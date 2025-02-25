@@ -1,144 +1,239 @@
-Return-Path: <linux-kernel+bounces-532553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B939A44F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:51:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F21EA44F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15D4189BF52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B13442170D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C86221148B;
-	Tue, 25 Feb 2025 21:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4E2212B3B;
+	Tue, 25 Feb 2025 21:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="HQJEwcnL"
-Received: from rcdn-iport-4.cisco.com (rcdn-iport-4.cisco.com [173.37.86.75])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UPaipt5F"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4153209;
-	Tue, 25 Feb 2025 21:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.75
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520277; cv=none; b=c52XDzXL4qdBgYYNqejzLmnpr3o4F8H6SIcgm6reHdsPAKusz0naPD/S0Msvq1aeFWGmCea1YSbDW4WzdwiECafUvimSKe0taRk5vSYM/Wr9+1dTH9KuUhGhP85lXDBJHVbTV5R4hOjrq4MV7i6T8XDD0a8389tLUjEO/co6+gw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520277; c=relaxed/simple;
-	bh=rftS8tH4GM8YtYSmzprWQQW5nTRrqbX2Fg2SKGmK3TQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QFJ4vkwAEhJxUsT6t+hn50H6663lUZuJFBi/bCk5DEQLEhTGjwwJnU0Q881vokoQll31tYSZhZWndck0hkw/fxnKfLUpktJxVjyv40u8Dy1lFZuoAV3xvmoI6mvw57AY2ZNE78o+e6cmakEa1r/mjtxD27DkkjeK9hnE/1V2DQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=HQJEwcnL; arc=none smtp.client-ip=173.37.86.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=1237; q=dns/txt;
-  s=iport01; t=1740520275; x=1741729875;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iyfNPZTyuYPKmgazSumm4YcuvxbstpbUvFtUrHQS5/g=;
-  b=HQJEwcnLmBiouVqZKfneNgSkkXeSSubZi7bkbvdAVq37aMddGHc0yzGL
-   Ee2i90Zf16oBHV1Pnogj/sn2x4w3lWu+bEx5a9NyCCQ02a1SQYzmqNIY2
-   F9fMygsi+OOQ1Sqt6RfiT8g05xtZzehYo+ksUqJ52eCqZ8DBkRYJBC7Iq
-   GJTg+Dl+rg8ShEgZqnGVj7oL8uXK8isgRqr5LXeM2z9sAZ1i6BpaIYBZB
-   BPrTb/9RLgFESGHyByxVBLR7qfXZhw2Kf+HHGOqYDuTNY6odks5qpRdoY
-   568gzG/zNC6Wm+XyobGulf6RfmCjHcOkbwSiUPwzvf56kkBTwVDhf3FWR
-   g==;
-X-CSE-ConnectionGUID: Pjii2pvwSMG6mbCHjdoPvQ==
-X-CSE-MsgGUID: vau5NgW/Qn+XKvqiWnSCxw==
-X-IPAS-Result: =?us-ascii?q?A0AnAACsOr5n/5H/Ja1aHAEBAQEBAQcBARIBAQQEAQGBf?=
- =?us-ascii?q?wcBAQsBgkqBT0MZL4xyp2qBJQNWDwEBAQ9EBAEBhQeLEwImNAkOAQIEAQEBA?=
- =?us-ascii?q?QMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGCIZdKwsBRoFQgwKCZQOvL?=
- =?us-ascii?q?IF5M4EB3jSBboFIAY1KhWcnFQaBSUSEDm+BUoM+hXcEh1unakiBIQNZLAFVE?=
- =?us-ascii?q?w0KCwcFgXEDNQwLLhWBRnqCRWlJOgINAjWCHnyCK4RUhEOEQYVSghGLPYQKQ?=
- =?us-ascii?q?AMLGA1IESw3FBsGPm4HoCs8hDyBDhSCFRcpOqURoQSEJaFIGjOqVAGYfakwg?=
- =?us-ascii?q?Wc8gVkzGggbFYMiUhkPji0Wz0YlMjwCBwsBAQMJkWUBAQ?=
-IronPort-Data: A9a23:/8GW166miuRcX8Qnbb/SaAxRtBPGchMFZxGqfqrLsTDasY5as4F+v
- jdNWT+HP/bYYmDzKNp/PNi1o0NTucXTxt9mHAtu+y81Zn8b8sCt6fZ1gavT04J+CuWZESqLO
- u1HMoGowPgcFyGa/lH1dOC89RGQ7InQLpLkEunIJyttcgFtTSYlmHpLlvUw6mJSqYDR7zil5
- 5Wr+KUzBHf/g2QpajhOtvrZwP9SlK2aVA0w7wRWic9j5Dcyp1FNZLoDKKe4KWfPQ4U8NoaSW
- +bZwbilyXjS9hErB8nNuu6TnpoiG+O60aCm0xK6aoD66vRwjnVaPpUTaJLwXXxqZwChxLid/
- jniWauYEm/FNoWU8AgUvoIx/ytWZcWq85efSZSzXFD6I0DuKxPRL/tS4E4eBY8Z+7xvH3510
- NNGLTomThKPgNqo+efuIgVsrpxLwMjDJogTvDRkiDreF/tjGcCFSKTR7tge1zA17ixMNa+BP
- IxCNnw1MUmGOkESUrsUIMpWcOOAhXDlbzxcoVG9rqss6G+Vxwt0uFToGIGPJ4XSGJUMwS50o
- ErY9nmkJB4lc+WZigqm7Gutuen0tjPkDdd6+LqQs6QCbEeo7mAaDlsdXEGjrP+lh1SWX9NZI
- lYTvC00osAa9kGpRPH5XhulsDiFtBtaUN1Ve8U/4RuRy6yS+wuFC3IfQzhpb8Yvv8s7Azct0
- zehm9LvGCwqs7CPT3+Z3qmboCn0OiUPK2IGIygeQmMt59jlvZF2lRnUT/59H6OvyN74Azf9x
- 3aNtidWulkIpdQA26P++RXMhCih48CZCAU0/Q7QGGmi62uVebKYWmBh0nCDhd4oEWpTZgDpU
- KQs8yRG0N0zMA==
-IronPort-HdrOrdr: A9a23:rnZq7qlxAb8t1/Q405YEpoEBmcLpDfIf3DAbv31ZSRFFG/FwWf
- rDoB19726XtN9/Yh8dcLy7UpVoIkmslqKdg7NxAV7KZmCP01dAR7sM0WKN+VDdMhy73vJB1K
- tmbqh1AMD9ABxHl8rgiTPIdurIuOPmzEht7t2uqEuEimpRGsVd0zs=
-X-Talos-CUID: 9a23:dVssB2BFCMiELHP6ExFl9U9OAt46SVjyknLaCG+6BWFRVoTAHA==
-X-Talos-MUID: 9a23:BXpe6wX7AUSVqaTq/CHlmWxEO/gv2qLtOGMTiJQ5vfKvJTMlbg==
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
-   d="scan'208";a="325105817"
-Received: from rcdn-l-core-08.cisco.com ([173.37.255.145])
-  by rcdn-iport-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 25 Feb 2025 21:51:06 +0000
-Received: from fedora.cisco.com (unknown [10.188.0.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kartilak@cisco.com)
-	by rcdn-l-core-08.cisco.com (Postfix) with ESMTPSA id 61649180001ED;
-	Tue, 25 Feb 2025 21:51:05 +0000 (GMT)
-From: Karan Tilak Kumar <kartilak@cisco.com>
-To: sebaddel@cisco.com
-Cc: arulponn@cisco.com,
-	djhawar@cisco.com,
-	gcboffa@cisco.com,
-	mkai2@cisco.com,
-	satishkh@cisco.com,
-	aeasi@cisco.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Karan Tilak Kumar <kartilak@cisco.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] scsi: fnic: Replace use of sizeof with standard usage
-Date: Tue, 25 Feb 2025 13:50:56 -0800
-Message-ID: <20250225215056.4899-1-kartilak@cisco.com>
-X-Mailer: git-send-email 2.47.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4180320FA9E;
+	Tue, 25 Feb 2025 21:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740520331; cv=pass; b=Sd1QoxeEfUOaBUNR8qr4IC8fTwgmyA/jctOiBszrZU5etc7jJKA0OLk3j69LvzlOemQXc91VAXEk9ydbfVFfVspBu9rsLIoKSIEtSvLk7eAZymn0TVHnOFJ7/HZE1Ccks+2Lk8mrys4hU2xYLgB5dCzL0Dxe7AAr0nM6yHYo0eA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740520331; c=relaxed/simple;
+	bh=+ELnTD2jQXo2BD566+x6iNht2yvO8kyKXVBT0Jw+ND8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3L56J6+Gii6iJa3tw5f93gZHglXnpCXdDNhbrklDdnfCGF2R8nauLpfdMV/JqHPGIdEGjYzymOCAAC8mfV95iZ3rxKPE/isluD8T/TlEr82RxrdOK9ZWRu2WLE9MLx3qZtzcYd0IYjBtt6yLVqQR0CZ7zH0wMlfO73v5gHsx/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UPaipt5F; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740520299; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kKpnwqL23qM255LDU7Kavm53nW5Sfsv/fiQCAMwjmhozGaXDh7gBbsN9XV69BvD6VHGdGdEkZkeyFYWoLaP4atl3j/FIjpWs0d+lVnOCAwEc97uub9MJN/I09m+xxNzZTY0OmJl9BPrCczZa0ZXqPP0PcgCitsOKJgySg89juXg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740520299; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gRvAwLbNIssG674AaLjZhtPbGgHizEjSnBjeusKXP4A=; 
+	b=fs+RxRi3Dx1sHjH3ffMThzrKwCOhtPiwvTQivQx2+Z529hEKvHYDy1jDf8rhm+BcGKExafSCqrYxWUro1u56H5MN6hR8SSq1ODuVrMyiULEfAuS4tJ3HQubuICV12icDr8GlxDsAqkjm2e66Q59TtH3YEDH6hgds9JIAR/cIBhc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740520299;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=gRvAwLbNIssG674AaLjZhtPbGgHizEjSnBjeusKXP4A=;
+	b=UPaipt5FnYaXKMPGeTGt2rQC6zrZWqvGss4ZULEqjqnAGwnkZnI2V6v1+As+pYHY
+	bIzMtKbGkmY9HBgFN8HH10TVpf2bd8I28HVXoAOVgEQsJfe+arrBfO/8ThHTptes9KD
+	aufIe8euQL5DeFgPEduRo4PN+0vzMvozv1VVFIdk=
+Received: by mx.zohomail.com with SMTPS id 1740520296039872.1712499063477;
+	Tue, 25 Feb 2025 13:51:36 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 040DF18040A; Tue, 25 Feb 2025 22:51:31 +0100 (CET)
+Date: Tue, 25 Feb 2025 22:51:30 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Kever Yang <kever.yang@rock-chips.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
+	Simon Xue <xxm@rock-chips.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: PCI: dw: rockchip: Add rk3576 support
+Message-ID: <jzxf7a7xm4xm5yjgim2sqmxuvmtjrqupps3mnwvhbzimsu6zdk@75fyzct43n3e>
+References: <20250225102611.2096462-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-User: kartilak@cisco.com
-X-Outbound-SMTP-Client: 10.188.0.187, [10.188.0.187]
-X-Outbound-Node: rcdn-l-core-08.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225102611.2096462-1-kever.yang@rock-chips.com>
+X-ZohoMailClient: External
 
-Remove cast and replace use of sizeof(struct) with standard usage of
-sizeof.
+Hello Kever,
 
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Fixes: a63e78eb2b0f ("scsi: fnic: Add support for fabric based solicited requests and responses")
-Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-Reviewed-by: Arun Easi <aeasi@cisco.com>
-Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
----
- drivers/scsi/fnic/fdls_disc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Tue, Feb 25, 2025 at 06:26:10PM +0800, Kever Yang wrote:
+> rk3576 is using DWC PCIe controller, with msi interrupt directly to GIC
+> instead of using GIC ITS, so
+> - no ITS support is required and the 'msi-map' is not required,
+> - a new 'msi' interrupt is needed.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
 
-diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-index ff9ba7cafc01..3a41e92d5fd6 100644
---- a/drivers/scsi/fnic/fdls_disc.c
-+++ b/drivers/scsi/fnic/fdls_disc.c
-@@ -318,8 +318,7 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
- 			"Schedule oxid free. oxid idx: %d\n", idx);
- 
- 		spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
--		reclaim_entry = (struct reclaim_entry_s *)
--						kzalloc(sizeof(struct reclaim_entry_s), GFP_KERNEL);
-+		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
- 		spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
- 
- 		if (!reclaim_entry) {
--- 
-2.47.1
+You should either drop my Signed-off-by or add
 
+Co-developed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Both options are fine with me, but the current one does not make
+much sense :)
+
+Greetings,
+
+-- Sebastian
+
+> 
+> Changes in v7:
+> - Move the rk3576 device specific schema out of common.yaml
+> 
+> Changes in v6:
+> - Fix make dt_binding_check and make CHECK_DTBS=y
+> 
+> Changes in v5:
+> - Add constraints per device for interrupt-names due to the interrupt is
+> different from rk3588.
+> 
+> Changes in v4:
+> - Fix wrong indentation in dt_binding_check report by Rob
+> 
+> Changes in v3:
+> - Fix dtb check broken on rk3588
+> - Update commit message
+> 
+> Changes in v2:
+> - remove required 'msi-map'
+> - add interrupt name 'msi'
+> 
+>  .../bindings/pci/rockchip-dw-pcie-common.yaml | 10 +++-
+>  .../bindings/pci/rockchip-dw-pcie.yaml        | 55 +++++++++++++++++--
+>  2 files changed, 57 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+> index cc9adfc7611c..2150bd8b5fc2 100644
+> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+> @@ -65,7 +65,11 @@ properties:
+>            tx_cpl_timeout, cor_err_sent, nf_err_sent, f_err_sent, cor_err_rx,
+>            nf_err_rx, f_err_rx, radm_qoverflow
+>        - description:
+> -          eDMA write channel 0 interrupt
+> +          If the matching interrupt name is "msi", then this is the combinded
+> +          MSI line interrupt, which is to support MSI interrupts output to GIC
+> +          controller via GIC SPI interrupt instead of GIC its interrupt.
+> +          If the matching interrupt name is "dma0", then this is the eDMA write
+> +          channel 0 interrupt.
+>        - description:
+>            eDMA write channel 1 interrupt
+>        - description:
+> @@ -81,7 +85,9 @@ properties:
+>        - const: msg
+>        - const: legacy
+>        - const: err
+> -      - const: dma0
+> +      - enum:
+> +          - msi
+> +          - dma0
+>        - const: dma1
+>        - const: dma2
+>        - const: dma3
+> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> index 550d8a684af3..4764a0173ae4 100644
+> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> @@ -16,16 +16,13 @@ description: |+
+>    PCIe IP and thus inherits all the common properties defined in
+>    snps,dw-pcie.yaml.
+>  
+> -allOf:
+> -  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> -  - $ref: /schemas/pci/rockchip-dw-pcie-common.yaml#
+> -
+>  properties:
+>    compatible:
+>      oneOf:
+>        - const: rockchip,rk3568-pcie
+>        - items:
+>            - enum:
+> +              - rockchip,rk3576-pcie
+>                - rockchip,rk3588-pcie
+>            - const: rockchip,rk3568-pcie
+>  
+> @@ -71,8 +68,54 @@ properties:
+>  
+>    vpcie3v3-supply: true
+>  
+> -required:
+> -  - msi-map
+> +allOf:
+> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> +  - $ref: /schemas/pci/rockchip-dw-pcie-common.yaml#
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              const: rockchip,rk3576-pcie
+> +    then:
+> +      required:
+> +        - msi-map
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: rockchip,rk3576-pcie
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 6
+> +          maxItems: 6
+> +        interrupt-names:
+> +          items:
+> +            - const: sys
+> +            - const: pmc
+> +            - const: msg
+> +            - const: legacy
+> +            - const: err
+> +            - const: msi
+> +    else:
+> +      properties:
+> +        interrupts:
+> +          minItems: 5
+> +        interrupt-names:
+> +          minItems: 5
+> +          items:
+> +            - const: sys
+> +            - const: pmc
+> +            - const: msg
+> +            - const: legacy
+> +            - const: err
+> +            - const: dma0
+> +            - const: dma1
+> +            - const: dma2
+> +            - const: dma3
+> +
+>  
+>  unevaluatedProperties: false
+>  
+> -- 
+> 2.25.1
+> 
+> 
 
