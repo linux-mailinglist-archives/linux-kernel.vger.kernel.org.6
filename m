@@ -1,214 +1,148 @@
-Return-Path: <linux-kernel+bounces-531431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C80A44072
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:18:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C106A4405F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1617C19E2E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E753BAFF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61C269816;
-	Tue, 25 Feb 2025 13:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="BZbhRsHR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D5A2690D7;
+	Tue, 25 Feb 2025 13:11:54 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927B0267AE1;
-	Tue, 25 Feb 2025 13:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489190; cv=pass; b=nZY9EQTYsqi/Wq0dSNyCmvcr1nFs3f0QeYenv+6p33zrh1JHGBpqSP2KizEogCADr8hzoP4sD6e23PeAeYIg9bAawjgAFoXY8PbhFQ38AT0r74Hu/2iaOrXwLsrrB+JSuQrYsy4lDFAOdzwlJWL4MCYWfnaPuauJxEm/oxHCngQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489190; c=relaxed/simple;
-	bh=Pn/Fx/yuU/lUaA3NedAbSiQkqvsmm1dENaJyUG5J8kw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D681EBFE6;
+	Tue, 25 Feb 2025 13:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740489113; cv=none; b=W+fkG1Bf+Eu8h2eGlfMbIPP9DEcHybxn++0zD1Gmssz9PCgzlbt5J9hFkiGJp1kjaULSTyuo9n4PmpM8eXtWV+P9DWjvl3othYWZk/qSjEa8ajWTkQqnrXnJvJV+jvN7aql5TTgQbHD4iRvGTgfD5PzerWmmXqgz/Aryx6wEwVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740489113; c=relaxed/simple;
+	bh=Tc06KpHhdncY5vHPplX6+roo60GBAPDBnABoT57FjX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2zSNLcAMTIsnga7QLovxBTDRAeYbVMtI31YUgSK0biST5Khg1OAnGBcvor2MJbmqjHFIvGMmf99SuL1WwEFx2+BNBFj5G7rKKFaVyzycGfpKNmEKNwdeT/WIbQ3A/T9H/X+1Db5au+tZSsTnqyDoS75yh5cC08ODmYZfXdIkH4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=BZbhRsHR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740489110; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NZnfyVR7IyMTyXDLIEUCrMKSCGoTGqsj+069o9fihhvi0eGkpqCRiv1yIih6DatPyzlCBSWvAsLckZwjO9/nbLliRC7JxzVJA+QyiqPD3cZYsiG7DJbvKMqStVYQlixILKLnz5qBzKpwFqyeWef1GwDDsaeQ2d72qVshwNoPClY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740489110; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xrERTREY6YsrpdfbtuvBlrDzb+rIm9ucee5+fOc7+3s=; 
-	b=X7bylatDMJhFwzJK5XJCxJMbpRaKeNdxWn9zmgwee2JcjP3pxIuzStBLo07Zm+wfPfQpdT8fcBBHjWisd4+4pFSZ83A8/tQpT9Kzmet+b05HUFguneYiG/dsBHrfO36oBqNdsEEYY5JNX2mejJwyfaeqPW4PrA3A2LqKhBLrp2o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740489110;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=xrERTREY6YsrpdfbtuvBlrDzb+rIm9ucee5+fOc7+3s=;
-	b=BZbhRsHRaCk8oCx4V1IJthqAD0y0f1aA6Jq9zf2qb0ab+nE18X2Bc3s7PUOLdqwP
-	VHKDCjsBwixxUM9KyNmeRpL+tHO6jPqaQjhxFSLOXyJc+d5mNkD6cNqk5v+3YqWtH3N
-	T8L2lHl6rizRn1UcYqljqJYFtXSY5q4dVNz5yrCg=
-Received: by mx.zohomail.com with SMTPS id 1740489106492893.7559376695295;
-	Tue, 25 Feb 2025 05:11:46 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id EB08C180403; Tue, 25 Feb 2025 14:11:39 +0100 (CET)
-Date: Tue, 25 Feb 2025 14:11:39 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Chen-Yu Tsai <wens@csie.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
-	David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
-	Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
-Message-ID: <ocbwzuqk56yx34kc5vp6aaxnhxqd4zp2wixlv7p3mex66ibntu@ahigikrf5cg4>
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
- <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndxiqQHTqEEgFSLqSShj/ERrVAbkc1z13ALCzDdiAtWFZrIOd5CLlfPcxI28gtfV9I6XhfCx+8MBZzAXLjuFTt1EDXuaLdTzjNnYh5ucXcVo5bUisCBuxSLhMynT02L9hGRY2zpyVbzMGWbd2QtfhxBsCqrXpbBIaAnlDRmNuo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abec8b750ebso214848666b.0;
+        Tue, 25 Feb 2025 05:11:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740489110; x=1741093910;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bWZOk7RRTPc+ZkJlzirhO5rrxb3g158YcdwUTbEdDw4=;
+        b=wrbTf7ye80IbNV6wsoXQuylnFBcomRrzkUdugE8PXgSOmOWxbACLt33khj1WxaOHZi
+         c5bNt7c9MlUcwDgH2/VF7dNs8pDZFwrmSysgZHHkhnGwdGFj/bPp1u2yEir2o0Rx+xi9
+         RRSTMy5ojbyHpbvclS7Yk4CtsBJDncTvZvVgPmoT5NwN7cALuGlQunLy09vOE4iSG7I0
+         NMpp4FSBfsWpWHsisuKOUHaPhOV+Qg1yfdaotPCjWNrGtcCXn9FWYjd7mMVA0DIz9Lrc
+         Y56IWOTicshOOAIBbfharFaC7MahfElwSXHYgOGwpBBomKAyDyfPiLwnByWoT8HoEYKL
+         9Lgw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ykirT6upriIeMshKlZjdsFfoXh7zOT7qLj89Fxz1glTpsDqQjAEj53GgpCAttZ05ChKMHrSymQM1ZauQIwLX@vger.kernel.org, AJvYcCU8faJf3v2IGYqkMn/dZId8hI9U9vR2mZspGh88izXFgkHkYQUuHjc/z0t9mS++Twu2i6RoAww+WgM=@vger.kernel.org, AJvYcCVnPZM//mx8FozPXR3ZJBqG34tuZdun8Gd9VIN+BzVVKYsVQrTatsF2dg+ob8YlwrPLPk2NCHVk@vger.kernel.org, AJvYcCWeIBz+8DklpxHTH6jbpNhtL9csjfm9rST06lJKiUMYW8C4GqLKgiQWnQH1nyUz3W7FDkG8IeHvOqQQAxkS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLmhaqZBB+2Z0KPczejHjjDqTacTLwHtg1B+NFaFuGnkfQe7E/
+	U4USfjXBQCuYNVMpQugdgFeue9YMOmz+ITKypABu5pWj6nt789k5
+X-Gm-Gg: ASbGnctGGbNN539bejVkkf7cZSdsrPx9YupE5neCQtZSkxRmOCWCYQZ/Gckycbnb51K
+	XAu4JgtX2AhBswMKsn+V9yNYJDz+Vqn9P7W2uOQ7K4rSRdpfsYra3PdqcCZuPbp/8eTW4JyvpDA
+	2OxHs5LwWUXA9rUjkBB2pD+iTk6cS7j3b9KeOMgmeVhdyknHTgs6Iz1cWs8EWsshvictlNfg8jO
+	43HZtAbXQIZgD9ClnNUfW61fpgjXw7SbLJ2zym1I2X6Y/ruT8TnJh6hCQqeIJcEB/Iv9+qL85FH
+	v0S/8epvRg6Xuw7I8A==
+X-Google-Smtp-Source: AGHT+IGFvHYwvYql3mUsikF1Ks4rOTcJOh62lrefJB9Zvc8mdhl4bBBxZZYSPaW8NxhpSJFjRt6GQg==
+X-Received: by 2002:a17:907:724f:b0:ab7:bf87:d9de with SMTP id a640c23a62f3a-abc0de146b4mr1561996666b.37.1740489110209;
+        Tue, 25 Feb 2025 05:11:50 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d58sm139993866b.148.2025.02.25.05.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:11:49 -0800 (PST)
+Date: Tue, 25 Feb 2025 05:11:47 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next 5/7] netconsole: add task name to extra data
+ fields
+Message-ID: <20250225-bright-jasmine-butterfly-aa1bb0@leitao>
+References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
+ <20250221-netcons_current-v1-5-21c86ae8fc0d@debian.org>
+ <20250225101910.GM1615191@kernel.org>
+ <20250225-doberman-of-scientific-champagne-640c69@leitao>
+ <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qokyrq4gcjmy6fsj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.466.79
-X-ZohoMailClient: External
+In-Reply-To: <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
 
+Hello Paolo,
 
---qokyrq4gcjmy6fsj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
-MIME-Version: 1.0
+On Tue, Feb 25, 2025 at 12:53:49PM +0100, Paolo Abeni wrote:
+> On 2/25/25 12:17 PM, Breno Leitao wrote:
+> > On Tue, Feb 25, 2025 at 10:19:10AM +0000, Simon Horman wrote:
+> >> On Fri, Feb 21, 2025 at 05:52:10AM -0800, Breno Leitao wrote:
+> >>> This is the core patch for this whole patchset. Add support for
+> >>> including the current task's name in netconsole's extra data output.
+> >>> This adds a new append_taskname() function that writes the task name
+> >>> (from current->comm) into the target's extradata buffer, similar to how
+> >>> CPU numbers are handled.
+> >>>
+> >>> The task name is included when the SYSDATA_TASKNAME field is set,
+> >>> appearing in the format "taskname=<name>" in the output. This additional
+> >>> context can help with debugging by showing which task generated each
+> >>> console message.
+> >>>
+> >>> Signed-off-by: Breno Leitao <leitao@debian.org>
+> >>> ---
+> >>>  drivers/net/netconsole.c | 14 +++++++++++++-
+> >>>  1 file changed, 13 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> >>> index 5a29144ae37ee7b487b1a252b0f2ce8574f9cefa..625f4c0be11d8deb454139b1c526abc842697219 100644
+> >>> --- a/drivers/net/netconsole.c
+> >>> +++ b/drivers/net/netconsole.c
+> >>> @@ -1179,12 +1179,22 @@ static int append_cpu_nr(struct netconsole_target *nt, int offset)
+> >>>  			 raw_smp_processor_id());
+> >>>  }
+> >>>  
+> >>> +static int append_taskname(struct netconsole_target *nt, int offset)
+> >>> +{
+> >>> +	if (WARN_ON_ONCE(!current))
+> >>> +		return 0;
+> >>
+> >> Hi Breno,
+> >>
+> >> I gather that theoretically this could occur, but it isn't expected
+> >> to happen in practice. Is that right?
+> > 
+> > That's correct. `current` isn't expected to be NULL in practice.
+> > I've been running this code on several servers for days and have never
+> > encountered this warning. 
+> > 
+> > While the taskname feature isn't enabled during early boot, netconsole
+> > might be active at that time, which is why I exercised extra caution
+> > here.
+> 
+> So `current` can't be NULL here. I think it's better to drop such check,
+> it's presence would be misleading. i.e. like adding checks for UDP stack
+> being initialized before calling send_msg_fragmented()
 
-Hi,
+Ack. I will remove the check then, and check if the UDP stack has been
+initialized before calling netpoll helpers.
 
-On Tue, Feb 25, 2025 at 01:14:03PM +0200, Matti Vaittinen wrote:
-> On 25/02/2025 01:21, Sebastian Reichel wrote:
-> > This removes .of_node from 'struct power_supply', since there
-> > is already a copy in .dev.of_node and there is no need to have
-> > two copies.
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >   drivers/power/supply/power_supply_core.c | 17 ++++++++---------
-> >   include/linux/power_supply.h             |  1 -
-> >   2 files changed, 8 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/s=
-upply/power_supply_core.c
-> > index d0bb52a7a0367a8e07787be211691cad14a41a54..11030035da6f121ca76bebf=
-800c06cfd5db57578 100644
-> > --- a/drivers/power/supply/power_supply_core.c
-> > +++ b/drivers/power/supply/power_supply_core.c
-> > @@ -200,11 +200,11 @@ static int __power_supply_populate_supplied_from(=
-struct power_supply *epsy,
-> >   	int i =3D 0;
-> >   	do {
-> > -		np =3D of_parse_phandle(psy->of_node, "power-supplies", i++);
-> > +		np =3D of_parse_phandle(psy->dev.of_node, "power-supplies", i++);
-> >   		if (!np)
-> >   			break;
-> > -		if (np =3D=3D epsy->of_node) {
-> > +		if (np =3D=3D epsy->dev.of_node) {
-> >   			dev_dbg(&psy->dev, "%s: Found supply : %s\n",
-> >   				psy->desc->name, epsy->desc->name);
-> >   			psy->supplied_from[i-1] =3D (char *)epsy->desc->name;
-> > @@ -235,7 +235,7 @@ static int  __power_supply_find_supply_from_node(st=
-ruct power_supply *epsy,
-> >   	struct device_node *np =3D data;
-> >   	/* returning non-zero breaks out of power_supply_for_each_psy loop */
-> > -	if (epsy->of_node =3D=3D np)
-> > +	if (epsy->dev.of_node =3D=3D np)
-> >   		return 1;
-> >   	return 0;
-> > @@ -270,13 +270,13 @@ static int power_supply_check_supplies(struct pow=
-er_supply *psy)
-> >   		return 0;
-> >   	/* No device node found, nothing to do */
-> > -	if (!psy->of_node)
-> > +	if (!psy->dev.of_node)
-> >   		return 0;
-> >   	do {
-> >   		int ret;
-> > -		np =3D of_parse_phandle(psy->of_node, "power-supplies", cnt++);
-> > +		np =3D of_parse_phandle(psy->dev.of_node, "power-supplies", cnt++);
-> >   		if (!np)
-> >   			break;
-> > @@ -606,8 +606,8 @@ int power_supply_get_battery_info(struct power_supp=
-ly *psy,
-> >   	const __be32 *list;
-> >   	u32 min_max[2];
-> > -	if (psy->of_node) {
-> > -		battery_np =3D of_parse_phandle(psy->of_node, "monitored-battery", 0=
-);
-> > +	if (psy->dev.of_node) {
-> > +		battery_np =3D of_parse_phandle(psy->dev.of_node, "monitored-battery=
-", 0);
-> >   		if (!battery_np)
-> >   			return -ENODEV;
->=20
-> This reminded me of a change I once did to power_supply - but maybe never
-> got it further than RFC stage. Anyways, do you think it would be possible=
- to
-> decouple the battery info and struct power_suppply (while at it)?
->
-> I believe that the chargers and especially fuel-gauges which are designed=
- to
-> operate with different batteries (and which get battery details using sta=
-tic
-> battery nodes), would like to get the battery info _before_ registering t=
-he
-> power_supply (to avoid sending bogus values while operating on defaults,
-> before the battery info is read and before things are set accordingly).
->=20
-> I know this may be a bit much to ask, but I believe it'd be an improvemen=
-t.
->=20
-> Other than that, looks good to me.
+What is the best way to make sure taht the UDP stack has been
+initialized?
 
-I was thinking about adding an init function to power_supply_desc,
-which would be called directly before psy->initialized is set to
-true in the power-supply registration phase. I think that would be
-the right place to setup device registers based on battery-info data.
-But it's definitely not a thing for this series.
-
-Greetings,
-
--- Sebastian
-
---qokyrq4gcjmy6fsj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme9wYEACgkQ2O7X88g7
-+pqiLw//XIliVc9d8leYVw9Zg1Ou2CIFlkNNs0jNuGp/9lBRbbqU3i1ak4YxVKtX
-Gwz4lsiJCZAACkP7CuEb5IguHkrl/pMT0hWEa+Lt1rwqx+F18FVdoWK5mujphYXK
-oE+4iXNfaU0hYoypPpgqWorMtKs7KKVw7cv7BuIgGp+LYXEeBRdde6W5t9mMYY4y
-IwppeBvxwmOoNc+E0nXErhERfiydaEwm6BFWuBnKfmeHoXPnCL0jVamXJbDVjczE
-+1oLmR5iZYfuSrmRczsPiqj1Mcw5iD2avPWX0hi92SEz3KQunNHrsYdfH67nJzw1
-qvCCjn9fnT22fTH5Ttny1Cg//zsOnfmBQsDYuY6WVmQZ6ioXDwV6nXlfydr14ZRT
-66oYdUBsDh/Gxy68lUMaLDiKus2I4WrVgqNNXazlnDaMsSrKn6MRZ0O5JJBtY4yD
-yqByN1yiZLRSfhPmJqXZlCIXBp4PJ19wfMg8HWynQVuHv/T8YgOso15Tbucp+qWf
-IOfMOx8HxTJeDuCezPkCZV7GJeVMsOYHzLrwvLnwk9AHGb+VIFiWu4I+iRzkV8pR
-9cYRHe78FNnqRCnf69jmZd8IBp/qnRIcelg00w4vo1A5mrVLI6YYt2oUuj/6yEqr
-ljWvdVK5cQo/CvXH/3zlL4AZNW/tsPlLT2WKpFyuVqwIOvS1SLw=
-=+mrH
------END PGP SIGNATURE-----
-
---qokyrq4gcjmy6fsj--
+Thanks for the review,
+--breno
 
