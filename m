@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-531678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0425A4438B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:53:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF34DA44393
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A666C19C4D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D954D864C15
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688F921ABC0;
-	Tue, 25 Feb 2025 14:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAC9268FFD;
+	Tue, 25 Feb 2025 14:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBngrPUB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hyh9QqRA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFACA21ABAE;
-	Tue, 25 Feb 2025 14:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7DA21ABD8;
+	Tue, 25 Feb 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494785; cv=none; b=O5bG7fr9fKImlCwZ3SbY39EC9rplffrBKE1Ew2tm0TDmZOZHH5Qof+a8OfFVvik1DIzc+mECNei6ahDCQ7TUIOgz2K9mjURBkuBzc0aupoHH9uESwTQ6FjsWNJLSeE7ffayazh+TPY6zps73wxCz8EDJlhVdmYdL5PjndQHShqw=
+	t=1740494795; cv=none; b=kXBQCuil4yJUo+/+j5kiMZbAulniSUJIIh2tRDm8UJpuFxU3AYjE9kqmxZLIZZEEdbEQRzayyFe/Bb2RG/QU6BZvloabWbkRSxENPHyYPKSo7GZIkxOydaBqObSxJuvU45o5MJ2xhj9eaRhVp/53RYC2w7B2AM/6hVAwRZ4H1mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494785; c=relaxed/simple;
-	bh=6ZThMx3yk5s32UwJseFaT+0LfZxbEk9CwJs9at/sz4o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IMuiCl4nDQaRjOTlfK8axG0w8mJg6fTZjOO8eeqUQpdP/I5G5gl4BQhIinRDvMF7sIgQ1tqylBFzy7XUvGw8B5kcXjcEKXK5Vmm/5uIa6KdXwJbrSIS5D/hVdCEYu5A05OBizU3CsnBDIPvLtVGFRKJonB0PhEA+q/ZyP2M8c2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBngrPUB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A07C4CEDD;
-	Tue, 25 Feb 2025 14:46:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740494785;
-	bh=6ZThMx3yk5s32UwJseFaT+0LfZxbEk9CwJs9at/sz4o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JBngrPUB7/i1+yjFpBp9I9OvqFFITb4P6hFYqyz+5W3iuG/l83/RgnZFIQroM4OrC
-	 YaKdAQ8NMAL01KLJKlB93BVlGXMIFs8RiE8uxS2iJ01lILFP3WCMwnnqRRf+MGqxWt
-	 0U8nRcEY0hNM5MIuxYghPIraxG6uFjF0jL/2VkW7PDXgCwsFxE7JbqEGL+FqUfQvMT
-	 o7z0blAKwjG+kEN08spkJTBd6roI64NzBumphKDGBkvIHn1Gjl2vVFE6svS3q915xH
-	 HPftpzYJtBQoSTGGYNnGKtq8R8lwuM3m/VH7vyxidZOLNRhW8/r9UfTjBOwNdjeRFu
-	 pg6bRqLdMN6+A==
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
- Elaine Zhang <zhangqing@rock-chips.com>, 
- =?utf-8?q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Peter Geis <pgwipeout@gmail.com>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
- Vignesh Raman <vignesh.raman@collabora.com>, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20250220-rk3588-gpu-pwr-domain-regulator-v6-0-a4f9c24e5b81@kernel.org>
-References: <20250220-rk3588-gpu-pwr-domain-regulator-v6-0-a4f9c24e5b81@kernel.org>
-Subject: Re: (subset) [PATCH v6 0/8] Fix RK3588 power domain problems
-Message-Id: <174049478169.62098.16182863254035343977.b4-ty@kernel.org>
-Date: Tue, 25 Feb 2025 14:46:21 +0000
+	s=arc-20240116; t=1740494795; c=relaxed/simple;
+	bh=xRLtya76a4CWMfPZLUXOt80YfMIxPHShG70qhWNfxpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SI/lejSbaFeueY5m+mQ1BU8mfjAX3ATjfQWGcKA6rHXXRONjo3HWXpqoeMBuA6duayQKEMxDhgVKA1s/KIDY9ZZ+fgZFs4nabdaNSfr5YGUap2pKzm+9TXj8c7C5sSKvZxz0F1AStFlWBe8AwxREo4y2DJW+kKYiYzEfNbgRImY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hyh9QqRA; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740494793; x=1772030793;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=xRLtya76a4CWMfPZLUXOt80YfMIxPHShG70qhWNfxpU=;
+  b=hyh9QqRAPbMEica0aNtokanrzQct2PhXxrjnNksXs2AduT0CkzT8+70l
+   /plhT5bUyuHiDIherYoeO/Ygvrfx/ZjH5V88qGnU39ZtXtLRIdEx6ubp0
+   ncQFB1BuGf16H9GXgbBKLfOPPd16rkqOhWj8bykZedMy1SZdy0dA2lfuL
+   P/fNwX91NVnly5QCZjoCu7wNINvz58q1zdJl4H05bFmvz9sjwvNXlTUsL
+   w4dWeOzxBKO3IsB7us5p+UEcjeVKoOPeqUQ3EwtCsnkKoTOCdMm0BavFp
+   dwrJPOM5FidJ9+DkH0mBosE9BSHwxJuuY+ytf9FtMAFEE+vufrr1zdGi9
+   Q==;
+X-CSE-ConnectionGUID: v4zCleIyQv+5dwhiiFFPCQ==
+X-CSE-MsgGUID: R3GL86FISG2AhB7OWUFGoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="51934117"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="51934117"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:46:33 -0800
+X-CSE-ConnectionGUID: IK9Jn9FQTmKygRaa2Eyg1w==
+X-CSE-MsgGUID: GvxWqsPiRQKFVGuE/vp2gw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="121497166"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:46:31 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmwCa-0000000F1Ky-3BCD;
+	Tue, 25 Feb 2025 16:46:28 +0200
+Date: Tue, 25 Feb 2025 16:46:28 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/3] gpiolib: don't use gpiochip_get_direction() when
+ registering a chip
+Message-ID: <Z73XxMwvFYjA0_6s@smile.fi.intel.com>
+References: <20250225-retval-fixes-v1-0-078c4c98517a@linaro.org>
+ <20250225-retval-fixes-v1-1-078c4c98517a@linaro.org>
+ <Z73EIu0AqnfPU33k@smile.fi.intel.com>
+ <CAMRc=MdTKCtwrDouTV4YHoWa1F8cenSVEtTXicSUdrmEk3TxCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdTKCtwrDouTV4YHoWa1F8cenSVEtTXicSUdrmEk3TxCQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 20 Feb 2025 19:58:03 +0100, Sebastian Reichel wrote:
-> I got a report, that the Linux kernel crashes on Rock 5B when the panthor
-> driver is loaded late after booting. The crash starts with the following
-> shortened error print:
+On Tue, Feb 25, 2025 at 03:43:29PM +0100, Bartosz Golaszewski wrote:
+> On Tue, Feb 25, 2025 at 2:22 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Feb 25, 2025 at 12:56:23PM +0100, Bartosz Golaszewski wrote:
+
+> > > During chip registration we should neither check the return value of
+> > > gc->get_direction() nor hold the SRCU lock when calling it. The former
+> > > is because pin controllers may have pins set to alternate functions and
+> > > return errors from their get_direction() callbacks. That's alright - we
+> > > should default to the safe INPUT state and not bail-out. The latter is
+> > > not needed because we haven't registered the chip yet so there's nothing
+> > > to protect against dynamic removal. In fact: we currently hit a lockdep
+> > > splat. Revert to calling the gc->get_direction() callback directly not
+> > > not checking its value.
+
+...
+
+> > I think the below code deserves a commit (as a summary of the above commit
+> > message).
 > 
-> rockchip-pm-domain fd8d8000.power-management:power-controller: failed to set domain 'gpu', val=0
-> rockchip-pm-domain fd8d8000.power-management:power-controller: failed to get ack on domain 'gpu', val=0xa9fff
-> SError Interrupt on CPU4, code 0x00000000be000411 -- SError
-> 
-> [...]
+> Can you rephrase? I'm not getting this one.
 
-Applied to
+Ah, s/commit/comment/
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> > > +             if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index))
+> > > +                     assign_bit(FLAG_IS_OUT, &desc->flags,
+> > > +                                !gc->get_direction(gc, desc_index));
+> > > +             else
+> > >                       assign_bit(FLAG_IS_OUT,
+> > >                                  &desc->flags, !gc->direction_input);
+> >
+> > Otherwise LGTM,
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thanks!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[1/8] regulator: Add (devm_)of_regulator_get()
-      commit: 0dffacbbf8d044456d50c893adb9499775c489f4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
