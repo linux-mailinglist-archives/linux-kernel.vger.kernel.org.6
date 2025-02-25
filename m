@@ -1,244 +1,103 @@
-Return-Path: <linux-kernel+bounces-531617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688CBA442CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:31:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B546A442D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D35B3AF530
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:27:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3CA17249E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D40726B097;
-	Tue, 25 Feb 2025 14:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B426A095;
+	Tue, 25 Feb 2025 14:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UxkQG5db"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0y6+WsF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FF926B0B8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8532698A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493644; cv=none; b=Pbgz2eNgx5m5bi8n41CtEOY+VkKDnvfS+DMKyayzq0HnIRWABVuEsugYLWAqMLrl4EtDeBFJNnwwTMYIjhIouznXp4AKQsWIBNkEoPv3JhYlgE4BU6n3GzYdQpTbEQvW7txScjgQYeze6hxldQ/17cbhXynMnsclSfmKT5KBmSA=
+	t=1740493714; cv=none; b=HfZXEgY16qEgBjsD5jTZjGU473x7GnrMkcx8MWJ9LNlaabzPr29sUXSHBEE+kO2aRJkvTnCfpRcUNWb2OqF+jIKprhHgcvoYieWaaytOmWAHhGdio+pSL62PWYDul4WLMfxBeUDF9MgopVr37QhuvUuifnust1QoU7MZk0Al20Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493644; c=relaxed/simple;
-	bh=VOyeap2V4VvrNDUc/T4wa2Ycc1cF0m6fX095b2mIBOM=;
+	s=arc-20240116; t=1740493714; c=relaxed/simple;
+	bh=gvIBwaSJNTvZ8M88E/Zqfyzlre6QRNCoiRn2farrnhc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=opN8rmYGV6T5SrBOgbftWDiXl649dX8pTseRk6ND9KGxs8EPuNpdSd13fb29aRzdH5+MevjStnwzEWOSBVNjLOjmQ8JyJ57LDzYmWJtiB3SLwNuthEftudHP05/z40ip0Dfc2hvO5RfQR0Lq9HUCNENQT5zzgAlJhyEnfqAyyr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UxkQG5db; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 551F04442F;
-	Tue, 25 Feb 2025 14:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740493641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ksF7rsjoy0iP9hn3MuB5+OiMn4k7YbnH9STHuf8uDAI=;
-	b=UxkQG5dbGt+tSDyvxdAcaQ/tAsfRGtqmGzlChs+y3LOyB+9jX5jmFEjf72H1Ggym+k/DOC
-	VB3I5kz6N9L6lZ4Mh3gX6BB+QcUYL30eCPPQlmM/XCzXNNTv7zYUs1vxP2lAVe0HjVAMu+
-	TC/x4zncUiWxlS3OzqnZYt7X24Q8eNWpD2rvWIVLIR0AGOKXHVRSdu306xqArgB4vKd4hT
-	8+BCY2Evu4EA03yeu6W6+0QVlzUv0bPTcDnzp5mBrxb4XerQG8iwEtOslZ3ZYh85v/LXrp
-	2AWL+RWAavDiFqE8FmNarRvJGRjPi8fPlPTtI1/SeqXW4VqM7lZHMIuMecz/7g==
-Date: Tue, 25 Feb 2025 15:27:19 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
-	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-Subject: Re: [PATCH 23/63] dyndbg: fail modprobe on
- ddebug_class_range_overlap()
-Message-ID: <6234628f-4085-40ad-b521-4590db2cb5f5@bootlin.com>
-Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
-	linux-kernel@vger.kernel.org, jbaron@akamai.com,
-	gregkh@linuxfoundation.org, ukaszb@chromium.org,
-	intel-gfx-trybot@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-References: <20250125064619.8305-1-jim.cromie@gmail.com>
- <20250125064619.8305-24-jim.cromie@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJfL01FMuReSPeQDm6QnbBlTDLqHgwUcp5MvxhmN0QTv1aZq0TqO/22FnzXfTJtOZMkfajsXndSmQScSWozz7orZOXl4A5zFrWKY1ePSAY2PHukVP8xQeBE75lnGYS7VYNUc9UoW5aiVzwRYewkM45zdbqsybthkilC8wtRM+r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0y6+WsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5A3C4CEDD;
+	Tue, 25 Feb 2025 14:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740493713;
+	bh=gvIBwaSJNTvZ8M88E/Zqfyzlre6QRNCoiRn2farrnhc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s0y6+WsFGO+M1MC082PAovNBh/ze6iQUyhg1hCCIo3nISlQvZVrPFYB6fkZRAsI/i
+	 OWuVuGqgg4D+zwOBlyIVgt6IdyZDaz0ta88qAvJVY8Chi9fqYGa7ZYlCob8cGt/BwT
+	 rGI2hQ8JJj/dQlu5Qwy8oppOtL9jZsnN3xx6w8XsCsnO29vnITnBwXgoUySvEOzHHm
+	 /bolLoaIAauC0ceQERCL0W3Ms9sxv3erenSZd7CwGdU93EZb9iFQnuzPFrQh1YA927
+	 IrU5gaRyj9QWANr3m0ozY8eVw+jERb7gQscEXaJ06llH8n7UtFgxSjSyrnHJxg6Ly1
+	 sn7BMIXdsCLUw==
+Date: Tue, 25 Feb 2025 15:28:31 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
+ the callbacks.
+Message-ID: <Z73Tj3SAzNjaHwV3@localhost.localdomain>
+References: <20250221170530.L3yMvO0i@linutronix.de>
+ <20250223224014.GC23282@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250125064619.8305-24-jim.cromie@gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
- dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <20250223224014.GC23282@redhat.com>
 
-
-
-Le 25/01/2025 à 07:45, Jim Cromie a écrit :
-> 1. All classes used by a module (declared DYNDBG_CLASSMAP_{DEFINE,USE}
-> by module code) must share 0..62 class-id space; ie their respective
-> base,+length reservations shouldn't overlap.  Overlaps would lead to
-> unintended changes in ddebug enablements.
+Le Sun, Feb 23, 2025 at 11:40:15PM +0100, Oleg Nesterov a écrit :
+> Well... I won't really argue because I can't suggest a better fix at
+> least right now. Most probably never.
 > 
-> Detecting these class-id range overlaps at compile-time would be ideal
-> but is not obvious how; failing at modprobe at least insures that the
-> developer sees and fixes the conflict.
+> However, let me say that this patch doesn't make me happy ;) See below.
 > 
-> ddebug_class_range_overlap() implements the range check, accumulating
-> the reserved-ids as it examines each class.  It probably should use
-> bitmaps.
+> On 02/21, Sebastian Andrzej Siewior wrote:
+> >
+> > Oleg pointed out that this might be problematic if one closes 2.000.000
+> > files at once. While testing this scenario by opening that many files
+> > following by exit() to ensure that all files are closed at once, I did
+> > not observe anything outside of noise.
 > 
-> A previous commit reworked the modprobe callchain to allow failure,
-> now call ddebug_class_range_overlap() to check when classid conflicts
-> happen, and signal that failure.
+> and this probably means that we can revert c82199061009 ("task_work: remove
+> fifo ordering guarantee") and restore the fifo ordering which IMO makes much
+> more sense.
 > 
-> NB: this can only happen when a module defines+uses several classmaps,
+> But:
 > 
-> TBD: failing modprobe is kinda harsh, maybe warn and proceed ?
+> > Fixes: c5d93d23a2601 ("perf: Enqueue SIGTRAP always via task_work.")
 > 
-> test_dynamic_debug*.ko:
+> Yes. So, to fix this specific problem in perf this patch changes task_work.c
 > 
-> If built with -DFORCE_CLASSID_CONFLICT_MODPROBE, the modules get 2 bad
-> DYNDBG_CLASS_DEFINE declarations, into parent and the _submod.  These
-> conflict with one of the good ones in the parent (D2_CORE..etc),
-> causing the modprobe(s) to fail.  TODO: do in submod only, since fail
-> of parent prevents submod from ever trying.
+> And after this change we can never enforce a "clear" ordering, fifo or even lifo.
+> The ordering is simply "unpredictable/random".
 > 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> ---
-> ---
->   lib/dynamic_debug.c      | 30 ++++++++++++++++++++++++------
->   lib/test_dynamic_debug.c | 11 ++++++++++-
->   2 files changed, 34 insertions(+), 7 deletions(-)
-> 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index 8afcd4111531..8e1e087e07c3 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -1211,6 +1211,21 @@ static void ddebug_apply_params(const struct ddebug_class_map *cm, const char *m
->   	}
->   }
->   
-> +static int ddebug_class_range_overlap(struct ddebug_class_map *cm,
-> +				      u64 *reserved_ids)
-> +{
-> +	u64 range = (((1ULL << cm->length) - 1) << cm->base);
-> +
-> +	if (range & *reserved_ids) {
-> +		pr_err("[%d..%d] on %s conflicts with %llx\n", cm->base,
-> +		       cm->base + cm->length - 1, cm->class_names[0],
-> +		       *reserved_ids);
-> +		return -EINVAL;
-> +	}
-> +	*reserved_ids |= range;
-> +	return 0;
-> +}
-> +
->   /*
->    * scan the named array: @_vec, ref'd from inside @_box, for the
->    * start,len of the sub-array of elements matching on ->mod_name;
-> @@ -1242,9 +1257,11 @@ static int ddebug_module_apply_class_maps(struct ddebug_table *dt,
->   	struct ddebug_class_map *cm;
->   	int i;
->   
-> -	for_subvec(i, cm, &dt->info, maps)
-> +	for_subvec(i, cm, &dt->info, maps) {
-> +		if (ddebug_class_range_overlap(cm, reserved_ids))
-> +			return -EINVAL;
->   		ddebug_apply_params(cm, cm->mod_name);
-> -
-> +	}
->   	vpr_info("module:%s attached %d classmaps\n", dt->mod_name, dt->info.maps.len);
->   	return 0;
->   }
-> @@ -1255,10 +1272,11 @@ static int ddebug_module_apply_class_users(struct ddebug_table *dt,
->   	struct ddebug_class_user *cli;
->   	int i;
->   
-> -	/* now iterate dt */
-> -	for_subvec(i, cli, &dt->info, users)
-> +	for_subvec(i, cli, &dt->info, users) {
-> +		if (ddebug_class_range_overlap(cli->map, reserved_ids))
-> +			return -EINVAL;
->   		ddebug_apply_params(cli->map, cli->mod_name);
-> -
-> +	}
->   	vpr_info("module:%s attached %d classmap uses\n", dt->mod_name, dt->info.users.len);
->   	return 0;
->   }
-> @@ -1311,11 +1329,11 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   			return rc;
->   		}
->   	}
-> +
->   	mutex_lock(&ddebug_lock);
->   	list_add_tail(&dt->link, &ddebug_tables);
->   	mutex_unlock(&ddebug_lock);
->   
-> -
+> I'll try to find and read the previous discussions tomorrow, but iirc Frederic
+> had another solution?
 
-Hi Jim,
+This:
 
-Strange line issues, can you squash it with the correct patch?
+	https://lore.kernel.org/all/Zx-B0wK3xqRQsCOS@localhost.localdomain/
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Though I'm not entirely happy with it either.
 
-Thanks,
-
->   	if (dt->info.users.len) {
->   		rc = ddebug_module_apply_class_users(dt, &reserved_ids);
->   		if (rc)
-> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
-> index b1555b0a2bb1..74b98adc4ed0 100644
-> --- a/lib/test_dynamic_debug.c
-> +++ b/lib/test_dynamic_debug.c
-> @@ -81,7 +81,7 @@ enum cat_disjoint_bits {
->   	D2_DRMRES };
->   
->   /* numeric verbosity, V2 > V1 related */
-> -enum cat_level_num { V0 = 14, V1, V2, V3, V4, V5, V6, V7 };
-> +enum cat_level_num { V0 = 16, V1, V2, V3, V4, V5, V6, V7 };
->   
->   /* recapitulate DRM's parent(drm.ko) <-- _submod(drivers,helpers) */
->   #if !defined(TEST_DYNAMIC_DEBUG_SUBMOD)
-> @@ -90,6 +90,7 @@ enum cat_level_num { V0 = 14, V1, V2, V3, V4, V5, V6, V7 };
->    * classmaps on the client enums above, and then declares the PARAMS
->    * ref'g the classmaps.  Each is exported.
->    */
-> +
->   DYNDBG_CLASSMAP_DEFINE(map_disjoint_bits, DD_CLASS_TYPE_DISJOINT_BITS,
->   		       D2_CORE,
->   		       "D2_CORE",
-> @@ -113,6 +114,14 @@ DYNDBG_CLASSMAP_DEFINE(map_level_num, DD_CLASS_TYPE_LEVEL_NUM,
->   DYNDBG_CLASSMAP_PARAM(disjoint_bits, p);
->   DYNDBG_CLASSMAP_PARAM(level_num, p);
->   
-> +#ifdef FORCE_CLASSID_CONFLICT_MODPROBE
-> +/*
-> + * Enable with -Dflag on compile to test overlapping class-id range
-> + * detection.  This should break on modprobe.
-> + */
-> +DYNDBG_CLASSMAP_DEFINE(classid_range_conflict, 0, D2_CORE + 1, "D3_CORE");
-> +#endif
-> +
->   #else /* TEST_DYNAMIC_DEBUG_SUBMOD */
->   
->   /*
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Thanks.
 
