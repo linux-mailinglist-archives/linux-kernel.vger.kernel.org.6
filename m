@@ -1,168 +1,195 @@
-Return-Path: <linux-kernel+bounces-532443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A575A44DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F2FA44DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E96172F7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816481772F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273AA20C02C;
-	Tue, 25 Feb 2025 20:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D77621148B;
+	Tue, 25 Feb 2025 20:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIXMuKf6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBsDKwfC"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA7C18DB04;
-	Tue, 25 Feb 2025 20:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF2E20E70C;
+	Tue, 25 Feb 2025 20:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515807; cv=none; b=RetCtSdHn9RzwLfYWe/3c5VIOZeyqxtehYY9Pq+hF+F7qn8h0WNvsa2ML7mgZ2UA8IADgVhK9gc/VTc8tQX5GHZY6/79HsMuHnEJ8841G/wCP7wBuyniUIhinGksMbaZi6A4TLxAEcMN0FxHgaIngGdys5vUkPS4kcsEmvsTLkM=
+	t=1740515838; cv=none; b=cPhZ52pnm3NHeD8LdKvgIQXRQ9l9vGT9pfKfiddHluy+dNb97WLOc1Q4fswzWA5LjxJiFGxUZSeWZBW5xq/uEoKyst36FaLZT22Wb5qzjBfgbhDhoyHEvczeArERD58roH3U8xihQsIkVjnwycFUt+Ire0nB52C64UCKlB1aGNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515807; c=relaxed/simple;
-	bh=bBsSca7iPGoKC51DbyRKuTIoqdblhn5vEaotnZn1898=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NnHjH7bnJjJyKO4E1Z5FISToJJ4p24yOA9dCM+5bhzH60aQkC22OMAR0o06+1ciA2rvJxOGsb/bIIzZNd9b6sFww3mGQn9yn7vbZNzkvoyot2mBqKgB3ugHlKXbWazm4hWiRVqnWROKyYykOtuAEQh+w14tJI26JlNnfZ4jOXSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIXMuKf6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD672C4CEDD;
-	Tue, 25 Feb 2025 20:36:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740515806;
-	bh=bBsSca7iPGoKC51DbyRKuTIoqdblhn5vEaotnZn1898=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIXMuKf6St13MvzpEG60kV3wue5KSI7lX03EQ/mLq6d9GN1AoPzuQjJve2DJAjNIJ
-	 syeEBlNr98VOASB/mcvUGk2naiSHu65m/DkWtUdG4Dp1DYX4ZNUZqB1N5JaaloFlv6
-	 nc1VYLS40dPYtQpS8o70/WPfs9MU+SyGX/oqULWasZAsExIwTS3jc2GoOCfPsJzYye
-	 k0zM7B5WsJddaantrmPhKMBnGS1lLPbWNUQqo3mcdJZ/qFHJWdq8lFqNF5rYmpIYxC
-	 ewWs+4PAEF24ybf4MyTN+d1MvhGw3ksAn5D/GmxDNAOd63VZPPC6JDaHfdL6VlapDn
-	 CNSNjzqLHtUsg==
-Date: Tue, 25 Feb 2025 21:36:37 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Yeo Reum Yun <YeoReum.Yun@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"acme@kernel.org" <acme@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] events/core: fix acoount failure for event's
- total_enable_time
-Message-ID: <Z74p1QaMdNKQRNeu@gmail.com>
-References: <20241220100202.804062-1-yeoreum.yun@arm.com>
- <20241220133359.GC17537@noisy.programming.kicks-ass.net>
- <Z2V5s2JM4W7BRckR@e129823.arm.com>
- <20241220151414.GO11133@noisy.programming.kicks-ass.net>
- <Z2WMsnbFmqpEV5Pu@e129823.arm.com>
- <20241220153040.GP11133@noisy.programming.kicks-ass.net>
- <Z2WaC0CqSwU5Ux1B@e129823.arm.com>
- <20250110163643.GB4213@noisy.programming.kicks-ass.net>
- <GV1PR08MB105213E200ED463126D478DF1FBEF2@GV1PR08MB10521.eurprd08.prod.outlook.com>
+	s=arc-20240116; t=1740515838; c=relaxed/simple;
+	bh=QD5JiDDyXsPHqrw0/A3B2UFGdqNGf7bGZM6WRv9bwQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hm90jFdMpvFiiWnIMPLw4GzaW8nn5kGTlXt7rWFIafX2w/S+aNf/T+085gHrhgg0LXGJepfSPU6l2Ex6ocLK8yaHyjcO2NBaR1jYEgE1+ZCHZcNrGlkosicAUOqEFu6eSCUgmR01zDMfDNgo+wXm2iBZd9Q5Ya3/YHxmpE531uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBsDKwfC; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5209437e773so1646571e0c.3;
+        Tue, 25 Feb 2025 12:37:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740515836; x=1741120636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eH8MpmM78j+iib/pM9nd1FTI7DaYEcTE4LGOHyCUfsY=;
+        b=mBsDKwfC77RWqYvaYIbYq7luOt4S5oUoqg9fdp2U4zVo6x1K3Mbm1xaOHvBow8cKjs
+         Ro7eP2IA3Sp189N7s26DntoGxLYkCWMKOCqflzqkSe5Pl7JUdadDCCre0txrpo1sZra5
+         q6ZzxC4xALML0mKxUx4h7aTgSwWxFiuWl21BHxJcQAU12+g9RoNnJj+hdZp2Fll6j29v
+         OYYZkwFpABWYccak8R/CUDte414LXVAcmBzCQMUg4Ek0b+kqeoLwuWcdrQIFCiSUakvl
+         k5PALkQNIO0o4JXOWXXfSfnwpUn6/Yt8jNHDRRc01fKBV83lkSi65MottPMMBDDnYw7w
+         Iv9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740515836; x=1741120636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eH8MpmM78j+iib/pM9nd1FTI7DaYEcTE4LGOHyCUfsY=;
+        b=YpWrhhm52gISY3HlygDckYz6Ye2tfRyYML783lozWwIjD7a8S1HMXKqJqGA8HenGg0
+         fEOZYY7jmMh7xIQRJTNCgYJwZNf6nDGHLxSWBfH3y1w44kbP2Jq6Izwinwv42ER2MZc1
+         lL9mIWXCVbd84Qgt6Tbccn5/iRH8JZvLDL97Kea5NzipgS/hq5MQiDXeZ+gePPjJvCbc
+         VniSg6aLxQV8DSYk3DtyqlVKdhPTmDwAcjPH1u4uJcRLhUZkW2wOvP3PU2bQdUaxSyi5
+         9lZ9fra6e9J2fGbKr0a15Q2x/BuJ4GMScTaaMot5VPKEQ7q8GL3piz8G97iGkQU5Azh3
+         eLNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUudAHilp0oi0wCP/pF84z2bvFLv8VmKMNcOO2ikECFOTtNXfawIRhOyX6+Bf0ogANk4yDewBT3HnE2p9Dl@vger.kernel.org, AJvYcCUzNTHi5/rc9s2qNy4aJtsD1wvlrkXmwUuNmGOj4BNFACQgZHkox/loV7ipvuBw8OR87GaSX/zPuqsonNXSYfBfQJs=@vger.kernel.org, AJvYcCXcSmIwEcM/vcV3W08UB9JN5M5uvZ1qD+WcGq9RXfge23u6griJXW9J2thtwAtWreC81YbGxFA/olU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTmgZVDdwMs5H//2wqi66mkxg6ahDQ7/AVd62CWnsipYDIUOEo
+	5VXUIHqGv/03jPjxg+BIEtiU2IDghygP5F8omZPT4gEix/7LF9HNYTGHiwgV/nM+o4EeAlqip4+
+	eo6FRLXVIa7jEHWnpEa/L5cWz6h4=
+X-Gm-Gg: ASbGnctzHKG6WpcbMUQbUOC37a4ICpCqKJ/zbXrnj3YSNFtKguxyKVntWU0qCOEWt/C
+	H6bOvEbLfVtOf8DyYY2qLCM3CdIGf3BcpenVabSqnMzi7BrMOF9bikpV6J/Uc9P53wraMbecp/W
+	p+UY46/GM=
+X-Google-Smtp-Source: AGHT+IExQMHoNBfnz0e2JCdwvItc8XUqO/8OGgYYcvgIbrZjWdNKg/L+r67NJOf17hkUCcV4QvFDyQBa5luny6opYVk=
+X-Received: by 2002:a05:6122:330e:b0:520:652b:ce18 with SMTP id
+ 71dfb90a1353d-5224ca44a91mr655026e0c.0.1740515836053; Tue, 25 Feb 2025
+ 12:37:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV1PR08MB105213E200ED463126D478DF1FBEF2@GV1PR08MB10521.eurprd08.prod.outlook.com>
+References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com> <20250224120608.1769039-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250224120608.1769039-3-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Feb 2025 20:36:50 +0000
+X-Gm-Features: AQ5f1Jo4yBcvY2RYMCiCO9Kb3cXMgLq2iq8E_Nnn-p4EJnAoTwHoukq4lOnKFcc
+Message-ID: <CA+V-a8uF+y-SuVNs=iBpgitnGgDzVGzc9YK8KBnxfVHtp+swUw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] iio: adc: rzg2l: Cleanup suspend/resume path
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Feb 24, 2025 at 12:13=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> There is no need to manually track the runtime PM status in the driver.
+> The pm_runtime_force_suspend() and pm_runtime_force_resume() functions
+> already call pm_runtime_status_suspended() to check the runtime PM state.
+>
+> Additionally, avoid calling pm_runtime_put_autosuspend() during the
+> suspend/resume path, as this would decrease the usage counter of a
+> potential user that had the ADC open before the suspend/resume cycle.
+>
+> Fixes: cb164d7c1526 ("iio: adc: rzg2l_adc: Add suspend/resume support")
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - collected tags
+>
+> Changes in v2:
+> - none
+>
+>  drivers/iio/adc/rzg2l_adc.c | 29 ++++++++---------------------
+>  1 file changed, 8 insertions(+), 21 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-* Yeo Reum Yun <YeoReum.Yun@arm.com> wrote:
+Cheers,
+Prabhakar
 
-> Hi Peter,
-> 
-> Sorry to late answer. I've missed your last repsonse in this thread,
-> and waiting for in new thread:
-> https://lore.kernel.org/all/20250110163643.GB4213@noisy.programming.kicks-ass.net/
-> 
-> > > This patch doesn't work when the event is child event.
-> > > In case of parent's event, when you see the list_del_event(),
-> > > the total_enable_time is updated properly by changing state with
-> > > PERF_EVENT_STATE_OFF.
-> > >
-> > > However, child event's total_enable_time is added before list_del_event.
-> > > So, the missing total_enable_time isn't added to parents event and the
-> > > error print happens.
-> > >
-> > > So, I think it wouldn't be possible to update time with set_state.
-> > > instead I think it should update total_enable_time before
-> > > child's total_enable_time is added to parents' child_total_enable_time
-> > >
-> > > like
-> > >
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 065f9188b44a..d27717c44924 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -13337,6 +13337,7 @@ static void sync_child_event(struct perf_event *child_event)
-> > >         }
-> > >
-> > >         child_val = perf_event_count(child_event, false);
-> > > +       perf_event_update_time(child_event);
-> > >
-> > >         /*
-> > >          * Add back the child's count to the parent's count:
-> >
-> > Well, that again violates the rule that we update time on state change.
-> > 
-> > AFAICT there is no issue with simply moving the perf_event_set_state()
-> > up a few lines in __perf_remove_from_context().
-> >
-> > Notably event_sched_out() will already put us in OFF state; and nothing
-> > after that cares about further states AFAICT.
-> >
-> > So isn't the below the simpler solution?
-> >
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -2438,14 +2438,13 @@ __perf_remove_from_context(struct perf_e
-> >                state = PERF_EVENT_STATE_DEAD;
-> >        }
-> >       event_sched_out(event, ctx);
-> > +       perf_event_set_state(event, min(event->state, state));
-> >       if (flags & DETACH_GROUP)
-> >                perf_group_detach(event);
-> >       if (flags & DETACH_CHILD)
-> >                perf_child_detach(event);
-> >        list_del_event(event, ctx);
-> >
-> > -       perf_event_set_state(event, min(event->state, state));
-> > -
-> >        if (!pmu_ctx->nr_events) {
-> >                pmu_ctx->rotate_necessary = 0;
-> 
-> Agree, for DETACH_EXIT case, below code in list_del_event()
-> doesn't need to be considered because
-> the all of event related to event ctx would be freed:
-> 
->      /*
->       * If event was in error state, then keep it
->       * that way, otherwise bogus counts will be
->       * returned on read(). The only way to get out
->       * of error state is by explicit re-enabling
->       * of the event
->       */
->       if (event->state > PERF_EVENT_STATE_OFF) {
->           perf_cgroup_event_disable(event, ctx);
->           perf_event_set_state(event, PERF_EVENT_STATE_OFF);
->       }
-> 
-> With your suggestion, Could I send the v4 for this?
-
-Yes, please send a -v4 version.
-
-Thanks,
-
-	Ingo
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 7db04416e1cf..5236ca0da167 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -89,7 +89,6 @@ struct rzg2l_adc {
+>         struct completion completion;
+>         struct mutex lock;
+>         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
+> -       bool was_rpm_active;
+>  };
+>
+>  /**
+> @@ -594,14 +593,9 @@ static int rzg2l_adc_suspend(struct device *dev)
+>         };
+>         int ret;
+>
+> -       if (pm_runtime_suspended(dev)) {
+> -               adc->was_rpm_active =3D false;
+> -       } else {
+> -               ret =3D pm_runtime_force_suspend(dev);
+> -               if (ret)
+> -                       return ret;
+> -               adc->was_rpm_active =3D true;
+> -       }
+> +       ret =3D pm_runtime_force_suspend(dev);
+> +       if (ret)
+> +               return ret;
+>
+>         ret =3D reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+>         if (ret)
+> @@ -610,9 +604,7 @@ static int rzg2l_adc_suspend(struct device *dev)
+>         return 0;
+>
+>  rpm_restore:
+> -       if (adc->was_rpm_active)
+> -               pm_runtime_force_resume(dev);
+> -
+> +       pm_runtime_force_resume(dev);
+>         return ret;
+>  }
+>
+> @@ -630,11 +622,9 @@ static int rzg2l_adc_resume(struct device *dev)
+>         if (ret)
+>                 return ret;
+>
+> -       if (adc->was_rpm_active) {
+> -               ret =3D pm_runtime_force_resume(dev);
+> -               if (ret)
+> -                       goto resets_restore;
+> -       }
+> +       ret =3D pm_runtime_force_resume(dev);
+> +       if (ret)
+> +               goto resets_restore;
+>
+>         ret =3D rzg2l_adc_hw_init(dev, adc);
+>         if (ret)
+> @@ -643,10 +633,7 @@ static int rzg2l_adc_resume(struct device *dev)
+>         return 0;
+>
+>  rpm_restore:
+> -       if (adc->was_rpm_active) {
+> -               pm_runtime_mark_last_busy(dev);
+> -               pm_runtime_put_autosuspend(dev);
+> -       }
+> +       pm_runtime_force_suspend(dev);
+>  resets_restore:
+>         reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+>         return ret;
+> --
+> 2.43.0
+>
+>
 
