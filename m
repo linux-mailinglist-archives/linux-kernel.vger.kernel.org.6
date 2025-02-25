@@ -1,77 +1,94 @@
-Return-Path: <linux-kernel+bounces-532185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4969A449FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:17:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369D3A449D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066423A6AA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77705425368
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE01D19F116;
-	Tue, 25 Feb 2025 18:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171D719D071;
+	Tue, 25 Feb 2025 18:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="vM2nQPXw"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gL7SEbso";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7LfX3Kc/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gL7SEbso";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7LfX3Kc/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1C419DFB4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A428A199E88
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507049; cv=none; b=WR97p+KeFAd5x0/oP8ncg/tQCl+0Tup5i3emEp4P/Kl83vLu1fd1mVejMYmuBmllU+1FVtfW8hCHLZ/XELMwRAjSlmjV4EcV32CwBAUnzaOCxzFwBHm1tigT3dWGvIyC2rkJPv0E3gE8HbDIdSbEIFWg2M/6ys0q6F1Y6IwoY0o=
+	t=1740507070; cv=none; b=f2jEo1HCEoEVmEt4UQ8JU6DZpgn8Hm1b73D0n6LIjA5RVHno3t+g7q/XAHapy5AMLwB7STI74/OyJwQXWZLMvcM7AjDHOeRwoItFM6sP64Mh3EpCb8xgN8oJvxrUjxNHD4IBu4RT72/EMp7DYt89uay24Bv/6cb9EDNWJLscKsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507049; c=relaxed/simple;
-	bh=0kagRtFzm8Sg8hNgrYsnkVHfez94hwdJouxKPKp/jwQ=;
+	s=arc-20240116; t=1740507070; c=relaxed/simple;
+	bh=JoTUFu4I1x7ISgdjZlufiPitot7Q9U1yu0WYfWBOr6w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+gB9Bhz+nr0igMLgKMzLNSGwccjFhvpwrGLTD1YUd6zFVX9R/pbilXe/3kKpcmZQXqbK4TSTxkfDw0dOxD50j4bgt9jIw824X5WPt0oBdI5gFFAh/8f+arbiXlPv0bQNf+tE5HTatd/R8jCOy8C1KkDhG38LR+zM0Xs0i7eh9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=vM2nQPXw; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so40907975e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:10:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1740507045; x=1741111845; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0kagRtFzm8Sg8hNgrYsnkVHfez94hwdJouxKPKp/jwQ=;
-        b=vM2nQPXw/WzSO+wmw1KTx7KrFS9ZLnE0auUpjWV8g17xs+s0tI3yH0HZKh+xAgwBHW
-         NY82M/DMzXjs3OPc6booetmBlhUG7k5W3kWxNYiUfl3yuLaiAvvKznLAHqFAqUgz3wFN
-         R1HWshOpTCyJuv2kvC+PUVZJawQrNiq/ZrTRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740507045; x=1741111845;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kagRtFzm8Sg8hNgrYsnkVHfez94hwdJouxKPKp/jwQ=;
-        b=SxQbLUOezaOVVlcJrIuw+wPd3Ww3IZjhM6LWRewSlKquP3ncz/jIlLPM+QyunLpLCs
-         a2fai/qgEUGYmyyVOARQaK+Kz+jXcNdkpDOLBTXbrUfi6gmxtzL7shVtANPgaSQBEbCt
-         QGNaZw8ZD1XOg4gPBu479h0KV6FHQRaDupgQIKTvKaXmdbq4iy1AdlvGcjH0CJ3XsI+6
-         8B3F+/pvNFsTY/0D+bLbFrS1qh6JNuZlHPxQX6kte3r2gkXjAxX6AreNk0/0vP0OTp40
-         7+RykvraJmXThvdXaIZsZQezkPhyQGBMsHs1mE09n58dwb+LOjuyF+9n6twJNlduvs32
-         sPaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6E9LlAQo0aFK31BJP1zlIkd0NOUAy7EvDbtpzwlnv0Bx3V6PFSnIMa+e/0n/7Tt2HoSi4d1VeMKJtN0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQcsQ6SKbTDfGB/76r36BPJPCkyc2Tnj7hd+gL3nXR3wc8MkfV
-	z1VirOuty/COdQCp8ANOl+UOQ097T5Dh+CjOjgWWz+R6EwUyvc0z1OFJys9f6UFjDVeTqttS1FZ
-	i
-X-Gm-Gg: ASbGncuElcGBB0UI9gRoeRsR6lFq3XElcwxbLBApjvZ/ghWP9rkCBeLLb07ksn91qnI
-	0MeEQek7ToAoC17KliQN1YAoT7ouekyd7V+W/tRJ2BBqWTUDgZVMLYyt40ZPMNxOf0iXYVcRqkK
-	WJ/VQlnk2dnVjH1FzoU9+mf4eWCiq8eSGwTlIS7PbOVx07X59vze+adWT3MJdJCrb6mjb+Y02Hq
-	4mjH/HShjz5NzflgXylsmlvQpEKKWSupuwacU0FzTjePNgR2Nvcq+xwaLgJenkmSDApNDM8uFAh
-	111UoD56jyP8Hp22iAxVMWTayiZx9Vzf0jsBcRFmSPb6b0Dd8b5rjrP3MzUaRNvzKA==
-X-Google-Smtp-Source: AGHT+IG9zEYrz279GnRlIYQx2hGfJtQTkJ0pTYmtHboiyYfH27LPFowEQjM9SOPBl/uYZJVX95Hruw==
-X-Received: by 2002:a05:600c:1e23:b0:439:987c:2309 with SMTP id 5b1f17b1804b1-439ae221d7dmr149222535e9.27.1740507045584;
-        Tue, 25 Feb 2025 10:10:45 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c40fd2sm24904785e9.0.2025.02.25.10.10.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 10:10:45 -0800 (PST)
-Message-ID: <fa66e2f1-4770-45f5-aa4d-1a0ebec8a912@citrix.com>
-Date: Tue, 25 Feb 2025 18:10:44 +0000
+	 In-Reply-To:Content-Type; b=ESGIou3WZDWDhZ9a5iSEfmxdmmQBoJ02CEtYihohxzcfg640jS8GD6CJn/9FxYPIQ22+/Io4oPDqIkNSagcgWGYpyXqIueBNNeft2O3PWP4evmZUSp74qqbban39dqoWZQtJU7eWO71w+KKzSWvzD7GUHhyKeJKZKDmakxhwk1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gL7SEbso; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7LfX3Kc/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gL7SEbso; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7LfX3Kc/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AF68B1F44F;
+	Tue, 25 Feb 2025 18:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740507066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5d/50A6zDnaZCHQYaZpq4chtHF+j1x/FzEEM/FXjYu8=;
+	b=gL7SEbso7+S/+SPWPvHO7U/pMdy7J3yZVobo8ou1CtzxZZiQAo+N5IYNIfyXz+OyldXfQk
+	/FOGrASidMMrEPMU1FtnPkovobPfFwOETLj0f8gaT8fIjieUysQk66mdQQe4ik4WONqlhk
+	FP6ElRXKC6W6EHfhJ8xbTtGRM71XCX0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740507066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5d/50A6zDnaZCHQYaZpq4chtHF+j1x/FzEEM/FXjYu8=;
+	b=7LfX3Kc/jXFLNwamX4tf/yE3nx2y06MzRXM9BEye2oYBNozFPfJ5KQf3YYRJ41cP4wJZk0
+	K13vNo4puWkb5XAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740507066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5d/50A6zDnaZCHQYaZpq4chtHF+j1x/FzEEM/FXjYu8=;
+	b=gL7SEbso7+S/+SPWPvHO7U/pMdy7J3yZVobo8ou1CtzxZZiQAo+N5IYNIfyXz+OyldXfQk
+	/FOGrASidMMrEPMU1FtnPkovobPfFwOETLj0f8gaT8fIjieUysQk66mdQQe4ik4WONqlhk
+	FP6ElRXKC6W6EHfhJ8xbTtGRM71XCX0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740507066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5d/50A6zDnaZCHQYaZpq4chtHF+j1x/FzEEM/FXjYu8=;
+	b=7LfX3Kc/jXFLNwamX4tf/yE3nx2y06MzRXM9BEye2oYBNozFPfJ5KQf3YYRJ41cP4wJZk0
+	K13vNo4puWkb5XAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EB0113888;
+	Tue, 25 Feb 2025 18:11:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2mdtGroHvmeZWwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 25 Feb 2025 18:11:06 +0000
+Message-ID: <cca361c8-2f03-40b9-872c-0949dc70cde8@suse.cz>
+Date: Tue, 25 Feb 2025 19:11:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,110 +96,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
-To: Rudolf Marek <r.marek@assembler.cz>, Jann Horn <jannh@google.com>
-Cc: jmill@asu.edu, joao@overdrivepizza.com, luto@kernel.org,
- samitolvanen@google.com, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- linux-hardening@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
- x86 maintainers <x86@kernel.org>
-References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
- <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
- <CAG48ez0h0wUS6y+W1HTOwN14V95gKmmFZ_2TamAX+JKTmXT=DA@mail.gmail.com>
- <1cf8d5a5-bf3e-4667-bc6a-d1b1d662d822@citrix.com>
- <e46ca730-8858-4f57-bdd0-2fd0db086500@assembler.cz>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
- VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
- srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
- Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
- ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
- YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
- LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
- e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
- gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
- ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
- cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
- CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
- 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
- IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
- SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
- JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
- mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
- ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
- RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
- dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
- /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
- TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
- Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
- 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
- vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
- g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
- wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
- 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
- kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
- bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
- uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
- XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
- HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
- pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
- vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
- b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
- 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
- 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
- nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
- B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
- d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
- 6+ahAA==
-In-Reply-To: <e46ca730-8858-4f57-bdd0-2fd0db086500@assembler.cz>
+Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
+ kmem_cache_destroy()
+Content-Language: en-US
+To: Uladzislau Rezki <urezki@gmail.com>, Keith Busch <keith.busch@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ linux-nvme@lists.infradead.org, leitao@debian.org
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
+ <Z7iqJtCjHKfo8Kho@kbusch-mbp> <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
+ <Z7xbrnP8kTQKYO6T@pc636> <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz>
+ <Z73p2lRwKagaoUnP@kbusch-mbp>
+ <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
+ <Z74Av6tlSOqcfb-q@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Z74Av6tlSOqcfb-q@pc636>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,joelfernandes.org,joshtriplett.org,gmail.com,linux.com,google.com,goodmis.org,efficios.com,inria.fr,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,googlegroups.com,lists.infradead.org,debian.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_RATELIMIT(0.00)[to_ip_from(RLjmiudjgfgtmtcfdjcm7aqdap)]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 22/02/2025 8:43 pm, Rudolf Marek wrote:
-> Hi,
->
-> Dne 13. 02. 25 v 3:42 Andrew Cooper napsal(a):
->> The SYSCALL behaviour TLDR is:
->>
->>      %rcx = %rip
->>      %r11 = %eflags
->>      %cs = fixed attr
->>      %ss = fixed attr
->>      %rip = MSR_LSTAR
->>
->> which means that %rcx (old rip) is the only piece of state which
->> userspace can't feasibly forge (and therefore could distinguish a
->> SYSCALL from user vs kernel mode), yet if we're talking about a JOP
->> chain to get here, then %rcx is under attacker control too.
->
-> The SYSCALL instruction also provides means to create "incoherent"
-> state of the processor selectors
-> where the value of selector do not match pre-loaded values in the
-> descriptor caches.
+On 2/25/25 18:41, Uladzislau Rezki wrote:
+> 
+> but i had to adapt slightly the Vlastimil's test:
 
-Very cunning.  Yes it does, but the state needs to be safe to IRET back
-to, and ...
+Great, works for me too, thanks!
 
-> Would it work to have KERNEL_CS as last entry in the GDT table?
-> Therefore executing SYSCALL would set the CS as usual,
-> but the numeric value of SS selector would be larger than GDT limit?
-
-... this isn't safe.  Any exception/interrupt will yield #SS when trying
-to load an out-of-limit %ss.
-
-i.e. a wrongly-timed NMI will take out the system with a very bizarre
-looking oops.
-
-
-You can do this in a less fatal way by e.g. having in-GDT form have a
-segment limit, but any exception/interrupt will resync the out-of-sync
-state, and break detection.  Also it would make the segment unusable for
-compatibility userspace, where the limit would take effect.
-
-Finally, while this potentially gives us an option for SYSCALL and maybe
-SYSENTER, it doesn't help with any of the main IDT entrypoints which can
-also be attacked.
-
-~Andrew
 
