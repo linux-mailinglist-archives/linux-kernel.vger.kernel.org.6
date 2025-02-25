@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-531618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CB9A442C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:29:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974D9A442A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9467A644A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02CB174D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608B8269CF0;
-	Tue, 25 Feb 2025 14:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDDA26A0CB;
+	Tue, 25 Feb 2025 14:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="Urj+lX3X"
-Received: from smtpcmd0987.aruba.it (smtpcmd0987.aruba.it [62.149.156.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6c6N6Yn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE2626B09C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C723626770B;
+	Tue, 25 Feb 2025 14:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493646; cv=none; b=qU7TOhOwEmAPqrX7xYOh9Usd0TZ8lvyhN8B5/QiR7lo3rytuCV7ej9pD1iaFWadUQynkTCawSmCwLl3d7C/jjB7ceyJVmXu9TAt+6D04EZ3RzC/qO+V1W9DMOgcbt4e4dxhtI6GVNa+hC8HK9hDwvkfg8SLRue8wATa0kHKjHQo=
+	t=1740493479; cv=none; b=jlNrmwO6zx991GEv4/2vQdfa/6469sWT/tHUEVCp1kvSi/N/vLjBbeIx0WEtrs9ugrRkoSQiaZK4ja4/vJRB8unIecjs+tsOevaRUngO8udrZcsp/jP0KTsUonZhLGthRRPi7q/iu16Cu6GV3SmZgbD6TkjoUX+SWrDFwZ4JyxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493646; c=relaxed/simple;
-	bh=Q1PAwSYP5N2acovyf6NbSeLosza1uVnYcw4+mKEx22I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uq2zkhhOIpGo9NN+MEXxueSHe+5lATWGEKxp0iBoFMjNxL8bRo0+ei8fT6T9iDkjzNEC+uCP22ubgeVMTMeWeWP0/zhoeNl3RXY7aFr53jPczlsy6JC0cvx/8SbSCjbsPIVNkfIRNQm9UHJXgR80RCEBE8NdXPUjzHjYh0uk0s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=Urj+lX3X; arc=none smtp.client-ip=62.149.156.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id mvr2tADX4S934mvr3tLfyb; Tue, 25 Feb 2025 15:24:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1740493453; bh=Q1PAwSYP5N2acovyf6NbSeLosza1uVnYcw4+mKEx22I=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=Urj+lX3XOgoF5r8UyKJBnvytqgZFIgFAle77rggZzJ1TVO9ak/r1fU30m5kRCeoD5
-	 Ug8ms+xEeAhPoCxvAMWp7Pp6gBqPtkUj8UkcRrvjZgZtMsJXQRR7a6E7fhOITQkXtB
-	 ko7jdVrJupKCxEB7onDWPrTG5oWfvH++dHPFMbicGUXy07R6JCbPgHrA/31YOzJT+e
-	 U74vwUjiY3QY+G/Tcuqyx45KcdEZ3V4yWpeM9QlJu4aYRJb92pRVjyYuxo2WwDfuUZ
-	 lgAD1pNcJOtOLwNbV3P9KAPW51fX/0+9+ugBNuToYwPIBeMXjDp8M4LyAy/vBXGgt2
-	 v20VRmZEJY75g==
-Message-ID: <a0f5aff2-3437-4b70-baa0-fe1555ec81e7@enneenne.com>
-Date: Tue, 25 Feb 2025 15:24:10 +0100
+	s=arc-20240116; t=1740493479; c=relaxed/simple;
+	bh=Tc/+WyJ8Iu+Vv+jAgKujCKC+Po6J5sopxIY2TPW8Xjc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=eImSM3EnTFbYeyijhUCsm3LWqV9+2jkTODO5iEzviaGPLFD1GWfRh7TmYXP/RLKNJ8TsDJf6y/0j56WZ/HqEU1kyTeC0xm9cQWd9ooOb1bacNqwtjkMOdx8/2wc7Vlt9modXDsCeEmLURKiD9m6ljLbRvcE1F+zGytEb2FQOKr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6c6N6Yn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C99CC4CEDD;
+	Tue, 25 Feb 2025 14:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740493479;
+	bh=Tc/+WyJ8Iu+Vv+jAgKujCKC+Po6J5sopxIY2TPW8Xjc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=A6c6N6Yn7j53oak37Og95xt1rMTVpfmjwcHxJfJ43MK8NIMZh5JwLQXaN8RnwLT3R
+	 nzvYY6s5w9mfB1n7oypQDTYcdau2q6QVY97RcU57DQf5MAWDMjaBd4Z6noqZlVCzZg
+	 IYTsbhIloDhv2JjfrlfncWupCp6K2tQvw5lGkZ7zCl1m1MlDLOspXXoZrOMXwwKEQq
+	 v0GXdbNBY1vwedcQzhejheZB+adUQzneLBCVH3LOsjiPOj/SznCDjtj1R7+TZePlaa
+	 upPZSNfu3RvPRVuj0g7EQwYYHuaixfpuCNGPiCM6BTiPHYNbay6Td1sbCF34aPENi7
+	 9Vwq8goStZtpg==
+Date: Tue, 25 Feb 2025 08:24:37 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pps: add epoll support
-Content-Language: en-US
-To: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <05ac823e44504921a6e864fe6fb283d6@diehl.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <05ac823e44504921a6e864fe6fb283d6@diehl.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfMus3A2SkhhuTmS+mVuI/mlCoA2xpL+S4kqrUhYYapOtC/S+ulAzxwrjoRGj80n0F6Y2OK138lqLQoBcuYfnnMQV2WXPal4YPg44Tg6tgXjzw8rju1p5
- s2+lyI9s62C2Z+76mxhZq+Gz8nq+V7g+AFh+L6e5MdP0VWND989FZhLEz+NH+17yQZ2fQK5eywyOEPu877OVS8XPsxOwHGJeHjG3EDos6I3nMODqnPcBNg5D
- gfoYssdUOjVKfnm3bg1irA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: krzk+dt@kernel.org, quic_jesszhan@quicinc.com, rfoss@kernel.org, 
+ jernej.skrabec@gmail.com, conor+dt@kernel.org, robh+dt@kernel.org, 
+ jonas@kwiboo.se, linux-arm-msm@vger.kernel.org, 
+ Laurent.pinchart@ideasonboard.com, quic_vproddut@quicinc.com, 
+ neil.armstrong@linaro.org, konradybcio@kernel.org, andrzej.hajda@intel.com, 
+ linux-kernel@vger.kernel.org, quic_rajeevny@quicinc.com, 
+ freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ marijn.suijten@somainline.org, andersson@kernel.org, 
+ dmitry.baryshkov@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com, 
+ sean@poorly.run, devicetree@vger.kernel.org
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <20250225121824.3869719-4-quic_amakhija@quicinc.com>
+References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
+ <20250225121824.3869719-4-quic_amakhija@quicinc.com>
+Message-Id: <174049347715.2313013.4695405671704163724.robh@kernel.org>
+Subject: Re: [PATCH 03/11] dt-bindings: display: msm: document DSI
+ controller and phy on SA8775P
 
-On 25/02/25 14:39, Denis OSTERLAND-HEIM wrote:
-> Hi,
+
+On Tue, 25 Feb 2025 17:48:16 +0530, Ayushi Makhija wrote:
+> Document DSI controller and phy on SA8775P platform.
 > 
-> I fixed-up s/pps->fetched_ev/pps->last_fetched_ev/ and tested it.
+> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+> ---
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 170 ++++++++++++++++++
+>  1 file changed, 170 insertions(+)
 > 
-> With one process it works well.
-> 
-> ```
-> # cat /sys/class/pps/pps1/assert; PpsPollTest /dev/pps1; cat /sys/class/pps/pps1/assert
-> 1520599383.268749168#29
-> assert: 29
-> time: 1520599383.268749168
-> assert: 30
-> time: 1520599384.292728352
-> assert: 31
-> time: 1520599385.316788416
-> 1520599385.316788416#31
-> ```
 
-OK.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> If I start multiple user space programs data races are visible.
-> 
-> ```
-> # for i in 0 1 2 3 4 5 6; do PpsPollTest /dev/pps1 > log$i & done
-> # sleep 6
-> # tail log*
-> ==> log0 <==
-> timeout
-> assert: 196
-> time: 1520599554.276752928
-> assert: 197
-> time: 1520599555.300692704
+yamllint warnings/errors:
 
-This is the same behavior we have when working with a serial port: if more than 
-one process gets access to it, data is stolen.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^dsi@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 
->>From my point of view it would be great to fix this bug without such an limitation.
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^phy@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 
-I disagree, it is not a limitation! It is like a normal char device work.
+doc reference errors (make refcheckdocs):
 
-What we have to test now is if your initial goal has been addressed! That is, in 
-an application that has more to do than just dealing with one PPS device, we can 
-use poll()/select() in order to avoid using threads.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250225121824.3869719-4-quic_amakhija@quicinc.com
 
-Ciao,
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Rodolfo
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
