@@ -1,352 +1,419 @@
-Return-Path: <linux-kernel+bounces-531620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540F5A442D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:32:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306C7A442DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03510175CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF3F1885203
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E983D269AE6;
-	Tue, 25 Feb 2025 14:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5CA26A0CB;
+	Tue, 25 Feb 2025 14:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kvppJQ8x"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021091.outbound.protection.outlook.com [40.107.192.91])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VzY+Hzpx"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E1F42A97
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.91
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493730; cv=fail; b=rbKSUpPjp835CU98tKhg4hxrMcZpN/Oy6amPRGRf7F7NbGmwD8yiWm1annFq3euX5nmTdWVDon4pO3oTccyr9t1jYi800+2jxGHHivtORceRlb+ce46xTeFavElway2QsOJKeSK2LXGspIOstVI7rLxRFybdaWWsjZvqaI141ZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493730; c=relaxed/simple;
-	bh=NLedShEBoy3jg1RSEM42r/YtzgMSjV/n5Qd9aQEw6SI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CCL/bu1ygutpqEfTZz4e5n1bvg1BbEDG8IcMdjgsyGtE0PDw6kSm6JIsXNooerpxzian0VhbMN3PdXkFJhKupPYkiWBX9ZnJgLXYVTFg20i7m7Xh4O8eleTE6PDSEPgqyw6FUDUdD+Tol+/5Xwx7u3Ux47Oe9Z/sDhKFWH5wXTc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=kvppJQ8x; arc=fail smtp.client-ip=40.107.192.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T+MqiUp/hVXmkOdxHg+MVs80CLpRhptcG1jEKahIji+Xy2QrFNoPMtJ6b171kat4kDvXI6eVKOzS6coBEKWW/dCLPY7HdFtuJzp/CeZ5iPDtdpg4E6LjH/FYUxskCDWqIbt95WL5cgipEIjYWvqZ361XURqXddmvwfct4hPPkSph9jDX2mwP1fEstqF1vGHUMMmdEdN7YpcGzg2iNwjawvR/HbU2tRd0xa0ZzBTKqN5qRIl1ox8XqTKq+CmW1rM8AcbT8GyS+UnR4DsLeTFGrRCX6qyw01qtKJb4zY1EOd5lcIIGRjWf+imN0IbyWD1VyMW8lpD+Mdd5L7hdbGhEUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gi8XVGJqjhfzH7N7iXaxqbYwM6drSz0HybH7nD2Tc94=;
- b=EKIkqZinqZV34+jiPsJ0BMbURiqm0yeGU60jQId4Qxia6RjTgZKaUTGX2VYVh1w+QwKea1+3QSf1FOkZ4uG/DAJVVOOMWSHmCltCp9m8aqlBZ00QD87hxMDs1SiNmDvf+s8Bu2MmD7uV+7hsZ3j9RJNyGyEvVJ2tsDOZmj6JkdOcL3HJ7DCHYb6hWdib4OvxrgWkj0R5p5/OMkQ4anw65LEUo/c+4XB3TMKL715cDWxr3tNT/GqfV7Aojp3DevCc1kFPUHJRGSWAD+ZZWmo4kj77OxArZtWLNBN9SW4aNeBwzjGADV+tTZ7CTb/keaYVaLVvnMYb8dVBdI46uzM2OA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gi8XVGJqjhfzH7N7iXaxqbYwM6drSz0HybH7nD2Tc94=;
- b=kvppJQ8xKaZaRQiI7jY1csrLisw0U4789LZlS4USYPaWHvbXISeRNRDlqXn1OnmeJLRCSC+nTSZ+0cGm90nHuhr1fyvexXIR5pDrCT0+eOR1mbo86yg1sbMMMXsdFcjp9uLVE5LBRixg0ZYfe7qbaJj6vBvmMx2qNmpLKHFLXNzVQZLtS0d6w+0BxXeH4sWjOXtx70AkV3pesFzxRpgNPEKWi4c9tBEiNMBIYl1mkb2VzzRMbXgEvfk9p7U3rgLfzGE4+ym+Zc6iTDhnx1mlMKvgQYnkVXdQ5QJlfDce8cskMHwvngN5oNV8e24N0TTPGoNYWLfDuKnESh+M90cCZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB5920.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:5a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
- 2025 14:28:46 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8489.018; Tue, 25 Feb 2025
- 14:28:46 +0000
-Message-ID: <b42dc8d7-2f2e-466f-bdca-0d532a0d5928@efficios.com>
-Date: Tue, 25 Feb 2025 09:28:44 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] rseq: Make rseq work with protection keys
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- aruna.ramakrishna@oracle.com, elver@google.com,
- "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1740403209.git.dvyukov@google.com>
- <4e93f7da6dfa450d488fafa3599306349e6e34e8.1740403209.git.dvyukov@google.com>
- <b18e6478-ef4b-42b3-8cc4-42467b3a0a7f@efficios.com>
- <CACT4Y+YxmkW6opFVJFOOFd=c73gz7yFvwBBCnjMndj-jffjBCw@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CACT4Y+YxmkW6opFVJFOOFd=c73gz7yFvwBBCnjMndj-jffjBCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0072.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:88::26) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A571D3596D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740493769; cv=none; b=fcweEZBdSn4A9T/EbAtLxHgIPRUFh+9LX7qGOcvilxfOZBXu5oqan/zsQ2+Yncylro4KOYe2+A9iT91LFa31YuWwNn2YDfWQlnXUFKaLW8hzyQEbcIyKR5uJfwcynaC+cIrnjkn9Pi7jeUCndLfV1oFTmNKx/F4NHBMrnOQxGdI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740493769; c=relaxed/simple;
+	bh=y11NNZS03rxnHk5DRXFMqiZH6mPD0dJ6HokkN6wyPWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muNWyxSznw7z3uqbLD7NrmizawBkH6yrFskQcgTL40XjHqSdpZBrrv7TrkMFwh0znZI8IXWuHMpLgabYykQA9QdL5sWu8/UXtCao4pF78hkyhgzBGViQxDtgCh2aPCIB0wjj7qCqtP2ArOBCLNSTMkFhMd6koWdwStHDaZBrjKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VzY+Hzpx; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 139CA443F9;
+	Tue, 25 Feb 2025 14:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740493765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQVZTI+J2Bxmo3+kW+7/DMCdK4aDeLF6zQe9+Aj4Ae4=;
+	b=VzY+HzpxDC0A1CGsy+h8mRVnlKhu5h6SA3Yx+cgETRLhG+YOHo2Fv/HDEvF+T+6LwxpD4g
+	NjJgFvCs49gdQ0i1OIAspWWD5+F1mpLjoV+I+JKzMUQ0i5tlCIOGbOKIHUE6zg6ygkIV75
+	QxFP6hqS5gxWw8IjX9MMOwZRTNVswM6dB41tY7JxQjlAx3bQ3SiMrkktMlEJrH4NSpjMmZ
+	3ihph4TJoUv8u3gROxMY9d2WIxS88UBHfbHnnd/77aNfUNzf6JmY6MYvcGUrW6HoENfkUb
+	YBOvFvoun3qe0hdrvRmayrvxesZH+jNIiJQdUELOZIb4I3av0Nz6TN+JsDPTnA==
+Date: Tue, 25 Feb 2025 15:29:22 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 28/63] dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
+Message-ID: <160ec360-918d-414f-aef9-606cfa1749df@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-29-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB5920:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ca0b132-400d-4d1b-d787-08dd55a8b67e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGs3a09PNFdXTkFJanhKOVF4cGxFYXM5YXA5c1NKUnFaTDZUNjBCb3RCVEo4?=
- =?utf-8?B?Q1VyU1RQbXBTYjZUVFFSQ1RGcGFiRGFGam5iM2I5bmlyTDIwOFl3ZDdRaUxP?=
- =?utf-8?B?QUZ4V2wxVEpocmF1b3pMdHpZQmFGSHJiR2lOL1daZ0Q2eTRBVDVxWkdZYS9E?=
- =?utf-8?B?NGlkUUU0ajZtYXVSTmZEL1NNOFA4OE1jM09OVWIyV3NhMk5lY1lvS2ZEQkpM?=
- =?utf-8?B?Z1VBY3ZmNGh4UC9ZNVVtWnk0SERmRGpNaHk1Wk96Wk5VL0hNcUpESnYvNjdr?=
- =?utf-8?B?bGlWS2p4VU04U29pMjF4aVpVc3poY1RXcDRzRk9Qcy9RMmtCSlh0amljeDdz?=
- =?utf-8?B?R1hSZGhKYVlaTE45UkRjRndiVGk4YVNqL1poeEpUYXo1WTRpcElPNEZVdm9s?=
- =?utf-8?B?YkswYjN4YW10ZHpCWWJyeHZZb0RXNUs3Qm9uTG9XS3RDUU42N0lnWlRxQSs5?=
- =?utf-8?B?aUpNWVEvMDBTaDFhcWp4bXFuYmJjQ1haOGEzNVJHK08yLzdnS3BubGozV082?=
- =?utf-8?B?eEpxU09yRTlabks1alNUNVp1K3lSSUd2S2dMZlY2WlFrNlZUcml4bit6TWpN?=
- =?utf-8?B?MThmSnVTU1REa2hjMlgza0xkZ3F0OFFCMWgrMys4RUZESDNqT3J0T0dheEVp?=
- =?utf-8?B?WlJma1BPeFBZNmhSK1c1K01FbERta2lnQ1dadlh4QSt2N3Jxdm41WGN4dTIx?=
- =?utf-8?B?djliZ0pMMzQ1UkhLNktTbm9BZVVlc0lEZERxbWFDdWc0VVQwd1JqQjBVUW1E?=
- =?utf-8?B?MDAwb3NJTzgrVm5tNVZSVDZMTWI0c2R3V0RsQXNPMWlscHdjZVNxUWRDQlBv?=
- =?utf-8?B?QlJVYmFvdUJLMVNtd3lqaTl1V1lqRDR0SUJobm41N3ViRmdsai9taGhadlhQ?=
- =?utf-8?B?cllvQU43Zi9Bc29nNUs4MG9nYUZoSnRBWnlOSGhCRWtXN0FHYVZiNEFVbG03?=
- =?utf-8?B?dE01UEZwNDdBTTJRcWJtanZHb1Y0K1U4ZmVSeUZBeVRMZEhpaUlhZkd6MHF1?=
- =?utf-8?B?YjJSNDFaa2pwcGN0UC9ERHZrNTNJQTRrUlZaakhkNnFnOW1NSXJnbzNCTis2?=
- =?utf-8?B?Z2M2c2hEbWFoaVg4OU40dHh3bVFCN05HR1RVTDV5eGFDQ2RkMjFwUlJLN0Fh?=
- =?utf-8?B?dGEveGhnZjRpL3lPc2I1SldaNm00OWZCOFV4ZTZyQ1FBRVNHWWZ0SGp3NFVq?=
- =?utf-8?B?dUJHdkxxUE1MTU5VS3pNZ2w4SEZDNnc2QjJETDMxZnJRRHhtMFRXYUVLdmU0?=
- =?utf-8?B?ZHpJTVJVZTVnZ3ZWNlF6MXpWTTc1V3EwVG9MUHlqZzhwcWZSakZwTEdVTy80?=
- =?utf-8?B?VEFrRUplblFtRmZQRXBKd1QrSlMwcktnTHdZMU8yUHV5U1pRQmFQWW5mRWd3?=
- =?utf-8?B?c0NMT2RCWGVvOGhZRTNNUGMxYmVGV2pVbFFzL0JYN3V1eGs1b1FqaU5RS3pB?=
- =?utf-8?B?NW5QeUNWK3E0ZXVvQWU3WlkySjA0elU0Nm1DdGdQZ1JBd3JDaTlXOG9yTVM0?=
- =?utf-8?B?K1M4OGIra2ZiSUpNL3l4aFpUa05JQldyNFNFditscGRxNG1JQ3h2dVZrd1NI?=
- =?utf-8?B?UDcxajVDdmljMFZyMVpaYlZnVU9jbEFqMjdLSU9CRnNFWThEWGRYK0doM0s3?=
- =?utf-8?B?NTRQcVIweFgyRnJFeFIrK3VKc2owT3dTQzYzOVBMeTdNYVc2cDQ0dW1WekxH?=
- =?utf-8?B?TmRPMmtzdHFDTUIvVTAyaktWaXhRc0w0Nkg4K091QmNodXhocmk4UkROTzdp?=
- =?utf-8?B?VEs2UllGWFB4dkdRc2hENDhOa1FEdURNV0RXdld2UFg4SmJvSjFOYjNOc3Yv?=
- =?utf-8?B?cm90cE9DbVEwOWFEalIzZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(13003099007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cW9WRVhlUThEc0FPNVVIY3dWdmFkSGlIY0hwdUN0Z3RBZU9xek5NeTBEVnZI?=
- =?utf-8?B?YW9jMXQ3dWFjSlhhMzY0TGMyUVJYZGl1UVpWUXVQSzhJWDAwRDlxMVkrNlBB?=
- =?utf-8?B?U3BuSjBRR3B0Sm9BZHZSN1VWWnhsSHBoRGRreDFpSlZ5cGlvSXg3UU1RT3Fm?=
- =?utf-8?B?VFdjUEpNeVV4eXVzUVpnMkxCSHJsd0J1emhxOU95ZU9qV0FLSkM1S3JsS0pk?=
- =?utf-8?B?bmJodk85R1NSbW1PazNrV3g3OGtnUkdSMGRNdlRNTTRFZ29udVRLZ0tWQ0Y2?=
- =?utf-8?B?Mm5DVGNQL25ZSkJWa0xlanpHSEEwM0tzK3k3Tm5kOERNWk9CeXFVRGtKV2Vr?=
- =?utf-8?B?eXJwejF5b1RYelVEVnRzNmI2MkZ4ZXlCaHRjWmNQcERYRHdKNWV1RjJHTWI1?=
- =?utf-8?B?eEFGRElYUm9BNFNTTHY1RzNMc3VFL2E1RjUreGZSOUlPUmIyUHNtZzZPWEV4?=
- =?utf-8?B?R2xzVXNNTHZiVkZFdmdRQzFMUW1YSTNLYVczWnZhNU0zU0tZRGVNZEpzT2ps?=
- =?utf-8?B?dkllQmVxUEkycUVHMmdvcXZLN202ZUc3SlVsZHVnL1FtcytGa1ZHNXdzRDlw?=
- =?utf-8?B?V1ZPSzBFRXNZMnJLdzJxaXJRM0h0dkEyMkIyOEIyeHpoR2prdkJrbjR4YlFs?=
- =?utf-8?B?dFJ6WVczN3NIMVhqVHN1UE9NN2JVdjF0dnFIQ3d2NndrTjV6M3VEUVRNRE51?=
- =?utf-8?B?RHdzd0hQWG53bnl2NWJWU2xkTCtLUUw4ZTFGZ0VPemVtemNvMlR4M2UwQjd1?=
- =?utf-8?B?bUNwSVdJYmFFaTVCdWpqeFMzVklGMjJoY3ErM2wwZU1odFBzQStTWUh1Ujhw?=
- =?utf-8?B?SDVIUm5tOFV1MFlzajduZjBpaVNKamtlRnlyenV6QVhORDF4SjE3ZkFVQThI?=
- =?utf-8?B?aHdUcG1lUUMyQWMvK0NLNFJrRXVnQ1FjNHlreHpjajJZUzgyQ28rdWpCWFoy?=
- =?utf-8?B?WnBrSXgwalFYL0dwaHJwMjQ2M000RmVIRERLWmliNlFiZXlSMUtnc2kwd2RM?=
- =?utf-8?B?M2NTMEF4alJjalprV2xiUFJ4SDBINXFjZU5aRCt0S0hJdG92ZHpVWk00NVpI?=
- =?utf-8?B?TDNUakNMd1M5ak0yejAyd28zWk44QUJVMTJ4UWRwZ2NDVHNmTTdqenNEejJo?=
- =?utf-8?B?c040Y3ZzT2ZDNTRTM2N0TXdnSnhGMi9BWnk2QWJReXdHcUlxYnBqY0cwdWhW?=
- =?utf-8?B?OTVkdHU5SzNPU0xkUjU0NmhOYVFCZ3ZYTWJQN0J0UDYxTG1rb0FHSUNWR2Nj?=
- =?utf-8?B?OWVMRjBuV0VLQnhGam5jUXQreEQ3WE1Cb3R4bDhPS0RJU0EvUGFnazZRSHlT?=
- =?utf-8?B?anZjaVpXTDlyd28yelFoT3lTclE2ZmZHOEFtd2RrM0ZNMjdyNGJQWXRaeUFl?=
- =?utf-8?B?d09rRjFKTk5JMHA4UHR3aUdPVWs3WElHMWFTdmprVjE4dVZNS00wRFJsc0Ry?=
- =?utf-8?B?SXZmRzJwdVdtbGJZUWMxbjQyTDlNMGl0VW8wanp2UlJNSHcvT2xhN1dzMzlB?=
- =?utf-8?B?MXFCcVNacTEzYmpGQnpjc0FTNzg5NVJqcWVSZUlrVVhJSC9FSnRYRVM1Sjlp?=
- =?utf-8?B?QTRaVkdxME5xOVZXY05LVG51NGlEQklvQk9USXlXVmp6elJndUYzbWxObGtj?=
- =?utf-8?B?am81bHpkbVZTNlB5WlA3QTRUc05CN2JrK0Q3L01UeE4xOU1PcDdkaG5VWWIy?=
- =?utf-8?B?bndqNHFCVXJqdm5DdW9ScktCMkFhd0hRZmR3aWxndGh2RnJkWEtaUjNVQzc0?=
- =?utf-8?B?Z2ZhNkN6YUtJTWpZUHBUeFNyM2ZuTVd1QmNaMWhPNjJMUmErZGFsR2x4cTAr?=
- =?utf-8?B?Sld5WWc0UEdBM080SjFMT2djMTRZMDN2V2JuTEhDYzFyWnk2WW5YeGNLdDQz?=
- =?utf-8?B?ZWpmYUR4dzdrMkZNUm52cE5xbUtvdDNlbGY1QlBlOXE3THFNZjBkd0VyNVJC?=
- =?utf-8?B?bHdNU2lJZDBKSENUKzc4WnFDdkRCSlZOSkdMYUt5RDV5WFR4R3FGam5GZi9I?=
- =?utf-8?B?UDBlNm1jQW85RHRyTmtsYlZ0TU5aOVF1ckhCdDJoY2JZb2JVWmpRVWYxZ01M?=
- =?utf-8?B?UmZqT3ZQMm53OVJBblJuTjBPOWRKcStJbzlvTGhwZklzUUZLWDVRU1BWaTBX?=
- =?utf-8?B?amZBVDRTNkJNeGU1azNQZE1kUmRhcXFEaVZIclh1TnBxWk56Y0h3TkgwVU04?=
- =?utf-8?Q?oNe/kD0211J9J1ZzMVj51vc=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ca0b132-400d-4d1b-d787-08dd55a8b67e
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 14:28:46.2578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x5Dw9elqfAu+OponCA32umsGhZXqVgI/52xoKfSQhELxGAdJvjZnLcwWSM+JewYBvCMroIx7Wq5nMjx2mYXuQfwFHlIlvC/U0Ic/bxlPZ8I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5920
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250125064619.8305-29-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 2025-02-25 09:07, Dmitry Vyukov wrote:
-> On Mon, 24 Feb 2025 at 20:18, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> On 2025-02-24 08:20, Dmitry Vyukov wrote:
->>> If an application registers rseq, and ever switches to another pkey
->>> protection (such that the rseq becomes inaccessible), then any
->>> context switch will cause failure in __rseq_handle_notify_resume()
->>> attempting to read/write struct rseq and/or rseq_cs. Since context
->>> switches are asynchronous and are outside of the application control
->>> (not part of the restricted code scope), temporarily switch to
->>> pkey value that allows access to the 0 (default) PKEY.
->>
->> This is a good start, but the plan Dave and I discussed went further
->> than this. Those additions are needed:
->>
->> 1) Add validation at rseq registration that the struct rseq is indeed
->>      pkey-0 memory (return failure if not).
+
+
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> move the DYNDBG_CLASSMAP_PARAM macro from test-dynamic-debug.c into
+> the header, and refine it, by distinguishing the 2 use cases:
 > 
-> I don't think this is worth it for multiple reasons:
->   - a program may first register it and then assign a key, which means
-> we also need to check in pkey_mprotect
->   - pkey_mprotect may be applied to rseq of another thread, so ensuring
-> that will require complex code with non-trivial synchronization and
-> will add considerable overhead to pkey_mprotect call
->   - a program may assign non-0 pkey but have it always accessible, such
-> programs will break by the new check
->   - the misuse is already detected by rseq code, and UNIX errno-based
-> reporting is not very informative and does not add much value on top
-> of existing reporting
->   - this is not different from registering rseq and then unmap'ing the
-> memory, checking that does not look like a good idea, and checking
-> only subset of misuses is inconsistent
+> 1.DYNDBG_CLASSMAP_PARAM_REF
+>      for DRM, to pass in extern __drm_debug by name.
+>      dyndbg keeps bits in it, so drm can still use it as before
 > 
-> Based on my experience with rseq, what would be useful is reporting a
-> meaningful siginfo for access errors (address/unique code) and fixing
-> signal delivery. That would solve all of the above problems, and
-> provide useful info for the user (not just confusing EINVAL from
-> mprotect/munmap).
+> 2.DYNDBG_CLASSMAP_PARAM
+>      new user (test_dynamic_debug) doesn't need to share state,
+>      decls a static long unsigned int to store the bitvec.
 > 
-> But I would prefer to not mix these unrelated usability improvements
-> and bug fixes with this change. That's not related to this change.
-
-I agree with your arguments. If Dave is OK with it, I'd be fine with
-leaving out the pkey-0 validation on rseq registration, and eventually
-bring meaningful siginfo access errors as future improvements.
-
-So the new behavior would be that both rseq and rseq_cs are required
-to be pkey-0. If they are not and their pkey is not accessible in the
-current context, it would trigger a segmentation fault. Ideally we'd
-want to document this somewhere in the UAPI header.
-
+> __DYNDBG_CLASSMAP_PARAM
+>     bottom layer - allocate,init a ddebug-class-param, module-param-cb.
 > 
+> Modify ddebug_sync_classbits() argtype deref inside the fn, to give
+> access to all kp members.
 > 
->> 2) The pkey-0 requirement is only for struct rseq, which we can check
->>      for at rseq registration, and happens to be the fast path. For struct
->>      rseq_cs, this is not the same tradeoff: we cannot easily check its
->>      associated pkey because the rseq_cs pointer is updated by userspace
->>      when entering a critical section. But the good news is that reading
->>      the content of struct rseq_cs is *not* a fast-path: it's only done
->>      when preempting/delivering a signal over a thread which has a
->>      non-NULL rseq_cs pointer.
+> Also clean up and improve comments in test-code, and add
+> MODULE_DESCRIPTIONs.
+>
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> ---
 > 
-> rseq_cs is usually accessed on a hot path since rseq_cs pointer is not
-> cleared on critical section exit (at least that's what we do).
-
-Fair point.
-
+> -v9
+>   - fixup drm-print.h  add PARAM_REF forwarding macros
+>     with DYNDBG_CLASSMAP_PARAM_REF in the API, add DRM_ variant
+> ---
+>   include/linux/dynamic_debug.h   | 38 +++++++++++++++++++++
+>   lib/dynamic_debug.c             | 60 ++++++++++++++++++++++-----------
+>   lib/test_dynamic_debug.c        | 59 +++++++++++++-------------------
+>   lib/test_dynamic_debug_submod.c |  9 ++++-
+>   4 files changed, 111 insertions(+), 55 deletions(-)
 > 
->>      Therefore reading the struct rseq_cs content should be done with
->>      write_permissive_pkey_val(), giving access to all pkeys.
-> 
-> You just asked me to redo the code to simplify it, won't this
-> complicate it back again? ;)
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index 48d76a273f68..b47d1088b7ad 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -205,6 +205,44 @@ struct ddebug_class_param {
+>   	const struct ddebug_class_map *map;
+>   };
+>   
+> +/**
+> + * DYNDBG_CLASSMAP_PARAM - control a ddebug-classmap from a sys-param
+> + * @_name:  sysfs node name
+> + * @_var:   name of the classmap var defining the controlled classes/bits
+> + * @_flags: flags to be toggled, typically just 'p'
+> + *
+> + * Creates a sysfs-param to control the classes defined by the
+> + * exported classmap, with bits 0..N-1 mapped to the classes named.
+> + * This version keeps class-state in a private long int.
+> + */
+> +#define DYNDBG_CLASSMAP_PARAM(_name, _var, _flags)			\
+> +	static unsigned long _name##_bvec;				\
+> +	__DYNDBG_CLASSMAP_PARAM(_name, _name##_bvec, _var, _flags)
+> +
+> +/**
+> + * DYNDBG_CLASSMAP_PARAM_REF - wrap a classmap with a controlling sys-param
+> + * @_name:  sysfs node name
+> + * @_bits:  name of the module's unsigned long bit-vector, ex: __drm_debug
+> + * @_var:   name of the (exported) classmap var defining the classes/bits
+> + * @_flags: flags to be toggled, typically just 'p'
+> + *
+> + * Creates a sysfs-param to control the classes defined by the
+> + * exported clasmap, with bits 0..N-1 mapped to the classes named.
+> + * This version keeps class-state in user @_bits.  This lets drm check
+> + * __drm_debug elsewhere too.
+> + */
+> +#define DYNDBG_CLASSMAP_PARAM_REF(_name, _bits, _var, _flags)		\
+> +	__DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)
+> +
+> +#define __DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)		\
+> +	static struct ddebug_class_param _name##_##_flags = {		\
+> +		.bits = &(_bits),					\
+> +		.flags = #_flags,					\
+> +		.map = &(_var),						\
+> +	};								\
+> +	module_param_cb(_name, &param_ops_dyndbg_classes,		\
+> +			&_name##_##_flags, 0600)
+> +
+>   /*
+>    * pr_debug() and friends are globally enabled or modules have selectively
+>    * enabled them.
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 781781835094..9283f2866415 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -660,6 +660,30 @@ static int ddebug_apply_class_bitmap(const struct ddebug_class_param *dcp,
+>   
+>   #define CLASSMAP_BITMASK(width) ((1UL << (width)) - 1)
+>   
+> +static void ddebug_class_param_clamp_input(unsigned long *inrep, const struct kernel_param *kp)
+> +{
+> +	const struct ddebug_class_param *dcp = kp->arg;
+> +	const struct ddebug_class_map *map = dcp->map;
+> +
+> +	switch (map->map_type) {
+> +	case DD_CLASS_TYPE_DISJOINT_BITS:
+> +		/* expect bits. mask and warn if too many */
+> +		if (*inrep & ~CLASSMAP_BITMASK(map->length)) {
+> +			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
+> +				KP_NAME(kp), *inrep, CLASSMAP_BITMASK(map->length));
+> +			*inrep &= CLASSMAP_BITMASK(map->length);
+> +		}
+> +		break;
+> +	case DD_CLASS_TYPE_LEVEL_NUM:
+> +		/* input is bitpos, of highest verbosity to be enabled */
+> +		if (*inrep > map->length) {
+> +			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
+> +				KP_NAME(kp), *inrep, map->length);
+> +			*inrep = map->length;
+> +		}
+> +		break;
+> +	}
+> +}
+>   static int param_set_dyndbg_module_classes(const char *instr,
+>   					   const struct kernel_param *kp,
+>   					   const char *modnm)
+> @@ -678,26 +702,15 @@ static int param_set_dyndbg_module_classes(const char *instr,
+>   		pr_err("expecting numeric input, not: %s > %s\n", instr, KP_NAME(kp));
+>   		return -EINVAL;
+>   	}
+> +	ddebug_class_param_clamp_input(&inrep, kp);
+>   
+>   	switch (map->map_type) {
+>   	case DD_CLASS_TYPE_DISJOINT_BITS:
+> -		/* expect bits. mask and warn if too many */
+> -		if (inrep & ~CLASSMAP_BITMASK(map->length)) {
+> -			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
+> -				KP_NAME(kp), inrep, CLASSMAP_BITMASK(map->length));
+> -			inrep &= CLASSMAP_BITMASK(map->length);
+> -		}
+>   		v2pr_info("bits:0x%lx > %s.%s\n", inrep, modnm ?: "*", KP_NAME(kp));
+>   		totct += ddebug_apply_class_bitmap(dcp, &inrep, *dcp->bits, modnm);
+>   		*dcp->bits = inrep;
+>   		break;
+>   	case DD_CLASS_TYPE_LEVEL_NUM:
+> -		/* input is bitpos, of highest verbosity to be enabled */
+> -		if (inrep > map->length) {
+> -			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
+> -				KP_NAME(kp), inrep, map->length);
+> -			inrep = map->length;
+> -		}
+>   		old_bits = CLASSMAP_BITMASK(*dcp->lvl);
+>   		new_bits = CLASSMAP_BITMASK(inrep);
+>   		v2pr_info("lvl:%ld bits:0x%lx > %s\n", inrep, new_bits, KP_NAME(kp));
+> @@ -1163,15 +1176,24 @@ static const struct proc_ops proc_fops = {
+>   static void ddebug_sync_classbits(const struct kernel_param *kp, const char *modname)
+>   {
+>   	const struct ddebug_class_param *dcp = kp->arg;
+> +	unsigned long new_bits;
+>   
+> -	/* clamp initial bitvec, mask off hi-bits */
+> -	if (*dcp->bits & ~CLASSMAP_BITMASK(dcp->map->length)) {
+> -		*dcp->bits &= CLASSMAP_BITMASK(dcp->map->length);
+> -		v2pr_info("preset classbits: %lx\n", *dcp->bits);
+> +	ddebug_class_param_clamp_input(dcp->bits, kp);
+> +
+> +	switch (dcp->map->map_type) {
+> +	case DD_CLASS_TYPE_DISJOINT_BITS:
+> +		v2pr_info("  %s: classbits: 0x%lx\n", KP_NAME(kp), *dcp->bits);
+> +		ddebug_apply_class_bitmap(dcp, dcp->bits, 0UL, modname);
+> +		break;
+> +	case DD_CLASS_TYPE_LEVEL_NUM:
+> +		new_bits = CLASSMAP_BITMASK(*dcp->lvl);
+> +		v2pr_info("  %s: lvl:%ld bits:0x%lx\n", KP_NAME(kp), *dcp->lvl, new_bits);
+> +		ddebug_apply_class_bitmap(dcp, &new_bits, 0UL, modname);
+> +		break;
+> +	default:
+> +		pr_err("bad map type %d\n", dcp->map->map_type);
+> +		return;
+>   	}
+> -	/* force class'd prdbgs (in USEr module) to match (DEFINEr module) class-param */
+> -	ddebug_apply_class_bitmap(dcp, dcp->bits, ~0, modname);
+> -	ddebug_apply_class_bitmap(dcp, dcp->bits, 0, modname);
 
-I'm fine with the pkey-0 approach for both rseq and rseq_cs if Dave is
-also OK with it.
+Hi Jim,
 
-Thanks,
+We lost the double call with ~0/0, is it normal?
 
-Mathieu
+Thanks a lot for your work,
+Louis Chauvet
 
-> 
-> 
->> Thanks,
->>
->> Mathieu
->>
->>>
->>> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
->>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
->>> Cc: Boqun Feng <boqun.feng@gmail.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Borislav Petkov <bp@alien8.de>
->>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
->>> Cc: x86@kernel.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
->>>
->>> ---
->>> Changes in v4:
->>>    - Added Fixes tag
->>>
->>> Changes in v3:
->>>    - simplify control flow to always enable access to 0 pkey
->>>
->>> Changes in v2:
->>>    - fixed typos and reworded the comment
->>> ---
->>>    kernel/rseq.c | 11 +++++++++++
->>>    1 file changed, 11 insertions(+)
->>>
->>> diff --git a/kernel/rseq.c b/kernel/rseq.c
->>> index 2cb16091ec0ae..9d9c976d3b78c 100644
->>> --- a/kernel/rseq.c
->>> +++ b/kernel/rseq.c
->>> @@ -10,6 +10,7 @@
->>>
->>>    #include <linux/sched.h>
->>>    #include <linux/uaccess.h>
->>> +#include <linux/pkeys.h>
->>>    #include <linux/syscalls.h>
->>>    #include <linux/rseq.h>
->>>    #include <linux/types.h>
->>> @@ -402,11 +403,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
->>>    void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->>>    {
->>>        struct task_struct *t = current;
->>> +     pkey_reg_t saved_pkey;
->>>        int ret, sig;
->>>
->>>        if (unlikely(t->flags & PF_EXITING))
->>>                return;
->>>
->>> +     /*
->>> +      * Enable access to the default (0) pkey in case the thread has
->>> +      * currently disabled access to it and struct rseq/rseq_cs has
->>> +      * 0 pkey assigned (the only supported value for now).
->>> +      */
->>> +     saved_pkey = enable_zero_pkey_val();
->>> +
->>>        /*
->>>         * regs is NULL if and only if the caller is in a syscall path.  Skip
->>>         * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
->>> @@ -419,9 +428,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->>>        }
->>>        if (unlikely(rseq_update_cpu_node_id(t)))
->>>                goto error;
->>> +     write_pkey_val(saved_pkey);
->>>        return;
->>>
->>>    error:
->>> +     write_pkey_val(saved_pkey);
->>>        sig = ksig ? ksig->sig : 0;
->>>        force_sigsegv(sig);
->>>    }
->>
->>
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> https://www.efficios.com
-
+>   }
+>   
+>   static void ddebug_match_apply_kparam(const struct kernel_param *kp,
+> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> index 5cfc156ca4bb..32a9d49a7a3b 100644
+> --- a/lib/test_dynamic_debug.c
+> +++ b/lib/test_dynamic_debug.c
+> @@ -1,6 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Kernel module for testing dynamic_debug
+> + * Kernel module to test/demonstrate dynamic_debug features,
+> + * particularly classmaps and their support for subsystems like DRM.
+>    *
+>    * Authors:
+>    *      Jim Cromie	<jim.cromie@gmail.com>
+> @@ -43,36 +44,21 @@ module_param_cb(do_prints, &param_ops_do_prints, NULL, 0600);
+>   
+>   #define CLASSMAP_BITMASK(width, base) (((1UL << (width)) - 1) << (base))
+>   
+> -/* sysfs param wrapper, proto-API */
+> -#define DYNDBG_CLASSMAP_PARAM_(_model, _flags, _init)			\
+> -	static unsigned long bits_##_model = _init;			\
+> -	static struct ddebug_class_param _flags##_##_model = {		\
+> -		.bits = &bits_##_model,					\
+> -		.flags = #_flags,					\
+> -		.map = &map_##_model,					\
+> -	};								\
+> -	module_param_cb(_flags##_##_model, &param_ops_dyndbg_classes,	\
+> -			&_flags##_##_model, 0600)
+> -#ifdef DEBUG
+> -#define DYNDBG_CLASSMAP_PARAM(_model, _flags)  DYNDBG_CLASSMAP_PARAM_(_model, _flags, ~0)
+> -#else
+> -#define DYNDBG_CLASSMAP_PARAM(_model, _flags)  DYNDBG_CLASSMAP_PARAM_(_model, _flags, 0)
+> -#endif
+> -
+>   /*
+> - * Demonstrate/test all 4 class-typed classmaps with a sys-param.
+> + * Demonstrate/test both types of classmaps, each with a sys-param.
+>    *
+>    * Each is 3 part: client-enum decl, _DEFINE, _PARAM.
+> - * Declare them in blocks to show patterns of use (repetitions and
+> - * changes) within each.
+> + * Pair the 6 parts by type, to show the pattern of repetition and
+> + * change within each.
+>    *
+> - * 1st, dyndbg expects a client-provided enum-type as source of
+> - * category/classid truth.  DRM has DRM_UT_<CORE,DRIVER,KMS,etc>.
+> + * 1st, dyndbg classmaps follows drm.debug convention, and expects a
+> + * client-provided enum-type as source of category/classid truth.  DRM
+> + * gives DRM_UT_<CORE,DRIVER,KMS,etc>.
+>    *
+>    * Modules with multiple CLASSMAPS must have enums with distinct
+>    * value-ranges, arranged below with explicit enum_sym = X inits.
+>    *
+> - * Declare all 4 enums now, for different types
+> + * Declare the 2 enums now.
+>    */
+>   
+>   /* numeric input, independent bits */
+> @@ -91,12 +77,15 @@ enum cat_disjoint_bits {
+>   /* numeric verbosity, V2 > V1 related */
+>   enum cat_level_num { V0 = 16, V1, V2, V3, V4, V5, V6, V7 };
+>   
+> -/* recapitulate DRM's parent(drm.ko) <-- _submod(drivers,helpers) */
+> +/*
+> + * use/demonstrate multi-module-group classmaps, as for DRM
+> + */
+>   #if !defined(TEST_DYNAMIC_DEBUG_SUBMOD)
+>   /*
+> - * In single user, or parent / coordinator (drm.ko) modules, define
+> - * classmaps on the client enums above, and then declares the PARAMS
+> - * ref'g the classmaps.  Each is exported.
+> + * For module-groups of 1+, define classmaps with names (stringified
+> + * enum-symbols) copied from above. 1-to-1 mapping is recommended.
+> + * The classmap is exported, so that other modules in the group can
+> + * link to it and control their prdbgs.
+>    */
+>   
+>   DYNDBG_CLASSMAP_DEFINE(map_disjoint_bits, DD_CLASS_TYPE_DISJOINT_BITS,
+> @@ -116,11 +105,12 @@ DYNDBG_CLASSMAP_DEFINE(map_level_num, DD_CLASS_TYPE_LEVEL_NUM,
+>   		       V0, "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7");
+>   
+>   /*
+> - * now add the sysfs-params
+> + * for use-cases that want it, provide a sysfs-param to set the
+> + * classes in the classmap.  It is at this interface where the
+> + * "v3>v2" property is applied to DD_CLASS_TYPE_LEVEL_NUM inputs.
+>    */
+> -
+> -DYNDBG_CLASSMAP_PARAM(disjoint_bits, p);
+> -DYNDBG_CLASSMAP_PARAM(level_num, p);
+> +DYNDBG_CLASSMAP_PARAM(p_disjoint_bits,	map_disjoint_bits, p);
+> +DYNDBG_CLASSMAP_PARAM(p_level_num,	map_level_num, p);
+>   
+>   #ifdef FORCE_CLASSID_CONFLICT_MODPROBE
+>   /*
+> @@ -131,12 +121,10 @@ DYNDBG_CLASSMAP_DEFINE(classid_range_conflict, 0, D2_CORE + 1, "D3_CORE");
+>   #endif
+>   
+>   #else /* TEST_DYNAMIC_DEBUG_SUBMOD */
+> -
+>   /*
+> - * in submod/drm-drivers, use the classmaps defined in top/parent
+> - * module above.
+> + * the +1 members of a multi-module group refer to the classmap
+> + * DEFINEd (and exported) above.
+>    */
+> -
+>   DYNDBG_CLASSMAP_USE(map_disjoint_bits);
+>   DYNDBG_CLASSMAP_USE(map_level_num);
+>   
+> @@ -211,6 +199,7 @@ static void __exit test_dynamic_debug_exit(void)
+>   module_init(test_dynamic_debug_init);
+>   module_exit(test_dynamic_debug_exit);
+>   
+> +MODULE_DESCRIPTION("test/demonstrate dynamic-debug features");
+>   MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
+>   MODULE_DESCRIPTION("Kernel module for testing dynamic_debug");
+>   MODULE_LICENSE("GPL");
+> diff --git a/lib/test_dynamic_debug_submod.c b/lib/test_dynamic_debug_submod.c
+> index 9a893402ce1a..0d15f3ffe466 100644
+> --- a/lib/test_dynamic_debug_submod.c
+> +++ b/lib/test_dynamic_debug_submod.c
+> @@ -1,6 +1,9 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   /*
+> - * Kernel module for testing dynamic_debug
+> + * Kernel module to test/demonstrate dynamic_debug features,
+> + * particularly classmaps and their support for subsystems, like DRM,
+> + * which defines its drm_debug classmap in drm module, and uses it in
+> + * helpers & drivers.
+>    *
+>    * Authors:
+>    *      Jim Cromie	<jim.cromie@gmail.com>
+> @@ -8,3 +11,7 @@
+>   
+>   #define TEST_DYNAMIC_DEBUG_SUBMOD
+>   #include "test_dynamic_debug.c"
+> +
+> +MODULE_DESCRIPTION("test/demonstrate dynamic-debug subsystem support");
+> +MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
+> +MODULE_LICENSE("GPL");
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
