@@ -1,176 +1,101 @@
-Return-Path: <linux-kernel+bounces-530558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78536A43518
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:21:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACF7A4351A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678CA17A269
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C375F17A2BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EAF256C9B;
-	Tue, 25 Feb 2025 06:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F39256C9B;
+	Tue, 25 Feb 2025 06:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzPr87bH"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="W2QiWaMB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66485182D9;
-	Tue, 25 Feb 2025 06:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870F8172A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464458; cv=none; b=fh1azbrfDBj/RDY3ltjhJqtCx3kqMmqp+5vO27pO6RX6NlvgnXZ39LJldZ5+332690XbQX7Fejbp4bUknjoUGlKnNDOipwqUQxMqGNKIK8djoLhSMtv0A6sYfJuv+7oaQL2e/E7fIzyvnvi0pje07F0NMVEe4UgrcOn75yfbZ24=
+	t=1740464558; cv=none; b=GCgcYtg/Us85qoqQX1qi5C6MkViv/2ot7xBkhP4rxFjH6XsqP+nAOkjT5s788ipJ8gl2qyR1dcNQOHswQBjkG0ki7ot0Wd4lx1AyXbmHhB0iyTu+KWbhlLehvhWLhwZNym5qIVCpAjlaBj71SSvafPCHNREq+N5YR3drkT/2ti8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464458; c=relaxed/simple;
-	bh=5OKb51izA80yh4zy5cydeniYSGVGNjdKJPweeJv8nx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pj9MB2eZ+ghH/7ccZMrmsnS4n87J9b3hD7phJMsq5kNzxOXhNFlCsz0pPA6smC7fvhQtoZVbR7VXPjckh+/essP66hidea+AI/J/cB0vMnCpkHzY+h3dFmphIBi4bvdhGPJLBoTZO/I9Cym335InuhbI2iYuo89QF1ElG6kVcTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzPr87bH; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22128b7d587so100474635ad.3;
-        Mon, 24 Feb 2025 22:20:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740464456; x=1741069256; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ULxxZ3EpvZ0eV4eBI5zdwhpaLVGTbquNxWTjT5AEwZk=;
-        b=dzPr87bHzaUpAXechKA+FE7MiM6Gu5ZHwPaxLfA1eCPSzpL+SwRDYZCS/FeYEi4CkJ
-         Eyo0oCgs5g6gHgrSXsvXS8BqiBLqK8r6MsRP0+Jb56Jaa9j0c4+h+fpN5oAqV4pknd7R
-         3dvTkn6F5ryZoi1bQ9P8YVJGc0JR/pHWXZWEDLKFtslH/azOhhePv5QgxbbXka534/85
-         pSEbEW8QplSyKXP7xtRHy1qwBWQaFgiffBy4a6A8KAKQn6AaLpfQY7KL+uTv9cX/jvJa
-         4gk1/q5QbvYSvfEuv3HtkntLDJxf6wPUZPfqvROMtpfE/QmcSsmsl9iyqBLAdJjLVdEJ
-         KEOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740464456; x=1741069256;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ULxxZ3EpvZ0eV4eBI5zdwhpaLVGTbquNxWTjT5AEwZk=;
-        b=xUUqlZjsWRKWQCAOPXU1j+v8XiMkXcja+VjxT1owWtUMnq7h0ywKQoEBHSI3hqGKQ/
-         x1wW5e8EMlUvTcAzQM0dinesvzNs0zdYfEK6YnowdiptNy47ZO9r4MI1HONLvBz+bZOs
-         CyuvgdO0RNHxXJyx/B2z7onfyGcBOUTf1TmOQ6ni9TN42NuIdO66WZa4rbm+khRmpslt
-         aGvD35LxVXTPJlFhmiWew4aoFifpkivr3qas9tX/L5zTA7f2zkZZUy6DsnRaREPLWvlN
-         /M0ORNo6UBTlwLdJyEGvK8oi78yist9C2SCXTmfAGNxxu/us4WSMyHrg/801jwidOqiB
-         oTlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUF8KhYu+98V2FrRHsR7oVPtubS6771n3u+C5Vf6tbvaNPiOmOnBw6WZhKi649RDcefCSjV2Ra@vger.kernel.org, AJvYcCVffPBoC3D7WKL8M7zwNpx2cYS4iPdCgBqKS+4+9oStKGCqlzeaR5fSihnhbeWssFkK0978T3jmA5CJ6+Y=@vger.kernel.org, AJvYcCWvgFo2hpBpnxxFsPOQIOLMws2XEqmSQaHNL5mI2SirUIMkEWvPcmNx5Dq6azUPRGAj5hWhOkJfolXb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz51kPPKP2yjvOgmSTcuITAiS0EiRareDkAo/hG1u3bk87zqgx4
-	0DpCIZYRNTXxEPlBwacGVBJr1tx7zmXvjO0TK+nujkSKmj9rJg2p
-X-Gm-Gg: ASbGncu3l++2gj1J5zCoHLIoRmYQ4kNy64OBk8jhUrANsGr8m8j/bGreNJ4Rr6bFP5w
-	Eq8U/Ue/8jjQsqWGMbarr/Ow1NwIckI3x9cFsKBW3ir8CKUbh0xRXj7R4Lf0imrly/dsvYoIBSF
-	TsxhBhoDjL7pOL2EliNdUOnQGzT2aR6B83t5gj5l2wulVzJ8WPpe4zcudVIuG2L8YEikigaVcS/
-	tR4kQ8oZBj+rShQrA6oA1gfiDU5F1v8ideX8i92+y9MKMkFevaYpAFLw4Oy8db4L8FQlIGQ7rYY
-	L4YaFOEi1XrLSefdKyleDG+L8RgFuTqmuvBT03ZhKinpHGa/gX+rZnwLMOS2BqSXSAhReFBAuRl
-	kcrpbtQ==
-X-Google-Smtp-Source: AGHT+IGZuSb5qFFIyeaeG2RR3Qcw8TbVF5PhtTliQgdhjGn7cRZjmzdvZC1t+L7d4J6FNqz8dddNrA==
-X-Received: by 2002:a17:902:ce86:b0:21f:4c65:6290 with SMTP id d9443c01a7336-2219ff32f58mr258970425ad.1.1740464456487;
-        Mon, 24 Feb 2025 22:20:56 -0800 (PST)
-Received: from ?IPV6:2402:3a80:428b:35ff:dd92:c12f:8ec5:287b? ([2402:3a80:428b:35ff:dd92:c12f:8ec5:287b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0008b4sm6398785ad.31.2025.02.24.22.20.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 22:20:56 -0800 (PST)
-Message-ID: <d22a1b92-294c-498c-8719-9776c48984ed@gmail.com>
-Date: Tue, 25 Feb 2025 11:50:42 +0530
+	s=arc-20240116; t=1740464558; c=relaxed/simple;
+	bh=XpV8O7FOYRNeMQ7j+kvwt+ECoNaMe4MRy1Mfv9FckbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgkyDH2IDTZ0yrh/+lHhOcQGEjNf6d+CEz54j1wNi4PxxQt+UyYK91+0Gr7zj93AT00mWq+uPDN5QMW1YLSn4mq8pchXvjYm8HUrIFZ2OjN7RYge0s7S+45UKWNa5B304Ij1VgXbuXTT6BkvVbG3+ahfP68Uksh/QliI8LyV0Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=W2QiWaMB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0305FC4CEDD;
+	Tue, 25 Feb 2025 06:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740464557;
+	bh=XpV8O7FOYRNeMQ7j+kvwt+ECoNaMe4MRy1Mfv9FckbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W2QiWaMBG3x+66UzYIYa6MkUGJiv+M7HO1XQbbJPFUKqdDa7G6eLC8g0JUVqLu/ke
+	 PG+elu9+f/g4ZIs/96PTQAHRJVpUuDzdUBXB9ekMrrRqAsQEyhe30xoDKo4P51IJqu
+	 wBgw7BgZN7LZJF/mMcsFFHtGALK5im5Z6IFhJh74=
+Date: Tue, 25 Feb 2025 07:21:27 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Subject: Re: [PATCH 1/2] Revert "drivers: core: synchronize really_probe()
+ and dev_uevent()"
+Message-ID: <2025022553-maximize-ferry-8532@gregkh>
+References: <20250220064647.2437048-1-dmitry.torokhov@gmail.com>
+ <2025022051-happy-plant-b40b@gregkh>
+ <9232C7B6-627B-43F9-AD5C-1EA4BB69E40D@gmail.com>
+ <Z70oQKHjvjutqom5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ppp: Prevent out-of-bounds access in ppp_sync_txmunge
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, skhan@linuxfoundation.org,
- syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-References: <1e906059-83c7-4f29-a026-76cd73d8b6fa@gmail.com>
- <20250218185033.26399-1-kuniyu@amazon.com>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <20250218185033.26399-1-kuniyu@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z70oQKHjvjutqom5@google.com>
 
-On 19/02/25 00:20, Kuniyuki Iwashima wrote:
-> From: Purva Yeshi <purvayeshi550@gmail.com>
-> Date: Tue, 18 Feb 2025 11:58:17 +0530
->> On 18/02/25 02:46, Kuniyuki Iwashima wrote:
->>> From: Purva Yeshi <purvayeshi550@gmail.com>
->>> Date: Sun, 16 Feb 2025 11:34:46 +0530
->>>> Fix an issue detected by syzbot with KMSAN:
->>>>
->>>> BUG: KMSAN: uninit-value in ppp_sync_txmunge
->>>> drivers/net/ppp/ppp_synctty.c:516 [inline]
->>>> BUG: KMSAN: uninit-value in ppp_sync_send+0x21c/0xb00
->>>> drivers/net/ppp/ppp_synctty.c:568
->>>>
->>>> Ensure sk_buff is valid and has at least 3 bytes before accessing its
->>>> data field in ppp_sync_txmunge(). Without this check, the function may
->>>> attempt to read uninitialized or invalid memory, leading to undefined
->>>> behavior.
->>>>
->>>> To address this, add a validation check at the beginning of the function
->>>> to safely handle cases where skb is NULL or too small. If either condition
->>>> is met, free the skb and return NULL to prevent processing an invalid
->>>> packet.
->>>>
->>>> Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
->>>> Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
->>>> Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
->>>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
->>>> ---
->>>>    drivers/net/ppp/ppp_synctty.c | 6 ++++++
->>>>    1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
->>>> index 644e99fc3..e537ea3d9 100644
->>>> --- a/drivers/net/ppp/ppp_synctty.c
->>>> +++ b/drivers/net/ppp/ppp_synctty.c
->>>> @@ -506,6 +506,12 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
->>>>    	unsigned char *data;
->>>>    	int islcp;
->>>>    
->>>> +	/* Ensure skb is not NULL and has at least 3 bytes */
->>>> +	if (!skb || skb->len < 3) {
->>>
->>> When is skb NULL ?
->>
->> skb pointer can be NULL in cases where memory allocation for the socket
->> buffer fails, or if an upstream function incorrectly passes a NULL
->> reference due to improper error handling.
+On Mon, Feb 24, 2025 at 06:17:36PM -0800, Dmitry Torokhov wrote:
+> On Wed, Feb 19, 2025 at 11:22:25PM -0800, Dmitry Torokhov wrote:
+> > On February 19, 2025 11:13:00 PM PST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > >On Wed, Feb 19, 2025 at 10:46:44PM -0800, Dmitry Torokhov wrote:
+> > >> This reverts commit c0a40097f0bc81deafc15f9195d1fb54595cd6d0.
+> > >> 
+> > >> Probing a device can take arbitrary long time. In the field we observed
+> > >> that, for example, probing a bad micro-SD cards in an external USB card
+> > >> reader (or maybe cards were good but cables were flaky) sometimes takes
+> > >> longer than 2 minutes due to multiple retries at various levels of the
+> > >> stack. We can not block uevent_show() method for that long because udev
+> > >> is reading that attribute very often and that blocks udev and interferes
+> > >> with booting of the system.
+> > >> 
+> > >> The change that introduced locking was concerned with dev_uevent()
+> > >> racing with unbinding the driver. However we can handle it without
+> > >> locking (which will be done in subsequent patch).
+> > >
+> > >So shouldn't we take the second patch first to prevent any issues here?
+> > 
+> > I think the potential for the NULL dereference is extremely small, we
+> > lived with it for many years. But if you prefer the patches can be
+> > swapped.
 > 
-> Which caller passes NULL skb ?
-> 
-> If it's really possible, you'll see null-ptr-deref at
-> 
->    data = skb->data;
-> 
-> below instead of KMSAN's uninit splat.
+> Greg, I was looking at this again and I do not think it makes sense to
+> swap the patches, as then explanation and justification makes no sense.
+> So we can either keep it as a straight revert and then address the
+> driver pointer handling, or combine the 2. What would be your
+> preference?
 
-Understood. I’ll check where the skb pointer is receiving uninitialized 
-data.
+Your original sequence is fine, it makes more sense as you point out.
 
-> 
-> 
->>
->> Additionally, skb->len being less than 3 can occur if the received
->> packet is truncated or malformed, leading to out-of-bounds memory access
->> when attempting to read data[2].
->>
->>>
->>>
->>>> +		kfree_skb(skb);
->>>> +		return NULL;
->>>> +	}
->>>> +
->>>>    	data  = skb->data;
->>>>    	proto = get_unaligned_be16(data);
->>>>    
->>>> -- 
->>>> 2.34.1
+> I will need to respin to address Rafael's comment anyways.
 
+That would be great, thanks!
+
+greg k-h
 
