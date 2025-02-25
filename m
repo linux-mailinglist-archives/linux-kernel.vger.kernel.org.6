@@ -1,98 +1,90 @@
-Return-Path: <linux-kernel+bounces-530568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA955A43530
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:27:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC1DA43534
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D85718849B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0353168E41
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A82257422;
-	Tue, 25 Feb 2025 06:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKiOLds6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A2025742E;
+	Tue, 25 Feb 2025 06:28:00 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB59256C92;
-	Tue, 25 Feb 2025 06:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0D624EF8E;
+	Tue, 25 Feb 2025 06:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464822; cv=none; b=ZijAhxV3WhebL+yUsgn4vEBd/DzFq787NPY6QfmAg5vV3xvq+mfiDWB7+I0M23yEU49dsJE4nJjxt9wmIymSAR/ryrDiAFghG9aamke4zIzWnoN10uMQX9ynYYXacoULcgypSgSf2xlMn9W7fYxfMJNqYhd/RLewNH2bjgBrD9w=
+	t=1740464880; cv=none; b=O19oGM8ZDYwwoLTtOBn0SJRUh9shIV8M4GiHHBgxKWXSzlW6ovfPitbNV42n7NKeUh/6rCjLW+N92hDurb7oERLEkfkV8NTP09DGosUNyZT9piOklE3vswDHa7wEYZJU5AwMJEpHb8epdXTcUEdZrzmlqVaFaCyWK28xYK6WePY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464822; c=relaxed/simple;
-	bh=KN2IyK+4qxOMlogFBDhVp3us+v9KROEgmandKUYf3sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pCI5GGDKthvRcPXodP9tLXFukC7FKcSz3PoBjeGG9Kkm1CaYQUydMiw5oMX1aR/vEz35780wC9uDwYENq9UUJ87fHw7wi6Qaco7h+fYQcNZxjxR7Yfq5zUEEpQ6vz9JNGGjCxO5rSxImg26dvlxbtAeHDODvcD7TJP/4iXp/qFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKiOLds6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B80DC4CEDD;
-	Tue, 25 Feb 2025 06:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740464822;
-	bh=KN2IyK+4qxOMlogFBDhVp3us+v9KROEgmandKUYf3sY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uKiOLds6ul53xwa+JklX5leCg+9+kK5Rzyxz1euYXG8EtPtqj/iLZorVW9o9kVpla
-	 bGLy3D+JzZovqtQU7LYQaLFLYiITuFjrv3PgzG6pWyea7SneoyKASPPo5lYD9F7f4B
-	 JT7MfKUnQiMqKYHBzdq7OVpjTpjgyy3Ihzpxy+vbCdxS6tu8tCJyNy4vMRUVgwGHKP
-	 dKOTfcdkZyuzzmFTqJGlFiYGXf4sEeKBKk1HpR3uwOSMBLO4Jp/ngz2pWmtb/sM1y6
-	 Gvy2np4Ir8hlSjwvK4VyQTIpoj9UnVYKKa6u8mRWdC8fHnH2CiOyk+HdfaLwo5jx8N
-	 Fr7QfeUlD3c5w==
-Date: Tue, 25 Feb 2025 07:26:58 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/39] scripts/kernel-doc: rename it to
- scripts/kernel-doc.pl
-Message-ID: <20250225072658.38e0a200@foz.lan>
-In-Reply-To: <874j0j2ahi.fsf@trenco.lwn.net>
-References: <cover.1740387599.git.mchehab+huawei@kernel.org>
-	<52d0e3a45dac63af3dfad23103cd4365fb12686c.1740387599.git.mchehab+huawei@kernel.org>
-	<874j0j2ahi.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740464880; c=relaxed/simple;
+	bh=D+T+cL7zCVF4XlmbURU0leyooQfo+gefrQFWll6WUG4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RH3vs6N0LHhG19apT5f2WK0JUh+Ol3WU7Cg94zwSeuNZud2L8h5+UXDNXm2nsBp7pV6Igcylj2tM44HxjghUK0eO8LKRqfpJ4ZnhG2AHvRIPv8OcWg2DrOtFw0JFuRbRyUItYeFMpSD2y3NuIuQpNTsxsyebRvVgO7ACcVUWFUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z26yH4sd2zCs7C;
+	Tue, 25 Feb 2025 14:24:23 +0800 (CST)
+Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id C52D61402CA;
+	Tue, 25 Feb 2025 14:27:49 +0800 (CST)
+Received: from huawei.com (10.50.165.33) by kwepemg500006.china.huawei.com
+ (7.202.181.43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Feb
+ 2025 14:27:49 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
+Subject: [PATCH v4 0/5] bugfix some driver issues
+Date: Tue, 25 Feb 2025 14:27:52 +0800
+Message-ID: <20250225062757.19692-1-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.24.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500006.china.huawei.com (7.202.181.43)
 
-Em Mon, 24 Feb 2025 16:23:21 -0700
-Jonathan Corbet <corbet@lwn.net> escreveu:
+As the test scenarios for the live migration function become
+more and more extensive. Some previously undiscovered driver
+issues were found.
+Update and fix through this patchset.
 
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> 
-> > In preparation for deprecating scripts/kernel-doc in favor of a
-> > new version written in Perl, rename it to scripts/kernel-doc.pl.
-> >
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  scripts/{kernel-doc => kernel-doc.pl} | 0
-> >  1 file changed, 0 insertions(+), 0 deletions(-)
-> >  rename scripts/{kernel-doc => kernel-doc.pl} (100%)
-> >
-> > diff --git a/scripts/kernel-doc b/scripts/kernel-doc.pl
-> > similarity index 100%
-> > rename from scripts/kernel-doc
-> > rename to scripts/kernel-doc.pl
-> > -- 
-> > 2.48.1  
-> 
-> A pretty tiny nit but ... this isn't bisectable.  I'm not sure how
-> worried we are about that, but I thought I'd point it out.
+Change v3 -> v4
+	Modify version matching scheme
 
-I wrote this in separate to make the diff clear that this patch
-just renames the script without any changes. This helps you to
-review.
+Change v2 -> v3
+	Modify the magic digital field segment
 
-When applying it, I would merge this one with the next patch, to
-prevent bisect issues.
+Change v1 -> v2
+	Add fixes line for patch comment
 
-Thanks,
-Mauro
+
+Longfang Liu (5):
+  hisi_acc_vfio_pci: fix XQE dma address error
+  hisi_acc_vfio_pci: add eq and aeq interruption restore
+  hisi_acc_vfio_pci: bugfix cache write-back issue
+  hisi_acc_vfio_pci: bugfix the problem of uninstalling driver
+  hisi_acc_vfio_pci: bugfix live migration function without VF device
+    driver
+
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 89 ++++++++++++++++---
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++-
+ 2 files changed, 88 insertions(+), 15 deletions(-)
+
+-- 
+2.24.0
+
 
