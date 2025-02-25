@@ -1,156 +1,159 @@
-Return-Path: <linux-kernel+bounces-530724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189A3A43786
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:25:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75138A43789
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95517AC3B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978A67AC899
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4EC262D0D;
-	Tue, 25 Feb 2025 08:19:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EC72638BA;
+	Tue, 25 Feb 2025 08:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ETY/Jcws";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yj/d7+Wa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0886F25EFBC;
-	Tue, 25 Feb 2025 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588325EFB8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471553; cv=none; b=skh9mqPw5o66YIeYIgNgt52Vw63o45XD1wB71YmHsq3WeCzGk+Ju+uEhXj2rkPOYRxU6/Pf6O8vH9UMmFW1DW0SwxEVCM17SIYPPXah3C+gsmQFT2GCEoTYZf5aYXNz/oiSijCD0G41OrwaZm6JbtqdRoJRSzPC0mw+3bV2hNuc=
+	t=1740471561; cv=none; b=XFd++yXkpHyxIDVK7bi5Xz/cIAlWFCf/jDHQfRZry1mLknTdfSa2sx4fnbQTyNCV8VFdETrLCZ05u31Gtw+QgQwawoJsfNAgsUrR56pqhx6Kblpl0SRRddelRhKx0EDKgrVvqM/dBdZdV7tFIboJ4ioxbHYKBC6n61WpJ7BTqV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471553; c=relaxed/simple;
-	bh=fX+vDu5tpVOloBke0+b3EbF+Ei4LRiFkovA+2DtZnbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mg8HrHN0q4Ixsbwh9xPlkXvlP61q9j1ZagXox5wFEXPgjWJ6dnr62iohZqR5ew4x8n++AfaT454aWIDd03e6qP0rpZFLlrsTEQ6o1PmFSUrDr4LR33uSzWiDy59lYdz6DIHLmvW3OyDd/6+fnXtuPvxQr8CVCBGMe+yUX9/g+Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35248C4CEDD;
-	Tue, 25 Feb 2025 08:19:10 +0000 (UTC)
-Message-ID: <34f42e07-b543-4cf7-b0a1-cf72eba70786@xs4all.nl>
-Date: Tue, 25 Feb 2025 09:19:08 +0100
+	s=arc-20240116; t=1740471561; c=relaxed/simple;
+	bh=tvnMnAyzoSvIGys78PXOVZpqioKeO9qUoVCsBob8w0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjC1OohPMuIQP4IjtFbMIU9t8fZgU7h9F9636nq8V8cJpTQqNF2eQofhfzeWJJ2TTcAkfYIqg61fyqj0/tdNISWt8bPQOqmEkwVIGhK+mZIAusHouJ74iPpuY48rw/tA0rtdAK4mzzX3r2OSVyydD0kS8mKZgEVdgzbAzap6mUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ETY/Jcws; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yj/d7+Wa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Feb 2025 09:19:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740471557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MbmGE3lh0+rEmbWN8ci1bBU7IZ/e52tY6v25JTl98TM=;
+	b=ETY/Jcws9iN3+iLmGHdsECVEC/bWqYwDEohdXe6fxA892cgHkwXS7icb1PQeuoVKI59psh
+	eoTksaQAK5djqOSCwXRwWNNogSiJ7PxurzkYnu59biBWMxXs85kaJK0SllNrYjNDGL64zo
+	GgkXWWqYVYkvGCGg6oZD6D1Pc7otPqvnI6o/z5FnMIjAJB1DCPG3OU19ROmedbt2MeTjRg
+	Zy3EJVVADe12/dsB/+ZhbjRnvLbero2PYougZQ+LOpODV60hTdoF6jGTsPWWBTmb0VWSvC
+	d2TiRTxmhCBR3TuCHtu286U6dkktd1qvIxu2IgwKzI5gTWcwyJ4UMEUFlASa5A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740471557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MbmGE3lh0+rEmbWN8ci1bBU7IZ/e52tY6v25JTl98TM=;
+	b=Yj/d7+WaDLF6XW2kHzohhFYpb9iUmVk+7t86CnWvVyGepa1QkW/dgDwRIe4OuQh5EOdLxg
+	12fyjzKLV50iXxDg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't use %pK through printk
+Message-ID: <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
+References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de>
+ <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
+ <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/12] media: cx231xx: Remove vidioc_s_ctrl callback
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20250223-queryctrl-v3-0-4292911cab6b@chromium.org>
- <20250223-queryctrl-v3-9-4292911cab6b@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250223-queryctrl-v3-9-4292911cab6b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
 
-On 23/02/2025 19:58, Ricardo Ribalda wrote:
-> The driver has been converted to the control framework in the past:
-> commit 88b6ffedd901 ("[media] cx231xx-417: convert to the control
-> framework").
+On Mon, Feb 24, 2025 at 06:54:47PM +0000, Maciej W. Rozycki wrote:
+> On Mon, 24 Feb 2025, Christophe Leroy wrote:
 > 
-> This function is never called, the core will only use the control
-> framework instead.
+> > > Restricted pointers ("%pK") are not meant to be used through printk().
+> > > It can unintentionally expose security sensitive, raw pointer values.
+> > > 
+> > > Use regular pointer formatting instead.
+> > > 
+> > > Link:
+> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023%40linutronix.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C75a852a0fef54fa43a3608dd4f263f45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638753747883689862%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aUgq6pXb1ySaQ6e%2FdyM09jfc4MNLE71Njw0%2FnCg%2F6VU%3D&reserved=0
+> > > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > 
+> > Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > 
+> > > ---
+> > >   arch/powerpc/kernel/eeh_driver.c | 2 +-
+> > >   arch/powerpc/perf/hv-24x7.c      | 8 ++++----
+> > >   2 files changed, 5 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/arch/powerpc/kernel/eeh_driver.c
+> > > b/arch/powerpc/kernel/eeh_driver.c
+> > > index
+> > > 7efe04c68f0fe3fb1c3c13d97d58e79e47cf103b..10ce6b3bd3b7c54f91544ae7f7fd3f32a51ee09a
+> > > 100644
+> > > --- a/arch/powerpc/kernel/eeh_driver.c
+> > > +++ b/arch/powerpc/kernel/eeh_driver.c
+> > > @@ -907,7 +907,7 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
+> > >   		/* FIXME: Use the same format as dump_stack() */
+> > >   		pr_err("EEH: Call Trace:\n");
+> > >   		for (i = 0; i < pe->trace_entries; i++)
+> > > -			pr_err("EEH: [%pK] %pS\n", ptrs[i], ptrs[i]);
+> > > +			pr_err("EEH: [%p] %pS\n", ptrs[i], ptrs[i]);
+> > >     		pe->trace_entries = 0;
+> > >   	}
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Tested-by: Hans Verkuil <hverkuil@xs4all.nl>
-
-Regards,
-
-	Hans
-
-> ---
->  drivers/media/usb/cx231xx/cx231xx-417.c | 15 ---------------
->  1 file changed, 15 deletions(-)
+>  But shouldn't this be using `%px' then instead?  It would be sad if all 
+> the address information from error reports such as below:
 > 
-> diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-> index a4a9781328c5..5a4b0f96cca2 100644
-> --- a/drivers/media/usb/cx231xx/cx231xx-417.c
-> +++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-> @@ -1538,20 +1538,6 @@ static int vidioc_s_std(struct file *file, void *priv, v4l2_std_id id)
->  	return 0;
->  }
->  
-> -static int vidioc_s_ctrl(struct file *file, void *priv,
-> -				struct v4l2_control *ctl)
-> -{
-> -	struct cx231xx *dev = video_drvdata(file);
-> -	struct v4l2_subdev *sd;
-> -
-> -	dprintk(3, "enter vidioc_s_ctrl()\n");
-> -	/* Update the A/V core */
-> -	v4l2_device_for_each_subdev(sd, &dev->v4l2_dev)
-> -		v4l2_s_ctrl(NULL, sd->ctrl_handler, ctl);
-> -	dprintk(3, "exit vidioc_s_ctrl()\n");
-> -	return 0;
-> -}
-> -
->  static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
->  					struct v4l2_fmtdesc *f)
->  {
-> @@ -1627,7 +1613,6 @@ static const struct v4l2_ioctl_ops mpeg_ioctl_ops = {
->  	.vidioc_enum_input	 = cx231xx_enum_input,
->  	.vidioc_g_input		 = cx231xx_g_input,
->  	.vidioc_s_input		 = cx231xx_s_input,
-> -	.vidioc_s_ctrl		 = vidioc_s_ctrl,
->  	.vidioc_g_pixelaspect	 = vidioc_g_pixelaspect,
->  	.vidioc_g_selection	 = vidioc_g_selection,
->  	.vidioc_querycap	 = cx231xx_querycap,
+> EEH: Call Trace:
+> EEH: [000000008985bc3b] __eeh_send_failure_event+0x78/0x150
+> EEH: [000000008c4c5782] eeh_dev_check_failure+0x388/0x6b0
+> EEH: [000000001fb766c1] eeh_check_failure+0x98/0x100
+> EEH: [000000004b9af8c6] dfx_port_read_long+0xb0/0x130 [defxx]
+> EEH: [00000000e23999c1] dfx_interrupt+0x80/0x8c0 [defxx]
+> EEH: [00000000c7884fb7] __handle_irq_event_percpu+0x9c/0x2f0
+> EEH: [000000008d4e9afd] handle_irq_event_percpu+0x44/0xc0
+> EEH: [000000008c39ece4] handle_irq_event+0x74/0xc0
+> EEH: [00000000d85114a9] handle_fasteoi_irq+0xd4/0x220
+> EEH: [00000000a692ef4e] generic_handle_irq+0x54/0x80
+> EEH: [00000000a6db243b] __do_irq+0x68/0x200
+> EEH: [0000000040ccff9e] call_do_irq+0x14/0x24
+> EEH: [00000000e8e9ddf7] do_IRQ+0x78/0xd0
+> EEH: [0000000031916539] replay_soft_interrupts+0x180/0x370
+> EEH: [000000001b7e5728] arch_local_irq_restore+0x48/0xc0
+> EEH: [00000000088691b7] cpuidle_enter_state+0x108/0x560
+> EEH: [00000000e6e26f30] cpuidle_enter+0x50/0x70
+> EEH: [000000007c26474c] call_cpuidle+0x4c/0x80
+> EEH: [0000000036b8a2fc] do_idle+0x360/0x3b0
+> EEH: [0000000048702083] cpu_startup_entry+0x38/0x40
+> EEH: [00000000d3b1fb8d] start_secondary+0x62c/0x660
+> EEH: [0000000041a9a815] start_secondary_prolog+0x10/0x14
 > 
+> was suddenly lost from the kernel log, the access to which unprivileged 
+> users can be denied if so desired according to the site policy.  Whereas 
+> running the kernel such as to have all output from plain `%p' exposed just 
+> to cope with this proposed change, now that seems like a security risk.
 
+Your point makes sense.
+*But* the addresses in your example are already hashed,
+as indicated by the all-zero upper 32 bits.
+By default, when kptr_restrict is set to 0, %pK behaves the same as %p.
+The same happened for a bunch of other architectures and nobody seems
+to have noticed in the past.
+The symbol-relative pointers or pointer formats designed for backtraces,
+as notes by Christophe, seem to be enough.
+
+But personally I'm also fine with using %px, as my goal is to remove the
+error-prone and confusing %pK.
+
+Thomas
 
