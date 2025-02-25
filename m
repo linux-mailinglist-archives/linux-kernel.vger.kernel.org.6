@@ -1,108 +1,65 @@
-Return-Path: <linux-kernel+bounces-530460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA32A433BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 496B2A433C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B90D177FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4413F179496
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFC02505CA;
-	Tue, 25 Feb 2025 03:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520E52505A2;
+	Tue, 25 Feb 2025 03:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sVCQfkiw"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PBEmxPNj"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D324A07F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C5824FBE8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454940; cv=none; b=KqgKUmn+MZHbGDgnF4iKHInWLzqz4AFHKoZxNxILJvccY7IVwZjP3FSvehiWDXcqqoU5NoqLQb6SIDZu3gcDDdxo2VmZ1DCcttMLS9xZVqU5NTxAHFf5+QpUdOEzqwnpDyg+AqlY24Cs2iRWrk+/G/xfela+hKlCPTGmJIoDcoY=
+	t=1740454968; cv=none; b=EjfXK9NNRJhT2IaibRUsfV1SC30cTCm8RcCR1rUjF7Rnu0OTANnbqsqfkKdo+MAsHRIeamPmy2kxketnk871ATFnU5mrhJq+20ybV5d/NTRNU+MolPYznnxvbBFen2wAfSk7AHd//tqVnUhFzL9E28w/OG4HXq4vkHRPiwtBHLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454940; c=relaxed/simple;
-	bh=9jj19+NzLuiuNb0sAf3HxNj5pndd5pUpK7+tsjaRNrk=;
+	s=arc-20240116; t=1740454968; c=relaxed/simple;
+	bh=H+RyLfFamXo1oAGjUqvJZhcQXerEfcHPpC15CMvkWnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pp8UmvfuUxIPt+knYjDMBteU29WDop1+tf2oZmJ/mW/e6mfxCJhzPB6EJn5mSi3ryhKC/y3PRxxBcHAa2KMnPfUQW+RGXDMavpnx0y8vyABDxTFR8DuYZ6IreDY173PLjE27AeuIvCu5OtNLgJXG2tXSvsM9NLTLYtQY+TNnZ3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sVCQfkiw; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220d601886fso77247965ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:42:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1740454938; x=1741059738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
-        b=sVCQfkiwm7U/0MXbJuF2xus/d6Nt0iYqQ4AXqiTcTVk22l6gG6ccQrniqq4yBWi6zN
-         c/VHLu+mOFR/+k1kxlWTpDqnqU9HZxIBoN+Fpz7zxBHrkGFud5AZRF0aEqQclkzMQLjw
-         NK0QHfRn8nGn17GAZTIZjy7wHJ7jOTtsHOa1e6beg6Mcluf/2Ml0DIQHaVx8qLenLfBB
-         17taZWkhNGgMqIYnNNTx1Ngdbg2Tm4dsS0ca8ocbh6sOxPpj0MZhbmhZC6KiPhu2hynv
-         vTFBKbX3J88WXdaW2MTNbQhwiC9v/TUryX1AzJFN5fxqR2FHohszZEEc7PuxORRM/IHA
-         L9TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740454938; x=1741059738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
-        b=qrfZKQituN2McRNCOwo6RsA1Yo3T4KwYb0N0irWZmxyslKJgCCdsQCBi3S2/JMVkhE
-         Sa3hT0u43pGflb7/gYymKp7JlRPAYQ8fWkp5wY8eEG/U/ryt6Hr3l9dF3VAqSDq5YMI0
-         kEyoBerqB+vpGxsc2gonKIKVvDjNWXn2Gl0ZoqAOknSJUbdDnh98b6PC+wU36u7D9BDM
-         e3gsHuZmSaWIppele0lSqjrOrT58GDOjSEP67zh2yF6hobkLNI8S7IlifMzs/GMaJh38
-         YyjmOFQEWLSybCP6kIrrAMQszb647+76rsjsDEsxTlyBTQ697D8RNRNOT8jOmUzcwdvu
-         DyVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiOkNLEMkwCzek02nsAvN2YNezzEYbyusdJXFa/Z8s9wAY0wPQniQ7jINCuMAO5mmXn7aErRZedQUw0jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTU3Lb+X3m3ZUkF/0/5cwQ+h8ryDLuxiIXqgqrlgKsL5GLWNV7
-	nevPh5fSpuILpEXl69NMETWwzv8GzKANAcR40Mpe9q5NaYlooF8w05CKyMgk1aBZDqB+FNVQLCk
-	w
-X-Gm-Gg: ASbGncv/3OJ67I7XbXupAdEyAKNwnoItlgzrVw4fCv/VWjnxYIL7Je4GFy07oB3Xdt6
-	DSg7NdsJ+8UQY6sl3BdWC1wrOzIQMIwh9yVZnqDv1OTRzKN+18P9X1hau/yFEtZnS6mY2ws8wwP
-	u47619dcz6GdJMZd9VA6A6o3XYIMlOv5rYw+eFpH8D8+QWn3WxPrGLLiiRRjjD2aE2z+Hd8n/qF
-	nI4mFGRKJ1Vo++IEeUDVfkwYHNP7vrPuzGlWOw/3Dsk1HRq6wXNOV+9HFgK43CxI053JvBt9/ix
-	5khFJys0HCL2lE1tkKxzx5HlfjZQ7RaBFk2cD19dYJtzIJWBqFgij4QzEqeaTFyF3pqRbtw8Qzx
-	jpQ==
-X-Google-Smtp-Source: AGHT+IFu9ZTqMmFmKgq2BwNevmgyVHSAbFB+fe6KcaqwYov8nGeJ6zB/x+emYSs02kt5foE3WTELdQ==
-X-Received: by 2002:a05:6a00:1310:b0:730:9567:c3d5 with SMTP id d2e1a72fcca58-7347909fee5mr2844300b3a.4.1740454938499;
-        Mon, 24 Feb 2025 19:42:18 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aedaa643b1asm285306a12.49.2025.02.24.19.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 19:42:17 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tmlpm-00000005cIf-1lpb;
-	Tue, 25 Feb 2025 14:42:14 +1100
-Date: Tue, 25 Feb 2025 14:42:14 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Message-ID: <Z708FirwXbRFBqGj@dread.disaster.area>
-References: <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali>
- <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
- <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
- <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
- <20250218192701.4q22uaqdyjxfp4p3@pali>
- <Z7UQHL5odYOBqAvo@dread.disaster.area>
- <20250218230643.fuc546ntkq3nnnom@pali>
- <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
- <20250221163443.GA2128534@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2CZKE9wjOzWK49GhjPsm6WHvLaCRlnkM5FoTI0JY136sDbSMNhfE52/wE5Rj77iFnstU9Swc5bIZj8rT/FohNlEOBsapscGWznb1+C2kqUaH9u5oO5KBadgHq3FgXyoxRQ7SWmSlsLAG9m2zxpw3Fo4f1SO3EFxu9LXmeRPKx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PBEmxPNj; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Feb 2025 03:42:28 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740454954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9afZ+NqTLgZXLQIzPGVnqR+tzegyYgOtZzHHZW/wF2c=;
+	b=PBEmxPNjhz6LPVmwSdF4iTOOk+6D43wZb4Gt6sdGtIY9OPHp6VF6ODgHepIUHMZSwMjckq
+	oDo8txB3t0S9MWzIhPks8UV+zIpgHCvS+pYVtIh+YTJAEoQ8/PlEOQXou9bLuAYSY6l3fo
+	lfq3v0ddWuZ58ugt1znbO82wQRoMldU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
+ hw_stat_device_show()
+Message-ID: <Z708JNt6-vPIuDBm@google.com>
+References: <20250221020555.4090014-1-roman.gushchin@linux.dev>
+ <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z7gARTF0mpbOj7gN@google.com>
+ <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250221174347.GA314593@nvidia.com>
+ <CY8PR12MB7195A82F6CE17D9BDC674D72DCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250224151127.GT50639@nvidia.com>
+ <CY8PR12MB7195E91917FD5329932FA3FCDCC02@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z7z_NcGWIr3_Dxtt@google.com>
+ <20250224233004.GD520155@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,150 +68,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221163443.GA2128534@mit.edu>
+In-Reply-To: <20250224233004.GD520155@nvidia.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 21, 2025 at 11:34:43AM -0500, Theodore Ts'o wrote:
-> I think a few people were talking past each other, because there are two
-> fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
-> is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
-
-I don't think anyone has been confusing the two - the entire
-discussion has been about fsx_xflags and the struct fsxattr...
-
-> started getting used by many other file systems, starting with
-> resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
-> that flags word were both the ioctl ABI and the on-disk encoding, and
-> because we were now allowing multiple file systems to allocate bits,
-> and we needed to avoid stepping on each other (for example since btrfs
-> started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
-> at least not for a publically exported flag).
+On Mon, Feb 24, 2025 at 07:30:04PM -0400, Jason Gunthorpe wrote:
+> On Mon, Feb 24, 2025 at 11:22:29PM +0000, Roman Gushchin wrote:
+> > On Mon, Feb 24, 2025 at 03:16:46PM +0000, Parav Pandit wrote:
+> > > 
+> > > 
+> > > > From: Jason Gunthorpe <jgg@nvidia.com>
+> > > > Sent: Monday, February 24, 2025 8:41 PM
+> > > > 
+> > > > On Sat, Feb 22, 2025 at 06:34:21PM +0000, Parav Pandit wrote:
+> > > > > ib_setup_device_attrs() should be merged to ib_setup_port_attrs() by
+> > > > > renaming ib_setup_port_attrs() to be generic.  To utilize the group
+> > > > > initialization ib_setup_port_attrs() needs to move up before
+> > > > > device_add().
+> > > > 
+> > > > It needs more than that, somehow you have to maintain two groups list or
+> > > > somehow remove the coredev->dev.groups assignment..
+> > > > 
+> > > I was thinking that if both device and port attr setup is done in
+> > > same function, there is knowledge of is_full_dev that can be used
+> > > for device level hw_stats setup. (similar to how its done at port
+> > > level).
+> > 
+> > Given that there is a bit of discussion on how to move forward with this,
+> > can we please merge the trivial fix in the mean time? (Just sent out v2 with
+> > the fixed commit log).
 > 
-> So we started running out of space in the FS_FLAG_*_FL namespace, and
-> that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
-
-No, that is most certainly not how this API came about. 
-
-The FS_IOC_[GS]ETXATTR ioctls were first implement on IRIX close on
-30 years ago. They were ported to Linux with the XFS linux port over
-2 decades ago. Indeed, we've been using them for xfsdump/xfs_restore
-since before XFS was ported to linux.
-
-They got lifted to the VFS back in 2016 so that ext4 could use the
-interface for getting/setting project IDs on files. This was done so
-that existing userspace functionality for setting up
-project/directory quotas on XFS could also be used on ext4.
-
-> FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
-> positions, by my count.
+> Well, the issue now is the ABI break
 > 
-> As far as the arguments about "proper interface design", as far as
-> Linux is concerned, backwards compatibility trumps "we should have
-> done if it differently".  The one and only guarantee that we have that
-> FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
+> If the right answer is to remove the sysfs entirely then it doesn't
+> make sense to make it work in the stable and LTS kernels since that
+> would create users. Currently it is fully broken so there are no
+> users. Can we say that so certainly after it is fixed?
 
-That's a somewhat naive understanding of the overall API. The struct
-fsxattr information is also directly exported to userspace via the
-XFS blukstat ioctls. i.e. extent size hints, fsx_xflags, project
-IDs, etc are all exported to userspace via multiple ioctl
-interfaces.
+It's a good point.
 
-This is all used by xfsdump/xfs_restore to be able to back up and
-restore the inode state that is exposed/controlled by the
-GET/SETXATTR interfaces.
+Ok, then we need something like this (obviously, coded more nicely):
 
-> The use case of "what if a backup program wants to backup the flags
-> and restore on a different file system" is one that hasn't been
-> considered, and I don't think any backup programs do it today.
-
-Wrong. As I've already said: we have been doing exactly this for 20+
-years with xfsdump/restore.
-
-xfsdump uses the bulkstat version of the GET interface, whilst
-restore uses the FS_IOC_SETXATTR interface.
-
-> For
-> that matter, some of the flags, such as the NODUMP flag, are designed
-> to be instructions to a dump/restore system, and not really one that
-> *should* be backed up.
-
-Yes. xfsdump sees this in the bulkstat flags field for the inode and
-then omits the inode from the dump.
-
-Further, xfs_fsr (the online file defragmenter for XFS) uses
-bulkstat and looks at the FS_XFLAGS returned from bulkstat for each
-inode it scans.
-
-> Again, the only semantic that was guaranteed
-> is GETXATTR or GETXATTR followed by SETXATTR.
-
-For making a single delta state change, yes.
-
-For the dump/restore case, calling SETXATTR on a newly created file
-with a preconstructed struct fsxattr state retreived at dump time is
-also supported.
-
-This is not a general use case - it will destroy any existing state
-that file was created with (e.g. override admin inheritence
-settings) by overwriting it with the state from the backup.
-
-It should also be noted that xfs_restore does this in two SETXATTR
-calls, not one. i.e. it splits the set operation into a
-pre-data restore SETXATTR, and one post-data restore SETXATTR.
-
-Why?
-
-Because stuff like extent size hints and realtime state needs to be
-restored before any data is written whilst others can only be set
-after the data has been written because they would otherwise prevent
-data restoration:
-
-/* extended inode flags that can only be set after all data
- * has been restored to a file.
- */
-#define POST_DATA_XFLAGS        (XFS_XFLAG_IMMUTABLE |          \
-                                  XFS_XFLAG_APPEND |            \
-                                  XFS_XFLAG_SYNC)
-
-Yup, you can't restore data to the file if it has already been
-marked as immutable....
-
-IOWs, any changes to the flag space also needs to be compatible with
-the XFS bulkstat shadowing of the fsxattr fields+flags and the
-existing usage of these APIs by xfsdump, xfs_restore and xfs_fsr.
-
-> We can define some new interface for return what xflags are supported
-> by a particular file system.
-
-Why do we even care?
-
-On the get side, it just doesn't matter - if the flag isn't set, it
-either is not active or not supported. Either way, it doesn't
-matter if there's a "this is supported mask".
-
-On the set side, adding a mask isn't going to change historic
-behaviour: existing applications will ignore the new mask because
-they haven't been coded to understand it. And vice versa, an old
-kernel will ignore the feature mask if the app uses it because it
-ignores unknown flags/fields.
-
-IOWs, adding a feature mask doesn't solve any of the problems
-related to forwards/backwards compatibility of new features, and so
-we are back to needing to use the API as a GET/SET pair where the
-GET sets all the known state correctly such that a SET operation
-will either do nothing, change the state or return an error because
-an invalid combination of known parameters was passed.
-
-> I suppose the field could double as the bitmask field when
-> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
-> set of semantics.  If someone really wants to do that, I wouldn't
-> really complain, but then what we would actually call the field
-> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
-
-That effectively prevents the existing dump/restore usage of the
-API.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 0ded91f056f3..6998907fc779 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -956,6 +956,7 @@ static int add_one_compat_dev(struct ib_device *device,
+        ret = device_add(&cdev->dev);
+        if (ret)
+                goto add_err;
++       device->groups[2] = NULL;
+        ret = ib_setup_port_attrs(cdev);
+        if (ret)
+                goto port_err;
 
