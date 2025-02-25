@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-531187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07D3A43D54
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEC7A43D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BBBB3BBE93
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610723B31FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C206267B19;
-	Tue, 25 Feb 2025 11:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0D226772F;
+	Tue, 25 Feb 2025 11:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSPvHeia"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1JdV71WP"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003AF206F38;
-	Tue, 25 Feb 2025 11:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156B02676FD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482048; cv=none; b=QpeSvpplcW3TUYkxp+CesIaGtYFWAktO5FQ+zMmZDiK4gCcno/5wSNZxPRWGyfoeaWW+TqeG8IOM1djMGawvNqcodJaD3j6cus2XrnYJaPSx1KGcQtWkkY7HtGkoBmHgwsHJFo/WIiGkBfcfatKFmBF89h4mkElTaouI3oZe4IA=
+	t=1740482110; cv=none; b=kB01N1VWGO912cvzKkrld7VMwr4VSkqd8IpKS6Mb7ZijP1JqnOc/wEKGSr8CHtBwYYle1k0LEaTd7Rk1NjXG/UuOgqmppvSZh+fCy2FrsOCq2Mquas6uwDZbJISu7zMPE644d9uP7f+L3Qkufu8rJsdjIjIGxzP3T2cq3AiZRko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482048; c=relaxed/simple;
-	bh=DANjY5TtCCrp11jRRZ29qp0AepL6LXWb2OAgWasVe/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNIQ5Rdjyex16003/01UE2RBdmqoW2ZMosohyyGhm3Ik/lh44RnZS1mgYm+QmwOSQfmq7/r9a9cxitUhnDyBUDZHUHodZ+h7A4rzSYxLWTKNG+cUVvEkRtcEviESafok7lEnRqH10bjIcizYaQyr2myeFCSlsqSoKir/O1JriFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSPvHeia; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452ca02bdbso5109978e87.1;
-        Tue, 25 Feb 2025 03:14:06 -0800 (PST)
+	s=arc-20240116; t=1740482110; c=relaxed/simple;
+	bh=ObW0ySAp2NYqfEvC+jiKAOzw8shS/kdjO9OS0VOsQjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kiQBrIZgKhOjEGWKdkAQy8bXL9clSEhsEWcPeaA2oxOMsnJlMotk3wSEURJI4iQi3W1KfsaWgdDAMrhACO3fT7v7HHwFdBF87OZKf56HQxke9obfsH3kVJMrRjw89TsXB/DGr6yFANUXxAwnFNBI32yB4DWtbQ6DgI5cK1r0aUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1JdV71WP; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471f1dd5b80so170881cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:15:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740482045; x=1741086845; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rgo3Wa66A+J6hx1qOkgMYaAB9PtHBgkCHBMzDDLog5w=;
-        b=SSPvHeiaReRunJYFmInDFwnMo8p1XsXRsFmScVE6EptBkjfwZ7+G191lyy33v7uyJ+
-         JSmjLneiYem0+WKRAVYkVYcJUQWdpNX/F08pKLnyTImx3V8LNVdsZ0cKFzRpusGJkZsr
-         E+PKYxGp6khhnJy+UUnmyrp1E4EgHqqu531GncCVdvDiu5MxRw3HE3VdzEDNqczoY7a0
-         dKqhFQD9tkV9sluG9DSVy6Km7Sr/UqH4foUD5GUBLDfLmPoWONFPHUVGLrRURljn9vxl
-         /GTZpeakr9jmtpQzVCpag6bfEMR3h9tsEnOIRxD1QBC4uw5LbWymTK/W2TDhpkWVqjWS
-         8GHQ==
+        d=google.com; s=20230601; t=1740482108; x=1741086908; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xc5yW/4rgg5KqhOxif21KGnv89ZFaMc+1AokhRRA/h0=;
+        b=1JdV71WPJItk2UzfZN5cVoCUbpJYLgUscOOOUnTbvtLEbbaIf0TMz7pBCZOcsfjphT
+         p/XRQyd+GOSSAU8KMVwkNltZpktjbow5gQkcv/9U5LNjcMRvBDrxgTE/Y2lgM/Ri4ioc
+         9Q/AILPOLcqMKXI6n8AdyWr1XuWtsUaS/l3KVhmvbmzwiggMff6clrfi5xVLLBsJLbbI
+         5L8HEC+AKVeVGG8Tnk03O7TFq5upTyHdsIROkhrCEQhwNJQN22CkfPS2i9CmhSkABBRI
+         yLBfK6FXJr9GGU7wxSG6tiN18PWyVzvw+W4VyaJSAJs5s5B0hgjkdozq1izK0axayq9a
+         03AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740482045; x=1741086845;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rgo3Wa66A+J6hx1qOkgMYaAB9PtHBgkCHBMzDDLog5w=;
-        b=kHGf4C9ZdvhyW8tPiUjP/VH65lxmWPlaAEg//Z9h/ukOO1ibJ9ZxXVxh+Na9snsgYQ
-         s2G3C6kJT/qZXx+W4oJcLoGnL8BVO+czyaf7zEgJHF/rsOyf4UYbF81IX8PcDW7mT302
-         DFhkG8KYmyT4Szl9PG1gcyFfdMqYWsdyPo/ut6vwn20wwI8/C3PxP3NyPlP0gdUyn5Fp
-         QYSCdTh0nS3KyMHZBCP9hLxkg5htg1W8CYC9lyBO4VSYHIKgvQuuFjcVAsjTVmydSHoh
-         HtAIY+EaPYFUzE25fOlrvMuvPJg+nBfct6xmqB9zH5WUd9LmFOxmyE/HTHycafjjRoLK
-         l/hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGR/VKNFpN0ypPfUvch8LLEzbZliHUAkJOImhaOYR9zQH01+rHPCFPy6qbkCfB6jX4yLP1/rvtKhR5@vger.kernel.org, AJvYcCUzbbQeYlh9hR0xAMeoHSV+BV4t7/5aQUwI9mEjyqdAw7LlWdiUpYo4muUBLO1BkHEr7Da8wq55eBOrz+k=@vger.kernel.org, AJvYcCVjG0nbL7JGVKywZjYqNaOaeEKbPZVWeyHd/ywTQvNJMRIqdEQ1vMxHW6+qpkADj8IJWr5jtCRbGcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa/vmvgZwIBeb9Rr8McZZjys4Os98o7RuEly8KiSfLvVn+3Plc
-	DCoQqummLVKoo/jSa3cCNxh/bSw8O5n7IA5vSMpe/rf572Orx963
-X-Gm-Gg: ASbGncu2XyXl24LVXVjlvplGikAoulSiFbIQGQxZIZDSlF8/j2aydxApBxYfMosCP9y
-	wuQ7OZTtxMMZTXmsPgWXJ+5QeJPwP0AMOOwP5HZmqwHJ18x50KhIgh2zOxduO6GgCKLqeiRiQR7
-	FznxfZp22d+TPpT/IHfCellwFJY2oWaLrQCxYiwJLYlrNlGLzXmnMn1UJbjnlEESZOeHxIuE48U
-	JRUWCyv8x05vG23VIpZENro4OyQELaHj7Ym63MKbp+NBqSJdEUw1RU06pftuKlsiUS/y82e62sW
-	kQSevOUXLxq44ZW/vHTVkW3+f/hLMt0Bxwf34hw=
-X-Google-Smtp-Source: AGHT+IH87webjBqQp4/vTTkCKu3naPzYWwEogj7hx0iJcKdAdu9PM46iA4Pc1YwDJQyPV713p/gb8g==
-X-Received: by 2002:a05:6512:3e13:b0:545:e19:ba1c with SMTP id 2adb3069b0e04-548510d272cmr1073827e87.19.1740482044737;
-        Tue, 25 Feb 2025 03:14:04 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5487950a4besm86332e87.124.2025.02.25.03.14.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 03:14:04 -0800 (PST)
-Message-ID: <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
-Date: Tue, 25 Feb 2025 13:14:03 +0200
+        d=1e100.net; s=20230601; t=1740482108; x=1741086908;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xc5yW/4rgg5KqhOxif21KGnv89ZFaMc+1AokhRRA/h0=;
+        b=qwSf3Auw20AAOw1vfBs9sPZg1Dn3ICcSfnRZCvnA3PLyVMeSbpU1QgKLEmxjYxNFK7
+         d/4Wrunr1yMpEOVOkOz0mp8ha5P6bPlSgK+0BD7NHJJxThCXDqdKhhKBueXvRsvkbJrW
+         sEcjjvPVXA/zUf5Osc/A04NuM9qg2zEdntVHaMMSlrCAuOEYw3+Vf2JSKExm2n1HkitI
+         MBVKHY3+/G9dCBgC8ycQIzGrSd9LEqk4v/wqA5yJ32UNGaQ8yeUELZX3o9RhalM+zBXc
+         U8fjhY1WijPI9O8nujtvKu9lReZoKJJ2ppAw+lNZ+itS6hX+s4FMXcnuOEHsHQJ3WTtO
+         375g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlCchs8FTeFukfdwnUrCjvVpXbCNPY1nJXJgB0u569XOrytptvu8oy84/OlH1mK7YMJJzm73Pb5xOIpSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6qE9HOFjmc8nY3T1N65KTc31GEZ772p1dX1XnIAYPLQrCfilx
+	5p6V4wjjeRYRLMoEQU5OJtPsVTd5gVA4b2JBIPcUBCav86iw6KnZJLIv2fQ+P/MShZ1AQH6ibFc
+	AczmNIqY0nXCgPHRblktr192RqnVOv+jVLLNO
+X-Gm-Gg: ASbGnctiH9V20VYQFVWIfG1VKcTbXhaKhTXh0m6vZ+Las6PyY1wFbb7RJvWbXPNZ4Ep
+	8QhKaxodbrBqe1r4N9lENRkSdSfBBCW+Rqg5wBnfUwzYc+hR00QrioM12eZ0VhhEukZdFe1XAlA
+	kKXkKBBRkLcy4pDkqzJNYxsUJuvNeU9iLfsPaK7Q==
+X-Google-Smtp-Source: AGHT+IF293xeVyj4/wAp5kXWhSXHvlqZ+hGOq5jwSu7o+tmHkKY22JHmZitJTtCcPuuUlKFOv+HkABOvq5lh90WmCTc=
+X-Received: by 2002:ac8:7c48:0:b0:471:fb3a:5bfb with SMTP id
+ d75a77b69052e-47376e5de43mr4324371cf.1.1740482107770; Tue, 25 Feb 2025
+ 03:15:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>,
- David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
+ <20250224-page-alloc-kunit-v1-4-d337bb440889@google.com> <Z7y5vK1M5IOizIWR@google.com>
+In-Reply-To: <Z7y5vK1M5IOizIWR@google.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Tue, 25 Feb 2025 12:14:56 +0100
+X-Gm-Features: AQ5f1Jr2V__EQDgXK12d3od3hg4EIBPZN4EogawQjt_yGI4eSiDAQDJGxAHmIjU
+Message-ID: <CA+i-1C1KL9uJALuU=ZND0U0HQoqihzyH6HoZhdKmmTQP25qDuw@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/4] mm/page_alloc_test: Add smoke-test for page allocation
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/02/2025 01:21, Sebastian Reichel wrote:
-> This removes .of_node from 'struct power_supply', since there
-> is already a copy in .dev.of_node and there is no need to have
-> two copies.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->   drivers/power/supply/power_supply_core.c | 17 ++++++++---------
->   include/linux/power_supply.h             |  1 -
->   2 files changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> index d0bb52a7a0367a8e07787be211691cad14a41a54..11030035da6f121ca76bebf800c06cfd5db57578 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -200,11 +200,11 @@ static int __power_supply_populate_supplied_from(struct power_supply *epsy,
->   	int i = 0;
->   
->   	do {
-> -		np = of_parse_phandle(psy->of_node, "power-supplies", i++);
-> +		np = of_parse_phandle(psy->dev.of_node, "power-supplies", i++);
->   		if (!np)
->   			break;
->   
-> -		if (np == epsy->of_node) {
-> +		if (np == epsy->dev.of_node) {
->   			dev_dbg(&psy->dev, "%s: Found supply : %s\n",
->   				psy->desc->name, epsy->desc->name);
->   			psy->supplied_from[i-1] = (char *)epsy->desc->name;
-> @@ -235,7 +235,7 @@ static int  __power_supply_find_supply_from_node(struct power_supply *epsy,
->   	struct device_node *np = data;
->   
->   	/* returning non-zero breaks out of power_supply_for_each_psy loop */
-> -	if (epsy->of_node == np)
-> +	if (epsy->dev.of_node == np)
->   		return 1;
->   
->   	return 0;
-> @@ -270,13 +270,13 @@ static int power_supply_check_supplies(struct power_supply *psy)
->   		return 0;
->   
->   	/* No device node found, nothing to do */
-> -	if (!psy->of_node)
-> +	if (!psy->dev.of_node)
->   		return 0;
->   
->   	do {
->   		int ret;
->   
-> -		np = of_parse_phandle(psy->of_node, "power-supplies", cnt++);
-> +		np = of_parse_phandle(psy->dev.of_node, "power-supplies", cnt++);
->   		if (!np)
->   			break;
->   
-> @@ -606,8 +606,8 @@ int power_supply_get_battery_info(struct power_supply *psy,
->   	const __be32 *list;
->   	u32 min_max[2];
->   
-> -	if (psy->of_node) {
-> -		battery_np = of_parse_phandle(psy->of_node, "monitored-battery", 0);
-> +	if (psy->dev.of_node) {
-> +		battery_np = of_parse_phandle(psy->dev.of_node, "monitored-battery", 0);
->   		if (!battery_np)
->   			return -ENODEV;
+On Mon, 24 Feb 2025 at 19:26, Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
+> > +static void action_nodemask_free(void *ctx)
+> > +{
+> > +     NODEMASK_FREE(ctx);
+> > +}
+> > +
+> > +/*
+> > + * Call __alloc_pages_noprof with a nodemask containing only the nid.
+> > + *
+> > + * Never returns NULL.
+> > + */
+> > +static inline struct page *alloc_pages_force_nid(struct kunit *test,
+> > +                                              gfp_t gfp, int order, int nid)
+> > +{
+> > +     NODEMASK_ALLOC(nodemask_t, nodemask, GFP_KERNEL);
+>
+> For the sake of the test can't we just put the nodemask on the stack?
 
-This reminded me of a change I once did to power_supply - but maybe 
-never got it further than RFC stage. Anyways, do you think it would be 
-possible to decouple the battery info and struct power_suppply (while at 
-it)?
+Hm, I think whether or not it's test code is irrelevant to whether we
+can put it on the stack. Presumably the nodemask code is written as it
+is because nodemasks can be massive, so we can overflow the stack here
+just as easily and confusingly as anywhere else.
 
-I believe that the chargers and especially fuel-gauges which are 
-designed to operate with different batteries (and which get battery 
-details using static battery nodes), would like to get the battery info 
-_before_ registering the power_supply (to avoid sending bogus values 
-while operating on defaults, before the battery info is read and before 
-things are set accordingly).
+(I think we're not in a very deep stack here right now but KUnit could
+easily change that).
 
-I know this may be a bit much to ask, but I believe it'd be an improvement.
+FWIW I think when using the mm/.kunitconfig provided in this series it
+does actually go on the stack.
 
-Other than that, looks good to me.
+> > +     struct page *page;
+> > +
+> > +     KUNIT_ASSERT_NOT_NULL(test, nodemask);
+> > +     kunit_add_action(test, action_nodemask_free, &nodemask);
+>
+> Why aren't we just freeing the nodemask after using it, before we make
+> any assertions?
 
->   
-> @@ -1544,9 +1544,8 @@ __power_supply_register(struct device *parent,
->   	if (cfg) {
->   		dev->groups = cfg->attr_grp;
->   		psy->drv_data = cfg->drv_data;
-> -		psy->of_node =
-> +		dev->of_node =
->   			cfg->fwnode ? to_of_node(cfg->fwnode) : cfg->of_node;
-> -		dev->of_node = psy->of_node;
->   		psy->supplied_to = cfg->supplied_to;
->   		psy->num_supplicants = cfg->num_supplicants;
->   	}
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index 6ed53b292162469d7b357734d5589bff18a201d0..975ccab56597ef579ef0c9dc913dcb0a26b5855a 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -316,7 +316,6 @@ struct power_supply {
->   
->   	char **supplied_from;
->   	size_t num_supplies;
-> -	struct device_node *of_node;
->   
->   	/* Driver private data */
->   	void *drv_data;
-> 
+I guess that's just a philosophical question, I usually default to
+writing KUnit code such that you can throw an assertion in ~anywhere
+and things just work.
 
+But, I'm not passionate about it, I would also be fine with freeing it
+directly (it would certainly save quite a few lines of code).
+
+> > +/* Generate test cases as the cross product of orders and alloc_fresh_gfps.  */
+> > +static const void *alloc_fresh_gen_params(const void *prev, char *desc)
+> > +{
+> > +     /* Buffer to avoid allocations. */
+> > +     static struct alloc_fresh_test_case tc;
+> > +
+> > +     if (!prev) {
+> > +             /* First call */
+> > +             tc.order = 0;
+> > +             tc.gfp_idx = 0;
+> > +             return &tc;
+> > +     }
+>
+> We need to set 'tc' here to whatever 'prev' is pointing at, right?
+
+prev always points at tc (or is NULL). Sounds like it needs a comment
+to that effect!
+
+(Note tc is static).
+
+Ack to everything else, thanks for the review!
 
