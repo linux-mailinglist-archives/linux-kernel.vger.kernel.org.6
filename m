@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-530864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8638A43976
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFE8A43982
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:32:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A9A16B012
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 471CE16DE78
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F625EFA2;
-	Tue, 25 Feb 2025 09:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295832638BA;
+	Tue, 25 Feb 2025 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuV7oYqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qtzOxqD9"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6261A1FE465;
-	Tue, 25 Feb 2025 09:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5602638A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475757; cv=none; b=C/omyI7rO4LU4cs7vmptyTc7AVH+EnGIL3qAsSzjgNhbIw7rHPVsxn9dt8CX7A1IoG8tpxq9YiYPHjj3v7AWEj/+giUhRYyxUQ8N2KHyMu0y84gtGT9qbPEMtVHyc+D1TLLgWT3D+T1uxV0q+soV+gLTZwDKEkfkG23k16ymJiQ=
+	t=1740475876; cv=none; b=YLH4WhBy3+ggwpou5nUhqjjZ/TiPfX1p6yPmN4d2UkTFi5KttND6JO/Q7KdoJZ1JE02u25QqsjNs8wXgRIS9ObfMWmO+7tJarfvFZ4spNpLsxgjtDdCHIqzvUDiafEPuDImkwJ0TEG7aa8Aqiz0XseecmRGb0Th7ZIuxybei0IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475757; c=relaxed/simple;
-	bh=5QI9uHnbKrXRYGECovSmXyJvXB7auSAuhh+3htNO7DE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDURvx4YapLnwIQL6TFOGnsXK61nj9qlBbjyQXm1HwJSc474sk3sOeQxR26I+LTsoAp5nrNJhVQFNk06w/h1meLTWXn+yiBm/00oX38x/3id5IHU0CFa4WFfeuCJU8M0htY0xQw9Cv0qhJYtQvguqk5zAfwTs4x5Sl9kYt/Vn2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuV7oYqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BD9C4CEEF;
-	Tue, 25 Feb 2025 09:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740475755;
-	bh=5QI9uHnbKrXRYGECovSmXyJvXB7auSAuhh+3htNO7DE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nuV7oYqOqcFYUbXxbNP3rUkXVAa8592p3HxdihLdC5kXmWBKKZR3WqKQQendCNaV/
-	 oENz2v5D7A9JKyUOf1uodJmLm1dwCSf8wP9Z8AP/kNQM8sDn99CZQi/ZJHDXpPb4Xb
-	 d3PsLgO8xvfl7+lTWEKmbzenhWL8/jbbFC1E00x79diKhjTnwZcyo/4ktVzkaBvZ/j
-	 OMGrPyQUPqBO+cQUWzk+7fFfEfSclBkWkxYrXRneYbAli5NQXMgr0v5DJ6YHwiQglV
-	 QNPmFR5o+111CjBJYMXitgSeAeKXxONTPS5aQt0+JCNGA5357tdKC38UIqcBMLjBoR
-	 GEGMFWKIGIpXg==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abb86beea8cso959290866b.1;
-        Tue, 25 Feb 2025 01:29:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXYPEVk66PhUZVdwApiy3UVnHSOYjS268gTKgw0zh/mjThmzeKnHl8S5nvFdhe3lZINUCAGrf1v@vger.kernel.org, AJvYcCXxRAHKK89uLKN9KiBRvoSenXcOJSLUsbaxhEPclp0ZimY8u1cXZHhu2NLVB8SVHNeTeyoLcIAyiwqsJ5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiQPTe88Rl1decGRjaLejg3bw34lPOGp6t4i+eFmu0n2kF6GoO
-	Gav2x6UIHSI5DXu2YxJa+sZKPSDIoiKQvDswke0BfqbwwhaS4kavHsTbGD2A1fiLG9gt2buVfPz
-	THSuTqsbPQansyWa09hygGXR29Gc=
-X-Google-Smtp-Source: AGHT+IEOq0At6zPT+OpiunH+4BSketgcPR98DlixUCXVccfuLEsVE/TVTjLEJE+pZxuYrZTPiI+ADoAS4DNWkmoERiQ=
-X-Received: by 2002:a17:907:9406:b0:aaf:c259:7f6 with SMTP id
- a640c23a62f3a-abc09d35ecfmr1620078166b.45.1740475754321; Tue, 25 Feb 2025
- 01:29:14 -0800 (PST)
+	s=arc-20240116; t=1740475876; c=relaxed/simple;
+	bh=gwp2fuJXCL/bjNIarZEPkgmjBf8NLWIelOI9giPWV8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B3cCY2MmWrsrsK9LBcOh6Xka0TfcD6pUcaomlbvRQJmUL2AA0e4YRzPJGcPHeEzKkkRDsnjnK6vjPAp9cKjaZ2Zp9HZzkQTlagWAQWDbnwvrIGkpqJ9sgIatInfoEtKAzF0xoNoSQvfINndmtayP36oJLUEBO23ZjB1rl1qaEB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qtzOxqD9; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740475861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=isPQgwurSdwU4T9ma6rP9Qtz5aT2veuB9Ji0NyBAn4o=;
+	b=qtzOxqD9Ri5jjb902pbFYhzZ6EzVrV12wtzG47jsrGdYj7Sg2QCW9dKlkagI5EIv5pRgIL
+	0g/P6xRW1qyAchXbFS0h7FAm1hB6JpPmn0JKgQfczdufF5Wi8ps59ZhbGhrCUjhudYqvCe
+	xpdRdnUOV+AyDBIb+ndHJknC6QocUWk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: Replace deprecated strncpy() with strscpy_pad()
+Date: Tue, 25 Feb 2025 10:29:49 +0100
+Message-ID: <20250225092949.287300-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224135321.36603-2-phasta@kernel.org> <20250224135321.36603-4-phasta@kernel.org>
-In-Reply-To: <20250224135321.36603-4-phasta@kernel.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 25 Feb 2025 17:29:01 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4Eu3VNO615wMdMT2bbeSurACwyR9uJmSGHErdyVu950Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JpaEC4JuCS1MMY9EZYHmlHgtkdETZGtwE5y_2Q9kz7yTyHXXJLQzlO9aME
-Message-ID: <CAAhV-H4Eu3VNO615wMdMT2bbeSurACwyR9uJmSGHErdyVu950Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 2/4] stmmac: loongson: Remove surplus loop
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu <guyinggang@loongson.cn>, 
-	Feiyang Chen <chenfeiyang@loongson.cn>, Philipp Stanner <pstanner@redhat.com>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Feb 24, 2025 at 9:53=E2=80=AFPM Philipp Stanner <phasta@kernel.org>=
- wrote:
->
-> loongson_dwmac_probe() contains a loop which doesn't have an effect,
-> because it tries to call pcim_iomap_regions() with the same parameters
-> several times. The break statement at the loop's end furthermore ensures
-> that the loop only runs once anyways.
->
-> Remove the surplus loop.
->
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+strncpy() is deprecated for NUL-terminated destination buffers. Use
+strscpy_pad() instead and don't zero-initialize the param array.
 
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drive=
-rs/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> index 73a6715a93e6..e3cacd085b3f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> @@ -554,14 +554,9 @@ static int loongson_dwmac_probe(struct pci_dev *pdev=
-, const struct pci_device_id
->         pci_set_master(pdev);
->
->         /* Get the base address of device */
-> -       for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> -               if (pci_resource_len(pdev, i) =3D=3D 0)
-> -                       continue;
-> -               ret =3D pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
-> -               if (ret)
-> -                       goto err_disable_device;
-> -               break;
-> -       }
-> +       ret =3D pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
-> +       if (ret)
-> +               goto err_disable_device;
->
->         memset(&res, 0, sizeof(res));
->         res.addr =3D pcim_iomap_table(pdev)[0];
-> --
-> 2.48.1
->
+Compile-tested only.
+
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/btrfs/sysfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 53b846d99ece..b941fb37776d 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -1330,13 +1330,13 @@ MODULE_PARM_DESC(read_policy,
+ 
+ int btrfs_read_policy_to_enum(const char *str, s64 *value_ret)
+ {
+-	char param[32] = { 0 };
++	char param[32];
+ 	char __maybe_unused *value_str;
+ 
+ 	if (!str || strlen(str) == 0)
+ 		return 0;
+ 
+-	strncpy(param, str, sizeof(param) - 1);
++	strscpy_pad(param, str);
+ 
+ #ifdef CONFIG_BTRFS_EXPERIMENTAL
+ 	/* Separate value from input in policy:value format. */
+-- 
+2.48.1
+
 
