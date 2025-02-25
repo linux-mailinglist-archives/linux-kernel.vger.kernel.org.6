@@ -1,130 +1,187 @@
-Return-Path: <linux-kernel+bounces-532141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35267A44935
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:59:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3912EA44978
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DCB18863F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A063A7B8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F7519D886;
-	Tue, 25 Feb 2025 17:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7DF19DF81;
+	Tue, 25 Feb 2025 17:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWkp5SfV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1DRvSYv"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2DC156F3A;
-	Tue, 25 Feb 2025 17:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B1036D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506361; cv=none; b=BT0sky72j8uUMuILMvjQYsVz/UCJ6oxHjrxf5VRw6xpZCGWiaWANJwPgIHo29Satn512IrmWUy08ZkSJs4triGK+9TIfY12HlD1k6lFCCVdSiWEcIacIVtxttN5vme0Vh6vgv8TE0FTAodtTrSMK2yNLKfZ/2UxauYetA5rrlpQ=
+	t=1740506384; cv=none; b=MxHXB6XmdusmbyjtBhKiAOwRIDsyty/I+VxTBnbvD9/G/zJ02J4DvfsjTgaVdbkmuPwXr69OicJxbGnDvMsAn5oeSCdwmLRuBlE+rCoreKfOq7HdPuLFuk7LBiO3if3WtWy+TcfIZLZKqdpr+pwY0HrEEIwB8yKz0fnL1QNd9mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506361; c=relaxed/simple;
-	bh=yBULEnieTf/nQ04VsVNsRxbU8OeMLTkbgocf2i5ZY0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCSo91Sn31P2jd5PRUDo4mi6INFyj9XuVxXMkHCUOY/ACv6AQjNAbxvPJhNqQM6yiFfTxpl0p9GA90SgiSPP9aLjrXS712kULwCsAaIxNW2PQckeaGAjUJCq7zuCvNvgiGBACzxYb7FVl2MAVBmO4XjwbVZolRv/DLfAlsP6LhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWkp5SfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C258C4CEE2;
-	Tue, 25 Feb 2025 17:59:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740506361;
-	bh=yBULEnieTf/nQ04VsVNsRxbU8OeMLTkbgocf2i5ZY0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWkp5SfVATCU6JXaCE4TayPuVL+eCHSYSxbJ3H1xQhC0vAS40u98f1WrKObFiVBgh
-	 yqVqMjhZ/YO18OlGgUp0l5NDa/hkbIklidIn82bUP2vJTvJp6yw+73Dh7bHNfqYjHN
-	 +ZQr73CANA2OvIk1XXw4dx2S4aewx69rt6eH3fnc9wALnp3bpQewmBdza28ubI06dG
-	 1dYTu+HfjsJ0i+/DbEsJBcrK1PTDJ/jtaWtpE34VPnAVeQ6EtNFG1BJ+KBYu3uGvnt
-	 MW7NV3+F74bLsP96vaa9QMsK8x6t2brZChzW3h0j/0Us4zQdbR1ruz1320aM+dyxlC
-	 EbdtbJ99OKDAQ==
-Date: Tue, 25 Feb 2025 17:59:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	=?iso-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Peter Geis <pgwipeout@gmail.com>,
-	Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Vignesh Raman <vignesh.raman@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 1/8] regulator: Add (devm_)of_regulator_get()
-Message-ID: <3360051d-1699-46cc-a4c9-0f379fcf8de0@sirena.org.uk>
-References: <20250220-rk3588-gpu-pwr-domain-regulator-v6-0-a4f9c24e5b81@kernel.org>
- <20250220-rk3588-gpu-pwr-domain-regulator-v6-1-a4f9c24e5b81@kernel.org>
+	s=arc-20240116; t=1740506384; c=relaxed/simple;
+	bh=66chWspf+9/yJYzIwwRhoGQweWniqAt59VXvA4reaXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i+GorMAxVRGz4bRFH+pcoK8EAAvljJd/GkHOBHrq+s4mZBtvmgTYhP3EioRWhrNCBSDM1VO2F/e79Vwyc5o9Cg/fNuarTFWSfZvzB2XdBYRfyWaHklCzmGWg5NlEcpStjUxdM6hpC3eAc6W8PXL5ufO1ArYGQ3SAa6Q6+Q69jgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1DRvSYv; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4398738217aso51872215e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740506380; x=1741111180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlOTh4h5umgfceAsa2lYGRUvci2slvisxc9CBcNpu8A=;
+        b=B1DRvSYvYFI6HP6bVmQhcpiJMB/V8Et78NztXN19wpNk8wu6eiBpPcbMHEjh51ci6q
+         NyT5sOWRFJpFWo1uwqI/fxqM2sb6V0Et895ka94W92v0UPyjMkhFs8VFTiLYR4HRexPC
+         qO89a8bUHm5Q9RuJ3NZ9i9dXIcA+Clr1bnly8Scvw1sw4+9YBTw5M9oNPYuoQk1VgVcS
+         Hwx7LPVL0tt1J1EB1yUPUE6fD3J3pSSjrpi1mhTbadWx8dm+DdV7gZa3I+IKYtQLPkZf
+         pugtUXqbVPjaEBpfbVxSXpChctozcdUTnUO2ZLiFa77M+w7lRsRuU2raGc83uWpPWL6F
+         V9BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740506380; x=1741111180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IlOTh4h5umgfceAsa2lYGRUvci2slvisxc9CBcNpu8A=;
+        b=EaeMg3dhkdHmgFN6RKuAO5Kh5ljY9LuCw4pnZy9GEJWzTe07ZtGVfK9EvNR+2/TKJk
+         jk5pO4lyGZNIP/902SlmHcXkM4+DMPRyg8tzxezCdZtGLGiECyT4iqTVUGVTZaS+I8FS
+         7Q6peEOsVnXnk+yzlA6USwGILH/M4Y0IjxPEFn1XR4cvLiyHwgugumdkbSr6LAIQ83BU
+         QHcBR7Ov38zKWWu1zJZeiOfp/aswu7KrnjtrVDU9LCIQdEKOIT9l6d36S1r1adwGu6GS
+         2dhpt6bmS8MP+8yaRJYfLtDUWrDMfiYRcLP0blvnX3D6MflStGeJjb9EVQj5AoPm5FyG
+         Bm3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6JG4ZVzAyi8BjDLmTP0k9xP2rLorgpwzoH6UEMA461wPvFbvyF/rIUF3x5kOQBh9HpY8gKt19ILCXTjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzapYA/fx07TzeoRBII+cI2vBh3wmbZdNdWVLYRGsKWMiaQ8VqF
+	AxCQusMI0FozOkWc1y3ZZIsZZVKZjguERq7qfs/LG1cr3NF884Iw
+X-Gm-Gg: ASbGncspx3P94kf9K60hxZcQ7V17cGRlC43pRHAPh9dwwiYmOo7e/91zc8d0kYMAcy3
+	wg2WdlGLbSW+S/d7KYr3YoJPqD34NjXH/Vvh9yOiL1Xc9uZToH/VWZojH37Yo3ytltru5M7Pq+7
+	2xYuD2Qc2/i0x0xv9Ps9MrTBpGRehfMViyMpCwpVA9AYBuKaNEMDiNGe9bAXJEYpJjtjxuvd3s4
+	sCJMVHYkUdd1lG/EBJmeV0iBnettYbtG03DvTp7gIy/5/KFrEOFcr5sXt7Yw5ukdiUE0+Hk+icM
+	hCoE53BwLGoENFaIW41hflgUC94z
+X-Google-Smtp-Source: AGHT+IGuSG3h6hJ/vOasWsVyZxPpD2r1u0MXUGz76IbPsnd7FNLvlfpPyt2hgkVddWuEr6cU5pi9tQ==
+X-Received: by 2002:a05:600c:190e:b0:439:689b:99eb with SMTP id 5b1f17b1804b1-43ab8fd8768mr4629045e9.7.1740506380040;
+        Tue, 25 Feb 2025 09:59:40 -0800 (PST)
+Received: from fedora.. ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:59:39 -0800 (PST)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v2 00/16] drm/vkms: Add configfs support
+Date: Tue, 25 Feb 2025 18:59:20 +0100
+Message-ID: <20250225175936.7223-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6DahNsJj491Prgx/"
-Content-Disposition: inline
-In-Reply-To: <20250220-rk3588-gpu-pwr-domain-regulator-v6-1-a4f9c24e5b81@kernel.org>
-X-Cookie: I'm not available for comment..
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi everyone,
+
+This series, to be applied on top of [1], allow to configure one or more VKMS
+instances without having to reload the driver using configfs.
+
+The series is structured in 3 blocks:
+
+  - Patches 1..11: Basic device configuration. For simplicity, I kept the
+    available options as minimal as possible.
+
+  - Patches 12 and 13: New option to skip the default device creation and to-do
+    cleanup.
+
+  - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
+    part of the minimal set of options, but I included in this series so it can
+    be used as a template/example of how new configurations can be added.
+
+The process of configuring a VKMS device is documented in "vkms.rst".
+
+Finally, the code is thoroughly tested by a collection of IGT tests [2].
+
+Best wishes,
+José Expósito
+
+[1] https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
+[2] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071.html
+
+Changes in v2:
+
+  - Applied review comments by Louis Chauvet: (thanks!!)
+    - Use guard(mutex)(...) instead of lock/unlock
+    - Return -EBUSY when trying to modify a enabled device
+    - Move the connector hot-plug related patches to the end
+  - Rebased on top of drm-misc-next
+  - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
+
+José Expósito (16):
+  drm/vkms: Expose device creation and destruction
+  drm/vkms: Add and remove VKMS instances via configfs
+  drm/vkms: Allow to configure multiple planes via configfs
+  drm/vkms: Allow to configure the plane type via configfs
+  drm/vkms: Allow to configure multiple CRTCs via configfs
+  drm/vkms: Allow to configure CRTC writeback support via configfs
+  drm/vkms: Allow to attach planes and CRTCs via configfs
+  drm/vkms: Allow to configure multiple encoders via configfs
+  drm/vkms: Allow to attach encoders and CRTCs via configfs
+  drm/vkms: Allow to configure multiple connectors via configfs
+  drm/vkms: Allow to attach connectors and encoders via configfs
+  drm/vkms: Allow to configure the default device creation
+  drm/vkms: Remove completed task from the TODO list
+  drm/vkms: Allow to configure connector status
+  drm/vkms: Allow to update the connector status
+  drm/vkms: Allow to configure connector status via configfs
+
+ Documentation/gpu/vkms.rst                    | 100 ++-
+ drivers/gpu/drm/vkms/Kconfig                  |   1 +
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+ drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+ drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+ drivers/gpu/drm/vkms/vkms_configfs.c          | 807 ++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+ drivers/gpu/drm/vkms/vkms_connector.c         |  26 +-
+ drivers/gpu/drm/vkms/vkms_connector.h         |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
+ drivers/gpu/drm/vkms/vkms_output.c            |   2 +-
+ 13 files changed, 1045 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
 
 
---6DahNsJj491Prgx/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+base-commit: 130377304ed09e54ff35a8974372498aad7059f3
+prerequisite-patch-id: 1bff7bbc4ef0e29266265ac3dc009011c046f745
+prerequisite-patch-id: 74a284d40a426a0038a7054068192238f7658187
+prerequisite-patch-id: c3e34e88ad6a0acf7d9ded0cdb4745a87cf6fd82
+prerequisite-patch-id: 9cd0dfaf8e21a811edbe5a2da7185b6f9055d42d
+prerequisite-patch-id: f50c41578b639370a5d610af6f25c2077321a886
+prerequisite-patch-id: 5a7219a51e42de002b8dbf94ec8af96320043489
+prerequisite-patch-id: 67ea5d4e21b4ce4acbd6fc3ce83017f55811c49b
+prerequisite-patch-id: 37a7fab113a32581f053c09f45efb137afd75a1b
+prerequisite-patch-id: 475bcdc6267f4b02fb1bb2379145529c33684e4f
+prerequisite-patch-id: d3114f0b3da3d8b5ad64692df761f1cf42fbdf12
+prerequisite-patch-id: d1d9280fb056130df2050a09b7ea7e7ddde007c5
+prerequisite-patch-id: 2c370f3de6d227fa8881212207978cce7bbb18ba
+prerequisite-patch-id: 938b8fe5437e5f7bc22bffc55ae249a27d399d66
+prerequisite-patch-id: ab0a510994fbe9985dc46a3d35e6d0574ddbb633
+-- 
+2.48.1
 
-On Thu, Feb 20, 2025 at 07:58:04PM +0100, Sebastian Reichel wrote:
-> The Rockchip power-domain controller also plans to make use of
-> per-domain regulators similar to the MediaTek power-domain controller.
-> Since existing DTs are missing the regulator information, the kernel
-> should fallback to the automatically created dummy regulator if
-> necessary. Thus the version without the _optional suffix is needed.
-
-The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
-
-  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-devm-of-get
-
-for you to fetch changes up to 0dffacbbf8d044456d50c893adb9499775c489f4:
-
-  regulator: Add (devm_)of_regulator_get() (2025-02-24 15:26:08 +0000)
-
-----------------------------------------------------------------
-regulator: Add (devm_)of_regulator_get()
-
-This introduces devm_of_regulator_get without the _optional suffix, since
-that is more sensible for the Rockchip usecase.
-
-----------------------------------------------------------------
-Sebastian Reichel (1):
-      regulator: Add (devm_)of_regulator_get()
-
- drivers/regulator/devres.c         | 17 +++++++++++++++++
- drivers/regulator/of_regulator.c   | 21 +++++++++++++++++++++
- include/linux/regulator/consumer.h |  6 ++++++
- 3 files changed, 44 insertions(+)
-
---6DahNsJj491Prgx/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme+BPIACgkQJNaLcl1U
-h9A55wf/defOMhqJG1AXSmf7/jp/1X3vDIPMsTOOh0tDNUJtT8RdlyJ/1G15zthm
-Ox921lEC1kReTUTejPD2nPrh+9WGu66Fcsm9T61U1q6bAZeAMclhcM6guiw66nXp
-Dx7seGYTztQQY3PdtZmGK7jouFWjKA9f8CPEIENafSPzm6VMuQ50i/+snwRKcsKU
-aM8r9w6ordMdNXq1ZG8lb7Y+gQuwpBBQ2/yELkpoLg/ONyGeR2YikE9Vm5h8jXEE
-LpZh0x1iCwDVWgAJT+bE8g5u8IboaG8D8slK3sUb4f0VN9IiZSDcVOh9yKt4DZR5
-oSNOuTmiEVVNTswy+nw3QdpvMLDTbg==
-=rB2k
------END PGP SIGNATURE-----
-
---6DahNsJj491Prgx/--
 
