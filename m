@@ -1,239 +1,135 @@
-Return-Path: <linux-kernel+bounces-532161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EC9A4496A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:04:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4F1A4495F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08E11189A88C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DDE17C3C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A419F18C035;
-	Tue, 25 Feb 2025 18:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC33620CCEA;
+	Tue, 25 Feb 2025 17:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvALjABw"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EuL96jSb"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE43210F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D01F4185
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506403; cv=none; b=qtmV6Joxm+36tVnRz5QlNJGof3PYr4dmFv/CWY2kTDquKjTWvpa1irWURxibE2WM8DYzb9+dRB4HJh4UHH3/ZTNHrYhuPptheUL2Pplry2IUNwp21gIpAZhdHxnQEgJxJ0RfIRAHTfkGJFPW4gkgXMNgi9dE2SHS1NgJhUg76aI=
+	t=1740506395; cv=none; b=gmkaeFzaM0krDskPOvYLW29A4hKCXXxBnYYxu6KMmTy+IZcldpccohczJlQ5na05trqqt62DA0pirx4xZK9JfPRARyyX+RWYGzl3n0Yrdz2R3aSbAhhFZ59njBfmjEjQTTERoFV4L8rajqdEykTK48GGREP2pnBEABsBsMZTvFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506403; c=relaxed/simple;
-	bh=ap0abf7pYKvLuYyghIBsdol1SAK7DKp7h/sxPesUTKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phL916LHeMan3c3WaSz98muxNcMOSs5XJjgv9vrQ3dGVp3hI3gkLixmm/BLsevxgsWCFjPg0bKRIv6vdVyNu5chE/WVeZLOrCB7VItUWiNg+GPbEhsaQHWOO5Ah8wTlp3RgoqZ6tHo7+9XbdUIUffOO9EO1yFwQqFKmvP8dw8s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AvALjABw; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4399deda38cso36717545e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:00:00 -0800 (PST)
+	s=arc-20240116; t=1740506395; c=relaxed/simple;
+	bh=t+3/xgTztA90riGckbgrI9IzG66KkbXPYhDKFDRxAeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnqt5QYvU8CFjUJZeDyqyAaQ0EJc9hpGrrKNU3yWOl8JIYI7ptUSGJc40w7cql16Wp4aCKJxh7HghzJDrVb5NQ6GniNEPXQpRoM1hstTnurklk1nfb4qVPipq9fryi/kDWwj+xqWES4PgYWsD6IrfJmXHrceMYmAqO7Cf4ImKa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EuL96jSb; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220e0575f5bso5915ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740506399; x=1741111199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yGxwG+6bGnNIthEQL+F1Y0qNbK+3kLrCEEdzMCdmayU=;
-        b=AvALjABw+isMGaS9lGQqlkoBlrxI7lA5aiHyS4B0PKLqpRWpSKa+D/7H8qAkq1FpDL
-         xVbURyy0OdnpzBb2zfmiKLqe4Qi7OJuQsy0l9IRGPMkLiplH9yg3IT3H283NGqrKMSkI
-         BgNb1tub4btT90rTw1EWQqRASERKa+YvivcHtnepEad0fBz6UdyGODZ9XDN0MuOyI8Di
-         hjadgq6T6y1bFCNmkaPwYntMh9QgihP9E61lGfZZzLGhaYxJj7NazFxhA3r7Sy+0J4C+
-         Ad4osfygQuAnLa3rvMueC8zGkeYJ+UH1pZAiu+sI2U3ymkn8VcdLc+1Qe+RjYVSxOQ1n
-         6rMg==
+        d=google.com; s=20230601; t=1740506392; x=1741111192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zet+c1c4ONj7xvmenDNyn9l5ztIYraYudvekwtRFR4g=;
+        b=EuL96jSbDAd25L16qFsOdYafktXepV3jB/EwvZHTHfcwGBFQrsz56rYMMmmxKJVGkr
+         ulcf+FZSW7aycHtGq3HCGJpMIPxPmZWSa21wwihB9L9ePlpWzMo/yaUj71NZYqIIr6fy
+         6n1c6qiR635r6M8mVbH3THSLsE1qnw6ho9hB1ICNCWd9bcpDBlgYAA4UW85o1cqa2sFF
+         b8dhDYeXI2lhJs2hojov22fkpHvJMPIB58H7gUQpiwjff8LS0S6KPir+0Rs/KmWtS3A6
+         rnzxoER08rxh/8uDs/Dto6Gyp5Rv0Cqdbtd/ViS5lZMulIF1EiIYvVfCBRltMjx5IbDv
+         fWaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506399; x=1741111199;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yGxwG+6bGnNIthEQL+F1Y0qNbK+3kLrCEEdzMCdmayU=;
-        b=qj54j1jTnlNhN8Qv3ThUP+yyrdcCZKNUmEkPouyf/Xg4tx8/ibPpbAu6IHR5/sWuUJ
-         WIwodzE+0UAg/HF0+beUWjWsZMepUJhtLc2taHqZueiM52S5toUj6I5S7WkEfQp3VylV
-         bj5e39eClnpbGLGB3NAoT97Dzuzo+g+Ef3kAfx6D4LG4wpURZjKQDEFxi8/gB0zEriGV
-         Pxs30PTQcXmnFC3YIPxRpWdgWkPQRIY1Q+Pgxgzyxv3YLsCwyU+23C+6U4BmDeiVzk+7
-         +FZVJGiiCDGVEawVDehOS+eTJy4giqxnfB7AsrQ2AAWEJWWDYcAskYZsRrCnYHgfhx99
-         jjiw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DomXhAvaea++daTyboDCPb+DzXVeggHNnO4s0yBXPJQSHo54FLgosbzrmknCzOIcoYyf/SAnpbtHoNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRcUt/9R8Q0e/rmjJu2iKN6yxdg+OPUMt2PBk8+lfIRpPJ2ci1
-	ypdKQaVkoIIDXB+6Ic6WacYUH72mpVCMU3GmQ/75v/fswGHuBwco
-X-Gm-Gg: ASbGncvCRFim+7UiT9NaqoGtzj2ABewf6VCpDlK0vzSXWLFv0JOvEmZpT7J58W40z0e
-	Tw94QQpXZYNhMu28TdtE/3W/31J0CseAbPCHgRyKej0apPWrNMd25wafTgc8X+KeitGTOz0rRVU
-	8bEOUD5i5DEekMiaNlwCwK61fKI8O2yWFkXavquLBI5v0qpHrcIN9lWUc8Ns8+qY/d0Zv69hMan
-	nCCrwff5UwLM4oF8EawogDXs1YTuDyxBo2TTHI17JcC0jzXGONfRlFx1I5rRzMm1Ytr25hX3pgh
-	8boM1YCL1lD2KOBVeKAXgZ5mYDHM
-X-Google-Smtp-Source: AGHT+IGqBZvURkcaxlMPmAxOYXrBfupjLCf9BWOro848BGonvQQbFRhIpMLdNCyILndFVpqQPjDTTQ==
-X-Received: by 2002:a5d:53cf:0:b0:38d:a90c:d489 with SMTP id ffacd0b85a97d-390cc6384a1mr3115400f8f.45.1740506399191;
-        Tue, 25 Feb 2025 09:59:59 -0800 (PST)
-Received: from fedora.. ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.57
+        d=1e100.net; s=20230601; t=1740506392; x=1741111192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zet+c1c4ONj7xvmenDNyn9l5ztIYraYudvekwtRFR4g=;
+        b=pTT8IVfwTA6X42wNOcNppIor1RkOSdT/u+mRpEBWTqowgUb56mdCjljMQJ5LC01PuK
+         OOY0IyN1PXTasNBr/h3t4Z/z8+QCitBOlhesGgvkAXKnf537TiIezq0hyiGpVx8oSDFe
+         9OdG/ouFemyTz8HIqwPRTqi9OfbLICEj6E0Kw5d9d5GZo78uNh4fkmv8Xv25Ue7R74VO
+         siy+TJXOwpFHI3KndfCet5sBVDKW8DTuS3I/+LE5NxfVatBrviEZGBh7TpBzYI4prE2u
+         U7zzF14+uOa2VCwgE69tCfv0RtWHrDiisE6TnRxDmT0fsV2LJHNPKO906LDrfz2o2z+I
+         v5pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxLS9vCBXBxatjfdaGi7MNOXRPkeZiQ/v50V0wsuPTGjKqqA0xmTxebUOd42UMJxkTXFXbXuda/XK+gJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx59q2jxMAcLLnxyn2aIw8ISKC868u59fJhB3P6/0JJvN1zRwn
+	K7fLoWqIrWvg6WH4mj77L2hEyGy0EicLfWDMlvKrhuALn0HA4QUTNy2Vrpu2WA==
+X-Gm-Gg: ASbGncvVpKGtO6IDKR/EDCo178psbC+TAcsBqiv+jl62Ip1HFQ+9ymsideT/EcSCvmX
+	DRVu2BzVrKeFHFVV7fr6EDhBSy8lfl0YhHT2ik2KhmcsND9iATmS4AuR9lGB+zKFb++T1pU9I7a
+	97lpOr6fw7deHMiPl//Iy7666w7pYbAeXYZhvGGJItlDb54nulpAa5XU9m/VGpPCcmmoRrDbbP/
+	X2BvrwajWHUMVAm4KUakzX98rwlWpFj9X8Du6UZmp+g4S0Tyva+eWLL2UKeDKzNNOMKnyYdgZ5u
+	BW54D2waDBR37k/mNzDwCwJe/M7uY2+rJjBy45iPRvpWy9rOXr/jBkzLQdd05tE=
+X-Google-Smtp-Source: AGHT+IHt1jR5XD9845sVRfVXJk9oOqx4VZihn8kcHDN1a+U5MuzF3NMe86gHqr8wYv7wnn00ZADsGQ==
+X-Received: by 2002:a17:902:ec85:b0:21f:631c:7fc9 with SMTP id d9443c01a7336-2230798c8c9mr3956505ad.0.1740506392319;
+        Tue, 25 Feb 2025 09:59:52 -0800 (PST)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f8ec9sm1867028b3a.53.2025.02.25.09.59.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:59:58 -0800 (PST)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: louis.chauvet@bootlin.com
-Cc: hamohammed.sa@gmail.com,
-	simona@ffwll.ch,
-	melissa.srw@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v2 16/16] drm/vkms: Allow to configure connector status via configfs
-Date: Tue, 25 Feb 2025 18:59:36 +0100
-Message-ID: <20250225175936.7223-17-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225175936.7223-1-jose.exposito89@gmail.com>
-References: <20250225175936.7223-1-jose.exposito89@gmail.com>
+        Tue, 25 Feb 2025 09:59:51 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:59:41 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	joro@8bytes.org, suravee.suthikulpanit@amd.com,
+	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v8 14/14] iommu/arm-smmu-v3: Set MEV bit in nested STE
+ for DoS mitigations
+Message-ID: <Z74FDTtZkjwrjv29@google.com>
+References: <cover.1740504232.git.nicolinc@nvidia.com>
+ <f465dd9defdc0fc748c2fa2cfc829e37778a4ced.1740504232.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f465dd9defdc0fc748c2fa2cfc829e37778a4ced.1740504232.git.nicolinc@nvidia.com>
 
-When a connector is created, add a `status` file to allow to update the
-connector status to:
+On Tue, Feb 25, 2025 at 09:25:42AM -0800, Nicolin Chen wrote:
+> There is a DoS concern on the shared hardware event queue among devices
+> passed through to VMs, that too many translation failures that belong to
+> VMs could overflow the shared hardware event queue if those VMs or their
+> VMMs don't handle/recover the devices properly.
+> 
+> The MEV bit in the STE allows to configure the SMMU HW to merge similar
+> event records, though there is no guarantee. Set it in a nested STE for
+> DoS mitigations.
+> 
+> In the future, we might want to enable the MEV for non-nested cases too
+> such as domain->type == IOMMU_DOMAIN_UNMANAGED or even IOMMU_DOMAIN_DMA.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 1 +
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 2 ++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         | 4 ++--
+>  3 files changed, 5 insertions(+), 2 deletions(-)
+> 
+Apologies for my spelling error in [1]. It's supposed to be:
 
- - 1 connector_status_connected
- - 2 connector_status_disconnected
- - 3 connector_status_unknown
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-If the device is enabled, updating the status hot-plug or unplugs the
-connector.
+Correct spelling in [2].
 
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
----
- Documentation/gpu/vkms.rst            |  5 +++
- drivers/gpu/drm/vkms/vkms_configfs.c  | 46 +++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_connector.c |  7 ++++
- drivers/gpu/drm/vkms/vkms_connector.h |  6 ++++
- 4 files changed, 64 insertions(+)
+Thanks,
+Praan
 
-diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index c551241fe873..7c54099b1dc6 100644
---- a/Documentation/gpu/vkms.rst
-+++ b/Documentation/gpu/vkms.rst
-@@ -108,6 +108,11 @@ Last but not least, create one or more connectors::
- 
-   sudo mkdir /config/vkms/my-vkms/connectors/connector0
- 
-+Connectors have 1 configurable attribute:
-+
-+- status: Connection status: 1 connected, 2 disconnected, 3 unknown (same values
-+  as those exposed by the "status" property of a connector)
-+
- To finish the configuration, link the different pipeline items::
- 
-   sudo ln -s /config/vkms/my-vkms/crtcs/crtc0 /config/vkms/my-vkms/planes/plane0/possible_crtcs
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index d4d36d2c8f3d..76afb0245388 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -7,6 +7,7 @@
- #include "vkms_drv.h"
- #include "vkms_config.h"
- #include "vkms_configfs.h"
-+#include "vkms_connector.h"
- 
- /* To avoid registering configfs more than once or unregistering on error */
- static bool is_configfs_registered;
-@@ -496,6 +497,50 @@ static const struct config_item_type encoder_group_type = {
- 	.ct_owner	= THIS_MODULE,
- };
- 
-+static ssize_t connector_status_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_connector *connector;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	guard(mutex)(&connector->dev->lock);
-+	return sprintf(page, "%u",
-+		       vkms_config_connector_get_status(connector->config));
-+}
-+
-+static ssize_t connector_status_store(struct config_item *item,
-+				      const char *page, size_t count)
-+{
-+	struct vkms_configfs_connector *connector;
-+	enum drm_connector_status status;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	if (kstrtouint(page, 10, &status))
-+		return -EINVAL;
-+
-+	if (status != connector_status_connected &&
-+	    status != connector_status_disconnected &&
-+	    status != connector_status_unknown)
-+		return -EINVAL;
-+
-+	guard(mutex)(&connector->dev->lock);
-+
-+	vkms_config_connector_set_status(connector->config, status);
-+
-+	if (connector->dev->enabled)
-+		vkms_trigger_connector_hotplug(connector->dev->config->dev);
-+
-+	return (ssize_t)count;
-+}
-+
-+CONFIGFS_ATTR(connector_, status);
-+
-+static struct configfs_attribute *connector_item_attrs[] = {
-+	&connector_attr_status,
-+	NULL,
-+};
-+
- static void connector_release(struct config_item *item)
- {
- 	struct vkms_configfs_connector *connector;
-@@ -514,6 +559,7 @@ static struct configfs_item_operations connector_item_operations = {
- };
- 
- static const struct config_item_type connector_item_type = {
-+	.ct_attrs	= connector_item_attrs,
- 	.ct_item_ops	= &connector_item_operations,
- 	.ct_owner	= THIS_MODULE,
- };
-diff --git a/drivers/gpu/drm/vkms/vkms_connector.c b/drivers/gpu/drm/vkms/vkms_connector.c
-index b03a00b5803a..ed99270c590f 100644
---- a/drivers/gpu/drm/vkms/vkms_connector.c
-+++ b/drivers/gpu/drm/vkms/vkms_connector.c
-@@ -76,3 +76,10 @@ struct vkms_connector *vkms_connector_init(struct vkms_device *vkmsdev,
- 
- 	return connector;
- }
-+
-+void vkms_trigger_connector_hotplug(struct vkms_device *vkmsdev)
-+{
-+	struct drm_device *dev = &vkmsdev->drm;
-+
-+	drm_kms_helper_hotplug_event(dev);
-+}
-diff --git a/drivers/gpu/drm/vkms/vkms_connector.h b/drivers/gpu/drm/vkms/vkms_connector.h
-index 5ab8a6d65182..7865f54a313c 100644
---- a/drivers/gpu/drm/vkms/vkms_connector.h
-+++ b/drivers/gpu/drm/vkms/vkms_connector.h
-@@ -33,4 +33,10 @@ struct vkms_connector {
- struct vkms_connector *vkms_connector_init(struct vkms_device *vkmsdev,
- 					   struct vkms_config_connector *connector_cfg);
- 
-+/**
-+ * struct vkms_device *vkmsdev() - Update the device's connectors status
-+ * @vkmsdev: VKMS device to update
-+ */
-+void vkms_trigger_connector_hotplug(struct vkms_device *vkmsdev);
-+
- #endif /* _VKMS_CONNECTOR_H_ */
--- 
-2.48.1
+[1] https://lore.kernel.org/all/Z73zvIbsXzJMCaNt@google.com/
+[2] https://lore.kernel.org/all/Z730M3XptvDRObBp@google.com/ 
 
 
