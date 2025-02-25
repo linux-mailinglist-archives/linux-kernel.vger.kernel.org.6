@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-532682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D696A450E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:27:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5488A450EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D657AA0C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C892F16B957
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F8A237176;
-	Tue, 25 Feb 2025 23:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2958237168;
+	Tue, 25 Feb 2025 23:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdofdHDY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="JoDWORWh"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50366215164;
-	Tue, 25 Feb 2025 23:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A2A215164
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740526019; cv=none; b=FNe4uG4bUwIAIG6c4vCrO2fqBH4qbb6Uh57v1Z5/69aVKnFREK8h4nzslg2kfxgmNseF5wSbQhSJOvTNz1xg0JUsOdmTetRB9cmc8oXaZMaHKNjh9CQnzxwDWs6ktQGgwxHW4rrj5hC2OwMagnmNmzrplBqM+PJ6ciOIVrF2jYg=
+	t=1740526132; cv=none; b=IoqDNQn5/nBwSLfnhhvBDgmvUE9op1ohX1k+mpYv+JTyFgMLjm70Lmj4zY3UskHG9Gk7fHqPvW0FAmttUxGukYRmid7URS6/l+o0mtOcZsQCDtN/7pAfY9lgT/4rejGWe3Xz/3IjkxTm4kQqUYg2bVe2EbjFHHpqBI/tkVOMIZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740526019; c=relaxed/simple;
-	bh=ibAdGeayJwCauyp3OQL2DUFoUDuFf6aXjCY4OlFfh/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix2bUK8BqYA8ZD1axZ+ptYjPX7s2u3+OzcBvtXaj1o4L3Cv749ZUz4mzNYujOmZ5P7LS04UCTU2HfvmeaiG/2uR9gr+aXCxEvEwTe3xwwFTxwPNuToMoXgevfA1s06IO5q+5333tEv12Ejv1Y8/EO4gQXOt7sXNnf15Ksm7KesI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdofdHDY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7A7FC4CEDD;
-	Tue, 25 Feb 2025 23:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740526018;
-	bh=ibAdGeayJwCauyp3OQL2DUFoUDuFf6aXjCY4OlFfh/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fdofdHDYJmVgwd5SbpoRfwuuUiVWfm0Mgv0L+/ovSo49vnfbP77ctkJCr3rjOC8wq
-	 f4O9pk67EBlKjzGrXfKrxCnoBl6vwIfb4urPebINmvWq9Jr6J23B6rURn62m/KklNn
-	 3jV9WoJrUSsmYRz2SfRPpQoKwvST+JpVIJRumiylC0+s1SM7awNyhYsHm9t3bjqRKP
-	 nyk88IOM+/N70YLZolcMCrlsY1Kobw8VUv6/qscKjBQx4+MkszIs/5MWi+2nY5VN64
-	 BAIsj5uw4cVz5Yx1FwPIa+dL8/OxUrd+uKG/Ayiz5LxqQbjWQD3vDoqWTw0hXaNYtr
-	 rby230WMJ2n+g==
-Date: Wed, 26 Feb 2025 00:26:53 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z75RvU-Yb70iFyor@cassiopeiae>
-References: <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
- <Z7xg8uArPlr2gQBU@pollux>
- <Z7xh5bEyh_MII4WV@pollux>
- <20250224184502.GA1599486@joelnvbox>
- <Z70EcwNIX0KtWy36@cassiopeiae>
- <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
- <Z73rP4secPlUMIoS@cassiopeiae>
- <20250225210228.GA1801922@joelnvbox>
- <20250225225756.GA4959@nvidia.com>
+	s=arc-20240116; t=1740526132; c=relaxed/simple;
+	bh=QSvc/XemxvspxE6At8l/Qu+fHyG/W1yOWa6QPQHBb58=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aEUcf/r9Wk3SmX5uVXIVJ7rxHCoHe4RMxqEbr6cULf2iVr+QrOOWJkIZHVWkMCrDJpd0JsCUOp0hUqHPq5AzRC56gPYnjS94rOru2X/sG37iYM3TgUdq1P7kPWPqCOcsFYVWVTi9/gzmO8NLwGnrBMPNd/F25wzLB4uwiBRWc+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=JoDWORWh; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1740526128;
+	bh=QSvc/XemxvspxE6At8l/Qu+fHyG/W1yOWa6QPQHBb58=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=JoDWORWh5GMuHWhPpH1YC1VOcRnB6A0kfhfXPOGKob7Lozkmp3Ldds10SIb0gMhEo
+	 fmHS9hlv8mpFF3iIb62peumhlZfdGhgFv3CgFEpbMtrVtyKku5LWeuo/UR2qvIQH3t
+	 Z8jAT5Wcm8SyNW+trXOBYBpF6Gk+cYA+lsQkvKDh7kS53ux52/9KGCGUU/lWA4zwAr
+	 8PvFv8z+MShtsR07hsYXl3OkWSbnXfFCkv3tesjsRtL2NBV8wjH2lKY37vYfVp/CYy
+	 2rPbc879sPoopOr5hnt0fyzuB0ocRbNoDd1Kaut3S26MhoDuno6+T2IE5VlHCTKMzc
+	 HEV5j0ycCFL5A==
+Received: from [192.168.68.112] (ppp118-210-173-152.adl-adc-lon-bras34.tpg.internode.on.net [118.210.173.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1415377691;
+	Wed, 26 Feb 2025 07:28:43 +0800 (AWST)
+Message-ID: <0008bab55f56252016406e06f147ef52f058bb86.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v1 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Mo Elbadry <elbadrym@google.com>
+Cc: Kevin Chen <kevin_chen@aspeedtech.com>, "joel@jms.id.au"
+ <joel@jms.id.au>,  Z-ChiaWei Wang <chiawei_wang@aspeedtech.com>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "tomer.maimon" <tomer.maimon@nuvoton.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, "lee@kernel.org" <lee@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>, Jenmin
+ Yuan <jenmin_yuan@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>
+Date: Wed, 26 Feb 2025 09:58:41 +1030
+In-Reply-To: <CAOO6b=udHyXx3QXyUE=siuuJopanUxzbFeBujtqWRy=j2ut4fw@mail.gmail.com>
+References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
+	 <20250217114831.3225970-4-kevin_chen@aspeedtech.com>
+	 <e43b5f8f-37e4-4468-b3ca-5059a5e6f3c3@kernel.org>
+	 <6fd7cd57261ddf9831f57dc4c637b24e9f8982d9.camel@codeconstruct.com.au>
+	 <PSAPR06MB4949C65DF5C034BD6B40C9B589FA2@PSAPR06MB4949.apcprd06.prod.outlook.com>
+	 <d4945482509cad0bf3e8cd93c1fb21bac2e0c7f2.camel@codeconstruct.com.au>
+	 <TY0PR06MB4960EA7255DF0BDF235F0D9689C52@TY0PR06MB4960.apcprd06.prod.outlook.com>
+	 <ba2757fd02b3e7c8f9c862c76f2cfcd2b6bfb41b.camel@codeconstruct.com.au>
+	 <PSAPR06MB494947E21AB39369ADFA8C9489C72@PSAPR06MB4949.apcprd06.prod.outlook.com>
+	 <f7369d6205e05c7aac3f3de7cbd08c3b08960d75.camel@codeconstruct.com.au>
+	 <CAOO6b=udHyXx3QXyUE=siuuJopanUxzbFeBujtqWRy=j2ut4fw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225225756.GA4959@nvidia.com>
 
-On Tue, Feb 25, 2025 at 06:57:56PM -0400, Jason Gunthorpe wrote:
-> I think this resource-revoke idea is deviating from the normal
-> expected driver model by allowing driver code to continue to run in
-> other threads once remove completes. That is definitely abnormal at
-> least.
+Hi Mo,
 
-No, it simply guarantees that once remove() completed the pointer to the
-resource can't be accessed anymore and the resource can't be kept alive
-(which includes the actual memory mapping as well as the allocated resource
-region).
+On Mon, 2025-02-24 at 20:34 -0800, Mo Elbadry wrote:
+> Hi Andrew,
+>=20
+> I agree that a small layer of abstraction is needed to provide common
+> chardev semantics to userspace. I think that effort can come where both
+> Nuvoton and Aspeed unify their design and agree on a common abstraction
+> layer.
+>=20
+> I think such efforts may take some time for both to unify, is it possible
+> to get this upstreamed (after addressing all other comments) while both
+> parties work on an agreed unified abstraction layer?
+>=20
 
-It also solves the unplug problem, where ioctls can't access the resource
-anymore after remove(). This is indeed a problem that does not affect all
-subsystems.
+Given Arnd doesn't want bespoke userspace interfaces in the SoC drivers
+this will need to go elsewhere, perhaps drivers/char or drivers/misc.
+Greg and Arnd maintain both, so the patch needs to make a convincing
+argument to them. For my part, my comments are just opinions based on
+my understanding of the use-cases and the SoCs involved, and the desire
+for reasonable devicetree and userspace interfaces.
 
-> 
-> It is not necessarily *wrong*, but it sure is weird and as I explained
-> above it has bad system level properties.
-> 
-> Further, it seems to me there is a very unique DRM specific issue at
-> work "time unbounded driver callbacks". A weird solution to this
-> should not be baked into the common core kernel rust bindings and
-> break the working model of all other subsystems that don't have that
-> problem.
-> 
-> > > Similarly you can have custom functions for short sequences of I/O ops, or use
-> > > closures. I don't understand the concern.
-> > 
-> > Yeah, this is certainly possible. I think one concern is similar to what you
-> > raised on the other thread you shared [1]:
-> > "Maybe we even want to replace it with SRCU entirely to ensure that drivers
-> > can't stall the RCU grace period for too long by accident."
-> 
-> I'd be worried about introducing a whole bunch more untestable failure
-> paths in drivers. Especially in areas like work queue submit that are
-> designed not to fail [2]. Non-failing work queues is a critical property
-> that I've relied on countless times. I'm not sure you even *can* recover
-> from this correctly in all cases.
-> 
-> Then in the other email did you say that even some memory allocations
-> go into this scheme? Yikes!
+I don't think it's right to try to rush things as devicetree and
+userspace interfaces can be tricky to change or remove. Rushing tends
+to be painful for all involved in the long run.
 
-"For instance, let's take devm_kzalloc(). Once the device is detached
-from the driver the memory allocated with this function is freed automatically.
+Cheers,
 
-The additional step in Rust is, that we'd not only free the memory, but also
-revoke the access to the pointer that has been returned by devm_kzalloc() for
-the driver, such that it can't be used by accident anymore."
-
-This was just an analogy to explain what we're doing here. Obviously, memory
-allocations can be managed by Rust's object lifetime management.
-
-The reason we have Devres for device resources is that the lifetime of a
-pci::Bar is *not* bound to the object lifetime directly, but to the lifetime of
-the binding between a device and a driver. That's why it needs to be revoked
-(which forcefully drops the object) when the device is unbound *not* when the
-pci::Bar object is dropped regularly.
-
-That's all the magic we're doing here. And again, this is not a change to the
-device / driver model. It is making use of the device / driver model to ensure
-safety.
-
-> 
-> Further, hiding a synchronize_rcu in a devm destructor [3], once per
-> revocable object is awful. If you imagine having a rcu around each of
-> your revocable objects, how many synchronize_rcu()s is devm going to
-> call post-remove()?
-
-As many as you have MMIO mappings in your driver. But we can probably optimize
-this to just a single synchronize_rcu().
+Andrew
 
