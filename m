@@ -1,158 +1,161 @@
-Return-Path: <linux-kernel+bounces-530622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4A2A435E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:01:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0760A435E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A98D1893AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB96D177B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFF2257ACA;
-	Tue, 25 Feb 2025 07:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2AF257447;
+	Tue, 25 Feb 2025 07:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9m2A9cz"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4BapXeX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576451FCD1F;
-	Tue, 25 Feb 2025 07:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A840D19F495
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466867; cv=none; b=kXtm5JN3QcUIr+OchAgQlwvDSxTJMVr7icuAjzUTWgPibRUH05sb5g+cZ1xp0+wPQ3VNpoEq5eQ0iaUi781i62ApbnHqQ6SVb/Od2ifPtObf3+KdIMvcM8hneUXn7zRQ1KWBwyaSUEhTYPpnk2IOiaKLlvMIxipPlBpRuddXAvQ=
+	t=1740466906; cv=none; b=iRCJPu2TBM9RYnvuPz5tI7RtFukhIyI22IEbFo4/e7jYj//b+CzJyR0iYLnmNT8gA5NUwfp9TKHaWutXwP6tgYdK0pleJObb5PkIdcSlt8osMpWv8bhtZ9c6IOnQAibDcqDNJRji/myt5ydVz/7PVetXRWuterR2sNCT3u42q3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466867; c=relaxed/simple;
-	bh=KWUdJgIpUQsVXCnBiWxg3+iKKy8Ujl9Xa6y63DyZMJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s+osidvlNux9w/d4YxQ9yXBH2dVrfC2lbUpSnOih8zbFAyRJ4Mfv/2eGmbjxkwRrBQh6H7bVCTdB1KYTDfECIKeFS5ibfCkVqb79ROgPv+JD7F+W71n/Fn5BhGNUCxdkIGbt7vwvp38tAtLnZkCd/p8SEn0brMtktUpvKiBPML8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9m2A9cz; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so6062233e87.1;
-        Mon, 24 Feb 2025 23:01:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740466863; x=1741071663; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xEybYvWRx/5H4FjB4f3Tj6B5Z+fVUBC9NtkC11fk+HI=;
-        b=h9m2A9czLVH9gA+NEYe0i6EdRCuqOk7RSatYxmTqXAU/2OJT3eKSJwloPwC9Fp1INY
-         19PQKhtuOaFXvnLTjnTPyUdplBd6ZexqEPMXbZycQ4LmtfxxzxLfFrFPaTg6ycRnBp5j
-         oD84tseCGa7oxVENbxlNf4xPYYLGykCxa7wG4VE8zkYYA8z38KwlM6YO1qP3b94ebITh
-         basPuU5PGl/MWD5sytGt4Xqyt5Moe5p4u25DcUAok21vGV29MJeN5UCqgSedDIDptfID
-         KyLQKGMA92x6ZYBfssiHkYzKwVz8Rcd0k4iqwAujFVSO0yCjUoOU00+7ahth0sgpSWs1
-         nQeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740466863; x=1741071663;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xEybYvWRx/5H4FjB4f3Tj6B5Z+fVUBC9NtkC11fk+HI=;
-        b=HoZExk67o7yYknjjcWeaR/nXA5G6b4psa/tEQdO48SZ/PxMN/AcgEcWiuNqTDCePon
-         Ix1SHVQFFxf5vki4JqUlf0LReNuL2h1gl/OhKynibprZUsWyQ0UNTF+NDDSxw1IYWLCU
-         ++EiGQXzoePOlP/I/eTkIO/OueaNF1FPCxbJBlClo2s7dusKNwUY8S4wwknyR4dCvwIp
-         hiCyw9pBXaSVyLj9ZcPigrgpkCzYJvPc0+MikasGowxyL9KiF6iF2pQSjWqlL7CyefOW
-         flIkYe9/bvovKrpZy+/AScFvRCjld3eaqhLUpO6KscFHhu94NGMYTcRXUhGuTuxxaDJg
-         jjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBJ257/Mrd2dDqYCU5TeDhipFJiWzPNi9Rq+O/uCuAm2kliHtgvUNcRjiScxUMlt0IBslWUNZluddS@vger.kernel.org, AJvYcCVFwaLLFiqkWTsOjRzY1CFsQS6FMdox61gVGgi/USsKDMI90ZtITLl9K0SoJVaPWxRZAQVW1wtJU3Vq0gPM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzevdS4JUKve0AFZiFWPnNc4Lv/nhmLCBpqW8PgEJ6QdV/j2aI
-	QB9cXicwDd9eo+S+dgKUjYX1mTIGawrkkL46wwdXs4276INgwqodtMf/3g==
-X-Gm-Gg: ASbGncsACHkGMsMalrgfXrdXOGgK+xAmH8TKwAwkO1x0/9HjSG0re/q6GIMROZIr9f8
-	d6bzA6bnsI9VTZ3iK+vAtlORMzbdxYvHrBl8QBF8Mx+LlPUU58d6oVFPqoLYGt97n4urCAosYa2
-	N31jtVpCbHF8OnmMixIqG/K2vKVAv9Z+j+mR5DYMTibfXPmR8n0pftPNPvM8ypjPwYqVL5ZfibK
-	yxbdRWiGl34XaLldq7n4uMGqanJ4kD2CbRXVGnR9BdPREbW18qF8UREnKH8Y/424Gx3PrrVQK7f
-	SBKbk8SZjdJN234/dIjiS+9iPi2l
-X-Google-Smtp-Source: AGHT+IHPzr4IY0sdvXocyj/XL6Du+23H0ztIQzDiz5JA+sv+RHXoJQj9XCviYpfMdtltpBPy8ALGdw==
-X-Received: by 2002:a05:6512:acc:b0:545:2b68:936a with SMTP id 2adb3069b0e04-54838eff533mr5287219e87.29.1740466863000;
-        Mon, 24 Feb 2025 23:01:03 -0800 (PST)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a819ebe18sm1393931fa.36.2025.02.24.23.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 23:01:01 -0800 (PST)
-Date: Tue, 25 Feb 2025 09:00:54 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: Document the 'valid_mask' being internal
-Message-ID: <Z71qphikHPGB0Yuv@mva-rohm>
+	s=arc-20240116; t=1740466906; c=relaxed/simple;
+	bh=DKqBKC4FjxhMkoEJUSZOc+8sSEa1bIVOfaEeP2C4xaI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WA1kNuXiEemBfedMyw0E0R/UkcI0n5xgQ1gew/JyVTKhdU+TnQ0tgH+wC1d4Hm7uSPlYimKp4RBBaz1NADVaRIzMPPbZ2T8VQHGtqeUAkgNk+MA2GRDoAgikgc/D30rQw1zLkmSlrbhFsxsU186FAXewuqUwWBnHSlXyxEgqdp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4BapXeX; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740466905; x=1772002905;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DKqBKC4FjxhMkoEJUSZOc+8sSEa1bIVOfaEeP2C4xaI=;
+  b=g4BapXeXUH+EzfaZZCRhUs2UOV6jaAPYXywROcPLWpxWBK5+fB4Err/W
+   hkeQJqEwgA596mEDvqpRX6huHV/uBwuHxbAemKGATqk8OWanvJg7rwntG
+   Vo5rRPe6rwduDke0779w4W62p21FE6LHyiQW91yDJYmWqcW8508CMA1b0
+   pQd4hDKEAGUBwm64riCpyCcWaOjgeY1YCy76MUyIBcGKlXOlCNLm+8/B1
+   XYtWuLu3+jWI+MiXaK6c2P+0Ta2ooVJislLmyShTY0xBxaQBgklcS8Apx
+   9e7rBO3J/Y3e+i5mNDzd2k0XC2L0p3jX/mMtJ0DfIl00YmTvlcI7M+hN2
+   Q==;
+X-CSE-ConnectionGUID: YoPy1KMFQSCatkQQmMV2yQ==
+X-CSE-MsgGUID: fb+GUSbZSKSQQFXfsDtXxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41140231"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="41140231"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:01:44 -0800
+X-CSE-ConnectionGUID: i5AIK804TnaA9XaVAdnWig==
+X-CSE-MsgGUID: ZDfrC+/MSS2pJk35HQJI3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="121242705"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.105]) ([10.124.240.105])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:01:41 -0800
+Message-ID: <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+Date: Tue, 25 Feb 2025 15:01:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2t/6T+yCC05nv9en"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Ethan Zhao <haifeng.zhao@linux.intel.com>
+Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
+To: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025/2/25 14:48, Yunhui Cui wrote:
+> We found that executing the command ./a.out &;reboot -f (where a.out is a
+> program that only executes a while(1) infinite loop) can probabilistically
+> cause the system to hang in the intel_iommu_shutdown() function, rendering
+> it unresponsive. Through analysis, we identified that the factors
+> contributing to this issue are as follows:
+> 
+> 1. The reboot -f command does not prompt the kernel to notify the
+> application layer to perform cleanup actions, allowing the application to
+> continue running.
+> 
+> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
+> BSP (Bootstrap Processor) CPU is operational in the system.
+> 
+> 3. During the execution of intel_iommu_shutdown(), the function down_write
+> (&dmar_global_lock) causes the process to sleep and be scheduled out.
+> 
+> 4. At this point, though the processor's interrupt flag is not cleared,
+>   allowing interrupts to be accepted. However, only legacy devices and NMI
+> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
+> routing have already been disabled. If no legacy or NMI interrupts occur
+> at this stage, the scheduler will not be able to run.
+> 
+> 5. If the application got scheduled at this time is executing a while(1)-
+> type loop, it will be unable to be preempted, leading to an infinite loop
+> and causing the system to become unresponsive.
+> 
+> To resolve this issue, the intel_iommu_shutdown() function should not
+> execute down_write(), which can potentially cause the process to be
+> scheduled out. Furthermore, since only the BSP is running during the later
+> stages of the reboot, there is no need for protection against parallel
+> access to the DMAR (DMA Remapping) unit. Therefore, the following lines
+> could be removed:
 
---2t/6T+yCC05nv9en
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good summary! Thank you!
 
-The valid_mask member of the struct gpio_chip is unconditionally written
-by the GPIO core at driver registration. Current documentation does not
-mention this but just says the valid_mask is used if it's not NULL. This
-lured me to try populating it directly in the GPIO driver probe instead
-of using the init_valid_mask() callback. It took some retries with
-different bitmaps and eventually a bit of code-reading to understand why
-the valid_mask was not obeyed. I could've avoided this trial and error if
-it was mentioned in the documentation.
+> 
+> down_write(&dmar_global_lock);
+> up_write(&dmar_global_lock);
+> 
+> After testing, the issue has been resolved.
+> 
+> Fixes: 6c3a44ed3c55 ("iommu/vt-d: Turn off translations at shutdown")
+> Co-developed-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
+> Signed-off-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>   drivers/iommu/intel/iommu.c | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index cc46098f875b..6d9f2e56ce88 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -2871,16 +2871,12 @@ void intel_iommu_shutdown(void)
+>   	if (no_iommu || dmar_disabled)
+>   		return;
+>   
+> -	down_write(&dmar_global_lock);
+> -
+>   	/* Disable PMRs explicitly here. */
+>   	for_each_iommu(iommu, drhd)
 
-Help the next developer who decides to directly populate the valid_mask
-in struct gpio_chip by documenting the valid_mask as internal to the
-GPIO core.
+Removing the locking for for_each_iommu() will trigger a suspicious RCU
+usage splat. You need to replace this helper with a raw
+list_for_each_entry() with some comments around it to explain why it is
+safe.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Alternative approach would be to check whether the valid_mask is NULL at
-gpio_chip registration and touch it only if it is NULL. This, however,
-might cause problems if any of the existing drivers pass the struct
-gpio_chip with uninitialized valid_mask field to the registration. In
-order to avoid this I decided to keep current behaviour while
-documenting it a bit better.
----
- include/linux/gpio/driver.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>   		iommu_disable_protect_mem_regions(iommu);
+>   
+>   	/* Make sure the IOMMUs are switched off */
+>   	intel_disable_iommus();
+> -
+> -	up_write(&dmar_global_lock);
+>   }
+>   
+>   static struct intel_iommu *dev_to_intel_iommu(struct device *dev)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 2dd7cb9cc270..fe80c65dacb0 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -503,7 +503,8 @@ struct gpio_chip {
- 	 * @valid_mask:
- 	 *
- 	 * If not %NULL, holds bitmask of GPIOs which are valid to be used
--	 * from the chip.
-+	 * from the chip. Internal to GPIO core. Chip drivers should populate
-+	 * init_valid_mask instead.
- 	 */
- 	unsigned long *valid_mask;
-=20
-
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
---=20
-2.48.1
-
-
---2t/6T+yCC05nv9en
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme9aqAACgkQeFA3/03a
-ocWu1Qf/Zg9npoNinOajhrBvsxKQo4LtxOmy78IOWILnNX+SEIH4e8VKLNMnOcBZ
-vqKq2ZqUyAOUojsJv+pslsIcL6hVT/Evm9FLp6nAhtxHxLAihXIg1LP3tOzW1f/z
-F0ljNXFMSWgrOObnBg2ym2TWMnUwrjnX7pwEdgm/OHnlSSe2xIfjirubRv+kCViZ
-tuDxGOL5w+ydsivFituRhCK+RIkYNQvjp9CWhZvyHgEkgbEHIcCieUK+M7pieOET
-opLAMKnrCrVhgZw9fBdOexW/3DfuqhxBu7PEe99QhF5+MwNyH75lVCQ5JTFARt8+
-b2CJtG9N+gvl17s3Tmaghcnx0StxLQ==
-=gU03
------END PGP SIGNATURE-----
-
---2t/6T+yCC05nv9en--
+Thanks,
+baolu
 
