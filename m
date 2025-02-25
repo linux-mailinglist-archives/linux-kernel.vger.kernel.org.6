@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-531960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB364A44713
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928E9A4472F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2838E162FD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1922F3A26D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD7206F05;
-	Tue, 25 Feb 2025 16:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E1E20AF63;
+	Tue, 25 Feb 2025 16:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZfWkPO2t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z4uUfH49"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B48194091
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DF31A23A2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502079; cv=none; b=Z6oLHkLePuYlhiBhNQKAK91RUUiDuLeCPjyXg5sa2mBzg+x8L7lMG/dze5VC3nBPDhJUv4PwbL2NjYcRG4YmxhujHPk6/87Hs+I/7F5vbONYItsTlAAESLsLeBLuETEjU5UybTP476MtucpeZGiVFyrxQTUPzpd6vHLBBDplwwk=
+	t=1740502106; cv=none; b=erzjIA0YiyDPWQAT+wl1rf31K/BQSTu9mLc9aTtLqUbw5KCMtuNHCoZ94jGiJdv8L+Yq2VykXSyq8D8mSR2uPIkbCsOgzzLc00wMAy/HSCEDx8F96GKbBZUR/XmWosUQrTP3BCt/4Ww0hNaD9wUTAVJUoBsWNrzPdKQhIIQVGt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502079; c=relaxed/simple;
-	bh=9ZDVrOfhGJwI3TSbSIuZAzkP2eTAltfjgpAh9EQGfog=;
+	s=arc-20240116; t=1740502106; c=relaxed/simple;
+	bh=QLeXofl8oz+1YDj2uHG9Af1DIWMS8S6ol/g/+nY++FQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V6scJUq+Ez4x8MLIV4M/mbnf80f1b3t4CekN6l8GOJVDBOqCY/WQZ2anxQWNeHyYR6KGw712bftqapvx23hEr1s0si6C//jab5OZsCBXOUYlBub+4aPWorV8Ky1akmGsi+tbIFGKwo9oHn/w6MPmjNJKsiwO3HNChml/qa6J4eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZfWkPO2t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8aCHX010037
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9ZDVrOfhGJwI3TSbSIuZAzkP2eTAltfjgpAh9EQGfog=; b=ZfWkPO2te79Al0Cq
-	Gs1OU6yTBTQU5uA7j3wIsU90Kk2jGp6AZ7IzjJApkcIqnbN5SiRyC5qvu4OYr8aC
-	lJFBPhX1iwt95jgOhxkUARQGua9ofW1i/NltO9BLxUvOLflUGGHhG0XR1m6wEM0b
-	p43ovatiNfszES1CMRavudjkHgYi5SOL2+qTZEFOUgPmBAx+/ryNDGWcavTsxexe
-	Ez8Nj4VOaroLWQZLhQfiwjuxLbVowtqe8hwqmYm5bCHEusWhtMocUvow/AzBJ++y
-	5GTDImaA1YybpbJfVJI89mIUe7DQABX6SurWTDoixYpeCv/YwQypoXsDHRVo9Yd5
-	rAQyVw==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xnhrhd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:56 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fc1cb0c2cbso19251268a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:47:56 -0800 (PST)
+	 In-Reply-To:Content-Type; b=OEEOq3EiO1sac3nWH/YhOUuW4tXsFfiMqGyPzFhhmzaxdMHOVfYjPFiiNwEGoRqcbA/hbhodSpMTUDGD9Clrvrua9Pp0imuFOboKCasa+tkHy4NnZcNLK3mx2GUeDqHsMqpb6SWEspyLWzDrSY301rM7+sCNtrmANQ4idf1oZOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z4uUfH49; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740502103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jw2CX8GJqxuLRFAFx88zTCcWlXcKTO/rHj8BJTgdWyk=;
+	b=Z4uUfH494yPKf+qWMKBmLoNxiI948PB3j16TGiZaRDoTA6wdKzq/SC/oNJzzORITsJvrYv
+	jrissvshBpo4KYV1rZfT5nfgKJ/MOIpjtOgj94kB4S6IQB8yREvzSo5VTTbV9YuoxFZWmH
+	HSKcZuLTKMjUm2R9EKLP069+Ypfy5v4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-_PAjNytkNjeZglNGu_BCeA-1; Tue, 25 Feb 2025 11:48:21 -0500
+X-MC-Unique: _PAjNytkNjeZglNGu_BCeA-1
+X-Mimecast-MFC-AGG-ID: _PAjNytkNjeZglNGu_BCeA_1740502100
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-439858c5911so27922875e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:48:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502075; x=1741106875;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZDVrOfhGJwI3TSbSIuZAzkP2eTAltfjgpAh9EQGfog=;
-        b=ejJUyuS6z4YhPg1mcy1UesKjGxKwC+C/SQi/lP5amjQNA8GLnCdpcxv5GODqKo2PAL
-         QMFtHtimeM5jYi5NSChoI5OIAYoZsg7bMiACCAlr33YxQV0wAv3IelUCI7k0bwCBBmGy
-         0PTAKzmFFZvPg5EJNDr9bL37nilcJYy5zglILy+UejR6P5qmmLIPT+A9Nh5qNu8Tx7eY
-         GT2ngVeYQ1wMH4cQOghjJv7K9MB1OWHmhmeH5TpvzHt+rWaI7L6trrZoJsh9Fv2eRWrs
-         YY51Fnr/tW82QOncMIEEhqa3sws+aF938+0mAQz/gkDB/RFnH30BiWfOPr4N9HGb5yWg
-         UZ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbVlMgVl0xvRG8hRBkYF8ccPHhutn2x2sYbSu0zseOO1ysgZ4iM8Htf+pgKNWNrNcMCj7vWz37HlR5vD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDU01Xre9Vw5aFqnY4rY1EKx7ZYPNSY6+dAJIITSD/7hPWsskf
-	uDbx6zCsmd1CiejQBSCmbJifdRVHxdcImBvMGzFE33r7jeaX7J5jb89VOaM/w/zxIU+9xUsVXBt
-	Jbw1lnNWWIYVd7aVUnYUIuPCjROMU8B0hibAsn4g8wkxRKhdMA1L4RIRRTV5y8yQ=
-X-Gm-Gg: ASbGncvke1fNatlQ2wkr6xNQMFoWpYkpcPXEfn/pO9tl4XSmODE4g4MjgsfnpON66D5
-	uXY4wYqYSgiQARkS8laPxC6smGT9Pez3lSd2vZTHkWYe5yfGE4TRSKpCnOGW0/9rUibHj455hd7
-	aFAwsRS3B5OjeFR+61ybr9hiaKMCp2EQg+k0X2crcFiY9G9Iq2/jHJNx0OsTl3QPKsBD07Y+57T
-	OyVEX0yjOnhu3QrpoD0JG6Wy1veer++PtD7uqtg8mM/g4EjtQKQtDdhrE9zjdZHus5cpPL6FUgy
-	3fxFtnPXx5VVYUI4hXpau5vBCvdXx0N+kRMmmu4VQJ0XLYO+FV28X8cRVjWqFBqp/O92inI=
-X-Received: by 2002:a05:6a20:840d:b0:1f0:e547:2a95 with SMTP id adf61e73a8af0-1f0fc77fbc4mr7690921637.31.1740502075597;
-        Tue, 25 Feb 2025 08:47:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFdPfLWKKNqt+lqaJWqGpH+fK0ZqBAaMQEednaibGK9nTCW7SkhcF0zLldZAyJp0Yf7PYgmjA==
-X-Received: by 2002:a05:6a20:840d:b0:1f0:e547:2a95 with SMTP id adf61e73a8af0-1f0fc77fbc4mr7690858637.31.1740502075031;
-        Tue, 25 Feb 2025 08:47:55 -0800 (PST)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda79a23dfsm1367185a12.21.2025.02.25.08.47.54
+        d=1e100.net; s=20230601; t=1740502100; x=1741106900;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jw2CX8GJqxuLRFAFx88zTCcWlXcKTO/rHj8BJTgdWyk=;
+        b=d9d8bLguQbtFN93zT0jsjW3WAPA35DUGeuGRT/EdVON1WS/lFQHVX8BexSwXag1mw/
+         QopZhAp0HNwug7M9q56Ljavt49UT+YGhRazKb1hHyTgo0GZ5qUayTgjpmtLcUuyeHFFn
+         4qweHBfNqnj/18zSJ6rIqD2PDROjQEYPh6cqCabk04rl+fjACjxyqQGTYHSPDLWysGEo
+         4JlzfI+qupq4pTG7XYL1422CAccfGnS4xRSkqzT8GoiukEzQbF9xY2dj9heRWdxaQwAt
+         ppSDattS+tmWwcUVo256pKi4VTu24aoQug1QwQuVkVO6i9Rh6DIAaQxg2BF8vlxA+HDs
+         M0Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9s/7zpQe92OhKU0UBibCBLdWqIGbVJ46WtiP1XuJaSsDQaIsCa+Q573d5RflLyUewFPpU/HHsSFqNbWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrjuyfg35RdEETeISi5tgRQg3zHIXQkZJlrbmN2Ms2rYT2Zo27
+	zhJKDGAa0R7UZJIYH/D5F54dsHS3BtMKPylLBZGTn49mHhWkW/5mSyBLcQ2o+B1dns+huVZsaJD
+	cSXNvAj5TLMoMD9RAUR5EaqAR5RQaD6fr5m+imlXXhIKulP58G5OLItNgKKfrQw==
+X-Gm-Gg: ASbGncvyvsY1sdzBC6Dy3iOPaxYQ8Uu+MmH/fLbT+W2UHOXQiGFwBrO+V7mgPWO7yJB
+	veEL8Ha2JOunr/TKYhUWFxH1IDQCkuZPyJB5qWcf1jlFfbNBYNaj5ddyAE99tddDqmDSRSgD7sl
+	/czYnBm2u4c8Dkn5bLFjbB3ChCV3XJJ9CtwvgtfBMeFKLjvZTqiIryGNBV30cG4AZUlcSjZ8S/J
+	UB7go84YcP9EpeDPGsmVsE65mWH4w8by8Qx5cepL3wewuGQPaTojowx1eI83ESupfB38YZ22VSk
+	OU6ORl7qJuM2lUahGhnkLutVjGHqPsWvmTrM/tf7dmxO8I0vLx62yJp7VH7nBUfYsVZy8D84cT6
+	E0m2x8T1pFCzhshl2Kx9Zjy/o6/iZ23gLPqzOwGgnIWw=
+X-Received: by 2002:a5d:59a3:0:b0:38d:e15e:17e9 with SMTP id ffacd0b85a97d-38f6f0b2161mr20087636f8f.35.1740502100260;
+        Tue, 25 Feb 2025 08:48:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE8sdF4FkFqdZXDiyQJpYRdr9jotf0bgjSy0tUCoeN9Ynzu8FAq0ynzblVc1iJsuqV0PE3uGw==
+X-Received: by 2002:a5d:59a3:0:b0:38d:e15e:17e9 with SMTP id ffacd0b85a97d-38f6f0b2161mr20087605f8f.35.1740502099887;
+        Tue, 25 Feb 2025 08:48:19 -0800 (PST)
+Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab15476f0sm32638635e9.23.2025.02.25.08.48.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:47:54 -0800 (PST)
-Message-ID: <c2b540d6-a30d-44e2-b928-4e95a78d9d6c@oss.qualcomm.com>
-Date: Tue, 25 Feb 2025 08:47:53 -0800
+        Tue, 25 Feb 2025 08:48:19 -0800 (PST)
+Message-ID: <48ffe442-5015-44fe-bbd6-708ba8500505@redhat.com>
+Date: Tue, 25 Feb 2025 17:48:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,37 +89,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] wifi: ath11k: Clear affinity hint before calling
- ath11k_pcic_free_irq() in error path
-To: Baochen Qiang <quic_bqiang@quicinc.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        jjohnson@kernel.org
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ath11k@lists.infradead.org
-References: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
- <20250225053447.16824-2-manivannan.sadhasivam@linaro.org>
- <4dc9e860-7417-480f-ba89-439498138d3f@quicinc.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
+ mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>
+References: <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
+ <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
+ <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
+ <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
+ <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
+ <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
+ <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
+ <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
+ <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
+ <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
+ <3102ab3b-67b6-4047-9db7-e83c3b9c1c53@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <4dc9e860-7417-480f-ba89-439498138d3f@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <3102ab3b-67b6-4047-9db7-e83c3b9c1c53@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 2V84YFCkdH3xEKkpyvBtbMBbg5IawtnY
-X-Proofpoint-GUID: 2V84YFCkdH3xEKkpyvBtbMBbg5IawtnY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=765 bulkscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502250107
 
-On 2/24/2025 11:23 PM, Baochen Qiang wrote:
-> LGTM
+>> As for compatibility with VM_LOCKONFAULT, do we need a new
+>> MADV_GUARD_INSTALL_LOCKED or can we say MADV_GUARD_INSTALL is new enough
+>> that it can be just retrofitted (like you retrofit file backed mappings)?
+>> AFAIU the only risk would be breaking somebody that already relies on a
+>> failure for VM_LOCKONFAULT, and it's unlikely there's such a somebody now.
+>>
+>>
+> 
+> Hmm yeah I suppose. I guess just to be consistent with the other _LOCKED
+> variants? (which seem to be... undocumented at least in man pages :P, and yes I
+> realise this is me semi-volunteering to do that obviously...).
+> 
+> But on the other hand, we could also expand this if you and I see also Dave feel
+> this makes sense and wouldn't be confusing.
 
-Suggest you reply with an official Reviewed-by: tag
-This helps build your reputation.
+Just my 2 cents: one thing that came to mind: an existing library would 
+have to be updated to use the _LOCKED variant if the app would be using 
+mlockall(future), which is a bit unfortunate -- and if it could be 
+avoided, it would be great.
 
+But yeah, devil is in the detail ...
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
