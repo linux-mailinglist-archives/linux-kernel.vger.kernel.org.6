@@ -1,202 +1,123 @@
-Return-Path: <linux-kernel+bounces-530921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B42A43A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:49:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35DDA43A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C646D1895570
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB5B19C5B9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C14B266191;
-	Tue, 25 Feb 2025 09:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361E62676CF;
+	Tue, 25 Feb 2025 09:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BcV+8by0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="iqgJce1V"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82AF2627F1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476616; cv=none; b=FXAYqfAPxT910OoRQcAUukPyNYZjhUxRUfK1Kf15cbnQxv07pycvvSRC3vc0SkjI5D9oziHXH8100sArsjlMvGvEjZXSeXuw29BI65e6s1PokyDWS0fyFI9fAjRf8TZESkbqTeLBwCMqu1VIkxAGniPw62st91gC/HxSFwxX4rI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476616; c=relaxed/simple;
-	bh=QH8HT1UuDS6VviZFTBNZOaM0PQX0cxRd7F9k0oVT9mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6eOGXa61vk2B9tRLV3V8mKsaxOeBSk5Dt6p4D0fEEBqYY3u7+7/+AdW3ihUcel7Iyt4opMifz0OrvNb9rcEjgk9OvsiSvQSPCZd4hYHXk957KLxFNx8Bu/3DOuygDoCNFTL+LTo0RD7HYDVPvZiHRHmL2XMP7iHQHbREzeUDSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BcV+8by0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740476613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N5IuXbVC/fE2fpy28ItJZlJGmOxKbKIqaMashXqUdLM=;
-	b=BcV+8by0it2plCjkpekCUOUHjsH9OSBeOMGFVa+v+oNiFCtHCHhlw3dhiEElrCqUiiK/mb
-	0kHkeIN/k/gKAN/I4klTfigyOnPSt0ASnACtsGwMHKtypztP5jytDIEX0ClqdRxu46rSeR
-	qAIIkWJxIhXmB56+UuB/dL1hxMEYato=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-473-AzVKpqwVPbmMXit9L2vrow-1; Tue, 25 Feb 2025 04:43:31 -0500
-X-MC-Unique: AzVKpqwVPbmMXit9L2vrow-1
-X-Mimecast-MFC-AGG-ID: AzVKpqwVPbmMXit9L2vrow_1740476610
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4393e89e910so29789745e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:43:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740476610; x=1741081410;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N5IuXbVC/fE2fpy28ItJZlJGmOxKbKIqaMashXqUdLM=;
-        b=CJnan6NBMUKWIml2ytpu8BI5sDdTjaZHvYS+8UzJ54dUiL85NJ8s3Uqpn1hGgfqCuH
-         RdczQnlIWP76seNXqFy1x7/pdmgOeuEWZhpw7VAWgMfHQt8qi2YnFMS5atROPnDppeZ2
-         T1wIxIdxMrbET73zo3M9GzoOBwgxMbjdkQtet5K6nzMjpwhBxz8+w8583NklL1mRDIqx
-         UlNR6KFIt3VM0kdFHS5zDLrQGxXPEm3B3tIbuh+AjtxXp9Q6LzH5oTXoB56pMbfkWfoU
-         CXBhpdHva+fk3jM72tpUIs8KiUMoT34bgws7+mGQ5sRgDk64SYYkhUk0wr3ruhwTq8YH
-         S8Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCWwF2I3yItoKnsMn8yx3stv3tcybpalbjb5WOD/pp0iaa9W2psbiWKgKK66uCxX0AT5pWnI2iBw05nMTrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ml1XUTZAZZxUtWv6yQW7G8wMLE7RDiQYX/XfgcLpez2REsfA
-	7vWTYBOfylzOoIH1l9tsZNwo5ZUuyeeglHG287B3cJanKk9AXDtkm3ZZKCYS2f/d2ZMmt0qYjA0
-	aanzmKA0NYqJMptF4YaPZBNfD2YGj5DRVzcZatwFBuLOLsj+0uYd87UMnMpjGwg==
-X-Gm-Gg: ASbGncv/9bnhT72QmU/aAHYGzY97TWJQJxeFi/xDyrMm2NeDkAo4kra8gfsrTWBGvbO
-	YQeUS/PhK2qeg+/+vo5lFNumeUXDikFRXbKlyJPJdLlAmTvAjqMSNSlMNGxi19rjlQ+7GHzOIxJ
-	uDhkrG389pBUUgb43czP1jNH+RHQYSSTwRNGe9TD4z4Df/MNeTrhoVZoVzln4fZd2vuc3BkxbOI
-	pC+wUMew6eY/6S/7fJtgsqRw6wOsDRXBI5FdP/JQYcr9rYFAbqxGFHTpaQVEuiUGV5ONaN1EA8a
-	XcIq1Vi9symzalxrutFc7tAVkNRJ4Vj+CUJZ2yhNLfrnLj2f2W5PKnt+1Tu/FRg=
-X-Received: by 2002:a05:600c:3c87:b0:439:930a:58aa with SMTP id 5b1f17b1804b1-43ab0ecc2f2mr24089295e9.0.1740476610523;
-        Tue, 25 Feb 2025 01:43:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7SWWZtXumX0waBhzuzJJUOBFPNpCyr81evlpTXBUdvLowN5fEohw657IpPbZDbBNIzb4b3A==
-X-Received: by 2002:a05:600c:3c87:b0:439:930a:58aa with SMTP id 5b1f17b1804b1-43ab0ecc2f2mr24088975e9.0.1740476610069;
-        Tue, 25 Feb 2025 01:43:30 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce615sm134946725e9.5.2025.02.25.01.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:43:29 -0800 (PST)
-Date: Tue, 25 Feb 2025 10:43:27 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] acpi/ghes: Use HEST table offsets when
- preparing GHES records
-Message-ID: <20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20250221070221.329bdfb0@foz.lan>
-References: <cover.1738345063.git.mchehab+huawei@kernel.org>
-	<9610ff88cf6fdc59cbfc8871d653fd890391be1e.1738345063.git.mchehab+huawei@kernel.org>
-	<20250203153423.3e4de17c@imammedo.users.ipa.redhat.com>
-	<20250221070221.329bdfb0@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AD2266B4C;
+	Tue, 25 Feb 2025 09:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740476661; cv=pass; b=kwtj1PxDCYNx2cE3yeWOz/evwpjWnKBIom4n2A6IgIZdv/ncy1A5kAL93K3UjoadBh+6gXl6mMPxgy9OXwxZW+YZGvUM99DjSaO92OxpqZZ2jv4v24YzSvlLyMcU2cmsOJFy+49xp+b5DO//GimwvWyS54FlDpys7QAo/bYCCLY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740476661; c=relaxed/simple;
+	bh=mGa1ZVpVEgPerlEBMmFu55L7BuMoyO1RjFa7unAYWsE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=EdUrn4zDv/ltTlBViPNAbMqdvNn8uKluYKoup+WKgpe1X6lzAKxM9iRNZtzY5u+TG+38UgxvIiZzZthkiw8tcEKYU4OzspM4JXeBcVbQcHZSoHiseBCVx4JBBr5y9+oUcQRq56u9c0fetV0IwxczNnSJ3El7Cz4pUtnxgDcqI6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=iqgJce1V; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740476632; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hOAzLH10upnYM8mrUCJKeSFvpPQF4X8pbBP9U6Ib/J7wI6gKqAAg4x5D8BL+LJz18gdMEEWwAOxYCaGB97NqmdSU4Xz4JctrwSmMqKO9GpxyVOLWKq8sK6uAxreSaYlvk4vvl1ENV/rdNL4B5qdfc1L4g5M0KIhNUyee/Ieo3Po=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740476632; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mGa1ZVpVEgPerlEBMmFu55L7BuMoyO1RjFa7unAYWsE=; 
+	b=BwekNULxccjsZMNQ2D+mGAlVx8pLyZLfiTRT1g3RySnmMJIStUHZZKlEhWhVwJxxEd6p1vIZPnqpvUlbigZAxhB5E1Hy5GNbgXQh2WXOti62u5uusjvrOPXHDRq4sWrPJcXhLUwnHn5kZ+vo9PTAuEzWTWZEskE2BQE9FJm3FcI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740476632;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=mGa1ZVpVEgPerlEBMmFu55L7BuMoyO1RjFa7unAYWsE=;
+	b=iqgJce1VS9nGMtrO+a5XqdIt09odx5cAGf8CDtM6aHzUc5+szZL4elVjc0e0UpLt
+	z7pqmLPMaT3PTcEfQGp+ogA6fT9gsY08KsVPuJ6exnvUVafH9iI/udDcI36SC3G/y3Q
+	F4Mr6GwIXFKpwtTinI4J1RbPqVxQIDfj7as9+YUo=
+Received: by mx.zohomail.com with SMTPS id 1740476629225362.08681216406217;
+	Tue, 25 Feb 2025 01:43:49 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH 1/2] rust: Add cpumask helpers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250224233938.3158-2-yury.norov@gmail.com>
+Date: Tue, 25 Feb 2025 06:43:31 -0300
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Danilo Krummrich <dakr@redhat.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Nishanth Menon <nm@ti.com>,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>,
+ Rob Herring <robh@kernel.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Jason Gunthorpe <jgg@nvidia.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ linux-pm@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9E7A81AA-6460-4F87-942E-2EEA145257F2@collabora.com>
+References: <20250224233938.3158-1-yury.norov@gmail.com>
+ <20250224233938.3158-2-yury.norov@gmail.com>
+To: Yury Norov <yury.norov@gmail.com>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On Fri, 21 Feb 2025 07:02:21 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Hi Yury,
 
-> Em Mon, 3 Feb 2025 15:34:23 +0100
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Fri, 31 Jan 2025 18:42:44 +0100
-> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >   
-> > > There are two pointers that are needed during error injection:
-> > > 
-> > > 1. The start address of the CPER block to be stored;
-> > > 2. The address of the ack.
-> > > 
-> > > It is preferable to calculate them from the HEST table.  This allows
-> > > checking the source ID, the size of the table and the type of the
-> > > HEST error block structures.
-> > > 
-> > > Yet, keep the old code, as this is needed for migration purposes.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > ---
-> > >  hw/acpi/ghes.c         | 132 ++++++++++++++++++++++++++++++++++++-----
-> > >  include/hw/acpi/ghes.h |   1 +
-> > >  2 files changed, 119 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > index 27478f2d5674..8f284fd191a6 100644
-> > > --- a/hw/acpi/ghes.c
-> > > +++ b/hw/acpi/ghes.c
-> > > @@ -41,6 +41,12 @@
-> > >  /* Address offset in Generic Address Structure(GAS) */
-> > >  #define GAS_ADDR_OFFSET 4
-> > >  
-> > > +/*
-> > > + * ACPI spec 1.0b
-> > > + * 5.2.3 System Description Table Header
-> > > + */
-> > > +#define ACPI_DESC_HEADER_OFFSET     36
-> > > +
-> > >  /*
-> > >   * The total size of Generic Error Data Entry
-> > >   * ACPI 6.1/6.2: 18.3.2.7.1 Generic Error Data,
-> > > @@ -61,6 +67,25 @@
-> > >   */
-> > >  #define ACPI_GHES_GESB_SIZE                 20
-> > >  
-> > > +/*
-> > > + * Offsets with regards to the start of the HEST table stored at
-> > > + * ags->hest_addr_le,    
-> > 
-> > If I read this literary, then offsets above are not what
-> > declared later in this patch.
-> > I'd really drop this comment altogether as it's confusing,
-> > and rather get variables/macro naming right
-> >   
-> > > according with the memory layout map at
-> > > + * docs/specs/acpi_hest_ghes.rst.
-> > > + */    
-> > 
-> > what we need is update to above doc, describing new and old ways.
-> > a separate patch.  
-> 
-> I can't see anything that should be changed at
-> docs/specs/acpi_hest_ghes.rst, as this series doesn't change the
-> firmware layout: we're still using two firmware tables:
-> 
-> - etc/acpi/tables, with HEST on it;
-> - etc/hardware_errors, with:
-> 	- error block addresses;
-> 	- read_ack registers;
-> 	- CPER records.
-> 
-> The only changes that this series introduce are related to how
-> the error generation logic navigates between HEST and hw_errors
-> firmware. This is not described at acpi_hest_ghes.rst, and both
-> ways follow ACPI specs to the letter.
-> 
-> The only difference is that the code which populates the CPER
-> record and the error/read offsets doesn't require to know how
-> the HEST table generation placed offsets, as it will basically
-> reproduce what OSPM firmware does when handling	HEST events.
+> On 24 Feb 2025, at 20:39, Yury Norov <yury.norov@gmail.com> wrote:
+>=20
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+>=20
+> In order to prepare for adding Rust abstractions for cpumask, add
+> the required helpers for inline cpumask functions that cannot be
+> called by rust code directly.
 
-section 8 describes old way to get to address to record old CPER,
-so it needs to amended to also describe a new approach and say
-which way is used for which version.
+I don=E2=80=99t understand what is going on here. You apparently did not =
+provide the
+Rust code itself.
 
-possibly section 11 might need some messaging as well.
+Usually, when I see a =E2=80=9Cin order to prepare for =E2=80=A6=E2=80=9D =
+I expect the actual patch to
+follow in the same series.
 
+Right now - and correct me if I'm wrong - it seems like you=E2=80=99ve =
+essentially added
+dead code.
 
-> 
-> Thanks,
-> Mauro
-> 
-
+=E2=80=94 Daniel=
 
