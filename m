@@ -1,1200 +1,298 @@
-Return-Path: <linux-kernel+bounces-531898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1ABBA4465F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:40:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A58A4464E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C491425DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:38:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 575407A76C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D19C19342E;
-	Tue, 25 Feb 2025 16:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B34195381;
+	Tue, 25 Feb 2025 16:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="p9D9LPvc"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011036.outbound.protection.outlook.com [52.103.67.36])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n/dACkRc";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="N/Nbyb5i"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E9A1865E2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5897321ABA6;
+	Tue, 25 Feb 2025 16:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501461; cv=fail; b=Hatr5KTTW8QsZhEMilOG3X91UxYxOqqbRnINNgpcBv8tpPtstHEt8xJn6a9vCUfKrRxGOLs8qZevItf3NQ06l2sb2v7x9ZxyFuQkbvgV7imXyRchxYDEJ6tVXIfh0DobAgX/EoBQDCzMaDVhkWTg2awca59M8v0LaFbTJvyKVEk=
+	t=1740501488; cv=fail; b=idzVM7KwQcR73KW9AGO7ZnEOZlBouKCeRo9b0Dd+vCZh9KkW6eYVcwc9tXNB7H/LXWRlVax2lKONf/uoFe0VjQzrC5OFu/SpAZLbXs9JtJ0Zm7x9w16QPZS7BMGMFeIWbtLIrcLT/FTM84+UQzRThDuuA6Kh3DuUc3/I3Lnq1y0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501461; c=relaxed/simple;
-	bh=wkbOHpWDi62bpXq6MmJeMsdN63XTvre7Pb5v/wmZEww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a/iIpsCQLuhgy6L9w1+W4Gz7cZQSVtVt92jV08k+f8I5LmPI9jre1UHhWb73ZwU9XPR8HQVckbg3IuRtHjHsTLUNAmobaDcZItBs+qEu4dSzEchIIsEcGQ/+f/UZePa+H6oKnoZct+fDD+PRIlfUvsf4/QupICg+O8Hr9Ork0eA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=p9D9LPvc; arc=fail smtp.client-ip=52.103.67.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1740501488; c=relaxed/simple;
+	bh=37rqSDHhfibeL4ET0L1exbfHjKWCiHAPKRWCyEa5gn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ev1Tn98j/v2G96xZ9hZrfK36FHNMFrJnhoqAFT50GahIBIG+lQNBPmOhjUrKgNOriRN7TL8BTsRDUiFsN+XB7J1P2+GP5qYByRrbpw/Pytj0/xb7v2nhmr40MUDzqqs9Q0Mcv/PCn1APsFxc3xnYsx3fMfXGNjns67VEtwW/fQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=n/dACkRc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=N/Nbyb5i; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PFMjgL028812;
+	Tue, 25 Feb 2025 16:37:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=649r4NkocGSroZLlcp
+	ntxdEwac1v/7ZUEQkfSZnRayA=; b=n/dACkRcccjkWzwdWlnTjX4KcJkDQxpfoO
+	vsblIlStnEIFTdQabWLeaPcHsINuUqifLGWsWIw2tTmGP6yezEfdRZRHxM57x4v4
+	VUx7SVODtYuc+oJK1T4BF+fqhnfrr2RJGGaG68Am0r40YhRwPKO9nrVMElUcvbc5
+	fltLgVSDWdhdFt32VdfbxVPt3rlQl0YZ/in8mS0XlVpTiVD52EZ1QRTPL1EGtVAj
+	mR2fITFLkkIufWissTObWIfQlYsUj1hKB9NDom2tTHySq+CCzrDLub5zQjjVp48V
+	rTBmjmFEUT3S8465ZcuyNjOqsuO9B69Vvuhe/A1Q8TggT7P8ewSw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y74t5qks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 16:37:48 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51PFjhKb012668;
+	Tue, 25 Feb 2025 16:37:47 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2175.outbound.protection.outlook.com [104.47.56.175])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51aqxmw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 16:37:47 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qqe88gfBF9QRLPxqMDVl4tEVtPyBk5IO7V/oAQkj1UR42zdm6krg0GqUV9Fy4/XzmO2e7zVPowU2V0RJl36KnLeT+obLNNIsvYv4DkCweKa9oc8yGt104p+QP+YD0G+uNhB9dSUZyzFh0w1k95Eg7MWtFzJQquPwiK23+QLVfqic8gFMQGhZsBkSTCyfLQLjoH58Dlcj7SBlNZbYmmWx3cp4er6QQkFj9bSVVUQE68RB9nRMMZlSMzLfK0rHUwEBuFH3eXbPZs436uCFpYDSjlaJsVMJSUtWT5Tmg+KU7WrxtaiahXP37w7OkubKYgEYQ9cD+5/L+TFMIGwWWlkhnw==
+ b=OKahcG/lv/Nv5I6PkNvm4MmXxppweUc3szhARZd1e/o/Sk2PPoSxE2TXMgmXpBEEDT0GSXlOxiBAmucHisFYXWgfn+V534iwrI/AxduC2OoQaD7yHNK7i6XlwHjo70kJVqHRVezpAoQcG1HIKu6YU8Bnu5fXVjRlSPpBOj/GQsxC14q/q1GPUG9BhP4LWCFMDYaQJwk5m4jZ+a5u8Mv6pzHYy7jS0s+Qro+BaJeeWhaKAooKmkmZwU1Y+SGGdd2spIIo06Mn2OPbJwlcJ1d4CQul03eStkBHC4lMR4A0qOUDX1g8KIkUvPLCygK7VCeunIymkVXwO7Mp/a384WcnnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9whW9Ima5GqTcJsy4PM/Yli40oyFy/gzdz+m+Uya1mw=;
- b=QPfc7Y8FS98LGrt2lSf+L56IPq7YqXIBKQ+DTeGIpDDpULE7bxqL4yTRdYEW+xNre9j6Xodjv0pbRNtunYYr2oUacO5p/YfChQk0Kh5rzvxoccJDnGALclINGeOURBs3nNXA5z+CxFRR6yD6rRBL8oPcfLWskiQJ276i87kG5yZiIzaip37ttxCzAstFEsDPlGh/FXMpL3n4TN9vmpjIG1gFC9+8Urxz6kwgILC9EJnZZB8DMVGuUF7XmrGLJb+BVyzmDJTb4wSk1Jhf0e+mZSvlVJM49jRe8jtfKkla5y4iBKmJHMv5Uj3KuizkYj7a9vHh6j58ZTrP4L5hB2eHUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=649r4NkocGSroZLlcpntxdEwac1v/7ZUEQkfSZnRayA=;
+ b=GwhrA9t3ien9InFa5jBBfru8dd/TzSNIRfdDgkYZ4M9wpJ4dUzYX1IaZ0nPwzhRaSf6whAzDkzpIg82vtDdEfwNtt4lW4khZep7IGIllaL3SfY6XHltfwYyUGSfXv4G6O1j++HNRrJ5+9amYpiLfMm2dwKEv5cx6gezNZ2dn1rDKkfTZo9uE6mt7ihwmSIOBj8yyHw3O4ea2cG9ryF2mxjiUladNR5yMwTI0ApHl2KUaMMRhcVDLh4nUL7FL8Wu/o/rC9Bi7gAcK6Eu7KoXf+9pBZNAg0FO1UI84pFg8rqcNiz5LfHUahGPRO6zL1TY763ldsI3pJ296VyFx97dR5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9whW9Ima5GqTcJsy4PM/Yli40oyFy/gzdz+m+Uya1mw=;
- b=p9D9LPvceUI9LDj5gzpVTW6Sh/RpjZmCgdnp7b1mZme5/wk5kqYQe1g4ibTMDz1rJqL9flL46EoumE9H/N/OUrYiWwlsdLU2018Ufv/oEnOVS8B/Rtwk+AtJWhi+0Hp1dkugxaMYYgWRsBTTFtZbeNpnbzjV1ZZRFyBqi6DZflf8LzQsqEnp5rBSGl6+oJQW5nkw/esbRXIXPlfstHYgv9Japx24Bd/FMxvIzgUqdChxSQoiPR5UPOKK/ZIzI1KmlNXPTIoyNACczSxR9APS/kg8P1rjJvesP8hbZ6d61jG0V8kGD9j0oFEdXhZ8SC4tEbz+0tvNtUfC2Q6JXEhY+w==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN2PR01MB9876.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:12a::8) with
+ bh=649r4NkocGSroZLlcpntxdEwac1v/7ZUEQkfSZnRayA=;
+ b=N/Nbyb5i03zUUmNf6MYhprDpjzEhZVdCGx55fx2lg2VU0rXlr8gzBQvc9rrfSRrQ+dDFGUhL3fyST0uKoUgOeVOOWnJrFg/eSykUMgc2gEYP5KnTTr1vmlQu5qzYxf34NfPYrIae7IltM5AJjCwa6mSl+3gQZzfujS4uNJ0CKjY=
+Received: from BN8PR10MB4099.namprd10.prod.outlook.com (2603:10b6:408:b7::32)
+ by DS7PR10MB4880.namprd10.prod.outlook.com (2603:10b6:5:3ac::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 16:37:32 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 16:37:32 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "andriy.shevchenko@linux.intel.com"
-	<andriy.shevchenko@linux.intel.com>
-CC: Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: [PATCH v6 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
-Thread-Topic: [PATCH v6 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index: AQHbh6OR8jR6BcTzsU2nOnP9tkpoLg==
-Date: Tue, 25 Feb 2025 16:37:32 +0000
-Message-ID: <F8BB11DB-1E2B-407E-9FB2-F02AAA82D4FE@live.com>
-References: <0BAB26BE-5BB6-467F-BED3-9AA8DE25433B@live.com>
-In-Reply-To: <0BAB26BE-5BB6-467F-BED3-9AA8DE25433B@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PR01MB9876:EE_
-x-ms-office365-filtering-correlation-id: d56022e5-432d-48dd-4d0a-08dd55bab395
-x-microsoft-antispam:
- BCL:0;ARA:14566002|12121999004|8062599003|8060799006|19110799003|7092599003|15080799006|461199028|440099028|3412199025|10035399004|4302099013|12091999003|41001999003|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?N2GMLG27VRjVX0Vl4d4Dv3hwAqp+37EFVuoE/qtxCrEEnqJSFiw3Ylb1Cpbh?=
- =?us-ascii?Q?NdPvDWxvw2bqGdfFHVZMhgrdWJ6sIP8DYS7JxXGM6G4TBPJ31ubeReR4F251?=
- =?us-ascii?Q?CE0ilN3WRSuLtlBzbgp9VdMkwuFYKIqy1uPf/ZAbQmigy50g8jRtaAHiYrSq?=
- =?us-ascii?Q?T+8X54JFBXT+ZQjv52eVoV+r5Zbel85DQERhlHclChkZJqwHc04gHhxXq/zg?=
- =?us-ascii?Q?4Jt4z5Jy3G2dg1LBJQWPTix6+3dM68c3XVXETi2uxrDKtE7rmV/NwDp8gmii?=
- =?us-ascii?Q?XPGrgyotZA9g4AHT6NS0WBOfIusFHL5NK8WxcsBLItHGm++sTgDprDG8CrZN?=
- =?us-ascii?Q?6/Qp35SM2b91lKtdiWjimbJi+iONy3aIZfIdUXl3YRNLivtqb9Daw440G8eS?=
- =?us-ascii?Q?gbbsZshIRWoSBopHEpGtD4aDYuwFCS3XP02qEqVAFA9ZIu1lkOorLIlpKM5Y?=
- =?us-ascii?Q?fc1Rg2YIjK7QMpr1N6AqXeACl68AdR+VH2p6dxzLU3dkYQXQZw0DJWEOJQbj?=
- =?us-ascii?Q?DYPpLsjxXyxdukEO0Wix+qc/HgjcjpWdrq9dzllBeG9+VKFm5AUUsywPaFJB?=
- =?us-ascii?Q?uAceSFhvsJHAmhABN85eoSKFnACi6dQuvTxVLRGDmXs8AUQNYKjmrVxSzd0z?=
- =?us-ascii?Q?QRrkzszSY++SYOEXfXwhcuOyY0tHeDslzSlxEn8i0R5BLyj+u5p/DEEHTZG6?=
- =?us-ascii?Q?cotA9qYc+pQK3MNzb8Q9HMNAf6EM79c5+aO/5+lSOR1bkezGqAHSaVeQMJP0?=
- =?us-ascii?Q?hkU7aEfoO5lwVhKOyAn+V7OkIQMkob8Q9AeTqQI4d8LfOMEqLd0bCJ3Q+7LS?=
- =?us-ascii?Q?M99YSP8ThCclLeJ7bvsSrnZkS7dU1u93BqIUSGz3xpQKqNfqyvcWpRBfZbkv?=
- =?us-ascii?Q?5GarUeaUd5VTgvQH8AicQ91XstZSFXJ81/xEuBkfqln7IS764AiKYUvQ+7xv?=
- =?us-ascii?Q?9BQUDGH+crzAIkQtnAWfPQ1gluTQwV83C6cso4YR9/sPYea13cSSfbb9QQ6/?=
- =?us-ascii?Q?qWRMCAO25vdTe2Xk0HiNLrj28HB5tz5ptdtReuE9xR2Qlig0uPGXuBrzVlso?=
- =?us-ascii?Q?3jrRYaw/9FR6kBcFdSlrliC5FTdZ1lvbJQpjrM556QYgG7cx0iStAN6pwSFB?=
- =?us-ascii?Q?rVFDDGEvlxK45Jga5qkmzk1Lh6q8c2DWTbgpku43YznnRiCe74cs/Vkg4MM1?=
- =?us-ascii?Q?WYF133ACo4VbC30d0KFa6B9nRDwQ1m793ikSXFwfZpUyaoxoOqzLFO6xClNT?=
- =?us-ascii?Q?YTZRClzD/JDl1TjREkG3M5lx3sK60twELDGb0zCLlyxaI9Pc/1kYqMj+Ohc3?=
- =?us-ascii?Q?ds8=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?IUe32U0b/btXyYg+YTUkGT28lfns5tkJG94Cjk/gh2Zm31IbQezufxjb08Tb?=
- =?us-ascii?Q?gAdTYOtH1NV9i6cmIQi9fW4LsGsh3zzjZSO9QsJe9TiQG5vTi5MmmTZh1Mka?=
- =?us-ascii?Q?BBvayvLPshIENdRs0GIN79zo6iu3Tdsin0WLGnPx5BVXg4XJf3UoOMjnSToE?=
- =?us-ascii?Q?rkMZPZRWrTvTFrd3UZpMkngh7EN8jGtC9LKxjuzsMWGh9InpkUJmDapTtnGg?=
- =?us-ascii?Q?MFCc7jXFVt0WpoqnLwkNKvP3l3OCQPVhn7QbYk/gPfnQeUaaCLt+NQ9sDaPz?=
- =?us-ascii?Q?23aOPHFjSW7zO46ZHHWYghktb4y7AYoe+ZhzzHZVEBmbkOtJkrw6JgAqf1WQ?=
- =?us-ascii?Q?fUOr5x3GEY/dTkqGqepbuKCgVAXWK/vuv0VwwKGQbqAlzl9pbu3IxM+cuGSw?=
- =?us-ascii?Q?S38K5zlM4ozqQJeLLdEEDuoPoubaCuyiqh34cLFXXBOPb9sGLsABf/5StX5R?=
- =?us-ascii?Q?qNklLU34Lji48pA/L/PePGnz2vdQ9rfGDU4KVrf3cndBt6a52uKUu3EQBc4c?=
- =?us-ascii?Q?A1NfIE5RoNFGQNV70AONSJJo8wPy2q5NcVLnEcodkoQE/IvCenqT+KOmJ/yJ?=
- =?us-ascii?Q?ccruGpqwYxvWyZ+YldC22xv84eqey4d9hJnJGmFgTRGgtWiE0fEft03eJdIN?=
- =?us-ascii?Q?5keFZxTabwp9i05pESiqSG62xi37V7KaIYmcfEsMR/caoOQOOBQvT8LpLJek?=
- =?us-ascii?Q?TRqgiPCgW7PRyhLREz1+tcGDdwQa/EDx0MzWEnE5gSnZAC/Fm6S61jb734Ds?=
- =?us-ascii?Q?KoAFuODu0/SquZ/8oTleP7/54iOOfL751DG1/teF1DtmmwwJBxJS2KbclR41?=
- =?us-ascii?Q?xoEoU3XlosCvZ2KzGhvMqn622Z5hds++SFrr6+4go1s91RDXJuHwLHWnf/ol?=
- =?us-ascii?Q?gIk/Hm5cuYS+yX3aj/QF9RuPowq3sI9afeZE5rl+IOD/25MyJV/CVHelZCo7?=
- =?us-ascii?Q?gLZR0eJD98BrQO1g5w7cmNIHCCrUZqwQ7cga1ySMIkMxNihH79C1JeKCwgWB?=
- =?us-ascii?Q?guhCQaJeCRFlp0Ep5vtQM6q9N8Gb83ctsNLdeW9XQOpyae85zix078aZEm6h?=
- =?us-ascii?Q?WDUzvQS0FhHNHGmdlVSTsJKaDxGez8HnATQEz5aio0RIgwS4bKeDsEKU8JVH?=
- =?us-ascii?Q?r2I/N/vCbLWp39H7Fye7OFDgsnp1NgxlsCW2RiaaGN6mkY1U3YJB2qtZuo9j?=
- =?us-ascii?Q?DUCfPK8lJSJIbU/2NfVfGYJbD/kv9Hnj4+rQrqOpjchTD8c0ZdF1TMEEJ6YO?=
- =?us-ascii?Q?ti5KoQemxbIjjgiJTXmFRPemsmlvz/7qdsaF4obNvVXM29UXBL80b1zvb03W?=
- =?us-ascii?Q?sjHiEAD+9Sse1CHsgvI7BT6S?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3BD6B651528C0F4FB092850B9FC1A29D@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
+ 2025 16:37:42 +0000
+Received: from BN8PR10MB4099.namprd10.prod.outlook.com
+ ([fe80::5db:fa9a:dfe:2a2d]) by BN8PR10MB4099.namprd10.prod.outlook.com
+ ([fe80::5db:fa9a:dfe:2a2d%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 16:37:42 +0000
+Date: Tue, 25 Feb 2025 16:37:40 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Juan Yescas <jyescas@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
+ mappings
+Message-ID: <3102ab3b-67b6-4047-9db7-e83c3b9c1c53@lucifer.local>
+References: <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
+ <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
+ <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
+ <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
+ <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
+ <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
+ <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
+ <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
+ <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
+ <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
+X-ClientProxiedBy: LO4P265CA0289.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::12) To BN8PR10MB4099.namprd10.prod.outlook.com
+ (2603:10b6:408:b7::32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR10MB4099:EE_|DS7PR10MB4880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 346e50a1-76e9-49ca-2d79-08dd55bab9ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dD8wiQyfyuVzPe9U5T1QiDGJLg9TDvXdXFusBmsbf6zDxe5LZibqZe5loCUy?=
+ =?us-ascii?Q?2kdkP8yZ4ILXVJ4OKu/UtsL0Ze6PmrVTUVRtt+qsi/I/y5sJCaDCXL+GGITV?=
+ =?us-ascii?Q?Lz3Hvbcs1Pyt2li4aRcQ2jQ0yzB+2YTuYV09LcdbgQG0ggxP16r08iXG0feC?=
+ =?us-ascii?Q?d2Q2+2hLi8PG3DZcZNtgzPD4A/lHumtZevWfpKxe93phJqI+1O9VPHiPYc8r?=
+ =?us-ascii?Q?3z1gH0wUjWucNPPKcRjfZyQeNqerR8qsdkC6YFMDp/YJ2JXHGoXuOnaWz7JN?=
+ =?us-ascii?Q?FDdQBl3eFSElYbk1qcGrpm7S4yNLlDtmSHGAhinLmW3Z0qJhU7Q4jDLfnCa2?=
+ =?us-ascii?Q?3n/rrndmSaqe+c8YyP4GGizQdo+GWXC9HKGXrVfaaiJvjtEOaT+pj7MPoICr?=
+ =?us-ascii?Q?nIUSLoEvOSxjJGDZH4Zp6XsbeVUU7xu1Cab7lc3NzZkj7pNj4Q4irDVpCOx/?=
+ =?us-ascii?Q?KyzmiRapLAnS7rKftMxJQU8g1DfAAg7cYv+qcer3DIPhaQhsOgpYKMXB+BRw?=
+ =?us-ascii?Q?L+6Ut0eQAnpB7HJFi70JT5yWf73hLV2G2p4tE5hHpS1H+VYNCHSPFbCa9Z55?=
+ =?us-ascii?Q?hjM4yvKZZxqxmcMyZdaVRbxjh4K/PSfqKGxh3gzwWyudHH/KSET2xNYGJqVT?=
+ =?us-ascii?Q?Cy/GUZ7o0daI2f7Myw0K2lJtMYjcDeRbkn4kZZibf9zSx6IzuT2hPr5jpO+S?=
+ =?us-ascii?Q?nehL78G5aqQjq60qpFfZamMiogiI5m7ZQMY3lNFA82oTrw0r5x9RlHBE/HE4?=
+ =?us-ascii?Q?zWEg+rudW7KWeqKCS07Z7KVVbgZQ2SrXfX8mQBHHYXSzQ+jOnJyuF2hxEwc+?=
+ =?us-ascii?Q?BbHq/qh7feQHBh+ZNUxbbhsBk6HQxlGlYTtWU5axfS+HJiMlkEHsD4G0S8Y1?=
+ =?us-ascii?Q?ExVhLzFmf8QNITsyQ43Pv4ed46V+Vofdx9fMJbXc4FwRLIImlIzVBK0g58sL?=
+ =?us-ascii?Q?OlrXXD39Kd0S690oy7+E9G7JYdqCh0cE7nOfJi2MxoP8AF6i0MFqyQSeqpWb?=
+ =?us-ascii?Q?kOxXVU+2/arJoS6msX1yLrxY3ym3DBkLbvOci7KBmiGvQqaZ7LTsEbpK1bIK?=
+ =?us-ascii?Q?DmedRtR1+LL1Mg1+rxleFdr4B6AMAjQ/aCMIrTOcwqiIVkVy8VbjS7H/1se0?=
+ =?us-ascii?Q?H98/fCe4hBiMsKJIpQx0XZ2JVQAt/fkz0XBx76k5nTnJ84P3022DeAHE169G?=
+ =?us-ascii?Q?bjWLPd1Kzn4isbTwqMXuZrnX0Zm2WSjkCRaDoR0MD0sB450FhrLM74mnunmP?=
+ =?us-ascii?Q?57e4xDGLHeFDfZLNE900f8yVmgKhGEcKyVRvFVjoZt6VrvkarJUT7SbcaSJh?=
+ =?us-ascii?Q?T7qe15uZJrwqd20ZhwXPmqJHfdiaFNOywnPSOtHyG97wOwQgGrDRa4mjD+p8?=
+ =?us-ascii?Q?3YJaIdTg1pFU9mBS/dqjUT9XfbWd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB4099.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Amv8LNJU2XVmO7evRt1uaOFOHhbO7cjaRVDmnI2KC+Eb7NwngD2mt6FCffRB?=
+ =?us-ascii?Q?P3ucAANWQITLsI2LNv9Gf6o3hIZ7HFy++7gZc1hEAgL8CThCaknmE4tfwbt/?=
+ =?us-ascii?Q?KjnN7TA+1IMx5uZefJsnKPwdW56RAQvGv4TIUiZNaweOt8FSdLHqJEh45xQ2?=
+ =?us-ascii?Q?zNxQZ6ItkhPxSY8o9l7JqGnw3u02KhltJ0qibiQ9bBuxv/1yH0+UzF9l7uJq?=
+ =?us-ascii?Q?O/Kag65UMca2Jmh5oMeYpZuoD54dA2vAQtSl4iZGFpu2aYxPiCp9l1Rd50gy?=
+ =?us-ascii?Q?z9zoE5mlng8mgvlGf/+besorQ0IZVp2t+TCvh4xlfBk1NalcmkRWPDuWlQl8?=
+ =?us-ascii?Q?A9GBPoZeYXUFAKW7xioaeHeh6g1GomqwknY0DknTYPTwFURUIB1tfTsdOsqP?=
+ =?us-ascii?Q?qMEHN1howrdhYSoRUtuBKQV9iza4kb/J/GkiFxpNt6NlfwckkSbMgtr2j5cY?=
+ =?us-ascii?Q?0mOpLqWjPIQ0MvaPJUS7BEt/4b4Hoq3qSMR2wc8JzvPaN1lSlEttzmvahxP2?=
+ =?us-ascii?Q?4cbwDxfdmIVDJjqVJfQu5QniHN9gTDc+r4MxHI6SiwyowOvRP39u08WVW1l3?=
+ =?us-ascii?Q?Lbi/SwA4ui8sFipNpYhDLQ1X1zhfzjk9rLW0fyEynJ3EC8j/OsP/YnBa6IO0?=
+ =?us-ascii?Q?vjFbAj+VNa+W1KLoa+60LyKtJySoOdevO4FxXXrV9dA7lHykvM71Ty/HhLWN?=
+ =?us-ascii?Q?zkj6EXK6VSkEHecxFfdIMv1R6TVtIlh8JAp1KKLI0CRgulHZ6m5U7mi5/eS6?=
+ =?us-ascii?Q?qlTKt0WWNffyuTE1HDT00OmJAhMoBl0bRIW5Aly5OwbnoZwbUFSvB2NSxOk5?=
+ =?us-ascii?Q?ZD+/KwjiQBvA4N+aS4CsLjoUOY8W3FAxq82BF9+Vvzikzbc+BT0Ed8bvEMNA?=
+ =?us-ascii?Q?lpgSfMhfd0KoYBaDT+YCwatLbcrOUtKiGG6JOU8BT93Mpr/8LzIylNBvBHWC?=
+ =?us-ascii?Q?H+e9ChnJ5lb8yW6hO3ijAB/n09MD2UgED5ArE9GCe3VOP2jqTKzySvCZfkm1?=
+ =?us-ascii?Q?fyOMvmQCn6QDGHHnZVTnXnuDgw7QuqdRWEpxVpGB/LAQ0WkqCnaFE4dqP99O?=
+ =?us-ascii?Q?nE6lxsmoY/tNAnkKWj8NliUNubtgm2HzzXybLdhvhB4NKbopOoSE679UweYz?=
+ =?us-ascii?Q?jU3PaAMUDFaDRC0SRVw/S8YvgP3+9MtWEY/kMND996V86FzZ6s01Eq+KIqfX?=
+ =?us-ascii?Q?qT2fGxSHUjIFokUynr+ifEtDqlBcFEbYl6BdZOtNZfRDQ4q6Tt95mcQlginb?=
+ =?us-ascii?Q?bQDyYeq8zZ8c0KUwZ5fwm+S6cvAAmuhR8OyDnMXugl8H7iRAWL5RUqkIpWxe?=
+ =?us-ascii?Q?xyr/ZeIh01RvnxQdnQtX6Qzr1itaA9WuOqVU/hEpePJm1i4f7D5PHvrYKE4o?=
+ =?us-ascii?Q?VHCvamzk98yVN4MNR/S9nI5y7rjNYhVn+QnNdp71A8KzIyyjlFSGyV/5cO7o?=
+ =?us-ascii?Q?kK/unRP60E8y33pUew2uaG08v2b2LTXwfgJ3D+UfV3KNSttTd60abqWb9SIG?=
+ =?us-ascii?Q?hhnGnGcvcYcUjsS56rgEIA6FeJNFyzEZeLPV+JE/t5vsn0Ri965mxjLac9Et?=
+ =?us-ascii?Q?ohaegNcu2fvrvyR4RXECAoJDXArSdoGqLLCWZsmTzvMRUf0cqBWVh6xLatSO?=
+ =?us-ascii?Q?7A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ycBxXrVLAGnTtbnYwGOkWVdgGPDGDJfhZu3rqHxzAURsTP8BRSHQ2tpE5e8l//qcSkiswFJRG+Sz8uoa58+vBGA5mkmHJTadq/xiLBVqcy7SmWskEzdYuC2m0+UCG8hS3uKLK3ZyhHsjpQPIh8ZPp/XKUqVlQg0rOHO3W35B2dbQi+mf8yFbCRnITKTq+12UoE7HiCymTxNjgquVJMDhk0CW2x2Y2jI8wrUS7YdrpXLghOikiG09foDYb3D2ZXaNCYhkXNSRpBNtRPSpubUEQlXZu0R9LtCoT7XY+pfPU9/arjC3weblD15ghbkqlDMV1ePLQIa0BbQPI8JFxhiFlW4auZ7BWc107UTRf4co0K6tDKK+4Zl/3rHfIuCkLYXhSP7twP22itviIFRzCo2eRTQM8iva7UdPi0TMo0NgVP85o1U8IMtSTprcfW/3N6x1YnZCbK3CQrn/ZgiXiyFij7WySO6dW0kRL1esV/4Ulolt/Lp0yir9M8h0PjRX8T2FyzoogLvaATtIZVE+GQ/ahJop+fPiqBRT8GrGzNpp0usUpOT8ojRxMqIhR9EdoNRNoLvOdSkOyIv15Yt0l1HrxKZo4HNrwjvhk8RKx83x4Lc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 346e50a1-76e9-49ca-2d79-08dd55bab9ba
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR10MB4099.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d56022e5-432d-48dd-4d0a-08dd55bab395
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 16:37:32.1561
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 16:37:42.6140
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB9876
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cq2pRE0gezzT2asJ++MPpYLfkY00B/fGFxoUYETmcMdckEfks/VGRXQ0ufDYFabyxkH+iHoGgCPQpLg8KqDnGiLU9yT1LdmAS1t7+jWcac4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4880
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 mlxscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502250106
+X-Proofpoint-GUID: IapFwdqDjYftnX0Vz31OLFNNKo5cQmUj
+X-Proofpoint-ORIG-GUID: IapFwdqDjYftnX0Vz31OLFNNKo5cQmUj
 
-From: Kerem Karabay <kekrby@gmail.com>
+On Tue, Feb 25, 2025 at 04:54:22PM +0100, Vlastimil Babka wrote:
+> On 2/18/25 18:28, Lorenzo Stoakes wrote:
+> > On Tue, Feb 18, 2025 at 06:25:35PM +0100, David Hildenbrand wrote:
+> >>
+> >> > > >
+> >> > > > It fails because it tries to 'touch' the memory, but 'touching' guard
+> >> > > > region memory causes a segfault. This kind of breaks the idea of
+> >> > > > mlock()'ing guard regions.
+> >> > > >
+> >> > > > I think adding workarounds to make this possible in any way is not really
+> >> > > > worth it (and would probably be pretty gross).
+> >> > > >
+> >> > > > We already document that 'mlock()ing lightweight guard regions will fail'
+> >> > > > as per man page so this is all in line with that.
+> >> > >
+> >> > > Right, and I claim that supporting VM_LOCKONFAULT might likely be as easy as
+> >> > > allowing install/remove of guard regions when that flag is set.
+> >> >
+> >> > We already allow this flag! VM_LOCKED and VM_HUGETLB are the only flags we
+> >> > disallow.
+> >>
+> >>
+> >> See mlock2();
+> >>
+> >> SYSCALL_DEFINE3(mlock2, unsigned long, start, size_t, len, int, flags)
+> >> {
+> >> 	vm_flags_t vm_flags = VM_LOCKED;
+> >>
+> >> 	if (flags & ~MLOCK_ONFAULT)
+> >> 		return -EINVAL;
+> >>
+> >> 	if (flags & MLOCK_ONFAULT)
+> >> 		vm_flags |= VM_LOCKONFAULT;
+> >>
+> >> 	return do_mlock(start, len, vm_flags);
+> >> }
+> >>
+> >>
+> >> VM_LOCKONFAULT always as VM_LOCKED set as well.
+> >
+> > OK cool, that makes sense.
+> >
+> > As with much kernel stuff, I knew this in the past. Then I forgot. Then I knew
+> > again, then... :P if only somebody would write it down in a book...
+> >
+> > Yeah then that makes sense to check explicitly for (VM_LOCKED | VM_LOCKONFAULT)
+> > in any MADV_GUARD_INSTALL_LOCKED variant as obviously this would be passively
+> > excluded right now.
+>
+> Sorry for the late reply. So AFAIU from your conversations, guards can't be
+> compatible with VM_LOCKED, which means e.g. any attempts of glibc to use
+> guards for stacks will soon discover that mlockall() users exist and are
+> broken by this, and the attempts will fail? That's a bummer.
+>
 
-The Touch Bars found on x86 Macs support two USB configurations: one
-where the device presents itself as a HID keyboard and can display
-predefined sets of keys, and one where the operating system has full
-control over what is displayed.
+Yeah damn, this pushes up the priority on this.
 
-This commit adds support for the display functionality of the second
-configuration. Functionality for the first configuration has been
-merged in the HID tree.
+Yeah unfortunately we cannot support this with guard regions being installed
+_after_ the mlockall() but can for before.
 
-Note that this driver has only been tested on T2 Macs, and only includes
-the USB device ID for these devices. Testing on T1 Macs would be
-appreciated.
+Let me write this on my eternal whiteboard of doom (TM), because that ups the
+priority on this. I want to have a good think and see if it might after all be
+possible to find a way to make things work here for sake of this case.
 
-Credit goes to Ben (Bingxing) Wang on GitHub for reverse engineering
-most of the protocol.
+This thing is already shipped now, so it is inevitably going to be an add-on.
 
-Also, as requested by Andy, I would like to clarify the use of __packed
-structs in this driver:
+I will try some experiments when I get a sec.
 
-- All the packed structs are aligned except for appletbdrm_msg_information.
-- We have to pack appletbdrm_msg_information since it is requirement of
-  the protocol.
-- We compared binaries compiled by keeping the rest structs __packed and
-  not __packed using bloat-o-meter, and __packed was not affecting code
-  generation.
-- To maintain consistency, rest structs have been kept __packed.
+Thanks very much for bringing this point up! This is pretty key.
 
-I would also like to point out that since the driver was reverse-engineered
-the actual data types of the protocol might be different, including, but
-not limited to, endianness.
+> As for compatibility with VM_LOCKONFAULT, do we need a new
+> MADV_GUARD_INSTALL_LOCKED or can we say MADV_GUARD_INSTALL is new enough
+> that it can be just retrofitted (like you retrofit file backed mappings)?
+> AFAIU the only risk would be breaking somebody that already relies on a
+> failure for VM_LOCKONFAULT, and it's unlikely there's such a somebody now.
+>
+>
 
-Link: https://github.com/imbushuo/DFRDisplayKm
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Co-developed-by: Atharva Tiwari <evepolonium@gmail.com>
-Signed-off-by: Atharva Tiwari <evepolonium@gmail.com>
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aun-Ali Zaidi <admin@kodeit.net>
----
-v2 ->
-- Add the driver to MAINTAINERS.
-- Allocate memory for request and response in plane's atomic-check helper
-- Void the use of drm_fb_blit()
-- Implement atomic_disable
-- Make PRIME work
-- Remove the date field from struct drm_driver=20
-- intersect damage with dst_clip
-- Register DRM device in appletbdrm_probe
-- Clear the display as the final call in probe
-- Select hid_multitouch as well in kconfig
+Hmm yeah I suppose. I guess just to be consistent with the other _LOCKED
+variants? (which seem to be... undocumented at least in man pages :P, and yes I
+realise this is me semi-volunteering to do that obviously...).
 
-v3 ->
-- Change commit message to credit Ben (Bingxing) Wang
+But on the other hand, we could also expand this if you and I see also Dave feel
+this makes sense and wouldn't be confusing.
 
-v4 ->
-- Use "Link:" in commit message
-- Specify why __packed has been used in commit message
-- Use %p4cc instead of %p4ch for errors
-- Add myself to Maintainers
-- Remove #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-- Add missing header files
-- Use return 0; instead of return ret; in static int appletbdrm_send_reques=
-t
-- Better errno types used in appletbdrm_read_response
-- Use BITS_TO_BYTES() to convert APPLETBDRM_BITS_PER_PIXEL to bytes
-- Remove redundant else in plane_helper_atomic_check
-- Remove unnecessary use of 0xff in request->msg_id =3D timestamp & 0xff;
-- Remove duplicated struct device in struct appletbdrm_device
-- clear frames_size and request_size as well in primary_plane_helper_atomic=
-_update
-- Allocate using kzalloc instead of kmemdup
-- Use drm_err() instead of dev_err_probe()
-- Avoid clearing drm->mode_config.min_width and height to 0
-- Use put_device() to release the DMA device in appletbdrm_disconnect
+Agreed entirely that it'd be very very odd for a user to rely on that so I think
+we'll be fine.
 
-v5 ->
-- Convert leftover dev_err_probe to drm_err
-- Add missing period in comment
-- Use struct device *dmadev instead of struct device *dev in struct appletb=
-drm_device
-- Instead of using __APPLETBDRM_MSG_STR4(str4) macro, the hex values have b=
-een directly used
-- Remove modules that were not needed from kconfig
+I shall return to this topic later, in the form of a series, probably!
 
-v6 ->
-- Clear the drm pointer to NULL in probe
-- Add back else if in atomic_check for the sake of consistency with other d=
-rm drivers
-
- MAINTAINERS                       |   8 +
- drivers/gpu/drm/tiny/Kconfig      |  12 +
- drivers/gpu/drm/tiny/Makefile     |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c | 843 ++++++++++++++++++++++++++++++
- 4 files changed, 864 insertions(+)
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index efee40ea5..f7c97eb24 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7148,6 +7148,14 @@ S:	Supported
- T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	drivers/gpu/drm/sun4i/sun8i*
-=20
-+DRM DRIVER FOR APPLE TOUCH BARS
-+M:	Aun-Ali Zaidi <admin@kodeit.net>
-+M:	Aditya Garg <gargaditya08@live.com>
-+L:	dri-devel@lists.freedesktop.org
-+S:	Maintained
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	drivers/gpu/drm/tiny/appletbdrm.c
-+
- DRM DRIVER FOR ARM PL111 CLCD
- M:	Linus Walleij <linus.walleij@linaro.org>
- S:	Maintained
-diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
-index 94cbdb133..54c84c980 100644
---- a/drivers/gpu/drm/tiny/Kconfig
-+++ b/drivers/gpu/drm/tiny/Kconfig
-@@ -1,5 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-only
-=20
-+config DRM_APPLETBDRM
-+	tristate "DRM support for Apple Touch Bars"
-+	depends on DRM && USB && MMU
-+	select DRM_GEM_SHMEM_HELPER
-+	select DRM_KMS_HELPER
-+	help
-+	  Say Y here if you want support for the display of Touch Bars on x86
-+	  MacBook Pros.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called appletbdrm.
-+
- config DRM_ARCPGU
- 	tristate "ARC PGU"
- 	depends on DRM && OF
-diff --git a/drivers/gpu/drm/tiny/Makefile b/drivers/gpu/drm/tiny/Makefile
-index 60816d2eb..0a3a7837a 100644
---- a/drivers/gpu/drm/tiny/Makefile
-+++ b/drivers/gpu/drm/tiny/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
-=20
-+obj-$(CONFIG_DRM_APPLETBDRM)		+=3D appletbdrm.o
- obj-$(CONFIG_DRM_ARCPGU)		+=3D arcpgu.o
- obj-$(CONFIG_DRM_BOCHS)			+=3D bochs.o
- obj-$(CONFIG_DRM_CIRRUS_QEMU)		+=3D cirrus-qemu.o
-diff --git a/drivers/gpu/drm/tiny/appletbdrm.c b/drivers/gpu/drm/tiny/apple=
-tbdrm.c
-new file mode 100644
-index 000000000..39f5ee556
---- /dev/null
-+++ b/drivers/gpu/drm/tiny/appletbdrm.c
-@@ -0,0 +1,843 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Apple Touch Bar DRM Driver
-+ *
-+ * Copyright (c) 2023 Kerem Karabay <kekrby@gmail.com>
-+ */
-+
-+#include <linux/align.h>
-+#include <linux/array_size.h>
-+#include <linux/bitops.h>
-+#include <linux/bug.h>
-+#include <linux/container_of.h>
-+#include <linux/dev_printk.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/overflow.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/unaligned.h>
-+#include <linux/usb.h>
-+
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_damage_helper.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_encoder.h>
-+#include <drm/drm_format_helper.h>
-+#include <drm/drm_fourcc.h>
-+#include <drm/drm_framebuffer.h>
-+#include <drm/drm_gem_atomic_helper.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
-+#include <drm/drm_plane.h>
-+#include <drm/drm_probe_helper.h>
-+
-+#define APPLETBDRM_PIXEL_FORMAT		cpu_to_le32(0x52474241) /* RGBA, the actu=
-al format is BGR888 */
-+#define APPLETBDRM_BITS_PER_PIXEL	24
-+
-+#define APPLETBDRM_MSG_CLEAR_DISPLAY	cpu_to_le32(0x434c5244) /* CLRD */
-+#define APPLETBDRM_MSG_GET_INFORMATION	cpu_to_le32(0x47494e46) /* GINF */
-+#define APPLETBDRM_MSG_UPDATE_COMPLETE	cpu_to_le32(0x5544434c) /* UDCL */
-+#define APPLETBDRM_MSG_SIGNAL_READINESS	cpu_to_le32(0x52454459) /* REDY */
-+
-+#define APPLETBDRM_BULK_MSG_TIMEOUT	1000
-+
-+#define drm_to_adev(_drm)		container_of(_drm, struct appletbdrm_device, dr=
-m)
-+#define adev_to_udev(adev)		interface_to_usbdev(to_usb_interface(adev->dma=
-dev))
-+
-+struct appletbdrm_msg_request_header {
-+	__le16 unk_00;
-+	__le16 unk_02;
-+	__le32 unk_04;
-+	__le32 unk_08;
-+	__le32 size;
-+} __packed;
-+
-+struct appletbdrm_msg_response_header {
-+	u8 unk_00[16];
-+	__le32 msg;
-+} __packed;
-+
-+struct appletbdrm_msg_simple_request {
-+	struct appletbdrm_msg_request_header header;
-+	__le32 msg;
-+	u8 unk_14[8];
-+	__le32 size;
-+} __packed;
-+
-+struct appletbdrm_msg_information {
-+	struct appletbdrm_msg_response_header header;
-+	u8 unk_14[12];
-+	__le32 width;
-+	__le32 height;
-+	u8 bits_per_pixel;
-+	__le32 bytes_per_row;
-+	__le32 orientation;
-+	__le32 bitmap_info;
-+	__le32 pixel_format;
-+	__le32 width_inches;	/* floating point */
-+	__le32 height_inches;	/* floating point */
-+} __packed;
-+
-+struct appletbdrm_frame {
-+	__le16 begin_x;
-+	__le16 begin_y;
-+	__le16 width;
-+	__le16 height;
-+	__le32 buf_size;
-+	u8 buf[];
-+} __packed;
-+
-+struct appletbdrm_fb_request_footer {
-+	u8 unk_00[12];
-+	__le32 unk_0c;
-+	u8 unk_10[12];
-+	__le32 unk_1c;
-+	__le64 timestamp;
-+	u8 unk_28[12];
-+	__le32 unk_34;
-+	u8 unk_38[20];
-+	__le32 unk_4c;
-+} __packed;
-+
-+struct appletbdrm_fb_request {
-+	struct appletbdrm_msg_request_header header;
-+	__le16 unk_10;
-+	u8 msg_id;
-+	u8 unk_13[29];
-+	/*
-+	 * Contents of `data`:
-+	 * - struct appletbdrm_frame frames[];
-+	 * - struct appletbdrm_fb_request_footer footer;
-+	 * - padding to make the total size a multiple of 16
-+	 */
-+	u8 data[];
-+} __packed;
-+
-+struct appletbdrm_fb_request_response {
-+	struct appletbdrm_msg_response_header header;
-+	u8 unk_14[12];
-+	__le64 timestamp;
-+} __packed;
-+
-+struct appletbdrm_device {
-+	struct device *dmadev;
-+
-+	unsigned int in_ep;
-+	unsigned int out_ep;
-+
-+	unsigned int width;
-+	unsigned int height;
-+
-+	struct drm_device drm;
-+	struct drm_display_mode mode;
-+	struct drm_connector connector;
-+	struct drm_plane primary_plane;
-+	struct drm_crtc crtc;
-+	struct drm_encoder encoder;
-+};
-+
-+struct appletbdrm_plane_state {
-+	struct drm_shadow_plane_state base;
-+	struct appletbdrm_fb_request *request;
-+	struct appletbdrm_fb_request_response *response;
-+	size_t request_size;
-+	size_t frames_size;
-+};
-+
-+static inline struct appletbdrm_plane_state *to_appletbdrm_plane_state(str=
-uct drm_plane_state *state)
-+{
-+	return container_of(state, struct appletbdrm_plane_state, base.base);
-+}
-+
-+static int appletbdrm_send_request(struct appletbdrm_device *adev,
-+				   struct appletbdrm_msg_request_header *request, size_t size)
-+{
-+	struct usb_device *udev =3D adev_to_udev(adev);
-+	struct drm_device *drm =3D &adev->drm;
-+	int ret, actual_size;
-+
-+	ret =3D usb_bulk_msg(udev, usb_sndbulkpipe(udev, adev->out_ep),
-+			   request, size, &actual_size, APPLETBDRM_BULK_MSG_TIMEOUT);
-+	if (ret) {
-+		drm_err(drm, "Failed to send message (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	if (actual_size !=3D size) {
-+		drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
-+			actual_size, size);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int appletbdrm_read_response(struct appletbdrm_device *adev,
-+				    struct appletbdrm_msg_response_header *response,
-+				    size_t size, __le32 expected_response)
-+{
-+	struct usb_device *udev =3D adev_to_udev(adev);
-+	struct drm_device *drm =3D &adev->drm;
-+	int ret, actual_size;
-+	bool readiness_signal_received =3D false;
-+
-+retry:
-+	ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, adev->in_ep),
-+			   response, size, &actual_size, APPLETBDRM_BULK_MSG_TIMEOUT);
-+	if (ret) {
-+		drm_err(drm, "Failed to read response (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * The device responds to the first request sent in a particular
-+	 * timeframe after the USB device configuration is set with a readiness
-+	 * signal, in which case the response should be read again
-+	 */
-+	if (response->msg =3D=3D APPLETBDRM_MSG_SIGNAL_READINESS) {
-+		if (!readiness_signal_received) {
-+			readiness_signal_received =3D true;
-+			goto retry;
-+		}
-+
-+		drm_err(drm, "Encountered unexpected readiness signal\n");
-+		return -EINTR;
-+	}
-+
-+	if (actual_size !=3D size) {
-+		drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
-+			actual_size, size);
-+		return -EBADMSG;
-+	}
-+
-+	if (response->msg !=3D expected_response) {
-+		drm_err(drm, "Unexpected response from device (expected %p4cc found %p4c=
-c)\n",
-+			&expected_response, &response->msg);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int appletbdrm_send_msg(struct appletbdrm_device *adev, __le32 msg)
-+{
-+	struct appletbdrm_msg_simple_request *request;
-+	int ret;
-+
-+	request =3D kzalloc(sizeof(*request), GFP_KERNEL);
-+	if (!request)
-+		return -ENOMEM;
-+
-+	request->header.unk_00 =3D cpu_to_le16(2);
-+	request->header.unk_02 =3D cpu_to_le16(0x1512);
-+	request->header.size =3D cpu_to_le32(sizeof(*request) - sizeof(request->h=
-eader));
-+	request->msg =3D msg;
-+	request->size =3D request->header.size;
-+
-+	ret =3D appletbdrm_send_request(adev, &request->header, sizeof(*request))=
-;
-+
-+	kfree(request);
-+
-+	return ret;
-+}
-+
-+static int appletbdrm_clear_display(struct appletbdrm_device *adev)
-+{
-+	return appletbdrm_send_msg(adev, APPLETBDRM_MSG_CLEAR_DISPLAY);
-+}
-+
-+static int appletbdrm_signal_readiness(struct appletbdrm_device *adev)
-+{
-+	return appletbdrm_send_msg(adev, APPLETBDRM_MSG_SIGNAL_READINESS);
-+}
-+
-+static int appletbdrm_get_information(struct appletbdrm_device *adev)
-+{
-+	struct appletbdrm_msg_information *info;
-+	struct drm_device *drm =3D &adev->drm;
-+	u8 bits_per_pixel;
-+	__le32 pixel_format;
-+	int ret;
-+
-+	info =3D kzalloc(sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	ret =3D appletbdrm_send_msg(adev, APPLETBDRM_MSG_GET_INFORMATION);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D appletbdrm_read_response(adev, &info->header, sizeof(*info),
-+				       APPLETBDRM_MSG_GET_INFORMATION);
-+	if (ret)
-+		goto free_info;
-+
-+	bits_per_pixel =3D info->bits_per_pixel;
-+	pixel_format =3D get_unaligned(&info->pixel_format);
-+
-+	adev->width =3D get_unaligned_le32(&info->width);
-+	adev->height =3D get_unaligned_le32(&info->height);
-+
-+	if (bits_per_pixel !=3D APPLETBDRM_BITS_PER_PIXEL) {
-+		drm_err(drm, "Encountered unexpected bits per pixel value (%d)\n", bits_=
-per_pixel);
-+		ret =3D -EINVAL;
-+		goto free_info;
-+	}
-+
-+	if (pixel_format !=3D APPLETBDRM_PIXEL_FORMAT) {
-+		drm_err(drm, "Encountered unknown pixel format (%p4cc)\n", &pixel_format=
-);
-+		ret =3D -EINVAL;
-+		goto free_info;
-+	}
-+
-+free_info:
-+	kfree(info);
-+
-+	return ret;
-+}
-+
-+static u32 rect_size(struct drm_rect *rect)
-+{
-+	return drm_rect_width(rect) * drm_rect_height(rect) *
-+		(BITS_TO_BYTES(APPLETBDRM_BITS_PER_PIXEL));
-+}
-+
-+static int appletbdrm_connector_helper_get_modes(struct drm_connector *con=
-nector)
-+{
-+	struct appletbdrm_device *adev =3D drm_to_adev(connector->dev);
-+
-+	return drm_connector_helper_get_modes_fixed(connector, &adev->mode);
-+}
-+
-+static const u32 appletbdrm_primary_plane_formats[] =3D {
-+	DRM_FORMAT_BGR888,
-+	DRM_FORMAT_XRGB8888, /* emulated */
-+};
-+
-+static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *=
-plane,
-+						   struct drm_atomic_state *state)
-+{
-+	struct drm_plane_state *new_plane_state =3D drm_atomic_get_new_plane_stat=
-e(state, plane);
-+	struct drm_plane_state *old_plane_state =3D drm_atomic_get_old_plane_stat=
-e(state, plane);
-+	struct drm_crtc *new_crtc =3D new_plane_state->crtc;
-+	struct drm_crtc_state *new_crtc_state =3D NULL;
-+	struct appletbdrm_plane_state *appletbdrm_state =3D to_appletbdrm_plane_s=
-tate(new_plane_state);
-+	struct drm_atomic_helper_damage_iter iter;
-+	struct drm_rect damage;
-+	size_t frames_size =3D 0;
-+	size_t request_size;
-+	int ret;
-+
-+	if (new_crtc)
-+		new_crtc_state =3D drm_atomic_get_new_crtc_state(state, new_crtc);
-+
-+	ret =3D drm_atomic_helper_check_plane_state(new_plane_state, new_crtc_sta=
-te,
-+						  DRM_PLANE_NO_SCALING,
-+						  DRM_PLANE_NO_SCALING,
-+						  false, false);
-+	if (ret)
-+		return ret;
-+	else if (!new_plane_state->visible)
-+		return 0;
-+
-+	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, new_plane_stat=
-e);
-+	drm_atomic_for_each_plane_damage(&iter, &damage) {
-+		frames_size +=3D struct_size((struct appletbdrm_frame *)0, buf, rect_siz=
-e(&damage));
-+	}
-+
-+	if (!frames_size)
-+		return 0;
-+
-+	request_size =3D ALIGN(sizeof(struct appletbdrm_fb_request) +
-+		       frames_size +
-+		       sizeof(struct appletbdrm_fb_request_footer), 16);
-+
-+	appletbdrm_state->request =3D kzalloc(request_size, GFP_KERNEL);
-+
-+	if (!appletbdrm_state->request)
-+		return -ENOMEM;
-+
-+	appletbdrm_state->response =3D kzalloc(sizeof(*appletbdrm_state->response=
-), GFP_KERNEL);
-+
-+	if (!appletbdrm_state->response)
-+		return -ENOMEM;
-+
-+	appletbdrm_state->request_size =3D request_size;
-+	appletbdrm_state->frames_size =3D frames_size;
-+
-+	return 0;
-+}
-+
-+static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
-+				   struct drm_plane_state *old_state,
-+				   struct drm_plane_state *state)
-+{
-+	struct appletbdrm_plane_state *appletbdrm_state =3D to_appletbdrm_plane_s=
-tate(state);
-+	struct drm_shadow_plane_state *shadow_plane_state =3D to_drm_shadow_plane=
-_state(state);
-+	struct appletbdrm_fb_request_response *response =3D appletbdrm_state->res=
-ponse;
-+	struct appletbdrm_fb_request_footer *footer;
-+	struct drm_atomic_helper_damage_iter iter;
-+	struct drm_framebuffer *fb =3D state->fb;
-+	struct appletbdrm_fb_request *request =3D appletbdrm_state->request;
-+	struct drm_device *drm =3D &adev->drm;
-+	struct appletbdrm_frame *frame;
-+	u64 timestamp =3D ktime_get_ns();
-+	struct drm_rect damage;
-+	size_t frames_size =3D appletbdrm_state->frames_size;
-+	size_t request_size =3D appletbdrm_state->request_size;
-+	int ret;
-+
-+	if (!frames_size)
-+		return 0;
-+
-+	ret =3D drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
-+	if (ret) {
-+		drm_err(drm, "Failed to start CPU framebuffer access (%d)\n", ret);
-+		goto end_fb_cpu_access;
-+	}
-+
-+	request->header.unk_00 =3D cpu_to_le16(2);
-+	request->header.unk_02 =3D cpu_to_le16(0x12);
-+	request->header.unk_04 =3D cpu_to_le32(9);
-+	request->header.size =3D cpu_to_le32(request_size - sizeof(request->heade=
-r));
-+	request->unk_10 =3D cpu_to_le16(1);
-+	request->msg_id =3D timestamp;
-+
-+	frame =3D (struct appletbdrm_frame *)request->data;
-+
-+	drm_atomic_helper_damage_iter_init(&iter, old_state, state);
-+	drm_atomic_for_each_plane_damage(&iter, &damage) {
-+		struct drm_rect dst_clip =3D state->dst;
-+		struct iosys_map dst =3D IOSYS_MAP_INIT_VADDR(frame->buf);
-+		u32 buf_size =3D rect_size(&damage);
-+
-+		if (!drm_rect_intersect(&dst_clip, &damage))
-+			continue;
-+
-+		/*
-+		 * The coordinates need to be translated to the coordinate
-+		 * system the device expects, see the comment in
-+		 * appletbdrm_setup_mode_config
-+		 */
-+		frame->begin_x =3D cpu_to_le16(damage.y1);
-+		frame->begin_y =3D cpu_to_le16(adev->height - damage.x2);
-+		frame->width =3D cpu_to_le16(drm_rect_height(&damage));
-+		frame->height =3D cpu_to_le16(drm_rect_width(&damage));
-+		frame->buf_size =3D cpu_to_le32(buf_size);
-+
-+		switch (fb->format->format) {
-+		case DRM_FORMAT_XRGB8888:
-+			drm_fb_xrgb8888_to_bgr888(&dst, NULL, &shadow_plane_state->data[0], fb,=
- &damage, &shadow_plane_state->fmtcnv_state);
-+			break;
-+		default:
-+			drm_fb_memcpy(&dst, NULL, &shadow_plane_state->data[0], fb, &damage);
-+			break;
-+		}
-+
-+		frame =3D (void *)frame + struct_size(frame, buf, buf_size);
-+	}
-+
-+	footer =3D (struct appletbdrm_fb_request_footer *)&request->data[frames_s=
-ize];
-+
-+	footer->unk_0c =3D cpu_to_le32(0xfffe);
-+	footer->unk_1c =3D cpu_to_le32(0x80001);
-+	footer->unk_34 =3D cpu_to_le32(0x80002);
-+	footer->unk_4c =3D cpu_to_le32(0xffff);
-+	footer->timestamp =3D cpu_to_le64(timestamp);
-+
-+	ret =3D appletbdrm_send_request(adev, &request->header, request_size);
-+	if (ret)
-+		goto end_fb_cpu_access;
-+
-+	ret =3D appletbdrm_read_response(adev, &response->header, sizeof(*respons=
-e),
-+				       APPLETBDRM_MSG_UPDATE_COMPLETE);
-+	if (ret)
-+		goto end_fb_cpu_access;
-+
-+	if (response->timestamp !=3D footer->timestamp) {
-+		drm_err(drm, "Response timestamp (%llu) doesn't match request timestamp =
-(%llu)\n",
-+			le64_to_cpu(response->timestamp), timestamp);
-+		goto end_fb_cpu_access;
-+	}
-+
-+end_fb_cpu_access:
-+	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
-+
-+	return ret;
-+}
-+
-+static void appletbdrm_primary_plane_helper_atomic_update(struct drm_plane=
- *plane,
-+						     struct drm_atomic_state *old_state)
-+{
-+	struct appletbdrm_device *adev =3D drm_to_adev(plane->dev);
-+	struct drm_device *drm =3D plane->dev;
-+	struct drm_plane_state *plane_state =3D plane->state;
-+	struct drm_plane_state *old_plane_state =3D drm_atomic_get_old_plane_stat=
-e(old_state, plane);
-+	int idx;
-+
-+	if (!drm_dev_enter(drm, &idx))
-+		return;
-+
-+	appletbdrm_flush_damage(adev, old_plane_state, plane_state);
-+
-+	drm_dev_exit(idx);
-+}
-+
-+static void appletbdrm_primary_plane_helper_atomic_disable(struct drm_plan=
-e *plane,
-+							   struct drm_atomic_state *state)
-+{
-+	struct drm_device *dev =3D plane->dev;
-+	struct appletbdrm_device *adev =3D drm_to_adev(dev);
-+	int idx;
-+
-+	if (!drm_dev_enter(dev, &idx))
-+		return;
-+
-+	appletbdrm_clear_display(adev);
-+
-+	drm_dev_exit(idx);
-+}
-+
-+static void appletbdrm_primary_plane_reset(struct drm_plane *plane)
-+{
-+	struct appletbdrm_plane_state *appletbdrm_state;
-+
-+	WARN_ON(plane->state);
-+
-+	appletbdrm_state =3D kzalloc(sizeof(*appletbdrm_state), GFP_KERNEL);
-+	if (!appletbdrm_state)
-+		return;
-+
-+	__drm_gem_reset_shadow_plane(plane, &appletbdrm_state->base);
-+}
-+
-+static struct drm_plane_state *appletbdrm_primary_plane_duplicate_state(st=
-ruct drm_plane *plane)
-+{
-+	struct drm_shadow_plane_state *new_shadow_plane_state;
-+	struct appletbdrm_plane_state *old_appletbdrm_state;
-+	struct appletbdrm_plane_state *appletbdrm_state;
-+
-+	if (WARN_ON(!plane->state))
-+		return NULL;
-+
-+	old_appletbdrm_state =3D to_appletbdrm_plane_state(plane->state);
-+	appletbdrm_state =3D kzalloc(sizeof(*appletbdrm_state), GFP_KERNEL);
-+	if (!appletbdrm_state)
-+		return NULL;
-+
-+	/* Request and response are not duplicated and are allocated in .atomic_c=
-heck */
-+	appletbdrm_state->request =3D NULL;
-+	appletbdrm_state->response =3D NULL;
-+
-+	appletbdrm_state->request_size =3D 0;
-+	appletbdrm_state->frames_size =3D 0;
-+
-+	new_shadow_plane_state =3D &appletbdrm_state->base;
-+
-+	__drm_gem_duplicate_shadow_plane_state(plane, new_shadow_plane_state);
-+
-+	return &new_shadow_plane_state->base;
-+}
-+
-+static void appletbdrm_primary_plane_destroy_state(struct drm_plane *plane=
-,
-+						   struct drm_plane_state *state)
-+{
-+	struct appletbdrm_plane_state *appletbdrm_state =3D to_appletbdrm_plane_s=
-tate(state);
-+
-+	kfree(appletbdrm_state->request);
-+	kfree(appletbdrm_state->response);
-+
-+	__drm_gem_destroy_shadow_plane_state(&appletbdrm_state->base);
-+
-+	kfree(appletbdrm_state);
-+}
-+
-+static const struct drm_plane_helper_funcs appletbdrm_primary_plane_helper=
-_funcs =3D {
-+	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-+	.atomic_check =3D appletbdrm_primary_plane_helper_atomic_check,
-+	.atomic_update =3D appletbdrm_primary_plane_helper_atomic_update,
-+	.atomic_disable =3D appletbdrm_primary_plane_helper_atomic_disable,
-+};
-+
-+static const struct drm_plane_funcs appletbdrm_primary_plane_funcs =3D {
-+	.update_plane =3D drm_atomic_helper_update_plane,
-+	.disable_plane =3D drm_atomic_helper_disable_plane,
-+	.reset =3D appletbdrm_primary_plane_reset,
-+	.atomic_duplicate_state =3D appletbdrm_primary_plane_duplicate_state,
-+	.atomic_destroy_state =3D appletbdrm_primary_plane_destroy_state,
-+	.destroy =3D drm_plane_cleanup,
-+};
-+
-+static enum drm_mode_status appletbdrm_crtc_helper_mode_valid(struct drm_c=
-rtc *crtc,
-+							  const struct drm_display_mode *mode)
-+{
-+	struct appletbdrm_device *adev =3D drm_to_adev(crtc->dev);
-+
-+	return drm_crtc_helper_mode_valid_fixed(crtc, mode, &adev->mode);
-+}
-+
-+static const struct drm_mode_config_funcs appletbdrm_mode_config_funcs =3D=
- {
-+	.fb_create =3D drm_gem_fb_create_with_dirty,
-+	.atomic_check =3D drm_atomic_helper_check,
-+	.atomic_commit =3D drm_atomic_helper_commit,
-+};
-+
-+static const struct drm_connector_funcs appletbdrm_connector_funcs =3D {
-+	.reset =3D drm_atomic_helper_connector_reset,
-+	.destroy =3D drm_connector_cleanup,
-+	.fill_modes =3D drm_helper_probe_single_connector_modes,
-+	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,
-+	.atomic_duplicate_state =3D drm_atomic_helper_connector_duplicate_state,
-+};
-+
-+static const struct drm_connector_helper_funcs appletbdrm_connector_helper=
-_funcs =3D {
-+	.get_modes =3D appletbdrm_connector_helper_get_modes,
-+};
-+
-+static const struct drm_crtc_helper_funcs appletbdrm_crtc_helper_funcs =3D=
- {
-+	.mode_valid =3D appletbdrm_crtc_helper_mode_valid,
-+};
-+
-+static const struct drm_crtc_funcs appletbdrm_crtc_funcs =3D {
-+	.reset =3D drm_atomic_helper_crtc_reset,
-+	.destroy =3D drm_crtc_cleanup,
-+	.set_config =3D drm_atomic_helper_set_config,
-+	.page_flip =3D drm_atomic_helper_page_flip,
-+	.atomic_duplicate_state =3D drm_atomic_helper_crtc_duplicate_state,
-+	.atomic_destroy_state =3D drm_atomic_helper_crtc_destroy_state,
-+};
-+
-+static const struct drm_encoder_funcs appletbdrm_encoder_funcs =3D {
-+	.destroy =3D drm_encoder_cleanup,
-+};
-+
-+static struct drm_gem_object *appletbdrm_driver_gem_prime_import(struct dr=
-m_device *dev,
-+								 struct dma_buf *dma_buf)
-+{
-+	struct appletbdrm_device *adev =3D drm_to_adev(dev);
-+
-+	if (!adev->dmadev)
-+		return ERR_PTR(-ENODEV);
-+
-+	return drm_gem_prime_import_dev(dev, dma_buf, adev->dmadev);
-+}
-+
-+DEFINE_DRM_GEM_FOPS(appletbdrm_drm_fops);
-+
-+static const struct drm_driver appletbdrm_drm_driver =3D {
-+	DRM_GEM_SHMEM_DRIVER_OPS,
-+	.gem_prime_import	=3D appletbdrm_driver_gem_prime_import,
-+	.name			=3D "appletbdrm",
-+	.desc			=3D "Apple Touch Bar DRM Driver",
-+	.major			=3D 1,
-+	.minor			=3D 0,
-+	.driver_features	=3D DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
-+	.fops			=3D &appletbdrm_drm_fops,
-+};
-+
-+static int appletbdrm_setup_mode_config(struct appletbdrm_device *adev)
-+{
-+	struct drm_connector *connector =3D &adev->connector;
-+	struct drm_plane *primary_plane;
-+	struct drm_crtc *crtc;
-+	struct drm_encoder *encoder;
-+	struct drm_device *drm =3D &adev->drm;
-+	int ret;
-+
-+	ret =3D drmm_mode_config_init(drm);
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize mode configuration\n");
-+		return ret;
-+	}
-+
-+	primary_plane =3D &adev->primary_plane;
-+	ret =3D drm_universal_plane_init(drm, primary_plane, 0,
-+				       &appletbdrm_primary_plane_funcs,
-+				       appletbdrm_primary_plane_formats,
-+				       ARRAY_SIZE(appletbdrm_primary_plane_formats),
-+				       NULL,
-+				       DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize universal plane object\n");
-+		return ret;
-+	}
-+
-+	drm_plane_helper_add(primary_plane, &appletbdrm_primary_plane_helper_func=
-s);
-+	drm_plane_enable_fb_damage_clips(primary_plane);
-+
-+	crtc =3D &adev->crtc;
-+	ret =3D drm_crtc_init_with_planes(drm, crtc, primary_plane, NULL,
-+					&appletbdrm_crtc_funcs, NULL);
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize CRTC object\n");
-+		return ret;
-+	}
-+
-+	drm_crtc_helper_add(crtc, &appletbdrm_crtc_helper_funcs);
-+
-+	encoder =3D &adev->encoder;
-+	ret =3D drm_encoder_init(drm, encoder, &appletbdrm_encoder_funcs,
-+			       DRM_MODE_ENCODER_DAC, NULL);
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize encoder\n");
-+		return ret;
-+	}
-+
-+	encoder->possible_crtcs =3D drm_crtc_mask(crtc);
-+
-+	/*
-+	 * The coordinate system used by the device is different from the
-+	 * coordinate system of the framebuffer in that the x and y axes are
-+	 * swapped, and that the y axis is inverted; so what the device reports
-+	 * as the height is actually the width of the framebuffer and vice
-+	 * versa.
-+	 */
-+	drm->mode_config.max_width =3D max(adev->height, DRM_SHADOW_PLANE_MAX_WID=
-TH);
-+	drm->mode_config.max_height =3D max(adev->width, DRM_SHADOW_PLANE_MAX_HEI=
-GHT);
-+	drm->mode_config.preferred_depth =3D APPLETBDRM_BITS_PER_PIXEL;
-+	drm->mode_config.funcs =3D &appletbdrm_mode_config_funcs;
-+
-+	adev->mode =3D (struct drm_display_mode) {
-+		DRM_MODE_INIT(60, adev->height, adev->width,
-+			      DRM_MODE_RES_MM(adev->height, 218),
-+			      DRM_MODE_RES_MM(adev->width, 218))
-+	};
-+
-+	ret =3D drm_connector_init(drm, connector,
-+				 &appletbdrm_connector_funcs, DRM_MODE_CONNECTOR_USB);
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize connector\n");
-+		return ret;
-+	}
-+
-+	drm_connector_helper_add(connector, &appletbdrm_connector_helper_funcs);
-+
-+	ret =3D drm_connector_set_panel_orientation(connector,
-+						  DRM_MODE_PANEL_ORIENTATION_RIGHT_UP);
-+	if (ret) {
-+		drm_err(drm, "Failed to set panel orientation\n");
-+		return ret;
-+	}
-+
-+	connector->display_info.non_desktop =3D true;
-+	ret =3D drm_object_property_set_value(&connector->base,
-+					    drm->mode_config.non_desktop_property, true);
-+	if (ret) {
-+		drm_err(drm, "Failed to set non-desktop property\n");
-+		return ret;
-+	}
-+
-+	ret =3D drm_connector_attach_encoder(connector, encoder);
-+
-+	if (ret) {
-+		drm_err(drm, "Failed to initialize simple display pipe\n");
-+		return ret;
-+	}
-+
-+	drm_mode_config_reset(drm);
-+
-+	return 0;
-+}
-+
-+static int appletbdrm_probe(struct usb_interface *intf,
-+			    const struct usb_device_id *id)
-+{
-+	struct usb_endpoint_descriptor *bulk_in, *bulk_out;
-+	struct device *dev =3D &intf->dev;
-+	struct appletbdrm_device *adev;
-+	struct drm_device *drm =3D NULL;
-+	int ret;
-+
-+	ret =3D usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_o=
-ut, NULL, NULL);
-+	if (ret) {
-+		drm_err(drm, "Failed to find bulk endpoints\n");
-+		return ret;
-+	}
-+
-+	adev =3D devm_drm_dev_alloc(dev, &appletbdrm_drm_driver, struct appletbdr=
-m_device, drm);
-+	if (IS_ERR(adev))
-+		return PTR_ERR(adev);
-+
-+	adev->in_ep =3D bulk_in->bEndpointAddress;
-+	adev->out_ep =3D bulk_out->bEndpointAddress;
-+	adev->dmadev =3D dev;
-+
-+	drm =3D &adev->drm;
-+
-+	usb_set_intfdata(intf, adev);
-+
-+	ret =3D appletbdrm_get_information(adev);
-+	if (ret) {
-+		drm_err(drm, "Failed to get display information\n");
-+		return ret;
-+	}
-+
-+	ret =3D appletbdrm_signal_readiness(adev);
-+	if (ret) {
-+		drm_err(drm, "Failed to signal readiness\n");
-+		return ret;
-+	}
-+
-+	ret =3D appletbdrm_setup_mode_config(adev);
-+	if (ret) {
-+		drm_err(drm, "Failed to setup mode config\n");
-+		return ret;
-+	}
-+
-+	ret =3D drm_dev_register(drm, 0);
-+	if (ret) {
-+		drm_err(drm, "Failed to register DRM device\n");
-+		return ret;
-+	}
-+
-+	ret =3D appletbdrm_clear_display(adev);
-+	if (ret) {
-+		drm_err(drm, "Failed to clear display\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void appletbdrm_disconnect(struct usb_interface *intf)
-+{
-+	struct appletbdrm_device *adev =3D usb_get_intfdata(intf);
-+	struct drm_device *drm =3D &adev->drm;
-+
-+	put_device(adev->dmadev);
-+	drm_dev_unplug(drm);
-+	drm_atomic_helper_shutdown(drm);
-+}
-+
-+static void appletbdrm_shutdown(struct usb_interface *intf)
-+{
-+	struct appletbdrm_device *adev =3D usb_get_intfdata(intf);
-+
-+	/*
-+	 * The framebuffer needs to be cleared on shutdown since its content
-+	 * persists across boots
-+	 */
-+	drm_atomic_helper_shutdown(&adev->drm);
-+}
-+
-+static const struct usb_device_id appletbdrm_usb_id_table[] =3D {
-+	{ USB_DEVICE_INTERFACE_CLASS(0x05ac, 0x8302, USB_CLASS_AUDIO_VIDEO) },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(usb, appletbdrm_usb_id_table);
-+
-+static struct usb_driver appletbdrm_usb_driver =3D {
-+	.name		=3D "appletbdrm",
-+	.probe		=3D appletbdrm_probe,
-+	.disconnect	=3D appletbdrm_disconnect,
-+	.shutdown	=3D appletbdrm_shutdown,
-+	.id_table	=3D appletbdrm_usb_id_table,
-+};
-+module_usb_driver(appletbdrm_usb_driver);
-+
-+MODULE_AUTHOR("Kerem Karabay <kekrby@gmail.com>");
-+MODULE_DESCRIPTION("Apple Touch Bar DRM Driver");
-+MODULE_LICENSE("GPL");
---=20
-2.43.0
-
+Cheers!
 
