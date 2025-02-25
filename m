@@ -1,227 +1,270 @@
-Return-Path: <linux-kernel+bounces-530320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1754A43205
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0015CA43212
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B85A3B7366
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B89E3A8399
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A30D299;
-	Tue, 25 Feb 2025 00:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474642571B4;
+	Tue, 25 Feb 2025 00:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="t66Sjj5f"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011024.outbound.protection.outlook.com [52.103.68.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ue3Zy9F4"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A86E4C6E;
-	Tue, 25 Feb 2025 00:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740444256; cv=fail; b=lJ9VbcgNfcU/F3sT5AJHTwz7v2JGcyVNJnynIlAxZ3E+kt8sqPfeS5uF3N0ZnXXdi6nb3NAJDq5uQA7ohrUJ7rcvpnYLpwsFiTwTvdtBGh5ErveKUi0iuDwmebuRMm0j16RAZEVpcDZMLcqbb9ALfuU6reEuEJBRemDkM8qt+lg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740444256; c=relaxed/simple;
-	bh=CPFCF0CqcBeGEbB2WKnH7H5klIgzwwFIx9YIMRG7qpA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AkBnVo+pHVvEqya6/LR9SVguAdtWvgFQdX8fXfvn80z2KDpMK+IKJXbgjqe8cHV+jrzd4DD0OX3bbhNyYt4ukBe2fa/1dGA5PBLstfQAMg3QaP1PrjOZacjTHCbAzZGyBCLgYXc4EnOBG2wvNuxnG6MsRKs7gPbqpwmsLVvhgH0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=t66Sjj5f; arc=fail smtp.client-ip=52.103.68.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x8EEn5GnqrXp6d/MmQawgEAYiO0TzyrgOmMxmVem5iUP34VAOmLKj8ld4j4LFQOujNsPgiG0/Wf8AGj4Wd0Ft9E/Fq9JjYfw+dkEGzCc3VwT/1FhMHXpmib+mlR2DyXuRpD1jBfKaWtD0lHRaq6gjbm15KyQDsuYXeWldZ8pHO/3CeBzLVc+rFNG7zLDrV/7rQM6AhdLBArcZdqr9PmeSpZFQPl7GjTJTjdlk+5Mx0JtyQBSoQgOzZXuh3v/15uV6jBypWG9KZi9LLKzvnHUOg0drtyvSCOZWX760q+mXGCtsSWdf6MuV+5q3OmY2kBahjboFezwvkpHlqGbdB4BKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rzuEI/28QrV/m3ZzYDpzeECMS/VA9nlI/FEe5XNWt2k=;
- b=EyQXJoSjJEQdAGQKKllMN+oLoY5GpgS2rf21e/Wo5hfcwn0/Q2KHYHMYTpP3Et8Wc2annDx51kYnDv5oNNNh8aCvTVZe+4FoXuhRRmqCVfnZv140YLRA7q1/HUDLLzhS7eU+2qnTCqqd2aeiPNV6JUpT4aNh9NDYsnF0FeswL76wvL2BdlOzu1U3iM3gCtfvPjIP9R+RYy028SzAyp84Ap6pae213MDMSywfppgm8oxiy8YM7CclE7Jz6oT8Xlra3JdLYvu1TBt3f5pC2X2k2MKsKk4LOA7V68bVfvfnBb4KAtz+IQ2OVSpqT9C2682Y5fE7OsYCyCWQyzyEF0O92g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rzuEI/28QrV/m3ZzYDpzeECMS/VA9nlI/FEe5XNWt2k=;
- b=t66Sjj5fkEQoMo2ZCXqj7rZ3Wk50UMjLE2JVTgwGVukyrCBcEkkHuyGt26pl+EJ7Z6/yRktqojBV6ZQ1Yl+ypRwLaWqY7AF3sDzkGR8BRwJvtPsv5Nil+40VKjJgkB3kC0tBDtaofP6jLFSDeUtOmq1lo37KKUgpSwyruvHiwKWX3ySYI5VwWxemeFtS4BJpsbwhnGsygDrdCNWU1TjwZZSEDw6qBhOtMEoWakzpApRiEy3zkBRIgeqYM3T15l288t46e/IcrDL6UDR4bQ2LoIJlE3lYgOx6OSkboHSQvXacrLYO3LYbWpjghGHVpd3N0ponNiv5R8HLtEJKCH/BEQ==
-Received: from MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:10a::5)
- by PN3PR01MB6628.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:88::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 00:44:08 +0000
-Received: from MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::207c:c76a:271:28b]) by MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::207c:c76a:271:28b%5]) with mapi id 15.20.8466.020; Tue, 25 Feb 2025
- 00:44:08 +0000
-Message-ID:
- <MAZPR01MB9162FA24821C3E02472CF028FEC32@MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM>
-Date: Tue, 25 Feb 2025 08:44:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] riscv: dts: sophgo: add Sophgo SPI NOR controller
- driver
-To: Inochi Amaoto <inochiama@gmail.com>, Longbin Li <looong.bin@gmail.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>
-References: <20250224101213.26003-1-looong.bin@gmail.com>
- <20250224101213.26003-4-looong.bin@gmail.com>
- <PN0PR01MB91662EB902D8B337A0526458FEC32@PN0PR01MB9166.INDPRD01.PROD.OUTLOOK.COM>
- <nni37727545uwmq5uizihptcyq435wopjurdjcqufsfvfq3lc3@aq4zpb2l3nw7>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <nni37727545uwmq5uizihptcyq435wopjurdjcqufsfvfq3lc3@aq4zpb2l3nw7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0122.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b6::8) To MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:10a::5)
-X-Microsoft-Original-Message-ID:
- <d168eeb8-0075-46a0-af1a-f3dc11d7a1a3@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC5915E96
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740444443; cv=none; b=plgWeRaEs2a2QqUjWQo5PtiWzqlMzrfEntjHFf0rumzVLX51+I9kevW6OBmFtSgoIA4XFBzN0wODyClQ7ObJeCIGG7anruK36j3oHqqJLF8u7mSIVlmUgbJ+Lh75qFPaL1xBO/JQ/TLNo18kTIybR/Aa/sdarWBvdgyV38Sbqqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740444443; c=relaxed/simple;
+	bh=9VyoE5rqBPdWDwAYMqaw+sWflGZ3yC3uju/Z14kM9NY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Bx1mD9qvGUsdMrfSs+liniPHtbV/y9MBPxZZPRAIorpZl9pTVLMWOJnxXvNbUIGpQ9+U/Dj7bxjxgyB6hH1bjjynNrHqMRq2M+Jc5VojZg+5R+Umm97HzqTw0i/xjl404gMXH1/k7FAtwN5UiwqMjUCnu9uVggZJ1nUxTY2BmqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ue3Zy9F4; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fce2954a10so13886315a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740444441; x=1741049241; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LLn0ouDWavOo+k23cGEFyx3GWlevLRlbuFWAFagmycY=;
+        b=ue3Zy9F4/lVYxCTqL1P2UsOLfyLvZMzv2LJENCSTrfWocqFa5PNhSNEwvB5xsOavbr
+         mo4TOHMJa3zA9pcVVsRUe7Ve06Fepwqv16m2IaMRMcbjxoAl9OdsF9KoWNQmBH6Xe9iq
+         8IGUd0xDz8PFqqwsq+mYo2Wi3G3TUSiaMqO9A7dTCu0jn2gM3SUO1gVj4veXuKMAv1M3
+         rcmbXibEDBbVUNgyHnvDgUj4FZUKNZ4XnfRP1iot+7pyQnWANIbd4p0UvvJJxdMhQUqv
+         AjBxXVH37wiBRGGHs59fnSNv7MKAW9wlWug7ogJVbWwuqJO5lafwa3VPpec0MfwC3mQd
+         X62w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740444441; x=1741049241;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LLn0ouDWavOo+k23cGEFyx3GWlevLRlbuFWAFagmycY=;
+        b=wGikZJG4bcEz+UUxREe+f03zx6C/H9WL8qJ+DSUsNsU4MPS6ocEUoqdnBenK6v3xyU
+         ZMtJNQ+D809+q50xTtGuXp2oZY+bJgD0sOCFs7W1S6ZkHY9MYAI8uiERwFTwtVaBj3s6
+         +g6m3fpV3olBAI/fRICmrGF5ETA/p052L5XMkMrFHoqLsaXKaAb6ycDFUDvy/CQYSs3O
+         Sz7YwIdfge6xbMDOsUpfLxpwOL4tmc2FHY7jMGaFCYIh0kMPpkSIVw3icK2C2CtvLfQO
+         cFiT02eMUPgIymPMnngO41NafNDawyRHWgpx/O/HNvY3k5DuakwFZ1rLfDFVZ1Xhdnfw
+         95XQ==
+X-Gm-Message-State: AOJu0YxUBsAUoA4wMxqr5luhQaJh6BqCXX9Kp4Dyq8lI2d31LvmZKGG2
+	5+LkB4kPctm62pqh2h8A9UUmx0+4LO5GHrBWXGORazrbQ2OiQfJHYLkNE2pHGNFLB/ClWEhHX/V
+	ge2YDfEcFbMVjQCsvB4S64GAzv6aROFl8XpzCqQiCb1+ktPaRAwRojxr3y54w95mdJWIVGXy7d0
+	5d6umCBHgoXv9XMx9AW6OlKfdHHpzexhlt7mIGJ8S85HIQpPNklfo=
+X-Google-Smtp-Source: AGHT+IGjTB7OqTkNMNzcfyv0LdWUXTWhbdIyRa+cJKyKRwTrcEIT6xduBck8PQaOscdeB6AJZA6OXuOCQQ8MTQ==
+X-Received: from pjbqx15.prod.google.com ([2002:a17:90b:3e4f:b0:2fc:3022:36b8])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3b83:b0:2f6:d266:f45c with SMTP id 98e67ed59e1d1-2fce868c637mr26094804a91.2.1740444440607;
+ Mon, 24 Feb 2025 16:47:20 -0800 (PST)
+Date: Mon, 24 Feb 2025 16:45:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAZPR01MB9162:EE_|PN3PR01MB6628:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5615474-86fa-45d5-d732-08dd5535831e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|15080799006|7092599003|461199028|8060799006|6090799003|19110799003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bkIwbjZBVDl4Y1pZM0cwc0pIVk5lVXJDejVHTHI2WUpicGl6NjFkOHVwK2FJ?=
- =?utf-8?B?c3o1OTRJTThvZnhkSnN2VWEwL3JETDRKcTQyY0pSQWZVbFMwU1BlQm9jd21O?=
- =?utf-8?B?NFZoZXAycVhoRXNJSjFha1krVmZHOFgzUVRsSzVpdGF5Q0NqU1MwNmFVL2JW?=
- =?utf-8?B?ZWMwUUZWdk9FS25KS2dXTE5pd0tYZi9JZmd1dmhacThpV0d5V1RUM3p4TWZR?=
- =?utf-8?B?NkRhN0hReUttdm9BeEU1VUF4bjI2N09xS2VWc09nZmZtaUtoUTZvNmU2Lzhy?=
- =?utf-8?B?TE9FdU9NcHBLa1dlL0FtakJOaW93ZzQwYkVmeWRlMWVjbW9sYjVRT3l0OCtF?=
- =?utf-8?B?SVJZZFFhN2U4NFJya25GejRGSldzdzdZdEVoOVFYdjQyZ1k4ZTFBUnlKdE1L?=
- =?utf-8?B?ZzNKODJiUGJWenF4Z2VzeUZPK1RUbnIyWm9nM1ZWeXUrdFUza0NLaU5yR0Mv?=
- =?utf-8?B?Z1BmQkp4cXVBVlNRekp6T2hqVGJrYmxVZHhjZHNDQVdzM2V2NUhZdktWUUxn?=
- =?utf-8?B?Zy93aHoyVkVsWlZqSFgvVnNCSEhYeU1mK3MwekhIbHMwSm44Njl6RUUvOWd5?=
- =?utf-8?B?NVhFTC9UTkY0R3Q4dlQ1U1lSZENObXN5RktvUHJ4QUZnWVJSVjFIUHl3bDkv?=
- =?utf-8?B?K0dnUnMyS21sT2c5b2lybHJTS3lmZEpzYUJkK3NvVHU4TDNwNGE5a09aSkZq?=
- =?utf-8?B?aU9KYldiM0psbHNYTDhKSDRYNW1JQ3l0clJ5MFVNc0hCbUNhcVkrNCsrenc0?=
- =?utf-8?B?NDNrLzNrYXJUUWxWR1RWUFF2QWNtbFRiZG1SK1l6OUtLWUxSRDdUVTBjZFMw?=
- =?utf-8?B?VCsrV09jVTJJeW5WeWpNdTJzbng4NGhtOUpWQ3RDM2xDeFowdGh6ak4yaWI5?=
- =?utf-8?B?MlYzNnpFUWpHUFM0L1JERGdPdWpxTTdyYmNUeW0zK3VXbEdneitTTWcyTjBO?=
- =?utf-8?B?Tll4c3l3U3VzRVpXQ3ZqYWNNdll4Mk0wUU1hMHdlV3FjMTZCc2VDODFnQ3hq?=
- =?utf-8?B?VXovMWIra1lIdnFORWJyUVpOSGp5OHhzbEVZdWwxNjMwVjhRNmFTL0MvTmY5?=
- =?utf-8?B?ajVWemhJWWF3SUYwUStqWEFQRDVNR0NRcnZhOWxXTEdrdFVUMk51d0djb3I0?=
- =?utf-8?B?YnAzY3REU1dXZGNzM3ZNVFZJa1ZKemttbCs0STlGcnNhWjFQY1VWMTRzRnlN?=
- =?utf-8?B?SXY2OFhWTWNxbEk5YzRNNnBneE9MTmRYMXRaUGduWEUwcXNVMDdZc0pmc3VW?=
- =?utf-8?B?UXM0V1lMTi9uekQzWnNNYWxZOXhERWZ3ZFlhUHh0SC82ZEFjWGNPTzlFUG5k?=
- =?utf-8?B?OVBCQ1VZYzFIR0p3NEIwMCtxSGFyZVE1RTl2a0p4Ty82NzhWaHFkUENvUUJK?=
- =?utf-8?B?TGpCVE9kSlVOOWpZU0RnSmhBanNUaHBOOEZwcDJsa1hobXhzSXdBOTk0WUNm?=
- =?utf-8?B?dStJMjdOOWNjZUMxTmJCbERVOGVRRlhlM3VHNDNtb0xZVnQrS3JXQVppbVhD?=
- =?utf-8?Q?+zfGKw=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L0VwUlFIdHo1MGZ4VGd2K25xR1ZXNytWVkhOdFl1elpIdTZWUnl0TWVIdmkv?=
- =?utf-8?B?bFVPUlBTZkF1OU8wRmFCZFVRdXd6djVIZ2Z1NllIMnNDUkVZdUM1dkt5TjRh?=
- =?utf-8?B?TUl1WmV2ZjMxWTNRMXAvWU92RWo5NGtHRUcwU3VIUlFrVDBJVnJQRzdIMXh4?=
- =?utf-8?B?UFdoUGRrcHRwdmNCV2RTY1pzQ1dxOElaK3NQSGVPaFhBT2RwSk4yaGdzVG5N?=
- =?utf-8?B?c1ZtMGlkV3ArNzBGUFM5ZEFUQXhzd25iM1hDdEd2ems2ZzFhWGh0U2xsMmFE?=
- =?utf-8?B?eVFjWXdCcFhwcjF3ZElsOE1tM0RLNG1iV0VSVmJ0a0dwTG5pRFI0OE9HN1ho?=
- =?utf-8?B?ZFBHcjl1Skw0OFNGd2dISFVoZ3ZCeEdwWHJ5b2V0Wk8vUHhPMVBiWDJhZEdF?=
- =?utf-8?B?eDl5QWhFZ1lOd0hSZ3VqNk40YWErTjllUk1JUE9vTjlNRG4rdG5oZzNQNERC?=
- =?utf-8?B?a2tzM1lUa3d5OFQ5SSsyRjh2bGZQdHlacmQ5ZjFaNGF1TDJsQXQvNy9RR0lR?=
- =?utf-8?B?MTJoNlJGRm9RNEIwL1Y4Si9mdzNkRzRVSGJiZGlvVUNoWWlnMWs3cW5rL0Jy?=
- =?utf-8?B?WGI3WUFrbU1XSVNFMHNmcm5vQnBlU3kzdXYzZjRLcjhOYzAzbzdxQWpBK2J2?=
- =?utf-8?B?NkV6dDE3b2RqNlZMQmxQYksxZTMzaU5lYTlqTFFkWnNDM0FFZFNyZ0YxTjFD?=
- =?utf-8?B?NGxiTWxIUDNiSXZMaytSV1p2TUtLVE8wTUtiYU0yWVBQYklNQi9PMDRXN2tk?=
- =?utf-8?B?SDZ5SEZ2MjF5WDYzZkhJU1UvN1l3dFFwdHV2UDZhclFZcW9zTVpOdlpPMjZR?=
- =?utf-8?B?YXJXWjc0SkVhSGptc2xaQ1Jxa0dwOXlFb01sMWRpdTRtSkVnOTBDcVRyeGlB?=
- =?utf-8?B?YVhrVlJJbnhJTTllUTVlRXdQZG9POVNKWTFlQU9Gc1UyVDZacmYrVURySGd0?=
- =?utf-8?B?L3E1SFVlM3g4TEZHYUwzUE5oSUFtd09Jb3huMzJKU3VPTFBvUHNRTmJiV3Rr?=
- =?utf-8?B?ZUpMbVJUeVR5dHRxdnNYc0syUjFGSzk3ZktiL0NXWnhMNnVVMFluZmVrbmE1?=
- =?utf-8?B?UFl5STVoNnpDN3AyVEtSRm5QZGROOUhJeEIzZGYvKy85NnlZc1N2ZTI3U3VS?=
- =?utf-8?B?UW8rTWhtZWFRQXgzRXp3aVJHbjBjV2hmMmJJeXdlR0g2R2xvMVo5akxDT0to?=
- =?utf-8?B?cjlrUk5vN0hGTi80N3JDYU9FWk40cnR3eFo0eFc5eVhFaHh6Skg4bU8vTWpH?=
- =?utf-8?B?cUVKVXJMUWJLYnpvMzI5L0JaUWwrUm00M21ocFIxQnlNNXcwV0RiRWRiZHVh?=
- =?utf-8?B?MUZTQ2hWaTZDSmFhWFR2aHRkeCtINXIrQno1R3UweUxzaldJSG4xYXVvZlY3?=
- =?utf-8?B?ZktjRCtnTllPdUtlQ1VieUEza3FzV3A5Y0xieWExeEVkaHNSMXdyL0NDYUVi?=
- =?utf-8?B?Nm5sU1pMcTdsK1hTby9Ka013cVZ6QzJaeEZpcUpMNzF1U0lWNXdCbmJjQ1VU?=
- =?utf-8?B?YkhsTy9XbmpiTFdWaVQ1ZzViQ1N3bjN1bXBTYmpMd3hqMjhwOS9sS3NrZm5j?=
- =?utf-8?B?WHMrWEJLUVJqYVd1bzltdzQwZFlPaDlsWEU2SklLc3VqeFhRTE95aXVnQ0VD?=
- =?utf-8?B?S21QSStUeFRpS3AraE5qWWNaaWMvQ2VWUlVHbVZNOGJwWUxnNGxoZHFhWnhG?=
- =?utf-8?B?YUVkT1FmV0prVXZ2S3RDSDhJaEFoUjloRkhScms5d0VCcWdjUUd2eVd3aTF2?=
- =?utf-8?Q?W5up+qz9elDxYN7ip/QPVhiUbq17RvUFCn1Idb8?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5615474-86fa-45d5-d732-08dd5535831e
-X-MS-Exchange-CrossTenant-AuthSource: MAZPR01MB9162.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 00:44:08.3124
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB6628
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250225004708.1001320-1-jmattson@google.com>
+Subject: [PATCH] KVM: x86: Provide a capability to disable APERF/MPERF read intercepts
+From: Jim Mattson <jmattson@google.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Allow a guest to read the physical IA32_APERF and IA32_MPERF MSRs
+without interception.
 
-On 2025/2/25 8:38, Inochi Amaoto wrote:
-> On Tue, Feb 25, 2025 at 08:23:36AM +0800, Chen Wang wrote:
->> On 2025/2/24 18:12, Longbin Li wrote:
->>> Add SPI NOR device node for Sophgo.
->>>
->>> Signed-off-by: Longbin Li <looong.bin@gmail.com>
->>> ---
->>>    .../boot/dts/sophgo/sg2044-sophgo-sd3-10.dts  | 18 ++++++++++++++
->>>    arch/riscv/boot/dts/sophgo/sg2044.dtsi        | 24 +++++++++++++++++++
->>>    2 files changed, 42 insertions(+)
->>>
->>> diff --git a/arch/riscv/boot/dts/sophgo/sg2044-sophgo-sd3-10.dts b/arch/riscv/boot/dts/sophgo/sg2044-sophgo-sd3-10.dts
->>> index c50e61a50013..9c634920f37e 100644
->>> --- a/arch/riscv/boot/dts/sophgo/sg2044-sophgo-sd3-10.dts
->>> +++ b/arch/riscv/boot/dts/sophgo/sg2044-sophgo-sd3-10.dts
->>> @@ -80,6 +80,24 @@ &sd {
->>>    	status = "okay";
->>>    };
->>>
->>> +&spifmc0 {
->>> +	status = "okay";
->>> +
->>> +	flash@0 {
->>> +		compatible = "jedec,spi-nor";
->>> +		reg = <0>;
->>> +	};
->>> +};
->>> +
->>> +&spifmc1 {
->>> +	status = "okay";
->>> +
->>> +	flash@0 {
->>> +		compatible = "jedec,spi-nor";
->>> +		reg = <0>;
->>> +	};
->>> +};
->>> +
->>>    &uart1 {
->>>    	status = "okay";
->>>    };
->> What is your baseline? I can't see "sg2044-sophgo-sd3-10.dts " on the latest
->> mainline yet.
->>
-> It seems like he forgot to remove this patch as the baseline is not
-> submitted.
->
->> BTW,  the name "sg2044-sophgo-sd3-10" seems a bit redundant. Wouldn't
->> "sg2044-sd3-10" be better?
->>
-> I do not think so. we want <soc-vendor-board> format. In this format.
-> sophgo is a must.
+The IA32_APERF and IA32_MPERF MSRs are not virtualized. Writes are not
+handled at all. The MSR values are not zeroed on vCPU creation, saved
+on suspend, or restored on resume. No accommodation is made for
+processor migration or for sharing a logical processor with other
+tasks. No adjustments are made for non-unit TSC multipliers. The MSRs
+do not account for time the same way as the comparable PMU events,
+whether the PMU is virtualized by the traditional emulation method or
+the new mediated pass-through approach.
 
-All these dts* files are under "sophgo" folder, that's why I think 
-"sophgo" is redundant for file name.
+Nonetheless, in a properly constrained environment, this capability
+can be combined with a guest CPUID table that advertises support for
+CPUID.6:ECX.APERFMPERF[bit 0] to induce a Linux guest to report the
+effective physical CPU frequency in /proc/cpuinfo. Moreover, there is
+no performance cost for this capability.
 
-Anyway, if you do WANT the format, I won't object strongly.
+Signed-off-by: Jim Mattson <jmattson@google.com>
+---
+ Documentation/virt/kvm/api.rst  | 1 +
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/svm/svm.c          | 7 +++++++
+ arch/x86/kvm/svm/svm.h          | 2 +-
+ arch/x86/kvm/vmx/vmx.c          | 4 ++++
+ arch/x86/kvm/x86.c              | 7 +++++--
+ arch/x86/kvm/x86.h              | 5 +++++
+ include/uapi/linux/kvm.h        | 1 +
+ tools/include/uapi/linux/kvm.h  | 4 +++-
+ 9 files changed, 28 insertions(+), 4 deletions(-)
 
->
-> Regards,
-> Inochi
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 2b52eb77e29c..6431cd33f06a 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -7684,6 +7684,7 @@ Valid bits in args[0] are::
+   #define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
+   #define KVM_X86_DISABLE_EXITS_PAUSE            (1 << 2)
+   #define KVM_X86_DISABLE_EXITS_CSTATE           (1 << 3)
++  #define KVM_X86_DISABLE_EXITS_APERFMPERF       (1 << 4)
+ 
+ Enabling this capability on a VM provides userspace with a way to no
+ longer intercept some instructions for improved latency in some
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0b7af5902ff7..53de91fccc20 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1380,6 +1380,7 @@ struct kvm_arch {
+ 	bool hlt_in_guest;
+ 	bool pause_in_guest;
+ 	bool cstate_in_guest;
++	bool aperfmperf_in_guest;
+ 
+ 	unsigned long irq_sources_bitmap;
+ 	s64 kvmclock_offset;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index a713c803a3a3..5ebcbff341bc 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -111,6 +111,8 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = MSR_IA32_CR_PAT,			.always = false },
+ 	{ .index = MSR_AMD64_SEV_ES_GHCB,		.always = true  },
+ 	{ .index = MSR_TSC_AUX,				.always = false },
++	{ .index = MSR_IA32_APERF,			.always = false },
++	{ .index = MSR_IA32_MPERF,			.always = false },
+ 	{ .index = X2APIC_MSR(APIC_ID),			.always = false },
+ 	{ .index = X2APIC_MSR(APIC_LVR),		.always = false },
+ 	{ .index = X2APIC_MSR(APIC_TASKPRI),		.always = false },
+@@ -1359,6 +1361,11 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
+ 	if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
+ 		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
+ 
++	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
++		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_APERF, 1, 0);
++		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_MPERF, 1, 0);
++	}
++
+ 	if (kvm_vcpu_apicv_active(vcpu))
+ 		avic_init_vmcb(svm, vmcb);
+ 
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 9d7cdb8fbf87..3ee2b7e07395 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned long pa)
+ #define	IOPM_SIZE PAGE_SIZE * 3
+ #define	MSRPM_SIZE PAGE_SIZE * 2
+ 
+-#define MAX_DIRECT_ACCESS_MSRS	48
++#define MAX_DIRECT_ACCESS_MSRS	50
+ #define MSRPM_OFFSETS	32
+ extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
+ extern bool npt_enabled;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6c56d5235f0f..88a555328932 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7597,6 +7597,10 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
+ 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
+ 		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
+ 	}
++	if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
++		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_APERF, MSR_TYPE_R);
++		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_MPERF, MSR_TYPE_R);
++	}
+ 
+ 	vmx->loaded_vmcs = &vmx->vmcs01;
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 02159c967d29..98f3df24ac9a 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4533,7 +4533,7 @@ static inline bool kvm_can_mwait_in_guest(void)
+ 
+ static u64 kvm_get_allowed_disable_exits(void)
+ {
+-	u64 r = KVM_X86_DISABLE_EXITS_PAUSE;
++	u64 r = KVM_X86_DISABLE_EXITS_PAUSE | KVM_X86_DISABLE_EXITS_APERFMPERF;
+ 
+ 	if (!mitigate_smt_rsb) {
+ 		r |= KVM_X86_DISABLE_EXITS_HLT |
+@@ -6543,7 +6543,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 
+ 		if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
+ 		    cpu_smt_possible() &&
+-		    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
++		    (cap->args[0] & ~(KVM_X86_DISABLE_EXITS_PAUSE |
++				      KVM_X86_DISABLE_EXITS_APERFMPERF)))
+ 			pr_warn_once(SMT_RSB_MSG);
+ 
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+@@ -6554,6 +6555,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 			kvm->arch.hlt_in_guest = true;
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+ 			kvm->arch.cstate_in_guest = true;
++		if (cap->args[0] & KVM_X86_DISABLE_EXITS_APERFMPERF)
++			kvm->arch.aperfmperf_in_guest = true;
+ 		r = 0;
+ disable_exits_unlock:
+ 		mutex_unlock(&kvm->lock);
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 91e50a513100..0c3ac99454e5 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -488,6 +488,11 @@ static inline bool kvm_cstate_in_guest(struct kvm *kvm)
+ 	return kvm->arch.cstate_in_guest;
+ }
+ 
++static inline bool kvm_aperfmperf_in_guest(struct kvm *kvm)
++{
++	return kvm->arch.aperfmperf_in_guest;
++}
++
+ static inline bool kvm_notify_vmexit_enabled(struct kvm *kvm)
+ {
+ 	return kvm->arch.notify_vmexit_flags & KVM_X86_NOTIFY_VMEXIT_ENABLED;
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 45e6d8fca9b9..b4a4eb52f6df 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -617,6 +617,7 @@ struct kvm_ioeventfd {
+ #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
++#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
+ 
+ /* for KVM_ENABLE_CAP */
+ struct kvm_enable_cap {
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index 502ea63b5d2e..9b60f0509cdc 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -617,10 +617,12 @@ struct kvm_ioeventfd {
+ #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
++#define KVM_X86_DISABLE_EXITS_APERFMPERF     (1 << 4)
+ #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
+                                               KVM_X86_DISABLE_EXITS_HLT | \
+                                               KVM_X86_DISABLE_EXITS_PAUSE | \
+-                                              KVM_X86_DISABLE_EXITS_CSTATE)
++					      KVM_X86_DISABLE_EXITS_CSTATE | \
++					      KVM_X86_DISABLE_EXITS_APERFMPERF)
+ 
+ /* for KVM_ENABLE_CAP */
+ struct kvm_enable_cap {
+-- 
+2.48.1.658.g4767266eb4-goog
+
 
