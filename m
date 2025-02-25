@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-530667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6B6A43673
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:50:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25693A43679
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF35018897CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDD33A3078
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF11A25A331;
-	Tue, 25 Feb 2025 07:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4CB25A622;
+	Tue, 25 Feb 2025 07:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9gyG2n+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsgE7zeT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207421DB15B;
-	Tue, 25 Feb 2025 07:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B40D25A32D;
+	Tue, 25 Feb 2025 07:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740469736; cv=none; b=tM1EagzkLeP1MPT1O8N3V4kj9CvORh7//COJQSChjlyejM6O0B+vhKps0MbNOPEIBsYwdO0UJWlL0GKlJojL6ail5JoPUCcpppqVMA5FKELOxq3IrTrBiJV0OeXGpiTgoayM63bREjz2h/Ee/IstefmnFGhT83RRq29Ch4v7Xwc=
+	t=1740469892; cv=none; b=M/6xVnQICb2BZjqfxdQdWpVIIZ9Y4mF1U/kBputGqGjobUKSG6Ym5OuxnSGZhF/gOuNVSvMtfq+jkPkWTOmpghGtt98OnhZ/bHBEJ2wvHPF973mDcgROXs6KCfZzjY2UQz9Law/dF//HpSMC+6NRZDigspm9x5NNA5fpAazxjlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740469736; c=relaxed/simple;
-	bh=/ncftbb9PfkRY5I1SEo5KWByGpqMh87THSvXX1b1/Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U/4yFpb/Xta9ou1NNik8sHIiRkVJdTz+b4KeRlx03pSGx/jpN5FAOgGPawpyW5yRb8pWfrNXP0Jwx6EmQfWq8KD2ceofVxXiboG51MPU3Y1/+qbB2uB424e5Gp+Sr8WqpEIfwrM926bcXa/p+u7uc2a/j/n2hadTjqXTBlpyrtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9gyG2n+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67958C4CEDD;
-	Tue, 25 Feb 2025 07:48:50 +0000 (UTC)
+	s=arc-20240116; t=1740469892; c=relaxed/simple;
+	bh=e2+1A+StkzfLCCel5frxscI5QVNiBlktYMKxy4nUtRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VNcTZbwQ18UnKjl52KHIxeF/JmTgK/29/kvrBHNcJZLh53DLD3XEyjHl3q/w2M3Arya7G65oC8eeTyylX0WyIslx+snsb+eCE4TKwioqKuMytxzUede4/65E0ku0esv4rYaJ1KMoP9XZKO1XyU1xf1eoW28pUkEZPu0jYnPP20k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsgE7zeT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED26C4CEE2;
+	Tue, 25 Feb 2025 07:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740469735;
-	bh=/ncftbb9PfkRY5I1SEo5KWByGpqMh87THSvXX1b1/Ms=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R9gyG2n+2ROXnP/X14vbm0q8n+lZHTumKXJ+xYnR3rnd6Kki+WFokVrVDe/VHevZz
-	 524z+obxKDc9qExkVKSXDHccqC6g6NT7TIaJ1dtxwswccxcoRtdqXSwc3WQArKBjrv
-	 vmGvBgOhNjnQsLziIrMi1gtmnKy/rNC1HrnD7HDhy8YMYoEOevt4wGpmZJD0Yae5N+
-	 HREYavAgE4QRHSFMsONHOHl0JCWzx7Iq+25ur3DrmFw5lVb8K+dh6NXYQkMNgEjjMk
-	 e9gN2yAD5xAGNxwhKj4TFhq22nJNoVq5MPx+8Rjk/DzBI3WhXkMXXsCD6+vxoOUwDJ
-	 0sjMYMZgATXsw==
-Message-ID: <f76a3a6c-795e-4fc8-905f-4655115ea99d@kernel.org>
-Date: Tue, 25 Feb 2025 08:48:48 +0100
+	s=k20201202; t=1740469892;
+	bh=e2+1A+StkzfLCCel5frxscI5QVNiBlktYMKxy4nUtRU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=qsgE7zeTur0CeHUbE6xMYk7Iu8Lv5GVrFDQKqMa94ooZDotUlfeuvEe3QbRv+/M2N
+	 EfjS0bDENCOpOwDF25PKvNY/iHPn9F3Z00i8h6Q/AQ1lbCtx4Jdnq+GhqNYvnC44Cp
+	 1ApDdRUq3ha7+IPfWnPthoT/sCXKMBMuwLgHC2h77kEa5siyEbDHIk2jJihRfViX6X
+	 Iyhx3nDVH/+HL+xetd27f6U2EwK13eNWpUUggPIn/LJb2yrhB+x2K3wjJzSS+dw9U4
+	 pHAedcVXu4W+OoaB/4D2XSPU7OxXM2C65ZbgCqCbpf4IDpAHKZnGE+4XXwb+2f46zz
+	 1GePnrYyq17Dg==
+Message-ID: <58d978fb-fbbd-433f-9c4c-8d9db425ea9c@kernel.org>
+Date: Tue, 25 Feb 2025 08:51:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] arm64: defconfig: enable STM32 LP timers drivers
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, lee@kernel.org,
- ukleinek@kernel.org, alexandre.torgue@foss.st.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, wbg@kernel.org, jic23@kernel.org,
- daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: catalin.marinas@arm.com, will@kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
- olivier.moysan@foss.st.com
-References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
- <20250224180150.3689638-8-fabrice.gasnier@foss.st.com>
+Subject: Re: [PATCH v9 2/3] reset: aspeed: register AST2700 reset auxiliary
+ bus device
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
+ <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
+ <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
+ <d5d90f03-3db8-4f90-baad-0be4f3d3e0ea@kernel.org>
+ <b00aef9582e223a5770cebc714ad65168eab744b.camel@pengutronix.de>
+ <OS8PR06MB7541E77E1EA78D658E5444A6F2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,18 +115,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250224180150.3689638-8-fabrice.gasnier@foss.st.com>
+In-Reply-To: <OS8PR06MB7541E77E1EA78D658E5444A6F2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 19:01, Fabrice Gasnier wrote:
-> Enable the STM32 timer drivers: MFD, counter, PWM and trigger as modules.
-> Clocksource is a bool, hence set to y. These drivers can be used on
-> STM32MP25.
+On 25/02/2025 03:20, Ryan Chen wrote:
+>>>>> +
+>>>>> +	return devm_add_action_or_reset(clk_dev,
+>>>>> +aspeed_reset_unregister_adev, adev); }
+>>>>> +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
+>>>>
+>>>> No, you cannot export functions without users. There is no single
+>>>> user of this, so this is not justified at all.
+>>> My mistake, I missed patch #3 which uses it.
+>>>
+>>> I don't get why do you need to export this in the first place, instead
+>>> of putting it in the clock driver, as usually expected. Handling child
+>>> creation is logically the task of the device having children, the
+>>> parent. Not the child.
+>>
+>> Also, consider basing this on top of:
+>>
+>> https://lore.kernel.org/all/20250218-aux-device-create-helper-v4-0-c3d7dfdea
+>> 2e6@baylibre.com/
+> 
+> Hello, Base on this series, I will use adev = devm_auxiliary_device_create instead addev_alloc, adev_releas.
+> But it still have EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
+> Am I right?
 
 
-Which upstream board? If you do not have upstream board, the defconfig
-is pointless for us. It's not defconfig for your downstream forks.
+Why? It looks like you skipped entirely my message. It is the same over
+and over - respond to people comments...
+
 
 
 Best regards,
