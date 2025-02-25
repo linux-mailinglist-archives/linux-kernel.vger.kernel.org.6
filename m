@@ -1,150 +1,110 @@
-Return-Path: <linux-kernel+bounces-532495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B0FA44E94
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AEFA44E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479143A3B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437B8189AC7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA64211A00;
-	Tue, 25 Feb 2025 21:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4D74A1A;
+	Tue, 25 Feb 2025 21:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZF1IjJ2"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="pbtrWwkA"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B9211486;
-	Tue, 25 Feb 2025 21:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0FE20F070;
+	Tue, 25 Feb 2025 21:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518097; cv=none; b=NWUnKgQ+uZTCIvs/YHDKCs7ucKiupqB2Cg31ZMbez0hwjRjfNbz/E7JhHFNs1YfVw22eq53GPB0mT7El6jesr4fg8mUq2LGX+rKvP8VMQOOX/cIni8X0eaQth59guYVUQ9+5voMuh/5Q7hkfJ0irZUVo5VTiwPERYxZpfw1ah3E=
+	t=1740518102; cv=none; b=VrULTA2yeD1hq1oPkR6Skxo8o2AelDTEKXJET8guob/GAqlIm7DDPScjYgBhn9N1RoafKHaPv+sRNyTi4jjWX+R0T+LIp+d0OwkWT0no8lCu8aVlNad4+qCDFadrbeqDrAC/0+3sRqsVfzF0duTELt5Urmb6KQeBtF5znfe+ZFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518097; c=relaxed/simple;
-	bh=iy7RzMcseFqoBKxXRI1szKiJ7QaVa9fG/SmJIRyWj/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EMhLbla5g3Ss1JEaUdo+Go8rzILiJXRTNohnbfNo8G/u83/6+FM1fY6+ZmSfMpLplOKLfo2ngcTpjhggXYgYxrNY6Q4VY+9q5nuX92RRYBzOlMGz1lsWlzaleLDR/ujWFPELfJ69vnrdRZHXwLB8xk/trQbct3qqbz4639CULN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZF1IjJ2; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb181331bso1805452e0c.0;
-        Tue, 25 Feb 2025 13:14:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740518095; x=1741122895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AW5QcpgIQeo7y06TiRKbv/Zl5iFBz580MvzxJVvIe9c=;
-        b=UZF1IjJ2KE3LbKLY00rCLeba9sq4ggApqhuWCqhfvZGGhCzUNx6g6jMKfKaQeg98KP
-         qB+QHOU68UkL0u+J3ABHF6DRu10GYHi0lqDw/Vg3Dse6NxiMalIYp5gvn/HEVyM8gFaq
-         OleEdJsVdrDpku1U6StjlpahePAe5RVKFv0O4FDgfoOS22Cw/NuI7ljtRN1VMU0e131f
-         +sli4cqWBom49j4WlVoODHqIWsaJV/E+KuZmSJlBMPZCjQTFZFY4Ss/NsCYDnozYnW6z
-         DCNomcjPNxSNlUBH5d/Bc6LGALyTainrKaEeKi17P0IsU48ws/9eGBTNY8PHfSkwR9Lb
-         /H2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740518095; x=1741122895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AW5QcpgIQeo7y06TiRKbv/Zl5iFBz580MvzxJVvIe9c=;
-        b=FNGEs1S9Bmc0T6V0matSSfeGENGk4rjjiIVwSip8HIKE25wgDRBpeyj64kOibKqS2F
-         Q11XYsJOqNkOGEViLIW2erH5dCG9Tk0ZlDuke7rRl/mwzTVod8GCIxJmolSDWtaXK7AM
-         s2Br4msxDzRFIeer8a1YlsUmCBOqOhjAPQhX/b+toPYsUjZQKaGlWo5smDQyIZDBkBiJ
-         hzUw+pP0t3UZmeT3aOyBvl5aZ46t3I2FwDY6a3G59KGR/71PhOQkolE1VKbZ5kMWOnJb
-         zAZCPmHC54+5TETqIpX7l6Y1ORjXRkoWo8JE/kgqRIZqpdoOGTXXGvSRARo9353MgmW8
-         14TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkYP3Y89AELLi8WfdqLAXPHfOXyzbAMKIWcbGlrsHfsX7SYmvLZy0I8cKBbbc2k79tSsIyHyaHDIgcBVf6aLvkJeo=@vger.kernel.org, AJvYcCXWLPxuD3kGSJvu+uniaVB5iC7Fl/nfPGlNxwnai/4EUEaZe6h4VpkpRLMcLUPXqoxgvsTZG3HA@vger.kernel.org, AJvYcCXoVdR4JqSmElsboUCZTqYheSMi1gz7pKdQ/ntwTDJh0/lxDTs4Rw6Pz1iSllkWnQnYF1WMhIDe44OL4DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmm4bgGv/FJh1c00Kc8vKlqrPVT/y2F6PTIB8EIJzPk8SVU2wJ
-	j0ti+Hd3yJQJA16SLVQ4VE6vaYZLD+rmXZrg6uCgPWKZnG2DBWL3SKqV+D+u5ob/B9MYe0xek/k
-	ukgJR4SjCgClncqcb7hgVylO6xvYUv3JVXIE=
-X-Gm-Gg: ASbGncvpg91gjHB67UHKVRBUnCqSPoTI4j2dt8PJelZ2FAjcDKZvNHv/UEGSKhJc+eF
-	qr1uvP5tXnoObAlMc3sFbbuDqvlz1yQA2eBjHZByd9/R2QeEo+u3uuC3WuPKx0BodG5Ox8qzxNA
-	Wek0FsECA=
-X-Google-Smtp-Source: AGHT+IH+22l/nhV/eo+LsoUBWcRRFcH+qjcSVfVQhj06cmg5RN57DPWPOTTnjdaIgqgufqGoSWJZ4zcmh/LpTAenPzM=
-X-Received: by 2002:a05:6122:370f:b0:51f:3e67:75df with SMTP id
- 71dfb90a1353d-5223cd67f1cmr2916625e0c.10.1740518094826; Tue, 25 Feb 2025
- 13:14:54 -0800 (PST)
+	s=arc-20240116; t=1740518102; c=relaxed/simple;
+	bh=g08GjdWndeD+8Od5WoeqAJLhdg02LWDKIbkAtiqenRA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SshGGTYrXwEXx3V8lzBshnx4ghtV8wR/VmBPS5+vPN+9xYcK89LRCeJRbK+Rr2eDHfL4ndeJOhzbjxJ/wjiJFuogzJUE00qAnIyWJx61I9/1fwO0hHGIRm4mcxqj1sVVYIxyvDcvmJUVJbPhAi2ykynN7qckWCYMpLK0YZIoZjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=pbtrWwkA; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1740518093; bh=g08GjdWndeD+8Od5WoeqAJLhdg02LWDKIbkAtiqenRA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=pbtrWwkAFE299XF+2DMLKMDhQgp95omo/FkdqCLBfA6bl4WbePmzuCl7oxVyPcDVL
+	 zrv77ZaXN1cCDgkFWD0N7oY1hQPk2miGASM9AcWQ6GueSE4o082gP9qZlX/Qw7nnQT
+	 bOun2M0bFDCzutf7mn4cpKVP4L4uH6TAQMa7I694=
+From: Luca Weiss <luca@lucaweiss.eu>
+Date: Tue, 25 Feb 2025 22:14:29 +0100
+Subject: [PATCH v2 1/4] dt-bindings: vendor-prefixes: document Shenzhen DJN
+ Optronics Technology
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com> <20250225105907.845347-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250225105907.845347-5-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 25 Feb 2025 21:14:28 +0000
-X-Gm-Features: AQ5f1JpFrcLSR2PdWwsq0IaFGDrBnxPMoaqIzSsoFrcOvJ3nNscVLCVZEzeeiPI
-Message-ID: <CA+V-a8sX4TwV=7rr17_fhaYKQr2cB6nScFgydqdTmb2jVBqaRg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] phy: renesas: rcar-gen3-usb2: Assert PLL reset on
- PHY power off
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org, 
-	horms+renesas@verge.net.au, fabrizio.castro.jz@renesas.com, 
-	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250225-fp3-display-v2-1-0b1f05915fae@lucaweiss.eu>
+References: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
+In-Reply-To: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Luca Weiss <luca@lucaweiss.eu>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=918; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=g08GjdWndeD+8Od5WoeqAJLhdg02LWDKIbkAtiqenRA=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnvjLI6Mh3e/cZZMMQq3hcbldXzG82qfhZqWPEV
+ 3wFJf6S7BCJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ74yyAAKCRBy2EO4nU3X
+ Vl3sD/wMTs6+IB3h9qvB3lAEBCrXn5gxbD+9pLzy13c4dbL7YGYLn71qXbvXD4e6L9eLzNdNEyq
+ io+rOEuhhXnWD1S2SRQ+QSI/WQp6c+YWBmJ0BCkYzY9vQa9XzmlETHXr2dEzJpE97czJbNIYpRd
+ bgcknY598W6aeQ7EtQnfmzgVT6Fv980+ubfXan+vS+oQaRt+SJbetm8b2OgpUMgI6ftivIChaS1
+ w79SLMrr1d0oqhCz0IK3PpVZeGqH2w1ujVr6DaXCG2PFiwQQFJg4cAXQJyfH+XptWGToWQCH9Dc
+ 0nfHV5z8NA7f6U916gHj9TEbv0zu6gEUzrJ56C1JmsIxo7SauryPEFKnxw/HDtMHoihZiKw/Bxm
+ W71v++jGgQU9IIjjgwWHY1nS4kS9r+TIE9MT9X51Jwm2hHyj65gQE7mr6R4nq5dxWe+33u2Ff1A
+ KVsZM77UKE/9QvEYSu3ETH1/hmZU9dYHINVkkc30YomIkntqy3+2TL8x47Wl5NqHADqiiWKxUrv
+ kH7hRVK4XgxaIR8egi5jq8FpBHXpR44ZC3tvHEI5/1mDMCa3G4in2lfRTDdLMcgfgLymRK+KY09
+ GG9WKk0TWOuYdZVmLIpxKGAOfBmtckxLZQX0zftUNbGhuvoxtGJuJiw/RiYNzImt5PlrgOaEyNV
+ G6D1PvZFnh2OPTA==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-On Tue, Feb 25, 2025 at 11:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Assert PLL reset on PHY power off. This saves power.
->
-> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver=
-")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - collected tags
-> - add an empty line after definition of val to get rid of
->   the checkpatch.pl warning
->
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Add the vendor prefix for DJN (http://en.djnlcd.com/).
 
-Cheers,
-Prabhakar
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-> index 5c0ceba09b67..21cf14ea3437 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -537,9 +537,17 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *=
-p)
->         struct rcar_gen3_chan *channel =3D rphy->ch;
->         int ret =3D 0;
->
-> -       scoped_guard(spinlock_irqsave, &channel->lock)
-> +       scoped_guard(spinlock_irqsave, &channel->lock) {
->                 rphy->powered =3D false;
->
-> +               if (rcar_gen3_are_all_rphys_power_off(channel)) {
-> +                       u32 val =3D readl(channel->base + USB2_USBCTR);
-> +
-> +                       val |=3D USB2_USBCTR_PLL_RST;
-> +                       writel(val, channel->base + USB2_USBCTR);
-> +               }
-> +       }
-> +
->         if (channel->vbus)
->                 ret =3D regulator_disable(channel->vbus);
->
-> --
-> 2.43.0
->
->
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index da01616802c76830a520594a69bd6a2e0231df0d..ee2dca4f372263c7a79ea17f4a9411939bd0531a 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -390,6 +390,8 @@ patternProperties:
+     description: Diodes, Inc.
+   "^dioo,.*":
+     description: Dioo Microcircuit Co., Ltd
++  "^djn,.*":
++    description: Shenzhen DJN Optronics Technology Co., Ltd
+   "^dlc,.*":
+     description: DLC Display Co., Ltd.
+   "^dlg,.*":
+
+-- 
+2.48.1
+
 
