@@ -1,208 +1,253 @@
-Return-Path: <linux-kernel+bounces-531308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F13A43ECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:08:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E9FA43E9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C3E19C7C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8288218991D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72765268685;
-	Tue, 25 Feb 2025 12:06:53 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C162529CF0;
-	Tue, 25 Feb 2025 12:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65666267F55;
+	Tue, 25 Feb 2025 12:02:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF081FC7ED;
+	Tue, 25 Feb 2025 12:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485213; cv=none; b=qPjTkc1+jcMrhA1QnRF1vQy19O/bXe026NgXHqVOmAplYFZp+PJFu3CKCQMJedFITbPJ9lYZYVEYPUF8E7/fTFKBh9khNEWAnn+3HXTLVFhOXZdTOeBT7vl93LS+uToctVAqeMCOC+CKlRoTYrd/lzmbbEO1fCkXMpUA/1J3t4o=
+	t=1740484920; cv=none; b=ngS6c9GYJVEc2NrpLWunEJASZvFDPwN7asJ2ae7BlTGC8AR5qywZVCJT5BTa3CvaVYHIMvGV/OGWmNMgirvfhd8QTRaunDCnd0UzVV3d37yriNAA13M+BlSt9ndCDpgPRuiequEna4ivYMBJhMt6Fg0D63HinrX5Kyu0hMBUXwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485213; c=relaxed/simple;
-	bh=Zeua9U34mpIZzVNmoPv424NWh2Wy8ELnVKvzqhinVv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i03HtnOqg69vlB4K3QIi9IBFrlXB3jWXPvHK5vTWA6IlvwvVe/CMebSUxhPmVX8rsorRIM5bkd8edj4xQALQRDdBsQQVPVsyKdw38k8y+TfAsfZv4/WiD0oatcbgv5L6mRAJBuciUIGZzeAXfwCIZYBsm7ac9UFZDzv0LE7Suh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51PC1Gsg013755;
-	Tue, 25 Feb 2025 06:01:16 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51PC1E2h013753;
-	Tue, 25 Feb 2025 06:01:14 -0600
-Date: Tue, 25 Feb 2025 06:01:14 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-Message-ID: <20250225120114.GA13368@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
+	s=arc-20240116; t=1740484920; c=relaxed/simple;
+	bh=SWp3WrvX79X3ktWHCJ8Pf4Tx4DFOq4UVMg8Vp0BxCOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gncTZqGPycuIcM4wTiVTA2KiOYxzC+m27rx5F3+g9UF9efktjJnhH+C/xq27l9jMYnpFZySEoYY2Je3YOXxBuNlm20IWiZSc6j9MiUwQuaeGop+zendegZZhpSfNBYq6OJa5VXUVwU/n4KT+2IYE4aQYNcq+F2cX3hP08X95SAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F372D152B;
+	Tue, 25 Feb 2025 04:02:14 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 730B23F6A8;
+	Tue, 25 Feb 2025 04:01:55 -0800 (PST)
+Date: Tue, 25 Feb 2025 12:01:52 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+Message-ID: <Z72xMLsd37I6X_5-@J2N7QTR9R3>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
+ <20250224122507.GE8144@e132581.arm.com>
+ <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+ <20250224140317.GF8144@e132581.arm.com>
+ <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+ <20250224180301.GI8144@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 25 Feb 2025 06:01:16 -0600 (CST)
+In-Reply-To: <20250224180301.GI8144@e132581.arm.com>
 
-On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+On Mon, Feb 24, 2025 at 06:03:01PM +0000, Leo Yan wrote:
+> On Mon, Feb 24, 2025 at 04:05:43PM +0000, Mark Rutland wrote:
+> 
+> [...]
+> 
+> > > > > Just a minor concern.  I don't see any handling for task migration.
+> > > > > E.g., for a task is migrated from one CPU to another CPU, I expect we
+> > > > > need to save and restore branch records based on BRBE injection.  So
+> > > > > far, the driver simply invalidates all records.
+> > > > >
+> > > > > I think this topic is very likely discussed before.  If this is the
+> > > > > case, please ignore my comment.  Except this, the code looks good
+> > > > > to me.
+> > > > 
+> > > > Not really discussed on the list, but that was present in v18 (though
+> > > > not functional because .sched_task() hook wasn't actually enabled) and
+> > > > Mark removed it. His work is here[1].The only comment was:
+> > > > 
+> > > > Note: saving/restoring at context-switch doesn't interact well with
+> > > > event rotation (e.g. if filters change)
+> > > 
+> > > In the brbe_enable() function, it "Merge the permitted branch filters
+> > > of all events".  Based on current implementation, all events share the
+> > > same branch filter.
+> > 
+> > Critically, the brbe_enable() function merges the filters of all
+> > *active* events which have been installed into hardware. It does not
+> > track all events which can be rotated, and the resulting filter is not
+> > the same -- it can change as a result of rotation.
+> 
+> In a perf session has multiple events, and events have different branch
+> filters, seems to me, a simple way is to return error for this case.
 
-For the record, further documentation of our replies to TSEM technical
-issues.
+FWIW, I'd generally prefer to do that since it avoids a number of
+horrible edge-cases and gets rid of the need to do SW filtering, which
+falls somewhere between "tricky" and "not entirely possible". However,
+that's not what LBR and others do, which is why we went with filter
+merging.
 
-> On Thu, Jan 16, 2025 at 11:47???PM Dr. Greg <greg@enjellic.com> wrote:
-> > > > +In order to handle modeling of security events in atomic context, the
-> > > > +TSEM implementation maintains caches (magazines) of structures that
-> > > > +are needed to implement the modeling and export of events.  The size
-> > > > +of this cache can be configured independently for each individual
-> > > > +security modeling namespace that is created.  The default
-> > > > +implementation is for a cache size of 32 for internally modeled
-> > > > +namespaces and 128 for externally modeled namespaces.
-> > > > +
-> > > > +By default the root security namespace uses a cache size of 128.  This
-> > > > +value can be configured by the 'tsem_cache' kernel command-line
-> > > > +parameter to an alternate value.
-> >
-> > > I haven't looked at the implementation yet, but I don't understand
-> > > both why a kmem_cache couldn't be used here as well as why this
-> > > implementation detail is deemed significant enough to be mentioned
-> > > in this high level design document.
-> >
-> > TSEM does use kmem_cache allocations for all of its relevant data
-> > structures.
-> >
-> > The use of a kmem_cache, however, does not solve the problem for
-> > security event handlers that are required to run in atomic context.
-> > To address the needs of those handlers you need to serve the
-> > structures out of a pre-allocated magazine that is guaranteed to not
-> > require any memory allocation or sleeping locks.
+If folk on the tools side are happy with the kernel rejecting
+conflicting events, then I'd be more than happy to do that. What I don't
+want is that we start off with that approach and people immediately
+start to complain that the BRBE driver rejects events that the LBR
+driver accepts.
 
-> This still seems somewhat suspicious as there are a couple of GFP
-> flags that allow for non-blocking allocations in all but a few cases,
-> but I'll defer further discussion of that until I get to the code.  In
-> my opinion, there are still enough red flags in these documentation
-> reviews to keep me from investing the time in reviewing the TSEM code.
+See the last time this came up:
 
-As a group, we can state quite affirmatively to the fact that we have
-experience and understanding in use of memory allocation instruction
-flags.  Our use of namespace specific event processing structure
-caches is not driven by unfamiliarity with the use and implications of
-GFP_ATOMIC.
+  https://lore.kernel.org/linux-arm-kernel/Zli6Ot0TwK3Qy-ee@J2N7QTR9R3/
+  https://lore.kernel.org/linux-arm-kernel/ZlnKFFwv9612V81h@J2N7QTR9R3/
 
-The use of independent structure magazines, for security events
-running in atomic context in a security modeling namespace, is driven
-by the need to prevent security adversaries from placing pressure on
-the global kernel atomic page reserves.
+> I would argue BRBE is an IP for recording branches per CPU wise, it does
+> not support recording for event wise.
 
-These namespace specific event magazines prevent an adversary from
-waging a memory denial of service attack against the kernel at large.
-Adversaries can only impair their own functionality in a security
-modeling namespace through the use of a synthetic attack workload that
-stresses the availability of atomic context memory.
+Yes, there is a mismatch between the hardware and the perf ABI.
 
-Further, TSEM is formulated on the premise that software teams,
-as a by product of CI/CD automation and testing, can develop precise
-descriptions of the security behavior of their workloads.  One
-component of that description is the cache depth needed to support
-security event handlers running in atomic context.
+> If we can unify branch filter within a perf session, would this be
+> much easier for handling?
 
-Exceeding that cache depth would be a sentinel forensic event for a
-workload.  For anyone unfamiliar with modern IT security
-architectures, a very specific alert on your security dashboard that
-one of the tens of thousands of workloads that are running is doing
-something it shouldn't.
+Do you mean if the perf tool ensured that all events in a given session
+had the same filter? From the kernel's PoV there's no such thing as a
+"perf session", and I'm not sure whether you're suggesting doing that in
+userspace or withing the kernel.
 
-Adversaries really hate to be noticed.
+Doing that in the perf tool would certianly make a stronger argument for
+the kernel taking the "reject conflicting branch filters" option.
 
-> Regardless, I stand by my previous comment that discussion of these
-> caches may be a bit more detail that is needed in this document, but
-> of course that is your choice.  It's a balancing act between providing
-> enough high level detail to satisfy users and reviewers, and producing
-> a document that is so verbose that the time required to properly
-> review it is prohibitive.
+Doing that within the kernel isn't really possible.
 
-It was our understanding that the administrative guides to a security
-architecture are intended to provide comprehensive information on the
-use and management of the implementation.
+> > > When event rotation happens, if without context switch, in theory we
+> > > should can directly use the branch record (no invalidation, no injection)
+> > > for all events.
+> > 
+> > No; that only works in *some* cases, and will produce incorrect results
+> > in others.
+> > 
+> > For example, consider filtering. Imagine a PMU with a single counter,
+> > and two events, where event-A filters for calls-and-returns and event-B
+> > filters for calls-only. When switching from event-A to event-B, it's
+> > theoretically possible to keep the existing records around, knowing that
+> > the returns can be filtered out later. When switching from event-B to
+> > event-A we cannot keep the existing records, since there are gaps
+> > whenever a return should have been recorded.
+> 
+> Seems to me, the problem is not caused by event rotation.  We need to
+> calculate a correct filter in the first place - the BRBE driver should
+> calculate a superset for all filters of events for a session.  Then,
+> generate branch record based event's specific filter.
 
-We were attempting to be thorough in the description and rationale for
-all the technical aspects of TSEM.  The discourse in
-Documentation/memory-barriers.txt would seem to provide justification
-for intimate detail on important operational issues in the kernel.
+From the kernel's PoV there is no such thing as a perf session, and the
+branch filters are per-event per the perf ABI.
 
-> > > > +The 'cache' keyword is used to specify the size of the caches used to
-> > > > +hold pointers to data structures used for the internal modeling of
-> > > > +security events or the export of the security event to external trust
-> > > > +orchestrators.  These pre-allocated structures are used to service
-> > > > +security event hooks that are called while the process is running in
-> > > > +atomic context and thus cannot sleep in order to allocate memory.
-> > > > +
-> > > > +The argument to this keyword is a numeric value specifying the number
-> > > > +of structures that are to be held in reserve for the namespace.
-> > > > +
-> > > > +By default the root security modeling namespace and externally modeled
-> > > > +namespaces have a default value of 128 entries.  An internally modeled
-> > > > +namespace has a default value of 32 entries.  The size requirements of
-> > > > +these caches can be highly dependent on the characteristics of the
-> > > > +modeled workload and may require tuning to the needs of the platform
-> > > > +or workload.
-> >
-> > > Presumably TSEM provides usage statistics somewhere so admins can
-> > > monitor and tune as desired?  If so, it seems like it would be a
-> > > good idea to add a reference here.
-> >
-> > We have trended toward the Linus philosophy of reducing the need to
-> > worry about properly tuning knobs.
+We only really have two options:
 
-> I agree that generally speaking the less tuning knobs to get wrong,
-> the better.  However, that assumes a system that can adjust itself
-> as necessary to ensure a reasonable level of operation.  If TSEM can
-> not dynamically adjust itself you should consider exposing those
-> tunables.
+(1) Reject conflicting filters when scheduling events. At event open
+    time we have ot check whether an entire group is actually
+    schedulable.
 
-The atomic structure magazine sizes (cache depth) can be set on a per
-namespace basis, including the root modeling namespace.
+(2) Merge filters when scheduling events, and then filter out
+    branches which don't match a particular event's filters when reading
+    the branches.
 
-Our current development tree, on our GitHub site if anyone is
-interested, has simplified the cache sizing by using a single default
-value that is of sufficient size to boot a standard Linux (Debian)
-implementation.
+> > There are a number of cases of that shape given the set of configurable
+> > filters. In theory it's possible to retain those in some cases, but I
+> > don't think that the complexity is justified.
+> > 
+> > Similarly, whenever kernel branches are recorded it's necessary to drop
+> > the stale branches whenever branch recording is paused, as there's
+> > necessarily a blackout period and hence a gap in the records.
+> 
+> If we save BRBE record when a process is switched out and then restore
+> the record when a process is switched in, should we can keep a decent
+> branch record for performance profiling?
 
-For subordinate modeling namespaces, experience has shown that to be
-more than what is needed, but it greatly simplifies the ability to use
-TSEM 'out of the box'.
+I cannot parse this question. What are you trying to suggest here?
 
-We still need to update the documentation to call out this fact and
-note that development teams can adjust this value downward for
-subordinate workloads that require lower levels of atomic event
-reserves, if there is a desire to save memory.  Or upward if a
-workload generates a pathologically large corpus of security events
-that run in atomic context.
+> I understand it might be many things happen in the middle of a task
+> switching or migration, but it is fine for not recording branches during
+> the blackout period.  The missed branch records are not very helpful for
+> forming a flow for a profiled program itself, especially, if we
+> consider we will optimize userspace program in many cases.
 
-One could arguably make this self-tuning by setting a low water mark
-that would trigger the expansion of the depth of the event structure
-caches.  Which would invariably lead to a request to have a tunable to
-set that low water mark....
+Just to be clear, you're talking about userspace specifically, right?
 
-Not to mention an argument about the performance impacts of locking
-the namespace context to prevent atomic context events from running
-while the event magazines are expanded.
+There are users that want a contiguous set of branches, which is what
+hardware tries to guarantee, and that's what LBR tries to gaurantee
+today, so I don't think that we can say gaps are always fine.
 
-> paul-moore.com
+If we want a "give me as many arbitrary samples branches as possible,
+with arbitrary potential gaps" option, I'm not necessarily opposed to
+that, but I do not think that should be the default behaviour.
 
-Have a good day.
+> > Do you think that you have a case where losing branches across rotation
+> > *really* matters?
+> 
+> I agreed that event rotation case might be rare and complex.  Please see
+> a comment below.
+> 
+> > > For a context-switch case, we need to save and re-inject branch record.
+> > > BRBE record sticks to a process context, no matter what events have been
+> > > enabled.
+> > 
+> > I had originally wanted to keep per-event records around, but it doesn't
+> > work in all cases. One reason events get discarded at context-switch
+> > time is that CPU-bound events can sample branches, and would
+> > mis-attribute stale userspace branches to the wrong context when
+> > switching tasks. There are explicit comments about this in
+> > amd_pmu_brs_sched_task() and intel_pmu_lbr_sched_task().
+> > 
+> > Given we discard records when reprogramming events, we *could* try to
+> > preserve events in some cases, but I suspect that as with the rotation
+> > case this'll be a lot of complexity for little gain. Note that as we
+> > discard events when enabling the PMU, we'd throw some task-bound records
+> > away anyway, and practically the gain would be limited to cpu-bound
+> > records.
+> > 
+> > Do you have a reason why you think we *must* keep events around?
+> 
+> Here I am really concerned are cases when a process is preempted or
+> migrated.  The driver doesn't save and restore branch records for these
+> cases, it just invalidates all records when a task is scheduled in.
+> 
+> As a result, if an event overflow is close to context switch, it is
+> likely to capture incomplete branch records.  For a userspace-only
+> tracing, it is risk to capture empty branch record after preemption
+> and migrations.
 
-As always,
-Dr. Greg
+Yes, and I was initially concerned about that, but is that really a
+problem? So long as the event period doesn't *always* coincide with
+preemption you'll get records from other samples anyway.
 
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+While I agree this is a theoretical concern, I don't think its of
+practical importance. This discarding happens on x86 *today* with LBR,
+and (AFAICT) there hav been no complaints. Note that the LBR logic to
+save/restore records for task contexts is only done for user callstack
+recording, which BRBE does not support.
+
+Regardless, there's still the problematic interaction with event
+rotation; you cannot save/restore the records safely here if events (and
+the relevant filters) can change between the save and restore.
+
+Discarding here is significantly simpler, and correct.
+
+Mark.
 
