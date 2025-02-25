@@ -1,120 +1,120 @@
-Return-Path: <linux-kernel+bounces-532097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A78AA4486F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:37:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C63A448F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 470577A4644
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95848874C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E1F19CC39;
-	Tue, 25 Feb 2025 17:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120AB1A0BC9;
+	Tue, 25 Feb 2025 17:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFTZCFEK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arYogA2N"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78EC198A19;
-	Tue, 25 Feb 2025 17:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BC042AA5;
+	Tue, 25 Feb 2025 17:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504837; cv=none; b=Yr9lKZvM+Ho+Ke2OWWk/wR27DxY4tWKP5YKOO0WILltxQTU6bocgxQnEKAgElhgYM7x7xUefdmrYrAiKXcuHGfOgshfWXZ024O9mMoqevCHjze2ikdLFhQ1lcZbxvAspmqxT89S1YsRMa0kOlNGJFTjDHdO9zVKJZ+2ziOpwBpA=
+	t=1740504894; cv=none; b=j/8dlB7wvZAiXaW60/wTGiqwoQ5p11NxCFjBGkyVYFEhB7S+Cj0ZDmT15XaElKyRJIoaf62cBFcGarrmSNUevD4cDAfCJlMWN15dIaBkE3xdF13giJIKdWtS86pdF5jD5cEbYqZB4vJlbOwT3LPrNV4cMdl9zrYtSq40N2NB2S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504837; c=relaxed/simple;
-	bh=HEeE6nVudlw77jbt7B9nhzAlyX66hpjtkyvyw8dcu4A=;
+	s=arc-20240116; t=1740504894; c=relaxed/simple;
+	bh=LR7pXcJosTSUOOsJpWPomSYJcINg8nEivuH9TAYjqA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGvCKRyD9OrUEvrefp+TYBZDbHcXOK1o1X/8YTsbsaHz7ilgG88AOGCY4AHs7vK5UWWPG9PeQymz2tkZNekz5R9hMKZMgmknmJwWvDmocoW7ShS1weZaeHmCukT4RGUCfams6dZZkchO3MEqTfDt+BcaCSsMja1eeRW/L+07erI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFTZCFEK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC74BC4CEDD;
-	Tue, 25 Feb 2025 17:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740504836;
-	bh=HEeE6nVudlw77jbt7B9nhzAlyX66hpjtkyvyw8dcu4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tFTZCFEKRHiP/y2phEnJ97KO+7eTF1mkzlrKWkYZ2bF/0DUX6jn4qhAA9yrkjOAr1
-	 dh/HPY1irq9EhSYrtQIq0OSCdx3e0/yZYGMsFHJ+GsKqA0AFFLuRE/CYCX7KrsjeSD
-	 MEWL9JbG2yLb+R6XBbQf+xAwLkreqUlURTACr1uNqPq3KJwjnigCxhOAJXT+FK95p6
-	 Y2KVe6xEg780MHOJ+9etKGC7W9ik2Qrksvc5xKMKgjedcQiEnbEVALmyEDu3rs6Ft0
-	 eBBjyNwLOYfbikCKczlmQM3nuAf7AeL8HcSRa+eT5vqukS5dbB3ui6g2E86rS3Ftqq
-	 h+LHQ1fuORqDg==
-Date: Tue, 25 Feb 2025 09:33:56 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 04/11] iomap: Support CoW-based atomic writes
-Message-ID: <20250225173356.GD6242@frogsfrogsfrogs>
-References: <20250213135619.1148432-1-john.g.garry@oracle.com>
- <20250213135619.1148432-5-john.g.garry@oracle.com>
- <20250224195912.GC21808@frogsfrogsfrogs>
- <c3958187-e83e-46a1-a204-87b342583a4a@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bbzqg07Ld6rogaDWznrijncKPDMpG6wbSsU3NL2ANfpwB9pW2+A7RSScFUkdmA3swLjgJTmzwE7oLE3+E8VA/Dupjsn7bowvcOLc261ns+UmDXI+slMizVOYYfKYYnBwWlFbvhl+k+SB3UZnRHb6BQQChbOJrqn+B6w94DrNLGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arYogA2N; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22185cddbffso531585ad.1;
+        Tue, 25 Feb 2025 09:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740504892; x=1741109692; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=h+YoddM30ZuOoLuZFWAILIJYkTUfH7Xy1b0eiSahC7k=;
+        b=arYogA2N7C7wWAibA5PZTFIZPsPUxBVMbyFTQSKLxFkJALPIdxaF1+YMEf8nNjFfhW
+         IrOFoX3fASWsFfmklAZcyYKy7EYcdGvsjoT3uLXIhtv2Et5JH41hb8aGi++UL5hnhhN+
+         AUl8GGTo0/R9IObAVhX+38L3M1A5gRBiJcBG0gQgiNK6pkMTgdVdcRZ7LtuEx7mEaoRb
+         lZtePzDA/B6z5QPCLN77RUO3iHfFHVt3Zk3jeHwu6Pi3qw7ygdm9W/pqE9HsIsNO5H+B
+         di7tU8ze85VmCU4WK0/QYNQk2EOSwIQjoVTSJz6GenoJrlof5hPbSSqAL1EapsHmNBK6
+         spxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740504892; x=1741109692;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+YoddM30ZuOoLuZFWAILIJYkTUfH7Xy1b0eiSahC7k=;
+        b=t+e9OPKK1SYc7wePUatu1U/ZnTIBJIp/3x/05TAZNkgN2jcjHTFBZDKf4NY7i+sVGZ
+         xEewGfYxVQ4QlPHp+untA89nO77gspxa7fW2jbH7unf42L59oZtTIZJV/8rFsKoNjjvx
+         sPOxkQDzeLOYsM0u13ydtTRM4BQZi9YAeffRKmbXyZ6TSmVPjgVI2O29mvv0tCysLUTL
+         /nTtaq2YeROFw097/DdWXDnUB/rqsYMkEgnL2+h3HOx0U0JhY8zjCrFce1+JTcIEx4T+
+         tAXMyFhvsVimwsnXlDWI5/gk/5iOtvd1aGlquxmqHh2l0r5C/fPdE/UBVinaG77s8i0h
+         Extw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/AFAjTa45EhbdL7bvtCHDD1/eiWx6hVu+k1dMP5lu+Zj+8wT3tUg+2yr6j1JnlM+F1gxncOw4IhPI+QkO@vger.kernel.org, AJvYcCWOCNAddk4l4BwTwKzDpCSsJG841Rn+FNvkH5bm4vdVjKtP+F/pGdIyFvlAI+ziH8DvpHiGozTrMptuBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGc6ALlB9q7APksOvVzuxSR5ghTAyYJsslo/T7AlOljAP5TT9X
+	P5qKcw0kwoVQTa+r24eswUpxyic9OHnir3DhWUc6DADuNySQCH8U
+X-Gm-Gg: ASbGnctuawhO8pX/4kIMmQ3rdlUT3p3GtDDsoF6RgnsKANqug9NDJdic4fLLNe+mw7p
+	ETL/Y/m+FaZSm1Yge5LZgI1CDrJbJz2Gk619PHX9vkHGmL2xbx8K+NRr9PqrGsevLKPxcrzzIzb
+	oD7HZ+GOFSV0bJ+RrL3kojJZ42mxGHUq1E0hvt+wn68lp7tAp32ee0RYBMURBm3I7MXs9UKRVKN
+	z0ja5tjzL5zCLw/ANSYE8jjY1TuIdt+ktDLYDww57GJZjs1VwIkdTIBnBOg/6rqqX2WM/4yYU8L
+	XgBrIYRXpg9iHG+JzvBHw6Ov04M=
+X-Google-Smtp-Source: AGHT+IGzT8D98mm/xfqHVwKnnruGiSqgtsx9ZMPyvQeorwaPdEAalISlU4iJJJ1meGZlaeeWMlSHzg==
+X-Received: by 2002:a05:6a00:3d10:b0:734:a78:2f36 with SMTP id d2e1a72fcca58-73425cde0d6mr27762695b3a.12.1740504892200;
+        Tue, 25 Feb 2025 09:34:52 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:987e:29fc:176a:2ed5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9aa4sm1834621b3a.107.2025.02.25.09.34.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:34:51 -0800 (PST)
+Date: Tue, 25 Feb 2025 09:34:49 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Bastien Nocera <hadess@hadess.net>, Hans de Goede <hdegoede@redhat.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: goodix-berlin - constify 'struct bin_attribute'
+Message-ID: <Z73_OabHseExVhXs@google.com>
+References: <20241222-sysfs-const-bin_attr-input-v1-1-1229dbe5ae71@weissschuh.net>
+ <Z71j73PPLO5AwkxA@google.com>
+ <2cedc1f5-3a6e-46cc-a214-497f899fd115@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c3958187-e83e-46a1-a204-87b342583a4a@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2cedc1f5-3a6e-46cc-a214-497f899fd115@t-8ch.de>
 
-On Tue, Feb 25, 2025 at 10:19:49AM +0000, John Garry wrote:
-> On 24/02/2025 19:59, Darrick J. Wong wrote:
-> > > + * ``IOMAP_ATOMIC_COW``: This write is being issued with torn-write
-> > > +   protection based on CoW support.
-> > I think using "COW" here results in a misnamed flag.  Consider:
+On Tue, Feb 25, 2025 at 07:38:28AM +0100, Thomas Weiﬂschuh wrote:
+> Hi Dmitry,
+> 
+> On 2025-02-24 22:32:15-0800, Dmitry Torokhov wrote:
+> > On Sun, Dec 22, 2024 at 09:00:43PM +0100, Thomas Weiﬂschuh wrote:
+> > > The sysfs core now allows instances of 'struct bin_attribute' to be
+> > > moved into read-only memory. Make use of that to protect them against
+> > > accidental or malicious modifications.
+> > > 
+> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 > > 
-> > "IOMAP_ATOMIC_SW:
+> > Applied, thank you.
 > 
-> ok, fine
+> Thanks.
 > 
-> > This write is being issued with torn-write protection
-> > via a software fallback provided by the filesystem."
-> 
-> I'm not sure that we really need to even mention software fallback. Indeed,
-> xfs could just use IOMAP_ATOMIC_SW always when the bdev does not support HW
-> offload. Maybe I can mention that typically it can be used as a software
-> fallback when HW offload is not possible.
+> However Greg already took this through the driver core tree, as it was
+> blocking the general progress.
+> Could you drop it again?
 
-Ok, a software mechanism then.
+Oh, sorry, dropped.
 
-> > 
-> > iomap itself doesn't care*how* the filesystem guarantees that the
-> > direct write isn't torn, right?
-> 
-> Correct. iomap just ensures that for IOMAP_ATOMIC_HW we produce a single bio
-> - that's the only check really.
-> 
-> > The fs' io completion handler has to
-> > ensure that the mapping update(s) are either applied fully or discarded
-> > fully.
-> 
-> right
-> 
-> > 
-> > In theory if you had a bunch of physical space mapped to the same
-> > file but with different unwritten states, you could gang together all
-> > the unwritten extent conversions in a single transaction, which would
-> > provide the necessary tearing prevention without the out of place write.
-> > Nobody does that right now, but I think that's the only option for ext4.
-> 
-> ok, maybe. But ext4 still does have bigalloc or opportunity to support
-> forcealign (to always use IOMAP_ATOMIC_HW for large untorn writes).
+Thanks.
 
-<nod>
-
---D
-
-> Thanks,
-> John
-> 
-> 
-> 
-> 
+-- 
+Dmitry
 
