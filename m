@@ -1,293 +1,193 @@
-Return-Path: <linux-kernel+bounces-531290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8D3A43E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:01:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5E5A43EBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DA77A8C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB95163BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E811C267B98;
-	Tue, 25 Feb 2025 11:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1710E267B99;
+	Tue, 25 Feb 2025 11:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hD8M3+2P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="54M5y1Ui";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hD8M3+2P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="54M5y1Ui"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="An6UgHBE"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3CD1C861B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F002080D6;
+	Tue, 25 Feb 2025 11:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484702; cv=none; b=qtlau00Dhyv5Ge9zB1q80iC90QWaYWBiuvFp3mh61e1slXt4OCKicq14GetkS2BQWEoUT+63YJsIvUvYrtVd0wDXTQeJBESRT3Ku5mJBPDBHqo6pnE39AgiI0ef2DQOtWiZ8Q6yLttmSLs/Gp1IdcONvkAeRJ9/4FUCEHJ66mKA=
+	t=1740484741; cv=none; b=ONxzEKqEmqKaWzAb+LmqiNGqrwyO8lz8cyCnzvX8kc1TydCfZGsK1UtwPdPvtaokO45KYcXj/YC5TG7MtvNsnDdaK/pbka0GGKT3WDqDmq7Hxf0etdAjnG0SdNpjg7Q9wJsocA4PSQzWVFK2GfK7hrJMzIqLv3dcScZiavzWnU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484702; c=relaxed/simple;
-	bh=r6875Ufr1YtSuAWpxko7YCgQbRxxoTMsoP5oOSmbW88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LOcdp/1q4yKaPEtsytGlyqB6HKJCJPlTGCQ3UJfrSMOgJdxgcru+LT5EOcNXePorBgHL95CVpUkEJh5kdgL4zlER6f9SCOTBcWkqIwshG2r3JWbq2ToCeSUK1lT3UF3QFws7uE/naUkIduSooz7Q7bDCmMPlmOKihXclcqid6I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hD8M3+2P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=54M5y1Ui; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hD8M3+2P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=54M5y1Ui; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 26F352116A;
-	Tue, 25 Feb 2025 11:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740484698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jh8MVDz39OwecAZp/7HIGitwnLQCkwTN0crf5zZ3TP4=;
-	b=hD8M3+2PHeRZOb7tYnptgG9PRQJsGwKau1ceVYMDIAI+qWug2fcgwq0osKfcSwJhXzo9Y2
-	WDBU82ZvZlDQ3fKmnV9xnXgdo+1nqNIhzChgRaSuzbDGQpN/RpQENzDz0sG0kGJF/Rcrqx
-	zF+TBMt7TXGQbOefNR86Cth7oAhnB1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740484698;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jh8MVDz39OwecAZp/7HIGitwnLQCkwTN0crf5zZ3TP4=;
-	b=54M5y1UiYvdlSGzgCZiGgC/9uEQQYL4qDPH3lY+5kBu/4wvtV7bND/Dhne1wjqiZpq1i4H
-	vaWuLHhVXMVTdNBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740484698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jh8MVDz39OwecAZp/7HIGitwnLQCkwTN0crf5zZ3TP4=;
-	b=hD8M3+2PHeRZOb7tYnptgG9PRQJsGwKau1ceVYMDIAI+qWug2fcgwq0osKfcSwJhXzo9Y2
-	WDBU82ZvZlDQ3fKmnV9xnXgdo+1nqNIhzChgRaSuzbDGQpN/RpQENzDz0sG0kGJF/Rcrqx
-	zF+TBMt7TXGQbOefNR86Cth7oAhnB1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740484698;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jh8MVDz39OwecAZp/7HIGitwnLQCkwTN0crf5zZ3TP4=;
-	b=54M5y1UiYvdlSGzgCZiGgC/9uEQQYL4qDPH3lY+5kBu/4wvtV7bND/Dhne1wjqiZpq1i4H
-	vaWuLHhVXMVTdNBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDBA513888;
-	Tue, 25 Feb 2025 11:58:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RUULMVmwvWdYRgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 25 Feb 2025 11:58:17 +0000
-Message-ID: <c0249cd8-68e4-4860-b5c3-e054df10ae30@suse.de>
-Date: Tue, 25 Feb 2025 12:58:17 +0100
+	s=arc-20240116; t=1740484741; c=relaxed/simple;
+	bh=+pK7W2Q6b1RBgxpzS83X4wpeOlNFidK3MHXGdwxvwts=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rlpGeFg9sBC6hptssP32dw3MjaJlGJyIJc73mPkGeME6AZpchqDqQR4sg20klBp6/td2tgqPHgN4qhiW49KeaRmYAD3jnKrHpNWtEWzEcDigTs9ALRtrACiU4rHk7K3Xu/ZozjExPg3QrLVkj58gkWYB2H8bcNLPD+ylWRNNXPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=An6UgHBE; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb90c20baeso708906266b.1;
+        Tue, 25 Feb 2025 03:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740484738; x=1741089538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0f0Viu8zBHLWFqYx5Y6dMfvnL01Pt8+7ZPXp9TuHe/w=;
+        b=An6UgHBECsm/8oYGDslahAmuYg2wXW4YLSi8i1WDd0flKW/SwblfkLdiVzbfXdvndM
+         2/CDuuve6ESFxAZ6BGi+d5xFC+dFUN95aEnDjo1kGGThTJwSFyFLF4AB/IjsOOxQQjm4
+         ba2NRD3N4zVikAVWqcLmGyw6TFIrSZi15nsYNS+FHLHAru88pwOM1bm7sUQCGHA2B4dq
+         KBkpkf+rlTJWET1BB07md97ReHXRxprURA+JxHux8iPL8TbH6G5WDhd6vnuh1NdsFVRs
+         go1l4NzV6Br68ZMH9vCLCxQItvVVB6Cng6FcwG2xMRC1GPKAgySqw9OZybQOdjvhkp3S
+         QWBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740484738; x=1741089538;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0f0Viu8zBHLWFqYx5Y6dMfvnL01Pt8+7ZPXp9TuHe/w=;
+        b=BIfJLCccfPprwb3CC7uJ9vSVRyXO9LhJOITu3xfXtAcvXvXg4QvWtJEgX5FSSu+mIj
+         D6/v39F427sXbnIrlacoAQfp//nm2/7m8uWZ5BPE9FeOJ4c313nMY0Q6BmT2WXGfI3CG
+         fAC8lrLdeqXofYy0nLQUoDznuk/113enMFVwJVntWcHpBort0XNutywJ6e7cFC0hBH4f
+         Xo14fgSAN1c0V1iEtpHhKMKXlXfY1svkKsgvFTkvaJ4+hV9PHuXicIB7dgiSF9OWpeHB
+         pApMOxyN+iUGeg6rmnH+Dk/P2kh8jwZh5s9uWTSbBpI4pwUtJv/1xO2+FVb7ufpvfoyl
+         9FTw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6EL3GP9JodnDn00RW63JeUSrIanc67sggBYCO0cqW7cTi03Crs2AZ9nlLAoUCJwy1Bf5N4yguu7Htm3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvQ+SCf5xaeZrCuLLdgYRTBGUPeTOZmBDpe7R2A/2Bm/OO9wVs
+	kAElFQkmROdbyCCEYVyu0Y8GALdjkzTdj+2q/UijhG8ntKY13f+95UjgTg==
+X-Gm-Gg: ASbGnctai4gmfEslU39Tg4FCdOE98dmOkej00ApavxK6G+lxpgJK3C566QB+lySbEho
+	3VwoaHCvs3SsdfB9svOwoBK+XLA7G75PWfrthiJOOhFTGFjhW4tg0vsVHbQ4B8t17ybRhOoRZby
+	FcYSreGQ5NDZh1ulLOxaIoRtGbQb0GnhqFSpiumxt5xPHqAM6aqY0aDEw9uHqsUsfxZxHU8RN1R
+	5R6EFijHAuEzII/LevDOh+hWlNDhVst+cr5cHHU34iK9SYQiZgjF7Yz+SvzmtJZeCi5IVII9YYG
+	CRSwoOIh5txQNTxT7SMHVPlAdWEPduyL82k1W6jA8AI=
+X-Google-Smtp-Source: AGHT+IFUq0UTJdD/U4lVRq7gguWQRgoO8NcZ5BFRILAZiGfNGB/hUE2rS9VpdO/5lwk+MSg8Oaz8KA==
+X-Received: by 2002:a17:906:c103:b0:abc:c42:5c7a with SMTP id a640c23a62f3a-abc0da2f10bmr1906178066b.31.1740484737220;
+        Tue, 25 Feb 2025 03:58:57 -0800 (PST)
+Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2010f44sm128259166b.111.2025.02.25.03.58.56
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 25 Feb 2025 03:58:56 -0800 (PST)
+Date: Tue, 25 Feb 2025 12:58:54 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] usb: xhci: Apply the link chain quirk on NEC isoc
+ endpoints
+Message-ID: <20250225125854.622a6433@foxbook>
+In-Reply-To: <20250225125750.1b345e2c@foxbook>
+References: <20250225125750.1b345e2c@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-To: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, Kerem Karabay <kekrby@gmail.com>,
- Atharva Tiwari <evepolonium@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
- <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
- <Z72chunE_vvxtjLQ@smile.fi.intel.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <Z72chunE_vvxtjLQ@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[linux.intel.com,live.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,kodeit.net,vger.kernel.org,lists.freedesktop.org];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Hi
+Two clearly different specimens of NEC uPD720200 (one with start/stop
+bug, one without) were seen to cause IOMMU faults after some Missed
+Service Errors. Faulting address is immediately after a transfer ring
+segment and patched dynamic debug messages revealed that the MSE was
+received when waiting for a TD near the end of that segment:
 
-Am 25.02.25 um 11:33 schrieb andriy.shevchenko@linux.intel.com:
-> On Tue, Feb 25, 2025 at 10:09:42AM +0000, Aditya Garg wrote:
->> From: Kerem Karabay <kekrby@gmail.com>
->>
->> The Touch Bars found on x86 Macs support two USB configurations: one
->> where the device presents itself as a HID keyboard and can display
->> predefined sets of keys, and one where the operating system has full
->> control over what is displayed.
->>
->> This commit adds support for the display functionality of the second
->> configuration. Functionality for the first configuration has been
->> merged in the HID tree.
->>
->> Note that this driver has only been tested on T2 Macs, and only includes
->> the USB device ID for these devices. Testing on T1 Macs would be
->> appreciated.
->>
->> Credit goes to Ben (Bingxing) Wang on GitHub for reverse engineering
->> most of the protocol.
->>
->> Also, as requested by Andy, I would like to clarify the use of __packed
->> structs in this driver:
->>
->> - All the packed structs are aligned except for appletbdrm_msg_information.
->> - We have to pack appletbdrm_msg_information since it is requirement of
->>    the protocol.
->> - We compared binaries compiled by keeping the rest structs __packed and
->>    not __packed using bloat-o-meter, and __packed was not affecting code
->>    generation.
->> - To maintain consistency, rest structs have been kept __packed.
->>
->> I would also like to point out that since the driver was reverse-engineered
->> the actual data types of the protocol might be different, including, but
->> not limited to, endianness.
-> ...
->
->> +static int appletbdrm_probe(struct usb_interface *intf,
->> +			    const struct usb_device_id *id)
->> +{
->> +	struct usb_endpoint_descriptor *bulk_in, *bulk_out;
->> +	struct device *dev = &intf->dev;
->> +	struct appletbdrm_device *adev;
->> +	struct drm_device *drm;
->> +	int ret;
->> +
->> +	ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, NULL, NULL);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to find bulk endpoints\n");
-> This is simply wrong (and in this case even lead to crash in some circumstances).
-> drm_err() may not be used here. That's my point in previous discussions.
-> Independently on the subsystem the ->probe() for the sake of consistency and
-> being informative should only rely on struct device *dev,
+[ 5441.041954] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ffa08fe0
+[ 5441.042120] xhci_hcd 0000:0c:00.0: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0005 address=0xffa09000 flags=0x0000]
+[ 5441.042146] xhci_hcd 0000:0c:00.0: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0005 address=0xffa09040 flags=0x0000]
 
-That's never going to work with DRM. There's so much code in a DRM probe 
-function that uses the DRM error functions.
+It gets even funnier if the next page is a ring segment accessible to
+the HC. Below, it reports MSE in segment at ff1e8000, plows through a
+zero-filled page at ff1e9000 and starts reporting events for TRBs in
+page at ff1ea000 every microframe, instead of jumping to seg ff1e6000.
 
-This specific instance here is wrong, as the drm pointer hasn't been 
-initialized. But as soon as it is, it's much better to use drm_err() and 
-friends. It will do the right thing and give consistent output across 
-drivers.
+[ 4807.041671] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ff1e8fe0
+[ 4807.041999] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ff1e8fe0
+[ 4807.042011] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
+[ 4807.042028] xhci_hcd 0000:0c:00.0: All TDs skipped for slot 1 ep 2. Clear skip flag.
+[ 4807.042134] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
+[ 4807.042138] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 31
+[ 4807.042144] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ea040 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
+[ 4807.042259] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
+[ 4807.042262] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 31
+[ 4807.042266] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ea050 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
 
-Best regards
-Thomas
+At some point completion events change from Isoch Buffer Overrun to
+Short Packet and the HC finally finds cycle bit mismatch in ff1ec000.
 
->
->> +		return ret;
->> +	}
->> +
->> +	adev = devm_drm_dev_alloc(dev, &appletbdrm_drm_driver, struct appletbdrm_device, drm);
->> +	if (IS_ERR(adev))
->> +		return PTR_ERR(adev);
->> +
->> +	adev->in_ep = bulk_in->bEndpointAddress;
->> +	adev->out_ep = bulk_out->bEndpointAddress;
->> +	adev->dmadev = dev;
->> +
->> +	drm = &adev->drm;
->> +
->> +	usb_set_intfdata(intf, adev);
->> +
->> +	ret = appletbdrm_get_information(adev);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to get display information\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = appletbdrm_signal_readiness(adev);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to signal readiness\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = appletbdrm_setup_mode_config(adev);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to setup mode config\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = drm_dev_register(drm, 0);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to register DRM device\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = appletbdrm_clear_display(adev);
->> +	if (ret) {
->> +		drm_err(drm, "Failed to clear display\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
+[ 4807.098130] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 13
+[ 4807.098132] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ecc50 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
+[ 4807.098254] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 13
+[ 4807.098256] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ecc60 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
+[ 4807.098379] xhci_hcd 0000:0c:00.0: Overrun event on slot 1 ep 2
 
+It's possible that data from the isochronous device were written to
+random buffers of pending TDs on other endpoints (either IN or OUT),
+other devices or even other HCs in the same IOMMU domain.
+
+Lastly, an error from a different USB device on another HC. Was it
+caused by the above? I don't know, but it may have been. The disk
+was working without any other issues and generated PCIe traffic to
+starve the NEC of upstream BW and trigger those MSEs. The two HCs
+shared one x1 slot by means of a commercial "PCIe splitter" board.
+
+[ 4807.162604] usb 10-2: reset SuperSpeed USB device number 3 using xhci_hcd
+[ 4807.178990] sd 9:0:0:0: [sdb] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x07 driverbyte=DRIVER_OK cmd_age=0s
+[ 4807.179001] sd 9:0:0:0: [sdb] tag#0 CDB: opcode=0x28 28 00 04 02 ae 00 00 02 00 00
+[ 4807.179004] I/O error, dev sdb, sector 67284480 op 0x0:(READ) flags 0x80700 phys_seg 5 prio class 0
+
+Fortunately, it appears that this ridiculous bug is avoided by setting
+the chain bit of Link TRBs on isochronous rings. Other ancient HCs are
+known which also expect the bit to be set and they ignore Link TRBs if
+it's not. Reportedly, 0.95 spec guaranteed that the bit is set.
+
+The bandwidth-starved NEC HC running a 32KB/uframe UVC endpoint reports
+tens of MSEs per second and runs into the bug within seconds. Chaining
+Link TRBs allows the same workload to run for many minutes, many times.
+
+No negative side effects seen in UVC recording and UAC playback with a
+few devices at full speed, high speed and SuperSpeed.
+
+The problem doesn't reproduce on the newer Renesas uPD720201/uPD720202
+and on old Etron EJ168 and VIA VL805 (but the VL805 has other bug).
+
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/usb/host/xhci.h | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 377dad9cd639..2ad31e147d67 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1761,11 +1761,20 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
+ }
+ 
+ 
+-/* Link TRB chain should always be set on 0.95 hosts, and AMD 0.96 ISOC rings */
++/*
++ * Reportedly, some chapters of v0.95 spec said that Link TRB always has its chain bit set.
++ * Other chapters and later specs say that it should only be set if the link is inside a TD
++ * which continues from the end of one segment to the next segment.
++ *
++ * Some 0.95 hardware was found to misbehave if any link TRB doesn't have the chain bit set.
++ *
++ * 0.96 hardware from AMD and NEC was found to ignore unchained isochronous link TRBs when
++ * "resynchronizing the pipe" after a Missed Service Error.
++ */
+ static inline bool xhci_link_chain_quirk(struct xhci_hcd *xhci, enum xhci_ring_type type)
+ {
+ 	return (xhci->quirks & XHCI_LINK_TRB_QUIRK) ||
+-	       (type == TYPE_ISOC && (xhci->quirks & XHCI_AMD_0x96_HOST));
++	       (type == TYPE_ISOC && (xhci->quirks & (XHCI_AMD_0x96_HOST | XHCI_NEC_HOST)));
+ }
+ 
+ /* xHCI debugging */
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+2.48.1
 
