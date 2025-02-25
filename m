@@ -1,150 +1,156 @@
-Return-Path: <linux-kernel+bounces-531400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07F0A44000
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9100A43FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA5D3A979E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:02:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BDD3BA179
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6E9268FFE;
-	Tue, 25 Feb 2025 13:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342882676DA;
+	Tue, 25 Feb 2025 13:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="YprGR3q4"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTvKnFrO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274072686B1;
-	Tue, 25 Feb 2025 13:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609BB268C67;
+	Tue, 25 Feb 2025 13:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488527; cv=none; b=tDUvChzzzTDA6zfesB9K4p7QxT2xaebnPxT82o53V5BeAA+LdK88u94hAdyQ0byXoIxYToEGgtf8uPSEree6EpZXHa9jFfx59ClOe3vcVz0NdFUGfkv/H7tRib/8IlguU9dMHCva2Tm7H8+x1IMopCpOkoYaZEUdszLfS4WQync=
+	t=1740488493; cv=none; b=LcmRIzgD/Sq16uR3cGk/xyg8lb6QluS+lImZU2NJbepjfeuJNOLnmehKaPXvrlJ9sxBLCbTDBAwd1UHcut1+bEzUA4iCF2Uqv3RCGQ67kJHFR/xSnPCAFqvY9m4mdGXGIgM3LO7tIfUQ7IA61viERdt1mPeOszHhs38Hj6aBXIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488527; c=relaxed/simple;
-	bh=eaO/axIomN57wbu9Q86ufLGH5usOhqRBBhwtKqX6/5M=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=W8bIp98IUkmMceykfoqyFf6lqW/s/iXJdaSpH/vAv8+a/zob8SJHGvdHWQy4Ds0hEu0UVtDykgI8evYyjbMKkzli/SkmRmNVfdDPiJrQhZt9Sihx9djcZEFhISbMLDHN7LTvpCn6auMfKXhQWeRXINnNjPjMPHjFB1BRD23vNFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=YprGR3q4; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PANJwf032103;
-	Tue, 25 Feb 2025 08:01:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=jfvPMnHZRQjpKAtCzy7mGoWTnI0
-	VS3BVSEay4BZVuik=; b=YprGR3q4q+ldsQwP4ywGVcQfTcji4DjWQK45J08oe6j
-	4/5mGnXnMq8FtaSqakdJUNwA/ZCUtnPN8SI3J74Oy4Mq+5KqstQm6zWe+w2DIdE8
-	Go81/aMTQrgVms1QQ5gNwIPmC/h6IlWvmufeHeKJfvmzmagxcqU2hYe5Wqy6wi8D
-	KGJsO90dtLV9h2Ll7ZOfFlvOcmbDh7iBOf7mnxg87yNgBTXyC7OTApQwxCHGLnR4
-	eD12NgtiEzuRuj68SPQ9DL74gshjoL14xp6rpVSaMqA90KKwzA6kpD8vQBYYFSXv
-	UO2NnXqbJnJq30HD0wD6odfTsApnU5ZruYWScQiGlag==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44yccapsvv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 08:01:50 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51PD1m2W015492
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Feb 2025 08:01:48 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 25 Feb
- 2025 08:01:48 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 25 Feb 2025 08:01:48 -0500
-Received: from CENCARNA-L02.ad.analog.com (CENCARNA-L02.ad.analog.com [10.117.116.88])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51PD1VXT020999;
-	Tue, 25 Feb 2025 08:01:34 -0500
-From: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Subject: [PATCH v2 0/2] Add support for LT3074 low voltage linear regulator
-Date: Tue, 25 Feb 2025 21:01:12 +0800
-Message-ID: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
+	s=arc-20240116; t=1740488493; c=relaxed/simple;
+	bh=Wre+7TIAdIAjgCV/VfB9/8j835OKXCFH6jzeJStgQ90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiZcDIN3Y/zE/dZEIPqIWVcw0SHwOmZtv11/7p9OzCqYAEykx+DS3Y52JM3L0/alqGbadO8SxwQHTLP4GSMFu47aFdZMF+xTXJUNTOdo7F1NSjFW55irbcPY0qJWB0++nw7tho8zShOHX30AHkfSnl/l6sOa0acXBCeHvNyaeLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTvKnFrO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BECC4CEDD;
+	Tue, 25 Feb 2025 13:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740488492;
+	bh=Wre+7TIAdIAjgCV/VfB9/8j835OKXCFH6jzeJStgQ90=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UTvKnFrOm+rZzOfDvIL4G00yiS2ehq8If6jU34ZVXeObXVBjpE+lxO86yNLsam5gP
+	 KqaUa7rdVWWplwTGan7LIcOQIi2CygjvMnsud/JAWDIl0qATrie56UwA7REnmDoPKp
+	 l5IiLyRA/kw098HOqdMOS0qloSfjKIW0czXpDnELBZp5/Y+QoKh4V6a1fZQ/R217UJ
+	 pv3M34ryurGa79QdK+UUHShGAjjcxErVc3GllJwdMjsoEWtcPdBy4Nq9KoIXeiBhyi
+	 qJtALB+/J3OjsjEJ2yKaeGTQbrquItr4JEoScFunKe7AgC7SDhnpNgEJvpR6V0cn8H
+	 2yH1yUyeKf40g==
+Message-ID: <f17eadf3-eb2d-470d-ad77-909f00584d44@kernel.org>
+Date: Tue, 25 Feb 2025 14:01:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABm/vWcC/3WNwQ7CIBAFf6XZsxhgkRpP/Q/TA9ZtS9JCA0g0D
- f8u9u5xJnnzdogULEW4NTsEyjZa7yrIUwPDbNxEzD4rg+TywoVU7LXFFMisbEnIW8WERLwqqTT
- xB9TVFmi076N47yvPNiYfPsdBFj/7v5UF46zVHEdUWiFSZ5xZ/HQe/Ap9KeUL8rJvVa8AAAA=
-X-Change-ID: 20250124-upstream-lt3074-123384246e0b
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter
- Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
-        Delphine CC
- Chiu <Delphine_CC_Chiu@Wiwynn.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Cedric Encarnacion
-	<cedricjustine.encarnacion@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740488492; l=1569;
- i=cedricjustine.encarnacion@analog.com; s=20250124;
- h=from:subject:message-id; bh=eaO/axIomN57wbu9Q86ufLGH5usOhqRBBhwtKqX6/5M=;
- b=TFl578K45wZF5TKnxi8LIHWO+aj5kWahZKTRooxyAjFT7g4uuPHhAFalHHYfcNU6XZAQOFyaD
- xOh5SLFfDBrDMfgxvi7fiyVTrJcjIb9nKLG5+z/RySGD+s7IUmo6619
-X-Developer-Key: i=cedricjustine.encarnacion@analog.com; a=ed25519;
- pk=ZsngY3B4sfltPVR5j8+IO2Sr8Db8Ck+fVCs+Qta+Wlc=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: U2jK9sHfAJCRRVqBrxBkdWD9CcXeZMaX
-X-Authority-Analysis: v=2.4 cv=SPa4VPvH c=1 sm=1 tr=0 ts=67bdbf3e cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=HTG6LfV_5ri_l7Ai_WkA:9 a=QEXdDO2ut3YA:10
- a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-ORIG-GUID: U2jK9sHfAJCRRVqBrxBkdWD9CcXeZMaX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502250090
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] dt-bindings: pinctrl: stm32: Add HDP includes for
+ stm32mp platforms
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-1-9d049c65330a@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-hdp-upstream-v1-1-9d049c65330a@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Introduce hardware monitoring and regulator support for LT3074. The
-component is an ultrafast, ultralow noise 3A, 5.5V dropout linear
-regulator with a PMBus serial interface that allows telemetry for
-input/output voltage, output current, and die temperature. It has a
-single channel and requires a bias voltage which can be monitored via
-manufacturer-specific registers.
+On 25/02/2025 09:48, Clément Le Goffic wrote:
+> Each file introduces helpers to choose the signal to monitor through the
+> HDP pin.
+> Signals are different for each platforms: stm32mp13, stm32mp15, stm32mp25.
 
-Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
----
-Changes in v2:
- * Separated dt-binding for LT3074.
- * Added __maybe_unused attribute to of_device_id. This addresses kernel
-   test robot warning.
- * Added entry to MAINTAINERS.
+Headers are part of bindings commit, assuming this stays...
 
-- Link to v1: https://lore.kernel.org/r/20250124-upstream-lt3074-v1-0-7603f346433e@analog.com
 
----
-Cedric Encarnacion (2):
-      dt-bindings: hwmon: pmbus: add lt3074
-      hwmon: (pmbus/lt3074): add support for lt3074
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  include/dt-bindings/pinctrl/stm32mp13-hdp.h | 130 +++++++++++++++++++++++++
+>  include/dt-bindings/pinctrl/stm32mp15-hdp.h | 116 ++++++++++++++++++++++
+>  include/dt-bindings/pinctrl/stm32mp25-hdp.h | 144 ++++++++++++++++++++++++++++
+>  3 files changed, 390 insertions(+)
+> 
+> diff --git a/include/dt-bindings/pinctrl/stm32mp13-hdp.h b/include/dt-bindings/pinctrl/stm32mp13-hdp.h
+> new file mode 100644
+> index 000000000000..a3487e700143
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/stm32mp13-hdp.h
+> @@ -0,0 +1,130 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_STM32MP13_HDP_H
+> +#define _DT_BINDINGS_STM32MP13_HDP_H
+> +
+> +/* define a macro for each function a HDP pin can transmit */
+> +#define HDP0_PWR_PWRWAKE_SYS			 "0"
 
- .../bindings/hwmon/pmbus/adi,lt3074.yaml           |  64 +++++++++++
- Documentation/hwmon/index.rst                      |   1 +
- Documentation/hwmon/lt3074.rst                     |  72 ++++++++++++
- MAINTAINERS                                        |   9 ++
- drivers/hwmon/pmbus/Kconfig                        |  18 +++
- drivers/hwmon/pmbus/Makefile                       |   1 +
- drivers/hwmon/pmbus/lt3074.c                       | 122 +++++++++++++++++++++
- 7 files changed, 287 insertions(+)
----
-base-commit: 8df0f002827e18632dcd986f7546c1abf1953a6f
-change-id: 20250124-upstream-lt3074-123384246e0b
+
+Why this is a string not a number?
+
+Where is it used? I don't see usage in the driver, so this does not look
+like binding (and DTS is not a driver).
 
 Best regards,
--- 
-Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-
+Krzysztof
 
