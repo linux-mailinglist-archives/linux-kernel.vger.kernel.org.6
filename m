@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-532274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70385A44AEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:55:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A47A44AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310A3177A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6122B3ABF52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B959D1A23A9;
-	Tue, 25 Feb 2025 18:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB401A7262;
+	Tue, 25 Feb 2025 18:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0v4riTqf"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ELaoWmCq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2F71A0BD6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A743E1A23A9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740509694; cv=none; b=HCQEcQNb6q56sfH2yjC+o8QqpV/NYF/Mhb1yt2sHH+zDtGIVIE/tdhoIHFmiKFElbg2vAljrb/SpWu8WE5qUI/NhVftA5FMenSHpUJUTQevyURXDyKb6o7uzf76Zt6DZ+4AffAMpI7+l551kVu85CYVc2xNOx7Z68/hACOxRNdE=
+	t=1740509708; cv=none; b=qBvR9MDRlUqLVAJ6Iak/W2MQMD8OQvG9n115tUkxSF/P8qVSe/ULmikKVbGCp17KPrk/VvWq8CjAb8qnjHX8kFuwsueopVZQwqfl+3CQs9e+pFTLvI2l/NU3Tr9CXYn2QxgGrgcGNMgulSw6+3WNPva9AxxaegCaStcCzMUpoc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740509694; c=relaxed/simple;
-	bh=5o8pizoxvzVoSdZd/O+cZXmZb2Ptzgx/7TJMpQErk40=;
+	s=arc-20240116; t=1740509708; c=relaxed/simple;
+	bh=PYHSgLO7lQsS8Kx+B9mtZoE1y7zDRkButLc9RwemdLY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M3Il40CAxzqys8Oz2pS4X3DSwX1SwZabXRoByXYkjyZ6/6G4a6XgbRJlzKOJLG3DKkyG03EeyQcJznstx1SzLx8J7rsvl2l/P0zC9LEH8QLsG5PMG47yjIf4cwMeOSownM9IQUFdobOOXSz775xzBdyPEPqqITlNGpgpj7lf1Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0v4riTqf; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2212222d4cdso13935ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:54:52 -0800 (PST)
+	 To:Cc:Content-Type; b=REBE6RHYw05zKbp5dYlQbLW0tsiWQlqKt4y1fkT+cn222oVACpG9iqTNC1kTlPzFp59L9XjMkJnRpS8radWJz/xjEZuGwQOWVuJeoBmozPI5Q0YrWGOwvXwZ5/+iPv1KgEh5jIfhsJerklXJGqnpQoF7JDhsy/hyA3om2PWfJWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ELaoWmCq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbda4349e9so871926366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:55:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740509692; x=1741114492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uMCXizc35EGrmaC85T0NiBuwZkt8Yhq5EnmRBkHr9ig=;
-        b=0v4riTqfdOu+E/qSOFlzOFSI+fZoE+Xr20a/9HR6AlLOgJrqI9/Yj28Xmqh7U+femg
-         29yrlKtZ4y0rWIMnB6Abm36KOyag4BWd0cM2d22YObAB7BpQZI1wFWV4UYJYAsCzW1qd
-         FciBaASfMNqrYqtwLYpxGCf6h1H7pLim6ogclP5gfWp3Z9dX02lyYdO3VrBS5dQxyCmf
-         5NBOZCnMWsCRe9U8P1//nz2p8lSAdf2lRxZ5OBdkXLA8zs1E21hyJ3cYi5fZzSHKBS7W
-         FivyAfSRlS4iQS9fG+gUrHJjrLSwVkYA/LjgK8bh+pykNnyxMuHMNAyBMLNizTxJf1Ps
-         Jabw==
+        d=linux-foundation.org; s=google; t=1740509705; x=1741114505; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+rWhtD5x8D6XUhYZf1P7I+awMTvGfoNgd9n4DqDTvI=;
+        b=ELaoWmCqO4eg5spGLL2TEeE9Crn7uH81+THRp8z29jMY+Jd3nucMxsQMYSwAQ0pQep
+         gkB+xak+oQ5KVIEKmLj7D8kZgKAa/yBqqaFzyIovCYY7l+0KKSwweNDI2nM6+/vDmb1e
+         MAtY3ugPb7VM5sx3nfxmvN6GqRwR88/xbLG/k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740509692; x=1741114492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uMCXizc35EGrmaC85T0NiBuwZkt8Yhq5EnmRBkHr9ig=;
-        b=sTJZmtvvUq2dcQMRV9UpNbMk1i0kx6m3n4uTGyCqzU5hza9KVC4Y2RApHwbP5snJic
-         QYUCcnrZSd2FRWE/FUnIdaCBuJEURE+wLmsTsA37OAXF3ruedTu7mHGhiJdIizEd3cr2
-         Q/bC6qqPADX0jiJki0rXdV1UtxqBYfOUvr9o00kVtYmFkMKyopbwiIwhGfkaARv+PfHF
-         msv2XmUuCfQszDhd75PQYUVIZ5/hEsMgpm5uAIrm6/yhBo5in8XXG0L7m4clBGtZLoWM
-         9AsFFUgTH4Ampf3fU85RUGh7eviP9BaA3vx86zcmHabN5HVLIi8fgVCzSjPg4jotFBay
-         nZ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3jn0wVOrDMCgHCoYnq21LwS8dWLmgxghadC+1zSiSqesSoBHOJ9dySqsDSnqNbA1tL8H2nx/RXun/DVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbR9Ial0UPlMsDRIBVtDns50Lbwm3G48EBs6qR3hjJpSKbhyFc
-	dOAmJAQP1VOl7yud5QlVEkprogpCq0RQ9cIFg6Vaozf2+8nlmd1kkhgoAy8Faj9ZnhCzai+erU7
-	1J4W8QrKprZNJFySskIOiUpSQ1zEueMHE/pNi
-X-Gm-Gg: ASbGncthQ+lHgqnB0ARF6bi9nNO8dJHnCajzK+U+AvwDMeevQR2CXNbiMgVZfTCfeoG
-	rcqXcdon+6jKlBOyoZbsJV6XUNrzkgmIKw+pS6xKi2FU1H7q1v1IvE1bz4GK+zH4X/vo+labVA6
-	exWGNvInqFZiyKMQCG+xMmkiW2vZnu4stBzfJA
-X-Google-Smtp-Source: AGHT+IHKtkzfqoDq/aFKOFQr1ERgcAbcEK4IFsBn5K00z2a2QK3glh0MNqMaWd3X+U0cJKGz5XG2Nx9VjUfKKSOn5L8=
-X-Received: by 2002:a17:903:32c8:b0:21f:3f5c:d24c with SMTP id
- d9443c01a7336-22307990990mr4177415ad.0.1740509691634; Tue, 25 Feb 2025
- 10:54:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740509705; x=1741114505;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i+rWhtD5x8D6XUhYZf1P7I+awMTvGfoNgd9n4DqDTvI=;
+        b=Bc0fY09KywX2nPLfk00wIHxYdite7hRT+tRePAZUEbYUPxZK7XBuupuEzD+BnQx2XP
+         DpLHeUoUq9nhCO5KCTPe7/jWV+z2/UHrmKtaNUNEIlVuO3oUDYEOwCMZnNQeY7mWsYFY
+         nP4QqDetV8HZ4aYFznf+Wpps3Rk94oUyiwWuOqKL0LWJ9k7rVRB4S5EMHxrdauVG3QPX
+         rVJePs0jmodXGj8a4qkURMhXkhHRVSv66LEKSa/tBAWR16vUgeKfvm8szmNbSzeAsEOY
+         oZZrITEhfL5qSaGtEB0qIjwyxU4YeIec7cGwYWifdI619N1tFyy2u4VwiFGLovZYgRJ3
+         pWTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFbki36WXJZAV8VJXDCaNHj6JiAlivZNpU/7KNGRG0za3zvtmUdvADRMS0lQAyoTFBOtjslA0X3mrBgIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1+4rGY7X7d6v7dJmBxq36b2my4YwLrc2jXrIyRm7uoeEn61Gm
+	8arNT1oEKDBwUusQfb9ZHrw9UNibROqJ+PrzvjFn6xe4lyB4EWZ/qt1KHUfiFEODMQgcsItrbEC
+	oeCU=
+X-Gm-Gg: ASbGncsLD6ZpEeHT3GACsGXtENBRHfrNdISPVonOuV4hS3+9XObxa/MIWBJQwzm08qo
+	cwwDEpFn7efuyFePTdMOj34mSZuPb3fQ7FlsWBo+DQFOt9aw0lBmUArS3u0MCFZHzMbnhD5qMfM
+	65ieI3I0GR2vb+rxBCuVPyrhQ5nsolBJEL57d0HjNG9wdimMrhvYNJ9AdGhEhg6lmQ+Ktzzx6o5
+	ZNh++I0n+3VQrpW1375i6UWaJtBBzqi7OO/LgFAxz8tIlrvVcPo5HxnP4FB6DSKChDxr5R97JK+
+	FeUnr/n8ewYpioCOUzjXoPze8frMxZtWpCiNg3lJEdSXZfAfF5Tt52Z0JPPzYF3OHSOiSf2bPyi
+	c
+X-Google-Smtp-Source: AGHT+IEyilJbscHJ1rg4gw7JaDIMymrEUAMTJGr6021Bbkq1AISN6tyzfJlADh1b6i5j0Z4395yZVQ==
+X-Received: by 2002:a17:906:310b:b0:ab7:da56:af95 with SMTP id a640c23a62f3a-abc0d97c68cmr1718407266b.2.1740509704759;
+        Tue, 25 Feb 2025 10:55:04 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdbf06sm184589466b.23.2025.02.25.10.55.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 10:55:03 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e08064b4ddso8040010a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:55:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXAhgP+9Mpu3KzJMDKjA8vcKB4CUDlAy42hC0t6Xv6xgDu7NcdPUu67ADy/IlBj8BtGbaIrKTKeMPrEEkA=@vger.kernel.org
+X-Received: by 2002:a05:6402:2b86:b0:5d9:a54:f8b4 with SMTP id
+ 4fb4d7f45d1cf-5e0b70dc05emr16845178a12.11.1740509703150; Tue, 25 Feb 2025
+ 10:55:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222191517.743530-1-almasrymina@google.com>
- <20250222191517.743530-4-almasrymina@google.com> <a814c41a-40f9-4632-a5bb-ad3da5911fb6@redhat.com>
- <CAHS8izNfNJLrMtdR0je3DsXDAvP2Hs8HfKf5Jq7_kQJsVUbrzg@mail.gmail.com> <a003b144-0abf-4274-abff-a6e391a3e20b@kernel.org>
-In-Reply-To: <a003b144-0abf-4274-abff-a6e391a3e20b@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 25 Feb 2025 10:54:39 -0800
-X-Gm-Features: AWEUYZm9ddJufTmC5t011zUcER-Yc8Z8hhKJRb2CSFMpmWrFXAHePyW-LPIzaHw
-Message-ID: <CAHS8izMc0NCMPvCGg-uAOeWaf+K-_EfHnK7+4i205dPUy9JBFA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 3/9] net: devmem: Implement TX path
-To: David Ahern <dsahern@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com> <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+In-Reply-To: <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Feb 2025 10:54:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+X-Gm-Features: AWEUYZk0cXay_isXRx72KKy4FfsgUiBHKihS09o_3cl8pFnpf_e0Ez6oe_KpUXU
+Message-ID: <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Ventura Jack <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
+	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 10:03=E2=80=AFAM David Ahern <dsahern@kernel.org> w=
-rote:
+On Tue, 25 Feb 2025 at 08:12, Alice Ryhl <aliceryhl@google.com> wrote:
 >
-> On 2/25/25 10:41 AM, Mina Almasry wrote:
-> > On Tue, Feb 25, 2025 at 5:04=E2=80=AFAM Paolo Abeni <pabeni@redhat.com>=
- wrote:
-> >>
-> >> On 2/22/25 8:15 PM, Mina Almasry wrote:
-> >> [...]
-> >>> @@ -119,6 +122,13 @@ void net_devmem_unbind_dmabuf(struct net_devmem_=
-dmabuf_binding *binding)
-> >>>       unsigned long xa_idx;
-> >>>       unsigned int rxq_idx;
-> >>>
-> >>> +     xa_erase(&net_devmem_dmabuf_bindings, binding->id);
-> >>> +
-> >>> +     /* Ensure no tx net_devmem_lookup_dmabuf() are in flight after =
-the
-> >>> +      * erase.
-> >>> +      */
-> >>> +     synchronize_net();
-> >>
-> >> Is the above statement always true? can the dmabuf being stuck in some
-> >> qdisc? or even some local socket due to redirect?
-> >>
-> >
-> > Yes, we could have have netmems in the TX path in the qdisc or waiting
-> > for retransmits that still have references to the dmabuf, and that's
-> > fine here I think.
+> I think all of this worrying about Rust not having defined its
+> aliasing model is way overblown. Ultimately, the status quo is that
+> each unsafe operation that has to do with aliasing falls into one of
+> three categories:
 >
-> skbs with references to netmem from a dmabuf can get stuck in retransmit
-> queues for a long time. The comment should at least acknowledge that.
->
+> * This is definitely allowed.
+> * This is definitely UB.
+> * We don't know whether we want to allow this yet.
 
-Will do, although I think maybe I'll add that comment above the
-refcount_t definition in net_devmem_dmabuf_binding, if that's OK with
-you. That was meant to explain how the refcounting on the binding
-works.
+Side note: can I please ask that the Rust people avoid the "UD" model
+as much as humanly possible?
 
-Maybe worthy of note, this is not that new, in fact something similar
-is happening in the RX path. In the RX path each skb waiting in the
-receive queue to be recvmsg()'d will hold a reference on the
-underlying page_pool, which in-turn holds a reference on the
-underlying dmabuf. It's just that a similar thing is happening in the
-TX path.
+In particular, if there is something that is undefined behavior - even
+if it's in some "unsafe" mode, please please please make the rule be
+that
 
---=20
-Thanks,
-Mina
+ (a) either the compiler ends up being constrained to doing things in
+some "naive" code generation
+
+or it's a clear UB situation, and
+
+ (b) the compiler will warn about it
+
+IOW, *please* avoid the C model of "Oh, I'll generate code that
+silently takes advantage of the fact that if I'm wrong, this case is
+undefined".
+
+And BTW, I think this is _particularly_ true for unsafe rust. Yes,
+it's "unsafe", but at the same time, the unsafe parts are the fragile
+parts and hopefully not _so_ hugely performance-critical that you need
+to do wild optimizations.
+
+So the cases I'm talking about is literally re-ordering accesses past
+each other ("Hey, I don't know if these alias or not, but based on
+some paper standard - rather than the source code - I will assume they
+do not"), and things like integer overflow behavior ("Oh, maybe this
+overflows and gives a different answer than the naive case that the
+source code implies, but overflow is undefined so I can screw it up").
+
+I'd just like to point to one case where the C standards body seems to
+have actually at least consider improving on undefined behavior (so
+credit where credit is due, since I often complain about the C
+standards body):
+
+   https://www9.open-std.org/JTC1/SC22/WG14/www/docs/n3203.htm
+
+where the original "this is undefined" came from the fact that
+compilers were simple and restricting things like evaluation order
+caused lots of problems. These days, a weak ordering definition causes
+*many* more problems, and compilers are much smarter, and just saying
+that the code has to act as if there was a strict ordering of
+operations still allows almost all the normal optimizations in
+practice.
+
+This is just a general "please avoid the idiocies of the past". The
+potential code generation improvements are not worth the pain.
+
+              Linus
 
