@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-532312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FA0A44B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:27:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BDCA44B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736FF189BBA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:27:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A752917886B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46221DA634;
-	Tue, 25 Feb 2025 19:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BB41DFD96;
+	Tue, 25 Feb 2025 19:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SmE+VvgZ"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H4hcWf0Q"
+Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5783D1A2567;
-	Tue, 25 Feb 2025 19:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2977C19ADA2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740511639; cv=none; b=ZhyDl5bZlm/ChV86zwjP/7MCfVqtsKGDmt2eM71WFnwLn+wwxg+ulPTqhA7afcqHAYUuA98tDDL7Egr1nL1mPb7FRYsD5sc+315WZUsj9ayv0qOZPfKaFpwBtwHEZKagnxVoiRcWLqXGMcjhDauFi2zbSgKxQUwnj3x+TQjKMfM=
+	t=1740511608; cv=none; b=AnpxjFXxm5mUISaJhuRVqp844fyoaeveo02MDO1g0xdetqRGBVb4M5tb8UYeSM6b9b0xvAk1O+uOKxkndAB14ntSBz8mduEjwWL9ECEp6Je1SUE8dNwrhFxKlNLFYJlv7BOAL3UVQg97QgO/UuaVa5p71nnyJUaCIPoca7iLpcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740511639; c=relaxed/simple;
-	bh=7rgzTj8hndkVmcmioNXrt79hnJiv5zKhBjTWJstLBLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l24+ILdfzpHynlb+GPoXhRlamuneMZs1Vo+rZ6SKKdSJns9k8wC01VOY+DDUT9JNrTTeGT4KakGggMFUWv9RWP072TwgTtlweYRfEAUm3PcoFXBFtINeggNNjaEDs5D2huFYRzP8HDFdhfWgU+3A1ATfo9IPKigwyXqtrL1wVow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SmE+VvgZ; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740511624;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4k9CEs7wAsBYpq0KmQyOgglOrKZ8NjXAyBCDpKKsOio=;
-	b=SmE+VvgZoUK+JeGMgYviCM06haJdXl4bZ0OrTYnM6DWfpBKFKr8M9fRqLS36y3J2+d2u5R
-	RPxs1Tt6zfQ6YFiAFHRLY+6Q3XmwPDOfe8pbiUT9Ht3QciIu6j6uwPGhh65VusHtnz5VLO
-	zSvOMZlDI4FPpOscU3HhgaUscbdBPTc=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] btrfs: Replace deprecated strncpy() with strscpy()
-Date: Tue, 25 Feb 2025 20:26:14 +0100
-Message-ID: <20250225192613.330409-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740511608; c=relaxed/simple;
+	bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Cfw3TA820SYA5Mr/daTMZMCoqiVOvLby7lW6bBcm8LkRAMMbuL/p7DYw7rKpZ3/KtsC5jeZIpNZNea4eaCu98mTv0lS2eA/9VT0PUEcJxfBqtFYz8fNSQqnWzy3DdbEze11g6Zn6iwP/tEWKM/+f5QArGbx3com3j/lff8CUDWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H4hcWf0Q; arc=none smtp.client-ip=209.85.210.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
+Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-7275bc1e735so3560404a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740511606; x=1741116406; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+        b=H4hcWf0Q+oQQQ3tVXB9N28PRzDtT7eVVDRv1gHV3DZQ7xe6LumpB9/MqchQ0yASsxK
+         ly0Hb9Q/SuYmBYIv/YLCE3y9p6G2QUKInZU/RiPPfDLa5f7lHrD6EidAR907TuhHOOBj
+         1DuUMpna10vkjNvGgnJCfGwtkodhzlA00SgxvCpN/JJr/ePRn7LbnO1/bg3rYpLnq560
+         D86JRVZcCmFBBsZ1ZUlV8Uapo9+4uegNmYLNK36Q0GO0D5ZXSPV/O0svVml6lK0ieMb9
+         dZ1fhrCVp8r1VfjjFGIJInlcSD0q70rCkzu8SJShv4FrFXioXz3nV9Xhii2iqZIJMSSW
+         dtmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740511606; x=1741116406;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+        b=kpstv5Y4BvM8WI5pIgOZgpyOgRiwCgOdioIo4XZYuHx5yfgThKVA26OT8NDnKWilbU
+         IkUnBbjNvfT9WSxd2t+9oA1cty3Ptm0xBrPPPtTEMAnRY0q32BRAON2XVEPNZOr4wK2M
+         EL+LrcHk+jczCQQW3CRBzFD2a6nU8GyWqE64JpAkHbCBfrN5bhnpPqMtogDCYQlZsrT1
+         /UOYyroKMWf7mTYqLA5DGj+/aeMLADHKEqJpOHeDQ37lxnCRNl49nw90+fh+uPaw/l87
+         +hJTJPZzL0Tz3RE9ny52TaPQp2QiWVK/pe9bfQ7AWPMa+1++fzrBV8XTV2fYY8VS5QsM
+         QIKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhOKyGmJ0LZdmZDwm1KR/2FkiCo2VUUEbMMxBjaG+ZEx/g7CQHFy8ZH4HHFJ38SEajaUYOYOzWelzGPOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxCntSbfoOXlCPrEmRdpetg6FWnorDvX1b3Xj63fNST+b9UAAB
+	EMjqP/8SHlfkSFIM5VxBz31R6cedGaKO0tSXwrmdMhRdtiI0CCduLgi9Y4hcv/pELQPRptKnFFL
+	DM6fmkGR3YsoNSHxIb53FDV3Atg==
+X-Google-Smtp-Source: AGHT+IH42rZCjQxhtGaX41R/FygdO39bmt4VMVb9EHOMyqJQj1A1hd9V5S6V3ciDnhUFtYvqHYTc4Cmq0ZkSclZIm6Q=
+X-Received: from oabxl3.prod.google.com ([2002:a05:6870:9f03:b0:2bc:6c19:c219])
+ (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6830:2701:b0:727:26ca:bd2d with SMTP id 46e09a7af769-7274c184410mr11658399a34.3.1740511606242;
+ Tue, 25 Feb 2025 11:26:46 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:26:44 -0800
+In-Reply-To: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250225192644.1410948-1-paullawrence@google.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+From: Paul Lawrence <paullawrence@google.com>
+To: amir73il@gmail.com
+Cc: corbet@lwn.net, dvander@google.com, ebiederm@xmission.com, 
+	john.stultz@linaro.org, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	luca.boccassi@microsoft.com, miklos@szeredi.hu, paulmoore@microsoft.com, 
+	rdunlap@infradead.org, salyzyn@android.com, sds@tycho.nsa.gov, 
+	selinux@vger.kernel.org, vgoyal@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-strncpy() is deprecated for NUL-terminated destination buffers. Use
-strscpy() instead and don't zero-initialize the param array.
+> As I wrote, this is one specific problem that I identified.
+> If you propose a different behavior base on mount flag you should
+> be able to argue that is cannot be exploited to circumvent security
+> access policies, by peaking into cached copies of objects that the user
+> has no access to, or by any other way.
 
-Compile-tested only.
+> I have no idea how to implement what you want and prove that
+> it is safe.
+> Maybe if you explained the use case in greater details with some
+> examples someone could help you reach a possible solution.
 
-Link: https://github.com/KSPP/linux/issues/90
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Use strscpy() instead of strscpy_pad() as suggested by David Sterba
-- Link to v1: https://lore.kernel.org/r/20250225092949.287300-2-thorsten.blum@linux.dev/
----
- fs/btrfs/sysfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm going to wake up this thread one last time to lay it to rest permanently.
+We have now reimplemented our use of overlayfs to no longer need these patches.
+We will no longer be attempting to get this patch set accepted.
 
-diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-index 53b846d99ece..14f53f757555 100644
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -1330,13 +1330,13 @@ MODULE_PARM_DESC(read_policy,
- 
- int btrfs_read_policy_to_enum(const char *str, s64 *value_ret)
- {
--	char param[32] = { 0 };
-+	char param[32];
- 	char __maybe_unused *value_str;
- 
- 	if (!str || strlen(str) == 0)
- 		return 0;
- 
--	strncpy(param, str, sizeof(param) - 1);
-+	strscpy(param, str);
- 
- #ifdef CONFIG_BTRFS_EXPERIMENTAL
- 	/* Separate value from input in policy:value format. */
--- 
-2.48.1
+One issue - remount does not update the mounter credentials, either by default
+or via a flag. I was able to work around this, but it would have been much
+easier had I simply been able to remount with new credentials. (The specific
+use case is that we load sepolicy from a potentially overlaid partition, so the
+original mounter will always have the default kernel domain, which will not be
+suitable once sepolicy is enforced.)
 
+Is this a design decision? Would a patch to set credentials during remount be
+of interest?
+
+Thanks,
+Paul
 
