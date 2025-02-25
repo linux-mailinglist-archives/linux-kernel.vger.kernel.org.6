@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-531184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B035A43D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EA5A43D25
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C274188BA6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5571897599
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9196820AF82;
-	Tue, 25 Feb 2025 11:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086CB267709;
+	Tue, 25 Feb 2025 11:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="EhIZH8hs"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mWeGPYYq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Cl16CYMr"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F85E1C7015
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2386A3DBB6;
+	Tue, 25 Feb 2025 11:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481968; cv=none; b=eMFV3py5B9TOHQJbU/qrUBL08O8BSZMkUc5is1lD9SegUXpcJ+mM+CoNqMxMIPZiSEP3+xFRqr90S1k2UUVQ8LHXRhkbO/YtzCCZ+eilgUF8Kf1capr2euLDL5dz12I5s/Bfu70sDy3EBeTdOLp8FPFEWY1+0ciDnfLl1+ZgiD0=
+	t=1740482036; cv=none; b=J6Nnzj2CAPnEdk6CaitUoBJHwlSWzDfwmndNrtOWFeQPjFqaxxYT6iH4TQ9We31ROR1JDvx7oI2JjyStNYvzmyRwE3bJXPZlOoXp4Giku8qXm8JypQMEIZf5TnsesMuQf8x438nBK4JyqJmmy3AcHtXyJiVxgIinLyRXygHhey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481968; c=relaxed/simple;
-	bh=rZvIG9n9FNdpcEfyyXYKwUcmzUi8Kx09rg3zVUfKq8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KF39blPJEuW2ua1n4YtGSrEHemY24wem5owEWXiM+aTBztHOBkqjnd5Ut6RWf3kghLuJSirnIZx5A+PxuBLXYtfwxfBo8/ByEcKenR1S8gcFqbUVaAKsA1whnPsTcJFr4+4XK6EFdFykhJwkl9FiAm65tOZNIGBQCm2QvlFYBAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=EhIZH8hs; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id A9458240103
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:12:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1740481964; bh=rZvIG9n9FNdpcEfyyXYKwUcmzUi8Kx09rg3zVUfKq8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=EhIZH8hs/aMR450/GimsVhqbpgAON1uB5v2XPJuAL0PYwaOqXmnbJmhYonF3/f3WB
-	 ipBbh1duVftQ1cstlq/r0pCmf+RZ4sf1KV6F2+72xMBmnFCAfKHORtThuIfOPQ2uHX
-	 92+bBH6dHjPDyEV3JppnYtfySYoI60qifkU+SEAoD0j3VTrRGQFdrcWGK6OuWGlCBc
-	 UhmvmdSpggkWPS1GBZOSFp47tSu+3bxgsmvxmwn9vouP9dcFS5SNTlGw6L3ZmEac4k
-	 JNXJQPhYJIpx/rZ8/VDqE3X4O5eu/+1ahxP1O8lgOSmhnXLdYu1q/T07MHFDvBg2iy
-	 51Hth7ZvNjJmQ==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Z2FLy4hhMz6txf;
-	Tue, 25 Feb 2025 12:12:42 +0100 (CET)
-Date: Tue, 25 Feb 2025 11:12:42 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: net: Convert fsl,gianfar-{mdio,tbi} to
- YAML
-Message-ID: <Z72lqrhs50NtoK8m@probook>
-References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
- <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
- <20250221163651.GA4130188-robh@kernel.org>
- <Z7zdawaVsQbBML95@probook>
+	s=arc-20240116; t=1740482036; c=relaxed/simple;
+	bh=8OZuyHpvsUVbfiGFhXm25KHhZEJBKdeeXHeNu3ALA4Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=R6i4mbzpQFSryjOpB1KPEVWX02WEzCEv+QqDrFwRh4JRm63yjG/DIqTpqYmjI/QBDnHeF4Px7CGrsQHnT40KIY04eHf0Zc7kWYHanE6nFl6jOwtqEIW8tjdolhtwrIDbdiJipduDrvZmLMr+Qgo626ftdTgyKMzGQXQzksdUJm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mWeGPYYq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Cl16CYMr; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id AD0E425401A7;
+	Tue, 25 Feb 2025 06:13:52 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 06:13:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740482032;
+	 x=1740568432; bh=8OZuyHpvsUVbfiGFhXm25KHhZEJBKdeeXHeNu3ALA4Y=; b=
+	mWeGPYYq0c+Voz1qnm2FhSsI7U8mrjHqAzAu62vmmyoS3DhDjhlDjb423TXNpojS
+	N+8DfUEFJhpnrI71lzRaO23Ivf2oR5SUdxx4NMCeF/vlULuNWGtB21mY8iowjNqP
+	2Pk9d47gwynUlIvZHnj/7P1ZMb6kAXhFuIBHw9vNCX/rOxrFOHG0FTFqpOwv4C8y
+	xAeoaKR/7xtERIEuQOZnF2jzEZ6j5PV5xlv0trWawbxmbq7yOoObJuuOcRB8x1ap
+	/d0zBKo7V0nfIecD8TdHqqw94IQqzOS3AdHSYRXAH5NN0/HTTCP2ovf343qNLq8a
+	dYVlkT9KC2rfgUwoLozJaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740482032; x=
+	1740568432; bh=8OZuyHpvsUVbfiGFhXm25KHhZEJBKdeeXHeNu3ALA4Y=; b=C
+	l16CYMr3RfZCBZOPoHsg/fUIr0ytp7z4P+FMV7mbRiPIhK9UyfFU8679PxtgYbu+
+	JdLwX1H9KzDbGQj5POLFfp0/4PE197XkeTqm5aCyeZzHR/VTu5Q6957bL/nOxjbG
+	dGc0AbPUMFbsuCKUwSVhxUONUtFbPiIIe2hZXA4dCAQ9t/JjevvaKqRDjrXpJHes
+	kJkSNHiE9SXDfLgz+nvzr4gRqfGEW7XGUkXMjwpc9a6wA8fBdDNZYFc+jL1gDpep
+	xCkwMq2y6RTNk0P/lTIGdDW2onT8qCbT30YZIrODmKzh8/75DclN6twj0cuiuP8x
+	bCDWp0tjaHFxz0hRK4fvg==
+X-ME-Sender: <xms:8KW9Z5PunitMNPM4PYDZJczPgIO4hiJFlvvX16mJX078TOlX2zRL9A>
+    <xme:8KW9Z7_CfQ7qGFN8kK3yeh0Orn9fOKe0JFJmHdPle3cfUNV4F6PitYd9zV_l9MO2n
+    kjHK2oYMqqffKNlML8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudehhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghhvghlghgrrghssehgohhogh
+    hlvgdrtghomhdprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepkhhishhhohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghrrg
+    hlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhgrnhhivhgrnhhnrghnrdhsrgguhhgrshhivhgrmheslh
+    hinhgrrhhordhorhhgpdhrtghpthhtohepkhifsehlihhnuhigrdgtohhmpdhrtghpthht
+    ohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    ephhgrhigrshhhihdrkhhunhhihhhikhhosehsohgtihhonhgvgihtrdgtohhm
+X-ME-Proxy: <xmx:8KW9Z4Td90mKZqTBkvmK8xHIWtnOQo0wAPE6FgKUia1urs-w9AY8cQ>
+    <xmx:8KW9Z1tVISLlzuXTNCAY8cZpzL1027zd185fK7i-g7dlXcoNayuUiQ>
+    <xmx:8KW9ZxfeCFEvPWeUaRk2r8xDyRw_v1_mKLqZEPbjgfsJJW9tFVBW8w>
+    <xmx:8KW9Zx3WaahY2phJachF8QGZ2TQx5wc7Uz3QI2Czt-twEQ_p0FYoiw>
+    <xmx:8KW9Z_3_BcgusIHbm1RyJLyshHGnvdPXZxQndvKDNB5ePz0nTP8pc-gA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2BE2E2220072; Tue, 25 Feb 2025 06:13:52 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7zdawaVsQbBML95@probook>
+Date: Tue, 25 Feb 2025 12:13:31 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kunihiko Hayashi" <hayashi.kunihiko@socionext.com>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Gustavo Pimentel" <gustavo.pimentel@synopsys.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>, shuah <shuah@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, "Niklas Cassel" <cassel@kernel.org>
+Message-Id: <87857a72-eca0-4919-8e1d-ff04b9047d82@app.fastmail.com>
+In-Reply-To: <20250225110252.28866-6-hayashi.kunihiko@socionext.com>
+References: <20250225110252.28866-1-hayashi.kunihiko@socionext.com>
+ <20250225110252.28866-6-hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH v4 5/6] misc: pci_endpoint_test: Remove global 'irq_type' and
+ 'no_msi'
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 08:58:19PM +0000, J. Neuschäfer wrote:
-> On Fri, Feb 21, 2025 at 10:36:51AM -0600, Rob Herring wrote:
-> > On Thu, Feb 20, 2025 at 06:29:21PM +0100, J. Neuschäfer wrote:
-> > > Move the information related to the Freescale Gianfar (TSEC) MDIO bus
-> > > and the Ten-Bit Interface (TBI) from fsl-tsec-phy.txt to a new binding
-> > > file in YAML format, fsl,gianfar-mdio.yaml.
-> > > 
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > ---
-> [...]
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - fsl,gianfar-tbi
-> > > +      - fsl,gianfar-mdio
-> > > +      - fsl,etsec2-tbi
-> > > +      - fsl,etsec2-mdio
-> > > +      - fsl,ucc-mdio
-> > > +      - gianfar
-> > 
-> > Can you just comment out this to avoid the duplicate issue.
-> > 
-> > Though I think if you write a custom 'select' which looks for 
-> > 'device_type = "mdio"' with gianfar compatible and similar in the other 
-> > binding, then the warning will go away. 
-> 
-> I'm not sure how the 'select' syntax works, is there a reference
-> document I could read?
+On Tue, Feb 25, 2025, at 12:02, Kunihiko Hayashi wrote:
+> The global variable "irq_type" preserves the current value of
+> ioctl(GET_IRQTYPE).
+>
+> However, all tests that use interrupts first call ioctl(SET_IRQTYPE)
+> to set test->irq_type, then write the value of test->irq_type into the
+> register pointed by test_reg_bar, and request the interrupt to the
+> endpoint. The endpoint function driver, pci-epf-test, refers to the
+> register, and determine which type of interrupt to raise.
+>
+> The global variable "irq_type" is never used in the actual test,
+> so remove the variable and replace it with test->irq_type.
+>
+> And also for the same reason, the variable "no_msi" can be removed.
+>
+> Initially, test->irq_type has IRQ_TYPE_UNDEFINED, and the
+> ioctl(GET_IRQTYPE) before calling ioctl(SET_IRQTYPE) will return an error.
+>
+> Suggested-by: Niklas Cassel <cassel@kernel.org>
+> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-Ok, I think I figured it out, this seems to work as intended:
+Nice catch, always good to remove global variables with too generic names.
 
-
-
-select:
-  oneOf:
-    - properties:
-        compatible:
-          enum:
-            - fsl,gianfar-tbi
-            - fsl,gianfar-mdio
-            - fsl,etsec2-tbi
-            - fsl,etsec2-mdio
-            - fsl,ucc-mdio
-
-      required:
-        - compatible
-
-    - properties:
-        compatible:
-          enum:
-            - gianfar
-            - ucc_geth_phy
-
-        device_type:
-          const: mdio
-
-      required:
-        - compatible
-        - device_type
-
-properties:
-  compatible:
-    enum:
-      - fsl,gianfar-tbi
-      - fsl,gianfar-mdio
-      - fsl,etsec2-tbi
-      - fsl,etsec2-mdio
-      - fsl,ucc-mdio
-      - gianfar
-      - ucc_geth_phy
-
-  reg:
-    ...
-
-
-
-Best regards,
-J. Neuschäfer
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
