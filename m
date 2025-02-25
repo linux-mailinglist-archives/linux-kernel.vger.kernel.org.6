@@ -1,181 +1,200 @@
-Return-Path: <linux-kernel+bounces-530752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E20A437D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:42:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DB5A437DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B19357A1993
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1823AAEBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E3C260A23;
-	Tue, 25 Feb 2025 08:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D81260A3D;
+	Tue, 25 Feb 2025 08:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Envf/ird"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FPWiSdzi"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7EC16DEA9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC2925EFAB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472968; cv=none; b=ftH85Ts0YWEDT9xw86Xyf+W9rhq7L0xXp631qcNWZw1pj7YHRrnQ9ivLm54SWupaF1/sytllA1yRRuwWtHwVVsYS9wzvQ6deu1OqSBBSApiQkpwXmh8T+faa3D+OSu9I91gBr9go2V4eISCBeb0EMHWSwbtenUmvFeD1rgcKKKs=
+	t=1740472994; cv=none; b=D1wke0kFkhBsZPdxrws2LYvI7jhg+KcL75ZY0u/qG7QxP2xdZ3Vncm3ydIJbeDugdol/9tHRyeK7avk6ZBWRoz4zkq3JhUCFr7EE6J/1oWX1Eklt2a2C/1i3FUgy6UcyJ2VAkDVpwZindyQBHoHctTHefF7dbKzTY88jvK1+TY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472968; c=relaxed/simple;
-	bh=jRXq8ssUo91/daY5t5TlTKQcS9XD51HyEpcgQhSKrbE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cWGRZPVBLVCdPSp4P5cakgIjQ0tNdhZvQYt9chU0GhabAx4et0PDAgByj961+xTXEGzL+InpYfem2gv+ObNrJIds1DalxU/GBUYGsf6Hn6Sovs6pBZWI7Rz2sUzN4Y5YhvGKhO+agrvEh6sMHQjgXuNglR9PjJtJO/9pO7QDU/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Envf/ird; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-439946a49e1so33096585e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:42:45 -0800 (PST)
+	s=arc-20240116; t=1740472994; c=relaxed/simple;
+	bh=ZsJQiag5Jbz79rgXK9tTPdlWbEAfTMdMRsolldYSzxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T1kEHi8IEd4oWqj/YhOXkODmEqIpdh3LpPUdzTEr/J5ybIszk3G2WyD22zRTLQ73EcSiVP3/zgjQVjhQ2kXhTpJYIe5TX+vRjsefJdHWOxsojgE/Z6/QA9dQHdBkHPWx/DEzK6PCgqck1HBc2PcD87JFc6PpXl8b4iRrO1d1tUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FPWiSdzi; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-221050f3f00so119752345ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:43:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740472964; x=1741077764; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CqB8W2CJN8Ny6/nq8A+RmCQatW6F2vm+JwrvzYnwz3E=;
-        b=Envf/irdgQDveYaozPGPhoMRIgsq1vOoGHoW1F80Gm2t+/+hnzVJb0LLRuSY475sjv
-         mnc6Pbh0sFruNLg0dN6H50BpCUPjSdbQ34novZ565DLJ2RkTzykN7saASejA/KGeofuv
-         nWKDIrBqMlQGMC7uyeqmADiJ7bAbnOoBR0WlX4+sOQEgVsi2CzfwDeSEb2TIV36FOhvp
-         6QDEYkkM6dip30j1toeVqEKX4KC7U4lzqFEyuA+9lCnEU5UBwws03tdZkujjAbfKbtNE
-         lvtXROELXADtQGWHtSYbQvhaSSdQXvBYQwbkZRklY5rgdPdW/u+SZmp4fudBi0Vjy5XO
-         cnRQ==
+        d=broadcom.com; s=google; t=1740472992; x=1741077792; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsJQiag5Jbz79rgXK9tTPdlWbEAfTMdMRsolldYSzxM=;
+        b=FPWiSdziw7fWhb02Yhqa+XBY88fhZwI8p/cOYWy4L0hZdVMsywf5icHx9iGOp+9sKR
+         RvAyFUTH3zidPVzIJDX0U3sz34KwfIQqsGm0D3CAowPb5zWI46Q9b46QkMQ0ilaRzWCm
+         jylW2wslqgJwUcki8zR868CL2cRh89QN7B3ng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740472964; x=1741077764;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CqB8W2CJN8Ny6/nq8A+RmCQatW6F2vm+JwrvzYnwz3E=;
-        b=mL4vNS0iiY2eTJLgDTUf3gHDvVQ0jNMUEwIQSaaBrChjmyXhJ3n/lYPwMT+zzzVLe5
-         2N7WeXGnVL3r3cgq3wkXMh/9fCiCvl4S8OMXojq/9oPiTF7SEPH1wSbA1O1gqyueBGO0
-         JwOa8X7YUTeIl72+cIGATZb2hSku/7Xn+p4ZOdEPpsLLAx/+J8/QtPeXzdPX62ygfQw5
-         XF22301ZTR/JQepeJ73QNuIsvUOZteD8xh7peoNTdY7errIUBivwUj7ByM6OJBR07r2u
-         GB3XHn2ZkEPlaBXXPcViGW/1LRjCB2ll68JKN3vaTFpB54aKCKmRVfGPyKvrPDX3ZIiF
-         3ikA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD+zwiKI2/J4cxr8Cn/pA5O1ABMWAxJu3iXWG/Qnfs/UUPd3dpa5aid4b9UHWV+r/J43gtj1jR/xYhS6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNdIn2Ouc2pm7uar5f3m3F6C6QIzEHz5gCSiH5ONveKfmczAJm
-	dXvqYrAJkCXzOxrbkvBqRy+xfqUD4O2fVSKSF1kgKnSrtiyxJ+fcSuzl2AIXz6w=
-X-Gm-Gg: ASbGncv7GK8YPtufDnqkrqL7TRqu4C9Or5B0vj1USY+U5tSzMkn5e+UF4vxNNTMSo+j
-	jBaY4qFcSl/Pkc8ZbEmhf6E4YRzmh+7Pnci4naZQqaIyrm4w0kcv+pLMn6jTUZYo+kPVMffp718
-	W6eaIRid7KthojK8rAUiEbpZBxir1zZzsnm2daZbriaZuZIJZdWiyylor1OxB/YImiQ8OKRc4tR
-	590dWKacODMSEmBXTVCqaIA9IbsSm7Wl+GEy0nK7oO+mP2gSZAptLTjL+dC+XfXb0sIuIHq1R3b
-	i/KCNqZ06UdUkMk+GgCKKGnXr29OGig=
-X-Google-Smtp-Source: AGHT+IGJgd1NygEBIqg6/grk4B+Un8Sa506Ytea8slhBHwOSxzKdp9L8SvAlX2UbbxiCmluDx72reQ==
-X-Received: by 2002:a05:600c:1910:b0:439:9225:2f50 with SMTP id 5b1f17b1804b1-439ae1f1586mr165534235e9.16.1740472964310;
-        Tue, 25 Feb 2025 00:42:44 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1539dc0sm17679615e9.9.2025.02.25.00.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 00:42:43 -0800 (PST)
-Message-ID: <a4b065a1b96cf87078320374f7a682b3e3762336.camel@linaro.org>
-Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: better interrupt name
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: William McVicker <willmcvicker@google.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, kernel-team@android.com,
- linux-usb@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 08:42:43 +0000
-In-Reply-To: <Z6-8Q9oDj04NurJ5@google.com>
-References: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
-	 <Z6-8Q9oDj04NurJ5@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        d=1e100.net; s=20230601; t=1740472992; x=1741077792;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZsJQiag5Jbz79rgXK9tTPdlWbEAfTMdMRsolldYSzxM=;
+        b=p3ZPmq9DfBXgpbhEyNoms0WjnVTPZR2021upqPnNB4dn64xLod9VvVWwDKZT67MPe6
+         /gwAyP7CeeCAZgKMZBLSWH4EeC5X6Gjhs+nFhxoRpjUIm6/pHE04+LaZSeCwDWh0vuW1
+         Phc/QhVJQmIseBESg2hl3u9bXKAFCwtuXhQws+m5F0xOZ51CQFc+KuXyKEtGBi/7DQt3
+         VNMp9uTxE/Cls+AOByqM0VSqukJUnGBbqTVWQkD/ebTotbE3iQqac1ADm3H3eXsHRiSr
+         pf7n1pm96N02x+0rteaW1fbJIsDDtPTiWQwSTtCPrewRGbMNqXpl+fzto0bPS5jSpCQT
+         SECw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu6ampNbEbW8joc2GbgJTeT3UXMhJy1j8Hldl1zQ6gWwijjtNpWguJxefixF6olndt4vixrFFengaWwP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysR0arsjts0l+5kKC+lwtmboxuVLqaSN2n9IyccFmbZ91c6tkm
+	0DQ0uEr8Uw0IHgygdzliI5zlhXB9VFqbTWTWnN6unluxP6mcq3wdkL1cWHOyK4xSR7FXeONbAPH
+	xrPK9krS5tR+qCAoZr8kwtvU+Rl7V/LHNrQqD
+X-Gm-Gg: ASbGncvtIeIf7GvIhopuDspi3dNn6mG8xeO8XmZqqKLGm6Lyk110r7fqdRnRLS7cIw4
+	EqY/NbUF4Q8jyRAfFDlGDyYsXUa81cTSM1RJBKK9a3iXrR0G7ZlbusJpD7hO0JkVJtfha6mrQzo
+	W6+LXXFdpv
+X-Google-Smtp-Source: AGHT+IEGwXs4ek44QCKwhnUHh8v5SzRBhJQzFwmR6QfM1sjUvSqc0GKFlKb5PilzVS96/g4Uy7RUYz6h+KIxF7CFGIY=
+X-Received: by 2002:a17:90b:3509:b0:2fa:1a8a:cfe8 with SMTP id
+ 98e67ed59e1d1-2fe68d05df5mr4016234a91.29.1740472992253; Tue, 25 Feb 2025
+ 00:43:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250225072608.526866-1-tariqt@nvidia.com> <20250225072608.526866-4-tariqt@nvidia.com>
+In-Reply-To: <20250225072608.526866-4-tariqt@nvidia.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Tue, 25 Feb 2025 14:12:59 +0530
+X-Gm-Features: AWEUYZmq6wTQZWPMNTEDJdjR-jB5DSodCcQ0IooduLjn9vXqspN0DQTKcsriYwQ
+Message-ID: <CAH-L+nNhTTVO4ApvK6S1ftHsSHqzdF7+rNfr1v_aH5_KkqA5_A@mail.gmail.com>
+Subject: Re: [PATCH net 3/3] net/mlx5: IRQ, Fix null string in debug print
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>, 
+	Carolina Jubran <cjubran@nvidia.com>, Shay Drory <shayd@nvidia.com>, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, Moshe Shemesh <moshe@nvidia.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000077b390062ef37293"
 
-Hi Will,
+--00000000000077b390062ef37293
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-02-14 at 13:57 -0800, William McVicker wrote:
-> On 02/13/2025, Andr=C3=A9 Draszik wrote:
-> > This changes the output of /proc/interrupts from the non-descriptive:
-> > =C2=A0=C2=A0=C2=A0 1-0025
-> > (or similar) to a more descriptive:
-> > =C2=A0=C2=A0=C2=A0 1-0025-max33359
-> >=20
-> > This makes it easier to find the device, in particular if there are
-> > multiple i2c devices, as one doesn't have to remember (or lookup) where
-> > it is located.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0drivers/usb/typec/tcpm/tcpci_maxim_core.c | 13 ++++++++++---
-> > =C2=A01 file changed, 10 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/ty=
-pec/tcpm/tcpci_maxim_core.c
-> > index fd1b80593367..46fc626589db 100644
-> > --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> > +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> > @@ -420,12 +420,14 @@ static irqreturn_t max_tcpci_isr(int irq, void *d=
-ev_id)
-> > =C2=A0	return IRQ_WAKE_THREAD;
-> > =C2=A0}
-> > =C2=A0
-> > -static int max_tcpci_init_alert(struct max_tcpci_chip *chip, struct i2=
-c_client *client)
-> > +static int max_tcpci_init_alert(struct max_tcpci_chip *chip,
-> > +				struct i2c_client *client,
-> > +				const char *name)
-> > =C2=A0{
-> > =C2=A0	int ret;
-> > =C2=A0
-> > =C2=A0	ret =3D devm_request_threaded_irq(chip->dev, client->irq, max_tc=
-pci_isr, max_tcpci_irq,
-> > -					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), dev_name(chip->dev),
-> > +					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), name,
-> > =C2=A0					chip);
-> > =C2=A0
-> > =C2=A0	if (ret < 0)
-> > @@ -485,6 +487,7 @@ static int max_tcpci_probe(struct i2c_client *clien=
-t)
-> > =C2=A0	int ret;
-> > =C2=A0	struct max_tcpci_chip *chip;
-> > =C2=A0	u8 power_status;
-> > +	const char *name;
-> > =C2=A0
-> > =C2=A0	chip =3D devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-> > =C2=A0	if (!chip)
-> > @@ -531,7 +534,11 @@ static int max_tcpci_probe(struct i2c_client *clie=
-nt)
-> > =C2=A0
-> > =C2=A0	chip->port =3D tcpci_get_tcpm_port(chip->tcpci);
-> > =C2=A0
-> > -	ret =3D max_tcpci_init_alert(chip, client);
-> > +	name =3D devm_kasprintf(&client->dev, GFP_KERNEL, "%s-%s",
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_name(&client->dev), client->name=
-);
-> > +	if (!name)
-> > +		return -ENOMEM;
-> > +	ret =3D max_tcpci_init_alert(chip, client, name);
-> > =C2=A0	if (ret < 0)
-> > =C2=A0		return dev_err_probe(&client->dev, ret,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "IRQ initialization failed\n");
->=20
-> Can you just change the `init_name` instead like this?
->=20
-> =C2=A0 chip->client->dev.init_name =3D name;
->=20
-> That way calling `dev_name()` will get you this more informative name as =
-well?
+On Tue, Feb 25, 2025 at 12:58=E2=80=AFPM Tariq Toukan <tariqt@nvidia.com> w=
+rote:
+>
+> From: Shay Drory <shayd@nvidia.com>
+>
+> irq_pool_alloc() debug print can print a null string.
+> Fix it by providing a default string to print.
+>
+> Fixes: 71e084e26414 ("net/mlx5: Allocating a pool of MSI-X vectors for SF=
+s")
+> Signed-off-by: Shay Drory <shayd@nvidia.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202501141055.SwfIphN0-lkp@i=
+ntel.com/
+> Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-I don't think that member is supposed to be set by anybody. Looking
-at device_add(), this seems to only be meant to be statically set
-by statically allocated devices and is cleared upon device_add().
-Essentially no driver sets this in the kernel.
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-So it doesn't appear to be appropriate.
 
-Cheers,
-Andre'
+--=20
+Regards,
+Kalesh AP
 
+--00000000000077b390062ef37293
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIDq6uXluNg+BdonG7g29Vqd6nTo1Cmc7UynT7MnHi2bdMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIyNTA4NDMxMlowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAmcpfYdCTc
+wRQPvFp74B8ACFYj2qbr0lcMQnHo4yos/setSweWwlYs0HlSqb/yrPVP+Vu2t5wBNMnrr+nfEhE3
+PxdZoTGs2Yr5KGCaqfG/DJSs23ydHxuRy0dpKen/qTFNE7w0xNqiabX7v4WX6YM1nWu1EmJYnzii
+uvs+gU3wxNU61lc8HEm3l+/EvCgquwx5L29dYbUwvFtgQfyCwdQzcQnjRwyVgktZbw3OW5R1l12Q
+osaj5vGdtWTVaVMNBMGQGmDM/h2cffrGnlT7DqlDgJFqUEDD7TC8j+Imh5KKxNECtBDle3rRnU3x
+JLDxXp14+utN/yLH/+BVv0PG4qsM
+--00000000000077b390062ef37293--
 
