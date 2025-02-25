@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-530530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF27A434D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:57:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1107A434DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97AF91898167
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:57:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433437A7B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B192566EC;
-	Tue, 25 Feb 2025 05:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915882566EE;
+	Tue, 25 Feb 2025 05:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LavnUCvB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E6eCWB0J"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D389C36124;
-	Tue, 25 Feb 2025 05:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C324F254856;
+	Tue, 25 Feb 2025 05:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740463013; cv=none; b=EbtKpM/mzMnxMVHDvew3SE5dQSJbRmPzs7CfNfpngxAlRc+jP5oz4Hu1o1BSXKm/+PwT03mb0+FpeETJB8UEC8E8nc8jCqzW5VvWBxSMqhwVEkQCKhLJv/XC2lww4S5A7EevnaLGBJ3M4kDeGh1c6YKrJnEW9XKLSi7lDOCeA1c=
+	t=1740463093; cv=none; b=Hf1yHSj6mfWoLiDZyhENRb0zGLUJi5gf/t0buKHSI0ezo5/11iXakOyxO9QchiTNmmWe3HLivsh7TF+VQ4bCq31VJtbITj3lZ1BcyIE/2XDL0PBHy9Z7KZE/gD+ZKjccueOSRIhnP0i1cwGPAk6rD9FjgOzp9l5mUjCj8LSLrDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740463013; c=relaxed/simple;
-	bh=O0AZLPEFBpzWrpkL052RWCLjQ6UGpoQ8F1HUT4GvX3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BS2Ka/0UJErT2LAnpTFzMBG4F5/d7VMR+tb4qt851/mNWVXc97muWlzroRWqfTxcS6hlfltmtog2mFiYU/EOZL9RpBoRJch3QYVQMi4htuNcPkMezH9zu3iiuVl9cPKV3Xo46r7qlZbgST8HUjYpz2cgs/TOgMWoxGXep49COkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LavnUCvB; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740463011; x=1771999011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O0AZLPEFBpzWrpkL052RWCLjQ6UGpoQ8F1HUT4GvX3k=;
-  b=LavnUCvBkSxBMD2ECAv3/MkAggFidI1RVQf5lCzO/goLSV10ZBHcuwzw
-   GAo4odL/dIrOhHnGqZRmO1R0rEdkUgklVMbgZzc8v7AFcEVxSn+3+2t5o
-   U/N6rwLCbFwnOBge2adCBlCKFi3x7lLAY34rsNGONWOpShwp6vUIbHFnE
-   NLfEUDRNuSAO4pTVN+xFJ6NASZxG6NPecVzhDxJUpmQye3VBaPi11QgOq
-   PT/dOd7NZSb1ThKnXkfU3LnvVR5enuFoRDwGg+etxNH1aoSre8z9kpphR
-   XnURgB7p5T40b7cSp7c9+sDYoNVuB5m+do0naCGF6YZ36gy2VwHksIIsq
-   A==;
-X-CSE-ConnectionGUID: 0KdYGRkcQ22pRVDtk6BV0A==
-X-CSE-MsgGUID: mbzzeHMKTw2+tG4OKuicow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="45036319"
-X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="45036319"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 21:56:51 -0800
-X-CSE-ConnectionGUID: KJw0J1VNTSuc+ODJm2wyyw==
-X-CSE-MsgGUID: Zr07HMDJRJqXKEkpzNv7Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="121386643"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 21:56:45 -0800
-Message-ID: <27e31afd-2f8e-4f2e-92e3-92e52b956751@intel.com>
-Date: Tue, 25 Feb 2025 13:56:41 +0800
+	s=arc-20240116; t=1740463093; c=relaxed/simple;
+	bh=XFQddjupwHWDf1QiMntCRT3sbOOb0aS0zpeXx93gHx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gm9dvARczmBwT40iVH6yQDqPLtvwsotYY73KQ1MsHnWtTuL4lyZMEenRXohWyaY0o/vDLPJDSzneoucIlch70s2rP05t2RBuz6dTNNRdLkLqnxc581nnAFuuZfyQawoVFRlEOYCjE1WKYzfMw9cIvTACtYFv5qZ8j+eE3uhl/hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E6eCWB0J; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51P5vpku1682408
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 24 Feb 2025 23:57:51 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740463071;
+	bh=Sa7ucSJKWasZ2KGuuAlceNV2b8JCAsYjJZF+dbJsVKo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=E6eCWB0J1TLY5hBPfkrtc1a2eK8EFTk/UyJiTby3O9u/0pw/qwRsMItfJ80h2z3uw
+	 +qwXG1ZvE8PrNcO3YTTjFj8sNzEM4UKN+O+XsFh3j2FgLAig7jZYb6v8dMC57zoyex
+	 KcK5ejqvpwXouATTxqPcQcCK2OJSpzLyQ/rO+DBk=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51P5vp7g009513;
+	Mon, 24 Feb 2025 23:57:51 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Feb 2025 23:57:51 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Feb 2025 23:57:51 -0600
+Received: from [172.24.25.83] (lt5cd2489kgj.dhcp.ti.com [172.24.25.83])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51P5vlMG101472;
+	Mon, 24 Feb 2025 23:57:48 -0600
+Message-ID: <1c110279-ed22-4505-8fe2-2664b9880132@ti.com>
+Date: Tue, 25 Feb 2025 11:27:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,161 +64,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 02/12] KVM: x86: Allow the use of
- kvm_load_host_xsave_state() with guest_state_protected
-To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
- seanjc@google.com
-Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- binbin.wu@linux.intel.com, dmatlack@google.com, isaku.yamahata@intel.com,
- nik.borisov@suse.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20250129095902.16391-1-adrian.hunter@intel.com>
- <20250129095902.16391-3-adrian.hunter@intel.com>
- <01e85b96-db63-4de2-9f49-322919e054ec@intel.com>
- <96cc48a7-157b-4c42-a7d4-79181f55eed8@intel.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct
+ the GICD size
+To: Keerthy <j-keerthy@ti.com>, <robh+dt@kernel.org>, <nm@ti.com>,
+        <vigneshr@ti.com>, <conor+dt@kernel.org>, <kristo@kernel.org>,
+        <krzk+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <u-kumar1@ti.com>
+References: <20250218052248.4734-1-j-keerthy@ti.com>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <96cc48a7-157b-4c42-a7d4-79181f55eed8@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250218052248.4734-1-j-keerthy@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2/24/2025 7:38 PM, Adrian Hunter wrote:
-> On 20/02/25 12:50, Xiaoyao Li wrote:
->> On 1/29/2025 5:58 PM, Adrian Hunter wrote:
->>> From: Sean Christopherson <seanjc@google.com>
->>>
->>> Allow the use of kvm_load_host_xsave_state() with
->>> vcpu->arch.guest_state_protected == true. This will allow TDX to reuse
->>> kvm_load_host_xsave_state() instead of creating its own version.
->>>
->>> For consistency, amend kvm_load_guest_xsave_state() also.
->>>
->>> Ensure that guest state that kvm_load_host_xsave_state() depends upon,
->>> such as MSR_IA32_XSS, cannot be changed by user space, if
->>> guest_state_protected.
->>>
->>> [Adrian: wrote commit message]
->>>
->>> Link: https://lore.kernel.org/r/Z2GiQS_RmYeHU09L@google.com
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->>> ---
->>> TD vcpu enter/exit v2:
->>>    - New patch
->>> ---
->>>    arch/x86/kvm/svm/svm.c |  7 +++++--
->>>    arch/x86/kvm/x86.c     | 18 +++++++++++-------
->>>    2 files changed, 16 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->>> index 7640a84e554a..b4bcfe15ad5e 100644
->>> --- a/arch/x86/kvm/svm/svm.c
->>> +++ b/arch/x86/kvm/svm/svm.c
->>> @@ -4253,7 +4253,9 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->>>            svm_set_dr6(svm, DR6_ACTIVE_LOW);
->>>          clgi();
->>> -    kvm_load_guest_xsave_state(vcpu);
->>> +
->>> +    if (!vcpu->arch.guest_state_protected)
->>> +        kvm_load_guest_xsave_state(vcpu);
->>>          kvm_wait_lapic_expire(vcpu);
->>>    @@ -4282,7 +4284,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->>>        if (unlikely(svm->vmcb->control.exit_code == SVM_EXIT_NMI))
->>>            kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
->>>    -    kvm_load_host_xsave_state(vcpu);
->>> +    if (!vcpu->arch.guest_state_protected)
->>> +        kvm_load_host_xsave_state(vcpu);
->>>        stgi();
->>>          /* Any pending NMI will happen here */
->>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>> index bbb6b7f40b3a..5cf9f023fd4b 100644
->>> --- a/arch/x86/kvm/x86.c
->>> +++ b/arch/x86/kvm/x86.c
->>> @@ -1169,11 +1169,9 @@ EXPORT_SYMBOL_GPL(kvm_lmsw);
->>>      void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
->>>    {
->>> -    if (vcpu->arch.guest_state_protected)
->>> -        return;
->>> +    WARN_ON_ONCE(vcpu->arch.guest_state_protected);
->>>          if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
->>> -
->>>            if (vcpu->arch.xcr0 != kvm_host.xcr0)
->>>                xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
->>>    @@ -1192,13 +1190,11 @@ EXPORT_SYMBOL_GPL(kvm_load_guest_xsave_state);
->>>      void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu)
->>>    {
->>> -    if (vcpu->arch.guest_state_protected)
->>> -        return;
->>> -
->>>        if (cpu_feature_enabled(X86_FEATURE_PKU) &&
->>>            ((vcpu->arch.xcr0 & XFEATURE_MASK_PKRU) ||
->>>             kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE))) {
->>> -        vcpu->arch.pkru = rdpkru();
->>> +        if (!vcpu->arch.guest_state_protected)
->>> +            vcpu->arch.pkru = rdpkru();
->>
->> this needs justification.
-> 
-> It was proposed by Sean here:
-> 
-> 	https://lore.kernel.org/all/Z2WZ091z8GmGjSbC@google.com/
-> 
-> which is part of the email thread referenced by the "Link:" tag above
 
-IMHO, this change needs to be put in patch 07, which is the better place 
-to justify it.
+On 2/18/2025 10:52 AM, Keerthy wrote:
+> Currently we get the warning:
+>
+> "GICv3: [Firmware Bug]: GICR region 0x0000000001900000 has
+> overlapping address"
+>
+> As per TRM GICD is 64 KB. Fix it by correcting the size of GICD.
+>
+> Fixes: 9cc161a4509c ("arm64: dts: ti: Refactor J784s4 SoC files to a common file")
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Cc: stable@vger.kernel.org
+> ---
 
->>
->>>            if (vcpu->arch.pkru != vcpu->arch.host_pkru)
->>>                wrpkru(vcpu->arch.host_pkru);
->>>        }
->>
->>
->>> @@ -3916,6 +3912,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>>            if (!msr_info->host_initiated &&
->>>                !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->>>                return 1;
->>> +
->>> +        if (vcpu->arch.guest_state_protected)
->>> +            return 1;
->>> +
->>
->> this and below change need to be a separate patch. So that we can discuss independently.
->>
->> I see no reason to make MSR_IA32_XSS special than other MSRs. When guest_state_protected, most of the MSRs that aren't emulated by KVM are inaccessible by KVM.
-> 
-> Yes, TDX will block access to MSR_IA32_XSS anyway because
-> tdx_has_emulated_msr() will return false for MSR_IA32_XSS.
-> 
-> However kvm_load_host_xsave_state() is not TDX-specific code and it
-> relies upon vcpu->arch.ia32_xss, so there is reason to block
-> access to it when vcpu->arch.guest_state_protected is true.
+Acked-by: Udit Kumar <u-kumar1@ti.com>
 
-It is TDX specific logic that TDX requires vcpu->arch.ia32_xss unchanged 
-since TDX is going to utilize kvm_load_host_xsave_state() to restore 
-host xsave state and relies on vcpu->arch.ia32_xss to be always the 
-value of XFAM & XSS_MASK.
 
-So please put this change into the TDX specific patch with the clear 
-justfication.
-
->>
->>>            /*
->>>             * KVM supports exposing PT to the guest, but does not support
->>>             * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
->>> @@ -4375,6 +4375,10 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>>            if (!msr_info->host_initiated &&
->>>                !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->>>                return 1;
->>> +
->>> +        if (vcpu->arch.guest_state_protected)
->>> +            return 1;
->>> +
->>>            msr_info->data = vcpu->arch.ia32_xss;
->>>            break;
->>>        case MSR_K7_CLK_CTL:
->>
-> 
-
+> Changes in V2:
+>
+> 	* Added the fixes tag
+> 	* Cc: stable
+>
+>   arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> index 83bbf94b58d1..3b72fca158ad 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> @@ -193,7 +193,7 @@
+>   		ranges;
+>   		#interrupt-cells = <3>;
+>   		interrupt-controller;
+> -		reg = <0x00 0x01800000 0x00 0x200000>, /* GICD */
+> +		reg = <0x00 0x01800000 0x00 0x10000>, /* GICD */
+>   		      <0x00 0x01900000 0x00 0x100000>, /* GICR */
+>   		      <0x00 0x6f000000 0x00 0x2000>,   /* GICC */
+>   		      <0x00 0x6f010000 0x00 0x1000>,   /* GICH */
 
