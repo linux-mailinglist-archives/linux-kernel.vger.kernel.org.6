@@ -1,179 +1,150 @@
-Return-Path: <linux-kernel+bounces-531397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DDEA43FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A07F0A44000
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8A83BF787
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA5D3A979E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02F62690D1;
-	Tue, 25 Feb 2025 13:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6E9268FFE;
+	Tue, 25 Feb 2025 13:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CUYBtmRN"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="YprGR3q4"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EB5268FFE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274072686B1;
+	Tue, 25 Feb 2025 13:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488474; cv=none; b=GDHTQb7WV7HlXtS3IuYOytIgQP7npVZ6i9LGdm9C2L4vIDT8cJjsAAEN/zx9aXoRMGLve4geWWQw+/2l4Zx50Rs1n64pSbnNRMWk0R0ur+a5TP7Ovu4TfHzy5YLVD1vL4Mckvn4A0y6u2PfIJs/HCGifpWXIfGxK0Fwfhk4j7o0=
+	t=1740488527; cv=none; b=tDUvChzzzTDA6zfesB9K4p7QxT2xaebnPxT82o53V5BeAA+LdK88u94hAdyQ0byXoIxYToEGgtf8uPSEree6EpZXHa9jFfx59ClOe3vcVz0NdFUGfkv/H7tRib/8IlguU9dMHCva2Tm7H8+x1IMopCpOkoYaZEUdszLfS4WQync=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488474; c=relaxed/simple;
-	bh=jyeTnXrsHhsYX3YxoE9935CbRvycdZ3AB5a9mTYXpbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TSACyfyyR4S5Wg1BWvSYlml+RROyTrGia4pTt7VXx605gZ4XVhbHw/dGpaWrl4tUCCytz325QCqJtbRZbKxganTBu4WldcxHqRQrjpFF4ujoxlkE8s9WpHl7GuR2POiNH0/hyIEZSIHAPxKmXTFVfAXhExjfO0RbK17N+tcwl0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CUYBtmRN; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=ch15gq6+yE1qgD1FXBTrb/33lczrC6ySmbc2ZQVM5Fw=; b=CUYBtmRNiIFcQN/k
-	6j68mdwWTdymE54OmfVyfwMlMRPrvNvgP0GJApfTGlM9DaUdz5CjGh/n7NA7XWGPG8tjk1IiDjoZn
-	lDit+S86eKQ9wFGSMD1uoNgL+pjc4j3G0NuSszCSaaZlJ9L4B2XhGF3wfFvo7pWof8+TXhqcu4Qfp
-	MGR7Y0i9flw2SXUFXs63bbwkzoThdCvNHXb460Wgy4n09Z3gcY0uMqlWFVxVi//ZJXH7+nbp17JtV
-	ujSXbtlToIjg8qMESBddmC8fOlnR6hoy3t8BF5WVDSBWfSKuu3oYDq+MAKqUKHlnZN11c8zM84okk
-	Y//Vs/uWo1b2vzW6fQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tmuYc-000ggP-25;
-	Tue, 25 Feb 2025 13:01:06 +0000
-Date: Tue, 25 Feb 2025 13:01:06 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Harald Welte <laforge@gnumonks.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, david@rowetel.com
-Subject: Re: users of drivers/misc/echo ?
-Message-ID: <Z72_EnXyHoDACRk5@gallifrey>
-References: <Z7tZhYET41DAoHVf@gallifrey>
- <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
- <Z724l3DFJbGevtPF@nataraja>
+	s=arc-20240116; t=1740488527; c=relaxed/simple;
+	bh=eaO/axIomN57wbu9Q86ufLGH5usOhqRBBhwtKqX6/5M=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=W8bIp98IUkmMceykfoqyFf6lqW/s/iXJdaSpH/vAv8+a/zob8SJHGvdHWQy4Ds0hEu0UVtDykgI8evYyjbMKkzli/SkmRmNVfdDPiJrQhZt9Sihx9djcZEFhISbMLDHN7LTvpCn6auMfKXhQWeRXINnNjPjMPHjFB1BRD23vNFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=YprGR3q4; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PANJwf032103;
+	Tue, 25 Feb 2025 08:01:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=jfvPMnHZRQjpKAtCzy7mGoWTnI0
+	VS3BVSEay4BZVuik=; b=YprGR3q4q+ldsQwP4ywGVcQfTcji4DjWQK45J08oe6j
+	4/5mGnXnMq8FtaSqakdJUNwA/ZCUtnPN8SI3J74Oy4Mq+5KqstQm6zWe+w2DIdE8
+	Go81/aMTQrgVms1QQ5gNwIPmC/h6IlWvmufeHeKJfvmzmagxcqU2hYe5Wqy6wi8D
+	KGJsO90dtLV9h2Ll7ZOfFlvOcmbDh7iBOf7mnxg87yNgBTXyC7OTApQwxCHGLnR4
+	eD12NgtiEzuRuj68SPQ9DL74gshjoL14xp6rpVSaMqA90KKwzA6kpD8vQBYYFSXv
+	UO2NnXqbJnJq30HD0wD6odfTsApnU5ZruYWScQiGlag==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44yccapsvv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 08:01:50 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51PD1m2W015492
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Feb 2025 08:01:48 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 25 Feb
+ 2025 08:01:48 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 25 Feb 2025 08:01:48 -0500
+Received: from CENCARNA-L02.ad.analog.com (CENCARNA-L02.ad.analog.com [10.117.116.88])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51PD1VXT020999;
+	Tue, 25 Feb 2025 08:01:34 -0500
+From: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+Subject: [PATCH v2 0/2] Add support for LT3074 low voltage linear regulator
+Date: Tue, 25 Feb 2025 21:01:12 +0800
+Message-ID: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <Z724l3DFJbGevtPF@nataraja>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 12:43:57 up 292 days, 23:57,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABm/vWcC/3WNwQ7CIBAFf6XZsxhgkRpP/Q/TA9ZtS9JCA0g0D
+ f8u9u5xJnnzdogULEW4NTsEyjZa7yrIUwPDbNxEzD4rg+TywoVU7LXFFMisbEnIW8WERLwqqTT
+ xB9TVFmi076N47yvPNiYfPsdBFj/7v5UF46zVHEdUWiFSZ5xZ/HQe/Ap9KeUL8rJvVa8AAAA=
+X-Change-ID: 20250124-upstream-lt3074-123384246e0b
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+        Guenter
+ Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+        Delphine CC
+ Chiu <Delphine_CC_Chiu@Wiwynn.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Cedric Encarnacion
+	<cedricjustine.encarnacion@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740488492; l=1569;
+ i=cedricjustine.encarnacion@analog.com; s=20250124;
+ h=from:subject:message-id; bh=eaO/axIomN57wbu9Q86ufLGH5usOhqRBBhwtKqX6/5M=;
+ b=TFl578K45wZF5TKnxi8LIHWO+aj5kWahZKTRooxyAjFT7g4uuPHhAFalHHYfcNU6XZAQOFyaD
+ xOh5SLFfDBrDMfgxvi7fiyVTrJcjIb9nKLG5+z/RySGD+s7IUmo6619
+X-Developer-Key: i=cedricjustine.encarnacion@analog.com; a=ed25519;
+ pk=ZsngY3B4sfltPVR5j8+IO2Sr8Db8Ck+fVCs+Qta+Wlc=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: U2jK9sHfAJCRRVqBrxBkdWD9CcXeZMaX
+X-Authority-Analysis: v=2.4 cv=SPa4VPvH c=1 sm=1 tr=0 ts=67bdbf3e cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=HTG6LfV_5ri_l7Ai_WkA:9 a=QEXdDO2ut3YA:10
+ a=oVHKYsEdi7-vN-J5QA_j:22
+X-Proofpoint-ORIG-GUID: U2jK9sHfAJCRRVqBrxBkdWD9CcXeZMaX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250090
 
-* Harald Welte (laforge@gnumonks.org) wrote:
-> Hi Arnd,
-> 
-> > Adding Harald to Cc, might know more about it.
-> 
-> thanks for Cc'ing me on this thread.
+Introduce hardware monitoring and regulator support for LT3074. The
+component is an ultrafast, ultralow noise 3A, 5.5V dropout linear
+regulator with a PMBus serial interface that allows telemetry for
+input/output voltage, output current, and die temperature. It has a
+single channel and requires a bias voltage which can be monitored via
+manufacturer-specific registers.
 
-Hi Harald,
-  Thanks for the reply.
+Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+---
+Changes in v2:
+ * Separated dt-binding for LT3074.
+ * Added __maybe_unused attribute to of_device_id. This addresses kernel
+   test robot warning.
+ * Added entry to MAINTAINERS.
 
-> On Sun, Feb 23, 2025 at 09:38:12PM +0100, Arnd Bergmann wrote:
-> > I don't see any in-tree users for it either, but I found one
-> > project using the exported symbols, and there is a debian
-> > package for it as well:
-> > 
-> > https://tracker.debian.org/pkg/osmocom-dahdi-linux
-> > https://gitea.osmocom.org/retronetworking/dahdi-linux/src/branch/master/drivers/dahdi/dahdi_echocan_oslec.c#L34
-> 
-> Note: The official upstream of DAHDI is maintained as part of the Asterisk soft switch project,
-> the Osmocom fork has just become more popular in recent years due to very slow maintenance of
-> upstream.
-> 
-> Any of the DAHDI forks is used in production deployments by a number of
-> different telephony / softswitch / telecom software projects (like
-> Asterisk, FreeSWITCH, yate or many osmocom sub-projects) in order to
-> interface with classic anaolog or TDM (time division multiplex)
-> telephony technology.  
-> 
-> Even today this TDM technology (most likely in most instances without
-> open source softswitches) is still relevant in commercial production
-> deployments, including many (but not all) cellular carriers
-> around the world, but for example also as part of GSM-R (railway
-> communications systems) for at least until 2035.  I personally also know
-> of present-day production deployments in satellite telephony
-> infrastructure.
-> 
-> However, those DAHDI-using deployments that I personally am familiar
-> with do not use the software echo canceller discussed here.  On the
-> other hand, I'm quite certain that there are many PBX/IVR related
-> systems out there (unrelated to my area of cellular or trunked radio)
-> that would still use the echo canceller discussed here.
-> 
-> In any case, for this discussion, it doesn't matter, as all DAHDI
-> flavours make use of the same API function.
-> 
-> > With our normal rules, we should just remove it as there is no
-> > way to use the code without external modules, but I don't know
-> > how we even got to this state.
-> 
-> I'd expect the echo cancellation code was used by mISDN for as long as
-> that was still in upstream.  As mISDN has (sadly, but understandably)
-> been removed, the echo canceller likely remained in the tree without any
-> other in-tree users.
+- Link to v1: https://lore.kernel.org/r/20250124-upstream-lt3074-v1-0-7603f346433e@analog.com
 
-OK.
+---
+Cedric Encarnacion (2):
+      dt-bindings: hwmon: pmbus: add lt3074
+      hwmon: (pmbus/lt3074): add support for lt3074
 
-> DAHDI has been using the in-kernel echo canceller for decades.  If it's
-> removed now, it will likely mean that DAHDI will carry a copy of it and
-> selectively compile that as out-of-tree module for future kernel
-> versions.
+ .../bindings/hwmon/pmbus/adi,lt3074.yaml           |  64 +++++++++++
+ Documentation/hwmon/index.rst                      |   1 +
+ Documentation/hwmon/lt3074.rst                     |  72 ++++++++++++
+ MAINTAINERS                                        |   9 ++
+ drivers/hwmon/pmbus/Kconfig                        |  18 +++
+ drivers/hwmon/pmbus/Makefile                       |   1 +
+ drivers/hwmon/pmbus/lt3074.c                       | 122 +++++++++++++++++++++
+ 7 files changed, 287 insertions(+)
+---
+base-commit: 8df0f002827e18632dcd986f7546c1abf1953a6f
+change-id: 20250124-upstream-lt3074-123384246e0b
 
-Well, it's a bit odd - but if it's actively used it's not terrible.
-(I guess there are kernel drivers that are fully usable that are never used!)
-
-Some questions:
-
-1) I see drivers/dahdi/dahdi_echocan_oslec.c
-
-/* Fix this if OSLEC is elsewhere */
-#include "../staging/echo/oslec.h"
-//#include <linux/oslec.h>
-
-now that moved to drivers/misc in 2014 by Greg's
-6e2055a9e56e ("staging: echo: move to drivers/misc/")
-
-So is most of this on ancient kernels or do people
-actually use modern stuff?
-
-2) I see there is a fir.h that's different from the kernels
-drivers/misc/echo/fir.h  doesn't that cause problems?
-Should one get updated from the other somehow?
-
-3) Any idea why it's never been upstreamed?
-  I guess the problem is that dahdi-base.c is quite a chunk and
-that would have to go in to take any of the useful other bits.
-Oh hmm, and a whole bunch hasn't got signed-off's so it's
-very hard.
-
-Dave
-
-
-> I personally wouldn't see that as a big problem, as DAHDI itself has
-> always been out-of-tree anyway, and adding one more module to that is
-> not a big deal.  Note that I cannot speak officially for the DAHDI
-> project as I'm just maintaining the Osmocom fork.
-> 
-> Kind regards,
-> 	Harald
-> -- 
-> - Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
-> ============================================================================
-> "Privacy in residential applications is a desirable marketing option."
->                                                   (ETSI EN 300 175-7 Ch. A6)
+Best regards,
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+
 
