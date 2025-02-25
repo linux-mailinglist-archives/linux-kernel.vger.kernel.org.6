@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-531407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F627A44020
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:08:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE717A4400F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF94188A0EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:05:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06CBD7A262E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2E626983B;
-	Tue, 25 Feb 2025 13:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01474268FE2;
+	Tue, 25 Feb 2025 13:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GaTud2c5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/DJZYIX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8D3268FCC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512EC263C72;
+	Tue, 25 Feb 2025 13:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488689; cv=none; b=oeyVTMpcxuyVQ3kIm+UBCTr9N6pKIWa4ylvsR3TLb9h8ScYV9FvrnuJ3TxEKLRIt3SHrkVrg2E9GYtBrlvdKw1obDYh0UXgRzGRqnPVAsJyxPVb/i+8ZvCLCSDhtONTHAx40WgU9X97LiWbzxNipmEyeAkOrJ7pzsUpMX4ewVn4=
+	t=1740488743; cv=none; b=I5ReKlNwzmNSoiaAwcTdrJ8UC4R+/YGS0K8xKXTb+AEAJmLf+BSFycHXgMAByF3lZk/mSpFULeS8eNuNxwUlDzINcbaJelXStFbDbv+jpsMf5ryRtUAjL1hpw357d3aUm0Ou4D0uMJezRNwDoa6KphHir6EMZbMIbT9j6yL24G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488689; c=relaxed/simple;
-	bh=PoqjAs48+8ee6d8AS/JvwD5Eq5M+o52O3KMWUPpMR28=;
+	s=arc-20240116; t=1740488743; c=relaxed/simple;
+	bh=ivp+WgXR409RKAJtAj+T6GJEnC9EUUj+NsyJEKYzZeA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RkWS9jAU/6mD5KE+IqZ2pgn8S8Mh5BIgY3spl4iAsydDdf2GWI0Lj+5RQLYDsO/pc4m1GBK68V+mSs4YGlaYBh4tDQQl2j2BkC5inXnrmwZaothSWXkINskpr+zxtubd1oU1xchmrkKJCpoaQKDeiWDQkqbdP8lzMEEINOLibqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GaTud2c5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740488686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NEjZiA0tpgBSlB/iySqtUo2D0VDFNUAgdeGczXOHVDE=;
-	b=GaTud2c5HIHMmftprbtdT0xJ1fLU8YLuxXPXiJ8M2CRN67uJmbnS71Dry9JNNpBuaG7cgF
-	+Y10xwcG+sEt9MOjD44Rs12RQcfGcFAgmMjnsuOmJg2K6ohhJO3hyFiLCP5DwoNMGUqxSK
-	RVpFYfMW81yJSF7ttDSWbS5eb4TSsK4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-287-txSl8fZ3M62aEk53mMuHZw-1; Tue, 25 Feb 2025 08:04:45 -0500
-X-MC-Unique: txSl8fZ3M62aEk53mMuHZw-1
-X-Mimecast-MFC-AGG-ID: txSl8fZ3M62aEk53mMuHZw_1740488684
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38f42f21f54so2159487f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:04:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740488684; x=1741093484;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEjZiA0tpgBSlB/iySqtUo2D0VDFNUAgdeGczXOHVDE=;
-        b=ikD6B6iwiirNiTK6QTiaAlJMgA8jt0LvJjMhWeRI3pkN+mMtU/pz0Pd6ALU2tBCbWt
-         /0K23YY500Uew6eBoN8E2oKKGC+WySFVLxFl7HmFG65SAYWkgqf9k1Za+MBJB5ZfC/CY
-         ImqIi/AfW+8hzX9dyy63LhS5+a2DGQYvl8D7fPn1pCmpumbO82mkd/51lNyhImKrplr3
-         smgt5AZWIITtWX+tiU6lWu1kW/vF5PKglcMBYgkYM4uUaLBthQftlpi7snH0rorC/qop
-         fbxQhgYFpJ1REJYymc+6G1RbUEsHwF+WUb9HumiADEkbCsBWm3Bgql6/zaa3PpiTDkAN
-         VBvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWga5sDXCDEi7NSwdBaSiTDyWCwl39UlaNolS6WHN65+ZHT3Hom3JQRp5mQWd6x4T6SQfiUbUTjnhA8uOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAJ5M8TlHhqaZogUGHgDpTG9TC/rPT7ORvVEbaMV9LZrKua08J
-	/k8Et3dfdzweMhJN6ThNEYt8LEJ8A9bq3VnayWBeuKLLoS66k3haEaF7nXFANpfEmqB1UA/HK1Z
-	p6oI839IKRAJOhxPEGZogr+twkSetmMY0Kx52k1Kk5dmWoLqQXREUVlmH5ApJ0QADjcmLGJot
-X-Gm-Gg: ASbGncu1dDYGzPLbFAXErzwGDhz7OrHu9afSkb6KVdCnVmcAWw4dy6Kq3PTAzMRNPZQ
-	BbyB1ZFYueAF1sq/UAoVnLAD6c14/1zjiJpG7lMmXjOct+7yRD/CdF6ck8uspb7Pduzn8MWyEax
-	/lHRvLZj5Q6eBDqdw2RsLxX5WPSiBJQChnMhQoBymeHVn0bLVpmZXWGYn2pqr5HnCY+xBZLOSLp
-	UmjfF+v0yKAaY7aBMS4TWNr/l3NViR0xY+es7MYLPiawzVrxIPo4Nxj56/8v/F72Ur7yUd9Qw/r
-	IGNglDNk9nZ/mQysyHuBZkZhaD4cWN5Y6m17bFVCg9Q=
-X-Received: by 2002:a05:6000:1a87:b0:38f:3344:361e with SMTP id ffacd0b85a97d-38f7079ec17mr15303947f8f.23.1740488684038;
-        Tue, 25 Feb 2025 05:04:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGzXYHaIMYF6GMizRa4fNCOG8+4IpljILlUq8KxSNpA12i9exQXViaMTl+bM5c0ACpAig5+BQ==
-X-Received: by 2002:a05:6000:1a87:b0:38f:3344:361e with SMTP id ffacd0b85a97d-38f7079ec17mr15303910f8f.23.1740488683687;
-        Tue, 25 Feb 2025 05:04:43 -0800 (PST)
-Received: from [192.168.88.253] (146-241-59-53.dyn.eolo.it. [146.241.59.53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab37403cfsm15578055e9.1.2025.02.25.05.04.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:04:43 -0800 (PST)
-Message-ID: <a814c41a-40f9-4632-a5bb-ad3da5911fb6@redhat.com>
-Date: Tue, 25 Feb 2025 14:04:40 +0100
+	 In-Reply-To:Content-Type; b=V3VWzf7AZbHOtYNxrONcAs8ZNoENLhBGJbzSC06WqVf3lCLCey3YNRrIjOfAyHwGe/4EuXbdkY6wBL0DSxN40C5CB6iYdjCoRAX629VZnbB50e66HDKXD0yd2LGxjA1vwiUQhVCYJiOD9qvyOnUo8QppGf/+hchBnkHYKiRklo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/DJZYIX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40889C4CEE6;
+	Tue, 25 Feb 2025 13:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740488743;
+	bh=ivp+WgXR409RKAJtAj+T6GJEnC9EUUj+NsyJEKYzZeA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O/DJZYIXlOyU/29abrOwdvyJYSfSHkW61ayW8puE+Z9p81l4X5OUFJ11Kbuqg/lE3
+	 OBPGPyabW4PlW5jwHbPxpRxvxUEUrIxSwkAgJ+nCXwMWVwfYzHpP8wfw0AMY0rQl5e
+	 nEMlp4AoAI7QHDJDCXOUyE/aE7oHYoOGinNptDElthL58x4fiZ+z6lJBJSKT62HW7A
+	 C5dtyKHcT116G8vsGQKAoxvGjtBqTK8rH1LwvXz+pk5Dk6DyCbowUvHokH/7qX9Odq
+	 tyY+bV1X21AYzC12szZiclO8HgpIP/FfUvBxMtUHp1dxBZlk3m/BynzlvPMkHdcgGK
+	 V3Mc9I94rrSxQ==
+Message-ID: <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
+Date: Tue, 25 Feb 2025 14:05:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,101 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 3/9] net: devmem: Implement TX path
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Jeroen de Borst <jeroendb@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
- <willemb@google.com>, David Ahern <dsahern@kernel.org>,
- Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
- asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
- Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
- <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20250222191517.743530-1-almasrymina@google.com>
- <20250222191517.743530-4-almasrymina@google.com>
+Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp25
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250222191517.743530-4-almasrymina@google.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/22/25 8:15 PM, Mina Almasry wrote:
-[...]
-> @@ -119,6 +122,13 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
->  	unsigned long xa_idx;
->  	unsigned int rxq_idx;
+On 25/02/2025 09:48, Clément Le Goffic wrote:
+> Add the hdp devicetree node for stm32mp25 SoC family
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  arch/arm64/boot/dts/st/stm32mp251.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index f3c6cdfd7008..43aaed4fcf10 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -918,6 +918,13 @@ package_otp@1e8 {
+>  			};
+>  		};
 >  
-> +	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
-> +
-> +	/* Ensure no tx net_devmem_lookup_dmabuf() are in flight after the
-> +	 * erase.
-> +	 */
-> +	synchronize_net();
+> +		hdp: pinctrl@44090000 {
+> +			compatible = "st,stm32mp-hdp";
 
-Is the above statement always true? can the dmabuf being stuck in some
-qdisc? or even some local socket due to redirect?
+So here again - you have stm32mp251 SoC, but use entirely different
+compatible.
 
-> @@ -252,13 +261,23 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
->  	 * binding can be much more flexible than that. We may be able to
->  	 * allocate MTU sized chunks here. Leave that for future work...
->  	 */
-> -	binding->chunk_pool =
-> -		gen_pool_create(PAGE_SHIFT, dev_to_node(&dev->dev));
-> +	binding->chunk_pool = gen_pool_create(PAGE_SHIFT,
-> +					      dev_to_node(&dev->dev));
->  	if (!binding->chunk_pool) {
->  		err = -ENOMEM;
->  		goto err_unmap;
->  	}
->  
-> +	if (direction == DMA_TO_DEVICE) {
-> +		binding->tx_vec = kvmalloc_array(dmabuf->size / PAGE_SIZE,
-> +						 sizeof(struct net_iov *),
-> +						 GFP_KERNEL);
-> +		if (!binding->tx_vec) {
-> +			err = -ENOMEM;
-> +			goto err_free_chunks;
+Same feedback as with previous patchsets from ST. Please take it inside,
+digest internally and do not repeat same issues.
 
-Possibly my comment on v3 has been lost:
-
-"""
-It looks like the later error paths (in the for_each_sgtable_dma_sg()
-loop) could happen even for 'direction == DMA_TO_DEVICE', so I guess an
-additional error label is needed to clean tx_vec on such paths.
-"""
-
-[...]
-> @@ -1071,6 +1072,16 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
->  
->  	flags = msg->msg_flags;
->  
-> +	sockc = (struct sockcm_cookie){ .tsflags = READ_ONCE(sk->sk_tsflags),
-> +					.dmabuf_id = 0 };
-> +	if (msg->msg_controllen) {
-> +		err = sock_cmsg_send(sk, msg, &sockc);
-> +		if (unlikely(err)) {
-> +			err = -EINVAL;
-> +			goto out_err;
-> +		}
-> +	}
-
-I'm unsure how much that would be a problem, but it looks like that
-unblocking sendmsg(MSG_FASTOPEN) with bad msg argument will start to
-fail on top of this patch, while they should be successful (EINPROGRESS)
-before.
-
-/P
-
+Best regards,
+Krzysztof
 
