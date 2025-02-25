@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-530609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FD2A435BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:51:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1372EA435D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E71477A8ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447873A88EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AAF25A327;
-	Tue, 25 Feb 2025 06:50:04 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D352586CD;
+	Tue, 25 Feb 2025 06:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hArMpTSv"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD622580D3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78F126C10;
+	Tue, 25 Feb 2025 06:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466204; cv=none; b=IEK8D/S6urPKWXH9E+nNQB4AIf9qPaUQVGnvVR2M7lxaHr9LbU1Y8Ut5Cues4fBtVibaeZ+EKcBn77td+V8h94letApolIWvz7AOTDMPltx5TAWNtp/y2tOhmg7MwPdOgNiUvn4iNwnLCLYhgRqoswyKeSr5eJwR+VY2fpzifRY=
+	t=1740466541; cv=none; b=SsBy17nmCMglR63cnhOgOpcA7sDMarjtsSP/Ph1oQAhEAAFJxADvPQBIhw43RXZzpDvrIsTz11WdFiGBr3D9HbB5ODeYSdHE4qAwClm7yi7eueBM8TqRMlPUPFQYPZV3n+Q7t2NXI/kTYYK5ZThsoWWY2XiKGPYZRZ/g5gyCTRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466204; c=relaxed/simple;
-	bh=jbsg3TAULemB474RCuga6e3uLPTvoNoYPugdAEpE3zM=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=m2CQoOSBDHQnsLCRqGjCm7/3w58tt/Why+64cjQgbeLLiO4AowFRBhN8k4FKETVP7vfdxDhRAA9xWPhqBN39AZAD/ad96ngcmfx9LlbLzN9wvqCELmW1aoq4pBMSPkssrN57sDsVJlLHkvMvvlnKAJofuKYzn1YYorCAD5f2MZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z27R665HCzJ1FT;
-	Tue, 25 Feb 2025 14:45:54 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id A31D91401F3;
-	Tue, 25 Feb 2025 14:49:57 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 14:49:56 +0800
-Subject: Re: [PATCH v2] mm: make page_mapped_in_vma() hugetlb walk aware
-To: Jane Chu <jane.chu@oracle.com>
-References: <20250224211445.2663312-1-jane.chu@oracle.com>
-CC: <willy@infradead.org>, <peterx@redhat.com>, <akpm@linux-foundation.org>,
-	<kirill.shutemov@linux.intel.com>, <hughd@google.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <3f3acf9f-f71d-77a3-ca61-5cc5c6c7f02b@huawei.com>
-Date: Tue, 25 Feb 2025 14:49:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1740466541; c=relaxed/simple;
+	bh=XdaHfHNVzH2DxfM7R+6reWaHUTDC4IadlQSZggIho7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDSWy2NNMwaDEBYPv7y79pyTM3kwBygZEvFcczQBJqTcbGdbbr+Ylo8hyVJkUzRjCHNnRzXLBaUhqB1yBKCJin015JP51LYZluHoYM3SD29FgkjTXNg/H9Fjarxs2JkdaUDT6LvzdEQrMhFdDEabL+Q3OS/UgMBjR98FYKMSj6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hArMpTSv; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220c8eb195aso3889145ad.0;
+        Mon, 24 Feb 2025 22:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740466539; x=1741071339; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SK+sB2NYj3xrsqhJk5JpYZAhuhVIkEl/E3zvyx25wmA=;
+        b=hArMpTSv04+UfpE5GIDtcEGfq+h/MWkRmvMiaZlmwxxOspsTmi7ByFrfc60/8DGH6r
+         OnWBgo1oJjKVlekuSyKogo0RbHPGpNunDw3+8XfErepofzAkwVW5AB357OCxuMuDkzlR
+         ZX2NwmuoWUBL4Te3jvy4OHAeH+UYxfZWxpNIVqcBhIhheKzJZVXe23lfb4qQjKt4PXHA
+         x0xyKxVc9cqPFdXR3DUk+7CZ1wQQqbcKNA5UPttx9xNApn8iKrXxzzwC5brnlKRgjGY3
+         DZmv/tMfG4vtawmvwLLnsxpFa9HacXaJPdgojycbhAyVjDYbsFzROobwHncnlWm00ldM
+         J+ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740466539; x=1741071339;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SK+sB2NYj3xrsqhJk5JpYZAhuhVIkEl/E3zvyx25wmA=;
+        b=T6+hjUDQDEEWoExPrCuJb8++xPeTLNhXXM0OAIPcic5iZ2YxkS2fvYbZzvwezi0Fu2
+         HGJ02klFNR8UkFOAklkwbLLuJ9c2dsM5+NRsoBN1Knhrhplvsd1UbS1u8xbA8GQb5Zil
+         oLX1Oh2REE4IGXQ8hB4Zvyf6zavJ6egv1M7yyxUcPd2oCvRP4+OHn2I9wFjvkh1SXw5C
+         YBgfeiUR43xK1fI5ilAXJzQ4wcV4Ky/WAMOJ8gtfb2et0rQswB7kBz+wT5B3oZxWaqph
+         B3LEQ11nOlQlv8tc1KTLAXSyCKSLMOrybadoYDiUP3cY9hv+7a2kWqq/JuPl/JlUjDg8
+         V2NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvld+zHmzsQE6r5Mdli/5XzitfgnVZqWTMo8H6tVwNa56cSYR6iUpYbIPAar99XFy7WglwHVyL0k5l7Fk=@vger.kernel.org, AJvYcCX/OzmCEF/82f/Dc2P8r2n05FHiUJ3TEzIGSyypbg6ozjMyFkpWNCpBRpi5CWZNTHhSVFZjZX8VoJRlAizY@vger.kernel.org, AJvYcCXvlAa2817DNkXRcIQZNU6QYxIyp0G6XhrbSyyFBbQZKcwlVMSVaBYnYIJ/D5Hs7Yk/BddggDKN6VZN@vger.kernel.org
+X-Gm-Message-State: AOJu0YySSG1a2pTxcJbfZtHOYSx64ZCQEJeQcSQmPPB26lxrxWMpO0sZ
+	yHgY7sSuowOSK6uUJNvwdvO20Z1DIN5UybXsooyJ46irV6ia4mgO
+X-Gm-Gg: ASbGncsqFjycVmdsCREZ/oR1bH9n7u2z6FA/1WQbSTcmV/qDWLVXrIdzoT6Cmrm9kkp
+	gHhI25aOIVKREC/DYYNHw4AHsfL31UP4Lj3z0d6ZsAhsuhMj1EoThW2osvfn1rTk8gbuB/+HkcX
+	+lt4FOvCNLpl1ZKuN4ThEWF+7Whv2x0Ex+s2MIXI3jvFNsdNvuots9jnldWEhtW58Mx0QFzts5o
+	GtDxhqcZ5oBrtNMilkq0GvqXlHeiEifQUEsx+xUKx2BCpiUV7jJQ4CsoI5HYgOjHmg9laJX49vf
+	oxdQz0VEcpfZ3TRTfSIWnna0iaY=
+X-Google-Smtp-Source: AGHT+IFK8dw+y+DNVUgtLr73+PNIRRyKNRO7yFn7L9Z/isc+4Mn2dvGrMONR/glLOu2wtdPi5Hixuw==
+X-Received: by 2002:a17:903:2a8d:b0:21f:6584:2085 with SMTP id d9443c01a7336-2219ffc4928mr290706985ad.42.1740466539239;
+        Mon, 24 Feb 2025 22:55:39 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0007dcsm7135085ad.1.2025.02.24.22.55.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 22:55:38 -0800 (PST)
+Date: Mon, 24 Feb 2025 22:55:36 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Manuel Traut <manuel.traut@mt.com>
+Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/7] Input: matrix_keypad - use fsleep for variable
+ delay duration
+Message-ID: <Z71paM0nDwVj85ls@google.com>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-2-markus.burri@mt.com>
+ <Z7YIKaG0jBHV2FSE@mt.com>
+ <Z71l9046XyjxicFf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250224211445.2663312-1-jane.chu@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z71l9046XyjxicFf@google.com>
 
-On 2025/2/25 5:14, Jane Chu wrote:
-> When a process consumes a UE in a page, the memory failure handler
-> attempts to collect information for a potential SIGBUS.
-> If the page is an anonymous page, page_mapped_in_vma(page, vma) is
-> invoked in order to
->   1. retrieve the vaddr from the process' address space,
->   2. verify that the vaddr is indeed mapped to the poisoned page,
-> where 'page' is the precise small page with UE.
+On Mon, Feb 24, 2025 at 10:40:55PM -0800, Dmitry Torokhov wrote:
+> On Wed, Feb 19, 2025 at 05:34:49PM +0100, Manuel Traut wrote:
+> > On Fri, Jan 10, 2025 at 06:49:00AM +0100, Markus Burri wrote:
+> > > The delay is retrieved from a device-tree property, so the duration is
+> > > variable. fsleep guesses the best delay function based on duration.
+> > > 
+> > > see Documentation/timers/delay_sleep_functions.rst
+> > > 
+> > > Signed-off-by: Markus Burri <markus.burri@mt.com>
+> > 
+> > Reviewed-by: Manuel Traut <manuel.traut@mt.com> 
 > 
-> It's been observed that when injecting poison to a non-head subpage
-> of an anonymous hugetlb page, no SIGBUS show up; while injecting to
-> the head page produces a SIGBUS. The casue is that, though hugetlb_walk()
-> returns a valid pmd entry (on x86), but check_pte() detects mismatch
-> between the head page per the pmd and the input subpage. Thus the vaddr
-> is considered not mapped to the subpage and the process is not collected
-> for SIGBUS purpose.  This is the calling stack
->       collect_procs_anon
->         page_mapped_in_vma
->           page_vma_mapped_walk
->             hugetlb_walk
->               huge_pte_lock
->                 check_pte
+> As I mentioned in other review activate_col() may be called in atomic
+> context where we can not sleep:
 > 
-> check_pte() header says that it
-> "check if [pvmw->pfn, @pvmw->pfn + @pvmw->nr_pages) is mapped at the @pvmw->pte"
-> but practically works only if pvmw->pfn is the head page pfn at pvmw->pte.
-> Hindsight acknowledging that some pvmw->pte could point to a hugepage of
-> some sort such that it makes sense to make check_pte() work for hugepage.
-
-Thanks for your patch. This patch looks good to me.
-
+> "activate_col() may be called in atomic context, and if fsleep() turns
+> into usleep_range() or msleep() we are going to have a bad time.
 > 
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> We should either stop using request_any_context_irq() or figure out if
+> interrupt handler can sleep or not and adjust behavior properly."
+> 
+> Unfortunately this was completely ignored.
 
-Is a Fixes tag needed?
+My apologies, it looks like it only is called from work handler, so my
+comment was wrong.
 
 Thanks.
-.
+
+-- 
+Dmitry
 
