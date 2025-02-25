@@ -1,210 +1,315 @@
-Return-Path: <linux-kernel+bounces-532499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55C3A44EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94944A44EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0038416FB7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B5B3B4859
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0B62144AE;
-	Tue, 25 Feb 2025 21:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9B020F068;
+	Tue, 25 Feb 2025 21:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="bHA9pBSy"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ry2BuTOd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE05212B38;
-	Tue, 25 Feb 2025 21:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E37D1A9B46;
+	Tue, 25 Feb 2025 21:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518104; cv=none; b=KJ3t0ehsGjv8g2oZJoCM9jyBXNaT2V+Mo/hwCdb0lXmkLk2p/L9Hs+6Tlgru+SXlFz4fqfS5Nod5YcsQ3RcxEQZGpo5OpDLFwx7RDrW1klo8J7aLbJMQerLKWD16bDPA+XB1Li3/IdMG6dqojKuWX95skBwPu7mcDmyT6OphM/I=
+	t=1740518124; cv=none; b=Apr/vRGhEfFmAeG4p/GAAMsmd1TDWDnR3nxjNwnHAjgzr/yEykbctaGYbeaKMTiOLE6G5y5MJFB8SXHX+7VbJuPt9+D1yMcNo6ppcKHIdSdCEEPxHLoGNIojB/570GybKyjnunmlxrjn3mmOod1LJOUTwniofvEGAS1rwFIJPCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518104; c=relaxed/simple;
-	bh=V8zm/T/v89iW7Qxn5c4OjobqRw0lXZC27c2iSEMOnn8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZpKCRYCqWljruw1l8jooFzXuALSYJrm2+hgWC7IvTmY7wBoA+ds6eorA0MM3ZNW0PVSyN5m8U4xsazSUD7/kJdm+sbV8cDVDmHArb1F5YFLqiCdBiIeXUN5EilHyZQjxfJW2KynauYIStQvX2cnWKN1jOwo/98CKnBzrQU7STPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=bHA9pBSy; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1740518094; bh=V8zm/T/v89iW7Qxn5c4OjobqRw0lXZC27c2iSEMOnn8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=bHA9pBSyZxybVLBkGBxL+XQPqfwe7PIMBtMoImfwremXWYF7+4ujNADL8TOlNCZAI
-	 xn45l+mjxxr0GRIa98XIbwhIZU+ErfQH9m1JHM09OQAxXGLc3ctdf1SqDU3JIXJRNQ
-	 5Ik7PwoEvLkXS2cl/J8cWygkyFHh7/xLFLweVQfk=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Tue, 25 Feb 2025 22:14:32 +0100
-Subject: [PATCH v2 4/4] arm64: dts: qcom: sdm632-fairphone-fp3: Enable
- display and GPU
+	s=arc-20240116; t=1740518124; c=relaxed/simple;
+	bh=lQJAQbZ4oPUDgplqxFG+FyGE3lJA+KrNuHVzwt4QK/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp7RFKT81kHryxpDsFPKV1A1jFXCSk3e8/WTgzqA0683ovxFzObEl/PJD3uc8PQj4Td8bUBNpCpXG9OCDBqEVYAlVEc+c1bLBhPrdwTOGzC+zc9vBJ6uLnjsJrL7BmRy80UYXO8ODBxz5+b4aFHB5VrZA3ffZ6B55NJS39FpCNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ry2BuTOd; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740518121; x=1772054121;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lQJAQbZ4oPUDgplqxFG+FyGE3lJA+KrNuHVzwt4QK/M=;
+  b=Ry2BuTOdagmTj/H+tz8Fsd0BPpFOo1LjdlJgO/n18Seyw7/vHh1rcM8w
+   bIEGtWb1WlMLcn10MiQdjMAKCurKMSDOaxPIEX466B+wxax0gdc/3Y5aK
+   SgMGn8v69MO3OsaIznDb/0K4xFdBAEuoFTKagMddno6mzXC3MaPmNnDEy
+   Y0H5qgVXX5D/HrE7dreBGHSXZvUf5fGrYTvUmCDPV7lHgPXaR3fTFUk46
+   dmiPBp7cAwG8we/Zzyhp8vD4PTfAjVv0w1ydcXHPXxTu16YWeR+9zOQNQ
+   YtnnKShSGtTg692hkX0z+vAfVaikZsYJZx9qVHhanSGlBi2JJI+OWR74s
+   Q==;
+X-CSE-ConnectionGUID: U1lFmua4To+UYMLITozHVg==
+X-CSE-MsgGUID: MCel8il/ShitD+6LCjKXNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58768958"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="58768958"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 13:15:20 -0800
+X-CSE-ConnectionGUID: qRzw28haSNq80Ckope3R6Q==
+X-CSE-MsgGUID: +LE8dPfEQiCVv6itHhBgbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="121122947"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Feb 2025 13:15:18 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tn2Gp-000Amd-26;
+	Tue, 25 Feb 2025 21:15:15 +0000
+Date: Wed, 26 Feb 2025 05:14:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
+Message-ID: <202502260415.PSbWYkXd-lkp@intel.com>
+References: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-fp3-display-v2-4-0b1f05915fae@lucaweiss.eu>
-References: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
-In-Reply-To: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3207; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=V8zm/T/v89iW7Qxn5c4OjobqRw0lXZC27c2iSEMOnn8=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnvjLLLxC/LXvqZR548r1l8YFfBF2H/HiCQs346
- JBrmX4EdJaJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ74yywAKCRBy2EO4nU3X
- Vq5ID/9mkGZ+E3Mi1lgJtZ0A+laMbxyjekOKGBvkS0VKwBQcRvRCq17iXyJlQeh4fDKbm00aiFU
- v/58MYo39g9G6Wxqi/0zrE5a+QNf2qYoYu9BJGpi7t7Sy5KUBUUf45yT1zk2XvZzrOiepmVipV0
- mowzmFBaihCmdO37D8PiqcOaCHkG8sWLu/4IKuvNSAFZWO1uhmpY09u/Rs3DdehW0XTyvAxolHP
- b5raB9EjvJZIs2U7VQGVBtxpvtJwSNBrqOCwGZi+VaYbwP4p/9VekdZoIogiPDYUKAhieiMujuK
- 8Shka3vkvE/j/5x7NGEM5/UkrFgyA9lodTwWmC+tAov5pqZLgxAssU9R8Ec1yEvsMRi5p+bz5oD
- iaM8ad6N9MLnsCVv9UDUpnidpooLORlhZVM+G9TMIIpjd3b9pun/jf8QF9ziOXuXOPU8klpNwYh
- ExPnQUjQUeSWM31xAwLjthNtO1HkVSWTo0RBGbuuDzlV4+Zc+5kbBoKOGnMscLHspBjG5hYEawu
- +f3+5C+wKdOzZXrAeUik1PmpuoaFo3w8eMzVov/dk4JZM+3fVOUC4/54Y9jJvf4GKE3JB+SzkjT
- drjsKBg8eGXFAbf43zkiCzYMAQUU2vuKqIcAMLrXG5oqagllvGgYd2d3LUwgo7xFAN1vZqVrbyd
- HzpS/hAXEzmmbyg==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
 
-Add the description for the display panel found on this phone.
-Unfortunately the LCDB module on PMI632 isn't yet supported upstream so
-we need to use a dummy regulator-fixed in the meantime.
+Hi Andy,
 
-And with this done we can also enable the GPU and set the zap shader
-firmware path.
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
- arch/arm64/boot/dts/qcom/msm8953.dtsi             |  2 +-
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 62 +++++++++++++++++++++++
- 2 files changed, 63 insertions(+), 1 deletion(-)
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on linus/master v6.14-rc4 next-20250225]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index af4c341e2533ef2cca593e0dc97003334d3fd6b7..6f5e6c407194d16682d1e6401fd4d10f3b73c195 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -1072,7 +1072,7 @@ gpu: gpu@1c00000 {
- 
- 			status = "disabled";
- 
--			zap-shader {
-+			gpu_zap_shader: zap-shader {
- 				memory-region = <&zap_shader_region>;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-index 31ed26c31e6ea381a8942ccf569513df3300cdeb..55a45b528bd3f1bf9b6fe7882753338b43c62271 100644
---- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-@@ -36,6 +36,14 @@ key-volume-up {
- 		};
- 	};
- 
-+	/* Dummy regulator until PMI632 has LCDB VSP/VSN support */
-+	lcdb_dummy: regulator-lcdb-dummy {
-+		compatible = "regulator-fixed";
-+		regulator-name = "lcdb_dummy";
-+		regulator-min-microvolt = <5500000>;
-+		regulator-max-microvolt = <5500000>;
-+	};
-+
- 	vph_pwr: vph-pwr-regulator {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vph_pwr";
-@@ -44,6 +52,14 @@ vph_pwr: vph-pwr-regulator {
- 	};
- };
- 
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/msm8953/fairphone/fp3/a506_zap.mbn";
-+};
-+
- &hsusb_phy {
- 	vdd-supply = <&pm8953_l3>;
- 	vdda-pll-supply = <&pm8953_l7>;
-@@ -87,6 +103,45 @@ &lpass {
- 	status = "okay";
- };
- 
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	vdda-supply = <&pm8953_s3>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "djn,98-03057-6598b-i";
-+		reg = <0>;
-+
-+		reset-gpios = <&tlmm 61 GPIO_ACTIVE_LOW>;
-+
-+		iovcc-supply = <&pm8953_l6>;
-+		vsn-supply = <&lcdb_dummy>;
-+		vsp-supply = <&lcdb_dummy>;
-+
-+		pinctrl-0 = <&mdss_te_default>;
-+		pinctrl-names = "default";
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0_out {
-+	data-lanes = <0 1 2 3>;
-+	remote-endpoint = <&panel_in>;
-+};
-+
-+&mdss_dsi0_phy {
-+	vcca-supply = <&pm8953_l3>;
-+	status = "okay";
-+};
-+
- &mpss {
- 	firmware-name = "qcom/msm8953/fairphone/fp3/mba.mbn",
- 			"qcom/msm8953/fairphone/fp3/modem.mbn";
-@@ -292,6 +347,13 @@ &tlmm {
- 	 * 135-138: fingerprint reader (SPI)
- 	 */
- 	gpio-reserved-ranges = <0 4>, <135 4>;
-+
-+	mdss_te_default: mdss-te-default-state {
-+		pins = "gpio24";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
- };
- 
- &uart_0 {
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/watchdog-nic7018_wdt-tidy-up-ACPI-ID-table/20250225-180908
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250225095804.360899-1-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250226/202502260415.PSbWYkXd-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250226/202502260415.PSbWYkXd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502260415.PSbWYkXd-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/s390/include/asm/io.h:95,
+                    from include/linux/io.h:14,
+                    from drivers/watchdog/nic7018_wdt.c:8:
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_remove':
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:229:9: note: in expansion of macro 'outb'
+     229 |         outb(LOCK, wdt->io_base + WDT_REG_LOCK);
+         |         ^~~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_set_timeout':
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:96:9: note: in expansion of macro 'outb'
+      96 |         outb(counter << 4 | config->divider,
+         |         ^~~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_ping':
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:138:9: note: in expansion of macro 'outb'
+     138 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
+         |         ^~~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_stop':
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:127:9: note: in expansion of macro 'outb'
+     127 |         outb(0, wdt->io_base + WDT_CTRL);
+         |         ^~~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:128:9: note: in expansion of macro 'outb'
+     128 |         outb(0, wdt->io_base + WDT_RELOAD_CTRL);
+         |         ^~~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:129:9: note: in expansion of macro 'outb'
+     129 |         outb(0xF0, wdt->io_base + WDT_PRESET_PRESCALE);
+         |         ^~~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_get_timeleft':
+>> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+     542 | #define _inb _inb
+   include/asm-generic/io.h:643:13: note: in expansion of macro '_inb'
+     643 | #define inb _inb
+         |             ^~~~
+   drivers/watchdog/nic7018_wdt.c:148:17: note: in expansion of macro 'inb'
+     148 |         count = inb(wdt->io_base + WDT_COUNT) & 0xF;
+         |                 ^~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_start':
+>> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+     542 | #define _inb _inb
+   include/asm-generic/io.h:643:13: note: in expansion of macro '_inb'
+     643 | #define inb _inb
+         |             ^~~~
+   drivers/watchdog/nic7018_wdt.c:112:19: note: in expansion of macro 'inb'
+     112 |         control = inb(wdt->io_base + WDT_RELOAD_CTRL);
+         |                   ^~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:113:9: note: in expansion of macro 'outb'
+     113 |         outb(control | WDT_RELOAD_PORT_EN, wdt->io_base + WDT_RELOAD_CTRL);
+         |         ^~~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:115:9: note: in expansion of macro 'outb'
+     115 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
+         |         ^~~~
+>> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+     542 | #define _inb _inb
+   include/asm-generic/io.h:643:13: note: in expansion of macro '_inb'
+     643 | #define inb _inb
+         |             ^~~~
+   drivers/watchdog/nic7018_wdt.c:117:19: note: in expansion of macro 'inb'
+     117 |         control = inb(wdt->io_base + WDT_CTRL);
+         |                   ^~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:118:9: note: in expansion of macro 'outb'
+     118 |         outb(control | WDT_CTRL_RESET_EN, wdt->io_base + WDT_CTRL);
+         |         ^~~~
+   drivers/watchdog/nic7018_wdt.c: In function 'nic7018_probe':
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:209:9: note: in expansion of macro 'outb'
+     209 |         outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
+         |         ^~~~
+>> include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
+     596 | #define _outb _outb
+   include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
+     655 | #define outb _outb
+         |              ^~~~~
+   drivers/watchdog/nic7018_wdt.c:213:17: note: in expansion of macro 'outb'
+     213 |                 outb(LOCK, wdt->io_base + WDT_REG_LOCK);
+         |                 ^~~~
+
+
+vim +/_outb +596 include/asm-generic/io.h
+
+3f7e212df82ca0 Arnd Bergmann   2009-05-13  534  
+9216efafc52ff9 Thierry Reding  2014-10-01  535  /*
+9216efafc52ff9 Thierry Reding  2014-10-01  536   * {in,out}{b,w,l}() access little endian I/O. {in,out}{b,w,l}_p() can be
+9216efafc52ff9 Thierry Reding  2014-10-01  537   * implemented on hardware that needs an additional delay for I/O accesses to
+9216efafc52ff9 Thierry Reding  2014-10-01  538   * take effect.
+9216efafc52ff9 Thierry Reding  2014-10-01  539   */
+9216efafc52ff9 Thierry Reding  2014-10-01  540  
+f009c89df79abe John Garry      2020-03-28  541  #if !defined(inb) && !defined(_inb)
+f009c89df79abe John Garry      2020-03-28 @542  #define _inb _inb
+6f043e75744596 Niklas Schnelle 2024-10-24  543  #ifdef CONFIG_HAS_IOPORT
+214ba3584b2e2c Stafford Horne  2020-07-26  544  static inline u8 _inb(unsigned long addr)
+9216efafc52ff9 Thierry Reding  2014-10-01  545  {
+87fe2d543f8173 Sinan Kaya      2018-04-05  546  	u8 val;
+87fe2d543f8173 Sinan Kaya      2018-04-05  547  
+87fe2d543f8173 Sinan Kaya      2018-04-05  548  	__io_pbr();
+87fe2d543f8173 Sinan Kaya      2018-04-05  549  	val = __raw_readb(PCI_IOBASE + addr);
+abbbbc83a210e9 Will Deacon     2019-02-22  550  	__io_par(val);
+87fe2d543f8173 Sinan Kaya      2018-04-05  551  	return val;
+9216efafc52ff9 Thierry Reding  2014-10-01  552  }
+6f043e75744596 Niklas Schnelle 2024-10-24  553  #else
+6f043e75744596 Niklas Schnelle 2024-10-24  554  u8 _inb(unsigned long addr)
+6f043e75744596 Niklas Schnelle 2024-10-24  555  	__compiletime_error("inb()) requires CONFIG_HAS_IOPORT");
+6f043e75744596 Niklas Schnelle 2024-10-24  556  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  557  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  558  
+f009c89df79abe John Garry      2020-03-28  559  #if !defined(inw) && !defined(_inw)
+f009c89df79abe John Garry      2020-03-28  560  #define _inw _inw
+6f043e75744596 Niklas Schnelle 2024-10-24  561  #ifdef CONFIG_HAS_IOPORT
+f009c89df79abe John Garry      2020-03-28  562  static inline u16 _inw(unsigned long addr)
+9216efafc52ff9 Thierry Reding  2014-10-01  563  {
+87fe2d543f8173 Sinan Kaya      2018-04-05  564  	u16 val;
+87fe2d543f8173 Sinan Kaya      2018-04-05  565  
+87fe2d543f8173 Sinan Kaya      2018-04-05  566  	__io_pbr();
+c1d55d50139bea Stafford Horne  2020-07-29  567  	val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+abbbbc83a210e9 Will Deacon     2019-02-22  568  	__io_par(val);
+87fe2d543f8173 Sinan Kaya      2018-04-05  569  	return val;
+9216efafc52ff9 Thierry Reding  2014-10-01  570  }
+6f043e75744596 Niklas Schnelle 2024-10-24  571  #else
+6f043e75744596 Niklas Schnelle 2024-10-24  572  u16 _inw(unsigned long addr)
+6f043e75744596 Niklas Schnelle 2024-10-24  573  	__compiletime_error("inw() requires CONFIG_HAS_IOPORT");
+6f043e75744596 Niklas Schnelle 2024-10-24  574  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  575  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  576  
+f009c89df79abe John Garry      2020-03-28  577  #if !defined(inl) && !defined(_inl)
+f009c89df79abe John Garry      2020-03-28  578  #define _inl _inl
+6f043e75744596 Niklas Schnelle 2024-10-24  579  #ifdef CONFIG_HAS_IOPORT
+214ba3584b2e2c Stafford Horne  2020-07-26  580  static inline u32 _inl(unsigned long addr)
+9216efafc52ff9 Thierry Reding  2014-10-01  581  {
+87fe2d543f8173 Sinan Kaya      2018-04-05  582  	u32 val;
+87fe2d543f8173 Sinan Kaya      2018-04-05  583  
+87fe2d543f8173 Sinan Kaya      2018-04-05  584  	__io_pbr();
+c1d55d50139bea Stafford Horne  2020-07-29  585  	val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+abbbbc83a210e9 Will Deacon     2019-02-22  586  	__io_par(val);
+87fe2d543f8173 Sinan Kaya      2018-04-05  587  	return val;
+9216efafc52ff9 Thierry Reding  2014-10-01  588  }
+6f043e75744596 Niklas Schnelle 2024-10-24  589  #else
+6f043e75744596 Niklas Schnelle 2024-10-24  590  u32 _inl(unsigned long addr)
+6f043e75744596 Niklas Schnelle 2024-10-24  591  	__compiletime_error("inl() requires CONFIG_HAS_IOPORT");
+6f043e75744596 Niklas Schnelle 2024-10-24  592  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  593  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  594  
+f009c89df79abe John Garry      2020-03-28  595  #if !defined(outb) && !defined(_outb)
+f009c89df79abe John Garry      2020-03-28 @596  #define _outb _outb
+6f043e75744596 Niklas Schnelle 2024-10-24  597  #ifdef CONFIG_HAS_IOPORT
+f009c89df79abe John Garry      2020-03-28  598  static inline void _outb(u8 value, unsigned long addr)
+9216efafc52ff9 Thierry Reding  2014-10-01  599  {
+a7851aa54c0cdd Sinan Kaya      2018-04-05  600  	__io_pbw();
+a7851aa54c0cdd Sinan Kaya      2018-04-05  601  	__raw_writeb(value, PCI_IOBASE + addr);
+a7851aa54c0cdd Sinan Kaya      2018-04-05  602  	__io_paw();
+9216efafc52ff9 Thierry Reding  2014-10-01  603  }
+6f043e75744596 Niklas Schnelle 2024-10-24  604  #else
+6f043e75744596 Niklas Schnelle 2024-10-24  605  void _outb(u8 value, unsigned long addr)
+6f043e75744596 Niklas Schnelle 2024-10-24  606  	__compiletime_error("outb() requires CONFIG_HAS_IOPORT");
+6f043e75744596 Niklas Schnelle 2024-10-24  607  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  608  #endif
+9216efafc52ff9 Thierry Reding  2014-10-01  609  
 
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
