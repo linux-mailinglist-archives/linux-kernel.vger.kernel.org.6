@@ -1,79 +1,159 @@
-Return-Path: <linux-kernel+bounces-532140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB993A44937
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A35A44945
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AA4817A61B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52461172BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414419C554;
-	Tue, 25 Feb 2025 17:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8519C19D88F;
+	Tue, 25 Feb 2025 17:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="dKOfbqQB"
-Received: from antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGqlF0l2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978891891AA;
-	Tue, 25 Feb 2025 17:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE051624FB;
+	Tue, 25 Feb 2025 17:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506340; cv=none; b=UjXAvn4eZPvUmrexhj84xGSE1lp2+y1/g9MKWQ22VugfPAqwcQ++9W5LlKKxoOQMyR/gP8TwKocGKu/7mfEt6nU3IoERnCvxAhKHlMZJZ0vIbw3S44JWU+FR1nBl/a4TaQvCAsgyt5HC7dvRztyr0EQLi3SlJd6BE6k7GExNBOY=
+	t=1740506361; cv=none; b=VtrRHY0VHalnn4N6P6BAkn4x7QYUARE/pUhzr3O9FUfPuO4aHm+5ZexyJCLXQXIaDn9+plcfcMS3phZzeSZBQeBlMj/SPtFz+xq/Gu9qGyX+WD3T9tcsEobMc9HAHrJgOQe/0F5a/Ecxw/F088Io/dbByyNsKcv1SdTAi/icS5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506340; c=relaxed/simple;
-	bh=y40fTClVqSkkllf6kxBAHLmw12Tbp7DEQ0R0nVDvfKk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+WxTtG04VBORTwA9vwtHJcWdH8tCTTY1j8TY1Wzj4YqiR3j3WB1Iog3lAQNabLfL+QVkyPjWsY55taHOCmtOwf6vRGfm6MZrt2QmrlfuKrqw02/OXHglfQ4imHjC6brWTwoV6lUP/Jdf0kVuV2+8bqZl4xkkerw5u5b00Tns+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=dKOfbqQB; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Tue, 25 Feb 2025 18:58:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1740506330;
-	bh=y40fTClVqSkkllf6kxBAHLmw12Tbp7DEQ0R0nVDvfKk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
-	b=dKOfbqQBEpT+1uSMkyWQMka/Uc4Iqdm1M8yRtiPLNro6s7w5YEu2etfdBV4gYUQ2K
-	 gl1D9VRJb8Prv1V5j3TQOVZ4BQKgV7yHwYcy02QhiHIlL7icsgOLZf2OTbZNXUn4v6
-	 ktFs1nSCTU0uHMN/j9dN4kmDVQL2zHmlMVSKG65x7Pg8F/B+wHVygPxqBneQRmbEOS
-	 1NL/AXz1WbFwdBlgs7qVXV8p2RwS48T99FZDoW3O95xdjLqd+Qr8inzJdHpwonQ2qn
-	 8/O4T5LVWxuaBkkBbfwQ2JH1CtDobvgOeahLk2QlwRt2/p4azGwiQNyCOCuiX7tubG
-	 Oa2/I5K5fw87Q==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.12 000/153] 6.12.17-rc2 review
-Message-ID: <20250225175850.GA2770@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250225064751.133174920@linuxfoundation.org>
+	s=arc-20240116; t=1740506361; c=relaxed/simple;
+	bh=KV9aTcVPRj2TbE8QV+NhaTT5Bp0YGUgGMer8gWxFKU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W6x3hHKjt5sHlP8qX6Ny83fSMT/aG9EQ4UzWx7JOxf9zUlh0qNdtPbcDaeZCLz05e64LqNqJJg5mvXMSLnU9xiEeA5782o70aE+R9wzOFyEhHKej1P3qP6hozLGH89Tq3O5eiFn0sgUXDPBefwmdufqlr6JSzUfSK/t+LzJFt3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGqlF0l2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D60C4CEDD;
+	Tue, 25 Feb 2025 17:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740506361;
+	bh=KV9aTcVPRj2TbE8QV+NhaTT5Bp0YGUgGMer8gWxFKU4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aGqlF0l2OhomfOdRjDYgvqLm2MHiKrZ7lRoAJxed513yIhAzoJePEGUUhs/VgKayq
+	 3G5pdgF84rWsHZti6KhmI3h8B8+3cdW2t5wBZd3EwJFiGC/r2l0l+iqBm73UjW0HmM
+	 mJ9yPTdDLc6PnOJ5p3yUTu473cAOT9w9nRzWnl0mRVNmLEE6OVuhXL6B1LNJ3eiO75
+	 UgHZGQgoBZGldNzZCYeiCy900HDEu/rg2d23wSzIr1e/QyPmyIEsH6vv2QyyKSspqU
+	 JzFa86zVd9ST7qhbB1Cv8JVyLqmELJ7FRG+HWUMRm1BGoIpFcnVxXX4fjQydLQEFEu
+	 mjbkytNpMI29A==
+Message-ID: <a9e0a8ff-e84e-4210-babd-0d0a1825e9ec@kernel.org>
+Date: Tue, 25 Feb 2025 18:59:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225064751.133174920@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-slim7x: Drop incorrect
+ qcom,ath12k-calibration-variant
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ath12k@lists.infradead.org
+References: <20250225093051.58406-1-krzysztof.kozlowski@linaro.org>
+ <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
+ <7b54e965-3395-4349-8ae7-51a28c759235@linaro.org>
+ <kce6gzso22fp3ze2wp43fvy4tv6yqkaijm72kh5qk34jwijk2l@3ifaiz5tgjvl>
+ <d93789c6-61d9-4761-98f5-aa3dbec14d82@linaro.org>
+ <21ad3381-4d65-4c68-892d-9f485bf13735@oss.qualcomm.com>
+ <c55f615e-6831-4470-9ea2-73fe605b8a5f@linaro.org>
+ <71019e23-f339-4485-8599-c4e40ad979a9@oss.qualcomm.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <71019e23-f339-4485-8599-c4e40ad979a9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.12.17 release.
-> There are 153 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 25/02/2025 18:36, Jeff Johnson wrote:
 > 
-> Responses should be made by Thu, 27 Feb 2025 06:47:31 +0000.
-> Anything received after that time might be too late.
+>>
+>> Also post factum reasoning is not correct, because this would open the
+>> gate to bypass any sort of review. Just squeeze your stuff into the DTS
+>> and then you can bypass all DT maintainers :/
+>>
+>> All properties must be documented and bindings must be accepted *before*
+>> DTS patch is applied.
+> 
+> There is no intention to bypass DT maintainers. We are just trying to upstream
+> a large amount of downstream code, and in the process some pieces are coming
 
-Hi Greg
+I don't see how this is related here - patch was not sent by anyone from
+Qualcomm.
 
-6.12.17-rc2 compiles, boots and runs here on x86_64 (AMD Ryzen 5 7520U,
-Slackware64-current), no regressions observed.
+> out of order. And there is also confusion if binding, driver, and DTS changes
+> should be in one series or three separate series.
 
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+How is it related to incorrect property here? It feels like this topic
+is being hijacked for some other point. I am not happy with this because
+then Bjorn will see that discussion is going so he will ignore the patch.
+
+BTW, I gave my statement multiple times, writing bindings also mention
+this, so is anything going to change if I say it 100th time here? In one
+month there will be the same question :/
+
+DTS must be applied via ARM SoC, thus you cannot combine DTS into
+patchsets being entirely applied by driver subsystem maintainers (Greg,
+netdev, sometimes maybe watchdog). For other maintainers, you can
+combine it, because they know to skip DTS.
+
+Bindings always go via subsystem, so they must be part of driver
+patchset, unless of course there is no driver (but then bindings are
+"the driver" patchset).
+
+
+Best regards,
+Krzysztof
 
