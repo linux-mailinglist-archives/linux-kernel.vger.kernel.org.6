@@ -1,330 +1,430 @@
-Return-Path: <linux-kernel+bounces-531657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC72A44340
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:43:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E02A4435D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0AD86239C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E229188C273
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F4926BDB1;
-	Tue, 25 Feb 2025 14:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4184026BDB6;
+	Tue, 25 Feb 2025 14:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="AXGzZrhC"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023113.outbound.protection.outlook.com [40.107.162.113])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VYxLhWeG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3440426B089;
-	Tue, 25 Feb 2025 14:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.113
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494365; cv=fail; b=u+Cf4XHUsu/p2EJUhpWArpSfXW7LsuB2NykPbdGuk63iJ3YGSWH070uDxdZTA665wUEXp33GgT2Px8wbI/QMBNf9TNuqWoUdcibi7BnCN8LLAu6kCHdUNIlqzvR53qRvviQQzUHlFGERIpW/zJxDikvpTIlkYA8Q2y5T6KdN/HA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494365; c=relaxed/simple;
-	bh=QTUxDrNQv+XTym9eeqeL2q0sswEM6ZCeFbI/+IB53FY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GGe0X9T8nz8nIATmy5MYMczNYTNyoZwZLkfphVgZU8t+NL/dwSyjyUrtqxC7Kfu32kdAHg1ygQMTTErmyrqDcHHtwBPz8SixXWrYHyAID9ywj+W+e7YzjSSjk6A2bgleZ6nqHMKTl2J+zULJygK7w+NS05L3FyXcqh5uVdtmwY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=AXGzZrhC; arc=fail smtp.client-ip=40.107.162.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I5r/SgZsiozoTDsPbyEI3uAdUL6ZmLEJMQG9WDfPj6zvklSWXVA7puNXseYRByxU28rZKVvVK3LbvniONaada5QMGZ1NsMJ/lkuTX6UwxsZYcyYL7tlTZx2s3E1a8OpXYd0luYEOoqG9JiSFA5Q4cZ9XwI1+WwVLd2Q8CIA8zg2uQ1Raf3WR2XMkI4aogVNx0HEv53niW2aqMCadCwN7A5RzQ5084uqIRhJeKJJ5byndMHe99YfOhErIrsPl1pzYcCtUJyRDzZ+V4z0OJZ/8C7dpU7cELoR2EGox25IuNu1vS0f4KZRCPOCh2kba+XRLrdoY/Td1NRhp62L7XtNCkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QTUxDrNQv+XTym9eeqeL2q0sswEM6ZCeFbI/+IB53FY=;
- b=KRCgl7IZ8LZv5Agmcvln+0NOVK1ri7d5IBItLV8eQ3pbLInM4weIZE/QC1kq7KJ4SobgEK2Bsy7HPQQy5Ktc/9WZ+7Qy7wFVIBy+nmuqtYm8E939OXntF+Oa8a+E/G2LZYxCsSlzU6j15wd0xKOu1VMT6HmC0iz+XzVr+O23VIpaJmsIG98Izh/v3al5FZevCDHiY2t3czgIsgW5EV/FXrmjTfmhJ3tku4+I02YjPKrAvOz9LfLTahzMfZhAfjwcqgaJ3nQ8uCohL8PGiePJl8rot9y9l4d+7uA20VsnilQChCLdPg2qDn/vxoijNJcTfXpqNjG46p72i/aK5P2E3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=gocontroll.com; dmarc=pass action=none
- header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QTUxDrNQv+XTym9eeqeL2q0sswEM6ZCeFbI/+IB53FY=;
- b=AXGzZrhCRkpXeGLYJef6Fin5AqACRhRf8iCXimdCmWHh4IdYbo717J4RpCaNFB/WOfJFfvM5ISqnsMeUPNNpM1ahdQI4IL0/GwWiHmuiyik/XvJABWY1DPLgrGXzIkp9aW/3+LygAVa5x4mdJU3hXDmzRDL9aIXF7Y03AIhJ9OS0KxKxzfgGhG3LYJhDebalhZrHs+fuS6n4LncuivQKZ0aiQW2+dxOivAkGgz1IunuVJfE7WARtnFuwSe2Nj6oFBiD7aP5ErMCwite+g5uVcBAI2Ko89gBIoZPLaoDVWsPP2WkhDRcuBMJIuSHebQy3qXWd8ljTxiDzF5N7AqAMOg==
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com (2603:10a6:102:ec::16)
- by PA4PR04MB9269.eurprd04.prod.outlook.com (2603:10a6:102:2a4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 14:39:16 +0000
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f]) by PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 14:39:16 +0000
-From: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
-To: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Liu Ying
-	<victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
- Moduline IO modules
-Thread-Topic: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
- Moduline IO modules
-Thread-Index:
- AQHbhsMosk0/ripJzU6HkH3zRHdpDrNW7EQAgACtnhWAAFAuAIAABT4ZgAAkE4CAAAFNQQ==
-Date: Tue, 25 Feb 2025 14:39:16 +0000
-Message-ID:
- <PA4PR04MB76303307674B66B4118CC3B1C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
-References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
- <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
- <20250224204428.GA4050751-robh@kernel.org>
- <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
- <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
- <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
- <20250225142043.GA2173114-robh@kernel.org>
-In-Reply-To: <20250225142043.GA2173114-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=gocontroll.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB7630:EE_|PA4PR04MB9269:EE_
-x-ms-office365-filtering-correlation-id: 2502bd7c-4a28-40b4-d748-08dd55aa2e52
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?yqxn6geKtpJ78H9R3TyicCVa3DBzpi7EH8yvRW8UYBORvsyYU2JhNZ4o/K?=
- =?iso-8859-1?Q?+jBXIt5mSNGOKKF7fG6pS5S5t1PGlafIuS4WclWYtsXCkFPbcjKsEJlq3P?=
- =?iso-8859-1?Q?NZLzkrjhgiI13oX9V/tYCDLsZgLM8bNk1PmvB6pEbeSSjnHtBw8qvfJEjf?=
- =?iso-8859-1?Q?8VbZcgOjXcPK8+IBG7NCgOeRBSDOz+o5Kb29h/lfvDw6xMiTTcetSUpFmj?=
- =?iso-8859-1?Q?UWNAjsM/gR9wMlKrBMc4Ip/rAm7UIhhjmylnkgEGUQucswoN+gpgWi2sQd?=
- =?iso-8859-1?Q?Wc3M640tfDBhz2eEzXpyzNLvIGKb1NneqUCcwLCrOZV2A8cRVs2WqkA6BM?=
- =?iso-8859-1?Q?McMp4dzTPPpC5MuTVu0LOLHjI0Fx7O0OPafYxpi8WwaJvKeXCJUWzgcSzy?=
- =?iso-8859-1?Q?x1H8v0/Y4o6OICPIGc4m1qW+YEfiXNOBSdVFjhx5gKZlXm2mqQTtiWWb5d?=
- =?iso-8859-1?Q?b3rIT+702zvNME9VLqNFt84a3dGELUtS6jJc1AA78e82CpvZKW3dy8civL?=
- =?iso-8859-1?Q?rQCx9YBEQ6gk9eQNRtYpRQ5muogpj/dc3hF53FdwUF4jLyMRZ+LedbU5Nu?=
- =?iso-8859-1?Q?c3sMeHx2I2k0MATlonuL8DMeK45sPZpLHfhCeDWIVFq66qdYkm40j0JUAu?=
- =?iso-8859-1?Q?T/DJ+I6J2RhR7EKZukYfuw14iEn4cSVbxHfzVf+40vof589f7zoUT6Ejqa?=
- =?iso-8859-1?Q?iifoXDXAjhdmh2BXZF74v5aFNuthvTEW16nfnaGXvr73QG8zyTYRjqVmn+?=
- =?iso-8859-1?Q?zyQTawZ1nmtQ3yShi1VhRlPv5dwgQXyM0uxdjS5kQSY27mddUoGcZdeOeN?=
- =?iso-8859-1?Q?Iu485EHDhAe58X9BykvktLrtDrtxRmE5+Or/LMILhkhOJpD9Zn/2ZXN7Pg?=
- =?iso-8859-1?Q?M68PV4x+ffAplYxQ4jCy1A+zjCCs51FPYg0YwXgSA6fPoUSv+SoHUKsNOo?=
- =?iso-8859-1?Q?PmUp8RdOygNoRsOzEs9PGxzCAeU+xnirmJGZIFrPQOPnq+WCiva06fccsh?=
- =?iso-8859-1?Q?Al0sPunekt1iW0MNEEXLw0JTvjPS2xImvDDDQeBDA3KfVXaHuEV+EjkcuS?=
- =?iso-8859-1?Q?yGdwat+T9sbydBEMyif8ph0t4AgaqQZpygy2pGgS4+diJJ+QfwmmZi7qzi?=
- =?iso-8859-1?Q?lywyHa23Isg/oh4mFY9fT1bfIeuqCUpXwtkp8ZzD4fTYJzEdno6LfGz42Z?=
- =?iso-8859-1?Q?6FmMC/6XJhQIXGa54EeLg1MV9hRJMuN8AS4mt69y3B3hKSsJW8+J+7v0Bk?=
- =?iso-8859-1?Q?Nlsvgk5edrYUpeX4Kl9jwatzmSPv6GrtbLtu2tT3fUi+o/aXLoIr8NSfKq?=
- =?iso-8859-1?Q?SCAoI4Cd39qVTIixREzHgEvZbr+ULDJAzyD1dh6FNUf/IQGg6NWbCDeSw1?=
- =?iso-8859-1?Q?I1WC9hqTA/7zgy8JNUFv5GzTERywCXfs1Ld0mcepNBfSLsy2fwLpjzoQ5z?=
- =?iso-8859-1?Q?ZSJcj0R92OUJTqHR/fSxl+o50ViORthhM5f7f4zC/rhv+jm98uFPiWBpkc?=
- =?iso-8859-1?Q?TXAzmg46kan/usK63E/961?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7630.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?P140BimaGm8enNYiTcrD/v5JtTL/uCCEehdVOM3VnIUjBwv5XgrNBLxeHZ?=
- =?iso-8859-1?Q?qSPasWsmQa1af1dLhSS6Z2x3qDFDTqHEz8+kbAKA20/pwB3tkdWBoBuUX8?=
- =?iso-8859-1?Q?KT2DahbqlLxz6XY0iBy6rHOGTlO5pjffQsI1gTli+AuGIPk7h7Y+aPsoPG?=
- =?iso-8859-1?Q?2GRlpS9V5c+qQQZiir/02lBoUtVzDmpWYOktIZfAg1RByQhkbRIHX16A8D?=
- =?iso-8859-1?Q?ramu7Sd+PXY2c9B0xoTpgwiUTNGypKjQ+tPmyd4r+zH7N4BhobubK+qqqj?=
- =?iso-8859-1?Q?wlUy0MNv/PqEXWqglxkpqmTBCdWyZO/cm+ouvPnDvRO9CVL28SBCpVmOBL?=
- =?iso-8859-1?Q?QPt8+UFS1w4qmn2MzCOB63YIiY/hv7ZyIWMbL2uvbYWxNcRWgjBirvZHmJ?=
- =?iso-8859-1?Q?xAYxLW7QHjJxoBuVH2BWhvXNNmLe3Emei7j5S/LEOpN8x5bhKFXQivDRD9?=
- =?iso-8859-1?Q?wojyAMU38ebTubapkrstdR5J2heDGlgD+wka2iPkIcy1c7iIkd/Co1Cn9T?=
- =?iso-8859-1?Q?WaBJqZurZgPZAdX+O7gQuamPGZjuOYZ7YA8pR028mVlnsqfXFyj9Fn6niy?=
- =?iso-8859-1?Q?AbabRbHvJiI1zunIdDTKm1+SuEpp4hlBim00BoYG5WSwSj/MmQvE9bZyzx?=
- =?iso-8859-1?Q?QGgUvi+WMHA1nd4bhY7StYg7vWtnBwhfq0EU0+OXizoJwr3Eyz+ZeAJy1u?=
- =?iso-8859-1?Q?05aUMPa5DMp7W1lyj43v4lGZCMy97gNGkWAl2ABuD2vxRYgdvB3JYcYUY3?=
- =?iso-8859-1?Q?09PRBUe5dFhjNeWIgzLSgFnu2M8Arc6v5H2Vefw5E1IimuGDgrjDxdbxHF?=
- =?iso-8859-1?Q?Cy+Xvu+znqyKgPy87xJhPcc/RZHC4ATADZwrxOg59ff6Y9RozRaIzGIQtR?=
- =?iso-8859-1?Q?JsXIIBINHOqatKX3LauxP79j+dYQdKB2jYi0FX127K5Wt7g4QoUrCHn+zZ?=
- =?iso-8859-1?Q?IeldHMS/A+WRNQ8PCFSbq6U8nZ7li0ltXTGOTLSbRz6TafaYZ3NHAa4Waf?=
- =?iso-8859-1?Q?g46/6ghudYmVx/egpGtWQlu5KHBIKZdO1+fUaYeBxC34mWXapBcaJR2UQD?=
- =?iso-8859-1?Q?S0Xhyt2NhE0Nn2p2FVnELimqbuLFSZqUlRa08bm4AUhr4O8q3x5mJsV956?=
- =?iso-8859-1?Q?CVZ9SGi8ECneMAzQhxIegm5uo5+e6RIuyfTf9xSXrxXPsgLRQJ5R+qYGIB?=
- =?iso-8859-1?Q?aI2UhZlx2ScepBo1ha4SR6MVlKyHgyAU84oW5VOLc71bsZrV8DVyDHk+D/?=
- =?iso-8859-1?Q?rwLiHu6HODy881KAzcN0rHytDz02iRBcYgGEYPNPWh4fLIyxYAOWHb0CX4?=
- =?iso-8859-1?Q?VAmWDPxf3ggXd9d88r8x6gRWA1HRMgl8sD2N7rtuD7A4dFUWWg0iMX6LG+?=
- =?iso-8859-1?Q?joZuZ6/vprbJbpD8X/DwQiOZfQu5PtwiTu40N6P37bFZnHYK+6I2nkkOV7?=
- =?iso-8859-1?Q?ebXNlCGYFpVPuU2uFM0B8hJPHpmdQqrQyoI5/atik9rAmLUJQ2/Ebs1CFL?=
- =?iso-8859-1?Q?lnf+0q03mBjWoOfl8mR3NoKbj/kDfRNIU++P2xW2Ryrck8lRaFREEG0Ddu?=
- =?iso-8859-1?Q?2NbAvuf7302sH/ncjLh83AGde15VTwkIyDuEIyOJFf32SGopqgIPwYa5Wr?=
- =?iso-8859-1?Q?o64vCp311U3aB0Pv1SsFYKKV7VCsvTCTNrY+gP1L/PV5W5QfuI2yoVlOeE?=
- =?iso-8859-1?Q?xTITbIz9/M+XdQ4zjfVGQGDMhONkdoNl0S2DfEgsu3oaljvqvcjVgDQIrJ?=
- =?iso-8859-1?Q?XZmQ=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583D626B089
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740494375; cv=none; b=deiJaFusqEGrwSYiz0/mnWIGeJfOkt/yvAQqletsvVvYh0Eue1e0hhvzEopOt0t/8rXZnluoOPLS1yO6lJ157muNLvj9aTEzXZIo0aBT/D4LPkT8OOvzwLCjOOJfYZ6HX6lTRkMLRE1oPZH2A0bUVT7A1CHcMYBYLRGuMmiJHfA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740494375; c=relaxed/simple;
+	bh=rpxxA6Yp4ev+eJOt8GflBMQ5MWpoeZqXMu5jx+nfPSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AwFxPSib2mf2LkXnMfZmK0JfunUtBQEDKNjgMSlafqHmcVZupXt1eSNLOKndwp25+DDT07ZLOY+C0XVrDz9tT8gAoQg/qc2C9EJqEHha4wFYfBJBdxPN6TtfpjzT3/7CKsgSFf9CJketdcng//3D3B0N+xeqB1MlwhKSuuezsrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VYxLhWeG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740494371;
+	bh=rpxxA6Yp4ev+eJOt8GflBMQ5MWpoeZqXMu5jx+nfPSI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VYxLhWeGs7vboQ/UdPFONGMYVJY8Asc/3yVSZB+lCTT4Xy0KCBOKu19RbbTK96J0v
+	 znieq7gfA+NCeb+KP9xxpiqTqIkGCVF42jr1PFcJmxst2ccY5epea96pyHeHwGF6sY
+	 8RsVVuhlOyWi6vCGqTwbhcVBOAx6MFpK4xn6ACWhtOEZeVybP5Sc7Ngo93FAW4PLbX
+	 QGIeml/b7hPkLy9mBJXbJTB+fnHVMeLZw8cd9B8Vq7oiimavdkgKOroM7IpsGAmYyF
+	 PfrObZpKHqBAvk+Oy6DoCYppeBNjKOPYL6OENCj2zwHd5W68P/FSWpqWH3p21f1Yhy
+	 CnZicZaHNFbdA==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 169AB17E0DB7;
+	Tue, 25 Feb 2025 15:39:31 +0100 (CET)
+Date: Tue, 25 Feb 2025 15:39:25 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Steven
+ Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com
+Subject: Re: [RFC PATCH 5/7] drm/shmem: Implement sparse allocation of pages
+ for shmem objects
+Message-ID: <20250225153925.10443056@collabora.com>
+In-Reply-To: <20250218232552.3450939-6-adrian.larumbe@collabora.com>
+References: <20250218232552.3450939-1-adrian.larumbe@collabora.com>
+	<20250218232552.3450939-6-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: gocontroll.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7630.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2502bd7c-4a28-40b4-d748-08dd55aa2e52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 14:39:16.6213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4LXZL0fssP0F0IetxvDVX3E/F8Dy8e29J3XiNRZKd1ZFzXOwj5vps4gpPg7AutkbwM1MwrGBHIPYEQ9fzDpb+W146D/6NJkH5XQUqPipjTo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9269
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From:=A0Rob Herring <robh@kernel.org>=0A=
-Sent:=A0Tuesday, February 25, 2025 3:20 PM=0A=
-=A0=0A=
->On Tue, Feb 25, 2025 at 12:24:09PM +0000, Maud Spierings | GOcontroll wrot=
-e:=0A=
->> From:=A0Krzysztof Kozlowski <krzk@kernel.org>=0A=
->> Sent:=A0Tuesday, February 25, 2025 12:52 PM=0A=
->> =A0=0A=
->> >On Tue, Feb 25, 2025 at 07:39:52AM +0000, Maud Spierings | GOcontroll w=
-rote:=0A=
->> >> From:=A0Rob Herring <robh@kernel.org>=0A=
->> >> Sent:=A0Monday, February 24, 2025 9:44 PM=0A=
->> >> =A0=0A=
->> >> >On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:=0A=
->> >> >> The main point of the Moduline series of embedded controllers is i=
-ts=0A=
->> >> >> ecosystem of IO modules, these currently are operated through the =
-spidev=0A=
->> >> >> interface. Ideally there will be a full dedicated driver in the fu=
-ture.=0A=
->> >> >>=0A=
->> >> >> Add the gocontroll moduline-module-slot device to enable the requi=
-red=0A=
->> >> >> spidev interface.=0A=
->> >> >>=0A=
->> >> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>=0A=
->> >> >> ---=0A=
->> >> >>=A0 Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++=
-=0A=
->> >> >>=A0 1 file changed, 2 insertions(+)=0A=
->> >> >>=0A=
->> >> >> diff --git a/Documentation/devicetree/bindings/trivial-devices.yam=
-l b/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> >> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc6=
-15c7fb46f771a300926f05 100644=0A=
->> >> >> --- a/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> >> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> >> @@ -107,6 +107,8 @@ properties:=0A=
->> >> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - fsl,mpl3115=0A=
->> >> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 # MPR121: Proximity Capacit=
-ive Touch Sensor Controller=0A=
->> >> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - fsl,mpr121=0A=
->> >> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 # GOcontroll Moduline module sl=
-ot for spi based IO modules=0A=
->> >> >=0A=
->> >> >I couldn't find anything about SPI for GOcontroll Moduline. Can you=
-=0A=
->> >> >point me to what this hardware looks like. Based on what I did find,=
-=0A=
->> >> >this seems incomplete and not likely a trivial device.=0A=
->> >>=0A=
->> >> I'll give some more details, if there is a v2 of this patch I will al=
-so=0A=
->> >> add more information in the commit message.=0A=
->> >>=0A=
->> >> The module slots have a number of pins, a lot of them currently unuse=
-d as=0A=
->> >> they have not found a function yet, this is very much still a develop=
-ing=0A=
->> >> product. The currently used interfaces to the SoC are:=0A=
->> >> 1. SPI bus as a spidev to ease developing new modules and quickly=0A=
->> >> integrate them. This is the main communication interface for control =
-and=0A=
->> >> firmware updates.=0A=
->> >> 2. A reset pin, this is/was driven with the gpio-led driver but I dou=
-bt=0A=
->> >> that would get accepted upstream so I intend to switch to the much be=
-tter=0A=
->> >> suited libgpio.=0A=
->> >=0A=
->> >reset-gpios is not in trivial devices, so that's already a hint you=0A=
->> >cannot use this binding.=0A=
->> >=0A=
->> >> 3. An interrupt pin, this is currently only used in the firmware upda=
-te=0A=
->> >> utility [2] to speed up the update process. Other communication is do=
-ne at=0A=
->> >> a regular interval.=0A=
->> >>=0A=
->> >> What is unused:=0A=
->> >> 1. A potentially multi-master i2c bus between all the module slots an=
-d=0A=
->> >> the SoC=0A=
->> >> 2. An SMBus alert line is shared between the modules, but not the SoC=
-.=0A=
->> >> 3. A shared line designated as a clock line, intended to in the futur=
-e=0A=
->> >> aid with synchronizing modules to each other for time critical contro=
-l.=0A=
->> >>=0A=
->> >> current software that is used to work with the modules can be found a=
-t=0A=
->> >> [2] and [3], one of them is a Node-RED module the other is a blockset=
- for=0A=
->> >> Matlab/Simulink generated code.=0A=
->> >>=0A=
->> >> If you know a better way I could describe this in the devicetree then=
- I=0A=
->> >=0A=
->> >You need dedicated binding where you describe entire device, entire=0A=
->> >hardware, not what your driver supports in current release.=0A=
->>=0A=
->> I see now that I also forgot the patch that adds this compatible to the=
-=0A=
->> spidev driver. Didn't check for the spidevs in testing I guess.=0A=
->>=0A=
->> Could I write bindings for this device, and then add the compatible to t=
-he=0A=
->> spidev driver for now? So it probes that driver, and then later when the=
-re=0A=
->> is a driver remove the compatible there and keep it only in the purpose=
-=0A=
->> built driver?=0A=
->>=0A=
->> So I'll write gocontroll,moduline-module-slot.yaml, don't quite know whe=
-re=0A=
->> that would go. Define all these attributes in there and then add the=0A=
->> compatible to drivers/spi/spidev.c=0A=
->>=0A=
->> Is that okay?=0A=
->=0A=
->Yes. Bindings are forever, but drivers change.=0A=
-=0A=
-Okay that is great to hear, I was afraid I was going to have to drop=0A=
-support for the foreseeable future. I'll get to work on those for v2.=0A=
-=0A=
->Perhaps put it in connector/ as this looks a bit like a connector. Do=0A=
->you envision DT overlays for the IO modules? Or modules don't have=0A=
->sub-devices you need to describe? There's some effort to on connector=0A=
->bindings (for mikrobus in particular) in order to de-couple host=0A=
->buses/signals from the modules (i.e. so a DT overlay can be applied to=0A=
->any DT defining the connector).=0A=
-=0A=
-I don't envision overlays coming in to play here, everything should be=0A=
-probed by the driver. Just needs the socket definition. The IO module=0A=
-bootloader will communicate what type of module it is and what firmware=0A=
-version it is running. Modules can be swapped very easily between boot=0A=
-cycles if the lid is off, it would be very annoying to then have to mess=0A=
-with the devicetrees. For most of our customers that might be too=0A=
-complicated. I am still thinking on how to keep the ecosystem open for=0A=
-others to develop their own IO modules, but I'll figure that out when we=0A=
-get there.=0A=
-=0A=
-Kind regards,=0A=
-Maud=
+On Tue, 18 Feb 2025 23:25:35 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+
+> Add a new function that lets drivers allocate pages for a subset of the s=
+hmem
+> object's virtual address range. Expand the shmem object's definition to i=
+nclude
+> an RSS field, since it's different from the base GEM object's virtual siz=
+e.
+>=20
+> Add also new function for putting the pages of a sparse page array. There=
+ is
+> refactorisation potential with drm_gem_put_pages, but it is yet to be dec=
+ided
+> what this should look like.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gem.c              |  32 +++++++
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 123 ++++++++++++++++++++++++-
+>  include/drm/drm_gem.h                  |   3 +
+>  include/drm/drm_gem_shmem_helper.h     |  12 +++
+>  4 files changed, 165 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index ee811764c3df..930c5219e1e9 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -679,6 +679,38 @@ void drm_gem_put_pages(struct drm_gem_object *obj, s=
+truct page **pages,
+>  }
+>  EXPORT_SYMBOL(drm_gem_put_pages);
+> =20
+> +void drm_gem_put_sparse_xarray(struct xarray *pa, unsigned long idx,
+> +				unsigned int npages, bool dirty, bool accessed)
+
+How about renaming that one drm_gem_put_xarray_page_range()? The sparse
+property is something decided by the caller IMHO, and this aspect
+doesn't necessarily have to leak through the drm_gem API.
+
+> +{
+> +	struct folio_batch fbatch;
+> +	struct page *page;
+> +
+> +	folio_batch_init(&fbatch);
+> +
+> +	xa_for_each(pa, idx, page) {
+> +		struct folio *folio =3D page_folio(page);
+> +
+> +		if (dirty)
+> +			folio_mark_dirty(folio);
+> +		if (accessed)
+> +			folio_mark_accessed(folio);
+> +
+> +		/* Undo the reference we took when populating the table */
+> +		if (!folio_batch_add(&fbatch, folio))
+> +			drm_gem_check_release_batch(&fbatch);
+> +
+> +		xa_erase(pa, idx);
+> +
+> +		idx +=3D folio_nr_pages(folio) - 1;
+> +	}
+> +
+> +	if (folio_batch_count(&fbatch))
+> +		drm_gem_check_release_batch(&fbatch);
+> +
+> +	WARN_ON((idx+1) !=3D npages);
+> +}
+> +EXPORT_SYMBOL(drm_gem_put_sparse_xarray);
+
+Since you already expose a helper to return pages in an xarray range,
+why not add a helper to allocate/get pages? That's basically
+drm_gem_shmem_get_sparse_pages_locked() but without the sgt logic, and
+with the xarray passed as an argument (plus a gfp_t argument to specific
+allocation constraints).
+
+> +
+>  static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+>  			  struct drm_gem_object **objs)
+>  {
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
+_gem_shmem_helper.c
+> index d63e42be2d72..40f7f6812195 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/shmem_fs.h>
+>  #include <linux/slab.h>
+>  #include <linux/vmalloc.h>
+> -#include <linux/xarray.h>
+> =20
+>  #ifdef CONFIG_X86
+>  #include <asm/set_memory.h>
+> @@ -161,6 +160,18 @@ struct drm_gem_shmem_object *drm_gem_shmem_create_wi=
+th_mnt(struct drm_device *de
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
+> =20
+> +static void drm_gem_shmem_put_pages_sparse(struct drm_gem_shmem_object *=
+shmem)
+> +{
+> +	unsigned int n_pages =3D shmem->rss_size / PAGE_SIZE;
+> +
+> +	drm_WARN_ON(shmem->base.dev, (shmem->rss_size & (PAGE_SIZE - 1)) !=3D 0=
+);
+> +	drm_WARN_ON(shmem->base.dev, !shmem->sparse);
+> +
+> +	drm_gem_put_sparse_xarray(&shmem->xapages, 0, n_pages,
+> +				   shmem->pages_mark_dirty_on_put,
+> +				   shmem->pages_mark_accessed_on_put);
+> +}
+> +
+>  /**
+>   * drm_gem_shmem_free - Free resources associated with a shmem GEM object
+>   * @shmem: shmem GEM object to free
+> @@ -264,10 +275,15 @@ void drm_gem_shmem_put_pages(struct drm_gem_shmem_o=
+bject *shmem)
+>  		set_pages_array_wb(shmem->pages, obj->size >> PAGE_SHIFT);
+>  #endif
+> =20
+> -	drm_gem_put_pages(obj, shmem->pages,
+> -			  shmem->pages_mark_dirty_on_put,
+> -			  shmem->pages_mark_accessed_on_put);
+> -	shmem->pages =3D NULL;
+> +	if (!shmem->sparse) {
+> +		drm_gem_put_pages(obj, shmem->pages,
+> +				  shmem->pages_mark_dirty_on_put,
+> +				  shmem->pages_mark_accessed_on_put);
+> +		shmem->pages =3D NULL;
+> +	} else {
+> +		drm_gem_shmem_put_pages_sparse(shmem);
+> +		xa_destroy(&shmem->xapages);
+> +	}
+>  }
+>  EXPORT_SYMBOL(drm_gem_shmem_put_pages);
+> =20
+> @@ -765,6 +781,81 @@ static struct sg_table *drm_gem_shmem_get_pages_sgt_=
+locked(struct drm_gem_shmem_
+>  	return ERR_PTR(ret);
+>  }
+> =20
+> +static struct sg_table *drm_gem_shmem_get_sparse_pages_locked(struct drm=
+_gem_shmem_object *shmem,
+> +							       unsigned int n_pages,
+> +							       pgoff_t page_offset)
+
+Can we keep the page allocation and sgt creation distinct, with a
+drm_gem_shmem_sparse_populate_locked() returning an int, and
+drm_gem_shmem_sparse_get_sgt_for_range() returning an sgt for a
+previously populated range.
+
+> +{
+> +	struct drm_gem_object *obj =3D &shmem->base;
+> +	gfp_t mask =3D GFP_KERNEL | GFP_NOWAIT;
+
+You shouldn't mix GFP_KERNEL and GFP_NOWAIT, as GFP_KERNEL implies
+GFP_RECLAIM.
+
+> +	size_t size =3D n_pages * PAGE_SIZE;
+> +	struct address_space *mapping;
+> +	struct sg_table *sgt;
+> +	struct page *page;
+> +	bool first_alloc;
+> +	int ret, i;
+> +
+> +	if (!shmem->sparse)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* If the mapping exists, then bail out immediately */
+> +	if (xa_load(&shmem->xapages, page_offset) !=3D NULL)
+> +		return ERR_PTR(-EEXIST);
+
+You're only checking the first page here. Maybe we should just
+ignore the case where some pages are already populated, and populate
+the missing ones. This implies leaving already allocated pages in place
+if an error occurs in the middle instead of trying to revert what we've
+allocated, but that's probably okay.
+
+> +
+> +	dma_resv_assert_held(shmem->base.resv);
+> +
+> +	first_alloc =3D xa_empty(&shmem->xapages);
+> +
+> +	mapping =3D shmem->base.filp->f_mapping;
+> +	mapping_set_unevictable(mapping);
+> +
+> +	for (i =3D 0; i < n_pages; i++) {
+> +		page =3D shmem_read_mapping_page_nonblocking(mapping, page_offset + i);
+
+Looks like we're mixing the sparse and non-blocking aspects. I'd rather
+make the non-blocking property by passing gfp_t flags to this function.
+
+> +		if (IS_ERR(page)) {
+> +			ret =3D PTR_ERR(page);
+> +			goto err_free_pages;
+> +		}
+> +
+> +		/* Add the page into the xarray */
+> +		ret =3D xa_err(xa_store(&shmem->xapages, page_offset + i, page, mask));
+> +		if (ret) {
+> +			put_page(page);
+> +			goto err_free_pages;
+> +		}
+> +	}
+> +
+> +	sgt =3D kzalloc(sizeof(*sgt), mask);
+> +	if (!sgt) {
+> +		ret =3D -ENOMEM;
+> +		goto err_free_pages;
+> +	}
+> +
+> +	ret =3D sg_alloc_table_from_page_xarray(sgt, &shmem->xapages, page_offs=
+et, n_pages, 0, size, mask);
+> +	if (ret)
+> +		goto err_free_sgtable;
+> +
+> +	ret =3D dma_map_sgtable(obj->dev->dev, sgt, DMA_BIDIRECTIONAL, 0);
+> +	if (ret)
+> +		goto err_free_sgtable;
+> +
+> +	if (first_alloc)
+> +		shmem->pages_use_count =3D 1;
+> +
+> +	shmem->rss_size +=3D size;
+> +
+> +	return sgt;
+> +
+> +err_free_sgtable:
+> +	kfree(sgt);
+> +err_free_pages:
+> +	while (--i) {
+> +		page =3D xa_erase(&shmem->xapages, page_offset + i);
+> +		if (drm_WARN_ON(obj->dev, !page))
+> +			continue;
+> +		put_page(page);
+> +	}
+
+Why not call drm_gem_put_sparse_xarray() here?
+
+> +	return ERR_PTR(ret);
+> +}
+> +
+>  /**
+>   * drm_gem_shmem_get_pages_sgt - Pin pages, dma map them, and return a
+>   *				 scatter/gather table for a shmem GEM object.
+> @@ -796,6 +887,28 @@ struct sg_table *drm_gem_shmem_get_pages_sgt(struct =
+drm_gem_shmem_object *shmem)
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_get_pages_sgt);
+> =20
+> +struct sg_table *drm_gem_shmem_get_sparse_pages_sgt(struct drm_gem_shmem=
+_object *shmem,
+> +						     unsigned int n_pages, pgoff_t page_offset)
+> +{
+> +	struct drm_gem_object *obj =3D &shmem->base;
+> +	struct sg_table *sgt;
+> +	int ret;
+> +
+> +	if (drm_WARN_ON(obj->dev, !shmem->sparse))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	ret =3D dma_resv_lock(shmem->base.resv, NULL);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	sgt =3D drm_gem_shmem_get_sparse_pages_locked(shmem, n_pages, page_offs=
+et);
+
+Let's make the page allocation explicit (force the caller to call
+drm_gem_shmem_sparse_populate_locked() before this function), and return
+an error if pages are not populated in the requested range.
+
+> +
+> +	dma_resv_unlock(shmem->base.resv);
+> +
+> +	return sgt;
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sparse_pages_sgt);
+> +
+>  /**
+>   * drm_gem_shmem_prime_import_sg_table - Produce a shmem GEM object from
+>   *                 another driver's scatter/gather table of pinned pages
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index fdae947682cd..4fd45169a3af 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -38,6 +38,7 @@
+>  #include <linux/dma-resv.h>
+>  #include <linux/list.h>
+>  #include <linux/mutex.h>
+> +#include <linux/xarray.h>
+> =20
+>  #include <drm/drm_vma_manager.h>
+> =20
+> @@ -532,6 +533,8 @@ int drm_gem_create_mmap_offset_size(struct drm_gem_ob=
+ject *obj, size_t size);
+>  struct page **drm_gem_get_pages(struct drm_gem_object *obj);
+>  void drm_gem_put_pages(struct drm_gem_object *obj, struct page **pages,
+>  		bool dirty, bool accessed);
+> +void drm_gem_put_sparse_xarray(struct xarray *pa, unsigned long idx,
+> +				unsigned int npages, bool dirty, bool accessed);
+> =20
+>  void drm_gem_lock(struct drm_gem_object *obj);
+>  void drm_gem_unlock(struct drm_gem_object *obj);
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shm=
+em_helper.h
+> index 902039cfc4ce..fcd84c8cf8e7 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -44,6 +44,14 @@ struct drm_gem_shmem_object {
+>  	 */
+>  	unsigned int pages_use_count;
+> =20
+> +	/**
+> +	 * @rss_size:
+> +	 *
+> +	 * Size of the object RSS, in bytes.
+> +	 * lifetime.
+> +	 */
+> +	size_t rss_size;
+
+Let's do that in a separate patch series dealing with memory
+accounting for sparse GEMs, if you don't mind. This can probably stay
+driver specific until the rest of the changes have been accepted.
+
+> +
+>  	/**
+>  	 * @madv: State for madvise
+>  	 *
+> @@ -107,6 +115,7 @@ struct drm_gem_shmem_object {
+>  	container_of(obj, struct drm_gem_shmem_object, base)
+> =20
+>  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
+, size_t size);
+> +struct drm_gem_shmem_object *drm_gem_shmem_create_sparse(struct drm_devi=
+ce *dev, size_t size);
+>  struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
+vice *dev,
+>  							   size_t size,
+>  							   struct vfsmount *gemfs);
+> @@ -138,6 +147,9 @@ void drm_gem_shmem_purge(struct drm_gem_shmem_object =
+*shmem);
+>  struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_shmem_object =
+*shmem);
+>  struct sg_table *drm_gem_shmem_get_pages_sgt(struct drm_gem_shmem_object=
+ *shmem);
+> =20
+> +struct sg_table *drm_gem_shmem_get_sparse_pages_sgt(struct drm_gem_shmem=
+_object *shmem,
+> +						     unsigned int n_pages, pgoff_t page_offset);
+> +
+>  void drm_gem_shmem_print_info(const struct drm_gem_shmem_object *shmem,
+>  			      struct drm_printer *p, unsigned int indent);
+> =20
+
 
