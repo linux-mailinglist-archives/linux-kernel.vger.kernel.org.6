@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-532374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9896EA44C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A625EA44C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FADA7A7597
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:13:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D2B7A2551
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BEE2135A6;
-	Tue, 25 Feb 2025 20:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D052139B1;
+	Tue, 25 Feb 2025 20:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qA/yQo2D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxKxVRfA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57299212D9D;
-	Tue, 25 Feb 2025 20:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B87F2135CA;
+	Tue, 25 Feb 2025 20:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740514357; cv=none; b=luRtl1d2A2rVsXM4UNANx2A/NIpCeA3nDmiCVff6By7PmgQRfxEMFHoSPCUBA5tFGI+iojNdCZVcYpe6axolz5VIPI47JvuX6PWkDPra0CNdDW1PA9VxWr2Evx+uQpMWDVZCulmoSQm5kwV8D+REsiDQy2LwnaQfrHw1tkRPLwE=
+	t=1740514359; cv=none; b=LDan/il4nQ0cdj6/linHf2SP92J9zcu0Kp8mwLiWDyaHK6eeX7UXLbpvRIpvduDUGKGGYPWJxaO5NQeD4PyNNplwuN/YKKo7sTML+HyLCYHaGB0auUG7u0M7M1EhDKHo8bzf/+lcE++235IPByRIDNd1vG4ge4Pugw2R0MGZ1Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740514357; c=relaxed/simple;
-	bh=yTCj5mHCtdBx8pk+52dg55Yg5D96C+PxN6w8CQznwjM=;
+	s=arc-20240116; t=1740514359; c=relaxed/simple;
+	bh=7S6m5qj19j2HH2oirUAYDNOi+Wj6A6WK3mHdMWXnPOs=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=gJBsdT2g3+zVzew3Tf39gsq/8dDy3epRsVz/eU6ZEczwi32Y8Xva2GKdM9QQxX6MrRkQ3x4/t3WdAGlVFlL6Rzh1Q7mWZO6jNB/g0gGSfqWvlVqqWIDeMwqV11N5t4sN0srdaH6qWbm6K/+knuhEQKfqb/QX8WJi9udhrvdmWYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qA/yQo2D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941DFC4CEDD;
-	Tue, 25 Feb 2025 20:12:36 +0000 (UTC)
+	 Message-Id:Subject; b=hs2HmODsBlxPZUhRIputWM3DLwMX28HgShqljNhlZsyHHv2N1jsEEHJAybhQhGWrmTeu9YVgjZ7hnKy0TIbXxROVeTTgL5M51D/RAyeGoRGHM43I7g0y/kkJG/JTr7+hqaExqPMVgOJA8oasRvdU9cgKcHh1pWsVzpano4CTyt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxKxVRfA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560F2C4CEDD;
+	Tue, 25 Feb 2025 20:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740514356;
-	bh=yTCj5mHCtdBx8pk+52dg55Yg5D96C+PxN6w8CQznwjM=;
+	s=k20201202; t=1740514358;
+	bh=7S6m5qj19j2HH2oirUAYDNOi+Wj6A6WK3mHdMWXnPOs=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qA/yQo2Dj7sATmTqu+FxRMZ65j9/jCkahdI62i/V40ioGuSi2VPnHu+ozuj0hCykM
-	 7SwJsjXxnFwy5gAEVVto5RF/S13qmg4gmUdYBgf6i+zc8r0IROTfT+VESyZEPDRs4H
-	 UxNacRkez6vE1G0S562m0LjxY9fD5f/Qub7y8BpjbWIkVKPsdJlRHbcAXQfPCJ4xLH
-	 DQyQUfZ+U1hwVn5ZH6fcdjIQJJ7uOc1hu6AAK1njsVkcmXuyu5F1ItA39HdEWxd/qN
-	 7p1JfHl5t6QAegMK+0wFDo2wggGt9kTyPga4LZqk3/r281/fkY6jUdkoUe6vqE6OGZ
-	 cdwFm+tgF71yQ==
-Date: Tue, 25 Feb 2025 14:12:34 -0600
+	b=rxKxVRfA6iOtsiT3k9Ku1jxKYLor7MNqxEi3U5vaGizZg067EjMB4y61uJojIRlAW
+	 UAIhecahjb9vXBcGth4vfPWKPTya25Mjx3qtTHseFZ+xs7VL4MXURYQwx104ctQO0v
+	 qpRWPveKcx5tNUI1QpEfSPtYA6RzYJjncIgztOLC75Btg0Uy/mgWku7SCz97COSXUZ
+	 jGwQu3HeWX0lRJj1LYfVgUYCYGe9Mrfn71KO9BHVaXIM8cVeea1r5qKLTATF9Mtk/e
+	 Ktk6uzEPhXiA9uXpWP1Z/6HCrdqNsY7hASZRortJTgG3AtQgYC7pdUjAaV0h2qtr81
+	 xH/ElgTCWgXkA==
+Date: Tue, 25 Feb 2025 14:12:37 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,58 +50,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: will@kernel.org, jic23@kernel.org, lee@kernel.org, ukleinek@kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- tglx@linutronix.de, catalin.marinas@arm.com, daniel.lezcano@linaro.org, 
- linux-iio@vger.kernel.org, wbg@kernel.org, devicetree@vger.kernel.org, 
- linux-pwm@vger.kernel.org, conor+dt@kernel.org, 
- alexandre.torgue@foss.st.com, krzk+dt@kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, olivier.moysan@foss.st.com
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
-References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
-Message-Id: <174051415125.2971414.5163158019956863310.robh@kernel.org>
-Subject: Re: [PATCH 0/8] Add STM32MP25 LPTIM support: MFD, PWM, IIO,
- counter, clocksource
+Cc: jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com, 
+ quic_rajeevny@quicinc.com, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, neil.armstrong@linaro.org, sean@poorly.run, 
+ devicetree@vger.kernel.org, robdclark@gmail.com, andersson@kernel.org, 
+ dmitry.baryshkov@linaro.org, conor+dt@kernel.org, rfoss@kernel.org, 
+ quic_jesszhan@quicinc.com, quic_vproddut@quicinc.com, 
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ marijn.suijten@somainline.org, Laurent.pinchart@ideasonboard.com, 
+ andrzej.hajda@intel.com, jonas@kwiboo.se, konradybcio@kernel.org, 
+ robh+dt@kernel.org
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
+References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
+Message-Id: <174051415386.2971902.3360853171203974622.robh@kernel.org>
+Subject: Re: [PATCH 00/11] Add DSI display support for SA8775P target
 
 
-On Mon, 24 Feb 2025 19:01:42 +0100, Fabrice Gasnier wrote:
-> This series adds support for STM32MP25 to MFD PWM, IIO, counter and
-> clocksource low-power timer (LPTIM) drivers.
-> This new variant is managed by using a new DT compatible string.
-> It comes with a slightly updated register set, some new features and new
-> interconnect signals inside the SoC.
-> Same feature list as on STM32MP1x is supported currently.
-> The device tree files add all instances in stm32mp251 dtsi file.
+On Tue, 25 Feb 2025 17:48:13 +0530, Ayushi Makhija wrote:
+> This series enables the support for DSI to DP bridge ports
+> (labled as DSI0 and DSI1) of the Qualcomm's SA8775P Ride platform.
 > 
-> Fabrice Gasnier (6):
->   dt-bindings: mfd: stm32-lptimer: add support for stm32mp25
->   mfd: stm32-lptimer: add support for stm32mp25
->   pwm: stm32-lp: add support for stm32mp25
->   counter: stm32-lptimer-cnt: add support for stm32mp25
->   arm64: defconfig: enable STM32 LP timers drivers
->   arm64: dts: st: add low-power timer nodes on stm32mp251
+> SA8775P SoC has DSI controller v2.5.1 and DSI PHY v4.2.
+> The Ride platform is having ANX7625 DSI to DP bridge chip from Analogix.
 > 
-> Olivier Moysan (1):
->   iio: trigger: stm32-lptimer: add support for stm32mp25
+> Ayushi Makhija (11):
+>   dt-bindings: display: msm-dsi-phy-7nm: document the SA8775P DSI PHY
+>   dt-bindings: msm: dsi-controller-main: document the SA8775P DSI CTRL
+>   dt-bindings: display: msm: document DSI controller and phy on SA8775P
+>   drm/msm/dsi: add DSI PHY configuration on SA8775P
+>   drm/msm/dsi: add DSI support for SA8775P
+>   arm64: dts: qcom: sa8775p: add Display Serial Interface device nodes
+>   arm64: dts: qcom: sa8775p-ride: add anx7625 DSI to DP bridge nodes
+>   arm64: dts: qcom: sa8775p-ride: enable Display serial interface
+>   drm/bridge: anx7625: enable HPD interrupts
+>   drm/bridge: anx7625: update bridge_ops and sink detect logic
+>   drm/bridge: anx7625: change the gpiod_set_value API
 > 
-> Patrick Delaunay (1):
->   clocksource: stm32-lptimer: add stm32mp25 support
-> 
->  .../bindings/mfd/st,stm32-lptimer.yaml        |  23 +-
->  arch/arm64/boot/dts/st/stm32mp251.dtsi        | 177 ++++++++++++++
->  arch/arm64/configs/defconfig                  |   5 +
->  drivers/clocksource/timer-stm32-lp.c          |   1 +
->  drivers/counter/stm32-lptimer-cnt.c           |   1 +
->  drivers/iio/trigger/stm32-lptimer-trigger.c   | 109 +++++++--
->  drivers/mfd/stm32-lptimer.c                   |  30 ++-
->  drivers/pwm/pwm-stm32-lp.c                    | 220 +++++++++++++++---
->  include/linux/iio/timer/stm32-lptim-trigger.h |   9 +
->  include/linux/mfd/stm32-lptimer.h             |  32 ++-
->  10 files changed, 554 insertions(+), 53 deletions(-)
+>  .../display/msm/dsi-controller-main.yaml      |   1 +
+>  .../bindings/display/msm/dsi-phy-7nm.yaml     |   1 +
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 170 +++++++++++++++
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi    | 198 +++++++++++++++++-
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 183 +++++++++++++++-
+>  drivers/gpu/drm/bridge/analogix/anx7625.c     |  24 ++-
+>  drivers/gpu/drm/msm/dsi/dsi_cfg.c             |  18 ++
+>  drivers/gpu/drm/msm/dsi/dsi_cfg.h             |   1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c         |   2 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h         |   1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     |  27 +++
+>  11 files changed, 614 insertions(+), 12 deletions(-)
 > 
 > --
-> 2.25.1
+> 2.34.1
 > 
 > 
 > 
@@ -121,12 +121,64 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/st/' for 20250224180150.3689638-1-fabrice.gasnier@foss.st.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250225121824.3869719-1-quic_amakhija@quicinc.com:
 
-arch/arm64/boot/dts/st/stm32mp257f-ev1.dtb: timer@46060000: trigger@3:reg:0:0: 3 is greater than the maximum of 2
-	from schema $id: http://devicetree.org/schemas/mfd/st,stm32-lptimer.yaml#
-arch/arm64/boot/dts/st/stm32mp257f-ev1.dtb: timer@46070000: trigger@4:reg:0:0: 4 is greater than the maximum of 2
-	from schema $id: http://devicetree.org/schemas/mfd/st,stm32-lptimer.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: gpio@74: 'gpio10_cfg', 'gpio11_cfg', 'gpio2_cfg', 'gpio3_cfg' do not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: gpio@74: 'gpio10_cfg', 'gpio11_cfg', 'gpio2_cfg', 'gpio3_cfg' do not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: gpio@74: 'gpio10_cfg', 'gpio11_cfg', 'gpio2_cfg', 'gpio3_cfg' do not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: gpio@74: 'gpio10_cfg', 'gpio11_cfg', 'gpio2_cfg', 'gpio3_cfg' do not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd10-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd18-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: anx7625@58: 'vdd33-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
 
 
 
