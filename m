@@ -1,205 +1,132 @@
-Return-Path: <linux-kernel+bounces-530738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933ECA437B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:33:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA36BA437B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B59CB7A6728
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3091890730
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A3A25E465;
-	Tue, 25 Feb 2025 08:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E5F25E465;
+	Tue, 25 Feb 2025 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PhL/teWz"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDzwAiIM"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF9C215182
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE918DB1D;
+	Tue, 25 Feb 2025 08:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472395; cv=none; b=qM/o/EQrk28hVYIzzglx57eZTwmIYnlQMEwWrBDHQi8j+0RzEfee/+sLMmHzyQByUBul0brfwRmM2lcZj4Us96b+kDMRc01o++uROBgb+N3timBN8uqqiFLvJOGB3eKnlMTVl4sxt+aHc1m9FnQiPjIKYKRmPNPXVqR2HxuOOts=
+	t=1740472453; cv=none; b=oypKi1FXiEzjd/fKQ0sktQb3zmvDe+66HiSCyybIDFZrph1Qi3Nj/ZYmOwHl6tkp6GNM/QveRu/YxzUP8CnZ/cxKxMcpMc4VZqTikxMhNe0t5aeOXyFz6pjtsrAvIcO6gPHcx5sh7fnI0+wzxa1jNCcsZYW60LqKrmA/sSqOCus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472395; c=relaxed/simple;
-	bh=hUvGcbX1M8/8NOUDvmKTRtGA8/5aU1g/Qz0Zf/5sQ4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjwMKIpa/Dq5rf/vkEnmniiDwd33nH3U7l3QXqF3ZFukMWxKVqqbD+cR7IBgd5fz7vq7vtiffR0iI+vEUwVoYClMAGBe9M2v2Kf/oUcN0ULS0iOgOxN3w/xCXp7r+Pim2WAFdsw+u063TqkrelDlRVYSfMgT2tY9AsfrFDwd0g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PhL/teWz; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso7314850a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:33:13 -0800 (PST)
+	s=arc-20240116; t=1740472453; c=relaxed/simple;
+	bh=QvrTqaLDyImGCadrKf+gt4FWLG66Tv/eNc2tekUYK+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WHvMCW02VCALao6MOQLREUe1G1stgW29Mg6FWD1q3IbWdtQYXk3emdnNgIMp2F8AMl1n/slMgsl1ERmDJi27MCZBPbAOZksUWBYxVPUfnihIAdXrtc0Kdv/Xk5WvRS0R/kE0u7l0ayHhmQZR1UZ6EAGmWd5LGSDSHNOjMCKSDg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDzwAiIM; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so8180995a12.0;
+        Tue, 25 Feb 2025 00:34:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740472392; x=1741077192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2uQEE0vqGhPs5ZeLO92iI9oa2Rk21hDTj79zQ7HG9aw=;
-        b=PhL/teWzLJTa8BXHL5sSJzN62RWzkQzvKHEd6TvQP9C1QwkApqmRurO28WXJfnHnAB
-         kvetew5oShJ/P49Q4pv6g5pq9UwaxIZvCiNs81wrDNeKVDjcT8vhWLS7QpCOsHJixIG0
-         BLNyq9G2FE299LFpJjqbLvDziVUQQsqvTzC3K34zlVvCbpqt7Oj+pvmgWa0MNh+sf0Q9
-         hlOUDK+61LYHVMk1lyIRUr16e4vCkC+8ATRAHNbRXn+HqewprwN3GmbRGaiAZ6aLhHmy
-         YQ24oag3N3V5Vp0VvLJjltvsLdQFa2lc0VsnIYjXpga7ZEZsclQBpZsz2fgW+fvJW21A
-         3AEg==
+        d=gmail.com; s=20230601; t=1740472449; x=1741077249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncfMgMCnPRMr8FAyu3AxbC4kltJNrhu35yNsQQCCo+A=;
+        b=PDzwAiIMN3zXK3lg7r6KJAN/HgLdQfXWhGG+r6LlK9UN+wFBPel1Mz5BqL3ehc9OIT
+         QxbAsB7ZtDQBevzahPDGhW/oDejUlh/u33vUSkx+8mt/eHJ6InmcveVJRHQ8V7cookP/
+         9NwnkKpJaBl3mVmP8x+gRo1vVZQvC5I+GzgtNRz/v7I5YfxxCF+6o0Xsw5N0ap+VvwXd
+         FOQq/BWBcO9cx2aXckOIkY4iSqwAcAe1GMGDtKGonlxPctMY0AWhwUJIW34MIwWuJfuW
+         CHtHaOzDYLhnouNj5GkHUjIaFVWr816NEebwOmmm/Dc9qH7Y/vZmUEslrGoSj4EoEdmQ
+         gakw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740472392; x=1741077192;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2uQEE0vqGhPs5ZeLO92iI9oa2Rk21hDTj79zQ7HG9aw=;
-        b=DMd9TFadggkJyrWpKqb518dMP8PMcp3Z7G6vYO8FcRP/neMGDe6ecvNUyTjmWfMKoR
-         LL416HF8SoODd+FXQjqOKVNddvC+eVeNVmQHCThkyS6hD/TMDp14PWGz5xXaQXgRIzXy
-         ukDrZYTdx59zUHV6EHoPZbxUa3AzPv7jNhvnxN3dUs51w5bZ/J0TbudsW7fSkKKX2j42
-         0fsI7EFpZeC85LIAvWDpLrUt0FEtLxFB281gS4xAlflO5VMoTl/veVslm/E1bUIutJzw
-         THfdQ5ipTkVK5gpl36X1YaBS7WIWkiEFSVvcXwtgwMQAMA2l15KtgCV8Dm2Lb5NKsflZ
-         i1dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXy/2+yKrHPyrJDrs1PkhAY3hVIA9/0As2Ms1ordfs3a9XqbDFa+SlWo1LoXkFy1Juyg826xYBvEC3CydM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygqZN2Y+LsAfdOEkgLBPkZDXx4XJoMM3Gye1qAPMf8puY7D5IC
-	ECSwvREz7S/K8XXErQlZNpJsY3xGE+4JPus/7NcPnjTKK6kS21c6JD4cAtTp2ms=
-X-Gm-Gg: ASbGncsimFFRsD4UZlW4JzNNyS8dzrklEmsxPWrE5JHNWdruWPPcjf+MgzhvnfNZ43n
-	vvUTHveTx2MgbVAFcIepX6oPlWWP8UBmtpAlkbsXje59pDfp3b+Ahyaqg4+5Vu9dh8vzC/tFTAn
-	ZQ9E10fO1wXqeTVlqQMsI0IAwT3/g89J6dnz2BY0MwxdnyGRdiA9e79qwOMoTFf05u5BLzLoROR
-	yX+S0xNQUd9mw79Scp0+mYUTfudhIv4VPjbIeTapNV90wdRObnJeJ7N54GgLg0LcGuwrivIoYGe
-	lzzoCmL7evH/tjwL8VTfIa9Mw7Wlrg==
-X-Google-Smtp-Source: AGHT+IGqRG1lJV/HKH+NlkKHzrYTEOwjEu01RN89meeh0XD7zNegvzrfS3k6QKTJYI1ZKFpVt/u56Q==
-X-Received: by 2002:a05:6402:3488:b0:5e0:51a9:d425 with SMTP id 4fb4d7f45d1cf-5e0b724ecfcmr15530079a12.29.1740472391943;
-        Tue, 25 Feb 2025 00:33:11 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e460ff8694sm846813a12.50.2025.02.25.00.33.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 00:33:11 -0800 (PST)
-Message-ID: <e8ba9f36-e33d-4c53-9d34-ff611cb1c221@suse.com>
-Date: Tue, 25 Feb 2025 09:33:10 +0100
+        d=1e100.net; s=20230601; t=1740472449; x=1741077249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ncfMgMCnPRMr8FAyu3AxbC4kltJNrhu35yNsQQCCo+A=;
+        b=rP5EgwnWpHHXjGjFJ/R6aXT2LBvTiTkCvJPgn7aI7/ItshzxZDark45bPmLZAto7mR
+         s9zyv7RoeraoAk8iXh8Zvito71Qh0ruqjl9zjcHUOP//B8tJ08OxF+NbUtN94SmhiHeP
+         2/IRoZRGS6BUpq5uGR8BGRE+ctc138rMwshO2x9K2F7ZDBel3Wqa/Eji6ekVEjWzvEmx
+         jxYtQ5b7o9sn7NvhvmPHuWOZn2T6n5h9jI8pk3zsW4ORQ/sSFJKFQXJdGWSu/HgZdqJK
+         ACZ5th6yR4Wop8+w2jFX7ybSq6Ng8aUkI/tmNEDBy9IPZkdRgMIenL9MM4b0gsdxi23m
+         TKww==
+X-Forwarded-Encrypted: i=1; AJvYcCV9J13ennFStNZ+7us2uzbFLC9AtpqKgAwecthqZg7q1zqsXgLFYbrOUQsyzAGNImbfl+Hf1tUepGcyIqBk@vger.kernel.org, AJvYcCXDj2ZxR8/1eOYsih06sUtZ3hnXYpxkiCodMbbvryO65f5HnTV4ZxXRU0SzQk84iet4RroqbNNeCPcx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFZy7bGW3TU7BrRR/LfpxEkkjX+esc5kGdSAZDf7XyjkdIzDxT
+	MInhfiRLjYpHSs3n6JTW0ZQ9toacwc/qHwjiKWPLr+XXZWPM9/zj
+X-Gm-Gg: ASbGncu27nEAGhxRIVCH3/+ZV7L3QeWMc1w5gZVQfOv5ztGg8WYaeuCAyhKUsLoWw6j
+	zdBM9YfdSeSXHbjd2DEN9nPXg6X1xsX4nqMsZtBYfbwdC0NguexXYAaFGlWuuHiod/ed85q4sII
+	PEYu7IsRzN53k1Ikg9CmAQPweO623pgbiphrPFXNrF7kuzJVtnf8pO0UBMIPdEOWowLwctAESJz
+	VqjaHw1iF3ox83K57JPVRi3lhNxYN6qVkd6WsiHIIFnUPV7Di8LmNeCN4HivrbWFC6D9q5u1rfE
+	a48MrBWDGQa3uzm52w==
+X-Google-Smtp-Source: AGHT+IFsVJ+G4evgAq2r7H+GUziPoyhbg5V2ZB+XNwTzd0UZ8vWBpEbIR7juW9BOXlM/qfA+5BMgEQ==
+X-Received: by 2002:a17:907:96a0:b0:aba:5f44:8822 with SMTP id a640c23a62f3a-abc099b838amr1684793066b.11.1740472448765;
+        Tue, 25 Feb 2025 00:34:08 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdbe0asm102660766b.36.2025.02.25.00.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 00:34:08 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] drm: bridge: add support for Triple 10-BIT
+Date: Tue, 25 Feb 2025 10:33:41 +0200
+Message-ID: <20250225083344.13195-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] kernel: refactor lookup_or_create_module_kobject()
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Shyam Saini <shyamsaini@linux.microsoft.com>,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- code@tyhicks.com, christophe.leroy@csgroup.eu, hch@infradead.org,
- mcgrof@kernel.org, frkaya@linux.microsoft.com, vijayb@linux.microsoft.com,
- linux@weissschuh.net, samitolvanen@google.com, da.gomez@samsung.com,
- gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org
-References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
- <20250211214842.1806521-3-shyamsaini@linux.microsoft.com>
- <4039ec74-8b46-417e-ad71-eff22239b90f@suse.com> <87wmdjo9yp.fsf@prevas.dk>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <87wmdjo9yp.fsf@prevas.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/21/25 11:42, Rasmus Villemoes wrote:
-> On Thu, Feb 13 2025, Petr Pavlu <petr.pavlu@suse.com> wrote:
-> 
->> On 2/11/25 22:48, Shyam Saini wrote:
->>> In the unlikely event of the allocation failing, it is better to let
->>> the machine boot with a not fully populated sysfs than to kill it with
->>> this BUG_ON(). All callers are already prepared for
->>> lookup_or_create_module_kobject() returning NULL.
->>>
->>> This is also preparation for calling this function from non __init
->>> code, where using BUG_ON for allocation failure handling is not
->>> acceptable.
->>
->> I think some error reporting should be cleaned up here.
->>
->> The current situation is that locate_module_kobject() can fail in
->> several cases and all these situations are loudly reported by the
->> function, either by BUG_ON() or pr_crit(). Consistently with that, both
->> its current callers version_sysfs_builtin() and kernel_add_sysfs_param()
->> don't do any reporting if locate_module_kobject() fails; they simply
->> return.
->>
->> The series seems to introduce two somewhat suboptimal cases.
->>
->> With this patch, when either version_sysfs_builtin() or
->> kernel_add_sysfs_param() calls lookup_or_create_module_kobject() and it
->> fails because of a potential kzalloc() error, the problem is silently
->> ignored.
->>
-> 
-> No, because (IIUC) when a basic allocation via kzalloc fails, the kernel
-> complains loudly already; there's no reason for every caller of
-> kmalloc() and friends to add their own pr_err("kmalloc failed"), that
-> just bloats the kernel .text.
+Triple 10-BIT LVDS Transmitter is used in Microsoft Surface RT and
+MStar TSUMU88ADT3-LF-1 HDMI bridge is used in ASUS Transformer AiO
+P1801-T.
 
-I wasn't suggesting to log a kmalloc() error specifically. The idea was
-that if lookup_or_create_module_kobject() fails for whatever reason,
-kernel_add_sysfs_param() and version_sysfs_builtin() should log the
-failure to create/get the kobject.
+---
+Changes on switching from v1 to v2:
+- sort compatible alphabetically in schema
+---
 
-> 
->> Similarly, in the patch #4, when module_add_driver() calls
->> lookup_or_create_module_kobject() and the function fails, the problem
->> may or may not be reported, depending on the error.
->>
->> I'd suggest something as follows:
->> * Drop the pr_crit() reporting in lookup_or_create_module_kobject().
-> 
-> No, because that reports on something other than an allocation failing
-> (of course, it could be that the reason kobject_init_and_add or
-> sysfs_create_file failed was an allocation failure, but it could
-> also be something else), so reporting there is the right thing to do.
+David Heidelberg (1):
+  dt-bindigs: display: extend the LVDS codec with Triple 10-BIT LVDS
+    Transmitter
 
-The error message says:
-pr_crit("Adding module '%s' to sysfs failed (%d), the system may be unstable.\n", name, err);
+Maxim Schwalm (1):
+  drm/bridge: simple-bridge: Add support for MStar TSUMU88ADT3-LF-1
 
-I think it was appropriate for locate_module_kobject() to do this error
-reporting when the function was only called by code in kernel/params.c
-and in the boot context. Now that the patch makes the function available
-to external callers, I'm not sure if it should remain reporting this
-error.
+Svyatoslav Ryhel (1):
+  dt-bindigs: display: extend the simple bridge with MStar
+    TSUMU88ADT3-LF-1
 
-The function itself shouldn't directly make the system unstable when it
-fails. Each caller can appropriately determine how to handle the error.
-Functions kernel_add_sysfs_param() and version_sysfs_builtin() don't
-have much of an option and can only log it, but module_add_driver()
-could roll back its operation.
-
-That's it, I guess my question is really whether module_add_driver()
-should do that and handle errors from lookup_or_create_module_kobject()
-by propagating them up the call stack. That would be my default if
-writing this code from scratch. I don't quite see why calling
-lookup_or_create_module_kobject() is special in this regard.
-
-The rest of my suggestion flows from that. Function
-lookup_or_create_module_kobject() should then similarly propagate any
-error upwards. However, functions kernel_add_sysfs_param() and
-version_sysfs_builtin() can't really do that and so actually need to
-report the error themselves.
-
-What do you think?
-
-> 
->> * Have version_sysfs_builtin() and kernel_add_sysfs_param() log an error
->>   when lookup_or_create_module_kobject() fails. Using BUG_ON() might be
->>   appropriate, as that is already what is used in
->>   kernel_add_sysfs_param()?
-> 
-> No, BUG_ON is almost never appropriate, and certainly not for something
-> which the machine can easily survice, albeit perhaps with some
-> functionality not available. That this had a BUG_ON is simply a
-> historical artefact, nothing more, and borderline acceptable as lazy
-> error handling in __init code, as small allocations during system init
-> simply don't fail (and if they did, the system would be unusable
-> anyway).
-
-I agree, just to clarify.. the reason why I mentioned using BUG_ON() in
-this case was only for consistency with what's already in
-kernel_add_sysfs_param(). I think it would be good to clean up other
-BUG_ON() calls in that function later, but it didn't seem immediately
-necessary to me as part of this series.
+ .../devicetree/bindings/display/bridge/lvds-codec.yaml       | 1 +
+ .../devicetree/bindings/display/bridge/simple-bridge.yaml    | 1 +
+ drivers/gpu/drm/bridge/simple-bridge.c                       | 5 +++++
+ 3 files changed, 7 insertions(+)
 
 -- 
-Thanks,
-Petr
+2.43.0
+
 
