@@ -1,142 +1,136 @@
-Return-Path: <linux-kernel+bounces-531416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6741A44049
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:14:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727E5A4403F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E0A1895F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8549317EC48
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57914269817;
-	Tue, 25 Feb 2025 13:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECA7268FD9;
+	Tue, 25 Feb 2025 13:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cyCMC6uO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qq+xIrWr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C119268FD9;
-	Tue, 25 Feb 2025 13:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DB62690CF;
+	Tue, 25 Feb 2025 13:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488959; cv=none; b=skv52FIRdVCnqYfxc6K4Jay1O01x15++0eDjP+wX1Q+/PbrJDnAfGlJ+I8fMLQbp0ETa+3AYIhU6WaAiQEk7q39P5kgkocJswz3FcFqGbjQda6lQt70kpnswnLMJtn+Jsy3LuIlIxojObsauFuaKn59uE9Vwsciy2S1valMvV6Q=
+	t=1740488935; cv=none; b=MhoCUejInKNd8mqrkLj1AQKkWxbLLSF24MZY9qkEK4qpt/yMV8YNiys/+802zrfpBzD+8YdDEzw4Zeg2H3Zjn03mUXugxTQ9alLlt0cS1p7HisTFQNm7kUvtdIgxdp6MlbzYoSGkXvA5V8XPYKCti7svlj8lFzyGpI5fK3hBkrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488959; c=relaxed/simple;
-	bh=KF5ZO6ejS0ACndO4NFjdXXOOXXaUCY9pfvk3vfNCGDc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WLB6nbagsgtKIB0CgGFXSInCO1CJCLid01+hxK+z8/wVIJfiGCBEDxgZjQhL2ml+uQz+J4gDfRC/9mmj87GRvjdt/M4lcfPLeDcajohtSEsrf4IJKc4sS1T5ozphZs1nsDHjfoxhgZ/VAv3waLiDQ2wnl4Zsw3m4v+MUZXjoP/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cyCMC6uO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 35B6DC4CEEB;
-	Tue, 25 Feb 2025 13:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1740488959; bh=KF5ZO6ejS0ACndO4NFjdXXOOXXaUCY9pfvk3vfNCGDc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cyCMC6uOVL6ENJBMx1lXJrPO0uR1bu1jjC30djlZQ78iRHEqdynObv6jUjVwBrc0N
-	 9evlK/yYrORjOHTwJESmj3GBeHBQiX3HOhUvHFHPbm4VRDr9eS2oNVjZt5zX3gfIz9
-	 O2trTR2gDcjzZTIVRdIohh4aJ4XlWRrAb40HXu6A=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2330FC021BB;
-	Tue, 25 Feb 2025 13:09:19 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Tue, 25 Feb 2025 14:08:42 +0100
-Subject: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
+	s=arc-20240116; t=1740488935; c=relaxed/simple;
+	bh=lpwT38cksPLhgDNp/anLedApIncSZLWOnUwPr4KlFlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e8jfbeybN5oHeV8VXL3zv32RS2jvFUK3RCc/eHqPIAvWWWzacQR44hsF0wfsczsgp6WB0yuBmJ3vp+70CoPT3WLB4fDXREIUt6M4nqbBC5Bk/+HqnHDvQfHWvUktJQoEJwFoGWc73PC/amgHoqmnTcJ9quORdEACLT60bz7fpME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qq+xIrWr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08F7C4CEDD;
+	Tue, 25 Feb 2025 13:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740488935;
+	bh=lpwT38cksPLhgDNp/anLedApIncSZLWOnUwPr4KlFlY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qq+xIrWrE25gUYN5jMGYYdqJInn0Larueyuu7gx4PUQLZDHJZtjOnmaH8TuUbVSik
+	 PEqMqTNENHsb7QUtvKnkjDhGMltrrbhqsArB4nPRdNYscT1HtkOO2im69KNaqaDxRg
+	 Nln35oEiTlwi30EbZMWGNFL/ndpmmjBDL7s7og8Ymnobb0624Eiv5lh47Znnfx4HJN
+	 2F5jscG71hDxk/J7eXJ21H/pxzHS0A2XYITTSvysZnfw7r9eRsO60mUaRxeBLd6nx6
+	 OZFfvymlQu68Zl/I4WRBmViyci4KCknm04941uEHnsQKUGbeh/mqFfYoJxE8hBzcZH
+	 XuLvKwI9oyv5Q==
+Message-ID: <e959c772-9c10-4c87-a22b-e2f91ca05af8@kernel.org>
+Date: Tue, 25 Feb 2025 14:08:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: enable Qualcomm IRIS & VIDEOCC_8550 as
+ module
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250225-topic-sm8x50-upstream-iris-defconfig-v1-1-8a17e2e193d9@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-topic-sm8x50-upstream-iris-defconfig-v1-1-8a17e2e193d9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
-In-Reply-To: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Richard Leitner <richard.leitner@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740488957; l=2508;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=KF5ZO6ejS0ACndO4NFjdXXOOXXaUCY9pfvk3vfNCGDc=;
- b=Wy3qIvcFnUZxA6mDs+WE167dDcqWuS83NVPC7MitfLarLKKapbyUYFnFzapJIgVl6JQsg2/Hf
- /irWAutIOKQCLac2qmTmi2mz9uo/8jG2Nwvy1oR3Vk8J40E43apvdXe
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
 
-The sensors analogue gain is stored within two "LONG GAIN" registers
-(0x3508 and 0x3509) where the first one holds the upper 5 bits of the
-value. The second register (0x3509) holds the lower 4 bits of the gain
-value in its upper 4 bits. The lower 4 register bits are fraction bits.
-
-This patch changes the gain control to adhere to the datasheet and
-make the "upper gain register" (0x3508) accessible via the gain control,
-resulting in a new maximum of 0x1fff instead of 0xff.
-
-As the "upper gain register" is now written during exposure/gain update
-remove the hard-coded 0x00 write to it from common_regs.
-
-We cover only the "real gain format" use-case. The "sensor gain
-format" one is ignored as based on the hard-coded "AEC MANUAL" register
-configuration it is disabled.
-
-All values are based on the OV9281 datasheet v1.01 (09.18.2015).
-
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
----
- drivers/media/i2c/ov9282.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index c882a021cf18852237bf9b9524d3de0c5b48cbcb..e6effb2b42d4d5d0ca3d924df59c60512f9ce65d 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -54,11 +54,11 @@
- #define OV9282_AEC_MANUAL_DEFAULT	0x00
- 
- /* Analog gain control */
--#define OV9282_REG_AGAIN	0x3509
--#define OV9282_AGAIN_MIN	0x10
--#define OV9282_AGAIN_MAX	0xff
--#define OV9282_AGAIN_STEP	1
--#define OV9282_AGAIN_DEFAULT	0x10
-+#define OV9282_REG_AGAIN	0x3508
-+#define OV9282_AGAIN_MIN	0x0010
-+#define OV9282_AGAIN_MAX	0x1fff
-+#define OV9282_AGAIN_STEP	0x0001
-+#define OV9282_AGAIN_DEFAULT	0x0010
- 
- /* Group hold register */
- #define OV9282_REG_HOLD		0x3308
-@@ -226,7 +226,6 @@ static const struct ov9282_reg common_regs[] = {
- 	{OV9282_REG_AEC_MANUAL, OV9282_GAIN_PREC16_EN},
- 	{0x3505, 0x8c},
- 	{0x3507, 0x03},
--	{0x3508, 0x00},
- 	{0x3610, 0x80},
- 	{0x3611, 0xa0},
- 	{0x3620, 0x6e},
-@@ -605,7 +604,11 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- 	if (ret)
- 		goto error_release_group_hold;
- 
--	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-+	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, (gain >> 8) & 0x1f);
-+	if (ret)
-+		goto error_release_group_hold;
-+
-+	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN + 1, 1, gain & 0xff);
- 
- error_release_group_hold:
- 	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-
--- 
-2.47.2
+On 25/02/2025 10:10, Neil Armstrong wrote:
+> In order to support the Qualcomm IRIS driver on the Qualcomm SM8550
+> platform, enable the IRIS and the VIDEOCC_8550 dependency as modules.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index a1cc3814b09b31ee659536a64b7db704153d6fe9..710452f75133896af2e3a19ae544f139e1c28a98 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -847,6 +847,7 @@ CONFIG_VIDEO_IMX8_ISI_M2M=y
+>  CONFIG_VIDEO_IMX8_JPEG=m
+>  CONFIG_VIDEO_QCOM_CAMSS=m
+>  CONFIG_VIDEO_QCOM_VENUS=m
+> +CONFIG_VIDEO_QCOM_IRIS=m
 
 
+Does not look really as Kconfig-ordered. iris is before venus in Kconfig
+include.
+
+
+
+Best regards,
+Krzysztof
 
