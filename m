@@ -1,178 +1,141 @@
-Return-Path: <linux-kernel+bounces-530305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A10A431CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:18:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF76A431CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30078189AA15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5B618979CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F984C83;
-	Tue, 25 Feb 2025 00:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2BB4A29;
+	Tue, 25 Feb 2025 00:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HZTQpbNm"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PKRppGj+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4DBE46;
-	Tue, 25 Feb 2025 00:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740442683; cv=fail; b=Ro6CDUmPsYwZMPoZ6aWmYEoMcrK6ObKQiO+2M92GLVzOPVPZ+JX98166zOEUGyi7SM44SArYhi8dCJYSbjsGBvHQR0lWBanISvkxwu9sS+GHZPVgaBV9JxU5Un9Jni0pTAoxKQ7Al+O3hiDcpbkVlHgiTCJuq2eZO6kldYU8Bow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740442683; c=relaxed/simple;
-	bh=hGKxuXWp2wVYAQObOPXgPoHyphDdhEunmQnk470QvH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=I9tg826mqitGWT1Am0sL3FnaVp1VGkHVdClixzDjczAV5kFBvyUZl4pRAwheqTibPWsBKQPExes/OuBi0Nhw5VE6mAZa02csu48ITjTRanmN41gFvpblR5wD3KQNsmG6bZFY33wlvAAGXP4GK6l39z3OGW3IY1/UaWBnFL5WiPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HZTQpbNm; arc=fail smtp.client-ip=40.107.237.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gFAYjwK9Mejc9XOXeKJtkkGlKAZYwtTJ2AE4540YvZ0L4WWPrmz9Nm3q30DsRrGYhFuzGMUOHmjLoy3BCeCqHocPvL/L0N4mHasVUmPtFUJOqJDHNEoidrJhbSDr7xnWloPBDAIkTw7NmpDIBubPFDFFj2cmZj0yFKkP70pbCjOzkj1W+ROnKDtyd1u/yVoa1Ozjl7zZj7/0qmZW14pLr8dATWnNo1jwqqPs1CLbdja5gyCyPF5HZk/C0P+w+uN8uA7Azbb74cC0ZXnuTinEU9qGQ5fLyUBjPIUq2moIhmCXNOCHHOb5jd6APRaozCfuGKj6DBBCqOMghpUum7/IPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p0nVy5sjHDhgwoFDW816oCoslQT84AkHw/8wGUu2iCI=;
- b=rqA3CM3M6G/zto1SilYzTBpBgZ7mYj79CG4bQt5dIBk1Tp2q1Px/866FN5U1ORvmQrQwTxqBWKsmQClTZWoEboZUU7XbwHfWoFeO+Y+AWMH6JsNFncexN8MJhVGVxc3onvDXfC1vSd8mPFYOh6y6LTtQyFXoliiR4XyOaoSeKp7HmM8zCCrFQ1P13yN7PHQFV6rwJNVyOMFbClzt291GJ6xh6cbMbtVx1LngKRMxw5BTuRS8oAuTIZZid1tRH5Any3iAk4KnaxCutHtrtECWMvdF5PBRI0M/M3fNt9gJK3qq2aXRPPC/+L/h1WIKUQ2HiEIAOe0O7BEshOcQHwNpRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p0nVy5sjHDhgwoFDW816oCoslQT84AkHw/8wGUu2iCI=;
- b=HZTQpbNmmODSMoDp5VkueYuN4zXbNtjzlnWmBRxZMfQfJIhN+RhOPmYS4lzcd6YRd11jMU18HpEy/8Nl0oresVEbE5qKxmrlJj266iYa9hdYfEA6Wuf0n9MTeWEMGc+g6vRrLO+evy4j7ggZ7vuceIc3bNskWDCiAjwIWJ+yH7EdL8F0VnZZ95SgBjBOQKZ6FnDG6k1tQGeBe1IlGIHgxvAdcwFqyoEFfYo+0Ge9r6O0Jc1nO050siUCR67+Hb3chjf87e9p8GyklcJVH9YMOoItWXp84SvNtUECG17jrZcsW4VbnLQ6378i8/xdPRiDP5+w+0remVFm+oHcQqj28A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DM6PR12MB4356.namprd12.prod.outlook.com (2603:10b6:5:2aa::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 00:17:54 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 00:17:54 +0000
-Date: Mon, 24 Feb 2025 20:17:52 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com,
-	mitchell.augustin@canonical.com, clg@redhat.com,
-	willy@infradead.org
-Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
-Message-ID: <20250225001752.GL520155@nvidia.com>
-References: <20250218222209.1382449-1-alex.williamson@redhat.com>
- <20250218222209.1382449-7-alex.williamson@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218222209.1382449-7-alex.williamson@redhat.com>
-X-ClientProxiedBy: YQZPR01CA0047.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:86::28) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DE153A7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740442742; cv=none; b=m2Klvg/Sg5Ewhrp5dPqgd1z/yvn8iSh+0f/nJZc4OU8OkpMozutaFpsl2eDFhAshr9zNNptWhOWvp0XlHcKhRc4KMsOzS80HnznfPiHSYqlQ/9RrzV7yvqWNhanNn0lalymKBWQiW/pC1804rKNh6K1MxYuEg31DDqe7JAs17FU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740442742; c=relaxed/simple;
+	bh=gNeyILjB/QdS85/GU8LJmYJPDXUZn4Dir5gNKqab82c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLcQ80u90whxL+qufvt0GbxJmnyjlXHzXkM0sriL9TtP8zKQnYNzVHP9BMd/Ev/wcwIq801cH1+KhYCoN2kHF7FfxG6oSnlxusj6upcn0wk9EDHk6MD3dZ1yuRhodjZQY51haeHRGx6wJWlUGhOnuZlR/TrvSgUXatMeFB94n/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PKRppGj+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740442739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVAmyR6FHsajLdbtkqXLPF4+Gi6+fbQMI+k10rMIb+Y=;
+	b=PKRppGj+G7BywgQrEDOCjPrhOadarTVpKcLqOIO0+0HwDjH0ndR6uQQlXXxGKbsGpYEstM
+	TAvzcJWcIszohY6WtROE3ZTz88fpXQm4uvXei2CER77/DkoUpwj2CISuqg1+NAo9E27t2Q
+	vhO9HopXNGrTVCgLD87X2mmg83N5Ovk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-T7_wB4RKOL-n5ROr4S-uOw-1; Mon,
+ 24 Feb 2025 19:18:54 -0500
+X-MC-Unique: T7_wB4RKOL-n5ROr4S-uOw-1
+X-Mimecast-MFC-AGG-ID: T7_wB4RKOL-n5ROr4S-uOw_1740442732
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA69619373DC;
+	Tue, 25 Feb 2025 00:18:51 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BFF71800358;
+	Tue, 25 Feb 2025 00:18:48 +0000 (UTC)
+Date: Tue, 25 Feb 2025 08:18:44 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+Message-ID: <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-3-chenste@linux.microsoft.com>
+ <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+ <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM6PR12MB4356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23ff2ce3-30f8-4f08-424b-08dd5531d954
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RJ09rbvxuWkVW3BzEx2Uv/oKEl9twl7geFTrAya3tGE3ij70GYZtjIGIhQn8?=
- =?us-ascii?Q?cE5MP12VtA7VI/uqEUMKxJ9bGt5SE4yX1/GPoZ/UTiBqT0cZ3CfndQeVAMrx?=
- =?us-ascii?Q?PIT5DXoQw90zcomx0BPv9/Fjlp8glURPXv3N/Ng5CTk9Zw+0mMTPzr/x4kKC?=
- =?us-ascii?Q?s3hU0Q1loxUt6kPxt54Ldy2ZZ7Y7XrWh4qX3BYpuB4fqpc6+p8seu+qyQ24y?=
- =?us-ascii?Q?6MZbu1/Byyy+I9DKDxgxJNNWSLKmrORfhmbsLjQYet5yv8AYVZsU8kHs/gaa?=
- =?us-ascii?Q?ElGgu3LfrgqbFUT05e9ltvzjYsfyHv0vWg4HHgFQe+RX3I8uzxL/gYZ4P50d?=
- =?us-ascii?Q?mvWRjTnj68wNvH31ykl0zv7RmKugD++oa52t5bsOPclZha/ZhceU937Nh+J5?=
- =?us-ascii?Q?4ytndKeBwjtlcO8/bq3eBsX/Z31OzhS9yTO0EmXvXG3oU8YP/0gnWJemVDnX?=
- =?us-ascii?Q?1cgKmuMZxttB4Jvn6LHi13at5/TNUaHVOQ8YxC0FFuTlEFcU3fECBPLj8xiM?=
- =?us-ascii?Q?60DrzrVIePQmeK0MfaNH19J6JtuljglWewJ/9eLBw1U4HIVfiZoSA0NLYD0/?=
- =?us-ascii?Q?yqT3rdh4UbU8ezz9OLHMWfi4h27b8O3CE9lki/6RVlNRUtfSikYHsPpwEoFF?=
- =?us-ascii?Q?p7S+dS1at1iqz3+22WSt2fv4Y4uIQcK6gGQ+q1P23D9F3iR7mgYiMNI10qYy?=
- =?us-ascii?Q?ihYRRbtfAqJoXbmNsrnxSzC6hJ7ofqiy4RZSBFkSYKp6p6cnsrqNqOfi1EPM?=
- =?us-ascii?Q?DyiVfTxshPRRDFcinrfEEgJw3eOdx038lvIWZGgn0iLjp6t2oW41Ebn2fAJ6?=
- =?us-ascii?Q?JY/oLZVI4IWje2SloCfehsWoZWk9AA3bnDFJneh2gnWvO3zCN1W/udSyUEq1?=
- =?us-ascii?Q?FKAtkTeHGoJS20w0Pr1EhrcHB/0ldhPzVmyY/aAi9oZOgZ/T1fWvZoT3uR4J?=
- =?us-ascii?Q?nubUgrSO0+qLSpIoA7wRElPQFmmF42kDZicc1CGBxScAMz/no7/RY81o+xaL?=
- =?us-ascii?Q?vP256KOO9BQxrIqWiyKxD2jpz8l79aq/lBX3V8/FNCbi4c9HtfZgO9CfrhPl?=
- =?us-ascii?Q?clIDLjlnAMsmK8Je6FO9odSrbCXpytxRo24u31XM4ZIHnZlZxRbmBh+9q6C1?=
- =?us-ascii?Q?wOf94x3JGlK3JyKKJkymso6LybsrcxSwI9L8iS4c0OYmT2T82CAdNP5GA0zo?=
- =?us-ascii?Q?8MEK0irpMfC02mfWlq2UhEh+LrOlX09jcaNgCSf5UVdJVs9GGywq+VpD8InE?=
- =?us-ascii?Q?PcU1pGaAKJIn+yRJvqymH7mHnUoi/anp29oidwspyccES3NATsVi5t4v5mdb?=
- =?us-ascii?Q?Rvwrv7SVYfMTVUZlbL5P2tsYRJanh5RnRbKDGoWP0XmJYk3TsfjaMdpQAHA4?=
- =?us-ascii?Q?H05PJvklq95LVVpjSGumYoTKtjWT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gnae9ojqL44SHARwN1lV48X1U/wvrz2rEG1JS4OlJkWbXtKXn/PIQQVFxRAJ?=
- =?us-ascii?Q?U6786u8y05Me2/d4sAvawpE069aWXQkYu1Cf4ARroKteX5t1kIyX1oSaAfA7?=
- =?us-ascii?Q?WPjIQIBuHiwBvmAEIk0KUSq5lsIEoN7FD0tSFxZZyGXa2M4B9EqXzQG2B2dW?=
- =?us-ascii?Q?FJhdbdkTom7ODgQQDO2vw3rn/MHWqxBzcL8uamsjkbVEvN3vi9iQBYu5u01i?=
- =?us-ascii?Q?t9IYcea3Y8Xra6oX65nIiJK/ZkPkMKGc39R2MfmOJXAa4iy/QDh3M7SkHuY+?=
- =?us-ascii?Q?6RVD5A0pDmAGCHNTlB6vioOIUn7L6iDy28jRtZGJS4894iS3++Nitxw7hd5j?=
- =?us-ascii?Q?pBwhw6u3ByLvhXx0gV8RbAdCySgFa9QE8cawwSuaueopgylkX7hLfTmzoSfR?=
- =?us-ascii?Q?6TdLOT3Qb9md3UUa0X1rk5VJ0VTlAp1Vp4MHE91NPulIMHReNt2i7JQXXw+U?=
- =?us-ascii?Q?8Of28TO0ogApm9P1GFW1gy2yuetZJo375z3lQ25dlwZakzhAnYUyVPMxEVg/?=
- =?us-ascii?Q?lVcm7irSBZq1GTbT3NbmT+ZTLIjk4/P2VbVTnrHB+DUBm1zH9c1quOEotOqG?=
- =?us-ascii?Q?6XY//tguVp+9vC21ysfrz6KvqixoGg1gc3az8lmnk31rppel1uSwd6xdXOLu?=
- =?us-ascii?Q?uzuvk0GLDsiZ84zMA8ZCOlETTIeyw15zafz82bi7cGRTkQStAtCaL/B7edps?=
- =?us-ascii?Q?2GG5L6efBLZiFMYPw8DYcoO0+eikjxvKVQBg7vqrk49J8hagHOQlARrCO67d?=
- =?us-ascii?Q?2vwcz4OZCiTyetCmsdRo5eRP/TqxIXZjGOf9O286Fk19YjDUBNkYaCwmA4Py?=
- =?us-ascii?Q?WWHNH8OXuh4F/81IC2Uu9MIzmaj8ezvRsDzXMZZzds8godW6Lk8Tpzu3JL+5?=
- =?us-ascii?Q?cU7NsFdZ8cvernpAWwv6XJxicsZFyg+syteQz0RLoMtt3zSWpfEviGzhgprG?=
- =?us-ascii?Q?8R8ifgpHAiM0wJLP/aQPm1PZvzETqw4YfcZ7FSw8Ara6mZuXAbrNTeABdq1w?=
- =?us-ascii?Q?nXFJ9r6cXE//tRhjyrLrdpU52wo1qLBnl1E1czx2yr+CR0RlUuw3Ohmey61W?=
- =?us-ascii?Q?MZbJkc8jxroLdGiJ9rQ+1sa4IHMd2q3k268756/OXMa7vBpmOS+/nvy4SyBT?=
- =?us-ascii?Q?MrBEukx5XaOTN/wU4WFTCrtFPuxg3LTcTFZZyY2KaTJfeIIiyQJq2xu3PzWF?=
- =?us-ascii?Q?T158q8V6/KQsvvLdOEH7b1sQkzVd1dwQO8RpCZ04SzOIePvFS1gKMk6gBYQD?=
- =?us-ascii?Q?1yAWv9Hto2VJGncCGGxa2UTJb7zji+HUIptD+vYpVVu0HfyG7iVB5s7kfry0?=
- =?us-ascii?Q?NGIebY+Ka6jADWzUs0e3thD+i8enWQnQgcqgaEQmPWlgPz6G9un7QXEJJ5BR?=
- =?us-ascii?Q?IJsqT8U36R+SiIie3pFsDa2hn/cKA2anYp9w4cxm3cgzwfdhY8fqoe42XXay?=
- =?us-ascii?Q?3jWxGY2UpcbuVvQo2rSTsEnCgijMNGKdkQU4BJzjYWVdHb7h2/pSAFkw8V5l?=
- =?us-ascii?Q?bsA0Ms4dgfHWuHZHka4GTAbJDjXi6SobTpCBXdrHaYRJ2hAlVMvIWmnJ6uqV?=
- =?us-ascii?Q?a0UlrAre/lyHYuxJt8LwKIQ1xPaPoIIez5VtM+6I?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23ff2ce3-30f8-4f08-424b-08dd5531d954
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 00:17:54.6326
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E643J65opeV0FzQKmeHfC/nhbau2khBPG7i8hS7dQyiE5t+iqT8Pa8LCuKcRpKTC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4356
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Feb 18, 2025 at 03:22:06PM -0700, Alex Williamson wrote:
-> vfio-pci supports huge_fault for PCI MMIO BARs and will insert pud and
-> pmd mappings for well aligned mappings.  follow_pfnmap_start() walks the
-> page table and therefore knows the page mask of the level where the
-> address is found and returns this through follow_pfnmap_args.pgmask.
-> Subsequent pfns from this address until the end of the mapping page are
-> necessarily consecutive.  Use this information to retrieve a range of
-> pfnmap pfns in a single pass.
+On 02/24/25 at 03:05pm, steven chen wrote:
+> On 2/23/2025 10:14 PM, Baoquan He wrote:
+> > Hi Steve, Mimi,
+> > 
+> > On 02/18/25 at 02:54pm, steven chen wrote:
+> > > Currently, the mechanism to map and unmap segments to the kimage
+> > > structure is not available to the subsystems outside of kexec.  This
+> > > functionality is needed when IMA is allocating the memory segments
+> > > during kexec 'load' operation.  Implement functions to map and unmap
+> > > segments to kimage.
+> > I am done with the whole patchset understanding. My concern is if this
+> > TPM PCRs content can be carried over through newly introduced KHO. I can
+> > see that these patchset doesn't introduce too much new code changes,
+> > while if many conponents need do this, kexec reboot will be patched all
+> > over its body and become ugly and hard to maintain.
+> > 
+> > Please check Mike Rapoport's v4 patchset to see if IMA can register
+> > itself to KHO and do somthing during 2nd kernel init to restore those
+> > TPM PCRs content to make sure all measurement logs are read correctly.
+> > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+> > 
+> > Thanks
+> > Baoquan
 > 
-> With optimal mappings and alignment on systems with 1GB pud and 4KB
-> page size, this reduces iterations for DMA mapping PCI BARs by a
-> factor of 256K.  In real world testing, the overhead of iterating
-> pfns for a VM DMA mapping a 32GB PCI BAR is reduced from ~1s to
-> sub-millisecond overhead.
+> Hi Baoquan,
 > 
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
+> For IMA, it appears that there are no current issues with TPM PCRs after a
+> kernel soft reboot.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
+kernel.
 
-Jason
+> 
+> This patches is used to get currently missed IMA measurements during the
+> kexec process copied to new kernel after the kernel soft reboot. I think
+> it's ok to leave it at current location: it will be easy to maintain for
+> IMA.
+
+Yeah, but I am saying this patchset increase unnecessary code
+complexity in kexec code maintaining.
+
+> 
+> Overall, for these patches, do you see any major blockers for kexec?
+> 
+> If you have any specific concerns or need further details, please let me
+> know.
+
+I have no concerns for this patchset implementation itself, I saw you using
+vmap to maping the possible scattered source pages smartly and taking
+the mapped buffer pointers to update later duing kexec jumping. That's very
+great and clever method. BUT I am concerned about the solution, if we
+can make use of the existed way of KHO to implement it more simply. Could
+you please do investigation?
+
 
