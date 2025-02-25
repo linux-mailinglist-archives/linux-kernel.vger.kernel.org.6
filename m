@@ -1,143 +1,193 @@
-Return-Path: <linux-kernel+bounces-531704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ADBA443F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:08:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E126BA443DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30403AE23F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:03:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1595A7A43B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8130D26B080;
-	Tue, 25 Feb 2025 15:03:27 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0FF268C7F;
+	Tue, 25 Feb 2025 15:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="wy7aP/JO"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E046B21ABA3;
-	Tue, 25 Feb 2025 15:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977AE3A27B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495807; cv=none; b=s/5qBn8uUY7WlbCYkWgvP7v01rHcj1+if28UjA3+sgHI/hvswqO/2t/upUZUh+IafvoN3rQYTkFP7/Fcy2K9TLDtq6xpQ8lmx+exuPjVYZf9k6AVi3bxKAPJ/3WXY8LR5NcVu2vq2QbNcb5EjHzj1+O43qyqcnZ/HgDURYbzshA=
+	t=1740495890; cv=none; b=SbtRTi+GRqWY35dA9TKvX+GjXfNRhYghWEa6e1BhGHEOg5Wrpy6yCkWFrBI9MXv4TOPMpGKEN2DsOhvOJ2UES+FLZbIv4TIxLlkfE9PzOimwy89sWgIS9VIeP9UG3eYemldzqCrTXvq2Pp2nqs4vMBB6GnSLhOKc4nwp565ll0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495807; c=relaxed/simple;
-	bh=NmDieNqa0hKn4613+QefhA0S3lXIlcoi+rTSENIZIgc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=mwERPWuoCnUhLInjKXeh+fmd17+6Jh8WHt/pCqDp416WRAmDC8X+VeMB+F56IfRx7uiSN7bPl58C3TeTranROva8asf4jGW6dUxLwsRB0aYMzMByua9IJ9TwHsbGvjStdKR0G/6n6FYj6ptHoMQTBBvKQN5jUjrYIvdmdkKSeU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tmwSe-0008sc-Aq; Tue, 25 Feb 2025 16:03:04 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tmwSe-000FtS-1g;
-	Tue, 25 Feb 2025 16:03:04 +0100
-Message-ID: <e378ffb9-2424-4b09-b5fd-688f4f3d1556@hetzner-cloud.de>
-Date: Tue, 25 Feb 2025 16:03:02 +0100
+	s=arc-20240116; t=1740495890; c=relaxed/simple;
+	bh=vT53ahoBMOSafvYOD117cJ99F2Z9LH2oLQSGpsKHzsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BP/DmzZCLRO/tyzzaFO3GxdANU1Pl5atk/q9/BWBeLCYOxi5LGd+beYPMTauwPf1ccUHXdCmUWg9N4yyJ+fjEJJaU+C7i7UhRJFaLMAiJUofyWQizkLM6g2vJciZU5z9ouXdGDVLJDRKEharxaj/+ExF9h5BoSsJV6/nBSvJANA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=wy7aP/JO; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e41e17645dso59054886d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:04:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740495886; x=1741100686; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nn6Uxgl3eAo9l3NW1uWYKG21RtNcAXLzEO35VKD04Go=;
+        b=wy7aP/JOSZrx/p3hlDrQHrAOSKm7PQHqVbLtihiXLe77jS09lpHNL9r1tgEytiJqQl
+         EQqww1jDNqtHSGqJPe1MbfZ6AQZknpxRSh+d/6OTwGosUpQ4HSCu8kTfp/QCvpDlqj8J
+         Xq7nBNF0RI+io3ifO0+tZAM+PRaA19P/0HJUOWckRK27HdQyl7u30RCNfQSX6XmgOtLY
+         a7tXLanjZ5BDTY1Sclws2T9Uion+GevswV46FF8sxaoaHroRinvejX0drQsMmPSmzoha
+         wQfvSdZALn049/hlWtNr0233uFRk6pkxZMKOBPRDoPVDRDXaT07bIKisEAmGJ8LTWPm2
+         3T3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740495886; x=1741100686;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nn6Uxgl3eAo9l3NW1uWYKG21RtNcAXLzEO35VKD04Go=;
+        b=loMnVOJIbOPYYkJqr3W/K/FXAFmw5+cM6cPB8pWqmZyXAE6WItPFMV62x1n1vvmDA3
+         P41t2yTwSch8PDPek9lvyUlDpiRADlCBOtBCIkqSCkmsLYOe3V9q0kHlssZN3AoDAd4t
+         NiKifbX9ZEybuVokDahfYtnEVIrItEtmM0thbDxNO3zTO5Do6T7ceiJf/1awt2Jq4MGH
+         6E+BvVwvA+4QZ/2YxCsM4AkmK6XXER50vX1xEpwgmVxf87zhJlYp/OQkurKaIh5UeyA1
+         P5YMT0cIgnAgvL1xWH5K4tadz2/Wgce+XrGkVNGPT/wwMzBTCW0UysW53yoIr3gcXAj9
+         GSNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv3AoG6mTNGjbsGHi8JGbkZ2AKqWROT56f3Mde9Id56b3Esc0YbHzfL09TzlHDvMh1HJf2W3bWnzlgwyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxazQeWxvp2GvznVZaWnvAI0vy6+Yvjpe20mFC5UaFV+2tUk9cN
+	y6Md9DplQFKIw4ZU11vV8h+OXP5ZnrWJ/E/Gvn3Zu46OUMvelDbVH0LAkA1TNVk=
+X-Gm-Gg: ASbGncvQPGBW1zpNQ9qpoNe3nHcdIPwpRyQS17dhDC/iZc53R9IM13z8DcahgoSHfsz
+	QH82HL97n3Unq5la5wvkCiO6dYFiIqhMCp2UGVnsFw/PFFbJCINzU80czkHx3wgF09+2LVr3f0B
+	bUBMV/LQEQgCjzOuEwbZRS8IJyjQCPM92kOnrD5w+TGWWRgcf6UZQ09fcl15LGRZ0dANMq5NxEo
+	3wE/XO5XNhKYbzakQrPyV7MfizhfGVhkCkVVKcR1R4B1Tfj2CQqV05Zw9ZkMvc7l7uLKEqRAoFT
+	NBbf7UZy7qGDrFbr08WRjG4R
+X-Google-Smtp-Source: AGHT+IGonCnwQEj5UDFxTvMWr15lZ0jTE+5hj5ccntmODdWVtK3zIvgmZ1LmA0sV0c9X2ShiF6SaoQ==
+X-Received: by 2002:a05:6214:27e2:b0:6e4:1e16:b63d with SMTP id 6a1803df08f44-6e6ae826c01mr255677666d6.21.1740495886247;
+        Tue, 25 Feb 2025 07:04:46 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e87b1564easm10084066d6.72.2025.02.25.07.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 07:04:45 -0800 (PST)
+Date: Tue, 25 Feb 2025 10:04:41 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: page_alloc: don't steal single pages from
+ biggest buddy
+Message-ID: <20250225150441.GA1499716@cmpxchg.org>
+References: <20250225001023.1494422-1-hannes@cmpxchg.org>
+ <20250225001023.1494422-2-hannes@cmpxchg.org>
+ <Z73G6A6asz_KrGTo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: jasowang@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org,
- eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, hawk@kernel.org,
- Willem de Bruijn <willemb@google.com>
-References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
- <67bdd9e0c54d9_2474a12947d@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [PATCH bpf-next v3 0/6] XDP metadata support for tun driver
-In-Reply-To: <67bdd9e0c54d9_2474a12947d@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27560/Tue Feb 25 10:44:40 2025)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z73G6A6asz_KrGTo@google.com>
 
-Am 25.02.25 um 15:55 schrieb Willem de Bruijn:
-> Marcus Wichelmann wrote:
->> [...]
->>
->> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
->> Acked-by: Jason Wang <jasowang@redhat.com>
->> Reviewed-by: Willem de Bruijn <willemb@google.com>
+On Tue, Feb 25, 2025 at 01:34:32PM +0000, Brendan Jackman wrote:
+> On Mon, Feb 23, 2025 at 07:08:24PM -0500, Johannes Weiner wrote:
+> > The fallback code searches for the biggest buddy first in an attempt
+> > to steal the whole block and encourage type grouping down the line.
+> > 
+> > The approach used to be this:
+> > 
+> > - Non-movable requests will split the largest buddy and steal the
+> >   remainder. This splits up contiguity, but it allows subsequent
+> >   requests of this type to fall back into adjacent space.
+> > 
+> > - Movable requests go and look for the smallest buddy instead. The
+> >   thinking is that movable requests can be compacted, so grouping is
+> >   less important than retaining contiguity.
+> > 
+> > c0cd6f557b90 ("mm: page_alloc: fix freelist movement during block
+> > conversion") enforces freelist type hygiene, which restricts stealing
+> > to either claiming the whole block or just taking the requested chunk;
+> > no additional pages or buddy remainders can be stolen any more.
+> > 
+> > The patch mishandled when to switch to finding the smallest buddy in
+> > that new reality. As a result, it may steal the exact request size,
+> > but from the biggest buddy. This causes fracturing for no good reason.
+> > 
+> > Fix this by committing to the new behavior: either steal the whole
+> > block, or fall back to the smallest buddy.
+> > 
+> > Remove single-page stealing from steal_suitable_fallback(). Rename it
+> > to try_to_steal_block() to make the intentions clear. If this fails,
+> > always fall back to the smallest buddy.
 > 
-> Please don't add tags, unless a person has explicitly added them.
+> Nit - I think the try_to_steal_block() changes could be a separate
+> patch, the history might be easier to understand if it went:
 > 
-> And they are only sticky when the code has not been changed since
-> they added them.
+> [1/N] mm: page_alloc: don't steal single pages from biggest buddy
+> [2/N] mm: page_alloc: drop unused logic in steal_suitable_fallback()
+
+There are several ways in which steal_suitable_fallback() could end up
+taking a single page, and I'd have to mirror all those conditions in
+the caller if I wanted to prevent this. That would be too convoluted.
+
+> >  static __always_inline struct page *
+> >  __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
+> > @@ -2291,45 +2289,35 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
+> >  		if (fallback_mt == -1)
+> >  			continue;
+> >  
+> > -		/*
+> > -		 * We cannot steal all free pages from the pageblock and the
+> > -		 * requested migratetype is movable. In that case it's better to
+> > -		 * steal and split the smallest available page instead of the
+> > -		 * largest available page, because even if the next movable
+> > -		 * allocation falls back into a different pageblock than this
+> > -		 * one, it won't cause permanent fragmentation.
+> > -		 */
+> > -		if (!can_steal && start_migratetype == MIGRATE_MOVABLE
+> > -					&& current_order > order)
+> > -			goto find_smallest;
+> > +		if (!can_steal)
+> > +			break;
+> >  
+> > -		goto do_steal;
+> > +		page = get_page_from_free_area(area, fallback_mt);
+> > +		page = try_to_steal_block(zone, page, current_order, order,
+> > +					  start_migratetype, alloc_flags);
+> > +		if (page)
+> > +			goto got_one;
+> >  	}
+> >  
+> > -	return NULL;
+> > +	if (alloc_flags & ALLOC_NOFRAGMENT)
+> > +		return NULL;
 > 
-> These are only in the cover letter, so not picked up. But for future
-> revisions and patches.
+> Is this a separate change? Is it a bug that we currently allow
+> stealing a from a fallback type when ALLOC_NOFRAGMENT? (I wonder if
+> the second loop was supposed to start from min_order).
 
-Oh, I'm sorry. I checked https://docs.kernel.org/process/submitting-patches.html
-but must have misunderstood it then.
+No, I don't see how we could hit that right now. With NOFRAGMENT, the
+first loop scans whole free blocks only, which, if present, are always
+stealable. If there are no blocks, the loop continues through all the
+fallback_mt == -1 and then the function returns NULL. Only without
+NOFRAGMENT does it run into !can_steal buddies.
 
-To clarify:
-So these tags are limited to a single patch of the patch series and I should only
-carry them over, when the single patch where they were added to is re-sent in a
-follow-up patch series without changes?
+IOW, the control flow implicit in min_order, can_steal and the gotos
+would make it honor NOFRAGMENT - albeit in a fairly non-obvious way.
 
-Thank you. I still have to familiarise myself with the mailinglist processes.
+The code is just a bit odd. While the function currently looks like
+it's two loops following each other, this isn't how it's actually
+executed. Instead, the first loop is the main sequence of the
+function. The second loop is entered only from a jump in the main loop
+under certain conditions, more akin to a function call.
 
-Marcus
+I'm changing the sequence so that all types fall back to the smallest
+buddy if stealing a block fails. The easiest way to express that is
+removing the find_smallest jump and having the loops *actually* follow
+each other as the main sequence of this function.
+
+For that, I need to make that implicit NOFRAGMENT behavior explicit.
 
