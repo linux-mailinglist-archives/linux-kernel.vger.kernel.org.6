@@ -1,110 +1,217 @@
-Return-Path: <linux-kernel+bounces-532663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B396A45077
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:47:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DD1A4507B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2FE7A5003
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98FE33ABFDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3212309AD;
-	Tue, 25 Feb 2025 22:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79372230D0F;
+	Tue, 25 Feb 2025 22:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+UfumVw"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gWiTqVGq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBA822FF3A;
-	Tue, 25 Feb 2025 22:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40B8204F9B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740523638; cv=none; b=WBltsAJUA6tbySjwcRwAz/odJxRUAgaZmF3SunW6pr15Lf/0zzuWhH7nl9tFdsZaQ1GyX43JcD48BAFE7K6xpNOvuXnI95qQEEERNAjuCuv8/I2prfGZmOk40Yz4euhe9YbYwtcw4W384chm2CU5jtju0ORQ9/IH1P8o9rd+MMo=
+	t=1740523730; cv=none; b=d5VbFfH9YQFdggWcjOpQBdEm2cpNlqsGcvKHE11fB9BnatXE7/AJi9Hoq+/nUBeRrVdr7oFynyVkUMEvFRPGYt3IE1c1y7MHhLNxRRGi6f//a6KJo6tY5Mdd3ToNIO8Qaa34Ro8xANUc+ZsoSZWTMI/DZ/0xxieMhAgU8r/0Dx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740523638; c=relaxed/simple;
-	bh=ny2ghrdd8gmVHUJmIR5VEz+T3IjMS6VPe2m4WRZaJOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nMR2UwRIxYl+hbWG6xbPFuhso534K185VwUyzODkIOvkZNLxHfchAywnKx5vhNoMBj+j+GmpvVxGMX6m6DBEcLwYnvfGsGsM96/Xh6yfOGm4yjM939ahollZBRyZkpm8kS4fNxVRWdHKxEBoSfFiwWiiSaoWyBr1QpqazZuwTHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+UfumVw; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc95e20e72so1622556a91.1;
-        Tue, 25 Feb 2025 14:47:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740523636; x=1741128436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ny2ghrdd8gmVHUJmIR5VEz+T3IjMS6VPe2m4WRZaJOs=;
-        b=m+UfumVwDPZqe7Xeha37kAkm72n38I0HD7YMz/ewzh9EtbidG/aDekLUBL6c4B/Lta
-         2cP10tnbApRdre8C/+kr+DUPZEfJVVCgZ3X3VfXaPcu9g9t2SINZIHoZi9FA+4ej1CBh
-         eYYcynpTzHtQsOgw8yqyQ0Fg/qorGFvVuYzl0PV08Qo6Xgh0L7YJmSaWgr+wJ44OqTk5
-         t5r0Y11Ie8t1Lmh0TiPHPyzW9uSE7pWM7GxrUvI7ROoY226QLqJaN4Q4N0zmYgYQmDsQ
-         k11LOK2vlsTnmRnoPQH2CA3rffti4tPCTH60H+dRHy3azvaxbWFFs5eb6pTn8RhBwemv
-         2l9g==
+	s=arc-20240116; t=1740523730; c=relaxed/simple;
+	bh=SROdnK/ZiRoVcJIS6wLXsIZQl1DVurf0XQ5n7WzpUPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7pa/8SdsAcw6wiwGlCspv866LWfkloHC4TlbYK3y4CjOFaiQ/JRJOVZAde9AnVAyT3HLPjoDi0sxShiu+iYt7iwmN46OPhMGO2vGxA1A5kb1vwC2p9S6G64GPaKlz7tqwb925ogizGPZEj4ZvaSe47BejqiAVwoxvG1jlDsVAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gWiTqVGq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740523727;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9USmteYBOsJlbnz2c74ZK2ivD7zFdGWY3i53bXovAE=;
+	b=gWiTqVGqjodaUGaZpAQsPcxgzjJD6f9DWPWU5f9StYxZ3fdny3xsvYrzbULo75oxtdF5WP
+	V8pf0kcNZRGPXpFyrl/VQDgreiCKtMp7m2cNMJrCslB6FkQR2x1kPH0wJXuQoQ8jBPJjaB
+	KPin0hZtpOdSv7ku9z15ropdFudHqbo=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-7daGC1jIMZaXucOjMgQotA-1; Tue, 25 Feb 2025 17:48:46 -0500
+X-MC-Unique: 7daGC1jIMZaXucOjMgQotA-1
+X-Mimecast-MFC-AGG-ID: 7daGC1jIMZaXucOjMgQotA_1740523726
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d2b6d933baso132247455ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:48:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740523636; x=1741128436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ny2ghrdd8gmVHUJmIR5VEz+T3IjMS6VPe2m4WRZaJOs=;
-        b=kTbi6bGXN4Rm8iJYnpLV9Rj5KTEyGcITo77Vble7Y/B03/i+VLClql68z8iWpi2Qhb
-         mP8RxV/tpTOdC1FrPQGLnfWXECpJRIX5/+w0yN7QeMeYaX53UFTspxbW+yimb7ypucIU
-         NtBN1Xto6jb14o5IEXsqOpJolBlyo2NGyliuGNgZ8eix0esTXWViV+bM4GTlMkJ0eFC3
-         rlxRJAiPBnlRZq/VigbzQwU63kznqLmX0M8XaAF2JtJD7M1fNH1OJXdmK35qw7H0evNt
-         payxdc1AEqVhJqcnLvAXVSZQD6ZCRxuPVxpUAnn/cb69t/k5QvugASJFdQIsGv1EAweh
-         NNvw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/hIN0CguQ2AR33YwcwBcu8utsL8t/4XbFprXWgsL8rlzC0OWv5+7exAURE23nQ+bYcMW7/mx46ScT/c=@vger.kernel.org, AJvYcCWSeKTuClePOE67kECKIyyCILVhBmpmv8ztDHfESpUyK9H/eFF/DobHS9vD4A1+Bi/Qm+Z/bl0Zm+varjxpcaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Xp/suiWdj+/e9IM3FRQ6OExRFvdn6wna6Lu+bvo5l4iAVrBJ
-	3sU/ZAxzhsqro5iUgEbME1uEAshNNmFIok3lJWnVVdBkq3TSXZgJvLatYOeh9YCPgHW38qKQdSV
-	YIaJkvGvShGPDHbzgV7+GxG16q04=
-X-Gm-Gg: ASbGncs6XOpwsugLPKf1N0FKany7z2/Vxen1iyjDoip8VMXoW8juzZBwRMkvVLthe6p
-	QlKKr8GYkxKlJv+99xaDTo1tJ3h16os5b2Ga0Xt7jeZRha3HgCH36v0EGQ2BRKb2o9EN8fsL9hC
-	QqWvBcMhI=
-X-Google-Smtp-Source: AGHT+IGi39MZWp1FrqUalH4zLCzJZyUAjKjFfaYDXFXZ7HT8JiWDotjXJ+45bzkp2240ucesaig3+7yZTGxqAKsS4SI=
-X-Received: by 2002:a17:90b:3848:b0:2ee:acea:9ec4 with SMTP id
- 98e67ed59e1d1-2fce7af8da8mr11771572a91.3.1740523636156; Tue, 25 Feb 2025
- 14:47:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740523725; x=1741128525;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9USmteYBOsJlbnz2c74ZK2ivD7zFdGWY3i53bXovAE=;
+        b=ZmabRXLw1oYQHswdQXUxkncNRQiso6HVY1TemCMNSGqa0/Gi3um+V2NQhnTqqHqZoS
+         LRUl5p0ALNl+VN7wJjqw4LXux6rEzFQxj7EYzODRCNLC355cqR/cXUiJvCg2tY9ikO9f
+         bvgF+IxuGRyfmZ49aRzYNjtQkVaHrYWM+WIm5PoaOf+UUA8U9yeitT3rdAhCYawLLAHa
+         NXNnZCbdJX1pxoA7CQ/yV7mtp0YjsatdVYdNpGSqbA1SH4nu/yzsr7Si352dyPxjXq5w
+         vyPwBXJChwU1VfRDC06LOGXzG/q+aRMu2+el+cOeGpFK7WU7NBrlt7sW3NQrugD/ZLHM
+         0dIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQeUQXnaoQTphuJDSsMNmK1PPKu4d6pHa5TI4bXQ16/qHGNpCXW+5yFO6UKjYJOxIGuXcLxnTMSb7rLDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZL5iIp0j97Yp7JKjtQ7bPWGVqbJHBEcY17VW8Rn3puVMwR1yX
+	8/hRarmKN2W4yWSfeSqGRf1BDD4c36LmFI7t1/s0LFBGkI907assCbx1X9IySw46zuRUUKMmc1o
+	xq8gUH1OC2YCuaYmCRB4xa5j0OgKIF8eeKxS65FehB9wXPq6KB4rphmyWtz7/Vg==
+X-Gm-Gg: ASbGncspmmafA6qdpDeorZesuyRWHAsFYnDHntP+aVNS/sMNPVSqpwXYPAxLbrDZhrM
+	na8EtHN7AkEV5ycjyTYYsMk4GVPOkR5ag/N6KC+RJDqxgzWQd2FlVvFxEfVrrU2tIAxJ+HdRfAo
+	sNntEQF1ynzJ3nL02ZE0/1IbJ9R7+l5/Kx2mGihMKJ3pMFp6XkNEF2mWAIy2tEbKSgAS6ZOwODa
+	LXemUdOkp/X42oBjxpqvfIbXq2E5p1ft6ENyoc9cDiWl58zNQhIHnlEcvibQNBVqSKeIg==
+X-Received: by 2002:a05:6e02:1fec:b0:3d0:239a:c46a with SMTP id e9e14a558f8ab-3d2cae6c31cmr155256655ab.9.1740523725686;
+        Tue, 25 Feb 2025 14:48:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQ7EnFgM3wQVUi5kFJpCaifI3VyCXEtwhDnx/oGpR/znVxALQ5e6RThgXAJT1QmJArmFzIlA==
+X-Received: by 2002:a05:6e02:1fec:b0:3d0:239a:c46a with SMTP id e9e14a558f8ab-3d2cae6c31cmr155256395ab.9.1740523725319;
+        Tue, 25 Feb 2025 14:48:45 -0800 (PST)
+Received: from x1.local ([2604:7a40:2041:2b00::1000])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f0475309c9sm609890173.118.2025.02.25.14.48.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 14:48:44 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:48:39 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, lokeshgidra@google.com, aarcange@redhat.com,
+	21cnbao@gmail.com, v-songbaohua@oppo.com, david@redhat.com,
+	willy@infradead.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, hughd@google.com, jannh@google.com,
+	kaleshsingh@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] userfaultfd: do not block on locking a large folio
+ with raised refcount
+Message-ID: <Z75Ix6eXr972N5y6@x1.local>
+References: <20250225204613.2316092-1-surenb@google.com>
+ <Z7420bbHoz3y73xh@x1.local>
+ <CAJuCfpGLcxSLNek7bUALKcg8HwF8vd9piaBf+cvjYRhY=xOfrA@mail.gmail.com>
+ <CAJuCfpH8-LrNuK8xWHU9kGM7QjYqWBdjy1TKe4DuuPd1s+g11Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250224002745.7d7460a7.gary@garyguo.net> <CAFJgqgSNjF=LfrCNTH3GdYssXz9YG-AeCtpibejJ7Ywtx0m3HQ@mail.gmail.com>
- <4cb1d98b-f94b-410a-be90-4394c48bdbf2@proton.me> <CAFJgqgQ3P81-iskGu9R+T=c=wyB2K0JqUhx+Gj+6mkYeY8-ORg@mail.gmail.com>
- <a4b79751-f1c8-4476-98a5-c59fb2e545ad@proton.me> <CAFJgqgRdiQ29bWvwsu11yokZb4OFF7pYYUU=ES6CYv9847KgVg@mail.gmail.com>
- <c05cb400-969d-44a1-bd40-9b799ed894d7@proton.me> <CAFJgqgTs3h5YagY1RU2AZf3wKWKfXiPTE2mx7CuWyzN=ee-k3g@mail.gmail.com>
- <137dd7ef-b8f6-43df-87e0-115f913d0465@proton.me>
-In-Reply-To: <137dd7ef-b8f6-43df-87e0-115f913d0465@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Feb 2025 23:47:03 +0100
-X-Gm-Features: AQ5f1JpvOh4_I-FDP0Z4g4cSDvvRBjbQMQSAXGa5UM-gHOivr4L6ainO45xfxNY
-Message-ID: <CANiq72=L4AHq0dNYV-KBsYy_TJwfDRwR+GTJn81EXs=xefvdsQ@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com, 
-	ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpH8-LrNuK8xWHU9kGM7QjYqWBdjy1TKe4DuuPd1s+g11Q@mail.gmail.com>
 
-On Tue, Feb 25, 2025 at 11:38=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> I do not get UB when I comment out any of the commented lines. Can you
-> share the output of MIRI?
+On Tue, Feb 25, 2025 at 02:21:39PM -0800, Suren Baghdasaryan wrote:
+> On Tue, Feb 25, 2025 at 2:12 PM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > On Tue, Feb 25, 2025 at 1:32 PM Peter Xu <peterx@redhat.com> wrote:
+> > >
+> > > On Tue, Feb 25, 2025 at 12:46:13PM -0800, Suren Baghdasaryan wrote:
+> > > > Lokesh recently raised an issue about UFFDIO_MOVE getting into a deadlock
+> > > > state when it goes into split_folio() with raised folio refcount.
+> > > > split_folio() expects the reference count to be exactly
+> > > > mapcount + num_pages_in_folio + 1 (see can_split_folio()) and fails with
+> > > > EAGAIN otherwise. If multiple processes are trying to move the same
+> > > > large folio, they raise the refcount (all tasks succeed in that) then
+> > > > one of them succeeds in locking the folio, while others will block in
+> > > > folio_lock() while keeping the refcount raised. The winner of this
+> > > > race will proceed with calling split_folio() and will fail returning
+> > > > EAGAIN to the caller and unlocking the folio. The next competing process
+> > > > will get the folio locked and will go through the same flow. In the
+> > > > meantime the original winner will be retried and will block in
+> > > > folio_lock(), getting into the queue of waiting processes only to repeat
+> > > > the same path. All this results in a livelock.
+> > > > An easy fix would be to avoid waiting for the folio lock while holding
+> > > > folio refcount, similar to madvise_free_huge_pmd() where folio lock is
+> > > > acquired before raising the folio refcount.
+> > > > Modify move_pages_pte() to try locking the folio first and if that fails
+> > > > and the folio is large then return EAGAIN without touching the folio
+> > > > refcount. If the folio is single-page then split_folio() is not called,
+> > > > so we don't have this issue.
+> > > > Lokesh has a reproducer [1] and I verified that this change fixes the
+> > > > issue.
+> > > >
+> > > > [1] https://github.com/lokeshgidra/uffd_move_ioctl_deadlock
+> > > >
+> > > > Reported-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > >
+> > > Reviewed-by: Peter Xu <peterx@redhat.com>
+> > >
+> > > One question irrelevant of this change below..
+> > >
+> > > > ---
+> > > >  mm/userfaultfd.c | 17 ++++++++++++++++-
+> > > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > index 867898c4e30b..f17f8290c523 100644
+> > > > --- a/mm/userfaultfd.c
+> > > > +++ b/mm/userfaultfd.c
+> > > > @@ -1236,6 +1236,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+> > > >                */
+> > > >               if (!src_folio) {
+> > > >                       struct folio *folio;
+> > > > +                     bool locked;
+> > > >
+> > > >                       /*
+> > > >                        * Pin the page while holding the lock to be sure the
+> > > > @@ -1255,12 +1256,26 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+> > > >                               goto out;
+> > > >                       }
+> > > >
+> > > > +                     locked = folio_trylock(folio);
+> > > > +                     /*
+> > > > +                      * We avoid waiting for folio lock with a raised refcount
+> > > > +                      * for large folios because extra refcounts will result in
+> > > > +                      * split_folio() failing later and retrying. If multiple
+> > > > +                      * tasks are trying to move a large folio we can end
+> > > > +                      * livelocking.
+> > > > +                      */
+> > > > +                     if (!locked && folio_test_large(folio)) {
+> > > > +                             spin_unlock(src_ptl);
+> > > > +                             err = -EAGAIN;
+> > > > +                             goto out;
+> > > > +                     }
+> > > > +
+> > > >                       folio_get(folio);
+> > > >                       src_folio = folio;
+> > > >                       src_folio_pte = orig_src_pte;
+> > > >                       spin_unlock(src_ptl);
+> > > >
+> > > > -                     if (!folio_trylock(src_folio)) {
+> > > > +                     if (!locked) {
+> > > >                               pte_unmap(&orig_src_pte);
+> > > >                               pte_unmap(&orig_dst_pte);
+> > >
+> > > .. just notice this.  Are these problematic?  I mean, orig_*_pte are stack
+> > > variables, afaict.  I'd expect these things blow on HIGHPTE..
+> >
+> > Ugh! Yes, I think so. From a quick look, move_pages_pte() is the only
+> > place we have this issue and I don't see a reason for copying src_pte
+> > and dst_pte values. I'll spend some more time trying to understand if
+> > we really need these local copies.
+> 
+> Ah, we copy the values to later check if PTEs changed from under us.
+> But I see no reason we need to use orig_{src|dst}_pte instead of
+> {src|dst}_pte when doing pte_unmap(). I think we can safely replace
 
-I think he means when only having one of the `pz`s definitions out of
-the 4, i.e. uncommenting the first and commenting the last one that is
-live in the example.
+That looks like something we just overlooked before, meanwhile it's
+undetectable on !HIGHPTE anyway.. in which case the addr ignored, and that
+turns always into an rcu unlock.
 
-Cheers,
-Miguel
+> them with the original ones. WDYT?
+
+Agreed.  Maybe not "the original ones" if we're looking for words to put
+into the commit message: it could be "we should kunmap() whatever we
+kmap()ed before", or something better.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
