@@ -1,137 +1,202 @@
-Return-Path: <linux-kernel+bounces-531575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF442A4422C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:16:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B83A44241
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6732C3BE602
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3170F19C5EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5D26A0F5;
-	Tue, 25 Feb 2025 14:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816AF26A084;
+	Tue, 25 Feb 2025 14:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fPMZ7W12"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAnmQJ3p"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08542676C8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7F1257420;
+	Tue, 25 Feb 2025 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492698; cv=none; b=m6t+jgrZqVHel2dXgsmPYWQxj5xAsN6+KnV4+7znOciQQaMSnlXwNr9CENzE2g1+KS43H1BGgdlq1NJf03bxC/d3joNLqVnvAaX2R+8WmiFOkV4tt3vExfyNJo5XBlcRy8rgbUF58vu8nIlbJbOP7j39PDgFpLp7OymhcNhVids=
+	t=1740492730; cv=none; b=Syl+gBoHYtqQqp43bx4z8cruVvKyaoILIzV2vxBPtIg/EfV6ZohnQRUwVTsMv5zjX8pJ5h5sLvejakGZNfrsuPnlHhTRK4NefJj0yi2+9SkR7gaxtVKcuJ5St4P+/toKcCacDo6RZzjWlj8y2ZyBeVFYd/ZI5U8Z/b7hIbxefgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492698; c=relaxed/simple;
-	bh=RYZ2LGJ/9k8sqBARHzY9mERx9WzoJ2QmsF4ozxptjSM=;
+	s=arc-20240116; t=1740492730; c=relaxed/simple;
+	bh=TiDKBEVw2IJOrp6cyIhigiqqGL6hR20AGWd5Dbp8KYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3EQ482rencvKexsaxmFJ//rwgzN77M96wcTIxChEMSPSE+bYYXJDdKy/ac1YbbK8b9fkzTxNXMxPMVBA1pid6bJNkUHonB6vg0r0xygSVztoVCGwoZXR0aiaEi+JoZ0f+EWYFKE1LzUPcOmT2DZ/bihtfRol44acqOYMoax1ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fPMZ7W12; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4961C441D2;
-	Tue, 25 Feb 2025 14:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740492695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6RLWBnzHMT4Lq6CI5Bgms/o16OkUBhbIiLtOpET2pFE=;
-	b=fPMZ7W122enahIEvwltDlvOm3T7H22v4SEFh92x0YUz/4DNuofv6+LJYT2nReAh5/7vlph
-	6UPmeG25AE8deChJMlHCC/+/8He4NSo/2c0+pLELWM5qaoPAThX+w7Ph47RQHKftn7C84u
-	q5nVSnbtKEEmB/NK75H+OBorBCwLHoDO75pGK15aS+eYBUYgXDaonpKYq60XwhmQ+TsS/Q
-	Aj+UFHcA7F/DJ7a+nODu3TlrNK1Glb1YQuCgQbL/AxECG7BIvuBO7XBdZEK8qvQUOrIwUD
-	gAFPL5lTSKHwYRR7W8Dh9fHuDvfxG3XJ8ZD0GzgRQdRkSuIUAkU/wi09euB02A==
-Date: Tue, 25 Feb 2025 15:11:32 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
-	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-Subject: Re: [PATCH 11/63] dyndbg: tighten ddebug_class_name() 1st arg type
-Message-ID: <91e7b038-2270-45ac-8ebb-e49bda98ce99@bootlin.com>
-Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
-	linux-kernel@vger.kernel.org, jbaron@akamai.com,
-	gregkh@linuxfoundation.org, ukaszb@chromium.org,
-	intel-gfx-trybot@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-References: <20250125064619.8305-1-jim.cromie@gmail.com>
- <20250125064619.8305-12-jim.cromie@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNdEn0JBwvOrceZwe2DGnh0prw2XR7EJGAjM9V3oQYqDffCQ40tNl718et6tzoXUySDutLP4mTsQOU2kjo20yjsAYBK11w1eifcYOwFEYTjZn2G61pvxwz+nLh//i7zFOkOUM09depu2VCdPlykLMlbBN7T/UU8z7TdQMvJR5To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAnmQJ3p; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so37486125e9.0;
+        Tue, 25 Feb 2025 06:12:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740492727; x=1741097527; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwnQSqj41owZpi1oD9MKzf/fLpRh6alNAjkpN49LQt0=;
+        b=bAnmQJ3px7R4IjHXD5uz0WH1cAuyFpq7vNff2hRlUfiyYLL8EsvjvnNFa8WCEne9Ch
+         wxiCwtKfVzz0kQPZMI5HK94P2Z2sdDe4X3K6386ZxW04uvFM+88LhDJM9Y0q0x7M07/S
+         2AoAcr5qq7NoF4xlvQFfpaO2W3Heg3yF8jSI8pQo7s92L7nnKee2N98A7fScwsHcO0VC
+         oYkuZF79TznhzVrkMjqI0cG9QZKjqnRJKSJPsiIedznzLzOdUgLuzHRbTLg/dmyKd4Rv
+         3iujmIfQdK01LxACQttb/3NWOH+wZxWWdhCEAo/WdGwG348vMCztM7PIZpY3rxtuagBG
+         L6SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740492727; x=1741097527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gwnQSqj41owZpi1oD9MKzf/fLpRh6alNAjkpN49LQt0=;
+        b=K7ntAhELre1A6TV1Wxyo5Tw37zr0sAQSV/gRjJUipkZ6UEEMKyNzzhdWKoVuDlzd4+
+         8LJNpHgoZ/EI88ekZ2n4LuuYKH4yzpimfIqGeZG63mU8laa5S8wHZg71BITG+BrmSIyT
+         RQq7gwomLKSrmJFhmrUC5Fbbe+2yszQXqjEyqdkSh/ccnJKL+LtLFdbr4IBUQPi4qRs9
+         61WFiOCpbgFHTNHm3bdwEzd+L3StxNNm9NrzHAjlVnJI9Eg7xauKRqLeA7M1wGYTd31T
+         CVR3XId5AsEMlhSVRVN5lNf6Xbb4VmQi3u4SSqN2LSgtiXToaAXLZ0awEpls3sJcXULi
+         gbCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz6q6r6thtnEyW3avCLvNV6NL8dSaKUM/wQzrLNoenvz+CIbpuaaIgvrYkYxX2+0yyspzWTuXfWeE84Hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzXf/QHbKlcR7Eq2OM5V97DdX2o9jWi+KJ7CO31OuYyG1RXFkN
+	2+p4r1c7q4DMpBpNs0cciTnw7qbrccX8lofrkijrBKapkiu6z2QgQHmV51Pg
+X-Gm-Gg: ASbGncto2hBv1cd8rEySkv3qoRk/JXg5ov2bnLzJ2KnLwMPvrCOV7xPb+Uc+vv/2AFu
+	o929fCcUd8NaW5w+5M1nS2P1e1CrZdTWeCiPJAbNheBq70QYDQyCi+YQi/RxyEo5KeXea66F1Y8
+	bQIIYh0lWmTF1iYueJ5xruM71aqN04oNyVeLsl1ZbuwN+1SohTqurHCRmC2CstU6Ntp8sQwyiVR
+	0kc0k+hPEB4g6RQPZAWO5yUxNFj/ojqyQ3VKh5nhE+7HstCYUgxclihu9TN8r+2wP9/wojUlEDp
+	7zI5lOJpzVsfjEbUzgH+2YGnUb+nPcNPDF68Pto=
+X-Google-Smtp-Source: AGHT+IGWIWAm6eIsYAepddN6YCrMJibV1h5n2h/KIgvf16JG61QXLKORsTtujaCKpi3VwvRrZTWpKw==
+X-Received: by 2002:a05:600c:4fcf:b0:439:5a37:8157 with SMTP id 5b1f17b1804b1-439aebf3613mr175716175e9.30.1740492727166;
+        Tue, 25 Feb 2025 06:12:07 -0800 (PST)
+Received: from localhost.localdomain ([45.128.133.219])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e78e8sm2398565f8f.79.2025.02.25.06.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:12:06 -0800 (PST)
+Date: Tue, 25 Feb 2025 15:11:57 +0100
+From: Oscar Maes <oscmaes92@gmail.com>
+To: Ido Schimmel <idosch@idosch.org>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	viro@zeniv.linux.org.uk, jiri@resnulli.us,
+	linux-kernel@vger.kernel.org, security@kernel.org,
+	syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+Subject: Re: [PATCH net] net: 802: enforce underlying device type for GARP
+ and MRP
+Message-ID: <20250225141157-oscmaes92@gmail.com>
+References: <20250212113218.9859-1-oscmaes92@gmail.com>
+ <Z6ywV4OkFu52AB8P@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250125064619.8305-12-jim.cromie@gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
- dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <Z6ywV4OkFu52AB8P@shredder>
 
-
-
-Le 25/01/2025 à 07:45, Jim Cromie a écrit :
-> Change function's 1st arg-type, and deref in the caller.
-> The fn doesn't need any other fields in the struct.
+On Wed, Feb 12, 2025 at 04:29:43PM +0200, Ido Schimmel wrote:
+> On Wed, Feb 12, 2025 at 12:32:18PM +0100, Oscar Maes wrote:
+> > When creating a VLAN device, we initialize GARP (garp_init_applicant)
+> > and MRP (mrp_init_applicant) for the underlying device.
+> > 
+> > As part of the initialization process, we add the multicast address of
+> > each applicant to the underlying device, by calling dev_mc_add.
+> > 
+> > __dev_mc_add uses dev->addr_len to determine the length of the new
+> > multicast address.
+> > 
+> > This causes an out-of-bounds read if dev->addr_len is greater than 6,
+> > since the multicast addresses provided by GARP and MRP are only 6 bytes
+> > long.
+> > 
+> > This behaviour can be reproduced using the following commands:
+> > 
+> > ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
+> > ip l set up dev gretest
+> > ip link add link gretest name vlantest type vlan id 100
+> > 
+> > Then, the following command will display the address of garp_pdu_rcv:
+> > 
+> > ip maddr show | grep 01:80:c2:00:00:21
+> > 
+> > Fix this by enforcing the type and address length of
+> > the underlying device during GARP and MRP initialization.
+> > 
+> > Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
+> > Reported-by: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+> > Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
+> > Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+> > ---
+> >  net/802/garp.c | 5 +++++
+> >  net/802/mrp.c  | 5 +++++
+> >  2 files changed, 10 insertions(+)
+> > 
+> > diff --git a/net/802/garp.c b/net/802/garp.c
+> > index 27f0ab146..2f383ee73 100644
+> > --- a/net/802/garp.c
+> > +++ b/net/802/garp.c
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/skbuff.h>
+> >  #include <linux/netdevice.h>
+> >  #include <linux/etherdevice.h>
+> > +#include <linux/if_arp.h>
+> >  #include <linux/rtnetlink.h>
+> >  #include <linux/llc.h>
+> >  #include <linux/slab.h>
+> > @@ -574,6 +575,10 @@ int garp_init_applicant(struct net_device *dev, struct garp_application *appl)
+> >  
+> >  	ASSERT_RTNL();
+> >  
+> > +	err = -EINVAL;
+> > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
 > 
-> no functional change.
+> Checking for 'ARPHRD_ETHER' is not enough? Other virtual devices such as
+> macsec, macvlan and ipvlan only look at 'dev->type' AFAICT.
+
+Agreed, I will change this.
+
 > 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> Also, how about moving this to vlan_check_real_dev()? It's common to
+> both the IOCTL and netlink paths.
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+{garp,mrp}_init_applicant assume that the address length is 6-bytes, when they call dev_mc_add
+with a 6-byte buffer.
+I think that the ARPHRD check should be right before calling dev_mc_add.
 
-> ---
->   lib/dynamic_debug.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+Currently, GARP is only used by VLAN, which means your suggestion would technically work,
+but this assumption might be violated by future protocol implementations like GMRP, which
+could potentially resurface this bug.
+
 > 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index c27965180a49..a3849ac3be23 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -1120,12 +1120,12 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
->   #define class_in_range(class_id, map)					\
->   	(class_id >= map->base && class_id < map->base + map->length)
->   
-> -static const char *ddebug_class_name(struct ddebug_iter *iter, struct _ddebug *dp)
-> +static const char *ddebug_class_name(struct ddebug_table *dt, struct _ddebug *dp)
->   {
-> -	struct ddebug_class_map *map = iter->table->classes;
-> -	int i, nc = iter->table->num_classes;
-> +	struct ddebug_class_map *map = dt->classes;
-> +	int i;
->   
-> -	for (i = 0; i < nc; i++, map++)
-> +	for (i = 0; i < dt->num_classes; i++, map++)
->   		if (class_in_range(dp->class_id, map))
->   			return map->class_names[dp->class_id - map->base];
->   
-> @@ -1159,7 +1159,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
->   	seq_putc(m, '"');
->   
->   	if (dp->class_id != _DPRINTK_CLASS_DFLT) {
-> -		class = ddebug_class_name(iter, dp);
-> +		class = ddebug_class_name(iter->table, dp);
->   		if (class)
->   			seq_printf(m, " class:%s", class);
->   		else
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+> > +		goto err1;
+> > +
+> >  	if (!rtnl_dereference(dev->garp_port)) {
+> >  		err = garp_init_port(dev);
+> >  		if (err < 0)
+> > diff --git a/net/802/mrp.c b/net/802/mrp.c
+> > index e0c96d0da..1efee0b39 100644
+> > --- a/net/802/mrp.c
+> > +++ b/net/802/mrp.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/skbuff.h>
+> >  #include <linux/netdevice.h>
+> >  #include <linux/etherdevice.h>
+> > +#include <linux/if_arp.h>
+> >  #include <linux/rtnetlink.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/module.h>
+> > @@ -859,6 +860,10 @@ int mrp_init_applicant(struct net_device *dev, struct mrp_application *appl)
+> >  
+> >  	ASSERT_RTNL();
+> >  
+> > +	err = -EINVAL;
+> > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
+> > +		goto err1;
+> > +
+> >  	if (!rtnl_dereference(dev->mrp_port)) {
+> >  		err = mrp_init_port(dev);
+> >  		if (err < 0)
+> > -- 
+> > 2.39.5
+> > 
+> > 
 
