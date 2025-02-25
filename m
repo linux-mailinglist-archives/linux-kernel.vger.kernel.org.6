@@ -1,167 +1,180 @@
-Return-Path: <linux-kernel+bounces-532538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1BDA44F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:38:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931B9A44F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF45189D454
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:38:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CB37A6F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C066720E32A;
-	Tue, 25 Feb 2025 21:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E12020F098;
+	Tue, 25 Feb 2025 21:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKXsB8Sa"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uP5D6uYA"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5419618DB1B;
-	Tue, 25 Feb 2025 21:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740519501; cv=none; b=XU50d7cBNS4uLc9LR5sPpAR9h2dmg1Kg5DPDOul5kGUL9iWZziAy//GEZXDPqmIHoCFsqNMSEEHl6dSxlFX/SOM1eSs/WjYZZwbs7BHLqEeTzx0T0fpEaKXnZuslFzhX2Q+xzMeFUOKpv7fTm4oOWYhrfClDJiebHIytTHlqO0Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740519501; c=relaxed/simple;
-	bh=fXFKcm0lZuF5OG0aApeKuQOf3+mW6bFB0yCFPCGgwEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CbIZBxiqU6j+Iw0YYPlQQt6MaIYLLk46RYIpG3GzSTkbCaJB8prd66d2KS/PY9EcIa0pj/l+bDqxFE3aatDWQbM8xGcRVup4TaOH03Yb87tXQwMSzUTvRb1wKOZQvILg0zW4mMa1mXS3G/T0pdsAzcxdaEWenoQcIib4V1Qd3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKXsB8Sa; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f325dd9e6so3210477f8f.1;
-        Tue, 25 Feb 2025 13:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740519498; x=1741124298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fXFKcm0lZuF5OG0aApeKuQOf3+mW6bFB0yCFPCGgwEk=;
-        b=HKXsB8SaNQZrsdPJN5G/e969u4XrplWhOBrOM4CudSdla/LNbPm2hgGO5Rt+cPW4eU
-         ohVtN6piiLlF+dSBWtwsgl/PlIUjih2Wlqs9cPGF3FT6TKDVySBOG7KwH0dVYd8DunzB
-         z4T9OdDDwL1uqu6RkoSTKLKjh6GYJ5edSq1xYlkXF6tpC0lc3slac8c6UU13g9XG+jAo
-         N7jF5T10iOTENnB1tgtowOMAdTh+UsiuQRdH0lUQxJ6E/xQvppMa7KDiddRBlWHWCyk6
-         yIsR+wXyAdrRjGJAI84vmNREdbXESEqskFqkU3ALq8+ul+jQ+zm6tkrLWeeGgjTOekJo
-         EWJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740519498; x=1741124298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fXFKcm0lZuF5OG0aApeKuQOf3+mW6bFB0yCFPCGgwEk=;
-        b=UF/uYTM16g8lhg4++2JVPMTKoFYdsUfD1kJc6IYUqkSffZPeHCg0JyoM/90j/gYBD5
-         8oi8NGfovqxCgwwHD8fzszhupg4UBeY2B69DZigP7TG5m1Yj7XtjrcBp669DyOL01P/Z
-         ilHOlSXG3fwyyVv/LneF/rrvVdCl6/zwzUf8dDViGmr+1+ukr6io07gPmbsnKZnssVKs
-         /RRw5xSCM5TfsZ/oPU3bWRmMlduYs6wGKiAphlV8cpaaoqPMLOjL/Uy8eunhg5kvra3d
-         1WonlsFImeK5AkGMyGVD9/il1DK+b4WK6El4U95MjkRAALi9VgUaxbOLLI8cKUCGMPaH
-         hBeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMB2Me87K9kqPgl/79wLRD58/z/tFVGCWAwAJ9GMPf+2gtEYzWeGFitW8j8wjMCcIFxi5KamI93ttedTD7@vger.kernel.org, AJvYcCWafhspqipt09d2toHy+F5uSFvORoxLIVH1EyujqrCVAXCVb9Nq/IoEZjZAhBciEKa316y0NKW1jys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCoi0qGUZ8shaE2k1fSCrKUP30BW0hnmENooH55ZqKPtKZZcQ6
-	WfGjo0IXa7WJKfbtYk6RZQHDYzW9yTjgHFXhMEe21Hxlx2+soyu/2mt3quVuYikAh7HQhXJs/Eo
-	BYKmc88uDJmyEOBUROWcKKvuM8TY=
-X-Gm-Gg: ASbGnctQG1HG+z6Ov2LVDYfAVR6htULS5Q6KSKTS5MowP8QIBv6pimjfqk22vssUmZU
-	Ftvy09dciYCEB5RShz09Ks2lTih0OX2SMz5CZzICb+nzctj60ZORe0avbV7VDG/PNbOWEzn7yk7
-	KXjWTo5hH1
-X-Google-Smtp-Source: AGHT+IGh8E+lTwkx8iX124FdlLJw2Xy9DPydEazX+qcbmRtx4fMlCbmv7VFo9hwZNeA+xmoTq7Gl/a44OapVymXi8YM=
-X-Received: by 2002:adf:f003:0:b0:388:da10:ff13 with SMTP id
- ffacd0b85a97d-390d4f3c491mr589082f8f.21.1740519497503; Tue, 25 Feb 2025
- 13:38:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BB51925B8;
+	Tue, 25 Feb 2025 21:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740519595; cv=fail; b=UHSZhiXysKyXd9eMjDuCJM2ZUQgSpMBo5374AA4/FMxl3yqAtIzxQZWQHrcJBidLRAOP37BqO/wVCOILHg1ey8Sby3Z6l8557UQS7ePMztcr27pAMOWWkDLcNverbZWeQ3zFLNHJwPNSpAnw5MFzSEWZTnxaX0j5toxPB8xkYWY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740519595; c=relaxed/simple;
+	bh=FSA9uzl/SPN7OFMyhljhAPW17X7uE7Ad7ZkrQdvZeHc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZOTx+z5qp8jFfzgyEGzAZWewy8xPLm1o6gdmb+A8lYW9v4ETjUYFiNEwlTXdZXlMOZeI41byqCKTCWRjhbESFv6FU4xva9BtnNzrHBvS3Wk+WI2Q1S8ovE5j+OH8pH/ZG8wu3LON4WoF1NvSOVppyixyE1KC6EFl+/4E8Hz+lqU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uP5D6uYA; arc=fail smtp.client-ip=40.107.220.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B/RUu7xKOGo7YbDbrz4mTO6UVhcbiLy75Giw7kguf/NmyNxBfRLw7iJs1Mb/KLrF9a9MkfcE74k+j3czKyqJpacJJtxycsn/702Sr/fgpKSTLoTMIj/T3zuYVc5VaFVqcFsI/4iZRnyK16XIr7/xcSoDDsUkOhD2mk/93n9+ZbMXVFBbItcEXk+IVao6B/rMniE6qSUVLPlyf1iHjBg5YEDdzO/fURBofzsj9DVjkiuwf4/EDdj0rodTtfPWkzVsUXODZ9GX3z+Amh2uxYWftoP4YZRjhyHN5mzaGDmxdBB1RNC04EXZfpBaA646rbrdQ4UX6x9NFXTl4CMYSIG5bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wv3wJdB53HnkFG/eBG6BXhYDKS3AfM63sWiNK+RtS80=;
+ b=jkvahOGh9ll6ywwmhJX4tZ8mV1puJ0T5htNBfCUkvX9iNjkxqBGhDKJtfzIT+XjARThEcC6CQDjVA6VnkQeJfEDJfUDzIh6AnziETQ1Zhigf5ymFz3cCVHUbGhvJLCPHm14Bn+Q+9YPJUCB8NSPXoy+1m+eNq8W7ZSUmDtTEFeoaZNzIwRYPTmbSqyPkGvxMc8q+gW5ctNf8aRzkDtyMuaIemJzpYihbaD40ffOeUCTCt5p8Yg7nqRGRL/fwGi5Ar8GPOLuSENpOEuxpmuA0WPD2GPKBUuHwxnvTcdBvUGIZqJV7HVtKPqtsHNhAg3ZhD1hgFWSaUc0UCLEnfg/DwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wv3wJdB53HnkFG/eBG6BXhYDKS3AfM63sWiNK+RtS80=;
+ b=uP5D6uYABHK9rBvPwwfaIYlD+DRuj7Hr5ezNbSYBa98rqiWXW+sKyBS6inkgFKwZgeSrisQE06FsM+SC4JpG2pUv0hf2eWuSr1S7C2gM2BuwmM+6XFdMAv0+Av4IuIQj9dhEAPE7sIi+yI60u/b6lXVCLvGPUWgRwRH8iepw/TE=
+Received: from SN7PR18CA0021.namprd18.prod.outlook.com (2603:10b6:806:f3::12)
+ by PH8PR12MB6915.namprd12.prod.outlook.com (2603:10b6:510:1bc::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 21:39:51 +0000
+Received: from SN1PEPF00036F3E.namprd05.prod.outlook.com
+ (2603:10b6:806:f3:cafe::e4) by SN7PR18CA0021.outlook.office365.com
+ (2603:10b6:806:f3::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Tue,
+ 25 Feb 2025 21:39:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F3E.mail.protection.outlook.com (10.167.248.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Tue, 25 Feb 2025 21:39:51 +0000
+Received: from ethanolx5646host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 15:39:50 -0600
+From: Melody Wang <huibo.wang@amd.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>,
+	Paluri PavanKumar <pavankumar.paluri@amd.com>, Melody Wang
+	<huibo.wang@amd.com>
+Subject: [PATCH v5 0/2] KVM: SVM: Make VMGEXIT GHCB exit codes more readable
+Date: Tue, 25 Feb 2025 21:39:35 +0000
+Message-ID: <20250225213937.2471419-1-huibo.wang@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
- <168f775c4587f3a1338271390204a9fe16b150dd.1739866028.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZcVSwUAC9_xtVAHvO6+RWDzt6wOzWN623m=dT-3G=NnTQ@mail.gmail.com>
- <cik7z3nwspdabtw5n2sfoyrq5nqfhuqcsnm42iet5azibsf4rs@jx3qkqwhf6z2>
- <CA+fCnZd6O0_fc1U-D_i2shcF4Td-6389F3Q=fDkdYYXQupX1NA@mail.gmail.com>
- <uup72ceniis544hgfaojy5omctzf7gs4qlydyv2szkr5hqia32@t6fgaxcaw2oi>
- <gisttijkccu6pynsdhvv3lpyxx7bxpvqbni43ybsa5axujr7qj@7feqy5fy2kgt> <6wdzi5lszeaycdfjjowrbsnniks35zhatavknktskslwop5fne@uv5wzotu4ri4>
-In-Reply-To: <6wdzi5lszeaycdfjjowrbsnniks35zhatavknktskslwop5fne@uv5wzotu4ri4>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 25 Feb 2025 22:38:06 +0100
-X-Gm-Features: AWEUYZlodhwAbgPi0Dk16h7YK7x4HrrqY-JVxMx5ByQmdcv8cbnJsNVhi4etBIM
-Message-ID: <CA+fCnZeEm+-RzqEXp1FqYJ5Gsm+mUZh5k3nq=92ZuTiqwsaWvA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/14] kasan: sw_tags: Use arithmetic shift for shadow computation
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Vitaly Buka <vitalybuka@google.com>
-Cc: kees@kernel.org, julian.stecklina@cyberus-technology.de, 
-	kevinloughlin@google.com, peterz@infradead.org, tglx@linutronix.de, 
-	justinstitt@google.com, catalin.marinas@arm.com, wangkefeng.wang@huawei.com, 
-	bhe@redhat.com, ryabinin.a.a@gmail.com, kirill.shutemov@linux.intel.com, 
-	will@kernel.org, ardb@kernel.org, jason.andryuk@amd.com, 
-	dave.hansen@linux.intel.com, pasha.tatashin@soleen.com, 
-	guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, mark.rutland@arm.com, 
-	broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, rppt@kernel.org, 
-	kaleshsingh@google.com, richard.weiyang@gmail.com, luto@kernel.org, 
-	glider@google.com, pankaj.gupta@amd.com, pawan.kumar.gupta@linux.intel.com, 
-	kuan-ying.lee@canonical.com, tony.luck@intel.com, tj@kernel.org, 
-	jgross@suse.com, dvyukov@google.com, baohua@kernel.org, 
-	samuel.holland@sifive.com, dennis@kernel.org, akpm@linux-foundation.org, 
-	thomas.weissschuh@linutronix.de, surenb@google.com, kbingham@kernel.org, 
-	ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, xin@zytor.com, 
-	rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, cl@linux.com, 
-	jhubbard@nvidia.com, hpa@zytor.com, scott@os.amperecomputing.com, 
-	david@redhat.com, jan.kiszka@siemens.com, vincenzo.frascino@arm.com, 
-	corbet@lwn.net, maz@kernel.org, mingo@redhat.com, arnd@arndb.de, 
-	ytcoode@gmail.com, xur@google.com, morbo@google.com, 
-	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3E:EE_|PH8PR12MB6915:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70571d52-42a2-43b2-f57c-08dd55e4ef79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LIajJvrW5lJ6WX4iTsHG1dTCUicDUdgauu8EfM9olWG/Lz01CRAXbVHkW2Cx?=
+ =?us-ascii?Q?Ahrso7LuJ7EBbliFi1UVGxcwXino/OoheFedoui2QTuacC1Z1OJVkTOw2PFM?=
+ =?us-ascii?Q?9mJF35Z1FZYpXosoSc9nxOwNiBfVtTnZ9DxGuRPyBX5Te0RozUADJ5VAn1Wa?=
+ =?us-ascii?Q?ms24nESOhRlaQP0EmMDx1Ac10L3cIjd0b/Pr39U1X3tIdUWkLRDEJxWC8cEb?=
+ =?us-ascii?Q?EKwTkMvjQFKN/PoUCV6kyzeyJ0g0GowgjGpjME2fyH4gx+kmuXDYwAJXrViX?=
+ =?us-ascii?Q?9vI/7yB0WcrV+8sHtcwcVyjG1KPnw0uHAQA/kVzt0/9qEXKMTxFMo/SIPMp1?=
+ =?us-ascii?Q?/0vr9aoRyBsSJ0s0FAk0T4duw84ZaQDkcjZrY+yf+co+tI9SZkJoPfABGB0b?=
+ =?us-ascii?Q?utoIuNqGo42CTT1gmd9RSQVEHXP1wCNV3VIDvgnjn4tmLhRf5jiZx6ubJeur?=
+ =?us-ascii?Q?0OI5jLKdNA88m0D5U6ky6q6rGfjSz91kw/Wq45VBskcpVq3ZBIA3vpRpmGC/?=
+ =?us-ascii?Q?3LYrZrm0Us8y5CLZ/JWnP+fvaZhFmf9vMsO5sgcZlxGMEmS/T3ftEvfrbOKC?=
+ =?us-ascii?Q?4a5X3qBZ+n3rY2RgFIoycIHH8Z0H7V5ezlULYet6J3Pt4sy3Y16jdaI4erR1?=
+ =?us-ascii?Q?AjrRH7aEgLaULEY1s3p0rvpHSqZQrmP4yzSQ/HmO+ruK2mATqo9MITxvAqzi?=
+ =?us-ascii?Q?4nZGtv75e60yBRzs3Dz+J2Kl6l6bQMJrQ7K4QoVGnLem8Lrf4NVnDDFS3QK8?=
+ =?us-ascii?Q?bdd+YbMSyJksn8fTFaQezkreAiuhUGWk/MPB8+LDMeGJiM9kbfkLYj3aMfj+?=
+ =?us-ascii?Q?Hibf17ZScvIWO7YkdG5h/68tNyvqayfFv6Wv7gJq3zvnqHoRdQCxUINPqMFd?=
+ =?us-ascii?Q?pBMCaZuQY0FuqGbHjnn4hVKWOR2duBoFljRtTcySmK51mVWYwYiLsd7DinLQ?=
+ =?us-ascii?Q?KQ2x3cQJYnUq7A0MGbzh6ZzbZmT1G7TCin9CZXH4ujqTBrp34sY3CGVZYQQq?=
+ =?us-ascii?Q?X0HWHoC9AOT/Fe1EP3iZyexQSf7Dfhp0+UQbmCuhdOUc/Pk41wMrJPRDOX79?=
+ =?us-ascii?Q?XKK+5KC6c5qPiK5eJ17ZjS0uVPUaPBq5+t3gtfwmWT5npOQD4y1aIF5EFQ7k?=
+ =?us-ascii?Q?/hBNF6HUF+nZR5Rlt5oI1+zeVfjHrmNiiRDY8TLAS92Rcp1QKu3oDQQWsiRn?=
+ =?us-ascii?Q?+agExSy2HEYpmjtxFPPxTth3rCpT5tXqwwDDE48J/0C5MbyurAM8ryx1YpWz?=
+ =?us-ascii?Q?tASkqxZYwOfgFk8mGbUiO/hniIz02rBR0ru28hDD0dL4Q/08QOrFI0LvXM13?=
+ =?us-ascii?Q?Zg5j9H2wt6SH9d5/Mvw1RxlBvn72GR92c3/fAhxrRs+b54R/XxWI59kShDje?=
+ =?us-ascii?Q?d7hm96jaaDSAuv25uW+6z9IauyA1mrByjo2huaueAN5wjDqyLg6tUyY8Cwpb?=
+ =?us-ascii?Q?H7GEiCAeo1x/jeNL1XLpgBcdLk08jtff0nVHPCxd27WxQEUCIDU9wXH05pWI?=
+ =?us-ascii?Q?Q2xaNVfRB6377L4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 21:39:51.4349
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70571d52-42a2-43b2-f57c-08dd55e4ef79
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F3E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6915
 
-On Tue, Feb 25, 2025 at 9:13=E2=80=AFPM Maciej Wieczor-Retman
-<maciej.wieczor-retman@intel.com> wrote:
->
-> >>Thanks for letting me know about the tag resets, that should make chang=
-ing the
-> >>check in kasan_non_canonical_hook() easier.
-> >
-> >Ah, but the [0xff00000000000000, 0xffffffffffffffff] won't be true for x=
-86
-> >right? Here the tag reset function only resets bits 60:57. So I presume
-> >[0x3e00000000000000, 0xffffffffffffffff] would be the range?
->
-> Sorry, brain freeze, I meant [0x1e00000000000000, 0xffffffffffffffff]
+This patchset includes two patches to make VMGEXIT GHCB exit codes returned by the
+hypervisor more readable. One patch coverts plain error code numbers to defines, the
+other one adds helpers to set the error code.
 
-+Vitaly, who implemented [1]
+No functionality changed.
 
-Ah, so when the compiler calculates the shadow memory address on x86,
-it does | 0x7E (=3D=3D 0x3F << 1) [2] for when CompileKernel =3D=3D true,
-because LAM uses bits [62:57], I see.
+Thanks,
+Melody
 
-What value can bit 63 and take for _valid kernel_ pointers (on which
-KASAN is intended to operate)? If it is always 1, we could arguably
-change the compiler to do | 0xFE for CompileKernel. Which would leave
-us with only one region to check: [0xfe00000000000000,
-0xffffffffffffffff]. But I don't know whether changing the compiler
-makes sense: it technically does as instructed by the LAM spec.
-(Vitaly, any thoughts? For context: we are discussing how to check
-whether a pointer can be a result of a memory-to-shadow mapping
-applied to a potentially invalid pointer in kernel HWASAN.)
+Changelog:
 
-With the way the compiler works right now, for the perfectly precise
-check, I think we need to check 2 ranges: [0xfe00000000000000,
-0xffffffffffffffff] for when bit 63 is set (of a potentially-invalid
-pointer to which memory-to-shadow mapping is to be applied) and
-[0x7e00000000000000, 0x7fffffffffffffff] for when bit 63 is reset. Bit
-56 ranges through [0, 1] in both cases.
+Changes since v4:
+* Add explanation comment about svm_vmgexit_no_action() is corresponding to SW_EXITINFO1.
+* Add explanation comment about svm_vmgexit_no_action() when the request failed due to a firmware error.
 
-However, in these patches, you use only bits [60:57]. The compiler is
-not aware of this, so it still sets bits [62:57], and we end up with
-the same two ranges. But in the KASAN code, you only set bits [60:57],
-and thus we can end up with 8 potential ranges (2 possible values for
-each of the top 3 bits), which gets complicated. So checking only one
-range that covers all of them seems to be reasonable for simplicity
-even though not entirely precise. And yes, [0x1e00000000000000,
-0xffffffffffffffff] looks like the what we need.
+Changes since v3:
+* Document the weirdness with PSC's SW_EXITINFO1.
+* Add svm_vmgexit_no_action() helper along with svm_vmgexit_success() to clarify meaning.
+* Change GHCB_HV_RESP_SUCCESS to GHCB_HV_RESP_NO_ACTION to avoid the confusion.
 
-[1] https://github.com/llvm/llvm-project/commit/cb6099ba43b9262a317083858a2=
-9fd31af7efa5c
-[2] https://github.com/llvm/llvm-project/blob/llvmorg-20-init/llvm/lib/Tran=
-sforms/Instrumentation/HWAddressSanitizer.cpp#L1259
+Changes since v2:
+* Add one patch for providing helpers to set the error code when converting VMGEXIT SW_EXITINFO1 and
+SW_EXITINFO2 codes from plain numbers to proper defines.
+* Add comments for better code readability.
+
+Changes since v1: Rebase with the latest KVM next.
+
+Melody Wang (2):
+  KVM: SVM: Convert plain error code numbers to defines
+  KVM: SVM: Provide helpers to set the error code
+
+ arch/x86/include/asm/sev-common.h |  8 +++++++
+ arch/x86/kvm/svm/sev.c            | 39 +++++++++++++++++--------------
+ arch/x86/kvm/svm/svm.c            |  6 +----
+ arch/x86/kvm/svm/svm.h            | 29 +++++++++++++++++++++++
+ 4 files changed, 59 insertions(+), 23 deletions(-)
+
+-- 
+2.34.1
+
 
