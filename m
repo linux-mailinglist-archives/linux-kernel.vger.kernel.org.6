@@ -1,165 +1,138 @@
-Return-Path: <linux-kernel+bounces-531254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9710A43E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:47:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C331AA43E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8EE31884D6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07FE67A4DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2442690CC;
-	Tue, 25 Feb 2025 11:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOiyrIO+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B4F268692;
-	Tue, 25 Feb 2025 11:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C976A267B73;
+	Tue, 25 Feb 2025 11:46:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB7126657B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483990; cv=none; b=VX60JwyqnuJUrklsFIVJtRWh/Jc05cDyAnQYHXWvKrytZSJe3Z+mDMWpT3qJfgmgldHNU5WQkXA8YFKXhQvtgxxKkk0gSu55twHiDU//uC4bzbcp8BDvPSeDmOjhx/TNMpHnHYRPvPmtPfr8Cwr2Sz3Bwi6KZX5hH3Nu5fZEwCw=
+	t=1740484011; cv=none; b=QevQhihYiFJK0Y6MxagtRx19OErdXaDL2J4pFrBLsetzSYWi+u2VbYhRZGUptjZR2nvZh32CwS53hEs8VTTupxiCEkVAQ24By5gkG5/gZd2NaLmFKwim05njcRESVzVhtTCTdnjZ5YoeK9gkRqCuzTmlUlkmzYQ9NrBGhXVyS0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483990; c=relaxed/simple;
-	bh=4IIRoh5wb+/jIFP4g7aKueshVyB+l000sg+l64SSteI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4g/IP69IWy8JlYaH/oIHkGNq50ylo4l0pkDgaGBCmIY+Z10YvrM3dN07q//Er6ddg88YDtdx6jT2EVncrWQeMp3zGOo9qTrrLVXc0lSBlU8wDJewUs8mVPusiK1B6mo5CxR3H73pIIXYtdieKRGrpVW20+jlgVBSJYf0lXKoxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOiyrIO+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92D7C4CEDD;
-	Tue, 25 Feb 2025 11:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740483989;
-	bh=4IIRoh5wb+/jIFP4g7aKueshVyB+l000sg+l64SSteI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jOiyrIO+unuve0eE7gyGrpzrY1t0WNOSfUpUXflagWiw1Wj+TfYH5+Gf6VghbxTRy
-	 lGVTtdUWHkiBQDmRih8snkWBDO+rI3j1anTpXteFXmxn585+oREVOnPZeh4+k/PsOh
-	 UXLIwJ1f8UJjC/a/FplnZrWb1APIe16KtPG63u+BjhLmgq0V7U/fk58FwQQi/GsnF9
-	 jB4ZuVNweDB+2m4RWjwnDLn2huExQin9znUa3+keWKJ/yDGy1DXLVfN5hks64pP+vx
-	 Ea7TMIJw7sbjyaRvxdu+dHiFRM2QpHznJMW2sxsVySk3R/ehtXDJPMG981GSujsr29
-	 BNFDAW4pKxL9A==
-Date: Tue, 25 Feb 2025 12:46:26 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: phy: snps-eusb2: add exynos2200
- support
-Message-ID: <20250225-conscious-spotted-ape-a71edd@krzk-bin>
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-3-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1740484011; c=relaxed/simple;
+	bh=ZsEQIftbTmVerN7S6MZlM8FeIPYbmhoavD4Mxnf7fJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YWJp4+SC2j/ERqiubAhWLfloPg1rkp4XLcIG234guuUsnPiqWwA4lNgoOSYQ7WzK41dtMZAj8cj9F3Me3YQpaIpEYMNTTcy2Z36CGGzesJQioVCN+JnVmCQXBovwk3TD7L/LxM+u6j3TaLknm0NnijmGE8Tz9AF3TMLaSDzoJv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E6031516;
+	Tue, 25 Feb 2025 03:47:05 -0800 (PST)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D51453F5A1;
+	Tue, 25 Feb 2025 03:46:47 -0800 (PST)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Luiz Capitulino <luizcap@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
+Date: Tue, 25 Feb 2025 11:46:36 +0000
+Message-ID: <20250225114638.2038006-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250223122227.725233-3-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 02:22:21PM +0200, Ivaylo Ivanov wrote:
-> Exynos 2200 makes use of the Synposys eUSB2 IP, so document it in the
-> binding. Unlike the currently documented Qualcomm SoCs, it doesn't provide
-> reset lines for reset control and uses more clocks.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov@gmail.com>
+When the range of present physical memory is sufficiently small enough
+and the reserved address space for the linear map is sufficiently large
+enough, The linear map base address is randomized in
+arm64_memblock_init().
 
-Mismatched sob. Be sure you run checkpatch before posting.
+Prior to commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and
+use it consistently"), we decided if the sizes were suitable with the
+help of the raw mmfr0.parange. But the commit changed this to use the
+sanitized version instead. But the function runs before the register has
+been sanitized so this returns 0, interpreted as a parange of 32 bits.
+Some fun wrapping occurs and the logic concludes that there is enough
+room to randomize the linear map base address, when really there isn't.
+So the top of the linear map ends up outside the reserved address space.
 
-> ---
->  .../bindings/phy/snps,eusb2-phy.yaml          | 64 +++++++++++++++++--
->  1 file changed, 57 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> index 22c77968f..f4164db71 100644
-> --- a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> @@ -23,6 +23,7 @@ properties:
->                - qcom,x1e80100-snps-eusb2-phy
->            - const: qcom,sm8550-snps-eusb2-phy
->        - const: qcom,sm8550-snps-eusb2-phy
-> +      - const: samsung,exynos2200-snps-eusb2-phy
->  
->    reg:
->      maxItems: 1
-> @@ -31,12 +32,12 @@ properties:
->      const: 0
->  
->    clocks:
-> -    items:
-> -      - description: ref
-> +    minItems: 1
-> +    maxItems: 3
->  
->    clock-names:
-> -    items:
-> -      - const: ref
-> +    minItems: 1
-> +    maxItems: 3
->  
->    resets:
->      maxItems: 1
-> @@ -58,11 +59,60 @@ required:
->    - compatible
->    - reg
->    - "#phy-cells"
-> -  - clocks
-> -  - clock-names
->    - vdd-supply
->    - vdda12-supply
-> -  - resets
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sm8550-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
+Fix this by intoducing a helper, cpu_get_parange() which reads the raw
+parange value and overrides it with any early override (e.g. due to
+arm64.nolva).
 
-I don't understand this. What's the top-level value here?
+Reported-by: Luiz Capitulino <luizcap@redhat.com>
+Closes: https://lore.kernel.org/all/a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com/
+Fixes: 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and use it consistently")
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+---
 
-> +
-> +        clocks:
-> +          items:
-> +            - description: ref
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
-> +
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +        - resets
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos2200-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +
+This applies on top of v6.14-rc4. I'm hoping this can be merged for v6.14 since
+it's fixing a regression introduced in v6.14-rc1.
 
-Drop blank line
+Luiz, are you able to test this to make sure it's definitely fixing your
+original issue. The symptom I was seeing was slightly different.
 
-Best regards,
-Krzysztof
+I'm going to see if it's possible for read_sanitised_ftr_reg() to warn about use
+before initialization. I'll send a follow up patch for that.
+
+Thanks,
+Ryan
+
+
+ arch/arm64/include/asm/cpufeature.h | 9 +++++++++
+ arch/arm64/mm/init.c                | 8 +-------
+ 2 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index e0e4478f5fb5..2335f44b9a4d 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -1066,6 +1066,15 @@ static inline bool cpu_has_lpa2(void)
+ #endif
+ }
+
++static inline u64 cpu_get_parange(void)
++{
++	u64 mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
++
++	return arm64_apply_feature_override(mmfr0,
++					    ID_AA64MMFR0_EL1_PARANGE_SHIFT, 4,
++					    &id_aa64mmfr0_override);
++}
++
+ #endif /* __ASSEMBLY__ */
+
+ #endif
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9c0b8d9558fc..1b1a61191b9f 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -280,13 +280,7 @@ void __init arm64_memblock_init(void)
+ 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+ 		extern u16 memstart_offset_seed;
+
+-		/*
+-		 * Use the sanitised version of id_aa64mmfr0_el1 so that linear
+-		 * map randomization can be enabled by shrinking the IPA space.
+-		 */
+-		u64 mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
+-		int parange = cpuid_feature_extract_unsigned_field(
+-					mmfr0, ID_AA64MMFR0_EL1_PARANGE_SHIFT);
++		int parange = cpu_get_parange();
+ 		s64 range = linear_region_size -
+ 			    BIT(id_aa64mmfr0_parange_to_phys_shift(parange));
+
+--
+2.43.0
 
 
