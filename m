@@ -1,143 +1,216 @@
-Return-Path: <linux-kernel+bounces-530745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EECA437C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:37:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED5AA437C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3901718930FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0124174E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDE325B694;
-	Tue, 25 Feb 2025 08:36:15 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1AE25D55E;
+	Tue, 25 Feb 2025 08:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iMSj3EYj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TRxa2sAX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEJYeUeY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2GWcGaxb"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BD71A7044;
-	Tue, 25 Feb 2025 08:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489C71A7044
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472575; cv=none; b=rZMikxfPUmWg8jnRdfXCIZC1CX87DnJNxk+rz3s99CkiQrpwljMD6A4IBx0g1V6pCpruR4lzcDcL7LZRNFFsG3OHLms1dj6fzwshI9ZqlxGMzO2scp4Kh7RgFOQ0ZA6EmPjNh5yRQpyrl5SV+Zo/tRBUNHYNyBmnMMIUkE/L0HA=
+	t=1740472611; cv=none; b=pWtwBOynZdCM33Vz0MRHVyAuUQ9N0U/akFBMyL6eGJiF+Dzp9Hxw4OKaoKlnS/1VupX2MpU1VvYYpsp9nEp7xNRZPoYbKhobrQ05E0ofAk8uiF2+0OL6XpMbyjmrnE4F1czOPLKbrsvGxxA0PuWr1jIaaZckb9Sb6y3XK8e3MAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472575; c=relaxed/simple;
-	bh=ut+ohpyFjQA9YTJLw4f5nyEpmeEh/c1UwnP5CbBLeAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gfDo1Lu/OUoIEtdpM2rHfeUyDZHA2PrC++4JrhTk1uRFRa+CbV/ugXylVeIcBzxjccBqwxi84U7RnMp2wjXtuKxh8Ztd4rwasHGnG+HnXg+QfXER6zz1PQQ4loW+0HQSQNsovfMe/Vbug43X4d14XEVa1zcxA9474bv4kIT2eR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1454944286;
-	Tue, 25 Feb 2025 08:36:05 +0000 (UTC)
-Message-ID: <b449aacb-f981-4907-af37-1ca5aea83bb4@ghiti.fr>
-Date: Tue, 25 Feb 2025 09:36:04 +0100
+	s=arc-20240116; t=1740472611; c=relaxed/simple;
+	bh=dYiNWNzutWIunK0YREZeye8mMXG++RLpRz2knUfjkfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sOrTjHiBsE0fD0yzBH2azDAL3ZKZHOq0o3nPyt3FKmF5+YWL3ASEZCEnhM51AxRDpld1MIkyWQZofSR8hZCQV+icxlB0e/dQSFikMfIoDn3AsguKgkV1zl/Meg0OA8g1MA/d9IAeWufYvFtXBQspAC4+0nrWGw0KIFFfxSg+y0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iMSj3EYj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TRxa2sAX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEJYeUeY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2GWcGaxb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E4572118E;
+	Tue, 25 Feb 2025 08:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740472608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
+	b=iMSj3EYjCoNJ4Z740vMgD27ZXFtu3F3CLVZ3oDILVbMlw0tqBuyEub8EIZkyJoPcuaMSQ9
+	G3jhPBfdRxBTGbC20LgbOZ9u51YQKPTAb23mcV/JMQ+KUQ13ZpYxnu/wwU8mCM7oh/EB1+
+	9/aFr/JtHPWoIBmQ0mXyMnO6Q1YWMt0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740472608;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
+	b=TRxa2sAXnPlD/UqrVIzRVclpxMU9HcFoA1CacAu9ubJK6QHEW5VpPrkxL2IbzRQuDLBuJx
+	PSNljU0qjUBar6AQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lEJYeUeY;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2GWcGaxb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740472607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
+	b=lEJYeUeYu/5Ys8uFO5wUOLJGv1Rv9tujKpdmgBhdYZTXGkN0NDf0Mj+ZcBQ1KkU7/whuJz
+	3GlsRoHvKAJ18y3q3FOUDVilf+RTLuTme8ZLSYsm9BNGHP0n/5wW+Ig0uRN4IPqmcgH+E/
+	jIvpC9x9STl8fkDqE8rA3U18Vk39tsY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740472607;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
+	b=2GWcGaxbapQTPy3/Te8CBxci5u/POnS2l69/xxK+ZEHnFiPzrSZYs0JYSoAu0ksLesZV+n
+	2Ewt3Q9+NjNBC0AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 770CA13A61;
+	Tue, 25 Feb 2025 08:36:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xlNQGh6BvWemAwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 25 Feb 2025 08:36:46 +0000
+Date: Tue, 25 Feb 2025 09:36:44 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+	linux-kernel@vger.kernel.org, 42.hyeyoo@gmail.com, byungchul@sk.com,
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	akpm@linux-foundation.org, stable@vger.kernel.org,
+	linux-mm@kvack.org, max.byungchul.park@sk.com,
+	max.byungchul.park@gmail.com
+Subject: Re: [PATCH] x86/vmemmap: Synchronize with global pgds if populating
+ init_mm's pgd
+Message-ID: <Z72BHNv18NNq1e2F@localhost.localdomain>
+References: <20250220064105.808339-1-gwan-gyeong.mun@intel.com>
+ <d1da214c-53d3-45ac-a8b6-51821c5416e4@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: tracing: Fix __write_overflow_field in
- ftrace_partial_regs()
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20250224-fix_ftrace_partial_regs-v1-1-54b906417e86@rivosinc.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250224-fix_ftrace_partial_regs-v1-1-54b906417e86@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekuddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvrgdtgeemtggvtgdtmeduuddtvgemrgeggegsmegrjeelieemsgekrghfmeeisgekieemfhelrggsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtdegmegtvggttdemuddutdgvmegrgeegsgemrgejleeimegskegrfhemiegskeeimehflegrsgdphhgvlhhopeglkffrggeimedvrgdtgeemtggvtgdtmeduuddtvgemrgeggegsmegrjeelieemsgekrghfmeeisgekieemfhelrggsngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdpr
- hgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepohhlvghgsehrvgguhhgrthdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d1da214c-53d3-45ac-a8b6-51821c5416e4@intel.com>
+X-Rspamd-Queue-Id: 3E4572118E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[intel.com,vger.kernel.org,gmail.com,sk.com,linux.intel.com,kernel.org,infradead.org,linux-foundation.org,kvack.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,localhost.localdomain:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Hi Charlie,
+On Thu, Feb 20, 2025 at 10:02:54AM -0800, Dave Hansen wrote:
+> On 2/19/25 22:41, Gwan-gyeong Mun wrote:
+> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> > index 01ea7c6df303..7935859bcc21 100644
+> > --- a/arch/x86/mm/init_64.c
+> > +++ b/arch/x86/mm/init_64.c
+> > @@ -1498,6 +1498,54 @@ static long __meminitdata addr_start, addr_end;
+> >  static void __meminitdata *p_start, *p_end;
+> >  static int __meminitdata node_start;
+> >  
+> > +static void * __meminit vmemmap_alloc_block_zero(unsigned long size, int node)
+> > +{
+> > +	void *p = vmemmap_alloc_block(size, node);
+> > +
+> > +	if (!p)
+> > +		return NULL;
+> > +	memset(p, 0, size);
+> > +
+> > +	return p;
+> > +}
+> 
+> This is a pure copy and paste of the generic function. I assume this is
+> because the mm/sparse-vmemmap.c is static. But this kind of copying is
+> really unfortunate.
 
-On 25/02/2025 03:42, Charlie Jenkins wrote:
-> The size of &regs->a0 is unknown, causing the error:
->
-> ../include/linux/fortify-string.h:571:25: warning: call to
-> '__write_overflow_field' declared with attribute warning: detected write
-> beyond size of field (1st parameter); maybe use struct_group()?
-> [-Wattribute-warning]
+Agreed.
+
+> ...
+> > +pgd_t * __meminit vmemmap_pgd_populate(unsigned long addr, int node)
+> > +{
+> > +	pgd_t *pgd = pgd_offset_k(addr);
+> > +
+> > +	if (pgd_none(*pgd)) {
+> > +		void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
+> > +
+> > +		if (!p)
+> > +			return NULL;
+> > +
+> > +		pgd_populate(&init_mm, pgd, p);
+> > +		sync_global_pgds(addr, addr);
+> > +	}
+> > +
+> > +	return pgd;
+> > +}
+> 
+> I'd _really_ like to find another way to do this. We really don't want
+> to add copy-and-paste versions of generic functions that we now need to
+> maintain on the x86 side.
+> 
+> The _best_ way is probably to create some p*d_populate_kernel() helpers:
+> 
+> void pgd_populate_kernel(unsigned long addr, pgd_t *pgd, p4d_t *p4d)
+> {
+> 	pgd_populate(&init_mm, pgd, p4d);
+> 	arch_sync_global_pgds(addr, addr+something);
+> }
+> 
+> and move over most of the callers of:
+> 
+> 	p*d_populate(&init_mm, ...);
+
+I think this makes more sense, yes.
+So for those that do not need the sync, arch_sync_* would be just a
+noop, so we could avoid all these code duplication.
 
 
-I can't reproduce this warning with gcc and llvm, even when setting by 
-hand -Wattribute-warning when compiling bpf_trace.c (which is the user 
-of ftrace_partial_regs()).
-
-Which toolchain did you use?
-
-Thanks,
-
-Alex
-
-
->
-> Fix this by wrapping the required registers in pt_regs with
-> struct_group() and reference the group when doing the offending
-> memcpy().
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->   arch/riscv/include/asm/ftrace.h |  2 +-
->   arch/riscv/include/asm/ptrace.h | 18 ++++++++++--------
->   2 files changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
-> index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..ec6db1162021fbf4fa48fc87e7984266040aa7d9 100644
-> --- a/arch/riscv/include/asm/ftrace.h
-> +++ b/arch/riscv/include/asm/ftrace.h
-> @@ -207,7 +207,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
->   {
->   	struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
->   
-> -	memcpy(&regs->a0, afregs->args, sizeof(afregs->args));
-> +	memcpy(&regs->a_regs, afregs->args, sizeof(afregs->args));
->   	regs->epc = afregs->epc;
->   	regs->ra = afregs->ra;
->   	regs->sp = afregs->sp;
-> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
-> index b5b0adcc85c18e15c156de11172a5d7f03ada037..2910231977cb71dac3cc42f2dc32590284204057 100644
-> --- a/arch/riscv/include/asm/ptrace.h
-> +++ b/arch/riscv/include/asm/ptrace.h
-> @@ -23,14 +23,16 @@ struct pt_regs {
->   	unsigned long t2;
->   	unsigned long s0;
->   	unsigned long s1;
-> -	unsigned long a0;
-> -	unsigned long a1;
-> -	unsigned long a2;
-> -	unsigned long a3;
-> -	unsigned long a4;
-> -	unsigned long a5;
-> -	unsigned long a6;
-> -	unsigned long a7;
-> +	struct_group(a_regs,
-> +		unsigned long a0;
-> +		unsigned long a1;
-> +		unsigned long a2;
-> +		unsigned long a3;
-> +		unsigned long a4;
-> +		unsigned long a5;
-> +		unsigned long a6;
-> +		unsigned long a7;
-> +	);
->   	unsigned long s2;
->   	unsigned long s3;
->   	unsigned long s4;
->
-> ---
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-> change-id: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
+-- 
+Oscar Salvador
+SUSE Labs
 
