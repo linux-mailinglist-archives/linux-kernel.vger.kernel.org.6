@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-531474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8632A440EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:35:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79694A44118
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56873A7CBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FE8F16A8F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4951A26981C;
-	Tue, 25 Feb 2025 13:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BEA26981E;
+	Tue, 25 Feb 2025 13:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCXVaAsm"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4Ds20wG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520943A1DB;
-	Tue, 25 Feb 2025 13:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC086268FF8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490414; cv=none; b=GFJ6ipogC3rim5ohfPJCFlp3LUb6/bL8dLU4DnWdBND/GH0dKD/frrb0b5D88vgCFPPrLc0EgRmSsaywyZ9k2bNjv/j9+8HSyg51B1+qLYDtYj9posEo2LaYbIqAm7zALAGR1cWlL2t7sG2NEoW6YRxYw5HmqMc9sfGcQVgudhs=
+	t=1740490521; cv=none; b=f6+TPbFH25EKtV4B7KUd+8XWTjnqQk62N14aX9sGFjmFLkgLITP2nxILF7n/NW2/PZAzm1f6GHmADwSK6M8sCsgquEQ7jV7Y75BnQVHMzRfyr8IwABkexe3n/uzjJCG2OIMIp3GiaQTyBwUJvwoEhQ5w/X0KwiugZ0+3h1Pzyvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490414; c=relaxed/simple;
-	bh=53fpyJmRj6Rqqv2hcXrWuNnqYKt92WXS893aUdbh8v4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCLBzlc/VynZ1D5qoLODgQ9w7KlQenzZ3GCtkOpkEcWX7RN5hsJ/2KaOua969FPCsSy+AEik1hCvkEZlOr5wCXtKpvnYQ509THP4o5VDb3jQ3/vAvCqWRrGa/1BTTk0QddoVE+oyPfc9tOJGpNHusAUDufK7an1cOrHm8d02Du0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCXVaAsm; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc291f7ddbso9036613a91.1;
-        Tue, 25 Feb 2025 05:33:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740490412; x=1741095212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
-        b=VCXVaAsmFGVzcQfhS5SdnMYy/8K48x7L5EiytKOm3Sy2ZKd8HDE0vxdOajE4deyzYp
-         n6c40w2DbJOj9ZNRQK7uhUy6T9ZbVTNcYNpt5bIwSIft1t9MLBPJ+AIhAFMIgqRStphh
-         7XRQ5PZ4UwC4inkoc7X2puU2OeOzvB3tfgePklGgVRTeOselrEYvcmTinEuquZaq/IN+
-         SwL1rrIbcaIckonB8rjttWDyUi8uYrtsDDS1w/zDRzo2Bu3Gi1UhwHGnbK5Q9yIoQblq
-         lI5oVb9bktwH4B1A5y2zgkndojvblC+UmkvOY78mbXnvCZtnVbrzPEeoS4kUNNfmbvAR
-         K9Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490412; x=1741095212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
-        b=WNGV0l/hZsTm23Nsw4oe0wnWePUWIUUtJWGq1SHUeUEY5ZW3LAFRhjlhPoTQBHIra/
-         ubvu6GV6CBslOPpz56QfiSiRtbBvi6vsYwXnZz0IxcvDymrLqmiG2F2kEavncEjyXdle
-         ePP+uX3C4w8EA15TEnxHWxJ/7QKdbpMQG09KilB5X4xsEEqHIgoWlA4xRmq4O8LNWaBM
-         BrSoiyjmBM1eyZ1ZbGxBK/hwSxnPiZs86MT72ohWrNOFtG6uHXbwATOtvmxKrBSRTefs
-         lTLWoFRjNc17gcSOzR7hnoyPU+u/oZ64iyM8sW9vAdDDrI+JaIufCiQX9V4yHdMKq3/P
-         6puA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZr7d8wz09y6P6CQ0J1pn0kyh7B8VGX554rd+SEqlJyVZoJTCigo4gFIrgk0USKL5W8tkWIFIxI1rOcG5t@vger.kernel.org, AJvYcCX/+UZpg42nOUmCUakdG03b6R2AaBnUZ3QzO7OEmHsEWaxhJXVeJDX2TWttu75vsuis8zKvwuKqowd4yYq9oG7/Lg==@vger.kernel.org, AJvYcCXuT/SShmhNhA4KWTNScleHwW37cpYe2zHh7xiNF2MfBSY8VFDNd/ZnmPX2p22IVI6F9O84gvEzYPbh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDdzMWMaOnZjVXoLD8Sb09Ab8RFXpJdXKyU4pisB6XE2T+jeKy
-	X5pSH/H+sxRiNvReBduyxaYgDYjqozfES6SjahqjPgZHRU6nl4NdBWnttOLEV/Vbl0S//4G6dtE
-	arm+YpK4uH600FpT6aEjVBq0PldA=
-X-Gm-Gg: ASbGncu4eAGavPJMp1NFo51jcx0yBJJYw4K18p8yWG6bvRu+Qc6aUiS4H5awc3PQZXz
-	/5byk0TXBlE6gdp3Sq8BZJfWuax/DSNhnxJY0m8rGWFkVNHx6jbHLiL8tfd9uZcBSQo0/tGdkd7
-	6Gp2mh
-X-Google-Smtp-Source: AGHT+IFumrADYMZTbshcR/jQQQzsoDviUuD373A59nqtY8JJ4DVQv9+RznKhnhkMPzfDVQnWCYD8iJq2w2f2vqoh2zk=
-X-Received: by 2002:a17:90b:544f:b0:2f9:cf97:56ac with SMTP id
- 98e67ed59e1d1-2fe68a2e72dmr6336504a91.0.1740490412464; Tue, 25 Feb 2025
- 05:33:32 -0800 (PST)
+	s=arc-20240116; t=1740490521; c=relaxed/simple;
+	bh=vpWPcNVLmkBSbC5ElRatTgDIB7BIfVf5XaBoa9gZcN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2BiZTYy2U7k8FrZH1zxNZx3AKYsjGefAhRXnzNukQv6TuQON3cJI85a/+2BoClPFGwhcB+IvgeO3/z8uUd6cFS6j7ymHVgK8lN70861W8Hqh3XAw9WH2BfeRBg5lDKac/HVLluTAtvum84n3K3BqnGstDz2MZtvq6E+QseLNTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4Ds20wG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4434AC4CEDD;
+	Tue, 25 Feb 2025 13:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740490521;
+	bh=vpWPcNVLmkBSbC5ElRatTgDIB7BIfVf5XaBoa9gZcN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q4Ds20wGywnswOj7inuhX6Uc5uieTRA9OUPyOCP3zN0n03DHgD5xjrKjQnf9dR9sP
+	 IbpDBbT7+8cGbYJDOCCxXpOmnY1XMrLpH+7dUWJ3Q6oQx1tyUzyGQQld9vdSo6OCdT
+	 PUg6nPgQwtB2LWKqLBufE8uW6t7O4U9/WJuuvQFTQ7heMtko/2Q0BC0hM2gGMvcsSW
+	 BYYSYf9XbNbEmMPeCyPJhfa4ZUwT0auOQJ0GTbN1XmvV1I2Sp84klIj1p9OW5P1LJy
+	 L9jrrUGV+o39UdYEX0oJaOOhSxjl4V55b1RPwB/pb3rGHq/xm3/3+3HjcVRfVMskU2
+	 sRp5l6R8b0HaA==
+Date: Tue, 25 Feb 2025 14:35:10 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mtrr: Remove unnecessary strlen() in mtrr_write()
+Message-ID: <Z73HDk9p2P_Zigu2@gmail.com>
+References: <20250225131621.329699-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225102005.408773-1-daniel.baluta@nxp.com>
- <20250225102005.408773-2-daniel.baluta@nxp.com> <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
-In-Reply-To: <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 25 Feb 2025 15:35:08 +0200
-X-Gm-Features: AWEUYZkXV-v2aTP1kBRTGqqig6c6PuH1hUgPphPti5oZf8llKAM919qLE-PCQwU
-Message-ID: <CAEnQRZDrC4KEmOBM+LupCRSvNRxpBO0qnPaqG7HBRNeNOzO9sQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: reset: audiomix: Add reset ids for
- EARC and DSP
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	shawnguo@kernel.org, mathieu.poirier@linaro.org, conor+dt@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	andersson@kernel.org, Frank.Li@nxp.com, peng.fan@nxp.com, 
-	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225131621.329699-2-thorsten.blum@linux.dev>
 
-On Tue, Feb 25, 2025 at 3:18=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
->
-> On Di, 2025-02-25 at 12:19 +0200, Daniel Baluta wrote:
-> > Add reset ids used for EARC and DSP on i.MX8MP platform.
-> >
-> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  include/dt-bindings/reset/imx8mp-reset-audiomix.h | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >  create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
-> >
-> > diff --git a/include/dt-bindings/reset/imx8mp-reset-audiomix.h b/includ=
-e/dt-bindings/reset/imx8mp-reset-audiomix.h
-> > new file mode 100644
-> > index 000000000000..3349bf311764
-> > --- /dev/null
-> > +++ b/include/dt-bindings/reset/imx8mp-reset-audiomix.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
-> > +/*
-> > + * Copyright 2025 NXP
-> > + */
-> > +
-> > +#ifndef DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
-> > +#define DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
-> > +
-> > +#define IMX8MP_AUDIOMIX_EARC         0
-> > +#define IMX8MP_AUDIOMIX_EARC_PHY     1
-> > +#define IMX8MP_AUDIOMIX_DSP          2
->
-> How about calling these IMX8MP_AUDIOMIX_EARC_RESET,
-> IMX8MP_AUDIOMIX_EARC_PHY_RESET, and IMX8MP_AUDIOMIX_DSP_STALL instead?
 
-That's fine with me, makes more sense.
+* Thorsten Blum <thorsten.blum@linux.dev> wrote:
 
-Will make the change in v4. Will wait for a while for more comments.
+> The local variable length already holds the string length after calling
+> strncpy_from_user(). Using another local variable linlen and calling
+> strlen() is therefore unnecessary and can be removed. Remove linlen
+> and strlen() and use length instead.
+> 
+> Compile-tested only.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/x86/kernel/cpu/mtrr/if.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+> index a5c506f6da7f..4049235b1bfe 100644
+> --- a/arch/x86/kernel/cpu/mtrr/if.c
+> +++ b/arch/x86/kernel/cpu/mtrr/if.c
+> @@ -99,7 +99,6 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
+>  	char *ptr;
+>  	char line[LINE_SIZE];
+>  	int length;
+> -	size_t linelen;
+>  
+>  	memset(line, 0, LINE_SIZE);
+>  
+> @@ -108,9 +107,8 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
+>  	if (length < 0)
+>  		return length;
+>  
+> -	linelen = strlen(line);
+> -	ptr = line + linelen - 1;
+> -	if (linelen && *ptr == '\n')
+> +	ptr = line + length - 1;
+> +	if (length && *ptr == '\n')
+>  		*ptr = '\0';
 
-Thanks Philipp!
+I see no corner-case analysis in the changelog about what may happen if 
+the copy fails partially.
+
+Thanks,
+
+	Ingo
 
