@@ -1,120 +1,152 @@
-Return-Path: <linux-kernel+bounces-531547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA34A441B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:04:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E993AA441F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3837A31D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87673B4A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC8926A0A4;
-	Tue, 25 Feb 2025 14:04:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8012686A8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAC426AA98;
+	Tue, 25 Feb 2025 14:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N1q6kuDK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F1F269CF5;
+	Tue, 25 Feb 2025 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492287; cv=none; b=Nbn8/GAGOdShnmuxq25HoBpcdp7WKEeRu8mJY6i44Pj2YzFh+pknmk63p2L+sfOE8Wont+yGmdtgxD8VdbWusoMQCQROi6LEqeashjSpt/FmkrzDHkRcW0VDw0WILFShlh/irRR+vy7vU+C3m2S4vl5jydvQT5wa3OlYGFvEyb8=
+	t=1740492336; cv=none; b=nD3EXju4l/zaCo1VRJrr1DkjspsuwYUowBkVtvMAzoPHSlCsBwFbRBUyP6pLn94C4afiuYl9hi6ILKyQvjY9CIf8ZQHFr0/IO4EyY+5phTFW5ribZTH2nMcYmWXd2Mmr/IOCx0NObyiXgY7diUj3VBC/U7CePLFT8amjj/oLrF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492287; c=relaxed/simple;
-	bh=L434M/O3oCkZpW7cHEiVIKwlK34tRrLWx2AxIrRqUj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9q9Jgow16Cwm6WAbR66/H3tMk8MaSpVYQ0r2OXBST9qa0iVOCxUslsXg480id18IAQMrxgbnI6SfmUog2AcI+3pQvGcIHo8XfEbYmYlyTCMt45DLTD2l3VHpkLoSvC2Fiky1hOf5oa0SvZ1rQo6oGob1LPpVAaiZNBCP3T1zp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15760152B;
-	Tue, 25 Feb 2025 06:05:00 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49A9A3F6A8;
-	Tue, 25 Feb 2025 06:04:42 -0800 (PST)
-Message-ID: <34a0b098-d9c5-4605-8ce7-abd6fa59d38b@arm.com>
-Date: Tue, 25 Feb 2025 14:04:29 +0000
+	s=arc-20240116; t=1740492336; c=relaxed/simple;
+	bh=SrlaSBpwPqmnPKBwwpLbhryOe+dfDdFe+sPMj9Vemu4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uVEMim/o0uyfyNqKmRzE/OvRQq0MVp6TeJqmcPLDjt1O2cPquQXDhkYbE/7F817q5nbtmbtll9h4iEWTKxTUP8dLX8YONNlimKak8bFmYnqpsEjJdjErxMpagbi3yMWwTYxkG7T1mgv5gU+/bGOse2C010twefZ5Wk+tmUOSZQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=N1q6kuDK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740492331;
+	bh=SrlaSBpwPqmnPKBwwpLbhryOe+dfDdFe+sPMj9Vemu4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=N1q6kuDK+8ntA0AaElI0VJl2/OzVvACcjDQ/P2V6svRV3s3WHMve5JiVdUTd80Qnr
+	 K58KBSM2Qb7dmqKHwGdQaEiK3UWwswphxj1skJWk1RbYRl4Fj7bXE/qs/9fgEg50J1
+	 BUP3XOGCQjOG8C/VDC0iKES/YCq/oVsixPwtuRDOfp3wtG2gZxbKZOIkh59FjX7prU
+	 k5WwdWnA5MuwVDcYr2pkAGTOoAABa8gLQTvBDrGUiJ4VFzdwQHUOpvoXn2UXoNOzgs
+	 47beLJVO33KZ7Qr8qaSaU7DXYtnjHXjT2fRY6GwNfwkZe2dUs3zweivyihBuC63lEM
+	 Y9DZpkTydLIRA==
+Received: from [IPv6:2606:6d00:11:e976::5ac] (unknown [IPv6:2606:6d00:11:e976::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4453317E09B5;
+	Tue, 25 Feb 2025 15:05:29 +0100 (CET)
+Message-ID: <808a9d14be9c8de25e2ba5232ee01f874acb66b6.camel@collabora.com>
+Subject: Re: [PATCH] fixup! media: v4l2-common: Add helpers to calculate
+ bytesperline and sizeimage
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Fricke
+	 <sebastian.fricke@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Ezequiel Garcia	
+ <ezequiel@vanguardiasur.com.ar>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Boris Brezillon
+ <boris.brezillon@collabora.com>, linux-media <linux-media@vger.kernel.org>,
+ linux-kernel	 <linux-kernel@vger.kernel.org>, linux-rockchip	
+ <linux-rockchip@lists.infradead.org>, linux-staging	
+ <linux-staging@lists.linux.dev>, Mauro Carvalho Chehab	
+ <mchehab+huawei@kernel.org>, Alex Bee <knaerzche@gmail.com>, Benjamin
+ Gaignard	 <benjamin.gaignard@collabora.com>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ Jonas Karlman <jonas@kwiboo.se>
+Date: Tue, 25 Feb 2025 09:05:27 -0500
+In-Reply-To: <795082c4-499f-4935-b580-72b01d82fe1b@xs4all.nl>
+References: 
+	<20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com>
+	 <20250225124008.195405-1-sebastian.fricke@collabora.com>
+	 <1953d249c3c.d1d6678f34821.5333341344528638254@collabora.com>
+	 <795082c4-499f-4935-b580-72b01d82fe1b@xs4all.nl>
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dma: Fix encryption bit clearing for dma_to_phys
-To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org,
- catalin.marinas@arm.com
-Cc: maz@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- aneesh.kumar@kernel.org, steven.price@arm.com,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
- <20250219220751.1276854-2-suzuki.poulose@arm.com>
- <68405608-564c-4e79-9cbc-545626e736f1@arm.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <68405608-564c-4e79-9cbc-545626e736f1@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 25/02/2025 11:25, Robin Murphy wrote:
-> On 2025-02-19 10:07 pm, Suzuki K Poulose wrote:
->> phys_to_dma() sets the encryption bit on the translated DMA address. But
->> dma_to_phys() clears the encryption bit after it has been translated back
->> to the physical address, which could fail if the device uses DMA ranges.
->>
->> Hopefully, AMD SME doesn't use it.
+Le mardi 25 février 2025 à 13:50 +0100, Hans Verkuil a écrit :
+> On 2/25/25 13:46, Sebastian Fricke wrote:
+> > Hey,
+> > 
+> > sorry about missing this in the patch series, if you don't like the
+> > fixup path, then I can send a new patch series as well.
+> > I just thought the change was minor enough and addressed the final
+> > comments.
 > 
-> ...by which you mean we don't think any AMD systems are using the ACPI 
-> _DMA method to constrain physical DMA ranges, otherwise SME with dma- 
-> direct would presumably already be broken by this lookup going wrong.
-
-Yep, that AMD systems aren't using DMA ranges.
-
-
+> Ah, this relates to patch 01/12 of this patch series:
 > 
->> Anyways, let us fix it, before cleanup
->> the infrastructure for supporting other architectures.
+> https://patchwork.linuxtv.org/project/linux-media/list/?series=14577
 > 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-Thanks
-
-Suzuki
-
+> Next time it might be better to just reply to the offending patch
+> with the fixup.
 > 
->> Reported-by: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
->> Link: https://lkml.kernel.org/r/yq5amsen9stc.fsf@kernel.org
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Steven Price <steven.price@arm.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   include/linux/dma-direct.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
->> index d7e30d4f7503..d20ecc24cb0f 100644
->> --- a/include/linux/dma-direct.h
->> +++ b/include/linux/dma-direct.h
->> @@ -101,12 +101,13 @@ static inline phys_addr_t dma_to_phys(struct 
->> device *dev, dma_addr_t dma_addr)
->>   {
->>       phys_addr_t paddr;
->> +    dma_addr = __sme_clr(dma_addr);
->>       if (dev->dma_range_map)
->>           paddr = translate_dma_to_phys(dev, dma_addr);
->>       else
->>           paddr = dma_addr;
->> -    return __sme_clr(paddr);
->> +    return paddr;
->>   }
->>   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+> That way it is clear for the maintainer what the fixup is for.
+
+I believe you could have used:
+
+  git send-email -in-reply-to=9db356bd-4d71-4975-91c6-7435bee8aef3@xs4all.nl <somepatch>
+
+To make that a reply.
+
+cheers,
+Nicolas
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > 
+> > Regards,
+> > Sebastian
+> > 
+> >  ---- On Tue, 25 Feb 2025 13:40:08 +0100  Sebastian Fricke
+> > <sebastian.fricke@collabora.com> wrote --- 
+> >  > ---
+> >  >  drivers/media/v4l2-core/v4l2-common.c | 2 +-
+> >  >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  > 
+> >  > diff --git a/drivers/media/v4l2-core/v4l2-common.c
+> > b/drivers/media/v4l2-core/v4l2-common.c
+> >  > index 07a999f75755..aa86b8c6aa75 100644
+> >  > --- a/drivers/media/v4l2-core/v4l2-common.c
+> >  > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> >  > @@ -360,7 +360,7 @@ static inline unsigned int
+> > v4l2_format_block_height(const struct v4l2_format_inf
+> >  >  }
+> >  >  
+> >  >  static inline unsigned int v4l2_format_plane_stride(const
+> > struct v4l2_format_info *info, int plane,
+> >  > -                           unsigned int width)
+> >  > +                            unsigned int width)
+> >  >  {
+> >  >      unsigned int hdiv = plane ? info->hdiv : 1;
+> >  >      unsigned int aligned_width =
+> >  > -- 
+> >  > 2.25.1
+> >  > 
+> >  > 
+> > 
 > 
 
+-- 
+Nicolas Dufresne
+Principal Engineer at Collabora
 
