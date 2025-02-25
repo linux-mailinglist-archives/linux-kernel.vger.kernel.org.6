@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-531181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED21A43D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:13:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32324A43D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:16:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2CD188CCB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 880307A5077
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC52268685;
-	Tue, 25 Feb 2025 11:09:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23892676F7;
-	Tue, 25 Feb 2025 11:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B3C33CFC;
+	Tue, 25 Feb 2025 11:10:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8571DF73D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481780; cv=none; b=V6ZuS+P5bCXKP3TBv8K6hh2MeTBZ+a2mN1LcuTzpTLMBggk0a4fNKn0a9V5GqqEue+CEunqFX+9SnDW991cOyKKNPsPa9b3rduGfKrHhEZGGC3KS+dY3N94MVa4bD0qt3hH2zOghSeHsLz9/oceYYwrmkrVyWYW5kKoXnnLo7ek=
+	t=1740481857; cv=none; b=F+xaIZFQkq8ISZsx6k9hK5Ycsn3jddqG4XxYdqENNdwZ80KuFqAucDzu/c0yn10G5lMZPyHNMrCEYKZz7wfQ0jTrx4FMPsAEVw14FcfWCX7TeRNfQI0EIQWby8QIN8Rt9WdouhMfmlI3tArVgXC7Z8JfoVhlranwkzaFXIHZhF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481780; c=relaxed/simple;
-	bh=d1JecBOd39KaxgofY9dObpdwKr5wka7PaavQk7GYTxo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YuGP3Bc/ChnLvFAy7nI3H1bXXZgwlPsB0qUuuj/D1Z3iwLo98m7Rg1A7N91RhveecVSQCxaxB8218GrB+URVJrE5FBMtctElyGheQxZUI/PtVLUBsajGoyQynDdN0uFi/YJEgSeT6OQoCDc7WUYSehVS85ZymUhgd3WOhSzLJMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2FH00sZCz4f3jt0;
-	Tue, 25 Feb 2025 19:09:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9294A1A0DE0;
-	Tue, 25 Feb 2025 19:09:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB321_qpL1nVnlrEw--.6688S3;
-	Tue, 25 Feb 2025 19:09:32 +0800 (CST)
-Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <Z7nAJSKGANoC0Glb@fedora>
- <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
- <Z7vnTyk6Y6X4JWQB@fedora>
- <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
- <Z7w0P8ImJiZhRsPD@fedora>
- <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
- <Z70btzRaN83FbTJp@fedora>
- <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
- <Z70qvZEBdq6L3-Yb@fedora>
- <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
- <Z719gj8GOl0itRwV@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <dc2b3a40-b33b-0bc5-3a73-18b288b4283f@huaweicloud.com>
-Date: Tue, 25 Feb 2025 19:09:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740481857; c=relaxed/simple;
+	bh=BwZq8RSTyie3qwAAeo2SkjKBI+dDwj3DOLncsyX+0Ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NizTMoXSfBdWGW76R5hOkzZnwfL0jvkP9b50ePzZJcvJKCf+mV8lRp63sQFaC788KjOhZ9qgId/2aF5JfM5HrEnPop8QkLU98gboFUdYT9xk9i0JyQ35BWZNBX2IXvuHVYNWZdb9bUjE0UPqXd+I1IrQ4cODE7zHP5clKDhFFtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D71D81516;
+	Tue, 25 Feb 2025 03:11:09 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D357D3F673;
+	Tue, 25 Feb 2025 03:10:51 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:10:46 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Luiz Capitulino <luizcap@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+	ardb@kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <Catalin.Marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: kernel BUG at arch/arm64/mm/mmu.c:185!
+Message-ID: <Z72lNoOdZp5_kiT7@J2N7QTR9R3>
+References: <a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com>
+ <fe95f4c8-4b09-4d8e-99c9-987ddc2761e3@arm.com>
+ <9f5600b3-6525-4045-ad1f-4408dfc9ce0f@redhat.com>
+ <cf2b32a4-2217-4a31-b6d7-e60a9f4ef7dd@arm.com>
+ <789c17e6-5ebc-4e37-93cd-19d24f148fd8@redhat.com>
+ <dee18de8-7938-4df1-badb-c00832d6995f@redhat.com>
+ <b39a37c8-c9b5-406d-a97a-24fa67622b49@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z719gj8GOl0itRwV@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB321_qpL1nVnlrEw--.6688S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFW3WF4rGr13KrW3Jw47urg_yoW8Zr4DpF
-	Waqrn0kr4YqFn7KF4Fv3Z8Wa48AayDWr98Gw4DJrWxA3WDCw1xtF12kFs0kF9ayFn7Cr4j
-	va4rXFy3AFy8ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b39a37c8-c9b5-406d-a97a-24fa67622b49@arm.com>
 
-Hi,
+On Tue, Feb 25, 2025 at 09:47:30AM +0000, Ryan Roberts wrote:
+> (Adding arm folks for visibility)
+> 
+> See original report here for context:
+> https://lore.kernel.org/all/a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com/
+> 
+> TL;DR is that 6.14 doesn't boot on Ampere Altra when kaslr is enabled.
+> 
+> 
+> On 20/02/2025 20:08, Luiz Capitulino wrote:
+> > On 2025-02-19 09:40, Luiz Capitulino wrote:
+> > 
+> >>>> Btw, I'll try to bisect again and will also try to update the system's firmware
+> >>>> just in case.
+> > 
+> > I tried to bisect it and again, got nowhere.
+> > 
+> > Git bisect says the first bad commit is 8883957b3c9de2087fb6cf9691c1188cccf1ac9c .
+> > But I'm able to boot that tree...
+> > 
+> 
+> OK, think I've found the dodgy commit:
+> 
+> Commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and use it consistently")
+> 
+> Based on the changes it certainly looks like it could be the issue, but I
+> haven't spotted exactly what the problem is yet. Ard, could you take a look?
+> 
+> I managed to hack multi ram bank support into kvmtool, so I can now repro the
+> issue in virtualization. Then was able to bisect to get to the above commit.
 
-在 2025/02/25 16:21, Ming Lei 写道:
-> On Tue, Feb 25, 2025 at 11:12:24AM +0800, Yu Kuai wrote:
->> Hi, Ming!
->>
->> 在 2025/02/25 10:28, Ming Lei 写道:
->>> Can you explain in details why it signals that the rate is expected now?
->>>
->>> If rate isn't expected, it will cause trouble to trim, even just the
->>> previous part.
->>
->> Ok, for example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
->> slice is 20ms(2 jiffies).
->>
-> 
-> We all know how it works, but I didn't understand the behind idea why it
-> is correct. Now I figured it out:
-> 
-> 1) increase default slice window to 2 * td->throttle_slice
-> 
-> 2) slice window is set as [jiffies - td->throttle_slice, jiffies + td->throttle_slice]
-> 
-> 3) initialize td->bytes_disp[]/td->io_dis[] as actual dispatched bytes/ios
-> done [jiffies - td->throttle_slice, 0]
-> 
-> This approach looks smart, and it should work well for any deviation which is <= 1
-> throttle_slice.
-> 
-> Probably it is enough for fixing the issue in throtl/001, even though 2 jiffies
-> timer drift still may be observed, see the below log collected in my VM(HZ_100)
-> by just running one time of blktests './check throtl':
-> 
-> @timer_expire_delay:
-> [1, 2)               387 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [2, 3)                11 |@                                                   |
-> 
-> bpftrace -e 'kfunc:throtl_pending_timer_fn { @timer_expire_delay = lhist(jiffies - args->t->expires, 0, 16, 1);}'
-> 
-> 
-> Also I'd suggest to remove ->carryover_bytes/ios since blk-throttle algorithm is
-> supposed to be adaptive, and the approach I suggested may cover this area,
-> what do you think of this cleanup? I have one local patchset, which can
-> pass all blktest throtl tests with removing ->carryover_bytes/ios.
-> 
+If you're able to repro this, could you please say the configuration of
+memory banks you're using, and could you hack the BUG() to dump more
+info, e.g. something lihke the below, UNTESTED patch.
 
-It's always welcome for such cleanup. BTW, do you have plans to support
-bio merge for iops limit in blk-throttle? Since bio split is handled. I
-was thinking about using carryover_ios, perhaps you can handle this as
-well.
+Knowing the VA will tell us whether we're spilling out of the expected VA
+region otherwise going wildly wrong with addressing, and the values in the PTEs
+will tell us what's specifically triggering the warning.
 
-Thanks,
-Kuai
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
+Also, if you're able to test with CONFIG_DEBUG_VIRTUAL, that might spot if we
+have a dodgy VA->PA conversion somewhere, which can 
 
+Mark.
+
+---->8----
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index b4df5bc5b1b8b..d04719919de33 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -171,19 +171,22 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+ {
+        do {
+                pte_t old_pte = __ptep_get(ptep);
++               pte_t new_pte =  pfn_pte(__phys_to_pfn(phys), prot);
+ 
+                /*
+-                * Required barriers to make this visible to the table walker
+-                * are deferred to the end of alloc_init_cont_pte().
++                * After the PTE entry has been populated once, we
++                * only allow updates to the permission attributes.
+                 */
+-               __set_pte_nosync(ptep, pfn_pte(__phys_to_pfn(phys), prot));
++               if (!pgattr_change_is_safe(pte_val(old_pte), pte_val(new_pte))) {
++                       panic("Unsafe PTE change @ VA:0x%016lx PA:%pa::0x%016llx -> 0x%016llx\n",
++                              addr, &phys, pte_val(old_pte), pte_val(new_pte));
++               }
+ 
+                /*
+-                * After the PTE entry has been populated once, we
+-                * only allow updates to the permission attributes.
++                * Required barriers to make this visible to the table walker
++                * are deferred to the end of alloc_init_cont_pte().
+                 */
+-               BUG_ON(!pgattr_change_is_safe(pte_val(old_pte),
+-                                             pte_val(__ptep_get(ptep))));
++               __set_pte_nosync(ptep, pfn_pte(__phys_to_pfn(phys), prot));
+ 
+                phys += PAGE_SIZE;
+        } while (ptep++, addr += PAGE_SIZE, addr != end);
+ 
 
