@@ -1,126 +1,107 @@
-Return-Path: <linux-kernel+bounces-531092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86228A43C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:45:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB10A43C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAF4189A709
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E6A3A9EDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097E0266F0B;
-	Tue, 25 Feb 2025 10:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56425265637;
+	Tue, 25 Feb 2025 10:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="eiNmEuHC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TFZGOM/h"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqheaWyE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC24192B96;
-	Tue, 25 Feb 2025 10:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4D5256C76;
+	Tue, 25 Feb 2025 10:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740480193; cv=none; b=ZfT+5Oiy57raibtcOqTcfDH+3dnDfZ7cu6TM5n1Tb48V5aTdlWMy6XWDcXDnBt93+0eo6FslBiUda5GcWdAGQScyw9P8T3noAw1t41xnoLfsH1rdhAKVSpfhh9gpHqnl6r8lDRhJMnvFMk4DwOFymHaW+wqsesGD5cxvgG3hHXQ=
+	t=1740480268; cv=none; b=TeuHjr/ZDCV68SUi2YeKN03oo4B4AJWDmg3OZNUXXVyCh/BricNPA5xA2St0IEg4VGZq401iNfGvZvfZtP/u3tDoOy1IQmkkS1ysz6yF0LEYDq3cRIzu1PI+f52+ByKH0sRmjPN0QXaN+Qe8UsjQUPXsVtlDhQrOvvLMUgEzCiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740480193; c=relaxed/simple;
-	bh=tv0R0s1TjtqmD93DRANhxUHfOVD0iMVBBhlDl7tSPL4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=oJElKVDBRbe4kwGon929fKcmNbbI3xLP+WBJIXwKNSXsp6+BcQSIoZKDoFOv2R+vYQARrB+YtqOHV/hcUQxrZJoZzkwlb+L0GyL/e1OPt/lqurfA3kMBimXYRXRnPyaI58lqmW3oY3q/WHr+ZF/Y6FLVUGvPQT2XFq9X7oasEC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=eiNmEuHC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TFZGOM/h; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 28B4C25400AD;
-	Tue, 25 Feb 2025 05:43:09 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 05:43:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740480189;
-	 x=1740566589; bh=GC1Rd8pP+MYB/d62vWhN9HoZZUyWU3eCT57wkmcfp0Y=; b=
-	eiNmEuHCu+EJJVMQjznB/+iv14HoT4te4oFQTLWMrU3b+44pPUSIEjl7i88oFZmJ
-	tK8rzQmEBBb12w8FRfBt9DPKjCtPPD2+GMcAH4AhuZc+foWCHbZP9FGKX5Lsipte
-	Bjh/sHuGmpWHGS74V5eaJyafxqWqaK6jmR603/irbsOIow3W6hKGAdTb8g9Vc4ag
-	NNJgpUJc4uw0hqSciLQflRO9+EwEYsSDYQw63F4FkUefQI74Jl2s16XidLz2hWkJ
-	pRDqujti03sdfLUYir+NmhKvc8rZHj7j9vlAIIy+2/WvvytILcAB9iNO4zAtrt6I
-	FL5BOxhvO/wPkd3LksnLUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740480189; x=
-	1740566589; bh=GC1Rd8pP+MYB/d62vWhN9HoZZUyWU3eCT57wkmcfp0Y=; b=T
-	FZGOM/hv0/3rQuzrFGx34cc9B1Zf0M/p7f1/T4r67zxmiNss3+7nI6BV6YK0p6FL
-	TL8Sbl3c46rtQI+QExGqUyx1Ir/NN6EajJCpZs1h25oD+8e3YQ56+yEWTLX5aoDP
-	3UVKrrq9VCx066xT0aKdOEMoCuf21x7WKGL7PDKpFzwmjRjUsUiBFtYOLNiu+hlk
-	mbYwb2W9gkwkWGNSp4n5FtH1rwKeRV8ygiMNK+VJ5c5pLpxmod+4xe6U0ypaRH93
-	Zlha1a4zq7qiIsHsu3+3Nvap/N8NIzxJ1TGewHH3dezkgsmpr5rT75eaEqMyJUMY
-	ua3XhDvQIGJMMgpg3coBg==
-X-ME-Sender: <xms:vZ69Zyo4f53VsXNNAriilkJc4eVqylOuVqncAwrmWr4ilt7679s1jA>
-    <xme:vZ69ZwrCTtZvx3ZSZVxQSzwORh61zP3CB_CfH23PH6pwEFY4dILVD3TowbcVqAZwt
-    YbbH9c3EVKpwZ8_HOY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeei
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpd
-    hrtghpthhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkiheslhhinhgrrhhordho
-    rhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrih
-    hnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhg
-X-ME-Proxy: <xmx:vZ69Z3PydYbPRTly_fy_ePcqpRy6f8bFJWo6hJeuK6Dd-vagMkfnmg>
-    <xmx:vZ69Zx758rgsP3sFQoJmo1kInegkx8w-KFRQyQg_gXNbmennMM-OEQ>
-    <xmx:vZ69Zx7KMPP_NS59eS6GvXAtJwNAOT54uNiFPRlfIglDRT7Npun-Uw>
-    <xmx:vZ69Zxif6zkl8mrSyZVd8HSoE_ZSPLiky1clhmQjmUKGPPcTycfetg>
-    <xmx:vZ69Z_R_EdkxMkmoBzfDsd1W6j47b84U6Rmkp5V9V-4Lin1gv63Zxndm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8C03A2220072; Tue, 25 Feb 2025 05:43:09 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740480268; c=relaxed/simple;
+	bh=ww6sPUfIIGL/VzJ7+DqtotdPzurN+hiu4g05wvRpwgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXa4jBL5xoYrNUsYw+4aOlOeSZBjKCfLXUpRPuZsmSqTvS/42/dir0wZbLSyPGtDTSi9u1yrAw24BUhJCO1RjnunKCg5/FMOnjUi+kBjcj5wHr1hjjbDGOHA7jKXFEL8S61EW+XQw2zGNkbF8X41x9k0RnlB9Hmm0WFVCxjsabc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqheaWyE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740480267; x=1772016267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ww6sPUfIIGL/VzJ7+DqtotdPzurN+hiu4g05wvRpwgw=;
+  b=eqheaWyE/SZ4OWFhxF7arhaOw6YyCzzsDJhohqdVwOf63ttWhoLBOJbC
+   kS/rlY69kNjUA859PZJheBNXMuZRtP3f/mHxF/l2Jsm17O5JSPA6maVRq
+   wdsq8vNh93usLz3hnJmD6O0rf+sQ648JHBNMn1RfI1CbHrxgRr1Zg8T09
+   uUuCz+LaZmpRgtr/zTZ/40ASQCBX/Jk+/ZhAYv0sPrT+z1E9T1hJg5WDl
+   Oxe1FcICthZqLd6czG3iOKmsOW07GoXcTRg+dp21CunljiB40D9RnjEar
+   w5BPqMrIH5auAHv5EixeavIqNGfljrqQmSfcTMhEhmwwwKIYFyX5PTXAo
+   w==;
+X-CSE-ConnectionGUID: fxglxrLtS0qx4R+yj+Im9w==
+X-CSE-MsgGUID: Lz9nWrxqSr2yoVQ0krd9XA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="51494050"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="51494050"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:44:26 -0800
+X-CSE-ConnectionGUID: A8A7c+cRT92NiFADd2xUiw==
+X-CSE-MsgGUID: ++kiv6lzQ0KfmB78EvBFGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="116549645"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:44:24 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tmsQI-0000000ExgH-0vIX;
+	Tue, 25 Feb 2025 12:44:22 +0200
+Date: Tue, 25 Feb 2025 12:44:21 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: use the required minimum set of headers
+Message-ID: <Z72fBfM4afo5SL0m@smile.fi.intel.com>
+References: <20250225095210.25910-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 11:42:48 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Message-Id: <745ff032-1e71-4569-ac9f-07c44cbcb344@app.fastmail.com>
-In-Reply-To: <Z72dfxKzLLORkLl1@smile.fi.intel.com>
-References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
- <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
- <Z72dfxKzLLORkLl1@smile.fi.intel.com>
-Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR() protections
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225095210.25910-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 25, 2025, at 11:37, Andy Shevchenko wrote:
-> On Tue, Feb 25, 2025 at 11:29:05AM +0100, Arnd Bergmann wrote:
->> On Tue, Feb 25, 2025, at 11:08, Andy Shevchenko wrote:
->
->> Subject: [PATCH] [SUBMITTED 20240403] spi: remove incorrect of_match_ptr
->>  annotations
->
-> Was it applied (and the rest you provided here)?
+On Tue, Feb 25, 2025 at 10:52:10AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Andy suggested we should keep a fine-grained scheme for includes and
+> only pull in stuff required within individual ifdef sections. Let's
+> revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
+> gpio/consumer.h") and make the headers situation even more fine-grained
+> by only including the first level headers containing requireded symbols
+> except for bug.h where checkpatch.pl warns against including asm/bug.h.
 
-It was part of a longer series. Some were applied, but the ones
-I provided here are those that for some reason did not make it.
-They should apply cleanly to today's linux-next.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-      Arnd
+FWIW, I have checked the current state of affairs of linux/bug.h vs. asm/bug.h
+and found no possible issues with the dependencies. While linux/bug.h drags
+more than needed into this header it won't prevent cleaning up the rest of
+the headers. So for now we can stick with linux/bug.h, but at some point it
+would be better to be more pedantic on this.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
