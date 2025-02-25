@@ -1,350 +1,209 @@
-Return-Path: <linux-kernel+bounces-531021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B681A43B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:18:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5338EA43B28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0363E188975E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8DBE3B23BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9062426560F;
-	Tue, 25 Feb 2025 10:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F6266190;
+	Tue, 25 Feb 2025 10:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SxPhmuMb"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="Q7mGLkOx"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013030.outbound.protection.outlook.com [52.101.67.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E506118CC1C;
-	Tue, 25 Feb 2025 10:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478556; cv=none; b=Has9zV7HepeZIbDotD6NDMsQW6yTR8VAx8q1L/idYx4bavdS5OPIfkjw8AwEp8ao8Bb/dJCjUns4fTsykmLyG13YDhxJ9lbPnjBX1DjTlVhbNA4ZFlwEUh8pkLvusKm6JIYFQl8A3PAaALIG9UK4IdqhEcEAt7Pl8GlkVEy0HX4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478556; c=relaxed/simple;
-	bh=Zo0opcPKGQ/pu9FzDTV+Lkxg6BFsS3+OMq13Rm4Lons=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KSi+gs1zNsu6uUQH6CKgBZZnXe0Kn2oVdMK+e2eEQa7JIseb787pDU2MsYpIw2jKi78Wr3I5JsdeDtdUIUjDuY0ueFDJHK4KPIjwk/FmW4e7Ig6PlCLXAPu8/hxPylBVg/n6yAdjCDL99XbRzxZUCsH1IaO2nq8dzuMqw3gmHKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SxPhmuMb; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740478549; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=G1//MzoBhkItqh36YQVUEyzPgpeaLo06j7nacJ5WR2A=;
-	b=SxPhmuMbpdm03d0p7oT5Q9as3ev8gZYumVSVOXaSzm3UXMqzXC95R4KSnb3mWLHw4+KINEc1v20JB45F9S7ZajAD/by6/eOKVk49ByBNAS/wC1CDy3u7HMIUlhC4LStbUFjBBbAPH6Jl/fKvLgJ1zslgz7XbqxIRjF5v5DtFg+w=
-Received: from 30.74.144.116(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQEMMgT_1740478548 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 18:15:48 +0800
-Message-ID: <af6122b4-2324-418b-b925-becf6036d9ab@linux.alibaba.com>
-Date: Tue, 25 Feb 2025 18:15:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C0F254858;
+	Tue, 25 Feb 2025 10:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740478579; cv=fail; b=QfEhqJmhGn8KkpZBgIgFCd15piuEWMbUUe43xvaY0t3XfVFPGLvUx3RcXA8Pih4UcnldksaBuz/pEHpFALS48V7s+E80h8XNJALViCft3yIQSQDoNSw0y7SOMGX7uPr4uBAvxZuoyBEAAzjhyvcVvAFDW04MRXnkfLR4nzRGSz4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740478579; c=relaxed/simple;
+	bh=N5j/pVl5wm7CfWMe1u1lb6D0axUYLO0/uVWv2UpH4+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S1/30eIsU7I/kzt7dOvTw/+B1VyE+ZIwUmPAtH0r8ldW4blf8vIUV9p3D+T5fVBi9Q+5wwkQu5tmLIlJIYi10aO2kqyT6kVJgJOjRl7V571whJBEfEu9QGvjoAobJ+JKguWNDSRJovGRLDnSsc+iA4/5wHfd8MC9o+gvI3sGw9E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=Q7mGLkOx; arc=fail smtp.client-ip=52.101.67.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XzuydntMM5/W5Wq7zLf20HtZHzCxJcOXMnF0gOzy3g6g9avAph7b9dNpnFIsZ8jlCYQ1nZ/Jn9kJO2Qm48NuQPtDoOYFJxeBHK5Nn4Z8g7r5Itxjupi8p8W+WJbeIRE4zfbVF6KBcv4jwfX8m4BaEQNYSke7nY4pPzu/CQLKGxL15SqHzNlTnYUlp0QABnPd7OGTwoZ5gOE2fl9J6tYhjejiMtSu8We+GtBB0rC9GIne65p+iTFrRw3wnijchg1bkZKD727OaTb5rwADaUk+aY/9V6d5JziDaoPdpo4WdYVDJeIxjHHif8inzSq8bezdxlSuPm7yS5Vb9zDuSyWNIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yd6kuu1SJ/t3uyQ0xl5bfhExD8kUQVAAwgbe/gRoPz0=;
+ b=nVJo/zw6+ToczPD9q/BoGdC+Zxl+OlsIdNavzZ0J4tcS1NhY3GHfqsuMD+/VC0wLSeyVOs5Cmn+CZpBYAMSHct9LPXRxMAqykW3DgIy0t+3yLBGXi3pVXyuO76Q1dn+j4REKm5h4ey+adHbx8VIwLiqLhChiWcQxNuLJYZgaC2ETRfWySMKUKBYrxtlTqpGXxuejhzrebbQ8PH3sj2X+ZJwS2NYDXcXR71s8KriZlmtirFSMpdU7PJRJC7PgCT+aeWmPRj5Twt1/ag1GYs9B8cMGVKi+HeX0wo3gOPeoagczriK75SRND9o62GuzK8y42QoeSI3rk+SLqsedpzgc+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yd6kuu1SJ/t3uyQ0xl5bfhExD8kUQVAAwgbe/gRoPz0=;
+ b=Q7mGLkOx91pue0PJi07bztrun8XVqVnB7ql+xl/s1PIR9YrRNNY5K9miQ6Kb0ux8kP5CVRrTeGZtEpWt5nR1wTpdrEWbDZoe+m8frkjhwVLxJqIn7Mzy3LEBobvxscqgjyn0r3H/ppRiZAmA8acMi40ae41b0qShI30ykGim3yBjO7u/TCrdkQ9RcoyqP5+gr0NGZDjHw0frMqQM/kh6fscMadgkHubCYUj8Yupm5ypumCFk82FNvv6dNXPNStmBUrp555/Hze9JquMMnoTuJIsTVR1+XZmaktBdMU07jsXz42c+oF+9xcfZ+AysONbwqrezfwyqLJF8vJhC1RXxtQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from DBBPR03MB5399.eurprd03.prod.outlook.com (2603:10a6:10:f5::22)
+ by AS2PR03MB9880.eurprd03.prod.outlook.com (2603:10a6:20b:547::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 10:16:11 +0000
+Received: from DBBPR03MB5399.eurprd03.prod.outlook.com
+ ([fe80::2fec:64f5:1893:f53a]) by DBBPR03MB5399.eurprd03.prod.outlook.com
+ ([fe80::2fec:64f5:1893:f53a%5]) with mapi id 15.20.8356.010; Tue, 25 Feb 2025
+ 10:16:10 +0000
+Date: Tue, 25 Feb 2025 11:16:07 +0100
+From: Markus Burri <markus.burri@mt.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Manuel Traut <manuel.traut@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] dt-bindings: input: matrix_keypad - add missing
+ property
+Message-ID: <Z72YZwBuzW2D9q0b@Debian-VM-Markus.debian>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-5-markus.burri@mt.com>
+ <Z7YJ2ENZ04Nktnwf@mt.com>
+ <Z71nMdTvyIg5a85Y@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z71nMdTvyIg5a85Y@google.com>
+X-ClientProxiedBy: MI2P293CA0004.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::15) To DBBPR03MB5399.eurprd03.prod.outlook.com
+ (2603:10a6:10:f5::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-References: <20250218235444.1543173-1-ziy@nvidia.com>
- <20250218235444.1543173-3-ziy@nvidia.com>
- <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
- <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
- <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
- <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
- <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
- <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
- <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
- <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
-In-Reply-To: <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR03MB5399:EE_|AS2PR03MB9880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9dd90458-6d0e-41ae-bc1e-08dd55856cbb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DEKBnNiGU2lc2LoQHdcPSGo3WKZpBSlh406oy76v2kmLhrZnZWAjcftdxAKK?=
+ =?us-ascii?Q?ejQ1cFtvknmPUtKiVUb2Chqvzju5YxaVG5jMycoWyUJI3wyG1yGcU37UoH5J?=
+ =?us-ascii?Q?jE0BNRiian3KEmRFAuBuzqY9ku1EKE1cj+bbntrS7ClST9nulMz1+esHgc5Y?=
+ =?us-ascii?Q?I8NLFnAVXJ3OJ/2Wq2wZK2TV1j51Pd5QUQGCr1J/pyXyAjR1S4JrOzSxt9oM?=
+ =?us-ascii?Q?zwxc3AUuHtLIBRZBL0fFmyuQZRYKH4323QqQcRMlH1olcyA+FAAWiqBQCvzf?=
+ =?us-ascii?Q?egeL2F6lvgHPFu92/Z4/muAV1qJ9ixs8PPkTNFxwv9Ps6rMC+jwqHfPSMCmK?=
+ =?us-ascii?Q?5vMIe8sammltLedkyi4uRjD1aGWYn9jcBbEaUKcHfMXkbTI8ghrfDrjZWvwS?=
+ =?us-ascii?Q?4VLlovU5fdNhWLmJd68UatyTEgBSlRuaDZ3VVmnN4/vd02XaP6vbAsHKuits?=
+ =?us-ascii?Q?j1VOtyxKI9eWZSuXoRxQQgZwaT2/IVqMiSzdIU4u/1y3oz8Kv3xXkLCzozKv?=
+ =?us-ascii?Q?aHl7gb2Cu3VhPyjITFFQG6LsZyxm+4xgkuJL3ko42gDGLzfl71jwLdEF9fEg?=
+ =?us-ascii?Q?nZybY6sEDjT/bRGpEQpqwcegfY2ThNldD2sXD3D6mty61E1XSWK6r0bdtBel?=
+ =?us-ascii?Q?3jcTxq9xBD2d/FXck3kwvy8Mm07yVb5AHrJO//Suf+s2ZqULzaXhPu5stDnm?=
+ =?us-ascii?Q?MeHGDhjWyl33WwPgqIvN7AjX2Zpd4i/mrJ2qUmNT1e3F4vap3DUS5QOFgcvT?=
+ =?us-ascii?Q?sVyyMRqrVtmbFHImleQCbOvIv6WCkp+Oy6QL8kuLouCA9yyQo20axX1foHj1?=
+ =?us-ascii?Q?yLDpfLHG0WP3ctdtxJK8Mfz+cKUD/u3A+HKnWFlvJW4N1HVTcdLQHgHnp51e?=
+ =?us-ascii?Q?wtdtTDx7qdHnZkMNsGqyRf4VdzhRIU9XIo88oHlXEb2K54Qy5PmMwXmVvnly?=
+ =?us-ascii?Q?AjkUnArbSisFFmV6jUxJKbcIMtTz4Gec5M8x8dVmUA+qke5FUEtQQKDsGSVj?=
+ =?us-ascii?Q?G9k8B39vBuUlEromzNP0wQ58RO+odpv+tunG7zDrv9ZB2uOKBLTC7qht/k54?=
+ =?us-ascii?Q?14HpHLQxsQP2UjOcUe8kpkEB/tq2WvVSA8vZmFMPZnchKDWPQ8UGptqA/tXh?=
+ =?us-ascii?Q?oQzQQv4DBo1yFrzooYH7vOGXaGAE8+R//Fmwr+C4jndDmiprOORmV1JKpFsx?=
+ =?us-ascii?Q?k95vJi33LdMJR6zPzlmWvfFVN7rx9qkPu6kCCp4KSoJssPDuuyOsa5Hd8Yyb?=
+ =?us-ascii?Q?MeYXyP8NFIBGrGjoD321UpwebVFKA5jcLv62TqPVss2uwo15Dnx111w6UTtg?=
+ =?us-ascii?Q?A1aTM1auE0Vdp6m2FQ9XaVPcv+vvhw2WOCjy9ULGNGxzQibTXkc/rdkUQNJw?=
+ =?us-ascii?Q?tN6diCQmfD7icQF9ug8TIbW+BUC/FhL6/8oW5LsrjwMOWU/KIQIQ+dh9s7fU?=
+ =?us-ascii?Q?QJ+UYwIG2577fcF1j+1DKxUvkO/2nyxz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB5399.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OnrPzMVcterYS9O1QhP4y6sH9X5zaJJqEx7Ge9XVI4+0WFfs56ZsKj9USnNv?=
+ =?us-ascii?Q?Q5OZZUJa6NLiiI3U9XcH8JMVKV6lT5ht2t3W7keZ1hVw9sZfjVk/Iz5ItYuT?=
+ =?us-ascii?Q?RyS9T4dOpM970dlJ0S4j1CV/LcPR7a6wBBE+o7TEOELK9IOqCenfyt8Rhguv?=
+ =?us-ascii?Q?Xe7T8MSgpqmhyzO8ZtPwD7ekSoiBSz2oNKdj7QV4FBO/SlSFwkZC1b9joLrk?=
+ =?us-ascii?Q?LoAUrqcl4WmMModqycS3/Qbr3Q/uMJGJGPWqhXZq3DMERcEdAPEwlnuF0J6u?=
+ =?us-ascii?Q?VTg313WLwwwT+DSF5Yf79qTAhJxVQXiBwD44+Zk361wLDUM3eDoixG5feOkW?=
+ =?us-ascii?Q?TnFJfJm8Gm+qcTusO3RS0XDNgBB7E17vlYDi+YkUimTT88m38mzx/+91J1tO?=
+ =?us-ascii?Q?aZrqByFagvZbTP1PU6UJp8PXU9Y4/aFCfI2KCT7OE4+kDtwAFFxGzFlmG0C5?=
+ =?us-ascii?Q?lQta4uZhGi6DhrkN8SBneAQHKMcs2ipjFq1pYheT2y7oypuar5jCPX9MWMGa?=
+ =?us-ascii?Q?H0iq3vb25xIZwHyKyCNZUTrBnj5xrfrPpevR/D7cCpDphD7DFbzWvNwHuQbs?=
+ =?us-ascii?Q?hCndso2/RyImWtn49zsPWsXlTRQodMsb1QYzHnolBPVlu8TJEe/Vs+nhN7sI?=
+ =?us-ascii?Q?2XcuMsfDTMXOWpENAZucgCxlP2ZDjKEsnjTpG5b0nH68EeXrPSHnLHce/PWI?=
+ =?us-ascii?Q?z/rqKdT0b1qDBj06SW7Km39gc/KJr8uKOjMf84OLmraaNQvJED9TcMTxy3dq?=
+ =?us-ascii?Q?DuOAx5Ijg0tZnT84meirapvYi/9MnsvoT2LYWPxTb0wPAFaw7gy4Ba+zyogT?=
+ =?us-ascii?Q?LJaVcIMPTUgWzLzIp9uz6UXWpl8yzXdP/T3SRhUJ4IAEicAaC08Nrm2lPvyH?=
+ =?us-ascii?Q?K0xkJG5kUhHc4MPs8NqkwZbS0SL6UIlnaGp8kNZjuWpFyizQjAu/spHxwb3t?=
+ =?us-ascii?Q?+uSWFqQrsk8zgDiAV4ATvtYkzL99hAVwKISMlRN4s819KZ4/PBxQ5gLDshbL?=
+ =?us-ascii?Q?kpE+qPolfmCTpincir/SSImE1YdM/vHWebTkWFl9hQ554GKjpzmfuxHUNhvb?=
+ =?us-ascii?Q?k6R49qybW6RATkbftdV7/EOb3L13cvUnmUTSvJFAZTlWouW/M4gnYODw4yTY?=
+ =?us-ascii?Q?sHoIuuHVsoa3KF7JJqI9dSb1KWtsRyvTWx7AOpWpJdFOoEUsN12KyBb6Ykug?=
+ =?us-ascii?Q?gwkvaursx2005VOkpyfQvW8OYdDfobvo2nzL9zeYIFVpQqSJwAeYLMvd+blf?=
+ =?us-ascii?Q?Xv2umos82kQN1pauwtBSnHH3ZxM92N7mijzE10KdwSUhgyAxSZZsRxVnpj2o?=
+ =?us-ascii?Q?u/XWxfLSwwLXZzJdfaioRbaC3KzXRtNdRp2qFIdrLX+u4hKOg/EDlDRr2rJ1?=
+ =?us-ascii?Q?9uzXdYxc9U/HYBQ17YG4U23bYMqxfEVMtKF1VfAGGAtcmo0ax5UjVsXPTTjC?=
+ =?us-ascii?Q?XunOOF/BdD/2HqMwla0vRI/frn2Wm/2dZT0go6JILMVRBt+79foqV/CD8yvc?=
+ =?us-ascii?Q?jJn0QFHdUySgHY0hs46wSt3hpo+VU+BoMc7NIVEORVKOimwJuPFjukrkhrMG?=
+ =?us-ascii?Q?QM039Ntyzw/MEtB8tpRRIciyA4+mUgyOUW/Ek4Sa?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd90458-6d0e-41ae-bc1e-08dd55856cbb
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB5399.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 10:16:10.2426
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VEaTAUiirFb65r6QkqxqqpD+BvjXk450jjX/mHgBdypbz35eOUMlo65z2BLjPsiOXPFKWxDK9vuJy1BGZKbSVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9880
 
-
-
-On 2025/2/25 17:20, Baolin Wang wrote:
+On Mon, Feb 24, 2025 at 10:46:09PM -0800, Dmitry Torokhov wrote:
+> On Wed, Feb 19, 2025 at 05:42:00PM +0100, Manuel Traut wrote:
+> > On Fri, Jan 10, 2025 at 06:49:03AM +0100, Markus Burri wrote:
+> > > The property is implemented in the driver but not described in dt-bindings.
+> > > Add missing property 'gpio-activelow' to DT schema.
+> > > 
+> > > Signed-off-by: Markus Burri <markus.burri@mt.com>
+> > 
+> > Reviewed-by: Manuel Traut <manuel.traut@mt.com>
+> > 
+> > > ---
+> > >  .../devicetree/bindings/input/gpio-matrix-keypad.yaml       | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > index 0f348b9..9c91224 100644
+> > > --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > @@ -40,6 +40,12 @@ properties:
+> > >      type: boolean
+> > >      description: Do not enable autorepeat feature.
+> > >  
+> > > +  gpio-activelow:
+> > > +    type: boolean
+> > > +    deprecated: true
+> > > +    description:
+> > > +      The GPIOs are low active (deprecated).
+> > > +      Use the GPIO-flags in gpio controller instead of this property.
 > 
-> 
-> On 2025/2/21 10:38, Zi Yan wrote:
->> On 20 Feb 2025, at 21:33, Zi Yan wrote:
->>
->>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
->>>
->>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
->>>>
->>>>> On 2025/2/20 17:07, Baolin Wang wrote:
->>>>>>
->>>>>>
->>>>>> On 2025/2/20 00:10, Zi Yan wrote:
->>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
->>>>>>>
->>>>>>>> Hi Zi,
->>>>>>>>
->>>>>>>> Sorry for the late reply due to being busy with other things:)
->>>>>>>
->>>>>>> Thank you for taking a look at the patches. :)
->>>>>>>
->>>>>>>>
->>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
->>>>>>>>> During shmem_split_large_entry(), large swap entries are 
->>>>>>>>> covering n slots
->>>>>>>>> and an order-0 folio needs to be inserted.
->>>>>>>>>
->>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by 
->>>>>>>>> the folio
->>>>>>>>> need to be split and the remaining n-1 shadow entries can be 
->>>>>>>>> retained with
->>>>>>>>> orders ranging from 0 to n-1.  This method only requires
->>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
->>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
->>>>>>>>> xas_split_alloc() + xas_split() one.
->>>>>>>>>
->>>>>>>>> For example, to split an order-9 large swap entry (assuming 
->>>>>>>>> XA_CHUNK_SHIFT
->>>>>>>>> is 6), 1 xa_node is needed instead of 8.
->>>>>>>>>
->>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls to
->>>>>>>>> xas_try_split() during split.
->>>>>>>>
->>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by 
->>>>>>>> skipping the swap cache, we will split the large swap entry 
->>>>>>>> stored in the shmem mapping into order-0 swap entries, rather 
->>>>>>>> than splitting it into other orders of swap entries. This is 
->>>>>>>> because the next time we swap in a shmem folio through 
->>>>>>>> shmem_swapin_cluster(), it will still be an order 0 folio.
->>>>>>>
->>>>>>> Right. But the swapin is one folio at a time, right? 
->>>>>>> shmem_split_large_entry()
->>>>>>
->>>>>> Yes, now we always swapin an order-0 folio from the async swap 
->>>>>> device at a time. However, for sync swap device, we will skip the 
->>>>>> swapcache and swapin the whole large folio by commit 1dd44c0af4fa, 
->>>>>> so it will not call shmem_split_large_entry() in this case.
->>>>
->>>> Got it. I will check the commit.
->>>>
->>>>>>
->>>>>>> should split the large swap entry and give you a slot to store 
->>>>>>> the order-0 folio.
->>>>>>> For example, with an order-9 large swap entry, to swap in first 
->>>>>>> order-0 folio,
->>>>>>> the large swap entry will become order-0, order-0, order-1, 
->>>>>>> order-2,… order-8,
->>>>>>> after the split. Then the first order-0 swap entry can be used.
->>>>>>> Then, when a second order-0 is swapped in, the second order-0 can 
->>>>>>> be used.
->>>>>>> When the last order-0 is swapped in, the order-8 would be split to
->>>>>>> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 
->>>>>>> will be used.
->>>>>>
->>>>>> Yes, understood. However, for the sequential swapin scenarios, 
->>>>>> where originally only one split operation is needed. However, your 
->>>>>> approach increases the number of split operations. Of course, I 
->>>>>> understand that in non-sequential swapin scenarios, your patch 
->>>>>> will save some xarray memory. It might be necessary to evaluate 
->>>>>> whether the increased split operations will have a significant 
->>>>>> impact on the performance of sequential swapin?
->>>>
->>>> Is there a shmem swapin test I can run to measure this? 
->>>> xas_try_split() should
->>>> performance similar operations as existing 
->>>> xas_split_alloc()+xas_split().
->>>>
->>>>>>
->>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all 
->>>>>>> swap entries
->>>>>>> are order-0, which can lead to issues. There should be some check 
->>>>>>> like
->>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() 
->>>>>>> should
->>>>>>> be used.
->>>>>>>>
->>>>>>>> Moreover I did a quick test with swapping in order 6 shmem 
->>>>>>>> folios, however, my test hung, and the console was continuously 
->>>>>>>> filled with the following information. It seems there are some 
->>>>>>>> issues with shmem swapin handling. Anyway, I need more time to 
->>>>>>>> debug and test.
->>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not 
->>>>>>> allocate
->>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
->>>>>>> error below. Let me know if there is anything I can help.
->>>>>>
->>>>>> I encountered some issues while testing order 4 and order 6 swapin 
->>>>>> with your patches. And I roughly reviewed the patch, and it seems 
->>>>>> that the new swap entry stored in the shmem mapping was not 
->>>>>> correctly updated after the split.
->>>>>>
->>>>>> The following logic is to reset the swap entry after split, and I 
->>>>>> assume that the large swap entry is always split to order 0 
->>>>>> before. As your patch suggests, if a non-uniform split is used, 
->>>>>> then the logic for resetting the swap entry needs to be changed? 
->>>>>> Please correct me if I missed something.
->>>>>>
->>>>>> /*
->>>>>>    * Re-set the swap entry after splitting, and the swap
->>>>>>    * offset of the original large entry must be continuous.
->>>>>>    */
->>>>>> for (i = 0; i < 1 << order; i++) {
->>>>>>       pgoff_t aligned_index = round_down(index, 1 << order);
->>>>>>       swp_entry_t tmp;
->>>>>>
->>>>>>       tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
->>>>>>       __xa_store(&mapping->i_pages, aligned_index + i,
->>>>>>              swp_to_radix_entry(tmp), 0);
->>>>>> }
->>>>
->>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this out.
->>>>
->>>>>
->>>>> In addition, after your patch, the shmem_split_large_entry() seems 
->>>>> always return 0 even though it splits a large swap entry, but we 
->>>>> still need re-calculate the swap entry value after splitting, 
->>>>> otherwise it may return errors due to shmem_confirm_swap() 
->>>>> validation failure.
->>>>>
->>>>> /*
->>>>>   * If the large swap entry has already been split, it is
->>>>>   * necessary to recalculate the new swap entry based on
->>>>>   * the old order alignment.
->>>>>   */
->>>>>   if (split_order > 0) {
->>>>>     pgoff_t offset = index - round_down(index, 1 << split_order);
->>>>>
->>>>>     swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
->>>>> }
->>>>
->>>> Got it. I will fix it.
->>>>
->>>> BTW, do you mind sharing your swapin tests so that I can test my new 
->>>> version
->>>> properly?
->>>
->>> The diff below adjusts the swp_entry_t and returns the right order after
->>> shmem_split_large_entry(). Let me know if it fixes your issue.
->>
->> Fixed the compilation error. It will be great if you can share a 
->> swapin test, so that
->> I can test locally. Thanks.
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index b35ba250c53d..bfc4ef511391 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -2162,7 +2162,7 @@ static int shmem_split_large_entry(struct inode 
->> *inode, pgoff_t index,
->>   {
->>       struct address_space *mapping = inode->i_mapping;
->>       XA_STATE_ORDER(xas, &mapping->i_pages, index, 0);
->> -    int split_order = 0;
->> +    int split_order = 0, entry_order = 0;
->>       int i;
->>
->>       /* Convert user data gfp flags to xarray node gfp flags */
->> @@ -2180,6 +2180,7 @@ static int shmem_split_large_entry(struct inode 
->> *inode, pgoff_t index,
->>           }
->>
->>           order = xas_get_order(&xas);
->> +        entry_order = order;
->>
->>           /* Try to split large swap entry in pagecache */
->>           if (order > 0) {
->> @@ -2192,23 +2193,23 @@ static int shmem_split_large_entry(struct 
->> inode *inode, pgoff_t index,
->>                   xas_try_split(&xas, old, cur_order, GFP_NOWAIT);
->>                   if (xas_error(&xas))
->>                       goto unlock;
->> +
->> +                /*
->> +                 * Re-set the swap entry after splitting, and the swap
->> +                 * offset of the original large entry must be 
->> continuous.
->> +                 */
->> +                for (i = 0; i < 1 << cur_order; i += (1 << 
->> split_order)) {
->> +                    pgoff_t aligned_index = round_down(index, 1 << 
->> cur_order);
->> +                    swp_entry_t tmp;
->> +
->> +                    tmp = swp_entry(swp_type(swap), swp_offset(swap) 
->> + i);
->> +                    __xa_store(&mapping->i_pages, aligned_index + i,
->> +                           swp_to_radix_entry(tmp), 0);
->> +                }
->>                   cur_order = split_order;
->>                   split_order =
->>                       xas_try_split_min_order(split_order);
->>               }
-> 
-> This looks incorrect to me. Suppose we are splitting an order-9 swap 
-> entry, in the first iteration of the loop, it splits the order-9 swap 
-> entry into 8 order-6 swap entries. At this point, the order-6 swap 
-> entries are reset, and everything seems fine.
-> 
-> However, in the second iteration, where an order-6 swap entry is split 
-> into 63 order-0 swap entries, the split operation itself is correct. But 
+> No, we unfortunately can not rely on GPIO-flags. This is not how driver
+> works: current driver behavior is to force GPIOs as active high if the
+> property is missing and ignore polarity specified in GPIO property.
 
-typo: 64
+So you mean this property is still valid?
+Current implementation toggle the GPIO flags to low active if the property and the GPIO flags are different.
+So in case of missing property (false) the settings from GPIO flags will be used.
+In case of gpio-activelow (true) GPIO flags are set to low active.
 
-> when resetting the order-0 swap entry, it seems incorrect. Now the 
-> 'cur_order' = 6 and 'split_order' = 0, which means the range for the 
-> reset index is always between 0 and 63 (see __xa_store()).
+So I will remove the deprecated flag and change the description to:
+"Force GPIO flags to active low. Use GPIO flags if property is missing."
+OK?
 
-Sorry for confusing. The 'aligned_index' will be rounded down by 
-'cur_order' (which is 6), so the index is correct. But the swap offset 
-calculated by 'swp_offset(swap) + i' looks incorrect, cause the 'i' is 
-always between 0 and 63.
-
->  > +for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
->  > +    pgoff_t aligned_index = round_down(index, 1 << cur_order);
->  > +    swp_entry_t tmp;
->  > +
->  > +    tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
->  > +    __xa_store(&mapping->i_pages, aligned_index + i,
->  > +        swp_to_radix_entry(tmp), 0);
->  > +}
 > 
-> However, if the index is greater than 63, it appears that it is not set 
-> to the correct new swap entry after splitting. Please corect me if I 
-> missed anyting.
+> Thanks.
 > 
->> -
->> -            /*
->> -             * Re-set the swap entry after splitting, and the swap
->> -             * offset of the original large entry must be continuous.
->> -             */
->> -            for (i = 0; i < 1 << order; i++) {
->> -                pgoff_t aligned_index = round_down(index, 1 << order);
->> -                swp_entry_t tmp;
->> -
->> -                tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
->> -                __xa_store(&mapping->i_pages, aligned_index + i,
->> -                       swp_to_radix_entry(tmp), 0);
->> -            }
->>           }
->>
->>   unlock:
->> @@ -2221,7 +2222,7 @@ static int shmem_split_large_entry(struct inode 
->> *inode, pgoff_t index,
->>       if (xas_error(&xas))
->>           return xas_error(&xas);
->>
->> -    return split_order;
->> +    return entry_order;
->>   }
->>
->>   /*
->>
->>
->> Best Regards,
->> Yan, Zi
+> -- 
+> Dmitry
 
