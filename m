@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-531218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C860A43DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:33:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D1CA43DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31AC47A32BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268ED17928C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201CB267AFA;
-	Tue, 25 Feb 2025 11:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D0E267B03;
+	Tue, 25 Feb 2025 11:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QdwwyCcL"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w9A012Zq"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EA626657B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA0326561F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483222; cv=none; b=lVEvCcuUvTw6OKwQPx8hv44yyXdu5RSJLUayC9ajHo0zku7//yVa3ofBm5SPvNKUnINNJRSpeldfCeneWMV5PkKU/Y7L63q/PRF8WqwnOtcUzXvLoYdeaigmNy7YZSv59rz5MbQGBV2r5g+XazVHLjdxTfsC1NsPUArNec61tNs=
+	t=1740483264; cv=none; b=bdNAgbIjVp/V42jO2XOeEfR+BT0N201MSHwFMmwK+iFhBx3GyVwQFq5kKnETjDcLAswDSiNIgRhb+4XWq8426jHutMarQROAXOKBHzuqipNumCR5t7rensWgvGGwqSRKcdsW98N0yTz+oBsWOjJzLqDpnkRhJJjD7+SC1J0s910=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483222; c=relaxed/simple;
-	bh=Ta4BgpxfxjKDJ20mL6RIarb8PIWbJrvt0mlVBqL08Js=;
+	s=arc-20240116; t=1740483264; c=relaxed/simple;
+	bh=CREou4y/+U6bUYhLNe/N351zpQJAgpdQqf53UGRVSBQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fmn8/mMangv0ZwS1OLmaA2fbbYDScXijHvhpQijA1EAH9Y5Q0KrM0iB2U3WpJw+Pk8x7RKduV8dJNcljXlt7CPCqP1z8evFjzW0yvVjb+xOwty+8rTgkbPcMtcEm0+zCIxBQeu8krs1Iocx5mUk/PN6PQqIZIWtLBzglidqm6l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QdwwyCcL; arc=none smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=VdxDEJFIFCAqy46X1dubk5acZpCI6WGZdKrd+2npIsLo4hADrBDhjHydQQPgSS4udis1e79ZkIrcbyrBACQSOkWN+LomU1ga/UFLxQIBlJSQWjIzxI/FCTq/uHwb7b+CKL+Iu8yRTnZD4x6Muo7Zl1T5z8RyscrGQhw9roeEO2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w9A012Zq; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-472098e6e75so246691cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:33:40 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-439a2780b44so34358185e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740483219; x=1741088019; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ta4BgpxfxjKDJ20mL6RIarb8PIWbJrvt0mlVBqL08Js=;
-        b=QdwwyCcLk3wx6X3YCkSpS835qrM0/Da7OtLvFtCG5/+1KP8PzLM6vRl6HJH0ICD/f5
-         n4rd9rSVs+ygnw0caP/mSur4uBpPq/9HkHJxXxwLt5cFQlk7znLTGy+KxOdJ01dbT1Ey
-         VmkbPZV/tmmWOTEEYUqBFlCUy4yv10xtrEZyq/WqyYmvcPcD2EBKphoQuBEY2MC2SBPf
-         Ua2LM0ObRs7X7cpPaLh4p8qbcDGY0uzLzIl6ckjAiUjo3O6AYJpIOUoUc4XKcSPYGJoC
-         /NE0zrDtbMDNcNDVS2kZfWCDgWS98AwE4bj8oEx0vRcY1MJAuq5TXdssCyaYG2qvReJD
-         FoSQ==
+        d=google.com; s=20230601; t=1740483261; x=1741088061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TieRo03C9onpOScmMgtCBQj1o1WeXXfQS18urJ4Jtb4=;
+        b=w9A012Zq+ISEbHKlHjjvxiikKN4ZWRBRygHhyQAXrVlf/cgPUW+Pb8PmiNaTKmq5Vo
+         XkSjRfQPY/y4tLt/VO5ar3POV6TiV5PII6C0G+43OIYrYFElqd75vL0PQaMulhWrvVVX
+         5NSeml/aekAcwXW9rKSZYmDivH5ecq67WifyFAp0x/l/0R/c04cyu2EpYXTWQX9Npjg2
+         YIMG+k3xz9XdaHp6z76J+mrZrEC4kpAkSRmdK4HFgrgkBTnuywbuKPiEaVClWe6Xpcrk
+         XQ6juTgjm+65us0ft7/gfuVUcWLblcXtNGpRiPA0qutiWnuuseHj07wL8Y6gz3dGkuv0
+         qXUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740483219; x=1741088019;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ta4BgpxfxjKDJ20mL6RIarb8PIWbJrvt0mlVBqL08Js=;
-        b=S2AizxcSnp6zYmaOyWLFfvHBV7tEfpZITl311on9h1YV1VxGYnqAHL1NVOiEbLcqYC
-         RT8LaRvujCMXxbKCCV90ufhWqipXwowRRQ+1s5Jz2ROmtnwqP5sgWZRKCl0xjFIfS5IH
-         BwTdRvqikuB/d79dJjbQCGiZNIeDEhC1tzeqPDJV63/YjUXm/sMURICdmYTV3B58E82F
-         DM/qiPZLiEAkCET4lgId4/+60LoUNC9kdc63/nw/t/Z020EoYzl24mFPSqWd4si0tgIp
-         KjptkyeD5kIm3e/OebWfj7vLbRyrvYL8HhzVxat+vhDygCzPJY6TIBAcf5K0OVB1xgGX
-         S2Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWopRys6J9y292nATZcHkuw/tp7XHnnU3U5AiJ80yrMgttisIpRkmIjyeDK0WdLuKUzu5B2cgce2vOQxpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtGZqZ2YCKSgbJeXIjlQNKrHW2LADv/u4e8cExQtOwW0E+fEvu
-	RZRiaeZItI1+pqUxVNjXlQdXf7Lj48lJTuOFsSy7A3rviclXmARQekI4aYxzQC/A2aE680v6eRV
-	s1Y565Q2NpEscEeC3N+YnJlz7Vltm1ZZERykh55M81Xh67AegRdwqa2Q=
-X-Gm-Gg: ASbGncsDpIb17nfreLCS1nP4oBxIgWIrIPOb27pESU9rjIUVTHE1GDrdh2uO505bphz
-	G2eaG3O8+CPPN+lJuqQmP87XueTlOyngi/Ob15mtcdEghnYPxy1DuDwn51rIpA3KSYvBp25kpCF
-	2WkgguC/JbPthikCBA9NTNl8t+BTQKp2GvpTCrgw==
-X-Google-Smtp-Source: AGHT+IET/v27MCIkeaaMC3Gh/ajvYpr8Wix2qBvkNFg05Vp2NIsgPAEPOcq4Gkpw/hgEpYSU4WtOvrGwdF70tW94tpc=
-X-Received: by 2002:a05:622a:1a95:b0:471:f34d:1d83 with SMTP id
- d75a77b69052e-47376e6f153mr3752441cf.7.1740483218972; Tue, 25 Feb 2025
- 03:33:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740483261; x=1741088061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TieRo03C9onpOScmMgtCBQj1o1WeXXfQS18urJ4Jtb4=;
+        b=OyWEZRTZPFul1X1vheraC88HofAHT7CXfw1qycBhJz6R0wBvu+GFHH8TOqZzuEcwqd
+         eMlv6HK+CDSxjVF1NgQe+Z31Yqrv5mFcaVHhd/RDNFQ/BmKOwEtr9VGIYTMhjLdGoShI
+         nqY/A8J3QDZ4Zoxp/gtuQjzrJE/yVPvS4jhmzSa0tUmFWB8jQnKFQqrNDdbuGCHy+wlS
+         E2sujagprqQ0EWk2z3ltIoGmbn89Dzo4q2MN1X4NaFe1iSfqRovX/H5eDJZOJH90Swe3
+         4s8F+3ejtvNFdBusDX5yC9wIc/joJZH3N95+trFNrU3Dy3+ItLCTow01P4qo/IOMq5yz
+         qGUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Ic+IlatXekCyJKWYgkYssXsRCi2rSZIUpscupvjgm94I7LzEvo1ap9ojfMFGl2h+OnTgh+2mQsR1jk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVnjpIU4C4DxIX1v+GUpPGKmWtDLPxFrlFqtmt3JFz1OTrYXhc
+	lpL1j5mzoOvBirI3T7yt7I3oQIDDj05WcrUDFboFlrLX14xeh7boqhVWrLcbFUfATWAkemJADYr
+	JAm0HNLqBjyeDoyVaLoiw0QQ3DxXz/ybUy01P
+X-Gm-Gg: ASbGncvSUYpcwKTkufTH/+r7JR54/U6ISGr2sNrg76dAjIUOS6Ldq6JPvBcjA/Uc2Pt
+	VwNPcbb1zPLdKe/Be+PZf3zfux6fqQvshi4CFKWwJtY8oPkwarei8dUjdUHwJuFXCwGmKHJqVj/
+	Z41fjBg93rJFavgt3N/YjLhsSnO9rm0zJjYo4aXg==
+X-Google-Smtp-Source: AGHT+IFuQe5i+7zSpyl92MNrd+ihjdRnVV5HSYuuSo3c0eiByulZFl7LuiY4yHbGeqIo5m3MYEG1Igcn/QXeQMwNFW4=
+X-Received: by 2002:a05:6000:47:b0:38c:617c:ee2f with SMTP id
+ ffacd0b85a97d-38f6e95f4bdmr11415200f8f.13.1740483261227; Tue, 25 Feb 2025
+ 03:34:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115-checkpatch-ignore-v2-0-8467750bf713@google.com> <763bd905-6f1a-42a9-9f81-acecd98131a4@oss.qualcomm.com>
-In-Reply-To: <763bd905-6f1a-42a9-9f81-acecd98131a4@oss.qualcomm.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Tue, 25 Feb 2025 12:33:27 +0100
-X-Gm-Features: AQ5f1Jr1-wymxOiYtkrlZ1UkFRedAs2kEf4aoYC-u6d7-yufgGTqA5eKvVIMl6g
-Message-ID: <CA+i-1C30dTL4H2ELNzvYV_yOc+WT=bVKW7R3KQe6=XjRX_jzfw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] checkpatch: Add support for checkpatch-ignore note
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org
+References: <cover.1740475625.git.viresh.kumar@linaro.org> <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
+ <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com> <20250225105425.ooqvefiae5bmr723@vireshk-i7>
+In-Reply-To: <20250225105425.ooqvefiae5bmr723@vireshk-i7>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 25 Feb 2025 12:34:09 +0100
+X-Gm-Features: AQ5f1Jqoh_oqWwzicR7sl7AH4qtQrypdV62Ab3La63JTVep-rxjy5YnPI5krq8s
+Message-ID: <CAH5fLgjbW0yGm0TQcQEG9cc+i3WxbF8JKaqBUFD7=pJ-JkJ9zg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	Danilo Krummrich <dakr@redhat.com>, rust-for-linux@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 24 Feb 2025 at 20:09, Jeff Johnson
-<jeff.johnson@oss.qualcomm.com> wrote:
+On Tue, Feb 25, 2025 at 11:54=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
 >
-> On 1/15/2025 7:33 AM, Brendan Jackman wrote:
-> > Checkpatch sometimes has false positives. This makes it less useful for
-> > automatic usage: tools like b4 [0] can run checkpatch on all of your
-> > patches and give you a quick overview. When iterating on a branch, it's
-> > tiresome to manually re-check that any errors are known false positives.
+> On 25-02-25, 10:55, Alice Ryhl wrote:
+> > On Tue, Feb 25, 2025 at 10:47=E2=80=AFAM Viresh Kumar <viresh.kumar@lin=
+aro.org> wrote:
+> > > +impl Drop for Cpumask {
+> > > +    fn drop(&mut self) {
+> > > +        if self.owned {
+> > > +            // SAFETY: `ptr` is guaranteed to be valid for the lifet=
+ime of `self`. And it is safe
+> > > +            // to call `free_cpumask_var()`.
+> > > +            unsafe { bindings::free_cpumask_var(self.ptr) }
 > >
-> > This patch adds a feature to record in the patch "graveyard" (after the
-> > "---" that a patch might produce a certain checkpatch error, and that
-> > this is an expected false positive.
+> > This is missing a semicolon, but it's not the last statement in the
+> > block. Did you compile this with CPUMASK_OFFSTACK=3Dn? I don't think it
+> > compiles with that setting.
+>
+> I would always add a semicolon here, yeah I missed adding that but ..
+>
+> I have missed minor things before sending a series a few times in the
+> past and this one really scared me thinking here I did it again :)
+>
+> Though I was sure that I have built the code with both
+> CPUMASK_OFFSTACK=3Dy and =3Dn, I performed the builds again and it worked
+> (again).  That confused me even more :)
+>
+> And here is what I think is happening here (which makes it build fine
+> accidentally):
+> - free_cpumask_var() has a return type of void.
+> - The block {} allows it to build fine without a semicolon here.
+> - I performed a simple test for this [1] and it works too.
+
+Ah, you are right, the block makes it work in this particular case.
+
+> > > +            #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
+> > > +            // SAFETY: The pointer was earlier initialized from the =
+result of `KBox::into_raw()`.
+> > > +            unsafe {
+> > > +                drop(KBox::from_raw(self.ptr))
+> > > +            };
 > >
-> > Note, for Git users this will require some configuration changes to
-> > adopt (see documentation patch), and not all tools that wrap Checkpatch
-> > will automatically be able to take advantage. Changes are required for
-> > `b4 prep --check` to work [0], I'll send that separately if this patch
-> > is accepted.
-> >
-> > [0] https://github.com/bjackman/b4/tree/checkpatch-ignore
+> > This looks like you did not run rustfmt.
 >
-> While this addresses one issue with checkpatch, it doesn't solve what I
-> consider to be a bigger issue, namely to have a way for checkpatch to ignore
-> false positives (or deliberate use of non-compliant code) when run with the -f
-> flag.
+> I did this:
 >
-> I don't know how many times I've seen new kernel contributors try to "fix"
-> checkpatch issues as their first commit, and contribute broken code in the
-> process. This is especially true when trying to "fix" macros.
+> make CLIPPY=3D1 rustfmtcheck ARCH=3Darm64 O=3D../barm64t/ -j8 CROSS_COMPI=
+LE=3Daarch64-linux-gnu- CONFIG_DEBUG_SECTION_MISMATCH=3Dy
 >
-> So IMO what would be more useful is to have some way to document these
-> overrides in the tree so that they could be honored both when processing
-> patches as well as when processing files.
->
-> Note that thanks to Kalle's work, the wireless/ath drivers have their own way
-> of doing this, but of course that only works if you run the scripts.
-> checkpatch run normally would still flag the issues.
->
-> more surgical:
-> <https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath12k/ath12k-check>
->
-> less surgical:
-> <https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath11k/ath11k-check>
-> <https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath10k/ath10k-check>
+> I hope that is all I need ? I checked again with both CONFIG options,
+> doesn't complain with rustc 1.84.1.
 
-Yeah I think the best solution for that would be something like a
-.checkpatch-ignore file in the spirit of .gitignore.
+Hmm, ok. I would have expected it to format on one line:
+unsafe { drop(KBox::from_raw(self.ptr)) };
 
-Maybe other tools have solutions for that that checkpatch could copy.
-The only one I know of is pylint which solves it with code comments.
-That makes a real visual mess of the code in my experience. And based
-on Konstantin's comments on v1 of this patch, comments _definitely_
-wouldn't fly with the kernel community! So I think it would have to be
-an out-of-band config, and if that comes at the expense of granularity
-then so be it.
+That is what normally happens when the semi-colon is outside the
+block. Not sure why it did not happen in this case.
 
-(I would support the inline-config approach for a very high-precision
-linter, like Rust and Go have, but Checkpatch Dot P.L. is never gonna
-be one of those).
-
-Anyway, solving the -f case shouldn't be required for merging this feature IMO.
+Alice
 
