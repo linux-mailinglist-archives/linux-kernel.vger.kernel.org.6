@@ -1,131 +1,159 @@
-Return-Path: <linux-kernel+bounces-532180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E48A449E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:14:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AE4A449CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6613B38A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC9417A837
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D8719D88F;
-	Tue, 25 Feb 2025 18:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655CF19D086;
+	Tue, 25 Feb 2025 18:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV0JxqUB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjDjOReS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD14194A59;
-	Tue, 25 Feb 2025 18:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10B315445D;
+	Tue, 25 Feb 2025 18:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506933; cv=none; b=hOn7w22B3pK4a72GcOF7tYsauqHqLYyc+yAjyn10eEpPnCMR3TiXuIfq0L2LeyyXwXtxc4SuC4O0EbORn4zzzFgyUKK6jR1wCBCafzUvKqbYbK/B8O1BN4jr0jLMP4SNRDLEaxVPe7nXYlogegxxo2hJOFJTCnqDKWG0b+AOfaw=
+	t=1740506949; cv=none; b=KQt4AOlnkC6dkrOFiujLp0qhoiDFs5y4ZSoXcm4QN981aHhfGmP4z8oD75erDq7ni1fM+61CZf9jLS+xoWkkFTUtsah4TA11Ze1f8SxHTPG1awafAmYUpfGyCa5H78kSYW19Ysawuz+6xRNNlbt4YHI5PPcAal+cQ28K2wiT1YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506933; c=relaxed/simple;
-	bh=bq2qsdPe4LGuWItQe5cE+6dmynkmRrOR0hWrrdjWRAo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rYgrFlXHLDkoBcptVMmF5WAjxCtKk4HVn8Izq+JJosqNtJVYKCIkY4KEct6oqOI8fnI9T7oYmOvczXJ8GbEHVYn2qhe/zWECkfwMeGVrfMOBbdDdc1q4moPu5M2B0QHwVWquiRo5Jxgz2LRYwrjbpwF0gspPvlfr0mlf0CpFGd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dV0JxqUB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F2CC4CEE2;
-	Tue, 25 Feb 2025 18:08:52 +0000 (UTC)
+	s=arc-20240116; t=1740506949; c=relaxed/simple;
+	bh=Dv9CuDzk0YW6VVlDS9wYPUduwzmfbTUqSubDrkIsSpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h9FeLhoZOE39s7MciPMl+wYHTP7wb3kK6tW9INWq/Tm6VtN0kHvkIQs3UwJA5vdx+NwLmthf9GpVaX7onE5SzHFuullDV+dY2uhdj5c8co3FgWZvwxCz+evJxTzFwCJ01LGt5x8zAlPFuuajY9e/TBhu6Op9+tqS3uwY3LhPLMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjDjOReS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1CB9C4CEE2;
+	Tue, 25 Feb 2025 18:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740506933;
-	bh=bq2qsdPe4LGuWItQe5cE+6dmynkmRrOR0hWrrdjWRAo=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=dV0JxqUBtf/F1yClSGdbE7OOolhrNZU8Wu+c5/YcGH9Kn82SrCMS7tlYCWq55TwWZ
-	 FVEbvTs3j1Suap/aS0d++cfEICTM7O+PTt8JjPvFWnp1IHl+YJK/9DTzZr3PrUQDM+
-	 eFW8dLEDyvVBe/1FR+izUeD/Ymb7opbh4jXN5KlVOf5XMOfEXxd8A1rzqUz2XqvVYD
-	 qqcSCAAC7DvdOpAnMFtvCOXtmjvJtWlMwK3WeQlrm1zMuiAHSwGNhvFFo6ns4k2lW6
-	 ++ToAW8FiAYXTOKOh04KWTxBV2NETHvwdUKwC7weofRZDIvqBRxgKsJCZnZaLoHL25
-	 8S4/61iBNwuDQ==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 45AC6120007A;
-	Tue, 25 Feb 2025 13:08:51 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-10.internal (MEProxy); Tue, 25 Feb 2025 13:08:51 -0500
-X-ME-Sender: <xms:Mwe-Zz6vx6mRR190CkwMuUl2O9mT2iqe1DDgKB-ydt--DPUuR_LEcg>
-    <xme:Mwe-Z45tlUoSpZxGKKoogc9JCBMoOMSHrUs6AL_mS9aZXnrrVXMcH84M2QDW8OO8g
-    2XN55Hbgm_83QtYMj8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfnvghonhcutfhomhgrnhhovhhskhihfdcuoehlvghonheskhgvrh
-    hnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpeejvefflefgledvgfevvdetleehhfdv
-    ffehgeffkeevleeiveefjeetieelueeuvdenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehlvghonhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidquddvfedtheefleekgedqvdejjeeljeejvdekqdhlvghonheppehkvghrnh
-    gvlhdrohhrgheslhgvohhnrdhnuhdpnhgspghrtghpthhtohepvddtpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehjohhnnhihtgesrghmrgiiohhnrdgtohhmpdhrtghpth
-    htohepmhgtrghrlhhsohhnsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehkrghi
-    rdhhvghnghdrfhgvnhhgsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohephhhkrg
-    hllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgvlhhgrggrsheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkfieslhhinhhugidrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhn
-    rdgthhdprhgtphhtthhopegrvggrshhisehmrghrvhgvlhhlrdgtohhm
-X-ME-Proxy: <xmx:Mwe-Z6eRVRwb92v3xwiBRoCfoU0BORcIuI5pBoWRiwArPQGtCgPYzg>
-    <xmx:Mwe-Z0J6Ik74tuQs9Mz5hywsL3_3znIDGsJbsvmfzDbn7XWvyp7XXw>
-    <xmx:Mwe-Z3IeoWtKp9OK6SQzwxeMKmc605ZxLRoljnlrjyFcvZa9xGVQAQ>
-    <xmx:Mwe-Z9z-8gKVgagYVKNcKARCpzK-Pnn9nMUAwlsdwauhARFyBLdXQA>
-    <xmx:Mwe-ZzK93b_6RGbKiEZVp7H-nuum2kxMJCPcHO4uTC1XVqJ4QxMNJIOE>
-Feedback-ID: i927946fb:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 158D51C20069; Tue, 25 Feb 2025 13:08:51 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20201202; t=1740506949;
+	bh=Dv9CuDzk0YW6VVlDS9wYPUduwzmfbTUqSubDrkIsSpE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TjDjOReS5VSAIrf7ns1UhM+oFR7VPfDeL9sO2q75jx6LVRggHaD/MtMmpMD78zrUl
+	 6LtQKaMqX+Nj18vylZ+x8qDJ+Frz0B2YGJl7Ee+EnEvtmHlv3yJZOSgF4bGtbNF0ue
+	 iW9mJGrDTlCKSF3/yTzJ87RblzgkSTNywBsy6eTCR6vQ7F19/9PBUmBAU0i5/2Pyyw
+	 wYFAfOQt/0X/16LDjwZXR1Eo3CparlDImQK1izoQKWHzl8ylUTWOgdH+Q/5ZiTnJik
+	 kzOb7qTgUo9zcsDIDBOrFdzCVtenG9tCeaooSdFQfDsqncWSYQB3g2jQMjiL/y+4WW
+	 txsflAGIcrctg==
+Message-ID: <5f21bb7f-b0f8-4b39-8afd-5a1a672c54ec@kernel.org>
+Date: Tue, 25 Feb 2025 19:09:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 20:08:31 +0200
-From: "Leon Romanovsky" <leon@kernel.org>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Cc: "Bjorn Helgaas" <helgaas@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- linux-pci@vger.kernel.org, "Ariel Almog" <ariela@nvidia.com>,
- "Aditya Prabhune" <aprabhune@nvidia.com>, "Hannes Reinecke" <hare@suse.de>,
- "Heiner Kallweit" <hkallweit1@gmail.com>, "Arun Easi" <aeasi@marvell.com>,
- "Jonathan Chocron" <jonnyc@amazon.com>,
- "Bert Kenward" <bkenward@solarflare.com>,
- "Matt Carlson" <mcarlson@broadcom.com>,
- "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
- "Jean Delvare" <jdelvare@suse.de>,
- "Alex Williamson" <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, "Jakub Kicinski" <kuba@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Message-Id: <354ce060-fc42-4c15-a851-51976aa653ad@app.fastmail.com>
-In-Reply-To: <7ff54e42-a76c-42b1-b95c-1dd2ee47fe93@lunn.ch>
-References: 
- <c93a253b24701513dbeeb307cb2b9e3afd4c74b5.1737271118.git.leon@kernel.org>
- <20250225160542.GA507421@bhelgaas> <20250225165746.GH53094@unreal>
- <7ff54e42-a76c-42b1-b95c-1dd2ee47fe93@lunn.ch>
-Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-slim7x: Drop incorrect
+ qcom,ath12k-calibration-variant
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ath12k@lists.infradead.org
+References: <20250225093051.58406-1-krzysztof.kozlowski@linaro.org>
+ <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
+ <7b54e965-3395-4349-8ae7-51a28c759235@linaro.org>
+ <kce6gzso22fp3ze2wp43fvy4tv6yqkaijm72kh5qk34jwijk2l@3ifaiz5tgjvl>
+ <d93789c6-61d9-4761-98f5-aa3dbec14d82@linaro.org>
+ <21ad3381-4d65-4c68-892d-9f485bf13735@oss.qualcomm.com>
+ <c55f615e-6831-4470-9ea2-73fe605b8a5f@linaro.org>
+ <71019e23-f339-4485-8599-c4e40ad979a9@oss.qualcomm.com>
+ <a9e0a8ff-e84e-4210-babd-0d0a1825e9ec@kernel.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a9e0a8ff-e84e-4210-babd-0d0a1825e9ec@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 25/02/2025 18:59, Krzysztof Kozlowski wrote:
+> On 25/02/2025 18:36, Jeff Johnson wrote:
+>>
+>>>
+>>> Also post factum reasoning is not correct, because this would open the
+>>> gate to bypass any sort of review. Just squeeze your stuff into the DTS
+>>> and then you can bypass all DT maintainers :/
+>>>
+>>> All properties must be documented and bindings must be accepted *before*
+>>> DTS patch is applied.
+>>
+>> There is no intention to bypass DT maintainers. We are just trying to upstream
+>> a large amount of downstream code, and in the process some pieces are coming
+> 
+> I don't see how this is related here - patch was not sent by anyone from
+> Qualcomm.
+> 
+>> out of order. And there is also confusion if binding, driver, and DTS changes
+>> should be in one series or three separate series.
+> 
+> How is it related to incorrect property here? It feels like this topic
+> is being hijacked for some other point. I am not happy with this because
+> then Bjorn will see that discussion is going so he will ignore the patch.
+> 
+> BTW, I gave my statement multiple times, writing bindings also mention
+> this, so is anything going to change if I say it 100th time here? In one
+> month there will be the same question :/
 
 
-On Tue, Feb 25, 2025, at 19:30, Andrew Lunn wrote:
->> We always read VPD by using "sudo ..." command, until one of our customers
->> requested to provide a way to run monitoring library without any root access.
->> It runs on hypervisor and being non-root there is super important for them.
->
-> You can chmod files in sys. So the administrator can change the
-> permissions, and then non-root users can access it.
->
-> This seems a more scalable solution that adding a special case in the
-> kernel.
+Another BTW, not helpful to community, but if you asked above for
+Qualcomm, that Qualcomm does not know where to post DTS, then you are
+lucky, because your extensive internal guideline has it already very
+clearly documented (detailed in "Driver upstreaming process" and a bit
+in "feedback/review on lists"). The guide is quite comprehensive and
+covers all typical cases, like that one.
 
-Special case is an outcome of discussion in previous versions. My initial patch which I believe is the right approach is to allow non-root read access to VPD for everyone.
-
-Chmod solution is something that I thought, but for now I'm looking for the out of the box solution. Chmod still require from administrator to run   scripts with root permissions.
-
-Thanks 
-
->
-> 	Andrew
+Best regards,
+Krzysztof
 
