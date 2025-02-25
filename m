@@ -1,85 +1,73 @@
-Return-Path: <linux-kernel+bounces-531503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8928AA4414C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:50:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ACEA44150
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 855AE165417
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A96797A58E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C76F268FFE;
-	Tue, 25 Feb 2025 13:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B500269AEA;
+	Tue, 25 Feb 2025 13:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS1Zij+j"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UP4byKOg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE43F2571D3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF54F233714;
+	Tue, 25 Feb 2025 13:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491418; cv=none; b=SVLkQaRnurGfPY6mZBARacHvhq0ZS5ayIY+FYq6c682Si0harazIhE6G0rft514Rsi7D9byevpaI0zrs5H8pXTCpCPvX0XC1ddXPV8/RfdkX6a+nMrwJkNsGbmUXRjFH6K5ayD7I4r5Rxg8nb4OC37egJpcGuXcjY2soPiUmpdM=
+	t=1740491480; cv=none; b=lsYrSN+Arub2xzWob0VtRjBKcnTQLGVy6X9qz47/TsEWyyIF3+81sBNNKjnxrTlL7Sbp5pMLqHID1MOMAH5JGG+kpZoNiUGtpyCGOmT1Shd2oTaYoqOVEeYCbvdd6QOi7Gke6lX0cFeglEhdVawrD4Amiiw095kdeh3py6HDU4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491418; c=relaxed/simple;
-	bh=AnrO1R+eYOIRoqSXgbhD5fZn5x01gW/jo/i+D2bdYGo=;
+	s=arc-20240116; t=1740491480; c=relaxed/simple;
+	bh=PcXWHDco3CAdDPQSPgA+cZxIc/cAUc3MY9VoBBcOWbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYdusixpZ76wm3hCGKOiuww+Z742XweOs3yHK4ZZtJiPN9QX6tFHMliM9WMIyidARJGiAwqHg0UUcruykhwftEaFfEAKqiM2/pZtwfuvGxp8Bpn8lgfS63qfu4KVlgdftyWuQqAUx4WATKV9JpCOW0jj8JfVxf0BFGkz/JU6LOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cS1Zij+j; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso54455e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:50:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740491414; x=1741096214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=flQTZ/IAOp+GXiZB2aYc0mgVQNYYPMmryd0DJ0XOL+c=;
-        b=cS1Zij+jgJsa9DAEIzQHwNl/WaXsysiFSL2L+IZ7I2ybPSjeDCYP8HquFcR7FUA47U
-         9MlowhDCfkDuUVUFrTXSyeBZt+z91ilkbCLqOLiAung6UeqVTGKEJFL672hh+vFNTzc/
-         fBKyxWVOui5NIajELWPK0zfm6545XRs0ksnLOMUDwStEa8G7/+27olQii9zF11Md+NKd
-         X41tmnq9Ex9DrY9DQRbjlHWt1wugXLchMFQx9CoIZtQYpJOD90SzrfOzVZt3pn4cFLrx
-         kCzXRRlRQza+4RZO8DL9xIv0hRmNRaQLoRJ9pY4pvCAzstWWL2PRdZoru/X5ysTWwAxx
-         6iEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740491414; x=1741096214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=flQTZ/IAOp+GXiZB2aYc0mgVQNYYPMmryd0DJ0XOL+c=;
-        b=Lmysa0J1mn81fYxb0c2Q8bCsqgrCk9EMrY5HQha1LuP/rHExexrPAO3g+r6zT5FwOU
-         DQ4HviXdhb/eFJvK1mpHQibsAwRGwgBd/3ADabV3coVciyHNlrfKBC3YEEjpeVLTnUrX
-         8oG7NhptbH+UqpMG99KjjgOop3puS5eCHln3RgYyKz6oNlqwSX8EfjCJI2so6JI6sCsa
-         6OYq4RnHR2trhmkVWhWWPDIdLqoWL1gUdPNhBi19x2UmKqe5ox8kQV/lXBtsm0+NGsgD
-         mr97k25lR6BAcN1cO8hDHGuKombboiwLQIZpWNHJc2uuVbdK95GycpNwhsgVeDXVkKxR
-         rHjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmG0cOt5YbSiLn6QFYNpcScr/ci/KGMXd37FA3HyAHf+mZouU41rNVmrpF0uDQiYXkMslelW6NGWyxoXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx309NaBNXM84BnVKQcHeYnh7/7+wwRLlsCMkB6jGjSHEbHZEmO
-	4M/qEhJXh4/pXaVz3inHmBd12ZsGqQ05wZqvduDO2Sb9pH8D8ghdMT/Un2Ec5A==
-X-Gm-Gg: ASbGncsRR0ZVQ/oD/H6HVRZjRx0moBn11/X0SXceh82tYapaOn2L0nBozUn9D5dOJjH
-	jCRx6MHwLdTFjtnkezCQq9Tx0PO0Q5tuaf3RnDZc9LiE0hDo1Wv7FR/CMlLohjIWD291po+bRHW
-	FrQLNMQjw1B09XQQweQn2aVwBEQRyczqlW11w5RJFBf2KAQJOAJ2U/DjRqZ/dIq/PLgZ/J3Iw8K
-	veNzzArcupTksN0m7huP+eDdsqoPpc7jYIsipXiFMHLixJuKrbjGHhzyINl1qqldaVIW7PNQjcZ
-	jCd9vfwPxkN9mSP0b/jhWdNYCl8FR0EhfaCS84n8acHH0bKSBYYvbD+SOLM2Yg==
-X-Google-Smtp-Source: AGHT+IEVNqBoimy0tPc+jYLAvU92qKQ9P0Hox3Z1GFrcZRjdTqreOTBPA7teWDprvJFrjRs+a6mDNw==
-X-Received: by 2002:a05:600c:920:b0:439:6017:6687 with SMTP id 5b1f17b1804b1-43ab10495c5mr1353355e9.7.1740491414136;
-        Tue, 25 Feb 2025 05:50:14 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fbcabsm2312660f8f.86.2025.02.25.05.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:50:13 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:50:09 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm: page_alloc: group fallback functions together
-Message-ID: <Z73KkRTWfu-9CBIm@google.com>
-References: <20250225001023.1494422-1-hannes@cmpxchg.org>
- <20250225001023.1494422-4-hannes@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RM52yVYfkLgm47UhxD/Q5yW8v0mCBISHt6tWFVlw8+tEWo7F+F/brgNuzwZ85ofN9KC7alemU9lzu6Z1wlUpRvbXAfPSLQYEJZPJ3byYjn46qzYcX9gKk0+g0brIM/4rx0Iw4y0idvNVrNRoI7jrNTVAH4JNMl/sl3FfJmkxPSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UP4byKOg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=e3VmXvqmgpmlkacg4yCqG6k/DWw/7LO2D1NyxSJiktc=; b=UP4byKOgV4ukVo21U5njdpdZC0
+	G4UYijU2274eCrrlkKTfbuZSamLwWkZdjJYtqnNdcNL8pIQoMObhFrr6qyHdQig4KiT6Wdj18Yzhx
+	yy/ckGOZzVfYTDYy1YR18vgMtRIB9TN5Uees+9P8PejyiR+5lwuHi2M5UswRsCsj1DPo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tmvKu-00HWpb-CB; Tue, 25 Feb 2025 14:51:00 +0100
+Date: Tue, 25 Feb 2025 14:51:00 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 1/3] net: phy: mediatek: Add 2.5Gphy firmware
+ dt-bindings and dts node
+Message-ID: <176f8fe1-f4cf-4bbd-9aea-5f407cef8ac5@lunn.ch>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-2-SkyLake.Huang@mediatek.com>
+ <a15cfd5d-7c1a-45b2-af14-aa4e8761111f@lunn.ch>
+ <Z7X5Dta3oUgmhnmk@makrotopia.org>
+ <ff96f5d38e089fdd76294265f33d7230c573ba69.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,20 +76,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225001023.1494422-4-hannes@cmpxchg.org>
+In-Reply-To: <ff96f5d38e089fdd76294265f33d7230c573ba69.camel@mediatek.com>
 
+> > Would using a 'reserved-memory' region be an option maybe?
+> Or maybe just leave those mapped registers' addresses in driver code
+> (mtk-2p5ge.c)? Like:
+> #define MT7988_2P5GE_PMB_BASE (0x0f100000)
+> #define MT7988_2P5GE_PMB_LEN  (0x20000)
 
-On Mon, Feb 24, 2025 at 07:08:26PM -0500, Johannes Weiner wrote:
-> The way the fallback rules are spread out makes them hard to
-> follow. Move the functions next to each other at least.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+The problem with hard coding them is you need some way to know which
+set of hard coded values to use, because the hardware engineers will
+not guarantee to never move them, or change the bit layout for the
+next generation of devices.
 
-Moving code makes blame more tiresome so I wouldn't personally do
-this, but if others find it helpful it's fine by me.
+PHYs don't use compatibles because they have an ID in register 2 and
+3. Is this ID specific to the MT7988?
 
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-
-("Reviewed" means "git tells me there are no new lines nor totally
-deleted lines").
+	Andrew
 
