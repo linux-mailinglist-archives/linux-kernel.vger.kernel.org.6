@@ -1,146 +1,180 @@
-Return-Path: <linux-kernel+bounces-530592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81FFA4358A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:41:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1907A43592
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6CF4167EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F233B7724
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641F4257437;
-	Tue, 25 Feb 2025 06:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4B425742E;
+	Tue, 25 Feb 2025 06:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDWMu4N3"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nlETZ7mc"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A33D984;
-	Tue, 25 Feb 2025 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF4A254855;
+	Tue, 25 Feb 2025 06:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465660; cv=none; b=kg4WQwO497k7iafjye4rFzXuwYYQmcvRTeoHSc0dqe6ioUZgJNqthCf2SEopl+xigR2Pz6UUd7Dqh8/e7bpQx8hJg7ARHv8/AS3MI/R97WCgpnYUW98baaM/jU4+HPDGwXj/1xcrEZs4nDFfmhs2qMsnudIhFqp7zGgeji6aWqY=
+	t=1740465831; cv=none; b=E3EX5cKm94sH68ofu4uzwLpiC6ZZE7Zv+sC/4KfbyPDeuQKTV7svmytFdw0/i4Cc3ok5BdB5tzs4sLkrDVw7xm2wQWXulS2wCDX4BHGXxGoLURIRsclybMt5B755vGVFl/W1mOB66ygK58Oke+e95CnfZkPWy6h9P4iDwRlhcXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465660; c=relaxed/simple;
-	bh=bP75iQdWMfulJf6yXOUhCLzS3q7ljtZNdMT5g3yO9kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RgdGnJabGUQ6h1HgqVkknIkLkGZUY0LGo8eUu+Tq3Q60WfojnvBhvY7fISPxZXmo32Jdm3tghcuaOxB6mxFe2wodYAo0nYBFVFntL1LJtv/FrjtN/ZcDn8ZQLUcN3mShQPs9gx/FhoV99uurSAc1JL1XRytrNDRZ2o3YxPpzQOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDWMu4N3; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220ecbdb4c2so29921575ad.3;
-        Mon, 24 Feb 2025 22:40:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740465658; x=1741070458; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t2P/2v/Klk6zqg9pFD4grzPc6MwHkHIHVcHBwEQXLhQ=;
-        b=gDWMu4N3YcRxW4gEaGEwMPtkGKoJ0NOednBiXiSxtM6IlMZxTV5QRLegaPtvkZSWTR
-         UOuui23gHDP0g41JC+8m33SGaQaYwpJ1r8VhHZocoaAAedm3Zx8i/qp8dMi+Ke3dmoGb
-         r//KkVusF2dBkkJAcYfW71iU4LxdhcIVdGTe7CtuKNUyJAwAD+rv0h/vvVYFeDvwvD5Z
-         J33P9jTzqwEYifSQ0fFt+WFHjWCwhoRN/EzBcER68Fa972z4hyseWbskmXyGkawjuDzJ
-         s64xhpjGIIJ9vPc9ZkHHMJntSwADtMJCAGmrrtVUkvKd2P4groferjQrYPieNsUM7n9G
-         RpKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740465658; x=1741070458;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t2P/2v/Klk6zqg9pFD4grzPc6MwHkHIHVcHBwEQXLhQ=;
-        b=jaY0FTPOpafmQXlk5UaOVt4F/VdduAEB27ZI6Gthr9mNtQso7/d/0bvhWaJSxVTECK
-         RV190tX162VSSvHiW3m+Pi0imIiiqO1VJG7FM2xXYHfDxetVUomjskjwLvUlDoAvAKQQ
-         0O2f77ZaZ21qqJsdgZZP0Tt5d0lnugQGF/hbmc0CCN5C9+cr0X8IyqsmFHvlXJ5tTHBR
-         PxPB8TGIxHAvEHQlrrBV2FAD+KyYQ8aJddnP5e7Oh1PuH8Kh/9DkoXy0R9iDzQYyr3fD
-         rDYr8Mj42Q8j0ll/2y5ApzKrJpnhHxztEtwABXJMVaVP9q8EymGqvC5C0F53nj/vub2r
-         rF2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWq2uFWvbFyUE+TxXM/H+7XvZPvgFMfAnKItiarIZyzn1Hzg8Io28OSXpMM08sOND3H/qIljxxJSBtO0FQ=@vger.kernel.org, AJvYcCXILrTbTVjbyPKIUxx8Swt8uLM+i90BI1Q2XHFhDBxqCj7p+0EremoXbxqtpOgKTOoopBBZA3f81iBj@vger.kernel.org, AJvYcCXcylexuwGQL0JbFAHUILLhZJ4OADb54HZI1dC1wYfeNKN4iQr8AQpUGkAgQI3unzv4FTDErcobp+RBRq5x@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLAF75VwOgspM/GfNR19uJwsIN3aAENRcbIcHK7k77VnFJUApI
-	LeaSYdlRkv9Wiv2S6HzSrc4YVrsN5+WBoH+XhGuXT7RcCsS6Wu29
-X-Gm-Gg: ASbGncupPo0QIV8HjevSLLJoXgkwFQE5W2zEtuw9+5MQ2xcOFCurNyW2aQMmnqpL74Z
-	Ii1gR78m7eO0p9qf9vJ+bWfh1H01cV8BKDUd8B7AGBIQpbY7kzftzU5z28uXGum/1QixZRvlQUF
-	zg/RTdRuczaxqA0a694kK9So9kz4TIBkGCFce16ywSLwDD1jK3/mOgo5xbebF1fhZHln0tO2Miw
-	xzrOSRPAS3tseiSh4eCYk4VKkqSFHiUQtH5ZRzuhfKAC2Hn0Nyx+MpTKQbzqECmHxeQku1YsrDq
-	E0EDqdnabYEQxeXxApC/9QhwQnU=
-X-Google-Smtp-Source: AGHT+IEOk1x5AoIYZW+55H4hzFIVfeVeIvyzhHdJ23TfluHygEQbpPwlmqAbahw8Whoj+DhzHTCW8A==
-X-Received: by 2002:a17:902:d501:b0:21f:dbb:20a6 with SMTP id d9443c01a7336-221a1148f3amr234622445ad.33.1740465658520;
-        Mon, 24 Feb 2025 22:40:58 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092edasm6677905ad.130.2025.02.24.22.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:40:58 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:40:55 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Manuel Traut <manuel.traut@mt.com>
-Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] Input: matrix_keypad - use fsleep for variable
- delay duration
-Message-ID: <Z71l9046XyjxicFf@google.com>
-References: <20250110054906.354296-1-markus.burri@mt.com>
- <20250110054906.354296-2-markus.burri@mt.com>
- <Z7YIKaG0jBHV2FSE@mt.com>
+	s=arc-20240116; t=1740465831; c=relaxed/simple;
+	bh=PXabjfpfBOXq8tRWvKo6GYiCmy3eNq/J97iav18nkas=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hpkkj+wh8A1tPFD6vODXq0yjvTVWAPzSyGqlTn7im/Ua3Rl3AE7FN+52Mp80uO8CdlZJGsQ5pFk0tJccS3hH6dtqN2UUqju3uq0LUzwGApn7jUCv/P3Zk7DP6xPaToWIoD5Nmvcsx+bQPjBG9FMQnOLvTm5HFelbUCGHB/nNvpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nlETZ7mc; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740465824; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=dtWtcCos5TZoKRFTrhJZTu555UIWcx8R/sCLOdoDYxc=;
+	b=nlETZ7mcJkSYR9/YamcGFR+t/ZbRp1eocv7vl7CFkHLhk4sLxN4PGVliUQ7SLWBP3WlHB2/Crxn+i0jZLkg176SIN3tagFuMDjthcHk9nvbFm45Dk/ODeBZCtHlyOxOm+Z1g39DFCwK52OoJ9XqmwFAjdMVqtez8AQKWGXWvitA=
+Received: from localhost(mailfrom:zijie.wei@linux.alibaba.com fp:SMTPD_---0WQDdazp_1740465817 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 14:43:43 +0800
+From: weizijie <zijie.wei@linux.alibaba.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: weizijie <zijie.wei@linux.alibaba.com>,
+	xuyun <xuyun_xy.xy@linux.alibaba.com>
+Subject: [PATCH Resend] KVM: x86: ioapic: Optimize EOI handling to reduce unnecessary VM exits
+Date: Tue, 25 Feb 2025 14:42:53 +0800
+Message-ID: <20250225064253.309334-1-zijie.wei@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <Z6uo24Wf3LoetUMc@google.com>
+References: <Z6uo24Wf3LoetUMc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7YIKaG0jBHV2FSE@mt.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 05:34:49PM +0100, Manuel Traut wrote:
-> On Fri, Jan 10, 2025 at 06:49:00AM +0100, Markus Burri wrote:
-> > The delay is retrieved from a device-tree property, so the duration is
-> > variable. fsleep guesses the best delay function based on duration.
-> > 
-> > see Documentation/timers/delay_sleep_functions.rst
-> > 
-> > Signed-off-by: Markus Burri <markus.burri@mt.com>
-> 
-> Reviewed-by: Manuel Traut <manuel.traut@mt.com> 
+Address performance issues caused by a vector being reused by a
+non-IOAPIC source.
 
-As I mentioned in other review activate_col() may be called in atomic
-context where we can not sleep:
+Commit 0fc5a36dd6b3
+("KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race")
+addressed the issues related to EOI and IOAPIC reconfiguration races.
+However, it has introduced some performance concerns:
 
-"activate_col() may be called in atomic context, and if fsleep() turns
-into usleep_range() or msleep() we are going to have a bad time.
+Configuring IOAPIC interrupts while an interrupt request (IRQ) is
+already in service can unintentionally trigger a VM exit for other
+interrupts that normally do not require one, due to the settings of
+`ioapic_handled_vectors`. If the IOAPIC is not reconfigured during
+runtime, this issue persists, continuing to adversely affect
+performance.
 
-We should either stop using request_any_context_irq() or figure out if
-interrupt handler can sleep or not and adjust behavior properly."
+Simple Fix Proposal:
+A straightforward solution is to record highest in-service IRQ that
+is pending at the time of the last scan. Then, upon the next guest
+exit, do a full KVM_REQ_SCAN_IOAPIC. This ensures that a re-scan of
+the ioapic occurs only when the recorded vector is EOI'd, and
+subsequently, the extra bit in the eoi_exit_bitmap are cleared,
+avoiding unnecessary VM exits.
 
-Unfortunately this was completely ignored.
+Co-developed-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
+---
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/ioapic.c           | 10 ++++++++--
+ arch/x86/kvm/irq_comm.c         |  9 +++++++--
+ arch/x86/kvm/vmx/vmx.c          |  9 +++++++++
+ 4 files changed, 25 insertions(+), 4 deletions(-)
 
-> 
-> > ---
-> >  drivers/input/keyboard/matrix_keypad.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-> > index 2a3b3bf..5571d2e 100644
-> > --- a/drivers/input/keyboard/matrix_keypad.c
-> > +++ b/drivers/input/keyboard/matrix_keypad.c
-> > @@ -68,7 +68,7 @@ static void activate_col(struct matrix_keypad *keypad, int col, bool on)
-> >  	__activate_col(keypad, col, on);
-> >  
-> >  	if (on && keypad->col_scan_delay_us)
-> > -		udelay(keypad->col_scan_delay_us);
-> > +		fsleep(keypad->col_scan_delay_us);
-> >  }
-> >  
-> >  static void activate_all_cols(struct matrix_keypad *keypad, bool on)
-> > -- 
-> > 2.39.5
-> > 
-
-Thanks.
-
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0b7af5902ff7..8c50e7b4a96f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1062,6 +1062,7 @@ struct kvm_vcpu_arch {
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	hpa_t hv_root_tdp;
+ #endif
++	u8 last_pending_vector;
+ };
+ 
+ struct kvm_lpage_info {
+diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+index 995eb5054360..40252a800897 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -297,10 +297,16 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+ 			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
+ 
+ 			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						e->fields.dest_id, dm) ||
+-			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
++						e->fields.dest_id, dm))
+ 				__set_bit(e->fields.vector,
+ 					  ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
++				__set_bit(e->fields.vector,
++					  ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = e->fields.vector >
++					vcpu->arch.last_pending_vector ? e->fields.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
+ 	}
+ 	spin_unlock(&ioapic->lock);
+diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+index 8136695f7b96..1d23c52576e1 100644
+--- a/arch/x86/kvm/irq_comm.c
++++ b/arch/x86/kvm/irq_comm.c
+@@ -426,9 +426,14 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
+ 
+ 			if (irq.trig_mode &&
+ 			    (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						 irq.dest_id, irq.dest_mode) ||
+-			     kvm_apic_pending_eoi(vcpu, irq.vector)))
++						 irq.dest_id, irq.dest_mode)))
+ 				__set_bit(irq.vector, ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, irq.vector)) {
++				__set_bit(irq.vector, ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = irq.vector >
++					vcpu->arch.last_pending_vector ? irq.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
+ 	}
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6c56d5235f0f..047cdd5964e5 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5712,6 +5712,15 @@ static int handle_apic_eoi_induced(struct kvm_vcpu *vcpu)
+ 
+ 	/* EOI-induced VM exit is trap-like and thus no need to adjust IP */
+ 	kvm_apic_set_eoi_accelerated(vcpu, vector);
++
++	/* When there are instances where ioapic_handled_vectors is
++	 * set due to pending interrupts, clean up the record and do
++	 * a full KVM_REQ_SCAN_IOAPIC.
++	 */
++	if (vcpu->arch.last_pending_vector == vector) {
++		vcpu->arch.last_pending_vector = 0;
++		kvm_make_request(KVM_REQ_SCAN_IOAPIC, vcpu);
++	}
+ 	return 1;
+ }
+ 
 -- 
-Dmitry
+2.43.5
+
 
