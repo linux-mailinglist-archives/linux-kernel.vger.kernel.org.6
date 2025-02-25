@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-531207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085AFA43D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:26:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E7AA43D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C87189704E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D47F3B0316
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C8A267B75;
-	Tue, 25 Feb 2025 11:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktfljMLn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DF3266B5E;
-	Tue, 25 Feb 2025 11:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75924267734;
+	Tue, 25 Feb 2025 11:25:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F792676F6;
+	Tue, 25 Feb 2025 11:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482678; cv=none; b=JckTGdli//hCBaJsq+4QrFnae46l3O1raQBIKraOxrXPUo50hcynkHNDiHqr39QLWjISnDP9Mq1jhLDuC5rnHCC6ZxGb4fXh2hLEkQ7LJ6hr5lmRgHCE6XLp2Jkarrr2A/2/wSRG+edDQXQnV5aCk6NAYunwJd3KstqqNp32OsQ=
+	t=1740482720; cv=none; b=ldMYNeq4eVyNcpnzofzf9I7+SM/GTpzr3TYO3eIL+1StTg1wiU3DRnjCqPzLnNZvAbR984llnktUVH1ma6DXbxWO06I/xr7OWsD+aVai5o4Z1QJ/2/8ekcxYYfXbWakxTofmZ1sZ+MpbkC8ljAASpFKLhfHNszN20C/fCMWzEsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482678; c=relaxed/simple;
-	bh=M1WvkfNJ0eZrSf0XE1rECdU/V4VR77kaJon9xnxT7G4=;
+	s=arc-20240116; t=1740482720; c=relaxed/simple;
+	bh=JElWj9omZOIOVZlAA3KWEGXWH56+yW8/E4mjL6NYtoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4IwRmLJdw2rHR3lEDbKSKz+XtKjTCu1mggGXsjCMjkGkFhhwFXouPJqsqtTWp3TyNwHpbuY513wTwReBFHkUg1Rk9Iu0XhYfGsBwcalL8EHYA8nJbThEr9qDYr93IelD8Fa9aB7g5kZZR8DOlOP5uZ+EbW2d+mZZxdseycD01w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktfljMLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B5BC4CEDD;
-	Tue, 25 Feb 2025 11:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740482677;
-	bh=M1WvkfNJ0eZrSf0XE1rECdU/V4VR77kaJon9xnxT7G4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ktfljMLntCvWtURu2w+6ca9SLNjlV71BHVbO3E3vr7yt0VObWQUnA6jiYChVUBLsp
-	 B4de/hdUSyedHyU28Or+9UfkLBb/Fn/wn6ef8zSeBTQgvir4CoLvRvTw3zj3dGuTtq
-	 M2RP+Rng44Gg7cvZB3DxSCJA3xprFlhVWjb1QlWeKRUwRnpi3BbI8v2P1FN9ZbfuAU
-	 2DxV2UauKyIiUkf1huul4xngZTJlKNoFKtLSvWVvBA0N34Fr9vr2rtJWn3zbi3hxhN
-	 ZR3RomEpB7HqzO96/OQ1lq9eeHQ+E/K91wkC9bS03/re7/mbsh7PIMLWVHOKDwr2lp
-	 oZJoEOokONKcQ==
-Date: Tue, 25 Feb 2025 12:24:33 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Kurt Borja <kuurtb@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] driver core: faux: only create the device if probe()
- succeeds
-Message-ID: <Z72oceZFfJcMAf-D@pollux>
-References: <2025022545-unroasted-common-fa0e@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAgxOOhPNzVu5S8jITjly5PomqENLduC21Y9imqeHwi8PW1XqPOI8wFo2m8P9sWBO/oi1exznzsk5DaloHq4L/d6oWJcxpkKRUJq/4GjOTlS7YwKFwnjShS4s2j8b8WO1iWhP6eNxW51VuLUQ+qOZR123l+naCHXhbJoWYTtV8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84B651516;
+	Tue, 25 Feb 2025 03:25:34 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04FA53F673;
+	Tue, 25 Feb 2025 03:25:15 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:25:06 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 5/7] firmware: imx: Add i.MX95 SCMI LMM driver
+Message-ID: <Z72okilByCKhSsA3@pluto>
+References: <20250212-imx-lmm-cpu-v2-0-3aee005968c1@nxp.com>
+ <20250212-imx-lmm-cpu-v2-5-3aee005968c1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,70 +59,249 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025022545-unroasted-common-fa0e@gregkh>
+In-Reply-To: <20250212-imx-lmm-cpu-v2-5-3aee005968c1@nxp.com>
 
-On Tue, Feb 25, 2025 at 07:35:46AM +0100, Greg Kroah-Hartman wrote:
-> It's really hard to know if a faux device properly passes the callback
-> to probe() without having to poke around in the faux_device structure
-> and then clean up.  Instead of having to have every user of the api do
-> this logic, just do it in the faux device core itself.
+On Wed, Feb 12, 2025 at 03:40:27PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> This makes the use of a custom probe() callback for a faux device much
-> simpler overall.
+> The i.MX95 System manager exports SCMI LMM protocol for linux to manage
+> Logical Machines. The driver is to use the LMM Protocol interface to
+> boot, shutdown a LM.
 > 
-> Suggested-by: Kurt Borja <kuurtb@gmail.com>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Hi,
+
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/base/faux.c |   15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  drivers/firmware/imx/Kconfig    | 11 +++++
+>  drivers/firmware/imx/Makefile   |  1 +
+>  drivers/firmware/imx/sm-lmm.c   | 98 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/firmware/imx/sm.h | 33 ++++++++++++++
+>  4 files changed, 143 insertions(+)
 > 
-> diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-> index 531e9d789ee0..407c1d1aad50 100644
-> --- a/drivers/base/faux.c
-> +++ b/drivers/base/faux.c
-> @@ -102,7 +102,9 @@ static void faux_device_release(struct device *dev)
->   *
->   * Note, when this function is called, the functions specified in struct
->   * faux_ops can be called before the function returns, so be prepared for
-> - * everything to be properly initialized before that point in time.
-> + * everything to be properly initialized before that point in time.  If the
-> + * probe callback (if one is present) does NOT succeed, the creation of the
-> + * device will fail and NULL will be returned.
->   *
->   * Return:
->   * * NULL if an error happened with creating the device
-> @@ -147,6 +149,17 @@ struct faux_device *faux_device_create_with_groups(const char *name,
->  		return NULL;
->  	}
+> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+> index 907cd149c40a8b5f1b14c53e1c315ff4a28f32ac..c3e344d6ecc645df1f0e3ee8078934c47f347fd7 100644
+> --- a/drivers/firmware/imx/Kconfig
+> +++ b/drivers/firmware/imx/Kconfig
+> @@ -23,6 +23,17 @@ config IMX_SCU
+>  	  This driver manages the IPC interface between host CPU and the
+>  	  SCU firmware running on M4.
 >  
-> +	/*
-> +	 * Verify that we did bind the driver to the device (i.e. probe worked),
-> +	 * if not, let's fail the creation as trying to guess if probe was
-> +	 * successful is almost impossible to determine by the caller.
-> +	 */
-> +	if (!dev->driver) {
+> +config IMX_SCMI_LMM_DRV
+> +	tristate "IMX SCMI LMM Protocol driver"
+> +	depends on IMX_SCMI_LMM_EXT || COMPILE_TEST
+> +	default y if ARCH_MXC
+> +	help
+> +	  The System Controller Management Interface firmware (SCMI FW) is
+> +	  a low-level system function which runs on a dedicated Cortex-M
+> +	  core that could provide Logical Machine management features.
+> +
+> +	  This driver can also be built as a module.
+> +
+>  config IMX_SCMI_MISC_DRV
+>  	tristate "IMX SCMI MISC Protocol driver"
+>  	default y if ARCH_MXC
+> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
+> index 8d046c341be878bb6dd1e6277992ff66ae90e292..7762855d2a771169d4f1867d27e0d51be7c9ad03 100644
+> --- a/drivers/firmware/imx/Makefile
+> +++ b/drivers/firmware/imx/Makefile
+> @@ -2,3 +2,4 @@
+>  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
+>  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
+>  obj-${CONFIG_IMX_SCMI_MISC_DRV}	+= sm-misc.o
+> +obj-${CONFIG_IMX_SCMI_LMM_DRV}	+= sm-lmm.o
+> diff --git a/drivers/firmware/imx/sm-lmm.c b/drivers/firmware/imx/sm-lmm.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ed9650a8cb7ca878874e8609f0a5c83b5e46204a
+> --- /dev/null
+> +++ b/drivers/firmware/imx/sm-lmm.c
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2025 NXP
+> + */
+> +
+> +#include <linux/firmware/imx/sm.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/scmi_protocol.h>
+> +#include <linux/scmi_imx_protocol.h>
+> +
+> +static const struct scmi_imx_lmm_proto_ops *imx_lmm_ops;
+> +static struct scmi_protocol_handle *ph;
+> +
+> +int scmi_imx_lmm_boot(u32 lmid)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_lmm_ops->lmm_boot(ph, lmid);
+> +};
+> +EXPORT_SYMBOL(scmi_imx_lmm_boot);
 
-Seems like really_probe() cleans things up properly through
-device_unbind_cleanup(), such that dev->driver is guaranteed to be NULL on
-failure.
 
-> +		dev_err(dev, "probe did not succeed, tearing down the device\n");
-> +		faux_device_destroy(faux_dev);
-> +		faux_dev = NULL;
+...cant you unify this...
 
-NIT: Maybe return NULL directly (like above) in case a subsequent change adds
-more code to the end of this function and does not consider that we fall
-through.
+> +
+> +int scmi_imx_lmm_info(u32 lmid, struct scmi_imx_lmm_info *info)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	if (!info)
+> +		return -EINVAL;
+> +
+> +	return imx_lmm_ops->lmm_info(ph, lmid, info);
+> +};
+> +EXPORT_SYMBOL(scmi_imx_lmm_info);
+> +
+> +int scmi_imx_lmm_reset_vector_set(u32 lmid, u32 cpuid, u32 flags, u64 vector)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_lmm_ops->lmm_reset_vector_set(ph, lmid, cpuid, flags, vector);
+> +}
+> +EXPORT_SYMBOL(scmi_imx_lmm_reset_vector_set);
+> +
+> +int scmi_imx_lmm_power_on(u32 lmid)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_lmm_ops->lmm_power_on(ph, lmid);
+> +};
+> +EXPORT_SYMBOL(scmi_imx_lmm_power_on);
 
-Either way,
+...this...
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+> +
+> +int scmi_imx_lmm_shutdown(u32 lmid, u32 flags)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_lmm_ops->lmm_shutdown(ph, lmid, flags);
+> +};
+> +EXPORT_SYMBOL(scmi_imx_lmm_shutdown);
+> +
 
+...and this into some common operation that accepts parameters to
+specifiy what to do...like (just making up name)
+
+	scmi_imx_operation(lmid, flags, <OP>)
+
+...so exporting only ONE symbol ?
+
+> +static int scmi_imx_lmm_probe(struct scmi_device *sdev)
+> +{
+> +	const struct scmi_handle *handle = sdev->handle;
+> +
+> +	if (!handle)
+> +		return -ENODEV;
+> +
+> +	if (imx_lmm_ops) {
+> +		dev_err(&sdev->dev, "lmm already initialized\n");
+> +		return -EEXIST;
 > +	}
 > +
->  	return faux_dev;
->  }
->  EXPORT_SYMBOL_GPL(faux_device_create_with_groups);
+> +	imx_lmm_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_IMX_LMM, &ph);
+> +	if (IS_ERR(imx_lmm_ops))
+> +		return PTR_ERR(imx_lmm_ops);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct scmi_device_id scmi_id_table[] = {
+> +	{ SCMI_PROTOCOL_IMX_LMM, "imx-lmm" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(scmi, scmi_id_table);
+> +
+> +static struct scmi_driver scmi_imx_lmm_driver = {
+> +	.name = "scmi-imx-lmm",
+> +	.probe = scmi_imx_lmm_probe,
+> +	.id_table = scmi_id_table,
+> +};
+> +module_scmi_driver(scmi_imx_lmm_driver);
+> +
+> +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
+> +MODULE_DESCRIPTION("IMX SM LMM driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/firmware/imx/sm.h b/include/linux/firmware/imx/sm.h
+> index 9b85a3f028d1b0a5287b453eb3ad8412a363fe6c..e02b7b558afb6f430f6fbeeaf3ee1f59feea3c1b 100644
+> --- a/include/linux/firmware/imx/sm.h
+> +++ b/include/linux/firmware/imx/sm.h
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/bitfield.h>
+>  #include <linux/errno.h>
+> +#include <linux/scmi_imx_protocol.h>
+>  #include <linux/types.h>
+>  
+>  #define SCMI_IMX_CTRL_PDM_CLK_SEL	0	/* AON PDM clock sel */
+> @@ -20,4 +21,36 @@
+>  int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);
+>  int scmi_imx_misc_ctrl_set(u32 id, u32 val);
+>
+
+This down below seems fine to me (maybe simoplfied as stated above) and
+I guess we should see if we dont hit some weird Kconfig combination that
+breaks some builds on some combination of modules/builtin: in the
+past I vaguely remember Arnd posting the build error...and in fact the
+above scmi_imx_misc_ctrl_set/get have NO ifdeffery and aer handeld in
+that reversed way in which the protocol depends on the driver
+
+config IMX_SCMI_MISC_EXT                                                         
+        tristate "i.MX SCMI MISC EXTENSION"                                      
+        depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)                     
+        depends on IMX_SCMI_MISC_DRV                                             
+        default y if ARCH_MXC                         
+
+...which weird but was needed by the build bots combinations....(I
+think)...so just a heads up that you could have to deal with that
+again...
+
+> +#if IS_ENABLED(CONFIG_IMX_SCMI_LMM_DRV) || IS_ENABLED(CONFIG_COMPILE_TEST)
+> +int scmi_imx_lmm_boot(u32 lmid);
+> +int scmi_imx_lmm_info(u32 lmid, struct scmi_imx_lmm_info *info);
+> +int scmi_imx_lmm_reset_vector_set(u32 lmid, u32 cpuid, u32 flags, u64 vector);
+> +int scmi_imx_lmm_power_on(u32 lmid);
+> +int scmi_imx_lmm_shutdown(u32 lmid, u32 flags);
+> +#else
+> +static inline int scmi_imx_lmm_boot(u32 lmid)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int scmi_imx_lmm_info(u32 lmid, struct scmi_imx_lmm_info *info)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int scmi_imx_lmm_reset_vector_set(u32 lmid, u32 cpuid, u32 flags, u64 vector)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int scmi_imx_lmm_power_on(u32 lmid)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int scmi_imx_lmm_shutdown(u32 lmid, u32 flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +#endif
+>  #endif
+> 
+
+Other thean the above unification:
+
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+
+Thanks,
+Cristian
 
