@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-532297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F166A44B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:17:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E68EA44B2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB357AC300
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:16:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0754212A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BA81898FB;
-	Tue, 25 Feb 2025 19:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D5/fZUrr"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1BBEC2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18321A2846;
+	Tue, 25 Feb 2025 19:18:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8E1EC2;
+	Tue, 25 Feb 2025 19:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740511071; cv=none; b=S/vdZLRY4LdeEX7L8uQoCSikEyRDRIGNJZA8gqSFekSNvQmkP5ofXh6MAtfaY4cfk1NtpFsnadu5nBw/HE0AS6/Fg8xTGxFCBXnAqJR1Dk9zBAtxtsPyfLgn/8QIL5bUFWogirBhQCCwoINYzX+SubEdzkq7ymgrU6QHUcS8SII=
+	t=1740511135; cv=none; b=ZG4eOPG866U3KOBh4rYI/ujf2fnt2X83rcAdoUkHLbDsb8aG1ylCkO0OTlzZmOeu5tBaUYrsq/tBhoyeijMa41FQ22QnDFaitOkWwJAVYyK6hOwp6Usml4wOF57GekO9QqKydRBE87/OdsczBhtw9TZr+MTsBGctmYyGxxm5PPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740511071; c=relaxed/simple;
-	bh=rw6fkj7krREUaEJ9aGI8DkpSNHoX2Fsurw/g06u/GUM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bEjN0IJuGmspHAA+6tCr2/+iEuhCva0SNQUkfa0qlXuFS1cKA5VD4qUZKBz+4HpxvmZtEh9+lClO7cOPFRUBseg8QlWhInj17Ait7Xa+fIevfe95IIBhcNdQCg+rAmBK9KXyYtW6cNNf3sD6M9tou4CqKaRfXs38bHxcq8Rs0ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D5/fZUrr; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740511066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eaNj3Zkdf3VSuIU89F1enXWb/g7fusbmfwskhEWAK4E=;
-	b=D5/fZUrrw72tG9O7pSfZ/vFQRn1i4JuCmu0rDWFzsrPpTGKlRzkSsOkdSaw4u1PvWRHZG3
-	Ecsg/yzQd9WjBZSmrv0E4ZC0aWrq68o8hr918totalx0j2rMlRN0zQZqw1gji/6RaOQ8Zp
-	UMcHtmYgNIIp4DEtVs/9Qq3+8D7Gd/c=
+	s=arc-20240116; t=1740511135; c=relaxed/simple;
+	bh=+O/jLlBPENXadD95GrBWGZEENjjbBIHuh1VsORmZ0DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbcsvB3IE0JIdoihPHpFYtUGg4Wzx8mNjosccMkaPE3owsOTyQ3a/UXPFlflpXxVC9ixbIPZG9AZ4J5bJLlFoorhMeVQzHeYOJBQIP1p8r+rTj/zZyBljhS5R7dL5UPeOg2LFIZOXZ5Hceg1DKbTKzeXpbs6ngAPlKNROrxgCU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E0E6152B;
+	Tue, 25 Feb 2025 11:19:09 -0800 (PST)
+Received: from bogus (unknown [10.57.37.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6DB83F5A1;
+	Tue, 25 Feb 2025 11:18:49 -0800 (PST)
+Date: Tue, 25 Feb 2025 19:18:46 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+	Jessica Clarke <jrtc27@jrtc27.com>
+Subject: Re: [PATCH v7 00/10] arm64: dts: Add Arm Morello support
+Message-ID: <20250225191846.5zopbxloo4zuoxp5@bogus>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
+ <Z7jL5wBUJNjOlg4r@J2N7QTR9R3.cambridge.arm.com>
+ <58ee2a8d-d3c1-4bc2-92dd-6568f645b01f@arm.com>
+ <Z72ydHCLxd-WGsJu@bogus>
+ <Z720J5kXEnj5sZn0@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] x86/mtrr: Remove unnecessary strlen() in mtrr_write()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <Z73HDk9p2P_Zigu2@gmail.com>
-Date: Tue, 25 Feb 2025 20:17:33 +0100
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <35EF1145-7214-4B51-8168-4D54028BE0E5@linux.dev>
-References: <20250225131621.329699-2-thorsten.blum@linux.dev>
- <Z73HDk9p2P_Zigu2@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z720J5kXEnj5sZn0@J2N7QTR9R3>
 
-On 25. Feb 2025, at 14:35, Ingo Molnar wrote:
-> * Thorsten Blum <thorsten.blum@linux.dev> wrote:
+On Tue, Feb 25, 2025 at 12:14:31PM +0000, Mark Rutland wrote:
+> Hi Sudeep,
 > 
->> The local variable length already holds the string length after calling
->> strncpy_from_user(). Using another local variable linlen and calling
->> strlen() is therefore unnecessary and can be removed. Remove linlen
->> and strlen() and use length instead.
->> 
->> Compile-tested only.
->> 
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> ---
+> On Tue, Feb 25, 2025 at 12:07:16PM +0000, Sudeep Holla wrote:
+> > On Mon, Feb 24, 2025 at 10:08:18AM +0000, Vincenzo Frascino wrote:
+> > > On 21/02/2025 18:54, Mark Rutland wrote:
+> > > > On Fri, Feb 21, 2025 at 06:03:39PM +0000, Vincenzo Frascino wrote:
+> > > >> This series adds dts support for the Arm Morello System Development
+> > > >> Platform.
+> > > >
+> > > > Do we actually need the dts for this board?
+> > > >
+> > > > I have one on my desk; it boots vanilla Debian 12 via UEFI + ACPI just
+> > > > fine, with the Debian 6.1.0-13-arm64 kernel.
+> > > >
+> > > > Is there something that we can only do with the DT? i.e. some
+> > > > functionality that isn't exposed via ACPI?
+> > > >
+> > > > How do you expect this DT to be used?
+> > >
+> > > There are functionalities that are not exposed via ACPI, e.g. gpu, dpu, i2c for
+> > > the phy, etc. My aim to have upstream support for all the hardware exposed by
+> > > the platform.
+> > 
+> > Does this address some of your concerns ? I do understand some of these
+> > are not well addressed in ACPI and hence people use DT as an alternative.
 > 
-> I see no corner-case analysis in the changelog about what may happen if 
-> the copy fails partially.
+> Yep; I'm happy with this so long as there's an actual functional reason
+> to have the DT, which it seems there is.
+> 
+> It would have been nice for that to be spelled out a bit clearer in the
+> cover / commit messages, but that's not important and doesn't need a
+> respin.
+>
 
-Hi Ingo,
+I can add that info in my pull request as it is very valid point. One needs
+to know why we are pushing DTS now after couple of years after the boards
+are available and why DT over ACPI which is shipped with the device.
 
-I'm not sure what you mean. Why would I describe something I didn't
-change? This patch only removes an unnecessary string (line) length
-calculation and shouldn't affect the logic in any way.
+> > I was thinking of queuing this in -next if all the bindings are acked.
+> > Let me know if you still have concerns and would like to avoid getting
+> > these merged. I will hold off then.
+> 
+> No need to hold off.
+> 
+> Sorry for the confusion; I should have been clearer with my questions.
+> 
 
-If strncpy_from_user() fails, we immediately return length from
-mtrr_write(), but my patch doesn't change this - unless I'm missing
-something?
+No confusion as such, good to ask explicitly and get the motivation for
+this series captured on the list. Since I had gone through this motion
+even with N1SDP which for some reasons I don't know didn't appear on the
+list, I didn't ask it and implicitly assumed similar reasoning.
 
-Thanks,
-Thorsten
+So, it is good that you asked and got it answered for wider audience here.
 
+-- 
+Regards,
+Sudeep
 
