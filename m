@@ -1,198 +1,107 @@
-Return-Path: <linux-kernel+bounces-531655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65756A4431E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:41:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6663A4433A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46AD57A9568
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:40:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE73176ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12D226F44A;
-	Tue, 25 Feb 2025 14:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7AB26BD87;
+	Tue, 25 Feb 2025 14:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7HWpaer"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYladAF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF9426E62D;
-	Tue, 25 Feb 2025 14:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F8F269B01;
+	Tue, 25 Feb 2025 14:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494221; cv=none; b=L1P+URuMc5sv04xTRrf7UiONUUtCD92ajaTFITLyvwwqKZPBa+FzEnSdNf5IL7eklHtx6Pj+n5K52gIS1xS8khqxPqIanCUg81Bpu+fUd5TLzwvfkcgk9HlgSJPJEgw1F3LEzt+yIsUKF6aC+vMDazy6+hdCvp/qmuOEh0fPiQs=
+	t=1740494327; cv=none; b=ARfHKOmySnkeFCsn2Ej+1YZPkRdH6LfDUE3dSY2Uc3X163X44a5cBHI9lfPQ9sIQIryXB8aCHspXcl+IP6fyAM8/AugqiKU6icBtnxnmGcXd+T2Ph17Kl2kecudvrEUCaTJJYrWkJYQyWSRtwvcqlkjp/LFBJMvrXOxWZVqoxO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494221; c=relaxed/simple;
-	bh=oxUNXWyrdbfw0HhvZKnTRghHV9qRgTedjCmOgTIoAls=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vAnIKoM/eJ3i3gjWgWvmoHa/osaEqRDyBV8ab8dYqn6Go1/0fNPk2fjiH50YNCbX0Kv8aAFgoklC5bSQL7sgdUo8iYjU7fx7pRTK5q6C2gAV8WfmfqpwprvhEPfxHqX5roCeqXnbEF72sTCvPw7A3+UFxhFsjKUN//qRijizuoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7HWpaer; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439a2780b44so36049905e9.1;
-        Tue, 25 Feb 2025 06:36:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740494217; x=1741099017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l/sg7omSvJw4OhSWVma2ygvtz/i44Mb1jIOoIOn0G+U=;
-        b=F7HWpaerfbOUNm+vn2Xit4z/fS+YoXC8nmJKNKn+PrxvqhKLJ5oqDrolzSH4jsz/wk
-         0VhnOFw2tYfgoZF7U37EdqidOg+Ug7bYyC0+b3eoCbhRwkniRdlvXFwt84TFeL5glEN6
-         ldluRQshSDTr78+mFF0eC3GCHQaYZ1ygHguy18AC0OFOyxGRl853hwwAavJVPzx4E3pf
-         Q//SmI8luU4gUXoHEM+PaSPXLp8NPK0ffKixKS+XMRAdjwjWjkibBar1NtxadCYmDHPz
-         caiLTDmZXUM3g3RPdW926CgYqgegXdrYIVo0hsaVjf5rp1g7bKeWU8AL0vwCDoBR0MKy
-         WVTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494217; x=1741099017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l/sg7omSvJw4OhSWVma2ygvtz/i44Mb1jIOoIOn0G+U=;
-        b=mrfg/zXrzQ2T6EnMiQLCIXcWRkdLem3D8krrWDElYogDbA1+ad8RKZj6LvdIxu6UbU
-         en9ZUEviGSSDW9lkb9Ls4EdDmY0YFAe/6KqAbyO7IL22LwVRLo5IvX+Wg8ae6t1dra3h
-         FjGhaHK2F9liShXytpNuRLzZTLtZ0toMDQrP7z10d5peCbrhh1dyFKqxb/TpcTKd6jOG
-         9EE/Drg/aaP05GAjjk9s4vI5dniig1rBLTf8ONQL5Vo+pLICBNXAdNyNd1qZxeweQAiM
-         EmcGA57UcB5hfvqA/qPTI4rgeeDUpAopHYLmbzRkufi5J4JDMQZPS/b/i1IwtwUcP89W
-         GX5g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/WJBOECWMrdjOaw+iNg3FbxdkVqMCsXr7q6U/pPplydUReSA+v1ZYWviJOm9Vkop2KCHqrNS6VsLNmLs=@vger.kernel.org, AJvYcCVtgwJRXDXRwbzGntpKquhaMvf1i4BoQ5Q35FwJ5yj/1CgtPhCFovB2Pc2rcPCF2vLjduLORJjf9mUXLdiVdqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ3DPRpFmd9W9y7GYYZtOGUawCBKvUMAZZ8pk5itQp52aFAMb8
-	nX8MCfQYLJ58fRKp+qZlq+F2K0JcQQ/frWb7H9YNMfXws8bPr02y
-X-Gm-Gg: ASbGncvyF51V6+2gLW0P+lW4fVIXwPDOFFVZn5dk7/nZCdj0PUJ1zecrL0mqD3c/ECv
-	PpoIbO8eV1a1UgXmNhQ88+/uW72qYOwaarHgMzXnUrCceS314a/rWaB3XNHH8zl3yyw6IszxKEu
-	r/AmDEDdMSafwLdVn4wGm/IIb3IIRmVsDhVzShVQQeLx+bNuEN7U9XT1a59hLA2lfLdn7gCMnNF
-	IYP3w5JgwFaKeTUUJnaewvBtekLXF67vNpdwfAD3LBSNaQk8rC6BEaf5CsxG0DmNaqOyd/ra4Mu
-	qd8nmAXc/DXu2+B37WpgOLV2xp3tezKTwcXMefcpuzEYvLKJY50O/eoBitb5Lks=
-X-Google-Smtp-Source: AGHT+IFPeiOcFGyA9KgALMCP8R9zH2itjkDt9MTElBJ+IdcbxwJLf0w1wOrioUPVxCe8w88V34Lxxg==
-X-Received: by 2002:a05:600c:3b1e:b0:439:9698:d703 with SMTP id 5b1f17b1804b1-439ae212960mr145877145e9.23.1740494217035;
-        Tue, 25 Feb 2025 06:36:57 -0800 (PST)
-Received: from Junction.dargent.eu (242.76.29.93.rev.sfr.net. [93.29.76.242])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8829cesm2474493f8f.49.2025.02.25.06.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 06:36:56 -0800 (PST)
-From: Regis Dargent <regis.dargent@gmail.com>
-To: 
-Cc: Regis Dargent <regis.dargent@gmail.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] watchdog: sunxi_wdt: Allow watchdog to remain enabled after probe
-Date: Tue, 25 Feb 2025 15:36:38 +0100
-Message-Id: <20250225143638.1989755-2-regis.dargent@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250225143638.1989755-1-regis.dargent@gmail.com>
-References: <20250225143638.1989755-1-regis.dargent@gmail.com>
+	s=arc-20240116; t=1740494327; c=relaxed/simple;
+	bh=Rz8PyDQA7tXQDOwd3OcOnJOQh/8GiQQJF7d9jpHgyAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOC7tvUkrsc7aed5sSLhtdX/LfPEcIQf6Ygi4MBgTFh+LpMwfqQmE8i3YddPoFFyKnSgNt45QSYbiIwYJWLT+kaFfKgKTj8M0j80gc9NgXu9Is0wscgaKLfvdOJuHuUbGRLe3eoJTzq2DL5ktAZQ/W75qHCEwTPSIi95WXsA4aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rYladAF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51061C4CEDD;
+	Tue, 25 Feb 2025 14:38:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740494326;
+	bh=Rz8PyDQA7tXQDOwd3OcOnJOQh/8GiQQJF7d9jpHgyAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rYladAF9gO1vtePJOw2dqv8gzam05iG1iItdHJGdTrhVI12hyWIiqopep7rg/CQUg
+	 kNN8DI66uDg+rHaCYD5cVMMEyl33RnDMnT+oz8cR7QBRgkerJ2PPWWGUoIPcP3s58q
+	 GpPAJ/jmSWjDWLN3v2Mf+wdfKUefQbKn76f53YH/4oVFhQ6fd/tcayyjTpRTaKFMsE
+	 4LKNs+5L77UTMV/AjXsZQbG1t3Xc71wUbmGCwlLuA/QQVr1KOiGjYJCT430a9XZmJu
+	 TZ1o8uULZHiBrIQWBy1VrF3+dm2Q3J+gYptx2PjIYj7DakL1UG8Q18coas5vLxOau2
+	 gkOgPfx1iF98Q==
+Date: Tue, 25 Feb 2025 08:38:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH 3/5] of: Correct property name comparison in
+ __of_add_property()
+Message-ID: <20250225143844.GA2279028-robh@kernel.org>
+References: <20250224-of_bugfix-v1-0-03640ae8c3a6@quicinc.com>
+ <20250224-of_bugfix-v1-3-03640ae8c3a6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224-of_bugfix-v1-3-03640ae8c3a6@quicinc.com>
 
-If the watchdog is already running during probe, let it run on, read its
-configured timeout, and set its status so that it is correctly handled by the
-kernel.
+On Mon, Feb 24, 2025 at 10:27:59PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> __of_add_property() compares property name by strcmp(), and that is
+> improper for SPARC which wants strcasecmp().
 
-Signed-off-by: Regis Dargent <regis.dargent@gmail.com>
+Except that 'name' is the nodename (usually, with a few rare 
+exceptions). Sparc node names are case sensitive, so strcmp was correct. 
 
---
+My hope is to get rid of case insensitive comparisions, so if nothing 
+cares that we're doing a case sensitive comparision, I want to keep 
+that. 
 
-Changelog v1..v2:
-- add sunxi_wdt_read_timeout function
-- add signed-off-by tag
+I also want to get rid of storing both 'name' as a property and 
+device_node.name. The name property is an ABI issue though if no one is 
+looking, then it's not an ABI issue. Also, we should be able to generate 
+device_node.name from device_node.full_name. There's still a bunch of 
+direct users of device_node.name which have to be fixed. Mostly in clock 
+drivers from what I remember.
 
-Changelog v2..v3:
-- WDIOF_SETTIMEOUT was set twice, and other code cleanup
----
- drivers/watchdog/sunxi_wdt.c | 45 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
-index b85354a99582..d509dbcb77ce 100644
---- a/drivers/watchdog/sunxi_wdt.c
-+++ b/drivers/watchdog/sunxi_wdt.c
-@@ -140,6 +140,7 @@ static int sunxi_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 		timeout++;
- 
- 	sunxi_wdt->wdt_dev.timeout = timeout;
-+	sunxi_wdt->wdt_dev.max_hw_heartbeat_ms = 0;
- 
- 	reg = readl(wdt_base + regs->wdt_mode);
- 	reg &= ~(WDT_TIMEOUT_MASK << regs->wdt_timeout_shift);
-@@ -152,6 +153,32 @@ static int sunxi_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 	return 0;
- }
- 
-+static int sunxi_wdt_read_timeout(struct watchdog_device *wdt_dev)
-+{
-+	struct sunxi_wdt_dev *sunxi_wdt = watchdog_get_drvdata(wdt_dev);
-+	void __iomem *wdt_base = sunxi_wdt->wdt_base;
-+	const struct sunxi_wdt_reg *regs = sunxi_wdt->wdt_regs;
-+	int i;
-+	u32 reg;
-+
-+	reg = readl(wdt_base + regs->wdt_mode);
-+	reg >>= regs->wdt_timeout_shift;
-+	reg &= WDT_TIMEOUT_MASK;
-+
-+	/* Start at 0 which actually means 0.5s */
-+	for (i = 0; (i < WDT_MAX_TIMEOUT) && (wdt_timeout_map[i] != reg); i++)
-+		;
-+	if (i == 0) {
-+		wdt_dev->timeout = 1;
-+		wdt_dev->max_hw_heartbeat_ms = 500;
-+	} else {
-+		wdt_dev->timeout = i;
-+		wdt_dev->max_hw_heartbeat_ms = 0;
-+	}
-+
-+	return 0;
-+}
-+
- static int sunxi_wdt_stop(struct watchdog_device *wdt_dev)
- {
- 	struct sunxi_wdt_dev *sunxi_wdt = watchdog_get_drvdata(wdt_dev);
-@@ -192,6 +219,16 @@ static int sunxi_wdt_start(struct watchdog_device *wdt_dev)
- 	return 0;
- }
- 
-+static bool sunxi_wdt_enabled(struct sunxi_wdt_dev *wdt)
-+{
-+	void __iomem *wdt_base = wdt->wdt_base;
-+	const struct sunxi_wdt_reg *regs = wdt->wdt_regs;
-+	u32 reg;
-+
-+	reg = readl(wdt_base + regs->wdt_mode);
-+	return !!(reg & WDT_MODE_EN);
-+}
-+
- static const struct watchdog_info sunxi_wdt_info = {
- 	.identity	= DRV_NAME,
- 	.options	= WDIOF_SETTIMEOUT |
-@@ -275,8 +312,12 @@ static int sunxi_wdt_probe(struct platform_device *pdev)
- 
- 	watchdog_set_drvdata(&sunxi_wdt->wdt_dev, sunxi_wdt);
- 
--	sunxi_wdt_stop(&sunxi_wdt->wdt_dev);
--
-+	if (sunxi_wdt_enabled(sunxi_wdt)) {
-+		sunxi_wdt_read_timeout(&sunxi_wdt->wdt_dev);
-+		set_bit(WDOG_HW_RUNNING, &sunxi_wdt->wdt_dev.status);
-+	} else {
-+		sunxi_wdt_stop(&sunxi_wdt->wdt_dev);
-+	}
- 	watchdog_stop_on_reboot(&sunxi_wdt->wdt_dev);
- 	err = devm_watchdog_register_device(dev, &sunxi_wdt->wdt_dev);
- 	if (unlikely(err))
--- 
-2.25.1
-
+> Fix by using dedicated property name comparison macro of_prop_cmp().
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/of/base.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 001ff6ce4abf85c07f13649d5a9f691f549a8ccc..c810014957e81171675b63f25eaabe391cc903e4 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1651,7 +1651,7 @@ int __of_add_property(struct device_node *np, struct property *prop)
+>  	prop->next = NULL;
+>  	next = &np->properties;
+>  	while (*next) {
+> -		if (strcmp(prop->name, (*next)->name) == 0) {
+> +		if (of_prop_cmp(prop->name, (*next)->name) == 0) {
+>  			/* duplicate ! don't insert it */
+>  			rc = -EEXIST;
+>  			goto out_unlock;
+> 
+> -- 
+> 2.34.1
+> 
 
