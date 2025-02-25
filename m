@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-530390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F058A432D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:10:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4BBA432DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6515189E3F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898383B7656
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392413632B;
-	Tue, 25 Feb 2025 02:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629901311AC;
+	Tue, 25 Feb 2025 02:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRC3M5Y+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888AF2C9D;
-	Tue, 25 Feb 2025 02:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3F6440C;
+	Tue, 25 Feb 2025 02:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740449429; cv=none; b=sY91/Gl+zVNfTi8jpnKzVov8LFHc8Oy7wivfUhb/XK94YWt4wNrqq3ZEwlIptczbk4o6D92n1ol5FaVlrDsl31wb3yiSTqTdC/fdS0aJIE89QmXAmquFoDy0X2r9/6RP0Y+jAuJ7ueTopD4UmcaZx6TDHicXCH3pO+zgKn1rsyg=
+	t=1740449478; cv=none; b=m/nRznEA7HjDLH5dOkXiLlE9Hk/idkMJUE6k6m5sPpFE7rpB5khWQ1DNMBL3MsFZLrmN3xtM0xtE6ofjzfWK84KaP99RLVqvX0yjxqrpd2T88EqxqD+KCKb4oMbuM46Ob96+V0nDu8poNQxanTbno0YDvc9r5tYvnqFBuIgWK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740449429; c=relaxed/simple;
-	bh=aaHGUOs30tNuy84PGnD8R0PY9RDSWCOwwuFCRkSChe4=;
+	s=arc-20240116; t=1740449478; c=relaxed/simple;
+	bh=d3eqK0aEkRk/IZn107FKcXpClMaxinMjhwGUee/i/5M=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qVC6HrD8DtavyxruxygWpk5/Xi+GSvj+q/sm2Rz724LS/aYb5IvnzWvSz5UOgMOO/ly5cDLnctnW+TLwR4DhlzbUPsawWmFsSHgHvbbT7+Jp50KHUeYPjdGXMvCJ7mRqVWG8RFgnpZHUB0G4DSCrlq3Vy4WTXFqbc/GDtc8pQFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659A4C4CED6;
-	Tue, 25 Feb 2025 02:10:26 +0000 (UTC)
-Date: Mon, 24 Feb 2025 21:11:02 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, "Masami
- Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>, "Masahiro Yamada"
- <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>, "Nicolas
- Schier" <nicolas@fjasle.eu>, "Zheng Yejian" <zhengyejian1@huawei.com>,
- "Martin Kelly" <martin.kelly@crowdstrike.com>, "Christophe Leroy"
- <christophe.leroy@csgroup.eu>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Heiko Carstens" <hca@linux.ibm.com>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Vasily Gorbik"
- <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>
-Subject: Re: [PATCH v5 2/6] scripts/sorttable: Have mcount rela sort use
- direct values
-Message-ID: <20250224211102.33e264fc@gandalf.local.home>
-In-Reply-To: <20250224172147.1de3fda5@gandalf.local.home>
-References: <20250218195918.255228630@goodmis.org>
-	<20250218200022.538888594@goodmis.org>
-	<893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com>
-	<20250224172147.1de3fda5@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=iR1BZwfM+k4wDP1lFhe/SVytpq/e2HwtP5OsmCVIH4w94k/8DKMwkMqCcb4S6DZKE06RFQMLDex83LI+OLyGMYv37pAkSL5sdNUXMePVW0StXjwEeS0lwGa249JVMJJA4USQwVqWgMe9e86yUh/r/kt1/h3yckDtdT3Wd8LV1Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRC3M5Y+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E27D6C4CED6;
+	Tue, 25 Feb 2025 02:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740449478;
+	bh=d3eqK0aEkRk/IZn107FKcXpClMaxinMjhwGUee/i/5M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fRC3M5Y+t9/nvzMpC8jx+fdTA+d9imccbNLRSWaLasSEPLnjCwRa1LqvHwjhPdQxk
+	 TUtDjoy/7WitBrjz3HKbaogjFj71kMjO4hjxEYwHSLKRBuSqudejeDVP/z6sHgE8xA
+	 SP1hJwVLrd0Yh3E7qUKvoT7dNz/8A7xBWz6fdQ61bNOdUe6K8sBhbunju5qklHxden
+	 90pbBWYEpHT614fdJztdXSFlWXGWaPUIm4xVEFa9CK4gFGq1eYpM1vD4qCUMsd5zhc
+	 WBQf7wMxvuAl0Arfs7EkMhl1aJnuCstH+ud4OejEVq2eiGYlK2FatabSsZ4qAnJecH
+	 hnMD3KkEPqc4A==
+Date: Mon, 24 Feb 2025 18:11:17 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: admiyo@os.amperecomputing.com
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston
+ <matt@codeconstruct.com.au>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v18 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+Message-ID: <20250224181117.21ad7ab1@kernel.org>
+In-Reply-To: <20250220183411.269407-2-admiyo@os.amperecomputing.com>
+References: <20250220183411.269407-1-admiyo@os.amperecomputing.com>
+	<20250220183411.269407-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,53 +64,96 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 24 Feb 2025 17:21:47 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, 20 Feb 2025 13:34:10 -0500 admiyo@os.amperecomputing.com wrote:
+> +MANAGEMENT COMPONENT TRANSPORT PROTOCOL (MCTP) over PCC (MCTP-PCC) Driver
+> +M:	Adam Young <admiyo@os.amperecomputing.com>
+> +L:	netdev@vger.kernel.org
 
-> Hmm, I haven't tried building this with clang.
-> 
-> Can you compile without that commit, run and give me the output from these
-> two programs:
-> 
->  ./dump_elf_sym vmlinux __start_mcount_loc __stop_mcount_loc
->  ./dump_elf_rela vmlinux .rela.dyn
-> 
-> If the second one fails, remove the '.rela.dyn' and see what that shows.
-> 
->  https://rostedt.org/code/dump_elf_sym.c
->  https://rostedt.org/code/dump_elf_rela.c
-> 
+You can drop the L:, AFAIK, it's going to be inherited from next layer
+of entries.
 
-Nevermind, Masami told me all I need to do is add LLVM=1 and clang can
-handle the cross compiling.
+> +S:	Maintained
+> +F:	drivers/net/mctp/mctp-pcc.c
+> +
 
-I looked, and sure enough clang on arm64 does it the same way x86 does. So
-using the rela items to sort is a gcc thing :-p
+> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
+> +{
+> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
+> +	struct mctp_pcc_hdr  *mctp_pcc_header;
+> +	void __iomem *buffer;
+> +	unsigned long flags;
+> +	int len = skb->len;
+> +
+> +	dev_dstats_tx_add(ndev, len);
 
-Can you try this patch?
+To be safe you should call:
 
--- Steve
+	if (skb_cow_head(skb, ..
 
+to make sure skb isn't a clone.
 
-diff --git a/scripts/sorttable.c b/scripts/sorttable.c
-index 23c7e0e6c024..07ad8116bc8d 100644
---- a/scripts/sorttable.c
-+++ b/scripts/sorttable.c
-@@ -827,9 +827,14 @@ static void *sort_mcount_loc(void *arg)
- 		pthread_exit(m_err);
- 	}
- 
--	if (sort_reloc)
-+	if (sort_reloc) {
- 		count = fill_relocs(vals, size, ehdr, emloc->start_mcount_loc);
--	else
-+		/* gcc may use relocs to save the addresses, but clang does not. */
-+		if (!count) {
-+			count = fill_addrs(vals, size, start_loc);
-+			sort_reloc = 0;
-+		}
-+	} else
- 		count = fill_addrs(vals, size, start_loc);
- 
- 	if (count < 0) {
+> +	spin_lock_irqsave(&mpnd->lock, flags);
+> +	mctp_pcc_header = skb_push(skb, sizeof(struct mctp_pcc_hdr));
+> +	buffer = mpnd->outbox.chan->shmem;
+> +	mctp_pcc_header->signature = cpu_to_le32(PCC_MAGIC | mpnd->outbox.index);
+> +	mctp_pcc_header->flags = cpu_to_le32(PCC_HEADER_FLAGS);
+> +	memcpy(mctp_pcc_header->mctp_signature, MCTP_SIGNATURE,
+> +	       MCTP_SIGNATURE_LENGTH);
+> +	mctp_pcc_header->length = cpu_to_le32(len + MCTP_SIGNATURE_LENGTH);
+> +
+> +	memcpy_toio(buffer, skb->data, skb->len);
+> +	mpnd->outbox.chan->mchan->mbox->ops->send_data(mpnd->outbox.chan->mchan,
+> +						    NULL);
+> +	spin_unlock_irqrestore(&mpnd->lock, flags);
+> +
+> +	dev_consume_skb_any(skb);
+> +	return NETDEV_TX_OK;
+> +}
+
+> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
+> +{
+> +	struct mctp_pcc_lookup_context context = {0, 0, 0};
+> +	struct mctp_pcc_ndev *mctp_pcc_ndev;
+> +	struct device *dev = &acpi_dev->dev;
+> +	struct net_device *ndev;
+> +	acpi_handle dev_handle;
+> +	acpi_status status;
+> +	int mctp_pcc_mtu;
+> +	char name[32];
+> +	int rc;
+> +
+> +	dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
+> +		acpi_device_hid(acpi_dev));
+> +	dev_handle = acpi_device_handle(acpi_dev);
+> +	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
+> +				     &context);
+> +	if (!ACPI_SUCCESS(status)) {
+> +		dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	//inbox initialization
+
+Prefer C comments, please.
+
+> +	snprintf(name, sizeof(name), "mctpipcc%d", context.inbox_index);
+> +	ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_ENUM,
+
+Enum means the kernel assigns the ID, you're fully formatting the name
+in the driver based on fixed device attributes, so NET_NAME_PREDICTABLE
+
+> +			    mctp_pcc_setup);
+> +	if (!ndev)
+> +		return -ENOMEM;
+
+> +	return devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
+> +cleanup_netdev:
+
+rename the label to free_netdev, please, to match with the first action
+
+> +	free_netdev(ndev);
+> +	return rc;
+> +}
+-- 
+pw-bot: cr
 
