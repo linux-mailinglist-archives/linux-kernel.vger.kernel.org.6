@@ -1,97 +1,118 @@
-Return-Path: <linux-kernel+bounces-531352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A286CA43F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:32:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3305A43F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D378176403
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF18A1783CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08BD267F5F;
-	Tue, 25 Feb 2025 12:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqKAWsGJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F572192E6;
-	Tue, 25 Feb 2025 12:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E8B268C48;
+	Tue, 25 Feb 2025 12:32:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D252264A62
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486728; cv=none; b=NwMnvGrB4mpCBYrGIaGSAg+lastMXjkeS+0uEODUlXgsfWgdpT6bsD+o0oJdQ3YQRyfoA/Jyv/xVjw0BOwUEwoNnEm7tR2nkeiDEIlTC6oTkTNZ2emdVgeZMjeleAhpy1D9AnaHB+WQFhnTpjqkaF0vHyjpcUuBJmM+DMsqo0VE=
+	t=1740486730; cv=none; b=SefQYPq7TV7xu0Z76Ic+oxqRnNaEZ2NIUEiBMyC5NaimGvREnOsCU6GveCJFiLbD2uoafpdD7HeDfuSQen3nrUvA+ciNiQWuW5n0VQ51oXDb04WnIcRef/BROJTaOY5WuS/Glii9zSRqmkaWr1J3rgyxtO5S04+jG9QiMEDe7RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486728; c=relaxed/simple;
-	bh=2/EDKQtqzN5mDRO/PeqOSFhs8UvZidhjbkvV4ZctUW8=;
+	s=arc-20240116; t=1740486730; c=relaxed/simple;
+	bh=QpXoEDkYKpSmRt4xZzQ8pfU/exILKuqfy05zUgcayWE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgcvlq5jDY6B+aN/QoxJm7M59KWZk08tftxzDvWha2ceaeYvNjT+UbSTLnKXUlQTgWDzo25p5AVJX7SC0RNqEjAfS6SR1qYhg2HqF67cRXL89UEOoD9+gctdRNW84lBZPglbOcRfKfCTR79K9LUFLoYh+offafWzbOORefiaW70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqKAWsGJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00443C4CEE8;
-	Tue, 25 Feb 2025 12:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740486726;
-	bh=2/EDKQtqzN5mDRO/PeqOSFhs8UvZidhjbkvV4ZctUW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DqKAWsGJR79zbFjC2g3xC6/XuZD+o+ZW7Jq5xaw3AdmyG78MeZ93yxYNT223UCjS6
-	 3y4qYqIEnRjto0DMmFEdCojpUeTI7jaO1cRv3Mx9H2f4WF4WsQ50uNhjHuPPoycGpv
-	 RrEH1/Jy4+S65KR2bqprpMcAaJ7PifymxwsvX1qJMFkACPfXUSEUT6abp1qsXQG+9V
-	 xtcsRHFTjW0dVF93rbyyj+K8v6ec5a9J2/CYwVQiOz5+0rWy+pOXu0DBQqQdulgNCy
-	 qBcDjdkJdhQ0HwDr9OjXuljaN+dkSAJqgvJ0G2W28OKxIc/dayn2qUku9ksgKraeGQ
-	 r4q1y9DhnS65A==
-Date: Tue, 25 Feb 2025 12:32:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-Message-ID: <ad36c5d4-18ea-47d7-b2cd-f0be95e5e70b@sirena.org.uk>
-References: <20250225064750.953124108@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGTg0eeh9t1l+NOM1eSKchinx6INQEvUex8A7POzN2RF8Ouml4K5PQf72iRo5rSWue32mZocO3qzYuiFBz5AbR5L5AuTqy6uQvSFk9A8GFSQwBD7uX5yNxzbiR2I+CXAgw8UbzEyhSuza9xFdVhwMMOy/3D++iRzBEC/f8Ok23M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDA16152B;
+	Tue, 25 Feb 2025 04:32:23 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32AEF3F6A8;
+	Tue, 25 Feb 2025 04:32:06 -0800 (PST)
+Date: Tue, 25 Feb 2025 12:32:03 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/mm: Explicit cast conversions to correct data type
+Message-ID: <Z724Q1ofM1GvKquV@J2N7QTR9R3>
+References: <20250219035646.536707-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TBaEGPcv01ZRiNyu"
-Content-Disposition: inline
-In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
-X-Cookie: I'm not available for comment..
-
-
---TBaEGPcv01ZRiNyu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250219035646.536707-1-anshuman.khandual@arm.com>
 
-On Tue, Feb 25, 2025 at 07:49:18AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Feb 19, 2025 at 09:26:46AM +0530, Anshuman Khandual wrote:
+> From: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> When CONFIG_ARM64_PA_BITS_52 is enabled, page table helpers __pte_to_phys()
+> and __phys_to_pte_val() are functions which return phys_addr_t and pteval_t
+> respectively as expected. But otherwise without this config being enabled,
+> they are defined as macros and their return types are implicit.
+> 
+> Until now this has worked out correctly as both pte_t and phys_addr_t data
+> types have been 64 bits. But with the introduction of 128 bit page tables,
+> pte_t becomes 128 bits. Hence this ends up with incorrect widths after the
+> conversions, which leads to compiler warnings.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Does 128-bit page table not imply 52-bit PAs?
 
---TBaEGPcv01ZRiNyu
-Content-Type: application/pgp-signature; name="signature.asc"
+> Fix the warnings by explicitly casting to the correct type after doing the
+> conversion.
 
------BEGIN PGP SIGNATURE-----
+I think it would be simpler and clearer if we replaced the macros with
+functions, such that __pte_to_phys() and __phys_to_pte_val() are
+*always* functions.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme9uD8ACgkQJNaLcl1U
-h9DR7wf+L0ir5hwpexKIZhwVrpl9nV8H5KBQK/tATcV5bnlj0XKrP1BqMD8H7p3u
-0yZr2lnE+Ag0PsclWusoFLvNAG4qCkmljas8cEllEaa3/G7v5ZuowbKO1SXKQ1wL
-vqmO/6bgYod1HjWJPfAPoKz5TUW75xIpX9qaZfLeXwpqstkxfi6uSl87L/LgfNLN
-IQ4DT5n9zBjkFjGOqRUjhWf92fD3sSssu/W8qf2TLpH4IfrR2Ssl3BY1zFaTcT48
-b86IcWqtdEMw7fZbEuRS0YLIu7FSyXb6EPPiam/dz0FfCaCQ3vglv0bDJxHjZlGM
-pKtTsixjD7M9lZOq3rC/7cEs3Va9Ww==
-=iS6X
------END PGP SIGNATURE-----
+That way it's easier to compar the CONFIG_ARM64_PA_BITS_52=y and
+CONFIG_ARM64_PA_BITS_52=n versions, and the types are always explciit
+for inputs and outputs, so there'd be less room for error and the
+compiler can warn us of type safety issues in any configuration.
 
---TBaEGPcv01ZRiNyu--
+That and we can delete the comment block immediately above at the same
+time.
+
+Mark.
+
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> This patch applies on v6.14-rc3
+> 
+>  arch/arm64/include/asm/pgtable.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 0b2a2ad1b9e8..1da2421c9a15 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -84,8 +84,8 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
+>  	return (phys | (phys >> PTE_ADDR_HIGH_SHIFT)) & PHYS_TO_PTE_ADDR_MASK;
+>  }
+>  #else
+> -#define __pte_to_phys(pte)	(pte_val(pte) & PTE_ADDR_LOW)
+> -#define __phys_to_pte_val(phys)	(phys)
+> +#define __pte_to_phys(pte)	((phys_addr_t)(pte_val(pte) & PTE_ADDR_LOW))
+> +#define __phys_to_pte_val(phys)	((pteval_t)(phys))
+>  #endif
+>  
+>  #define pte_pfn(pte)		(__pte_to_phys(pte) >> PAGE_SHIFT)
+> -- 
+> 2.25.1
+> 
+> 
 
