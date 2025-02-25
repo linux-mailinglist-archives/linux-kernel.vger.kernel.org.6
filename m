@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-532213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5333AA44A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:35:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CB2A44A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110123BC6BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856B03AACCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752991C84A5;
-	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C27A20C006;
+	Tue, 25 Feb 2025 18:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CVqql2uZ"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7B51A4E98;
-	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D8F19DF4F;
+	Tue, 25 Feb 2025 18:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507616; cv=none; b=jvg2XT6KG+2PuysBmH8uCoSISJR1tjwZPiCXHcu5LhhP2TXEXFJ674chEiUccCVaZJFuzQR815BrP6ww9jWDoLYJ0u3JnpWpCJL+J1stWz/1tmeJQIurvoEWyFksuAZcz7zp0iYGL8k3hd1isZ0TBbq0dXg3SRXPx1WbSim4ETs=
+	t=1740507667; cv=none; b=uHnbVGh6RMr9EbPZdtHVGn0/PMLIdD2zL/cUthuAnF6Sj67/Ja6bNZA6vVThGguRz9sIATeuBBno8QAdk18x669L5xLuhHx+xn2yuMbVVMpe2o6LwtNQyKhvVra+KzL2G6vfIM5sPeWxRuyM945sfb8+/soXLzecyJ/GfUr+IDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507616; c=relaxed/simple;
-	bh=YdLBlvD7KuxzSEIk+RyaPCgrtz0J+VoLSvcf9Vme8s8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=aTCzGPdvIEiaZERP+jETJE3twA+oizEhBWsO/Z0DztPLJ4VX3lytTUn9N+Nt2zYJkszzNgvldI1Bf6aZQkgnwrbQGTYsIVVLFrpeLBUUD8lh5lnZAW0DMGODw4jdFyNGIPge6LnrWzoci4wT6cdcm0uj5jKZ+8TapaNm+6+Vc+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A1EC4CEF2;
-	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tmzY6-000000095ZO-41vx;
-	Tue, 25 Feb 2025 13:20:54 -0500
-Message-ID: <20250225182054.815536219@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 25 Feb 2025 13:20:08 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- "Arnd Bergmann" <arnd@arndb.de>,
- Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4/4] scripts/sorttable: Allow matches to functions before function entry
-References: <20250225182004.473875894@goodmis.org>
+	s=arc-20240116; t=1740507667; c=relaxed/simple;
+	bh=Cn/mewwWYXy4+YNwH4XczW57RlDnZqheZRJagcYXGkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y9lF6UExRDmAQSg4qyh3Qb9Oy0gTVASigbzcegYcT5BOanlBE7VKCRFDMRd3ouD7bDB8FWYb+4LGhoR8CUyZolm8LT+JlO1ee2f/1yz2P0Tr82JyY3BT4/VdAdA17qgALu80beNkKTFYkNND1FVIPaZaTECWrnBkudGvBAVnvZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CVqql2uZ; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B44B44469;
+	Tue, 25 Feb 2025 18:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740507658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fLHCu1SzDUA81bfOLrX40HQiaQBQLCEnAu274pcYQI8=;
+	b=CVqql2uZnn25u38xUpnKUfNUVQhNWeQZuyo6ovNiU1q2OF6rFT5LluPVTdNoaKf2ZsujlG
+	VOb37t+gS+AzpzdUlsffmNG0uh1OsUZY2+1GWauWuS4Vi3PaY4WYelX/aJwiaQTd7AtJWe
+	ewCKVjysXsjeSm5CUlMTgoNu6NGL72OEbEzqM6loCbrDNz8ndhEaW8E0MGwsggFhS+3C2S
+	CGRs0VMzSfV6FYN8LfaxQYM87mxjDMwaTCFKj0msLbuErOhH5NcH/jVbf6Bf5ZIG5o96Lj
+	gk8qeb2ljL2AndLEM4VHkx2J2jixaTIqZuC0oUPtajmQSEAKS9zVRdOi0eeJww==
+Date: Tue, 25 Feb 2025 19:20:55 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
+ <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
+ Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?B?QmrDuHJu?= Mork
+ <bjorn@mork.no>
+Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
+ module access
+Message-ID: <20250225192055.32168b48@fedora.home>
+In-Reply-To: <Z74GLblGUPhHID8a@shell.armlinux.org.uk>
+References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
+	<20250225112043.419189-2-maxime.chevallier@bootlin.com>
+	<Z74GLblGUPhHID8a@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdegudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtt
+ hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, 25 Feb 2025 18:04:29 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-ARM 64 uses -fpatchable-function-entry=4,2 which adds padding before the
-function and the addresses in the mcount_loc point there instead of the
-function entry that is returned by nm. In order to find a function from nm
-to make sure it's not an unused weak function, the entries in the
-mcount_loc section needs to match the entries from nm. Since it can be an
-instruction before the entry, add a before_func variable that ARM 64 can
-set to 8, and if the mcount_loc entry is within 8 bytes of the nm function
-entry, then it will be considered a match.
+> On Tue, Feb 25, 2025 at 12:20:39PM +0100, Maxime Chevallier wrote:
+> > The SFP module's eeprom and internals are accessible through an i2c bus.
+> > However, all the i2c transfers that are performed are SMBus-style
+> > transfers for read and write operations.  
+> 
+> Note that there are SFPs that fail if you access them by byte - the
+> 3FE46541AA locks the bus if you byte access the emulated EEPROM at
+> 0x50, address 0x51. This is documented in sfp_sm_mod_probe().
+> 
+> So there's a very real reason for adding the warning - this module
+> will not work!
 
-Fixes: ef378c3b82338 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- scripts/sorttable.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+That's indeed pretty serious and since we can't even read the
+eeprom, there's not even a chance to have, say, a list of modules that
+will break with 1-byte io. So indeed the warning is needed...
 
-diff --git a/scripts/sorttable.c b/scripts/sorttable.c
-index 07ad8116bc8d..7b4b3714b1af 100644
---- a/scripts/sorttable.c
-+++ b/scripts/sorttable.c
-@@ -611,13 +611,16 @@ static int add_field(uint64_t addr, uint64_t size)
- 	return 0;
- }
- 
-+/* Used for when mcount/fentry is before the function entry */
-+static int before_func;
-+
- /* Only return match if the address lies inside the function size */
- static int cmp_func_addr(const void *K, const void *A)
- {
- 	uint64_t key = *(const uint64_t *)K;
- 	const struct func_info *a = A;
- 
--	if (key < a->addr)
-+	if (key + before_func < a->addr)
- 		return -1;
- 	return key >= a->addr + a->size;
- }
-@@ -1253,6 +1256,8 @@ static int do_file(char const *const fname, void *addr)
- #ifdef MCOUNT_SORT_ENABLED
- 		sort_reloc = true;
- 		rela_type = 0x403;
-+		/* arm64 uses patchable function entry placing before function */
-+		before_func = 8;
- #endif
- 		/* fallthrough */
- 	case EM_386:
--- 
-2.47.2
+Thanks
 
-
+Maxime
 
