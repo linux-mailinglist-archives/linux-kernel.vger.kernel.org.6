@@ -1,188 +1,122 @@
-Return-Path: <linux-kernel+bounces-531988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C5DA44760
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:07:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DBBA44765
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D29116813E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406011734F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774EA1547E3;
-	Tue, 25 Feb 2025 17:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E044191F6F;
+	Tue, 25 Feb 2025 17:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HywG1Vx0"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wsa7kM0S"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8212943F;
-	Tue, 25 Feb 2025 17:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8421547E3;
+	Tue, 25 Feb 2025 17:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740503150; cv=none; b=WAii9pDUkUDz1EwDUF+sMsyGPd2a6uqOaj8G8ounTPMTlanI903agE0NqQlnOnM3Qe6NnugZiQbqgPYrZVF0ZaZT3eTMxvQJCV+aOopR834/RotBjtZu+PU13KqrgJ86yeveDWo0ZymDFAAfy/1Sd47cd7nmSrZo0ywvhTpaYLE=
+	t=1740503170; cv=none; b=N0dPaiGV7PMj8CeN8vLfidaOlbPn4NMqKZ2EWYDRELzzmqIsmkCCVF37dpj7kGyP1G2CHbh0XRQdkFvgRFQuDCZnvE6gFgyI8mW5YkbWbEcchalfGTNClwcmWhSyux4srBSis4OzvPcXKR+cv2Yyj7IRAeF3hH4Msyp8LRxv5y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740503150; c=relaxed/simple;
-	bh=AHjVZHAx9j1NzqkNbb+pYYYK7INXzAwVGFl0ef+03eM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UX1tdF1B58rL0Y6zcnN8Iztinb0b0dn9Shm3BJ/zQHq0h1epxPLqFo1YAEeXxbS2Ok82Kh2GhVY0jZ/hRuXq59S/oMd7Xlgeg1qtq75EDbFx5/cqkePNPg7FK0aBogLir8eecibwhDXC3NR8LliPHxJnuxf2Ylmu3DAAT9a7I60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HywG1Vx0; arc=none smtp.client-ip=209.85.166.181
+	s=arc-20240116; t=1740503170; c=relaxed/simple;
+	bh=bpxL3B7mFZ8T1gpT6geSdExB3J0o22Gfa+Yiler7EOM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l2yWN61gwWvHDfpl3uJnkBBmLnz9Sl2TCGsaugMOOjLMSO5rkyitGc5O0ALotYLhT4ydhoqTc/FyV7LevJQMeHvAVUPBDQmb9beahpYo7kgSlIko/6QCPZsk3AbRFVvRx2QApAQ5Q10avQ4pOG/8n3xLIHBwEEraZDxmsteaJZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wsa7kM0S; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d2b08175f1so1466355ab.0;
-        Tue, 25 Feb 2025 09:05:49 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2211cd4463cso120229245ad.2;
+        Tue, 25 Feb 2025 09:06:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740503148; x=1741107948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYV21KgAAK9DCaC1N/igtqqjHAXsIGmsKhB8/dHzdzw=;
-        b=HywG1Vx0Uk/W4W5B6iy8e47fctUF1DxTzRyeJf+JquFajdvh0dHCvo5kG2YTCSlJJb
-         JebGK2Jy/Fwd0GMpVJ7+oz7NWAk8EBmVbL+mQEmUgY9nb2hcQIma3qKX9Yg6ynw3gVWy
-         SSfTXnlGDrvWLNumNEms6i+DYA+2ix7Y02xPNehbn+KykwjVCfFPZhDkBPBvRfFbLeU4
-         rDGMMdIs0hkL9t6/bBT3BcgD7xn3x5g5Teqf5AjBc3m7k8JTiOk8fOeN4Z3wYUvfYj/r
-         5JCLXLgfzh7/4JYtR7Hnvma05wdLfzSjGVz3Oz80vWlx0ZVbBkJpLLINhn6yzfkmGSQf
-         ny4w==
+        d=gmail.com; s=20230601; t=1740503168; x=1741107968; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bpxL3B7mFZ8T1gpT6geSdExB3J0o22Gfa+Yiler7EOM=;
+        b=Wsa7kM0SXVUPlaFyrl+1M2gSWxE+93VurzC4Xsqp65qIdnIbRtir8bMo6qrrY/6bkH
+         g0nagPF21ynsi4rdJIvpp5e/2BSOCS5UNpNHzTGaus+FkXKttQRjIdtR595dmC5EkUGb
+         F1Iyc5lDoUww0X6zej77/7jDLmOWg0E79ynExy7t55K7tgtyaXWbCnqme3asUxTwV0FT
+         QT8Nh1yS9y86djDqlhWovOVXKslRbmeuMJ/ya3mALAHdotBEoJgP9F3tHKAnPIc/rLNK
+         4RXnPgmHjdvS2Iamh2HI0/qST1klhXVK6TcLVvyu3eRBX3ewJY0yFRgzGRGcEReKGC50
+         laZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740503148; x=1741107948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740503168; x=1741107968;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VYV21KgAAK9DCaC1N/igtqqjHAXsIGmsKhB8/dHzdzw=;
-        b=YnfKNUbx18ZqqI0nOjRnsuM5MB/sO1TMI0u6Hi6o5tIw5+Dhj9+95cnIcqW+2gW/L+
-         RhyiflhZxK/LL5lq/QNoZSqBowpNhWBoSi12RwKff40cAzT3Wy/AozY4zB2pqQsR6PEh
-         Rb6+og9VBi1XMw91W7rFSjRWA6UFPx4LsaE3ChXv8JsYbko8SXtUe21L2jZ9vEv7oqqA
-         ilDk4jh84QEVOTBRvXhdYXT8/+dB/RQOWk27zZCWaMs5QKDt2/44oZOjWTDP2MXIATvi
-         CR7vs5W4iAvM/cQbv6A2DlPSc46Rb1jNhzJC86tZerwG+0jQN5QFbf/tR8TsMceraaPg
-         1wQg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9y+6hLXkhEdGObLMR0OL9+wYXLE3FuSym3JspDRSlx/LICTjfLaRHuhnX3xYVeB7sUV7I@vger.kernel.org, AJvYcCVqkzfv4pqzTGGiQcqsBylsJkRvZdiXSzsX9eScFaLgx3ZFoES889WW27Pp/AxIPKh4/O84ZcXG9Mk+pA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk/7yufiHt+zzLCNiKxzuVB/lrcFtd02w/oO4LbKIbpQ00mlUd
-	bg+PqpfdZRqYqVZlZXpPL9XDMtWktndW7DrfUIdPtGUA2mF33tOrYopE1D/iVWwHwtlbiH0kbG0
-	qKkCaqWfN90+Io/YU0bk0js8ssJ0=
-X-Gm-Gg: ASbGnct3oCtuQec2ll8AQ9nLSgBNnt9r3LUG1vvsqnHHyIHc78VmRnuWncGflhDVGU1
-	mgL8GbGypX+ALZVGFzBO+6eqEwsF+5OKXCClxZ5JGk4sIzRXXiB4gsbhNtN+VNJu8xQlltgmBNP
-	DHWjkBjQ==
-X-Google-Smtp-Source: AGHT+IF93EFtJ6oPsAu3p+R2151Bs9lgZsKeK3XtmcLvapwsdOCh6mvoMCN5/c279RrUn/GUfkqIUe5+Fw08pLAioIU=
-X-Received: by 2002:a05:6e02:1646:b0:3d0:4ae2:17b6 with SMTP id
- e9e14a558f8ab-3d2cad72c9fmr48331585ab.0.1740503148188; Tue, 25 Feb 2025
- 09:05:48 -0800 (PST)
+        bh=bpxL3B7mFZ8T1gpT6geSdExB3J0o22Gfa+Yiler7EOM=;
+        b=bg2iV5TP//KY5ldHi70SHaGJJpQivHjvGaQwdUIHiRAfIB7N89VBZR5WSjizcFmKlk
+         I0CsaeL+USnkYQYvJGMY70nAOQ3QYjgr9+2Aa+K48ClIvElik8rfJtI3x3aRQ0CBqrfR
+         sFMR623niwxbj5ZD8wbdHEn0ky6u6zYk4KIpvDlHRl4vMaq6UYtGRtMTeVskHlVPQ4oM
+         YP5FUTKD03GCxzZiAg1cdfC/ZIhOagvpEY8c1cD6noTPEddpQ/3fA1+urGV4gynXYkeL
+         oIdbaGfESkBYztoB5cHmQrHn64NWEjitBApbSgUsqxC5MSbT4Z2L9VArvoP9ukKVhhUV
+         SQzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq64IE5YKDfabjtlDFrVIpEYfhku/xgI5MhawnRsW8LTy5MiWNAj0jA8c/XrUqoLOR6vOk8dmSJIDRNw==@vger.kernel.org, AJvYcCWsK4mMomVnyHmaD8GCwrf74SuZWEI8t8YIObH1uz7iFKeEEdn8YEwBl5CwtLLOBE7GLwextYlS75l2ilw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+vdkLmpPTXIN6wRS9kQ01eoC5QQMxm077u8cSN2FyFhWo+YlJ
+	nwbHoDfWIIoHSMomQ979cZTLUPwOMtErC32Fa+Ugg39Avf+tTiP5qyBbbSId
+X-Gm-Gg: ASbGncsC5YlwToS/3aa+lFXDDjjUY+MY59Chleq2BroWFQadvYX94xn/HfOnqjY8kbm
+	SJkepr5aZK6cJo7iM5y/QNU9PQKhdZzICqmseIFOQt9r36WFONXFPwLsVj0lw5CN2b5l1+v3B5u
+	vk0uE9hDqh315gRdctqehwmEiSM1NzKzqTy01t5gBOunZZfDOc1/NeICS1KG9CFssQoJ9nyPA/p
+	xkkQSAe/4Qch+jx2dnAq3ysuft0jTDEPdhElN/g9t48lYo3k0HKbAP5kXFSrtzhAa9bZMfZ1o6N
+	q8dQ1sssVlWGuXBDmfm/hDOJ7nIJMHUOXijqzkI1Kd+z1DE=
+X-Google-Smtp-Source: AGHT+IFv9YuL/fzfRISpsvngTs+AOHJv036o9wJ92ZFpW3rksechl/oac0mMWei93fa2C8ODk7J6Xg==
+X-Received: by 2002:a05:6a00:8c3:b0:730:94e5:1ea2 with SMTP id d2e1a72fcca58-734790a2709mr5892899b3a.4.1740503168229;
+        Tue, 25 Feb 2025 09:06:08 -0800 (PST)
+Received: from DESKTOP-P76LG1N.localdomain ([14.162.192.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6abb63sm1759887b3a.9.2025.02.25.09.06.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:06:07 -0800 (PST)
+From: Nam Tran <trannamatk@gmail.com>
+To: pavel@kernel.org,
+	lee@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nam Tran <trannamatk@gmail.com>
+Subject: [PATCH v1 0/2] leds: add new LED driver for TI LP5812
+Date: Wed, 26 Feb 2025 00:05:59 +0700
+Message-Id: <20250225170601.21334-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
- <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
- <Z7iqJtCjHKfo8Kho@kbusch-mbp> <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
- <Z7xbrnP8kTQKYO6T@pc636> <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz> <Z73p2lRwKagaoUnP@kbusch-mbp>
-In-Reply-To: <Z73p2lRwKagaoUnP@kbusch-mbp>
-From: Keith Busch <keith.busch@gmail.com>
-Date: Tue, 25 Feb 2025 10:05:37 -0700
-X-Gm-Features: AQ5f1Jrz3qY3MDeCKERua2dr5bSa2550jia32PBjWFTFKImY0jy7IP8cCbQl7FM
-Message-ID: <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Jakub Kicinski <kuba@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org, 
-	leitao@debian.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 09:03:38AM -0700, Keith Busch wrote:
-> On Tue, Feb 25, 2025 at 10:57:38AM +0100, Vlastimil Babka wrote:
-> > I tried to create a kunit test for it, but it doesn't trigger anything. Maybe
-> > it's too simple, or racy, and thus we are not flushing any of the queues from
-> > kvfree_rcu_barrier()?
->
-> Thanks, your test readily triggers it for me, but only if I load
-> rcutorture at the same time.
+From: Nam Tran <trannamatk@gmail.com>
+To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Oops, I sent the wrong kernel messages. This is the relevant part:
+This patch series adds support for the Texas Instruments LP5812 LED driver.
+Patch 1 adds the Device Tree (DT) bindings documentation.
+Patch 2 introduces the core driver implementation.
 
-[  142.371052] workqueue: WQ_MEM_RECLAIM
-test_kfree_rcu_destroy_wq:cache_destroy_workfn [slub_kunit] is
-flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
-[  142.371072] WARNING: CPU: 11 PID: 186 at kernel/workqueue.c:3715
-check_flush_dependency.part.0+0xad/0x100
-[  142.375748] Modules linked in: slub_kunit(E) rcutorture(E)
-torture(E) kunit(E) iTCO_wdt(E) iTCO_vendor_support(E)
-intel_uncore_frequency_common(E) skx_edac_common(E) nfit(E)
-libnvdimm(E) kvm_intel(E) kvm(E) evdev(E) bochs(E) serio_raw(E)
-drm_kms_helper(E) i2c_i801(E) e1000e(E) i2c_smbus(E) intel_agp(E)
-intel_gtt(E) lpc_ich(E) agpgart(E) mfd_core(E) drm_shm]
-[  142.384553] CPU: 11 UID: 0 PID: 186 Comm: kworker/u64:11 Tainted: G
-           E    N 6.13.0-04839-g5e7b40f0ddce-dirty #831
-[  142.386755] Tainted: [E]=UNSIGNED_MODULE, [N]=TEST
-[  142.387849] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[  142.390236] Workqueue: test_kfree_rcu_destroy_wq
-cache_destroy_workfn [slub_kunit]
-[  142.391863] RIP: 0010:check_flush_dependency.part.0+0xad/0x100
-[  142.393183] Code: 75 dc 48 8b 55 18 49 8d 8d 78 01 00 00 4d 89 f0
-48 81 c6 78 01 00 00 48 c7 c7 00 e1 9a 82 c6 05 4f 39 c5 02 01 e8 53
-bd fd ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e c3 80 3d 39 39 c5 02 00 75 83
-41 8b
-[  142.396981] RSP: 0018:ffffc900007cfc90 EFLAGS: 00010092
-[  142.398124] RAX: 000000000000008f RBX: ffff88803e9b10a0 RCX: 0000000000000027
-[  142.399605] RDX: ffff88803eba0d08 RSI: 0000000000000001 RDI: ffff88803eba0d00
-[  142.401092] RBP: ffff888007d9a480 R08: ffffffff83b8c808 R09: 0000000000000003
-[  142.402548] R10: ffffffff8348c820 R11: ffffffff83a11d58 R12: ffff888007150000
-[  142.404098] R13: ffff888005961400 R14: ffffffff813221a0 R15: ffff888005961400
-[  142.405561] FS:  0000000000000000(0000) GS:ffff88803eb80000(0000)
-knlGS:0000000000000000
-[  142.407297] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  142.408658] CR2: 00007f826bd1a000 CR3: 00000000069db002 CR4: 0000000000772ef0
-[  142.410259] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  142.411871] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  142.413341] PKRU: 55555554
-[  142.414038] Call Trace:
-[  142.414658]  <TASK>
-[  142.415249]  ? __warn+0x8d/0x180
-[  142.416035]  ? check_flush_dependency.part.0+0xad/0x100
-[  142.417182]  ? report_bug+0x160/0x170
-[  142.418041]  ? handle_bug+0x4f/0x90
-[  142.418861]  ? exc_invalid_op+0x14/0x70
-[  142.419853]  ? asm_exc_invalid_op+0x16/0x20
-[  142.420877]  ? kfree_rcu_shrink_scan+0x120/0x120
-[  142.422029]  ? check_flush_dependency.part.0+0xad/0x100
-[  142.423244]  __flush_work+0x38a/0x4a0
-[  142.424157]  ? find_held_lock+0x2b/0x80
-[  142.425070]  ? flush_rcu_work+0x26/0x40
-[  142.425953]  ? lock_release+0xb3/0x250
-[  142.426785]  ? __mutex_unlock_slowpath+0x2c/0x270
-[  142.427906]  flush_rcu_work+0x30/0x40
-[  142.428756]  kvfree_rcu_barrier+0xe9/0x130
-[  142.429649]  kmem_cache_destroy+0x2b/0x1f0
-[  142.430578]  cache_destroy_workfn+0x20/0x40 [slub_kunit]
-[  142.431729]  process_one_work+0x1cd/0x560
-[  142.432620]  worker_thread+0x183/0x310
-[  142.433487]  ? rescuer_thread+0x330/0x330
-[  142.434428]  kthread+0xd8/0x1d0
-[  142.435248]  ? ret_from_fork+0x17/0x50
-[  142.436165]  ? lock_release+0xb3/0x250
-[  142.437106]  ? kthreads_online_cpu+0xf0/0xf0
-[  142.438133]  ret_from_fork+0x2d/0x50
-[  142.439045]  ? kthreads_online_cpu+0xf0/0xf0
-[  142.440428]  ret_from_fork_asm+0x11/0x20
-[  142.441476]  </TASK>
-[  142.442152] irq event stamp: 22858
-[  142.443002] hardirqs last  enabled at (22857): [<ffffffff82044ef4>]
-_raw_spin_unlock_irq+0x24/0x30
-[  142.445032] hardirqs last disabled at (22858): [<ffffffff82044ce3>]
-_raw_spin_lock_irq+0x43/0x50
-[  142.451450] softirqs last  enabled at (22714): [<ffffffff810bfdbc>]
-__irq_exit_rcu+0xac/0xd0
-[  142.453345] softirqs last disabled at (22709): [<ffffffff810bfdbc>]
-__irq_exit_rcu+0xac/0xd0
-[  142.455305] ---[ end trace 0000000000000000 ]---
+The LP5812 is an I2C-controlled LED driver capable of driving up to 4 LEDs with independent brightness control and pattern programming.
+This driver provides support through the Linux LED framework and includes device tree bindings for proper integration.
+
+This driver has been tested on Raspberry Pi 4 B using kernel version 6.14.0.
+
+I kindly request feedback from the community to ensure that this driver adheres to the Linux LED subsystem standards.
+
+Thank you for your consideration.
+
+Best regards,
+Nam
+
+---
+
+Changes in v2:
+- Renamed DT bindings file from `leds-lp5812.yaml` to `ti,lp5812.yaml`.
+- Added LP5812 device tree node to `bcm2711-rpi-4b.dts` for Raspberry Pi 4B.
+- Updated core driver implementation to fix build errors in kernel version 6.14.0-rc4. (The v1 patch was only compatible with kernel version 6.1.93)
+
+Signed-off-by: Nam Tran <trannamatk@gmail.com>
 
