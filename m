@@ -1,97 +1,61 @@
-Return-Path: <linux-kernel+bounces-531157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1ACA43CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:09:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E589A43CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F58F443129
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:05:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A31D422041
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BAC2676FA;
-	Tue, 25 Feb 2025 11:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="k14C2U6n"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358E52676F8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88926B965;
+	Tue, 25 Feb 2025 11:03:11 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BDB26AAB9;
+	Tue, 25 Feb 2025 11:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481382; cv=none; b=s2iI4hhpUEntbl+sUmmWmzGs1OZfmt1UKFOjBa9dCK3EWsdMM51ebJAA29jI3m4Y7ByNOq5Hk59u06ciirAu29RQNak+EiMDdmUk016DqRtZs5fRhFiexbQykON209BTqScF+RyBBds9Api5emPsNXF/BfMq03SyyYTfLdfdkCk=
+	t=1740481391; cv=none; b=smfu8LWH8khOc8Wve/al3KIjbN+yZb1zQCjS1zqlcQ2u2FYKP/MINbm70MVUkFc0cwcyzCOtsHASDd2+09dZIn3ozYhUfsmSJfe54+CKHLurTiDtYFx+ITCLWoToe+KZN8irKabAAELXMgSZcIlMK+Mw8DitWHMFAtbekYdMcv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481382; c=relaxed/simple;
-	bh=EFoTjmBvFXfXjWb+GX1/FcvwY+PND4is0Ol1b2EMzJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qfL6lGyZjxqM1wsR3P/quZtN4JXHlYjwvoJo3PKIFcdoWaczxwD6f4FKJE7hr1GmUoTWyD9SiIjyhh+WWos886UZqCBzsFMFcuuRL6D0xvNs75TH6/9Lxz69Iz2K1WdAGWdjKzbkub/46V4wRDGOCCr/AkT/uSkJ9UNkjfn5MJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=k14C2U6n; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394036c0efso34052915e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:02:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740481378; x=1741086178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1g90tifgQM9MVDjBzO/J2Q9Ytv3puck/TcrC4X2HffE=;
-        b=k14C2U6nGMHsF8/MEKTGyx66X/GNX/AXIuxMBjthOmHyCVh3Qs3d6RCIodf3FL2KB8
-         ZOEgIsQ5L9Yisrg4dL+bMYNoduIE2WpcEkyrlN3WZwoPLKL0EVjvxLWhcasXzjLWhXaH
-         8Dw+UHLTblJvNiXztWWwWvP+49ExEwDcWxFvOlpPxayZkWHXyz9yTXBHo/DLHowNO5Ls
-         C6A++u09CDhYP1b3aZx/MP7jurtIkfa3+p2T89o5IcUJirKjAVyYaMD7fXnDZvgH9lMS
-         xmKyYNs48gjm91WmA7YsSqYrnicAaIWdRBgeJpuKXL2mWdIaZtu1kNJsZoyCPaPPvVT0
-         7HcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740481378; x=1741086178;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1g90tifgQM9MVDjBzO/J2Q9Ytv3puck/TcrC4X2HffE=;
-        b=r8wAo626b5BacC/AIdjGvzizPLrDPjRBh+a27X3fY6pSdOV8TfqsoowWSi6C4/GLhK
-         btFmprymuZgdvFaMrknkmWOA3L1JBAJMbP0okNLDVMEOYRg1fv3zfOU2EVMRy7KjiK9r
-         22gOeke4pZyE5jbpGh5/NbEXskijlmk3ZC58M5P5g33ALRUQ1KdgT/QtArsTxQgS7GkM
-         iIy1j2MvKr5pBAmKXUE6A4Xe75YknmUQwZ6rB0rKnCnK35WP+lWVou/1Tc6M3t0T4zRs
-         0foMzVBHpXJ3Bb48dBE9I2SiTcd/+sdXkLYSfdgHPpLmn9KUQnP/rnZGITtaBqJAGcEr
-         TXsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0xY21x+xK0RHz2kvXjvHD7hzxmRUXPUirrc7K9m2UHLrAXAYfCeIZyLV5xtZ6lX/KeotrdORxcV8XDG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXE3PIkFq4FPB/MSKNM7aFPj/l1qIKb3jChp2Fez14MqUUvTnC
-	iUDpukVpYQPs3MrEh9oZ+qjBFq20wT4LaaXfh+26VQGSQVgwYhWnWQBEs25lyOY=
-X-Gm-Gg: ASbGncv86unHOUBe9E2Y8lt9q7rF4/JFWE9aiEROidQ3UEYqfML0RtAqFdEy3I10F4y
-	2JtoEUu8WlSYdKq73g+yvPSyYHUi5pYExrk0pRiiaDQyBmMsWWvDAlU7lNAJ7oMcH/dQIWpDi/b
-	DXHWQW4HCvDx9hj+VrRN/hxy8BWZhnzStUhHF8HjNHRlR3yVB9nqVSnoMMaKZtdkk6CyPzaeacf
-	ERWLe2ZtzZ6mMwu7pOVpdB4j1ehEW3+db4P7jX1ApJbfZUFyNBNI90kI1ia9RQFuhax+spv/xSb
-	jKCxDxBGeEqP4uB4Jbledx/N+US7nFzmNQpP8eYGqn5QmUmzJrYLXHM=
-X-Google-Smtp-Source: AGHT+IH9p4vFb/WlIcpRZOBte7JgwwPLkhCZmRimhOlrCUbR7HFlC6wBkzx+vvYw/CKT/Zad3bHmmw==
-X-Received: by 2002:a05:600c:4f84:b0:439:955d:7ad9 with SMTP id 5b1f17b1804b1-439ae1f145cmr171014845e9.14.1740481378537;
-        Tue, 25 Feb 2025 03:02:58 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1532dccsm21972385e9.7.2025.02.25.03.02.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:02:58 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: gregkh@linuxfoundation.org,
-	geert+renesas@glider.be,
-	biju.das.jz@bp.renesas.com,
-	yoshihiro.shimoda.uh@renesas.com,
-	phil.edworthy@renesas.com,
-	balbi@ti.com,
-	laurent.pinchart@ideasonboard.com,
-	kuninori.morimoto.gx@renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-usb@vger.kernel.org,
+	s=arc-20240116; t=1740481391; c=relaxed/simple;
+	bh=5nejIMLJ8y/qOjJkfWJrFYsps54a6ZHcVBkaxfaA7To=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ijDDGjHcT5K8qlKKc4OXFOshO1+F3V0vy2rhrRn2s9SiLfNXTTudZd8cioRHlwzIaMvWQ1kCUH+v/ZHHUprYEsZSGThbViVMA2Zl64vcYdAB8GBearWWCbARxQ08Q3ihad0JM5NkIs/sIRxgHME6evurSZiuMqONt9Wv06PVVrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 25 Feb 2025 20:03:00 +0900
+Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
+	by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id 70AAF20090C2;
+	Tue, 25 Feb 2025 20:03:00 +0900 (JST)
+Received: from kinkan2.css.socionext.com ([172.31.9.51]) by m-FILTER with ESMTP; Tue, 25 Feb 2025 20:03:00 +0900
+Received: from plum.e01.socionext.com (unknown [10.212.245.39])
+	by kinkan2.css.socionext.com (Postfix) with ESMTP id D59663730;
+	Tue, 25 Feb 2025 20:02:59 +0900 (JST)
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	"Krzysztof Wilczynski" <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	linux-kselftest@vger.kernel.org,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
 	stable@vger.kernel.org
-Subject: [PATCH v2 2/3] usb: renesas_usbhs: Use devm_usb_get_phy()
-Date: Tue, 25 Feb 2025 13:02:47 +0200
-Message-ID: <20250225110248.870417-3-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250225110248.870417-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250225110248.870417-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 2/6] misc: pci_endpoint_test: Avoid issue of interrupts remaining after request_irq error
+Date: Tue, 25 Feb 2025 20:02:48 +0900
+Message-Id: <20250225110252.28866-3-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250225110252.28866-1-hayashi.kunihiko@socionext.com>
+References: <20250225110252.28866-1-hayashi.kunihiko@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,41 +64,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+After devm_request_irq() fails with error in
+pci_endpoint_test_request_irq(), pci_endpoint_test_free_irq_vectors() is
+called assuming that all IRQs have been released.
 
-The gpriv->transceiver is retrieved in probe() through usb_get_phy() but
-never released. Use devm_usb_get_phy() to handle this scenario.
+However some requested IRQs remain unreleased, so there are still
+/proc/irq/* entries remaining and this results in WARN() with the following
+message:
 
-This issue was identified through code investigation. No issue was found
-without this change.
+    remove_proc_entry: removing non-empty directory 'irq/30', leaking at
+    least 'pci-endpoint-test.0'
+    WARNING: CPU: 0 PID: 202 at fs/proc/generic.c:719 remove_proc_entry
+    +0x190/0x19c
 
-Fixes: b5a2875605ca ("usb: renesas_usbhs: Allow an OTG PHY driver to provide VBUS")
+To solve this issue, set the number of remaining IRQs to test->num_irqs
+and release IRQs in advance by calling pci_endpoint_test_release_irq().
+
 Cc: stable@vger.kernel.org
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Fixes: e03327122e2c ("pci_endpoint_test: Add 2 ioctl commands")
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
+ drivers/misc/pci_endpoint_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v2:
-- collected tags
-
- drivers/usb/renesas_usbhs/mod_gadget.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
-index 105132ae87ac..e8e5723f5412 100644
---- a/drivers/usb/renesas_usbhs/mod_gadget.c
-+++ b/drivers/usb/renesas_usbhs/mod_gadget.c
-@@ -1094,7 +1094,7 @@ int usbhs_mod_gadget_probe(struct usbhs_priv *priv)
- 		goto usbhs_mod_gadget_probe_err_gpriv;
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index a3d2caa7a6bb..9e56d200d2f0 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -259,6 +259,9 @@ static int pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
+ 		break;
  	}
  
--	gpriv->transceiver = usb_get_phy(USB_PHY_TYPE_UNDEFINED);
-+	gpriv->transceiver = devm_usb_get_phy(dev, USB_PHY_TYPE_UNDEFINED);
- 	dev_info(dev, "%stransceiver found\n",
- 		 !IS_ERR(gpriv->transceiver) ? "" : "no ");
++	test->num_irqs = i;
++	pci_endpoint_test_release_irq(test);
++
+ 	return ret;
+ }
  
 -- 
-2.43.0
+2.25.1
 
 
