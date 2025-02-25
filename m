@@ -1,112 +1,294 @@
-Return-Path: <linux-kernel+bounces-530522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4741A434C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:44:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34139A434CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D7B3B8FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EB151684C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259DF2561DE;
-	Tue, 25 Feb 2025 05:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB6A2505A5;
+	Tue, 25 Feb 2025 05:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ef42IUr8"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GFp7lzqQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C05B19CC08
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740462260; cv=none; b=f1kMiUNKUjBZiFfTFFuNot85xFUrdMbWecJXcvHM5dqcJ8yui1dsm0ogKLG9LmitaN9vCvd3Tc7CdvYc+YBnHI32WWnm3WgslPO9UsGcqwPy+bDKuoOt9cAo/ewu1Z843oNj/W4GH9/wBO9Kjezen8ml56WjBnHIlt5sWLSALaU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740462260; c=relaxed/simple;
-	bh=YR6auw4bqXEXQ4lN3HdARvRbit10qylCF448um5Ywf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g4hKkjgqZkX1+u1k8+a7w4N4JPNa4dxr9Veu3ng2c0bIm8IUmWNz0OXxFb3bTJy1HDvQI6FagRkdPUun9ohhVO709YU5gTy29y4iE1rypZByXMLQFfUQ+i6a8dnXOEXuJlBnsWm16nVD3dUBkqeIoPPHUlqF47lpkxnCrrwWgmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ef42IUr8; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d25b468f-0a84-45c9-b48e-9fd3b9f65b54@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740462255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vZth+1J0qcG8af65YCaDKhN3YqIxKYuz0JmOjVxti1U=;
-	b=Ef42IUr8rRA8r8MKIhzugtkBzzwgPhRpIASjRT0BJH/vU1p6IAXnK4wWR6135FSBHwfSss
-	X51PDPNKwi5Z5Q1wilSx36TTNRtugn4rYdPFEuSeU6DvK7TOWr3BsKdVBIVpg1GKZNaqlC
-	fu/lSUP7hLKj2KgF6pMXQdos+9EGBSc=
-Date: Tue, 25 Feb 2025 13:44:04 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9E63D984
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740462331; cv=fail; b=i8oD+LQs2HDL0pqE/WFqfHMD9z5v4nlhO1YHSJ7IvwFLPGMcbw9xUdqMVbY96xHQ5rG3be1qsr7O1sPtxpuQEr6t3M7SsuZS3VRfU4+QqkwHdTh/RLS5TStAOYH5VRByjHs17FmcmCNiP7zbD8yYE8WjwQ7YpQV4wWWxoqgH0ic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740462331; c=relaxed/simple;
+	bh=5XX5xJoTc20T4TuRLstC5wDjFolI2y+qEj6pdj1Di68=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JtR/qB0j1VdP0UexuTnGTzpWn+g0AT2VgvYMrsalh8SjecVYangcCJMdfujjIkPL2pfbBVLsBKMn2xwFKflXJ2fe9Ml1lDDmJPseM5dxVjCmXRSmWVbJZt6/TzLCbHFdhLZKGfauLB+tmV/QHS/wH3oFvKcLWt4XeQr6pS76l0A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GFp7lzqQ; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740462330; x=1771998330;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=5XX5xJoTc20T4TuRLstC5wDjFolI2y+qEj6pdj1Di68=;
+  b=GFp7lzqQLuM0e5psCv4/4qSA5AJa4B4xM3I5V/SS9Q9A4JIHBwky8b6+
+   8QX+5aA2LpmOBwP7nqIkwNZ7nbzs5p4giCMmZrrdS/eKFl1pgJXtTgwor
+   JSIE0ptS7oi0Sq83ubdR3wHpcbECvYQm264gjR77InX1VIJI32MNqpiA6
+   mt43liAFMdGN9PwdchnY6KsEjo1Tp9kgDMQvZzQnTTu3E4bY8fNFyr5vh
+   wlZogzBP/io5mC8wRWHQ5y/pT2olz19DcoNaTeXbhNwJAg7I6H7nTtm7N
+   pbycuxsLpIWVyGkyZbnUn0WTMoeE2hl+xIN8BsfgsUgtetvUt4+vvnqIG
+   Q==;
+X-CSE-ConnectionGUID: XIK6tISPTiu3VWCTPh9frw==
+X-CSE-MsgGUID: RIrb3iRmT3iPkSgjAkmW+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="45034838"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="45034838"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 21:45:30 -0800
+X-CSE-ConnectionGUID: a5cKHXNDRbmgVvLTToz76g==
+X-CSE-MsgGUID: Ucp1fSWvRzu3Lm3lNacQSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="116915815"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 21:45:29 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Feb 2025 21:45:28 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 21:45:28 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.49) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 24 Feb 2025 21:45:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EnrMH0v/YfbaIivuHtP297P6nZe6CPbX3AjZOYv32mUazi9g/weoJydigsaacQ4eindXYJbWtQFRf9WeEKyMpS/5Nql+wMwEbxWMjXypDaHF2oNTw1X8FwiDe+UlFiGdIzE7r4mLLF2eanGg8D+b525jEbeg+DtBIAna/InlV9BnT5jCgB8mnvB5yZl4GfP19nRyqspP5H5+hxmhfs9CMBc7eDfxOxFoyu+Hf5LYThsRe1BnLGzTPJddBLh7J/gYTH4KI3pIFm1TfUYNYNkvxSauBNodqx7tglqlkhQU8rK/QhXPMxdqShOlYFOaUkj5wPnBreK9SLbmeWTJXSB5Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zj/4hafYcgtluR8OBUffsI9Z1KDSP4+THaaPPkYWd5U=;
+ b=iWvhUJoFIq8POuWsUXTsoSykbNdZGQ7iU9hGJSlWDGNjBHJ+CpdqRZsuok3p0lElGfHk6uxJG6FPJv6pg+NyB1BhymQM0oxZGaYnRohPYJKORU/31ITUOKXjwnZcd9cT1Pux+CiQDSLBaSflk9+FDoTV0boCLDUB6UeQZfKRRZFecCh9FujPi1jKWRBCeYl7PX7/88WvKEJfOBwmkkx3X1HRqS6eNUNBhPUGIj/8v63KuZD+FTuihUJ4S060gIkjXVW8sWoFA0B7RWsKZgKga+uexHr+4ucijKvr0QrBrAXU5Crx86YnBIdTmC8O7456sRoMXILhlfuV/9BW7Ok++w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SN7PR11MB7511.namprd11.prod.outlook.com (2603:10b6:806:347::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
+ 2025 05:45:24 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 05:45:24 +0000
+Date: Mon, 24 Feb 2025 21:46:27 -0800
+From: Matthew Brost <matthew.brost@intel.com>
+To: <phasta@kernel.org>
+CC: qianyi liu <liuqianyi125@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+Message-ID: <Z71ZM9Cs1Wb4mhD3@lstrano-desk.jf.intel.com>
+References: <20250221062702.1293754-1-liuqianyi125@gmail.com>
+ <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
+X-ClientProxiedBy: MW4P220CA0014.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:303:115::19) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v8 4/5] libbpf: Init kprobe prog
- expected_attach_type for kfunc probe
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, chen.dylane@gmail.com
-References: <20250224165912.599068-1-chen.dylane@linux.dev>
- <20250224165912.599068-5-chen.dylane@linux.dev>
- <CAEf4BzYz9_0Po-JLU+Z4kB7L5snuh2KFSTO0X9KK00GKSq91Sw@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAEf4BzYz9_0Po-JLU+Z4kB7L5snuh2KFSTO0X9KK00GKSq91Sw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SN7PR11MB7511:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5253344-efa4-44bc-0c79-08dd555f9956
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZjdocnY2UGZ3TUhaa3ZmQll5SFF4TzB5YlZKR011MW5hMjRYSU14S282NGxR?=
+ =?utf-8?B?NmV1S1d0amlPM202VlZmc1o4ZXdWTGVnSVpGbXN1Ukx1Y29UazgrUVBvUkhs?=
+ =?utf-8?B?bzlOdS9JV29XZlhEaUFqdzBCRXB4OCtHeE9XYkR5NUhpTXhxMTNtZnN2RE0z?=
+ =?utf-8?B?cFNmbS90MEpPZXVjYUZFWjlrWjk3a1p2SExOS3RFRHFyYXhNclNjdlZrVTI0?=
+ =?utf-8?B?eXJvT3dwa21kTVRoblVwK2x5NFFoSnQ3SHo5c1JBNEtxcVNQMytFWmY0TTVs?=
+ =?utf-8?B?MUZkbDlvOVk0Yno4UzlURHFKZjJoeWZQZ2lyRzBINWNkTStkSURIdkdEVlRT?=
+ =?utf-8?B?UzBOcXhVM3IzRXVRYVlpUGRubFNQME5relpQcHNYNHRFRzg2a0ViRlZwL0pD?=
+ =?utf-8?B?SzNQSnlLeUY2NGJ5TDUxa1p4OGdTWDNwRW1WMUZaYVpnT1MyV2I4S2NlMWts?=
+ =?utf-8?B?UDhueWYvWFljUDZ4MWM4cVZsZ2tWc05kemtQWmd3YmNzTnduNkJSSTFmV2FK?=
+ =?utf-8?B?VUR6eG50UHdFNGhpQzlhRWwyWFJhTk1Ccklyakc1Rll0ZFRKOVljSHgrSzdX?=
+ =?utf-8?B?M2EwRVZHdE9lQ1lKU3NFZzI2aHl4amlmeFM2emFvaVFPTUcvZHU3T1F3SWxl?=
+ =?utf-8?B?UWpLVEJCSVZaYlkwMnpRRU11cC81VEIzSnlDVmsvVXhhZk10YVU3L2hWbFlu?=
+ =?utf-8?B?Y3pNb0JIeWcrU3ZZZ2Q2ZUx0NldrWVJKall4WHFndDhQSGY0d2libDFDSDI5?=
+ =?utf-8?B?WVF3TGJRZDB4bFpGV0xtQ3lkNHFoN21WcXQwcEpMMDZ4b25SbkJnTk1ncXVi?=
+ =?utf-8?B?azNPWG1DbTI3Rm14bXludW1Vd2xkREs5WXczbWxtdG93SWs4Y05hMHJVY2dq?=
+ =?utf-8?B?RktsMzJoZUttVDk1dFpGZXA4bkx5ZnNoSGZtLzNpWVpocGxyZ2c5Z2ZNM0hn?=
+ =?utf-8?B?OTkzL1hYT0lOdTNMdzdxZDVnbXgvWGJpdVROY21OUHBhVGROZnlHSnB0cnNQ?=
+ =?utf-8?B?enVIQVBUWnNSSDk3czRTUUtzVjRMazJ1NU1KWG56dzRJU0loNC95VjZaaTh0?=
+ =?utf-8?B?d3Z3S1k4SFpQbFJEYTVoNnFNekVVMWZqOEhqUm1PSm9kUENmL1dBVlpTTTBl?=
+ =?utf-8?B?OERhdWJycmhkcEF0ZlZCN1FvbnRIcm9QZjZ6ZTVkTE9FTElFWE44NnRlTTJy?=
+ =?utf-8?B?SExhMndWT1ZqVGhlSExDdlNBL0haeVJuNDV6eUNidVJQMzdoL0hrTmhvRHFw?=
+ =?utf-8?B?bFd2TW1YeERmTzRFWkRrWUpQbFpXcTlaZ1NaeVBWTk1meFpuSjdUZEdRMjEr?=
+ =?utf-8?B?Sk95T3djRXptTEc4Q2YzcjlrSTFqL1F2SWdNTGlvbTdzUjhTbXR1c0ZZNHRC?=
+ =?utf-8?B?UGw2cWJ6NEVoMHpnYWgrNHdYdkRScHBQMzQyVFRUWVV2YzYxNXRmZE0rdlNZ?=
+ =?utf-8?B?ZW1WZlMvb1AwY2tVMHNtTlJaQmJwRGNFejR6ZHhkdmdBMTNhQ2NON3N2dnlQ?=
+ =?utf-8?B?amZNbWVQclMwRGNwdmlDQWo3eHRaWXQyK2htMEowYzFrWHAwT29mTVZ4V0lO?=
+ =?utf-8?B?YlZmM01IbWEvL3l6SUtzUEtOWWdjdk5ZNjN6NWdLOWxyQWJuWThzWjBBT21X?=
+ =?utf-8?B?ajJuampWVEV3YXZjUk1JZEo0UzVaMGNieDZ4SkkrRkRUMEhKcmJDVWo0clk0?=
+ =?utf-8?B?OXN6Wk1yS05sRmEwYmpEck4yVWMrT3pMTFByWXZGTkFNdklya0djSGE4Z3Bw?=
+ =?utf-8?B?aERIR0dxRXQySUxMYmE5cjlBR2tmcnl0YlN0WmYxb3dkNkM0OUd1WG85Q1N3?=
+ =?utf-8?B?cmYzcC9CQzE4N2xoM29Sdz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?amNFOGR4R3NlR1hhNTVtK3RuYVlmWFRxbmFHdzdabGtTelpPenBLZGVuSXps?=
+ =?utf-8?B?Y1BuWGlpMURDWTBNRDhXSHRaZmFFNmRtNkFscDF5elNEVGhaT2JFdlk3WEUy?=
+ =?utf-8?B?K1JwbjN4Tk9CN2NOWDNVUllVaWF0MVpjVnliWlJRT3V2WTMyQXRmK3ZwMVA4?=
+ =?utf-8?B?aEhCdDFLZVdpS0ZCa05GK0xQZG5jQk4xVFphRHB6WHdaSGdLMEdSQmpiYTN6?=
+ =?utf-8?B?QU91SFJkN1Arc1ZaVEdXditMNTBjeElsNldqd3RsaHhKcXVHd2haN3kwVWdO?=
+ =?utf-8?B?cS9teVhiZ1VQM1A1QjRLS0xYS0tOWHJKR0FPd2VYMmpwM3BlZ052S0RTS3JY?=
+ =?utf-8?B?cDFyejJ6cmljV0NwcnJYUDhTNkc5SFc1emo3V1Z0U1RYcUg4cEVTWk4wL2xK?=
+ =?utf-8?B?VVVPWVBJUGM4b3RpejRiVDB6UzVjMHNzSlV0ZHR3b01GOThVbDU3MkZmWGwr?=
+ =?utf-8?B?bW5nWW04Q1d0RTVpeUJsWTR2WEMvc1pCa2ZHNktZM0lVdXJ4UklzT1NvL2V6?=
+ =?utf-8?B?ay9pdGUyWTl6RHlwazNTeWtoakNvcHFCWnk2T3d2ZDIwMEg4c1RxR2wwSHJw?=
+ =?utf-8?B?TWdOQ0hiNkpZUjMrWjNCdjZHVjJoaGtpTTR2a0ZCbTBlRmtoRDVHU01DOUho?=
+ =?utf-8?B?eGdRQ1FlSXFpVmdSOHNhdkdGdFAzZ0dGNTNOZ3lmNk9MK0s2SHhBYURJTlda?=
+ =?utf-8?B?ZTJmRDNCRFprU2VYWll1OS96NHR6c0pQL1J0ak9mRlNXUDkwMDhnS1dyazBj?=
+ =?utf-8?B?Uk0zeFE0UTdBcGQ3MjBydllhb09FOHRtNFUzaitDR2hxWnovVmJYVVBlYUdX?=
+ =?utf-8?B?M0JFZXhXaUhKVGxQSkViSlZHc1dLcTMzUHdRTFB6WHdRS1BJQUUyTm9QMHc5?=
+ =?utf-8?B?NkJKK3lkaHRBbmVZYnFJaXk5bHBYQVhWaVpKRmJiR0hYc2RUVStJem9FY2VG?=
+ =?utf-8?B?L2Uvc1FvZDhMNS93dDVnS3NwTVVOUm9MMThlTXRUVEVEZC83anpwREdSMFhq?=
+ =?utf-8?B?QWFFYVZIaGd4am5Iclh0SHlFdHUvV0F0OHZDR0FUMEI3czUvSEZZQm90aVlU?=
+ =?utf-8?B?R1ZMRjhDNm5PZGJMYys1YjA0T24xUWltTTM4U2pxR1NSRFM1dUF0cUNaUFRD?=
+ =?utf-8?B?ckhFZzUvWnIwY2lTbG9uMnlWaFZxektlMldrQ1c1QXJ1V1ZtWUZpZTZqWnZu?=
+ =?utf-8?B?V1ZCQWdEOTV5T1lYd1VUUHNYeHo0T1l4bFNqV2FOVTBwSVhMc3Mwa2wzT2Zi?=
+ =?utf-8?B?bys2clNGcG1JRTFqZEpTRDkxZ01ZWVNwd1QxQWlnbGErbngrbTBWT3dPLzdj?=
+ =?utf-8?B?bFE3MEsxbjR6cmMvTGFqa1FkemhXbmdhWXNkMEdTdTkzcHIyM3ZKRytHd05T?=
+ =?utf-8?B?d1NxSzdWaTd2MThLdU45clQ1RklUbzljZTNDcWJGOEFNaTBOWGd4NXpCT0gz?=
+ =?utf-8?B?N3dwU1ovOXVwS3R0TGN5dTBGUWk4bTNnWXBERDdqVFlFUHdsSy9zYnV1Qkp0?=
+ =?utf-8?B?R0grc1lHYXpHa0xBVFFLb1NXM3lDeG1tTmtQajFWcitxaElZd1ZMRFQ4U1Zm?=
+ =?utf-8?B?WVhQMURGK0JlczVJOGxPd2dvZkZPRlVxME15Ym8xUTFVNitxb1d2eldFdXdR?=
+ =?utf-8?B?NGFXSHRZMUlTNStnMVJ0VDk3djFMaGdNMGlSemxzUk5CTUZranlWeTQ1TE4y?=
+ =?utf-8?B?YXd6RXhzUy93MU9vOWVHUmJzeVlaaW4rcFh4L2p1c05FYldNbEp2OFFwWmMr?=
+ =?utf-8?B?NXhaZ3lGUjd2OEFhdmN2WC9SZzl0MzNFdGtKZ1AraXp4bFBTajBoSlFBVHNy?=
+ =?utf-8?B?b0lrY0hoaDVTQk4xTkZNMjZmL0xKWGpqQlE1YnYyTjBVV3lvMFJUamhCdEg0?=
+ =?utf-8?B?bldDUnR3ejY0MGFzMlROQ0RkUUU1MmhlQjBOZ3JFYXUyb25mancrb091aHl4?=
+ =?utf-8?B?eXUyTnNWV2RPWklvS3NsTzJsSktzUDRWM0ZHT2E4UzBZWHVMdndDY1RhcFJp?=
+ =?utf-8?B?TkN1U0NTOHNsbTM2UE9sbFdoUk92bkk0bDFOY1V0UFQzaDRvam5JbGI0a3VM?=
+ =?utf-8?B?QkZmdG9tcXhxS2syMHNXMFlkS1RTQUpnbHh4Ny9OM1c4UUNFY2FCWHpTR3ov?=
+ =?utf-8?B?bHorbUYwOVFITDErQ1lZUk9yY2RzeGNTN3dTa0VCRk5VSjM3OWtIWTIvYzhT?=
+ =?utf-8?B?U1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5253344-efa4-44bc-0c79-08dd555f9956
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 05:45:24.0587
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EJPxAfHdGMc3NbqhLaG5F//pKsJ845J5SKtECGuOLG8qdZpTZm0X1Tp4g7pHPqXMCca+CrpOufdPbTMLz8JXKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7511
+X-OriginatorOrg: intel.com
 
-在 2025/2/25 09:15, Andrii Nakryiko 写道:
-> On Mon, Feb 24, 2025 at 9:03 AM Tao Chen <chen.dylane@linux.dev> wrote:
->>
->> Kprobe prog type kfuncs like bpf_session_is_return and
->> bpf_session_cookie will check the expected_attach_type,
->> so init the expected_attach_type here.
->>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/lib/bpf/libbpf_probes.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
->> index 8efebc18a215..bb5b457ddc80 100644
->> --- a/tools/lib/bpf/libbpf_probes.c
->> +++ b/tools/lib/bpf/libbpf_probes.c
->> @@ -126,6 +126,7 @@ static int probe_prog_load(enum bpf_prog_type prog_type,
->>                  break;
->>          case BPF_PROG_TYPE_KPROBE:
->>                  opts.kern_version = get_kernel_version();
->> +               opts.expected_attach_type = BPF_TRACE_KPROBE_SESSION;
+On Mon, Feb 24, 2025 at 10:52:56AM +0100, Philipp Stanner wrote:
+> Hello,
 > 
-> so KPROBE_SESSION is relative recent feature, if we unconditionally
-> specify this, we'll regress some feature probes for old kernels where
-> KPROBE_SESSION isn't supported, no?
+> subject line: please write "drm/sched" instead of "drm/scheduler". It
+> has become the norm
 > 
-
-Yeah, maybe we can detect the kernel version first, will fix it.
-
-+               if (opts.kern_version >= KERNEL_VERSION(6, 12, 0))
-+                       opts.expected_attach_type =BPF_TRACE_KPROBE_SESSION;
-
-> pw-bot: cr
+> On Fri, 2025-02-21 at 14:27 +0800, qianyi liu wrote:
+> > Problem: If prev(last_scheduled) was already signaled I encountred a
 > 
->>                  break;
->>          case BPF_PROG_TYPE_LIRC_MODE2:
->>                  opts.expected_attach_type = BPF_LIRC_MODE2;
->> --
->> 2.43.0
->>
+> prev(last_scheduled) almost reads like a function call. Maybe write
+> "prev / last_scheduled"?
+> 
+> > memory leak in drm_sched_entity_fini. This is because the
+> > prev(last_scheduled) fence is not free properly.
+> 
+> s/free/freed
+> 
+> > 
+> > Fix: Balance the prev(last_scheduled) fence refcnt when
+> > dma_fence_add_callback failed.
+> > 
+> > Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
+> > ---
+> >  drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
+> > b/drivers/gpu/drm/scheduler/sched_entity.c
+> > index 69bcf0e99d57..1c0c14bcf726 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> > @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
+> > drm_sched_entity *entity)
+> >  		struct drm_sched_fence *s_fence = job->s_fence;
+> >  
+> >  		dma_fence_get(&s_fence->finished);
+> > -		if (!prev || dma_fence_add_callback(prev, &job-
+> > >finish_cb,
+> > -					  
+> > drm_sched_entity_kill_jobs_cb))
+> > +		if (!prev ||
+> > +		    dma_fence_add_callback(prev, &job->finish_cb,
+> > +					  
+> > drm_sched_entity_kill_jobs_cb)) {
+> > +			dma_fence_put(prev);
+> 
+> But now the fence will also be put when prev == NULL. Is that
+
+dma_fence_put(NULL) is a NOP [1].
+
+[1] https://elixir.bootlin.com/linux/v6.13.4/source/include/linux/dma-fence.h#L290
+
+> intentional? It doesn't seem correct to me from looking at the commit
+> message, which states "Balance […] refcnt when dma_fence_add_callback
+> failed"
+> 
+> It didn't get clear to me immediately which dma_fence_get() your new
+> dma_fence_put() balances. Can you ellaborate on that or maybe write a
+> comment?
 
 
--- 
-Best Regards
-Tao Chen
+drm_sched_entity_kill_jobs_cb(prev, ...)	-  Calls put 'prev'
+
+drm_sched_entity_kill_jobs_cb(NULL, ...)	- Does not.
+
+> 
+> But also be handy of could share the kmemleak trace.
+>
+
+Agree kmemleak trace would good, include in commit message, but the
+patch looks correct to me.
+
+I also think the commit message need a bit of work as Phillip suggests.
+
+Matt 
+
+> 
+> Thanks
+> P.
+> 
+> >  			drm_sched_entity_kill_jobs_cb(NULL, &job-
+> > >finish_cb);
+> > +		}
+> >  
+> >  		prev = &s_fence->finished;
+> >  	}
+> 
 
