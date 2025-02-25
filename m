@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-530546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE512A434FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:16:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277FCA43503
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A7F1899E27
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3731B189F1FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAB8256C7D;
-	Tue, 25 Feb 2025 06:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CAB256C89;
+	Tue, 25 Feb 2025 06:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Fqj4ChlC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e1LoKoWI"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+JcAQ0Z"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B405256C68;
-	Tue, 25 Feb 2025 06:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47714B080;
+	Tue, 25 Feb 2025 06:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464020; cv=none; b=JV8h8M39lW0mv7DhBES/6wKqIWG6rnNpXzBcQJbNq59ydJyRxizbAx5McZlHk2roiaRAd+t+P60QIU1PvZY3EaJ58dkhEJhJsmISVjwq9qWbneX2Hwc49PUcuZ4T9uN3+fTiEvaZMEdUbY2KDkkRh0DbEmISQDYwCaG5leThFJA=
+	t=1740464092; cv=none; b=IQDGukMSq/Rwv8KPQVYI0TY4jRObM+uITl1Rz3Rmk8lFoODOd1rbZI/s2GPxXOWG4sEQYoNcQs3jAslzldweKPB0OBfe6YvsUCf7KFltYFlXw7Vn+YPB7C4dVh8vtgWD05bXY7bEvsbRbGM5Eg63SppVy4YqbiuGpu0reU1OkkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464020; c=relaxed/simple;
-	bh=0bNrTd+0Kri939AjowYkwp5sI3m8I9so+4v3iNbKFNc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MylY6py2i3wyJjoKwd3I2D9lBLFUTDzIxgT4s7jgLEGCEByQE/uDIzZD3Lv4CljwEQvCzv1obXIviVvGdWL+QZaiVOPIamFSEMFRsNsUd4BHiT77soELOCs0LAlFXCS2noJ5mcM82Q3bZdAZ83heW71jm21SWyHhjoR/BWeK5VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Fqj4ChlC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e1LoKoWI; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2587113816C4;
-	Tue, 25 Feb 2025 01:13:36 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 25 Feb 2025 01:13:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740464016;
-	 x=1740550416; bh=66pDvVk6+iDQJbtSXtpwsgbq4SfVodI4UVwSnweQfZ4=; b=
-	Fqj4ChlCV6CGNNn0iS4msDiYQ+4+GvJYES/bix1GYkljSYFBzOLSENl5a4xV8xfi
-	/kvSAiqPZdlL4h4cCU4WspxzvkAClTu3ITfIeZOJSsdZzkW8aN6/sTgZHKHjeZBc
-	s8sF+AXRm6PKI0uMiA3AoxzjZbyM2/uCFPYf87iFGw8TeBXhLIIinbxHuN2NxtRT
-	Qg+7OmkNE08QpAaWXM074DdKjVCPgv+qLizEjPu2XNs3P2YQFhcTboeA+DB1FDlc
-	mIflIbi5Q8IhpKSXjW0APJhFcIieeMKTiEohQ5B7Cq2gfA4QqySPLkWLgYSZTkLL
-	og9BiHo3ArdkI3cH6Ei4rw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740464016; x=
-	1740550416; bh=66pDvVk6+iDQJbtSXtpwsgbq4SfVodI4UVwSnweQfZ4=; b=e
-	1LoKoWIiSoMw2FFxNGrUxCEcXKyxI90SWeuEZZ1Zt9Rd0P12Qv1RPLdu906UX0BE
-	iMPRW/zkrTiW6Puq/fgBfsi1oyyzwXnGH5loRuEp5ScVFCKv3iW4lgE1jvVJXrjT
-	2ClCzP7iNUSiydBevhWsJHFWkKPJR3exS7SIEu57soKHRLcQjG9khl4jWIlWk5wd
-	F8cPuwE9b9yPWeaQVxssnIJmyIEFfYi0XBvPWQq0EiKRArEAyRIifyTCgiYARrrV
-	JR4M1Acg0EKg+LEXNrlxAJSgtOMeH+juRmt5R51vXSxaFtOAFKKk/Iq0OATlA+oQ
-	sxSkqH8GkUlEsvRbspFqw==
-X-ME-Sender: <xms:j1-9Z3Bz5Fxt4lGOsdVaBNttyE9O7CSPvTfyvgYXhiiyaSYAX0kaPw>
-    <xme:j1-9Z9jiMaBrAanuNvJdT9cros7R6u7phBKcruChjsF96Fj_sjIs1H_NTarY0vJjV
-    OleacGE3BJGmvEkD4c>
-X-ME-Received: <xmr:j1-9Zyn-i20TFebVjb5013k1IyNtdN8CTs7KarOxzdP6o-gDGUrgRNKAc2WAbr3Cn2niS5xt2xk4SP7s9w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdektdelgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttder
-    jeenucfhrhhomhepnfhukhgvucflohhnvghsuceolhhukhgvsehljhhonhgvshdruggvvh
-    eqnecuggftrfgrthhtvghrnhepkeefffeujeevueejueegleelhedtgedvledukedttdff
-    hfeifeelvdduheefjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlh
-    hlohesrghmugdrtghomhdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdig
-    keeisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghorhgvnhhtihhnrd
-    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvggu
-    hhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrd
-    hinhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:j1-9Z5x5o4sAMjF9hDDrRHGya6_sQ4H_EpZk6FdAcaGfZTyQjdl6hQ>
-    <xmx:kF-9Z8Sz8POeMpYxl4tMpcynCIuqLA6MyhlJSvvQoqoGqDuvyo_gyA>
-    <xmx:kF-9Z8Y-lVDcHP_SE2ZXg9a1Ji6sOCDCWoqagwayjQfLqAb-UMf_lw>
-    <xmx:kF-9Z9QvF2srdtSlt8ASmMdOVbelwn128eJPxq1XwG8PSLPM9iPYzg>
-    <xmx:kF-9ZxJ40EA_2UhlkPz5GbUS5cd2RhwGKKP8KzVEFl35dAwPnTB4epCV>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Feb 2025 01:13:33 -0500 (EST)
-Message-ID: <0d67e31ce334085b815f79f9c57a2c4e35870423.camel@ljones.dev>
-Subject: Re: [PATCH] platform/x86: asus-wmi: change quiet to low-power
-From: Luke Jones <luke@ljones.dev>
-To: Mario Limonciello <mario.limonciello@amd.com>, 
-	platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com, hdegoede@redhat.com, 
-	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 19:13:29 +1300
-In-Reply-To: <7a958091-84a0-4ec5-bd4a-3e5f973772e0@amd.com>
-References: <20250224223551.16918-1-luke@ljones.dev>
-	 <7a958091-84a0-4ec5-bd4a-3e5f973772e0@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740464092; c=relaxed/simple;
+	bh=agvOuJoTNh8OTM20uhL6EZgzAA082YyQcg0WmGwlpK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MA4357bafG3uYV/YjpWQ5xm6aw7Yzk/NcWiTAjui645qTeOt0/BkvtEbl34LYBizeQ7hcOsII1fYQOI5hJ5JNsflOYJNEkhib33+oR7M7ViAHUZqQVLCnmYoGfLIEDelU9/4xDoB75AI/7f7i5pxSzdEGioLkkH3QxZ8kpPLLMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+JcAQ0Z; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220d601886fso78509995ad.1;
+        Mon, 24 Feb 2025 22:14:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740464091; x=1741068891; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAVQolx9KExb7Tb78lU8f9flTHmTgz7gOctqgRk6LUA=;
+        b=H+JcAQ0ZPpcABOqhNMGnRCEpWKjlHxKiuDROAovMMpUZkS+cMnCqokophf2l0eqgnJ
+         D40WYn5LAKbZUiqt1os8EWQq+VXReRIyWELVV//dtDGhrDV0JVCMft1gOCTx9g25+NIb
+         DxNeb3ZpGcjGWPceAqUDYAHI5xBvMSOMJHSl0V0BH7l0BJqSMWNvjbhav1qFjrZNDQQX
+         ThlnH/0/OHcX/gPH6oz4adYRDpM70DSjEECE8z1aOyoLQgq6fUdwrzH+quc8JK70Uwdk
+         UlU7gTtplILZZW76qSNPlBjSbseHU5VpKR9fZOp/7HdChiChwM5APzYl28VMRgYxIyw2
+         eMkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740464091; x=1741068891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PAVQolx9KExb7Tb78lU8f9flTHmTgz7gOctqgRk6LUA=;
+        b=xKrJK4c3heEkmoC4pu+p1MknSPjWEFRjCldtrchFvotD9D8Yu5sLVPke+EGRkCHSzF
+         +M7nu7abEmSd5RbC3JTdY/5KQZI2szaihz4zO5x7GUKXO3tEQ7JtQYYAusOEsT+Wi3XG
+         7qIpLgoXsSGXRA6PtGkOSY7yGljKyhb8sKpFQx4yJDNL4FlcvkNQiLorZjzWMP/WofjO
+         MSYjrmzmPOmF+RGsLx3AjUQA3rUoTO5HBHhzA26Gw2eo2DYsxZmYnd2qOx1Ob6bMZOuq
+         PowU7LSgfc1p5jIROBxGGDOQ/kr5aSiVB7FUhFMUMM+PwYZGRJwbpHl3uizGzj8gZMPq
+         UWvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtEurN6EZ1YD7UWP06Cb4tpUX6sEv7+IyTWGXKC5icZPYqrzXKxZswLM7AQHQ74UnytX3sXPqehwFbfKOj@vger.kernel.org, AJvYcCVLevMiBWZx7v2rEyvmQf5q1nswD9URQuqEUvh0qLjsnyi3QPrMdex3mMUg7SqEIMgyApYN6LXj4HZm83I=@vger.kernel.org, AJvYcCXE5ebonN/yaVja0AjsnLVr6ttu5qVZuSRKtgRAHaE4Ktse2QvcZhFbk4E8DJ6M78QPzPIKC0OjXNHG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqhsFEAoIjLFarZTvVBSXv4ezMZAaqyaeXk3NiL0JybnjRVLB9
+	OlQcjSsvih/zA4PNXZhfAnqg3DZNtrfDFgdvbC60hzw15UpB9hrAX5Fj7Q==
+X-Gm-Gg: ASbGncuBx1w2zwqGV+Rks1IGnISGvA+6Nhzd/ibCjy37sIb37hzqkj0JiBwC5Rwn0vP
+	3O38ALw9yqZpHjI17P5pNS3CFxpGtOFd1UNyQpuj2mfu61mJbK/rOQZCTFll+MKZyd+7EXKBSBu
+	Ysk3j6druh3XEcpb9QbWeUYD36klZCSKxyMwT8uWPJe4QORK0pZXUmjQNj2zMdffDgtJXHjeF8c
+	JasHjS5PjQxghvy0qkZtouHu2c4GV2M9mGoHsvG1qKpgNB/KJYMZrS4YNXeV8FYqlG4J1fsyzjt
+	I8g5kpGFkdxHZyhbkrrRhC7X9CE=
+X-Google-Smtp-Source: AGHT+IGwkid3k/avMSIUbwqT5je0rV66CDm1UlnOW0Q6bT9hXylAJGMLD+sehIyy1nTfXR9ACddpGQ==
+X-Received: by 2002:a17:903:22c2:b0:21f:55e:ed71 with SMTP id d9443c01a7336-22307b45598mr38223475ad.5.1740464090521;
+        Mon, 24 Feb 2025 22:14:50 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0927a7sm6292795ad.143.2025.02.24.22.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 22:14:50 -0800 (PST)
+Date: Mon, 24 Feb 2025 22:14:47 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: fnkl.kernel@gmail.com
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Neal Gompa <neal@gompa.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v7 0/4] Driver for Apple Z2 touchscreens.
+Message-ID: <Z71f18TQLEiexUaD@google.com>
+References: <20250224-z2-v7-0-2746f2bd07d0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224-z2-v7-0-2746f2bd07d0@gmail.com>
 
-On Mon, 2025-02-24 at 18:39 -0800, Mario Limonciello wrote:
-> On 2/24/2025 16:35, Luke Jones wrote:
-> > From: "Luke D. Jones" <luke@ljones.dev>
-> >=20
-> > Change the profile name "quiet" to "low-power" to match the AMD
-> > name. The
-> > primary reason for this is to match AMD naming for
-> > platform_profiles and
-> > allow both to match. It does not affect Intel machines.
-> >=20
-> > The quiet profile is essentially a low-power profile which tweaks
-> > both TDP and fans - this applies to 80+ ASUS laptops.
-> >=20
-> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
->=20
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->=20
-> IMO - this should have a fixes tag since this should probably go in
-> the=20
-> 6.14 cycle too.
->=20
-> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple
-> handlers")
->=20
+Hi Sasha,
 
-Good point, thanks. I assume when pulled in this can be added?
+On Mon, Feb 24, 2025 at 12:01:08PM +0100, Sasha Finkelstein via B4 Relay wrote:
+> Hi.
+> 
+> This series adds support for Apple touchscreens using the Z2 protocol.
+> Those are used as the primary touchscreen on mobile Apple devices, and for the
+> touchbar on laptops using the M-series chips. (T1/T2 laptops have a coprocessor
+> in charge of speaking Z2 to the touchbar).
+> 
+> Originally sent as a RFC at https://lore.kernel.org/all/20230223-z2-for-ml-v1-0-028f2b85dc15@gmail.com/
+> The changes since then mostly address the review feedback, but also
+> add another machine that has this specific controller.
+> 
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+> Changes in v7:
+> - Added a dependency on ARCH_APPLE to prevent potential confusion on x86
+> - Link to v6: https://lore.kernel.org/r/20250205-z2-v6-0-cc60cbee1d5b@gmail.com
 
-> > ---
-> > =C2=A0 drivers/platform/x86/asus-wmi.c | 6 +++---
-> > =C2=A0 1 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/x86/asus-wmi.c
-> > b/drivers/platform/x86/asus-wmi.c
-> > index d22748f1e154..de19c3b3d8fb 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -3945,7 +3945,7 @@ static int
-> > asus_wmi_platform_profile_get(struct device *dev,
-> > =C2=A0=C2=A0		*profile =3D PLATFORM_PROFILE_PERFORMANCE;
-> > =C2=A0=C2=A0		break;
-> > =C2=A0=C2=A0	case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
-> > -		*profile =3D PLATFORM_PROFILE_QUIET;
-> > +		*profile =3D PLATFORM_PROFILE_LOW_POWER;
-> > =C2=A0=C2=A0		break;
-> > =C2=A0=C2=A0	default:
-> > =C2=A0=C2=A0		return -EINVAL;
-> > @@ -3969,7 +3969,7 @@ static int
-> > asus_wmi_platform_profile_set(struct device *dev,
-> > =C2=A0=C2=A0	case PLATFORM_PROFILE_BALANCED:
-> > =C2=A0=C2=A0		tp =3D ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
-> > =C2=A0=C2=A0		break;
-> > -	case PLATFORM_PROFILE_QUIET:
-> > +	case PLATFORM_PROFILE_LOW_POWER:
-> > =C2=A0=C2=A0		tp =3D ASUS_THROTTLE_THERMAL_POLICY_SILENT;
-> > =C2=A0=C2=A0		break;
-> > =C2=A0=C2=A0	default:
-> > @@ -3982,7 +3982,7 @@ static int
-> > asus_wmi_platform_profile_set(struct device *dev,
-> > =C2=A0=20
-> > =C2=A0 static int asus_wmi_platform_profile_probe(void *drvdata,
-> > unsigned long *choices)
-> > =C2=A0 {
-> > -	set_bit(PLATFORM_PROFILE_QUIET, choices);
-> > +	set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
-> > =C2=A0=C2=A0	set_bit(PLATFORM_PROFILE_BALANCED, choices);
-> > =C2=A0=C2=A0	set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
-> > =C2=A0=20
->=20
+My apologies, I already applied v6 (patches 1, 2 and 4). Could you
+please resend against linux-next (or my 'next' branch)?
 
+Patch #3 should go through Sven's tree.
+
+Thanks.
+
+-- 
+Dmitry
 
