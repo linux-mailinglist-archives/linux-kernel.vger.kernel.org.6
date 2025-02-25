@@ -1,351 +1,156 @@
-Return-Path: <linux-kernel+bounces-532440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408BEA44DD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:41:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10F7A44DC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D712C16ADCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:37:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE713B7C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DE2135B5;
-	Tue, 25 Feb 2025 20:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BB0211471;
+	Tue, 25 Feb 2025 20:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV8LbgxD"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1o+YzKQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90164210180;
-	Tue, 25 Feb 2025 20:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8571448E3;
+	Tue, 25 Feb 2025 20:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515743; cv=none; b=k33uoxHTUvh/+vQK953CH5utGw5m7n2MtZ90fITE4mGpZ1e+TekISbRFgUS5fhH8abBh/1G4t/d+asnqzdlaV6wxIM5/k8M+lT7CrEjf9ZY2X9P1AH4VpPPV0toCLvRRViGeFanBzaOuL0oX7w+JkZ3om64Q7rSDNhkZL4XP5jw=
+	t=1740515726; cv=none; b=sAopNrkMYS+SNcrEPCtupiUD23TLIGfeUxN0Qtk3GR1TqzsT+YQqOpgP9eJQgxpyLqtkLpg4lYn9E60I64Jj3ywtd0aXHdjENd1foqXP5ZTzpBWjhGWqi8u7xu89/kbV5JVH4pmcpCYpM94wVfIZ4T2N3h5/Iv04U15JgciLcw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515743; c=relaxed/simple;
-	bh=Tz59V4906cizkmnAyLwAF7UMXQmgEg8hAksuM9UAhYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZG8MtAx6rSG7hrd3Z3PW5NUMJoe9TxTq1hp5iTC5imvAqnfNr21XZlC31tBm40/5vfZwHHd26r+s7ucgMd+Xx3KAdCHpja+mf9txeHjIW+CCHVkXVur5y0R4QPnAPY5v2MDZGEmmsCFqDnwvj3UK9lQH84jlMzFym6MAlnqrNaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EV8LbgxD; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52096b4e163so1375009e0c.1;
-        Tue, 25 Feb 2025 12:35:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740515740; x=1741120540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+XwywpaYtj2l46Dle33DDpq7qxGEX6r8LCnpx6a8Ja0=;
-        b=EV8LbgxDI5EIWVpdT6s4awSLNk+BlGiOgehBJ0hxEzlLgZAnMxPddnHRqRrTQ6k+mk
-         vivNg12YYuVIK+XI0ffJX0EZHChx8XvEg17AKg20DzU/ojOeTmZLBqoLqsoP3GDfDJjn
-         k9/Y3285EzOTnvQeMQ9tRe+vErbrr+cwtWlwgCbqC/79CfLCruNnvXxCC4aSv4v4wIRw
-         ZyB75huYP/42N7mwjtop+MONEJHUHQ2XpoPOMm5MT60ecBHgIXc5fwCvaYKV3XicDmBy
-         5TMUbBBTk11BJTknwXmPvJ/uRlu90065cdmUz3ri9dvs1ViJeDbSlXCjlHEj7OkFr/EM
-         SYBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740515740; x=1741120540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+XwywpaYtj2l46Dle33DDpq7qxGEX6r8LCnpx6a8Ja0=;
-        b=ho4CtyXB877UNEXPRhqq2wogkn0VV/ATfN+Y5ZQE9W/pLDuzaLj8t4HkhvXQ/v4mFP
-         2EWhspQkMcuCGiIyJcXMTxhnqQzY5gQPbN+/AQeLNu0FLhUrpv8im2MmpE4fRN9HIx5Q
-         Ptguusrad1VZYo7mCTQ4G5NqPk8TEVsUBayCNja7JaVkruHKtNYM6H7Lt0aONxQTT4y4
-         0hbQrFY5Qxy/LNqkD+CRywkKzhQUjzXaTS3QM9qrQnTwx+5lHZ/jBBOnHfwFDKNXEp59
-         pzjsVPRsqWCdwcaG+kodeVEN36X3gIvmtVCPVvlidgGTF1bYN84r4/h4SMXbf8Wb2j25
-         aM5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLM8P8c+Mn3mdaKlAe3tvYrBTivyfaX6c0cvFB1rHAVjKIBnhNl8WxOt9+oqWi5AK18oKiE0EPP15wZyL4@vger.kernel.org, AJvYcCVPwagQjzqH77C5aP1tBVTCagDlgIBnNi80xOZs5C/Ku5x3MLE+S/UobXHXp0Z/9rEI/i1+Tx+G62t1mS8BZzKcukw=@vger.kernel.org, AJvYcCXuQEsn1/0OUE2b071AhZaarGm0x6SGp8+LnnEd0FANNTJn1ksZBYSgFRK7zd7JiNt1I+IRqDLxGA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6+ZN8uVDfSH5lDSBcBEHLuIDRC3ntco9O+is70Er6IKWdsgEO
-	WivPmNFZabaQWlO9AxmdPjc5dAQbkwFirNc8DNNawJM9Tjjum1d3t+Txy7ohJ+6GluodQ3QA/zj
-	POHQnZGHJH7CNhhR9IBHKmXgyG4Lp4nAFp9A=
-X-Gm-Gg: ASbGncu3cwUcDZ//SdFf0iVIlu0YF+j9L2rJ9EPM+TgIxk3eDuM7wZsGoWrWyODh+7B
-	FV8HRpptvye+7ZFmXZ/+1DZkR6DGkRywyFo7dR1Xd1/9+Upp+6hQ9vsYRVZjPfuACTuHynsbun5
-	ud9f6nWDQ=
-X-Google-Smtp-Source: AGHT+IEOg3FN4XhV8eDdeGzHvTE/i8yhURPWnZYtSByTKQHBWCTONJ80ukzBmtui63GXiQHBKHd/9pVKUJn4HYNnCqI=
-X-Received: by 2002:a05:6122:3c94:b0:518:791a:3462 with SMTP id
- 71dfb90a1353d-521ee45c3e6mr8864926e0c.9.1740515740115; Tue, 25 Feb 2025
- 12:35:40 -0800 (PST)
+	s=arc-20240116; t=1740515726; c=relaxed/simple;
+	bh=7Wg1p0f2ypkxnC0TFBuDHULqBARMpNOuEl5fgz8O5K4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OKkkLlMrIiTBLy2y30CoeHBqDTIjkPSOumJE9yiUVQkGPbFtIu/pZnlXTns8oLTN4+SsOGU/41F7c2KNjpPnC08YXs2R1uwnej0LEuamYL3DAljoG9S3+uL1dszuCx5Z3B3Aar5jvvfJW5qBPIKvkeVeEf1A9yK9le/TxF5nxdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1o+YzKQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4012C4CEDD;
+	Tue, 25 Feb 2025 20:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740515726;
+	bh=7Wg1p0f2ypkxnC0TFBuDHULqBARMpNOuEl5fgz8O5K4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=u1o+YzKQTjiHFa378K9/JNzh8aDmB6+8eSlzj2e0oqKfk3HNpjqojfcknEQf7dasY
+	 03hMuuQtgsENKquMorrWqUGoeNDbnhT8OWNv2SkWWLV2eGDqCJKtwkf01YgUUcP3em
+	 0vF1gkPM7D3w3aowShgQuXbYAygbru0he6FEP1lpDrHz9VHeTVcmNxKMqIdyJgFqm4
+	 XCKGzWr5q/xPyIjix/RGoEOSV0Bbd2ZAqusDGXt9sZ/henPtK7X/J0rhcR9MmW6NaV
+	 yjkjWzQ+We+5C2wMW9aH5ZtmatdkVY+qCKe3UQk5io0s0ECF90mFWsoYbS4vjIrMLR
+	 29Dh1G9eqw+eQ==
+Date: Tue, 25 Feb 2025 14:35:24 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Julian Ruess <julianr@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+Message-ID: <20250225203524.GA516498@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com> <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 25 Feb 2025 20:35:14 +0000
-X-Gm-Features: AQ5f1JqEjlRTnX7gXKwgOoeBVHxzXc63ua0nEMVxP_m_ype3EgDDhW-oZn_cCeM
-Message-ID: <CA+V-a8s+-ZS-Y7D1FmdKfVoH5i3Ee86KgYQC6QyfdE0ygDMt+A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] iio: adc: rzg2l_adc: Open a devres group
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
-	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7bcd6de5f40b2ee6d4d6758e3d2473172bd9b990.camel@linux.ibm.com>
 
-On Mon, Feb 24, 2025 at 12:13=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> On all systems where the rzg2l_adc driver is used, the ADC clocks are par=
-t
-> of a PM domain. The code that implements the PM domains support is in
-> drivers/clk/renesas/rzg2l-cpg.c, the functions of interest for this commi=
-t
-> being rzg2l_cpg_attach_dev() and rzg2l_cpg_deattach_dev(). The PM
-> domains support is registered with GENPD_FLAG_PM_CLK which, according to
-> the documentation, instructs genpd to use the PM clk framework while
-> powering on/off attached devices.
->
-> During probe, the ADC device is attached to the PM domain
-> controlling the ADC clocks. Similarly, during removal, the ADC device is
-> detached from the PM domain.
->
-> The detachment call stack is as follows:
->
-> device_driver_detach() ->
->   device_release_driver_internal() ->
->     __device_release_driver() ->
->       device_remove() ->
->         platform_remove() ->
->           dev_pm_domain_detach()
->
-> During driver unbind, after the ADC device is detached from its PM domain=
-,
-> the device_unbind_cleanup() function is called, which subsequently invoke=
-s
-> devres_release_all(). This function handles devres resource cleanup.
->
-> If runtime PM is enabled via devm_pm_runtime_enable(), the cleanup proces=
-s
-> triggers the action or reset function for disabling runtime PM. This
-> function is pm_runtime_disable_action(), which leads to the following cal=
-l
-> stack of interest when called:
->
-> pm_runtime_disable_action() ->
->   pm_runtime_dont_use_autosuspend() ->
->     __pm_runtime_use_autosuspend() ->
->       update_autosuspend() ->
->         rpm_idle()
->
-> The rpm_idle() function attempts to runtime resume the ADC device. Howeve=
-r,
-> at the point it is called, the ADC device is no longer part of the PM
-> domain (which manages the ADC clocks). Since the rzg2l_adc runtime PM
-> APIs directly modifies hardware registers, the
-> rzg2l_adc_pm_runtime_resume() function is invoked without the ADC clocks
-> being enabled. This is because the PM domain no longer resumes along with
-> the ADC device. As a result, this leads to system aborts.
->
-> Open a devres group in the driver probe and release it in the driver
-> remove. This ensures the runtime PM is disabled (though the devres group)
-> after the rzg2l_adc_remove() finishes its execution avoiding the describe=
-d
-> scenario.
->
-> Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v3:
-> - open a devres group in probe and release it in remove; the failure
->   path of probe() was also updated to close the devres group
-> - dropped Ulf's Rb tag as the patch is different now
-> - updated the patch description to match the new approach
->
-> Note: a generic approach was proposed in [1] to have this in the platform
-> bus itself but wasn't seen acceptable.
->
-> [1] https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj=
-@bp.renesas.com/
->
-> Changes in v2:
-> - collected Ulf's tag
-> - add a comment above pm_runtime_enable() explaining the reason
->   it shouldn't be converted to devres
-> - drop devres calls that request IRQ and register IIO device
->   as proposed in the review process: Ulf, I still kept you Rb
->   tag; please let me know otherwise
->
->  drivers/iio/adc/rzg2l_adc.c | 88 ++++++++++++++++++++++++++++---------
->  1 file changed, 67 insertions(+), 21 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Feb 25, 2025 at 09:59:13AM +0100, Niklas Schnelle wrote:
+> On Mon, 2025-02-24 at 14:53 -0600, Bjorn Helgaas wrote:
+> > On Fri, Feb 14, 2025 at 02:10:51PM +0100, Niklas Schnelle wrote:
+> > > With the introduction of memory I/O (MIO) instructions enbaled in commit
+> > > 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> > > gained support for direct user-space access to mapped PCI resources.
+> > > Even without those however user-space can access mapped PCI resources
+> > > via the s390 specific MMIO syscalls. There is thus nothing fundamentally
+> > > preventing s390 from supporting VFIO_PCI_MMAP, allowing user-space
+> > > drivers to access PCI resources without going through the pread()
+> > > interface. To actually enable VFIO_PCI_MMAP a few issues need fixing
+> > > however.
+> > > 
+> > > Firstly the s390 MMIO syscalls do not cause a page fault when
+> > > follow_pte() fails due to the page not being present. This breaks
+> > > vfio-pci's mmap() handling which lazily maps on first access.
+> > > 
+> > > Secondly on s390 there is a virtual PCI device called ISM which has
+> > > a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
+> > > which leads to any attempt to mmap() it fail with the following message:
+> > > 
+> > >     vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
+> > > 
+> > > Even if one tried to map this BAR only partially the mapping would not
+> > > be usable on systems with MIO support enabled. So just block mapping
+> > > BARs which don't fit between IOREMAP_START and IOREMAP_END. Solve this
+> > > by keeping the vfio-pci mmap() blocking behavior around for this
+> > > specific device via a PCI quirk and new pdev->non_mappable_bars
+> > > flag.
+> > > 
+> > > As noted by Alex Williamson With mmap() enabled in vfio-pci it makes
+> > > sense to also enable HAVE_PCI_MMAP with the same restriction for pdev->
+> > > non_mappable_bars. So this is added in patch 3 and I tested this with
+> > > another small test program.
+> > > 
+> > > Note:
+> > > For your convenience the code is also available in the tagged
+> > > b4/vfio_pci_mmap branch on my git.kernel.org site below:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
+> > > 
+> > > Thanks,
+> > > Niklas
+> > > 
+> > > Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
+> > > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> > > ---
+> > > Changes in v6:
+> > > - Add a patch to also enable PCI resource mmap() via sysfs and proc
+> > >   exlcluding pdev->non_mappable_bars devices (Alex Williamson)
+> > > - Added Acks
+> > > - Link to v5: https://lore.kernel.org/r/20250212-vfio_pci_mmap-v5-0-633ca5e056da@linux.ibm.com
+> > 
+> > I think the series would be more readable if patch 2/3 included all
+> > the core changes (adding pci_dev.non_mappable_bars, the 3/3
+> > pci-sysfs.c and proc.c changes to test it, and I suppose the similar
+> > vfio_pci_core.c change), and we moved all the s390 content from 2/3 to
+> > 3/3.
+> 
+> Maybe we could do the following:
+> 
+> 1/3: As is
+> 
+> 2/3: Introduces pdev->non_mappable_bars and the checks in vfio and
+> proc.c/pci-sysfs.c. To make the flag handle the vfio case with
+> VFIO_PCI_MMAP gone, a one-line change in s390 will set pdev-
+> >non_mappable_bars = 1 for all PCI devices.
 
-Cheers,
-Prabhakar
+What if you moved the vfio_pci_core.c change to patch 3?  Then I think
+patch 2 would do nothing at all (since there's nothing that sets
+non_mappable_bars), and all the s390 stuff would be in patch 3?
 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index 883c167c0670..7db04416e1cf 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -85,6 +85,7 @@ struct rzg2l_adc {
->         struct reset_control *adrstn;
->         const struct rzg2l_adc_data *data;
->         const struct rzg2l_adc_hw_params *hw_params;
-> +       void *devres_group_id;
->         struct completion completion;
->         struct mutex lock;
->         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
-> @@ -429,60 +430,88 @@ static int rzg2l_adc_probe(struct platform_device *=
-pdev)
->         struct device *dev =3D &pdev->dev;
->         struct iio_dev *indio_dev;
->         struct rzg2l_adc *adc;
-> +       void *devres_group_id;
->         int ret;
->         int irq;
->
-> -       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*adc));
-> -       if (!indio_dev)
-> +       /*
-> +        * Open a devres group to allow using devm_pm_runtime_enable()
-> +        * w/o interfeering with dev_pm_genpd_detach() in the platform bu=
-s
-> +        * remove. Otherwise, durring repeated unbind/bind operations,
-> +        * the ADC may be runtime resumed when it is not part of its powe=
-r
-> +        * domain, leading to accessing ADC registers without its clocks
-> +        * being enabled and its PM domain being turned on.
-> +        */
-> +       devres_group_id =3D devres_open_group(dev, NULL, GFP_KERNEL);
-> +       if (!devres_group_id)
->                 return -ENOMEM;
->
-> +       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*adc));
-> +       if (!indio_dev) {
-> +               ret =3D -ENOMEM;
-> +               goto release_group;
-> +       }
-> +
->         adc =3D iio_priv(indio_dev);
->
-> +       adc->devres_group_id =3D devres_group_id;
->         adc->hw_params =3D device_get_match_data(dev);
-> -       if (!adc->hw_params || adc->hw_params->num_channels > RZG2L_ADC_M=
-AX_CHANNELS)
-> -               return -EINVAL;
-> +       if (!adc->hw_params || adc->hw_params->num_channels > RZG2L_ADC_M=
-AX_CHANNELS) {
-> +               ret =3D -EINVAL;
-> +               goto release_group;
-> +       }
->
->         ret =3D rzg2l_adc_parse_properties(pdev, adc);
->         if (ret)
-> -               return ret;
-> +               goto release_group;
->
->         mutex_init(&adc->lock);
->
->         adc->base =3D devm_platform_ioremap_resource(pdev, 0);
-> -       if (IS_ERR(adc->base))
-> -               return PTR_ERR(adc->base);
-> +       if (IS_ERR(adc->base)) {
-> +               ret =3D PTR_ERR(adc->base);
-> +               goto release_group;
-> +       }
->
->         adc->adrstn =3D devm_reset_control_get_exclusive_deasserted(dev, =
-"adrst-n");
-> -       if (IS_ERR(adc->adrstn))
-> -               return dev_err_probe(dev, PTR_ERR(adc->adrstn),
-> -                                    "failed to get/deassert adrst-n\n");
-> +       if (IS_ERR(adc->adrstn)) {
-> +               ret =3D dev_err_probe(dev, PTR_ERR(adc->adrstn),
-> +                                   "failed to get/deassert adrst-n\n");
-> +               goto release_group;
-> +       }
->
->         adc->presetn =3D devm_reset_control_get_exclusive_deasserted(dev,=
- "presetn");
-> -       if (IS_ERR(adc->presetn))
-> -               return dev_err_probe(dev, PTR_ERR(adc->presetn),
-> -                                    "failed to get/deassert presetn\n");
-> +       if (IS_ERR(adc->presetn)) {
-> +               ret =3D dev_err_probe(dev, PTR_ERR(adc->presetn),
-> +                                   "failed to get/deassert presetn\n");
-> +               goto release_group;
-> +       }
->
->         pm_runtime_set_autosuspend_delay(dev, 300);
->         pm_runtime_use_autosuspend(dev);
->         ret =3D devm_pm_runtime_enable(dev);
->         if (ret)
-> -               return ret;
-> +               goto release_group;
->
->         platform_set_drvdata(pdev, indio_dev);
->
->         ret =3D rzg2l_adc_hw_init(dev, adc);
-> -       if (ret)
-> -               return dev_err_probe(&pdev->dev, ret,
-> -                                    "failed to initialize ADC HW\n");
-> +       if (ret) {
-> +               ret =3D dev_err_probe(&pdev->dev, ret,
-> +                                   "failed to initialize ADC HW\n");
-> +               goto release_group;
-> +       }
->
->         irq =3D platform_get_irq(pdev, 0);
-> -       if (irq < 0)
-> -               return irq;
-> +       if (irq < 0) {
-> +               ret =3D irq;
-> +               goto release_group;
-> +       }
->
->         ret =3D devm_request_irq(dev, irq, rzg2l_adc_isr,
->                                0, dev_name(dev), adc);
->         if (ret < 0)
-> -               return ret;
-> +               goto release_group;
->
->         init_completion(&adc->completion);
->
-> @@ -492,7 +521,23 @@ static int rzg2l_adc_probe(struct platform_device *p=
-dev)
->         indio_dev->channels =3D adc->data->channels;
->         indio_dev->num_channels =3D adc->data->num_channels;
->
-> -       return devm_iio_device_register(dev, indio_dev);
-> +       ret =3D devm_iio_device_register(dev, indio_dev);
-> +       if (ret)
-> +               goto release_group;
-> +
-> +       return 0;
-> +
-> +release_group:
-> +       devres_release_group(dev, devres_group_id);
-> +       return ret;
-> +}
-> +
-> +static void rzg2l_adc_remove(struct platform_device *pdev)
-> +{
-> +       struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
-> +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
-> +
-> +       devres_release_group(&pdev->dev, adc->devres_group_id);
->  }
->
->  static const struct rzg2l_adc_hw_params rzg2l_hw_params =3D {
-> @@ -614,6 +659,7 @@ static const struct dev_pm_ops rzg2l_adc_pm_ops =3D {
->
->  static struct platform_driver rzg2l_adc_driver =3D {
->         .probe          =3D rzg2l_adc_probe,
-> +       .remove         =3D rzg2l_adc_remove,
->         .driver         =3D {
->                 .name           =3D DRIVER_NAME,
->                 .of_match_table =3D rzg2l_adc_match,
-> --
-> 2.43.0
->
->
+Not sure if that's possible, but I think it's a little confusing to
+have the s390 changes split across patch 2 and 3.
+
+> 3/3: Changes setting pdev->non_mappable_bars = 1 in s390 to only the
+> ISM device using the quirk handling and adds HAVE_PCI_MMAP.
+> 
+> Thanks,
+> Niklas
 
