@@ -1,174 +1,219 @@
-Return-Path: <linux-kernel+bounces-532600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA17BA44FC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1E8A44FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD527AC34F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A22F7A65F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD2521420D;
-	Tue, 25 Feb 2025 22:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2879721420D;
+	Tue, 25 Feb 2025 22:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNgRVUNu"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T9YXZA4S"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7012135A0;
-	Tue, 25 Feb 2025 22:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6643214A97
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522099; cv=none; b=L0a4P4naY35S7N8tdiWgaWKCXhtM+ThoYKUDbewF54jNUE2TGkpWoDmDkVEFK8hhOmGaaSZnBGCiqgD9SoZH3FUWjmr5jijHAigJwf503Pa/u8uw+cyFo+zsii02WdevgLEGlS2aKasRWMRFKriUqoN2D+orE71Mw603dMid33s=
+	t=1740522114; cv=none; b=nyskvKLHmuR2bFLNVjAQ2niyVYyuFNIpuwMU6PPAu2PquenoBqBG23zIX1xfKMM8Z20fz90XXRj15oo04QIwERsidMXc3taqLe//I7JjaxIx+FOjhI3Th/8l3C1ohPwLRT8pvtQXph9aLK2FMqTYIqQb0psyqIjznF9DbOjBDkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522099; c=relaxed/simple;
-	bh=4dV3qMEaY+/b58WRuHTItVUPpAgVVn9pTDo0iht+B4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fMcE8nLrxvZLg2zMtR3XNDGpWV6uDT7k+sXxd/0kldXdG2gIj1Iyj4xm5+xCGOtzS1GaTjYK1lPf0YxLf8j/5uqDcynPoLhYdUKvE/wticlnmSWVulefXnEdNiV/9tkMcfZuquhPvteIzCUpdwFN4SHKKtCJqGUISlYv+kyp2X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNgRVUNu; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43989226283so42252565e9.1;
-        Tue, 25 Feb 2025 14:21:37 -0800 (PST)
+	s=arc-20240116; t=1740522114; c=relaxed/simple;
+	bh=V8hikXjTftw0cXBaUEV3kLVcBYfQoNmDC86IxHTVlsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JIay2XZiL02Crb8i13Z24DIYpjxE25da2R/WLHAcFIs4GoKlYSL8a8JCYS9bTAawD+Ql4cIaLiXxzTPH/d9qJGHYl/siCR45UIS1CnguWVNWAzbBQV/mLpQiPrKPwTIc1/5IJUTg2wgROURwUvPAXb8kvwa5kse4FXe8OPw+p9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T9YXZA4S; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-472098e6e75so42971cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:21:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740522096; x=1741126896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1740522111; x=1741126911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHOvPuR/Wi9UO5iZQxG9fC7V2bgAgdFZoJjL8l7B2iU=;
-        b=kNgRVUNuNdwo5DBBGGunBP1m3r2f/78DATIwdGdSn664wub+RM4XGB91Op7S3I2V5N
-         oePRRq2c0mFTlcgBTBEHarXr3pTYp3N2/hg/e1mjm0lgd0C8vrtUoCkeXWYxEsh8BBjo
-         OQi/Hw6cyU1qW9EQngQo34+l+WDElcca3jgd3BCqLBBEf7x3s3b8bVfzpYyxaxuaXL8W
-         wznnOpimxpGJTWcQ2Q6w3HS2Pc9UTewbvgC2Z3pXo1UJAF6T491GeLkv08zLcOK+fMQD
-         Rrw+3IER7tSfLzcOb8X6c5pKb59zml0omTZBn6xtTB55u6BspMZ5jWFQcBmG3tEqBrUk
-         7aEg==
+        bh=nU6IIXGWGh9H/ehdT9Qc/ulzK83hLj2Kl5Kcq106fII=;
+        b=T9YXZA4SrxfPJNcdorf87P60efwr7zyVH61MqA+kGbNWXJJzgZrNNSWVa0dkjPm2RY
+         XtK4B+0OADdqdMF2VT4JXAbEiUR7RXXAzQxcFjoSdRxffSIfWIwe/CYAIqZedGQ7zGt8
+         ++Uesp+ldNZ4JJDy88przxkGs14ZknYubWUl1eCbs6P5hUwKdBk2U+Gd3Af14UAeRPwZ
+         OMZd0bNMZZ5EeCs+O6nJrqEiKvgbR/qvdyx7nN18Vu3xKzOFlYB5Cva6NhI0pThlTyB5
+         kGFhyrxa1KtOtIR7fvwmKeNslNodqdFnsX/aTImbsWnjVx+y9OJ0Ba0dWBL0mGltHfxX
+         etWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740522096; x=1741126896;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740522111; x=1741126911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VHOvPuR/Wi9UO5iZQxG9fC7V2bgAgdFZoJjL8l7B2iU=;
-        b=ZkG1MBKPU988OLWvTnFhKmb9fvYDGBFOXblvyxoG4tYl+61QfLjNzBsQaIkSOQVq55
-         DSRHfHDau1PdIGq5LANaBTEIlfbeaNmEEf1vc8f/yMtSeaYCvc7ITP0Y03XiJK0v1jl5
-         35Dw/NXGsl2efdlcRsKDUhJ89wfc0HUHfAjOEvziobHGdByY9jwkf5qqxY4Lcdcy22GZ
-         imIosCx3WoyGCuw9+eDj+aq/051Dcxk0q8yBVuIKdbAauoV8p51QaBjuxRr6nEWGY0Wk
-         IGLvJ2zyG+A0+vEABDBfcDLltDAhI9pXlp7erWaO69oNpTCiZ/gMMnndKTqPERKs3E15
-         ImdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVArfQ5+AMyItRglMHD1yLp8CwLlxV9qB84NgaewgDfx84dZylNDtZ9KuCckmauKzSg4eAwSA5gBPmcJtE=@vger.kernel.org, AJvYcCVxm8ZOqdoaPnQzbULYPdrYfLqSVICAKHaEmzuQyCfW8MlvlKwkSDHFY1xQc/YvVYTgCmaCaAyWtSRQ08MC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEwjWnmF509rOr4jmh5Z24n0Yt3/XIv69x/sVEZM7efv4UwDz3
-	Syy0wOZ3AuM0SC1TLXjcP5FggI0LwJnBhhWmsFNH0V6aiFj5feMm
-X-Gm-Gg: ASbGncs+tpcEntc/G8woxMoITasF4sqKlfCDNwOIEo/cmkN+MmLy0uA/AxsIO+I9XH9
-	r/7UU/jpuLbP4UkUqmSwDzWk3sNFEmudlix5QOvrd8PvN9yfy5fyg9cn0S1b6R8xwi4cJo9j5D+
-	uJhO+OSHuU0ZA+DlQqP5pT7o0mHt6MF5fYFDhKT1iYcUkwrbJPFyB0OI9JwxXAZnSrItTKoDY0d
-	Vm2T942sjufX9DTlR/uz/Evi2p9OXbl3KeMc1qwAkIgC9mJ0FafGUQzsn26El9VdwY+xI9cu43+
-	ENDMmKeh/b9WYOR69ZSx7ygnKeM774uhtaPgNsx2W7Eh/yEisd+j+jymyjwIUS/G
-X-Google-Smtp-Source: AGHT+IGhuQdlW93oN+iObz2oloQDQjhab7e/6iloMoMzZrb9scHCZGmdXSbo/tQq2HlfvypbqG9OAg==
-X-Received: by 2002:a05:600c:1c13:b0:439:98b0:f911 with SMTP id 5b1f17b1804b1-439ae1e9aa8mr179552915e9.10.1740522095603;
-        Tue, 25 Feb 2025 14:21:35 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b591sm1452315e9.6.2025.02.25.14.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 14:21:35 -0800 (PST)
-Date: Tue, 25 Feb 2025 22:21:33 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Xiao Liang <shaw.leon@gmail.com>, x86@kernel.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel
- <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>
-Subject: Re: [RFC PATCH 1/2] x86/fpu: make kernel-mode FPU reliably usable
- in softirqs
-Message-ID: <20250225222133.395f7194@pumpkin>
-In-Reply-To: <20250221193124.GA3790599@google.com>
-References: <20250220051325.340691-1-ebiggers@kernel.org>
-	<20250220051325.340691-2-ebiggers@kernel.org>
-	<CABAhCOQjnSsos3gm4GWrxFUdV8dw-=r_mMn0+xdjnZjJ0PQ9MA@mail.gmail.com>
-	<20250221193124.GA3790599@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=nU6IIXGWGh9H/ehdT9Qc/ulzK83hLj2Kl5Kcq106fII=;
+        b=BKnSVrl8BXU3x1DIKN5AqUganfdZVej03gQQXfnRAFe4EM0J0uw/Ds5BplGn7Y/NN1
+         QEUPhTKiXXhBUy7M6INkSr9uROXnX11OP05GDYfY7RVYneKZ9Xrm62jX2dzxW2LzOZzz
+         ZwvGAfr9HudQuoKaeq12D/mnptpz1dSbg4UgZU7FV3M7Uf8lWe+/X+EFKzzzsUBUH2Wd
+         FmcchPD2Zlr83H9jB9UyrSc35FPe7Z8Tg2e9HVdel5nLJslhwzMEjj/kfzQXE7dUwqcS
+         yCAoLlfvJpYlgIuCs/kOErteXTP3/zEH/ibNFDuk/M9sRsC4lH/H3cwUFsR7ugb416Yk
+         sMdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvhGql2IvRZ6cJvmKOTUb1EGUi4o+WJ5fGaejDnDkR01w0bfjV9zaKMwqsmB7eQVfy2vCAMo6SuQ/ucjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBIze/JlsCxK1JUoVb/Rn2kS0IiW//yC2YlSPfGeo7WRsdiWvP
+	OyHko7elyIZWA8ynKv3JDXaknAqY8YjW+woUts37LfMzTSnzfEwAXSRDlrviOkkutN412sTBior
+	O4wNjQDjVcdUWNiHsPwdZYu39ITz44SHrqHxC
+X-Gm-Gg: ASbGncuImzuwHBbPW0h29gFov0jsWn8baNrAjzf7sYYWfJsEW+qwz5c/k+kvkkvG5ns
+	n/1+OXsR8Pf/iDMC3e2Sh0Je7+buD8T4g8slvnpMtVIgCtnaU+1Lea7q3fLmi3T4/8EjeOpDhpu
+	TWi/4h8Ec=
+X-Google-Smtp-Source: AGHT+IEq/AKzX+cYl7aJmSUqhtY1SddAAUnJW41lZVjVI/xrlYAHTtZS1Og5x8RQPWjaHO4K/43BSUS1zvjg+LAB+A4=
+X-Received: by 2002:ac8:7f95:0:b0:471:f257:7a5f with SMTP id
+ d75a77b69052e-47376e8f38cmr7477371cf.13.1740522111074; Tue, 25 Feb 2025
+ 14:21:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250225204613.2316092-1-surenb@google.com> <Z7420bbHoz3y73xh@x1.local>
+ <CAJuCfpGLcxSLNek7bUALKcg8HwF8vd9piaBf+cvjYRhY=xOfrA@mail.gmail.com>
+In-Reply-To: <CAJuCfpGLcxSLNek7bUALKcg8HwF8vd9piaBf+cvjYRhY=xOfrA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 25 Feb 2025 14:21:39 -0800
+X-Gm-Features: AWEUYZlr9psNh16uDKwukoh4oYDN-sgVhvIBloc0uSr9nmxcabIzsX5L3_guFh0
+Message-ID: <CAJuCfpH8-LrNuK8xWHU9kGM7QjYqWBdjy1TKe4DuuPd1s+g11Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: do not block on locking a large folio
+ with raised refcount
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, lokeshgidra@google.com, aarcange@redhat.com, 
+	21cnbao@gmail.com, v-songbaohua@oppo.com, david@redhat.com, 
+	willy@infradead.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	hughd@google.com, jannh@google.com, kaleshsingh@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Feb 2025 19:31:24 +0000
-Eric Biggers <ebiggers@kernel.org> wrote:
-
-> Hi Xiao,
-> 
-> On Fri, Feb 21, 2025 at 03:38:27PM +0800, Xiao Liang wrote:
-> > > Therefore, this patch updates x86 accordingly to reliably support
-> > > kernel-mode FPU in softirqs (except when hardirqs are disabled).
+On Tue, Feb 25, 2025 at 2:12=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Tue, Feb 25, 2025 at 1:32=E2=80=AFPM Peter Xu <peterx@redhat.com> wrot=
+e:
+> >
+> > On Tue, Feb 25, 2025 at 12:46:13PM -0800, Suren Baghdasaryan wrote:
+> > > Lokesh recently raised an issue about UFFDIO_MOVE getting into a dead=
+lock
+> > > state when it goes into split_folio() with raised folio refcount.
+> > > split_folio() expects the reference count to be exactly
+> > > mapcount + num_pages_in_folio + 1 (see can_split_folio()) and fails w=
+ith
+> > > EAGAIN otherwise. If multiple processes are trying to move the same
+> > > large folio, they raise the refcount (all tasks succeed in that) then
+> > > one of them succeeds in locking the folio, while others will block in
+> > > folio_lock() while keeping the refcount raised. The winner of this
+> > > race will proceed with calling split_folio() and will fail returning
+> > > EAGAIN to the caller and unlocking the folio. The next competing proc=
+ess
+> > > will get the folio locked and will go through the same flow. In the
+> > > meantime the original winner will be retried and will block in
+> > > folio_lock(), getting into the queue of waiting processes only to rep=
+eat
+> > > the same path. All this results in a livelock.
+> > > An easy fix would be to avoid waiting for the folio lock while holdin=
+g
+> > > folio refcount, similar to madvise_free_huge_pmd() where folio lock i=
+s
+> > > acquired before raising the folio refcount.
+> > > Modify move_pages_pte() to try locking the folio first and if that fa=
+ils
+> > > and the folio is large then return EAGAIN without touching the folio
+> > > refcount. If the folio is single-page then split_folio() is not calle=
+d,
+> > > so we don't have this issue.
+> > > Lokesh has a reproducer [1] and I verified that this change fixes the
+> > > issue.
 > > >
-> > > This is done by just disabling softirq processing in kernel-mode FPU
-> > > sections, as that prevents the nesting that was problematic.
+> > > [1] https://github.com/lokeshgidra/uffd_move_ioctl_deadlock
 > > >
-> > > This will delay some softirqs slightly, but only ones that would have
-> > > otherwise been nested inside a task context kernel-mode FPU section.
-> > > Any such softirqs would have taken the slow fallback path before if they
-> > > tried to do any en/decryption.  Now these softirqs will just run at the
-> > > end of the task context kernel-mode FPU section (since local_bh_enable()
-> > > runs pending softirqs) and will no longer take the slow fallback path.  
-> > 
-> > I think this will delay all softirqs, including those that don't use
-> > FPU. Will there be a performance impact?
-> > (I guess you've noticed the patch I submitted last year. And this is
-> > the main reason why it was implemented in the way you mentioned as
-> > the second alternative.)  
-> 
-> Thanks for taking a look at this patch!  It's true that this patch makes all
-> softirqs on the same CPU be delayed until the end of the current kernel-mode FPU
-> section.  But, I'm a bit skeptical that it actually matters enough on x86 to go
-> with a more complex solution that would allow nested kernel-mode FPU.
-> Kernel-mode FPU sections are generally short; the usual cases are en/decrypting
-> disk sectors or network packets that are 4 KiB or less.
-> 
-....
-> I think it's also important to note that when local_bh_enable() re-enables
-> softirq processing (when called from kernel_fpu_end()), it also immediatelly
-> runs any pending softirqs.  Thus there would be no additional delay; the CPU
-> will *immediately* run any pending softirqs.
+> > > Reported-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >
+> > Reviewed-by: Peter Xu <peterx@redhat.com>
+> >
+> > One question irrelevant of this change below..
+> >
+> > > ---
+> > >  mm/userfaultfd.c | 17 ++++++++++++++++-
+> > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index 867898c4e30b..f17f8290c523 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -1236,6 +1236,7 @@ static int move_pages_pte(struct mm_struct *mm,=
+ pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >                */
+> > >               if (!src_folio) {
+> > >                       struct folio *folio;
+> > > +                     bool locked;
+> > >
+> > >                       /*
+> > >                        * Pin the page while holding the lock to be su=
+re the
+> > > @@ -1255,12 +1256,26 @@ static int move_pages_pte(struct mm_struct *m=
+m, pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >                               goto out;
+> > >                       }
+> > >
+> > > +                     locked =3D folio_trylock(folio);
+> > > +                     /*
+> > > +                      * We avoid waiting for folio lock with a raise=
+d refcount
+> > > +                      * for large folios because extra refcounts wil=
+l result in
+> > > +                      * split_folio() failing later and retrying. If=
+ multiple
+> > > +                      * tasks are trying to move a large folio we ca=
+n end
+> > > +                      * livelocking.
+> > > +                      */
+> > > +                     if (!locked && folio_test_large(folio)) {
+> > > +                             spin_unlock(src_ptl);
+> > > +                             err =3D -EAGAIN;
+> > > +                             goto out;
+> > > +                     }
+> > > +
+> > >                       folio_get(folio);
+> > >                       src_folio =3D folio;
+> > >                       src_folio_pte =3D orig_src_pte;
+> > >                       spin_unlock(src_ptl);
+> > >
+> > > -                     if (!folio_trylock(src_folio)) {
+> > > +                     if (!locked) {
+> > >                               pte_unmap(&orig_src_pte);
+> > >                               pte_unmap(&orig_dst_pte);
+> >
+> > .. just notice this.  Are these problematic?  I mean, orig_*_pte are st=
+ack
+> > variables, afaict.  I'd expect these things blow on HIGHPTE..
+>
+> Ugh! Yes, I think so. From a quick look, move_pages_pte() is the only
+> place we have this issue and I don't see a reason for copying src_pte
+> and dst_pte values. I'll spend some more time trying to understand if
+> we really need these local copies.
 
-I'd also have thought that anything time-critical shouldn't rely on softirq.
-The network stack will run a lot of code in softirq context, a bit of time
-with softirq disabled isn't going to make any difference to real-world latency.
+Ah, we copy the values to later check if PTEs changed from under us.
+But I see no reason we need to use orig_{src|dst}_pte instead of
+{src|dst}_pte when doing pte_unmap(). I think we can safely replace
+them with the original ones. WDYT?
 
-I do wonder though whether the network napi code should be running in softint
-context at all.
-With the amount of data it is trivial to get through a single 'consumer' ethernet
-interface it can easily cause the scheduler to mis-behave.
-I'd guess that google (etc) use threaded napi, multiple rx queues and RFS to get
-the network processing spread out and non contending with process code.
-
-> 
-> As for supporting nested kernel-mode FPU if we wanted to go that way: yes, your
-> patch from last year
-> https://lore.kernel.org/lkml/20240403140138.393825-1-shaw.leon@gmail.com/
-> ostensibly did that.  However, I found some bugs in it; e.g., it didn't take
-> into account that struct fpu is variable-length.  So it didn't turn out as
-> simple as that patch made it seem.  Just extending fpregs_{lock,unlock}() to
-> kernel-mode FPU is a simpler solution with fewer edge cases, and it avoids
-> increasing the memory usage of the kernel.  So I thought I'd propose that first.
-
-Since many kernel users don't want the traditional fpu, they just need to use
-an instruction that requires an AVX register or two, is it possible for code
-to specify a small save area for just two or four registers and then use just
-those registers? (so treating then all as caller-saved).
-I know that won't work with anything that affects the fpu status register,
-but if you want a single wide register for a PCIe read (to generate a big TLP)
-it is more than enough.
-
-I'm sure there are horrid pitfalls, especially if IPI are still used to for
-deferred save of fpu state.
-
-	David
-
-
+>
+> >
+> > >                               src_pte =3D dst_pte =3D NULL;
+> > >
+> > > base-commit: 801d47bd96ce22acd43809bc09e004679f707c39
+> > > --
+> > > 2.48.1.658.g4767266eb4-goog
+> > >
+> >
+> > --
+> > Peter Xu
+> >
 
