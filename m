@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-531580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A007BA44240
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:17:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3953A4423E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A623A825F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21B53BF539
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDD726B2CE;
-	Tue, 25 Feb 2025 14:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE2A26A1B6;
+	Tue, 25 Feb 2025 14:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="hIYTk2hM"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H1Mc3L25"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F7B2676C8;
-	Tue, 25 Feb 2025 14:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AA226A095
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492765; cv=none; b=qVpADza0rSbZNo+oCiyS3SxEWm7BFguINSlwyybDjXAJpY/PbogaW8WZb9Z67oQMxWfPhRYt21KXtRNIob4mzK+BaEVPqmhCHluqAeV+gnIXS3ztweF2ZkZTT4hMLYmI83HKeHcvGlkwPxS4xuDAspJLa0lcQQkL/Cq6ilGLmcM=
+	t=1740492763; cv=none; b=bwmot0w5eY40HMqPxQ+ouHGmw6raS4YFI3XH+lwHAfqoJlpuQ/WsRLHSnHetdruLAvKB/XDEy1h9g7Eg5W7kE9LIeLhMqFO8RAlF7UhNdg2T8cBVuq00Khr0KU/uM4z1TIfRxtCwT3E+zTouDJPjkdmQaa8jEBKGhTX+QWFRfmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492765; c=relaxed/simple;
-	bh=VKH1ouIyBgpV+yjjzpH1YAmVGB47UmPki1d/30Utxk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E/VhelkOWyTWc9L4yDJOPo5YHNvRCRj6RF/FqhSyZPJ0y7I3kkIC5CW267Ece9SffhXiOcJ5bCrNK/0VtxifeuhEmnN1HeCjPACCHymVqI70nLZ7JChW2sG7zzkw4l1+OM5DmPfmU3kXhxvgTnIf3Kb0SBLYl4wuiVIyYEO9gLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=hIYTk2hM; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740492764; x=1772028764;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wCe9wqGieGFyiUCexYspDQYCKCk1CfumNTmeDIsPvqY=;
-  b=hIYTk2hMUm5BIsJKCZdhucPQ7TRjAUJIW05dqhA7W6wxw2FgA+s1grGV
-   DO1J58NycpW+tCR2VtjaCU1SH/mmNEkq0eh0Wd591J6WTYbIFbfRV+F2g
-   H340M/nQgAqNwvFQqGOIS1iApTVKQKVov1pbjZPMSOFxTWYJbtg54LZFp
-   g=;
-X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
-   d="scan'208";a="274174113"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 14:12:38 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:33203]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.69:2525] with esmtp (Farcaster)
- id 1760cb76-f2c7-41ad-bce5-bd5d082ea92a; Tue, 25 Feb 2025 14:12:37 +0000 (UTC)
-X-Farcaster-Flow-ID: 1760cb76-f2c7-41ad-bce5-bd5d082ea92a
-Received: from EX19D020UWA003.ant.amazon.com (10.13.138.254) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 14:12:37 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D020UWA003.ant.amazon.com (10.13.138.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 14:12:36 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-f5cd2367.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Tue, 25 Feb 2025 14:12:36 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-f5cd2367.us-west-2.amazon.com (Postfix) with ESMTPS id 46E31C7D57;
-	Tue, 25 Feb 2025 14:12:29 +0000 (UTC)
-Message-ID: <9e60449b-0d2f-43ef-a0b0-3cc999fa9d99@amazon.co.uk>
-Date: Tue, 25 Feb 2025 14:12:27 +0000
+	s=arc-20240116; t=1740492763; c=relaxed/simple;
+	bh=uSuOfKLT6sZbtfJyW0bA1Ex2ywZTI0jPU5liri3f0c4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n5YrVBhJiQ0PaiExlhHFvr6CBZEP2eXhVcBR/C0KDowP4NxBDAoFJF6VMj/qMHhPMlzYSnG+5xy6EYeHZbFeP1WnhLB87ZPCgwA/kyw24dzXaBk22taOrbZyIa1tUAiBX6HlcxGgyYhFgYFgP2ihWevi8WPj1YM8zvnCojAOUJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H1Mc3L25; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 53AB044430;
+	Tue, 25 Feb 2025 14:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740492759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CmfZgHdY6jTWPcA0XsZVYbxYIn6A9jqbs+9Qn8P1av4=;
+	b=H1Mc3L25irv7jSv/bNroxf4S+aCA3546iyR6II/Jkv84XlwLaeSDzBq98I5tXOzok/uLG6
+	l45DoXxPvyskBdu/37nbqX6SG4lCB4wp+Bdry143L3CHvN+cdyYn93BcF8WDAPITw58qDh
+	8bD2wfx4eIKZyEP7xmwtzRd/561Di7+OfsfN0KyGBYJqiU1/3jMgkJM1sm8bckfLfcxtyu
+	SayCn2KbQ6bQyz6Fp67LRf8f31RPubQ2J0wxTE0VIGHzASIn1aWCh3bsYzhGKyhFWd2MHU
+	h5D+/SFQwxTGmhG1PpOMhzKhlvw0jFglbXFCXnp/q8h+x1nSQL0HOmFob5vB6Q==
+Date: Tue, 25 Feb 2025 15:12:37 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 13/63] dyndbg: reduce verbose=3 messages in
+ ddebug_add_module
+Message-ID: <d9d6c121-9c53-476e-a37c-ff6e6bfccc7f@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-14-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/12] KVM: selftests: Add guest_memfd based
- vm_mem_backing_src_types
-To: <rppt@kernel.org>, <david@redhat.com>, <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-9-roypat@amazon.co.uk>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <20250221160728.1584559-9-roypat@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250125064619.8305-14-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Fri, 2025-02-21 at 16:07 +0000, Patrick Roy wrote:
 
-...
 
-> @@ -985,10 +1013,13 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	if (alignment > 1)
->  		region->mmap_size += alignment;
->  
-> -	region->fd = -1;
-> -	if (backing_src_is_shared(src_type))
-> +	if (backing_src_is_guest_memfd(src_type))
-> +		region->fd = guest_memfd;
-> +	else if (backing_src_is_guest_memfd(src_type))
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> When modprobing a module, dyndbg currently logs/says "add-module", and
+> then "skipping" if the module has no prdbgs.  Instead just check 1st
+> and return quietly.
+> 
+> no functional change
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-Argh, this is nonsense. Should be 
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-+	else if (backing_src_is_shared(src_type))
+> ---
+>   lib/dynamic_debug.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index fc9bf5d80aa9..6bac5703dd41 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -1245,11 +1245,10 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   {
+>   	struct ddebug_table *dt;
+>   
+> -	v3pr_info("add-module: %s.%d sites\n", modname, di->num_descs);
+> -	if (!di->num_descs) {
+> -		v3pr_info(" skip %s\n", modname);
+> +	if (!di->num_descs)
+>   		return 0;
+> -	}
+> +
+> +	v3pr_info("add-module: %s %d sites\n", modname, di->num_descs);
+>   
+>   	dt = kzalloc(sizeof(*dt), GFP_KERNEL);
+>   	if (dt == NULL) {
 
-instead.
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
->  		region->fd = kvm_memfd_alloc(region->mmap_size,
->  					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
-> +	else
-> +		region->fd = -1;
->  
->  	region->mmap_start = mmap(NULL, region->mmap_size,
->  				  PROT_READ | PROT_WRITE,
-
-...
 
