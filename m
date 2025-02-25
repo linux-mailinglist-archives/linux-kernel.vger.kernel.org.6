@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-531421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19D7A44051
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:14:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D4AA4404E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:14:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012E24204C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A8E17F4D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8042690D9;
-	Tue, 25 Feb 2025 13:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1852E269817;
+	Tue, 25 Feb 2025 13:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Me+uzO1z"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG9jRTpj"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD97E2690D1;
-	Tue, 25 Feb 2025 13:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C80268C40
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489020; cv=none; b=JkQJcmdT65MbmIjBgsmyjkFvrUeDHtGVN4gZiA0DsdPb/IduFujzDYO8GH1z1pu0/CuEa4NFq7g2GZpvfp1G2CQA77eK8h4+YR4gEYKyAsmyzYqe9QCYCmkzdCQdP3ctuMm77GVnR0sZSdBAb7ulWNlTwYPfnaenCHpcU0a3egM=
+	t=1740489002; cv=none; b=GJ5P8Tvkh9HzyunBrdaePru+gjw1+jXO2otFqOwGRBUYHHxD0CyX5L+yYE7qsdgvHPMwtDvLQF7AufwPeHdA10JQh6y/KH0rulvWDU3OuD/aZywiwBMEubeg56v1syd0vgE/6iiCap5chT+SRmvX78zKspJYGe/i7+Eu4RGRNtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489020; c=relaxed/simple;
-	bh=Jb9vzuauP2H+kDu/VR2zAVEKBcnuo7X9NOzfhwfu47I=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CN60cNkQ9lORuTfFnryeRNj7qelwR0Czod3EzbVgp7tarLumUyHQy/0IQqx7c+35voCOf9DmslMew4akyC96DL7HG7kH092/ovx6Zwbh5lXE6uFK+WlrnPKROIN/0EvO03XJQS4+eWtiOiaSn37cjS8W7j1BwT7L55mG7KSY8Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Me+uzO1z; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740488987; x=1741093787; i=markus.elfring@web.de;
-	bh=i029VMQrtBpgtUWTznuij9OfxhOaNdfR/97gam4psFY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Me+uzO1z8P9eVzHixCWKSE/3VfGr9s2onGj6IYhAcz7HJLJR0NAJo2c9fWome1Tt
-	 XUcDnvOpJM+Uo+bJAwrIw/iIZgDOWoYJcW7tsYNTgHIRPMeYRlVGOH8o75Sq4VG+R
-	 4ax2UNzU2ipPbUPA1P6x9dhyKi43NzB0BFroQuWAIr6j0VSu7A3wxKJtZdtMwWHwM
-	 Dzxtn049xf9xBKsf1o4Eaoq2w4VHFczjsLc4GEh+aB7vEbJ24pIBwFq5kcldo+y8W
-	 NWjFoSnmrmPAOb5c/6BoSWOI7tWbiAFena4i6JQRA+5Cg7yXDl5TAHbGSt4aDufvP
-	 u7EerNZB8os18Ub5qg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.36]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVrbz-1tuJ6k3CHl-00LFOr; Tue, 25
- Feb 2025 14:09:47 +0100
-Message-ID: <32992dc7-15a1-4ca5-a5a1-e7e26ce74fbc@web.de>
-Date: Tue, 25 Feb 2025 14:09:39 +0100
+	s=arc-20240116; t=1740489002; c=relaxed/simple;
+	bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hfJYjZIxFmXHE1iY7Dz1m/G3DcbzFLOkX1VGNnEX2lV/Hb1crAx5dIQhL9p0em4HuTLwlo8AgvAH0uhpKpX3HIcPykKrrOY7aMFjecx8n0Rp8hlGnd4vVjIkSm1LfSXEE0wkBHUrQWKt8OIhi5JmsCqoTkKL88d0Vi2iCsMcIgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG9jRTpj; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220cb083491so11553715ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:10:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740489000; x=1741093800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
+        b=OG9jRTpjQlDwu+Yc6sJHuJSi3Y8gAJOESzts/Nmq36g5A/GuY+upJX1EZLaZXGkDFp
+         XDfrmixVSQtCpNoaoGhBf75PtBkXHECv6qp/6QKUSWfmNdc/BD8ZEm4hinM+IKPOu/Oi
+         AIyk8Ij4jH9S0N15znpmcgIDvLfZUyMojugLv99FkQmLSFTrxjb4ff/N9LmT+sKagLM3
+         AGw+62wg8BxEwNsStfPwRWB1M1WUN0tVdyzjCuRwrYFeP6SLNCE4piGAXSIVTDF82S3G
+         Hr3fgYrbA44OPDlHgYCmtn1ANGygsPcMI8V+xglyC6vax1FSlWUmJo7DFQpYsYbWyIKF
+         jwaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740489000; x=1741093800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
+        b=fjf5++ir5zfqOd8jSHfaRKk3LJf9QLMDxtk2zPwf4/+hW8QBStXgHwVIB56QPWLif6
+         ftZwdYI4aKHKd/AEtvw1hmSARyvg3N7EzxkxY6RSg6PlQia4xsPe0dgfQPhhI7VqXvTI
+         zq7i9WTkxx8lHEOWS5xPx1MxLVAYopCy4vW5rC9Nb1he8l6m8yXoQFX6NK8mMmDvxCSQ
+         z9llwXGEZD2xHz9+PucSwxSpZ8WLpszJ5B9b5Xf+z1/i9n8nXt4YV5TZlteKLy/FShk6
+         pKgRHx8cOBjWGsl7koOUsg7qVKOABWfvR6lPLE0770yCeziV52SrYpWc2ubaaGngXyQH
+         QZBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhL6TfQrONNAm3c2mplfXKotXsOmWRkHT51HDHZz/rNq7GV/DnvgWznkq9y2WnMFAsYB0l4D2DiqEbK6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcO2SUmHiZEaMaVCJ9HdaB2gjSioRjmC1jDJwmcDGsLO804AhP
+	r8/U0a6ZqO9ceKyJfDy1X4+HB5Gn1hs5cNt2are8YVI/hHX9GiXWSWRnnwyR/pwT4Q==
+X-Gm-Gg: ASbGncsl6g++SPOX3iG+FgMuGYCkg9Kazq93nKN3KabLQ7h8orRi7ZljrObL6clh/Tz
+	xEGBVWCaM9Uix1dTEZtozvxDMNwG5qXOmGZmVHrsPG4a6AOp5EpKmUmdIG5u+on9BIWexRTwoAp
+	y/lfFIUX/5Sxk/ZsH4GuoHKu6C3k+JfKDHSVDp8zTSNJTABb+1MFoYhnGQuMiuJlfhcl2bpx0nH
+	teKphT30p0VWgQpbg41rknmBPIddaiOjI3aG6czwlYYPGl8GaB/IM/36PMmdXELMJ9x9D5yEmkn
+	WLlAcWKfQafXStcTxOLMxCwmBNW57m8Lus4hUDG3wQk=
+X-Google-Smtp-Source: AGHT+IFAOl04FQd9DYpn24JBIFzBlWQ2MlsHQBRasgHUbKqN9nNVyvOkNVWTDVi3kFIyQpABTIYMWw==
+X-Received: by 2002:a17:903:230e:b0:216:30f9:93c5 with SMTP id d9443c01a7336-2219ff56b99mr109777465ad.6.1740489000319;
+        Tue, 25 Feb 2025 05:10:00 -0800 (PST)
+Received: from localhost.localdomain ([171.217.43.225])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0a7ea0sm13413485ad.177.2025.02.25.05.09.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:09:59 -0800 (PST)
+From: Qianyi Liu <liuqianyi125@gmail.com>
+To: phasta@mailbox.org
+Cc: airlied@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	dakr@kernel.org,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	liuqianyi125@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	matthew.brost@intel.com,
+	mripard@kernel.org,
+	phasta@kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+Date: Tue, 25 Feb 2025 21:09:53 +0800
+Message-Id: <20250225130953.100871-1-liuqianyi125@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
+References: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Weidong Wang <wangweidong.a@awinic.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Yi <yijiangtao@awinic.com>,
- Binbin Zhou <zhoubinbin@loongson.cn>, Conor Dooley <conor+dt@kernel.org>,
- Igor Prusov <ivprusov@salutedevices.com>, Jack Yu <jack.yu@realtek.com>,
- Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Paul Handrigan <paulha@opensource.cirrus.com>,
- Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>, Rob Herring
- <robh@kernel.org>, Takashi Iwai <tiwai@suse.com>
-References: <20250221102623.369435-3-wangweidong.a@awinic.com>
-Subject: Re: [PATCH 2/2] ASoC: codecs: Add aw88166 amplifier driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250221102623.369435-3-wangweidong.a@awinic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:riAmvwFPUhMFynWWay+uFRh8YpTOKq3JRXHtflEzj+oDzgYxCsz
- pwvqA9YyumJYdfyoxAK0NcW9LkJ4P+pMkol3cuikR1mVzBw6piJnncVX+5Dy+r5sD0wkpzn
- SP0K/xUgKV8khIM8Nd0SGkB/Wz50NaxyFESaoEC1Tf+yqbps6LECCf4Ye8qBfTTCpqSanGx
- oXhnyLUl982ximNUlR7yw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6sy7Gwobrfk=;DTZomGTNI+xtEnLkXlY4ZNPKgT5
- hZMieKbKTW543RUofR4IauZkF8cYYZaPxdGoEpXJ2nWz/y8jc9lFuK+vgZi2hDcKWNyv9GWN2
- NSEquUixnox+0DEbMW6QBiJpntJd7JgPoaobiQWiehf27fWXFMZRj2b3PBDTc3C6YZLpH89ie
- 3t+h3nu0Y4XwXtPKTRJIM04u/nCprdoEprB/9ZnIV6YAyivHjlJuUKdwhK0bbrK/A/3WwdRx8
- 4mKwJAznZNjsN7C6lIFrxKRevkILS+dUPVMmwaAQzXJ44oji9sV4ARmTPKCuNTk7+UD2zdLqN
- CVOp0BSAIQtPBpxNfCp+zw976Q8uXNpqiawqs1/RmudFZezsNunl1nrCMHcG+SgjaYzFyv1mO
- RpO/oA2Zsq3CpDMgf2eEsDczPAUX4oLLLMIPdcB0mF76i8S3YwRjDrKNCr9H9u97R5vcg71wn
- ZKYi+mSN2pnqbfVCiViANzCnSPZiRzwUNJalz1r2Z7XUH76qVsi3TIZDcmOm665gO5qM0XATv
- PDkAqgxYimm/JEl+gaBeN18KBu53/JN2Y8JaGxr8zDUCUZoleYZRzbqAB1kYlM5WV5Nhkgx7p
- SsSTTatj7fMSNDQSLlbTyEIPMcxoIgIVHk/ravEVk95l/SdlkkN0uqiQavU5VNXxdMF0Z/PXA
- K2AP6dkGKZW9HEK18heu8Knc3+oVefgFOkBbDe4ekMnvUpsatbd6vYCx6bvCJWPfxhW1v1iBQ
- XHUlIge1o62fL2is0C+ttrrhK/AQKsuscjIGkdS2PeCIsUgkrhSOGnQ2mKl1Ak039qlGRN2jn
- 81Nc0j0spFrrXC24tKZ7RJIa0Di/99iKsQnQJU/hzsGFSwrllkGwHsdBFfjlVSuLx1eEKTtKH
- 1Umu9Njf3SNoMqZa2//phjPF3w2lnw+gxPO36jCmqyrOiOQhAOPrvvPoZ3sjJ8GmHLkWXYdGM
- rAXOudrL5mecrbkimoHX9PJo4lWBQETZ9VbMfXYUevZpMqxOEKzc3PNNMxMuAaLdmkY6YmYWF
- v2EatcXiYNXKAVoRm2364cLPdOtZyVe+Qnaw4BLHzUb4AXXagvPNvG1Ehv1nglYLreQrd4aHk
- NQPtEi4ZirgSpWTl8PXXbErjxvsHwTezJHtOWYjdVbe3ol4oDkMKga4RegNes8rI3NUjH7xUZ
- na/yScXKsdD48qOz0Ndesw397RjzgrQlPval34VbWxur38sW5CqziT8lr6GhozYpKwRWVpTzl
- ShU/O2xf4nHgVAB30qQfKomviO5CIYWZiR6hAxt5XYKM2Q50Zw3sgYLUmdHyv6JK/XQVVxepT
- DYHOPIURKrnvaoiT+23iGxGS5ZhosXmXTue5jq7kkoFEJjeIBNAMsT3TA5G2u1W2/wRaqXReW
- fWcvWPTS+BsxcAUztFGgSPS0jrKnQtDgBJJw/VMPGgj92ApWYb/ocIE8g7Sx+E8xLDyHkB1qi
- xcHcIL3L4Z75j3xH5/yVB4St0sjY=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> The driver is for amplifiers aw88166 of Awinic Technology
-=E2=80=A6
+> Oh, and importantly, I forgot:
 
-You may occasionally put more than 57 characters into text lines
-of such a change description.
+> Since this is clearly a bug fix, it needs a "Fixes: " tag and put the
+> stable kernel on Cc.
 
+OK, thanks for reminding.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc4#n94
-
-
-=E2=80=A6
-> +++ b/sound/soc/codecs/aw88166.c
-> @@ -0,0 +1,1937 @@
-=E2=80=A6
-> +static int aw_dev_dsp_read(struct aw_device *aw_dev,
-+		unsigned short dsp_addr, unsigned int *dsp_data, unsigned char data_typ=
-e)
-> +{
-=E2=80=A6
-> +	mutex_lock(&aw_dev->dsp_lock);
-> +	switch (data_type) {
-> +	case AW88166_DSP_16_DATA:
-=E2=80=A6
-> +	mutex_unlock(&aw_dev->dsp_lock);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
-
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&aw_dev->dsp_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/mutex.h#L2=
-01
-
-Regards,
-Markus
+Qianyi.
 
