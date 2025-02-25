@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-532514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6428A44ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:26:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB4DA44ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8F13A96F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3FBA18924B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2D920E71F;
-	Tue, 25 Feb 2025 21:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519281A23BD;
+	Tue, 25 Feb 2025 21:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACelFAqO"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xKi0RuZ9"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C93B1A9B46;
-	Tue, 25 Feb 2025 21:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B89118DB2E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518760; cv=none; b=YuxO/58RNTYseoR4Vvx3/fN1YHEokMDN+zxsNFnR/xyriUkXEqGcf+wjztqrm1cSay/Arkjk6H8HiB7ul1fT4RWDLuXRqLxHoGYKjh/S38QQfdLq1IeZYy519Wo/rPuo3vc2lgzSnDqP0Oe6euuGbWlsZO4dw6Cj4x4/28HhumQ=
+	t=1740518833; cv=none; b=RsfUE5uc93nsIjQ5rk56/n3/+HMUGVwE3PzilbAahypvz7macRxiHCxaSTOkVddEMrkS8Cp5i+NfCSqrgHyDG9gGbaUHoZ/8y6oFPwLHoQUR/hBz9kvliKI1Bwyn0GRPZlthc01Fiq2Ze/2ivnBNXtepX+gQ1vsKS93VEft6wWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518760; c=relaxed/simple;
-	bh=YsMMbWlgUx+4O3lXMAWFkJ/wtPjt3U9uGLHFDYZgw7U=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y4hozh1HzC7X5gqKCIp927B7hA6vhmGQMxNjYhw4S/SZtu5b+PyJhcrKFTaZ7PtQV6IoyausoViunTK8lec6XRb961i9xN/i1N7TkV9pItCCMAD6SsOtCd5YIqSHPfEtSVVvVIzsklHQ7hFfuXZRkvuuX2/IEDF/kTyCkO0GYTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACelFAqO; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f70170005so3744634f8f.3;
-        Tue, 25 Feb 2025 13:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740518757; x=1741123557; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dOVYg7z7CFz6OzK6aoZCvfA4lRKGWxPBEQ2vsHHrQGA=;
-        b=ACelFAqO/bogKi0ygC9g8bnuMpYWBYhLRQlaPQdZID/au5i9xmDJooXJ2EhLEula3U
-         jJtvSNBhxEQM6tGJTpEaXE4NlqHFEJyd9hGBZrr7Xyqf2CECPHPUDj8EATuL+iLVrSDj
-         6zeJZt+f4w4huFgxbmSMKArJRt5hHEYEV0ugrSJaytj1oHxUnyQvo1O7w+ROAt0q6E8W
-         g3agt6yeFimy2BaAVSGJOZGHg+o/n5ycs6BFyyspKpCETNAmQtHgP/vLs24g5+3gaSdc
-         rLFzjsxIEs4jVM/Zwclt1gpFb/YZ8/9v8Qm58S1KcnNCQib8TJ7MEzM/6KvuZmOqfd0M
-         v0hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740518757; x=1741123557;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOVYg7z7CFz6OzK6aoZCvfA4lRKGWxPBEQ2vsHHrQGA=;
-        b=cWPftusy708rE9oEi2pvU9DwaX66yW1JwXuknpaaHemqkTj7HlgtXeb5VoeICyFyrz
-         CfQdK9yxtKXs4pGVWa4pzf94lb92dnQ44vCuuLbBvq/TXjKw/GRbXIZ8aZkL1GlNNbdN
-         FEln4UlCNxdbzOFpRcP3XYBtGKXqpqIqNiWo31uWTMYyUnMYVce/H7dS6jumdh8irfjP
-         5cYn2zbmPl0gWsHSEWvXUFgpZSZKPA1PfKiQTOiYIBp8oNurwZcmqZP445+KNvgSWZfG
-         nsZ8O7Y+y8KhSnh8sPJdLASBiXMK0KNd6BsWte5Y1qdWcr/ubRkMptcZhnuplHaCYWp2
-         B/cw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+lGlQ2OT3soGO0Korf06YEIIEi8VEjUjgnTOgkSm16Y+erwnCul0ILFlmGNank2LVrRI24BaHj6+SqEI=@vger.kernel.org, AJvYcCVHvCv2CWz2jLDntSCOu/samkWcp5KdNuL3eAuLt/tZ3OZ6EZYKpVBZoGQFWJROmvpFMfBwiGy98TTc6uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKsmlgpGER79POikrD/KUDOpMplWDrEavBpAj03m2clYrVYyaF
-	dhCPgQs/ZIGe3buSFYU0vhtMV7adyoeAcmI8ijlaXBprO0gjkRDJ
-X-Gm-Gg: ASbGnctEj+tOonIkJFDrlvm9vGloJI1QX/jU/iJlCueeKBiCdHfhIKUcaFMbim15NfB
-	pfxh5Ds16q3KUnD6zNs8i3/77GTrhHDbGl5foFOR9BYH8TuNxODCVcW2BkXkgSBS87GlBbEqgg6
-	oCek+TO+G8ld0bXib0f3m6LaNxA+HKpOoaHi6rTua30OMGywHHMlDI2qo1UF26nt/Sish85dGW0
-	yDf4skdkCgwYoRdFxxSu+I0tKLWMUkWIxac0xwchfqnJ+VfPHrah51JpZIqh+fYTrSc0UNFSWq7
-	AiccPuoxxHYnobFCdcce478lHEqUm1TI
-X-Google-Smtp-Source: AGHT+IFfqGmg8jaTYe3aHYa+NHD4Q/7RkKXcFvEdnIfsyLNJdQHUHBv+JCKoX8hHOdin+Y9uJL5Lww==
-X-Received: by 2002:a05:6000:400f:b0:38d:dc57:855d with SMTP id ffacd0b85a97d-390d4f8d921mr716558f8f.35.1740518756474;
-        Tue, 25 Feb 2025 13:25:56 -0800 (PST)
-Received: from [192.168.0.100] ([188.27.130.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd867144sm3521950f8f.7.2025.02.25.13.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 13:25:55 -0800 (PST)
-Message-ID: <04572f32-4203-4a9d-96dd-7974708f4088@gmail.com>
-Date: Tue, 25 Feb 2025 23:25:52 +0200
+	s=arc-20240116; t=1740518833; c=relaxed/simple;
+	bh=4gQN0VLbJRdDl/d/jrbSsx/7k2nPEha8NL3NlC2iSMw=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=oDlKUbGjAoDuhXnDTWhl3tlrA9Dk/Zz8v/i7Z8gaifOlOIv+7IjFVPEMt0hKOowjSEwa806toZOX2PA09mWz54zpePvkT3qazh36Z2ncef+LGup4ouyUc8aa5TjgW/gSy1vY3j8bt/VR2b4H/a63qjf2GFrf2IhFUTSJZ0GyUNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xKi0RuZ9; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: platform: rpi1-cfe: fix pad in call to
- get_mbus_config()
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Hans Verkuil <hverkuil@xs4all.nl>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Naushir Patuck <naush@raspberrypi.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250225212031.188987-1-demonsingur@gmail.com>
-From: Cosmin Tanislav <demonsingur@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20250225212031.188987-1-demonsingur@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740518829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dhI76UpWhlnE7Yqu8JZTWQLbNYq/H0XlJSdmyeQOIak=;
+	b=xKi0RuZ9ssMF9Wh1/muPoKNY22TXoTfptgS/FXcU/YvYoyVpCewsL2NZ0CQgxrk0KQ4aG7
+	dWd13p8GuEBnNPCUv3c7++fd/cImesHVww0KW5+L7uC+xB4D/PSZzV5oOl2KldJpVpOpa7
+	/Ndcdg+N9RfOCmBp26Y1sJr25M5wvHQ=
+Date: Tue, 25 Feb 2025 21:27:06 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yosry Ahmed" <yosry.ahmed@linux.dev>
+Message-ID: <59ea1984b2893be8a3a72855b022d16c67b857e9@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH 4/6] x86/bugs: Use a static branch to guard IBPB on vCPU
+ load
+To: "Sean Christopherson" <seanjc@google.com>
+Cc: x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
+ <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
+ "Pawan Gupta" <pawan.kumar.gupta@linux.intel.com>, "Andy Lutomirski"
+ <luto@kernel.org>, "Paolo Bonzini" <pbonzini@redhat.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <Z74exImxJpQI9iyA@google.com>
+References: <20250219220826.2453186-1-yosry.ahmed@linux.dev>
+ <20250219220826.2453186-5-yosry.ahmed@linux.dev>
+ <Z74exImxJpQI9iyA@google.com>
+X-Migadu-Flow: FLOW_OUT
 
+February 25, 2025 at 11:49 AM, "Sean Christopherson" <seanjc@google.com> =
+wrote:
+>
+> On Wed, Feb 19, 2025, Yosry Ahmed wrote:
+> >=20
+>=20> Instead of using X86_FEATURE_USE_IBPB to guard the IBPB execution i=
+n the
+> >  vCPU load path, introduce a static branch, similar to switch_mm_*_ib=
+pb.=20
+>=20>=20
+>=20>  This makes it obvious in spectre_v2_user_select_mitigation() what
+> >  exactly is being toggled, instead of the unclear X86_FEATURE_USE_IBP=
+B
+> >  (which will be shortly removed). It also provides more fine-grained
+> >  control, making it simpler to change/add paths that control the IBPB=
+ in
+> >  the vCPU load path without affecting other IBPBs.
+> >=20
+>=20>  Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  arch/x86/include/asm/nospec-branch.h | 2 ++
+> >  arch/x86/kernel/cpu/bugs.c | 5 +++++
+> >  arch/x86/kvm/svm/svm.c | 2 +-
+> >  arch/x86/kvm/vmx/vmx.c | 2 +-
+> >  4 files changed, 9 insertions(+), 2 deletions(-)
+> >=20
+>=20>  diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/inclu=
+de/asm/nospec-branch.h
+> >  index 7cbb76a2434b9..a22836c5fb338 100644
+> >  --- a/arch/x86/include/asm/nospec-branch.h
+> >  +++ b/arch/x86/include/asm/nospec-branch.h
+> >  @@ -552,6 +552,8 @@ DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
+> >  DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
+> >=20
+DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+>=20>=20=20
++DECLARE_STATIC_KEY_FALSE(vcpu_load_ibpb);
+>=20>=20
+>=20
+> How about ibpb_on_vcpu_load? To make it easy for readers to understand =
+exactly
+> what the knob controls.
 
-
-On 2/25/25 11:20 PM, Cosmin Tanislav wrote:
-> The source subdevice might be using a source pad not equal to 0.
-> 
-> Use the already existing source_pad field of cfe.
-> 
-> Fixes: e7bad98c205d ("media: v4l: Convert the users of v4l2_get_link_freq to call it on a pad")
-
-I used the wrong Fixes tag, this is the correct one:
-Fixes: 6edb685abb2a ("media: raspberrypi: Add support for RP1-CFE")
-
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->   drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-> index 69a5f23e7954..7db4fe5e0fd4 100644
-> --- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-> +++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-> @@ -1206,8 +1206,8 @@ static int cfe_start_streaming(struct vb2_queue *vq, unsigned int count)
->   	cfg_reg_write(cfe, MIPICFG_INTE,
->   		      MIPICFG_INT_CSI_DMA | MIPICFG_INT_PISP_FE);
->   
-> -	ret = v4l2_subdev_call(cfe->source_sd, pad, get_mbus_config, 0,
-> -			       &mbus_config);
-> +	ret = v4l2_subdev_call(cfe->source_sd, pad, get_mbus_config,
-> +			       cfe->source_pad, &mbus_config);
->   	if (ret < 0 && ret != -ENOIOCTLCMD) {
->   		cfe_err(cfe, "g_mbus_config failed\n");
->   		goto err_clear_inte;
-
+I was trying to remain consistent with the existing static branches' name=
+s, but I am fine with ibpb_on_vcpu_load if others don't object.
 
