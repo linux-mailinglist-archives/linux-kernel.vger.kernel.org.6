@@ -1,245 +1,213 @@
-Return-Path: <linux-kernel+bounces-530750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39F2A437D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:40:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93817A437CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAB51898E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E7E172564
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C30C260A23;
-	Tue, 25 Feb 2025 08:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B58625E469;
+	Tue, 25 Feb 2025 08:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="txupU22k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dSN+mjRX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jOeOxlxB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dSN+mjRX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jOeOxlxB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE525D541;
-	Tue, 25 Feb 2025 08:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE411C8607
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472845; cv=none; b=MtOT65i8COyKGEp3LKplR0LDT3be8eInE/pBfsD9TTrYdIeeptnFjv/u7rFmOuRpvfB2o9H1KfEp1g5y0JGOre/N/lNcXxCEa/t8uFyY8I7PgVF2CaXw3HDJKpW4DeCFo6V6g0Db7/6W+7YGehZpyT5VZvOIr4zdQvGmzpb7rkU=
+	t=1740472824; cv=none; b=TQJiTNz1bZA0bVIEs2Y/cCth6nFVRpAXvw4ZLwGgPSc/M5p6TglY7Vm92lCciRJbbEFRcqqrZMqWkWYTdBGYKBf2ZAINvcVg5Juqq0ZcQNkonXng6E7ccutan8P3T7VPiVxWbDsUu/YiPfFRTcnf00vtMo2dWmcDKq/i14Xfnzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472845; c=relaxed/simple;
-	bh=nYTjMJ1HG4v5wj/7GVed50qI5CmtP75J9mDus97hIpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABg9AIXQSOOFXarnRuvH7s6wwufml/LcqDXJwOn41OFEJ2vsDNpuq0SfFwnht5jdMopEE9rPEhq7kSjRd4N+rKYpHF5RXFOqNQjEGvZp06jFYz+5zVRhnu9qZAdGw/9A5UGRYmMcO0m4k0JclIT/FNyU5LbaNdAYMPD7+fb5FEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=txupU22k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569D7C4CEDD;
-	Tue, 25 Feb 2025 08:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740472844;
-	bh=nYTjMJ1HG4v5wj/7GVed50qI5CmtP75J9mDus97hIpY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=txupU22k3wqRj/Tvwm3CCnlyOPttCnFr04hohRttdeW7N2uqCeB/3ICENwZHbwzRC
-	 cCrZH82SRbAujv6MZBJZe2b1pumvUKuF3z2YaWijX4mPQ3Wxk+36R8JwavN2XTHKvZ
-	 HEWRSQw9I6jFmqkHrllD5STn5WXCzK9RbQ1M/9YI=
-Date: Tue, 25 Feb 2025 09:39:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Long Li <longli@microsoft.com>
-Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
-Message-ID: <2025022515-lasso-carrot-4e1d@gregkh>
-References: <20250225052001.2225-1-namjain@linux.microsoft.com>
- <2025022504-diagnosis-outsell-684c@gregkh>
- <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
+	s=arc-20240116; t=1740472824; c=relaxed/simple;
+	bh=ZxtiafzoItHhBF2m8z2RCFd/4h5Onb4ILsaa5+qkGYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BpV6mjtdnOmmLudQg91UIWqXgm8medabXCRM2Yo0rbG75OdVwI4RSYeQ5/1cNoqZ5Lib6Hs8eP1lAA9WwZAFEvz7mK8A9JlGzqAMoF5osw5Dp8XilBPfGAa+dRNRWgyiXjd8BT9zHSbTu26eIyNADQzBRryuGKffXUCR75IwBrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dSN+mjRX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jOeOxlxB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dSN+mjRX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jOeOxlxB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3ECC31F44F;
+	Tue, 25 Feb 2025 08:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740472821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vymxwxoadVXGtSEyMChbCLjg0tlriUpMXxu5RkofEhg=;
+	b=dSN+mjRXWE8IYVrOE9NzARRWvHLJyhvFYSZ97GiQEjgB7PoKDnmuNEAoMG8v7G2YicuO8x
+	pMLK3AsHR5L9BT/Vx8/RyOLX3krIZ4K/bYecCGxaf5HvRryAFY/jTvV1hA46TTLXDtVf5c
+	mbRWsXrN1kfdc5wG6NNgTseXt9JjjVw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740472821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vymxwxoadVXGtSEyMChbCLjg0tlriUpMXxu5RkofEhg=;
+	b=jOeOxlxB7r2qfi8gRAWYRopYk1nwu6jbsfjKprr7/IY+ZFu6bTWExE23hRKdRrSWd26dVB
+	Y7ToUbJm/vVwnTDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dSN+mjRX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jOeOxlxB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740472821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vymxwxoadVXGtSEyMChbCLjg0tlriUpMXxu5RkofEhg=;
+	b=dSN+mjRXWE8IYVrOE9NzARRWvHLJyhvFYSZ97GiQEjgB7PoKDnmuNEAoMG8v7G2YicuO8x
+	pMLK3AsHR5L9BT/Vx8/RyOLX3krIZ4K/bYecCGxaf5HvRryAFY/jTvV1hA46TTLXDtVf5c
+	mbRWsXrN1kfdc5wG6NNgTseXt9JjjVw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740472821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vymxwxoadVXGtSEyMChbCLjg0tlriUpMXxu5RkofEhg=;
+	b=jOeOxlxB7r2qfi8gRAWYRopYk1nwu6jbsfjKprr7/IY+ZFu6bTWExE23hRKdRrSWd26dVB
+	Y7ToUbJm/vVwnTDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28FCE13A61;
+	Tue, 25 Feb 2025 08:40:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J+N5CfWBvWe9BAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 25 Feb 2025 08:40:21 +0000
+Message-ID: <ae808959-1ade-4989-81d9-026dc2722242@suse.cz>
+Date: Tue, 25 Feb 2025 09:40:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/page_alloc: Clarify some migratetype fallback code
+Content-Language: en-US
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mel Gorman <mgorman@techsingularity.net>, Michal Hocko <mhocko@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Yosry Ahmed <yosry.ahmed@linux.dev>
+References: <20250214-clarify-steal-v1-1-79dc5adf1b79@google.com>
+ <20250214212647.GB233399@cmpxchg.org>
+ <CA+i-1C3e_JUBBhMDYwrehvLZzLtb9pfgEy8=wQa=9uTBr1-b5g@mail.gmail.com>
+ <764394d9-592c-4d68-8910-67362dd8810a@suse.cz>
+ <CA+i-1C3vX=79jCdJOWnR4KJB0zbanjU1p34RxJy8D62g0HZMAw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CA+i-1C3vX=79jCdJOWnR4KJB0zbanjU1p34RxJy8D62g0HZMAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 3ECC31F44F
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
+On 2/24/25 13:35, Brendan Jackman wrote:
+> On Tue, 18 Feb 2025 at 11:20, Vlastimil Babka <vbabka@suse.cz> wrote:
+>> Would it make sense to have only "bool *whole_block" parameter of
+>> find_suitable_fallback? The value the caller initializes it, it means the
+>> current need_whole_block, the value it has upon return it instructs the
+>> caller what to do. It would mean __compact_finished() would no longer pass
+>> an unused parameter.
 > 
-> 
-> On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
-> > On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
-> > > On regular bootup, devices get registered to vmbus first, so when
-> > > uio_hv_generic driver for a particular device type is probed,
-> > > the device is already initialized and added, so sysfs creation in
-> > > uio_hv_generic probe works fine. However, when device is removed
-> > > and brought back, the channel rescinds and device again gets
-> > > registered to vmbus. However this time, the uio_hv_generic driver is
-> > > already registered to probe for that device and in this case sysfs
-> > > creation is tried before the device gets initialized completely.
-> > > 
-> > > Fix this by moving the core logic of sysfs creation for ring buffer,
-> > > from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
-> > > attributes for the channels are defined. While doing that, make use
-> > > of attribute groups and macros, instead of creating sysfs directly,
-> > > to ensure better error handling and code flow.
-> > > 
-> > > Problem path:
-> > > vmbus_device_register
-> > >      device_register
-> > >          uio_hv_generic probe
-> > >                      sysfs_create_bin_file (fails here)
-> > >          kset_create_and_add (dependency)
-> > >          vmbus_add_channel_kobj (dependency)
-> > > 
-> > > Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
-> > > Cc: stable@kernel.org
-> > > Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > > Suggested-by: Michael Kelley <mhklinux@outlook.com>
-> > > Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> > > ---
-> > > Hi,
-> > > This is the first patch after initial RFC was posted.
-> > > https://lore.kernel.org/all/20250214064351.8994-1-namjain@linux.microsoft.com/
-> > > 
-> > > Changes since RFC patch:
-> > > * Different approach to solve the problem is proposed (credits to
-> > >    Michael Kelley).
-> > > * Core logic for sysfs creation moved out of uio_hv_generic, to VMBus
-> > >    drivers where rest of the sysfs attributes for a VMBus channel
-> > >    are defined. (addressed Greg's comments)
-> > > * Used attribute groups instead of sysfs_create* functions, and bundled
-> > >    ring attribute with other attributes for the channel sysfs.
-> > > 
-> > > Error logs:
-> > > 
-> > > [   35.574120] ------------[ cut here ]------------
-> > > [   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
-> > > [   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
-> > > [   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
-> > > [   35.574197] Call Trace:
-> > > [   35.574199]  <TASK>
-> > > [   35.574200]  ? show_regs+0x69/0x80
-> > > [   35.574217]  ? __warn+0x8d/0x130
-> > > [   35.574220]  ? sysfs_create_bin_file+0x81/0x90
-> > > [   35.574222]  ? report_bug+0x182/0x190
-> > > [   35.574225]  ? handle_bug+0x5b/0x90
-> > > [   35.574244]  ? exc_invalid_op+0x19/0x70
-> > > [   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
-> > > [   35.574252]  ? sysfs_create_bin_file+0x81/0x90
-> > > [   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
-> > > [   35.574271]  vmbus_probe+0x3b/0x90
-> > > [   35.574275]  really_probe+0xf4/0x3b0
-> > > [   35.574279]  __driver_probe_device+0x8a/0x170
-> > > [   35.574282]  driver_probe_device+0x23/0xc0
-> > > [   35.574285]  __device_attach_driver+0xb5/0x140
-> > > [   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
-> > > [   35.574291]  bus_for_each_drv+0x86/0xe0
-> > > [   35.574294]  __device_attach+0xc1/0x200
-> > > [   35.574297]  device_initial_probe+0x13/0x20
-> > > [   35.574315]  bus_probe_device+0x99/0xa0
-> > > [   35.574318]  device_add+0x647/0x870
-> > > [   35.574320]  ? hrtimer_init+0x28/0x70
-> > > [   35.574323]  device_register+0x1b/0x30
-> > > [   35.574326]  vmbus_device_register+0x83/0x130
-> > > [   35.574328]  vmbus_add_channel_work+0x135/0x1a0
-> > > [   35.574331]  process_one_work+0x177/0x340
-> > > [   35.574348]  worker_thread+0x2b2/0x3c0
-> > > [   35.574350]  kthread+0xe3/0x1f0
-> > > [   35.574353]  ? __pfx_worker_thread+0x10/0x10
-> > > [   35.574356]  ? __pfx_kthread+0x10/0x10
-> > > 
-> > > ---
-> > >   drivers/hv/hyperv_vmbus.h    |  4 +++
-> > >   drivers/hv/vmbus_drv.c       | 62 ++++++++++++++++++++++++++++++++++++
-> > >   drivers/uio/uio_hv_generic.c | 34 ++------------------
-> > >   include/linux/hyperv.h       |  3 ++
-> > >   4 files changed, 72 insertions(+), 31 deletions(-)
-> > > 
-> > > diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> > > index 29780f3a7478..e0c7b75e6c7a 100644
-> > > --- a/drivers/hv/hyperv_vmbus.h
-> > > +++ b/drivers/hv/hyperv_vmbus.h
-> > > @@ -477,4 +477,8 @@ static inline int hv_debug_add_dev_dir(struct hv_device *dev)
-> > >   #endif /* CONFIG_HYPERV_TESTING */
-> > > +/* Create and remove sysfs entry for memory mapped ring buffers for a channel */
-> > > +int hv_create_ring_sysfs(struct vmbus_channel *channel);
-> > > +int hv_remove_ring_sysfs(struct vmbus_channel *channel);
-> > > +
-> > >   #endif /* _HYPERV_VMBUS_H */
-> > > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > > index 22afebfc28ff..0110643bad3f 100644
-> > > --- a/drivers/hv/vmbus_drv.c
-> > > +++ b/drivers/hv/vmbus_drv.c
-> > > @@ -1802,6 +1802,39 @@ static ssize_t subchannel_id_show(struct vmbus_channel *channel,
-> > >   }
-> > >   static VMBUS_CHAN_ATTR_RO(subchannel_id);
-> > > +/* Functions to create sysfs interface to allow mmap of the ring buffers.
-> > > + * The ring buffer is allocated as contiguous memory by vmbus_open
-> > > + */
-> > > +static int hv_mmap_ring_buffer(struct vmbus_channel *channel, struct vm_area_struct *vma)
-> > > +{
-> > > +	void *ring_buffer = page_address(channel->ringbuffer_page);
-> > > +
-> > > +	if (channel->state != CHANNEL_OPENED_STATE)
-> > > +		return -ENODEV;
-> > > +
-> > > +	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
-> > > +			       channel->ringbuffer_pagecount << PAGE_SHIFT);
-> > > +}
-> > > +
-> > > +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
-> > > +				       const struct bin_attribute *attr,
-> > > +				       struct vm_area_struct *vma)
-> > > +{
-> > > +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
-> > > +
-> > > +	if (!channel->mmap_ring_buffer)
-> > > +		return -ENODEV;
-> > > +	return channel->mmap_ring_buffer(channel, vma);
-> > 
-> > What is preventing mmap_ring_buffer from being set to NULL right after
-> > checking it and then calling it here?  I see no locks here or where you
-> > are assigning this variable at all, so what is preventing these types of
-> > races?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Thank you so much for reviewing.
-> I spent some time to understand if this race condition can happen and it
-> seems execution flow is pretty sequential, for a particular channel of a
-> device.
-> 
-> Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
-> called in parallel to hv_uio_probe (which had set
-> channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
-> 
-> Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
-> 
-> vmbus_device_register
->   device_register
->     hv_uio_probe
-> 	  hv_create_ring_sysfs (W to non NULL)
->         sysfs_update_group
->           vmbus_chan_attr_is_visible (R)
->   vmbus_add_channel_kobj
->     sysfs_create_group
->       vmbus_chan_attr_is_visible  (R)
->       hv_mmap_ring_buffer_wrapper (critical section)
-> 
-> hv_uio_remove
->   hv_remove_ring_sysfs (W to NULL)
+> I thought I liked this idea but once I tried it out I changed my mind
 
-Yes, and right in here someone mmaps the file.
+Right, me too actually.
 
-I think you can race here, no locks at all feels wrong.
+> - the unused parameter is a bit of noise, but doing the above makes
+> the function interface and implementation harder to understand.
+> 
+> I also thought of allowing the caller to specify NULL which would have
+> the current meaning of only_steal=true, but again I don't think it's
+> worth it.
+> 
+> So I'll skip this for v2 but we can always extend it later. I think
+> it's likely that I'll end up proposing some other change to this
+> interface for ASI anyway, let's see.
 
-Messing with sysfs groups and files like this is rough, and almost never
-a good idea, why can't you just do this all at once with the default
-groups, why is this being added/removed out-of-band?
-
-thanks,
-
-greg k-h
+Ack.
 
