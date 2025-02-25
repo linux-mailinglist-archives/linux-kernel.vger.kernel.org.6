@@ -1,102 +1,60 @@
-Return-Path: <linux-kernel+bounces-532257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475B9A44ACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96368A44ACB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B483A7869
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705F83A908A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDE819F42C;
-	Tue, 25 Feb 2025 18:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226119E804;
+	Tue, 25 Feb 2025 18:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsw+zqxU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="f19UWKbe"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E7F1547F8;
-	Tue, 25 Feb 2025 18:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F54189B9C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740508726; cv=none; b=d8sO4NIdEdReaGbeRFnNUT3Gjpd7O15jkZY2B+dBC0U7iJLAq9N4b9KsXSVlFvQGxISrYx+wowORfYw/cKC945YWWzEjHFi7FuZrvl+hrh6cShodveuVP6BhNXdap/FOLLdvfY2uky4a2IGkXZH4g0MICIlErfQB+UzhF3h4f6I=
+	t=1740508754; cv=none; b=mv7BzNNHgPUZb2m/d19/G/NtMtsddY1dd5HWNrpob96UHL/s1FwN0Y1v+VpqgmzmqHMtqFnkMArE3ET7Hm9Bgl0cq9LsHAbWCipFSOkS+L0mpj464HfTRpEpBov4JCOimbDU99/99IBhyXWIAmn5p3orUxYEGlOJI4620cVtNOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740508726; c=relaxed/simple;
-	bh=ynX2StzETqPMRv1sdJI/4CozZVwIRxYLX53PEHHkcQk=;
+	s=arc-20240116; t=1740508754; c=relaxed/simple;
+	bh=d6qIhS338zcyXStTSr2X5+ACE58ddF0bUqI2XW853WI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/8jBGaY9vzjMyB3zb6hZ0uqKay5nSXyoNnri0Ocu78MLHXIpGLfIzJSvvPsYleFPkhhqGX/6NrvhBTinGY1Nt2bujG4xs67MqF81oOH5G3aC1IJSpIvwdmDKitX4NhJ0QqD/cjIUeUuVS/3LPl51BqC9dXkD3IYrlYxSJW1IJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsw+zqxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B08C4CEDD;
-	Tue, 25 Feb 2025 18:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740508725;
-	bh=ynX2StzETqPMRv1sdJI/4CozZVwIRxYLX53PEHHkcQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lsw+zqxUSt7OeHiW9hIjV+0jTTUXBVnq88zOOfS3hLriptFejXvqcagC8XXm6v9/R
-	 wmE1A0PgDmxavb5S3ymUTz8hqUvpNLt+elmrHdG6g9qdeT7bh0ldb05oH4fOjgsQK7
-	 y3mR/brq8qgAi7Dd/ixnputzOLMHjwqKL4ttEFjyis2SNq+obDTVjA4XPyepDF166H
-	 KP4IR8+HE6nELDxMVnBt+y1Lfs5uUhqcHTaZfe5+eMolVV8nt9ij38REHd4DXwZzjR
-	 innyYhz6Mae3I8EdJfXBlFNOgJdi50ppuyoizxI8ItI4IvLy7UKt7thf/bZllu8r1X
-	 QsPdM3dMJ+bRA==
-Date: Tue, 25 Feb 2025 10:38:42 -0800
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Berg, Benjamin" <benjamin.berg@intel.com>,
-	"jeffxu@chromium.org" <jeffxu@chromium.org>,
-	"Jason@zx2c4.com" <Jason@zx2c4.com>,
-	"adobriyan@gmail.com" <adobriyan@gmail.com>,
-	"deller@gmx.de" <deller@gmx.de>,
-	"gerg@kernel.org" <gerg@kernel.org>,
-	"anna-maria@linutronix.de" <anna-maria@linutronix.de>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"avagin@gmail.com" <avagin@gmail.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"enh@google.com" <enh@google.com>,
-	"thomas.weissschuh@linutronix.de" <thomas.weissschuh@linutronix.de>,
-	"hch@lst.de" <hch@lst.de>, "hca@linux.ibm.com" <hca@linux.ibm.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ojeda@kernel.org" <ojeda@kernel.org>,
-	"jannh@google.com" <jannh@google.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"sroettger@google.com" <sroettger@google.com>,
-	"ardb@google.com" <ardb@google.com>,
-	"jorgelo@chromium.org" <jorgelo@chromium.org>,
-	"rdunlap@infradead.org" <rdunlap@infradead.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"peterx@redhat.com" <peterx@redhat.com>,
-	"mike.rapoport@gmail.com" <mike.rapoport@gmail.com>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"groeck@chromium.org" <groeck@chromium.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"42.hyeyoo@gmail.com" <42.hyeyoo@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"aleksandr.mikhalitsyn@canonical.com" <aleksandr.mikhalitsyn@canonical.com>
-Subject: Re: [PATCH v7 5/7] mseal, system mappings: enable uml architecture
-Message-ID: <202502251035.239B85A93@keescook>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-6-jeffxu@google.com>
- <c5d3927e-06e3-49e7-a1d6-f4c9e817def4@lucifer.local>
- <96ebddf3fe31353c89f6a4680eaeb2793c25cd09.camel@intel.com>
- <d2aeeb56-ba8c-49f3-957d-1ac790522233@lucifer.local>
- <DC169C8C-BF10-4125-AA91-29E48BB1AD6A@kernel.org>
- <de5577b5-5d9d-4173-99f7-8c156c53f175@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQfMKFIho6b3o+yNTvKvPEvtkDHeL8gcEA6rhzaIVVzzS916vdBTjXZTQm0g4xC1vNvsxL7Uv9qUrKMY3SgTjXqsJa3/TitawboP0T52llGtYiE2KXQ2MggdRLlqa8nNkoE1aQuAk1H5Co17Ye0gx2S9ER79QmNCS+lw4uxnAQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=f19UWKbe; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=FUtkPzcmdbz+C1QDeT+fCSeX9HpnwFcnl8w9BxaCO64=; b=f19UWKbeqHv5rG/Y
+	/P9MDu/UpgGjUqMoYGNbahazrRYJdI1Su+nkXafrwNRle6N2u/XdcL+ULNoeYOlOXeDzXD/t/y5s5
+	qY3h8PEbWn9bxJ8Rv3o/PxTnTcstND/Oe8Su6626zy0wYFdN52qOPBggTUot7pewIZZV73M9PCJX3
+	SaDB3pdMrXVGqyYSTA08u9/mMjjx7MbiMgh5UFydBPp6QZrxAV0HR4Y4VcrUP/EHcCfoGqOdEM80x
+	plUFg9eO2/dcHBXnnJ4DEnxyP1jkJ2AluemJfzbXnrrHS8vXecEOM5wQlOGd7zi8tZxamWX3cx2DT
+	iyj/zSIZXto7jTkWsQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tmzpi-000nnb-0Y;
+	Tue, 25 Feb 2025 18:39:06 +0000
+Date: Tue, 25 Feb 2025 18:39:06 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Harald Welte <laforge@gnumonks.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, david@rowetel.com
+Subject: Re: users of drivers/misc/echo ?
+Message-ID: <Z74OSsZqeboJml9c@gallifrey>
+References: <Z7tZhYET41DAoHVf@gallifrey>
+ <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
+ <Z724l3DFJbGevtPF@nataraja>
+ <Z72_EnXyHoDACRk5@gallifrey>
+ <Z73MevharqkC5dt8@nataraja>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,78 +63,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <de5577b5-5d9d-4173-99f7-8c156c53f175@lucifer.local>
+In-Reply-To: <Z73MevharqkC5dt8@nataraja>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 18:33:29 up 293 days,  5:47,  1 user,  load average: 0.02, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Tue, Feb 25, 2025 at 03:31:06PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Feb 25, 2025 at 07:06:13AM -0800, Kees Cook wrote:
-> >
-> >
-> > On February 25, 2025 2:37:11 AM PST, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > >On Tue, Feb 25, 2025 at 08:45:21AM +0000, Berg, Benjamin wrote:
-> > >> Hi,
-> > >>
-> > >> On Tue, 2025-02-25 at 06:22 +0000, Lorenzo Stoakes wrote:
-> > >> > On Mon, Feb 24, 2025 at 10:52:44PM +0000, jeffxu@chromium.org wrote:
-> > >> > > From: Jeff Xu <jeffxu@chromium.org>
-> > >> > >
-> > >> > > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on UML, covering
-> > >> > > the vdso.
-> > >> > >
-> > >> > > Testing passes on UML.
-> > >> >
-> > >> > Maybe expand on this by stating that it has been confirmed by Benjamin (I
-> > >> > _believe_) that UML has no need for problematic relocation so this is known to
-> > >> > be good.
-> > >>
-> > >> I may well be misreading this message, but this sounds to me that this
-> > >> is a misinterpretation. So, just to clarify in case that is needed.
-> > >>
-> > >> CONFIG_MSEAL_SYSTEM_MAPPINGS does work fine for the UML kernel.
-> > >> However, the UML kernel is a normal userspace application itself and
-> > >> for this application to run, the host kernel must have the feature
-> > >> disabled.
-> > >>
-> > >> So, UML supports the feature. But it still *cannot* run on a host
-> > >> machine that has the feature enabled.
-> > >
-> > >Sigh ok. Apologies if I misunderstood.
-> > >
-> > >Is there any point having this for the 'guest' system? I mean security wise are
-> > >we concerned about sealing of system mappings?
-> >
-> > UML guests are used for testing. For example, it's the default target for KUnit's scripts. Having sealing working in the guest seems generally useful to me.
-> >
+* Harald Welte (laforge@gnumonks.org) wrote:
+> Hi Dave, Arnd, Greg,
 > 
-> 'Having sealing working' you mean system sealing? Because mseal works fine
-> (presumably in UML, not tried myself!)
-
-Sorry, yes, I mean "system mapping msealing".
-
+> On Tue, Feb 25, 2025 at 01:01:06PM +0000, Dr. David Alan Gilbert wrote:
+> > > However, those DAHDI-using deployments that I personally am familiar
+> > > with do not use the software echo canceller discussed here.  On the
+> > > other hand, I'm quite certain that there are many PBX/IVR related
+> > > systems out there (unrelated to my area of cellular or trunked radio)
+> > > that would still use the echo canceller discussed here.
 > 
-> System msealing lacks any test in this series (I did ask for them...), certainly
-> no kunit tests, so this seems a bit theoretical? Unless you're talking about the
-> theoretical interaction of kunit tests and VDSO sealing?
-
-Right, I meant theoretical interaction, but it would be useful for
-future KUnit tests of system mapping msealing too.
-
-> I mean can't we just introduce this at the time if we believe this'd be useful?
-
-Perhaps adding it as part of adding some KUnit tests that exercise the
-system mapping msealing would be the most sensible.
-
-> Generally I'm not a fan of adding features mid-way through a series, the
-> revisions are meant to be refinements of the original, not an evolving thing.
+> I have to correct myself here:  "that would still use software echo cancellation".
 > 
-> So in general I'd prefer this to be added if + when we need it for something.
+> As I stated before, in "my" deployments, the echo canceller is not used
+> and hence I'm not super familiar with it.  My use cases either don't
+> need echo cancellation, or use hardware echo cancellation.
+> 
+> Revisiting the DAHDI source code as a result of this thread: There are
+> actually several different software echo cancellation implementations,
+> only one of which (oslec) is using the drivers/misc/echo.
+> 
+> > Some questions:
+> > 
+> > 1) I see drivers/dahdi/dahdi_echocan_oslec.c
+> > 
+> > /* Fix this if OSLEC is elsewhere */
+> > #include "../staging/echo/oslec.h"
+> > //#include <linux/oslec.h>
+> > 
+> > now that moved to drivers/misc in 2014 by Greg's
+> > 6e2055a9e56e ("staging: echo: move to drivers/misc/")
+> > 
+> > So is most of this on ancient kernels or do people
+> > actually use modern stuff?
+> 
+> Actually, looking at DAHDI, I really don't think anyone is still using
+> the dahdi_echocan_oslec code.  It is disabled by default and only built
+> if explicitly enabled by the user, and indeed if anyone did that it
+> would fail to build for any kernels that have moved it out of staging.
 
-Yup, makes sense. And it may be that KUnit tests need to exercise more
-than what UML can support, so even the KUnit idea may be invalid.
+It looks like Debian is including and enabling it in it's DKMS build:
 
-Jeff, let's leave off UML for this initial "minimum viable feature"
-series, unless there is a strong reason to keep it.
+# apt install dahdi-dkms
+...
+dahdi_echocan_oslec.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/6.1.0-31-amd64/updates/dkms/
+...
+# nm /lib/modules/6.1.0-31-amd64/updates/dkms/dahdi_echocan_oslec.ko
+...
+                 U oslec_create
+                 U oslec_free
+                 U oslec_update
+...
 
+> > 2) I see there is a fir.h that's different from the kernels
+> > drivers/misc/echo/fir.h  doesn't that cause problems?
+> > Should one get updated from the other somehow?
+> 
+> I'll not investigate that given the above determination.
+> 
+> > 3) Any idea why it's never been upstreamed?
+> 
+> I can only speculate, but I guess it was never a strong priority for the authors,
+> and indeed likely the code would have had to undergo quite some changes.
+> 
+> DAHDI is clearly well beyond its peak user base these days, and I would
+> expect the amount of effort into mainlining it, together with the
+> associated risk of introducing bugs during required refactoring simply
+> doesn't make it an attractive proposition.  Also, given that userspace
+> applications for it have been around for decades, it would be impossible
+> to address any upstreaming related change requests without rendering
+> those applications incompatible.
+> 
+> So I'd really not bother at this point anymore.  The few adjustments
+> I/we had to make to keep it building + working with recent kernels over
+> the past few years are minimal, and mostly trivial stuff like minor
+> kernel API changes.  In the end, DAHDI doesn't interact with a lot of
+> other kernel.  It talks to the hardware via its own device drivers, and
+> it talks to userspace programs via character devices.  So unless some
+> core kernel memory allocator, or PCI or USB device drive APIs or
+> character device API changes, we're mostly good.
+
+OK.
+
+Dave
+
+> -- 
+> - Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
+> ============================================================================
+> "Privacy in residential applications is a desirable marketing option."
+>                                                   (ETSI EN 300 175-7 Ch. A6)
+> 
 -- 
-Kees Cook
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
