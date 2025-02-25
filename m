@@ -1,103 +1,128 @@
-Return-Path: <linux-kernel+bounces-531800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12CCA4451F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:58:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45458A4456E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5578A3B409C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2E03B676A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD813176AB5;
-	Tue, 25 Feb 2025 15:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A118CC13;
+	Tue, 25 Feb 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vMr7zURB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="UWnZVUMZ"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779E22AEE4;
-	Tue, 25 Feb 2025 15:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E77017E472
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499023; cv=none; b=hEzS2biDU5l52I7ogatLfqd6P4g/OZK2YoP+P2vrXgr1E0tAUeXZNhY900LsPKTIjv/raG+TLGpSchLjEam4uoSMCHcR/jKH8vZiAl/Oad/pXFDDVtu0WWyGOAZM3VgnB2XCKXulhQO4mcB+KXOyBLpDmnxeDs/BvmFFg8AlUPs=
+	t=1740499524; cv=none; b=Z8Iv9mRsrRMnJSMuWKcCRijGSegvX3NFry0Z0KTumtF5e7qvah6F5S9EkqABBF/Ojtck5fuMu4kHCXXcJ0U5SUK8oMMZdJ4WN2IBpJuCNbEM1P0TM0Gfh199hNX92OzRuDYUC68+mrp1JJ9ndbGBIjHmfkWzWHK4bcUtDLNJuWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499023; c=relaxed/simple;
-	bh=yu6wXpbijbvoprV7cAUlfR90pWJ4tsCo/nY0611s5OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkwuYDbKTJUWgQ3WzdDL00YPS6L50K1Ph4XsPFzf71PCMM+7yPWMrvKjacIOw7GMY4G5L+Mx7RUB4sRdvaqK1Ni/lhNX3miFnyUaOeuhce2EFKQDz6mjEkpvplnyDpfVoUQJWDLF5pFLQ1UZ+2/cZ0gYW9rccJ84TJGcQnVy/m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vMr7zURB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VN/3A6vgb56W0tilRktJHT6BmmHqRIi/ngh2AhRM5Lw=; b=vMr7zURBonPoMkDkO+7eSER6rL
-	pCwqXqAO33W7UHrux3BNm1V62PG09EmLrLvg2hR4LTU4Y2hgybNPu/M4WI6WCCarx4beg3iZSFMDo
-	MC9/VGxIBE9AJzXY4jMkkgSWG2/bGuz4vYLs7DQIsok9BDqqIShw9RAl3GNmzG4klBIPETOYSdBJp
-	EOhdxTzkOQd01nxYOVjO2dgpAdWX5Y2163Aj5RDnvluWQzdosVXsZaPEUOx8AaV1uoRUtDM7RCGj9
-	C813cuTkW2o041P7/Vrm7f3KY/t2WvZ+Ts6ImZqBvtfK0EmTqKk81P+vZscn/cUT+EJDSzZrbl2LC
-	NdLSSr2Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmxIn-0000000BoqX-3LBB;
-	Tue, 25 Feb 2025 15:56:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A5FB9300472; Tue, 25 Feb 2025 16:56:56 +0100 (CET)
-Date: Tue, 25 Feb 2025 16:56:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rangemachine@gmail.com,
-	whanos@sergal.fun, Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [PATCH 0/3] KVM: SVM: Zero DEBUGCTL before VMRUN if necessary
-Message-ID: <20250225155656.GE34233@noisy.programming.kicks-ass.net>
-References: <20250224181315.2376869-1-seanjc@google.com>
+	s=arc-20240116; t=1740499524; c=relaxed/simple;
+	bh=XK1zkzaCikUXtEYmYx2k7/oNH03FbT61gtjPhljYPkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UuEcKjivsLYVgIyLwfTL3jDiK9SRw20bV0Be8RWcTdTfieO3K3h+z+xWDM3N/YV/IB0WH1GdLu+KHTaSbapB+dg4YeYYR3o00Yf9PcFREHNQ0J8EJgvxB/8BPKmlu/uJGUEfiAGfv0ZL5lwBYwThg5CcCAbGXIf4FGYd7GkpEaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=UWnZVUMZ; arc=none smtp.client-ip=193.222.135.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 24648 invoked from network); 25 Feb 2025 16:58:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
+          t=1740499120; bh=Hj7qAEgiQ50fp7uhcmsq7NZfp8iIKRdHrawCOPWVFaQ=;
+          h=From:To:Cc:Subject;
+          b=UWnZVUMZfiARyp73UoCOgpAM09aKIAYMW2srVFZsG7NEHuGXbEUzd6xB4NJSgybhX
+           wgr/OzibQBxJJeaYOxRU11iaPHl8ruXXN4yQRubRaQWIdjFTnhB1/uwZLlH1IeCh9e
+           B4QIdxkj3yv8/2ZCTgEeHEpiyEd3rrBPAmEJjV8Km7v388dJezu1hIQuiGPZs0YDXC
+           ipYODhWwdeInT3Gz/i5IviIHg+Jl+3/+r2diLYAzi0wS5gLmnFPI/RyrX1QtsBtJSI
+           YA6u3oelgMKAgLw4PwIt4P6sx3mxoAmkpreh5WUioIcltJYTEoZeNKdgIchNh9Dkbs
+           l71Y9H1gY5atw==
+Received: from public-gprs689392.centertel.pl (HELO M73..) (mprnk@o2.pl@[5.184.236.49])
+          (envelope-sender <mprnk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <marcel@holtmann.org>; 25 Feb 2025 16:58:40 +0100
+From: Michal Piernik <mprnk@o2.pl>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Michal Piernik <mprnk@o2.pl>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: btusb: Add Mercusys MA530 HWID 0x2c4e/0x0115 for Realtek 8761BUV
+Date: Tue, 25 Feb 2025 16:58:25 +0100
+Message-Id: <20250225155825.1504841-1-mprnk@o2.pl>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224181315.2376869-1-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 400995f43b953aaecd84dd38b06430a3
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [gTPE]                               
 
-On Mon, Feb 24, 2025 at 10:13:12AM -0800, Sean Christopherson wrote:
-> PeterZ,
-> 
-> Can you confirm that the last patch (snapshot and restore DEBUGCTL with
-> IRQs disabled) is actually necessary?  I'm 99% certain it is, but I'm
-> holding out hope that it somehow isn't, because I don't love the idea of
-> adding a RDMSR to every VM-Entry.
+/sys/kernel/debug/usb/devices:
+T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=03 Dev#=  4 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2c4e ProdID=0115 Rev= 2.00
+S:  Manufacturer=
+S:  Product=Mercusys MA530 Adapter
+S:  SerialNumber=30169D905719
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-I think you're right. I mean, I'd have to go double check and trace the
-various call paths again, but I'd be very surprised if we can't change
-DEBUGCTL from NMI context.
+dmesg:
+[11106.761376] Bluetooth: hci0: RTL: examining hci_ver=0a hci_rev=000b lmp_ver=0a lmp_subver=8761
+[11106.762370] Bluetooth: hci0: RTL: rom_version status=0 version=1
+[11106.762374] Bluetooth: hci0: RTL: loading rtl_bt/rtl8761bu_fw.bin
+[11106.762554] Bluetooth: hci0: RTL: loading rtl_bt/rtl8761bu_config.bin
+[11106.762579] Bluetooth: hci0: RTL: cfg_sz 6, total sz 30210
+[11106.910393] Bluetooth: hci0: RTL: fw version 0xdfc6d922
+[11106.977569] Bluetooth: MGMT ver 1.22
 
-> Assuming DEBUGCTL can indeed get modified in IRQ context, it probably
-> makes sense to add a per-CPU cache to eliminate the RDMSR.  Unfortunately,
-> there are quite a few open-coded WRMSRs, so it's not a trivial change.
+Signed-off-by: Michal Piernik <mprnk@o2.pl>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This, I'm surprised we've not yet done that.
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index f5609110f..0fc1dde8f 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -739,6 +739,8 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
+ 
+ 	/* Additional Realtek 8761BUV Bluetooth devices */
++	{ USB_DEVICE(0x2c4e, 0x0115), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x2357, 0x0604), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x0b05, 0x190e), .driver_info = BTUSB_REALTEK |
+-- 
+2.34.1
 
-> On to the main event...
-> 
-> Fix a long-lurking bug in SVM where KVM runs the guest with the host's
-> DEBUGCTL if LBR virtualization is disabled.  AMD CPUs rather stupidly
-> context switch DEBUGCTL if and only if LBR virtualization is enabled (not
-> just supported, but fully enabled).
-> 
-> The bug has gone unnoticed because until recently, the only bits that
-> KVM would leave set were things like BTF, which are guest visible but
-> won't cause functional problems unless guest software is being especially
-> particular about #DBs.
-> 
-> The bug was exposed by the addition of BusLockTrap ("Detect" in the kernel),
-> as the resulting #DBs due to split-lock accesses in guest userspace (lol
-> Steam) get reflected into the guest by KVM.
-
-Hehe, yeah, games. Yeah we ran into that with bus-lock on intel too :-)
 
