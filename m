@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-531083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C9DA43BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:41:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F175BA43BFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D18B3A89D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C645F16B3DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476A7261571;
-	Tue, 25 Feb 2025 10:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1262673A3;
+	Tue, 25 Feb 2025 10:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YC/xapEf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="lCgQQNZx"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBDE1FDE18;
-	Tue, 25 Feb 2025 10:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2C0260A26;
+	Tue, 25 Feb 2025 10:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479878; cv=none; b=PJj7ePVSWnptzidzGsich76Jmuq0WXJsZEUl1MX7XrWT515hKoRx4v/fX62+fzw+WRnCBgZVwfokTVUxLsoSYvlVpRQYQ8InJef7p+htfvsfTTEvkPuLn6xSM9+tX9s4XX7PVGyXUJraH/TWjq2eaq4s8coZKr8qfrNkhAJShU8=
+	t=1740479894; cv=none; b=nk4YoyNut7Pz86r4E7X12hGb737VJpEx420OgEJjUCxyvchTT5X3SQOw/KDQEgxpxg1IjUbhAVbzCjmup+d2CygGsHi851fLrSdcf72mTnI7pyYNfYF1Bq8zvZ1eVY1rzATIdf/XiQiedyLpqw+p4cVPKs8HLMF2wqF8ILcwVMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479878; c=relaxed/simple;
-	bh=vs/wwxt5DOMp/6xhNJ+6yjgOoU2fOm7g5unK87DJaC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyMvHGRD7imhPF9YAPR5N4mTbHAZyDERHwSKagKhaXLQO7WH1GD/NrNrCIBKWhzNsKBGxf0uU6X7Sy883qOw385NftMTFMP+BOeQaTrrCbPLdLDW+LH27KLAzV6EsVsMtsxMVaXAF+sQ8GtvxMDlBPk2Vl/bBd+sxSH8w/QXj9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YC/xapEf; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740479877; x=1772015877;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vs/wwxt5DOMp/6xhNJ+6yjgOoU2fOm7g5unK87DJaC0=;
-  b=YC/xapEfoKCzwG1PrDnWCgdhVnifhQ2fuUC3wJOXwBiWHjUo29UJF9hW
-   fsI9yj62kxb3aOyedX+bIerC4SVODBAnD91FIfqWAAmDamVFi3pk4y4Jh
-   elLWS/shzmI/9nlT0h7/2WqihhDBOrF+acNacRbvMv8Gwg8LMOOCRoqTM
-   YJfeaN0nBD4L0kLFxyTDKUGad/2UBtJ2uaNjTX0dZnnBLGKGvMyfa3RKb
-   +LzgAbCm3LK/UruA7RfDffealkymADwWv/wuoScdvlswfDg3xw9oXXooe
-   fkgeMwIDUU/BIml+ergsFI/3SFsmL9BsjCJ5h1JiV46Rc9BLTw2lI8E1A
-   g==;
-X-CSE-ConnectionGUID: gIOttq0vS1ybJxWtST0OWg==
-X-CSE-MsgGUID: FsOXRq47SQusBIDL5VoPhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="28869635"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="28869635"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:37:56 -0800
-X-CSE-ConnectionGUID: ZB6kWAn6SkWq6/29SPCKdw==
-X-CSE-MsgGUID: Rxoeeh+3QwG+6vRQoDD+Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="116362428"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:37:55 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmsK0-0000000ExbG-0sh8;
-	Tue, 25 Feb 2025 12:37:52 +0200
-Date: Tue, 25 Feb 2025 12:37:51 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR()
- protections
-Message-ID: <Z72dfxKzLLORkLl1@smile.fi.intel.com>
-References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
- <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
+	s=arc-20240116; t=1740479894; c=relaxed/simple;
+	bh=nmaIuLRIXhpvBAWF936BZrE5FfGSBBkqykB3EbSstac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNZ0U25NCF0t3y9u0aFBDDH8fgIw7WqBv12a1qjAgkbt++ch1qvwhX1iRmAHuM72JJWyBfoKfbwI1SfrkcVDWWihazfvU4TgTBcjd+Jfk/PWGzhjAB3rqmvwdLBbuUYwP14TqJoaCFIdpNpuPqT57FAz6PXSlZcoQ0DVulPp4MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=lCgQQNZx; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3B271204D4;
+	Tue, 25 Feb 2025 10:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1740479884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wt3UxvctVd0CM5VFAarheDiBUupuORfHc7HMZ4s/FLg=;
+	b=lCgQQNZxgWHBrWHRXrEHHn19LxurT/Plb8hRCvHTTWige0RFmZ/KJOTYVNyKDpDb6AJ4K4
+	nYFvnl11++m+d/uqjmxPOu/xMzyhRFpSv4O4ECi8FpgR3UWUQ/DcLoXv/EPudBIR4UFxL2
+	BzzhDlxbasTrOu9sZiVpkF7Wmt8FkYZgTM+8PuFyLSF+VNqTYalQ11fnprlOwCIUw0xJvd
+	COFFHYosuNm7nUlxHvl3WqywBR+W3Itsq6DvwDY93XvF18WP2jxD86glHZDDI5LzP1E64R
+	esdbFQCIQ8uAff9pRqX6LaIfKnRKKCpVkild1mAomruSExHmuhbtbrfZ6ElHGQ==
+Message-ID: <ac5742e1-7a2b-4d74-889c-0a0c434c16e5@clip-os.org>
+Date: Tue, 25 Feb 2025 11:37:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] sysctl: Fixes nsm_local_state bounds
+To: Chuck Lever <chuck.lever@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+ codalist@coda.cs.cmu.edu, linux-nfs@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Joel Granados <j.granados@samsung.com>, Clemens Ladisch
+ <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Jan Harkes <jaharkes@cs.cmu.edu>, Jeff Layton <jlayton@kernel.org>,
+ Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+ <20250224095826.16458-3-nicolas.bouchinet@clip-os.org>
+ <da418443-a98b-4b08-ad44-7d45d89b4173@oracle.com>
+Content-Language: en-US
+From: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+In-Reply-To: <da418443-a98b-4b08-ad44-7d45d89b4173@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefpihgtohhlrghsuceuohhutghhihhnvghtuceonhhitgholhgrshdrsghouhgthhhinhgvthestghlihhpqdhoshdrohhrgheqnecuggftrfgrthhtvghrnheptdfggeejjefhleeuffetueektefhledukeegvefgteeugeeuhfekudffleehgfetnecukfhppeeltddrieefrddvgeeirddukeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdeifedrvdegiedrudekjedphhgvlhhopegludelvddrudeikedrfeefrdeihegnpdhmrghilhhfrhhomhepnhhitgholhgrshdrsghouhgthhhinhgvthestghlihhpqdhoshdrohhrghdpnhgspghrtghpthhtohepvdejpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgumhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgtshhisehvghgvrhdrkhgvrhhnvghlrdhor
+ hhgpdhrtghpthhtoheptghouggrlhhishhtsegtohgurgdrtghsrdgtmhhurdgvughupdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtohhlrghsrdgsohhutghhihhnvghtsehsshhirdhgohhuvhdrfhhrpdhrtghpthhtohepjhdrghhrrghnrgguohhssehsrghmshhunhhgrdgtohhm
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-On Tue, Feb 25, 2025 at 11:29:05AM +0100, Arnd Bergmann wrote:
-> On Tue, Feb 25, 2025, at 11:08, Andy Shevchenko wrote:
-> > These result in a very small reduction in driver size, but at the cost
-> > of more complex build and slightly harder to read code. In the case of
-> > of_match_ptr() it also prevents use of PRP0001 ACPI based identification.
-> > In this particular case we have a valid ACPI/PNP ID that should be used
-> > in preference to PRP0001 but doesn't mean we should prevent that route.
-> >
-> > With this done, drop unneeded of*.h inclusions and __maybe_unused markers.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Thank you!
+On 2/24/25 15:38, Chuck Lever wrote:
+> On 2/24/25 4:58 AM, nicolas.bouchinet@clip-os.org wrote:
+>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>
+>> Bound nsm_local_state sysctl writings between SYSCTL_ZERO
+>> and SYSCTL_INT_MAX.
+>>
+>> The proc_handler has thus been updated to proc_dointvec_minmax.
+>>
+>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>> ---
+>>   fs/lockd/svc.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+>> index 2c8eedc6c2cc9..984ab233af8b6 100644
+>> --- a/fs/lockd/svc.c
+>> +++ b/fs/lockd/svc.c
+>> @@ -461,7 +461,9 @@ static const struct ctl_table nlm_sysctls[] = {
+>>   		.data		= &nsm_local_state,
+>>   		.maxlen		= sizeof(int),
+>>   		.mode		= 0644,
+>> -		.proc_handler	= proc_dointvec,
+>> +		.proc_handler	= proc_dointvec_minmax,
+>> +		.extra1		= SYSCTL_ZERO,
+>> +		.extra2		= SYSCTL_INT_MAX,
+>>   	},
+>>   };
+>>   
+> Hi Nicolas -
+>
+> nsm_local_state is an unsigned 32-bit integer. The type of that value is
+> defined by spec, because this value is exchanged between peers on the
+> network.
+>
+> Perhaps this patch should replace proc_dointvec with proc_douintvec
+> instead.
+>
+>
 
-> For reference, see below for a couple of patches in this area that
-> I have sent in the past. Ideally I think we should try to fix these
-> all up and enable -Wunused-const-variable, which is useful in its
-> own right.
+Hi Chuck,
 
-Agree.
+Thank's for your review.
 
-> Your patch does not address a warning, but it's still a step
-> in that direction.
+If `nsm_local_state` should be set to the
+full range of an uint32_t by a user writing in the sysctl, then yes it 
+should
+use `proc_douintvec` instead of limiting it to SYSCTL_INT_MAX value 
+(INT_MAX).
 
-Yeah, because the original code uses __maybe_unused markers.
+I've used `proc_dointvec_minmax` since it already used `proc_dointvec` 
+and thus
+was already capped at INT_MAX.
 
-...
+Best regards,
 
-> Subject: [PATCH] [SUBMITTED 20240403] spi: remove incorrect of_match_ptr
->  annotations
-
-Was it applied (and the rest you provided here)?
-
-To me sounds like a good cleanup that should be applier sooner than later to
-move forward of getting rid of of_match_ptr()/ACPI_PTR() completely.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Nicolas
 
 
