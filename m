@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-531885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BB9A4463E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:37:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C729A44640
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41774257EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D687425EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0387719258C;
-	Tue, 25 Feb 2025 16:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20E7195985;
+	Tue, 25 Feb 2025 16:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X38ywIVM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VTBQD9jC"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F2E4430;
-	Tue, 25 Feb 2025 16:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC97194C9E;
+	Tue, 25 Feb 2025 16:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501272; cv=none; b=CHmoMl5RwPWkFqnUS2X8qkhlR+CMiXi8J7FtDgcozzmlcbm8EyxyGbu9/mb5NzO1dI6OE31f4e2X15nMOHZC2HWnPjIUksAz60uIxLlrtfQS0R/3vQ+LKcLW1Qgl7QFXE7X0XC1R0pZ9jjsdNQ+VS+bRYEs8UysV81dP3jjCjYw=
+	t=1740501278; cv=none; b=HlRG4oug/nRVahRSVnbq/F8ftE7JK0OQISxEyEIax+O3ZXMyVB4+Tldf7dFf0W/+6b5xkps37r4RWIkk/+PfBZhU+B5MZ3VJ4LDQoo4J+ci940/hauXCel21njFmXVilLUxgX+VWv5SX2VfUZrIc0WoXndjRRfmS2TDsSnVkjZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501272; c=relaxed/simple;
-	bh=ZVN2jAp//1Bi4NTUQhstv2rOQhLKNMFQYilgLnPa2/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EqGvwLl185yQ4nAGKct9BlBdg/S1MWCQ9xQ1HFgy9HhQKSLaBzyfSr8h7q+GI0jl6Ku9RBa584ylqBEod8j+tU8KGIOJgnsvhYbFAq0Ej6DeWs2ycp3yGC/N8kWbAnEzYWJqucoZHOxOxUw7W5UqlSEUtgsGEto6qL1QL7nfds4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X38ywIVM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0427C4CEDD;
-	Tue, 25 Feb 2025 16:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740501271;
-	bh=ZVN2jAp//1Bi4NTUQhstv2rOQhLKNMFQYilgLnPa2/c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X38ywIVMtP//6KCeIy2RZFW8cZM7+RaTV9cySuvfYWciBnyPRJWNKP8QOSzyTUkoD
-	 nd1aM3uJX4BOg8bfwQ+LdEfdTIS+p2R/gtTTCx1Rh/KBdw2Wzt4TO4uF+tSaqAz98b
-	 StkONQyWmd1akwfKSW6XR+vZvQ7b/nq2ERLyQ1mtlBszObr9XxZJDdWxteahBlgKS9
-	 BnO8/RNF4w8TW9qLjoH/XhSfsPQfqrRjndGHpmohx9X2Ugrl+k1VFeNWcmjVfYUdTd
-	 jNIE1pcUSeXrpZj6kuTyo9Dl1bqcdCaRnw7SJA+YzDHwEmHRFJzDR4kizW8SPVSbTq
-	 sXBjodpHmGWDw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc: fsl-ftm: remove incorrect ACPI_PTR annotation
-Date: Tue, 25 Feb 2025 17:34:19 +0100
-Message-Id: <20250225163427.4168570-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740501278; c=relaxed/simple;
+	bh=1I0X4ltiGArS/4LY4t83f7eFtoxhqR2YlpZHJjc4/AA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=CkHgNSjXcL7ty/SxmSwlygmRddiDX7xtmtX0w0Hz/iU5YjtCNXaaMjQGLx230FYyjnLFGvc6Vta+c42Bg0R8LumqxmRwoOvpJNnYOLg7VHvtwLvyTX8TSwoOZCa8Y+Vbr/3lcQa1KMtEpBkk47GEnBM6B+vxRRRpbfE3p2C2d8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VTBQD9jC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740501264; x=1741106064; i=markus.elfring@web.de;
+	bh=6F/+BR3fuIk7qDEk7fWKObdKldJLm53E0U6iRmv2vRI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VTBQD9jCL5+Hw0tIVKpDJ4zCNLPJK5jZuNPO7qlfkuDBYSPblsvCwUlOreIxJzoY
+	 pYO3vhNCLa7hm63831Y9MhlteK7yaNIaqAMz+8OHeyBCK48IpW1HuHKT+qTYOUs71
+	 QslMPUNoZsoetXnbdSfkh+N6GC04G2iETihgPs1zlYWT1ak8FAJV8X7rxGUx24OXK
+	 csrSpQGQNO+LuYllz2TsYZS2Jy4lNo2KE417lR/4J9GROG2gU2w6bnl6qMK99IGta
+	 UIZCVtMvBR/G0VUh9qYBpcVvit49JZkskE4v+kESYgM4htTWi9HZWQEC7e/zvDhU4
+	 6waCt2OHxtDG5ElhRA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.36]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYcpt-1trWLb13IJ-00WyfW; Tue, 25
+ Feb 2025 17:34:24 +0100
+Message-ID: <ef3f1c7e-30d8-4cdd-b07a-41162adf245d@web.de>
+Date: Tue, 25 Feb 2025 17:34:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Qasim Ijaz <qasdev00@gmail.com>, linux-media@vger.kernel.org,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250225125937.20413-1-qasdev00@gmail.com>
+Subject: Re: [PATCH] media: i2c: Replace nested min() with single min3()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250225125937.20413-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6cbFpp+AElXxu39FIClzrBRRibUKYCpleTgIyuXapN1joZl+EIF
+ KoRVw57cgxpftKMKGIJtZWtpAJP8MGgvdrvZ6zYjsw6yjplZvYcwTsIQ4niFAWpkIyWMyM8
+ EhqtzdlDkq27jBWf1sAicj2fZrxo3tHwpnnTbxEPOzpwXO12Ava+Rjr4l3P5BR8n8vlhjeN
+ 2nsVGUdhfH36BW8XWLfig==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jzFCJJcFtLk=;zgyC5g0HxtMAAXOWKvLbawFbXfO
+ gKmfENYpqUE1FPA/5bzDdimFWYfgZW7HWlDymGu8kCFQOONzk7YVzU1C0B08yLh6YDbB0K3iE
+ W1mXeSp8R8yw5MmZs8ieWm0/vYEgugMPFgF58yHqdwb/aHl/IJBpETTDhVewL1UNV5E6hzHWp
+ 69Z2Xa2bVC9moSwK1jTXg8H42/5aJmkPDo5Rt1zt5+Cc9yPIVilrWdDW0eOjEmerBkQbJISFd
+ J6gKK2FEEK/0R9Jev1rAj0w+DRhjwCWIIejTnKAyWdhrfv8UCFC1tibqJAPWBmInWSI3CsiD2
+ bePREbrumrKEYlvV0pt9ovdb4Blpe82dvTCgoFFpZFeYVIDGZ7phOOGgg4R2emiX/qwSwbn0s
+ ANiWcF0wM7uO032YNQYD24QHgzz+VsI1MZPm6+b91PdEEIa2IxFmyRQF7An9NaHZJWhiQVyii
+ 3PTyEWHOD/wbUgLW0UvJCjFNnE7KR3Z5ouwdU9g3Nk1v+jGu0qvhucZxEAfOe+yibfcOZYoj+
+ 4tqbXv6AW1dDdAjXUqAU1pMN9JC0aHvhfVCq0rzIaeIqN63Xb+TB7tE7r9YkTHaQ6Vqrk9ZI+
+ dXBuclRNzKLI2rST8vmLJOssu+FNOSawHoKDNd+Ff/heJssCv6tfq4IOXzmX3gsxdr9IgnPJa
+ +maLHkUuTGeQA86/4XcMy/o4YcXhn6jSVDJMewbaE42d9f6bfFRaHiChWCKrNHbvYSEV75E/P
+ e6l9mtuJcnnbZQbHVjZcFnanXEyW0bfJI43oZyz11VAgjMukLxAfr1vbijkrPkN8ngHOu81Yd
+ VpgQb33ptIvmbyfqRJe+yVhNTG9RWqiFtjUhqrXyLx+vEF649ywEZsniXst1IVZZ3hgjhwym+
+ WYP8ASIG1+tCSYliMe8Yw3aBUqUx+M/4AgRnyhrZRcdiP1+9hE4eFZat8Ii8sDS2VDmaba6xU
+ NPgV4rX+kLsut/h2tpkgi+jNOAbU6+1k67Vncpge0o977rfWzA6aJiEMdFvWS7yjU47v7PkiQ
+ u7thVjt4U80CZ5+VGfCaOW5ft6NlRqVm/Xtt9prDrMz9+fj/6lG97LmA8YL7acjBC+yuKm29G
+ BQkN+kgnp9X+yvLVARvt9WV9obdKVAt3wYVXLolY49yrb8VJleJRKxYtY7kDRSImpV6wi9dOc
+ HdAO5glsAFdZ/fSnKhgscb2NyE3tlR/s3l99MyNEwEBc8AnHcegDblGYdub3b21Cpb21Qq8Uv
+ MAI7Bazk3sN5NO8XrfjkxLIraoOk/Z1LX2IIH9dV00Zj3rMJVSuXU+i2HQ8LQIBh5/p6nf1p1
+ LhF/9fPUTOSfW49ogiNpfYEq7yGCKZNWN5qy75XN9wQmCs5mrzA69bGdYohlSA6fTlCe1LisL
+ UnLy6J5SvxsVtXNLXiVg6Codwzt1n0VhuJu6vBSTg/3eYd27H2q6fY2r4WeUpNQ7zna4W6E7A
+ N31j3KA==
 
-From: Arnd Bergmann <arnd@arndb.de>
+=E2=80=A6
+> +++ b/drivers/media/i2c/vgxy61.c
+> @@ -892,8 +892,8 @@ static u32 vgxy61_get_expo_long_max(struct vgxy61_de=
+v *sensor,
+>  	third_rot_max_expo =3D (sensor->frame_length / 71) * short_expo_ratio;
+>
+>  	/* Take the minimum from all rules */
+> -	return min(min(first_rot_max_expo, second_rot_max_expo),
+> -		   third_rot_max_expo);
+> +	return min3(first_rot_max_expo, second_rot_max_expo,
+> +		    third_rot_max_expo);
+=E2=80=A6
 
-Building with W=1 shows a warning about ftm_imx_acpi_ids being unused when
-CONFIG_ACPI is disabled:
+Can the following source code variant be applied?
 
-drivers/rtc/rtc-fsl-ftm-alarm.c:312:36: error: unused variable 'ftm_imx_acpi_ids' [-Werror,-Wunused-const-variable]
++	return min3(first_rot_max_expo, second_rot_max_expo, third_rot_max_expo)=
+;
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/rtc/rtc-fsl-ftm-alarm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-fsl-ftm-alarm.c b/drivers/rtc/rtc-fsl-ftm-alarm.c
-index a72c4ad0cec6..12da7d36e520 100644
---- a/drivers/rtc/rtc-fsl-ftm-alarm.c
-+++ b/drivers/rtc/rtc-fsl-ftm-alarm.c
-@@ -320,7 +320,7 @@ static struct platform_driver ftm_rtc_driver = {
- 	.driver		= {
- 		.name	= "ftm-alarm",
- 		.of_match_table = ftm_rtc_match,
--		.acpi_match_table = ACPI_PTR(ftm_imx_acpi_ids),
-+		.acpi_match_table = ftm_imx_acpi_ids,
- 	},
- };
- 
--- 
-2.39.5
-
+Regards,
+Markus
 
