@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-531292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5E5A43EBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:06:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02C4A43EAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB95163BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B393AEF77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1710E267B99;
-	Tue, 25 Feb 2025 11:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541B6267B87;
+	Tue, 25 Feb 2025 11:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="An6UgHBE"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rv9jgcjr"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F002080D6;
-	Tue, 25 Feb 2025 11:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D9F262D2D;
+	Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484741; cv=none; b=ONxzEKqEmqKaWzAb+LmqiNGqrwyO8lz8cyCnzvX8kc1TydCfZGsK1UtwPdPvtaokO45KYcXj/YC5TG7MtvNsnDdaK/pbka0GGKT3WDqDmq7Hxf0etdAjnG0SdNpjg7Q9wJsocA4PSQzWVFK2GfK7hrJMzIqLv3dcScZiavzWnU0=
+	t=1740484786; cv=none; b=CW0gGsVaJBeWhr2Gv5RlnbtG5mhwiQvt+Xi7O5f/WO4+AvGjhx1fmO6Pa3Jh9tYrV+oOLsYZLD2EEmUmEDwv1QCRc9AFe13LNekEV5CDD+DZJ94EMALsoAzOJkWpvnJVZ3KIGKBTDdug+h6PFZTQ7kXc4J6oI3VfpIwNSZ+LkM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484741; c=relaxed/simple;
-	bh=+pK7W2Q6b1RBgxpzS83X4wpeOlNFidK3MHXGdwxvwts=;
+	s=arc-20240116; t=1740484786; c=relaxed/simple;
+	bh=O+pTnhJjs6H33Ym38gmHlxqcaSfLUxX1LU4OxRu7neM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rlpGeFg9sBC6hptssP32dw3MjaJlGJyIJc73mPkGeME6AZpchqDqQR4sg20klBp6/td2tgqPHgN4qhiW49KeaRmYAD3jnKrHpNWtEWzEcDigTs9ALRtrACiU4rHk7K3Xu/ZozjExPg3QrLVkj58gkWYB2H8bcNLPD+ylWRNNXPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=An6UgHBE; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version:Content-Type; b=UbJsj8w/OYsOYoR0k68gLyafP7oIzS8bXNLCbjfUTlroWM0M4Wf+QBhwXJATAcWhiN2p30uiJLmfK7NVynf6S/t+WQ8uPunyjq1cP+J2SC80gm7Qcjjjvoyee6RMhFoPLjMrgZpXahKmzGT6EXShQagVCUfuQuJj5Uh3SPbDqPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rv9jgcjr; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb90c20baeso708906266b.1;
-        Tue, 25 Feb 2025 03:58:59 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so7485740a12.0;
+        Tue, 25 Feb 2025 03:59:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740484738; x=1741089538; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740484783; x=1741089583; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0f0Viu8zBHLWFqYx5Y6dMfvnL01Pt8+7ZPXp9TuHe/w=;
-        b=An6UgHBECsm/8oYGDslahAmuYg2wXW4YLSi8i1WDd0flKW/SwblfkLdiVzbfXdvndM
-         2/CDuuve6ESFxAZ6BGi+d5xFC+dFUN95aEnDjo1kGGThTJwSFyFLF4AB/IjsOOxQQjm4
-         ba2NRD3N4zVikAVWqcLmGyw6TFIrSZi15nsYNS+FHLHAru88pwOM1bm7sUQCGHA2B4dq
-         KBkpkf+rlTJWET1BB07md97ReHXRxprURA+JxHux8iPL8TbH6G5WDhd6vnuh1NdsFVRs
-         go1l4NzV6Br68ZMH9vCLCxQItvVVB6Cng6FcwG2xMRC1GPKAgySqw9OZybQOdjvhkp3S
-         QWBw==
+        bh=rjtbe6XyfVXU7CLIUh2zIuX23o5DTHKFfpILeJ7M3lg=;
+        b=Rv9jgcjr/Bj5T0HQwKjaHovfTz3kFDikgBkieyPoMjCZK0EGBfVh7Ymr1Rn+M9ZTHG
+         rmoxJF+fEl1sLdPoTclHANOmp5Y2dPjkZJlHRoMHJdFSYhRiOVMQR9Evorza0JnRR/vq
+         cnqRscsAhPsrlajuTDMcLc8cgHZ7zY2XFuXwCuvoV8koMsOOOcv1c2Uw7NboeKG9UeNY
+         pb4PD/qPtZW8LVg94KcwSMJ2f2jt0VjNZiUbLg18RaDMTTSBp84khThzrPdad4ZH9ihY
+         AFXz5Q+ssIAwjmGxlp9v1OmXKCuTutcQw4al4Y4DVJ/gAG3s+EdH/8xsorlxfu0BPmkZ
+         FHhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484738; x=1741089538;
+        d=1e100.net; s=20230601; t=1740484783; x=1741089583;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0f0Viu8zBHLWFqYx5Y6dMfvnL01Pt8+7ZPXp9TuHe/w=;
-        b=BIfJLCccfPprwb3CC7uJ9vSVRyXO9LhJOITu3xfXtAcvXvXg4QvWtJEgX5FSSu+mIj
-         D6/v39F427sXbnIrlacoAQfp//nm2/7m8uWZ5BPE9FeOJ4c313nMY0Q6BmT2WXGfI3CG
-         fAC8lrLdeqXofYy0nLQUoDznuk/113enMFVwJVntWcHpBort0XNutywJ6e7cFC0hBH4f
-         Xo14fgSAN1c0V1iEtpHhKMKXlXfY1svkKsgvFTkvaJ4+hV9PHuXicIB7dgiSF9OWpeHB
-         pApMOxyN+iUGeg6rmnH+Dk/P2kh8jwZh5s9uWTSbBpI4pwUtJv/1xO2+FVb7ufpvfoyl
-         9FTw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6EL3GP9JodnDn00RW63JeUSrIanc67sggBYCO0cqW7cTi03Crs2AZ9nlLAoUCJwy1Bf5N4yguu7Htm3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvQ+SCf5xaeZrCuLLdgYRTBGUPeTOZmBDpe7R2A/2Bm/OO9wVs
-	kAElFQkmROdbyCCEYVyu0Y8GALdjkzTdj+2q/UijhG8ntKY13f+95UjgTg==
-X-Gm-Gg: ASbGnctai4gmfEslU39Tg4FCdOE98dmOkej00ApavxK6G+lxpgJK3C566QB+lySbEho
-	3VwoaHCvs3SsdfB9svOwoBK+XLA7G75PWfrthiJOOhFTGFjhW4tg0vsVHbQ4B8t17ybRhOoRZby
-	FcYSreGQ5NDZh1ulLOxaIoRtGbQb0GnhqFSpiumxt5xPHqAM6aqY0aDEw9uHqsUsfxZxHU8RN1R
-	5R6EFijHAuEzII/LevDOh+hWlNDhVst+cr5cHHU34iK9SYQiZgjF7Yz+SvzmtJZeCi5IVII9YYG
-	CRSwoOIh5txQNTxT7SMHVPlAdWEPduyL82k1W6jA8AI=
-X-Google-Smtp-Source: AGHT+IFUq0UTJdD/U4lVRq7gguWQRgoO8NcZ5BFRILAZiGfNGB/hUE2rS9VpdO/5lwk+MSg8Oaz8KA==
-X-Received: by 2002:a17:906:c103:b0:abc:c42:5c7a with SMTP id a640c23a62f3a-abc0da2f10bmr1906178066b.31.1740484737220;
-        Tue, 25 Feb 2025 03:58:57 -0800 (PST)
+        bh=rjtbe6XyfVXU7CLIUh2zIuX23o5DTHKFfpILeJ7M3lg=;
+        b=GFkITWKvd6PBGb0qVtGRWOpAdZYaA3fJZatkmbV+iDkukabpkHmybY8wbPdBYWGrmK
+         /vQ2Fo/9gJIorRkt0wrqCnqHkO/AR/VPJ5DsKpyGiyer+UOIoS7VLcsbfXSp2lgi64rO
+         XUHKcMNug/rco1ChrCnAm9zm6Po+r4DPZiqKcc+kbJ1h2de1dHWZ6cKN0LNoSmfe3LYz
+         +VN7HuOoK8lN2FRDj5hCIrkraZtMMwVRX+li4/nxAzna3t8TfAQsKZkwGNcBF/SJ09Bn
+         uU3hFZk8xIIF4azRkffrt2MPuNiwgGwwkaoFBLLVsFSUdflhjECEJ/g6V/JypYzZ+yMe
+         8/HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULZ2LeQ6zC2+17td61LDCcuhW2BNQLiL196unnQpdk0xoIk+YFMBA496RtlTW/33dWqgdvAljJ8RtuTaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmP+PRzZlMn04dxM+BoaKiHV6MkC7oE0tYKCdCwb51PTyT906o
+	11BJsfDtfO9e5kCOQwOWKzTYT30N8bbdAT/RLov5k09r13hXPZyn
+X-Gm-Gg: ASbGncvWuWzIa9wBuHmxPG91Gb23b6N9a5BM2A5WM2GTcWup/JXMP7oy494+UV7WIKS
+	tRTv7EGjjHRtcWtedyjK8szU0jchj/zoR5/KFHpFr0pUYmVnCh9/3uJe0cyKPLjKqdLmS9JVCKl
+	6nA1gEyyTwQkm33B31Cx7fG/C81eSUuLyUFfQbGPOKW08J/1eQgaMuugrIkR3ena4Czf8MddGQT
+	ODB6ZNYlsndW+PRXgsAil3A1h7dMZnwYWbD6vaGsiBg7uNMPZTJI6deWgu8NJsEUb1lby6YnbkV
+	Uc3u06yF4UecZTApdk+1tWtsTdY0Db+6OOWfBfvRz6c=
+X-Google-Smtp-Source: AGHT+IG0z7wdec8nCHOissKNBAOpzj5lFrj/nifN83acYYVsMzUtVB9xCMZpR7bdJ0Nc8UB4kWGWag==
+X-Received: by 2002:a17:906:c142:b0:ab7:5cc9:66fc with SMTP id a640c23a62f3a-abc09e46652mr1684707466b.50.1740484782838;
+        Tue, 25 Feb 2025 03:59:42 -0800 (PST)
 Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2010f44sm128259166b.111.2025.02.25.03.58.56
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d9fsm129689866b.147.2025.02.25.03.59.42
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 25 Feb 2025 03:58:56 -0800 (PST)
-Date: Tue, 25 Feb 2025 12:58:54 +0100
+        Tue, 25 Feb 2025 03:59:42 -0800 (PST)
+Date: Tue, 25 Feb 2025 12:59:39 +0100
 From: Michal Pecio <michal.pecio@gmail.com>
 To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
  <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] usb: xhci: Apply the link chain quirk on NEC isoc
- endpoints
-Message-ID: <20250225125854.622a6433@foxbook>
+Subject: [PATCH v2 2/3] usb: xhci: Simplify moving HW Dequeue Pointer past
+ cancelled TDs
+Message-ID: <20250225125939.7a248e38@foxbook>
 In-Reply-To: <20250225125750.1b345e2c@foxbook>
 References: <20250225125750.1b345e2c@foxbook>
 Precedence: bulk
@@ -90,104 +90,125 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Two clearly different specimens of NEC uPD720200 (one with start/stop
-bug, one without) were seen to cause IOMMU faults after some Missed
-Service Errors. Faulting address is immediately after a transfer ring
-segment and patched dynamic debug messages revealed that the MSE was
-received when waiting for a TD near the end of that segment:
+xhci_move_dequeue_past_td() uses a relatively complex and inefficient
+procedure to find new dequeue position after the cancelled TD.
 
-[ 5441.041954] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ffa08fe0
-[ 5441.042120] xhci_hcd 0000:0c:00.0: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0005 address=0xffa09000 flags=0x0000]
-[ 5441.042146] xhci_hcd 0000:0c:00.0: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0005 address=0xffa09040 flags=0x0000]
+Replace it with a simpler function which moves dequeue immediately to
+the first pending TD, or to enqueue if the ring is empty.
 
-It gets even funnier if the next page is a ring segment accessible to
-the HC. Below, it reports MSE in segment at ff1e8000, plows through a
-zero-filled page at ff1e9000 and starts reporting events for TRBs in
-page at ff1ea000 every microframe, instead of jumping to seg ff1e6000.
+The outcome should be basically equivalent, because we only clear xHC
+cache if it stopped or halted on some cancelled TD and moving past the
+TD effectively means moving to the first remaining TD, if any.
 
-[ 4807.041671] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ff1e8fe0
-[ 4807.041999] xhci_hcd 0000:0c:00.0: Miss service interval error for slot 1 ep 2 expected TD DMA ff1e8fe0
-[ 4807.042011] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
-[ 4807.042028] xhci_hcd 0000:0c:00.0: All TDs skipped for slot 1 ep 2. Clear skip flag.
-[ 4807.042134] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
-[ 4807.042138] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 31
-[ 4807.042144] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ea040 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
-[ 4807.042259] xhci_hcd 0000:0c:00.0: WARN: buffer overrun event for slot 1 ep 2 on endpoint
-[ 4807.042262] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 31
-[ 4807.042266] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ea050 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
-
-At some point completion events change from Isoch Buffer Overrun to
-Short Packet and the HC finally finds cycle bit mismatch in ff1ec000.
-
-[ 4807.098130] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 13
-[ 4807.098132] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ecc50 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
-[ 4807.098254] xhci_hcd 0000:0c:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 2 comp_code 13
-[ 4807.098256] xhci_hcd 0000:0c:00.0: Looking for event-dma 00000000ff1ecc60 trb-start 00000000ff1e6820 trb-end 00000000ff1e6820 seg-start 00000000ff1e6000 seg-end 00000000ff1e6ff0
-[ 4807.098379] xhci_hcd 0000:0c:00.0: Overrun event on slot 1 ep 2
-
-It's possible that data from the isochronous device were written to
-random buffers of pending TDs on other endpoints (either IN or OUT),
-other devices or even other HCs in the same IOMMU domain.
-
-Lastly, an error from a different USB device on another HC. Was it
-caused by the above? I don't know, but it may have been. The disk
-was working without any other issues and generated PCIe traffic to
-starve the NEC of upstream BW and trigger those MSEs. The two HCs
-shared one x1 slot by means of a commercial "PCIe splitter" board.
-
-[ 4807.162604] usb 10-2: reset SuperSpeed USB device number 3 using xhci_hcd
-[ 4807.178990] sd 9:0:0:0: [sdb] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x07 driverbyte=DRIVER_OK cmd_age=0s
-[ 4807.179001] sd 9:0:0:0: [sdb] tag#0 CDB: opcode=0x28 28 00 04 02 ae 00 00 02 00 00
-[ 4807.179004] I/O error, dev sdb, sector 67284480 op 0x0:(READ) flags 0x80700 phys_seg 5 prio class 0
-
-Fortunately, it appears that this ridiculous bug is avoided by setting
-the chain bit of Link TRBs on isochronous rings. Other ancient HCs are
-known which also expect the bit to be set and they ignore Link TRBs if
-it's not. Reportedly, 0.95 spec guaranteed that the bit is set.
-
-The bandwidth-starved NEC HC running a 32KB/uframe UVC endpoint reports
-tens of MSEs per second and runs into the bug within seconds. Chaining
-Link TRBs allows the same workload to run for many minutes, many times.
-
-No negative side effects seen in UVC recording and UAC playback with a
-few devices at full speed, high speed and SuperSpeed.
-
-The problem doesn't reproduce on the newer Renesas uPD720201/uPD720202
-and on old Etron EJ168 and VIA VL805 (but the VL805 has other bug).
+If the cancelled TD is followed by more cancelled TDs turned into No-
+Ops, we will now jump over them and save the xHC some work.
 
 Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
-Cc: stable@vger.kernel.org
 ---
- drivers/usb/host/xhci.h | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/usb/host/xhci-ring.c | 64 ++++++++++--------------------------
+ 1 file changed, 18 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 377dad9cd639..2ad31e147d67 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1761,11 +1761,20 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 965bffce301e..fd2d5b371483 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -630,9 +630,9 @@ static u64 xhci_get_hw_deq(struct xhci_hcd *xhci, struct xhci_virt_device *vdev,
+ 	return le64_to_cpu(ep_ctx->deq);
  }
  
- 
--/* Link TRB chain should always be set on 0.95 hosts, and AMD 0.96 ISOC rings */
-+/*
-+ * Reportedly, some chapters of v0.95 spec said that Link TRB always has its chain bit set.
-+ * Other chapters and later specs say that it should only be set if the link is inside a TD
-+ * which continues from the end of one segment to the next segment.
-+ *
-+ * Some 0.95 hardware was found to misbehave if any link TRB doesn't have the chain bit set.
-+ *
-+ * 0.96 hardware from AMD and NEC was found to ignore unchained isochronous link TRBs when
-+ * "resynchronizing the pipe" after a Missed Service Error.
-+ */
- static inline bool xhci_link_chain_quirk(struct xhci_hcd *xhci, enum xhci_ring_type type)
+-static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
+-				unsigned int slot_id, unsigned int ep_index,
+-				unsigned int stream_id, struct xhci_td *td)
++/* Move HW dequeue to the first pending TD or to our enqueue if there are no TDs */
++static int set_ring_dequeue(struct xhci_hcd *xhci, unsigned int slot_id,
++				unsigned int ep_index, unsigned int stream_id)
  {
- 	return (xhci->quirks & XHCI_LINK_TRB_QUIRK) ||
--	       (type == TYPE_ISOC && (xhci->quirks & XHCI_AMD_0x96_HOST));
-+	       (type == TYPE_ISOC && (xhci->quirks & (XHCI_AMD_0x96_HOST | XHCI_NEC_HOST)));
- }
+ 	struct xhci_virt_device *dev = xhci->devs[slot_id];
+ 	struct xhci_virt_ep *ep = &dev->eps[ep_index];
+@@ -640,58 +640,31 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
+ 	struct xhci_command *cmd;
+ 	struct xhci_segment *new_seg;
+ 	union xhci_trb *new_deq;
++	struct xhci_td *td;
+ 	int new_cycle;
+ 	dma_addr_t addr;
+-	u64 hw_dequeue;
+-	bool cycle_found = false;
+-	bool td_last_trb_found = false;
+ 	u32 trb_sct = 0;
+ 	int ret;
  
- /* xHCI debugging */
+-	ep_ring = xhci_triad_to_transfer_ring(xhci, slot_id,
+-			ep_index, stream_id);
++	ep_ring = xhci_triad_to_transfer_ring(xhci, slot_id, ep_index, stream_id);
++
+ 	if (!ep_ring) {
+ 		xhci_warn(xhci, "WARN can't find new dequeue, invalid stream ID %u\n",
+ 			  stream_id);
+ 		return -ENODEV;
+ 	}
+ 
+-	hw_dequeue = xhci_get_hw_deq(xhci, dev, ep_index, stream_id);
+-	new_seg = ep_ring->deq_seg;
+-	new_deq = ep_ring->dequeue;
+-	new_cycle = hw_dequeue & 0x1;
++	if (!list_empty(&ep_ring->td_list)) {
++		td = list_first_entry(&ep_ring->td_list, struct xhci_td, td_list);
++		new_seg = td->start_seg;
++		new_deq = td->start_trb;
++		new_cycle = le32_to_cpu(new_deq->generic.field[3]) & TRB_CYCLE;
++	} else {
++		new_seg = ep_ring->enq_seg;
++		new_deq = ep_ring->enqueue;
++		new_cycle = ep_ring->cycle_state;
++	}
+ 
+-	/*
+-	 * We want to find the pointer, segment and cycle state of the new trb
+-	 * (the one after current TD's end_trb). We know the cycle state at
+-	 * hw_dequeue, so walk the ring until both hw_dequeue and end_trb are
+-	 * found.
+-	 */
+-	do {
+-		if (!cycle_found && xhci_trb_virt_to_dma(new_seg, new_deq)
+-		    == (dma_addr_t)(hw_dequeue & ~0xf)) {
+-			cycle_found = true;
+-			if (td_last_trb_found)
+-				break;
+-		}
+-		if (new_deq == td->end_trb)
+-			td_last_trb_found = true;
+-
+-		if (cycle_found && trb_is_link(new_deq) &&
+-		    link_trb_toggles_cycle(new_deq))
+-			new_cycle ^= 0x1;
+-
+-		next_trb(&new_seg, &new_deq);
+-
+-		/* Search wrapped around, bail out */
+-		if (new_deq == ep->ring->dequeue) {
+-			xhci_err(xhci, "Error: Failed finding new dequeue state\n");
+-			return -EINVAL;
+-		}
+-
+-	} while (!cycle_found || !td_last_trb_found);
+-
+-	/* Don't update the ring cycle state for the producer (us). */
+ 	addr = xhci_trb_virt_to_dma(new_seg, new_deq);
+ 	if (addr == 0) {
+ 		xhci_warn(xhci, "Can't find dma of new dequeue ptr\n");
+@@ -1055,9 +1028,8 @@ static int xhci_invalidate_cancelled_tds(struct xhci_virt_ep *ep)
+ 	if (!cached_td)
+ 		return 0;
+ 
+-	err = xhci_move_dequeue_past_td(xhci, slot_id, ep->ep_index,
+-					cached_td->urb->stream_id,
+-					cached_td);
++	err = set_ring_dequeue(xhci, slot_id, ep->ep_index, cached_td->urb->stream_id);
++
+ 	if (err) {
+ 		/* Failed to move past cached td, just set cached TDs to no-op */
+ 		list_for_each_entry_safe(td, tmp_td, &ep->cancelled_td_list, cancelled_td_list) {
 -- 
 2.48.1
 
