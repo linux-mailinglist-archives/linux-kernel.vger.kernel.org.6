@@ -1,134 +1,177 @@
-Return-Path: <linux-kernel+bounces-532679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C261EA450D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:10:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2C2A450D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6EB53A857B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FBE3A86CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234EF2356D0;
-	Tue, 25 Feb 2025 23:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BFC236430;
+	Tue, 25 Feb 2025 23:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="jVqZyn+L"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="24IEUHon"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE60E2054F1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FC718C34B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740525022; cv=none; b=ogIOQ7SrxoV8gwqGYxyUQpw2GQkPcVOxHrAqOl1Fl5B+mg+RRb2xmd/MRRFUtMmgftqahR2SgrifmbnnjARABS5oIZG1dM8NZH48SjZtN9tK5WoFWYs44r2RIGntr/t5YD2xsb79dWF1p5aQX9iN2CpJAyH2HwNhygCJIGAhM5Q=
+	t=1740525090; cv=none; b=ZXSuFdZHq7zFXuutAt8bOgIlgMFL8Mws3DwVkC5DFlylSBQkH3P0wy6ud35NHIe1vcweQbt6gCnEJ+GEVL5k3huEhWc0Dc7T4Zd1EtERz22JkoDNLzIhQWaEgA0kFQfYRcehVUV+GU0rM4LCTzOowY2CaxpolGKXSj0r9cWjVLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740525022; c=relaxed/simple;
-	bh=+kvbUQZyXSL4zamHMB07/kBb9aSkSvHGTQvnF1zvxkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atyrnHPBRJ94KFGkXUaVptWaZO2nWh2NeoGVOd3rzqFtTkK6IHaHpKimqTetooyFWqk/D4V4YoRB2dAtpf15A9xixN3L7HhhBaAIv1ZSa/I00aDq6v9iHTSOQKin9XP/i8ceJwaAX/JCiz/61Oh1GuWt9ZoFubfMQV1dRwAkO9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=jVqZyn+L; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f504f087eso4805117f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:10:20 -0800 (PST)
+	s=arc-20240116; t=1740525090; c=relaxed/simple;
+	bh=/ftNyy+vaSlm3/4HIx02nxkWhTTu1YUQIglU9aKLez0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dPmBIA6RIGE5uMn4oWHhBXdr5qx5gCC2BT3zcjo1R6BGpa87QnirRflUxxwb9JO3aJqd0bCUjG3EYpXHh4QB2BgAqPcLfugnTq8QvovTF9BN00rvLJ6HbzQ4G/Z/WKj0+TQUqBeaps3GgkQbTmRX8g2FZ8pFxtMT5u6syHEEcrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=24IEUHon; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220bff984a0so132233355ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:11:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740525019; x=1741129819; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GR/f1XfgOyLiD0/Fzm3IhtRl2Wk8lZ2d6RNv1rFkKW8=;
-        b=jVqZyn+LjftUAMnkuBCWEMK8bc7PtJ9Pvxx1AAnv9iCnqF2g6wJx71Rsbs1N6Bbs6v
-         +25OF9NEdmYeqNN94QgCs60oNgq0lippQXxz7jaE/wT6xqQR/UVg+iz+WCYb7TM1psMZ
-         j4tfPxnTqRY2hF3JIuXQ19wtqdRMT9g+iaWJKwQpYPlBKBv0KMojKrHTFxqs3OuM6Ewt
-         kU8MK1PLdWbflF4JRxcmGq+s5hy+B7OtQjHWgaGZOIOm+DjsyZYzokkdl/9dlmoZsNKr
-         unNnuU721dGA4yPZy/QEBgW9fCD6QQDyyTbxgT99GW4p1gz+0joSJc4Z6wYYHx6PNQIr
-         JF5Q==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1740525087; x=1741129887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LQ61ZtswOD85wV8P56MHQvltVEA+rd3ScB/YgelJwiQ=;
+        b=24IEUHonfKFuYeI1HnDl8T/rbU5ssotbAmQ+Fkt+Z7XAs4d5YsgB0vn3up24UE9Oum
+         uUDdonmVpnzvb9b9ACLipECX6Vw238VL4GJGRjp5TvG3fbB66BJ1GkK4IZiYZv0WnKZJ
+         6nO/kwTQtyNhschW4/QHsk4aFGN4x5HlFP/mXpoXKFyEhKxZIUB4Fqlzgg0M08hjEQJJ
+         qnaO88DK0HGu0LClL2Qq0RLXAysD3KAYzchJ9k6uEWAUdkBjBNZa/fXQj43YqYzjaV5O
+         YLZGkdMYxW0RLRZEctXtRqdnwOcahNcIqMJ9DgXG9CkacscxnCGSSKbhAqTzAXxoeI6S
+         mzTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740525019; x=1741129819;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GR/f1XfgOyLiD0/Fzm3IhtRl2Wk8lZ2d6RNv1rFkKW8=;
-        b=ZkLe8kRixwNEzwG/1welG8GGGiqAt+5+0PD1iqDTcEvUqSuECf60777AGaCPiJKlDo
-         yKCDmH7wphYaBeWYpkHOz1HguM2S8rcvjCh2/shfo+7vbe5fX1/0+2l5+1fPxvl3996u
-         BqTEx7V0JOdk1nDhEkDNBbwbvD23OTgLhdPKT+iteAOkXXN7YWigWuBli1oxHNI1zuSr
-         x3f2rzVVPZNkySyt13rkrelRVAm8q/Rh8/llGGwNT2HAibzDBRQ7ZSA+beClBdKy1o1p
-         53YDp6S2XWx3uxPx+Q2gx+qaHIdxypksUReP0hM2pX+B4vCCuzOv2zb5KECclEDfuvB7
-         OIRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlQipGa3jLK0i8j46t2rvvXJTP1ntArawICOJmLVjvxwmVvOiG4JJFn10QfFcnugkDwJt5MrzBIkr4qYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3TJKwLMIdcdIGYh0Z7ylbSKBY/722hCG8tAKfC/Z6wgJL+aqS
-	L/ubCFw9EeZ2CgjZX2KVpxk7tS/fFnmhaEOfPZd0OsqghU3ai79CQFhimQGcwko=
-X-Gm-Gg: ASbGnctavvck/10DY4Wp0M7nVA5ovBCFUhfrLEIHYqBuRPvW7Kp7wnb95LKy5zb+YtC
-	2LJMDCzNgyqptrKen2/QxBu8X911xCgVVHHSXpIIdg9UCHN/LpPqbrJZXpshexZtZn71UhWhiIJ
-	WIvmVAX/9JRANNgfSZY//pekxFStD3uWQMfykPWcnxDCxIrXxFPdsC8kW0i+kzSM2BkNcf4ovQp
-	hHyHpgqoEH4UfJXPwVYUqaAaJpCq+lR5zt5f6ty/hB1aFrh3ZMqaAwD2+gBGmKivPzkewHvhFyH
-	FYjl1vjH3wp0vvoSPhgc
-X-Google-Smtp-Source: AGHT+IFzKxgT+FDekkwTj58ufLFPS3qmQu4xLsL8NJ7EyApAQDJ+XquwGx750TREzyjfZG0WuyEI6A==
-X-Received: by 2002:a05:6000:1546:b0:38a:87cc:fb42 with SMTP id ffacd0b85a97d-390d4f3cee1mr709890f8f.21.1740525018774;
-        Tue, 25 Feb 2025 15:10:18 -0800 (PST)
-Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba58760bsm2039845e9.38.2025.02.25.15.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 15:10:18 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:10:14 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Chen Yu <yu.chen.surf@foxmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	zihan zhou <15645113830zzh@gmail.com>, oe-lkp@lists.linux.dev,
-	kernel test robot <oliver.sang@intel.com>, lkp@intel.com,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	aubrey.li@linux.intel.com, yu.c.chen@intel.com
-Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
- regression
-Message-ID: <20250225231014.yztrap5ihain3cd2@airbuntu>
-References: <202502251026.bb927780-lkp@intel.com>
- <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
- <20250225122705.GD34233@noisy.programming.kicks-ass.net>
- <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
- <20250225134220.qjctfqwwhjz7bspp@airbuntu>
- <tencent_1A4C28B62DA5726C31A985601B07F664250A@qq.com>
+        d=1e100.net; s=20230601; t=1740525087; x=1741129887;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LQ61ZtswOD85wV8P56MHQvltVEA+rd3ScB/YgelJwiQ=;
+        b=mMw9eVRHYDMsNUxjis4XxQNH1pqiCLHx4nDYrgFrRtEEuIksucg8Z6MPbUcR6+eaNS
+         PXTD3TG5mDFY3o/zhS3QvIrHedbmUzRwWJhCnNbPoOJBaFnEldZUsdyH7vePqbyDCMXm
+         FeWwqbmsa7gQR+woMhNf4bGApyg4d1c00VCKnUuQCSprvciQytfNzaJdQyxOQy6OGUE9
+         1sNxWCXwv9wiR21NUicFaghuO5LjFL2XwUQGBsYkf9Y+JEj6iZFGHdPQuL2Lmbv7wrLF
+         mNBAn/nUM6dJyvr3TAGYnBCbsAK1SXNXThhMgZwiA+OaPq/BiuFooGIVXIFsBVg7jmdU
+         AJQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLGYhN7LUZwyo1s01dO/2/KYTbvSgIBFHm5iMoJ8meoZjkP+9zLKYPH6+QgnbEmOzPQo1F/VivyIR+lc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy98fb2dPD/wCP6y2D03rbqAmA4qzCKP7/eMlb3LvPyu+laIn3h
+	jvIPicJ/aW1C3MUCAijz43M7cPJF250066DKJjbdNTUpa1DNnN9+K3Q03ZpFpu8=
+X-Gm-Gg: ASbGncvcjOTxKAoesfyTQSpNPO2UzGyZ+GLXaQupr/3aBwef+UOB3Wonyd/qOlIhHPR
+	1b0usS3iyAzp2UcY1yZzh40Y+5Rfs1nygOLBvHjWTR5AkiC8kKMy8NDKP9CMp4XZLuQ8d0t6+mO
+	XVhfkGg7GyeJyt2r3xBVu0YCqrh2XctPKvbrQUv81PBuCcthwe/hx7Vt5Tv7Qt2oLl4b7PvygNo
+	KhQBLLFNI2UNZCZ+EHmVFfgIfJ07EnXyo3eP75BKTogqA9fzge59FfrgJ53VskFgUtbPG5LUuRP
+	+dat3XZ5DvDtIj/Iw/aU17Mz138L9vTSqObRxS64AT6kAFiEEP2T5nqLhxZ4QxPrxFBg/A==
+X-Google-Smtp-Source: AGHT+IH5civrRZQb+4W/qlkknAb8yEWjaptfeFOtCfZg94sm3+noPuJFyjA5fde/QqxXj6in5KcNBw==
+X-Received: by 2002:a17:902:ecd0:b0:21f:542e:dd0a with SMTP id d9443c01a7336-22307e6586fmr93275905ad.41.1740525087342;
+        Tue, 25 Feb 2025 15:11:27 -0800 (PST)
+Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::4:6a61])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00abfasm19847055ad.82.2025.02.25.15.11.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 15:11:26 -0800 (PST)
+Message-ID: <1c263479-43a4-40ec-94ae-987c7da7d43d@davidwei.uk>
+Date: Tue, 25 Feb 2025 15:11:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tencent_1A4C28B62DA5726C31A985601B07F664250A@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] selftests: drv-net: Check if combined-count exists
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250225181455.224309-1-jdamato@fastly.com>
+Content-Language: en-GB
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20250225181455.224309-1-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 02/25/25 23:35, Chen Yu wrote:
-> On 2025-02-25 at 13:42:20 +0000, Qais Yousef wrote:
-> > On 02/25/25 21:15, Chen Yu wrote:
-> > > On 2025-02-25 at 13:27:05 +0100, Peter Zijlstra wrote:
-> > > > On Tue, Feb 25, 2025 at 05:31:34PM +0800, Chen Yu wrote:
-> > > > 
-> > > > > 
-> > > > > But consider that the 6% regression is not that high, and the user might customize
-> > > > > base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
-> > > > > future(we have encountered some SPECjbb regression due to over-preemption).
-> > > > 
-> > > > You can specify a per-task slice using sched_attr::sched_runtime. Also
-> > > > see commit 857b158dc5e8 ("sched/eevdf: Use sched_attr::sched_runtime to
-> > > > set request/slice suggestion")
-> > > > 
-> > > >
-> > > 
-> > > Thanks, we'll have a try during the next test cycle.
-> > 
-> > Could you also try with HRTICK enabled?
-> > 
-> > 	echo HRTICK | sudo tee /sys/kernel/debug/sched/features
+On 2025-02-25 10:14, Joe Damato wrote:
+> Some drivers, like tg3, do not set combined-count:
 > 
-> Sure. Is HRTICK supposed to encourage preemption? I thought
-> hackbench might be sensitive to preemption(downgrading).
+> $ ethtool -l enp4s0f1
+> Channel parameters for enp4s0f1:
+> Pre-set maximums:
+> RX:		4
+> TX:		4
+> Other:		n/a
+> Combined:	n/a
+> Current hardware settings:
+> RX:		4
+> TX:		1
+> Other:		n/a
+> Combined:	n/a
+> 
+> In the case where combined-count is not set, the ethtool netlink code
+> in the kernel elides the value and the code in the test:
+> 
+>   netnl.channels_get(...)
+> 
+> With a tg3 device, the returned dictionary looks like:
+> 
+> {'header': {'dev-index': 3, 'dev-name': 'enp4s0f1'},
+>  'rx-max': 4,
+>  'rx-count': 4,
+>  'tx-max': 4,
+>  'tx-count': 1}
+> 
+> Note that the key 'combined-count' is missing. As a result of this
+> missing key the test raises an exception:
+> 
+>  # Exception|     if channels['combined-count'] == 0:
+>  # Exception|        ~~~~~~~~^^^^^^^^^^^^^^^^^^
+>  # Exception| KeyError: 'combined-count'
+> 
+> Change the test to check if 'combined-count' is a key in the dictionary
+> first and if not assume that this means the driver has separate RX and
+> TX queues.
+> 
+> With this change, the test now passes successfully on tg3 and mlx5
+> (which does have a 'combined-count').
+> 
+> Fixes: 1cf270424218 ("net: selftest: add test for netdev netlink queue-get API")
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  tools/testing/selftests/drivers/net/queues.py | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/drivers/net/queues.py b/tools/testing/selftests/drivers/net/queues.py
+> index 38303da957ee..baa8845d9f64 100755
+> --- a/tools/testing/selftests/drivers/net/queues.py
+> +++ b/tools/testing/selftests/drivers/net/queues.py
+> @@ -45,10 +45,13 @@ def addremove_queues(cfg, nl) -> None:
+>  
+>      netnl = EthtoolFamily()
+>      channels = netnl.channels_get({'header': {'dev-index': cfg.ifindex}})
+> -    if channels['combined-count'] == 0:
+> -        rx_type = 'rx'
+> +    if 'combined-count' in channels:
+> +        if channels['combined-count'] == 0:
+> +            rx_type = 'rx'
+> +        else:
+> +            rx_type = 'combined'
+>      else:
+> -        rx_type = 'combined'
+> +        rx_type = 'rx'
 
-Yes my bad, I don't know why I read this as preemption was happening later not
-earlier. Please ignore me then.
+Logic is good but minor nit in reducing nestiness:
 
-Thanks
+rx_type = 'rx'
+if channels.get('combined-count', 0) > 0:
+	rx_type = 'combined'
 
---
-Qais Yousef
+>  
+>      expected = curr_queues - 1
+>      cmd(f"ethtool -L {cfg.dev['ifname']} {rx_type} {expected}", timeout=10)
+> 
+> base-commit: bc50682128bde778a1ddc457a02d92a637c20c6f
 
