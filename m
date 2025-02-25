@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-530843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E707A4393A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:20:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EE8A4393C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFB74406B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB7B440930
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A4F267B04;
-	Tue, 25 Feb 2025 09:12:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3892641F7;
+	Tue, 25 Feb 2025 09:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R8c5xQo+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128ED267AE3;
-	Tue, 25 Feb 2025 09:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F91267AE3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474740; cv=none; b=KiYoyiDHpWY0DNphq9631V7md6orsGcKo5QwLUTY8YPs74FoD58TQs7e9kdVfkS1U0Aqcev5kpUZGZueciBazJUARLTxPdca/MaY1n7Fy1UNldYVLlCbwTewRMwO/r+oyp5LaA/07srbJuxaZSWmJcgJF4v4XZTv5zooLqIR8j4=
+	t=1740474749; cv=none; b=R/Z+Y6ZIoysbwXYTiXfjZpsn8wuN3SOIOF504tg+dNpvGoVKCFgmsfHUPeVVRTX3CbDpExzmI8Ui2D5D9UCCnUcbH9HaLR7G5NWlO2ZPwgZpj1Hjd1D08kJK63+w/1EhoNW1rH25OCmZp98eM0fftgOzxOxJrzeNWFqVKDTggD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474740; c=relaxed/simple;
-	bh=jSfr0DnZJRt/ciNTHE0XDHV5JQ8wzrnyJ3cQBG5h2r0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AsPDeh+Dzia7NK8uLuJOsiBK7qaT1MQhIxI2i1edEduvL6hXOj6RakvP3hJ3BG5DGOzVPetw9EsRl00jvFR1xMIfBnnxwu+8Am0J3LYs0W9EJIaM/uDS4fxzGXTAoLNAM0u6W+43JDlpdlf2FEy4Ftb2upfakhkCqhsGuQl5eOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z2BgX4NRQz4f3js9;
-	Tue, 25 Feb 2025 17:11:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 673BA1A058E;
-	Tue, 25 Feb 2025 17:12:14 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP3 (Coremail) with SMTP id _Ch0CgAne8Vrib1nMy0hEw--.30895S3;
-	Tue, 25 Feb 2025 17:12:14 +0800 (CST)
-Message-ID: <b9fee454-54e0-d07f-44eb-74bfc588abeb@huaweicloud.com>
-Date: Tue, 25 Feb 2025 17:12:11 +0800
+	s=arc-20240116; t=1740474749; c=relaxed/simple;
+	bh=saJTl/rz3FTdOuD5O23ARIj2rQwZ67tsnr8yfGUlzms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggOI9+JQOWnCdANsGOAZxIFOVkjqplJdUkf5hEbAvaYwysO6Q0VwQ7nvD8c/hqmW8Uz9i9Ffss2QBDZ0iWXe5mrn9LH9VdkIQvSMZzdLNbtBS4irrie2VdLjEsry2zWbUItbX3UHvyoiNO+QosNc7qqgl9N8X3XTX/1bSK9RQ+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R8c5xQo+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=z5VuTg2iBpv9gBvZBLI09HpYczzDcEyyIN0W2/1zW3A=; b=R8c5xQo+IfMd93MKLHLN8EPwbk
+	O4boUmPxSq0oWdFMzeUgrHdF6IIUrA+2bVb8LJ7KdD2UpwPe16fhH2s3u8YoRf+U4AlPlHNMxoVYr
+	WC7dB6bqkSpFe1mqB5Whi/QkOT/iBpq7qKZbHpVAC3ebiLSXUMa7d/RNink/Riooir0Jw4UbZjZuo
+	5UH5TfhYEyAQNqQwB7wRDUr0/qQlfwLjNtEYD4qf0Dmmf46bJnFkm2fIcqNdrzN+GT2vYQIiryYWh
+	VrwjzjWqBJ0X4pLp8sZsn3cGnLFkhLiJnIwyIGIXhjDOtyXjD6ruYLRxCccXbHjdg5cMAJSj5rU5y
+	hrainxEA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmqz8-00000003KEU-28DH;
+	Tue, 25 Feb 2025 09:12:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D584A30072F; Tue, 25 Feb 2025 10:12:13 +0100 (CET)
+Date: Tue, 25 Feb 2025 10:12:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
+	ojeda@kernel.org, kees@kernel.org, alexei.starovoitov@gmail.com,
+	mhiramat@kernel.org, jmill@asu.edu
+Subject: Re: [PATCH v4 09/10] x86/ibt: Implement FineIBT-BHI mitigation
+Message-ID: <20250225091213.GI11590@noisy.programming.kicks-ass.net>
+References: <20250224123703.843199044@infradead.org>
+ <20250224124200.820402212@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 05/12] badblocks: return error if any badblock set fails
-To: Coly Li <colyli@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Coly Li <i@coly.li>, Zheng Qixing <zhengqixing@huaweicloud.com>,
- axboe@kernel.dk, song@kernel.org, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
- dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com,
- Hannes Reinecke <hare@suse.de>, zhengqixing@huawei.com,
- john.g.garry@oracle.com, geliang@kernel.org, xni@redhat.com, colyli@suse.de,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-6-zhengqixing@huaweicloud.com>
- <4qo5qliidycbjmauq22tqgv6nbw2dus2xlhg2qvfss7nawdr27@arztxmrwdhzb>
- <272e37ea-886c-8a44-fd6b-96940a268906@huaweicloud.com>
- <70D2392E-4F75-43C6-8C34-498AACC78E0C@coly.li>
- <a3c74c7c-44b6-c4c0-872d-0de7e29214c0@huaweicloud.com>
- <vdd6yaz3opuhufbfhbkhwtfj4a3oiskem7o23n3axtzy5e74xp@fibgbwxospom>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <vdd6yaz3opuhufbfhbkhwtfj4a3oiskem7o23n3axtzy5e74xp@fibgbwxospom>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAne8Vrib1nMy0hEw--.30895S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUOo7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvE
-	ncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I
-	8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0E
-	jII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbI
-	xvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4IkC
-	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjfUOyCJUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224124200.820402212@infradead.org>
 
-
-
-在 2025/2/22 14:16, Coly Li 写道:
-> On Sat, Feb 22, 2025 at 09:12:53AM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/02/21 18:12, Coly Li 写道:
->>> So we don’t need to add a negative return value for partial success/failure?
->>>
->>> Coly Li.
->>
->> Yes, I think so. No one really use this value, and patch 10 clean this
->> up by changing return type to bool.
+On Mon, Feb 24, 2025 at 01:37:12PM +0100, Peter Zijlstra wrote:
+> While WAIT_FOR_ENDBR is specified to be a full speculation stop; it
+> has been shown that some implementations are 'leaky' to such an extend
+> that speculation can escape even the FineIBT preamble.
 > 
-> OK, then it is fine to me.
+> To deal with this, add additional hardening to the FineIBT preamble.
 > 
-> It will be good to add a code comment that parital setting will be treated as failure.
+> Notably, using a new LLVM feature:
 > 
-> Thanks.
+>   https://github.com/llvm/llvm-project/commit/e223485c9b38a5579991b8cebb6a200153eee245
 > 
+> which encodes the number of arguments in the kCFI preamble's register.
 > 
+> Using this register<->arity mapping, have the FineIBT preamble CALL
+> into a stub clobbering the relevant argument registers in the
+> speculative case.
+> 
+> (This is where Scott goes and gives more details...)
 
-Thank you for your review. I will add comment in the next version.
+Scott, could you give a blurb here? Would the below cover things?
 
--- 
-Thanks,
-Nan
+The basic setup, for 1 argument, is something like:
 
+__bhi_args_1:
+  jne .Lud
+  cmovne %r10, %rdi
+  ret
+  int3
+
+__cfi_foo:
+  endbr
+  subl $hash, %r10d
+  call __bhi_args_1
+foo:
+  osp nop3
+  ...
+
+
+such that when speculation of an indirect call is maliciously steered
+here from a non-matching site, the hash check (__cfi_foo's SUB) will not
+match, resulting in !ZF and non-zero R10. Subsequently the __bhi_args
+stub will either hit #UD exception, which kills speculation, or when
+steered wrong, hit the cmovne, which will then clobber the argument
+register RDI with whatever non-zero garbage sits in R10. Making it much
+harder to control whatever foo normally does with its input argument.
+
+Additionally, CFI hashes are randomized at boot, making it much harder
+still to predict/control the non-zero value.
 
