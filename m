@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-532646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37B3A4503C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9ACAA4504F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957E1189849D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F0D3B5902
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8730B214803;
-	Tue, 25 Feb 2025 22:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A80A21516A;
+	Tue, 25 Feb 2025 22:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btCnrTsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cX/ZfDhb"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2821129E;
-	Tue, 25 Feb 2025 22:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC0A1FBEBD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522737; cv=none; b=rsr94eEgwtBnOwjbLPv2i7A4b6eDYtkRNo8UCakvDN4RheUF9PDdQ+e6jpDBKQfy3mUsH9vAOukAPoBUbNTPo74sJop7kfuAesPhW+mST442SYA7glkrWDrY0DkCTr8k0jqkR45FwUCbEuvmCe7rZmiFxSF3D0l89lxV5wzzTEw=
+	t=1740522776; cv=none; b=mfo+oZBZ7NE/7E/yjnbatVyWvSYHnrynlsVtIAEoB9xFSoOEMcPp21fv6Ioor8fU1rmzqJBdn99xOqU4cz6VrfnJsMFXe671GY5scCo+J88F33SYdxrXNm40ESwd7qApVFCyA3bo/2pX0IiHF9GZyWpGqNr4xa5Wm7sbGxkEjbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522737; c=relaxed/simple;
-	bh=o+i9nObUcHywXRlODRiDLTHO7kajo7zEsnp5EZ0py7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkjIHhuDNIGP1ErEyyrWzyw2E/KRkKqNYjS8Ds1xwvZApHVvnLNwpTqzq7tw665llU7iY4AWHo3Ns+9MHcpnT2hbDMssVgqRh6e3l4QA7cX3B4AakTkZnE8l+l2wgp6kBfAGsHW9LXE4mCQz5ApGFooeXsCpQqlGwlJYfa7hfO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btCnrTsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29161C4CEDD;
-	Tue, 25 Feb 2025 22:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740522737;
-	bh=o+i9nObUcHywXRlODRiDLTHO7kajo7zEsnp5EZ0py7A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=btCnrTsCT4QMrPdQ+utkCFD6AUiS4pY6njhHEIWv+/KyXHXHSxPf50eRa3gN3gHOM
-	 P7uz7gnsyv8JMHgrYOdL1RxA09/QfhzOYHdwMe/1yjjUHjL+9eADQeflKQ2UZBE31x
-	 fST4WvyXkavTGMmnzfAfE4un7kELsLLd0MhrO9bU+oUiwnxTNE8S4o1PDNlqNsKkQF
-	 zOfJejQejojFnZM7g0tL8/l7U63R8PwGnX11UgY0T+PI5Fd55Pbh795QIS8rYS0/ek
-	 h4z5K0C6QdS7lmNcwrGTjqH4Yh2grJ6+IG8t31BUJxY3Slb5soEotxfrQWfb8FAIIm
-	 S6mdI63m5yrkQ==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	mingo@kernel.org
-Cc: oleg@redhat.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jolsa@kernel.org,
-	kernel-team@meta.com,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Breno Leitao <leitao@debian.org>
-Subject: [PATCH perf/core] uprobes: remove too strict lockdep_assert() condition in hprobe_expire()
-Date: Tue, 25 Feb 2025 14:32:14 -0800
-Message-ID: <20250225223214.2970740-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1740522776; c=relaxed/simple;
+	bh=ASZpiCaz/lujoT+hKvH2SvCb3OzGoif6hv9DMAwNjF0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FlYVz+QLOzZNg8OH9NhjphVEhf/OGANBs9ItCOiv5oQPzz5WuwJc2rUIBl1y4C4RLZ/2LcvVMcDYqrp6XUE5V1OpFLpHbUXfmr0MWuKa9vwOPr5yP5hqfFUZMgGsMT3SnkqqtjCNXsnCotLHVMN6RLTwnUf3HQDb3h+KpWkq3Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cX/ZfDhb; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so12714042a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:32:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740522774; x=1741127574; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGwMJeTN+dKZHBUUmf4B4DWcKF/PGoO9rdnWonYrQT4=;
+        b=cX/ZfDhbchmpkuHqIBbEKjzXthQFuJZuxO0MOIT9drK22A1KoQuL/ceXy6wPa8qlI+
+         aXD32f0NFjSoMIEXdF3YnCUDpVBfQrSV3pW4DF4omsxar4l3hyXwvmYTKxxAUVQGWeYd
+         tdLWDiR/SBR+85eLXzbTzAnG4exYK5krHWpTyqeuZkabqr4H/pQ1pfAQSWthtHYwdkN0
+         +2i14CN4j9AJTT8rQ5KlJ6rrXJU2025RBeP77yGargK1oxBS5GeTrSE7EwXR8HhqRSi/
+         ISrLU8RtKtaqh4KPsvIkgcMUYQCf9z8UjTVIKayxFonpDe4ONvqr5p1iOCqLiYQJTb41
+         IQdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740522774; x=1741127574;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGwMJeTN+dKZHBUUmf4B4DWcKF/PGoO9rdnWonYrQT4=;
+        b=xC44fCeKfG1W0OaWWu5SWM4ps6rNmRhDHq/U1MalnRA9ZYr/vP/9lP8HQ30ELVZoZs
+         9zZ3nFk0W/h3aEJ0zOhSyaSm3JEys4WoSGaZqpnEdUHkfPJxr7jQtAIHkPsmCtA9mJDn
+         +JQ33+jK5m2I85myeeOm8CxEB6fpQKQZElgjPK7UXRj2JJ6TaBbe4h6WJBUg6JlMysCt
+         rfNF0uwXqtHjL1Js22KKUJCumgMKZdpWPjuNKe10Y/6f4gRypp9+HNDt/l+hptU81GFZ
+         6fBnPERiRtsqF1rNkaNjR5P0zc0k7IByY48R514w7e2vJ5v1bqkLvRZRHg5nk6JI59bg
+         7pQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF7VY+KbN9otP4nYO9ZyDw2M8Q55BE4HEuRhy6xn6nHqb8uP/QKt2cnT4Uv2XU4uPrSMFiEEosUNmTzOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfUA/lteTkhwojA0090Lt6ikWJlm3+itU78vVOjv24K6WM1EUz
+	eViiG2QlKuIS03b2SMdAoeCQL9oW4T7eaV181wyDBbypHcBbGFrW1c5Nzf/zLpMLMKwAn1d6E/Z
+	89w==
+X-Google-Smtp-Source: AGHT+IFdywSgZgWisiM3fsWoKNuqZEmY/ulK9kNQX86fbh4TBv6Dn9TbtR9/PAKzKbHi2Sbm54RZsl1lrMs=
+X-Received: from pjbqd16.prod.google.com ([2002:a17:90b:3cd0:b0:2ef:8a7b:195c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ecf:b0:2ee:f19b:86e5
+ with SMTP id 98e67ed59e1d1-2fe68ada443mr9176092a91.14.1740522774713; Tue, 25
+ Feb 2025 14:32:54 -0800 (PST)
+Date: Tue, 25 Feb 2025 14:32:53 -0800
+In-Reply-To: <20250225213937.2471419-3-huibo.wang@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250225213937.2471419-1-huibo.wang@amd.com> <20250225213937.2471419-3-huibo.wang@amd.com>
+Message-ID: <Z75FFZqPLyJgt-4g@google.com>
+Subject: Re: [PATCH v5 2/2] KVM: SVM: Provide helpers to set the error code
+From: Sean Christopherson <seanjc@google.com>
+To: Melody Wang <huibo.wang@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Paluri PavanKumar <pavankumar.paluri@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-hprobe_expire() is used to atomically switch pending uretprobe instance
-(struct return_instance) from being SRCU protected to be refcounted.
-This can be done from background timer thread, or synchronously within
-current thread when task is forked.
+On Tue, Feb 25, 2025, Melody Wang wrote:
+> @@ -3675,8 +3673,13 @@ static void snp_complete_psc(struct vcpu_svm *svm, u64 psc_ret)
+>  	svm->sev_es.psc_inflight = 0;
+>  	svm->sev_es.psc_idx = 0;
+>  	svm->sev_es.psc_2m = false;
+> -	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
+> -}
+> +
+> +	/*
+> +	 * A value of zero in SW_EXITINFO1 does not guarantee that all operations have
 
-In the former case, return_instance has to be protected through RCU read
-lock, and that's what hprobe_expire() used to check with
-lockdep_assert(rcu_read_lock_held()).
+"A value of zero" is largely redundant, and somewhat confusing.  There's no '0'
+in the below code, so to understand the comment, the reader needs to know that
+"no action" is a response code of '0' (and is communicated in SW_EXITINFO1,
+though that's much less of a problem).
 
-But in the latter case (hprobe_expire() called from dup_utask()) there
-is no RCU lock being held, and it's both unnecessary and incovenient.
-Inconvenient due to the intervening memory allocations inside
-dup_return_instance()'s loop. Unnecessary because dup_utask() is called
-synchronously in current thread, and no uretprobe can run at that point,
-so return_instance can't be freed either.
+> +	 * completed or completed successfully.  PSC requests always get a "no action"
+> +	 * response in SW_EXITINFO1, with a PSC-specific return code in SW_EXITINFO2.
 
-So drop rcu_read_lock_held() condition, and expand corresponding comment
-to explain necessary lifetime guarantees. lockdep_assert()-detected
-issue is a false positive.
+Please wrap at ~80.  Yes, it's a "soft limit", but preferred KVM style is to
+wrap at 80 unless running long makes the code more readable.  For a multi-line
+comment, I don't see any reason to wrap in the mid-80s.
 
-Fixes: dd1a7567784e ("uprobes: SRCU-protect uretprobe lifetime (with timeout)")
-Reported-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- kernel/events/uprobes.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+This is what I ended up with
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index e783da1d1762..4d2140cab7ec 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -762,10 +762,14 @@ static struct uprobe *hprobe_expire(struct hprobe *hprobe, bool get)
- 	enum hprobe_state hstate;
- 
- 	/*
--	 * return_instance's hprobe is protected by RCU.
--	 * Underlying uprobe is itself protected from reuse by SRCU.
-+	 * Caller should guarantee that return_instance is not going to be
-+	 * freed from under us. This can be achieved either through holding
-+	 * rcu_read_lock() or by owning return_instance in the first place.
-+	 *
-+	 * Underlying uprobe is itself protected from reuse by SRCU, so ensure
-+	 * SRCU lock is held properly.
- 	 */
--	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
-+	lockdep_assert(srcu_read_lock_held(&uretprobes_srcu));
- 
- 	hstate = READ_ONCE(hprobe->state);
- 	switch (hstate) {
--- 
-2.43.5
+	/*
+	 * PSC requests always get a "no action" response in SW_EXITINFO1, with
+	 * a PSC-specific return code in SW_EXITINFO2 that provides the "real"
+	 * return code.  E.g. if the PSC request was interrupted, the need to
+	 * retry is communicated via SW_EXITINFO2, not SW_EXITINFO1.
+	 */
 
+> +	 */
+> +	svm_vmgexit_no_action(svm, psc_ret); }
+
+Malformed change to the closing curly brace.
+
+>  	case SVM_VMGEXIT_HV_FEATURES:
+> -		ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_HV_FT_SUPPORTED);
+> +		/* Get hypervisor supported features */
+
+This doesn't add any value.  If the logic isn't clear, then GHCB_HV_FT_SUPPORTED
+needs to be renamed.
+
+> +		svm_vmgexit_success(svm, GHCB_HV_FT_SUPPORTED);
+>  
+>  		ret = 1;
+>  		break;
 
