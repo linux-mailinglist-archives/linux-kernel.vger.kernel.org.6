@@ -1,225 +1,145 @@
-Return-Path: <linux-kernel+bounces-531510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680A9A44167
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:54:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BE3A44170
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F25E189BF43
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A726B3BD8E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A642826A0CD;
-	Tue, 25 Feb 2025 13:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2C526B2A5;
+	Tue, 25 Feb 2025 13:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfD87ieM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G1mPuaKt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DC626A092
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DE826AA93
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491609; cv=none; b=WeBraRZ0nV7CKv37/CVmJSImn10q/r2ofV8nfMeUQOA2ZFDk6pcG58UG8R6BLh9uNHtIN9VTS/3ScbYM7POmvnztKhUb42BHXQgWyXHFC1n1XESYLEMIxOnmw+Ca/mTCoXUyoghr9wLdtO5dzWdkZfQ7xL1R5bjAOBSUTudnW5I=
+	t=1740491613; cv=none; b=jO/YbMkX+KgUj9Q+QgbqIMIW038kvZrlYyDEB8wtJM6nwbRRGoAaM1sr5kOa1E+EfUsiyzkzWQxx90Adn9EWR6UOGQmVL8qzVb5HL64zHUqezeTMMOC+Ly2+9/0YUmYq9ktaU+jud/hp90sevprQEDsVJNZekC8rvX6RMEcMDRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491609; c=relaxed/simple;
-	bh=9jjT9Dmx0RQm05fQny9n8MFl7tgWSAUjesLzAN+0AT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgJ0GKznsIN/gxrMDTmF/t5VV1vlbg/iSdRJiANNDakSunbEqteBVLxYNRWar07s7L8PrWv4ECEgOYwl81BSc8LlbUDkiaKc/zVekk+iFqs69GtOW67E+G2lt+nyOIlkQ12tih5rA2ha7tnFWSm+Y/oITodvqdQloZeHBdtFO3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfD87ieM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01353C4CEDD;
-	Tue, 25 Feb 2025 13:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740491609;
-	bh=9jjT9Dmx0RQm05fQny9n8MFl7tgWSAUjesLzAN+0AT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JfD87ieMMetexfqLp6L5lcahzIYrDkCYozMrkvYIKMq1V/87pCsepy9pn2D/9BnLA
-	 4VJAul4xJxvs1Panfee346L6irAbPuFEywwdWtUOpGeFxSCDdWi9rCaod1VFXPJacH
-	 yeXMKhTCpMc31743rh4f5GkppFSX6WFMWlSdq+JYzeSeVOHIA1ij9uijH8kY9eqJWn
-	 R8o+g3nnWPZXAPt2pzzGW6ER9Qw2GZAl35tdrMu9oFBmjdEbZLzCP8ChbajCY6R7O2
-	 9PkHtevssRqWItxqD7se2768QYSzwsfL375S1z6X6uBg5rS1f5jKWa+Pkq5sv/6316
-	 c/+zHtkfQs1Iw==
-Date: Tue, 25 Feb 2025 14:53:24 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Matthew Brost <matthew.brost@intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/sched: Fix outdated comments referencing thread
-Message-ID: <Z73LVBw7HXANVbHQ@cassiopeiae>
-References: <20250225131332.83415-2-phasta@kernel.org>
+	s=arc-20240116; t=1740491613; c=relaxed/simple;
+	bh=0fm8dD2GSkal7pX6wfp5ldr/EGe8/x09E5/sp8nkiRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WRB+a2UeRr88cUu+vQbz59PlPVTkA6Mv0Va30h6x7BVRgn2expwOj0b9q6mF0oatbH7MPrlif6HCOcnvlfL/G+/ZiDmcgOrT/Kn1gEqV+wJzq3anwt56UC0noJYnL8p66CK06Sbwf4PQEpt1O/IQtIUIiKLJeYSjDrsLm3HkxSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G1mPuaKt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PCtUlA001910
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:53:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7+T0FemeMk1vQ5gyh6YIRlKas8xebx73MY0rmeqa9fo=; b=G1mPuaKtVzc6rcuV
+	CU+lzck6KziTNtt/ZgpmsArrjlHL+NEMOTTaeNr/IPFeGriD11MDKpbekFXtI4OL
+	YNjCet3WyBgSK+JkvsCbU7+trRI7JcSbt+xM14QE+tsT6WNkLqVxT7VWdVh8lBbj
+	fvoFwhHXrJOw6XPONF0k+fpDz3vE7HOV60c1f4J+CRdyuud4wCYfTEXyJVVuj2Pt
+	rnxxZLpd/T9Uw0l/4RgBWB8vuFKa23ZZQmBu3ASB7GO+tVe0TIlSsRsT+ZFnl8We
+	cE7SCbU8+4Yvvpq6pszcklsQcCs0JH7Yz2/cJ6UbCc1KAN3CDyb0cfluxNblP3B+
+	GyzvTg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4516nm9kpd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:53:31 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e66b3359f7so6749936d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:53:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740491610; x=1741096410;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+T0FemeMk1vQ5gyh6YIRlKas8xebx73MY0rmeqa9fo=;
+        b=kwYJzextE0aa5TwNBYqAF1M0+/HBrrBa4tk5EAUkW9G5eQVDv/SFkA0qUcC07FxUDg
+         TX7TsGKlMoaDyTzXLMyoyU8EAOjROd9Rurp9CPwb69M5Z6kXxSrpWRE9mhg/MrUNHyTt
+         4yMgPUG2GD1l8h8d4s4RyQnvITj+ZU0zvbKGVpCXAe1wEA8LWAu5thYctV8lQ8oJmgWS
+         kJcVwDQFnfRtXzj66kARi3j3N+wcsO6dNX04hWjL5hQmnTJoqv7EJIRTS06tHfL1X3ir
+         PeGoeSmM+vu/q4dfT7w+WZC+CTXPs5n6K7GFaQSizIxYVSlyST5vQbnAhP7e6PIf651X
+         CsoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuG5qgzF7kOAW98V8sXSqzG2Ffw7feu7u41hJvgh0vGsIffWmtFrrlYNYchj8xBgpkEd94uHIuepbv3vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDWqimTOU5Dj297Kdx3XWXF4+gke7OVToLTce9Crdks91f7CrF
+	2XJ84aNBewPzfkovyRaAeXSgye8G/xOQrnnC2cUwgVwEthDEnDVKOFMXX5LOPSMOu8r25dEEsZs
+	tQ81hBf1EFIoCZxYKg9kSFWY27dg0z3cvShDWafgyjxR7UVoQqNCHcEUBdeomX5M=
+X-Gm-Gg: ASbGncts/qOfBe+UCgdPzvh8a1iAKi1ZoG/OTSkbAnMEmc6GjXNbeDt37RXHkTcHNb/
+	nlQ80AoGjGE177Dqs3OkVGGuGTNIpyRLT7z73NQVTiA+w/IYctIXhZf4zxjStMZ8LFhgww9QUop
+	eLNCJu6vQtPZkGnz0tr8vGZxik+YSvZVXNSXGdQPJkmbBoU7qWRhec8ZeEtbdKTPSnStOKyUMgD
+	Jyik6AuGeZHsfXcVJloT1YNP+J6ESuaRvrlQLlbWKOQqx4m76kD9QIrVA3ULW3E+flk93YqPFei
+	ki3FSfkVVYkDRncvA//4/24obDXoeRDBY5P/w+uO4Kq4s/By21d8G04WiUXWEaYJcyB4Pw==
+X-Received: by 2002:ad4:5b8d:0:b0:6e6:60f6:56db with SMTP id 6a1803df08f44-6e6ae96757cmr86033956d6.6.1740491609837;
+        Tue, 25 Feb 2025 05:53:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFpLsxtECdHESHTNPzz/+xdF8LEgDeZCxkFo9jJSwp7RyqzIE6McvZorZtxRBNonQfFw/rxRg==
+X-Received: by 2002:ad4:5b8d:0:b0:6e6:60f6:56db with SMTP id 6a1803df08f44-6e6ae96757cmr86033856d6.6.1740491609479;
+        Tue, 25 Feb 2025 05:53:29 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abee2fe29fcsm45391666b.123.2025.02.25.05.53.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 05:53:28 -0800 (PST)
+Message-ID: <be947420-f37d-40e5-aedc-01acfaf25060@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 14:53:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225131332.83415-2-phasta@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcs615: add TRNG node
+To: Abhinaba Rakshit <quic_arakshit@quicinc.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250224-enable-trng-for-qcs615-v1-0-3243eb7d345a@quicinc.com>
+ <20250224-enable-trng-for-qcs615-v1-2-3243eb7d345a@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250224-enable-trng-for-qcs615-v1-2-3243eb7d345a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: HR6_hYrhfofI-lN6UWxsIleh6XAv2R1Z
+X-Proofpoint-GUID: HR6_hYrhfofI-lN6UWxsIleh6XAv2R1Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 adultscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250095
 
-On Tue, Feb 25, 2025 at 02:13:32PM +0100, Philipp Stanner wrote:
-> The GPU scheduler's comments refer to a "thread" at various places.
-> Those are leftovers stemming from a rework in which the scheduler was
-
-Maybe "leftovers from commit a6149f039369 ("drm/sched: Convert drm scheduler to
-use a work queue rather than kthread") [...]".
-
-> ported from using a kthread to workqueues.
+On 24.02.2025 10:50 AM, Abhinaba Rakshit wrote:
+> The qcs615 SoC has a True Random Number Generator, add the node
+> with the correct compatible set.
 > 
-> Replace all references to kthreads.
-> 
-> Fixes: a6149f039369 ("drm/sched: Convert drm scheduler to use a work queue rather than kthread")
-
-I suggest to drop the 'Fixes' tag, it's not a fix in the sense of this tag.
-
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
 > ---
->  drivers/gpu/drm/scheduler/sched_entity.c |  8 ++++----
->  drivers/gpu/drm/scheduler/sched_main.c   | 21 +++++++++++----------
->  include/drm/gpu_scheduler.h              | 12 ++++++------
->  3 files changed, 21 insertions(+), 20 deletions(-)
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 87f88259ddf6..f9811420c787 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -538,10 +538,10 @@ void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
->  		return;
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index f4abfad474ea62dea13d05eb874530947e1e8d3e..ab0bf68fdd8c2e223c242f70e779a3d9374292ea 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -973,6 +973,11 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>  			};
+>  		};
 >  
->  	/*
-> -	 * Only when the queue is empty are we guaranteed that the scheduler
-> -	 * thread cannot change ->last_scheduled. To enforce ordering we need
-> -	 * a read barrier here. See drm_sched_entity_pop_job() for the other
-> -	 * side.
-> +	 * Only when the queue is empty are we guaranteed that
-> +	 * drm_sched_run_job_work() cannot change entity->last_scheduled. To
-> +	 * enforce ordering we need a read barrier here. See
-> +	 * drm_sched_entity_pop_job() for the other side.
->  	 */
->  	smp_rmb();
->  
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index c634993f1346..015ee327fe52 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -389,7 +389,7 @@ static void drm_sched_run_free_queue(struct drm_gpu_scheduler *sched)
->   * drm_sched_job_done - complete a job
->   * @s_job: pointer to the job which is done
->   *
-> - * Finish the job's fence and wake up the worker thread.
-> + * Finish the job's fence and wake up the work item.
->   */
->  static void drm_sched_job_done(struct drm_sched_job *s_job, int result)
->  {
-> @@ -550,8 +550,8 @@ static void drm_sched_job_timedout(struct work_struct *work)
->  	if (job) {
->  		/*
->  		 * Remove the bad job so it cannot be freed by concurrent
-> -		 * drm_sched_cleanup_jobs. It will be reinserted back after sched->thread
+> +		rng@793000 {
+> +			compatible = "qcom,qcs615-trng", "qcom,trng";
+> +			reg = <0x0 0x00793000 0x0 0x1000>;
+> +		};
 
-Not related to your patch, but I assume this means "cannot be freed by
-concurrent calls to drm_sched_job_cleanup()", which would still be incorrect,
-since drm_sched_job_cleanup() doesn't free the job itself. Maybe you want to fix
-this as well?
+Please move it so that the nodes are sorted address-wise
 
-> -		 * is parked at which point it's safe.
-> +		 * drm_sched_cleanup_jobs. It will be reinserted back after the
-> +		 * scheduler's workqueues are stopped at which point it's safe.
-
-You don't know whether the workqueues are "stopped". I think you want to say
-that run_job / free_job work isn't scheduled or running.
-
-Same for a couple more instances below.
-
->  		 */
->  		list_del_init(&job->list);
->  		spin_unlock(&sched->job_list_lock);
-> @@ -597,10 +597,10 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
->  
->  	/*
->  	 * Reinsert back the bad job here - now it's safe as
-> -	 * drm_sched_get_finished_job cannot race against us and release the
-> +	 * drm_sched_get_finished_job() cannot race against us and release the
-
-Not related to the patch, but fine for me, since you do it for consistency with
-the change below.
-
->  	 * bad job at this point - we parked (waited for) any in progress
-> -	 * (earlier) cleanups and drm_sched_get_finished_job will not be called
-> -	 * now until the scheduler thread is unparked.
-> +	 * (earlier) cleanups and drm_sched_get_finished_job() will not be
-> +	 * called now until the scheduler's workqueues are unparked.
-
-workqueues are unparked?
-
->  	 */
->  	if (bad && bad->sched == sched)
->  		/*
-> @@ -613,7 +613,8 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
->  	 * Iterate the job list from later to  earlier one and either deactive
->  	 * their HW callbacks or remove them from pending list if they already
->  	 * signaled.
-> -	 * This iteration is thread safe as sched thread is stopped.
-> +	 * This iteration is thread safe as the scheduler's workqueues are
-> +	 * stopped.
->  	 */
->  	list_for_each_entry_safe_reverse(s_job, tmp, &sched->pending_list,
->  					 list) {
-> @@ -678,9 +679,9 @@ void drm_sched_start(struct drm_gpu_scheduler *sched, int errno)
->  	struct drm_sched_job *s_job, *tmp;
->  
->  	/*
-> -	 * Locking the list is not required here as the sched thread is parked
-> -	 * so no new jobs are being inserted or removed. Also concurrent
-> -	 * GPU recovers can't run in parallel.
-> +	 * Locking the list is not required here as the scheduler's workqueues
-> +	 * are paused, so no new jobs are being inserted or removed. Also
-> +	 * concurrent GPU recovers can't run in parallel.
->  	 */
->  	list_for_each_entry_safe(s_job, tmp, &sched->pending_list, list) {
->  		struct dma_fence *fence = s_job->s_fence->parent;
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 50928a7ae98e..7da7b0b52a7e 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -192,8 +192,8 @@ struct drm_sched_entity {
->  	 * @last_scheduled:
->  	 *
->  	 * Points to the finished fence of the last scheduled job. Only written
-> -	 * by the scheduler thread, can be accessed locklessly from
-> -	 * drm_sched_job_arm() if the queue is empty.
-> +	 * by &struct drm_gpu_scheduler.submit_wq. Can be accessed locklessly
-> +	 * from drm_sched_job_arm() if the queue is empty.
->  	 */
->  	struct dma_fence __rcu		*last_scheduled;
->  
-> @@ -426,14 +426,14 @@ struct drm_sched_backend_ops {
->  	 * Drivers typically issue a reset to recover from GPU hangs, and this
->  	 * procedure usually follows the following workflow:
->  	 *
-> -	 * 1. Stop the scheduler using drm_sched_stop(). This will park the
-> -	 *    scheduler thread and cancel the timeout work, guaranteeing that
-> -	 *    nothing is queued while we reset the hardware queue
-> +	 * 1. Stop the scheduler using drm_sched_stop(). This will stop the
-> +	 *    scheduler's workqueues and cancel the timeout work, guaranteeing
-> +	 *    that  nothing is queued while we reset the hardware queue
->  	 * 2. Try to gracefully stop non-faulty jobs (optional)
->  	 * 3. Issue a GPU reset (driver-specific)
->  	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
->  	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
-> -	 *    jobs can be queued, and the scheduler thread is unblocked
-> +	 *    jobs can be queued, and the scheduler's workqueues be started again.
->  	 *
->  	 * Note that some GPUs have distinct hardware queues but need to reset
->  	 * the GPU globally, which requires extra synchronization between the
-> -- 
-> 2.48.1
-> 
+Konrad
 
