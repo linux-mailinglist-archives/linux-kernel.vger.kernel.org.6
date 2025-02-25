@@ -1,113 +1,165 @@
-Return-Path: <linux-kernel+bounces-531437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3550FA44087
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:20:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1AEA44081
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE5417FF69
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FDE440BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA98F2698AF;
-	Tue, 25 Feb 2025 13:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB186268FDB;
+	Tue, 25 Feb 2025 13:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuF6w+6q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5Vfqr2W"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C9726982F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA5F2690C8;
+	Tue, 25 Feb 2025 13:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489258; cv=none; b=NKdVMT+T0gYInFy7GrL9LxRKmFn6QWpLt5F4Yazw0iNH09xuQi9SGWMW2m5B4De1m7QKKzNTzQ5Uu8uWNsI6IoJqrU4F12R8IT8/2kNZFaWvWWqAW7qFGP09+OsqF9IAAU7FBbsngbxmR8RTzwWi7iQ/J8jKFc6rr3f5nxdPp0Y=
+	t=1740489233; cv=none; b=agFNh5yGEsGEfyXLxCl5xiWh3eZeSff4DGGo6WKnIK7ZTfpAH8l28S590AL8TJOdfilqoHHb5wwT6oQ4fNmDL44aLQKdP94b5yDe74IpnCG8cQVxlrXMXYfUUAWVlu9E6uG6naEtRZVIo0r7OXvybUnZIcVQpA3brLtZb1f39Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489258; c=relaxed/simple;
-	bh=Bhp6PbDhhFe8mAEBp5rNuHjMn4cQ68XhArMiM1W9hj0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AYw1+SPQNocdPeS9Yw8KZxnyEw3kOoVc4LfpUKDA1ZSfRpT/tJzup1DAbmN+Ol3iKDCBPDzPCvcn/mRwlbtrTss4jcP23Zeadx/g4jhdgIjolFhB0M/BbrNdmYhxSm2fgKGouqefkyKzSoVI47GbNaq9hkHlH6ygU+9sUi8Izc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuF6w+6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0CBC4CEE6;
-	Tue, 25 Feb 2025 13:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740489255;
-	bh=Bhp6PbDhhFe8mAEBp5rNuHjMn4cQ68XhArMiM1W9hj0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CuF6w+6qjVigVJZkDmwvBn+Sx0iSbeYdO3MCwdWUTqRqVnmB/Sa73RJxdyOAGddx6
-	 7MaoMF9M6pCNdUMUTp8DN13Hr+8r5/lyD3JQzUB5b5hZzk6lx99S709IlWHBU/PEtb
-	 dQA0X66Sa2KZVPtqaelKrLSaSWk2l6IeIA7FtFD4gmTq9dOlRlf2Zy3kd/LTw5IuDQ
-	 hFl8mOkROADnvSQ28J26FI0NjHGRGfsgpOY5HmIKDUEOP9LPrdJP51L3EsEK52+olv
-	 mM4HybygvF33tv3gCLBjEuGrZc60hvIrFoEFjwx11lp5udtrNK2bM5n8DeapERGV+P
-	 oBn0EXSCcgtCg==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1740489233; c=relaxed/simple;
+	bh=6kRCQ7fXHrIH6ekv/Ss52bOswcnen3yxj0SgzL/vpsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrT3TJVVhXfywiJECrwecXi/69PqJDDMzKKiTwJDTs7RjqT16uWIHqGEBDrV8Kx8ajFQnlnrXHCiRqqoE3j1hwPzMyZtkZ4Hn90Rrzcf1uMQsvgUKoyBA4cwo3ha2aV/c/Fo1gkfqC6MM4fE4BIqXEDg6sbU5jwfC19jmRslZDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5Vfqr2W; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22113560c57so27039565ad.2;
+        Tue, 25 Feb 2025 05:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740489231; x=1741094031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9TsjSO1IWqsIvdlcJcY3GR2q1JpemyZTlLz+DhSQuM=;
+        b=F5Vfqr2W3zi6x8HIeLov93J6/jw5NBX3N1I/SSWeW67vU5sIg5HakhoIsPqn7+FW+P
+         MlSVGtHrx7zZ43yK/r5CqGNQ0bImTkfXrk3S9rB6GfM9Eg6a5tGNDIsULoNgpfEZIOvq
+         OwTgqzEEQJ/0BAcctM4q38mPSTKdoST+5kt3SJllpJhzjIuu9NFKF5ogH5mZxLmYLT6G
+         w1hWWw8UYYTPvCfZcgq2gbHgxEdMSmr8pCVWEyBbHYdphJ59W74SglFn0Xml6MUEPAO0
+         hU3NcWQGUnXE8SQvwWpyDYNKLmybaZwAPH7U++L/UVJPCsEkUSh7Fk73rah565I+cbDT
+         oHBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740489231; x=1741094031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z9TsjSO1IWqsIvdlcJcY3GR2q1JpemyZTlLz+DhSQuM=;
+        b=jxL+yxDBLYl3Qp/uRzFs9Ix3l2MjvEtHapysnAkhsSi+oADbCy4/VZsQkF01kSDK5e
+         mS9+9jxuhQWfLbB/eMAht+PNZiROCFPJQJZXDr/NUUu5wOiKb3XpKVnIcWj+eBb6nhKg
+         wRgtXtFuK/PKKc5X4Eb7l2QNWlpZDbArbCuOke3DuQuj1jKnS92IRybmYcDQ+KZM677b
+         hp3uHuWvfkPQSOHLWBsQ99xcoRrRQX+e8PhZFE1WqeiMC+6MdmsWphCjOPhSYg5gJ8bA
+         pW4GiAcUo5RyymGImfqms+/nJu/CGGdTC9SUYvD5IRdphsLkvh9CH6B8d7UuRUuWdiZ7
+         y4Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUiLup6UKJOsPYYTMrWnRP5+kgsVnTiFRErCuL7UzUTOVm++qmuN9DA0eUZPh+NLmk7pcqw0HDH+ZcG04c=@vger.kernel.org, AJvYcCWxddEzxUw79qPJepphbJSO8NieHc7KyWy2s+RwnrAJSgHMJcUU2ORwpLBfOj2mpQoU+wy8WUEPEvWbcbuyuiWz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMvjpC6IsQs3MWBaouLwyDiTRfg5hKE3inV5LKFA3RIZM+Nawl
+	UwmcBVoqGXcjzfZ2zCXN7tF15pz0mbi7LKjjzGA+TD/2vhv5R4SYlKWwBZkx6FG6kw==
+X-Gm-Gg: ASbGncuX4sFjhP6Jh4SNqcoqyf2jZfFYkNTFcVNipCr+B/TIOaamYAgbF/lRXWOVCQv
+	090LjyCqW/udh76XlMt8Z8FVrkpLUnc+t52InDcd6Mbuo7tpy6FJUhFITIzSaKQB2fYYofph+rE
+	YzP7j9iVT0FyZZPg4MSCrNpeiZTNvEbGCU+QqN3Q3uQOMGHHwuQJiGqP1A6pXkIlMbtnF0bs5Tx
+	Z9VQh9IqX7wBLMCLknvJb59FvACUUvfkRf9B6fEQVPE4Y+WfnxMAWqbpbsnCAxrVgDBp4LuXQEe
+	qSvV1w0U6YR69EtBVqBV6PEvQhHGrsE=
+X-Google-Smtp-Source: AGHT+IHJeOQlK9PS9RNyAPhLNtr0dg5YGqS2UGl7RUfoXHxhWKx8lHHwKT7XMi/jaVu93pbVEFfEkw==
+X-Received: by 2002:a17:903:2282:b0:216:644f:bc0e with SMTP id d9443c01a7336-221a10dddbbmr308706845ad.24.1740489230926;
+        Tue, 25 Feb 2025 05:13:50 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092ce6sm13476975ad.127.2025.02.25.05.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:13:50 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:13:43 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
+	Jarod Wilson <jarod@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/sched: Remove kthread header
-Date: Tue, 25 Feb 2025 14:13:34 +0100
-Message-ID: <20250225131332.83415-4-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225131332.83415-2-phasta@kernel.org>
-References: <20250225131332.83415-2-phasta@kernel.org>
+Subject: Re: [PATCHv2 net 1/3] bonding: move mutex lock to a work queue for
+ XFRM GC tasks
+Message-ID: <Z73CBzgTVucuOMMb@fedora>
+References: <20250225094049.20142-1-liuhangbin@gmail.com>
+ <20250225094049.20142-2-liuhangbin@gmail.com>
+ <a658145a-df99-4c79-92a2-0f67dd5c157b@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a658145a-df99-4c79-92a2-0f67dd5c157b@blackwall.org>
 
-The kthread header doesn't need to be included anymore. It's a relict
-from the days when the scheduler was still using a kthread instead of
-workqueues.
+On Tue, Feb 25, 2025 at 01:05:24PM +0200, Nikolay Aleksandrov wrote:
+> > @@ -592,15 +611,17 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
+> >  	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
+> >  out:
+> >  	netdev_put(real_dev, &tracker);
+> > -	mutex_lock(&bond->ipsec_lock);
+> > -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+> > -		if (ipsec->xs == xs) {
+> > -			list_del(&ipsec->list);
+> > -			kfree(ipsec);
+> > -			break;
+> > -		}
+> > -	}
+> > -	mutex_unlock(&bond->ipsec_lock);
+> > +
+> > +	xfrm_work = kmalloc(sizeof(*xfrm_work), GFP_ATOMIC);
+> > +	if (!xfrm_work)
+> > +		return;
+> > +
+> 
+> What happens if this allocation fails? I think you'll leak memory and
+> potentially call the xdo_dev callbacks for this xs again because it's
+> still in the list. Also this xfrm_work memory doesn't get freed anywhere, so
+> you're leaking it as well.
 
-Remove the unneeded includes.
+Yes, I thought this too simply and forgot free the memory.
+> 
+> Perhaps you can do this allocation in add_sa, it seems you can sleep
+> there and potentially return an error if it fails, so this can never
+> fail later. You'll have to be careful with the freeing dance though.
 
-Fixes: a6149f039369 ("drm/sched: Convert drm scheduler to use a work queue rather than kthread")
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-I'm not sure whether we should Cc the stable kernel. It's inconvenient
-and makes build times slower, but isn't really a bug.
----
- drivers/gpu/drm/scheduler/sched_entity.c | 1 -
- drivers/gpu/drm/scheduler/sched_fence.c  | 1 -
- 2 files changed, 2 deletions(-)
+Hmm, if we allocation this in add_sa, how to we get the xfrm_work
+in del_sa? Add the xfrm_work to another list will need to sleep again
+to find it out in del_sa.
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index f9811420c787..e55b98af8a50 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -21,7 +21,6 @@
-  *
-  */
- 
--#include <linux/kthread.h>
- #include <linux/slab.h>
- #include <linux/completion.h>
- 
-diff --git a/drivers/gpu/drm/scheduler/sched_fence.c b/drivers/gpu/drm/scheduler/sched_fence.c
-index e971528504a5..d6239e015b66 100644
---- a/drivers/gpu/drm/scheduler/sched_fence.c
-+++ b/drivers/gpu/drm/scheduler/sched_fence.c
-@@ -21,7 +21,6 @@
-  *
-  */
- 
--#include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
--- 
-2.48.1
+> Alternatively, make the work a part of struct bond so it doesn't need
+> memory management, but then you need a mechanism to queue these items (e.g.
+> a separate list with a spinlock) and would have more complexity with freeing
+> in parallel.
 
+I used a dealy work queue in bond for my draft patch. As you said,
+it need another list to queue the xs. And during the gc works, we need
+to use spinlock again to get the xs out...
+
+> 
+> > +	INIT_WORK(&xfrm_work->work, bond_xfrm_state_gc_work);
+> > +	xfrm_work->bond = bond;
+> > +	xfrm_work->xs = xs;
+> > +	xfrm_state_hold(xs);
+> > +
+> > +	queue_work(bond->wq, &xfrm_work->work);
+> 
+> Note that nothing waits for this work anywhere and .ndo_uninit runs before
+> bond's .priv_destructor which means ipsec_lock will be destroyed and will be
+> used afterwards when destroying bond->wq from the destructor if there were
+> any queued works.
+
+Do you mean we need to register the work queue in bond_init and cancel
+it in bond_work_cancel_all()?
+
+Thanks
+Hangbin
 
