@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-532144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3912EA44978
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:06:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DBAAA44950
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A063A7B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904D442019B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7DF19DF81;
-	Tue, 25 Feb 2025 17:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB4119F116;
+	Tue, 25 Feb 2025 17:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1DRvSYv"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WefaRd7P"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B1036D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE4319D898
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506384; cv=none; b=MxHXB6XmdusmbyjtBhKiAOwRIDsyty/I+VxTBnbvD9/G/zJ02J4DvfsjTgaVdbkmuPwXr69OicJxbGnDvMsAn5oeSCdwmLRuBlE+rCoreKfOq7HdPuLFuk7LBiO3if3WtWy+TcfIZLZKqdpr+pwY0HrEEIwB8yKz0fnL1QNd9mM=
+	t=1740506386; cv=none; b=oXKQ/HpV6T6f5Xt7WiL/d9RFyfQ+oRSEX8cNXzonyK1uyCSygEmQX9kyFfvjaZVFnStrETlA2m6wjG1pNB7FYQiARa094YZp5P4Z2aRBeANCSmyoL1kw/CjIsYynEpEfj6tDUXSm1oCv/aR4uDIKRRiFrQIxaa3n1LySKsO/cB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506384; c=relaxed/simple;
-	bh=66chWspf+9/yJYzIwwRhoGQweWniqAt59VXvA4reaXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i+GorMAxVRGz4bRFH+pcoK8EAAvljJd/GkHOBHrq+s4mZBtvmgTYhP3EioRWhrNCBSDM1VO2F/e79Vwyc5o9Cg/fNuarTFWSfZvzB2XdBYRfyWaHklCzmGWg5NlEcpStjUxdM6hpC3eAc6W8PXL5ufO1ArYGQ3SAa6Q6+Q69jgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1DRvSYv; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1740506386; c=relaxed/simple;
+	bh=x8q2LQoaUnOBaiP5jsGvS/C96mTK7nmUfaD9bWRUJsg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vEopilnk5mRmvXaOxP1gsaN1kbgbmDK/wk0d0nzcDwPoCxmmDawVXJooOjTCGGWjGrvtT9yAvkzAPDNSUGgCPi4v2S84f6GjM1ZBUAaLgKtSR2xWjT1Cw+YKBR3dAHC+QwgDM4ET5p/QlUWQNTuGSyBAWF95uG+Yd+Icj5ec7Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WefaRd7P; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4398738217aso51872215e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:41 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso37847605e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740506380; x=1741111180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlOTh4h5umgfceAsa2lYGRUvci2slvisxc9CBcNpu8A=;
-        b=B1DRvSYvYFI6HP6bVmQhcpiJMB/V8Et78NztXN19wpNk8wu6eiBpPcbMHEjh51ci6q
-         NyT5sOWRFJpFWo1uwqI/fxqM2sb6V0Et895ka94W92v0UPyjMkhFs8VFTiLYR4HRexPC
-         qO89a8bUHm5Q9RuJ3NZ9i9dXIcA+Clr1bnly8Scvw1sw4+9YBTw5M9oNPYuoQk1VgVcS
-         Hwx7LPVL0tt1J1EB1yUPUE6fD3J3pSSjrpi1mhTbadWx8dm+DdV7gZa3I+IKYtQLPkZf
-         pugtUXqbVPjaEBpfbVxSXpChctozcdUTnUO2ZLiFa77M+w7lRsRuU2raGc83uWpPWL6F
-         V9BQ==
+        d=gmail.com; s=20230601; t=1740506382; x=1741111182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDEi+IB29m5kaXCQs1Xh/NAR1EeJ74QIHesF2OX+9WQ=;
+        b=WefaRd7PVvn2lGzK2n9XrXjYSJE8s64MYkUe2XtfNRm8zfd+wEMDnqogIH5eotzy28
+         9A9uzblydUlOOqGdC2OQR3B6r4Dq9l3znxHnAsiVSyRgpu/lKzuUpFuK8rWq2RajsfBI
+         ZpxNMGXiugR99R3UWMfRr9hn4gDmG+pHOChGlX5ua0hGEKCtZy0287N16UWdW4Re9UO+
+         AyxDRGjz95i38nyI3Fxsj2YXVUvABvVRDtPipY7IL2D3r0K9ukuhjOnzeFW3kcA3XWBQ
+         Vo6lPMeVEfJhsicGYhxJKQzpwBuRQjFkRe53ocyFrBzqy2+sTENf2j41dI8I7mbNRkTz
+         on3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506380; x=1741111180;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IlOTh4h5umgfceAsa2lYGRUvci2slvisxc9CBcNpu8A=;
-        b=EaeMg3dhkdHmgFN6RKuAO5Kh5ljY9LuCw4pnZy9GEJWzTe07ZtGVfK9EvNR+2/TKJk
-         jk5pO4lyGZNIP/902SlmHcXkM4+DMPRyg8tzxezCdZtGLGiECyT4iqTVUGVTZaS+I8FS
-         7Q6peEOsVnXnk+yzlA6USwGILH/M4Y0IjxPEFn1XR4cvLiyHwgugumdkbSr6LAIQ83BU
-         QHcBR7Ov38zKWWu1zJZeiOfp/aswu7KrnjtrVDU9LCIQdEKOIT9l6d36S1r1adwGu6GS
-         2dhpt6bmS8MP+8yaRJYfLtDUWrDMfiYRcLP0blvnX3D6MflStGeJjb9EVQj5AoPm5FyG
-         Bm3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6JG4ZVzAyi8BjDLmTP0k9xP2rLorgpwzoH6UEMA461wPvFbvyF/rIUF3x5kOQBh9HpY8gKt19ILCXTjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzapYA/fx07TzeoRBII+cI2vBh3wmbZdNdWVLYRGsKWMiaQ8VqF
-	AxCQusMI0FozOkWc1y3ZZIsZZVKZjguERq7qfs/LG1cr3NF884Iw
-X-Gm-Gg: ASbGncspx3P94kf9K60hxZcQ7V17cGRlC43pRHAPh9dwwiYmOo7e/91zc8d0kYMAcy3
-	wg2WdlGLbSW+S/d7KYr3YoJPqD34NjXH/Vvh9yOiL1Xc9uZToH/VWZojH37Yo3ytltru5M7Pq+7
-	2xYuD2Qc2/i0x0xv9Ps9MrTBpGRehfMViyMpCwpVA9AYBuKaNEMDiNGe9bAXJEYpJjtjxuvd3s4
-	sCJMVHYkUdd1lG/EBJmeV0iBnettYbtG03DvTp7gIy/5/KFrEOFcr5sXt7Yw5ukdiUE0+Hk+icM
-	hCoE53BwLGoENFaIW41hflgUC94z
-X-Google-Smtp-Source: AGHT+IGuSG3h6hJ/vOasWsVyZxPpD2r1u0MXUGz76IbPsnd7FNLvlfpPyt2hgkVddWuEr6cU5pi9tQ==
-X-Received: by 2002:a05:600c:190e:b0:439:689b:99eb with SMTP id 5b1f17b1804b1-43ab8fd8768mr4629045e9.7.1740506380040;
-        Tue, 25 Feb 2025 09:59:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740506382; x=1741111182;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zDEi+IB29m5kaXCQs1Xh/NAR1EeJ74QIHesF2OX+9WQ=;
+        b=OIkcwvAiG3A3F2KW5/SWo/vqyrI1pgnkf/1vCPpMZchZivuxt20i/I27kp8yoawKUp
+         y4SFLqzZB1LC+qlDSXvaEDEiI/sQ+XTGprBF/oEcggCXFVXKUcCcKmzzfOJG9UEGgZYO
+         JtB8coys5LtVDuaYEkDWDux61krXx/wQgLqXQytAhR1H/M2u9cafr5mYEqzF+YnBmHY4
+         mVwbOqovuxR6w6n7Ca0e2IHYVwJWU40SW50FfHqN8L5P7q05Y3bcYj6pgkirkLMhSgMD
+         QBelnLcvSRRMN5f4JhjhnInA4KjxIQH/6NMztI6i2yQw+WokqKvla6m+a7tUUk1+epCe
+         0g5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVdQyHeXjaL2Ou4tlknScLiSUzhwMjT3uLEAyEH5LSR7F69IiYogsZ14jyWIntMcQFzDWDfhFIO7szbZvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxecfi2vbtFUJfhgl/mhSzWMofyWXU1c99P0kcmgg65xAS5cGxy
+	4uFCGoNJhMzu8u70rByvwZ5X4xHVuKIIaWdPmcKwg+u6eYadYBDh
+X-Gm-Gg: ASbGncueH7ZLgce0Rr+Ekie+WQCidotTYscwZ7Tts+kUXZZHK4EKf7h5jxT6+R2cdMX
+	6k1uzyFWVDv47T0UeuJ0BhrIiIZFvO9TIAeY9N9WvceYDFLShHqJsGeWGpZWNNuqnBJh+DtWBzI
+	jWiGQyexZcmDmWbCuPf2W2AmdAagfyx0iOQMyXSet5BqV+mulmkQXSYC3x3cvOIEapPMH1jxJL6
+	zsa4bZVHmWkH1K8oUwpGgEd6quHUKYLK22EJtq4kfphZwI13jFu6LiKhET+oVai4uv0T/0x/9he
+	stGK3ckktgMI/vGG1pDppmEbGS/l
+X-Google-Smtp-Source: AGHT+IGLk9bjzumLU58MNpaygHhKj7RjQYegcaCcfgsinAKj5M6r6P6pmCzsRocIk9CriKFeU9tX1A==
+X-Received: by 2002:a05:600c:4f0d:b0:439:98ca:e3a4 with SMTP id 5b1f17b1804b1-43ab90169d5mr4187105e9.19.1740506381786;
+        Tue, 25 Feb 2025 09:59:41 -0800 (PST)
 Received: from fedora.. ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:59:39 -0800 (PST)
+        Tue, 25 Feb 2025 09:59:40 -0800 (PST)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: hamohammed.sa@gmail.com,
@@ -81,10 +83,12 @@ Cc: hamohammed.sa@gmail.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v2 00/16] drm/vkms: Add configfs support
-Date: Tue, 25 Feb 2025 18:59:20 +0100
-Message-ID: <20250225175936.7223-1-jose.exposito89@gmail.com>
+Subject: [PATCH v2 01/16] drm/vkms: Expose device creation and destruction
+Date: Tue, 25 Feb 2025 18:59:21 +0100
+Message-ID: <20250225175936.7223-2-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250225175936.7223-1-jose.exposito89@gmail.com>
+References: <20250225175936.7223-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,93 +98,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi everyone,
+In preparation for configfs support, expose vkms_create() and
+vkms_destroy().
 
-This series, to be applied on top of [1], allow to configure one or more VKMS
-instances without having to reload the driver using configfs.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+---
+ drivers/gpu/drm/vkms/vkms_drv.c |  4 ++--
+ drivers/gpu/drm/vkms/vkms_drv.h | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-The series is structured in 3 blocks:
-
-  - Patches 1..11: Basic device configuration. For simplicity, I kept the
-    available options as minimal as possible.
-
-  - Patches 12 and 13: New option to skip the default device creation and to-do
-    cleanup.
-
-  - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
-    part of the minimal set of options, but I included in this series so it can
-    be used as a template/example of how new configurations can be added.
-
-The process of configuring a VKMS device is documented in "vkms.rst".
-
-Finally, the code is thoroughly tested by a collection of IGT tests [2].
-
-Best wishes,
-José Expósito
-
-[1] https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
-[2] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071.html
-
-Changes in v2:
-
-  - Applied review comments by Louis Chauvet: (thanks!!)
-    - Use guard(mutex)(...) instead of lock/unlock
-    - Return -EBUSY when trying to modify a enabled device
-    - Move the connector hot-plug related patches to the end
-  - Rebased on top of drm-misc-next
-  - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
-
-José Expósito (16):
-  drm/vkms: Expose device creation and destruction
-  drm/vkms: Add and remove VKMS instances via configfs
-  drm/vkms: Allow to configure multiple planes via configfs
-  drm/vkms: Allow to configure the plane type via configfs
-  drm/vkms: Allow to configure multiple CRTCs via configfs
-  drm/vkms: Allow to configure CRTC writeback support via configfs
-  drm/vkms: Allow to attach planes and CRTCs via configfs
-  drm/vkms: Allow to configure multiple encoders via configfs
-  drm/vkms: Allow to attach encoders and CRTCs via configfs
-  drm/vkms: Allow to configure multiple connectors via configfs
-  drm/vkms: Allow to attach connectors and encoders via configfs
-  drm/vkms: Allow to configure the default device creation
-  drm/vkms: Remove completed task from the TODO list
-  drm/vkms: Allow to configure connector status
-  drm/vkms: Allow to update the connector status
-  drm/vkms: Allow to configure connector status via configfs
-
- Documentation/gpu/vkms.rst                    | 100 ++-
- drivers/gpu/drm/vkms/Kconfig                  |   1 +
- drivers/gpu/drm/vkms/Makefile                 |   3 +-
- drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
- drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
- drivers/gpu/drm/vkms/vkms_config.h            |  26 +
- drivers/gpu/drm/vkms/vkms_configfs.c          | 807 ++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
- drivers/gpu/drm/vkms/vkms_connector.c         |  26 +-
- drivers/gpu/drm/vkms/vkms_connector.h         |  18 +-
- drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
- drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
- drivers/gpu/drm/vkms/vkms_output.c            |   2 +-
- 13 files changed, 1045 insertions(+), 16 deletions(-)
- create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
- create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-
-
-base-commit: 130377304ed09e54ff35a8974372498aad7059f3
-prerequisite-patch-id: 1bff7bbc4ef0e29266265ac3dc009011c046f745
-prerequisite-patch-id: 74a284d40a426a0038a7054068192238f7658187
-prerequisite-patch-id: c3e34e88ad6a0acf7d9ded0cdb4745a87cf6fd82
-prerequisite-patch-id: 9cd0dfaf8e21a811edbe5a2da7185b6f9055d42d
-prerequisite-patch-id: f50c41578b639370a5d610af6f25c2077321a886
-prerequisite-patch-id: 5a7219a51e42de002b8dbf94ec8af96320043489
-prerequisite-patch-id: 67ea5d4e21b4ce4acbd6fc3ce83017f55811c49b
-prerequisite-patch-id: 37a7fab113a32581f053c09f45efb137afd75a1b
-prerequisite-patch-id: 475bcdc6267f4b02fb1bb2379145529c33684e4f
-prerequisite-patch-id: d3114f0b3da3d8b5ad64692df761f1cf42fbdf12
-prerequisite-patch-id: d1d9280fb056130df2050a09b7ea7e7ddde007c5
-prerequisite-patch-id: 2c370f3de6d227fa8881212207978cce7bbb18ba
-prerequisite-patch-id: 938b8fe5437e5f7bc22bffc55ae249a27d399d66
-prerequisite-patch-id: ab0a510994fbe9985dc46a3d35e6d0574ddbb633
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index a24d1655f7b8..23817c7b997e 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -146,7 +146,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
+ 	return vkms_output_init(vkmsdev);
+ }
+ 
+-static int vkms_create(struct vkms_config *config)
++int vkms_create(struct vkms_config *config)
+ {
+ 	int ret;
+ 	struct platform_device *pdev;
+@@ -229,7 +229,7 @@ static int __init vkms_init(void)
+ 	return 0;
+ }
+ 
+-static void vkms_destroy(struct vkms_config *config)
++void vkms_destroy(struct vkms_config *config)
+ {
+ 	struct platform_device *pdev;
+ 
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index a74a7fc3a056..2ad8e3da3b7b 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -223,6 +223,26 @@ struct vkms_device {
+ #define to_vkms_plane_state(target)\
+ 	container_of(target, struct vkms_plane_state, base.base)
+ 
++/**
++ * vkms_create() - Create a device from a configuration
++ * @config: Config used to configure the new device
++ *
++ * A pointer to the created vkms_device is stored in @config
++ *
++ * Returns:
++ * 0 on success or an error.
++ */
++int vkms_create(struct vkms_config *config);
++
++/**
++ * vkms_destroy() - Destroy a device
++ * @config: Config from which the device was created
++ *
++ * The device is completely removed, but the @config is not freed. It can be
++ * reused or destroyed with vkms_config_destroy().
++ */
++void vkms_destroy(struct vkms_config *config);
++
+ /**
+  * vkms_crtc_init() - Initialize a CRTC for VKMS
+  * @dev: DRM device associated with the VKMS buffer
 -- 
 2.48.1
 
