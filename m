@@ -1,106 +1,185 @@
-Return-Path: <linux-kernel+bounces-530695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0166DA43707
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:10:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E931A436F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89C93BB10A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574753B3FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B9725D551;
-	Tue, 25 Feb 2025 08:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C8F25B665;
+	Tue, 25 Feb 2025 08:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QltTdTC7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aSd0uwaM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K82ey+kS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404D21577D;
-	Tue, 25 Feb 2025 08:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF024A1A;
+	Tue, 25 Feb 2025 08:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470934; cv=none; b=tGkO4OygFPUuB7Bx2g9AlGYF+LhUrySqNlpu4HUWrRf/53xt9oPhPdlxOfmMhEPGpIukPnpaDEYq1A36G4+uG0APCrVqJSyB3d2FIfWllGer39Sz/XcVtNbMjLnnIg5Z5zM7PY3REvjktqo97sTODjmFjKodfMTS93ImFdVU0eg=
+	t=1740470888; cv=none; b=Pf0cd/0QwiMle7wE2ElI/wZg2cbDTWAjIvG2CoOO7QiijMns96h2ZwIjpr/xrjfEcZbeNafPz2YAWgiMlOtgX7Ens6o1WTRSNA6OY7AIL57+tTpxLTIjnuEhVKm9hRg+actKRwn+uTzBWF4T3SGPV9B7zfzGPk6BYbixPGaiv6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470934; c=relaxed/simple;
-	bh=sQAfVvcp7n1ezVIbtvacOocV6jhjjc+IvNo1mmfimAs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D41EiHktmVu9RDjtpqW72wLKG4bcScMQYeK3CXKcehWJymzsUrxKSI7tjn6zZjH3fZe73eRoO0ig3mV8UNFjnpYa6CHR1soOdlFjJgEw9wfyOu3Jpj1CVNi0piTLfDksGYRWpuBjdw63fekFZpLHew/TD29D+MGdyj+OsHqenjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QltTdTC7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7FBC4CEDD;
-	Tue, 25 Feb 2025 08:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740470934;
-	bh=sQAfVvcp7n1ezVIbtvacOocV6jhjjc+IvNo1mmfimAs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=QltTdTC730e2XfTORBjLo/b8UfZZHeQCwQEBANfSrd3lgpPqdyodmLREjd7sM6I9m
-	 yOWRZ9+4ZYl9EjB97+sSBOv0rTolcXjcuU1rNOiRrgRncJcBlTBf350QHcjtVKrAfT
-	 5mTgpIXWX2iWvvI3xzQECPy4zQIFNVhu0OKqdZERZfSP4IP5GzvuvEHVymTUDi5vEb
-	 HDFcoY3qcmDxMEmtiDtvTcKqlsf1Wb3LSU5BAzSjodWkdxu9rN8rKa8g6Ba09VQFYn
-	 Hp0lWx0rSpJoALlhgDFjH3+rUsW8yGU4SIGE5Bc8X9K4ULxKdRXbZesZAc8RZZ83X8
-	 3PKaUilpjMvJw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Janne Grunau" <j@jannau.net>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis
- Chamberlain" <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
- <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
- <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing
- functions
-In-Reply-To: <CANiq72ns264CeAHPKv9m4rUxS7b8J6+2Mwrk=+xSEQs5wPNoxg@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Tue, 25 Feb 2025 02:51:33 +0100")
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
-	<20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org>
-	<20250224223032.GA615664@robin.jannau.net>
-	<d65H4u7WH99Iku0t8049xM2-SeBQVjpkNmYJdZadlG0WENXnb9BmG3U8DXYAQedZSSZ3C4ruU4D_cpEgwxgSxw==@protonmail.internalid>
-	<CANiq72ns264CeAHPKv9m4rUxS7b8J6+2Mwrk=+xSEQs5wPNoxg@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 09:07:51 +0100
-Message-ID: <87ikoyxx9k.fsf@kernel.org>
+	s=arc-20240116; t=1740470888; c=relaxed/simple;
+	bh=jDu0V+akQ3h725aTgIuKzINMQUKK/xDZt/5z+cC5YTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml1aEXrD7Oa/FPlOmdwjWRByq0pG8WGVvyCVxUepbtldQewSLD2Cbd8BjztnCnfOCRYd0FijDGUPMe4nG3wgS5/gxtaLs0iLpj/Xt0OqDZbOnPq4kDoPDq9Fh1lqIwmFjt15xrvjGcizxMCvq049O65wtXryNziTPvEM5zfvWtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aSd0uwaM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K82ey+kS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Feb 2025 09:08:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740470884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9SrLxlsEKlN3z3PPX6qEc7Y1rqFZZfeIMG6CIYjw5ec=;
+	b=aSd0uwaMRywXvfcwXz6E1s7WMMvPcS0fYeUImVK48trosJ/EnRp7LhEgrMV21c+66KVfb7
+	68PvEh3spC0ixnzYv27hMl+brE4z78pFErb/7JUsLrxuTKaycdO/GzJJFOmjtRtgTB7ugx
+	3TFTgnpMe7RT5g8tgvNX7T+N1G7Xg8VCUT3rNPT+kafdqaNq1r2L9oX8dt/bpYZTeGV7Qd
+	7mhK8dl9FaVKXK9mELw/pgmctxokVMVyuUjcU6Zx408mhtgNftILuvY9CPOhyIpVXxbrfB
+	3N8WtEHxXanUo9y89jAfzlXW+6aDBnEzFt5gUG0cjhzNo+yKZVFsV2VWSsKQSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740470884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9SrLxlsEKlN3z3PPX6qEc7Y1rqFZZfeIMG6CIYjw5ec=;
+	b=K82ey+kSuc3PRkirrZCoSiOX7lC9ayDulqa2XPhk/ii8GpYPFzo//WeKXtLq/Qxa8f55Jc
+	u70VogiGsVuYjhAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
+	ojeda@kernel.org, adobriyan@gmail.com, johannes@sipsolutions.net, 
+	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de, 
+	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, f.fainelli@gmail.com, 
+	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
+	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
+	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
+	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
+Subject: Re: [PATCH v7 3/7] mseal, system mappings: enable x86-64
+Message-ID: <20250225085728-24167715-8562-45a8-86cd-0ea503e4bc73@linutronix.de>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+ <20250224225246.3712295-4-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224225246.3712295-4-jeffxu@google.com>
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+Hi Jeff,
 
-> On Mon, Feb 24, 2025 at 11:30=E2=80=AFPM Janne Grunau <j@jannau.net> wrot=
-e:
->>
->> The errors go away after exchanging i128 with i64 (while breaking the
->> parsing for large values).
->
-> I don't think we can use 128-bit integers unconditionally for all
-> architectures (we could eventually get it to work for some though). So
-> we should do one of the other approaches discussed in the previous
-> versions, like call into the C one.
+On Mon, Feb 24, 2025 at 10:52:42PM +0000, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
+> 
+> Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on x86-64,
+> covering the vdso, vvar, vvar_vclock.
+> 
+> Production release testing passes on Android and Chrome OS.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  arch/x86/Kconfig          |  1 +
+>  arch/x86/entry/vdso/vma.c | 16 ++++++++++------
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 87198d957e2f..8fa17032ca46 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -26,6 +26,7 @@ config X86_64
+>  	depends on 64BIT
+>  	# Options that are inherently 64-bit kernel only:
+>  	select ARCH_HAS_GIGANTIC_PAGE
+> +	select ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
+>  	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+>  	select ARCH_SUPPORTS_PER_VMA_LOCK
+>  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
+> diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+> index 39e6efc1a9ca..1b1c009f20a8 100644
+> --- a/arch/x86/entry/vdso/vma.c
+> +++ b/arch/x86/entry/vdso/vma.c
+> @@ -247,6 +247,7 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
+>  	struct mm_struct *mm = current->mm;
+>  	struct vm_area_struct *vma;
+>  	unsigned long text_start;
+> +	unsigned long vm_flags;
+>  	int ret = 0;
+>  
+>  	if (mmap_write_lock_killable(mm))
+> @@ -264,11 +265,12 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
+>  	/*
+>  	 * MAYWRITE to allow gdb to COW and set breakpoints
+>  	 */
+> +	vm_flags = VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC;
+> +	vm_flags |= VM_SEALED_SYSMAP;
+>  	vma = _install_special_mapping(mm,
+>  				       text_start,
+>  				       image->size,
+> -				       VM_READ|VM_EXEC|
+> -				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+> +				       vm_flags,
+>  				       &vdso_mapping);
+>  
+>  	if (IS_ERR(vma)) {
+> @@ -276,11 +278,12 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
+>  		goto up_fail;
+>  	}
+>  
+> +	vm_flags = VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
+> +	vm_flags |= VM_SEALED_SYSMAP;
+>  	vma = _install_special_mapping(mm,
+>  				       addr,
+>  				       (__VVAR_PAGES - VDSO_NR_VCLOCK_PAGES) * PAGE_SIZE,
+> -				       VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|
+> -				       VM_PFNMAP,
+> +				       vm_flags,
+>  				       &vvar_mapping);
 
-I don't want to call into the C functions for this task if I can stay in
-safe Rust.
+This hunk (and the vvar mapping in the arm64 patch) will conflict with my
+"Generic vDSO datapage" series.
+That series is already part of the tip tree (branch timers/vdso) and scheduled
+for the next merge window.
 
-I think I can solve the issue by parsing into a unsigned version of the
-integer and then test the sign bit, or compare against the max value for
-the signed version.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=timers/vdso
 
+The conflict resolution is fairly easy:
+Move the new flag logic into lib/vdso/datastore.c
 
-Best regards,
-Andreas Hindborg
+Depending on the expected mainline timing for this series either mention this
+somewhere for the conflict resolution by Linus or rebase your series on top of
+tip/timers/vdso.
 
+>  	if (IS_ERR(vma)) {
+> @@ -289,11 +292,12 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
+>  		goto up_fail;
+>  	}
+>  
+> +	vm_flags = VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
+> +	vm_flags |= VM_SEALED_SYSMAP;
+>  	vma = _install_special_mapping(mm,
+>  				       addr + (__VVAR_PAGES - VDSO_NR_VCLOCK_PAGES) * PAGE_SIZE,
+>  				       VDSO_NR_VCLOCK_PAGES * PAGE_SIZE,
+> -				       VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|
+> -				       VM_PFNMAP,
+> +				       vm_flags,
+>  				       &vvar_vclock_mapping);
+>  
+>  	if (IS_ERR(vma)) {
+> -- 
+> 2.48.1.658.g4767266eb4-goog
+> 
 
