@@ -1,132 +1,137 @@
-Return-Path: <linux-kernel+bounces-530494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F3CA43423
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F22A43425
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:33:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B2817A97D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E653A9278
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8D318BC2F;
-	Tue, 25 Feb 2025 04:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E06C4314B;
+	Tue, 25 Feb 2025 04:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TYKoM9Zj"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IiDKaDWw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AE2156677
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EB81362;
+	Tue, 25 Feb 2025 04:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740457797; cv=none; b=r6EBfDY8bPK8YIHEKAM39pTaDKSsll1diu56okJ/hvQ2uz0ZtlngGrF8jgKVxGW3vbf2+MjeQrT3zF9UsS5PBfhSJ54hMcwjZUU6CAtYZeIDJugXR+sXXLv13ittsVuRLnTx54cvEsxhsQNmrAh5bmu6PwCF6iV2fw7cSFU8pmA=
+	t=1740457934; cv=none; b=QK16JAbavM+n8/4/6CeT3SzOZab55Vxw753Kz31r+BecnYHHfpMj0+YDqIEaUHjjjf25PWE/mCmGoirLn2jcP96swQHBeZF4wBnVB5WpQsweY0E1+Z8I+BCGH7yC64rJ6r8IvBAmfS3caqfkOslJujn/ugnZMJgW6MHup0r2KOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740457797; c=relaxed/simple;
-	bh=3MLJGP6GqWlRWzJ+lkwGmXXGqCvfjR7N+JVGex0eR+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a8+2aI+BNeFfqTVZ//AJBGuNRGBYMnUILgETcFyleZp+ganLbf/59rnoIBMoPn/USoQvwwc0ronWXhZBNpVWasqtqlzUFuCXDTGXCpwUgbiGxV09HviMJIP3IwbbofyD4kUWxCjRrsKjghBhnds4qabrj6JhtDdWL/XN22iNdTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TYKoM9Zj; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220d39a5627so78975585ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740457795; x=1741062595; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zXXlNPUUBPiKZkubtIkuAxkw7YXjV7aLOsj4Haw9B1U=;
-        b=TYKoM9ZjvRWlSJjXOiucz+T0n/qelIixOfEuidFIyzDZPtIFaZnLIabUmXxrjA4w+b
-         FFYro/ptCrShWksRvZ60pargKQzClDBImb+BmCaF09D2nOu8Hrsjb+JLAOSYyV2SDbHu
-         KdFHooXWjRDKEnPL8ApVKbALrXoE3BoL7uu0c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740457795; x=1741062595;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zXXlNPUUBPiKZkubtIkuAxkw7YXjV7aLOsj4Haw9B1U=;
-        b=qnEgg2AX6Wg6H6EIODhHYVA3xGtWNKgi5kVDpuFlNrzEXNqcuFc4/PV1MFbjOPcsM6
-         UgJlUK/rugDLJPp5PKdk31Vou5IkD7SPxHTN0M5k1VQG0uM1geI0nkNXANQBxiQ+1fc8
-         7PsrAAHXkm8WDdt2byRNowcpuLdBWLg0N+dhQekQR2kUseacMQnWZf6q2rByTCXb3aWS
-         N9fEHoFRkSFTjrtaCJPRQdCcm4ta+DqvGo9BbhbGxwDVcegYWTlYKWrpeXGQsF8VaZvM
-         +rGlN2FtfjGl48CC2C8NozAd1lTb7Rf7NSFI5BWUAmLftSo1ei8dmDKECKj7bCltNG5P
-         l+AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTASgnwwnZzLX2PsZxk2Zi61ncD/GAazQb6mBPXFB3dx/8kzEB2m2yLLpAzvadZTvgfQjbqn3XqyBqByI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTuRoE6fJbwjyRyDT6AX0vH3YutPyk+q1GzI63ICnsRL206+wG
-	faD64j/XMKxiiRTiF8xD0zYQDgGtyeCp3YqgIQBuYIHjK+jF+lSSrCkuMEIJaA==
-X-Gm-Gg: ASbGncu1CeFbhMrT4wer8RrViG0pyE9ijdFEiA4bLbWFZf+sOI4tK6T8E/7kDQ+nLAq
-	e+WDapbp+z5I9QMrw9vbOig37placisHonEYLWamh08sMkB0T9Y/whZImf8CZ1Tr5Lafr7fsCl1
-	l2NfIOyrqwLtbIFnEJZr5fDqN4k6NPi1ujNrsCdHZFu2zcyK6ZnTBRLZyBC6N9QoeEjr2z2XEdj
-	6JgPT7XLdpl9uVKUiABw1tfiOFlHrAyB+YEmcRO8q+eB15XsZFHEciaY1VgjZK0xEG+lvgmLq1n
-	zZL9/jOvB//M33CRiSdMZ71JUOIXhA==
-X-Google-Smtp-Source: AGHT+IHUMtzZMx8wOAQvNxvT5VlJCxbnuMeKFBQKuzIVUYr4CRGvYpaLooVV7rMLU8mEiyK7DpOnPQ==
-X-Received: by 2002:a05:6a00:14c1:b0:730:8e97:bd76 with SMTP id d2e1a72fcca58-73426cb143cmr21793645b3a.9.1740457795473;
-        Mon, 24 Feb 2025 20:29:55 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:e27d:842a:e0d1:29c4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f761fsm488585b3a.47.2025.02.24.20.29.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 20:29:55 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:29:49 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 12/17] zsmalloc: introduce new object mapping API
-Message-ID: <k3sjohhgao4zlu7nqjrwrbajctz65dtzg2aip42vjygpaiyg7r@hjwsb54qbjm2>
-References: <20250221222958.2225035-1-senozhatsky@chromium.org>
- <20250221222958.2225035-13-senozhatsky@chromium.org>
- <20250224090154.7Xlsipmu@linutronix.de>
+	s=arc-20240116; t=1740457934; c=relaxed/simple;
+	bh=irayXAisGUoUoGZvRyGhIKIP5KwuaCozyhuWr6IDiZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z/pRqNCJgioImvMvfMjAUMx6D2UwrIxPQCjI2isM5JsuT8UqmC5o706lu+Dgulzx/O5n9SRhNi5+KhuXcBnHkf0/GfKmx+A6GDXurrgjfYZDKEJgTYXIy5HKba+Yd2UNodxpzvEy3JXk+UwwlXzcbLPPTwfJzWhfdDkEdrS6g+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IiDKaDWw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740457922;
+	bh=ZuCR/MCGR9SvJt/L2yF3b+kYGVfqXq9PZC4o2gp9sDI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IiDKaDWwxo/KMCjJMm6aQahJnfouin+KXcG7iNA6g4T5aprgQeV2RMLJqxXfVNNxJ
+	 W5IW2k1YFwRseOMzcCHjfOgcaocjCh5sW3J79QVvWOdt0lC+QfQGQC4EK9NVcrfnVJ
+	 LKRCy7bhu9cs2rQuyT1oe8TYEPJ7tP94az9kWhXHuTPT1X20gXB9H8wKFIhwMfp34T
+	 xIJmtd/xdJg+YL72QfNGlt7Y5NurTWxq82IlR0zcGRm2TKq1Zv+dq2QMv5oTQH8NG5
+	 LJbqBaT6FxK8v0NfBo5IhJLqu8lF3/jeaeSjSdoKFjSTNflqFRh7jCdB/IUF2h30YS
+	 amOkR1jLaE5BQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z24Sd57p0z4wcj;
+	Tue, 25 Feb 2025 15:32:01 +1100 (AEDT)
+Date: Tue, 25 Feb 2025 15:32:00 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Bart Van Assche <bvanassche@acm.org>, John Garry
+ <john.g.garry@oracle.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
+Subject: linux-next: manual merge of the scsi-mkp tree with the tip tree
+Message-ID: <20250225153200.00773d86@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224090154.7Xlsipmu@linutronix.de>
+Content-Type: multipart/signed; boundary="Sig_/udWpU6YiEcQx+bGVEcRtS3X";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On (25/02/24 10:01), Sebastian Andrzej Siewior wrote:
-> Date: Mon, 24 Feb 2025 10:01:54 +0100
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> To: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>,  Yosry Ahmed
->  <yosry.ahmed@linux.dev>, Hillf Danton <hdanton@sina.com>, Kairui Song
->  <ryncsn@gmail.com>,  Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
->  linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v8 12/17] zsmalloc: introduce new object mapping API
-> Message-ID: <20250224090154.7Xlsipmu@linutronix.de>
-> 
-> On 2025-02-22 07:25:43 [+0900], Sergey Senozhatsky wrote:
-> > index 03710d71d022..1288a4120855 100644
-> > --- a/mm/zsmalloc.c
-> > +++ b/mm/zsmalloc.c
-> > @@ -1377,6 +1377,135 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
-> >  }
-> >  EXPORT_SYMBOL_GPL(zs_unmap_object);
-> >  
-> > +void *zs_obj_read_begin(struct zs_pool *pool, unsigned long handle,
-> > +			void *local_copy)
-> > +{
-> > +	struct zspage *zspage;
-> > +	struct zpdesc *zpdesc;
-> > +	unsigned long obj, off;
-> > +	unsigned int obj_idx;
-> > +	struct size_class *class;
-> > +	void *addr;
-> > +
-> > +	WARN_ON(in_interrupt());
-> 
-> This macro is deprecated. Could you come up with something else like
-> !in_task() if needed?
+--Sig_/udWpU6YiEcQx+bGVEcRtS3X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This was derived from the current zsmalloc object mapping API
+Hi all,
 
-	BUG_ON(in_interrupt());
+Today's linux-next merge of the scsi-mkp tree got a conflict in:
 
-but converted from BUG_ON() to WARN_ON().  I guess I can drop
-entirely tho.
+  drivers/scsi/scsi_debug.c
+
+between commit:
+
+  b7011929380d ("scsi: Switch to use hrtimer_setup()")
+
+from the tip tree and commit:
+
+  b441eafbd1eb ("scsi: scsi_debug: Simplify command handling")
+
+from the scsi-mkp tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/scsi/scsi_debug.c
+index fe5c30bb2639,2208dcba346e..000000000000
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@@ -8701,8 -9351,12 +9351,13 @@@ err_out
+  static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd=
+ *cmd)
+  {
+  	struct sdebug_scsi_cmd *sdsc =3D scsi_cmd_priv(cmd);
++ 	struct sdebug_defer *sd_dp =3D &sdsc->sd_dp;
+ =20
+  	spin_lock_init(&sdsc->lock);
+ -	hrtimer_init(&sd_dp->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
+++	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
+++		      HRTIMER_MODE_REL_PINNED);
++ 	sd_dp->hrt.function =3D sdebug_q_cmd_hrt_complete;
++ 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
+ =20
+  	return 0;
+  }
+
+--Sig_/udWpU6YiEcQx+bGVEcRtS3X
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme9R8AACgkQAVBC80lX
+0Gxw6gf8DH+9m+demSWVyzKIyRKQyI7hfULkUiXeCdFIkVwWY0b3EyVCcS4qLnwm
+5Tn8dpKLF6fSGNyKD+5o3W7UHVUbiRT4oRqXcaQW9b7nntE2P/dycpA7JNzi5V7E
+TwDtssaU5Rv0X2ogeoWby1i8pbgzhmOqG/1O7rAq6TmwS1TaWk6O52PYDI9EMAEL
+xjCjnRVY0kgncIECsKqLcnrzK5kU5ym2LxlzslMb+P1W/5TgWmib7d2K0rA7tSlL
+f/xtBXaA7ljwzo5J6CN78ILWZ19+Kdf5Tgj4FujnK/wMt/ZUxntem9UBrT8KBNHR
+97jyLxocZUudWEeMqBktqs4PTDPcng==
+=hGCw
+-----END PGP SIGNATURE-----
+
+--Sig_/udWpU6YiEcQx+bGVEcRtS3X--
 
