@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-530755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB44FA437E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:44:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19452A43809
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46ABE3AC35F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977F73A9066
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B3C25EFB5;
-	Tue, 25 Feb 2025 08:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A0C260A59;
+	Tue, 25 Feb 2025 08:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NhL55zdV"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CodEsv4e"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B41A4E70
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4454813A88A;
+	Tue, 25 Feb 2025 08:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740473024; cv=none; b=DjbJ/m5tVlEHsm1WF3V51MiWvpDyCW5QUWqtF9eUd2ok039jVM/IeFA1HVIb+/m/wB1TEbCugmwqv8zboaAO0c4hOxUfSMFVbj1ojbkM5nUvJu4AB2ek/2Z8LPC9/ebPghzGIYzdVn2uZO+QTZeKHxmrt7L4N6VeT0fMzgajlfM=
+	t=1740473265; cv=none; b=NBuvON05QEdyxFKKcBqYP58e3rRNFmLCXspRokXI9ilstWT2np+9fzF9bWEY1lFVdEl51uF6NF5kFlmlrq+ews0y8xOQMIghKt6r9yKaZgL65PyMYhwzzd4ts4/14YVtSwNq6mhWd61iBpxr4Z0z1m0t06Nkc76nYeJmRX5sC2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740473024; c=relaxed/simple;
-	bh=nYzmG5fGqyJ2/BnvAMcEEuMW7ccLQ6/I9/n243p9qqk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=i+4TEs8jR/lNKGPhOziA6/FM5Bxb8ima4psc1hLckDKd5ye6msMRoAZi4nMeXSy3xonlIGF6kOm2xsld6oQ8cXTDgQy1KBZGxIvVsohyJ4Mcx6rREI1Sxma2diOBOcGlxT/v0SFb6CvCjrBw8sI/Ez/vETkxh2hh9hmiAcvY548=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NhL55zdV; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740473017; bh=EFnITfDpz4AeZkC0s+o9ISgPM4kN3o13RbvxeE+/mJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NhL55zdV/7lMJVozpzg7fDHHzeOYMoInti98HvtXn7z4qSzX6OoSx2LGMtFBv97/S
-	 5eAPCtpcbL+6qi7+iP5g46RyWut3yV/sYXoncp/UufyUVSDeM+uYyR/4IN02Dvyyo+
-	 ZB+k1D1+0WWLm3nI94azva8nso8K9UFAzkSt2F2w=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id AE3910A9; Tue, 25 Feb 2025 16:43:35 +0800
-X-QQ-mid: xmsmtpt1740473015th8qz8g06
-Message-ID: <tencent_A58D9392315DBB5DE51976CFB48D98A58207@qq.com>
-X-QQ-XMAILINFO: Njb1gVDhFoIvkpvG9Aa537mtaux2kXLQCoz/2bHiEA1ls6KTeAPhekk2HxfpL1
-	 siBxeUzJzlqg7OwZ1mCfq3xgB29KvRwJZoB/WlSRkWeNBXQVXRF0aialg0J9lzO9DeciqiCwS1If
-	 XcTKiA0pSzfOmUDSbKFCpo9kkHC2voveMspC13TaVOp7TrZXIYTu9Xms2ImP4r9OYWsbSlEsdZ7N
-	 bV/GLp6JDHMtefh1dfWjUBsFHdbmv0AsRNoHN+s65lpCCShCiF+lAnsVxoLDz1bFfBZ3odAw8fFo
-	 xZ/unhePcpKMluvEKVmY5U6aGd/h69x1qqLTjnh7OjPv0Z9wrjp7F4MoiamOJMDMzCfBGKn+5SvP
-	 +nRdc2MOmuldvIK5LGHr3Z9FJ1pRCp9yaF/AqwMqXCoyLYI0KO74LiPIwRoG7xappwxpIoVUOvDf
-	 FtXmpPbE4HxdnqqzywFokPIV27ZbLbNqO8sYVY8X5TeF4kY34tBVm0wp4CGggRtnl7p3uFNYdaK2
-	 FKhLH0ILkyD78d9/+Rl31pJW/DvY0MYScZC756RotH8BXDnp3FeMpPzUwHmJ9Lth0emenLmSyLrF
-	 mnK+Uw5c54JO971thZjrqND419WF+kixFDulD9fTK9M+OZ2bKYDlkQ0IF754Y+xfmpP1EZ+GWbg5
-	 QNhha81oneP8wtHXiflD5zSUSU2Fh0dt96h7WgAooZBlp2iR3DocGqUsCKHKUodYjJH0PEMWzQTL
-	 et8/iZR1M52sCNbn9gDnzf0hzJ1CIZzH5Zp+wLmSpofd7VHDztaqkir7BEE+WfJJDATFunauAyIi
-	 yfGj85IvIX5OUbY/f655t5/dOMFavBZC5aJzgxqQxM6cPv5il3SlcOednbFKn+p8/oYfpMdF+gRp
-	 Mqsx68mhNMujuzLpMCnjkjQ48sLQ3+oW2lnDzY/LZHIDdXP6k9nw4=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
-Date: Tue, 25 Feb 2025 16:43:36 +0800
-X-OQ-MSGID: <20250225084335.1222336-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
-References: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
+	s=arc-20240116; t=1740473265; c=relaxed/simple;
+	bh=IvrsNh1PoziXp5gsBXRLYUYz8EOp7rsmJMbgVpDub9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cjOOe4bI4Bro4X9e91ahGp+WuHRQP5CG8iJ2mohMFRfmrdZMVj+UtypXgJNGlDkkbjrjpu2uYXazBanC8kcyfLGTML2YcVHq3Sm8nxTnBuOfZ3rdLm4kZVYhxTKOCaUXvmdQw66h1Z1SWeG+Y1Adjy03qRyTzyHWKv0ExM852p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CodEsv4e; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P7LgQ0003966;
+	Tue, 25 Feb 2025 09:47:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yHiS+n00ibzlP5REtMR+ddXLiK9OUJ+uzaby4EVh4iM=; b=CodEsv4eyIfFhzYg
+	ppgKu4xEWudziYqyzc6o4+V04zZ9hb2GoY5E3k8+YGSgW1XJh4FYciD1d8ZTfiB1
+	HWrAGQMacZjm+JsMIxqVuGatBAr2dcKZh+XQD16NZ3RPJRG6Qin5KHOOZaqZc1y7
+	cd0zu6WUaGwEWMk+odatGnvR8FpWKwz6Oj2/vqJeDGwNBnkVGW9MKjSIFwqfzxt/
+	Uo9uXsTDYMxnokHSXiSJiJC2NAaTWEejQ80wuuH9aNdb+RA+1+BXe7qyATYn9TnU
+	Wa/4Eyy8BsE0EaqNfsPMErBymX6znxmfg1a7MonpedGO+L73X9L0y5RHG5cQLVo3
+	Z6P34A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sphr2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 09:47:26 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 380F040044;
+	Tue, 25 Feb 2025 09:46:16 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8B9C9430105;
+	Tue, 25 Feb 2025 09:44:00 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 09:44:00 +0100
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 09:43:59 +0100
+Message-ID: <696ac9eb-f223-4993-b288-b6c3e07f4ed7@foss.st.com>
+Date: Tue, 25 Feb 2025 09:43:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] arm64: defconfig: enable STM32 LP timers drivers
+To: Krzysztof Kozlowski <krzk@kernel.org>, <lee@kernel.org>,
+        <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <wbg@kernel.org>, <jic23@kernel.org>, <daniel.lezcano@linaro.org>,
+        <tglx@linutronix.de>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
+ <20250224180150.3689638-8-fabrice.gasnier@foss.st.com>
+ <f76a3a6c-795e-4fc8-905f-4655115ea99d@kernel.org>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <f76a3a6c-795e-4fc8-905f-4655115ea99d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
 
-#syz test
+On 2/25/25 08:48, Krzysztof Kozlowski wrote:
+> On 24/02/2025 19:01, Fabrice Gasnier wrote:
+>> Enable the STM32 timer drivers: MFD, counter, PWM and trigger as modules.
+>> Clocksource is a bool, hence set to y. These drivers can be used on
+>> STM32MP25.
+> 
+> 
+> Which upstream board? If you do not have upstream board, the defconfig
+> is pointless for us. It's not defconfig for your downstream forks.
 
-diff --git a/mm/memory.c b/mm/memory.c
-index d5c4f932b399..f67670cb2e22 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6484,7 +6484,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 					  unsigned long address)
- {
- 	MA_STATE(mas, &mm->mm_mt, address, address);
--	struct vm_area_struct *vma;
-+	struct vm_area_struct *vma, *vma2;
- 
- 	rcu_read_lock();
- retry:
-@@ -6492,10 +6492,10 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 	if (!vma)
- 		goto inval;
- 
--	vma = vma_start_read(mm, vma);
--	if (IS_ERR_OR_NULL(vma)) {
-+	vma2 = vma_start_read(mm, vma);
-+	if (IS_ERR_OR_NULL(vma2)) {
- 		/* Check if the VMA got isolated after we found it */
--		if (PTR_ERR(vma) == -EAGAIN) {
-+		if (PTR_ERR(vma2) == -EAGAIN) {
- 			count_vm_vma_lock_event(VMA_LOCK_MISS);
- 			/* The area was replaced with another one */
- 			goto retry;
+Hi Krzysztof,
 
+It's going to be used on stm32mp257f-dk and stm32mp257f-ev1 boards.
+I can add the relevant DT for the(se) board(s) in next revision.
+
+Best regards,
+Fabrice
+
+> 
+> 
+> Best regards,
+> Krzysztof
 
