@@ -1,163 +1,162 @@
-Return-Path: <linux-kernel+bounces-532643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39713A4504B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:36:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7928A45043
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82D03AD5F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:32:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E7187A268B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BAE21B1A0;
-	Tue, 25 Feb 2025 22:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1781A216612;
+	Tue, 25 Feb 2025 22:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J1+GbYQZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V/G2h6y6"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650C0218AD7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47B1211A20
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522645; cv=none; b=SQ9KO4gtVEuO3swn2ypbkvZ6zsIHt11rOXqnUfQdR/h6/+GicHiNx8rEhNY9n5/gmAheuhgRXCE48vAHZHk0Ku0JlOqLqdese3NW035YBuGRHI3m8YRV7VBYdYFRAhNwgxlciec6xW6AYhcKt2EhdhfNqqYjYRUkW67c3MZLIY4=
+	t=1740522642; cv=none; b=PxG8T8di2stHOrFLLR9M4Zi09EIooDZOeXzshVNB3dqmCzjJOAHPp0v3ma2MxJV0cI49O8rxhgh+3FAe6u+UyxzZ3x2K0lgtapNJRX9ehEQ88PF5WO06212skKk9l78jljJdFa3C3HtfR0UcPPx9s4Xj/aNtJRn1T32s/04sQd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522645; c=relaxed/simple;
-	bh=fFPPERKTfi8mGUGm779neSrurhFuM8MdmclAeibEHHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u0c20FK0GYtOUx1IPwE1ToV47gJNqn0zMCZ/gD8QH8f8aXtyrM3bQPdlCkVZy0qhhzexXIRdK2lF4+HOUyG+K0XBN19U56XQihxKpvbcLKkolqent/O3u6OXX4CCBrts9PKDiVK2V+CYJzenHlH4zPzFbG8vT7l95r8NyoUpi+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J1+GbYQZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522642;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJVc13YBLYcQhhBors+jGa91VWfcFb50JYNpdknUXOk=;
-	b=J1+GbYQZRR2XZy9Mked917Rb/cZv6v9vzaN/oF35ypC1El1X6BilCHNOBE1ijUpYW13i+g
-	l0nalFr2Oxuol37ObZdtOAbfSg4xv3PoTcLTVdc4r5sidGaNYhYr7iS7KOy3AT2Jt9n+ec
-	A5+Oi/lJiZOS1rTdyF2sMag8Nz0JUcA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-_n9_DebHNSaDvGVbA2lZLQ-1; Tue, 25 Feb 2025 17:30:40 -0500
-X-MC-Unique: _n9_DebHNSaDvGVbA2lZLQ-1
-X-Mimecast-MFC-AGG-ID: _n9_DebHNSaDvGVbA2lZLQ_1740522640
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so20016849a91.2
+	s=arc-20240116; t=1740522642; c=relaxed/simple;
+	bh=oxaCiQCmqeAS1epekehXbElGJ+m3X0CqMo4HcDIs+cU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbSKmmaz5G3Z2E3rceVVSsnT7eN2RQscc4gu9K3ElbnEt44U6MDg7vMSa4KCKo8C5qNlQxxbKqWj/vOVsYMRDG6eyTwbig2QXrUyu15gspW6rBFNuEc5tngSO7BmkKoSrGKhKLba+uNwCycrdqOtSdy6hbOp00sGjZIbWbrXD3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V/G2h6y6; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2212a930001so55939905ad.0
         for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:30:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740522640; x=1741127440; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CxPMcTd9qCEBN074ty2w+VRI4Bnqdaah0BYjoLFwE7k=;
+        b=V/G2h6y6WpI9gq82abt50L/6j2hctNFDFTZRmxxfcq/BO+GOZB5XK9hd/wDJKyw68/
+         MuyHdGZHGdBkNQ0nx0kGZ3EkLIj2dw1MoR7Xdsux5FoWwCUhT0m320Vjrn7CYMPLT9NV
+         a1ljDIF3nG9wEYDOh6yxsFIDs50T8Tge7ncfI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740522639; x=1741127439;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJVc13YBLYcQhhBors+jGa91VWfcFb50JYNpdknUXOk=;
-        b=ZxWmxrHMBwl9/EKii55xiUXZNXWjRdFpIMX1POp9ip4qFk3B6wu9iqDMOyCqwLnRwa
-         QcNOAo8R2ZP8ipVxp5WHvBvp6YsrNSpzNPYLNcMzzjYwE7twUhO9I9VlHZHj/SUjMu+z
-         JtP9+0OrtIOAAjj1vhk1NfZRN9ML8vmhmfttLn6oqjZXnMWED7JWAAESs1GeQbkSSzuP
-         hhG/hhCZj692Vs6QBu+3DzNsydkfarFMn+Llw2c7g0fBKv9rr1inVKmmaYjmT+hxbpoP
-         E5miVaCIrAy7b0yOIGMwB3GBxxQWm1kLq/oeNYs02wti/ltBs1roOXk8DkZD7q7M/l9n
-         h7BA==
-X-Forwarded-Encrypted: i=1; AJvYcCUomNlGJUppjiwfkIa37V2IDTIgtfQ9Rrq3gcVKEUCrNIoUSnJ8EWBp2WeefGGBFmO6HkpO9tunfa5E7Ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQqSg9uq1gWeHPl2DDy+IAIqxLXM4mFLBlTg8xZ3KoNRupYSqx
-	yzuJ4NUrRnw1MXhsXbKbyLnXN3FYQDum3rnWFVLuzEEv0iYIFwJBEOZPzGiAIXdYaq08rFOjtO8
-	p0kkG9ZO8M61QhNtgegeuZNkR1HfMvnSH9wQm0agOLz4NnlowN9d+7U8XmFvYRugoavnu6g==
-X-Gm-Gg: ASbGncssn4iOacGxdDEeQaCLY/4IvFIyNG7gH7VD70MWCnBU657WqW6HV0+3Ow26vAN
-	GtxC3McSTSQ7PSfBnXooHCVapYrIS0YZCDarE6xRy3q2GBnixYzuBqTbMyMuBfXUkPkw1/eOIoS
-	6GuofNnBEEY/0JLxeRmg3EU76iQBrBVrk+/oaS1RkDSviQhoHLm+FILNoOQikejgnRXgfx9x/nb
-	UbutJSJ4Gc0yl1eLHbCZsNZDA3TDhzHYdiwM7rW8XE2WTbTsVlt218hvQJNGvVcTJCQMI7bVmaD
-	aZwjPpkNjEpPSA81rsOodI938FCaInOGgUdJuc/JsJA7CRuZMdRW0+D8Uy86QOBXGPW/GldzNl8
-	0
-X-Received: by 2002:a17:90b:254e:b0:2f4:434d:c7ed with SMTP id 98e67ed59e1d1-2fe68ae6bcamr8995179a91.16.1740522639403;
+        d=1e100.net; s=20230601; t=1740522640; x=1741127440;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CxPMcTd9qCEBN074ty2w+VRI4Bnqdaah0BYjoLFwE7k=;
+        b=poAQ0l8Oyr7262fbmZ+NfkZVgEZIGYG5GNUDprCDYHW1qJJ1ECnTryjeepAL9lQHAM
+         +/IoRrNFN26ECo3fFrosjpq25ox5W0yOfwsyVHLZBTM3dRFVsf8jBTw9ubBEVVXljcR9
+         NZSbu5RmdB7vU0iM5CxslLkH0vGM/4Q9M9UNCIxXGo8GxPomYfLyGEd6NmQoFSjts5T+
+         VyA+x2Sfk4V3XGn98L6d1sFdr8gycu8ZfbdMGMMBtevR2RcAyoHVE0TVk8SmFC926PtS
+         4g3Dz4MHcROJ2yifzHgX9LU0aiGJhF4SNlnvxDLXLXqVHI7a2cPUVFxbMaYE1Ej6C/ah
+         /AoA==
+X-Gm-Message-State: AOJu0YzzZippEG/oOwUXvKlaxexoQMymFCw8B/FyXEzdDO3yry8vPWfp
+	6wvLVZgzbpavfb3/MHBIFBLwJdxxH+i6S55EzsjoN0eSM/sWzN3QKKcaabddvg==
+X-Gm-Gg: ASbGncuulIRlw6n1V27UWpUuaZXUHpWi8BmriXBF8xNwHpwW8yvZy4zeTaL29WURepf
+	fzi0m4K/qeb7FPk1CGPc+Zr6h21yjjk4U8aHWGGmV1tE5G77Jctc2vGRz3Wgif0XqAt3pszVzWC
+	G7Gxzk9pBCsvGzLjg0vF9HHhneZ9vuIi9PWFqajbut+VJMXUfwoXdMZEr+uY7Mlh9afp6l1H4Yj
+	VOeXhJN+ZBTn7LZCD44N55bcidas1UxZv4SeXY0iiFfoTCj/boeyVuHxhsaTvS7WYJV63mqNtJC
+	6csgCgJGCVzdSy3qPzRPl/hTGFzWJaSXre+qGpG7nLVvHAiNbCruFlsdNdoufeY13g==
+X-Google-Smtp-Source: AGHT+IGfycDzz2jrkUoYR/BFevUgFFIrZzQind7dUvVF1+Ua3fNlMG4d7Bly/f+2404A/5GyvlX3Qw==
+X-Received: by 2002:a17:902:f64c:b0:21f:49f2:e33f with SMTP id d9443c01a7336-221a0ed7885mr305363575ad.21.1740522639971;
         Tue, 25 Feb 2025 14:30:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEdseTczjLi48aVnqTQW4mRSbV3I8Ul1bJsKhnAUZxMdDYgMS6GSgqMt3SxEmjkNTk/UFX4NA==
-X-Received: by 2002:a17:90b:254e:b0:2f4:434d:c7ed with SMTP id 98e67ed59e1d1-2fe68ae6bcamr8995142a91.16.1740522639074;
-        Tue, 25 Feb 2025 14:30:39 -0800 (PST)
-Received: from [192.168.2.110] (bras-base-aylmpq0104w-grc-16-70-52-24-57.dsl.bell.ca. [70.52.24.57])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825a95c5sm92883a91.1.2025.02.25.14.30.34
+Received: from localhost (222.246.125.34.bc.googleusercontent.com. [34.125.246.222])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aeda7c9079dsm1949830a12.23.2025.02.25.14.30.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 14:30:38 -0800 (PST)
-Message-ID: <68e82e87-606e-4443-99d3-7de6f665ce05@redhat.com>
-Date: Tue, 25 Feb 2025 17:30:27 -0500
+        Tue, 25 Feb 2025 14:30:39 -0800 (PST)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	patches@lists.linux.dev,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	devicetree@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Pin-yen Lin <treapking@chromium.org>,
+	cros-qcom-dts-watchers@chromium.org
+Subject: [PATCH v5 0/2] arm64: dts: qcom: sc7180-trogdor: Wire up USB
+Date: Tue, 25 Feb 2025 14:30:35 -0800
+Message-ID: <20250225223038.879614-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm: page_owner: use new iteration API
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, yuzhao@google.com, pasha.tatashin@soleen.com
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev
-References: <cover.1740434344.git.luizcap@redhat.com>
- <badc717329c288c58b7abf7513603aa3042c008c.1740434344.git.luizcap@redhat.com>
- <a196d780-c775-4f77-96f2-df3fe61af32f@redhat.com>
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <a196d780-c775-4f77-96f2-df3fe61af32f@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-02-25 11:44, David Hildenbrand wrote:
-> On 24.02.25 22:59, Luiz Capitulino wrote:
->> The page_ext_next() function assumes that page extension objects for a
->> page order allocation always reside in the same memory section, which
->> may not be true and could lead to crashes. Use the new page_ext
->> iteration API instead.
->>
->> Fixes: cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for gigantic folios")
->> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
->> ---
->>   mm/page_owner.c | 61 +++++++++++++++++++++++--------------------------
->>   1 file changed, 29 insertions(+), 32 deletions(-)
->>
-> 
-> [...]
-> 
->>   void __reset_page_owner(struct page *page, unsigned short order)
->> @@ -293,11 +297,11 @@ void __reset_page_owner(struct page *page, unsigned short order)
->>       page_owner = get_page_owner(page_ext);
->>       alloc_handle = page_owner->handle;
->> +    page_ext_put(page_ext);
->>       handle = save_stack(GFP_NOWAIT | __GFP_NOWARN);
->> -    __update_page_owner_free_handle(page_ext, handle, order, current->pid,
->> +    __update_page_owner_free_handle(page, handle, order, current->pid,
->>                       current->tgid, free_ts_nsec);
->> -    page_ext_put(page_ext);
-> 
-> I assume moving that is fine ...
-> 
-> but I'll not that ...
-> 
->> -    for (i = 0; i < (1 << new_page_owner->order); i++) {
->> +    rcu_read_lock();
->> +    for_each_page_ext(&old->page, 1 << new_page_owner->order, page_ext, iter) {
->> +        old_page_owner = get_page_owner(page_ext);
->>           old_page_owner->handle = migrate_handle;
->> -        old_ext = page_ext_next(old_ext);
->> -        old_page_owner = get_page_owner(old_ext);
->>       }
->> +    rcu_read_unlock();
->>       page_ext_put(new_ext);
->>       page_ext_put(old_ext);
-> 
-> ... here you are not moving it?
-> 
-> 
-> In general, LGTM, only the remaining page_ext_put() are a bit confusing.
+Wiring up the USB hub to the connectors allows us to gain the proper
+'connect_type' and 'removable' values in sysfs for the USB devices on
+sc7180 trogdor devices. These two patches are split off of a larger
+series[1] so they can land faster and because we've come to the
+conclusion that the DisplayPort path is going to connect to the
+cros-ec-typec node, not the usb-c-connector node.
 
-Which part you found confusing: the fact that I'm not moving them up or that
-we still make use of them?
+The first patch adds the pogo pin binding to describe the detachable
+keyboards found on some trogdor devices (actually strongbad). The second
+patch is the dts changes required to wire up all the USB stuff. This is
+sufficient to set the sysfs properties for USB devices so that the
+builtin USB webcam is considered "fixed" or hard-wired while devices
+plugged into the connectors or the keyboard are considered "removable"
+or hotpluggable.
 
-For this hunk, I decided to keep them where they are because 'new_page_owner',
-which is a page extension from 'next_ext', is still used in the last loop. So
-I decided to free them all at the end for simplicity.
+Changes from v4 https://lore.kernel.org/r/20250221233120.3596158-1-swboyd@chromium.org
+ * Add newline after property before child node
+ * Pick up ack from Konrad
 
-The other part is, page_ext_get() and page_ext_put() are still valid functions
-for getting specific page extensions outside of loops and the usage in
-__folio_copy_owner() (and a few other cases) seems valid to me.
+Changes from v3 https://lore.kernel.org/r/20250210225714.1073618-1-swboyd@chromium.org
+ * Consistent quotes in binding
+ * Drop unused labels on hub ports
+
+Changes from v2 https://lore.kernel.org/r/20250205233016.1600517-1-swboyd@chromium.org
+ * Make binding specific to keyboard and move to usb/
+ * Update dts to reflect new compatible string for pogo pin keyboard
+
+Changes from v1 https://lore.kernel.org/r/20240210070934.2549994-1-swboyd@chromium.org
+ * Split out of larger series
+ * Added description to DT binding
+ * Removed DP part of dts changes
+
+[1] https://lore.kernel.org/r/20240210070934.2549994-1-swboyd@chromium.org
+
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>
+Cc: <devicetree@vger.kernel.org>
+Cc: <chrome-platform@lists.linux.dev>
+Cc: Pin-yen Lin <treapking@chromium.org>
+Cc: <cros-qcom-dts-watchers@chromium.org>
+
+Stephen Boyd (2):
+  dt-bindings: usb: Add binding for ChromeOS Pogo pin keyboard connector
+  arm64: dts: qcom: sc7180-trogdor: Wire up USB to usb-c-connectors
+
+ .../usb/google,usb-pogo-keyboard.yaml         |  68 ++++++++++
+ .../dts/qcom/sc7180-trogdor-clamshell.dtsi    |  21 +++
+ .../boot/dts/qcom/sc7180-trogdor-coachz.dtsi  |  47 +++++++
+ .../dts/qcom/sc7180-trogdor-detachable.dtsi   |  16 +++
+ .../dts/qcom/sc7180-trogdor-homestar.dtsi     |  47 +++++++
+ .../dts/qcom/sc7180-trogdor-kingoftown.dts    |  55 ++++++++
+ .../boot/dts/qcom/sc7180-trogdor-lazor.dtsi   |  55 ++++++++
+ .../boot/dts/qcom/sc7180-trogdor-pazquel.dtsi |  55 ++++++++
+ .../boot/dts/qcom/sc7180-trogdor-pompom.dtsi  |  44 +++++++
+ .../qcom/sc7180-trogdor-quackingstick.dtsi    |  31 +++++
+ .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |  57 ++++++++-
+ .../dts/qcom/sc7180-trogdor-wormdingler.dtsi  |  47 +++++++
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  | 121 ++++++++++++++++++
+ 13 files changed, 662 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/google,usb-pogo-keyboard.yaml
+
+
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+-- 
+https://chromeos.dev
 
 
