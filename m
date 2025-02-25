@@ -1,112 +1,240 @@
-Return-Path: <linux-kernel+bounces-530859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08017A43964
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:26:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388E7A43970
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CD016A008
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:24:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71703A6C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE4026137B;
-	Tue, 25 Feb 2025 09:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CB25EF9C;
+	Tue, 25 Feb 2025 09:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y5XcvCDH"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DIK3Ve0j"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB4260A51
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97516257422;
+	Tue, 25 Feb 2025 09:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475478; cv=none; b=VoxTF06oVa/YQHZqkHiAEMTEfPVeUOGOaF/iPfOMyOXroZpeOQIbuf55rUdtURMm+1OyQ3y0dl2j9Li1BqRMHf1ssIWOCxz15wY1wrTfvQsVC1D6IH8ACPlq/zM0J9ZfgnT7NB0fWfpv4ATJQPMQJ/vrVH7thYdcVJDjGvbl7xQ=
+	t=1740475536; cv=none; b=Wy7jAEoDhf7m/uFQJns+ad5jDirb9f6jBxfQlBeSX5MQwuq5Dp7Mm5/NhIO0mApVIHwtdNAPmXD8FIntPiK5n0sqXxQ1oPvxIW8ITlqnaNBK/d2XfKWlEtFa6Gpz/DpFpYjc78ZMEE8HBggmIJvKf6lvi/+d/76F0f3EDprAZVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475478; c=relaxed/simple;
-	bh=ZxiIxSccYcexTMgoVMyRSTYmi6kCr66px7UtyhRM/0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DrNgq+7571XjYui+M+IdZKwcUNnt4SkJ390XCcFN0MKjT4M1H4pMsCaWVyTvx4F+rE6I1WkwByXK+k4M29hKS8yQFb1KHcn21BLx8TuAFrXJ2gpKrtrNWeeiFoKZWj0sdvX0kpzRuUBNi306G2Lv75plLNtfqVi7KyDnN8xmYyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y5XcvCDH; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f325ddbc2so3878723f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:24:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740475475; x=1741080275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZxiIxSccYcexTMgoVMyRSTYmi6kCr66px7UtyhRM/0E=;
-        b=Y5XcvCDHhUN6wP/Or88y8pLdm+Ovk5Pw6CLGC1Qyd39u77j01hU/lacZJUHL71kkw2
-         K7LIrXkoe7uIIZ2JhvwvqJNs66BpNGL2RD2u29VgBibJPsY/+FuIsK1k7wmwMZE2zKFQ
-         HYyUkEt9Ms81hATP57YpXRw8NS3lTYur9ZlAVCIWN72eJP4yh1R3C1g5x6PuntPWEq0H
-         7EgCDy5ofNCDp3eKUdJ1hQoCaEFCe7oA1aQm2DrbRtmZ6jl7auAMhmbZMwRpEmbmL1ab
-         Z0+9Muxvj9ryygzGNltP7gaCgPxrjDBcsmvgplBBtakUZNvsb21+sqoovw7zE0+gcmXU
-         72nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740475475; x=1741080275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZxiIxSccYcexTMgoVMyRSTYmi6kCr66px7UtyhRM/0E=;
-        b=LFaOrDliNMH496ADBP6gGHfgAjhXEVIS/We9hCg07BoUOHHiPnq3ShcVSty3QdILVX
-         p4NWRRe1zH6onQmC2UuEKOU8JeraGaDbVvEqjXd3yJSqPwYPgAG+tyvG1Wv7z7f0ASas
-         QlcuhDtNQZNZJ0z2gBxNx53FAn3S/MMaBI9Hvm8A4bT38rsHBoIdnBXN1FEiEYBYgYR+
-         tgiSKTIl3FcuzgRkAULDWIUUK0NqCEktO2zVnmbJnY16u308xbT7uQICCDPn7AZycVGI
-         LiE7EcIxT50LWy68KhvyqF4TUhQyrc3QTmzfXKb+PGn6um22pnblDzsuYFD6QzfnJKuw
-         5kuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUep1Qh3k1oOOvIqwA/affEYinq9RyABq1wu6qo/fa/5WZZIYL6Xb0eRWKONdJaiDdWiqSN3J0nbekFpOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Vgx0TuV1Vdi8DxwX+V1F3CB3GDwmVAM70CVaVagoXWacXq23
-	qc1TAGTCKDC4OIqyhVc0YMFzVIatJZQtANsyY4Un63hwGb2L+4E0UVuWy1d2ApdB+FCLD/1dIgS
-	ugt/aY1UeblSJFV1p+cd2QnicnoF0cN5yAtLb
-X-Gm-Gg: ASbGncsdwpipmFU6WrDd0I3W39T9cAaWe9bm0LJ9/GiibV+/5ax2pUxIa65xR05bOlZ
-	8H/UtwfUMunZ2Gc+O2Qve0uMgYQVGBmADZOc6HEGNoINwqdRiAKGZP2+2zcOEx48RBplrwn6VH6
-	jw9gXSRoBmbwDTbhuzbOpPO0MGSuDySQp0AkzKYw==
-X-Google-Smtp-Source: AGHT+IGQHSzoQSkPlTwNA0fxypnA/os2iIyhXnWMnuOEfnVFkcbcWJzo4J+RgQk5Yx7RRkNXXrVU9KuiyHJ1mGA4DK4=
-X-Received: by 2002:a05:6000:1844:b0:386:3835:9fec with SMTP id
- ffacd0b85a97d-38f70826ea0mr15050496f8f.44.1740475475410; Tue, 25 Feb 2025
- 01:24:35 -0800 (PST)
+	s=arc-20240116; t=1740475536; c=relaxed/simple;
+	bh=MI6J4EJ1qNZUeGGHV7eVqORjRJT9bWvPaKDjbTOIBqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MbpTMk/xUaiX6ctN+w9DUIw+/0sOs4OlKZ66C7Khn+XusIvvCn6S8Z/2XFUs9suLtguFOAGLvE0VMjSVgk0d8PKPvZFLHGuWyZj3ZmvrmAgLqKjoswfs27H9McKmFrX1BeIVKdAupIUNfP5r39sLTLhr98Ag6B4MNzwKWFm/EC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DIK3Ve0j; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740475528; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kp7DHAHZqUNldKyIx09U3r22xBk4BnuCHAvUZRQ4RvQ=;
+	b=DIK3Ve0jn0vcP5nObMq+zDR9nSz7QAUY4L2bjElHhOLWjl1Hmhz2T+dBHTVXY6lD6b2WcE//GSz0k5j2i6FoeSzn1EZHdtQKLl1hdkZ14BQ8LTl1M0TXB1c9cS7cYWBXTeGnuZ6gSufUZPX+m2M4j3Sali8C1GxZS1rVXohBLbk=
+Received: from 30.74.144.116(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQEGWYx_1740475527 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 17:25:27 +0800
+Message-ID: <ec0d6ec4-6295-46f5-a652-e294738c8c56@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 17:25:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224233938.3158-1-yury.norov@gmail.com> <20250224233938.3158-2-yury.norov@gmail.com>
-In-Reply-To: <20250224233938.3158-2-yury.norov@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 25 Feb 2025 10:24:23 +0100
-X-Gm-Features: AQ5f1Jommy2ub_3vQwqnVtD39tTTKNsZezOyKXgy7B1RbabnHE7_Zcs3Cv7hZ9A
-Message-ID: <CAH5fLggk9tus1KmEw-Ox0buFLLhN0VajKCXYdxiFncjnbLGatg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: Add cpumask helpers
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Danilo Krummrich <dakr@redhat.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, 
-	Erik Schilling <erik.schilling@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Jason Gunthorpe <jgg@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
+ shmem_split_large_entry()
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20250218235444.1543173-1-ziy@nvidia.com>
+ <20250218235444.1543173-3-ziy@nvidia.com>
+ <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
+ <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
+ <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
+ <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
+ <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
+ <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
+ <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+ <edd6e5fd-f6d1-420c-a895-2dae5fe746ef@linux.alibaba.com>
+ <7090090D-4E74-4A6B-9B09-D2045AD616F0@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <7090090D-4E74-4A6B-9B09-D2045AD616F0@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 12:39=E2=80=AFAM Yury Norov <yury.norov@gmail.com> =
-wrote:
->
-> From: Viresh Kumar <viresh.kumar@linaro.org>
->
-> In order to prepare for adding Rust abstractions for cpumask, add
-> the required helpers for inline cpumask functions that cannot be
-> called by rust code directly.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+On 2025/2/22 07:47, Zi Yan wrote:
+> On 21 Feb 2025, at 1:17, Baolin Wang wrote:
+> 
+>> On 2025/2/21 10:38, Zi Yan wrote:
+>>> On 20 Feb 2025, at 21:33, Zi Yan wrote:
+>>>
+>>>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
+>>>>
+>>>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
+>>>>>
+>>>>>> On 2025/2/20 17:07, Baolin Wang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2025/2/20 00:10, Zi Yan wrote:
+>>>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
+>>>>>>>>
+>>>>>>>>> Hi Zi,
+>>>>>>>>>
+>>>>>>>>> Sorry for the late reply due to being busy with other things:)
+>>>>>>>>
+>>>>>>>> Thank you for taking a look at the patches. :)
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
+>>>>>>>>>> During shmem_split_large_entry(), large swap entries are covering n slots
+>>>>>>>>>> and an order-0 folio needs to be inserted.
+>>>>>>>>>>
+>>>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by the folio
+>>>>>>>>>> need to be split and the remaining n-1 shadow entries can be retained with
+>>>>>>>>>> orders ranging from 0 to n-1.  This method only requires
+>>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
+>>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
+>>>>>>>>>> xas_split_alloc() + xas_split() one.
+>>>>>>>>>>
+>>>>>>>>>> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
+>>>>>>>>>> is 6), 1 xa_node is needed instead of 8.
+>>>>>>>>>>
+>>>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls to
+>>>>>>>>>> xas_try_split() during split.
+>>>>>>>>>
+>>>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by skipping the swap cache, we will split the large swap entry stored in the shmem mapping into order-0 swap entries, rather than splitting it into other orders of swap entries. This is because the next time we swap in a shmem folio through shmem_swapin_cluster(), it will still be an order 0 folio.
+>>>>>>>>
+>>>>>>>> Right. But the swapin is one folio at a time, right? shmem_split_large_entry()
+>>>>>>>
+>>>>>>> Yes, now we always swapin an order-0 folio from the async swap device at a time. However, for sync swap device, we will skip the swapcache and swapin the whole large folio by commit 1dd44c0af4fa, so it will not call shmem_split_large_entry() in this case.
+>>>>>
+>>>>> Got it. I will check the commit.
+>>>>>
+>>>>>>>
+>>>>>>>> should split the large swap entry and give you a slot to store the order-0 folio.
+>>>>>>>> For example, with an order-9 large swap entry, to swap in first order-0 folio,
+>>>>>>>> the large swap entry will become order-0, order-0, order-1, order-2,… order-8,
+>>>>>>>> after the split. Then the first order-0 swap entry can be used.
+>>>>>>>> Then, when a second order-0 is swapped in, the second order-0 can be used.
+>>>>>>>> When the last order-0 is swapped in, the order-8 would be split to
+>>>>>>>> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 will be used.
+>>>>>>>
+>>>>>>> Yes, understood. However, for the sequential swapin scenarios, where originally only one split operation is needed. However, your approach increases the number of split operations. Of course, I understand that in non-sequential swapin scenarios, your patch will save some xarray memory. It might be necessary to evaluate whether the increased split operations will have a significant impact on the performance of sequential swapin?
+>>>>>
+>>>>> Is there a shmem swapin test I can run to measure this? xas_try_split() should
+>>>>> performance similar operations as existing xas_split_alloc()+xas_split().
+>>
+>> I think a simple sequential swapin case is enough? Anyway I can help to evaluate the performance impact with your new patch.
+>>
+>>>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all swap entries
+>>>>>>>> are order-0, which can lead to issues. There should be some check like
+>>>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() should
+>>>>>>>> be used.
+>>>>>>>>>
+>>>>>>>>> Moreover I did a quick test with swapping in order 6 shmem folios, however, my test hung, and the console was continuously filled with the following information. It seems there are some issues with shmem swapin handling. Anyway, I need more time to debug and test.
+>>>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not allocate
+>>>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
+>>>>>>>> error below. Let me know if there is anything I can help.
+>>>>>>>
+>>>>>>> I encountered some issues while testing order 4 and order 6 swapin with your patches. And I roughly reviewed the patch, and it seems that the new swap entry stored in the shmem mapping was not correctly updated after the split.
+>>>>>>>
+>>>>>>> The following logic is to reset the swap entry after split, and I assume that the large swap entry is always split to order 0 before. As your patch suggests, if a non-uniform split is used, then the logic for resetting the swap entry needs to be changed? Please correct me if I missed something.
+>>>>>>>
+>>>>>>> /*
+>>>>>>>     * Re-set the swap entry after splitting, and the swap
+>>>>>>>     * offset of the original large entry must be continuous.
+>>>>>>>     */
+>>>>>>> for (i = 0; i < 1 << order; i++) {
+>>>>>>>        pgoff_t aligned_index = round_down(index, 1 << order);
+>>>>>>>        swp_entry_t tmp;
+>>>>>>>
+>>>>>>>        tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+>>>>>>>        __xa_store(&mapping->i_pages, aligned_index + i,
+>>>>>>>               swp_to_radix_entry(tmp), 0);
+>>>>>>> }
+>>>>>
+>>>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this out.
+>>>>>
+>>>>>>
+>>>>>> In addition, after your patch, the shmem_split_large_entry() seems always return 0 even though it splits a large swap entry, but we still need re-calculate the swap entry value after splitting, otherwise it may return errors due to shmem_confirm_swap() validation failure.
+>>>>>>
+>>>>>> /*
+>>>>>>    * If the large swap entry has already been split, it is
+>>>>>>    * necessary to recalculate the new swap entry based on
+>>>>>>    * the old order alignment.
+>>>>>>    */
+>>>>>>    if (split_order > 0) {
+>>>>>> 	pgoff_t offset = index - round_down(index, 1 << split_order);
+>>>>>>
+>>>>>> 	swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>>>>>> }
+>>>>>
+>>>>> Got it. I will fix it.
+>>>>>
+>>>>> BTW, do you mind sharing your swapin tests so that I can test my new version
+>>>>> properly?
+>>>>
+>>>> The diff below adjusts the swp_entry_t and returns the right order after
+>>>> shmem_split_large_entry(). Let me know if it fixes your issue.
+>>>
+>>> Fixed the compilation error. It will be great if you can share a swapin test, so that
+>>> I can test locally. Thanks.
+>>
+>> Sure. I've attached 3 test shmem swapin cases to see if they can help you with testing. I will also find time next week to review and test your patch.
+>>
+>> Additionally, you can use zram as a swap device and disable the skipping swapcache feature to test the split logic quickly:
+>>
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index 745f130bfb4c..7374d5c1cdde 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -2274,7 +2274,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>>          folio = swap_cache_get_folio(swap, NULL, 0);
+>>          if (!folio) {
+>>                  int order = xa_get_order(&mapping->i_pages, index);
+>> -               bool fallback_order0 = false;
+>> +               bool fallback_order0 = true;
+>>                  int split_order;
+>>
+>>                  /* Or update major stats only when swapin succeeds?? */
+> 
+> Thank you for the testing programs and the patch above. With zswap enabled,
+> I do not see any crash. I also tried to mount a tmpfs, dd a file that
+> is larger than total memory, and read the file out. The system crashed
+> with my original patch but no longer crashes with my fix.
+> 
+> In terms of performance, I used your shmem_aligned_swapin.c and increased
+> the shmem size from 1GB to 10GB and measured the time of memset at the
+> end, which swaps in memory and triggers split large entry. I see no difference
+> between with and without my patch.
+
+OK. Great.
+
+> I will wait for your results to confirm my fix. Really appreciate your help.
+
+You are welcome:) and I commented your fixes.
+
+> BTW, without zswap, it seems that madvise(MADV_PAGEOUT) does not write
+> shmem to swapfile and during swapin, swap_cache_get_folio() always gets
+> a folio. I wonder what is the difference between zswap and a swapfile.
+
+Right, IIUC swapfile is not a sync swap device. You can set up zram as a 
+swap device, which is a sync swap device:
+
+modprobe -v zram
+# setup 20G swap
+echo 20G > /sys/block/zram0/disksize
+mkswap /dev/zram0
+swapon /dev/zram0
+swapon -s
 
