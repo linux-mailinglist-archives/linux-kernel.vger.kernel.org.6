@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-531730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B229BA44431
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:21:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488DEA44436
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A9C189E892
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83F6189E9FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF26026B2AD;
-	Tue, 25 Feb 2025 15:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11BD26AA93;
+	Tue, 25 Feb 2025 15:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="I3RbItsI"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="gNC8SD6m"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAEF268689;
-	Tue, 25 Feb 2025 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A75825D546;
+	Tue, 25 Feb 2025 15:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740496865; cv=none; b=EyvJc7R8w+1AyupRBt2sX5gaq8zwCFOyznpsrbilTOn3XTUfQiyGg8Cj7j4z28jULLPT1T2GaGoaw7G1p/v+uUXaF21VHvN0vduo45Vmq2w9jdYVsv3g6biTGEIE8QPxaTodU4ZawvVjpOKf+VHRzybpdFiY3qstJsECYcOLCq0=
+	t=1740496892; cv=none; b=VTWmFo+LKpDt215TNvbqtUryArqWnlbMsw/r0iid2TOGjgEBEH1X3R9YyquY5AQKsuTVl0pNFpYRP1eMMrqYneuP2li5hKMg2FuWR03HJiT1P8eVfsAOnqfmSb0cDTSOpvAF7R7faPpae6J9F/VZ/B9Qdq3fKVWiFBhgb1OdFdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740496865; c=relaxed/simple;
-	bh=LEYExAvOlZQZSspB1c18HV8RXpGDdV5MPj6WidEcY3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NgHHb4FZ4oXd00q1xc+yZjNbmZNY71/6ZEX31tU+Feufm/HGEgfts5EwyB/lyhQfxSV9A0kZMqb5mXnO8P5dervFi6+O6aUtLueux1sKZ7mJSfMIpPgBupLidCZI6qofsAD/svvbVNAIlNmtXudwkzH2meyhXe6b3UNpno6Gg2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=I3RbItsI; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4397dff185fso50299335e9.2;
-        Tue, 25 Feb 2025 07:21:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740496862; x=1741101662; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R00iFC92M1deh98zQEz+YC258SvnhDWpARo05Vlc3R0=;
-        b=I3RbItsI5VpSLVLDK38fCL2OUZS7w8QFSYfIPmBJgU2szZ7+nF2R8jK9ZVKuTokCAl
-         mBQyd2y2+azzHzU/6k3tuHo95R5Zo1wxh10/3IADx9QDOtDVeFd7I3dr+vOVIrtBGkfW
-         leEEMlbcTe9YxIy6HpeNKgNSU7jKuIqtQIg683r4fc+HTtydETwSFeC5Gtn99HQoeztL
-         D76rVB1pDqJoCFi//ivOBX116pbzYV7sirsenvAXHV/dNJhUUyducnu51w29Ho9W1DkW
-         PwKrl0uGCM13NMqc6oLexolkPyCthLQ2c4Em2IVCV5ss/Da/EyUuvcOoQD02N7fQvnw9
-         2lug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740496862; x=1741101662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R00iFC92M1deh98zQEz+YC258SvnhDWpARo05Vlc3R0=;
-        b=pT75gJIDni9SITCvglXEkpOBd1tEFyGpc55TOpdxSPyQgpfI67WbPJfDhEfH+LUxAN
-         oQ0vf2oNG1X2tewYvJfIUrVKEibHaIL8Beyyivc+185qr/V/FChzwIKIKblzrrq97TqE
-         zrLalLCoMNUebQNLDVpT338Yb7qhf4j9nZtaRLZHf7e9KYxu87Odjobe/qSENPbyJ7cG
-         xyIs0flnY82+ygBkFr66mlxn1yqZG2ryqv2spmnMhBLrQ0P81wfJh7t1gIKkI/ZfoMyb
-         1NWeGC6d9KNTU2Zjh3xRskao8jwJPK2zimuI1+R3rvosLZ3kihc54k5YqE/fAwmmNevT
-         RlcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAlx/dKsohIKBGXKvzOKHKRXbb9fBixl8HNKYyDEI0b/DtUHL8WOKfmeI65HxTwd3g5V2dtZgZ@vger.kernel.org, AJvYcCW/ZSs2FoE7sDtbhEPUogQwaVGWYcLtdmQqHNmYeICXN+2KWLp/sFttD6h5+7DB6MSewbiYGq0T716JSic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz77pXcx4hRbxRqJlGsaLBMcZpoo3QJsZlxg/1bHsScLlLb43ze
-	H9bcGkgmjbUo3AKbmyYHRnejWucMjHMbNeyZf+UjywVDY4DpdpE=
-X-Gm-Gg: ASbGncsi7Y7z9rNoqL2jJjVBJNapG8NSDsd3zFMMkD6DX2XC54xf3PCg6HaI3TVyvFI
-	8aC2HOQBQoPax8ol5IJCByB+FllLqpGEgU13BkQqWQZjjQUgXjBBYeqItBqAmeVlAXAnpHRR+Aa
-	40hxM+SNf4mk515zUEfG525/nIFRTMBjIVnrFaJtYbOXih7H2zr59VQx+yTaazTB+a+WFfCZTcC
-	Oa/Sr4tB0PphM3VWnliZOeNpL+IRFOPVX5L7ir5rXFl0Rx+t+9wPSX+NW1W6rI1C6FWNAzAPA0u
-	rVDDAAxIBeu8n8ra1RCEnxEu6JNGJ/EF3tjMrjLMk0DCghBMe+DNc2MatP9j8jN+FM1AO9BpIJ7
-	zHiVD
-X-Google-Smtp-Source: AGHT+IFTmPOZNMUYbjq0xktjOwR/hrjcj7eKjTft/BEOywT7Z0vceEUrKjh0CqgKZ053FHdrLSzW4w==
-X-Received: by 2002:a05:6000:1788:b0:38d:d9bd:1897 with SMTP id ffacd0b85a97d-38f6e95ef5bmr14241054f8f.22.1740496861848;
-        Tue, 25 Feb 2025 07:21:01 -0800 (PST)
-Received: from [192.168.1.3] (p5b2aca7c.dip0.t-ipconnect.de. [91.42.202.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d60c0sm143189335e9.12.2025.02.25.07.21.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 07:21:01 -0800 (PST)
-Message-ID: <066123b3-127d-4200-946f-61b118de1a45@googlemail.com>
-Date: Tue, 25 Feb 2025 16:21:00 +0100
+	s=arc-20240116; t=1740496892; c=relaxed/simple;
+	bh=FVKv8GrgSmao0OIpGObeXk+FWqUHw2hHv3c8zmGSzsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MyyeL4qYVIOxID3EOA/IsYXu8N1VhnfUpM1u8t8ZCSi3nBEbUu7BpC9H0Nnl5wgP1kf7O2nu8VGDz+XxwNs/pts6zO+K0YwPkxTsikM6kA9Mu7AVrnT63IorqzUzbE3v37mHQ5YYypDqpptrr78ULee2lzA5NaByG6Kt4DM2ELc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=gNC8SD6m; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 71A952E08DAD;
+	Tue, 25 Feb 2025 17:21:26 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740496886;
+	bh=xWuahah/PdOfmDNyuBQXOs+HN3Pjy/JHF3ALg0qBEzc=;
+	h=Received:From:Subject:To;
+	b=gNC8SD6mrK5kXfFoU60otEoy3g8khZzHUb+PkNCCAD0U5gdfLCGAJfQqE4hekSMjL
+	 fX1xWpZlDy1ToU5csyrLVC8J2u4/godvE32l2PT/7k5mADK9QvONlngNVoxAVJvQXC
+	 MJ2jkAhMKEPg8OfyMks4nvSBETrNc0EJ2b1ci8ek=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.171) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f171.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-30797730cbdso56804081fa.3;
+        Tue, 25 Feb 2025 07:21:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU6Jp8zVWlDj8Q3g5O2aCbXv5xqkHOXpQIKLTR/LHdtAwM6LaiNfkv1JSegXlth2qk73KHg8e/oAEPxeng=@vger.kernel.org,
+ AJvYcCWwItNSr7Y+OlkPD7KjikRzgjiIuxtyD12pwTZgdJQcBsdN/d32nrTnuyAE+P2VW1477Xg8KRamHDNuSxd4YUuFKliaXQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsx4X9DNIG0T+N2cFNi5YHw6BjU117nMyAyKDl0kwfrp00Vk2Z
+	PFwA/oLfwIq/9AfdNzyxCvSZyosYedaZoQncAqJPpt6U4G8nIh2fhXgX8BBHi6CbSgWudeQEf5n
+	CjSRlnnM3gm6rnNX/BaN3cEJy9Wc=
+X-Google-Smtp-Source: 
+ AGHT+IGOxt1nlQx6O/l/QrJKSFe0IYaaYfHThuSDfRPp/NqLUzZ59caD5eWUj8y4EmUIUOdt9SR7HGOm4SNjDqJcifM=
+X-Received: by 2002:a2e:9e0d:0:b0:308:f5f0:c438 with SMTP id
+ 38308e7fff4ca-30a599b8ca7mr54828541fa.31.1740496885703; Tue, 25 Feb 2025
+ 07:21:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250225064750.953124108@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250224223551.16918-1-luke@ljones.dev>
+ <20250225142555.14005-1-lkml@antheas.dev>
+ <4612ead6-d76f-4a24-ab4e-f45b0178d70a@amd.com>
+In-Reply-To: <4612ead6-d76f-4a24-ab4e-f45b0178d70a@amd.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Tue, 25 Feb 2025 16:21:14 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwF-WVEgiAbWbRCiUaXf=BVa3KqmMJfs06trdMQHpTGmjQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpQ2d0bTOmNVn2MCzXfdYylCfDXf_AL-LaupFBFRXcc1ncNj05LlrSWOsQ
+Message-ID: 
+ <CAGwozwF-WVEgiAbWbRCiUaXf=BVa3KqmMJfs06trdMQHpTGmjQ@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: asus-wmi: change quiet to low-power
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: luke@ljones.dev, corentin.chary@gmail.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174049688685.14640.17415816087005026662@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Am 25.02.2025 um 07:49 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> The documentation says to look at platform_profile_choices.  To
+> determine what is supported.  FWIW this is exactly what
+> power-profiles-daemon does.
 
-Like -rc1, no problems with -rc2 here. Builds, boots and works on my 2-socket Ivy Bridge 
-Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+Yeah, this one is minor all things considered. Since there is a
+justification. Even if user error is not the best of justifications.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+But as I maintain a userspace TDP tool, I can tell you that if the
+other issue is not fixed, /sys/firmware/acpi/platform_profile is no
+longer trustworthy due to being able to occlude platform profiles. So
+a mitigation will be needed for all userspace power utilities. But
+there is actually very little use currently for
+/sys/class/platform-profile as AMD pmf is mostly a NOOP, so I think
+this would be premature and should be avoided.
 
+While I do not have a large portfolio of ACPI collections for
+Thinkpads, HP, Alienware, and Dell that have WMI drivers, I can see
+amd-pmf popping up on a lot of the late 2024 models of GPD, Ayaneo,
+Lenovo, and Asus, and going into 2025. So it is worthwhile fixing this
+now once and for all.
 
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Antheas
 
