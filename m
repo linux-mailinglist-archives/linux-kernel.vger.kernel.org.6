@@ -1,180 +1,386 @@
-Return-Path: <linux-kernel+bounces-531804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738C6A44533
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:00:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E98D4A4453D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E1A188F18D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E12C717D81D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5445416C854;
-	Tue, 25 Feb 2025 15:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17381714A1;
+	Tue, 25 Feb 2025 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="PxWNJ4R0"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZflnUnB+"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAB42AEE4;
-	Tue, 25 Feb 2025 15:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB687175AB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499196; cv=none; b=Cv3JrP6hPDhQuOXrYuBo2ryQZA/ueiWmBrldGMba7bKLid47Mo1lqoFNU5LFdcmlJwXzE7AOdwOpAABoZLp6vku8ph/LlEhd/PvKY/k5DoCwwz0JlMm0xnEpmnAmJiPxXr19ASwtX0/YvE49r/slyQlD20j0ktalmLm13/R67yY=
+	t=1740499255; cv=none; b=VB1WBEJI7x73w2jUGWj/B9CBZmtOLT4WkJtoJr01HanJEDJDD1fZMSMSq3E7dTZJ6WI1yy3YjBnbMFrwOwbswpb5g4jLKpja2BA/6NvkjFoUkcyI0oUnweCQ1WegnkBTahQEqAlkGOi+a4CMu+8LRmqjVy70JdPll2h9MQ/UR1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499196; c=relaxed/simple;
-	bh=vU/jJyxqtXWQ08fyslpvzJxRG6WC82WSeVW8eQEOgRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t516W4m4WOabMhOILiD4NzDRD0IP/wcHw9NvxQNVS2aDBTZKBQAt9cf2p0YtJFFiZizLXM4rrB3e/5qnvGlqEIJFqOurM6wqWhVO3Ehj86PwU55w2lUbnOkn6mcNMosYKIisAPP/tLnvhE2ieQN2m/1wKzcBhOCEoehjxv2tJuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=PxWNJ4R0; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1740499189; x=1741103989; i=w_armin@gmx.de;
-	bh=VoH3BvQCgsX1U5LuCaZ1VFv1FfMkRAgbcCzq9pEohVo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PxWNJ4R0KtYNt+o+1bJ+QNLqTMAB5MWRY5wRzg48O+TuUVYW3hq5sASzSmpqEj6i
-	 +By/W20NpAgvJNKFXoN/rb/GtsfVulSgt31T9MxEUS2pG0xosYJWVToUZ8bggjFkW
-	 JEOSq7nLudixysSa/V3UY27no6VjFwl9WitH/UZSh0Qka2e1CRHU87z++3E2RNr9R
-	 YjA+jwEtrF9NnhG8MIg2q/oH3I84fasAJbg/OgQjp82wpBklPc0Tyt3SAWxCbZXE2
-	 x8x9xcBW/mNtBViObf0KTepY5/si8+lTWwXxpbTHxbCsbp1QAPhg/csPq3KbXhRGO
-	 frOhAI97WqH45+Nh7Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MrhUK-1szJAn1sBw-00aIYO; Tue, 25
- Feb 2025 16:59:49 +0100
-Message-ID: <9aab6df8-892c-40d2-9834-954ca764d5f4@gmx.de>
-Date: Tue, 25 Feb 2025 16:59:47 +0100
+	s=arc-20240116; t=1740499255; c=relaxed/simple;
+	bh=4/6WNfOFt0tBeL4b4ZFXpp6KrBRycH/p/0PSMwuLqJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3LulLabwn/o3EyjuIDvLKw13775bo5nyy7mSxs6oOy4JUgdMFqv33u3hZUPQTw2Bf4S1AzK1f0CZAWiDFcX370+iPmhfotfiwjwtKqlh6TWZ7/h0EErQ7zKvqBYGjha7la/DlPkR5WzmC3/ghkw1fdDaSir9TYd5ycteoU+Noo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZflnUnB+; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6df83fd01cbso26467116d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:00:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1740499253; x=1741104053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qfo6+lok37Xv4JW+s09KuDgrT6+5xL1zebJ3c/AEumA=;
+        b=ZflnUnB+PeZMI4/b70E6a2cU58jPeq62/pEaWrYrSHi9ULd94fG0+uXeSktADpAa9I
+         1OJik1HxEM5/2LHJ5ykJEKPhL6GN0qY+l6JkpHnTO0nnNnkIoYwpTl7BKG9Eet3Pnt2R
+         U1a1mLyAlbVoTu3p1lnQI7D7LZnoWYKd+GmpM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740499253; x=1741104053;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfo6+lok37Xv4JW+s09KuDgrT6+5xL1zebJ3c/AEumA=;
+        b=ev2D67StKUqJxkQbay1ybyEvUpeTDLoet2smiJbCZlCfXylPJSM6rP/qsSiYlFldwo
+         R1+Nuyb6xlGhBhj5Ouei7pFiz2AiZdsQAImpyW4EGCqXuoAMdgF6DF7MKUx0HmLa82Pg
+         OYc3jXhdOMSYqNPxUC/41OxXqxAgFYlX+tebRiWdeGwEZ3aRan6SPkEFE3mnQXMLWjMC
+         BYN7EOd/DSjVm5Z64Gq7YLWiirbXyVtnH2DTI2he2cSi/omYFFje1Tz4nmfWZbagW+Y8
+         3aLBg0BaK58QsJH9DcXHKUH3VN21JAAr1ZUC9U4D+vIfC9aShlch7XIR3ZoTJeaFd2OT
+         eI7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWK6cbOvMCjYAtyByGW8TPeuvmPOuO9LA1U1+GUDD4HjX3aNtsbhym2I+hd/HMAfcccqfaMDSYDmJXVDe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKb4+ncJrrEKhdosISC+bF9X3WBCh1vl/jBqZTBK0Qd1Q7uSLw
+	/j1B1R9BkwbHhB2diqZHrChJZO9BRX3gcK6drjk2ZeeMofx5ukSPab+op6fKtjE=
+X-Gm-Gg: ASbGnctA+vBi3OQ8UmQM9a7nCWrKNYnPf+IUMU8+IYbHHxnHswDutDshZyNQbYECCzP
+	I31j5JDFaWC1zKD/V/DdanIUeRK8q3hePrsuXrvUcyeEiELWZDl4ZjZrCtg8FqvLbgfzd3QPBn5
+	9gLpJ6MRyQ5IjUXvARAM2kk5JK9xlYZeAObNxBio7ub1W2VZlwpIz3nVBindquaffPTCgB1+dH5
+	BPBuwbjjwXgLKVRgoXFoXSXq6v0Oj+LJCbnutFiG7wcBegWv0/ofaoGyHM8G7KV3lU5FO0+0dFx
+	nlV119alXrw5DSp9QGsYBC9QSaz2iKzF7n4F1HqRupBzrOgjTmn32v2mWezyifBV
+X-Google-Smtp-Source: AGHT+IFy8cr87IYs/ikvSPfJnNOc6xW3Y53Ei4eNhSOWrUVVAE6ouMuggS+w7Eme1vNlh671mSTUjA==
+X-Received: by 2002:ad4:5bea:0:b0:6e6:4969:f005 with SMTP id 6a1803df08f44-6e6ae994f63mr168782136d6.30.1740499252509;
+        Tue, 25 Feb 2025 08:00:52 -0800 (PST)
+Received: from LQ3V64L9R2 (ool-44c5a22e.dyn.optonline.net. [68.197.162.46])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b176c02sm10540366d6.110.2025.02.25.08.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:00:51 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:00:49 -0500
+From: Joe Damato <jdamato@fastly.com>
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: Fan Gong <gongfan1@huawei.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Cai Huoqing <cai.huoqing@linux.dev>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: Re: [PATCH net-next v06 1/1] hinic3: module initialization and tx/rx
+ logic
+Message-ID: <Z73pMXNsYprCcbmk@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Gur Stavi <gur.stavi@huawei.com>, Fan Gong <gongfan1@huawei.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Cai Huoqing <cai.huoqing@linux.dev>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+References: <cover.1740487707.git.gur.stavi@huawei.com>
+ <0e13370a2a444eb4e906e49276b2d5c4b8862616.1740487707.git.gur.stavi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: asus-wmi: change quiet to low-power
-To: Luke Jones <luke@ljones.dev>,
- Mario Limonciello <mario.limonciello@amd.com>,
- platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
- Antheas Kapenekakis <lkml@antheas.dev>
-References: <20250224223551.16918-1-luke@ljones.dev>
- <7a958091-84a0-4ec5-bd4a-3e5f973772e0@amd.com>
- <0d67e31ce334085b815f79f9c57a2c4e35870423.camel@ljones.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <0d67e31ce334085b815f79f9c57a2c4e35870423.camel@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:aBR4wKS7B+kEl44VvOkPmuHEPmld0+ugeeXQtJHAIqLGRMkC06M
- OvQLPUsPJOvHJ6+9SSAd7lCYTMAR0ajuLBDmjOkhhXc98P89akh1a04mnel8Wnto2iciEvB
- cOBshWvngeEGXQFvLBkNYyDHcPBczRivettYPE2v7tq3dpu3JD/+rt4XdJsPQdeRxN5o5aO
- 2R5fBtGUNn2dQjy9cZvqw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GU357jzTE48=;1yIagCdh0kKUVMPbRHlT3u+6Xrh
- WrVPJi16bBu8/KgbMkO5H864iQe8ApKySUYdC/X/YQBXhaFLlA+E7WVwv2pLW7ykd7YXxY+Kx
- 23PcULWJHzD/4+RvnU7aNuGJVRL3Vw7pvVybcoFLF5GHZHx39Jl1mH4182CI1RrsXJ8Luoxrm
- GMw/IHzCQLzTxeWgvYrww5S+6tFsZZ066nl/UZCbGtlaPpUAj3Mq0qxzHQaQ0e9nGKbo4jAqb
- 2hVOSi9imBg5C3h07PGhjQ31coeckwZsvdJhvnInxkw+zQnIixiB7M8ePiFScjaU12GL2jImm
- pJL2ugypCJXVdRgrx0NOlEGanEN11yBh0Log5v6VecRmUJ/KcaYrH2ySsHMzNrK+Q5KEmVfmg
- zAyd1R3KJS9WxMO1yHNTvzUy2woPjCCDg1JtARod8sLxElGuFGph2OlAvporHonkNQban1+In
- ZtKmWiJt5+tfLnBeKAOWYe2rHqnX8BcwJrp9YK/c/X3fQ9YS4N1Ymqfb4YynvpQBpEGtT9gC/
- Wm8XIA9qXJa5KEvFc9UWit6gEPPcppPreBhfQYnJXRIx3GzbeKf+Ioo1QWXfedi6H+NSo49ab
- JoGSAYJqW9p8YO78Q6BlJ37uznty9v+Csr1uav4DVATQWoD9LLMiumxapNCmYfPkl1SfXlM0x
- zfIeNeIbIA8rGYjcCBK19CgOI4VaTpcNXP1+kchfA/+gFIaNINSQ6qwcjhKNZD0XNAZDDTQg7
- M8aCcfwIKw4LxWdx80vR9YA4oKELYbAgaWkSK2FbEFOUUnb29PLwyEwfTEJK/1hqrNLEpXTQ6
- cT4ZKB67GQ/9j4T0XoPdqhfhXXgekN1L64cTwsiwQDp2p6FU+T3iVp9NuoAfWuVJqLxqwm2/d
- gP+6+6dJgwe+NItZDO5qJaGjHOVYqnWB/lQpyWp2rg3179M7iOVULZALsWZ7zw/EepYOQAuj0
- oKvus8vIF9N1uCJl7y/qMRIZ4NDmcSqINpGFxB3FJxIhWWdvUY2a2iPrurk+Ygt1M/XLgnhhu
- A8U//ocnQ18vQgCZh+uuV1cWYhJBkUAtMnCgJIQmZ7Owv6fXxCpX5DHvbitYrZbq8pPO6yHpW
- vc7/11FE0cKcZHPlVUyKl117hYTVAZ1iUT09heTjdCLhG/PxA3uFQTnnDnXc0NSZ+S65PFS7K
- nuowX6hL+SXM9mA31IvQOhyhuxR1oTeUIZDYDnG1c+boQlhbQocqqmy7N48Obikt8gm8h2Obo
- 1lfXQeSAZJUnfp87nRiNeLw4U2iV6JVbAkbW/R+wPMXWYbQX6HG3pfY+3lunU8AJUV9BT3rF5
- eo0BmjpwOQ8o4SGzQCfCgLltul4PBm//kVGjUQ23bquUjcAuf3XUf3Amy27LwcgapbJ+uX5AT
- 4rp2vm49NpK+1tlEngb9BncRiwV3TyHJuFRkHeBvVdvF9wpGBwSIwWfFk3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e13370a2a444eb4e906e49276b2d5c4b8862616.1740487707.git.gur.stavi@huawei.com>
 
-Am 25.02.25 um 07:13 schrieb Luke Jones:
+On Tue, Feb 25, 2025 at 04:53:30PM +0200, Gur Stavi wrote:
+> From: Fan Gong <gongfan1@huawei.com>
+> 
+> This is [1/3] part of hinic3 Ethernet driver initial submission.
+> With this patch hinic3 is a valid kernel module but non-functional
+> driver.
 
-> On Mon, 2025-02-24 at 18:39 -0800, Mario Limonciello wrote:
->> On 2/24/2025 16:35, Luke Jones wrote:
->>> From: "Luke D. Jones" <luke@ljones.dev>
->>>
->>> Change the profile name "quiet" to "low-power" to match the AMD
->>> name. The
->>> primary reason for this is to match AMD naming for
->>> platform_profiles and
->>> allow both to match. It does not affect Intel machines.
->>>
->>> The quiet profile is essentially a low-power profile which tweaks
->>> both TDP and fans - this applies to 80+ ASUS laptops.
->>>
->>> Signed-off-by: Luke D. Jones <luke@ljones.dev>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->>
->> IMO - this should have a fixes tag since this should probably go in
->> the
->> 6.14 cycle too.
->>
->> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple
->> handlers")
->>
-> Good point, thanks. I assume when pulled in this can be added?
+IMHO, there's a huge amount of code so it makes reviewing pretty
+difficult.
 
-Antheas is concerned that this patch might break brittle userspace scripts
-like "echo quiet | sudo tee /sys/firmware/acpi/platform_profile".
+Is there no way to split this into multiple smaller patches? I am
+sure his was asked and answered in a previous thread that I missed.
 
-Maybe we should instead change the strategy used by the legacy platform-pr=
-ofile
-handler when selecting supported profiles?
+I took a quick pass over the code, but probably missed many things
+due to the large amount of code in a single patch.
 
-Thanks,
-Armin Wolff
+[...]
 
->>> ---
->>>  =C2=A0 drivers/platform/x86/asus-wmi.c | 6 +++---
->>>  =C2=A0 1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/platform/x86/asus-wmi.c
->>> b/drivers/platform/x86/asus-wmi.c
->>> index d22748f1e154..de19c3b3d8fb 100644
->>> --- a/drivers/platform/x86/asus-wmi.c
->>> +++ b/drivers/platform/x86/asus-wmi.c
->>> @@ -3945,7 +3945,7 @@ static int
->>> asus_wmi_platform_profile_get(struct device *dev,
->>>  =C2=A0=C2=A0		*profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>>  =C2=A0=C2=A0		break;
->>>  =C2=A0=C2=A0	case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
->>> -		*profile =3D PLATFORM_PROFILE_QUIET;
->>> +		*profile =3D PLATFORM_PROFILE_LOW_POWER;
->>>  =C2=A0=C2=A0		break;
->>>  =C2=A0=C2=A0	default:
->>>  =C2=A0=C2=A0		return -EINVAL;
->>> @@ -3969,7 +3969,7 @@ static int
->>> asus_wmi_platform_profile_set(struct device *dev,
->>>  =C2=A0=C2=A0	case PLATFORM_PROFILE_BALANCED:
->>>  =C2=A0=C2=A0		tp =3D ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
->>>  =C2=A0=C2=A0		break;
->>> -	case PLATFORM_PROFILE_QUIET:
->>> +	case PLATFORM_PROFILE_LOW_POWER:
->>>  =C2=A0=C2=A0		tp =3D ASUS_THROTTLE_THERMAL_POLICY_SILENT;
->>>  =C2=A0=C2=A0		break;
->>>  =C2=A0=C2=A0	default:
->>> @@ -3982,7 +3982,7 @@ static int
->>> asus_wmi_platform_profile_set(struct device *dev,
->>>
->>>  =C2=A0 static int asus_wmi_platform_profile_probe(void *drvdata,
->>> unsigned long *choices)
->>>  =C2=A0 {
->>> -	set_bit(PLATFORM_PROFILE_QUIET, choices);
->>> +	set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
->>>  =C2=A0=C2=A0	set_bit(PLATFORM_PROFILE_BALANCED, choices);
->>>  =C2=A0=C2=A0	set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
->>>
->
+> +static void init_intr_coal_param(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +	struct hinic3_intr_coal_info *info;
+> +	u16 i;
+> +
+> +	for (i = 0; i < nic_dev->max_qps; i++) {
+> +		info = &nic_dev->intr_coalesce[i];
+> +		info->pending_limt = HINIC3_DEAULT_TXRX_MSIX_PENDING_LIMIT;
+> +		info->coalesce_timer_cfg = HINIC3_DEAULT_TXRX_MSIX_COALESC_TIMER_CFG;
+> +		info->resend_timer_cfg = HINIC3_DEAULT_TXRX_MSIX_RESEND_TIMER_CFG;
+> +	}
+> +}
+> +
+> +static int hinic3_init_intr_coalesce(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
+> +	u64 size;
+> +
+> +	size = sizeof(*nic_dev->intr_coalesce) * nic_dev->max_qps;
+> +	if (!size) {
+> +		dev_err(hwdev->dev, "Cannot allocate zero size intr coalesce\n");
+> +		return -EINVAL;
+> +	}
+> +	nic_dev->intr_coalesce = kzalloc(size, GFP_KERNEL);
+> +	if (!nic_dev->intr_coalesce)
+> +		return -ENOMEM;
+> +
+> +	init_intr_coal_param(netdev);
+> +	return 0;
+> +}
+> +
+> +static void hinic3_free_intr_coalesce(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +
+> +	kfree(nic_dev->intr_coalesce);
+> +}
+
+Do you need the IRQ coalescing code in this version of the patch? It
+looks like hinic3_alloc_rxqs is unimplemented... so it's a bit
+confusing to see code for IRQ coalescing but none for queue
+allocation ?
+
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+> new file mode 100644
+> index 000000000000..4a166c13eb38
+> --- /dev/null
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+> +
+> +#include "hinic3_hwdev.h"
+> +#include "hinic3_hwif.h"
+> +#include "hinic3_nic_cfg.h"
+> +#include "hinic3_nic_dev.h"
+> +#include "hinic3_rss.h"
+> +
+> +void hinic3_clear_rss_config(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +
+> +	kfree(nic_dev->rss_hkey);
+> +	nic_dev->rss_hkey = NULL;
+> +
+> +	kfree(nic_dev->rss_indir);
+> +	nic_dev->rss_indir = NULL;
+> +}
+
+Do you need the above code in hinic3_clear_rss_config?
+
+I probably missed it but hinic3_try_to_enable_rss is empty, so I'm
+not sure why you'd need to implement the de-allocaion of the
+rss_hkey and rss_indir in this patch ?
+
+> +static void hinic3_reuse_rx_page(struct hinic3_rxq *rxq,
+> +				 struct hinic3_rx_info *old_rx_info)
+> +{
+> +	struct hinic3_rx_info *new_rx_info;
+> +	u16 nta = rxq->next_to_alloc;
+> +
+> +	new_rx_info = &rxq->rx_info[nta];
+> +
+> +	/* update, and store next to alloc */
+> +	nta++;
+> +	rxq->next_to_alloc = (nta < rxq->q_depth) ? nta : 0;
+> +
+> +	new_rx_info->page = old_rx_info->page;
+> +	new_rx_info->page_offset = old_rx_info->page_offset;
+> +	new_rx_info->buf_dma_addr = old_rx_info->buf_dma_addr;
+> +
+> +	/* sync the buffer for use by the device */
+> +	dma_sync_single_range_for_device(rxq->dev, new_rx_info->buf_dma_addr,
+> +					 new_rx_info->page_offset,
+> +					 rxq->buf_len,
+> +					 DMA_FROM_DEVICE);
+> +}
+
+Are you planning to use the page pool in future revisions to
+simplify the code ?
+
+> +static void hinic3_add_rx_frag(struct hinic3_rxq *rxq,
+> +			       struct hinic3_rx_info *rx_info,
+> +			       struct sk_buff *skb, u32 size)
+> +{
+> +	struct page *page;
+> +	u8 *va;
+> +
+> +	page = rx_info->page;
+> +	va = (u8 *)page_address(page) + rx_info->page_offset;
+> +	prefetch(va);
+
+net_prefetch ?
+
+> +
+> +	dma_sync_single_range_for_cpu(rxq->dev,
+> +				      rx_info->buf_dma_addr,
+> +				      rx_info->page_offset,
+> +				      rxq->buf_len,
+> +				      DMA_FROM_DEVICE);
+> +
+> +	if (size <= HINIC3_RX_HDR_SIZE && !skb_is_nonlinear(skb)) {
+> +		memcpy(__skb_put(skb, size), va,
+> +		       ALIGN(size, sizeof(long)));
+> +
+> +		/* page is not reserved, we can reuse buffer as-is */
+> +		if (likely(page_to_nid(page) == numa_node_id()))
+> +			goto reuse_rx_page;
+> +
+> +		/* this page cannot be reused so discard it */
+> +		put_page(page);
+> +		goto err_reuse_buffer;
+> +	}
+> +
+> +	skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
+> +			rx_info->page_offset, size, rxq->buf_len);
+> +
+> +	/* avoid re-using remote pages */
+> +	if (unlikely(page_to_nid(page) != numa_node_id()))
+> +		goto err_reuse_buffer;
+> +
+> +	/* if we are the only owner of the page we can reuse it */
+> +	if (unlikely(page_count(page) != 1))
+> +		goto err_reuse_buffer;
+
+Are you planning to use the page pool in future revisions to
+simplify the code ?
+
+> +static struct sk_buff *hinic3_fetch_rx_buffer(struct hinic3_rxq *rxq,
+> +					      u32 pkt_len)
+> +{
+> +	struct net_device *netdev = rxq->netdev;
+> +	struct sk_buff *skb;
+> +	u32 sge_num;
+> +
+> +	skb = netdev_alloc_skb_ip_align(netdev, HINIC3_RX_HDR_SIZE);
+> +	if (unlikely(!skb))
+> +		return NULL;
+> +
+> +	sge_num = hinic3_get_sge_num(rxq, pkt_len);
+> +
+> +	prefetchw(skb->data);
+
+net_prefetchw ?
+
+> +int hinic3_rx_poll(struct hinic3_rxq *rxq, int budget)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(rxq->netdev);
+> +	u32 sw_ci, status, pkt_len, vlan_len;
+> +	struct hinic3_rq_cqe *rx_cqe;
+> +	u32 num_wqe = 0;
+> +	int nr_pkts = 0;
+> +	u16 num_lro;
+> +
+> +	while (likely(nr_pkts < budget)) {
+> +		sw_ci = rxq->cons_idx & rxq->q_mask;
+> +		rx_cqe = rxq->cqe_arr + sw_ci;
+> +		status = rx_cqe->status;
+> +		if (!RQ_CQE_STATUS_GET(status, RXDONE))
+> +			break;
+> +
+> +		/* make sure we read rx_done before packet length */
+> +		rmb();
+> +
+> +		vlan_len = rx_cqe->vlan_len;
+> +		pkt_len = RQ_CQE_SGE_GET(vlan_len, LEN);
+> +		if (recv_one_pkt(rxq, rx_cqe, pkt_len, vlan_len, status))
+> +			break;
+> +
+> +		nr_pkts++;
+> +		num_lro = RQ_CQE_STATUS_GET(status, NUM_LRO);
+> +		if (num_lro)
+> +			num_wqe += hinic3_get_sge_num(rxq, pkt_len);
+> +
+> +		rx_cqe->status = 0;
+> +
+> +		if (num_wqe >= nic_dev->lro_replenish_thld)
+> +			break;
+> +	}
+> +
+> +	if (rxq->delta >= HINIC3_RX_BUFFER_WRITE)
+> +		hinic3_rx_fill_buffers(rxq);
+
+Doesn't this function need to re-enable hw IRQs? Maybe it does
+somewhere in one of the helpers and I missed it?
+
+Even so, it should probably be checking napi_complete_done before
+re-enabling IRQs and I don't see a call to that anywhere, but maybe
+I missed it?
+
+I also don't see any calls to netif_napi_add, so I'm not sure if
+this code needs to be included in this patch ?
+
+> +#define HINIC3_BDS_PER_SQ_WQEBB \
+> +	(HINIC3_SQ_WQEBB_SIZE / sizeof(struct hinic3_sq_bufdesc))
+> +
+> +int hinic3_tx_poll(struct hinic3_txq *txq, int budget)
+> +{
+> +	struct net_device *netdev = txq->netdev;
+> +	u16 hw_ci, sw_ci, q_id = txq->sq->q_id;
+> +	struct hinic3_nic_dev *nic_dev;
+> +	struct hinic3_tx_info *tx_info;
+> +	u16 wqebb_cnt = 0;
+> +	int pkts = 0;
+> +
+> +	nic_dev = netdev_priv(netdev);
+> +	hw_ci = hinic3_get_sq_hw_ci(txq->sq);
+> +	dma_rmb();
+> +	sw_ci = hinic3_get_sq_local_ci(txq->sq);
+> +
+> +	do {
+> +		tx_info = &txq->tx_info[sw_ci];
+> +
+> +		/* Did all wqebb of this wqe complete? */
+> +		if (hw_ci == sw_ci ||
+> +		    ((hw_ci - sw_ci) & txq->q_mask) < tx_info->wqebb_cnt)
+> +			break;
+> +
+> +		sw_ci = (sw_ci + tx_info->wqebb_cnt) & (u16)txq->q_mask;
+> +		prefetch(&txq->tx_info[sw_ci]);
+
+net_prefetch ?
 
