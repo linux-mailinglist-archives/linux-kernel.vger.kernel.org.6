@@ -1,216 +1,93 @@
-Return-Path: <linux-kernel+bounces-530746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED5AA437C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:36:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B00A437C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0124174E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606161893A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1AE25D55E;
-	Tue, 25 Feb 2025 08:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B2D25E469;
+	Tue, 25 Feb 2025 08:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iMSj3EYj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TRxa2sAX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEJYeUeY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2GWcGaxb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="a4mR7q78"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489C71A7044
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA04215F7B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472611; cv=none; b=pWtwBOynZdCM33Vz0MRHVyAuUQ9N0U/akFBMyL6eGJiF+Dzp9Hxw4OKaoKlnS/1VupX2MpU1VvYYpsp9nEp7xNRZPoYbKhobrQ05E0ofAk8uiF2+0OL6XpMbyjmrnE4F1czOPLKbrsvGxxA0PuWr1jIaaZckb9Sb6y3XK8e3MAA=
+	t=1740472633; cv=none; b=MC9uGU3y7qHpntyGT9FT9FOzQY0eaYq3kuE/mZDWFi6WmK0R3ROtqeN9AeYTw8OT1AyAggLLJH3AWnrMmFjafOhLTT0YTJR9sHFiiBf48RYXb4fqikCtYtbS7rHOUyfNUKV+Fp09IrfMfo9T6J34/1qzKbvc6g561UrKgDQ/rFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472611; c=relaxed/simple;
-	bh=dYiNWNzutWIunK0YREZeye8mMXG++RLpRz2knUfjkfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOrTjHiBsE0fD0yzBH2azDAL3ZKZHOq0o3nPyt3FKmF5+YWL3ASEZCEnhM51AxRDpld1MIkyWQZofSR8hZCQV+icxlB0e/dQSFikMfIoDn3AsguKgkV1zl/Meg0OA8g1MA/d9IAeWufYvFtXBQspAC4+0nrWGw0KIFFfxSg+y0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iMSj3EYj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TRxa2sAX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEJYeUeY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2GWcGaxb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E4572118E;
-	Tue, 25 Feb 2025 08:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740472608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
-	b=iMSj3EYjCoNJ4Z740vMgD27ZXFtu3F3CLVZ3oDILVbMlw0tqBuyEub8EIZkyJoPcuaMSQ9
-	G3jhPBfdRxBTGbC20LgbOZ9u51YQKPTAb23mcV/JMQ+KUQ13ZpYxnu/wwU8mCM7oh/EB1+
-	9/aFr/JtHPWoIBmQ0mXyMnO6Q1YWMt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740472608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
-	b=TRxa2sAXnPlD/UqrVIzRVclpxMU9HcFoA1CacAu9ubJK6QHEW5VpPrkxL2IbzRQuDLBuJx
-	PSNljU0qjUBar6AQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lEJYeUeY;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2GWcGaxb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740472607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
-	b=lEJYeUeYu/5Ys8uFO5wUOLJGv1Rv9tujKpdmgBhdYZTXGkN0NDf0Mj+ZcBQ1KkU7/whuJz
-	3GlsRoHvKAJ18y3q3FOUDVilf+RTLuTme8ZLSYsm9BNGHP0n/5wW+Ig0uRN4IPqmcgH+E/
-	jIvpC9x9STl8fkDqE8rA3U18Vk39tsY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740472607;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixIW4L2KK1/x1LlQODZCwvIbEcdT4VoLWaThdcRLEE8=;
-	b=2GWcGaxbapQTPy3/Te8CBxci5u/POnS2l69/xxK+ZEHnFiPzrSZYs0JYSoAu0ksLesZV+n
-	2Ewt3Q9+NjNBC0AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 770CA13A61;
-	Tue, 25 Feb 2025 08:36:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xlNQGh6BvWemAwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 25 Feb 2025 08:36:46 +0000
-Date: Tue, 25 Feb 2025 09:36:44 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-	linux-kernel@vger.kernel.org, 42.hyeyoo@gmail.com, byungchul@sk.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	akpm@linux-foundation.org, stable@vger.kernel.org,
-	linux-mm@kvack.org, max.byungchul.park@sk.com,
-	max.byungchul.park@gmail.com
-Subject: Re: [PATCH] x86/vmemmap: Synchronize with global pgds if populating
- init_mm's pgd
-Message-ID: <Z72BHNv18NNq1e2F@localhost.localdomain>
-References: <20250220064105.808339-1-gwan-gyeong.mun@intel.com>
- <d1da214c-53d3-45ac-a8b6-51821c5416e4@intel.com>
+	s=arc-20240116; t=1740472633; c=relaxed/simple;
+	bh=ElkRcRcC9BTO7H5jfSF1QHswt8xyaeS2W3ZojVAqfjg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=u/5na/ijfTQMFlDeisxeZAHcJNUITpI/DgvXwvJrL7qxCbm9eMlZjU2fxvclg5vwvVbp+Q7SRqPes7C4DiK52sAIwOO1fXsJ3vChCMUWNkzJdP/SwxGk0SVxXuSFqWvVyGXNAqmlt4KAEQjrbsa3tR8WKI5a4xdrbvgsHKgQpgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=a4mR7q78; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1740472624; bh=S/FFL1KTyAN1SCxYwd/nei5gKa0deIvjHt1fYZZAH8U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=a4mR7q785cfwVk1vlwih9r8azFmuC65/pojIHnZGhuivkylVaxgstNIo9i7gvJ95t
+	 Y2A96JO7Y78H5ZBoZ59Q0PDpkC4DnPXCp2grGBmdF5Y06V6tXOrYW7wbV4Dj/Sn1zK
+	 aB2jXQPgiIS2oFtNXRk7YhhJgeCZUWAJboxHGNQU=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 94231688; Tue, 25 Feb 2025 16:37:02 +0800
+X-QQ-mid: xmsmtpt1740472622tvrxescdg
+Message-ID: <tencent_1C33E69E051B5B4B211B972571BA1CBB1C08@qq.com>
+X-QQ-XMAILINFO: NDAhN78L72+TSkgFZK690s6iStuka/9NzeeaCPXYeeisv0ECEwpyqwZngQJWJ4
+	 mPMNML6B3BWH+3bOmaasYxZySv2TY3nDKS/d8OmJMYe3GBRF1nOgLZ3on6Q4nsorWbHlHTY8NDHj
+	 SE1mwq86SWfw7K179xAx5vg6SinRyeitYPMdsuPqDE1FL43y3B8Zli0Yz1qM8TcesIFv6P/Dua/u
+	 DA+tb2w0lBl9QeNkonwZe1PNVpTgt2EMOH6VOwhkVKydAvr3OhxnW5JLx/pdB6N59xED3p882fZa
+	 CKZXptiGOcGGwpZKYjri3isiz9/vXQpcjXX+0rVlCsZhIWkHSPSzhq21aJvoG4XL2efAlRo4c/mZ
+	 yYsiC7JbxrY4rT5QobWTBEWBW+xMgkGJ6EYUphFkaA/uerZMi6voiL5vGRYsY4aFdw8QfydejdV0
+	 /L1HxDwoV+9vdACVaP2oZ6KldEfp8zx76+tcmU6jUzqCe9vMb3lMeowstbgs5ggNRVUXTi9P8AOL
+	 dFEJcep4XmxSgMAXpEUkD0JcQbSgvgNz4YdiM9RubTCYIbZURko3IqBSDzTvmFXeUQoMnOCKFIJk
+	 oWEUwdXpt/Dpz9I81jlZSKRyaTLg4q/v00Fc8ujH0e2PXzeQpzLjCHmNQ3pZRluuKFhBMxiyjLHA
+	 T7IlEv6Kw9FvcCys2bzJmh8XMwIPOef4s+ZE8EpiudG4llBTdZP8LU/4WLpRNdq8mACGY/uQa+bF
+	 3Cg7zP/npQecFaPSL76RdWTv9AorDZ9BjJN2E4Gr+a2uII5daMU95EinGlvDadEI1HPGWzvla4nx
+	 CXTUmAY/oMqzpSc3KuPMyjll4zsEN++V0+nuC0k+F7hKP0FfuCXQIK3oBM/O7zbFpfDadR5Ek0DY
+	 uOHJqpbRNzOQ6CSnDBueU4y1M1oKhrM18p4S1sTf4q
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
+Date: Tue, 25 Feb 2025 16:37:02 +0800
+X-OQ-MSGID: <20250225083701.1218150-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
+References: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1da214c-53d3-45ac-a8b6-51821c5416e4@intel.com>
-X-Rspamd-Queue-Id: 3E4572118E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[intel.com,vger.kernel.org,gmail.com,sk.com,linux.intel.com,kernel.org,infradead.org,linux-foundation.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,localhost.localdomain:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 10:02:54AM -0800, Dave Hansen wrote:
-> On 2/19/25 22:41, Gwan-gyeong Mun wrote:
-> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > index 01ea7c6df303..7935859bcc21 100644
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -1498,6 +1498,54 @@ static long __meminitdata addr_start, addr_end;
-> >  static void __meminitdata *p_start, *p_end;
-> >  static int __meminitdata node_start;
-> >  
-> > +static void * __meminit vmemmap_alloc_block_zero(unsigned long size, int node)
-> > +{
-> > +	void *p = vmemmap_alloc_block(size, node);
-> > +
-> > +	if (!p)
-> > +		return NULL;
-> > +	memset(p, 0, size);
-> > +
-> > +	return p;
-> > +}
-> 
-> This is a pure copy and paste of the generic function. I assume this is
-> because the mm/sparse-vmemmap.c is static. But this kind of copying is
-> really unfortunate.
+#syz test
 
-Agreed.
+diff --git a/mm/memory.c b/mm/memory.c
+index d5c4f932b399..a5b1832ec8f6 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6492,8 +6492,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	if (!vma)
+ 		goto inval;
+ 
+-	vma = vma_start_read(mm, vma);
+-	if (IS_ERR_OR_NULL(vma)) {
++	if (IS_ERR_OR_NULL(vma_start_read(mm, vma))) {
+ 		/* Check if the VMA got isolated after we found it */
+ 		if (PTR_ERR(vma) == -EAGAIN) {
+ 			count_vm_vma_lock_event(VMA_LOCK_MISS);
 
-> ...
-> > +pgd_t * __meminit vmemmap_pgd_populate(unsigned long addr, int node)
-> > +{
-> > +	pgd_t *pgd = pgd_offset_k(addr);
-> > +
-> > +	if (pgd_none(*pgd)) {
-> > +		void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
-> > +
-> > +		if (!p)
-> > +			return NULL;
-> > +
-> > +		pgd_populate(&init_mm, pgd, p);
-> > +		sync_global_pgds(addr, addr);
-> > +	}
-> > +
-> > +	return pgd;
-> > +}
-> 
-> I'd _really_ like to find another way to do this. We really don't want
-> to add copy-and-paste versions of generic functions that we now need to
-> maintain on the x86 side.
-> 
-> The _best_ way is probably to create some p*d_populate_kernel() helpers:
-> 
-> void pgd_populate_kernel(unsigned long addr, pgd_t *pgd, p4d_t *p4d)
-> {
-> 	pgd_populate(&init_mm, pgd, p4d);
-> 	arch_sync_global_pgds(addr, addr+something);
-> }
-> 
-> and move over most of the callers of:
-> 
-> 	p*d_populate(&init_mm, ...);
-
-I think this makes more sense, yes.
-So for those that do not need the sync, arch_sync_* would be just a
-noop, so we could avoid all these code duplication.
-
-
--- 
-Oscar Salvador
-SUSE Labs
 
