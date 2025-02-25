@@ -1,483 +1,482 @@
-Return-Path: <linux-kernel+bounces-530499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18965A4342F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:36:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0889A43431
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBF717AAD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 570A11896670
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED22B24EF9D;
-	Tue, 25 Feb 2025 04:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192C724EF8E;
+	Tue, 25 Feb 2025 04:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nM78GXvQ"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FYdMTM5F"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6677824BC09
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740458186; cv=fail; b=S8f1UUXynOajg8vz+jZucalGdjw5N7UkjWJ7bgIwmA0SXhhfrKVQIilLa2OE2Lvyw5gjKNLAKdHft3FtlVEa46pmVFwkuIpoU8JUmOBfEL8p2cY/4NgmP7qHLo/ulsWhLD2orXMj5JvU3rOJePwMcVs2CMyENO9RyqNEa9iUUzo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740458186; c=relaxed/simple;
-	bh=RbdZT08/+nCk6CcZ8Dmj8w4QO5bKmreMB/Lo6KsfbKw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eQSiP1egLId4x5o4NKsoranbMrEWG7J7cOG15MRT9Bv4rv/slzFq6InfbtPuw5+bsMqgMq+/e1hWtk00A7XIRZrQ0Fg5Khq7g6wgfVN+TEC001QOI3SnpxXoPvelgRBwDeQKIlDcE4WvoIzIf7VUtfcGfNKYQPd2bpS74lpzqpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nM78GXvQ; arc=fail smtp.client-ip=40.107.244.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FmfoIE6MnWOPQrxCNjzhd3B5YBxzRCCFOrF6PgHBUnjayUuV0uRJPntUc0Vt65bxE+hPBvcCcNt14i+p5vs8Afi01+ofpuxr6R89IDX+tQkqboN3KDmLCz2bjLwshavKs1MyUo8maIAxq8i3ExWIw5rRxjuCzK+1MvHwMh7eEeY2Ta7p43KRmfE5mUKVDqCMFyTPH2yAkUom+quBKmMRZaYhv9LISOJiOfWDIbXn773ie1HnHeVBo0pfuSJbVsS7r6a+Gkek+fPvhRqM3fnRGvKlNSS73Z5GREMbGbtVzvpzYP6D6DbNpy9dVbenqK7+ANEdKWkwdtp3JtLUBKxLAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0XUEWrfxOGz9vig9Sj2YMr3lB8IFOy+i8V6eMQGrJVo=;
- b=nl9ZAriKEBD/n+jdHqIMO5TEYZ9qgUW3wTv5XD6C+Sk/NgOax36lQYK2T/4Eu3e8hw92RMAz+IvFjU7vHbb4z6Fas6IEoQHP6d+pC+aL+xjKd4WXfYM3Rqlohp0oqtolvcqpDvs0njHcnH3xkq4uYRgC8u6W5C7L0m7D3pLNyXVnDvpzYXGY7qGESAP35e/8qILcmJFTRcXCTIw1+qurjbbtBU/hAxTq4g8ibNgPAK1o/xFh/PoW+ZKZ17DKB6Bex/fr35LsxhGRVrdJJcGafRkPysQkxcjA8ccVE7Baogu0Ef2DpNE4dcBaHJEDj9vTBFsrcv5/yPngIX2xaHpKCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0XUEWrfxOGz9vig9Sj2YMr3lB8IFOy+i8V6eMQGrJVo=;
- b=nM78GXvQDhNtSgCPH/MlYPOnULKjVfp1bXxi77EAxjJU3XZj1JuWYuyFypn0eurqnEBx478pzxhhCwUxMRh9kiL0twF8VQwnbFLJoGCdxYOrO9tRcxrVBwrg4vWdSrAt7J+51gxHa7CodKv3ShXWoOnd11isREAm9UOgH0In8fYQvDnf3BeBRiVtIofFxr7XvUMdTzcfRuVYizueXW+gmJfME+JKQf2AJaODBzpP+p+8x1k1NmBUUddmBdFGoqtgW0U6LX8wtkt//uftMyIyVox5RrJDdHrwM+e86eVVSWu/vnv4dGzrkIcA89mbQX/ibQk/1d3YLsMlTvrw71gQaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
- SA5PPFA403A61D8.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8da) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Tue, 25 Feb
- 2025 04:36:20 +0000
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2%5]) with mapi id 15.20.8466.020; Tue, 25 Feb 2025
- 04:36:20 +0000
-Message-ID: <289351cf-7fc7-428a-8faf-f0763e85a8fd@nvidia.com>
-Date: Mon, 24 Feb 2025 20:36:17 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 39/42] x86/resctrl: Split trace.h
-To: Reinette Chatre <reinette.chatre@intel.com>,
- James Morse <james.morse@arm.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
-References: <20250207181823.6378-1-james.morse@arm.com>
- <20250207181823.6378-40-james.morse@arm.com>
- <c481185c-9fbf-4c85-b1e2-ff95fc4cc18c@intel.com>
-Content-Language: en-US
-From: Fenghua Yu <fenghuay@nvidia.com>
-In-Reply-To: <c481185c-9fbf-4c85-b1e2-ff95fc4cc18c@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY3PR05CA0033.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::8) To DM6PR12MB2667.namprd12.prod.outlook.com
- (2603:10b6:5:42::28)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC724BC09
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740458235; cv=none; b=N7dIKtFv9bzVpftEccqBtXuIzrFhgHCValvZP827kEvPKcP+5o1D1e2pjWAaPXNx9JzRnK+NPynGhMJtWtb6tFGI7WgyFjwYQod9JhWEXLYCktqmNmEruR5Jax58PzvxAoF3HiQb8XS+6E53tQRGRfalF8aOkcR26ZJINAzYzJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740458235; c=relaxed/simple;
+	bh=8OLwxL171auZ4f2/5h4h+CkbzTmMQW7TAC07KE+jS8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4YoDJRewCdGin6lTNnnynrTxtgtVyfRBf7qxi94940PdR9J+157ip0ilYXvm93+GmImB9JsRUTxWTjuL8M2lTyeY5sjiDby2bq+MV2Jt/NN/Fa2/nycu9lA21NyJxk5Tr0CLeasOl6ebqp1TVM2ioZ+tS3VgCGP5bEif19ylWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FYdMTM5F; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2212222d4cdso87875ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:37:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740458233; x=1741063033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cmWF1cQtQKp2i246d+2gQ577pU5W7PI/0/07ey4RKtQ=;
+        b=FYdMTM5F/1+DUpFlSUwTvuRc2MtK7V/yJi/StGQbxZH9jHCBETP3bFDX2cBWCLxjar
+         ZtFgeSHmHQEm35jeV5AAwmczmpd7ODv3zVWYcWI/ziul6oy/cTWCiaUt+fWID1VmhzcL
+         koM/aZt2ZLq04hAo93DJx6z1PefrfGdPaOaAxpZYKIln8TPUfMstCJesY0UzQEQcGL9o
+         69p4PHJ99FZRVCyWJJT5TYY5GdPHgCukcDUDV/cyb3Dp6iJ+OVxfnhsS4ituxTvA8Lrn
+         b8HhEJbBTEnbYwY29WgRPcoG6yWPRXe/G9PiB5OEXcY7ELXo4Y/BjIgFGUr5fmD69fV2
+         pYvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740458233; x=1741063033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cmWF1cQtQKp2i246d+2gQ577pU5W7PI/0/07ey4RKtQ=;
+        b=UCXBjPOBAC8w8e3Txg/d9BpCAvfs9vocRpF1m++KmrAUfJZlToo8QzF6i0gmMXNnNm
+         oqkw7noKsXDDeEaYcIUFrXHz8wxWQ7p8m+vL0/zrEc/Cfo04ltd91cyhACT3ARIOdmod
+         yqsJcVfIttmJRE4sKIKaLP74NqvlNqQcLt9rv9SZi9HjVtTR0CYqvBYebmwhPjV92VAv
+         EBzgJoXwvU80mrK26dMnLYiUOwg3W6jNtP0qGrkgI7idW+sqZrVUglbri3I2hTew5rj9
+         XNu2a/p1ypgpP+8WsoF0lwwbs3haUWHFXRT7Fgp7QjC0kYJuCr2RxU/ybpWySuA0VgMk
+         awvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVey3c1eHgIqtdDlYTV9pkf2fuLcyY8C6VnIwI3MSAFITS9WrUalKTSJir7XmHTR122VLlxb3bAr9Kgg2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypc6V0vNwu53KP2HemjaskeoIPFFi9GPJ6UZIB+tdOJtlfxvkK
+	f6qjI2nqtOoahoSX79DuDiG88J4F0SQ5ev81ruUPoA/A4sQKK4zq6bqEw0VQ6BUIdRc9RI+ggrs
+	2XZT8VO+rcDuI76ZRygR8j748KaiQuZAAqjSd
+X-Gm-Gg: ASbGncskH42gMtYbuKg9xr/qSWdJOq7eHic3B5W1OswdXW37v77vcjWV6P4CdEjBdht
+	NljRHUAf/VVc/CmU4xqfnjZpuMLGH61EjsVwT50K2wzPFB8VKq/kJUEcouEXg3BTHCbNYxvgxHA
+	Y7mFqUtLVf
+X-Google-Smtp-Source: AGHT+IFrWogvTWFCRBGPBQvWobJO6nok1Gvhe0cFkItgiDmMmQEa1xAxJrYzWTGcsUxyFvv4nAo2h244R7G71CjWkjU=
+X-Received: by 2002:a17:903:1d1:b0:21d:dd8f:6e01 with SMTP id
+ d9443c01a7336-22307a2f8admr2063525ad.5.1740458232782; Mon, 24 Feb 2025
+ 20:37:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|SA5PPFA403A61D8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 194f7ede-4af8-4eff-9fff-08dd5555f383
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|4022899009|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlhlMHdESzFYQjVqNU9HYkdaOG16bkpXY3NCTE1kM1J4Ni8xcWZ5M282Q0JT?=
- =?utf-8?B?Y25wVkpFcFBUa1liZGlCeFk2QlBtU0pCSUJvQkNkQmFHYzlaWEtrenNCbDNY?=
- =?utf-8?B?OFpsT0hJRzg4ZFNLZ0hjK2VVTGRRR2NjSkFaTHlOdjRiV2ZRU004ZklaMnZt?=
- =?utf-8?B?a1BwTmRrY01UeUwzV2k2cEVCbmNwRjZSWVZnU1hUcGtka1R0Ry9vUTRwRmJG?=
- =?utf-8?B?MExNYU1aRE1WYlVESWZ6MHh3SFFjTEJUZG50c2RLOHhicmFxeWwwQjN1Qm9z?=
- =?utf-8?B?K2hwVTdWN2VNRkdHYkRyazdRVW9kREpHSUZBSUg4d0lobWRieEJ2UlVZTVNq?=
- =?utf-8?B?aU5RT0psMnd5bzBKRkJTQ0lYQWhvVysyNExkbHY4TFMzOE56U2l4cXRQdHdN?=
- =?utf-8?B?RG9Pbkpqc3pnZnI0T3JGbnVaM1JSMktVcVRNWXN2V3FYSDc5MXUwYjUzNnhJ?=
- =?utf-8?B?Yy81ZDNpM1RNTkVHWnpIMlFwUzBEZTlKUStrSE9uN0NJMHNvcjQ1NVV3Wlk2?=
- =?utf-8?B?c1Q3anZUNlllaW5yS0lRanpucHVQL3NvNmtzRlp4bm54L2M5MHVad1FXVjQ5?=
- =?utf-8?B?c1ZHZVJ3NnNJMTVLVCtVcDh3R2FTR2ZqRzhwQTk4VWRHMkFvSzUzOFhhbFNK?=
- =?utf-8?B?Z2tMTGFkS2R4S1J1bG1aOXA1bVZhUTN3UWp4M1lDRWNybndTWWxFaE9FMFJq?=
- =?utf-8?B?TzdPSTZZWUt1Vmo3djRBM211ZDM3bzVJeTEwRnRrai93bkVHa3hLc01RNEUx?=
- =?utf-8?B?emNuNXdHcnFDdngrcFE4SVdJM1dmZ20yRGtESURjTVJWVC9teHNpUENXY0M4?=
- =?utf-8?B?NkV3RFN4MUxoSEx6cHdwcUxCOE9YUEFwMXdkMS9XODEwRlAyUWZicFVSTnhN?=
- =?utf-8?B?RmlEMXF4UDYyN243MWZ1QlBsbjBGRmc5TUVvcG4yS0NVNFlKYlVCbnZib25z?=
- =?utf-8?B?UC9wU3dmOHpJM09zT3gwcXZYZWx0SXFNREw4SXpGaTMwSSs5elphcmRaWnBS?=
- =?utf-8?B?MFJEYXFGb3JhSlZBaTBpaDR3eERKNzJsOWlrbWVJVGJTREVFN2FJREh0Y1NQ?=
- =?utf-8?B?N2kzM3RJTkptbExhZy9tcmFRVHAvcFcyRDRUOWl6bHhnZldOdUlQZ2VMeTll?=
- =?utf-8?B?L2kxUkVVcHNzUXQ4eDlwRlhDL1AxTTFDS1BiUjZydzlaYUdCZ1phSURTbHNO?=
- =?utf-8?B?clZJMmhkaCtUcjI1dUhUVUxwTkN6a2RybFZIY0p0N2xySzJ1d0d4dXFmSVo4?=
- =?utf-8?B?YTAvV2Q2QmpiZUJySjRkd0pBUWFmSkhscmc2SGFmTFFSNGV4SGU3cXFndXB1?=
- =?utf-8?B?M2ttRnBENVl0dlRpblNBbkhhNE9xYWsyWkl5T2QzTmE0ZGIxM2lUM1kydGVJ?=
- =?utf-8?B?WWtlZlU1Nmo5dHRFNCtqL1BsMHJMVjdPckdIMmVPUDRsdWFvdjVnbmRPM1cy?=
- =?utf-8?B?UlpscjhRa0RZM0RoL0xDeG9RNUZjdi82cXdHQkM4ZlVIRnVtWUJaY2kyODc2?=
- =?utf-8?B?a29xU2ZGQXdBdW5HZzlqbWR6bTN4ZTY1eFVVK1ZEZE5VZEJGWTJRNStJVm9r?=
- =?utf-8?B?Q1RXa2RNSWtqcWQwOHJsaGFSTERza0xHNE9GeE9mSUwxeXA5NWpBUXdKRlp4?=
- =?utf-8?B?UEV0WmNTdEMxdEhPcS9RWitkSlpRVGFMZGxGZ1dUNTNwN0lmSElvRUtsUkxs?=
- =?utf-8?B?Zy91QTRVMFVNY0pVNE1RRWN1OXZHZmFDVnJSYmYvRFNFR3k2emFvTDVaS0Yr?=
- =?utf-8?B?aS9jMzFvRUoyVnQ0ZXNjRmQ5bHdSZE4wU05oMmd3a1lsdU12d0tzNUt4dHZS?=
- =?utf-8?B?ZjhjN3MvSWRwMXc1SGpwQnhwTVoxeWgwZkpmR2tiS1Z1d3dKeWxNYXcreWhm?=
- =?utf-8?Q?15Pxfwb1uqYhd?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TjdCNWs1Uis5dXRteS94VjdPdHBnOXIyOTN3aFBQMjF1dHR0cjUwdE1sdSt4?=
- =?utf-8?B?TldxRWdXNDkrRmEyWGkxdHl3QU5kbnNXd0VXRGR4UW13SHhLMzlrSU9FUHJx?=
- =?utf-8?B?WUZ1Y2U1bGFyM3ZUZjNra0JPMTNNWll3dEY5Ky9sc2VDOE0rVUFqSHg3Kzkz?=
- =?utf-8?B?akxSL1pLVmc0YkxtZUpGTW9tbDRZekdXMUdiMkJHUGdRSUJIWXpBdVp1ZkFh?=
- =?utf-8?B?QTEwSXNja1FRWFB4Q0llNEsrUzBCLzZ6YXFjYytRenI2S0EzUW1hRjFQNUto?=
- =?utf-8?B?ZkNMRGN1L3ZEbVh2TnBkVkZ5ZVNVMXpLUTlLZ0JiQUt3bzNUSVRtelI0S3N6?=
- =?utf-8?B?QlRpYzZzYU1FMll6b0JaTXpuTGJxT2dwTTFQcDZwd0Z0ck5WYnJ6WVNkWlg2?=
- =?utf-8?B?U0FpU1kxMUlxS05jKyt5bTk1c0Q4dU50SitocGpTZmgxVmY3MGI4ZXBEVmRY?=
- =?utf-8?B?UVhOVU45NFFMcVR6bDNiKzNPanZlWUpzRnROTmJvZUVQeE5Gd3BRUWtWVWYy?=
- =?utf-8?B?TzhaME5sNEtlYUlZNGlyaFBkRXdNYnFvRS9MSU40V1hxTk9mZ3hON01JM2Ja?=
- =?utf-8?B?SjlBS3dyMzNRblk2ZXhPem14Z2lFbmxWMU1saHVNV0xMYUtuUDZCNVdlVVZB?=
- =?utf-8?B?dUwyS3MzblhIRDJXU3N3NXBBUFhYdm0xNENyOGljbDM1YWI3STU3SWFhMDlv?=
- =?utf-8?B?L2lYaXhKckk4dUh0WGcvTjJqdlFHeVZMK210UFZqTHhWUW5paktneFJaWHFN?=
- =?utf-8?B?MW5wL3hYZEZXOEdwQ3VDdVlXWnVtem9Sb3ZXZjlIVkV6SG1yeVNQazZoSFNC?=
- =?utf-8?B?aXhhYlhqZWNEek5aZkYxZ0VjWGxic0lIMStoOUVOQW5FTm1DdER4K0JDc3Zh?=
- =?utf-8?B?QklTd1dKWTV6UWlyb29HSGtKSHA1YjlYWE5rak1GYVB1VURGQVZnMk93bnA2?=
- =?utf-8?B?T2FwYkJnc0s2RE1ldTJsUDBXekw3bTkwQmgrbWlGdWIrUytFczJ4UGxJR2Yx?=
- =?utf-8?B?NGJmOEcyelB6a2M4TDZyNGtlTGpCajdFZVBBTDBXNTB2ZkpUMXR0Z1lVU1lX?=
- =?utf-8?B?SzhBUTFXSGhOUTVwZVNTZEk0UHNNMHV3T1BFSTBtL2FRWkZPZ2hWM0huS2Mx?=
- =?utf-8?B?QVJWSUNVM3oveitQRmN3TDREZnJRUzdKQTlNeHJXRmFtSDBKZ0dkb1AwM1Ix?=
- =?utf-8?B?NDJCQzZtU3crSi9YT0NMRTV1MkNkUGlRMkVDNmRCdWNjdGIvMVZSR29rT2hm?=
- =?utf-8?B?MFNqNnQ2SVhzaDR5N1NGdTV3WHowdS9xc0ZyQU1DVGVlcEw3cFVZVXczRFl6?=
- =?utf-8?B?ODBUNlc3STg3Um9XZXRHUGI2eHJTV24ySG1naitjL0tKRHprMDF0MWlEMkJY?=
- =?utf-8?B?TE5jNVM0bFBaR0dsb0s5NFRGYk5sMGF6YXRTbTgrSjBkQ1QyQmpza0VKYVh6?=
- =?utf-8?B?UnBEajhMZHJQd255NGNZYzRMdlYreTZHNWVyK1VPVlZJWS9aQ0FMMndEQXNK?=
- =?utf-8?B?RUJiakVMY2tVazg4ekN5ZUZtU0xNaytPRWRSUUJnUHB2R3BiS2FIV3RucHZB?=
- =?utf-8?B?bExybmM0UjlBRmtxNlhWVHF5Tkd1N2FHRktmRzJiNkRQVXdzK0UrSEh6ZW9p?=
- =?utf-8?B?dXZaNFl3Qm5vaG1lMlBDU25DMkRPZ2FLTWlvaHBpaGlCSjhId1BWZkd2aGZM?=
- =?utf-8?B?WUdpQ0YwOUpaSUVkQ0xUQVRUa2dFcTJHajFvaFRZSlVLSTV4VkxEenFBQWVk?=
- =?utf-8?B?UFp6TWpoWkxoQ203OWsrNmVzUXBCL1dGWUZEZFBSSTZoeUdOSDBYdnlQM1Uw?=
- =?utf-8?B?V1FjamVQeVVOVXMvbnlCa1hTdFpmeDZya2hicmNLVDFsS0QwRm1VMURCWGFC?=
- =?utf-8?B?dkQ3Y3lEU2p5c1UydUZ3N2o0UWtRcUI2RVc5ZEIzQXJaOTNkamI0NVZkc2w4?=
- =?utf-8?B?TzFIcnhIQWdrYWttN2c0d01jam0yWHdYVXNneDBIdWpOaWNRN1FVaG9rdXFv?=
- =?utf-8?B?NmRQdWhoaHlJaHVITm5YMU1qblp5b3ZvYTNEbHNUL2JwTDByNEhLaE54M1Jm?=
- =?utf-8?B?UDNXZmFWSWNUSyt6c1VlZzVBeTIzeEdEY29vOXNVejJaR2JLYTJjMnhFVEFZ?=
- =?utf-8?Q?pv3U32wU/HXEKO3TAFR0AJUjG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 194f7ede-4af8-4eff-9fff-08dd5555f383
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 04:36:20.4325
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6aGRgDdbY9WdCJdpQ5faHtvnXTWuhv0RTufZYEQTSkBhV8sjP5accKOGc1Uzhmioim0HQo58sJvtoXPrr5rDqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFA403A61D8
+References: <20250219185657.280286-1-irogers@google.com> <Z70zejQJvppH8Sfh@google.com>
+In-Reply-To: <Z70zejQJvppH8Sfh@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 24 Feb 2025 20:37:01 -0800
+X-Gm-Features: AWEUYZmKfCqNoq-RKdyyf9OFHWu4ilc6KGoveyUuhyX17-QnGIojINk7mSBMx9g
+Message-ID: <CAP-5=fU8Xw-aeCGUOFo8Zph=xagHv43jo+BkXY5vUai5tUsmDA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] perf: Support multiple system call tables in the build
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, guoren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org, 
+	linux-mips@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Reinette and James,
-
-On 2/19/25 21:45, Reinette Chatre wrote:
-> Hi James,
+On Mon, Feb 24, 2025 at 7:05=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> On 2/7/25 10:18 AM, James Morse wrote:
->> trace.h contains all the tracepoints. After the move to /fs/resctrl, some
->> of these will be left behind. All the pseudo_lock tracepoints remain part
->> of the architecture. The lone tracepoint in monitor.c moves to /fs/resctrl.
->>
->> Split trace.h so that each C file includes a different trace header file.
->> This means the trace header files are not modified when they are moved.
->>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Reviewed-by: Tony Luck <tony.luck@intel.com>
->> ---
-> I did not investigate if this originates here or after the code move but
-> when compiling the series (after running the file move script) with W=1
-
-The issues happen after running the move script.
-
-It's because no trace event is defined in fs/resctrl/pseudo_lock_trace.h 
-or arch/x86/kernel/cpu/resctrl/monitor_trace.h.
-
-One way to fix them is to add empty events in the trace files. But seems 
-that may cause the script difficulty because it cannot handle empty 
-events easily.
-
-Another way is to remove the two files and their inclusions in .c files. 
-Please see my comment and fix in patch #42.
-
-> I see the following:
+> On Wed, Feb 19, 2025 at 10:56:49AM -0800, Ian Rogers wrote:
+> > This work builds on the clean up of system call tables and removal of
+> > libaudit by Charlie Jenkins <charlie@rivosinc.com>.
+> >
+> > The system call table in perf trace is used to map system call numbers
+> > to names and vice versa. Prior to these changes, a single table
+> > matching the perf binary's build was present. The table would be
+> > incorrect if tracing say a 32-bit binary from a 64-bit version of
+> > perf, the names and numbers wouldn't match.
+> >
+> > Change the build so that a single system call file is built and the
+> > potentially multiple tables are identifiable from the ELF machine type
+> > of the process being examined. To determine the ELF machine type, the
+> > executable's header is read from /proc/pid/exe with fallbacks to using
+> > the perf's binary type when unknown.
+> >
+> > Remove some runtime types used by the system call tables and make
+> > equivalents generated at build time.
 >
-> In file included from /home/reinette/dev/linux/include/trace/trace_events.h:27,
->                   from /home/reinette/dev/linux/include/trace/define_trace.h:113,
->                   from /home/reinette/dev/linux/arch/x86/kernel/cpu/resctrl/monitor_trace.h:17,
->                   from /home/reinette/dev/linux/arch/x86/kernel/cpu/resctrl/monitor.c:32:
-> /home/reinette/dev/linux/include/trace/stages/init.h:2:23: warning: ‘str__resctrl__trace_system_name’ defined but not used [-Wunused-const-variable=]
->      2 | #define __app__(x, y) str__##x##y
->        |                       ^~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:3:21: note: in expansion of macro ‘__app__’
->      3 | #define __app(x, y) __app__(x, y)
->        |                     ^~~~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:5:29: note: in expansion of macro ‘__app’
->      5 | #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
->        |                             ^~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:8:27: note: in expansion of macro ‘TRACE_SYSTEM_STRING’
->      8 |         static const char TRACE_SYSTEM_STRING[] =       \
->        |                           ^~~~~~~~~~~~~~~~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:11:1: note: in expansion of macro ‘TRACE_MAKE_SYSTEM_STR’
->     11 | TRACE_MAKE_SYSTEM_STR();
->        | ^~~~~~~~~~~~~~~~~~~~~
-> [SNIP]
-> In file included from /home/reinette/dev/linux/include/trace/trace_events.h:27,
->                   from /home/reinette/dev/linux/include/trace/define_trace.h:113,
->                   from /home/reinette/dev/linux/fs/resctrl/pseudo_lock_trace.h:17,
->                   from /home/reinette/dev/linux/fs/resctrl/pseudo_lock.c:34:
-> /home/reinette/dev/linux/include/trace/stages/init.h:2:23: warning: ‘str__resctrl__trace_system_name’ defined but not used [-Wunused-const-variable=]
->      2 | #define __app__(x, y) str__##x##y
->        |                       ^~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:3:21: note: in expansion of macro ‘__app__’
->      3 | #define __app(x, y) __app__(x, y)
->        |                     ^~~~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:5:29: note: in expansion of macro ‘__app’
->      5 | #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
->        |                             ^~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:8:27: note: in expansion of macro ‘TRACE_SYSTEM_STRING’
->      8 |         static const char TRACE_SYSTEM_STRING[] =       \
->        |                           ^~~~~~~~~~~~~~~~~~~
-> /home/reinette/dev/linux/include/trace/stages/init.h:11:1: note: in expansion of macro ‘TRACE_MAKE_SYSTEM_STR’
->     11 | TRACE_MAKE_SYSTEM_STR();
->        | ^~~~~~~~~~~~~~~~~~~~~
->                                                                                  
-> [SNIP]
+> So I tested this with a test program.
 >
-> Reinette
+>   $ cat a.c
+>   #include <stdio.h>
+>   int main(void)
+>   {
+>         char buf[4096];
+>         FILE *fp =3D fopen("a.c", "r");
+>         size_t len;
+>
+>         len =3D fread(buf, sizeof(buf), 1, fp);
+>         fwrite(buf, 1, len, stdout);
+>         fflush(stdout);
+>         fclose(fp);
+>         return 0;
+>   }
+>
+>   $ gcc -o a64.out a.c
+>   $ gcc -o a32.out -m32 a.c
+>
+>   $ ./perf version
+>   perf version 6.14.rc1.ge002a64f6188
+>
+>   $ git show
+>   commit e002a64f61882626992dd6513c0db3711c06fea7 (HEAD -> perf-check)
+>   Author: Ian Rogers <irogers@google.com>
+>   Date:   Wed Feb 19 10:56:57 2025 -0800
+>
+>       perf syscalltbl: Mask off ABI type for MIPS system calls
+>
+>       Arnd Bergmann described that MIPS system calls don't necessarily st=
+art
+>       from 0 as an ABI prefix is applied:
+>       https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@a=
+pp.fastmail.com/
+>       When decoding the "id" (aka system call number) for MIPS ignore val=
+ues
+>       greater-than 1000.
+>
+>       Signed-off-by: Ian Rogers <irogers@google.com>
+>
+> It works well with 64bit.
+>
+>   $ sudo ./perf trace ./a64.out |& tail
+>        0.266 ( 0.007 ms): a64.out/858681 munmap(addr: 0x7f392723a000, len=
+: 109058)                             =3D 0
+>        0.286 ( 0.002 ms): a64.out/858681 getrandom(ubuf: 0x7f3927232178, =
+len: 8, flags: NONBLOCK)              =3D 8
+>        0.289 ( 0.001 ms): a64.out/858681 brk()                           =
+                                      =3D 0x56419ecf7000
+>        0.291 ( 0.002 ms): a64.out/858681 brk(brk: 0x56419ed18000)        =
+                                      =3D 0x56419ed18000
+>        0.299 ( 0.009 ms): a64.out/858681 openat(dfd: CWD, filename: "a.c"=
+)                                     =3D 3
+>        0.312 ( 0.001 ms): a64.out/858681 fstat(fd: 3, statbuf: 0x7ffdfadf=
+1eb0)                                 =3D 0
+>        0.315 ( 0.002 ms): a64.out/858681 read(fd: 3, buf: 0x7ffdfadf2030,=
+ count: 4096)                         =3D 211
+>        0.318 ( 0.009 ms): a64.out/858681 read(fd: 3, buf: 0x56419ecf7480,=
+ count: 4096)                         =3D 0
+>        0.330 ( 0.001 ms): a64.out/858681 close(fd: 3)                    =
+                                      =3D 0
+>        0.338 (         ): a64.out/858681 exit_group()                    =
+                                      =3D ?
+>
+> But 32bit is still broken and use 64bit syscall table wrongly.
+>
+>   $ file a32.out
+>   a32.out: ELF 32-bit LSB pie executable, Intel 80386, version 1 (SYSV), =
+dynamically linked, interpreter /lib/ld-linux.so.2,
+>   BuildID[sha1]=3D6eea873c939012e6c715e8f030261642bf61cb4e, for GNU/Linux=
+ 3.2.0, not stripped
+>
+>   $ sudo ./perf trace ./a32.out |& tail
+>        0.296 ( 0.001 ms): a32.out/858699 getxattr(pathname: "", name: "=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD", value: 0xf7f6ce14,=
+ size: 1)  =3D 0
+>        0.305 ( 0.007 ms): a32.out/858699 fchmod(fd: -134774784, mode: IFL=
+NK|ISUID|ISVTX|IWOTH|0x10000)         =3D 0
+>        0.333 ( 0.001 ms): a32.out/858699 recvfrom(size: 4160146964, flags=
+: RST|0x20000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) =3D 1481879552
+>        0.335 ( 0.004 ms): a32.out/858699 recvfrom(fd: 1482014720, ubuf: 0=
+xf7f71278, size: 4160146964, flags: NOSIGNAL|MORE|WAITFORONE|BATCH|SPLICE_P=
+AGES|CMSG_CLOEXEC|0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) =3D 1=
+482014720
+>        0.355 ( 0.002 ms): a32.out/858699 recvfrom(fd: 1482018816, ubuf: 0=
+x5855d000, size: 4160146964, flags: RST|NOSIGNAL|MORE|WAITFORONE|BATCH|SPLI=
+CE_PAGES|CMSG_CLOEXEC|0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) =
+=3D 1482018816
+>        0.362 ( 0.010 ms): a32.out/858699 preadv(fd: 4294967196, vec: (str=
+uct iovec){.iov_base =3D (void *)0x1b01000000632e62,.iov_len =3D (__kernel_=
+size_t)1125899909479171,}, pos_h: 4160146964) =3D 3
+>        0.385 ( 0.002 ms): a32.out/858699 close(fd: 3)                    =
+                                      =3D 211
+>        0.388 ( 0.001 ms): a32.out/858699 close(fd: 3)                    =
+                                      =3D 0
+>        0.393 ( 0.002 ms): a32.out/858699 lstat(filename: "")             =
+                                      =3D 0
+>        0.396 ( 0.004 ms): a32.out/858699 recvfrom(fd: 1482014720, size: 4=
+160146964, flags: NOSIGNAL|MORE|WAITFORONE|BATCH|SPLICE_PAGES|CMSG_CLOEXEC|=
+0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) =3D 1482014720
+>
+> The last 5 should be openat, read, read, close and brk(?).
 
+That's strange as nearly the same test works for me:
+```
+$ git show
+commit 7920020237af8138f7be1a21be9a2918a71ddc5e (HEAD -> ptn-syscalltbl)
+Author: Ian Rogers <irogers@google.com>
+Date:   Fri Jan 31 21:34:07 2025 -0800
 
-Thanks.
+   perf syscalltbl: Mask off ABI type for MIPS system calls
 
+   Arnd Bergmann described that MIPS system calls don't necessarily start
+   from 0 as an ABI prefix is applied:
+   https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.fa=
+stmail.com/
+   When decoding the "id" (aka system call number) for MIPS ignore values
+   greater-than 1000.
 
--Fenghua
+   Signed-off-by: Ian Rogers <irogers@google.com>
+..
+$ file a.out
+a.out: ELF 32-bit LSB pie executable, Intel 80386, version 1 (SYSV),
+dynamically linked, interpreter /lib/ld-linux.so.2,
+BuildID[sha1]=3D3fcd28f85a27a3108941661a91dbc675c06868f9, for GNU/Linux
+3.2.0, not stripped
+$ sudo /tmp/perf/perf trace ./a.out
+...
+         ? (         ): a.out/218604  ... [continued]: execve())
+                                    =3D 0
+     0.067 ( 0.003 ms): a.out/218604 brk()
+                                    =3D 0x5749e000
+     0.154 ( 0.007 ms): a.out/218604 access(filename: 0xf7fc7f28,
+mode: R)                                 =3D -1 ENOENT (No such file or
+directory)
+     0.168 ( 0.023 ms): a.out/218604 openat(dfd: CWD, filename:
+0xf7fc44c3, flags: RDONLY|CLOEXEC|LARGEFILE) =3D 3
+     0.193 ( 0.006 ms): a.out/218604 statx(dfd:
+3</proc/218604/status>, filename: 0xf7fc510a, flags:
+NO_AUTOMOUNT|EMPTY_PATH, mask:
+TYPE|MODE|NLINK|UID|GID|ATIME|MTIME|CTIME|INO|SIZE|BLOCKS, buffer:
+0xffaa6b88) =3D 0
+     0.212 ( 0.002 ms): a.out/218604 close(fd: 3</proc/218604/status>)
+                                    =3D 0
+     0.233 ( 0.019 ms): a.out/218604 openat(dfd: CWD, filename:
+0xf7f973e0, flags: RDONLY|CLOEXEC|LARGEFILE) =3D 3
+     0.255 ( 0.004 ms): a.out/218604 read(fd: 3</proc/218604/status>,
+buf: 0xffaa6df0, count: 512)         =3D 512
+     0.262 ( 0.003 ms): a.out/218604 statx(dfd:
+3</proc/218604/status>, filename: 0xf7fc510a, flags:
+NO_AUTOMOUNT|EMPTY_PATH, mask:
+TYPE|MODE|NLINK|UID|GID|ATIME|MTIME|CTIME|INO|SIZE|BLOCKS, buffer:
+0xffaa6b38) =3D 0
+     0.347 ( 0.002 ms): a.out/218604 close(fd: 3</proc/218604/status>)
+                                    =3D 0
+     0.372 ( 0.002 ms): a.out/218604 set_tid_address(tidptr:
+0xf7f98528)                                   =3D 218604 (a.out)
+     0.376 ( 0.002 ms): a.out/218604 set_robust_list(head: 0xf7f9852c,
+len: 12)                            =3D
+     0.381 ( 0.002 ms): a.out/218604 rseq(rseq: 0xf7f98960, rseq_len:
+32, sig: 1392848979)                 =3D
+     0.469 ( 0.010 ms): a.out/218604 mprotect(start: 0xf7f6e000, len:
+8192, prot: READ)                    =3D 0
+     0.489 ( 0.007 ms): a.out/218604 mprotect(start: 0x5661a000, len:
+4096, prot: READ)                    =3D 0
+     0.503 ( 0.007 ms): a.out/218604 mprotect(start: 0xf7fd0000, len:
+8192, prot: READ)                    =3D 0
+     0.550 ( 0.015 ms): a.out/218604 munmap(addr: 0xf7f7b000, len:
+111198)                                 =3D 0
+     0.589 ( 0.035 ms): a.out/218604 openat(dfd: CWD, filename:
+0x56619008)                                =3D 3
+     0.627 ( 0.024 ms): a.out/218604 read(fd: 3</proc/218604/status>,
+buf: 0xffaa68fc, count: 4096)        =3D 1437
+     0.654 ( 0.090 ms): a.out/218604 write(fd: 1</dev/pts/3>, buf: ,
+count: 1437)                          =3D 1437
+     0.766 (1000.164 ms): a.out/218604 clock_nanosleep(rqtp:
+0xffaa6824, rmtp: 0xffaa681c)                   =3D 0
+  1000.942 (         ): a.out/218604 exit_group()
+$ file /tmp/perf/perf
+/tmp/perf/perf: ELF 64-bit LSB pie executable, x86-64, version 1
+(SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2,
+BuildID[sha1]=3D60b07f65d2559a7193b2d1d36cfa00054dfbd076, for GNU/Linux
+3.2.0, with debug_info, not stripped
+```
+Perhaps your a.out binary was built as an x32 one?
+Looking under the covers with gdb:
+```
+$ sudo gdb --args /tmp/perf/perf trace ./a.out
+GNU gdb (Debian 15.1-1) 15.1
+...
+Reading symbols from /tmp/perf/perf...
+(gdb) b syscalltbl__name
+Breakpoint 1 at 0x23a51b: file util/syscalltbl.c, line 47.
+(gdb) r
+...
+[Detaching after vfork from child process 218826]
 
->
->
->  From mboxrd@z Thu Jan  1 00:00:00 1970
-> Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-> 	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBED71AF4E9
-> 	for <linux-kernel@vger.kernel.org>; Fri,  7 Feb 2025 18:21:02 +0000 (UTC)
-> Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-> ARC-Seal: i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-> 	t=1738952472; cv=none; b=PFrOGcCGM+MjrdBzD6HmKJG/UiOsBugPbKMsqC2F57JloaI12vsfJ6MvmkRWrY6qiP/OJUu0TOyQpGWHpn5aRfBOYww5b+87lSnRBQRdrF+KXxLTyqMVd1nH4aZdUDrvcaZ6VG7GPcBcDERY8rqliD0ML1je6nefzSBMGoE0+DI=
-> ARC-Message-Signature: i=1; a=rsa-sha256; d=subspace.kernel.org;
-> 	s=arc-20240116; t=1738952472; c=relaxed/simple;
-> 	bh=34UocWVSN3dGfK9ddb8MDRo3AU4bVW3Pvwz5MGjnN30=;
-> 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-> 	 MIME-Version; b=edzmQCT8CRaz1N9z0j5OnDawAxdTiDx7vz1PxIqaf5ANscFYEuEcKlijvFuk1ENpYAU9jyXuAwVX4dQlp2AMWVwCTWurQln2bvF/4lWLn82uB1BR2FokzzzUo8n5w4Dyn8koLUwzNlk9a3U0TjKO23gs1LFoqLoOlDqXLQHleeA=
-> ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-> Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-> Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-> Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-> 	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 829C71F37;
-> 	Fri,  7 Feb 2025 10:21:23 -0800 (PST)
-> Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-> 	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64EA33F63F;
-> 	Fri,  7 Feb 2025 10:20:57 -0800 (PST)
-> From: James Morse <james.morse@arm.com>
-> To: x86@kernel.org,
-> 	linux-kernel@vger.kernel.org
-> Cc: Reinette Chatre <reinette.chatre@intel.com>,
-> 	Thomas Gleixner <tglx@linutronix.de>,
-> 	Ingo Molnar <mingo@redhat.com>,
-> 	Borislav Petkov <bp@alien8.de>,
-> 	H Peter Anvin <hpa@zytor.com>,
-> 	Babu Moger <Babu.Moger@amd.com>,
-> 	James Morse <james.morse@arm.com>,
-> 	shameerali.kolothum.thodi@huawei.com,
-> 	D Scott Phillips OS <scott@os.amperecomputing.com>,
-> 	carl@os.amperecomputing.com,
-> 	lcherian@marvell.com,
-> 	bobo.shaobowang@huawei.com,
-> 	tan.shaopeng@fujitsu.com,
-> 	baolin.wang@linux.alibaba.com,
-> 	Jamie Iles <quic_jiles@quicinc.com>,
-> 	Xin Hao <xhao@linux.alibaba.com>,
-> 	peternewman@google.com,
-> 	dfustini@baylibre.com,
-> 	amitsinght@marvell.com,
-> 	David Hildenbrand <david@redhat.com>,
-> 	Rex Nie <rex.nie@jaguarmicro.com>,
-> 	Dave Martin <dave.martin@arm.com>,
-> 	Koba Ko <kobak@nvidia.com>,
-> 	Shanker Donthineni <sdonthineni@nvidia.com>,
-> 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-> 	Tony Luck <tony.luck@intel.com>
-> Subject: [PATCH v6 39/42] x86/resctrl: Split trace.h
-> Date: Fri,  7 Feb 2025 18:18:20 +0000
-> Message-Id: <20250207181823.6378-40-james.morse@arm.com>
-> X-Mailer: git-send-email 2.20.1
-> In-Reply-To: <20250207181823.6378-1-james.morse@arm.com>
-> References: <20250207181823.6378-1-james.morse@arm.com>
-> Precedence: bulk
-> X-Mailing-List: linux-kernel@vger.kernel.org
-> List-Id: <linux-kernel.vger.kernel.org>
-> List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
-> List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-> MIME-Version: 1.0
-> Content-Transfer-Encoding: 8bit
->
-> trace.h contains all the tracepoints. After the move to /fs/resctrl, some
-> of these will be left behind. All the pseudo_lock tracepoints remain part
-> of the architecture. The lone tracepoint in monitor.c moves to /fs/resctrl.
->
-> Split trace.h so that each C file includes a different trace header file.
-> This means the trace header files are not modified when they are moved.
->
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> ---
->   arch/x86/kernel/cpu/resctrl/Makefile          |  3 ++
->   arch/x86/kernel/cpu/resctrl/monitor.c         |  4 ++-
->   arch/x86/kernel/cpu/resctrl/monitor_trace.h   | 31 +++++++++++++++++++
->   arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  2 +-
->   .../resctrl/{trace.h => pseudo_lock_trace.h}  | 24 +++-----------
->   5 files changed, 42 insertions(+), 22 deletions(-)
->   create mode 100644 arch/x86/kernel/cpu/resctrl/monitor_trace.h
->   rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
->
-> diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
-> index 0c13b0befd8a..909be78ec6da 100644
-> --- a/arch/x86/kernel/cpu/resctrl/Makefile
-> +++ b/arch/x86/kernel/cpu/resctrl/Makefile
-> @@ -2,4 +2,7 @@
->   obj-$(CONFIG_X86_CPU_RESCTRL)		+= core.o rdtgroup.o monitor.o
->   obj-$(CONFIG_X86_CPU_RESCTRL)		+= ctrlmondata.o
->   obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
-> +
-> +# To allow define_trace.h's recursive include:
->   CFLAGS_pseudo_lock.o = -I$(src)
-> +CFLAGS_monitor.o = -I$(src)
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-> index a9168913c153..6acfbd3ad007 100644
-> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> @@ -26,7 +26,9 @@
->   #include <asm/resctrl.h>
->   
->   #include "internal.h"
-> -#include "trace.h"
-> +
-> +#define CREATE_TRACE_POINTS
-> +#include "monitor_trace.h"
->   
->   /**
->    * struct rmid_entry - dirty tracking for all RMID.
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor_trace.h b/arch/x86/kernel/cpu/resctrl/monitor_trace.h
-> new file mode 100644
-> index 000000000000..ade67daf42c2
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor_trace.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM resctrl
-> +
-> +#if !defined(_FS_RESCTRL_MONITOR_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _FS_RESCTRL_MONITOR_TRACE_H
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +TRACE_EVENT(mon_llc_occupancy_limbo,
-> +	    TP_PROTO(u32 ctrl_hw_id, u32 mon_hw_id, int domain_id, u64 llc_occupancy_bytes),
-> +	    TP_ARGS(ctrl_hw_id, mon_hw_id, domain_id, llc_occupancy_bytes),
-> +	    TP_STRUCT__entry(__field(u32, ctrl_hw_id)
-> +			     __field(u32, mon_hw_id)
-> +			     __field(int, domain_id)
-> +			     __field(u64, llc_occupancy_bytes)),
-> +	    TP_fast_assign(__entry->ctrl_hw_id = ctrl_hw_id;
-> +			   __entry->mon_hw_id = mon_hw_id;
-> +			   __entry->domain_id = domain_id;
-> +			   __entry->llc_occupancy_bytes = llc_occupancy_bytes;),
-> +	    TP_printk("ctrl_hw_id=%u mon_hw_id=%u domain_id=%d llc_occupancy_bytes=%llu",
-> +		      __entry->ctrl_hw_id, __entry->mon_hw_id, __entry->domain_id,
-> +		      __entry->llc_occupancy_bytes)
-> +	   );
-> +
-> +#endif /* _FS_RESCTRL_MONITOR_TRACE_H */
-> +
-> +#undef TRACE_INCLUDE_PATH
-> +#define TRACE_INCLUDE_PATH .
-> +#define TRACE_INCLUDE_FILE monitor_trace
-> +#include <trace/define_trace.h>
-> diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> index e7f713eb4490..9eda0abbd29d 100644
-> --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> @@ -30,7 +30,7 @@
->   #include "internal.h"
->   
->   #define CREATE_TRACE_POINTS
-> -#include "trace.h"
-> +#include "pseudo_lock_trace.h"
->   
->   /*
->    * The bits needed to disable hardware prefetching varies based on the
-> diff --git a/arch/x86/kernel/cpu/resctrl/trace.h b/arch/x86/kernel/cpu/resctrl/pseudo_lock_trace.h
-> similarity index 56%
-> rename from arch/x86/kernel/cpu/resctrl/trace.h
-> rename to arch/x86/kernel/cpu/resctrl/pseudo_lock_trace.h
-> index 2a506316b303..5a0fae61d3ee 100644
-> --- a/arch/x86/kernel/cpu/resctrl/trace.h
-> +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock_trace.h
-> @@ -2,8 +2,8 @@
->   #undef TRACE_SYSTEM
->   #define TRACE_SYSTEM resctrl
->   
-> -#if !defined(_TRACE_RESCTRL_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_RESCTRL_H
-> +#if !defined(_X86_RESCTRL_PSEUDO_LOCK_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _X86_RESCTRL_PSEUDO_LOCK_TRACE_H
->   
->   #include <linux/tracepoint.h>
->   
-> @@ -35,25 +35,9 @@ TRACE_EVENT(pseudo_lock_l3,
->   	    TP_printk("hits=%llu miss=%llu",
->   		      __entry->l3_hits, __entry->l3_miss));
->   
-> -TRACE_EVENT(mon_llc_occupancy_limbo,
-> -	    TP_PROTO(u32 ctrl_hw_id, u32 mon_hw_id, int domain_id, u64 llc_occupancy_bytes),
-> -	    TP_ARGS(ctrl_hw_id, mon_hw_id, domain_id, llc_occupancy_bytes),
-> -	    TP_STRUCT__entry(__field(u32, ctrl_hw_id)
-> -			     __field(u32, mon_hw_id)
-> -			     __field(int, domain_id)
-> -			     __field(u64, llc_occupancy_bytes)),
-> -	    TP_fast_assign(__entry->ctrl_hw_id = ctrl_hw_id;
-> -			   __entry->mon_hw_id = mon_hw_id;
-> -			   __entry->domain_id = domain_id;
-> -			   __entry->llc_occupancy_bytes = llc_occupancy_bytes;),
-> -	    TP_printk("ctrl_hw_id=%u mon_hw_id=%u domain_id=%d llc_occupancy_bytes=%llu",
-> -		      __entry->ctrl_hw_id, __entry->mon_hw_id, __entry->domain_id,
-> -		      __entry->llc_occupancy_bytes)
-> -	   );
-> -
-> -#endif /* _TRACE_RESCTRL_H */
-> +#endif /* _X86_RESCTRL_PSEUDO_LOCK_TRACE_H */
->   
->   #undef TRACE_INCLUDE_PATH
->   #define TRACE_INCLUDE_PATH .
-> -#define TRACE_INCLUDE_FILE trace
-> +#define TRACE_INCLUDE_FILE pseudo_lock_trace
->   #include <trace/define_trace.h>
+Breakpoint 1, syscalltbl__name (e_machine=3D3, id=3D11) at util/syscalltbl.=
+c:47
+47              const struct syscalltbl *table =3D find_table(e_machine);
+```
+So the e_machine is 3 which corresponds to EM_386.
+
+I've not fixed every use of syscalltbl but I believe this one is working.
+
+Thanks,
+Ian
+
+> >
+> > v3: Add Charlie's reviewed-by tags. Incorporate feedback from Arnd
+> >     Bergmann <arnd@arndb.de> on additional optional column and MIPS
+> >     system call numbering. Rebase past Namhyung's global system call
+> >     statistics and add comments that they don't yet support an
+> >     e_machine other than EM_HOST.
+> >
+> > v2: Change the 1 element cache for the last table as suggested by
+> >     Howard Chu, add Howard's reviewed-by tags.
+> >     Add a comment and apology to Charlie for not doing better in
+> >     guiding:
+> >     https://lore.kernel.org/all/20250114-perf_syscall_arch_runtime-v1-1=
+-5b304e408e11@rivosinc.com/
+> >     After discussion on v1 and he agreed this patch series would be
+> >     the better direction.
+> >
+> > Ian Rogers (8):
+> >   perf syscalltble: Remove syscall_table.h
+> >   perf trace: Reorganize syscalls
+> >   perf syscalltbl: Remove struct syscalltbl
+> >   perf thread: Add support for reading the e_machine type for a thread
+> >   perf trace beauty: Add syscalltbl.sh generating all system call table=
+s
+> >   perf syscalltbl: Use lookup table containing multiple architectures
+> >   perf build: Remove Makefile.syscalls
+> >   perf syscalltbl: Mask off ABI type for MIPS system calls
+> >
+> >  tools/perf/Makefile.perf                      |  10 +-
+> >  tools/perf/arch/alpha/entry/syscalls/Kbuild   |   2 -
+> >  .../alpha/entry/syscalls/Makefile.syscalls    |   5 -
+> >  tools/perf/arch/alpha/include/syscall_table.h |   2 -
+> >  tools/perf/arch/arc/entry/syscalls/Kbuild     |   2 -
+> >  .../arch/arc/entry/syscalls/Makefile.syscalls |   3 -
+> >  tools/perf/arch/arc/include/syscall_table.h   |   2 -
+> >  tools/perf/arch/arm/entry/syscalls/Kbuild     |   4 -
+> >  .../arch/arm/entry/syscalls/Makefile.syscalls |   2 -
+> >  tools/perf/arch/arm/include/syscall_table.h   |   2 -
+> >  tools/perf/arch/arm64/entry/syscalls/Kbuild   |   3 -
+> >  .../arm64/entry/syscalls/Makefile.syscalls    |   6 -
+> >  tools/perf/arch/arm64/include/syscall_table.h |   8 -
+> >  tools/perf/arch/csky/entry/syscalls/Kbuild    |   2 -
+> >  .../csky/entry/syscalls/Makefile.syscalls     |   3 -
+> >  tools/perf/arch/csky/include/syscall_table.h  |   2 -
+> >  .../perf/arch/loongarch/entry/syscalls/Kbuild |   2 -
+> >  .../entry/syscalls/Makefile.syscalls          |   3 -
+> >  .../arch/loongarch/include/syscall_table.h    |   2 -
+> >  tools/perf/arch/mips/entry/syscalls/Kbuild    |   2 -
+> >  .../mips/entry/syscalls/Makefile.syscalls     |   5 -
+> >  tools/perf/arch/mips/include/syscall_table.h  |   2 -
+> >  tools/perf/arch/parisc/entry/syscalls/Kbuild  |   3 -
+> >  .../parisc/entry/syscalls/Makefile.syscalls   |   6 -
+> >  .../perf/arch/parisc/include/syscall_table.h  |   8 -
+> >  tools/perf/arch/powerpc/entry/syscalls/Kbuild |   3 -
+> >  .../powerpc/entry/syscalls/Makefile.syscalls  |   6 -
+> >  .../perf/arch/powerpc/include/syscall_table.h |   8 -
+> >  tools/perf/arch/riscv/entry/syscalls/Kbuild   |   2 -
+> >  .../riscv/entry/syscalls/Makefile.syscalls    |   4 -
+> >  tools/perf/arch/riscv/include/syscall_table.h |   8 -
+> >  tools/perf/arch/s390/entry/syscalls/Kbuild    |   2 -
+> >  .../s390/entry/syscalls/Makefile.syscalls     |   5 -
+> >  tools/perf/arch/s390/include/syscall_table.h  |   2 -
+> >  tools/perf/arch/sh/entry/syscalls/Kbuild      |   2 -
+> >  .../arch/sh/entry/syscalls/Makefile.syscalls  |   4 -
+> >  tools/perf/arch/sh/include/syscall_table.h    |   2 -
+> >  tools/perf/arch/sparc/entry/syscalls/Kbuild   |   3 -
+> >  .../sparc/entry/syscalls/Makefile.syscalls    |   5 -
+> >  tools/perf/arch/sparc/include/syscall_table.h |   8 -
+> >  tools/perf/arch/x86/entry/syscalls/Kbuild     |   3 -
+> >  .../arch/x86/entry/syscalls/Makefile.syscalls |   6 -
+> >  tools/perf/arch/x86/include/syscall_table.h   |   8 -
+> >  tools/perf/arch/xtensa/entry/syscalls/Kbuild  |   2 -
+> >  .../xtensa/entry/syscalls/Makefile.syscalls   |   4 -
+> >  .../perf/arch/xtensa/include/syscall_table.h  |   2 -
+> >  tools/perf/builtin-trace.c                    | 290 +++++++++++-------
+> >  tools/perf/scripts/Makefile.syscalls          |  61 ----
+> >  tools/perf/scripts/syscalltbl.sh              |  86 ------
+> >  tools/perf/trace/beauty/syscalltbl.sh         | 274 +++++++++++++++++
+> >  tools/perf/util/syscalltbl.c                  | 148 ++++-----
+> >  tools/perf/util/syscalltbl.h                  |  22 +-
+> >  tools/perf/util/thread.c                      |  50 +++
+> >  tools/perf/util/thread.h                      |  14 +-
+> >  54 files changed, 616 insertions(+), 509 deletions(-)
+> >  delete mode 100644 tools/perf/arch/alpha/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/alpha/entry/syscalls/Makefile.sysca=
+lls
+> >  delete mode 100644 tools/perf/arch/alpha/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/arc/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/arc/entry/syscalls/Makefile.syscall=
+s
+> >  delete mode 100644 tools/perf/arch/arc/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/arm/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/arm/entry/syscalls/Makefile.syscall=
+s
+> >  delete mode 100644 tools/perf/arch/arm/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/arm64/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/arm64/entry/syscalls/Makefile.sysca=
+lls
+> >  delete mode 100644 tools/perf/arch/arm64/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/csky/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/csky/entry/syscalls/Makefile.syscal=
+ls
+> >  delete mode 100644 tools/perf/arch/csky/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/loongarch/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/loongarch/entry/syscalls/Makefile.s=
+yscalls
+> >  delete mode 100644 tools/perf/arch/loongarch/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/mips/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/mips/entry/syscalls/Makefile.syscal=
+ls
+> >  delete mode 100644 tools/perf/arch/mips/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/parisc/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/parisc/entry/syscalls/Makefile.sysc=
+alls
+> >  delete mode 100644 tools/perf/arch/parisc/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/powerpc/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/powerpc/entry/syscalls/Makefile.sys=
+calls
+> >  delete mode 100644 tools/perf/arch/powerpc/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/riscv/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/riscv/entry/syscalls/Makefile.sysca=
+lls
+> >  delete mode 100644 tools/perf/arch/riscv/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/s390/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/s390/entry/syscalls/Makefile.syscal=
+ls
+> >  delete mode 100644 tools/perf/arch/s390/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/sh/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/sh/entry/syscalls/Makefile.syscalls
+> >  delete mode 100644 tools/perf/arch/sh/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/sparc/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/sparc/entry/syscalls/Makefile.sysca=
+lls
+> >  delete mode 100644 tools/perf/arch/sparc/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/x86/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/x86/entry/syscalls/Makefile.syscall=
+s
+> >  delete mode 100644 tools/perf/arch/x86/include/syscall_table.h
+> >  delete mode 100644 tools/perf/arch/xtensa/entry/syscalls/Kbuild
+> >  delete mode 100644 tools/perf/arch/xtensa/entry/syscalls/Makefile.sysc=
+alls
+> >  delete mode 100644 tools/perf/arch/xtensa/include/syscall_table.h
+> >  delete mode 100644 tools/perf/scripts/Makefile.syscalls
+> >  delete mode 100755 tools/perf/scripts/syscalltbl.sh
+> >  create mode 100755 tools/perf/trace/beauty/syscalltbl.sh
+> >
+> > --
+> > 2.48.1.601.g30ceb7b040-goog
+> >
 
