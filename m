@@ -1,83 +1,110 @@
-Return-Path: <linux-kernel+bounces-532226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB172A44A4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:28:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62FBA44A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315B919E0AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F793424EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5443F1A83FB;
-	Tue, 25 Feb 2025 18:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E792036FD;
+	Tue, 25 Feb 2025 18:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDIDpF7d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e58QKnME"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD75317B418;
-	Tue, 25 Feb 2025 18:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DED51F4177;
+	Tue, 25 Feb 2025 18:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507916; cv=none; b=NELoQquOaGBx9scYDnWb+/1unux3fV3HflEwNnWfComlJYk4OUx8W2BcDp94HtdzBGK6+wpKEW4yUaX+dUrYIakJQQ9i5aLnc3mb7Fp8OhOulmfNSVZSorn95isNFCQicEWXKqOm+NihVKtfSAD+RWgKpUyMkvFh46LrRZPJfOY=
+	t=1740507942; cv=none; b=jB6945nNW70iIHEPtNSzmYGFuxHPkb8Opm4w6hFbL70EP2RYNUZbS7xP3wAcNiUI8mUs1oTiUUAnVBy9RRNxj01lf43Kuz3XQBnANRSK71ghG5xT4WOdfCF6BxDSHRvzBjlA4ahUVHTnQboDoe/37HMXnIqAzIg4+I9wKnEWHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507916; c=relaxed/simple;
-	bh=o1iiOA9LfnQe0ALiZ+iV2Yj2Y8Ra3J2HvrNSi5k9uUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nXzLYGK3kV9DsQIVbVrNYaTqf7bBVXjbfa4xM3DFRr83BVdNvdq+Z+89at0ptmK6rDntzbaC1VWI/eiwpKyykLY2steLdZ+83814sBaZLkt5+2EBMBGdi/AFoFlbbvYS7rqOZ4VnGsXxs3qoa9qv/SAMB8jZsqyTZ22sz/jP/3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDIDpF7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2E8C4CEDD;
-	Tue, 25 Feb 2025 18:25:15 +0000 (UTC)
+	s=arc-20240116; t=1740507942; c=relaxed/simple;
+	bh=FI4npKmJzzOhR1wCpGxwR49Q+jIScuTUHT5YRTQ/ivI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=XIpQTiHUWdV19gytdsVswnKNHahSmS9U4+VrPaZIcfVI+zXLXV+03XC4dks9g7LLAOOJbh7DCQ+qQ4FO04O2pRy++bfPi7dyDPiFtLe7+8knNHd+ktpiA8mpqY1bR/UkhHBAeFGHw684lOdlYsOdjCh8vgpAFg3STeb3wboK0yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e58QKnME; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0F5C4CEDD;
+	Tue, 25 Feb 2025 18:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740507916;
-	bh=o1iiOA9LfnQe0ALiZ+iV2Yj2Y8Ra3J2HvrNSi5k9uUQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YDIDpF7dFzNIyTih0uCzjJfw4vs3xlnImSNlOdnNwwOySd1S+k5IYOXtR1lbsS0J9
-	 EovqW53KYBNAKTR6FRu5s/mrVEUQZTw7lQnrwAcbiIyvU+SAGKWKO9EUeYV7/NvFXx
-	 W+UtVXdNrAGR1i3OEBmsrFJktzeviFoEd7DzsqjvLbC8Vf/bw4D+4qLQf//gE+tjvQ
-	 UQoSjRwRzlcw5JWvBWkG43kfrYS2lT5OkV1y/X/aDBFAzgd2oESCMG8amrW4vgBzmR
-	 spAKa7f/GCNfAFiEzg3U3nrohFCLLLN4UKF3gseJwO/zvG2ioWYowPsmREyYixXvJq
-	 zQgTOj7CS5scQ==
-Date: Tue, 25 Feb 2025 12:25:14 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mukesh Sisodiya <mukesh.sisodiya@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [regression] Significant WiFi Speed Reduction with Kernel
- Versions > 6.8.12 on Intel Wi-Fi 6 AX203
-Message-ID: <20250225182514.GA512422@bhelgaas>
+	s=k20201202; t=1740507941;
+	bh=FI4npKmJzzOhR1wCpGxwR49Q+jIScuTUHT5YRTQ/ivI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=e58QKnMEpZZKN6nblA3HDiCdV03Ctn0C1iZ2O0Y5LB1nSJXWlGMuir4BBQUVf6FVn
+	 OY1bVsgPKOKeWMpwnrDqvmyxFeoKN0Wn9nKn1FqLshhZON087DmmRAC+GeCNmhEpLW
+	 AuySps3tktYI77AAVmXF/VUcWkbixdSWPsX7l5m2mrEglugfGAbFZMDg029umBF1ZJ
+	 DjotcfDjD1d0BjkATvgF+JVm3RNVYN9UV93cIhjPa/BX0doaCwYy3saY/xrvKpqU01
+	 KNpjgg4h1uHrH0OiBVokBwSRCb0uonivoIdKGyxJ1UILiANScz5ZTDepKGMDoNdbrs
+	 N+4nVCucGg6Ng==
+Date: Tue, 25 Feb 2025 12:25:40 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e9c5c74-9b36-48bb-b74a-9a209b71a634@leemhuis.info>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: lee@kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-leds@vger.kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, pavel@kernel.org
+To: Nam Tran <trannamatk@gmail.com>
+In-Reply-To: <20250225170601.21334-2-trannamatk@gmail.com>
+References: <20250225170601.21334-1-trannamatk@gmail.com>
+ <20250225170601.21334-2-trannamatk@gmail.com>
+Message-Id: <174050793997.2798870.5121158567249735734.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add LP5812 LED driver
+ bindings
 
-On Thu, Aug 08, 2024 at 08:43:53AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 07.08.24 11:12, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > 
-> > Mukesh Sisodiya, I noticed a report about a regression in
-> > bugzilla.kernel.org that appears to be caused by a change of yours:
-> > 
-> > 099a47dbe71b75 ("wifi: iwlwifi: Add support for new 802.11be device")
-> > [v6.9-rc1]
+
+On Wed, 26 Feb 2025 00:06:00 +0700, Nam Tran wrote:
+> This documentation ensures proper integration of the LP5812
+> in Device Tree-based systems.
 > 
-> For the record, turns out the bisection went a bit sideways and the
-> problems apparently is caused by 84ec2d2e960f33 ("wifi: iwlwifi: disable
-> 160 MHz based on subsystem device ID") [v6.9-rc1]. For details, see
-> https://bugzilla.kernel.org/show_bug.cgi?id=219114#c8
+> Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> ---
+>  .../devicetree/bindings/leds/ti,lp5812.yaml   | 34 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++++
+>  2 files changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+> 
 
-Browsing the regression tracker, this seems stalled with no responses
-even though the submitter (bcc'd) has bisected it.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Maybe regzbot will notice the correct commit below?
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: [error] syntax error: expected '<document start>', but found '<block mapping start>' (syntax)
+./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:6:13: [error] empty value in block mapping (empty-values)
 
-#regzbot introduced: 84ec2d2e960f ("wifi: iwlwifi: disable 160 MHz based on subsystem device ID")
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/ti,lp5812.yaml: ignoring, error parsing file
+./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: expected '<document start>', but found ('<block mapping start>',)
+make[2]: *** Deleting file 'Documentation/devicetree/bindings/leds/ti,lp5812.example.dts'
+Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: expected '<document start>', but found ('<block mapping start>',)
+make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/leds/ti,lp5812.example.dts] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250225170601.21334-2-trannamatk@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
