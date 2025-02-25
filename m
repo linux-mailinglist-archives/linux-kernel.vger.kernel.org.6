@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-532179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA4EA449B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:10:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E48A449E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F204189B586
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6613B38A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1131519DF7A;
-	Tue, 25 Feb 2025 18:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D8719D88F;
+	Tue, 25 Feb 2025 18:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="oDlD88+F"
-Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV0JxqUB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F4D19993B;
-	Tue, 25 Feb 2025 18:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD14194A59;
+	Tue, 25 Feb 2025 18:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506895; cv=none; b=hGhIUgfrSvx9BUfSjZ0gLUhyar2TW/ujcsVZ5ym2c4G2/XOonC/m9fuMIjttIfbq1XrH0eyHFYfWOKl8GhGd4X6sOzlJyZnAWZKaoq6Kx5S0wo9zlTwgqftqVSB8a1HaeOeLqUoFfkVU6PYJqpD04Gzt4D+wJwmOZTWqMGiqYo8=
+	t=1740506933; cv=none; b=hOn7w22B3pK4a72GcOF7tYsauqHqLYyc+yAjyn10eEpPnCMR3TiXuIfq0L2LeyyXwXtxc4SuC4O0EbORn4zzzFgyUKK6jR1wCBCafzUvKqbYbK/B8O1BN4jr0jLMP4SNRDLEaxVPe7nXYlogegxxo2hJOFJTCnqDKWG0b+AOfaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506895; c=relaxed/simple;
-	bh=wefH7Rpmq54N4YPB2U8jXbjMtX7IaHJ1punDFwYSoxE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=MRC2vXpA6DTCc4vKthSoihf1EpwWZNfmcX+aKQD/ijWYnlJksVTzWeIEfq2KMcZjX2X0Yh2QSS3gf10EyRHv99BB5q//amhNsoG60LIXmahUoC4dfiZJwc4JR/eyXhyDsiAv0nj6WuoaVnnejUdQ7vdR43dBWEUTlTFDg9/+UcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=oDlD88+F; arc=none smtp.client-ip=65.108.154.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
-Authentication-Results: dilbert.mork.no;
-	dkim=pass (1024-bit key; secure) header.d=mork.no header.i=@mork.no header.a=rsa-sha256 header.s=b header.b=oDlD88+F;
-	dkim-atps=neutral
-Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10de:2e00:0:0:0:1])
-	(authenticated bits=0)
-	by dilbert.mork.no (8.18.1/8.18.1) with ESMTPSA id 51PI7fID1055590
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 18:07:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-	t=1740506861; bh=XJFMpaLBtjREdFMRnck4vJ5NSVGA7jW7HlBTjc+VhXU=;
-	h=From:To:Cc:Subject:References:Date:Message-ID:From;
-	b=oDlD88+FsB93ZAgzk6Lr3ZECuDwCk9p+FZJ+VjSy9NZ3oezLp85OGFJ+7x6+hZcZb
-	 bQTk2o0p6lH09pNpwsY1i//T0LsgUb29tFp5zBGds++qh/5PIIOXF7M2sjv+zqi1uN
-	 cooA24KToIp6100WGut3zSE6/LU6JzGZUL19Tyvg=
-Received: from miraculix.mork.no ([IPv6:2a01:799:10de:2e0a:149a:2079:3a3a:3457])
-	(authenticated bits=0)
-	by canardo.dyn.mork.no (8.18.1/8.18.1) with ESMTPSA id 51PI7fao3242724
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 19:07:41 +0100
-Received: (nullmailer pid 1167981 invoked by uid 1000);
-	Tue, 25 Feb 2025 18:07:41 -0000
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
-        Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        =?utf-8?Q?K=C3=B6ry?= Maincent <kory.maincent@bootlin.com>,
-        Simon Horman <horms@kernel.org>,
-        Romain Gantois <romain.gantois@bootlin.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Organization: m
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-	<Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
-	<87o6yqrygp.fsf@miraculix.mork.no>
-	<Z736uAVe5MqRn7Se@shell.armlinux.org.uk>
-Date: Tue, 25 Feb 2025 19:07:41 +0100
-In-Reply-To: <Z736uAVe5MqRn7Se@shell.armlinux.org.uk> (Russell King's message
-	of "Tue, 25 Feb 2025 17:15:36 +0000")
-Message-ID: <87h64hsxsi.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1740506933; c=relaxed/simple;
+	bh=bq2qsdPe4LGuWItQe5cE+6dmynkmRrOR0hWrrdjWRAo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=rYgrFlXHLDkoBcptVMmF5WAjxCtKk4HVn8Izq+JJosqNtJVYKCIkY4KEct6oqOI8fnI9T7oYmOvczXJ8GbEHVYn2qhe/zWECkfwMeGVrfMOBbdDdc1q4moPu5M2B0QHwVWquiRo5Jxgz2LRYwrjbpwF0gspPvlfr0mlf0CpFGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dV0JxqUB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F2CC4CEE2;
+	Tue, 25 Feb 2025 18:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740506933;
+	bh=bq2qsdPe4LGuWItQe5cE+6dmynkmRrOR0hWrrdjWRAo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=dV0JxqUBtf/F1yClSGdbE7OOolhrNZU8Wu+c5/YcGH9Kn82SrCMS7tlYCWq55TwWZ
+	 FVEbvTs3j1Suap/aS0d++cfEICTM7O+PTt8JjPvFWnp1IHl+YJK/9DTzZr3PrUQDM+
+	 eFW8dLEDyvVBe/1FR+izUeD/Ymb7opbh4jXN5KlVOf5XMOfEXxd8A1rzqUz2XqvVYD
+	 qqcSCAAC7DvdOpAnMFtvCOXtmjvJtWlMwK3WeQlrm1zMuiAHSwGNhvFFo6ns4k2lW6
+	 ++ToAW8FiAYXTOKOh04KWTxBV2NETHvwdUKwC7weofRZDIvqBRxgKsJCZnZaLoHL25
+	 8S4/61iBNwuDQ==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 45AC6120007A;
+	Tue, 25 Feb 2025 13:08:51 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-10.internal (MEProxy); Tue, 25 Feb 2025 13:08:51 -0500
+X-ME-Sender: <xms:Mwe-Zz6vx6mRR190CkwMuUl2O9mT2iqe1DDgKB-ydt--DPUuR_LEcg>
+    <xme:Mwe-Z45tlUoSpZxGKKoogc9JCBMoOMSHrUs6AL_mS9aZXnrrVXMcH84M2QDW8OO8g
+    2XN55Hbgm_83QtYMj8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfnvghonhcutfhomhgrnhhovhhskhihfdcuoehlvghonheskhgvrh
+    hnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpeejvefflefgledvgfevvdetleehhfdv
+    ffehgeffkeevleeiveefjeetieelueeuvdenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehlvghonhdomhgvshhmthhprghuthhhphgvrhhsohhn
+    rghlihhthidquddvfedtheefleekgedqvdejjeeljeejvdekqdhlvghonheppehkvghrnh
+    gvlhdrohhrgheslhgvohhnrdhnuhdpnhgspghrtghpthhtohepvddtpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopehjohhnnhihtgesrghmrgiiohhnrdgtohhmpdhrtghpth
+    htohepmhgtrghrlhhsohhnsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehkrghi
+    rdhhvghnghdrfhgvnhhgsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohephhhkrg
+    hllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgvlhhgrggrsheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehkfieslhhinhhugidrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhn
+    rdgthhdprhgtphhtthhopegrvggrshhisehmrghrvhgvlhhlrdgtohhm
+X-ME-Proxy: <xmx:Mwe-Z6eRVRwb92v3xwiBRoCfoU0BORcIuI5pBoWRiwArPQGtCgPYzg>
+    <xmx:Mwe-Z0J6Ik74tuQs9Mz5hywsL3_3znIDGsJbsvmfzDbn7XWvyp7XXw>
+    <xmx:Mwe-Z3IeoWtKp9OK6SQzwxeMKmc605ZxLRoljnlrjyFcvZa9xGVQAQ>
+    <xmx:Mwe-Z9z-8gKVgagYVKNcKARCpzK-Pnn9nMUAwlsdwauhARFyBLdXQA>
+    <xmx:Mwe-ZzK93b_6RGbKiEZVp7H-nuum2kxMJCPcHO4uTC1XVqJ4QxMNJIOE>
+Feedback-ID: i927946fb:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 158D51C20069; Tue, 25 Feb 2025 13:08:51 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 1.0.7 at canardo.mork.no
-X-Virus-Status: Clean
+Date: Tue, 25 Feb 2025 20:08:31 +0200
+From: "Leon Romanovsky" <leon@kernel.org>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: "Bjorn Helgaas" <helgaas@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ linux-pci@vger.kernel.org, "Ariel Almog" <ariela@nvidia.com>,
+ "Aditya Prabhune" <aprabhune@nvidia.com>, "Hannes Reinecke" <hare@suse.de>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>, "Arun Easi" <aeasi@marvell.com>,
+ "Jonathan Chocron" <jonnyc@amazon.com>,
+ "Bert Kenward" <bkenward@solarflare.com>,
+ "Matt Carlson" <mcarlson@broadcom.com>,
+ "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
+ "Jean Delvare" <jdelvare@suse.de>,
+ "Alex Williamson" <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, "Jakub Kicinski" <kuba@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Message-Id: <354ce060-fc42-4c15-a851-51976aa653ad@app.fastmail.com>
+In-Reply-To: <7ff54e42-a76c-42b1-b95c-1dd2ee47fe93@lunn.ch>
+References: 
+ <c93a253b24701513dbeeb307cb2b9e3afd4c74b5.1737271118.git.leon@kernel.org>
+ <20250225160542.GA507421@bhelgaas> <20250225165746.GH53094@unreal>
+ <7ff54e42-a76c-42b1-b95c-1dd2ee47fe93@lunn.ch>
+Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-"Russell King (Oracle)" <linux@armlinux.org.uk> writes:
 
->> I believe you are reading more into the spec than what's actually there.
+
+On Tue, Feb 25, 2025, at 19:30, Andrew Lunn wrote:
+>> We always read VPD by using "sudo ..." command, until one of our customers
+>> requested to provide a way to run monitoring library without any root access.
+>> It runs on hypervisor and being non-root there is super important for them.
 >
-> So I'm making up the quote above from SFF-8472.  Okay, if that's where
-> this discussion is going, I'm done here.
+> You can chmod files in sys. So the administrator can change the
+> permissions, and then non-root users can access it.
+>
+> This seems a more scalable solution that adding a special case in the
+> kernel.
 
-No, not at all.  That was not what I meant.  Please accept my apologies.
-This came out wrong. You are absolutely correct about reading the 16bit
-diagnostic registers you quoted. I would never doubt that. I have an
-extreme respect for you and your knowledge of these standards and the
-practical hardware implications.
+Special case is an outcome of discussion in previous versions. My initial patch which I believe is the right approach is to allow non-root read access to VPD for everyone.
 
-It was the conclusion that this fact prevents SMBus hosts I wanted to
-question.  I still don't see that.  Some SMBus hosts might be able do 2
-byte reads.  And if they can't, then I believe they can safely ignore
-these registers without being out of spec.  Like the proposed solution.
+Chmod solution is something that I thought, but for now I'm looking for the out of the box solution. Chmod still require from administrator to run   scripts with root permissions.
 
-I'll shut up now, to avoid confusing the discussion of Maxime's patches
-further.
+Thanks 
 
-
-Bj=C3=B8rn
-
-
+>
+> 	Andrew
 
