@@ -1,91 +1,127 @@
-Return-Path: <linux-kernel+bounces-530397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71962A432ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:20:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5056EA432F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2097B7AAE5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56BA189E313
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2BC1420A8;
-	Tue, 25 Feb 2025 02:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9530912C544;
+	Tue, 25 Feb 2025 02:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/6QoWtp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAHoyD4N"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135D0136352;
-	Tue, 25 Feb 2025 02:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6821CAB3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740450005; cv=none; b=tjP6+HjdwfGxdPL8uiJ3kn2VvVBtsE4aR6kksyC9OVNNZrAlPbv6rjEIK5qFRA8OZGx3GPFXxQOj8E9zhJQDkmJbinQ6XIMcydwKuPpnO81SFShVv6moWdX/MMM5uAsIK2jjF9Vc61+4ijxqdVPNh+tnf4DyOW2XgSMJOAz5P+c=
+	t=1740450105; cv=none; b=LB2PCmHgOMhXYk673iiP5YF6AYhhbm56TZEdWDNzG6IxJtNMcmubD1JJfIMsWC+WNJowxtrZiQ6oVLahW1qKVwpmNfRK3Qt5FN7if7d8HXSICuR/0uDxg6uAwSe9IjuLHzad5F3qwg1vtYlTIvMtriWIyGxA4xFlSSHTRj87G+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740450005; c=relaxed/simple;
-	bh=g8R/KExjsjMHU++fl86tL9WrJhnFGwtWyWYnw0yoGxk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=J9YGP80aC2MMeXWbDvwThW/zWcgvH/CEeQl4WLx81V+fcGJiT51NVXSyzqZdugK5bXP6wDVQxKKQlXdmhIVkIRT2ZLajjK6PHVRxE2sO9blHJyXCGtg6nOgDAT/H/g6Hmb7Z6kQSl+SyMzrbuAA27AnTZPWdGo0J6kn3G2KnthI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/6QoWtp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E75C4CEEA;
-	Tue, 25 Feb 2025 02:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740450004;
-	bh=g8R/KExjsjMHU++fl86tL9WrJhnFGwtWyWYnw0yoGxk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Y/6QoWtpVm1ilManSvBLWHMWj7U8Nrqe1tpc0pfVugX92GijdTke6VPJqW+HPPZef
-	 2LVeQGQvgrhZmimKUpuViZ3RQAzK93a3PW/fo581/g5CKyOwmG9FT6PG3aW3le7QX9
-	 YB0yu1eROyWsaFqEsNqBaUGpeiXSgrLCo3r1c+bvG+P6av6aF98fRv6xoyUgb5Xf+d
-	 H0uP0jNG+HAJxI/Cv+pVwzzlFSe50h0AnPVuANLrZZt8JeQ+iMyDXGZRm62AosCYKD
-	 vCDKAWDMkm5nwwuzqehaO9vP1iEIS/YR8fEWlpgTEN+OvBea+3ZrVUvK6a6v6Ovfzl
-	 wPsI3TFyhkzQw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD27380CFD8;
-	Tue, 25 Feb 2025 02:20:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740450105; c=relaxed/simple;
+	bh=JFIMsaljc/OsNF2ji0aIKwRyKe88J0Fe7e6NSM1ldg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1UFoLZbvBzL+IeAjpBsmnvSZVe+P+o4rSiHDajxN8GTzHmkMJWZaZ6S7jMQq1H1sSZXrAlWojcJ5Sq5scWWwMnJFJrh6tGX3O8UnUWIOjGZkzUVw6SLWVDePqHQBZcbR/VmgTamJ/j7nBBm2R5v86TGSmd3Q6dMStvadd4mRqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAHoyD4N; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so106936055ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740450102; x=1741054902; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HN9Mi/04d7rm3C5xy1wbndrq4MdUVMimL5fYGZEmdkw=;
+        b=eAHoyD4NddhRM+VMaIRfbuuoKuVBNrQ2JuWetH9RydTcvw2AZzA7pxMLAwmlq440tB
+         4s5gp2AUGaWhx/AMtM0WXa7ev5Z99YgKUi/FMIO8WB1z0fiZmDrYaDKuv2HUKmL+1Pbx
+         NoXHFuMj7jmEKFSpWkYaCdMt+Pfz8M/UXTZNKarR8VtPI6DOGl3MSvv7tcC+rU6UihGn
+         ney7CkMJQM5XMJc0X9i/b9gBaLCWhWsDpCun9ejKwU+CrdJ6UgTj2ofjEHz5D6A+sLgF
+         Uh4m427RzEtI2vixNzvKCtsDhTcavM9BwssdJ/1IXz0I1SE3SvfsQevOE/CCImrn3FNJ
+         VjLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740450102; x=1741054902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HN9Mi/04d7rm3C5xy1wbndrq4MdUVMimL5fYGZEmdkw=;
+        b=Icv4XItuQhXCmrlSKBIRt+WIxnPChFAMo+6YXBjPmbdx6vpwONEHXN6Za3CFksneyE
+         LhN5xdv4dPqIoiB2DAUfJF1g5RDtKrqz5E2wj/mCPeOb+YZiZE6aIOPgTyAD8SMnz8z9
+         byaPLzrBINeTZtgxu8dWL1LeZa/G5O5uQhdnRyUJ5E419xEYtLqe1WNqBxmPxWfCCz+b
+         XXDo5phmc4yP0d9Co7jl6sJQKdJYGi3Z8N70B0pe9MBYXGRSy94ohyH1RokGmvVfWfZ/
+         whMRAxgPfhlxHxlZ3PKyJJr8Zgw5skQCtaZg6jms1MWZy4ZuMNJqv2LcVOf48LaKun67
+         AClQ==
+X-Gm-Message-State: AOJu0YwOckbByJvWpY1DMrY0h/XZnWTIL5uM0EjWJD32llNWc1huRo1T
+	GcrVJxmVo7lUUai00MyZlglKVcLJdfBa5FFISGQxhxzxI95kIYNub8/wYg==
+X-Gm-Gg: ASbGncsNledvlk13IAzx4PLMit3mjAgntfInCxLB9f90p6AYXG8j3QNC0tSK2hm3d/P
+	2KDcdWtbbPv7r7YNPcN22ifVqL7Rfk8X/Hu7C/sQcRV4mSCUgHHhWH53tDlc5wYQB4IlR5QXVnL
+	kSwPRLwNroxnRNyMlzmSOWC7K4znzA/SyyPlC45tU2IkhJ6VjdlLq2qgNWqoEc5rj0RYnNS8Gan
+	qaFAyUKFiw23DmS8C7I71GCZJHVpvNCKT4sh9WKiJO717iuR3X/OMXrdtKeNPlIzHuhF0OPIC2o
+	jz4MOpOP2MMRoaE+XurVgMSRhC/XCPrZB3EoWaY=
+X-Google-Smtp-Source: AGHT+IEEnytOBAspW2sSUQO7iG5hpqakqNkGD+X2+WwdvqSIByvUT58T+TrNd8qv8kmZZUlsAwTdZg==
+X-Received: by 2002:a05:6a00:190e:b0:730:87b2:e839 with SMTP id d2e1a72fcca58-73426d8ff83mr28720259b3a.21.1740450102531;
+        Mon, 24 Feb 2025 18:21:42 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f9006sm352150b3a.57.2025.02.24.18.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 18:21:42 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 24 Feb 2025 18:21:40 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.14-rc4
+Message-ID: <035ff595-8277-4680-a64e-a1bd8c141e04@roeck-us.net>
+References: <CAHk-=wi9Aa_sgCjSncJ7odZX_f=v5WZwWm+GuwXmVy1O+wiBsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: ethernet: renesas: rcar_gen4_ptp: Remove bool
- conversion
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174045003649.3679724.9544329181307344377.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Feb 2025 02:20:36 +0000
-References: <20250223233613.100518-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250223233613.100518-2-thorsten.blum@linux.dev>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: yoshihiro.shimoda.uh@renesas.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi9Aa_sgCjSncJ7odZX_f=v5WZwWm+GuwXmVy1O+wiBsw@mail.gmail.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 24 Feb 2025 00:36:11 +0100 you wrote:
-> Remove the unnecessary bool conversion and simplify the code.
+On Sun, Feb 23, 2025 at 12:49:22PM -0800, Linus Torvalds wrote:
+> This continues to be the right kind of "boring" release: nothing in
+> particular stands out in rc4.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/net/ethernet/renesas/rcar_gen4_ptp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> We've got all the usual driver fixes (ok, let networking than usual,
+> but gpu, sound, nvme, you name it, but it won't be huge), various
+> smaller filesystem fixes (xfs, smb, netfs, cachefs), core kernel and
+> networking fixes.
+> 
+> And all of it looks pretty small and non-threatening. The biggest
+> single patch is just a new self test.
+> 
+> So - knock wood - 6.14 looks to be on track, with everything looking good.
+> 
+> Please keep testing,
+> 
 
-Here is the summary with links:
-  - [net-next] net: ethernet: renesas: rcar_gen4_ptp: Remove bool conversion
-    https://git.kernel.org/netdev/net-next/c/6538c8ca8ee1
+Time for a report.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Build results:
+	total: 161 pass: 161 fail: 0
+Qemu test results:
+	total: 619 pass: 619 fail: 0
+Unit test results:
+	pass: 565894 fail: 0
 
+I recently enabled boot tests with PREEMPT_RT enabled. This triggers some
+tracebacks in older network drivers. Nothing special, though, so I won't
+provide details here. For those interested, preliminary fixes for two of
+the problems are available in my 'fixes' branch at
+git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git.
 
+b364dd4ed219 possible circular locking dependency backtrace seen when enabling PREEMPT_RT
+8571385b8fbf lockdep: Don't disable interrupts on RT in disable_irq_nosync_lockdep.*()
+
+Guenter
 
