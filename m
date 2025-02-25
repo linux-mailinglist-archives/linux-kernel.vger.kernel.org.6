@@ -1,137 +1,92 @@
-Return-Path: <linux-kernel+bounces-530495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F22A43425
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:33:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7B6A43426
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E653A9278
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:32:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A7F167674
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E06C4314B;
-	Tue, 25 Feb 2025 04:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE68C1422A8;
+	Tue, 25 Feb 2025 04:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IiDKaDWw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yrajGa6T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EB81362;
-	Tue, 25 Feb 2025 04:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4397C1362;
+	Tue, 25 Feb 2025 04:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740457934; cv=none; b=QK16JAbavM+n8/4/6CeT3SzOZab55Vxw753Kz31r+BecnYHHfpMj0+YDqIEaUHjjjf25PWE/mCmGoirLn2jcP96swQHBeZF4wBnVB5WpQsweY0E1+Z8I+BCGH7yC64rJ6r8IvBAmfS3caqfkOslJujn/ugnZMJgW6MHup0r2KOo=
+	t=1740458037; cv=none; b=n0iQ5XEHuxxACrE/llUJn+AshqJev1VourTgusZIovIxIocF87Hn/HOoU/OvnymMhhOjIkH6z0u6RjHccGQ8EQp2QaK3/UdIu6Lc+eRDmQpVlBSrffU3CmT9v06/Wr6eVNqItqIgP2z7cW6D6+bd487efcIhnBB02hOCFCmsrqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740457934; c=relaxed/simple;
-	bh=irayXAisGUoUoGZvRyGhIKIP5KwuaCozyhuWr6IDiZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z/pRqNCJgioImvMvfMjAUMx6D2UwrIxPQCjI2isM5JsuT8UqmC5o706lu+Dgulzx/O5n9SRhNi5+KhuXcBnHkf0/GfKmx+A6GDXurrgjfYZDKEJgTYXIy5HKba+Yd2UNodxpzvEy3JXk+UwwlXzcbLPPTwfJzWhfdDkEdrS6g+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IiDKaDWw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740457922;
-	bh=ZuCR/MCGR9SvJt/L2yF3b+kYGVfqXq9PZC4o2gp9sDI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IiDKaDWwxo/KMCjJMm6aQahJnfouin+KXcG7iNA6g4T5aprgQeV2RMLJqxXfVNNxJ
-	 W5IW2k1YFwRseOMzcCHjfOgcaocjCh5sW3J79QVvWOdt0lC+QfQGQC4EK9NVcrfnVJ
-	 LKRCy7bhu9cs2rQuyT1oe8TYEPJ7tP94az9kWhXHuTPT1X20gXB9H8wKFIhwMfp34T
-	 xIJmtd/xdJg+YL72QfNGlt7Y5NurTWxq82IlR0zcGRm2TKq1Zv+dq2QMv5oTQH8NG5
-	 LJbqBaT6FxK8v0NfBo5IhJLqu8lF3/jeaeSjSdoKFjSTNflqFRh7jCdB/IUF2h30YS
-	 amOkR1jLaE5BQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z24Sd57p0z4wcj;
-	Tue, 25 Feb 2025 15:32:01 +1100 (AEDT)
-Date: Tue, 25 Feb 2025 15:32:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, John Garry
- <john.g.garry@oracle.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: linux-next: manual merge of the scsi-mkp tree with the tip tree
-Message-ID: <20250225153200.00773d86@canb.auug.org.au>
+	s=arc-20240116; t=1740458037; c=relaxed/simple;
+	bh=eUyOIgdhZEGdlkSyY9vqN1/2N2DmG9kzcX6jjLMiPEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSck53L33csAmJTqBAWZuPqwVsV7LeyUxoaMUKSsYn6ZvqE2TKkcEP1LtAHyQtYpbiwidZDv9PumbqbkBpNzPNgKWePFhjmE973Y/b2JDK/w9KTTHderRNj5G8oIp8/3QJCEVElIOuFAVfMcHKDUt0WajmYMUAgeU2imwJM77e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yrajGa6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D683C4CEDD;
+	Tue, 25 Feb 2025 04:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740458036;
+	bh=eUyOIgdhZEGdlkSyY9vqN1/2N2DmG9kzcX6jjLMiPEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yrajGa6T5whGU5YBXQ6oD5IjJJIhgM8Tv3j2Mc3ngdVFupSoPO0178DIDpgV/bPjQ
+	 NyTvAvlyjL9THIz1KAwEiOk12eyt8P+sRqS6WgQrEo6P+BetaUs0Y5Jo0bhKj9CGDb
+	 vp3MSh6NPAB4lykGwCM9uluC6LLnNrj1kG8HADgY=
+Date: Tue, 25 Feb 2025 05:32:46 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Alan Mackenzie <acm@muc.de>, Simona Vetter <simona@ffwll.ch>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: More than 256/512 glyphs on the Liinux console
+Message-ID: <2025022528-humble-chatter-4e7d@gregkh>
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh>
+ <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+ <2025022355-peroxide-defacing-4fa4@gregkh>
+ <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
+ <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/udWpU6YiEcQx+bGVEcRtS3X";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
 
---Sig_/udWpU6YiEcQx+bGVEcRtS3X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 24, 2025 at 09:08:50PM +0100, Jiri Slaby wrote:
+> On 24. 02. 25, 19:22, Alan Mackenzie wrote:
+> > Hello, Greg.
+> > 
+> > On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
+> > > On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
+> > > > On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
+> > 
+> > [ .... ]
+> > 
+> > > > But I think you are also asking why I use the console at all.  That's
+> > > > a fair question which I'll try to answer.
+> > 
+> > > I'm not disputing using the console, it's the vt layer that I'm talking
+> > > about.  The DRM developers have the long-term goal of getting rid of
+> > > CONFIG_VT which will remove a ton of mess that we have overall.
+> > > DRM-based consoles should provide the same functionality that a vt
+> > > console does today.  If not, please let them know so that the remaining
+> > > corner cases can be resolved.
+> > 
+> > Does a DRM based console exist at the moment?  I spent quite some time
+> > looking for it yesterday, but found nothing.
+> 
+> I didn't read the thread, but are you looking e.g. for kmscon?
 
-Hi all,
+Yes, that is what I was referring to, but couldn't remember the name,
+thanks for the pointer.
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
-
-  drivers/scsi/scsi_debug.c
-
-between commit:
-
-  b7011929380d ("scsi: Switch to use hrtimer_setup()")
-
-from the tip tree and commit:
-
-  b441eafbd1eb ("scsi: scsi_debug: Simplify command handling")
-
-from the scsi-mkp tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/scsi/scsi_debug.c
-index fe5c30bb2639,2208dcba346e..000000000000
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@@ -8701,8 -9351,12 +9351,13 @@@ err_out
-  static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd=
- *cmd)
-  {
-  	struct sdebug_scsi_cmd *sdsc =3D scsi_cmd_priv(cmd);
-+ 	struct sdebug_defer *sd_dp =3D &sdsc->sd_dp;
- =20
-  	spin_lock_init(&sdsc->lock);
- -	hrtimer_init(&sd_dp->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
-++	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
-++		      HRTIMER_MODE_REL_PINNED);
-+ 	sd_dp->hrt.function =3D sdebug_q_cmd_hrt_complete;
-+ 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
- =20
-  	return 0;
-  }
-
---Sig_/udWpU6YiEcQx+bGVEcRtS3X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme9R8AACgkQAVBC80lX
-0Gxw6gf8DH+9m+demSWVyzKIyRKQyI7hfULkUiXeCdFIkVwWY0b3EyVCcS4qLnwm
-5Tn8dpKLF6fSGNyKD+5o3W7UHVUbiRT4oRqXcaQW9b7nntE2P/dycpA7JNzi5V7E
-TwDtssaU5Rv0X2ogeoWby1i8pbgzhmOqG/1O7rAq6TmwS1TaWk6O52PYDI9EMAEL
-xjCjnRVY0kgncIECsKqLcnrzK5kU5ym2LxlzslMb+P1W/5TgWmib7d2K0rA7tSlL
-f/xtBXaA7ljwzo5J6CN78ILWZ19+Kdf5Tgj4FujnK/wMt/ZUxntem9UBrT8KBNHR
-97jyLxocZUudWEeMqBktqs4PTDPcng==
-=hGCw
------END PGP SIGNATURE-----
-
---Sig_/udWpU6YiEcQx+bGVEcRtS3X--
+greg k-h
 
