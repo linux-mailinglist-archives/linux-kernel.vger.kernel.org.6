@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-532311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BDCA44B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:27:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFACDA44B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A752917886B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E414189DA82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BB41DFD96;
-	Tue, 25 Feb 2025 19:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28F11DB375;
+	Tue, 25 Feb 2025 19:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H4hcWf0Q"
-Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn1U3tN+"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2977C19ADA2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BD24414;
+	Tue, 25 Feb 2025 19:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740511608; cv=none; b=AnpxjFXxm5mUISaJhuRVqp844fyoaeveo02MDO1g0xdetqRGBVb4M5tb8UYeSM6b9b0xvAk1O+uOKxkndAB14ntSBz8mduEjwWL9ECEp6Je1SUE8dNwrhFxKlNLFYJlv7BOAL3UVQg97QgO/UuaVa5p71nnyJUaCIPoca7iLpcY=
+	t=1740511657; cv=none; b=n0RkUVO+Hz2xoUETYYOtGUmNiWIUmokre7nt6IrDittuJ3zFHWmiJoXTZL+sgeyxM5zzd1VTfhfdSi7uZs19z/xdQQhrcGpQ+TmGXYkMMxX4oplOUdFjF8k827J4u6LPw54TduXwVu+uTBebE42x66/i+41ylRNy1HYM13tMI+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740511608; c=relaxed/simple;
-	bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Cfw3TA820SYA5Mr/daTMZMCoqiVOvLby7lW6bBcm8LkRAMMbuL/p7DYw7rKpZ3/KtsC5jeZIpNZNea4eaCu98mTv0lS2eA/9VT0PUEcJxfBqtFYz8fNSQqnWzy3DdbEze11g6Zn6iwP/tEWKM/+f5QArGbx3com3j/lff8CUDWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H4hcWf0Q; arc=none smtp.client-ip=209.85.210.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
-Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-7275bc1e735so3560404a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:26:46 -0800 (PST)
+	s=arc-20240116; t=1740511657; c=relaxed/simple;
+	bh=zdaV+3Ywbo5HbnXPfU6splKF+KIBRUUTFf17H3ea9dE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U8BECXANt6OXPF+8gAk6bc7yTKnhA9InBKfoSEBEakGjDCH3f3AlnKAi7VBPFxtmH+hcDR0K/Ek1TnlXU+WS2pDK/rK7ZcT0QWQ22UgS2Bb92bGei23A/5xZLEazAfKlm4Zj5TwLLTAnEixwegNzJVcDdgqVrlyf+Hf8C1hskXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn1U3tN+; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22113560c57so36736195ad.2;
+        Tue, 25 Feb 2025 11:27:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740511606; x=1741116406; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
-        b=H4hcWf0Q+oQQQ3tVXB9N28PRzDtT7eVVDRv1gHV3DZQ7xe6LumpB9/MqchQ0yASsxK
-         ly0Hb9Q/SuYmBYIv/YLCE3y9p6G2QUKInZU/RiPPfDLa5f7lHrD6EidAR907TuhHOOBj
-         1DuUMpna10vkjNvGgnJCfGwtkodhzlA00SgxvCpN/JJr/ePRn7LbnO1/bg3rYpLnq560
-         D86JRVZcCmFBBsZ1ZUlV8Uapo9+4uegNmYLNK36Q0GO0D5ZXSPV/O0svVml6lK0ieMb9
-         dZ1fhrCVp8r1VfjjFGIJInlcSD0q70rCkzu8SJShv4FrFXioXz3nV9Xhii2iqZIJMSSW
-         dtmg==
+        d=gmail.com; s=20230601; t=1740511655; x=1741116455; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5SO+7/ep0j/owc8WrmnlAPtfqqgd25aSeIIb1w7NrA=;
+        b=nn1U3tN+K3yzvRLAb8ryWFurttPpVBOuTZVIaGscGvTML8Ou9YGJCin1SJhqKU7YsF
+         OUxSadkl3P3+tuXYet3n4zYu5cxPwsG4wMXZZtRSfiT2lwIC43BtF9OHqkl2HzvsqYs3
+         d88ysFcA04nXSN3IHEYOFoYDHS/ktZ9bQuBSiRncu0YLFH5PxJiiBw2Pss+i5GDzNA47
+         gfAmaIEwabkpdhp9bveDU9UAiZCoi/HzkQVnH30MjuJJcPnteVi5tGaY6M049SezAADO
+         JrIBBqsuGFd1N74Ml3i7hyyyW9ACSd+vTbPbYtA764Fc2QarL0fSI+Wkom/jbVFLNDin
+         DGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740511606; x=1741116406;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
-        b=kpstv5Y4BvM8WI5pIgOZgpyOgRiwCgOdioIo4XZYuHx5yfgThKVA26OT8NDnKWilbU
-         IkUnBbjNvfT9WSxd2t+9oA1cty3Ptm0xBrPPPtTEMAnRY0q32BRAON2XVEPNZOr4wK2M
-         EL+LrcHk+jczCQQW3CRBzFD2a6nU8GyWqE64JpAkHbCBfrN5bhnpPqMtogDCYQlZsrT1
-         /UOYyroKMWf7mTYqLA5DGj+/aeMLADHKEqJpOHeDQ37lxnCRNl49nw90+fh+uPaw/l87
-         +hJTJPZzL0Tz3RE9ny52TaPQp2QiWVK/pe9bfQ7AWPMa+1++fzrBV8XTV2fYY8VS5QsM
-         QIKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhOKyGmJ0LZdmZDwm1KR/2FkiCo2VUUEbMMxBjaG+ZEx/g7CQHFy8ZH4HHFJ38SEajaUYOYOzWelzGPOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxCntSbfoOXlCPrEmRdpetg6FWnorDvX1b3Xj63fNST+b9UAAB
-	EMjqP/8SHlfkSFIM5VxBz31R6cedGaKO0tSXwrmdMhRdtiI0CCduLgi9Y4hcv/pELQPRptKnFFL
-	DM6fmkGR3YsoNSHxIb53FDV3Atg==
-X-Google-Smtp-Source: AGHT+IH42rZCjQxhtGaX41R/FygdO39bmt4VMVb9EHOMyqJQj1A1hd9V5S6V3ciDnhUFtYvqHYTc4Cmq0ZkSclZIm6Q=
-X-Received: from oabxl3.prod.google.com ([2002:a05:6870:9f03:b0:2bc:6c19:c219])
- (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6830:2701:b0:727:26ca:bd2d with SMTP id 46e09a7af769-7274c184410mr11658399a34.3.1740511606242;
- Tue, 25 Feb 2025 11:26:46 -0800 (PST)
-Date: Tue, 25 Feb 2025 11:26:44 -0800
-In-Reply-To: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1740511655; x=1741116455;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C5SO+7/ep0j/owc8WrmnlAPtfqqgd25aSeIIb1w7NrA=;
+        b=U8UjCax1ejgEy3KsVgqPSbYwrEg2R+yR17Z0f/Ntac4QQUIL6kUqssfmw/PIuZBvos
+         jOEBb1GnZBmnJn6OO/+rmK+q3dvAKhtFU3mvTuG4z4/eqhTeLXDHsSOL8r4Mvoa8NzTz
+         MMZUlQTdTRq97u2Hl3eoSyyJSfN8hR/Qcz7nbM3iuDuKdEO8lTop1pKw6JWkDMtJ81jB
+         6g+hd+fmgmox5ZtL3d3btd9/j+06ht5vZKwv/j5ZBrE3GhxqY+f1BTLdeWnWoSadDVul
+         +SwmT9vD/GYL75Ui+6367Se2oQbLzsy78IqkQF3SQripaL1IkL+rJbbKzX9E1B/Py9kw
+         L2Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaIXDb0UDyd5EMfxOFTJ9Pxk/N6ljDcCZGrnw/e9sccwzPHSKuBKTQWfEG4fgpw0EfeU0SjJr4+cWHz2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7vmiD0SVaitg1cCZVJlGn9llSj1HTMZdh3LKtlm9oWYypjINE
+	ZtUtY4JLDwLG6kNqk5y5iF9EtMzyKvMt+ZnPdVt6wfGs2+qt8Iid
+X-Gm-Gg: ASbGnctEoRGZzmS48eLU6Hezo/1t97AP+0tPNx5UKJ+33WVq9fd1SwyeoMf9lItuEJ+
+	zTUhiMWGbJ3Qy4fsZ0DI0sK/kvF1jRHFEqLowxnfZUYC3mmf1dbGyi86QsPgdER4DWW6HmcmAqy
+	IQkTMt3u/OlPY3VI8aXZ9C3meTX+A9lWS84f98r7fBvOu1kTjFMzvs3SzoMuSovWomVtV8srnzI
+	lO4z6BqQj/U1X+N5cRCA9aBH2meWPwEv8agFESDKDmekDuwCEPm2RyozTHlUuEwZIz4wl3Mfec4
+	cqirrSNi+dkBubhT4VcXFhF01LI=
+X-Google-Smtp-Source: AGHT+IEqSuUqr9dv8f0RwH2FZL2RwCXspaXOEwGIZTwj3CQdWQj6g02qdmxYcGheJFG6nbU/pscZwA==
+X-Received: by 2002:a17:902:daca:b0:220:c164:6ee1 with SMTP id d9443c01a7336-221a1148bdcmr297622065ad.32.1740511654831;
+        Tue, 25 Feb 2025 11:27:34 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:987e:29fc:176a:2ed5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0965cfsm17946225ad.155.2025.02.25.11.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 11:27:34 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:27:31 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: fnkl.kernel@gmail.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev
+Subject: Re: [PATCH] input: apple_z2: Fix potential confusion in KConfig
+Message-ID: <Z74ZoyMCHSkKQK6j@google.com>
+References: <20250225-z2-kconfig-v1-1-a67d9b778a6c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250225192644.1410948-1-paullawrence@google.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-From: Paul Lawrence <paullawrence@google.com>
-To: amir73il@gmail.com
-Cc: corbet@lwn.net, dvander@google.com, ebiederm@xmission.com, 
-	john.stultz@linaro.org, kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	luca.boccassi@microsoft.com, miklos@szeredi.hu, paulmoore@microsoft.com, 
-	rdunlap@infradead.org, salyzyn@android.com, sds@tycho.nsa.gov, 
-	selinux@vger.kernel.org, vgoyal@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-z2-kconfig-v1-1-a67d9b778a6c@gmail.com>
 
-> As I wrote, this is one specific problem that I identified.
-> If you propose a different behavior base on mount flag you should
-> be able to argue that is cannot be exploited to circumvent security
-> access policies, by peaking into cached copies of objects that the user
-> has no access to, or by any other way.
+On Tue, Feb 25, 2025 at 08:48:24AM +0100, Sasha Finkelstein via B4 Relay wrote:
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> 
+> Add a dependency on ARCH_APPLE and clarify the description to make it more
+> obvious that this is for ARM machines, not x86 ones
+> 
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 
-> I have no idea how to implement what you want and prove that
-> it is safe.
-> Maybe if you explained the use case in greater details with some
-> examples someone could help you reach a possible solution.
+Applied, thank you.
 
-I'm going to wake up this thread one last time to lay it to rest permanently.
-We have now reimplemented our use of overlayfs to no longer need these patches.
-We will no longer be attempting to get this patch set accepted.
-
-One issue - remount does not update the mounter credentials, either by default
-or via a flag. I was able to work around this, but it would have been much
-easier had I simply been able to remount with new credentials. (The specific
-use case is that we load sepolicy from a potentially overlaid partition, so the
-original mounter will always have the default kernel domain, which will not be
-suitable once sepolicy is enforced.)
-
-Is this a design decision? Would a patch to set credentials during remount be
-of interest?
-
-Thanks,
-Paul
+-- 
+Dmitry
 
