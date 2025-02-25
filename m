@@ -1,91 +1,72 @@
-Return-Path: <linux-kernel+bounces-531623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9265A442D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9989DA442DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E40178EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5408E161525
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C6426B0A5;
-	Tue, 25 Feb 2025 14:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44694269D06;
+	Tue, 25 Feb 2025 14:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5+51SdR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRyh6RS5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423F5269D06;
-	Tue, 25 Feb 2025 14:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21051FCFD9;
+	Tue, 25 Feb 2025 14:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493806; cv=none; b=QwCvFSR1p1J5s4rCuNk9ODiqJxPDXvpiDkPM8RuStUE39hy+9XQjAFeinL3H4ECUIJa1uuXMbEcV+ta5Zmz3ep9wGJGum6III0L1ILmeCSpIdV8YQV4Kgzn+fMrhmDGpPtNeGwz700GUHwyQaKlBTPE0iBrLIQ6cULXreZCcSSM=
+	t=1740493921; cv=none; b=joWajE2Za/ZBbUzmxlhQl0a9qHYD4PrLO2Fr1is4xRZBDqRBrAflV53e50xnkvosRg692FU7SaHvfWtszQ8a9wNeNBhMMveRr87Cq5g1TR2ebChlhbRVBPZzfPG7atj2Z5ly6D+LXX4Rz0E/59TSdzsheBPEWTYIhvmcrxqwnvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493806; c=relaxed/simple;
-	bh=lYjpObcEnEszvzK+aJGxjwhQQRARi3ET5qF3EhUkLIQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=V2yitnnQMnd2Fv+JvZCof/Zxgh8KzyJ3AHQhlPUGzKowBdP0TRNZlprOLO8pMjHOxUm48QX+RA9pz7JChkbHR+1OdwnLoGu5DcZRCsIFj9gTPeeb10/FV+wVNqkVCJ12QAHjla8B3QB1HfwqBD9RWR8adrhjcUZ84RbP3HIKgmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5+51SdR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4244C4CEE8;
-	Tue, 25 Feb 2025 14:30:05 +0000 (UTC)
+	s=arc-20240116; t=1740493921; c=relaxed/simple;
+	bh=+xRF9Tk3XNeOHq+GTk8RWa8l8wzWPABhjbAB/Kg4TfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ezuy3cVm1oB76Q9mYUQIYRqEelGd8WQ27df2ib8rzRAEWpjEORMufASv3524XpniXLBpuQ8D6dxqA7dtkit5e8ctRgE4PL7qn0eDxlPjmcbmayTtnI4Ayo7RxAfXyi7IFVUYc7YuJcNnVqBs5cq1EG4/nX+IwCOyiMyLcM+h2qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRyh6RS5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 832D2C4CEDD;
+	Tue, 25 Feb 2025 14:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740493805;
-	bh=lYjpObcEnEszvzK+aJGxjwhQQRARi3ET5qF3EhUkLIQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=U5+51SdRk8hGafYwIxqpUFe+KIvMBMPUF5N6l1wHBHNVO2oRK1ZVz4EdvUFJ5H9xB
-	 1QCvX6E5vMYDsIgEnfkjRMpMhJO42jndtzxC2swYJmRW24YSZ223W1EHDCBGONX1uG
-	 sXlhBdz2e8Eimk0uRrBaA6u2tZ4f5hNkjJ3cQj2GRp8YTpwOcQXL/sds3dULh4dfzQ
-	 e8TVHgWhX7JNRz5FYOQPJZEyhIxUxRCJASnxU5axSaFtapFiTYa7zLgDFrVtdLwNaa
-	 Z3ApKyxAixo8ve/KOT0LvnGw7tIkm5kkrqEqExq7gKIdMpdCxe5yWikZrS0PivWXMq
-	 gdZd7nNTty3fg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7120D380CEDC;
-	Tue, 25 Feb 2025 14:30:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740493921;
+	bh=+xRF9Tk3XNeOHq+GTk8RWa8l8wzWPABhjbAB/Kg4TfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CRyh6RS5qByJiJPKiX0zP+SMcqbGPXIjtJmcph1ahsM967orLfmLFAh3tGN3bOPBz
+	 hwKGTNb66NYJ+Om1Okw6Z9oipuZXMtipMSVUhFq5ka57gK6rxlNzk3WL9vvxPOfOrA
+	 Vaz7TcyEUxkMN+ItHCVMOtE1E6ZaJukGu4kLKkX/reEhm5MBkO5x7+r1LhtGOpb0aC
+	 TimGEkRF3cuxgnm9ob4gifcI9qOmZ/Krt1ZLLXHAPPrMDunQDxZ+vstmXKIT4rIg6r
+	 c2Vb8RuAJNvl7FtSZz4PpkeMfJsDYNzBPK3EGWBCqFsVGvIJFOg3ZHqcO3kzevL6Un
+	 SWb85NvrDvKsA==
+Date: Tue, 25 Feb 2025 16:31:55 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: torvalds@linux-foundation.org, m.szyprowski@samsung.com,
+	robin.murphy@arm.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: update MAINTAINERS
+Message-ID: <20250225143155.GA3167815@unreal>
+References: <20250224162724.349679-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] sctp: Remove unused payload from sctp_idatahdr
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174049383727.4190834.5787481246783621819.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Feb 2025 14:30:37 +0000
-References: <20250223204505.2499-3-thorsten.blum@linux.dev>
-In-Reply-To: <20250223204505.2499-3-thorsten.blum@linux.dev>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, marcelo.leitner@gmail.com,
- lucien.xin@gmail.com, kees@kernel.org, linux-sctp@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224162724.349679-1-hch@lst.de>
 
-Hello:
+On Mon, Feb 24, 2025 at 08:27:21AM -0800, Christoph Hellwig wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+<...>
 
-On Sun, 23 Feb 2025 21:45:07 +0100 you wrote:
-> Remove the unused payload array from the struct sctp_idatahdr.
-> 
-> Cc: Kees Cook <kees@kernel.org>
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  include/linux/sctp.h | 1 -
->  1 file changed, 1 deletion(-)
+>  DMA MAPPING HELPERS
+> -M:	Christoph Hellwig <hch@lst.de>
 
-Here is the summary with links:
-  - [net-next] sctp: Remove unused payload from sctp_idatahdr
-    https://git.kernel.org/netdev/net-next/c/287044abff82
+It is sad change to see.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks
 
