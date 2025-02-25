@@ -1,214 +1,155 @@
-Return-Path: <linux-kernel+bounces-530627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18894A435E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:02:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E71A435EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446FD18998DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA6F7A8C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4DC2580FE;
-	Tue, 25 Feb 2025 07:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44DE257450;
+	Tue, 25 Feb 2025 07:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXUsoYSG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1QmRmjt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A1C19F495
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DCF255E4E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466967; cv=none; b=iKRO8mlSgrCv84OIbVyOda/1vlx2HXKmsABK3wcinrv4zG6+SeTqr6fE8+h0CNEOheFrsYg6nZ1qPn6EZgQ4LHJHKhnDSnbBq1QytaFf/3lEqRWb1uQCrFJzGuMKbsbN4Zm0tRuXtwf4dw52Fp5m4KEHVXyPRH0G26B31UyBDsw=
+	t=1740467122; cv=none; b=ObrJAL8jFtqKnPDe5UnziNtZQIePTAKbTKMs8tYl9i4/Y7nHiSEbr+Ml6t67EDvsrO/XaYhAZX02a122eXbwA+XHo3o9hzyKZaOB2/oQVNvbZxePHGEWrd7f0WG1FmJz10zNNUFYgivv74pk+qP5LkwLsyog2w5VuSU7MoNNKx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466967; c=relaxed/simple;
-	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZnJXKn7PmN9CoLy6s7tS2PgBgro8YgQZxENrrjNhNJPcVL4jL/etHl9wUVagL51fnPTwpvaXabWUPTMMfwQpXNvvxrI5tgQTMCzRgKk6MQLJjSqCP0DJOEQTsQMK7CTuI1uv4Ex19Ot5ioZSNz6Lt/PIZjrqTYNT9thrqsPhuhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXUsoYSG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87542C4CEDD;
-	Tue, 25 Feb 2025 07:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740466966;
-	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZXUsoYSGHutHWA7bxOJw/lr8/GjpMaKU2/ThGC9N3iYTs2x+sgcaeIqOeq7xGfvu0
-	 NlPFQLYfvGEEbz3og/u3BYBOA03nuv/8eBnlq/36wNPNPayEUQVHxyiffANOQQs3s/
-	 zCFZbYUzOB6HqHs0X8pKSPgAxSr5sjI5F1JNaPfZLeO7Q6Kea5szAYGzd6XILVDASL
-	 d2SKwCAN5qqHqaBhzty+RTygCX5mVkDR5anAs3QMBjZxRDK/OATwbDomWCYwebuIu6
-	 j6Zy5/Cqev21v/CPDN4HYjpVLHQ/7uSxBeV0yE6WrOUNkb1KtunjjVIAbOc7/mkqpq
-	 l4W9rNuBEd/xw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Yongliang Gao <leonylgao@tencent.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] samples: Add hung_task detector mutex blocking sample
-Date: Tue, 25 Feb 2025 16:02:43 +0900
-Message-ID:  <174046696281.2194069.4567490148001547311.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To:  <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
-References:  <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1740467122; c=relaxed/simple;
+	bh=R1KNPUbY8j4Sq6oeIttoOmOjA31pS82T/7gfy/E4qVM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OFfnw1tDbru4FPC+hVLzT8THCRuZPXn6E2/5Gu49F4B7T6yL/UsHJYgTlEEIwa4DWFkFBwf7WW/NmaJGSY+7l+jy634JM3LDP2N6pRmuTnsvvTF4+J+2c/Vx4VetLRm/6XF7R9Ymwgrfj5Bz29xSW/ypJPSfKuUcDZCM8+NaMj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1QmRmjt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740467119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RqAd8VzJLJdLi2vhE9uzobVZxQDnUMPSVtoywsbMNzM=;
+	b=A1QmRmjtUsVafLN/MgdxDJAGwxsACZ+xnO3HO8l5XcXFHfJY955ADZUUqhwwUxltYcyYcF
+	qLuDiE+s2wqK+7SdX1MhXMJFbSkKwvIbCjNDe6jbIosIYa8EwEpb2HKbqRGQoUn+QfhfdQ
+	wxmfKZE9h2EZTteUPFmNgd45u2+MjGk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-N8k3xWW8MUS-DM906JmchQ-1; Tue, 25 Feb 2025 02:05:14 -0500
+X-MC-Unique: N8k3xWW8MUS-DM906JmchQ-1
+X-Mimecast-MFC-AGG-ID: N8k3xWW8MUS-DM906JmchQ_1740467113
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f27acb979so4938843f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:05:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740467113; x=1741071913;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RqAd8VzJLJdLi2vhE9uzobVZxQDnUMPSVtoywsbMNzM=;
+        b=p3+lCBgbKn1A6m+Y6mIQctr2ZMUULIeZ+ru5/8464N4ghfQxA7/IZkycesXIwu+xxL
+         u1ZIUFLQ6DsyG9sHxh5PF5ZvnOoBu0xBvxrlB3+py8EfnyhdohmkSn3giOTHN2w/lP6r
+         k2rVrD3s+A/TcJ4MAMC7kGGVkrNT9DnRmQJPmZda6SedgJPpC+v9VLqmFkVBa0nrkqxx
+         69pKg9YrAibpX8hbjBluK1z82+MLa7X5PXtX/fhOlPfSfEZtz6zFytgSmJOxtt6TLdCs
+         ePMuguARaZ+E4ioPVzgoO1SILqmMC0jFkvddzayvub8MkAG8OHvtrBpEBW7V6/Px8kMS
+         UsMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYzW0G6yKxAu4oNxOmDFIm/YwedVpgJHqWuemgAqC9tu6Dogn58jPWuHnGL9x3S6P/zkIKPUDxNvlyvTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtxZJPRKw5EcjAnpj2maQJw+EK8LSBEvsBRHDgm76H+OP18gAk
+	356JNcuiTlL1owKotXOoB1rMZGAED534F0nhpG7tnzdqghmQ94JtAtKStFunonY3Gc/zB1Bblno
+	ei21mD5bnxkSf5bEZq8YPeHL9d7feRFlKRrqivHoOwYOzB8zpfzfTQojoz4/QQg==
+X-Gm-Gg: ASbGncv1NM67pztf0ZsPDq7pMUDi62IdZ3IQp8bROfNXuNSpwpP8BvSYtut+79gCo8G
+	ip8t5Cm9IvvtatEQoQ6Wm34g5rgAnKzytlq2zpCwUXSfnNFWzLZV3mcnWPVTIdsr1tn7jSjlyQm
+	h8X1gNJSKjnApieJ93Xp0GdHoi+ZGR/wJ5DOavhvX2Ojmzd9ZAiRjRWTbH1qDUdUEGno9aCKK0x
+	6yTonK8+xHTex6sJ64RnfhRFGqRxmi/4ZjqzxyMsbPcaHPHAEjtmKiYdgmFEOCyOMg+BmYQYvFe
+	SAxZIgM1eg2WmUN+k7V1Cml4EfMCE6a6VinvP7Ln6A==
+X-Received: by 2002:a05:6000:4021:b0:38d:d0ca:fbad with SMTP id ffacd0b85a97d-38f70799a67mr15083107f8f.14.1740467112860;
+        Mon, 24 Feb 2025 23:05:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9YMw5XzZ0+135wSW3pKEkRcXfBgZYV9S0B/g6AXHwM8JHp+AH7f6Vd9OX/q/N2jg1cQ9U3w==
+X-Received: by 2002:a05:6000:4021:b0:38d:d0ca:fbad with SMTP id ffacd0b85a97d-38f70799a67mr15083077f8f.14.1740467112522;
+        Mon, 24 Feb 2025 23:05:12 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d5700sm131895635e9.9.2025.02.24.23.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 23:05:12 -0800 (PST)
+Message-ID: <b8508fe41425dd7cd568ade401f2d2622aa343d5.camel@redhat.com>
+Subject: Re: [PATCH v9 2/3] sched: Move task_mm_cid_work to mm work_struct
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@redhat.org>, Shuah Khan <shuah@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ linux-mm@kvack.org
+Date: Tue, 25 Feb 2025 08:05:08 +0100
+In-Reply-To: <2bc76f69-901c-4d2c-bd75-64e757ec2230@efficios.com>
+References: <20250224132836.383041-1-gmonaco@redhat.com>
+	 <20250224132836.383041-3-gmonaco@redhat.com>
+	 <2bc76f69-901c-4d2c-bd75-64e757ec2230@efficios.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, 2025-02-24 at 15:50 -0500, Mathieu Desnoyers wrote:
+> On 2025-02-24 08:28, Gabriele Monaco wrote:
+> [...]
+> > diff --git a/kernel/rseq.c b/kernel/rseq.c
+> > index 2cb16091ec0ae..936863fe7eb37 100644
+> > --- a/kernel/rseq.c
+> > +++ b/kernel/rseq.c
+> > @@ -419,6 +419,7 @@ void __rseq_handle_notify_resume(struct ksignal
+> > *ksig, struct pt_regs *regs)
+> > =C2=A0=C2=A0	}
+> > =C2=A0=C2=A0	if (unlikely(rseq_update_cpu_node_id(t)))
+> > =C2=A0=C2=A0		goto error;
+> > +	task_queue_mm_cid(t);
+>=20
+> Given that task_queue_mm_cid() will be called quite frequently from
+> __rseq_handle_notify_resume, perhaps it would be best to move at
+> least
+> the portion responsible for checks (including the time_before()) to
+> include/linux/sched.h to eliminate a function call from the fast
+> path.
+>=20
+>=20
 
-Add a hung_task detector mutex blocking test sample code.
+Right, good idea. Thinking about that, task_queue_mm_cid checks a bit
+more than the __rseq_handle_notify_resume.
+As far as I understand, as long as we only call task_queue_mm_cid from
+__rseq_handle_notify_resume, it won't ever be called from a kthread (I
+assume the t->rseq implies t->mm and not PF_KTHREAD but also by
+construction since it's called in return to user).
 
-This module will create a dummy file on the debugfs. That file will
-cause the read process to sleep for enough long time (256 seconds)
-while holding a mutex. As a result, the second process will wait on
-the mutex for a prolonged duration and be detected by the hung_task
-detector.
+In short, considering we already check for PF_EXITING, the following is
+just superfluous:
 
-Usage is;
+  if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)))
+  	return;
 
- > cd /sys/kernel/debug/hung_task
- > cat mutex & cat mutex
+and we could just keep the time_before check in
+__rseq_handle_notify_resume, perhaps adding a t->mm check just to avoid
+a perceived NULL pointer dereference, which seems not possible anyway.
 
-and wait for hung_task message.
+Am I missing any corner case?
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- samples/Kconfig                     |    9 +++++
- samples/Makefile                    |    1 +
- samples/hung_task/Makefile          |    2 +
- samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++++++++++
- 4 files changed, 78 insertions(+)
- create mode 100644 samples/hung_task/Makefile
- create mode 100644 samples/hung_task/hung_task_mutex.c
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 820e00b2ed68..09011be2391a 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -300,6 +300,15 @@ config SAMPLE_CHECK_EXEC
- 	  demonstrate how they should be used with execveat(2) +
- 	  AT_EXECVE_CHECK.
- 
-+config SAMPLE_HUNG_TASK
-+	tristate "Hung task detector test code"
-+	depends on DETECT_HUNG_TASK && DEBUG_FS
-+	help
-+	  Build a module which provide a simple debugfs file. If user reads
-+	  the file, it will sleep long time (256 seconds) with holding a
-+	  mutex. Thus if there are 2 or more processes read this file, it
-+	  will be detected by the hung_task watchdog.
-+
- source "samples/rust/Kconfig"
- 
- source "samples/damon/Kconfig"
-diff --git a/samples/Makefile b/samples/Makefile
-index f24cd0d72dd0..bf6e6fca5410 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_SAMPLE_FPROBE)		+= fprobe/
- obj-$(CONFIG_SAMPLES_RUST)		+= rust/
- obj-$(CONFIG_SAMPLE_DAMON_WSSE)		+= damon/
- obj-$(CONFIG_SAMPLE_DAMON_PRCL)		+= damon/
-+obj-$(CONFIG_SAMPLE_HUNG_TASK)		+= hung_task/
-diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
-new file mode 100644
-index 000000000000..fe9dde799880
---- /dev/null
-+++ b/samples/hung_task/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-\ No newline at end of file
-diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
-new file mode 100644
-index 000000000000..7a29f2246d22
---- /dev/null
-+++ b/samples/hung_task/hung_task_mutex.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * hung_task_mutex.c - Sample code which causes hung task by mutex
-+ *
-+ * Usage: load this module and read `<debugfs>/hung_task/mutex`
-+ *        by 2 or more processes.
-+ *
-+ * This is for testing kernel hung_task error message.
-+ * Note that this will make your system freeze and maybe
-+ * cause panic. So do not use this except for the test.
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/delay.h>
-+#include <linux/fs.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+#define HUNG_TASK_DIR   "hung_task"
-+#define HUNG_TASK_FILE  "mutex"
-+#define SLEEP_SECOND 256
-+
-+static const char dummy_string[] = "This is a dummy string.";
-+static DEFINE_MUTEX(dummy_mutex);
-+struct dentry *hung_task_dir;
-+
-+static ssize_t read_dummy(struct file *file, char __user *user_buf,
-+			  size_t count, loff_t *ppos)
-+{
-+	/* If the second task waits on the lock, it is uninterruptible sleep. */
-+	guard(mutex)(&dummy_mutex);
-+
-+	/* When the first task sleep here, it is interruptible. */
-+	msleep_interruptible(SLEEP_SECOND * 1000);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos,
-+				dummy_string, sizeof(dummy_string));
-+}
-+
-+static const struct file_operations hung_task_fops = {
-+	.read = read_dummy,
-+};
-+
-+static int __init hung_task_sample_init(void)
-+{
-+	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-+	if (IS_ERR(hung_task_dir))
-+		return PTR_ERR(hung_task_dir);
-+
-+	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
-+			    NULL, &hung_task_fops);
-+
-+	return 0;
-+}
-+
-+static void __exit hung_task_sample_exit(void)
-+{
-+	debugfs_remove_recursive(hung_task_dir);
-+}
-+
-+module_init(hung_task_sample_init);
-+module_exit(hung_task_sample_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Masami Hiramatsu");
-+MODULE_DESCRIPTION("Simple sleep under mutex file for testing hung task");
+Thanks,
+Gabriele
 
 
