@@ -1,95 +1,174 @@
-Return-Path: <linux-kernel+bounces-531557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31E2A441E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:10:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC598A441CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B66188D04D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC7B16BFF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18836269D16;
-	Tue, 25 Feb 2025 14:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC0B267AF1;
+	Tue, 25 Feb 2025 14:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTDUof/c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LH+T2tIp"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C2426869E;
-	Tue, 25 Feb 2025 14:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B101820E6E0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492448; cv=none; b=dWN5qdz5ToOhC2FcsMnEMH48TAmAhfj21r2JVejEx/+hZmHCHqEG/UKTMDBop4x3iWICXXS3fK2T4ZepTST2FHqoMlF9uCXaFq67B91RWkQ6USQ+9AmN0z/aQRKtSGEWns/XRdslodNdugDD2VTwnsgVtUFtr5Qx1DxG8KAZ2EE=
+	t=1740492457; cv=none; b=ehHbEukHCxF4bDSrcdTU2BtKHigpaRHSpffPQP5idIC7SPOglfHGZvVhb6vuXHjr/IsWh9T/S8L4sPDoGGUfril7oeV9Bt0U7v5jOcocLAIJeG1eGgo38nmWGUnZMxttPiAp6fI8nksgedbr3CXLmXmzwyhzvx92EyL1zTtDH6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492448; c=relaxed/simple;
-	bh=ylog7V7NQEcge7nITuORIXXaH0MR5zF/yHX1ZMVs1U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jj7MWGiVUxoDxN7bUlw899RmDi0av+IFA73QI5WCGwxQag93PNUj0LSC4I+42SWr6kLjBTOOFvPsI26LK7cJ55aioW7ddpUO8GI8o/TMnMguMYzn5fHd5HxOS+3gX0iBjGL+NdO/53pKoqW+KtFy+CpeKf+eLmHypFndGdDg2tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTDUof/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E7FC4CEDD;
-	Tue, 25 Feb 2025 14:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740492447;
-	bh=ylog7V7NQEcge7nITuORIXXaH0MR5zF/yHX1ZMVs1U8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GTDUof/cZ6v9RgXqZgG6IiDyxfLNwL6zoUwmXt8LeRKlTyScKbrtN1+J/ECTOG3zw
-	 bSnP5iHVnptR4I3QV7uCIX6A1Rq6rQMn9oGi1OeA6hQKTtFxq2prI9Tf/mQmS2eMGF
-	 4+W2PgXJFuyaIDTUiB3e/wZtX5C7m1DpoWu+X4VGU7LszJO1F/NADWGbjvvgH4Xtgw
-	 5ljlQ5QZ0/4eIgXTjtlA2FMlAYNr9V5Cp6F2GhOa/EXADl8pxXlraGspFDFC3owjiX
-	 aLcVEr8L7SLGokBUJ9A7VSPK9BLuibt9BHp/++mQg4kMLCO23Br82nwrdeyLdcVNd+
-	 cmfSCgdKvqr9Q==
-Date: Tue, 25 Feb 2025 14:07:23 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] regulator: adp5055: Add driver for adp5055
-Message-ID: <3905cff4-4e4f-4301-8aaf-70bd50126448@sirena.org.uk>
-References: <20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com>
- <20250225-upstream-adp5055-v1-2-a5a7f8e46986@analog.com>
+	s=arc-20240116; t=1740492457; c=relaxed/simple;
+	bh=ETtbGfre+8vSSFzKt9ffhumK3/zdteTUO6XQ0C3bBjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EIwW9+AMGU62r0z7rvjevWs9SX+CaOasbtaEbr+9sDW6k96/oAt0sjn7JL7tK+s9ZRjXEzp0NklC0tNFefvG41NXjykllRUkTTcB/J3i47h5/DJYM++/csFq0Sesx5TSt4GZmZqbLL3t6Ud061skF2V1K4sUFgMfXlH7n/Qnp0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LH+T2tIp; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5ded51d31f1so10044986a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740492454; x=1741097254; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52CPMxSHvISiy3Wem3SvA0rcU6ZBPvQeZSq+VknVkPQ=;
+        b=LH+T2tIpPx+3OFkO6sCUd9tdPB58WVN9RwewDrON/AQztGGEv9RlSftC4ODM2NS+iB
+         qcLeORO43fsyj4vHCpIHTsfzGJ1ol01bXOm6YYMQi1Pct63mD+fTiLoR1yeMW1vOJDGR
+         b38XW7xtR6fzG83GdfyqrU3ti2D5kWzanUGzJK0Mb2TdENfkPKQx7x79VMnXranmSg2E
+         aTdrEfKx/tR4RdbTpvaKi1s5nlPqa3znvzx0oJOFAGiwBSArwqUwdXq/i+XKHaRSQ0UP
+         gFUXrmFh+UtbgVOr9OdrnXLM6LJZgur13cE9D7cigFe6vLK7oQ/dPjrfJcZc+dwLiitv
+         qbow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740492454; x=1741097254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=52CPMxSHvISiy3Wem3SvA0rcU6ZBPvQeZSq+VknVkPQ=;
+        b=R8J1l93xSruMod9CmvSLkE9prLxaEu9EgvksMcvMEEB0J2xu6U0afVrt2UPtdmVrIF
+         OUGqc1C+8ZxT607TSik0+lx9E6yVbhFAMs0acVDTfvbAaHOA1zGU5e9KujTOj7a7eVjK
+         CAiTv2ARuWq/SINsGV5H/Qq2bpKvMxhAXrMW4VKwir1Qb6v+7O5GNSqeRDTXyW8UxlOe
+         8Mz5gx3LW9wK00IUhBlsptzS9Dsz/Zn6E3tt8ZYMydhiUrazuvXvkDeXNB5B1YvLVQq8
+         UYZPEyAgQSRCmR8RBZ/LMDPa3n33h5EYdjWG9lU4WB8Qz44IDbTFz88TAjVN0FghMJMr
+         DcXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXYY7OIL4olvLSlJRyCRKvSissLTviviSbmTWELE4syknu9NcLQRKS3PXs7M9zbyXz6nJynZWHHvp4BZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+iYb9ntHCoyjGwPKLSNwJDfELjaxGPKhCn2l+PU0iyZKXpswt
+	7K2JbbSWBDqPeiR8CaLTLa2pjre9L6fhPHAhp/GQ4nlwl2nOalkKP5WvXj+s5QSdiRPEX+mLtkq
+	D21+K+Mq06x3QRqeG9aXohq0oE19eO+NgSWDj4A==
+X-Gm-Gg: ASbGncu0eNMpV+2g728B6NaaaFbvPukI0bqijTU91oed93LOEZcajtwKLKW8jM72UJQ
+	gfSsJTF4rm60vL7QsHKT+Y5wmOLQXv5Uckv9wKWfpGNneoBSELS3WgokQV8gVy84FySbWQDjyvH
+	XGP99pjxw=
+X-Google-Smtp-Source: AGHT+IEQN2EDCAAeHFkbNRXvx783uJdY53BszHXjfFa/MVQdphVBraQZDPpAVQvXLTkAQT+0PQSNrmUIWMt1Q9RBz8w=
+X-Received: by 2002:a05:6402:42c9:b0:5d3:cff5:634f with SMTP id
+ 4fb4d7f45d1cf-5e0b721e1famr17991883a12.24.1740492454054; Tue, 25 Feb 2025
+ 06:07:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jTB3LrYJ9ENBnqsY"
-Content-Disposition: inline
-In-Reply-To: <20250225-upstream-adp5055-v1-2-a5a7f8e46986@analog.com>
-X-Cookie: I'm not available for comment..
+References: <20250115024024.84365-1-cuiyunhui@bytedance.com>
+ <CAHVXubhapunBD_+cZ=WeEp9GPJec795xOWSnMKmh_iSH09r2Yw@mail.gmail.com> <CAEEQ3wkeLrTFVqVZEAYSsROSLHzkC-EeKvuPHmW=qH3CxamwhA@mail.gmail.com>
+In-Reply-To: <CAEEQ3wkeLrTFVqVZEAYSsROSLHzkC-EeKvuPHmW=qH3CxamwhA@mail.gmail.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 25 Feb 2025 15:07:23 +0100
+X-Gm-Features: AQ5f1Jq1ao-dkwxD2tcF7rBD5LcSaT1gKrmPFXFhH7IkW09oLtBAZAZXrkzMTtc
+Message-ID: <CAHVXubhCOivB8oxG7gcCNKTfK0DgHdu721SxsyGX2E4XAjbi6w@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 0/3] Enable Zicbom in usermode
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: ajones@ventanamicro.com, andybnac@gmail.com, aou@eecs.berkeley.edu, 
+	charlie@rivosinc.com, cleger@rivosinc.com, conor.dooley@microchip.com, 
+	conor@kernel.org, corbet@lwn.net, evan@rivosinc.com, jesse@rivosinc.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	palmer@dabbelt.com, paul.walmsley@sifive.com, samuel.holland@sifive.com, 
+	shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Feb 25, 2025 at 2:27=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.com=
+> wrote:
+>
+> Hi Alex,
+>
+> On Tue, Feb 25, 2025 at 9:21=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosi=
+nc.com> wrote:
+> >
+> > Hi Yunhui,
+> >
+> > On Wed, Jan 15, 2025 at 3:40=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance=
+.com> wrote:
+> > >
+> > > v1/v2:
+> > > There is only the first patch: RISC-V: Enable cbo.clean/flush in user=
+mode,
+> > > which mainly removes the enabling of cbo.inval in user mode.
+> > >
+> > > v3:
+> > > Add the functionality of Expose Zicbom and selftests for Zicbom.
+> > >
+> > > v4:
+> > > Modify the order of macros, The test_no_cbo_inval function is added
+> > > separately.
+> > >
+> > > v5:
+> > > 1. Modify the order of RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE in hwprobe=
+.rst
+> > > 2. "TEST_NO_ZICBOINVAL" -> "TEST_NO_CBO_INVAL"
+> > >
+> > > Yunhui Cui (3):
+> > >   RISC-V: Enable cbo.clean/flush in usermode
+> > >   RISC-V: hwprobe: Expose Zicbom extension and its block size
+> > >   RISC-V: selftests: Add TEST_ZICBOM into CBO tests
+> > >
+> > >  Documentation/arch/riscv/hwprobe.rst        |  6 ++
+> > >  arch/riscv/include/asm/hwprobe.h            |  2 +-
+> > >  arch/riscv/include/uapi/asm/hwprobe.h       |  2 +
+> > >  arch/riscv/kernel/cpufeature.c              |  8 +++
+> > >  arch/riscv/kernel/sys_hwprobe.c             |  6 ++
+> > >  tools/testing/selftests/riscv/hwprobe/cbo.c | 66 +++++++++++++++++--=
+--
+> > >  6 files changed, 78 insertions(+), 12 deletions(-)
+> > >
+> > > --
+> > > 2.39.2
+> > >
+> >
+> > So a v6 needs to be sent with:
+> >
+> > - the fix for hwprobe_ext0_has() reported by kernel test robot
+> > - a rebase on top of 6.14 since patch 2 will conflict with
+> > RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0
+>
+> Thank you for the reminder. In fact, version 6 was sent out almost a
+> month ago. Reference:
+> https://lore.kernel.org/lkml/20250124035959.45499-1-cuiyunhui@bytedance.c=
+om/
 
---jTB3LrYJ9ENBnqsY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Oh sorry, I missed it somehow!
 
-On Tue, Feb 25, 2025 at 05:08:34PM +0800, Alexis Czezar Torreno wrote:
+I think we can fix RISCV_HWPROBE_MAX_KEY when merging the patch.
 
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &i);
-> +		if (ret)
+Sorry again and thanks!
 
-Use of_parse_cb() to parse per-regulator properties.
+Alex
 
---jTB3LrYJ9ENBnqsY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme9zpoACgkQJNaLcl1U
-h9BU8gf/YjvkmrzPVLgHtogI4EMUneSBFqOsHcweayHTVmnvSguz5ATiriXqiQq1
-m95UyDAmvmjQ7VpmfGQDZwKbbrPU7Iws8RKAYHvQIK4X0okreDE+ubT4cmeY0TJ8
-4IaO1RLfcGFaStOvVy5T6lWrXWvo2vgBNooQ9dy346Ed9ZmBcj+lpuXGji7anlc3
-fpAl+INzTI/Ig8oE3Ab7wBTIt2wBLm6KmnuOqA2GgM8RjIt2Nk0mt0RyOXPCE/Lz
-wKjRlPR9MDX7rv2Etj0GPHOtbAU+6pd3ged1aY2WPTAUo3e0cYuW3zvOKTBMMlBj
-DyK1hRPA1swPYRORoV60UPnEPZEFIg==
-=mFoQ
------END PGP SIGNATURE-----
-
---jTB3LrYJ9ENBnqsY--
+>
+> >
+> > Do you think you can do that soon so that it gets merged in 6.15? The
+> > patchset received a lot of RB so it would be too bad to miss this
+> > release.
+> >
+> > Thanks,
+> >
+> > Alex
+>
+> Thanks,
+> Yunhui
 
