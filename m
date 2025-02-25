@@ -1,76 +1,181 @@
-Return-Path: <linux-kernel+bounces-531975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF70A44755
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:05:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5A5A4475C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F52867516
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 507D83A8E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE87E18DB38;
-	Tue, 25 Feb 2025 16:58:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C1D21ABC4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAEE18DB34;
+	Tue, 25 Feb 2025 17:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7UDOO39"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9752B1922E0;
+	Tue, 25 Feb 2025 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502707; cv=none; b=mL59vLv8FlQBSUjrdJrT+PXP/SimFwVhkUamkDjulkyNLnR24dy40kOEGsIf9PKd3qG8eqCS33ULggXEHgy2wNxNq0dndLIvlr0QXUb3+7r7maWja0d7bqFWPa/h5QnK30nspZddqQkbe6oEjuLwVHjeCmFCYWPUy5M1OLxjgyg=
+	t=1740502812; cv=none; b=o5p2BbCucyoC0jv+MniVfcXKot1VEBOXRjeXm1Gvk/cIsGx4ebIWFuTyJ9/9kqRVG/KPJ65LXrq+JSFQDbFB5xixzO6frPRUW0le8vsC03Mbifn1ZZSK6Zby48oSzZqDtovgx1RMxefITZISow5TY04khDTL7myZ3Jq6Nc0JsZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502707; c=relaxed/simple;
-	bh=S4VAtKxcYi0QKLp35ve2vYkp97o5Asnl+7BlscWqOsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hfZaTX5NxNVVOKUhaYs3M1xM9ycNiu6gW7N+jDUqPAFn8RKky78qBJ+87RKbrjXGT+rMnOyzZFxTzMJXniTUpIbaKC/nsEKcjsQR4AwXcpknqiSOw+nzeRkRp3hHmOvlfOtTt2ijXixk3iF8stLWFaKqBIv6Os+Miw21+E3UA5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A21961BCB;
-	Tue, 25 Feb 2025 08:58:41 -0800 (PST)
-Received: from [10.1.27.154] (XHFQ2J9959.cambridge.arm.com [10.1.27.154])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 539A53F5A1;
-	Tue, 25 Feb 2025 08:58:23 -0800 (PST)
-Message-ID: <a734d321-c839-498b-ac5d-2e9ab5355cff@arm.com>
-Date: Tue, 25 Feb 2025 16:58:21 +0000
+	s=arc-20240116; t=1740502812; c=relaxed/simple;
+	bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n8sDg1U+DFc+aWp/OLsD/bEmr+h+1fGuIrGai43pC1yoc4or+h5p7JYSCKunQ2VDBXaT0cEFWKwTBw0gV6zrUQFauKrfC5cC0d5+nbSw3f1mjXcfUC5MEkxrTrkDnvMm3ULohWoTYJpOcaNylZBfFqWamE8N2VOxJhKFN7J2DbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7UDOO39; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so9161494a91.1;
+        Tue, 25 Feb 2025 09:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740502810; x=1741107610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
+        b=B7UDOO39sm6KY2KbFodq2tgW4Y9J03JDMgI1iRcB7lDiCVcONCGc2VDYiYyAIsA172
+         GHujYXxtQshW/o1RKls9fD8qijzeyb5S+EA8VD3Gi+ABD2RL+m6W84OHbOQWdNqsxj1d
+         Xq7R0Cm9SkUCNaifnubZzeL3gfsPeFtnXQ8lOeYNROa/j3u0vbzymEFR+xrBeTZL/DnX
+         VZpU0PES12MCA445jdjcJmLMD9EAkWbDhy1FNQlRimTrzVn8uQJQQxZDhvT2iStY2SJc
+         L4pQr9G94M1d86h7s6ibvFMnS6zWunCKFPBprObIzfQ4Zp4is4c0FDhwhLdeytMPEPr8
+         Y04w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740502810; x=1741107610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
+        b=cG6OUbbPbqw6zP32mIU5jhSRsMFHyz8wfOtInGV2cuL5LzLV/JHMC0kLVMy4fQJXDB
+         V9mSsYC1FW1Wxwm7dcgOcVst5Lk0swphTntsYIgB+OZKOde9H8cHp+/VBmMQAhEojdJD
+         ZzrdHZfxnVu97RbiWdjQyfDKZvE4VuWKCavJDCX7g9ULHvEys96uYMj7z+uw31Sa8Bnu
+         7J3XNNfo7w1yoQygWGxwn3+0WgTE5MTdv6WHZM8dilX0Q6HIBVHpX58kmshWWwAocfmW
+         cw4dlwDERp1lxh+xe48NrHvaYoPPUdxRReCd28djbEGeMwwRhKaAtCQXOfAh9rKlGO0v
+         60Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Z4RcegwOUORhB26ENUVvMKoc5sfL6eOBp2kfWi0q4MLvbeJJrCNJRp/trInwrMcrIWJk78+5/eFvY/3Y@vger.kernel.org, AJvYcCVxF4rFmnL9469JLQFIcjKZqa0yblqUJDsHBn3lPOOGZcO3G4kguWlHWqUg5OFmY2/a7KucVDooT7wKLg==@vger.kernel.org, AJvYcCWcp1bt869Wl55LdEqJjvU9IkbBL4xpO9dA6LVThpdLcVpS0kILIETblLxSZu5O1zCP//k=@vger.kernel.org, AJvYcCWf0f98lgCWn9Rf8hqUPI+Wq1KIfDiHLJmiciv8ZYBzKn0WeUVDCq16sVhbB5ZZi+IOw+JICAKpyf8+OnKQ@vger.kernel.org, AJvYcCXCtJgG55d6QU2sNwMW5HyH0BmkbnyTnr9z7K6c8HHLerWZHyX/ztYhoVZgPb9MrDnMUHCYWZYGcqsAG2q5rS4j@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOdJsx7TyLu8cLtg6jfOJvZu9uPpv3RndVPqUzbvZ+KYQ7SK6E
+	xWIXVbgCMe8o9d2/mvPBWiduWI+VJc6bSrjKAExoI4qNaRbRMFrY3H9loZ9rzgWGsWGEHLCWJo5
+	lQWn1NULbcClUvotnhvteJ6HpbLM=
+X-Gm-Gg: ASbGnctIHi1wHaVEbtMBRqEkICT9PKKGncAHidipL6ScQp84A52in3fpC/BlHAmCtGe
+	UZkoM5ABrzwHnt9KfPafqA4tFZfkZdZqJ8sEBCMP+rUk9/xXNkKMuEMbnxAlfogdbGWqs7OJCs0
+	YBRQuIWoOLk9gUMg3/NjyKNt8=
+X-Google-Smtp-Source: AGHT+IEqGX/0s3L9HOzk4Sz5iomAqtCqwfcqNvGFpgeCqLV+ITRzR2oQPU+QlnRFoROJ8TnyuhJGLs8Sn0eBQ85lycM=
+X-Received: by 2002:a17:90b:6c4:b0:2fa:1a23:c01d with SMTP id
+ 98e67ed59e1d1-2fe68ae3f9dmr5490807a91.21.1740502807682; Tue, 25 Feb 2025
+ 09:00:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/14] mm/vmalloc: Batch arch_sync_kernel_mappings()
- more efficiently
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250217140809.1702789-1-ryan.roberts@arm.com>
- <20250217140809.1702789-12-ryan.roberts@arm.com> <Z73jrWlV5X9senZw@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z73jrWlV5X9senZw@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250207012045.2129841-1-stephen.s.brennan@oracle.com>
+ <20250207012045.2129841-2-stephen.s.brennan@oracle.com> <CAK7LNAQokoST0FnByeWywaghTMP2aG7hQaV1T=TcQ=1v4ZLQrg@mail.gmail.com>
+ <CAEf4Bzb9rYHTVkuxxSuoW=0P84M7UPkBr-4991KiMnFsv10hjA@mail.gmail.com> <87eczm6ckn.fsf@oracle.com>
+In-Reply-To: <87eczm6ckn.fsf@oracle.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 25 Feb 2025 08:59:54 -0800
+X-Gm-Features: AWEUYZm71T4KvCmI2nwm6g0nvCi2k88IvtzTenbxtSBKIzvf9AgIN9hu_viY36I
+Message-ID: <CAEf4BzZnQmjWLijCZdsNvFTmrAM+ioDW3YygmOZRHqadCg1_rw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kallsyms: output rodata to ".kallsyms_rodata"
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Andrii Nakryiko <andrii@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kees Cook <kees@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Sami Tolvanen <samitolvanen@google.com>, Eduard Zingerman <eddyz87@gmail.com>, linux-arch@vger.kernel.org, 
+	Stanislav Fomichev <sdf@fomichev.me>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Jiri Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Jann Horn <jannh@google.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
+	Daniel Borkmann <daniel@iogearbox.net>, Nathan Chancellor <nathan@kernel.org>, 
+	linux-debuggers@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/02/2025 15:37, Catalin Marinas wrote:
-> On Mon, Feb 17, 2025 at 02:08:03PM +0000, Ryan Roberts wrote:
->> When page_shift is greater than PAGE_SIZE, __vmap_pages_range_noflush()
-> 
-> s/PAGE_SIZE/PAGE_SHIFT/
-> 
-> Otherwise it looks fine.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+On Mon, Feb 24, 2025 at 5:24=E2=80=AFPM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
+>
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+> > On Sat, Feb 15, 2025 at 6:21=E2=80=AFAM Masahiro Yamada <masahiroy@kern=
+el.org> wrote:
+> >>
+> >> On Fri, Feb 7, 2025 at 10:21=E2=80=AFAM Stephen Brennan
+> >> <stephen.s.brennan@oracle.com> wrote:
+> >> >
+> >> > When vmlinux is linked, the rodata from kallsyms is placed arbitrari=
+ly
+> >> > within the .rodata section. The linking process is repeated several
+> >> > times, since the kallsyms data size changes, which shifts symbols,
+> >> > requiring re-generating the data and re-linking.
+> >> >
+> >> > BTF is generated during the first link only. For variables, BTF incl=
+udes
+> >> > a BTF_K_DATASEC for each data section that may contain a variable, w=
+hich
+> >> > includes the variable's name, type, and offset within the data secti=
+on.
+> >> > Because the size of kallsyms data changes during later links, the
+> >> > offsets of variables placed after it in .rodata will change. This me=
+ans
+> >> > that BTF_K_DATASEC information for those variables becomes inaccurat=
+e.
+> >> >
+> >> > This is not currently a problem, because BTF currently only generate=
+s
+> >> > variable data for percpu variables. However, the next commit will ad=
+d
+> >> > support for generating BTF for all global variables, including for t=
+he
+> >> > .rodata section.
+> >> >
+> >> > We could re-generate BTF each time vmlinux is linked, but this is qu=
+ite
+> >> > expensive, and should be avoided at all costs. Further as each chunk=
+ of
+> >> > data (BTF and kallsyms) are re-generated, there's no guarantee that
+> >> > their sizes will converge anyway.
+> >> >
+> >> > Instead, we can take advantage of the fact that BTF only cares to st=
+ore
+> >> > the offset of variables from the start of their section. Therefore, =
+so
+> >> > long as the kallsyms data is stored last in the .rodata section, no
+> >> > offsets will be affected. Adjust kallsyms to output to .rodata.kalls=
+yms,
+> >> > and update the linker script to include this at the end of .rodata.
+> >> >
+> >> > Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> >> > ---
+> >>
+> >> I am fine if this is helpful for BTF.
+> >
+> > This seems like a useful change all by itself even while the main
+> > feature of this patch set is still being developed and reviewed.
+> > Should we land just this .kallsyms_rodata change?
+>
+> I would be happy to see it merged now.
+>
+> I don't think it would help anything other than BTF, because most other
+> things (e.g. kallsyms) refer to symbols via an absolute address. Using
+> the section offset seems pretty uncommon.
+>
+> But it still is a nice cleanup anyway.
 
-Thanks!
+I was thinking about possible use cases of some tooling wanting to
+access kallsyms data from vmlinux (instead of from /proc/kallsyms).
+But, frankly, having a separate section doesn't help all that much
+even there. We either way seem to have ELF symbols pointing to
+relevant pieces of information, so it's not hard to get it even if
+it's part of .rodata. So I guess we don't have to rush landing this
+patch separately.
+
+>
+> Thanks,
+> Stephen
 
