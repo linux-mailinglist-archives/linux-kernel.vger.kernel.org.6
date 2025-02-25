@@ -1,190 +1,238 @@
-Return-Path: <linux-kernel+bounces-531377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA25A43FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:54:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3B6A43FC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189893B6E38
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B19178EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4F0268C66;
-	Tue, 25 Feb 2025 12:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFCF268C70;
+	Tue, 25 Feb 2025 12:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="mjILcAIk"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="je5JKm3C"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A22268C56
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4316267AE1;
+	Tue, 25 Feb 2025 12:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488077; cv=none; b=CsI1b1zZbg6mJIOLscqJV6sLTNNkC5LQRPgCDJTDwc6oTuBovJlEY0wI5iZbfwIuYiD04L3Hp39lC+E8EsC70wyV7AI1cktUL5ZMiLzDbe7sFxFlhV7fOcjRizeJYMO3EgVLYX+EfpqOqklSOIOIdKuUOuRKT/iFZZD9g0r9VNs=
+	t=1740488189; cv=none; b=Ayq02xfWtmfhCF/Z2SfKW4o942QwUSpxunWLVqGkQufEH/c7CDekM6ztCNw79cibGLYlu2T4VT/dDMAWF97B64lNE97I2BQ/pwFMhkikmBwkoZGlBCjEgpEDd64lWGXQiS4RKUTkDNB0HFGqgKMM7xPi9DtGB9FrTiG5IvctLdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488077; c=relaxed/simple;
-	bh=W8LIqF7kkH6cCLj3gN0Tz1ix7jTva4xQTCeEx72fA+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czr7i4QQgbLLMK1HYhtXXDjKt6Gs/++7dP/wr3Is4CZMajoOg6M2nd1v2nl/EtzO4FyeAS2mEWHmbKyWyW3S7LAcMsfmGoGijde6v7YWmaSI3aM94jkcRoNnTsGHr8KtPz44sYHJI2pl2Bet1yNM9m5zQPmAwtt/+9rRG4EKTvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=mjILcAIk; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 7381D240029
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:54:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1740488073; bh=W8LIqF7kkH6cCLj3gN0Tz1ix7jTva4xQTCeEx72fA+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=mjILcAIkXqzqNKdVJx8aNZciCsFDMgWk1hSEOtkfGbO6HFVdhu5Vy04vupoKrYvbv
-	 c6on3zliqSDojlPicjEIhjGdw22NRnh01nANE/3jRMwtf45rqgaGqjBEPbDvvOZQgg
-	 s4Jb6KbceFTD97AcdgGFKHeQkXDlrBbwG3iChrbmjhflZJIT8e5l8aV2shsyZ4sXKo
-	 6ofVmK+sYqzNywRiys2+yrDszLO59sxgwWTEXz+wqj0Y8Kj8BPrm6dHb8ttxz+aByz
-	 WtF5CLyU4itMYTueMHGswR3Km+h6T3R2kOXkZBOleO2kFLusG00NHpXaxrg6YwUFTp
-	 3ou6TTWtB7XpA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Z2HcG3WCTz9rxG;
-	Tue, 25 Feb 2025 13:54:21 +0100 (CET)
-Date: Tue, 25 Feb 2025 12:54:21 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Cc: Frank Li <Frank.li@nxp.com>, devicetree@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 05/12] dt-bindings: dma: Convert fsl,elo*-dma to YAML
-Message-ID: <Z729fRBNLAxdYD22@probook>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
- <Z6pV4eauZj75+911@lizhi-Precision-Tower-5810>
- <Z684nUnDX4Sb98rQ@probook>
+	s=arc-20240116; t=1740488189; c=relaxed/simple;
+	bh=0oT5shLnbtbhNDJ7D3AgCbSwDUFlzk9PgtUkpEfpxPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d+GcWjTO5XKFgMbG5HUkoxoh0QgLg1TdnnFHvuKJUzXVEUooecDWvUT9o0hUHvxvTcdUbXHtxfi3CTRjOgRhrwLDUnx+k6mJf1uY96joJF+A9G9nBgiEfQgbTQ4QasA1iX9tAyO5nsYgCJYEz0tCRVDcv/ieKnH+bVuGvRwX5Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=je5JKm3C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PCY3Vn011208;
+	Tue, 25 Feb 2025 12:56:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=piYoMX
+	DdaY+TU9E18vFRAcZoLdOWB0ePhiobWmf10uk=; b=je5JKm3Cvt4SNBH4kt6GCP
+	BCergyn9VoVVqo5edSKmjdIWLh5J9rIrPSSMcAKuo8pM2PGrhiIARIKNEBcIXU5z
+	qBw643xPXKH8jxVRBuCnzUJ/KyOXArBHZY024u0iXMYbTIqpTeWmA9wFEAa5zQ2H
+	9dX1EZvwrI5Py/j6YOx9gjXu0rUVGxvPRw85jXI1AYaCWI/1YTi7M3HEmrb15rrI
+	kFHsIyhD99qQIeErhJnINUqHVPFTX6qijSLqy8a+ivlII1Z5KWIJhnFt2NvVbWgg
+	fzxoL/y+xeYesfNYYNKI4YxZqbtIt5Auy4TPoQp2SJFUENYZaFuxSOnU1FXCQa/A
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4513x9twsy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 12:56:14 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51PBRO59002545;
+	Tue, 25 Feb 2025 12:56:13 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jmn38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 12:56:13 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51PCuA8i11338002
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 12:56:10 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CBB020040;
+	Tue, 25 Feb 2025 12:56:10 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0C6BC2004B;
+	Tue, 25 Feb 2025 12:56:10 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 25 Feb 2025 12:56:09 +0000 (GMT)
+Message-ID: <5ac2dda6-a9ac-449a-bb7c-0f9eb90614f5@linux.ibm.com>
+Date: Tue, 25 Feb 2025 13:56:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] KVM: s390: Don't use %pK through debug printing
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250217-restricted-pointers-s390-v1-0-0e4ace75d8aa@linutronix.de>
+ <20250217-restricted-pointers-s390-v1-2-0e4ace75d8aa@linutronix.de>
+From: Michael Mueller <mimu@linux.ibm.com>
+In-Reply-To: <20250217-restricted-pointers-s390-v1-2-0e4ace75d8aa@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z684nUnDX4Sb98rQ@probook>
-
-On Fri, Feb 14, 2025 at 12:35:41PM +0000, J. Neuschäfer wrote:
-> On Mon, Feb 10, 2025 at 02:39:13PM -0500, Frank Li wrote:
-> > On Fri, Feb 07, 2025 at 10:30:22PM +0100, J. Neuschäfer via B4 Relay wrote:
-> > > From: "J. Neuschäfer" <j.ne@posteo.net>
-> > >
-> > > The devicetree bindings for Freescale DMA engines have so far existed as
-> > > a text file. This patch converts them to YAML, and specifies all the
-> > > compatible strings currently in use in arch/powerpc/boot/dts.
-> > >
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > ---
-[...]
-> > Need ref to dma-common.yaml?
-> 
-> Sounds good, but I'm not sure what to do about the #dma-cells property,
-> which is required by dma-common.yaml.
-> 
-> There aren't many examples of DMA channels being explicitly declared in
-> device trees. One example that I could find is the the xilinx_dma.txt
-> binding:
-> 
-> 
-> 	axi_vdma_0: axivdma@40030000 {
-> 		compatible = "xlnx,axi-vdma-1.00.a";
-> 		#dma_cells = <1>;
-> 		reg = < 0x40030000 0x10000 >;
-> 		dma-ranges = <0x00000000 0x00000000 0x40000000>;
-> 		xlnx,num-fstores = <0x8>;
-> 		xlnx,flush-fsync = <0x1>;
-> 		xlnx,addrwidth = <0x20>;
-> 		clocks = <&clk 0>, <&clk 1>, <&clk 2>, <&clk 3>, <&clk 4>;
-> 		clock-names = "s_axi_lite_aclk", "m_axi_mm2s_aclk", "m_axi_s2mm_aclk",
-> 			      "m_axis_mm2s_aclk", "s_axis_s2mm_aclk";
-> 		dma-channel@40030000 {
-> 			compatible = "xlnx,axi-vdma-mm2s-channel";
-> 			interrupts = < 0 54 4 >;
-> 			xlnx,datawidth = <0x40>;
-> 		};
-> 		dma-channel@40030030 {
-> 			compatible = "xlnx,axi-vdma-s2mm-channel";
-> 			interrupts = < 0 53 4 >;
-> 			xlnx,datawidth = <0x40>;
-> 		};
-> 	};
-> 
-> 	...
-> 
-> 	vdmatest_0: vdmatest@0 {
-> 		compatible ="xlnx,axi-vdma-test-1.00.a";
-> 		dmas = <&axi_vdma_0 0
-> 			&axi_vdma_0 1>;
-> 		dma-names = "vdma0", "vdma1";
-> 	};
-> 
-> It has #dma_cells (I'm sure #dma-cells was intended) on the controller.
-> 
-> 
-> Another example is in arch/powerpc/boot/dts/fsl/p1022si-post.dtsi:
-> 
-> 	dma@c300 {
-> 		dma00: dma-channel@0 {
-> 			compatible = "fsl,ssi-dma-channel";
-> 		};
-> 		dma01: dma-channel@80 {
-> 			compatible = "fsl,ssi-dma-channel";
-> 		};
-> 	};
-> 
-> 	...
-> 
-> 	ssi@15000 {
-> 		compatible = "fsl,mpc8610-ssi";
-> 		cell-index = <0>;
-> 		reg = <0x15000 0x100>;
-> 		interrupts = <75 2 0 0>;
-> 		fsl,playback-dma = <&dma00>;
-> 		fsl,capture-dma = <&dma01>;
-> 		fsl,fifo-depth = <15>;
-> 	};
-> 
-> 
-> There, the DMA channels are used directly and without additional
-> information (i.e. #dma-cells = <0>, althought it isn't specified).
-
-I had another look at dma-common.yaml and it explicitly requires
-#dma-cells to have a value of at least 1, so this second idea won't
-work.
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _mwJdslvPc5QLXsfDPi8-Q7J-DAJwtjM
+X-Proofpoint-GUID: _mwJdslvPc5QLXsfDPi8-Q7J-DAJwtjM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ mlxlogscore=944 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250088
 
 
-Best regards,
-J. Neuschäfer
+
+On 17.02.25 14:13, Thomas Weißschuh wrote:
+> Restricted pointers ("%pK") are only meant to be used when directly
+> printing to a file from task context.
+> Otherwise it can unintentionally expose security sensitive,
+> raw pointer values.
+> 
+> Use regular pointer formatting instead.
+> 
+> Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
+
+I sucessfully ran our test suite after applying this patch.
+
+Reviewed-by: Michael Mueller <mimu@linux.ibm.com>
+Tested-by: Michael Mueller <mimu@linux.ibm.com>
+
+> ---
+>   arch/s390/kvm/intercept.c |  2 +-
+>   arch/s390/kvm/interrupt.c |  8 ++++----
+>   arch/s390/kvm/kvm-s390.c  | 10 +++++-----
+>   3 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/intercept.c b/arch/s390/kvm/intercept.c
+> index 610dd44a948b22945b0a35b760ded64bd44ef7cb..a06a000f196ce0066bfd21b0d914492a1796819a 100644
+> --- a/arch/s390/kvm/intercept.c
+> +++ b/arch/s390/kvm/intercept.c
+> @@ -95,7 +95,7 @@ static int handle_validity(struct kvm_vcpu *vcpu)
+>   
+>   	vcpu->stat.exit_validity++;
+>   	trace_kvm_s390_intercept_validity(vcpu, viwhy);
+> -	KVM_EVENT(3, "validity intercept 0x%x for pid %u (kvm 0x%pK)", viwhy,
+> +	KVM_EVENT(3, "validity intercept 0x%x for pid %u (kvm 0x%p)", viwhy,
+>   		  current->pid, vcpu->kvm);
+>   
+>   	/* do not warn on invalid runtime instrumentation mode */
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 07ff0e10cb7f5c0294bf85f1d65d1eb124698705..c0558f05400732b2fe6911c1ef58f86b62364770 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -3161,7 +3161,7 @@ void kvm_s390_gisa_clear(struct kvm *kvm)
+>   	if (!gi->origin)
+>   		return;
+>   	gisa_clear_ipm(gi->origin);
+> -	VM_EVENT(kvm, 3, "gisa 0x%pK cleared", gi->origin);
+> +	VM_EVENT(kvm, 3, "gisa 0x%p cleared", gi->origin);
+>   }
+>   
+>   void kvm_s390_gisa_init(struct kvm *kvm)
+> @@ -3178,7 +3178,7 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+>   	gi->timer.function = gisa_vcpu_kicker;
+>   	memset(gi->origin, 0, sizeof(struct kvm_s390_gisa));
+>   	gi->origin->next_alert = (u32)virt_to_phys(gi->origin);
+> -	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+> +	VM_EVENT(kvm, 3, "gisa 0x%p initialized", gi->origin);
+>   }
+>   
+>   void kvm_s390_gisa_enable(struct kvm *kvm)
+> @@ -3219,7 +3219,7 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
+>   		process_gib_alert_list();
+>   	hrtimer_cancel(&gi->timer);
+>   	gi->origin = NULL;
+> -	VM_EVENT(kvm, 3, "gisa 0x%pK destroyed", gisa);
+> +	VM_EVENT(kvm, 3, "gisa 0x%p destroyed", gisa);
+>   }
+>   
+>   void kvm_s390_gisa_disable(struct kvm *kvm)
+> @@ -3468,7 +3468,7 @@ int __init kvm_s390_gib_init(u8 nisc)
+>   		}
+>   	}
+>   
+> -	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
+> +	KVM_EVENT(3, "gib 0x%p (nisc=%d) initialized", gib, gib->nisc);
+>   	goto out;
+>   
+>   out_unreg_gal:
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index ebecb96bacce7d75563bd3a130a7cc31869dc254..9e427ba3aed42edf617d6625b5bcaba8f43dc464 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -1020,7 +1020,7 @@ static int kvm_s390_set_mem_control(struct kvm *kvm, struct kvm_device_attr *att
+>   		}
+>   		mutex_unlock(&kvm->lock);
+>   		VM_EVENT(kvm, 3, "SET: max guest address: %lu", new_limit);
+> -		VM_EVENT(kvm, 3, "New guest asce: 0x%pK",
+> +		VM_EVENT(kvm, 3, "New guest asce: 0x%p",
+>   			 (void *) kvm->arch.gmap->asce);
+>   		break;
+>   	}
+> @@ -3464,7 +3464,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+>   		kvm_s390_gisa_init(kvm);
+>   	INIT_LIST_HEAD(&kvm->arch.pv.need_cleanup);
+>   	kvm->arch.pv.set_aside = NULL;
+> -	KVM_EVENT(3, "vm 0x%pK created by pid %u", kvm, current->pid);
+> +	KVM_EVENT(3, "vm 0x%p created by pid %u", kvm, current->pid);
+>   
+>   	return 0;
+>   out_err:
+> @@ -3527,7 +3527,7 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+>   	kvm_s390_destroy_adapters(kvm);
+>   	kvm_s390_clear_float_irqs(kvm);
+>   	kvm_s390_vsie_destroy(kvm);
+> -	KVM_EVENT(3, "vm 0x%pK destroyed", kvm);
+> +	KVM_EVENT(3, "vm 0x%p destroyed", kvm);
+>   }
+>   
+>   /* Section: vcpu related */
+> @@ -3648,7 +3648,7 @@ static int sca_switch_to_extended(struct kvm *kvm)
+>   
+>   	free_page((unsigned long)old_sca);
+>   
+> -	VM_EVENT(kvm, 2, "Switched to ESCA (0x%pK -> 0x%pK)",
+> +	VM_EVENT(kvm, 2, "Switched to ESCA (0x%p -> 0x%p)",
+>   		 old_sca, kvm->arch.sca);
+>   	return 0;
+>   }
+> @@ -4025,7 +4025,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>   			goto out_free_sie_block;
+>   	}
+>   
+> -	VM_EVENT(vcpu->kvm, 3, "create cpu %d at 0x%pK, sie block at 0x%pK",
+> +	VM_EVENT(vcpu->kvm, 3, "create cpu %d at 0x%p, sie block at 0x%p",
+>   		 vcpu->vcpu_id, vcpu, vcpu->arch.sie_block);
+>   	trace_kvm_s390_create_vcpu(vcpu->vcpu_id, vcpu, vcpu->arch.sie_block);
+>   
+> 
+
 
