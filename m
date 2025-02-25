@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-531646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A2AA4430E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:40:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64708A442F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A267860C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8A4174CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09409272907;
-	Tue, 25 Feb 2025 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6950426FA79;
+	Tue, 25 Feb 2025 14:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FhjLbkqd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbxXeH8m"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A2F27424F;
-	Tue, 25 Feb 2025 14:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9EB26F476;
+	Tue, 25 Feb 2025 14:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494140; cv=none; b=ucMI/u3qi2l+LiYl7+XfJ/OKqWCktpT+bkjYBupOrfrZVuGoK9nV/pbItWREH3HadQN7OxtveWNW2y/V0+jPYRR8DbSq26i+8Rj8GV2DKoyD7u3QpUs+n75zzO049rdndL92WN/tattPHwDkHjRI04AiM/TxfJbgO/NbgyrNF6Q=
+	t=1740494130; cv=none; b=RXQcbJTHZSpFSjkx1TI49Lb8vVRnhfV1EgB9jnO7LgqlYvH5yh1McpEjy8U1CR7bblkydLE8TuqB68hCNZxhD4k8u9EC0IpbW1jGwnbIrsTU/eH3gNcl8JnOvUf316P1zC3ESzAIJkTFMDbbQv68pvq7uMBS/18wjHHhXsqPjyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494140; c=relaxed/simple;
-	bh=qVV8kVOhgmF8ivc217Cn73eSTlkBc3CdkndiqKhaMgE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uZhRPrnnMavJY55JdewurCxY+/sC4LzLWbfNlEgp5UbkgLl9E+dYoSFW6H7T7F+qCMT2pAPzixDTsqNPOq3cJosyqkElXInVzbpEpr9rO0TfATQxfpwPCmK0GVqFnaPhGJkEc5nU8Be5nJLPvQfQ5XsaxJEwfscYLxnLvAyiWfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FhjLbkqd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740494136;
-	bh=qVV8kVOhgmF8ivc217Cn73eSTlkBc3CdkndiqKhaMgE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FhjLbkqddWAwTD4TtQ4cAhWO0rMwRCsgE9B3muy8SXbHEEhqkSiG+9bwExP/7MBCJ
-	 44dvHpYoviV1HjASKa7hm8dSvLG6t4hV3pMyhlFLOFU5vA/L+9sj/diiU7r6v8Hx98
-	 qaRfiJzJj7esvIksUT2kAyIpJXDZWyYEZujAaTeYC5M9W3nehQAwVRGz22x2TrdKVB
-	 AlwWx6xJ4WPvO6an2zvWKoXUFxf6OugCKBPuSwfNO90VfLXfGwL7+F2q2x7YbNNU+a
-	 i9IRZlWuHkKf2CwWlvHKC74vUrBH2fZft5IlSFRSgDo5jOuIKHOQDQFfAnYFfzrnTa
-	 bGccwDUcUBp1g==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1004])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F15BA17E0DD7;
-	Tue, 25 Feb 2025 15:35:32 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 25 Feb 2025 11:33:54 -0300
-Subject: [PATCH v2 8/8] arm64: dts: mediatek: mt8390-genio-common: Add
- delay codec for DMIC
+	s=arc-20240116; t=1740494130; c=relaxed/simple;
+	bh=YfEJJxOaE1bubUz8y+eeOayZ+HoMY9iGQM+S0HF15ME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hxYV/3qQt8yW/pgoTlsNeJno5URDbAXCj3mH+OvbxrNZUUOqH8pbhmG0zqIEpVMavkXjXdiLWZjtTnhWLilfcstLSMbBBvawUN5nQ73nmbLXC52k6scPj0pJT/TewfpxmqU7q24RLq/MAPvcguGdf4+4aotm4GCjMDc6XtRARYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbxXeH8m; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so10210669a12.0;
+        Tue, 25 Feb 2025 06:35:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740494127; x=1741098927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+MhurcEaBGY4o3NzbZONDtgfllk1+j/+ZQ6IGQegIz0=;
+        b=gbxXeH8mg6BZ86S7U+FWMgZDQpivmfTC4skmRMEyHAeg/G41a9sFh55pGv9dCdosiN
+         LrWqpAnHs45KComB0JOkIZe21SCwzckU3SGsaLN2W5ygpPFkTW53n1YH8vPiJHNH4Ziq
+         Ak9pbi8t/ImvO/Ugu4bGtzRnAjrxbTxbHRwLApGWs7N9SyiDq1RQsf7t4SqqtebtjUYJ
+         MbPbGd7AOkHWwBTixscILD63TBOOFB2BlVgCBkgrNFiOrQCOpTuEVgzq1ozvE64a1Raf
+         YMY/M0fAewAqBffdlXcoH89aVrOXO3B4wZfXi6JvMSGTKkUB8wNqLyLr5qeEeYxdo7t5
+         9qUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740494127; x=1741098927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+MhurcEaBGY4o3NzbZONDtgfllk1+j/+ZQ6IGQegIz0=;
+        b=aLgoH+gR+JERPupfqqIpi+X+W+qhxkBkVN7W46qo3jBNLUCINQz0wM9pX9vZrYXbOn
+         WTolr4TRBxQAcwZxdrRTC9XyE0adEipM8K1rSgNKAacc9NEuZJOR0Ro5Q8x6KrKvjMjM
+         lLrQ1ClMwgRhvIoPk8PtK5I+5bDpNt7R66jJE1Dc1Nh+IBSrcP5zclGev28Oiq2KCEbz
+         yLpjP8R3rnY2MkVnhEcAFyC+olB/EJITSP8ufrN8jNfyVb7kPONKgYJejsOyHMI4Hb/u
+         k6zryQRnjftW1s20OeWZcLu3hAg6nqS5UiOLT5eyex8dFeOCqnZkQ1p7dkY7UqhXOtsO
+         W+AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVArG141V0zYByksPZIIqCNDMtHED1PYc/P2IIFvCqOrgnjoVBXi8w70m2AVfWm62rql3o9vfK9yFgSBko=@vger.kernel.org, AJvYcCW1AMeUEHCg/SktN5w3St7ZlHQ52FzYtt87uOAvwEWsClku/vlhI0J+u9MMmzbzabV8+BVRgtpI4vl9@vger.kernel.org, AJvYcCX7k5GVpk7Acab1U3HMuwZPa2Pu6GA2Mhz/FtIuRUQX4fZIlVum8cP+wDSU+Y3OksQSTyb89jBoGgZN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX1xmzY0akhtfIEi+AW2mkDhJ/uhjjVD9mZiUvXxhwhBYq01Tq
+	u78h7lrfUs3xDkxfWvoDPmjuniR8uB4Yx5qIrpPiAiyQDfogd6uW
+X-Gm-Gg: ASbGncvPfGPJxCeKyxx2D5fjDYWY4xTYmQPzpmtL/vcfvvzt79SFLq/pvg8jjAIdVCO
+	TvJLFreafNsY95SAAjLvgY8PnWWqG8bgi2gspd6IGQ2+mZW0LsHfdhsFhZ0bZAUnHF1m2nz6xtW
+	A2kEZXqCCuiqAgigIddEtZ+jU2Dn9uT04zYf4YaX/cjKe13OlqfnhesOch89C96eyWiYcOduRMZ
+	/EIXA0V3al4CHzL0wbWkfit62vq0Y9KApCMAv5emJ+8A3sLETmr5vMkEj31NC7Nv7W/WqCVj6Io
+	piEWS7jqEeyCMX6eBg==
+X-Google-Smtp-Source: AGHT+IHMUYvZiaDlxxq0smJOgsYCOC14lv21ltA6f7PMPOKxPMVhcSvf8pMZ64RMIvmRtNh7xn3HLA==
+X-Received: by 2002:a05:6402:2354:b0:5de:dd44:929e with SMTP id 4fb4d7f45d1cf-5e0b724438dmr13910661a12.21.1740494127006;
+        Tue, 25 Feb 2025 06:35:27 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e460ff8629sm1298750a12.59.2025.02.25.06.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:35:26 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v1 0/9] Tegra114: implement EMC support
+Date: Tue, 25 Feb 2025 16:34:52 +0200
+Message-ID: <20250225143501.68966-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250225-genio700-dmic-v2-8-3076f5b50ef7@collabora.com>
-References: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
-In-Reply-To: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Zoran Zhan <zoran.zhan@mediatek.com>
-X-Mailer: b4 0.14.2
 
-The signal from the dual digital microphones connected to the DMIC_BE
-takes 30ms to settle after being enabled. Add a dmic-codec with
-corresponding wakeup-delay-ms to prevent an initial "pop" sound when
-recording with the microphones.
+Add support for External Memory Controller found in Tegra 4 SoC along
+with adjustments required for it to work properly.
 
-Co-developed-by: Zoran Zhan <zoran.zhan@mediatek.com>
-Signed-off-by: Zoran Zhan <zoran.zhan@mediatek.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index efdeca88b8c4e58f0c17825156276babf19af145..6aa59acd77c245e5fcf7044859a5985f503daeb3 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -218,6 +218,13 @@ usb_p2_vbus: regulator-9 {
- 		regulator-max-microvolt = <5000000>;
- 		enable-active-high;
- 	};
-+
-+	dmic_codec: dmic-codec {
-+		#sound-dai-cells = <0>;
-+		compatible = "dmic-codec";
-+		num-channels = <2>;
-+		wakeup-delay-ms = <30>;
-+	};
- };
- 
- &adsp {
-@@ -974,6 +981,14 @@ codec {
- 			sound-dai = <&pmic 0>;
- 		};
- 	};
-+
-+	dai-link-1 {
-+		link-name = "DMIC_BE";
-+
-+		codec {
-+			sound-dai = <&dmic_codec>;
-+		};
-+	};
- };
- 
- &spi2 {
+Svyatoslav Ryhel (9):
+  ARM: tegra: Add ACTMON support on Tegra114
+  dt-bindings: memory: Document Tegra114 Memory Controller
+  drivers: memory: tegra: implement EMEM regs and ICC ops for T114
+  dt-bindings: memory: tegra114: Add memory client IDs
+  clk: tegra114: remove emc to mc clock mux
+  dt-bindings: memory: Document Tegra114 External Memory Controller
+  memory: tegra: Add Tegra114 EMC driver
+  ARM: tegra: Add External Memory Controller node on Tegra114
+  ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
+    device-tree nodes
+
+ .../nvidia,tegra114-emc.yaml                  |  431 +++++
+ .../nvidia,tegra114-mc.yaml                   |  154 ++
+ .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
+ drivers/clk/tegra/clk-tegra114.c              |   48 +-
+ drivers/memory/tegra/Kconfig                  |   12 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
+ drivers/memory/tegra/tegra114.c               |  193 +++
+ include/dt-bindings/memory/tegra114-mc.h      |   67 +
+ 10 files changed, 2561 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-emc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-mc.yaml
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
+ create mode 100644 drivers/memory/tegra/tegra114-emc.c
 
 -- 
-2.48.1
+2.43.0
 
 
