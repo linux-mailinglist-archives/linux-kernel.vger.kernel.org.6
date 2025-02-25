@@ -1,121 +1,121 @@
-Return-Path: <linux-kernel+bounces-532315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC0CA44B58
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:32:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DF6A44B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6AA017AF2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EB747A5E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE561C8602;
-	Tue, 25 Feb 2025 19:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B511EBFE6;
+	Tue, 25 Feb 2025 19:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="05XqCl7+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/sjWN9Sc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTrZE4Wu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8812219C54E;
-	Tue, 25 Feb 2025 19:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28671B2182;
+	Tue, 25 Feb 2025 19:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740511953; cv=none; b=m+PMS4zYPt2q9S8U658ybUXwWKuzLvEAjHQA/ClzbF4glvB1H87cdVrI77u2f3gTcuCJ/g+LukAOdR3YKY1rJ0KGFFuBlmPaNArTBED6zHTQmcr+5G+Pb1xc9hc6/VWZLwCOP8PDy72l2WgJvowCYvoG9LneJknSzEaMOjqs5dA=
+	t=1740511966; cv=none; b=BW5XGfqM6ewyFlbFwcBsK7n5VH2CwKeL5JTvaErnUcz36IuD8CHmu9hIPUpZh8ge3II0BYebGYD35zYyLbPlN5iOXP6TGeMFLkhY6ZGdlq0gDKukFusiMAaAWlCqM0v9Mc5vTekurxR8grTnNEIPCwD/7I3zjiRMWoNNq51V6wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740511953; c=relaxed/simple;
-	bh=7iwwXU581HFoOelmrhDURpbOv86LLeA6R9xvq5cHtJM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PxhpAfJshm1QOAUgT0lfWP7mgclNdD0618woM8/Msj5U1VC5ScAwUqGhVpJ7RjA4/W/S2s2JBV4m7cf8+Ep3LrydlWU9CGXAHRJKemfHj8/ODxF3PrW22ZJ11lgK1IzqU2pJCQ89gR9KhQlTPBZnk2rQbaYqbglVpruvbvSgQzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=05XqCl7+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/sjWN9Sc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740511949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1jrPjukilEBv/hCspf7pK3WQBodfY1qOus5kpYrl0A=;
-	b=05XqCl7+rroFfSpzh8rf4lEoVqW0KOrVtQmsUKdcI+0vaGI3amHZq400VzX2W3yvjNMwRd
-	bPtU/L04nopm6KxKxuy/SQZMIjscGMbJY61TuUmfbCR2esFtqbjxOdvnCDiKDOkc2SV//F
-	4ClJWH1R8cZ30NMTn5zlh3IqGnVuSK1FVLGj6d0fanW2OZeo1qkG4YgkGG/o7hSBHOrmTx
-	NG9kmfk08VqfnCxqGPrMD0JWrSyc8iNdbrwxKQZSd/a8ZF2UO/tc25GVNRC5MgcpJC+60b
-	A8jqai7VPjn6024cOpdj5cQ3/qGVvrb/mNo2EO2Je7yEA/6iY8RG7QaGnIrOqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740511949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1jrPjukilEBv/hCspf7pK3WQBodfY1qOus5kpYrl0A=;
-	b=/sjWN9ScmJcMJ5ahcCAfCkCpsCMbrvLAHIGJVEjuMzmC6vZx80GwfZ/wTkh3kQjDCd396H
-	1tiPFTwUhJ87RhDA==
-To: John Garry <john.g.garry@oracle.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>,
- Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the tip tree
-In-Reply-To: <a902ea86-132a-4b64-8710-575a798f1a18@oracle.com>
-References: <20250225153200.00773d86@canb.auug.org.au>
- <a902ea86-132a-4b64-8710-575a798f1a18@oracle.com>
-Date: Tue, 25 Feb 2025 20:32:28 +0100
-Message-ID: <87h64hg6r7.ffs@tglx>
+	s=arc-20240116; t=1740511966; c=relaxed/simple;
+	bh=EJ0p7kJP7tcBXTVtX2EQW5Eqt9I/PZY1PRXbITilg4Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oF4ejbuA3lzc5VjAVk3kkm5nWvIgBOL46UC/Smi97ohi6JjvMKmlRH+VEfYVmoulEo/MNOfzhCihZWgMVjZVRKKJxXK9EBb5UwJMzjoAfjfVHQqRcrH/nXFN9qe0MN47wbL8O+gU8f9CtNORQzWmk6yNLx/2s6aJTL2hlMIglqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTrZE4Wu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DDDC4CEE2;
+	Tue, 25 Feb 2025 19:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740511965;
+	bh=EJ0p7kJP7tcBXTVtX2EQW5Eqt9I/PZY1PRXbITilg4Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=mTrZE4WuJLivocdDlOAyUC2sQPoGHxDaCYT9NHKSq28BUTlAulfb4fehDp0FsRufS
+	 wN2GyPsPi6OmFzTc6Ee2sTqgm3ETtXKtEe6iEdhwM7NDGtfgbvQFp4cOJ8WNAcZfBT
+	 BFiGFR6ejC//8RQRWhkzVwv1JEOxWPjZq/K8aBcaurTcLTt+xmYzVyl5eL1Yx7gEG/
+	 d5hPZA2+vFU/+Mx2BzCzyS6yUNx0qvgMlmexsoD8ynAY+8glKvJmR/lCTKClqV9Lc+
+	 CyfjXuELUxxY24pzKEo5rik8bu9FfV+No86fQNUU58QoDTwOBhtCTXtmOZwL8WPsSy
+	 V5yFbpl2Z+/Iw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ parkeryang <Parker.Yang@mediatek.com>, Zoran Zhan <zoran.zhan@mediatek.com>
+In-Reply-To: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
+References: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
+Subject: Re: (subset) [PATCH v2 0/8] Enable DMIC for Genio 700/510 EVK
+Message-Id: <174051196206.229034.7513749709146445847.b4-ty@kernel.org>
+Date: Tue, 25 Feb 2025 19:32:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Tue, Feb 25 2025 at 09:38, John Garry wrote:
-> On 25/02/2025 04:32, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Today's linux-next merge of the scsi-mkp tree got a conflict in:
->> 
->>    drivers/scsi/scsi_debug.c
->> 
->> between commit:
->> 
->>    b7011929380d ("scsi: Switch to use hrtimer_setup()")
->> 
->> from the tip tree and commit:
->> 
->>    b441eafbd1eb ("scsi: scsi_debug: Simplify command handling")
->> 
->> from the scsi-mkp tree.
->> 
->> I fixed it up (I think - see below) and can carry the fix as necessary.
->> This is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->> 
-> static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct 
-> scsi_cmnd *cmd)
-> {
-> 	struct sdebug_scsi_cmd *sdsc = scsi_cmd_priv(cmd);
-> 	struct sdebug_defer *sd_dp = &sdsc->sd_dp;
->
-> 	spin_lock_init(&sdsc->lock);
-> 	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
-> 		      HRTIMER_MODE_REL_PINNED);
-> 	sd_dp->hrt.function = sdebug_q_cmd_hrt_complete; ***
-> 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
->
->
-> I guess that setting sd_dp->hrt.function explicitly, at *** above, is 
-> not needed (as hrtimer_setup()) does this.
+On Tue, 25 Feb 2025 11:33:46 -0300, Nícolas F. R. A. Prado wrote:
+> This series enables the dual digital microphones present on the Genio
+> 700 and 510 EVK boards.
+> 
+> Patches 1 and 2 add some required clocks, patch 3 changes volatility
+> handling of some registers to prevent issues, patch 3 adds the DMIC DAI
+> driver for MT8188 and updates the AFE with its routes, patch 4 adds the
+> DMIC backend and widget to the mt8188-6359 machine sound driver, patch 5
+> adds the audio routes for the DMIC to the Devicetree, patch 6 adds
+> DMIC_BE in the dt-binding and patch 6 assigns a wakeup-delay-ms to the
+> DMIC DAI.
+> 
+> [...]
 
-Correct. hrtimer_setup is enough.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/8] ASoC: mediatek: mt8188: Add audsys hires clocks
+      commit: ef6a24c79d5047c029577113af43eddd1d0f1bd2
+[2/8] ASoC: mediatek: mt8188: Add reference for dmic clocks
+      commit: bf1800073f4d55f08191b034c86b95881e99b6fd
+[3/8] ASoC: mediatek: mt8188: Treat DMIC_GAINx_CUR as non-volatile
+      commit: 7d87bde21c73731ddaf15e572020f80999c38ee3
+[4/8] ASoC: mediatek: mt8188: Add support for DMIC
+      commit: c1e42ec04197ac013d049dde40d9c72cf543b5f6
+[5/8] ASoC: mediatek: mt8188-mt6359: Add DMIC support
+      commit: 390ebb24b3c3a95e109c28e14c2ec9fe3f0f8aaa
+[7/8] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add DMIC backend to dai-link
+      commit: f00b3056843d14754ac1bab2106cf5599680f115
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-        tglx
 
