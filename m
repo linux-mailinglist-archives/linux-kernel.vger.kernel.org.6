@@ -1,160 +1,216 @@
-Return-Path: <linux-kernel+bounces-530854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16E3A4394E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:23:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB31AA43945
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F462169A86
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:19:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A4997A1EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4136C257459;
-	Tue, 25 Feb 2025 09:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7505261573;
+	Tue, 25 Feb 2025 09:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nqa8hrvN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VytEYfiR"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB71A4E70;
-	Tue, 25 Feb 2025 09:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1F6260A54;
+	Tue, 25 Feb 2025 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475190; cv=none; b=UONz/vzIqgSsx2kJ6Yb3UybvnN+I+a9oITQNxZyEiJ/ZnlvrOIGIIDms4/3sangXTPqe7TkX5yM2ha1PmNr/Qch28F43F6kc7MiCeuj4T/7AWO5/TPyHAJG7IdfeLvj5g8d2UUrp6uFH3wwiut79paqkSueVvF9cGj0y6fdAxxA=
+	t=1740475196; cv=none; b=KT60vLOHcnB0y+m5v3EH/EMzOLiamzGh1lTy4/QDo6NhsYlJQLiZg0GvAmLJY85U4DouTLRDMTtRq7kyJ5xKUyfP8cLxfM4HthWP7D+3E/o6qIlws7AUqbw4Nn+7boG3BBDRs4DTsmfvhYJDwijH2ZUg6vTd2MRxJr1wZvrZMl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475190; c=relaxed/simple;
-	bh=WV/BQQjSklg+inxqIej//MnYL20DO4u7FlUKUcFIGv8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=duAdKgAUmCMmGmo8UT8Ks3YJSt1ARi946rnZUqkALI2fjr4dyyjVahqK3pMU71j/iGYCuzdMPzPXq8XaZJCBYi1JLDo/fgmQfuTloPGgaXLeySJ0k+Jtv+hZFyxjuUMW/VxnLeIft6TlTXOQ+mC8Fgp1MKmrPuvs0/y5kM4RqhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nqa8hrvN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4BCC4CEF0;
-	Tue, 25 Feb 2025 09:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740475190;
-	bh=WV/BQQjSklg+inxqIej//MnYL20DO4u7FlUKUcFIGv8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Nqa8hrvNEdtESHepNoK33z6bHqU5dvgKbp0Yr2cSPd+LQww+L4gVku3jbn+aTpYnD
-	 gOtbELHFspakf/y82ddzGTkeS/oYi34BXHoKvPVh0Syb/lkHN4cLCl15AebTJNVydw
-	 +2cAdStkTbzFDl4v+XhQ4HqWq4ljYU7eaah1odM6An2qpw15KdMmsOraonMtam8rLI
-	 TmaD+zOv3TbNV9Z+KqX2BTEKSzvcVGrb2dCUBDx7iIWJ+SumM7Elos19q5m9Y3AxPx
-	 rbvts/03En1J2eNSZkY/+o7AeFadtswXBTGFe8yvH3M5O7XzkID3AtMVvwRKOZQQei
-	 MthekgK65T2NQ==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab771575040so1101951666b.1;
-        Tue, 25 Feb 2025 01:19:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUVsijjqSwE6+3ZiNJJ18TyO58pO3qEBR6vxUJxvpsq+9Wi0ytgS+xJ0ef14l3iQgbaZ/e0JZ/G@vger.kernel.org, AJvYcCXf6g8LtgQs3m5PAcjc66iEA579almAkcQZ27/5aojuhLnVjVN3QPZMObuY0p9zZ9WkFPv34+3uiEbhbNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjSSM0nokluOY/k11gNM4f3hIx8NprOLSsfi+ED8mzVlJijKBt
-	jLiAWefufITOc5r/g9L8z+qrhJdkBgNV+kZtBiHocwtPFKB1lecHVYQoi3PjvZUotYtAz3lQRdx
-	G3KCqF9umEbrClI9wC/980ZdLx2I=
-X-Google-Smtp-Source: AGHT+IHH5/lZpNbRGSgruDA194J8Wu4I6GsbEXWL0O7Bhszg4FzraJyCq1ptOSxW6ZjsuQkpHhmLCFX1Z/wZ9UNOce0=
-X-Received: by 2002:a17:907:7a88:b0:ab6:fe30:f49e with SMTP id
- a640c23a62f3a-abc0b0e5fcdmr1785569066b.28.1740475188509; Tue, 25 Feb 2025
- 01:19:48 -0800 (PST)
+	s=arc-20240116; t=1740475196; c=relaxed/simple;
+	bh=mxjeNY/gI1DEE5UWt79KGSeGfVjKaB/ATptNamQXRwU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXSPD37G6LIXmxZZLfqFl3+3IcTcxQjUyrN4bh/fY98Wu58IB3wVbSwn11oElHsR43F8Ybo/dKwem47g4Njxuu2wqMB+B3J0G0xYNShrP+oNYlIrcjsIZ7Y3DilpluEy/CfdoRrtimjmjk6zScs7eHaiHdAx2Hfju+u9Tip/NyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VytEYfiR; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-222e8d07dc6so33347435ad.1;
+        Tue, 25 Feb 2025 01:19:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740475194; x=1741079994; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nj3QvJrkZQTbm/14d0IKWFHBOShY4xnuFmDq9qgKrl0=;
+        b=VytEYfiRHf6StH3SVyWkCqKqSuE9EuzJVKOn9+z+O2MJWo2CcXOBY+K1Emz5jQ8ND8
+         X7TwLCrZe88HhOcTdxnzGemQpUSQIlTzJ5lXpyJUmcjefq3iGw3S7cq+sNZvRVrIa/Xs
+         Zzttm43FZC2Dpt13UjV2TlGcQcOv5JRoJqU5rkqbewoejc61TkcSA5VTbDNUbYWVuUqF
+         4b2TFDKA+HjWYWqI0XIIfFJ5oOFPBnPZkVO1tzanhWXnTn7voXviJvcOlE4rIPcY2FGE
+         on8QWDPkTThmIndLdj70U9Jttt5AzxlVghWn1U240sWfWEfy6U4QGQXQAlw9RY+Wdrtb
+         /Wyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740475194; x=1741079994;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nj3QvJrkZQTbm/14d0IKWFHBOShY4xnuFmDq9qgKrl0=;
+        b=xRxAanGUf5YZp6Qgs3nrY8WxVB6b76QICdjKrGo0v9G3qjzlvp+10W3PGL9PagiTaC
+         nAMp8IPJKDRDfpm8eNMg3WVJAl7oxWbUOlhKJxAGMpp1Otk9twzCgd6WYYGSZaLKQCm5
+         f6DSQNyCQ4PEi7KxnI6Syx+SuAsPYYQr6r8mZyFEtShO8SrHDAQJeEFjudjlv1qx7QTu
+         mfJmiTRGvUrZBMENSVY/i6jG9flbysI652tQwE1SZaiXDhoFSAKs0RefwHP/ETPb3/Nk
+         OeUGxwMvsWsOWS9TDmzwhcphOhyAdOq4RONr8GK1xGnXGUjsCj66Ga0K+lPGqH/JRkqs
+         D1iw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8E3TaOPOvwxOiP1IB3QI5M7nl5OUUrRaUc4VQGSNilCAqGQLYxImwz0tIBgHaNbWsi6xmcuRN2eHP@vger.kernel.org, AJvYcCXNNrC72xRc8yUgLMSjd+pnv2+PMCFWygv83DOK9gmheb1pBXDrHhTJxjkvnFH7cG1W+R7a3Wkid9AN0kLU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVKqncetKOADVITlDxhTZADtO2Niu5yNWDBYvZ/7xsxtuFQl2Z
+	NtiXYO46DfrbLyuOOXmV7RUvNQmSrjPu5tLgSnaKAyK56CjZcHSG2Usku0yX5Og=
+X-Gm-Gg: ASbGnct2KXp4N2b8djb7fTwBCbht5qAl1c0JgCkdrfz+bORM3EliI5SOGKE+B2pp3yv
+	O+MG4bztH2cc+nxrDw6igusejIYwMc7IO6540gr7di9b650JYd05PxJaY2z7wwvtD2PCTiOA/UE
+	o8B3hB36ey7d6hm+Uq2IAMs0XgtJUIFyGiMdV8tDfOgTSwzpYq1ZqZghMhTzGi+MbvZi1kCycEM
+	gfAk5TxkSYw6VlEug8Ji1kqoyuIuqGfVTUFNBU70pTgrjJy4UaonvUM1k9hQI9RXZ1t6ZOvqTLl
+	F73LmvSLhhCA+M0k7gQ6t2BDkwI=
+X-Google-Smtp-Source: AGHT+IE9YBdCkNq/S4TjozYMNc2eD/oYxsI6+U8AdO2NGvsUJBfklT61ZkIl1cuk5oEXWFTnMRX1eg==
+X-Received: by 2002:a17:903:2ec6:b0:21f:6ce8:29df with SMTP id d9443c01a7336-2218c3cfab6mr358683895ad.3.1740475193891;
+        Tue, 25 Feb 2025 01:19:53 -0800 (PST)
+Received: from [127.0.1.1] ([2601:644:8501:1640:4148:75aa:e7ad:9664])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a000542sm9679975ad.17.2025.02.25.01.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 01:19:53 -0800 (PST)
+From: Rudraksha Gupta <guptarud@gmail.com>
+Date: Tue, 25 Feb 2025 01:19:44 -0800
+Subject: [PATCH] ARM: dts: qcom: msm8960: add tsens
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224135321.36603-2-phasta@kernel.org> <20250224135321.36603-5-phasta@kernel.org>
- <425215fb-8fb5-4412-87e7-1d29c4ac0b7f@linux.dev>
-In-Reply-To: <425215fb-8fb5-4412-87e7-1d29c4ac0b7f@linux.dev>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 25 Feb 2025 17:19:36 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6yVX_tgdiDP+vVB3K-dbRm-ejF0ngmN8UgFD8eRVaTJg@mail.gmail.com>
-X-Gm-Features: AQ5f1Josz9kykUlq72YeUoErSStI-rKm3nm-tjAtPbfVHHpD6td2eL_df52t8Dk
-Message-ID: <CAAhV-H6yVX_tgdiDP+vVB3K-dbRm-ejF0ngmN8UgFD8eRVaTJg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/4] stmmac: Remove pcim_* functions for
- driver detach
-To: Yanteng Si <si.yanteng@linux.dev>
-Cc: Philipp Stanner <phasta@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Yinggang Gu <guyinggang@loongson.cn>, Feiyang Chen <chenfeiyang@loongson.cn>, 
-	Philipp Stanner <pstanner@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Qing Zhang <zhangqing@loongson.cn>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250225-expressatt-tsens-v1-1-024bee5f2047@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAC+LvWcC/x2MQQqAIBAAvxJ7TjBRk74SHSS32ouFKyGIf086D
+ sNMBcZEyLAMFRK+xHTHDtM4wH75eKKg0BmUVEYqZQSWJyGzz1lkxshC2qCtcbM3TkPPuj6o/Mt
+ 1a+0DrixKuWIAAAA=
+X-Change-ID: 20250225-expressatt-tsens-06d46587a584
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, wctrl <wctrl@proton.me>, 
+ Rudraksha Gupta <guptarud@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740475192; l=2826;
+ i=guptarud@gmail.com; s=20250208; h=from:subject:message-id;
+ bh=mxjeNY/gI1DEE5UWt79KGSeGfVjKaB/ATptNamQXRwU=;
+ b=G8RELbz18xURPb3s3D2SAYZXoJ8dZZ8e1UejFDFquMrE8XFzPZ9SvLdkdq48f4c5n5aDGhRsm
+ Vktv5b5qCWfCeCJ0pnaO8FNRqv8QJ7YFD8n4FvTsegWQll0pHzISbln
+X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
+ pk=5lJNaiR/Bu7edToWFLriO5zXOrVqSQWrBKbAKwuEw04=
 
-On Tue, Feb 25, 2025 at 5:11=E2=80=AFPM Yanteng Si <si.yanteng@linux.dev> w=
-rote:
->
->
-> =E5=9C=A8 2/24/25 9:53 PM, Philipp Stanner =E5=86=99=E9=81=93:
-> > Functions prefixed with "pcim_" are managed devres functions which
-> > perform automatic cleanup once the driver unloads. It is, thus, not
-> > necessary to call any cleanup functions in remove() callbacks.
-> >
-> > Remove the pcim_ cleanup function calls in the remove() callbacks.
-> >
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> >   drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c |  7 -------
-> >   drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c     | 10 ----------
-> >   2 files changed, 17 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/dri=
-vers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> > index e3cacd085b3f..f3ea6016be68 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> > @@ -614,13 +614,6 @@ static void loongson_dwmac_remove(struct pci_dev *=
-pdev)
-> >       if (ld->loongson_id =3D=3D DWMAC_CORE_LS_MULTICHAN)
-> >               loongson_dwmac_msi_clear(pdev);
-> >
-> > -     for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> > -             if (pci_resource_len(pdev, i) =3D=3D 0)
-> > -                     continue;
-> > -             pcim_iounmap_regions(pdev, BIT(i));
-> > -             break;
-> > -     }
-> > -
-> >       pci_disable_device(pdev);
-> >   }
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers=
-/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> > index 352b01678c22..91ff6c15f977 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> > @@ -227,20 +227,10 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
-> >    *
-> >    * @pdev: platform device pointer
->
-> >    * Description: this function calls the main to free the net resource=
-s
->
-> There is a missing full stop. You commented on the next email,
->
-> and it seems that you are already preparing for v4.  With this
->
->
-> Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+Copy tsens node from ap8064 and adjust some values
 
->
-> Thanks,
-> Yanteng
->
-> > - * and releases the PCI resources.
-> >    */
-> >   static void stmmac_pci_remove(struct pci_dev *pdev)
-> >   {
-> > -     int i;
-> > -
-> >       stmmac_dvr_remove(&pdev->dev);
-> > -
-> > -     for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> > -             if (pci_resource_len(pdev, i) =3D=3D 0)
-> > -                     continue;
-> > -             pcim_iounmap_regions(pdev, BIT(i));
-> > -             break;
-> > -     }
-> >   }
-> >
-> >   static int __maybe_unused stmmac_pci_suspend(struct device *dev)
+Co-developed-by: wctrl <wctrl@proton.me>
+Signed-off-by: wctrl <wctrl@proton.me>
+Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+---
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 62 +++++++++++++++++++++++++++++++-
+ 1 file changed, 61 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+index 865fe7cc39511d7cb9ec5c4b12100404f77e2989..167953605447bfaa0d33b0e41b581220f86c72e6 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+@@ -52,6 +52,40 @@ memory@80000000 {
+ 		reg = <0x80000000 0>;
+ 	};
+ 
++	thermal-zones {
++		cpu0-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 0>;
++			coefficients = <1199 0>;
++
++			trips {
++				cpu_alert0: trip0 {
++					temperature = <60000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++			};
++		};
++
++		cpu1-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 1>;
++			coefficients = <1132 0>;
++
++			trips {
++				cpu_alert1: trip0 {
++					temperature = <60000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++			};
++		};
++	};
++
+ 	cpu-pmu {
+ 		compatible = "qcom,krait-pmu";
+ 		interrupts = <GIC_PPI 10 0x304>;
+@@ -115,6 +149,20 @@ timer@200a000 {
+ 			cpu-offset = <0x80000>;
+ 		};
+ 
++		qfprom: efuse@700000 {
++			compatible = "qcom,qfprom";
++			reg = <0x00700000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			tsens_calib: calib@404 {
++				reg = <0x404 0x10>;
++			};
++			tsens_backup: backup-calib@414 {
++				reg = <0x414 0x10>;
++			};
++		};
++
+ 		msmgpio: pinctrl@800000 {
+ 			compatible = "qcom,msm8960-pinctrl";
+ 			gpio-controller;
+@@ -127,7 +175,7 @@ msmgpio: pinctrl@800000 {
+ 		};
+ 
+ 		gcc: clock-controller@900000 {
+-			compatible = "qcom,gcc-msm8960";
++			compatible = "qcom,gcc-msm8960", "syscon";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			reg = <0x900000 0x4000>;
+@@ -135,6 +183,18 @@ gcc: clock-controller@900000 {
+ 				 <&pxo_board>,
+ 				 <&lcc PLL4>;
+ 			clock-names = "cxo", "pxo", "pll4";
++
++			tsens: thermal-sensor {
++				compatible = "qcom,msm8960-tsens";
++
++				nvmem-cells = <&tsens_calib>, <&tsens_backup>;
++				nvmem-cell-names = "calib", "calib_backup";
++				interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "uplow";
++
++				#qcom,sensors = <5>;
++				#thermal-sensor-cells = <1>;
++			};
+ 		};
+ 
+ 		lcc: clock-controller@28000000 {
+
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250225-expressatt-tsens-06d46587a584
+
+Best regards,
+-- 
+Rudraksha Gupta <guptarud@gmail.com>
+
 
