@@ -1,141 +1,216 @@
-Return-Path: <linux-kernel+bounces-532435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC275A44DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C59A44DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EC816652F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C1A189F13B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9445B215078;
-	Tue, 25 Feb 2025 20:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C31214803;
+	Tue, 25 Feb 2025 20:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DIzpj0s9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hnEW1imu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34DD214817;
-	Tue, 25 Feb 2025 20:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE5B20E713;
+	Tue, 25 Feb 2025 20:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515557; cv=none; b=TzxvbbJ0Hto5PCtlh0NLznHUNFxvalGolc/4UJYQJpYS0ACzUoueg8ecMRIeosU4McFWDJl73Uouc7zTNsvBOWVH+wRU2c5LslyW5BgCnCB5yI8/Vd/fy94SPwf8Pr/yXQ0uCsbEyt7pEFR/hQ8RUXMg+jfQgGn8e+/cmYn3Lb8=
+	t=1740515554; cv=none; b=Xqk9Rl142ga6xog93vkasrl5ETGq/JQ6ztZHWqv03PCHPBz3qgu2O8VlimEH2/eDjkCf2UIHDqTQLHFvPSRUDs3qCCw3dHW9qXOGxJCRqHuUBee/uQl9Umyj6vGD9ERKeWwOaWAUzDt9qfJQIYZHyo/79apl2dBQHMyPaCWz1Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515557; c=relaxed/simple;
-	bh=wckgz3tdenQ9ZtBQpHOi8VCnc+yy0A2dSk2aV0Zjeqw=;
+	s=arc-20240116; t=1740515554; c=relaxed/simple;
+	bh=HrY16MuKJ0t/yC+/pOKrWXInfKwieWik7OdUcGsbnGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fV3duAC8f+oE2pN+7N17ksMYR48Hl176JmG0OmcBkHpm1DQbKOiCIvGJ/3bhSQOzOKatxwc6r1CDbNi1xePgHK9oj8amdNLK25rnh5RwcapCHYyWqYgMiiYlbp07MBgRKOSGSx5bFpAb92V+jxSk6PFiod5oWlhlOSEPfAlAKRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DIzpj0s9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 16745A30;
-	Tue, 25 Feb 2025 21:31:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740515460;
-	bh=wckgz3tdenQ9ZtBQpHOi8VCnc+yy0A2dSk2aV0Zjeqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DIzpj0s9msFhLOz+8bA185w8lDAvF6MScXRRMWToJGq11vaWb1/54GtxQCAOvXrqh
-	 RH6/pHRixNuKKM/vbBSymDEELXmkO1a88QHytPB+UlaV4YbeEwZQoZj2FNj2j1mVBb
-	 ZPMjQ1V5Q3I6kuMK4oLbVo7miOEkNBd2u6vXcsaE=
-Date: Tue, 25 Feb 2025 22:32:08 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	soc@lists.linux.dev, workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] docs: dt: submitting-patches: Document sending DTS
- patches
-Message-ID: <20250225203208.GG18866@pendragon.ideasonboard.com>
-References: <20250225184822.213296-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQU/84aCP0HT6WnWZYs3OTYBAVFHbsil8VBQWTe1Vfe3EYDiP8U8vOadYBTNbcbaON+DfoX4td2PlE7Q9DZV9AGDBueNGsV0zUHqCYcuRO+JrSUoC1+Ik2tI5QG7+tTC6vUIf2UM0SI+I0W5W4fH8E3jo9Sxo2lMfWj5Jws7QZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hnEW1imu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QkEbOEhQdJwQDtDmCT8g7OJdt6uh2XSoL9PZrCV3FY8=; b=hnEW1imuKDKm1OsC9ijMsjBqoZ
+	JtpHm9eGXzdKJ8pHI8pzp0msaSpUQC2O6IVgVi1dQqz5L1Y+c10+f6WtSAJq+YycW5dqRniIUVWR+
+	tcMDX6/sD583kE8VPlC6AtQQYRNB4d0reU55z93FrbY7xgjZp/1yVbwkhvQasGyTMRT5lvOxrHIQh
+	Mnlmk19XKw+oAbaOXmm3z+eTVQfZ032G0od3VGnVIXZaF/e9SFk48mNrnmtqDY3FkH1sCXVzaswYY
+	fjtAl9lCM2l7lSJ9htl7XIH2q9zRKUr1iGr2eRsPWe/YLKu2MyHJ4ivEWeBIWQXI2Qhoi46tuVScb
+	VzI9piRQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tn1bM-0000000CYL0-47sC;
+	Tue, 25 Feb 2025 20:32:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8EB5F300472; Tue, 25 Feb 2025 21:32:24 +0100 (CET)
+Date: Tue, 25 Feb 2025 21:32:24 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v2 17/24] perf/core: Support to capture higher width
+ vector registers
+Message-ID: <20250225203224.GB1278@noisy.programming.kicks-ass.net>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-18-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225184822.213296-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250218152818.158614-18-dapeng1.mi@linux.intel.com>
 
-Hi Krzysztof,
-
-On Tue, Feb 25, 2025 at 07:48:21PM +0100, Krzysztof Kozlowski wrote:
-> Document two rules already widely used and enforced by DT maintainers
-> and SoC platform maintainers:
-> 
-> 1. DTS patches should be placed at the end of driver patchset to
->    indicate no dependencies of driver code on DTS.
-> 
-> 2. DTS patches should be applied via SoC platform maintainers, because
->    it is a driver-independent hardware description.  However some
->    driver maintainers are reluctant to pick up portions of patchsets and
->    prefer to take entire set at once.  For such cases, the DTS portion
->    should be split into separate patchset, so it will not end up in the
->    driver subsystem integration tree.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-This matches my understanding of the current (and best) practices, so
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  .../bindings/submitting-patches.rst           | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
-> index a64f21a5f299..f3e23e69a638 100644
-> --- a/Documentation/devicetree/bindings/submitting-patches.rst
-> +++ b/Documentation/devicetree/bindings/submitting-patches.rst
-> @@ -54,11 +54,22 @@ I. For patch submitters
->       followed as of commit bff5da4335256513497cc8c79f9a9d1665e09864
->       ("checkpatch: add DT compatible string documentation checks"). ]
+On Tue, Feb 18, 2025 at 03:28:11PM +0000, Dapeng Mi wrote:
+> diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
+> index 9ee9e55aed09..3851f627ca60 100644
+> --- a/arch/x86/include/uapi/asm/perf_regs.h
+> +++ b/arch/x86/include/uapi/asm/perf_regs.h
+> @@ -33,7 +33,7 @@ enum perf_event_x86_regs {
+>  	PERF_REG_X86_32_MAX = PERF_REG_X86_GS + 1,
+>  	PERF_REG_X86_64_MAX = PERF_REG_X86_SSP + 1,
 >  
-> -  7) If a documented compatible string is not yet matched by the
-> +  7) DTS is treated in general as driver-independent hardware description, thus
-> +     any DTS patches, regardless whether using existing or new bindings, should
-> +     be placed at the end of patchset to indicate no dependency of drivers on
-> +     the DTS.  DTS will be anyway applied through separate tree or branch, so
-> +     different order would indicate the serie is non-bisectable.
+> -	/* These all need two bits set because they are 128bit */
+> +	/* These all need two bits set because they are 128 bits */
+>  	PERF_REG_X86_XMM0  = 32,
+>  	PERF_REG_X86_XMM1  = 34,
+>  	PERF_REG_X86_XMM2  = 36,
+> @@ -53,6 +53,87 @@ enum perf_event_x86_regs {
+>  
+>  	/* These include both GPRs and XMMX registers */
+>  	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
 > +
-> +     If a driver subsystem maintainer prefers to apply entire set, instead of
-> +     their relevant portion of patchset, please split the DTS patches into
-> +     separate patchset with a reference in changelog or cover letter to the
-> +     bindings submission on the mailing list.
+> +	/*
+> +	 * YMM upper bits need two bits set because they are 128 bits.
+> +	 * PERF_REG_X86_YMMH0 = 64
+> +	 */
+> +	PERF_REG_X86_YMMH0	= PERF_REG_X86_XMM_MAX,
+> +	PERF_REG_X86_YMMH1	= PERF_REG_X86_YMMH0 + 2,
+> +	PERF_REG_X86_YMMH2	= PERF_REG_X86_YMMH1 + 2,
+> +	PERF_REG_X86_YMMH3	= PERF_REG_X86_YMMH2 + 2,
+> +	PERF_REG_X86_YMMH4	= PERF_REG_X86_YMMH3 + 2,
+> +	PERF_REG_X86_YMMH5	= PERF_REG_X86_YMMH4 + 2,
+> +	PERF_REG_X86_YMMH6	= PERF_REG_X86_YMMH5 + 2,
+> +	PERF_REG_X86_YMMH7	= PERF_REG_X86_YMMH6 + 2,
+> +	PERF_REG_X86_YMMH8	= PERF_REG_X86_YMMH7 + 2,
+> +	PERF_REG_X86_YMMH9	= PERF_REG_X86_YMMH8 + 2,
+> +	PERF_REG_X86_YMMH10	= PERF_REG_X86_YMMH9 + 2,
+> +	PERF_REG_X86_YMMH11	= PERF_REG_X86_YMMH10 + 2,
+> +	PERF_REG_X86_YMMH12	= PERF_REG_X86_YMMH11 + 2,
+> +	PERF_REG_X86_YMMH13	= PERF_REG_X86_YMMH12 + 2,
+> +	PERF_REG_X86_YMMH14	= PERF_REG_X86_YMMH13 + 2,
+> +	PERF_REG_X86_YMMH15	= PERF_REG_X86_YMMH14 + 2,
+> +	PERF_REG_X86_YMMH_MAX	= PERF_REG_X86_YMMH15 + 2,
 > +
-> +  8) If a documented compatible string is not yet matched by the
->       driver, the documentation should also include a compatible
->       string that is matched by the driver.
->  
-> -  8) Bindings are actively used by multiple projects other than the Linux
-> +  9) Bindings are actively used by multiple projects other than the Linux
->       Kernel, extra care and consideration may need to be taken when making changes
->       to existing bindings.
->  
-> @@ -79,6 +90,10 @@ II. For kernel maintainers
->    3) For a series going though multiple trees, the binding patch should be
->       kept with the driver using the binding.
->  
-> +  4) The DTS files should however never be applied via driver subsystem tree,
-> +     but always via platform SoC trees on dedicated branches (see also
-> +     Documentation/process/maintainer-soc.rst).
+> +	/*
+> +	 * ZMM0-15 upper bits need four bits set because they are 256 bits
+> +	 * PERF_REG_X86_ZMMH0 = 96
+> +	 */
+> +	PERF_REG_X86_ZMMH0	= PERF_REG_X86_YMMH_MAX,
+> +	PERF_REG_X86_ZMMH1	= PERF_REG_X86_ZMMH0 + 4,
+> +	PERF_REG_X86_ZMMH2	= PERF_REG_X86_ZMMH1 + 4,
+> +	PERF_REG_X86_ZMMH3	= PERF_REG_X86_ZMMH2 + 4,
+> +	PERF_REG_X86_ZMMH4	= PERF_REG_X86_ZMMH3 + 4,
+> +	PERF_REG_X86_ZMMH5	= PERF_REG_X86_ZMMH4 + 4,
+> +	PERF_REG_X86_ZMMH6	= PERF_REG_X86_ZMMH5 + 4,
+> +	PERF_REG_X86_ZMMH7	= PERF_REG_X86_ZMMH6 + 4,
+> +	PERF_REG_X86_ZMMH8	= PERF_REG_X86_ZMMH7 + 4,
+> +	PERF_REG_X86_ZMMH9	= PERF_REG_X86_ZMMH8 + 4,
+> +	PERF_REG_X86_ZMMH10	= PERF_REG_X86_ZMMH9 + 4,
+> +	PERF_REG_X86_ZMMH11	= PERF_REG_X86_ZMMH10 + 4,
+> +	PERF_REG_X86_ZMMH12	= PERF_REG_X86_ZMMH11 + 4,
+> +	PERF_REG_X86_ZMMH13	= PERF_REG_X86_ZMMH12 + 4,
+> +	PERF_REG_X86_ZMMH14	= PERF_REG_X86_ZMMH13 + 4,
+> +	PERF_REG_X86_ZMMH15	= PERF_REG_X86_ZMMH14 + 4,
+> +	PERF_REG_X86_ZMMH_MAX	= PERF_REG_X86_ZMMH15 + 4,
 > +
->  III. Notes
->  ==========
+> +	/*
+> +	 * ZMM16-31 need eight bits set because they are 512 bits
+> +	 * PERF_REG_X86_ZMM16 = 160
+> +	 */
+> +	PERF_REG_X86_ZMM16	= PERF_REG_X86_ZMMH_MAX,
+> +	PERF_REG_X86_ZMM17	= PERF_REG_X86_ZMM16 + 8,
+> +	PERF_REG_X86_ZMM18	= PERF_REG_X86_ZMM17 + 8,
+> +	PERF_REG_X86_ZMM19	= PERF_REG_X86_ZMM18 + 8,
+> +	PERF_REG_X86_ZMM20	= PERF_REG_X86_ZMM19 + 8,
+> +	PERF_REG_X86_ZMM21	= PERF_REG_X86_ZMM20 + 8,
+> +	PERF_REG_X86_ZMM22	= PERF_REG_X86_ZMM21 + 8,
+> +	PERF_REG_X86_ZMM23	= PERF_REG_X86_ZMM22 + 8,
+> +	PERF_REG_X86_ZMM24	= PERF_REG_X86_ZMM23 + 8,
+> +	PERF_REG_X86_ZMM25	= PERF_REG_X86_ZMM24 + 8,
+> +	PERF_REG_X86_ZMM26	= PERF_REG_X86_ZMM25 + 8,
+> +	PERF_REG_X86_ZMM27	= PERF_REG_X86_ZMM26 + 8,
+> +	PERF_REG_X86_ZMM28	= PERF_REG_X86_ZMM27 + 8,
+> +	PERF_REG_X86_ZMM29	= PERF_REG_X86_ZMM28 + 8,
+> +	PERF_REG_X86_ZMM30	= PERF_REG_X86_ZMM29 + 8,
+> +	PERF_REG_X86_ZMM31	= PERF_REG_X86_ZMM30 + 8,
+> +	PERF_REG_X86_ZMM_MAX	= PERF_REG_X86_ZMM31 + 8,
+> +
+> +	/*
+> +	 * OPMASK Registers
+> +	 * PERF_REG_X86_OPMASK0 = 288
+> +	 */
+> +	PERF_REG_X86_OPMASK0	= PERF_REG_X86_ZMM_MAX,
+> +	PERF_REG_X86_OPMASK1	= PERF_REG_X86_OPMASK0 + 1,
+> +	PERF_REG_X86_OPMASK2	= PERF_REG_X86_OPMASK1 + 1,
+> +	PERF_REG_X86_OPMASK3	= PERF_REG_X86_OPMASK2 + 1,
+> +	PERF_REG_X86_OPMASK4	= PERF_REG_X86_OPMASK3 + 1,
+> +	PERF_REG_X86_OPMASK5	= PERF_REG_X86_OPMASK4 + 1,
+> +	PERF_REG_X86_OPMASK6	= PERF_REG_X86_OPMASK5 + 1,
+> +	PERF_REG_X86_OPMASK7	= PERF_REG_X86_OPMASK6 + 1,
+> +
+> +	PERF_REG_X86_VEC_MAX	= PERF_REG_X86_OPMASK7 + 1,
+>  };
 >  
-> -- 
-> 2.43.0
-> 
-> 
+>  #define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
 
--- 
-Regards,
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index 0524d541d4e3..8a17d696d78c 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -379,6 +379,10 @@ enum perf_event_read_format {
+>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+> +#define PERF_ATTR_SIZE_VER9	168	/* add: sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE] */
+> +
+> +#define PERF_EXT_REGS_ARRAY_SIZE	4
+> +#define PERF_NUM_EXT_REGS		(PERF_EXT_REGS_ARRAY_SIZE * 64)
+>  
+>  /*
+>   * Hardware event_id to monitor via a performance monitoring event:
+> @@ -531,6 +535,13 @@ struct perf_event_attr {
+>  	__u64	sig_data;
+>  
+>  	__u64	config3; /* extension of config2 */
+> +
+> +	/*
+> +	 * Extension sets of regs to dump for each sample.
+> +	 * See asm/perf_regs.h for details.
+> +	 */
+> +	__u64	sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE];
+> +	__u64   sample_regs_user_ext[PERF_EXT_REGS_ARRAY_SIZE];
+>  };
+>  
+>  /*
 
-Laurent Pinchart
+*groan*... so do people really need per-register (or even partial
+register) masks for all this?
+
+Or can we perhaps -- like XSAVE/PEBS -- do it per register group?
+
+Also, we're going to be getting EGPRs, which I think just about fit in
+this 320 bit mask we now have, but it is quite insane.
 
