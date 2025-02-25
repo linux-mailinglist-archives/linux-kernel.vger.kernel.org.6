@@ -1,65 +1,45 @@
-Return-Path: <linux-kernel+bounces-530374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC13A432A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:51:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4A6A432A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D32217A3D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DCB1188C698
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CD586344;
-	Tue, 25 Feb 2025 01:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F31413C9B8;
+	Tue, 25 Feb 2025 01:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="FAlNsKkU"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qvwfQcGc"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839FB101F2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA59B74059;
+	Tue, 25 Feb 2025 01:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740448292; cv=none; b=tNCa50G1yOMKK7CSFSD2FRZs1o2hCqugLQq030oKyckPz6p998BxS1YZl5vfXWPQzVAjGc9bjPqSDxBSaRzlDFH9h+kz2t6DIG1lu0Nw42yeSWZ9C6cWsdIzPV+l3e32esp95y1T70yXZh5/UB+mZY0lrmBcVZ4l/NnpJ6N9Ils=
+	t=1740448295; cv=none; b=vGURk247R3muwCcN1DCWWUsXLf/42KZcjiJqX9OaqVsTtmgQyUu45vXXM/h5ZeTtAoPjhouy5gir4/Tfv5CC8ay5R816taJMIxIf2+tCiE2AIfedmXeF2ke1ajSUnwE5inp8E6kJlvwUpC2pauSMrIMLTQnbyV09X1JApAMj9dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740448292; c=relaxed/simple;
-	bh=kLCgPoctPehmp4UPhP9Ilyf4fSNulvovwDizoFjMJuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1q4J6Y8sb5UsW9ICqASy/1XWuYFqZ1pURhOgjQOcAVSPr5A70e9iWa+qBGtsXudfLTYDuAuj/iF8M+oeQxt0JzZMeZuhC7DsQV/Q6bixKAXTLJ4RocjCYnb0KL6g21mFldko4ZviUh6Mf1PIVnx9VEBp9w381Odt69ZnjGdHKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=FAlNsKkU; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id mbI9tZpmbMETlmk6WtohO3; Tue, 25 Feb 2025 01:51:24 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id mk6VtEUCSrMXlmk6VtUReD; Tue, 25 Feb 2025 01:51:23 +0000
-X-Authority-Analysis: v=2.4 cv=Xob8O0F9 c=1 sm=1 tr=0 ts=67bd221c
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
- a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7T7KSl7uo7wA:10
- a=oltRCMenW_0Ea9-Xwq4A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Yt7FV8Is/XZOi8N7ebx2gw+ZNuxX/nMnNKn9hf0ikMI=; b=FAlNsKkUoIJYZiQd1fuXC5EcHn
-	RvU4cr7cQwvw2jO60pbhr3XUqC8oJo4oagWZczJ4Mrhuytki65/XzuhYs+2iHsC2cap1CBRhRS44Z
-	5pk5CO4hRWNavWIdLB5zKgkYJLXNgsNl3r/To1FSkpr+/+9kz+2GCniwZQRGRfmgkS+Y5SHFvphB3
-	jO46v03XIDm9N5m9OVSij54DbuaANzHIIke9eiIdHKlRD7nnWxUj7HmWRFbcP4uANnaCdwqeLVqtT
-	3NoR6ligc3UErUhqO8Pj2n+Cv4xSWKNMUg/2D67jE/w+NdVG+Oz590fxQkO2QcbqbvjZPzYi/aGUw
-	spKgTMVw==;
-Received: from [45.124.203.140] (port=53629 helo=[192.168.0.158])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tmk6U-001k4Y-2S;
-	Mon, 24 Feb 2025 19:51:23 -0600
-Message-ID: <c3c28d70-540b-4034-8a89-8a6c4dcf17ab@embeddedor.com>
-Date: Tue, 25 Feb 2025 12:21:15 +1030
+	s=arc-20240116; t=1740448295; c=relaxed/simple;
+	bh=Sk1QTUCGTk72KsMzQM6GlXFASWKIaYnHSoJrWIVnYd4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dmfQDc60M382jXaK+mmNak6n84bCCN+K9244GPOHGYwFDD+/b/p+znn+kad38jJ4BHyKjjgr8ok/n3ozqZrl2kgzfRQF0hGuBon8NtuLUaVaZO/SlcRCDAoQmXvjAYDBIscNR/U1uf91Q7Ztsb6Hdo4tbUDhKAU9DeFgnLVFM38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qvwfQcGc; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740448288; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=XLFzlWyNgA2NvZExDRHffNi/+7Rg7mFUz7UnwELeKFs=;
+	b=qvwfQcGcTaCwMtJlJda33qk4Jj9MBV8TZCmAaT/STfc+l6Ee5sv/iTnBLGevltErPM7ijfuoZj1vsr0EkXIq+bAWie42hx0tJe5ikOlPYI0Nx3ZjxZLERoG0e+Qp301ll6YBFMUEPkrGhdN247+8U6vwnfnfNJo9MfuWt/5H+Ig=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQChn5i_1740448285 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 09:51:27 +0800
+Message-ID: <6f34c17c-4113-46d9-aa66-53ff5a1feed5@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 09:51:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,77 +47,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8][next] nvme: target: Avoid
- -Wflex-array-member-not-at-end warnings
-To: Christoph Hellwig <hch@lst.de>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <cover.1739957534.git.gustavoars@kernel.org>
- <ef7a6920384ab2f8f83c0f630f94edc73cd65997.1739957534.git.gustavoars@kernel.org>
- <20250224141938.GB1088@lst.de>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20250224141938.GB1088@lst.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Luck, Tony" <tony.luck@intel.com>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <SJ1PR11MB60836781C4CE26C4B43AFF0BFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250219081037.GAZ7WR_YmRtRvN_LKA@fat_crate.local>
+ <SJ1PR11MB6083F7AC9C5AED072141B8CAFCC52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250220111903.GDZ7cPp1qVq3t9Jgs6@fat_crate.local>
+ <SJ1PR11MB608335ACA7AEC51F7F6A75D2FCC42@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <4e13bef2-7402-4f75-8f0c-4a3cc210c5a6@linux.alibaba.com>
+ <20250224220146.GBZ7zsSnXLftyqWzW_@fat_crate.local>
+In-Reply-To: <20250224220146.GBZ7zsSnXLftyqWzW_@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 45.124.203.140
-X-Source-L: No
-X-Exim-ID: 1tmk6U-001k4Y-2S
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.158]) [45.124.203.140]:53629
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPTK0J0JlZiDrmQJyY349FgEuS6BAl4R6Pz7X0Md/wGNqas4rcme1sckN0hKfgYS7TfdVZgqw6Unj+6UpR8iAdqOOfeC3+DCwI4FSWCoE5zaA3Z6iHAu
- CX8gUvhIpKhkDO1F2jOZvy9YC8MA6aW6SRFfDRZDd6ebgPJBpyM0LLzykUndre3hTmruGwU7+9Jh5qw1eURk7BhX8XAohXXWJzgeAw3LZC+Md5ZW8mgX0pZl
+Content-Transfer-Encoding: 8bit
 
 
 
-On 25/02/25 00:49, Christoph Hellwig wrote:
-> On Mon, Feb 24, 2025 at 08:30:10PM +1030, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
+在 2025/2/25 06:01, Borislav Petkov 写道:
+> On Fri, Feb 21, 2025 at 02:05:28PM +0800, Shuai Xue wrote:
+>> #perf script
+>> kworker/48:1-mm 25516 [048]  1713.893549: probe:memory_failure: (ffffffffaa622db4)
+>>          ffffffffaa622db5 memory_failure+0x5 ([kernel.kallsyms])
+>>          ffffffffaa25aa93 uc_decode_notifier+0x73 ([kernel.kallsyms])
+>>          ffffffffaa3068bb notifier_call_chain+0x5b ([kernel.kallsyms])
+>>          ffffffffaa306ae1 blocking_notifier_call_chain+0x41 ([kernel.kallsyms])
+>>          ffffffffaa25bbfe mce_gen_pool_process+0x3e ([kernel.kallsyms])
+>>          ffffffffaa2f455f process_one_work+0x19f ([kernel.kallsyms])
+>>          ffffffffaa2f509c worker_thread+0x20c ([kernel.kallsyms])
+>>          ffffffffaa2fec89 kthread+0xd9 ([kernel.kallsyms])
+>>          ffffffffaa245131 ret_from_fork+0x31 ([kernel.kallsyms])
+>>          ffffffffaa2076ca ret_from_fork_asm+0x1a ([kernel.kallsyms])
 >>
->> Change the type of the middle struct members currently causing trouble
->> from `struct bio` to `struct bio_hdr`.
+>> einj_mem_uc 44530 [184]  1713.908089: probe:memory_failure: (ffffffffaa622db4)
+>>          ffffffffaa622db5 memory_failure+0x5 ([kernel.kallsyms])
+>>          ffffffffaa2594fb kill_me_maybe+0x5b ([kernel.kallsyms])
+>>          ffffffffaa2fac29 task_work_run+0x59 ([kernel.kallsyms])
+>>          ffffffffaaf52347 irqentry_exit_to_user_mode+0x1c7 ([kernel.kallsyms])
+>>          ffffffffaaf50bce noist_exc_machine_check+0x3e ([kernel.kallsyms])
+>>          ffffffffaa001303 asm_exc_machine_check+0x33 ([kernel.kallsyms])
+>>                    405046 thread+0xe (/home/shawn.xs/ras-tools/einj_mem_uc)
 >>
->> We also use `container_of()` whenever we need to retrieve a pointer to
->> the flexible structure `struct bio`, through which we can access the
->> flexible-array member in it, if necessary.
->>
->> With these changes fix 38 of the following warnings:
->>
->> drivers/nvme/target/nvmet.h:455:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/nvme/target/nvmet.h:462:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
+>> einj_mem_uc 44531 [089]  1713.916319: probe:memory_failure: (ffffffffaa622db4)
+>>          ffffffffaa622db5 memory_failure+0x5 ([kernel.kallsyms])
+>>          ffffffffaa2594fb kill_me_maybe+0x5b ([kernel.kallsyms])
+>>          ffffffffaa2fac29 task_work_run+0x59 ([kernel.kallsyms])
+>>          ffffffffaaf52347 irqentry_exit_to_user_mode+0x1c7 ([kernel.kallsyms])
+>>          ffffffffaaf50bce noist_exc_machine_check+0x3e ([kernel.kallsyms])
+>>          ffffffffaa001303 asm_exc_machine_check+0x33 ([kernel.kallsyms])
+>>                    405046 thread+0xe (/home/shawn.xs/ras-tools/einj_mem_uc)
 > 
-> I'm not sure where you bio_hdr structure comes from, but maybe that's
-> because you annoyingly split CC over the series, and by the number of
-> patches probably also bundled unrelated changes.
+> What are those stack traces supposed to say?
+> 
+> Two processes are injecting, cause a #MC and a kworker gets to handle the UC?
+> 
+> All injecting to the same page?
 
-Ugh, yes, I messed up my script just before creating the series.
+Yes, I inject poison to a page and create two process with pthread_create() which
+trigger the same poison page.
 
 > 
-> In general our first resort here should be to move embedded bio to the
-> of containing structures.  If that's not possible you'll need to explain
-> why.
+> What's the upper limit on CPUs seeing the same hw error and all raising
+> a CMCI/#MC?
+
+It depends on the forked process which trying to read the poison.
+
+> 
+>> - kill_accessing_process() is only called when the flags are set to
+>>    MF_ACTION_REQUIRED, which means it is in the MCE path.
+>> - Whether the page is clean determines the behavior of try_to_unmap. For a
+>>    dirty page, try_to_unmap uses TTU_HWPOISON to unmap the PTE and convert the
+>>    PTE entry to a swap entry. For a clean page, try_to_unmap uses ~TTU_HWPOISON
+>>    and simply unmaps the PTE.
+>> - When does walk_page_range() with hwpoison_walk_ops return 1?
+>>    1. If the poison page still exists, we should of course kill the current
+>>       process.
+>>    2. If the poison page does not exist, but is_hwpoison_entry is true, meaning
+>>       it is a dirty page, we should also kill the current process, too.
+>>    3. Otherwise, it returns 0, which means the page is clean.
+> 
+> I think you're too deep into detail. What I'd do is step back, think what
+> would be the *proper* recovery action and then make sure memory_failure does
+> that. If it doesn't - fix it to do so.
+> 
+> So, what should really happen wrt recovery action if any number of CPUs see
+> the same memory error?
 > 
 
-Yes. Also, thanks for the feedback in your other response. I'll try to
-follow that approach and see how it goes.
+IMHO, we should send a SIGBUS signal to the processes running on the CPUs that
+detect a memory error for dirty page, which is the current behavior in the
+memory_failure.
 
---
-Gustavo
+Thanks
+Shuai
 
