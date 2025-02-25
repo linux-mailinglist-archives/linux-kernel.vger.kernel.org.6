@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-530939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0769A43A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B91A43A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4698D1884550
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD0A188805B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEB71519A5;
-	Tue, 25 Feb 2025 09:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uj5DyjEp"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2401B262D25;
+	Tue, 25 Feb 2025 09:54:19 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CB58494
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD53C1519A5;
+	Tue, 25 Feb 2025 09:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477203; cv=none; b=qqlp1Io1a0GexiX4Rn0PFNhas3NWzEMAFiwHeSjHEJm2RStmkHFghWgkXwGY/BYsGa84mAzR7vJXaOwTRAVMevkGBydJxkNWKf6NehsLgB4lAPePNMkUKOZdqcXpTELJqlBx75nq/Td7LGP/u+kysWZHpYrWX6ipICXu8HjCN7Y=
+	t=1740477258; cv=none; b=AtDhj+0dSZ9L0v3jet7RRklnK6dQE6wRllPg0bjkcDnbw+sIoiIoxeSLw88X3cGDYDQPeUkarHTSHHgehfh/2d1BQCmkMkAXrkk/z8qJRMyPqNZtB8bTMDkv/csnRNUMsA3IcaGWR493acVucfbvh4VEDPzljfZuDse5Mz4Ia/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477203; c=relaxed/simple;
-	bh=G0sFW0Mo6iUqWeHZuGXwZDimuwqPDerwTIjkQQh8+Rk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZnKkLNH3eycVoNPRSym+nJmpU22QnQkn4SF2JzxOX71NYI+o+i9KUuiPy6vhDhCoF6oNVcRkPjSvdyVfmx2ZllDhqNcvFo56qMQlKTelC82lCRetvsYnjS//r2p8jh2OAMSMutGHvVnyI2XLw+e3wbXShV/HeG7ytulqVJRZY1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uj5DyjEp; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740477191; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=VVoLc33zPMeaiAyTcxHiedjnEIt4XQjILMkv0uRR958=;
-	b=uj5DyjEpO5VItRSzbsL/s5ik26t8ZyklVFbPcvJcDJg1D3kgfAzM4v6btBCzZ/APb7yVkyLpNG16TspAvV2QHsAtJwd569hLYKoOOpIeeeAiWxmHUi1u5zSwrqwLGuxo9JsF1+nvmA8MAHrNnMCnhlSzz1c+jxVoryBqSCdGsCk=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQELTmb_1740477190 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 17:53:10 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	alex_y_xu@yahoo.ca,
-	ryncsn@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: shmem: fix potential data corruption during shmem swapin
-Date: Tue, 25 Feb 2025 17:52:55 +0800
-Message-ID: <2fe47c557e74e9df5fe2437ccdc6c9115fa1bf70.1740476943.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1740477258; c=relaxed/simple;
+	bh=W1xxEv4UrVRBlCTYkmzY9cCkgMJhYTDLgWq3+WP6ClQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSUQPEmOWK1dq/xc/fVfUgO57WxdNTdgrvsjThzCGF+HaFWJ8nCgsGvdk3U8sOW/Ks2M3NtoveCAKlxKR8ZvS+omxFraRJg5hpENs9KtW31wIKdeTxbcXPU7dzNx1ncVSacPOZleJC0mjVd++wgSRDH+uzQ9y7iijJiaZt4rNSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id AE190100DA1B4;
+	Tue, 25 Feb 2025 10:54:12 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 8318D64E7F0; Tue, 25 Feb 2025 10:54:12 +0100 (CET)
+Date: Tue, 25 Feb 2025 10:54:12 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczy??ski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	chaitanya chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
+	amitk@kernel.org, dmitry.baryshkov@linaro.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	jorge.ramirez@oss.qualcomm.com
+Subject: Re: [PATCH v4 07/10] PCI: PCI: Add pcie_is_link_active() to
+ determine if the PCIe link is active
+Message-ID: <Z72TRBvpzizcgm9S@wunner.de>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-7-e08633a7bdf8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-qps615_v4_1-v4-7-e08633a7bdf8@oss.qualcomm.com>
 
-Alex and Kairui reported some issues (system hang or data corruption) when
-swapping out or swapping in large shmem folios. This is especially easy to
-reproduce when the tmpfs is mount with the 'huge=within_size' parameter.
-Thanks to Kairui's reproducer, the issue can be easily replicated.
+On Tue, Feb 25, 2025 at 03:04:04PM +0530, Krishna Chaitanya Chundru wrote:
+> Introduce a common API to check if the PCIe link is active, replacing
+> duplicate code in multiple locations.
+[...]
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -234,18 +234,7 @@ static void pcie_write_cmd_nowait(struct controller *ctrl, u16 cmd, u16 mask)
+>   */
+>  int pciehp_check_link_active(struct controller *ctrl)
+>  {
+> -	struct pci_dev *pdev = ctrl_dev(ctrl);
+> -	u16 lnk_status;
+> -	int ret;
+> -
+> -	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> -	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
+> -		return -ENODEV;
+> -
+> -	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> -	ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
+> -
+> -	return ret;
+> +	return pcie_is_link_active(ctrl_dev(ctrl));
+>  }
 
-The root cause of the problem is that swap readahead may asynchronously
-swap in order 0 folios into the swap cache, while the shmem mapping can
-still store large swap entries. Then an order 0 folio is inserted into
-the shmem mapping without splitting the large swap entry, which overwrites
-the original large swap entry, leading to data corruption.
+Please replace all call sites of pciehp_check_link_active() with a call
+to the new function.
 
-When getting a folio from the swap cache, we should split the large swap
-entry stored in the shmem mapping if the orders do not match, to fix this
-issue.
 
-Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
-Reported-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
-Reported-by: Kairui Song <ryncsn@gmail.com>
-Closes: https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
-Tested-by: Kairui Song <kasong@tencent.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
-Changes from v1:
- - Add the tested tag from Kairui. Thanks Kairui.
- - Add Closes information to the commit message.
----
- mm/shmem.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4923,8 +4922,7 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
+>  		if (!dev->link_active_reporting)
+>  			return -ENOTTY;
+>  
+> -		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &status);
+> -		if (!(status & PCI_EXP_LNKSTA_DLLLA))
+> +		if (pcie_is_link_active(dev))
+>  			return -ENOTTY;
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4ea6109a8043..cebbac97a221 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2253,7 +2253,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 	struct folio *folio = NULL;
- 	bool skip_swapcache = false;
- 	swp_entry_t swap;
--	int error, nr_pages;
-+	int error, nr_pages, order, split_order;
- 
- 	VM_BUG_ON(!*foliop || !xa_is_value(*foliop));
- 	swap = radix_to_swp_entry(*foliop);
-@@ -2272,10 +2272,9 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 
- 	/* Look it up and read it in.. */
- 	folio = swap_cache_get_folio(swap, NULL, 0);
-+	order = xa_get_order(&mapping->i_pages, index);
- 	if (!folio) {
--		int order = xa_get_order(&mapping->i_pages, index);
- 		bool fallback_order0 = false;
--		int split_order;
- 
- 		/* Or update major stats only when swapin succeeds?? */
- 		if (fault_type) {
-@@ -2339,6 +2338,29 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 			error = -ENOMEM;
- 			goto failed;
- 		}
-+	} else if (order != folio_order(folio)) {
-+		/*
-+		 * Swap readahead may swap in order 0 folios into swapcache
-+		 * asynchronously, while the shmem mapping can still stores
-+		 * large swap entries. In such cases, we should split the
-+		 * large swap entry to prevent possible data corruption.
-+		 */
-+		split_order = shmem_split_large_entry(inode, index, swap, gfp);
-+		if (split_order < 0) {
-+			error = split_order;
-+			goto failed;
-+		}
-+
-+		/*
-+		 * If the large swap entry has already been split, it is
-+		 * necessary to recalculate the new swap entry based on
-+		 * the old order alignment.
-+		 */
-+		if (split_order > 0) {
-+			pgoff_t offset = index - round_down(index, 1 << split_order);
-+
-+			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
-+		}
- 	}
- 
- alloced:
-@@ -2346,7 +2368,8 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 	folio_lock(folio);
- 	if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
- 	    folio->swap.val != swap.val ||
--	    !shmem_confirm_swap(mapping, index, swap)) {
-+	    !shmem_confirm_swap(mapping, index, swap) ||
-+	    xa_get_order(&mapping->i_pages, index) != folio_order(folio)) {
- 		error = -EEXIST;
- 		goto unlock;
- 	}
--- 
-2.43.5
+Missing negation.
 
+
+> +/**
+> + * pcie_is_link_active() - Checks if the link is active or not
+> + * @pdev: PCI device to query
+> + *
+> + * Check whether the link is active or not.
+> + *
+> + * If the config read returns error then return -ENODEV.
+> + */
+> +int pcie_is_link_active(struct pci_dev *pdev)
+
+Why not return bool?
+
+I don't quite like the function name because in English the correct word
+order is subject - predicate - object, i.e. pcie_link_is_active() or
+even shorter, pcie_link_active().
+
+
+> @@ -2094,6 +2095,10 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
+>  {
+>  	return -ENOSPC;
+>  }
+> +
+> +static inline int pcie_is_link_active(struct pci_dev *dev)
+> +{ return -ENODEV; }
+> +
+>  #endif /* CONFIG_PCI */
+
+Is the empty inline really necessary?  What breaks if you leave it out?
+
+Thanks,
+
+Lukas
 
