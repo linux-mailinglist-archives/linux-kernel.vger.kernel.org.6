@@ -1,94 +1,91 @@
-Return-Path: <linux-kernel+bounces-532090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF01AA44871
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:37:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE4AA448DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB638188CE9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06D2886154
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99EA19E804;
-	Tue, 25 Feb 2025 17:29:14 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3068817B418
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49B31A08CA;
+	Tue, 25 Feb 2025 17:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyyPMrdm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2055A17B418;
+	Tue, 25 Feb 2025 17:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504554; cv=none; b=snso4KkgXADX8UBtIj7ODF9mIdJ3oTMjPUsW5s1NT4WfxtcxmqMl8cEjqiKyTEAifsVeNIUEzf2iVLs/qyGFO9G90dtwNZ5xpk54rDlg627m5vW8LcuM1Uk4XQ404w10/xVgRusd40ShreJFjyJhxV4jhPx2kb4UKxMDHxPz54Y=
+	t=1740504567; cv=none; b=jbLYuiRu00EOsi7iqg+gLlm8d1za2cZKUx7LmKAm2emKl8QDDq/WL68IJkEW1IvYgudKjs3SiL6/i52r49p5p/UA6//4JkVvLmGBDmTcrWM4K4G6YC1TuqYjSwq+X3CjcDOqsyXTg30XJAss9wW51VIEPxbp0vc4FPtLCoLklng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504554; c=relaxed/simple;
-	bh=+3/HyB4QuuPOf5t/WmOnKXVbHUTEErYfCEcPq6iMK90=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ToJBB6zMBh4Q3vP3VE3rmLCo4Dz34wbboKcu+LcdzHIWKCPS8oCp8/b9jrdLyD4dWiCrRAIFTTi3keqzcTxYeyIM39ayeBZghF/QIc7DTIZjBcWMoPrUvkH4eZn0xMGR/9zR+KRv5FbpKUJ/2X2YuePL1RmMPgg+lNHPGKYTonQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 10D1992009C; Tue, 25 Feb 2025 18:29:10 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 0CEBB92009B;
-	Tue, 25 Feb 2025 17:29:10 +0000 (GMT)
-Date: Tue, 25 Feb 2025 17:29:09 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Don't use %pK through printk
-In-Reply-To: <a7a135c9-c65b-48a8-a3a8-6aa98afe77d0@csgroup.eu>
-Message-ID: <alpine.DEB.2.21.2502251703450.65342@angie.orcam.me.uk>
-References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de> <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu> <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk> <a7a135c9-c65b-48a8-a3a8-6aa98afe77d0@csgroup.eu>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1740504567; c=relaxed/simple;
+	bh=3Rqh7c0axEAODu64/2c4AI+tEiP1L/g+oD+X2VodFyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iWgIHw5dwRdkaTlaqO/SDJ4L3xKSvPqRBnzOgtxT2TEDggL9JSG4vCHGaAYOgrQvs+Dx9vqI1vxTF5cpe45Mk8r5WkVz2hJEApgIn4tVcPHSn1a7wFoVk4H64SzhHpQzrOIq09ca3W+QCAbCWtfDe50CW/XUfHqii+WfGLyws88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyyPMrdm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DEFC4CEDD;
+	Tue, 25 Feb 2025 17:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740504566;
+	bh=3Rqh7c0axEAODu64/2c4AI+tEiP1L/g+oD+X2VodFyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fyyPMrdmLYXOoyCK6Ho8lTd+kBax1fiwRnTClqOfh5z7d64bPUvjpp51ZjfiftmR2
+	 bw0i/O5KepNu2eYOah45rrdeLhRyPdFqHbWg/baVucYGxuXGezg4VqSY2Bu9QiAp63
+	 gtROThv0H8KaX+g0a8oFW45hdcDc1598ao9AtyKxch9a/i0pxz7EH84YCVNHX162Z7
+	 R9yJGyY3RLhbmINz7z2vD927jJwM11JAL45fLzmOf50D+PTCVjyWkgd3a8qGJsE5c2
+	 /QlT6OsByvuHdw2ilwq7Yn6khcJtW09bdylBx+kNROUXvGWV7mL1/VPOw8ILPtEaNH
+	 shyFWkWqEXZig==
+Date: Tue, 25 Feb 2025 09:29:26 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <20250225172926.GC6242@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-4-john.g.garry@oracle.com>
+ <20250224202609.GH21808@frogsfrogsfrogs>
+ <0c8ba9d8-5a52-4658-abc8-00c05ba84585@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c8ba9d8-5a52-4658-abc8-00c05ba84585@oracle.com>
 
-On Tue, 25 Feb 2025, Christophe Leroy wrote:
-
-> > was suddenly lost from the kernel log, the access to which unprivileged
-> > users can be denied if so desired according to the site policy.  Whereas
-> > running the kernel such as to have all output from plain `%p' exposed just
-> > to cope with this proposed change, now that seems like a security risk.
+On Tue, Feb 25, 2025 at 10:01:32AM +0000, John Garry wrote:
+> On 24/02/2025 20:26, Darrick J. Wong wrote:
+> > > +	if (error)
+> > > +		return error;
+> > > +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> > > +	xfs_trans_ijoin(tp, ip, 0);
+> > > +
+> > > +	error = xfs_reflink_end_cow_extent_locked(tp, ip, offset_fsb, end_fsb);
+> > Overly long line, but otherwise looks fine.
 > 
-> The purpose of hashed addresses is to avoid kernel addresses to leak to the
-> kernel log. Here you have function names, if you get real function addresses
-> at the same time, then you know everything about kernel addresses and for
-> instance KASLR becomes just pointless.
+> The limit is 80, right? That line fills out to 80.
 
- Why is it so important not to have kernel addresses in the kernel log?  
-This defeats the purpose of having diagnostics for such fatal events.
+Ah, right, forgot that I have vim set up to display the right margin at
+72 for emails.
 
- If your site policy so requires, you can disable access to the kernel log 
-for unprivileged users, in which case once you do have one you can poke at 
-/dev/mem too and have a thousand other ways to do harm.  And if you are a 
-sloppy admin and have /var/log/messages world-readable where you really 
-ought not to, then well, what can I say?
+--D
 
- From the description of `%pK' I infer it's been meant for /proc files and 
-the like that may be readable to unprivileged users, and I can certainly
-understand the security implications here.
-
-> By the way, why do you need the addresses at all in addition to function names
-> ? When I look at x86 dump stack, they only print function name, using %pBb
-
- They can be handed over to GDB, `objdump' and similar debug tools when 
-working with `vmlinux'.  Function names do help, giving you assistance to 
-make sure you work with matching `vmlinux'.
-
- NB I don't know what x86 does, I've done little in that area in the 
-recent ~20 years, mostly taking care about my legacy 32-bit i486/i586 
-stuff.
-
-  Maciej
+> > With that fixed,
+> > Reviewed-by: "Darrick J. Wong"<djwong@kernel.org>
+> > 
+> 
+> cheers
+> 
+> 
 
