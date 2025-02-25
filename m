@@ -1,149 +1,197 @@
-Return-Path: <linux-kernel+bounces-530819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818DFA438E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:12:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5599A438CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA02188811E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB053167CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D5018BB9C;
-	Tue, 25 Feb 2025 09:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2092A261592;
+	Tue, 25 Feb 2025 09:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOSYI/UO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="njiXGBgU"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011037.outbound.protection.outlook.com [52.103.68.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A1926136A;
-	Tue, 25 Feb 2025 09:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474299; cv=none; b=tEcqUNbBN31isZM3olX3dCakI7LVQo7Gcbrr6gXW4s3gmLCqbOwW739svHuWWFho6s4Fd1JAQP5zfYC7Pc5LTa8+X9ZLgxmBOEOH3b3SnUXB8a6FPFn0kPy9c8gvtHBMrlQxbaO19KJijzUEi2XxND69r0Bee19fIq/uNtyZ0rk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474299; c=relaxed/simple;
-	bh=05QLNDsxtSaPcxhtQ3nsQ6J5e1btNztLI7SRH7c/3Wk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OT9J9Q8Pe04B3PyCBMUXUV9IhcfjKQrpLDE0U0kVrLDTEd1PPfU0yJUZwE/xqzfDbPlCTIFYw6LZiI+apnavefPYJNAkbVSw5SumBaIps328wYY33J/DpYbVKlG7JgjA3BDrf64+hQSsY0kDAZPB9+YmtXw7JKv/JcgIloAoAm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOSYI/UO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB49C4CEDD;
-	Tue, 25 Feb 2025 09:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740474298;
-	bh=05QLNDsxtSaPcxhtQ3nsQ6J5e1btNztLI7SRH7c/3Wk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gOSYI/UOQZtxdx+Gr0pWQxuMAdCFljQ+3RPA6xKRKNXzVATbtH4id9OTzpB23REx8
-	 1TDQhxCZsC25mtM/elDs2BAy+TR90LkgB7kJnN+Ajjnouu8qfVNMeOjhKcPjSdW3Ah
-	 ZVX+JqxdsM/FuFy3oGXP7xFv8QjZKxVNstO4/LraaWYGelzZikSvyxEiBD0V9Boz70
-	 ZTu+rajUAPin5Mvmkb5xyaTlHsJyAdiWqNnj9rC28SKT20Os1HDbB1FZg/wf7zVDC2
-	 8Qqr46VHUVnCII13Eg6BQMhzaL85U9G8qUfwLUE2ogaoWVXfiPNs8H9uJ3NHvTZzAt
-	 SFotrwv68A8ng==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 11/13] rust: hrtimer: add `HrTimerMode`
-In-Reply-To: <96f4ee3fd83d4b248441f536fae8f694af52d567.camel@redhat.com>
-	(Lyude Paul's message of "Mon, 24 Feb 2025 18:40:48 -0500")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-11-5bd3bf0ce6cc@kernel.org>
-	<Sk36nx_Y-idodXXeE2t7pzk0a29qre1l249TK_Ln9v2J8R0y3K6aMhv4JZqTh46Po5hPAE6jfC39dDJTw-TCJw==@protonmail.internalid>
-	<96f4ee3fd83d4b248441f536fae8f694af52d567.camel@redhat.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 10:04:19 +0100
-Message-ID: <87v7sywg30.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303D1260A59
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740474301; cv=fail; b=J0/p2D7VxuugJC0ydMyaA36r+ECLA+mIrQzHWaHDIDOpnvGVrmsQIhVq0gKlT347p5VChW6jrpp2mQCl2wdA7jK2v0ngxNqpEtEI8ywt9cqrjvr0M6oyu89hXCfldAoeetX0KBuKwaC5lL6tu+QzTWHQKq9pIKvDKS6tWB7YIg0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740474301; c=relaxed/simple;
+	bh=Aou5PD7Hujkti+NoZTtzn6lGsmYrjphCudYsUHOORXw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lDIbQMsYOYBsEVR6yDNpA+zMkFUiuHXu6iHuWYB6fqwJgGp3pjcKMmulfoJkbpKtOqDry3NRSCMy1ossbxUTe61pT0C2QkL/8sQosDsOjfYTVNTOlaD6W4xMQIMWddzBM3b89QDD3TQw+cJfv0e7yd7j4ADaMp6rIkTsHjmOgQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=njiXGBgU; arc=fail smtp.client-ip=52.103.68.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c7Zn0o2fANMO51+VCVWb9q+FbfJXk89TBH4aAGkdUwky3+EJHeiZ97I/TDKEginVL7aRetOPwGCl8hjhPSCcVJjyhHbkeECe8LgaQA+V3YscAqm38Ha8YsfL0sXg1atPeiMFap9cUGNX/BWqMWHmaIUJwQX4f4pwP1vTZBxzMTyfLfqXvrF+q0GurZloV1QfjuReubkt6kEGMSN7F79xDDpp49Nesttr7RuOH1M9jWf1Xh7knggboJGNMMrrlIGeyVZCVkdjtfg/wivM/8WQEyEiKODuAUKknFF6rR2TZBc30zzUvengBAaAh5ymBWuLfg1HqWblAOrzHWS4vJ0kjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Aou5PD7Hujkti+NoZTtzn6lGsmYrjphCudYsUHOORXw=;
+ b=UCbsJXn+dnVKKkhgDZ+EM+kgVzDM8BEPsACYzFqEBO7auJ+kPzDYJunWCaMYQr7iegwWFCXvSccAR5oPencRQbH4y97HcanvGJoTHdPTYULPHV1MxPoUx9CfREMSVUBtY6RHFGWf3JIgg7mVJ76iMArq0qZKK9ZmXVs3wV82ae6u7UtB9aP9KwAB1ShmR+VbvkncUB6O2quEjdGLaq+qA8MHzAlYulWnNDZ+qPyWtOyaJofzVM5+H0SlXttJyO/J2qwjzE4emMqdaC3TgJtyc3lDeH4liouZlFfsN0yOoBriulAn10dNzEwiC9U2YhsWSmU7iAKhWr97CYuAKI8+9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Aou5PD7Hujkti+NoZTtzn6lGsmYrjphCudYsUHOORXw=;
+ b=njiXGBgUXZCXf9dbr9mNSOUzGURxnaglPnx2WMLuk82VqpRvlWkX3jH26VSXNNKiPUiP3kC7rNYADo9Rr5PL9y68SkNaUMjawn49iantuc3r3hVlMJJdUQ1gFXdFAeGT/1TSBguP65jpKkl1pcq2loDKzW9Hgr5ndKMaELzMKBCZqUDttziIziPXFDZlS1GIJk3N/2MpoFnO7kQTsoegbEVWrdYqsF2C7tvFEQhqHb/PzjTs3apSZuqXPC8r7E487j/TbIvW+5ToI2PCKnQKCLzO7THLUdweuuFHd9tVROrouUVG490fQofUwB81mB5BOqiJRGnISij1RqWuCyvTkw==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN2PPF729037332.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c04:1::1b1) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Tue, 25 Feb
+ 2025 09:04:51 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 09:04:51 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Thread-Topic: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Thread-Index: AQHbhsGm46fWR/3mxEipqc6+PMbxkrNWrTuIgAD67QCAABL7QA==
+Date: Tue, 25 Feb 2025 09:04:51 +0000
+Message-ID:
+ <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+ <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+ <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
+In-Reply-To: <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PPF729037332:EE_
+x-ms-office365-filtering-correlation-id: d533ee21-6c37-4d15-9377-08dd557b76ae
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|6072599003|15080799006|461199028|7092599003|8060799006|8062599003|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?a2lmNU1aYnZQdkFiMFZzZW5PdzZpSkJJZnRtUHdJYktlbUUzc3pqenpFNXZa?=
+ =?utf-8?B?aFZGcXBNOWs2UlZhWjJGd0VLRlFPdGlYaUswWEo1eUNNZDZHS2NZamhPMnVI?=
+ =?utf-8?B?VVhXNG41VWZnajFLMkhXQjFwTjFrK3BFRkhDbXdqNU1TNkVVekE3Tyt6UGo0?=
+ =?utf-8?B?UVJDTmtVSVBhL3VNL20wMXM0RzFqQ2VzL3pWSU5xdXBOSXlvR2VTemdvV05V?=
+ =?utf-8?B?WmIvbnY2MFZPaG40a2tRY0VXOXVHUTlqZ3N6MUFmUWNTL3YxSGcyK0doRStz?=
+ =?utf-8?B?Y0wzNzltcGJHcGdBUHJ4eVIvdzI4TUNvNVNVdWVhS1RQbGN5akcwVmVJc3RY?=
+ =?utf-8?B?VFRKRWVwMnMvd3hwcXRxd1pZTU1DQ0RYUExGblhmQVlkVGZYQXU4dXIwNTMz?=
+ =?utf-8?B?c3U1TFpseXBDb2VjTVgxQ2lpYW9qRG54a0pMWlR3NVRyWDBndmNTRkZSQXo4?=
+ =?utf-8?B?N0xNbEdGMzZKaXVrSDB1L1l2cmppRGJCMDBYTkpQV015STBMdVlveDgyeTZ3?=
+ =?utf-8?B?R0QvUGtqTFdiTGFFbEtsNWVmVktibndGYWs5UUtTZENxZmNRT25lbTdsNVBC?=
+ =?utf-8?B?Y2pqT1UremlZaC9qYUcydjZEVi9lNGo2YW5Rd1hIOW1haTBydncxVG1taThq?=
+ =?utf-8?B?NWUwOE5TUlprWWlmV3A2ZkpFRHMvSTB2TEF0alhPSVQ1c3ZOYzl5TVFiODc3?=
+ =?utf-8?B?cjV6eW5CdVUrS1ZZZTNxeHNCTnpWY1RtVDFFYmNHMURWdTFGUnN0MFRMc0or?=
+ =?utf-8?B?NTZLc2tLTW5MWER1alZRVkpSMjUySVBTSnBjaGwxWitLZFEvQVdiQk00QzZV?=
+ =?utf-8?B?a0w2cGZQS0NEenNJbEYxQUU2RGNIL1JFVDRiNGVQTVl5UkNkTmFSaVdGWFFy?=
+ =?utf-8?B?eTVoVlNUSlZwSUduYXRLZmJJN2VCUTFHYWlWSEd0Und3a3JvQjZoVzlVbnM5?=
+ =?utf-8?B?WkRWUWVxQ3diQjJnZktxQjhhcVJvL053N2NRb1N0Z2pBTXZvOFRXSXhPdkgx?=
+ =?utf-8?B?eUVIQ25tL0Uxb3hRelc0NkZtQ3MyQzZ5NWtMTXBqczFKZEE1ODRNNm53cmlF?=
+ =?utf-8?B?NWhvUjBJZldLZnBicncvTERkbmRKOElBenBsNEluTEpMTGp1U3Y0RzYrT3N3?=
+ =?utf-8?B?ZERscm5GN2k2V1lWWW5lMnhhd3IvU29HSXdUbXZMc3EyUEdBRFowOEhkVUdG?=
+ =?utf-8?B?bk9TbTYvWTR5aXFTbzYrMzQyZU9EcHppMmNVRmFNckE4aG9STmJTVi93OG5E?=
+ =?utf-8?B?Q2tWRndjSFpVQk1xcVFxV3FWLzVOcEtSUWtxVk10a2EzNnhSMER6cGFuZGNu?=
+ =?utf-8?B?dFV5UFRNY2hXVWFSQlRRM3Vqbjc0V2ZVOWs5Y1daam5nZmg0S2NuYUM0cW5F?=
+ =?utf-8?B?WUNOMnZUaksxT01CNjBNM25scG5OcHYxUEZxM3ZzUXNlMnJndmJnWVIxS2Fh?=
+ =?utf-8?B?K1VRWFBydDVFcTNUMEo2Vjc5UHpsNWVrNkJOVHk2eW5mT0cvNTl1R3Vkcmd4?=
+ =?utf-8?Q?H1Va+Q=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bzhvbHdIN0l1MDQ2bHV4STdVYXpkK0F6eGtSVEQxNnphNFZPRDN3MDVTYmpG?=
+ =?utf-8?B?Q1ZhOWhUaWxhOTNmdWJ1ejRCM0s4MEplMnh2YWJnQklFU1dRUCs0dENhRlA3?=
+ =?utf-8?B?VEYraHJ5b1JQOXFqSW9DVHlpaXdqOVRZUzl2bWJ5L0FKS2xIZ3luR2tWenJS?=
+ =?utf-8?B?bGFQMExUK2pBMXYyZStIY2JOWms3UUtUWXFaeXM4b0x4S3ZnRUJGays0d2I2?=
+ =?utf-8?B?RlpjZlFYdFArRXVyTiszQnNiUG5ZNkpISTFSVmtVZjhOTTlnM3YvUDVoMmxG?=
+ =?utf-8?B?c1JDUkgraTVQcTRiR1Q5Z3IxSWxRUlpHbnFnalFYSmQyZEFKYk9LN0RaTnlG?=
+ =?utf-8?B?K1p1MlJQS3FId1cwMlBDV1Nhcmt5RTRYeHVWWVMwN0VqY3dKUDhtZ1h0aWJ4?=
+ =?utf-8?B?OStxZXhSVmVSTEVxSHNIdWYyRldnYW1ZKzQwZFNrajFPMHhsbXFOOTlWSXlJ?=
+ =?utf-8?B?ZTBIOGNKUkRnN2tIOThhbXlZNW5laTRKb0J2MHJBZHN5YWpleWxEM1ltWmRW?=
+ =?utf-8?B?RjlHWkdrRVJ5d2xjdWIySkVuYkExNjk3K3piak9XaVdpRUJISi9tNEN4MThn?=
+ =?utf-8?B?Q1dZaGZUdXcyY04wZTVzVzJ5aUNBR28rakYyeWVwb2tselZ5bEtRSmVuajJh?=
+ =?utf-8?B?VFd3Qm5IOE5aSzBhdit2N1d6b3pLSm5nRytKSnhzSk4rNzFoUnowbTV5SWpS?=
+ =?utf-8?B?c0dqSE1vbjNxSVllbW13VDJnZHZhTHlhZHpJUmcrV0xrYllwYVA3bHZHL1BS?=
+ =?utf-8?B?eWxlZ2s5WGYzNjVQd2o4aXpFUHFqYTlydGI0S0hFZlUrRitqSXlMQ0NjaTQz?=
+ =?utf-8?B?YzJBbXoxMnh3S1h2UThMNDdmYjZvT1Q3UWhsOUlxSXZmclhvK3NUZnBpcURo?=
+ =?utf-8?B?aWdhK0wxV3FzZVFzVHAvQXRMNktvVnlHOUlLWC9kaVVTY1BWUzlQZ1BqaDRD?=
+ =?utf-8?B?Uk1NUVVtSWpNc0liZ1hqS0xBdEREZlpNdGhRS1I3UnV0M3NUOUxNdGVlT2RY?=
+ =?utf-8?B?TGhuaVZqZEpEa3NFaDQxUWRVR09ZL0d4U0JRc0hyM2xIem44VndiTVU5OU9T?=
+ =?utf-8?B?NVZVUGd2ZVgxVzZOTW9DVVFtNjZDNE5WTi9OS25qQ3IwZjRNOTM5VWEzb3B1?=
+ =?utf-8?B?ZU5sOWNKZThiR3hhMEJXdHRNUVJ3Yk55cFhZZWp2S2ZFNXN0N0VKbEtoVitu?=
+ =?utf-8?B?cWIvRFpSekpIejNPM1ZKcytaMUdtUmFXUUQzREprMjNhQUpBZWo4SGwwK2l4?=
+ =?utf-8?B?MTJteDBsMTA4WXd2aU9TTDNTWHhqTDFDOEhxMG4zWnN6NUdBYWpMWFlDTW41?=
+ =?utf-8?B?TUZ3cnNKenhZcTVTYlE4MEswNEpHWWZ5SmNMczZpTG1Qdkp3OG9reUgwbWFF?=
+ =?utf-8?B?RVNnTUpQc1BtREdrU1RlTTNUb3ZGeGNySE9Hb2tyR0lhQWpXNkpoVlpQeVcv?=
+ =?utf-8?B?bEdvOXVxc0hjT0IvcFdQUTZqeldPVC9WMFErYVFQTWx5UHNLbXlWbkFhNGFB?=
+ =?utf-8?B?UVhhS0JRZk51eHNSMzY1Y2JHQmlhb0FBK0FaaURJRmZGcEQ0MkhEM05ZL202?=
+ =?utf-8?B?WWlZUWY3cStpSU5haldwOW1ORHdDWHZKUjIxNHJ4QnFoY2I4Ym5QR2tWbUF2?=
+ =?utf-8?B?T2s3UXJoTjl5b2pLb3h6Q1NHUzBzQ3FuSkQvaFBIWi9iM2labEJ1bFdpK0hX?=
+ =?utf-8?B?VHlORHpodnRPZWs5d0NBNm5wNlpERE40SFRZWVArV2JWSy9oTlBjRitlMnBq?=
+ =?utf-8?Q?echyciKamHgADCV8QY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d533ee21-6c37-4d15-9377-08dd557b76ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 09:04:51.6934
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPF729037332
 
-"Lyude Paul" <lyude@redhat.com> writes:
-
-> On Mon, 2025-02-24 at 13:03 +0100, Andreas Hindborg wrote:
-
->> +/// Operational mode of [`HrTimer`].
->> +#[derive(Clone, Copy)]
->
-> PartialEq, Eq?
-
-Sure, why not. I'm not sure if there is any negative side effects of
-this? `Debug` too?
-
->
->> +pub enum HrTimerMode {
->> +    /// Timer expires at the given expiration time.
->> +    Absolute,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    Relative,
->> +    /// Timer does not move between CPU cores.
->> +    Pinned,
->> +    /// Timer handler is executed in soft irq context.
->> +    Soft,
->> +    /// Timer handler is executed in hard irq context.
->> +    Hard,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    AbsolutePinned,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    RelativePinned,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer handler is executed in soft irq context.
->> +    AbsoluteSoft,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    /// Timer handler is executed in soft irq context.
->> +    RelativeSoft,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in soft irq context.
->> +    AbsolutePinnedSoft,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in soft irq context.
->> +    RelativePinnedSoft,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer handler is executed in hard irq context.
->> +    AbsoluteHard,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    /// Timer handler is executed in hard irq context.
->> +    RelativeHard,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in hard irq context.
->> +    AbsolutePinnedHard,
->> +    /// Timer expires after the given expiration time interpreted as a duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in hard irq context.
->> +    RelativePinnedHard,
->> +}
->
-> Besides the question I had earlier about how we represent enums like this
-> (e.g. using repr(u32) and using discriminants):
-
-I'll await your response in the other thread
-
->
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
->
-
-
-Best regards,
-Andreas Hindborg
-
-
+DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDE6MjfigK9QTSwgVGhvbWFzIFppbW1lcm1hbm4gPHR6
+aW1tZXJtYW5uQHN1c2UuZGU+IHdyb3RlOg0KPiANCj4g77u/SGkNCj4gDQo+IEFtIDI0LjAyLjI1
+IHVtIDE3OjU4IHNjaHJpZWIgQWRpdHlhIEdhcmc6DQo+IFsuLi5dDQo+Pj4gDQo+Pj4gK2NvbmZp
+ZyBEUk1fQVBQTEVUQkRSTQ0KPj4+ICsgICAgdHJpc3RhdGUgIkRSTSBzdXBwb3J0IGZvciBBcHBs
+ZSBUb3VjaCBCYXJzIg0KPj4+ICsgICAgZGVwZW5kcyBvbiBEUk0gJiYgVVNCICYmIE1NVQ0KPj4+
+ICsgICAgc2VsZWN0IERSTV9HRU1fU0hNRU1fSEVMUEVSDQo+Pj4gKyAgICBzZWxlY3QgRFJNX0tN
+U19IRUxQRVINCj4+PiArICAgIHNlbGVjdCBISURfQVBQTEVUQl9CTA0KPj4gQnR3IEkgaGF2ZSBh
+IGRvdWJ0IHJlZ2FyZGluZyB0aGlzIGRlcGVuZGVuY3kuIFdoaWxlIGhpZC1hcHBsZXRiLWJsIGhh
+cyBtYWRlIGludG8gdGhlIGxpbnV4LW5leHQgdHJlZSwgaXQgaGFzIHN0aWxsIG5vdCBiZWVuIG1l
+cmdlZCBpbnRvIExpbnVzJyB0cmVlLCBhbmQgbmVpdGhlciB0aGUgZHJtIHRyZWUgSSBhc3N1bWUu
+IEl0IHBvdGVudGlhbGx5IGNvdWxkIGNhdXNlIGlzc3Vlcz8NCj4gDQo+IFllcy4gV2UgY2Fubm90
+IG1lcmdlIHRoaXMgZHJpdmVyIHVudGlsIHdlIGhhdmUgdGhpcyBzeW1ib2wgaW4gb3VyIHRyZWUu
+IEJ1dCB0aGF0IHdpbGwgaGFwcGVuIHNvb25lciBvciBsYXRlci4NCj4gDQo+IE1vcmUgcHJvYmxl
+bWF0aWMgaXMgdGhhdCB5b3VyIGRyaXZlciBzZWxlY3RzIEhJRF9BUFBMRVRCX0JMLiBGcm9tIHdo
+YXQgSSd2ZSBzZWVuLCB0aGlzIHN5bWJvbCBpcyB1c2VyIGNvbmZpZ3VyYWJsZSwgc28gdGhlIGRy
+aXZlciBzaG91bGRuJ3Qgc2VsZWN0IGl0LiBZb3UgbmVlZCB0byB1c2UgJ2RlcGVuZHMgb24nIGlu
+c3RlYWQgb2YgJ3NlbGVjdCcgaGVyZS4NCg0KTG9va2luZyBhdCB0aGlzIGFnYWluLCBtYXliZSBp
+dCBzaG91bGQgYmUgc2VsZWN0ZWQuIElmIHlvdSBzZWUgdGhlIGtlcm5lbCBjb25maWcgb2YgVElO
+WURSTV9IWDgzNTdELCB3aGljaCBpcyBhbHNvIGluIGRybS90aW55LCBpdCBpcyBzZWxlY3Rpbmcg
+QkFDS0xJR0hUX0NMQVNTX0RFVklDRS4NCj4gDQo+IEJlc3QgcmVnYXJkcw0KPiBUaG9tYXMNCj4g
+DQo+PiANCj4+PiArICAgIHNlbGVjdCBISURfTVVMVElUT1VDSA0KPj4+ICsgICAgaGVscA0KPj4+
+ICsgICAgICBTYXkgWSBoZXJlIGlmIHlvdSB3YW50IHN1cHBvcnQgZm9yIHRoZSBkaXNwbGF5IG9m
+IFRvdWNoIEJhcnMgb24geDg2DQo+Pj4gKyAgICAgIE1hY0Jvb2sgUHJvcy4NCj4+PiArDQo+Pj4g
+KyAgICAgIFRvIGNvbXBpbGUgdGhpcyBkcml2ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6
+IHRoZQ0KPj4+ICsgICAgICBtb2R1bGUgd2lsbCBiZSBjYWxsZWQgYXBwbGV0YmRybS4NCj4+PiAr
+DQo+IA0KPiAtLQ0KPiAtLQ0KPiBUaG9tYXMgWmltbWVybWFubg0KPiBHcmFwaGljcyBEcml2ZXIg
+RGV2ZWxvcGVyDQo+IFNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KPiBGcmFu
+a2Vuc3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KPiBHRjogSXZvIFRvdGV2
+LCBBbmRyZXcgTXllcnMsIEFuZHJldyBNY0RvbmFsZCwgQm91ZGllbiBNb2VybWFuDQo+IEhSQiAz
+NjgwOSAoQUcgTnVlcm5iZXJnKQ0KPiANCg==
 
