@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-532262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765C3A44AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:44:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14934A44ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF8C19C565D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F3C04232A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE72F1A2567;
-	Tue, 25 Feb 2025 18:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D941A5BBB;
+	Tue, 25 Feb 2025 18:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utn3/Uni"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSGLmxjC"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0551922DD;
-	Tue, 25 Feb 2025 18:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FE51A5BAF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740509058; cv=none; b=t8k2jm59PY58D5yS5MuaWo1N9yOV7G9tsUPPjLRffOlmJuESQ9C6S4LwxfTqmfdxuhQ1AzvG/XNwRRvE4HuK1XX4FS0STG6AcI+ER/YFoA02GTe+oVXgAbIp6iHHb594iDPD5fP00Rn8t6CFprQoytabattJ0tgBcA2HZbD+G8M=
+	t=1740509110; cv=none; b=qPPIuUHH7T/lr2YsBqH40VmcbgPSGORJBjgKNtCyMn/b9eFnt8Uu63FHxmFTfCh4GP3EAlE0KIyC5w21kKgLuZBIcBS+7uw5KClR375OG4RkhBq0iy7v2i57BfA8JmmBqk0WudQnwF+AeJAgMsZBcIDEEaoe74eUGfSkes5uy94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740509058; c=relaxed/simple;
-	bh=dn6VZ1CnV+ktWgFz95nA4nnuqJfQUAF2pAupsrhvR7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aiHiTkWAb/8d/Iu3GsMbIsQIzobizljglt4T+ed7HHhhIr7KErSmh/FkCNUH5QRUMuGI3k9kCHUysJ17ijuzOJEHLe9RVlVQCmfwTQ/ju4EeFe/Du9d1IUqzwoQU/2rZDBUYSJXn1mJk8MGVGgy5D/NDbPGp01kne+sclnmcuWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utn3/Uni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30670C4CEDD;
-	Tue, 25 Feb 2025 18:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740509057;
-	bh=dn6VZ1CnV+ktWgFz95nA4nnuqJfQUAF2pAupsrhvR7Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=utn3/UniPOs0994n7y5/O26OSjzPWcTzbB448hKXUZQTOCzHCZnoJd/2dOM1eCz7u
-	 Gh48seRBbGwC+4FKBOyjkdE2VTxVf2ssfU0RtFMkwyH3taO/dZU+cZ3jcgLBcbhrtb
-	 q9Iw2ziAIITcffViIlyEIrrOepnofuuAKEelXl178cOSqG1WSlmwj4oJTUKaRCOGLi
-	 BwU5NQNt4u8uz9nPuyXPs3D6QwDIurV8cEdpuNtPPPS5zUciaRYaHFVV9ANwziO43d
-	 +AoWrrs0ETQr0IGAtP/kRK092GS+RcNJdiIGwIGclrM6xik6I3iEJH2SYfYh76xQLx
-	 wgChZOK864Ntw==
-Message-ID: <b150ef5e-08b3-4747-8fd3-7b60410513a1@kernel.org>
-Date: Tue, 25 Feb 2025 19:44:13 +0100
+	s=arc-20240116; t=1740509110; c=relaxed/simple;
+	bh=6IihvIBx7CTuNvNSW0s445hgmcegN2gSRUziakg2f4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jhgrc6U8kqDKM55FsVw+cx5YbtUUuBwTaSoH1q/A7NzSfhKERmMvYTSESdOeq0NYfMBJ+ee86IEhh55TPYx7Ui3Hm7ASF0yw4OMHzackhgofmBcV3/xCd48jXRbnUi0NpcSGb8yUJDiFHRFlqqb3dwnRyAuT4uUn0XM+4iEJp10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSGLmxjC; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c2a87378so101694595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:45:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740509108; x=1741113908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IihvIBx7CTuNvNSW0s445hgmcegN2gSRUziakg2f4A=;
+        b=PSGLmxjCWnJD3ECgg7VioQuJBIAfiNsLAIHS1jNmHLrGNIFRFp4kLWtVyCqdiXI80V
+         OUygeWOb5lxKbcy+9VxyspSGS2Ql46stYCjMhGYlBj6XEHiWkXPNve+93C8lg4AMf9Ov
+         GwiVRVsv8PHMTY1O/OvxobgYL/07/Wo6e/4wdkNeyfihfAs/KCVFdVfa+jVAGq/VgVpK
+         IsHQDO7h1ckq7Ja3usUhQwcyKe/w39UA70ioVgQ0maZKlyhmhQaRSsq5fGTMfX66Q4h3
+         5QQaT4HEha6z/bwi1eL/VLb8m3E3p7JkPzPF53HC8A0ieKlk3cCXGeMp+2ZGLvM8ork9
+         GVYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740509108; x=1741113908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6IihvIBx7CTuNvNSW0s445hgmcegN2gSRUziakg2f4A=;
+        b=JmJqw7YTwZT2DGXOG8NVfsN0+EQx5g+zFZR13EBtF+XFdgxPApSeMXHbLePFYjfm/e
+         yb+wavidAyOGwyLfELZQDEGpAAsX00TDu2z1etcOnEI7QS+0WMPO1N3+kFv97fX4i5I8
+         Q0Kg+oxvarGhjAGmKH9DsU/kWREytGeWH+2zenvAcLkGtpIkXZ3cHAx8M6TXV3D8ypPg
+         ichvGEnZgWc3KIlBzr9vvf0pjHcg5d5LlQ/BIHScAHA3KMuTxPyCtbV8esMPQrtW5CbC
+         qBfMOhTb+W5axsa8jTUSTX5rXzHgUjuB87O5fCKXNbg8WKQlSdEg6Gwy1zz0hmOFgjBL
+         E63w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwFCSzLI8WAzcTgq8b+oLf559cAtxfZwbC5ky+9IqvkoLEnMDetaPrKbqedGCRsoZRBaGx+dXmMp9jM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK6MYzwdnEC8MjN/YayRlaSl2as4MsY28gKLiAYcQsstyjLUFT
+	lDcYJRpXQez3O4ryIU9cs1X4zWMK+AWijtLQJsj+WSthyePiQ1xR
+X-Gm-Gg: ASbGncuDP98W+zzcz12DLOrABrnshUJfkbJJ7WlG19sxuWKerHwXz59ynxY7hjGq2n9
+	h4DzaXf9h5PApMiDBNRkj0cdV6xdPFR5S0gS+X5mbZRzSPGPKhr1x/SWGcbF6VgpfcwMyZQRvlK
+	JgBlpUz1MnZRvkjNrmoi+w1XvqoJ3U3oYjViEFRJHlCDMUQhoaabWLyK/FLKY0rpipd2zUmX1uM
+	h4wRa0AXrmuCVmakaMzOUqyyY44/lbW0qrKYMHTQe7PaVF1pkSDyDhCCGIYv4xnPX3vwUwZ2QBt
+	cWCm9s6wuv14EpCFI0VpkCQdC89Qyh5atZTBuXE253EZVkD5cS+/
+X-Google-Smtp-Source: AGHT+IGApZrzeywhChiSfHA9SwSFpXhrOiTvaZKX1WlvvQNLrEXZxvDkN6xmmX2mZ4h2HyS1cFdFWw==
+X-Received: by 2002:a05:6a21:164e:b0:1ee:aa06:1a48 with SMTP id adf61e73a8af0-1eef52f7e0dmr33718090637.22.1740509108139;
+        Tue, 25 Feb 2025 10:45:08 -0800 (PST)
+Received: from ideapad.tail50fddd.ts.net ([139.5.199.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a81ec94sm1913969b3a.137.2025.02.25.10.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 10:45:07 -0800 (PST)
+From: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
+To: akpm@linux-foundation.org
+Cc: ayaanmirzabaig85@gmail.com,
+	linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/1] radix-tree: Prevent NULL pointer dereference in radix_tree_node_rcu_free
+Date: Wed, 26 Feb 2025 00:14:56 +0530
+Message-ID: <20250225184502.1222081-1-ayaanmirzabaig85@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250224202723.aa20e103b6b3bc3de65ca7e4@linux-foundation.org>
+References: <20250224202723.aa20e103b6b3bc3de65ca7e4@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mfd: sec: add support for S2MPU05 PMIC
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org>
- <20250219-exynos7870-pmic-regulators-v2-2-1ea86fb332f7@disroot.org>
- <20250223-outrageous-bizarre-hedgehog-8a3bbd@krzk-bin>
- <11387d3d0478d7fa1899ee3d0409541b@disroot.org>
- <07634537-0750-4616-9c88-800d1672dcfc@kernel.org>
- <69c58c0ba04ad85f0ddd3f379bcb8390@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <69c58c0ba04ad85f0ddd3f379bcb8390@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/02/2025 19:14, Kaustabh Chakraborty wrote:
-> On 2025-02-25 00:48, Krzysztof Kozlowski wrote:
->> On 24/02/2025 18:37, Kaustabh Chakraborty wrote:
->>> On 2025-02-23 16:10, Krzysztof Kozlowski wrote:
->>>> Missing bindings.
->>>
->>> Bindings have been applied in v1.
->>
->> Heh, I see email from Lee now but mainline does not have them, next from
->> 19th Feb neither.
-> 
-> I see it in lee/mfd/for-mfd-next. [1]
-> 
->>
->> BTW, what happened with all the review tags? Nothing in cover letter nor
->> changelog explains dropping reviews.
-> 
-> Haven't explicitly mentioned dropping the tags, but I've changed the
-> macros a bit, among other things (which is mentioned in cover). I assume
-> that's the standard procedure.
+Hi Andrew,
 
+Thank you for reviewing the patch! I’d be happy to assist in debugging the issue, though I’ll need some guidance since I’m still learning kernel development workflows. Could you or Paul clarify:
 
-No, it is highly nonstandard. You must mention dropping tags and
-submitting-patches explicitly asks for that.
+What specific symptom or failure prompted the need for investigation ?
 
-How would you feel if you provide feedback and other person just skips it?
+Are there subsystems or tools I should focus on ?
 
+How can I reproduce the issue locally to gather more data?
 
-Best regards,
-Krzysztof
+I’ll start by re-testing my patch with CONFIG_DEBUG_ATOMIC_SLEEP and lockdep enabled, and share any findings. Please let me know how I can contribute further!
 
