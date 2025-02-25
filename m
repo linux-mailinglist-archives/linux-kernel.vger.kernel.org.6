@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-532173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC68A449E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:15:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D20A449C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:11:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619E73BBB46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264B43BEC8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C233219AA58;
-	Tue, 25 Feb 2025 18:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB019D071;
+	Tue, 25 Feb 2025 18:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KYfkupEb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4oifWZd"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE73198831;
-	Tue, 25 Feb 2025 18:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D8B156F3A;
+	Tue, 25 Feb 2025 18:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506782; cv=none; b=Zc7zTOPG0yHCoU0fSMkdkT/ECduFMwnk14BwbCQe5rYuap+hPsWTU7GVwl9XVyCKH+HxEFnrjAY1JND3hGEgqpMCefFm9d4Sp8FixDrbxfnCtwRcKfHD6ft0bhfu9lxm0HPUqWZsu7NmwxBc0ttNwCSQTFTXMVETAtBUyfdXuBs=
+	t=1740506797; cv=none; b=YDfASeEtKn/8SCRcpNTtmr8MPdKgU21cNMcF/+Tn2PgA+L/PUTEZitlayVIznqZ/RpD5DAYZGJqmeeNyBhRio1m9XG957mzr2heW2Px0QJ6+vz2PNEl1fwvhwHbJTRPzScWKGX6ily+7EzmZk0oLZyOa+i94rp4bQFe2osdwoM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506782; c=relaxed/simple;
-	bh=+mgjPcYbtBMafv2PEBke0dmjEk/XTdvICAF/+MhrcVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcEAKs15Pej48NUvHVVng4AG8gYc0PHdu6dKC9v7TjKcmw/lkYmRBXElfgFCv0tKRbPQkVT4Ra/8l3wYPkX6RspLjh8PxS6In6538Xo2uitLtqIsBetZ3ezImH+wUnJQIlVIRK2I9V2gP553gNXG7fmoyUUdH4GBrD/6rxZCbks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KYfkupEb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AEGSWcKHG/DGt9gmn7ot1tseH2ZGwgQHNF6MKDhFdnA=; b=KYfkupEbzYdvsInYQ4QxQpYdDV
-	UAeDld9Vipi+m2Y1ukkkHO7GDy4pAWGsHZu+XKmbSshXL6h7bGCW+lWSf7gVwypgMgRGhDeGBMRyT
-	f15y/QaBTV0vL+TDqNqd9wpaMLkv7GNGm5Ap2TOvkM7WeeFSX7pgPV/K+dbpWRud6vH6wfjx2MGwL
-	jocI6Eazk1hLWhTG+LPpzLOT058nEcByt7RZW6wTLdoEpW+V48w4tyZXzact4gHDBQEcWwpPZra9z
-	A2EdJnlUA8e/EWL2DxEKeopdocFd5RhuFeaAmzFJH8l0T5brwHMEj39NK4OMi8h+6qG/MM6ie6URd
-	5tbtCDSA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54436)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tmzJu-0002Av-2R;
-	Tue, 25 Feb 2025 18:06:14 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tmzJt-0006DA-1D;
-	Tue, 25 Feb 2025 18:06:13 +0000
-Date: Tue, 25 Feb 2025 18:06:13 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
- module access
-Message-ID: <Z74GlXKiExICQ6Rd@shell.armlinux.org.uk>
-References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
- <20250225112043.419189-2-maxime.chevallier@bootlin.com>
- <6ff4a225-07c0-40f6-9509-c4fa79966266@lunn.ch>
- <20250225145617.1ed1833d@fedora.home>
+	s=arc-20240116; t=1740506797; c=relaxed/simple;
+	bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=omw6/bzf5Pe6xaULbxanKbDmdZ3z+FCMz5POjx50taJ6op7mYhFE8BllNZf5S7P/VQd5xeGvfSWHC4nA4VR2JEHGZY7XixRyswRp83RJJY+c3+VKB67pmT1Y1eypFxGS5z7xWhUEdvJ2wWHNsLkHx/zgJH5HvXDbiXTHJUJ2T/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4oifWZd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so15406255e9.2;
+        Tue, 25 Feb 2025 10:06:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740506793; x=1741111593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
+        b=Y4oifWZdg4UIF2bN0BfWa9urTM3jRZzoW1QN6DcLlXirvkiAKj6aDDGEBMjrfKlL+t
+         xy+Lz7k6BMECbFed8A9wnsL1S4Oge1kJMqY9YTUET1/NUEiGbl0jAP86uCdoZ8UeUMEg
+         HAm2NrCOaPHlheOnwOM9dAw0k7ZW//nadzEYUyUXfzygwjuqi4nlUt4YC4Zz67C4vw2f
+         UJq6GrmNEkfmo5SZk5vRuOk5nwdPEEGi/rjNHs4pcJbSgqg5uAXokHPWlCxBrWmJBQBi
+         9aLvPPaKm3bNZ7BZTHvzMKFO5MauM8hzUS8+j9BKcwnAiQIDfzbwjTjmghel+fL1t12V
+         LuMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740506793; x=1741111593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
+        b=HP68725Feem9g5QDjwLjxfpAPzaRagT8+URSKDSvV+3axFBae72g8nabqztGn/+Og8
+         B4/UDbEEBqOO6SOB/di66VqvgYTJNRc3I/uCVuL6Xse+rVy7Ta57i4Rwh36fnIbXmpSq
+         4YXYhZD15pa+8up3ZqbxuBjwwt4bOAdOchrYd9S9OvNlK4VCFkXzuiIB1zQPCTYVdTyY
+         oqoq4x4a3rRdLEmC/uBcrJWGGR1ONxHiL4aNkI/IAuP6fL3yAtEBuI45/NNcKGNYv+Qc
+         AXT2x1+he3pc5iZIyngfRYOuEeV/K6eYRLg7fxqvuc32f2Eov5sFDALtCo2RBQevo4ah
+         hxew==
+X-Forwarded-Encrypted: i=1; AJvYcCW4t5davvoATg/D+1oVAeqj/VUP7dnwfXP8f+0AKzxlsmSVeoD80FnfbzBO8GcR7Q7FNis=@vger.kernel.org, AJvYcCWl6QkI3dmc/XohEhTW5Y5IaLdwpSnX1LjQ7cEJY45szxpSMCA25gEqWT2lVCe4er8odv/ya4QdcjbQEbrk@vger.kernel.org, AJvYcCX7PjBgC546bUBAbYlyL7YYWEer8bvrCz4zaSUBaRUqKb7gxkGvA5ZWW991LSBTniRTFi3YrwkLq3TQtZjB3H4rN+Jg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi7KIyi6TnoVNDeu48TmByxQzP/FKAX0Tm1LEuPyYYU5xQiff6
+	2HUK5ZhDC0EonB2HQNDHSjnDF4jzhPUi3fhm8AnvBQOM5hyeEFR3jzSdZvOCwTxoEa4PW1YyvD+
+	l3NXlYwk/LzCSLIGJpq+j/OS85L+WxMUB
+X-Gm-Gg: ASbGncuNiOaYT9OkRy/Bhrv490UDKGvP8MiamexKrP6162v+2xROlF2tJsP4Bi57vb8
+	VEcT/QIs9U3hY2xZ6lRwYTbeI5oG8FOEEY30HhJxAiObYKsnauIoqLXyIfvvsQooVTqvgDtU+lP
+	jefdjSLAksVdarprttrpV+sXs=
+X-Google-Smtp-Source: AGHT+IGlwkwtt8yLazHetKUrxIo1z6pDXtJnI2CGJXL07EgtfUktZVrpKCWsb3EHD1nsxtvSR1Y7t73KP/dUgPFF8CA=
+X-Received: by 2002:a05:6000:1fae:b0:38d:cbc2:29f6 with SMTP id
+ ffacd0b85a97d-38f6e947434mr14144173f8f.17.1740506793340; Tue, 25 Feb 2025
+ 10:06:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225145617.1ed1833d@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250224140151.667679-1-jolsa@kernel.org> <20250224140151.667679-9-jolsa@kernel.org>
+ <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com> <Z73HDU5IZ5NV3BtM@krava>
+In-Reply-To: <Z73HDU5IZ5NV3BtM@krava>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 25 Feb 2025 10:06:19 -0800
+X-Gm-Features: AQ5f1JonQ3bzFeYH2MPwYc-bN0juQN4SqNxsA6Q12e74EuGvHeE7xiA9aTlZ6Xg
+Message-ID: <CAADnVQKNeWKFkZxb_-Fuenvmfy47-t6Z7KLY_j3UUOrj5pFP-g@mail.gmail.com>
+Subject: Re: [PATCH RFCv2 08/18] uprobes/x86: Add uprobe syscall to speed up uprobe
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 02:56:17PM +0100, Maxime Chevallier wrote:
-> > > +	while (len) {
-> > > +		ret = i2c_smbus_xfer(sfp->i2c, bus_addr, 0,
-> > > +				     I2C_SMBUS_READ, dev_addr,
-> > > +				     I2C_SMBUS_BYTE_DATA, &smbus_data);
-> > > +		if (ret < 0)
-> > > +			return ret;  
-> > 
-> > Isn't this the wrong order? You should do the upper byte first, then
-> > the lower?
-> 
-> You might be correct. As I have been running that code out-of-tree for
-> a while, I was thinking that surely I'd have noticed if this was
-> wrong, however there are only a few cases where we actually write to
-> SFP :
-> 
->  - sfp_modify_u8(...) => one-byte write
->  - in sfp_cotsworks_fixup_check(...) there are 2 writes : one 1-byte
-> write and a 3-bytes write.
-> 
-> As I don't have any cotsworks SFP, then it looks like having the writes
-> mis-ordered would have stayed un-noticed on my side as I only
-> stressed the 1 byte write path...
+On Tue, Feb 25, 2025 at 5:35=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> > In later patches I see nop5 is replaced with a call to
+> > uprobe_trampoline_entry, but which part saves
+> > rdi and other regs?
+> > Compiler doesn't automatically spill/fill around USDT's nop/nop5.
+> > Selftest is doing:
+> > +__naked noinline void uprobe_test(void)
+> > so just lucky ?
+>
+> if you mean registers that would carry usdt arguments, ebpf programs
+> access those based on assembler operand string stored in usdt record:
 
-This Cotsworks module is not a SFP. It's a solder-on SFF module.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+No. I'm talking about all normal registers that trap-style uprobe
+preserves, but this nop5->call will scratch.
+Instead of void uprobe_test(void)
+add some arguments to it, and read them before and after nop5 uprobe.
+They must remain the same.
 
