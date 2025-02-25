@@ -1,109 +1,218 @@
-Return-Path: <linux-kernel+bounces-532323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFE8A44B75
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:39:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A36A44B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2443B2AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2F13B3395
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C741DFD89;
-	Tue, 25 Feb 2025 19:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1031F20C46B;
+	Tue, 25 Feb 2025 19:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PPrVPcmo"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k1h9NN+v"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5220C1DB153;
-	Tue, 25 Feb 2025 19:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A462036EB;
+	Tue, 25 Feb 2025 19:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740512369; cv=none; b=Gj1Bl6BY0keQ9uWF5KMptZ0ezAoS4BZKNeuqstS5dw2ua5pu5D9iAeS/Kn/z/pRUaWkc3ZPtCijch2OcOkehr7zJ80cLO0fN+/95rgZrDnDb/jsXLSM0cFmHJLFSgh8JXIrFUkjlee9zGdc6wVVm2GM9dGoKAYL1WL31YkGAvog=
+	t=1740512373; cv=none; b=nLBiFzItVzkRj6z6ly6+8hqbVCiu9ZPmCiHb+VIj19u5gTIN63xm7dOgCn+XZcue4mCBcq9LuWTJJzuFO+H0YoBad04ocyTMzLqzluF0vaxbJ6J4dWLdEP7Oxgv4+iXCALX1T/RaWBPj0e0nPC8L2L9kOjvARO4Bi5zyaEaPR0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740512369; c=relaxed/simple;
-	bh=Uwf7eWdavyjH5gGwV2VxH1xgmznfjmK4oAqMn+DVDPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3alpOJJjfYrZty6v8BlYbJ62snLTgamzNsG0Ha3DA5+5TCXa2u0JX5aisp3k1qEpb8S8shSE3nsz2BQWIxPi7LMXh3dQ+09SBz25h4++db2+IlmT75QF81gFcuhxUklCX4TK43sQ5miEYRtGMXxDZdFhbjbQtog7GhLyCQZq1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PPrVPcmo; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30761be8fa8so65598081fa.2;
-        Tue, 25 Feb 2025 11:39:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740512366; x=1741117166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rRfwiNue6KLLPaOFrmVXrPuXrw6AneOIZ7brZ38AEvc=;
-        b=PPrVPcmoDHd+tJEXEzLIrnjJb6hpOJUYqISlbyixWp7LSqlMpYDRolnz0znVdiMGM7
-         44IIH5o0j6fauxyEjtkZkq3QLJxv+pconMI8wRJtOOwwBgJfmd8lvVV58EyClhlSH3aX
-         rMNaE9YXuIeYm6r4glS6GyPaS1KQDJ/x3Q3QPFcwdxpmBvMsS5k23zCD+2N+F0htzMXq
-         w33htTLOK6nxvYXaN28KbuyghjIzkHTGY7aKO8y54rzkMjxxzPboJLpRXHZ7F0vb/tqo
-         md0cA3TKZKMhYACuZz+SMQ8Iv3W1oI03iX7G/zsFTjpLMr9oAn/GXSrfZWk8fRtmmKhM
-         NtAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740512366; x=1741117166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rRfwiNue6KLLPaOFrmVXrPuXrw6AneOIZ7brZ38AEvc=;
-        b=OWyEvENLymybZaYYfQMzM6+4/YIHeLyPcytDmRjiUjZvMVKzaUj2dHBZsl+BgiDUyI
-         9QtuIDhJND2/+2nzjfa3P4xjD9r1N9IB0taaScbCQAMQX89IxfliudHx7ylnucR1uREG
-         XqxZOTYB8z8wODhb/hpz4VrZqJZfUA5coxWM52I2R1C7JdTR2qYFsvC7nqyC2KVQzkQK
-         EU1zIxwMuDnhL1kjGmbdMPif4Xp0ndr5nJgHM57nWIi0C0vVGSZupAjGDEq3S99tjl7x
-         41hfF4+/qr8GHZV3IuRsIZuGlALv4gs9mmQwdlziT4i0IDCM3+Ian5cKXQVYJgAGJHH1
-         InNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+6rUYRb+ntU+4W7dKdHK5r4Gt/JVrR7RXMmn62MYJwY/Q4tVvAxJFKQbjQtU0bPAcN/+HbLjP5o1R@vger.kernel.org, AJvYcCVCeVc8+cjOungK6QcJyBt8FLmoB/hy8kGIw95cSL2+2FjzJ5Y2/2Ws7GL5LI/+jLC0Ne5xeCwLGxsrYNJq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPGXDAYClnb55B1ZQjls1woejDkgy13s2zJpcN4cen+OcDnVNU
-	04jMNY3wN+HEE/KDytBAjsgVBEx8Qu1tH52yO0XSxh4HbwGneZqgJzMwr45uI/ySzfUtjalu0ee
-	ThWZ1M7OyZ950nE8aZmU8CThzN1M=
-X-Gm-Gg: ASbGncsO7VU3MG2KNck399ikfOt+d11xJM5Eav7rN1/cwl6UB8KM6ciQ0YnNhrgpuXs
-	P/bqLrrLYuw/jF+/BIwfaMNZrGwdpJ72+KgPUqv0cUFWlIaByMWW2OLNwCr1BUkADHGns/VXhPP
-	FS8YOtInXdh/D2McTNRcIVhmNL/BP/d06S9/BRt2c=
-X-Google-Smtp-Source: AGHT+IEKk084A4djpTZdcYmY7yRIuhYdq72PxE8lKK7wocMcZos7nA2xNjrdx5Wn+I+t1aoqdI5qFo8Lb0jS8y7rkGo=
-X-Received: by 2002:a05:6512:158c:b0:545:169b:9b51 with SMTP id
- 2adb3069b0e04-548510dba17mr3031808e87.24.1740512366062; Tue, 25 Feb 2025
- 11:39:26 -0800 (PST)
+	s=arc-20240116; t=1740512373; c=relaxed/simple;
+	bh=12jSNbr/O7Q1kvbb9tzLOBuiGrS73Qz9TCIgyAJGh9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxKy1NAgrbRdPQuHoUgnZxEGVgJHOV2Mcn4dj8IVAOn2ilVywyp7franFQcQ+1g3S+yJLHq3qOAbfBPxRBJ7XUTDZagjLDlQZmOlJsffTBl/060Oq6GJjF95DmZICxrm0TKxO6eknQzmzi+RdI6bF2qjVXhbYkgFTyhCDrglTq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k1h9NN+v; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 11B4E11400DD;
+	Tue, 25 Feb 2025 14:39:30 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 25 Feb 2025 14:39:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740512369; x=1740598769; bh=tNpHy374sw+alC5l8BsffCVK88jBzGOVtLI
+	rpfQdpMA=; b=k1h9NN+vlkzReBZoUj7kD0/VPnmlSJ0veTe8nXDG4gsoLEVS9EP
+	ZfLrL8wEZmQpCyUXmctwdB3KEFyP+lLPKByi+SXIDOQl9Ikl3go7tRzNRkvoVR9c
+	sXwNiTnKuP2D7mjmU0gMVKEj14dPor6uNErVuisSuWp4hin9oP0Sxl3bzmOsU5yn
+	CppS5zY7fhRjBVy3psq2TqFO9Abp2uZy5JQxmsdWvLhHoOB2RoHlZtiXajDHpqem
+	+T0VgAR7JB7VgVH6io1uO3g1goAWsGRI0hKvm1C1UW9qLQWHxM6R8L9OLU7IhdKs
+	+P6fpYALyImD2xMlDdc4EJxZjAIFKSf8fVQ==
+X-ME-Sender: <xms:cRy-Z5mzCLParHuQi63QdnKmpk-SOeEG-K2GQyqWkcLFTS4bgUx63w>
+    <xme:cRy-Z00KEpOYjG9TvbKgjgOtEedc1t0FB7jJSKMnbQqv8q9Q99sY3nvw5TGlFRTdP
+    GEIemLXKdAljuA>
+X-ME-Received: <xmr:cRy-Z_roSxA3kyf1FxUmVbl_JuHozi4J0PwGPNoNTEiPA6cRfxr1i9YnO6bdvRrc8pzEgBUk7ncP_vwJ1JY1HjOUhHOgWA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdehjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrd
+    horhhgqeenucggtffrrghtthgvrhhnpeehhfdtjedviefffeduuddvffegteeiieeguefg
+    udffvdfftdefheeijedthfejkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguohhstghh
+    sehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehoshgtmhgrvghsledvsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvh
+    gvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghho
+    ohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmshes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrd
+    horhhgrdhukhdprhgtphhtthhopehjihhrihesrhgvshhnuhhllhhirdhush
+X-ME-Proxy: <xmx:cRy-Z5k6_vouBe6jFlqc1nKqnztF7iSLOrZqnJEdE2R-IqhNqsYxkQ>
+    <xmx:cRy-Z30tNDb7bMKc_kEErQEUcHDmvPD2Xvb1ZqQu7hGF_ECV0878qw>
+    <xmx:cRy-Z4tIOMs-P9HywUUxZ2JpwQgMlhDvxuXfLFXO7zTa60gpT-xhhA>
+    <xmx:cRy-Z7VW5fRh4Igf3kyJ36KUFCmL8iwo3dAnh6duGgkXneLXuNYSQg>
+    <xmx:cRy-ZwuUbUfsB_0GqtY7xl6oxNyHFGR808nxMBIXd2H02Fe3TKyH3QBT>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Feb 2025 14:39:28 -0500 (EST)
+Date: Tue, 25 Feb 2025 21:39:25 +0200
+From: Ido Schimmel <idosch@idosch.org>
+To: Oscar Maes <oscmaes92@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	viro@zeniv.linux.org.uk, jiri@resnulli.us,
+	linux-kernel@vger.kernel.org, security@kernel.org,
+	syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+Subject: Re: [PATCH net] net: 802: enforce underlying device type for GARP
+ and MRP
+Message-ID: <Z74cbT8aNIPn__FF@shredder>
+References: <20250212113218.9859-1-oscmaes92@gmail.com>
+ <Z6ywV4OkFu52AB8P@shredder>
+ <20250225141157-oscmaes92@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225192557.2914684-1-Frank.Li@nxp.com>
-In-Reply-To: <20250225192557.2914684-1-Frank.Li@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 25 Feb 2025 16:39:14 -0300
-X-Gm-Features: AWEUYZkycYP4AmimIz7AT7PNtXzinXlNotQzIz-bQOQJJOzcBgdenJ2hhbqyzlA
-Message-ID: <CAOMZO5AFy288CEeZLhbDvpL=_ETnFt2sAYnJH_VbiXzGe5UiQw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] arm64: dts: imx93: Add the 'fsl,ext-reset-output'
- property for wdog3
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225141157-oscmaes92@gmail.com>
 
-On Tue, Feb 25, 2025 at 4:26=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+On Tue, Feb 25, 2025 at 03:11:57PM +0100, Oscar Maes wrote:
+> On Wed, Feb 12, 2025 at 04:29:43PM +0200, Ido Schimmel wrote:
+> > On Wed, Feb 12, 2025 at 12:32:18PM +0100, Oscar Maes wrote:
+> > > When creating a VLAN device, we initialize GARP (garp_init_applicant)
+> > > and MRP (mrp_init_applicant) for the underlying device.
+> > > 
+> > > As part of the initialization process, we add the multicast address of
+> > > each applicant to the underlying device, by calling dev_mc_add.
+> > > 
+> > > __dev_mc_add uses dev->addr_len to determine the length of the new
+> > > multicast address.
+> > > 
+> > > This causes an out-of-bounds read if dev->addr_len is greater than 6,
+> > > since the multicast addresses provided by GARP and MRP are only 6 bytes
+> > > long.
+> > > 
+> > > This behaviour can be reproduced using the following commands:
+> > > 
+> > > ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
+> > > ip l set up dev gretest
+> > > ip link add link gretest name vlantest type vlan id 100
+> > > 
+> > > Then, the following command will display the address of garp_pdu_rcv:
+> > > 
+> > > ip maddr show | grep 01:80:c2:00:00:21
+> > > 
+> > > Fix this by enforcing the type and address length of
+> > > the underlying device during GARP and MRP initialization.
+> > > 
+> > > Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
+> > > Reported-by: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+> > > Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
+> > > Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+> > > ---
+> > >  net/802/garp.c | 5 +++++
+> > >  net/802/mrp.c  | 5 +++++
+> > >  2 files changed, 10 insertions(+)
+> > > 
+> > > diff --git a/net/802/garp.c b/net/802/garp.c
+> > > index 27f0ab146..2f383ee73 100644
+> > > --- a/net/802/garp.c
+> > > +++ b/net/802/garp.c
+> > > @@ -9,6 +9,7 @@
+> > >  #include <linux/skbuff.h>
+> > >  #include <linux/netdevice.h>
+> > >  #include <linux/etherdevice.h>
+> > > +#include <linux/if_arp.h>
+> > >  #include <linux/rtnetlink.h>
+> > >  #include <linux/llc.h>
+> > >  #include <linux/slab.h>
+> > > @@ -574,6 +575,10 @@ int garp_init_applicant(struct net_device *dev, struct garp_application *appl)
+> > >  
+> > >  	ASSERT_RTNL();
+> > >  
+> > > +	err = -EINVAL;
+> > > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
+> > 
+> > Checking for 'ARPHRD_ETHER' is not enough? Other virtual devices such as
+> > macsec, macvlan and ipvlan only look at 'dev->type' AFAICT.
+> 
+> Agreed, I will change this.
+> 
+> > 
+> > Also, how about moving this to vlan_check_real_dev()? It's common to
+> > both the IOCTL and netlink paths.
+> 
+> {garp,mrp}_init_applicant assume that the address length is 6-bytes, when they call dev_mc_add
+> with a 6-byte buffer.
+> I think that the ARPHRD check should be right before calling dev_mc_add.
+> 
+> Currently, GARP is only used by VLAN, which means your suggestion would technically work,
+> but this assumption might be violated by future protocol implementations like GMRP, which
+> could potentially resurface this bug.
 
-> --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
-> @@ -692,6 +692,7 @@ wdog3: watchdog@42490000 {
->                                 interrupts =3D <GIC_SPI 79 IRQ_TYPE_LEVEL=
-_HIGH>;
->                                 clocks =3D <&clk IMX93_CLK_WDOG3_GATE>;
->                                 timeout-sec =3D <40>;
-> +                               fsl,ext-reset-output;
+I disagree. The problem is in the caller (the VLAN driver). It should
+explicitly check for the error condition (real device not being
+Ethernet) and bail out as soon as possible (in vlan_check_real_dev())
+with an appropriate error message. It should not rely on the first
+function where this error condition happened to explode to do the
+verification, especially when this function can be compiled out (e.g.,
+CONFIG_VLAN_8021Q_GVRP=n).
 
-This property depends on the board design.
-
-It should be placed in the board dts file, not the SoC dtsi.
+> 
+> > 
+> > > +		goto err1;
+> > > +
+> > >  	if (!rtnl_dereference(dev->garp_port)) {
+> > >  		err = garp_init_port(dev);
+> > >  		if (err < 0)
+> > > diff --git a/net/802/mrp.c b/net/802/mrp.c
+> > > index e0c96d0da..1efee0b39 100644
+> > > --- a/net/802/mrp.c
+> > > +++ b/net/802/mrp.c
+> > > @@ -12,6 +12,7 @@
+> > >  #include <linux/skbuff.h>
+> > >  #include <linux/netdevice.h>
+> > >  #include <linux/etherdevice.h>
+> > > +#include <linux/if_arp.h>
+> > >  #include <linux/rtnetlink.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/module.h>
+> > > @@ -859,6 +860,10 @@ int mrp_init_applicant(struct net_device *dev, struct mrp_application *appl)
+> > >  
+> > >  	ASSERT_RTNL();
+> > >  
+> > > +	err = -EINVAL;
+> > > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
+> > > +		goto err1;
+> > > +
+> > >  	if (!rtnl_dereference(dev->mrp_port)) {
+> > >  		err = mrp_init_port(dev);
+> > >  		if (err < 0)
+> > > -- 
+> > > 2.39.5
+> > > 
+> > > 
 
