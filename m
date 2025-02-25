@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-530512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4EBA4348A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:28:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516ECA4348D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4606172023
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B81189CB3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F38254AF6;
-	Tue, 25 Feb 2025 05:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1B2571A3;
+	Tue, 25 Feb 2025 05:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KE26V3mf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grf/fUEi"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB223322A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756DD17E4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740461317; cv=none; b=mCOJq3c1bYRqZR89acXPej/WIysqQtHvrSNS3sGKSzzNXOZPIRoXJMBNyR4R/MH64I1GGS3ayeywE3uKKEUIa9snkBz8x+Er+J4Hd2JySpenNcCbNj1Uv9gJbcJ9cxsKrrZZYkWXS9/90X1T6OGvoSu30o104aLLDb+eGP3wGTg=
+	t=1740461697; cv=none; b=lSEhjQNFJzPMdK+1nl3eP5h+YjJXf0NsHyNU/Ve8TP4QbRyMT4qjYmAWEkZhZtmhF5CI+d6tgmqSmHWpaSpbfzBxTh5mgwtH7w0GVUxAYXGvVS1qagyAwt6+vYJpU22o86tMyfLyQyxsNkhNboP0UqRe8bEQmoX6Wmj4pgqKVCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740461317; c=relaxed/simple;
-	bh=d0pNxPyFO+IzMKyIpFDsBRs3vBA1pbmFQp0icnqlUD0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HMaIKJxaH1A1vfHJ+bd+8aGbNSsKhDhA3WdflyU+V1bCLH5R7wZzPLQrA/S6okYOhpfqWKzuEeb8RvJHgeesrYV4cC6AJRsGbB6acY7fMJOlADSjglJMMKBvSBY58mdNxLERw8sBAEiNpJR5osEmWEndTB/bFsGXx5l6+IY179E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KE26V3mf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740461314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/NUjSEYdYicw0eBxTkoq1tdaPZmsum3sTHbVvspj4iI=;
-	b=KE26V3mffyNeGagP4e/WL84f5DiNbSIBFth83YDWjS2AEzA2dxxsfFa9pbdmJ6cpu2znuY
-	r/LnbmhZ434eign4Zwt7ddu1Jru+ZIpp41q+c//Iwq3AwsJbJSGx//3iqQXSCrNwaHyvz2
-	srid+AiD0mlX9724YTlMzLZmU6rrsQc=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-22xNRPGSPGuAPNz2gE9sag-1; Tue, 25 Feb 2025 00:28:32 -0500
-X-MC-Unique: 22xNRPGSPGuAPNz2gE9sag-1
-X-Mimecast-MFC-AGG-ID: 22xNRPGSPGuAPNz2gE9sag_1740461311
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220bf94cb40so80228135ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:28:32 -0800 (PST)
+	s=arc-20240116; t=1740461697; c=relaxed/simple;
+	bh=mmG+LHSr5wQDq0zrxPGlfjS43+NwfjSyToS3LM1GNsI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=htRU0DxYk4HxSPz8nfpi3WX1tVkhNWQLYz2r22CwhF2r5FZOYXdldZh/DzR+y8voGhIQY5sml4YhwdbRyyCLdxGnvWF2xt8N/+NOzcYbIduc/vNtfgG3ivP21RR6vjiub8AjJ55X1lOU2XzNxSYgvSSS4kahq8hrS0pZOzQ5r30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grf/fUEi; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22104c4de96so89050895ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:34:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740461695; x=1741066495; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=COFBXMHPskIsoIit0YmVND2fstaviJl+t/pdbf0Dt6Q=;
+        b=grf/fUEijyXm7cdF4rfiALoJX1KlFNYcQRFjraipbtaOVT7Zu44yZFIvONOrAcW3S3
+         WWpv7LPztVoEKntFjoyIRNs7HaEw4hpYVFPrKlQGYHS4EsFMg0Hmpacr/Ko/x4OGMZCT
+         X9SaYfwKxv45WZdcRjNmYdCVn06LwCvuPVfoduWNHxwCTBP9V/nriGCajgOCB6wUG34v
+         fuoMmN/ZYonehhZiFtkX9wOd/ERkv0dnbSbWgsnKa+cx2GsXnCUsyIZfO7ECi99atoB1
+         +e8rDhqE6SNRGVFy8HmVzEtdpnHU7H7cNlEiAI0Wid/9lOyHZ44hAruuxC+o23bxDIYo
+         ZRbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740461311; x=1741066111;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/NUjSEYdYicw0eBxTkoq1tdaPZmsum3sTHbVvspj4iI=;
-        b=vDKu5MM/X5Il+c3kIbgitv/tLTCQRrMTWNDqvX1lLssk5hLK6LTjxo7gdl9J7rj1gm
-         QyAGNACnkAcUUYPlACdVi1hnz45qnzp6n2TVwHU8ZZybSeMJ2dniYusp99rgKZL51YWf
-         XirnTwfUh7HRKMVfukMqxabEz3WtbZnQZAKfuVYvPKroODVLguls5Wy9Z4G335jVwNf+
-         Y9zdQjSMppY4ykqlRa3qLhkD9bNmD37KVW9eWOb+y8hZb3bcvhWDlfS8MFPKRejHHC9H
-         434IshD8I5eWJXn5xuZ+jzOXTryW2waOoCSxJKiXJxQlfqW1AoFeOVifaNNQaLh/Hper
-         s7uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aIQCE6BpeHvXo/jkZQ+Xx8bbGarF2YgEx7+hfwjNB/tXPJ/KqTOdGr7N5vFdmxjdKdjedVqEtYh8DD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPNdkP+3CeYGrg6bivfq8vAoiMtRkiH4Z0pHxnkASpgOyoeE0B
-	/LuBwAmXPnnBV6vnnwcZo6FlhSSd4XKQrbc8LB6w27DFKwZmHM6mIwvVXWIU5XJOFDdNiIpoYdO
-	rcnbQJggkj27CVfPh4isPk81/D3uHCqzbc4uZvWT14BUX4xTp0NmIXxL2BW0Wxg==
-X-Gm-Gg: ASbGncsiJ/ZZyuMBl4ktGw6iFkBCT6924/f/jvWSqN7totLYWTx3rxajpHT/kgVsoFJ
-	P6DdNkeSoB3jz2rRsJKZt3Yeh0+GpAUhCv9Nk4acg+FSMy4ZpsIrmzSW10d0uDxz4X+m1ZDK8MB
-	nnoXqXF73XzbN3yTKyjqppSxC7ZADVBxKfyaCydxMN5UPhZwTpbPyyz2fVD+CMYnePYBRax7fdi
-	XL6+c9nb5jnLMWRS+SSPYxPRdL9dVBtaV4C64mF3wgMkSihGW4iLcLiuEgp4VTcAPF1pWB6XjQ5
-	OU8pIJKRnpXkgNNSHg==
-X-Received: by 2002:a17:902:d4d0:b0:21f:8453:7484 with SMTP id d9443c01a7336-2219ff61d6fmr262644025ad.30.1740461311414;
-        Mon, 24 Feb 2025 21:28:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEWEKWTJ+abF91IxGYeto7bQIpOErHP0Z2jKXfqBhYv9SfzPfkcFZPuQ+Nc/9Vvo9lQFQO3wg==
-X-Received: by 2002:a17:902:d4d0:b0:21f:8453:7484 with SMTP id d9443c01a7336-2219ff61d6fmr262643665ad.30.1740461311082;
-        Mon, 24 Feb 2025 21:28:31 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0a798asm5232455ad.189.2025.02.24.21.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 21:28:30 -0800 (PST)
-Message-ID: <308f8a08-a6f8-403e-a130-18c7d3db2e23@redhat.com>
-Date: Tue, 25 Feb 2025 15:28:24 +1000
+        d=1e100.net; s=20230601; t=1740461695; x=1741066495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=COFBXMHPskIsoIit0YmVND2fstaviJl+t/pdbf0Dt6Q=;
+        b=r6e+chcsQodf+qtgbheW0A8q5cmt/vFdcIWWlmYOKNM+nXDnhI+hbrxVRjKcxqDw/5
+         tKHiEWv2xhi6wTolR/qV8G0ocY7P1w4NR/TgDkgYuFC2N5pDRkhluypMaPnQ7TrMLT+L
+         U9F6BGWn2jddNCNJ++ZhpIuR0sYW3cV98JsgbWoe+bNuxb5Tkhz6bAdzENfgHRh9WTCo
+         rIMQNfiq2/IF9BnAEfTv5oOqkDvwxhLwEON9HNofsAlbOkQGLGRJyxTG604q9ApIm6br
+         9njCtD7Yt7UzUYiufhJgGOsqy5xvvYO985UjjrmsT6BEda8RiKK1OW3Fy4qZ8TetsSjm
+         ZDBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPoX06N5oZtnQYwbn8cc+Om+ZE5meefl5gfVU291bUh+5La4U7D1x/wegvMaRafP8xB0ad/MlMmCt810=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo/XebVfgyrlXB+l0NfOcHWjEUeQs9axidjbJmVjayfiI5A3TV
+	BKNVfMjKb63C1+78+76dozG/TPdyaV+k6HhJpL5JeOMux+g2z6CylY2UaZnNsQ==
+X-Gm-Gg: ASbGncvCbTLK0VG6rn7HCZcx2wgtfsKxur5NDTeepxdHPoEQzbe10SWWHWRVK9fbUCy
+	t3g3+pn7pwlfoAgi5oqhmtIxY6LJZJAQhq3Rd4u/bPBFkc7JQkSE7Uye54wLKpOVAHXflki4RK+
+	t37rDgvTrBKoSVxh9bPoi3JVjCphGN98XfSBdcCmWBWRAxZYgtYu4iCRqf6Ufk5ib7p421954h9
+	aZf4jyn9X8o4eCy795MUJ9kXIMI/dGs6ziziJ95W6DRGaNw7S0RMbcso2ISYAfUGFxg6UpRPvuj
+	KhNuYq9dNAVn+XDvsSIV1A8W3x2bMicAhV2BaaMPsYhUCsVxh4Obnw==
+X-Google-Smtp-Source: AGHT+IEcKJ/dXx95j55XEtJ2Yr2v+/ULOkI6H8gKJVMhyZk/j4JRz3SW0id9uRnQMpLfQLa1g1/udg==
+X-Received: by 2002:a05:6a00:228c:b0:730:8ad5:90c1 with SMTP id d2e1a72fcca58-73479101286mr3756467b3a.14.1740461694618;
+        Mon, 24 Feb 2025 21:34:54 -0800 (PST)
+Received: from localhost.localdomain ([36.255.17.214])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9af3sm582101b3a.110.2025.02.24.21.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 21:34:54 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: jjohnson@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/3] wifi: ath11k/ath12k: IRQ affinity fixes
+Date: Tue, 25 Feb 2025 11:04:44 +0530
+Message-Id: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: realm: Use aliased addresses for device DMA
- to shared buffers
-From: Gavin Shan <gshan@redhat.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
- robin.murphy@arm.com, catalin.marinas@arm.com
-Cc: maz@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- aneesh.kumar@kernel.org, steven.price@arm.com,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
- <20250219220751.1276854-4-suzuki.poulose@arm.com>
- <c710a9d6-bd1b-4867-bdc9-b3a79e577d0e@redhat.com>
-Content-Language: en-US
-In-Reply-To: <c710a9d6-bd1b-4867-bdc9-b3a79e577d0e@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2/25/25 3:24 PM, Gavin Shan wrote: 
-> On 2/20/25 8:07 AM, Suzuki K Poulose wrote:
->> When a device performs DMA to a shared buffer using physical addresses,
->> (without Stage1 translation), the device must use the "{I}PA address" with the
->> top bit set in Realm. This is to make sure that a trusted device will be able
->> to write to shared buffers as well as the protected buffers. Thus, a Realm must
->> always program the full address including the "protection" bit, like AMD SME
->> encryption bits.
->>
->> Enable this by providing arm64 specific dma_{encrypted,decrypted,clear_encryption}
->> helpers for Realms. Please note that the VMM needs to similarly make sure that
->> the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
->> unprotected alias.
->>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Steven Price <steven.price@arm.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/mem_encrypt.h | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/mem_encrypt.h b/arch/arm64/include/asm/mem_encrypt.h
->> index f8f78f622dd2..aeda3bba255e 100644
->> --- a/arch/arm64/include/asm/mem_encrypt.h
->> +++ b/arch/arm64/include/asm/mem_encrypt.h
->> @@ -21,4 +21,26 @@ static inline bool force_dma_unencrypted(struct device *dev)
->>       return is_realm_world();
->>   }
->> +static inline dma_addr_t dma_decrypted(dma_addr_t daddr)
->> +{
->> +    if (is_realm_world())
->> +        daddr |= prot_ns_shared;
->> +    return daddr;
->> +}
->> +#define dma_decrypted dma_decrypted
->> +
-> 
-> There is an existing macro (PROT_NS_SHARED), which is preferred to return
-> prot_ns_shared or 0 depending on the availability of the realm capability.
-> However, that macro needs to be improved a bit so that it can be used here.
-> We need to return 0UL to match with the type of prot_ns_shared (unsigned long)
-> 
-> -#define PROT_NS_SHARED         (is_realm_world() ? prot_ns_shared : 0)
-> +#define PROT_NS_SHARED         (is_realm_world() ? prot_ns_shared : 0UL)
-> 
-> After that, the chunk of code can be as below.
-> 
->      return daddr | PROT_NS_SHARED;
-> 
->> +static inline dma_addr_t dma_encrypted(dma_addr_t daddr)
->> +{
->> +    if (is_realm_world())
->> +        daddr &= prot_ns_shared - 1;
->> +    return daddr;
->> +}
->> +#define dma_encrypted dma_encrypted
->> +
-> 
-> With PROT_NS_SHARED, it can become something like below. (PROT_NS_SHARED - 1)
-> is equivalent to -1UL, 'daddr & -1UL' should be fine since it does nothing.
-> 
+Hi,
 
-I meant (PROT_NS_SHARED - 1) is equivalent to -1UL when no realm capability
-is around :)
+This series fixes a warning from kernel IRQ core that gets triggered in the
+error path of QCA6390 probe. While fixing that I also noticed the same issue in
+the ath12k driver, so added an untested patch for the same.
 
->      return daddr & (PROT_NS_SHARED - 1);
-> 
->> +static inline dma_addr_t dma_clear_encryption(dma_addr_t daddr)
->> +{
->> +    return dma_encrypted(daddr);
->> +}
->> +#define dma_clear_encryption dma_clear_encryption
->> +
->>   #endif    /* __ASM_MEM_ENCRYPT_H */
+Finally, updated the irq_set_affinity_hint() API in both drivers as it was
+deprecated.
 
-Thanks,
-Gavin
+- Mani
+
+Changes in v2:
+
+- Instead of moving the affinity setting, cleared the affinity hint in the error
+  path before freeing the IRQs
+- Rebased on top of v6.14-rc1
+
+Manivannan Sadhasivam (3):
+  wifi: ath11k: Clear affinity hint before calling
+    ath11k_pcic_free_irq() in error path
+  wifi: ath12k: Clear affinity hint before calling ath12k_pci_free_irq()
+    in error path
+  wifi: ath11k/ath12k: Replace irq_set_affinity_hint() with
+    irq_set_affinity_and_hint()
+
+ drivers/net/wireless/ath/ath11k/pci.c | 4 +++-
+ drivers/net/wireless/ath/ath12k/pci.c | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+-- 
+2.25.1
 
 
