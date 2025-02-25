@@ -1,147 +1,347 @@
-Return-Path: <linux-kernel+bounces-532458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD360A44E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF37A44E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A9B3A8567
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E9D3A84F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF78918A6A8;
-	Tue, 25 Feb 2025 20:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6917204F9B;
+	Tue, 25 Feb 2025 20:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Wdwb+MLO"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R67vw2gR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B79418DB20
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FCBDF59;
+	Tue, 25 Feb 2025 20:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740516430; cv=none; b=KUZEMLdoCD08Q+LgN66LfsuSSpgCa49o3FEEDQeMM9dcAD2EBfOMYpTjSp0KYJfa929PPEriJfYPQKNv21XuI/j05CdAb10irFzs938I/+5GdOeVuo+LvHtNY69z9W9bVdULvozQDWU5Vpb7bVVwPtPemEaBIEeuqekE9jr90SY=
+	t=1740516629; cv=none; b=ONk9PvqTBKLD02N3OBu7PiKGDQlMLrkbFShyM6nDTFZUWhmKyUWEhZ8PPw7yW3Gcaexl889lAJFEWpSt6jIV7Py6f5nHHyB3i3nHgMVVaDbnI9ZETc/8yURax47AVG2td5840gkbY/CYMpTzU2GBpwUaYYRjzcFdTpPH7H/X4+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740516430; c=relaxed/simple;
-	bh=gfxL9wTEWZrOay5k0nZAnnPNeXDPhYHavX9Kj7fIazk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=gci4g/rGGH+sg1NK+3gXDtlI/L57gSG9eXfGdVQnp4IuCtcRl+4miYTfkNUWv1jfmM2XhsXkazHeL81LbadhRZEav6kSb+gNzHElWoO7diIHs07P+hcb59jzSCqSQLvSs6eBSiEIjnfqpQQovflFLBCTfRG5Iza8OBNbxWaGuNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Wdwb+MLO; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51PKkTeV1426971
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 25 Feb 2025 12:46:29 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51PKkTeV1426971
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740516390;
-	bh=IJqMiXLFWZPNEHcvMh73vVZtN2o32vvQUt/V/YKmWTs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Wdwb+MLO8ny/HSMikeM9g7XF3Ldz1ppHS7MEWup5hYLZ4IxGAjfTphKU6neslrJFX
-	 SU1hW3jl+U+aSpW7sPnw030qGazDWWmEGqOE2c4tLF1XXspG0yZIyjuNg8ZfcA53Nq
-	 aFXnYt3cXZJZMGnCXjWajRmdqB4gSwk8QRaZsOFOfkhAOOCJ/2/1yJJkHWmEtgu+N6
-	 dnNSVgWuzlmBthQ9+9vaL3Dh6Q3dIpA2G9vUJUq6+ljpj+rVxNSScVznITfA27caIm
-	 vQbKCA1Rrw3rNbGok/IibvJp/DhkVd7dNvbNtU7JmuJXF3kFUMh/9x9evFatxkr84n
-	 ZRZ+J6ZJ2/Org==
-Date: Tue, 25 Feb 2025 12:46:26 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Ingo Molnar <mingo@kernel.org>
-CC: Roman Kisel <romank@linux.microsoft.com>, akpm@linux-foundation.org,
-        bhe@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        kai.huang@intel.com, kirill.shutemov@linux.intel.com, mingo@redhat.com,
-        pbonzini@redhat.com, tglx@linutronix.de, x86@kernel.org,
-        linux-kernel@vger.kernel.org, apais@microsoft.com,
-        benhill@microsoft.com, ssengar@microsoft.com, sunilmut@microsoft.com,
-        vdso@hexbites.dev
-Subject: Re: [PATCH] x86/reboot: Don't corrupt memory on non-BIOS systems
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Z74qn-iQDPb3NrXS@gmail.com>
-References: <20250109204352.1720337-1-romank@linux.microsoft.com> <Z74nKGVfkhmYppCo@gmail.com> <03D69594-6E5E-47B1-ACF7-B0222F642DE5@zytor.com> <Z74qn-iQDPb3NrXS@gmail.com>
-Message-ID: <299DAF93-E190-41DF-B0AA-A1AA9BA3772A@zytor.com>
+	s=arc-20240116; t=1740516629; c=relaxed/simple;
+	bh=vtRCJwqdp9zS4j+w0TlDmDonUlNsFwY9t2l0HStLyBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cDA01VicwQQ8OTl71HcoE2YlwhorUo5YYG81wL62ZpUG/1SII1KsF4PC896b6zp1dKLT5Hj76y67h/jMDrEML7F1GgRk7A1cL4hl/kQYL/eziqo9QK47FAcwgkndSstmBlfAl+5aIuTapdeT8rMbU3PVt/awx1FvVsSsyUMYxC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R67vw2gR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E62C4CEDD;
+	Tue, 25 Feb 2025 20:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740516629;
+	bh=vtRCJwqdp9zS4j+w0TlDmDonUlNsFwY9t2l0HStLyBc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R67vw2gR8RF6sMS0aYtzL1yHIiUrz2/FVhQ0KXF82sI+DNe5BkY6ds9XOpmT2Lm1b
+	 qYJnziZTGyX2rJgk3N3l7ZxxErC5+PiMpqh353ttD3yVX1RB3f9Y3X+Er73OShHskT
+	 MHyIgK3S/kKINoHz0M4JBRbsJ0fTunLsKeLMPtrrOW3w1A+U6rEKtuE9RRymlB0nuY
+	 ZtyoEthUV0SImdUpHuRV99VhU9m5ybAly42VgPsm8Utn4omR1pWJwuJIJrmyfOXHPJ
+	 exCiDg2KcBQQDHrSFZL01dOiEHuAxqdJZBxM5EvVyzkXqBtBgXik9bPW7LBRp6ia9l
+	 9N5imA4WPqUnw==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2a88c7fabdeso4595536fac.1;
+        Tue, 25 Feb 2025 12:50:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVE9aXk+O6NoDj5IIbtJLkJ/vccw3+8WteQsZGIK3khgpquP9oyE7ZVc5sSD0rTeExauCsUDiBs26Lv@vger.kernel.org, AJvYcCWjSfhfzSNJeiDyaUOGmLCMOS3WODtfT9E4kn4ysqmgPHOOjNMtre8DPqmj3WcuanDKxGH6ESxXn6YPDAG8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxsYGs+But7Bo8hFqOvYojzMV1sIFrJ2UIGPa5qA/mYIZE0znM
+	x2c3hET1vIdOF7892TqgOGVEZ+kkn98nsblxc1MJoF5apsSnfMiI6aJhVCvgzHTRwdVYnvvsrsN
+	qixJf5wF0BFZYdGixt3eC0UIY3Pc=
+X-Google-Smtp-Source: AGHT+IEvmG0ZZQwhTFGZXwlFsTdMtw+z3EfkWIbUnaNNokv5w1cDV9bjlSMx7t6QmiID7s2Hx95FqETLM09/GSpDGow=
+X-Received: by 2002:a05:6871:7a85:b0:29f:b1d4:7710 with SMTP id
+ 586e51a60fabf-2bd517c4946mr12577487fac.24.1740516628374; Tue, 25 Feb 2025
+ 12:50:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250222094407.9753-1-josh@joshuagrisham.com>
+In-Reply-To: <20250222094407.9753-1-josh@joshuagrisham.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 25 Feb 2025 21:50:17 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iRzTuZ9x=biw1UtcrOdTwFhbH1kakHz6SKtksQfn-jOw@mail.gmail.com>
+X-Gm-Features: AWEUYZm-9OaKhtwR12EAT9QLzKQzUPdTgZOXzF_EsrDOFkXUwM0G2XO1VtXbKWI
+Message-ID: <CAJZ5v0iRzTuZ9x=biw1UtcrOdTwFhbH1kakHz6SKtksQfn-jOw@mail.gmail.com>
+Subject: Re: [PATCH v4] ACPI: fan: Add fan speed reporting for fans with only _FST
+To: Joshua Grisham <josh@joshuagrisham.com>
+Cc: rafael@kernel.org, lenb@kernel.org, W_Armin@gmx.de, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On February 25, 2025 12:39:59 PM PST, Ingo Molnar <mingo@kernel=2Eorg> wrot=
-e:
+On Sat, Feb 22, 2025 at 10:44=E2=80=AFAM Joshua Grisham <josh@joshuagrisham=
+.com> wrote:
 >
->* H=2E Peter Anvin <hpa@zytor=2Ecom> wrote:
+> Add support for ACPI fans with _FST to report their speed even if they do
+> not support fan control.
 >
->> On February 25, 2025 12:25:12 PM PST, Ingo Molnar <mingo@kernel=2Eorg> =
-wrote:
->> >
->> >* Roman Kisel <romank@linux=2Emicrosoft=2Ecom> wrote:
->> >
->> >> native_machine_emergency_restart() writes unconditionally
->> >> to the physical address of 0x472 to pass the warm reboot
->> >> flags to BIOS=2E The BIOS reads this on booting to bypass memory
->> >> test and do the warm boot=2E On the non-BIOS systems, other
->> >> means have to be employed, and this write is a memory corruption=2E
->> >>=20
->> >> Fix that by moving the offending write into the case where
->> >> the machine is rebooted via BIOS=2E
->> >>=20
->> >> Signed-off-by: Roman Kisel <romank@linux=2Emicrosoft=2Ecom>
->> >> ---
->> >>  arch/x86/kernel/reboot=2Ec | 4 ++--
->> >>  1 file changed, 2 insertions(+), 2 deletions(-)
->> >>=20
->> >> diff --git a/arch/x86/kernel/reboot=2Ec b/arch/x86/kernel/reboot=2Ec
->> >> index 615922838c51=2E=2E6eec8653493f 100644
->> >> --- a/arch/x86/kernel/reboot=2Ec
->> >> +++ b/arch/x86/kernel/reboot=2Ec
->> >> @@ -637,9 +637,8 @@ static void native_machine_emergency_restart(voi=
-d)
->> >> =20
->> >>  	tboot_shutdown(TB_SHUTDOWN_REBOOT);
->> >> =20
->> >> -	/* Tell the BIOS if we want cold or warm reboot */
->> >> +	/* Tell the firmware if we want cold or warm reboot */
->> >>  	mode =3D reboot_mode =3D=3D REBOOT_WARM ? 0x1234 : 0;
->> >> -	*((unsigned short *)__va(0x472)) =3D mode;
->> >> =20
->> >>  	/*
->> >>  	 * If an EFI capsule has been registered with the firmware then
->> >> @@ -681,6 +680,7 @@ static void native_machine_emergency_restart(voi=
-d)
->> >>  			break;
->> >> =20
->> >>  		case BOOT_BIOS:
->> >> +			*((unsigned short *)__va(0x472)) =3D mode;
->> >>  			machine_real_restart(MRR_BIOS);
->> >
->> >If the value of 0x472 is only meaningful in the legacy 'BOOT_BIOS'=20
->> >case, then at minimum the whole block should be moved to that case, no=
-t=20
->> >just the setting=2E
->> >
->> >Thanks,
->> >
->> >	Ingo
->>=20
->> Does the memory corruption actually matter, though?
+> As suggested by Armin Wolf [1] and per the Windows Thermal Management
+> Design Guide [2], Samsung Galaxy Book series devices (and possibly many
+> more devices where the Windows guide was strictly followed) only implemen=
+t
+> the _FST method and do not support ACPI-based fan control.
 >
->I presume the issue came up by auditing & reviewing host writes to a=20
->barebones non-legacy VM?
+> Currently, these fans are not supported by the kernel driver but this pat=
+ch
+> will make some very small adjustments to allow them to be supported.
 >
->I'd argue that we shouldn't be writing random values into random legacy=
-=20
->addresses, especially if that special address doesnt seem to be covered=
-=20
->by any modern spec? Basic defensive coding practices and such=2E
+> This patch is tested and working for me on a Samsung Galaxy Book2 Pro who=
+se
+> DSDT (and several other Samsung Galaxy Book series notebooks which
+> currently have the same issue) can be found at [3].
 >
->Thanks,
+> [1]: https://lore.kernel.org/platform-driver-x86/53c5075b-1967-45d0-937f-=
+463912dd966d@gmx.de
+> [2]: https://learn.microsoft.com/en-us/windows-hardware/design/device-exp=
+eriences/design-guide
+> [3]: https://github.com/joshuagrisham/samsung-galaxybook-extras/tree/8e30=
+87a06b8bdcdfdd081367af4b744a56cc4ee9/dsdt
 >
->	Ingo
+> Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>
+> ---
+>
+> v1->v2:
+> - Still allow acpi4_only_fst fans to update power state on
+>   suspend/resume
+> - Fix if / else if logic error
+> - Also hide hwmon_power_input for acpi4_only_fst fans
+>
+> v2->v3:
+> - Still allow acpi4_only_fst fans to set initial power state on probe
+>
+> v3->v4:
+> - Small tweaks to naming (acpi4_only_fst became has_fst) and logic flow
+>   based on feedback from Rafael
+> - Built against next and tested working on Samsung Galaxy Book2 Pro
+> ---
+>  drivers/acpi/fan.h       |  1 +
+>  drivers/acpi/fan_attr.c  | 37 ++++++++++++++++++++++---------------
+>  drivers/acpi/fan_core.c  | 25 ++++++++++++++++++-------
+>  drivers/acpi/fan_hwmon.c |  8 ++++++++
+>  4 files changed, 49 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
+> index 488b51e2c..15eba1c70 100644
+> --- a/drivers/acpi/fan.h
+> +++ b/drivers/acpi/fan.h
+> @@ -49,6 +49,7 @@ struct acpi_fan_fst {
+>
+>  struct acpi_fan {
+>         bool acpi4;
+> +       bool has_fst;
+>         struct acpi_fan_fif fif;
+>         struct acpi_fan_fps *fps;
+>         int fps_count;
+> diff --git a/drivers/acpi/fan_attr.c b/drivers/acpi/fan_attr.c
+> index f4f6e2381..22d29ac24 100644
+> --- a/drivers/acpi/fan_attr.c
+> +++ b/drivers/acpi/fan_attr.c
+> @@ -75,15 +75,6 @@ int acpi_fan_create_attributes(struct acpi_device *dev=
+ice)
+>         struct acpi_fan *fan =3D acpi_driver_data(device);
+>         int i, status;
+>
+> -       sysfs_attr_init(&fan->fine_grain_control.attr);
+> -       fan->fine_grain_control.show =3D show_fine_grain_control;
+> -       fan->fine_grain_control.store =3D NULL;
+> -       fan->fine_grain_control.attr.name =3D "fine_grain_control";
+> -       fan->fine_grain_control.attr.mode =3D 0444;
+> -       status =3D sysfs_create_file(&device->dev.kobj, &fan->fine_grain_=
+control.attr);
+> -       if (status)
+> -               return status;
+> -
+>         /* _FST is present if we are here */
+>         sysfs_attr_init(&fan->fst_speed.attr);
+>         fan->fst_speed.show =3D show_fan_speed;
+> @@ -92,7 +83,19 @@ int acpi_fan_create_attributes(struct acpi_device *dev=
+ice)
+>         fan->fst_speed.attr.mode =3D 0444;
+>         status =3D sysfs_create_file(&device->dev.kobj, &fan->fst_speed.a=
+ttr);
+>         if (status)
+> -               goto rem_fine_grain_attr;
+> +               return status;
+> +
+> +       if (!fan->acpi4)
+> +               return 0;
+> +
+> +       sysfs_attr_init(&fan->fine_grain_control.attr);
+> +       fan->fine_grain_control.show =3D show_fine_grain_control;
+> +       fan->fine_grain_control.store =3D NULL;
+> +       fan->fine_grain_control.attr.name =3D "fine_grain_control";
+> +       fan->fine_grain_control.attr.mode =3D 0444;
+> +       status =3D sysfs_create_file(&device->dev.kobj, &fan->fine_grain_=
+control.attr);
+> +       if (status)
+> +               goto rem_fst_attr;
+>
+>         for (i =3D 0; i < fan->fps_count; ++i) {
+>                 struct acpi_fan_fps *fps =3D &fan->fps[i];
+> @@ -109,18 +112,18 @@ int acpi_fan_create_attributes(struct acpi_device *=
+device)
+>
+>                         for (j =3D 0; j < i; ++j)
+>                                 sysfs_remove_file(&device->dev.kobj, &fan=
+->fps[j].dev_attr.attr);
+> -                       goto rem_fst_attr;
+> +                       goto rem_fine_grain_attr;
+>                 }
+>         }
+>
+>         return 0;
+>
+> -rem_fst_attr:
+> -       sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+> -
+>  rem_fine_grain_attr:
+>         sysfs_remove_file(&device->dev.kobj, &fan->fine_grain_control.att=
+r);
+>
+> +rem_fst_attr:
+> +       sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+> +
+>         return status;
+>  }
+>
+> @@ -129,9 +132,13 @@ void acpi_fan_delete_attributes(struct acpi_device *=
+device)
+>         struct acpi_fan *fan =3D acpi_driver_data(device);
+>         int i;
+>
+> +       sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+> +
+> +       if (!fan->acpi4)
+> +               return;
+> +
+>         for (i =3D 0; i < fan->fps_count; ++i)
+>                 sysfs_remove_file(&device->dev.kobj, &fan->fps[i].dev_att=
+r.attr);
+>
+> -       sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+>         sysfs_remove_file(&device->dev.kobj, &fan->fine_grain_control.att=
+r);
+>  }
+> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
+> index 10016f52f..8ad12ad3a 100644
+> --- a/drivers/acpi/fan_core.c
+> +++ b/drivers/acpi/fan_core.c
+> @@ -203,12 +203,16 @@ static const struct thermal_cooling_device_ops fan_=
+cooling_ops =3D {
+>   * ---------------------------------------------------------------------=
+-----
+>  */
+>
+> +static bool acpi_fan_has_fst(struct acpi_device *device)
+> +{
+> +       return acpi_has_method(device->handle, "_FST");
+> +}
+> +
+>  static bool acpi_fan_is_acpi4(struct acpi_device *device)
+>  {
+>         return acpi_has_method(device->handle, "_FIF") &&
+>                acpi_has_method(device->handle, "_FPS") &&
+> -              acpi_has_method(device->handle, "_FSL") &&
+> -              acpi_has_method(device->handle, "_FST");
+> +              acpi_has_method(device->handle, "_FSL");
+>  }
+>
+>  static int acpi_fan_get_fif(struct acpi_device *device)
+> @@ -327,7 +331,12 @@ static int acpi_fan_probe(struct platform_device *pd=
+ev)
+>         device->driver_data =3D fan;
+>         platform_set_drvdata(pdev, fan);
+>
+> -       if (acpi_fan_is_acpi4(device)) {
+> +       if (acpi_fan_has_fst(device)) {
+> +               fan->has_fst =3D true;
+> +               fan->acpi4 =3D acpi_fan_is_acpi4(device);
+> +       }
+> +
+> +       if (fan->acpi4) {
+>                 result =3D acpi_fan_get_fif(device);
+>                 if (result)
+>                         return result;
+> @@ -335,7 +344,9 @@ static int acpi_fan_probe(struct platform_device *pde=
+v)
+>                 result =3D acpi_fan_get_fps(device);
+>                 if (result)
+>                         return result;
+> +       }
+>
+> +       if (fan->has_fst) {
+>                 result =3D devm_acpi_fan_create_hwmon(device);
+>                 if (result)
+>                         return result;
+> @@ -343,9 +354,9 @@ static int acpi_fan_probe(struct platform_device *pde=
+v)
+>                 result =3D acpi_fan_create_attributes(device);
+>                 if (result)
+>                         return result;
+> +       }
+>
+> -               fan->acpi4 =3D true;
+> -       } else {
+> +       if (!fan->acpi4) {
+>                 result =3D acpi_device_update_power(device, NULL);
+>                 if (result) {
+>                         dev_err(&device->dev, "Failed to set initial powe=
+r state\n");
+> @@ -391,7 +402,7 @@ static int acpi_fan_probe(struct platform_device *pde=
+v)
+>  err_unregister:
+>         thermal_cooling_device_unregister(cdev);
+>  err_end:
+> -       if (fan->acpi4)
+> +       if (fan->has_fst)
+>                 acpi_fan_delete_attributes(device);
+>
+>         return result;
+> @@ -401,7 +412,7 @@ static void acpi_fan_remove(struct platform_device *p=
+dev)
+>  {
+>         struct acpi_fan *fan =3D platform_get_drvdata(pdev);
+>
+> -       if (fan->acpi4) {
+> +       if (fan->has_fst) {
+>                 struct acpi_device *device =3D ACPI_COMPANION(&pdev->dev)=
+;
+>
+>                 acpi_fan_delete_attributes(device);
+> diff --git a/drivers/acpi/fan_hwmon.c b/drivers/acpi/fan_hwmon.c
+> index bd0d31a39..e8d906051 100644
+> --- a/drivers/acpi/fan_hwmon.c
+> +++ b/drivers/acpi/fan_hwmon.c
+> @@ -43,6 +43,10 @@ static umode_t acpi_fan_hwmon_is_visible(const void *d=
+rvdata, enum hwmon_sensor_
+>                 case hwmon_fan_input:
+>                         return 0444;
+>                 case hwmon_fan_target:
+> +                       /* Only acpi4 fans support fan control. */
+> +                       if (!fan->acpi4)
+> +                               return 0;
+> +
+>                         /*
+>                          * When in fine grain control mode, not every fan=
+ control value
+>                          * has an associated fan performance state.
+> @@ -57,6 +61,10 @@ static umode_t acpi_fan_hwmon_is_visible(const void *d=
+rvdata, enum hwmon_sensor_
+>         case hwmon_power:
+>                 switch (attr) {
+>                 case hwmon_power_input:
+> +                       /* Only acpi4 fans support fan control. */
+> +                       if (!fan->acpi4)
+> +                               return 0;
+> +
+>                         /*
+>                          * When in fine grain control mode, not every fan=
+ control value
+>                          * has an associated fan performance state.
+> --
 
-The ultimate answer to the question is probably WWWD=2E
+Applied as 6.15 material, thanks!
 
