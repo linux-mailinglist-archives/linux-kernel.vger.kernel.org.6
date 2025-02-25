@@ -1,157 +1,139 @@
-Return-Path: <linux-kernel+bounces-531287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C726CA43E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:02:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98817A43E9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B21316AEEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD56D3A968F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29868267B73;
-	Tue, 25 Feb 2025 11:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2A4267B1A;
+	Tue, 25 Feb 2025 11:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KwSkPt55"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QdASPCFm"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70717268689
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779DD24EF9B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484594; cv=none; b=YSCQk7Iz1tK9znzprxuJErBIezuoJ8C54dcT7TLZQy4xTO4biNLadvpiysWbaNTWy+R9g3rpD2Ag1rPEsGx2klSde/sP05hBTRw4vIYzbsPNmy+yADOjvthl4V22LfHUV78xRRuzqH/Eyt81lU16/fG9rdUMgMGkH7y1AAidNxg=
+	t=1740484661; cv=none; b=NU1kE9y1ltLovV8G9ySJUP29DjObo5G11oqovuzEwlw9N8SM2n5mzjYPvL3gQ5t1f/nKbzwIlWbRyUtKyF/UUzXxTz0LXY3PNahHSksqYkgXJNngejaJ6tzKMETV1nfKWqKkV/wDF93QEoVbkdEZCOcrxwCE8AF5hNHjKneDeSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484594; c=relaxed/simple;
-	bh=Mti7N7TampMJEA85fEFqM/SWyPHekb4T8hMC5Q9KEIc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nr0rnkwwSF5M+YbeRNXKBw1OrVvenH1bySIMu/WTbHsGZbKxIbMYNp7pj48u+e0ypM8ahDBz26QWLJvdUsgf8F3GT7/YC6v+3++/U2CmXuWCvprag83+5eExPMPsMwSM90RQRjNL6tkxNeNMVZHsdeu7vpSI66U7e9N4tg3bZPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KwSkPt55; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-439a1e8ba83so52055605e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:56:32 -0800 (PST)
+	s=arc-20240116; t=1740484661; c=relaxed/simple;
+	bh=0ejaQvRgvD/39Cpjo9LWMBffWmj8mem5cTlbNfG0LaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6LybF/ME8waLGYQ5XMYogt46fDyuOASGq4ODzQ2LiXYXMqniHXTWArJzzOL/ywJDJh48rFttmLYTidFjjTEpSogeNjIzAvagsYaKQKfjrCsjoYACvusnPOn1ROsbTOeqG1o78szwKeyNfNmz6S4lyl5i0J/uH2gm5ujGws7hKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QdASPCFm; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5439a6179a7so6124474e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740484590; x=1741089390; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9VXUEb/ixDS8VUxbNTLQP4mnGoLEwCu+P5iIlLIClao=;
-        b=KwSkPt55zD8GpgiTHELk3OCn6SOVqmR0IowNtdRHohS1Uz4l8Vbr6V9s721KB+VJ7j
-         /J3xkEYWda7X0jRevxqYr3yb50HqF6EgpOa+SMQRdFNQDUWjLqAiOAlIhs3SNuEPQPQe
-         fx89DKthg+lpayiVwf6k8z1KcNOZc1j2Coh+OomI4Ya8Za+cnjD6nId88QSN7eU9jXLM
-         weACdEqBew5y3/+BB+tHJPsqI2CijFvhrzOqUn7gHF0ouNYIVmPfqm4BAsSS2ypx8WLX
-         R7hzaUfHv+Z5sj6f5dPTg0aQVXutORkfHlZkM9e9QStafrGykvuSZNgbTwD1GVZ5VtDc
-         z4/A==
+        d=linaro.org; s=google; t=1740484657; x=1741089457; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BJdxb9d2Qc7/mEkgivvxiQHCCJjZY2RUEpoG9MQvZUI=;
+        b=QdASPCFmvY0kmiBGFkfLYbccilBrK/x1p/YrUfUijy9lOZsV8J2PugjpT/T+E9UA3G
+         O2p2rQ+XGfu1eEIwuKTVLbGqsxgUErD6aTqUqKt+nw4P93gOKFrsRZWD/8LEgOkg0wL6
+         7cmpVuEMMHg4/7LBmMaBHXHuDuY+CBe5Y3zyY4KPv6/cXMVcXSmsa2EkjJZW8DgAcpcw
+         /0dfwpRz4yPAoVNw+3DmUf/DMiIzE9bOyHE7S1R3tAyk+N3L867M2hVEd4mARY5yNYjS
+         H28nFe10GNUrxCdGVI3rkPCFdLP+/z3G5POkfBBg+q+X0WP1ouj+IyNVxHuDUWvLtIM4
+         PhgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484590; x=1741089390;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9VXUEb/ixDS8VUxbNTLQP4mnGoLEwCu+P5iIlLIClao=;
-        b=eISQB5Mhub7D94iOzO32ix/620NCVu0rVL2gFig+dIK2mp21S7MaIZiPlBm/4csgfF
-         nsNfOvqc8E6BMLeGGsJpTBj2uZPnG9e766puszyo0rkBORp6sVFnA1Jkp7Yw0TKzvisL
-         pT4gFwvt1KJ3IY7NN8oC3JoRS4NbxK0YAfswUlzvgtz9jxDz6Hr8Z3EZvBhoNMajCEpy
-         cUnyXjS5FVipSq21q4FMiXrnBAUZeEkkOdr0vP4zAHalxB9reNEKYt6kbS62zVhkZ2bn
-         qPxLEqZ+Re9kk7lIa23hBG6RqNq2KjBqjzBlCXdlXL+/JuIMPDmMq/BlfIKl+pTEKahG
-         /1BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsmCFEBci5ZF8NG+fpzGNpuTEEkIUpi/h9E9B4LqcbWdrTLVii4CDeLnXgcb3/C7ov60XKZ3NLE5NRXj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBy39uo2ro50RMpeNYZFH9rccGfPRicyfI9kXPZFCBv2dnn7R2
-	vLP38jFEbNLt56JcUXPVrW4n32wgHlRfdeSAfyk6Ta9NgVilcdxNiGYH1TOZ8kg=
-X-Gm-Gg: ASbGncusjbD/wSSiGFn1atswZ/RNBl2vEEBT+aT6JeA0iqoINs0jWYJ8Dow9SRvX9BE
-	lrSdsbOSQd4fHOmWt32k9DUHokD9LktpoiUqsdgqWbiQeahTSLG5Iw3PWFmY+z9N4yyhxXLp3pS
-	Z/SHLvgzIJB5wEPKcYK7x3woPuQJvm9W2QXGNHq9jRwQnoBBGgCMlRrUNmBDRh6+pnvEf4Zy40I
-	Mf+/gjT9LJtCEuGWgNoeLp4EuMVMAsmGxztCqbVgNSl6LO8L38JHk258QWSZII+bWh23Zu3l53d
-	LEPnzAOntGt5kCJBaVc=
-X-Google-Smtp-Source: AGHT+IGhNAzd0cwvKJlCcUBz4fFnTGPxFvxtGsmUDBHWAvkZ/S5MMekNH4MM1kJfOrBEzZienQf0IA==
-X-Received: by 2002:a05:6000:186e:b0:38d:e572:4dc2 with SMTP id ffacd0b85a97d-38f70826839mr16768704f8f.40.1740484590445;
-        Tue, 25 Feb 2025 03:56:30 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:15ae:2cfe:447a:4a32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd883521sm2058054f8f.56.2025.02.25.03.56.29
+        d=1e100.net; s=20230601; t=1740484657; x=1741089457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJdxb9d2Qc7/mEkgivvxiQHCCJjZY2RUEpoG9MQvZUI=;
+        b=kas1hE6EWwiApLiM6xSQiSf+5MO73SdAIouXbsN3ismApUVzYIbRvxwPsNi8za3lU5
+         SUgPiHq95BptehVOKbSgsyLy+mEAMcyrFulDygaIUl7izvwNpepxSHTN+5k2cVmo8WXC
+         3vjayRWL0tZn/kPW9sLNI1/aKYI8HYAtI2OcVqxxrVjJVPi7UnPr63D0AQQL+n13HZQf
+         Zc1f3FDfemiScRc745OrJpgyLdYa8RBp1IQwemEVvXccwaHyEG0pmfltI5TPvP7szAjZ
+         PklhyaN4WLqsTh9dpWcRAqcsmjuEOguTCvhdtRxkzjQfoFGoE62hXNRArARnZ264W/xv
+         9NBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtBgEIKQmQV2fmJ3U2mmHmztJ6NVO2SSBkdzwHLkU2/hkeDkOOXXKPWz7lNuAjQrDAkwle7HekMmUyh2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz80A01NY/OqKYCb2e7oz4IRae3kHEpBL35T4UzwWTvZ+wwxrwe
+	elcdsf2resJ3Rc8onrUvlBYaGTcUwpIYe/mIDcdsCfisIQamvDap4iqUPIlNNek=
+X-Gm-Gg: ASbGnct2KDggIXn8waplrf7NHHXyRdlwmBYFpH1XXOwHdOuvr8sjygdmh0oT0tMhX10
+	7xzRs+v4R5GXJenRCOqziW6u8Km+PU8c2OfXMGzx0TmVdAmarIH2N7SpiBVYf8y494NlAwOv0lT
+	FHjBhfcFIwPiP2/RWDG/lDroCX4oJ4jibcYLtYsaOu/97NSZcW6HSYMMTd1uSCq5z3Aq4jsxW3P
+	gGJN5gOAPnnEgts0HegsdQMwIDq1LciTgl3yx2LqxBnWgY5fK/SXTmpeXwr8jhk0UuVjEluO893
+	M6cUrDFRqb2J2o+4snnFjQoHS1C/g0Y/nsoJ7YwpJ6AvQbgZGZvJQ31QqEwf//KfTqz9+8lISKk
+	/M7Rkiw==
+X-Google-Smtp-Source: AGHT+IFbqdYh8fwBrlR0bY7/Z36QCpnKteDFdIRRsnwu1FwaNfeJZqynpnHdLJr5tV947+xq6nGVtQ==
+X-Received: by 2002:a05:6512:280a:b0:545:8f7:8596 with SMTP id 2adb3069b0e04-54838cb6287mr5705354e87.17.1740484657548;
+        Tue, 25 Feb 2025 03:57:37 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548794c6a73sm95082e87.250.2025.02.25.03.57.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:56:29 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 25 Feb 2025 12:56:25 +0100
-Subject: [PATCH 3/3] gpiolib: don't double-check the gc->get callback's
- existence
+        Tue, 25 Feb 2025 03:57:36 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:57:34 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] drm/bridge: simple-bridge: Add support for MStar
+ TSUMU88ADT3-LF-1
+Message-ID: <lkfxsq3daspjxdw43dofch3nulprpmg4soxsgflsypu3kem4ok@utt6rfdtbg7j>
+References: <20250225083344.13195-1-clamor95@gmail.com>
+ <20250225083344.13195-4-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-retval-fixes-v1-3-078c4c98517a@linaro.org>
-References: <20250225-retval-fixes-v1-0-078c4c98517a@linaro.org>
-In-Reply-To: <20250225-retval-fixes-v1-0-078c4c98517a@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1494;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=6atFFEarXWb+TlxXxAZ8zvN/XwNKSrTyBdSfh9C2z2g=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnva/q/AmJ17Wymqe4xC7L2pemu0T0vkY2LjS/L
- 033mY+Bz6uJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ72v6gAKCRARpy6gFHHX
- cqegD/96DdPjR+YM/W3XOgAGfDVn4rpB1amn1VB167231QWyCHnDLZcC1GA0i3dBcu8oLunOygq
- ud1Yh7DH821xcPFiYkURVHaM/1UWGDkF91NgroW10LLpCzG9QtxczwyRqVn3Iyx82pvjcm6dt+z
- 5H/KlXAqJDpX5jvHh74if1UQ6z+z4Wk3jYq7CGCbSSWJhgheKUenVFxqnMdOFO4cbXZz8kZ8/tW
- 9gYBMKLIVhI1wLvVxxxwVRv4AEn4szanmnxSwaR5+oPpzDdOomLNwbmfvzsicjMAfUlmgM6h99E
- fRYX1DX/jZiORTaZS+zGepDSj0jpcRwzY5I1RmdoC7PUdrkon7XeBxgjuF5nqSCDN7A9EQN9KZY
- jYhJE8Obxj6o4WIS6IEm1YsD2bcQMpuJhV4XO/+rLHSRQwGVEgBg8E4NWCqCSD/xtgi4FfR+kpJ
- vkybu+DQLYbPPpA0cnl2btyb4s2b2x9SyA5wUdFz1Wubv0hi8ZtzW6kz3Q2VgYE3qwyct9tdZCA
- CYGGp6W9+y2BPJAnZ3o8PBGH9BAV5fH/1K0ScP98J8lbjvu+WbwbJg+e6U8dYBrwuCKMXuZU8AU
- sKnm1nHNyZv/O+p33x0glx437P59HBdzjAaZDcYyHSwX/8bqmUQHEsyNMy8VcpFmoDPiraXAXKN
- mH9qS4d1LgjjOwQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225083344.13195-4-clamor95@gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Feb 25, 2025 at 10:33:44AM +0200, Svyatoslav Ryhel wrote:
+> From: Maxim Schwalm <maxim.schwalm@gmail.com>
+> 
+> A simple HDMI bridge used in ASUS Transformer AiO P1801-T.
+> 
+> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Reviewed-by: Robert Foss <rfoss@kernel.org>
+> ---
+>  drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+> index ab0b0e36e97a..c0f1f7baaa37 100644
+> --- a/drivers/gpu/drm/bridge/simple-bridge.c
+> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
+> @@ -277,6 +277,11 @@ static const struct of_device_id simple_bridge_match[] = {
+>  			.timings = &ti_ths8134_bridge_timings,
+>  			.connector_type = DRM_MODE_CONNECTOR_VGA,
+>  		},
+> +	}, {
+> +		.compatible = "mstar,tsumu88adt3-lf-1",
+> +		.data = &(const struct simple_bridge_info) {
+> +			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
+> +		},
 
-gpiochip_get() is called only in two places: in gpio_chip_get_value()
-and in gpiochip_get_multiple() where the existence of the gc->get()
-callback is already checked. It makes sense to unduplicate the check by
-moving it one level up the stack.
+This entry should also come between adi,adv7123 and ti,opa362.
 
-Fixes: 86ef402d805d ("gpiolib: sanitize the return value of gpio_chip::get()")
-Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Closes: https://lore.kernel.org/all/Z7yekJ8uRh8dphKn@black.fi.intel.com/
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d076b2ec633f..b8f10192f27e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3158,9 +3158,7 @@ static int gpiochip_get(struct gpio_chip *gc, unsigned int offset)
- 
- 	lockdep_assert_held(&gc->gpiodev->srcu);
- 
--	if (!gc->get)
--		return -EIO;
--
-+	/* Make sure this is called after checking for gc->get(). */
- 	ret = gc->get(gc, offset);
- 	if (ret > 1)
- 		ret = -EBADE;
-@@ -3170,7 +3168,7 @@ static int gpiochip_get(struct gpio_chip *gc, unsigned int offset)
- 
- static int gpio_chip_get_value(struct gpio_chip *gc, const struct gpio_desc *desc)
- {
--	return gpiochip_get(gc, gpio_chip_hwgpio(desc));
-+	return gc->get ? gpiochip_get(gc, gpio_chip_hwgpio(desc)) : -EIO;
- }
- 
- /* I/O calls are only valid after configuration completed; the relevant
+>  	},
+>  	{},
+>  };
+> -- 
+> 2.43.0
+> 
 
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
