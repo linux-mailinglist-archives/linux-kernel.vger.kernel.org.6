@@ -1,103 +1,188 @@
-Return-Path: <linux-kernel+bounces-531450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EF4A440A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:25:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AD7A4408C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428DE166386
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E3616F015
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B215A2690DB;
-	Tue, 25 Feb 2025 13:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5C226980C;
+	Tue, 25 Feb 2025 13:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="vceDglkQ"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Me/tWsXB"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A1B2690CE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF120B213;
+	Tue, 25 Feb 2025 13:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489640; cv=none; b=gaaJff2S3W4x0V4tHlrVLzBEEe4HQMTDnevAGRmzSydbghZ35R2Buta79FDTq+jWO4LFDCrYeb4dty0/qj2qTk5+6bF9ISF9IN8hsjD5XGUd6HyaIK2Qa0WUnLnSJw1IXklbUIBOUkavM1u+B9Fh6O0CEj0F6cVz1G/VcQLTT5w=
+	t=1740489378; cv=none; b=D2OMI++Cu/RH+OYlr8SWx5TfuecyttCBvGRNqlHGagTuypSSqIg2EgcNTvOFZLurNs4QV8FARkhI5/npX2GYXKb6UHUbkdsltNvaBKy1k2ZE7/jUcyLPhliLRNKhhrGwqLagHkjgRw1oeWZRh1bZrGu5V75+bgtk2Qqy+q5x4zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489640; c=relaxed/simple;
-	bh=u3yEwLudzQn5Appg1EKIWuwC8eP34YxzNljiK7UUCCg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9Jvvy0pUCUr2CQdw99SSbx18N/ZDhrC4CX2OMwmLYSVyhNDN5PQKXpLphdvAaSoYrVlhg4j9k6nRqEqMxZQX1DjO4t38WEVzdcX0gDo2WGE99IHEqrQPpCvfkBV856DFIuAdQEy+5N+KlmVxnw7kpTBbTl5x4L+WEDcst3nqfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=vceDglkQ; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1740489327;
-	bh=+oQG0kubNNcrUEyDC0x1SXjD6cJ/muvA92NEGb9rnSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=vceDglkQgrwvb/l71lq6tNX5AivBJf7PHhg0WpslKeAkEbD9s5SMJ1dMxhJv9STtT
-	 JH3+MhM+JbM6Ac94WjVUXw+095nUErB/9pNzdjAnoA9cjCHVvehOerfBzajg4OZCRf
-	 ECRhw9bpjaw7TM3BftwSlFsD74WSvwhnzIkNc14A=
-Received: from chenyu5-mobl2 ([118.114.56.201])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 3D80A29F; Tue, 25 Feb 2025 21:15:24 +0800
-X-QQ-mid: xmsmtpt1740489324ty7p96lgy
-Message-ID: <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J2E6enTI6knP98gdgIednHXvZvEccsRAn9oe1QGR85OzNNIkaslU
-	 Q+h5S9Q1+2jjv1ibfUEDZ8WjHmIsJuCdBSokzipwjIAldc3a8CrJTh6bhbQCGqg8ZIzGWQE46gy2
-	 6kr5DGGTUMwBtLiHN++HGGETiGq/ScptKEOPD0v3ewPGqNV/fcXbUw8q1lNN+oQ7g1c2hVshM910
-	 ciRiT7BsPcTBREqtrGnRRXmFO6ghcxSZI8pvbR0tiKm5WvhPtmFCRbL798g4eMP4xkZE/CeTp+GX
-	 MAfEXVCBdZ15TtEr2/Lr1nQcfDvXdZPLxHWRo6yAzMXZsLy6P6Pm1YcSOZeJeHF5KI1oq9MdaVFE
-	 Ab0Ayfx4eUwN3YgSuUB2IR1Js10SPUmKFZGg+yuDXUq44VS/BQkJLN7KeugpQdwK/1WoFjwy410P
-	 VCzckYVh1FYCQ54DqqkEm/Ht6mjba/PIFuDYYwk2rJRNBVvoj9xzeHELV8UCmvyhokdOsTeKXyRJ
-	 rwsK6JnlEdWSNjcpovR2tIUOHT0pYzvBUS8sOA87WYR/BKTOZNqB1nEuQ4J5Zj8/hyQJTP0FyWhg
-	 C/yeTC92fyzKuwSIiJtNJFDHTqSc+ojmsUYKApwwLlPecGg0wkLSPQ02BPlcBPJ4o1iIdpF0nnJu
-	 QV6WICJ1ChGZYJZpavGvm3yEEOYdxDoxF9qKl2HJEO8j18W0z69EOnFTKV9nLjtC/go3hLGad2t+
-	 1pe/HbNuE7qs3vjXz3EyJ3jEhtYZQu9LCPvY/qBFWuC3ZOtli0StsOzHaKX7ofDXX0hh9GSZT2er
-	 8V/Wp3v1E44dO0Pfb14rWQYWfcZHaCgnKVX+Ief4tBOVE5Cs7QQuombY+EPmx/iJzKooqC19v0cg
-	 /+wTonDgeIUgMDTrb/RqTKJlh0WJXkikKstYBmkqOaApQjzR0rXNisFPa2gRi8LsW6h/6QiMY8Nr
-	 bZPfmQjgNXppMuDnjMoF+5toFXjbEOqcuaB53IaM/IcRd1NKfhxA==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-Date: Tue, 25 Feb 2025 21:15:56 +0800
-From: Chen Yu <yu.chen.surf@foxmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: zihan zhou <15645113830zzh@gmail.com>, oe-lkp@lists.linux.dev,
-	kernel test robot <oliver.sang@intel.com>, lkp@intel.com,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	aubrey.li@linux.intel.com, yu.c.chen@intel.com
-Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
- regression
-X-OQ-MSGID: <Z73CjBppcf/zhrOW@chenyu5-mobl2>
-References: <202502251026.bb927780-lkp@intel.com>
- <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
- <20250225122705.GD34233@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1740489378; c=relaxed/simple;
+	bh=xebKsClSpiGJgFYUEhLrX3k3fPwdXQfBamfK8FLRr8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R01WcO19zV9pUwHC1MdG029y/fHGCxN3kI+om55klK8dzLBKaikz59KASwEJKICtX/K2QI6K7dTSj/Lh0MiY7T+2izTBsr1zVYh4pF8+PU//+cBRfYN/XKeP/rkVM5S2XAKtWPQNzPK6I6GuA4qCeRccjmiMtQfsXQIdLSku9rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Me/tWsXB; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5461cb12e39so5390785e87.2;
+        Tue, 25 Feb 2025 05:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740489375; x=1741094175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0yhzYhqcZ0u+9Qey41WN8C1X1Cv3m1W92EYrnC/bc1E=;
+        b=Me/tWsXBJ9t3xUGjK4KJ+LrD8fZQihLUBfwxI65xUh0xQZOIWECtJpfwkWgvpxuCJL
+         7tOJ9l39Ax+iqSPj8VT1UJZ7vLYurdwd29vcKzMTR9CepdVE7TGLgAMw8vsoLmln0tAJ
+         x+HKr2bCUAKyTgpb82NyHc5q9WYwB+hO6GYf2BwFZS3KmEc7N9sNhlQcjfmjH6JRJuid
+         ETco3K2DqYMgVeB6dekGxQlvpPtjOo5tBcyWgCVtZPPsdG2us0WGsap09/fKTic6/nw+
+         gMCYupFDVu5I9UrzNa++AooLRvULUf8+nc5E9FLQLYXsrkDyglDHd9kEhUIsytKMAQdh
+         ILHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740489375; x=1741094175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0yhzYhqcZ0u+9Qey41WN8C1X1Cv3m1W92EYrnC/bc1E=;
+        b=m9mlcX/KfBek9Zi8Ai8PCU6mRQ5bNXhWRhGeBXJEMLohfMRQIIy791tIHvfKbcm3g2
+         /bLs/FPIQaXM1DfIkK8/b2NMJUsqKBNEll/8dxN9t54keAYlOa1J7JH2vJd180/Gylpn
+         bbEYRdzDRSnabUYGyha3w5r3XW4ExRpUsk9iBTwlyjNtT8Z9mL52fjXW8upp/zMCPe7H
+         WCLHP5E8qPI/kSPg8qkZJRyZfPvy8s53pg/k4O70DXAd+L5WbWUgBFRe2MbsmRS49Vjx
+         5337UHoRRsxamX998qAFkSfjN9tApZyXbE5OSWiP1cfpRw/WaV5n8JoL1iqfXToiKFVC
+         Oyjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZwGKy0LyLDWqGPmvWs6EhnKFtDlpjwjwrduPRBjWwkx91hDcfyyTa3Co74qMCbqHR7i0ARvoPbGcTtQ6@vger.kernel.org, AJvYcCV+73yKjGuLf6ROo5NlD6Hb0kwgyQcQilurW+4ybubha4ZVAEHJdBUuRD7h6qRMnPhLRKaj/7jP9vsC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYu0eS8rsE98/t4P+/iDYcprcFox15ypG89/w/amRwbW40L9ve
+	P3rrg+omOPHZF2xFpXBQn2LKvGgk3LGqhk7aSDrQMtWdPm8aGtIlteCX78I/vGdRkncTBXtOtDp
+	45jpTTC1FDqddyg9EbKcEw36okg==
+X-Gm-Gg: ASbGncs9NtlWKPjbcTakxcd5ks78KVz/kFdkkARIWUhsb5/TwSs5Oi9cpLBokMcUVP4
+	6ExAQfWzqk+D0iC06iSiBfAFup6Aq/2XMfO3VpAOVJJHB62Nlvm6bIGtGpc55fZOnmjb1NGrKcF
+	KQlzbTJUQ=
+X-Google-Smtp-Source: AGHT+IHZD37TRQdeOLKhUhrNZM5rGVP80rGFnhiNLLy62hwtki8xxWAer67VvhIKFDb2Fj6lIFpjYt/ZBIDtcPG2Dw8=
+X-Received: by 2002:a05:6512:6ce:b0:545:441:52d2 with SMTP id
+ 2adb3069b0e04-54838ef4c73mr7761428e87.23.1740489374516; Tue, 25 Feb 2025
+ 05:16:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225122705.GD34233@noisy.programming.kicks-ass.net>
+References: <CAMciSVVV9tHH1M2bOnwqCJCQ8OjNFGjuQB7R-fY7JHHD5tQHoA@mail.gmail.com>
+ <20250224195423.GA473540@bhelgaas>
+In-Reply-To: <20250224195423.GA473540@bhelgaas>
+From: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Date: Tue, 25 Feb 2025 18:46:02 +0530
+X-Gm-Features: AQ5f1Jpa03K69kEgEFPOkIOv7GmmUMgdCFEj1cGoDijTqSNxJvZtameW7_EW_ok
+Message-ID: <CAMciSVX3X=DxLU0tfj4rG5WPaS5BCUDcMp2MYWBitT0ecEH+ig@mail.gmail.com>
+Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-02-25 at 13:27:05 +0100, Peter Zijlstra wrote:
-> On Tue, Feb 25, 2025 at 05:31:34PM +0800, Chen Yu wrote:
-> 
-> > 
-> > But consider that the 6% regression is not that high, and the user might customize
-> > base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
-> > future(we have encountered some SPECjbb regression due to over-preemption).
-> 
-> You can specify a per-task slice using sched_attr::sched_runtime. Also
-> see commit 857b158dc5e8 ("sched/eevdf: Use sched_attr::sched_runtime to
-> set request/slice suggestion")
-> 
+On Tue, Feb 25, 2025 at 1:24=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org> =
+wrote:
 >
+> On Tue, Feb 25, 2025 at 12:29:00AM +0530, Naveen Kumar P wrote:
+> > On Mon, Feb 24, 2025 at 11:03=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.=
+org> wrote:
+> > > On Mon, Feb 24, 2025 at 05:45:35PM +0530, Naveen Kumar P wrote:
+> > > > On Wed, Feb 19, 2025 at 10:36=E2=80=AFPM Bjorn Helgaas <helgaas@ker=
+nel.org> wrote:
+> > > > > On Wed, Feb 19, 2025 at 05:52:47PM +0530, Naveen Kumar P wrote:
+> > > > > > Hi all,
+> > > > > >
+> > > > > > I am writing to seek assistance with an issue we are experienci=
+ng with
+> > > > > > a PCIe device (PLDA Device 5555) connected through PCI Express =
+Root
+> > > > > > Port 1 to the host bridge.
+> > > > > >
+> > > > > > We have observed that after booting the system, the Base Addres=
+s
+> > > > > > Register (BAR0) memory of this device gets reset to 0x0 after
+> > > > > > approximately one hour or more (the timing is inconsistent). Th=
+is was
+> > > > > > verified using the lspci output and the setpci -s 01:00.0
+> > > > > > BASE_ADDRESS_0 command.
+>
+> > ...
+> > I booted with the pcie_aspm=3Doff kernel parameter, which means that
+> > PCIe Active State Power Management (ASPM) is disabled. Given this
+> > context, should I consider removing this setting to see if it affects
+> > the occurrence of the Bus Check notifications and the BAR0 reset
+> > issue?
+>
+> Doesn't seem likely to be related.  Once configured, ASPM operates
+> without any software intervention.  But note that "pcie_aspm=3Doff"
+> means the kernel doesn't touch ASPM configuration at all, and any
+> configuration done by firmware remains in effect.
+>
+> You can tell whether ASPM has been enabled by firmware with "sudo
+> lspci -vv" before the problem occurs.
+>
+> > > > During the ACPI_NOTIFY_BUS_CHECK event, the lspci output initially
+> > > > showed all FF's, and then the next run of the same command showed
+> > > > BASE_ADDRESS_0 reset to zero:
+> > > > $ sudo lspci -xxx -s 01:00.0 | grep "10:"
+> > > > 10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > >
+> > > Looks like the device isn't responding at all here.  Could happen if
+> > > the device is reset or powered down.
+> >
+> > From the kernel driver or user space tools, is it possible to
+> > determine whether the device has been reset or powered down?  Are
+> > there any power management settings or configurations that could be
+> > causing the device to reset or power down unexpectedly?
+>
+> Not really.  By "powered down", I meant D3cold, where the main power
+> is removed.  Config space is readable in all other power states.
+>
+> > > What is this device?  What driver is bound to it?  I don't see
+> > > anything in dmesg that identifies a driver.
+> >
+> > The PCIe device in question is a Xilinx FPGA endpoint, which is
+> > flashed with RTL code to expose several host interfaces to the system
+> > via the PCIe link.
+> >
+> > We have an out-of-tree driver for this device, but to eliminate the
+> > driver's role in this issue, I renamed the driver to prevent it from
+> > loading automatically after rebooting the machine. Despite not using
+> > the driver, the issue still occurred.
+>
+> Oh, right, I forgot that you mentioned this before.
+>
+> > > You're seeing the problem on v5.4 (Nov 2019), which is much newer tha=
+n
+> > > v4.4 (Jan 2016).  But v5.4 is still really too old to spend a lot of
+> > > time on unless the problem still happens on a current kernel.
+>
+> This part is important.  We don't want to spend a lot of time
+> debugging an issue that may have already been fixed upstream.
+Sure, I started building the 6.13 kernel and will post more
+information if I notice the issue on the 6.13 kernel.
 
-Thanks, we'll have a try during the next test cycle.
+Regarding the CommClk- (Common Clock Configuration) bit, it indicates
+whether the common clock configuration is enabled or disabled. When it
+is set to CommClk-, it means that the common clock configuration is
+disabled.
 
-thanks,
-Chenyu
+LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- CommClk-
+        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
 
+For my device, I noticed that the common clock configuration is
+disabled. Could this be causing the BAR reset issue?
+
+How is the CommClk bit determined(to set or clear)? and is it okay to
+enable this bit after booting the kernel?
+
+>
+> Bjorn
 
