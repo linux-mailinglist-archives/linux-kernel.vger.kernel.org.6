@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-530619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA753A435D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6FBA435DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70AE179943
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:57:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F78A1797F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FBC2580D7;
-	Tue, 25 Feb 2025 06:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3F92586ED;
+	Tue, 25 Feb 2025 06:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LEugYbsC"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0NaIEjx"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F79126C10
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2224F126C10;
+	Tue, 25 Feb 2025 06:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466620; cv=none; b=YRTxC6WjeOkC6g4qMQNzqIhkQBkOE9FETiuP8TjYxq75681sYy83f/nMgfPpNaHt75k3XI3wgV8NI+PrixW1B0l14SuNvVPkLL55J492Lc9W63eIU4KuIsNmb9w2atOjnTuSdg0RN7ry+oIenLzIq7PA7OGZpTg5FEwDbBgsM38=
+	t=1740466712; cv=none; b=qNO5/7wXaNHmrPOaTY7c8QjVsztrRAQpt4jMSav9n0hXSKloxiD9xqTM1/7mrk5KK0HMy8qJKz0BVvn1UxM6//YRRIRfnTiV1c9yGGYFe9LbQ8//5yvbR4ioAGaC+jyC22CzM5xxw1By83ZxwBRMIYlEdC0fqm9MXCR9qW6jqmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466620; c=relaxed/simple;
-	bh=e3+aNYTnbKWJivg+q+Hi3DtLQsrRb9Bk6wUzOAsG45k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPnIIHVBMLXbvqZq5gdOUbjXNj3LoUvbsa6QNKte8NJ8CHr7zGg84KwzwfyBK0s/lsySHgxqSK44PcKSwqTp1LQLio/sskrXzHfWwCyUcuQatH3ehXlUBfpniUozBKE/nHnxpEA52br4xZ3aW4Z7zF7s6nfVKo9nG9cXVIl6HPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LEugYbsC; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740466614; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=T6xkjDjtY7QYfVEzscO1gyxYmDDVuGprPC6v4IGloFQ=;
-	b=LEugYbsCrtVyzRn+C6sFG2K3TxyoIlpDw1T+a94fj9BDPoulJ4/1LtFTj5fbYi1NH31HvTbTViTT1ork+d0nN3+mzwsGnc5Fh7FLdZBLIQZs6sqb7dzKnPF+tGkSG3cvZXy7/UIcrPNwsVHpSEC007/6M3UfXDkYtNKzU8S+jCs=
-Received: from 30.74.130.67(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WQDcYiu_1740466603 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 14:56:53 +0800
-Message-ID: <61589e0e-a3d7-490c-8bba-a1ce25f585c3@linux.alibaba.com>
-Date: Tue, 25 Feb 2025 14:56:52 +0800
+	s=arc-20240116; t=1740466712; c=relaxed/simple;
+	bh=7n1NEXEZX1x+SAMkNZ1zmOKpOrcQM8yKNkEbs+8t+sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjrnYywbhbZ+QWE/J1ujHOStnPuf/spA81pvjoYrGE4E4WBSBFziCI4EoPghF6FiwpDIIDJ0RHkOXbTraMu9+KNJGn5lGQxfG8XdZmErO/uNbVRHjvrNXLOxT6VfAOfF2kA058tPgaz1GSwJQ9F9nlAuD+3KuZZ1M49GUVqOCTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0NaIEjx; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2210d92292eso5123145ad.1;
+        Mon, 24 Feb 2025 22:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740466710; x=1741071510; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJ4IIBqtZ+7dg9GjIFDDWBbqrCmJeC0sJly4M0s0wws=;
+        b=i0NaIEjxUyQUzlcJ+LaAj0U11j6wuBaYYl2fLfPNwb7rHgsfSu0iFQ/vifpxxaG26O
+         tOCVKDRxWl6DEniYE/9Ab8tisNh2yeWnK+hINyRClcMh5E61irHNJZOVj8HHLbG09j6g
+         FFzIYHz2BuCj69txGXlCFvVlx5zgJQWD41c6t9LO69TEYYb5eiGeiO2nKFqZmF12Hg4q
+         7uIfISWdnKcOA6yKf3/urcHYyiFEt+u0OBGaH/22zMm9xxvBdINcLTE5O7Xj8J1VDtq+
+         YI0ZyEWk29dx4Sn87E1Xg0OHBqFSomU8XJXQjEu0GbRo0U+gmPcB8nvvElbxcMG+Zh4B
+         kLjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740466710; x=1741071510;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZJ4IIBqtZ+7dg9GjIFDDWBbqrCmJeC0sJly4M0s0wws=;
+        b=MVtn4gI9vKNh9Rkcmhz+lQVhsGaF8dvwcX9Q6DA1AgniIjQlEMB9IbP8CjmluXimg/
+         b4m95dClCLEgxADNpLR4BAENhmJ5oUpsZUvRx5b7zWgKz3g8rmMPs8uQVUP59Eqhw9A0
+         KPtXdVp5LjZ/m6Cpt/8VFQNsvkpaR1rf2zlvSA4HDZKl5Cb2/C8xtd/gJUvPB22IYOcM
+         IhBIDPsOheZ2L7xOfoBf5NRfaG3CSoxn1gA9qZvCyP+5xX7Vl4GUw/zEjdrtlTh3ebDj
+         8xl1Edk9TaYk+zoWdQLBhWnIUuC042KMx4HSGQOg1L7iwqrJojQnHBcXS9U7MrOYzS9N
+         VY7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTfEvDJ+Q86lWXnfPU/AlyLbuZb2iHbW4UOa41dZyEuMIbVodP053u5/eOKfAAVb8tpOhlkgWAAkSh60Js@vger.kernel.org, AJvYcCUhVwB0ZGrGMeQstVieXzsuLZt/fpBuLM+WhY8EfVzpMvJhHfMtgZuP1KOba172seoRz99rnhOzeAVD/ZQ=@vger.kernel.org, AJvYcCVW9VYfYX1uCNqmGB/1JcQkueRSYtVARf44RWyna94jELxNfvpCnis4BQlBTBIlcllTxT+r5WP14sSu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoL45SJ0sahidzXbfpifUhV4+3pX++Vci3nkblufhtZpIGrQEy
+	xLGAvgKspYjcjLbyHCuBZjup6XwTjWJIL3/BOcWmYImQkg3wcdi9QBG91w==
+X-Gm-Gg: ASbGncso/SBNVLRJfhaCRPkKW4AUdAY6Uzd68KKLUMLgv0xRwtx9421gZ90Vkh1Ontl
+	HlqCCX/lHPBfHlHXr1Ve4t4uvLlxGQXeKzZE9f3s6SdDK2r/RBW8O4G4c+hJYGCLjlFsByBdXk6
+	ybOweZBbOjYvqY2MNuJ+bC1g3nTRt8fGlymZZC/vHy7m5REaeqoU1U2hZgUg0+7JOBBn40QlCSl
+	R84WpFiALg12DcIWCYu8vqoPcR1ZvSeVfnfBeo5QqMM4GbV3bSiwB/QraqJsxOd8hA287fmq6Dy
+	i5Tcn/2zTMQqB/dvZHo4qOpZ+2g=
+X-Google-Smtp-Source: AGHT+IFxMEkF4ozJ9A9pUzGjVLBrdC+gVqGS4GB5H2EERgj00pbgpPTyNSLvVsjQ8jlzx7M3xIDcTQ==
+X-Received: by 2002:a05:6a00:982:b0:731:737c:3224 with SMTP id d2e1a72fcca58-73426cab055mr25848353b3a.10.1740466710284;
+        Mon, 24 Feb 2025 22:58:30 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f8fc3sm786057b3a.50.2025.02.24.22.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 22:58:29 -0800 (PST)
+Date: Mon, 24 Feb 2025 22:58:27 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Manuel Traut <manuel.traut@mt.com>
+Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] Input: matrix_keypad - detect change during scan
+Message-ID: <Z71qEyDVz22j_CvL@google.com>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-8-markus.burri@mt.com>
+ <Z7YNKl4ljWFQEa-u@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 2/2] sched/fair: Fix premature check of WAKEUP_PREEMPTION
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Josh Don <joshdon@google.com>,
- "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
- Abel Wu <wuyun.abel@bytedance.com>
-References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
- <20250221111226.64455-3-wuyun.abel@bytedance.com>
- <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
- <6097164a-aa99-4869-b666-9dc7018c1f96@bytedance.com>
- <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
- <9d9d7432-9a5d-4216-ac53-a0f333a35d8f@bytedance.com>
- <d1237acd-9e3c-4ab9-8628-31d98fcf7638@linux.ibm.com>
- <83f8b833-af79-4d77-a179-5065aec994dc@bytedance.com>
- <CAKfTPtBL4aPbEDOa8jJ+h2wQ9CLU80=0mQdrc07vfqBVswzAsg@mail.gmail.com>
-Content-Language: en-US
-From: Tianchen Ding <dtcccc@linux.alibaba.com>
-In-Reply-To: <CAKfTPtBL4aPbEDOa8jJ+h2wQ9CLU80=0mQdrc07vfqBVswzAsg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7YNKl4ljWFQEa-u@mt.com>
 
-
-
-On 2/24/25 9:47 PM, Vincent Guittot wrote:
-[...]
+On Wed, Feb 19, 2025 at 05:56:10PM +0100, Manuel Traut wrote:
+> On Fri, Jan 10, 2025 at 06:49:06AM +0100, Markus Burri wrote:
+> > For a setup where the matrix keypad is connected over a slow interface
+> > (e.g. a gpio-expansion over i2c), the scan can take a longer time to read.
+> > 
+> > Interrupts need to be disabled during scan. And therefore changes in this
+> > period are not detected.
+> > To improve this situation, scan the matrix again if the row state changed
+> > during interrupts disabled.
+> > The rescan is repeated until no change is detected anymore.
 > 
-> Or we should just remove it. I'm curious to know who used it during
-> the last couple of years ? Having in mind that lazy preemption adds
-> another level as check_preempt_wakeup_fair()  uses it so sched-idle
-> tasks might not always be immediately preempted anyway.
+> This is a quirk for a bad hardware design. For 'good' hardware it adds
+> an additional read_row_state for no need. For even slower connected
+> GPIOs this will also not help much. However it is obvious that it will
+> be an improvement for some designs. 
 > 
+> Dmitry, would it make sense to make this configurable?
 
-I just remembered that I've mentioned this issue in another thread[1] 
-before. Can we do preempt SCHED_IDLE immediately even in PREEMPT_LAZY? (to 
-achieve better response time for SCHED_NORMAL)
+What if we do not disable interrupts after the first one, but record
+the last interrupt time and rescan if it arrived after work handler
+started executing?
 
-[1] 
-https://lore.kernel.org/all/8e6f02a0-2bd0-4e75-9055-2cb7c508ce4e@linux.alibaba.com/
+Thanks.
+
+-- 
+Dmitry
 
