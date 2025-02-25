@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-530623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0760A435E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E650A435E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB96D177B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:01:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A72B1798ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2AF257447;
-	Tue, 25 Feb 2025 07:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFCC25A2A4;
+	Tue, 25 Feb 2025 07:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4BapXeX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="esTIaEsc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A840D19F495
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDAA19F495;
+	Tue, 25 Feb 2025 07:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466906; cv=none; b=iRCJPu2TBM9RYnvuPz5tI7RtFukhIyI22IEbFo4/e7jYj//b+CzJyR0iYLnmNT8gA5NUwfp9TKHaWutXwP6tgYdK0pleJObb5PkIdcSlt8osMpWv8bhtZ9c6IOnQAibDcqDNJRji/myt5ydVz/7PVetXRWuterR2sNCT3u42q3I=
+	t=1740466928; cv=none; b=PDy3RtbKM4N+QDA/sS2/MAen2+E8aZHdb5zZ0cDhAguJsVdFW0XJgWAQeQGCNnD70+cFLp93tB4ZSMy/vN3VPTK0XLI9jANH5bkxLWAesJ0fg8eUJ6KJYYUV/LjjnUFpMOaFeLltj73pDlz6hOrLhBxJey08sGOyUKydagd17zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466906; c=relaxed/simple;
-	bh=DKqBKC4FjxhMkoEJUSZOc+8sSEa1bIVOfaEeP2C4xaI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WA1kNuXiEemBfedMyw0E0R/UkcI0n5xgQ1gew/JyVTKhdU+TnQ0tgH+wC1d4Hm7uSPlYimKp4RBBaz1NADVaRIzMPPbZ2T8VQHGtqeUAkgNk+MA2GRDoAgikgc/D30rQw1zLkmSlrbhFsxsU186FAXewuqUwWBnHSlXyxEgqdp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4BapXeX; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740466928; c=relaxed/simple;
+	bh=YDHo7zYDPufYkhp0Cg7rVy8EeU6sr95Qg3slPgjgbZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sT2X33uS/g80g116hMWiFIXwOLNAKu0+24rLuzdCzonlJS/Q9rlh6pd/tyxBUz/gwFuAuaxHY4fCEYoNKFg6lpfGYkMrHxp1dor4MWepzdCej8SaAiqGHtNTtNRRBnRgiiTxzPzxi4eWX2B5/w58957xQnZ3TXgTb0t2eqybRuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=esTIaEsc; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740466905; x=1772002905;
-  h=message-id:date:mime-version:cc:subject:to:references:
+  t=1740466926; x=1772002926;
+  h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=DKqBKC4FjxhMkoEJUSZOc+8sSEa1bIVOfaEeP2C4xaI=;
-  b=g4BapXeXUH+EzfaZZCRhUs2UOV6jaAPYXywROcPLWpxWBK5+fB4Err/W
-   hkeQJqEwgA596mEDvqpRX6huHV/uBwuHxbAemKGATqk8OWanvJg7rwntG
-   Vo5rRPe6rwduDke0779w4W62p21FE6LHyiQW91yDJYmWqcW8508CMA1b0
-   pQd4hDKEAGUBwm64riCpyCcWaOjgeY1YCy76MUyIBcGKlXOlCNLm+8/B1
-   XYtWuLu3+jWI+MiXaK6c2P+0Ta2ooVJislLmyShTY0xBxaQBgklcS8Apx
-   9e7rBO3J/Y3e+i5mNDzd2k0XC2L0p3jX/mMtJ0DfIl00YmTvlcI7M+hN2
-   Q==;
-X-CSE-ConnectionGUID: YoPy1KMFQSCatkQQmMV2yQ==
-X-CSE-MsgGUID: fb+GUSbZSKSQQFXfsDtXxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41140231"
+  bh=YDHo7zYDPufYkhp0Cg7rVy8EeU6sr95Qg3slPgjgbZs=;
+  b=esTIaEsct5yImYUcwdNv8MKeRJ+N4VPSiUVB7wPlt1o1afpj5YCkgF8m
+   GdrGEgNxKcbB/WO2Ul1EVUCoaaIf0HOR7iuQz26UTv4tV8Gf2kWyoUHKG
+   MsFmIQI6p2kQHYoxxzLO8BTl25i8kqMjpMEhNScaGAJpkii7iQ8TTQuW+
+   2QdYLe1NiaVPujwHBwG5UW881xI/zTY4/qnCItwaAn03xweETFLVwwTLq
+   Uv9Zk+PZ5wNR6H914GdUjAXhorhIpu1Ok2ilb6/dmcIWHuJ5Kl6cu0IU/
+   CfTKmMSNp/8FLhVLT0LsqzlTLO3UrD65zYnmcU7PgYuuLGXzrug3vJE7V
+   g==;
+X-CSE-ConnectionGUID: TcMzh/7DSwO8SB3/1HHHPQ==
+X-CSE-MsgGUID: VqjsPH1vQQannjYRPkJTMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58800459"
 X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="41140231"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:01:44 -0800
-X-CSE-ConnectionGUID: i5AIK804TnaA9XaVAdnWig==
-X-CSE-MsgGUID: ZDfrC+/MSS2pJk35HQJI3w==
+   d="scan'208";a="58800459"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:02:05 -0800
+X-CSE-ConnectionGUID: PLmv9oSlQgGcx5tVsMaXbQ==
+X-CSE-MsgGUID: aLVqLw5LSxyiBlo+nJhKuA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="121242705"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.105]) ([10.124.240.105])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:01:41 -0800
-Message-ID: <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
-Date: Tue, 25 Feb 2025 15:01:38 +0800
+   d="scan'208";a="116073207"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:02:01 -0800
+Message-ID: <e2c4fa9f-a2af-494b-b4b0-71f11365e36c@intel.com>
+Date: Tue, 25 Feb 2025 15:01:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,96 +66,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Ethan Zhao <haifeng.zhao@linux.intel.com>
-Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
-To: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+Subject: Re: [PATCH V2 09/12] KVM: TDX: restore user ret MSRs
+To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ binbin.wu@linux.intel.com, dmatlack@google.com, isaku.yamahata@intel.com,
+ nik.borisov@suse.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20250129095902.16391-1-adrian.hunter@intel.com>
+ <20250129095902.16391-10-adrian.hunter@intel.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250129095902.16391-10-adrian.hunter@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2025/2/25 14:48, Yunhui Cui wrote:
-> We found that executing the command ./a.out &;reboot -f (where a.out is a
-> program that only executes a while(1) infinite loop) can probabilistically
-> cause the system to hang in the intel_iommu_shutdown() function, rendering
-> it unresponsive. Through analysis, we identified that the factors
-> contributing to this issue are as follows:
+On 1/29/2025 5:58 PM, Adrian Hunter wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
 > 
-> 1. The reboot -f command does not prompt the kernel to notify the
-> application layer to perform cleanup actions, allowing the application to
-> continue running.
+> Several user ret MSRs are clobbered on TD exit.  Restore those values on
+> TD exit and before returning to ring 3.
 > 
-> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
-> BSP (Bootstrap Processor) CPU is operational in the system.
-> 
-> 3. During the execution of intel_iommu_shutdown(), the function down_write
-> (&dmar_global_lock) causes the process to sleep and be scheduled out.
-> 
-> 4. At this point, though the processor's interrupt flag is not cleared,
->   allowing interrupts to be accepted. However, only legacy devices and NMI
-> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
-> routing have already been disabled. If no legacy or NMI interrupts occur
-> at this stage, the scheduler will not be able to run.
-> 
-> 5. If the application got scheduled at this time is executing a while(1)-
-> type loop, it will be unable to be preempted, leading to an infinite loop
-> and causing the system to become unresponsive.
-> 
-> To resolve this issue, the intel_iommu_shutdown() function should not
-> execute down_write(), which can potentially cause the process to be
-> scheduled out. Furthermore, since only the BSP is running during the later
-> stages of the reboot, there is no need for protection against parallel
-> access to the DMAR (DMA Remapping) unit. Therefore, the following lines
-> could be removed:
-
-Good summary! Thank you!
-
-> 
-> down_write(&dmar_global_lock);
-> up_write(&dmar_global_lock);
-> 
-> After testing, the issue has been resolved.
-> 
-> Fixes: 6c3a44ed3c55 ("iommu/vt-d: Turn off translations at shutdown")
-> Co-developed-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
-> Signed-off-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> Co-developed-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+> Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 > ---
->   drivers/iommu/intel/iommu.c | 4 ----
->   1 file changed, 4 deletions(-)
+> TD vcpu enter/exit v2:
+>   - No changes
 > 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index cc46098f875b..6d9f2e56ce88 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -2871,16 +2871,12 @@ void intel_iommu_shutdown(void)
->   	if (no_iommu || dmar_disabled)
->   		return;
->   
-> -	down_write(&dmar_global_lock);
-> -
->   	/* Disable PMRs explicitly here. */
->   	for_each_iommu(iommu, drhd)
-
-Removing the locking for for_each_iommu() will trigger a suspicious RCU
-usage splat. You need to replace this helper with a raw
-list_for_each_entry() with some comments around it to explain why it is
-safe.
-
->   		iommu_disable_protect_mem_regions(iommu);
->   
->   	/* Make sure the IOMMUs are switched off */
->   	intel_disable_iommus();
-> -
-> -	up_write(&dmar_global_lock);
+> TD vcpu enter/exit v1:
+>   - Rename tdx_user_return_update_cache() ->
+>       tdx_user_return_msr_update_cache() (extrapolated from Binbin)
+>   - Adjust to rename in previous patches (Binbin)
+>   - Simplify comment (Tony)
+>   - Move code change in tdx_hardware_setup() to __tdx_bringup().
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 44 +++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 43 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index e4355553569a..a0f5cdfd290b 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -729,6 +729,28 @@ int tdx_vcpu_pre_run(struct kvm_vcpu *vcpu)
+>   	return 1;
 >   }
 >   
->   static struct intel_iommu *dev_to_intel_iommu(struct device *dev)
+> +struct tdx_uret_msr {
+> +	u32 msr;
+> +	unsigned int slot;
+> +	u64 defval;
+> +};
+> +
+> +static struct tdx_uret_msr tdx_uret_msrs[] = {
+> +	{.msr = MSR_SYSCALL_MASK, .defval = 0x20200 },
+> +	{.msr = MSR_STAR,},
+> +	{.msr = MSR_LSTAR,},
+> +	{.msr = MSR_TSC_AUX,},
+> +};
+> +
+> +static void tdx_user_return_msr_update_cache(void)
+> +{
+> +	int i;
 
-Thanks,
-baolu
+I think it can be optimized to skip update cache if it the caches are 
+updated already. No need to update the cache after every TD exit.
+
+> +	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++)
+> +		kvm_user_return_msr_update_cache(tdx_uret_msrs[i].slot,
+> +						 tdx_uret_msrs[i].defval);
+> +}
+> +
+>   static bool tdx_guest_state_is_invalid(struct kvm_vcpu *vcpu)
+>   {
+>   	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+> @@ -784,6 +806,8 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
+>   
+>   	tdx_vcpu_enter_exit(vcpu);
+>   
+> +	tdx_user_return_msr_update_cache();
+> +
+>   	kvm_load_host_xsave_state(vcpu);
+>   
+>   	vcpu->arch.regs_avail &= ~TDX_REGS_UNSUPPORTED_SET;
+> @@ -2245,7 +2269,25 @@ static bool __init kvm_can_support_tdx(void)
+>   static int __init __tdx_bringup(void)
+>   {
+>   	const struct tdx_sys_info_td_conf *td_conf;
+> -	int r;
+> +	int r, i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++) {
+> +		/*
+> +		 * Check if MSRs (tdx_uret_msrs) can be saved/restored
+> +		 * before returning to user space.
+> +		 *
+> +		 * this_cpu_ptr(user_return_msrs)->registered isn't checked
+> +		 * because the registration is done at vcpu runtime by
+> +		 * tdx_user_return_msr_update_cache().
+> +		 */
+> +		tdx_uret_msrs[i].slot = kvm_find_user_return_msr(tdx_uret_msrs[i].msr);
+> +		if (tdx_uret_msrs[i].slot == -1) {
+> +			/* If any MSR isn't supported, it is a KVM bug */
+> +			pr_err("MSR %x isn't included by kvm_find_user_return_msr\n",
+> +				tdx_uret_msrs[i].msr);
+> +			return -EIO;
+> +		}
+> +	}
+>   
+>   	/*
+>   	 * Enabling TDX requires enabling hardware virtualization first,
+
 
