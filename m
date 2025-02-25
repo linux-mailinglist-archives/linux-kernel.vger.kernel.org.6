@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-532562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34F9A44F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:55:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438FFA44F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B5B7AA4FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:54:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C747A7ABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EF4212B09;
-	Tue, 25 Feb 2025 21:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A36212B0E;
+	Tue, 25 Feb 2025 21:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hfal9T5n"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVJ1aWd+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EF5198A32;
-	Tue, 25 Feb 2025 21:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03DC198A32;
+	Tue, 25 Feb 2025 21:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520507; cv=none; b=TgahALl+NR6UTmWcpQ/owNTX0qLbcysIkCRShBvVdUpbespv+eM64q42SHNA1rCnDW9OSMG+W76+6+EufRV73wxk0LlV4RIi1Dsn8VbBOzDEE85MbMNjDKeZp4XDySDn6Doi/ZdnAp5CsoZfIEV/Wt3ggAGRENdUqckguWlRjso=
+	t=1740520560; cv=none; b=u7Xgy10eLo7saNvKqBKtsCGCCyTpBxLGgmv0OBaA2FFxdjPiigo14b6bH3fJizNZP8XAseY06k/fZVLXzcyJjz0+CjydIHnSrqSPJ/WHWP4No+jRSbptilOvVF3CBTpVrujIsCxRYU0UztN45H2uZPG2XaSDkaPLIug9C1Nf7d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520507; c=relaxed/simple;
-	bh=KOaUpuobEYJa6FPJI2WuExOdYmMlPWWncrQ/Jha0ucE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EinIHlvaJC13/EOVDYoiFf1ZMMe5GofuBeUSQvAoL4wagQbbsqRjcfBnLZqChCKctxyHzyY88X12fLywWcUg0FF8pSMnck7w2V/opqBPli7RuQHJz6w12Pq8GP7eD55gsHoVMZzR7TvcPZUQNp0Y3TwNxGAMbAHUJmyQzE1kNRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hfal9T5n; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740520500;
-	bh=fA2zsdMbwAeLI5ZvHBc6b5RYSJ2cOjYBLDyph7IPDWg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hfal9T5nxHSpS8X9tO5ZiAmNoUUuFGQ8AAMSS2F7IeA9DBMPFRCO/0uietMMVC/sG
-	 0kN3NJPX9gKk5MArO1/1e7c8BX8rBqemRu1BzzTOlAhCn81bsziZENz1cp0/jL00RO
-	 yHD3wUcEaKe+VfFBJiWThw5qdd111i0ax4FFdrRI7WikwJPL8rxIeJJxGEPYi5Zszt
-	 AYOqaJA8TQQSbB0+32LtVCm447tW8D+Onw1QsSBK2QW370z6TEaXn5q5BIz4Rj4llz
-	 xLdC+cdkK7p9ioZOffYsu8JjexRc8fIH8gKPSW9hpTnqq6tkPZvmN7nSnHffcJizyp
-	 eqEBGxNo5SUfA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z2Wc30dVSz4x04;
-	Wed, 26 Feb 2025 08:54:59 +1100 (AEDT)
-Date: Wed, 26 Feb 2025 08:54:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Garry <john.g.garry@oracle.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bart Van
- Assche <bvanassche@acm.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the tip tree
-Message-ID: <20250226085435.50a140ab@canb.auug.org.au>
-In-Reply-To: <87h64hg6r7.ffs@tglx>
-References: <20250225153200.00773d86@canb.auug.org.au>
-	<a902ea86-132a-4b64-8710-575a798f1a18@oracle.com>
-	<87h64hg6r7.ffs@tglx>
+	s=arc-20240116; t=1740520560; c=relaxed/simple;
+	bh=DINa8jIv0eOK7RVTVe5/lWlYEoUGUUZx8qWN8FG+jw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FzTPeVhEcY02ht37I6ZnChftkka9iW/XFWXHS8rxR9XoFWZR4GVx3ok+h6VtMQbKOceRd2RSA/gmK6K/Zb3LTgN4wG1iXKWGdDEzPzVf5U5YMBT/ZBqoLbdG/Ym4NkeZ/+oAerQqdKq8ZkTpzcxoAV0jRhi22yZcoz9Ps0X+vyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVJ1aWd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D62BDC4CEDD;
+	Tue, 25 Feb 2025 21:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740520560;
+	bh=DINa8jIv0eOK7RVTVe5/lWlYEoUGUUZx8qWN8FG+jw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HVJ1aWd+l0yDawmuh8u6agP/lCjrGmMbGNls7icWLdUjaM83gOBaR5shaFNOTb0vk
+	 1iWxhmgIpm+nQJzVwnsAURJUYGBCSZJ+BSKlUC0geR8XtWTjy3CoaPMw9mR0ejAJor
+	 3BdDqRqX1FqRGVOVmPUAMIxa+IszZey/Qt5Hch340kypQzCHZIky/1vAhS7MYfxA6c
+	 gjk8NgRYuGjCwBfcNU22hcx3IjYAtlOGN1bnEec+2rCB3jczJP0+1C1MLfJR5ypFTx
+	 gRCNVqnVNTVqoyq5XnNC3QV3DuEFBQxS1V3OnSvODPffWP6PKzHix7PMQQR1MMY6XJ
+	 Pdb5m8KDUTglw==
+Date: Tue, 25 Feb 2025 22:55:49 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jinyu Tang <tjytimi@163.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+	Will Deacon <will@kernel.org>, Anup Patel <apatel@ventanamicro.com>,
+	Julien Thierry <julien.thierry.kdev@gmail.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] x86: avoid one cpu limit for kvm
+Message-ID: <Z748ZaNc9IclOUPi@gmail.com>
+References: <20241224130952.112584-1-tjytimi@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241224130952.112584-1-tjytimi@163.com>
 
---Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Jinyu Tang <tjytimi@163.com> wrote:
 
-On Tue, 25 Feb 2025 20:32:28 +0100 Thomas Gleixner <tglx@linutronix.de> wro=
-te:
->
-> On Tue, Feb 25 2025 at 09:38, John Garry wrote:
-> >
-> > static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct=20
-> > scsi_cmnd *cmd)
-> > {
-> > 	struct sdebug_scsi_cmd *sdsc =3D scsi_cmd_priv(cmd);
-> > 	struct sdebug_defer *sd_dp =3D &sdsc->sd_dp;
-> >
-> > 	spin_lock_init(&sdsc->lock);
-> > 	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
-> > 		      HRTIMER_MODE_REL_PINNED);
-> > 	sd_dp->hrt.function =3D sdebug_q_cmd_hrt_complete; ***
-> > 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
-> >
-> >
-> > I guess that setting sd_dp->hrt.function explicitly, at *** above, is=20
-> > not needed (as hrtimer_setup()) does this. =20
->=20
-> Correct. hrtimer_setup is enough.
+> I run kernel by kvmtool but only one cpu can start in guset now, 
+> because kvm use virt-ioapic and kvmtool set noapic cmdline for 
+> x86 to disable ioapic route in kernel, and the latest cpu topo 
+> code below makes cpu limitted just to one.
+> 
+> For x86 kvm, noapic cmdline is reasonable, virt-ioapic don't
+> need to init hardware ioapic, so change it for x86 kvm guest to
+> avoid one num limit.
+> 
+> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> ---
+>  arch/x86/kernel/cpu/topology.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
+> index 621a151ccf7d..a73847b1a841 100644
+> --- a/arch/x86/kernel/cpu/topology.c
+> +++ b/arch/x86/kernel/cpu/topology.c
+> @@ -429,7 +429,9 @@ void __init topology_apply_cmdline_limits_early(void)
+>  	unsigned int possible = nr_cpu_ids;
+>  
+>  	/* 'maxcpus=0' 'nosmp' 'nolapic' 'disableapic' 'noapic' */
+> -	if (!setup_max_cpus || ioapic_is_disabled || apic_is_disabled)
+> +	if (!setup_max_cpus ||
+> +		(ioapic_is_disabled && (x86_hyper_type != X86_HYPER_KVM)) ||
+> +		apic_is_disabled)
+>  		possible = 1;
+>  
+>  	/* 'possible_cpus=N' */
+> @@ -443,8 +445,10 @@ void __init topology_apply_cmdline_limits_early(void)
+>  
+>  static __init bool restrict_to_up(void)
+>  {
+> -	if (!smp_found_config || ioapic_is_disabled)
+> +	if (!smp_found_config ||
+> +		(ioapic_is_disabled && (x86_hyper_type != X86_HYPER_KVM)))
+>  		return true;
+> +
+>  	/*
+>  	 * XEN PV is special as it does not advertise the local APIC
+>  	 * properly, but provides a fake topology for it so that the
 
-Thanks, I have updated my merge resolution.
+Just to confirm that this bug got fixed, current kvmtool boots fine 
+with multiple CPUs, correct?
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
 
---Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme+PBwACgkQAVBC80lX
-0GxDEQf+OIs7m12CrjF4Vp27eyc5zzcnhB3TpqslahusUaCwJyQX9ewMzpdOpCa0
-vg8H0i+4gs3HrJVOUKh41zpUr3SiqAOmfEbAlAPY/SRopulNzbhq2+25qfTmXmwf
-Lg2495AkLwmz45V5Edh5yAHWyGHERIayh06rO9VA7XFqMERrWfufcolQPlIQKAVV
-+ubycHFztIlEx96fjcN04nTR9T45o+MlDa8SXeLGf5/L1GBWcpKFncxffECfoXms
-GkOO+BPyxrmpQYoxr+xlXQgdiOMa3iPfA1/wSrSECKYDrJQEM0wbSUhaFmLkNrwY
-ZOgY5jSRUmlhnleEk/Ex6I3K5ApdQA==
-=v6/I
------END PGP SIGNATURE-----
-
---Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz--
+	Ingo
 
