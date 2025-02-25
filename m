@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-531428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45664A4406E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:17:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3699A44065
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDFD3ACD5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A160119E1A61
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A4D2690D7;
-	Tue, 25 Feb 2025 13:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R+P5YuYy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F897268FFE;
+	Tue, 25 Feb 2025 13:12:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D24268FE0;
-	Tue, 25 Feb 2025 13:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B06268C40
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489140; cv=none; b=mqpAjUqzY+yYvOiyYyKhR43iF+UN4lLNkbzJxZlyN1R6goFi5614HLHIoTl2ar8EV6i4G8SSZadhnyTuZQFyHqfluLc+RVfbFTSSS/UKW25T0q/mqT1pnorSDQJg9cRQ6VbMEusKrJhN3/TplFAAR0KsQ658m2Z5/zMSjpqqXTs=
+	t=1740489133; cv=none; b=n07+Y0FdZ98fy/dS3dFsamRBP9kKH8S5dscGw+QC6TqEhq7YBZxRo6vPxmM2AO6bb7ZcpPuImsfWXRxt5g6FNREOW8NAvuhG8lePe31y5dBJeGjjlOYNtG3qTOj6V7JdWIQpEW9g1BCfj7uCjTyiFiLAh5g7MKobWvkBO8hwQMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489140; c=relaxed/simple;
-	bh=IvLxYoqof+h1zVJG/BNtTm2YaSAll3uDPKebnBkZeA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjsWvDrm3cDUxD3OL3Whg5u2OJFN/Dnr5IKWDKnCDHPoFnBPBFOnjlSjibFWgL1Iysn5UZdQViZC0wpe3KQV1snrIAI8bqtuqCQePxvHopit8wSgt7dg+GX7G36eBuF5d0TDuMlVoE2ruED7CFwPuO9D43f8PrBv9o8KNW/mai8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R+P5YuYy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BE0BB40E01AE;
-	Tue, 25 Feb 2025 13:12:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id c4bYqnj3_9Ty; Tue, 25 Feb 2025 13:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740489130; bh=aiTNWBEfHf+ez36sasAzHhMIQIMyctxZwHgo6gKB6Mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R+P5YuYy+OZ/H0lPGjVJHQxWsJs04IfzWC+ISVcf3ZN9KSB6OvDodmMfex4Yy1x2u
-	 r6faDzQZKIU3Iu2tTqVpaQKKGaCuhok+p1Hq5YRGt+YdutTwG6HmBcIxb4x9F7dlgB
-	 2gfbgmisBe1wtaiLS/qvowXP3wNnvPzbtKJZZnN0HQo8vvowQM5/3SpS9Q87y9orve
-	 ikFk8PaPmjBKIY2iMAPyW/YxM8zC74sDdsp1xuRx+SkN3SSHXJuuzq8RRWs43ktXGp
-	 AxC8j6B1EwTkKEYIvViQ2NXIwNmZbGfyLRAoQjluKomqXv6HYdEQ1WUmyZ8pHkghUo
-	 gI2YB7UQvqgt4xMUl4us6aAF1YdzoiFWYglTeswsdEhJWjJq46AXgdDTjQPd53da/k
-	 5zNH9Ram6tMTb93FdSAzpUGYI3q1dnrqwuQG9iXweUhJxXrs9Ngq9LIc4VzqeCDoYx
-	 +Ul8FNkMblB3xcPK90Mw+t5RsurnHqla6Lhyj+GT+qPZzbzrrBfhjpTE6fm7RKTPFX
-	 Tqz2Qs/caOiTNY06+7z1lgSiJgJ7K0OoxZRHuYwBWtmHydBVMRcLKGX+no07gVrMra
-	 1CWrloNwXOKyBh0dNoPy1v/AG98jabIY0XDVrDpVLx68C3Bly9mqRmHn/i79z8DXOU
-	 qfOiIi/2qI0blmaahfLhHqrU=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E989240E0177;
-	Tue, 25 Feb 2025 13:12:04 +0000 (UTC)
+	s=arc-20240116; t=1740489133; c=relaxed/simple;
+	bh=+OuOvkEeuzB7LAlg9x4s/xUKhlq/4QtpAbBFb8doADA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oHzc/zal+PRwskImQFRa/XvoUiYh41HFVkmi8WotGHFVqz8LUSZQCy5XT+syLb+MpGM59ZfBa9hYkXCWhHhmIEshmGS5YWPpm5AUcp8h68jgU8HxOePUBbdY7MA2auUXmtCFJLeieX4S3jPCCEx+z8jZNZbeas6pJBslxQuW93o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tmujE-0005WL-BO; Tue, 25 Feb 2025 14:12:04 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tmujD-002mM0-2S;
+	Tue, 25 Feb 2025 14:12:03 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tmujD-0008y2-29;
+	Tue, 25 Feb 2025 14:12:03 +0100
+Message-ID: <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
+Subject: Re: [PATCH v3 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org,
+ krzk+dt@kernel.org,  shawnguo@kernel.org, mathieu.poirier@linaro.org
+Cc: conor+dt@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+ festevam@gmail.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,  imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,  linux-remoteproc@vger.kernel.org,
+ andersson@kernel.org, Frank.Li@nxp.com,  peng.fan@nxp.com,
+ laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
 Date: Tue, 25 Feb 2025 14:12:03 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, tony.luck@intel.com
-Subject: Re: [PATCH v2 3/3] x86/mce: Make mce_notify_irq() depend on
- CONFIG_X86_MCELOG_LEGACY
-Message-ID: <20250225131203.GLZ73Bo6OgcD302H5e@fat_crate.local>
-References: <20250210154707.114219-1-nik.borisov@suse.com>
- <20250210154707.114219-4-nik.borisov@suse.com>
+In-Reply-To: <20250225102005.408773-3-daniel.baluta@nxp.com>
+References: <20250225102005.408773-1-daniel.baluta@nxp.com>
+	 <20250225102005.408773-3-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210154707.114219-4-nik.borisov@suse.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2025 at 05:47:06PM +0200, Nikolay Borisov wrote:
-> mce_notify_irq() really depends on the legacy mcelog being enabled as
-> otherwise mce_work_trigger() will never schedule the trigger work as
-> mce_helper can't be set unless CONFIG_X86_MCELOG_LEGACY is defined.
-> 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+On Di, 2025-02-25 at 12:19 +0200, Daniel Baluta wrote:
+> Assert and deassert functionality of the DSP found on i.MX8MP is
+> realized by combining control bits from two modules: Audio Block
+> Control and Debug Access Port.
+>=20
+> Audio block control bits are used to for Run/Stall the DSP core
+> while the DAP bits are used for software reset the core.
+>=20
+> The original plan was to use fsl,dsp-ctrl property and to refer the
+> audiomix bits via syscon interface. This proposal received NACK from
+> community we shouldn't abuse the syscon interface [1].
+>=20
+> So remove fsl,dsp-ctrl property for i.MX8MP and use reset control
+> interface instead.
+>=20
+> [1] https://patchwork.kernel.org/project/imx/patch/20250212085222.107102-=
+6-daniel.baluta@nxp.com/
+>=20
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  arch/x86/kernel/cpu/mce/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index d55b1903fde6..8b8553e144ce 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -591,11 +591,13 @@ EXPORT_SYMBOL_GPL(mce_is_correctable);
->   */
->  static int mce_notify_irq(void)
->  {
-> +#ifdef CONFIG_X86_MCELOG_LEGACY
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml         | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documen=
+tation/devicetree/bindings/dsp/fsl,dsp.yaml
+> index ab93ffd3d2e5..b3550c9d12e7 100644
+> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> @@ -82,6 +82,9 @@ properties:
+>      description:
+>        Phandle to syscon block which provide access for processor enablem=
+ent
+> =20
+> +  resets:
+> +    maxItems: 1
 
-You can't do that - I see mce_notify_irq() in mce_timer_fn().
+The DAP core reset is mentioned in the commit message. Why is it
+missing here? After reading the discussion in [1], I'd expect both the
+stall and the (core) reset signal to be documented, something like:
 
--- 
-Regards/Gruss,
-    Boris.
+  resets:
+    maxItems: 2
 
-https://people.kernel.org/tglx/notes-about-netiquette
+  reset-names:
+    items:
+      - const: core
+      - const: stall
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -164,6 +167,16 @@ allOf:
+>              - const: txdb1
+>              - const: rxdb0
+>              - const: rxdb1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8mp-dsp
+> +              - fsl,imx8mp-hifi4
+> +    then:
+> +      required:
+> +        - resets
+> =20
+>  additionalProperties: false
+> =20
+> @@ -186,6 +199,7 @@ examples:
+>      };
+>    - |
+>      #include <dt-bindings/clock/imx8mp-clock.h>
+> +    #include <dt-bindings/reset/imx8mp-reset-audiomix.h>
+>      dsp_reserved: dsp@92400000 {
+>        reg =3D <0x92400000 0x1000000>;
+>        no-map;
+> @@ -220,5 +234,5 @@ examples:
+>                 <&mu2 3 0>;
+>        memory-region =3D <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+>                        <&dsp_vdev0vring1>, <&dsp_reserved>;
+> -      fsl,dsp-ctrl =3D <&audio_blk_ctrl>;
+
+Is there nothing else in this range that will have to be controlled by
+the DSP driver in the future, such as the IMPWIRE register or the
+XOCDMODE[OCDHALTONRESET] bit?
+
+regards
+Philipp
 
