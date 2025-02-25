@@ -1,132 +1,280 @@
-Return-Path: <linux-kernel+bounces-532578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41E5A44F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:02:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33ECA44F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6581895025
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5546C3B467A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D532A19B5B4;
-	Tue, 25 Feb 2025 22:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC642212FA9;
+	Tue, 25 Feb 2025 22:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2IMn18Ot";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UmJdPG9N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZ/hTKOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D23213E8A;
-	Tue, 25 Feb 2025 22:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D278020E31E;
+	Tue, 25 Feb 2025 22:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520894; cv=none; b=hduVuuxumOaHmLLcxEIPSrr0RTflDw+C2cSM2ZEv3LqjFjcsooNH8K4C4iMqUYSgOLu2/cydLZnrs5Nz7mPpRIaZG+oR6GGJxwI+hcB1McnAUP2xZgdoh8/AKjwnmVyxNAfPQLITrA36tWcB2Ik7N8dbeZE+/9+y7vRtiYOs13s=
+	t=1740520930; cv=none; b=IH7pjaCraReqyAsH4YD7QQOsN1iRzO9ckP2x8YQsj3w6bzo6qSgJLxx1hAVgFxg3g65gGNpbiI6bbL9gGdWvEI0Sb4ymFZL2f51Gpmq+sMhpv40bmKfxY0DzIxCYq3mOS/PN/4JbAFsq9+WA/mK5LRWQCahIUq864Yo+FCIFW8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520894; c=relaxed/simple;
-	bh=mUFqFrUmE2xpp5y+ciiaJp9Tms2xhtUitgQIxUYuEBk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aaFIWvienTvCl8sg0FdPmg9vF9wpnxqrbBfCrDdZ7SJ+BvpWXBmjX+uXbQRE7Vb2soxxURwEusZDBVhkXELNaqxJ5y8blBYdwmOO+E5X5jO9H9Jl7iQ9DZGKcs0P/wif9POWWaJHbPJz2kkBpyykAoEQdVMfY2O7+iE9DlxMwDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2IMn18Ot; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UmJdPG9N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Feb 2025 22:01:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740520891;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hL5efWH5krulfWdyCEDRfFI594ElHaIBqMGzpMJyORQ=;
-	b=2IMn18Otn1/8/9ALKYOUVd3hh1hfdo4ERfrQbeKIabg8oeIp3/DLNjVi39s7Xn8QvSATB6
-	tKav3GSdxz5XSZzVt+MSs2/Ors3u1VSd1vgnU4crMQ/DWNHA+jP5jkspQm8HA9IWHW5aWq
-	AyUzLMQsUZq2q5J95bbfJIh5bLheF7iB9qfLU+g0T3TFRIeyQOkY3W7JUbCxeE71xbuI9D
-	7OnSGrFOVhGJg/LpYwrJCRGVca/J7ocK6eXCqODzva3rVnnLSH4qPwpzQw5KYli6oQKVs2
-	ABhH6FW8LWnvI+uaXSmONVvJE+8GTDef4rL2pu5Elt5CP3PWTUtsa4HiepbOkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740520891;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hL5efWH5krulfWdyCEDRfFI594ElHaIBqMGzpMJyORQ=;
-	b=UmJdPG9NNvk/ABeYzp157soLWgoxw2/9R7ZVRCk3r7ZR8axIaZISHYUAxVXw0sAciM20pr
-	IzwQaIFsRpF53SDA==
-From: "tip-bot2 for Aaron Ma" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/x86/rapl: Add support for Intel Arrow Lake U
-Cc: Aaron Ma <aaron.ma@canonical.com>, Ingo Molnar <mingo@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241224145516.349028-1-aaron.ma@canonical.com>
-References: <20241224145516.349028-1-aaron.ma@canonical.com>
+	s=arc-20240116; t=1740520930; c=relaxed/simple;
+	bh=eNWdkHC2n1MuEFu0t27z5mGkFhYDZuXcacDZi0gjopk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7OV8vUzP1A3k/sxSsWdaKlC+XMoarDjXVmKN3R4qxM++P4WmpNS0PDPnBXWj5gManTw5UJfk7EkpMVtTQ6d4w+pCCXg2WFYlvJ2BwFH6ppbuAN0R4DV2FiSUNSBaaUoWZ8gtKcQ6I0H0CedQvoflWPfUOZ1J+KInw+kM36DwM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZ/hTKOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660C0C4CEDD;
+	Tue, 25 Feb 2025 22:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740520930;
+	bh=eNWdkHC2n1MuEFu0t27z5mGkFhYDZuXcacDZi0gjopk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cZ/hTKOeYSq0wy69PK5r26cD5SnHdlZ2OvgzPcTRe+OyH969PMVPbEMUW06ONjBsN
+	 DOIGZUAebolvPtZzevORdRkmxMgffsPffJ5/dNT8uN78G2VdouOWrshxlSsKYNhbs+
+	 +j68wJxsJdNtY29wHxgPI1nyhue1MZ4ZmMKTxzqUeV5taJmp9lWe2/059gPUw4GLbj
+	 ACTSjDNZSjTRCpmwhEclu8FRTBA/hAJysSWUbJrlR94ojXcNyuPHcXQWx4lhRI5DFn
+	 oCiuPN1Z+DWHbO4wlNuXY9zqF3wZgLL2uR+GxI5z8h6hRm2PLwZixgCaqkE6ST4PuU
+	 51CCZRafHtTTQ==
+Date: Tue, 25 Feb 2025 23:02:04 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z7493C8_IvvYDbm8@pollux>
+References: <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
+ <Z7xg8uArPlr2gQBU@pollux>
+ <Z7xh5bEyh_MII4WV@pollux>
+ <20250224184502.GA1599486@joelnvbox>
+ <Z70EcwNIX0KtWy36@cassiopeiae>
+ <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174052089028.10177.2125405174996624736.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225210228.GA1801922@joelnvbox>
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Tue, Feb 25, 2025 at 04:02:28PM -0500, Joel Fernandes wrote:
+> On Tue, Feb 25, 2025 at 05:09:35PM +0100, Danilo Krummrich wrote:
+> > On Tue, Feb 25, 2025 at 10:52:41AM -0500, Joel Fernandes wrote:
+> > > 
+> > > 
+> > > On 2/24/2025 6:44 PM, Danilo Krummrich wrote:
+> > > > On Mon, Feb 24, 2025 at 01:45:02PM -0500, Joel Fernandes wrote:
+> > > >> Hi Danilo,
+> > > >>
+> > > >> On Mon, Feb 24, 2025 at 01:11:17PM +0100, Danilo Krummrich wrote:
+> > > >>> On Mon, Feb 24, 2025 at 01:07:19PM +0100, Danilo Krummrich wrote:
+> > > >>>> CC: Gary
+> > > >>>>
+> > > >>>> On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
+> > > >>>>> This inability to sleep while we are accessing registers seems very
+> > > >>>>> constraining to me, if not dangerous. It is pretty common to have
+> > > >>>>> functions intermingle hardware accesses with other operations that might
+> > > >>>>> sleep, and this constraint means that in such cases the caller would
+> > > >>>>> need to perform guard lifetime management manually:
+> > > >>>>>
+> > > >>>>>   let bar_guard = bar.try_access()?;
+> > > >>>>>   /* do something non-sleeping with bar_guard */
+> > > >>>>>   drop(bar_guard);
+> > > >>>>>
+> > > >>>>>   /* do something that might sleep */
+> > > >>>>>
+> > > >>>>>   let bar_guard = bar.try_access()?;
+> > > >>>>>   /* do something non-sleeping with bar_guard */
+> > > >>>>>   drop(bar_guard);
+> > > >>>>>
+> > > >>>>>   ...
+> > > >>>>>
+> > > >>>>> Failure to drop the guard potentially introduces a race condition, which
+> > > >>>>> will receive no compile-time warning and potentialy not even a runtime
+> > > >>>>> one unless lockdep is enabled. This problem does not exist with the
+> > > >>>>> equivalent C code AFAICT
+> > > >>>
+> > > >>> Without klint [1] it is exactly the same as in C, where I have to remember to
+> > > >>> not call into something that might sleep from atomic context.
+> > > >>>
+> > > >>
+> > > >> Sure, but in C, a sequence of MMIO accesses don't need to be constrained to
+> > > >> not sleeping?
+> > > > 
+> > > > It's not that MMIO needs to be constrained to not sleeping in Rust either. It's
+> > > > just that the synchronization mechanism (RCU) used for the Revocable type
+> > > > implies that.
+> > > > 
+> > > > In C we have something that is pretty similar with drm_dev_enter() /
+> > > > drm_dev_exit() even though it is using SRCU instead and is specialized to DRM.
+> > > > 
+> > > > In DRM this is used to prevent accesses to device resources after the device has
+> > > > been unplugged.
+> > > 
+> > > Thanks a lot for the response. Might it make more sense to use SRCU then? The
+> > > use of RCU seems overly restrictive due to the no-sleep-while-guard-held thing.
+> > 
+> > Allowing to hold on to the guard for too long is a bit contradictive to the goal
+> > of detecting hotunplug I guess.
+> > 
+> > Besides that I don't really see why we can't just re-acquire it after we sleep?
+> > Rust provides good options to implement it ergonimcally I think.
+> > 
+> > > 
+> > > Another colleague told me RDMA also uses SRCU for a similar purpose as well.
+> > 
+> > See the reasoning against SRCU from Sima [1], what's the reasoning of RDMA?
+> > 
+> > [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
+> 
+> Hmm, so you're saying SRCU sections blocking indefinitely is a concern as per
+> that thread. But I think SRCU GPs should not be stalled in normal operation.
+> If it is, that is a bug anyway. Stalling SRCU grace periods is not really a
+> good thing anyway, you could run out of memory (even though stalling RCU is
+> even more dangerous).
 
-Commit-ID:     68a9b0e313302451468c0b0eda53c383fa51a8f4
-Gitweb:        https://git.kernel.org/tip/68a9b0e313302451468c0b0eda53c383fa51a8f4
-Author:        Aaron Ma <aaron.ma@canonical.com>
-AuthorDate:    Tue, 24 Dec 2024 22:55:16 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Feb 2025 22:48:50 +01:00
+I'm saying that extending the time of critical sections is a concern, because
+it's more likely to miss the unplug event and it's just not necessary. You grab
+the guard, do a few I/O ops and drop it -- simple.
 
-perf/x86/rapl: Add support for Intel Arrow Lake U
+If you want to sleep in between just re-acquire it when you're done sleeping.
+You can easily avoid explicit drop(guard) calls by moving critical sections to
+their own function or closures.
 
-Add Arrow Lake U model for RAPL:
+I still don't understand why you're thinking that it's crucial to sleep while
+holding the RevocableGuard?
 
-  $ ls -1 /sys/devices/power/events/
-  energy-cores
-  energy-cores.scale
-  energy-cores.unit
-  energy-gpu
-  energy-gpu.scale
-  energy-gpu.unit
-  energy-pkg
-  energy-pkg.scale
-  energy-pkg.unit
-  energy-psys
-  energy-psys.scale
-  energy-psys.unit
+> 
+> For RDMA, I will ask Jason Gunthorpe to chime in, I CC'd him. Jason, correct
+> me if I'm wrong about the RDMA user but this is what I recollect discussing
+> with you.
+> 
+> > > 
+> > > >> I am fairly new to rust, could you help elaborate more about why these MMIO
+> > > >> accesses need to have RevocableGuard in Rust? What problem are we trying to
+> > > >> solve that C has but Rust doesn't with the aid of a RCU read-side section? I
+> > > >> vaguely understand we are trying to "wait for an MMIO access" using
+> > > >> synchronize here, but it is just a guest.
+> > > > 
+> > > > Similar to the above, in Rust it's a safety constraint to prevent MMIO accesses
+> > > > to unplugged devices.
+> > > > 
+> > > > The exact type in Rust in this case is Devres<pci::Bar>. Within Devres, the
+> > > > pci::Bar is placed in a Revocable. The Revocable is revoked when the device
+> > > > is detached from the driver (for instance because it has been unplugged).
+> > > 
+> > > I guess the Devres concept of revoking resources on driver detach is not a rust
+> > > thing (even for PCI)... but correct me if I'm wrong.
+> > 
+> > I'm not sure what you mean with that, can you expand a bit?
+> 
+> I was reading the devres documentation earlier. It mentios that one of its
+> use is to clean up resources. Maybe I mixed up the meaning of "clean up" and
+> "revoke" as I was reading it.
+> 
+> Honestly, I am still confused a bit by the difference between "revoking" and
+> "cleaning up".
 
-The same output as ArrowLake:
+The Devres [1] implementation implements the devres callback that is called when the
+device is unbound from the driver.
 
-  $ perf stat -a -I 1000 --per-socket -e power/energy-pkg/
+Once that happens, it revokes the underlying resource (e.g. the PCI bar mapping)
+by using a Revocable [2] internally. Once the resource is revoked, try_access()
+returns None and the resource (e.g. pci::Bar is dropped). By dropping the
+pci::Bar the mapping is unmapped and the resource region is removed (which is
+typically called cleanup).
 
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Zhang Rui <rui.zhang@intel.com>
-Link: https://lore.kernel.org/r/20241224145516.349028-1-aaron.ma@canonical.com
----
- arch/x86/events/rapl.c | 1 +
- 1 file changed, 1 insertion(+)
+[1] https://rust.docs.kernel.org/kernel/devres/struct.Devres.html
+[2] https://rust.docs.kernel.org/kernel/revocable/struct.Revocable.html
 
-diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index 4952faf..6941f48 100644
---- a/arch/x86/events/rapl.c
-+++ b/arch/x86/events/rapl.c
-@@ -879,6 +879,7 @@ static const struct x86_cpu_id rapl_model_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L,	&model_skl),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&model_skl),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE,		&model_skl),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	&model_skl),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&model_skl),
- 	{},
- };
+> 
+> > > 
+> > > > By revoking the Revocable, the pci::Bar is dropped, which implies that it's also
+> > > > unmapped; a subsequent call to try_access() would fail.
+> > > > 
+> > > > But yes, if the device is unplugged while holding the RCU guard, one is on their
+> > > > own; that's also why keeping the critical sections short is desirable.
+> > > 
+> > > I have heard some concern around whether Rust is changing the driver model when
+> > > it comes to driver detach / driver remove.  Can you elaborate may be a bit about
+> > > how Rust changes that mechanism versus C, when it comes to that?
+> > 
+> > I think that one is simple, Rust does *not* change the driver model.
+> > 
+> > What makes you think so?
+> 
+> Well, the revocable concept for one is rust-only right?
+
+Yes, but that has nothing to do with changing the driver model. It is just an
+additional implementation detail to ensure safety.
+
+IIRC there are also have been efforts for a similar mechanism in C.
+
+> 
+> It is also possibly just some paranoia based on discussions, but I'm not sure
+> at the moment.
+
+Again there is nothing different to C, except one additional step to ensure
+safety. For instance, let's take devm_kzalloc(). Once the device is detached
+from the driver the memory allocated with this function is freed automatically.
+
+The additional step in Rust is, that we'd not only free the memory, but also
+revoke the access to the pointer that has been returned by devm_kzalloc() for
+the driver, such that it can't be used by accident anymore.
+
+Besides that, I'd be interested to what kind of discussion you're referring to.
+
+> 
+> > > Ideally we
+> > > would not want Rust drivers to have races with user space accesses when they are
+> > > detached/remove. But we also don't want accesses to be non-sleepable sections
+> > > where this guard is held, it seems restrictive (though to your point the
+> > > sections are expected to be small).
+> > 
+> > In the very extreme case, nothing prevents you from implementing a wrapper like:
+> > 
+> > 	fn my_write32(bar: &Devres<pci::Bar>, offset: usize) -> Result<u32> {
+> > 		let bar = bar.try_access()?;
+> > 		bar.read32(offset);
+> > 	}
+> > 
+> > Which limits the RCU read side critical section to my_write32().
+> > 
+> > Similarly you can have custom functions for short sequences of I/O ops, or use
+> > closures. I don't understand the concern.
+> 
+> Yeah, this is certainly possible. I think one concern is similar to what you
+> raised on the other thread you shared [1]:
+> "Maybe we even want to replace it with SRCU entirely to ensure that drivers
+> can't stall the RCU grace period for too long by accident."
+
+Yeah, I was just thinking out loud, but I think it wasn't a good idea -- we
+really do want to keep the critical sections short, so RCU is fine. Prohibit
+drivers to use RCU, just because they could mess up, wasn't a good reason.
+
+> 
+> [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
+> 
+> thanks,
+> 
+>  - Joel
+> 
+> 
 
