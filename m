@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-530807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA617A438A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:05:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39CCA438CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD36176543
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89961188C07E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EBC2641D4;
-	Tue, 25 Feb 2025 09:00:52 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AC8266F1B;
+	Tue, 25 Feb 2025 09:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tz6difrt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F0A263C78;
-	Tue, 25 Feb 2025 09:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7DC266EE6;
+	Tue, 25 Feb 2025 09:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474051; cv=none; b=YhACgZeQ5e9pQLQQkEk38ldZZUDm8OVc3vegzU0IO2fNep+VVNygBJG9czPZMUegqxoySrRhfxzolpP8Cb6+vR4Z1sVNmx8H7KhG9f8sDf/yvw+kZcoLQFxD/QlhR5dIKRoBcvR7MgYz+Gj71iaJ7l/SzqoGcl7PvuuweQzV1cI=
+	t=1740474069; cv=none; b=p4leIm5AzS1Da3afHxiqjp7e60EUqSFagRFL6p4DNBHCwk3aJGVFDBgQ0fU2emZv5uFZHxXOOoLNkgLqNGNQeCKARU464ZUJUDSkFn3bdpVjb4B4A9jD/8k+7/fbc1HuzXxsDNYcLv0B0r6aWHy/9FoKVyRxYjhX0r4AjfzYz/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474051; c=relaxed/simple;
-	bh=qGBjq6b2fG50Vfe++nNQj/3aecjsAcg52cqNqgJAvNM=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GGQcqD5Il38RSg2vPNpTfiqLXLAhlBZ6BbvytNGZLBEONqGzg94XpJQiM+g3TXptoSw6R3fhvQ2k5JUgfOTxJaW+JeQKmhj6aEvkZvGcsiss0F6RMEEfw7PTjDGdrohM9CGLVVnKKhpebVJ3UmppHhhJPxh+3KUbJXeRjPbBxqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z2BKG67Xrzdb8g;
-	Tue, 25 Feb 2025 16:56:02 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D32941402C3;
-	Tue, 25 Feb 2025 17:00:46 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 17:00:45 +0800
-Message-ID: <641ddf73-3497-433b-baf4-f7189384d19b@huawei.com>
-Date: Tue, 25 Feb 2025 17:00:45 +0800
+	s=arc-20240116; t=1740474069; c=relaxed/simple;
+	bh=MXujraY/qrz9VsF63mgg+FLRt5PFyb1aIn1fpHd9zp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MpbwILTjxYqwmxCAGGcBvo87kWJ/FF6y+UWVbCt2kZ18hs4t2o0XYzIJiwrBuzq7stmTvGywCwTNiKZVfMATXzhA0VqJuA58R3rJ4N0mOvZsrMIGhE2zgeobe4naOuFCsBZVHF+8lIlx6J29uwC7PUaX9YOESlr95kbkuG/RTEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tz6difrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14039C4CEDD;
+	Tue, 25 Feb 2025 09:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740474068;
+	bh=MXujraY/qrz9VsF63mgg+FLRt5PFyb1aIn1fpHd9zp4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tz6difrtmoVLNuzU8LBLkTGQpKbgn4SFARw8Y69kUam+kCNPoYh0sZ3dLH1JTZ9PG
+	 JTf1AeIB3l5jBZDxgVftM8C412f27jf7/5XLlICkmi1Kmzr9kF8iJngZVsw/e2kFRL
+	 IIs8dEJeco+xkRfDTZmmGe3gci8LUaN408f1yENvqA1ppubIAsv5LAMVWTl8wCjGa/
+	 6wjS8SvGPFYf2ni8QxV35EodNsaoOyi5K9o9RAvWBE0nXAmbro3yChuEGW4cPtRDMW
+	 r5H3P4T/ccu6dinBys2uXWrmSJFsgqMpTxN35wBZqxAo7qZ+tx7oqs3Op5qfXRSffI
+	 59kguWkeUZ3wA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] ftrace: don't call kaslr_offset()
+Date: Tue, 25 Feb 2025 10:00:58 +0100
+Message-Id: <20250225090104.554966-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>
-Subject: Re: [PATCH v3 net-next 2/6] net: hibmcge: Add support for rx checksum
- offload
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20250221115526.1082660-1-shaojijie@huawei.com>
- <20250221115526.1082660-3-shaojijie@huawei.com>
- <20250224190937.05b421d0@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20250224190937.05b421d0@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-on 2025/2/25 11:09, Jakub Kicinski wrote:
-> On Fri, 21 Feb 2025 19:55:22 +0800 Jijie Shao wrote:
->> +#define HBG_SUPPORT_FEATURES (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | \
-> these are tx not rx
+The kaslr_offset() function is only defined on architectures
+that implement CONFIG_RANDOMIZE_BASE, which leads to a
+build failure on 32-bit arm and likely others.
 
+Hide the function call behind an #ifdef.
 
-Yes, the processing of the driver tx checksum is received along with the xmit() function, and here it's just set features.
-I may need to explain this in the commit log.
+Fixes: ef378c3b8233 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+There is probably a nicer way to do this, this version was the
+minimum fix I found to unbreak the build.
+---
+ kernel/trace/ftrace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
->
->> +			     NETIF_F_RXCSUM)
-> I don't see you setting the checksum to anything other than NONE
-
-When receiving packets, MAC checks the checksum by default. This behavior cannot be disabled.
-If the checksum is incorrect, the MAC notifies the driver through the descriptor.
-
-If checksum offload is enabled, the driver drops the packet.
-Otherwise, the driver set the checksum to NONE and sends the packet to the stack.
-
-Thanks,
-Jijie Shao
-
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index ac55b97aa540..f41245716e0b 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7018,7 +7018,7 @@ static int ftrace_process_locs(struct module *mod,
+ 	unsigned long count;
+ 	unsigned long *p;
+ 	unsigned long addr;
+-	unsigned long kaslr;
++	unsigned long kaslr = 0;
+ 	unsigned long flags = 0; /* Shut up gcc */
+ 	unsigned long pages;
+ 	int ret = -ENOMEM;
+@@ -7070,8 +7070,10 @@ static int ftrace_process_locs(struct module *mod,
+ 		ftrace_pages->next = start_pg;
+ 	}
+ 
++#ifdef CONFIG_RANDOMIZE_BASE
+ 	/* For zeroed locations that were shifted for core kernel */
+ 	kaslr = !mod ? kaslr_offset() : 0;
++#endif
+ 
+ 	p = start;
+ 	pg = start_pg;
+-- 
+2.39.5
 
 
