@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-531288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98817A43E9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:03:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12CDA43EA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD56D3A968F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:57:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498383AB36E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2A4267B1A;
-	Tue, 25 Feb 2025 11:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFBC267F63;
+	Tue, 25 Feb 2025 11:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QdASPCFm"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="deO5mD1n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779DD24EF9B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A85267B14
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484661; cv=none; b=NU1kE9y1ltLovV8G9ySJUP29DjObo5G11oqovuzEwlw9N8SM2n5mzjYPvL3gQ5t1f/nKbzwIlWbRyUtKyF/UUzXxTz0LXY3PNahHSksqYkgXJNngejaJ6tzKMETV1nfKWqKkV/wDF93QEoVbkdEZCOcrxwCE8AF5hNHjKneDeSA=
+	t=1740484704; cv=none; b=j24TIkrZFlSksDM81ZcDV7Xy8TaNG13oh1cbCJsTrk6LesxvOC0FERxrAm09iSMvFUTq8Cmad+XjcX2EPH8pPgI7/vk8JJJumSzIgx9rlalrJMBBR8HHs7RR/UAUDC7utIeIkpzi/hy0pXHOHOxBInpnv9HR6Y3XCYO5dzVSirk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484661; c=relaxed/simple;
-	bh=0ejaQvRgvD/39Cpjo9LWMBffWmj8mem5cTlbNfG0LaM=;
+	s=arc-20240116; t=1740484704; c=relaxed/simple;
+	bh=ZML+M6SNb254B3okUsOvmT/4Q3X+djWXrWToFKbLH/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6LybF/ME8waLGYQ5XMYogt46fDyuOASGq4ODzQ2LiXYXMqniHXTWArJzzOL/ywJDJh48rFttmLYTidFjjTEpSogeNjIzAvagsYaKQKfjrCsjoYACvusnPOn1ROsbTOeqG1o78szwKeyNfNmz6S4lyl5i0J/uH2gm5ujGws7hKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QdASPCFm; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5439a6179a7so6124474e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740484657; x=1741089457; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJdxb9d2Qc7/mEkgivvxiQHCCJjZY2RUEpoG9MQvZUI=;
-        b=QdASPCFmvY0kmiBGFkfLYbccilBrK/x1p/YrUfUijy9lOZsV8J2PugjpT/T+E9UA3G
-         O2p2rQ+XGfu1eEIwuKTVLbGqsxgUErD6aTqUqKt+nw4P93gOKFrsRZWD/8LEgOkg0wL6
-         7cmpVuEMMHg4/7LBmMaBHXHuDuY+CBe5Y3zyY4KPv6/cXMVcXSmsa2EkjJZW8DgAcpcw
-         /0dfwpRz4yPAoVNw+3DmUf/DMiIzE9bOyHE7S1R3tAyk+N3L867M2hVEd4mARY5yNYjS
-         H28nFe10GNUrxCdGVI3rkPCFdLP+/z3G5POkfBBg+q+X0WP1ouj+IyNVxHuDUWvLtIM4
-         PhgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484657; x=1741089457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJdxb9d2Qc7/mEkgivvxiQHCCJjZY2RUEpoG9MQvZUI=;
-        b=kas1hE6EWwiApLiM6xSQiSf+5MO73SdAIouXbsN3ismApUVzYIbRvxwPsNi8za3lU5
-         SUgPiHq95BptehVOKbSgsyLy+mEAMcyrFulDygaIUl7izvwNpepxSHTN+5k2cVmo8WXC
-         3vjayRWL0tZn/kPW9sLNI1/aKYI8HYAtI2OcVqxxrVjJVPi7UnPr63D0AQQL+n13HZQf
-         Zc1f3FDfemiScRc745OrJpgyLdYa8RBp1IQwemEVvXccwaHyEG0pmfltI5TPvP7szAjZ
-         PklhyaN4WLqsTh9dpWcRAqcsmjuEOguTCvhdtRxkzjQfoFGoE62hXNRArARnZ264W/xv
-         9NBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtBgEIKQmQV2fmJ3U2mmHmztJ6NVO2SSBkdzwHLkU2/hkeDkOOXXKPWz7lNuAjQrDAkwle7HekMmUyh2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz80A01NY/OqKYCb2e7oz4IRae3kHEpBL35T4UzwWTvZ+wwxrwe
-	elcdsf2resJ3Rc8onrUvlBYaGTcUwpIYe/mIDcdsCfisIQamvDap4iqUPIlNNek=
-X-Gm-Gg: ASbGnct2KDggIXn8waplrf7NHHXyRdlwmBYFpH1XXOwHdOuvr8sjygdmh0oT0tMhX10
-	7xzRs+v4R5GXJenRCOqziW6u8Km+PU8c2OfXMGzx0TmVdAmarIH2N7SpiBVYf8y494NlAwOv0lT
-	FHjBhfcFIwPiP2/RWDG/lDroCX4oJ4jibcYLtYsaOu/97NSZcW6HSYMMTd1uSCq5z3Aq4jsxW3P
-	gGJN5gOAPnnEgts0HegsdQMwIDq1LciTgl3yx2LqxBnWgY5fK/SXTmpeXwr8jhk0UuVjEluO893
-	M6cUrDFRqb2J2o+4snnFjQoHS1C/g0Y/nsoJ7YwpJ6AvQbgZGZvJQ31QqEwf//KfTqz9+8lISKk
-	/M7Rkiw==
-X-Google-Smtp-Source: AGHT+IFbqdYh8fwBrlR0bY7/Z36QCpnKteDFdIRRsnwu1FwaNfeJZqynpnHdLJr5tV947+xq6nGVtQ==
-X-Received: by 2002:a05:6512:280a:b0:545:8f7:8596 with SMTP id 2adb3069b0e04-54838cb6287mr5705354e87.17.1740484657548;
-        Tue, 25 Feb 2025 03:57:37 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548794c6a73sm95082e87.250.2025.02.25.03.57.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:57:36 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:57:34 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] drm/bridge: simple-bridge: Add support for MStar
- TSUMU88ADT3-LF-1
-Message-ID: <lkfxsq3daspjxdw43dofch3nulprpmg4soxsgflsypu3kem4ok@utt6rfdtbg7j>
-References: <20250225083344.13195-1-clamor95@gmail.com>
- <20250225083344.13195-4-clamor95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sznb2lBwQiqNlXfwsyXI0I4mvbSl1Y4ub098Wq6vLXzs9oTNlzPiGgTOtQ9d/JQjrlxc28bb8cnW6jqY+ORE+CUGNSKuoMii4jFvvvv3gs0BgXIHePPz7NOZcKbLwAsVOBZjvU/oFRFRYoTnF9wE75J1kJN0cgdKFSAsx4yBOYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=deO5mD1n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740484700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MCyJOCDY4s4V1OSV5l5wvh4COV+tZP6Tfm0smlf+8X4=;
+	b=deO5mD1ne3YXzOTAXRJTevVLpdydrfbuBRYXHg5fIAN2vW3q92xDahbTu4tPcrqEVmXObJ
+	dc+4LqR2tW5gzhPyvnOZt0FyTcEWGaV2MrLdSVPEiUyj1arCbL3B2wYGPNcEx3DJrUpdQG
+	YIusBAhuJZjrQT16esoSvgEQ3EU2s50=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-LiOX7p_OP_qs-CkJIUfpJQ-1; Tue,
+ 25 Feb 2025 06:58:15 -0500
+X-MC-Unique: LiOX7p_OP_qs-CkJIUfpJQ-1
+X-Mimecast-MFC-AGG-ID: LiOX7p_OP_qs-CkJIUfpJQ_1740484693
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49A9A1800879;
+	Tue, 25 Feb 2025 11:58:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.211])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id EE376180035E;
+	Tue, 25 Feb 2025 11:58:08 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Feb 2025 12:57:43 +0100 (CET)
+Date: Tue, 25 Feb 2025 12:57:37 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250225115736.GA18523@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,44 +83,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225083344.13195-4-clamor95@gmail.com>
+In-Reply-To: <20250224142329.GA19016@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Feb 25, 2025 at 10:33:44AM +0200, Svyatoslav Ryhel wrote:
-> From: Maxim Schwalm <maxim.schwalm@gmail.com>
-> 
-> A simple HDMI bridge used in ASUS Transformer AiO P1801-T.
-> 
-> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Robert Foss <rfoss@kernel.org>
-> ---
->  drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-> index ab0b0e36e97a..c0f1f7baaa37 100644
-> --- a/drivers/gpu/drm/bridge/simple-bridge.c
-> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
-> @@ -277,6 +277,11 @@ static const struct of_device_id simple_bridge_match[] = {
->  			.timings = &ti_ths8134_bridge_timings,
->  			.connector_type = DRM_MODE_CONNECTOR_VGA,
->  		},
-> +	}, {
-> +		.compatible = "mstar,tsumu88adt3-lf-1",
-> +		.data = &(const struct simple_bridge_info) {
-> +			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
-> +		},
+On 02/24, Oleg Nesterov wrote:
+>
+> Just in case, did you use
+>
+> 	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
+>
+> ?
 
-This entry should also come between adi,adv7123 and ti,opa362.
+Or did you use another version?
 
->  	},
->  	{},
->  };
-> -- 
-> 2.43.0
-> 
+Exactly what parameters did you use?
 
--- 
-With best wishes
-Dmitry
+If possible, please reproduce the hang again. How many threads/processes
+sleeping in pipe_read() or pipe_write() do you see? (you can look at
+/proc/$pid/stack).
+
+Please pick one sleeping writer, and do
+
+	$ strace -p pidof_that_write
+
+this should wake this writer up. If a missed wakeup is the only problem,
+hackbench should continue.
+
+The more info you can provide the better ;)
+
+Oleg.
+
 
