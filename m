@@ -1,139 +1,177 @@
-Return-Path: <linux-kernel+bounces-532506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47A8A44EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:23:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309B8A44EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C123A3777
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:22:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7893F3A952F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB87920C002;
-	Tue, 25 Feb 2025 21:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E41820E6F0;
+	Tue, 25 Feb 2025 21:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7TxPtds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WuVRlsDd"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665419CD1E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE0119CD1E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518531; cv=none; b=WTNHqCwLB/nSDOcy8ZIDX9lwchoIcB0FV8Y07dkXdN6/jjlKPNKGQDTJJ1HmwubTazeYID0dz5ZphtiLq9/os6JJXQBXI/6FAf/A4C10/+fBt7uO8yeSRRQFHPkOLxD18HeDJBukfL6rrvFTnXbgbhFCSz50OM8VXZv8iQixMEk=
+	t=1740518552; cv=none; b=OzYV4fp2C9a+HAF0O3oegC1+V0kzEh4drQ+LOGm4mqNa2Ahzw1l1BbPxAJlivtbNv3E3AvJHU7h7Uo1z+1aAjnfAzviZkFP6ISMbew9XTl1hVabYPRIisKyZtGfTCotcpnDtHMfdRaX6rjVN19wIuttsZfkoJlS+IuGaDOX02Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518531; c=relaxed/simple;
-	bh=+Ec/mIumHeFLdpNxbtqhH8+wRQITguW0MhsTNczarSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7IHZ+IPl0Wlz2eRsyaJ7Hzhj4zNnKwpdpJeXM0TfZCWuX1XCPL/6sInduypB6dRxZ5/IyH1f39SYbGB75rYrFNVN7WKpu0hjex7shjtRHtsBjN5QRjzXUe1zk4anJHKPaENwNYoX1cosuKvgrta/tZzf4mq8XJb9f1nf1mOOTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7TxPtds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D698C4CEDD;
-	Tue, 25 Feb 2025 21:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740518530;
-	bh=+Ec/mIumHeFLdpNxbtqhH8+wRQITguW0MhsTNczarSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7TxPtdsqV6RaGWaDfcEFywZSggTYbaYbm81jgOD5UIUCHb4T1D3mIqJ/aoNWya9L
-	 hyQhVewSJWkLVJMvxlAeGJIek7GR+9MEOPaw7Mgs17norTfOCdzTyMjvfsSWfs0Kqv
-	 XbdrP0fI1kskWDcFKmd+Bhl7DJKtx51izjwWDPcBQueTue/5AKIQlvDaFB2oxHDibp
-	 zYHRPeraGkAt6u0H6ztKlU/gwm7h0Zj2mLpM7YRv2atKxdJhsqiZ2r+RLUu28VRB/F
-	 qDh7tS9mf5o9ssfi9h2qG/eP+qJYtHUjK2NXv1K/k4nPncbWwcgelnXtRs2gqVoS4c
-	 Eu3d+tDQ4OnWA==
-Date: Tue, 25 Feb 2025 22:22:00 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Yujun Dong <yujundong@pascal-lab.net>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpuidle, sched: Use smp_mb__after_atomic() in
- current_clr_polling()
-Message-ID: <Z740eIZcK31DQETq@gmail.com>
-References: <20241230141624.155356-1-yujundong@pascal-lab.net>
+	s=arc-20240116; t=1740518552; c=relaxed/simple;
+	bh=Xtnq3RhDI1F0mjpN2gEvr8f5Yewsi+xjtiZxWthnvNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g3sm1foFotWSI5YmyUbe4v17i4KXFEwlEZ7+JGIrA6/ZQvX8K3VrdQQGpDTt6409+uD85E+U7WvMxZ64oMmoWvMAc0aD0YLD0HUFbVxUdPVZZ+vILmoX9BHsHT392s0070qN6t4rRmniGN8XsV50WV65CwQggZylpRK8y8tLzd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WuVRlsDd; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so6430216f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:22:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740518548; x=1741123348; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=O+TAAzGVnDWDFtlFc6W2oZXUMNHkoRIXgVMUB+sYZ44=;
+        b=WuVRlsDdDHW9/9DYpUB+jCcW3te6ln/6Lzv4xkbE8cwwHkT2XPDuqvjRW8X/nEUmqf
+         Amk3KwA0hXk41TtoH/ewCea+XJ+ty+tiUKZW/xMquxxWWVRjYyjH4WKeCpLeO2Rdd+5H
+         iyGhClxUc6A2g+CekSyB/faNLRtvPD74JmjtQnQkMLEME1Ugi7LeCBnND3sRdJM9UiBn
+         5yCiHseawgYhmLjEDIFfkwNQz+Tm64TopRZ0c0Aq1V+ObrHPVRze18rsLBPetA+I3ZAd
+         cpHSfupEdywGQR66uRgv/inXqbsayKgRq1KGVmITw1SIe666+w8RK6rkORwMuGsdxUlH
+         aLNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740518548; x=1741123348;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O+TAAzGVnDWDFtlFc6W2oZXUMNHkoRIXgVMUB+sYZ44=;
+        b=HCc7SA8xKiJnP39THCLlEy/LLu1EKNix0/HpVO1cuDvrKKO1GIh701IPS1xreSgh3v
+         Ykt6g7tMJ70GlwuWrqrNG8YLZ9ptL7cPLQFjstRFsUExObAh1Hk/IsP4VTYGBETneAvd
+         KBhyMeEcEzyeSQTuNNIaqAYL7VjXeVuXD/25tIanzEbURgop6BKtDkBWjCLYR9mxm7vl
+         wWob7SgmMuNBKdga3HPgLXEnz8sGBuAQsrivrftp5LPtS2yAygcT+shLUZ93MV5A2y/T
+         RgSpkZEquPDGnhqRUGlisyK1aV8wbU2kC24x3OCxb1JpJHXwBxYWytEPu6Yq6l/DzB0n
+         gqJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6CBZ3HiexXhIPJRuWVK6MeMJ8aGh9z3+yeWzb3yRF/afBMx1vc40iXQRXU6H24s7HJ+XOrMlGJVfuSmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6PXSHjiXPzcJlyV4d1IEaQHHM91h3xVB5kP0LOVTnwN3BOJmX
+	WnCEenGBMu58qBbvgSix/bLQRBnLMFPFr4QKE3RJNBTrMLmW3XozKft7+elMJY0=
+X-Gm-Gg: ASbGncvla9srWNZQZAB8YtPAAGF5PlqCVG23hy/GG3yTqSE5B0NHjOJVhxbiY7OAXFe
+	TE2sg+yT0YEtcLnwL1paPTYWuDMXdvgIn/npeO2MPa2F1lLCkcP7SrUMGJSzoUJMUq29qpTrLUY
+	A4SI/6hbpIxBLZ+Iz1a/CqswyImsNl2dtdxWPliKpm0C7qwKIuvE/xAyJFF7NabH4iU5IuE8Gg0
+	z14CjFIJEjypavBmaxWgL1uo7MT6P4PNQmHBb6+kD78wLo08SzmHuVFfVRIMnpOL5KQZ30bj+PG
+	XvR9idkhSQW0QC9IAlivUmfYe7p61X45nM/p3rhRXumc40nI4+n9tw==
+X-Google-Smtp-Source: AGHT+IE75e9DPZfshqgcyz53q9QKQceztLXtBTDV3gXXaoLOI+hnMjNK3s6gZgjyBeOFutornyMF3w==
+X-Received: by 2002:a05:6000:1549:b0:38d:df29:e14f with SMTP id ffacd0b85a97d-390cc631b46mr5227528f8f.43.1740518548098;
+        Tue, 25 Feb 2025 13:22:28 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f7de2sm2065200b3a.106.2025.02.25.13.22.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 13:22:27 -0800 (PST)
+Message-ID: <1cfc2f43-8ea4-4c39-b543-1f54ba9b284e@suse.com>
+Date: Wed, 26 Feb 2025 07:52:21 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241230141624.155356-1-yujundong@pascal-lab.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] btrfs: use min_t() for mismatched type comparison
+To: Arnd Bergmann <arnd@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Anand Jain <anand.jain@oracle.com>, Filipe Manana <fdmanana@suse.com>,
+ Li Zetao <lizetao1@huawei.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250225194416.3076650-1-arnd@kernel.org>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250225194416.3076650-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-[ Sorry about the belated reply, found this in my TODO pile ... ]
 
-* Yujun Dong <yujundong@pascal-lab.net> wrote:
+在 2025/2/26 06:14, Arnd Bergmann 写道:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> loff_t is a signed type, so using min() to compare it against a u64
+> causes a compiler warning:
+> 
+> fs/btrfs/extent_io.c:2497:13: error: call to '__compiletime_assert_728' declared with 'error' attribute: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
+>   2497 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
+>        |                           ^
+> 
+> Use min_t() instead.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202502211908.aCcQQyEY-lkp@intel.com/
+> Fixes: aba063bf9336 ("btrfs: prepare extent_io.c for future larger folio support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> In architectures that use the polling bit, current_clr_polling() employs
-> smp_mb() to ensure that the clearing of the polling bit is visible to
-> other cores before checking TIF_NEED_RESCHED.
-> 
-> However, smp_mb() can be costly. Given that clear_bit() is an atomic
-> operation, replacing smp_mb() with smp_mb__after_atomic() is appropriate.
-> 
-> Many architectures implement smp_mb__after_atomic() as a lighter-weight
-> barrier compared to smp_mb(), leading to performance improvements.
-> For instance, on x86, smp_mb__after_atomic() is a no-op. This change
-> eliminates a smp_mb() instruction in the cpuidle wake-up path, saving
-> several CPU cycles and thereby reducing wake-up latency.
-> 
-> Architectures that do not use the polling bit will retain the original
-> smp_mb() behavior to ensure that existing dependencies remain unaffected.
-> 
-> Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
-> ---
->  include/linux/sched/idle.h | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/sched/idle.h b/include/linux/sched/idle.h
-> index e670ac282333..439f6029d3b9 100644
-> --- a/include/linux/sched/idle.h
-> +++ b/include/linux/sched/idle.h
-> @@ -79,6 +79,21 @@ static __always_inline bool __must_check current_clr_polling_and_test(void)
->  	return unlikely(tif_need_resched());
->  }
->  
-> +static __always_inline void current_clr_polling(void)
-> +{
-> +	__current_clr_polling();
-> +
-> +	/*
-> +	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
-> +	 * Once the bit is cleared, we'll get IPIs with every new
-> +	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
-> +	 * fold.
-> +	 */
-> +	smp_mb__after_atomic(); /* paired with resched_curr() */
-> +
-> +	preempt_fold_need_resched();
-> +}
-> +
->  #else
->  static inline void __current_set_polling(void) { }
->  static inline void __current_clr_polling(void) { }
-> @@ -91,21 +106,15 @@ static inline bool __must_check current_clr_polling_and_test(void)
->  {
->  	return unlikely(tif_need_resched());
->  }
-> -#endif
->  
->  static __always_inline void current_clr_polling(void)
->  {
->  	__current_clr_polling();
->  
-> -	/*
-> -	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
-> -	 * Once the bit is cleared, we'll get IPIs with every new
-> -	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
-> -	 * fold.
-> -	 */
->  	smp_mb(); /* paired with resched_curr() */
+Thanks a lot, those fixes will be merged into the next version.
 
-So this part is weird: you remove the comment that justifies the 
-smp_mb(), but you leave the smp_mb() in place. Why?
+For now the series is only for test purposes as there is a backlog of 
+subpage block size related patches pending.
 
 Thanks,
+Qu
 
-	Ingo
+> ---
+>   fs/btrfs/extent_io.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index f0a1da40d641..7dc996e7e249 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2485,7 +2485,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
+>   		 * code is just in case, but shouldn't actually be run.
+>   		 */
+>   		if (IS_ERR(folio)) {
+> -			cur_end = min(round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
+> +			cur_end = min_t(u64, round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
+>   			cur_len = cur_end + 1 - cur;
+>   			btrfs_mark_ordered_io_finished(BTRFS_I(inode), NULL,
+>   						       cur, cur_len, false);
+> @@ -2494,7 +2494,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
+>   			continue;
+>   		}
+>   
+> -		cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
+> +		cur_end = min_t(u64, folio_pos(folio) + folio_size(folio) - 1, end);
+>   		cur_len = cur_end + 1 - cur;
+>   
+>   		ASSERT(folio_test_locked(folio));
+
 
