@@ -1,91 +1,118 @@
-Return-Path: <linux-kernel+bounces-530842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC00A43932
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E707A4393A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8193A5C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFB74406B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4202C266F17;
-	Tue, 25 Feb 2025 09:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTWVf5vI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A4F267B04;
+	Tue, 25 Feb 2025 09:12:20 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17FB262D03
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128ED267AE3;
+	Tue, 25 Feb 2025 09:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474731; cv=none; b=lEn274rwOM5W1+vvS4xCK+odAWBywjH6f4b9cqoaIvrNgkcxZzdxqx4g0K8wVNVDpp5QT5mRBt6MeuEOBBeis67m2xxSJyI9R6fX33gIBVnJCFxwo2tg78yuEMBfXjy6XMYfTOQg0WLlSYJHPMh0aJ4+lk9dYp7hoT1Z1/gXEGE=
+	t=1740474740; cv=none; b=KiYoyiDHpWY0DNphq9631V7md6orsGcKo5QwLUTY8YPs74FoD58TQs7e9kdVfkS1U0Aqcev5kpUZGZueciBazJUARLTxPdca/MaY1n7Fy1UNldYVLlCbwTewRMwO/r+oyp5LaA/07srbJuxaZSWmJcgJF4v4XZTv5zooLqIR8j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474731; c=relaxed/simple;
-	bh=S5EX/5L//5qymarzJKFar1n+dLhhvHH+iEov2Smk9WA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yt2/S22dta0RUuvGDJrabMYEfkttsy5Lh2JAUwa3aTn3+Zf3m7QUI7Ia74uOrPrRFRLVeKV5mWhNg4NpZEzHeQWbhZH13fKk3s5U41sOWaevr8rwEMCmN3J+qbtQ4spLzRRjVZsWdlMMYKTR2EYfyoH4ySGXy36eUmHEiSbM2gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTWVf5vI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76397C4CEDD;
-	Tue, 25 Feb 2025 09:12:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740474731;
-	bh=S5EX/5L//5qymarzJKFar1n+dLhhvHH+iEov2Smk9WA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KTWVf5vIbEbfCfDXu6joOEyS6F4MZ2ETDqZFqHzMZq5Tql9rM1FB8YOOjd7RbjOCs
-	 dSZ5rLa5oxJVKxZ2fshnm6w8/vUNBT7jVrMqE1w0FP2QcWjKJc2XhijMFht4We4m+j
-	 ynhM2RLgMVL69oAycfkBdFdDST9VtIFqS/n74lpWqSUHHBS0kBJEKpH5bvP1WpKXLV
-	 Co4Srtw962oT0vqW6Z+RaMewboUbhh6nj9MzkY0ZPqi6njUUMRvilPQPQVlosIPIkI
-	 z4nlbHZF+i7N/WPzOZdq8RwHzJkTuB1W+RpivhhKxXuFbLc3zFMtlRwtrNEWRxTkjl
-	 JDyVexJp0QUJg==
-Date: Tue, 25 Feb 2025 10:12:01 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Michael Jeanson <mjeanson@efficios.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rseq: update kernel fields in lockstep with
- CONFIG_DEBUG_RSEQ
-Message-ID: <Z72JYW0y7fUBSWll@gmail.com>
-References: <20250221191401.464648-1-mjeanson@efficios.com>
- <Z7nQzOQT_-9-Rbr5@gmail.com>
- <974359d5-43f3-483a-89cf-79e9b4965785@efficios.com>
- <Z7nbYcdRKXspX8o2@gmail.com>
- <26dba55c-eb09-4e9e-8460-8adbf75e32cd@efficios.com>
+	s=arc-20240116; t=1740474740; c=relaxed/simple;
+	bh=jSfr0DnZJRt/ciNTHE0XDHV5JQ8wzrnyJ3cQBG5h2r0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AsPDeh+Dzia7NK8uLuJOsiBK7qaT1MQhIxI2i1edEduvL6hXOj6RakvP3hJ3BG5DGOzVPetw9EsRl00jvFR1xMIfBnnxwu+8Am0J3LYs0W9EJIaM/uDS4fxzGXTAoLNAM0u6W+43JDlpdlf2FEy4Ftb2upfakhkCqhsGuQl5eOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z2BgX4NRQz4f3js9;
+	Tue, 25 Feb 2025 17:11:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 673BA1A058E;
+	Tue, 25 Feb 2025 17:12:14 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP3 (Coremail) with SMTP id _Ch0CgAne8Vrib1nMy0hEw--.30895S3;
+	Tue, 25 Feb 2025 17:12:14 +0800 (CST)
+Message-ID: <b9fee454-54e0-d07f-44eb-74bfc588abeb@huaweicloud.com>
+Date: Tue, 25 Feb 2025 17:12:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26dba55c-eb09-4e9e-8460-8adbf75e32cd@efficios.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 05/12] badblocks: return error if any badblock set fails
+To: Coly Li <colyli@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Coly Li <i@coly.li>, Zheng Qixing <zhengqixing@huaweicloud.com>,
+ axboe@kernel.dk, song@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com,
+ Hannes Reinecke <hare@suse.de>, zhengqixing@huawei.com,
+ john.g.garry@oracle.com, geliang@kernel.org, xni@redhat.com, colyli@suse.de,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-6-zhengqixing@huaweicloud.com>
+ <4qo5qliidycbjmauq22tqgv6nbw2dus2xlhg2qvfss7nawdr27@arztxmrwdhzb>
+ <272e37ea-886c-8a44-fd6b-96940a268906@huaweicloud.com>
+ <70D2392E-4F75-43C6-8C34-498AACC78E0C@coly.li>
+ <a3c74c7c-44b6-c4c0-872d-0de7e29214c0@huaweicloud.com>
+ <vdd6yaz3opuhufbfhbkhwtfj4a3oiskem7o23n3axtzy5e74xp@fibgbwxospom>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <vdd6yaz3opuhufbfhbkhwtfj4a3oiskem7o23n3axtzy5e74xp@fibgbwxospom>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAne8Vrib1nMy0hEw--.30895S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUOo7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvE
+	ncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I
+	8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0E
+	jII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbI
+	xvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4IkC
+	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+	CTnIWIevJa73UjIFyTuYvjfUOyCJUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
-* Michael Jeanson <mjeanson@efficios.com> wrote:
 
-> >> I always find it odd that the "source" argument comes first and 
-> >> the "destination" argument comes second in all put_user() APIs, 
-> >> compared to memcpy, WRITE_ONCE() and all assignments (e.g. 
-> >> operator "=" LHS vs RHS). Choosing a different argument order 
-> >> therefore made sense with a naming different from "*put_user", but 
-> >> not so much if we use a derived naming.
-> > 
-> > Yeah, put_user()'s oddity is a random historic idiosyncrasy that we 
-> > want to preserve in derived naming to reduce the potential for 
-> > confusion.
+在 2025/2/22 14:16, Coly Li 写道:
+> On Sat, Feb 22, 2025 at 09:12:53AM +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/02/21 18:12, Coly Li 写道:
+>>> So we don’t need to add a negative return value for partial success/failure?
+>>>
+>>> Coly Li.
+>>
+>> Yes, I think so. No one really use this value, and patch 10 clean this
+>> up by changing return type to bool.
 > 
-> Would that be ok?
+> OK, then it is fine to me.
 > 
->   rseq_unsafe_put_user(t, value, field, error_label)
+> It will be good to add a code comment that parital setting will be treated as failure.
+> 
+> Thanks.
+> 
+> 
 
-Yeah, I think so.
+Thank you for your review. I will add comment in the next version.
 
+-- 
 Thanks,
+Nan
 
-	Ingo
 
