@@ -1,110 +1,84 @@
-Return-Path: <linux-kernel+bounces-531209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE73A43DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:30:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BD4A43D7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E32213B2895
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF3217052E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CA92676F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2360E267B12;
+	Tue, 25 Feb 2025 11:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WL0S8IpA"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B03B267AF2;
 	Tue, 25 Feb 2025 11:25:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6793C26770B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482748; cv=none; b=vCwWjiXbWGiNKH4LVOziS83Lk0JgVN/mGy5e59/Y88Mx1RAmR6GpyiLHAJO9gF5vEp6OPGwDr3HhLkIeN1LdOWdGmtsgDTeTlOanotMmP2QSfipvbjGapWJZ7vY0bhakf+tEyh9JYuN4SI6DqKa9j8AGTsydI/Yp3T8m89pQ2AY=
+	t=1740482751; cv=none; b=FPK80oS5xncH84BBQfaQtJhwDvh4sbAy0wRwVTD1/4xus1Wzie/E0LArkExyTlr5kTjNqUnZEiA4tgePvuy7i+TA3hEhmNv9Ks4m7KOrc/DOY1QDoiXjTtkOvH70vdaxvxub5m85Us9B1QOxXK5tIvQroWZd3NoNX9ya3asdmjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482748; c=relaxed/simple;
-	bh=I/z1jeNQSbxEzaxNQjCzf+IPm6CCr9Of1VGogmoEQes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HkLF5rdZuGPs41lCM/VQN4Idd5iTF1tq7Xdwahfcm0PWlG/x0pQG3t39GSFd/0KqTRuCcWbpTw3MNdK1KRGalptK1E2xOUIwLQZ8vHboxapgvET4jZSZBTYHF8itkhZ0fzZbaoqN04bXCG97cV/oCIE9A7hcpm6TMau4Y+6QkiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 120C71516;
-	Tue, 25 Feb 2025 03:26:03 -0800 (PST)
-Received: from [10.57.38.173] (unknown [10.57.38.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17EBD3F673;
-	Tue, 25 Feb 2025 03:25:44 -0800 (PST)
-Message-ID: <68405608-564c-4e79-9cbc-545626e736f1@arm.com>
-Date: Tue, 25 Feb 2025 11:25:38 +0000
+	s=arc-20240116; t=1740482751; c=relaxed/simple;
+	bh=Lhrwl1x6WS1e4L0zo3QZm7lLfOMmhJbsDbNnkKZwnoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ien8MnF3Ty8oQKgStkZivCy/NkTzOFuwJYqMrl5mgY1Lxy6jh/i52Zf/H5RwgxEo/dm+GQf0zhJstkE3aqK2u8MrNTypd2VM2N7VXCNjU/ObkX7ZjFncuyzefR2Y0DXNXcYD02xrV3UOX/N7rJyUCTIIA+E0N7bQhr9A3llLeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WL0S8IpA; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Lhrwl1x6WS1e4L0zo3QZm7lLfOMmhJbsDbNnkKZwnoc=; b=WL0S8IpAQoEwauZY6lBtK5wOR9
+	5O5SN6NWP0e5vkh+piwcr7J1+FN4O6oiABvTqF6EMpPg2tsL+LJd6cbyfIInpEYpgdclKGSNAZMiS
+	p5szNhj617nQInk8okB5JuYAvhi7vkxUCenxvVwt91pZbcoQSKqkOshl1jdaCnTpcWyhodPUJsV70
+	PTEFm6Ey6Vk3Bn5Z01ZVeSnG6bXkPnZW0SHOMKWOuzp5iVJhrmVc2Y4iRuafFgzFpkuGmgxMhHMoI
+	lE8RhK7wCPEQVlNbOzCsgQjeHtokHqtsEJ20CeD9zlsd078JXDXiN42bEQuRFFFLkoni7vp1kVUwY
+	QEBBfQOQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmt4J-00000003Ktc-2raQ;
+	Tue, 25 Feb 2025 11:25:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 451C73006E6; Tue, 25 Feb 2025 12:25:43 +0100 (CET)
+Date: Tue, 25 Feb 2025 12:25:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+Message-ID: <20250225112543.GM11590@noisy.programming.kicks-ass.net>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dma: Fix encryption bit clearing for dma_to_phys
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
- catalin.marinas@arm.com
-Cc: maz@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- aneesh.kumar@kernel.org, steven.price@arm.com,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
- <20250219220751.1276854-2-suzuki.poulose@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250219220751.1276854-2-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
 
-On 2025-02-19 10:07 pm, Suzuki K Poulose wrote:
-> phys_to_dma() sets the encryption bit on the translated DMA address. But
-> dma_to_phys() clears the encryption bit after it has been translated back
-> to the physical address, which could fail if the device uses DMA ranges.
-> 
-> Hopefully, AMD SME doesn't use it.
+On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
+> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
+> buffer physical address. This patch allocates arch-PEBS buffer and then
+> initialize IA32_PEBS_BASE MSR with the buffer physical address.
 
-...by which you mean we don't think any AMD systems are using the ACPI 
-_DMA method to constrain physical DMA ranges, otherwise SME with 
-dma-direct would presumably already be broken by this lookup going wrong.
-
-> Anyways, let us fix it, before cleanup
-> the infrastructure for supporting other architectures.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Link: https://lkml.kernel.org/r/yq5amsen9stc.fsf@kernel.org
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Steven Price <steven.price@arm.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   include/linux/dma-direct.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index d7e30d4f7503..d20ecc24cb0f 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -101,12 +101,13 @@ static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
->   {
->   	phys_addr_t paddr;
->   
-> +	dma_addr = __sme_clr(dma_addr);
->   	if (dev->dma_range_map)
->   		paddr = translate_dma_to_phys(dev, dma_addr);
->   	else
->   		paddr = dma_addr;
->   
-> -	return __sme_clr(paddr);
-> +	return paddr;
->   }
->   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
->   
+Just to clarify, parts with ARCH PEBS will not have BTS and thus not
+have DS?
 
 
