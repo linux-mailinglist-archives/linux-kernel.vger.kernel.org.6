@@ -1,169 +1,202 @@
-Return-Path: <linux-kernel+bounces-532046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6114AA44826
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:32:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1469A447E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F888680DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B043E1892524
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830BF198A29;
-	Tue, 25 Feb 2025 17:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0D5194A6B;
+	Tue, 25 Feb 2025 17:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K4dd+xUz"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XGg6yrSf"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0441E14A60A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E549F18E34A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740503897; cv=none; b=p5Y2KQCvfwfOcMBhh6H74pDvyGLyODWTFZliw7U+4HDaWUiwT/jjbhZ5LbA4/ihu7rPEoCnlPA3KCOzYa2AL3o9syNVnncKCVH0QcnU6+uS/k24EeUxsb8bIzqCJrKA0OsHEYTdalpxxFyjnDugMQykMDp4wML1FHlJsjugyIDY=
+	t=1740504012; cv=none; b=K+R+EOKb84baTRZBc4dtFUaNqyoAj37AKyRZgXOyl4XKWeUqOp3m4bWk1/tK+/Yhi6MFwIaniEjsx981VWD5Z78fXR18I4KeH/nQ/n0RmgiZpWYFYw9I3aGM397X7tkszMWaBgwFHB/Sk+0CUa8Oe8HJU55rcHUCJwd+FCEzc6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740503897; c=relaxed/simple;
-	bh=fegxD61N6B8hGlbYe8Jr/TcJ0cHmgZSa0wxqbTbnR+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eA6s+ytdyUWs9RW/FywjvpyLxlKF1g0oSY8HhibGfrWecjlsQSBnJOlUpdXYFWLlwa4cnyDBVfZcbe7H8IsOL1egXFUpBpbuhgO72FhrRQPb5KQGGul4JwNkRghPzt4AlTL2G8i58hcejXf4qEXHCvViLaedcaw92shm99UC7Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K4dd+xUz; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-548409cd2a8so4151524e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:18:15 -0800 (PST)
+	s=arc-20240116; t=1740504012; c=relaxed/simple;
+	bh=nYvvvyUkn/NQrJXuHQOgg478+Z6m4uibxctBKt7VFgw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RP+WWIYbNubxosYxE9+K2hm1pJQH3OVhiGe6gs4K51UCK0D43PnLxTrm+oLiBlka3h5chr3X80hgYWBfx0n6LjXOaLuaLbRWiTaeeWHZmccc+G+i/ndvu2e/Ewl5Dbk7YUvxVmTSmugFdQydNQQ21rfyxIu8E3yFHpSs7wjsNUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XGg6yrSf; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22117c396baso204955ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:20:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740503894; x=1741108694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UBMGUOCl55gdKoV7vW8XIwXzlyBYkDGukZo5cGFH5CU=;
-        b=K4dd+xUzSiv2YuKc/yP1Gy16kZHMbr3DX7nqRtdAEnJJlDuf1s1JPwGsgO2LBSJI99
-         HJL8EcX0TUWr8yIHFwTcNzMK3R7a5hrHNvmPILGSDw13aoVoypRCGnPviLNV15thfpd9
-         v/UnDXIuwhspX5k+r+gNKKU4VfNM5j0CibKBYqxx5Xq4ysIDblW39upKRrQDRpk5yKnm
-         4VWD97w6kZEyjledbQnm2vHjak/nzweN8qlaCkwm2Xb9p+mfgBd/vFq7f8gP0aXj7OAu
-         R+VK5ids4diMRIlPvBWdvrw6ZZPyQbQosLNFXiYIQpyJF5vLj7gdfmmZLfgMEcZUd4by
-         ab8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740503894; x=1741108694;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1740504009; x=1741108809; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UBMGUOCl55gdKoV7vW8XIwXzlyBYkDGukZo5cGFH5CU=;
-        b=jWpJjl5FamHXYUuhN8GrNYCVM+sAwWP5y1KOkMORF6N9xN8TcUiEU/j67uUOhXwhFL
-         +w9zud6mPvQ/CWLHcPFRbxbxOdVkJgj6tDyiMuAcZwJrAnmNafHc3JHtc24m9b30lDdu
-         oiATcK52EM5KMfAsXo3Ofr+ouZayE77+LCFy4sWQZAtQ5VoPISiRx3j8HjQVMGnUUnOQ
-         OlLY6sQItAorbpUXdzfMGrWDtVP1wqSv0T1SZkeC8fKuGicG9iO8WAIIgxc69oi2l00g
-         MOp2vSjFBQ+hsHDfgCcgEVc81Lb3CpGS3kzIO+Zhg0i4KnkOMcZUkq2myr6YzRR/DoZC
-         Qm3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMMJ8ifh88lr9d6/Qd6tn1LILUqy1iYcFquP8EUkWcl4D89yNr1RBdfoDWAhvAH8iCE8oWqABPE1vVcWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6CPcbkBseO6538UE6D2KmKu4eyg1dafwCnIcyAIp0cgCVVhP7
-	oZVW4MKqagBPxllc1GVRaEZ5VTYUVRURpKF1yuzZYNZoZgrnzja+vv9sU9RmOds=
-X-Gm-Gg: ASbGncseMbrIJJkI7PZXBZ6hVChW/foUFfBlTXjzAL1pT4klC9yNeoR4xNXg3q+dyQ6
-	97P2wnIjjbJh8/TGm6r1wQCHDgwQNZz+xPLXZfth0Zad0Voagn4Q+p+KPo2j8RVn+CwHDLbHy6r
-	X2LCaQjw7FJrm4kKReD2g52v3Mkf+ptT16HRutGUI0Y2yMJWGZYo2oabsZuucI7WjCWN527A/3n
-	1YGI1H9XJARpwucHLif1j50TX+KW0a4eE+3lld61CnCEo4BBN8tlLEK2KNGrOA08+j3spKPR/PS
-	ze6ThOtdCsEmlDS2x5z/txBPFAYC30CjCEUEaOvSdMbn9V2uyHbslf2nH/oX3Hs7lhn7CXWyuDM
-	RIv0uFQ==
-X-Google-Smtp-Source: AGHT+IHP/HVI8920DHkWUudbL09CGIMVh2mmFw18ADlkjqgydR5LKcjUPGttxXMqHgdd2UEVYmuwRQ==
-X-Received: by 2002:a05:6512:3f28:b0:545:b49:f96d with SMTP id 2adb3069b0e04-548510712admr2315191e87.0.1740503893983;
-        Tue, 25 Feb 2025 09:18:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b261esm229975e87.24.2025.02.25.09.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:18:13 -0800 (PST)
-Date: Tue, 25 Feb 2025 19:18:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, sean@poorly.run, marijn.suijten@somainline.org, 
-	andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org, 
-	konradybcio@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com, 
-	quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
-Subject: Re: [PATCH 05/11] drm/msm/dsi: add DSI support for SA8775P
-Message-ID: <hl352hhpv6imtilpw554njkpod4nycjlls4gg75barlugc2e42@okw2snj2bqm3>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-6-quic_amakhija@quicinc.com>
+        bh=7hb3C7FYdDqsPYEBoq2vFVVUt+W47wHJYO2+QU2YKUI=;
+        b=XGg6yrSf1XFnff7d1MLBOdtGFNlqkjY65nJ1acePMU+/LwJjxWjc7IQZ/pIpylvdng
+         7Scl1WQECEZw5c8g5EzpASnVxwVSZUy0Y2cMr7yWYcFucGXk2XT2D8rGY5RauCJla2Dj
+         F5waNjKbm8E0VGk2XTsPtkL0MVRx9RiXbuZ6dRsyA6tVa/TjIL+IbLfqQcg8sCUcdr3R
+         6SYwvAKa4vJFtVsqlVGDicH3QZO+qQPf2Y7D6TTZ5t7uks+0qLDpgmclEo2tyP1qsFM9
+         5qLSBAv19l9qUik8+i9krmpjfONavgGJG2a6ZzJXKeA2oyKFgCnk3Sfb30oj4SGLUAYj
+         C/Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740504009; x=1741108809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7hb3C7FYdDqsPYEBoq2vFVVUt+W47wHJYO2+QU2YKUI=;
+        b=TjUDlgndCngFDc5O6blNUGtnLfvxNYdjHWJMcHBILVkzIXr5Filjt4UqFJPjck6ZCa
+         Z/5ck3kG7qy9Ms0OWIAT6GOVSqkkzm+OSGep+UrLqY+q8LSv6Udmf5mdG+fDZF4BxYEE
+         M8B5jrqFdKX1XRSNCTjHb3NYixdSPKtuImB98mU3bhe8WnXkfG8ZjpIL1MmzqboHgR37
+         uDBwfKac7aW5KY6yTrg2VcaqKCIr+DBv1QtTmT56ZZ+Hbg0ObRxTFpRt8jjCiDstORyr
+         Z3dl721qxpGgfKHy+vnGnjxXbnfsV9PIgWqcuJRl4JOVTLeoEu+/43Ux3awxu+bjRzE2
+         j2ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWq81rPr8BeGc73e9d0rcNJyPQxJ2eQM9zE5q+dif4knm9aLuN9QoOAd+s6HLp0oXJX5bhZag7XLcCxwhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHPHafW12W4bq02GD4BQpNiWtQYQQuyMhPDMAqW4+uLkI+AMEU
+	DAMLidYNw2COKNpIheQyPkaygkXnokMtxjbwpf1FodmHCdSlm++FKo3C3RYGq88l+DY5qjbRNyf
+	2hSS9pjLLhBlYmLbnY+lUnNXEwTL6O77PS9IU
+X-Gm-Gg: ASbGncvebX4rTelotmsMRBD74636j3r9kjSP/Y/xTp6v53foPLWjCEmk9DrUI7cam88
+	gCEuxB3zbo+vDFBkCF4d/S6tdjQJxD3fphQ0D87Bl83YwiyFxF1j54djglB6vaP1oGfMD20+/nF
+	/ubdOS3iNu5pTORQYHK5O+AhZVCz1O66ylfXo=
+X-Google-Smtp-Source: AGHT+IGpsu2gE6OHJh6wFHMikBC+V7A4sdMucnJSErx5tMIoel4ur2peTYL89qPCpXByYo8PvF55LuvZuIZemHPc5Wc=
+X-Received: by 2002:a17:902:ce05:b0:21b:b3b3:ef5f with SMTP id
+ d9443c01a7336-22307a973d5mr3609785ad.22.1740504008965; Tue, 25 Feb 2025
+ 09:20:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225121824.3869719-6-quic_amakhija@quicinc.com>
+References: <20250225164639.522741-1-james.clark@linaro.org> <20250225164639.522741-2-james.clark@linaro.org>
+In-Reply-To: <20250225164639.522741-2-james.clark@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 25 Feb 2025 09:19:57 -0800
+X-Gm-Features: AWEUYZnYh0D9XwWJZPJZL4jHRJTeBa1LnRgouzF4MQP99jNCAKe6CUlFHsXbSU8
+Message-ID: <CAP-5=fW1NkeZjBpNijV1oKNjZ_F480wahmUPfEN9vrxYjwD=9A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf pmu: Dynamically allocate tool PMU
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, namhyung@kernel.org, cyy@cyyself.name, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Weilin Wang <weilin.wang@intel.com>, Junhao He <hejunhao3@huawei.com>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 05:48:18PM +0530, Ayushi Makhija wrote:
-> Add DSI Controller v2.5.1 support for SA8775P SoC.
-> 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+On Tue, Feb 25, 2025 at 8:47=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+> perf_pmus__destroy() treats all PMUs as allocated and free's them so we
+> can't have any static PMUs that are added to the PMU lists. Fix it by
+> allocating the tool PMU in the same way as the others. Current users of
+> the tool PMU already use find_pmu() and not perf_pmus__tool_pmu(), so
+> rename the function to add 'new' to avoid it being misused in the
+> future.
+>
+> perf_pmus__fake_pmu() can remain as static as it's not added to the
+> PMU lists.
+>
+> Fixes the following error:
+>
+>   $ perf bench internals pmu-scan
+>
+>   # Running 'internals/pmu-scan' benchmark:
+>   Computing performance of sysfs PMU event scan for 100 times
+>   munmap_chunk(): invalid pointer
+>   Aborted (core dumped)
+>
+> Fixes: 240505b2d0ad ("perf tool_pmu: Factor tool events into their own PM=
+U")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  drivers/gpu/drm/msm/dsi/dsi_cfg.c | 18 ++++++++++++++++++
->  drivers/gpu/drm/msm/dsi/dsi_cfg.h |  1 +
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> index 7754dcec33d0..71881d9370af 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> @@ -221,6 +221,22 @@ static const struct msm_dsi_config sc7280_dsi_cfg = {
->  	},
->  };
->  
-> +static const struct regulator_bulk_data sa8775p_dsi_regulators[] = {
-> +	{ .supply = "vdda", .init_load_uA = 30100 },    /* 1.2 V */
-> +	{ .supply = "refgen" },
-> +};
-
-sc7280 has 8350 uA here. I'd say, having those two next to each other is
-suspicious. Could you please doublecheck it?
-
-LGTM otherwise
-
+>  tools/perf/util/pmus.c     |  2 +-
+>  tools/perf/util/tool_pmu.c | 23 +++++++++++------------
+>  tools/perf/util/tool_pmu.h |  2 +-
+>  3 files changed, 13 insertions(+), 14 deletions(-)
+>
+> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> index 8a0a919415d4..c1815edaca37 100644
+> --- a/tools/perf/util/pmus.c
+> +++ b/tools/perf/util/pmus.c
+> @@ -268,7 +268,7 @@ static void pmu_read_sysfs(unsigned int to_read_types=
+)
+>
+>         if ((to_read_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) !=3D 0 &&
+>             (read_pmu_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) =3D=3D 0) {
+> -               tool_pmu =3D perf_pmus__tool_pmu();
+> +               tool_pmu =3D perf_pmus__new_tool_pmu();
+>                 list_add_tail(&tool_pmu->list, &other_pmus);
+>         }
+>         if ((to_read_types & PERF_TOOL_PMU_TYPE_HWMON_MASK) !=3D 0 &&
+> diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+> index 3a68debe7143..45eae810b205 100644
+> --- a/tools/perf/util/tool_pmu.c
+> +++ b/tools/perf/util/tool_pmu.c
+> @@ -490,17 +490,16 @@ int evsel__tool_pmu_read(struct evsel *evsel, int c=
+pu_map_idx, int thread)
+>         return 0;
+>  }
+>
+> -struct perf_pmu *perf_pmus__tool_pmu(void)
+> +struct perf_pmu *perf_pmus__new_tool_pmu(void)
+>  {
+> -       static struct perf_pmu tool =3D {
+> -               .name =3D "tool",
+> -               .type =3D PERF_PMU_TYPE_TOOL,
+> -               .aliases =3D LIST_HEAD_INIT(tool.aliases),
+> -               .caps =3D LIST_HEAD_INIT(tool.caps),
+> -               .format =3D LIST_HEAD_INIT(tool.format),
+> -       };
+> -       if (!tool.events_table)
+> -               tool.events_table =3D find_core_events_table("common", "c=
+ommon");
+> -
+> -       return &tool;
+> +       struct perf_pmu *tool =3D zalloc(sizeof(struct perf_pmu));
 > +
-> +static const struct msm_dsi_config sa8775p_dsi_cfg = {
-> +	.io_offset = DSI_6G_REG_SHIFT,
-> +	.regulator_data = sa8775p_dsi_regulators,
-> +	.num_regulators = ARRAY_SIZE(sa8775p_dsi_regulators),
-> +	.bus_clk_names = dsi_v2_4_clk_names,
-> +	.num_bus_clks = ARRAY_SIZE(dsi_v2_4_clk_names),
-> +	.io_start = {
-> +		{ 0xae94000, 0xae96000 },
-> +	},
-> +};
+> +       tool->name =3D strdup("tool");
+> +       tool->type =3D PERF_PMU_TYPE_TOOL;
+> +       INIT_LIST_HEAD(&tool->aliases);
+> +       INIT_LIST_HEAD(&tool->caps);
+> +       INIT_LIST_HEAD(&tool->format);
+> +       tool->events_table =3D find_core_events_table("common", "common")=
+;
 > +
->  static const struct msm_dsi_host_cfg_ops msm_dsi_v2_host_ops = {
->  	.link_clk_set_rate = dsi_link_clk_set_rate_v2,
->  	.link_clk_enable = dsi_link_clk_enable_v2,
-> @@ -294,6 +310,8 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
->  		&sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
->  	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_5_0,
->  		&sc7280_dsi_cfg, &msm_dsi_6g_v2_host_ops},
-> +	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_5_1,
-> +		&sa8775p_dsi_cfg, &msm_dsi_6g_v2_host_ops},
->  	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_6_0,
->  		&sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
->  	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_7_0,
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> index 120cb65164c1..65b0705fac0e 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> @@ -27,6 +27,7 @@
->  #define MSM_DSI_6G_VER_MINOR_V2_4_0	0x20040000
->  #define MSM_DSI_6G_VER_MINOR_V2_4_1	0x20040001
->  #define MSM_DSI_6G_VER_MINOR_V2_5_0	0x20050000
-> +#define MSM_DSI_6G_VER_MINOR_V2_5_1	0x20050001
->  #define MSM_DSI_6G_VER_MINOR_V2_6_0	0x20060000
->  #define MSM_DSI_6G_VER_MINOR_V2_7_0	0x20070000
->  #define MSM_DSI_6G_VER_MINOR_V2_8_0	0x20080000
-> -- 
+> +       return tool;
+>  }
+> diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
+> index a60184859080..268f05064d03 100644
+> --- a/tools/perf/util/tool_pmu.h
+> +++ b/tools/perf/util/tool_pmu.h
+> @@ -51,6 +51,6 @@ int evsel__tool_pmu_open(struct evsel *evsel,
+>                          int start_cpu_map_idx, int end_cpu_map_idx);
+>  int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int threa=
+d);
+>
+> -struct perf_pmu *perf_pmus__tool_pmu(void);
+> +struct perf_pmu *perf_pmus__new_tool_pmu(void);
+
+I think for consistency this should be "tool_pmu__new" although pmus
+have odd function names like "lookup" which is basically "new". I was
+trying to be smart by avoiding the allocation, but I also don't think
+it matters and correct is more important. Thanks for doing this.
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Ian
+
+>
+>  #endif /* __TOOL_PMU_H */
+> --
 > 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+>
 
