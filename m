@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-531392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428A2A43FE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:00:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA10CA43F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3B4440546
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34BE19C108D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B992690D9;
-	Tue, 25 Feb 2025 12:59:17 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78FC268C75;
+	Tue, 25 Feb 2025 12:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U//oaj6w"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5674D268FE9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF4A2686A8;
+	Tue, 25 Feb 2025 12:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488357; cv=none; b=fib4VrdVsh8ZBxBy/Yx+lUHdrAXlCwtVM6kz2E+xxplDHoWrB7kzBA8NiRkwrh8DKuBK4CyR7hMmazfPOqgLActLL9+6kP/3k7m8GP0+JKLORpHxhNJf2o8TjZdT9RJpYggmNuW541ByHWbDll5sKa0bVonBZ77moXfdF4gQ5DY=
+	t=1740486731; cv=none; b=Y+i7xeJsCiX/++CoPHJWCFRfMxabfrP1+j8aVLHC2ZOJtZVfgAhygp7HuZVx73UtPEZL2/HSDuVBpg68OQJGhLC3v70OXgEOMuUifemX2Q7WmRIQUn6llsN1fZTZYZFwSLxKUaNvoQPUydpqfC/5WDDDiizPhYjDKcRQG4jet64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488357; c=relaxed/simple;
-	bh=9MDAaOkzjRCOz3MuMWw4HXIQo4co0NCFHKCaS5GZhbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awQeG7B/ZyGocrfpUeon8zksHElOErJA9cjftFCayh+IUx2qzIp7wsbqt8yVTNFyelleAAYY48OVDaMfTGVCVlx/p4UOKDHGi3hkh75ziqiM2CJSApy7AnotxkP7b4yx4QN6I9nLVsfmE+uzuHSKFsIgcGQg2yf+jwvgDV1lGA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.94.2)
-	(envelope-from <laforge@gnumonks.org>)
-	id 1tmu7y-003Gx0-L0; Tue, 25 Feb 2025 13:33:34 +0100
-Received: from laforge by nataraja.fritz.box with local (Exim 4.98)
-	(envelope-from <laforge@gnumonks.org>)
-	id 1tmu7r-00000000YTm-4306;
-	Tue, 25 Feb 2025 13:33:27 +0100
-Date: Tue, 25 Feb 2025 13:33:27 +0100
-From: Harald Welte <laforge@gnumonks.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux <linux@treblig.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, david@rowetel.com
-Subject: Re: users of drivers/misc/echo ?
-Message-ID: <Z724l3DFJbGevtPF@nataraja>
-References: <Z7tZhYET41DAoHVf@gallifrey>
- <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
+	s=arc-20240116; t=1740486731; c=relaxed/simple;
+	bh=1pyD4SZ5Q/Lc9AqUwjBxII6k9+7yhxDr5m+K9ELoDbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VE4ce1+xTag8NngqpnGBlwb1oBXwuMVT5NcgExm3r+092qJHTAOA07DCcQxc/CAX5wX/YWEDwQzmMUrOC6EcycwmtTngow3DoNpNpb7qyvPD2IlWPegPNb0DYQn6YWiciwUnMGR0oZeOvu2pvwkv4lJOP8mdM4MhXhgvHZAfiiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U//oaj6w; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fcff77ff9bso6249760a91.0;
+        Tue, 25 Feb 2025 04:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740486729; x=1741091529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7hQ9PSnky3hzUHJ3r5I6w65ox232hzZUXn+oYcw3lsM=;
+        b=U//oaj6whFaW1Y9WF2s+r9c12W1TMarw1dgqGToyjyAEadXNzQVrJIq1FP1gVUB4Y1
+         s0NjCbLWy+XZoVi2sd+ZYuLO8AbG5Z1egr50nAKIbd4CEePEwd104cLF5Tw9z7SaAG7n
+         mR9IxSIy63IevXJOPTTL/3id625o2TDfXQGJGUkzufBU9W94orx+Pv+Gb/DgmfaAdTLg
+         1MdmkeLYw3XGe/c/5n3bevrduoeIcgPk7HUXroK44rKisSA5eluGISYT8AGI0fFgtZH6
+         PWAkPFezVmg2+0fLIEMXyt+oX2GhRnIPHSYUVExzNHUcTaLkQ3XcV1VjVY1Bt33Sqdsf
+         gQlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740486729; x=1741091529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7hQ9PSnky3hzUHJ3r5I6w65ox232hzZUXn+oYcw3lsM=;
+        b=xKltorvYcBqAh1Yvc+hazOp3hqiCmYPWM5CF2yt1xva0dxbLh2g/0L1d2ClZL7Gw0B
+         ZLrZULD30j7UmAvBb9LNepAGrpAsiVFXDgl17gWHhH0oAxlyxDMRxAR1cCY2k+gfMLGL
+         1UT4c6yC2yoIMNBjovLI4Nb8+WMCU9sndFaJDh6O6TZ06LcKCLZ2FXShUHPX6TGvE9k1
+         6zd8XfAy10pmy2g/iTEwy4VZfbh1iQuevFEs28hYRnX+/OfSLMhUulxKqa24czxRrcx/
+         24YkwbOrsL6og3RrH5MuSGvqsWnBLbU6TNbIxMApbCnFBWokRnb7T2RGWP6yz2NpMMZH
+         WYmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLUrh8F3OLec9OaQNlXDx6weaQMXzxv6OSfLRBaURVW4m/QVceKGCDTSbHZp3gUtQnYqNp4qXdAejoqMgG@vger.kernel.org, AJvYcCXmURMu4Fj/GbJAomrFrVGHl39JpgMPAF/YCwucn0A1qfE9fAcphJK4Gp6S4QB1/Ge36X9I9kSrXMbB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2eywYVnrFKwIQ+stC2vwIL9x8nZrBqrz2Rj+VkQeaqBRmKHaJ
+	xIwBzTuj0ew6urgwwVnG54+MDeJ7T2LXMrRefjcyo2oyRWUWaNRWEBz6SiUS3Cb2GgyYFizzMys
+	bmPxu2lbWL0NKnitdgsjdq3QdIVQ=
+X-Gm-Gg: ASbGncs78N1IKkSRyIt8OOSJhXi2BrdkNKy7jLw7owj1xtz91GzqVv2fPk4CQiXypdP
+	1fpp8zNAPNNa7aX0qOyuZFppJYJXiAyaPF7znDQyTEFX9ODtV0C+pEBcSBg7scBzmV2yhoDCoG8
+	kCvxtX
+X-Google-Smtp-Source: AGHT+IEhj54F35PZEsJYYrzaWJyBanI+coj2uAU8OTJp3NVm093Jk0fuCJf+AJB+0L8a6Juozj6iHZgPqCZQO9GBPqA=
+X-Received: by 2002:a17:90b:2751:b0:2ee:df70:1ff3 with SMTP id
+ 98e67ed59e1d1-2fe68a312b8mr6037629a91.0.1740486729075; Tue, 25 Feb 2025
+ 04:32:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
+References: <20250225120707.2658709-1-m.felsch@pengutronix.de>
+In-Reply-To: <20250225120707.2658709-1-m.felsch@pengutronix.de>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 25 Feb 2025 14:33:45 +0200
+X-Gm-Features: AWEUYZlyvb2cM0-5vtqGVculafUAJm4OWsTkAKrC0Tw7wQoPYmnk7k-oBG7QuOM
+Message-ID: <CAEnQRZAoPxFN1ce0MEY34KpJO=SS4n33ehABH4auxWTDq8_R8g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: imx8mn: fix micfil dmas settings
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: "robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, Sascha Hauer" <s.hauer@pengutronix.de>, kernel@pengutronix.de, aford173@gmail.com, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Joy Zou <joy.zou@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+On Tue, Feb 25, 2025 at 2:12=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
+>
+> The third dma cell is used for priority information not to encode
+> something else. The NXP downstream kernel use the third cell to encode
+> more information:
+>
+>  - Bit31: sw_done feature enable/disable
+>  - Bit15~Bit8: selector
+>  - Bit7~Bit0: priority level
+>
+> but this was never mainlined. Therefore drop the further information and
+> just specify the priority which is 0.
+>
+> FTR: The sw_done feature was mainlined without making use of the
+> devicetree.
+>
+> Fixes: cca69ef6eba5 ("arm64: dts: imx8mn: Add support for micfil")
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-> Adding Harald to Cc, might know more about it.
+For all series:
 
-thanks for Cc'ing me on this thread.
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-On Sun, Feb 23, 2025 at 09:38:12PM +0100, Arnd Bergmann wrote:
-> I don't see any in-tree users for it either, but I found one
-> project using the exported symbols, and there is a debian
-> package for it as well:
-> 
-> https://tracker.debian.org/pkg/osmocom-dahdi-linux
-> https://gitea.osmocom.org/retronetworking/dahdi-linux/src/branch/master/drivers/dahdi/dahdi_echocan_oslec.c#L34
-
-Note: The official upstream of DAHDI is maintained as part of the Asterisk soft switch project,
-the Osmocom fork has just become more popular in recent years due to very slow maintenance of
-upstream.
-
-Any of the DAHDI forks is used in production deployments by a number of
-different telephony / softswitch / telecom software projects (like
-Asterisk, FreeSWITCH, yate or many osmocom sub-projects) in order to
-interface with classic anaolog or TDM (time division multiplex)
-telephony technology.  
-
-Even today this TDM technology (most likely in most instances without
-open source softswitches) is still relevant in commercial production
-deployments, including many (but not all) cellular carriers
-around the world, but for example also as part of GSM-R (railway
-communications systems) for at least until 2035.  I personally also know
-of present-day production deployments in satellite telephony
-infrastructure.
-
-However, those DAHDI-using deployments that I personally am familiar
-with do not use the software echo canceller discussed here.  On the
-other hand, I'm quite certain that there are many PBX/IVR related
-systems out there (unrelated to my area of cellular or trunked radio)
-that would still use the echo canceller discussed here.
-
-In any case, for this discussion, it doesn't matter, as all DAHDI
-flavours make use of the same API function.
-
-> With our normal rules, we should just remove it as there is no
-> way to use the code without external modules, but I don't know
-> how we even got to this state.
-
-I'd expect the echo cancellation code was used by mISDN for as long as
-that was still in upstream.  As mISDN has (sadly, but understandably)
-been removed, the echo canceller likely remained in the tree without any
-other in-tree users.
-
-DAHDI has been using the in-kernel echo canceller for decades.  If it's
-removed now, it will likely mean that DAHDI will carry a copy of it and
-selectively compile that as out-of-tree module for future kernel
-versions.
-
-I personally wouldn't see that as a big problem, as DAHDI itself has
-always been out-of-tree anyway, and adding one more module to that is
-not a big deal.  Note that I cannot speak officially for the DAHDI
-project as I'm just maintaining the Osmocom fork.
-
-Kind regards,
-	Harald
--- 
-- Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
-============================================================================
-"Privacy in residential applications is a desirable marketing option."
-                                                  (ETSI EN 300 175-7 Ch. A6)
+Marco I couldn't find the cover letter for this series so I add my R-b tag =
+here.
 
