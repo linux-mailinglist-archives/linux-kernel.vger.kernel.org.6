@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-530726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF5BA43783
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:24:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33432A43793
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9AE175EE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EA5189D4A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E8260A2E;
-	Tue, 25 Feb 2025 08:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29B225EFA2;
+	Tue, 25 Feb 2025 08:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7VchIXZ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UFC5HBQd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B625EFB8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3243A21CC58
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471584; cv=none; b=hzDoaCUzfh3KwjBkngxWgOcCsdknSzS6Wx6HOcCmQV2Gs/ruP2xihrXs2hWICHfXUmQa0qRE+2lLdnJVxVZCkjvAAq5gwvcIBID0uHp86oppsaYTfGM04TH0x2BK1DkrjiaxW5JCbRYm/U9wHOGFpo3FkZYd+dJzxNEHSxWc3do=
+	t=1740471709; cv=none; b=oUhC2e/D756RLX4v901KEkdLajxleIqqexnjtcPpmxebNAZP5uEQ5VDJCId63vlbXXmGzblKjYLptuO1mYDgwoljSlSXjobfo63kAlCgCyew2tWYsiLpF4v3rMwMTxtvcYWDFYlrQICXDJuRX89zK15eqYwXXp8IoT32cxu6tOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471584; c=relaxed/simple;
-	bh=X4Rwqhge4ZHSgWe7CXXfacQmhKs7JKLp0sW/JwbmXq4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UT/l3CpFnJ9GzNP73iv5JmghAD7ah9NKOCZlYlchRnGtyXE8FkvWeeJf0T7fJ0X3Q/X6uTiW1v6iuuHV8iUIiPtuKOBU/wue+Fl/aQlkoCT2AtVag+SFHOmSgYfQ6tnB2sd5vslkgiwx6jejRmzUisAl6DdbbvXAYNe2z8gumrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7VchIXZ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21f8f3bd828so11628465ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:19:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740471582; x=1741076382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mx2QrLQuirMCQwy2aokgi/+k+IY05gOk7VQO5JEmOBQ=;
-        b=a7VchIXZCJHvwGhgmTpjZgQtTaC7bGgsXPklUocqnmjq9UbzGAEEcjkUpPos/E3i9R
-         L6nq6SQav4+HoiW7LXgRcxME7eYbsI3iQJtoQRlYxQZUBBnkUcLigOb60Et4B+w+YMVW
-         yMCqW1k8v4LgtB+MDO0TuxvG4hLA47Zls6tey7IHMpn+xLK2a6uXHAe7/TEa6pmUeKEs
-         BnMDM7FGRtG4x8f743jKk7M0nFpUBIHfmEp4PXEHFPMZXLdW3uON42uZob35It+uLua6
-         AL/8oq7y5Uhf1l+3KLLQdSeBYeyS9ms74NYRXFKtbQsD62jUB85izPRB2C04M+xb9iQx
-         6sAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740471582; x=1741076382;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mx2QrLQuirMCQwy2aokgi/+k+IY05gOk7VQO5JEmOBQ=;
-        b=Coz+jm5BmwMsoFY6YKNBiIfad2PJGz5A7vojtrzuRyeoYHDtyMyGL+/Qe4cwNY3jNt
-         DxusmdL4fIQPazVQLibFTpJMhhS7CqGfpJyq+1NT9fSurfdMTZwWftjbG1h1COiB7kA6
-         gt62gzs2akVXmdz7kdIcjLnwo1blYRDip4U0d/1xTX0H7UIDVWbzkWdwe4xoHQHdUT/a
-         d30+YXfDuDJmVBS0TD/wH6SbjSPSDCtGegx1I9cGd1sj/36CcppUhtrl8srr/2IWtFB5
-         25xLRMaPYvhPvzjDbBQFwX6XdNZ0d4RlqgOi3nKQWCqyJjueRyx/N2COThQXaI9jbcvQ
-         j8PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGrp8T0esi1ikaKFtmomUJwptZFDSfb4Uc4cLENqKbGs2GUpxxd/LaD5TjVN2p2fR3+2Ae674kzZuxKuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0TE6Mr35IscsskFmgOdJnah/M38ZgyTRA9bgiczZW/ZMT2IyI
-	Du7MLWBdYfPHqnhux647/+BdXmc7r/gcoM9UTuxVFOEoa2WzrjlL
-X-Gm-Gg: ASbGnctUMvTl1FTJPnzJaG9GWtrKnm9WuowUlAw6Nln9sUl8QJG1+pBT1dZpimADrwN
-	h+lKVxwrKcYl8mlFRnF2MFNAdiQMbESqcIQxbM0eWBVzJv3dchrCFLevnEWNFCIiwH2Ns2XMYX9
-	nfJ8Y8FWW5gOfmYyBOa2x8vpCegXw23v9s2ZnFAB0CqIYPmQJv+AOcgxoN0qUwN3ACQuoeyLuYF
-	vX5CINJP8qvzU4k8bu2PzzMy5HZOUu3ELZOHe86EKd6osflvrM8dXym9uqSvbxb+wwvZ+vKzsvR
-	S9lBglzgFqMZza0sclAGxqYvNU7YsWLWoBjXCmWlhQ==
-X-Google-Smtp-Source: AGHT+IFUZ921XcZ5J+TM3sPegqR9smZXw0NsQmGLu6WmXG02pXk6UoE/wAMIzm34jMd5imF3JFw22w==
-X-Received: by 2002:a05:6a00:641a:b0:734:3d2e:18b1 with SMTP id d2e1a72fcca58-7343d2e19b4mr7936256b3a.2.1740471582432;
-        Tue, 25 Feb 2025 00:19:42 -0800 (PST)
-Received: from localhost.localdomain ([182.148.13.61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6ada9fsm943955b3a.17.2025.02.25.00.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 00:19:42 -0800 (PST)
-From: Qianyi Liu <liuqianyi125@gmail.com>
-To: matthew.brost@intel.com
-Cc: airlied@gmail.com,
-	ckoenig.leichtzumerken@gmail.com,
-	dakr@kernel.org,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	liuqianyi125@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	phasta@kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
-Date: Tue, 25 Feb 2025 16:19:32 +0800
-Message-Id: <20250225081932.175586-1-liuqianyi125@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <Z71ZM9Cs1Wb4mhD3@lstrano-desk.jf.intel.com>
-References: <Z71ZM9Cs1Wb4mhD3@lstrano-desk.jf.intel.com>
+	s=arc-20240116; t=1740471709; c=relaxed/simple;
+	bh=6LbLbk2Hi/cJhAyDERiL/9BQ/9IckNqbv1Bsg0nAn0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYAKQLitv6CYAykfFvXyWtXNzp7RAH69EaWA4vduK3JSjRhLn7C8QgoFLLF3Xa3Rlp++Yhyv7ORDHiqZrAjpCcSdwH65E1Qg4jv7y130VDE211i8A03q3nkgupYj3PGxgGmZRLh637fUiSDmysZdPgWEg0a+xhkk6r1q0ukNYlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UFC5HBQd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740471706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JGVEBgr6yIICt4OFYjSxGo52A+94TcAFJZUxRZ8kPXw=;
+	b=UFC5HBQdSV2OnuZ/6DM7oNkMATWNyCEYWPoufNXobVrlJwuFVupbLEHk4YhmkbDW8OTwlj
+	kwnheHv6GhWS7M+NcgU0ZFVZzx/4DWn9Ah6sh63l3vU/qmCSylvN5Nl6nZqwQeZrrsrnFL
+	h4kW+ovKVDDah87VytYe5IUfMxRSvVk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-V37hrS02P2u-zcID8-HCQw-1; Tue,
+ 25 Feb 2025 03:21:39 -0500
+X-MC-Unique: V37hrS02P2u-zcID8-HCQw-1
+X-Mimecast-MFC-AGG-ID: V37hrS02P2u-zcID8-HCQw_1740471697
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AC4C18EB2C3;
+	Tue, 25 Feb 2025 08:21:36 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.31])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9F6B01800358;
+	Tue, 25 Feb 2025 08:21:27 +0000 (UTC)
+Date: Tue, 25 Feb 2025 16:21:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+Message-ID: <Z719gj8GOl0itRwV@fedora>
+References: <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+ <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+ <Z7w0P8ImJiZhRsPD@fedora>
+ <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
+ <Z70btzRaN83FbTJp@fedora>
+ <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
+ <Z70qvZEBdq6L3-Yb@fedora>
+ <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello Matt,
+On Tue, Feb 25, 2025 at 11:12:24AM +0800, Yu Kuai wrote:
+> Hi, Ming!
+> 
+> 在 2025/02/25 10:28, Ming Lei 写道:
+> > Can you explain in details why it signals that the rate is expected now?
+> > 
+> > If rate isn't expected, it will cause trouble to trim, even just the
+> > previous part.
+> 
+> Ok, for example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+> slice is 20ms(2 jiffies).
+> 
 
->> 
->> But also be handy of could share the kmemleak trace.
->>
+We all know how it works, but I didn't understand the behind idea why it
+is correct. Now I figured it out: 
 
-> Agree kmemleak trace would good, include in commit message, but the
-> patch looks correct to me.
+1) increase default slice window to 2 * td->throttle_slice
 
-Unfortunately, as trace involves private code of our driver, our driver has not
-yet officially entered the community yet, but it is already on the way. So I
-cannot provide trace information at this time. But I will update the commit in
-V2.
+2) slice window is set as [jiffies - td->throttle_slice, jiffies + td->throttle_slice]
 
-Best Regards.
-QianYi.
+3) initialize td->bytes_disp[]/td->io_dis[] as actual dispatched bytes/ios
+done [jiffies - td->throttle_slice, 0]
+
+This approach looks smart, and it should work well for any deviation which is <= 1
+throttle_slice.
+
+Probably it is enough for fixing the issue in throtl/001, even though 2 jiffies
+timer drift still may be observed, see the below log collected in my VM(HZ_100)
+by just running one time of blktests './check throtl':
+
+@timer_expire_delay:
+[1, 2)               387 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[2, 3)                11 |@                                                   |
+
+bpftrace -e 'kfunc:throtl_pending_timer_fn { @timer_expire_delay = lhist(jiffies - args->t->expires, 0, 16, 1);}'
+
+
+Also I'd suggest to remove ->carryover_bytes/ios since blk-throttle algorithm is
+supposed to be adaptive, and the approach I suggested may cover this area,
+what do you think of this cleanup? I have one local patchset, which can
+pass all blktest throtl tests with removing ->carryover_bytes/ios.
+
+
+
+Thanks,
+Ming
+
 
