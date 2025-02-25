@@ -1,312 +1,283 @@
-Return-Path: <linux-kernel+bounces-531052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6E6A43BA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC9AA43BAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E841765FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A48424B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2242673BD;
-	Tue, 25 Feb 2025 10:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767DC26739C;
+	Tue, 25 Feb 2025 10:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hN+jpoEG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VA+Re3qo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B93266B62;
-	Tue, 25 Feb 2025 10:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A4D266B62;
+	Tue, 25 Feb 2025 10:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479008; cv=none; b=aoK274NCpXtVCDpH/DLXlFgJbSBSBSdCu3Sz0drAIOt/nSkQGG+3rGoinnR1vJjlGOivzs5/Cpvk9Arul4r/ERCKuHuNlJp8/p4a2a+56tW8MScLJ5O0eRDdbvtkwgrPeYuTUzZZ1SSvKZjX7xH8dISM1r0xCCvFqVU9IEUQOjE=
+	t=1740479024; cv=none; b=R7mXsi1WmoubIqdpWM0zAOR2b901IhnVX0tMyRDG55GqsegpbVX5+QpN8qbGu3lrRpI/DvMZfpDT0jE7292jWI5DipdSvVYVKBrAjUr5o+z6ljy2QLcAQYXHKxEttKRmO1WRCFKSztTwCFSjm0h2MU5w20DceheSVHj8jZsY2ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479008; c=relaxed/simple;
-	bh=CNvff+RVUf9q6DmURZwaRmGW7rpo3fSwYqmNvnCRmMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SM/1++ZVOg67MoDzYWggPn6C24v05qWMgH7csCLiEzV6dHEtj6LomTJ0yokSuPHTexWJy6yKwdlQ2ZeutKI6v906SqubOGsSi4orHEmNDpMm1fYYnd+TE/e+yF+uOsqFFuCIUFtDVpC7MQgY1aLggF49DM7oW5rkmC/9ohQVyAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hN+jpoEG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740479004;
-	bh=CNvff+RVUf9q6DmURZwaRmGW7rpo3fSwYqmNvnCRmMQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=hN+jpoEGjCDSbnpP+9gx0l0DifI2Au8F2f0rG7AI8v/HWycLTVDof/2PfqeAuXd2X
-	 Dj8S8hAOlPhyKA0OjhykhGk7MfBGyU+EpGwThEUgGQKMqPD6RPcdOJMbAVsXqvIUD8
-	 Kun5yD7MlgKOOU45vpHJBkQt6BXsHsUqcZzFtCJSU14HvqdMM37vAVecZ+cH5LLovd
-	 D6B02K3nfiz6hMkpd0lZNCp5kHpLD5vLU4HF00aBe+CZVNPuTydaVNhTb1+05id9o7
-	 6dNZuwbkQ5BkakfJMsrmj0L6e3/6tOZ6cMZ5ayNQ2lEGWlSNYdQUkytmdldrgEY8qe
-	 sRrFXkpCUcxTA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A485117E09E7;
-	Tue, 25 Feb 2025 11:23:23 +0100 (CET)
-Message-ID: <c50e114a-bb5b-40a4-ab01-69ee33b984b8@collabora.com>
-Date: Tue, 25 Feb 2025 11:23:23 +0100
+	s=arc-20240116; t=1740479024; c=relaxed/simple;
+	bh=OL7+WhfqMOlCT5NqZZrkzMvgJrl1fo1sSNbR/WMWItM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NoOv9x/UW7hE8ptCB26fj0NMMk/1r4VinNUNlaR2RSwu6zd2kSB0KiE4qijY0yofY9X//9OSTdwA7FaaN8450ZOGt7cz4a1+YpIv+ZgoPzSgkMhCPB2jnKjlubTrUBAHTaRAp2pORCuM0r/W1HsKZBrHw8JomY/IV+1lHR7K8Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VA+Re3qo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86CBC4CEDD;
+	Tue, 25 Feb 2025 10:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740479023;
+	bh=OL7+WhfqMOlCT5NqZZrkzMvgJrl1fo1sSNbR/WMWItM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=VA+Re3qoylvKvbXFzQkmRV9ABh85iVOXJub7z4pDJrhRZKI02nzLKpC0uTXFu4LMB
+	 /hB8zIW+EKnR03s6TiKoNzE7TwW6mSrZfs4TnLg2s9DACupBAna/Mc2NlUzYUDPk7i
+	 KRP+LjahDFczzI3mFxrX/YdUXNWwZf0558obPR/XL2WVsT6yj6K3tyyk3t6koeACdb
+	 nQnskVCEXPLRKnIEWQASvJj/Zmre9YYpu8z3TgN+tVWIeEgwgraNVrXU2uc5hHji5u
+	 yGJaFP1yJd1DUkkkrvkiG6ReScTr/14o+umXrzA1UK82R57hQg/9Zazmg83lAGq7Ah
+	 0rX4i/11wpDAQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Joel Becker" <jlbec@evilplan.org>,  "Christoph Hellwig" <hch@lst.de>,
+  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
+ <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
+ <longman@redhat.com>,  "Fiona Behrens" <me@kloenk.dev>,  "Charalampos
+ Mitrodimas" <charmitro@posteo.net>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/4] rust: configfs: add a sample demonstrating
+ configfs usage
+In-Reply-To: <CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com> (Daniel
+	Almeida's message of "Tue, 25 Feb 2025 06:37:33 -0300")
+References: <20250224-configfs-v4-0-9af9b5e611f6@kernel.org>
+	<20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
+	<gFsQNuXNmyVQmdawZnfoGhTe3Fu7W0K5VeoiM5tjROpKWVojf48IOHIQT0JY77AFiTPPLHk3f_gjzEGilH7vLQ==@protonmail.internalid>
+	<CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 25 Feb 2025 11:23:30 +0100
+Message-ID: <87jz9ewcf1.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] arm64: dts: mediatek: mt8183: Switch to undeprecated
- qcom,calibration-variant
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250225101828.107509-1-krzysztof.kozlowski@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250225101828.107509-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Il 25/02/25 11:18, Krzysztof Kozlowski ha scritto:
-> The property qcom,ath10k-calibration-variant was deprecated in favor of
-> recently introduced generic qcom,calibration-variant, common to all
-> Qualcomm Atheros WiFi bindings.
-> 
-> Change will affect out of tree users, like other projects, of this DTS.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Ah, finally. That's nice :-)
+> Hi Andreas,
+>
+>> On 24 Feb 2025, at 10:21, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Add a sample to the samples folder, demonstrating the intended use of the
+>> rust configfs API.
+>
+> nit: this is not the first time I see Rust not capitalized in this series.
 
-Regardless of the RFC status....:
+Will fix =F0=9F=91=8D
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+[...]
 
-> ---
-> 
-> Dependency/RFC!
-> 
-> RFC, because this should be merged release after driver support is
-> merged:
-> https://lore.kernel.org/linux-devicetree/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org/T/#t
-> ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts     | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts      | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts      | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts      | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts      | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dts    | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dts  | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi  | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dts      | 2 +-
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dts      | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi   | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi           | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku32.dts       | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku38.dts       | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi           | 2 +-
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi            | 2 +-
->   16 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> index 83bbcfe62083..f2303d9f125f 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> @@ -35,5 +35,5 @@ trackpad@2c {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_COZMO";
-> +	qcom,calibration-variant = "GO_COZMO";
->   };
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-> index 3935d83a047e..13ec15fa284f 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-> @@ -31,7 +31,7 @@ &mt6358codec {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_DAMU";
-> +	qcom,calibration-variant = "GO_DAMU";
->   };
->   
->   &i2c2 {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
-> index 72852b760038..b576b974cf23 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
-> @@ -40,6 +40,6 @@ &touchscreen {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL";
-> +	qcom,calibration-variant = "GO_FENNEL";
->   };
->   
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
-> index 757d0afd14fb..d64581f35d2c 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
-> @@ -28,6 +28,6 @@ &touchscreen {
->   
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL";
-> +	qcom,calibration-variant = "GO_FENNEL";
->   };
->   
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
-> index 6641b087e7c5..d0c98d0aba95 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
-> @@ -28,6 +28,6 @@ &touchscreen {
->   
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL";
-> +	qcom,calibration-variant = "GO_FENNEL";
->   };
->   
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dts
-> index 877256eab262..3a81786084da 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dts
-> @@ -14,5 +14,5 @@ / {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL14";
-> +	qcom,calibration-variant = "GO_FENNEL14";
->   };
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dts
-> index b981dd31a430..959c4d3d9707 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dts
-> @@ -14,5 +14,5 @@ / {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL14";
-> +	qcom,calibration-variant = "GO_FENNEL14";
->   };
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi
-> index 078bc765646f..4788edaeab87 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi
-> @@ -22,6 +22,6 @@ trackpad@2c {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_JUNIPER";
-> +	qcom,calibration-variant = "GO_JUNIPER";
->   };
->   
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dts
-> index ddb993521bbf..01cd59993a7c 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dts
-> @@ -14,7 +14,7 @@ / {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL14";
-> +	qcom,calibration-variant = "GO_FENNEL14";
->   };
->   
->   &mmc1_pins_uhs {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dts
-> index 10c4f920a7d8..c939ef3965ec 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dts
-> @@ -14,7 +14,7 @@ / {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_FENNEL14";
-> +	qcom,calibration-variant = "GO_FENNEL14";
->   };
->   
->   &mmc1_pins_uhs {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi
-> index c942e461a177..14d03419b92c 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi
-> @@ -37,5 +37,5 @@ trackpad@2c {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_JUNIPER";
-> +	qcom,calibration-variant = "GO_JUNIPER";
->   };
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
-> index ff02f63bac29..c4c08c0f715e 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
-> @@ -370,7 +370,7 @@ keyboard-controller {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_KAKADU";
-> +	qcom,calibration-variant = "GO_KAKADU";
->   };
->   
->   &panel {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku32.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku32.dts
-> index 2b5a8d1f900e..7428efec95a0 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku32.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku32.dts
-> @@ -32,5 +32,5 @@ &panel {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_KATSU";
-> +	qcom,calibration-variant = "GO_KATSU";
->   };
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku38.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku38.dts
-> index 75fadf2c7059..a36b6ddb71f6 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku38.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-katsu-sku38.dts
-> @@ -32,7 +32,7 @@ &panel {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_KATSU";
-> +	qcom,calibration-variant = "GO_KATSU";
->   };
->   
->   &sound {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
-> index da6e767b4cee..2b283a55f653 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
-> @@ -349,7 +349,7 @@ keyboard-controller {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "GO_KODAMA";
-> +	qcom,calibration-variant = "GO_KODAMA";
->   };
->   
->   &i2c_tunnel {
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> index 8b56b8564ed7..00da50a41574 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> @@ -353,7 +353,7 @@ keyboard-controller {
->   };
->   
->   &qca_wifi {
-> -	qcom,ath10k-calibration-variant = "LE_Krane";
-> +	qcom,calibration-variant = "LE_Krane";
->   };
->   
->   &sound {
+>> +impl kernel::InPlaceModule for RustConfigfs {
+>> +    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
+>> +        pr_info!("Rust configfs sample (init)\n");
+>> +
+>> +        let item_type =3D configfs_attrs! {
+>> +            container: configfs::Subsystem<Configuration>,
+>> +            data: Configuration,
+>> +            child: Child,
+>> +            attributes: [
+>> +                message: 0,
+>> +                bar: 1,
+>> +            ],
+>> +        };
+>
+> As I said in the previous patch, this macro is a bit complex. Is there an=
+ything more you can do with it?
+>
+> If so, it better be in this driver, because I hardly think anybody will g=
+o through the source code itself
+> to figure out. My 2c.
+
+I can add some inline comments on the usage here. Is that what you are
+thinking of?
+
+>
+>
+>> +
+>> +        try_pin_init!(Self {
+>> +            config <- configfs::Subsystem::new(
+>> +                c_str!("rust_configfs"), item_type, Configuration::new()
+>> +            ),
+>> +        })
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::GroupOperations for Configuration {
+>> +    type Child =3D Child;
+>> +
+>> +    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::=
+Group<Child>, Error>> {
+>> +        let tpe =3D configfs_attrs! {
+>> +            container: configfs::Group<Child>,
+>> +            data: Child,
+>> +            child: GrandChild,
+>> +            attributes: [
+>> +                baz: 0,
+>> +            ],
+>> +        };
+>> +
+>> +        Ok(configfs::Group::new(name.try_into()?, tpe, Child::new()))
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::AttributeOperations<0> for Configuration {
+>> +    type Data =3D Configuration;
+>> +
+>> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> R=
+esult<usize> {
+>> +        pr_info!("Show message\n");
+>> +        let data =3D container.message;
+>> +        page[0..data.len()].copy_from_slice(data);
+>> +        Ok(data.len())
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::AttributeOperations<1> for Configuration {
+>> +    type Data =3D Configuration;
+>> +
+>> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> R=
+esult<usize> {
+>> +        pr_info!("Show bar\n");
+>> +        let guard =3D container.bar.lock();
+>> +        let data =3D guard.0.as_slice();
+>> +        let len =3D guard.1;
+>> +        page[0..len].copy_from_slice(&data[0..len]);
+>> +        Ok(len)
+>> +    }
+>> +
+>> +    fn store(container: &Configuration, page: &[u8]) -> Result {
+>> +        pr_info!("Store bar\n");
+>> +        let mut guard =3D container.bar.lock();
+>> +        guard.0[0..page.len()].copy_from_slice(page);
+>> +        guard.1 =3D page.len();
+>> +        Ok(())
+>> +    }
+>> +}
+>> +
+>> +#[pin_data]
+>> +struct Child {}
+>
+> nit: you don=E2=80=99t need the braces here
+
+Can't do that. The `pin_data` macro won't eat it. I'll add a comment.
+
+>
+>> +
+>> +impl Child {
+>> +    fn new() -> impl PinInit<Self, Error> {
+>> +        try_pin_init!(Self {})
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::GroupOperations for Child {
+>> +    type Child =3D GrandChild;
+>> +
+>> +    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::=
+Group<GrandChild>, Error>> {
+>> +        let tpe =3D configfs_attrs! {
+>> +            container: configfs::Group<GrandChild>,
+>> +            data: GrandChild,
+>> +            attributes: [
+>> +                gc: 0,
+>> +            ],
+>> +        };
+>> +
+>> +        Ok(configfs::Group::new(
+>> +            name.try_into()?,
+>> +            tpe,
+>> +            GrandChild::new(),
+>> +        ))
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::AttributeOperations<0> for Child {
+>> +    type Data =3D Child;
+>> +
+>> +    fn show(_container: &Child, page: &mut [u8; PAGE_SIZE]) -> Result<u=
+size> {
+>> +        pr_info!("Show baz\n");
+>> +        let data =3D c"Hello Baz\n".to_bytes();
+>> +        page[0..data.len()].copy_from_slice(data);
+>> +        Ok(data.len())
+>> +    }
+>> +}
+>> +
+>> +#[pin_data]
+>> +struct GrandChild {}
+>
+> =E2=80=A6nor here
+
+>
+>> +
+>> +impl GrandChild {
+>> +    fn new() -> impl PinInit<Self, Error> {
+>> +        try_pin_init!(Self {})
+>> +    }
+>> +}
+>> +
+>> +#[vtable]
+>> +impl configfs::AttributeOperations<0> for GrandChild {
+>> +    type Data =3D GrandChild;
+>> +
+>> +    fn show(_container: &GrandChild, page: &mut [u8; PAGE_SIZE]) -> Res=
+ult<usize> {
+>> +        pr_info!("Show baz\n");
+>
+> As I said in the cover letter, perhaps this one slip through :)
+
+Yes, thank you.
+
+>
+>> +        let data =3D c"Hello GC\n".to_bytes();
+>> +        page[0..data.len()].copy_from_slice(data);
+>> +        Ok(data.len())
+>> +    }
+>> +}
+>>
+>> --
+>> 2.47.0
+>>
+>>
+>
+> I=E2=80=99m OK with this patch. It works, and it does what it=E2=80=99s s=
+upposed to do, i.e.: showcase the API.
+>
+> With the =E2=80=9CShow baz=E2=80=9D nit fixed:
+>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+Thanks!
+
+
+Best regards,
+Andreas Hindborg
 
 
 
