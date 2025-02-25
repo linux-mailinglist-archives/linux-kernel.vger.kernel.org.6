@@ -1,69 +1,85 @@
-Return-Path: <linux-kernel+bounces-530938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F8CA43A51
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:52:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3376AA43A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8737A2585
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842B41885D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A462627E6;
-	Tue, 25 Feb 2025 09:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01172627F5;
+	Tue, 25 Feb 2025 09:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="H944BIbK"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OrcFZeCH"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BAB18BB9C;
-	Tue, 25 Feb 2025 09:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7171519A5
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477148; cv=none; b=M1KgQx/NB9yL1Vpw4xMJlP+iT9kLS+B7iBvhYRUaLzajAaiag3dHXUJmel5i4r0uIE7QfZmh4PA5a8+kXnALXX6n62h7m8ev+twbApjW2jjviTns590RjCq7ob5KUMawaz4zSEOQvsFh/5ORosADNUjmLQFNuSkhH3sWGIAOeys=
+	t=1740477138; cv=none; b=EqjYknOXYGIfpc5l+6DFmHYkDwH0VH7ZT5/eiduIG0zMp4MXsaw9zjeh4z+Lz+c+j6Hn7KXnBI2NeorhOX8J+D2hStZ3IROc7fpW9AIsSyruPROzzeVoDpIVuCZqXjALO7KrJ0j1Et80Zec+fB54ELCALz+ftu0mMgON5BOn1Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477148; c=relaxed/simple;
-	bh=13XhFyThWjddbCcTyIBgYU0jGQLILu93dCMct+l48CM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UcLaVlLbjatEfgxzII56ujiMQQqOLsCXBGhyzRcKrjer90cCsNojn8+1zEUHvrf8NacFXNVk3/mYsupePCUb9kJ5VSqj0uQIW4Ls3MOCW45KHpTOxwUAfLtxh71kvrK7XZbGBBFRT5wmhCSp7xyn8XAQ4IRXhYkeGbBm0pwaGWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=H944BIbK; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51ONUwVT005162;
-	Tue, 25 Feb 2025 01:52:10 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=RI8q8A+C/mMkg4mX0jo9fet
-	GEHZ8oz6WKdpobl6FLG0=; b=H944BIbKRL0vlXMoJ9WSdviz8Qbrxpe6D57RR2O
-	p8mF1I9Cdag3mEhLpHnrZUijr+Y02qlpYVNc/Lq7PaMXyrHP0WzRyckiA+zHNMkD
-	KcbeuIsDcdT8gYGJoQlfj1DQVssJyF9cA1lGjqlq/g0p32FS9OG6n6B+HmwPaKzr
-	4BoI3vwwKb2yaIUWBLM8F1MnMi8ActDhWr9qfJ4bEeVODh7W3U4FJc43C+avXClY
-	2mqtLGWrqjZLVsVwVZYkTF7oSeC2dNDoT2G+yr8UfUCN+4rjFZzYNanlNTNtRSTB
-	pdJnOfUmu9z8eytc3OH7w+ih9oq1BgSF1BKLxUn9F2yuCxQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4512gh972j-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 01:52:09 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 25 Feb 2025 01:52:06 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 25 Feb 2025 01:52:06 -0800
-Received: from tx2-sever.caveonetworks.com (unknown [10.110.141.15])
-	by maili.marvell.com (Postfix) with ESMTP id 35CAC3F706D;
-	Tue, 25 Feb 2025 01:52:06 -0800 (PST)
-From: George Cherian <george.cherian@marvell.com>
-To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <corbet@lwn.net>
-CC: <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        George Cherian <george.cherian@marvell.com>
-Subject: [PATCH v2] drivers: watchdog: Add support for panic notifier callback
-Date: Tue, 25 Feb 2025 09:52:03 +0000
-Message-ID: <20250225095203.2139482-1-george.cherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740477138; c=relaxed/simple;
+	bh=XARi+YZOioq2dSvOxXxvznWL5FQ8OEc1/3zPe3u8PFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MXiOdZxZjijFOXnIIWuNRVtx5b1Uqy85aVM9MqKJ+Ok0ngr7//lHaoYyPiR0XD9O2xpWlijoiz/1+bmEwZTzQxCHS87aSypEszdpJ/OiFtSlIHy6x9mwwdiTdUws6hCBJtpFxGM/TqiBXgcA3g7ZB4zeZ8p3054pADEHla3MzDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OrcFZeCH; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so3896981f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:52:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740477133; x=1741081933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5GHjrvlBNm+Fuw+mlPf6/5PhsQQqF/yxmPzmUGmJOQ=;
+        b=OrcFZeCHLhNiMi0Ap7Y2NJXa5TBrFHRWss8a9EAo/vi2Ev03jWWo4Ftg412YrzC8dm
+         /r5WbvKciPUJdNGQ15IVEJL+Du7SdMYoqAwZuBNH+Izw3kaueSyspIyKfSkJayJQmwBU
+         V8AKNUWAm7umSFgAE2woUCi84IpAsorwTJuQzNFhCgBsj0ATmXpzPI3tUCKSmLS7u+RU
+         TBdDWVQrmRNf4gX5q4GseGXBEjp+WQgrYKB4N5ar48GNULTWOrftCg7XfrArDMkdSepv
+         daxiZTxEmo4xVuHj6qUpTOKXRbLZ8ZiFxiULQEs1F0VIA7b/ep+W4CgAjEO/hVdmiRgQ
+         RsTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740477133; x=1741081933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5GHjrvlBNm+Fuw+mlPf6/5PhsQQqF/yxmPzmUGmJOQ=;
+        b=sd2aodmqp1aA//BStJ7VNy0R+Eh8JKrA6Ml7ZkpPMsFtK0GxlqkXfSA1cK1z0iNM2B
+         W6i+9XVc3gBV8uErLb/pvRcVPWkZVfG3Zyhh5M7sRTPyqZBWduzv1MQKxj6EbLjlMlhg
+         SyGUUdk7A1H6TuENGRyx9VQbiG3sB5mBCyjfRHgT09EzDDw6HwhKUo6EkWt+hvML15gM
+         sEiObZ4vxV3FQ03Q049DuC+eJSY4+davZ8fM3GQSjcydtm5nSe1Qz1gwfbMBIZUDaB3v
+         FeN+T9avlD2he+qYewihLr5uF6+Ur9TQxuqSrDk6E9NTz71NcPdVj989QUfayUwu5qyv
+         yhSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8NGK+22Iiic6tKCPCcfxQPel8NNrYo83vWFED92tq2mXLGw+wv0jydyORLHcKyvvBKW8yJG+88/47EWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyISujvOHirzE92BAaFZMSFhLdI1PxQ/rtHLxMb83d1Od2XEAuA
+	WmsOmNWG+Tt59+B6tu/YNZDKVATZ0PcgdsW5MDyv/ZIPQqlqjoCGusegc4qcbbK+dKhLb6Ie9zR
+	9E7s=
+X-Gm-Gg: ASbGncsneZ5/+EEiD1xrnXpzG9buj+mXTy/3KEHU9bp03wr8I+w220ATF1ZX7fgyp4Y
+	2G2Sz2dHGsTc5OCM/ynWVXN02t1EkrotS6MxdRO8kgxc+Fmn1uzX9CoYtsgYmr6idR/FwXbnkPz
+	LfXTBbsKCpoFkydQhWpPZjqyRXobhy/yUOtli0OtbNE5mt3w3eoLvfIVh88GFASgPimTfcuyHF0
+	XRDdTl9pXlMYkNVb0egFDZgl9OPgk4YuX/YbGqQtIVNw/+l7t4jFln6laxGY7B+sJTdnFDIxVWE
+	Q3fteNnFQKmP0se4nG3Zjw03yw==
+X-Google-Smtp-Source: AGHT+IHI72au0X7G/eU3XJtp8XN4UP3wf3anxfHDJsGzVLMKwudw09vKCm6cjU/0t4YhXRSZTAfuLg==
+X-Received: by 2002:a05:6000:186e:b0:38d:e572:4dc2 with SMTP id ffacd0b85a97d-38f70826839mr16248954f8f.40.1740477133387;
+        Tue, 25 Feb 2025 01:52:13 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:15ae:2cfe:447a:4a32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fbef5sm1733781f8f.90.2025.02.25.01.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 01:52:12 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: [PATCH v2] gpiolib: use the required minimum set of headers
+Date: Tue, 25 Feb 2025 10:52:10 +0100
+Message-ID: <20250225095210.25910-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,156 +87,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: bGCIOzTepTq8SHJVlu2mrXvmlXKmvUCl
-X-Authority-Analysis: v=2.4 cv=FLrhx/os c=1 sm=1 tr=0 ts=67bd92c9 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=T2h4t0Lz3GQA:10 a=M5GUcnROAAAA:8 a=OmVHwVlGuMYDsWmUhBYA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: bGCIOzTepTq8SHJVlu2mrXvmlXKmvUCl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
 
-Watchdog is not turned off in kernel panic situation.
-In certain systems this might prevent the successful loading
-of kdump kernel. The kdump kernel might hit a watchdog reset
-while it is booting.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-To avoid such scenarios add a panic notifier call back function
-which can stop the watchdog. This provision can be enabled by
-passing watchdog.stop_on_panic=1 via kernel command-line parameter.
+Andy suggested we should keep a fine-grained scheme for includes and
+only pull in stuff required within individual ifdef sections. Let's
+revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
+gpio/consumer.h") and make the headers situation even more fine-grained
+by only including the first level headers containing requireded symbols
+except for bug.h where checkpatch.pl warns against including asm/bug.h.
 
-Signed-off-by: George Cherian <george.cherian@marvell.com>
+Fixes: dea69f2d1cc8 ("gpiolib: move all includes to the top of gpio/consumer.h")
+Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Closes: https://lore.kernel.org/all/Z7XPcYtaA4COHDYj@smile.fi.intel.com/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changelog:
-v1 -> v2
-- Remove the per driver flag setting option
-- Take the parameter via kernel command-line parameter to watchdog_core.
+Changes in v2:
+- don't include asm/errno.h: it's already provided by linux/err.h which
+  must be included globally for this header due to
+  gpiod_multi_set_value_cansleep() needing it
 
- drivers/watchdog/watchdog_core.c | 42 ++++++++++++++++++++++++++++++++
- include/linux/watchdog.h         |  8 ++++++
- 2 files changed, 50 insertions(+)
+ include/linux/gpio/consumer.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
-index d46d8c8c01f2..8cbebe38b7dd 100644
---- a/drivers/watchdog/watchdog_core.c
-+++ b/drivers/watchdog/watchdog_core.c
-@@ -34,6 +34,7 @@
- #include <linux/idr.h>		/* For ida_* macros */
- #include <linux/err.h>		/* For IS_ERR macros */
- #include <linux/of.h>		/* For of_get_timeout_sec */
-+#include <linux/panic_notifier.h> /* For panic handler */
- #include <linux/suspend.h>
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 0b2b56199c36..824a1717e6d2 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -3,10 +3,7 @@
+ #define __LINUX_GPIO_CONSUMER_H
  
- #include "watchdog_core.h"	/* For watchdog_dev_register/... */
-@@ -47,6 +48,9 @@ static int stop_on_reboot = -1;
- module_param(stop_on_reboot, int, 0444);
- MODULE_PARM_DESC(stop_on_reboot, "Stop watchdogs on reboot (0=keep watching, 1=stop)");
+ #include <linux/bits.h>
+-#include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/errno.h>
+-#include <linux/kernel.h>
+ #include <linux/types.h>
  
-+static int stop_on_panic = -1;
-+module_param(stop_on_panic, int, 0444);
-+MODULE_PARM_DESC(stop_on_panic, "Stop watchdogs on panic (0=keep watching, 1=stop)");
- /*
-  * Deferred Registration infrastructure.
-  *
-@@ -155,6 +159,23 @@ int watchdog_init_timeout(struct watchdog_device *wdd,
- }
- EXPORT_SYMBOL_GPL(watchdog_init_timeout);
+ struct acpi_device;
+@@ -185,6 +182,9 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
  
-+static int watchdog_panic_notify(struct notifier_block *nb,
-+				 unsigned long action, void *data)
-+{
-+	struct watchdog_device *wdd;
+ #else /* CONFIG_GPIOLIB */
+ 
++#include <linux/bug.h>
++#include <linux/kernel.h>
 +
-+	wdd = container_of(nb, struct watchdog_device, panic_nb);
-+	if (watchdog_active(wdd)) {
-+		int ret;
-+
-+		ret = wdd->ops->stop(wdd);
-+		if (ret)
-+			return NOTIFY_BAD;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- static int watchdog_reboot_notifier(struct notifier_block *nb,
- 				    unsigned long code, void *data)
+ static inline int gpiod_count(struct device *dev, const char *con_id)
  {
-@@ -299,6 +320,14 @@ static int ___watchdog_register_device(struct watchdog_device *wdd)
- 			clear_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
- 	}
- 
-+	/* Module parameter to force watchdog policy on panic. */
-+	if (stop_on_panic != -1) {
-+		if (stop_on_panic &&  !test_bit(WDOG_NO_WAY_OUT, &wdd->status))
-+			set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-+		else
-+			clear_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-+	}
-+
- 	if (test_bit(WDOG_STOP_ON_REBOOT, &wdd->status)) {
- 		if (!wdd->ops->stop)
- 			pr_warn("watchdog%d: stop_on_reboot not supported\n", wdd->id);
-@@ -334,6 +363,16 @@ static int ___watchdog_register_device(struct watchdog_device *wdd)
- 				wdd->id, ret);
- 	}
- 
-+	if (test_bit(WDOG_STOP_ON_PANIC, &wdd->status)) {
-+		if (!wdd->ops->stop) {
-+			pr_warn("watchdog%d: stop_on_panic not supported\n", wdd->id);
-+		} else {
-+			wdd->panic_nb.notifier_call = watchdog_panic_notify;
-+			atomic_notifier_chain_register(&panic_notifier_list,
-+						       &wdd->panic_nb);
-+		}
-+	}
-+
  	return 0;
- }
- 
-@@ -390,6 +429,9 @@ static void __watchdog_unregister_device(struct watchdog_device *wdd)
- 	if (test_bit(WDOG_STOP_ON_REBOOT, &wdd->status))
- 		unregister_reboot_notifier(&wdd->reboot_nb);
- 
-+	if (test_bit(WDOG_STOP_ON_PANIC, &wdd->status))
-+		atomic_notifier_chain_unregister(&panic_notifier_list,
-+						 &wdd->panic_nb);
- 	watchdog_dev_unregister(wdd);
- 	ida_free(&watchdog_ida, wdd->id);
- }
-diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-index 99660197a36c..3c21b527ede9 100644
---- a/include/linux/watchdog.h
-+++ b/include/linux/watchdog.h
-@@ -108,6 +108,7 @@ struct watchdog_device {
- 	struct notifier_block reboot_nb;
- 	struct notifier_block restart_nb;
- 	struct notifier_block pm_nb;
-+	struct notifier_block panic_nb;
- 	void *driver_data;
- 	struct watchdog_core_data *wd_data;
- 	unsigned long status;
-@@ -118,6 +119,7 @@ struct watchdog_device {
- #define WDOG_HW_RUNNING		3	/* True if HW watchdog running */
- #define WDOG_STOP_ON_UNREGISTER	4	/* Should be stopped on unregister */
- #define WDOG_NO_PING_ON_SUSPEND	5	/* Ping worker should be stopped on suspend */
-+#define WDOG_STOP_ON_PANIC	6	/* Should be stopped on panic for loading kdump kernels */
- 	struct list_head deferred;
- };
- 
-@@ -146,6 +148,12 @@ static inline void watchdog_set_nowayout(struct watchdog_device *wdd, bool noway
- 		set_bit(WDOG_NO_WAY_OUT, &wdd->status);
- }
- 
-+/* Use the following function to stop the watchdog on panic */
-+static inline void watchdog_stop_on_panic(struct watchdog_device *wdd)
-+{
-+	set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-+}
+@@ -549,6 +549,9 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+ int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+ #else
 +
- /* Use the following function to stop the watchdog on reboot */
- static inline void watchdog_stop_on_reboot(struct watchdog_device *wdd)
++#include <linux/bug.h>
++
+ static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
+ 					       unsigned long flags)
  {
 -- 
-2.34.1
+2.45.2
 
 
