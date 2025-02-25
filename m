@@ -1,140 +1,350 @@
-Return-Path: <linux-kernel+bounces-532452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3295AA44DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:45:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629A8A44DF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A3316997C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 941BA16A893
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D5618DB04;
-	Tue, 25 Feb 2025 20:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="sqzs/H1V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BhAJADjs"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DC520DD71;
+	Tue, 25 Feb 2025 20:44:06 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEC31A2396;
-	Tue, 25 Feb 2025 20:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FC31A2C0E;
+	Tue, 25 Feb 2025 20:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740516225; cv=none; b=PFmF2TfNyAsE0z0UEzk2ZG4VxGfg7ci/rCRLj8RZ1xbbtt7UV4v1wSxYHi6xUHn3VlCNEXH+mcxr8as6cJ6EnKP3moRTm/r54tgXFVtlLnoHd9wdlYKXwseap987e956Ut2ltvGLVlvE+4zPsuNUZugyhCcWGdas2nUrJMmPFeg=
+	t=1740516245; cv=none; b=nxgzcErj6vcdS2lXbGkVZpzXPAa35U8txGIN2Ens9cZEpm4Y2x/lD6QhJzduYBYcMbky1L4BA3Sp37Fn3F9ychS6rmtPl1DU3l+OOAehZ+0wod8MaJ+VvFMNcUGkphoB8hv9ewugYre7mivFR6ULCf3+TPvU5H5GtBf5n7dj7og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740516225; c=relaxed/simple;
-	bh=O/fhfATb4AiUXDJCmjcXCXRXVNJS4e8/TecLMtuchqQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jTjQQCoymsBnJrXK8hlgiOvaTS5xYIhjFr6buPLurZsvYY7eyTcQwaLKph6lpGYVy2IIVA4SjzeatR0aQhY6gtjGuWHU9ZAzbICAxQNXPSjEW28teChkcKj3nYCT+V0acwcq57/kMMlJzMHK9ZAQYcTgXYuG0GEvLWcOuhzNwbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=sqzs/H1V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BhAJADjs; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DFBD52540158;
-	Tue, 25 Feb 2025 15:43:40 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Tue, 25 Feb 2025 15:43:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1740516220; x=1740602620; bh=O/fhfATb4AiUXDJCmjcXCXRXVNJS4e8/
-	TecLMtuchqQ=; b=sqzs/H1VLTKz+ic/Ses3INJph9n2k4WuTOxFo+MvtoLX169Y
-	nSkD4oDB9axeueV5vNigULRe7V9Mu71G0wgnXLmN3vS16206nonzNfN9cLp7zOwB
-	b46FBm0BJcFBpq68axremRPUQlqIdkYY0zz6q8e4FGsjUM4fLRxHYpLQ68BzmZgx
-	xiFtLpYME1Oocxe6/yZ6fSV+mYVtdAaRREo/8nHe6UWV38WbyrzeK0FX1kDo7Uxk
-	jLBd4wFmGuEeXmNGcAf5w8GMA9lmfVAlz+V6+s2/hrhaxewpyRSxxENXymJanLIc
-	DM1hEzl7Vhz2z9XTidYlovfeqfLoIFMWitLV7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740516220; x=
-	1740602620; bh=O/fhfATb4AiUXDJCmjcXCXRXVNJS4e8/TecLMtuchqQ=; b=B
-	hAJADjsSmaVl9LVtpfE6cRAsxXwwuTg1N7861zIRXibXgg2MxKhe+aikLrrD5MYY
-	BiUooc93Mf8BsbhWcMow1u3RQFNKr+lXhLXazMqVa9Bg/by/lAeF7zTcm9g9k32U
-	LOQAu/sFMy7FXiBL5+vU++XTFY4U7+IcqiQ820mF9pY+1RoTOXWaEitR2V+ptCfZ
-	WJqdLfdhwUcM/QpXuDkpvn2Uf2Mzj6i+/MmXL9x4tTgwytoe5zUXbM4n59+2gJKX
-	kBk7Yu/gI/JeJe36RNZxUYPdSN+zx3GuLfPJgv0uP7DdvOIWe+qh0vGhZct/9XFj
-	6rxueUVS3Wx/36OK80jIw==
-X-ME-Sender: <xms:eyu-Z4C34Fh3XE97I_u7gERDrdNerw9w3TP03wXikKnfqf5RKF8_GQ>
-    <xme:eyu-Z6g9gS4J2rwHWVuwYOTTTiErGSRRsvFXQqt44vO_0E7TSNN76phlHbZJ6MRuE
-    Gpbv8-vsjNXnuSRF1o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdeilecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeegheduteffteeguefgteeugeffvdejgefg
-    gfegkedthffgudfhudduieelkeekkeenucffohhmrghinhepghhithhhuhgsrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghn
-    sehsvhgvnhhpvghtvghrrdguvghvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtoheprhihuggsvghrghessghithhmrghthhdrohhrghdprhgt
-    phhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpth
-    htohepfhhnkhhlrdhkvghrnhgvlhesghhmrghilhdrtghomhdprhgtphhtthhopehnvggr
-    lhesghhomhhprgdruggvvhdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgtph
-    htthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihk
-    odgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhn
-    fhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:fCu-Z7mIrGgSvFW5O80C-vreKzrTwA4iGXV1Ro_0fyX3q1pRBxe8Tg>
-    <xmx:fCu-Z-zYu1EGdl3h3FKh3drCYacxHtXezkfwDqZdxjihmMbGRQYAFQ>
-    <xmx:fCu-Z9Qos28BREiaYB0D-yS_S_9S-SrA8KYEkGIq5EUF3NSdWLJrGg>
-    <xmx:fCu-Z5Z2TYLoOG5jGqeS938z0CwNI11CKJlvFB0XatiQbrawZxKJCA>
-    <xmx:fCu-Z5pbHil56P7IpzzlVm65q57AwXFOM7H0nmnKK9xQPlbnpUhxW4xr>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D655BBA006F; Tue, 25 Feb 2025 15:43:39 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740516245; c=relaxed/simple;
+	bh=Yv+Z9Y+3B4jBCJ4/yx5U464umiGC38OjXZxWPi4QusE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aTojWX4A/83V77UtmNTM81e6qLf5qtG/BU2PKHv+V6X1aTPCm36aRU07gnFB0rSzyuVygq4PTiKPCd5oUGxew7hduXKablPfL126ZBpwGQ/8/B2TFrZaFTw625k2KtJkHXye5ezqj5qqZQDZ2D1GIjDdiU0Bu50KqOq2qY2X57A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af513.dynamic.kabel-deutschland.de [95.90.245.19])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D9D4061E646F9;
+	Tue, 25 Feb 2025 21:43:47 +0100 (CET)
+Message-ID: <d1661817-1036-420a-9f76-a7124e6550a7@molgen.mpg.de>
+Date: Tue, 25 Feb 2025 21:43:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 21:43:08 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Sasha Finkelstein" <fnkl.kernel@gmail.com>,
- "Hector Martin" <marcan@marcan.st>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Henrik Rydberg" <rydberg@bitmath.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Janne Grunau" <j@jannau.net>,
- "Neal Gompa" <neal@gompa.dev>
-Message-Id: <4394a92e-8024-431e-a667-1644171472d2@app.fastmail.com>
-In-Reply-To: <20250224-z2-v7-3-2746f2bd07d0@gmail.com>
-References: <20250224-z2-v7-0-2746f2bd07d0@gmail.com>
- <20250224-z2-v7-3-2746f2bd07d0@gmail.com>
-Subject: Re: [PATCH v7 3/4] arm64: dts: apple: Add touchbar digitizer nodes
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: Linux logs new warning `gpio gpiochip0:
+ gpiochip_add_data_with_key: get_direction failed: -22`
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
+ <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+ <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025, at 12:01, Sasha Finkelstein via B4 Relay wrote:
-> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
->
-> Adds device tree entries for the touchbar digitizer
->
-> Co-developed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Acked-by: Sven Peter <sven@svenpeter.dev>
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
-
-Hi,
-
-this doesn't apply anymore on top of asahi-soc/dt [1]. Can you rebase and resend?
-
-[1] https://github.com/AsahiLinux/linux/tree/asahi-soc/dt
-
-Thanks,
+Dear Bartosz,
 
 
-Sven
+Thank you for your support.
+
+Am 24.02.25 um 09:51 schrieb brgl@bgdev.pl:
+> On Sun, 23 Feb 2025 23:04:05 +0100, Paul Menzel <pmenzel@molgen.mpg.de> said:
+
+>> Am 23.02.25 um 21:54 schrieb Bartosz Golaszewski:
+>>> On Fri, Feb 21, 2025 at 10:02 PM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>>>>
+>>>>> What GPIO driver is it using? It's likely that it's not using the
+>>>>> provider API correctly and this change uncovered it, I'd like to take
+>>>>> a look at it and fix it.
+>>>>
+>>>> How do I find out? The commands below do not return anything.
+>>>>
+>>>>        $ lsmod | grep gpio
+>>>>        $ lspci -nn | grep -i gpio
+>>>>        $ sudo dmesg | grep gpio
+>>>>        [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -22
+>>>>        [Just these lines match.]
+>>
+>>> If you have libgpiod-tools installed, you can post the output of
+>>> gpiodetect here.
+>>
+>>       $ sudo gpiodetect
+>>       gpiochip0 [INT344B:00] (152 lines)
+> 
+> So it's pinctrl-intel, specifically this function in
+> drivers/pinctrl/intel/pinctrl-intel.c:
+> 
+> static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+> {
+> 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+> 	void __iomem *reg;
+> 	u32 padcfg0;
+> 	int pin;
+> 
+> 	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+> 	if (pin < 0)
+> 		return -EINVAL;
+> 
+> 	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+> 	if (!reg)
+> 		return -EINVAL;
+> 
+> 	scoped_guard(raw_spinlock_irqsave, &pctrl->lock)
+> 		padcfg0 = readl(reg);
+> 
+> 	if (padcfg0 & PADCFG0_PMODE_MASK)
+> 		return -EINVAL;
+> 
+> 	if (__intel_gpio_get_direction(padcfg0) & PAD_CONNECT_OUTPUT)
+> 		return GPIO_LINE_DIRECTION_OUT;
+> 
+> 	return GPIO_LINE_DIRECTION_IN;
+> }
+> 
+> Can you add some logs and see which -EINVAL is returned here specifically?
+
+Sure. I used the diff below, and added `dyndbg="file pinctrl-intel.c 
++p"` added to `/boot/grub/grub.cfg`.
+
+```
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c 
+b/drivers/pinctrl/intel/pinctrl-intel.c
+index 527e4b87ae52..f0922d9e64ee 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1067,18 +1067,24 @@ static int intel_gpio_get_direction(struct 
+gpio_chip *chip, unsigned int offset)
+         int pin;
+
+         pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+-       if (pin < 0)
++       if (pin < 0) {
++               dev_dbg(pctrl->dev, "pin < 0");
+                 return -EINVAL;
++       }
+
+         reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+-       if (!reg)
++       if (!reg) {
++               dev_dbg(pctrl->dev, "not reg");
+                 return -EINVAL;
++       }
+
+         scoped_guard(raw_spinlock_irqsave, &pctrl->lock)
+                 padcfg0 = readl(reg);
+
+-       if (padcfg0 & PADCFG0_PMODE_MASK)
++       if (padcfg0 & PADCFG0_PMODE_MASK) {
++               dev_dbg(pctrl->dev, "padcfg0 = %x", padcfg0);
+                 return -EINVAL;
++       }
+
+         if (__intel_gpio_get_direction(padcfg0) & PAD_CONNECT_OUTPUT)
+                 return GPIO_LINE_DIRECTION_OUT;
+```
+
+These are the logs:
+
+```
+[    0.198584] sunrisepoint-pinctrl INT344B:00: Community0 features: 
+0x000000
+[    0.198613] sunrisepoint-pinctrl INT344B:00: Community1 features: 
+0x00000c
+[    0.198629] sunrisepoint-pinctrl INT344B:00: Community2 features: 
+0x000000
+[    0.198687] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198688] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198693] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198694] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198699] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198700] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198704] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198705] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198709] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198710] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198715] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198715] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198720] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198721] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198730] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198731] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198735] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198736] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198741] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198741] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198746] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198747] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198756] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198757] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198766] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198767] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198812] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198812] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198817] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198818] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198822] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198823] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198837] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198838] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198843] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198843] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198848] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198849] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198853] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198854] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198863] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198864] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198874] sunrisepoint-pinctrl INT344B:00: padcfg0 = 4000700
+[    0.198875] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198879] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198880] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198884] sunrisepoint-pinctrl INT344B:00: padcfg0 = 4000700
+[    0.198885] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198938] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198939] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198944] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198945] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198950] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198951] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198972] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198973] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198978] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.198979] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.198989] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.198990] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199006] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199007] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199011] sunrisepoint-pinctrl INT344B:00: padcfg0 = 84000700
+[    0.199012] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199028] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199029] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199034] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199035] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199040] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199041] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199045] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199046] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199211] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199211] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199217] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199217] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199239] sunrisepoint-pinctrl INT344B:00: padcfg0 = 4000700
+[    0.199240] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199255] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199256] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199261] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199262] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199267] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199268] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199273] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000702
+[    0.199274] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199278] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199279] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199284] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199285] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199301] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000502
+[    0.199302] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199307] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199308] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199312] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199313] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199318] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199319] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199324] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000700
+[    0.199325] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199382] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000600
+[    0.199383] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+[    0.199387] sunrisepoint-pinctrl INT344B:00: padcfg0 = 44000600
+[    0.199388] gpio gpiochip0: gpiochip_add_data_with_key: get_direction 
+failed: -22
+```
+
+With
+
+     #define PADCFG0_PMODE_MASK              GENMASK(13, 10)
+
+indeed one bit is always set in this range.
+
+> In any case: Linus: what should be our policy here? There are some pinctrl
+> drivers which return EINVAL if the pin in question is not in GPIO mode. I don't
+> think this is an error. Returning errors should be reserved for read failures
+> and so on. Are you fine with changing the logic here to explicitly default to
+> INPUT as until recently all errors would be interpreted as such anyway?
+
+
+Kind regards,
+
+Paul
 
