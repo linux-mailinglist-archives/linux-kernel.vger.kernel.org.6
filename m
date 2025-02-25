@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-531680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56338A44391
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FB6A44397
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99351891633
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEBDA18834B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AA721ABC2;
-	Tue, 25 Feb 2025 14:48:02 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE1A21ABD5;
+	Tue, 25 Feb 2025 14:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eMBACx/6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6DD21ABA2;
-	Tue, 25 Feb 2025 14:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C8821ABC3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494881; cv=none; b=ni5OBXNxh/w/va/uHjYrML7qifBPLNiPiGdjbjXnO3TbGgsC5uHE/ZGTNHCUnC6xbM6FJGY5962ZwwS+Yu6Da3DwWDCkRlqGz4jBx/4FNwQsZ4OEN9/ZUPa/a4LWmLnkeNW57Fz+g2uZrk9FHaIcF2lumaLAtLn2vULfrmOoQ90=
+	t=1740494959; cv=none; b=DMeYQu+nXnct06WDtTb2p11Mvx34teRPn0GphN8Kl/FaQvVeUZfdEIkJmUHecocmGPev4lPjnelKOvqTH/zZgYSB8ThCzoAfij6x9VgtZvmo1q7JHndiiEkcoBUzrh1/jOBfrbl/3tbyLGyCFyZ6VProA43U3iLhgwD00JHedug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494881; c=relaxed/simple;
-	bh=mdUuuqIXJweoUeEecxQyPPnc+0OGiJKwMkgKfyVt1BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bsqdnhZAbiQ4WmqTxPAdYx2mrRM4xUA86yuKfze8gB8Zw2pTBw/I/nQZFg3p2KolWAAO1ltU+S6Rv/xyWNRFFZNYvOpQzDHAm/rv5vsimiL2M2gCm+zJURU7Qf2K3Xhghlt+xShN1IfW5id3AZHe9u9qbuIuuePM7rR+PAZVaHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220bfdfb3f4so14706045ad.2;
-        Tue, 25 Feb 2025 06:47:59 -0800 (PST)
+	s=arc-20240116; t=1740494959; c=relaxed/simple;
+	bh=jB2KNx2xiJKVw67d/M0TT8okvRHhKlz8iuO0X0oMk5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cngjt0RlNlzyYZl5wtAWLUSpt/je4jIME8yOfr30uH7IRt8JPv6yUQ3Mt4B9f12gk1FdydUX5BrtGZUqyPGsOpxT6KHVLlaQbvBDwawEGqH03TBXGfS9cusdoetkHcMLUA0Gy93ncXznpFZGOdK+0pm7uPqEIhEbMoTmMlgstso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eMBACx/6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PBkEYm017465
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:49:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MdZblCZrtqr5nSTII/rdTDMLLzlyRaA57jSGq74yb+Y=; b=eMBACx/628VwpC7D
+	9lZ9O1PFLSPuTVS+tc53m1rF4B52Mdcqsa73TtHeh14XTNF7xVuHNInbVxviXI5c
+	nUMgSrt0e1IwjROayup08XZGHjpuDJLR6Yh0Qv9NThGeqizuXjGgKPWlfeNn6g/5
+	kIknF1gyMCgHn/3QPf80VXMP/L+tv3OeZ1qWPsGChjgewvTkFFtB8g6FjwqOo4Eh
+	7V76ZVlFLvCPgw/oZHcTgdfC9isHIjrt4/zVitJZrrpleyixZOwylqsORPiWFT44
+	2VzO+9meT7BbaaCLA2x6PaW6W1LsRvNUnaGNJserjXFoleIcqIGHVNtm+SmYBbdN
+	RpL8Mw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4516nm9rgd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:49:16 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e665343a70so10133836d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:49:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494879; x=1741099679;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H9fUAMMSFfpBE9zde4jyNVpOAHmdzHBHI3cebG5cFgg=;
-        b=nrNNMmDMHs5+UF/RuVqU6WDHe8CcNGAs0w/0rm3i++GAsnt0n8qOynz5PE6brjH5OH
-         eVWDDCjkLtniavTQZtA+0WXbyPGfqS5wh1HDfHuJVr2uoszwwSzwDcZ9/JbfDWNgvYay
-         W/KPwb+ZSu0T7lVJ/nSWES7a4C0ji7dkoM3CQ+twSuJ1fworsfhw6jYX6G98Pf4IfnFM
-         VpFL2JVEPvvCM+lj2eptoz+zCCacjbnCOUOXpeU3Q1LD4wLS2aJqUa35SRTe0Uv8pSJN
-         kA8fEGjhh1lUE59k1q1XTErPzZyirTMrHX/EbpQH4XEx6M2eYUVoJ7ng1mTy4W4UBXNc
-         PYog==
-X-Forwarded-Encrypted: i=1; AJvYcCWy7Km0UqFgWUD8D2mJugI5zrzEeMyx9cwvhNVMiBzCAsC6QQ+Uf3NTrQPYtnhZSaKOykZJa3T1vOpuwFAd/NkcuA==@vger.kernel.org, AJvYcCXAxkeqgDwR1pGR047dcktUsWA+5F6Cz8ucYxkAUJfF3ZaxOfKHdvcobsf5WVEGAqM8XedHfPUYVrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx2yiGPiuYFkN2lyCs0Jbhr26D8TFG5HXRRQrw7iCEfCg9ZrAM
-	4amircMt38W8o3P8ZKgA7ebbLOw2eXK04Czrca1Gh5VGeV65K2pI
-X-Gm-Gg: ASbGncu1aQ6B2Hn4Di8kHtrjInQacCVkfSUu0Nv9MPe0Et0tAEasYGjbklg/p3hs/xZ
-	Xe/JPF2pOhKVuEthUVHiBrl8RF/O9x329lGKbnhBM+V5Y/N2qQ8XRBXhlCdjUqXBr0WkVMHDdWk
-	FM2T4zZgT8U4LZ2/ZhHFbOZ8UR9nZwDargrFdWtsJYmx7w2hq7XS022aqX1+NKDvgn4dzIk4zFB
-	6CJThRBqnBFl/qAyp7GRfk/e/hdzZc7tNCWkEJ741Y3VjxqSE7qm3Ks/9wCHtaYgGeglph5UUbw
-	h9Kd9I3BvGfq6zQd/FtlnPPmOZJASwePosk1aBjfg798qogzFIfDZltICGJ7
-X-Google-Smtp-Source: AGHT+IFJlOv8carYE6+UU235OdYaIvzKkWJV3Kr/Y5yUb/0j804xN8YoKlVnPeDtE+lBocpwiZJ8YA==
-X-Received: by 2002:a05:6a00:c92:b0:732:1840:8382 with SMTP id d2e1a72fcca58-73426ae9b30mr24918884b3a.0.1740494879299;
-        Tue, 25 Feb 2025 06:47:59 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aeda7f8538fsm1488011a12.31.2025.02.25.06.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 06:47:58 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:47:57 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 1/5] perf/dwc_pcie: Move common DWC struct definitions
- to 'pcie-dwc.h'
-Message-ID: <20250225144757.GA1660448@rocinante>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132024epcas5p13d6e617805e4ef0c081227b08119871b@epcas5p1.samsung.com>
- <20250221131548.59616-2-shradha.t@samsung.com>
+        d=1e100.net; s=20230601; t=1740494955; x=1741099755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MdZblCZrtqr5nSTII/rdTDMLLzlyRaA57jSGq74yb+Y=;
+        b=D3vcgzvjbDEiWyvgfJZxEgYYF0qqwLBgf3BCrztIHteXwm85bi3xY4UdTwKFP6UO8T
+         +f6n+/Vuhi8xRFFSwzuZur5ADfr0r96sxQC+e1toqXb7szTFthHRk0tVLk2ZS+VT+UM2
+         osYg22lXtk4mdjUAQsfGYbcM3+BExhH1h8ohj2o2/94CdEfz9ZjXbWAQKmfIPNc7JxdA
+         aPqslHuV6xGmr7r+36ImWRC/ntI0u3sSStyM8DMUp0ib7T210tDDtZ5w2/wTPOvAGnws
+         tcAIgxOBMlQ+mBqf/P6Sxb1v67+g5elVIfTbVDC6/mU0r6RELHPfKv3UpUi1ZxAwpAIp
+         tjww==
+X-Gm-Message-State: AOJu0YwH/wuaa1YH1/ztZWVRY1VfUG++OzUNsa1DP4bbi01Z9D2WY5NF
+	F6lRRGFvOBcYgpxxW2zMEyKvm3L3UoW7QsiH3klE9B3IcinNTKSgrZLSTJIvQHlK2mDXzW10AaG
+	GP5Qkl4MK6hi6a+kKYuTU2UAZAbItZwos3KgauBpcb9GB7dka2+uXfbMyZwbs2rg=
+X-Gm-Gg: ASbGncuUYdQ/ZfrRv/wYxrelboT7GsqtELqT8fH4lim+2ovqJMnPln3FvX2EjKun3Ki
+	LPTPdpZE00bC0T2BIrporpYUMqSRYuMKNJEnG7D1u0zyUDt/2wa2skCr5BXQCj4Vk+NXpkrVzkb
+	WpLsbZahcl+Wo4Fm7/BB7IwQDjbpb6noXXEzZqhkiESE52kYWBN24OlN9cA+qfus9IbcG8m54hr
+	h8VR7hSytwqJZ+yREUpbT0kJYrr8JIO7UXI9Rviy9Qj2ML0gj9GIWdXfUBGn3jmHCPLqowwyBNq
+	9uu9kOxIRXebgx0SFCbHSaiNkFGiCAICXeNCFyH/bNK/7Gi/uRCcwKMCTfB7PSpiwSPkGg==
+X-Received: by 2002:a05:6214:e64:b0:6e6:60f6:56dd with SMTP id 6a1803df08f44-6e6ae9b4a82mr78584586d6.7.1740494955190;
+        Tue, 25 Feb 2025 06:49:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE1Q6ox4nvENUzBFA4fILrABEqSIsQiZXCOTgUYTSKSMgYH+75qvmwIn5Zxz7zObrGAIRpFQw==
+X-Received: by 2002:a05:6214:e64:b0:6e6:60f6:56dd with SMTP id 6a1803df08f44-6e6ae9b4a82mr78584296d6.7.1740494954729;
+        Tue, 25 Feb 2025 06:49:14 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2010df7sm153581666b.95.2025.02.25.06.49.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 06:49:14 -0800 (PST)
+Message-ID: <051fdebf-baf0-4d67-b044-fdbb50d2f7fc@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 15:49:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221131548.59616-2-shradha.t@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sc7180-trogdor: Wire up USB to
+ usb-c-connectors
+To: Stephen Boyd <swboyd@chromium.org>,
+        Konrad Dybcio
+ <konradybcio@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        patches@lists.linux.dev, cros-qcom-dts-watchers@chromium.org,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        Pin-yen Lin <treapking@chromium.org>
+References: <20250221233120.3596158-1-swboyd@chromium.org>
+ <20250221233120.3596158-3-swboyd@chromium.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250221233120.3596158-3-swboyd@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: zbCaGsG5GjlPk7YRzjidU9k3De_dB5Bb
+X-Proofpoint-GUID: zbCaGsG5GjlPk7YRzjidU9k3De_dB5Bb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 adultscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 mlxlogscore=930 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250099
 
-Hello,
-
-> Since these are common to all Desginware PCIe IPs, move them to a new
-> header 'pcie-dwc.h', so that other drivers like debugfs, perf and sysfs
-> could make use of them.
+On 22.02.2025 12:31 AM, Stephen Boyd wrote:
+> Fully describe the USB type-c on sc7180 Trogdor devices. Most Trogdor
+> devices have two USB type-c ports (i.e. usb-c-connector nodes), but
+> Quackingstick only has one. Also, clamshell devices such as Lazor have a
+> USB webcam connected to the USB hub, while detachable devices such as
+> Wormdingler don't have a webcam, or a USB type-a connector. Instead they
+> have the pogo pins for the detachable keyboard.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> Fully describing the topology like this will let us expose information
+> about what devices are connected to which physical USB connector (type-A
+> or type-C).
+> 
+> Cc: <cros-qcom-dts-watchers@chromium.org>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: <linux-arm-msm@vger.kernel.org>
+> Cc: <devicetree@vger.kernel.org>
+> Cc: Pin-yen Lin <treapking@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
 
-We are still missing feedback from the perf maintainers.
+This is quite a patch, but it seems to do what it promises..
 
-Especially, as I would like to take this patch via the PCI tree, if there
-is no objection.
+Please add newlines between defined properties and subnodes
 
-Thank you, Niklas, for pointing this out.  Appreciated.
+With that: 
 
-	Krzysztof
+Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
