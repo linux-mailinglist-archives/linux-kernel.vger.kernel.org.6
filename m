@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-531193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA5EA43D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:23:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE21A43D70
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F663ADF02
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25F83B5F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B9B266B5E;
-	Tue, 25 Feb 2025 11:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EsTZvl69"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D51B266B5E;
+	Tue, 25 Feb 2025 11:18:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D715B980;
-	Tue, 25 Feb 2025 11:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A81A2391;
+	Tue, 25 Feb 2025 11:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482293; cv=none; b=FYZVsOrCjzocNFmyEeaoTPB0WE453TavGn+suLJIU5RCr1JNnCmmfBHYFvaeIJtYMH29AVFgzcNmnnrQXvqKudMpx80B/w2uJvEK9p1t8f4x1ZqdaRVjPQQWm1woQH3J5FLKGryTUFF/pKxwZe6b/S/VDWelG7yV270Xnvfod0s=
+	t=1740482307; cv=none; b=it45fDCXER2FXmAUWebtlaxKeOyvS4/p24XwjGQTRfF0uAGbhAhLqC9ha3BM0AVxRWm3aP8cG1m9hdqRsJKo1mC5EbU9c7aOUE0Ay9uukG/SoeCFZ1XC5LXeoBR/6lOs1mqsSATWphEeFL8jA7dELQtiDBgCTqzWgQwJw7cnwIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482293; c=relaxed/simple;
-	bh=rS5A7G2PPNZ64d4wsZYQSjrh/llTleB0yD7V7HiWEOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyXJycnPt5BowzedlSqqJD8so+hKjgSo4HhcSSD4vjIMUuZpfNWtXqWgKlAUFVeL1NrlVl41Hyio+TSi+E0ommwQSdx7mxVP2YV/dP9Uxee86DXPPALbtLTSKmHFtbQYx5XGD5MF1xfHRkwaB3IlVYme6hvqiyNH8ps47KfzG9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EsTZvl69; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PG5kCQLkC4Qdt9FOaQJJ0ba0zTFUJgKo/opSo8xQitE=; b=EsTZvl69dRJtWaMQoshZ9unPem
-	aZqIQoyY5z69yMu9hVoi+QvSDzlut1naIQEezFg81teH5p1nCtHTfrq6qLeu0jED0zb/dJFSY2DIz
-	sCi/R0d1pj/GFcJS5DobEjs65pzdosDn2OCCuipWHmwmca7sjRKV6OkGgs5p2z9k+7tAkkZ3zYI9X
-	jdJExG1EtmcKyo9CgIR1gk/i/Vctr2cGw0X2R14lIbzU3yUU1hGX3Zoiqk+WuNrf5pkX3cpk+MV5v
-	b6j/BMp9T+zVzByZw5suLJkegEKCwWXT9LDWPX2w7xKVnlgyfciwdhd3/gniWmZU0KWB4hfRJwbSz
-	5VwUvINw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmsww-0000000B3IX-0CLx;
-	Tue, 25 Feb 2025 11:18:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 568B8300472; Tue, 25 Feb 2025 12:18:05 +0100 (CET)
-Date: Tue, 25 Feb 2025 12:18:05 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
- initialize PEBS_BASE MSR
-Message-ID: <20250225111805.GL11590@noisy.programming.kicks-ass.net>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1740482307; c=relaxed/simple;
+	bh=JomRQni8mtKMJrVY4O7G/UiG3MTsVhu0cW37KZeUnKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iMvtulf/9FgkLU5BddHOUs99xP1sEdO+j9mky2VRgK8vfEGXb7SxElA0XQqiH1E1SIQygyTo0BDQmnMEfIHF5414Yy3Y5nt+hpDS1AC/2NdZSxO0YpSEAEnCskuebQhXao8Siq/X8Nxh15YbT1ZfV+RfhtNH/Oqwhst4+GNHxBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91719C4CEDD;
+	Tue, 25 Feb 2025 11:18:24 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] LoongArch: Use polling play_dead() when resuming from hibernation
+Date: Tue, 25 Feb 2025 19:18:12 +0800
+Message-ID: <20250225111812.3065545-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
-> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
-> buffer physical address. This patch allocates arch-PEBS buffer and then
-> initialize IA32_PEBS_BASE MSR with the buffer physical address.
+When CONFIG_RANDOM_KMALLOC_CACHES or other randomization infrastructrue
+enabled, the idle_task's stack may different between the booting kernel
+and target kernel. So when resuming from hibernation, an ACTION_BOOT_CPU
+IPI wakeup the idle instruction in arch_cpu_idle_dead() and jump to the
+interrupt handler. But since the stack pointer is changed, the interrupt
+handler cannot restore correct context.
 
-Not loving how this patch obscures the whole DS area thing and naming.
+So rename the current arch_cpu_idle_dead() to idle_play_dead(), make it
+as the default version of play_dead(), and the new arch_cpu_idle_dead()
+call play_dead() directly. For hibernation, implement an arch-specific
+hibernate_resume_nonboot_cpu_disable() to use the polling version (idle
+instruction is replace by nop, and irq is disabled) of play_dead(), i.e.
+poll_play_dead(), to avoid IPI handler corrupting the idle_task's stack
+when resuming from hibernation.
 
+This solution is a little similar to commit 406f992e4a372dafbe3c ("x86 /
+hibernate: Use hlt_play_dead() when resuming from hibernation").
 
-> @@ -624,13 +604,18 @@ static int alloc_pebs_buffer(int cpu)
->  	int max, node = cpu_to_node(cpu);
->  	void *buffer, *insn_buff, *cea;
->  
-> -	if (!x86_pmu.ds_pebs)
-> +	if (!intel_pmu_has_pebs())
->  		return 0;
->  
-> -	buffer = dsalloc_pages(bsiz, GFP_KERNEL, cpu);
-> +	buffer = dsalloc_pages(bsiz, preemptible() ? GFP_KERNEL : GFP_ATOMIC, cpu);
+Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/smp.c | 40 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-But this plain smells bad, what is this about?
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index fbf747447f13..308478f29278 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -19,6 +19,7 @@
+ #include <linux/smp.h>
+ #include <linux/threads.h>
+ #include <linux/export.h>
++#include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/time.h>
+ #include <linux/tracepoint.h>
+@@ -423,7 +424,7 @@ void loongson_cpu_die(unsigned int cpu)
+ 	mb();
+ }
+ 
+-void __noreturn arch_cpu_idle_dead(void)
++static void __noreturn idle_play_dead(void)
+ {
+ 	register uint64_t addr;
+ 	register void (*init_fn)(void);
+@@ -447,6 +448,43 @@ void __noreturn arch_cpu_idle_dead(void)
+ 	BUG();
+ }
+ 
++static void __noreturn poll_play_dead(void)
++{
++	register uint64_t addr;
++	register void (*init_fn)(void);
++
++	idle_task_exit();
++	__this_cpu_write(cpu_state, CPU_DEAD);
++
++	__smp_mb();
++	do {
++		__asm__ __volatile__("nop\n\t");
++		addr = iocsr_read64(LOONGARCH_IOCSR_MBUF0);
++	} while (addr == 0);
++
++	init_fn = (void *)TO_CACHE(addr);
++	iocsr_write32(0xffffffff, LOONGARCH_IOCSR_IPI_CLEAR);
++
++	init_fn();
++	BUG();
++}
++
++static void (*play_dead)(void) = idle_play_dead;
++
++void __noreturn arch_cpu_idle_dead(void)
++{
++	play_dead();
++	BUG(); /* play_dead() doesn't return */
++}
++
++#ifdef CONFIG_HIBERNATION
++int hibernate_resume_nonboot_cpu_disable(void)
++{
++	play_dead = poll_play_dead;
++	return suspend_disable_secondary_cpus();
++}
++#endif
++
+ #endif
+ 
+ /*
+-- 
+2.47.1
 
->  	if (unlikely(!buffer))
->  		return -ENOMEM;
->  
-> +	if (x86_pmu.arch_pebs) {
-> +		hwev->pebs_vaddr = buffer;
-> +		return 0;
-> +	}
-> +
->  	/*
->  	 * HSW+ already provides us the eventing ip; no need to allocate this
->  	 * buffer then.
 
