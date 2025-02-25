@@ -1,218 +1,195 @@
-Return-Path: <linux-kernel+bounces-532324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A36A44B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:39:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AA1A44B9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2F13B3395
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:39:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC290420F31
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1031F20C46B;
-	Tue, 25 Feb 2025 19:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1853020DD40;
+	Tue, 25 Feb 2025 19:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k1h9NN+v"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PcfCCpzJ"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2051.outbound.protection.outlook.com [40.107.104.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A462036EB;
-	Tue, 25 Feb 2025 19:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740512373; cv=none; b=nLBiFzItVzkRj6z6ly6+8hqbVCiu9ZPmCiHb+VIj19u5gTIN63xm7dOgCn+XZcue4mCBcq9LuWTJJzuFO+H0YoBad04ocyTMzLqzluF0vaxbJ6J4dWLdEP7Oxgv4+iXCALX1T/RaWBPj0e0nPC8L2L9kOjvARO4Bi5zyaEaPR0g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740512373; c=relaxed/simple;
-	bh=12jSNbr/O7Q1kvbb9tzLOBuiGrS73Qz9TCIgyAJGh9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxKy1NAgrbRdPQuHoUgnZxEGVgJHOV2Mcn4dj8IVAOn2ilVywyp7franFQcQ+1g3S+yJLHq3qOAbfBPxRBJ7XUTDZagjLDlQZmOlJsffTBl/060Oq6GJjF95DmZICxrm0TKxO6eknQzmzi+RdI6bF2qjVXhbYkgFTyhCDrglTq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k1h9NN+v; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 11B4E11400DD;
-	Tue, 25 Feb 2025 14:39:30 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 25 Feb 2025 14:39:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740512369; x=1740598769; bh=tNpHy374sw+alC5l8BsffCVK88jBzGOVtLI
-	rpfQdpMA=; b=k1h9NN+vlkzReBZoUj7kD0/VPnmlSJ0veTe8nXDG4gsoLEVS9EP
-	ZfLrL8wEZmQpCyUXmctwdB3KEFyP+lLPKByi+SXIDOQl9Ikl3go7tRzNRkvoVR9c
-	sXwNiTnKuP2D7mjmU0gMVKEj14dPor6uNErVuisSuWp4hin9oP0Sxl3bzmOsU5yn
-	CppS5zY7fhRjBVy3psq2TqFO9Abp2uZy5JQxmsdWvLhHoOB2RoHlZtiXajDHpqem
-	+T0VgAR7JB7VgVH6io1uO3g1goAWsGRI0hKvm1C1UW9qLQWHxM6R8L9OLU7IhdKs
-	+P6fpYALyImD2xMlDdc4EJxZjAIFKSf8fVQ==
-X-ME-Sender: <xms:cRy-Z5mzCLParHuQi63QdnKmpk-SOeEG-K2GQyqWkcLFTS4bgUx63w>
-    <xme:cRy-Z00KEpOYjG9TvbKgjgOtEedc1t0FB7jJSKMnbQqv8q9Q99sY3nvw5TGlFRTdP
-    GEIemLXKdAljuA>
-X-ME-Received: <xmr:cRy-Z_roSxA3kyf1FxUmVbl_JuHozi4J0PwGPNoNTEiPA6cRfxr1i9YnO6bdvRrc8pzEgBUk7ncP_vwJ1JY1HjOUhHOgWA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdehjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrd
-    horhhgqeenucggtffrrghtthgvrhhnpeehhfdtjedviefffeduuddvffegteeiieeguefg
-    udffvdfftdefheeijedthfejkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguohhstghh
-    sehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehoshgtmhgrvghsledvsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvh
-    gvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmshes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrd
-    horhhgrdhukhdprhgtphhtthhopehjihhrihesrhgvshhnuhhllhhirdhush
-X-ME-Proxy: <xmx:cRy-Z5k6_vouBe6jFlqc1nKqnztF7iSLOrZqnJEdE2R-IqhNqsYxkQ>
-    <xmx:cRy-Z30tNDb7bMKc_kEErQEUcHDmvPD2Xvb1ZqQu7hGF_ECV0878qw>
-    <xmx:cRy-Z4tIOMs-P9HywUUxZ2JpwQgMlhDvxuXfLFXO7zTa60gpT-xhhA>
-    <xmx:cRy-Z7VW5fRh4Igf3kyJ36KUFCmL8iwo3dAnh6duGgkXneLXuNYSQg>
-    <xmx:cRy-ZwuUbUfsB_0GqtY7xl6oxNyHFGR808nxMBIXd2H02Fe3TKyH3QBT>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Feb 2025 14:39:28 -0500 (EST)
-Date: Tue, 25 Feb 2025 21:39:25 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Oscar Maes <oscmaes92@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	viro@zeniv.linux.org.uk, jiri@resnulli.us,
-	linux-kernel@vger.kernel.org, security@kernel.org,
-	syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
-Subject: Re: [PATCH net] net: 802: enforce underlying device type for GARP
- and MRP
-Message-ID: <Z74cbT8aNIPn__FF@shredder>
-References: <20250212113218.9859-1-oscmaes92@gmail.com>
- <Z6ywV4OkFu52AB8P@shredder>
- <20250225141157-oscmaes92@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F6C1DFD89;
+	Tue, 25 Feb 2025 19:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740512441; cv=fail; b=SGpMU/FCJ4VFHpFdOfsa/0ePthkvTGYA56f4uwWNp8VI0xHOTQ0pkiHX+u17zv66KbFI07ayNZHClvR0Atp/MF4Clqqnye2vqclJW0zcJbvq53fOM6qiwZs+GPYnYUZ/x0h9SKt3NfWFWfTm8ZMokRMujn9CuL5ZavUiwd6t93A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740512441; c=relaxed/simple;
+	bh=2Pai41WFFju9eWgN86WADHzM9IQqaGN9IE1IFcDSUG8=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HihQg+PqjrNDY/uJMNFrqyU56ohfMsdLbvdEKyTbouI9LhbcjNVtC3jOEhH4FKxgdOATM28rB2Op/L/5g6DmcLcVy7yRyoFiNnuDoplit10DF74jsPXO31xoRrV29OrIrY0BpuzilpVWz5mayRtw6cpoR9ncX+ghpvEMeH7jdb8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PcfCCpzJ; arc=fail smtp.client-ip=40.107.104.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gz1Qs6uy5E4O5WLZ6ZWz5EP8UHjCh+CEltraUeY5wKNDcuSDROIkMrk1TQhg/10x7IiBIpDHnb+EVtoP/8b+QEujxBXZl5xAuWJgJ9Egu0VXBZ2TUJZl7dWDQ8J/TVEH6sst4te63exkhpgTwkT20RoSLcfRaP4As6Wd24VsvGyqDwoe13ZNQYSlLzZ5M89/PO0PqViRocm2kUENx3EwuZ9NHxJ6GUTHAQvm14EhdhrvBR80km5ik9fX1OnkMhXppi8/THFqNXMURfR13o3Twx3lS+fsh6FPS0xfIX89btgTEh0cesa02CiWtnBNjq7/FNZXPv+Lrfg2P5FQ5CAKAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c0HedO2R5roLvvNgA16NYkrRBnfqBV+soef9P/o1tNc=;
+ b=brxC/1i64m+m8DoEGRVqIUYOK1hHUKxvQvGC+a1VksjAOMZ4tNyjeqRl6CAe99OXQ7v43352+mtx538DkGePs/qD8JsB+1Rigbujz74bOvKz/9mtny0JZrNuNw7w734y4J8jg6MikZ+ZDyhOXAblowE1ZlVj/9ARa3kVNWRN0chkmgM578hsBS7MJ/YNuWy11P4c/DqFB0qrNrbr7FBg+OsgvrK7bZTXz3sI0th+eiGhWm88Q7TEjcifa2d/FKrUGCE5M/izudZ0n9O0UfQOuGH8eo5nF9ODjbPp2XzfbNS74kD/Ygw+BudJf/A2Votw8ZpJYWDDiXjaF43DuOapsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c0HedO2R5roLvvNgA16NYkrRBnfqBV+soef9P/o1tNc=;
+ b=PcfCCpzJ0ugo9VQHc+SQv5bJVoBB6SuXMNMnRuYtFb3vNMgVR2dm53NcgFtPoorw956dOYecvgY8UpbQRH+//JVJet1wKGL0V76kuWbjgz0SZlmI28PsFGa/Lu9dNToq5aPcWllB/PTNWI2Qc+0CkL1fX+gwqvQBWTKjFCIpyII584QhDjnFAo1tdJaUJaL6nBjfBXViqaoV62jKNqfQ65Y05P6mTimm/a6FddZR1hJD6uCU1igaWxD1NpscB7LEJjdMJ1LNv+0XUfjPtgeX5LcC9LxUQpWFVyPv7zWg6YvWF9W4foX0f9vev6VJFyjiObevcH3UoMAlryYpZmck+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB8347.eurprd04.prod.outlook.com (2603:10a6:10:245::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 19:40:36 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 19:40:36 +0000
+Date: Tue, 25 Feb 2025 14:40:29 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] arm64: dts: imx93: Add the 'fsl,ext-reset-output'
+ property for wdog3
+Message-ID: <Z74crTILjh2LeR3e@lizhi-Precision-Tower-5810>
+References: <20250225192557.2914684-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225192557.2914684-1-Frank.Li@nxp.com>
+X-ClientProxiedBy: BY1P220CA0015.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:5c3::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225141157-oscmaes92@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB8347:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ca6c461-0e7c-4de3-367c-08dd55d44694
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|52116014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BdwF75onKXa8BUdicjSPJxRZ0AWmvFh8Pj5dccLK4WNyZiuCFz1ek4ISuOw5?=
+ =?us-ascii?Q?mFX6IakZc5/mIV59CsuBdobSdySzetGu30Wb5o12YPpXXf7FcJaiJX4G56tm?=
+ =?us-ascii?Q?G1ekicZjKqsoeFYU804086AeU/xJL9Zfz0tg2UmjJJkaxxwAKUI97hsBRrRL?=
+ =?us-ascii?Q?PFPgs+MuY7DAyEeHJV8Btta7RZgHeP+B4iyt7XUirq+ULDeSPiODwLIGVL2m?=
+ =?us-ascii?Q?o00ulQrhqMZ/LfrZFk2FhFGLeybS81GDUS4kTeikmVy2JQgdL4HNbiDWNVSr?=
+ =?us-ascii?Q?AL/mwg+GfhydBJM2OXXrGEI6wbY19UVxcCo7U5XcDB+uBJjsH3ss/g1YIN8y?=
+ =?us-ascii?Q?28zLhKkEoh/aiGghOoEG5VpSnqxSc1atlTRV7cOdxtJO4Lx1pSODTpGdks7M?=
+ =?us-ascii?Q?xPwCf/QH2n8tOOMzI5AKaatj0ap0mzOqNBiGKVcOIGWreiSvXDEyRh9tKXKN?=
+ =?us-ascii?Q?0/pWRDBtS4DFNpJRHTpai/xHOc8MsdvrZahpCHySSYERNxlY0PrHu9kZsqel?=
+ =?us-ascii?Q?4dMQNXfLunOWhUwMKkqP39PdC7z8tSPgif/6bZuHKHD+Cj3ODSshrAVSmDBG?=
+ =?us-ascii?Q?Yfor0fT358FEWfv1xMEXrsB0eJmKcLwApOABfTDRNE7up8q5Xv8BoY9S9MUV?=
+ =?us-ascii?Q?8brN0YC58Q+IUVF7XarrHaZjVklNCA6Q91uWIxjLAgndZ2q8OzL0cum+SyWM?=
+ =?us-ascii?Q?rSMV4jmZxCDqlO1ry7OQRoLU0fc//K4bIEo7SPtOyuVCJ4ylB6Du1IWidZJQ?=
+ =?us-ascii?Q?usgLyiLx07r28ZHYXA3/N1DfYYKLR4sLlgp+bh3JQw3I4/OsvNjj4bZ+ZHvr?=
+ =?us-ascii?Q?XGtQyOHA7ZZxk7gwh+ZQAVUMvvfDW6Cy64lgFNaycIRVLcpnLz9KTxl/pIRm?=
+ =?us-ascii?Q?YNyvol1BnvR6LkWYsqG7OH79GAjlHAT+vhMcaiKDMVrPc15cP4kwSJZbXl+1?=
+ =?us-ascii?Q?/MND1+VAyY3lWii4BgiQuZ5UanYnG1GmJZUWBpd0WBNHPQgtvCLYWPdsFNkM?=
+ =?us-ascii?Q?s8vR+VbmwsTLwx3rnPvUl4hwonvOwrz4dedWhM5HVs61Jbg90N+uEg8f5tIM?=
+ =?us-ascii?Q?VuRNa84ArJYwJbsA6OVb6yuUD36OdTWf5WpHQV89IyPXAZ0KVOEn97se4ykj?=
+ =?us-ascii?Q?lBRO/LnxQFdWp/8vJKHei3qQLYHG5leThaB0EljPD7imuomooUKIxa8EKcyc?=
+ =?us-ascii?Q?TIv1PUpPGQjtoJrWgiuohsluN+jlv3wYWs0PU0ix4g4oJRnfJI6dEFuaKJ8k?=
+ =?us-ascii?Q?pdNCtZCovtM7x965Ns0FJUJ3lc28b/v/DWrRsSsu/SbdQ0HyKX9h7QEr0R6e?=
+ =?us-ascii?Q?ymSY65Kco+K9jhyDjtc6+UiDOzcrSeR2gnFZ4KsRyUbcPOJ2c6+cYUXR7Nf1?=
+ =?us-ascii?Q?pY1nJPUDu8ZYDCbi8ip+lQB5LHBGTuT8NcvBsEMuQJs/jiY3DXOC2TBvBU5n?=
+ =?us-ascii?Q?SZZX4z0l0bSHWvJ8JGSwMd2tBDQkJmyFyIHA+ejbhdsHbRiLaAQE9w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mDhLUcEht/0bikqiGayor3GI6+K/k7ljbwm3JDf8WGTP1KfmZ6Jeghu2Opag?=
+ =?us-ascii?Q?Mb9RVou1VPFJ3D+x1zUHnt2fraB+aO0m6Z4/t9JyR9rNjSSCRxzx0a+Wufs5?=
+ =?us-ascii?Q?ibprHq5/0ZEAvOV8hUNq/oJAoHekse4omb96PANvcA8QyozbCAZ9iELLelwF?=
+ =?us-ascii?Q?qNeSpfyafOY9rDntKjkXrcpitKh19eTd6Sem4+k3hsaGQ4mgm3S06Z9+tixd?=
+ =?us-ascii?Q?mAYdhgSgnCM0mAuiAdCb9RKS+oZJd6CKOMPqifJCE9Ip4ghQIrnAbU0Uudsa?=
+ =?us-ascii?Q?ByUAX4PPtP+1Hf2AHPYpVTVLMDM1IHRpvrZiADe2tyEkZlOc670igO3PjPzF?=
+ =?us-ascii?Q?BYfpEXNy1oCWgv3j+iYYGzNyponGi+0LDAcJQjvEupDpVfuuM0S6tKVs/tAK?=
+ =?us-ascii?Q?Hstcvglvua8M/NcNRob1OcBCbndHu9uU8oxGjazqxTIl0f6zvrIuzttMAr2G?=
+ =?us-ascii?Q?yZGgDcfs3eX+RqBCXPxfjxVTl7qZaXlwwzGKn+k4FFi9fEGYO89hA9D4AdCa?=
+ =?us-ascii?Q?QgqxbI3DlE7vLfNziSWr5dOKY6g0dM4lh3/YnEGZ787NI2j5W4ol8sQzd1LU?=
+ =?us-ascii?Q?OoPjDbPkIvZv/cO2RhTtNf/uxNI1h+oSVxquH+gT6vnc/Sd4uhGrERLCVwmE?=
+ =?us-ascii?Q?ofQWhbF7JpvyUaxMcigUf960SNY2/yUHwEmEtqC0E8FyWj1NZDZSH8SHbY/7?=
+ =?us-ascii?Q?z9847MXP+hul2axnMV8dldsgd7cJEyJR0V0l/MWXpeuFw5o7Hafl5q8noBm6?=
+ =?us-ascii?Q?NzU1qxslOJOFqEsOj0zsztt25dtw2ybMzowhCw5cK2R7VG9DGgyb1J7AREW2?=
+ =?us-ascii?Q?WvOu/znC6aalwNiwWr99VfchZDAclH/eFzI4LB1ufIvePDf+JfxumxNPm950?=
+ =?us-ascii?Q?ImDll7oKHE0V8hq3kgQrdUsK8Nd7TkhwjttMlt2Tdjj8z0f3LLEHUbkwxUV4?=
+ =?us-ascii?Q?2tEEXsfRa+N/3J5GZwucTc4VUMOSo1BIyVrniToKldD1hxydqBq5WENhHIWe?=
+ =?us-ascii?Q?80dv17L7jzyVM379bSV1U0blKvK9bRz/7xIkQaKnv1+PeDMsWCYrTPLb2ZoC?=
+ =?us-ascii?Q?30kYRgil0PwXzpT947MWCwbDRjrQC4Q/BN/U0VW9f1Vfsi5INs4OIF1yynO3?=
+ =?us-ascii?Q?imeVASwbNHLV217i1EfW1PLS8+BqQplIr6ate5uCtsP94j1hnCv6ySF/pPuL?=
+ =?us-ascii?Q?B68e3S1NTmz8NfUtRZuH+ORtZm9oZufFsu/FlicxmG4YFbGT7qyqyL9BSNPw?=
+ =?us-ascii?Q?QrbNVXJAS2X2hIVy94Vrv9LAUSDm4mADHv04PK4sDpHy3AsiQOzTtQnRkCYA?=
+ =?us-ascii?Q?DwV0z0LAJ/e4dqBHdOae0XVAM3AovrIDoaxfQ5VTK7jpVpcMa+nE7198IhKt?=
+ =?us-ascii?Q?Q5GhVvjMO3dIjgOfXia5Lnw5xaQtn5+pLil9G9Yj5k0kGPTF5euanPiDTgSe?=
+ =?us-ascii?Q?DripSvRpKdjFCG/O/4c2uyjZKBYs6UYD5MrxAsNpZgkvS8WIp+8MtCTTr6lG?=
+ =?us-ascii?Q?GZjlxekpLhVE0y2XCmPWSXwPOEqnbKN8vbPIX2qt29RqzXt9A8V2ezRq3GOW?=
+ =?us-ascii?Q?B6kTx1F9jOQNhNvDU+cc4G8i8qHoj9S30o5RyVYH?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ca6c461-0e7c-4de3-367c-08dd55d44694
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 19:40:36.2854
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FxIHC4mXZEdANs+ugZkxvGAcSPAMKi1jrxScPz97ZfRwe/KZRgxHX5Mg9afvWuSJcqrpeJ0WHhD0RHRIwg74Lg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8347
 
-On Tue, Feb 25, 2025 at 03:11:57PM +0100, Oscar Maes wrote:
-> On Wed, Feb 12, 2025 at 04:29:43PM +0200, Ido Schimmel wrote:
-> > On Wed, Feb 12, 2025 at 12:32:18PM +0100, Oscar Maes wrote:
-> > > When creating a VLAN device, we initialize GARP (garp_init_applicant)
-> > > and MRP (mrp_init_applicant) for the underlying device.
-> > > 
-> > > As part of the initialization process, we add the multicast address of
-> > > each applicant to the underlying device, by calling dev_mc_add.
-> > > 
-> > > __dev_mc_add uses dev->addr_len to determine the length of the new
-> > > multicast address.
-> > > 
-> > > This causes an out-of-bounds read if dev->addr_len is greater than 6,
-> > > since the multicast addresses provided by GARP and MRP are only 6 bytes
-> > > long.
-> > > 
-> > > This behaviour can be reproduced using the following commands:
-> > > 
-> > > ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
-> > > ip l set up dev gretest
-> > > ip link add link gretest name vlantest type vlan id 100
-> > > 
-> > > Then, the following command will display the address of garp_pdu_rcv:
-> > > 
-> > > ip maddr show | grep 01:80:c2:00:00:21
-> > > 
-> > > Fix this by enforcing the type and address length of
-> > > the underlying device during GARP and MRP initialization.
-> > > 
-> > > Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
-> > > Reported-by: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
-> > > Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
-> > > Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
-> > > ---
-> > >  net/802/garp.c | 5 +++++
-> > >  net/802/mrp.c  | 5 +++++
-> > >  2 files changed, 10 insertions(+)
-> > > 
-> > > diff --git a/net/802/garp.c b/net/802/garp.c
-> > > index 27f0ab146..2f383ee73 100644
-> > > --- a/net/802/garp.c
-> > > +++ b/net/802/garp.c
-> > > @@ -9,6 +9,7 @@
-> > >  #include <linux/skbuff.h>
-> > >  #include <linux/netdevice.h>
-> > >  #include <linux/etherdevice.h>
-> > > +#include <linux/if_arp.h>
-> > >  #include <linux/rtnetlink.h>
-> > >  #include <linux/llc.h>
-> > >  #include <linux/slab.h>
-> > > @@ -574,6 +575,10 @@ int garp_init_applicant(struct net_device *dev, struct garp_application *appl)
-> > >  
-> > >  	ASSERT_RTNL();
-> > >  
-> > > +	err = -EINVAL;
-> > > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
-> > 
-> > Checking for 'ARPHRD_ETHER' is not enough? Other virtual devices such as
-> > macsec, macvlan and ipvlan only look at 'dev->type' AFAICT.
-> 
-> Agreed, I will change this.
-> 
-> > 
-> > Also, how about moving this to vlan_check_real_dev()? It's common to
-> > both the IOCTL and netlink paths.
-> 
-> {garp,mrp}_init_applicant assume that the address length is 6-bytes, when they call dev_mc_add
-> with a 6-byte buffer.
-> I think that the ARPHRD check should be right before calling dev_mc_add.
-> 
-> Currently, GARP is only used by VLAN, which means your suggestion would technically work,
-> but this assumption might be violated by future protocol implementations like GMRP, which
-> could potentially resurface this bug.
+On Tue, Feb 25, 2025 at 02:25:56PM -0500, Frank Li wrote:
+> From: Jacky Bai <ping.bai@nxp.com>
+>
+> Add 'fsl,ext-reset-output' property for wdog3 to let it to trigger
+> external reset through wdog_any pin.
 
-I disagree. The problem is in the caller (the VLAN driver). It should
-explicitly check for the error condition (real device not being
-Ethernet) and bail out as soon as possible (in vlan_check_real_dev())
-with an appropriate error message. It should not rely on the first
-function where this error condition happened to explode to do the
-verification, especially when this function can be compiled out (e.g.,
-CONFIG_VLAN_8021Q_GVRP=n).
+Shawn:
 
-> 
-> > 
-> > > +		goto err1;
-> > > +
-> > >  	if (!rtnl_dereference(dev->garp_port)) {
-> > >  		err = garp_init_port(dev);
-> > >  		if (err < 0)
-> > > diff --git a/net/802/mrp.c b/net/802/mrp.c
-> > > index e0c96d0da..1efee0b39 100644
-> > > --- a/net/802/mrp.c
-> > > +++ b/net/802/mrp.c
-> > > @@ -12,6 +12,7 @@
-> > >  #include <linux/skbuff.h>
-> > >  #include <linux/netdevice.h>
-> > >  #include <linux/etherdevice.h>
-> > > +#include <linux/if_arp.h>
-> > >  #include <linux/rtnetlink.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/module.h>
-> > > @@ -859,6 +860,10 @@ int mrp_init_applicant(struct net_device *dev, struct mrp_application *appl)
-> > >  
-> > >  	ASSERT_RTNL();
-> > >  
-> > > +	err = -EINVAL;
-> > > +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
-> > > +		goto err1;
-> > > +
-> > >  	if (!rtnl_dereference(dev->mrp_port)) {
-> > >  		err = mrp_init_port(dev);
-> > >  		if (err < 0)
-> > > -- 
-> > > 2.39.5
-> > > 
-> > > 
+	Please forget this patch. It should be set at board level dts file.
+
+Frank
+
+>
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx93.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> index 64cd0776b43d3..ddfd57cedff73 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> @@ -692,6 +692,7 @@ wdog3: watchdog@42490000 {
+>  				interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+>  				clocks = <&clk IMX93_CLK_WDOG3_GATE>;
+>  				timeout-sec = <40>;
+> +				fsl,ext-reset-output;
+>  				status = "disabled";
+>  			};
+>
+> --
+> 2.34.1
+>
 
