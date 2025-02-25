@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-532092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FAC0A44887
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:40:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45ABA44758
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8C31899EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5793F7AA117
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9761DD889;
-	Tue, 25 Feb 2025 17:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80A21990AB;
+	Tue, 25 Feb 2025 16:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wgvvxZWW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYErTKnm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9457C197A7E;
-	Tue, 25 Feb 2025 17:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713ED191F60
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504618; cv=none; b=DkPsjB/DtUKKOSzv9edioic4zxA0Sp+IE8eaapc0lkajUkM7RxhqLJ0FJ9qBEUXI0vb2nsu0unltqjgGhMy8iLePY8gRGVsXqwhpC8/QGDzuP4r7GcFLNwV8YkqUqeG2cihy3tCei9S/fqfmiyEFY9moXRp0oi1JdIQczuXUiO8=
+	t=1740502506; cv=none; b=tWYLg0v5+rPGYNZ8weL0OwoCbGHMdqli8UTubAgZW+VPBV1eN0jOE/+vvUzN6kBuoAs8aXoW0eVuCP0tUTB3JfM2Hd2tNYbQqd5wLUyJr2ADD/DgygdljDMjKWLaq0O45wzIpNeJfJY0354gK4QlsaFfGs7lSvfLl7umpfH6XHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504618; c=relaxed/simple;
-	bh=WJWgSb2paLZ+MN/WFfvZX9SdiP9wa/LhMyVe8shgwNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gQCDazcI7VkwBmRIgeomLfV7B8og2LLzHCh9YSqtYBC7wRXYxIyeGAcOrtSbNBOOHfqDnWgJWPPoJTjPevznA7oFV2FIBcnquubOnv9C/P2FOhma5pEnqnJEy5+8T0iIkBuIFMPp1evOFNEhEiXtqp/R+6sLifiLlBlo7P3MUKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wgvvxZWW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PF2BBx000811;
-	Tue, 25 Feb 2025 18:29:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	zboDa3cKQkLjfjJd+7M0V2NhLphn96I5A2P8IRJH05M=; b=wgvvxZWW/CqAHK3j
-	H8sgxDoRLndjNM9Sd34CXs4PXk5zv6HAYe1E3VwWDrRK8sHF482eocl9THKJ9N27
-	yUIfiqlKj2VdC+Ir8+dPwx5EA4NCnMKxl1X74e4c8S/swBVfsjJ5v5afQa3fhJwA
-	+wVJ268wjp6nEHEytQg/Qn8skofLorecSxqwEzRIZSUNK5tkojzeyZEkWpK/srzJ
-	aeOeQuvy7TX65vAKcnizUIptGUgD3I37OoEY1gX1imisG+4JVwTQoQmwekuHf55P
-	SdTs5UrdwLlMDkQhIEF1hSH752cpuFUHY6BKJf01wEcWhzjbcne0+Dwif5rwpHDr
-	RsHO+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp4xep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 18:29:59 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 877F4400E2;
-	Tue, 25 Feb 2025 18:28:50 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6783C4C5307;
-	Tue, 25 Feb 2025 17:09:41 +0100 (CET)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 17:09:40 +0100
-Message-ID: <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
-Date: Tue, 25 Feb 2025 17:09:40 +0100
+	s=arc-20240116; t=1740502506; c=relaxed/simple;
+	bh=x4rVCQ/NGKY3lY+wOYrwPqaoT+vCb2bZCJg7lvJQpkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JEvzmA1iaPKt2pGTtVSpuZxH8sxUUVHsUmMGkgCKUg0m0MBY0pqgff8N23J2I/I5YwCK16bkIyfrp6PCSTDDxToryfGUV4msRb0sV4zaeBJoNxiG4K+UrkeVRoREx1yxrcc4y1P8dozFb3rdnwV5dRMQ5iEOagneAAsX9iP/wME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYErTKnm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740502503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=S5yJPGVdx65L5scmtHTZpd1NndI/d9z8+AShgb9e8MI=;
+	b=BYErTKnmrbs0OLVBmXyO3kilFuVPi3i0kCqCN5nBTaCnOvXBV7Nycz/VJ4FWHTSn2810ZF
+	wkKn4a5EsO0mh6KDStfEFpzpcHOI077lcfNDynZ430wa9lN5kuXtCeNC4yVsTZnAo0rX0x
+	ac1NtevtA2mJ9rOv0fvHWptwJ3GbGtg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-48-1sJpmUMmPuOJ_zA8vfotAw-1; Tue, 25 Feb 2025 11:55:01 -0500
+X-MC-Unique: 1sJpmUMmPuOJ_zA8vfotAw-1
+X-Mimecast-MFC-AGG-ID: 1sJpmUMmPuOJ_zA8vfotAw_1740502501
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38f32ac838cso4516970f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:55:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740502500; x=1741107300;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S5yJPGVdx65L5scmtHTZpd1NndI/d9z8+AShgb9e8MI=;
+        b=jdiT+UemL0I4wlXRn6L0sbOEKxYLqLYMM3S8zKnxi/NuHiyLy1LOW0iceUIxkttH4R
+         Y+1GnW4tzJCaCsSax9gMu9QBBoz/SK4CrOKQSdY1KBKL4sKQv+mr5dO1rtatQvg5rfSk
+         8BbFIO++PLBTdnEGnUc52IGEVig3S91f8WlF9Ii6wexqq0QqjCf3BvrWEhdPOvxUmXVZ
+         h3kB1z67E6Zc2JPRkGATllggjsuW81928Gj5fG//Px43Wbdf2o/Pqx2Uv84pDf78pbYq
+         X7w9Y94VoGbxSPle86o9KLTN7A1SanmkzaoXjtVmQRmZLSyM346elHmYVrsJ5wNKOKLn
+         RCnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqqia3zsJ3WaSNgZ8bw6E4jIEdkdAQQ3MtLIwL5ov0vrT/5tM5uyQ7Pb/U0gFD57zTxkIypW0jVdsUMqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDJ6xCGhJo9FInPqFC3ecWhM6e9Ugd8Op2Qh4Xkf8wy0Vd5BqV
+	peX5ERaI1G2HglFh/QlwUgjzgUZJcDa5BGqblvbrwVyGysVB9zXg6rI+qq9iq5fYJT3P4TMIDSe
+	vy4O5J+E9s4fC4itb/GrHyrXbD3THKY3gphMdlXDv8CoawK1mr92dWt2yz0Ur6Q==
+X-Gm-Gg: ASbGncunTDCsMMaI85+Z3BhROkc3PfnuOTRvUiEt+0Y/0VdnUvT1ThaeznfQQTaK7WS
+	9c/GwvrK0nnM5qt1cTCxJ7d/PMC67w+Q4s/07iKQSzumeRnBjP7Rld2kHX6uEVIly8ynFAfvxUh
+	f7x8RGsFejy6KP8lw1LoERTMi4x0j7i7lXjRJckgUSsBw0k0AtQRIRAxZ08hKIcFTqQf/q0ActD
+	+fAqeJ2M4/9kh/O9XqZm6GA1tXNKfUgbtGH4/iOVDyhl0GHPLqRrqcU9lCg1tOMNegdCSfc+x6c
+	PtNaTQjJ3GLfs1L4PmROnwJ6qiBvEZGuyvOLQtKmzZFqwGkNz4v5w3lYnw/f5HONEUk9nP8uWNg
+	NhQSCyKksbza8Q7W+G0n86X5id6W3dkwagjbtxw1LOho=
+X-Received: by 2002:a05:6000:1448:b0:38d:da11:df19 with SMTP id ffacd0b85a97d-38f6f0b0c1cmr14635678f8f.41.1740502500570;
+        Tue, 25 Feb 2025 08:55:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFlmp7luRAOfWO8ZbFTMmYO9AWAJKLijTHwIR0d02WtfI3388fc2maD1UF8IAM7tzFvSQS1WQ==
+X-Received: by 2002:a05:6000:1448:b0:38d:da11:df19 with SMTP id ffacd0b85a97d-38f6f0b0c1cmr14635636f8f.41.1740502500067;
+        Tue, 25 Feb 2025 08:55:00 -0800 (PST)
+Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce685sm146345305e9.2.2025.02.25.08.54.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 08:54:59 -0800 (PST)
+Message-ID: <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
+Date: Tue, 25 Feb 2025 17:54:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,70 +89,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
+Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
+ map
+To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
+Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
+ akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ vbabka@suse.cz, jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
+ graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
+ derekmn@amazon.com, jthoughton@google.com
+References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+ <20250221160728.1584559-4-roypat@amazon.co.uk>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250221160728.1584559-4-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2/25/25 14:05, Krzysztof Kozlowski wrote:
-> On 25/02/2025 09:48, Clément Le Goffic wrote:
->> Add the hdp devicetree node for stm32mp25 SoC family
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> index f3c6cdfd7008..43aaed4fcf10 100644
->> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> @@ -918,6 +918,13 @@ package_otp@1e8 {
->>   			};
->>   		};
->>   
->> +		hdp: pinctrl@44090000 {
->> +			compatible = "st,stm32mp-hdp";
+On 21.02.25 17:07, Patrick Roy wrote:
+> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
+> set, guest_memfd folios will be removed from the direct map after
+> preparation, with direct map entries only restored when the folios are
+> freed.
 > 
-> So here again - you have stm32mp251 SoC, but use entirely different
-> compatible.
-
-Ok so I will use "st,stm32mp15-hdp"
-
-> Same feedback as with previous patchsets from ST. Please take it inside,
-> digest internally and do not repeat same issues.
+> To ensure these folios do not end up in places where the kernel cannot
+> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
+> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
 > 
-> Best regards,
-> Krzysztof
+> Note that this flag causes removal of direct map entries for all
+> guest_memfd folios independent of whether they are "shared" or "private"
+> (although current guest_memfd only supports either all folios in the
+> "shared" state, or all folios in the "private" state if
+> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
+> direct map entries of also the shared parts of guest_memfd are a special
+> type of non-CoCo VM where, host userspace is trusted to have access to
+> all of guest memory, but where Spectre-style transient execution attacks
+> through the host kernel's direct map should still be mitigated.
+> 
+> Note that KVM retains access to guest memory via userspace
+> mappings of guest_memfd, which are reflected back into KVM's memslots
+> via userspace_addr. This is needed for things like MMIO emulation on
+> x86_64 to work. Previous iterations attempted to instead have KVM
+> temporarily restore direct map entries whenever such an access to guest
+> memory was needed, but this turned out to have a significant performance
+> impact, as well as additional complexity due to needing to refcount
+> direct map reinsertion operations and making them play nicely with gmem
+> truncations.
+> 
+> This iteration also doesn't have KVM perform TLB flushes after direct
+> map manipulations. This is because TLB flushes resulted in a up to 40x
+> elongation of page faults in guest_memfd (scaling with the number of CPU
+> cores), or a 5x elongation of memory population. On the one hand, TLB
+> flushes are not needed for functional correctness (the virt->phys
+> mapping technically stays "correct",  the kernel should simply to not it
+> for a while), so this is a correct optimization to make. On the other
+> hand, it means that the desired protection from Spectre-style attacks is
+> not perfect, as an attacker could try to prevent a stale TLB entry from
+> getting evicted, keeping it alive until the page it refers to is used by
+> the guest for some sensitive data, and then targeting it using a
+> spectre-gadget.
+> 
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
 
-Best regards,
+...
 
-Clément
+>   
+> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
+> +{
+> +	return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
+> +}
+> +
+>   static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>   {
+> +	struct inode *inode = folio_inode(folio);
+> +
+> +	if (kvm_gmem_test_no_direct_map(inode)) {
+> +		int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
+> +						     false);
+
+Will this work if KVM is built as a module, or is this another good 
+reason why we might want guest_memfd core part of core-mm?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
