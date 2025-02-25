@@ -1,93 +1,54 @@
-Return-Path: <linux-kernel+bounces-532127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA5FA448F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0171AA448F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D54F188402C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4660318868D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B40619ABD4;
-	Tue, 25 Feb 2025 17:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nt80qRTs"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6629118FC8F;
+	Tue, 25 Feb 2025 17:52:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDC166F29
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E31C19B3CB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505949; cv=none; b=nd5aqY2+Di40F4IXVNv3/cXQwzBy4CE57h4Jrig+GTqDyH6eaadMmtXgS9rLpTSqU9RB8zVmAJZl23+rRrr3uqbBMSmc29VRrIh0AbIJCTGW5lrrHM073Si/M/uSt6VV/sYJqXPFIbWOlsoR4ipO+RqP2YAp551dlwNkcV8rI6Y=
+	t=1740505951; cv=none; b=DTGoi5VEO514cwCBqTMIVlcqq9LZQbWsM2vhLZH0VzM2IrUTV5ZYMOEQ48o82nAmwRPEq+d+MW+TYuio4pcSOoDm6QF1p+Q+S9IaV8RJCYylZt2PqiDmkgV9Ev+K44w3DdAcgbHAJmWaa5Ay55t8xicoUHW066cJX0SBBpmYjQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505949; c=relaxed/simple;
-	bh=TITnbcgolKPMPksTb0kVckLbIOLQEkwI2FcyCceIkT4=;
+	s=arc-20240116; t=1740505951; c=relaxed/simple;
+	bh=pgcA9JK0EKlacZiWkqx+C3sx/vPAa/HUHyJsPVogTkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDw0pqf+ekXr2rJxIvDKeTecFdrPzpQ4Ft4KU+419t8OgCY3akQkcExMTDjKF0cpxGmjfolbGafQ6IZwxUC4Ez0cv9j10oVbgD86zKWYKf/k0oOy//r+7W+9lxr+jjG0K9OmW2hE82CuBwTuaco05XkrrVkIyRPOXhUmmt9KKlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nt80qRTs; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-221ac1f849fso1795ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:52:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740505948; x=1741110748; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dN8nBA+Qh6D4N+wqpSDyJLyiHWYbmS4OUKXh0N+DSqI=;
-        b=Nt80qRTsdIMKwK77eOr5LzLlJ6jv6oZ1XHDd6JlCzx539zK4aJJyWsue9Zgfdk2bNZ
-         /hGVuCPln+75Wikzcy+h5VjgkFl6JnaCzXw5kkA/bWco+Pr8zsaL1TRrP8Vs26Kwt2Uf
-         ZCh3SNk3gj/QHBWnV32g7+9XZLcqSbOvlMlSiwfDQcP4j5+/8mZuHlgdhtGZVbosLN4b
-         YijJmCwdSeGE1PM9npYMVeeXv18y+YSX7Cxpc1iFn/2RWwp5+0JvQI4+EtO6k1uSmWtT
-         /nkdvxmIEiqivOK5B+R5cf5yNBCHijxkPzGB7A62mx4+/f+Lf8l0TCMRqHL3+Z86IkCL
-         QBiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740505948; x=1741110748;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dN8nBA+Qh6D4N+wqpSDyJLyiHWYbmS4OUKXh0N+DSqI=;
-        b=ofTQ/SBasBuV6RSKG3zX2Qb7sp8eqTyMX1DMrbocLlwQNl/tsQpO8aU6YTmWupC5sz
-         S/g7akz+0TabLVK8pEzT/eY1gqTWJWpjw8ABIamUaGXBIuwtaXcH37cONaxRf+Cn4zwY
-         J5LBydDuhdqGKYBAGkrpOtiLHPVEONCY1tVeVJ3r8SOlNAlbPnAhe8pWCj2UROCjrSG+
-         6H9KsErWZ7j0+OTlD9ZhzGXklQJjDP1srLfZa9XuMZsMVKQAhcBHMbmVfY7lHjr7XNGa
-         OyvbBSEVrUmLMPegTH1gnlNGehkGXIm/KE1MO1yE5SPGUZpB1To1uxDqrolV61eI8a6O
-         sMjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkSBF2mOOrChN1prRv3CVBwCG2E3Xi18zeiGZb7qpnAOHKqPxDUWhfHqknNu12vJDk01Pwpeu68axHYPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK3oJ9eeynDrmhhYUEvNCWNWrTIw0ClphY2UvIWOavA9gZ//Xl
-	JiR75AL/RCKR+qZpA/WJdkJEcZINHvy65pEdyaPIYH/wiLbugnqgmzDH4uT7EQ==
-X-Gm-Gg: ASbGncsPZG+Hso7zDw/fWw+s+mKORgrzpUBvZjB1IbktfV0pIgRnUdZGGf2TGZ0rMAu
-	2ko/vCHf8bZzEiYYHcV5XgA7jcyzRtEsAF/+fzawPHV4j/EFRt2znbpDQZ/qJp7pAkUk/AARREs
-	okMpPfe0vWWM/HfWKkbOdmHRMYWgJTeMvKs3qDZeVuE8a9SA8P61l2sAi9lE3DYJmDn85A+WUCk
-	AEm0Zni2zB5BYlUu32ZEuuGfenxW6pdye8icby0Nc4eQrnxMjPvah8LHxy+1RlquicPDI0goByi
-	FlXWXIjdr7c/fm46MMgzJbPApb6odHXshN1UH26IS0KaT9SYgt9q9niUQio5uaQ=
-X-Google-Smtp-Source: AGHT+IHCwCn1SF2NMONCzfAyHzGrJNS1HAUTJPist+TAdk8bMDyf0wMytHFuTMKOTPJoVoDGnbqb0g==
-X-Received: by 2002:a17:903:244d:b0:216:48d4:b3a8 with SMTP id d9443c01a7336-22307a60187mr3928025ad.16.1740505947317;
-        Tue, 25 Feb 2025 09:52:27 -0800 (PST)
-Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a43ccb3sm1861445a91.39.2025.02.25.09.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:52:26 -0800 (PST)
-Date: Tue, 25 Feb 2025 17:52:16 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	joro@8bytes.org, suravee.suthikulpanit@amd.com,
-	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
-	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
-	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v8 12/14] iommu/arm-smmu-v3: Introduce struct
- arm_smmu_vmaster
-Message-ID: <Z74DUPcl9KRZcvpW@google.com>
-References: <cover.1740504232.git.nicolinc@nvidia.com>
- <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDqIpz+K+UgV+vVne2612BAXCtXkACEsxQTWa5te5TIx4drGx1KaeFb53cTpr5xyD8OLLKusPxu+pKj7+omTV5GqX/En0M/WHk7ZmfobuCvEOLN2rI9axTszmdh04GZKjOyzkEoXggdXZsGGZEQmxNyNMg/Ag+sVhn4T8yxe124=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DDDC4CEDD;
+	Tue, 25 Feb 2025 17:52:27 +0000 (UTC)
+Date: Tue, 25 Feb 2025 17:52:25 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] mm: Generalize arch_sync_kernel_mappings()
+Message-ID: <Z74DWQJ7g-KNpHLY@arm.com>
+References: <20250217140809.1702789-1-ryan.roberts@arm.com>
+ <20250217140809.1702789-13-ryan.roberts@arm.com>
+ <4fad245f-a8a6-468b-82d5-13f089aa525b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,40 +57,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
+In-Reply-To: <4fad245f-a8a6-468b-82d5-13f089aa525b@arm.com>
 
-On Tue, Feb 25, 2025 at 09:25:40AM -0800, Nicolin Chen wrote:
-> Use it to store all vSMMU-related data. The vsid (Virtual Stream ID) will
-> be the first use case. Since the vsid reader will be the eventq handler
-> that already holds a streams_mutex, reuse that to fenche the vmaster too.
+On Tue, Feb 25, 2025 at 05:10:10PM +0000, Ryan Roberts wrote:
+> On 17/02/2025 14:08, Ryan Roberts wrote:
+> > arch_sync_kernel_mappings() is an optional hook for arches to allow them
+> > to synchonize certain levels of the kernel pgtables after modification.
+> > But arm64 could benefit from a hook similar to this, paired with a call
+> > prior to starting the batch of modifications.
+> > 
+> > So let's introduce arch_update_kernel_mappings_begin() and
+> > arch_update_kernel_mappings_end(). Both have a default implementation
+> > which can be overridden by the arch code. The default for the former is
+> > a nop, and the default for the latter is to call
+> > arch_sync_kernel_mappings(), so the latter replaces previous
+> > arch_sync_kernel_mappings() callsites. So by default, the resulting
+> > behaviour is unchanged.
 > 
-> Also add a pair of arm_smmu_attach_prepare/commit_vmaster helpers to set
-> or unset the master->vmaster point. Put these helpers inside the existing
-> arm_smmu_attach_prepare/commit().
+> Thanks to Kevin Brodsky; after some discussion we realised that while this works
+> on arm64 today, it isn't really robust in general.
+[...]
+> As an alternative, I'm proposing to remove this change (keeping
+> arch_sync_kernel_mappings() as it was), and instead start wrapping the vmap pte
+> table walker functions with
+> arch_enter_lazy_mmu_mode()/arch_exit_lazy_mmu_mode().
+
+I came to the same conclusion why looking at the last three patches. I'm
+also not a fan of relying on a TIF flag for batching.
+
+> These have a smaller scope
+> so there is no risk of the nesting (pgtable allocations happen outside the
+> scope). arm64 will then use these lazy mmu hooks for it's purpose of deferring
+> barriers. There might be a small amount of performance loss due to the reduced
+> scope, but I'm guessing most of the performance is in batching the operations of
+> a single pte table.
 > 
-> For identity/blocked ops that don't call arm_smmu_attach_prepare/commit(),
-> add a simpler arm_smmu_master_clear_vmaster helper to unset the vmaster.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 28 ++++++++++++
->  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 45 +++++++++++++++++++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 18 +++++++-
->  3 files changed, 90 insertions(+), 1 deletion(-)
-> 
+> One wrinkle is that arm64 needs to know if we are operating on kernel or user
+> mappings in lazy mode. The lazy_mmu hooks apply to both kernel and user
+> mappings, unlike my previous method which were kernel only. So I'm proposing to
+> pass mm to arch_enter_lazy_mmu_mode().
 
-Apologies for my spelling error in [1]. It's supposed to be:
+Note that we have the efi_mm that uses PAGE_KERNEL prot bits while your
+code only checks for init_mm after patch 13.
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
-For all the other patches too. Correct spelling in [2].
-
-Thanks,
-Praan
-
-[1] https://lore.kernel.org/all/Z73zvIbsXzJMCaNt@google.com/
-[2] https://lore.kernel.org/all/Z730M3XptvDRObBp@google.com/ 
-
+-- 
+Catalin
 
