@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-530700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC943A43712
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:11:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3102FA43716
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:12:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8605918909E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 135AB16BB48
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7AE25E459;
-	Tue, 25 Feb 2025 08:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2956725D55E;
+	Tue, 25 Feb 2025 08:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvGsygq9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAx80sKm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5F62153EB;
-	Tue, 25 Feb 2025 08:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54849188735;
+	Tue, 25 Feb 2025 08:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471085; cv=none; b=kpSrsdHqtgqPHEaMQb+fcmCffsH+X98ndt8zrFeszueMy/WI8OYHummp+RGsntrnR+uPAeCTY7/3vxVOrAF/P7VcRRUfQirPYo8jaQ/50Cj9P+3uT85iOf+3asNmDu6+9ZctpMqdhWEPlQnRtGPWaC9O715psfa0lZSNHwiyG5M=
+	t=1740471167; cv=none; b=M+q7nksvYioet08F0Jn3qcvGbrba+3gxCdm4xr+0s+Cw0aqsYnQAQokYWjhaot6Aih+lA4mjaLgfwkThGOeY/GpmXGI2TZgCibP2IN19wtiEVOmI0vftNunFufVJNKnB4XFlXq2YVrdBPUeq9qB3DCxRyQtBVxshMDcCa0TpnSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471085; c=relaxed/simple;
-	bh=aLquZf07TT12h1ddFK/vUtibJHM+LwbHdlfjiJfmXKo=;
+	s=arc-20240116; t=1740471167; c=relaxed/simple;
+	bh=oioRiYJ4Vklv26htgRct3bcjim0IxVAPfn5+RAjq134=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hul/nf8jYbqJb2SgqmPwMQJVQSfXPTX/Bbh98pOYFYav0BZGePkj1rgneDHbwPSo9XzHF2xhjG36FNioknZyTGEdrDvsvff6RW2oOEasyWDULYak/b3Ff0SsLB81ZzVdc12pr/8qhAwlub4kO1KXd5j1HoUPV7Q8agkDdsDU3UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvGsygq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9453C4CEDD;
-	Tue, 25 Feb 2025 08:11:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kXUaXK1om2tQLvEiTb1ev69vyvJp6WbIcAnGAfi8PhhMfC58gX8ZMbCREchRWY4jd+N8urkpQ10x0Z2fEqq1SR4d0qgccpjZ8N6GUUpzeNAiX2z6rM7sHfCdIOz4sX4iyRANvUjQ19qFH3IyAhO2bH+K7wCgLcFeI0HEuvZKGkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAx80sKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B5CC4CEDD;
+	Tue, 25 Feb 2025 08:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740471084;
-	bh=aLquZf07TT12h1ddFK/vUtibJHM+LwbHdlfjiJfmXKo=;
+	s=k20201202; t=1740471166;
+	bh=oioRiYJ4Vklv26htgRct3bcjim0IxVAPfn5+RAjq134=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EvGsygq9wqCVlTBUSN6xE6f4CrZsYmf7CLTK5P2BU4TjqRECnR6QMxOakWWb+fdGS
-	 s0HKJWy99e21ibkWrl9I7glsYYtdr8KCeHxcdtQ6JND8f4XSJbO+/9CkJNWSTlKM6z
-	 NgFr9kV/QoiQfY35WX6eH+IW9rYKCoHqF5cSb8PksFNW+FO732KedeJvK+iYQcg/rk
-	 dm5YiNM3Qqnd4iOh/Hm09TMSD/dKscNbezJdSIWU8CCwG/HiqpBXasw3hXkkJWITby
-	 3yRL11Mi3wqPycMQKUnPkdD5uN9w0SQb45LnIuosLClFP/GK+IwgbTdqcgV6QqpTKs
-	 NTatOsoQOIcBA==
-Message-ID: <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
-Date: Tue, 25 Feb 2025 09:11:18 +0100
+	b=JAx80sKmURHXMO/iKSZ8noI01xNOTfd6lFxs9HTKtARO63J8IVtkQ7sYCKoFmXxy3
+	 0r8Y0Tu8L26Ira5juZEj3BHwDyvS9zsAkxI7R8Oo3sZQrIVvgwstyRDJOK13WBJxK0
+	 6J1X5MKUxxhnMMVtDNWvSwcWWroQceQO/U69IwlCSsoteqjbHZ3bKISFFVpJ+14uuN
+	 pTVayOtn09tbBoeV6YPwiEFJd/SR/OmXKXK6WGpei8aAuPxTHd8OWfQKomJRDaW+zj
+	 jWzbsutYT5znbD3weF74k/d2HtwQop/veq9IqXtKzi1OSnup4tLShBxQksVOHzUh6E
+	 KiFbjtVBnkt/w==
+Message-ID: <976a2029-c0c0-4093-a3cd-71e1524db032@kernel.org>
+Date: Tue, 25 Feb 2025 09:12:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
- samsung,exynos2200-usbcon-phy schema file
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+To: Haylen Chu <heylenay@4d2.org>, Alex Elder <elder@riscstar.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
- <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
- <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
+ <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+ Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+ Guodong Xu <guodong@riscstar.com>
+References: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
+ <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
+ <Z7BTVu10EKHMqOnJ@ketchup>
+ <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
+ <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org> <Z7mrdrACFp3m-7sy@ketchup>
+ <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org> <Z7xHRAFE4-QEA6PO@ketchup>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,90 +113,148 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
+In-Reply-To: <Z7xHRAFE4-QEA6PO@ketchup>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 11:48, Ivaylo Ivanov wrote:
-> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
->> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
->>> The Exynos2200 SoC has a USB controller PHY, which acts as an
->>> intermediary between a USB controller (typically DWC3) and other PHYs
->>> (UTMI, PIPE3). Add a dt-binding schema for it.
+On 24/02/2025 11:17, Haylen Chu wrote:
+> On Sat, Feb 22, 2025 at 12:50:13PM +0100, Krzysztof Kozlowski wrote:
+>> On 22/02/2025 11:48, Haylen Chu wrote:
+>>> On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
+>>>> On 22/02/2025 00:40, Alex Elder wrote:
+>>>>> I have a general proposal on how to represent this, but I'd
+>>>>> like to know whether it makes sense.  It might be what Krzysztof
+>>>>> is suggesting, but in any case, I hope this representation would
+>>>>> work, because it could simplify the code, and compartmentalizes
+>>>>> things.
+>>>>>
+>>>>> Part of what motivates this is that I've been looking at the
+>>>>> downstream reset code this week.  It contains a large number of
+>>>>> register offset definitions identical to what's used for the
+>>>>> clock driver.  The reset driver uses exactly the same registers
+>>>>> as the clock driver does.  Downstream they are separate drivers,
+>>>>> but the clock driver exports a shared spinlock for both drivers
+>>>>> to use.
+>>>>>
+>>>>> These really need to be incorporated into the same driver for
+>>>>> upstream.
+>>>>
+>>>> Why? First, it is not related to the topic here at all. You can design
+>>>> drivers as you wish and still nothing to do with discussion about binding.
+>>>> Second, different subsystems justify different drivers and Linux handles
+>>>> this well already. No need for custom spinlock - regmap already does it.
+>>>>
+>>>>
+>>>>>
+>>>>> The clock code defines four distinct "units" (a term I'll use
+>>>>> from here on; there might be a better name):
+>>>>>    MPMU  Main Power Management Unit
+>>>>>    APMU  Application Power Management Unit
+>>>>>    APBC  APB Clock
+>>>>>    APBS  APB Spare
+>>>>>
+>>>>> The reset code defines some of those, but doesn't use APBS.
+>>>>> It also defines three more:
+>>>>>    APBC2 Another APB Clock
+>>>>>    RCPU  Real-time CPU?
+>>>>>    RCPU2 Another Real-time CPU
+>>>>>
+>>>>> Each of these "units" has a distinct I/O memory region that
+>>>>> contains registers that manage the clocks and reset signals.
+>>>>
+>>>> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
+>>>> 1+2? But previous statements were saying these are intermixed?
+>>>>
+>>>> " I'll make APMU/MPMU act as a whole device"
 >>>
->>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>> ---
->>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
->>>  1 file changed, 76 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->> You have undocumented dependencies which prevent merging this file.
->> First, dependencies have to be clearly expressed.
-> 
-> They are, in the cover letter.
-
-Where? I read it twice. Dependencies is the most important thing and
-should scream at beginning of the cover letter, so if you bury them
-somewhere deep it also would not matter - just like they were missing.
-
-> 
->> Second, you should
->> rather decouple the code from header dependencies, otherwise this cannot
->> be merged for current release (just use clocks with long names, without IDs).
-> 
-> Sure
-
-
-> 
+>>> My reply seems somehow misleading. The statement means I will merge the
+>>> children with the syscon into one devicetree node, which applies for
+>>> both APMU and MPMU. I wasn't going to say that APMU and MPMU are
+>>> intermixed.
+>>>
+>>> As Alex said, all these units have their own distinct and separate MMIO
+>>> regions.
+>>>
+>>>>>
+>>>>> I suggest a single "k1-clocks" device be created, which has
+>>>>
+>>>> For four devices? Or for one device?
+>>>
+>>> By Alex's example, I think he means a device node taking all these
+>>> distinct MMIO regions as resource.
 >>
->>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>> new file mode 100644
->>> index 000000000..7d879ec8b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>> @@ -0,0 +1,76 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Exynos2200 USB controller PHY
->>> +
->>> +maintainers:
->>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>> +
->>> +description:
->>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
->>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
->> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
+>>
+>> You still do not answer about the hardware: how many devices is there?
 > 
-> It's not (I think). There's a few reasons I've decided to make this separate
-> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
-> 
-> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
+> In my understanding, the series covers four devices, APBC, APMU, MPMU
+> and APBS, each comes with its separate MMIO region and is clearly
+> described in the datasheet. I stated this in the later part of the
+> reply,
 
-USBDRD phy does not provide UTMI and PIPE on its own either if you look
-at diagram - they call it phy controller.
-
-> for them, and all that is needed from it is to disable HWACG, assert/
-> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
-> initialization can be done and USB2 works. If the USBCON phy is not set
-> up before the eUSB2 one, the device hangs, so there is definitely a
-> dependancy between them. For PIPE3 we'd need to control the pipe3
-> attaching/deattaching and then initialize the synopsys USBDP combophy.
-
-Does it mean there is no USB DRD phy controller as before?
-
-Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
-
+Ack
 
 > 
-> 2. With the way it's modelled, we need to parse phandles from eUSB2 and
-> USBDP to the controller. Adding that to the usbdrd driver would be...
-> weird. It makes more sense to model it as a separate driver, because
-> it functions in a different way.
+>>> For APBC, MPMU, APBS and APMU, I'm pretty
+>>> sure they're standalone blocks with distinct and separate MMIO regions,
+>>> this could be confirmed by the address mapping[1].
+> 
+> Thus I don't agree on Alex's solution, since it creates fake devices not
+> mentioned by the datasheet (spacemit,k1-clocks and all its children in
+> the example devicetree).
 
-Just to be clear: we don't talk about drivers here.
+Ack
+
+> 
+>>>
+>>> 	clock {
+>>> 		compatible = "spacemit,k1-clocks";
+>>>
+>>> 		reg = <0x0 0xc0880000 0x0 0x2050>,
+>>> 		      <0x0 0xc0888000 0x0 0x30>,
+>>> 		      <0x0 0xd4015000 0x0 0x1000>,
+>>> 		      <0x0 0xd4050000 0x0 0x209c>,
+>>> 		      <0x0 0xd4090000 0x0 0x1000>,
+>>> 		      <0x0 0xd4282800 0x0 0x400>,
+>>> 		      <0x0 0xf0610000 0x0 0x20>;
+>>> 		reg-names = "rcpu",
+>>> 			    "rcpu2",
+>>> 			    "apbc",
+>>> 			    "mpmu",
+>>> 			    "apbs",
+>>> 			    "apmu",
+>>> 			    "apbc2";
+>>>
+>>> 		/* ... */
+>>> 	};
+>>>
+>>>> No, it's again going to wrong direction. I already said:
+>>>>
+>>>> "You need to define what is the device here. Don't create fake nodes ust
+>>>> for your drivers. If registers are interleaved and manual says "this is
+>>>> block APMU/MPMU" then you have one device, so one node with 'reg'."
+>>>>
+>>>> So what is the device here? Can you people actually answer?
+>>>>
+>>>
+>>> I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
+>>> related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
+>>> sure they're standalone blocks with distinct and separate MMIO regions,
+>>> this could be confirmed by the address mapping[1].
+>>
+>> They were brought here to discuss for some reason. Long discussions,
+>> long emails, unrelated topics like hardware or different devices - all
+>> this is not making it easier for me to understand.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> By the way, I made a summary on the hardware covered by this series in
+> one of my earlier reply[1]. Could you please comment further on my
+> proposal[2] according it, or pointing out anything that's unclear or
+> missing? It will be helpful for things to improve.
+
+Thanks, it looks good.
+
 
 
 Best regards,
