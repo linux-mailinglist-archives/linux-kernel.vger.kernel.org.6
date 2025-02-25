@@ -1,224 +1,202 @@
-Return-Path: <linux-kernel+bounces-530890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119A4A439DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55084A439E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00004173562
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF68B1795F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8566262808;
-	Tue, 25 Feb 2025 09:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE17C261590;
+	Tue, 25 Feb 2025 09:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MdgSI4Hv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RMvWKNBp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MdgSI4Hv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RMvWKNBp"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="D5us9oTW"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010002.outbound.protection.outlook.com [52.103.68.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BC1FE465
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476173; cv=none; b=GSy+SRVzzaGKBs1fDK3dZpKW5FZ+D/ar4xQFpM3wqZlzDrMKDaBHvZvWKtwzVlR1LDom2cke7kGB/ODNudcMs+JX1+/YBe9Tsa+q4aWk0qguq8S63nZi8pohwPgnvQVMW/f1tVpji21wDhjeu7eeatP5uY371p4ZvqU1H1mj0WQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476173; c=relaxed/simple;
-	bh=prA312rqe9WFEYwNDewyqNmLuRIPwToz6pjiUUU83ao=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q8mpGoUbXgMETPqyuUMW7p+3g6bYmYYIrdj7Y6foxJV99VwZUbUFWhJ1RH6s/7+ejtYhy7DJSgvlveP/2HwNPzRTUZo47TcLCPm3cK9PzTQx3F5LyqgIIU2pJUzaf1STCbnJPJqbLzXXX2lKxdtTbjFbcupZvLO1rt/QNPzXlec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MdgSI4Hv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RMvWKNBp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MdgSI4Hv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RMvWKNBp; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6533F1F44F;
-	Tue, 25 Feb 2025 09:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740476162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsrnR7Efn9rCU7JZaxjsWN3D3syNECpkktGDzdT2cQo=;
-	b=MdgSI4HvGVtgrr2VTdTVq26YtMrv64m3vW+CS83jlrVbD6TIlBIUmOfc5ASJomXeXt0PEB
-	MpL98LB+RwTgLyTOk1VSksTj/3beg/w5P7MZD1j9royLUeNnu4Cyg573fzRoM8eJiAN2q+
-	AfDQH/ElYhFqBzpMqxaJcUviLMCMQYk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740476162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsrnR7Efn9rCU7JZaxjsWN3D3syNECpkktGDzdT2cQo=;
-	b=RMvWKNBphNccmvb55hKzIW3I/qHPce3JpqpAhlCG85Kx/FrPEW4PBKqLVo0dForWRsn6NG
-	AyLu28ZINH4l2LDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MdgSI4Hv;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RMvWKNBp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740476162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsrnR7Efn9rCU7JZaxjsWN3D3syNECpkktGDzdT2cQo=;
-	b=MdgSI4HvGVtgrr2VTdTVq26YtMrv64m3vW+CS83jlrVbD6TIlBIUmOfc5ASJomXeXt0PEB
-	MpL98LB+RwTgLyTOk1VSksTj/3beg/w5P7MZD1j9royLUeNnu4Cyg573fzRoM8eJiAN2q+
-	AfDQH/ElYhFqBzpMqxaJcUviLMCMQYk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740476162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsrnR7Efn9rCU7JZaxjsWN3D3syNECpkktGDzdT2cQo=;
-	b=RMvWKNBphNccmvb55hKzIW3I/qHPce3JpqpAhlCG85Kx/FrPEW4PBKqLVo0dForWRsn6NG
-	AyLu28ZINH4l2LDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0BA3313332;
-	Tue, 25 Feb 2025 09:36:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3umZAQKPvWceFwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 25 Feb 2025 09:36:02 +0000
-Date: Tue, 25 Feb 2025 10:36:01 +0100
-Message-ID: <87zfia74e6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Takashi Iwai <tiwai@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Su Hui <suhui@nfschina.com>
-Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in vga_switcheroo_register_audio_client()
-In-Reply-To: <87zfia5r0a.fsf@intel.com>
-References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
-	<87eczn7adi.fsf@intel.com>
-	<8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
-	<87zfia5r0a.fsf@intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377AB20101A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740476232; cv=fail; b=oUUfzJs7cVkb/mLSykXziKZcr6pv4OIIsJUEgsDGGjz+X/xq4XTdjQth/8PtYX2qSB6Kwc8rVe724GNhsaCoYqr5tXmYw0BtpPh/DYhLv5j0zrHnUZ4niFEX3Nmh8x9PeqXmWfcxN5jpZXwqYzg1dYnllz7tSLW+env1y7h0x+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740476232; c=relaxed/simple;
+	bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EMrhp0ENopFdrdWP/yHtWuwPusxtSXWhjN25qE1OyyoxVVsZt0A/BicJhVsWsqaw4Kg5XSuBZ2zd36RPvdGQDyKS6hV6gvEy1i1bafFz2SlXIlBtBfIvcVGWkYqGYejyyyLjdg1Rm2IziU1/mdwnO1DYzFszTwJEe3MG00IBcVQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=D5us9oTW; arc=fail smtp.client-ip=52.103.68.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mmMQXURsXi7AGpd8j4LWHXDxMGeg8ZxhqkN5s+WOK9H3/1wdCxR17P3ZT7qPVMwZObqtePEY3D69R9fG591/0Y4UJ3XWL2JU2sqKV2bk0AbKkd7s61QmK9r2SXartUWKLMK6sHOYkNPRwjirRkOokCM/BjR5/KgSX3EokxweEP0XyC3CzLKjsK7Xgt4P9AFDtB9nm4YzqqyBZxcaYOPeGsdWPtt2JnCwjl7iSDSM7gfGFwPgIt17XzbgH30C5honPC/L4est1rvsPHC3rZiz66iSS8X7phCUKT/4m07KzaO1L0B/bx5Im8wv7lLC5Hx7O0vq297RXv1MXd425kE1mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
+ b=EUldxVYNTKxupBUzv/OpVS7tA9ZfQF5ha+q35i3iMKOFZXRllekD/irwLwbm/ka7R4ADjV3O+JpZkMjp98u5rb9jtowfPDVU5gOw1bilVQ5U3W6yZifBdrQbyan/G8Vn1J32Ns4rIecTdzn2fKKJoQFR1NsPKiJSzHxhbCj5JVeblFz6u7NB34VlAi18tRT1dj0g1+o6irp2uXXu+L1hYp39IklmeAhL+IfdumovCaT8+QYp98l8ObL3hmRhZiqPD+ibTSKFEb5hexaGkoxXh++1eucea9mPHxgy4k5P6N40l3OH5Soa39bRik0Y4jgcR+GIBrOnUu37xtuWZqX5yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
+ b=D5us9oTWTpm5RPHhrZu0w/NhWH/zEZrCvqGxZNGHEgS4n5sDHqpgj+8ZrCURRWGwTTzTBYs93rNmGpp/RqqGKsB6R1R/XWCD2gmkpG+he8ZZL5OuupT7LYPW53OXNPaWvjTDlEuQxM0WMBRnJGCQAf7LR5JiCSHu/jxgC31CKIRnJdIxGWXQFyL08bAY6oYsIJt+uBR79ybjLDTrGTptdq0PK2F90ZzCyouCmW7BKGP4MgMpUmYIugb5HMjafvJgG5QTOJfac36lZpcZg/42/0Gp8bU/IrJOoobXF21YO5HoKlqp/E2tQljfMCmwyT3SeaEKRV1LtXcSekF61mDzGA==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB5803.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:66::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
+ 2025 09:37:04 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 09:37:04 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Thread-Topic: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Thread-Index:
+ AQHbhsGm46fWR/3mxEipqc6+PMbxkrNWrTuIgAD67QCAABL7QIAAANpQgAAHqwCAAAB7rA==
+Date: Tue, 25 Feb 2025 09:37:04 +0000
+Message-ID:
+ <PN3PR01MB95976ED2D5FDC48C5F9E6EF7B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+ <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+ <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
+ <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB959719792308EBB9370993DFB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <a4bc0440-5451-49e7-b7a3-9299c5200a2e@suse.de>
+In-Reply-To: <a4bc0440-5451-49e7-b7a3-9299c5200a2e@suse.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB5803:EE_
+x-ms-office365-filtering-correlation-id: b3cd1422-9399-4ef8-4f0f-08dd557ff6e1
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|7092599003|461199028|8062599003|6072599003|8060799006|19110799003|102099032|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?TjJHTmtVTytjOXdRdmJFTC9BQktQMlNWakp5SVo0ZEZZTW41K25TdndoaUFS?=
+ =?utf-8?B?NDQraWZvclJOTGVQSitSZDVZUjBKNHJtVGVTQXRiRlhUMUhMQ3pZelNYYTZU?=
+ =?utf-8?B?Z1RicWpJdXdqNlI0eTc5U2tSclkzMUR3QzdpNUhhSG9uY3l5SXRWUU1wMGtZ?=
+ =?utf-8?B?RDVkSE9ucXA4TDhURy9VQlBYbWRYTEpRT0RNOHUzWFBhTW4yU09sckhXUzg0?=
+ =?utf-8?B?MWU2V2RLa2RHdjk3NVBGcUVLL2hXWnJLUUttNlowcGhIV05GZHFOT3RLMHdp?=
+ =?utf-8?B?M3JBZkt3Uzk0ZEtmc1AycjJXdmhzSUtFdlJEbFI5aEpnbkE2ZXRzeFpYM202?=
+ =?utf-8?B?M05FQmFXR2Y3bCtNZ0t4VUs5RFB3WUIxRW9yQ0R0TWIwUkRiaW0zSnBrTFJE?=
+ =?utf-8?B?YnVLMzg5SHo0REtkb2VaOVJvYzZsOXI2dTVZSHRsaHZtdDBIbSt4S3pvRlp6?=
+ =?utf-8?B?dnJLWFkxU0JWQUh4UXdVWS9Bc1haMmZZU3BPMm4rVkcrRE5aQ3BwaGFFRnFX?=
+ =?utf-8?B?Tm8ySUVUVmhONUhMZ3JiYk40bkVxQ2VoY3VoUi9Jd29KS2hwU0h3U0JHVGJP?=
+ =?utf-8?B?UVF4RzZ3R0w3eGFDaElZK0V2UUs5MDFqbzFSUXpxT3dycUlXaVZ1NFcwbjlJ?=
+ =?utf-8?B?dlFEWVBHQU81Y3ppbEQrd1NHSU80eUFiNXV3R25SZGJnQ0FvVURvQVFpaC9L?=
+ =?utf-8?B?SXFFWmZRT0FvRVZyUHFTZGw0K1ZkNHJGZHpQSmIrZ3BvVWdiM0NyaXBRK3Yx?=
+ =?utf-8?B?ZEc3UGcwTUxtYVJNY0xqZllTRUtKODlmRVZBNjlnYUptUG5BMkZ6U1B0OVZE?=
+ =?utf-8?B?NWNaaDhoWUo3Qm5kS1Fjd0ZYb2ZCaGIvL3IyMm5XS2trK3RhVHdTS0lEN0JT?=
+ =?utf-8?B?UEY5VEI4bXYxY1ZEdFY0RkF1dGQ2TEpvOXlIeng1R3BZZG11NVlTSDdMUSs4?=
+ =?utf-8?B?aTErSnRzdURiaHhEbGYxL0hndHRjUjRPRU5XQjBYdEtJWGRhU00rOVJ0SEQ5?=
+ =?utf-8?B?S3pVcloxM3BKallxelFtOURmVmZLeFhFYjJTeDN2Y3AvNVhPcWFlVkpONEsr?=
+ =?utf-8?B?dk9IRXFHay9LWVMrQnJRZHB4cGFxeXpvSTQxVzZaeVJJVnIyRThPT1VTTUsw?=
+ =?utf-8?B?ZnV1R3JFbThGVFpUY3IwMzIwYU41NWRvaDI4Wlk1dTZ1TkpHVTZ4bHFjazFY?=
+ =?utf-8?B?LytMVlNEZW5UWEhjOHBWVlIrdEI5NkdmZ0NPbDRmamRGYjdMY1hEcHFBWm9s?=
+ =?utf-8?B?aGxwbnpzWTMzRXFYSVFheStUNllhZER5ci9aaGkvRjVuSHlNM3RnNVZzYlIw?=
+ =?utf-8?B?dUsyd1llTW1NWHpGYjlRVGtVYlZPWTUrcUpSalQ2VURoZ2doWjhTVi8wVHlJ?=
+ =?utf-8?B?OUtMNkhVSEplNnVhaWlEbURiYmpHa2lYYkZuamovRDk0YkpxbHpObFNtSDBk?=
+ =?utf-8?B?b0wrUVk4TGNOL2EzVElNZmZjc0ZkRGp3dGc0S3BjdGpaVFVObVM4SUxNRnNB?=
+ =?utf-8?Q?nvL2xQ=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Y0FyTVpkSExoaDE5eUpZcld2Lzd5M2VZbG0rc0JHUi9DK250VDdONmM2WlEr?=
+ =?utf-8?B?YTJrOU1qSjRKMWs2Wk44QnFFRWczaytSN25rdUQybm5YdkpkenBhc3cxTFFa?=
+ =?utf-8?B?S2RGcjNTMGtPZm1wRGNiUVF2aHZGdVRnYitBUU4vTk1zVEZNZ0FJRVRvZ2ZM?=
+ =?utf-8?B?cmdPMWswUHlMQkFraHhVaFlDSUh5NlJoV1pHWStsaWV5R2g0WTE4L0F6TWZQ?=
+ =?utf-8?B?N2ZTdmk3c0IvQi82T3FvL0o0alJMeGVxcUNwVE00TFJRbWZ4aGxMdkluSnF2?=
+ =?utf-8?B?czhCdlhqOUkwdzFCVTA1K0J1d1ZydVVvaW5TSXZnY044ZC94d2xXdGhoQlpH?=
+ =?utf-8?B?cXdld3ZnZEVoVllhTTg3Um11bCtZYldUcExiNTBMSDVaZGU2UDZYbUxHdG1J?=
+ =?utf-8?B?dWN2Qm9NbmV4Z3oxMkhXUTdOdWFCOGo4cHdEYVdlS1ZrcnJtbG1mS1dyMDRN?=
+ =?utf-8?B?c3kvUksrM3c4c2lRM0VyNms1Rm1qN3FvQXZXVkQ1eHNjRUJ6cjIvbTNKVWtx?=
+ =?utf-8?B?Q1lBTkg5cmxTYlVrZk5aVU5VSmdvOVpEcGs3TXdML0JwTVlDcDBYcWNGUkZU?=
+ =?utf-8?B?dU16KzdpQi96bUppYkUxZzdvb2swL29SV2NWWGhhQVB2VjJ1ZXp5VUJyL25S?=
+ =?utf-8?B?OS9WUVNRTnpSMUxXV0piNE9qMk1ONnEyVUEyNWF5QmUvdWZYU2tpQzBTdEFn?=
+ =?utf-8?B?M2ZLUXBvV1FITDNrUGFmL3V3TG5CTXNYbm44VDVzbUZrTEdBNGI3dWo4RVM5?=
+ =?utf-8?B?VnBLd0N2akRVbTVDUTQ1Y0gwcTg1bTJMQkg0dGJkRlIxdkE5MDg2UHh6SFNX?=
+ =?utf-8?B?MDJ2UFNFTFRjdm5hY2RGT3cxQlRNWVE1bEY5UWZsNmdxaFZhdVVNQlEyZlJ0?=
+ =?utf-8?B?a3huMkJWRzVYZmdQS0wyZHpIT2lCYUNkRG1qaEl0OUEvM3hOWC9DeFZoZkgv?=
+ =?utf-8?B?TmZ5V2NDWVplOWV4NEFqQ3NlV2g3MUJqVytVclpzQzRZMmcyTjZGMGNaMlNx?=
+ =?utf-8?B?anJEcDZBS1pzUkVCQzFtdHdCMThJcTNtUTlRWDNyNkJNTHBxbHdEWGVFZVhr?=
+ =?utf-8?B?d1dOQkhLSU9FTmdlS0NGU3lWeTB3aytjQVJUN0liemtyMUxJK01zekRwdlNo?=
+ =?utf-8?B?Vm5EVEtOby90KzZjOGJpckJQQVBTNzVzRkNmeWFlWmlTaFVoNWlNa0p3N1Vi?=
+ =?utf-8?B?U1dyenNuVUV2bjVjZU5GWVpXS3ZrZ2E2RXRGbVZKNTk4UmxrVE9nT0VHMzZD?=
+ =?utf-8?B?RTJwY1hVQkxHWHRDa0thZ2pCb0MybmMrZ2RhVkZNYmZtZmZmNjZFelYrS25K?=
+ =?utf-8?B?b0N6R2ZEYkZHZWM2alhsQnhIQjFwaUV0dUJiN0ladlBBKzBtOWVrVG9taDRJ?=
+ =?utf-8?B?a1NFSUJHSTVaU0pyaU04YWwrQlB1cVBDa3oxbHlTTGYweVkzQkFING84US8y?=
+ =?utf-8?B?OGxMWFYyU2ZQV2ZVZmdxOUtZdDhwVkRKRlVXQURtM1pTMEtFcThqdG0wNS91?=
+ =?utf-8?B?OWlDQ0pTQjZmVFo3SzRhSXVaTjFoakc0aEhFWVlSWXFCZzlrUVNMRFJhM1RV?=
+ =?utf-8?B?T2NCWmdWR2RtRDBnZUFjbG5STnI5YUd3YUNnOXNOOERpdE82bHd0cmJ3NHND?=
+ =?utf-8?Q?c4bBX/G9iiV2eZUOS8lJfsyvHjtt0PGk/j+E/1Q/Ix4M=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 6533F1F44F
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linaro.org,wunner.de,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,nfschina.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,linaro.org:email,nfschina.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3cd1422-9399-4ef8-4f0f-08dd557ff6e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 09:37:04.7333
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB5803
 
-On Tue, 25 Feb 2025 10:10:29 +0100,
-Jani Nikula wrote:
-> 
-> On Mon, 24 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > On Mon, Feb 24, 2025 at 03:14:33PM +0200, Jani Nikula wrote:
-> >> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >> > The "id" variable is an enum and in this context it's treated as an
-> >> > unsigned int so the error handling can never trigger.  The
-> >> > ->get_client_id() functions do not currently return any errors but
-> >> > I imagine that if they did, then the intention was to return
-> >> > VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
-> >> > and UNKNOWN_ID so we'll catch it either way.
-> >> >
-> >> > Reported-by: Su Hui <suhui@nfschina.com>
-> >> > Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
-> >> > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
-> >> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >> > ---
-> >> >  drivers/gpu/vga/vga_switcheroo.c | 2 +-
-> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >
-> >> > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
-> >> > index 18f2c92beff8..216fb208eb31 100644
-> >> > --- a/drivers/gpu/vga/vga_switcheroo.c
-> >> > +++ b/drivers/gpu/vga/vga_switcheroo.c
-> >> > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
-> >> >  	mutex_lock(&vgasr_mutex);
-> >> >  	if (vgasr_priv.active) {
-> >> >  		id = vgasr_priv.handler->get_client_id(vga_dev);
-> >> > -		if (id < 0) {
-> >> > +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
-> >> 
-> >> Maybe we want to do something else here... see [1].
-> >> 
-> >> BR,
-> >> Jani.
-> >> 
-> >> 
-> >> [1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
-> >> 
-> >
-> > I feel like my patch is good enough...  I guess the concern here is that
-> > GCC could change enums to something else.  I don't think that's likely as
-> > it would break a lot of code.  The other option, which is a good option,
-> > is to change the function signature for vgasr_priv.handler->get_client_id()
-> > so that we do:
-> >
-> > 	ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
-> > 	if (ret)
-> > 		return;
-> >
-> > That's better code, honestly.  But I can't find motivation enough to do
-> > the work.
-> 
-> The more I look at this, the more bonkers 4aaf448fa975 feels.
-> 
-> Anyway, I don't think ->get_client_id() hooks should return negative
-> error codes, and indeed none of them do. None of them return
-> VGA_SWITCHEROO_UNKNOWN_ID either, but that would be a valid return.
-> 
-> I suggest only checking for id == VGA_SWITCHEROO_UNKNOWN_ID. And doing
-> that in all the places that have that check, there are two more, but
-> they assign the return value to an int. So the int ret should be changed
-> to enum vga_switcheroo_unknown_id id I think.
-
-+1, this sounds like the cleanest way.
-
-> Any chance of finding enough motivation to do that? ;)
-
-For whom? ;)
-
-
-thanks,
-
-Takashi
+DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDM6MDXigK9QTSwgVGhvbWFzIFppbW1lcm1hbm4gPHR6
+aW1tZXJtYW5uQHN1c2UuZGU+IHdyb3RlOg0KPiANCj4g77u/SGkNCj4gDQo+PiBBbSAyNS4wMi4y
+NSB1bSAxMDowNyBzY2hyaWViIEFkaXR5YSBHYXJnOg0KPj4gDQo+Pj4+IE9uIDI1IEZlYiAyMDI1
+LCBhdCAyOjM04oCvUE0sIEFkaXR5YSBHYXJnIDxnYXJnYWRpdHlhMDhAbGl2ZS5jb20+IHdyb3Rl
+Og0KPj4+IA0KPj4+IO+7vw0KPj4+IA0KPj4+PiBPbiAyNSBGZWIgMjAyNSwgYXQgMToyN+KAr1BN
+LCBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4gd3JvdGU6DQo+Pj4+IA0K
+Pj4+PiDvu79IaQ0KPj4+PiANCj4+Pj4gQW0gMjQuMDIuMjUgdW0gMTc6NTggc2NocmllYiBBZGl0
+eWEgR2FyZzoNCj4+Pj4gWy4uLl0NCj4+Pj4+PiArY29uZmlnIERSTV9BUFBMRVRCRFJNDQo+Pj4+
+Pj4gKyAgICB0cmlzdGF0ZSAiRFJNIHN1cHBvcnQgZm9yIEFwcGxlIFRvdWNoIEJhcnMiDQo+Pj4+
+Pj4gKyAgICBkZXBlbmRzIG9uIERSTSAmJiBVU0IgJiYgTU1VDQo+Pj4+Pj4gKyAgICBzZWxlY3Qg
+RFJNX0dFTV9TSE1FTV9IRUxQRVINCj4+Pj4+PiArICAgIHNlbGVjdCBEUk1fS01TX0hFTFBFUg0K
+Pj4+Pj4+ICsgICAgc2VsZWN0IEhJRF9BUFBMRVRCX0JMDQo+Pj4+PiBCdHcgSSBoYXZlIGEgZG91
+YnQgcmVnYXJkaW5nIHRoaXMgZGVwZW5kZW5jeS4gV2hpbGUgaGlkLWFwcGxldGItYmwgaGFzIG1h
+ZGUgaW50byB0aGUgbGludXgtbmV4dCB0cmVlLCBpdCBoYXMgc3RpbGwgbm90IGJlZW4gbWVyZ2Vk
+IGludG8gTGludXMnIHRyZWUsIGFuZCBuZWl0aGVyIHRoZSBkcm0gdHJlZSBJIGFzc3VtZS4gSXQg
+cG90ZW50aWFsbHkgY291bGQgY2F1c2UgaXNzdWVzPw0KPj4+PiBZZXMuIFdlIGNhbm5vdCBtZXJn
+ZSB0aGlzIGRyaXZlciB1bnRpbCB3ZSBoYXZlIHRoaXMgc3ltYm9sIGluIG91ciB0cmVlLiBCdXQg
+dGhhdCB3aWxsIGhhcHBlbiBzb29uZXIgb3IgbGF0ZXIuDQo+Pj4+IA0KPj4+PiBNb3JlIHByb2Js
+ZW1hdGljIGlzIHRoYXQgeW91ciBkcml2ZXIgc2VsZWN0cyBISURfQVBQTEVUQl9CTC4gRnJvbSB3
+aGF0IEkndmUgc2VlbiwgdGhpcyBzeW1ib2wgaXMgdXNlciBjb25maWd1cmFibGUsIHNvIHRoZSBk
+cml2ZXIgc2hvdWxkbid0IHNlbGVjdCBpdC4gWW91IG5lZWQgdG8gdXNlICdkZXBlbmRzIG9uJyBp
+bnN0ZWFkIG9mICdzZWxlY3QnIGhlcmUuDQo+Pj4gTG9va2luZyBhdCB0aGlzIGFnYWluLCBtYXli
+ZSBpdCBzaG91bGQgYmUgc2VsZWN0ZWQuIElmIHlvdSBzZWUgdGhlIGtlcm5lbCBjb25maWcgb2Yg
+VElOWURSTV9IWDgzNTdELCB3aGljaCBpcyBhbHNvIGluIGRybS90aW55LCBpdCBpcyBzZWxlY3Rp
+bmcgQkFDS0xJR0hUX0NMQVNTX0RFVklDRS4NCj4gDQo+IFRoaXMgZHJpdmVyIGRvZXMgaXQgd3Jv
+bmcuDQo+IA0KPj4gVG8gbWFrZSB0aGluZ3MgbW9yZSBjbGVhciwNCj4+IA0KPj4gMS4gaGlkLWFw
+cGxldGItYmwgaXMgZm9yIHRoZSBiYWNrbGlnaHQgb2YgdGhlIHRvdWNoYmFyLiBUaGUgRFJNIGNv
+ZGUgcmVtYWlucyBzZXBhcmF0ZS4NCj4+IDIuIGhpZC1tdWx0aXRvdWNoIGlzIHRvIG1ha2UgdGhl
+IHRvdWNoYmFyIGEgdG91Y2ggc2NyZWVuLiBZb3UgY2FuIHN0aWxsIHVzZSB0aGUgZHJpdmVyIHdp
+dGhvdXQgdGhlIHRvdWNoIGZ1bmN0aW9uYWxpdHkuDQo+IA0KPiBJZiB5b3VyIGRyaXZlciBkb2Vz
+IG5vdCByZXF1aXJlIHRoaXMsIGl0IHNob3VsZG4ndCBzZWxlY3Qgb3IgZGVwZW5kIG9uIGl0Lg0K
+DQpDb3VsZCB5b3UgZXhwbGFpbiBtZSBpbiB3aGF0IHNpdHVhdGlvbnMgd291bGQgc2VsZWN0IGJl
+IHVzZWQ/
 
