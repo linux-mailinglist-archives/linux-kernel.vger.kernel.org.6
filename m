@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-531595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08F1A44276
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:21:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4A8A44283
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3BB161813
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D420189BB8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE9326B089;
-	Tue, 25 Feb 2025 14:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A6226A1CA;
+	Tue, 25 Feb 2025 14:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="K5+bAzWv"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hGy97bFZ"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFE820F076;
-	Tue, 25 Feb 2025 14:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24C3256C62;
+	Tue, 25 Feb 2025 14:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493063; cv=none; b=hwAYexNBN1BbVOahypBP2npyFPGB4wMY4nZw16Tbn+UeN28az8kogFnkK8aqa2JTYWn8k2aptMKZiHKd0HoEBw9YQmPhbYuGgiflPeNc2w8mHD1iLR6189Sak5cmGaxGFs6Ib5dPRRffzAuoFlmFcJvxBFDRGNRO5djG/w1cqpM=
+	t=1740493045; cv=none; b=hfpVhLTum841mlS1t5BFqv1JgayTWr5xG/9sniUqzdrKp60bbObpHENjNr+ghf/y0ajPuMWwV7XLJlU7K3tWmo0JKJLkcajDaI4B0Tz9A4gC+sf+qdjEv651Wh7E3ivzP+JlCp2vpEbP1GjA6Ndj4dsdbNwcRT/Wlz4a1SUrdj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493063; c=relaxed/simple;
-	bh=Knb+Fwyr4oljGu5E97sQ1+52xmCIUT7m2z1VnduXuIQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SutP91Odutkb/xf68zuJqH6WBtt7woc2nmC9D1W1PUi7wIFULY8gE5qz0MrYaaXncmpreEjX3SDy6FqQzsqM5P8kmfIr19Y0lwVqBxkxFXcXxeJlbYwU3XsfWIO+so0ojGu0KcJZbnlrgA1X+SrqZtfv1CVimU/FrI2Rji9VPkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=K5+bAzWv; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740493041; x=1741097841; i=markus.elfring@web.de;
-	bh=3PiIP1hxD1m9jYMgoVMW46TApIDu6OVW3nV0YlKWXjk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=K5+bAzWvbJIt2/LVkJyhAchWK0YioCBbAhlBP1CIId69Dt7dcr0Xx9mCJo/FZO2F
-	 MGaWN/QWRJ2rc74NfcVQEZSOBHD5w3hVXS5MA08WdJjL0UTpfXh+N5Q9/e7s7quGK
-	 T/qMTyz8+aEEqq+xiDWnx4h3WtMXLw04nSpNvFfBvfiB60eA5V75lLz0ltceYwLGE
-	 BDnKWho1fRFDbmjm0Fl8faxVY52tCbQI7LMNhBVwM7IIpxq8jT2L9CvjLL8En9tQs
-	 /SF9yJ2aWVjzzBJpXNSF8tdz3TcjB4mB8QTJ8j86hxc4vh45K5iFDFHrWOeo5Ihyc
-	 bo+lIlSXNiDmRqL+Dw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.36]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqIB7-1t0gss0JxT-00gmDH; Tue, 25
- Feb 2025 15:17:21 +0100
-Message-ID: <2fabe78f-a527-494f-8c3e-f2226ecbc43d@web.de>
-Date: Tue, 25 Feb 2025 15:17:18 +0100
+	s=arc-20240116; t=1740493045; c=relaxed/simple;
+	bh=b/ETh82ccROWlFBnVJoGXaUDJ3XwJUdAkS0sAfZEHpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K/HIz0ydc/DJDWZpOlwribjzGU3nLOQ8xq2Eo2Zw55V3curdTDNYIQjiWNHxgPT1SV+eaF7/XZ3+2PuBT3zyD+2PMVWLUK59t1DuvluUzs4d5PdTvzk2DgmtLccLV4sYf58BplE7nhaJSCud5e7wxVQuTladYx1EOvQM87N0s/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hGy97bFZ; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6E4043425;
+	Tue, 25 Feb 2025 14:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740493042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mY5FfQ+FK/SGrOr5TQi4sZrUW2dqPRYoNVeQLnDmxMg=;
+	b=hGy97bFZf5CYDUbjbclD2/EryWItej2SmmkPIpvJcm5/vQRnqwCPoMwpaE3Sc4N0n4ncS9
+	264lUdNYZvNOG1I4IIS55EMlKC5aR7vuW6jpEIIlX2+rS+vN4tszJTsidhgFuDUpbSZAZZ
+	FlPZc8RU1Fwz7Mdw4YyqsaCgTa25u0Pp8zqV2pC/nkpfeUoYxsv6/eFApt2jekCY8FIj0D
+	/zlP+xkMS5jrI0JIr6F4b2QZh8SFabLUItIcMb0JPiNH8qmGETMMbF314nj6cBzM69ZLm0
+	Kn+IQM5qQwr73LZVAm6HZsqwaXSIuNSo7kcqx4c5ZRQQKN94uFLd8/vWLXAfDg==
+Date: Tue, 25 Feb 2025 15:17:20 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 12/13] net: phy: phylink: Use phy_caps_lookup
+ for fixed-link configuration
+Message-ID: <20250225151720.29911b4b@fedora.home>
+In-Reply-To: <20250224150440.7fe5458d@kmaincent-XPS-13-7390>
+References: <20250222142727.894124-1-maxime.chevallier@bootlin.com>
+	<20250222142727.894124-13-maxime.chevallier@bootlin.com>
+	<20250224144431.2dca9d19@kmaincent-XPS-13-7390>
+	<Z7x52C5dE3eXWomq@shell.armlinux.org.uk>
+	<20250224150440.7fe5458d@kmaincent-XPS-13-7390>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qianyi Liu <liuqianyi125@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Matthew Brost <matthew.brost@intel.com>, Maxime Ripard <mripard@kernel.org>,
- Philipp Stanner <phasta@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250225094125.224580-1-liuqianyi125@gmail.com>
-Subject: Re: [PATCH V2] drm/sched: fix fence reference count leak
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250225094125.224580-1-liuqianyi125@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:F4njyynBkRmF31L8qtqh4Qa/sWddqfZ2QogbbKK+kIBC4X8wbf/
- pPcTQOkimUZiYhAGwREn1U46cchQMYvR/IbNYffLU7axxSAS1BinPzHsOAikpsNt5eId7uU
- D2aTkglmAebxcGRlR1czM7zLkBVsysleiCtbaqdKacmptIAhxZHqYi1/JirfBy03UvApvyQ
- go3ig5hY+sTj20lu1nsBw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0cMJcX94lzI=;yBRbMs+81Yg541y+4Gipxuzhesp
- Q0ZRKRTW65QhBr/QLXJpf4uFoF3yQkt4fqdd0LyLvo4VDEbs682nOw2sWxMAyMpXvstXt69LE
- 2Pt2R5adkO2KUHQgBKFMFjxoqiNjJ1WSoJ+xhNYYqqYOJz0ay31+3msNjQrSlxP7cwm9hCuT6
- MCsOFwd3pNvP6qSvrwnPfOULquqLpROYbubSyPc/TK37RdFQjNIJz4I/xGgk6tyYscwwKkQmh
- ++u+3f5yqq5t/0A6qaJ1DuQ6p9Z7xoxi3HO53u77XK5YccsOkFPOrIATvFTQNUgiHg4xNLlhx
- O+0oiNIaliAdh6FhGsl6IVliZ17y1E68liV/4JpLOjOZq++t0LvFpwmHqDeny84RCUbjyvs+q
- 3jeJ6Ry5LsigisuuYF2gS3rguUV761USIOddg49AHpd92GRKSYwCfVEf6hqL5uG6dsVNWPbk+
- DRh5A+VT3zCjPnWy15T2HMAU9j2VcZM++yLzEIO8rcCFMo4JXoQzLhw5PDBsMVkvprzo4WbLV
- gVaI1keTsbB26nIMRLruwdKeWLaPcGIfsWsCNskqSpmHg0pbt0+0oeeG8BYRa3YN+8kqZ7c8j
- 8yi9TJVygeZtnLo0bBXhHqsddkwlUBbbINVm/FwH4e0vxRmhNdu5Wdv3sKM8wKoTmSiFr6uO7
- kERAQ3fh1j6kPEshCZWRzDCbwFXC8wLU4ZKZUqKGpGJsotWc80/7XhpM4GlCRpx6WfoJjWJd+
- rVRpaBW1ariusrH/2FatkHucJ2y2GQ7JRo1dLRod8JNXEB3EL4NFBY5/tkt1gAJ5VaIvRwuTc
- 78AFXQaUGUex98Itb0vj0Vw+7HaXzDWktDe9jENX/8X9uNMV6EStPyXuWHV+0bYM9ZQxDQ+jj
- CmAHUHJtclVC99JM0nI+WSAEQCqoJi86cyOc5BjBQPQy0MGyY8d1G4GpFMGJum2MY1GBo4Bgx
- wq4ZU+bOPqJ8munQzDTobx6EO3h3R30iXvePKIjc8MMxpZlQ7HYvMjXZoUsQmt+O8xhYnQYsB
- 0BA9PMnqk0fPfqWkjYUHw00vwGJd/eQzsA5KjJtowwKI2X40q5bEtoqSRiNO83so17j0XKPZY
- d0r30eTivbghLrqIeut+Nzet8rBC4GSxwUIHrXgeOyMySBK6WZRcAla+QX7F/tWxXmlrhQEuK
- /7kCeUD3BO5ELYgMQIO6BPIefc3W+gqvrrkgtpYM0D9hWHNvsY01UpTMT6yu2kZjCzuFRdJHv
- zpFoc33BYN6TteylaMOMZqgC1jRiz3796Mhk09/Qm0MjTRlsIPlHETObdy3yBa0O8IRL86BiA
- GcfRrpeAGJSF+E9cFflT02P73VFi+ocbMkgM70RlNVbjskVowYkl2jeJEfT7RbfU2dQ6a5Oib
- pCkIX2eBkIOrq1WK7NgFyr4kAj8k0cXsfIvImDu2YqB0+y+jR54nYfbamOwvxsTvKFQ7qAbVO
- TRAS1uu42yscrPScUDj4u6jJPt1M=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemtggtfegtmeeglehfgeemfeeiheehmegsheejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegttgeftgemgeelfhegmeefieehheemsgehjeegpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhof
+ hhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-=E2=80=A6
-> fence callback add fails.
+On Mon, 24 Feb 2025 15:04:40 +0100
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-                     failed?
+> On Mon, 24 Feb 2025 13:53:28 +0000
+> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> 
+> > On Mon, Feb 24, 2025 at 02:44:31PM +0100, Kory Maincent wrote:  
+> > > On Sat, 22 Feb 2025 15:27:24 +0100
+> > > Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+> > >     
+> > > > When phylink creates a fixed-link configuration, it finds a matching
+> > > > linkmode to set as the advertised, lp_advertising and supported modes
+> > > > based on the speed and duplex of the fixed link.
+> > > > 
+> > > > Use the newly introduced phy_caps_lookup to get these modes instead of
+> > > > phy_lookup_settings(). This has the side effect that the matched
+> > > > settings and configured linkmodes may now contain several linkmodes (the
+> > > > intersection of supported linkmodes from the phylink settings and the
+> > > > linkmodes that match speed/duplex) instead of the one from
+> > > > phy_lookup_settings().    
+> > > 
+> > > ...
+> > >     
+> > > >  
+> > > >  	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+> > > >  	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
+> > > > @@ -588,9 +591,9 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+> > > >  
+> > > >  	phylink_set(pl->supported, MII);
+> > > >  
+> > > > -	if (s) {
+> > > > -		__set_bit(s->bit, pl->supported);
+> > > > -		__set_bit(s->bit, pl->link_config.lp_advertising);
+> > > > +	if (c) {
+> > > > +		linkmode_or(pl->supported, pl->supported, match);
+> > > > +		linkmode_or(pl->link_config.lp_advertising,
+> > > > pl->supported, match);    
+> > > 
+> > > You are doing the OR twice. You should use linkmode_copy() instead.    
+> > 
+> > No, we don't want to copy pl->supported to
+> > pl->link_config.lp_advertising. We just want to set the linkmode bit
+> > that corresponds to the speed/duplex in each mask.
+> > 
+> > That will result in e.g. the pause mode bits will be overwritten despite
+> > being appropriately set in the advertising mask in the code above this.  
+> 
+> Ok, so the right thing should be this:
+> linkmode_or(pl->link_config.lp_advertising, pl->link_config.lp_advertising,
+> 	    match)
 
+That looks right indeed, I'll address that for the next iteration.
 
-> To fix this, we should decrement the reference count of prev when
-=E2=80=A6
+Thanks for reviewing,
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc4#n94
-
-
-> v2:
-
-Patch version descriptions may be specified behind the marker line.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc4#n763
-
-Regards,
-Markus
+Maxime
 
