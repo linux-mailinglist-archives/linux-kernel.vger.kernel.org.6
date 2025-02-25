@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-530363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3873A43286
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:41:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70E1A43287
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD6B27A980A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B6A3B08FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F323CF58;
-	Tue, 25 Feb 2025 01:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A7F3CF58;
+	Tue, 25 Feb 2025 01:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UXvjWldc"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WCYNPwZ/"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D0101F2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96409101F2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740447680; cv=none; b=YLE/AeCdS2r7qURwU1ZXMrWxv0FRu6c9C86DCqm3v1AsgkN98Di1lC1wQ8d45NqZFChsv2GtENnVx9gzQ20ACe95MG6dWzI+pSTrWUDQtfrmWGrVYJTuD+g500biYG49978/zBbCDI6ILgUu+htabBEG+o3jx9uT+OtCiSzXPyY=
+	t=1740447687; cv=none; b=JHl3EbDyur80Vs0PqsSxuWzXqh3lrGT7T3djn+SiD/gfQjS9Zz88uk5iJD+DCJ1BL0ju53t4CsuVtuNWuFxfsd/c8IRZ6NFV06uY4bG3bpjM8CX7Uf/TqDXwyPAutYraCfl+3kns0nuqGMR2ClRpQiTyavxRTPO0i58QhgMcMVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740447680; c=relaxed/simple;
-	bh=OcbScHMevtCpUQLP39MsdU6XISC+ts9KIshL7n45BFc=;
+	s=arc-20240116; t=1740447687; c=relaxed/simple;
+	bh=71ALkwh4lV1GOQf6XwUxLBOPX9rYbG8qB4YRKiZ0PHc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nNKKo52AzG8BhybZXGkeC6GJvu6lZzUx6CTUb6q7xWLYeAmughFr1ChxUaLkyOMV59E+9A2QeWZwGxPdvKogUe1qrYMekLDkt8XkFSEIhXLNmA4jGQG6XqFz3UMTviDJB292voCshSz3XxKUXA66gtWbWyoEI7xIhw93XI3EAPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UXvjWldc; arc=none smtp.client-ip=209.85.167.54
+	 To:Cc:Content-Type; b=tRoIrYDoVvCa7QYGuo4a8Z95c26c+RQguaz6X8wST0iYqGm48OgyDPef3cPPKmvfoDigRunRql7zKF9ry1xPndiLXWM2yDiJmScRMStXmLG3bNkjqn+2B7geJLtoM/MdtYGUptBSMZFHo4TVlxXzFcjMeNoXVmZMzF8WTzTmKts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WCYNPwZ/; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5454f00fc8dso4717664e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:18 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30737db1ab1so39601191fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740447673; x=1741052473; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740447680; x=1741052480; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i4TOCMT9A63jLoOCD33qtnm1uXyI2TNmIj6w6+0Voco=;
-        b=UXvjWldcssyUJySa3MBMpe2Yyh0Hwiq822snPrkrWuXpvECr/louHtobqT0c9UMakk
-         JyEtR8Ahhb+DC7XXThxZyuoQSNmbcYRK5xBPSgVl4T6AeVs3VKucHTw/aG1oMS4CJ+TB
-         z7+9oTg7CKE7H0WWSHkLsWoATvzlHPnhdpaHA=
+        bh=5BIxNZpAxXmgtUZVoY5Vf5YilI6JIk11YmgayAzmSTM=;
+        b=WCYNPwZ/7qsfA3V8/04o6EoXlckdJzIwn/iwy7hpVK+gfXYM2PsfbF6OHltPX3eQb9
+         w7jCfXg53Z2/fixK4CYLKCvF2iGduY54Q74w/Y05R5FMK7wZITSS6yg1LxMi2A9qOjrp
+         bXH0v3rHvhKCGtxv95WfTuLpu0Y0QugDp176M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740447673; x=1741052473;
+        d=1e100.net; s=20230601; t=1740447680; x=1741052480;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i4TOCMT9A63jLoOCD33qtnm1uXyI2TNmIj6w6+0Voco=;
-        b=FjVoeSIbFQdCa0Hel2W4FK60I66uBii5uq/fm/wWIe/1iMUSBH7mBbQuVWHe5X7u4p
-         vDsYG+dDyHLCRCJM3ZX0MJADkGJZyn2q9TINDwB7N5K6hRATvhKvV9j2hUJ0wmNQT/w+
-         PMk6uk8jj0Hz0oS8XhWeoWyaQw0i7Z9G2aYHG7anWWqhUUDr3AGZLnqA4psvQhe2IjA8
-         FDXJQG/SQ8A4C3DAmVkJ89CXQJLiokbockDPHhP4vGz2Q5v8l7YQDJM+LH8ql1UwJtWA
-         yYgxM2DgGuuSYBB98PhWaHlnMyp6dAJYlxxIlnywR1UZwuGJPLSj0toqPAf2n6hTjMc2
-         D9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGXxagWiMr6+taPFy7KQHpbZF5NO57OyjwUBfMbybAeXmDvua4HK2QIZIxQ3SDsJrEyMuttC8qwiyP9lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv60fnBjioayevIBBm/u87hei9g2Fxv6muNDYkUaHvrYYA1fhC
-	QBSE7/LcQamK+U6lzGc0ujFesnR6FKEPsIFAgsKdJqVw/e4/Zll55P1v6HWMptcnor4RJe9y6DA
-	5ig==
-X-Gm-Gg: ASbGncufVSxfK4+KVhQo4LLYeLK+d3BvC1reK9s4FGpExJLhGSzgj6MOaTK+hb38MCk
-	OephgcxGZxGr9j+1Fy3z3Wk0Pyy7jnrxxqo1WA7Z73v7AAmgS3n43kA6mu3D9CkGawxv+aNX1lW
-	SFoCpq4532WQIq+e9p4wDpvSB2LNoMBS6mlXe4X1JHIPBEmSk4gHRjEfAxDR87BWyqAAzT0ThF8
-	yPRI0Jle8p3Q3fSe/bW8i9rkYqno4FRk/HgbF1nr0NvsXrrZFehugs2srJPXjJ5yB14Sv5sKlyJ
-	VMtBcV98EWLCPK1zVGE0sg7vEqoZMtVdTNdq8zw6VwuShxhmUtZTKck/tbcB+zKQdQ==
-X-Google-Smtp-Source: AGHT+IHcLvGHRn0CoCYf+f2d47W6C0IZ29gDzyvtzXP3c4nkBXlZbjKvPXN4eLrlf03633iYap7Jrg==
-X-Received: by 2002:a05:6512:ac3:b0:545:f69:1d10 with SMTP id 2adb3069b0e04-54838ee1c94mr5432980e87.8.1740447672919;
-        Mon, 24 Feb 2025 17:41:12 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f9e69sm46559e87.213.2025.02.24.17.41.02
+        bh=5BIxNZpAxXmgtUZVoY5Vf5YilI6JIk11YmgayAzmSTM=;
+        b=cZsVKSKJWyFOzT2rdxs370gQHztZszj+aqbP5fzp8Yqsji3UW5hEtwIagT1hy7XXVX
+         R+ZAbPw2C/7p9RXIUF1rsBiMjEfZ2Lr3wsb1voa716+hf8c/STOplaoQFSkYwRk/74HW
+         VKeoGlmp4jHSS0TtQCuiet8oi486GzkP7wwWSem2ZeMH6CCh+atzlGWxatTX8i7fHwfb
+         1QFlYQke3sRiMOjtooFlCM8jhAxuswFJEwr+aPo8BUK9RD7eAVs0jIWxefhCeSnIWKTd
+         vkJy8ftdoS6vjbzoyr7Rt22+auw02GvT4VmdJLEGZDpT+Y1RP261CNnl00xrjdZV8D/m
+         lQVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFdBpYHJ8oX3L0xg0OWhRBkgiGMoRSOKNPhZPTmiswMzo/7+gJPTo1tyZqPaqz6uXcSAKv+H95rtSx5HM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7sb+huUBhZXREfinQP+vzM34RvK4j4MbXS844LTz72Jm+Za1Y
+	n5E+R791z/HWDY1w+AJlK3bjBaUr2MKR+/tNXIe06fJUYSlkR+PXvHqfhICkKXEadeWAsXr+sTk
+	6Cg==
+X-Gm-Gg: ASbGncvCXJeutdZLYhVtUU3B17g/kgxFBnI4ezNABZwxWYLreCW05xlsxPF4Y4hLUeb
+	obILFmG62L9K0kxmZukuQM9nqRhRqjAOhYpHomt1c2daYL8w6cwLQZWagybFjmX0QbSnueKEjWi
+	d6AGo0OGvx61uUW6KBK5Lchmgl3VVwDuZX6iVoIGe1HdeEz9oeVs7dV2BKpN1XO1qdrLnWP1SGO
+	Z7S/FPscQJX997mlK+Vkc3jYf0xC80J1rJ60rrg8xwKum3sS7FxuDV8c0YZs1G981evQqU7NFJZ
+	BGXPnmM9TArrZx6ZtPTghwTMFyzEVauHNzLohbry4neeIcASpa03oGwHlYPQAUD6eA==
+X-Google-Smtp-Source: AGHT+IG39TlapO8S+qbM6rol7/jrKfB96kerijW1p3MkueJqOtiQqfgmmfAmEHNHxIbp3CJJIAiSnA==
+X-Received: by 2002:a05:651c:1051:b0:30a:453d:a02b with SMTP id 38308e7fff4ca-30a5b21cf0emr45983291fa.32.1740447679789;
+        Mon, 24 Feb 2025 17:41:19 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a818164e2sm895501fa.0.2025.02.24.17.41.11
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 17:41:07 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5452efeb87aso5087339e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVacjJQL2Nx3tTw7CzI4vseRFmNA3+SWINXZ2xOhijGr5Ko0pvHigo3km749v8QzJQvTY8DvmHW4G/rGfM=@vger.kernel.org
-X-Received: by 2002:a05:6512:ac3:b0:545:f69:1d10 with SMTP id
- 2adb3069b0e04-54838ee1c94mr5432801e87.8.1740447662279; Mon, 24 Feb 2025
- 17:41:02 -0800 (PST)
+        Mon, 24 Feb 2025 17:41:13 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-548430564d9so2711118e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXR8NG+EufbZw1tAS5jHV8R2zz4EcojrboiQvl3cQwRsbvFg43OG6bH43SB91UDTTqu1n1ebUL9Ca6nPbk=@vger.kernel.org
+X-Received: by 2002:a05:6512:10c6:b0:540:1f7d:8bce with SMTP id
+ 2adb3069b0e04-54839268617mr4611865e87.38.1740447670508; Mon, 24 Feb 2025
+ 17:41:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224081325.96724-1-damon.ding@rock-chips.com> <20250224081325.96724-5-damon.ding@rock-chips.com>
-In-Reply-To: <20250224081325.96724-5-damon.ding@rock-chips.com>
+References: <20250224081325.96724-1-damon.ding@rock-chips.com> <20250224081325.96724-6-damon.ding@rock-chips.com>
+In-Reply-To: <20250224081325.96724-6-damon.ding@rock-chips.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 24 Feb 2025 17:40:49 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
-X-Gm-Features: AWEUYZlbdiIhJLMaGbE9FR34Ygo4r4AydhTgMaLe8qb8EcM7igmYbqK2w54Qn0U
-Message-ID: <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
-Subject: Re: [PATCH v7 04/15] drm/bridge: analogix_dp: Remove the unnecessary
- calls to clk_disable_unprepare() during probing
+Date: Mon, 24 Feb 2025 17:40:58 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Uu+EvZzuFmCvq5qJ=FeBjmLTtfGT4Aq6QBSoH=Sen8PA@mail.gmail.com>
+X-Gm-Features: AWEUYZkhmeaAQLOMDj5xS_yarIgfu2NVlCE358kcuOa-b55Ak-RhS879p-uOQpk
+Message-ID: <CAD=FV=Uu+EvZzuFmCvq5qJ=FeBjmLTtfGT4Aq6QBSoH=Sen8PA@mail.gmail.com>
+Subject: Re: [PATCH v7 05/15] drm/bridge: analogix_dp: Remove CONFIG_PM
+ related check in analogix_dp_bind()/analogix_dp_unbind()
 To: Damon Ding <damon.ding@rock-chips.com>
 Cc: heiko@sntech.de, andy.yan@rock-chips.com, hjc@rock-chips.com, 
 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -109,41 +109,20 @@ Hi,
 On Mon, Feb 24, 2025 at 12:14=E2=80=AFAM Damon Ding <damon.ding@rock-chips.=
 com> wrote:
 >
-> With the commit f37952339cc2 ("drm/bridge: analogix_dp: handle clock via
-> runtime PM"), the PM operations can help enable/disable the clock. The
-> err_disable_clk label and clk_disable_unprepare() operations are no
-> longer necessary because the analogix_dp_resume() will not be called
-> during probing.
+> Remove the check related to CONFIG_PM in order to make the code more
+> concise, as the CONFIG_PM should be a required option for many drivers.
 >
-> Fixes: f37952339cc2 ("drm/bridge: analogix_dp: handle clock via runtime P=
-M")
-
-When possible "Fixes" should be pushed to the start of your series so
-it's obvious they have no dependencies when being picked to stable
-kernels. That should be possible here.
-
+> In addition, it is preferable to use devm_pm_runtime_enable() instead of
+> manually invoking pm_runtime_enable() followed by pm_runtime_disable().
+>
 > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 > ---
->  .../gpu/drm/bridge/analogix/analogix_dp_core.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers=
-/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index e23af674d91c..d9dafb038e7a 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1608,10 +1608,8 @@ analogix_dp_probe(struct device *dev, struct analo=
-gix_dp_plat_data *plat_data)
->         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->
->         dp->reg_base =3D devm_ioremap_resource(&pdev->dev, res);
+>  .../drm/bridge/analogix/analogix_dp_core.c    | 30 ++++---------------
+>  1 file changed, 6 insertions(+), 24 deletions(-)
 
-There is a context conflict when I apply to drm-misc-next because of
-commit 43c00fb1a518 ("drm/bridge: analogix_dp: Use
-devm_platform_ioremap_resource()"). You probably should rebase and
-re-apply.
-
-Aside from the context conflict, this looks great to me:
+If someone really has a reason to run this driver without CONFIG_PM
+then happy to hear about it. Until then, I'd say this is fine and
+matches what most drivers assume.
 
 Suggested-by: Douglas Anderson <dianders@chromium.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
