@@ -1,90 +1,77 @@
-Return-Path: <linux-kernel+bounces-530589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C02A43578
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:38:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD99A43585
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8A5163195
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2960E189A458
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58053257436;
-	Tue, 25 Feb 2025 06:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85D2256C9F;
+	Tue, 25 Feb 2025 06:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoJrXeJx"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dSCOYChR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752021C860F;
-	Tue, 25 Feb 2025 06:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7272C2561CE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465480; cv=none; b=Hp7TVkCuvRKApd6TAM+VuKFzBbUFubYrdH2AAxCXx/TVsvQu2fC6rFmtmXqeq2Z7hAAJWF9FICDvsUK+gnrGYnw+z74rXF3HsGUvSoI2MQ8sUbhEOWpr27vEqFkp1eto7bRq+zdQVb2j43SZP0Ym9t3UQlxatb5otOkENOuA4pg=
+	t=1740465553; cv=none; b=fHfGqIy4TWWGQQ48bxNOHE8APJsgD2KX/VCXo58amzN8HC7Plx7Deyux99OaNGjaObUausG7h97/Jm82BbUQDhxiCQ5lv6K4wCc/QhuAFBdKnnZ/NTWppXfMi5HNFpgJjKpK+tTZuOcf0aL0GupwJ1YRFFkBU4yodGaL9wAkvzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465480; c=relaxed/simple;
-	bh=7qVvZMSXjkvHN/DZpiXwIXDx2q7nGWyA+wRR0d0itBA=;
+	s=arc-20240116; t=1740465553; c=relaxed/simple;
+	bh=/uYxiYj9nJ75Errf8E1k5krTDrqPqlOeMhK0x+rSLhs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3jOGLSai4hSE/nhmeLSWVZvo28GV6d8Inzs1HvZEzhbe4FVhZq0cl/u1FOvc0buG70LjJVpcBWzWx2kCYG64qGLthOIXJqjjEdLdeCWC48NCcs87LbBEUi3QBTdYJDtvdY1DJ2wnTBEoc7d6vQfbP/cqCNvNN6Wxoq+I/87Zt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoJrXeJx; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fa8ac56891so8429032a91.2;
-        Mon, 24 Feb 2025 22:37:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740465479; x=1741070279; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=76ILTlfnlB6kCOD5q4hGLEZcImYGqMx/cm4TThbrhfE=;
-        b=MoJrXeJxzC0CVyp0IOTwKnqps2H39pb7Afy0+/gCF52h+k7Br2oHnBt/1PYQH4Xtnt
-         aUN7iiUOHcPbseeFuYqvN3oywvlmCyhkyT+gxGmGTEAZuG7sWCJq8e1DLV3zi5H5G03O
-         avMnC2JLeG8Eie437o03sWFUE2i5NbhCWqOO8E0zg3vV20R6dNs4QdyNPLi14z6ZIPwf
-         SlL/4ztccCYqx+Ax2nM9M15aCnJpyMWu0c+nG8tXI/JQfYvRdlioY/bN5znbS+1x20h6
-         HhPZ88h+2+lBgRhCe66KFzaGYzAy38DQVDP5iZNnZLrZjW1V1RzB+tAXwxS3/bBXMoVF
-         e2RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740465479; x=1741070279;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=76ILTlfnlB6kCOD5q4hGLEZcImYGqMx/cm4TThbrhfE=;
-        b=uOvSaJmDdJgSqHTD0qgTxUGzs/AFL6/tKOVfF9DgXXQWYLDIxfn6y6u/PNkdVrN9R5
-         O6nk6CIaA+3K1Lad17KCCn9s2OdfjNjanbL87SG3rl4AEnvpPZPv8I6Onni4r4DXs38m
-         OxVDL9UaaadJjQbtoKw8S58UF0yzCtuuxSeao1jtpWcq2tU5go4y5MAlPeSv3Obe0AhK
-         OuHvAtXeEmStWD4jPmaXTQeU++Xd1yIdHZ87j90cw7hVyaSefZPuR3f0V5BcjYocr7K3
-         T+4rxFeWPAHRH8eq+XTavWvXvuWtKjZa/BKcXQMVkGtRfaJiJRUBGDd1MwtgfkmjJwFB
-         dNPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVh9k++QjDVOOxXeAH3bok/t7ZTIv4HI8WX7aHNI+KM8bWq5wIpWhuSGKOXUaHSpdYQ7glTOLuHyEDHTgU=@vger.kernel.org, AJvYcCVi4O3ZQrgYGUOxxI37TjDyouzYnUyArH6Fp3L6B78VFPyAp8tJi4aEn+kxew/ESoOgj7rpEXkNIM1DP/Fv/g==@vger.kernel.org, AJvYcCX7HFt7QgAPQ+0lGcP7iJRWjch2AAxj0qJanphYpXA00377/Jb4K3ykb4u6Yjs5z8qsnDDPy0+/ny00@vger.kernel.org, AJvYcCXEpkcFauhEbGDNg9TWq0+C/sOq8SyHYUJESJf7oSIIfSYKWzouliY4h4O7gdRhDSN3whNcn/cFwnfH0WSW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKhj//QDO63vfOmg+4krm1yszDxXSPoMy5iMpAcoPQ2Jmgl+U4
-	Ku7nSyWYkgvbRSYWPDwn3rWm1RkEdf1xV8l3A0IuQ5SWxrkSlrYOERhTyw==
-X-Gm-Gg: ASbGncsVcXH5LqEETHgJvtd1E4LYq3Xs1NUY8VbnKwmf9qwe63XCK03STBf+PY8DM1R
-	w3C1PT2qWl1X0ewGLqGwcWDcxLQ7y5bWU/MKJsaKkSbLx1eTgZUI9DPfpIZfjSpRltPnytC5L3v
-	zuNUZoslnK7qBXNPxg/nT9BA5hEvPWlhGLOu041iiaElva+vpMXfLuFxM9q82XIgG2edv51j8mx
-	Rs1xVMEzb0BUyp9gxr3pxVizyWL+q/LEqjO+690R3IRwrvsrnk1Fizxyf93y2kEiYmgRXa2vyaB
-	B5ObvjLmDAb1m8hSVBQvE2MH/+g=
-X-Google-Smtp-Source: AGHT+IEZjAqeXMVte6OODUKt9bwKyvO0mGYOvzQMby3ME2hZsTSKm+0hYtRb78bfbj/5KUl1eNfYMA==
-X-Received: by 2002:a17:90b:4d12:b0:2ee:a76a:830 with SMTP id 98e67ed59e1d1-2fe68cf3ff4mr3709890a91.24.1740465478641;
-        Mon, 24 Feb 2025 22:37:58 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a3f21b7sm744181a91.27.2025.02.24.22.37.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:37:58 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:37:55 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Vasut <marex@denx.de>, linux-arm-msm@vger.kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: Correct indentation and style in DTS
- example
-Message-ID: <Z71lQ4DJJ82Y2Cjs@google.com>
-References: <20250107125844.226466-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdrIwjruE4NFL4GdQgjNvNHAi1+F2FBBx0uQkZkuRBlOs7T3Gfkn8XdqKrqXAxnHt5+NFweVlDNVNF7cJ+T9tOUDfyk5W2qFeeM7BQnw/cF6KS0At18mHSHnPcv6CKnOElc61vBMldR845vVnzHWSFJ/rfsGF3+G2snnjDMNdeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dSCOYChR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740465550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SI3pKJ/94/hKtKiM0+9f6j6EtNWcn8A+DJCrfNsIoTg=;
+	b=dSCOYChR+aiAY0lyK/fx3UF/GlEQyItPmRpcAHtz75blLBlVBUfarTKslddni1Z/xHOVrZ
+	e2+rCFknpwvFQUDAMn9niEwrStpyKUTdpTR5VUgqpHqFpfOn+1SRYea1R8xDsEzbJrR0Mt
+	YC8DTlWRzn4iaH7ilKG7fF7mWnGz2og=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-8AG496qDMpaB4LZL90eTFQ-1; Tue,
+ 25 Feb 2025 01:39:03 -0500
+X-MC-Unique: 8AG496qDMpaB4LZL90eTFQ-1
+X-Mimecast-MFC-AGG-ID: 8AG496qDMpaB4LZL90eTFQ_1740465541
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC3A0180087B;
+	Tue, 25 Feb 2025 06:39:00 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E8C51800359;
+	Tue, 25 Feb 2025 06:38:57 +0000 (UTC)
+Date: Tue, 25 Feb 2025 14:38:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] mm, swap: use percpu cluster as allocation fast
+ path
+Message-ID: <Z71lfU1HMRilvYCz@MiWiFi-R3L-srv>
+References: <20250224180212.22802-1-ryncsn@gmail.com>
+ <20250224180212.22802-6-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,20 +80,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250107125844.226466-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250224180212.22802-6-ryncsn@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Jan 07, 2025 at 01:58:43PM +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
+On 02/25/25 at 02:02am, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
+> Current allocation workflow first traverses the plist with a global lock
+> held, after choosing a device, it uses the percpu cluster on that swap
+> device. This commit moves the percpu cluster variable out of being tied
+> to individual swap devices, making it a global percpu variable, and will
+> be used directly for allocation as a fast path.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The global percpu cluster variable will never point to a HDD device, and
+> allocations on a HDD device are still globally serialized.
+> 
+> This improves the allocator performance and prepares for removal of the
+> slot cache in later commits. There shouldn't be much observable behavior
+> change, except one thing: this changes how swap device allocation
+> rotation works.
+> 
+> Currently, each allocation will rotate the plist, and because of the
+> existence of slot cache (one order 0 allocation usually returns 64
+> entries), swap devices of the same priority are rotated for every 64
+> order 0 entries consumed. High order allocations are different, they
+> will bypass the slot cache, and so swap device is rotated for every
+> 16K, 32K, or up to 2M allocation.
+> 
+> The rotation rule was never clearly defined or documented, it was changed
+> several times without mentioning.
+> 
+> After this commit, and once slot cache is gone in later commits, swap
+> device rotation will happen for every consumed cluster. Ideally non-HDD
+> devices will be rotated if 2M space has been consumed for each order.
+> Fragmented clusters will rotate the device faster, which seems OK.
+> HDD devices is rotated for every allocation regardless of the allocation
+> order, which should be OK too and trivial.
+> 
+> This commit also slightly changes allocation behaviour for slot cache.
+> The new added cluster allocation fast path may allocate entries from
+> different device to the slot cache, this is not observable from user
+> space, only impact performance very slightly, and slot cache will be
+> just gone in next commit, so this can be ignored.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  include/linux/swap.h |  11 ++--
+>  mm/swapfile.c        | 136 +++++++++++++++++++++++++++++--------------
+>  2 files changed, 95 insertions(+), 52 deletions(-)
 
-Applied, thank you.
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
--- 
-Dmitry
 
