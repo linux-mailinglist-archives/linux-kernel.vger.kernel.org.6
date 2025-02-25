@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-531370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48411A43FA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:45:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D4EA43FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10642175D1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63F21890DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380AF2686BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A18268C50;
 	Tue, 25 Feb 2025 12:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3Gd5dHC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ahtVADj3"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933D3267731;
-	Tue, 25 Feb 2025 12:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155663A1DB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740487417; cv=none; b=ScxpHeq76gmWCbVMz8Aw7smIDOiD4LtSuzYojBIyoraj3HoGuOBpzoKvmd5prKuoati8mgKo1+L/RwQJtYI/tglMvKs/OhsxMS36nr9w2sWHd1jX9ZZERA88k5wT86HTfjblld6KDnbQdPdkIn5qKrpJ273r9SaOSb+My8H+KhA=
+	t=1740487417; cv=none; b=SvBseiWYQkkVWbTuZDbxp3JhxZNWOR0IWakMXu0eBlN4A4W1f4B/a58WqBwFv6YenI4jSIqnj3DhO1zmIUFo+KEKjf5F5gV1wBKfbNZP6w5ovWFjhJ/YQk4/jvrRfuAR792eymqLGHh+uydADLBf87B3dUTsuyaSIX4SUaa43rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740487417; c=relaxed/simple;
-	bh=1OwfvkL6kTjgq4tN2T97ZHJ/YRpDQusij7Vrf1nZz9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kXTZYmXnXuPMMqQwRsiBCAIlId/HmvN0p9VpjZTJ7DBcUo1swk3RyeuDDrB+FV5TaRO5f/F3V9BYvR+sUXBxFTHsNW3c2bmch5L5Ezz/0WqFv1KDnNtP2r4WcCpBHnA10cVSXW4ILrdWti4FBevIQNOGncE0F72kl8U/0E/CD2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3Gd5dHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A185C4CEE9;
-	Tue, 25 Feb 2025 12:43:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740487417;
-	bh=1OwfvkL6kTjgq4tN2T97ZHJ/YRpDQusij7Vrf1nZz9Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=t3Gd5dHCYOsj8f+oIw24jdtPMH/DbFHIIuaLLGlI9xFbfLcUqZjCxsOu/aWGeUl5/
-	 Sc1/wjxGrqLjt70lQBK0VDO+68XwC8P8/nU2sL30tNmag4exr4ni/u81CJKdO5gxY4
-	 d6epU7hxrf1tKuLGK8NnhE9o9v5h7R5vNge0EXPR1tCMiXL4Kg4boIdjXyshkxOh5L
-	 CpN/WUg8lRQgY1PZYaydH/8uUN2ofXZeZe8LsdtAAaP35jkPH3tRt3Yi7yvhEBo2ft
-	 YeRBgXGSstHoMz+NbS2nDlOnbVeaQ1qj5OErv8MfCaUpGz/bL87lbTcg5hQfy8FT4F
-	 2p/BihEQqLAaw==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abb79af88afso1021779866b.1;
-        Tue, 25 Feb 2025 04:43:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVlGRgP1BvN7SkK+Mv7I8VgEe6miXrPwV+CqB/BSU4R3ZmaFHK2Rr178MqIoeAFiE/aDqMGWLYBpjjZSmw2@vger.kernel.org, AJvYcCX5wxYN3TfR075nB4TfBvVSyeFc320vr2ibmJR4sbLtH+mInjihpZ41fznOApcGNGq0D6Vhqah8ghZzYEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxtWb2jv4LqL18Xtn9sT8ZwZXOojBqRcurM6auzIYSzDC63kSD
-	mBem/mQucLIPMdSQ0AtoN8aPDQPzbgmT1YaPVYsIZTOzQrgGwD5X7VNoCAT/TtzwjFliOG/E/Lv
-	kBm+CjqeGgPcEVHNFqt6i7S0bEJA=
-X-Google-Smtp-Source: AGHT+IF394hAK3hIpt34lqAuCiGQSZ6t5Z8w9L9Fv+knOt2/+Vcpy+pwWWagwP0ICa/lKMsf5409s9LAdi0WO8c0bEE=
-X-Received: by 2002:a17:907:1b26:b0:aaf:1183:e9be with SMTP id
- a640c23a62f3a-abc099b881cmr2114719666b.2.1740487415736; Tue, 25 Feb 2025
- 04:43:35 -0800 (PST)
+	bh=ThZw8T6DuX3V5frsHq3jSN62Ru0Y+m5d8yUPxihXdE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ckKOHjXjGNFeMXtRtesqJIsHfbx7JQjuZM72/P/pgSXZ4X5Cc7pdHGijI0uw4q5Rbgh2vrXR0dx9hRBkS80xH/AUw+RAOXimI3FwlaKXscBdRYuYJXwNAaee6zf8g+88mzkk6T4NrzzP3f8jLMc91P79iKqBtr5LJwvRmK8ecL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ahtVADj3; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740487414;
+	bh=ThZw8T6DuX3V5frsHq3jSN62Ru0Y+m5d8yUPxihXdE4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ahtVADj3Eee4RvfCy9YX0ZRDzziZHexss9gc6QtR9GrJjhUjtv2cKhh+oKVFYHI68
+	 nVn/jcuQkf48vWYnsE/lKjawfIwFDwu9ZaeZLvUKrTnpJwXt2y+lQwEC2guMISSjOI
+	 5TC5m8B9Ntkh262//3SkgI0NK9umoEZ/g44iCiSMuwzrxLlwG+uXIYLOrEtImjCvVE
+	 eh0LK8loXyo1gL4mAhLTzCyXQh4GlwKw4Z4riNJm1cLg5pYzkEgG0cHsrSjvnRWHzH
+	 QI7aGcj+fIRlYXc8GI7T6kUrewUcFt1D7Zn+BHguyeX93oRTwmzKFWVLoE2zzKscpr
+	 bMJmV5l6oWU5Q==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B9E1317E0B59;
+	Tue, 25 Feb 2025 13:43:33 +0100 (CET)
+Date: Tue, 25 Feb 2025 13:43:25 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Steven
+ Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>, Hugh Dickins
+ <hughd@google.com>, kernel@collabora.com, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 1/7] shmem: Introduce non-blocking allocation of
+ shmem pages
+Message-ID: <20250225134325.72a071b6@collabora.com>
+In-Reply-To: <20250218232552.3450939-2-adrian.larumbe@collabora.com>
+References: <20250218232552.3450939-1-adrian.larumbe@collabora.com>
+	<20250218232552.3450939-2-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221113341.108063-1-xry111@xry111.site>
-In-Reply-To: <20250221113341.108063-1-xry111@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 25 Feb 2025 20:43:23 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4uacrS-kgvvrTQAGxdsGDsjDeE=eb6BcdCjRdgw8HLRg@mail.gmail.com>
-X-Gm-Features: AWEUYZlMCcvWaaM-Mso7yvHa--XGcu8ZFfgMrPiYEmxO1O1X9rEvnP9j0aMUixw
-Message-ID: <CAAhV-H4uacrS-kgvvrTQAGxdsGDsjDeE=eb6BcdCjRdgw8HLRg@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: vDSO: vgetrandom-chacha: Make use of the t8 register
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: WANG Xuerui <kernel@xen0n.name>, "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+On Tue, 18 Feb 2025 23:25:31 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Huacai
-
-On Fri, Feb 21, 2025 at 7:34=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> So we don't need to reuse a register and rematerialize a constant.  I
-> couldn't count :(.
->
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> With the future goal of preventing deadlocks with the shrinker when recla=
+iming
+> GEM-allocated memory, a variant of shmem_read_mapping_page_gfp() that doe=
+s not
+> sleep when enough memory isn't available, therefore potentially triggerin=
+g the
+> shrinker on same driver, is introduced.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 > ---
->
-> Tested with vdso_test_getrandom and vdso_test_chacha.
->
->  arch/loongarch/vdso/vgetrandom-chacha.S | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/loongarch/vdso/vgetrandom-chacha.S b/arch/loongarch/vds=
-o/vgetrandom-chacha.S
-> index c2733e6c3a8d..c4dd2bab8825 100644
-> --- a/arch/loongarch/vdso/vgetrandom-chacha.S
-> +++ b/arch/loongarch/vdso/vgetrandom-chacha.S
-> @@ -58,9 +58,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->  #define copy0          t5
->  #define copy1          t6
->  #define copy2          t7
-> -
-> -/* Reuse i as copy3 */
-> -#define copy3          i
-> +#define copy3          t8
->
->  /* Packs to be used with OP_4REG */
->  #define line0          state0, state1, state2, state3
-> @@ -99,6 +97,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->         li.w            copy0, 0x61707865
->         li.w            copy1, 0x3320646e
->         li.w            copy2, 0x79622d32
-> +       li.w            copy3, 0x6b206574
->
->         ld.w            cnt_lo, counter, 0
->         ld.w            cnt_hi, counter, 4
-> @@ -108,7 +107,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->         move            state0, copy0
->         move            state1, copy1
->         move            state2, copy2
-> -       li.w            state3, 0x6b206574
-> +       move            state3, copy3
->
->         /* state[4,5,..,11] =3D key */
->         ld.w            state4, key, 0
-> @@ -167,12 +166,6 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->         addi.w          i, i, -1
->         bnez            i, .Lpermute
->
-> -       /*
-> -        * copy[3] =3D "expa", materialize it here because copy[3] shares=
- the
-> -        * same register with i which just became dead.
-> -        */
-> -       li.w            copy3, 0x6b206574
-> -
->         /* output[0,1,2,3] =3D copy[0,1,2,3] + state[0,1,2,3] */
->         OP_4REG add.w   line0, copy
->         st.w            state0, output, 0
-> --
-> 2.48.1
->
+>  include/linux/shmem_fs.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 0b273a7b9f01..5735728aeda2 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -167,6 +167,13 @@ static inline struct page *shmem_read_mapping_page(
+>  					mapping_gfp_mask(mapping));
+>  }
+> =20
+> +static inline struct page *shmem_read_mapping_page_nonblocking(
+> +				struct address_space *mapping, pgoff_t index)
+> +{
+> +	return shmem_read_mapping_page_gfp(mapping, index,
+> +					mapping_gfp_mask(mapping) | GFP_NOWAIT);
+> +}
+
+Just my 2 cents, but I'm not entirely sure it's worth adding a helper
+for the non-blocking case given we can pretty easily call
+shmem_read_mapping_page_gfp() with the GFP_NOWAIT addition where needed.
+
+> +
+>  static inline bool shmem_file(struct file *file)
+>  {
+>  	if (!IS_ENABLED(CONFIG_SHMEM))
+
 
