@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-531405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9953CA4401F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:08:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B71AA4401D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FD7179667
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE1B1888CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C802690D7;
-	Tue, 25 Feb 2025 13:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPzCTPca"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3C268FDB;
-	Tue, 25 Feb 2025 13:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F281B26980B;
+	Tue, 25 Feb 2025 13:04:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD422690E7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488678; cv=none; b=NRBfOfzcFsxXyerY3XJqhyZIDZr49mutbyzDkCWEOEPSAolt+uUMhmOiYlEcwm3Q9M2MQAhLaRIfy5Y3vOYn46EMMa0IMQwetNs/2iQIiP+sOE+9vPfg0dR1OrTLtc5bGgNMkko4DpDWveqpYQ9yVryxVDzg5IxZf3cAeNZvsR4=
+	t=1740488681; cv=none; b=NTOefvsijcWKMnBCvDyj+3HggiPco/d9ZHHCAe+fYsX+VTNlKCxrvTK5dfOBdH0PnQof/YIA9Blm4MfY7+kug1L/+tRkvpw6hXbCMynkw+xhPUM07jlIr8En6YjDkdsc19QITKdQ5VWEKtZbkk2oWG1mm3HhbgEtPixJNDCzdyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488678; c=relaxed/simple;
-	bh=VmGLKYImE7DJ/sk9epTDObwuVtuKPlnNZgK/xKXvbm0=;
+	s=arc-20240116; t=1740488681; c=relaxed/simple;
+	bh=V+8Vqwur73cVfgt1CkaSJTemf1XS4pc+2r/TQKRNQao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zgnuy4NzUan+e6WxWh2tCe4Hy7EDX8rALJvjAWsBLXBcxKP66P3zt5Q2WXbwQkUjOj/9+xuLkBF9dzDDdaUZfiTmAB3E4ozKV03VWozCExlefOzRadWq9uT2Di9YqQWZICUdX7hf0GrsfewX6MutNS6xfz86iiNGVUkwM1NbFFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPzCTPca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83114C4CEE6;
-	Tue, 25 Feb 2025 13:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740488678;
-	bh=VmGLKYImE7DJ/sk9epTDObwuVtuKPlnNZgK/xKXvbm0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HPzCTPca2u0cgrfG5EsEvMItYgdJ4sjvxrX2x+8UCey1+ZPA74V0kWqKq0RlXfUx2
-	 bUnX0ml0DzmVWgT48TCOijIQigqNVeR0uCclCyw4BeiqXhh9ahXowMsrRMKq4TVYpn
-	 /5Ta2eNtnY5D//Y+etvAzTzZtC+HPlS9QcmuJ9vIBxdjf4qmLLdrUCR2iRQ1HMB/Mc
-	 aBcfRV2SFqoogCJDmJf2WRVsg4Ps5nuAn/yzKeCEnQ/xd+RLzguKjfNfd5w8ofV03u
-	 swGyj72txdoEOdhCgKpvdVB3U63UI5VfJl5nrGY4G5HFRp8MELrIXCIOV+UQkU4cFY
-	 fvY+vQAJawKzg==
-Message-ID: <6fc80544-6fc3-4450-a0cc-bfc740fe97bb@kernel.org>
-Date: Tue, 25 Feb 2025 14:04:32 +0100
+	 In-Reply-To:Content-Type; b=lgc7hMbEhHir5ir6VVgg81rkwrcxgDE07vbBzPR+atV3Ki1wgToVLS9tYdjb2aDb71PEc3dC5aDzo4HDdjQk0NECNd7ITq+WZOUDS9pviZcSSC95TLGDi0MX8x4jCBTnKVQ/ieGWAInJyPW+nOIvnTKRIQ8i+w7oLeAFxGFllbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57456152B;
+	Tue, 25 Feb 2025 05:04:55 -0800 (PST)
+Received: from [10.57.38.173] (unknown [10.57.38.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5956E3F5A1;
+	Tue, 25 Feb 2025 05:04:37 -0800 (PST)
+Message-ID: <0b0705aa-8c85-4502-8450-a6c7fdbdbdbd@arm.com>
+Date: Tue, 25 Feb 2025 13:04:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,140 +41,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 3/3] arm64: realm: Use aliased addresses for device DMA
+ to shared buffers
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
+ catalin.marinas@arm.com
+Cc: maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ aneesh.kumar@kernel.org, steven.price@arm.com,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
+ <20250219220751.1276854-4-suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250219220751.1276854-4-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25/02/2025 09:48, Clément Le Goffic wrote:
+On 2025-02-19 10:07 pm, Suzuki K Poulose wrote:
+> When a device performs DMA to a shared buffer using physical addresses,
+> (without Stage1 translation), the device must use the "{I}PA address" with the
+> top bit set in Realm. This is to make sure that a trusted device will be able
+> to write to shared buffers as well as the protected buffers. Thus, a Realm must
+> always program the full address including the "protection" bit, like AMD SME
+> encryption bits.
+> 
+> Enable this by providing arm64 specific dma_{encrypted,decrypted,clear_encryption}
+> helpers for Realms. Please note that the VMM needs to similarly make sure that
+> the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
+> unprotected alias.
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arch/arm64/include/asm/mem_encrypt.h | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/mem_encrypt.h b/arch/arm64/include/asm/mem_encrypt.h
+> index f8f78f622dd2..aeda3bba255e 100644
+> --- a/arch/arm64/include/asm/mem_encrypt.h
+> +++ b/arch/arm64/include/asm/mem_encrypt.h
+> @@ -21,4 +21,26 @@ static inline bool force_dma_unencrypted(struct device *dev)
+>   	return is_realm_world();
+>   }
+>   
+> +static inline dma_addr_t dma_decrypted(dma_addr_t daddr)
+> +{
+> +	if (is_realm_world())
+> +		daddr |= prot_ns_shared;
+> +	return daddr;
+> +}
+> +#define dma_decrypted dma_decrypted
 > +
-> +maintainers:
-> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
-> +
-> +description: |
+> +static inline dma_addr_t dma_encrypted(dma_addr_t daddr)
+> +{
+> +	if (is_realm_world())
+> +		daddr &= prot_ns_shared - 1;
 
+Nit: is there a reason this isn't the direct inverse of the other 
+operation, i.e. "daddr &= ~prot_ns_shared"? If so, it might be worth 
+dropping a comment why we're doing slightly unintuitive arithmetic on a 
+pagetable attribute (and if not then maybe just do the more obvious 
+thing). I doubt anyone's in a rush to support TBI for DMA, and this 
+would be far from the only potential hiccup for that, but still... :)
 
-Do not need '|' unless you need to preserve formatting.
+Thanks,
+Robin.
 
-> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
-> +  It allows to output internal signals on SoC's GPIO.
+> +	return daddr;
+> +}
+> +#define dma_encrypted dma_encrypted
 > +
-> +properties:
-> +  compatible:
-> +    const: st,stm32mp-hdp
+> +static inline dma_addr_t dma_clear_encryption(dma_addr_t daddr)
+> +{
+> +	return dma_encrypted(daddr);
+> +}
+> +#define dma_clear_encryption dma_clear_encryption
+> +
+>   #endif	/* __ASM_MEM_ENCRYPT_H */
 
-There is a mess in STM SoCs. Sometimes you call SoC stm32, sometimes
-stm32mp and sometimes stm32mpXX.
-
-Define for all your STM contributions what is the actual SoC. This
-feedback was already given to ST.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +
-> +    properties:
-> +      function:
-> +        enum: [ "0", "1", "2", "3", "4", "5", "6", "7",
-> +                "8", "9", "10", "11", "12", "13", "14",
-> +                "15" ]
-
-Function which has a number is not really useful. What does it even express?
-
-
-> +
-> +      pins:
-> +        enum: [ hdp0, hdp1, hdp2, hdp3, hdp4, hdp5, hdp6, hdp7 ]
-> +
-> +    required:
-> +      - function
-> +      - pins
-> +
-> +    additionalProperties: false
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/stm32mp1-clks.h>
-> +    #include <dt-bindings/pinctrl/stm32mp15-hdp.h>
-> +    //Example 1
-
-Drop
-
-
-Best regards,
-Krzysztof
 
