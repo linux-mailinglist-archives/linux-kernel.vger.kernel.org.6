@@ -1,111 +1,163 @@
-Return-Path: <linux-kernel+bounces-530352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D415A43263
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:21:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF7EA4326A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAA63AD3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21313AE729
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266D17BBF;
-	Tue, 25 Feb 2025 01:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03C11CD1F;
+	Tue, 25 Feb 2025 01:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLklv7rQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WbLvSqOX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D9A55887
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BB317578
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740446474; cv=none; b=ii27qv/IiURm3+zRaOqR5KHa96yIYsj22bSmMKHQicFWJZOPN24xYdN6rA+HOFI9TNzGcLLyILPPAffWoyVgBrJblJYyJrXXhon8fzWY1Ric8qdWw5PEFEHPjriMCE3G3q9CgW0LNv8oBHoeenliBh6XTbgaz1MDIHLtk+6fW6s=
+	t=1740446671; cv=none; b=kDX0/dfpK03iFOxy+F4tbRsnKRt9XTLDj8J8gkHYFsW1ZUKtzCv4boDa5ruWVDjKYCokuTr1cME2ejBD7skSVnsmwlmsIaZxph7wXLFIyo9iDu0j4A56vBijXyqQlD2Izrw21vDA9e8NdiBAZn/7vCKLSBz+FErsy4BlN0lp+wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740446474; c=relaxed/simple;
-	bh=34rmwhb2bBO3XVsccPBg5dFXR9H5wQTu1+GuS3aaCRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jhJ5zYQU1Q3c2YsZxu5KBid1y6WbDvSh8lpWQsiE0MQxZHG+kynkuTu9d2NcxncPrqVk0L/bWGy1igwzK4ALOY4nRnjY81JLXfeCMPKRD1gDnFkBmddx4praaJPPXegUKoMaNg8WBlb+aM+D8qaFsQe3+cPh6uEJmkTCE8TLNUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLklv7rQ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740446473; x=1771982473;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=34rmwhb2bBO3XVsccPBg5dFXR9H5wQTu1+GuS3aaCRU=;
-  b=NLklv7rQW3U+eAfCGbR9LblPyubZ+vvVDyo5HkgtE+ooNkTbZoBnDY1q
-   ShrDte0GXwYdtYO9i2JUSFO17jTrxk7VS/P/pp3XL8aEMxDTv+gthPwNx
-   kGHoOTdWVc02mxRhfoOYnNrQI7p576EYsnhRhtcSSTnipDadWWIIWc0gP
-   wqCtJOISIoDif2pWId0CinutAV7r/yC7I6PbgvV7kMT44hnEDlFvkFpBJ
-   kostt2onvDYMKgD/HQ475j6RID9kEyKm5bKDAjKlNiIv+eQ5fwO6vG35K
-   wHz5IXb0khW2tyMJ6xFEmNNKzx/4ccw0D+ER82uambR0gTTXsm9nD9aQy
-   A==;
-X-CSE-ConnectionGUID: FDlFvK9QTDeSxjOCfqglMg==
-X-CSE-MsgGUID: vc3pgwhxT5ay3kDE8pwAdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="52230937"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="52230937"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 17:21:12 -0800
-X-CSE-ConnectionGUID: Z123ZxbbQviv/AyiMaHNhw==
-X-CSE-MsgGUID: KuOlUUnNTKiwSo7Jy88aXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="121209972"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 24 Feb 2025 17:21:11 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tmjdE-0009YU-1v;
-	Tue, 25 Feb 2025 01:21:08 +0000
-Date: Tue, 25 Feb 2025 09:21:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: arch/riscv/kernel/unaligned_access_speed.c:22:1: sparse: sparse:
- symbol '__pcpu_scope_misaligned_access_speed' was not declared. Should it be
- static?
-Message-ID: <202502250928.pomaaBLM-lkp@intel.com>
+	s=arc-20240116; t=1740446671; c=relaxed/simple;
+	bh=OTRcGeU7kGGgXpTtQsUzKusjg93W/6CQSsMA/m9BSZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPuQ2GTzdAH1MRywQd1fekxBhKJCHIifKb7rsCb9V/dRAiQ4eSSqe1GfToNAfPBCJiZKYC+z/AWg1BO4Qk59nwgLUWOln4ZUiZsX7VA9F2ma+VHo32PqZBJhCwnEt2v+1fiD4dkiNb/Jn3wezH5LI83f+Z0s66DtW5TYAaMHJFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WbLvSqOX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740446668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cPoneJrfASluLO99cJQRqFmreizeALplyvR20fuKNPQ=;
+	b=WbLvSqOXNESEewd1dp+369fpeH7P3hMNHK3tmmkNJ8Dvl14xOi5URh9PKCgnZhk/Ngp/WF
+	LBlPy58Fr8Ala1RIkPhEGeQiZl2LTVNDLwh8nCl4832ge0n7yDD6MD6WAtdIM0Nt5XI0uf
+	esRa1hQ1ZmKjJcIykANtIw4hrs1SmF0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-275-z7RIGHkGMtyUfOBsf1quFg-1; Mon,
+ 24 Feb 2025 20:24:24 -0500
+X-MC-Unique: z7RIGHkGMtyUfOBsf1quFg-1
+X-Mimecast-MFC-AGG-ID: z7RIGHkGMtyUfOBsf1quFg_1740446663
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 024C8196E078;
+	Tue, 25 Feb 2025 01:24:22 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.21])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E45AC180035E;
+	Tue, 25 Feb 2025 01:24:13 +0000 (UTC)
+Date: Tue, 25 Feb 2025 09:24:07 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+Message-ID: <Z70btzRaN83FbTJp@fedora>
+References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
+ <20250222092823.210318-3-yukuai1@huaweicloud.com>
+ <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+ <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+ <Z7w0P8ImJiZhRsPD@fedora>
+ <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-commit: d1703dc7bc8ec7adb91f5ceaf1556ff1ed212858 RISC-V: Detect unaligned vector accesses supported
-date:   4 months ago
-config: riscv-randconfig-r131-20250225 (https://download.01.org/0day-ci/archive/20250225/202502250928.pomaaBLM-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250225/202502250928.pomaaBLM-lkp@intel.com/reproduce)
+On Mon, Feb 24, 2025 at 08:03:32PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/02/24 16:56, Ming Lei 写道:
+> > On Mon, Feb 24, 2025 at 03:03:18PM +0800, Yu Kuai wrote:
+> > > Hi, Ming!
+> > > 
+> > > 在 2025/02/24 11:28, Ming Lei 写道:
+> > > > throtl_trim_slice() returns immediately if throtl_slice_used()
+> > > > is true.
+> > > > 
+> > > > And throtl_slice_used() checks jiffies in [start, end] via time_in_range(),
+> > > > so if `start <= jiffies <= end', it still returns false.
+> > > 
+> > > Yes, I misread the code, by thinking throtl_slice_used() will return
+> > > true if the slice is still used. :(
+> > > 
+> > > 
+> > > > > BTW, throtl_trim_slice() looks like problematic:
+> > > > > 
+> > > > > -       if (bytes_trim <= 0 && io_trim <= 0)
+> > > > > +       if (bytes_trim <= 0 || io_trim <= 0 ||
+> > > > > +           tg->bytes_disp[rw] < bytes_trim || tg->io_disp[rw] < io_trim)
+> > > > >                   return;
+> > > > That is exactly what my patch is doing, just taking deviation and
+> > > > timeout into account, also U64_MAX limit has to be excluded.
+> > > Yes, perhaps you can add some comments in the last two conditions of
+> > > your patch.
+> > 
+> > Yes, we need to add comment on the check, how about the following words?
+> > 
+> > ```
+> > 
+> > If actually rate doesn't match with expected rate, do not trim slice
+> > otherwise the present rate control info is lost, we don't have chance
+> > to compensate it in the following period of this slice any more.
+> 
+> So, I just give your patch a test, and result is 1.3s while 1s is
+> expected. While debuging, a new idea come up in mind. :)
+> 
+> How about keep at least one slice out of consideration from
+> throtl_trim_slice()? With following patch, the result is between
+> 1.01-1.03s in my VM.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502250928.pomaaBLM-lkp@intel.com/
+That is easy to get the same result with the approach I suggested,
+another big benefit: it is adaptive, and blk-throttle may get
+simplified.
 
-sparse warnings: (new ones prefixed by >>)
->> arch/riscv/kernel/unaligned_access_speed.c:22:1: sparse: sparse: symbol '__pcpu_scope_misaligned_access_speed' was not declared. Should it be static?
-   arch/riscv/kernel/unaligned_access_speed.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
+> 
+> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> index 8d149aff9fd0..5207c85098a5 100644
+> --- a/block/blk-throttle.c
+> +++ b/block/blk-throttle.c
+> @@ -604,9 +604,12 @@ static inline void throtl_trim_slice(struct throtl_grp
+> *tg, bool rw)
+> 
+>         time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+>                                  tg->td->throtl_slice);
+> -       if (!time_elapsed)
+> +       /* don't trim slice until at least 2 slice is used */
+> +       if (time_elapsed < tg->td->throtl_slice * 2)
+>                 return;
 
-vim +/__pcpu_scope_misaligned_access_speed +22 arch/riscv/kernel/unaligned_access_speed.c
+If you just want to fix throtl/001, the above patch might
+work(sometimes, it might not, and timer may expire by 2 jiffies), but it
+is easy to fail other tests, such as, reduce the bps limit a bit, and
+increase BS a bit to make the IO cross exactly two slices.
 
-    21	
-  > 22	DEFINE_PER_CPU(long, misaligned_access_speed) = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
-    23	DEFINE_PER_CPU(long, vector_misaligned_access) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-    24	
+Also the big question is that how you can make sure that rate is always
+good when the window is >= 2 slice?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Thanks,
+Ming
+
 
