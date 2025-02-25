@@ -1,120 +1,197 @@
-Return-Path: <linux-kernel+bounces-530369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51C1A43294
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:45:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01221A4329C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41EF37A9298
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D3C3B6729
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FAC78F4B;
-	Tue, 25 Feb 2025 01:45:32 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4A4145A0B;
+	Tue, 25 Feb 2025 01:48:31 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CF0FC1D;
-	Tue, 25 Feb 2025 01:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F46213D897;
+	Tue, 25 Feb 2025 01:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740447932; cv=none; b=ZeFnJXXOywbFZAVgbTp51v18e5eK4n8LfjuIHrc+t7DdqzTjeSqon7gJ+NmFKI7fSefb/RqqCP6kdAHPERwk829cQwxfSd6f4yW20GO93Buu0ghwMKgzr8XDnItzhdjhLaNHSmQoVsaVW3tQdVTqZKnMQcuZhvO6dw5xaARsSTA=
+	t=1740448110; cv=none; b=cNNBX/4kiYV4LN4Y5TCrPgQtOmXtBey6Ij2WsLg8JUmesbYxW1LvFoGSW/Te7YVy50m9ZnyNYfgKC7kJ9EYxrgf3QhKIuOlusU2B3jH1R6+3LNsKT7Nxg4ZSb8UP+h9TqDSCBUuMcgD0ION3ahy4EOUTx97JwaY7xBi/uCg6fe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740447932; c=relaxed/simple;
-	bh=2+6V7qQVaa6iDdECCvN7iEz0i0TmM7x99EjDo6Sdr7M=;
+	s=arc-20240116; t=1740448110; c=relaxed/simple;
+	bh=nymM0ct3LcKrBqldgPir/y62KHjxez7MAYPfwaiGtoE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fYX2S9cy9EJ7PgrmBxYzCRVJr/tSIsxvs35GUlb6CFJZWegeTIjioSYFZO3B1JAV9H2o6lKQbpMUZ/SH6QBV10U/7FBpxwlGPq4wwkDmJ7rWKqgR8SalbaJEVoUKPuukSPmRd7Gd2vPbQ1D6aAmW7ulDsCoYMmtlJmbTdzJpZpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 In-Reply-To:Content-Type; b=Yh3pEfo3motVo5hYay8IoZ1otwzCvslbrrOTm/JORwj6IF14x9fczG5IhpnobaW01/RqsFarJt3sqodJVy3reyUtdZnLQ1MAAoYc6NEAjKy9pFsf2wspPbpYoTbmjw7tFE6ZY0yylOKVhG+uRCvYKsg2N8jSoUMOFEkGvMGnrL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z20fz3Lz5zdb7N;
-	Tue, 25 Feb 2025 09:40:43 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 137501402C3;
-	Tue, 25 Feb 2025 09:45:27 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z20l46r9LzHxf3;
+	Tue, 25 Feb 2025 09:44:16 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C4E61A0188;
+	Tue, 25 Feb 2025 09:48:19 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 09:45:25 +0800
-Message-ID: <df5b1deb-7d72-4f52-86c2-959ea4dffad4@huawei.com>
-Date: Tue, 25 Feb 2025 09:45:12 +0800
+ 15.2.1544.11; Tue, 25 Feb 2025 09:48:18 +0800
+Message-ID: <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
+Date: Tue, 25 Feb 2025 09:48:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] xsk: fix __xsk_generic_xmit() error code when cq is
- full
-To: Magnus Karlsson <magnus.karlsson@gmail.com>, Stanislav Fomichev
-	<stfomichev@gmail.com>
-CC: <bjorn@kernel.org>, <magnus.karlsson@intel.com>,
-	<maciej.fijalkowski@intel.com>, <jonathan.lemon@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <ast@kernel.org>,
-	<daniel@iogearbox.net>, <hawk@kernel.org>, <john.fastabend@gmail.com>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250222093007.3607691-1-wangliang74@huawei.com>
- <CAJ8uoz1fZ3zYVKergPn-QYRQEpPfC_jNgtY3wzoxxJWFF22LKA@mail.gmail.com>
- <Z7yXhHezJTgYh76T@mini-arch>
- <CAJ8uoz12bmCPsr_LFwCDypiwzmH+U7TeLqqykgRhp=8vKX4nQw@mail.gmail.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <CAJ8uoz12bmCPsr_LFwCDypiwzmH+U7TeLqqykgRhp=8vKX4nQw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+ <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+ <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+ <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
+ <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200005.china.huawei.com (7.202.181.32)
+X-ClientProxiedBy: kwepemh500016.china.huawei.com (7.202.181.150) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
 
-在 2025/2/25 1:14, Magnus Karlsson 写道:
-> On Mon, 24 Feb 2025 at 17:00, Stanislav Fomichev <stfomichev@gmail.com> wrote:
->> On 02/24, Magnus Karlsson wrote:
->>> On Sat, 22 Feb 2025 at 10:18, Wang Liang <wangliang74@huawei.com> wrote:
->>>> When the cq reservation is failed, the error code is not set which is
->>>> initialized to zero in __xsk_generic_xmit(). That means the packet is not
->>>> send successfully but sendto() return ok.
+
+On 2025/2/25 1:34, John Garry wrote:
+> On 24/02/2025 13:12, yangxingui wrote:
+>> Hi, John
+>>
+>> On 2025/2/24 20:21, John Garry wrote:
+>>> On 24/02/2025 09:36, yangxingui wrote:
+>>>>>
+>>>>>
+>>>>> So do you mean that all IO to this disk will error? If yes, then 
+>>>>> this is good.
+>>>> Yes, IO error or IO result does not meet expectations. As shown in 
+>>>> the log below, due to an abnormal port ID, the SNs of the two disks 
+>>>> read are the same.
+>>>
+>>> Do you mean that this is mainline kernel behaviour, below:
+>> Yes
+>>>
 >>>>
->>>> Set the error code and make xskq_prod_reserve_addr()/xskq_prod_reserve()
->>>> return values more meaningful when the queue is full.
->>> Hi Wang,
+>>>> [448000.504979] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
+>>>> link_rate=10(sata)
+>>>> [448000.505070] sas: phy-10:1 added to port-10:1, phy_mask:0x2 
+>>>> (5000000000000a01)
+>>>> [448000.505247] sas: DOING DISCOVERY on port 1, pid:2239187
+>>>> [448000.505255] hisi_sas_v3_hw 0000:d4:02.0: dev[2:5] found
+>>>> [448000.505274] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>>>> [448000.505295] sas: ata31: end_device-10:0: dev error handler
+>>>> [448000.505299] sas: ata32: end_device-10:1: dev error handler
+>>>> [448001.300517] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy1 
+>>>> phy_state=0x1   // phy1's hw port id released
+>>>> [448001.300522] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy1 down
+>>>> [448001.436187] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
+>>>> link_rate=10(sata) // phy2 occupies the hardware port ID of phy1
+>>>> [448001.608766] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
+>>>> link_rate=10(sata) // phy1 was assigned a new hardware port ID
+>>>> [448001.775605] ata32.00: ATA-11: WUH721816ALE6L4, PCGAW660, max 
+>>>> UDMA/133
+>>>> [448002.159364] sas: phy-10:2 added to port-10:2, phy_mask:0x4 
+>>>> (5000000000000a02)
+>>>> [448002.159575] sas: DOING DISCOVERY on port 2, pid:2239187
+>>>> [448002.159581] hisi_sas_v3_hw 0000:d4:02.0: dev[3:5] found
+>>>> [448002.159602] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>>>> [448002.159623] sas: ata31: end_device-10:0: dev error handler
+>>>> [448002.159633] sas: ata32: end_device-10:1: dev error handler
+>>>> [448002.159636] sas: ata33: end_device-10:2: dev error handler
+>>>> [448002.393349] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy2 
+>>>> phy_state=0x3
+>>>> [448002.393354] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy2 down
+>>>> [448002.684937] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
+>>>> link_rate=10(sata)
+>>>> [448002.851639] ata33.00: ATA-11: WUH721816ALE6L4, PCGAW660, max 
+>>>> UDMA/133
+>>>> [448002.851644] ata33.00: 31251759104 sectors, multi 0: LBA48 NCQ 
+>>>> (depth 32)
+>>>>
+>>>>>
+>>>>> But I still don't like the handling in this patch. If we get a phy 
+>>>>> up, then the directly-attached disk ideally should be gone already, 
+>>>>> so should not have to do this handling.
+>>>> There is no problem when the disk is removed. The current problem is 
+>>>> that multiple phy up at the same time. When one of the phys up and 
+>>>> enters error handler to execute hardreset, the phy will down and 
+>>>> then up. other phy up will probably occupy the hw port id of the 
+>>>> previous phy which do hardreset in EH.
 >>>
->>> I agree that this would have been a really good idea if it was
->>> implemented from day one, but now I do not dare to change this since
->>> it would be changing the uapi. Let us say you have the following quite
->>> common code snippet for sending a packet with AF_XDP in skb mode:
->>>
->>> err = sendmsg();
->>> if (err && err != -EAGAIN && err != -EBUSY)
->>>      goto die_due_to_error;
->>> continue with code
->>>
->>> This code would with your change go and die suddenly when the
->>> completion ring is full instead of working. Maybe there is a piece of
->>> code that cleans the completion ring after these lines of code and
->>> next time sendmsg() is called, the packet will get sent, so the
->>> application used to work.
->>>
->>> So I say: let us not do this. But if anyone has another opinion, please share.
->> Can we return -EBUSY from this 'if (xsk_cq_reserve_addr_locked())' case as
->> well?
-> That is a good idea! Though I would return -EAGAIN. When -EBUSY is
-> returned, the buffer was consumed but not sent. But -EAGAIN means that
-> the user just has to perform then sendmsg() again and that is exactly
-> what the user has to do here too.
+>>> Could you do this work (itct update) in lldd_ata_check_ready CB?
+>>
+>> It's a good idea only for sata disks, but the current problem is not 
+>> only the scenario of connecting the sata disk. This phenomenon 
+>> occasionally occurs when the SAS disk is connected after the 
+>> controller is reset. The following is the log of the stress test 
+>> recurrence after incorporating the current repair patch. Although we 
+>> called hisi_sas_refresh_port_id() on controller reset.
+>>
+>> [ 5387.235015] hisi_sas_v3_hw 0000:74:02.0: I_T nexus reset: internal 
+>> abort (-5)
+>> [ 5387.242126] sas: clear nexus ha
+>> [ 5387.245283] hisi_sas_v3_hw 0000:74:02.0: controller resetting...
+>> [ 5388.908489] hisi_sas_v3_hw 0000:74:02.0: phyup: phy5 
+>> link_rate=10(sata)
+>> [ 5388.915090] hisi_sas_v3_hw 0000:74:02.0: phyup: phy6 
+>> link_rate=10(sata)
+>> [ 5388.934505] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
+>> [ 5388.941009] hisi_sas_v3_hw 0000:74:02.0: phyup: phy1 link_rate=9(sata)
+>> [ 5388.950976] hisi_sas_v3_hw 0000:74:02.0: phyup: phy4 link_rate=11
+>> [ 5388.957048] hisi_sas_v3_hw 0000:74:02.0: phyup: phy7 link_rate=11
+>> [ 5388.980097] hisi_sas_v3_hw 0000:74:02.0: phyup: phy2 link_rate=11
+>> [ 5388.986169] hisi_sas_v3_hw 0000:74:02.0: phyup: phy3 link_rate=11 
+>> // phy3 attached a sas disk.
+>> [ 5389.065103] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+>> attach device
+>> [ 5389.072409] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+>> [ 5389.078492] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+>> attach device
+>> [ 5389.085780] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+>> [ 5389.091861] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+>> attach device
+>> [ 5389.099146] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+>> [ 5389.107419] hisi_sas_v3_hw 0000:74:02.0: controller reset complete 
+>> // controller reset finished
+>> [ 5389.113686] hisi_sas_v3_hw 0000:74:02.0: phydown: phy0 phy_state=0xfe
+>> [ 5389.120099] hisi_sas_v3_hw 0000:74:02.0: ignore flutter phy0 down
+>> [ 5389.136399] hisi_sas_v3_hw 0000:74:02.0: phy3's hw port id changed 
+>> from 1 to 7
+>> [ 5389.308114] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
+>>
+> 
+> 
+> pm8001 sends sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR,) link 
+> reset errors - can you consider doing that in hisi_sas_update_port_id() 
+> when you find an inconstant port id?
+Currently during phyup, the hw port id may change, and the corresponding 
+hisi_sas_port.id and the port id in itct are not updated synchronously. 
+The problem caused is not a link error, so we don't need deform port, 
+just update the port id when phyup.
 
-
-Thank you for the suggestion!
-Changing the uapi is indeed a high-risk act. Return -EAGAIN is a much 
-better choice.
-The cq is full usually because it is not released in time, try to send 
-msg again is appropriate.
-I will send a new patch later, and look forward to getting more advice. 
 Thanks.
-
+Xingui
 
 
