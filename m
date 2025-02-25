@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-531502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0A7A4414A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8928AA4414C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F55E16AB0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 855AE165417
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C882026989E;
-	Tue, 25 Feb 2025 13:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C76F268FFE;
+	Tue, 25 Feb 2025 13:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="BTtOajFC"
-Received: from out-15.pe-b.jellyfish.systems (out-15.pe-b.jellyfish.systems [198.54.127.81])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cS1Zij+j"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB95C2571D3;
-	Tue, 25 Feb 2025 13:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE43F2571D3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491357; cv=none; b=aa9JkKoVv3zDJKDK1YoHxaXnjQpUg+SR73rBBwclJZAdfMpmIzluEdh5kmXPOuF2c5WrdZ403E6/XdUfAqzI1PWC4hoJSpLapAiWlmww25JAWVhtRE8olXhcnNkAjRQkbsxVNapuolK2Hyd//pWzbhRzcoAPa4z3LloxCvVe4QE=
+	t=1740491418; cv=none; b=SVLkQaRnurGfPY6mZBARacHvhq0ZS5ayIY+FYq6c682Si0harazIhE6G0rft514Rsi7D9byevpaI0zrs5H8pXTCpCPvX0XC1ddXPV8/RfdkX6a+nMrwJkNsGbmUXRjFH6K5ayD7I4r5Rxg8nb4OC37egJpcGuXcjY2soPiUmpdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491357; c=relaxed/simple;
-	bh=7iRM7JhVAanpAM8Erx1B2TRdCjAkY/Jr6hAaZ2qnOms=;
+	s=arc-20240116; t=1740491418; c=relaxed/simple;
+	bh=AnrO1R+eYOIRoqSXgbhD5fZn5x01gW/jo/i+D2bdYGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=of70lZaRhyVX+Xr0QwIWa5jsExuVS/tqwxzUi7RAY4USs/x6PvIstbXDXZtl79ofbtYz96q6AgGw7wHlZViqS/msgv+gc+30zqFE+65EODb8yRGMFfGtvdYHHFKDI8PSUeT1IcQnHiuHfz4W2I+wDW/K1Tm0SefsCGv/7UOyjRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=BTtOajFC; arc=none smtp.client-ip=198.54.127.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
-	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z2JqZ3B7HzDqsH;
-	Tue, 25 Feb 2025 13:49:14 +0000 (UTC)
-Received: from MTA-12.privateemail.com (unknown [10.50.14.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z2JqZ2mlvz3hhVd;
-	Tue, 25 Feb 2025 08:49:14 -0500 (EST)
-Received: from mta-12.privateemail.com (localhost [127.0.0.1])
-	by mta-12.privateemail.com (Postfix) with ESMTP id 4Z2JqZ1TxPz3hhV3;
-	Tue, 25 Feb 2025 08:49:14 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1740491354;
-	bh=7iRM7JhVAanpAM8Erx1B2TRdCjAkY/Jr6hAaZ2qnOms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BTtOajFCPudrrEyWGiRznR1WG4R//XffntLUDhFye1qza3YyCQlvgJCQKHzPkFYNX
-	 pAm87haT/1uqPWENfxbaeCFongTUvai6xU4e6eR818LV9n+yey5FZtLy/vAGZi+uyx
-	 i8ayXALMlQw+TjiNAilRIWK+/YJxeUPERu/szAeK8bCO4WGfr5jvwwzgfW1R2Xjeot
-	 eoa2MDKPiFYB/m9NpWCCNuJqF4Zyi89g8PkfqAawEA2mMgVzGxp4iRqiFjTCH5MyQA
-	 T/nLtuq6mdzfCp7aRDJCVj/1x5wjsO+n3Jjl6jbfsGlTeehfJamW+t3VuLwCZbM4+H
-	 wrr8i1xIwmH3g==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-12.privateemail.com (Postfix) with ESMTPA;
-	Tue, 25 Feb 2025 08:49:06 -0500 (EST)
-Date: Tue, 25 Feb 2025 08:49:07 -0500
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	antoniu.miclaus@analog.com, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
-Message-ID: <Z73KUzqe5VmITJVB@65YTFL3.secure.tethers.com>
-References: <20250224175056.560111-1-sam.winchenbach@framepointer.org>
- <20250224175056.560111-2-sam.winchenbach@framepointer.org>
- <fe1b0dde-f899-4303-bd2a-b19098edcae8@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYdusixpZ76wm3hCGKOiuww+Z742XweOs3yHK4ZZtJiPN9QX6tFHMliM9WMIyidARJGiAwqHg0UUcruykhwftEaFfEAKqiM2/pZtwfuvGxp8Bpn8lgfS63qfu4KVlgdftyWuQqAUx4WATKV9JpCOW0jj8JfVxf0BFGkz/JU6LOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cS1Zij+j; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso54455e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:50:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740491414; x=1741096214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=flQTZ/IAOp+GXiZB2aYc0mgVQNYYPMmryd0DJ0XOL+c=;
+        b=cS1Zij+jgJsa9DAEIzQHwNl/WaXsysiFSL2L+IZ7I2ybPSjeDCYP8HquFcR7FUA47U
+         9MlowhDCfkDuUVUFrTXSyeBZt+z91ilkbCLqOLiAung6UeqVTGKEJFL672hh+vFNTzc/
+         fBKyxWVOui5NIajELWPK0zfm6545XRs0ksnLOMUDwStEa8G7/+27olQii9zF11Md+NKd
+         X41tmnq9Ex9DrY9DQRbjlHWt1wugXLchMFQx9CoIZtQYpJOD90SzrfOzVZt3pn4cFLrx
+         kCzXRRlRQza+4RZO8DL9xIv0hRmNRaQLoRJ9pY4pvCAzstWWL2PRdZoru/X5ysTWwAxx
+         6iEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740491414; x=1741096214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=flQTZ/IAOp+GXiZB2aYc0mgVQNYYPMmryd0DJ0XOL+c=;
+        b=Lmysa0J1mn81fYxb0c2Q8bCsqgrCk9EMrY5HQha1LuP/rHExexrPAO3g+r6zT5FwOU
+         DQ4HviXdhb/eFJvK1mpHQibsAwRGwgBd/3ADabV3coVciyHNlrfKBC3YEEjpeVLTnUrX
+         8oG7NhptbH+UqpMG99KjjgOop3puS5eCHln3RgYyKz6oNlqwSX8EfjCJI2so6JI6sCsa
+         6OYq4RnHR2trhmkVWhWWPDIdLqoWL1gUdPNhBi19x2UmKqe5ox8kQV/lXBtsm0+NGsgD
+         mr97k25lR6BAcN1cO8hDHGuKombboiwLQIZpWNHJc2uuVbdK95GycpNwhsgVeDXVkKxR
+         rHjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmG0cOt5YbSiLn6QFYNpcScr/ci/KGMXd37FA3HyAHf+mZouU41rNVmrpF0uDQiYXkMslelW6NGWyxoXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx309NaBNXM84BnVKQcHeYnh7/7+wwRLlsCMkB6jGjSHEbHZEmO
+	4M/qEhJXh4/pXaVz3inHmBd12ZsGqQ05wZqvduDO2Sb9pH8D8ghdMT/Un2Ec5A==
+X-Gm-Gg: ASbGncsRR0ZVQ/oD/H6HVRZjRx0moBn11/X0SXceh82tYapaOn2L0nBozUn9D5dOJjH
+	jCRx6MHwLdTFjtnkezCQq9Tx0PO0Q5tuaf3RnDZc9LiE0hDo1Wv7FR/CMlLohjIWD291po+bRHW
+	FrQLNMQjw1B09XQQweQn2aVwBEQRyczqlW11w5RJFBf2KAQJOAJ2U/DjRqZ/dIq/PLgZ/J3Iw8K
+	veNzzArcupTksN0m7huP+eDdsqoPpc7jYIsipXiFMHLixJuKrbjGHhzyINl1qqldaVIW7PNQjcZ
+	jCd9vfwPxkN9mSP0b/jhWdNYCl8FR0EhfaCS84n8acHH0bKSBYYvbD+SOLM2Yg==
+X-Google-Smtp-Source: AGHT+IEVNqBoimy0tPc+jYLAvU92qKQ9P0Hox3Z1GFrcZRjdTqreOTBPA7teWDprvJFrjRs+a6mDNw==
+X-Received: by 2002:a05:600c:920:b0:439:6017:6687 with SMTP id 5b1f17b1804b1-43ab10495c5mr1353355e9.7.1740491414136;
+        Tue, 25 Feb 2025 05:50:14 -0800 (PST)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fbcabsm2312660f8f.86.2025.02.25.05.50.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:50:13 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:50:09 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] mm: page_alloc: group fallback functions together
+Message-ID: <Z73KkRTWfu-9CBIm@google.com>
+References: <20250225001023.1494422-1-hannes@cmpxchg.org>
+ <20250225001023.1494422-4-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,63 +88,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe1b0dde-f899-4303-bd2a-b19098edcae8@kernel.org>
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20250225001023.1494422-4-hannes@cmpxchg.org>
 
-On Tue, Feb 25, 2025 at 08:42:04AM +0100, Krzysztof Kozlowski wrote:
-> On 24/02/2025 18:50, Sam Winchenbach wrote:
-> > Adds two properties to add a margin when automatically finding the
-> > corner frequencies.
-> > 
-> > Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
-> 
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC. It might happen, that command when run on an older
-> kernel, gives you outdated entries. Therefore please be sure you base
-> your patches on recent Linux kernel.
-> 
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> 
-> You missed at least devicetree list (maybe more), so this won't be
-> tested by automated tooling. Performing review on untested code might be
-> a waste of time.
-> 
-> Please kindly resend and include all necessary To/Cc entries.
-> </form letter>
 
-Updated the maintainers list per your instruction and resubmitted as v4.
-Thank you for your assistance.
+On Mon, Feb 24, 2025 at 07:08:26PM -0500, Johannes Weiner wrote:
+> The way the fallback rules are spread out makes them hard to
+> follow. Move the functions next to each other at least.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 
-> 
-> > ---
-> >  .../devicetree/bindings/iio/filter/adi,admv8818.yaml | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> > index b77e855bd594..1be6f1fe4bfc 100644
-> > --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> > @@ -44,6 +44,16 @@ properties:
-> >    '#clock-cells':
-> >      const: 0
-> >  
-> > +  adi,lpf-margin-hz:
-> > +    description:
-> > +      Sets minimum low-pass corner frequency to the frequency of rf_in plus this value when in auto mode.
-> 
-> Wrap according to coding style.
+Moving code makes blame more tiresome so I wouldn't personally do
+this, but if others find it helpful it's fine by me.
 
-Updated in the v4 patch.
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
 
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+("Reviewed" means "git tells me there are no new lines nor totally
+deleted lines").
 
