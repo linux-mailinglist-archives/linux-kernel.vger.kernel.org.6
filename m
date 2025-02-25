@@ -1,118 +1,91 @@
-Return-Path: <linux-kernel+bounces-531624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE06CA442E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:36:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9265A442D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FE4189AF52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E40178EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AFA26BD89;
-	Tue, 25 Feb 2025 14:30:07 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C6426B0A5;
+	Tue, 25 Feb 2025 14:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5+51SdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF37268C48;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423F5269D06;
 	Tue, 25 Feb 2025 14:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493807; cv=none; b=aoNpMq4wjO+Cw2t1MyqO1qOln7FoScGCNL8ZBFZqWtDURgtSeoE4HbCtXKJ0gwvpygGrfWaswLXop8hkHkRZKn9NwEW5Ea38Psvk/nkuAKHSK9x0Kq5mVcOTpW2otrSG+nhz75I6hgm6+E2nqifn7y8jhSqeHhPY3FHv4c6jcsE=
+	t=1740493806; cv=none; b=QwCvFSR1p1J5s4rCuNk9ODiqJxPDXvpiDkPM8RuStUE39hy+9XQjAFeinL3H4ECUIJa1uuXMbEcV+ta5Zmz3ep9wGJGum6III0L1ILmeCSpIdV8YQV4Kgzn+fMrhmDGpPtNeGwz700GUHwyQaKlBTPE0iBrLIQ6cULXreZCcSSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493807; c=relaxed/simple;
-	bh=eGc3wu2FWrg3YdBJdGL+LGOwL6146dZ8BpFENFejErA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3I5M+inWscXquOyZ/U3zx+xIz1i2N5p5VexApjz0joxdI+hegm8et4bth9noB2mvqX820fvYlEl7aMak7OoY28kzj0f7o5wl7dFY3W4OsqL94LKYdCuMqAAby2Ok+f9/wjsLU6XY69iu860q8kBsCAscgIFbndenyQi/1/y3d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-221057b6ac4so109299965ad.2;
-        Tue, 25 Feb 2025 06:30:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740493805; x=1741098605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DG3YidYogPh0t3kYDq7/qV85q51q4l91jIf6MGtnfZg=;
-        b=ONM7ypGLZU+yp8x8jvlz9VixMPNhIUleD4vyjxpMIoHsVSAnmbKbSM3HDr4fsiZ0zb
-         kEPxha/IKz3ecXyvcR4+rjF6++kFupUSw7VjPGl3SSiMy8LBIoA7oZ0wydBkxdEqhW1Z
-         D2lN4uTOXbNKmJsv6RUyJHeUNQlmjCfSKGUBosMoSxYsJ91EV0buABIUscsD5OwrnYw1
-         TOwHhkeghOtbGVjUwqBA2mFvHewxWQnaRSOT3oRs+Tw4PckXqhf71Zjs3hNgwOThQyQ/
-         6bn3ZwI9qNEJDDug5daV77qsyxlGz8jILWLFWFwtwQTjGFTUJuLqTErmPlICVfZBQIrM
-         3OhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSyXjRHq67sWXzA7WCllEomtcm8JNUwQMHFu0h8Y8yu68Go8TT0p//qRPW7T3ytUKVGfZ+gMqEbLYuEf0NJKw9qg==@vger.kernel.org, AJvYcCWVdMyfaHcHRoc1HGu8ad+GE3t42GPq/AojJcSJpBD5NqtaaFdWfn+FjN40+iteiia/MF+ZNfKFjBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgeraB3A9AuITjZ43WVE6ae97QATo7XK+cuJMLMPEqE4owf5xT
-	OAIvbt+HeG/Evw7cOgMedLWZZ/Pi/xj/DosDTU3TVwYVt20loksw
-X-Gm-Gg: ASbGncvjtk7R0IHNd//VHmHF34ccEFkLt4Z8Z0rFxJG6cCnXHRZbkEHJmJVNWb4hqzF
-	iVcSbjd4jJYyNgrRBQk3qxeLHnnPw0abv+6d2/UQIMwC/CGezwR5iyQ6yogs1qXrNoPGtGVcJ3H
-	tmOnri4pdfqqiRskgwHGFnH0H8DcF/bv+Fhn+ykr7MzntNFGJISSsuxDi4dtYT26Gxl/O3FVErM
-	gKOUbYzK+TpBLosBJuHuGjylTlIhqSq4LtVGVV2TerWbJTuqup/VwmLx0+0nS9d3xU3k0IUE4W1
-	apQW0HRQjI3nf+s/b8OHvM7OcrBOVuWR+b4UA+HRTy5YRzm5RrVLYuFlYLo7
-X-Google-Smtp-Source: AGHT+IHy6OrD/YH6k+g/XZQG11rxQoJ71aizZlrzOaFRpQvw8/aJiJt0N98sszSOwWUy7SbLW5HkyQ==
-X-Received: by 2002:a05:6a20:a11d:b0:1ee:d384:7553 with SMTP id adf61e73a8af0-1eef5558ec8mr34863278637.30.1740493804970;
-        Tue, 25 Feb 2025 06:30:04 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7347a81eb02sm1607319b3a.131.2025.02.25.06.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 06:30:04 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:30:01 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
- PCIe DW
-Message-ID: <20250225143001.GA1556729@rocinante>
-References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
- <20250221131548.59616-1-shradha.t@samsung.com>
+	s=arc-20240116; t=1740493806; c=relaxed/simple;
+	bh=lYjpObcEnEszvzK+aJGxjwhQQRARi3ET5qF3EhUkLIQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=V2yitnnQMnd2Fv+JvZCof/Zxgh8KzyJ3AHQhlPUGzKowBdP0TRNZlprOLO8pMjHOxUm48QX+RA9pz7JChkbHR+1OdwnLoGu5DcZRCsIFj9gTPeeb10/FV+wVNqkVCJ12QAHjla8B3QB1HfwqBD9RWR8adrhjcUZ84RbP3HIKgmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5+51SdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4244C4CEE8;
+	Tue, 25 Feb 2025 14:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740493805;
+	bh=lYjpObcEnEszvzK+aJGxjwhQQRARi3ET5qF3EhUkLIQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=U5+51SdRk8hGafYwIxqpUFe+KIvMBMPUF5N6l1wHBHNVO2oRK1ZVz4EdvUFJ5H9xB
+	 1QCvX6E5vMYDsIgEnfkjRMpMhJO42jndtzxC2swYJmRW24YSZ223W1EHDCBGONX1uG
+	 sXlhBdz2e8Eimk0uRrBaA6u2tZ4f5hNkjJ3cQj2GRp8YTpwOcQXL/sds3dULh4dfzQ
+	 e8TVHgWhX7JNRz5FYOQPJZEyhIxUxRCJASnxU5axSaFtapFiTYa7zLgDFrVtdLwNaa
+	 Z3ApKyxAixo8ve/KOT0LvnGw7tIkm5kkrqEqExq7gKIdMpdCxe5yWikZrS0PivWXMq
+	 gdZd7nNTty3fg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7120D380CEDC;
+	Tue, 25 Feb 2025 14:30:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221131548.59616-1-shradha.t@samsung.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] sctp: Remove unused payload from sctp_idatahdr
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174049383727.4190834.5787481246783621819.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Feb 2025 14:30:37 +0000
+References: <20250223204505.2499-3-thorsten.blum@linux.dev>
+In-Reply-To: <20250223204505.2499-3-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, marcelo.leitner@gmail.com,
+ lucien.xin@gmail.com, kees@kernel.org, linux-sctp@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+Hello:
 
-> DesignWare controller provides a vendor specific extended capability
-> called RASDES as an IP feature. This extended capability  provides
-> hardware information like:
->  - Debug registers to know the state of the link or controller. 
->  - Error injection mechanisms to inject various PCIe errors including
->    sequence number, CRC
->  - Statistical counters to know how many times a particular event
->    occurred
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Sun, 23 Feb 2025 21:45:07 +0100 you wrote:
+> Remove the unused payload array from the struct sctp_idatahdr.
 > 
-> However, in Linux we do not have any generic or custom support to be
-> able to use this feature in an efficient manner. This is the reason we
-> are proposing this framework. Debug and bring up time of high-speed IPs
-> are highly dependent on costlier hardware analyzers and this solution
-> will in some ways help to reduce the HW analyzer usage.
-> 
-> The debugfs entries can be used to get information about underlying
-> hardware and can be shared with user space. Separate debugfs entries has
-> been created to cater to all the DES hooks provided by the controller.
-> The debugfs entries interacts with the RASDES registers in the required
-> sequence and provides the meaningful data to the user. This eases the
-> effort to understand and use the register information for debugging.
-> 
-> This series creates a generic debugfs framework for DesignWare PCIe
-> controllers where other debug features apart from RASDES can also be
-> added as and when required.
+> Cc: Kees Cook <kees@kernel.org>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  include/linux/sctp.h | 1 -
+>  1 file changed, 1 deletion(-)
 
-Applied to controller/dwc, thank you!
+Here is the summary with links:
+  - [net-next] sctp: Remove unused payload from sctp_idatahdr
+    https://git.kernel.org/netdev/net-next/c/287044abff82
 
-	Krzysztof
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
