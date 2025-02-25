@@ -1,171 +1,145 @@
-Return-Path: <linux-kernel+bounces-532509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EEEA44EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:24:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB26A44EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98337188CE22
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25FC4171CAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7F920F06C;
-	Tue, 25 Feb 2025 21:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A637A20E31E;
+	Tue, 25 Feb 2025 21:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="VZMI05Lf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="LKrvjzfz"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9E81A23BD;
-	Tue, 25 Feb 2025 21:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518651; cv=pass; b=IloHQ9c5uRcJueq/5vMXZ17B2OnjKzwtzEX+2j34MdzEfUH31yEW3Se52xhAiYQhBoEpQO2UNge7a+XSAGDqSa1bOPnPOKUJwHoT5rts7njVnDynMYQgVE7TMrYftTNhF6RT/oXGBhY0yE7rnN7e5Y45cv9Ex2PROY6v5eTwasA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518651; c=relaxed/simple;
-	bh=yifWYicXzI3Racy3WLNPfPX3gSInoMk9MGp4tHcStF0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1720C002
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740518632; cv=none; b=AVA0mCgR4v32i2SeA54oFL2xQWHSgXwMU71B+3Kc1CaDC2+xkQPZDFiErBdNiaMpWQUKBZCGN/aqRTfU4mUnsaspPP15fTib+dcCf8+QosbaUQtGtnZs49Sl0Eai6hakJvyFxcOByR0OF3nf5zBAw3YHjnSuAeSwijpP9TD2js8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740518632; c=relaxed/simple;
+	bh=9e5b+ExLgK2p2+BxW6jT8y+FhU5WN164n9eGn9MzGy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+0uozk4BFIFb31un9OVrSHzWHWrXR592FFFDK6GWH2Goonklq7NXFimrkEvANjsvOs5hBXoGlzaBJraogH+s1h75rvjHhLzXVitT9TdLlU+lwFBo1ePhEy7jblXHnZv/Ve6JfnSCky7/1SeZEUVdupiFHjXB0rgiz4eUw9jflQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=VZMI05Lf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740518576; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VQ2zUjBknzn2fmSl3OndjkBykCq6GH3YuUXD5yu7z5+pqCpQNl+Ruz2gb6ReS+PlvB7W790tIhDa3l/BV+tCifHsB3Dn+li2pohgJn8XbT+Wvbx7HFL7knG09YzGcU8EAF0gTtK+wUfpT13Xa5nPWLjHBLXpKBSHOC0GIJ2XLtY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740518576; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PDVTKSM1rcFjNwRRV/0KaHspAmH3vDFXNZuyf3meR0Y=; 
-	b=KAqxisptIvOtUWOG3/+nOvLQaLBf8bUImwjIguK5eZHbHnM+kgZK9KxTWbfs5dlGJdHYlvssxgGUmaKlbeOzkvdZFn72sEaN9KaSaEwQ3/bwrzYdno7PYDAl2Iw7FZTQvYNOkSS3NgpBZ5P2lgnymWItTMmsE/QLjOwxyqpzte4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740518576;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=PDVTKSM1rcFjNwRRV/0KaHspAmH3vDFXNZuyf3meR0Y=;
-	b=VZMI05LfLyyWPl0+UeCgDE5+u4fdSF4zFhcfpdraUnoy8v/M835dRL/zZFPtJC3j
-	RLfixi+m2Bzvlxl6W0sDDNBAV8Gg0bhbeLS7vUzTjosyt1C3Ub+da+pZI3WKB8ifLP7
-	O9qzAZPA+h8Q6SweL1iTFwYgc7ut3LVgkZYd/SnA=
-Received: by mx.zohomail.com with SMTPS id 17405185698304.8376916548969575;
-	Tue, 25 Feb 2025 13:22:49 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 7E04D18040A; Tue, 25 Feb 2025 22:22:42 +0100 (CET)
-Date: Tue, 25 Feb 2025 22:22:42 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
-	David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
-	Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 7/7] power: supply: core: convert to fwnnode
-Message-ID: <duzge5bpxv4cd7b27pq2daisqtaw6mtt6oxl2u3hcdxcnh5tkw@yasxlx33yxbi>
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-7-d5e4369936bb@collabora.com>
- <a98547f0-f125-45dc-8bb6-a154ad78f672@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/trG3HeV9l1ZgiFrVQg+7RcMmS2lAasLQH8ocYJzqQha+s4my0nb1K0MPg/3vMAcqA5nJRSHwOeH74ians++wrZSjVKwSE9AXUx3wbRav2DFP4YsQ8o+ZXgcxFgFiclC+FlTwBeumJjP0sVK+wHgY0fYy8iy1GkpTWJzPKqfPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=LKrvjzfz; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 37A15240101
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:23:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1740518621; bh=9e5b+ExLgK2p2+BxW6jT8y+FhU5WN164n9eGn9MzGy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=LKrvjzfzBGciSEIXr2NGc7U8HYBxDDSiCpbsW0MqZQdVO0wYrb7uSxgTPedXkfS0R
+	 4324LQ5SiykN35CStB9V8cXAhKXBx5lvbd0mOc3WI5MZlnf+nheamyc8eEueB2g11j
+	 vGM+lAiJbmP+d1qZVGBDQPh+QhuiJ3ShUYX7yGXbtudWps3/56fnc8ql0Vdv8HXIwf
+	 T9ZyHfROnXLa9avZehvxtL+BMFL/LZvWkNL6ANxD0n05NevESL3ziktg5DA+ZF8NTT
+	 IvtFiC3i/6HmdellNX3LOFuyPlPHOHOD3PPUIsIjqJD1LivqrmhdAgG/3/3+XWXg8o
+	 wwdDLye5lUH3A==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4Z2Vvw1c3Wz9rxB;
+	Tue, 25 Feb 2025 22:23:40 +0100 (CET)
+Date: Tue, 25 Feb 2025 21:23:40 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: j.ne@posteo.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH] usb: storage: jumpshot: Use const for constant arrays
+Message-ID: <Z7403OPZUf7WZ5Ai@probook>
+References: <20250225-misc-const-v1-1-121ff3b86437@posteo.net>
+ <a4e81827-b506-491f-8087-204044705c42@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hdfg4ybxxtxchsut"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a98547f0-f125-45dc-8bb6-a154ad78f672@redhat.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.490.19
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a4e81827-b506-491f-8087-204044705c42@rowland.harvard.edu>
+
+On Tue, Feb 25, 2025 at 10:11:02AM -0500, Alan Stern wrote:
+> On Tue, Feb 25, 2025 at 01:25:03PM +0100, J. Neuschäfer via B4 Relay wrote:
+> > From: "J. Neuschäfer" <j.ne@posteo.net>
+> > 
+> > These arrays are not modified. Make them const.
+> 
+> This does not explain _why_ you want to declare these arrays const.
+> 
+> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> > ---
+> > Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> 
+> There should not be two Signed-off-by lines for the same person.  You 
+> should keep only the one with the email address you used for sending the 
+> patch.  And it should have your full name, just like signing a legal 
+> document.
+
+Ah sorry, editing error on my part (I started the patch a while ago and
+since switched to a different email provider).
+
+> 
+> > ---
+> > 
+> > This change was compile-tested with ARCH=powerpc
+> > ---
+> >  drivers/usb/storage/jumpshot.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/usb/storage/jumpshot.c b/drivers/usb/storage/jumpshot.c
+> > index 39ca84d6859122903de4e64b13e697e8b7d4ab31..089c6f8ac85fbb683cca8b03a2ff06c0ca776167 100644
+> > --- a/drivers/usb/storage/jumpshot.c
+> > +++ b/drivers/usb/storage/jumpshot.c
+> > @@ -367,16 +367,16 @@ static int jumpshot_handle_mode_sense(struct us_data *us,
+> >  				      struct scsi_cmnd * srb, 
+> >  				      int sense_6)
+> >  {
+> > -	static unsigned char rw_err_page[12] = {
+> > +	static const unsigned char rw_err_page[12] = {
+> >  		0x1, 0xA, 0x21, 1, 0, 0, 0, 0, 1, 0, 0, 0
+> >  	};
+> > -	static unsigned char cache_page[12] = {
+> > +	static const unsigned char cache_page[12] = {
+> >  		0x8, 0xA, 0x1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+> >  	};
+> > -	static unsigned char rbac_page[12] = {
+> > +	static const unsigned char rbac_page[12] = {
+> >  		0x1B, 0xA, 0, 0x81, 0, 0, 0, 0, 0, 0, 0, 0
+> >  	};
+> > -	static unsigned char timer_page[8] = {
+> > +	static const unsigned char timer_page[8] = {
+> >  		0x1C, 0x6, 0, 0, 0, 0
+> >  	};
+> >  	unsigned char pc, page_code;
+> > @@ -477,7 +477,7 @@ static int jumpshot_transport(struct scsi_cmnd *srb, struct us_data *us)
+> >  	int rc;
+> >  	unsigned long block, blocks;
+> >  	unsigned char *ptr = us->iobuf;
+> > -	static unsigned char inquiry_response[8] = {
+> > +	static const unsigned char inquiry_response[8] = {
+> >  		0x00, 0x80, 0x00, 0x01, 0x1F, 0x00, 0x00, 0x00
+> >  	};
+> 
+> There's nothing wrong with this.  However, several other source files in 
+> this directory also have static arrays that are never written to.  Why 
+> don't you change all of them?
+> 
+> If you do, it will be best to put the changes for each of the files in 
+> its own patch, and then submit them as a series of patches.
+
+That's a good idea, I'll do it.
 
 
---hdfg4ybxxtxchsut
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 7/7] power: supply: core: convert to fwnnode
-MIME-Version: 1.0
-
-Hello Hans,
-
-On Tue, Feb 25, 2025 at 02:16:12PM +0100, Hans de Goede wrote:
-> Hi Sebastian,
->=20
-> Thank you for your work on this.
->
-> A few small remarks inline / below.
->=20
-> On 25-Feb-25 12:21 AM, Sebastian Reichel wrote:
->=20
-> <snip>
->=20
-> > diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> > index a785742f97721e7e70d0e4c17a1ded7b985acb6d..9afde8c04efc72691c81a37=
-3d8dd03477b4efd7e 100644
-> > --- a/include/linux/power_supply.h
-> > +++ b/include/linux/power_supply.h
-> > @@ -805,7 +805,7 @@ static inline struct power_supply *power_supply_get=
-_by_name(const char *name)
-> >  { return NULL; }
-> >  #endif
-> >  #ifdef CONFIG_OF
-> > -extern struct power_supply *power_supply_get_by_phandle(struct device_=
-node *np,
-> > +extern struct power_supply *power_supply_get_by_phandle(struct fwnode_=
-handle *fwnode,
-> >  							const char *property);
->=20
-> this function now no longer is DT/OF/open-firmware specific, so I think i=
-t should be moved
-> outside of the #ifdef CONFIG_OF block now ?  The same goes for the devm v=
-ariant I think
-> and the implementations of course also should no longer be "#ifdef CONFIG=
-_OF".
-
-Good point. I suppose ideally the name should also change to power_supply_g=
-et_by_reference,
-since phandle is a DT/OF term. I will prepare these two changes for v2.
-
-Greetings,
-
--- Sebastian
-
-> >  extern struct power_supply *devm_power_supply_get_by_phandle(
-> >  				    struct device *dev, const char *property);
->=20
-> Regards,
->=20
-> Hans
->=20
->=20
-
---hdfg4ybxxtxchsut
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme+NJcACgkQ2O7X88g7
-+poO0w/+PtjuypiPttq8FXdCRzUhU78WLqWOJidkFzOKBqamTFhS0xbCsok/IUFQ
-AZSGVeoVEmZoASd8PRsXkGrfTDTq7LU3mcJArxufUITgc3y4xqEBJ82761VW16mJ
-g6koal4Wi4eQ/6BPKPXlXk8fcRiMNKmy2dZbTbivI2q7fmFzVTQLmgMTCi9241XP
-XYiyyHC7cI7/iHtXomgitOXCTF6qXBdXuB7nx/yE+qUofYF8akM/cD+ya5ktzGym
-ZKoizoAVDpu9DyHK6uyJuwBBc6wgmyaH91iIrw8xlfYR+OSHy+HRUyM8NTbROpSr
-nrD0I1ORi3uxjJUeoZ5v/bi70gLMXDEDaxQk7FXrqfBRgw43pHGnMIZsACK+b2Zv
-sFEez70kMZFHJM99oDJ9ZgvBZwrKXc6ZWvYXakX1IW7iNWUoEhXBLnXf2Zrni/Zx
-FMq6lr7s9/QnEtet/17dUKvCp9F3V23kvDbrJRV8C0ujkpW9wfo2VEvfPJNH9Ku+
-vdFDUeYNn7RvwHAsHYlmB/GyCUGdYLDsvyHPMbp4l989RUtNC0OF4t9bAVwJFdUt
-3oN7y6BOqfQa4EcP0fv3Ui9ITiak9BweFCVPm8aHqsKkqnIbzx1N9aaLB+TqS3is
-Xgz0BGWOempPbvaca4fuYrmSOsnC/gNIKFi+LMd5QmMhyO1ybi8=
-=g2xY
------END PGP SIGNATURE-----
-
---hdfg4ybxxtxchsut--
+> 
+> Alan Stern
 
