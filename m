@@ -1,198 +1,257 @@
-Return-Path: <linux-kernel+bounces-531793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A935A44501
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:53:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700DDA44504
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E522119C34B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1A619C52EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C131624DD;
-	Tue, 25 Feb 2025 15:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69781632F2;
+	Tue, 25 Feb 2025 15:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf6sFSsN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oTcX3Vfh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3j6myiMX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oTcX3Vfh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3j6myiMX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024882EB02;
-	Tue, 25 Feb 2025 15:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD4E1547E3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498790; cv=none; b=pbGqYyttv/U+kyfOXOCZonS8ebXInC+H2rzxQANJGowPFf3lLAdsl2QWSOss3FN70HLYp8df2FIgq0m9ogzrRQGR31ie6zEXLyi6QwzYEdYyHtB7jCu9seA2mOsmD7/Syt6uUEY9Hx/bP98R6DKjUpg+jVX4E8ffAIzaEb5/ZeI=
+	t=1740498866; cv=none; b=Frxs/HMcBT+EZhpSOAES1Mzs9TeRF+3xFjF7McDXj5wxcu3oFMyInI6U/9pf0r8XIeor61YrBHRR9NnrxF/Jj0wK9HVRUFA2Zm/I48P3bbxjh0Qu1yTjL6uYgrlcjXJqDSqJBAkVIEivX+2D7ZU02QAMgzWPSZC6EBwqt65i3as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498790; c=relaxed/simple;
-	bh=gIt6lFSnlekmgXMOQcKRdaO4+FjTMF8HEhwC8rmhqR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7hpOa+JU45K8dgAWXPI0OamCrdxR8pEsN29N1cwyDLrd16AuVIjYH88iHxYxJCralT+nFkp8jwW9QBxyKlBwkecQAsmWfOXNwAVlbxA7k5E23J7rwcv979Y4QL7yhzLJoJdZcwEhv2jFkGdHKcYse4ypyIrizZ7MP0HWlDCgK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf6sFSsN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA326C4CEDD;
-	Tue, 25 Feb 2025 15:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740498789;
-	bh=gIt6lFSnlekmgXMOQcKRdaO4+FjTMF8HEhwC8rmhqR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bf6sFSsNq4SZka95OAfNC4e+Yp9GEjpkPeY7XdiR7vx5OSBhaaGL2qZyB3NpeKku/
-	 fzQjREt/VR4Cg+lx90wgqbliR7R45SdU0uUOCirjIPZrDPm8tx/tQoAyk6Jk73OkY1
-	 ypWO/MxOiV7/nEs5g70+1mmUoiSmrr4qvXrLuQyZPXucnCLASOAkCAcDm2BmDGXwiW
-	 r1T00+NWXfqpfIJ4tQghLWm0F+Zesrt1dJ0/yVgreDcXeDuoRONF2CB/1uQvtIEzKR
-	 SXBFQApcJk4+SUTd5qTQMPBBCpFvgfitObqqV33ppiIyK5kjXugmTr0MzDq1D2VNPu
-	 mM6JS5NPPfVUw==
-Date: Tue, 25 Feb 2025 16:53:04 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Nouveau <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z73nYKsq14Pf6ucp@cassiopeiae>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7OrKX3zzjrzZdyz@pollux>
- <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
- <Z7xg8uArPlr2gQBU@pollux>
- <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
- <Z73cXGkookq5-NON@cassiopeiae>
- <D81MP8Y5ME66.3SLPVNXERH1HU@nvidia.com>
+	s=arc-20240116; t=1740498866; c=relaxed/simple;
+	bh=siMjE7KE9lqHRtIJmfA4/PmU8WGku/thbzmfXPBq+iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LmhxW1wHUHB//dZnaVPrYPSCp6VrrrtgJYe0fzgd2uoIalPWXXeF20v1KqEPLX9Vc51GdxR9DamBC9mER1ce72W13+gTjGVK9iQ+/OZjT3FbjFlPrbJMXV/DDwGjnVDfqrioYSXm5gtzK0O+FpLeZLRx/bLjGs/r6/nGkoyBNlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oTcX3Vfh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3j6myiMX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oTcX3Vfh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3j6myiMX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A84C1F455;
+	Tue, 25 Feb 2025 15:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740498863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
+	b=oTcX3VfhbE0TjL1fIL40szodu8FLIzpUXngT5EubANsyGFeX0mSWBI1L8is3B4zLnDr/j8
+	w81/Q0f8g32T8T7YSl70HxM8Eqmz6wwAy4yepQNymejEKNlMn5LcOaUCXTV36iafzLqhCy
+	xpBiRx4vRganm1CbTDlL3pOBpGbWsgc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740498863;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
+	b=3j6myiMXbz1GED977Dyje9fnBRxL6kjioXdSfitS8ndiNTRPS/p+1KqDQZlqhMOgY2Nyvc
+	iiqZlI6Oub+WtkAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oTcX3Vfh;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3j6myiMX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740498863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
+	b=oTcX3VfhbE0TjL1fIL40szodu8FLIzpUXngT5EubANsyGFeX0mSWBI1L8is3B4zLnDr/j8
+	w81/Q0f8g32T8T7YSl70HxM8Eqmz6wwAy4yepQNymejEKNlMn5LcOaUCXTV36iafzLqhCy
+	xpBiRx4vRganm1CbTDlL3pOBpGbWsgc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740498863;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
+	b=3j6myiMXbz1GED977Dyje9fnBRxL6kjioXdSfitS8ndiNTRPS/p+1KqDQZlqhMOgY2Nyvc
+	iiqZlI6Oub+WtkAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35AAB13332;
+	Tue, 25 Feb 2025 15:54:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Vp/CDK/nvWcfMwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 25 Feb 2025 15:54:23 +0000
+Message-ID: <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
+Date: Tue, 25 Feb 2025 16:54:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D81MP8Y5ME66.3SLPVNXERH1HU@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
+ mappings
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <fbfae348-909b-48fa-9083-67696b02f15e@suse.cz>
+ <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
+ <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
+ <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
+ <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
+ <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
+ <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
+ <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
+ <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
+ <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5A84C1F455
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:mid];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Wed, Feb 26, 2025 at 12:23:40AM +0900, Alexandre Courbot wrote:
-> On Wed Feb 26, 2025 at 12:06 AM JST, Danilo Krummrich wrote:
-> > On Tue, Feb 25, 2025 at 11:11:07PM +0900, Alexandre Courbot wrote:
-> >> On Mon Feb 24, 2025 at 9:07 PM JST, Danilo Krummrich wrote:
-> >> > CC: Gary
-> >> >
-> >> > On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
-> >> >> This inability to sleep while we are accessing registers seems very
-> >> >> constraining to me, if not dangerous. It is pretty common to have
-> >> >> functions intermingle hardware accesses with other operations that might
-> >> >> sleep, and this constraint means that in such cases the caller would
-> >> >> need to perform guard lifetime management manually:
-> >> >> 
-> >> >>   let bar_guard = bar.try_access()?;
-> >> >>   /* do something non-sleeping with bar_guard */
-> >> >>   drop(bar_guard);
-> >> >> 
-> >> >>   /* do something that might sleep */
-> >> >> 
-> >> >>   let bar_guard = bar.try_access()?;
-> >> >>   /* do something non-sleeping with bar_guard */
-> >> >>   drop(bar_guard);
-> >> >> 
-> >> >>   ...
-> >> >> 
-> >> >> Failure to drop the guard potentially introduces a race condition, which
-> >> >> will receive no compile-time warning and potentialy not even a runtime
-> >> >> one unless lockdep is enabled. This problem does not exist with the
-> >> >> equivalent C code AFAICT, which makes the Rust version actually more
-> >> >> error-prone and dangerous, the opposite of what we are trying to achieve
-> >> >> with Rust. Or am I missing something?
-> >> >
-> >> > Generally you are right, but you have to see it from a different perspective.
-> >> >
-> >> > What you describe is not an issue that comes from the design of the API, but is
-> >> > a limitation of Rust in the kernel. People are aware of the issue and with klint
-> >> > [1] there are solutions for that in the pipeline, see also [2] and [3].
-> >> >
-> >> > [1] https://rust-for-linux.com/klint
-> >> > [2] https://github.com/Rust-for-Linux/klint/blob/trunk/doc/atomic_context.md
-> >> > [3] https://www.memorysafety.org/blog/gary-guo-klint-rust-tools/
-> >> 
-> >> Thanks, I wasn't aware of klint and it looks indeed cool, even if not perfect by
-> >> its own admission. But even if the ignore the safety issue, the other one
-> >> (ergonomics) is still there.
-> >> 
-> >> Basically this way of accessing registers imposes quite a mental burden on its
-> >> users. It requires a very different (and harsher) discipline than when writing
-> >> the same code in C
-> >
-> > We need similar solutions in C too, see drm_dev_enter() / drm_dev_exit() and
-> > drm_dev_unplug().
+On 2/18/25 18:28, Lorenzo Stoakes wrote:
+> On Tue, Feb 18, 2025 at 06:25:35PM +0100, David Hildenbrand wrote:
+>>
+>> > > >
+>> > > > It fails because it tries to 'touch' the memory, but 'touching' guard
+>> > > > region memory causes a segfault. This kind of breaks the idea of
+>> > > > mlock()'ing guard regions.
+>> > > >
+>> > > > I think adding workarounds to make this possible in any way is not really
+>> > > > worth it (and would probably be pretty gross).
+>> > > >
+>> > > > We already document that 'mlock()ing lightweight guard regions will fail'
+>> > > > as per man page so this is all in line with that.
+>> > >
+>> > > Right, and I claim that supporting VM_LOCKONFAULT might likely be as easy as
+>> > > allowing install/remove of guard regions when that flag is set.
+>> >
+>> > We already allow this flag! VM_LOCKED and VM_HUGETLB are the only flags we
+>> > disallow.
+>>
+>>
+>> See mlock2();
+>>
+>> SYSCALL_DEFINE3(mlock2, unsigned long, start, size_t, len, int, flags)
+>> {
+>> 	vm_flags_t vm_flags = VM_LOCKED;
+>>
+>> 	if (flags & ~MLOCK_ONFAULT)
+>> 		return -EINVAL;
+>>
+>> 	if (flags & MLOCK_ONFAULT)
+>> 		vm_flags |= VM_LOCKONFAULT;
+>>
+>> 	return do_mlock(start, len, vm_flags);
+>> }
+>>
+>>
+>> VM_LOCKONFAULT always as VM_LOCKED set as well.
 > 
-> Granted, but the use of these is much more coarsed-grained than what is
-> expected of IO resources, right?
-
-Potentially, yes. But exactly this characteristic has been criticised [1].
-
-[1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
-
+> OK cool, that makes sense.
 > 
-> >
-> >> and the correct granularity to use is unclear to me.
-> >> 
-> >> For instance, if I want to do the equivalent of Nouveau's nvkm_usec() to poll a
-> >> particular register in a busy loop, should I call try_access() once before the
-> >> loop? Or every time before accessing the register?
-> >
-> > I think we should re-acquire the guard in each iteration and drop it before the
-> > delay. I think a simple closure would work very well for this pattern?
-> >
-> >> I'm afraid having to check
-> >> that the resource is still alive before accessing any register is going to
-> >> become tedious very quickly.
-> >> 
-> >> I understand that we want to protect against accessing the IO region of an
-> >> unplugged device ; but still there is no guarantee that the device won't be
-> >> unplugged in the middle of a critical section, however short. Thus the driver
-> >> code should be able to recognize that the device has fallen off the bus when it
-> >> e.g. gets a bunch of 0xff instead of a valid value. So do we really need to
-> >> extra protection that AFAICT isn't used in C?
-> >
-> > As mentioned above, we already do similar things in C.
-> >
-> > Also, think about what's the alternative. If we remove the Devres wrapper of
-> > pci::Bar, we lose the control over the lifetime of the bar mapping and it can
-> > easily out-live the device / driver binding. This makes the API unsound.
+> As with much kernel stuff, I knew this in the past. Then I forgot. Then I knew
+> again, then... :P if only somebody would write it down in a book...
 > 
-> Oh my issue is not with the Devres wrapper, I think it makes sense -
-> it's more the use of RCU to control access to the resource that I find
-> too constraining. And I'm pretty sure there will be more users of the
-> same opinion as more drivers using it get written.
+> Yeah then that makes sense to check explicitly for (VM_LOCKED | VM_LOCKONFAULT)
+> in any MADV_GUARD_INSTALL_LOCKED variant as obviously this would be passively
+> excluded right now.
 
-What do you suggest?
+Sorry for the late reply. So AFAIU from your conversations, guards can't be
+compatible with VM_LOCKED, which means e.g. any attempts of glibc to use
+guards for stacks will soon discover that mlockall() users exist and are
+broken by this, and the attempts will fail? That's a bummer.
 
-> 
-> >
-> > With this drivers would be able to keep resources acquired. What if after a
-> > hotplug the physical address region is re-used and to be mapped by another
-> > driver?
-> 
-> Actually - wouldn't that issue also be addressed by a PCI equivalent to
-> drm_dev_enter() and friends that ensures the device (and thus its
-> devres resources) stay in place?
+As for compatibility with VM_LOCKONFAULT, do we need a new
+MADV_GUARD_INSTALL_LOCKED or can we say MADV_GUARD_INSTALL is new enough
+that it can be just retrofitted (like you retrofit file backed mappings)?
+AFAIU the only risk would be breaking somebody that already relies on a
+failure for VM_LOCKONFAULT, and it's unlikely there's such a somebody now.
 
-I'm not sure I get the idea, but we can *not* have the device resources stay in
-place once the device is unbound (e.g. keep the resource region acquired by the
-driver).
 
-Consequently, we have to have a way to revoke access to the corresponding
-pci::Bar.
-
-> 
-> Using Rust, I can imagine (but not picture precisely yet) some method of
-> the device that returns a reference to an inner structure containing its
-> resources, available with immediate access. Since it would be
-> coarser-grained, it could rely on something less constraining than RCU
-> without a noticeable performance penalty.
-
-We had similar attempts when we designed this API, i.e. a common Revocable in
-the driver private data of a device. But it had some chicken-egg issues on
-initialization in probe(). Besides that, it wouldn't get you rid of the
-Revocable, since the corresponding resource are only valid while the driver is
-bound to a device, not for the entire lifetime of the device.
 
