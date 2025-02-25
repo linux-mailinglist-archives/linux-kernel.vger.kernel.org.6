@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-531065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E43A43BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:34:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FEAA43BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0C7440563
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:28:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F8C188597C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D092A267391;
-	Tue, 25 Feb 2025 10:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SfHiDG8l";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Jm6bf+RG"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F826389C;
+	Tue, 25 Feb 2025 10:35:57 +0000 (UTC)
+Received: from smtp.dudau.co.uk (dliviu.plus.com [80.229.23.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D89265CAB;
-	Tue, 25 Feb 2025 10:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D023260A3D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.229.23.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479282; cv=none; b=aii6FXE8o5g6p9PqfiDQadg6bCdmf+5oQdN67mHe5HEqUSvT4kRQlT8tucYL5zu7Im3xbS12LzqgimtvmbnXNGnpcblQZnTvImBBcVJbSlvIJ8y6aGufmyM8cHB/6mrdf68lCCaMvYFeGLS9OzCVeEEIw6t17ebcAWh6/ycWHz0=
+	t=1740479757; cv=none; b=H+QPWhQRmc3BXl6UGdhIneLg69BrfufBND3v8MY5f8fxcxamJtIZf4kZQAwIfZ+7VZhQCBArLgL1YTZ2GyErs++kUY9AxPLOqQkvxiijJNHKUFdPhzjL4b0u4CdTZtp+sT+WawoK6uJ4R6CNVkiSWCDz6yppjxawFWheuALpgTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479282; c=relaxed/simple;
-	bh=wYTkk5joZcekNVfsj7HpZZCqNDj2THYxlEr2GQK5qXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OdpFa7I+NZl0uHAZO5ywPQX7JLmdUWR0q3pc71XFGinCiR3hhpVkVFoIUJRIM/odNIMjXRmFFllzaqCfBP4ev9AUZ01cgROxYYsn+ETyPYYNNj1eX697FiroYBBro2rhnMbuCYuPD09kwIR75Z8CbTsXYXJk0j5dmxe6WW5TBXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SfHiDG8l; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Jm6bf+RG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1740479280; x=1772015280;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7WPlvrF7bTDr6Uv4dt2INKqCTAaWqXTlyvruekoPxeI=;
-  b=SfHiDG8l5v4fNxZsznIUkXAY7GCFjfPc9R7o3pohEBwj5JiquZzPODnP
-   IgBWUSkb/H+qwc0cv7geixeWRkJ9svbVYawSC9vVlfouXlLDMm5LKHyF4
-   dJw2hiExLgoIMrcEeCinAptQRMrHrf6kypWHIH9q+3wFobNHlmttPgfl+
-   ZXtU3TBXIdhdQGkaUcRNNH4ORGV/0lmHAWw6tSEYoqwKMolOFwIo36aaV
-   pwrTGsg08vylCTIVLQt9Qi+6maQjDfXlaLqWOlYjWskv8z5RScpFrq0/Y
-   rnmrOKCIyggwMLnhi7VqGQxMzM0Xr3QvqB5yU1ANswElVKWc2CqrFOEHL
-   Q==;
-X-CSE-ConnectionGUID: /UBrKjp4R1GZK4S6Y90w9w==
-X-CSE-MsgGUID: z0wGLHc1SY2iC7hblTXfkQ==
-X-IronPort-AV: E=Sophos;i="6.13,314,1732575600"; 
-   d="scan'208";a="42067837"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Feb 2025 11:27:58 +0100
-X-CheckPoint: {67BD9B2E-3D-28232521-C0C2250B}
-X-MAIL-CPID: 4232913E294A967EECF1F9D2E5748447_4
-X-Control-Analysis: str=0001.0A00211E.67BD9B2E.0027,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C57B61686C1;
-	Tue, 25 Feb 2025 11:27:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1740479274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7WPlvrF7bTDr6Uv4dt2INKqCTAaWqXTlyvruekoPxeI=;
-	b=Jm6bf+RGwm8llVKo1gknWYQP2i23wSfG1Pk5HFTeRlMw4zzEN7WKb8Sd20LeDWfcziafjc
-	18XZvRlsnLVvl8xtWp0M3XTxCONAC3/nge78ja/5GX/GQzCd/xeAxYm6/YShi5BZ5TCiYl
-	jkX6ZFkmrp7PJIwI7DCSBSN67dDeKRVQjxsV/ELJhbzeAcSszcuFtQZX569LWSG7656udf
-	AiyxJNW/loaqf9yKXmgh92ED8eaBqoI91xLtIHuuO2nVbCc33ZJDa3mNTZC1vePYVEc/+Z
-	ehH9Tp4AlPFrmq92QFHTJ0xDNevhYO+LQnCYHEUOwgqwz3Td4Setqol18ekUEg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Frank Li <Frank.li@nxp.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com
-Subject: [PATCH 3/3] arm64: dts: mba8xx: Remove invalid propert
-Date: Tue, 25 Feb 2025 11:27:23 +0100
-Message-ID: <20250225102726.654070-4-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250225102726.654070-1-alexander.stein@ew.tq-group.com>
-References: <20250225102726.654070-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1740479757; c=relaxed/simple;
+	bh=EJrFkML/scjKF+Lmlj/zEDEUjKP7+ZvAcedIE8vKUQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqmcfpWpdtZ8np/3XhMGGzXUhtfpvhI2Hfb9E0eEEq5Wr9doz9CfZMx7LMMzp7c3uNqL/aeSZbAOmxWkotKMWekYG9AQ8ejafle3o5VNr/3CLRYABE4w6/l5i9MUA1ztqL5NABoSgbO18kMsIrZMyirtFORVLeg99x+3ohyjdMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dudau.co.uk; spf=pass smtp.mailfrom=dudau.co.uk; arc=none smtp.client-ip=80.229.23.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dudau.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dudau.co.uk
+Received: from mail.dudau.co.uk (bart.dudau.co.uk [192.168.14.2])
+	by smtp.dudau.co.uk (Postfix) with SMTP id 89AEF41E2245;
+	Tue, 25 Feb 2025 10:28:02 +0000 (GMT)
+Received: by mail.dudau.co.uk (sSMTP sendmail emulation); Tue, 25 Feb 2025 10:28:02 +0000
+Date: Tue, 25 Feb 2025 10:28:02 +0000
+From: Liviu Dudau <liviu@dudau.co.uk>
+To: oushixiong1025@163.com
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH] drm/arm/komeda: Add a condition check before removing
+ sysfs attribute
+Message-ID: <Z72bMsXmoQv1UVv0@bart.dudau.co.uk>
+References: <20250220085358.232883-1-oushixiong1025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250220085358.232883-1-oushixiong1025@163.com>
 
-disable-gpio is an (old) downstream kernel property, which slipped into
-DT. Remove it.
+Hello,
 
-Fixes: c01a26b8897a ("arm64: dts: mba8xx: Add PCIe support")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/mba8xx.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+Replying from my personal email as the corporate system seems to have blackholed your emails
+while I was on holiday.
 
-diff --git a/arch/arm64/boot/dts/freescale/mba8xx.dtsi b/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-index 117f657283191..c4b5663949ade 100644
---- a/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-@@ -328,7 +328,6 @@ &pcieb {
- 	pinctrl-0 = <&pinctrl_pcieb>;
- 	pinctrl-names = "default";
- 	reset-gpios = <&lsio_gpio4 0 GPIO_ACTIVE_LOW>;
--	disable-gpio = <&expander 7 GPIO_ACTIVE_LOW>;
- 	vpcie-supply = <&reg_pcie_1v5>;
- 	status = "okay";
- };
+Can you tell me more why you think that if sysfs_create_group() fails we should not call
+sysfs_remove_group()? After all, we don't know how far sysfs_create_group() has progressed before
+it encountered an error, so we still need to do some cleanup.
+
+Best regards,
+Liviu
+
+On Thu, Feb 20, 2025 at 04:53:58PM +0800, oushixiong1025@163.com wrote:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+> 
+> [WHY] If the call to sysfs_create_group() fails, there is
+>       no need to call function sysfs_remove_group().
+> 
+> [HOW] Add a condition check before removing sysfs attribute.
+> 
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 7 ++++++-
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 2 ++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> index 5ba62e637a61..7d646f978640 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> @@ -259,6 +259,8 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
+>  		goto err_cleanup;
+>  	}
+>  
+> +	mdev->sysfs_attr_enabled = true;
+> +
+>  	mdev->err_verbosity = KOMEDA_DEV_PRINT_ERR_EVENTS;
+>  
+>  	komeda_debugfs_init(mdev);
+> @@ -278,7 +280,10 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
+>  	const struct komeda_dev_funcs *funcs = mdev->funcs;
+>  	int i;
+>  
+> -	sysfs_remove_group(&dev->kobj, &komeda_sysfs_attr_group);
+> +	if (mdev->sysfs_attr_enabled) {
+> +		sysfs_remove_group(&dev->kobj, &komeda_sysfs_attr_group);
+> +		mdev->sysfs_attr_enabled = false;
+> +	}
+>  
+>  	debugfs_remove_recursive(mdev->debugfs_root);
+>  
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> index 5b536f0cb548..af087540325c 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> @@ -216,6 +216,8 @@ struct komeda_dev {
+>  #define KOMEDA_DEV_PRINT_DUMP_STATE_ON_EVENT BIT(8)
+>  	/* Disable rate limiting of event prints (normally one per commit) */
+>  #define KOMEDA_DEV_PRINT_DISABLE_RATELIMIT BIT(12)
+> +
+> +	bool sysfs_attr_enabled;
+>  };
+>  
+>  static inline bool
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.43.0
-
+Everyone who uses computers frequently has had, from time to time,
+a mad desire to attack the precocious abacus with an axe.
+       	   	      	     	  -- John D. Clark, Ignition!
 
