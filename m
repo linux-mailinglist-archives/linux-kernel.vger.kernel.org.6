@@ -1,99 +1,191 @@
-Return-Path: <linux-kernel+bounces-532533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75728A44EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:35:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2F0A44EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923893AA10C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB1F1899887
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D4120E31F;
-	Tue, 25 Feb 2025 21:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC38212B3B;
+	Tue, 25 Feb 2025 21:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4QWIyo+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="NXNBRF3c"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21954199396
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E718DB1B
 	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740519343; cv=none; b=Wg7/qd1bc0A+eMNPiCmjXsTLRZZfrd9bnDLB5V9YNF8jt3dveLe+EP7TpcuEjXO67xzKKF4PW2nqPpFZI/mIoWMD4ZxgweDLFfEMghwXUcfchSExJ7wrZ6tuWZccykWWK1edN6QBzdScu/hYKPgIN1vbj2vunddhwkPsuFGM4ng=
+	t=1740519345; cv=none; b=WwgnQ7OF7bYmE/9yRgahhwSbaDj4WCB7T1c62pcl3LfBi8k9d49rJHFbqflQ6dKTtIN2/S1eT6Z/QM2b2i0p9VwFe9FqLepidTW4NpPKfokcizjeRMsp12y7Zc87N+A6oMgmWlP9RPoCS+8TWpxS5mrTyFZWzW5VL8Od9h8MQWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740519343; c=relaxed/simple;
-	bh=XJj6XvkQZvZnU7KV6XAood8YWkTdHu5c0H1A7ovBxzA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jsceNa1LKWJ9KiSlk3L//sIDCbtLnZVlQhZDx1TaOARsTU36Rz51OUpXhh/eye1EwXZmfsLAd55zsAJcssl7fCctaHTHPSVMl5K7ZsWiNPPyAGef/B9G7aUpKH3O4UGC/4xdWXdF3jZVL0CWPcHaOQWxhOEluRmgV5UFzjLXd7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4QWIyo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33E7C4CEDD;
-	Tue, 25 Feb 2025 21:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740519342;
-	bh=XJj6XvkQZvZnU7KV6XAood8YWkTdHu5c0H1A7ovBxzA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=W4QWIyo+ORQaPhjAKpxtAyBeafgO/6U/xTq6EytlUr0Uz8heSzfshCaIyL7vU+tJR
-	 WQtV1sSGREk12FhQJOIxuU4gW2pzest2Qzjgd74VM7dUbAbHL/oCN7GrzVq8RN3MXW
-	 pPfKHUdTym7mzGyeRVIoChmJ3uu+xmW7o24EaPzgIDie2n9GHzouLYoQAAkBIPHJuL
-	 rS9FL4fB6jgthJtfTSPJDs7Hx/fJcHfj1YSFtOBxoPy9cri7yCNJk1aBhBK2whcPqq
-	 kN6q2tVKUXUDtvAbBEiwnG1hEp6wL8wrjo+OZZe9F+9mJ7onV46DrisiMzc0rKOvVE
-	 DjsTZXG/0KZ8g==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: fixmap: make __end_of_early_ioremap_region an enum value
-Date: Tue, 25 Feb 2025 22:35:34 +0100
-Message-Id: <20250225213539.3236070-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740519345; c=relaxed/simple;
+	bh=FUaTnXw8Eh9mm3P9QBYvD2GKvGuQyztGJ7YcatN8jbg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=S+MAcPZy1eYZ+/H/jf9ANK4rebACOZsZjMMzOm9PCMFYnbQy0r/kxBGzQtkmdShuEz5ojkY6JjY8fAiYNoi6z5ZBy4BIYhzUKFVrczgLLOInP9rOyh46Y4azRrM8DlN2BvfKGehbv/arUfbKhFSS3qfvGbXGPhNdFk0rgQFvRbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=NXNBRF3c; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1740519340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SQB6S+lh0hzINQjumNTIEedaSDDvME+crToOT8AlV2s=;
+	b=NXNBRF3ciaiAgahfJskC2owN0RJ208InN9vyPrDN/99bHUMcg+F7Y18W+SSC8c3ymk8Wzq
+	HQNxApnYwinlC0ByDlAdjSx3nNHDnA28eDZYHGT1/uQa3grlk58C6luKBAoob7rJdYhTGg
+	PK3/5HuMSXHYKOHzCAmXv352eDFBAO1OLxTI7gXxYvMugMVJ5l8d6JxZUUxm6mVc/6ESrj
+	g08Rrf/rBBOEAc7+izEwLGOuu3rsnOE6ZcSlM917qbwnWC+lX/IJkNxiTGivyTJyEKkVhc
+	TTFhy6JXj/O9GYj/hWUh/lU/fHzwYVMKqn1dwz+Gc+I/zbaXCgBoL0EG3pgh8w==
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Date: Tue, 25 Feb 2025 16:35:36 -0500
+Subject: [PATCH v2] drm: add modifiers for Apple GPU layouts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io>
+X-B4-Tracking: v=1; b=H4sIAKc3vmcC/42NQQ6CMBBFr0Jm7ZhOAUNceQ/CotApTIKUtARUw
+ t2tnMDle8l/f4fIQTjCPdsh8CpR/JRAXzLoBjP1jGITg1a6VJoqNPM8Mi6bWDuyxae34oRDRGe
+ ZzM0VuVIdpPkc2MnrTNdN4kHi4sP7fFrpZ/+IroSEVVlSa9oi1+QewUeePhtLfxUPzXEcXzcg6
+ 3XEAAAA
+X-Change-ID: 20250218-apple-twiddled-modifiers-fde1a6f4300c
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3985; i=alyssa@rosenzweig.io;
+ h=from:subject:message-id; bh=FUaTnXw8Eh9mm3P9QBYvD2GKvGuQyztGJ7YcatN8jbg=;
+ b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnvjerxYTOPrAVSscpy1D7BqUFO3V2fZ1m7eL8g
+ kPjZrBe/CGJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ743qwAKCRD+/lBaCvVY
+ DTF5D/4osviRwizOiiPhiA2bg5pZ10GBDMFUCxokWl6xikeoD6uJT6LZYDm4Dou3M7xVdQ6iFl9
+ HAY2H6r/CzPV0tkQ6nRAta/z6wu0YcUBV4RGYYOthIiWmfp7V8KZK9aCubUEW7lMEiWuntBeNo0
+ kJNii0XMKO8J6DyDWw88IFtVUki3hPqv6WhQ0G/RLEbESNYRsk/oI4Z9W1r0kkDvg4aIOaPZUwF
+ stbz+hVEZ+5IaY6JrUjciuLq2zMYGzrQjDf2ItZSRuKW1HCV7nSEs2VbiXE95fNE0C54NNZAV6Q
+ zAWtIC1cuuFKpEJ3hGZpKU7fWeLSBBQ8wsZLCkFmQneT1wRC07dJChYSnEnR8WYMCUk3CUik/Z3
+ HvBvIbnTXnKi3yaOLrlf55StzhdZbn3yzFOHj3+a5eTxrsogxiZUW8/oNJOfcIS2UShhR498WVY
+ O8jhao7CE5A7+np03TZK+xMSqMDGE3CppY7OG7GVHp0PKsGn9nFCfo84aM84wXVNC26SNSlc1t4
+ kpzRqS/lCoxKq+F6U7gwlKyCNrvyFBNa+K49T/YKuHOwzOLN6iHZWApBkN+8YAEpIHoQgHHhAMM
+ cwKd5n0RMX/KgR1UV5A6P/gbWU7JBqgYd95Q2KofilFSl84HNJWV88rJc2xdDAE9cWEiTD04GIJ
+ 7MmoebZFT0srwcA==
+X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
+ fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
+X-Migadu-Flow: FLOW_OUT
 
-From: Arnd Bergmann <arnd@arndb.de>
+Apple GPUs support various non-linear image layouts. Add modifiers for
+these layouts. Mesa requires these modifiers to share non-linear buffers
+across processes, but no other userspace or kernel support is
+required/expected.
 
-Building with W=1 shows warnings for the __end_of_fixed_addresses
-definition:
+These layouts are notably not used for interchange across hardware
+blocks (e.g. with the display controller). There are other layouts for
+that but we don't support them either in userspace or kernelspace yet
+(even downstream), so we don't add modifiers here.
 
-    In file included from mm/early_ioremap.c:18:
-    arch/arm/include/asm/fixmap.h:39:35: error: '__end_of_fixed_addresses' defined but not used [-Werror=unused-const-variable=]
-
-Move the calculation slightly up in the file into the enum that
-contains __end_of_fixmap_region and __end_of_early_ioremap_region.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 ---
- arch/arm/include/asm/fixmap.h | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Changes in v2:
+- Rename "Twiddled" to "GPU-tiled" to match what I now believe is the canonical name.
+- Add modifiers for the actual "Twiddled" layouts.
+- Clarify that the body of compressed images are laid out like their
+  uncompressed counterparts.
+- Link to v1: https://lore.kernel.org/r/20250218-apple-twiddled-modifiers-v1-1-8551bab4321f@rosenzweig.io
+---
+ include/uapi/drm/drm_fourcc.h | 58 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/arch/arm/include/asm/fixmap.h b/arch/arm/include/asm/fixmap.h
-index 707068f852c2..90e0bd79b180 100644
---- a/arch/arm/include/asm/fixmap.h
-+++ b/arch/arm/include/asm/fixmap.h
-@@ -33,12 +33,11 @@ enum fixed_addresses {
+diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+index e41a3cec6a9ed18760f3b0c88ba437c9aba3dd4f..8668c0275677bbc0a82a1028f122bacfb44a867b 100644
+--- a/include/uapi/drm/drm_fourcc.h
++++ b/include/uapi/drm/drm_fourcc.h
+@@ -422,6 +422,7 @@ extern "C" {
+ #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+ #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
+ #define DRM_FORMAT_MOD_VENDOR_MTK     0x0b
++#define DRM_FORMAT_MOD_VENDOR_APPLE   0x0c
  
- 	FIX_BTMAP_END = __end_of_permanent_fixed_addresses,
- 	FIX_BTMAP_BEGIN = FIX_BTMAP_END + TOTAL_FIX_BTMAPS - 1,
--	__end_of_early_ioremap_region
--};
-+	__end_of_early_ioremap_region,
+ /* add more to the end as needed */
  
--static const enum fixed_addresses __end_of_fixed_addresses =
--	__end_of_fixmap_region > __end_of_early_ioremap_region ?
--	__end_of_fixmap_region : __end_of_early_ioremap_region;
-+	__end_of_fixed_addresses = __end_of_fixmap_region > __end_of_early_ioremap_region ?
-+				   __end_of_fixmap_region : __end_of_early_ioremap_region,
-+};
+@@ -1494,6 +1495,63 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+ /* alias for the most common tiling format */
+ #define DRM_FORMAT_MOD_MTK_16L_32S_TILE  DRM_FORMAT_MOD_MTK(MTK_FMT_MOD_TILE_16L32S)
  
- #define FIXMAP_PAGE_COMMON	(L_PTE_YOUNG | L_PTE_PRESENT | L_PTE_XN | L_PTE_DIRTY)
- 
++/*
++ * Apple GPU-tiled layout.
++ *
++ * GPU-tiled images are divided into tiles. Tiles are always 16KiB, with
++ * dimensions depending on the base-format. Within a tile, pixels are fully
++ * interleaved (Morton order). Tiles themselves are raster-order.
++ *
++ * Images must be 16-byte aligned.
++ *
++ * For more information see
++ * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
++ *
++ * When lossless compression is impossible, this is the preferred layout.
++ */
++#define DRM_FORMAT_MOD_APPLE_GPU_TILED fourcc_mod_code(APPLE, 1)
++
++/*
++ * Apple compressed GPU-tiled layout.
++ *
++ * Compressed GPU-tiled images contain a body laid out like
++ * DRM_FORMAT_MOD_APPLE_GPU_TILED followed by a metadata section.
++ *
++ * The metadata section contains 8 bytes for each 16x16 compression subtile. The
++ * metadata section pads the image to power-of-two dimensions, and compression
++ * subtiles are interleaved (Morton order). By convention, the metadata
++ * immediately follows the body, after padding the body to 128-bytes.
++ *
++ * Images must be 16-byte aligned.
++ *
++ * This is the preferred layout.
++ */
++#define DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED fourcc_mod_code(APPLE, 2)
++
++/*
++ * Apple twiddled layout.
++ *
++ * Twiddled images are padded to power-of-two dimensions, with pixels fully
++ * interleaved (Morton order).
++ *
++ * Images must be 16-byte aligned.
++ *
++ * GPU-tiling is preferred to twiddling. Twiddled images are mainly useful for
++ * sparse images, due to a limitation of the PBE unit.
++ */
++#define DRM_FORMAT_MOD_APPLE_TWIDDLED fourcc_mod_code(APPLE, 3)
++
++/*
++ * Apple compressed twiddled layout.
++ *
++ * Compressed twiddled images contain a body laid out like
++ * DRM_FORMAT_MOD_APPLE_TWIDDLED layout followed by metadata laid out like
++ * DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED metadata.
++ *
++ * Images must be 16-byte aligned.
++ */
++#define DRM_FORMAT_MOD_APPLE_TWIDDLED_COMPRESSED fourcc_mod_code(APPLE, 4)
++
+ /*
+  * AMD modifiers
+  *
+
+---
+base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
+change-id: 20250218-apple-twiddled-modifiers-fde1a6f4300c
+
+Best regards,
 -- 
-2.39.5
+Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
 
