@@ -1,141 +1,154 @@
-Return-Path: <linux-kernel+bounces-530347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15123A43255
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:16:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9565EA43257
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:16:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054C1172EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC78172ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838331799F;
-	Tue, 25 Feb 2025 01:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9974E18EA2;
+	Tue, 25 Feb 2025 01:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="bmP9gxre"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRksLa+W"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D730D3B784;
-	Tue, 25 Feb 2025 01:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BF04A1E;
+	Tue, 25 Feb 2025 01:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740446154; cv=none; b=Tg8SJ41cIrLsHs8MG6CYdYryx2JKky61uXLyTqiHJw1TR9RYDKJBWkQ33xD6WvTKdanxHOoOYqMutwfEKCMQjbaf/LRPs4b9w3kQ7uXxNFkX+brvWdqcsIsV1TzvRiHmNwXNCQWuOFcNTSgSRmHMkaIVm/QAYt+AZsv7vT0pn2k=
+	t=1740446164; cv=none; b=fdg0JgPx268OMmQVAO2JI1doiewUWssrux7zGd5K3InNJLagRV7S3ua8HgMQ8wYqUFNs1RAmdRsgqTALV1O4Mc5n56alAd5wCv0ZhZN88DsoG6FfkD/3Ig0kobkaOAjYOW3qcZyr/f878JIpYcD5bngwJoNSIEe9cZf4XNuzAYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740446154; c=relaxed/simple;
-	bh=MLUP5QnfwhL66AGTxMiJuNoHhQAhowFVljK/zCFRaf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r0LW+s3X/uWVPM+/4w4N6jjSghbf6bHpwy2dkHwnuTOZL+c9QXk3UKFEDL/iUeM7Dz/+EazwQGuLXyiFruIVnAyI8oJ5+n4SUc8wFIZUJGAtIrpHqqeVTBUK+CLuTfnVzq/eE+1T4O4Ebx2erJaRViw3h78fP3TL4MWNuOjrnzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=bmP9gxre; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=i9jjhpnAnfgtITEEW23ofcSSqaOu8vyXG7tfz1anqHc=; b=bmP9gxreW+vyWEpf
-	dlFvIhy7l9EXUM3V0Uctj2i9fH/o0jAJQrhFn4rNvbufLlrmPH07SEbT5Ks7FgeEo+GvnMBLj9CK1
-	uc2KhJHhzk4RV0dheiGDD6TAeigNGQqMwSR8fk8yN5fjGlL/G5SySXPSlOj+bijEkPFiM4n72bJ3t
-	mmtLrxxvtk4AAO8r4x4bP4oh8HuN28KTl/h/XXNcXss7Qgx/5qPpTLQBoizh/6rDLkOMFwnsC6ONg
-	acONsojYz0YrQPNi4Ee2qk5B5LRz4GDLCO/OAH0CUZl0096nDOSoPUwrOG2Xw4E+B0DqWM9+xHKuQ
-	vE8lxnerFZpTGsdMdA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tmjY0-000Yja-1P;
-	Tue, 25 Feb 2025 01:15:44 +0000
-From: linux@treblig.org
-To: mchehab@kernel.org,
-	linux-media@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: platform: ti: Remove unused omap3isp_print_status
-Date: Tue, 25 Feb 2025 01:15:43 +0000
-Message-ID: <20250225011543.94370-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740446164; c=relaxed/simple;
+	bh=t1gnET2A70hG6HJyhk/vsVyvwX980CN9jnI6Y+3zPbI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BQ+N6q2aTLp7RY05sSYCeU3JUpyzuFgbPuic+HF19MprQ+drYCy+ou/0txdZCwCQ+F5CrPx9mzxTfLGxWg6GqbEu5WQ/40ww0IdEKR+e9O9Ah72ZK70C7dOUKsO5hnD0rf1zG1Np+64oh4aEBbhWPBbc+sfyvsvr8VvrXMcQlb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRksLa+W; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fbfa8c73a6so10071866a91.2;
+        Mon, 24 Feb 2025 17:16:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740446161; x=1741050961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zsk/eTDm0zjPW47QD1ZOKd0EGJEhmrE9B/Doyx3diaA=;
+        b=kRksLa+WsaZ+AO/l42+ZTqrR2fGiok1kG8GqOWHvw4nYjBF93OeJ7XoeJyMvUKG4RL
+         XfzNNuydu2QT54i1t6e52+VU6PJGIuBoOH8eUmaWG/G0tZ+3RgD0BnDGfNPNhh803/X+
+         KpXTCcE5JSYfDnUvGRvmYiX78pp4qG8XIq7rd3+NFXp1XkjBz6nYW0HmazCp8oyd0Cl+
+         IDftu+gTlBTIFcGbPze6El7oSElBTOSvmLV+OnDioYb1KWDA4j3GBfUc9ItTy2JhviuZ
+         F/J5IzQn+m3Cpjehsu4jASIoplhU/CBAf8f0uQxYz3ibo1puReauT6fWXXZ2QAj5HxCz
+         8Z6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740446161; x=1741050961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zsk/eTDm0zjPW47QD1ZOKd0EGJEhmrE9B/Doyx3diaA=;
+        b=odup/h2+LJXDAnuPrWptBEKHr2iv3VwFUttpn6YjfPyuYpORtPFVCz72rZ47pQWggt
+         f2pXSGuH3PjsyV3SyZwI/nRd4yUsQANiuqm8D806FW+QLcQGWg2gQVhHUq3zIWtKr0NK
+         UFihGD+eDBtRqHPgrjGT7LL9gRCTBSUsCX4tumSyJbJPjJcshJA4jyOHXc9p4OWm6VQo
+         51up4nfQO2WPbPgf/I62Z9VSnJOrGPPu8TNdRZOSYlLtojV5EpjMXVY91ahczqd/QuAp
+         2unjX1HsALoV7AyN6x9obBoSEuVW1YG8/YFmpcxSlXIoa+fEev3UH6Hs3MJOB5BiImxG
+         YPZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPiQXsR74SC7J1rrO+Yu8OArVDx3BhezO+ZqHr6aiDrAS+ECm7MAyNrMTjAetYCy3j9Hk=@vger.kernel.org, AJvYcCXyYNnX3Lx+FNi1hIeH0xfT8KaYB1VZ87PbyjfgoBtb747jQ1gRtM+khddfl/rKfnmPAU1Bffozt4GUhMDa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjkpJ+m+vwNEyPAQB63dHBW5bhKHyGBQoz34lVp5vtZIsv1WMT
+	2nUtWjBs5v4Mr8k594KPAx4HSWF/vgT2LHJoTfvrJrMN6j/l4yXTMzUmX/llmR4/jayr5Ah4BZz
+	zsTh2W+oTxb4Ns3OFkVi8FohQcYc=
+X-Gm-Gg: ASbGncvBmwbxZaNgvSQ9mDEbe2tOlWu4I3tlEU+M433gYYlCdW+D3zbDjma47abimKM
+	IruI1Ob/GXFvLm4tltIBZuc47V3k6eoPcJL1erZEFq0ntJEGkzDDmG1bmx7OA47FV1KzQ3sFMHj
+	qybLfmihXze/XIREWy82jyk80=
+X-Google-Smtp-Source: AGHT+IGkvEX45NcU/iLlBhLRsn0JRY38pe0rcs5WES3Ja/anotIZiWbYyndug96gHNjRvK+oO6RIAtD7n5lqt5rQw5A=
+X-Received: by 2002:a17:90b:5148:b0:2fa:17dd:6afa with SMTP id
+ 98e67ed59e1d1-2fce86cdeddmr29021934a91.17.1740446161357; Mon, 24 Feb 2025
+ 17:16:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250224165912.599068-1-chen.dylane@linux.dev> <20250224165912.599068-4-chen.dylane@linux.dev>
+In-Reply-To: <20250224165912.599068-4-chen.dylane@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 24 Feb 2025 17:15:49 -0800
+X-Gm-Features: AQ5f1JqnJhx4LSlsXgXIiqxNaQklUHwpi_k1rD2vZFpCXjLYWGm44svhHrFDo3U
+Message-ID: <CAEf4BzYr9WzYbmyq8=nVETDqYvmYmObhD6x+_TQYpSUWxxGLLg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v8 3/5] libbpf: Add libbpf_probe_bpf_kfunc API
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
+	haoluo@google.com, jolsa@kernel.org, qmo@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, chen.dylane@gmail.com, 
+	Tao Chen <dylane.chen@didiglobal.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Feb 24, 2025 at 9:02=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> Similarly to libbpf_probe_bpf_helper, the libbpf_probe_bpf_kfunc
+> used to test the availability of the different eBPF kfuncs on the
+> current system.
+>
+> Cc: Tao Chen <dylane.chen@didiglobal.com>
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>  tools/lib/bpf/libbpf.h        | 19 ++++++++++++-
+>  tools/lib/bpf/libbpf.map      |  1 +
+>  tools/lib/bpf/libbpf_probes.c | 51 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 70 insertions(+), 1 deletion(-)
+>
 
-omap3isp_print_status() was added in 2011 by
-commit 448de7e7850b ("[media] omap3isp: OMAP3 ISP core")
-but has remained unused.
+[...]
 
-Remove it (and it's associated #defines).
+> +       buf[0] =3D '\0';
+> +       ret =3D probe_prog_load(prog_type, insns, insn_cnt, btf_fd >=3D 0=
+ ? fd_array : NULL,
+> +                             buf, sizeof(buf));
+> +       if (ret < 0)
+> +               return libbpf_err(ret);
+> +
+> +       if (ret > 0)
+> +               return 1; /* assume supported */
+> +
+> +       /* If BPF verifier recognizes BPF kfunc but it's not supported fo=
+r
+> +        * given BPF program type, it will emit "calling kernel function
+> +        * <name> is not allowed". If the kfunc id is invalid,
+> +        * it will emit "kernel btf_id <id> is not a function". If BTF fd
+> +        * invalid in module BTF, it will emit "invalid module BTF fd spe=
+cified" or
+> +        * "negative offset disallowed for kernel module function call". =
+If
+> +        * kfunc prog not dev buound, it will emit "metadata kfuncs requi=
+re
+> +        * device-bound program".
+> +        */
+> +       if (strstr(buf, "not allowed") || strstr(buf, "not a function") |=
+|
+> +          strstr(buf, "invalid module BTF fd") ||
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/platform/ti/omap3isp/isp.c | 37 ------------------------
- drivers/media/platform/ti/omap3isp/isp.h |  2 --
- 2 files changed, 39 deletions(-)
+why is invalid module BTF FD not an error (negative return)?
 
-diff --git a/drivers/media/platform/ti/omap3isp/isp.c b/drivers/media/platform/ti/omap3isp/isp.c
-index 405ca215179d..6ffbf587f3f7 100644
---- a/drivers/media/platform/ti/omap3isp/isp.c
-+++ b/drivers/media/platform/ti/omap3isp/isp.c
-@@ -1475,43 +1475,6 @@ void omap3isp_put(struct isp_device *isp)
-  * Platform device driver
-  */
- 
--/*
-- * omap3isp_print_status - Prints the values of the ISP Control Module registers
-- * @isp: OMAP3 ISP device
-- */
--#define ISP_PRINT_REGISTER(isp, name)\
--	dev_dbg(isp->dev, "###ISP " #name "=0x%08x\n", \
--		isp_reg_readl(isp, OMAP3_ISP_IOMEM_MAIN, ISP_##name))
--#define SBL_PRINT_REGISTER(isp, name)\
--	dev_dbg(isp->dev, "###SBL " #name "=0x%08x\n", \
--		isp_reg_readl(isp, OMAP3_ISP_IOMEM_SBL, ISPSBL_##name))
--
--void omap3isp_print_status(struct isp_device *isp)
--{
--	dev_dbg(isp->dev, "-------------ISP Register dump--------------\n");
--
--	ISP_PRINT_REGISTER(isp, SYSCONFIG);
--	ISP_PRINT_REGISTER(isp, SYSSTATUS);
--	ISP_PRINT_REGISTER(isp, IRQ0ENABLE);
--	ISP_PRINT_REGISTER(isp, IRQ0STATUS);
--	ISP_PRINT_REGISTER(isp, TCTRL_GRESET_LENGTH);
--	ISP_PRINT_REGISTER(isp, TCTRL_PSTRB_REPLAY);
--	ISP_PRINT_REGISTER(isp, CTRL);
--	ISP_PRINT_REGISTER(isp, TCTRL_CTRL);
--	ISP_PRINT_REGISTER(isp, TCTRL_FRAME);
--	ISP_PRINT_REGISTER(isp, TCTRL_PSTRB_DELAY);
--	ISP_PRINT_REGISTER(isp, TCTRL_STRB_DELAY);
--	ISP_PRINT_REGISTER(isp, TCTRL_SHUT_DELAY);
--	ISP_PRINT_REGISTER(isp, TCTRL_PSTRB_LENGTH);
--	ISP_PRINT_REGISTER(isp, TCTRL_STRB_LENGTH);
--	ISP_PRINT_REGISTER(isp, TCTRL_SHUT_LENGTH);
--
--	SBL_PRINT_REGISTER(isp, PCR);
--	SBL_PRINT_REGISTER(isp, SDR_REQ_EXP);
--
--	dev_dbg(isp->dev, "--------------------------------------------\n");
--}
--
- #ifdef CONFIG_PM
- 
- /*
-diff --git a/drivers/media/platform/ti/omap3isp/isp.h b/drivers/media/platform/ti/omap3isp/isp.h
-index b4793631ad97..60acf3401ac9 100644
---- a/drivers/media/platform/ti/omap3isp/isp.h
-+++ b/drivers/media/platform/ti/omap3isp/isp.h
-@@ -260,8 +260,6 @@ void omap3isp_configure_bridge(struct isp_device *isp,
- struct isp_device *omap3isp_get(struct isp_device *isp);
- void omap3isp_put(struct isp_device *isp);
- 
--void omap3isp_print_status(struct isp_device *isp);
--
- void omap3isp_sbl_enable(struct isp_device *isp, enum isp_sbl_resource res);
- void omap3isp_sbl_disable(struct isp_device *isp, enum isp_sbl_resource res);
- 
--- 
-2.48.1
-
+> +          strstr(buf, "negative offset disallowed") ||
+> +          strstr(buf, "device-bound program"))
+> +               return 0;
+> +
+> +       return 1;
+> +}
+> +
+>  int libbpf_probe_bpf_helper(enum bpf_prog_type prog_type, enum bpf_func_=
+id helper_id,
+>                             const void *opts)
+>  {
+> --
+> 2.43.0
+>
 
