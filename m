@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-532189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2E7A44A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:23:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD25A44A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0693A9617
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90413AB47B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A717E19DF7A;
-	Tue, 25 Feb 2025 18:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED61019D086;
+	Tue, 25 Feb 2025 18:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLitZWsa"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5kz60Oq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B67F610D;
-	Tue, 25 Feb 2025 18:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578A4199E88;
+	Tue, 25 Feb 2025 18:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507286; cv=none; b=ghuDIhl6o4+SggyUSun2TPGqB45TIQfpy1HUVKmY39JK/a+IN7Ivh6cW0QuitlocKNfYB9s/nqBIE1Ny+dftsthhULDYiGAZRUTFjqSYdk9NGXMBHg+aRDdMyrWZ5+qgbEg18CVnHEzVU7HWjclMrc2ZaMSwD/Pq+tR49tqTmhk=
+	t=1740507294; cv=none; b=XoGbuMJ6yUChjtnXJwpINYwpovD9luIEFCteMO/R3dmdHrbSgHM8/opo7bkEJ5p3NW8lwoBCEqTDPa0NERoEpYzcoBthpLz6i3Wx8cYhUK5f/kbKADqGqoM6Q5OhriwUk0r7qjE/35J3F8/uaZDDVZjjnSy+4HDfpuYj/z4I7Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507286; c=relaxed/simple;
-	bh=GW5jTXwKGESC3dgp5ePQ2pu7cawyAP5JV0KqR9Z3Fis=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=QsL8iqZpY4vFYn6srLRzxFSSRnoJ9ocmXDCDfyx2nGHAMdD4GIyuMksIzvu4olXdVJgJrfP9Y/KZsIiKYP+V/mn/5ehwilQ6hWbhn6XekXguAe6qGLqs+Jfgwch9gFvRomROTYEI8v+pQLJ85KNzYq8KxtogPjUZJdo8sSf1aG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLitZWsa; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e69db792daso49977036d6.0;
-        Tue, 25 Feb 2025 10:14:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740507283; x=1741112083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Afk27/X80PuVJHRhAC5WWQqoXLETvNztAeuyGDXpES8=;
-        b=CLitZWsa+MSG3TLuYnL/WLKupELTGNc9uNbr9+LGInBN13yhZNwHdAFYXbbxVox8tz
-         eID5RyykFEGhJKgLvAvTEIxtxySCtFpNe2LtTzAdJpk9zhdInDe3X2hL2yoaJh0SpWn+
-         Z/gHgmVRNYG7QEjIwPro7nX1MF3eJ/vg6wAHvAwj2CGZN0w3G67xK8ZFLBBI1Fu90/00
-         Wu0x/1Hb1BSmqYFluQl4pXqAH0wW6QxqUO0L2L6sIP1aiV3JNKbUARNbsrMRwzh4IiCW
-         V4Pj8WegQrk8A9L3hqoPztppkG6pHxifQsu4MdJjq3KNzdwx1s+cCcttT5t1SXsMgejd
-         poxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740507283; x=1741112083;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Afk27/X80PuVJHRhAC5WWQqoXLETvNztAeuyGDXpES8=;
-        b=qTzRtVRWjFJROY+3aiZXUq8Dcbibm8euCc5dlq2uqcZrC3aNg8/ybU/y8xs8/00R30
-         ggU9/hMTJ3b41yENTN6TCtYopJTdmiUHhLKI9MHLt2kUnP+CgoV6p9Nd+l/TTRZ/96iC
-         ZuWx0Zu38la7KlqVd2BNBvVKDU//77Qy4FO6ALrkzr0tP2jgoShZ49fVwhsIH8K6wBhx
-         RwIB+ZXyrGO/51x6pbr8sLLmu3X7b8NCiMb7OyhJOt6m07nWCfJHkh7LWTqxU0ySbs09
-         MrinmtdoR58qAbaKbK0a8KYM6JNDNOcqXWktMPO5RFhPNtrbWGitUuQdwRFfOn/K/Xbl
-         mlQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNx9cGQgOL/AmrwKbRusnkD7K8Vu7eYw+Dwe350dKaAKyp+FCLuTgk6l2Tu6anIBSIVL7LUSed2FEDj1/Xk+mA@vger.kernel.org, AJvYcCUtu6MeWQOwp9Xerb9CgBef3zCQZ851WT3HLQNRKv9dzxj+vkL2P+kFKNeOUUiZHAKXdd3CW7SpaUSNXZ94@vger.kernel.org, AJvYcCXJNYFd7RstMUx0JSsxcvaR4BFQBeJS81d44aUcudcWDJDKc/T+T84ENlzuUw3Zn2Z8UOZkM+zB@vger.kernel.org, AJvYcCXoBT/QqpiayMrXCHoGDjBG3mNwiXBiLfRxOw/DFxiUi3Bm6QnlwvyXZcoAGLbe5mvptfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN1V5+2jsIsrjPbCseG0KRuZgRXdIEpIzv6FxdSORRZ/YHoRea
-	cbM+sjHpRWYPTidKTltBuiTSheiI0I+xHtsXkPMC/1casW6C9bWQ
-X-Gm-Gg: ASbGncsjVmo45mJ4IEjLx82+I6gS+ztHHh4tlvloo8cO+qCopdJX+6EqkJ7WMkQnA8c
-	yGGmHhiP1MJfj6bqE0NJWNQE+PIqx96nGams5xAIDJdhtuufuM5w7JO4EjIaiabatbrlIjHqPBj
-	xcAo/yXIjY0lDax8DIZYBckAflUt9Gln7Q2he1RZJYY33vEUgG4h7GCWDOL4gLR94/Wb18qaHXl
-	Dm/8eguqi2q0gghxt2R3rAbfcUJ8EbsymAbKYrNAwjWZF/+bvOraXM9IygpKMP3VZ8HGGxriywn
-	m8SiKQse5rj4tyeiNAp6NpoG6iQFPG73TTs6RMa/Tpq5OJuFwxElVkXzBm7+MDsMrKFyJpKzQSB
-	c3gE=
-X-Google-Smtp-Source: AGHT+IExX7eM9fEZD7F0QtCwB+XhIqdpIe1EHNeoOZoYnsihPmyVx9XhY4575vLAyIyrtN6sLu19OQ==
-X-Received: by 2002:a05:6214:21e9:b0:6e6:5aa2:4e4f with SMTP id 6a1803df08f44-6e6b01a9dcemr283977046d6.32.1740507283356;
-        Tue, 25 Feb 2025 10:14:43 -0800 (PST)
-Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b06ddd4sm12063936d6.17.2025.02.25.10.14.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 10:14:42 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:14:42 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org
-Cc: jasowang@redhat.com, 
- andrew+netdev@lunn.ch, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- andrii@kernel.org, 
- eddyz87@gmail.com, 
- mykolal@fb.com, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- martin.lau@linux.dev, 
- song@kernel.org, 
- yonghong.song@linux.dev, 
- john.fastabend@gmail.com, 
- kpsingh@kernel.org, 
- sdf@fomichev.me, 
- haoluo@google.com, 
- jolsa@kernel.org, 
- shuah@kernel.org, 
- hawk@kernel.org, 
- Willem de Bruijn <willemb@google.com>
-Message-ID: <67be08921f167_25ccfc294bb@willemb.c.googlers.com.notmuch>
-In-Reply-To: <e378ffb9-2424-4b09-b5fd-688f4f3d1556@hetzner-cloud.de>
-References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
- <67bdd9e0c54d9_2474a12947d@willemb.c.googlers.com.notmuch>
- <e378ffb9-2424-4b09-b5fd-688f4f3d1556@hetzner-cloud.de>
-Subject: Re: [PATCH bpf-next v3 0/6] XDP metadata support for tun driver
+	s=arc-20240116; t=1740507294; c=relaxed/simple;
+	bh=//nOCamXGgyx9bCOhPoJsE2m/2aVtCeY7wDIhK+pfZg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SY1YR0QBhX1XcM2wXUeZs1+F8pYHyWz4+soyySueUVIRV9M/8EaivbAo8mXrlGBTbSWuOzwWiaDJl1daqP3mo6y4lwwhN5O122Mid16G4Z9TeakTzm9dOAoGge/zryZFrfZrgLRT02RykscswLkXwCJj2e+vKQcvl3FAdN//THg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5kz60Oq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66D6C4CEE8;
+	Tue, 25 Feb 2025 18:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740507293;
+	bh=//nOCamXGgyx9bCOhPoJsE2m/2aVtCeY7wDIhK+pfZg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=W5kz60OqgePrRwVEQls5r2LtWStdAux2aZOZeCLggSe6nGNvJz+GpEZLZBV7EES9A
+	 yA+BPHFeBzPhqZ60FwW9ujLk2G1MRf/+oMaxOnL+KEjK4Pp43cUIcbYTWndABkjisG
+	 7HKdAHEHYNv6UbJ+JCjNkscaS3DMlByiECxoh0iZInDPZaFskL2+7LslgZAy19zxJo
+	 k/eLJK3mBdCY5LTci4oy/d3BktZ0tCTck1KGtO+69BfLyWUzRXxWpYUujDcSD1bMnW
+	 ugmGvGHF1nfM4wS9nNUjTAgLGvzZH8oVwnNLP5D0NjdEQi3/kW2rOcE5qsyGujFYP7
+	 aj0Gef4tpEOvw==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 2/8] mm/damon/core: implement intervals auto-tuning
+Date: Tue, 25 Feb 2025 10:14:49 -0800
+Message-Id: <20250225181449.3008-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250213014438.145611-3-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Marcus Wichelmann wrote:
-> Am 25.02.25 um 15:55 schrieb Willem de Bruijn:
-> > Marcus Wichelmann wrote:
-> >> [...]
-> >>
-> >> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-> >> Acked-by: Jason Wang <jasowang@redhat.com>
-> >> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> > 
-> > Please don't add tags, unless a person has explicitly added them.
-> > 
-> > And they are only sticky when the code has not been changed since
-> > they added them.
-> > 
-> > These are only in the cover letter, so not picked up. But for future
-> > revisions and patches.
+On Wed, 12 Feb 2025 17:44:32 -0800 SeongJae Park <sj@kernel.org> wrote:
+
+> Implement the DAMON sampling and aggregation intervals auto-tuning
+> mechanism as designed on the cover letter of this patch series.  The
+> mechanism reuses the feedback loop function for DAMOS quotas
+> auto-tuning.  Unlike the DAMOS quotas auto-tuning use case, limit the
+> maximum decreasing amount after the adjustment to 50% of the current
+> value.  This is because the intervals have no good merits at rapidly
+> reducing, and it is assumed the user will set the range of tunable
+> values not very wide.
 > 
-> Oh, I'm sorry. I checked https://docs.kernel.org/process/submitting-patches.html
-> but must have misunderstood it then.
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  include/linux/damon.h | 16 ++++++++++
+>  mm/damon/core.c       | 68 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+)
+[...]
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index 2fad800271a4..227bdb856157 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+[...]
+> +static unsigned long damon_get_intervals_adaptation_bp(struct damon_ctx *c)
+> +{
+> +	struct damon_target *t;
+> +	struct damon_region *r;
+> +	unsigned long nr_regions = 0, access_samples = 0;
+> +	struct damon_intervals_goal *goal = &c->attrs.intervals_goal;
+> +	unsigned long max_samples, target_samples, score_bp;
+> +	unsigned long adaptation_bp;
+> +
+> +	damon_for_each_target(t, c) {
+> +		nr_regions = damon_nr_regions(t);
+
+This should use '+=' instead of '='.
+
+> +		damon_for_each_region(r, t)
+> +			access_samples += r->nr_accesses;
+> +	}
+> +	max_samples = nr_regions * c->attrs.aggr_samples;
+> +	target_samples = max_samples * goal->samples_bp / 10000;
+> +	score_bp = access_samples * 10000 / target_samples;
+> +	adaptation_bp = damon_feed_loop_next_input(100000000, score_bp) /
+> +		10000;
+> +	/*
+> +	 * adaptaion_bp ranges from 1 to 20,000.  Avoid too rapid reduction of
+> +	 * the intervals by rescaling [1,10,000] to [5000, 10,000].
+> +	 */
+> +	if (adaptation_bp <= 10000)
+> +		adaptation_bp = 5000 + adaptation_bp / 2;
+> +
+> +	return adaptation_bp;
+> +}
+[...]
+> @@ -2204,6 +2262,8 @@ static void kdamond_init_intervals_sis(struct damon_ctx *ctx)
+>  	ctx->next_aggregation_sis = ctx->attrs.aggr_interval / sample_interval;
+>  	ctx->next_ops_update_sis = ctx->attrs.ops_update_interval /
+>  		sample_interval;
+> +	ctx->next_intervals_tune_sis = ctx->next_aggregation_sis *
+> +		ctx->attrs.intervals_goal.aggrs;
+>  
+>  	damon_for_each_scheme(scheme, ctx) {
+>  		apply_interval = scheme->apply_interval_us ?
+> @@ -2290,6 +2350,14 @@ static int kdamond_fn(void *data)
+>  		if (ctx->passed_sample_intervals >= next_aggregation_sis) {
+>  			ctx->next_aggregation_sis = next_aggregation_sis +
+>  				ctx->attrs.aggr_interval / sample_interval;
+> +			if (ctx->attrs.intervals_goal.aggrs &&
+> +					ctx->passed_sample_intervals >=
+> +					ctx->next_intervals_tune_sis) {
+> +				ctx->next_intervals_tune_sis +=
+> +					ctx->attrs.aggr_samples *
+> +					ctx->attrs.intervals_goal.aggrs;
+> +				kdamond_tune_intervals(ctx);
+> +			}
+
+kdamond_tune_intervals() may increase ctx->next_aggregation_sis inside
+damon_set_attrs().  So it should be called before the above
+ctx->next_ops_update_sis update.
+
+>  
+>  			kdamond_reset_aggregated(ctx);
+>  			kdamond_split_regions(ctx);
+> -- 
+> 2.39.5
 > 
-> To clarify:
-> So these tags are limited to a single patch of the patch series and I should only
-> carry them over, when the single patch where they were added to is re-sent in a
-> follow-up patch series without changes?
-
-That's right.
 
 
+Thanks,
+SJ
 
