@@ -1,280 +1,170 @@
-Return-Path: <linux-kernel+bounces-532579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33ECA44F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:04:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD52A44F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5546C3B467A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7AF19C20A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC642212FA9;
-	Tue, 25 Feb 2025 22:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFBF20E70C;
+	Tue, 25 Feb 2025 22:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZ/hTKOe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Yp9EJthI"
+Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazolkn19012062.outbound.protection.outlook.com [52.103.37.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D278020E31E;
-	Tue, 25 Feb 2025 22:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520930; cv=none; b=IH7pjaCraReqyAsH4YD7QQOsN1iRzO9ckP2x8YQsj3w6bzo6qSgJLxx1hAVgFxg3g65gGNpbiI6bbL9gGdWvEI0Sb4ymFZL2f51Gpmq+sMhpv40bmKfxY0DzIxCYq3mOS/PN/4JbAFsq9+WA/mK5LRWQCahIUq864Yo+FCIFW8Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520930; c=relaxed/simple;
-	bh=eNWdkHC2n1MuEFu0t27z5mGkFhYDZuXcacDZi0gjopk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n7OV8vUzP1A3k/sxSsWdaKlC+XMoarDjXVmKN3R4qxM++P4WmpNS0PDPnBXWj5gManTw5UJfk7EkpMVtTQ6d4w+pCCXg2WFYlvJ2BwFH6ppbuAN0R4DV2FiSUNSBaaUoWZ8gtKcQ6I0H0CedQvoflWPfUOZ1J+KInw+kM36DwM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZ/hTKOe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660C0C4CEDD;
-	Tue, 25 Feb 2025 22:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740520930;
-	bh=eNWdkHC2n1MuEFu0t27z5mGkFhYDZuXcacDZi0gjopk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cZ/hTKOeYSq0wy69PK5r26cD5SnHdlZ2OvgzPcTRe+OyH969PMVPbEMUW06ONjBsN
-	 DOIGZUAebolvPtZzevORdRkmxMgffsPffJ5/dNT8uN78G2VdouOWrshxlSsKYNhbs+
-	 +j68wJxsJdNtY29wHxgPI1nyhue1MZ4ZmMKTxzqUeV5taJmp9lWe2/059gPUw4GLbj
-	 ACTSjDNZSjTRCpmwhEclu8FRTBA/hAJysSWUbJrlR94ojXcNyuPHcXQWx4lhRI5DFn
-	 oCiuPN1Z+DWHbO4wlNuXY9zqF3wZgLL2uR+GxI5z8h6hRm2PLwZixgCaqkE6ST4PuU
-	 51CCZRafHtTTQ==
-Date: Tue, 25 Feb 2025 23:02:04 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z7493C8_IvvYDbm8@pollux>
-References: <Z7OrKX3zzjrzZdyz@pollux>
- <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
- <Z7xg8uArPlr2gQBU@pollux>
- <Z7xh5bEyh_MII4WV@pollux>
- <20250224184502.GA1599486@joelnvbox>
- <Z70EcwNIX0KtWy36@cassiopeiae>
- <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
- <Z73rP4secPlUMIoS@cassiopeiae>
- <20250225210228.GA1801922@joelnvbox>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A42518DB2F;
+	Tue, 25 Feb 2025 22:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.37.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740520964; cv=fail; b=jp48uWJMdrYhgf7EfdKCUPhbzIkxTZthLn1s3UIwktEDtvwdMfGKIUkSM04H5uBHYI74yZw4nce0kFs5QkNTdZYG5k736qBcMQAvPAocuyK4PKSamPjsEjIvYDZo0ouiC3hnnpbPMQMj9hEFse88l8qtdQhrVwGGnTE72sJ4a2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740520964; c=relaxed/simple;
+	bh=QGNiDF2xv4kbWZaBAoyTfsJHBnjLyr6AbfKblxiZjsE=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nQZgy0Os3qGMHFxeDAISvPyg9zVxvFhgaW5L2p5zQYynE3PM5w4cmOlh+RbWEe0KFlzz8NB9e72GV8Iaf2Y27OWBk7U/Z78ZBi/FPAzcYkGJIxHcVfmRpdUfDRAm4pWS28G9olnzrX4vNeD+a6xuelgq20DO2TMoBbXztmDesx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Yp9EJthI; arc=fail smtp.client-ip=52.103.37.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lz2xTZF80u+hntn5Yzkf9SlplOGxJbbgQ7lmqPfuMQijLFED4VdJ8IY0EJaFCpwJ4QbOVqq6P6ukcFraYNEZ63BfgpBXsZPyU3B+720L5xXQKc9/JifehYCDUWmB14++x3eAvIwbOQkZ24a0TDlZ03A8+y3O83LLgc4JWGLuiSjZweiS7+AZcP4pMMvFXIuREFMCQa/iE4CVrQoPjGeRvgaHLNhCNViy6dhKZtptWSlqqq6GwEqJN2pHh5L+2aaffzx2kQhUUQKtDybyua46pPxm7O0oWFlpX2g5ngXzEu3SJNTMXdVtjrAATCHelnxjuURcyKgvIYE+GVhdX2w0xQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nnb72nhHoK/BdwoTKU8E/xRkDBsQOBKurR3CpqvTAVo=;
+ b=yKCDk0aKMAzUoQcy4nZlk5i8tACE8GuVhtk9rWpYcY/n2M3ctNHYKdbTXMCuDx/F2eWaBrCujwZ7/PVGdzWQwWGCmykHiUm8g5qfKbu3FZKS8/2PobzeOIi0K2XoYt6d9hD7Oy4n93YDvcX6hVypQ/IPFTBhXGVRYSmjr6ZcrgGg6qWNrVu05PZyAgUK5OX1cBEecmah5rCO0IwTleiZJbzU5XBc/0VjfDrFY3O37Rsbv42JG6f8iyiiNvPqQdqNdeT5HOeOuhdin511XUATBd/qP6uIiRuoMtr8NOZHRabNfWsw0em7LcRePhbenVnAwGl80tLniBXwYEf1Cyh4QQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nnb72nhHoK/BdwoTKU8E/xRkDBsQOBKurR3CpqvTAVo=;
+ b=Yp9EJthIew4PPH2dQnd1LKl3mgPSuftf3tBEQVMEfp/hvGQZ/Qv/ppUkkrc9EYYVMv5bT2OjH7yyLXU7Yh/q5uG0eh4Y+xtlljquJqKdJEpsMNPyelaovYtaIJ+PxLNuRzd+dnjC0hcrry9/WLByEzKkaI4doigpWK1n9ZBNgelrz5Fo8uegG/nvjBLjkjxkr+/l6iHphMAAb4F4IxdTSpkiVz1+UIZICX3EXhMKxu3h+rLkaJcvgAdJw6fsAUqUBBLP7Sex/DMToGfRjTy8+bgZ5cl2UeAY+0VZF09XlLlNERWKBAaG3dsKHSeb2PlmMGsmMwJ+YqyORiqtbFS8SQ==
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
+ by LOYP123MB3280.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:e1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Tue, 25 Feb
+ 2025 22:02:40 +0000
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb%5]) with mapi id 15.20.8489.018; Tue, 25 Feb 2025
+ 22:02:40 +0000
+From: Manuel Fombuena <fombuena@outlook.com>
+To: pavel@ucw.cz,
+	lee@kernel.org,
+	corbet@lwn.net,
+	vicentiu.galanopulo@remote-tech.co.uk,
+	linux-leds@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] Documentation: leds: remove .rst extension for leds-st1202 on index
+Date: Tue, 25 Feb 2025 22:02:28 +0000
+Message-ID:
+ <CWLP123MB5473137572529F99746F4AC4C5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <CWLP123MB5473552E76AE71CDE3085DA9C5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+References: <CWLP123MB5473552E76AE71CDE3085DA9C5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LNXP265CA0094.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:76::34) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:160::13)
+X-Microsoft-Original-Message-ID:
+ <20250225220228.1665783-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225210228.GA1801922@joelnvbox>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|LOYP123MB3280:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa4049ed-7343-4c77-29ff-08dd55e81ed2
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|7092599003|15080799006|8060799006|19110799003|5072599009|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?meyaviek7WmbMaALCmomf+xfyVbcgNrCVpCLIpOemP8s2McFwUeklJB/+Ome?=
+ =?us-ascii?Q?k/rQ0w+9dacxnMVGmaoKXHyFPKhz21dkDQQuYHokDjznYcEb5Zjk8Uys/dJW?=
+ =?us-ascii?Q?2iRMJ2bJXQtnQAHiRbkdmW5xgnh8vN+vEGNOa3JUhFrux49W30mdtqnsdz/g?=
+ =?us-ascii?Q?RSs7GckHyE384s3kC+6D4Wd6ahtJAhp2BQDWIviK+uusrIZnR6W2BZgZNegF?=
+ =?us-ascii?Q?zsurEEYHmkr86lWsPXtbXzyr+WwiiqEOufZre8jKmC7QI3fiaiKn8TR3k7vH?=
+ =?us-ascii?Q?eGZG+XzG0ihyzq09pi0QnyS23nm2BxPgrMWhYrj78s57yngrhL4F4TsdhPEC?=
+ =?us-ascii?Q?O5GeVBEhG9H4/W+FHBL/pFLEZZdy0euAPEb/2Pn0EA2HmPVar06sunnGzYo5?=
+ =?us-ascii?Q?QjVF/LQVSVQxX/elhRVpOaRtCYrrYwj5zd1U8f/UJXvHbjBRqN9Pmx51s9Jd?=
+ =?us-ascii?Q?fzs0RjMl8lhGX3yZ1egUH8lxP15A28C5KlpUiqJhNvYyrNm038ZCTGRV76K/?=
+ =?us-ascii?Q?OihoNH41GnMDBzaGNriKiBKT+i72CcixJiR0ns4wCF6J863yBvOHsJ4vhRji?=
+ =?us-ascii?Q?4UxIcHTmQfp4Jkmw6881QuNV8WkLPXTsbS+1Bh0HH2s+4P7UQc7XuWk2CuFS?=
+ =?us-ascii?Q?/5AAHGmk1s3Ug72ZYQvMXU1IQO2VqGdtvxHljRbW8qyr5VJJyjm5TKEuYfNc?=
+ =?us-ascii?Q?J8Nngp0DEEctSVA9Rxur85iQP8CAxjqLVP+ikR2r9C4bt5VxamQS7x6bHNK+?=
+ =?us-ascii?Q?wTKO/2sP3HWxZRvsUgvawaAqTd7HUIR2Y6h4xMXOGXLzP5IitZeXURgmxqEp?=
+ =?us-ascii?Q?AVDMy7S4OYp1b4uKUw1jX+KvH5JVoMs935mwX7IpqfXBkFUC6NmddBK+HOjI?=
+ =?us-ascii?Q?cI65RGFJE8yh9wweqfNlIl0r/3FI6V8wBj/GeuTMsA5QU80jkhIPH0Eb8pqf?=
+ =?us-ascii?Q?KXg5ibTrSMx6eqreEeaTfDP5z5fP+EJAgGfSg2M3cVZGk5r3AxnRJIOnQ8HD?=
+ =?us-ascii?Q?d6Vbc30q8cFy8vclDpflad3jWEHlaiVS0aoQ0KjP3pLikHAJKZezHNLh9zcc?=
+ =?us-ascii?Q?52cS8jzAy6HitJg6XVTsF0b5LXwisA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7S2Nz944YNgwtYNyHMjElHpnJwmTM98Vdkl2n+snt0+t1RXsJSwdeAau180P?=
+ =?us-ascii?Q?Bs2Yaai6OBbYFFncXidWzNnrTGMkDjnR8zV+81i6w711e95IUgJSiCppMooS?=
+ =?us-ascii?Q?0vMs5TAxphDRey5cMsM/ikfdtGjzH0UcW2B9lTFp/Nk6M1pTN1a4eh+XPQ3q?=
+ =?us-ascii?Q?GBR02xEdw37mygaQ2DPW1dbFJ+vhB1EQjvoeYq1lMRaus/lD7oEegHTuKlv3?=
+ =?us-ascii?Q?zetRJUSDMYN5xgqrCH+1+6Z1waEYq6Q2nPO5Xt4jBeMdTr3dNUyW0HvehCPu?=
+ =?us-ascii?Q?9uxNm+7khtTXEQjaFqE86gxvvX8CFygHOnkJ9eeMMaNzS0mbkxgHKKBwdNHn?=
+ =?us-ascii?Q?+cx7Yy4NALz8HNV13y8LOsUzUZIImerWUqkicLOoZVXmHJucg8IaB3b5Yxzf?=
+ =?us-ascii?Q?9p2BBi5WdzXAzxbu8Yq2bi78kfHcvvinj7038DlX+6EjeN2WcTS3RRqzzPw5?=
+ =?us-ascii?Q?pp9Pc62onvuHyzZH6s39k0P5ANunhXSoqo+9nwX8Dad9aMqY4WGS5I+SU6Rk?=
+ =?us-ascii?Q?MtlL3ZXohCMAv9wgwlzkUS583M5L6SQHTrzCdbkbC0HtEjojY/rPCHKGVUuY?=
+ =?us-ascii?Q?+nf/BaaEY3fboL6vZMz2VhMJs8O4/COdsQ10bla/Ayq9IZci75Y24YZ6rR+s?=
+ =?us-ascii?Q?/AQ4IGZsvvyiDlJze96JH/uvJ+fm6b72Q6Eu4QdXqNIqGZrJSBjaBsmLXfi8?=
+ =?us-ascii?Q?5uLQEGHbWvJoBzkiY+BJyXrDL37ljfTiZBuzhtQleE8DEsXnYygRHSGlJsf6?=
+ =?us-ascii?Q?ghKZbQE5btxs59jPyODGJieL5kpiu1zSl6V+aBiJxdo2ueE9h/SqtobjuHUI?=
+ =?us-ascii?Q?FAYcIQVymvmwLY8nddZvg9LZMWkyAl7SL82rcnbbo68ErspHbAQ+mjM5oRnJ?=
+ =?us-ascii?Q?SY1cB+djG9/3YiDyF9p6uY17+pEZWxVERpj39gR3tjQ0lvibQde8oa49YZJ5?=
+ =?us-ascii?Q?UohJHMvoJQWofBK3XgJktoLZ5iJsvkZ+j8Y+2VG7aaq5uXLOwmohRL/zPYF9?=
+ =?us-ascii?Q?mmtGFTFyo9IpxPpW8B6OrhjtP+VM1eD+R2uG2PS9Mm4kk3GomXd/aiiLTtjk?=
+ =?us-ascii?Q?gyLRsJTi801CVGTwCVo/3XgOYRaXwg4uz6JCevOvQNZlalBasBG4H5VZtlBr?=
+ =?us-ascii?Q?KBdt+wb8IvuhJS14ZBjvvrhZCLuE7TxADC/8qIgsy/Cj9jaZrVAwB5Xbf7e4?=
+ =?us-ascii?Q?WIrYZhmxJXIxMiDI5yFIuW39eLhmXWOstTJy/4sMaRAgSRAROgQsOdhSdXch?=
+ =?us-ascii?Q?+sgf5tff81mnG6FeI9BnXthpacdHSka75uDitgtEQ2JxYrOZ77vLcQnWconX?=
+ =?us-ascii?Q?F04=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa4049ed-7343-4c77-29ff-08dd55e81ed2
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 22:02:40.2887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP123MB3280
 
-On Tue, Feb 25, 2025 at 04:02:28PM -0500, Joel Fernandes wrote:
-> On Tue, Feb 25, 2025 at 05:09:35PM +0100, Danilo Krummrich wrote:
-> > On Tue, Feb 25, 2025 at 10:52:41AM -0500, Joel Fernandes wrote:
-> > > 
-> > > 
-> > > On 2/24/2025 6:44 PM, Danilo Krummrich wrote:
-> > > > On Mon, Feb 24, 2025 at 01:45:02PM -0500, Joel Fernandes wrote:
-> > > >> Hi Danilo,
-> > > >>
-> > > >> On Mon, Feb 24, 2025 at 01:11:17PM +0100, Danilo Krummrich wrote:
-> > > >>> On Mon, Feb 24, 2025 at 01:07:19PM +0100, Danilo Krummrich wrote:
-> > > >>>> CC: Gary
-> > > >>>>
-> > > >>>> On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
-> > > >>>>> This inability to sleep while we are accessing registers seems very
-> > > >>>>> constraining to me, if not dangerous. It is pretty common to have
-> > > >>>>> functions intermingle hardware accesses with other operations that might
-> > > >>>>> sleep, and this constraint means that in such cases the caller would
-> > > >>>>> need to perform guard lifetime management manually:
-> > > >>>>>
-> > > >>>>>   let bar_guard = bar.try_access()?;
-> > > >>>>>   /* do something non-sleeping with bar_guard */
-> > > >>>>>   drop(bar_guard);
-> > > >>>>>
-> > > >>>>>   /* do something that might sleep */
-> > > >>>>>
-> > > >>>>>   let bar_guard = bar.try_access()?;
-> > > >>>>>   /* do something non-sleeping with bar_guard */
-> > > >>>>>   drop(bar_guard);
-> > > >>>>>
-> > > >>>>>   ...
-> > > >>>>>
-> > > >>>>> Failure to drop the guard potentially introduces a race condition, which
-> > > >>>>> will receive no compile-time warning and potentialy not even a runtime
-> > > >>>>> one unless lockdep is enabled. This problem does not exist with the
-> > > >>>>> equivalent C code AFAICT
-> > > >>>
-> > > >>> Without klint [1] it is exactly the same as in C, where I have to remember to
-> > > >>> not call into something that might sleep from atomic context.
-> > > >>>
-> > > >>
-> > > >> Sure, but in C, a sequence of MMIO accesses don't need to be constrained to
-> > > >> not sleeping?
-> > > > 
-> > > > It's not that MMIO needs to be constrained to not sleeping in Rust either. It's
-> > > > just that the synchronization mechanism (RCU) used for the Revocable type
-> > > > implies that.
-> > > > 
-> > > > In C we have something that is pretty similar with drm_dev_enter() /
-> > > > drm_dev_exit() even though it is using SRCU instead and is specialized to DRM.
-> > > > 
-> > > > In DRM this is used to prevent accesses to device resources after the device has
-> > > > been unplugged.
-> > > 
-> > > Thanks a lot for the response. Might it make more sense to use SRCU then? The
-> > > use of RCU seems overly restrictive due to the no-sleep-while-guard-held thing.
-> > 
-> > Allowing to hold on to the guard for too long is a bit contradictive to the goal
-> > of detecting hotunplug I guess.
-> > 
-> > Besides that I don't really see why we can't just re-acquire it after we sleep?
-> > Rust provides good options to implement it ergonimcally I think.
-> > 
-> > > 
-> > > Another colleague told me RDMA also uses SRCU for a similar purpose as well.
-> > 
-> > See the reasoning against SRCU from Sima [1], what's the reasoning of RDMA?
-> > 
-> > [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
-> 
-> Hmm, so you're saying SRCU sections blocking indefinitely is a concern as per
-> that thread. But I think SRCU GPs should not be stalled in normal operation.
-> If it is, that is a bug anyway. Stalling SRCU grace periods is not really a
-> good thing anyway, you could run out of memory (even though stalling RCU is
-> even more dangerous).
+No other LED driver is listed on index.rst with the extension .rst.
+Remove it.
 
-I'm saying that extending the time of critical sections is a concern, because
-it's more likely to miss the unplug event and it's just not necessary. You grab
-the guard, do a few I/O ops and drop it -- simple.
+Fixes: b1816b22381b ("Documentation:leds: Add leds-st1202.rst")
+Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
+---
+ Documentation/leds/index.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you want to sleep in between just re-acquire it when you're done sleeping.
-You can easily avoid explicit drop(guard) calls by moving critical sections to
-their own function or closures.
+diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+index 0ab0a2128a11..76fae171039c 100644
+--- a/Documentation/leds/index.rst
++++ b/Documentation/leds/index.rst
+@@ -28,5 +28,5 @@ LEDs
+    leds-mlxcpld
+    leds-mt6370-rgb
+    leds-sc27xx
+-   leds-st1202.rst
++   leds-st1202
+    leds-qcom-lpg
+-- 
+2.48.1
 
-I still don't understand why you're thinking that it's crucial to sleep while
-holding the RevocableGuard?
-
-> 
-> For RDMA, I will ask Jason Gunthorpe to chime in, I CC'd him. Jason, correct
-> me if I'm wrong about the RDMA user but this is what I recollect discussing
-> with you.
-> 
-> > > 
-> > > >> I am fairly new to rust, could you help elaborate more about why these MMIO
-> > > >> accesses need to have RevocableGuard in Rust? What problem are we trying to
-> > > >> solve that C has but Rust doesn't with the aid of a RCU read-side section? I
-> > > >> vaguely understand we are trying to "wait for an MMIO access" using
-> > > >> synchronize here, but it is just a guest.
-> > > > 
-> > > > Similar to the above, in Rust it's a safety constraint to prevent MMIO accesses
-> > > > to unplugged devices.
-> > > > 
-> > > > The exact type in Rust in this case is Devres<pci::Bar>. Within Devres, the
-> > > > pci::Bar is placed in a Revocable. The Revocable is revoked when the device
-> > > > is detached from the driver (for instance because it has been unplugged).
-> > > 
-> > > I guess the Devres concept of revoking resources on driver detach is not a rust
-> > > thing (even for PCI)... but correct me if I'm wrong.
-> > 
-> > I'm not sure what you mean with that, can you expand a bit?
-> 
-> I was reading the devres documentation earlier. It mentios that one of its
-> use is to clean up resources. Maybe I mixed up the meaning of "clean up" and
-> "revoke" as I was reading it.
-> 
-> Honestly, I am still confused a bit by the difference between "revoking" and
-> "cleaning up".
-
-The Devres [1] implementation implements the devres callback that is called when the
-device is unbound from the driver.
-
-Once that happens, it revokes the underlying resource (e.g. the PCI bar mapping)
-by using a Revocable [2] internally. Once the resource is revoked, try_access()
-returns None and the resource (e.g. pci::Bar is dropped). By dropping the
-pci::Bar the mapping is unmapped and the resource region is removed (which is
-typically called cleanup).
-
-[1] https://rust.docs.kernel.org/kernel/devres/struct.Devres.html
-[2] https://rust.docs.kernel.org/kernel/revocable/struct.Revocable.html
-
-> 
-> > > 
-> > > > By revoking the Revocable, the pci::Bar is dropped, which implies that it's also
-> > > > unmapped; a subsequent call to try_access() would fail.
-> > > > 
-> > > > But yes, if the device is unplugged while holding the RCU guard, one is on their
-> > > > own; that's also why keeping the critical sections short is desirable.
-> > > 
-> > > I have heard some concern around whether Rust is changing the driver model when
-> > > it comes to driver detach / driver remove.  Can you elaborate may be a bit about
-> > > how Rust changes that mechanism versus C, when it comes to that?
-> > 
-> > I think that one is simple, Rust does *not* change the driver model.
-> > 
-> > What makes you think so?
-> 
-> Well, the revocable concept for one is rust-only right?
-
-Yes, but that has nothing to do with changing the driver model. It is just an
-additional implementation detail to ensure safety.
-
-IIRC there are also have been efforts for a similar mechanism in C.
-
-> 
-> It is also possibly just some paranoia based on discussions, but I'm not sure
-> at the moment.
-
-Again there is nothing different to C, except one additional step to ensure
-safety. For instance, let's take devm_kzalloc(). Once the device is detached
-from the driver the memory allocated with this function is freed automatically.
-
-The additional step in Rust is, that we'd not only free the memory, but also
-revoke the access to the pointer that has been returned by devm_kzalloc() for
-the driver, such that it can't be used by accident anymore.
-
-Besides that, I'd be interested to what kind of discussion you're referring to.
-
-> 
-> > > Ideally we
-> > > would not want Rust drivers to have races with user space accesses when they are
-> > > detached/remove. But we also don't want accesses to be non-sleepable sections
-> > > where this guard is held, it seems restrictive (though to your point the
-> > > sections are expected to be small).
-> > 
-> > In the very extreme case, nothing prevents you from implementing a wrapper like:
-> > 
-> > 	fn my_write32(bar: &Devres<pci::Bar>, offset: usize) -> Result<u32> {
-> > 		let bar = bar.try_access()?;
-> > 		bar.read32(offset);
-> > 	}
-> > 
-> > Which limits the RCU read side critical section to my_write32().
-> > 
-> > Similarly you can have custom functions for short sequences of I/O ops, or use
-> > closures. I don't understand the concern.
-> 
-> Yeah, this is certainly possible. I think one concern is similar to what you
-> raised on the other thread you shared [1]:
-> "Maybe we even want to replace it with SRCU entirely to ensure that drivers
-> can't stall the RCU grace period for too long by accident."
-
-Yeah, I was just thinking out loud, but I think it wasn't a good idea -- we
-really do want to keep the critical sections short, so RCU is fine. Prohibit
-drivers to use RCU, just because they could mess up, wasn't a good reason.
-
-> 
-> [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
-> 
-> thanks,
-> 
->  - Joel
-> 
-> 
 
