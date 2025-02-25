@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-531054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C208BA43BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:32:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647FAA43B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B219C73C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F686440CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6985726738F;
-	Tue, 25 Feb 2025 10:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n0J+ghyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F238F4A;
-	Tue, 25 Feb 2025 10:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6390265CAB;
+	Tue, 25 Feb 2025 10:23:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83291DDA00
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479053; cv=none; b=cWQFnJvPYVNGb12It5eyzRQ/1ms3taqTYWd4wizM78Pj/E7U2FGn2lKqigS7DkVXbskkzGgsDGr94+Yv/Y4pjb2ScDz2g6tYYhGmlwLJUumrDuLp6GxIQqtKWnuvuoDJ9JI/UWHM/oi7jI5tpGR2wexeQlCSjvkGb9pRDkCH18Y=
+	t=1740478996; cv=none; b=IWMxRxYKl57AUtLN8Eb9LLslIB30gsCQ+Ia9BnU1Lk7KZFdO2kZzijn0MTxcL2Qw4r6dKAKkncUKNiNi4S97YUp8sbBFQomiVAH5KwUYWJ37mo8b35sqRb+t1xUzY0QZR7s1H2heSE6DnwZ7ZER2Yieq4cqWPso7JVpGGs/nmHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479053; c=relaxed/simple;
-	bh=6h84qLfGwbImfITzfTzkYlb6/rJQLyKiI2OtAkuKs38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ik6b8VcklNyVlNNtbIiPOC2XTQVUqMwZzpor/HfG938MokR2hnwYbpvk+VmbYFglCYQfA1wXVRz/4FJjRfVEaqxJslwhMlA81GJoY1CkPGIe1uLHPQk1Jv5b8WEcpsmSXFn5hW9SStyndpn37rtmXiFctyHWB9OQwIn+GlfiKZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n0J+ghyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B74C4CEDD;
-	Tue, 25 Feb 2025 10:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740479053;
-	bh=6h84qLfGwbImfITzfTzkYlb6/rJQLyKiI2OtAkuKs38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n0J+ghyw53Zmv7eUA0gehh3FmrVJ1Qb0IFjnKgl5/Qjyr5h+kz7UQ8v7iVUnWW7HI
-	 nu19c2c2h09tgoSNtxWHfLlaKjn3OqMk0MUXNLAitT4k4PqNQonrKeTDPN4SjYiiWJ
-	 nE0W3Jkw5MmcUsPbal/ExLmJ3ORuSmLofw7H+pRI=
-Date: Tue, 25 Feb 2025 11:23:03 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: miscdevice: change how f_ops vtable is constructed
-Message-ID: <2025022523-charbroil-overtime-4e68@gregkh>
-References: <20250117-miscdevice-fops-change-v1-1-ec04b701c076@google.com>
- <2025021926-transport-fridge-bc43@gregkh>
- <CAH5fLggCjB0ePQvPFeTuy9m0UC_KkHa6-qU8AhQ+P8oHbAhZLA@mail.gmail.com>
+	s=arc-20240116; t=1740478996; c=relaxed/simple;
+	bh=qKlWRtNrajd/YdtKpLrdrrnz1q6SGJXyGwZI/WrYG8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pXbwMU/drAtuGrNFJIo5dKvTFe8axa8zMzL7OztHb5ZxvBb54F7KmC5GJCcVtB5XTWSYjiuqUHCWvIMz1mIlSThLYiPUuakmlLzLxE/Ytgf6i6tbGANdIBwScL2z+BG++e1kqbh95ADSrkQwAvdKWFbSS0RKZ+Q46pyMO/4ml9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7714C1516;
+	Tue, 25 Feb 2025 02:23:30 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3BA43F6A8;
+	Tue, 25 Feb 2025 02:23:12 -0800 (PST)
+Message-ID: <6c00cf65-af68-49fb-b762-675186f45abe@arm.com>
+Date: Tue, 25 Feb 2025 10:23:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggCjB0ePQvPFeTuy9m0UC_KkHa6-qU8AhQ+P8oHbAhZLA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] coresight: change some driver' spinlock type to
+ raw_spinlock_t
+To: Yeoreum Yun <yeoreum.yun@arm.com>, james.clark@linaro.org,
+ alexander.shishkin@linux.intel.com, bigeasy@linutronix.de,
+ clrkwllms@kernel.org, rostedt@goodmis.org, mike.leach@linaro.org
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
+References: <20241220104521.809071-1-yeoreum.yun@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241220104521.809071-1-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 11:10:17AM +0100, Alice Ryhl wrote:
-> On Wed, Feb 19, 2025 at 4:58 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Jan 17, 2025 at 02:22:32PM +0000, Alice Ryhl wrote:
-> > > I was helping someone with writing a new Rust abstraction, and we were
-> > > using the miscdevice abstraction as an example. While doing this, it
-> > > became clear to me that the way I implemented the f_ops vtable is
-> > > confusing to new Rust users, and that the approach used by the block
-> > > abstractions is less confusing.
-> > >
-> > > Thus, update the miscdevice abstractions to use the same approach as
-> > > rust/kernel/block/mq/operations.rs.
-> > >
-> > > Sorry about the large diff. This changes the indentation of a large
-> > > amount of code.
-> > >
-> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > ---
-> > >  rust/kernel/miscdevice.rs | 295 ++++++++++++++++++++++------------------------
-> > >  1 file changed, 141 insertions(+), 154 deletions(-)
-> >
-> > This doesn't apply against a clean 6.14-rc2 tree, what is is made
-> > against?
+Hi Levi,
+
+On 20/12/2024 10:45, Yeoreum Yun wrote:
+> In some coresight drivers, drvdata->spinlock can be held during __schedule()
+> by perf_event_task_sched_out()/in().
 > 
-> I will rebase.
+> Since drvdata->spinlock type is spinlock_t and
+> perf_event_task_sched_out()/in() is called after acquiring rq_lock,
+> which is raw_spinlock_t (an unsleepable lock),
+> this poses an issue in PREEMPT_RT kernel where spinlock_t is sleepable.
 > 
-> Are there any other miscdevice commits that have landed this cycle
-> that it might conflict with? If so, I can base it on your branch to
-> avoid such conflicts.
+> To address this,change type drvdata->spinlock in some coresight drivers,
+> which can be called by perf_event_task_sched_out()/in(),
+> from spinlock_t to raw_spinlock_t.
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
-Nope, I don't see any at the moment, or in my review queue, so it should
-be fine.
+This doesn't apply cleanly on coresight next branch. Please could you 
+rebase on coresight /next ?
 
-thanks,
+Cheers
+Suzuki
 
-greg k-h
+
+> 
+> Yeoreum Yun (9):
+>    coresight: change coresight_device lock type to  raw_spinlock_t
+>    coresight-etm4x: change etmv4_drvdata spinlock type to  raw_spinlock_t
+>    coresight: change coresight_trace_id_map's lock type to
+>      raw_spinlock_t
+>    coresight-cti: change cti_drvdata spinlock's type to raw_spinlock_t
+>    coresight-etb10: change etb_drvdata spinlock's type to raw_spinlock_t
+>    coresight-funnel: change funnel_drvdata spinlock's type to
+>      raw_spinlock_t
+>    coresight-replicator: change replicator_drvdata spinlock's type to
+>      raw_spinlock_t
+>    coresight-tmc: change tmc_drvdata spinlock's type to raw_spinlock_t
+>    coresight/ultrasoc: change smb_drv_data spinlock's type to
+>      raw_spinlock_t
+> 
+>   .../hwtracing/coresight/coresight-config.c    |   8 +-
+>   .../hwtracing/coresight/coresight-config.h    |   2 +-
+>   drivers/hwtracing/coresight/coresight-core.c  |   2 +-
+>   .../hwtracing/coresight/coresight-cti-core.c  |  44 +--
+>   .../hwtracing/coresight/coresight-cti-sysfs.c |  76 +++---
+>   drivers/hwtracing/coresight/coresight-cti.h   |   2 +-
+>   drivers/hwtracing/coresight/coresight-etb10.c |  26 +-
+>   .../coresight/coresight-etm4x-core.c          |  18 +-
+>   .../coresight/coresight-etm4x-sysfs.c         | 250 +++++++++---------
+>   drivers/hwtracing/coresight/coresight-etm4x.h |   2 +-
+>   .../hwtracing/coresight/coresight-funnel.c    |  12 +-
+>   .../coresight/coresight-replicator.c          |  12 +-
+>   .../hwtracing/coresight/coresight-syscfg.c    |  26 +-
+>   .../hwtracing/coresight/coresight-tmc-core.c  |   6 +-
+>   .../hwtracing/coresight/coresight-tmc-etf.c   |  48 ++--
+>   .../hwtracing/coresight/coresight-tmc-etr.c   |  40 +--
+>   drivers/hwtracing/coresight/coresight-tmc.h   |   2 +-
+>   .../hwtracing/coresight/coresight-trace-id.c  |  22 +-
+>   drivers/hwtracing/coresight/ultrasoc-smb.c    |  12 +-
+>   drivers/hwtracing/coresight/ultrasoc-smb.h    |   2 +-
+>   include/linux/coresight.h                     |   4 +-
+>   21 files changed, 308 insertions(+), 308 deletions(-)
+> 
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
