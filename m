@@ -1,114 +1,181 @@
-Return-Path: <linux-kernel+bounces-531603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D665A4429D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53305A442A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70821894BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D868B1895D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20F226B968;
-	Tue, 25 Feb 2025 14:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D25E26B2A6;
+	Tue, 25 Feb 2025 14:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ht7FGo4h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tB6gpsOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB626B0B6;
-	Tue, 25 Feb 2025 14:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850CF26B0B6;
+	Tue, 25 Feb 2025 14:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493243; cv=none; b=VyAq6r01aAA3hHR0H2s+R/NQLfhIMwfSTEtczlNLMpTQ5yjdH9YuVQGQ07u2wsH7n11RNouRFOY8lLFcqH6djlACDc+AWOY2b4Jx9TJ5QIcIZfzrB+AsWKJoidFsHlcuwXhpSM7qk5ySgtmSv7/Vog0kdJzYvLLR3Q1EL5XEFCk=
+	t=1740493246; cv=none; b=nGPyXPo1vgV7R12MrcrwVjQPhHwkYW+wmUw4vOtK4KWqBT+D1Uc1LS+Q+8PyRDm6p++9ZZplFGjgp1vwkU7XSaixkgXZ6y/0laXzelqAJ79Twh8BqtllrhCJGwo8wK3Znh/CXfW5zOhMQvnXmnxnL3S/U4o87v9ZH7vPPWRYdUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493243; c=relaxed/simple;
-	bh=0nB8zD88/ETArJkz+n7GmRzMANgETAdoS3ICvt6uEn8=;
+	s=arc-20240116; t=1740493246; c=relaxed/simple;
+	bh=eDBxPB2ey6CEl5Fn4xbiSGUKr6VohrZZtt7brOucJf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOGh6sSsUW+pfnJdedywn2FpZtzT/xz1fsvI4ctDX83Mpij3f2J6ZDRFQ9qCSNVikeRV3ZeIuKPHG5PF+BJCNjP2OlLHsHK3gu54khnCHkgEMFGzB2gardHx0ERMzgR+XbfizM97lWZ8+59NCfCJNy6BWL/JkHoVOyJ9aE8Hcvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ht7FGo4h; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740493242; x=1772029242;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0nB8zD88/ETArJkz+n7GmRzMANgETAdoS3ICvt6uEn8=;
-  b=Ht7FGo4hUjYBW4OYicoXXIvEpIf44DuUxlX7jewgd/Nm341q1xamcPLY
-   soGKYibuPS5vQWvs3EVMm9DjhaHEQt0e/b6RBGCCpxM4cuuZZAXujDlsP
-   5WkTPO33IwcSDFeCWwmsWVecPpfWPV/3npXuHm1m87ggisNdZBjAa4uzn
-   1XClJB7qd8N9P1knAoAz3aU9Be7jqeYqtd6lJGMisgaXD3OmRGwFgDlNA
-   sY8fIq0ekVVxh4kuT/He9+Mi2FboQje9T3bmPyLY0hNZo85TrUIdpFJKz
-   JcXVtcDB6HuGK/5bUpKXTgu2s72iceplY9zw7IMbnVzEUGUmgacXKcqT2
-   A==;
-X-CSE-ConnectionGUID: BQICi72dQpKe6s7EJ/2vLg==
-X-CSE-MsgGUID: GFSbOynnQ1uYcLOy1AwneA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41003327"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="41003327"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:20:41 -0800
-X-CSE-ConnectionGUID: mYOz7AmTQoGiMPFODo97HQ==
-X-CSE-MsgGUID: Ssj3M0sgSRSCOWvPV3AbRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="116889296"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:20:37 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmvnW-0000000F10y-1RF9;
-	Tue, 25 Feb 2025 16:20:34 +0200
-Date: Tue, 25 Feb 2025 16:20:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v4 2/2] of: Align macro MAX_PHANDLE_ARGS with
- NR_FWNODE_REFERENCE_ARGS
-Message-ID: <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
-References: <20250225-fix_arg_count-v4-0-13cdc519eb31@quicinc.com>
- <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7YgSu23OeSXrgEYmBTcusfSWxKCw/H/ikJWFaAvdkbp33iLRffeUm1VXMWbEZhVOvsjXo8LsamRbKBdUGE7cLWRAPkvgndSAQDRcmsR0CzjzqU//4o8gtAulv3vYHQvdTgIN7xEF9zRUfsm+MLYcF9O8VOFKZ9Rb7UzzCNIBSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tB6gpsOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AC2C4CEDD;
+	Tue, 25 Feb 2025 14:20:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740493246;
+	bh=eDBxPB2ey6CEl5Fn4xbiSGUKr6VohrZZtt7brOucJf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tB6gpsOpZKp5aTOboDdyxR0i9eLXFNrNmyJ2DQAcxZG7y0ROWfd86e0ofq4/C3GmW
+	 EoCE+8hsHyQGRO/TQXvZQdoSp9FTZkRL/VMEmLJjvofLyy3tzlQwy+CQJ45ZX/HxYM
+	 qYoEvZyo6xCSG6gT0xlwTda3Y6XBPkTinf/6qbuTQCzHwPgfynS90twSPxcsBZI+Pq
+	 G09SKxwrVNnJdcStCTcZBUYGHwHDk6SFEZsdeEasBb73x2fyoBXbk5v6ca2PkcAj0N
+	 pwBFnmEMnFTVvBKPYPiKIQUcq9Fi8M1eepSTS3PR0XBqAycnnW8jxPdnfYbo13+5WQ
+	 b0QY4QMg0kaAw==
+Date: Tue, 25 Feb 2025 08:20:43 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
+ Moduline IO modules
+Message-ID: <20250225142043.GA2173114-robh@kernel.org>
+References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
+ <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
+ <20250224204428.GA4050751-robh@kernel.org>
+ <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
+ <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
+ <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
 
-On Tue, Feb 25, 2025 at 09:58:07PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Feb 25, 2025 at 12:24:09PM +0000, Maud Spierings | GOcontroll wrote:
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Tuesday, February 25, 2025 12:52 PM
+>  
+> >On Tue, Feb 25, 2025 at 07:39:52AM +0000, Maud Spierings | GOcontroll wrote:
+> >> From: Rob Herring <robh@kernel.org>
+> >> Sent: Monday, February 24, 2025 9:44 PM
+> >>  
+> >> >On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:
+> >> >> The main point of the Moduline series of embedded controllers is its
+> >> >> ecosystem of IO modules, these currently are operated through the spidev
+> >> >> interface. Ideally there will be a full dedicated driver in the future.
+> >> >>
+> >> >> Add the gocontroll moduline-module-slot device to enable the required
+> >> >> spidev interface.
+> >> >>
+> >> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> >> >> ---
+> >> >>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+> >> >>  1 file changed, 2 insertions(+)
+> >> >>
+> >> >> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> >> >> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c7fb46f771a300926f05 100644
+> >> >> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> >> >> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> >> >> @@ -107,6 +107,8 @@ properties:
+> >> >>            - fsl,mpl3115
+> >> >>              # MPR121: Proximity Capacitive Touch Sensor Controller
+> >> >>            - fsl,mpr121
+> >> >> +            # GOcontroll Moduline module slot for spi based IO modules
+> >> >
+> >> >I couldn't find anything about SPI for GOcontroll Moduline. Can you
+> >> >point me to what this hardware looks like. Based on what I did find,
+> >> >this seems incomplete and not likely a trivial device.
+> >>
+> >> I'll give some more details, if there is a v2 of this patch I will also
+> >> add more information in the commit message.
+> >>
+> >> The module slots have a number of pins, a lot of them currently unused as
+> >> they have not found a function yet, this is very much still a developing
+> >> product. The currently used interfaces to the SoC are:
+> >> 1. SPI bus as a spidev to ease developing new modules and quickly
+> >> integrate them. This is the main communication interface for control and
+> >> firmware updates.
+> >> 2. A reset pin, this is/was driven with the gpio-led driver but I doubt
+> >> that would get accepted upstream so I intend to switch to the much better
+> >> suited libgpio.
+> >
+> >reset-gpios is not in trivial devices, so that's already a hint you
+> >cannot use this binding.
+> >
+> >> 3. An interrupt pin, this is currently only used in the firmware update
+> >> utility [2] to speed up the update process. Other communication is done at
+> >> a regular interval.
+> >>
+> >> What is unused:
+> >> 1. A potentially multi-master i2c bus between all the module slots and
+> >> the SoC
+> >> 2. An SMBus alert line is shared between the modules, but not the SoC.
+> >> 3. A shared line designated as a clock line, intended to in the future
+> >> aid with synchronizing modules to each other for time critical control.
+> >>
+> >> current software that is used to work with the modules can be found at
+> >> [2] and [3], one of them is a Node-RED module the other is a blockset for
+> >> Matlab/Simulink generated code.
+> >>
+> >> If you know a better way I could describe this in the devicetree then I
+> >
+> >You need dedicated binding where you describe entire device, entire
+> >hardware, not what your driver supports in current release.
 > 
-> Macro NR_FWNODE_REFERENCE_ARGS defines the maximal argument count
-> for firmware node reference, and MAX_PHANDLE_ARGS defines the maximal
-> argument count for DT node reference, both have the same value now.
+> I see now that I also forgot the patch that adds this compatible to the
+> spidev driver. Didn't check for the spidevs in testing I guess.
 > 
-> To void argument count inconsistency between firmware and DT, simply
-> align both macros by '#define MAX_PHANDLE_ARGS NR_FWNODE_REFERENCE_ARGS'.
+> Could I write bindings for this device, and then add the compatible to the
+> spidev driver for now? So it probes that driver, and then later when there
+> is a driver remove the compatible there and keep it only in the purpose
+> built driver?
+> 
+> So I'll write gocontroll,moduline-module-slot.yaml, don't quite know where
+> that would go. Define all these attributes in there and then add the 
+> compatible to drivers/spi/spidev.c
+> 
+> Is that okay?
 
-I would add here that the of.h includes fwnode.h already, so it doesn't
-add any new compile time dependency.
+Yes. Bindings are forever, but drivers change. ;)
 
-Both patches LGTM,
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Perhaps put it in connector/ as this looks a bit like a connector. Do 
+you envision DT overlays for the IO modules? Or modules don't have 
+sub-devices you need to describe? There's some effort to on connector 
+bindings (for mikrobus in particular) in order to de-couple host 
+buses/signals from the modules (i.e. so a DT overlay can be applied to 
+any DT defining the connector).
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Rob
 
