@@ -1,259 +1,284 @@
-Return-Path: <linux-kernel+bounces-530553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC92A4350D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:17:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14054A43511
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A568189FFC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC76189FBEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121BC257438;
-	Tue, 25 Feb 2025 06:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="AlskJxWh"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010044.outbound.protection.outlook.com [52.101.229.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2023B3207;
-	Tue, 25 Feb 2025 06:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464217; cv=fail; b=Kd6rgX8W6zAhR2dZtM4TPZvx67pA7oFt0SCRSygsDMm2FweZu/g/5N66BS9xTU0gKtP1p4KIHpulBAUKsBWskZstmZGnNzldCApxx5DBfKdzlDiBGnrxj/nomee5fOUgvZG+MLq6kC+zYKoDF9pH0FnfAY8l15PzjS025qIT1iw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464217; c=relaxed/simple;
-	bh=qD8La7bmEYF8vJ9fvT4+hslAFLNsLltf0fFmDDKfVso=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=S3CMhS7ckOypYN7LsOTm5VKDNpdKisOoIsWDD5lsPrzmFPQuzdTw3SvKjj4IjJ7rj2Vpao2odmMGYnbpuR4oppq3O61mdpLOYSqvM6fwfxgZsSML2XBDIbRJH7xuowRn2cviAlhUvIdNpFS41Lx0bSCgp1NFP15tdQyfDS+ZeQQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=AlskJxWh; arc=fail smtp.client-ip=52.101.229.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B0KgGv0wZER0pmsA/d+z8b2QjusKDkm3hiBhIQUz7oezZTPMVy976W2qQzi+gLmhH8/FcLwsCNsN88yMhCi0BhZpKZjsvYi/XiUPK7WCQJwqmY1TI785vC3wLUmPGJJBPIBgeBW3w7zbu8u2jsf9ajRhiuKygVQFrARO6mSPVidJqyBerr4D6Z+aU+h0KqGE1PidZrpOwrh3iBLQ5yvUkvcR8R/3IviLfqWroMpRKx6OO1ZMeBzlRnFxNeUHD6IIpwi13nD/tqPICNY/e73fM/0fe+IWrCbvO4PlgmDbIEHwJEa5UBSy2cW2k6ODGGf8czA+BMxR78M/1rLuUdL85Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uMltxy1/wD4qM0oWoxUkpsuo7IE2Iho7RFUOlhu7mi4=;
- b=iiV58X3H/IMv9VZidvRgjG23EiraKvYvuwFEkkqaxxoiR4B59Po13D0DlJw7pdx/gGY81oURpvs9gEN6hTtLPbtQGRoXFAik9AGUGbgXUUr7UiYkLANGe3w7ijOpVomJqmFoAXUfiv5jK3yGrHTaK04MoN/L6LOUbI1WfMudg9vzhb4VuNwtKrq3PyB8uVX/FbFByFJbzWYOzrxyjJ3z7M7maBO5+apezCtpNFMtd+U02TAPot93V7abRv36umgKKfebmBD7wCfAL7Wa3ERE48XQL62HfEVtlI/qllS4mmHEtu3putlOrAoLAMDSksEFw0DtyZxRJAozVAfNcZvoAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uMltxy1/wD4qM0oWoxUkpsuo7IE2Iho7RFUOlhu7mi4=;
- b=AlskJxWhyaQicu3QLSFUJ7qdUegt/Ph2MyrORqMQQ+lUbLx3I0s6BASGkeNtJJYvSkXViC5Krlq3Swx37QFlpCaWEdJfbjRI5COE6gQqtdIrlWb+QnzooZD6Jhp+BhQDMGOOOIBgZHWCJDgiuSh/XUp8b1p7ABzX93Jno6MQ+To=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYWPR01MB12125.jpnprd01.prod.outlook.com
- (2603:1096:400:440::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Tue, 25 Feb
- 2025 06:16:51 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.8466.020; Tue, 25 Feb 2025
- 06:16:51 +0000
-Message-ID: <8734g2sg4t.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	dri-devel@lists.freedesktop.org,
-	Niklas Cassel <cassel@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	kernel@collabora.com,
-	David Airlie <airlied@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Jonker <jbx6244@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v7 0/3] Add HDMI audio on the rk3588 SoC
-In-Reply-To: <87frk2sumw.wl-kuninori.morimoto.gx@renesas.com>
-References: <20250217215641.372723-1-detlev.casanova@collabora.com>
-	<BA73C4A1-C680-4748-9CE1-4B3B19A14261@gmail.com>
-	<5E535D58-AEFF-45A4-A1EA-1FA282F366AE@gmail.com>
-	<4988041.31r3eYUQgx@trenzalore>
-	<87frk2sumw.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: multipart/mixed;
- boundary="Multipart_Tue_Feb_25_15:16:50_2025-1"
-Date: Tue, 25 Feb 2025 06:16:50 +0000
-X-ClientProxiedBy: TYAPR01CA0119.jpnprd01.prod.outlook.com
- (2603:1096:404:2a::35) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AB1257420;
+	Tue, 25 Feb 2025 06:17:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD20254B11;
+	Tue, 25 Feb 2025 06:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740464249; cv=none; b=GYijM3bm+qgEPl45ekiLxfJNcNBZQKhxpF2r7zwS80HB/h+QCkcUv9B0HtQEPidC/Q3rjcomDxNMeiNv7DKS0Cv2Y8h+tkGmzMchc5+L6lKXGpB7dZ8+KySsqCaYF7EXd3SRJ39Hyoep0/mpWJQDcIAuAmVOubRfiKjNxcEjvRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740464249; c=relaxed/simple;
+	bh=2shgGogTgLVnF/xDRmIJLUbUkEMcbxDsqRJUV2lIt5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfMeSWGediMpM2L0D1rmYTHpr/WevqPkebCGlvjD93pskINmUTQkTa5+ZUgG0+EAIun1bga/ejT4fJLp3vrIJLjZDThKhuDpCpM5fl/IKvOspsqvC/D19c9yKa2yVSvYMKCK0rBNUfv9GtPhHnKuzjAHbuq6ucR9SP0HRJenzQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 731C0152B;
+	Mon, 24 Feb 2025 22:17:36 -0800 (PST)
+Received: from [10.162.40.21] (a077893.blr.arm.com [10.162.40.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C42A73F673;
+	Mon, 24 Feb 2025 22:17:15 -0800 (PST)
+Message-ID: <2ca1dc13-cd5a-4597-9733-2343e05f53b3@arm.com>
+Date: Tue, 25 Feb 2025 11:47:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB12125:EE_
-X-MS-Office365-Filtering-Correlation-Id: 080264aa-e0d9-4319-9e4c-08dd5563fe07
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|4053099003|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?kKQyU7LMz2MhAkHZTpDnjYV2r+m9ywc7DbrI/oSLQrZVaLlZtZ9tVuj8TDiq?=
- =?us-ascii?Q?w8geinNYz8NWT5u+SQMHpQd7j1jNiJa9X9n5INqtzerAAlpgvq+4t7tP7+/z?=
- =?us-ascii?Q?2FxZSLxm+oArkEotuqtBZsYRxVD3B3oI/L0RM6nW9DeqOHTdf1dFAli80BQY?=
- =?us-ascii?Q?Vhz0qVlwS6FZIABXbOuhK0HMIWeW/s0rzIay9GXSv32Dz6pf+/dBfqrf8kwl?=
- =?us-ascii?Q?+/UhU98aVM1fakIoPkK/9KZlSqr22pE1yr8EggHNbaIKd1cN+dlDaO8lQEUH?=
- =?us-ascii?Q?RgU6XB9OoBq4rVoW7rV6BLMWZoFY4hkaX8CkHhXIX1Y793fVcCmiKIOLsEB/?=
- =?us-ascii?Q?4xudl/tNrPX0njVcs3g/zDZkx9dUEWWtq8i9qz0JX5t4Veva8UUrtEg3tstd?=
- =?us-ascii?Q?rqSVcaVWZtiAch70xcYkACv4ZBWw4GaG4V38QS9XLczpWwjAYvVsAhKwtumV?=
- =?us-ascii?Q?YPvJiWJDPfzjPXLGVmw7nSPSLKFQHtXwdBIKJlolIAkxevV35DQeTnKr/5Iu?=
- =?us-ascii?Q?nqbRpbtXNn+G+VmpyLgUFgr9RIrevTttC3xlFJV22iIq/bWya5PVcJk7/oX8?=
- =?us-ascii?Q?kA1c0xCme4AH9AX7P2Hwx1iGlF+lTudj0O7zm8KaLYFKYqRoN6vn7wH8qsgr?=
- =?us-ascii?Q?cPb+7m/aaPD7zl7zxTTEkvSksgkQBjNwWSfj088pShcbv+ipFwciu7hN5Rd4?=
- =?us-ascii?Q?C+TQ77v+kKEkmso/25AX6UuKgbtVRfYNnRc/0Deon7Qif/g12V+XjXfkvBRI?=
- =?us-ascii?Q?5raLclg8QsRTWSFkHcgRDzHerqJGZbpB6Gf1quP7uq6gcxcBkLtAaLzsnMpz?=
- =?us-ascii?Q?q5IKAgp52PM5RJ8NG4vE+1SZ0Cow5BCJ7L/WYborpZaWxQLFhi1kWEyRHD5w?=
- =?us-ascii?Q?hilmWJ757gUbb59HxFPwovDrckwX3Kb5RA20AgQBbiefw1jHv5bOPn6Jw1d2?=
- =?us-ascii?Q?Rc64bUa/g5chGDOeVM0T2zJer2cCVk81hoZ4BewbYeMTRo3wVwTdcZfWemdh?=
- =?us-ascii?Q?VQn2JvZExc7F6Fb3xm6cUq+3VpKhWnwBQAXzt1CMx2JSWH0r3AErcYDum//Z?=
- =?us-ascii?Q?ReF7E/Dt0kbJocqNUjLYR9MWwLllG4oquv/b9h3AyHFvac9Yt3XgEJPAvGeb?=
- =?us-ascii?Q?29XA6bQXKk9cb9UGoY4YwyULfKRDMnjAgO9dbY2184SraQmfjYT4hEcqTj0k?=
- =?us-ascii?Q?ws1eQ+yzo36zrqTJSOXKL4BmbxwoZPs4B9RrAEVCxRpJ9VLi2+BKtulthL6t?=
- =?us-ascii?Q?JlPhtaRohx9Wx0RimPA/0ZLi9z06XnUC0Ad+mk/NDOS58vkg9iB6pcPx4vcU?=
- =?us-ascii?Q?I3k2OkmQckj3BH6mosophYCDhDHH9h3FiNa8I6zRYSLkHRIrU8dFMpbwCXyR?=
- =?us-ascii?Q?dT8GYINvbBuU5d44REvl0YPXX+qq/dwCmHo7pOFZP4IPYqVIVxbQohD8dQKe?=
- =?us-ascii?Q?LyBgeCmvGL9ze9f8Z+adVyzWW03VhpNE?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(4053099003)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?wTcJvlWc0845cS0tHUwhTmH0sngYljf0TMXizr9RCsmk/REt09y+iiiqgaor?=
- =?us-ascii?Q?AYhKF+4JrsSlt4ZEy/QINZ7HHm97aJTgW8joIHIMssUnHcoXPx52mqQYXJ7w?=
- =?us-ascii?Q?TCBGVKQA6lp4w5BqMYJ0a9JgNpStISk76cAgddKSRM4V9QeTe21L2uqEpJKO?=
- =?us-ascii?Q?rksbzLbnU0aCCW1TCYx69lYmuSfxuvliLOvTR9GZr68Mt9uptcARdC4Bh6lD?=
- =?us-ascii?Q?o+dzdKv+sg9QAOnt9fdreKfYd+V/f57NNOd/MbVP2ifo/zYVT97Izkv+EFsu?=
- =?us-ascii?Q?zE2sW1Vwp0+oAQ1DcnTbAxWbrPKtlfe5OgIcxTXEKHSZ3jqI8E6fx1JA3+X2?=
- =?us-ascii?Q?EkW7fkvm9SShdmDnMD5f+ky9pDSMSQjCnCM2o30cXrfmSFAw5lf9ouCRB4YK?=
- =?us-ascii?Q?XwXTmferjHZm7mFVnc/rL+wzSA6RujDhceEXyyjP20PlkFsqDa50GO51ZJFg?=
- =?us-ascii?Q?JUZYlbaBabffP3yRxVaQabJs8UQTErvwZf8dQY0L5l0/seGOQtexofzeciWB?=
- =?us-ascii?Q?KjGLQIlMLp9G/pZjptxvNpRyd4JIB0WX4HsfpKoU8AA665Bq0bt2nuNcTYYV?=
- =?us-ascii?Q?UR9jwP9kgHqgiX7sYIdA4P9bZcnf7y86d70JH9mEaA6BFSfbMTr8gzWutd1V?=
- =?us-ascii?Q?6Vglbdn4UOHNwrFMiRJY5IfngXGq/SKnE6let87xR2nnnQwMxgcuAgNo56KC?=
- =?us-ascii?Q?Sw4qazvZVcqE3BLEQwO1xTwY56D/ba8z26WOb736zwRIA339BBPrAbvZCOz5?=
- =?us-ascii?Q?Y6b3lJDjI5ziDFjaKt49GBODwOUrymTtWLHRBdLtz/9FDOxZHJkaFyqqoPe5?=
- =?us-ascii?Q?33L6ErxsGea2P/RZv0gMQMaWkIOpSVbDOcHyHwz7utTuD32mQ8rM42UM6Izp?=
- =?us-ascii?Q?i2uIDvE7ZgBcWMUshK9dEinqQMrJBFPJDy143JOUi/ijRZv7IuPPwncd+w4C?=
- =?us-ascii?Q?x5oBeBnQzZZSJ1a6jaoOFCh5mnen+suskiPeuGq60EtGv+CKDM6CsD2YOAPs?=
- =?us-ascii?Q?bMLQGnz4zz1Xw1ki/EZON758PY4VKZb5ujPYotePcCAD5v7XmI9tsiMuPT7D?=
- =?us-ascii?Q?9hQzWpSQonj4mhCAVjthD6TMZ3PQTvFMTxajFpZYHswA/lyOX7T2T/Jk0Tak?=
- =?us-ascii?Q?y0ppt2CDIk6+IfstapaU5mfzbSun2dKcHxY6PiMz/xrRlSHle45KkHNs9LRp?=
- =?us-ascii?Q?TvzpB4U8TvIifvKWXTAyWxnfkwZJvIltsdVby3Jw+2tWpyfsgkfG5qkcWcDQ?=
- =?us-ascii?Q?OHIYRfX5sj+v6GXFFbAoA64TMVxD1YKZEI5EQfjb+BH7NbcOSOK00rwAJF6w?=
- =?us-ascii?Q?+YUThvRYon4hWTliMOG5Wjqt5kaO4nyjUxeup3DJx8VB/KQKhvIHwn9EvSXi?=
- =?us-ascii?Q?TjTCPRics1mn9yVWCbXXD32oiKdG26fBDntXATyf0SOHh44Yl1XIzwBoTmhb?=
- =?us-ascii?Q?NUSLbjnN1s7Z8XeKfHkY9fNinSyuv7lILA6fcwVDSNL4bODTY3kjQWsLfTMg?=
- =?us-ascii?Q?FMNduY69srMiBuFT1/XVun/EotVH+M+GQSOfEy8fDgFvErDuBuzmpWzYcbka?=
- =?us-ascii?Q?zM04hZcwxJKIehrA8OuHWUrDlccs8nhImXdQmVttSgSDRPly4CwH72VxCx8I?=
- =?us-ascii?Q?IF7y70rT5BQoaHcIdnd7eYE=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 080264aa-e0d9-4319-9e4c-08dd5563fe07
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 06:16:51.0277
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jg/rd4ddVhsMEu9rrwaPdU8qXQxZdGIuWFTIgOw8ibWDXfMQwyCvtkq7SNRkHYUc6IIiWKKrPzaHO9ALZa2tly9u1c2aiOIer0Q8OXAUgch9t2J45oJNoTj5duVwhVhY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB12125
-
---Multipart_Tue_Feb_25_15:16:50_2025-1
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 7/7] arm64/boot: Enable EL2 requirements for
+ FEAT_PMUv3p9
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mark Brown <robh@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Jonathan Corbet <corbet@lwn.net>, Eric Auger <eric.auger@redhat.com>,
+ kvmarm@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250203050828.1049370-1-anshuman.khandual@arm.com>
+ <20250203050828.1049370-8-anshuman.khandual@arm.com>
+ <Z7x-EDH9QP7g4lC6@J2N7QTR9R3.cambridge.arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Z7x-EDH9QP7g4lC6@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Hi Detlev, again
 
-> > Especially those commits:
-> >       ASoC: audio-graph-card2: use __free(device_node) for device node
-> >       ASoC: audio-graph-card: use __free(device_node) for device node
-> >       ASoC: simple-card: use __free(device_node) for device node
+On 2/24/25 19:41, Mark Rutland wrote:
+> On Mon, Feb 03, 2025 at 10:38:28AM +0530, Anshuman Khandual wrote:
+>> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
+>> access from EL1 requires appropriate EL2 fine grained trap configuration
+>> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
+>> Otherwise such register accesses will result in traps into EL2.
+>>
+>> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
+>> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
+>> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
+>> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
+>>
+>> Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_FGT2
+>> based registers to be accessible in EL2.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Oliver Upton <oliver.upton@linux.dev>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-doc@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: kvmarm@lists.linux.dev
+>> Tested-by: Rob Herring (Arm) <robh@kernel.org>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
+>>  arch/arm64/include/asm/el2_setup.h   | 25 +++++++++++++++++++++++++
+>>  2 files changed, 43 insertions(+)
 > 
-> I got same report from our test team. I'm now tring to solve it.
+> Three things to note here:
+> 
+> (1) I think this is missing some other necessary register configuration.
+> 
+>     From a quick scan, we also require MDCR_EL3.EnPM2 (bit [7]) to be
+>     configured, which is not described in mainline nor here. If that
 
-Unfortunately, I can't reproduce the issue on my environment,
-but I guess I found the root cause. Does attached patch can solve
-your issue ?
-I will officially post the patch to ML, but want to confirm it before it.
+Will update the Documentation/arch/arm64/booting.rst.
 
-Thank you for your help !!
+>     resets to 0, then EL{2,1,0} accesses to a number of registers such
+>     as PMUACR_EL1 may trap to EL3> 
+>     AFAICT the boot-wrapper resets that bit to 0, so have we actually
+>     tested all of this with the boot-wrapper? Does TF-A set this bit?
 
-Best regards
----
-Kuninori Morimoto
+Right, boot wrapper resets the bit to 0. We will need the following changes
+to set that up when PMUv3p9 is available. MDCR_EL3.EnPM2 also needs to be
+set when FEAT_SPMU, FEAT_EBEP, FEAT_PMUv3_SS or FEAT_SPMU2 are implemented.
+Should those features be checked here as well ?
 
---Multipart_Tue_Feb_25_15:16:50_2025-1
-Content-Type: text/plain; type=patch; name="0001-ASoC-simple-card-utils-Don-t-use-__free-device_node-.patch"; charset=US-ASCII
-Content-Disposition: attachment; filename="0001-ASoC-simple-card-utils-Don-t-use-__free-device_node-.patch"
-Content-Transfer-Encoding: base64
+--- a/arch/aarch64/include/asm/cpu.h
++++ b/arch/aarch64/include/asm/cpu.h
+@@ -56,6 +56,7 @@
+ #define MDCR_EL3_SBRBE_NOTRAP_NOPROHIBIT       (UL(3) << 32)
+ #define MDCR_EL3_ENPMSN                                BIT(36)
+ #define MDCR_EL3_EBWE                          BIT(43)
++#define MDCR_EL3_EnPM2                         BIT(7)
+ 
+ #define SCR_EL3_RES1                   BITS(5, 4)
+ #define SCR_EL3_NS                     BIT(0)
+@@ -87,6 +88,7 @@
+ #define ID_AA64DFR0_EL1_PMSVER         BITS(35, 32)
+ #define ID_AA64DFR0_EL1_TRACEBUFFER    BITS(47, 44)
+ #define ID_AA64DFR0_EL1_BRBE           BITS(55, 52)
++#define ID_AA64DFR0_EL1_PMUVER         BITS(11, 8)
+ #define ID_AA64DFR0_EL1_DEBUGVER       BITS(3, 0)
+ 
+ #define ID_AA64ISAR0_EL1_TME           BITS(27, 24)
+diff --git a/arch/aarch64/init.c b/arch/aarch64/init.c
+index 54e4cc4..fe7ed5f 100644
+--- a/arch/aarch64/init.c
++++ b/arch/aarch64/init.c
+@@ -152,6 +152,9 @@ static void cpu_init_el3(void)
+        if (mrs_field(ID_AA64DFR0_EL1, DEBUGVER) >= 11)
+                mdcr |= MDCR_EL3_EBWE;
+ 
++       if (mrs_field(ID_AA64DFR0_EL1, PMUVER) >= 0b1001)
++               mdcr |= MDCR_EL3_EnPM2;
++
+        msr(MDCR_EL3, mdcr);
+ 
+        if (mrs_field(ID_AA64PFR0_EL1, SVE)) {
 
-RnJvbSAzOTk1NDc4YWU4NDI0MGIyNDk2NGE0NThlY2JlZmU5ZmI2ZGMyMjcyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBLdW5pbm9yaSBNb3JpbW90byA8a3VuaW5vcmkubW9yaW1vdG8u
-Z3hAcmVuZXNhcy5jb20+CkRhdGU6IFR1ZSwgMjUgRmViIDIwMjUgMDk6NTQ6NDcgKzA5MDAKU3Vi
-amVjdDogW1BBVENIXSBBU29DOiBzaW1wbGUtY2FyZC11dGlsczogRG9uJ3QgdXNlIF9fZnJlZShk
-ZXZpY2Vfbm9kZSkgYXQKIGdyYXBoX3V0aWxfcGFyc2VfZGFpKCkKCmNvbW1pdCA0MTlkMTkxODEw
-NWUgKCJBU29DOiBzaW1wbGUtY2FyZC11dGlsczogdXNlIF9fZnJlZShkZXZpY2Vfbm9kZSkgZm9y
-CmRldmljZSBub2RlIikgdXNlcyBfX2ZyZWUoZGV2aWNlX25vZGUpIGZvciBkbGMtPm9mX25vZGUs
-IGJ1dCB3ZSBuZWVkIHRvCmtlZXAgaXQgd2hpbGUgZHJpdmVyIGlzIGluIHVzZS4KCkRvbid0IHVz
-ZSBfX2ZyZWUoZGV2aWNlX25vZGUpIGluIGdyYXBoX3V0aWxfcGFyc2VfZGFpKCkuCgpGaXhlczog
-NDE5ZDE5MTgxMDVlICgiQVNvQzogc2ltcGxlLWNhcmQtdXRpbHM6IHVzZSBfX2ZyZWUoZGV2aWNl
-X25vZGUpIGZvciBkZXZpY2Ugbm9kZSIpClNpZ25lZC1vZmYtYnk6IEt1bmlub3JpIE1vcmltb3Rv
-IDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KLS0tCiBzb3VuZC9zb2MvZ2VuZXJp
-Yy9zaW1wbGUtY2FyZC11dGlscy5jIHwgNyArKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNl
-cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy9nZW5lcmlj
-L3NpbXBsZS1jYXJkLXV0aWxzLmMgYi9zb3VuZC9zb2MvZ2VuZXJpYy9zaW1wbGUtY2FyZC11dGls
-cy5jCmluZGV4IDUxZTBlNDM0NTE0ZC4uNzlmZGQ1N2E0NzBjIDEwMDY0NAotLS0gYS9zb3VuZC9z
-b2MvZ2VuZXJpYy9zaW1wbGUtY2FyZC11dGlscy5jCisrKyBiL3NvdW5kL3NvYy9nZW5lcmljL3Np
-bXBsZS1jYXJkLXV0aWxzLmMKQEAgLTExMDIsNiArMTEwMiw3IEBAIHN0YXRpYyBpbnQgZ3JhcGhf
-Z2V0X2RhaV9pZChzdHJ1Y3QgZGV2aWNlX25vZGUgKmVwKQogaW50IGdyYXBoX3V0aWxfcGFyc2Vf
-ZGFpKHN0cnVjdCBzaW1wbGVfdXRpbF9wcml2ICpwcml2LCBzdHJ1Y3QgZGV2aWNlX25vZGUgKmVw
-LAogCQkJIHN0cnVjdCBzbmRfc29jX2RhaV9saW5rX2NvbXBvbmVudCAqZGxjLCBpbnQgKmlzX3Np
-bmdsZV9saW5rKQogeworCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZTsKIAlzdHJ1Y3QgZGV2aWNl
-ICpkZXYgPSBzaW1wbGVfcHJpdl90b19kZXYocHJpdik7CiAJc3RydWN0IG9mX3BoYW5kbGVfYXJn
-cyBhcmdzID0ge307CiAJc3RydWN0IHNuZF9zb2NfZGFpICpkYWk7CkBAIC0xMTEwLDcgKzExMTEs
-NyBAQCBpbnQgZ3JhcGhfdXRpbF9wYXJzZV9kYWkoc3RydWN0IHNpbXBsZV91dGlsX3ByaXYgKnBy
-aXYsIHN0cnVjdCBkZXZpY2Vfbm9kZSAqZXAsCiAJaWYgKCFlcCkKIAkJcmV0dXJuIDA7CiAKLQlz
-dHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUgX19mcmVlKGRldmljZV9ub2RlKSA9IG9mX2dyYXBoX2dl
-dF9wb3J0X3BhcmVudChlcCk7CisJbm9kZSA9IG9mX2dyYXBoX2dldF9wb3J0X3BhcmVudChlcCk7
-CiAKIAkvKgogCSAqIFRyeSB0byBmaW5kIGZyb20gREFJIG5vZGUKQEAgLTExNTMsOCArMTE1NCwx
-MCBAQCBpbnQgZ3JhcGhfdXRpbF9wYXJzZV9kYWkoc3RydWN0IHNpbXBsZV91dGlsX3ByaXYgKnBy
-aXYsIHN0cnVjdCBkZXZpY2Vfbm9kZSAqZXAsCiAJICogICAgaWYgaGUgdW5iaW5kZWQgQ1BVIG9y
-IENvZGVjLgogCSAqLwogCXJldCA9IHNuZF9zb2NfZ2V0X2RsYygmYXJncywgZGxjKTsKLQlpZiAo
-cmV0IDwgMCkKKwlpZiAocmV0IDwgMCkgeworCQlvZl9ub2RlX3B1dChub2RlKTsKIAkJZ290byBl
-bmQ7CisJfQogCiBwYXJzZV9kYWlfZW5kOgogCWlmIChpc19zaW5nbGVfbGluaykKLS0gCjIuNDMu
-MAoK
+MDCR_EL2.EnPM2 does not seem to be set on TFA either, will double check and
+get it enabled.
 
---Multipart_Tue_Feb_25_15:16:50_2025-1--
+> 
+>     Are we sure we've cpatured *all* requirements for FEAT_PMUv3p9? i.e.
+>     is there anything else that we've missed?
+
+
+> 
+> (2) This is a fix for !VHE support for PMUACR and ICNTR, where the host
+>     may run at EL1 and consequently will be affected by fine grained
+>     traps.
+> 
+>     So this probably needs a CC stable and/or fixes tag, and backport.
+
+Fixes: 0bbff9ed8165 ("perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access control")
+Fixes: d8226d8cfbaf ("perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter")
+Cc: stable@vger.kernel.org
+
+But is there a particular stable tree this patch should be addressed ?
+
+> 
+> (3) As there's no KVM changes, this is only safe provided that the
+>     registers affected by these fine grained traps are already
+>     unconditionally trapped by other traps when running a vCPU.
+> 
+>     It looks like PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 are all
+>     trapped by MDCR_EL2.TPM, so that should work as long as we emulate
+>     the PMU. For direct access, FGT2 support will be a prerequisite.
+> 
+> Ideally, we'd have added support for FGT2 before the PMU functionality
+> that implicitly depends upon it. We should pay more attention to trap
+> controls in future.
+> 
+> Given (1) and (2) I think someone needs to look into this a bit more and
+> figure out if this needs a fixup or a respin.
+
+To summarize
+
+- Update arm64/booting.rst regarding MDCR_EL3.EnPM2
+- Add above mentioned "Fixes:" tag and "CC: stable"
+- But should respin this patch or send a fix up instead ?
+
+- Boot wrapper patch setting MDCR_EL3.EnPM2
+- TFA patch setting MDCR_EL3.EnPM2
+
+Is there anything else missing ?
+
+> 
+> Mark.
+> 
+>> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+>> index cad6fdc96b98..04d97a1d5ffa 100644
+>> --- a/Documentation/arch/arm64/booting.rst
+>> +++ b/Documentation/arch/arm64/booting.rst
+>> @@ -288,6 +288,12 @@ Before jumping into the kernel, the following conditions must be met:
+>>  
+>>      - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
+>>  
+>> +  For CPUs with the Fine Grained Traps 2 (FEAT_FGT2) extension present:
+>> +
+>> +  - If EL3 is present and the kernel is entered at EL2:
+>> +
+>> +    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
+>> +
+>>    For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
+>>  
+>>    - If EL3 is present and the kernel is entered at EL2:
+>> @@ -382,6 +388,18 @@ Before jumping into the kernel, the following conditions must be met:
+>>  
+>>      - SMCR_EL2.EZT0 (bit 30) must be initialised to 0b1.
+>>  
+>> +  For CPUs with the Performance Monitors Extension (FEAT_PMUv3p9):
+>> +
+>> + - If the kernel is entered at EL1 and EL2 is present:
+>> +
+>> +    - HDFGRTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
+>> +    - HDFGRTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
+>> +    - HDFGRTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
+>> +
+>> +    - HDFGWTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
+>> +    - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
+>> +    - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
+>> +
+>>    For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
+>>  
+>>    - If the kernel is entered at EL1 and EL2 is present:
+>> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+>> index 25e162651750..1a0071faf57e 100644
+>> --- a/arch/arm64/include/asm/el2_setup.h
+>> +++ b/arch/arm64/include/asm/el2_setup.h
+>> @@ -233,6 +233,30 @@
+>>  .Lskip_fgt_\@:
+>>  .endm
+>>  
+>> +.macro __init_el2_fgt2
+>> +	mrs	x1, id_aa64mmfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
+>> +	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
+>> +	b.lt	.Lskip_fgt2_\@
+>> +
+>> +	mov	x0, xzr
+>> +	mrs	x1, id_aa64dfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMUVer_SHIFT, #4
+>> +	cmp	x1, #ID_AA64DFR0_EL1_PMUVer_V3P9
+>> +	b.lt	.Lskip_pmuv3p9_\@
+>> +
+>> +	orr	x0, x0, #HDFGRTR2_EL2_nPMICNTR_EL0
+>> +	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
+>> +	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
+>> +.Lskip_pmuv3p9_\@:
+>> +	msr_s   SYS_HDFGRTR2_EL2, x0
+>> +	msr_s   SYS_HDFGWTR2_EL2, x0
+>> +	msr_s   SYS_HFGRTR2_EL2, xzr
+>> +	msr_s   SYS_HFGWTR2_EL2, xzr
+>> +	msr_s   SYS_HFGITR2_EL2, xzr
+>> +.Lskip_fgt2_\@:
+>> +.endm
+>> +
+>>  .macro __init_el2_gcs
+>>  	mrs_s	x1, SYS_ID_AA64PFR1_EL1
+>>  	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
+>> @@ -283,6 +307,7 @@
+>>  	__init_el2_nvhe_idregs
+>>  	__init_el2_cptr
+>>  	__init_el2_fgt
+>> +	__init_el2_fgt2
+>>          __init_el2_gcs
+>>  .endm
+>>  
+>> -- 
+>> 2.25.1
+>>
 
