@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-530431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F776A43360
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:07:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B503A43368
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62227189AD17
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2BF189CF2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9B014EC7E;
-	Tue, 25 Feb 2025 03:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W9LLfq+5"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7A315C14B;
+	Tue, 25 Feb 2025 03:09:12 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB17BE49;
-	Tue, 25 Feb 2025 03:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAB151991;
+	Tue, 25 Feb 2025 03:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740452821; cv=none; b=E7U4b2fMV18m6y3HrwC2RzzSjsmVN+7pSYqjYBzie37Kg7v+rv8yGFNAnZ2tfe8wKH6+FAsFvm3TUJnH3Y4R1r28UhVQVXCdrKf0Dcd5qYr10o80+NUOc+yxtyX5intHPh6hmAC5sFrnFsEXLbxDHjNkGBgy2wDeulkZcMHmMu4=
+	t=1740452952; cv=none; b=GtpVwRhCRkn8+6dyCTkc7iTUzYj/t2BW7MOB8MwOMSCZAGhiyOkTDPQtgrxCYVNwFMp+Fu6mO/1IhRMR4hFfvSias2camQmXq0lCVwWBjV+6d7yb7w4MWmnSR8WS54kSVSmALvBwMWzzp5y4x7vj2r7g+jAKFw1WRw7zv8j4jjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740452821; c=relaxed/simple;
-	bh=lHEAxf5ZJA2azxyY/oKi7P/y8H4bZ4x9CyA6kaJAiGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jr40HIE5HuAMl6JPKX5xDxXBrjZy/B5h8WiFHjZlbUDxI+/AnymMhKH3LVaDaaTyPNPnvotACP71NdKM4NdfBv1SH1oM9hzwOIIzI/jr8gFIxAx3Ab4qV+rrEZdHJADSYh9PfjK3Q/N2TlzETaDHfz03qzK0k4rLcw0oRPcvdQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W9LLfq+5; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740452811; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=tPFJL3Zgq99hh+p83jK5GeOO9zW89CPdsTMm5GrF2Dc=;
-	b=W9LLfq+5/W5AmwotnDp4n7Hmd1wB85LE/53Y4iwvDbL7jm+Qotk/8ErUdR6troUsfDNMcJzCqTESOxKRIL4xBWDLa/+XcDdRzVG8+fRKCKFn1s+XxOpEfGrwae3hbjHUgPMcIE/MEfmNaWZxC2w0xntQkltvGdBRXmsq//vuXQk=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQD2tsl_1740452810 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 11:06:51 +0800
-Date: Tue, 25 Feb 2025 11:06:50 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Lukas Wunner <lukas@wunner.de>, rafael@kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
- <20250224034500.23024-3-feng.tang@linux.alibaba.com>
- <Z7y2e-EJLijQsp8D@wunner.de>
+	s=arc-20240116; t=1740452952; c=relaxed/simple;
+	bh=qtwoiW+wjxdwfniv8ENqabrlCk5LMOdfrqjAEX8Z+1U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r8pTCQYMWQOxdnORL4pkjfqzgyPmMmbu2TpyAVlL8fN+6K2GYAEAAE6jnW/Yk9dWinlxlTHUBeHuik2FagPUHRwEJ2sch8gU6c0cUvPT9LhOI1nUidRUXOV+stIVR3C+eNEL5/r+FHKfP1g+rnmkpDPLU6RbNAsse8Qt3KjwFYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P2DuUF002099;
+	Mon, 24 Feb 2025 19:08:52 -0800
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 44yar7juc7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 24 Feb 2025 19:08:52 -0800 (PST)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 24 Feb 2025 19:08:51 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 24 Feb 2025 19:08:48 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <mchehab@kernel.org>, <fullwaywang@outlook.com>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <tiffany.lin@mediatek.com>, <andrew-ct.chen@mediatek.com>,
+        <yunfei.dong@mediatek.com>, <matthias.bgg@gmail.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 6.1.y] media: mtk-vcodec: potential null pointer deference in SCP
+Date: Tue, 25 Feb 2025 11:08:47 +0800
+Message-ID: <20250225030847.3829454-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7y2e-EJLijQsp8D@wunner.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: jbfNddqTegbxnga7WbzmBe77Awe98qSA
+X-Authority-Analysis: v=2.4 cv=Be0i0qt2 c=1 sm=1 tr=0 ts=67bd3444 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=UqCG9HQmAAAA:8 a=t7CeM3EgAAAA:8 a=7f2alXSBUxmpNkzq_swA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: jbfNddqTegbxnga7WbzmBe77Awe98qSA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_12,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 spamscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1011
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2502100000
+ definitions=main-2502250020
 
-Hi Lukas,
+From: Fullway Wang <fullwaywang@outlook.com>
 
-On Mon, Feb 24, 2025 at 07:12:11PM +0100, Lukas Wunner wrote:
-> On Mon, Feb 24, 2025 at 11:44:58AM +0800, Feng Tang wrote:
-> > @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
-> >  		 * Disable hot-plug interrupts in case they have been enabled
-> >  		 * by the BIOS and the hot-plug service driver is not loaded.
-> >  		 */
-> > -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> > -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> > +		pcie_disable_hp_interrupts_early(dev);
-> >  	}
-> 
-> Moving the Slot Control code from pciehp to portdrv (as is done in
-> patch 1 of this series) is hackish.  It should be avoided if at all
-> possible.
+[ Upstream commit 53dbe08504442dc7ba4865c09b3bbf5fe849681b ]
 
-I tried to remove the code duplication of 2 waiting function, according
-to Bjorn's comment in https://lore.kernel.org/lkml/20250218223354.GA196886@bhelgaas/.
-Maybe I didn't git it right. Any suggestion?
+The return value of devm_kzalloc() needs to be checked to avoid
+NULL pointer deference. This is similar to CVE-2022-3113.
 
-> 
-> As I've already said before...
-> 
-> https://lore.kernel.org/all/Z6HYuBDP6uvE1Sf4@wunner.de/
-> 
-> ...it seems clearing those interrupts is only necessary
-> in the CONFIG_HOTPLUG_PCI_PCIE=n case.  And in that case,
-> there is no second Slot Control write, so there is no delay
-> to be observed.
-> 
-> Hence the proper solution is to make the clearing of the
-> interrupts conditional on: !IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE)
-> 
-> You keep sending new versions of these patches that do not
-> incorporate the feedback I provided in the above-linked e-mail.
-> 
-> Please re-read that e-mail and verify if the solution that
-> I proposed solves the problem.  That solution does not
-> require moving the Slot Control code from pciehp to portdrv.
+Link: https://lore.kernel.org/linux-media/PH7PR20MB5925094DAE3FD750C7E39E01BF712@PH7PR20MB5925.namprd20.prod.outlook.com
+Signed-off-by: Fullway Wang <fullwaywang@outlook.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+[ To fix CVE-2024-40973, change the file path from drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+ to drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c and minor conflict resolution ]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test.
+---
+ drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-There might be some misunderstaning here :), I responded in
-https://lore.kernel.org/lkml/Z6LRAozZm1UfgjqT@U-2FWC9VHC-2323.local/
-that your suggestion could solve our issue.
+diff --git a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
+index d8e66b645bd8..27f08b1d34d1 100644
+--- a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
++++ b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
+@@ -65,6 +65,8 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(struct mtk_vcodec_dev *dev)
+ 	}
+ 
+ 	fw = devm_kzalloc(&dev->plat_dev->dev, sizeof(*fw), GFP_KERNEL);
++	if (!fw)
++		return ERR_PTR(-ENOMEM);
+ 	fw->type = SCP;
+ 	fw->ops = &mtk_vcodec_rproc_msg;
+ 	fw->scp = scp;
+-- 
+2.25.1
 
-And the reason I didn't take it is I was afraid that it might hurt
-the problem what commit 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port
-services during port initialization") tried to solve.
-
-As you mentioned, the comment for 2bd50dd800b5 is "a bit confusing",
-and I tried to guess in my previous reply: 
-"
-I'm not sure what problem this piece of code try to avoid, maybe
-something simliar to the irq storm isseu as mentioned in the 2/2 patch?
-The code comments could be about the small time window between this
-point and the loading of pciehp driver, which will request_irq and
-enable hotplug interrupt again.
-"
-
-The code comment from 2bd50dd800b5 is:
-
-	/*
-	 * Disable hot-plug interrupts in case they have been
-	 * enabled by the BIOS and the hot-plug service driver
-	 * is not loaded.
-	 */
-
-The "is not loaded" has 2 possible meanings:
-1. the pciehp driver is not loaded yet at this point inside
-   get_port_device_capability(), and will be loaded later
-2. the pciehp will never be loaded, i.e. CONFIG_HOTPLUG_PCI_PCIE=n 
-
-If it's case 2, your suggestion can solve it nicely, but for case 1,
-we may have to keep the interrupt disabling.
-
-Thanks,
-Feng
 
