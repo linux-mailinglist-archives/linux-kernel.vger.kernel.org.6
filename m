@@ -1,84 +1,136 @@
-Return-Path: <linux-kernel+bounces-531672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9451FA4437E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:51:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738F6A4437F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:51:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD6A863A87
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE361893718
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DBE269CF0;
-	Tue, 25 Feb 2025 14:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1C726E142;
+	Tue, 25 Feb 2025 14:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uobK+4u+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Koyd/4yt"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A521ABCC;
-	Tue, 25 Feb 2025 14:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC0626D5DE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494576; cv=none; b=dchoHlsUg1XXLS8uXDsGPZGtmQLgCT2Md3q5xNdPTU/CEbB9gXGMCJYtPWsIHWiS3gPjwPjjqVqjlJTSffIjYOS69FvH/pCtOMKs0Tt9/6D2OGLoJ08TrCvJ05gfzv8yNEa5JFX/J7htQ/4sbe7xyDts07ExvYIPxDhm/bYONJg=
+	t=1740494624; cv=none; b=cLBCbHy7wkihv8fvxZoJMx/ct08XMv/KK3PSy+f3TN9unbZ0yhlJogB8EAVZrMky7ClrXJXO9uUUYAQIo7tUWqZd7d+MlonMnL6YK5fCr527MO9iBoNV34tArOoxmE481T/k6cOodRJkmuhPWQbidF0+unlSp329/PG9eY2VNmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494576; c=relaxed/simple;
-	bh=+Rrz6dKLybJ666Hl5ZyN6uqa+5HptLGCNy0acRXjVb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V52vO1dL5A05UqCElRK3LhenSDobr+oZlrnRqpd1Y/uc6C0wRaz8ZQ6iNPmkifkXHt6e+jDzCzj7gbV0KzFlKY9Ut9xl5/YTCiTSEQpEjpNALuwn89kEDWuSqes6JxkniUvjwQpDZRrLr4lLAZq9pW0omVVnYa/mxLQRBSVtpJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uobK+4u+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEF1C4CEDD;
-	Tue, 25 Feb 2025 14:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740494575;
-	bh=+Rrz6dKLybJ666Hl5ZyN6uqa+5HptLGCNy0acRXjVb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uobK+4u+kcrDBl9pDK/oh11ozIVZknTD64VJOaNxKNg12MY8iAC3cDUvGvDWhdZIm
-	 wq9HkF9G59LOVZDfaWCwcm1L4q83C18tzMuUeBznriJF1wHrdvO4h+n0qnGSi9t9ro
-	 Adqbayr3luCD0/iScdgaNkANPZNm/i14qZIamc8tYNRTOrJZcRI6pjXNqQcxnsdX9u
-	 YXm2KLcZ8glUpuwmq1SSJQgazwcZPbmhYdZSCwg2rqDMr1mfk+Shum5X5ZsSPT36r1
-	 AK4zELDqgq0/39zn0fGdEkgDxjI0fHoW8UqCWqTVQ/WOy2pTDKiQm10PiVcOHy0CPx
-	 adx+e6fdWr0cQ==
-Date: Tue, 25 Feb 2025 08:42:53 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Saravana Kannan <saravanak@google.com>
-Subject: Re: [PATCH 1/5] of: Compare property names by of_prop_cmp() in
- of_alias_scan()
-Message-ID: <174049456365.2357875.2320414832055737654.robh@kernel.org>
-References: <20250224-of_bugfix-v1-0-03640ae8c3a6@quicinc.com>
- <20250224-of_bugfix-v1-1-03640ae8c3a6@quicinc.com>
+	s=arc-20240116; t=1740494624; c=relaxed/simple;
+	bh=gx8NytW0dpyLUO7UQa31/FCFzdjJXf1mhiwX+ZS46cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZvHkLWytadalyhnMWOVJ87A44GGrfwGvIaTLjn0OZD6j9PD4YmxnRW4C4W8so2xXIGLn9qbgMHS34n9CHemetRWxuy7uQacZNfjDxF4wnH7Daw+y7Wh5DGsaILYoS7yydNAHNKLFm6aGCwHrtwm81NB+Q+wT65k+LgZ3+KIJ4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Koyd/4yt; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54298ec925bso7991596e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:43:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740494620; x=1741099420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3kCyyrcTNuv5sP+J6vnk7eUPElleP8xNWbNZ5x97dgc=;
+        b=Koyd/4yt66fUuyUBrMk4IYpJPiFvV5IPf8kenDBhtUdb0Sg22Q6DMNWWA+XJAzuFeC
+         8NLJeHrOWCHsu8RlDHybmpGVlAwwasuA5xAcK1arkMAQytqpNoSdCM/uUDEnXQ8FukZB
+         E77mg9DrKpqsVG4oI0iQ/2F8Vd7kEFJmMuJNChZo2RR1YQz96PXAj3Ud6dKmeRqpyyal
+         lz2TCiFWSc5FVzUIoe88+J6HuiaXEtxSLCS93a2ZYlE0MOsiZDTJrcuuTOYbcjtRAy1s
+         0JbjdnTR0XtTu2FbtkvxiNUTPtYHjnrIk5IGnS2e/NFefKBq7YPfcnMXvvfW5Qxx8a31
+         vyVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740494620; x=1741099420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3kCyyrcTNuv5sP+J6vnk7eUPElleP8xNWbNZ5x97dgc=;
+        b=drITLrW+VA9d6f/BvUInz0Wxk6WPqyU/ogbjTH8wyafOxhk8PrP4NVrHPDcJ9VsqYT
+         FYY3MwsnsQ94uro8jbrOU6q/uv143/1AT+JKrnii6yGLQaZv8ZMlcWUaWItfvjkCd6N0
+         jR38m6HHZjTpyv4p0bqSq5fqbqbZmpwgN7wIP7KJaq5htDPUPe4/GEZvWVkIYzCjukX3
+         2eJYBJnkJhCIp8U1xidNFaHD5eOrZFsdN7HpyvftHkU+GOZmWOzDVmA4xrJvg2/xqGnR
+         jhKVQhI1veIVGuedFNbt4QJbhMpVfT8NxxvAignJtpvMa/br52QIUJJJ+lZKAijXAhPq
+         ZzbA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Z/pqoEAEUKJJKmk0w+32KN4fz7QeIv1j+6TQwg5YnUUQjERGE41niJEc9S52wohDlLC6jO3CcZSY43w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxThJSar2LfaZaLXcwLSV38XvB2bkLgs+56hz2TVh3MO2ytB7dq
+	CaUhHWqvJCdsgoMh2WiczhWiKJRH5ulmjhhlsU77uPRD7ZKOqDPz6iL90zSiImx9/GRp9nNAObE
+	p/FW7OKfQFRLCAZMqAtPcHXMrSEixp1XBmlQMHP+eBjL2mqvnBgk=
+X-Gm-Gg: ASbGncsNk3Vx3zQ/ayRaU83nel437tY93kxsBpyNxVOnR0pF49g85gcW7wrpizuPg1w
+	8lC/Xl4nSEViyAt9RG/76vpYVdhBUiMUWXkyrPGL5201bBr+heC7sfLShzjSNMYW9GvZDLQ1+Ti
+	+GFs3LxfEZTslSATb28pS3sr18DyMkJjSr/TFJNuY=
+X-Google-Smtp-Source: AGHT+IEkoQjVDUvwk2/o/jVKA4C4ByItsCEdLm/WTH0WQ1Txd20zHHR2uKLz+377e33VXWBhOTKNafhq9yOEHZyIG9E=
+X-Received: by 2002:a05:6512:3d11:b0:545:2e76:495c with SMTP id
+ 2adb3069b0e04-54838ef5a3emr6618248e87.25.1740494620506; Tue, 25 Feb 2025
+ 06:43:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224-of_bugfix-v1-1-03640ae8c3a6@quicinc.com>
+References: <20250225-retval-fixes-v1-0-078c4c98517a@linaro.org>
+ <20250225-retval-fixes-v1-1-078c4c98517a@linaro.org> <Z73EIu0AqnfPU33k@smile.fi.intel.com>
+In-Reply-To: <Z73EIu0AqnfPU33k@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 25 Feb 2025 15:43:29 +0100
+X-Gm-Features: AQ5f1JrSmiNkgrLute7D3zjWMT34MZ_ycPnM-jy9WgmyGnQ2GrV0ee5GAOqi_3w
+Message-ID: <CAMRc=MdTKCtwrDouTV4YHoWa1F8cenSVEtTXicSUdrmEk3TxCQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpiolib: don't use gpiochip_get_direction() when
+ registering a chip
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Feb 25, 2025 at 2:22=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 12:56:23PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > During chip registration we should neither check the return value of
+> > gc->get_direction() nor hold the SRCU lock when calling it. The former
+> > is because pin controllers may have pins set to alternate functions and
+> > return errors from their get_direction() callbacks. That's alright - we
+> > should default to the safe INPUT state and not bail-out. The latter is
+> > not needed because we haven't registered the chip yet so there's nothin=
+g
+> > to protect against dynamic removal. In fact: we currently hit a lockdep
+> > splat. Revert to calling the gc->get_direction() callback directly not
+> > not checking its value.
+>
+> ...
+>
+> I think the below code deserves a commit (as a summary of the above commi=
+t
+> message).
+>
 
-On Mon, 24 Feb 2025 22:27:57 +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> For these pseudo property names 'name', 'phandle' and 'linux,phandle':
-> 
-> Use dedicated property name comparison macro of_prop_cmp() instead of
-> strcmp() in of_alias_scan() to:
-> 
-> - Make property name comparison consistent.
-> - Prepare for introducing private is_pseudo_property() later.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/of/base.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+Can you rephrase? I'm not getting this one.
 
-Applied, thanks!
+Bart
 
+> > +             if (gc->get_direction && gpiochip_line_is_valid(gc, desc_=
+index))
+> > +                     assign_bit(FLAG_IS_OUT, &desc->flags,
+> > +                                !gc->get_direction(gc, desc_index));
+> > +             else
+> >                       assign_bit(FLAG_IS_OUT,
+> >                                  &desc->flags, !gc->direction_input);
+>
+> Otherwise LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
