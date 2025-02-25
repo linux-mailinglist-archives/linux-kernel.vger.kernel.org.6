@@ -1,232 +1,172 @@
-Return-Path: <linux-kernel+bounces-530360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D2DA43279
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:32:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5944AA4327D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86741189AB06
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:32:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C82D3B57CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383282AEE4;
-	Tue, 25 Feb 2025 01:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8FC364D6;
+	Tue, 25 Feb 2025 01:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbxO/luO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Ib08FKJL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PrUwU66R"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6276B367;
-	Tue, 25 Feb 2025 01:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C0F199B8;
+	Tue, 25 Feb 2025 01:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740447125; cv=none; b=RHqROmJpffURQ3viUOBsUx8UMSKSWol5qHpKYq2NNqprL40mQ8vRj7vYa8gAxjzcA+BVyvyO0/S/cxhZioCIEO0dE8oc2DDwPIRpfI8VZ66qX72auPWi9B0pbR0KB6s6fT3hBOUmF4eF8NDpY5F9rS42u803Bue98cTbctrX7Q0=
+	t=1740447305; cv=none; b=Nx0L67mILKUCDoD4PNXWz06yfjDHD2UHFooOM1JOHBiMQXp/98wVM9pEQUqnbiBzTY4HBhlwRAk5s6bQ4LdTBcjKXwLDyiW+63DPAyEbD9OXBcouMuEDu+rDdyWjr7oBrbvR1Pz9qzN7Q+nbKextRMVbxyIP97AmDSLDvZCRH0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740447125; c=relaxed/simple;
-	bh=oNFRiRu3B+1F4rETWzHu87g8+8lxN2QQ/bwEbS8L5/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DQZaBROrzrtOqAGbz1rrmnI/Ru6DbniiLlr5oEozyWSwC2rImPQ47uytIzxhGaFbFu0UpsRlWsx/oIVPiDvk9x0SItsh1B7R853Tm/HwaFXk6wHcMsbF3NMDo3Kh5UNfHpqVaaewK3fWs0qowkL6/BfkTRv38T24x0fuutwlgIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbxO/luO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8441C4CEE8;
-	Tue, 25 Feb 2025 01:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740447124;
-	bh=oNFRiRu3B+1F4rETWzHu87g8+8lxN2QQ/bwEbS8L5/E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bbxO/luOYTPR1YgMrZi0dz+o/Ag9v3NdrvsC1/fabzUkPRMuQbWnqBQyw09RuDZLw
-	 n7hqUskxHaGVIDXX491Yk9EVkngF+m116C06SoiPpZ9aCQc/dgdDYxxWjhFHH4WVbZ
-	 c2Tymn9RJVoc7HM9AsJeJL+3tALxsDOOdzwfoyK326E+jLSQszg71owGshnIY7ZTIP
-	 5xy65PXhjBi7MAfFRQE4sE1wYyUDDbJUEaNzwZELEzsKDfCC9Z/JVi0MWjBr/U6cZ+
-	 cd7S3GS8HTcclu0WIwF4/Q+PoJi/OQKqzUlAWtan0BFT9Wo711jV23OdjFCGq/UsLJ
-	 JOXweqkByieTg==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso9057897a12.3;
-        Mon, 24 Feb 2025 17:32:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW6Nw/QSwiRvbdvbihVSZo8ykHssDFrrSeAhtGvEyPnzfCg9Y+a80UcmuF6DxSc3CVrSLFshnf3BNo=@vger.kernel.org, AJvYcCWFliYZ++OXeCLFilff+nQyMA4XIl10M3ZH3YF2sp0HfcGIKL945X+cBf5XkNdigs8J+LeEr5snaG+DfCHl@vger.kernel.org, AJvYcCXL4IYliGw7be33VJLcJqpbXlfLSckBv3kLo2/jbeWpHT33Teqp4CkQlpxltUryq+wrJcH83LldnYcfV29M7hskzg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy097r33X80N7ZJ9pynZm7FDZFGcLb6PDCmGI4PzKQiAkSPxmyW
-	o/Od2AirNirNxae+byXEpE2ievoMGkAmenduwvV2ghgt2aRNcVpGyp8ISnhbwtLaCjvpEUK6HV1
-	QFRVSXzPVcYN2aJSXTr6Kv3eMAw==
-X-Google-Smtp-Source: AGHT+IF0oZCxiK/ZFsFb1hIDiizkSgWxjFTx6kKn+fuvN2qWJh20NtQly1HcVhyy6wmhgmp9semm1fTOfMZcyER0TDM=
-X-Received: by 2002:a05:6402:440b:b0:5de:aa54:dc30 with SMTP id
- 4fb4d7f45d1cf-5e444481387mr1053029a12.5.1740447123387; Mon, 24 Feb 2025
- 17:32:03 -0800 (PST)
+	s=arc-20240116; t=1740447305; c=relaxed/simple;
+	bh=ZTPTSfcjuXwUSPi7TPKTnuMsbHr9Y/GRQ70RKFMlkAA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XmsgvosfxsutsIz8fhh6yRd6beQe+9Xz2B/4f/F9xDe6a3CuFaJcV6bAxAgmhP9YXuZMZsfPnxTmKU8riR7vS7WIQfi5YOTTToG2xJ8uggP7NLCDH2M22l+SEDc/J0fsQIf25zE/MPXlOfgt25AZarGUs/VNGThQDljFc/GXOPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Ib08FKJL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PrUwU66R; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 96FF7114011F;
+	Mon, 24 Feb 2025 20:35:02 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 24 Feb 2025 20:35:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740447302;
+	 x=1740533702; bh=En7mhtzIGZYAtdlNeeUGm3RPq0wZ4XfvRF7cD+zY3tM=; b=
+	Ib08FKJLgdw4XGaRbXSEfYHYEoIvZDBGCdivuLO9W2IzAr3KxPjfWBujxNp3MNa1
+	zVJpdxkrYZ4J/Mryf1ER1P893EurUrE0fsBNn2xtyY4AODrybfubHK2XGvAxjtmE
+	y0/VQrnbWSiw59rsZypcGOJ/SssZLa5c5ZuDCLTSEaXvtMbgWAqdnpKj8C9SCD2/
+	ZInV57N13ogEvXtC6JAdDmTmTBNzVgOrj6rfQ4DzZqwTZD7p1z+guAyeMQpNf0zL
+	vmum+2GK4qgAnf6bPvfnoPk8wMhCLl3i4Wq42Mc3UYlW7Rv0Exa72ZeinkQyGdG1
+	Y6vJmnwmAL1QwT2wYNb0Rw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740447302; x=
+	1740533702; bh=En7mhtzIGZYAtdlNeeUGm3RPq0wZ4XfvRF7cD+zY3tM=; b=P
+	rUwU66R/zaPO+59QgroLQuCmjl3Z1QESgDk302Z/YwU7SiJlhQTyaAj7G3NQpvuO
+	CNlPDRszdCnWw/0ZdBUgcG3Y92meKjUfCQCGoUq6rsy+LwB1W31n/AAo/CmHiCmg
+	7X/F+xsf6ykPSBvMLojlG664iJekp2pICiy6cLrhgDAzFv9Q5bTAx79h2yj4ICSD
+	3fx4PPsbne1BtKoLJsxcIzesU91t5eIzPjxOyrZRpY7phhEUbzb3agfreOBjKRW2
+	Xjw8VCbksQlaq6yjqPa3n5KeSPXaX0OswEDYyhrGcl+mYXutgbHj4chl0egb1BKM
+	GYsEIH6aqU6HfqSqs8AZg==
+X-ME-Sender: <xms:RR69Z9R64EgaFXDNxFKBTRBS7qlh0NGhupvVATpI5smwnDEWm-v1qg>
+    <xme:RR69Z2zgVBFgmnOFSUHOgkRQc0xF-tvOnxhIzHfNYhmJWw-o6594rva8t5eGiD4tZ
+    lzv7bgv-To09SjCcaQ>
+X-ME-Received: <xmr:RR69Zy3utCV2S9WGCNQVlKyEqb99Rf3anKP5RpXBi-7hmkdGTt3M4VUZzr58kQZ61tJQaAqPJAfIUt38LA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdektdefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttder
+    jeenucfhrhhomhepnfhukhgvucflohhnvghsuceolhhukhgvsehljhhonhgvshdruggvvh
+    eqnecuggftrfgrthhtvghrnhepkeefffeujeevueejueegleelhedtgedvledukedttdff
+    hfeifeelvdduheefjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepuddu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlkhhmlhesrghnthhhvggrshdrug
+    gvvhdprhgtphhtthhopehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggr
+    pdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprh
+    gtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+    pdhrtghpthhtoheplhgvnhgssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrth
+    hfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:RR69Z1BDZXhGk_Q0yqomtIix7frgZ2mT1ITpi1E_BxrWMPvVQ5I2lg>
+    <xmx:RR69Z2hNm-fl_ks8dS4-gudWb7wMwKG3JL1cpXK2REFXzhDkmJlhNw>
+    <xmx:RR69Z5oBcjGBsXS19TDGEPZmoOI2xGiaJY498VqrtLmKcBA10ucyEA>
+    <xmx:RR69ZxickPM0w1BdQCO-GB_RP3WyP8YD3cxRZChAT1cPVRSl1LO6hA>
+    <xmx:Rh69Z7YJkKijuhCr5muBWzt5XBvd5UU6O-xfKmYJIT_2woTsG0ZoDxIM>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Feb 2025 20:34:58 -0500 (EST)
+Message-ID: <f5d39d3c932a78a5021877230c212c620edc586e.camel@ljones.dev>
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
+ multiple handlers
+From: Luke Jones <luke@ljones.dev>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, "Limonciello, Mario"	
+ <mario.limonciello@amd.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
+ <ilpo.jarvinen@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+ "linux-acpi@vger.kernel.org"	 <linux-acpi@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,  "platform-driver-x86@vger.kernel.org"	
+ <platform-driver-x86@vger.kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Hans de Goede <hdegoede@redhat.com>,
+ me@kylegospodneti.ch
+Date: Tue, 25 Feb 2025 14:34:54 +1300
+In-Reply-To: <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+References: <20250224195059.10185-1-lkml@antheas.dev>
+	 <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+	 <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
+	 <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
- <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
- <20250224140317.GF8144@e132581.arm.com> <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
- <20250224180301.GI8144@e132581.arm.com>
-In-Reply-To: <20250224180301.GI8144@e132581.arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Feb 2025 19:31:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKNad6eEBerUOco=SDWxdp6dgRD3FDrSt5OpGQYwwstSg@mail.gmail.com>
-X-Gm-Features: AQ5f1JpZnmkKohlVKFAFaoTDPyBucm92D6dTQtNc_f9Z3M6ImuFJVuDiTExv_eA
-Message-ID: <CAL_JsqKNad6eEBerUOco=SDWxdp6dgRD3FDrSt5OpGQYwwstSg@mail.gmail.com>
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-To: Leo Yan <leo.yan@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 12:03=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Mon, Feb 24, 2025 at 04:05:43PM +0000, Mark Rutland wrote:
->
-> [...]
->
-> > > > > Just a minor concern.  I don't see any handling for task migratio=
-n.
-> > > > > E.g., for a task is migrated from one CPU to another CPU, I expec=
-t we
-> > > > > need to save and restore branch records based on BRBE injection. =
- So
-> > > > > far, the driver simply invalidates all records.
-> > > > >
-> > > > > I think this topic is very likely discussed before.  If this is t=
-he
-> > > > > case, please ignore my comment.  Except this, the code looks good
-> > > > > to me.
-> > > >
-> > > > Not really discussed on the list, but that was present in v18 (thou=
-gh
-> > > > not functional because .sched_task() hook wasn't actually enabled) =
-and
-> > > > Mark removed it. His work is here[1].The only comment was:
-> > > >
-> > > > Note: saving/restoring at context-switch doesn't interact well with
-> > > > event rotation (e.g. if filters change)
-> > >
-> > > In the brbe_enable() function, it "Merge the permitted branch filters
-> > > of all events".  Based on current implementation, all events share th=
-e
-> > > same branch filter.
-> >
-> > Critically, the brbe_enable() function merges the filters of all
-> > *active* events which have been installed into hardware. It does not
-> > track all events which can be rotated, and the resulting filter is not
-> > the same -- it can change as a result of rotation.
->
-> In a perf session has multiple events, and events have different branch
-> filters, seems to me, a simple way is to return error for this case.
->
-> I would argue BRBE is an IP for recording branches per CPU wise, it does
-> not support recording for event wise.  If we can unify branch filter
-> within a perf session, would this be much easier for handling?
+On Mon, 2025-02-24 at 22:58 +0100, Antheas Kapenekakis wrote:
+> I will tell you that compared with other manufacturers, when asus
+> says
+> quiet, they mean quiet and not low power
+>=20
+> Z13's quiet mode is 40W, not very low-power if you ask me. Ally X
+> uses
+> 13w+boost, a source of many complaints. Other manufacturers use
+> around
+> 8W for low power modes.
+>=20
+> In any case, any rename might break user scripts and there are
+> actually 3 types of low power profiles:
+> PLATFORM_PROFILE_COOL
+> PLATFORM_PROFILE_QUIET
+> PLATFORM_PROFILE_LOW_POWER
+>=20
+> Then, there is also:
+> PLATFORM_PROFILE_BALANCED_PERFORMANCE
+>=20
+> Some ACER laptops implement many of those
+>=20
+> Obscuring any of those is not ideal.
+>=20
 
-And the PMU is an IP for recording events per CPU, but that is not
-perf (only)...
+In the context of their other modes it is low power. If there is
+confusion over what this is meant to mean for all vendors then it
+should be clarified in the relevant documentation.
 
->
-> > > When event rotation happens, if without context switch, in theory we
-> > > should can directly use the branch record (no invalidation, no inject=
-ion)
-> > > for all events.
-> >
-> > No; that only works in *some* cases, and will produce incorrect results
-> > in others.
-> >
-> > For example, consider filtering. Imagine a PMU with a single counter,
-> > and two events, where event-A filters for calls-and-returns and event-B
-> > filters for calls-only. When switching from event-A to event-B, it's
-> > theoretically possible to keep the existing records around, knowing tha=
-t
-> > the returns can be filtered out later. When switching from event-B to
-> > event-A we cannot keep the existing records, since there are gaps
-> > whenever a return should have been recorded.
->
-> Seems to me, the problem is not caused by event rotation.  We need to
-> calculate a correct filter in the first place - the BRBE driver should
-> calculate a superset for all filters of events for a session.  Then,
-> generate branch record based event's specific filter.
+low-power		Low power consumption
+cool			Cooler operation
+quiet			Quieter operation
+balanced		Balance between low power consumption
+			and performance
+balanced-performance	Balance between performance and low
+			power consumption with a slight bias
+			towards performance
+performance		High performance operation
+custom			Driver defined custom profile
 
-The driver doesn't have enough information. If it is told to schedule
-event A, it doesn't know anything about event B. It could in theory
-try to remember event B if event B had already been scheduled, but it
-never knows when event B is gone.
 
-> > There are a number of cases of that shape given the set of configurable
-> > filters. In theory it's possible to retain those in some cases, but I
-> > don't think that the complexity is justified.
-> >
-> > Similarly, whenever kernel branches are recorded it's necessary to drop
-> > the stale branches whenever branch recording is paused, as there's
-> > necessarily a blackout period and hence a gap in the records.
->
-> If we save BRBE record when a process is switched out and then restore
-> the record when a process is switched in, should we can keep a decent
-> branch record for performance profiling?
+"Low power consumption" compared to?
 
-Keep in mind that there's only 64 branches recorded at most. How many
-branches in a context switch plus reconfiguring the PMU? Not a small
-percentage of 64 I think. In traces where freeze on overflow was not
-working (there's an example in v18), just the interrupt entry until
-BRBE was stopped was a significant part of the trace. A context switch
-is going to be similar.
+If these "scripts" use `platform_profile_choices` to get their
+selections and verify they are available then there should be zero
+breakage. If they don't then they should be updated to be correct.
 
-> I understand it might be many things happen in the middle of a task
-> switching or migration, but it is fine for not recording branches during
-> the blackout period.  The missed branch records are not very helpful for
-> forming a flow for a profiled program itself, especially, if we
-> consider we will optimize userspace program in many cases.
-
-We can't really not record during a blackout period. The only way we
-can is with freeze on overflow.
-
-> > Do you think that you have a case where losing branches across rotation
-> > *really* matters?
->
-> I agreed that event rotation case might be rare and complex.  Please see
-> a comment below.
->
-> > > For a context-switch case, we need to save and re-inject branch recor=
-d.
-> > > BRBE record sticks to a process context, no matter what events have b=
-een
-> > > enabled.
-> >
-> > I had originally wanted to keep per-event records around, but it doesn'=
-t
-> > work in all cases. One reason events get discarded at context-switch
-> > time is that CPU-bound events can sample branches, and would
-> > mis-attribute stale userspace branches to the wrong context when
-> > switching tasks. There are explicit comments about this in
-> > amd_pmu_brs_sched_task() and intel_pmu_lbr_sched_task().
-> >
-> > Given we discard records when reprogramming events, we *could* try to
-> > preserve events in some cases, but I suspect that as with the rotation
-> > case this'll be a lot of complexity for little gain. Note that as we
-> > discard events when enabling the PMU, we'd throw some task-bound record=
-s
-> > away anyway, and practically the gain would be limited to cpu-bound
-> > records.
-> >
-> > Do you have a reason why you think we *must* keep events around?
->
-> Here I am really concerned are cases when a process is preempted or
-> migrated.  The driver doesn't save and restore branch records for these
-> cases, it just invalidates all records when a task is scheduled in.
->
-> As a result, if an event overflow is close to context switch, it is
-> likely to capture incomplete branch records.  For a userspace-only
-> tracing, it is risk to capture empty branch record after preemption
-> and migrations.
-
-There's the same risk if something else is recording kernel branches
-when you are recording userspace only. I think the user has to be
-aware if other things like context switches are perturbing their data.
-
-Rob
+In any case I am in the process of finalising an update to use the new
+platform_profile API including "custom". Please don't begin trying to
+break things just to be "first". My work has been ongoing for this in
+my spare time for months.
 
