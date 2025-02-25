@@ -1,181 +1,146 @@
-Return-Path: <linux-kernel+bounces-531604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53305A442A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EEC9A44299
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D868B1895D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CEA423EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D25E26B2A6;
-	Tue, 25 Feb 2025 14:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558B26B0BE;
+	Tue, 25 Feb 2025 14:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tB6gpsOp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dV+gF3aB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850CF26B0B6;
-	Tue, 25 Feb 2025 14:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FE926B089
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493246; cv=none; b=nGPyXPo1vgV7R12MrcrwVjQPhHwkYW+wmUw4vOtK4KWqBT+D1Uc1LS+Q+8PyRDm6p++9ZZplFGjgp1vwkU7XSaixkgXZ6y/0laXzelqAJ79Twh8BqtllrhCJGwo8wK3Znh/CXfW5zOhMQvnXmnxnL3S/U4o87v9ZH7vPPWRYdUg=
+	t=1740493296; cv=none; b=plVvoD4kGhpaosEK2va+nyxHQV1o8BiaA7cAOBylPAFaIMBImG8gFOEs015T8QU9Je843CQLQ1R/MADrVdCkP549/bAAyOjFt8YdfdCajRFNCVfybtHwiERkaCC2dNp9pzPySkFX9nZONqqBrQAICG7pTvMSvd7jDjZC89XdOSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493246; c=relaxed/simple;
-	bh=eDBxPB2ey6CEl5Fn4xbiSGUKr6VohrZZtt7brOucJf4=;
+	s=arc-20240116; t=1740493296; c=relaxed/simple;
+	bh=JOzSXnruxMx8fo4ynquuHZbCjEVyeQDk3Gw08yi3rfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7YgSu23OeSXrgEYmBTcusfSWxKCw/H/ikJWFaAvdkbp33iLRffeUm1VXMWbEZhVOvsjXo8LsamRbKBdUGE7cLWRAPkvgndSAQDRcmsR0CzjzqU//4o8gtAulv3vYHQvdTgIN7xEF9zRUfsm+MLYcF9O8VOFKZ9Rb7UzzCNIBSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tB6gpsOp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AC2C4CEDD;
-	Tue, 25 Feb 2025 14:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740493246;
-	bh=eDBxPB2ey6CEl5Fn4xbiSGUKr6VohrZZtt7brOucJf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tB6gpsOpZKp5aTOboDdyxR0i9eLXFNrNmyJ2DQAcxZG7y0ROWfd86e0ofq4/C3GmW
-	 EoCE+8hsHyQGRO/TQXvZQdoSp9FTZkRL/VMEmLJjvofLyy3tzlQwy+CQJ45ZX/HxYM
-	 qYoEvZyo6xCSG6gT0xlwTda3Y6XBPkTinf/6qbuTQCzHwPgfynS90twSPxcsBZI+Pq
-	 G09SKxwrVNnJdcStCTcZBUYGHwHDk6SFEZsdeEasBb73x2fyoBXbk5v6ca2PkcAj0N
-	 pwBFnmEMnFTVvBKPYPiKIQUcq9Fi8M1eepSTS3PR0XBqAycnnW8jxPdnfYbo13+5WQ
-	 b0QY4QMg0kaAw==
-Date: Tue, 25 Feb 2025 08:20:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
- Moduline IO modules
-Message-ID: <20250225142043.GA2173114-robh@kernel.org>
-References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
- <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
- <20250224204428.GA4050751-robh@kernel.org>
- <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
- <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
- <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tdGBYj7GOFB4E6+kdhXf/CpTLjtc8o3CaJaFu5jlXnPNZydODy2E014LiXrWBVvi6WUw+sbOUteUrzfUl3jmvIi1dgYOqhrDad8MbaVoqFaR4FKvzP/7E2ZeMTdheSC5APTE3A1mor6KniTaw2brEn+5oEL3oQa6Cp5jSHrieIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dV+gF3aB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740493293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SFFVttm850UqVz1pmb+AlnJQK6y1OGWuLBvoqE/ivD0=;
+	b=dV+gF3aBJG2ObjJtIOteRp5o4ZeAAdcEKWswESee9ZMQmGHBUaahzzAvaGbeDOp5nEvgMS
+	yxigvz2BdKIrv3feZK9uw/ziY+BM2BRNPAMbzrRQzSoNbao8v6JweV1l/2DhQ6xb2pjIi7
+	JzGOCritUGnPMlHVwgTaJeMHu1uAWP4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-SlvQuh7qOKaDcKbtNNjm9Q-1; Tue, 25 Feb 2025 09:21:31 -0500
+X-MC-Unique: SlvQuh7qOKaDcKbtNNjm9Q-1
+X-Mimecast-MFC-AGG-ID: SlvQuh7qOKaDcKbtNNjm9Q_1740493290
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f255d44acso2473719f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:21:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740493290; x=1741098090;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SFFVttm850UqVz1pmb+AlnJQK6y1OGWuLBvoqE/ivD0=;
+        b=cbHF/fGP7WUgOuej4Rg7mxMscgfEJgDr9JTTnZt1nTYz9ruPsi2sQv8yTQJIoWlW/8
+         o4Cb/GSD1NFFfvjo67k8VgOnD/H4Nk2ZCXaqGUsKrw9PSMVl0/7nbfYOaGJuPQALNzKc
+         XqbT3H0WtB7rrPRlDidEw+FgzsKpMmCuouMpk0VKPTeF5Sw4owRZQ8peBUg98VHCrw3C
+         kenI8VY1Kml3+13hMYktxNjGe+D0KOpnLEIeNS4PPSqf+pEppohlbzU2ZE0g/I7K53Tr
+         HoRs5tVUjEOpgcYqbZEiJeiw1W37zlHu4fO4cCXfWkpesE5oax9rfkTqC9Pj5MA9jaEz
+         4xNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFbxsT3CDfX7CnJmxJ5P7Hybe+9VQXcXpW2ZGAIecCBHbD4OwaTJDtBivGcP+qth5ZqUfIiEMdvh0BPP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg8yb+Uj3fVAhavXegWWCTKvrfQzXdKwXdZnURTk9TZxpZU076
+	ssCL2XF2hJIqCJgdj0klIJ0avbzOF8s2FQqJFeym/KBSaUkkpabc7wXMSgjXQwklcLjiVBlGusl
+	mow1MgXL9otPOIMfyxbW4E5l3ZMIsiZS/WF4uOD7xehth75GIpcZWfH8cDykYUA==
+X-Gm-Gg: ASbGncsa3PN6F+54nlt8wmoxHst015DoEcn69ar07/+4WPRx0is8VstIFTgmnUl/qX+
+	DAbuPtF8CtPsMVreo6pr5HUPY5zu51LYLoCvE01b3rWWL+ZFJVuXjms8Nv0z14J1JicCJ1Z/xDz
+	Gb8gdUhkRTRsKpBEPa29wJS5i1QXwjwgAO+CrG2BmQUaIgcIuoiZhxhhLa61o+a9TUI/ui+1Io+
+	Ax6l5bGFdQ+wFP2SMkgaBXeNkV5VSP7lLm+zjCLK0UvbV3Fkh+uuMZI0SYqMF4jgygW5+5Vid9p
+X-Received: by 2002:a05:6000:401e:b0:38f:210b:693f with SMTP id ffacd0b85a97d-38f6f0ae79cmr12378093f8f.52.1740493290294;
+        Tue, 25 Feb 2025 06:21:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFPzWsgH9v1k2HVPYkFXNJ3hhFz69OOLf5Yi+p9svSln8YhJs1OVyxaR00ASzjgQujycgWCZQ==
+X-Received: by 2002:a05:6000:401e:b0:38f:210b:693f with SMTP id ffacd0b85a97d-38f6f0ae79cmr12378040f8f.52.1740493289721;
+        Tue, 25 Feb 2025 06:21:29 -0800 (PST)
+Received: from redhat.com ([2.52.7.97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86cb08sm2423039f8f.29.2025.02.25.06.21.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:21:29 -0800 (PST)
+Date: Tue, 25 Feb 2025 09:21:24 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Peter Hilber <quic_philber@quicinc.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+	"Ridoux, Julien" <ridouxj@amazon.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Matias Ezequiel Vara Larsen <mvaralar@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>, virtio-dev@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] virtio_rtc: Add PTP clocks
+Message-ID: <20250225092115-mutt-send-email-mst@kernel.org>
+References: <20250219193306.1045-1-quic_philber@quicinc.com>
+ <20250219193306.1045-3-quic_philber@quicinc.com>
+ <20250224175618.GG1615191@kernel.org>
+ <vhlhes7wepjrtfo6qsnw5tmtvw6pdt2tfi4woqdejlit5ruczj@4cs2yvffhx74>
+ <20250225141240.GW1615191@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
+In-Reply-To: <20250225141240.GW1615191@kernel.org>
 
-On Tue, Feb 25, 2025 at 12:24:09PM +0000, Maud Spierings | GOcontroll wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Tuesday, February 25, 2025 12:52 PM
->  
-> >On Tue, Feb 25, 2025 at 07:39:52AM +0000, Maud Spierings | GOcontroll wrote:
-> >> From: Rob Herring <robh@kernel.org>
-> >> Sent: Monday, February 24, 2025 9:44 PM
-> >>  
-> >> >On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:
-> >> >> The main point of the Moduline series of embedded controllers is its
-> >> >> ecosystem of IO modules, these currently are operated through the spidev
-> >> >> interface. Ideally there will be a full dedicated driver in the future.
-> >> >>
-> >> >> Add the gocontroll moduline-module-slot device to enable the required
-> >> >> spidev interface.
-> >> >>
-> >> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> >> >> ---
-> >> >>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
-> >> >>  1 file changed, 2 insertions(+)
-> >> >>
-> >> >> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> >> >> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c7fb46f771a300926f05 100644
-> >> >> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> >> >> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> >> >> @@ -107,6 +107,8 @@ properties:
-> >> >>            - fsl,mpl3115
-> >> >>              # MPR121: Proximity Capacitive Touch Sensor Controller
-> >> >>            - fsl,mpr121
-> >> >> +            # GOcontroll Moduline module slot for spi based IO modules
-> >> >
-> >> >I couldn't find anything about SPI for GOcontroll Moduline. Can you
-> >> >point me to what this hardware looks like. Based on what I did find,
-> >> >this seems incomplete and not likely a trivial device.
-> >>
-> >> I'll give some more details, if there is a v2 of this patch I will also
-> >> add more information in the commit message.
-> >>
-> >> The module slots have a number of pins, a lot of them currently unused as
-> >> they have not found a function yet, this is very much still a developing
-> >> product. The currently used interfaces to the SoC are:
-> >> 1. SPI bus as a spidev to ease developing new modules and quickly
-> >> integrate them. This is the main communication interface for control and
-> >> firmware updates.
-> >> 2. A reset pin, this is/was driven with the gpio-led driver but I doubt
-> >> that would get accepted upstream so I intend to switch to the much better
-> >> suited libgpio.
-> >
-> >reset-gpios is not in trivial devices, so that's already a hint you
-> >cannot use this binding.
-> >
-> >> 3. An interrupt pin, this is currently only used in the firmware update
-> >> utility [2] to speed up the update process. Other communication is done at
-> >> a regular interval.
-> >>
-> >> What is unused:
-> >> 1. A potentially multi-master i2c bus between all the module slots and
-> >> the SoC
-> >> 2. An SMBus alert line is shared between the modules, but not the SoC.
-> >> 3. A shared line designated as a clock line, intended to in the future
-> >> aid with synchronizing modules to each other for time critical control.
-> >>
-> >> current software that is used to work with the modules can be found at
-> >> [2] and [3], one of them is a Node-RED module the other is a blockset for
-> >> Matlab/Simulink generated code.
-> >>
-> >> If you know a better way I could describe this in the devicetree then I
-> >
-> >You need dedicated binding where you describe entire device, entire
-> >hardware, not what your driver supports in current release.
+On Tue, Feb 25, 2025 at 02:12:40PM +0000, Simon Horman wrote:
+> On Tue, Feb 25, 2025 at 12:28:24PM +0100, Peter Hilber wrote:
+> > On Mon, Feb 24, 2025 at 05:56:18PM +0000, Simon Horman wrote:
+> > > On Wed, Feb 19, 2025 at 08:32:57PM +0100, Peter Hilber wrote:
+> > > 
+> > > ...
+> > > 
+> > > > +/**
+> > > > + * viortc_ptp_gettimex64() - PTP clock gettimex64 op
+> > > > + *
+> > > 
+> > > Hi Peter,
+> > > 
+> > > Tooling recognises this as a kernel doc, and complains
+> > > that there is no documentation present for the function's
+> > > parameters: ptp, ts, and sts.
+> > > 
+> > > Flagged by W=1 builds.
+> > > 
+> > 
+> > Thanks, I will change the offending documentation to non kernel-doc. I
+> > was not aware that these warnings are always considered a problem.
 > 
-> I see now that I also forgot the patch that adds this compatible to the
-> spidev driver. Didn't check for the spidevs in testing I guess.
+> Likewise, thanks.
 > 
-> Could I write bindings for this device, and then add the compatible to the
-> spidev driver for now? So it probes that driver, and then later when there
-> is a driver remove the compatible there and keep it only in the purpose
-> built driver?
-> 
-> So I'll write gocontroll,moduline-module-slot.yaml, don't quite know where
-> that would go. Define all these attributes in there and then add the 
-> compatible to drivers/spi/spidev.c
-> 
-> Is that okay?
+> I guess it depends on the subsystem. And perhaps this is fine for virtio.
+> But for Networking at large the rule of thumb is not to add new warnings.
 
-Yes. Bindings are forever, but drivers change. ;)
+Nope.
 
-Perhaps put it in connector/ as this looks a bit like a connector. Do 
-you envision DT overlays for the IO modules? Or modules don't have 
-sub-devices you need to describe? There's some effort to on connector 
-bindings (for mikrobus in particular) in order to de-couple host 
-buses/signals from the modules (i.e. so a DT overlay can be applied to 
-any DT defining the connector).
-
-Rob
 
