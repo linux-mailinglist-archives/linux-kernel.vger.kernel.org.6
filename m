@@ -1,93 +1,84 @@
-Return-Path: <linux-kernel+bounces-530747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B00A437C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:37:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99695A437CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606161893A8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554793B85FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B2D25E469;
-	Tue, 25 Feb 2025 08:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="a4mR7q78"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5FF25EFAB;
+	Tue, 25 Feb 2025 08:38:11 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA04215F7B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446C1C8607;
+	Tue, 25 Feb 2025 08:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472633; cv=none; b=MC9uGU3y7qHpntyGT9FT9FOzQY0eaYq3kuE/mZDWFi6WmK0R3ROtqeN9AeYTw8OT1AyAggLLJH3AWnrMmFjafOhLTT0YTJR9sHFiiBf48RYXb4fqikCtYtbS7rHOUyfNUKV+Fp09IrfMfo9T6J34/1qzKbvc6g561UrKgDQ/rFI=
+	t=1740472691; cv=none; b=br0Tmn1oGnsYB7EGMjy+PynFtDWjUqdEzbd3e/0hYBzKwXb7L1+GJMcCLn36Spikz5xrS/67pu95ID+QojOnwjgb9Dnh5xmUDHaxTDfK1h5I6JjHlSO9mjYSEgEDErjAlP68aYO4HbQ2JA1KyuOS9mzL+wSL1AvYbg1xKVFuORo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472633; c=relaxed/simple;
-	bh=ElkRcRcC9BTO7H5jfSF1QHswt8xyaeS2W3ZojVAqfjg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=u/5na/ijfTQMFlDeisxeZAHcJNUITpI/DgvXwvJrL7qxCbm9eMlZjU2fxvclg5vwvVbp+Q7SRqPes7C4DiK52sAIwOO1fXsJ3vChCMUWNkzJdP/SwxGk0SVxXuSFqWvVyGXNAqmlt4KAEQjrbsa3tR8WKI5a4xdrbvgsHKgQpgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=a4mR7q78; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740472624; bh=S/FFL1KTyAN1SCxYwd/nei5gKa0deIvjHt1fYZZAH8U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=a4mR7q785cfwVk1vlwih9r8azFmuC65/pojIHnZGhuivkylVaxgstNIo9i7gvJ95t
-	 Y2A96JO7Y78H5ZBoZ59Q0PDpkC4DnPXCp2grGBmdF5Y06V6tXOrYW7wbV4Dj/Sn1zK
-	 aB2jXQPgiIS2oFtNXRk7YhhJgeCZUWAJboxHGNQU=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 94231688; Tue, 25 Feb 2025 16:37:02 +0800
-X-QQ-mid: xmsmtpt1740472622tvrxescdg
-Message-ID: <tencent_1C33E69E051B5B4B211B972571BA1CBB1C08@qq.com>
-X-QQ-XMAILINFO: NDAhN78L72+TSkgFZK690s6iStuka/9NzeeaCPXYeeisv0ECEwpyqwZngQJWJ4
-	 mPMNML6B3BWH+3bOmaasYxZySv2TY3nDKS/d8OmJMYe3GBRF1nOgLZ3on6Q4nsorWbHlHTY8NDHj
-	 SE1mwq86SWfw7K179xAx5vg6SinRyeitYPMdsuPqDE1FL43y3B8Zli0Yz1qM8TcesIFv6P/Dua/u
-	 DA+tb2w0lBl9QeNkonwZe1PNVpTgt2EMOH6VOwhkVKydAvr3OhxnW5JLx/pdB6N59xED3p882fZa
-	 CKZXptiGOcGGwpZKYjri3isiz9/vXQpcjXX+0rVlCsZhIWkHSPSzhq21aJvoG4XL2efAlRo4c/mZ
-	 yYsiC7JbxrY4rT5QobWTBEWBW+xMgkGJ6EYUphFkaA/uerZMi6voiL5vGRYsY4aFdw8QfydejdV0
-	 /L1HxDwoV+9vdACVaP2oZ6KldEfp8zx76+tcmU6jUzqCe9vMb3lMeowstbgs5ggNRVUXTi9P8AOL
-	 dFEJcep4XmxSgMAXpEUkD0JcQbSgvgNz4YdiM9RubTCYIbZURko3IqBSDzTvmFXeUQoMnOCKFIJk
-	 oWEUwdXpt/Dpz9I81jlZSKRyaTLg4q/v00Fc8ujH0e2PXzeQpzLjCHmNQ3pZRluuKFhBMxiyjLHA
-	 T7IlEv6Kw9FvcCys2bzJmh8XMwIPOef4s+ZE8EpiudG4llBTdZP8LU/4WLpRNdq8mACGY/uQa+bF
-	 3Cg7zP/npQecFaPSL76RdWTv9AorDZ9BjJN2E4Gr+a2uII5daMU95EinGlvDadEI1HPGWzvla4nx
-	 CXTUmAY/oMqzpSc3KuPMyjll4zsEN++V0+nuC0k+F7hKP0FfuCXQIK3oBM/O7zbFpfDadR5Ek0DY
-	 uOHJqpbRNzOQ6CSnDBueU4y1M1oKhrM18p4S1sTf4q
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
-Date: Tue, 25 Feb 2025 16:37:02 +0800
-X-OQ-MSGID: <20250225083701.1218150-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
-References: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
+	s=arc-20240116; t=1740472691; c=relaxed/simple;
+	bh=/1rQNvsIxFUtvXe2WIhVNnMewTk3RyEV8aZ7XXjztBU=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=e0UP+pDgfCHTqQbYsnPFFdpqLjCPr57DHxrq0EMVcsaRclIAlYNH3ZtYzT+ngY0zOs1CI5phBCOp9PmyVSZb02VT+6GzXLtnvGCEVVkkmPxcsQ6bLNT9bK3ybLzIMzeTgBMsV2SSQF7dkVBvWwxoLJYd22H7h080tI6cPhW0Sc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z29pz3j6Vz1GDhb;
+	Tue, 25 Feb 2025 16:33:15 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3355E140203;
+	Tue, 25 Feb 2025 16:37:59 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 25 Feb 2025 16:37:58 +0800
+Message-ID: <53672c20-82d1-4efa-8192-1c1d3ce15c1c@huawei.com>
+Date: Tue, 25 Feb 2025 16:37:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>
+Subject: Re: [PATCH v3 net-next 4/6] net: hibmcge: Add support for mac link
+ exception handling feature
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20250221115526.1082660-1-shaojijie@huawei.com>
+ <20250221115526.1082660-5-shaojijie@huawei.com>
+ <20250224190908.1a5ba74e@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250224190908.1a5ba74e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-#syz test
 
-diff --git a/mm/memory.c b/mm/memory.c
-index d5c4f932b399..a5b1832ec8f6 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6492,8 +6492,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 	if (!vma)
- 		goto inval;
- 
--	vma = vma_start_read(mm, vma);
--	if (IS_ERR_OR_NULL(vma)) {
-+	if (IS_ERR_OR_NULL(vma_start_read(mm, vma))) {
- 		/* Check if the VMA got isolated after we found it */
- 		if (PTR_ERR(vma) == -EAGAIN) {
- 			count_vm_vma_lock_event(VMA_LOCK_MISS);
+on 2025/2/25 11:09, Jakub Kicinski wrote:
+> On Fri, 21 Feb 2025 19:55:24 +0800 Jijie Shao wrote:
+>> +	if (!(priv->stats.np_link_fail_cnt % HBG_NP_LINK_FAIL_RETRY_TIMES)) {
+> This adds a 64b divide which breaks the build on some 32b arches:
+>
+> ERROR: modpost: "__umoddi3" [drivers/net/ethernet/hisilicon/hibmcge/hibmcge.ko] undefined!
+
+Okay, I'll fix this in the next version.
+
+Thanks
+Jijie Shao
 
 
