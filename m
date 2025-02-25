@@ -1,131 +1,148 @@
-Return-Path: <linux-kernel+bounces-532502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E8AA44EA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AECA44EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D9019C04B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF26A163FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE1020E31E;
-	Tue, 25 Feb 2025 21:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262FC1DD889;
+	Tue, 25 Feb 2025 21:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="BiNly+uQ"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSetpMIY"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A418FDAA;
-	Tue, 25 Feb 2025 21:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1816318DB26;
+	Tue, 25 Feb 2025 21:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518213; cv=none; b=SNN/5Hzg03GFCwOt6V5o19+5YXztJSii/txNq5xKitxn8ft6bn63t1GUU7dH7XHb2ZSYediUwEjB6ivsr3SQQ7gLK65CGh6Ki0vM9/c9KuVqwj1JNYMHKxjK8U64TSHXWcwgAIqHEBs8xxRxRdonc6QimxEMB2Xhua5TJRwUVRA=
+	t=1740518300; cv=none; b=jsu0FZ+Bd0jTdPXQQmq5K55Qr+R4EYYb9R81fYK061dYT1cxbj5j983bnl/49Xown4PM5UMP+OTREcnksYtduSd7MRDtsGRuxwvQZgSTnGLa7ExPC/Mi3qMQhUAjfvf7GLwcF2X7DBJchvEaBemV10T/FVZepAyqT7f4+GJV14Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518213; c=relaxed/simple;
-	bh=4kRPWlClDYOUSoAHc2QVT1gZywE1fbr7r4UHSBjdXVw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m4tR/4yavrTF1KGezdMf/FiCmZ5u8LC/WO8nk69nAubYMYVnRjtBL6A5gcfc6rlneUWRB3lgIv6FO/QFcwgRqDtnHSlj6+H/kI1F9/r01b28z6Wc3+uSIGsQ/kBiE+KaOpXCvrRMJpk+IToJmPHC1xtPshrTT/zf9m+AvsnQXGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=fail smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=BiNly+uQ; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1740518300; c=relaxed/simple;
+	bh=AmI/ROhV4lpAECeyGeJEqy6tUHFxvNeAOstOpVPldJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wc3Vo7D/CdAVFHnB069fXzDoMznTZ96QMstzbY5fcsg8hrUcM+ATMx8Yc1vdAR1CNcBxqNosnWPbHRG8AKFn0438H4hsoUYhRQ+qRVCgywH9RazQDHdS6kozkpNJ2B434OKUkNJdDkaUKd9vMNAkL8Oo18mEusNm5Y70VYAcCYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSetpMIY; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-521b188df16so1444279e0c.2;
+        Tue, 25 Feb 2025 13:18:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1740518212; x=1772054212;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vTbIfOI1pwPLKR/Xg2D9C9fx1fVIbzOlXdU2l6tT3ew=;
-  b=BiNly+uQ9W6BfwzyL3zB409pHhSvAC60uLooAFqx5k8fd60u2dHOhVNf
-   h5b65KnjtnEVlxEx6FZyD4uo7yGFn0DctkP9WPz0LU6WE9QpwodQ1tkVR
-   HVyrcZOtcfW/93Ln6pQRhtcAxbReuqkchFsK5ggCPRiDfqBFEY3jLTdsx
-   I=;
-X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
-   d="scan'208";a="274300763"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:16:46 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:47411]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.32:2525] with esmtp (Farcaster)
- id cc5325a5-0b44-4c0f-aa1d-6f3fa40d5ce9; Tue, 25 Feb 2025 21:16:45 +0000 (UTC)
-X-Farcaster-Flow-ID: cc5325a5-0b44-4c0f-aa1d-6f3fa40d5ce9
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 21:16:45 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.100.5) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 21:16:41 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <wanghai38@huawei.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<horms@kernel.org>, <kerneljasonxing@gmail.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>, <liujian56@huawei.com>,
-	<ncardwell@google.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
-Subject: Re: [PATCH v3 net] tcp: Defer ts_recent changes until req is owned
-Date: Tue, 25 Feb 2025 13:16:31 -0800
-Message-ID: <20250225211631.97380-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250224090047.50748-1-wanghai38@huawei.com>
-References: <20250224090047.50748-1-wanghai38@huawei.com>
+        d=gmail.com; s=20230601; t=1740518298; x=1741123098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ClmqOl/Tw6JC6bZhWsysftkJJqIKxw8FKGY3Yy+YdFc=;
+        b=QSetpMIYBK5OYrmUJ6eo6u4J0Pe3ps90usqNfOSs4VYXfw7/G98Eb9naOtzhANuIe3
+         NePKnPhrfQ7qem6wZEI9b0p89Jf1H0eYfixwhHRjRu8SZhFwp4Ifw5zRqUHre7BD+vel
+         KFL9PoWGACkPiF/rWNUGwET7rtRdxLzrW//08C8H8BSTpuT0HhIyLxiHWUZUAAwcUdnV
+         matOGtGzXqWLwptb9c4qs1KIUguKIVvFFJyi2gMUmxeEj8fADIB+IVNz7bsn1VKBwqQp
+         whqA26+Egzax7ppvW6m8yuw2ODsEmTqO3fR9SJB+g+A+psfYgYe/K9nxj0e1itqE72VH
+         chNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740518298; x=1741123098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ClmqOl/Tw6JC6bZhWsysftkJJqIKxw8FKGY3Yy+YdFc=;
+        b=NhznzeTFBpU7RF9Se5NIoyoMsMKdqrx0P37eqoXRYuLg3X160nHrnGDaoqrYrRR0HB
+         9wH8HTrCZcIVMPc6F9ymFS4xszb6yhc+15afB2Mx64cSYJTBh59Q28cncH3x/+AOUviK
+         JprELaonO3Om7cTua+jxxsBI29IMg7SYNMNqo8wD94i4aTNGj5Bul9U8ST/Y0X38RiCJ
+         ttLwun0rn9eDA/G1Jav6iso4fCQfE8N8AwywnsxElsRyjMB9PxamZRTnpWTTDHrcP5vt
+         dMrGyZevBrKNiF/Sq/YJqZI0mlpFCCs/Vy1os3WDfeLhagQQfWiXlJRydoBqr/K/u24+
+         4fhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyUK+nxBmp9CPlw63j7rb9b5f/bikDKCUtq9qTBUYC6tIJEzeXYMu90Mg5uQrDDCA/7ZKC9jGr@vger.kernel.org, AJvYcCWvBEdhFaBKLZxS0gHMKq+vJQpVUpYJkfpicQlASWgeYlCtXunzPD9xvaeIpClicfKiFC4gcXkV+M5B0Zti8pctQQI=@vger.kernel.org, AJvYcCXZG4fiMqWARvaW2FrwzRER40n9geeI+3jhnBAXUfHzCLDBJ5GJjsdDeTFJacbq7ymW1iLEePj2xmSQ2mQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeetcVEKfSieeGvYdDtHa53ZkboKnrNFrDNHsohf2s2D8U4EQK
+	lnz+U7sPZ18lkKpJxOLsJxHxsfpZkwGJb/qqbxpmig45u6pRJ5VUybwx8epN1tNubkPioPdX1kT
+	/EA2o/TVkIQH83Sttz5rP9ZAfeC4=
+X-Gm-Gg: ASbGncvpQ8pqwB/1YwgPHzJU5/I0c1Wv3gDp+CZdgRMDQefRjPJSt49HmPgqr65VVtO
+	Atvq0LY1SjWrOWK4X3JFhwxDZOoS+ixUaZqyAUd1yflzmPeuyYuj/wQGNE2e6ozrWs5/eCvBEEg
+	CXx9U6fWE=
+X-Google-Smtp-Source: AGHT+IE1ro2Ea2GyyaX3xp2teX3THRLd4qkveKPG3P4FVT7E3q9jXm31Jo+kkD1ljGeB4qt1pCLbRlljtq0HjJqQfAg=
+X-Received: by 2002:a05:6122:3c94:b0:50b:e9a5:cd7b with SMTP id
+ 71dfb90a1353d-5223cd2c8a8mr3161652e0c.9.1740518297995; Tue, 25 Feb 2025
+ 13:18:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA001.ant.amazon.com (10.13.139.101) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com> <20250225105907.845347-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250225105907.845347-6-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Feb 2025 21:17:52 +0000
+X-Gm-Features: AQ5f1Jo2VftSleZ87D2j-IA4DPgIo3RBwdu6m9T9vVR3u6tfRaSwqq2-lvouTpI
+Message-ID: <CA+V-a8scgrFTe5GAUDSp7_v0M+iHEXBqpmjnavnPrSXYeXOQ0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] phy: renesas: rcar-gen3-usb2: Set timing registers
+ only once
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org, 
+	horms+renesas@verge.net.au, fabrizio.castro.jz@renesas.com, 
+	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Wang Hai <wanghai38@huawei.com>
-Date: Mon, 24 Feb 2025 17:00:47 +0800
-> Recently a bug was discovered where the server had entered TCP_ESTABLISHED
-> state, but the upper layers were not notified.
-> 
-> The same 5-tuple packet may be processed by different CPUSs, so two
-> CPUs may receive different ack packets at the same time when the
-> state is TCP_NEW_SYN_RECV.
-> 
-> In that case, req->ts_recent in tcp_check_req may be changed concurrently,
-> which will probably cause the newsk's ts_recent to be incorrectly large.
-> So that tcp_validate_incoming will fail. At this point, newsk will not be
-> able to enter the TCP_ESTABLISHED.
-> 
-> cpu1                                    cpu2
-> tcp_check_req
->                                         tcp_check_req
->  req->ts_recent = rcv_tsval = t1
->                                          req->ts_recent = rcv_tsval = t2
-> 
->  syn_recv_sock
->   tcp_sk(child)->rx_opt.ts_recent = req->ts_recent = t2 // t1 < t2
-> tcp_child_process
->  tcp_rcv_state_process
->   tcp_validate_incoming
->    tcp_paws_check
->     if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win)
->         // t2 - t1 > paws_win, failed
->                                         tcp_v4_do_rcv
->                                          tcp_rcv_state_process
->                                          // TCP_ESTABLISHED
-> 
-> The cpu2's skb or a newly received skb will call tcp_v4_do_rcv to get
-> the newsk into the TCP_ESTABLISHED state, but at this point it is no
-> longer possible to notify the upper layer application. A notification
-> mechanism could be added here, but the fix is more complex, so the
-> current fix is used.
-> 
-> In tcp_check_req, req->ts_recent is used to assign a value to
-> tcp_sk(child)->rx_opt.ts_recent, so removing the change in req->ts_recent
-> and changing tcp_sk(child)->rx_opt.ts_recent directly after owning the
-> req fixes this bug.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
-> Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+On Tue, Feb 25, 2025 at 11:02=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> phy-rcar-gen3-usb2 driver exports 4 PHYs. The timing registers are common
+> to all PHYs. There is no need to set them every time a PHY is initialized=
+.
+> Set timing register only when the 1st PHY is initialized.
+>
+> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver=
+")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - collected tags
+>
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cheers,
+Prabhakar
+
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+> index 21cf14ea3437..a89621d3f94b 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -467,8 +467,11 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+>         val =3D readl(usb2_base + USB2_INT_ENABLE);
+>         val |=3D USB2_INT_ENABLE_UCOM_INTEN | rphy->int_enable_bits;
+>         writel(val, usb2_base + USB2_INT_ENABLE);
+> -       writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM_TIMSET)=
+;
+> -       writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
+> +
+> +       if (!rcar_gen3_is_any_rphy_initialized(channel)) {
+> +               writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM=
+_TIMSET);
+> +               writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
+> +       }
+>
+>         /* Initialize otg part (only if we initialize a PHY with IRQs). *=
+/
+>         if (rphy->int_enable_bits)
+> --
+> 2.43.0
+>
+>
 
