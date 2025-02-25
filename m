@@ -1,153 +1,101 @@
-Return-Path: <linux-kernel+bounces-531341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B250A43F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:23:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FBFA43DD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F15C189F95E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28933A72E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14D9268C4F;
-	Tue, 25 Feb 2025 12:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E845267B0D;
+	Tue, 25 Feb 2025 11:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IVCv8PTj"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Fx8DmUwN"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF446267B82
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28974C80;
+	Tue, 25 Feb 2025 11:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485990; cv=none; b=pEM7YSi5s7JRbzGBXxjNxX/Qw3gAby4AebfwNO7Zhn2h2TwpQpLaHbnTiDQANjgjOcMxnHe+5AwIS8nXked2GfnzAG92dKvEXNVW6Xgvv7tt74znbPJ756SqMdxC+8HOUXUYQPgIofGf68SSE7JkcnezgIz3hvRUuzhmbbxUfXU=
+	t=1740483528; cv=none; b=kyZ0b8T8fOYCNWhVB2N3NlnKwOMSRTFcmGuVcx4p6oiQbY+0cW/IBZ65XTkWFNkRQ8DxE4ng2JRjzoNAhz7tpdnBpcBeInP0TT/9BhMqG86MRs7Aoc7s9sc2oMpWOrIaKDm022QCz4810oDnb2NPUXfJHdLlnaGRuWZD0zlk9v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485990; c=relaxed/simple;
-	bh=lRMt6jA061lprurvx0VShzAqXayV8eltmOsW49Zjb3A=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=Div8wPIL0u/RTG07laOQdlEWQ1Ws53Mx2xbXBvCAaPhMC0SmEw3kK5+Oj1crl8Fqs5d/ZsyKdUE81DS68dbctOWnRKwB/NL2kEXR0rgyy7CJA2IvLbMtfDH3wCwbfu1rR+Bg663wVZSAe0LY2rOFHsUuSPWrqks6MH9R/Mo5V0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IVCv8PTj; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250225121945epoutp0447f8875a534e0b26dd42020dbcb7f8c9~ncshRmfP22669026690epoutp04O
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:19:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250225121945epoutp0447f8875a534e0b26dd42020dbcb7f8c9~ncshRmfP22669026690epoutp04O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740485985;
-	bh=q0NY9q1nH4ABhU1WMsGxQmu1gQKIvkrPnNiTaH8G9/k=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=IVCv8PTjCQMxhb78NVUuSVmb0pGligpqCZ8R3yFKxKm318oiV2q6Ctxi1fnqI1EN8
-	 QFbV05PMszOqy8v+0HbNgVrprEmEkBy9NfLGGyRrRHcimxPQw3meAJHsxVsKMs284V
-	 S405u8BbxRG6bhLl95vjliyo57fdV7dHeH5AwiJY=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20250225121945epcas5p317219048972b9afbf040470ae890559d~ncsg6xqUN0319603196epcas5p3f;
-	Tue, 25 Feb 2025 12:19:45 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z2GrH6dR2z4x9Pv; Tue, 25 Feb
-	2025 12:19:43 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EE.F3.19956.F55BDB76; Tue, 25 Feb 2025 21:19:43 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250225121943epcas5p129c54f2e9ad44af2ce342c26267fe38a~ncsfTJMmY1323613236epcas5p1-;
-	Tue, 25 Feb 2025 12:19:43 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250225121943epsmtrp27a9dbdc10ee791740565f0d6c55cec2f~ncsfSjkFB0616406164epsmtrp23;
-	Tue, 25 Feb 2025 12:19:43 +0000 (GMT)
-X-AuditID: b6c32a4b-fd1f170000004df4-c4-67bdb55f6b91
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3A.5F.18729.F55BDB76; Tue, 25 Feb 2025 21:19:43 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.6]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250225121936epsmtip2fed77c88d0b19afab8241a8d8987f4a9~ncsZEwLhq1286612866epsmtip2J;
-	Tue, 25 Feb 2025 12:19:35 +0000 (GMT)
-From: Anindya Sundar Gayen <anindya.sg@samsung.com>
-To: andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-Subject: [PATCH] i2c-algo-bit: cpu_relax/ yield replaced with cond_resched
-Date: Tue, 25 Feb 2025 17:07:24 +0530
-Message-Id: <20250225113724.14653-1-anindya.sg@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7bCmpm781r3pBlseGFrc/9rBaHFo81Z2
-	i46/XxgtLu+aw2axaOsXdgdWj02rOtk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91W
-	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-	I7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj69zrzAXX2Ss2r3vG1sC4iq2L
-	kZNDQsBEYs6OJ8xdjFwcQgK7GSWe/bvKCuF8YpT4e+ALlPONUWLCmXcsMC3XH99jg0jsZZQ4
-	dG8WC4TTzCRx++1Nxi5GDg42AWOJtgeVIA0iAiES33r2M4LYzAJmEjPvngYbJCzgJXFux1Z2
-	EJtFQFXi2cunYDW8AtYSD35tYoJYJi+xesMBsPskBPrZJQ7//wqVcJFYt283I4QtLPHq+BZ2
-	CFtK4vO7vWwgN0gI5EssOZsNEc6ROLD8AVSrvcSBK3NYQEqYBTQl1u/ShziNT6L39xMmiE5e
-	iY42IQhTRWJiBwvM7Nk/djBD2B4SF172gO0UEoiVuPdhO/MERplZCDMXMDKuYpRMLSjOTU8t
-	Ni0wzksth8dMcn7uJkZw0tHy3sH46MEHvUOMTByMhxglOJiVRHg5M/ekC/GmJFZWpRblxxeV
-	5qQWH2I0BQbSRGYp0eR8YNrLK4k3NLE0MDEzMzOxNDYzVBLnbd7Zki4kkJ5YkpqdmlqQWgTT
-	x8TBKdXAJPs04a3IbVfb1TXqD1T9r23097yaY7m2s0to36plj/98Ti72O3W3s3H6g+Kge6/u
-	yE1va32a4ftyrsBBv4g/L/itGSLt75gELtD7srrDx2qxPcO1hrM10gvbmCaWLrEJOhFitNhH
-	/iNvXNqUv//e6b8OnHvtz5OeRKPE9TOOP+9kWnHu3hNtlfPPaxboN1mvYvYJnr07qYW/LspR
-	1F6dSX1C6NfVdpuenPt/zD0ieuWudxNy2NccSnGt/vJ57oGlvIpxd7+tzvI8WaYdanfk5pbd
-	hpp7xfZdmzRte6ClAHdHYskHFrf6xsUKH7N0b+o3Hr284lzGBy3ty+aT1HLaV22c9S0h+nOg
-	9S8+QZ4+FSWW4oxEQy3mouJEAIUAhDzDAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJMWRmVeSWpSXmKPExsWy7bCSvG781r3pBiv+yVjc/9rBaHFo81Z2
-	i46/XxgtLu+aw2axaOsXdgdWj02rOtk8+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK2Pr3OvM
-	BdfZKzave8bWwLiKrYuRk0NCwETi+uN7YLaQwG5GiTMLtCHiUhK3/3cyQtjCEiv/PWfvYuQC
-	qmlkkri+oIO1i5GDg03AWKLtQSWIKSIQJvF5kw5IObOAhcTKLQeZQWxhAS+Jczu2soPYLAKq
-	Es9ePgUbyStgLfHg1yYmiPHyEqs3HGCewMizgJFhFaNkakFxbnpusWGBYV5quV5xYm5xaV66
-	XnJ+7iZGcGBoae5g3L7qg94hRiYOxkOMEhzMSiK8nJl70oV4UxIrq1KL8uOLSnNSiw8xSnOw
-	KInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwya7yOFdV5DX9kX6s1Llp5cJCGbNmPIw7Ipjx
-	fE3qoQszcu7sF5X78NPq5zpe1kuiOYobKg1/cl5z67+UuNm5f3+SYfT7H3l7VGezeClnP/5X
-	G2Le/YC3103g/tr1KnvcBILurNv2y2b/nMXmnQaVOR3To1gPlEsvXfxaJzDgS8uao6qSneaT
-	xKK3TeY6eTjUzvvUR6nT31iLGlNrl15qs5rhsY39ldl7/9i41x7fZ8zTy5/RuK1xU+OUnmDO
-	qzbtp/+K9Lx4xHSFddLv9yVr10/5lNfokJ7V9OJZkMeKJVF1oUpbg6a6TjG7lZnwreSVefHr
-	fXe3aC3Xlv4zR/5swL2T15nkn+2ZdXiLy6RjVUosxRmJhlrMRcWJAFY+Pql7AgAA
-X-CMS-MailID: 20250225121943epcas5p129c54f2e9ad44af2ce342c26267fe38a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250225121943epcas5p129c54f2e9ad44af2ce342c26267fe38a
-References: <CGME20250225121943epcas5p129c54f2e9ad44af2ce342c26267fe38a@epcas5p1.samsung.com>
+	s=arc-20240116; t=1740483528; c=relaxed/simple;
+	bh=7o1LhwlAcsJgqFTK4J681khp+AvnA4zXAdW/ZK8fgcY=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=cqALK0FjI1FTDIVOabHs0Y2T2wARYNGaVAclDlGqg5Y4GghsOfToPY83tyvw8msMPVb4U10bcrbrz1IVjggSm1oap2CcqC5Y5Gbm3JEUu4V58x+r9Y8swN4HybFEmYouR5n+XygWUvYv5ORzImdkcmCvnJaEar725UB5XVkX8rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Fx8DmUwN; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740483461;
+	bh=7o1LhwlAcsJgqFTK4J681khp+AvnA4zXAdW/ZK8fgcY=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=Fx8DmUwNZJewxD15LNTJ5vMNr/YQUsIpa6YNjUaamLHwwREp5btz+eurbZ1nHB4Cj
+	 +68/+D+/+9PuWQ4s4rf1GSyKtGfScO1zkgdZia3BxEZtylhuL2UfgEItxvv/q13d/o
+	 2pzYSNqO29PCoNmypHUZINnrOA1qE0UEIk503a8I=
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: Xptfm9en8kSztH5x5sLIfL3u/YSEDpg5TCpVOgsGmtg=
+X-QQ-STYLE: 
+X-QQ-mid: v3sz3a-6t1740483459t397160
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?U2xhZGUgV2F0a2lucw==?=" <srw@sladewatkins.net>, "=?utf-8?B?R3JlZyBLSA==?=" <gregkh@linuxfoundation.org>
+Cc: "=?utf-8?B?Sm9obiBLZWVwaW5n?=" <jkeeping@inmusicbrands.com>, "=?utf-8?B?SmlyaSBTbGFieQ==?=" <jirislaby@kernel.org>, "=?utf-8?B?RmVycnkgVG90aA==?=" <ftoth@exalondelft.nl>, "=?utf-8?B?SWxwbyBKw6RydmluZW4=?=" <ilpo.jarvinen@linux.intel.com>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bGludXgtc2VyaWFs?=" <linux-serial@vger.kernel.org>, "=?utf-8?B?c3RhYmxl?=" <stable@vger.kernel.org>
+Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Tue, 25 Feb 2025 19:37:38 +0800
+X-Priority: 3
+Message-ID: <tencent_729B631A3339DFCB4BFA873E@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
+	<tencent_09E5A20410369ED253A21788@qq.com>
+	<2025022434-subsiding-esquire-1de2@gregkh>
+	<tencent_013690E01596D03C0362D092@qq.com>
+	<2faa8912-a699-47d9-b9d6-dc2fb22fe7c8@sladewatkins.net>
+In-Reply-To: <2faa8912-a699-47d9-b9d6-dc2fb22fe7c8@sladewatkins.net>
+X-QQ-ReplyHash: 829435416
+X-BIZMAIL-ID: 9039354056843283055
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Tue, 25 Feb 2025 19:37:40 +0800 (CST)
+Feedback-ID: v:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MgQY1K25Ph0m1naNLl6PTlAFYKFI+WJ3bVu4EThSbzozVxcMfEWbbzRW
+	4N7uMs+393LogP+FLkIofNR0nsWjS2BN6UF1YAIr/gACxhPL2xyPJ9lf5T0R+mh5kPbkdgc
+	NaE7RdGocNgBAOkmmuN+6ecjMuw7H4StlEk/OS8pEB+xyCdV3MWoQeb3p/nQye6ICleV7sn
+	uGtDZneJklQ/Jn//jJ1C7KgTx5jr8SzbnL4NeBkETJvf2OH5AFmCRDq49FP90vWZXLM4qF2
+	oFyzo2eJ2sCi+PlvNTPB/EpCubrqGfYnrPgT0d54yVbcToQHM92t2UR35bazj2KJ4vugHB+
+	MlmmaHQYldK5smP0g+w6C8X40XwldoB5c8ReLbb0e0s3R0ifUDonYzdrdW3i6EpjpvelwzQ
+	U6tikRNjBAkrPLGsIUPVYAVCwzqRMpHfWAcpBHUzsfRz8ZSf7K8dFAo8bsgqIR5EBZuH5nM
+	XdpWFvBfoiw35y4TI4da/ZDShTOagmckk7mEKgPV194vLHjy5zkJGKY66o3weON0iRmEvkF
+	15g5/WgprvwVRKZfbN8N/wtjINikYh3QvnTUcAlxPe4vpYdrbGuxNWYv4I2X75QvSqY/8sQ
+	1NVOL8ZTWNSrnVd3QjXAylK6tCb5kGE9/UQqKzqfwyGCPCFpaDJiC9ahGjw7hzXOtz+7lmk
+	7MB3zOIDDpd74SkE1un7X141YvA+2lWmjtsokUt+Q0/oPypW3yUBYCOc358Ys04b0rR2VTR
+	viJypw/uawzgxsA0/PsTL6Lzwhm/Wox883so+s0o49/m25FGeG1xy4TDiFg88DjDa/sJBrV
+	ev/O8HnxoyJZ4CpoqfkiCJVJ4TQPU2Y4274+n75Y6wkgSb6cYN7gt9b6SVWTAqrW8PTOeAl
+	jg5i3xpDasIAKUKtBjIlwT/iv7RcX6fe6aIb9kC9/n5vjvYUCH7m83QvQADt9xxAuwWLvkw
+	0xJ7ErqmVSdDY309erRfxQ6MLgLkRTPl2eDDdzLwpB6uivlLK8/hZ0PmrMvRV2CCAJMZEF/
+	GrZOZAQA==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-cpu_relax/ yield replaced with better flexible approach in kernel
-with cond_resched.
-
-Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
----
- drivers/i2c/algos/i2c-algo-bit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index eddf25b90ca8..4168fd901957 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -97,7 +97,7 @@ static int sclhi(struct i2c_algo_bit_data *adap)
- 				break;
- 			return -ETIMEDOUT;
- 		}
--		cpu_relax();
-+		cond_resched();
- 	}
- #ifdef DEBUG
- 	if (jiffies != start && i2c_debug >= 3)
-@@ -329,7 +329,7 @@ static int try_address(struct i2c_adapter *i2c_adap,
- 		bit_dbg(3, &i2c_adap->dev, "emitting stop condition\n");
- 		i2c_stop(adap);
- 		udelay(adap->udelay);
--		yield();
-+		cond_resched();
- 		bit_dbg(3, &i2c_adap->dev, "emitting start condition\n");
- 		i2c_start(adap);
- 	}
--- 
-2.17.1
+SGVsbG8gU2xhZGUsDQoNClRoYW5rcyBmb3IgcmVwbHkgbXkgcXVlc3Rpb24uDQoNCkJScw0K
+V2VudGFvIEd1YW4=
 
 
