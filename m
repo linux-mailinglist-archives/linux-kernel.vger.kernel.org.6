@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-532211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBDFA44A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305DFA44A27
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9BD189B378
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6AB118910B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBC81A8F79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0D1ACED7;
 	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10F71993B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69C1A38F9;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507615; cv=none; b=W+vnFNLVzN1XCyJDHf1APbbYrrdLI6apW/l4SxTl5xfhpn4p+bxJMOqrpAM9HguASuJrJyP0LLLlQ4z1l08sES/jSYiQ6sRxUxXKg4zZ+gBmUkv+YdFXg8YjWlFYdqUP9zGx5vjgLXLzoJCoqG/tIE51M37cy98kad1g7nGc5nc=
+	t=1740507616; cv=none; b=IHNGjTME8iIrts62oYLlctkDFI3TATZ8mteO6n/Egwql5bPLTanQ6ZzucV4AaIEQoZ1W4zQ0uVXs72ETpnZIPWUEqzar3Ag3Daz10RDgcImhfZGjYiOp7e6tqAy+gjKC3gvQTAhQO4/QPMArysB6qmXQVt42vV0GSZLKu7HzNuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507615; c=relaxed/simple;
-	bh=mawHT+XCFiZ2E8sUhLd3IyCVPgu+SmxgXKOIoYUw0VE=;
+	s=arc-20240116; t=1740507616; c=relaxed/simple;
+	bh=bjXwCEFL3RTxjvXbt/lE5V7lqwwfrOXJ5cW/b9UMM8E=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=DuOFF5s6E8wgFk0gHN9dqYrWrKjJOJ9YtJu9P0NK9/UD+LIwcGvSftrXHh6XxUEXoahyaqhKVHEzQBciqKLbJCVLl0LIyPFpayQaKbEdJ5C8LiqoOdkpAhUlZvq/8dip2DZHz2/xv98Oame2o/S+a1jJ7OlTnlKQmZOAAnv1ZWw=
+	 Content-Type; b=Wv+SD+LCVKPwpZvl5mPWpEhqKwdvEpOfNt3vrHWE2TuRbgKxmYqPEv/PNFgMyau9jLdRvSujcUjBzbGHHFv7Y/WEBysLUBALMhr6EV6aC8cWKzzENqYgu1kUn8Kg8lj6yPBQwffNTliuO56uSOQdrfbr6t5mMgsgYevQOVbGs2E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63DA3C4CEDD;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE33C4CEEE;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tmzY6-000000095Xv-1qYA;
+	id 1tmzY6-000000095YQ-2bvl;
 	Tue, 25 Feb 2025 13:20:54 -0500
-Message-ID: <20250225182054.290128736@goodmis.org>
+Message-ID: <20250225182054.471759017@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 25 Feb 2025 13:20:05 -0500
+Date: Tue, 25 Feb 2025 13:20:06 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -49,7 +49,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Nathan Chancellor <nathan@kernel.org>,
  "Arnd Bergmann" <arnd@arndb.de>,
  Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/4] ftrace: Test mcount_loc addr before calling ftrace_call_addr()
+Subject: [PATCH 2/4] ftrace: Check against is_kernel_text() instead of kaslr_offset()
 References: <20250225182004.473875894@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,47 +61,66 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The addresses in the mcount_loc can be zeroed and then moved by KASLR
-making them invalid addresses. ftrace_call_addr() for ARM 64 expects a
-valid address to kernel text. If the addr read from the mcount_loc section
-is invalid, it must not call ftrace_call_addr(). Move the addr check
-before calling ftrace_call_addr() in ftrace_process_locs().
+As kaslr_offset() is architecture dependent and also may not be defined by
+all architectures, when zeroing out unused weak functions, do not check
+against kaslr_offset(), but instead check if the address is within the
+kernel text sections. If KASLR added a shift to the zeroed out function,
+it would still not be located in the kernel text. This is a more robust
+way to test if the text is valid or not.
 
 Fixes: ef378c3b8233 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
 Reported-by: Nathan Chancellor <nathan@kernel.org>
-Reported-by: "Arnd Bergmann" <arnd@arndb.de>
+Reported-by: Mark Brown <broonie@kernel.org>
 Tested-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20250225025631.GA271248@ax162/
-Closes: https://lore.kernel.org/all/91523154-072b-437b-bbdc-0b70e9783fd0@app.fastmail.com/
+Closes: https://lore.kernel.org/all/20250224180805.GA1536711@ax162/
+Closes: https://lore.kernel.org/all/5225b07b-a9b2-4558-9d5f-aa60b19f6317@sirena.org.uk/
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/trace/ftrace.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 27c8def2139d..183f72cf15ed 100644
+index 183f72cf15ed..bec7b5dbdb3b 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -7063,7 +7063,9 @@ static int ftrace_process_locs(struct module *mod,
+@@ -7004,7 +7004,6 @@ static int ftrace_process_locs(struct module *mod,
+ 	unsigned long count;
+ 	unsigned long *p;
+ 	unsigned long addr;
+-	unsigned long kaslr;
+ 	unsigned long flags = 0; /* Shut up gcc */
+ 	unsigned long pages;
+ 	int ret = -ENOMEM;
+@@ -7056,9 +7055,6 @@ static int ftrace_process_locs(struct module *mod,
+ 		ftrace_pages->next = start_pg;
+ 	}
+ 
+-	/* For zeroed locations that were shifted for core kernel */
+-	kaslr = !mod ? kaslr_offset() : 0;
+-
+ 	p = start;
  	pg = start_pg;
  	while (p < end) {
- 		unsigned long end_offset;
--		addr = ftrace_call_adjust(*p++);
+@@ -7072,7 +7068,18 @@ static int ftrace_process_locs(struct module *mod,
+ 		 * object files to satisfy alignments.
+ 		 * Skip any NULL pointers.
+ 		 */
+-		if (!addr || addr == kaslr) {
++		if (!addr) {
++			skipped++;
++			continue;
++		}
 +
-+		addr = *p++;
-+
- 		/*
- 		 * Some architecture linkers will pad between
- 		 * the different mcount_loc sections of different
-@@ -7075,6 +7077,8 @@ static int ftrace_process_locs(struct module *mod,
++		/*
++		 * If this is core kernel, make sure the address is in core
++		 * or inittext, as weak functions get zeroed and KASLR can
++		 * move them to something other than zero. It just will not
++		 * move it to an area where kernel text is.
++		 */
++		if (!mod && !(is_kernel_text(addr) || is_kernel_inittext(addr))) {
+ 			skipped++;
  			continue;
  		}
- 
-+		addr = ftrace_call_adjust(addr);
-+
- 		end_offset = (pg->index+1) * sizeof(pg->records[0]);
- 		if (end_offset > PAGE_SIZE << pg->order) {
- 			/* We should have allocated enough */
 -- 
 2.47.2
 
