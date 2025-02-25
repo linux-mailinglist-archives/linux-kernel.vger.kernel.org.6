@@ -1,133 +1,188 @@
-Return-Path: <linux-kernel+bounces-531403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A7CA44015
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:06:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9953CA4401F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E8D4401C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FD7179667
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D93268FE9;
-	Tue, 25 Feb 2025 13:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C802690D7;
+	Tue, 25 Feb 2025 13:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9VUX23F"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPzCTPca"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D11DB365;
-	Tue, 25 Feb 2025 13:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3C268FDB;
+	Tue, 25 Feb 2025 13:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488560; cv=none; b=JsWjg076yFSG+/yNp90DNOa1cT5xBdWzuMSv7fIcLkWUYhoReOmJvguBhONaVuxLsyt8LR1hccsi4IXIS7QwocWGdUAxgOTztNXz/m03arvu8LSEdTLH7y36GkMoelVNzbvmO6Htc+LOhltWLvk8RN/ODmIVcsfKlpgPG4OILdQ=
+	t=1740488678; cv=none; b=NRBfOfzcFsxXyerY3XJqhyZIDZr49mutbyzDkCWEOEPSAolt+uUMhmOiYlEcwm3Q9M2MQAhLaRIfy5Y3vOYn46EMMa0IMQwetNs/2iQIiP+sOE+9vPfg0dR1OrTLtc5bGgNMkko4DpDWveqpYQ9yVryxVDzg5IxZf3cAeNZvsR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488560; c=relaxed/simple;
-	bh=GfBv0+2Ig6Q/5M8ohpa5wt34MrwK4ksWEyDMsdwY+ag=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=BYL1NTLskWTira3v6n6bxIxEKWhtNvzj9vbvEHU4igKoNagKDlPs/djF8BAETiIiWAgmzWYqj6f3fXz5xv3OUyYJUpYP5PPshsA5HIBhW464cpbA2nkUTKvM6AjApIvnNtfFc2cjvtJJL3LpD27z+z4/z/Qc2dlS9s3uY9GnigM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9VUX23F; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so9723765a12.0;
-        Tue, 25 Feb 2025 05:02:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740488557; x=1741093357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GfBv0+2Ig6Q/5M8ohpa5wt34MrwK4ksWEyDMsdwY+ag=;
-        b=W9VUX23Fj7pgwzBb20q5dEs1eaa+6P4komvm0zjJVnh/yV1DRyjgGOT53Odu/8RGj3
-         lmgbvG0zdUoTPhij8MxcibrpgVH3kfo4IIrthXJZW+LMXITuCIVQd5q8o659dJJO4pAA
-         /gKVWu+X79sPX3VMpuJb7Of5e5mxRUh7necwDNpvq7pwxDZyKJstwGoqit0nsaqr4RW9
-         glNvjhilj7hqiQwefx1LYqpFIfFno4f3T8wzYD5pl26Yagkx7+7PHxSAjByYDcvMxUsH
-         zUIBFQRVfOLynLEHW8eBqk4eWnXHtdXwO4vUPuGlKHjRdHXHc9eF8n8mrgpfc/SK/yK+
-         ridw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740488557; x=1741093357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GfBv0+2Ig6Q/5M8ohpa5wt34MrwK4ksWEyDMsdwY+ag=;
-        b=dKN25JmjlQneVQw03JFY8h7RbVTcoUeqYcIveR4HyUEOm7vbn9My14ucKPmHjU+bfW
-         bmMtaaprzwZS/xgofJIYixoifDpXwvhYuVfMSw2hQisI90xalWcjftRrFgpja4ZF+Umq
-         xdF5QVQhe1/k35bEzkjKlcRTwbtkAxiprezeiIjC05aHFiK8tNjMqIUOj7wanAmm4O/v
-         rPfi+KQqk/PlhC4nJyNCGL2PxD6n6LgDDct0JaoOX67Z+c97tvRHUVmNF1+VBTLsaWFg
-         eB634M5if+i9w6W5ABZ70rhHwjAsb6IWTjkrthAMLMX9I2URM+b4PPXoRos+cVG9Wl4s
-         NlRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFiMf2WUfcJBDbSu/CRi1InBE656zlTC7hv84MRUJjMU6Kljt4LNZpCiwUKg0qYHkT/kuyhk3+@vger.kernel.org, AJvYcCVq5XBOznafgt/Nf133k/WvK06p3skkxMKlGqt0zvF0V5mX+iVykGL1gvElh9ug4y2vnC7zgkqUD8qn4A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeSzw3XTDwP13LjrIR39OnafhTRYUcFhO4f093fP2DX4ecoxia
-	HyhxatDzAfUSdhUva/DRWCTnz0agKnlIid9kWN+r4Mhcdty5hy/nRaWuLQeeIDvISRpqqL11sbI
-	FBFBpKGoPEen1Ec683IMSBehewWtKX/5Xa5zSkA==
-X-Gm-Gg: ASbGnctO/N/OfbGP0GScxWdBzT23NjwVS+6DrgOtDAWUjz6tdLBcVJSwcum4SBMzZgn
-	4B1nbnUaFn+cdvhPM+3wBCz3tkwFyQ5TyG+1KDWFFGnSpnK36IxVYE3/hYjLPi+NYT9WF9ysd0B
-	aHjLQAeg==
-X-Google-Smtp-Source: AGHT+IGKsZfJvxcjb7PkMuNRzzrsgmgOoQbOBOqi+Lpi6M86G4RV2k2x4pLduAa2f8R0g20kTsF2wgHa4BPUgRCp4Kc=
-X-Received: by 2002:a05:6402:358f:b0:5de:5cb3:e82a with SMTP id
- 4fb4d7f45d1cf-5e0a1116e25mr23027748a12.0.1740488556516; Tue, 25 Feb 2025
- 05:02:36 -0800 (PST)
+	s=arc-20240116; t=1740488678; c=relaxed/simple;
+	bh=VmGLKYImE7DJ/sk9epTDObwuVtuKPlnNZgK/xKXvbm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zgnuy4NzUan+e6WxWh2tCe4Hy7EDX8rALJvjAWsBLXBcxKP66P3zt5Q2WXbwQkUjOj/9+xuLkBF9dzDDdaUZfiTmAB3E4ozKV03VWozCExlefOzRadWq9uT2Di9YqQWZICUdX7hf0GrsfewX6MutNS6xfz86iiNGVUkwM1NbFFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPzCTPca; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83114C4CEE6;
+	Tue, 25 Feb 2025 13:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740488678;
+	bh=VmGLKYImE7DJ/sk9epTDObwuVtuKPlnNZgK/xKXvbm0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HPzCTPca2u0cgrfG5EsEvMItYgdJ4sjvxrX2x+8UCey1+ZPA74V0kWqKq0RlXfUx2
+	 bUnX0ml0DzmVWgT48TCOijIQigqNVeR0uCclCyw4BeiqXhh9ahXowMsrRMKq4TVYpn
+	 /5Ta2eNtnY5D//Y+etvAzTzZtC+HPlS9QcmuJ9vIBxdjf4qmLLdrUCR2iRQ1HMB/Mc
+	 aBcfRV2SFqoogCJDmJf2WRVsg4Ps5nuAn/yzKeCEnQ/xd+RLzguKjfNfd5w8ofV03u
+	 swGyj72txdoEOdhCgKpvdVB3U63UI5VfJl5nrGY4G5HFRp8MELrIXCIOV+UQkU4cFY
+	 fvY+vQAJawKzg==
+Message-ID: <6fc80544-6fc3-4450-a0cc-bfc740fe97bb@kernel.org>
+Date: Tue, 25 Feb 2025 14:04:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Gui-Dong Han <hanguidong02@gmail.com>
-Date: Tue, 25 Feb 2025 21:02:00 +0800
-X-Gm-Features: AWEUYZlvHmVokT8MMhqWrzdI6JeU7QSjxyre4OI-nzDa3gkCtbDXRBtbozQqtC4
-Message-ID: <CAOPYjvaOBke7QVqAwbxOGyuVVb2hQGi3t-yiN7P=4sK-Mt-+Dg@mail.gmail.com>
-Subject: [BUG] r8188eu: Potential deadlocks in rtw_wx_set_wap/essid functions
-To: Larry.Finger@lwfinger.net, phil@philpotter.co.uk, paskripkin@gmail.com, 
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>, 
-	baijiaju1990@gmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello maintainers,
+On 25/02/2025 09:48, Clément Le Goffic wrote:
+> +
+> +maintainers:
+> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
+> +
+> +description: |
 
-I would like to report a potential lock ordering issue in the r8188eu
-driver. This may lead to deadlocks under certain conditions.
 
-The functions rtw_wx_set_wap() and rtw_wx_set_essid() acquire locks in
-an order that contradicts the established locking hierarchy observed
-in other parts of the driver:
+Do not need '|' unless you need to preserve formatting.
 
-1. They first take &pmlmepriv->scanned_queue.lock
-2. Then call rtw_set_802_11_infrastructure_mode() which takes &pmlmepriv->l=
-ock
+> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
+> +  It allows to output internal signals on SoC's GPIO.
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp-hdp
 
-This is inverted compared to the common pattern seen in functions like
-rtw_joinbss_event_prehandle(), rtw_createbss_cmd_callback(), and
-others, which typically:
+There is a mess in STM SoCs. Sometimes you call SoC stm32, sometimes
+stm32mp and sometimes stm32mpXX.
 
-1. Take &pmlmepriv->lock first
-2. Then take &pmlmepriv->scanned_queue.lock
+Define for all your STM contributions what is the actual SoC. This
+feedback was already given to ST.
 
-This lock inversion creates a potential deadlock scenario when these
-code paths execute concurrently.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    $ref: pinmux-node.yaml#
+> +
+> +    properties:
+> +      function:
+> +        enum: [ "0", "1", "2", "3", "4", "5", "6", "7",
+> +                "8", "9", "10", "11", "12", "13", "14",
+> +                "15" ]
 
-Moreover, the call chain: rtw_wx_set_* ->
-rtw_set_802_11_infrastructure_mode() -> rtw_free_assoc_resources()
-could lead to recursive acquisition of &pmlmepriv->scanned_queue.lock,
-potentially causing self-deadlock even without concurrency.
+Function which has a number is not really useful. What does it even express?
 
-This issue exists in longterm kernels containing the r8188eu driver:
 
-5.4.y (until 5.4.290)
-5.10.y (until 5.10.234)
-5.15.y (until 5.15.178)
-6.1.y (until 6.1.129)
+> +
+> +      pins:
+> +        enum: [ hdp0, hdp1, hdp2, hdp3, hdp4, hdp5, hdp6, hdp7 ]
+> +
+> +    required:
+> +      - function
+> +      - pins
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    #include <dt-bindings/pinctrl/stm32mp15-hdp.h>
+> +    //Example 1
 
-The r8188eu driver has been removed from upstream, but older
-maintained versions (5.4.x=E2=80=936.1.x) still include this driver and are
-affected.
+Drop
 
-This issue was identified through static analysis. While I've verified
-the locking patterns through code review, I'm not sufficiently
-familiar with the driver's internals to propose a safe fix.
-
-Thank you for your attention to this matter.
 
 Best regards,
-Gui-Dong Han
+Krzysztof
 
