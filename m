@@ -1,343 +1,132 @@
-Return-Path: <linux-kernel+bounces-530692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343C2A436E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:03:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33FFA43790
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6201885177
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034A618983C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4025B692;
-	Tue, 25 Feb 2025 08:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nx/7M07h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D1D3F9D2;
-	Tue, 25 Feb 2025 08:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADE6264F94;
+	Tue, 25 Feb 2025 08:20:08 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7225EF95
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470585; cv=none; b=RDggA4sYvDybkSOAhnuszywKMMaXhJ1GWBNI03bIlbZ2uuX6CNE2zYP7G5osjCw3sC2SsBZMFScIauLvfOI1jeHLXsYkJZTNela8EM3jd9SD2usaCnGc/tPuwsEC7jILkL0xJVNlwJqTgjbKRUn+YLI2Oj6qQA5cEeuJJzTsLvU=
+	t=1740471608; cv=none; b=FBKShFqa4oVxjLUhxffKu4gOyujOpWZW7KCQ8s9tbaQpt2X+1b+o9XIRdYOhpLtZ5exv2j/KFyLQIWuzW6/7kcQmdVfQ1UZX2UsOQC80DIA40EmZem5g/PFbPBuUwEf5Rzzlk8oJLtfbqXrN7S1Ypcv9FT2uHCZLriTCgOT3Azo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470585; c=relaxed/simple;
-	bh=2eHIphndq2uDMmUAi5YKrcovaUYO7tN2516cB/KGSJE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QuSNn4PUlcpWcprZnIs8FdltXI/tDrMVEpmSUs9jFnKpXwf887FkgP+BJhRTwl8cC+KzYzyDz4H+wF3jWp1lkaUnfUVnYoP5ePODDto1I6XI+rS4w00s7ARYJ/bw1i8y1y10PEqXptUKuknz/ac3MKQoKbiR7mUu+ziIeeQ7O7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nx/7M07h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFC5C4CEDD;
-	Tue, 25 Feb 2025 08:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740470584;
-	bh=2eHIphndq2uDMmUAi5YKrcovaUYO7tN2516cB/KGSJE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Nx/7M07hAEBi0dLlOognbXKP6zq06Mb+JLcy+hbp6Hw3vWiiOFg/cm80dQ6uNtGHV
-	 +/03BHv396IAmmIoHUMtxlb8bVJfKk4Qii+Bg7WDbDbeSO5Nf3d4K8PDgsO1uznoEg
-	 eWsClj93xEpdFNIQOlWQNv0nsZI7Y31QGKvBZDpK/So0Av3ctaVqwA9NAjZFS+YFo9
-	 THHdDUh+4ThoEQ7Fujacm4SdarEdXljz98nU5gRSBQ+u78no0N7hhNpG+M3B0BykSr
-	 2J7UO/So99wxDo3Ug4vK0reQDkh3ldYSXakmo3Z1TbziV3nvjMBP8I2xcmXj6XjwG+
-	 JFF2ctpbpF5tg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Masahiro Yamada"
- <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
-  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
- <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
- <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] rust: add parameter support to the `module!` macro
-In-Reply-To: <8AF85A37-76AC-4937-BD59-115BB432B738@collabora.com> (Daniel
-	Almeida's message of "Mon, 24 Feb 2025 12:28:56 -0300")
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
-	<20250218-module-params-v3-v7-6-5e1afabcac1b@kernel.org>
-	<oUH3AFSXY_kfA4fHRG_JpLCzAsZp4wujRwtOGwjKUuaB0-xVhRPPIQZ41nWZaJGFqTkbqBNKHTg3OskxIN7g5g==@protonmail.internalid>
-	<8AF85A37-76AC-4937-BD59-115BB432B738@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 09:02:52 +0100
-Message-ID: <87o6yqxxhv.fsf@kernel.org>
+	s=arc-20240116; t=1740471608; c=relaxed/simple;
+	bh=8JbHItkDNTqx7ppT/iSayCN1jPwzTMbHToRWPnGXZ+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Sh3yOI5r3JIx8ErxMrYQtXNsrzb2IXl1/rJxekBVUl0MnHTb0cPpMcSnL/tSkKs5wDK1Rp8f43TqCJ08Pf/SrYwa/0+9QDJeSvW4GtCfZBwGQyUsETbgUIxKxEtLkgf5EktQ6kXJTw69ofBkIjNOX653MZsbdaYu4QHENWUEWN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z29CQ5nnmz9sSd;
+	Tue, 25 Feb 2025 09:05:54 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id IOg3G3RLLwfI; Tue, 25 Feb 2025 09:05:54 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z29CM62YDz9sSY;
+	Tue, 25 Feb 2025 09:05:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B84C28B780;
+	Tue, 25 Feb 2025 09:05:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 0Az_q5mFkqk4; Tue, 25 Feb 2025 09:05:51 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.202.221])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0385A8B77C;
+	Tue, 25 Feb 2025 09:05:50 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Segher Boessenkool <segher@kewrnel.crashing.org>
+Subject: [PATCH v5 2/4] objtool/powerpc: Add support for decoding all types of uncond branches
+Date: Tue, 25 Feb 2025 09:05:49 +0100
+Message-ID: <bf0b4d554547bc34fa3d1af5b4e62a84c0bc182b.1740470510.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <0ca71a4b0ac679ea52bd9fdd1f607195d72b499f.1733245362.git.christophe.leroy@csgroup.eu>
+References: <cover.1733245362.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740470749; l=1915; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=8JbHItkDNTqx7ppT/iSayCN1jPwzTMbHToRWPnGXZ+8=; b=kDGs0rx51ssFnmq55d2aoKmsBU2DAAmDzguoyq3tyjbjJbM4jrsG8ij4o0PNedE9Vme8j9BUr x0rsWe/Na1UAXrX4N8/CmGrpflO/ZQFmsAwWzcfysb78yw/g0I16gKg
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+Add support for 'bla' instruction.
 
-> Hi Andreas, thanks for working on this, I can see that this patch took a =
-lot
-> of effort.
+This is done by 'flagging' the address as an absolute address so that
+arch_jump_destination() can calculate it as expected. Because code is
+_always_ 4 bytes aligned, use bit 30 as flag.
 
-Thanks! It's not all me though, it's based on old code from the
-pre-merge days.
+Also add support for 'b' and 'ba' instructions. Objtool call them jumps.
 
-[...]
+And make sure the special 'bl .+4' used by clang in relocatable code is
+not seen as an 'unannotated intra-function call'. clang should use the
+special 'bcl 20,31,.+4' form like gcc but for the time being it does not
+so lets work around that.
 
->> index 0000000000000..0047126c917f4
->> --- /dev/null
->> +++ b/rust/kernel/module_param.rs
->> @@ -0,0 +1,226 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Types for module parameters.
->
-> nit: maybe =E2=80=9CSupport for module parameters=E2=80=9D?
->
-> Or anything else other than =E2=80=9Ctypes=E2=80=9D, really :)
+Link: https://github.com/llvm/llvm-project/issues/128644
+Reviewed-by: Segher Boessenkool <segher@kewrnel.crashing.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v5: Add a special case for clang to ignore 'bl .+4' form.
+---
+ tools/objtool/arch/powerpc/decode.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-I agree. I think originally the naming came from this being types
-backing the macro implementation.
-
->
->> +//!
->> +//! C header: [`include/linux/moduleparam.h`](srctree/include/linux/mod=
-uleparam.h)
->> +
->> +use crate::prelude::*;
->> +use crate::str::BStr;
->> +
->> +/// Newtype to make `bindings::kernel_param` [`Sync`].
->> +#[repr(transparent)]
->> +#[doc(hidden)]
->> +pub struct RacyKernelParam(pub ::kernel::bindings::kernel_param);
->> +
->> +// SAFETY: C kernel handles serializing access to this type. We never a=
-ccess
->
-> nit: perhaps: =E2=80=9Cwe never access *it* from *a* Rust module=E2=80=9D=
- ?
-
-Right =F0=9F=91=8D
-
->
->> +// from Rust module.
->> +unsafe impl Sync for RacyKernelParam {}
->> +
->> +/// Types that can be used for module parameters.
->> +///
->> +/// Note that displaying the type in `sysfs` will fail if
->> +/// [`Display`](core::fmt::Display) implementation would write more than
->
-> nit: perhaps `implementation writes more than`? Although it=E2=80=99d be =
-great if a
-> native speaker could chime in on this one.
-
-Actually, we removed the support for displaying in sysfs from the
-series, so I will just yank that note.
-
->
->> +/// [`PAGE_SIZE`] - 1 bytes.
->> +///
->> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->> +pub trait ModuleParam: Sized {
->> +    /// The [`ModuleParam`] will be used by the kernel module through t=
-his type.
->> +    ///
->> +    /// This may differ from `Self` if, for example, `Self` needs to tr=
-ack
->> +    /// ownership without exposing it or allocate extra space for other=
- possible
->> +    /// parameter values.
->
-> I don=E2=80=99t understand what=E2=80=99s being said here. e.g.: what doe=
-s =E2=80=9CSelf needs to track
-> ownership without exposing it=E2=80=9D mean? Can you expand on this?
-
-For some parameter types, such as string values, the parameter may
-assume a reference value or an owned value. The reference value would be
-used as default (as a reference to a static string), while an owned
-value would be passed in when the value is set. For that, `Value` can be
-an enum.
-
-We yanked support for anything but integer parameters from this series,
-but I would like to keep this around to make adding string parameters
-less churn in the near future.
-
-If you follow link [1] in the cover letter, you can see the original
-code from the pre-merge branch that this patch is based on.
-
->
-> Also this is pub. It should perhaps also be sealed?
-
-We might in the future allow users to implement their own parsers.
-
->
->
->> +    // This is required to support string parameters in the future.
->> +    type Value: ?Sized;
->
-> Why? Can you also expand on this a tad further?
-
-As explained above.
-
->
->> +
->> +    /// Parse a parameter argument into the parameter value.
->> +    ///
->> +    /// `Err(_)` should be returned when parsing of the argument fails.
->> +    ///
->> +    /// Parameters passed at boot time will be set before [`kmalloc`] is
->> +    /// available (even if the module is loaded at a later time). Howev=
-er, in
->> +    /// this case, the argument buffer will be valid for the entire lif=
-etime of
->> +    /// the kernel. So implementations of this method which need to all=
-ocate
->> +    /// should first check that the allocator is available (with
->> +    /// [`crate::bindings::slab_is_available`]) and when it is not avai=
-lable
->> +    /// provide an alternative implementation which doesn't allocate. I=
-n cases
->> +    /// where the allocator is not available it is safe to save referen=
-ces to
->> +    /// `arg` in `Self`, but in other cases a copy should be made.
->> +    ///
->> +    /// [`kmalloc`]: srctree/include/linux/slab.h
->> +    fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
->> +}
->> +
->> +/// Set the module parameter from a string.
->> +///
->> +/// Used to set the parameter value at kernel initialization, when load=
-ing
->> +/// the module or when set through `sysfs`.
->> +///
->> +/// `param.arg` is a pointer to `*mut T` as set up by the [`module!`]
->> +/// macro.
->
-> Perhaps the above should also be an invariant?
-
-Actually, I think it should be part of the safety requirements.
-
-[...]
-
->> +
->> +impl<T> ModuleParamAccess<T> {
->> +    #[doc(hidden)]
->> +    pub const fn new(value: T) -> Self {
->
-> I assume that this is pub so that the macro can find it? If so, can you l=
-eave a note
-> outlining this?
-
-Yes, it must be accessible from other crates (modules). Will add a note.
-
->
->> +        Self {
->> +            data: core::cell::UnsafeCell::new(value),
->> +        }
->> +    }
->> +
->> +    /// Get a shared reference to the parameter value.
->> +    // Note: When sysfs access to parameters are enabled, we have to pa=
-ss in a
->> +    // held lock guard here.
->
-> What lock guard, guarding what exactly?
-
-That is yet to be determined. When we enable sysfs, we will have async
-access to the parameter value when user space interacts with sysfs.
-Thus, we need to apply synchronization on parameter value access. I
-envision a lock being taken before this method is called and a lock
-guard passed in to access the data.
-
-The code has deviated quite a bit from the original, but you can see a
-possible implementation here [1].
-
-[1] https://github.com/Rust-for-Linux/linux/blob/bc22545f38d74473cfef3e9fd6=
-5432733435b79f/rust/macros/module.rs#L410
-
-
-[...]
-
->> +    fn emit_params(&mut self, info: &ModuleInfo) {
->> +        let Some(params) =3D &info.params else {
->> +            return;
->> +        };
->
-> Shouldn=E2=80=99t this panic? A call to emit_params() where there=E2=80=
-=99s nothing to emit doesn=E2=80=99t
-> look right at a first glance.
-
-No, having no parameters is a valid configuration. If the "params" key
-is left out in the module macro call, the option will be `None`. The
-call to this function when generating code is unconditional.
-
-[...]
-
->> -    if let Some(firmware) =3D info.firmware {
->> +    if let Some(firmware) =3D &info.firmware {
->>         for fw in firmware {
->> -            modinfo.emit("firmware", &fw);
->> +            modinfo.emit("firmware", fw);
->>         }
->>     }
->
-> These seem a bit unrelated?
-
-They could be split in a precursor patch, but they are required for this
-change set. If you insist I will split them out, but I am also happy to
-keep them as one big change.
-
->
->>
->>     // Built-in modules also export the `file` modinfo string.
->>     let file =3D
->>         std::env::var("RUST_MODFILE").expect("Unable to fetch RUST_MODFI=
-LE environmental variable");
->> -    modinfo.emit_only_builtin("file", &file);
->> +    modinfo.emit_only_builtin("file", &file, false);
->> +
->> +    modinfo.emit_params(&info);
->>
->>     format!(
->>         "
->> @@ -362,14 +514,17 @@ unsafe fn __exit() {{
->>                             __MOD.assume_init_drop();
->>                         }}
->>                     }}
->> -
->>                     {modinfo}
->>                 }}
->>             }}
->> +            mod module_parameters {{
->> +                {params}
->> +            }}
->>         ",
->>         type_ =3D info.type_,
->>         name =3D info.name,
->>         modinfo =3D modinfo.buffer,
->> +        params =3D modinfo.param_buffer,
->>         initcall_section =3D ".initcall6.init"
->>     )
->>     .parse()
->> diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
->> index 4aaf117bf8e3c..d999a77c6eb9a 100644
->
-> I wonder if the changes to rust_minimal.rs should be a separate patch.
-
-Either way works for me.
-
-
-Thanks for the comments!
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
+index 53b55690f320..26d5050424a9 100644
+--- a/tools/objtool/arch/powerpc/decode.c
++++ b/tools/objtool/arch/powerpc/decode.c
+@@ -55,12 +55,17 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 
+ 	switch (opcode) {
+ 	case 18: /* b[l][a] */
+-		if ((ins & 3) == 1) /* bl */
++		if (ins == 0x48000005)	/* bl .+4 */
++			typ = INSN_OTHER;
++		else if (ins & 1)	/* bl[a] */
+ 			typ = INSN_CALL;
++		else		/* b[a] */
++			typ = INSN_JUMP_UNCONDITIONAL;
+ 
+ 		imm = ins & 0x3fffffc;
+ 		if (imm & 0x2000000)
+ 			imm -= 0x4000000;
++		imm |= ins & 2;	/* AA flag */
+ 		break;
+ 	}
+ 
+@@ -77,6 +82,9 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 
+ unsigned long arch_jump_destination(struct instruction *insn)
+ {
++	if (insn->immediate & 2)
++		return insn->immediate & ~2;
++
+ 	return insn->offset + insn->immediate;
+ }
+ 
+-- 
+2.47.0
 
 
