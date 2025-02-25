@@ -1,177 +1,128 @@
-Return-Path: <linux-kernel+bounces-532473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81866A44E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:01:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A40A44E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5488317B3AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B43919C443C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEBD212FAC;
-	Tue, 25 Feb 2025 21:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1892135A6;
+	Tue, 25 Feb 2025 21:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d+dW8rI0"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2061.outbound.protection.outlook.com [40.107.223.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElTrfANK"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B151A9B46;
-	Tue, 25 Feb 2025 21:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517245; cv=fail; b=TurhAJZP6Tw368uiz0L3pSilKf63CvvGJJ+DNWooJs1G1etUSKPjSmWyHACkSF3533ArRi6o2A2a/vLei1iOXoPbzm0/9CyB+I5QPx/H1W/aI+6J0qyK+KV1E3WrO7u+CdxhHjhy85Hl2NySS0YWluUQm0lhJPR2lq+9QBiupjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517245; c=relaxed/simple;
-	bh=bxu6aHDxurW7WCeciu8PQn22lKV7NeW2rafdMWuQC3o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WUz9w5wjSLCH2ioa1+Aa9XgvuW3yCU/vMfKGf8UcwTt9s0fLaHhBjdrcQ4NMAXLVORL/A7Zt1Na8HkT8hOO0nYPY2LD7cM0U0hGMGLD/mqMWkF2gKXSL4ZPyDXRpEsfPit3xwzc33tg+PQGC/HAJ2f1S8Qlgmh9g7NtpvFEoUjE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d+dW8rI0; arc=fail smtp.client-ip=40.107.223.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MSLZYi+8Eo8EdLXR4f62GsHfudg7RHTPmbTfANy8dukMZfwi5zJ8jkqrnw0zClWT2CDFf5cluRYx1Fh+dSMRsC2Tg+uCkTQ9005M1qjvkJoZsINaBQyxeOoGrs1UQhvYh/iO9izjpBIy5/1UZzyKjOEdHX1HRaS45knpln4iXogAvF/c22Dadd0IP31BfQGcUx1SUY7T7ZEtXoAe7UHe/tkszBiBSSIsF1ZZKm1WeenQ2w8U1thPb6CjSPdf15I1+qdYkG5SWcWNussH4V9yOnszsO7fXAVmvLjQY9WSaIjKFIcSx9yq97QmJWB1176uWaJ6dKK5WSe1IOaaUrn68A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MqeDz1I+vWNmDjPeeDmgkPG3ekIz/QDE5d1FbJDCgQw=;
- b=Iy9cXqFtu02VBD4vWl0H6LoXRf4/PF3eq8Fl2vtI7GGDtSkYZuoN/Dt78bkRW3w7gPvC3iZeJo7WHs0Zm9FiDnqwH94U0ILVlvoNAMYgWBOZtzX4AXRYHy4pQfLVvJYPiWaEFPJa3IHzGdG41yKuemE9uz221Dnl0R66r7EBLHXdx3cHjugtOXeBdOx4rq1ZbRwX+rPG6GjJXDR5ApaDSRLtiwTF/T2vfmEMheZqbM3Muy0ml0ZkYIbiJPUMQaefeWK7jO5VdZZ+ADS9td83ep3UPUSk5rj4OWOS0qUn54P5k5HxOIh1ZtpsbD7Ynl+/1mO8vkZfNU7/4MaS8+eg6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MqeDz1I+vWNmDjPeeDmgkPG3ekIz/QDE5d1FbJDCgQw=;
- b=d+dW8rI0jrmMiaAX2aPyGABuoYzaJIZtxDaNbDfGDHCJUvtqcDXJLzgr8C+suTkM+dpOoJhbzKqgG163qSelTIcUMfZdvxAqhonnejYVqHoYkBLCpZ5g+G9p1ROc2Mj2Un0DxTBP7/I3qm8KIPvfzaKp4vBzSW0WVNNaxyA/tMs=
-Received: from SJ0PR03CA0118.namprd03.prod.outlook.com (2603:10b6:a03:333::33)
- by CH3PR12MB8911.namprd12.prod.outlook.com (2603:10b6:610:169::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 21:00:40 +0000
-Received: from CO1PEPF000042AD.namprd03.prod.outlook.com
- (2603:10b6:a03:333:cafe::96) by SJ0PR03CA0118.outlook.office365.com
- (2603:10b6:a03:333::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Tue,
- 25 Feb 2025 21:00:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000042AD.mail.protection.outlook.com (10.167.243.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Tue, 25 Feb 2025 21:00:39 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 15:00:38 -0600
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <thomas.lendacky@amd.com>,
-	<john.allen@amd.com>, <herbert@gondor.apana.org.au>
-CC: <michael.roth@amd.com>, <dionnaglaze@google.com>, <nikunj@amd.com>,
-	<ardb@kernel.org>, <kevinloughlin@google.com>, <Neeraj.Upadhyay@amd.com>,
-	<aik@amd.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH v5 3/7] crypto: ccp: Reset TMR size at SNP Shutdown
-Date: Tue, 25 Feb 2025 21:00:29 +0000
-Message-ID: <ae532a946106e2ddbc031c0d48ebf2e41c56b550.1740512583.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1740512583.git.ashish.kalra@amd.com>
-References: <cover.1740512583.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F751A7044
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740517255; cv=none; b=HwR575fzdoyNhtBMf0XeP1qAIXhlurW5IjNHT58AVA0XhqAEU+sqid7XZPKEEQahV1Mr6U/HA1kHgf0Db8rTR9LDCO5qKBq+oIkMq3v9nlLW+M2DhXmCDjUVDIYTF6u+CApdpDkxuCAs90vwC3Sj5a8gamL6KnkUj9UyuZpcCLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740517255; c=relaxed/simple;
+	bh=IdZf9OirHo3w8TLk9FbgVZ1A1snETQ0MVXnUxcN2tAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kSwbxg32O4FxSDhnvF7lgalmVzp3ir8sVosDC7wHz7OGbFYLvLs+b/w4nkADlV9TtQXr5EAKeb1UqaiGHaRxtieDJEERS5cbgXXLHiTfr2EmiqREK5eiuIrbARik6p4/iV7gewTeN8R0Q+RWSpuXy+5qJSHpxVzoOR88Fnq4ETg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ElTrfANK; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fd2587d059so743927b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:00:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740517252; x=1741122052; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTECS3SKQyqLPvpHn3SdLnl7nJuW0BjxdhYYx7X/Yrs=;
+        b=ElTrfANKdzwE6kugjqiepiWfx2lxbwzHt836PI0NZF2v9Z5mg6i0bUAP+0qeRggRF1
+         S4v1OX2jL9kj8xUjWNtCrrm7zwldMyhIpDNl85EvD+P9gZVVd8FxzdtjMDNuI7m0Nb0c
+         qoZk74a96/5aOUzCnyGFqi1Iyveka+L3UxfgswQSUXraHDymdDvM6Qv7ntNqdF3GUhAr
+         +1TQqdPEQVn8zDfB/hbyCirS0+RCdj3Atzam1jSGjuS5Vjddstt2izxR1Zyoo2HmjviK
+         JC85I7TDbCIdaSbYgP7ZapByyJBR4vYTKniT21hTPYgRM+vBzjK4xR4r/ZugyMnq9KrH
+         iwRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740517252; x=1741122052;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aTECS3SKQyqLPvpHn3SdLnl7nJuW0BjxdhYYx7X/Yrs=;
+        b=irjUKia1onScql40ddY+g/DdoTIgnqnyuL56BsSd1DQOgQfi+l/JuBegV268/oszlO
+         lj4UY6HpX1CA4Aywc/oRjmw7ui0LRgfI+bXUC9IrzlKMFwtda88fYt+KF9dVpYJGdBAn
+         6ZNiAfzSMb95xC5Yx89MliTKajaZpGHju5ro7kDQLFXpToXScxBdjjzZ9toFX76Co1Fm
+         04/bCNqurrwZhPVIfedt+va7u1ZWETZxE4uBZAH1V4uKNlwQ3ZziYiF1pYNjEDNHkkF/
+         zIKEtsW0PMo6FI26xM9mD9GQT7dlFXvSi3cNiFMADPP1jnUx3zGkNWpjMGuizXAcwJco
+         2Ang==
+X-Forwarded-Encrypted: i=1; AJvYcCUSszG9JUKVVbYt7PL+Tu0L37c/AtTFTpt3UNz3IPg7K7N3sxy1MBC4JGIQuD5MQyedHhYQDpZeThycgnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjicybKZL7RWLE+kKOMiDJxbFk7yAa37VghVKfjCZkCZGH33Jq
+	0C0qqGCVbh6C+ALOnLPlBIAa9T7GSzxj/QmT81MDdrxwEabIx3m+uZ2zgKM/9uWuE3eMP+ps9yJ
+	CdFwHsUInck3HkyyYUFZxyjZ8/lvGJ429uQMwLA==
+X-Gm-Gg: ASbGncvvt3I73awze27gQKDorRqoNlTON6q0Lv4K3tOZdFwMhNW1xz8WANT3hJLBB80
+	3kTe8rvJnNAmtoQipqvqZ6oGO6hAHXbmItpJWq/Nr2SCt82stdClnpiEF7t5hCABlmsGHdEJHf6
+	c2K2TzHJBI4I4/e0P9DTEMYgsia7Yy3b7fL3yds7M=
+X-Google-Smtp-Source: AGHT+IHVNAF9M985zwQc8ti2DtEeKOd6IPqcLWmaevOapLPMkqXyG9p9oh+HENqNXQGjtwqlmhkaD1MmqhA217I8byY=
+X-Received: by 2002:a05:690c:888:b0:6f7:50b7:8fe0 with SMTP id
+ 00721157ae682-6fd21dc678cmr11826067b3.1.1740517252440; Tue, 25 Feb 2025
+ 13:00:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AD:EE_|CH3PR12MB8911:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8488425-74a7-44af-a3c6-08dd55df7588
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xs5qGLZq2YXlR3i2eBaam92yfn/sf3ROf98CNQnLKjrp8o9Op7+O92E638yZ?=
- =?us-ascii?Q?bSh2UaF5agAmxHBDs7VFg2IMVz8GB8NFIxCNCpeuF0KP5tFYI5VZtE6qPqEt?=
- =?us-ascii?Q?NCgInL8cQ48w9IV9TX0cXcpVyinq5GXOu4sz5ehVa4j5wUCxQR6gfuoCRU5j?=
- =?us-ascii?Q?+FN05WjVW5HC1ofd2gJBVNrrSz/GhGFHHe8rCYcuDtapOULwCINIGVnLAU+C?=
- =?us-ascii?Q?uTKjEtuhtRq8ncVPgVxkP5F6hHneUvT7pATp8748rRAWk6y+Cud607eR0Vcg?=
- =?us-ascii?Q?eH2zZkyRHeI8UjFuLJ9ZXiRj5p1OgfcxOdMi3wcYZmZRswZSYLxsx8DJ3HCz?=
- =?us-ascii?Q?DANw3QnAnaw8hfRJ9Wk66j6QSb4ScPhh5qGC8IdQ67J5YzGO/UxOZJhMLEzv?=
- =?us-ascii?Q?BFdEyO/56qTzb41ayz+/84GAQDN3qpdnW4pL2qaWaerWl+1Nphn9CnNl7IDo?=
- =?us-ascii?Q?t/4DDSDRVgkm4JcQ2ztpCQjVttyktm2nXjZIcjdNRAYeZh0VEp+5p9AmHiS+?=
- =?us-ascii?Q?+raI7suyxwVl9erUsx9VfZ17sL0kplZ28G6oKVpmMjs/QbCsQjidEhiOxB0B?=
- =?us-ascii?Q?AQ1+MFe/zbzkY6Ygn8d9gsH3IwkCv8Js7AaWJs4Vw3b4Hf9oPGzoCZr8KFrW?=
- =?us-ascii?Q?+NnMV4yLajLj3KHW/fsMFB224MB1YGfWYwlWoWpU+U8+h2yzML0VzjxgKJiv?=
- =?us-ascii?Q?7ot+nEH1GyS1iu/8YxPD284AzeICc3/+ri/TZvLo6pEDo9irIB+vy+Cmz2hm?=
- =?us-ascii?Q?Se+KDfrZW1IMGh2+QLf7izYuvD1OV2GI7C0cx4D5RD2kTZqgLFDutHPHbn2W?=
- =?us-ascii?Q?KpvfktBWla9lJksNninXgoc0a1577llC90BduoFQJGRoTTWzjKSGrwXM6ejc?=
- =?us-ascii?Q?CaPaGHLALZb1Z7rSvjhw9S30n4p+w3UhZWgMlB6/olNRJqQ/f8Mqh9YEdrFM?=
- =?us-ascii?Q?p4XoZ6IAjvl/gSCe79e1xwuO0YZ8K64E04DIhbJkALszuo0CvyDj7OlzGU3p?=
- =?us-ascii?Q?2pArhd0UGQU3JNoIr2/D+BqC0TgNBPkz2zkslkgGfmpH1naHR/5LCtnyNA+T?=
- =?us-ascii?Q?KlcJLsknTnJYoFLF4zLfDZAdNr5Yr9TEaVMR9sK2Nj6snXXdvjG0Ch6XSA8B?=
- =?us-ascii?Q?9meGDwL9N9yzJTYpZNw0uVreuiQXP+PJwS61CQGLRDBs9F6U7/MKAxHXnOIy?=
- =?us-ascii?Q?bQ4WzNxMtVwOceZ0y1trpcaU7moy0r9/3k4CCk4x0Bsew1UG1Bx0K0uLhaD0?=
- =?us-ascii?Q?ijyg6tV9eRbwYKpnnQfOXhvKiOtD6fPYQJO56N06+QsZ+PTMCWrP4hHH+1zR?=
- =?us-ascii?Q?iGByqHH4CepiRP8Quid6OueVC6cYLk6C2rhfu3E++FBWw3+8rQwzuWwpQrHQ?=
- =?us-ascii?Q?7UbpUPFwzyJVRmzwSg01CJF9M7syLCUD1Wk5mr4TJZVIEuoXKKgGibDc/Sys?=
- =?us-ascii?Q?dQBaArEnlcxgoHwFY1HNxcH6cLwZXlXRsQeAtoN6ddH9HPuCfET8/84V4WLZ?=
- =?us-ascii?Q?5Lhv0NnbRsWmGu/nkiJR3gMz5w1lc6cCuB+K?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 21:00:39.2872
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8488425-74a7-44af-a3c6-08dd55df7588
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AD.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8911
+References: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com> <174047913824.2131221.6545389561298332217.b4-ty@linaro.org>
+ <CAA8EJpqM8ZQ-ScEtEBXaUF2Nargtp_TBAyMYvbJ49PGbwPWjaQ@mail.gmail.com> <2d51cb9e-b8c5-4cf1-bd7a-751fb633275c@linaro.org>
+In-Reply-To: <2d51cb9e-b8c5-4cf1-bd7a-751fb633275c@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Feb 2025 23:00:40 +0200
+X-Gm-Features: AWEUYZnjLNgOW9D81B_b4Ug4M1LEmwU_chC0K6f10jOh7vvlfER0M0Paj99xQ-A
+Message-ID: <CAA8EJpqu269ttsUcEsJpBOexRUS+pKSaMESLosC9iNCoUCtroQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v7 0/5] Driver for pre-DCP apple display controller.
+To: neil.armstrong@linaro.org
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
+	Janne Grunau <j@jannau.net>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alyssa Ross <hi@alyssa.is>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Neal Gompa <neal@gompa.dev>, Nick Chan <towinchenmi@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+On Tue, 25 Feb 2025 at 19:59, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>
+> On 25/02/2025 12:37, Dmitry Baryshkov wrote:
+> > On Tue, 25 Feb 2025 at 12:25, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Mon, 17 Feb 2025 12:39:30 +0100, Sasha Finkelstein wrote:
+> >>> This patch series adds support for a secondary display controller
+> >>> present on Apple M1/M2 chips and used to drive the display of the
+> >>> "touchbar" touch panel present on those.
+> >>>
+> >>>
+> >>
+> >> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+> >>
+> >> [3/5] drm: panel: Add a panel driver for the Summit display
+> >>        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/40115947b59f2ca361a47615304dff0a2b69a2b4
+> >
+> > Without the bindings?!
+> >
+>
+> Bindings will be funneled with the rest of the ADP driver, the panel driver can be applied individually.
 
-Implicit SNP initialization as part of some SNP ioctls modify TMR size
-to be SNP compliant which followed by SNP shutdown will leave the
-TMR size modified and then subsequently cause SEV only initialization
-to fail, hence, reset TMR size to default at SNP Shutdown.
+Okay.....
 
-Acked-by: Dionna Glaze <dionnaglaze@google.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
----
- drivers/crypto/ccp/sev-dev.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index 14847f1c05fc..c784de6c77c3 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -1754,6 +1754,9 @@ static int __sev_snp_shutdown_locked(int *error, bool panic)
- 	sev->snp_initialized = false;
- 	dev_dbg(sev->dev, "SEV-SNP firmware shutdown\n");
- 
-+	/* Reset TMR size back to default */
-+	sev_es_tmr_size = SEV_TMR_SIZE;
-+
- 	return ret;
- }
- 
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
