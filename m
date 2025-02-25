@@ -1,197 +1,143 @@
-Return-Path: <linux-kernel+bounces-530372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01221A4329C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:49:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC13A432A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D3C3B6729
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D32217A3D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4A4145A0B;
-	Tue, 25 Feb 2025 01:48:31 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CD586344;
+	Tue, 25 Feb 2025 01:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="FAlNsKkU"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F46213D897;
-	Tue, 25 Feb 2025 01:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839FB101F2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740448110; cv=none; b=cNNBX/4kiYV4LN4Y5TCrPgQtOmXtBey6Ij2WsLg8JUmesbYxW1LvFoGSW/Te7YVy50m9ZnyNYfgKC7kJ9EYxrgf3QhKIuOlusU2B3jH1R6+3LNsKT7Nxg4ZSb8UP+h9TqDSCBUuMcgD0ION3ahy4EOUTx97JwaY7xBi/uCg6fe4=
+	t=1740448292; cv=none; b=tNCa50G1yOMKK7CSFSD2FRZs1o2hCqugLQq030oKyckPz6p998BxS1YZl5vfXWPQzVAjGc9bjPqSDxBSaRzlDFH9h+kz2t6DIG1lu0Nw42yeSWZ9C6cWsdIzPV+l3e32esp95y1T70yXZh5/UB+mZY0lrmBcVZ4l/NnpJ6N9Ils=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740448110; c=relaxed/simple;
-	bh=nymM0ct3LcKrBqldgPir/y62KHjxez7MAYPfwaiGtoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Yh3pEfo3motVo5hYay8IoZ1otwzCvslbrrOTm/JORwj6IF14x9fczG5IhpnobaW01/RqsFarJt3sqodJVy3reyUtdZnLQ1MAAoYc6NEAjKy9pFsf2wspPbpYoTbmjw7tFE6ZY0yylOKVhG+uRCvYKsg2N8jSoUMOFEkGvMGnrL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z20l46r9LzHxf3;
-	Tue, 25 Feb 2025 09:44:16 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7C4E61A0188;
-	Tue, 25 Feb 2025 09:48:19 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 09:48:18 +0800
-Message-ID: <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
-Date: Tue, 25 Feb 2025 09:48:18 +0800
+	s=arc-20240116; t=1740448292; c=relaxed/simple;
+	bh=kLCgPoctPehmp4UPhP9Ilyf4fSNulvovwDizoFjMJuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F1q4J6Y8sb5UsW9ICqASy/1XWuYFqZ1pURhOgjQOcAVSPr5A70e9iWa+qBGtsXudfLTYDuAuj/iF8M+oeQxt0JzZMeZuhC7DsQV/Q6bixKAXTLJ4RocjCYnb0KL6g21mFldko4ZviUh6Mf1PIVnx9VEBp9w381Odt69ZnjGdHKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=FAlNsKkU; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id mbI9tZpmbMETlmk6WtohO3; Tue, 25 Feb 2025 01:51:24 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id mk6VtEUCSrMXlmk6VtUReD; Tue, 25 Feb 2025 01:51:23 +0000
+X-Authority-Analysis: v=2.4 cv=Xob8O0F9 c=1 sm=1 tr=0 ts=67bd221c
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
+ a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7T7KSl7uo7wA:10
+ a=oltRCMenW_0Ea9-Xwq4A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Yt7FV8Is/XZOi8N7ebx2gw+ZNuxX/nMnNKn9hf0ikMI=; b=FAlNsKkUoIJYZiQd1fuXC5EcHn
+	RvU4cr7cQwvw2jO60pbhr3XUqC8oJo4oagWZczJ4Mrhuytki65/XzuhYs+2iHsC2cap1CBRhRS44Z
+	5pk5CO4hRWNavWIdLB5zKgkYJLXNgsNl3r/To1FSkpr+/+9kz+2GCniwZQRGRfmgkS+Y5SHFvphB3
+	jO46v03XIDm9N5m9OVSij54DbuaANzHIIke9eiIdHKlRD7nnWxUj7HmWRFbcP4uANnaCdwqeLVqtT
+	3NoR6ligc3UErUhqO8Pj2n+Cv4xSWKNMUg/2D67jE/w+NdVG+Oz590fxQkO2QcbqbvjZPzYi/aGUw
+	spKgTMVw==;
+Received: from [45.124.203.140] (port=53629 helo=[192.168.0.158])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tmk6U-001k4Y-2S;
+	Mon, 24 Feb 2025 19:51:23 -0600
+Message-ID: <c3c28d70-540b-4034-8a89-8a6c4dcf17ab@embeddedor.com>
+Date: Tue, 25 Feb 2025 12:21:15 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
- directly connected
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
-	<yanaijie@huawei.com>
-CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
-	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
-	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
-References: <20250220130546.2289555-1-yangxingui@huawei.com>
- <20250220130546.2289555-2-yangxingui@huawei.com>
- <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
- <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
- <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
- <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
- <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
- <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
- <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepemh500016.china.huawei.com (7.202.181.150) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8][next] nvme: target: Avoid
+ -Wflex-array-member-not-at-end warnings
+To: Christoph Hellwig <hch@lst.de>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <cover.1739957534.git.gustavoars@kernel.org>
+ <ef7a6920384ab2f8f83c0f630f94edc73cd65997.1739957534.git.gustavoars@kernel.org>
+ <20250224141938.GB1088@lst.de>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250224141938.GB1088@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 45.124.203.140
+X-Source-L: No
+X-Exim-ID: 1tmk6U-001k4Y-2S
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.158]) [45.124.203.140]:53629
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPTK0J0JlZiDrmQJyY349FgEuS6BAl4R6Pz7X0Md/wGNqas4rcme1sckN0hKfgYS7TfdVZgqw6Unj+6UpR8iAdqOOfeC3+DCwI4FSWCoE5zaA3Z6iHAu
+ CX8gUvhIpKhkDO1F2jOZvy9YC8MA6aW6SRFfDRZDd6ebgPJBpyM0LLzykUndre3hTmruGwU7+9Jh5qw1eURk7BhX8XAohXXWJzgeAw3LZC+Md5ZW8mgX0pZl
 
 
 
-On 2025/2/25 1:34, John Garry wrote:
-> On 24/02/2025 13:12, yangxingui wrote:
->> Hi, John
+On 25/02/25 00:49, Christoph Hellwig wrote:
+> On Mon, Feb 24, 2025 at 08:30:10PM +1030, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
 >>
->> On 2025/2/24 20:21, John Garry wrote:
->>> On 24/02/2025 09:36, yangxingui wrote:
->>>>>
->>>>>
->>>>> So do you mean that all IO to this disk will error? If yes, then 
->>>>> this is good.
->>>> Yes, IO error or IO result does not meet expectations. As shown in 
->>>> the log below, due to an abnormal port ID, the SNs of the two disks 
->>>> read are the same.
->>>
->>> Do you mean that this is mainline kernel behaviour, below:
->> Yes
->>>
->>>>
->>>> [448000.504979] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
->>>> link_rate=10(sata)
->>>> [448000.505070] sas: phy-10:1 added to port-10:1, phy_mask:0x2 
->>>> (5000000000000a01)
->>>> [448000.505247] sas: DOING DISCOVERY on port 1, pid:2239187
->>>> [448000.505255] hisi_sas_v3_hw 0000:d4:02.0: dev[2:5] found
->>>> [448000.505274] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
->>>> [448000.505295] sas: ata31: end_device-10:0: dev error handler
->>>> [448000.505299] sas: ata32: end_device-10:1: dev error handler
->>>> [448001.300517] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy1 
->>>> phy_state=0x1   // phy1's hw port id released
->>>> [448001.300522] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy1 down
->>>> [448001.436187] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
->>>> link_rate=10(sata) // phy2 occupies the hardware port ID of phy1
->>>> [448001.608766] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
->>>> link_rate=10(sata) // phy1 was assigned a new hardware port ID
->>>> [448001.775605] ata32.00: ATA-11: WUH721816ALE6L4, PCGAW660, max 
->>>> UDMA/133
->>>> [448002.159364] sas: phy-10:2 added to port-10:2, phy_mask:0x4 
->>>> (5000000000000a02)
->>>> [448002.159575] sas: DOING DISCOVERY on port 2, pid:2239187
->>>> [448002.159581] hisi_sas_v3_hw 0000:d4:02.0: dev[3:5] found
->>>> [448002.159602] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
->>>> [448002.159623] sas: ata31: end_device-10:0: dev error handler
->>>> [448002.159633] sas: ata32: end_device-10:1: dev error handler
->>>> [448002.159636] sas: ata33: end_device-10:2: dev error handler
->>>> [448002.393349] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy2 
->>>> phy_state=0x3
->>>> [448002.393354] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy2 down
->>>> [448002.684937] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
->>>> link_rate=10(sata)
->>>> [448002.851639] ata33.00: ATA-11: WUH721816ALE6L4, PCGAW660, max 
->>>> UDMA/133
->>>> [448002.851644] ata33.00: 31251759104 sectors, multi 0: LBA48 NCQ 
->>>> (depth 32)
->>>>
->>>>>
->>>>> But I still don't like the handling in this patch. If we get a phy 
->>>>> up, then the directly-attached disk ideally should be gone already, 
->>>>> so should not have to do this handling.
->>>> There is no problem when the disk is removed. The current problem is 
->>>> that multiple phy up at the same time. When one of the phys up and 
->>>> enters error handler to execute hardreset, the phy will down and 
->>>> then up. other phy up will probably occupy the hw port id of the 
->>>> previous phy which do hardreset in EH.
->>>
->>> Could you do this work (itct update) in lldd_ata_check_ready CB?
+>> Change the type of the middle struct members currently causing trouble
+>> from `struct bio` to `struct bio_hdr`.
 >>
->> It's a good idea only for sata disks, but the current problem is not 
->> only the scenario of connecting the sata disk. This phenomenon 
->> occasionally occurs when the SAS disk is connected after the 
->> controller is reset. The following is the log of the stress test 
->> recurrence after incorporating the current repair patch. Although we 
->> called hisi_sas_refresh_port_id() on controller reset.
+>> We also use `container_of()` whenever we need to retrieve a pointer to
+>> the flexible structure `struct bio`, through which we can access the
+>> flexible-array member in it, if necessary.
 >>
->> [ 5387.235015] hisi_sas_v3_hw 0000:74:02.0: I_T nexus reset: internal 
->> abort (-5)
->> [ 5387.242126] sas: clear nexus ha
->> [ 5387.245283] hisi_sas_v3_hw 0000:74:02.0: controller resetting...
->> [ 5388.908489] hisi_sas_v3_hw 0000:74:02.0: phyup: phy5 
->> link_rate=10(sata)
->> [ 5388.915090] hisi_sas_v3_hw 0000:74:02.0: phyup: phy6 
->> link_rate=10(sata)
->> [ 5388.934505] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
->> [ 5388.941009] hisi_sas_v3_hw 0000:74:02.0: phyup: phy1 link_rate=9(sata)
->> [ 5388.950976] hisi_sas_v3_hw 0000:74:02.0: phyup: phy4 link_rate=11
->> [ 5388.957048] hisi_sas_v3_hw 0000:74:02.0: phyup: phy7 link_rate=11
->> [ 5388.980097] hisi_sas_v3_hw 0000:74:02.0: phyup: phy2 link_rate=11
->> [ 5388.986169] hisi_sas_v3_hw 0000:74:02.0: phyup: phy3 link_rate=11 
->> // phy3 attached a sas disk.
->> [ 5389.065103] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
->> attach device
->> [ 5389.072409] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
->> [ 5389.078492] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
->> attach device
->> [ 5389.085780] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
->> [ 5389.091861] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
->> attach device
->> [ 5389.099146] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
->> [ 5389.107419] hisi_sas_v3_hw 0000:74:02.0: controller reset complete 
->> // controller reset finished
->> [ 5389.113686] hisi_sas_v3_hw 0000:74:02.0: phydown: phy0 phy_state=0xfe
->> [ 5389.120099] hisi_sas_v3_hw 0000:74:02.0: ignore flutter phy0 down
->> [ 5389.136399] hisi_sas_v3_hw 0000:74:02.0: phy3's hw port id changed 
->> from 1 to 7
->> [ 5389.308114] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
+>> With these changes fix 38 of the following warnings:
+>>
+>> drivers/nvme/target/nvmet.h:455:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> drivers/nvme/target/nvmet.h:462:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 >>
 > 
+> I'm not sure where you bio_hdr structure comes from, but maybe that's
+> because you annoyingly split CC over the series, and by the number of
+> patches probably also bundled unrelated changes.
+
+Ugh, yes, I messed up my script just before creating the series.
+
 > 
-> pm8001 sends sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR,) link 
-> reset errors - can you consider doing that in hisi_sas_update_port_id() 
-> when you find an inconstant port id?
-Currently during phyup, the hw port id may change, and the corresponding 
-hisi_sas_port.id and the port id in itct are not updated synchronously. 
-The problem caused is not a link error, so we don't need deform port, 
-just update the port id when phyup.
+> In general our first resort here should be to move embedded bio to the
+> of containing structures.  If that's not possible you'll need to explain
+> why.
+> 
 
-Thanks.
-Xingui
+Yes. Also, thanks for the feedback in your other response. I'll try to
+follow that approach and see how it goes.
 
+--
+Gustavo
 
