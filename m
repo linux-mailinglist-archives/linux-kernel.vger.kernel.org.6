@@ -1,179 +1,94 @@
-Return-Path: <linux-kernel+bounces-531307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5CEA43EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:08:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394BEA43EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462943AF5B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842897A5FAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E868267F67;
-	Tue, 25 Feb 2025 12:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLPNIKyQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9E226868B;
+	Tue, 25 Feb 2025 12:07:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D43267738;
-	Tue, 25 Feb 2025 12:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBA8268684
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485211; cv=none; b=g5O0AAPpMGIbIvCbpsFS00ePwyM1Nj5z2kcvvti2C25krlI4mdBzNnkU3JHah2OCA/emuM4EehbP5K//58fakUoA6kMQEZM4p41JGIm54Aa3FnZ6BZu4j6LOY1ohP8Xaq4bObD+LuDsT2Le+FXI6LT6u7l+NU4jdj2dz/gySses=
+	t=1740485258; cv=none; b=MYy8ebDWL+HJU6RSLrS74Fq3Mg6fKG0X0YvE6e6anLAvtscrZFe3OLWQbRNOTqoluIcl0uopDrLVzt8DKLzbuNwVYd0qDEYldHm9QnI0PjUWB40tNZUlr1DMD/NphpHPzlT9PDyiLI2WFyquelrxWmF4erU/wUMmWMXEPfMvV2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485211; c=relaxed/simple;
-	bh=M9uKEUq8wn1OiK4A1Sr0SpwlETpU2D5rT6iicUMUS1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTDyY65Fwfh+ZjbU4l1EqhqjEjuAaGy0uqZvVA/0aaq4LLWesRmNwYHwtAPZT9LKCEPkUH5mF8T4BxwdPHFXzvK8TA2ncXHjsmdPvK8zFja3eOrvvV1ML+k7tiWWNgsg5ctQPa99kVjtqzX8uA9zO1ElsPMlYwWHChmfScUk5Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLPNIKyQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE59DC4CEDD;
-	Tue, 25 Feb 2025 12:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740485211;
-	bh=M9uKEUq8wn1OiK4A1Sr0SpwlETpU2D5rT6iicUMUS1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLPNIKyQnCzj28tki4yV9v+CUMXKJW+LhrPH/IGrA85Bn5ky46l80LYAIM6m1d/rM
-	 a8uYmQQSd5gLKQYy0dp9r6cuOr01gxQrF9R3a2bh6yEgoli8ajXK4c29euyGaLVCey
-	 Lw1NX7ADGj35VLWeLs2kY10+9vO+w0StzGefOnQP7D3Y7JhAGfxVe/CvpTXPmpyvfa
-	 +FmAozCrOXoLeUApjCkOGjX8dBLBLFRWA4gIyCp9mj4EBxz4fLnDaYljDasJNu5JMl
-	 GCVe9ZrTyj+cmPbxEfcmFfWYGeTjRmGrAIx4akqRIImn3Gtgpy2RyJAX8Sp2jpqK1G
-	 lhswYgpdvf4Kg==
-Date: Tue, 25 Feb 2025 13:06:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, vz@mleia.com, 
-	Leonardo Felipe Takao Hirata <leofthirata@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert
- nxp,lpc3220-mic.txt to yaml format
-Message-ID: <20250225-lean-bronze-millipede-03edd9@krzk-bin>
-References: <20250224210432.94851-1-leofthirata@gmail.com>
+	s=arc-20240116; t=1740485258; c=relaxed/simple;
+	bh=zyNOL+XOkWD5oCudbzTVBi8p8ROknmM1P+qr25UGyKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aO95EhjI2JEjHXAXOzZG2tbicfJM5K8GJ3AZ+l6QvFAiDjAzIvuXEot+I0uUa9nUga+qDf4Gc2HzeTFWLp/9qGICZJ8s9e2SiwqYZA4MABAkEmOr54Ey7NEyNMJDpzRYbUmIs1uWAb4vFBe92kpRBSSXdwYHzWVP6KVbTQzgvp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1tmtid-00055V-T1; Tue, 25 Feb 2025 13:07:23 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: "robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, Sascha Hauer" <s.hauer@pengutronix.de>
+Cc: kernel@pengutronix.de,
+	aford173@gmail.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] arm64: dts: imx8mn: fix micfil dmas settings
+Date: Tue, 25 Feb 2025 13:07:04 +0100
+Message-Id: <20250225120707.2658709-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250224210432.94851-1-leofthirata@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2025 at 06:04:30PM -0300, Leonardo Felipe Takao Hirata wrote:
-> Convert NXP LPC3220-MIC to DT schema.
-> 
-> Signed-off-by: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
+The third dma cell is used for priority information not to encode
+something else. The NXP downstream kernel use the third cell to encode
+more information:
 
-SoB mismatch.
+ - Bit31: sw_done feature enable/disable
+ - Bit15~Bit8: selector
+ - Bit7~Bit0: priority level
 
-Run checkpatch.
+but this was never mainlined. Therefore drop the further information and
+just specify the priority which is 0.
 
-> ---
->  .../interrupt-controller/nxp,lpc3220-mic.txt  | 58 -------------
->  .../interrupt-controller/nxp,lpc3220-mic.yaml | 86 +++++++++++++++++++
->  2 files changed, 86 insertions(+), 58 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
+FTR: The sw_done feature was mainlined without making use of the
+devicetree.
 
-...
+Fixes: cca69ef6eba5 ("arm64: dts: imx8mn: Add support for micfil")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+---
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
-> +
-> +maintainers:
-> +  - Vladimir Zapolskiy <vz@mleia.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,lpc3220-mic
-> +      - nxp,lpc3220-sic
-> +
-> +  reg:
-> +    description:
-> +      Should contain IC registers location and length.
-
-Drop description
-
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +    description:
-> +      The number of cells to define an interrupt, should be 2.
-
-Don't repeat constraints in free form text. Drop.
-
-> +      The first cell is the IRQ number, the second cell is used to specify
-> +      one of the supported IRQ types.
-> +          IRQ_TYPE_EDGE_RISING = low-to-high edge triggered,
-> +          IRQ_TYPE_EDGE_FALLING = high-to-low edge triggered,
-> +          IRQ_TYPE_LEVEL_HIGH = active high level-sensitive,
-> +          IRQ_TYPE_LEVEL_LOW = active low level-sensitive.
-> +      Reset value is IRQ_TYPE_LEVEL_LOW.
-> +
-> +  interrupts:
-
-Need to list and describe the items.
-
-> +    description:
-> +      Empty for MIC interrupt controller, cascaded MIC hardware interrupts for
-> +      SIC1 and SIC2
-
-And then allOf:if:then restricting it per variant (interrupts: false).
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    mic: interrupt-controller@40008000 {
-> +      compatible = "nxp,lpc3220-mic";
-> +      reg = <0x40008000 0x4000>;
-> +      interrupt-controller;
-> +      #interrupt-cells = <2>;
-> +    };
-> +
-> +    sic1: interrupt-controller@4000c000 {
-> +      compatible = "nxp,lpc3220-sic";
-> +      reg = <0x4000c000 0x4000>;
-> +      interrupt-controller;
-> +      #interrupt-cells = <2>;
-> +      interrupt-parent = <&mic>;
-> +      interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
-> +                  <30 IRQ_TYPE_LEVEL_LOW>;
-> +    };
-> +
-> +    sic2: interrupt-controller@40010000 {
-
-Drop, two examples are enough.
-
-> +      compatible = "nxp,lpc3220-sic";
-> +      reg = <0x40010000 0x4000>;
-> +      interrupt-controller;
-> +      #interrupt-cells = <2>;
-> +      interrupt-parent = <&mic>;
-> +      interrupts = <1 IRQ_TYPE_LEVEL_LOW>,
-> +                  <31 IRQ_TYPE_LEVEL_LOW>;
-> +    };
-> +
-> +    adc@40048000 {
-> +      compatible = "nxp,lpc3220-adc";
-
-Drop, not relevant.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+index a5f9cfb46e5d..8ab4af78acb5 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+@@ -369,7 +369,7 @@ micfil: audio-controller@30080000 {
+ 						 <&clk IMX8MN_CLK_EXT3>;
+ 					clock-names = "ipg_clk", "ipg_clk_app",
+ 						      "pll8k", "pll11k", "clkext3";
+-					dmas = <&sdma2 24 25 0x80000000>;
++					dmas = <&sdma2 24 25 0>;
+ 					dma-names = "rx";
+ 					#sound-dai-cells = <0>;
+ 					status = "disabled";
+-- 
+2.39.5
 
 
