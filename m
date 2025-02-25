@@ -1,229 +1,271 @@
-Return-Path: <linux-kernel+bounces-531306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D821A43EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A0CA43ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8BD016A6D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:06:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41021188E5DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EB1267F6A;
-	Tue, 25 Feb 2025 12:06:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59871267F57;
-	Tue, 25 Feb 2025 12:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3E5267F6A;
+	Tue, 25 Feb 2025 12:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ioC2Ggv9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F7267B1A;
+	Tue, 25 Feb 2025 12:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485160; cv=none; b=qZGNtkDiRCfPGjgBo7los4mNBRkQ9e5gcbffBPIEKHk9mW+RIOcG/Bdc0UXyTcHoPwPAP4n9T7BFDLEXeQzXC9XTnMYXq8XpcPtmZzh7cj0pHul79vOh46CTaj4ggf5a9JyeNaCyYH2SZwcwsWFaZ1HELKy5b/dUvAykbrVBLx8=
+	t=1740485227; cv=none; b=bAhtYNiPZLfh1YJpILC/s+14kj6boLBD3egI8quygvtfa1vQtyYFhEgTz4SBeulntsj/xHiZtBwXc+cw8jWpivFqj+uVAhslaQuWvapp9A9xUrIIBLAzVCaPu+vYJxVs46X8WuYcTVFE2WRZtibiLkPQM9dms32ppxAA+OMAhMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485160; c=relaxed/simple;
-	bh=EEuB2YaIPUj/UxArsmC8/amUg4t4q12dcUIwBRFTpUU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KcoV4FE1Ds+Z3MCh6gJ9dgCn0kP6ufM9a3awnYeZSYnHnsj9nYBHiVBGjBM1OjXxIahHsWM4w7538wpyJ0WsmZ8f/49WP+O4Vzt4kksYhcOaLONEbXOWPqLWyTisHoQwQV5dWF/QXtTu3s6L84cRVt4t4JnLE1E+mntTOlI1JgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxeXEhsr1nuxeCAA--.26585S3;
-	Tue, 25 Feb 2025 20:05:53 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMBxXsUdsr1nweUnAA--.16387S3;
-	Tue, 25 Feb 2025 20:05:51 +0800 (CST)
-Subject: Re: [PATCH 7/7] KVM: Drop kvm_arch_sync_events() now that all
- implementations are nops
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Aaron Lewis <aaronlewis@google.com>, Jim Mattson <jmattson@google.com>,
- Yan Zhao <yan.y.zhao@intel.com>,
- Rick P Edgecombe <rick.p.edgecombe@intel.com>,
- Kai Huang <kai.huang@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>
-References: <20250224235542.2562848-1-seanjc@google.com>
- <20250224235542.2562848-8-seanjc@google.com>
-From: bibo mao <maobibo@loongson.cn>
-Message-ID: <49df2315-4c79-e0c0-6163-4f53b80afa55@loongson.cn>
-Date: Tue, 25 Feb 2025 20:05:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1740485227; c=relaxed/simple;
+	bh=R0YZwPa/j81Upn6H8+MQGjK/pv9flKnpttvi/0LYwVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCdmu2sfqzIA3czJQU7g6eWWX+8gCT71VBC27ARdM7MvKQP7Q51Fw+17amyBP19BxMVdSOODifV8QbvzZEQId1jY+F3tsE/tKUs/I03t2m2XJ2cDyErJAYWEBpCvY4B1iP8pqIRPN6kxISCEfLlMYKRd/ANtMEovvknmZUHXHM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ioC2Ggv9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P5Novm004885;
+	Tue, 25 Feb 2025 12:06:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=stcecdV4WR1w+pgTJ4RS+UPRZOfLI1
+	L48wPKI0ZpCDE=; b=ioC2Ggv9SkRIJcJGaQj5hhu/PmbmcDZpLmW8gEqwNzoP2t
+	1Qklnhan/VIZ5m1dNG+8M/SS6LtShBz0XH3XTT/DyhdhNN1USj2+hxeXTekikEZB
+	QmmlO5adSTzuSpa9O9syVhccZgsAXQ8+RgKpwRk+lZaTSRKyzye4djlFtkcW8WhD
+	shDDzgV7hlfmxAPmLgHIaExguT/faYEz1YTxxFZgXZosHKtoZPSNZE+Zk5x9u8qW
+	EBXHB/pwoNvOjLF2w2V+o/hgdz+CVYSL9BrESWreknKuoBswB8Gd/hWCh1G4PYxO
+	AcOW7PB+ewDxn6vFTiCvDhstB1H6Zq8N3cGydmfw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4517p8hua5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 12:06:50 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51PC1am0009865;
+	Tue, 25 Feb 2025 12:06:50 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4517p8hua1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 12:06:50 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51P9wwXK012470;
+	Tue, 25 Feb 2025 12:06:49 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwsn0r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 12:06:49 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51PC6l3230999286
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 12:06:47 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8DEE820040;
+	Tue, 25 Feb 2025 12:06:47 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 77A3E2004B;
+	Tue, 25 Feb 2025 12:06:45 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.249])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 25 Feb 2025 12:06:45 +0000 (GMT)
+Date: Tue, 25 Feb 2025 17:36:42 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        Mahesh Kumar <maheshkumar657g@gmail.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH 1/2] ext4: only defer sb update on error if SB_ACTIVE
+Message-ID: <Z72yUqGWHdRyCE25@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1740212945.git.ojaswin@linux.ibm.com>
+ <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
+ <3f9a67e2-ef08-47d4-b35e-41841e24bb71@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250224235542.2562848-8-seanjc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxXsUdsr1nweUnAA--.16387S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtF47XrykXrWUKw17WFW7trc_yoWxJryxpa
-	sxAF4kGw4fKry8Ka47Jr4q934fXws5Gw1ak342grW5JFnxtr1DJFWkCr1DJFn8J3y093WS
-	kFW3KF1rWF4qvwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1q6r43M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
-	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jC2NZUUUUU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f9a67e2-ef08-47d4-b35e-41841e24bb71@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sp-LYtRSr40l-UtyIL0GwCBAnZ7jOTQB
+X-Proofpoint-ORIG-GUID: DIEIlSmlvfnTVSdl5ijDVoylXAEfgk_8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250081
 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+On Tue, Feb 25, 2025 at 09:53:10AM +0800, Baokun Li wrote:
+> On 2025/2/22 16:40, Ojaswin Mujoo wrote:
+> > Presently we always BUG_ON if trying to start a transaction on a journal
+> > marked with JBD2_UNMOUNT, since this should never happen. However while
+> > running stress tests it was observed that in case of some error handling
+> > paths, it is possible for update_super_work to start a transaction after
+> > the journal is destroyed eg:
+> > 
+> > (umount)
+> > ext4_kill_sb
+> >    kill_block_super
+> >      generic_shutdown_super
+> >        sync_filesystem /* commits all txns */
+> >        evict_inodes
+> >          /* might start a new txn */
+> >        ext4_put_super
+> > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+> >          jbd2_journal_destroy
+> >            journal_kill_thread
+> >              journal->j_flags |= JBD2_UNMOUNT;
+> >            jbd2_journal_commit_transaction
+> >              jbd2_journal_get_descriptor_buffer
+> >                jbd2_journal_bmap
+> >                  ext4_journal_bmap
+> >                    ext4_map_blocks
+> >                      ...
+> >                      ext4_inode_error
+> Just curious, since jbd2_journal_bmap() only queries the map and does not
+> create it, how does it fail here? Is there more information in dmesg?
+> Is s_journal_inum normal after file system corruption?
 
-On 2025/2/25 上午7:55, Sean Christopherson wrote:
-> Remove kvm_arch_sync_events() now that x86 no longer uses it (no other
-> arch has ever used it).
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/arm64/include/asm/kvm_host.h     | 2 --
->   arch/loongarch/include/asm/kvm_host.h | 1 -
->   arch/mips/include/asm/kvm_host.h      | 1 -
->   arch/powerpc/include/asm/kvm_host.h   | 1 -
->   arch/riscv/include/asm/kvm_host.h     | 2 --
->   arch/s390/include/asm/kvm_host.h      | 1 -
->   arch/x86/kvm/x86.c                    | 5 -----
->   include/linux/kvm_host.h              | 1 -
->   virt/kvm/kvm_main.c                   | 1 -
->   9 files changed, 15 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 7cfa024de4e3..40897bd2b4a3 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -1346,8 +1346,6 @@ static inline bool kvm_system_needs_idmapped_vectors(void)
->   	return cpus_have_final_cap(ARM64_SPECTRE_V3A);
->   }
->   
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -
->   void kvm_init_host_debug_data(void);
->   void kvm_vcpu_load_debug(struct kvm_vcpu *vcpu);
->   void kvm_vcpu_put_debug(struct kvm_vcpu *vcpu);
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-> index 590982cd986e..ab5b7001e2ff 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -320,7 +320,6 @@ static inline bool kvm_is_ifetch_fault(struct kvm_vcpu_arch *arch)
->   
->   /* Misc */
->   static inline void kvm_arch_hardware_unsetup(void) {}
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
->   static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
->   static inline void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu) {}
-> diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-> index f7222eb594ea..c14b10821817 100644
-> --- a/arch/mips/include/asm/kvm_host.h
-> +++ b/arch/mips/include/asm/kvm_host.h
-> @@ -886,7 +886,6 @@ extern unsigned long kvm_mips_get_ramsize(struct kvm *kvm);
->   extern int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu,
->   			     struct kvm_mips_interrupt *irq);
->   
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_free_memslot(struct kvm *kvm,
->   					 struct kvm_memory_slot *slot) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-> index 6e1108f8fce6..2d139c807577 100644
-> --- a/arch/powerpc/include/asm/kvm_host.h
-> +++ b/arch/powerpc/include/asm/kvm_host.h
-> @@ -902,7 +902,6 @@ struct kvm_vcpu_arch {
->   #define __KVM_HAVE_ARCH_WQP
->   #define __KVM_HAVE_CREATE_DEVICE
->   
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
->   static inline void kvm_arch_flush_shadow_all(struct kvm *kvm) {}
->   static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index cc33e35cd628..0e9c2fab6378 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -301,8 +301,6 @@ static inline bool kvm_arch_pmi_in_guest(struct kvm_vcpu *vcpu)
->   	return IS_ENABLED(CONFIG_GUEST_PERF_EVENTS) && !!vcpu;
->   }
->   
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -
->   #define KVM_RISCV_GSTAGE_TLB_MIN_ORDER		12
->   
->   void kvm_riscv_local_hfence_gvma_vmid_gpa(unsigned long vmid,
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 9a367866cab0..424f899d8163 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -1056,7 +1056,6 @@ bool kvm_s390_pv_cpu_is_protected(struct kvm_vcpu *vcpu);
->   extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
->   extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
->   
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_free_memslot(struct kvm *kvm,
->   					 struct kvm_memory_slot *slot) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ea445e6579f1..454fd6b8f3db 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12770,11 +12770,6 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->   	return ret;
->   }
->   
-> -void kvm_arch_sync_events(struct kvm *kvm)
-> -{
-> -
-> -}
-> -
->   /**
->    * __x86_set_memory_region: Setup KVM internal memory slot
->    *
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index c28a6aa1f2ed..5438a1b446a6 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1747,7 +1747,6 @@ static inline void kvm_unregister_perf_callbacks(void) {}
->   
->   int kvm_arch_init_vm(struct kvm *kvm, unsigned long type);
->   void kvm_arch_destroy_vm(struct kvm *kvm);
-> -void kvm_arch_sync_events(struct kvm *kvm);
->   
->   int kvm_cpu_has_pending_timer(struct kvm_vcpu *vcpu);
->   
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 991e8111e88b..55153494ac70 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1271,7 +1271,6 @@ static void kvm_destroy_vm(struct kvm *kvm)
->   	kvm_destroy_pm_notifier(kvm);
->   	kvm_uevent_notify_change(KVM_EVENT_DESTROY_VM, kvm);
->   	kvm_destroy_vm_debugfs(kvm);
-> -	kvm_arch_sync_events(kvm);
->   	mutex_lock(&kvm_lock);
->   	list_del(&kvm->vm_list);
->   	mutex_unlock(&kvm_lock);
-> 
+Hey Baokun, 
 
+So I dug a bit more into the vmcore. The error information in sbi looks
+like this:
+
+  s_add_error_count = 1,
+  s_first_error_code = 117,
+  s_first_error_line = 475,
+  s_first_error_ino = 0,
+  s_first_error_block = 0,
+  s_first_error_func = 0xc0080000055300d0 <__func__.6> "ext4_read_block_bitmap_nowait",
+  s_first_error_time = 1737023235,
+
+  s_last_error_code = 117,
+  s_last_error_line = 609,
+  s_last_error_ino = 8,
+  s_last_error_block = 783,
+  s_last_error_func = 0xc008000005531b10 <__func__.41> "ext4_map_blocks",
+  s_last_error_time = 1737023236,
+
+  The first error is here:
+
+      if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
+     474               (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
+  *  475                   ext4_error(sb, "Invalid block bitmap block %llu in "
+     476                              "block_group %u", bitmap_blk, block_group);
+     477                   ext4_mark_group_bitmap_corrupted(sb, block_group,
+     478                                           EXT4_GROUP_INFO_BBITMAP_CORRUPT);
+     479                   return ERR_PTR(-EFSCORRUPTED);
+     480           }
+
+and the last error is here:
+
+    608           if (retval > 0 && map->m_flags & EXT4_MAP_MAPPED) {
+ *  609                   ret = check_block_validity(inode, map);
+    610                   if (ret != 0)
+    611                           return ret;
+    612           }
+
+
+And indeed we have the traces of the first error in dmesg:
+
+[75284.713463] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
+[75284.713470] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
+[75284.713476] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
+
+However, the last error seems strange. It seems like check_block_validity
+should ideally never fail for a journal inode. Unfortunately, sbi->s_es page is
+not recorded in the crash dump for some reason so idk the exact value at the
+time of the check, but looking in journal->j_inode->i_ino, the inode num is 8,
+which seems fine to me. So yeah, I'm a bit unsure what caused the corruption.
+I'll look a bit more into the proc01 ltp to see if we can recreate the failure
+to get more info.
+
+> 
+> Thanks,
+> Baokun
+> >                        ext4_handle_error
+> >                          schedule_work(&sbi->s_sb_upd_work)
+> > 
+> >                                                 /* work queue kicks in */
+> >                                                 update_super_work
+> >                                                   jbd2_journal_start
+> >                                                     start_this_handle
+> >                                                       BUG_ON(journal->j_flags &
+> >                                                              JBD2_UNMOUNT)
+> > 
+> > Hence, make sure we only defer the update of ext4 sb if the sb is still
+> > active.  Otherwise, just fallback to an un-journaled commit.
+> > 
+> > The important thing to note here is that we must only defer sb update if
+> > we have not yet flushed the s_sb_update_work queue in umount path else
+> > this race can be hit (point 1 below). Since we don't have a direct way
+> > to check for that we use SB_ACTIVE instead. The SB_ACTIVE check is a bit
+> > subtle so adding some notes below for future reference:
+> > 
+> > 1. Ideally we would want to have a something like (flags & JBD2_UNMOUNT
+> > == 0) however this is not correct since we could end up scheduling work
+> > after it has been flushed:
+> > 
+> >   ext4_put_super
+> >    flush_work(&sbi->s_sb_upd_work)
+> > 
+> >                             **kjournald2**
+> >                             jbd2_journal_commit_transaction
+> >                             ...
+> >                             ext4_inode_error
+> >                               /* JBD2_UNMOUNT not set */
+> >                               schedule_work(s_sb_upd_work)
+> > 
+> >     jbd2_journal_destroy
+> >      journal->j_flags |= JBD2_UNMOUNT;
+> > 
+> >                                        **workqueue**
+> >                                        update_super_work
+> >                                         jbd2_journal_start
+> >                                          start_this_handle
+> >                                            BUG_ON(JBD2_UNMOUNT)
+> > 
+> > Something like the above doesn't happen with SB_ACTIVE check because we
+> > are sure that the workqueue would be flushed at a later point if we are
+> > in the umount path.
+> > 
+> > 2. We don't need a similar check in ext4_grp_locked_error since it is
+> > only called from mballoc and AFAICT it would be always valid to schedule
+> > work here.
+> > 
+> > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+> > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+> > Suggested-by: Ritesh Harjani <ritesh.list@gmail.com>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >   fs/ext4/super.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index a963ffda692a..b7341e9acf62 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
+> >   		 * constraints, it may not be safe to do it right here so we
+> >   		 * defer superblock flushing to a workqueue.
+> >   		 */
+> > -		if (continue_fs && journal)
+> > +		if (continue_fs && journal && (sb->s_flags & SB_ACTIVE))
+> >   			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+> >   		else
+> >   			ext4_commit_super(sb);
+> 
+> 
 
