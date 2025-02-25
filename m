@@ -1,131 +1,158 @@
-Return-Path: <linux-kernel+bounces-531534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D53A4419A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:02:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6048A441AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF6A1883B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA3E3A4267
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8248A26E624;
-	Tue, 25 Feb 2025 13:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1097826AA9E;
+	Tue, 25 Feb 2025 13:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hQfY6BZT"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="M2+Zq5ql"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0493826AA8A;
-	Tue, 25 Feb 2025 13:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7559026A0A4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491783; cv=none; b=SeMFw9WhLGGVCx00y+j7lExUTI0oMWdDsNRN4dfGk3ogMtqS8ENpND0+VH8g3Bwpv01AUoBTpEP1R5f4DznqWzLfcxRRhf2OYy2n1yIurD/JZtkR7Vzq96fuWg3vv8Vq8xsQaP9daIjojuTl5aY9TYl2MRM0ok3h9PiJl4yJyh0=
+	t=1740491831; cv=none; b=amzyvWq/YaoMJiLq/Z/0vJekhog9/TMuVJoF1USnhTuALY5Y3RtvbKjTwWV7S82VSsFq+QHoiSgpKNYYVlMGwK0Ugj5c4veRz7tdYgTut6ZoTL3AzgvfvS1Omg1nIkDMKBnJVEyKLhfSR/27G+2KRzTackkNWwM82/R7Vs8eBhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491783; c=relaxed/simple;
-	bh=sk3A+C/3YF/aw+qmXdV3WY5MUHEfjGuEtG3jNw8Ywxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qJ44/ndax4XheYh9FQ8Ay3F/CqZXlanXIbAcbr08hyOSc9JAx0/c1BOB3DJOAlvL9RKsBoSE/rn1cerDzJmI90LvNS2VJSQSy4bDNnpOVHrl3Tyvj5KmcENtVAL/Hwj44iNAdZLf+6AGCMFLMns6cUdBwY9EjEMfKPCE9rtr2FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hQfY6BZT; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD31320454;
-	Tue, 25 Feb 2025 13:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740491779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0xoAglwtX05uIrcTfA8VEz2V2/yZL+wn+pNIMqwOKM=;
-	b=hQfY6BZTgnQRGkyolkYMlC3w1c05S8eOuj/k7QAOQcU4IskjRGDKoIn9qGyG1Zhh3w6dF2
-	74FOFCZ6IYqlKrRlmL5sX218RHQEhskI22OvTf449QGkDJFaNhB6s+Wtkzfa+zN0hlh8r7
-	MrnQ9B9kq61hbTgA5jWgz5BmBVvGhGbypU38kRnCqUaLiUEkJriEGCu2xVu+izR5pXYvCs
-	WbSKlrS54Qrdq1lpEQTGcTWtQQcN66JF9qFIIhaFDcZEYQKtWOzFQjzknaB2hyjNqwo5Le
-	WRDnpryLYW71H24FSrh2yPy+LGwriC33taRpoQ5pp1OdWXKy6ZYfB018eHvGKA==
-Date: Tue, 25 Feb 2025 14:56:17 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
- <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
- Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?B?QmrDuHJu?= Mork
- <bjorn@mork.no>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
- module access
-Message-ID: <20250225145617.1ed1833d@fedora.home>
-In-Reply-To: <6ff4a225-07c0-40f6-9509-c4fa79966266@lunn.ch>
-References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
-	<20250225112043.419189-2-maxime.chevallier@bootlin.com>
-	<6ff4a225-07c0-40f6-9509-c4fa79966266@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740491831; c=relaxed/simple;
+	bh=jNkGx7KXDIGaHcJ2rYwzogZr3XWTs6dGfkVUk/mbr2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2BsOiepxX+MrRHCZG9uCggiH3p/Ns1WJNQUTPM+tPL2FIMRYLQXbRn+gKJn5boO5mlrqfZ8A8osfVW5ISb28Zxuib8KoUeBwqs/dBzTNltrAX1uOsbGDiwtOZ5KHYyKIKUMk0xc9g5ANs1vZlJEojT9tbSVFep0B0qg0l7XT9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=M2+Zq5ql; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so53785065e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:57:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1740491828; x=1741096628; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xCMWClilUVx4gbpg5+ELoexid4UMYXeO+KTrE/EAgvo=;
+        b=M2+Zq5qlh0VubHbRGgBbNoghPP7JQFrlIgnayam9U+U6IONKGJyY5rU/ysItLiLAgZ
+         ot4Hdy4vrO6F4XDNI//8qMfTQ2zTepsgDDnTszVlwcCvjOo6EgvGPWVaq90pDfuFl0Wv
+         BiO/vskvzMbkxA3t54gcotOFPddeVWo5VqOuVOtkP3QrtTeSFsR2amNpy7oVzcI+iR7/
+         vvlQn7a+vMxQhb3sHfhQMsIeHVOo03JXaZCqom3NZx5EQKMxFEksFPcMUL4vOR0W0cL1
+         Kv+170T5GRA5E6vsneXGG6dFGKSjohvaopiUifl9xwv2KMBnTGNuv62jCEusPC2DQz9T
+         2g/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740491828; x=1741096628;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCMWClilUVx4gbpg5+ELoexid4UMYXeO+KTrE/EAgvo=;
+        b=uyZQQFS5EJIMpuPClVkxh0QZLbWM2ecQHcJZ+aEoo3q2jM3v4Rt/z9SJ8nQBXOVtTh
+         hLCPWHBFnL5Id2IapZJnT0p36GaUbLs52MsfXgvJQgScSiek3Vr8wwUmMiVZOCqf0CIc
+         MinAIKwWqHAs9vT+0jBZwuO9BNYYH0Z+tYaDGiH+YP5GJ2tOuZUCjr7ECgTmoGP3aqvS
+         gU+R5s+s4JNufzSpdY1B1yzCkV5/FqpYq7ZXC3rI0uxZm95Y81ns5rn4IMLYzDQLRToa
+         nok74JeRGZtFgGclYsCQyllqJNwWo1ixi9NrTc8+xUjVeY1fpLT61JTgXV1d/KzWy0Zu
+         WpiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuYF1kMWWf4FhwMF9NnDeswPPBVeopNcc827DRoIcNXVGcrBV735M47HYbXgMuZ5c4Sd8Txc8ehsUo6b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZYQICuZ09ZYEZkbseImIpikCO5UZJ6Rqw3rP99Ky9museERKf
+	h9X5AeQuM3tbZmCt6kZPHbQtP4+YT7enhnGtJIaFW11jYPAgB9ncbOIQ9zabUxA=
+X-Gm-Gg: ASbGncsoIIsFk+NbtCqa8SbdTvD95L4l9bcn+yYi+KqKnKR840BlwI/78LyNMqkOYZE
+	7vbRK2+u6t1oFhlLT8wViULI2sgXD4bD5C4HiXkD4RaQlKq2sLCFzNCRMsgyO2FIRfVQ8rOVvDJ
+	O2bJe60dW7YrdQnlFkGvSNyTlJTG2MUQUVZqIFnNfa/2/9D9fwRFIt4wTI/oQUUlJI/l1GzREzK
+	gpU5aPWNvsvWzfForokrOk1t/Wb8ax9znDJqqkbT8fGPQ3JCvlGFfHctzTtbjZon+6g+9nR6t0D
+	FeTo1coL8oDWkTH1K3PjX+QRIHgEBZp0P49/mKZ9R50y8+gcQGKEczY697wsQdUrmK6ikOGBfqn
+	2zDSVqHYI
+X-Google-Smtp-Source: AGHT+IG3o40PfdZ5xWkkYDR1eeBLAbfrWGZbWWL7adAfr6rI6bN+lbIQp0cgoQxoVPTgCqdy1XoClg==
+X-Received: by 2002:a05:600c:3149:b0:439:969e:d80f with SMTP id 5b1f17b1804b1-439aebe6b9bmr154964415e9.31.1740491827635;
+        Tue, 25 Feb 2025 05:57:07 -0800 (PST)
+Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.1.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:df16::2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1532d9dsm27945595e9.6.2025.02.25.05.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:57:06 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:57:05 +0000
+From: Phillip Potter <phil@philpotter.co.uk>
+To: Gui-Dong Han <hanguidong02@gmail.com>
+Cc: phil@philpotter.co.uk, paskripkin@gmail.com,
+	Greg KH <gregkh@linuxfoundation.org>, linux-staging@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>, baijiaju1990@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [BUG] r8188eu: Potential deadlocks in rtw_wx_set_wap/essid
+ functions
+Message-ID: <Z73MMWEI7o59qzDL@equinox>
+References: <CAOPYjvaOBke7QVqAwbxOGyuVVb2hQGi3t-yiN7P=4sK-Mt-+Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudekkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughum
- hgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOPYjvaOBke7QVqAwbxOGyuVVb2hQGi3t-yiN7P=4sK-Mt-+Dg@mail.gmail.com>
 
-Hi Andrew,
-
-> > -static int sfp_i2c_configure(struct sfp *sfp, struct i2c_adapter *i2c)
-> > +static int sfp_smbus_read(struct sfp *sfp, bool a2, u8 dev_addr, void *buf,  
+On Tue, Feb 25, 2025 at 09:02:00PM +0800, Gui-Dong Han wrote:
+> Hello maintainers,
 > 
-> Maybe call this sfp_smbus_byte_read(), leaving space for
-> sfp_smbus_word_read() in the future.
-
-Good idea, I'll do that :)
-
-> > +			  size_t len)
-> >  {
-> > -	if (!i2c_check_functionality(i2c, I2C_FUNC_I2C))
-> > -		return -EINVAL;
-> > +	u8 bus_addr = a2 ? 0x51 : 0x50;
-> > +	union i2c_smbus_data smbus_data;
-> > +	u8 *data = buf;
-> > +	int ret;
-> > +
-> > +	while (len) {
-> > +		ret = i2c_smbus_xfer(sfp->i2c, bus_addr, 0,
-> > +				     I2C_SMBUS_READ, dev_addr,
-> > +				     I2C_SMBUS_BYTE_DATA, &smbus_data);
-> > +		if (ret < 0)
-> > +			return ret;  
+> I would like to report a potential lock ordering issue in the r8188eu
+> driver. This may lead to deadlocks under certain conditions.
 > 
-> Isn't this the wrong order? You should do the upper byte first, then
-> the lower?
+> The functions rtw_wx_set_wap() and rtw_wx_set_essid() acquire locks in
+> an order that contradicts the established locking hierarchy observed
+> in other parts of the driver:
+> 
+> 1. They first take &pmlmepriv->scanned_queue.lock
+> 2. Then call rtw_set_802_11_infrastructure_mode() which takes &pmlmepriv->lock
+> 
+> This is inverted compared to the common pattern seen in functions like
+> rtw_joinbss_event_prehandle(), rtw_createbss_cmd_callback(), and
+> others, which typically:
+> 
+> 1. Take &pmlmepriv->lock first
+> 2. Then take &pmlmepriv->scanned_queue.lock
+> 
+> This lock inversion creates a potential deadlock scenario when these
+> code paths execute concurrently.
+> 
+> Moreover, the call chain: rtw_wx_set_* ->
+> rtw_set_802_11_infrastructure_mode() -> rtw_free_assoc_resources()
+> could lead to recursive acquisition of &pmlmepriv->scanned_queue.lock,
+> potentially causing self-deadlock even without concurrency.
+> 
+> This issue exists in longterm kernels containing the r8188eu driver:
+> 
+> 5.4.y (until 5.4.290)
+> 5.10.y (until 5.10.234)
+> 5.15.y (until 5.15.178)
+> 6.1.y (until 6.1.129)
+> 
+> The r8188eu driver has been removed from upstream, but older
+> maintained versions (5.4.x–6.1.x) still include this driver and are
+> affected.
+> 
+> This issue was identified through static analysis. While I've verified
+> the locking patterns through code review, I'm not sufficiently
+> familiar with the driver's internals to propose a safe fix.
+> 
+> Thank you for your attention to this matter.
+> 
+> Best regards,
+> Gui-Dong Han
 
-You might be correct. As I have been running that code out-of-tree for
-a while, I was thinking that surely I'd have noticed if this was
-wrong, however there are only a few cases where we actually write to
-SFP :
+Dear Gui-Dong,
 
- - sfp_modify_u8(...) => one-byte write
- - in sfp_cotsworks_fixup_check(...) there are 2 writes : one 1-byte
-write and a 3-bytes write.
+Not sure what the responsibility is here with this driver, given it
+never left staging. I've not looked at it myself for years, so genuine
+question on my part as to who is responsible for patching it (if at
+all). It doesn't have a maintainer anymore to my knowledge.
 
-As I don't have any cotsworks SFP, then it looks like having the writes
-mis-ordered would have stayed un-noticed on my side as I only
-stressed the 1 byte write path...
+Also, apologies to be the bearer of bad news, but it upsets me to have
+to report Larry Finger sadly passed on last year and is no longer with
+us.
 
-So, good catch :) Let me triple-check and see if I can find any
-conceivable way of testing that...
-
-Thanks,
-
-Maxime
+Regards,
+Phil Potter
 
