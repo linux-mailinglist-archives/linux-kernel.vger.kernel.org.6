@@ -1,162 +1,214 @@
-Return-Path: <linux-kernel+bounces-531425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEFFA4405B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C80A44072
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F24D3B9938
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1617C19E2E5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD82690D9;
-	Tue, 25 Feb 2025 13:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61C269816;
+	Tue, 25 Feb 2025 13:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q7QgPDQg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="BZbhRsHR"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F38268C40
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489083; cv=none; b=BuJSw8cngGM+7sFKJT7HmSZFwSKFkhv37beLIgf2R9l5ved98p3GEKNF+HN1EDmAxFCPjJqy5AgjRQ8UCBgaq8sviJZzeHLAzNB+fsb2I400jbFhdFymIqMtXQzrQOyCu24vXIdW3se6nFejJ4ffgcK4cS1szhq4o1EhdCZhSLk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489083; c=relaxed/simple;
-	bh=7FuRH89tDCOSNH1jKBMPZKH3DWaM3tBKPCcUh0VE6As=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uemScaBpUU2v8HzF06MqjXgqVP/4bdXjYaVgH3ltCVIyZMFCJQfAEkOsZ7ydMLqH8+QtHVmlSzRroP2L/JTFAOJ+hfo+pFi9EkGg6ImPPSR+ueIVE5Z7uKDGXRi1PYb/b70yTKlKmFt24pwodFZul7FUOPk2reTmKazcCjZBBFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q7QgPDQg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8TFRX002205
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:11:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uuwVfqXUmGXRoU+kSMckG71FjFzg8qfTg24k4ONKjKE=; b=Q7QgPDQgDt0t1CeK
-	ncM6P5dXSfVXjSbuTvW5j326SSv+P5RtKcgmfvrWC7mlW+rNYU8oiZMqIhyzCQ1b
-	S57rKzVVpRE9S6vUu/vufoSH9/1ar7WOjCP1r87uhhMFOAACB6vm51/Sxdxfzbgn
-	S6gE6GjCeacByhW8T85L1FsMHwBadCeruDJMirLF0IseQAzcXpAdqRMnZBXpaaKT
-	tSS612lp898nrWFnjLMlIpqKLWvnuJsvNgzait4f4KDVJr/6nbcAnl2rgtTENaJe
-	SfcME86DQwJ3qsND+ywAmeutEH8InBpkfZ2uhkNUbRR5kmXwsPONCfhDMq6IWAYQ
-	f51syg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y7rk0rxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:11:21 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-471f5a13ba5so6557611cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:11:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489079; x=1741093879;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uuwVfqXUmGXRoU+kSMckG71FjFzg8qfTg24k4ONKjKE=;
-        b=JH493MBwogm2bNeQnxHG+uXNIwQFWuYhXTj8D0jjJpx0Z0K18KbPrgfoUWVuTI+Arl
-         ijd6o5S2pOpTBwmfXXtwn1eDArAyToY9T9xZ6w13GJ2fwN+C/E2sFF3Sf0fDjh9amN/J
-         1VoeX6E2pYM/484CN2pfZidol+LnmIQbGSf+hqmeCMNoQCFUJBuwKc6XVE3O4IDWsIR0
-         crlRfoRX2rrIESuJGtGifOBC9X5biRHqZ0aLFCqBv+xVHSfdBKdm9dq8Uae24NYy8s8Z
-         54p8dqPivNQz10bnI8Xi6nCY66XipHBkBGJd4KdC17Qgb8qwQTeJj7lW4gkkw62MA/9b
-         QJLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPtvYn9RCbXKGjcJ2hsZQCindskz4ypta5E2EbrTFTyskLf9entQgxPISlKWriOq4zF1GSeeUPpBjQiRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWN0/QOoBXob9A04+Jb2F2zXRHYo+3JQ20NN4tWn+oX5sGatb
-	BjNAXD+t7RRAhk4DSTFnJorvZ2XlSy6O8JMRdzeRNViVvEcXipCJ/uXPNEn0XAQZR1B1opnzXub
-	WiMySAcNR5KDmMsjsiyjJGkdWTXQnNh+7UVLEjGi36qKSQBz7Xbc4by1cesEN1vA=
-X-Gm-Gg: ASbGncsXv9b3OQS0m6McpRQIXMV8RTs1FBlfRl8qwvnFqJgpXc8o5Sfvy5TBm9u9B0m
-	RB7s93On/VLc4HCxOXh1YOllf1TtljcO3kw+66kO/rBMKpt/b3N7p7PcudYQrRsaeBYAJHxyWHL
-	D6XEf3uPDFpSqFsASBbjsuT+69g3B0f6lVsVqLuZVbgkoGcRsi8Kc3A7LycQkZAwmgkeGy69bKN
-	6XER8vTBKQOK+w4EanmIIk/Jg85xZ+WF13fIxMTfTzAoCb5bAYG59O1xQFQxoMf/2mC2vcPT5OI
-	gxEvTDvFQ5jCXHlDMEVRXQV1IfeBVQAD9AKtK/IR1JSMB3/NYuRgvMlYxOPOBuHvQNoZyw==
-X-Received: by 2002:ac8:5a43:0:b0:472:14b8:ee01 with SMTP id d75a77b69052e-472228d7e30mr71677941cf.6.1740489079613;
-        Tue, 25 Feb 2025 05:11:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IErDUxqjVZVeKivo2X+WzYQGTk3m9wBnXFgnKFF8mPGrQ+En9HUm/GLFcoa+lNQennqXJ70qw==
-X-Received: by 2002:ac8:5a43:0:b0:472:14b8:ee01 with SMTP id d75a77b69052e-472228d7e30mr71677541cf.6.1740489079098;
-        Tue, 25 Feb 2025 05:11:19 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abee36dddecsm37813166b.61.2025.02.25.05.11.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:11:18 -0800 (PST)
-Message-ID: <3b91b340-2d01-4685-bb73-818924c4ec29@oss.qualcomm.com>
-Date: Tue, 25 Feb 2025 14:11:15 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927B0267AE1;
+	Tue, 25 Feb 2025 13:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740489190; cv=pass; b=nZY9EQTYsqi/Wq0dSNyCmvcr1nFs3f0QeYenv+6p33zrh1JHGBpqSP2KizEogCADr8hzoP4sD6e23PeAeYIg9bAawjgAFoXY8PbhFQ38AT0r74Hu/2iaOrXwLsrrB+JSuQrYsy4lDFAOdzwlJWL4MCYWfnaPuauJxEm/oxHCngQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740489190; c=relaxed/simple;
+	bh=Pn/Fx/yuU/lUaA3NedAbSiQkqvsmm1dENaJyUG5J8kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2zSNLcAMTIsnga7QLovxBTDRAeYbVMtI31YUgSK0biST5Khg1OAnGBcvor2MJbmqjHFIvGMmf99SuL1WwEFx2+BNBFj5G7rKKFaVyzycGfpKNmEKNwdeT/WIbQ3A/T9H/X+1Db5au+tZSsTnqyDoS75yh5cC08ODmYZfXdIkH4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=BZbhRsHR; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740489110; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NZnfyVR7IyMTyXDLIEUCrMKSCGoTGqsj+069o9fihhvi0eGkpqCRiv1yIih6DatPyzlCBSWvAsLckZwjO9/nbLliRC7JxzVJA+QyiqPD3cZYsiG7DJbvKMqStVYQlixILKLnz5qBzKpwFqyeWef1GwDDsaeQ2d72qVshwNoPClY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740489110; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xrERTREY6YsrpdfbtuvBlrDzb+rIm9ucee5+fOc7+3s=; 
+	b=X7bylatDMJhFwzJK5XJCxJMbpRaKeNdxWn9zmgwee2JcjP3pxIuzStBLo07Zm+wfPfQpdT8fcBBHjWisd4+4pFSZ83A8/tQpT9Kzmet+b05HUFguneYiG/dsBHrfO36oBqNdsEEYY5JNX2mejJwyfaeqPW4PrA3A2LqKhBLrp2o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740489110;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=xrERTREY6YsrpdfbtuvBlrDzb+rIm9ucee5+fOc7+3s=;
+	b=BZbhRsHRaCk8oCx4V1IJthqAD0y0f1aA6Jq9zf2qb0ab+nE18X2Bc3s7PUOLdqwP
+	VHKDCjsBwixxUM9KyNmeRpL+tHO6jPqaQjhxFSLOXyJc+d5mNkD6cNqk5v+3YqWtH3N
+	T8L2lHl6rizRn1UcYqljqJYFtXSY5q4dVNz5yrCg=
+Received: by mx.zohomail.com with SMTPS id 1740489106492893.7559376695295;
+	Tue, 25 Feb 2025 05:11:46 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id EB08C180403; Tue, 25 Feb 2025 14:11:39 +0100 (CET)
+Date: Tue, 25 Feb 2025 14:11:39 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Hans de Goede <hdegoede@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Chen-Yu Tsai <wens@csie.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
+	David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+	Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
+Message-ID: <ocbwzuqk56yx34kc5vp6aaxnhxqd4zp2wixlv7p3mex66ibntu@ahigikrf5cg4>
+References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
+ <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
+ <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] arm64: dts: qcom: sa8775p-ride: enable Display
- serial interface
-To: Ayushi Makhija <quic_amakhija@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-9-quic_amakhija@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250225121824.3869719-9-quic_amakhija@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: bEUkqdStsDFgUBW4PtlqWpZTG-TJ7hva
-X-Proofpoint-ORIG-GUID: bEUkqdStsDFgUBW4PtlqWpZTG-TJ7hva
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- phishscore=0 impostorscore=0 malwarescore=0 adultscore=0 spamscore=0
- priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502250091
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qokyrq4gcjmy6fsj"
+Content-Disposition: inline
+In-Reply-To: <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/240.466.79
+X-ZohoMailClient: External
 
-On 25.02.2025 1:18 PM, Ayushi Makhija wrote:
-> Enable both DSI to DP bridge ports on SA8775P Ride plaftrom.
-> 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 66 +++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> index 151f66512303..02d8a9c2c909 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> @@ -128,6 +128,30 @@ dp1_connector_in: endpoint {
->  			};
->  		};
->  	};
-> +
-> +	dsi0-connector {
-> +		compatible = "dp-connector";
-> +		label = "DSI0";
 
-DP0
+--qokyrq4gcjmy6fsj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
+MIME-Version: 1.0
 
-> +		type = "full-size";
-> +
-> +		port {
-> +			dsi0_connector_in: endpoint {
-> +				remote-endpoint = <&anx7625_1_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	dsi1-connector {
-> +		compatible = "dp-connector";
-> +		label = "DSI1";
+Hi,
 
-DP1
+On Tue, Feb 25, 2025 at 01:14:03PM +0200, Matti Vaittinen wrote:
+> On 25/02/2025 01:21, Sebastian Reichel wrote:
+> > This removes .of_node from 'struct power_supply', since there
+> > is already a copy in .dev.of_node and there is no need to have
+> > two copies.
+> >=20
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >   drivers/power/supply/power_supply_core.c | 17 ++++++++---------
+> >   include/linux/power_supply.h             |  1 -
+> >   2 files changed, 8 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/s=
+upply/power_supply_core.c
+> > index d0bb52a7a0367a8e07787be211691cad14a41a54..11030035da6f121ca76bebf=
+800c06cfd5db57578 100644
+> > --- a/drivers/power/supply/power_supply_core.c
+> > +++ b/drivers/power/supply/power_supply_core.c
+> > @@ -200,11 +200,11 @@ static int __power_supply_populate_supplied_from(=
+struct power_supply *epsy,
+> >   	int i =3D 0;
+> >   	do {
+> > -		np =3D of_parse_phandle(psy->of_node, "power-supplies", i++);
+> > +		np =3D of_parse_phandle(psy->dev.of_node, "power-supplies", i++);
+> >   		if (!np)
+> >   			break;
+> > -		if (np =3D=3D epsy->of_node) {
+> > +		if (np =3D=3D epsy->dev.of_node) {
+> >   			dev_dbg(&psy->dev, "%s: Found supply : %s\n",
+> >   				psy->desc->name, epsy->desc->name);
+> >   			psy->supplied_from[i-1] =3D (char *)epsy->desc->name;
+> > @@ -235,7 +235,7 @@ static int  __power_supply_find_supply_from_node(st=
+ruct power_supply *epsy,
+> >   	struct device_node *np =3D data;
+> >   	/* returning non-zero breaks out of power_supply_for_each_psy loop */
+> > -	if (epsy->of_node =3D=3D np)
+> > +	if (epsy->dev.of_node =3D=3D np)
+> >   		return 1;
+> >   	return 0;
+> > @@ -270,13 +270,13 @@ static int power_supply_check_supplies(struct pow=
+er_supply *psy)
+> >   		return 0;
+> >   	/* No device node found, nothing to do */
+> > -	if (!psy->of_node)
+> > +	if (!psy->dev.of_node)
+> >   		return 0;
+> >   	do {
+> >   		int ret;
+> > -		np =3D of_parse_phandle(psy->of_node, "power-supplies", cnt++);
+> > +		np =3D of_parse_phandle(psy->dev.of_node, "power-supplies", cnt++);
+> >   		if (!np)
+> >   			break;
+> > @@ -606,8 +606,8 @@ int power_supply_get_battery_info(struct power_supp=
+ly *psy,
+> >   	const __be32 *list;
+> >   	u32 min_max[2];
+> > -	if (psy->of_node) {
+> > -		battery_np =3D of_parse_phandle(psy->of_node, "monitored-battery", 0=
+);
+> > +	if (psy->dev.of_node) {
+> > +		battery_np =3D of_parse_phandle(psy->dev.of_node, "monitored-battery=
+", 0);
+> >   		if (!battery_np)
+> >   			return -ENODEV;
+>=20
+> This reminded me of a change I once did to power_supply - but maybe never
+> got it further than RFC stage. Anyways, do you think it would be possible=
+ to
+> decouple the battery info and struct power_suppply (while at it)?
+>
+> I believe that the chargers and especially fuel-gauges which are designed=
+ to
+> operate with different batteries (and which get battery details using sta=
+tic
+> battery nodes), would like to get the battery info _before_ registering t=
+he
+> power_supply (to avoid sending bogus values while operating on defaults,
+> before the battery info is read and before things are set accordingly).
+>=20
+> I know this may be a bit much to ask, but I believe it'd be an improvemen=
+t.
+>=20
+> Other than that, looks good to me.
 
-Konrad
+I was thinking about adding an init function to power_supply_desc,
+which would be called directly before psy->initialized is set to
+true in the power-supply registration phase. I think that would be
+the right place to setup device registers based on battery-info data.
+But it's definitely not a thing for this series.
+
+Greetings,
+
+-- Sebastian
+
+--qokyrq4gcjmy6fsj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme9wYEACgkQ2O7X88g7
++pqiLw//XIliVc9d8leYVw9Zg1Ou2CIFlkNNs0jNuGp/9lBRbbqU3i1ak4YxVKtX
+Gwz4lsiJCZAACkP7CuEb5IguHkrl/pMT0hWEa+Lt1rwqx+F18FVdoWK5mujphYXK
+oE+4iXNfaU0hYoypPpgqWorMtKs7KKVw7cv7BuIgGp+LYXEeBRdde6W5t9mMYY4y
+IwppeBvxwmOoNc+E0nXErhERfiydaEwm6BFWuBnKfmeHoXPnCL0jVamXJbDVjczE
++1oLmR5iZYfuSrmRczsPiqj1Mcw5iD2avPWX0hi92SEz3KQunNHrsYdfH67nJzw1
+qvCCjn9fnT22fTH5Ttny1Cg//zsOnfmBQsDYuY6WVmQZ6ioXDwV6nXlfydr14ZRT
+66oYdUBsDh/Gxy68lUMaLDiKus2I4WrVgqNNXazlnDaMsSrKn6MRZ0O5JJBtY4yD
+yqByN1yiZLRSfhPmJqXZlCIXBp4PJ19wfMg8HWynQVuHv/T8YgOso15Tbucp+qWf
+IOfMOx8HxTJeDuCezPkCZV7GJeVMsOYHzLrwvLnwk9AHGb+VIFiWu4I+iRzkV8pR
+9cYRHe78FNnqRCnf69jmZd8IBp/qnRIcelg00w4vo1A5mrVLI6YYt2oUuj/6yEqr
+ljWvdVK5cQo/CvXH/3zlL4AZNW/tsPlLT2WKpFyuVqwIOvS1SLw=
+=+mrH
+-----END PGP SIGNATURE-----
+
+--qokyrq4gcjmy6fsj--
 
