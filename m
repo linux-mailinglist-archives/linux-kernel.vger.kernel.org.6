@@ -1,241 +1,127 @@
-Return-Path: <linux-kernel+bounces-530490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2A3A4341D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:27:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A88A4341E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0EA189CD59
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A42A3A7040
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79441684AE;
-	Tue, 25 Feb 2025 04:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B099218BC2F;
+	Tue, 25 Feb 2025 04:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hMwkPLVt"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ie/g0kM8"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE28156677
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7839156677
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740457662; cv=none; b=K9tWZNEinvDgpUqhePrcfX8CJL84VSmRQe1RR2i+eaq3DilgUUnQTvgYxOWBM1/nCHq3VPQxsIh5Q7ZX+tuhkO22H9ACWn4ZgHV4rudLstiSSo4vDsrssoE80egll/9kkyGEw01zZhw4pOJDrjy4x8pjTaLlNsdF+IiRpdezzj8=
+	t=1740457696; cv=none; b=PsDjzsFFEEYyeQMFwZUWXfDl7g8XC5Fwpi4Rjp+tp2g0ZIyH5IlC79iNG45PfyWyxwT+FUI5Oqw8TEbqC90+RqGRHPZ5Y3CaDXiDLjc8JeayxMWZpNkRvCzSuk5gTtoAm6C1XCteyNWmjkBaOd8GiiKxhlQ2qO4fBlSDaQPqqyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740457662; c=relaxed/simple;
-	bh=tBq+uED9VcLqvQWo73iw5X2/Rdc3ERYOyoMS/2j02eE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QLEK9Obb516ZYe3X3p56vbVySf4ijKeEf79TDf0x4Du6FFEL6MyOGKFtREv2on+ChifssxUl3B16hHKpWNxe/T033dK34WcH1HwHxWKmgvLJjAZM4Vl2M4ns+PY3Zzbe1pGbDMfrHrzcwgdZlVsUbDuBy41YBh7UATecX46aVOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hMwkPLVt; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1740457696; c=relaxed/simple;
+	bh=G0eBJjapMyZYC3G4DQLFNrkQO0QOLVkTdNR6ndJ9FqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwywAbqXRt3QZ8g7KKG7BYdy4VQMx0RD3ChKW8rfS86+MKYcdednYkP5RmZ303Ibt8/mz49v81faTLRxmfFM3sJbbYGovUvYSpFJyeGbWVKmlJnYNgx+KHsUrLuMhKsnURqdoyjeUtnaVHI29AIF8pEhCA4GUYW/pAjHBof0kOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ie/g0kM8; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fcf3a69c3cso5037173a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:28:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1740457652;
-	bh=tBq+uED9VcLqvQWo73iw5X2/Rdc3ERYOyoMS/2j02eE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=hMwkPLVtLK1ZvJmQYYIrH7ps60fu/iAzOkiB+OHVTznrOoYho7yywweETK0X0NaWm
-	 VAH9Vw8zS4N79Anp6DLvAZkOvP5EGe0vjl2prTuESNbvsoN6ElpXzFhjmmO7UajEeU
-	 1yFOi6oZH3LsRLC6Krils2x/d1nxkfxnYDhuPTU8DgBlfnQ4Bq+eHkde7I0VIHxBTw
-	 Vdqli5J76dtZmqgFj/LIfvZhGM97a6ltsYJ+JiIOmhIf+D0UhM0+bWgnSRn3z2pw2b
-	 oJ4iVtEVLv9k54HnzOrlqRJxs7ymdnH6PCq8kMYC0HDdmwmyFoTYzhgeczEvTxencD
-	 YTsIsVvw3hegg==
-Received: from [IPv6:2405:6e00:2421:8fa3:333c:2fc8:332d:ddb4] (unknown [120.20.122.15])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4021170B52;
-	Tue, 25 Feb 2025 12:27:27 +0800 (AWST)
-Message-ID: <f7369d6205e05c7aac3f3de7cbd08c3b08960d75.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, "joel@jms.id.au"
- <joel@jms.id.au>,  Z-ChiaWei Wang <chiawei_wang@aspeedtech.com>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>
-Cc: "tomer.maimon" <tomer.maimon@nuvoton.com>, Krzysztof Kozlowski
-	 <krzk@kernel.org>, "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org"
-	 <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org"
-	 <conor+dt@kernel.org>, Jenmin Yuan <jenmin_yuan@aspeedtech.com>, BMC-SW
-	 <BMC-SW@aspeedtech.com>
-Date: Tue, 25 Feb 2025 14:57:25 +1030
-In-Reply-To: <PSAPR06MB494947E21AB39369ADFA8C9489C72@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
-	 <20250217114831.3225970-4-kevin_chen@aspeedtech.com>
-	 <e43b5f8f-37e4-4468-b3ca-5059a5e6f3c3@kernel.org>
-	 <6fd7cd57261ddf9831f57dc4c637b24e9f8982d9.camel@codeconstruct.com.au>
-	 <PSAPR06MB4949C65DF5C034BD6B40C9B589FA2@PSAPR06MB4949.apcprd06.prod.outlook.com>
-	 <d4945482509cad0bf3e8cd93c1fb21bac2e0c7f2.camel@codeconstruct.com.au>
-	 <TY0PR06MB4960EA7255DF0BDF235F0D9689C52@TY0PR06MB4960.apcprd06.prod.outlook.com>
-	 <ba2757fd02b3e7c8f9c862c76f2cfcd2b6bfb41b.camel@codeconstruct.com.au>
-	 <PSAPR06MB494947E21AB39369ADFA8C9489C72@PSAPR06MB4949.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=chromium.org; s=google; t=1740457694; x=1741062494; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+X5JfPK4BibaEtL7BQIEz80W1y4GdOj6RNmewuZiBw=;
+        b=ie/g0kM8ZTsYhidm0ToA7JFgu1BM/TmZbu+sQihCungf9KItcOUePoJp0SODLPXg8Y
+         6JZxxnSl+DJ93j/oURp8wjnG3s0hK+ewVA7YFIQQGOYg7IMu1L1UZ/1FEjw8TMHEpoIC
+         V5OBUMjoN6g/kKepOh217tULYop3QSPTZaGEk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740457694; x=1741062494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o+X5JfPK4BibaEtL7BQIEz80W1y4GdOj6RNmewuZiBw=;
+        b=ETbV2KjVJTDfpSBewl0JCSmod7Ah0sSzDhlKZCKkNNR5oQStoCEJdGHlTLzcOpZnV+
+         fXxLr4bsh7CkZrsk7LlBWJ2Wq710mfef7v4rr5g7NLzcn+6rNHBYLpksAXAcD3zYIQht
+         TLCfjoQ++kvHES1kmCV3ACv1Yj8DfOEy1wGpeDoDQmc+QfQq7/UywpYE8CFayEaXKKXe
+         CxtDTFExWWYGNLIoXvXp2Z78z7Ou9d4jIm54yPV157Gh45VzyAa64Woa+fcnI3+/Gi4i
+         t+PJb7aVAKmVzdRKvFFjui9KEhSTXEDFvPs9qFp7TsXiNQX5aoWQ8HqpaTC7i4edmhDp
+         mPPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE/GAjMZ8B36pSd3NsuQCGFPgl8E+nl7Gei+5MAwiXZPF5prRqVLEZAEd0b/0VIZethAH1EHQzoEiD2O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz84lo0olj+hj/LO6uO4rppSaAGnRXi76SlwAk2s+lz7HWC23xN
+	t3YJO7Wj2ZOm24FjTtQL0tcnMcH5EAKl302Wqu850Wg+ea6tld2EG8nASzvo0w==
+X-Gm-Gg: ASbGnctMyTBSR/nHDG5VtuHgsB3j5i/De5d4ctz2hBZws1XFdMFj2GrbLj8w9F7R3ih
+	RdVEhpJi3/305bO6z4Lp6zwPBBRloASgc025ygrkcEXlSEO2wzK6yUOw2J+2C8m5ylQPD026gFo
+	FI5Q4pRPtvZhpmbNih6VQV6X/eiPDAHpBNZlNY2r7xMEHpC9j2Eu7FZMdGUWLGC5eBIsEC792Be
+	3QYYCrtk+erN0AepB8FJRpXOI/wrd7ZFIzrGg7C2tQNIMpyExyuWv+E1Q6eLBgK9Gw7aGqOWk5Y
+	uTfMJM0LraOxT1ADsFVDTcvwLXFtUQ==
+X-Google-Smtp-Source: AGHT+IGN7n10gk0Mg9q+s54cyuTq6rWt1GXB+ExUPwCxugZhPSDMmIlsxSuZcdMmndNCmU7034jDBQ==
+X-Received: by 2002:a17:90b:1c08:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-2fce7b04f6amr25577848a91.30.1740457693979;
+        Mon, 24 Feb 2025 20:28:13 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:e27d:842a:e0d1:29c4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a3992fcsm506183a91.3.2025.02.24.20.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 20:28:13 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:28:07 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/17] zsmalloc: make zspage lock preemptible
+Message-ID: <nfkblmczqmfizey3fmd5566xthbrbg3dpsdu7ldsoddnwlqnmv@ef7lqqpa66bg>
+References: <20250221222958.2225035-1-senozhatsky@chromium.org>
+ <20250221222958.2225035-12-senozhatsky@chromium.org>
+ <20250224085943.gChnQpEB@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224085943.gChnQpEB@linutronix.de>
 
-On Fri, 2025-02-21 at 00:51 +0000, Kevin Chen wrote:
-> > On Wed, 2025-02-19 at 11:59 +0000, Kevin Chen wrote:
-> > > > On Tue, 2025-02-18 at 11:11 +0000, Kevin Chen wrote:
-> > > > > > On Mon, 2025-02-17 at 13:00 +0100, Krzysztof Kozlowski wrote:
-> > > > > > > On 17/02/2025 12:48, Kevin Chen wrote:
-> > > > > > > > +
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.parent=
- =3D dev;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.minor =
-=3D MISC_DYNAMIC_MINOR;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.name =
-=3D devm_kasprintf(dev, GFP_KERNEL,
-> > > > > > > > "%s%d",
-> > > > > > > > DEVICE_NAME,
-> > > > > > > >=20
-> > > > > >=20
-> > > >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0pcc->mdev_id);
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pcc->mdev.fops =
-=3D &pcc_fops;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D misc_regi=
-ster(&pcc->mdev);
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc) {
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_err(dev, "Couldn't register misc
-> > > > > > > > device\n");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0goto err_free_kfifo;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > > > > > >=20
-> > > > > > > You cannot expose user-space interfaces from SoC drivers. Use
-> > > > > > > appropriate subsystem for this with proper ABI documentation.
-> > > > > > >=20
-> > > > > > > See:
-> > > > > > > https://lore.kernel.org/all/bc5118f2-8982-46ff-bc75-d0c71475e=
-9
-> > > > > > > 09@a
-> > > > > > > pp.f
-> > > > > > > astmail.com/
-> > > > > > > and more discussions on LKML
-> > > > > >=20
-> > > > > > Further, drivers/misc/aspeed-lpc-snoop.c already exists:
-> > > > > >=20
-> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-g
-> > > > > > it/c
-> > > > > > ommit/?id=3D
-> > > > > > 9f4f9ae81d0affc182f54dd00285ddb90e0b3ae1
-> > > > > >=20
-> > > > > > Kevin: Did you consider reworking it?
-> > > > > Andrew: No, I do not rework it but add the post code capture
-> > > > > driver using the SNOOP registers. As a result, I add some code in
-> > > > > aspeed_a2600_15 to check the SNOOP enable bit. PCC driver probe
-> > > > > abort if snoop is enabled.
-> > > >=20
-> > > > Hmm, I think OpenBMC's history regarding POST code support caused
-> > > > some confusion on my part. For whatever reason, the snoop device wa=
-s
-> > > > used as a source of POST codes despite the existence of the
-> > > > dedicated POST code hardware since at least the AST2400, but...
-> > > What I know about the dedicated POST code hardware in ASPEED should b=
-e
-> > > the same one in LPC module.
-> > >=20
-> > > >=20
-> > > > > PCC is used for port I/O byte snooping over eSPI.
-> > > >=20
-> > > > ... it seems that they're largely interchangeable, just with
-> > > > different hardware features (PCC has DMA)? My impression is that th=
-e
-> > > > snoop device could also be used over eSPI?
-> > > Yes, PCC has DMA to capture the POST code.
-> > > And snoop device also can be used over eSPI.
-> > >=20
-> > > These two devices of PCC and snoop use the same port I/O of 80h and
-> > > 81h.
-> > > But, in current usage of PCC, it can support a continuous, 4-bytes
-> > > maximum region from port I/O 80h to 83h.
-> > > What I know about PCC or snoop usage, depends on INTEL platform or AM=
-D
-> > > platform.
-> > >=20
-> > > For ASPEED, we want to upstream the PCC driver for the PCC usage.
-> >=20
-> > Yeah, that's fine, but I think some work needs to be done to provide co=
-herence
-> > in the devicetree binding and userspace APIs across both the ASPEED sno=
-op
-> > and PCC bits, as well as the Nuvoton BPC. Bespoke designs create pain.
-> https://lore.kernel.org/linux-kernel//7661de74-f68c-6617-6a4e-3b0eb76a2a2=
-e@linaro.org/T/
-> Andrew, I find the "NPCM BPC driver" to get the link. Are these patches m=
-atch what you mentioned?
+On (25/02/24 09:59), Sebastian Andrzej Siewior wrote:
+> > +/*
+> > + * The zspage lock can be held from atomic contexts, but it needs to remain
+> > + * preemptible when held for reading because it remains held outside of those
+> > + * atomic contexts, otherwise we unnecessarily lose preemptibility.
+> > + *
+> > + * To achieve this, the following rules are enforced on readers and writers:
+> > + *
+> > + * - Writers are blocked by both writers and readers, while readers are only
+> > + *   blocked by writers (i.e. normal rwlock semantics).
+> > + *
+> > + * - Writers are always atomic (to allow readers to spin waiting for them).
+> > + *
+> > + * - Writers always use trylock (as the lock may be held be sleeping readers).
+> > + *
+> > + * - Readers may spin on the lock (as they can only wait for atomic writers).
+> > + *
+> > + * - Readers may sleep while holding the lock (as writes only use trylock).
+> > + */
+> > +static void zspage_read_lock(struct zspage *zspage)
+> > +{
+> > +	struct zspage_lock *zsl = &zspage->zsl;
+> > +
+> > +	rwsem_acquire_read(zsl_dep_map(zsl), 0, 0, _RET_IP_);
+> > +
+> > +	spin_lock(&zsl->lock);
+> > +	zsl->cnt++;
+> > +	spin_unlock(&zsl->lock);
+> 
+> How is this working given that a read_lock always increments the
+> counter? If it is write_locked then a read_lock makes it UNLOCKED.
 
-That looks about right.
-
-Note Rob's response there about disparate bindings:
-
-https://lore.kernel.org/linux-kernel//20221130193014.GA2645083-robh@kernel.=
-org/
-
->=20
-> >=20
-> > The PCC driver above reads the data out of the DMA ring-buffer straight=
- into
-> > the kfifo hooked up the the miscdev read callback. The datasheet
-> > notes: "the data structure of the FIFO is mode dependent" in the descri=
-ption of
-> > PCCR3, but no in-band or out-of-band mechanism (sysfs,
-> > ioctl) is provided for userspace to query whether it's 1B, 2B, 4B or "f=
-ull" mode.
-> For the data structure in PCCR3, I checked with designer. We only need 2B=
- mode to get the information about data and related addresses.
-> For example, from espi master send the port 80h~83h with first data 0x112=
-23344 and second data 0x55667788. The PCC kfifo would be written in the fol=
-lowing output from hexdump.
-> # hexdump=C2=A0 /dev/aspeed-lpc-pcc0
-> 0000000 4044 4133 4222 4311 4088 4177 4266 4355
-
-Right, but that's different to how the Aspeed snoop chardev behaves.
-Both the snoop and PCC features can be used to present the same data
-(POST codes) to userspace. There should be a unified chardev behaviour
-for POST codes so we don't end up with a mess in userspace to deal with
-the differences in hardware capabilities.
-
-If we've got a chardev it would feel idiomatic to me to have ioctls to
-configure the hardware to the required capture mode for the platform.
-
-> >=20
-> > The situation with the snoop driver is similar (1 or 2 1B channels mult=
-iplexed
-> > into the one data stream). It also looks a bit quirky with multiple cha=
-nnels
-> > enabled, as what userspace reads will depend on the host access pattern=
-s, but
-> > no metadata is provided to userspace about what it's reading.
-> Yes, for the snoop driver and PCC driver, some mechanism is the same. But=
- snoop only supports 2 bytes data from the 2 1B channels multiplexed.
-> So, we need to add PCC driver to upstream for customer's 4 Bytes POST cod=
-e capture usage even the PCC driver needs to check the snoop enabled or not=
-.
-
-I understand.
-
-> Or, could you please give us come comments about how I can upstream the P=
-CC driver.
-
-Essentially I don't think it's okay that each driver implement a
-bespoke chardev, or that the devices don't share a common devicetree
-binding. I think what's needed is a small abstraction that provides
-common chardev semantics to userspace (e.g. /dev/postcodeN) that can be
-connected to the different backends provided by the hardware (Aspeed
-snoop and PCC, Nuvoton BPC) and act on the needs of userspace (1, 2, 4-
-byte POST codes, configured using ioctls).
-
-Andrew
+If zspage is write-locked then zsl->lock is also locked, because
+write-lock returns with zsl->lock acquired and releases it in
+write-unlock.
 
