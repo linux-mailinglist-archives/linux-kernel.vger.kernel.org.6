@@ -1,174 +1,204 @@
-Return-Path: <linux-kernel+bounces-530542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6493A434F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:10:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC214A434F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B2017AA00
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7FB189B197
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FDB256C91;
-	Tue, 25 Feb 2025 06:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84711256C7C;
+	Tue, 25 Feb 2025 06:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="XrVUEkmO"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CKjWH1i8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581D9256C6A;
-	Tue, 25 Feb 2025 06:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740463815; cv=pass; b=OkE4r8gOOvUs43aWzWmx6U2ifxyO1GPwrRw17A1u+XsUa49HJQhlqQGoXIfqpffZE9JarBrlnB5+fTZsBNHvjpPFqLX8eS4vPe28fcKB6kMx+zdfhB9Bou5h6BxRqF9KSqf5VjFIi3SjWG70b2o0Vx92dyp1xTAdCTyhkj4P27U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740463815; c=relaxed/simple;
-	bh=fxjYhhopdIJkGIyF0ESuXORJasUN6Sxa6lF8FBEgu/s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O1DeISGbBASObqR68U6v8uPL1XYVsiVaeNGVS+LkA7d7H4fpDv8CIJ2w6VFMlsBoOYJ4s4vrfCSqrknC1GPwXrad2QpmjNdy7Ub8UhW3QgRNDdUtKQNtXZcPiPz+gMQMQ9r6+rVGzOCd3gi35i14tm7mp66F4js9ncuGTe6OR8Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=XrVUEkmO; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740463767; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MoxhigzgjKJZtjuMmmxtmjfd2B95WHy56Is1CRIbfGaDh5fXMdDFuTpf1hlCX1QvilcJ9Nyk582gyDVWQc58QhMk/SpRxfOhEQye4UJVl+VfUpv4Nrj5tnYUrGuOGMaKtaMrOX3+eRIt14XzgyLFXXazgnkQR9KqKn7cYRWSZbw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740463767; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zlGJk/boTTi46WwLjRxSuU692UCYhuz4KWqBVlpFD2s=; 
-	b=E77T+47VTEpF9m5gWxnlb58MjXvuDgg52KvKgXSiFJxPvMKdCxqrD9zimoSZGjm+/cpZNcId17F8Z91szlW+0Ok7jZFYONkasLf2znA+KhMdf6AjF1s7iuQiDqjxbLnR0fpq7sCLkbL8VIzBL4CJwxKap3JjPf3fvAWFEfmj1GQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740463767;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=zlGJk/boTTi46WwLjRxSuU692UCYhuz4KWqBVlpFD2s=;
-	b=XrVUEkmOoIzAxB8edEvVsTnEK14wqXdy3pGXFAylllaIlyWVgeyugUziAX+W/F9J
-	0Gke1Fh1EnBhDUJyGynb1WLxCfy9lPUTnYD7K77Ya1b32qOxaVdCxt0ei7oJW9FNXW9
-	sYBv1atwcZ4x4ru0xyrftIZQIR+Ij3yNovzfvOOg=
-Received: by mx.zohomail.com with SMTPS id 1740463764036975.0626584461274;
-	Mon, 24 Feb 2025 22:09:24 -0800 (PST)
-Message-ID: <b3540615-0dc1-41f8-bb8f-99f01f909b36@collabora.com>
-Date: Tue, 25 Feb 2025 11:10:00 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8152566F1;
+	Tue, 25 Feb 2025 06:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740463996; cv=none; b=SeRnWbywAvWT8OvkaWTJT5ycr2qTsQWiJvtfBx+pLxZiKiEFwAh4v89tXksqOdDdWRF5vz7Vc1M4slT6G2VsETKyY+RiVRLwztJkEOrekviKLqj2hHIo/KB0XCfgtg0CJ+/lrpjuDqvhart0W7VfMriNxgpOY9NCR5cR5sZrm1o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740463996; c=relaxed/simple;
+	bh=GPUPZeCXKfXNhvuJExZ+jWuWgptD83dizoihy6ohZF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pr5tqvXrB/e8I6HaFDIclYkUc08tFtoTENsvVulP0CZNLghaNZGra4jIURdeuqs85kFnvLJPz/nBcntPrRxSIMNfo8IzSiEtQY+rHW19jvzJh853QZnqAU2Fr4zvTed2CmZ667eECMRklEY7hNRWCvuykTf+8Z/g10+98HvXAOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CKjWH1i8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 516F4C4CEDD;
+	Tue, 25 Feb 2025 06:13:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740463994;
+	bh=GPUPZeCXKfXNhvuJExZ+jWuWgptD83dizoihy6ohZF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CKjWH1i8Fk+EJ/pwcIYxJUS/PNq18v6Z4w0XWq7OfGIoIE3TUzOES3H32VUbBQCmn
+	 eNpBhlw6Pvt6CcqSq0Ayy4aZgLqrCq7lD+Z0+4HViEcaM5Mo5ESQG8jLqO/bZJlIGr
+	 77Q3v/A3spDsjDhJux/rvtHPtytU/xl6orlmFUps=
+Date: Tue, 25 Feb 2025 07:12:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
+Message-ID: <2025022504-diagnosis-outsell-684c@gregkh>
+References: <20250225052001.2225-1-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Johan Hovold <johan@kernel.org>,
- Loic Poulain <loic.poulain@linaro.org>, linux-arm-msm@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
- kernel@collabora.com, ath11k@lists.infradead.org, jjohnson@kernel.org
-Subject: Re: [BUG REPORT] MHI's resume from hibernate is broken
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <59c036b6-a3d6-403b-8bb0-566a17f72abc@collabora.com>
- <20250214070447.scs6lpytjtecz3ko@thinkpad>
- <1cd4a1ed-f4e7-4c7b-a19f-f79afddbe310@collabora.com>
- <20250220075034.unsd5cq7xkip2by6@thinkpad>
- <ec8a01a3-5eaf-4fba-bb85-e7a677877e5f@collabora.com>
- <20250224164400.w3lpzxxwfbrj5lb6@thinkpad>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20250224164400.w3lpzxxwfbrj5lb6@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225052001.2225-1-namjain@linux.microsoft.com>
 
-On 2/24/25 9:44 PM, Manivannan Sadhasivam wrote:
-> On Thu, Feb 20, 2025 at 05:34:06PM +0500, Muhammad Usama Anjum wrote:
->> On 2/20/25 12:50 PM, Manivannan Sadhasivam wrote:
->>> On Mon, Feb 17, 2025 at 07:35:50PM +0500, Muhammad Usama Anjum wrote:
->>>> On 2/14/25 12:04 PM, Manivannan Sadhasivam wrote:
->>>>> Hi,
->>>> Thank you so much for replying.
->>>>
->>>>>
->>>>> + ath11k list and Jeff
->>>>>
->>>>> On Tue, Feb 11, 2025 at 01:15:55PM +0500, Muhammad Usama Anjum wrote:
->>>>>> Hi,
->>>>>>
->>>>>> I've been digging in the MHI code to find the reason behind broken
->>>>>> resume from hibernation for MHI. The same resume function is used
->>>>>> for both resume from suspend and resume from hibernation. The resume
->>>>>> from suspend works fine because at resume time the state of MHI is 
->>>>>> MHI_STATE_M3. On the other hand, the state is MHI_STATE_RESET when
->>>>>> we resume from hibernation.
->>>>>>
->>>>>> It seems resume from MHI_STATE_RESET state isn't correctly supported.
->>>>>> The channel state is MHI_CH_STATE_ENABLED at this point. We get error
->>>>>> while switching channel state from MHI_CH_STATE_ENABLE to
->>>>>> MHI_CH_STATE_RUNNING. Hence, channel state change fails and later mhi
->>>>>> resume fails as well. 
->>>>>>
->>>>>> I've put some debug prints to understand the issue. These may be
->>>>>> helpful:
->>>>>>
->>>>>> [  669.032683] mhi_update_channel_state: switch to MHI_CH_STATE_TYPE_START[2] channel state not possible cuzof channel current state[1]. mhi state: [0] Return -EINVAL
->>>>>> [  669.032685] mhi_prepare_channel: mhi_update_channel_state to MHI_CH_STATE_TYPE_START[2] returned -22
->>>>>> [  669.032693] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
->>>>>>
->>>>>
->>>>> Thanks for the report!
->>>>>
->>>>> Could you please enable the MHI and ath11k debug logs and share the full dmesg
->>>>> to help us understand the issue better?
->>>> The ath11k debug was already enabled. CONFIG_MHI_BUS_DEBUG wasn't enabled. 
->>>
->>> Sorry for not being clear. I asked you to enable the dev_dbg() logs in the MHI
->>> driver. But it is not required. See below.
->> I've disabled the MHI_BUG_DEBUG. It only enables some files. Ideally if those files
->> being used, there shouldn't be any difference. But they are definitely changing the
->> timings.
->>
->>>
->>>> I've
->>>> enabled it and now the hibernate is working without any issue. It is very strange
->>>> how can CONFIG_MHI_BUS_DEBUG make any difference. I don't have much background on
->>>> how it is helping.
->>>>
->>>
->>> Probably some timing issue. But enabling the MHI debug logs could also hide the
->>> issue. So you should disable the CONFIG_MHI_BUS_DEBUG option and collect the MHI
->>> trace logs that we recently added.
->> Disabled the MHI_BUS_DEBUG and collected logs by Dynamic debug:
->> [  584.040189] mhi mhi0: Allowing M3 transition
->> [  584.040202] mhi mhi0: Waiting for M3 completion
->> [  584.040480] mhi mhi0: State change event to state: M3
->> ..
->> [  584.535478] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
->> [  584.535482] qcom_mhi_qrtr mhi0_IPCR: PM: dpm_run_callback(): qcom_mhi_qrtr_pm_resume_early [qrtr_mhi] returns -22
->> [  584.535490] qcom_mhi_qrtr mhi0_IPCR: PM: failed to restore early: error -22
->> [  584.831583] mhi mhi0: Entered with PM state: M3, MHI state: M3
->>
->> It seems like the state save was success at hibernate time. The error is originating
->> at resume from hibernation.
->>
+On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
+> On regular bootup, devices get registered to vmbus first, so when
+> uio_hv_generic driver for a particular device type is probed,
+> the device is already initialized and added, so sysfs creation in
+> uio_hv_generic probe works fine. However, when device is removed
+> and brought back, the channel rescinds and device again gets
+> registered to vmbus. However this time, the uio_hv_generic driver is
+> already registered to probe for that device and in this case sysfs
+> creation is tried before the device gets initialized completely.
 > 
-> I just tried hibernation on my RB5 board featuring QCA6390 WLAN chip which makes
-> use of ath11k driver. I did encounter the resume failure, but the error log was
-> slightly different. Then looking at the ath11k driver made me realize that they
-> reverted the hibernation support due to suspend issue reported on some Lenovo
-> platforms: 2f833e8948d6 ("Revert "wifi: ath11k: support hibernation"").
+> Fix this by moving the core logic of sysfs creation for ring buffer,
+> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+> attributes for the channels are defined. While doing that, make use
+> of attribute groups and macros, instead of creating sysfs directly,
+> to ensure better error handling and code flow.
 > 
-> So that explained the resume failure. I reverted the revert and that allowed me
-> to resume properly from hibernation. So please try to do the same and see if it
-> helps you.
-On my side, I've reverted this. But it didn't create any difference. This commit is
-reverting hibernation for ath11k. It isn't changing anything in MHI. 
+> Problem path:
+> vmbus_device_register
+>     device_register
+>         uio_hv_generic probe
+>                     sysfs_create_bin_file (fails here)
+>         kset_create_and_add (dependency)
+>         vmbus_add_channel_kobj (dependency)
+> 
+> Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
+> Cc: stable@kernel.org
+> Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Suggested-by: Michael Kelley <mhklinux@outlook.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+> Hi,
+> This is the first patch after initial RFC was posted.
+> https://lore.kernel.org/all/20250214064351.8994-1-namjain@linux.microsoft.com/
+> 
+> Changes since RFC patch:
+> * Different approach to solve the problem is proposed (credits to
+>   Michael Kelley).
+> * Core logic for sysfs creation moved out of uio_hv_generic, to VMBus
+>   drivers where rest of the sysfs attributes for a VMBus channel
+>   are defined. (addressed Greg's comments)
+> * Used attribute groups instead of sysfs_create* functions, and bundled
+>   ring attribute with other attributes for the channel sysfs.  
+> 
+> Error logs:
+> 
+> [   35.574120] ------------[ cut here ]------------
+> [   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
+> [   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
+> [   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
+> [   35.574197] Call Trace:
+> [   35.574199]  <TASK>
+> [   35.574200]  ? show_regs+0x69/0x80
+> [   35.574217]  ? __warn+0x8d/0x130
+> [   35.574220]  ? sysfs_create_bin_file+0x81/0x90
+> [   35.574222]  ? report_bug+0x182/0x190
+> [   35.574225]  ? handle_bug+0x5b/0x90
+> [   35.574244]  ? exc_invalid_op+0x19/0x70
+> [   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
+> [   35.574252]  ? sysfs_create_bin_file+0x81/0x90
+> [   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
+> [   35.574271]  vmbus_probe+0x3b/0x90
+> [   35.574275]  really_probe+0xf4/0x3b0
+> [   35.574279]  __driver_probe_device+0x8a/0x170
+> [   35.574282]  driver_probe_device+0x23/0xc0
+> [   35.574285]  __device_attach_driver+0xb5/0x140
+> [   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
+> [   35.574291]  bus_for_each_drv+0x86/0xe0
+> [   35.574294]  __device_attach+0xc1/0x200
+> [   35.574297]  device_initial_probe+0x13/0x20
+> [   35.574315]  bus_probe_device+0x99/0xa0
+> [   35.574318]  device_add+0x647/0x870
+> [   35.574320]  ? hrtimer_init+0x28/0x70
+> [   35.574323]  device_register+0x1b/0x30
+> [   35.574326]  vmbus_device_register+0x83/0x130
+> [   35.574328]  vmbus_add_channel_work+0x135/0x1a0
+> [   35.574331]  process_one_work+0x177/0x340
+> [   35.574348]  worker_thread+0x2b2/0x3c0
+> [   35.574350]  kthread+0xe3/0x1f0
+> [   35.574353]  ? __pfx_worker_thread+0x10/0x10
+> [   35.574356]  ? __pfx_kthread+0x10/0x10
+> 
+> ---
+>  drivers/hv/hyperv_vmbus.h    |  4 +++
+>  drivers/hv/vmbus_drv.c       | 62 ++++++++++++++++++++++++++++++++++++
+>  drivers/uio/uio_hv_generic.c | 34 ++------------------
+>  include/linux/hyperv.h       |  3 ++
+>  4 files changed, 72 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 29780f3a7478..e0c7b75e6c7a 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -477,4 +477,8 @@ static inline int hv_debug_add_dev_dir(struct hv_device *dev)
+>  
+>  #endif /* CONFIG_HYPERV_TESTING */
+>  
+> +/* Create and remove sysfs entry for memory mapped ring buffers for a channel */
+> +int hv_create_ring_sysfs(struct vmbus_channel *channel);
+> +int hv_remove_ring_sysfs(struct vmbus_channel *channel);
+> +
+>  #endif /* _HYPERV_VMBUS_H */
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 22afebfc28ff..0110643bad3f 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1802,6 +1802,39 @@ static ssize_t subchannel_id_show(struct vmbus_channel *channel,
+>  }
+>  static VMBUS_CHAN_ATTR_RO(subchannel_id);
+>  
+> +/* Functions to create sysfs interface to allow mmap of the ring buffers.
+> + * The ring buffer is allocated as contiguous memory by vmbus_open
+> + */
+> +static int hv_mmap_ring_buffer(struct vmbus_channel *channel, struct vm_area_struct *vma)
+> +{
+> +	void *ring_buffer = page_address(channel->ringbuffer_page);
+> +
+> +	if (channel->state != CHANNEL_OPENED_STATE)
+> +		return -ENODEV;
+> +
+> +	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
+> +			       channel->ringbuffer_pagecount << PAGE_SHIFT);
+> +}
+> +
+> +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
+> +				       const struct bin_attribute *attr,
+> +				       struct vm_area_struct *vma)
+> +{
+> +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
+> +
+> +	if (!channel->mmap_ring_buffer)
+> +		return -ENODEV;
+> +	return channel->mmap_ring_buffer(channel, vma);
 
-On my side, it seems there is some timing issue on MHI side. I'll try to dig more in
-MHI.
->> [  584.535478] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
->> [  584.535482] qcom_mhi_qrtr mhi0_IPCR: PM: dpm_run_callback(): qcom_mhi_qrtr_pm_resume_early [qrtr_mhi] returns -22
+What is preventing mmap_ring_buffer from being set to NULL right after
+checking it and then calling it here?  I see no locks here or where you
+are assigning this variable at all, so what is preventing these types of
+races?
 
--- 
-BR,
-Muhammad Usama Anjum
+thanks,
+
+greg k-h
 
