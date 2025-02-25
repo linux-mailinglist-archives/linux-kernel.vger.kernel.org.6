@@ -1,160 +1,327 @@
-Return-Path: <linux-kernel+bounces-532062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF09A4488E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:41:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28ECEA4481D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C684C882FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A16219E13DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B8A1A7262;
-	Tue, 25 Feb 2025 17:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4341520D50D;
+	Tue, 25 Feb 2025 17:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BSdiKB3i"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604F21A2567;
-	Tue, 25 Feb 2025 17:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BSOEIyKg"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C55F19ABD4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504294; cv=none; b=efwb7XZ+INT5WV3Tn5RVcJyiRVMuXsPPgO0Ambu6KIMNab9KzAGdP/IPXLsEX3wyJi4EVdVwP49ZkiuhyDNLl1Ousm4F190AEdWyAWZU10nY/RkGEq28nSfYv0RYpzqM1uH2IIIhHPA2+I4u77vhVmFicqe+Ggo3NLR8Manz60g=
+	t=1740504307; cv=none; b=jsmKIF2Y2aGg6j1DKZvgR/uTLh8x/IhNsDUd0YE3a/4NkW04GX7/ljfErBfbFIHxCWTAMowX3mN9HeoSaBt5a+QIIKv6S6dgFtckt5LPommWql8/qVGS6gIRLlwC9HbPU397WKYdRdHr27XhDhGnx0epIEmJ/oFOZ0Qtm6222ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504294; c=relaxed/simple;
-	bh=aDY7TR4VTCyrtKDgPwDtxqtP5TeeW3MyhnHze/eIGxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIEsU0a/FfMVQHnwisKYJugMKHJyjdGOP46qAPGZvaiNR7ocnesXS7oxt8yBjNmC1eqHprrcVh7tPxUFEcmRP8orik3d8aFJRfuAaZdTyXnmDZ4XcS6LJHA+LkdBKieVH5ajITl2RAhMIPVe1nQ83VbnsIE4XgadBBcNXuGoYdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BSdiKB3i; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1152)
-	id EAB6A203CDED; Tue, 25 Feb 2025 09:24:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EAB6A203CDED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740504285;
-	bh=plsJhPJfP5AMhTGoZAobBxfnGCypJcfkAH+Ajvih/uE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BSdiKB3inbR3DLGJIOt6h+/rE0ZLTI6+fMQCfbGGcvPOc78AGZAp4kbCsMRcLOpwO
-	 SJ/rxaScF9xxJ43Me+3dtGYwaaCSlchcAOnx8qZvKtaDIF0KPbuJge8xqEqcCswi23
-	 zyNNcqRfFsBfSU2wNRRavAmCD8P4QIiFxKQlJ1K8=
-Date: Tue, 25 Feb 2025 09:24:45 -0800
-From: Shyam Saini <shyamsaini@linux.microsoft.com>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	code@tyhicks.com, christophe.leroy@csgroup.eu, hch@infradead.org,
-	mcgrof@kernel.org, frkaya@linux.microsoft.com,
-	vijayb@linux.microsoft.com, linux@weissschuh.net,
-	samitolvanen@google.com, da.gomez@samsung.com,
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org
-Subject: Re: [PATCH v3 2/4] kernel: refactor lookup_or_create_module_kobject()
-Message-ID: <20250225172445.GA28595@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
- <20250211214842.1806521-3-shyamsaini@linux.microsoft.com>
- <4039ec74-8b46-417e-ad71-eff22239b90f@suse.com>
- <87wmdjo9yp.fsf@prevas.dk>
- <e8ba9f36-e33d-4c53-9d34-ff611cb1c221@suse.com>
+	s=arc-20240116; t=1740504307; c=relaxed/simple;
+	bh=GxOQwmQiGHnba5gt1J2RmU+W0OoyNHD9HFAHgmbtgAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X27qIcujVW+lb71qk80d7lMcrfPE4ln5S2MiqAxQJAU7hHSYbmyDanJKZ6BConA2OPrdd7yxf2HkprRKXQAwm300uVlHPtriDnbSD+leJcENhqll8OzSeJZnbyZsuFtqsLFx4kO0+0SYMkhyguF007sqPMz9zcZmyTQz92AiEko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BSOEIyKg; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-472098e6e75so387111cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740504304; x=1741109104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75hfp2Z42eIGcb2goeqHLvg9bqhQMwNL1ix3XCMfK/g=;
+        b=BSOEIyKg+wqDPj297jpYLlT9DvmkW328Zxh39BLSq6YgYDjGTqp734WsNWOVHV6t1V
+         C9ujTtg174EpY8hudHrecTll7veayTfYx0z3mmwBbH85ieWVJ2UrasGjio8u1Ufi/xtZ
+         6/Vc8jmdGsnwsC6lifpC1UdqPGmtDqI+9DM/AdxQ+RyS92KvtUxD85z+7Ra2uCSwjWJr
+         rfqvP8R9OkhPIeWt2ueJMjtDEx2IjYSOqHT08moYafZx14aFKS2QctEdTuOcohUdCe9C
+         r4jPU9Upgfr80C6Vkkrzan1Sn87cfZhQmk45eaQcpjhTI5vyzWw7WnHvUEIseb5ZLzOg
+         Blww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740504304; x=1741109104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=75hfp2Z42eIGcb2goeqHLvg9bqhQMwNL1ix3XCMfK/g=;
+        b=cFAQ1b/IqG42LDV9CpaR7lY5+E1ZAuHctyOkcfMwxtDC6dZJcM+rroQjZkyRsizuf8
+         jPjD0ENVGuaewB1/jYOJo8od+Ou9n0G3gdHas9tLMvPuHKv4aLAkbXhXunigUAeDt4c0
+         JhPUnP3yBCQ2FwIII1VuorIZzMSmSYswJAiZz0rXi0lwCnGGNk/3hmA14UT4WFQwFSjQ
+         9Z1bWNTzpxb8MN9s2ZQX/Z8GLB6rf0Pu6kT/DboH8N59Eyvo2lqta8VTnia3Uck1WAvq
+         kw5Rn4csqS5sWVk3qd7ur/UaG8K0tT0rU7newXzj0QOm+h38Ou74QDQA08wtYZcTpVB1
+         Sf2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtSJdWrUZVlf+rzEyrXEzURfqw8DRb3tnacYkfR5RdnHQBATvI9Q0pQt4PzLnexeCEi1x5EPM2IlAh+EQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywrCt9OVwjPqaskM8h8uaCjQUbP2NEGGTOWdjQHnZywuHDJ3Rk
+	r3p7zJYT/Is/PkMsbnIrQSrnyc7p2uAPDt/Vj+Wm1F1/0j1O9soSfRMwCrQseAJM+MCx4+3v5to
+	7s/7I/XYV2MUeEQFSOB3RbPK59Uz55NNNJ91x
+X-Gm-Gg: ASbGnctjLDtH3boNDZyAmfuSF8HdSRXzQh0U2D2R+HiOZ/gLAuIptggTcv4mhLOXUT8
+	11GddLmKik68/ZxKadQYa/A3AuwRjVr8jVg6vPwgDhWr8d729ea7ukR4dasqM1KwzvDXHwVjq9V
+	icRNeg1RHfARwIFRgm1i4X6FSzjqZ44tbCMqrTB96O
+X-Google-Smtp-Source: AGHT+IEgCi3luOMK49RIezNsV02TX8cvdABlFxynF3pOmgArh3s4ioMJGNwkhQ3fRzLYgZez6QpvvC35o8BZxQK3q5E=
+X-Received: by 2002:ac8:7f8d:0:b0:46e:2561:e8a9 with SMTP id
+ d75a77b69052e-47376e5b001mr5537451cf.2.1740504304120; Tue, 25 Feb 2025
+ 09:25:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8ba9f36-e33d-4c53-9d34-ff611cb1c221@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
+ <20241203181839.7d0ed41c@kernel.org> <Z0/O1ivIwiVVNRf0@perf>
+ <CANn89iKms_9EX+wArf1FK7Cy3-Cr_ryX+MJ2YC8yt1xmvpY=Uw@mail.gmail.com>
+ <009e01db4620$f08f42e0$d1adc8a0$@samsung.com> <CADVnQykPo35mQ1y16WD3zppENCeOi+2Ea_2m-AjUQVPc9SXm4g@mail.gmail.com>
+ <Z4nl0h1IZ5R/KDEc@perf> <CADVnQykZYT+CTWD3Ss46aGHPp5KtKMYqKjLxEmd5DDgdG3gfDA@mail.gmail.com>
+ <CGME20250120001504epcas2p1d766c193256b4b7f79d19f61d76d697d@epcas2p1.samsung.com>
+ <Z42WaFf9+oNkoBKJ@perf> <Z6BSXCRw/9Ne1eO1@perf> <CADVnQykpHsN1rPJobKVfFGwtAJ9qwPrwG21HiunHqfykxyPD1g@mail.gmail.com>
+In-Reply-To: <CADVnQykpHsN1rPJobKVfFGwtAJ9qwPrwG21HiunHqfykxyPD1g@mail.gmail.com>
+From: Neal Cardwell <ncardwell@google.com>
+Date: Tue, 25 Feb 2025 12:24:47 -0500
+X-Gm-Features: AQ5f1JqXanvSWbiSecfhBvqTILnS-DUPnw2qWauzzQvA4KjLlHyi1MixCzeF3Xg
+Message-ID: <CADVnQymr=sst5foNOF7ydr-fUyAK6XLvRyNvnTVBV=wgPLpBBQ@mail.gmail.com>
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, 
+	dsahern@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	guo88.liu@samsung.com, yiwang.cai@samsung.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, joonki.min@samsung.com, hajun.sung@samsung.com, 
+	d7271.choe@samsung.com, sw.ju@samsung.com, 
+	"Dujeong.lee" <dujeong.lee@samsung.com>, Yuchung Cheng <ycheng@google.com>, Kevin Yang <yyd@google.com>, 
+	Xueming Feng <kuro@kuroa.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
+On Mon, Feb 24, 2025 at 4:13=E2=80=AFPM Neal Cardwell <ncardwell@google.com=
+> wrote:
+>
+> On Mon, Feb 3, 2025 at 12:17=E2=80=AFAM Youngmin Nam <youngmin.nam@samsun=
+g.com> wrote:
+> >
+> > > Hi Neal,
+> > > Thank you for looking into this issue.
+> > > When we first encountered this issue, we also suspected that tcp_writ=
+e_queue_purge() was being called.
+> > > We can provide any information you would like to inspect.
+>
+> Thanks again for raising this issue, and providing all that data!
+>
+> I've come up with a reproducer for this issue, and an explanation for
+> why this has only been seen on Android so far, and a theory about a
+> related socket leak issue, and a proposed fix for the WARN and the
+> socket leak.
+>
+> Here is the scenario:
+>
+> + user process A has a socket in TCP_ESTABLISHED
+>
+> + user process A calls close(fd)
+>
+> + socket calls __tcp_close() and tcp_close_state() decides to enter
+> TCP_FIN_WAIT1 and send a FIN
+>
+> + FIN is lost and retransmitted, making the state:
+> ---
+>  tp->packets_out =3D 1
+>  tp->sacked_out =3D 0
+>  tp->lost_out =3D 1
+>  tp->retrans_out =3D 1
+> ---
+>
+> + someone invokes "ss" to --kill the socket using the functionality in
+> (1e64e298b8 "net: diag: Support destroying TCP sockets")
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3Dc1e64e298b8cad309091b95d8436a0255c84f54a
+>
+>  (note: this was added for Android, so would not be surprising to have
+> this inet_diag --kill run on Android)
+>
+> + the ss --kill causes a call to tcp_abort()
+>
+> + tcp_abort() calls tcp_write_queue_purge()
+>
+> + tcp_write_queue_purge() sets packets_out=3D0 but leaves lost_out=3D1,
+> retrans_out=3D1
+>
+> + tcp_sock still exists in TCP_FIN_WAIT1 but now with an inconsistent sta=
+te
+>
+> + ACK arrives and causes a WARN_ON from tcp_verify_left_out():
+>
+> #define tcp_verify_left_out(tp) WARN_ON(tcp_left_out(tp) > tp->packets_ou=
+t)
+>
+> because the state has:
+>
+>  ---
+>  tcp_left_out(tp) =3D sacked_out + lost_out =3D 1
+>   tp->packets_out =3D 0
+> ---
+>
+> because the state is:
+>
+> ---
+>  tp->packets_out =3D 0
+>  tp->sacked_out =3D 0
+>  tp->lost_out =3D 1
+>  tp->retrans_out =3D 1
+> ---
+>
+> I guess perhaps one fix would be to just have tcp_write_queue_purge()
+> zero out those other fields:
+>
+> ---
+>  tp->sacked_out =3D 0
+>  tp->lost_out =3D 0
+>  tp->retrans_out =3D 0
+> ---
+>
+> However, there is a related and worse problem. Because this killed
+> socket has tp->packets_out, the next time the RTO timer fires,
+> tcp_retransmit_timer() notices !tp->packets_out is true, so it short
+> circuits and returns without setting another RTO timer or checking to
+> see if the socket should be deleted. So the tcp_sock is now sitting in
+> memory with no timer set to delete it. So we could leak a socket this
+> way. So AFAICT to fix this socket leak problem, perhaps we want a
+> patch like the following (not tested yet), so that we delete all
+> killed sockets immediately, whether they are SOCK_DEAD (orphans for
+> which the user already called close() or not) :
+>
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 28cf19317b6c2..a266078b8ec8c 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -5563,15 +5563,12 @@ int tcp_abort(struct sock *sk, int err)
+>         local_bh_disable();
+>         bh_lock_sock(sk);
+>
+> -       if (!sock_flag(sk, SOCK_DEAD)) {
+> -               if (tcp_need_reset(sk->sk_state))
+> -                       tcp_send_active_reset(sk, GFP_ATOMIC);
+> -               tcp_done_with_error(sk, err);
+> -       }
+> +       if (tcp_need_reset(sk->sk_state))
+> +               tcp_send_active_reset(sk, GFP_ATOMIC);
+> +       tcp_done_with_error(sk, err);
+>
+>         bh_unlock_sock(sk);
+>         local_bh_enable();
+> -       tcp_write_queue_purge(sk);
+>         release_sock(sk);
+>         return 0;
+>  }
+> ---
 
-Thank you for the reviews
+Actually, it seems like a similar fix was already merged into Linux v6.11:
 
-On Tue, Feb 25, 2025 at 09:33:10AM +0100, Petr Pavlu wrote:
-> On 2/21/25 11:42, Rasmus Villemoes wrote:
-> > On Thu, Feb 13 2025, Petr Pavlu <petr.pavlu@suse.com> wrote:
-> > 
-> >> On 2/11/25 22:48, Shyam Saini wrote:
-> >>> In the unlikely event of the allocation failing, it is better to let
-> >>> the machine boot with a not fully populated sysfs than to kill it with
-> >>> this BUG_ON(). All callers are already prepared for
-> >>> lookup_or_create_module_kobject() returning NULL.
-> >>>
-> >>> This is also preparation for calling this function from non __init
-> >>> code, where using BUG_ON for allocation failure handling is not
-> >>> acceptable.
-> >>
-> >> I think some error reporting should be cleaned up here.
-> >>
-> >> The current situation is that locate_module_kobject() can fail in
-> >> several cases and all these situations are loudly reported by the
-> >> function, either by BUG_ON() or pr_crit(). Consistently with that, both
-> >> its current callers version_sysfs_builtin() and kernel_add_sysfs_param()
-> >> don't do any reporting if locate_module_kobject() fails; they simply
-> >> return.
-> >>
-> >> The series seems to introduce two somewhat suboptimal cases.
-> >>
-> >> With this patch, when either version_sysfs_builtin() or
-> >> kernel_add_sysfs_param() calls lookup_or_create_module_kobject() and it
-> >> fails because of a potential kzalloc() error, the problem is silently
-> >> ignored.
-> >>
-> > 
-> > No, because (IIUC) when a basic allocation via kzalloc fails, the kernel
-> > complains loudly already; there's no reason for every caller of
-> > kmalloc() and friends to add their own pr_err("kmalloc failed"), that
-> > just bloats the kernel .text.
-> 
-> I wasn't suggesting to log a kmalloc() error specifically. The idea was
-> that if lookup_or_create_module_kobject() fails for whatever reason,
-> kernel_add_sysfs_param() and version_sysfs_builtin() should log the
-> failure to create/get the kobject.
-> 
-> > 
-> >> Similarly, in the patch #4, when module_add_driver() calls
-> >> lookup_or_create_module_kobject() and the function fails, the problem
-> >> may or may not be reported, depending on the error.
-> >>
-> >> I'd suggest something as follows:
-> >> * Drop the pr_crit() reporting in lookup_or_create_module_kobject().
-> > 
-> > No, because that reports on something other than an allocation failing
-> > (of course, it could be that the reason kobject_init_and_add or
-> > sysfs_create_file failed was an allocation failure, but it could
-> > also be something else), so reporting there is the right thing to do.
-> 
-> The error message says:
-> pr_crit("Adding module '%s' to sysfs failed (%d), the system may be unstable.\n", name, err);
-> 
-> I think it was appropriate for locate_module_kobject() to do this error
-> reporting when the function was only called by code in kernel/params.c
-> and in the boot context. Now that the patch makes the function available
-> to external callers, I'm not sure if it should remain reporting this
-> error.
-> 
-> The function itself shouldn't directly make the system unstable when it
-> fails. Each caller can appropriately determine how to handle the error.
-> Functions kernel_add_sysfs_param() and version_sysfs_builtin() don't
-> have much of an option and can only log it, but module_add_driver()
-> could roll back its operation.
-> 
+bac76cf89816b tcp: fix forever orphan socket caused by tcp_abort
 
-before this patch series [1] kset_find_obj() was called in module_add_driver()
-and the function immediately returned when no valid module_kobject was found,
+Details below.
 
-module_add_driver returns immediately if some error is encountered or module_kobject
-is not found in lookup_or_create_module_kobject()
-Since module_kobject() is anyway no-op if it [2] returns early so it shouldn't require
-any rollback, right?
+Youngmin, does your kernel have this bac76cf89816b fix? If not, can
+you please cherry-pick this fix and retest?
 
-Assuming rollback is not required for module_add_driver() in lookup_or_create_module_kobject()
-failure scenario, what should be the appropriate messaging from pr_crit() if it
-fails in module_add_driver()?
+Thanks!
+neal
 
-[1] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/base/module.c#L48
-[2] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/base/module.c#L58
+ps: details for bac76cf89816b:
 
-Thanks,
-Shyam
+commit bac76cf89816bff06c4ec2f3df97dc34e150a1c4
+Author: Xueming Feng <kuro@kuroa.me>
+Date:   Mon Aug 26 18:23:27 2024 +0800
+
+    tcp: fix forever orphan socket caused by tcp_abort
+
+    We have some problem closing zero-window fin-wait-1 tcp sockets in our
+    environment. This patch come from the investigation.
+
+    Previously tcp_abort only sends out reset and calls tcp_done when the
+    socket is not SOCK_DEAD, aka orphan. For orphan socket, it will only
+    purging the write queue, but not close the socket and left it to the
+    timer.
+
+    While purging the write queue, tp->packets_out and sk->sk_write_queue
+    is cleared along the way. However tcp_retransmit_timer have early
+    return based on !tp->packets_out and tcp_probe_timer have early
+    return based on !sk->sk_write_queue.
+
+    This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched
+    and socket not being killed by the timers, converting a zero-windowed
+    orphan into a forever orphan.
+
+    This patch removes the SOCK_DEAD check in tcp_abort, making it send
+    reset to peer and close the socket accordingly. Preventing the
+    timer-less orphan from happening.
+
+    According to Lorenzo's email in the v1 thread, the check was there to
+    prevent force-closing the same socket twice. That situation is handled
+    by testing for TCP_CLOSE inside lock, and returning -ENOENT if it is
+    already closed.
+
+    The -ENOENT code comes from the associate patch Lorenzo made for
+    iproute2-ss; link attached below, which also conform to RFC 9293.
+
+    At the end of the patch, tcp_write_queue_purge(sk) is removed because i=
+t
+    was already called in tcp_done_with_error().
+
+    p.s. This is the same patch with v2. Resent due to mis-labeled "changes
+    requested" on patchwork.kernel.org.
+
+    Link: https://patchwork.ozlabs.org/project/netdev/patch/1450773094-7978=
+-3-git-send-email-lorenzo@google.com/
+    Fixes: c1e64e298b8c ("net: diag: Support destroying TCP sockets.")
+    Signed-off-by: Xueming Feng <kuro@kuroa.me>
+    Tested-by: Lorenzo Colitti <lorenzo@google.com>
+    Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+    Reviewed-by: Eric Dumazet <edumazet@google.com>
+    Link: https://patch.msgid.link/20240826102327.1461482-1-kuro@kuroa.me
+    Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index e03a342c9162b..831a18dc7aa6d 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -4637,6 +4637,13 @@ int tcp_abort(struct sock *sk, int err)
+                /* Don't race with userspace socket closes such as tcp_clos=
+e. */
+                lock_sock(sk);
+
++       /* Avoid closing the same socket twice. */
++       if (sk->sk_state =3D=3D TCP_CLOSE) {
++               if (!has_current_bpf_ctx())
++                       release_sock(sk);
++               return -ENOENT;
++       }
++
+        if (sk->sk_state =3D=3D TCP_LISTEN) {
+                tcp_set_state(sk, TCP_CLOSE);
+                inet_csk_listen_stop(sk);
+@@ -4646,16 +4653,13 @@ int tcp_abort(struct sock *sk, int err)
+        local_bh_disable();
+        bh_lock_sock(sk);
+
+-       if (!sock_flag(sk, SOCK_DEAD)) {
+-               if (tcp_need_reset(sk->sk_state))
+-                       tcp_send_active_reset(sk, GFP_ATOMIC,
+-                                             SK_RST_REASON_NOT_SPECIFIED);
+-               tcp_done_with_error(sk, err);
+-       }
++       if (tcp_need_reset(sk->sk_state))
++               tcp_send_active_reset(sk, GFP_ATOMIC,
++                                     SK_RST_REASON_NOT_SPECIFIED);
++       tcp_done_with_error(sk, err);
+
+        bh_unlock_sock(sk);
+        local_bh_enable();
+-       tcp_write_queue_purge(sk);
+        if (!has_current_bpf_ctx())
+                release_sock(sk);
+        return 0;
 
