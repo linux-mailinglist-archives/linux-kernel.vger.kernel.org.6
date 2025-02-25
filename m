@@ -1,224 +1,202 @@
-Return-Path: <linux-kernel+bounces-531473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA069A440D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:31:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDE9A440EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3737A6E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518F43A9FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73516269820;
-	Tue, 25 Feb 2025 13:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139552690F8;
+	Tue, 25 Feb 2025 13:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVKU5PdM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PyzfEqx3"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E57267AF3;
-	Tue, 25 Feb 2025 13:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6333A1DB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490276; cv=none; b=RSY4SQWT29tk1+F3+CFRyQ7jQ4HJXWuZdapAF7b4CyBkt8n2jCUJzp6SPLLHYkeowANYfQw9Lapxqz7jEi2iAAfSF47fzEabVANCHR+MAaU9yArfDlLSEDigOrZ70pHXQSWD/Nk7nyeY0p35nN9tauTjQo2KjdbZRPJBg1BYUDo=
+	t=1740490480; cv=none; b=EVkYs8YHVbkVuUhBbr6X+xwiGKNXGzIG2WyNIMktYSna4+QiHdoOnPF83jFOEPu+qdsB2hnWDdSV/wJ969F1tOmwFJ6k3Iu1C+uOJ2E6IGKFk7pYDnEcr7Xv9FZAVCg5mzQtn3bPhUkbaIHqFPhbaWapjt9yuwXr4YeGQTckdW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490276; c=relaxed/simple;
-	bh=/xG0T3HHO8KtJyPXienzsV4NNKgXtezz1VzjO9CjT+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T0QzOkb2tlHpsYtjO9q8fx9JgJgzica9p++kk7qAO61IVsDNJw4714FyfxgaLK/xRt1YyfK5uF0M7UhyHNRZBfFLvpBqSZ8dSvQ3natmiqQm9JUFuEDkL1TgAsdp9+oPiYNVfQV4yq0ByPYSwwp76vY8CAYRAgxbdPfo2xNNY4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVKU5PdM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB604C4CEDD;
-	Tue, 25 Feb 2025 13:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740490275;
-	bh=/xG0T3HHO8KtJyPXienzsV4NNKgXtezz1VzjO9CjT+A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VVKU5PdM86DtqR1Wt2aF3udQDRTW9m3pMWCDfIEy+1LHDotjXi2A06KRXW2L2yeAw
-	 NQt5W6tMTsR+BejspVh99lgsByjeI1Eb90Vsj34PKxIewDwnUd8DmEn1t1hSNSk6VZ
-	 3KBVl4uJNF6VuyyARDYs0z31c9zQ+vY5IMp3I8hvvZNqb5HkYHFyvQTxFD7SLx4t0l
-	 6YaClksnZPqyyKhePfkLbQzz/+mGFfPMBEqmohv1Ja0w1jBcd1LnI+QIrWfwdZe7tQ
-	 AHZH++6fvRShUZiS8grCKveco/CCh1qrgcSETf9nO3/uPxnvkbMkJAoy1Xzo4PVjrj
-	 m5jgDb+7f8JMw==
-Message-ID: <ecdc2230-1ce1-4d70-a352-180f6cd29e61@kernel.org>
-Date: Tue, 25 Feb 2025 14:31:05 +0100
+	s=arc-20240116; t=1740490480; c=relaxed/simple;
+	bh=+K+g144L+ZN9DMzdDL2EkahPOa8eXTahQuhHm51dSms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcgr+2PYQP/Icn6SFB5UhVqHhX+AzjSmsGZRICftubhcOC0k7++3NNDxOGmaxYAAAcZdw3PCWXbG0pRpfjlxOXJYE1FtRNQwd1gylArcHSUXTrrwzYbs+amyl9OcV4OJdSYPL5bWTNelGggxkh9K1vt29UhFLUCDxDBgvU9+T08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PyzfEqx3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4393ee912e1so40685e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740490477; x=1741095277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1XPlcI28gI5oChrIiNVecq25q0LkKn4pW0JK0o6KpS0=;
+        b=PyzfEqx3tMbWIrtkbEqpgLBL1Z2+XGaL0w3S8dONSB2CKXRdirW4JD2Ae3z+XzPtm5
+         RD7/ipt+OD3iOV1YIKMXkGegkaw/mhrkanYUiF4IqMd0CP3rORxl0IDsJa3Weu/VFj64
+         mIZp8W4OBsv3l9IzqpJLyO0i94OFDoBFQzGiUSmV6yJRpIyZjS6qGx+AR2pc5oBuZV93
+         oh9jXzwH7EF3rsvo2i8v/1mkbpHQH06MdiqfRzyJTxO5R0vcsds2CLKwShfzANxYHQ9P
+         Fr/oCHlodzG6vRllP9R7zjjmuHsAMMYj4qPaixlN+d74z2RwTSlkkaD3/9yIRJbjttUe
+         3H8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740490477; x=1741095277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1XPlcI28gI5oChrIiNVecq25q0LkKn4pW0JK0o6KpS0=;
+        b=RC7noK07Hs8VqiYS8CVYeGhkNdOpiSs0N+7cV/wGE+L5KOP74rK9HXrCTRxJU84ldt
+         Z7n7jHt5LA68+kFg+Jh0C/M1sDMK+uzHmNL6nGY8bGLbA4xL+lhquFNqiQ6WS4/YjJ3a
+         KPvVKqBV/G063YTKjDX8ylxuxLruzMSyC5dHoipeWCO6v85WupWDhHoDiby2MpqFcCpN
+         fBRCIZcY74J4pbtEyZ0qywUSDzOZi2tuFBinsW71zbV/2Lu5sT5sn0HU1gpOsonOyk8r
+         ZKBHH7cRXWZIxyQpnsp4jIxAsIxIw35Yr55GhZHeWd4mbc4k5pzVGTXaZv83Ck3sM5pZ
+         ndjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmxMsCHKnR2e+JSpCHuayuz0MoI/1YiONkpwwUjwWslfTa/hWoRkayZ7vD8DLSa8NEVjBL/p4vuC7StLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu7OU9Ir2wmSoMDMp+cs/R5YKg7gy/R008XyutSToFG+1FZwh9
+	iE6HPd5/l1FPxW+R7zWJRpKOFfRI9LDblRPvQn8R7s2k40SyPnp28cOQ78W/uA==
+X-Gm-Gg: ASbGnctEDhAdA5GfJfxsftWDzaB48/Y7Tafn0/rGy80krJVOefgYY/vYv8pGHwa3Nib
+	Q5Y9eauStwTwyooj/Fckv9DXgeEY8T/r2EcWGlju6IVAFUZzs4wYDQrXJzkE9t5K4T0bwjJupGo
+	+UkQgHa0/ssRVU1tPS1ShLaNrQBBbumBnpFgjAFRpeanSRbne9eRqUnpxbMlMffdEX/qc8k5wpA
+	bhqv+lCH04Sh8pSssaSSLXHwHY7CrS7rJRs8GpLoJ49NK624wLMTMn16skxy5WuhEOah6l14z2l
+	o8JxXI98y3Ey9FbEmbpxyqDbBTUGnJFvNnRfhOr0MMgZdC9YQk0CqshZ/EcOeg==
+X-Google-Smtp-Source: AGHT+IFgarIShp/PegXB9yEBD9d5JJwHidwtjyIFC7IcNoRQMLs6o2EYyQwp8nXRryIOXgFHEMrOsA==
+X-Received: by 2002:a05:600c:56d1:b0:439:961d:fc7d with SMTP id 5b1f17b1804b1-43ab10378dcmr1431035e9.6.1740490476743;
+        Tue, 25 Feb 2025 05:34:36 -0800 (PST)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1546f77sm26215295e9.20.2025.02.25.05.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:34:36 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:34:32 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: page_alloc: don't steal single pages from
+ biggest buddy
+Message-ID: <Z73G6A6asz_KrGTo@google.com>
+References: <20250225001023.1494422-1-hannes@cmpxchg.org>
+ <20250225001023.1494422-2-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/11] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI to
- DP bridge nodes
-To: Ayushi Makhija <quic_amakhija@quicinc.com>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
- marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
- robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
- conor+dt@kernel.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
- quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
- quic_jesszhan@quicinc.com
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-8-quic_amakhija@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225121824.3869719-8-quic_amakhija@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225001023.1494422-2-hannes@cmpxchg.org>
 
-On 25/02/2025 13:18, Ayushi Makhija wrote:
-> +		pinctrl-0 = <&dsi0_int_pin>,
-> +				<&dsi0_cbl_det_pin>,
-> +				<&dsi1_int_pin>,
-> +				<&dsi1_cbl_det_pin>;
-> +		pinctrl-names = "default";
-> +
-> +		dsi0_int_pin: gpio2_cfg {
+On Mon, Feb 23, 2025 at 07:08:24PM -0500, Johannes Weiner wrote:
+> The fallback code searches for the biggest buddy first in an attempt
+> to steal the whole block and encourage type grouping down the line.
+> 
+> The approach used to be this:
+> 
+> - Non-movable requests will split the largest buddy and steal the
+>   remainder. This splits up contiguity, but it allows subsequent
+>   requests of this type to fall back into adjacent space.
+> 
+> - Movable requests go and look for the smallest buddy instead. The
+>   thinking is that movable requests can be compacted, so grouping is
+>   less important than retaining contiguity.
+> 
+> c0cd6f557b90 ("mm: page_alloc: fix freelist movement during block
+> conversion") enforces freelist type hygiene, which restricts stealing
+> to either claiming the whole block or just taking the requested chunk;
+> no additional pages or buddy remainders can be stolen any more.
+> 
+> The patch mishandled when to switch to finding the smallest buddy in
+> that new reality. As a result, it may steal the exact request size,
+> but from the biggest buddy. This causes fracturing for no good reason.
+> 
+> Fix this by committing to the new behavior: either steal the whole
+> block, or fall back to the smallest buddy.
+> 
+> Remove single-page stealing from steal_suitable_fallback(). Rename it
+> to try_to_steal_block() to make the intentions clear. If this fails,
+> always fall back to the smallest buddy.
 
+Nit - I think the try_to_steal_block() changes could be a separate
+patch, the history might be easier to understand if it went:
 
-No underscores, see DTS coding style.
+[1/N] mm: page_alloc: don't steal single pages from biggest buddy
+[2/N] mm: page_alloc: drop unused logic in steal_suitable_fallback()
 
-> +			pins = "gpio2";
-> +			input-enable;
-> +			bias-disable;
-> +		};
-> +
-> +		dsi0_cbl_det_pin: gpio3_cfg {
-> +			pins = "gpio3";
-> +			bias-pull-down;
-> +		};
-> +
-> +		dsi1_int_pin: gpio10_cfg {
-> +			pins = "gpio10";
-> +			input-enable;
-> +			bias-disable;
-> +		};
-> +
-> +		dsi1_cbl_det_pin: gpio11_cfg {
-> +			pins = "gpio11";
-> +			bias-pull-down;
-> +		};
-> +	};
-> +
-> +	i2c-mux@70 {
-> +		compatible = "nxp,pca9543";
-> +		#address-cells = <1>;
-> +
-> +		#size-cells = <0>;
-> +		reg = <0x70>;
-> +
-> +		i2c@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			anx_bridge_1: anx7625@58 {
+(But not a big deal, it's not that hard to follow as-is).
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>  static __always_inline struct page *
+>  __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
+> @@ -2291,45 +2289,35 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
+>  		if (fallback_mt == -1)
+>  			continue;
+>  
+> -		/*
+> -		 * We cannot steal all free pages from the pageblock and the
+> -		 * requested migratetype is movable. In that case it's better to
+> -		 * steal and split the smallest available page instead of the
+> -		 * largest available page, because even if the next movable
+> -		 * allocation falls back into a different pageblock than this
+> -		 * one, it won't cause permanent fragmentation.
+> -		 */
+> -		if (!can_steal && start_migratetype == MIGRATE_MOVABLE
+> -					&& current_order > order)
+> -			goto find_smallest;
+> +		if (!can_steal)
+> +			break;
+>  
+> -		goto do_steal;
+> +		page = get_page_from_free_area(area, fallback_mt);
+> +		page = try_to_steal_block(zone, page, current_order, order,
+> +					  start_migratetype, alloc_flags);
+> +		if (page)
+> +			goto got_one;
+>  	}
+>  
+> -	return NULL;
+> +	if (alloc_flags & ALLOC_NOFRAGMENT)
+> +		return NULL;
 
+Is this a separate change? Is it a bug that we currently allow
+stealing a from a fallback type when ALLOC_NOFRAGMENT? (I wonder if
+the second loop was supposed to start from min_order).
 
-> +				compatible = "analogix,anx7625";
-> +				reg = <0x58>;
-> +				interrupt-parent = <&io_expander>;
-> +				interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +				enable-gpios = <&io_expander 1 0>;
-> +				reset-gpios = <&io_expander 0 0>;
-
-Use proper defines.
-
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					dsi2dp_bridge_1_in: port@0 {
-> +						reg = <0>;
-> +
-> +						anx7625_1_in: endpoint {
-> +							remote-endpoint = <&mdss0_dsi0_out>;
-> +						};
-> +					};
-> +
-> +					dsi2dp_bridge_1_out: port@1 {
-> +						reg = <1>;
-> +
-> +						anx7625_1_out: endpoint { };
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		i2c@1 {
-> +			reg = <1>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			anx_bridge_2: anx7625@58 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +				compatible = "analogix,anx7625";
-> +				reg = <0x58>;
-> +				interrupt-parent = <&io_expander>;
-> +				interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
-> +				enable-gpios = <&io_expander 9 0>;
-> +				reset-gpios = <&io_expander 8 0>;
-
-
-
-Best regards,
-Krzysztof
+>  
+> -find_smallest:
+> +	/* No luck stealing blocks. Find the smallest fallback page */
+>  	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
+>  		area = &(zone->free_area[current_order]);
+>  		fallback_mt = find_suitable_fallback(area, current_order,
+>  				start_migratetype, false, &can_steal);
+> -		if (fallback_mt != -1)
+> -			break;
+> -	}
+> -
+> -	/*
+> -	 * This should not happen - we already found a suitable fallback
+> -	 * when looking for the largest page.
+> -	 */
+> -	VM_BUG_ON(current_order > MAX_PAGE_ORDER);
+> +		if (fallback_mt == -1)
+> +			continue;
+>  
+> -do_steal:
+> -	page = get_page_from_free_area(area, fallback_mt);
+> +		page = get_page_from_free_area(area, fallback_mt);
+> +		page_del_and_expand(zone, page, order, current_order, fallback_mt);
+> +		goto got_one;
+> +	}
+>  
+> -	/* take off list, maybe claim block, expand remainder */
+> -	page = steal_suitable_fallback(zone, page, current_order, order,
+> -				       start_migratetype, alloc_flags, can_steal);
+> +	return NULL;
+>  
+> +got_one:
+>  	trace_mm_page_alloc_extfrag(page, order, current_order,
+>  		start_migratetype, fallback_mt);
 
