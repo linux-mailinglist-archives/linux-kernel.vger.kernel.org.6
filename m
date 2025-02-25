@@ -1,148 +1,228 @@
-Return-Path: <linux-kernel+bounces-530585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E014A43555
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:33:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE2BA4355A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F8B17BE52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC2B1894428
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56922561B1;
-	Tue, 25 Feb 2025 06:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD85225742A;
+	Tue, 25 Feb 2025 06:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gz7sn1VL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XNRh+F6H"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F498AD51
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B139AD51;
+	Tue, 25 Feb 2025 06:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465174; cv=none; b=lRNIn3F+TMq/yJ9mbl0/cG13Uqb5WXitdtJ6aZMdqAjNyywuNRNM6vsRDctSE9yHgVSM06LDk5jn57QBACtfu9e8zRtncVNRW9DARRDr0dOJVLhwoiTGpnqN++aIux1E/2MBurOFe2povO4eR9A00eB8bHjzKvjnxtjhfO+xdiE=
+	t=1740465320; cv=none; b=fus8o/xik+lyDcET63+SVBbCdV+hM+LNHIzoF83VkuelBUsuN+XH87tjC8LJFQV6aOYiAy8UpvFplQsvMcjt67vON8Erk582//wnfeT86kke4nGMEKriOmTKUyUTQR2Gsal6dCpL/vvDEdQAGmciOe8da1rHDPPNPHYPms460YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465174; c=relaxed/simple;
-	bh=ZmFkko51tUdOwMWfv5DTYwJfN7Ad/CP8h2kypZyODsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMmOgWos0QNkIIlGr7lmxVUR9qIzKKHv/ZlVCUuPuPLG4JJdaOkbGtqcIIiEUgzzS+kWcv93UxAm8ozwHkjSsaPQ4O5y8SLtCIeFRFQXSgfEvyD3fXEmLgIAKmIbi8bU6ElQu20Ytvvhb3vW+40LyUd4grlcJZBgywi++HyFuzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gz7sn1VL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740465171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GAHGRiVe6gULuxxP81ZlSf4CThjS+6BqPeeqGS0Icyk=;
-	b=gz7sn1VL01j7cQTgd9e3HniaGx7jibzwhTLIdVzt2InkEodPymHhtiDhpdkxwSIQo0qhr6
-	pCCJCuWzdROj9GGg57t60PE62hwBXDc5ASDH7h+j6u0OWLpxdyrQvKeAm/42mIuQmwuruu
-	AeGuEIl8+2+3oyKT5CdI4W2MVPsj4Zs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-496--Ue5qIGBMlW6w7bKR0nvlA-1; Tue,
- 25 Feb 2025 01:32:49 -0500
-X-MC-Unique: -Ue5qIGBMlW6w7bKR0nvlA-1
-X-Mimecast-MFC-AGG-ID: -Ue5qIGBMlW6w7bKR0nvlA_1740465167
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D82619560B5;
-	Tue, 25 Feb 2025 06:32:46 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61F8D1800352;
-	Tue, 25 Feb 2025 06:32:43 +0000 (UTC)
-Date: Tue, 25 Feb 2025 14:32:39 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] mm, swap: don't update the counter up-front
-Message-ID: <Z71kB6iC50io8zwS@MiWiFi-R3L-srv>
-References: <20250224180212.22802-1-ryncsn@gmail.com>
- <20250224180212.22802-5-ryncsn@gmail.com>
+	s=arc-20240116; t=1740465320; c=relaxed/simple;
+	bh=hwjuFEuMnfB4O8VUaO04m6uezZ4P55OMG/iVFvWgbNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PGSMbP0WthAoAHgUDo1jxCVcgOO043EcowacN5H7N/6BvvFzMQ0JHiSMWQJpLzXO4rnFgv310xHR5BjF1dglUNzNflW35WQ1H5aHFe6KOYn6ZuHfPZV7GYQGE/Np3dLY5WIn+OlyaVZ58iGhBXuVU0kj042F0S60QjkAKtwjfww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XNRh+F6H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOmDJ015364;
+	Tue, 25 Feb 2025 06:34:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G5wLAQ2SISBLFUCx4diUD5E+j7DrZlbJZLbDRxONCcs=; b=XNRh+F6HPPj7WMD/
+	qm0tFXE+cj/vzmsJ1iBtIQWg7e/QfAil8yR7ZfSM4eFlfmxdtdHRPs6UB3VBR8k+
+	PU7gom9MjlSH12YvVpKFzJFjC8+PfDIGDYzfGSznNFcrkD9qK4SV8AsRLntX7mEe
+	g5mwrILTYGK047J/+iLz7kXAPwb7/6oe4jtoqUdRbowl21rDfI4e4peOA8DKjp5j
+	hMYzlxZ5XNu6Ih/x75dN+nqnHkxDevAQXKb3Duf7l4vQiMvw/QPR1XHh8tLzqtMZ
+	tSQcZgv+538ttx8iJX5Phu861vuZk9ofjTZ+g0f7yfywAaHACxwzJ/LfS+LOMvPl
+	d1btdQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 450kqg404y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 06:34:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P6YoRA020803
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 06:34:50 GMT
+Received: from [10.216.12.26] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
+ 2025 22:34:43 -0800
+Message-ID: <891c0e28-dda6-4025-8455-4033f9b3406a@quicinc.com>
+Date: Tue, 25 Feb 2025 12:04:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224180212.22802-5-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] drm/msm/a6xx: Fix gpucc register block for A621
+To: Rob Clark <robdclark@gmail.com>
+CC: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Jie Zhang
+	<quic_jiezh@quicinc.com>,
+        Rob Clark <robdclark@chromium.org>
+References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
+ <20250213-a623-gpu-support-v1-1-993c65c39fd2@quicinc.com>
+ <CAF6AEGvDR1md6D2dnqJWOW5v3t2wnaC29VD1fyX5q48bzqEkHQ@mail.gmail.com>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <CAF6AEGvDR1md6D2dnqJWOW5v3t2wnaC29VD1fyX5q48bzqEkHQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: t7CXTnGOgrqsMkH-nPVXS7XAht9tiN4n
+X-Proofpoint-ORIG-GUID: t7CXTnGOgrqsMkH-nPVXS7XAht9tiN4n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_02,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250041
 
-On 02/25/25 at 02:02am, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+On 2/18/2025 11:52 PM, Rob Clark wrote:
+> On Thu, Feb 13, 2025 at 8:10 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>
+>> From: Jie Zhang <quic_jiezh@quicinc.com>
+>>
+>> Adreno 621 has a different memory map for GPUCC block. So update
+>> a6xx_gpu_state code to dump the correct set of gpucc registers.
+>>
+>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 13 ++++++++++---
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h | 17 +++++++++++++++++
+>>  2 files changed, 27 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> index 0fcae53c0b14..2c10474ccc95 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> @@ -1214,12 +1214,12 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
+>>         struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+>>
+>>         a6xx_state->gmu_registers = state_kcalloc(a6xx_state,
+>> -               3, sizeof(*a6xx_state->gmu_registers));
+>> +               4, sizeof(*a6xx_state->gmu_registers));
+>>
+>>         if (!a6xx_state->gmu_registers)
+>>                 return;
+>>
+>> -       a6xx_state->nr_gmu_registers = 3;
+>> +       a6xx_state->nr_gmu_registers = 4;
 > 
-> The counter update before allocation design was useful to avoid
-> unnecessary scan when device is full, so it will abort early if the
-> counter indicates the device is full. But that is an uncommon case,
-> and now scanning of a full device is very fast, so the up-front update
-> is not helpful any more.
-> 
-> Remove it and simplify the slot allocation logic.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/swapfile.c | 18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
+> nit, this and splitting out a6xx_gpucc_reg from a6xx_gmu_cx_registers
+> could probably be it's own commit
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+Ack. Will split this patch.
+
+-Akhil
 
 > 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 6f2de59c6355..db836670c334 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1201,22 +1201,10 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
->  	int order = swap_entry_order(entry_order);
->  	unsigned long size = 1 << order;
->  	struct swap_info_struct *si, *next;
-> -	long avail_pgs;
->  	int n_ret = 0;
->  	int node;
->  
->  	spin_lock(&swap_avail_lock);
-> -
-> -	avail_pgs = atomic_long_read(&nr_swap_pages) / size;
-> -	if (avail_pgs <= 0) {
-> -		spin_unlock(&swap_avail_lock);
-> -		goto noswap;
-> -	}
-> -
-> -	n_goal = min3((long)n_goal, (long)SWAP_BATCH, avail_pgs);
-> -
-> -	atomic_long_sub(n_goal * size, &nr_swap_pages);
-> -
->  start_over:
->  	node = numa_node_id();
->  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node], avail_lists[node]) {
-> @@ -1250,10 +1238,8 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
->  	spin_unlock(&swap_avail_lock);
->  
->  check_out:
-> -	if (n_ret < n_goal)
-> -		atomic_long_add((long)(n_goal - n_ret) * size,
-> -				&nr_swap_pages);
-> -noswap:
-> +	atomic_long_sub(n_ret * size, &nr_swap_pages);
-> +
->  	return n_ret;
->  }
->  
-> -- 
-> 2.48.1
+> BR,
+> -R
 > 
+>>
+>>         /* Get the CX GMU registers from AHB */
+>>         _a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[0],
+>> @@ -1227,6 +1227,13 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
+>>         _a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[1],
+>>                 &a6xx_state->gmu_registers[1], true);
+>>
+>> +       if (adreno_is_a621(adreno_gpu))
+>> +               _a6xx_get_gmu_registers(gpu, a6xx_state, &a621_gpucc_reg,
+>> +                       &a6xx_state->gmu_registers[2], false);
+>> +       else
+>> +               _a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gpucc_reg,
+>> +                       &a6xx_state->gmu_registers[2], false);
+>> +
+>>         if (!a6xx_gmu_gx_is_on(&a6xx_gpu->gmu))
+>>                 return;
+>>
+>> @@ -1234,7 +1241,7 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
+>>         gpu_write(gpu, REG_A6XX_GMU_AO_AHB_FENCE_CTRL, 0);
+>>
+>>         _a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[2],
+>> -               &a6xx_state->gmu_registers[2], false);
+>> +               &a6xx_state->gmu_registers[3], false);
+>>  }
+>>
+>>  static struct msm_gpu_state_bo *a6xx_snapshot_gmu_bo(
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+>> index dd4c28a8d923..e545106c70be 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+>> @@ -363,6 +363,9 @@ static const u32 a6xx_gmu_cx_registers[] = {
+>>         0x51e0, 0x51e2, 0x51f0, 0x51f0, 0x5200, 0x5201,
+>>         /* GMU AO */
+>>         0x9300, 0x9316, 0x9400, 0x9400,
+>> +};
+>> +
+>> +static const u32 a6xx_gmu_gpucc_registers[] = {
+>>         /* GPU CC */
+>>         0x9800, 0x9812, 0x9840, 0x9852, 0x9c00, 0x9c04, 0x9c07, 0x9c0b,
+>>         0x9c15, 0x9c1c, 0x9c1e, 0x9c2d, 0x9c3c, 0x9c3d, 0x9c3f, 0x9c40,
+>> @@ -373,6 +376,17 @@ static const u32 a6xx_gmu_cx_registers[] = {
+>>         0xbc00, 0xbc16, 0xbc20, 0xbc27,
+>>  };
+>>
+>> +static const u32 a621_gmu_gpucc_registers[] = {
+>> +       /* GPU CC */
+>> +       0x9800, 0x980e, 0x9c00, 0x9c0e, 0xb000, 0xb004, 0xb400, 0xb404,
+>> +       0xb800, 0xb804, 0xbc00, 0xbc05, 0xbc14, 0xbc1d, 0xbc2a, 0xbc30,
+>> +       0xbc32, 0xbc32, 0xbc41, 0xbc55, 0xbc66, 0xbc68, 0xbc78, 0xbc7a,
+>> +       0xbc89, 0xbc8a, 0xbc9c, 0xbc9e, 0xbca0, 0xbca3, 0xbcb3, 0xbcb5,
+>> +       0xbcc5, 0xbcc7, 0xbcd6, 0xbcd8, 0xbce8, 0xbce9, 0xbcf9, 0xbcfc,
+>> +       0xbd0b, 0xbd0c, 0xbd1c, 0xbd1e, 0xbd40, 0xbd70, 0xbe00, 0xbe16,
+>> +       0xbe20, 0xbe2d,
+>> +};
+>> +
+>>  static const u32 a6xx_gmu_cx_rscc_registers[] = {
+>>         /* GPU RSCC */
+>>         0x008c, 0x008c, 0x0101, 0x0102, 0x0340, 0x0342, 0x0344, 0x0347,
+>> @@ -386,6 +400,9 @@ static const struct a6xx_registers a6xx_gmu_reglist[] = {
+>>         REGS(a6xx_gmu_gx_registers, 0, 0),
+>>  };
+>>
+>> +static const struct a6xx_registers a6xx_gpucc_reg = REGS(a6xx_gmu_gpucc_registers, 0, 0);
+>> +static const struct a6xx_registers a621_gpucc_reg = REGS(a621_gmu_gpucc_registers, 0, 0);
+>> +
+>>  static u32 a6xx_get_cp_roq_size(struct msm_gpu *gpu);
+>>  static u32 a7xx_get_cp_roq_size(struct msm_gpu *gpu);
+>>
+>>
+>> --
+>> 2.45.2
+>>
 
 
