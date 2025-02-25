@@ -1,86 +1,71 @@
-Return-Path: <linux-kernel+bounces-531454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B21A440AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C5EA440AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F01919C7D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B48A19E09EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865AC269895;
-	Tue, 25 Feb 2025 13:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90E8269892;
+	Tue, 25 Feb 2025 13:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fd9Qrxgk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mXUnjh5L"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2828C26981A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7973A269837
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489711; cv=none; b=bZjZUQBeehGpWPFwVbQdf3uvaeT7gPqyuoQm12agAQ3PKreO3lzspVA3dbeP0kJADBtRtypZzVMs7uVqPMPtA4QFjue1FgQIeQD7WNse+X3P0Rzv+XoBGS9H5ba9MDwNTXN2cNwNP9ChV7w7IZMgP16jL5E7Pgr1/QSdecvbEoI=
+	t=1740489738; cv=none; b=eiV4KOfaaWAIQMKiDiO8XK/b5GqakSsZfF7yTdWq7R02h9cT5cK037EIY4yt4BcK6H4NBP9Hg41GaQeDPuVDQ4HtSMsIOjjDyXLGA+B5ZgMIIq/wxH8uadwQhJdn4oWJ1dHoCpGHoRZKFqhU77JIvJzxp3Tn5mR6fiMCsiWnDJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489711; c=relaxed/simple;
-	bh=OpbzeKkRseA7inZVXOnlUwbCIzsHXlbkxgmG5l4Zwig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMnkMLVqbZ4QJjMZgjzugINrN3aTZJJPymXVajQqCEmrOjc6cBxS3ASd15/IUD1dDhY5EHxAZgjSprBuF5NuYmo/3Su8D5y6bWGBFyGzn6ngk4AIoCxzRbPabHP4/VfBadVEFWxxblkrvQamPz8qncdAKm6l1mcxIfmOrdsJ0hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fd9Qrxgk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8e10v009176
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:21:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QHtRyNjcOSVP/X/SiQO9BwjBFj2Ol265XSaU4JsAGS4=; b=fd9QrxgkIXPu0joi
-	ufsVtuT41EQz+S4oUzFwaBrP2XXiUQucdBdOdpO4Gip0g6kMGe0Xkjk86ZbhCSUC
-	6zVxanSN11+/NYFGTw5HpWzDldgxtgX57C4WHkWqujZNTygJOZZK3cZYdyeGQ6zj
-	Oh3o8AWhbfyAlWQyk6mUgODOZIhPBulQBL15HkO86WdkKvNjNm8O2zNIi/i3rE2a
-	PhUj1qSqEraZRCRySqOul3phEIR/DNrQgKHuH6MUR44mo4AJK7YCWGWAfQj/FvK+
-	kBEZHLoBPA+B7SFdcmlaSXgaHaK1UI15//38Dt/EEuhOIkcckAnU9eUbSIeSYKBm
-	Tec9lg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6y6ry2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:21:48 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e4546f8c47so12435846d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:21:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489708; x=1741094508;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHtRyNjcOSVP/X/SiQO9BwjBFj2Ol265XSaU4JsAGS4=;
-        b=mczCYa9uXDKgy1hZ6OFO/WiOYJGIV21L6bJJF6hwbCZKn22tF+6KqtTsUxiEBCBgs2
-         TtUqc5IfGdyqsQ4OC3W/ZD/U7wtOCeE4ovFEVAmp7gxtHEoY7PHDHt4M7CtqFExKEcLb
-         vchlDztiPlAYK94ylv6BgEeW7hIIkp1vkDshoHUGcgUHmz626XxEkUKMrmeXsLJzSE9Q
-         FqyTRlBKqcdKjtXYkJ/J/OYssQOGzYYIn/rjVj5NtLSiH174VlYPP37Bf5YyiiWpF/97
-         QpR0c3+YEdyuOnIsUMnDKVmfQ5dTz4p0/0/JGMa50e8htI2rkwWtCOvfGtNF3P0xRBTM
-         LzLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGcUwnqtUeUAwiTRqdLbQdfHK/efIdCR52IiBWzS4VQxEiru9+J3eVYavzvpD3cfosmtVwaUZNzjb7DNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFQ7n27bg8AocnCgAstoVC21I8wUSPvigndK0HFycOHCTD5EPl
-	On8Ko5YT0lzPJxI2OwpUr7+Ew9Qx4faOkq1PhAfSeN8rVsUPZfd3M4nWikNQXvdxZR1r8eU+8Lo
-	qsJb1WKyI8+s2hXLR4jUMfYR7w4OdQAj6wz85ckXSZEkm5oPnpyUI1mzH3sWoLO2YW02rE/Q=
-X-Gm-Gg: ASbGncvSLZU+M5n3qitrSK3FvEkmhp8kXyLPgzWmpieydsXU95+uXUFGFWETf6bTR2O
-	T/5l6IQuy7cdagK0EGce5JMn/qF9vRRnI5ZUtK5pQBAHXroo50O9wOXsb5Zj09lp6RNH/Qmf1E8
-	0bghLUj8cGPU1cgHsESdi1s1XsGheX5lqRA16SIA650ThduhDihaYTIL2evYg5G2decqPO2V9y5
-	O0p2JBwYMgGIX35afAdTYgmdnlZVKR+i++i38ST5CcddUs87JZTEX3hnNPJo5rZvaKfdvFeop7a
-	LQAS+AGtOqy4J1/ETPUEYSt2SO1Ycy4+q94Wdaobh56sAtQzN4nvy2q8Z9g5KJe5pgPh7Q==
-X-Received: by 2002:a05:6214:e64:b0:6d8:b169:dcd1 with SMTP id 6a1803df08f44-6e6ae9ffd9bmr79440186d6.11.1740489708172;
-        Tue, 25 Feb 2025 05:21:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFGrIYl5tf/TCu42Wwk/SIStx0cn1EJs1IKMD2u2nNw8qNKzZ1EcWUmCmlg+83ihivsS6EQzQ==
-X-Received: by 2002:a05:6214:e64:b0:6d8:b169:dcd1 with SMTP id 6a1803df08f44-6e6ae9ffd9bmr79439996d6.11.1740489707762;
-        Tue, 25 Feb 2025 05:21:47 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdbf55sm142080666b.15.2025.02.25.05.21.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:21:47 -0800 (PST)
-Message-ID: <bb447c8e-e64a-44bd-8b45-f161199397ae@oss.qualcomm.com>
-Date: Tue, 25 Feb 2025 14:21:44 +0100
+	s=arc-20240116; t=1740489738; c=relaxed/simple;
+	bh=A1MKIRsT16qR5Oc7esZf/aQQCPRctrch2eyCn0kavg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=ZScJ4itYyL5uprlYjIDg1Iz1ROxZK4n+5FEg3/98481z48Skg2njiND5nQEDgkZWttO392X21/aGFEtseo1Sx8WpuMhDotH2rfCP121FTkob60Goynal3+ytxsZGGauUrny4aYkudmSpmrAnqa7cq72tn18rfXFmE3zP2JzEHLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mXUnjh5L; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250225132213euoutp02a24c1e9b46ee4d4204be7a1dccba6bbb~ndjDxHzN-0892808928euoutp02C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:22:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250225132213euoutp02a24c1e9b46ee4d4204be7a1dccba6bbb~ndjDxHzN-0892808928euoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740489733;
+	bh=sj77nEotSWCrWW5AfrsnehFc3Rhlx8if506AIuvT6AU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=mXUnjh5LyeYEVmAiGc7MKMy5LzPd96kuikntYdJ8HA1k1Xj9Rin/cYwZqLhYUT1gh
+	 SnXhpn4JObo07hfLNt8o+MTuRaaCCyWmW3wH9q7Y3gAZ1r3K7DaVuAd8Vnn/w5QxRZ
+	 dN48oSe9sBzoXsKmXu+0KULMD4SRchj0zLW/hsJ0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250225132213eucas1p20e31b16f6482e6fa19cec164ffe03e91~ndjDjBBAA2789527895eucas1p29;
+	Tue, 25 Feb 2025 13:22:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 2E.AC.20409.504CDB76; Tue, 25
+	Feb 2025 13:22:13 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250225132213eucas1p1b56c16b80858e30af1abcc1a31321c34~ndjDPVSI_1312513125eucas1p1L;
+	Tue, 25 Feb 2025 13:22:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250225132213eusmtrp256efbdaddea79d5adc1be59f866072a3~ndjDOxlXh2728727287eusmtrp2D;
+	Tue, 25 Feb 2025 13:22:13 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-fd-67bdc40585d8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 23.7E.19654.404CDB76; Tue, 25
+	Feb 2025 13:22:12 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250225132212eusmtip2d8a1c67c0d94bd1f1361b49351b6e1a3~ndjClBPxN0760707607eusmtip2V;
+	Tue, 25 Feb 2025 13:22:12 +0000 (GMT)
+Message-ID: <1eb26bfa-205b-480a-9515-df99add14a98@samsung.com>
+Date: Tue, 25 Feb 2025 14:22:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,111 +73,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8250: Add support for Lenovo
- Xiaoxin Pad Pro 2021
-To: David Wronek <david@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-References: <20250217-lenovo-j716f-v1-0-b749cf4f6cd7@mainlining.org>
- <20250217-lenovo-j716f-v1-2-b749cf4f6cd7@mainlining.org>
+Subject: Re: [PATCH 1/3] gpiolib: don't use gpiochip_get_direction() when
+ registering a chip
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	<linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
+	Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250217-lenovo-j716f-v1-2-b749cf4f6cd7@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250225-retval-fixes-v1-1-078c4c98517a@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: iWOkbi3JPehz0rSklRbgGnhHdz5BmZ5y
-X-Proofpoint-GUID: iWOkbi3JPehz0rSklRbgGnhHdz5BmZ5y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502250091
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRT2t3vdvY5m12nskJE00N4uzWhlmGaFUa0iiEhSV16m5Kttlll/
+	rCLNLSh6mWupZXlXWImm5VqEZkoPxXwVa6XmWiVZrYmvfOR2tfzvO9/5zvnO9+NHYoIL7rPJ
+	xBQVrUiRJYm4PLyybqhxqXvtE/ky0+hMSV4xQ0gM/SUcibGzkiu5OMJwJOUFI0jSYtRzw7lR
+	Re3v3aOKTN84UZZ2EzfKUTZ3O76HtyaeTko8RCvEYXG8hLZSKzet3Tuj86SRUCP7TA3yIIEK
+	gSKNGnNiAWVA8L1bqEG8CdyHYHTIiLGFA8F4mwZNTdytMBBsg0Ggr/jMZQs7ArvWSjhVfCoM
+	zuY2c5wYp/xhuOWaO8t7wYs8K+7Esyg/6DBfcem9qRjIvu/AnYt8qBMImnM+uYYxSgUD45WI
+	xUIwWwtcPJcKAk2vZsKZJD2oCMhtCGIlfvCwV+86G6gmEkZyiwmnBqj10KPbwSbwhp76BwSL
+	58B4lXOlU5+NoPBPx2RxDoH6i3kycyhYGoddZhi1EO4bxSwdAZ1X1Rx2vye86/Vib/CE85W5
+	GEvz4XSWgFUHgK7+3j/b6qZm7BwS6aa9im5aSN20NLr/voUIv4OEdLoyWU4rg1Pow4FKWbIy
+	PUUeuD81uQxN/JtXY/V9jxDTYw+sQRwS1SAgMZEP3yPRJBfw42VHMmlFaqwiPYlW1iBfEhcJ
+	+TeenpILKLlMRR+g6TRaMdXlkB6z1ZzwH7inv4+vm9gnZAXz1nLTvO2bTSqVZ5UlNT6XtUbu
+	tX3U7o4tvFur3dmNmUNMdS/x6uri+SVj/OAq5vGtvME/A4ZMffUZPtFVaLuMLYnoZ2wZ8X2P
+	5uU017XFfjhuaV07bKVUdTvKY+Zrdkq9HFsUvrEbuvrWPd9k/7X1tVetMiHj59HrC17rIscO
+	PpMmpFqlANaNK9+E+m5Q5e9d4L84P/xZjpARbF5eEVEiFgzKNl5gtGdmRBd9PdYwR13RGnrJ
+	sLn//G9i1yG3syIHT5LhV7MqwE1a3FG6zxLwWxw51PNJ2J2o/RU3Gr/Jrh+MKQ20RodBMrV/
+	3mmFcTVxW4QrE2RBizCFUvYXZQebW6YDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsVy+t/xe7osR/amGxx9YmExc9lydosV39Yw
+	Wex6sI3NYsqf5UwWm+f/YbS4vGsOmwObx+Jrt1k9Fu95yeRx59oeNo/Pm+QCWKL0bIryS0tS
+	FTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mq5ueMJWcE244kHz
+	LvYGxo/8XYycHBICJhJrt65g72Lk4hASWMoo8Wz6DjaIhIzEyWkNrBC2sMSfa11gcSGB94wS
+	57p9QWxeATuJ/umXmEBsFgFViV+X57JCxAUlTs58wgJiiwrIS9y/NYMdxBYWiJNoX/+ZBWSZ
+	iEALo8TqC/fBhjILlEhMevifDeKK04wS1xceYIJIiEvcejIfzGYTMJToegtyBQcHp4CjxPSz
+	hhAlZhJdW7sYIWx5ie1v5zBPYBSaheSOWUgmzULSMgtJywJGllWMIqmlxbnpucVGesWJucWl
+	eel6yfm5mxiBEbbt2M8tOxhXvvqod4iRiYPxEKMEB7OSCC9n5p50Id6UxMqq1KL8+KLSnNTi
+	Q4ymwMCYyCwlmpwPjPG8knhDMwNTQxMzSwNTSzNjJXFetivn04QE0hNLUrNTUwtSi2D6mDg4
+	pRqYpnE8+x5woH/zw3dljY3+jmuV1j84pOVQ5tBukzazotvB4JXZxc81M3V12Tdqds48/Taw
+	4tN7lyv294qD+X6tdN/J4X/1DqPLGhmxp3Yd+b4m2iXue5qY/qdU37voKG59umfK+qz1wm+X
+	WVpzqbO6OCwsPCKXnL+P6VEwn8uRNTuM73Ze8fSrjv/5rv74qbtFnxe/iL3zWsrcf+7kq+br
+	jeebdxvtftTao3dlUwX3y5u9+yw187l2neNunrx8Vn50pkrF9ND4iImPCn46Wu/9XvPMrclh
+	W776ui+uQRNr3T7PuHqT6/GFLwfXN8wWv+0mffr6zysKvEwlUws1OzirT4ZtYrn79d/VbTW1
+	a+5VK7EUZyQaajEXFScCADlLNL05AwAA
+X-CMS-MailID: 20250225132213eucas1p1b56c16b80858e30af1abcc1a31321c34
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250225115633eucas1p12d5b3bd5cf51d936b62edcd7323ddbcc
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250225115633eucas1p12d5b3bd5cf51d936b62edcd7323ddbcc
+References: <20250225-retval-fixes-v1-0-078c4c98517a@linaro.org>
+	<CGME20250225115633eucas1p12d5b3bd5cf51d936b62edcd7323ddbcc@eucas1p1.samsung.com>
+	<20250225-retval-fixes-v1-1-078c4c98517a@linaro.org>
 
-On 17.02.2025 12:32 PM, David Wronek wrote:
-> Add the initial devicetree for the Lenovo Xiaoxin Pad Pro 2021 Android
-> tablet with the following features:
-> 
-> - Wi-Fi and Bluetooth (QCA6390)
-> - Detachable keyboard & touchpad accessory (Connected to an MCU)
-> - Fuel gauge (TI BQ27541)
-> - USB
-> - UFS
-> - Buttons
-> - Remoteprocs
-> - simple-framebuffer
-> 
-> Signed-off-by: David Wronek <david@mainlining.org>
+On 25.02.2025 12:56, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> During chip registration we should neither check the return value of
+> gc->get_direction() nor hold the SRCU lock when calling it. The former
+> is because pin controllers may have pins set to alternate functions and
+> return errors from their get_direction() callbacks. That's alright - we
+> should default to the safe INPUT state and not bail-out. The latter is
+> not needed because we haven't registered the chip yet so there's nothing
+> to protect against dynamic removal. In fact: we currently hit a lockdep
+> splat. Revert to calling the gc->get_direction() callback directly not
+> not checking its value.
+>
+> Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
+> Fixes: e623c4303ed1 ("gpiolib: sanitize the return value of gpio_chip::get_direction()")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/81f890fc-6688-42f0-9756-567efc8bb97a@samsung.com/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+>   drivers/gpio/gpiolib.c | 20 ++++----------------
+>   1 file changed, 4 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e8678a6c82ea..31d400b10167 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1082,24 +1082,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>   
+>   		desc->gdev = gdev;
+>   
+> -		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+> -			ret = gpiochip_get_direction(gc, desc_index);
+> -			if (ret < 0)
+> -				/*
+> -				 * FIXME: Bail-out here once all GPIO drivers
+> -				 * are updated to not return errors in
+> -				 * situations that can be considered normal
+> -				 * operation.
+> -				 */
+> -				dev_warn(&gdev->dev,
+> -					 "%s: get_direction failed: %d\n",
+> -					 __func__, ret);
+> -
+> -			assign_bit(FLAG_IS_OUT, &desc->flags, !ret);
+> -		} else {
+> +		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index))
+> +			assign_bit(FLAG_IS_OUT, &desc->flags,
+> +				   !gc->get_direction(gc, desc_index));
+> +		else
+>   			assign_bit(FLAG_IS_OUT,
+>   				   &desc->flags, !gc->direction_input);
+> -		}
+>   	}
+>   
+>   	ret = of_gpiochip_add(gc);
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-[...]
-
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&volume_up_n>;
-
-property-n
-property-names
-
-please (file-wide)
-
-[...]
-
-> +&i2c1 {
-> +	clock-frequency = <1000000>;
-> +	status = "okay";
-
-Please add a newline before status (file-wide)
-> +
-> +	touchpad@60 {
-> +		compatible = "hid-over-i2c";
-> +		reg = <0x60>;
-> +
-> +		vdd-supply = <&vreg_l16a_3p3>;
-> +		vddl-supply = <&vreg_l8c_1p8>;
-> +
-> +		interrupt-parent = <&tlmm>;
-> +		interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
-
-interrupts-extended
-
-also please align the property order with x1e80100-crd.dtsi
-
-[...]
-
-> +&i2c4 {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	/* onsemi NB7VPQ904M USB redriver @ 19 */
-> +	/* CS35L41 audio amp @ 40 */
-> +	/* CS35L41 audio amp @ 41 */
-> +	/* CS35L41 audio amp @ 42 */
-> +	/* CS35L41 audio amp @ 43 */
-
-All of them have a driver nowadays, should be trivial to hook up :)
-
-[...]
-
-> +&i2c15 {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	/* SMB1390 charger @ 10 */
-> +	/* ES7210 audio ADC @ 40 */
-> +	/* FSA4480 USB audio switch @ 43 */
-
-FSA4480 also has a driver
-
-Konrad
 
