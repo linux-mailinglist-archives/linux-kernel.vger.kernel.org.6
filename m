@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-531476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F8EA440FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:38:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8632A440EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:35:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE8188D001
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56873A7CBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF5826982F;
-	Tue, 25 Feb 2025 13:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4951A26981C;
+	Tue, 25 Feb 2025 13:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVGsj+OK"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCXVaAsm"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8EC268FF8;
-	Tue, 25 Feb 2025 13:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520943A1DB;
+	Tue, 25 Feb 2025 13:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490510; cv=none; b=YVw3xvIHFsr2GsE3B7PavYo3qQ0t/QsrhO22h+6od4VXVdTjwdRtdWhNLyipN+L/HyFloqXO2hmV5E1eO2eOcivJyfwc1Qp6yzYXPoKewJ4BSm9cH44VJHux14lvdX8fDig5YZuoH6xvR/HKhnLOzA78MLx2jjHJs7GQiR/J594=
+	t=1740490414; cv=none; b=GFJ6ipogC3rim5ohfPJCFlp3LUb6/bL8dLU4DnWdBND/GH0dKD/frrb0b5D88vgCFPPrLc0EgRmSsaywyZ9k2bNjv/j9+8HSyg51B1+qLYDtYj9posEo2LaYbIqAm7zALAGR1cWlL2t7sG2NEoW6YRxYw5HmqMc9sfGcQVgudhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490510; c=relaxed/simple;
-	bh=NuCCD+5ngYYpDJxMD83rbVh1YsowJ6J+qnTPt45lKqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AGUy7IJv6aHD3PiEBzGmDP3yp6x6lT8yJMn4LTIbpov9SQXZq/f/h1zOnJ94PXhuI745jW2mY/D3PuSatqgZHienMBC1CRn/6VS7ecbdIUmt4MiOXcqQNPXHahQ0IqZ/v8xjMESGYHSXcopNzQ1s5KEJjzyFKKGVuHMnOlUjcRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVGsj+OK; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1740490414; c=relaxed/simple;
+	bh=53fpyJmRj6Rqqv2hcXrWuNnqYKt92WXS893aUdbh8v4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UCLBzlc/VynZ1D5qoLODgQ9w7KlQenzZ3GCtkOpkEcWX7RN5hsJ/2KaOua969FPCsSy+AEik1hCvkEZlOr5wCXtKpvnYQ509THP4o5VDb3jQ3/vAvCqWRrGa/1BTTk0QddoVE+oyPfc9tOJGpNHusAUDufK7an1cOrHm8d02Du0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCXVaAsm; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43994ef3872so34328895e9.2;
-        Tue, 25 Feb 2025 05:35:06 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc291f7ddbso9036613a91.1;
+        Tue, 25 Feb 2025 05:33:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740490505; x=1741095305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vgOIooV+vPcoX74/jt4WArZdHKkpzYkOZYv/SCbrW0s=;
-        b=ZVGsj+OK/4Qmcz1rjhYoCTOMdU8T+dkDszzYVq7AgfGpvyhcTYgEIJsEWaNwhxCZgn
-         gmb9C6VKfdhMWa+1DMJEZyhT5TSk/Rsq6nFsHi7YbL6V0S9qHjn5Soxz+YkDb8SqABKo
-         UYPpnlG0pfc4h3c6yXYFzPwcTR8BO13Lk4avZtHe/DFfXbZsln+9HyviLjW5ewZjGQPw
-         73btpAjExFRGIJ/qRedUsnkSRfl2L1Dp+S57hLm+jHURVL8icSo3v5FEH6MAcQb6ThxF
-         VzYc/9cuteOHkbYPCduV3NfdLPaJ+VTsTso/63qb7MUii02qA1djv2J1OVJklovfVjCR
-         htBg==
+        d=gmail.com; s=20230601; t=1740490412; x=1741095212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
+        b=VCXVaAsmFGVzcQfhS5SdnMYy/8K48x7L5EiytKOm3Sy2ZKd8HDE0vxdOajE4deyzYp
+         n6c40w2DbJOj9ZNRQK7uhUy6T9ZbVTNcYNpt5bIwSIft1t9MLBPJ+AIhAFMIgqRStphh
+         7XRQ5PZ4UwC4inkoc7X2puU2OeOzvB3tfgePklGgVRTeOselrEYvcmTinEuquZaq/IN+
+         SwL1rrIbcaIckonB8rjttWDyUi8uYrtsDDS1w/zDRzo2Bu3Gi1UhwHGnbK5Q9yIoQblq
+         lI5oVb9bktwH4B1A5y2zgkndojvblC+UmkvOY78mbXnvCZtnVbrzPEeoS4kUNNfmbvAR
+         K9Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490505; x=1741095305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vgOIooV+vPcoX74/jt4WArZdHKkpzYkOZYv/SCbrW0s=;
-        b=PIskpif3UhCU6ceVU7ZvA1xEvyaZmpRDRjhASuplunK25bTMJ7zUSsf1yPRFvq6KGe
-         e6GObfxFatz1Nq6Ku5XNMfZpRNY8x9HoZVKT3p0LfdPIdg5Zi3uLGM8p+dj+1aQ5tVid
-         e0nr5ltLWoAafs7DzOnesXqwLEy8A0IN/kBNO6ePeU2fcv7kzLzALoL+ifsu6lvvvc0U
-         DS3k6KtWSPZrjgor4qEv8ow1HdKXbC0zZB0rCxzrUB/pT7V/49Abdcz+w49jWFW8hMFZ
-         CMbcYXbVjtNdkqy7XNOswokvkLFNqXQcennq5wQi5i0kiRIUPCcdcB+5XtOud4ChQ2If
-         95DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnHvhja22XEp/wytmigGX4la2WBbS0y2qnSBJG4ODx1FdvplisqxPwUPuS58zWYxjDaXUpWez2Mg5sWdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6NWpJIHqF0vDV2L1pASla1F5FoDWoV0f7ZwPuOfqAIi9K38u4
-	cSVA9oh7dZ8voq9VuH5QSof+mVUZlzAqX+8aMsdbpLNowiQ+4lNl
-X-Gm-Gg: ASbGncuTHurKnTPQPKmnvxlCW/f1EgUmNaDnx+3CI/5ryOsKxXD9Y5MgdjKC5tgFbYq
-	EqAxpbYbjNxOWauwp5+RJfIU00P3xITpWqMpuxZaNOWTfHzn4RSaxddkAVMKhEpCCIhpOFaez1P
-	s++Dy5+cweKqx0lnOy2IVF8h3V4v7TYo+FNryAKxejP2f081hXDMrIvXtiOHjklWW9OmZng2tQy
-	AHanNJ6hyjWmkvFKiD8sg6AZ2I1GLW7ItKHWsvnjj2X/rOnDNkj8iTYWa1j2TMEN7WA5QFfTs5B
-	prO6uQeHEkJd6yzB8NK7bd43g6uEkobQIP9mSp0=
-X-Google-Smtp-Source: AGHT+IFgIttL2OJHMfhu55YCgKpGUWOUuIqNz+zWdPlkkQCExtB2rK2ob3PSZBKrarWdAmTUjdMOHg==
-X-Received: by 2002:a05:600c:1d94:b0:439:9a40:aa09 with SMTP id 5b1f17b1804b1-43ab3be40d7mr18392495e9.25.1740490505165;
-        Tue, 25 Feb 2025 05:35:05 -0800 (PST)
-Received: from localhost.localdomain ([2a02:c7c:6696:8300:7c3b:8f00:8531:eaa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab153a803sm25743175e9.12.2025.02.25.05.35.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:35:04 -0800 (PST)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: sumit.semwal@linaro.org,
-	benjamin.gaignard@collabora.com,
-	Brian.Starkey@arm.com,
-	jstultz@google.com,
-	tjmercier@google.com,
-	christian.koenig@amd.com
-Cc: linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dma-buf: Use max3() instead of nested max()
-Date: Tue, 25 Feb 2025 13:35:02 +0000
-Message-Id: <20250225133502.28084-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1740490412; x=1741095212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
+        b=WNGV0l/hZsTm23Nsw4oe0wnWePUWIUUtJWGq1SHUeUEY5ZW3LAFRhjlhPoTQBHIra/
+         ubvu6GV6CBslOPpz56QfiSiRtbBvi6vsYwXnZz0IxcvDymrLqmiG2F2kEavncEjyXdle
+         ePP+uX3C4w8EA15TEnxHWxJ/7QKdbpMQG09KilB5X4xsEEqHIgoWlA4xRmq4O8LNWaBM
+         BrSoiyjmBM1eyZ1ZbGxBK/hwSxnPiZs86MT72ohWrNOFtG6uHXbwATOtvmxKrBSRTefs
+         lTLWoFRjNc17gcSOzR7hnoyPU+u/oZ64iyM8sW9vAdDDrI+JaIufCiQX9V4yHdMKq3/P
+         6puA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZr7d8wz09y6P6CQ0J1pn0kyh7B8VGX554rd+SEqlJyVZoJTCigo4gFIrgk0USKL5W8tkWIFIxI1rOcG5t@vger.kernel.org, AJvYcCX/+UZpg42nOUmCUakdG03b6R2AaBnUZ3QzO7OEmHsEWaxhJXVeJDX2TWttu75vsuis8zKvwuKqowd4yYq9oG7/Lg==@vger.kernel.org, AJvYcCXuT/SShmhNhA4KWTNScleHwW37cpYe2zHh7xiNF2MfBSY8VFDNd/ZnmPX2p22IVI6F9O84gvEzYPbh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDdzMWMaOnZjVXoLD8Sb09Ab8RFXpJdXKyU4pisB6XE2T+jeKy
+	X5pSH/H+sxRiNvReBduyxaYgDYjqozfES6SjahqjPgZHRU6nl4NdBWnttOLEV/Vbl0S//4G6dtE
+	arm+YpK4uH600FpT6aEjVBq0PldA=
+X-Gm-Gg: ASbGncu4eAGavPJMp1NFo51jcx0yBJJYw4K18p8yWG6bvRu+Qc6aUiS4H5awc3PQZXz
+	/5byk0TXBlE6gdp3Sq8BZJfWuax/DSNhnxJY0m8rGWFkVNHx6jbHLiL8tfd9uZcBSQo0/tGdkd7
+	6Gp2mh
+X-Google-Smtp-Source: AGHT+IFumrADYMZTbshcR/jQQQzsoDviUuD373A59nqtY8JJ4DVQv9+RznKhnhkMPzfDVQnWCYD8iJq2w2f2vqoh2zk=
+X-Received: by 2002:a17:90b:544f:b0:2f9:cf97:56ac with SMTP id
+ 98e67ed59e1d1-2fe68a2e72dmr6336504a91.0.1740490412464; Tue, 25 Feb 2025
+ 05:33:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250225102005.408773-1-daniel.baluta@nxp.com>
+ <20250225102005.408773-2-daniel.baluta@nxp.com> <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
+In-Reply-To: <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 25 Feb 2025 15:35:08 +0200
+X-Gm-Features: AWEUYZkXV-v2aTP1kBRTGqqig6c6PuH1hUgPphPti5oZf8llKAM919qLE-PCQwU
+Message-ID: <CAEnQRZDrC4KEmOBM+LupCRSvNRxpBO0qnPaqG7HBRNeNOzO9sQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: reset: audiomix: Add reset ids for
+ EARC and DSP
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	shawnguo@kernel.org, mathieu.poirier@linaro.org, conor+dt@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
+	andersson@kernel.org, Frank.Li@nxp.com, peng.fan@nxp.com, 
+	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the well-known max3() macro instead of nesting max()
-to find the maximum between in_size, out_size and drv_size.
+On Tue, Feb 25, 2025 at 3:18=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
+de> wrote:
+>
+> On Di, 2025-02-25 at 12:19 +0200, Daniel Baluta wrote:
+> > Add reset ids used for EARC and DSP on i.MX8MP platform.
+> >
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  include/dt-bindings/reset/imx8mp-reset-audiomix.h | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >  create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
+> >
+> > diff --git a/include/dt-bindings/reset/imx8mp-reset-audiomix.h b/includ=
+e/dt-bindings/reset/imx8mp-reset-audiomix.h
+> > new file mode 100644
+> > index 000000000000..3349bf311764
+> > --- /dev/null
+> > +++ b/include/dt-bindings/reset/imx8mp-reset-audiomix.h
+> > @@ -0,0 +1,13 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> > +/*
+> > + * Copyright 2025 NXP
+> > + */
+> > +
+> > +#ifndef DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
+> > +#define DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
+> > +
+> > +#define IMX8MP_AUDIOMIX_EARC         0
+> > +#define IMX8MP_AUDIOMIX_EARC_PHY     1
+> > +#define IMX8MP_AUDIOMIX_DSP          2
+>
+> How about calling these IMX8MP_AUDIOMIX_EARC_RESET,
+> IMX8MP_AUDIOMIX_EARC_PHY_RESET, and IMX8MP_AUDIOMIX_DSP_STALL instead?
 
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- drivers/dma-buf/dma-heap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's fine with me, makes more sense.
 
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-index 3cbe87d4a464..96cb9ab5731a 100644
---- a/drivers/dma-buf/dma-heap.c
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -147,7 +147,7 @@ static long dma_heap_ioctl(struct file *file, unsigned int ucmd,
- 		in_size = 0;
- 	if ((ucmd & kcmd & IOC_OUT) == 0)
- 		out_size = 0;
--	ksize = max(max(in_size, out_size), drv_size);
-+	ksize = max3(in_size, out_size, drv_size);
- 
- 	/* If necessary, allocate buffer for ioctl argument */
- 	if (ksize > sizeof(stack_kdata)) {
--- 
-2.39.5
+Will make the change in v4. Will wait for a while for more comments.
 
+Thanks Philipp!
 
