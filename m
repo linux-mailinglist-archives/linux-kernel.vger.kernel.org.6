@@ -1,45 +1,40 @@
-Return-Path: <linux-kernel+bounces-530748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99695A437CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24376A43850
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554793B85FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520243B7215
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5FF25EFAB;
-	Tue, 25 Feb 2025 08:38:11 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB249260A40;
+	Tue, 25 Feb 2025 08:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WwmsGDcz"
+Received: from mail-m49215.qiye.163.com (mail-m49215.qiye.163.com [45.254.49.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446C1C8607;
-	Tue, 25 Feb 2025 08:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E2D262D05;
+	Tue, 25 Feb 2025 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472691; cv=none; b=br0Tmn1oGnsYB7EGMjy+PynFtDWjUqdEzbd3e/0hYBzKwXb7L1+GJMcCLn36Spikz5xrS/67pu95ID+QojOnwjgb9Dnh5xmUDHaxTDfK1h5I6JjHlSO9mjYSEgEDErjAlP68aYO4HbQ2JA1KyuOS9mzL+wSL1AvYbg1xKVFuORo=
+	t=1740473666; cv=none; b=o4NL169eaUqYotwZliX1wG9GBZn+nVpo2S3TLP34K6oyPR+bqLgLLYj8qZfkhVMC35K8NO+m2utufPbhT1iAyq0KLCHO6zOK5Avq5AeApeTxq3ZL9jXVdZSuqdcItM8BIcaiHDhFmbZ7815y/4phm7GbbXd1kBzdGw1iQDg2HpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472691; c=relaxed/simple;
-	bh=/1rQNvsIxFUtvXe2WIhVNnMewTk3RyEV8aZ7XXjztBU=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e0UP+pDgfCHTqQbYsnPFFdpqLjCPr57DHxrq0EMVcsaRclIAlYNH3ZtYzT+ngY0zOs1CI5phBCOp9PmyVSZb02VT+6GzXLtnvGCEVVkkmPxcsQ6bLNT9bK3ybLzIMzeTgBMsV2SSQF7dkVBvWwxoLJYd22H7h080tI6cPhW0Sc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z29pz3j6Vz1GDhb;
-	Tue, 25 Feb 2025 16:33:15 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3355E140203;
-	Tue, 25 Feb 2025 16:37:59 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 16:37:58 +0800
-Message-ID: <53672c20-82d1-4efa-8192-1c1d3ce15c1c@huawei.com>
-Date: Tue, 25 Feb 2025 16:37:57 +0800
+	s=arc-20240116; t=1740473666; c=relaxed/simple;
+	bh=rxlDCNHlsFY5Fl/DxdROcp97mxpJR6HH6M5R8AMv1wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SCSmklidbvpnllERpoLULXBph8qa0prgL5S3vL70wAxeMGA9umQf/p9I3DYfYsEFQPp2XgOiy7dkBLJz/BHNa4xc1cOgLrXyVqv08acRUaGowlBQrrU2hfpq24JPa2RwHpQMM93V4eTPcAeeLC5rbg5TZM18E8dsFItEx6EI5ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WwmsGDcz; arc=none smtp.client-ip=45.254.49.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.67] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id c1f11c0c;
+	Tue, 25 Feb 2025 16:38:54 +0800 (GMT+08:00)
+Message-ID: <478b8972-07b9-483b-a3ef-bdea10c4e4cc@rock-chips.com>
+Date: Tue, 25 Feb 2025 16:38:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,38 +42,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>
-Subject: Re: [PATCH v3 net-next 4/6] net: hibmcge: Add support for mac link
- exception handling feature
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20250221115526.1082660-1-shaojijie@huawei.com>
- <20250221115526.1082660-5-shaojijie@huawei.com>
- <20250224190908.1a5ba74e@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20250224190908.1a5ba74e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Subject: Re: [PATCH v6 1/2] dt-bindings: PCI: dw: rockchip: Add rk3576 support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Simon Xue <xxm@rock-chips.com>, Conor Dooley <conor+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-kernel@lists.infradead.org
+References: <20250224074928.2005744-1-kever.yang@rock-chips.com>
+ <20250224-gifted-piculet-of-amplitude-a91ecd@krzk-bin>
+Content-Language: en-US
+From: Kever Yang <kever.yang@rock-chips.com>
+In-Reply-To: <20250224-gifted-piculet-of-amplitude-a91ecd@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx0ZTVYZH0NJHRoYHR1ISkNWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a953c4253a003afkunmc1f11c0c
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OTI6ERw5EDIOHRYjHB9MLRUU
+	EB8aCRlVSlVKTE9LT0xJTEhNQ0pOVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFIT0xPNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=WwmsGDczbRBij3SrocnQVsTJaDABZZZ39b0m72Yb797JBiACL+JGw6Mh3E8ANIgWQy+mGdZx1HvDwxj7H+dVw9Oxh3vYiqupcihCxfuvIPmmjPRctB0IS4h3HQCttRJXe8NCQF9KVRQCS4Hotu39VTGVMsIUYNwyZoGzqFwsO40=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=ltPMBWdpitIAr/1lqIvGJ/KYikU2UivViANg4djpIMI=;
+	h=date:mime-version:subject:message-id:from;
 
+Hi Krzysztof,
 
-on 2025/2/25 11:09, Jakub Kicinski wrote:
-> On Fri, 21 Feb 2025 19:55:24 +0800 Jijie Shao wrote:
->> +	if (!(priv->stats.np_link_fail_cnt % HBG_NP_LINK_FAIL_RETRY_TIMES)) {
-> This adds a 64b divide which breaks the build on some 32b arches:
+     Thanks for your review.
+
+On 2025/2/24 17:28, Krzysztof Kozlowski wrote:
+> On Mon, Feb 24, 2025 at 03:49:27PM +0800, Kever Yang wrote:
+>> rk3576 is using DWC PCIe controller, with msi interrupt directly to GIC
+>> instead of using GIC ITS, so
+>> - no ITS support is required and the 'msi-map' is not required,
+>> - a new 'msi' interrupt is needed.
+>>
+>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>> ---
+>>
+>> Changes in v6:
+>> - Fix make dt_binding_check and make CHECK_DTBS=y
+>>
+>> Changes in v5:
+>> - Add constraints per device for interrupt-names due to the interrupt is
+>> different from rk3588.
+>>
+>> Changes in v4:
+>> - Fix wrong indentation in dt_binding_check report by Rob
+>>
+>> Changes in v3:
+>> - Fix dtb check broken on rk3588
+>> - Update commit message
+>>
+>> Changes in v2:
+>> - remove required 'msi-map'
+>> - add interrupt name 'msi'
+>>
+>>   .../bindings/pci/rockchip-dw-pcie-common.yaml | 41 ++++++++++++++++++-
+>>   .../bindings/pci/rockchip-dw-pcie.yaml        | 19 ++++++---
+>>   2 files changed, 52 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+>> index cc9adfc7611c..e1ca8e2f35fe 100644
+>> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+>> @@ -65,7 +65,11 @@ properties:
+>>             tx_cpl_timeout, cor_err_sent, nf_err_sent, f_err_sent, cor_err_rx,
+>>             nf_err_rx, f_err_rx, radm_qoverflow
+>>         - description:
+>> -          eDMA write channel 0 interrupt
+>> +          If the matching interrupt name is "msi", then this is the combinded
+>> +          MSI line interrupt, which is to support MSI interrupts output to GIC
+>> +          controller via GIC SPI interrupt instead of GIC its interrupt.
+>> +          If the matching interrupt name is "dma0", then this is the eDMA write
+>> +          channel 0 interrupt.
+>>         - description:
+>>             eDMA write channel 1 interrupt
+>>         - description:
+>> @@ -81,7 +85,9 @@ properties:
+>>         - const: msg
+>>         - const: legacy
+>>         - const: err
+>> -      - const: dma0
+>> +      - enum:
+>> +          - msi
+>> +          - dma0
+>>         - const: dma1
+>>         - const: dma2
+>>         - const: dma3
+>> @@ -123,4 +129,35 @@ required:
+>>   
+>>   additionalProperties: true
+>>   
+>> +anyOf:
+> There is never syntax like that. Where did you find it (so we can fix
+> it)?
 >
-> ERROR: modpost: "__umoddi3" [drivers/net/ethernet/hisilicon/hibmcge/hibmcge.ko] undefined!
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: rockchip,rk3576-pcie
+> This does not belong to common schema, but to device specific. I don't
+> see this compatible in this common schema at all.
 
-Okay, I'll fix this in the next version.
+The common schema covers rockchip-dw-pcie.yaml and rockchip-dw-pcie-ep.yaml,
 
-Thanks
-Jijie Shao
+so I though I should add the if condition here.
 
+
+>
+>> +    then:
+>> +      properties:
+> interrupts:
+>    minItems: 6
+>    maxItems: 6
+Will add this back.
+
+Thanks,
+- Kever
+>> +        interrupt-names:
+>> +          items:
+>> +            - const: sys
+>> +            - const: pmc
+>> +            - const: msg
+>> +            - const: legacy
+>> +            - const: err
+> Best regards,
+> Krzysztof
+>
+>
 
