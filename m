@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-530837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D1EA43917
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:17:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528C3A4394A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55567A95E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF4219C268F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440ED205AD5;
-	Tue, 25 Feb 2025 09:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5892266573;
+	Tue, 25 Feb 2025 09:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="VQDpfEEF"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010007.outbound.protection.outlook.com [52.103.68.7])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="1xsRNF2J"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FA21A5BA1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474483; cv=fail; b=Q/BFQOSiM8oz3Lpt3TyMQVt8iniaI4t+GE36Lgs4rAZA3f5Yh/HazmUleWtoDoFKmWZgBXgtwA06sDIgo8bdjkcnhizc2g58E47QCkRjSGkPote7o9jWsv5z8MurmyJ5A1uIzM2Yss7fQ5z0Y3HUcsg/WjT9tEbxQ7y1HLA6OPM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474483; c=relaxed/simple;
-	bh=RMrBclDnAnDsryjXfcRSCS/Kd+DVemSPN61zDtV4eeA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bwJHgcxUEYxL/oB28fYVIOEmIf36Qa+wuqRcgHvZqlxkis9x583EXmlUXQvOzax/maTKaX2s7Bqtdn1FVZGWDrwImdZHff18alY7vfAFUSLCH3H/v5LRo756wa8yawupoW11Y69VGMwYgs1Yq6xUdw+ZzeNxgdaqhSqT2mSYzRU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=VQDpfEEF; arc=fail smtp.client-ip=52.103.68.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=scDj97sQEdVmQyBr0vjYFYL/V/3SNKXyEw9HTyh9Eq9wAFoEFr7GI0xuEK1pbAkTu0OsB/SxY6IfY/FasqE+u4OHWW9Kkyb6/djoSVp2ruF27XYP8ysik2gQ3pNFC2IxPjcTZkEOxPhgclxDNdyWKZ457yTDWSSCM1dptmOwRb4SmigoBbAKYsYm+Xk8tMPBpl5trbbx4IpyyRq9aDXQsC84TJyN0LiVD6XP14670K2H1GMh6tALzv2DLWB8mVHaqmt2NzwhmXguyA1R/pFARxMMt6k4ebUjpmmTqj9fuxOPCHDb3X/ayFFYYlXc73aJfsjFkGU1y4L7Fb5YqJuevA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RMrBclDnAnDsryjXfcRSCS/Kd+DVemSPN61zDtV4eeA=;
- b=Y2s0BjFnkTSyHu2qJ7fzpHberJg0L7vh3OJGr4IKfbukUp6wTRQflu31cII/xZf3lZwmaepKTYq1ptnW8feIBQiFFzArX1GGAYNHV6wM20akTvgBNeyO+7BchthqWJEAFdaevUMPrLx7kF/NWXMWJHs/OvByBloTfvqcnaSBFMqrdpC+2X7tNOluBqIe0ALABR8Ibuj9oF+8r6ZersBXV+lC5ekPD3j5nPa64zKf1Bv8P19LZCU0CMEAJ+8Q6BULD9yzedxDrs2nTMo/G/IYNQcEGLk+yriCnnxXhsun+cGSv1bYhLZS4HhgC2P+BCCMZYwrwq5/L6eKlB9sZXYADA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RMrBclDnAnDsryjXfcRSCS/Kd+DVemSPN61zDtV4eeA=;
- b=VQDpfEEFYtURyf8/opvkk98bLBdfP66nbUBMTbNRLrRzoJGuk0NVv1HlQGTv3yvsSgt25A95FKNZezSCSTzabn+T2yN8P6pxTg6MRrWjNdMWD1qQvVWfwo/pEkZnuhsPgXREQ93ybZqDpsJq8lM9O3gAMXmXUHna4kFMA7yPeifqPYxOUel9WEVDYgKXsmeWBy4pRIPFF0wGdxa9vlH3uiVMiVqHC8ThC2hTO7bDvlW+tSsjK7amVuXFu3J7C0JrrbQGrD9uRCWZigrjbLfXPAIbalM0sJ/BvHLwxUJepF/kj8l6eHXlVlGL95ePN119KF6Xz2poXL46tp8UHeomOw==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN2PPF729037332.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c04:1::1b1) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Tue, 25 Feb
- 2025 09:07:54 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 09:07:54 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Topic: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index: AQHbhsGm46fWR/3mxEipqc6+PMbxkrNWrTuIgAD67QCAABL7QIAAANpQ
-Date: Tue, 25 Feb 2025 09:07:54 +0000
-Message-ID:
- <PN3PR01MB959719792308EBB9370993DFB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
- <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
- <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
- <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-In-Reply-To:
- <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PPF729037332:EE_
-x-ms-office365-filtering-correlation-id: d0d92b01-677c-4539-bc82-08dd557be3b6
-x-microsoft-antispam:
- BCL:0;ARA:14566002|6072599003|15080799006|461199028|7092599003|8060799006|8062599003|19110799003|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- =?utf-8?B?anF1bnJRT2ZaVVo2UytGcW5HQmYwZ3JmLzNHS3g3V1VEQ0hyUmJkNC8rRFZO?=
- =?utf-8?B?TUxuYmY4b0Y4K0ZiYjkvaGcxd2I5SlF6YVNCOG1mR0tUT1VFSDNVYTJFalBU?=
- =?utf-8?B?Mi9GMi95aFVtM092REx3eldWb0g0eEhzZWdQSGtvaGNhTVdqNnZESGcvTGdR?=
- =?utf-8?B?TUVRRXVPTTh4Y0FtdWwybWprMTlUdUVncTZyd2Q5aTZPaEcrQjlWSWdWT041?=
- =?utf-8?B?T2ZSWURzUHJ4VE56T3BKYkZPZ0kvNVlYMHRZUk1Tay9obzRFMFdMeHM3MHUv?=
- =?utf-8?B?bTBUaVJkMHJOcEFjQWVsekpad3VTL1A3eEllN2ZaeTRBN1p2SG1zYXZjT2Ft?=
- =?utf-8?B?NzJFZkd4eksraDBWOHRXVFNMTFVSQmFCTDFlMkhsdVRNbHJMWGc3ZFI5eFQ5?=
- =?utf-8?B?WE9QM2ZqY0dKQlJJL1M4RGZqbDAxQXNodmJrOGkxSkx2aDRMckdpcUJnNXBX?=
- =?utf-8?B?akt5cW9BajJJQ1I1U1RYZ3ZDbTVmWWt2UVUySEc5Mi9hNDh3L1E5aFFrNWJV?=
- =?utf-8?B?dWtTbkxOa1M2eXFIekx3NTZ5c3d3UVpYZnp2cTNHRlpGMk1GVGFKUkU2T1Vr?=
- =?utf-8?B?N2hNdmkxcHdnMEFCZUdwNFF6NWdlNzB3M1EvaEoxYmdMVDdiLzlrbWhmWXZs?=
- =?utf-8?B?dmNMTzlacWRDakxjTVNNOE45TlJ4b0ZUeTNjWEtCRk5ZcExDVHAyZEVmb05E?=
- =?utf-8?B?UGxZeDFySDh6OWtxRGRkWlR3RXhMbGdHYU54cDdER3JicU1RTnNrb0xoUkht?=
- =?utf-8?B?WmxoWFp1OFJDU1NaUkRHemF4TFdzTE56V3Z4b1ZabzFmZzE3Q3kzKzJ2bGla?=
- =?utf-8?B?VUtDcmEwazdQSVNYT3RsTmVKWkgxcndNeCtTOXVTbWJFamF1TmZmbWhvQzAz?=
- =?utf-8?B?dVNKYmZRQXhsL2p5cXBYSG1SOS9wZkJONk9WK0x0TFJpSXlUblVuL09ueU10?=
- =?utf-8?B?RkgyZzQ5RXlzaEtIQ0E1Z2JnZzhKSWZLOFZGa0UzN0YvYVoxOFJQSnM0amJ1?=
- =?utf-8?B?TVNyMGRyemg0TFZyRnBHb05Hanlhd1kyQ1lLb0ZnS3NCOUVXZUFHekhZY2lY?=
- =?utf-8?B?ZGR2Tk1IRDlkNVh1RkZZM21GNDcwNDJxTW9hbzdxbnJkQVF4S0FwSDBzNVRS?=
- =?utf-8?B?T1o4bmVJZnF6UFFIcm5SV0hMcnQ4RXMrOXcyQnB1ckc3YWlYT3dmenFnQ1pU?=
- =?utf-8?B?c2dKcFRSejBtb2VJcVJib1EybVdrVDRRVEFuR1FkaFNtS0FZUitkSVE0aU5Y?=
- =?utf-8?B?N0dtOWdSRXFZV0pyZEp5azJ1RGtFYnFsMmJ6L0hVeVh1b25FNUJ1RFFJN2R3?=
- =?utf-8?B?VE5UWkVqc09Ham03S3htc1lFRmx5dk1FVHA4RjhsN2ZuZ01lWEc2Y0xNdGh2?=
- =?utf-8?B?VnhGaGJIODRGdnFOU2pmYnhwM09SMG52TFRWVTROYlBnQmFiMEU1dDNPclZ6?=
- =?utf-8?B?ZzZBeUsxNHQ1R1lxb1NMb21SbTZFZkF2c2gxV2s0VmlHc2NLbDFjM2lTR3dS?=
- =?utf-8?Q?6/W27w=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aHh4SnBrTDlOQVhRelNQdFJNQjBkWXhpQXkyaUI5OUFkSG5pTmZIUG9leXNX?=
- =?utf-8?B?OG1xaEM5dE9SSERsNlpXeCtWQ3ZXWGdhd20vaHRqaGF0VE9UbnRsb1RJL0Rt?=
- =?utf-8?B?bzBCZ21OeFMwZFVMSEhXOXEwOHc1aEF0RjlkTlRFWGxULzF3ZjVRMWpsd3Bk?=
- =?utf-8?B?UnF6d25HZWFCemdzWWE5Rm15eXdTTTFYV1BXOUZHaG1ITVNFM3laUC9XL1VJ?=
- =?utf-8?B?UnVZTzYrdnhIdzgzNE1KSFk1THJ2UDE1eDF1eXZTbnR1ZDRBbEQxalFCMGlI?=
- =?utf-8?B?dDNOdkdRcGJzdmFlbTNIZnFET2Y0NUhKOCtOOTFGaXptakh6NzF3ZnRtL25U?=
- =?utf-8?B?ekVaWTVGMzZ3cFRtOXFSd0ZxaXZxTTBaRWxFYmFTZzBtcDVaZmJVRmI5MUpS?=
- =?utf-8?B?YzVhZ2p6VUJXcjRrTUhOUTF6VmlKS0ZpQVRWRU85VzljSHExRXRaaDlYU1dy?=
- =?utf-8?B?VGtmeVI2dFM3bUdyTFNuQWJjMnVVSVB2MUtUS1BXV1daa3ZxZEo2M0phaHYr?=
- =?utf-8?B?d1A2RElVQ0ZKL01FUVFRa20wc1ZzalRZNWE3N1RwOVU1Tmp6TWY5cTlnTWFK?=
- =?utf-8?B?Rk83QU5EM0RsQ1M0dzRjdEc4UnBKRjRMRGJWa1dtdlRNQzh0WjBNeWtMeFBV?=
- =?utf-8?B?b1JFb0ZRM0pIYjNpUXc4NE9JdXprSExTVTlLWW1na2J0eEFMcll5dUphZHli?=
- =?utf-8?B?NUJwZXluQ0FZaERYeExXMWxhcjVkSGNmOGp0VUkrOVZTdTI0MkNISy8zbUZy?=
- =?utf-8?B?WTlkbW1Pc3VTN3FFYlEzdmhRZG80NkZUOFExMVR1dDBDV2YwOVh1SXcyeGlG?=
- =?utf-8?B?V1FNUUtzbjd1WklJQ0Z0MHZTSHMwM1VEdTdEb3l2STJzcGZ3ZGQ2VmZEdlRt?=
- =?utf-8?B?d2dyOENTWTZBTGVHaEcvVnJ4RVNUNHJnZzBLMkM2MjU0WVdUNGhLU1VQTXd0?=
- =?utf-8?B?MlRiaWJrS3oza2p6MlBFTnluV2JmSVM0NDBTb242SlNPL3ZKejVYZEN4QkZU?=
- =?utf-8?B?eVlOZFNpekY3QlBZOU1YZXNqU1BGYXU5RmdRb1NxVkxOUVlwSkg5d0ZqcStj?=
- =?utf-8?B?Wm13Z0Z5bEhaeTdvYkRjME1sbW5ibGF1S3lPSVNORnZ5Tk81dmkzcXRQemM1?=
- =?utf-8?B?dmdBU1JVYUJJejVjcS9LVmd6T3Bqb2tzZ1pyTGNBUkJLdEVpSGZKU08xbjlG?=
- =?utf-8?B?aktvOU1HMXJ5bktESG1HWEVxMnJZMTJJQ0krbjBlZVkvWUszWlE4Y01Sb3Z6?=
- =?utf-8?B?MmxwSkY4NEpWUEVOQTdyWVBRbTJyMENqWVJpUVRXVXZhZFVoaThTRFhsbWFN?=
- =?utf-8?B?QURmUjJuQ2pRcHlHN3BvUVpzZkhLVm5RMGNoK3dnVkI3Ylh5bEQvamxXcnBn?=
- =?utf-8?B?ZUFLRGU1aFFHSHZNNWlsYWtLbEtEWFY5Tkp6MjRxNk13Y0xlWDBpSHh4TUpI?=
- =?utf-8?B?Q0RLK3hjOUNPeWZ2YUY5OFV5dEc1Rm1ob3lBcDlCSXFGYXYrZ3k4bkY0cDI1?=
- =?utf-8?B?Q3E2eGtoSE0yVnphTHNXRWYvYzlZRjVwVTc0SG5LZ0ZzZ1FWRG1JNXlJN0pI?=
- =?utf-8?B?cytzWFp2MEpZTkhMbmtrZVg4NHFYeXJiOUhtNDRqME02cnREMXdNc3pJR0VJ?=
- =?utf-8?Q?oeMFhOxQv7ItDwbVOw+8IkjkDxM7C6jZcAsx34JiI/AY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906DB265CDD;
+	Tue, 25 Feb 2025 09:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740474924; cv=none; b=FM+aH3Jmr9Wc8NZH+IK1MUBSNQ06LMww7hnvVVQjZ17WyHZDdN0xsIiv+wJg67isva5MSm5A7MMQbPJJLIeXlUGDrhfbmr6B5tR9+jLU9AMruRunx1CVmamFA/I9vSNs9RR/AvZZPeQ1aGEoWtE8UO4NtdozgqXa0Xx7qVwoP9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740474924; c=relaxed/simple;
+	bh=7WcjelV31lrY8G6I07VmlKtcD76/c/2s50z0eMD/3vo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QeJKV4UH8zl1TlLzbEiK/hHrlWgHmRA4MJVjDZQekAEvXyuMtcAG52Vom3f68TAHqpQfOi1FyZaqYHNorgMmOoKj0ll5yh7kPOqt7dwS++O6Fwmkyr3SfF3dCY4G6EQZdSBGUiVmJlGIu/OE/DuLCCrWH4NSYAr45sACkQ3+aRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=1xsRNF2J; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P68E9B032103;
+	Tue, 25 Feb 2025 04:15:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=NdbmMSBSFj7Txm2ujfxK89J7NWZ
+	VgZ9A3lxLDEClkFY=; b=1xsRNF2JFLOLieWIgGvkjJkufSZQYPtlHo5l+RdEUNb
+	cKWIRSwwLIVTyw9alEKqLEqi2qC5XQCpEyuYeVgPUmrH9hMUjY+IZDjo3MuOjeRO
+	3cv/VM+A6pVj0I+PHj9qedrYkKXmiKAualalNW38McC6T71E7+TAPzkWpw1747Mx
+	jrrp/eHTZtN/0+mbYfvlvsbiOxkcb+PpJ1Lw61NieJN/uii3Axt9EhP0BhNKyumA
+	mbI25p0s7eMnL37ldbrhWc4uk47p0R/ezqhTKR3yURZGyhEriLEmBwxZMBYd8jbQ
+	GP/xJtb7jiwo5MpAUAdDWZnP4D5jDcadTCBktZcNwaA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44yccanu28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 04:15:08 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51P9F7x7003897
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Feb 2025 04:15:07 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 25 Feb
+ 2025 04:15:07 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 25 Feb 2025 04:15:07 -0500
+Received: from ATORRENO-L02.ad.analog.com (ATORRENO-L02.ad.analog.com [10.116.45.25])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51P9Eof8011564;
+	Tue, 25 Feb 2025 04:14:53 -0500
+From: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Subject: [PATCH 0/2] Add support for ADP5055 triple buck regulator.
+Date: Tue, 25 Feb 2025 17:08:32 +0800
+Message-ID: <20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0d92b01-677c-4539-bc82-08dd557be3b6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 09:07:54.5927
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPF729037332
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJCIvWcC/x2MQQ5AMBAAvyJ71qQ2VvAVcShd7EE1LSJp/F3jN
+ JnDTILIQThCXyQIfEuUw2WpygLmzbiVldjsgBpJI5K6fDwDm10Z60kTZU7cYINL19aQMx94ked
+ fDuP7flGHlwdiAAAA
+X-Change-ID: 20250225-upstream-adp5055-adbe6262f984
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Alexis
+ Czezar Torreno <alexisczezar.torreno@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740474891; l=1217;
+ i=alexisczezar.torreno@analog.com; s=20250213; h=from:subject:message-id;
+ bh=7WcjelV31lrY8G6I07VmlKtcD76/c/2s50z0eMD/3vo=;
+ b=naQrGPODQ4Bge+/jRmNft5q8qlTsAtkBTUwXLov1NZGkOKIHuAkLYSrSGYjGCELSOEJsTn5xl
+ 1glTV3rSiR6DFnsXSgJCYXfRxIge85l4gZvNos6K9ztHvOwk4/Fzhr+
+X-Developer-Key: i=alexisczezar.torreno@analog.com; a=ed25519;
+ pk=XpXmJnRjnsKdDil6YpOlj9+44S+XYXVFnxvkbmaZ+10=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: F0JV4oo9XMbONpf_yyXvwkPgqzluIzCh
+X-Authority-Analysis: v=2.4 cv=SPa4VPvH c=1 sm=1 tr=0 ts=67bd8a1c cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=pX8K7AMcFWmkIJv9s54A:9 a=QEXdDO2ut3YA:10
+ a=oVHKYsEdi7-vN-J5QA_j:22
+X-Proofpoint-ORIG-GUID: F0JV4oo9XMbONpf_yyXvwkPgqzluIzCh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=983
+ spamscore=0 impostorscore=0 clxscore=1011 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250063
 
-DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDI6MzTigK9QTSwgQWRpdHlhIEdhcmcgPGdhcmdhZGl0
-eWEwOEBsaXZlLmNvbT4gd3JvdGU6DQo+IA0KPiDvu78NCj4gDQo+PiBPbiAyNSBGZWIgMjAyNSwg
-YXQgMToyN+KAr1BNLCBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4gd3Jv
-dGU6DQo+PiANCj4+IO+7v0hpDQo+PiANCj4+IEFtIDI0LjAyLjI1IHVtIDE3OjU4IHNjaHJpZWIg
-QWRpdHlhIEdhcmc6DQo+PiBbLi4uXQ0KPj4+PiANCj4+Pj4gK2NvbmZpZyBEUk1fQVBQTEVUQkRS
-TQ0KPj4+PiArICAgIHRyaXN0YXRlICJEUk0gc3VwcG9ydCBmb3IgQXBwbGUgVG91Y2ggQmFycyIN
-Cj4+Pj4gKyAgICBkZXBlbmRzIG9uIERSTSAmJiBVU0IgJiYgTU1VDQo+Pj4+ICsgICAgc2VsZWN0
-IERSTV9HRU1fU0hNRU1fSEVMUEVSDQo+Pj4+ICsgICAgc2VsZWN0IERSTV9LTVNfSEVMUEVSDQo+
-Pj4+ICsgICAgc2VsZWN0IEhJRF9BUFBMRVRCX0JMDQo+Pj4gQnR3IEkgaGF2ZSBhIGRvdWJ0IHJl
-Z2FyZGluZyB0aGlzIGRlcGVuZGVuY3kuIFdoaWxlIGhpZC1hcHBsZXRiLWJsIGhhcyBtYWRlIGlu
-dG8gdGhlIGxpbnV4LW5leHQgdHJlZSwgaXQgaGFzIHN0aWxsIG5vdCBiZWVuIG1lcmdlZCBpbnRv
-IExpbnVzJyB0cmVlLCBhbmQgbmVpdGhlciB0aGUgZHJtIHRyZWUgSSBhc3N1bWUuIEl0IHBvdGVu
-dGlhbGx5IGNvdWxkIGNhdXNlIGlzc3Vlcz8NCj4+IA0KPj4gWWVzLiBXZSBjYW5ub3QgbWVyZ2Ug
-dGhpcyBkcml2ZXIgdW50aWwgd2UgaGF2ZSB0aGlzIHN5bWJvbCBpbiBvdXIgdHJlZS4gQnV0IHRo
-YXQgd2lsbCBoYXBwZW4gc29vbmVyIG9yIGxhdGVyLg0KPj4gDQo+PiBNb3JlIHByb2JsZW1hdGlj
-IGlzIHRoYXQgeW91ciBkcml2ZXIgc2VsZWN0cyBISURfQVBQTEVUQl9CTC4gRnJvbSB3aGF0IEkn
-dmUgc2VlbiwgdGhpcyBzeW1ib2wgaXMgdXNlciBjb25maWd1cmFibGUsIHNvIHRoZSBkcml2ZXIg
-c2hvdWxkbid0IHNlbGVjdCBpdC4gWW91IG5lZWQgdG8gdXNlICdkZXBlbmRzIG9uJyBpbnN0ZWFk
-IG9mICdzZWxlY3QnIGhlcmUuDQo+IA0KPiBMb29raW5nIGF0IHRoaXMgYWdhaW4sIG1heWJlIGl0
-IHNob3VsZCBiZSBzZWxlY3RlZC4gSWYgeW91IHNlZSB0aGUga2VybmVsIGNvbmZpZyBvZiBUSU5Z
-RFJNX0hYODM1N0QsIHdoaWNoIGlzIGFsc28gaW4gZHJtL3RpbnksIGl0IGlzIHNlbGVjdGluZyBC
-QUNLTElHSFRfQ0xBU1NfREVWSUNFLg0KDQpUbyBtYWtlIHRoaW5ncyBtb3JlIGNsZWFyLCANCg0K
-MS4gaGlkLWFwcGxldGItYmwgaXMgZm9yIHRoZSBiYWNrbGlnaHQgb2YgdGhlIHRvdWNoYmFyLiBU
-aGUgRFJNIGNvZGUgcmVtYWlucyBzZXBhcmF0ZS4NCjIuIGhpZC1tdWx0aXRvdWNoIGlzIHRvIG1h
-a2UgdGhlIHRvdWNoYmFyIGEgdG91Y2ggc2NyZWVuLiBZb3UgY2FuIHN0aWxsIHVzZSB0aGUgZHJp
-dmVyIHdpdGhvdXQgdGhlIHRvdWNoIGZ1bmN0aW9uYWxpdHkuDQo=
+Introduce a regulator driver support for ADP5055. The device combines 3
+high performance buck regulators in a 43-termminal land grid array
+package. The device enables direct connection to high input voltages up
+to 18V with no preregulator. Channel 1 and 2 deliver a programmable
+output current of 3.5A or 7.5A or provide a single output with up to 14A
+in parallel operation. Channel 3 has a programmable output current of
+1.5A or 3A.
+
+Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+---
+Alexis Czezar Torreno (2):
+      dt-bindings: regulator: add adi,adp5055-regulator
+      regulator: adp5055: Add driver for adp5055
+
+ .../bindings/regulator/adi,adp5055-regulator.yaml  | 214 +++++++++
+ MAINTAINERS                                        |   7 +
+ drivers/regulator/Kconfig                          |  11 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/adp5055-regulator.c              | 490 +++++++++++++++++++++
+ 5 files changed, 723 insertions(+)
+---
+base-commit: 7fef39f0e82ff02282797d9ae2589b39b16ab614
+change-id: 20250225-upstream-adp5055-adbe6262f984
+
+Best regards,
+-- 
+Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+
 
