@@ -1,147 +1,231 @@
-Return-Path: <linux-kernel+bounces-532333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00C8A44BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:48:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEFDA44BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E7983ADD78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE41D1885BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FE2205AB6;
-	Tue, 25 Feb 2025 19:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCBD205AB6;
+	Tue, 25 Feb 2025 19:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bhnz3muZ"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wmFfJyUp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uN4AuUqZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A391A01CC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C21DF993;
+	Tue, 25 Feb 2025 19:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740512899; cv=none; b=kXJAjh6+Sb+DUsymEojQK9KhpmHu6e1VY0KkBodii4Xi/bQO/Ph9gb09sejUOcjEK5PcZ5OC7gpB0zrS05RVbwN4Blbhb9kAM32GN00JI+u4juv2dZPGVYknwdOT7VFcKXOFTOWiZw3PEtc+ny90k3nVnRitySIVKexGoZp1E18=
+	t=1740512922; cv=none; b=gF8WRzFy5xBrGSHp0e1dCg7uD+xWcFar0xRVMZ+q9ATBSvyxvA9XenJNjV5R8yIDI9ZLwWLYk6OapYs7qFMNzA7lDlmGEPWghQ0LbdeGXDxGH6/+JSyQucgyzrjI3nNhLH/khU/06i72hhWimdz7/nxdVBMvFY19NPg9TpKleGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740512899; c=relaxed/simple;
-	bh=rG4FYwP4uwFeCnkf78eqP4bAIWLedMKUoimUJa8cZj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cErx++R0dwBjTAjWTESO46U8oQDo4LSvJd3IfmzWhMRHrhcB+LK8tLOLjo4tdB/nC4B6xWgd0Bq9zmtccxZfLFtwof6DmIbeLxH93+2PgiL8b2cCp0VgDgSe4ZatpeLZWlc7DwhZ44Av68AQRra4svWoYA49JIzuYlY/FNoMG/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bhnz3muZ; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 25 Feb 2025 14:47:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740512885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740512922; c=relaxed/simple;
+	bh=txgwZilKD6tP4BJ9tdnvoSMFZfqP3OnwaGUKm139PC8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=MIQ49b12iR39x5xInRabj+N+zdwrOgalo1yXVU3vjuC4g1EGBWOrUI++xATkVSf59C1PvdFRfv3zhr5YWmr1x2fQ9PvO1TTn+5fPm8i+8hrtknwvZycFgIZNeY/HfnmOanG98a5T3QxHSfTV8XTL07EA6p2N5zYccvBXM8FGhRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wmFfJyUp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uN4AuUqZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Feb 2025 19:48:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740512919;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uwFZIGkoTfpVfZh8sx/682mASLDO1H5beOdy1xnqYQU=;
-	b=bhnz3muZfSa0rKYbHxD8+O0AMYjIMaRKsPwaKIB8wNMZnTKpypQdlPQ4rN9J3kX/cWkdEP
-	dBmvxQkAx7eehU3D2yZwqsxETwygpe+UsbOHtT05+jbWyO1ZM97ecqMI4rT2CEWBSo9PqW
-	/puXMe1xxqEiqF0nN+veP5QNQEX6Fik=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	bh=RQwJzDdD80sdNyjIsF6uMa+/hkuUoqeZArYmqkDiRdY=;
+	b=wmFfJyUp/1gDecS30rrGsqixTBNLwqMlvKhuWtzatyg0DZAW2d37wX7yx2hwbmAUh7hzKD
+	gmv7OFmFg1I0l4FLwcpANDJN59ZX+GFN2P5ggrE6IVOm+SrAqec0LLTH8Vl8vcy1qOdcbN
+	mM3w5CIuMwBTcTjrJM7ibUEdYFeCzzZ2FJRrmHu4RQaviJzNXNBa6ahUux4wx9ODqWKIef
+	DDqVjP1QElKfkqhUY3dFYKEVdHnfIcVzA7j0JUtyxggQv2vVeY4XoH/NwjH5ITakwfJK7K
+	MHPFLLRwCELXWEUNihlRMtdQppqdgXdQmU0j7ycmT3zOAgFKCTSmrg6j+lKjUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740512919;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RQwJzDdD80sdNyjIsF6uMa+/hkuUoqeZArYmqkDiRdY=;
+	b=uN4AuUqZl4CZGRC3h8ZNU7GJqFJDvQNE6EfkxmJ8qkmjk1qSUGJMRAqJz0KiIl77M0CGJR
+	cWeQ8RWhrfJ3agDA==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/urgent] perf/x86/intel: Use better start period for frequency mode
+Cc: Kan Liang <kan.liang@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250117151913.3043942-3-kan.liang@linux.intel.com>
+References: <20250117151913.3043942-3-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <174051291590.10177.16595887812337905384.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 10:54:46AM -0800, Linus Torvalds wrote:
-> On Tue, 25 Feb 2025 at 08:12, Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > I think all of this worrying about Rust not having defined its
-> > aliasing model is way overblown. Ultimately, the status quo is that
-> > each unsafe operation that has to do with aliasing falls into one of
-> > three categories:
-> >
-> > * This is definitely allowed.
-> > * This is definitely UB.
-> > * We don't know whether we want to allow this yet.
-> 
-> Side note: can I please ask that the Rust people avoid the "UD" model
-> as much as humanly possible?
-> 
-> In particular, if there is something that is undefined behavior - even
-> if it's in some "unsafe" mode, please please please make the rule be
-> that
-> 
->  (a) either the compiler ends up being constrained to doing things in
-> some "naive" code generation
-> 
-> or it's a clear UB situation, and
-> 
->  (b) the compiler will warn about it
-> 
-> IOW, *please* avoid the C model of "Oh, I'll generate code that
-> silently takes advantage of the fact that if I'm wrong, this case is
-> undefined".
-> 
-> And BTW, I think this is _particularly_ true for unsafe rust. Yes,
-> it's "unsafe", but at the same time, the unsafe parts are the fragile
-> parts and hopefully not _so_ hugely performance-critical that you need
-> to do wild optimizations.
+The following commit has been merged into the perf/urgent branch of tip:
 
-Well, the whole point of unsafe is for the parts where the compiler
-can't in general check for UB, so there's no avoiding that.
+Commit-ID:     a26b24b2e21f6222635a95426b9ef9eec63d69b1
+Gitweb:        https://git.kernel.org/tip/a26b24b2e21f6222635a95426b9ef9eec63d69b1
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Fri, 17 Jan 2025 07:19:13 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 25 Feb 2025 20:38:21 +01:00
 
-And since unsafe is required for a lot of low level data structures (vec
-and lists), even though the amount of code (in LOC) that uses unsafe
-should be tiny, underneath everything it's all over the place so if it
-disabled aliasing optimizations that actually would have a very real
-impact on performance.
+perf/x86/intel: Use better start period for frequency mode
 
-HOWEVER - the Rust folks don't have the same mindset as the C folks, so
-I believe (not the expert here, Rust folks please elaborate..) in
-practice a lot of things that would generate UB will be able to be
-caught by the compiler. It won't be like -fstrict-aliasing in C, which
-was an absolute shitshow.
+Freqency mode is the current default mode of Linux perf. A period of 1 is
+used as a starting period. The period is auto-adjusted on each tick or an
+overflow, to meet the frequency target.
 
-(There was a real lack of communication between the compiler people and
-everything else when that went down, trying to foist -fstrict-aliasing
-without even an escape hatch defined at the time should've been a
-shooting offence).
+The start period of 1 is too low and may trigger some issues:
 
-OTOH, the stacked borrows and tree borrows work is very much rooted in
-"can we define a model that works for actual code", and Rust already has
-the clearly defined escape hatches/demarcation points (e.g. UnsafeCell).
+- Many HWs do not support period 1 well.
+  https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
 
-> So the cases I'm talking about is literally re-ordering accesses past
-> each other ("Hey, I don't know if these alias or not, but based on
-> some paper standard - rather than the source code - I will assume they
-> do not"),
+- For an event that occurs frequently, period 1 is too far away from the
+  real period. Lots of samples are generated at the beginning.
+  The distribution of samples may not be even.
 
-Yep, this is treeborrows. That gives us a model of "this reference
-relates to this reference" so it's finally possible to do these
-optimizations without handwavy bs (restrict...).
+- A low starting period for frequently occurring events also challenges
+  virtualization, which has a longer path to handle a PMI.
 
-I think the one thing that's missing w.r.t. aliasing that Rust could
-maybe use is a kasan-style sanitizer, I think with treeborrows and "now
-we have an actual model for aliasing optimizations" it should be possible
-to write such a sanitizer. But the amount of code doing complicated
-enough stuff with unsafe should really be quite small, so - shouldn't be
-urgently needed. Most unsafe will be in boring FFI stuff, and there all
-aliasing optimizations get turned off at the C boundary.
+The limit_period value only checks the minimum acceptable value for HW.
+It cannot be used to set the start period, because some events may
+need a very low period. The limit_period cannot be set too high. It
+doesn't help with the events that occur frequently.
+
+It's hard to find a universal starting period for all events. The idea
+implemented by this patch is to only give an estimate for the popular
+HW and HW cache events. For the rest of the events, start from the lowest
+possible recommended value.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250117151913.3043942-3-kan.liang@linux.intel.com
+---
+ arch/x86/events/intel/core.c | 85 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index cdcebf3..cdb19e3 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3952,6 +3952,85 @@ static inline bool intel_pmu_has_cap(struct perf_event *event, int idx)
+ 	return test_bit(idx, (unsigned long *)&intel_cap->capabilities);
+ }
+ 
++static u64 intel_pmu_freq_start_period(struct perf_event *event)
++{
++	int type = event->attr.type;
++	u64 config, factor;
++	s64 start;
++
++	/*
++	 * The 127 is the lowest possible recommended SAV (sample after value)
++	 * for a 4000 freq (default freq), according to the event list JSON file.
++	 * Also, assume the workload is idle 50% time.
++	 */
++	factor = 64 * 4000;
++	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
++		goto end;
++
++	/*
++	 * The estimation of the start period in the freq mode is
++	 * based on the below assumption.
++	 *
++	 * For a cycles or an instructions event, 1GHZ of the
++	 * underlying platform, 1 IPC. The workload is idle 50% time.
++	 * The start period = 1,000,000,000 * 1 / freq / 2.
++	 *		    = 500,000,000 / freq
++	 *
++	 * Usually, the branch-related events occur less than the
++	 * instructions event. According to the Intel event list JSON
++	 * file, the SAV (sample after value) of a branch-related event
++	 * is usually 1/4 of an instruction event.
++	 * The start period of branch-related events = 125,000,000 / freq.
++	 *
++	 * The cache-related events occurs even less. The SAV is usually
++	 * 1/20 of an instruction event.
++	 * The start period of cache-related events = 25,000,000 / freq.
++	 */
++	config = event->attr.config & PERF_HW_EVENT_MASK;
++	if (type == PERF_TYPE_HARDWARE) {
++		switch (config) {
++		case PERF_COUNT_HW_CPU_CYCLES:
++		case PERF_COUNT_HW_INSTRUCTIONS:
++		case PERF_COUNT_HW_BUS_CYCLES:
++		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
++		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
++		case PERF_COUNT_HW_REF_CPU_CYCLES:
++			factor = 500000000;
++			break;
++		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
++		case PERF_COUNT_HW_BRANCH_MISSES:
++			factor = 125000000;
++			break;
++		case PERF_COUNT_HW_CACHE_REFERENCES:
++		case PERF_COUNT_HW_CACHE_MISSES:
++			factor = 25000000;
++			break;
++		default:
++			goto end;
++		}
++	}
++
++	if (type == PERF_TYPE_HW_CACHE)
++		factor = 25000000;
++end:
++	/*
++	 * Usually, a prime or a number with less factors (close to prime)
++	 * is chosen as an SAV, which makes it less likely that the sampling
++	 * period synchronizes with some periodic event in the workload.
++	 * Minus 1 to make it at least avoiding values near power of twos
++	 * for the default freq.
++	 */
++	start = DIV_ROUND_UP_ULL(factor, event->attr.sample_freq) - 1;
++
++	if (start > x86_pmu.max_period)
++		start = x86_pmu.max_period;
++
++	if (x86_pmu.limit_period)
++		x86_pmu.limit_period(event, &start);
++
++	return start;
++}
++
+ static int intel_pmu_hw_config(struct perf_event *event)
+ {
+ 	int ret = x86_pmu_hw_config(event);
+@@ -3963,6 +4042,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 	if (ret)
+ 		return ret;
+ 
++	if (event->attr.freq && event->attr.sample_freq) {
++		event->hw.sample_period = intel_pmu_freq_start_period(event);
++		event->hw.last_period = event->hw.sample_period;
++		local64_set(&event->hw.period_left, event->hw.sample_period);
++	}
++
+ 	if (event->attr.precise_ip) {
+ 		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
+ 			return -EINVAL;
 
