@@ -1,200 +1,151 @@
-Return-Path: <linux-kernel+bounces-531116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A15A43C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92903A43C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF573A4081
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAC63ADCEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A302673B9;
-	Tue, 25 Feb 2025 10:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0702673A5;
+	Tue, 25 Feb 2025 10:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TjLBUDpV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uqb6u9BG"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D57266EE5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EADC266F1B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481006; cv=none; b=L+fFOMACEi11Wr8lOMpghZActIaq85Kbf1t4k5/C1GSIJqnvgr35jeTQFthTxJWTu3JDCXZYvhlXf7gflUmlrTuzwlVN7WCq02Nk5uGXI6AZqjyqThkW9+vTfQDn/PbjCgytPdb8DgaSfuILNdT1US/JyCKrWkTlmU5ir0ozmBo=
+	t=1740480870; cv=none; b=Qa65ghMs0l51g8q9Kf/a+VsuI00AuKVYgO47fxXU/BkZklCZRt0VPs8Iomdy702hxsMj59/99H3yY9WCRdxhnLnywA/5MQQ0QO/N8wyKlKlTS7R04hKR+pzzziozP3Y4RYsPDlR09V6piZfazZLyJ3o4klG7Cp3filaSCbQklc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481006; c=relaxed/simple;
-	bh=iKEf1m/m6BvXv4+yY+8cnvHqyOnvsNHZ2JRtdjVVX54=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqBnhIec/HEfXXo4tmCOdvg9geJAdCT3nxEhUD7akNXgZxinLEW2T9tKMhfYQtn+rwYOLd/10WBVYgyUR7NTDtnsAmkDR7yv5yg9F2BaAWMHGEwoo86I3LS+LjVH3ATLj8FYEUvf+nuNBYVyxZ3O8gLtzYy+ZwpKP0vwQlYrSmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TjLBUDpV; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740481004; x=1772017004;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iKEf1m/m6BvXv4+yY+8cnvHqyOnvsNHZ2JRtdjVVX54=;
-  b=TjLBUDpV+XxgaGQdsAb98mfbN69i3dBcGIy5QZNgMWq0WHb4t/l+J7jF
-   ZAsY/fpoKLBpkwK9uGLlreauihoEcMcys9+pwYqVnWFrWUzgjEXHUObzR
-   nZd8797qFzlCiL82aST9QvapxiOhOAzhtQWwxLRFLVpYaTs/f2KEgn70T
-   eIgd0dvZStgnXs/vv/Hz0i2/a5V+39Dyc8c3FGGolRhr93u+weKsFBjaS
-   QVpd8NZuLaX8nuSNX74PYbTt8WcOBHvTR5q3ckmfEK4OegL5oI/L9WGAP
-   j59IoL1ych4Wx7bd75YHUzoruBqXjjDJDgMSMRUYJyOyeuRk+pWQ0FDUO
-   Q==;
-X-CSE-ConnectionGUID: WaHEjTnNR0qMKpQFgGyzcA==
-X-CSE-MsgGUID: 0peESw3nSGiMeEVGscga6w==
-X-IronPort-AV: E=Sophos;i="6.13,314,1732604400"; 
-   d="scan'208";a="269479111"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Feb 2025 03:56:44 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 25 Feb 2025 03:56:20 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 25 Feb 2025 03:56:18 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <p.zabel@pengutronix.de>, <Steen.Hegelund@microchip.com>,
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<herve.codina@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH v2] reset: mchp: sparx5: Fix for lan966x
-Date: Tue, 25 Feb 2025 11:53:29 +0100
-Message-ID: <20250225105329.3037853-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740480870; c=relaxed/simple;
+	bh=Nlblt9Q1ES9xX9+QoDGnrD/VUnOCuS5GL3nVG3iQZ00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODru/L0c3DH8LXBS3avjmHSSVzeZZ7ZiRbGU/ECP1IBkEJxCZT4bCXkcRakDvjUzIA8S9nbj+qTAP7Q4kOsx+s8TaqZPuoq2tw/t6zkbAp7fNFFK0ClZICH/9ERBWAYDGGqoW3S18QavHB8TjqbtNrgm17iI6ugiUA5go9H1n/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uqb6u9BG; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2211acda7f6so120313145ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:54:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740480868; x=1741085668; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ywJx3h0ZJvqjojvcAw8b7KbSJw+rY7IXbqqxP13I3pQ=;
+        b=Uqb6u9BGoNTIq5VlNwpUosXmVAghTzaLqvnQoF1j27Cp4La4ztDzfvztZzP3EEj7EE
+         ywSBwZLVZ8TaSvJYfWWUgdyjkUBCYBXwW0uvcx2CNfd4M/aF/Gp3/iGmqmy6sUZzeBN4
+         Ubg2AeWLPF3W0FgU7OkjkCZoYLI8GqZJYZkBKqeqDYpIi+zx2zk6FbXHIc9pBUvMApJ5
+         fA+aa8g1yNWjpuQ6A09FTzaI6gPX/BEmpnbI7loRbB/Up39na+H+TuVDIgQfCxsYpXM7
+         et0ghuz/LOcVurIh9cBpRKakyKm+i2MbeJR5eyRY+iipIH6kixFc9lPx3HxMTBgFr2bU
+         UMZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740480868; x=1741085668;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ywJx3h0ZJvqjojvcAw8b7KbSJw+rY7IXbqqxP13I3pQ=;
+        b=t8HFGb9ckh5ctCbBo7wSR0QxeNPb47hEGUmocHdmGpjKaOPWgcK9Wp4wiqvS8STlU+
+         4AxibMjDCMUWR7szEkGrKEfIHl5sGwD8xGHyWcwMkpWvBRLQ4LaUB5zDgiEckVNXZ/lw
+         JyneSr4x96iaAt1kZqtdLm7cTf3ID/u+YyoSIwVPjmRhMhnrkstn/3nPen1S0FDgJwGY
+         aZHSjAkdGTu/wxvCWT7CqQWJzMt/s+0l3HMbUZmML5OHvY7k7lVUVgbN3QvgLVzsfg6e
+         MXCe5Cw3a6D0MYYm8D0Ov08WaQTMjAms0OwJelHkFyzwsieRDHAS3UlRB6yW5uzKReKU
+         u/kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU/Q4EenlTpr16UgdnA47I/iE2tEyDBQkq2RXHnsnUx9rzHAyeNP0cJ9v6jc5BOP50EcVGFsW4gcJGYT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNPFqavxqTV9yTUhKL3hmXXeiNV5/QMtXjDn1Jb6bp6JCC1kDf
+	UY2WwyHXv/qBk5BudNvfw/YA+sppzOF4H/1qfAq8p5wM1UhucEIU5VaVWhvXP2Q=
+X-Gm-Gg: ASbGncvTdaB940nJvSx6nktoCFToXlAVqkXFdfC7dVQfmMjTkQuQ7rW/NNzWnQresxE
+	6dbCjDMTw4aGJ5ZROcaVN/2jjYK2R62s+qQNVrcRA3HYi7l46uecPcahFrEBHf5eJdJQe4QnY39
+	ThtiymhOZzKRbrQVUdAbc4IgrteOsB9KD1UErHvlhURuYJsWbB6OnrffrWyK+vpbzMcAPzetqDu
+	bfE8ECstLL9g/CzQceDCY36/WtDBPdYuP/D5bUr0chDQSIA5X+NgCo1rwSpV8EL5J8CEgy1imof
+	/+bhF0kmFcyrQt/5S0qDlexLf4c=
+X-Google-Smtp-Source: AGHT+IGoJFVYUA+pbas1YPlSrtUdxisbU+dBwLRwJk/y+b4li8vEnSApiSuQK3C7VAjyR5NAwMkJiQ==
+X-Received: by 2002:a17:902:f545:b0:216:282d:c69b with SMTP id d9443c01a7336-2219ffc00a1mr258165835ad.50.1740480868315;
+        Tue, 25 Feb 2025 02:54:28 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f761fsm1188981b3a.47.2025.02.25.02.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 02:54:27 -0800 (PST)
+Date: Tue, 25 Feb 2025 16:24:25 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
+Message-ID: <20250225105425.ooqvefiae5bmr723@vireshk-i7>
+References: <cover.1740475625.git.viresh.kumar@linaro.org>
+ <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
+ <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
 
-With the blamed commit it seems that lan966x doesn't seem to boot
-anymore when the internal CPU is used.
-The reason seems to be the usage of the devm_of_iomap, if we replace
-this with of_iomap, this seems to fix the issue as we use the same
-region also for other devices.
+On 25-02-25, 10:55, Alice Ryhl wrote:
+> On Tue, Feb 25, 2025 at 10:47 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > +impl Drop for Cpumask {
+> > +    fn drop(&mut self) {
+> > +        if self.owned {
+> > +            // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe
+> > +            // to call `free_cpumask_var()`.
+> > +            unsafe { bindings::free_cpumask_var(self.ptr) }
+> 
+> This is missing a semicolon, but it's not the last statement in the
+> block. Did you compile this with CPUMASK_OFFSTACK=n? I don't think it
+> compiles with that setting.
 
-Fixes: 0426a920d6269c ("reset: mchp: sparx5: Map cpu-syscon locally in case of LAN966x")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
-v1->v2:
-- make sure to use iounmap when driver is removed
----
- drivers/reset/reset-microchip-sparx5.c | 40 +++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 11 deletions(-)
+I would always add a semicolon here, yeah I missed adding that but ..
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index aa5464be7053b..cbe68026adc8d 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
-@@ -26,6 +27,7 @@ struct mchp_reset_context {
- 	struct regmap *gcb_ctrl;
- 	struct reset_controller_dev rcdev;
- 	const struct reset_props *props;
-+	void __iomem *base;
- };
- 
- static struct regmap_config sparx5_reset_regmap_config = {
-@@ -69,23 +71,27 @@ static const struct regmap_config mchp_lan966x_syscon_regmap_config = {
- };
- 
- static struct regmap *mchp_lan966x_syscon_to_regmap(struct device *dev,
--						    struct device_node *syscon_np)
-+						    struct device_node *syscon_np,
-+						    struct mchp_reset_context *ctx)
- {
- 	struct regmap_config regmap_config = mchp_lan966x_syscon_regmap_config;
--	resource_size_t size;
--	void __iomem *base;
-+	struct resource res;
- 
--	base = devm_of_iomap(dev, syscon_np, 0, &size);
--	if (IS_ERR(base))
--		return ERR_CAST(base);
-+	if (of_address_to_resource(syscon_np, 0, &res))
-+		return ERR_PTR(-ENOMEM);
- 
--	regmap_config.max_register = size - 4;
-+	ctx->base = of_iomap(syscon_np, 0);
-+	if (!ctx->base)
-+		return ERR_PTR(-ENOMEM);
- 
--	return devm_regmap_init_mmio(dev, base, &regmap_config);
-+	regmap_config.max_register =  resource_size(&res) - 4;
-+
-+	return devm_regmap_init_mmio(dev, ctx->base, &regmap_config);
- }
- 
- static int mchp_sparx5_map_syscon(struct platform_device *pdev, char *name,
--				  struct regmap **target)
-+				  struct regmap **target,
-+				  struct mchp_reset_context *ctx)
- {
- 	struct device_node *syscon_np;
- 	struct regmap *regmap;
-@@ -103,7 +109,8 @@ static int mchp_sparx5_map_syscon(struct platform_device *pdev, char *name,
- 	 * device removal.
- 	 */
- 	if (of_device_is_compatible(pdev->dev.of_node, "microchip,lan966x-switch-reset"))
--		regmap = mchp_lan966x_syscon_to_regmap(&pdev->dev, syscon_np);
-+		regmap = mchp_lan966x_syscon_to_regmap(&pdev->dev, syscon_np,
-+						       ctx);
- 	else
- 		regmap = syscon_node_to_regmap(syscon_np);
- 	of_node_put(syscon_np);
-@@ -146,7 +153,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	err = mchp_sparx5_map_syscon(pdev, "cpu-syscon", &ctx->cpu_ctrl);
-+	err = mchp_sparx5_map_syscon(pdev, "cpu-syscon", &ctx->cpu_ctrl, ctx);
- 	if (err)
- 		return err;
- 	err = mchp_sparx5_map_io(pdev, 0, &ctx->gcb_ctrl);
-@@ -165,9 +172,19 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	dev_set_drvdata(&pdev->dev, ctx);
-+
- 	return devm_reset_controller_register(&pdev->dev, &ctx->rcdev);
- }
- 
-+static void mchp_sparx5_reset_remove(struct platform_device *pdev)
-+{
-+	struct mchp_reset_context *ctx = dev_get_drvdata(&pdev->dev);
-+
-+	if (ctx->base != NULL)
-+		iounmap(ctx->base);
-+}
-+
- static const struct reset_props reset_props_sparx5 = {
- 	.protect_reg    = 0x84,
- 	.protect_bit    = BIT(10),
-@@ -196,6 +213,7 @@ MODULE_DEVICE_TABLE(of, mchp_sparx5_reset_of_match);
- 
- static struct platform_driver mchp_sparx5_reset_driver = {
- 	.probe = mchp_sparx5_reset_probe,
-+	.remove = mchp_sparx5_reset_remove,
- 	.driver = {
- 		.name = "sparx5-switch-reset",
- 		.of_match_table = mchp_sparx5_reset_of_match,
+I have missed minor things before sending a series a few times in the
+past and this one really scared me thinking here I did it again :)
+
+Though I was sure that I have built the code with both
+CPUMASK_OFFSTACK=y and =n, I performed the builds again and it worked
+(again).  That confused me even more :)
+
+And here is what I think is happening here (which makes it build fine
+accidentally):
+- free_cpumask_var() has a return type of void.
+- The block {} allows it to build fine without a semicolon here.
+- I performed a simple test for this [1] and it works too.
+
+> > +            #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
+> > +            // SAFETY: The pointer was earlier initialized from the result of `KBox::into_raw()`.
+> > +            unsafe {
+> > +                drop(KBox::from_raw(self.ptr))
+> > +            };
+> 
+> This looks like you did not run rustfmt.
+
+I did this:
+
+make CLIPPY=1 rustfmtcheck ARCH=arm64 O=../barm64t/ -j8 CROSS_COMPILE=aarch64-linux-gnu- CONFIG_DEBUG_SECTION_MISMATCH=y
+
+I hope that is all I need ? I checked again with both CONFIG options,
+doesn't complain with rustc 1.84.1.
+
 -- 
-2.34.1
+viresh
 
+[1] https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=70cd7d31633d98774a088fed68ebb00d
 
