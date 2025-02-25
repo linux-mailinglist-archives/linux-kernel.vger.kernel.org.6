@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-531622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E92A442D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:32:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE06CA442E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80B98605A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FE4189AF52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E647F26B0AD;
-	Tue, 25 Feb 2025 14:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V++YC3az"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AFA26BD89;
+	Tue, 25 Feb 2025 14:30:07 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B96926B089
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF37268C48;
+	Tue, 25 Feb 2025 14:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493806; cv=none; b=g2QQ/UeG+uP0WCPjKScfQ6tzSdrEXh2DkWphqMSBpqhOaMZR0TstbQjd4mXYMZ/CBURO0FbZEndfjBDJsT54eQMeebcviPvTA9SbxgUFyqCf9x8zbWrVLYQH/lvoJ6rqFAl1v+5s5psOGeWZ3NTPzOho5dqdIyYnnEQTIMOpEH8=
+	t=1740493807; cv=none; b=aoNpMq4wjO+Cw2t1MyqO1qOln7FoScGCNL8ZBFZqWtDURgtSeoE4HbCtXKJ0gwvpygGrfWaswLXop8hkHkRZKn9NwEW5Ea38Psvk/nkuAKHSK9x0Kq5mVcOTpW2otrSG+nhz75I6hgm6+E2nqifn7y8jhSqeHhPY3FHv4c6jcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493806; c=relaxed/simple;
-	bh=ovpGMxPbTXnuK6JHQdRE1qjMhHn6VxsK6f+lWCDw1+o=;
+	s=arc-20240116; t=1740493807; c=relaxed/simple;
+	bh=eGc3wu2FWrg3YdBJdGL+LGOwL6146dZ8BpFENFejErA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JjXKZuskgu2EF43fWl3P+e/+3SBD2p+yrH435wc1NKebOZJwldpC63O4EwQtNyhuGRpM+WcLhgR0te+6GZA6YAymKXdOgstDoB7TeV4W2+HIRjBm09Pfkcq8KKQqsfdjjLgZwHqvH9qAnNGIiUgFYOTIJnA2ADPiLJe1SS3xLUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V++YC3az; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 856C2442F4;
-	Tue, 25 Feb 2025 14:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740493802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dX/nrWw3K+ooLFYD0Y9TwiiJkU/R1nkRj2uIOyjhUVw=;
-	b=V++YC3azumm1UnBRfcC631JH/asdM4eGnJS+D3THHckaUfyVdI+/U65RzROy7z8VBhKIGW
-	6tVaBO+s9mBrEeTAHZmuLM49jqazB6sDMVpLFa6s0EXqA4ix8/N0/GHM0+QDIyfnF6xxud
-	dhPDu4dwpWALyujswl4FFau0Y6D2sNkkWGK7diMziwAnst90rd3u5Q724cppHQErMdhI9e
-	50Hpi2H2e5zKxQv7J8jB3utANnbW1YbD/H9LWe8auCbmevjSr340oZg5qj58IAjBxK/VFj
-	FMPuOo57VInceeoUKy16spRk/7Ab6kQnGeB5iZeOE/bWVL0zK8Kt7lGOI9+0eA==
-Date: Tue, 25 Feb 2025 15:30:00 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
-	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-Subject: Re: [PATCH 01/63] docs/dyndbg: update examples \012 to \n
-Message-ID: <3f5d7e90-0feb-48ef-8279-1644ce5f3d5b@bootlin.com>
-Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
-	linux-kernel@vger.kernel.org, jbaron@akamai.com,
-	gregkh@linuxfoundation.org, ukaszb@chromium.org,
-	intel-gfx-trybot@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-References: <20250125064619.8305-1-jim.cromie@gmail.com>
- <20250125064619.8305-2-jim.cromie@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3I5M+inWscXquOyZ/U3zx+xIz1i2N5p5VexApjz0joxdI+hegm8et4bth9noB2mvqX820fvYlEl7aMak7OoY28kzj0f7o5wl7dFY3W4OsqL94LKYdCuMqAAby2Ok+f9/wjsLU6XY69iu860q8kBsCAscgIFbndenyQi/1/y3d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-221057b6ac4so109299965ad.2;
+        Tue, 25 Feb 2025 06:30:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740493805; x=1741098605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DG3YidYogPh0t3kYDq7/qV85q51q4l91jIf6MGtnfZg=;
+        b=ONM7ypGLZU+yp8x8jvlz9VixMPNhIUleD4vyjxpMIoHsVSAnmbKbSM3HDr4fsiZ0zb
+         kEPxha/IKz3ecXyvcR4+rjF6++kFupUSw7VjPGl3SSiMy8LBIoA7oZ0wydBkxdEqhW1Z
+         D2lN4uTOXbNKmJsv6RUyJHeUNQlmjCfSKGUBosMoSxYsJ91EV0buABIUscsD5OwrnYw1
+         TOwHhkeghOtbGVjUwqBA2mFvHewxWQnaRSOT3oRs+Tw4PckXqhf71Zjs3hNgwOThQyQ/
+         6bn3ZwI9qNEJDDug5daV77qsyxlGz8jILWLFWFwtwQTjGFTUJuLqTErmPlICVfZBQIrM
+         3OhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSyXjRHq67sWXzA7WCllEomtcm8JNUwQMHFu0h8Y8yu68Go8TT0p//qRPW7T3ytUKVGfZ+gMqEbLYuEf0NJKw9qg==@vger.kernel.org, AJvYcCWVdMyfaHcHRoc1HGu8ad+GE3t42GPq/AojJcSJpBD5NqtaaFdWfn+FjN40+iteiia/MF+ZNfKFjBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgeraB3A9AuITjZ43WVE6ae97QATo7XK+cuJMLMPEqE4owf5xT
+	OAIvbt+HeG/Evw7cOgMedLWZZ/Pi/xj/DosDTU3TVwYVt20loksw
+X-Gm-Gg: ASbGncvjtk7R0IHNd//VHmHF34ccEFkLt4Z8Z0rFxJG6cCnXHRZbkEHJmJVNWb4hqzF
+	iVcSbjd4jJYyNgrRBQk3qxeLHnnPw0abv+6d2/UQIMwC/CGezwR5iyQ6yogs1qXrNoPGtGVcJ3H
+	tmOnri4pdfqqiRskgwHGFnH0H8DcF/bv+Fhn+ykr7MzntNFGJISSsuxDi4dtYT26Gxl/O3FVErM
+	gKOUbYzK+TpBLosBJuHuGjylTlIhqSq4LtVGVV2TerWbJTuqup/VwmLx0+0nS9d3xU3k0IUE4W1
+	apQW0HRQjI3nf+s/b8OHvM7OcrBOVuWR+b4UA+HRTy5YRzm5RrVLYuFlYLo7
+X-Google-Smtp-Source: AGHT+IHy6OrD/YH6k+g/XZQG11rxQoJ71aizZlrzOaFRpQvw8/aJiJt0N98sszSOwWUy7SbLW5HkyQ==
+X-Received: by 2002:a05:6a20:a11d:b0:1ee:d384:7553 with SMTP id adf61e73a8af0-1eef5558ec8mr34863278637.30.1740493804970;
+        Tue, 25 Feb 2025 06:30:04 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7347a81eb02sm1607319b3a.131.2025.02.25.06.30.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:30:04 -0800 (PST)
+Date: Tue, 25 Feb 2025 23:30:01 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
+ PCIe DW
+Message-ID: <20250225143001.GA1556729@rocinante>
+References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
+ <20250221131548.59616-1-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250125064619.8305-2-jim.cromie@gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
- dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <20250221131548.59616-1-shradha.t@samsung.com>
 
+Hello,
 
-
-Le 25/01/2025 à 07:45, Jim Cromie a écrit :
-> commit 47ea6f99d06e ("dyndbg: use ESCAPE_SPACE for cat control")
+> DesignWare controller provides a vendor specific extended capability
+> called RASDES as an IP feature. This extended capability  provides
+> hardware information like:
+>  - Debug registers to know the state of the link or controller. 
+>  - Error injection mechanisms to inject various PCIe errors including
+>    sequence number, CRC
+>  - Statistical counters to know how many times a particular event
+>    occurred
 > 
-> changed the control-file to display format strings with "\n" rather
-> than "\012".  Update the docs to match the new reality.
+> However, in Linux we do not have any generic or custom support to be
+> able to use this feature in an efficient manner. This is the reason we
+> are proposing this framework. Debug and bring up time of high-speed IPs
+> are highly dependent on costlier hardware analyzers and this solution
+> will in some ways help to reduce the HW analyzer usage.
 > 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-
-Hi Jim,
-
-I think this patch is incomplete, I just tested and the \012 in [1] 
-needs to be replaced too.
-
-[1]:https://elixir.bootlin.com/linux/v6.14-rc3/source/Documentation/admin-guide/dynamic-debug-howto.rst#L39-L46
-
-With this change:
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-Tested-by: Louis Chauvet<louis.chauvet@bootlin.com>
-
-> ---
->   Documentation/admin-guide/dynamic-debug-howto.rst | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+> The debugfs entries can be used to get information about underlying
+> hardware and can be shared with user space. Separate debugfs entries has
+> been created to cater to all the DES hooks provided by the controller.
+> The debugfs entries interacts with the RASDES registers in the required
+> sequence and provides the meaningful data to the user. This eases the
+> effort to understand and use the register information for debugging.
 > 
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 7c036590cd07..691e0f7d4de1 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -57,12 +57,12 @@ query/commands to the control file.  Example::
->     # grease the interface
->     :#> alias ddcmd='echo $* > /proc/dynamic_debug/control'
->   
-> -  :#> ddcmd '-p; module main func run* +p'
-> +  :#> ddcmd '-p; module main func run* +p'	# disable all, then enable main
->     :#> grep =p /proc/dynamic_debug/control
-> -  init/main.c:1424 [main]run_init_process =p "  with arguments:\012"
-> -  init/main.c:1426 [main]run_init_process =p "    %s\012"
-> -  init/main.c:1427 [main]run_init_process =p "  with environment:\012"
-> -  init/main.c:1429 [main]run_init_process =p "    %s\012"
-> +  init/main.c:1424 [main]run_init_process =p "  with arguments:\n"
-> +  init/main.c:1426 [main]run_init_process =p "    %s\n"
-> +  init/main.c:1427 [main]run_init_process =p "  with environment:\n"
-> +  init/main.c:1429 [main]run_init_process =p "    %s\n"
->   
->   Error messages go to console/syslog::
->   
+> This series creates a generic debugfs framework for DesignWare PCIe
+> controllers where other debug features apart from RASDES can also be
+> added as and when required.
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied to controller/dwc, thank you!
 
+	Krzysztof
 
