@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-530701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3102FA43716
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54ECFA43719
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 135AB16BB48
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8C716F669
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2956725D55E;
-	Tue, 25 Feb 2025 08:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC23F25EF95;
+	Tue, 25 Feb 2025 08:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAx80sKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRzj7Kuc"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54849188735;
-	Tue, 25 Feb 2025 08:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1594522D4E7;
+	Tue, 25 Feb 2025 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471167; cv=none; b=M+q7nksvYioet08F0Jn3qcvGbrba+3gxCdm4xr+0s+Cw0aqsYnQAQokYWjhaot6Aih+lA4mjaLgfwkThGOeY/GpmXGI2TZgCibP2IN19wtiEVOmI0vftNunFufVJNKnB4XFlXq2YVrdBPUeq9qB3DCxRyQtBVxshMDcCa0TpnSg=
+	t=1740471330; cv=none; b=dKkJI7lganRj7arRDyfeTbC7pIHD3UiU05opjn8BPLqD7jToLe01+oMboO2a7JZz+/cxlNRblhYUl5J57ov662ZVLR1wWv6DFZNtowrm1Y/w9jdQNqQRV7XWkJUYu660TyvYmgNE0h2Zy8c6HguNk5VhKnBbDbWQ9t8syc1xBho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471167; c=relaxed/simple;
-	bh=oioRiYJ4Vklv26htgRct3bcjim0IxVAPfn5+RAjq134=;
+	s=arc-20240116; t=1740471330; c=relaxed/simple;
+	bh=yfrc+7kKphVxlnTfTwdmOQSoM2uXrBV0C9JkubOhMh8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kXUaXK1om2tQLvEiTb1ev69vyvJp6WbIcAnGAfi8PhhMfC58gX8ZMbCREchRWY4jd+N8urkpQ10x0Z2fEqq1SR4d0qgccpjZ8N6GUUpzeNAiX2z6rM7sHfCdIOz4sX4iyRANvUjQ19qFH3IyAhO2bH+K7wCgLcFeI0HEuvZKGkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAx80sKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B5CC4CEDD;
-	Tue, 25 Feb 2025 08:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740471166;
-	bh=oioRiYJ4Vklv26htgRct3bcjim0IxVAPfn5+RAjq134=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JAx80sKmURHXMO/iKSZ8noI01xNOTfd6lFxs9HTKtARO63J8IVtkQ7sYCKoFmXxy3
-	 0r8Y0Tu8L26Ira5juZEj3BHwDyvS9zsAkxI7R8Oo3sZQrIVvgwstyRDJOK13WBJxK0
-	 6J1X5MKUxxhnMMVtDNWvSwcWWroQceQO/U69IwlCSsoteqjbHZ3bKISFFVpJ+14uuN
-	 pTVayOtn09tbBoeV6YPwiEFJd/SR/OmXKXK6WGpei8aAuPxTHd8OWfQKomJRDaW+zj
-	 jWzbsutYT5znbD3weF74k/d2HtwQop/veq9IqXtKzi1OSnup4tLShBxQksVOHzUh6E
-	 KiFbjtVBnkt/w==
-Message-ID: <976a2029-c0c0-4093-a3cd-71e1524db032@kernel.org>
-Date: Tue, 25 Feb 2025 09:12:40 +0100
+	 In-Reply-To:Content-Type; b=o42qPcUCJluz+uH/DFu5RVLfCbhh3JAfSYp/zKSIMY0FohhYFv/QJkXFYvmDXCea4X/J8rqfJTnKo29Yfsaq1x2nW7PaR1EOXoOWyE6RDWF573NT7FUJbsc5N+tMlolHTRDq00jviXPA2OQJUKXrrcx2n58xU0ql4nd+8A0n49o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRzj7Kuc; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a6bso55432991fa.1;
+        Tue, 25 Feb 2025 00:15:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740471327; x=1741076127; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RdqAlLkZmfy0CFMV99JGfChSVQKpEGqALN/Yz7FEnLI=;
+        b=aRzj7KucOCI8fsECr/z6Gf93u3tbNFnDSU+wSNwONWdoqnlYZfqegQzBFrEFi2FENN
+         6cCx24VO0ziJ21LUCyxYVBXxJXG6H9CjhlaROEYBYgDG20DChJFJvjKAJaVARff5yWff
+         aRXS3N8zICD3LB4Vwq5f6ahHLmO5ZSdAUfFTHz1e2P3Q37uV2b5WYqJ9Kt3jQDRnmobJ
+         zdY7iZzKuREQdZzYYReypaY5/lJkTnzpfhvqmcCg0qCnflOJRPylNo2D9naW5MwEUIJt
+         3fx2JhmGftD1RWvPvA6Coy7R3QB/EbvveNM8KAd16yhLLY2kJygxhxJTAjqL4GChCMu/
+         Rq1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740471327; x=1741076127;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdqAlLkZmfy0CFMV99JGfChSVQKpEGqALN/Yz7FEnLI=;
+        b=C4V8D3zq9N2vbu3V7mzDzZRNbfyWY4GF485v6xXcZiPXzDTT319eXZjFrd2e9r8cHs
+         B46Q+p/Ko1yzTJ7KHXlJOjVBd2oOiB9CtPpbeGFst2Hm3nLH9l3Qj1pv9HMEGXFK0DdN
+         hrvQfxrQ3t37LTzs2/uRd1Dni0lOXGsYUk6K1T8xKor9c+VexRsg3PggWqXZZjVujM3Z
+         MIbfeumsxkMicNmFFEX0n4f7j+EQswFuIQk+vL80Rk3DpqVRKCIuRRCZr8s2LtTDPYzv
+         7/lZ58K5Dgv4j0J17i6b/evuTv9eSQ+LmHyism45wBm3gYpws8Le5KN6FlZYnkTBbk45
+         MM8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEGUQCHimhJFdVNxT92tH6TFCGl66DGaxAQKe6TnahT2j/ak/xgLPO/zWbfKxH43VV5oZKZmkagGLLwoY=@vger.kernel.org, AJvYcCXAGuFoaLG8GLJFSkAVArVbk0CiqFwU6WmcuGyIfYHVtqCGI+zME/k2PCZOaCxQCvLNKShaDczIT6tkI8U8oYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8hzazXSwnD/tHxfH+ZM0UM3Fq2OEGYApE7brvBPwS6Zo0bGuj
+	4iWdnORi9YzXVTJKF5UA5DQRtWdLfxv4WSVQAbKkxEzx0zHsZG8R
+X-Gm-Gg: ASbGncunEIJgUaC9pFo9ty9OI5Qk7eKTTQ0zoVlfJI/LjMl2XsGwiPplji2DXM+7kKI
+	BPIK3pDqU0hC4dgvPwZJfVfTVYS5pqs/HD5YCbFJhta4vSq2i/jCfsdBB8b74PJ6k7vXINg4pKN
+	XT6SFrLF7cdKcTq/AXnwYL4Acwor1eOkgHQtGx5HirtKn0SnF0LHHWatJ6ZzFE7vNuVyFZUJJsW
+	OaL8FH4LnB+ZoXmsOXZq12GU45II5QsUI1NgeUEiBjQL4z1XSDhYs/VwLrECnxUL/jWsQx5O6cq
+	1C7NYXlHf7/gXjtD73aDnjTEF8l0P8NC/gajFK/E2lV4ZtvjEV5FKBsh3n2JsU64fIK27tfu
+X-Google-Smtp-Source: AGHT+IF8UCoR+9ygGt6igUqdFrgSG5IAVYIl2IQ/fAb9S/8z9eTyoWb0Ux422EVvUx9jjVWOj8wKnA==
+X-Received: by 2002:a05:6512:239b:b0:546:2ea4:8e72 with SMTP id 2adb3069b0e04-548510ed685mr958741e87.49.1740471326562;
+        Tue, 25 Feb 2025 00:15:26 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514efc28sm116034e87.151.2025.02.25.00.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 00:15:25 -0800 (PST)
+Message-ID: <02911a6d-e17a-4d17-b060-83c96732003f@gmail.com>
+Date: Tue, 25 Feb 2025 10:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,214 +80,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Haylen Chu <heylenay@4d2.org>, Alex Elder <elder@riscstar.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
- Guodong Xu <guodong@riscstar.com>
-References: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org> <Z7mrdrACFp3m-7sy@ketchup>
- <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org> <Z7xHRAFE4-QEA6PO@ketchup>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: aliceryhl@google.com, dakr@kernel.org, robin.murphy@arm.com,
+ daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <CANiq72mMKx3kD5KEcT0gOa1zkCt-VXxTEhnDa3feq0H7AttUGw@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z7xHRAFE4-QEA6PO@ketchup>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CANiq72mMKx3kD5KEcT0gOa1zkCt-VXxTEhnDa3feq0H7AttUGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24/02/2025 11:17, Haylen Chu wrote:
-> On Sat, Feb 22, 2025 at 12:50:13PM +0100, Krzysztof Kozlowski wrote:
->> On 22/02/2025 11:48, Haylen Chu wrote:
->>> On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
->>>> On 22/02/2025 00:40, Alex Elder wrote:
->>>>> I have a general proposal on how to represent this, but I'd
->>>>> like to know whether it makes sense.  It might be what Krzysztof
->>>>> is suggesting, but in any case, I hope this representation would
->>>>> work, because it could simplify the code, and compartmentalizes
->>>>> things.
->>>>>
->>>>> Part of what motivates this is that I've been looking at the
->>>>> downstream reset code this week.  It contains a large number of
->>>>> register offset definitions identical to what's used for the
->>>>> clock driver.  The reset driver uses exactly the same registers
->>>>> as the clock driver does.  Downstream they are separate drivers,
->>>>> but the clock driver exports a shared spinlock for both drivers
->>>>> to use.
->>>>>
->>>>> These really need to be incorporated into the same driver for
->>>>> upstream.
->>>>
->>>> Why? First, it is not related to the topic here at all. You can design
->>>> drivers as you wish and still nothing to do with discussion about binding.
->>>> Second, different subsystems justify different drivers and Linux handles
->>>> this well already. No need for custom spinlock - regmap already does it.
->>>>
->>>>
->>>>>
->>>>> The clock code defines four distinct "units" (a term I'll use
->>>>> from here on; there might be a better name):
->>>>>    MPMU  Main Power Management Unit
->>>>>    APMU  Application Power Management Unit
->>>>>    APBC  APB Clock
->>>>>    APBS  APB Spare
->>>>>
->>>>> The reset code defines some of those, but doesn't use APBS.
->>>>> It also defines three more:
->>>>>    APBC2 Another APB Clock
->>>>>    RCPU  Real-time CPU?
->>>>>    RCPU2 Another Real-time CPU
->>>>>
->>>>> Each of these "units" has a distinct I/O memory region that
->>>>> contains registers that manage the clocks and reset signals.
->>>>
->>>> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
->>>> 1+2? But previous statements were saying these are intermixed?
->>>>
->>>> " I'll make APMU/MPMU act as a whole device"
->>>
->>> My reply seems somehow misleading. The statement means I will merge the
->>> children with the syscon into one devicetree node, which applies for
->>> both APMU and MPMU. I wasn't going to say that APMU and MPMU are
->>> intermixed.
->>>
->>> As Alex said, all these units have their own distinct and separate MMIO
->>> regions.
->>>
->>>>>
->>>>> I suggest a single "k1-clocks" device be created, which has
->>>>
->>>> For four devices? Or for one device?
->>>
->>> By Alex's example, I think he means a device node taking all these
->>> distinct MMIO regions as resource.
+On 25/02/2025 00:05, Miguel Ojeda wrote:
+> Hi Abdiel,
+> 
+> Some quick doc-related nits -- please take them as a general guide for
+> potential improvements in newer versions etc., given there are still
+> other comments that could change the contents.
+> 
+> On Mon, Feb 24, 2025 at 12:50 PM Abdiel Janulgue
+> <abdiel.janulgue@gmail.com> wrote:
 >>
->>
->> You still do not answer about the hardware: how many devices is there?
+>> +/// Inform the kernel about the device's DMA addressing capabilities. This will set the mask for
+>> +/// both streaming and coherent APIs together.
 > 
-> In my understanding, the series covers four devices, APBC, APMU, MPMU
-> and APBS, each comes with its separate MMIO region and is clearly
-> described in the datasheet. I stated this in the later part of the
-> reply,
+> This comment differs from the C side one -- that is OK, but just
+> wondering if there was a strong reason for that.
+> 
+>> +pub fn dma_set_mask_and_coherent(dev: &Device, mask: u64) -> i32 {
+> 
+> This returns `i32` -- I have not read the users of this, but should we
+> take the chance to have a `Result` already here? Same below for the
+> other one.
+> 
+>> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
+> 
+> To keep things consistent, please start comments with uppercase, i.e.
+> "SAFETY: Device pointer ..."
+> 
+> It may also be clearer to say "by the type invariant on".
+> 
+>> +/// Possible attributes associated with a DMA mapping.
+>> +///
+>> +/// They can be combined with the operators `|`, `&`, and `!`.
+> 
+> Even if it may be trivial, a small example could be nice here (when I
+> see a sentence like "This can be used ...", I typically consider
+> whether it is a good place to show how).
+> 
+>> +/// DMA mapping attrributes.
+> 
+> Typo: attributes.
+> 
+>> +    /// let c: CoherentAllocation<u64> = CoherentAllocation::alloc_attrs(dev.into(), 4, GFP_KERNEL,
+>> +    ///                                                                  DMA_ATTR_NO_WARN)?;
+> 
+> Please try to format the code as `rustfmt` would normally do it. I
+> know it is a pain to do it manually -- hopefully
+> `format_code_in_doc_comments` will eventually be stable.
+> 
+>> +        // We ensure that we catch the failure on this function and throw an ENOMEM
+> 
+> Apart from what Benno said, please try to use Markdown in all comments.
+> 
+>> +    /// Performs the same functionality as `alloc_attrs`, except the `dma_attrs` is 0 by default.
+> 
+> Intra-doc links (I will mark a few more that I think may work).
+> 
+>> +    /// Create a duplicate of the `CoherentAllocation` object but prevent it from being dropped.
+> 
+> Intra-doc link.
+> 
+>> +    /// r/w access or use-cases where the pointer to the live data is needed, `start_ptr()` or
+>> +    /// `start_ptr_mut()` could be used instead.
+> 
+> Intra-doc links.
+> 
+>> +    /// Performs the same functionality as `as_slice`, except that a mutable slice is returned.
+> 
+> Intra-doc link.
+> 
+>> +    /// Reads the value of `field` and ensures that its type is `FromBytes`
+> 
+> Intra-doc link.
+> 
+>> +    /// # Safety:
+> 
+> Typo: no colon. Also another one below.
+> 
+>> +    /// This must be called from the `dma_read` macro which ensures that the `field` pointer is
+>> +    /// validated beforehand.
+>> +    ///
+>> +    /// Public but hidden since it should only be used from `dma_read` macro.
+> 
+> Intra-doc links -- even if they are not rendered because it is hidden
+> (also even if it were a private item).
+> 
+>> +    #[doc(hidden)]
+>> +    pub unsafe fn field_read<F: FromBytes>(&self, field: *const F) -> F {
+>> +        // SAFETY: By the safety requirements field is valid
+> 
+> Markdown; and please end the sentence with a period for consistency.
+> 
+>> +    /// Writes a value to `field` and ensures that its type is `AsBytes`
+> 
+> Intra-doc link, and period at the end (same below too).
+> 
+>> +/// Reads a field of an item from an allocated region of structs.
+>> +/// # Examples
+> 
+> Newline between these two lines. Also for the write equivalent one below.
+> 
+>> +/// struct MyStruct { field: u32, }
+>> +/// // SAFETY: All bit patterns are acceptable values for MyStruct.
+> 
+> Newline between these two, also Markdown. Same below and in the write
+> equivalent.
+> 
+> I think it is fairly important to have clean examples, since people
+> will learn from and follow them!
 
-Ack
+Hi Miguel,
+
+Thanks for the valuable feedback. Still learning the ropes at this 
+point, but will further improve this. :)
+
+Regards,
+Abdiel
 
 > 
->>> For APBC, MPMU, APBS and APMU, I'm pretty
->>> sure they're standalone blocks with distinct and separate MMIO regions,
->>> this could be confirmed by the address mapping[1].
+> Thanks!
 > 
-> Thus I don't agree on Alex's solution, since it creates fake devices not
-> mentioned by the datasheet (spacemit,k1-clocks and all its children in
-> the example devicetree).
+> Cheers,
+> Miguel
 
-Ack
-
-> 
->>>
->>> 	clock {
->>> 		compatible = "spacemit,k1-clocks";
->>>
->>> 		reg = <0x0 0xc0880000 0x0 0x2050>,
->>> 		      <0x0 0xc0888000 0x0 0x30>,
->>> 		      <0x0 0xd4015000 0x0 0x1000>,
->>> 		      <0x0 0xd4050000 0x0 0x209c>,
->>> 		      <0x0 0xd4090000 0x0 0x1000>,
->>> 		      <0x0 0xd4282800 0x0 0x400>,
->>> 		      <0x0 0xf0610000 0x0 0x20>;
->>> 		reg-names = "rcpu",
->>> 			    "rcpu2",
->>> 			    "apbc",
->>> 			    "mpmu",
->>> 			    "apbs",
->>> 			    "apmu",
->>> 			    "apbc2";
->>>
->>> 		/* ... */
->>> 	};
->>>
->>>> No, it's again going to wrong direction. I already said:
->>>>
->>>> "You need to define what is the device here. Don't create fake nodes ust
->>>> for your drivers. If registers are interleaved and manual says "this is
->>>> block APMU/MPMU" then you have one device, so one node with 'reg'."
->>>>
->>>> So what is the device here? Can you people actually answer?
->>>>
->>>
->>> I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
->>> related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
->>> sure they're standalone blocks with distinct and separate MMIO regions,
->>> this could be confirmed by the address mapping[1].
->>
->> They were brought here to discuss for some reason. Long discussions,
->> long emails, unrelated topics like hardware or different devices - all
->> this is not making it easier for me to understand.
->>
->> Best regards,
->> Krzysztof
-> 
-> By the way, I made a summary on the hardware covered by this series in
-> one of my earlier reply[1]. Could you please comment further on my
-> proposal[2] according it, or pointing out anything that's unclear or
-> missing? It will be helpful for things to improve.
-
-Thanks, it looks good.
-
-
-
-Best regards,
-Krzysztof
 
