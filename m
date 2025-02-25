@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-530455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97339A433AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:39:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99642A433B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7F1189429B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97CA17A859
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5820324CEFD;
-	Tue, 25 Feb 2025 03:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8D24BC06;
+	Tue, 25 Feb 2025 03:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQCvo8XH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cvgcx60o"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D9D367;
-	Tue, 25 Feb 2025 03:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8752206BC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454764; cv=none; b=CRCwl6wR0IAhQ7AyvmCcirmSfHBzSQnXM4r7bnxyuVX5OWFNVjy9tztNC9phbYKfTLj4/kG0hfs8XiliDoq6Mlop2N80+V2CrvKYrqNqZR1qmZe9477nhSrPKq0Fizw1kn14L0XRGRp9eZKjZ7pGY4yv2W/SrF/OnQnzKNNErlg=
+	t=1740454787; cv=none; b=l1rGF4i93ot/l3UCvdClkrssWoa5JaENFlWEQ3GvtDyw1D2JZAMKLOimPmk/X7T2WB8VQBjM3eIvmNOxMXTFGo/TthrZbNG5IDmrB6D2J7aKUtGMFS3RFRuc7KNGbH9MB5KNKxYEQ9NDghBUTgMEfKi8O6kDWdXDoWU9lGWG8GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454764; c=relaxed/simple;
-	bh=Eo3O7fQNmnRYNoxJI3fzcjSQ+wsxJAPEukzQ+8e8wO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V7aKcr3FxS5xYBeHoXzXK5Olpk72J4UnuPaRk1wDc3HtR+bvYw4nvJX7OJa590Jq12V+m8Un4wJyoPx+AL0LfB5+ndZbFvTmoX2X7Sg9tYuYQjxBX7XWR4cYvNBlJpd7dJOnyId6Dcn39c7+QA4BCMXMmONUKZfAGvQ4KZ5O7A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQCvo8XH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220bfdfb3f4so1385995ad.2;
-        Mon, 24 Feb 2025 19:39:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740454762; x=1741059562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OjW4eNmpXZQk2be1o0LYhrX91M7wCrQClmxQ5N6YUyE=;
-        b=nQCvo8XHmknVktvCiq/cRSXVin9K6oBBiRG1QZXA7UiA1aDSTNyldc13kWPxME1yk5
-         oB/T+kQV5vz0jh2IVAZVtX+a/dlwMRHraJiKn3xSKTJ3Lf03zNadME3vaxQg6ahJ4eYR
-         87tns2swmTlWY/PMyF+Fa++m3i6QYeW5EUSsV9pfVpDh+enHupZwhCvpkOSm5QSUwM04
-         VQPdxGr9CiA0aqIeslz/TqRsaCcN11jX0rcjpdhNFFahUbJrXAlSdJitP5SpKhWavn1f
-         jp+8nZmB8aTPUJvw5ODDqix6aO+/fZw8l5n5uGkpH5Oa3Ssqsse/gKvNJU/MPFJDBuoy
-         E+Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740454762; x=1741059562;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OjW4eNmpXZQk2be1o0LYhrX91M7wCrQClmxQ5N6YUyE=;
-        b=Ya5nQMR3+NEFS8S/7YroaesRVRPwgPAlzfpUEh2vE8QBHEj6FNlxtsScpsrxT6CLH/
-         Knwb9ioZbKXXmnDOUGJGGa+gMho9shHqjJphmNp3boe6UK/ldQsw6bdYNq7BU/mzYW54
-         3hpo/h5rKJvlrM+/1Dp8hLe7wvsuEBMY5Pz3mIfg44IqvcUrS3/eFA0rHPR9lEUHYgwU
-         SCdQJ1PA0l24T7Eu1l8Stncaw0vCtdPw+2qls4oHfyJ5JKDJUgq7EmDe2vH6u4t0qB01
-         0q6OnBeRKvR3ngOlK5eMGEPGvglxWHysA4HonDBkcF4giXH5jMvEm4zskdpD/LK8MVO/
-         vDow==
-X-Forwarded-Encrypted: i=1; AJvYcCXvSdV6jhyUKColIKFLQRtpGcMykgh1SGGd3j3BDFaJ0dKKu8A0Ob9Z+zxnRmh9I93/l4C0mz7xlbA/P3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxr3JjoK4AX1UV46abaWgLtiCyl19s1+xXxBPRmDUAy+Knd9YQ
-	dQMu31rZHWpwliUc6LgMDQ0vNQaWHUKy+a/qD2di0shyDMY3aCEJ6BMzh5t3l8+hqA==
-X-Gm-Gg: ASbGncslJW1vuqCpEgYvlEhjeDB/i9OVvxmDZakpXechxVmUqc+fIvQ9gxxDu18xX5Q
-	NLwvND7Jcqxevz6GOkLWM6G62SuExUpLPIfN7eB1vs0+m2eqjJGMyvJbvL/YLLgV0lCKQ+nHWJa
-	+ZHOpVzsHUjkKyBNwjMuNxrDmFeLIGp9vjX9T0plqeurFC5RdSV6cve06UXFZpishlxQMNasU0P
-	dGqNgqt1dvZAuhshF8oz26ZRgnvMkLEbOUclQljhS5iaTTTlScUSQpYST952GMNt9I5p3bfpKAq
-	yUJr2K910HvYKSrrGfZrvlDGa/zj+RPxpLMwQbd2NdH/3g==
-X-Google-Smtp-Source: AGHT+IEua4ozRUVgbw0wJY0ruAcgA1qyqPJMaJdoCsoBPJXy70mZg7lI8EW4WJuJ0MbsV8veWza8mw==
-X-Received: by 2002:a05:6a00:3e0e:b0:732:7fc1:92b with SMTP id d2e1a72fcca58-73426ce7706mr26476942b3a.14.1740454762314;
-        Mon, 24 Feb 2025 19:39:22 -0800 (PST)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f8258sm414205b3a.112.2025.02.24.19.39.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 19:39:21 -0800 (PST)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCHv2 net-next] bonding: report duplicate MAC address in all situations
-Date: Tue, 25 Feb 2025 03:39:14 +0000
-Message-ID: <20250225033914.18617-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1740454787; c=relaxed/simple;
+	bh=aF1WRTePyUyRnZHJpGhucp9w76Ljz8qdTGSMRJjqC9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IPd3C9pD71g9/B6aBU8XRdxzs09cr40V5nE1WbjkR1kJ9gCL6gazoPdwrKusiLWNoL/r3y3oH3FZ7v7qqtjvCc14kZJEYVBtdvWsWUf/UiW52AE8QfdFPAbJ7im4ymFCCHBESerwRk2ZoMTWHHr3LjvaMotOsyPwCRnpVbDI4xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cvgcx60o; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740454780; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=wfIqepXZVUfIjlPUk4Da5gDeRqNF03KNFcNHAJQ76D4=;
+	b=cvgcx60oMVecghl6p12IkDscpCOmPH6tPl6KPsWU3kBOJAb7edkSA9qwlP1VqZu3wqZmhM89DNxipte0qMY4aK/veXfSLJVDusraqJ+nzn/FgAIQ/viR97WQzDKO/sm5Oae3Hqsf6W92Kayaxb0GtOCoVoapng3eu1hkdSbt6dA=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQD6RSw_1740454776 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 11:39:39 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: allow 16-byte volume name again
+Date: Tue, 25 Feb 2025 11:39:34 +0800
+Message-ID: <20250225033934.2542635-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Normally, a bond uses the MAC address of the first added slave as the bond’s
-MAC address. And the bond will set active slave’s MAC address to bond’s
-address if fail_over_mac is set to none (0) or follow (2).
+Actually, volume name doesn't need to include the NIL terminator if
+the string length matches the on-disk field size as mentioned in [1].
 
-When the first slave is removed, the bond will still use the removed slave’s
-MAC address, which can lead to a duplicate MAC address and potentially cause
-issues with the switch. To avoid confusion, let's warn the user in all
-situations, including when fail_over_mac is set to 2 or not in active-backup
-mode.
+I tend to relax it together with the upcoming 48-bit block addressing
+(or stable kernels which backport this fix) so that we could have a
+chance to record a 16-byte volume name like ext4.
 
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Since in-memory `volume_name` has no user, just get rid of the unneeded
+check for now.  `sbi->uuid` is useless and avoid it too.
+
+Fixes: a64d9493f587 ("staging: erofs: refuse to mount images with malformed volume name")
+[1] https://lore.kernel.org/r/96efe46b-dcce-4490-bba1-a0b00932d1cc@linux.alibaba.com
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
+ fs/erofs/internal.h | 2 --
+ fs/erofs/super.c    | 8 --------
+ 2 files changed, 10 deletions(-)
 
-v2: add fail_over_mac != BOND_FOM_ACTIVE to condition (Jakub Kicinski)
-
----
- drivers/net/bonding/bond_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 7d716e90a84c..7d98fee5a27f 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2548,7 +2548,7 @@ static int __bond_release_one(struct net_device *bond_dev,
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index f955793146f4..b452b6557aa5 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -152,8 +152,6 @@ struct erofs_sb_info {
+ 	/* used for statfs, f_files - f_favail */
+ 	u64 inos;
  
- 	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
+-	u8 uuid[16];                    /* 128-bit uuid for volume */
+-	u8 volume_name[16];             /* volume name */
+ 	u32 feature_compat;
+ 	u32 feature_incompat;
  
--	if (!all && (!bond->params.fail_over_mac ||
-+	if (!all && (bond->params.fail_over_mac != BOND_FOM_ACTIVE ||
- 		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
- 		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
- 		    bond_has_slaves(bond))
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 3dc86d931ef1..19e52ffa34c5 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -317,14 +317,6 @@ static int erofs_read_superblock(struct super_block *sb)
+ 
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+ 
+-	ret = strscpy(sbi->volume_name, dsb->volume_name,
+-		      sizeof(dsb->volume_name));
+-	if (ret < 0) {	/* -E2BIG */
+-		erofs_err(sb, "bad volume name without NIL terminator");
+-		ret = -EFSCORRUPTED;
+-		goto out;
+-	}
+-
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
 -- 
-2.46.0
+2.43.5
 
 
