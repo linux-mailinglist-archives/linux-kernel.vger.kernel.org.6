@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-531259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30E8A43E2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:48:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD6BA43E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 543C87AB8EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:47:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C959420569
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BF6267B1A;
-	Tue, 25 Feb 2025 11:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q1Qc/GVJ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003F22627FC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFBC267738;
+	Tue, 25 Feb 2025 11:49:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686EC14A4E9;
+	Tue, 25 Feb 2025 11:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484115; cv=none; b=GNIml83W+fOWwYQ7I92vtGPx0iJW2woJpZgfO3w+SQhHq1djFc70dEo6MQ/jfNmLRWlS7JOUnc2ttBwvy5eu3d8k/s7UFRfWeLM60FViuRatCrnwRlhGtgOUkjEIb7KMlw9TZujF+/epFuI3jr3i1Aoev+gQXeB44PIqasAg7V4=
+	t=1740484148; cv=none; b=lNyq5DNKnjN2qyQeiYbc+Uz+jjICjhrCuVTPPSablHr6P+11FQ+Btdkxm8LZWkp75COSWiJ/QfhE2nHA67fjJvZZJpu0D/NmnyGoaxkTudOAxzDqkUacWHf78pJAullKVH8TY2j/eub/QlQLKo0BTvt1Bs9VRuRmWrXD26NJeSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484115; c=relaxed/simple;
-	bh=jwIlbIZa94zqM8VMYCdmZHEfQAR94TbRRxSjsWwuhj4=;
+	s=arc-20240116; t=1740484148; c=relaxed/simple;
+	bh=RMX/vLzmRR+t1Z1tZJHPqlfhsfdx45TI3dWdcL1Fabs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rozjZS3NPAvRRTed9TwYNzdnGlgvkSbrkekPiVPqUqeNFOsUaxdXR1YZ+Eb3ybANzjTWLlV7//fnKrqO99iTVgrnSio2EuNYRP/0Laa7fZ0MjzacSVvDmyWqTOV/bMHhFZ0lx7JG8PONOdavw0pS1asI4Vh6RL0ztKBDlApVlKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q1Qc/GVJ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220d132f16dso83653515ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:48:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740484113; x=1741088913; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Qdo+jGz+lwZjU3PirrnDaRQoK8hS5+i1xXbU75YPLdM=;
-        b=q1Qc/GVJVwX+ME8zwLw/SeZ1lv+FVhFgUk11WLduiLPKLLOcraR1t5O6oi6ZLkIsck
-         cz81exzZ3LOu9nSKrsJ7UMALSZfUNXqawXrc+N81ZA2LYlMkDSncZhcr7mmzTKl7qJly
-         AX6LwEzW3c70iFU5xteMy3jxSv/tLJhJQOCqDoswDauU9DH4B6F2rQPbbR9Obi4oh65s
-         hIbJdAxbR5ukUAiza73ziXDxR17VxW3U97/KFVGJ3Q/ouFXTsYmRTGtAopJM53yoyHw/
-         fSwN1VWsNXpBqjrMTaa6qaQhzijA14+Kr657ItfxV8RZXngI8b35hSINBlLMB8NP8XyG
-         OXSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484113; x=1741088913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qdo+jGz+lwZjU3PirrnDaRQoK8hS5+i1xXbU75YPLdM=;
-        b=LCtKtLXud46UxIYFg64TfaThV/hktzrzJRsejsMPggdk4jXaVKjHtnhWu+NN7GQabr
-         aZy8bqkqE0ohh3pqurQ/SA3agyPmpIRrGaKBZTwrdAjPghrKBu6+3VRDqXAnod4cnaDR
-         65r6Pk/HFjA2CWamqqpoXdgdzy3QLhA9OpdRSkeqAfnvVHUgIM28i7o52GuTYFfC4L81
-         X2hSu6+82pLO7GIaOxuloC/PrVB/9FhDlYZfh56T3AIlgKAYrUDS3eRRPnzxvvkVjqDa
-         +e4qTRJUNjKpIe7uvCVx/lV4Y5LMWsbQhwrsW7YnIaGzlzZNI0l4H9gFFvzsTB3aMVDf
-         6dyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHobDhrFLuz6/s7fhaeqkGn3BMvBAXmN4y6tmlCYH6W/6pNrMYv44FhQ+Ilcb3oCy48V0s3gvfThXJNk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVzzoWsI21zHCcrDstvhh7Bs+opzJ03ut50r98373kqdsyaDDH
-	rUxyoDkkaBRO54LzrMPixLsK911mgN7mN0QS4KkH7pLp6u877wsJmOstCPRbrLU=
-X-Gm-Gg: ASbGncvUQqUGpntMxs7GSku5otMnLfzPotsjKj57N+W3CnS1zKewBVqDj+Dyx6ioWzQ
-	Baf6pCO6D+KRV1yHdEzCkbPhhd8T6mjI/yiZfJSkGd5AnmA5fzcNaYyKZ4oV5GWwD/i3R6ify+u
-	+b34ChKXTVtOpK4zh7kX0ig0hc3O48+qnqMqfUiXFxmTlDSiqulllW0zP7T0DRVUAVfxhr6rGxs
-	2ch3lPVslnAk524X7BQoCvvYtcCRaosc+TgmUvrol3AQHnf8d5hW1eHpe6hKTtNvxOSPjcIqJHR
-	yprMMeAzBGVQE7Kg/88QPoSPf/g=
-X-Google-Smtp-Source: AGHT+IGUKnJVC/nEaDn3iOHt54ul5Z63F/FxOemwqa0BCGDkyy9oqbocMm7EHttfLYn/TzlCRx8DIw==
-X-Received: by 2002:a17:902:f550:b0:220:e63c:5b13 with SMTP id d9443c01a7336-2219fff4ef2mr264491505ad.46.1740484113106;
-        Tue, 25 Feb 2025 03:48:33 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a000964sm12370925ad.48.2025.02.25.03.48.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:48:32 -0800 (PST)
-Date: Tue, 25 Feb 2025 17:18:30 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
-Message-ID: <20250225114830.64p56bndn4hkkkgq@vireshk-i7>
-References: <cover.1740475625.git.viresh.kumar@linaro.org>
- <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
- <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNuk7IVD/YGMXsZdX8aToao8Vw6WbmlmQVSgTqG3KQQWD1q64jLocgtfTMQJtDqNrLZY/wqlKHyBS26bf4qoVAYAkMIf4mjWpQ1hs122Q7wYRNgowDPMd0jUDFNAJdLfEo2O5sahYa9g/PpMeTKIzCiJxCsIJhxEfXh8qhJkxMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D5E71516;
+	Tue, 25 Feb 2025 03:49:23 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 918D43F5A1;
+	Tue, 25 Feb 2025 03:49:04 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:49:01 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Chuck Cannon <chuck.cannon@nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH 3/5] firmware: arm_scmi: imx: Add LMM and CPU
+ documentation
+Message-ID: <Z72uLenEmCwDCV5c@bogus>
+References: <20250121-imx-lmm-cpu-v1-0-0eab7e073e4e@nxp.com>
+ <20250121-imx-lmm-cpu-v1-3-0eab7e073e4e@nxp.com>
+ <Z5DhM1VLv2uCCVwT@bogus>
+ <PAXPR04MB8459D4C2CA3D5AE58B2B509788E02@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <Z72ZxspU3hfGZWez@bogus>
+ <20250225124203.GA31590@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
+In-Reply-To: <20250225124203.GA31590@nxa18884-linux>
 
-On 25-02-25, 10:55, Alice Ryhl wrote:
-> On Tue, Feb 25, 2025 at 10:47 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > +    /// Creates cpumask.
-> > +    #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
-> > +    fn new_inner(empty: bool) -> Result<Self> {
-> > +        let ptr = KBox::into_raw(KBox::new([bindings::cpumask::default(); 1], GFP_KERNEL)?);
-> 
-> I don't really understand this CPUMASK_OFFSTACK logic. You seem to
-> always allocate memory, but if OFFSTACK=n, then shouldn't it be on the
-> stack ...?
+On Tue, Feb 25, 2025 at 08:42:03PM +0800, Peng Fan wrote:
+> On Tue, Feb 25, 2025 at 10:21:58AM +0000, Sudeep Holla wrote:
+> >On Thu, Jan 23, 2025 at 01:30:43AM +0000, Peng Fan wrote:
+> >>
+> >> This is to manage the M7 core by Linux. I just put more documentation here.
+> >> CPU protocol is also used by ATF to manage AP cores.
+> >>
+> >
+> >Good
+> >
+> >> > Also what other CPUs are we talking here.
+> >>
+> >> M7 core
+> >>
+> >
+> >Are they referred by any other name in the system ? I reason I ask is using
+> >plain "CPU" is too generic and confusing. At the same time using "M7" may be
+> >too specific. I am trying to see if there is any middle ground.
+>
+> "CPU", if you mean the protocol name SCMI_CPU, there is no good choices.
+> I could add a note that "CPU indicates the various cores of i.MX SoC,
+> one CPU represents one core"
+>
 
-IIUC, the idea of the config option is to prevent stack overflow on
-systems with high number of CPUs (> 256), in which case the memory for
-the masks is allocated dynamically. Otherwise a local variable, in a
-function or a struct (which may itself get allocated dynamically) is
-fine.
+Just a wild suggestion, you don't have to take this. Can it be called
+SM CPU or something ? If you can't change the firmware documents which
+is understandable, I suggest we call it sm_cpu or something appended before
+cpu to distinguish it from the AP CPUs on which Linux runs.
 
-In the CONFIG_CPUMASK_OFFSTACK=y case, the cpumask C core does the
-allocation and the Rust code doesn't need to take care of the same.
+> The documentation origin from https://github.com/nxp-imx/imx-sm
+> hard for me to drive a change to use other name.
+>
+> Anyway if you have ideas, I could bring to our firmware owner.
+>
+> >
+> >> In general I would like to
+> >> > explore the possibility of collapsing this with LM protocol. CPUs within
+> >> > LM is LM's responsibility to bring up. And CPU can be seen as an LM for
+> >> > sake of this vendor protocol. I am not get into details here yet before I
+> >> > can understand what these CPUs are really in the system and why we
+> >> > need this.
+> >>
+> >> Our system supports M7 and A55 in one LM, so A55 use CPU protocol to
+> >> manage M7. When M7 and A55 in different LM, use LM protocol to
+> >> manage M7 LM.
+> >>
+> >
+> >The LM(assuming Logical Module/Machine) is an abstract construct, it should
+> >apply to even subset of components within an LM. Just wondering what are
+> >specific reasons do you think applying LM protocol you have on those M7
+> >CPUs alone in A55+M7 LM would not fit well.
+>
+> We have internal mail "NXP-ARM SCMI OEM extension" between NXP-ARM that I
+> could not post here. In that mail, LM is explained.
+>
 
-In the CONFIG_CPUMASK_OFFSTACK=n case, the allocation must be done by
-the caller (on stack or heap) and the cpumask C core will only clear
-the mask.
+Fair enough. Please don't share any info that can't be. I understand.
 
-I tried with an on-stack variable earlier but ran into problems as the
-memory is shared with the C FFI and Rust moves it unless it is pinned.
+> It is the LM protocol design that it only applies to the whole LM.
+> If the LM has A55+M7, A55+M7 will both be handled.
+> If the LM only has A55, A55 only be handled.
+> If the LM only has M7, M7 only be handled.
+>
+> When M7 + A55 in one LM, using LM protocol to handle M7 will make A55 not
+> work properly. The current linux usecase is remoteproc, that means
+> stop M7 will make A55 also stop. So need use CPU protocol here.
+>
+> When M7 and A55 in separate LM, using LM protocol to handle M7 LM works well.
+> The usecase is still remoteproc. In separate LM, A55 CPU protocol will be
+> blocked to handle M7 CPU per firmware security.
+>
 
-One easy way to make it work was using Box, which keeps the code
-simple.
+Thanks, I am now clear on LM has A55+M7 and M7 only. However your above
+statement relating to LMs with A55 only is not clear. If they run Linux,
+they just need to still use PSCI and this CPU protocol shouldn't be used
+to control them. Can you clarify on that ?
 
-Should I do it differently ?
+Other than that, it looks like we do need both LM and CPU. Just asking
+all the details so that if in future we have a similar need that needs to
+be a standard protocol, it would help us better.
 
--- 
-viresh
+--
+Regards,
+Sudeep
 
