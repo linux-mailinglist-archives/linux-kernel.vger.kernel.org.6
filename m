@@ -1,58 +1,91 @@
-Return-Path: <linux-kernel+bounces-530433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B503A43368
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:11:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0C3A43364
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2BF189CF2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9083717B1E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7A315C14B;
-	Tue, 25 Feb 2025 03:09:12 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF321547F3;
+	Tue, 25 Feb 2025 03:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ/PPfe5"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAB151991;
-	Tue, 25 Feb 2025 03:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9791151991;
+	Tue, 25 Feb 2025 03:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740452952; cv=none; b=GtpVwRhCRkn8+6dyCTkc7iTUzYj/t2BW7MOB8MwOMSCZAGhiyOkTDPQtgrxCYVNwFMp+Fu6mO/1IhRMR4hFfvSias2camQmXq0lCVwWBjV+6d7yb7w4MWmnSR8WS54kSVSmALvBwMWzzp5y4x7vj2r7g+jAKFw1WRw7zv8j4jjE=
+	t=1740452958; cv=none; b=YBvnJbRpsMmd8Bb6vJ7gpiaD/lTfxO/hgeNzFrqRV2qqSpotHus4S4cLIKFFMHazSwy0aYCeUME05dr/w+AIgi3QBgJ0F/ZOrGg+6b4yOEDW3yJIWJ8Pw0IDmBCqH8nbn3xHgWa1h5uRB2N56uHHtd3AbRDBa8fLLCbkH5iijyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740452952; c=relaxed/simple;
-	bh=qtwoiW+wjxdwfniv8ENqabrlCk5LMOdfrqjAEX8Z+1U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r8pTCQYMWQOxdnORL4pkjfqzgyPmMmbu2TpyAVlL8fN+6K2GYAEAAE6jnW/Yk9dWinlxlTHUBeHuik2FagPUHRwEJ2sch8gU6c0cUvPT9LhOI1nUidRUXOV+stIVR3C+eNEL5/r+FHKfP1g+rnmkpDPLU6RbNAsse8Qt3KjwFYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P2DuUF002099;
-	Mon, 24 Feb 2025 19:08:52 -0800
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 44yar7juc7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 24 Feb 2025 19:08:52 -0800 (PST)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 24 Feb 2025 19:08:51 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 24 Feb 2025 19:08:48 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <mchehab@kernel.org>, <fullwaywang@outlook.com>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <tiffany.lin@mediatek.com>, <andrew-ct.chen@mediatek.com>,
-        <yunfei.dong@mediatek.com>, <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 6.1.y] media: mtk-vcodec: potential null pointer deference in SCP
-Date: Tue, 25 Feb 2025 11:08:47 +0800
-Message-ID: <20250225030847.3829454-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740452958; c=relaxed/simple;
+	bh=yP4sJVz/+xRLnihlGpoNeTpJ4ncWPc1FCVMuukSKggY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbYYdJ1Ff+l0kbAlV9RQGJwO3O9SLZZQcyUPwV7gnW9llZ8rAh5aipjbmS8OUSBEc5MbNWgfOmySTy49xXgpioAbnTjAINXv5r7dNfZ5MObUbdmdfX7EDmVOksLctzCRpNIk0fH6tcWt0Y5Dos5V80CzDMKYJiqnRvOqa7rozWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ/PPfe5; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-216513f8104so12240885ad.2;
+        Mon, 24 Feb 2025 19:09:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740452956; x=1741057756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=elpjqOmNwpb5zLF3nxKBv/pF+35q6+L3HqlbKg46eQo=;
+        b=YQ/PPfe51VcPPY7lYwnuv2eEIT/EfBTBFYyihLnQuN0J9y3Yn66veQa/xbK8MwoGqF
+         nnVuBmtnHsdbJLynsyoUpYgM+cY0G1wp3X1T0Vuv329emLfVLoqhdYbVApd6cICEsJDg
+         okEsKCcyU9A98cXJvzTBBixobq+22Sg46ku5tvmJAKsvKxtElio8g1kBu7H91/6jReea
+         AxVC/9qlBj5KYR6K0U3z5g/K3xQnuf40P356y4eZqyaKTunyk6GO+7W1Du19NzFbO9Qn
+         yJqLB3HyZge7WpL3k8ilDce+hO5oDGc5sjahq/ET7/x8JFAc2lLK6Q2Hm+q1f3e9lv7o
+         yezA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740452956; x=1741057756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=elpjqOmNwpb5zLF3nxKBv/pF+35q6+L3HqlbKg46eQo=;
+        b=l/hzA8IvtfZl88mk2PnhcVGlErsICkYdK/bqjAK/8NEp989K4b/BTkV2QGi/VkwdZr
+         2gx+fYm4FXo0CvdbRjZ+vrV5kqEOL8cdqmNmvEgMPz/BucjVvLUURFBTr7DvNtH5WGs/
+         J3rojTw6vgBR5qAZoYuLmtY3dId674LKGgNfSRcVNsWzNjfr7tMk/SLpjbq+vMFSHUdO
+         B/t6xOAGUpHy0tQJvjJNNxksidYU2lEB2IVZen6G4X03t3/He39Hv9uOifQ3qLYSW1fs
+         jX6fp5JlMD1n87wKHf0F/QGCQqKVwqxQNccaFljW60v3OTrulFjULULgTmwoyf7td9jf
+         NphQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6NiDDTgCBgO0aJqkP/e9Lid1QcwrSSB2JTFQyuJvGv9vA33upCSOqw75/qQ68+UQbS+mQP09Qs7GY@vger.kernel.org, AJvYcCXffWqzLFv/AdHUqNycgryrJXKBUPjNnjAjoxZ8/FZAtP15c71MUW/whKAWV/YfUMSLFJEcRT/C4ZnB+kio@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8O/5Lk/PVHkQKu13UbElvnebgP74Ox5PU08Xi+39AjaXMbX/D
+	RybAsMuNT5UMQMMRRrecyYz6UiNs09rhO3BpkHsijzGtC1xqXYqM
+X-Gm-Gg: ASbGncud9ghE9F5m8B2gCiRgVIO60BbTzTUcjEzl9MgDOWPIXXV5S8qKg/NlQ12zACm
+	H3P2OthskheeMc8pKi9fy0fdrLpVpCjoId8dZGAtza8TzpCXipzbPCBZ+jz7BHholCQdQbv3Yyo
+	fViTCezPRORNmSTJJAsCEZfQVJc65lO8HE3R6SWbGisRe26aNR/24x+pWT8JuucquLRdiY60elk
+	8zvE0hA5oVRAVkQ8IxbDycK/ntQEgqzxWL+cUHlJnsa2/8v5Iae9FIpqnUBkGEzIeC/HydZWJEH
+	g/4QThZvgC/jS8/MjkhDyTs+SeMCtOk=
+X-Google-Smtp-Source: AGHT+IFDe2Sgq26vK2EiPZfc+NSBNuzC6A0u7dIPc3aRtjWh21i36Ss1MdvlgxEx1VMTHu4uwTgcIQ==
+X-Received: by 2002:a17:903:1c5:b0:220:bf1c:35da with SMTP id d9443c01a7336-2219ff72473mr96063675ad.7.1740452956032;
+        Mon, 24 Feb 2025 19:09:16 -0800 (PST)
+Received: from rock-5b.. ([221.220.131.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0aea5fsm3405505ad.224.2025.02.24.19.09.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 19:09:15 -0800 (PST)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
+Date: Tue, 25 Feb 2025 11:08:48 +0800
+Message-ID: <20250225030904.2813023-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,54 +93,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: jbfNddqTegbxnga7WbzmBe77Awe98qSA
-X-Authority-Analysis: v=2.4 cv=Be0i0qt2 c=1 sm=1 tr=0 ts=67bd3444 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=UqCG9HQmAAAA:8 a=t7CeM3EgAAAA:8 a=7f2alXSBUxmpNkzq_swA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: jbfNddqTegbxnga7WbzmBe77Awe98qSA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_12,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 spamscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1011
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.21.0-2502100000
- definitions=main-2502250020
 
-From: Fullway Wang <fullwaywang@outlook.com>
+Enable the HDMI port next to ethernet port.
 
-[ Upstream commit 53dbe08504442dc7ba4865c09b3bbf5fe849681b ]
-
-The return value of devm_kzalloc() needs to be checked to avoid
-NULL pointer deference. This is similar to CVE-2022-3113.
-
-Link: https://lore.kernel.org/linux-media/PH7PR20MB5925094DAE3FD750C7E39E01BF712@PH7PR20MB5925.namprd20.prod.outlook.com
-Signed-off-by: Fullway Wang <fullwaywang@outlook.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-[ To fix CVE-2024-40973, change the file path from drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
- to drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c and minor conflict resolution ]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
 ---
-Verified the build test.
----
- drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-index d8e66b645bd8..27f08b1d34d1 100644
---- a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-+++ b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-@@ -65,6 +65,8 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(struct mtk_vcodec_dev *dev)
- 	}
+Changes in v2:
+- Remove wrong port &hdptxphy_hdmi0
+- Link to v1: https://lore.kernel.org/all/20250215152550.3975614-1-liujianfeng1994@gmail.com/
+
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+index 6d68f70284e4..891c8afff160 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ #include <dt-bindings/pwm/pwm.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
+ #include "dt-bindings/usb/pd.h"
+ #include "rk3588.dtsi"
  
- 	fw = devm_kzalloc(&dev->plat_dev->dev, sizeof(*fw), GFP_KERNEL);
-+	if (!fw)
-+		return ERR_PTR(-ENOMEM);
- 	fw->type = SCP;
- 	fw->ops = &mtk_vcodec_rproc_msg;
- 	fw->scp = scp;
+@@ -89,6 +90,17 @@ fan0: pwm-fan {
+ 		pwms = <&pwm14 0 10000 0>;
+ 	};
+ 
++	hdmi1-con {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi1_con_in: endpoint {
++				remote-endpoint = <&hdmi1_out_con>;
++			};
++		};
++	};
++
+ 	/* M.2 E-KEY */
+ 	sdio_pwrseq: sdio-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+@@ -261,6 +273,28 @@ &gpu {
+ 	status = "okay";
+ };
+ 
++&hdmi1 {
++	pinctrl-0 = <&hdmim0_tx1_cec &hdmim0_tx1_hpd
++		     &hdmim1_tx1_scl &hdmim1_tx1_sda>;
++	status = "okay";
++};
++
++&hdmi1_in {
++	hdmi1_in_vp1: endpoint {
++		remote-endpoint = <&vp1_out_hdmi1>;
++	};
++};
++
++&hdmi1_out {
++	hdmi1_out_con: endpoint {
++		remote-endpoint = <&hdmi1_con_in>;
++	};
++};
++
++&hdptxphy1 {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0m2_xfer>;
+@@ -1209,3 +1243,18 @@ &usbdp_phy1 {
+ 	rockchip,dp-lane-mux = <2 3>;
+ 	status = "okay";
+ };
++
++&vop {
++	status = "okay";
++};
++
++&vop_mmu {
++	status = "okay";
++};
++
++&vp1 {
++	vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
++		reg = <ROCKCHIP_VOP2_EP_HDMI1>;
++		remote-endpoint = <&hdmi1_in_vp1>;
++	};
++};
 -- 
-2.25.1
+2.43.0
 
 
