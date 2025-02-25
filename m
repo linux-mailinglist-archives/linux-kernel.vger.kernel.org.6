@@ -1,172 +1,230 @@
-Return-Path: <linux-kernel+bounces-531552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982D2A441C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8379EA44269
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0857B16CB4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F11B188B94D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0A26B093;
-	Tue, 25 Feb 2025 14:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA3A26A1B4;
+	Tue, 25 Feb 2025 14:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKWz4F6d"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2/kGHnxa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k6aCjhhO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFEE269CF5;
-	Tue, 25 Feb 2025 14:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527C12698A8;
+	Tue, 25 Feb 2025 14:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492343; cv=none; b=JNlnMjyE+h6+2Fo5RUziVWs1OKydFyazytqv9f+md+wQPTLM52g/khblKl1mrmqFouzxtXDSrEKC46aRLNwqYrOSLqmiR+tBjtn7ph+mO5b/z30ZCKjWuABJH9+r/bSrCblyuvG5wfdulqyColhxHB0vsocirzbYOtY8e7GkKUs=
+	t=1740492901; cv=none; b=GlL7Seom6RgNBgiQ5l2Gz/cM/Eq394CBJa+RQy7J2YZXPuHVEZ0SruT9BcV9Ndd36YrkyUHmw/QQHsCudQJEBDhPSBUef9tP/wA428QSDveOmrZXUX5/yMQb7zOs1wO+Hv3F3Ei67GymszOMxFuXybytKmZxKFjm5I45Rczp3Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492343; c=relaxed/simple;
-	bh=kwghDFALfMvkIRmE1HPwrpB/0PzINC5FZ1kBkLfD77w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQC34gRgR8o34ZFl6+FTSiL4mDDzNNakEWfJpAdoapv9MgqdIFeZc2qwXsJu/Z/+mzJ+EwZ0Y3mgmkfKWHAHDdDp1dDPV7iLlAlXvDSJPOofFb2940jNRucsfzQHslmCXMe/3KANVFjEInT/l/X6OozowHZ8/pNnH2Af1KLc3oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKWz4F6d; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so8747093a12.0;
-        Tue, 25 Feb 2025 06:05:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740492340; x=1741097140; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tPd/d1lS+e5D1SoZ8oB+qy8yBKc1e4tlJLwqgs9YB9g=;
-        b=dKWz4F6dk5lcJFaLBki+JN5UBVuaAQY1bcAQMbEHEjabOwHFF8PyJ4iVn+Yrda91Vr
-         9NAgHqKrPfpk511jRJNdFZCrwsFHAYMITy9WEkI0Xk59lxx43MNSmCvnfUdaQAH62OfZ
-         Yo2Yyx9OTL1UXnaOjasd3epKhrz4ZsfdfZ3HOb2mLmgMo+MQMLnO4c+GZcvindiSAyga
-         pJ2Qtf6mTdvD/3UeEZAVGgaLurjesTux5gj/CJpCn9PKcBwUZjC1wp5bN5BvCoKtqPFK
-         cQrlKFVhLwJk4Ywf21NbLRL7NAbCHXoCL+2AT1ic2Sx5izUVgYa4oh83Jktx8tnYRKGj
-         +AJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740492340; x=1741097140;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tPd/d1lS+e5D1SoZ8oB+qy8yBKc1e4tlJLwqgs9YB9g=;
-        b=mJXJgDpgVOxkQntWSIijd85kV8qT1edhNJLfiGwf9icD8p+m5+KQVfD/pQlGk/OMSh
-         nQTORtuWIiKLpaOqa517UTBXrob1XpB5wZ4KMXQ65ZwrC2sWFfI+OdrykUGml5YTxCFQ
-         GzGAGsP1dv4CWUU1zPhjI1OBXHNzfTzc7BMuXiqV0PCBVBe5eiFgro8NVfO4eS+gDSoW
-         IjY6VPhlpNe0icRMpRaCMYMWvLRq2e365gkW+dUFbe/UEob63xpfNhXhSPYfl8cSa4Zh
-         rYrt76yxuPE68r/Ot7c5E3EReStzpWO68YaqKvRTDMa50X0tNM5k9+6hkDkrpw0a28CC
-         lWIA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/UhE2PykRkw8QfFgGU+isRRMso4EMtx74GzyVhugHKowsV6XbuiERD/Jz2QMK2TJ5yCE+0bMNpYRTLEZv@vger.kernel.org, AJvYcCXN60XqyjMR+hDGNJe2drnGi/5X+XlP3NxdubYXTezWB3JX65kjtWiLYH6qNwug/webVBaKWK+XrgZH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz8l8v4D5OlVUvztb5hDGz7tkg8xqFwHlpc2niC0sWJ7wS3syU
-	LcKz0pDQvVDwdLbXhTopAA1qiXMfOTnuRtlzjRtw1WtdhvY6iEiMCYFnmVoF
-X-Gm-Gg: ASbGnctVWrk/7so07eUAIAPrgwkjsq9ikJxoE2hWv4qwDZ5qzmSPQkEbIRw83M5sjCW
-	3BkVRUbiuMyfrCelQAkF+8S3riG51Wdxvzvzs3bgI6K1fiNjHV7ryIfzgGFKMWKmMemLYo6SxW/
-	3osKtNdp6jg8XcoAnSPmmno0Ati8xdp9CQPo9MEK9fffcKeIolzj9a6t8l/sKpJIGV832AV9Qo0
-	h0Yn8rF9XYpSU/7MbmGZ/BxUIiMhOCJsG/7NEh06Px1R0R08ngsx0f/pTq+BMQFWQLFBofOsjG4
-	dCnWW75NNKT3iIoJYOQoSEZstp3Ag8W2yUdOC/soqbjjJfOfMI8=
-X-Google-Smtp-Source: AGHT+IEduCdNbL7IFjCYL/sa3Uw1eSpI/ch7S+DMg3yhWwQhhBhMD+Xp89Ze8+kev4lk/55fC5U9WQ==
-X-Received: by 2002:a05:6402:1e8c:b0:5de:3478:269b with SMTP id 4fb4d7f45d1cf-5e44ba3ff2emr3170354a12.32.1740492339723;
-        Tue, 25 Feb 2025 06:05:39 -0800 (PST)
-Received: from [192.168.6.238] ([92.120.5.7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e45b716aadsm1258001a12.36.2025.02.25.06.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 06:05:39 -0800 (PST)
-Message-ID: <cd6a84cd-ff17-45df-becc-9bfc74522f73@gmail.com>
-Date: Tue, 25 Feb 2025 16:14:34 +0200
+	s=arc-20240116; t=1740492901; c=relaxed/simple;
+	bh=+035asVq2cxln6cQ58kGp3DD4QTDg0lBGUxK768xxPA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eTZwNiffY9cVZ6coFLBt4mmdpE4CueZWsLWmfw88Yk7KTBck1xQh7E3Mr4DKVKrcM0YW8vbRRgpdWiibosvLEKu0asZYpwWxAqLbuejWSQUCeR47E6PJR/CMBdMbUi0hpGTS/cjqMHkNy3G8XUeX9SODfrFb1b1WzKQ1Hss/Mf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2/kGHnxa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k6aCjhhO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Feb 2025 14:14:52 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740492897;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LIcfAAvaX2I1vLPgxgFdi4ri+8uIld27xT+PmxqyfcA=;
+	b=2/kGHnxaBKu+p+swcKkSSdJ5dNvyWLe36rZQye+VPqiKI1RD4RQjlbE5zr2j/7b/MQQxdl
+	V7Kevm9dxgQvOgEX67uPpGMWiEcRMPG1L7l2oA2mTYM+dsYo4KtNIGKhDEJ+/azCcoH4Ok
+	eA0ylDzy7J5uQkOpxo48LrkccgBAwSF4mw6BQajYkhu1RFn9L7F6JKMd8lxR5w/LFnuFOJ
+	xZOzt6j2yYDUk8+VJFeCt3w8Yjy6llvV/YtOXmS6MEgo9sHEWJFSYIibdpVR/97l5wkedT
+	gbLKDI1FTPGt8788xBn/mtznHd9fHu8ktHR09sguzhQa0S/Oae1Jzj+0TtU8kg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740492897;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LIcfAAvaX2I1vLPgxgFdi4ri+8uIld27xT+PmxqyfcA=;
+	b=k6aCjhhOZ+R7YcsA6uBjsSDWjlIhVcYNJSP5myMTj4Zv42VwX24a8lQ2EMWHVSobX8mEEe
+	rEUNTixaze7G7HAA==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86/intel: New start period for the freq mode
+Cc: Kan Liang <kan.liang@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250117151913.3043942-3-kan.liang@linux.intel.com>
+References: <20250117151913.3043942-3-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
-Content-Language: en-GB
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250221191909.31874-1-laurentiumihalcea111@gmail.com>
- <20250221191909.31874-5-laurentiumihalcea111@gmail.com>
- <Z7jahtO3bxjkMfnc@lizhi-Precision-Tower-5810>
-From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
-In-Reply-To: <Z7jahtO3bxjkMfnc@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174049289305.10177.5945609508670753411.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the perf/urgent branch of tip:
 
-On 21.02.2025 21:56, Frank Li wrote:
-> On Fri, Feb 21, 2025 at 02:19:08PM -0500, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> AIPS5 is actually AIPSTZ5 as it offers some security-related
->> configurations. Since these configurations need to be applied before
->> accessing any of the peripherals on the bus, it's better to make AIPSTZ5
->> be their parent instead of keeping AIPS5 and adding a child node for
->> AIPSTZ5. Also, because of the security configurations, the address space
->> of the bus has to be changed to that of the configuration registers.
-> The orginal 0x30c0_0000..0x31200000 include 0x30df0000, why not map only
-> config address part in your drivers.
->
-> Frank
+Commit-ID:     287b2d17fa77c812812fefd47ee22f90d9922e91
+Gitweb:        https://git.kernel.org/tip/287b2d17fa77c812812fefd47ee22f90d9922e91
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Fri, 17 Jan 2025 07:19:13 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 25 Feb 2025 14:54:14 +01:00
 
+perf/x86/intel: New start period for the freq mode
 
-Any concerns/anything wrong with current approach?
+Freqency mode is the current default mode of Linux perf. A period of 1 is
+used as a starting period. The period is auto-adjusted on each tick or an
+overflow, to meet the frequency target.
 
+The start period of 1 is too low and may trigger some issues:
 
-I find it a bit awkward to have the whole bus address space
+- Many HWs do not support period 1 well.
+  https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
 
-in the DT given that we're only interested in using the access
+- For an event that occurs frequently, period 1 is too far away from the
+  real period. Lots of samples are generated at the beginning.
+  The distribution of samples may not be even.
 
-controller register space.
+- A low starting period for frequently occurring events also challenges
+  virtualization, which has a longer path to handle a PMI.
 
+The limit_period value only checks the minimum acceptable value for HW.
+It cannot be used to set the start period, because some events may
+need a very low period. The limit_period cannot be set too high. It
+doesn't help with the events that occur frequently.
 
-I'm fine with the approach you suggested but I don't see a
+It's hard to find a universal starting period for all events. The idea
+implemented by this patch is to only give an estimate for the popular
+HW and HW cache events. For the rest of the events, start from the lowest
+possible recommended value.
 
-reason for using it?
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250117151913.3043942-3-kan.liang@linux.intel.com
+---
+ arch/x86/events/intel/core.c | 85 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+)
 
-
->
->> Finally, since AIPSTZ5 belongs to the AUDIOMIX power domain, add the
->> missing 'power-domains' property. The domain needs to be powered on before
->> attempting to configure the security-related registers.
->>
->> The DT node name is not changed to avoid potential issues with DTs in
->> which this node is referenced.
->>
->> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> index e0d3b8cba221..a1d9b834d2da 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> @@ -1399,11 +1399,13 @@ eqos: ethernet@30bf0000 {
->>  			};
->>  		};
->>
->> -		aips5: bus@30c00000 {
->> -			compatible = "fsl,aips-bus", "simple-bus";
->> -			reg = <0x30c00000 0x400000>;
->> +		aips5: bus@30df0000 {
->> +			compatible = "fsl,imx8mp-aipstz", "simple-bus";
->> +			reg = <0x30df0000 0x10000>;
->> +			power-domains = <&pgc_audio>;
->>  			#address-cells = <1>;
->>  			#size-cells = <1>;
->> +			#access-controller-cells = <0>;
->>  			ranges;
->>
->>  			spba-bus@30c00000 {
->> --
->> 2.34.1
->>
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index cdcebf3..cdb19e3 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3952,6 +3952,85 @@ static inline bool intel_pmu_has_cap(struct perf_event *event, int idx)
+ 	return test_bit(idx, (unsigned long *)&intel_cap->capabilities);
+ }
+ 
++static u64 intel_pmu_freq_start_period(struct perf_event *event)
++{
++	int type = event->attr.type;
++	u64 config, factor;
++	s64 start;
++
++	/*
++	 * The 127 is the lowest possible recommended SAV (sample after value)
++	 * for a 4000 freq (default freq), according to the event list JSON file.
++	 * Also, assume the workload is idle 50% time.
++	 */
++	factor = 64 * 4000;
++	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
++		goto end;
++
++	/*
++	 * The estimation of the start period in the freq mode is
++	 * based on the below assumption.
++	 *
++	 * For a cycles or an instructions event, 1GHZ of the
++	 * underlying platform, 1 IPC. The workload is idle 50% time.
++	 * The start period = 1,000,000,000 * 1 / freq / 2.
++	 *		    = 500,000,000 / freq
++	 *
++	 * Usually, the branch-related events occur less than the
++	 * instructions event. According to the Intel event list JSON
++	 * file, the SAV (sample after value) of a branch-related event
++	 * is usually 1/4 of an instruction event.
++	 * The start period of branch-related events = 125,000,000 / freq.
++	 *
++	 * The cache-related events occurs even less. The SAV is usually
++	 * 1/20 of an instruction event.
++	 * The start period of cache-related events = 25,000,000 / freq.
++	 */
++	config = event->attr.config & PERF_HW_EVENT_MASK;
++	if (type == PERF_TYPE_HARDWARE) {
++		switch (config) {
++		case PERF_COUNT_HW_CPU_CYCLES:
++		case PERF_COUNT_HW_INSTRUCTIONS:
++		case PERF_COUNT_HW_BUS_CYCLES:
++		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
++		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
++		case PERF_COUNT_HW_REF_CPU_CYCLES:
++			factor = 500000000;
++			break;
++		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
++		case PERF_COUNT_HW_BRANCH_MISSES:
++			factor = 125000000;
++			break;
++		case PERF_COUNT_HW_CACHE_REFERENCES:
++		case PERF_COUNT_HW_CACHE_MISSES:
++			factor = 25000000;
++			break;
++		default:
++			goto end;
++		}
++	}
++
++	if (type == PERF_TYPE_HW_CACHE)
++		factor = 25000000;
++end:
++	/*
++	 * Usually, a prime or a number with less factors (close to prime)
++	 * is chosen as an SAV, which makes it less likely that the sampling
++	 * period synchronizes with some periodic event in the workload.
++	 * Minus 1 to make it at least avoiding values near power of twos
++	 * for the default freq.
++	 */
++	start = DIV_ROUND_UP_ULL(factor, event->attr.sample_freq) - 1;
++
++	if (start > x86_pmu.max_period)
++		start = x86_pmu.max_period;
++
++	if (x86_pmu.limit_period)
++		x86_pmu.limit_period(event, &start);
++
++	return start;
++}
++
+ static int intel_pmu_hw_config(struct perf_event *event)
+ {
+ 	int ret = x86_pmu_hw_config(event);
+@@ -3963,6 +4042,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 	if (ret)
+ 		return ret;
+ 
++	if (event->attr.freq && event->attr.sample_freq) {
++		event->hw.sample_period = intel_pmu_freq_start_period(event);
++		event->hw.last_period = event->hw.sample_period;
++		local64_set(&event->hw.period_left, event->hw.sample_period);
++	}
++
+ 	if (event->attr.precise_ip) {
+ 		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
+ 			return -EINVAL;
 
