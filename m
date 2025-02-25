@@ -1,207 +1,283 @@
-Return-Path: <linux-kernel+bounces-532590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CB3A44F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:15:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFA0A44FA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E49817AC5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA7D3B1867
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9862135A6;
-	Tue, 25 Feb 2025 22:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A016211486;
+	Tue, 25 Feb 2025 22:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgOvUj1f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qJwTKFMt"
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303320CCD3;
-	Tue, 25 Feb 2025 22:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5F115539D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740521696; cv=none; b=IQ/C0Uyr+B449UI9z944z+WRE0okNiNeuJAlxGb7RDQcSms0A4dz6FLzbCrMd5wj3hqBUvB68B6curg1W4gIkXSwM2AplcIWFQ280JohJ4SH/xiN0pP7zRQ0PzZm8uH/4KvgR1ZqeHziIOkf4Wq8aVc5m0OEyQj9sCQcvsry9oY=
+	t=1740521860; cv=none; b=cPo5rWEOaVwJWrs6HOUaL6lSxeQSaNUItpYAFQUHeyjDpjYkzuxKXy3Vo86GYGLGxhsXySetM5vEGE3FxkhjpPldyuI6zPJIxjTfZ0kGM9YXtenu0WLUnY46xHHqS9tdngrJ8bZlLzk4r23XDhjy/xWLIu0HkAZOBoFuvH3Rjbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740521696; c=relaxed/simple;
-	bh=1wSYnkvLU4Ewu+IAhRy6LxphPTsLBZjldaLcpna5508=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YwXCXK8O7tgh/WkpVD6qFxWUglR0rqSLQSY/AQQl9Clmi013Y1tEtFnqce+QA+itwnpBRq/eh6p0AbIgADp75TrwimjtdY1ZGzBOFSMsmGCrOK2uG39qc0QdeLdE+uFaKlAJhqbSqEKma/8Z0eSrF8uciWc8Os1riOA5+P5RFOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgOvUj1f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A33C4CEDD;
-	Tue, 25 Feb 2025 22:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740521696;
-	bh=1wSYnkvLU4Ewu+IAhRy6LxphPTsLBZjldaLcpna5508=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WgOvUj1fm1rWMKSKnrtJA4vFNzbMDcESgPaMdwDm3PXTUyrdrIe6jY/1nF55nYcJp
-	 rn3bxYIJHFJNOVE3CIerQwdsPmT4hD2QyX/s/9HSzW+XlE0x0d2xaOI5b9uvAQyGng
-	 au4xGStPqOHhuYOe9mqT5XdYpq1nh65xvEp3Z0zI94s5Brc01Wcqgt0zsf+uRR6jtL
-	 ZvYGSl9hvDrddeHQCtDL9mHLO51gnFs7Nn6GXvf1PCvaxJ3Bew/FSLBq8q6pnD+FF6
-	 vMcmbRlkc3+7gxhK3zEp9bKucGWY7jhP9+dDgjSVBe7EGG8hJM4bsEuOu5NkEYy+8V
-	 rEuu4pSjd/FKg==
-Date: Tue, 25 Feb 2025 16:14:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-sound@vger.kernel.org,
-	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] ASoC: dt-bindings: xlnx,audio-formatter: Convert
- to json-schema
-Message-ID: <20250225221454.GA3224894-robh@kernel.org>
-References: <20250225190746.541587-1-vincenzo.frascino@arm.com>
- <20250225190746.541587-3-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1740521860; c=relaxed/simple;
+	bh=2xAg+xR9isAxludX2aUTlS5HqVo83GXFqkd+I9LuITo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O2NgrrAWFLOgbDTMFjSdFyzgbKzIqd0zzwgrXggRuJDrUxyDw9pvvAw5pjX+o3nXQcYcgh0ngsN0jRWc2pA2zWsXyeF58TMtaH78cnLrOPrWeW+ZD8US6Xjm40a+01ER8JqBwmzWetugFZ+TPoIGPQmFjUTsSOdzhq8JE0sVz7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qJwTKFMt; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id n3DytzpBQbR3dn3E1tCdOf; Tue, 25 Feb 2025 23:16:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740521786;
+	bh=d9A0JlJ4dz6HSjR6M0xdjKOHwvXf88YPRD+thZxM7BQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=qJwTKFMt9rHvzotJVhTQaLoATYLyaH4afQchZJZ2G6INFBu7WIu6ctwB/qZAQJdzJ
+	 nNq2HZfbTX8gRF9cWzr2rQWPHKh81W7Cuq0IGp7NDz2+In+8vzUsysBkYBWqnf1G7i
+	 lj/HZXkTSSL4ttQsLHmjf0weaoQrD60zfO9hCxRYe8aFZ2kj/G3bFtMB4uAN2cQ5f0
+	 Iu4w7vdeRYAQ9Eb35bv/oJyS2suxR5jhVjskWYUxQawqVUHbDQkYnXVkNRFU3pUDX5
+	 lheOj9JKUaT5GfbVa/9AUJfRnELdVTUjkKf5w5L5/q9o8dllm3pe4dk0DCgCwLyymB
+	 G4SG4vtKJDBfQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 25 Feb 2025 23:16:26 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <7a8e6b9f-2fa2-4794-bb4f-3abdb784fbc3@wanadoo.fr>
+Date: Tue, 25 Feb 2025 23:16:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225190746.541587-3-vincenzo.frascino@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] phy: rockchip: usbdp: move type-orientation-switch
+ further down
+To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, sebastian.reichel@collabora.com,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250225184519.3586926-1-heiko@sntech.de>
+ <20250225184519.3586926-2-heiko@sntech.de>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250225184519.3586926-2-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 07:07:44PM +0000, Vincenzo Frascino wrote:
-> Convert the Xilinx Audio Formatter 1.0  device tree binding documentation
-> to json-schema.
+Le 25/02/2025 à 19:45, Heiko Stuebner a écrit :
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > 
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Move the typec-orientation-switch functionality further down, next to
+> the typec-mux code. Not only brings this the typec-related functionality
+> closer together, but also the following change needs access to other
+> driver functions, that are below the current position.
+> 
+> No functional change.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 > ---
->  .../bindings/sound/xlnx,audio-formatter.txt   | 29 -------
->  .../bindings/sound/xlnx,audio-formatter.yaml  | 75 +++++++++++++++++++
->  2 files changed, 75 insertions(+), 29 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+>   drivers/phy/rockchip/phy-rockchip-usbdp.c | 166 +++++++++++-----------
+>   1 file changed, 83 insertions(+), 83 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
-> deleted file mode 100644
-> index cbc93c8f4963..000000000000
-> --- a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
-> +++ /dev/null
-> @@ -1,29 +0,0 @@
-> -Device-Tree bindings for Xilinx PL audio formatter
+> diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> index 5b1e8a3806ed..7b17c82ebcfc 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> @@ -616,89 +616,6 @@ static void rk_udphy_dp_hpd_event_trigger(struct rk_udphy *udphy, bool hpd)
+>   	rk_udphy_grfreg_write(udphy->vogrf, &cfg->vogrfcfg[udphy->id].hpd_trigger, hpd);
+>   }
+>   
+> -static void rk_udphy_set_typec_default_mapping(struct rk_udphy *udphy)
+> -{
+> -	if (udphy->flip) {
+> -		udphy->dp_lane_sel[0] = 0;
+> -		udphy->dp_lane_sel[1] = 1;
+> -		udphy->dp_lane_sel[2] = 3;
+> -		udphy->dp_lane_sel[3] = 2;
+> -		udphy->lane_mux_sel[0] = PHY_LANE_MUX_DP;
+> -		udphy->lane_mux_sel[1] = PHY_LANE_MUX_DP;
+> -		udphy->lane_mux_sel[2] = PHY_LANE_MUX_USB;
+> -		udphy->lane_mux_sel[3] = PHY_LANE_MUX_USB;
+> -		udphy->dp_aux_dout_sel = PHY_AUX_DP_DATA_POL_INVERT;
+> -		udphy->dp_aux_din_sel = PHY_AUX_DP_DATA_POL_INVERT;
+> -		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 1);
+> -		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 0);
+> -	} else {
+> -		udphy->dp_lane_sel[0] = 2;
+> -		udphy->dp_lane_sel[1] = 3;
+> -		udphy->dp_lane_sel[2] = 1;
+> -		udphy->dp_lane_sel[3] = 0;
+> -		udphy->lane_mux_sel[0] = PHY_LANE_MUX_USB;
+> -		udphy->lane_mux_sel[1] = PHY_LANE_MUX_USB;
+> -		udphy->lane_mux_sel[2] = PHY_LANE_MUX_DP;
+> -		udphy->lane_mux_sel[3] = PHY_LANE_MUX_DP;
+> -		udphy->dp_aux_dout_sel = PHY_AUX_DP_DATA_POL_NORMAL;
+> -		udphy->dp_aux_din_sel = PHY_AUX_DP_DATA_POL_NORMAL;
+> -		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 0);
+> -		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 1);
+> -	}
 > -
-> -The IP core supports DMA, data formatting(AES<->PCM conversion)
-> -of audio samples.
+> -	udphy->mode = UDPHY_MODE_DP_USB;
+> -}
 > -
-> -Required properties:
-> - - compatible: "xlnx,audio-formatter-1.0"
-> - - interrupt-names: Names specified to list of interrupts in same
-> -		    order mentioned under "interrupts".
-> -		    List of supported interrupt names are:
-> -		    "irq_mm2s" : interrupt from MM2S block
-> -		    "irq_s2mm" : interrupt from S2MM block
-> - - interrupts-parent: Phandle for interrupt controller.
-> - - interrupts: List of Interrupt numbers.
-> - - reg: Base address and size of the IP core instance.
-> - - clock-names: List of input clocks.
-> -   Required elements: "s_axi_lite_aclk", "aud_mclk"
-> - - clocks: Input clock specifier. Refer to common clock bindings.
+> -static int rk_udphy_orien_sw_set(struct typec_switch_dev *sw,
+> -				 enum typec_orientation orien)
+> -{
+> -	struct rk_udphy *udphy = typec_switch_get_drvdata(sw);
 > -
-> -Example:
-> -	audio_ss_0_audio_formatter_0: audio_formatter@80010000 {
-> -		compatible = "xlnx,audio-formatter-1.0";
-> -		interrupt-names = "irq_mm2s", "irq_s2mm";
-> -		interrupt-parent = <&gic>;
-> -		interrupts = <0 104 4>, <0 105 4>;
-> -		reg = <0x0 0x80010000 0x0 0x1000>;
-> -		clock-names = "s_axi_lite_aclk", "aud_mclk";
-> -		clocks = <&clk 71>, <&clk_wiz_1 0>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-> new file mode 100644
-> index 000000000000..af892a9abdc6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/xlnx,audio-formatter.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> -	mutex_lock(&udphy->mutex);
+> -
+> -	if (orien == TYPEC_ORIENTATION_NONE) {
+> -		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 0);
+> -		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 0);
+> -		/* unattached */
+> -		rk_udphy_usb_bvalid_enable(udphy, false);
+> -		goto unlock_ret;
+> -	}
+> -
+> -	udphy->flip = (orien == TYPEC_ORIENTATION_REVERSE) ? true : false;
+> -	rk_udphy_set_typec_default_mapping(udphy);
+> -	rk_udphy_usb_bvalid_enable(udphy, true);
+> -
+> -unlock_ret:
+> -	mutex_unlock(&udphy->mutex);
+> -	return 0;
+> -}
+> -
+> -static void rk_udphy_orien_switch_unregister(void *data)
+> -{
+> -	struct rk_udphy *udphy = data;
+> -
+> -	typec_switch_unregister(udphy->sw);
+> -}
+> -
+> -static int rk_udphy_setup_orien_switch(struct rk_udphy *udphy)
+> -{
+> -	struct typec_switch_desc sw_desc = { };
+> -
+> -	sw_desc.drvdata = udphy;
+> -	sw_desc.fwnode = dev_fwnode(udphy->dev);
+> -	sw_desc.set = rk_udphy_orien_sw_set;
+> -
+> -	udphy->sw = typec_switch_register(udphy->dev, &sw_desc);
+> -	if (IS_ERR(udphy->sw)) {
+> -		dev_err(udphy->dev, "Error register typec orientation switch: %ld\n",
+> -			PTR_ERR(udphy->sw));
+> -		return PTR_ERR(udphy->sw);
+> -	}
+> -
+> -	return devm_add_action_or_reset(udphy->dev,
+> -					rk_udphy_orien_switch_unregister, udphy);
+> -}
+> -
+>   static int rk_udphy_refclk_set(struct rk_udphy *udphy)
+>   {
+>   	unsigned long rate;
+> @@ -1323,6 +1240,89 @@ static const struct phy_ops rk_udphy_usb3_phy_ops = {
+>   	.owner		= THIS_MODULE,
+>   };
+>   
+> +static void rk_udphy_set_typec_default_mapping(struct rk_udphy *udphy)
+> +{
+> +	if (udphy->flip) {
+> +		udphy->dp_lane_sel[0] = 0;
+> +		udphy->dp_lane_sel[1] = 1;
+> +		udphy->dp_lane_sel[2] = 3;
+> +		udphy->dp_lane_sel[3] = 2;
+> +		udphy->lane_mux_sel[0] = PHY_LANE_MUX_DP;
+> +		udphy->lane_mux_sel[1] = PHY_LANE_MUX_DP;
+> +		udphy->lane_mux_sel[2] = PHY_LANE_MUX_USB;
+> +		udphy->lane_mux_sel[3] = PHY_LANE_MUX_USB;
+> +		udphy->dp_aux_dout_sel = PHY_AUX_DP_DATA_POL_INVERT;
+> +		udphy->dp_aux_din_sel = PHY_AUX_DP_DATA_POL_INVERT;
+> +		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 1);
+> +		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 0);
+> +	} else {
+> +		udphy->dp_lane_sel[0] = 2;
+> +		udphy->dp_lane_sel[1] = 3;
+> +		udphy->dp_lane_sel[2] = 1;
+> +		udphy->dp_lane_sel[3] = 0;
+> +		udphy->lane_mux_sel[0] = PHY_LANE_MUX_USB;
+> +		udphy->lane_mux_sel[1] = PHY_LANE_MUX_USB;
+> +		udphy->lane_mux_sel[2] = PHY_LANE_MUX_DP;
+> +		udphy->lane_mux_sel[3] = PHY_LANE_MUX_DP;
+> +		udphy->dp_aux_dout_sel = PHY_AUX_DP_DATA_POL_NORMAL;
+> +		udphy->dp_aux_din_sel = PHY_AUX_DP_DATA_POL_NORMAL;
+> +		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 0);
+> +		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 1);
+> +	}
 > +
-> +title: Xilinx PL audio formatter
+> +	udphy->mode = UDPHY_MODE_DP_USB;
+> +}
 > +
-> +description:
-> +  The IP core supports DMA, data formatting(AES<->PCM conversion)
-> +  of audio samples.
+> +static int rk_udphy_orien_sw_set(struct typec_switch_dev *sw,
+> +				 enum typec_orientation orien)
+> +{
+> +	struct rk_udphy *udphy = typec_switch_get_drvdata(sw);
 > +
-> +maintainers:
-> +  - Vincenzo Frascino <vincenzo.frascino@arm.com>
+> +	mutex_lock(&udphy->mutex);
 > +
-> +allOf:
-> +  - $ref: dai-common.yaml#
+> +	if (orien == TYPEC_ORIENTATION_NONE) {
+> +		gpiod_set_value_cansleep(udphy->sbu1_dc_gpio, 0);
+> +		gpiod_set_value_cansleep(udphy->sbu2_dc_gpio, 0);
+> +		/* unattached */
+> +		rk_udphy_usb_bvalid_enable(udphy, false);
+> +		goto unlock_ret;
+> +	}
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - xlnx,audio-formatter-1.0
+> +	udphy->flip = (orien == TYPEC_ORIENTATION_REVERSE) ? true : false;
+> +	rk_udphy_set_typec_default_mapping(udphy);
+> +	rk_udphy_usb_bvalid_enable(udphy, true);
 > +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    items:
-> +      - const: irq_mm2s
-> +      - const: irq_s2mm
-> +    description: |
-> +      Names specified to list of interrupts in same order mentioned under
-> +      "interrupts".
+> +unlock_ret:
+> +	mutex_unlock(&udphy->mutex);
+> +	return ret;
 
-Drop description.
+This will break built.
 
-With that,
+It was return 0 preivously.
+This change should be aprt of 2/2 where "int ret;" is introduced.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+CJ
 
+
+> +}
 > +
-> +  interrupts:
-> +    minItems: 1
-> +    items:
-> +      - description: interrupt from MM2S block
-> +      - description: interrupt from S2MM block
+> +static void rk_udphy_orien_switch_unregister(void *data)
+> +{
+> +	struct rk_udphy *udphy = data;
 > +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: s_axi_lite_aclk
-> +      - const: aud_mclk
+> +	typec_switch_unregister(udphy->sw);
+> +}
 > +
-> +  clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: clock for the axi data stream
-> +      - description: clock for the MEMS microphone data stream
+> +static int rk_udphy_setup_orien_switch(struct rk_udphy *udphy)
+> +{
+> +	struct typec_switch_desc sw_desc = { };
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-names
-> +  - interrupts
-> +  - clock-names
-> +  - clocks
+> +	sw_desc.drvdata = udphy;
+> +	sw_desc.fwnode = dev_fwnode(udphy->dev);
+> +	sw_desc.set = rk_udphy_orien_sw_set;
 > +
-> +additionalProperties: false
+> +	udphy->sw = typec_switch_register(udphy->dev, &sw_desc);
+> +	if (IS_ERR(udphy->sw)) {
+> +		dev_err(udphy->dev, "Error register typec orientation switch: %ld\n",
+> +			PTR_ERR(udphy->sw));
+> +		return PTR_ERR(udphy->sw);
+> +	}
 > +
-> +examples:
-> +  - |
-> +    audio_formatter@80010000 {
-> +      compatible = "xlnx,audio-formatter-1.0";
-> +      reg = <0x80010000 0x1000>;
-> +      interrupt-names = "irq_mm2s", "irq_s2mm";
-> +      interrupt-parent = <&gic>;
-> +      interrupts = <0 104 4>, <0 105 4>;
-> +      clock-names = "s_axi_lite_aclk", "aud_mclk";
-> +      clocks = <&clk 71>, <&clk_wiz_1 0>;
-> +    };
-> +...
-> -- 
-> 2.43.0
-> 
+> +	return devm_add_action_or_reset(udphy->dev,
+> +					rk_udphy_orien_switch_unregister, udphy);
+> +}
+> +
+>   static int rk_udphy_typec_mux_set(struct typec_mux_dev *mux,
+>   				  struct typec_mux_state *state)
+>   {
+
 
