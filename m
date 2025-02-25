@@ -1,110 +1,155 @@
-Return-Path: <linux-kernel+bounces-531420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D4AA4404E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C17F4A44053
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A8E17F4D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1862F423968
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1852E269817;
-	Tue, 25 Feb 2025 13:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE48C2676E0;
+	Tue, 25 Feb 2025 13:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG9jRTpj"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pn/GXGb1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C80268C40
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5122690D7;
+	Tue, 25 Feb 2025 13:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489002; cv=none; b=GJ5P8Tvkh9HzyunBrdaePru+gjw1+jXO2otFqOwGRBUYHHxD0CyX5L+yYE7qsdgvHPMwtDvLQF7AufwPeHdA10JQh6y/KH0rulvWDU3OuD/aZywiwBMEubeg56v1syd0vgE/6iiCap5chT+SRmvX78zKspJYGe/i7+Eu4RGRNtk=
+	t=1740489025; cv=none; b=lOtoh2oLwrat+o8Lj48yGz/JmtlSM9EJOvNCucuQHwKnwSrsiBqnwo+pU+TokzYZ2P2R2NYZ1iO3J5diInlUaOtsTfKtn4wAEaJuVUYSougCn2WBszkhL/knUb3gLKWrVoiT4qNKkPyCs+ApF7LkjhqhSHpHJoeTR6QSJ9XTktg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489002; c=relaxed/simple;
-	bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hfJYjZIxFmXHE1iY7Dz1m/G3DcbzFLOkX1VGNnEX2lV/Hb1crAx5dIQhL9p0em4HuTLwlo8AgvAH0uhpKpX3HIcPykKrrOY7aMFjecx8n0Rp8hlGnd4vVjIkSm1LfSXEE0wkBHUrQWKt8OIhi5JmsCqoTkKL88d0Vi2iCsMcIgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG9jRTpj; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220cb083491so11553715ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:10:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740489000; x=1741093800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
-        b=OG9jRTpjQlDwu+Yc6sJHuJSi3Y8gAJOESzts/Nmq36g5A/GuY+upJX1EZLaZXGkDFp
-         XDfrmixVSQtCpNoaoGhBf75PtBkXHECv6qp/6QKUSWfmNdc/BD8ZEm4hinM+IKPOu/Oi
-         AIyk8Ij4jH9S0N15znpmcgIDvLfZUyMojugLv99FkQmLSFTrxjb4ff/N9LmT+sKagLM3
-         AGw+62wg8BxEwNsStfPwRWB1M1WUN0tVdyzjCuRwrYFeP6SLNCE4piGAXSIVTDF82S3G
-         Hr3fgYrbA44OPDlHgYCmtn1ANGygsPcMI8V+xglyC6vax1FSlWUmJo7DFQpYsYbWyIKF
-         jwaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489000; x=1741093800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NmgbRQa5MS86snbaEZWHJjQdnfuzUG+P83d5Gw//rMo=;
-        b=fjf5++ir5zfqOd8jSHfaRKk3LJf9QLMDxtk2zPwf4/+hW8QBStXgHwVIB56QPWLif6
-         ftZwdYI4aKHKd/AEtvw1hmSARyvg3N7EzxkxY6RSg6PlQia4xsPe0dgfQPhhI7VqXvTI
-         zq7i9WTkxx8lHEOWS5xPx1MxLVAYopCy4vW5rC9Nb1he8l6m8yXoQFX6NK8mMmDvxCSQ
-         z9llwXGEZD2xHz9+PucSwxSpZ8WLpszJ5B9b5Xf+z1/i9n8nXt4YV5TZlteKLy/FShk6
-         pKgRHx8cOBjWGsl7koOUsg7qVKOABWfvR6lPLE0770yCeziV52SrYpWc2ubaaGngXyQH
-         QZBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhL6TfQrONNAm3c2mplfXKotXsOmWRkHT51HDHZz/rNq7GV/DnvgWznkq9y2WnMFAsYB0l4D2DiqEbK6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcO2SUmHiZEaMaVCJ9HdaB2gjSioRjmC1jDJwmcDGsLO804AhP
-	r8/U0a6ZqO9ceKyJfDy1X4+HB5Gn1hs5cNt2are8YVI/hHX9GiXWSWRnnwyR/pwT4Q==
-X-Gm-Gg: ASbGncsl6g++SPOX3iG+FgMuGYCkg9Kazq93nKN3KabLQ7h8orRi7ZljrObL6clh/Tz
-	xEGBVWCaM9Uix1dTEZtozvxDMNwG5qXOmGZmVHrsPG4a6AOp5EpKmUmdIG5u+on9BIWexRTwoAp
-	y/lfFIUX/5Sxk/ZsH4GuoHKu6C3k+JfKDHSVDp8zTSNJTABb+1MFoYhnGQuMiuJlfhcl2bpx0nH
-	teKphT30p0VWgQpbg41rknmBPIddaiOjI3aG6czwlYYPGl8GaB/IM/36PMmdXELMJ9x9D5yEmkn
-	WLlAcWKfQafXStcTxOLMxCwmBNW57m8Lus4hUDG3wQk=
-X-Google-Smtp-Source: AGHT+IFAOl04FQd9DYpn24JBIFzBlWQ2MlsHQBRasgHUbKqN9nNVyvOkNVWTDVi3kFIyQpABTIYMWw==
-X-Received: by 2002:a17:903:230e:b0:216:30f9:93c5 with SMTP id d9443c01a7336-2219ff56b99mr109777465ad.6.1740489000319;
-        Tue, 25 Feb 2025 05:10:00 -0800 (PST)
-Received: from localhost.localdomain ([171.217.43.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0a7ea0sm13413485ad.177.2025.02.25.05.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:09:59 -0800 (PST)
-From: Qianyi Liu <liuqianyi125@gmail.com>
-To: phasta@mailbox.org
-Cc: airlied@gmail.com,
-	ckoenig.leichtzumerken@gmail.com,
-	dakr@kernel.org,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	liuqianyi125@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	matthew.brost@intel.com,
-	mripard@kernel.org,
-	phasta@kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
-Date: Tue, 25 Feb 2025 21:09:53 +0800
-Message-Id: <20250225130953.100871-1-liuqianyi125@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
-References: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
+	s=arc-20240116; t=1740489025; c=relaxed/simple;
+	bh=nhLUfIoiOoIzAhHYROQBSPfuhD4U5LnXA/KST4muNII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9KOavUbDKFY0qun1jQfbs2WVryPO13r4c254bvKjYEfkZCJGXHryV/f9c2WhcqTZqvE5WdK1uxkflcUTntyOsFi/IpvA7S4VcoSL3U2yVyX8hrktmklnD8quSheeEvY6v3g1xGjyiWildqez88TKLCbCSdTMfdOAK3plwaPdUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pn/GXGb1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5AF2240E01AD;
+	Tue, 25 Feb 2025 13:10:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 28rS1vMLv5yB; Tue, 25 Feb 2025 13:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740489012; bh=HvQisBmjmpusVXJjXjZib7dbEOHzSN+VgPoUZiwWxik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pn/GXGb1luquKQzyuo/8aYb6J5d33gPW7wX51ENbr9bd6S+QyO4SqY9v+BMyUECzw
+	 /6E09SiDcnGElEpfQlylCF0DMo39mwA+Jmlvb+NySXm3AYGV0QJwJDIaOEIlcNjWlz
+	 JKtS6L9JdkTiaCsCsexQtn8gbtGwEYNbeJ3xp3j4fRcA07o7AUIot4Ie5f+gXy0jC0
+	 aQFdXZRll5hzF029Zudf6cZc/flRE06g/gBWKxAkz6LQpPHGc0gDTiar6V9kjFt0q6
+	 g0+stGRUy8Z0Ajl6i/Ckk1S+I52OIpJpha7lXUK7U5A7dwHJd8LWSAIpJtUgU09n7f
+	 d7Q5l80DBb+J0CIirdYW7hBKvHt0wN0JoxIYmna/Q3o4vVN/i8Y9lzGOrNMDqGn3vv
+	 nUjc9f4KcFHdDuM9MYemrXrRTvJ6+HHrhE6RRMMK3barEQl7Phpg4+TtZKi62wdxPg
+	 wolCeIoHN6HUtPMsqbiLX+i8NdLonoFhjx5YqnlKKfTPDqAoHRrjn9lKdZL9hoLdJ0
+	 7K7dAFceHy50nWqwMxuOYHoelmsKanZWk/+S9kRLYdotwQOe3tzrafloqPwKUhBQLM
+	 Bk0j2eEaPNa4zXY+C4XnEAectJ2ErggZSfpUe8fEEj4vLew20A5TwjJnBicTJvuDvF
+	 2OsmCmlw4lFeyFFAchM3xKQY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6A86B40E0177;
+	Tue, 25 Feb 2025 13:10:07 +0000 (UTC)
+Date: Tue, 25 Feb 2025 14:10:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v2 2/3] x86/mce: Move message printing from
+ mce_notify_irq to mce_early_notifier()
+Message-ID: <20250225131000.GKZ73BKIW4SqS4cbbE@fat_crate.local>
+References: <20250210154707.114219-1-nik.borisov@suse.com>
+ <20250210154707.114219-3-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210154707.114219-3-nik.borisov@suse.com>
 
-> Oh, and importantly, I forgot:
+On Mon, Feb 10, 2025 at 05:47:05PM +0200, Nikolay Borisov wrote:
+> Informing the user that an MCE has been logged from mce_notify_irq() is
+> somewhat misleading because whether the MCE has been logged actually
+> depends on whether CONFIG_X86_MCELOG_LEGACY is turned on or not.
 
-> Since this is clearly a bug fix, it needs a "Fixes: " tag and put the
-> stable kernel on Cc.
+That text needs update in light of what we talked about when looking at patch
+1...
 
-OK, thanks for reminding.
+> Furthermore it was reported that actually having a message triggered
+> when an MCE is generated can be helpful in certain scenarios.
 
-Qianyi.
+That's too vague - needs proper justification.
+
+> Improve the situation by lifting the printing to the generic
+> mce_early_notifier() as it's executed always and is independent of any
+> compile-time option.
+
+Meh.
+
+> Link: https://lore.kernel.org/all/CY8PR11MB7134D97F82DC001AE009637889E32@CY8PR11MB7134.namprd11.prod.outlook.com/
+
+Ah, there's the justification. I guess...
+
+Just don't put "customers" in the commit message.
+
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 89625ff79c3b..d55b1903fde6 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -591,15 +591,8 @@ EXPORT_SYMBOL_GPL(mce_is_correctable);
+>   */
+>  static int mce_notify_irq(void)
+>  {
+> -	/* Not more than two messages every minute */
+> -	static DEFINE_RATELIMIT_STATE(ratelimit, 60*HZ, 2);
+> -
+>  	if (test_and_clear_bit(0, &mce_need_notify)) {
+>  		mce_work_trigger();
+> -
+> -		if (__ratelimit(&ratelimit))
+> -			pr_info(HW_ERR "Machine check events logged\n");
+> -
+>  		return 1;
+>  	}
+>  
+> @@ -609,6 +602,8 @@ static int mce_notify_irq(void)
+>  static int mce_early_notifier(struct notifier_block *nb, unsigned long val,
+>  			      void *data)
+>  {
+> +	/* Not more than two messages every minute */
+> +	static DEFINE_RATELIMIT_STATE(ratelimit, 60*HZ, 2);
+>  	struct mce_hw_err *err = to_mce_hw_err(data);
+>  
+>  	if (!err)
+> @@ -619,6 +614,9 @@ static int mce_early_notifier(struct notifier_block *nb, unsigned long val,
+>  
+>  	set_bit(0, &mce_need_notify);
+>  
+> +	if (__ratelimit(&ratelimit))
+> +		pr_info(HW_ERR "Machine check event detected\n");
+
+Well, the previous "logged" was correct.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
