@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-530949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD98A43A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:58:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3B7A43A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F2216B7D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D535618883D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53EC2676D8;
-	Tue, 25 Feb 2025 09:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7591D267722;
+	Tue, 25 Feb 2025 09:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVlGLEay"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YkLTdvn3"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE41266F17
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F932673AD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477312; cv=none; b=b2MFwg/YrQev0yPxewlSEKIi1S6+JSwbpJyW8WAyeF8Gqi0IcXLPAdddae/i9N4y1fC1mBLix3kOXvOjjuF0fTGCYQUwPD3FN7me8CTDgOPXerDINXUonHT1sZamFqQGEX3pMSeGoaJSsifM9e2bbMkYtMfHNcEdacN8cZqT42E=
+	t=1740477313; cv=none; b=umXvWH4t3QfyRQum5Yxo6mxhV/BtTnuCKKXTCCLmVupySQdFz0uSD8FHKS8FP5TbJXxLnZ6L10t2/huTMSN6xa+dZ0FjI2zYQSefyx2yXOWx7mRLvw4Vji7JUuI/3ffs7M4xlj+El/d4IugnU8PqDiTXO2fOftN59uWIoulIQww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477312; c=relaxed/simple;
-	bh=KmFYy+Sl51pEEMIL+kYoz/kzGL3OpkwJKZPPkPqW0zo=;
+	s=arc-20240116; t=1740477313; c=relaxed/simple;
+	bh=1//OcGv7gI8Rf5rDiwusdTiN/AV8oS31pnzMa0CmGQ8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BI2U08yG2jdl1LI9ZbnWa+DUtruKLQ3LXyEcLFpCSf9X9Lq5cp6xR0EsfLr2le0nJAzROGFaz3neqAwNJyCrlI58xu+WJkyjkJmEwFBcCK8ymfko498Tf8CnpV99azfaq2svRr+gt1pOaJHDKwFlqdKKEG7jgNqXgDrAJ/FKoyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EVlGLEay; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:To:Cc; b=pNF6Lme2/t/YoBnXa4A/VpEZCRkxDLJKLCzhKL6/wMYbtKIu7d0o0sxa0bqgj8Y9b/xnV4k0pEXg2PFcL+SkKQIdYC93ft2+gCV4upYh9U+XvJBYk1sfbsGG0ZBa8s1aXtvL8wg5cE2BRhemHe3jtpbgJsqcgvA8R6312aV5Gs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YkLTdvn3; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5461dab4bfdso6457137e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:55:09 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5484fa1401cso1187198e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:55:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740477308; x=1741082108; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740477310; x=1741082110; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gCv9qyhC7Wn0x41/PmaNXNh/X9H9ffqS+9z2MGX0UwA=;
-        b=EVlGLEayvMgKWsWFKu399emywj/RVV7D8qPrSBtyEvk6o1P8jxeUnapO43/MgYzv/3
-         E4yk+6Eqswb+v4sp94CKCTEdNFkSgTwchqXYFck+uAoxJ9vgOtbz3/+NdyFpPCp1GVDK
-         QQzwiflWVMrKOzcbG6Dl1oisCM646lRwtfqm8cDFrjziSXRzrbC8JH+fkdOB707Zz25m
-         9/J9l8LpdtraRlDE2LAsvRaYjees/jxg3aAozSY8anOMQ2SYDMgPivq0yCRCKnfekvTt
-         JU6/3GRMID8JZB5gPYaVfTyfTH4NiYic6OxGrlBMnPs9usU6f1wdP7Fr2MpSmIIZ8d4Y
-         YYcw==
+        bh=aUy2L+59XSB2dO0W6jnqgQpUaRtZ0LvR6wu2Q9qABCw=;
+        b=YkLTdvn39mAIvAXySe93CfiJukZxVsLhKOSvBj29d8f2sfxTK0w/tP1HbSjydH83kG
+         Sv09j/rYODYu7Trgj8kpogjmpCO8a2W4I5dPIrw5+PsM4t69lA+reXgQwlyN7R2gS542
+         egqxFZOivmr/JFpAle+yx+/gzLyINZOIPqwja6AUZ8cLzvMEmlCjAhWZb/enw2Z67s01
+         HQOhiNeFLiRvkPskOypar0+okwmIF0KjkVVvsPm0fI4hCB3CuF4IQASuiwxIlgCKKG2v
+         Tk2pdVGPv3jpBixZi5r1HQAUcJ++NMxYJoKVEe6OtQEVjoEImKO7rogcGP528j7iGUKo
+         uwfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740477308; x=1741082108;
+        d=1e100.net; s=20230601; t=1740477310; x=1741082110;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gCv9qyhC7Wn0x41/PmaNXNh/X9H9ffqS+9z2MGX0UwA=;
-        b=Utlof5EYvgyp/tw8JfjQ2xdpFO1jqLdgnVFtfPoVDA40/JIh/xWx2FTRVlviWDIZOj
-         AOBsKThMBdy9SP42341qe5YAbuA93UdEoR36s6leVok52Mhh/TTaCD98NJLDkBUPXtPX
-         wIHiKM2zX7mWTuyswuJMb0I0hvYH+CSelkJA2Z/xMg7u0Wv/DLKGqVLbmN+Xfvgwj2m3
-         1buChY40QrOvTVK3BitSRr5PTVWQTNTey9gbsxXfcty0hIoIsWxHmt+lcUxIlP+k2PYR
-         8k+eBI7a2wjHRJje8i/r9uVlCQEuV4oBxlzK3nFy7Vn7W80a/AvT8SO+llwGW+5E3hpW
-         2uVA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5ndYr8TnOlQQBM+TvyI628hw1hEqOEMWM4Bdx7MaJOkG+Tu/WAyoFPviApFJfZ2gvYNsv/QgykF+D470=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOmHFgoQzWExySBAA9GT6UM7JIC1/8sY4LkOEczc4kY0AnY7JI
-	urvYrtKB6NRn0+0SavjTM/VIfS9SgPgfY7iCDH1jcXh0AIdC0Ld62hlPel7uvD0=
-X-Gm-Gg: ASbGnctR+LX2PJoFiQef2r+ywi283B5DzRRhcuLhnsk6XtYkzcnMx32c/2lPIRAYt9v
-	DcsNxfZ7uBgodNBVAp8drvGEYMtSpHYA3HrxzIKeVRWrLaNu8bDpCPVxWzqRHLfuod71iNU4wpx
-	u3ho1oWwisxdkStOfk94BZCP3cuBPSztt63I73A3JWJJe/2aA7ABPlsh4anyRe11pjBWZ9x3Ybk
-	QWlNQCpZ0/G5PsHdRJaHTGbVXjPd0x8T62bXz56mY9IV4c165zCWBqhIlCil8Avjn0ay5w02e0j
-	u5px/r5fS/xcotUjC/6VH2zjoZkfMkjKb3eP
-X-Google-Smtp-Source: AGHT+IH/i15/+svDVlzRmeCj49N+7fLYS0nSEMx6zNrdg8fMuOZRZIVmoIl+m7ZLFVdJmllqsHEC6Q==
-X-Received: by 2002:a05:6512:3049:b0:545:3031:b4d7 with SMTP id 2adb3069b0e04-54838edda6fmr5696766e87.6.1740477308397;
-        Tue, 25 Feb 2025 01:55:08 -0800 (PST)
+        bh=aUy2L+59XSB2dO0W6jnqgQpUaRtZ0LvR6wu2Q9qABCw=;
+        b=hWnF1/r+Em5i9JvAdqIMAsUO6r8POR+hfEN95qGNDuN9B8K6QUHyh7KHLZuKa2N/fa
+         ZEHywIuZ2tqnbypW1Led6Bpd92NRwOnoI+1HBEh3lSvaY001tQMM0OWSZgC5lU8L2zUi
+         7vdfPZnxnEgDwN0OYF2RXZrg8S5oYemGdYmWp7Y5t3JsSxDFHHbAQUUTEJWIM6QiGoaP
+         yCDziwiYMiBP5racE0Xss8flxgPsGe2eVIUL/Xr7l+lysQSZHiRPTt8enDLWR20xL0ts
+         TTvwhF0+GXDafqCZBJb0MXxaecknuxoIAzTo/odULVQNwNmsPsWpY1xfgEAZSkHDEuHq
+         0uVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdKVIkYqOmNNME+9KSVqmXYemz+uUnN2hA6sUcNbhPCzJcpXNBpZlqcV6XTn5B86sbgGseIfJsYYu7oGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBcP55WCzDtYnLFRLx+Ta+tdLeAujZPLCztK/ihnsNzEF0CebD
+	WBpuYJfFf7QRuFf9jbrT3Izjd33qO5umcXaoO/DEbQCb1r5PnSN1BUEGUWvqm9s=
+X-Gm-Gg: ASbGncu5ISMXmdTSPX7JYl4x0PvQvugdDYw6L4YDCaypAoOxdgQRTnTrXJmnh414UpX
+	a1EwKrMB3eCZ0VryIraifql8tOmaPDVKJntWpVr9J53hLU+y8zLk9cUcMPRhIFfUgFsGtNcVJKD
+	CH3U/WewrvIiXVR3qjHEQLc11xru0Ei/ylkoYgQ/piHUzsGxvrGu58i+F3INzMxrs+wsT2Bjcts
+	oF+UVMytolw3UgUkH8zSa01tvKHnuXmOhMXRVsP4IE4myjhJ9OF+TX77e4rGTL/Ndcnc/YkzFJS
+	WMjjNkjinU2QIaDFqccKAZ1V2tmD+wRlef6Y
+X-Google-Smtp-Source: AGHT+IF8cIBO3SlK9WGiwosYyqGfJqHooI+lszN8vN5QA7gNtCgUPpe2l1NosqypYf0ggr1xuNTUZw==
+X-Received: by 2002:a05:6512:110d:b0:53e:383a:639a with SMTP id 2adb3069b0e04-54838f4e402mr7330345e87.37.1740477309978;
+        Tue, 25 Feb 2025 01:55:09 -0800 (PST)
 Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b261esm132867e87.24.2025.02.25.01.55.07
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b261esm132867e87.24.2025.02.25.01.55.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:55:07 -0800 (PST)
+        Tue, 25 Feb 2025 01:55:08 -0800 (PST)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 25 Feb 2025 10:54:55 +0100
-Subject: [PATCH v5 08/31] ARM: entry: Move trace entry to C function
+Date: Tue, 25 Feb 2025 10:54:56 +0100
+Subject: [PATCH v5 09/31] ARM: entry: save the syscall sp in thread_info
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-arm-generic-entry-v5-8-2f02313653e5@linaro.org>
+Message-Id: <20250225-arm-generic-entry-v5-9-2f02313653e5@linaro.org>
 References: <20250225-arm-generic-entry-v5-0-2f02313653e5@linaro.org>
 In-Reply-To: <20250225-arm-generic-entry-v5-0-2f02313653e5@linaro.org>
 To: Dmitry Vyukov <dvyukov@google.com>, Oleg Nesterov <oleg@redhat.com>, 
@@ -96,68 +96,88 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.2
 
-This moves over the code entering into tracing into the
-C syscall invocation code. As syscall_trace_enter() will
-provide the current syscall number from the regs we need
-not provide the syscall number to the invocation function
-any more.
+We are going to rewrite the syscall handling in C, which
+means that the stack used by the call code is no longer
+predicatably 8 bytes (for syscall arguments r4 and r5)
+but a varying number of bytes depending on how nested the
+C code is.
+
+However the current code is just assuming it can rewind
+the stack by adding 8 to sp if a syscall is interrupted by
+a sigreturn call.
+
+Solve this by storing the entry sp in the per-task
+struct thread_info and use that in the sigreturn wrapper
+instead. We already have the thread info available in
+the SWI entry and sigreturn is probably not so common
+that retrieveing a pointer to thread_info should affect
+anything very much.
+
+Storing this per-task in thread_info makes the solution
+SMP robust.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/include/asm/syscall.h | 2 +-
- arch/arm/kernel/entry-common.S | 6 +-----
- arch/arm/kernel/syscall.c      | 5 ++++-
- 3 files changed, 6 insertions(+), 7 deletions(-)
+ arch/arm/include/asm/thread_info.h | 1 +
+ arch/arm/kernel/asm-offsets.c      | 1 +
+ arch/arm/kernel/entry-common.S     | 8 ++++++--
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/syscall.h b/arch/arm/include/asm/syscall.h
-index 1d21f26ecf510ac00a878b4d51a5753ee49475f5..66067d165ba3fbbe0f840a89ae396eb1a311bacc 100644
---- a/arch/arm/include/asm/syscall.h
-+++ b/arch/arm/include/asm/syscall.h
-@@ -20,7 +20,7 @@
- extern const unsigned long sys_call_table[];
- 
- int invoke_syscall(void *table, struct pt_regs *regs, int scno, void *retp);
--int invoke_syscall_trace(void *table, struct pt_regs *regs, int scno, void *retp);
-+int invoke_syscall_trace(void *table, struct pt_regs *regs, void *retp);
- 
- static inline int syscall_get_nr(struct task_struct *task,
- 				 struct pt_regs *regs)
+diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
+index 943ffcf069d29cf4a035964d20d56f7ebdd6d602..d8a45c5a10496aaf806bfeaa0353d5e8985bd6f5 100644
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@ -67,6 +67,7 @@ struct thread_info {
+ 	__u32			cpu_domain;	/* cpu domain */
+ 	struct cpu_context_save	cpu_context;	/* cpu context */
+ 	__u32			abi_syscall;	/* ABI type and syscall nr */
++	__u32			sp_syscall;	/* SP when entering syscall */
+ 	unsigned long		tp_value[2];	/* TLS registers */
+ 	union fp_state		fpstate __attribute__((aligned(8)));
+ 	union vfp_state		vfpstate;
+diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
+index 4853875740d0fe61c6bbc32ddd9a16fa8d1fb530..c9525cbb26b73827821aa746030e56b037f49556 100644
+--- a/arch/arm/kernel/asm-offsets.c
++++ b/arch/arm/kernel/asm-offsets.c
+@@ -49,6 +49,7 @@ int main(void)
+   DEFINE(TI_CPU_DOMAIN,		offsetof(struct thread_info, cpu_domain));
+   DEFINE(TI_CPU_SAVE,		offsetof(struct thread_info, cpu_context));
+   DEFINE(TI_ABI_SYSCALL,	offsetof(struct thread_info, abi_syscall));
++  DEFINE(TI_SP_SYSCALL,		offsetof(struct thread_info, sp_syscall));
+   DEFINE(TI_TP_VALUE,		offsetof(struct thread_info, tp_value));
+   DEFINE(TI_FPSTATE,		offsetof(struct thread_info, fpstate));
+ #ifdef CONFIG_VFP
 diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 77801d039b5f6562b231a6fd4979e318c7e736a6..3cfc6d952ff99be9c4c1be4481ac3039260e3e57 100644
+index 3cfc6d952ff99be9c4c1be4481ac3039260e3e57..8baab7f97f59c434396f30b08ddd3029c5f9c0e5 100644
 --- a/arch/arm/kernel/entry-common.S
 +++ b/arch/arm/kernel/entry-common.S
-@@ -292,13 +292,9 @@ ENDPROC(vector_swi)
- 	 * context switches, and waiting for our parent to respond.
- 	 */
- __sys_trace:
--	add	r0, sp, #S_OFF
--	bl	syscall_trace_enter
--	mov	scno, r0
--	mov	r2, r0				@ scno into r2
- 	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
- 	mov	r0, tbl
--	badr	r3, __sys_trace_return
-+	badr	r2, __sys_trace_return
- 	bl	invoke_syscall_trace
- 	cmp	r0, #-1
- 	bne	__sys_trace_return
-diff --git a/arch/arm/kernel/syscall.c b/arch/arm/kernel/syscall.c
-index d637dc74b1c70415933898fbcadbedc71df5f654..377e16c8c53c8e809e3f8b157a889ef115d5c043 100644
---- a/arch/arm/kernel/syscall.c
-+++ b/arch/arm/kernel/syscall.c
-@@ -21,8 +21,11 @@ __visible int invoke_syscall(void *table, struct pt_regs *regs, int scno, void *
- int invoke_syscall_trace_asm(void *table, struct pt_regs *regs, int scno, void *retp);
- __ADDRESSABLE(invoke_syscall_trace_asm);
+@@ -232,6 +232,8 @@ ENTRY(vector_swi)
  
--__visible int invoke_syscall_trace(void *table, struct pt_regs *regs, int scno, void *retp)
-+__visible int invoke_syscall_trace(void *table, struct pt_regs *regs, void *retp)
- {
-+	int scno;
-+
-+	scno = syscall_trace_enter(regs);
- 	if (scno == -1)
- 		return -1;
+ 	uaccess_disable tbl
+ 	get_thread_info tsk
++	/* Save a per-task copy of SP for sigreturn */
++	str	sp, [tsk, #TI_SP_SYSCALL]
  
+ 	adr	tbl, sys_call_table		@ load syscall table pointer
+ 
+@@ -377,13 +379,15 @@ sys_syscall:
+ ENDPROC(sys_syscall)
+ 
+ sys_sigreturn_wrapper:
+-		add	r0, sp, #S_OFF
++		get_thread_info tsk
++		ldr	r0, [tsk, #TI_SP_SYSCALL]	@ read back SP
+ 		mov	why, #0		@ prevent syscall restart handling
+ 		b	sys_sigreturn
+ ENDPROC(sys_sigreturn_wrapper)
+ 
+ sys_rt_sigreturn_wrapper:
+-		add	r0, sp, #S_OFF
++		get_thread_info tsk
++		ldr	r0, [tsk, #TI_SP_SYSCALL]	@ read back SP
+ 		mov	why, #0		@ prevent syscall restart handling
+ 		b	sys_rt_sigreturn
+ ENDPROC(sys_rt_sigreturn_wrapper)
 
 -- 
 2.48.1
