@@ -1,52 +1,49 @@
-Return-Path: <linux-kernel+bounces-530396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56424A432E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:19:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBDAA4330D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8708E7A517F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952D53B8662
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A0D12EBE7;
-	Tue, 25 Feb 2025 02:18:49 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652DC13B29F;
+	Tue, 25 Feb 2025 02:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIrzoer9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D4A1C27;
-	Tue, 25 Feb 2025 02:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4A71465B4;
+	Tue, 25 Feb 2025 02:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740449929; cv=none; b=FaFsap+/HYvfQkZYFMzVlMRuhvGLY0hZHzpORuIUHeocIr+oQ8ggZ0ShtE3Vw6f0XYamDpIdrWspPXrwY2fZR+8fg0b28FoNI/HTCuvnMC5TNL+/Rnc5+wjKx7oJ6JA/fMrxwFVa4FVXZEXS4aNG7C+cmJIOlgFEyFSEHrGcDPE=
+	t=1740450604; cv=none; b=kX4FLmca20sXLPfm1zCPnSL+SqkbxuJKG1Lr684+OCFAMN6iPa/dBliwuyVeijtopG0xqoVT+IMT29SxGQaTQ1rpY8ErDoWPnXKmqZL/a93o4YUpd95u5+ogHQfQjw7mwiyx23QmRAkKb9G4w3twBjFeE4zc18h9H4Ffj7CrJBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740449929; c=relaxed/simple;
-	bh=8y0Rwfc3Hi5n6TjYkSM8+RV/G0U0BsPaviMrVlxjhgo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FoJxbOy2erFczHbej/XuFrcDEsa1zITC2rixTbTVQTy031pPlQFM3Y/LObQfMXh5BkdRSaQyYfAuZY5eZU8wNH/5M/KGnNH+WM1G/IV0sl0qgoGz1/gLxNFMxSPNuTPh7k1BkO9zAXkPpFCP+gGrsPcq+rCdraYbTzx12E5Zt3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z21Q45C0rz2CpdY;
-	Tue, 25 Feb 2025 10:14:36 +0800 (CST)
-Received: from kwepemh100007.china.huawei.com (unknown [7.202.181.92])
-	by mail.maildlp.com (Postfix) with ESMTPS id B12CD1A016C;
-	Tue, 25 Feb 2025 10:18:38 +0800 (CST)
-Received: from huawei.com (10.67.174.33) by kwepemh100007.china.huawei.com
- (7.202.181.92) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Feb
- 2025 10:18:38 +0800
-From: Gu Bowen <gubowen5@huawei.com>
-To: <aubin.constans@microchip.com>, <ulf.hansson@linaro.org>
-CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <ludovic.desroches@atmel.com>,
-	<linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>
-Subject: [PATCH -next] mmc: atmel-mci: Add missing clk_disable_unprepare()
-Date: Tue, 25 Feb 2025 10:28:56 +0800
-Message-ID: <20250225022856.3452240-1-gubowen5@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740450604; c=relaxed/simple;
+	bh=071BG79VHNUJFvscUKhMIqdR5q6V+Edmq9WBd/sK5Fs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=b5i1HnKnuU/Ef+j/6JBEup1Tv2Q5YNsDN1hiipZXmEWtAke2/s3FpRQ7hHB0MdKhNuGbWDkXR6d7r9tkZYJBDb10XdaVgM+9JGP3Ui0aXtxlElBh/nJFrgFs7oJYMLBH5EbwrlmfpD0crG/wxL1Izyce0TtSXmGW0yio7F2pixU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BIrzoer9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B7BC4CED6;
+	Tue, 25 Feb 2025 02:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740450604;
+	bh=071BG79VHNUJFvscUKhMIqdR5q6V+Edmq9WBd/sK5Fs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=BIrzoer9J1bfyCitNIYvk8GFnFfKR8T8ah4in2QMl6wOHlr9KbRBDJJkxqXKigsSc
+	 dy8NJC/GXZAJr6n2lSREEavh/MkrUKCKuT2H+GlEySzyCjfVYIUbIaurnBhJ9ovWSB
+	 2T2aWUA8RamT100nNyZmIXxCMUsQM5IwjvcS6ihR0F8HkyLR4IdCvOg6F0YNexoYbV
+	 P8OtXCpLUvu/rg5VKebMwpnon36D7iXf2PwDvUs3I/qJNmgBvTRJxfxKY8fT3s60TD
+	 NQBwBF1m+3o5fyvUfTcotNtrmHYpGVTzXIMfqKLUdYTdd7YEPSC3lNQ1gBXuAX1V/N
+	 MX2UEh3IhXiew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3F0380CFD8;
+	Tue, 25 Feb 2025 02:30:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,38 +51,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh100007.china.huawei.com (7.202.181.92)
+Subject: Re: [PATCH net-next 0/8] net/mlx5e: Move IPSec policy check after
+ decryption
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174045063562.3682145.9099775003229462046.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Feb 2025 02:30:35 +0000
+References: <20250220213959.504304-1-tariqt@nvidia.com>
+In-Reply-To: <20250220213959.504304-1-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, gal@nvidia.com,
+ mbloch@nvidia.com, saeedm@nvidia.com, leon@kernel.org,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jianbol@nvidia.com
 
-The error path when atmci_configure_dma() set dma fails in atmci driver
-does not correctly disable the clock.
-Add the missing clk_disable_unprepare() to the error path for pair with
-clk_prepare_enable().
+Hello:
 
-Fixes: 467e081d23e6 ("mmc: atmel-mci: use probe deferring if dma controller is not ready yet")
-Signed-off-by: Gu Bowen <gubowen5@huawei.com>
----
- drivers/mmc/host/atmel-mci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index fc360902729d..24fffc702a94 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -2499,8 +2499,10 @@ static int atmci_probe(struct platform_device *pdev)
- 	/* Get MCI capabilities and set operations according to it */
- 	atmci_get_cap(host);
- 	ret = atmci_configure_dma(host);
--	if (ret == -EPROBE_DEFER)
-+	if (ret == -EPROBE_DEFER) {
-+		clk_disable_unprepare(host->mck);
- 		goto err_dma_probe_defer;
-+	}
- 	if (ret == 0) {
- 		host->prepare_data = &atmci_prepare_data_dma;
- 		host->submit_data = &atmci_submit_data_dma;
+On Thu, 20 Feb 2025 23:39:50 +0200 you wrote:
+> Hi,
+> 
+> This series by Jianbo adds IPsec policy check after decryption.
+> 
+> In current mlx5 driver, the policy check is done before decryption for
+> IPSec crypto and packet offload. This series changes that order to
+> make it consistent with the processing in kernel xfrm. Besides, RX
+> state with UPSPEC selector is supported correctly after new steering
+> table is added after decryption and before the policy check.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/8] net/mlx5e: Add helper function to update IPSec default destination
+    https://git.kernel.org/netdev/net-next/c/3400ae49cd1a
+  - [net-next,2/8] net/mlx5e: Change the destination of IPSec RX SA miss rule
+    https://git.kernel.org/netdev/net-next/c/20d5fdc8951a
+  - [net-next,3/8] net/mlx5e: Add correct match to check IPSec syndromes for switchdev mode
+    https://git.kernel.org/netdev/net-next/c/85e4a808af25
+  - [net-next,4/8] net/mlx5e: Move IPSec policy check after decryption
+    https://git.kernel.org/netdev/net-next/c/7d9e292ecd67
+  - [net-next,5/8] net/mlx5e: Skip IPSec RX policy check for crypto offload
+    https://git.kernel.org/netdev/net-next/c/aa2961e19ff6
+  - [net-next,6/8] net/mlx5e: Add num_reserved_entries param for ipsec_ft_create()
+    https://git.kernel.org/netdev/net-next/c/e20674a7e5b1
+  - [net-next,7/8] net/mlx5e: Add pass flow group for IPSec RX status table
+    https://git.kernel.org/netdev/net-next/c/78e77a41e401
+  - [net-next,8/8] net/mlx5e: Support RX xfrm state selector's UPSPEC for packet offload
+    https://git.kernel.org/netdev/net-next/c/c69046c3f2dc
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
