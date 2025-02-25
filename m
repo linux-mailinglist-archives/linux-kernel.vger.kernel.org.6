@@ -1,62 +1,60 @@
-Return-Path: <linux-kernel+bounces-532038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B634CA447D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:21:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE4FA447E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A4419C5C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEF6164581
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8DB1A01BF;
-	Tue, 25 Feb 2025 17:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDBE1A2846;
+	Tue, 25 Feb 2025 17:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPq6fe5m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/GPGZXe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9543019F117;
-	Tue, 25 Feb 2025 17:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9ED155756;
+	Tue, 25 Feb 2025 17:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740503712; cv=none; b=AWM+58ZK4suJ/0rOaIpR0Pvelct9QrWjcDnYfXzxIPUSUy+RLavZ7PpExg2BDv19uiiH5roB5w+dEzANA477vLIwTRka1xGulCe7CysDKYhQEwKqDpzm7RS01+8c9cG5G4ViKeTjf+f7hyo/Cle7bUhiPvTUA+nXwnjXUFkqmlU=
+	t=1740503723; cv=none; b=CnzIt+PmuNpWWsh0UYxJnkbW1l5kwBLrrlgencDWOySB+Nw9bCQL9bKe5Cg5LtI33vLJz2lhYYZn1cBsVA063LsWwafWIaW5XlwcUPdstF+fedQPqxdplEv1JSRILcK3awu7YZEKFLKNtS4WRFV/VmXl8MRSyyFkyIxoh03orKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740503712; c=relaxed/simple;
-	bh=TmJhw1XQJowNzPblNGM0D6qvHxlsRtYFF+ZL1fof74k=;
+	s=arc-20240116; t=1740503723; c=relaxed/simple;
+	bh=7KeqBFol8pGLRVvFbeuC+puSXOYFlCJdGV7zPxksw7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6j1hSizKfJ8B1QyN6YmattkuP79KhWY/h5NRsKQ9SO+HJrKqB2ZuVvKHP8nYGHV8j/hKHGNdU3D+Pe6JfghTU3qAF1jn1IZNqwQVCVsRmUA7M0C50PhDLHPWHC8Z11bjG2ggNS11iVn4iLuVeK/fx9InJNFr6/9ZXWOgqCFUlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPq6fe5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 511F1C4CEEA;
-	Tue, 25 Feb 2025 17:15:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRX0frL7jb/1dzuheoAwvhuFWOHZjJzskIQ5d3zvNbNOM8tBTdg/3tOj9ZZGBDa8jEEd0rJOARSjG9xylnl13429G8VaOUT9XMmaWPrZi29DCWCxG/w/RJfwyutjRut8D1Mkg79YSZgvo+ZmEZ9LXk/Q6Q5DxJmFccgoWSYclRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/GPGZXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00476C4CEDD;
+	Tue, 25 Feb 2025 17:15:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740503712;
-	bh=TmJhw1XQJowNzPblNGM0D6qvHxlsRtYFF+ZL1fof74k=;
+	s=k20201202; t=1740503723;
+	bh=7KeqBFol8pGLRVvFbeuC+puSXOYFlCJdGV7zPxksw7s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lPq6fe5myBn8j9khYpUgDVP99mEFRQ9sA4YMS1IQk9kNhB2Pit00/fCQnzwtc7iUA
-	 GbTlkpmJSMqqJNd80ODmEi5LGOw2a9GDnfp51vq/1vU4C3zUtLzhdLeoAjKKcfqGlv
-	 GnjbJqV7ppfYR/2dnrCeQzzMflMDG/N2naBfRIOc19omqcjM/TbDWxaPnl7hKy+DEG
-	 EuaPw+JUUZss8MuXX8ZIVi0LKBnWj/DOMh2mIUdPQsyEQU5dj6CeIDfPlM5PMrz3/B
-	 6xMZTaGSbSBLbi/VtH6P/VqSn7zLMC7YfXXo4eGMU7u4X99OatTKxEou9Ocom8gLDk
-	 US/8A3WqONteA==
-Date: Tue, 25 Feb 2025 11:15:10 -0600
+	b=D/GPGZXeAlGWSiKVMN9ABMI1yaVWrR4V2oHRRwyBLXzcOuX9hCCjYJwcq1Fb0XZ9Y
+	 MjqnURj4wK5tFnqZfYta9/djn513hXYNQm3d8f+2joPI/Z058C4v04Li2/eZOvbUSn
+	 7A9v12Jj0k3zH68ZKxsZtTErDRqvJZ9vj/A7agSVQgu29nyuFNWaTeEuab747g7rCw
+	 HKBbsgEZFQcEAXD7OWNS2yn2JyLpWwo6hp0EtVbQnad1lvWwVIHJ06jpU4KtDsIFZL
+	 Tl9V1QFJiCsPLa52hVSQ0C79t3Pw2Nvsbyt6pPR81f2Lpns12SogMGwZ59znC/2T1X
+	 3a3hjT1YO/H0w==
+Date: Tue, 25 Feb 2025 11:15:21 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	linux-media@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	Vikash Garodia <quic_vgarodia@quicinc.com>
-Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: document
- SM8650 IRIS accelerator
-Message-ID: <174050371025.2715689.10413778229138644951.robh@kernel.org>
-References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
- <20250225-topic-sm8x50-iris-v10-v1-1-128ef05d9665@linaro.org>
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	ath11k@lists.infradead.org, ath12k@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: wireless: ath11k: Strip ath11k prefix
+ from calibration property
+Message-ID: <174050372078.2716032.16014648484871048536.robh@kernel.org>
+References: <20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org>
+ <20250225-b-wifi-qcom-calibration-variant-v1-2-3b2aa3f89c53@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,20 +63,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225-topic-sm8x50-iris-v10-v1-1-128ef05d9665@linaro.org>
+In-Reply-To: <20250225-b-wifi-qcom-calibration-variant-v1-2-3b2aa3f89c53@linaro.org>
 
 
-On Tue, 25 Feb 2025 10:05:09 +0100, Neil Armstrong wrote:
-> Document the IRIS video decoder and encoder accelerator found in the
-> SM8650 platform, it requires 2 more reset lines in addition to the
-> properties required for the SM8550 platform.
+On Tue, 25 Feb 2025 10:05:33 +0100, Krzysztof Kozlowski wrote:
+> Devicetree properties describing exactly the same thing should be
+> reusable between device bindings.  All Qualcomm Atheros WiFi chips needs
+> certain calibration data, so properties should not be prefixed with
+> device family (ath11k).
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Deprecate qcom,ath11k-calibration-variant and alike, so we gradually
+> switch to a common property.  This will also allow moving these
+> properties to common schema, if desired.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/media/qcom,sm8550-iris.yaml           | 33 ++++++++++++++++++----
->  1 file changed, 28 insertions(+), 5 deletions(-)
+>  .../devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml        | 9 ++++++++-
+>  Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml  | 7 +++++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
