@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-530389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49289A432D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:07:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F058A432D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F82176C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6515189E3F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645338172A;
-	Tue, 25 Feb 2025 02:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="EFE3Xvzn"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392413632B;
+	Tue, 25 Feb 2025 02:10:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D55D6EB4C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740449273; cv=pass; b=Su9wmMFsUYQgm2+utS7KIYsL7CP0lCT3a4A0tfVL4oetrDBBMm3Rv+fqiUypViEmXmbwf6bAaRolyl3BRN11lBGtK7LX8bU+2nzsYXL2e2yvMFlizJnFmhjIWPc9PW4v2hQ0cslUChDttZWNr3NziD7GxEpcyI308L+TrFfUTpw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740449273; c=relaxed/simple;
-	bh=QSBREAfPC2cBcJiV6Z6ErnCB7KVWOLRnp6Zvp62iV/4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LU9JgAQc/xLkeVJapTztQ/T8/UFr8wA/6Stafa8PdSSc9SFNXniAy6onQqV2juBLuJENnFmYU1KIMI35FFyLXCjlS7s4oCVYax7LuY4zrfdg8ncM8C0u7ICloqn8QRUtU4HwBacRElo55+7xVRsSGI9GD6vffDVtVXmSukzwlM4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=EFE3Xvzn; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1740449260; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ctMaYshhKAViVYmhi35VSTcCEPdynuESMYTGkoniXnPG1daZqPx6t/KikcKoqxAJ1ERGJ/+lDnmHr2ITxKERyrG9ZMtKLhEnRcZ9kwk+LW4bA5VxFv7GHvAPCvOAfvxyjuE+N76s7S6P9wGl29FTHQ1k4yWs9RQ6MqscWGhh3to=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740449260; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QSBREAfPC2cBcJiV6Z6ErnCB7KVWOLRnp6Zvp62iV/4=; 
-	b=G40PjWNCsHQhdsFzGHJKcjzH8cQbb9KPPbvxiP9uXWXcrTGzGWGAFj/N1TKAeJBWUhGyhlT/0RzUgb0daOFUnRsbu/lgTjThEzv+F2Dcy8/qbJDxVHJ9j/MwcmJwpSoxZWKddVYhSz4BJNhneJwA2pridSnjUbv2/PGPEmoxn6U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740449260;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=QSBREAfPC2cBcJiV6Z6ErnCB7KVWOLRnp6Zvp62iV/4=;
-	b=EFE3XvznyPbgmrBhXf+KnRD24ymQPxZ0akb45gr0nLgcbe9M8wxxUDUQKHiX0ATy
-	BrOSVu1SkR+8/dUGIoH3E9+K1BTl1L+dDhy5J60QwShEK+E+RKW5JNod17OcOJB+2pd
-	JOEhiqLcZUmZbnAy/io8KaAiQWspgJ5yqDQe6ESlg6vf8huCeXPqPs5+zzgi1nMCste
-	pq4G8DyPas0AY5ydlWGXdAnoDQgNMFTAcg+QLVodGbCk905AN8XUgpTFZVwgI3DvWVK
-	GR8j4VNTneKhQpHiKElqYia967rDkbnq4BjfYalQNLz8NjOUYD75WNsHFJdor5V91xE
-	y8AUxUpQuw==
-Received: by mx.zohomail.com with SMTPS id 1740449257618172.64096278561385;
-	Mon, 24 Feb 2025 18:07:37 -0800 (PST)
-Message-ID: <64ff1dcf9e46c15e062ccf05ae6f9efd3747f0fd.camel@icenowy.me>
-Subject: Re: [PATCH 0/2] Misc fixes on registering PCI NVMe CMB
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 10:07:31 +0800
-In-Reply-To: <Z70MC0zoC0L-tOgO@kbusch-mbp>
-References: <20250212170444.16138-1-uwu@icenowy.me>
-	 <20250213055449.GB19370@lst.de> <Z70MC0zoC0L-tOgO@kbusch-mbp>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888AF2C9D;
+	Tue, 25 Feb 2025 02:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740449429; cv=none; b=sY91/Gl+zVNfTi8jpnKzVov8LFHc8Oy7wivfUhb/XK94YWt4wNrqq3ZEwlIptczbk4o6D92n1ol5FaVlrDsl31wb3yiSTqTdC/fdS0aJIE89QmXAmquFoDy0X2r9/6RP0Y+jAuJ7ueTopD4UmcaZx6TDHicXCH3pO+zgKn1rsyg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740449429; c=relaxed/simple;
+	bh=aaHGUOs30tNuy84PGnD8R0PY9RDSWCOwwuFCRkSChe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qVC6HrD8DtavyxruxygWpk5/Xi+GSvj+q/sm2Rz724LS/aYb5IvnzWvSz5UOgMOO/ly5cDLnctnW+TLwR4DhlzbUPsawWmFsSHgHvbbT7+Jp50KHUeYPjdGXMvCJ7mRqVWG8RFgnpZHUB0G4DSCrlq3Vy4WTXFqbc/GDtc8pQFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659A4C4CED6;
+	Tue, 25 Feb 2025 02:10:26 +0000 (UTC)
+Date: Mon, 24 Feb 2025 21:11:02 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, "Masami
+ Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, "Masahiro Yamada"
+ <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>, "Nicolas
+ Schier" <nicolas@fjasle.eu>, "Zheng Yejian" <zhengyejian1@huawei.com>,
+ "Martin Kelly" <martin.kelly@crowdstrike.com>, "Christophe Leroy"
+ <christophe.leroy@csgroup.eu>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Vasily Gorbik"
+ <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v5 2/6] scripts/sorttable: Have mcount rela sort use
+ direct values
+Message-ID: <20250224211102.33e264fc@gandalf.local.home>
+In-Reply-To: <20250224172147.1de3fda5@gandalf.local.home>
+References: <20250218195918.255228630@goodmis.org>
+	<20250218200022.538888594@goodmis.org>
+	<893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com>
+	<20250224172147.1de3fda5@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E5=9C=A8 2025-02-24=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 17:17 -0700=EF=BC=
-=8CKeith Busch=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, Feb 13, 2025 at 06:54:49AM +0100, Christoph Hellwig wrote:
-> > On Thu, Feb 13, 2025 at 01:04:42AM +0800, Icenowy Zheng wrote:
-> > > Here is a small patchset that is developed during my
-> > > investigation of
-> > > a WARNING in my boot kernel log (AMD EPYC 7K62 CPU + Intel DC
-> > > D4502
-> > > SSD), which is because of the SSD's too-small CMB block (512KB
-> > > only).
-> >=20
-> > Hah, that's certainly and odd CMB configuration.
->=20
-> Should be okay if it's just for submission queues. The driver has an
-> arbitrary requirement that the queues have at least 64 entries for
-> CMB,
-> and 512k allows us to create 128 submission queues like that. That's
-> enough for most systems.
+On Mon, 24 Feb 2025 17:21:47 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Yes, but this configuration seems to not fit the current driver code
-that utilizes PCIe P2P setup code. (Is there any driver that could
-utilize this configuration now?)
+> Hmm, I haven't tried building this with clang.
+> 
+> Can you compile without that commit, run and give me the output from these
+> two programs:
+> 
+>  ./dump_elf_sym vmlinux __start_mcount_loc __stop_mcount_loc
+>  ./dump_elf_rela vmlinux .rela.dyn
+> 
+> If the second one fails, remove the '.rela.dyn' and see what that shows.
+> 
+>  https://rostedt.org/code/dump_elf_sym.c
+>  https://rostedt.org/code/dump_elf_rela.c
+> 
 
+Nevermind, Masami told me all I need to do is add LLVM=1 and clang can
+handle the cross compiling.
+
+I looked, and sure enough clang on arm64 does it the same way x86 does. So
+using the rela items to sort is a gcc thing :-p
+
+Can you try this patch?
+
+-- Steve
+
+
+diff --git a/scripts/sorttable.c b/scripts/sorttable.c
+index 23c7e0e6c024..07ad8116bc8d 100644
+--- a/scripts/sorttable.c
++++ b/scripts/sorttable.c
+@@ -827,9 +827,14 @@ static void *sort_mcount_loc(void *arg)
+ 		pthread_exit(m_err);
+ 	}
+ 
+-	if (sort_reloc)
++	if (sort_reloc) {
+ 		count = fill_relocs(vals, size, ehdr, emloc->start_mcount_loc);
+-	else
++		/* gcc may use relocs to save the addresses, but clang does not. */
++		if (!count) {
++			count = fill_addrs(vals, size, start_loc);
++			sort_reloc = 0;
++		}
++	} else
+ 		count = fill_addrs(vals, size, start_loc);
+ 
+ 	if (count < 0) {
 
