@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-530634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FE9A43603
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:19:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4496A43609
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520A97A91B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B3F1898DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000D825A2A2;
-	Tue, 25 Feb 2025 07:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD4F25A2A2;
+	Tue, 25 Feb 2025 07:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="n9xnlE09"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U21nOR8x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783DC158851
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10AC18A6BA;
+	Tue, 25 Feb 2025 07:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740467948; cv=none; b=OTq1TRi4AKmmEuXooiaLzx7gYVMKW9VrWkqmLmMoJd4fb5r/8K41t2jVI1dMC2ak721q27XboDQYhzgCcRF2bdMYpyxH7SHA+wWR5CFxOYcTgTQfvzNLy9Bey1p2v2U8NjL/uENGRHuw1n0ls0nOfrhQLJo6fpzmN9so9gOoPOo=
+	t=1740468201; cv=none; b=ZUvbrySWOayLUKZaTRfUonlXOjxBU6KTObZ1hTCub06/tGSSSygt6XOVryskHI6uBIDIcrz2qt8lSQmXowa0GIE7ik01AAOe2InCC0Bcc7jV0IaODw6a6NY67KYDGLNgDy6G8kydmFEOVqnF9OlLa9Ju7zMvM21yAjTmjBt64Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740467948; c=relaxed/simple;
-	bh=JOLttplp4Lz7xrSC3AO36IZTZQK3AzRP3lq0XDH9zHg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aensIkHH5rXoC5FJ+rJKvZJOnJGjOc/GaNSIndCT75xvm42bf/pN6OOIl8kkpvMQGcd3zrknGyehX2Kvl2UNf74H/FMgwLm6iiiCgodbIrcOyVW6K/du0Ph4p9+B0DdkYt47DfQ2rqpaZyjjkAvbOo6UqqTyTbIMLljabWlTChI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=n9xnlE09; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z289L4YD0z9t7J;
-	Tue, 25 Feb 2025 08:19:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740467942; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTqWOsuaameKwBwP2PW1oZAO/zijrhZJI/nRbm8lIX0=;
-	b=n9xnlE09xFqeQXdUQ1SXlb4QeEkEBZdOcmAnl8P+r0QwpYhb3zr3SpOckymXrM5yLfffCC
-	7xNbaV/rcQMHdrnK6cGWaAxNszvVyUWN1Jobh8sGVTB5/aeeykF98AUE0KLVvopGHjqmRx
-	27AQYMXB7yLmPyhpCNzitAuCVFXLVzec4nVSmeKbPk1w/DC0qJyJxu8RNT956Q8GN6FadZ
-	sG8FhlzxRkfdAhEWO5+Pb/k4h9kC8DyTQTXk29Ho2lvnSs/ubNtMYgJkynANo3MrhE0eaQ
-	EeUogJH/X1jz6zPn2zrDGt0OeW35ZkorjJSyVvOULDz/iO5UPZdNquPJOFnbTQ==
-Message-ID: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
-Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: phasta@kernel.org, qianyi liu <liuqianyi125@gmail.com>, Danilo Krummrich
- <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 08:18:59 +0100
-In-Reply-To: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
-References: <20250221062702.1293754-1-liuqianyi125@gmail.com>
-	 <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740468201; c=relaxed/simple;
+	bh=h4bia+mYMyIlaxguzLk4TmwyvzKI/fME2tnOPYbHvqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dDTopnyyWCbN/varYS9WM3DlZzzE8b7FYWEruGPm2VQJp3pkpw+/MqivyQ7EvccKW8DxIYhythkSivYi2Uz8B+xgnCgZu0BaNjqJBmLQj2NgCGvIBcKwSKpNPjvSJxwHfxuKQ9TQEUSp5h4qfy5mmtNBdwzbLaDjbN/eQhyufRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U21nOR8x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOlvO014309;
+	Tue, 25 Feb 2025 07:23:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N9GZ15BBI9v3KLlPyeqhB3Cuz7Tplf+rh37APLGCQ7c=; b=U21nOR8xwfoy5B+V
+	Akntuznn5TNQCvlFLBhOSBChVateXLB+KGMyTnQYch69OkXPKfaVwLaQ6eV3GfjT
+	18s1ufQcKrJVZs+6Ftgz5zJ5parwmbeI/F9zyujBw9JltIW1AW6gJna7LWvOPgVL
+	aSucI3ITrZaSGXDyAf063iqPnOLQEdqLif3EW9+sqj9Jcd/3Zfh+gYXueHfC7Z4I
+	vc5ffEs+hGc01cphla8yxqH8tyN+XYIFDbwdAg0swSqyY668qR3Nil9f5+Ea/uOl
+	JNaLNdWozgPX+WcCHxq9lsRP30Cv4EubvuJ+OYiBd1C/eDBHkXw5Q35plIazq72O
+	PRh4zQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgr0xv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 07:23:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P7N9C9008828
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 07:23:09 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
+ 2025 23:23:08 -0800
+Message-ID: <4dc9e860-7417-480f-ba89-439498138d3f@quicinc.com>
+Date: Tue, 25 Feb 2025 15:23:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: d1huoh5qwmwhghcxnmkjt9ygpurkxqnf
-X-MBO-RS-ID: 04853c29170cc312e34
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] wifi: ath11k: Clear affinity hint before calling
+ ath11k_pcic_free_irq() in error path
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <ath11k@lists.infradead.org>
+References: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
+ <20250225053447.16824-2-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250225053447.16824-2-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3fDWGSD2xZucQUa23DR48OgTFkKynFOK
+X-Proofpoint-ORIG-GUID: 3fDWGSD2xZucQUa23DR48OgTFkKynFOK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_02,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1011 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250048
 
-On Mon, 2025-02-24 at 10:52 +0100, Philipp Stanner wrote:
-> Hello,
->=20
-> subject line: please write "drm/sched" instead of "drm/scheduler". It
-> has become the norm
->=20
-> On Fri, 2025-02-21 at 14:27 +0800, qianyi liu wrote:
-> > Problem: If prev(last_scheduled) was already signaled I encountred
-> > a
->=20
-> prev(last_scheduled) almost reads like a function call. Maybe write
-> "prev / last_scheduled"?
->=20
-> > memory leak in drm_sched_entity_fini. This is because the
-> > prev(last_scheduled) fence is not free properly.
->=20
-> s/free/freed
->=20
-> >=20
-> > Fix: Balance the prev(last_scheduled) fence refcnt when
-> > dma_fence_add_callback failed.
 
-Oh, and importantly, I forgot:
 
-Since this is clearly a bug fix, it needs a "Fixes: " tag and put the
-stable kernel on Cc.
+On 2/25/2025 1:34 PM, Manivannan Sadhasivam wrote:
+> If a shared IRQ is used by the driver due to platform limitation, then the
+> IRQ affinity hint is set right after the allocation of IRQ vectors in
+> ath11k_pci_alloc_msi(). This does no harm unless one of the functions
+> requesting the IRQ fails and attempt to free the IRQ. This results in the
+> below warning:
+> 
+> WARNING: CPU: 7 PID: 349 at kernel/irq/manage.c:1929 free_irq+0x278/0x29c
+> Call trace:
+>  free_irq+0x278/0x29c
+>  ath11k_pcic_free_irq+0x70/0x10c [ath11k]
+>  ath11k_pci_probe+0x800/0x820 [ath11k_pci]
+>  local_pci_probe+0x40/0xbc
+> 
+> The warning is due to not clearing the affinity hint before freeing the
+> IRQs.
+> 
+> So to fix this issue, clear the IRQ affinity hint before calling
+> ath11k_pcic_free_irq() in the error path. The affinity will be cleared once
+> again further down the error path due to code organization, but that does
+> no harm.
+> 
+> Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
+> 
+> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
+> Fixes: 39564b475ac5 ("wifi: ath11k: fix boot failure with one MSI vector")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/net/wireless/ath/ath11k/pci.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+> index b93f04973ad7..eaac9eabcc70 100644
+> --- a/drivers/net/wireless/ath/ath11k/pci.c
+> +++ b/drivers/net/wireless/ath/ath11k/pci.c
+> @@ -939,6 +939,8 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>  	return 0;
+>  
+>  err_free_irq:
+> +	/* __free_irq() expects the caller to have cleared the affinity hint */
+> +	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+>  	ath11k_pcic_free_irq(ab);
+>  
+>  err_ce_free:
 
-P.
+LGTM
 
-> >=20
-> > Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
-> > ---
-> > =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
-> > =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
-> > b/drivers/gpu/drm/scheduler/sched_entity.c
-> > index 69bcf0e99d57..1c0c14bcf726 100644
-> > --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> > @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
-> > drm_sched_entity *entity)
-> > =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
-> > =C2=A0
-> > =C2=A0		dma_fence_get(&s_fence->finished);
-> > -		if (!prev || dma_fence_add_callback(prev, &job-
-> > > finish_cb,
-> > -					=C2=A0=C2=A0
-> > drm_sched_entity_kill_jobs_cb))
-> > +		if (!prev ||
-> > +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
-> > +					=C2=A0=C2=A0
-> > drm_sched_entity_kill_jobs_cb)) {
-> > +			dma_fence_put(prev);
->=20
-> But now the fence will also be put when prev =3D=3D NULL. Is that
-> intentional? It doesn't seem correct to me from looking at the commit
-> message, which states "Balance [=E2=80=A6] refcnt when dma_fence_add_call=
-back
-> failed"
->=20
-> It didn't get clear to me immediately which dma_fence_get() your new
-> dma_fence_put() balances. Can you ellaborate on that or maybe write a
-> comment?
->=20
-> But also be handy of could share the kmemleak trace.
->=20
->=20
-> Thanks
-> P.
->=20
-> > =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
-> > > finish_cb);
-> > +		}
-> > =C2=A0
-> > =C2=A0		prev =3D &s_fence->finished;
-> > =C2=A0	}
->=20
 
 
