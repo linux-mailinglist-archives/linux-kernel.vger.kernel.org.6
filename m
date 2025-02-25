@@ -1,101 +1,194 @@
-Return-Path: <linux-kernel+bounces-532122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC193A44927
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:57:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FBAA448F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C233AFF42
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED861756B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB6819B3CB;
-	Tue, 25 Feb 2025 17:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF84A156F3A;
+	Tue, 25 Feb 2025 17:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P5deP9TM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA2HYpU7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F3318E34A;
-	Tue, 25 Feb 2025 17:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194BA19882F;
+	Tue, 25 Feb 2025 17:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505799; cv=none; b=CybEA+1riQ8wCGWlvDk8Nmlg21J9yelhKpqs48JD4WG9dBIdoJ65TOG/Pw5FFNm0aM8gadx5VROHNGgbZ5NnuVSsb8K2a4Y86tb5JVbpxVONrjrHrIT3YouoNkjZn83I8RS+GbS4yI0RfH63LHCBfFBsaIJ8W32Mk9828/DhZ34=
+	t=1740505818; cv=none; b=pYmsLmnhR4bDCek45v0tcTGflQ5sGuQfZAJJkSjmv5Qn9HTJ1eVhNvTybNChKBdCsXyFadBduBMezmsnl/ug97eOU2VwzKHOv/AxBMF80m0SLNhOBwOJ3hNg4Ml7aHQAJ+yukD2tXeEEGKo7Hla2zhJWRu+yKSmyLzMPsfOq9YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505799; c=relaxed/simple;
-	bh=AKm94b+tNe6dqRLJYUXxcm855hBDTf/Htp6Wz/SI670=;
+	s=arc-20240116; t=1740505818; c=relaxed/simple;
+	bh=pseHv10suOnTrBMeDPRE21TEpcumthLSZ89PrafeTmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SaY7y/892GZgpTSFWOWROOADTlPBtomAO5eeLDAU4QWQWMMEH4ArVSNsBHaPfLqrDfgjPVTiUHBD7h410DWWd0w5Szi6bHPcV6ZJXlWp0y2fub4T/h9URumcUppSefvWGabMaalYwi2erNF/F8sKmQvTPtSmDK7p22uqf2sfLns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P5deP9TM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 10EC040E01A3;
-	Tue, 25 Feb 2025 17:49:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id oakOgA1LJNYz; Tue, 25 Feb 2025 17:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740505788; bh=kzEStbJ6GTTg3i28u7wgJxFbqxP1ehrM8dP2IySrncs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBShzLXD2a7Xb0sZF2l7p0QF4qcfSeKNde7n2R7BBw+JXMU7gG7G1aWdJ6ATXl1ug9gmTx27PbQ0fiBHnEYzDc7EXc1cXpxYT+aPlPk8JR+mJ59RivknWyK2LahW6Hd3Io7WCfWbRbD6qdOlt6DggFTpS11NwNFfS2/51gRbs4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FA2HYpU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6609EC4CEDD;
+	Tue, 25 Feb 2025 17:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740505815;
+	bh=pseHv10suOnTrBMeDPRE21TEpcumthLSZ89PrafeTmA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P5deP9TMhtcWrQz9LoD+TsMyEKQVVXmvFx2djtF0jSizT9RdrFA7Zid2bbxeKovZ0
-	 gJJeBe5YImw5KwkTeCW8PqZ3gKXMVaOK7PmlF8RpVpzuc/icDh7FYem6yMzZNWTbpw
-	 4EsGMDZquuJkQ8McbHDMNRXDJ1HlD3mouWcLj5dHT9qkq01nT35lm/4c8v/T5LvOpG
-	 4e0wrmtv+Ejsj08CLepPY7B5pdlbmv4ca2haq0bpcudBINKHdZ/HBocp8egzrC8HI0
-	 KticnBFxk8/d2wKJ/zRfyneL20wIte6E1sGcvxLeit3VqZueHOUeYbLixgMqqGXpAo
-	 StqBHoDgkPmmg+xdhEiK5goqG/7aMPt1+JgvlRXQLqabasgMukfhwcGYwAOK3Ku4if
-	 9oUvaY5J5b2QUO+ukh0eb7Z//wwqQEoisXE1cOYUBVhWNvWcCMgLWyVzS1dN2XVMq3
-	 5p9xzx/jTTjl2fHq73Ssvkfaw1bPhLPuCUYN4ACaWX1RkzVGPFFbWq/QRTULZMtkkF
-	 uV5fRmtQiRNMj20ocvua5BdLahRTxq2u1aHmZXcpAy8kU3IT/pDCceo05jySy2PmV0
-	 5U8Bbf+qn4/dlaBcooR8hqSY45Bv0rNTwJZvKxCcoAjRIX4sBmZOR3gtDMG8S6tDPs
-	 6paz5+Y2pqs+pmi9Fg3PTVqA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C8C4140E01A0;
-	Tue, 25 Feb 2025 17:49:30 +0000 (UTC)
-Date: Tue, 25 Feb 2025 18:49:15 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, will@kernel.org,
-	peterz@infradead.org, yury.norov@gmail.com,
-	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
-	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: Re: [PATCH v5 0/5] x86/cpufeatures: Automatically generate required
- and disabled feature masks
-Message-ID: <20250225174915.GBZ74Cm2Xpc_WwS3oe@fat_crate.local>
-References: <20250106070727.3211006-1-xin@zytor.com>
- <20250223102723.GAZ7r4C7C6sTUnbe4I@fat_crate.local>
- <1a444a2e-75b6-46f9-8f38-0458655873ac@zytor.com>
+	b=FA2HYpU7sxl9DbGvZS2VrTSZkTRi0NbggriHvkAoRNsLSClEhqvmlLRf0WKvLtKn6
+	 nsmfJnfzqFpDz+JsDT4zYL3AHGMKjWy89TgRyjPtRsKGvsIGfEyvXoMsp0bP1GGGc2
+	 J3MPOWvmuwX7nhoBVYD6e+1R9ZikLZXD4cp2sMSaV8/wVLKUZepFhWNAm+0Ny0v+M/
+	 6qc5PJ5Ik0O2W3+IeRnL0869QbeBToUMz85xSn20NcC9W65V5+JiYRz0gkaa4o4JsR
+	 lWluW5luUuayby5720qFTotpcZMAmv+zn2/JA8BO1zAuJObKL4WVibt24mv1DljorM
+	 5jpObOLzOR9mA==
+Date: Tue, 25 Feb 2025 09:50:14 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] xfs: Commit CoW-based atomic writes atomically
+Message-ID: <20250225175014.GG6242@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-10-john.g.garry@oracle.com>
+ <20250224202034.GE21808@frogsfrogsfrogs>
+ <b2ba8b64-be86-474d-874c-273bbeb4df00@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1a444a2e-75b6-46f9-8f38-0458655873ac@zytor.com>
+In-Reply-To: <b2ba8b64-be86-474d-874c-273bbeb4df00@oracle.com>
 
-On Tue, Feb 25, 2025 at 09:10:01AM -0800, Xin Li wrote:
-> After looking into the build issue, we think it's better to change to perl;
-> GNU awk has quite a few extended features that standard awk doesn't support,
-> e.g., BEGINFILE/FPAT/...
+On Tue, Feb 25, 2025 at 11:11:45AM +0000, John Garry wrote:
+> On 24/02/2025 20:20, Darrick J. Wong wrote:
+> > On Thu, Feb 13, 2025 at 01:56:17PM +0000, John Garry wrote:
+> > > When completing a CoW-based write, each extent range mapping update is
+> > > covered by a separate transaction.
+> > > 
+> > > For a CoW-based atomic write, all mappings must be changed at once, so
+> > > change to use a single transaction.
+> > > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/xfs/xfs_file.c    |  5 ++++-
+> > >   fs/xfs/xfs_reflink.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> > >   fs/xfs/xfs_reflink.h |  3 +++
+> > >   3 files changed, 52 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > > index 9762fa503a41..243640fe4874 100644
+> > > --- a/fs/xfs/xfs_file.c
+> > > +++ b/fs/xfs/xfs_file.c
+> > > @@ -527,7 +527,10 @@ xfs_dio_write_end_io(
+> > >   	nofs_flag = memalloc_nofs_save();
+> > >   	if (flags & IOMAP_DIO_COW) {
+> > > -		error = xfs_reflink_end_cow(ip, offset, size);
+> > > +		if (iocb->ki_flags & IOCB_ATOMIC)
+> > > +			error = xfs_reflink_end_atomic_cow(ip, offset, size);
+> > > +		else
+> > > +			error = xfs_reflink_end_cow(ip, offset, size);
+> > >   		if (error)
+> > >   			goto out;
+> > >   	}
+> > > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> > > index 3dab3ba900a3..d097d33dc000 100644
+> > > --- a/fs/xfs/xfs_reflink.c
+> > > +++ b/fs/xfs/xfs_reflink.c
+> > > @@ -986,6 +986,51 @@ xfs_reflink_end_cow(
+> > >   		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+> > >   	return error;
+> > >   }
+> > > +int
+> > > +xfs_reflink_end_atomic_cow(
+> > > +	struct xfs_inode		*ip,
+> > > +	xfs_off_t			offset,
+> > > +	xfs_off_t			count)
+> > > +{
+> > > +	xfs_fileoff_t			offset_fsb;
+> > > +	xfs_fileoff_t			end_fsb;
+> > > +	int				error = 0;
+> > > +	struct xfs_mount		*mp = ip->i_mount;
+> > > +	struct xfs_trans		*tp;
+> > > +	unsigned int			resblks;
+> > > +
+> > > +	trace_xfs_reflink_end_cow(ip, offset, count);
+> > > +
+> > > +	offset_fsb = XFS_B_TO_FSBT(ip->i_mount, offset);
+> > > +	end_fsb = XFS_B_TO_FSB(ip->i_mount, offset + count);
+> > 
+> > Use @mp here instead of walking the pointer.
+> 
+> Yes
+> 
+> > 
+> > > +
+> > > +	resblks = (end_fsb - offset_fsb) *
+> > > +			XFS_NEXTENTADD_SPACE_RES(mp, 1, XFS_DATA_FORK);
+> > 
+> > How did you arrive at this computation?
+> 
+> hmmm... you suggested this, but maybe I picked it up incorrectly :)
+> 
+> > The "b" parameter to
+> > XFS_NEXTENTADD_SPACE_RES is usually the worst case number of mappings
+> > that you're going to change on this file.  I think that quantity is
+> > (end_fsb - offset_fsb)?
+> 
+> Can you please check this versus what you suggested in
+> https://lore.kernel.org/linux-xfs/20250206215014.GX21808@frogsfrogsfrogs/#t
 
-... which will make the kernel build depend on yet another tool. I know,
-I know, perl is everywhere but someone would crawl out of the woodwork
-complaining that building the kernel pulls in even more stuff.
+Ah, yeah, that ^^ is correct.  This needs a better comment then:
 
--- 
-Regards/Gruss,
-    Boris.
+	/*
+	 * Each remapping operation could cause a btree split, so in
+	 * the worst case that's one for each block.
+	 */
+	resblks = (end_fsb - offset_fsb) *
+			XFS_NEXTENTADD_SPACE_RES(mp, 1, XFS_DATA_FORK);
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--D
+
+> > 
+> > > +
+> > > +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, resblks, 0,
+> > > +			XFS_TRANS_RESERVE, &tp);
+> > > +	if (error)
+> > > +		return error;
+> > > +
+> > > +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> > > +	xfs_trans_ijoin(tp, ip, 0);
+> > > +
+> > > +	while (end_fsb > offset_fsb && !error)
+> > > +		error = xfs_reflink_end_cow_extent_locked(tp, ip, &offset_fsb,
+> > > +							end_fsb);
+> > 
+> > Overly long line, and the continuation line only needs to be indented
+> > two more tabs.
+> 
+> ok
+> 
+> > 
+> > > +
+> > > +	if (error) {
+> > > +		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+> > > +		goto out_cancel;
+> > > +	}
+> > > +	error = xfs_trans_commit(tp);
+> > > +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> > > +	return 0;
+> > 
+> > Why is it ok to drop @error here?  Shouldn't a transaction commit error
+> > should be reported to the writer thread?
+> > 
+> 
+> I can fix that, as I should not ignore errors from xfs_trans_commit()
+> 
+> Thanks,
+> John
+> 
 
