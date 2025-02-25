@@ -1,106 +1,170 @@
-Return-Path: <linux-kernel+bounces-530453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E80A433A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:34:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDC2A433B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C373B6755
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EF73ACE60
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D284324C689;
-	Tue, 25 Feb 2025 03:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008802512F1;
+	Tue, 25 Feb 2025 03:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lVnvIeUG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="iF9iqF5I"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F392A1D8;
-	Tue, 25 Feb 2025 03:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B96242912;
+	Tue, 25 Feb 2025 03:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454441; cv=none; b=H3A87uAda3jgPjkBn4zJV3MTA5tMJH3OTLpsu6mwWitWh+gJh/f8MCh0Xtdr1QCXb3QYhsby5QlR+aLlIJnP0v0EAqKLAWFR3AT2hKb7IO/3zoR4DWXifd1ITxzu0i+W+AHa6F8UlgNUbCAmGyY4vAy1jX+6uOHex3hQtm8O/yw=
+	t=1740454819; cv=none; b=tOxmGkDYcy/je214/o7eMIXkgj8xvGTCsAJYhnabekgcWaFxCH6eluKDFjN9yYGZaNAqtZcOM/e6LEH5i/7gZDIhF187ugjL0mIhK8rSPRdG2cZVB9VWyVWnOuN9dN4T4UzaQSOnXvcZdu0Bf8vCdIwdw8lpz6Cpn1YskCgE0u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454441; c=relaxed/simple;
-	bh=y3mGs7t8+XJevVGwbZ9T7FmAJL8mZauQ4VHUHxSwQHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jz7OSA+QuljVS9a5siQQZT/vEp1ngriNVNY2moKk54Pf4Q35JMZiUte0oQ9WubHm2vdZ5Lb3zIO0cqxpcGFjW8iqo5wrwig94KAnoa9Ca0dapMAnNCP2HzUBuP/DIBySEu7Gmy9oalhiZbZPEGWcz+iULvrgiFEnWRpc8zf+wYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lVnvIeUG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C1AC4CEE2;
-	Tue, 25 Feb 2025 03:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740454440;
-	bh=y3mGs7t8+XJevVGwbZ9T7FmAJL8mZauQ4VHUHxSwQHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lVnvIeUGlnR0l7YZJER4iGQ9MWbTjhIUhOjPmUpINQt1S4ny3x693z1aPJ6dD93WS
-	 51ndlCJfyT4Vj6LIU43ztRrqekg8qxlG+CYoh1zjefQ42oDSrD6crY7Cf9qAKQS4k+
-	 X1eetoJyCvc+rjPCHlmZ5uNgcCqcdkTY8P7Ffs+U=
-Date: Tue, 25 Feb 2025 04:32:50 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Samuel Holland <samuel@sholland.org>,
-	David Lechner <david@lechnology.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 3/7] usb: common: usb-conn-gpio: switch psy_cfg from
- of_node to fwnode
-Message-ID: <2025022542-recital-ebony-d9b5@gregkh>
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-3-d5e4369936bb@collabora.com>
+	s=arc-20240116; t=1740454819; c=relaxed/simple;
+	bh=qJuy0nK2q6YCUlorfPoA1uGhIzEe0LfAfeiGmFKmujU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l6I6aJyqp12dgdp4fK0A+SJCajV6XuJuc5ajjDVqpMRw5RwboP8Blz/UCCEiKFyFPkvlM4Ja7tldkfsdTEL6BNo+gb/V4Vqp0JGhfM1eBOy3zvfTZhq+CELWQLdQKcKWl7LC0Jmi3eRJwwl++RzwqTX5Nj1T4nsrSrbMtzqiJNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=iF9iqF5I; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.1.176] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51P3aPQT1061652
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 24 Feb 2025 19:36:26 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51P3aPQT1061652
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740454597;
+	bh=ISdSv8V44MsbYhNsZikfbFNm2jh7tbbEZwA+56mURdo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iF9iqF5IJij6HEIYPvvetQ6+tmIzHsh+pMTMVnu3P5ykEhZfImV1libD4devCmagC
+	 3iyNSk1XFew7r8nfwrcPOMDwT9Cet01bBs8IAXImpdZtFUNL3xujHc86QVgJiUt4X2
+	 0obQOYiKlDxXVK9eiAHHN4J1RQO+t4f6a/s1DU/qIj/jceKMbtNss8wjpWMLBt7Ymh
+	 YFL/VhabUdylO/46/55nX8FOwHbYthWKv8154FTojDQ/TbamsE3xTiQ8D2e6xanXYX
+	 Oq30jBmkXfmGEjBRSmTsnad5TAIoXsXj3RQH1SppbmnJ0+TSzbTmjlZvJzSgp8i1Fw
+	 p0rBDMFAbZAag==
+Message-ID: <d0067e6a-a6af-4b38-ac72-f655af4d3b3d@zytor.com>
+Date: Mon, 24 Feb 2025 19:36:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-3-d5e4369936bb@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/17] x86: Replace open-coded parity calculation with
+ parity8()
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
+        joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+        dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
+        hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+        johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, yury.norov@gmail.com, akpm@linux-foundation.org,
+        mingo@kernel.org, alistair@popple.id.au, linux@rasmusvillemoes.dk,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+        brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+        Yu-Chun Lin <eleanor15x@gmail.com>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-4-visitorckw@gmail.com>
+ <d080a2d6-9ec7-1c86-4cf4-536400221f68@gmail.com>
+ <e0b1c299-7f19-4453-a1ce-676068601213@zytor.com>
+ <CAFULd4a_AnP4iqgQs7a6xAsnUFL8oZXxFcAWLmZFMm6MPF_zDQ@mail.gmail.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CAFULd4a_AnP4iqgQs7a6xAsnUFL8oZXxFcAWLmZFMm6MPF_zDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 12:21:36AM +0100, Sebastian Reichel wrote:
-> In order to remove .of_node from the power_supply_config struct,
-> use .fwnode instead.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  drivers/usb/common/usb-conn-gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
-> index aa710b50791b0282be0a6a26cffdd981b794acaa..1e36be2a28fd5ca5e1495b7923e4d3e25d7cedef 100644
-> --- a/drivers/usb/common/usb-conn-gpio.c
-> +++ b/drivers/usb/common/usb-conn-gpio.c
-> @@ -158,7 +158,7 @@ static int usb_conn_psy_register(struct usb_conn_info *info)
->  	struct device *dev = info->dev;
->  	struct power_supply_desc *desc = &info->desc;
->  	struct power_supply_config cfg = {
-> -		.of_node = dev->of_node,
-> +		.fwnode = dev_fwnode(dev),
->  	};
->  
->  	desc->name = "usb-charger";
-> 
-> -- 
-> 2.47.2
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 2/24/25 14:08, Uros Bizjak wrote:
+> On Mon, Feb 24, 2025 at 10:56 PM H. Peter Anvin <hpa@zytor.com> wrote:
+>>
+>> On 2/24/25 07:24, Uros Bizjak wrote:
+>>>
+>>>
+>>> On 23. 02. 25 17:42, Kuan-Wei Chiu wrote:
+>>>> Refactor parity calculations to use the standard parity8() helper. This
+>>>> change eliminates redundant implementations and improves code
+>>>> efficiency.
+>>>
+>>> The patch improves parity assembly code in bootflag.o from:
+>>>
+>>>     58:    89 de                    mov    %ebx,%esi
+>>>     5a:    b9 08 00 00 00           mov    $0x8,%ecx
+>>>     5f:    31 d2                    xor    %edx,%edx
+>>>     61:    89 f0                    mov    %esi,%eax
+>>>     63:    89 d7                    mov    %edx,%edi
+>>>     65:    40 d0 ee                 shr    %sil
+>>>     68:    83 e0 01                 and    $0x1,%eax
+>>>     6b:    31 c2                    xor    %eax,%edx
+>>>     6d:    83 e9 01                 sub    $0x1,%ecx
+>>>     70:    75 ef                    jne    61 <sbf_init+0x51>
+>>>     72:    39 c7                    cmp    %eax,%edi
+>>>     74:    74 7f                    je     f5 <sbf_init+0xe5>
+>>>     76:
+>>>
+>>> to:
+>>>
+>>>     54:    89 d8                    mov    %ebx,%eax
+>>>     56:    ba 96 69 00 00           mov    $0x6996,%edx
+>>>     5b:    c0 e8 04                 shr    $0x4,%al
+>>>     5e:    31 d8                    xor    %ebx,%eax
+>>>     60:    83 e0 0f                 and    $0xf,%eax
+>>>     63:    0f a3 c2                 bt     %eax,%edx
+>>>     66:    73 64                    jae    cc <sbf_init+0xbc>
+>>>     68:
+>>>
+>>> which is faster and smaller (-10 bytes) code.
+>>>
+>>
+>> Of course, on x86, parity8() and parity16() can be implemented very simply:
+>>
+>> (Also, the parity functions really ought to return bool, and be flagged
+>> __attribute_const__.)
+>>
+>> static inline __attribute_const__ bool _arch_parity8(u8 val)
+>> {
+>>          bool parity;
+>>          asm("and %0,%0" : "=@ccnp" (parity) : "q" (val));
+> 
+> asm("test %0,%0" : "=@ccnp" (parity) : "q" (val));
+> 
+> because we are interested only in flags.
+> 
+
+Also, needs to be %1,%1 (my mistake, thought flags outputs didn't count.)
+
+Finally, this is kind of an obvious improvement:
+
+  static void __init sbf_write(u8 v)
+  {
+         unsigned long flags;
+
+         if (sbf_port != -1) {
+-               v &= ~SBF_PARITY;
+                 if (!parity(v))
+-                       v |= SBF_PARITY;
++                       v ^= SBF_PARITY;
+
+	-hpa
+
 
