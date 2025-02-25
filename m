@@ -1,196 +1,110 @@
-Return-Path: <linux-kernel+bounces-530488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9A0A43419
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:25:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEB2A4341A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75847168052
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D2C3A76B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B11D18B477;
-	Tue, 25 Feb 2025 04:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77A3186E54;
+	Tue, 25 Feb 2025 04:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="UcnN/8t7"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazolkn19011027.outbound.protection.outlook.com [52.103.43.27])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="l0wDhVEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EBCEEA9;
-	Tue, 25 Feb 2025 04:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740457518; cv=fail; b=RAyVRE7wjrlSEbzyUDdzmlh3qWNkZiOu1DXxI0rlKzcN1RbvcvkosC84oGk/cbUz2db2M58nPNipq5t+8H3k//fJNPRwQrk94ymxtotCk+c3B1U0d7pRFVoC9i6Rgr9daEEK771vixoGfQ5kwyiteCWWXJIexdAF2q53VbuGYqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740457518; c=relaxed/simple;
-	bh=AX77UlsrEg+ZxN7un4sVt/+vTpblCt96AQWkc0GY7MU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=l1V7O7uSL9/IXDUVXEay46GWwQFVpUc6ugAzPGHJZTkvyG9qX5mHCXXAtKdXaA93V0L5L/rdcHA5PWOmX/ntDZF3qLOoYcv4tapa0Ve1jKuqXGwo6h+OxWZdfkENwtZXRKyTnugFyk9iebNEAlrJj9nEdyElJ6JAjUZwhLNeb80=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=UcnN/8t7; arc=fail smtp.client-ip=52.103.43.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YdKcXqqvjVi2ejyK+lDUR0Vo05MSKjNxvwaBH5t5gYnnsCPoqsW43AbYF1zsu/T/zrzaGPl3xpTH9PFKxgQoeSHHkErIZYJr8sjo0QTtg2R1KI+JwnHbC+hjo0rhE27+rsp4ABV+FLbx57zMiCI670OKcUFnpuqvOQfKsfwLUT6kWJKKGjkzkpyMMx4MkL5QSB9t6ersU+7ZKENR8T9uvqvPSDVNTJ/LjLdWhA172lff1ioGizI77L9tG7e1h2y1Eu5QfLYsjroaHqWs9SVilS6e5WwEADOGyjBVYZ4YCXc6d9M9GcY6pepCWZj397s03gyy3x9+xNEu57l1yua8mQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9b5SmgOeYNihswM0NVFd7PxRc8zfPUHjUt9fli4wlIA=;
- b=FGu6cfZWXA+PU8VSUr06694bl2Qw6efH6j4bSavtc9aUaUotbjEbZZVBULFOXuXJbQ6RHvflPLETF+oS9cmud6B9gYqJW0ReNr9S6OetJCN1djceY6xglSbmHznNd4O6ST1/C5ySERMuxUf+c25YCNJO4bkW+XGKQ4vnfhOA5MNaL/AD84/TgNhw7eaXkqqbAqvMRfqT5QTODwFbJPGpMp5djPdgrxzQ1ww9DPe+uffKzGGaml1q5gYFZZUU/jnikOJhVMbeBMfZPVSYBDgIr7ZO9j6+R2srKFvYQpTV2MLwbKeb65DnHiyauqeiZtxazhbMLLV10A0qCEWj8k1eOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9b5SmgOeYNihswM0NVFd7PxRc8zfPUHjUt9fli4wlIA=;
- b=UcnN/8t7o16LzLC8knNb0d8Ryikjnz3sRIJVArHp5p+V/0H6Wyh5w1IYAO5k5JbolRJoHM1rkAcgH+wfCjfmxkNOEowf7SCcM1/Ha7sGjpDmaq4SqVix695p77AKNNyvbfEsp1qvKlaN85D/5LaapveTLw8w4ENSVNUnzy/osh76Q2assu/GOodkZQ3TTiERw6iyRTXjRnKWJVcnDU9Cocm03k2M2HGk6LTkayVwdrWYEuBjKaed++q76U+r/DW4fThPdQ8OM2BSOye9t4dsinqm4yTwbqhs/Qwz8310uBJi9Nt+dtF0bF3rBC5XZ42yk07Qhw+ITnDSWZbRhWcWOg==
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com (2603:1096:400:156::5)
- by TYWPR01MB9575.jpnprd01.prod.outlook.com (2603:1096:400:1a5::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 04:25:13 +0000
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f]) by TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 04:25:13 +0000
-From: Shengyu Qu <wiagn233@outlook.com>
-To: jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net,
-	eugene.shalygin@gmail.com,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Shengyu Qu <wiagn233@outlook.com>
-Subject: [PATCH v1] hwmon: (asus-ec-sensors) add PRIME X670E-PRO WIFI
-Date: Tue, 25 Feb 2025 12:25:06 +0800
-Message-ID:
- <TYCPR01MB84377BEADF97E8E7554EF0CF98C32@TYCPR01MB8437.jpnprd01.prod.outlook.com>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TPYP295CA0060.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:8::19) To TYCPR01MB8437.jpnprd01.prod.outlook.com
- (2603:1096:400:156::5)
-X-Microsoft-Original-Message-ID: <20250225042506.9957-1-wiagn233@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28899154439
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740457645; cv=none; b=byr0BneDBbKqLspHcztehabj4OJ/I8Z2rmtsDl+IAMbMIW8LSvimppwCrv0EWHfkEVTFv56lyOuLu7mKmzzdFH18Ky1uYt2WAuBiy1waDIHR4sH0dd7uNhF7AMC9h2znqirTnSJ78V69FOMfsKz2OTUbDLX7X+KzZG0CJe40QNM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740457645; c=relaxed/simple;
+	bh=QjPv24yDsjUsI3Lky6i2FsPYQkvhwvbazTW3e8yl9T0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UzeaJonrg5ulghTG3fJWFcJZXPjOxYPFl1PVaQh60MPuWe2EXmwkwG2I9/8eB2yuFjQnCt4VzGou7Mx14/l4Dm+tOgkVD9VPTBOANUh+vBs6k0LztJR+y9hLRvWU6k3jiTL+gMhLauVPA8fWJNaJPWH4xzZTdVz+R/Hsl2S5ocA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=l0wDhVEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A51CC4CEDD;
+	Tue, 25 Feb 2025 04:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1740457644;
+	bh=QjPv24yDsjUsI3Lky6i2FsPYQkvhwvbazTW3e8yl9T0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l0wDhVEW2z00zJfQqJ6wdZeYj5ISAtvw3ardHaicaPBXk00sU/e/9Tc2/Dm+TceN8
+	 hQ7+7NCc/Shegn2bfw7OB0EtS7UTevM4h3sBJ7LbvlAcPzVnSfj1dtlloMUZ7wTuvb
+	 7JyiN7jcO1H7Xlq3g8qQT/qYhN/nJ1/1xcBs3QKg=
+Date: Mon, 24 Feb 2025 20:27:23 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+ syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com, "Paul E. McKenney"
+ <paulmck@kernel.org>
+Subject: Re: [PATCH 1/1] radix-tree: Prevent NULL pointer dereference in
+ radix_tree_node_rcu_free
+Message-Id: <20250224202723.aa20e103b6b3bc3de65ca7e4@linux-foundation.org>
+In-Reply-To: <20250223200603.38895-1-ayaanmirzabaig85@gmail.com>
+References: <20250223200603.38895-1-ayaanmirzabaig85@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB8437:EE_|TYWPR01MB9575:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12233d1e-6efb-4b5b-2134-08dd55546594
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|5072599009|7092599003|19110799003|15080799006|461199028|5062599005|440099028|3412199025|41001999003|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ponirtIPFm7lhs74HvaL/WhUkz/eIMzfKmVQoLmcCDN4p9z8A2lkgeDgNctk?=
- =?us-ascii?Q?JRTUJXDOHuLU+ltHT5r7FbaPQwmoYOfXWIzgp/welzc+mCRFcnoN2/9NCbSm?=
- =?us-ascii?Q?5g8qA9D79htadBTpZBU5qa8a3otmB3v+QNhi7VDuWxKg1quLg1F7IiVZH4wE?=
- =?us-ascii?Q?8uecfdPSWZq5de3fuduJw7W8LYkzFt+OOo2NmeQaqBDg8uatF++FfejhAS70?=
- =?us-ascii?Q?Yzlm6PJFXcGIVosNmxA54rhA5RqUcNs5atzyNdTCS3uDRtccwweMIWPPBYxV?=
- =?us-ascii?Q?osQ8vA83Y4qX6OneOh1qPdRYUiOLhhZr5SUKgVp2V6ms2FbaQy9fGNJSyMge?=
- =?us-ascii?Q?e7BdzJx+YLPLvgM61+yI/6TL91KCMDup43znOIyHO7gLwq+qPRe/9hSLYp47?=
- =?us-ascii?Q?eNfuDr08XjmtRJKkG6gUtdQRyDkJMAC9D54/QpX98zgCUfzF0MHe/Q6EawgA?=
- =?us-ascii?Q?7zj1lgOoEAvf45zKRaNnuBg2oO3vwL9x1eexhsM0LL0vMBFWz2iXL2oitWPe?=
- =?us-ascii?Q?YjSoZTKvv2TUWgfaf4NvWex0gZ5nG09iPYidJ78ddQeglUl63FTUZaemLmbY?=
- =?us-ascii?Q?pzrHXmmeIXljfkf1fT5Re/euS7NqEj0DcvSt1rMovfxoX98GXJiGpubxYM9n?=
- =?us-ascii?Q?PqbaSP2TKKIn79CmMUGP4fJ6C8WCGczC7pwy+P/G976mPDwLWLXBzWLCbAfD?=
- =?us-ascii?Q?eCyOQxVi+YGofSCpjH4PU7gBKPJvgV5FxXS8FvUr28iOCYWQ/zsghbBWWhAl?=
- =?us-ascii?Q?9BZysQeXShwi0biB/aiVvISVgrBZzob4uVtfu9rZ9yCoImsiDZ+DKSSRJoJh?=
- =?us-ascii?Q?yckp5Ozj2QoYeITdwCLHpjgoOLym4LFqQcCH3X4j+KwyAgSMj/XfPPEFHZXF?=
- =?us-ascii?Q?TDjU1mET0l4UZaauZCR7DY3g4mAQt9FE5hTFTHr9t8q2lixSDSpv6wAuaKSb?=
- =?us-ascii?Q?okMcAg4UkXvvLgtp+vDHo4ZiZ4m4+zAagryul9uFmgNQhyXPHLxT5zM/v8Uw?=
- =?us-ascii?Q?S2oX8f4X/Z+YrZpzZgsgpPOdAhobOlGT6aWar3jhJvkkasQ/xDD/o5VcY82H?=
- =?us-ascii?Q?pg1/5bvQvLGp4/Y8YulNfvgDbJM/j45Pi72P+jT68i1JpwOneQ77VeUEaQPr?=
- =?us-ascii?Q?D5NNIUOlwHg8kpp2jsSKXKTMXwpxRawbCiGlnOzWdut7p058T60wzGU=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9OFDcEVxUX1OmPQ7N8pqB9dzqqfg4109au8DHfyLDFAOw3MJCddlbaKie7BK?=
- =?us-ascii?Q?XrSiflbtoS0T0bYYt/Vw3jr+88HHKYrRB3HxSZwj+9ZPtiytMQi+bK9lLimv?=
- =?us-ascii?Q?LMNhwrgZdtXQdPxMYkxmnTHAoBWWiYwUPayy6o5+ypbz6PjgB9OQ6t2qPhKY?=
- =?us-ascii?Q?oHiI0c+ufRFioJ8gKCCRkdtsndz4ilHeyKRnWqvpCEyq9zpIxlZ9T4Kk3vIj?=
- =?us-ascii?Q?eXU4liyHWe29mdhA4M1yf14zP+wuEMt75bQNvfICZpl4q2vtPthpAgVNh7m7?=
- =?us-ascii?Q?nD7d/m/Te4hOKnT9HVhEjeokqGqSazxNhl+hwf+d+bWhEDNHiJVgdcJq+227?=
- =?us-ascii?Q?cMqZfkqkE741LzLIhvnhB6k19UgPtsSiL2NbREWDs+gdT3ImCO7oDULzsCO9?=
- =?us-ascii?Q?GAZViuyTrs2GSA0x9jyzfgARJkYxNZnRUlcvcTG0Q7+e0k/s85Gi+wxZ/Gvr?=
- =?us-ascii?Q?RqoQgGqBOuZQ1IQp6R+szOybFvP/eUVICXSd2cvmiFnasJ9OZSKWgzSemGp8?=
- =?us-ascii?Q?sddByvGEr92+EefOEAjEk/tBWVYXoyGP9TbfNPhGZMx7KR5jWWHPZfAC9Iz9?=
- =?us-ascii?Q?4lg1s+US6dPNasMIEwk/Wxn/9FcuJA6sml0j44VkbxGE2pjoql3L96JckOQV?=
- =?us-ascii?Q?vW49MIvVj8ogKfG3ikGASxuxXPSLELXu/2RzL8qX1x/a/bpNKkZFZS7Pg1eP?=
- =?us-ascii?Q?qxGOKTBeRYe0qNt7vQiAuTwBZOz2uMNpfxU6bcrFlI8/iqLwM0Oati77DfVU?=
- =?us-ascii?Q?fhvt20jLSZ/D6cZDasdiStM6jZW0yBr9/Rj1o4XhjD0fGDkun16Xa50CvyV3?=
- =?us-ascii?Q?PgSXNlsvsjNxPPeZGDthwgQRk2oRR8Ov/qfcBGM5fPgJEa4XqQHGZW4mamz7?=
- =?us-ascii?Q?pZRE9e6cVoRK4QtYHWHAksq23a+KQwV/+5pw+8qoPBY3ZemeKZhYSq09psNG?=
- =?us-ascii?Q?ViNx37GhBNx9GcXp1u5lFXDvqnOYd8D9jY9GAEbyS+6ApNoTqWjrdLgMu9ZT?=
- =?us-ascii?Q?7VcoPtYnSPAX5agNLS2/6oqEQYH2dt0EtDZc3s//rvkxYQq2h/9b2mxQpUDz?=
- =?us-ascii?Q?+aN2R6e5cTqjfRjVLyckL4laTscxRZdpxWj/iQPUuLG+wmFr8yisbdbj/Dze?=
- =?us-ascii?Q?A6b/KQcq4Y3RauKFVwmAXkaQichQv9pNaOW1upKhMY+3EKUk4GwazQ39L0J8?=
- =?us-ascii?Q?NO71CeNvQj2Bb1EkZz4qUVo1C4tG3F1hmPi8fVFkTvNH8mWFcDw6zqRGxwbF?=
- =?us-ascii?Q?WsgBr+RMikOKPicl0VBxIxgALhUSBcKuZWuulC2E+aF2bZyvLnauHHtkZqlg?=
- =?us-ascii?Q?d6U=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12233d1e-6efb-4b5b-2134-08dd55546594
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8437.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 04:25:13.1703
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9575
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add support for PRIME X670E-PRO WIFI.
+On Mon, 24 Feb 2025 01:31:08 +0530 Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com> wrote:
 
-Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 10 ++++++++++
- 2 files changed, 11 insertions(+)
+> syzkaller reported a kernel NULL pointer dereference:
+> 
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> PGD 0 P4D 0
+> Oops: Oops: 0010 [#1] PREEMPT SMP KASAN NOPTI
+> 
+> Call Trace:
+>  <IRQ>
+>  rcu_do_batch kernel/rcu/tree.c:2546 [inline]
+>  rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2802
+>  handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>  __do_softirq kernel/softirq.c:595 [inline]
+>  invoke_softirq kernel/softirq.c:435 [inline]
+>  __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+> RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
+> 
+> Reported-by: syzbot+80e5d6f453f14a53383a@syzkaller.appspotmail.com
+> 
+> Link: https://syzkaller.appspot.com/bug?extid=80e5d6f453f14a53383a
+> Signed-off-by: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
+> ---
+>  lib/radix-tree.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+> index 976b9bd02a1b..5cefbfd7677e 100644
+> --- a/lib/radix-tree.c
+> +++ b/lib/radix-tree.c
+> @@ -292,6 +292,9 @@ void radix_tree_node_rcu_free(struct rcu_head *head)
+>  	struct radix_tree_node *node =
+>  			container_of(head, struct radix_tree_node, rcu_head);
+>  
+> +	if (unlikely(!node))
+> +		return; //Prevent NULL deref
+> +
+>  	/*
+>  	 * Must only free zeroed nodes into the slab.  We can be left with
+>  	 * non-NULL entries by radix_tree_free_nodes, so clear the entries
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 739636cf7994..d2be9db29614 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -6,6 +6,7 @@ Kernel driver asus_ec_sensors
- Supported boards:
-  * PRIME X470-PRO
-  * PRIME X570-PRO
-+ * PRIME X670E-PRO WIFI
-  * Pro WS X570-ACE
-  * ProArt X570-CREATOR WIFI
-  * ProArt X670E-CREATOR WIFI
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 43e54dc513da..006ced5ab6e6 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -316,6 +316,14 @@ static const struct ec_board_info board_info_prime_x570_pro = {
- 	.family = family_amd_500_series,
- };
- 
-+static const struct ec_board_info board_info_prime_x670e_pro_wifi = {
-+	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
-+		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
-+		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CPU_OPT,
-+	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
-+	.family = family_amd_600_series,
-+};
-+
- static const struct ec_board_info board_info_pro_art_x570_creator_wifi = {
- 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_VRM |
- 		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CPU_OPT |
-@@ -503,6 +511,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_prime_x470_pro),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("PRIME X570-PRO",
- 					&board_info_prime_x570_pro),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("PRIME X670E-PRO WIFI",
-+					&board_info_prime_x670e_pro_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt X570-CREATOR WIFI",
- 					&board_info_pro_art_x570_creator_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt X670E-CREATOR WIFI",
--- 
-2.48.1
-
+Well, we should work out why this happened.  Cc Paul ;)
 
