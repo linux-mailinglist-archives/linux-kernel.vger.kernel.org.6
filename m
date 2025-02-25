@@ -1,269 +1,218 @@
-Return-Path: <linux-kernel+bounces-532571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E502A44F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:00:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C67A44F74
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:02:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7E918942EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7168119C1FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EFA2135D9;
-	Tue, 25 Feb 2025 22:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC87213253;
+	Tue, 25 Feb 2025 22:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LuLWil9I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="pB4SOnOx"
+Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazolkn19011036.outbound.protection.outlook.com [52.103.38.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898881DC997
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520808; cv=none; b=A9uQdZijFpGCgapF4nEaYBAJvZ1i0HOAfDeskiz3ZchB0OrmuUpfiSJDWZ7qvAhMKn1yXp6Fq3tBS3W3jmq4kyK/+gxfNQIDQP+3P3xPTFr177N4uMsVc1R+gXMwEqyBhayh/STCVVBv4ILNw7vhxQWdEC51VHU1fPT5P9k1j/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520808; c=relaxed/simple;
-	bh=LGdXOz1Z3oleLe2XFRI65us3attlCYpRc59iXFHvP88=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jq/0YChw6hn8rua0IJQye+3nhYQBppiegLGX6yM2K3HP+pFYSjWD+xFlr0nh12VwXt2nxNYOSdvgPJvxEA93VrqsQcM8u04WW5OColV+45JsfeMsvAPvQZd8rFqcMK2sVvTS4ep9zbS+cTnUDCb6I2NDyzW1pGYNierkgEjLXlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LuLWil9I; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740520805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Bb2V+mbnJJoInEW5Wm2LB6yv6+Wa0umig9olpTiRHM=;
-	b=LuLWil9IPzcvya7pqUh8SmEopCnShVlX1DaPD5XP1cO6/CL04YNHcQvuQnIYXifG0hSwet
-	AjymbueG4vA/y/ZEaFXqp93ru3uigcLduLZv+h4vH/QvRVjiMxRDtm+4SRG20AeYRb4E3V
-	eKLJvhY2SOp+A+5Z2gFLFV5xErIg908=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-294-lOF8JZonPlKlczE5WljAIA-1; Tue, 25 Feb 2025 17:00:04 -0500
-X-MC-Unique: lOF8JZonPlKlczE5WljAIA-1
-X-Mimecast-MFC-AGG-ID: lOF8JZonPlKlczE5WljAIA_1740520803
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471fc73b941so185534771cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:00:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740520803; x=1741125603;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Bb2V+mbnJJoInEW5Wm2LB6yv6+Wa0umig9olpTiRHM=;
-        b=svFo9lh5EQfEKhOY8E4SfOSoeIixsmw64sh+LAJ8HdsVj6e6BOD/4OCKOOlF2iOlhO
-         A95z424ncL1Wy/J2EcwnVl2CvPUUfi/spxBFFul45NAu4BwjIro9TJx5qo+26z6+Wc0X
-         O1+SVkCcuYfKfYwvffzrtW1nHpoMiy0JIsOp8XPPVPeJ7QxxllnxbIMHFj8sAZGuyfhJ
-         jgACBiYWWlK8anqsaYSTMK82kGrW4KKx+9Rf2ij9ztMZv8VW4t7YQcIhv9i0gT7w4Ekj
-         7dLvJ2DDwMg1Ade4ZmBD5Bv99YczOUy09fWR9yzXl9C302vG9RJ9VCYwdUPFH/dtFSQ/
-         M3Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGdDCrfH/KJbBlWJpWgFj1WvofRzOdnJ/nVBPnlt/owvckwPR1J7zYyHO5UCixYg3XGWmxCe44Pd/cEKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5gQqFsvEab87k0BeFZ/TSzj8VTXLKZ/1xCX9W3TET1l1kVtZM
-	rBA7HeZ8z1Vk0cSen/rmivw0Szn8Hfgp/5vNklUC8D0TFECRHrl2cCqpk55BQexDL174wT8lUTf
-	e/pmHo5JDnzsdQCbjuQv2eAGXzmK04WreXeIuB2PIrQIsIuoBPahxs6gDZCAkWA==
-X-Gm-Gg: ASbGncuxL4UCSR+h74vpShSrZBaKXhBI6WyggqHra1lMHTmCJz+s86D/mz3mru6srUU
-	5SNyXdKbPtV0arRiHZkYDDP7IqLfTTg6TzqG09hLq+3ynaME1nZJuqSDazL1DWZm+iJlCU8MNNJ
-	TDfspHnmczR8Mjh9Erk3AuAmiqbac9rmqSmDnYuNp7e1Ku5KpdLJCiTzz23Sq2ULFUN93Xj7jsk
-	vSW7BqQabcbxQaitJbSDj8SXH7PquJuv0CkTvHDseMlUW4za/byGU/ead7Ywe3LGCPECuuHVlBf
-	gpEJjZp00K0/5cY=
-X-Received: by 2002:ac8:5fcd:0:b0:471:f272:9862 with SMTP id d75a77b69052e-4737725ccd8mr80673481cf.41.1740520803178;
-        Tue, 25 Feb 2025 14:00:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGKcJI9jny77dfDG0KDTNvU6C4CH9BV0kPcSk7G/tFKXoyZJlHMLOdxm3hpfh33e+GECWyEuQ==
-X-Received: by 2002:ac8:5fcd:0:b0:471:f272:9862 with SMTP id d75a77b69052e-4737725ccd8mr80672761cf.41.1740520802597;
-        Tue, 25 Feb 2025 14:00:02 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47378082f55sm15049841cf.65.2025.02.25.14.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 14:00:02 -0800 (PST)
-Message-ID: <07788b85473e24627131ffe1a8d1d01856dd9cb5.camel@redhat.com>
-Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  David Matlack <dmatlack@google.com>, David Rientjes
- <rientjes@google.com>, Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao
- <yuzhao@google.com>, Axel Rasmussen <axelrasmussen@google.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 17:00:00 -0500
-In-Reply-To: <Z7UwI-9zqnhpmg30@google.com>
-References: <20250204004038.1680123-1-jthoughton@google.com>
-	 <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
-	 <Z7UwI-9zqnhpmg30@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A16213236;
+	Tue, 25 Feb 2025 22:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.38.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740520882; cv=fail; b=odliM+geGjZhWijSv8qLT7jn57vV0J6Pt/BpsvBSYcRan0YwFdJ9EHxyd9fJHs7ocBHOEK5jaLlA4PqG46Cn+nhuMWuCqUzUcmPLcIuoJ4zgtyaaoOMK4NnS2XguLwiCl1UR8JZZFldc9tzDm+4PA6zftnm99HSQ3FSlVQqRBIw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740520882; c=relaxed/simple;
+	bh=kr2NHX9o1C7nQwSoORh+te0bhmu1Wty/zZFNt0Phg7g=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=btkDVse4lIom162BQYoH8833CP/ph4xMbNzkALZlricwqSq2DFOSvZBVGa9PPheh6WDXzAuJvK032eskD6rZFjleImMjLF4bx9ENqxH+PMCgA739kCl+DANSXM5ZYx5VW+923MDEEbQ0o0BHvJFEVcFfD/wPJunbFQaSohbXw9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=pB4SOnOx; arc=fail smtp.client-ip=52.103.38.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wMkqG9NQoU5QUyttPr0lp2IRhwoAATp48EdsV9ZRRWLCZIJaw2g+cBiSzZrxcImbduVNGqnBUNps4a4Yrh/wdp+pz9Jh+M0sIPfEP/8sGGG9uaaP2/CeJtjuJHrRZNpGLhv3AK/Kbz/QwFaW48ASItLPa6jrdUeO88HRuon3F3LEIJmPjJim3z1xXehfJeLAEa719IamW8/fIryfk5x443VDNNQbxT3H+epXEvHoKieyTqR9y9qvH0cAuqCGsq/s7ClvOEtL/x5uPK3hOyj7Y8DG5yf7RSyFktL/MXAEESpNZTpS6ddo7rAFtl73ejx282uS8tKXv54gIYCJqRZ/Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2qVtR9i+ovpPwlA6WooSZ3XHnOw81g43ueWtmISCFJE=;
+ b=XNY/97CMgw9uuOtMRGaYLTg3oTVC9577oUYCvUqs67zur+Gss8Bjx/CGgC/mGSWNWiCrbSPpL36vzSLdQjMWmdJMP/DW2UeIn//WDyKtIm7y7xfW6QQF3yYfLTwpQV0BLxWE2N88iNyfUauEDmlRZaDEKZaNxCRfmGIdQttEML4hRh9YVNnsFDhU6prFtSSLhKLZx5oUk+CcMOc1HtpXO56DIb4vWjA5K0z0mhwXjkKDGxw2PyHa7ifnVKPOP2TSmL9CYShXoZtoVsBOw+AJwfRSsIjuKnhFwHSVuDMSLZDbNJqFmSoZLiX+1p4aGMLpETpmuv7gNgZQCdzjZGoWUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2qVtR9i+ovpPwlA6WooSZ3XHnOw81g43ueWtmISCFJE=;
+ b=pB4SOnOxbo3lQ9Ywhh+MBmAMv93TWPFtO1CWmeRdg9WUIP+aGDLvT4MLkURnzHPrfYGEwZYwWzXhni9W4+yBYzoMTBjksQS86xyylXDoyMcSvl1gARG3Vm6QduCWZpPRwgKoM7b6J9ZLs5adXdHSXcIcyNX8WGZaw9OC0bOz5QBz9zPuj/FAtP3lm6VHWJzSyaDopgdoN9FkfDimBgVvrOiRnWVnkhnT8jpZCr89+MoExJbe3hnCDZmLVvHJG9hO99beiPLRdXydlf6DgJV1kGgR/qI7zfiyw8ylQLut9RwkjFIrhx06lmTbkKtHS/0dDSTCvHkAA+0IhlJ+RyzjNw==
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
+ by LOYP123MB3280.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:e1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Tue, 25 Feb
+ 2025 22:01:18 +0000
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb%5]) with mapi id 15.20.8489.018; Tue, 25 Feb 2025
+ 22:01:18 +0000
+From: Manuel Fombuena <fombuena@outlook.com>
+To: pavel@ucw.cz,
+	lee@kernel.org,
+	corbet@lwn.net,
+	vicentiu.galanopulo@remote-tech.co.uk,
+	linux-leds@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] leds: leds-st1202: fix NULL pointer access on race condition
+Date: Tue, 25 Feb 2025 22:01:02 +0000
+Message-ID:
+ <CWLP123MB54732771AC0CE5491B3C84DCC5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <CWLP123MB5473552E76AE71CDE3085DA9C5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+References: <CWLP123MB5473552E76AE71CDE3085DA9C5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0242.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::7) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:160::13)
+X-Microsoft-Original-Message-ID:
+ <20250225220102.1658528-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|LOYP123MB3280:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee2014b4-b5d0-43e7-d77d-08dd55e7edf9
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|7092599003|15080799006|8060799006|19110799003|5072599009|3412199025|440099028|41001999003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kmghtHHYW2bqfcMlB4cJi/GTmpp/nlByNL+1bjiAOJ7AeSJWLjncfwGNpjkN?=
+ =?us-ascii?Q?qXanJhW5H3+Ir3TgeEyrCr8UvzGCCsn3/6Z/HkdneF6PTpVCVKRs6WkIEmtu?=
+ =?us-ascii?Q?uzr/rYwu6xcatQ7e3w4TehG1xcT7pDLYCDeSNutEBuboSM6BGjtCUh17aBGF?=
+ =?us-ascii?Q?B/SpaVRzusLtImn0jgbaL3mMstbf68IK9tehYT5ZanNyFHK6Y5b9xHTnGClN?=
+ =?us-ascii?Q?+AD+C5FKhCPOdvuqHcbWAHQoSsTI4MPdhvRJ9M89oTYqnTGs90/34FIHv+iW?=
+ =?us-ascii?Q?N5+Szg3wd2GyJ5Z6isQYUExJJbITp8hgN3SV1rP4nq+inOZrfcvlBdsE8NCL?=
+ =?us-ascii?Q?VyuQ8WGmhRLpQLR/RdKYR2KERWtJ8NCFlf5/gPNtW9iUEheSmiSiZ/sV3+J7?=
+ =?us-ascii?Q?gtWZysd1HRZQQcuE19XwIKh0DNdsDIlfbPK/JLI6/d8MobuZ5QMOKANtRULJ?=
+ =?us-ascii?Q?qsHMIkCGGXCjCIWR+P/t8ij34NyW4Siz+C13MKDy6otAHT1B2SkvPK/4lsrB?=
+ =?us-ascii?Q?m2mkqAovQfBhTKVUeRmdT3uHbOrDWvQZ4/9z761E/MNpIuP0bl1s9v+HK2yr?=
+ =?us-ascii?Q?SUoRApg1/NjBWo602BLL6NAx3zLF3Jz6PVlo38/y4fE/fXTWzv/xFe/1QmJy?=
+ =?us-ascii?Q?trLs2jG5Y6DP+KurQnBaBwjphpZlsBKnElGqmAd7uZijGdPvNzEmMN0O2dzb?=
+ =?us-ascii?Q?Mio808Wruo7Tr/mzizVMIrimgJDywINIAbdY+JGi3MsAIWYzllksU733HtSS?=
+ =?us-ascii?Q?yf88Aoo8SCTnDGHDFVgxBpfpQCq6E1vc64iO0b/+Bhq+RoDL0sF5ZELW53p+?=
+ =?us-ascii?Q?1BFkoAy8ryJUq58la6KkLc7I2i99Pl3E1XTASWT+IhZNzTu+vZbgYUtg/pxq?=
+ =?us-ascii?Q?X1UR1wCeMvdrrjsGYsLbnxBm5zJ+/UTRR7Ue8W2ttuPFWtIdCfB+r+nosmJ3?=
+ =?us-ascii?Q?5bRR0kZnvL9L/8RNMlnO57UxuSvrsYAsQH9sZLZb1U1R/Y30FksvEd+ma+E1?=
+ =?us-ascii?Q?ocLkOcMnURT9MemytQVipc8BtfvF7j/op54MRrSG7DZQ0pMr77tL2PjHxbyU?=
+ =?us-ascii?Q?lNmXyZibWGOq8/COUMJmwV+pKf0wLeAcpK1kjpwWo3autVDzhC4=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OB8W/XTntZ6mFGIPf6lQoDXp4b0JB+EKjPzGGbLwaeJn0+Lc7RKsj5cGMcI/?=
+ =?us-ascii?Q?Ru7Is9dT7XNljqi7lxEbCVIUHnn1GflpFS6UjemP2yQMtD8FHeaSNadJ5D6k?=
+ =?us-ascii?Q?GhJgCGPQK2ekgyW17rG28B1jqj14mhKiETk8a3hT2XIJ+8TOlQufjRIDzkWl?=
+ =?us-ascii?Q?zbNTHxOZVCeoLN3BKTcwXkv3zIA6+tmPXOqwARtJBor4W08r18SiscjCqLRd?=
+ =?us-ascii?Q?mhBGprGxYERBlmwfFPlzrHaNkULtxfW6lMIXs6/2Xx+4U7mgdY9DxpuUw+Yo?=
+ =?us-ascii?Q?O6GoGQEjEChAt8I6N7CloXoa+azqHf1ombJMkQz79TOzeugEVBvsSAqWBZKO?=
+ =?us-ascii?Q?VbIvGr9nBDO8ZkqgaVdcL+wKbvUV0w38Rj5wRmglgX2VL7o8qAfgFW2/JCxT?=
+ =?us-ascii?Q?ATdRqxZsVGTP/ZIAkyHVrFD2X9sn4BpqHrZJs+DdcsBpKNfIUUTRMJ97WeWN?=
+ =?us-ascii?Q?ucj4v8QdXm/Qmh9IDKlvYca9Cor0buQF8wf4Vl/6nD+FDYTcBU3FWMoz/8p+?=
+ =?us-ascii?Q?Drl3kKSDz+avVJC0WyfWGEvIv0zyxXjwpIL0jmtbiU0Fu/QEd+utW9yLItRN?=
+ =?us-ascii?Q?Dxz1JZePl3UjcTMg2wn20xLWzsTvNTUC88rchTMHVFFzRlw5O9fPEe7uILYF?=
+ =?us-ascii?Q?jvEIH+HIB4WozUGSDsxtTR2fSIWi0O9jJOl/XOU1jo2fMUyoOWRlGF2cWFLa?=
+ =?us-ascii?Q?CCJ5wkFxBlgPUKW0tIs0RECrOQ8kwt7BV4WeFmtjpDksbZbjrI1ZRvt1PijS?=
+ =?us-ascii?Q?EHwHqdn8WU9guiWFdlY7lYfklt1u6dNmMlq/WcL7P1OiNtwTMlqfwkyPUzpB?=
+ =?us-ascii?Q?v+n48s6mB+RVerDkx2sYfIR30qF3+X3g2qxdJujizJDqOXiUhwRCJNzuWGa2?=
+ =?us-ascii?Q?dKWuK6QBY/yh636b6ghMBmRu8kHjJoh3hU6IflIqQ9orsV0IXPdgavdxalby?=
+ =?us-ascii?Q?6aPy98Ae9Xj2hMybojpOO6vPKmtP4t4z7NYhM9/bTnm4EgFcAMUg1jfsseej?=
+ =?us-ascii?Q?eCafi8VOl2hFVaNcyE1FuPAEaNhfp0hCGHFOC5VPMsVQbMLQrEbRRb6p8HMW?=
+ =?us-ascii?Q?/7apNUIpPCjm6Sig4g9wBAKNoD/Pl0PdDIALlJr84HKpF37FE0DHVDwQ0iEn?=
+ =?us-ascii?Q?t3u+cTKwGL5q5hnIE/voMAOXiuoy/9y8RHzEDUMOCREKR+02Ll17eaY+Pxrd?=
+ =?us-ascii?Q?v9V6tRv250oXSdZ+3TBNWALRwVG8otkr7Yu5vrVZ+FUUXYP4AOd1az48SUGb?=
+ =?us-ascii?Q?LhqCuJ2+1LcpE9UfYVTfPFQnwXgNQxQivFQaH84dErThkcoCnejBDw6YOocG?=
+ =?us-ascii?Q?VAk=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee2014b4-b5d0-43e7-d77d-08dd55e7edf9
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 22:01:17.9267
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP123MB3280
 
-On Tue, 2025-02-18 at 17:13 -0800, Sean Christopherson wrote:
-> On Tue, Feb 18, 2025, Maxim Levitsky wrote:
-> > On Tue, 2025-02-04 at 00:40 +0000, James Houghton wrote:
-> > > By aging sptes locklessly with the TDP MMU and the shadow MMU, neither
-> > > vCPUs nor reclaim (mmu_notifier_invalidate_range*) will get stuck
-> > > waiting for aging. This contention reduction improves guest performance
-> > > and saves a significant amount of Google Cloud's CPU usage, and it has
-> > > valuable improvements for ChromeOS, as Yu has mentioned previously[1].
-> > > 
-> > > Please see v8[8] for some performance results using
-> > > access_tracking_perf_test patched to use MGLRU.
-> > > 
-> > > Neither access_tracking_perf_test nor mmu_stress_test trigger any
-> > > splats (with CONFIG_LOCKDEP=y) with the TDP MMU and with the shadow MMU.
-> > 
-> > Hi, I have a question about this patch series and about the
-> > access_tracking_perf_test:
-> > 
-> > Some time ago, I investigated a failure in access_tracking_perf_test which
-> > shows up in our CI.
-> > 
-> > The root cause was that 'folio_clear_idle' doesn't clear the idle bit when
-> > MGLRU is enabled, and overall I got the impression that MGLRU is not
-> > compatible with idle page tracking.
-> > 
-> > I thought that this patch series and the 'mm: multi-gen LRU: Have secondary
-> > MMUs participate in MM_WALK' patch series could address this but the test
-> > still fails.
-> > 
-> > 
-> > For the reference the exact problem is:
-> > 
-> > 1. Idle bits for guest memory under test are set via /sys/kernel/mm/page_idle/bitmap
-> > 
-> > 2. Guest dirties memory, which leads to A/D bits being set in the secondary mappings.
-> > 
-> > 3. A NUMA autobalance code write protects the guest memory. KVM in response
-> >    evicts the SPTE mappings with A/D bit set, and while doing so tells mm
-> >    that pages were accessed using 'folio_mark_accessed' (via kvm_set_page_accessed (*) )
-> >    but due to MLGRU the call doesn't clear the idle bit and thus all the traces
-> >    of the guest access disappear and the kernel thinks that the page is still idle.
-> > 
-> > I can say that the root cause of this is that folio_mark_accessed doesn't do
-> > what it supposed to do.
-> > 
-> > Calling 'folio_clear_idle(folio);' in MLGRU case in folio_mark_accessed()
-> > will probably fix this but I don't have enough confidence to say if this is
-> > all that is needed to fix this.  If this is the case I can send a patch.
-> 
-> My understanding is that the behavior is deliberate.  Per Yu[1], page_idle/bitmap
-> effectively isn't supported by MGLRU.
-> 
-> [1] https://lore.kernel.org/all/CAOUHufZeADNp_y=Ng+acmMMgnTR=ZGFZ7z-m6O47O=CmJauWjw@mail.gmail.com
+st1202_dt_init() calls devm_led_classdev_register_ext() before the
+internal data structures are properly set up, so the LEDs become visible
+to user space while being partially initialized, leading to a window
+where trying to access them causes a NULL pointer access.
 
-Hi,
+Move devm_led_classdev_register_ext() from DT initialization
+to the end of the probe function when DT and hardware are fully
+initialized and ready to interact with user space.
 
-Reading this mail makes me think that the page idle interface isn't really used anymore.
+Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
+Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
+---
+ drivers/leds/leds-st1202.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-Maybe we should redo the access_tracking_perf_test to only use the MGLRU specific interfaces/mode,
-and remove its classical page_idle mode altogher?
-
-The point I am trying to get across is that currently access_tracking_perf_test main 
-purpose is to test that page_idle works with secondary paging and the fact is that it doesn't work 
-well due to more that one reason:
-
-The mere fact that we don't flush TLB already necessitated hacks like the 90% check,
-which for example doesn't work nested so another hack was needed, to skip the check
-completely when hypervisor is detected, etc, etc.
-
-And now as of 6.13, we don't propagate accessed bit when KVM zaps the SPTE at all, 
-which can happen at least in theory due to other reasons than NUMA balancing.
-
-
-Tomorrow there will be something else that will cause KVM to zap the SPTEs, and the test will fail again,
-and again...
-
-What do you think?
-
-
-> 
-> > This patch makes the test pass (but only on 6.12 kernel and below, see below):
-> > 
-> > diff --git a/mm/swap.c b/mm/swap.c
-> > index 59f30a981c6f..2013e1f4d572 100644
-> > --- a/mm/swap.c
-> > +++ b/mm/swap.c
-> > @@ -460,7 +460,7 @@ void folio_mark_accessed(struct folio *folio)
-> >  {
-> >         if (lru_gen_enabled()) {
-> >                 folio_inc_refs(folio);
-> > -               return;
-> > +               goto clear_idle_bit;
-> >         }
-> >  
-> >         if (!folio_test_referenced(folio)) {
-> > @@ -485,6 +485,7 @@ void folio_mark_accessed(struct folio *folio)
-> >                 folio_clear_referenced(folio);
-> >                 workingset_activation(folio);
-> >         }
-> > +clear_idle_bit:
-> >         if (folio_test_idle(folio))
-> >                 folio_clear_idle(folio);
-> >  }
-> > 
-> > 
-> > To always reproduce this, it is best to use a patch to make the test run in a
-> > loop, like below (although the test fails without this as well).
-> 
-> ..
-> 
-> > With the above patch applied, you will notice after 4-6 iterations that the
-> > number of still idle pages soars:
-> > 
-> > Populating memory             : 0.798882357s
-> 
-> ...
-> 
-> > vCPU0: idle pages: 132558 out of 262144, failed to mark idle: 0 no pfn: 0
-> > Mark memory idle              : 2.711946690s
-> > Writing to idle memory        : 0.302882502s
-> > 
-> > ...
-> > 
-> > (*) Turns out that since kernel 6.13, this code that sets accessed bit in the
-> > primary paging structure, when the secondary was zapped was *removed*. I
-> > bisected this to commit:
-> > 
-> > 66bc627e7fee KVM: x86/mmu: Don't mark "struct page" accessed when zapping SPTEs
-> > 
-> > So now the access_tracking_test is broken regardless of MGLRU.
-> 
-> Just to confirm, do you see failures on 6.13 with MGLRU disabled?  
-
-Yes. The test always fails.
-
-> 
-> > Any ideas on how to fix all this mess?
-> 
-> The easy answer is to skip the test if MGLRU is in use, or if NUMA balancing is
-> enabled.  In a real-world scenario, if the guest is actually accessing the pages
-> that get PROT_NONE'd by NUMA balancing, they will be marked accessed when they're
-> faulted back in.  There's a window where page_idle/bitmap could be read between
-> making the VMA PROT_NONE and re-accessing the page from the guest, but IMO that's
-> one of the many flaws of NUMA balancing.
-> 
-> That said, one thing is quite odd.  In the failing case, *half* of the guest pages
-> are still idle.  That's quite insane.
-> 
-> Aha!  I wonder if in the failing case, the vCPU gets migrated to a pCPU on a
-> different node, and that causes NUMA balancing to go crazy and zap pretty much
-> all of guest memory.  If that's what's happening, then a better solution for the
-> NUMA balancing issue would be to affine the vCPU to a single NUMA node (or hard
-> pin it to a single pCPU?).
-
-Nope. I pinned main thread to  CPU 0 and VM thread to  CPU 1 and the problem persists.
-On 6.13, the only way to make the test consistently work is to disable NUMA balancing.
-
-
-Best regards,
-	Maxim Levitsky
-
-
+diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+index 360e9db78dc1..9f275f7fb159 100644
+--- a/drivers/leds/leds-st1202.c
++++ b/drivers/leds/leds-st1202.c
+@@ -260,8 +260,6 @@ static int st1202_dt_init(struct st1202_chip *chip)
+ 	int err, reg;
+ 
+ 	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+-		struct led_init_data init_data = {};
+-
+ 		err = of_property_read_u32(child, "reg", &reg);
+ 		if (err)
+ 			return dev_err_probe(dev, err, "Invalid register\n");
+@@ -275,15 +273,6 @@ static int st1202_dt_init(struct st1202_chip *chip)
+ 		led->led_cdev.pattern_set = st1202_led_pattern_set;
+ 		led->led_cdev.pattern_clear = st1202_led_pattern_clear;
+ 		led->led_cdev.default_trigger = "pattern";
+-
+-		init_data.fwnode = led->fwnode;
+-		init_data.devicename = "st1202";
+-		init_data.default_label = ":";
+-
+-		err = devm_led_classdev_register_ext(dev, &led->led_cdev, &init_data);
+-		if (err < 0)
+-			return dev_err_probe(dev, err, "Failed to register LED class device\n");
+-
+ 		led->led_cdev.brightness_set = st1202_brightness_set;
+ 		led->led_cdev.brightness_get = st1202_brightness_get;
+ 	}
+@@ -369,6 +358,7 @@ static int st1202_probe(struct i2c_client *client)
+ 		return ret;
+ 
+ 	for (int i = 0; i < ST1202_MAX_LEDS; i++) {
++		struct led_init_data init_data = {};
+ 		led = &chip->leds[i];
+ 		led->chip = chip;
+ 		led->led_num = i;
+@@ -385,6 +375,15 @@ static int st1202_probe(struct i2c_client *client)
+ 		if (ret < 0)
+ 			return dev_err_probe(&client->dev, ret,
+ 					"Failed to clear LED pattern\n");
++
++		init_data.fwnode = led->fwnode;
++		init_data.devicename = "st1202";
++		init_data.default_label = ":";
++
++		ret = devm_led_classdev_register_ext(&client->dev, &led->led_cdev, &init_data);
++		if (ret < 0)
++			return dev_err_probe(&client->dev, ret,
++					"Failed to register LED class device\n");
+ 	}
+ 
+ 	return 0;
+-- 
+2.48.1
 
 
