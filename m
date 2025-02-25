@@ -1,182 +1,159 @@
-Return-Path: <linux-kernel+bounces-531256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8D0A43E28
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:48:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74C8A43E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C4A18853BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B706D7A79EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0335A268C58;
-	Tue, 25 Feb 2025 11:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ttmB/aM8"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BBF268FD8;
+	Tue, 25 Feb 2025 11:47:00 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FEA267F53
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82015268C64;
+	Tue, 25 Feb 2025 11:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484017; cv=none; b=bBWXyrI8xV5BC65dpaQb3rjCHOM6Le5wgPxKweOKHIeHRnVsKJHJL/piaX1RvDsnRuvxEhg+do0QeBGpGHD9blkeVD2in4S5ki7FaUiUfxLemomeuH1LzeBbo49uhuI2TDnKVw3TNIgbVUu+BGrRHcN/PGQpnQ5qzi7OL/QOa7w=
+	t=1740484020; cv=none; b=PJAHCKT9aUmxHh4LbIXTNbzo2F0hVP4R7ldZgYm8qRUoZ9bqws53JHi5DPIWNZotT/mxrhIXRFuWI0uyGaey430qQw4uKpYQXIMcavDDggoIH9cGzepcV+l3tbRRJpjVChnRZUkFaxPxBuEl22+BVqDgE2Nh5hCZnvdZl/11yJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484017; c=relaxed/simple;
-	bh=LbnNHvJwUCE222tNIF/NxQZ7BADM2FTAY1BWShXpMQE=;
+	s=arc-20240116; t=1740484020; c=relaxed/simple;
+	bh=0AVg+PqMZwCn6ffLSDS5fWOyG7qaHKlj438PbjbBKUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOxubmNE1fks8J6yzdgSSiRGoA435Bo7N/lH9aipNH/R92z4f8fPEWe0Uap9wO1lEnLv4eY/32HjlPlwFl9jMfXIqW5pZPn3+imQwsXJbJt6m2m4mQ9MdL3Kbn7ZAykltPP8CzGKttt/e1Q1demM1cQCt9CnDv0kbUC/E5jZcqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ttmB/aM8; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-545316f80beso4906194e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740484013; x=1741088813; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ts4A/ttxPZ/L49bXy7EOSBKD/ukxratjzN45EB6TnCM=;
-        b=ttmB/aM8vGgn8rFZ/vE4rZt/K4F8PoJwh4yCZCXP11y0Nu80Fava0oeOxcG670FkSg
-         h5HsfGXjq1w22SXWTsu9xsJx0PQlgRbm2fU6BvdMftpTHaSOMIzpvpeUHot0x8tFNBT3
-         Lpl/8eMy15yEPf/mQLO5hM71qxw9t8mA4RubA2EZC/9xBlGb51njvNxIaFH9ryxvEY6Q
-         5nf8+2U2rjHVx3PKHFHj9C+DkzHicOMAEVhOWC/Z/fs9yxBc0Yf+iRjeC0HJwmXc3o09
-         Syby5P/PB/1EreqN/RmvMktLVi0eSunLfL1C3UDXDnGxF2z9QzV79p6JVevb6mp75QU6
-         kGQw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=K8oU7WQTpPS5o8tJ1/AVLdgj8vnv9q1eBxFJwysUZKAslWnrofXgbkHpDbz5N29BmseHSRm2QtP/AjeRF2xubudVNx4/fp1MXsNpUG2fYvEgl97aVCXI0n1TRUnjSFEFQQJ/dtOCiS/1lwBbzBwdp7SVXi4ZHgx312G7CyyerYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so7906641a12.1;
+        Tue, 25 Feb 2025 03:46:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484013; x=1741088813;
+        d=1e100.net; s=20230601; t=1740484017; x=1741088817;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ts4A/ttxPZ/L49bXy7EOSBKD/ukxratjzN45EB6TnCM=;
-        b=gqkVE1sbkdFPvr8A0eA+fbLSJKgH3DpD5yNU2zrnJCmgoHMPojLxSbXLtCpV77i/4c
-         +qyyD3OyTbni9ARYM8xyjUzX3aTUjWnCpFTQFpQyO2yFGMGzFPXnXWmo7nuzuGmKErJ9
-         dMHEZv1udn3n3xOuFePk+baG+QhVwqcPU1mp+xlAwzmctT1Iq2w06joABPee3Tfk6MUr
-         JbE30TZUUpdUQquKRS8z1wG1GieK3yNRpXru9EjQSiW90UBTjOGMWX42glq3qTB1m0rj
-         OXD+iVO4ZtOj+oKLP25V6csrkArU3M4SWZFLCE5KVLWguxhHkiMrl1uLJi5oSE12e5ov
-         Y5iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEbOl0vyFQG5Hbm10PGH1V1A5jULX9FZZ2OhMV9SVgsgVxzmWjXnGs7+DvLB53GWSm0nAYVbMEihc6SjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhMnZtJJKWvgOSC4VZBDj9Hk3PLIF0sbhyLFHm/EFuXPiJbaL/
-	AjoJ3g9QpK9NYnGtpaGJuB6yJ2rRlKDRX2gXy4Y7Qxpq5aeWOLZs+uIiUzgCG0E=
-X-Gm-Gg: ASbGncubrVnm79rE1LQODKrbHaypxyCwHQCHBb4+pbJ+TQDq93PKl6j/UHJPjiv9zO0
-	OQvx7q/G2gThKHtTrFKPraUOuQSucuqI9ydQTOIVrvcGZYZaiaqk+3GluUjcQ+wOq9NGJQglK8O
-	ryv12qVuGUD+S2rSZpk903VVY9ybGIzKQFlmb4Quj6hcFcMOLOojmtjS6BjdCnVzOtXwSAuCnNd
-	Xx8zTLmB67RboE9a5/qv2uG6fd0Ze9GI9w+DDldKNNcULWiYSf8TXDYZ41pfVnfAOcGOBIa624h
-	31Zf29WUhWkuz13P+4OLefw20YWeeHMQEg++A9hBTiDRSbAraHgELI3xrYDqKEUhUEpQz4T16L+
-	bRexc4w==
-X-Google-Smtp-Source: AGHT+IHUcQBC16oXfmvyIM7koTL1imeYmCyXP4Cq4nkgukEO51aAQvQvv+5NeosCoPqAnavazJ8nQg==
-X-Received: by 2002:a05:6512:15a7:b0:545:16d3:3bd4 with SMTP id 2adb3069b0e04-548510eda44mr800752e87.53.1740484013276;
-        Tue, 25 Feb 2025 03:46:53 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514efc90sm158425e87.133.2025.02.25.03.46.51
+        bh=WnmpmMtgyV/RpBxxJNHh9adjrFRxaDmV/HVToi6KENU=;
+        b=Kp2TseC4bx0lAIlzhqMVxjEgtg5EkQwiHbndVuG+RFxbzrspvodpERuU36rlKXazdh
+         4bPtm1zBC+p2ekFAgf8jvIpG9VGJ4ivL9awf3gpA8Rr3hCkA3GjDMZudSiBR46Rhoh09
+         jIOYzwJkoIFIJNcvrdsCUlyD/9H/AX9XyUjJpLxWtYhO635n2G3MINYPA11FH6mOFk2P
+         4hYSWfcEt9N5axzLliaHCG8Xs+YeZuvd0284Z1G4WV0ez33r1c0qaaUtS5BKyI1xwM1L
+         lSDKXw/LfJFdXZDtHOrWgdJuSYClZvSJAVpY+Rvr9wgChGW/qCqgAkp2hHoNxeA+7QCW
+         8esg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCaTs8mHHebYMuVV8qdwr9xtZBUDIBuTB8tRxi9BYfNJEafxViaPer3t3Edfz1H2GXtSI/wbovtzR3Zo5e@vger.kernel.org, AJvYcCUPyTiJa2xLF5hn3ce5gTUgFqsXw8BzhamcJruVogy6kMK3b6mxBPNBUlF3v7cgzVfZ1uNWJW2RkVIINIsRDdA89BIF@vger.kernel.org, AJvYcCVcIJdp+ERMGsntCURR9Y5xZ4Qj2Ir7HEvUsBge8PI/IZ9DXniMqS3+7G0mpEhbu7bIiFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwjAX+tn9t1vxRriVP38Emr1oBZPenbWG/rwxLulXfWq529M1e
+	fLcd1kpx+lnvX57ZmBSl90SaWVJkjPBYZ6rEGg5araNRWuKpXMDzbLPv0A==
+X-Gm-Gg: ASbGncsV/ACbAV3IMM8WlU2u9VM0LH/rA+figvYEOc1mdL5n7zaBX+NtvQvwttB31iu
+	RDr2yyN4hl/QnvkMT5yO76D+W2cDipaQUjoan89qX7ZmWm1qROCR+Y5EZ4+l65ue9FUR9agRJbI
+	+4g2QUhjqMR0KOO8oOGNcZhYh84YQORe51sO5pwf67mwRZU2qatNyewD9iqPP7ieUeoT3oZF/I/
+	CRFnMoL1oXhBGr7vDBdv9iL5GzSDL+jjIRFu2hP4yK3mMzn4Rv/M+Qcxy/Y+ZAHUCcL/gH/+R1K
+	CEcgsSCsd6DaF2bp
+X-Google-Smtp-Source: AGHT+IH/rGv667ezHBwpRbWaGnx2NOPOuCNeGDXskfDoS9UGlpsfrLje1MDh0pGnfrPTeCMlekZVhw==
+X-Received: by 2002:a05:6402:13d2:b0:5de:c9d0:673b with SMTP id 4fb4d7f45d1cf-5e0b70b6f86mr16417676a12.1.1740484016465;
+        Tue, 25 Feb 2025 03:46:56 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:7::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e45ab9866csm1086076a12.32.2025.02.25.03.46.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:46:52 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:46:50 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	"Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org, 
-	kishon@kernel.org, p.zabel@pengutronix.de, abel.vesa@linaro.org, 
-	neil.armstrong@linaro.org, quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Message-ID: <zppwzqdi5xbggurbqho6ivuorvlubldpjw3pyw2fdgrap4nrhp@5otsko6o5cv3>
-References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
- <20250220102253.755116-3-quic_wenbyao@quicinc.com>
- <20250224073301.aqbw3gxjnupbejfy@thinkpad>
- <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
- <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
- <20250224122439.njrcoyrfsisddoer@thinkpad>
- <eea55dfa-3dd3-488b-958c-cd20e18a7d7d@quicinc.com>
- <20250225081744.3aprpztylrdgs2cl@thinkpad>
- <4a672888-a90e-434c-b494-bb58b91c99a2@quicinc.com>
+        Tue, 25 Feb 2025 03:46:55 -0800 (PST)
+Date: Tue, 25 Feb 2025 03:46:53 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org,
+	mhiramat@kernel.org, mingo@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH v3 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
+ lifetime (with timeout)
+Message-ID: <20250225-transparent-bronze-cobra-bafff4@leitao>
+References: <20241024044159.3156646-1-andrii@kernel.org>
+ <20241024044159.3156646-3-andrii@kernel.org>
+ <20250224-impressive-onyx-boa-36e85d@leitao>
+ <CAEf4BzbupJe10k0MROG5iZq6cYu6PRoN3sHhNK=L7eDLOULvNQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a672888-a90e-434c-b494-bb58b91c99a2@quicinc.com>
+In-Reply-To: <CAEf4BzbupJe10k0MROG5iZq6cYu6PRoN3sHhNK=L7eDLOULvNQ@mail.gmail.com>
 
-On Tue, Feb 25, 2025 at 06:08:03PM +0800, Qiang Yu wrote:
+Hello Andrii,
+
+On Mon, Feb 24, 2025 at 02:23:51PM -0800, Andrii Nakryiko wrote:
+> On Mon, Feb 24, 2025 at 4:23â€¯AM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > Hello Andrii,
+> >
+> > On Wed, Oct 23, 2024 at 09:41:59PM -0700, Andrii Nakryiko wrote:
+> > >
+> > > +static struct uprobe* hprobe_expire(struct hprobe *hprobe, bool get)
+> > > +{
+> > > +     enum hprobe_state hstate;
+> > > +
+> > > +     /*
+> > > +      * return_instance's hprobe is protected by RCU.
+> > > +      * Underlying uprobe is itself protected from reuse by SRCU.
+> > > +      */
+> > > +     lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
+> >
+> > I am hitting this warning in d082ecbc71e9e ("Linux 6.14-rc4") on
+> > aarch64. I suppose this might happen on x86 as well, but I haven't
+> > tested.
+> >
+> >         WARNING: CPU: 28 PID: 158906 at kernel/events/uprobes.c:768 hprobe_expire (kernel/events/uprobes.c:825)
+> >
+> >         Call trace:
+> >         hprobe_expire (kernel/events/uprobes.c:825) (P)
+> >         uprobe_copy_process (kernel/events/uprobes.c:691 kernel/events/uprobes.c:2103 kernel/events/uprobes.c:2142)
+> >         copy_process (kernel/fork.c:2636)
+> >         kernel_clone (kernel/fork.c:2815)
+> >         __arm64_sys_clone (kernel/fork.c:? kernel/fork.c:2926 kernel/fork.c:2926)
+> >         invoke_syscall (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+> >         do_el0_svc (arch/arm64/kernel/syscall.c:139 arch/arm64/kernel/syscall.c:151)
+> >         el0_svc (arch/arm64/kernel/entry-common.c:165 arch/arm64/kernel/entry-common.c:178 arch/arm64/kernel/entry-common.c:745)
+> >         el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:797)
+> >         el0t_64_sync (arch/arm64/kernel/entry.S:600)
+> >
+> > I broke down that warning, and the problem is on related to
+> > rcu_read_lock_held(), since RCU read lock does not seem to be held in
+> > this path.
+> >
+> > Reading this code, RCU read lock seems to protect old hprobe, which
+> > doesn't seem so.
+> >
+> > I am wondering if we need to protect it properly, something as:
+> >
+> >         @@ -2089,7 +2092,9 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+> >                                 return -ENOMEM;
+> >
+> >                         /* if uprobe is non-NULL, we'll have an extra refcount for uprobe */
+> >         +               rcu_read_lock();
+> >                         uprobe = hprobe_expire(&o->hprobe, true);
+> >         +               rcu_write_lock();
+> >
 > 
-> On 2/25/2025 4:17 PM, Manivannan Sadhasivam wrote:
-> > On Tue, Feb 25, 2025 at 04:06:16PM +0800, Wenbin Yao (Consultant) wrote:
-> > > On 2/24/2025 8:24 PM, Manivannan Sadhasivam wrote:
-> > > > On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
-> > > > > On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
-> > > > > > On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
-> > > > > > > On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
-> > > > > > > > From: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > > > > > 
-> > > > > > > > Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
-> > > > > > > > whole PHY (hardware and register), no_csr reset only resets PHY hardware
-> > > > > > > > but retains register values, which means PHY setting can be skipped during
-> > > > > > > > PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
-> > > > > > > > after that.
-> > > > > > > > 
-> > > > > > > > Hence, determine whether the PHY has been enabled in bootloader by
-> > > > > > > > verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
-> > > > > > > > available, skip BCR reset and PHY register setting to establish the PCIe
-> > > > > > > > link with bootloader - programmed PHY settings.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > > > > > Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> > > > > > > Some nitpicks below.
-> > > > > > > 
-> > > > > > > > ---
-> > > > > [...]
-> > > > > 
-> > > > > > > > +     * In this way, no matter whether the PHY settings were initially
-> > > > > > > > +     * programmed by bootloader or PHY driver itself, we can reuse them
-> > > > > > > It is really possible to have bootloader not programming the init sequence for
-> > > > > > > no_csr reset platforms? The comment sounds like it is possible. But I heard the
-> > > > > > > opposite.
-> > > > > > PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
-> > > > > > manually in UEFI shell if we want.
-> > > > > IIUC this will not be a concern going forward, and this is a special case
-> > > > > 
-> > > > I'm wondering how many *special* cases we may have to deal with going forward.
-> > > > Anyhow, I would propose to atleast throw an error and fail probe() if:
-> > > > 
-> > > > * the platform has no_csr reset AND
-> > > > * bootloader has not initialized the PHY AND
-> > > > * there are no init sequences in the kernel
-> > > > 
-> > > > - Mani
-> > > Hmmm, regardless of whether it's a special case, we can't assume that UEFI
-> > > will enable the PHY supporting no_csr reset on all platforms. It's a bit
-> > > risky. If we make such an assumption, we also won't need to check whether
-> > > the PHY is enabled by UEFI during powering on. We just need to check
-> > > whether no_csr reset is available.
-> > > 
-> > I am not supportive of this assumption to be clear. While I am OK with relying
-> > on no_csr reset and bootloader programming the PHY, we should also make sure to
-> > catch if the PHY doesn't initialize it. Otherwise, the driver would assume that
-> > the PHY is working, but the users won't see any PCIe devices.
-> > 
-> > > But it makes sense to check the exsitence of PHY senquence. How about
-> > > adding the check in qmp_pcie_init, if a PHY supports no_csr reset and isn't
-> > > initialized in UEFI and there is no cfg->tbls, return error and print some
-> > > error log so that the PCIe controller will fail to probe.
-> > > 
-> > Sounds good to me.
-> I'm wondering is it necessary to add this check? In current PHY driver,
-> for PHY that doesn't suppot no_csr reset there is also no such check.
-> If a PHY supports no_csr reset and isn't init in UEFI and there is no
-> cfg->tbls, the worst issue is link training fail and PCIe controller will
-> also fail to probe. Adding sucj check seems not change the result.
+> I think this is not good enough. rcu_read_lock/unlock should be around
+> the entire for loop, because, technically, that return_instance can be
+> freed before we even get to hprobe_expire.
 
-Failing the training is a random error which can mean a lot, e.g. the
-missing voltage rail. An explicit check is beneficial, it helps
-developers (and users) to better understand the reason of the failure.
+re you suggesting that we should use an RCU read lock to protect the
+"traversal" of return_instances? In other words, is it currently being
+traversed unsafely, given that return_instance can be freed at any time?
 
--- 
-With best wishes
-Dmitry
+> So, just like we have guard(srcu)(&uretprobes_srcu); we should have
+> guard(rcu)();
+> 
+> Except, there is that kmemdup() hidden inside dup_return_instance(),
+> so we can't really do that.
+
+Right. kmemdup() is using GFP_KERNEL, which might sleep, so, it cannot
+be called using rcu read lock.
+
+Thanks
+--breno
 
