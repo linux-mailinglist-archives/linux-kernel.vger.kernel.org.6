@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-530918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB50A43A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:48:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A873A43A2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7907419C1C23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE033AB3DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BCB26158C;
-	Tue, 25 Feb 2025 09:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EBD262804;
+	Tue, 25 Feb 2025 09:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cQaedq5U"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kolumbus.fi header.i=@kolumbus.fi header.b="AdLPzF3U"
+Received: from fgw20-4.mail.saunalahti.fi (fgw20-4.mail.saunalahti.fi [62.142.5.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1EB267B91;
-	Tue, 25 Feb 2025 09:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8683B2627E6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476576; cv=none; b=jch34xT6kelOq2DUEYg+LmYRtz5B6e9PYUdGedoKFtEoBqKsdOy6us32f0s40AV6zlZHm5/QgOlz9EzINpy7lItgBMkbk7ADAsY2MxdsQP5N264jKHEIiHsrkwVq35epUMalsulWga2xqIV0qAN6Xp1LnGStNs/OqsAHpyc0ZV8=
+	t=1740476609; cv=none; b=qkohM72h75lpj5kgtvcF0LYJ3fFQOosSYOHnLIIxFwqGCyiPBLI/GGD4JOLZBPub8cBb7OEjTQeBlQyoU7z6gD0mTQmkM1hIJf2+FCEc6HhhYvRLtWcI46CvtY9T9mc1ZsuGHiICpcnicl6ut/f/3mnccV/OcVIvdIxuAnBW+WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476576; c=relaxed/simple;
-	bh=QCL4qJ3PE1ixBwCHBOMcmpoONqC62sO+cxjJFE2jveo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CxYW7EJjGlmS5NO4zLlRYapTTQFJlTo6zwW5vlsofGVioYfL6mi+2uCTmtOeuLqprcBQTOWN2TjjhDOGdv0MfoO6DRnvqk8FPLCTfcRWF15Ns9MkoOa6FJGSgmodQkwz6Ox57+9NtQe+JBcNf5PzG7OEHVBjMxlGU0U15FqceFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cQaedq5U; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51P9gZKL1191019
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 03:42:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740476555;
-	bh=DQOBEpOmo/uOaXGxG+Mjsq1EExMqwVoc7fNvsKF+UVE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=cQaedq5Urlpaa5FzI3jSwV2H49PpiFpi3LaPuCVh6wmWEqNborRzJwzmA7VVEUPr5
-	 LXxy33DvSVxw2asWsHoxaAxxP2/i6uKtKY7dK6so5SeNIgn/wE7Xy8MKN9QQ8vyliC
-	 ZB/JsJFn2yoSqdSfzzdsyqLWWOLrwvO1y1lvyOnQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51P9gZ3r013415
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Feb 2025 03:42:35 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
- Feb 2025 03:42:34 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 25 Feb 2025 03:42:34 -0600
-Received: from [172.24.26.121] (lt9560gk3.dhcp.ti.com [172.24.26.121])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51P9gTA9106909;
-	Tue, 25 Feb 2025 03:42:30 -0600
-Message-ID: <85a366e8-5136-4b0f-914f-95d36658840e@ti.com>
-Date: Tue, 25 Feb 2025 15:12:28 +0530
+	s=arc-20240116; t=1740476609; c=relaxed/simple;
+	bh=6B0qB5/pvSZ5jcD/a3OGepgdBy2JO4/9bJDqujJ6z1g=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f+H4wguvqRyRR2tct7VY2Qb291TVd4x/09pdM0kQ3pIBgXrSHjs9vKQIAXty+Sr5NqA5vnE0iXTJblCcqNlN/ymRJraRa1K6srs8pIAUbMI7IUe51eQUbIPB1FRWP6KAyjUSSo4uSIwP3lqDJmZ1cXWb8oQ7xZe77FAOyYsvvpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kolumbus.fi; spf=pass smtp.mailfrom=kolumbus.fi; dkim=pass (2048-bit key) header.d=kolumbus.fi header.i=@kolumbus.fi header.b=AdLPzF3U; arc=none smtp.client-ip=62.142.5.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kolumbus.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kolumbus.fi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=kolumbus.fi; s=elisa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from:to:cc:reply-to:subject:date:in-reply-to:
+	 references:list-archive:list-subscribe:list-unsubscribe:content-type:
+	 content-transfer-encoding:message-id;
+	bh=4HJGFwO7iJWP35BGN8gS4/yzq08A26mPEUXcqi1UmOs=;
+	b=AdLPzF3UGEceEUAr5vBH/Juw35neeJ0zqnAhX2lBVUoAdWis+ncEWSrEWRvD47rmpE+YA6pjeGoTF
+	 M4RxdvpHUWhXU/FBXOSWK8jE/zrFfx139HlyI6BlLeJWS8YZaDOUZIMotBk7c0KfUkp5HUD3gu+seE
+	 YQrnOWRi4t4wk5dRTBmxjnreWspY5fIK5guuIDQpuozHjvObPS+YrwvuITnGS2hDG6fhEpV0VCmQBR
+	 G8RJfIsoy95nvogDclZacgoBEG5KJveq25wJzGNmFeEcMbe+Ns9rDkC3drVhmQ81JoYQ8ySB6X7V2f
+	 ItggHSqa/aLT5UYNPcpAQAavqiL9New==
+Received: from smtpclient.apple (85-156-116-90.elisa-laajakaista.fi [85.156.116.90])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTPSA
+	id f03b8702-f35c-11ef-9d7a-005056bd6ce9;
+	Tue, 25 Feb 2025 11:43:17 +0200 (EET)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 0/2] Fixes for perout configuration in IEP driver
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Jacob Keller <jacob.e.keller@intel.com>, <lokeshvutla@ti.com>,
-        <vigneshr@ti.com>, <javier.carrasco.cruz@gmail.com>,
-        <diogo.ivo@siemens.com>, <horms@kernel.org>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20250219062701.995955-1-m-malladi@ti.com>
- <415f755d-18a6-4c81-a1a7-b75d54a5886a@intel.com>
- <20250220172410.025b96d6@kernel.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20250220172410.025b96d6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH] scsi: scsi_debug: fix uninitialized variable use
+From: =?utf-8?B?IkthaSBNw6RraXNhcmEgKEtvbHVtYnVzKSI=?= <kai.makisara@kolumbus.fi>
+In-Reply-To: <20250225085644.456498-1-arnd@kernel.org>
+Date: Tue, 25 Feb 2025 11:43:06 +0200
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ John Meneghini <jmeneghi@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Bart Van Assche <bvanassche@acm.org>,
+ John Garry <john.g.garry@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <367BED6D-3187-473C-BBF4-EB71A0E1677A@kolumbus.fi>
+References: <20250225085644.456498-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
 
+> On 25. Feb 2025, at 10.56, Arnd Bergmann <arnd@kernel.org> wrote:
+>=20
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> It appears that a typo has made it into the newly added code
+>=20
+> drivers/scsi/scsi_debug.c:3035:3: error: variable 'len' is =
+uninitialized when used here [-Werror,-Wuninitialized]
+> 3035 |                 len +=3D resp_compression_m_pg(ap, pcontrol, =
+target, devip->tape_dce);
+>      |                 ^~~
+>=20
+> Replace the '+=3D' with the intended '=3D' here.
 
-On 2/21/2025 6:54 AM, Jakub Kicinski wrote:
-> On Wed, 19 Feb 2025 15:37:16 -0800 Jacob Keller wrote:
->> On 2/18/2025 10:26 PM, Meghana Malladi wrote:
->>> IEP driver supports both pps and perout signal generation using testptp
->>> application. Currently the driver is missing to incorporate the perout
->>> signal configuration. This series introduces fixes in the driver to
->>> configure perout signal based on the arguments passed by the perout
->>> request.
->>>    
->>
->> This could be interpreted as a feature implementation rather than a fix.
->>
->> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> 
-> Agreed, ideally we should get a patch for net which rejects
-> all currently (as in - in Linus's tree) unsupported settings.
-> That would be a fix.
-> 
-> Then once that's merged add support for the new settings in net-next.
-> 
-> Hope that makes sense?
+One more of these ;) The fix is correct. (And now I checked with grep =
+that v2 does not have any more of these.)
 
-I do agree that this can be interpreted as a feature implementation (as 
-the bug here is: missing perout driver implementation for which the 
-driver claims it supports). I will post the updated patch series as 
-suggested by Jakub.
+>=20
+> Fixes: e7795366c41d ("scsi: scsi_debug: Add READ BLOCK LIMITS and =
+modify LOAD for tapes")
+
+The bug was actually in 568354b24c7d "scsi: scsi_debug: Add compression =
+mode page for tapes"
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Kai M=C3=A4kisara <kai.makisara@kolumbus.fi =
+<mailto:kai.makisara@kolumbus.fi>>
+
+> ---
+> drivers/scsi/scsi_debug.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 722ee8c067ae..f3e9a63bbf02 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -3032,7 +3032,7 @@ static int resp_mode_sense(struct scsi_cmnd =
+*scp,
+> case 0xf: /* Compression Mode Page (tape) */
+> if (!is_tape)
+> goto bad_pcode;
+> - len +=3D resp_compression_m_pg(ap, pcontrol, target, =
+devip->tape_dce);
+> + len =3D resp_compression_m_pg(ap, pcontrol, target, =
+devip->tape_dce);
+> offset +=3D len;
+> break;
+> case 0x11: /* Partition Mode Page (tape) */
+> --=20
+> 2.39.5
+>=20
+>=20
 
 Thanks,
-Meghana Malladi.
+Kai
 
 
