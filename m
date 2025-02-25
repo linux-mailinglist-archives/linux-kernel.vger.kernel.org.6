@@ -1,146 +1,236 @@
-Return-Path: <linux-kernel+bounces-532135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36869A4495A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:02:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FB2A4491E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:57:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188863B14D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CED166ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB8819C554;
-	Tue, 25 Feb 2025 17:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D6B19C554;
+	Tue, 25 Feb 2025 17:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQ4YezyB"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNcKaNbH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB90F19B3EE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219119ABC3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506205; cv=none; b=jvpDdFTzrkx1Iz3JY6IGEm8+F6/0IWR5RQLaS/iD4fTGa3l7oUP3Wa7pTyLNrCMZF7KBEQXfsSyNWSTY4aXbPrIFOeB/oOGeYMj0i/XoYzrPOG23HELUy3xY9VaY/FjJsBKQYASi2VhiSEGRBdUF7LS4ZghRM/IzFasKkkAx8KU=
+	t=1740506212; cv=none; b=pKu3eqFGdJrgOYsuczTdLN+LLb7vFIQkaPMDkbxhbAuiHY/PuQbqyAXCezL4J9i9kP+LVKSAUBLLD1bmZsqWo8uXZRye30NR0z2fHgAFXotMa/mSRIA7nJ8R1CnjDvIUfug6bxJRCQ/Z5iYtnDvpf9TQz9qNaSlu10pTVuByXBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506205; c=relaxed/simple;
-	bh=qSjVnqw0ClAZgaxrRwxr4jTG+YrP6X57Cz8R8eCo864=;
+	s=arc-20240116; t=1740506212; c=relaxed/simple;
+	bh=voYBb2r//dRBt6lfBvNnss+/7ly2F5ArI4Tjl5Zq5NI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9K1u0EHlA+4voqh4HJ206JCeFjJiLfbxiZihMQFrLHq7GJI5JijzTY7DKuLOpLf9pIN6LT+eDIfOZzhfxhyWPt/6guheq2tNv2KZns22M3oktgjsx/ZzawCKM3kFmTXGSriNOnMmq5xkI2kIQyMANlFvBy5tev4CaEdCC+Csa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LQ4YezyB; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30795988ebeso61478591fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:56:42 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=afxnKN/iFQENnnKNPPaqHXUj6dXj+LU5PJ4AoNJz+dxM49z8iBcyo6EkTDcbJMEkd5IY3ehgraQJO/XMLcnc6gEvykm6fUe9ibq7ojyZTq6fmcE3lbNmEo8uWivV8i9IEkDazQOnOD3NuRjaJxBAj9+ifnR809wwjSX2ET7yddw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNcKaNbH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so40813995e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:56:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740506201; x=1741111001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVWp9Ja2Rjz3r7Z6XrBcybwSqNljM6TcrY1ydtVaEeA=;
-        b=LQ4YezyBLXTIrL3L6HcQSC4ckM8kpwaBCfMloWtSIlkwtnxGRkTXxt71N6waO8Ngtk
-         ZL0R27A3GcEDCI7tZgiMV5WJxnGTBIO+WAizj0y8NyoGaml0rP+TBLt/6kBnOfFnWUah
-         5qiqFF9SmE3mxCKVh0GQjf3xqkLcMuCLBRGpYKI4+06BmYGQJpsuMgCRh+c1QzPuuxQc
-         uQNXZiwQXjlN6Mcq+FnaWT5BElKb7m9HRWbbjeWLA3cqQhYawqS4B/himYpJZajlCerK
-         Hn/U+pBZdJvA0sI/3/5f3MNRhg8OgydKuQ5J8bGJhEC1f6JIIlwO55ERktqzziM/6pHI
-         IBtw==
+        d=gmail.com; s=20230601; t=1740506209; x=1741111009; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gOCUaU/7gnEaJ3IHdehXrJI4tg+whLlR3VL26FFaPrM=;
+        b=VNcKaNbH6G9IyZbF67VjWRQg365aaW0kSo3eUBEDQxMSgvZpNCz0jFyZM2Aey8A3uo
+         Cf8xTvrHGjNxkQVFviUPYut7aN5XtipWY5W27HWDnMSsgYk9V+AiKb+cvVF/ecHC1sT6
+         mfYITVQQDXRd5hdrbasLUaTG0NCGRE4QTkMh910MCCcR5yHWaUvnoZJlU6KmCcY5ZKte
+         zxqKV4Xif/R9tU5RICi1yTiL9bOSiGzA+NTWv14AZnJnAtmWoDhRQG5Lyf1pjvDymaXT
+         4EuMfrnIY40iJlSI2+N35sbP0XJsnXGx0mxPFkH6FpKKVTO/R3rbGoCp76djEie7OGyS
+         GXGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506201; x=1741111001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xVWp9Ja2Rjz3r7Z6XrBcybwSqNljM6TcrY1ydtVaEeA=;
-        b=MuOWHaUv0vGS5zTJ6KZ3BmI+Wf0Ls2/nyE9PtsJ/kU0rGpGlOkx5C4+vWu2Z2Yhj+U
-         DyyrXTEWXU1wV0Cr5OhM/laOp0xYhpU3BB3PPw3vkl/pDDP/lbmCLkN5eSAX2fNunCsc
-         BxmnyEmARGR87ZDgyQuzF50/xfAT21+CHbiR643nFyzE3NrtivO5Heb5STafZ9fTtkFd
-         dn7008X3g2y+BqPY4ok7ZK6Nv3/fSWb6aM4JJNEe3hZwP4xrg/Gg6uBtZ16+OXBmkqrj
-         os9rn6/9QnFeNylLKSeyic9aVgchN6tVNmITcT/tkxanKC+e2Y2zeBmyL1xkk74HX7n/
-         jCtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWg0Jwi0bz0UtEccaaHxeeBtMbO1QnU5tLM5p0y7B6+i8F3RWA+CaiEctsDDAsO3e8lazlP0A+ubMD+jHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeFvGiJLL17RaDfy5qjIVpEjQSmXAR0sLbVsP2nS9ofRds3NvY
-	o4w9XULPVqXEusroIy2E7s2BMX+gu4D6x1YDEoKVC9vNJjsnQrUasu+ZeQFtuG0=
-X-Gm-Gg: ASbGnctiK5wDnHpbGu2ECC7eHVz7H20raWkjQK+6iKk9KDrypzmVtFZCXVUgjrUYEZ9
-	rByl7yimeorSVzb+SVmcUe04Wh4L3dAGjpCzXNgbTSBkkTKUNh7DgyejH0SN/wzBY1+x7b5ceun
-	MXdG9isf0mmL0sVbzgAl+M2HL0lEv+eTgfcVllWMbVSCxsLcR3kRH574m5X9/V9N0jQbYYMnIc0
-	gmEvxxIkn+bJTfizyJCRbdyBR3ZBx1BfB1hL8N9tq6IwVAlr7gVzrZlVTmQ1DACCYI6gV410feI
-	RjL7BfdvknLLp5N/wM+xcpbcaGgeq5x/qC3fzZbTmghociYPFr0yqINuuV5SE3wksQOwzMpCBaQ
-	S6AD3Pw==
-X-Google-Smtp-Source: AGHT+IHXypG52wXkYLxSSmyf4bbr7jeX4L7AiMB7t5V529YkEH03E02hDurhAMGW0udAqKDM+HrsUg==
-X-Received: by 2002:a2e:321a:0:b0:309:bc3:36b4 with SMTP id 38308e7fff4ca-30a80c0f0c9mr19594681fa.6.1740506200764;
-        Tue, 25 Feb 2025 09:56:40 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a819e0a5asm2883591fa.19.2025.02.25.09.56.38
+        d=1e100.net; s=20230601; t=1740506209; x=1741111009;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOCUaU/7gnEaJ3IHdehXrJI4tg+whLlR3VL26FFaPrM=;
+        b=LxmvSgm7To7+a/+SuSlggOczmNP4w9l86cda0XLukMYFs83vSdDnxsdoGoOovkcpQG
+         9AzhJdzHX/E12wO6beDjlrT1/08LDJMkj6NOuIzNFsnOXsZX0lTzZv6aG0Lwrwq9TGlK
+         wA+8dTZHTli89KQ0XrWbaAEMEyZUMocwnqfWS3grGXz6lF7s8EHFgbvPVKEBoHPMY357
+         FEGTi5IIIdSzjysCtdDJuAMANVuZuQXjidiE3pNUkl6bffQTWZVRIwPuhidPmyUGKARS
+         lDntQLMkNdnSfQqS8MsOlunHLSM59wRoMisJNDUqSPUamxnFgmOc/eQZjVbqFjqV2GZN
+         UYAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO8KhWvE8PIH7qC+G9RbgrPwaGSu55Nq1SiAcvH4thT1ax7XznqkO3sgQvPvUk31EgnQDz+ZIBQHgySWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ1kEol5bZlBFMgGdSyyVRmkjuhzQ0m4ONfBfwsNKv6q+Sb6JT
+	n4OpvRJOp1uEQglDrzNOfQ9H8WFE2fsEZjkdJcxS/k8GTimpwX7m
+X-Gm-Gg: ASbGncumxbeH7rJHKo1ALYLxQfUmRsTRe3biJ5nORAJiQjiHBoAkrcnhFnGluOskS3S
+	7nHXmUPRw5SYqhPw2oOtClaUQslqzPohzh0BCwzGZdmGMNQt/FOwi4THMXDqYz/2nwGsj7R0re8
+	HTLL8XVrDAwXDGNdEBQ87JoyNhHoGh7LCIfFzAcn+T5JmUa0B90PoA4TYphYvsG3MQalnkmTB9I
+	wkoGmwx6ANBzBopWsph4vL2Xk4SV3MSYOOuGtyKy6MQnnPRIGuPGh7MbGKizuSTD2ftwwQ+SKbz
+	iRDm962LzM733JcF6sGcwDjTXQ==
+X-Google-Smtp-Source: AGHT+IExSFlTbctQ0zHvNEtFI4zl9JtgMobqQSi8OH4T7IPG24I3S3Zyhi0/pqqwm+YXvOwqJapctw==
+X-Received: by 2002:a05:600c:3c86:b0:439:9d75:9e7d with SMTP id 5b1f17b1804b1-439ae21d1d0mr136975665e9.22.1740506208497;
+        Tue, 25 Feb 2025 09:56:48 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b036756csm148728425e9.31.2025.02.25.09.56.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:56:39 -0800 (PST)
-Date: Tue, 25 Feb 2025 19:56:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, sean@poorly.run, marijn.suijten@somainline.org, 
-	andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org, 
-	konradybcio@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com, 
-	quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
-Subject: Re: [PATCH 09/11] drm/bridge: anx7625: enable HPD interrupts
-Message-ID: <l34eya75nmzh5j6jyw6ne4unwnemw4lrjdf2q5hm3d6jji6pvr@rav2vgfwioeu>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-10-quic_amakhija@quicinc.com>
+        Tue, 25 Feb 2025 09:56:47 -0800 (PST)
+Date: Tue, 25 Feb 2025 18:56:46 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/16] drm/vkms: Add configfs support
+Message-ID: <Z74EXo_qL1bZ2uNo@fedora>
+References: <20250218170808.9507-1-jose.exposito89@gmail.com>
+ <Z72jJtFCMypHpW_K@louis-chauvet-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250225121824.3869719-10-quic_amakhija@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z72jJtFCMypHpW_K@louis-chauvet-laptop>
 
-On Tue, Feb 25, 2025 at 05:48:22PM +0530, Ayushi Makhija wrote:
-> When device enters the suspend state, it prevents
-> HPD interrupts from occurring. To address this,
-> add an additional PM runtime vote during bridge
-> attach for DisplayPort. This vote is removed on
-> bridge detach.
+Hi Louis,
 
-Well.. You can guess. The bridges have .hpd_enable() and .hpd_disable()
-callbacks. Please use those instead.
+Thanks a lot for the super fast review, you are the best!
 
+On Tue, Feb 25, 2025 at 12:01:58PM +0100, Louis Chauvet wrote:
+> On 18/02/25 - 18:07, José Expósito wrote:
+> > Hi everyone,
+> > 
+> > This series, to be applied on top of [1], allow to configure one or more VKMS
+> > instances without having to reload the driver using configfs.
+> > 
+> > The series is structured in 3 blocks:
+> > 
+> >   - Patches 1..11: Basic device configuration. For simplicity, I kept the
+> >     available options as minimal as possible.
 > 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Thanks for this series, it is really nice!
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> index 4be34d5c7a3b..d2655bf46842 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -2168,6 +2168,9 @@ static int anx7625_bridge_attach(struct drm_bridge *bridge,
->  
->  	ctx->bridge_attached = 1;
->  
-> +	if (ctx->pdata.panel_bridge->type == DRM_MODE_CONNECTOR_DisplayPort)
-> +		pm_runtime_get_sync(dev);
-> +
->  	return 0;
->  }
->  
-> @@ -2175,6 +2178,9 @@ static void anx7625_bridge_detach(struct drm_bridge *bridge)
->  {
->  	struct anx7625_data *ctx = bridge_to_anx7625(bridge);
->  
-> +	if (ctx->pdata.panel_bridge->type == DRM_MODE_CONNECTOR_DisplayPort)
-> +		pm_runtime_put_sync(ctx->dev);
-> +
->  	drm_dp_aux_unregister(&ctx->aux);
->  }
->  
-> -- 
-> 2.34.1
-> 
+> I did some review, that can be sumarized in two point:
+> - Do we want to use scoped_guard?
 
--- 
-With best wishes
-Dmitry
+Since all mutex locks were unlock at the end of the file, I replaced
+mutex_lock/unlock with guard(mutex)(...). The resulting code is now
+much cleaner.
+
+Thanks for pointing me to cleanup.h, my Linux kernel books are too
+old to include these helpers and I wasn't aware of them.
+
+> - -EPERM, -EINVAL or -EBUSY when attempting to do something while the
+>   device is enabled
+
+I replaced all the cases with EBUSY, thanks!
+
+> >   - Patches 12, 13 and 14: Allow to hot-plug and unplug connectors. This is not
+> >     part of the minimal set of options, but I included in this series so it can
+> >     be used as a template/example of how new configurations can be added.
+> > 
+> >   - Patches 15 and 16: New option to skip the default device creation and to-do
+> >     cleanup.
+> 
+> For the next iteration, can you move those patch before 12, 13, 14, so
+> 1..11 could be merged before 12..14 (I need to think about the connector 
+> API to check if it will works with dynamic connector)?
+
+Sure, I moved them to the end in v2.
+
+I experimented with dynamic connectors a little bit and I think that it is
+possible to make it backwards compatible:
+
+ - We could add a "enabled" file for connectors
+ - At the moment, connectors can only be created while the device is disabled.
+   To keep compatibility, if the device is disabled, we need to set
+   connector->enabled to 1 by default.
+ - If the device is enabled, we'd need to set connector->enabled to 0. This
+   would allow the user to configure the connector before it is hot-added.
+ - We'd need to store if the connector is static or dynamic to allow hot-remove
+   only dynamic connectors.
+
+I believe that, if we implemented it like this, we'd be able to keep compatibility.
+
+> > The process of configuring a VKMS device is documented in "vkms.rst".
+> 
+> This is a really good documentation!
+> 
+> > Finally, the code is thoroughly tested by a collection of IGT tests [2].
+> 
+> I quickly looked on them, it seems nice! Thank you for this huge
+> improvment!
+
+If you could comment on that mailing list, I'm sure that a LGTM from the
+maintainer will help :)
+
+Thanks a lot for your work Louis.
+
+Sending v2,
+Jose
+
+> Louis Chauvet
+> 
+> > Best wishes,
+> > José Expósito
+> > 
+> > [1] https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
+> > [2] It is not in patchwork yet, but it'll appear here eventually:
+> >     https://patchwork.freedesktop.org/project/igt/patches/?submitter=19782&state=*&q=&archive=both&delegate=
+> > 
+> > José Expósito (16):
+> >   drm/vkms: Expose device creation and destruction
+> >   drm/vkms: Add and remove VKMS instances via configfs
+> >   drm/vkms: Allow to configure multiple planes via configfs
+> >   drm/vkms: Allow to configure the plane type via configfs
+> >   drm/vkms: Allow to configure multiple CRTCs via configfs
+> >   drm/vkms: Allow to configure CRTC writeback support via configfs
+> >   drm/vkms: Allow to attach planes and CRTCs via configfs
+> >   drm/vkms: Allow to configure multiple encoders via configfs
+> >   drm/vkms: Allow to attach encoders and CRTCs via configfs
+> >   drm/vkms: Allow to configure multiple connectors via configfs
+> >   drm/vkms: Allow to attach connectors and encoders via configfs
+> >   drm/vkms: Allow to configure connector status
+> >   drm/vkms: Allow to update the connector status
+> >   drm/vkms: Allow to configure connector status via configfs
+> >   drm/vkms: Allow to configure the default device creation
+> >   drm/vkms: Remove completed task from the TODO list
+> > 
+> >  Documentation/gpu/vkms.rst                    |  98 +-
+> >  drivers/gpu/drm/vkms/Kconfig                  |   1 +
+> >  drivers/gpu/drm/vkms/Makefile                 |   3 +-
+> >  drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+> >  drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+> >  drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+> >  drivers/gpu/drm/vkms/vkms_configfs.c          | 918 ++++++++++++++++++
+> >  drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+> >  drivers/gpu/drm/vkms/vkms_connector.c         |  26 +-
+> >  drivers/gpu/drm/vkms/vkms_connector.h         |  18 +-
+> >  drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+> >  drivers/gpu/drm/vkms/vkms_drv.h               |   4 +
+> >  drivers/gpu/drm/vkms/vkms_output.c            |   2 +-
+> >  13 files changed, 1138 insertions(+), 16 deletions(-)
+> >  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+> >  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
+> > 
+> > 
+> > base-commit: 9b6c03cb96b9e19bce2c2764d2c6dd4ccbd06c5d
+> > prerequisite-patch-id: 1bff7bbc4ef0e29266265ac3dc009011c046f745
+> > prerequisite-patch-id: 74a284d40a426a0038a7054068192238f7658187
+> > prerequisite-patch-id: c3e34e88ad6a0acf7d9ded0cdb4745a87cf6fd82
+> > prerequisite-patch-id: 9cd0dfaf8e21a811edbe5a2da7185b6f9055d42d
+> > prerequisite-patch-id: f50c41578b639370a5d610af6f25c2077321a886
+> > prerequisite-patch-id: 5a7219a51e42de002b8dbf94ec8af96320043489
+> > prerequisite-patch-id: 67ea5d4e21b4ce4acbd6fc3ce83017f55811c49b
+> > prerequisite-patch-id: 37a7fab113a32581f053c09f45efb137afd75a1b
+> > prerequisite-patch-id: 475bcdc6267f4b02fb1bb2379145529c33684e4f
+> > prerequisite-patch-id: d3114f0b3da3d8b5ad64692df761f1cf42fbdf12
+> > prerequisite-patch-id: d1d9280fb056130df2050a09b7ea7e7ddde007c5
+> > prerequisite-patch-id: 2c370f3de6d227fa8881212207978cce7bbb18ba
+> > prerequisite-patch-id: 938b8fe5437e5f7bc22bffc55ae249a27d399d66
+> > prerequisite-patch-id: ab0a510994fbe9985dc46a3d35e6d0574ddbb633
+> > -- 
+> > 2.48.1
+> > 
 
