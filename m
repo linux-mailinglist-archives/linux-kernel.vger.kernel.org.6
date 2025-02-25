@@ -1,152 +1,162 @@
-Return-Path: <linux-kernel+bounces-531709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D135AA443E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CF1A443E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97BC0164CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 214801676B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C532E26A0C7;
-	Tue, 25 Feb 2025 15:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B0526BD84;
+	Tue, 25 Feb 2025 15:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I80wjH0y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjmHLl4s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B63921ABA2;
-	Tue, 25 Feb 2025 15:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE18268692;
+	Tue, 25 Feb 2025 15:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495970; cv=none; b=aH1/MJX55KKJDWVarL0q6JBHpRdU+niIHFwpoBNIT2NcfrCzEfLdSA4iWYUQq4J5o/OxS65488h4dWM/T0F8aOwW6TTOc+QtnZm1GNJSWVIruTISXKIT9zVHiEdGSefrG8kbgfJpRxBCegOLQiRMSwppQT8aoZwE6KZbZbS8vC4=
+	t=1740495977; cv=none; b=MhGLR7XQMUmKuesjtj+WD2lkfOIJx7h2L1qFrutxDbPI7bA7OTtM1na8EtSNVhnLgk6yiI/vjioTQf+xx1A4/HF+S5KF/d/wcYtdY6iE+2UuySFWP97FJYTOfl85i7owZ/43O0oE4JcDyg0GLE4EvO5z4wraFAmm55KCmvvtIoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495970; c=relaxed/simple;
-	bh=kIzpWgLCcE7L4I8PudX2xwqeT82m7xGRh8clcilUdQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4WuoBZEICfWbwcIk9Z10ZN4yMxtKpL/ufpO8/YdJJCglJYPSf1/YFIIa81+JHWg3fx8uQYvKh7py3+AotVRKiiveb41nkGnsWUvPtJHNiDFkt6g5uQKEB3eEMwxEN1XigvS2MNw4/j219i3d37xtWLIWZEmJncAYFiplPL+MlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I80wjH0y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17319C4CEE6;
-	Tue, 25 Feb 2025 15:06:06 +0000 (UTC)
+	s=arc-20240116; t=1740495977; c=relaxed/simple;
+	bh=ulSlGShANn0qabJ6PwZZ9yBHZeUtO9LZVEnKl8528tc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=aNsBs8tvsk7xps94/MeQ3Fo17kZK5lBxKPD0qNXhEsG5DqUzcw2Zv6ktYMHE9LA83+hyDRNkkr6FHB6PPbA+N0x/x8QjvvKOg7bLe5GTydiX/J6PdwtMc3K+ajgV4isQsvErfrAENIk3z/duZ/0mtjrON6nV6TTlM7yMzhKb0zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjmHLl4s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E570AC4CEDD;
+	Tue, 25 Feb 2025 15:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740495969;
-	bh=kIzpWgLCcE7L4I8PudX2xwqeT82m7xGRh8clcilUdQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I80wjH0yESR6jSXjrLsl16Zz2CVyrakKYFjoS+OiKY7LVRV4bmBSXzXqasQtY+YjW
-	 Ug1zX4Cf2rQWxBozwEozVIlYRfwUpTCN35TyAUDr2VJvpVmgTIDiHy3yvvf/4HosPu
-	 DcA0SAyOpgOciaUazuiQ8V+CaFBU+nCsLbZb9Usz7vGMIjcki2xwSdQ9HYf7NFf5N/
-	 UPERGOs0JR8LLRimKkDavjt+rNJ6PQ8RMU+dIRKqGTyx+QJmLiandXCMub+OkWseqt
-	 0qlE1nuimyCp+zJZlc4f/3uxY9Mc6nejmh6nURuO09f6piveosX2kDmM9vVO33ImWU
-	 rt/NtQ3ByELhw==
-Date: Tue, 25 Feb 2025 16:06:04 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Nouveau <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z73cXGkookq5-NON@cassiopeiae>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7OrKX3zzjrzZdyz@pollux>
- <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
- <Z7xg8uArPlr2gQBU@pollux>
- <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
+	s=k20201202; t=1740495977;
+	bh=ulSlGShANn0qabJ6PwZZ9yBHZeUtO9LZVEnKl8528tc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ZjmHLl4sZAOy1F8GiI8E8GAiKPa5p7MSwqaQtXxYzGw1lXbbMPoC1vIM1vTXHDE1C
+	 c4lWCmbEi/mIYjG1s4rOtAhvqeyyd4jEDGnnNnVa5dB/fp/Khy1h5TlavXOdDIHJiw
+	 oHx4XaWEPVB0jlViX7Qc3tpS87j0ppDz3TW7gEKsJB0zTzwIGkCbXftF7ysnFKwGs/
+	 hurOr1uaJZ1iNMf8vzSXGfLRCZHAZrYRIrmX4uhh7pr4zKPTfmOrOoSaDw7jhMBx6G
+	 tYSI1/1WAzzP4TEugmX0mOEYpTLVWOfCvWoOzvnpEDsMDKp/nZyTIv5/is/Sn9nMgy
+	 jrwQZeOmBeQmw==
+Date: Tue, 25 Feb 2025 07:06:13 -0800
+From: Kees Cook <kees@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Berg, Benjamin" <benjamin.berg@intel.com>
+CC: "jeffxu@chromium.org" <jeffxu@chromium.org>,
+ "Jason@zx2c4.com" <Jason@zx2c4.com>,
+ "adobriyan@gmail.com" <adobriyan@gmail.com>, "deller@gmx.de" <deller@gmx.de>,
+ "gerg@kernel.org" <gerg@kernel.org>,
+ "anna-maria@linutronix.de" <anna-maria@linutronix.de>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "avagin@gmail.com" <avagin@gmail.com>, "mhocko@suse.com" <mhocko@suse.com>,
+ "enh@google.com" <enh@google.com>,
+ "thomas.weissschuh@linutronix.de" <thomas.weissschuh@linutronix.de>,
+ "hch@lst.de" <hch@lst.de>, "hca@linux.ibm.com" <hca@linux.ibm.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ojeda@kernel.org" <ojeda@kernel.org>, "jannh@google.com" <jannh@google.com>,
+ "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+ "sroettger@google.com" <sroettger@google.com>,
+ "ardb@google.com" <ardb@google.com>,
+ "jorgelo@chromium.org" <jorgelo@chromium.org>,
+ "rdunlap@infradead.org" <rdunlap@infradead.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+ "oleg@redhat.com" <oleg@redhat.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "keescook@chromium.org" <keescook@chromium.org>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "mike.rapoport@gmail.com" <mike.rapoport@gmail.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "rientjes@google.com" <rientjes@google.com>,
+ "groeck@chromium.org" <groeck@chromium.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
+ "ardb@kernel.org" <ardb@kernel.org>,
+ "42.hyeyoo@gmail.com" <42.hyeyoo@gmail.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+ "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "aleksandr.mikhalitsyn@canonical.com" <aleksandr.mikhalitsyn@canonical.com>
+Subject: Re: [PATCH v7 5/7] mseal, system mappings: enable uml architecture
+User-Agent: K-9 Mail for Android
+In-Reply-To: <d2aeeb56-ba8c-49f3-957d-1ac790522233@lucifer.local>
+References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-6-jeffxu@google.com> <c5d3927e-06e3-49e7-a1d6-f4c9e817def4@lucifer.local> <96ebddf3fe31353c89f6a4680eaeb2793c25cd09.camel@intel.com> <d2aeeb56-ba8c-49f3-957d-1ac790522233@lucifer.local>
+Message-ID: <DC169C8C-BF10-4125-AA91-29E48BB1AD6A@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 11:11:07PM +0900, Alexandre Courbot wrote:
-> On Mon Feb 24, 2025 at 9:07 PM JST, Danilo Krummrich wrote:
-> > CC: Gary
-> >
-> > On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
-> >> This inability to sleep while we are accessing registers seems very
-> >> constraining to me, if not dangerous. It is pretty common to have
-> >> functions intermingle hardware accesses with other operations that might
-> >> sleep, and this constraint means that in such cases the caller would
-> >> need to perform guard lifetime management manually:
-> >> 
-> >>   let bar_guard = bar.try_access()?;
-> >>   /* do something non-sleeping with bar_guard */
-> >>   drop(bar_guard);
-> >> 
-> >>   /* do something that might sleep */
-> >> 
-> >>   let bar_guard = bar.try_access()?;
-> >>   /* do something non-sleeping with bar_guard */
-> >>   drop(bar_guard);
-> >> 
-> >>   ...
-> >> 
-> >> Failure to drop the guard potentially introduces a race condition, which
-> >> will receive no compile-time warning and potentialy not even a runtime
-> >> one unless lockdep is enabled. This problem does not exist with the
-> >> equivalent C code AFAICT, which makes the Rust version actually more
-> >> error-prone and dangerous, the opposite of what we are trying to achieve
-> >> with Rust. Or am I missing something?
-> >
-> > Generally you are right, but you have to see it from a different perspective.
-> >
-> > What you describe is not an issue that comes from the design of the API, but is
-> > a limitation of Rust in the kernel. People are aware of the issue and with klint
-> > [1] there are solutions for that in the pipeline, see also [2] and [3].
-> >
-> > [1] https://rust-for-linux.com/klint
-> > [2] https://github.com/Rust-for-Linux/klint/blob/trunk/doc/atomic_context.md
-> > [3] https://www.memorysafety.org/blog/gary-guo-klint-rust-tools/
-> 
-> Thanks, I wasn't aware of klint and it looks indeed cool, even if not perfect by
-> its own admission. But even if the ignore the safety issue, the other one
-> (ergonomics) is still there.
-> 
-> Basically this way of accessing registers imposes quite a mental burden on its
-> users. It requires a very different (and harsher) discipline than when writing
-> the same code in C
 
-We need similar solutions in C too, see drm_dev_enter() / drm_dev_exit() and
-drm_dev_unplug().
 
-> and the correct granularity to use is unclear to me.
-> 
-> For instance, if I want to do the equivalent of Nouveau's nvkm_usec() to poll a
-> particular register in a busy loop, should I call try_access() once before the
-> loop? Or every time before accessing the register?
+On February 25, 2025 2:37:11 AM PST, Lorenzo Stoakes <lorenzo=2Estoakes@or=
+acle=2Ecom> wrote:
+>On Tue, Feb 25, 2025 at 08:45:21AM +0000, Berg, Benjamin wrote:
+>> Hi,
+>>
+>> On Tue, 2025-02-25 at 06:22 +0000, Lorenzo Stoakes wrote:
+>> > On Mon, Feb 24, 2025 at 10:52:44PM +0000, jeffxu@chromium=2Eorg=C2=A0=
+wrote:
+>> > > From: Jeff Xu <jeffxu@chromium=2Eorg>
+>> > >
+>> > > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on UML, covering
+>> > > the vdso=2E
+>> > >
+>> > > Testing passes on UML=2E
+>> >
+>> > Maybe expand on this by stating that it has been confirmed by Benjami=
+n (I
+>> > _believe_) that UML has no need for problematic relocation so this is=
+ known to
+>> > be good=2E
+>>
+>> I may well be misreading this message, but this sounds to me that this
+>> is a misinterpretation=2E So, just to clarify in case that is needed=2E
+>>
+>> CONFIG_MSEAL_SYSTEM_MAPPINGS does work fine for the UML kernel=2E
+>> However, the UML kernel is a normal userspace application itself and
+>> for this application to run, the host kernel must have the feature
+>> disabled=2E
+>>
+>> So, UML supports the feature=2E But it still *cannot* run on a host
+>> machine that has the feature enabled=2E
+>
+>Sigh ok=2E Apologies if I misunderstood=2E
+>
+>Is there any point having this for the 'guest' system? I mean security wi=
+se are
+>we concerned about sealing of system mappings?
 
-I think we should re-acquire the guard in each iteration and drop it before the
-delay. I think a simple closure would work very well for this pattern?
+UML guests are used for testing=2E For example, it's the default target fo=
+r KUnit's scripts=2E Having sealing working in the guest seems generally us=
+eful to me=2E
 
-> I'm afraid having to check
-> that the resource is still alive before accessing any register is going to
-> become tedious very quickly.
-> 
-> I understand that we want to protect against accessing the IO region of an
-> unplugged device ; but still there is no guarantee that the device won't be
-> unplugged in the middle of a critical section, however short. Thus the driver
-> code should be able to recognize that the device has fallen off the bus when it
-> e.g. gets a bunch of 0xff instead of a valid value. So do we really need to
-> extra protection that AFAICT isn't used in C?
+>
+>I feel like having this here might just add confusion and churn if it's n=
+ot
+>useful=2E
+>
+>If this is useless for UML guest, let's just drop this patch=2E
 
-As mentioned above, we already do similar things in C.
+But on the flip side, it's certainly not critical to have UML supported=2E=
+ I guess I just don't see a down side to keeping the patch=2E
 
-Also, think about what's the alternative. If we remove the Devres wrapper of
-pci::Bar, we lose the control over the lifetime of the bar mapping and it can
-easily out-live the device / driver binding. This makes the API unsound.
+-Kees
 
-With this drivers would be able to keep resources acquired. What if after a
-hotplug the physical address region is re-used and to be mapped by another
-driver?
+
+--=20
+Kees Cook
 
