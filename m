@@ -1,156 +1,229 @@
-Return-Path: <linux-kernel+bounces-531868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E8BA44606
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DFCA44602
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4F8167967
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D14F165876
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA0318DB19;
-	Tue, 25 Feb 2025 16:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74CB18EFED;
+	Tue, 25 Feb 2025 16:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ts+5z7ME";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7IMscJv+"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mszWsEjE"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA5A18FDAA;
-	Tue, 25 Feb 2025 16:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A9A18C930
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740500730; cv=none; b=c5ebHC0ufS9G28muSX0jnNW5ggZ+I4XBrE8le3Ewt09CclbUawyABh5r3FK9kxUc7ruthjoHOlehZX72NDvPU9V39MC8ft9t8cR9rEKRcj9ZXLN/pawcA0gCf0VbgSiwTSoaKHpuWYoptm8wfBUvUb2O+LDWIp+Nd8wElc0ZRbk=
+	t=1740500727; cv=none; b=M6nLx1cUV5rqaYFycKAGg1zWrv8yFxXt5f3znUPUDTMGl3MFjorjDA5HHrXnPkc8xbWpfyVs8TIk2ef1R9VE0JJyuZyzOSaMn3fSvkT2YOnuvPPGXq39teC/Yjqrj7QzzxHlUqXl+sH0IrS6YfnAMYKveI+XFI0i0Miv7QB4iyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740500730; c=relaxed/simple;
-	bh=W7vDGYr9AWUHy42wWnsHFFo2msgoho242tXHNbm/1zg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Xl07VIl51eU62+y+UV6nJKDNsLrAPudl7D+uy9ktp+yf6LUOdcIeLSmM/bWkPFfhrL2vs/F6gbCRKM6wDEcHcE8r/6W0gRExgfMN4k2NDMMyMDdVWq7W9TSlU24sgCWP2kAryVe89/jUiz24f42uDJCa28AMJlJ8oPe+KaPwFxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ts+5z7ME; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=7IMscJv+; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 6204311400FF;
-	Tue, 25 Feb 2025 11:25:27 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 11:25:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740500727;
-	 x=1740587127; bh=NgNWJz4/ej91tUlb/G6+Viw2nzrffwayT6pC5YFAhO8=; b=
-	Ts+5z7ME5Q8OC30nbJVhSMKsOdYysD4nm6jTVI4jooMa2+sO/0wBLKqZZ5V5bbdG
-	LxgOcxD/iZCSCmj6NPcMvNaToFkyCe7hPLhDw685n4CzTBChKu9j8QYfS1Opp1ZR
-	y/kS2NdLPJEFoODJI4bAMhfoeAp3BcvqlgX2wmILD5LO+WW6fa5Rt0wCsPrR2Fkt
-	mPtzfb5E4OApxqwkMp8ZlYej3DAxTnDNIzt9uPlhSOzgTxKmw+a5BRcDhcUo+bv9
-	ffySlOeAQLneC0mPDWxBJg7ioHDmWCtUx1qEZpwfuArf3+SoLHqWVGH1bwFDV3zu
-	yBPKhWjqFBIrh08VnspmoA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740500727; x=
-	1740587127; bh=NgNWJz4/ej91tUlb/G6+Viw2nzrffwayT6pC5YFAhO8=; b=7
-	IMscJv+4prsSX8+62EfnIXjp33+Cap/59Fm7j9L6MPjVCg1h9+D2tV5f+mnsi+Iw
-	yrkpybyHb8IL70gX5I5c5bL9xRAduilaZUnyBBYKH4LmrXxFosBzgqCr8eyTqTsq
-	MQCYnjBQ5TZ9V1LN3vgGD1do4Pxji+vMWREjvNlr8TYVX6YwrDowUT1zQFOipd3H
-	hbXSjuEg0vfrndit2+/op2bgFYQ/1vQh6/rOx9KB7SsUi2a7sGsgx41VmqMRZ7aD
-	BbgAwlMKUr/JxtBQRJFxlJZvLmrzYct2trhc4zyUeUcQKYtwUBDhrjcLixQlQ6Xz
-	RrKUOPLyhMPcOoaIbFH9g==
-X-ME-Sender: <xms:9e69Z07XuZLCb2mg1ZRkabdFDyqSIvS9qkpiGvKb-qNtTP-YVf06Pg>
-    <xme:9e69Z17cbtisUffNy5O8_ocMYcYeIGrPXdt-Jl3BL51QGh8OjQVoCzS4WSRnXdsoc
-    Dv5akB7NOyD5O3KBQ0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
-    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnh
-    highessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrthho
-    rhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtohepughmihhtrhihrdhtohhroh
-    hkhhhovhesghhmrghilhdrtghomhdprhgtphhtthhopehmtghoqhhuvghlihhnrdhsthhm
-    fedvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopeholhhivhgvrhdrghhrrghuthgvsehkohgtohgtohhnnhgvtghtohhr
-    rdgtohhmpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkiheslhhinh
-    grrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhs
-    thhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqshhtmhefvd
-    esshhtqdhmugdqmhgrihhlmhgrnhdrshhtohhrmhhrvghplhihrdgtohhm
-X-ME-Proxy: <xmx:9e69ZzegOGN6bUlJD2UGbVzh35QPUiFSoFF3xeY7tCxHjW-lGUaYEg>
-    <xmx:9e69Z5INpchUfssxhI6lz-Fnuj6gjsNMslOX57YqjYGZ_w8yg9x_KQ>
-    <xmx:9e69Z4K3UxN9cBGMVc8Aq2knw8HXcPrwkI6mnDOYjnS0aPPpW82qOg>
-    <xmx:9e69Z6yKQtoTIfgtx_8LGs0EDnXR_l7EzCykHIjUAyOttInnOdpBWA>
-    <xmx:9-69Z2yggIQFeBrIjCRTyRbAFT6agWMy-ansv0zzLMebHgySR2eqe0QQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B96FD2220072; Tue, 25 Feb 2025 11:25:25 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740500727; c=relaxed/simple;
+	bh=JKe3mTg9NjACJAebdmc0vAEZvPQt6d7vSJJ/iXEv0qw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YCbgcAPo7l5/OEpAvI6zjDDS6+Xx8cpHRAIM2/9b6AdA3GKq1BA6488WVSQkIvqW67STYChPyEHQ/6jVPAby+vN0ehyl8BlF59gxZgkr5b2vFE7tXagyCbJd51MQSuDUHrG8BUUXfIeFGW1CqPAqO6raRgHoopydGW1NXg1VwYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mszWsEjE; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394036c0efso37125665e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:25:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740500723; x=1741105523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cLxFWJr5SBm2uwG1aose8lFaFsHP1M9jCT6EPEpJIsU=;
+        b=mszWsEjEUHt0Oopifc7O0MeWBCZMyQvnCof/YJGaTqYYo1gvpz+EaHpgt9WYshhhj3
+         vckQ7lyUodrzHY4aVQxdrGRui3XT6fylwgKtFq1YjLo4tjlfQxTTOJ3+bbWKFRnrqj8W
+         OeKImyXyIpIHaYC5JKZD3htGN63ts37cHWtRN6JHE2RY5wcE+5WwkE5w0vHLbQ0ZZiU+
+         565l4xii7WQNCCDAiPg5J9hoWU8zUNVcsTGCsdVPbfwksTBoaB+Y+xJPbE/XNuTY2M4U
+         u5F8nOkP/UF2zSaTeDSBEUxHAY/bSa2+0cagx60nxWBSmpYCPhj41Vkr1NPfuKW9Immc
+         jkFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740500723; x=1741105523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cLxFWJr5SBm2uwG1aose8lFaFsHP1M9jCT6EPEpJIsU=;
+        b=kIsfqG3dSk5aGR6ojp7TbjNTbWEH4A7mjJLO16aWkKyPDxUlQtTEpy64ZPnkWTkq/8
+         OXYHAvmHJCvvvdsZY+i1zM+Cs8inkzGL9d5GEAYgIJj8y0HRzDOnEuofhgB9L11y9INg
+         VG3geHYAYVhLFIQENqy6okuw0VZdgx1JVu9VO+hWcS9owqOmPaJtiwdZMA1B/9kdyhxu
+         /OjIenywMhhpt1pwLhB7jsyN+CPxHhw88GWD7vxFZpWTGanXYPz3xB4j3twBDD6YW/gY
+         WUrA3m6NkMEhUdg6p3brIM8W486h+riKx4K+4yzs1dyVdROzyRBxvJSK5EF40zJuFPfh
+         EZYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHwClZ6n09tRHPqfOVTvozkD7xkq6lOuiJVp00LNKcrSbASYzBnJ6/EhPMfZAGw7PZCCKh8nME0ZHPcMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0/PSnuE4GIheeaOvqQfLXfdk+HzBeqW20DdYBD1VOFJ4S/yyw
+	lBEt6s9NqgRP/fg9/KMd4CKEmIz5hVnxL6Ny6balcyQMC3lQ0I6hZEkjn4LwiNjvXuHZ6C5zY33
+	Fpyei9NN2Ff7fTGlFHthjE+wriRmMAm409YuN
+X-Gm-Gg: ASbGncumnR2ofKsbDPe32Rfv0TwZYBMvhRc0UBrBwwlBZ+58+vTH7+2MUdmu/wYHCAD
+	LnOcfGUrrLuP7W7I22AeHgRNSDDnQO4VtUAo7G0eevx8IttH5gSA/58b/V//oAuYrdIfTlYt4xL
+	d6gVSNwQoN8o9qqOVqVjGBFuCI+Pkr86DRUWlhwQ==
+X-Google-Smtp-Source: AGHT+IEL/VAlIzC/72gt6UlPgqwmOgVfnvRRlHIzH2wOPjqxna9GiiQv4vbpSwWWRe3ewdVZoSIlBFaXfkrlmy6v6H0=
+X-Received: by 2002:a05:6000:154a:b0:38f:4251:5971 with SMTP id
+ ffacd0b85a97d-38f6e753b0bmr14003071f8f.6.1740500723345; Tue, 25 Feb 2025
+ 08:25:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 17:25:05 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- "Yu Jiaoliang" <yujiaoliang@vivo.com>,
- "Oliver Graute" <oliver.graute@kococonnector.com>,
- linux-input@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <a6d10d80-79d3-426f-9dc8-0ddab77e89d9@app.fastmail.com>
-In-Reply-To: 
- <6xoycaft6wnd4sm74f2o4koc7lvyl2mtxp2kc6lc4dzpjvby53@ejm5ssbfzbph>
-References: <20250225145332.1116557-1-arnd@kernel.org>
- <6xoycaft6wnd4sm74f2o4koc7lvyl2mtxp2kc6lc4dzpjvby53@ejm5ssbfzbph>
-Subject: Re: [PATCH] [v2] Input: stmpe-ts - mark OF related data as maybe unused
-Content-Type: text/plain; charset=utf-8
+References: <20250213-vma-v14-0-b29c47ab21f5@google.com> <20250213-vma-v14-6-b29c47ab21f5@google.com>
+ <20250225162400.37187f22@eugeo>
+In-Reply-To: <20250225162400.37187f22@eugeo>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 25 Feb 2025 17:25:11 +0100
+X-Gm-Features: AQ5f1JoEC3x9WNKgVd-On0faB1EZd0DxKFqSTrzCe8bV0fCShAQBPXTzoaNz4yc
+Message-ID: <CAH5fLgh-OKgpom+F30xON3hmiWzS_g-BqK0r9mdVoQdGZoO0ag@mail.gmail.com>
+Subject: Re: [PATCH v14 6/8] mm: rust: add VmaNew for f_ops->mmap()
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025, at 16:47, Uwe Kleine-K=C3=B6nig wrote:
-> On Tue, Feb 25, 2025 at 03:53:26PM +0100, Arnd Bergmann wrote:
->> diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/tou=
-chscreen/
+On Tue, Feb 25, 2025 at 5:24=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
 >
-> With=20
+> On Thu, 13 Feb 2025 11:04:05 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
 >
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 30e5b19bafa9..014f033ef1ba 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -250,7 +250,8 @@ extern void cleanup_module(void);
->  extern typeof(name) __mod_device_table__##type##__##name		\
->    __attribute__ ((unused, alias(__stringify(name))))
->  #else  /* !MODULE */
-> -#define MODULE_DEVICE_TABLE(type, name)
-> +#define MODULE_DEVICE_TABLE(type, name)					\
-> +static const typeof(name) *__mod_device_table__##type##__##name##_ptr=20
-> __attribute__((unused)) =3D &(name)
->  #endif
->=20
->  /* Version of form [<epoch>:]<version>[-<extra-version>].
+> > This type will be used when setting up a new vma in an f_ops->mmap()
+> > hook. Using a separate type from VmaRef allows us to have a separate se=
+t
+> > of operations that you are only able to use during the mmap() hook. For
+> > example, the VM_MIXEDMAP flag must not be changed after the initial
+> > setup that happens during the f_ops->mmap() hook.
+> >
+> > To avoid setting invalid flag values, the methods for clearing
+> > VM_MAYWRITE and similar involve a check of VM_WRITE, and return an erro=
+r
+> > if VM_WRITE is set. Trying to use `try_clear_maywrite` without checking
+> > the return value results in a compilation error because the `Result`
+> > type is marked #[must_use].
+> >
+> > For now, there's only a method for VM_MIXEDMAP and not VM_PFNMAP. When
+> > we add a VM_PFNMAP method, we will need some way to prevent you from
+> > setting both VM_MIXEDMAP and VM_PFNMAP on the same vma.
+> >
+> > Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> > Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/mm/virt.rs | 186 +++++++++++++++++++++++++++++++++++++++++=
++++++++-
+> >  1 file changed, 185 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+> > index 3e2eabcc2145..31803674aecc 100644
+> > --- a/rust/kernel/mm/virt.rs
+> > +++ b/rust/kernel/mm/virt.rs
+> > @@ -16,7 +16,7 @@
+> >
+> >  use crate::{
+> >      bindings,
+> > -    error::{to_result, Result},
+> > +    error::{code::EINVAL, to_result, Result},
+> >      mm::MmWithUser,
+> >      page::Page,
+> >      types::Opaque,
+> > @@ -198,6 +198,190 @@ pub fn vm_insert_page(&self, address: usize, page=
+: &Page) -> Result {
+> >      }
+> >  }
+> >
+> > +/// A configuration object for setting up a VMA in an `f_ops->mmap()` =
+hook.
+> > +///
+> > +/// The `f_ops->mmap()` hook is called when a new VMA is being created=
+, and the hook is able to
+> > +/// configure the VMA in various ways to fit the driver that owns it. =
+Using `VmaNew` indicates that
+> > +/// you are allowed to perform operations on the VMA that can only be =
+performed before the VMA is
+> > +/// fully initialized.
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// For the duration of 'a, the referenced vma must be undergoing init=
+ialization in an
+> > +/// `f_ops->mmap()` hook.
+> > +pub struct VmaNew {
+> > +    vma: VmaRef,
+> > +}
+> > +
+> > +// Make all `VmaRef` methods available on `VmaNew`.
 >
-> the warning goes away and stmpe_ts_ids isn't included in the .o file
-> without having to add __maybe_unused to the driver.
->
-> I would consider that a superior approach.
+> Are there operations that can't be performed when VMA is still being
+> setup? If so, using typestate might be more preferrable to Deref.
 
-Not sure, I can see how this avoids some warnings, but this is
-currently the only remaining instance of this problem (I fixed
-another two recently), and in most cases a MODULE_DEVICE_TABLE()
-entry that is completely unused ends up pointing to a real bug,
-where there is a table but it's not also part of the
-device_driver definition.
+I don't think so.
 
-      Arnd
+> > +impl Deref for VmaNew {
+> > +    type Target =3D VmaRef;
+> > +
+> > +    #[inline]
+> > +    fn deref(&self) -> &VmaRef {
+> > +        &self.vma
+> > +    }
+> > +}
+> > +
+> > +impl VmaNew {
+> > +    /// Access a virtual memory area given a raw pointer.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// Callers must ensure that `vma` is undergoing initial vma setup=
+ for the duration of 'a.
+> > +    #[inline]
+> > +    pub unsafe fn from_raw<'a>(vma: *mut bindings::vm_area_struct) -> =
+&'a Self {
+> > +        // SAFETY: The caller ensures that the invariants are satisfie=
+d for the duration of 'a.
+> > +        unsafe { &*vma.cast() }
+> > +    }
+> > +
+> > +    /// Internal method for updating the vma flags.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// This must not be used to set the flags to an invalid value.
+> > +    #[inline]
+> > +    unsafe fn update_flags(&self, set: vm_flags_t, unset: vm_flags_t) =
+{
+> > +        let mut flags =3D self.flags();
+> > +        flags |=3D set;
+> > +        flags &=3D !unset;
+> > +
+> > +        // SAFETY: This is not a data race: the vma is undergoing init=
+ial setup, so it's not yet
+>
+> It is possible to make this API `&mut self` then?
+
+No because of pinning. And taking `self: Pin<&mut Self>` is obnoxious.
+
+> > +        // shared. Additionally, `VmaNew` is `!Sync`, so it cannot be =
+used to write in parallel.
+> > +        // The caller promises that this does not set the flags to an =
+invalid value.
+>
+> Does `VmaRef` has to be `!Sync`? I wonder if we should explicitly mark
+> `VmaNew` as `!Sync` so this is more explicitly correct.
+
+See above.
+
+Alice
 
