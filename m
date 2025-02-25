@@ -1,179 +1,173 @@
-Return-Path: <linux-kernel+bounces-531179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B56AA43D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:12:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC13FA43D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B6919C59E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA563A9242
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC523DBB6;
-	Tue, 25 Feb 2025 11:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Neuh5Vkb"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011039.outbound.protection.outlook.com [52.103.68.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625B7267F60;
+	Tue, 25 Feb 2025 11:09:27 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6355120AF78
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481738; cv=fail; b=Qs8TVVqwqQ8DrJ7gUsWV+QRDwAve4/obk2TDgE6/C1KoG4EvYhFF6Em6r293Ulh5wQstHLIkQpGscDlqroHQgSfzYlVKlJBryFJBssaJPoghZcxUhqqMS6wFlaTsiZGQTEmTtwkF4ROfjV1WjZn82fqkRyhQ/ObFj7+8Gx6c6q8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481738; c=relaxed/simple;
-	bh=ZjssadTwbV1/qdUHPRDBEgYKrPmTumK6JilSJ0drQ6Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iPyMiuMJNM4ojI2L/IaXJ8xfoKH1ttgNH4cKz1mjU9231T4hEtwydwclt2lqoYCL6k5uGsfblL/bDDmbPHsMhavwFZJounuVdrj9cmHqlhzx+aZogA2PneDzVWdemwHecmVaZ8KeOfcuvEhWi4kiwX/qvU1hT50lxdGoAdubabk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Neuh5Vkb; arc=fail smtp.client-ip=52.103.68.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bc11LIKiYNjha8bfCaTV/ekbKI4WkSynCvoJBcSnvYKv8swcItQyut8t5na+Ye1S+lVfvZV1B5tRrxR/FrOEtw9CY/pHl4kuVQF79qAKW4k5eJDsTlHhCi3/u69KNO61UTQpli+KlCFy2NdDTbWOfXGEwDIXsCD141FFefk31crwDE+GLiwep3mhFuElbCFUSG9EF2qzAqaVTTDGLdk03Davo8vftxLW4/JlQSKy6b61zvc1Zu/0BadLlwc+krXTcga+hlLfJi3QPjFcBnoNn5FnR6nCcfN8T74haEp+r1rXlRWf7191CCKclX3xH8dRcwBR7Eeh/TWqifvhuwH2zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GAEaydk1bQrGgxI39LEo2OfttHhoe/JO7FU0F5yHrj8=;
- b=iBqGs4ntfdoKHn+Ph/+4hWJAnZU9Wc23jN7JqiGOO5vp+rJ1qu1In6J8g1iik5N4ET5zg6ALwOShcffa/s2Zm2LbibabyhMm9tUdU7LJn6yvrEb9DmrQjAjO2ZFcLefej2GOBfEQt66SV/qecoDYypVSn8tQ8ZVOakhsAosqAokhokUQlimH1iZDi0S0dfF4TzCHx+yfkHf5QquiBclQTNfv+ufGZL2ajgBoK0KE46iyzw29ytTeTcNrX+4Ud72afJJts2dACNF5jxiningRc6350PSWOwq+doJGUxk8P/MFlfMF91xBlbzsdErjK1nhpEMUK3rXIM0QJMvYOpJC4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GAEaydk1bQrGgxI39LEo2OfttHhoe/JO7FU0F5yHrj8=;
- b=Neuh5Vkb/neJU0PkKmQf1dHtti5mA93suSY0ool+LnhFFdVXad0F3Odv7dYiapJ+34PlqZspdAjHAfBvQAfz7ACXOWuamuw6cZupwCRbM4w1+jvQ23Y7j38kwm5TWGKqrQLZlmaHrHWNFjppLXP6IuFy/Nt7vCpZR8Q8AoKE0xkQ7bcwfeipt3NQdPbthiLBQIubEuQPDsRbWnB4fxORi7tFrOIuU2Rg11s3TKErgxG1IRkoRKUzWAxfuhLhEJFejdHMybJKzY/5YQP2b+uXJ0tAy9JvaOQLs5KB5+oh0boVMMPqv1w8+uQ0WXstGubcX6vRJcm5XPKckkUeCDFB1w==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN0PR01MB9351.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:108::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 11:08:50 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 11:08:50 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "airlied@redhat.com" <airlied@redhat.com>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "jfalempe@redhat.com" <jfalempe@redhat.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, "kraxel@redhat.com"
-	<kraxel@redhat.com>, "javierm@redhat.com" <javierm@redhat.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 6/6] drm/mgag200: Remove redundant else in atomic_check
-Thread-Topic: [PATCH 6/6] drm/mgag200: Remove redundant else in atomic_check
-Thread-Index: AQHbh3WmZ5+JflMfmkqJI8IWSsKY7g==
-Date: Tue, 25 Feb 2025 11:08:50 +0000
-Message-ID: <2E60927A-15DD-477E-9533-3256D384D984@live.com>
-References: <C8A4C8F8-1568-423E-A656-05D914D9933F@live.com>
-In-Reply-To: <C8A4C8F8-1568-423E-A656-05D914D9933F@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB9351:EE_
-x-ms-office365-filtering-correlation-id: 10358f6c-948f-443c-1c06-08dd558cc881
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799006|7092599003|12121999004|8060799006|8062599003|19110799003|3412199025|440099028|102099032|41001999003;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kBKbCkOgK5f7L062xDhPfH314+3t9S/AQxXnu9wg4EVZs5ik8612VNvubqgF?=
- =?us-ascii?Q?29NHvZ5RhIlOqstAZgk1Mwp9i9zUy5punQJ1wzhlB1NzBqu0AG6wl9Y8U9lL?=
- =?us-ascii?Q?N8OK+19Io/B+bSIhJgwMIyKgUereIqsJOPcF04ZMzG3iMSXYUaJCsrfDXhf5?=
- =?us-ascii?Q?lLP5xjYIZfGZWwfjS6P8hb9CQ1XHnMBG1yVaVyQZUiJ2SaFkpMVSa7hYwV/V?=
- =?us-ascii?Q?wn6SgIRV9AGr9kDKlAavnqDSWAvnO7c6S/4yWDrCSkBwiWskm037/TCa/6wu?=
- =?us-ascii?Q?4BABLBuBT+xiYqS39maVRW6RwPc0TLc2q3bvVAHkGld89+BH6io1bzAg4NQf?=
- =?us-ascii?Q?SGPDQnz1AQ8FiW8VFnnx/DVGhRrclpGD9pS/0E4qiW5cbDIlUNjzimm+4555?=
- =?us-ascii?Q?ZayeDRPsjEKbRgUnkdlNn1x1u+XifDGaqGZ373rVlRF5oMzBIM5N5sI6sLwg?=
- =?us-ascii?Q?O7NYyPhaV2vrxB4tqJwYk+eLPoRCRoZH1X6l0SWY15fPZBDMG6VxyTV4kFQ9?=
- =?us-ascii?Q?k1u9PITA+N9amsDKYPNzdIwqtHSppbFQy0A98z5ApU+16tDLYpLKjJUqKmCs?=
- =?us-ascii?Q?QmpKcwW2qGrJ7PbeEWECi5Qc8IqpSdaQ/xCQJQe7c35zdESfLcYVfIlwpaf5?=
- =?us-ascii?Q?nLD/4dI6wcwbnphrw2AnOvRw489ykf6XSFcUCw+oxP6dGyjBTTrZGooc0QBF?=
- =?us-ascii?Q?rrOFsBnC7VrkVYEvx6Og4Si9zCoEdE4y4ELLn8ybzlz5H1kcU3lCGvi68Fmh?=
- =?us-ascii?Q?AiBiY+P5sncrnB6gkqcbHlfEaYpi1PhXSR+3bibyGPnLz83NB/wG0btXJxhL?=
- =?us-ascii?Q?8U1g7BGI4wwaLMpviDRT9ssKHnpCfZXuw/JN0LbEOvs/F0y4UYxpQ6NuqQ+o?=
- =?us-ascii?Q?puBTpejVQUczVCzMYikBSKxT8Lw2ufXp7vh9ff78KjjAsqyo+B2r2x4CBpb2?=
- =?us-ascii?Q?RZQmW/KCWZ+r77vzrR/QjxwSiWNhBp5lCPhLKzNTRfTyxeC4VWujrebcShBF?=
- =?us-ascii?Q?tqbX5RQtLuuVfk/mMO18NcUQnHYsiK6RC6rrUGFvzkqyRLHeuNNchkH2PAPj?=
- =?us-ascii?Q?SypxhmyE/QCAc/fOqC3/yOrIyhprxSF8boIw6xpluAjFPLKZ6y3ERUi86J5c?=
- =?us-ascii?Q?UGq4WdIJ1Dcw1t9W/lokwsxkpbwRuBI1OQ=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?uI5jVrJWkGCl7fYYf9TVDsAzsiG5ZTjzPYshBdg0Rj1exXgoSQ0ip5Txj+ut?=
- =?us-ascii?Q?I2YHmt/9mkSXKxzlURwt7K5bz/OiOUujZDt/gEzjZkAGuEd72yNbEvd/VtXE?=
- =?us-ascii?Q?15XezUCbFnRVcKztD3o92XHSJ49G5+vFotLnuV1W2zDUtkyk0dL7p1P2GQF1?=
- =?us-ascii?Q?u9i3Ygtb2TU5VKbsySq4hczIi2I0EzkZ8na5b4wdYEmZb/0WOOC/g8Eie1tC?=
- =?us-ascii?Q?E0+yvfgc+IHkLPnWIz0p40ARDOuBcGOcYcDXZbrBOg/KL16OzpwHn634jluZ?=
- =?us-ascii?Q?h/OsJVK5bi2+qJAvmizoMyV9FZiihd/NF+3c51FnvSY37mPjZy8Vdvj5/i+G?=
- =?us-ascii?Q?E6AXr9PwpbSR3PO1KGKdb/B3yrNjlE6NBCqKPk2karfAF4P4QQGJpHQC5NhU?=
- =?us-ascii?Q?l/HYRFOjYYyv0fwsTAhHy6Y1PDIYPC8qyjEVZzuCK7Gi+fYYquwEl7qd8q1i?=
- =?us-ascii?Q?n8UyR3l0PpFo8qFZbtTDr0ZKDNcpBPVPv37+/VN1Y31bnPSmT/hG0Nf+7090?=
- =?us-ascii?Q?lUXpodgBVcuk4x3rjqPRFebubtJFQExdxoyvpmiAOKAY7eO9ZMcufVWpg0KB?=
- =?us-ascii?Q?1A8mkAbTMbNlLAca+8T4zdJtM56YEwzpFvdG5yOn3TbD7ybplMGvratIMuvi?=
- =?us-ascii?Q?JA+en7zROghutqgMBVki9CB6P2P20n3XC+htbmWwObta6AGFPSZ3tth3kcZW?=
- =?us-ascii?Q?Nl+5Om4JT5zs1OhY8syVLSVKAC5a9ktWrxKWxlKC1ASptcUNHTBZ83NswWF+?=
- =?us-ascii?Q?aDOBPrwgjCuDtgg9+UxZafJlGCqG8S0HWc5UXUn0tNEW6PD98f+pZuiNfF+J?=
- =?us-ascii?Q?NzK9sd33BSNuTLyTeWA/6ExTuEbbS4oqb56VsAZWkuoIqzB5emCfZ2rAg8pF?=
- =?us-ascii?Q?P6dM57c1i1n1LgqpuLV/aVSmnR/UAoSF1uG55JVyGBPwK9giu+temjwoAO/T?=
- =?us-ascii?Q?0841+pxXBBeTuRzIqomZ1ggJnACfxqbg0Ux1EdjyLJHcWpZ5U6gSkPFMPE4Y?=
- =?us-ascii?Q?9fENIGFJ1uXhbnHAxLimfoOrsNc1N75UhX5p0DjwARngYGqjTa/a5IZ8AMDt?=
- =?us-ascii?Q?iIbwYIWTdtlFd+c3ShAUpC/p7VyLIUIwKUQ9WQugLRPRvzqvH1u7XrDTm16M?=
- =?us-ascii?Q?GbqN2V0Hnr7AhUWNwgdhZB4NB4EyQisd+HsUwU3ixNptDLw+I3Ts7EtP0+VS?=
- =?us-ascii?Q?CZ++sHoKt7tlNppmw4GdSPPy6hGaJsewP4+ew7Aifa3Cv6Zjscw0knfpX/TU?=
- =?us-ascii?Q?K/rH9O9gUZ/iD1tZY5HVFSpU5FLObR5jd6obG4Xrp7s9IGhQ4O6i4s1qkkly?=
- =?us-ascii?Q?WUPhMDzKrnwdKnUlrL44f0Of?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <428AB63721E8D1439BD7FAE9402CB210@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A99264A7C;
+	Tue, 25 Feb 2025 11:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740481766; cv=none; b=LT/QYMEF5T0uUEdtDC4PTPvUkZN9KRYKYi3nlNpO3Gu4nzANIDMlKoc3jIY9U56BwjZNjcjgLCnqOKZ6YbHZsKqj5OXgGVkldsOghVlbn+jEilAq2SS/5XNKceK4eZDC3CtcuRTN2vladxadJrjY5O7tY1TNwoApLZ5QcJz62a4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740481766; c=relaxed/simple;
+	bh=TtBQCEIEL2mTq/30X9Qjp4A9+mPF9QER9TihXX7Hng8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkZjVI8VevC0q3mehy8jhSptuadGIvwpsI8TSMIISDAhahO6u7n1cPS1nzC1Ns2Jp+0T659EvgoqFAi+lCNCchY+XFtvsLFoAMAhFi5N/lwgliV6BxlQud8d/WDHMkRhYqCm3RTnMCnl/0LlK5aCVtfy8U6Aq1OL7zCMXwb0JwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so11670170a12.1;
+        Tue, 25 Feb 2025 03:09:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740481763; x=1741086563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/HP9OZuJ6AU1JfkSYo6B6srazy0msILW/CieEyyhb2E=;
+        b=JpYnkp+cLzs8KSyOIghHt1J/SsOOobj9vE3UHHAo4/zPPSdMjAoBMH+UomrAEXZBsn
+         KPTrf3qOEC4qfy73VjJR/Xb4qWI4Qn0Fnef4kqiM6giFQR9iszgtkpm0KSETtxubpDn/
+         bRGFtEx1BkwhheizlyPwG5MtnaRoHDrN+ZZYBnbNuu1qLBj6naG/5lCuK+1Je7pPgDDB
+         AK+YQAqNYYmyIdXjxJZTn9+av73Kfeh/eFvKFI6Vpjn+EoNC1D1L9XwWu0u8h2Ft7tHb
+         bDkhX6d7hL5h+f3Gg6P85sVxb4opUDKmLck77GPQLnrymdl7VWam8D/FRli+JW4Di3oc
+         q46g==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ORY8thReyEB6FIchyHbWm8MA0XQ1WVXSFNHePJR1dyS4+l1nkgeoL05OUzFxGpAwTy54C3zHmHWvHAAK@vger.kernel.org, AJvYcCVd0ehRGZfRl2JmPIJxfAYhwEh6AfAjY/+VfKV4LHoqYMlLM7zLpqn3VrYzMXU5JzURv/WmNRUE/HA=@vger.kernel.org, AJvYcCVeQIoJxIykyLvNBN2+MkRAuAf3muGexVmKjx7Q2DRmceokiJhF5ZPa2Jr8hBmMww+VnVLdEZTx@vger.kernel.org, AJvYcCXJ37uYE0BzcDu2pSIpPDVrmP5HJAUxvwzAM42UvgX904r0mdFbzabc9IbmrHHgZH10mSiHiZdA9CkeNfqoICXa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRi6Mprtmx8COUiTPVdmvhgV1OFlKodl8rySTfWKLbeLyRUqmW
+	Egv9nkrr7ts/N1LO+YhWv7woxqOAT+0zb5dwbfdfPCz4//hl4BIg
+X-Gm-Gg: ASbGncu0a+XLLERzJmy53fPfMwayQJqQOiNpW7u03gMpx2c22arD7fz3p51SCSSB9wM
+	BzVqIprA0j6LsfQdQCGuBMyoVUntr08VZsAKDR7G1llCmcQDqBGUcKdnrcfL2RwvJPtDcyO5PST
+	jJgmYOtPS7R+az0mc7OTUnIaonH9GmRota+dx+ujJAZjk7uPnmUSiGcsarhUpT8NAgku1de9p8o
+	ahaGcy0sA1vcCRkb+6+z04ZD19VlZ7PLfIDkzdbtuOdpz7NlgzAvi/M//UDbREhJSWuuHceT5tW
+	713IInsuoNUZJt8m
+X-Google-Smtp-Source: AGHT+IFtEU/qbtI5q4s+/3i4tDPt/bCCUO0KkhYar0f3IBw5ANItfNk//tImV+wtlwslPGilHyVkQQ==
+X-Received: by 2002:a17:907:c015:b0:abb:61b0:faa5 with SMTP id a640c23a62f3a-abbeda27eacmr2004055666b.4.1740481763220;
+        Tue, 25 Feb 2025 03:09:23 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20b81a0sm120938266b.180.2025.02.25.03.09.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 03:09:22 -0800 (PST)
+Date: Tue, 25 Feb 2025 03:09:20 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH net-next 2/7] netconsole: refactor CPU number formatting
+ into separate function
+Message-ID: <20250225-diamond-gaur-of-anger-b0f77e@leitao>
+References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
+ <20250221-netcons_current-v1-2-21c86ae8fc0d@debian.org>
+ <20250225101748.GL1615191@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10358f6c-948f-443c-1c06-08dd558cc881
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 11:08:50.3965
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9351
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225101748.GL1615191@kernel.org>
 
-From: Aditya Garg <gargaditya08@live.com>
+Hello Simon,
 
-Remove the redundant else statement from atomic_check since the previous if
-statement was returning if true.
+On Tue, Feb 25, 2025 at 10:17:48AM +0000, Simon Horman wrote:
+> On Fri, Feb 21, 2025 at 05:52:07AM -0800, Breno Leitao wrote:
+> > Extract CPU number formatting logic from prepare_extradata() into a new
+> > append_cpu_nr() function.
+> > 
+> > This refactoring improves code organization by isolating CPU number
+> > formatting into its own function while reducing the complexity of
+> > prepare_extradata().
+> > 
+> > The change prepares the codebase for the upcoming taskname feature by
+> > establishing a consistent pattern for handling sysdata features.
+> > 
+> > The CPU number formatting logic itself remains unchanged; only its
+> > location has moved to improve maintainability.
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  drivers/net/netconsole.c | 18 +++++++++++-------
+> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index c086e2fe51f874812379e6f89c421d7d32980f91..26ff2ed4de16bce58e9eeaf8b5b362dfaafaca0a 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -1117,13 +1117,21 @@ static void populate_configfs_item(struct netconsole_target *nt,
+> >  	init_target_config_group(nt, target_name);
+> >  }
+> >  
+> > +static int append_cpu_nr(struct netconsole_target *nt, int offset)
+> > +{
+> > +	/* Append cpu=%d at extradata_complete after userdata str */
+> > +	return scnprintf(&nt->extradata_complete[offset],
+> > +			 MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
+> > +			 raw_smp_processor_id());
+> > +}
+> > +
+> >  /*
+> >   * prepare_extradata - append sysdata at extradata_complete in runtime
+> >   * @nt: target to send message to
+> >   */
+> >  static int prepare_extradata(struct netconsole_target *nt)
+> >  {
+> > -	int sysdata_len, extradata_len;
+> > +	int extradata_len;
+> >  
+> >  	/* userdata was appended when configfs write helper was called
+> >  	 * by update_userdata().
+> > @@ -1133,12 +1141,8 @@ static int prepare_extradata(struct netconsole_target *nt)
+> >  	if (!(nt->sysdata_fields & SYSDATA_CPU_NR))
+> >  		goto out;
+> >  
+> > -	/* Append cpu=%d at extradata_complete after userdata str */
+> > -	sysdata_len = scnprintf(&nt->extradata_complete[nt->userdata_length],
+> > -				MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
+> > -				raw_smp_processor_id());
+> > -
+> > -	extradata_len += sysdata_len;
+> > +	if (nt->sysdata_fields & SYSDATA_CPU_NR)
+> > +		extradata_len += append_cpu_nr(nt, nt->userdata_length);
+> 
+> Hi Breno,
+> 
+> As this is the only caller of append_cpu_nr() I'm wondering
+> if it would be nicer if nt was the only argument to append_cpu_nr().
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/gpu/drm/mgag200/mgag200_mode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, I can do it. I just kept both functions the same:
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag2=
-00/mgag200_mode.c
-index fb71658c3..e3e102374 100644
---- a/drivers/gpu/drm/mgag200/mgag200_mode.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
-@@ -483,7 +483,8 @@ int mgag200_primary_plane_helper_atomic_check(struct dr=
-m_plane *plane,
- 						  false, true);
- 	if (ret)
- 		return ret;
--	else if (!new_plane_state->visible)
-+
-+	if (!new_plane_state->visible)
- 		return 0;
-=20
- 	if (plane->state)
---=20
-2.43.0
+  static int append_taskname(struct netconsole_target *nt, int offset)
+  static int append_cpu_nr(struct netconsole_target *nt, int offset)
 
+Another option is to use extradata_len as the second argument, instead
+of nt->userdata_length. That might(?) make the code easier to read? it
+would look like the following:
+
+          extradata_len = nt->userdata_length;
+          if (nt->sysdata_fields & SYSDATA_CPU_NR)
+                  extradata_len += append_cpu_nr(nt, extradata_len);
+          if (nt->sysdata_fields & SYSDATA_TASKNAME)
+                  extradata_len += append_taskname(nt, extradata_len);
+
+What would you write yourself?
+
+Thank you very much for the review,
+--breno
 
