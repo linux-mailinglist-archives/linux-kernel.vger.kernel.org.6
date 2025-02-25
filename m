@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-530659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB39A4364B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:41:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C667A43652
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC64217717C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72243B4056
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8F3257ACA;
-	Tue, 25 Feb 2025 07:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DF325A2C8;
+	Tue, 25 Feb 2025 07:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLKIoIsg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XphZY6kN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD9E126C18;
-	Tue, 25 Feb 2025 07:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D42571C7;
+	Tue, 25 Feb 2025 07:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740469297; cv=none; b=n3T/8e9omPTR3J7GPcTJXmRWJgkM/TkXfpGTg4maX+sCeus7KCW2QVgcsm9Ir2Ykkc4qH8GnNKgjT8EFXgw9l+IQskug7yIVfGPOAHdsR4a/hG79yuGEJfR60k8klz/tmSh4/0q/sLGSJ4BE+rlTD8iZhDgkn5RUXxjBUYvtLic=
+	t=1740469464; cv=none; b=MxVVsi2O5AOV7+1YLsNpwnHuNBxo1JK58t6w8H7a9EUo/De0LSSs6GFYSKyMBrocsZZEA4ecsLkdzCvQ3uyyry7MQz5R59Lm12XTF+/NTuD1QM6ypaoSTpCTVsxXPwsAemslSy+vMIMp6bsY48fwSbXRydeoActxo1WRlq/+u6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740469297; c=relaxed/simple;
-	bh=2XYXMJOoj8jR7rOLBVWUvoeGA6TeanSWB2tNbRdbaQU=;
+	s=arc-20240116; t=1740469464; c=relaxed/simple;
+	bh=rDDos2mgnkFWN7pXut8SG01S2XetF3htaI4UqKNCY0M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T6yxrAhCuRSPXn5W3Dr9HiXCWtSj3ZHcB6A1IClB6FaF2xPKPET7qvVOjV7wPZNTihJ/hMtkovi8yDoa/SxVmosEBKhN5d/nzQd7FShBOa70rNNEXblgZd/M2cn9Wt6cW4uYfWfGUceD4IQzZv9lZ69VpITGL54hVBNqZEPSLDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLKIoIsg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB343C4CEDD;
-	Tue, 25 Feb 2025 07:41:34 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gzWq6BsVX3FKKt0OOXS+GnltA/nn/ojE74xZE+sY2ZSDTgoc0ufbHTHJbf/6Y1hE7TGPR7OuhdH32Ms7zXnAAkI4a6NzSfeA4ONZHqx1MESCPh0fuJTMDCFzy90UuCPOcX7IDFm//KsHH8bQqRV4WSnzTaF+lH6Y+3QWNl/boUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XphZY6kN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC32C4CEDD;
+	Tue, 25 Feb 2025 07:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740469296;
-	bh=2XYXMJOoj8jR7rOLBVWUvoeGA6TeanSWB2tNbRdbaQU=;
+	s=k20201202; t=1740469464;
+	bh=rDDos2mgnkFWN7pXut8SG01S2XetF3htaI4UqKNCY0M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RLKIoIsgeoicWMs+xqA4V4aZNWo2G8yktpiOZlISV4mUzuWt9fLm1yWSzzP9eZgZ/
-	 bcFztsBRKEibxZ3c1sniOKr9IVzzgNmovqwWag/gXHFtn0yGbxMRFvGVFRr9LZrKH0
-	 nqBbGQwxXpExqaVNbSnhSn0xOQKfqQgPxDcTJ67zrPUhOcqOaAVJBLPlGwO9qb9heu
-	 CcDpIj0gfM4W/qlBIfLvgCI6Qi9RdWvakvJFmXPNxoinjGXrTvO7FGE9cBG9vLLbKl
-	 +f+MSIHmCPLf+abECnqs9Xm+znb73qVK44E7X6YFNiHzZbw4yZXX5oHviJEAZAAHTE
-	 DBEZ5XtHZKGbw==
-Message-ID: <2e383452-9a06-4278-930d-d6f8deed13a9@kernel.org>
-Date: Tue, 25 Feb 2025 08:41:32 +0100
+	b=XphZY6kNgCR6UESOoGX8B8Ic+wS7T3+69QOnF0aTBjcDEz24wsYNucgjCukRR/IR9
+	 UB4Vc77kt8AaJzub4UO/H/qUMt2z7GUcRJ/QIsmEz17qZfI39p++ufDVIwzJl4zlXh
+	 VS2vtBuYTpxZdaACVkuE6el9AZVVvLT4K6uLH+TifkRsx5ULJHumg14Z7HliAopqr4
+	 MZkbAwotp/OubfQ+H2MMygUihujc6dDwYD/0ZKrVIbcHKV6gWw+bfC0Mv5xE3u1DKO
+	 JBmXwtYce+EJafcfTfhsWXimY7NBcayCl5Oofhs+Syf1cGojvqaIbVZ11OhrwvL1vj
+	 0wwnjAMuMmxEQ==
+Message-ID: <fe1b0dde-f899-4303-bd2a-b19098edcae8@kernel.org>
+Date: Tue, 25 Feb 2025 08:42:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] input/touchscreen: imagis: document ist3038h
-To: Andras Sebok <sebokandris2009@gmail.com>, markuss.broks@gmail.com,
- dmitry.torokhov@gmail.com, linux-input@vger.kernel.org
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+Subject: Re: [PATCH v3 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
+To: Sam Winchenbach <sam.winchenbach@framepointer.org>,
  linux-kernel@vger.kernel.org
-References: <20250224090354.102903-2-sebokandris2009@gmail.com>
- <20250224090354.102903-4-sebokandris2009@gmail.com>
+Cc: linux-iio@vger.kernel.org, antoniu.miclaus@analog.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org
+References: <20250224175056.560111-1-sam.winchenbach@framepointer.org>
+ <20250224175056.560111-2-sam.winchenbach@framepointer.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,26 +101,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250224090354.102903-4-sebokandris2009@gmail.com>
+In-Reply-To: <20250224175056.560111-2-sam.winchenbach@framepointer.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 10:03, Andras Sebok wrote:
-> Signed-off-by: Andras Sebok <sebokandris2009@gmail.com>
-> ---
->  .../devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml   | 1 +
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also `scripts/checkpatch.pl --strict` and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
+On 24/02/2025 18:50, Sam Winchenbach wrote:
+> Adds two properties to add a margin when automatically finding the
+> corner frequencies.
+> 
+> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
 
 <form letter>
 Please use scripts/get_maintainers.pl to get a list of necessary people
@@ -141,6 +130,24 @@ a waste of time.
 
 Please kindly resend and include all necessary To/Cc entries.
 </form letter>
+
+> ---
+>  .../devicetree/bindings/iio/filter/adi,admv8818.yaml | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> index b77e855bd594..1be6f1fe4bfc 100644
+> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> @@ -44,6 +44,16 @@ properties:
+>    '#clock-cells':
+>      const: 0
+>  
+> +  adi,lpf-margin-hz:
+> +    description:
+> +      Sets minimum low-pass corner frequency to the frequency of rf_in plus this value when in auto mode.
+
+Wrap according to coding style.
 
 
 
