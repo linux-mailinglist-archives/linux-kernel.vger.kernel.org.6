@@ -1,119 +1,276 @@
-Return-Path: <linux-kernel+bounces-531122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D002A43C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:00:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2716EA43C86
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173FB3BE717
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225B83BF378
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B46F2676F1;
-	Tue, 25 Feb 2025 10:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41F6267AE1;
+	Tue, 25 Feb 2025 10:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvivoxQD"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I909IC6l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4361A5B9B;
-	Tue, 25 Feb 2025 10:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499D1267709
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481116; cv=none; b=EDSJzRE08mNfdhFT13Mqo2o6zwhscweZQmZDnQK0ZKSal0D3HeIzAVvSrXJVeEWv5tTJYdcsVENoc8Od5qf5j60hcHYsexIV2xLBKX/jUwkGGj6W6aZqHDeAki8wKoLKSEVFpDcpBqCPCOtyL2wKUqLbONysZmG5rywpSJk1t44=
+	t=1740481120; cv=none; b=VH6PfFkAJ/N5Ae3zetzQ0tUeBqAhYbE5PoyVBgsXB20U4QexegtlXacf6G2jWFWpfahre9MIWiEi3end9nLestkuOU9u9lM4EWDOM24j+nvqJSrXlmkpL57cJp1VGg/BzSD/2scXsHffw6A2TEWCPxyY4D6KBlPBDPb0AY2CsNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481116; c=relaxed/simple;
-	bh=TVlNyn10UOhOsfDb5reyqEProfJES17CfL7cj0kr9nU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMsOi9fuJ1HqEW8YKDAX57FDgrSKxqd6tVlx7MkJDRVG6LRF02QU9fnS+kKzy/EWL+xDcuzs8c8zyq61Ld1QhFXIE0HUrOszDBGCv7r3qA2OKi09DsahCfrCgwQIVopM+/11wz2zO/iG4yCND/eCLDqK8humTfNKbsS2hIUay2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvivoxQD; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54524740032so5634533e87.3;
-        Tue, 25 Feb 2025 02:58:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740481113; x=1741085913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A0JGPiOmgCbw/F87CIh3Is7mEUP2E4VCB+H+lpf/rx8=;
-        b=kvivoxQDXm90qUZVbQZfCmGyBBM+fPxa/pDj81LiMXfEHqv0Kf5N4vb89UeRDrUcsw
-         iZ4KGeuyJOic3khP3XPjw1Y9TpRo8g3ZrkRuVfSYOPYD/DSp6mw9p0yNznjVlYYkZRzA
-         ARNvxQ9ml/nHewthklS3NqP7Wsu8maRQTIqJlBGscg+tsIP3sa6jU+dFx9RCs2X4t5PK
-         iEf9o21LSv142QyyLWz3gMaTsHDgFTIz7P4YHt3g3YAer40MDZFHSJhFDqH0ulfP8+jG
-         3083EXdiRfEVD5goCiAMNClqcRtRD1GIdkJVJtIJRk1qQayAFgwAw33m6H1Zq+HMmh1r
-         I2DQ==
+	s=arc-20240116; t=1740481120; c=relaxed/simple;
+	bh=5GKjhMSdIGtaB9fefiSAWEdXX8hW8ZSY7qvcXDzuaj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m6RJqRcjuwXIn8fVBn/yFYt/FIXYcOH106A+3mlnujTknNk/OnnM6mrVRzvo5m2/H3tYaAsUTCaSaXsbCBJY/m6OXLDLDHYf3IWssOytftJSHTIyBv44kzC2XhdD2xXMmRDNL8llVLqdLabqG/iemApbUwTPYLPwW72LKyULvmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I909IC6l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740481117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vEth7nzYvrjkKd1whpPyCvFueH4OjZj2aRFsP1dAlyY=;
+	b=I909IC6l3SlgUno7UixkyS35JhQpEzBGlxveZPmHZlzJVIIi1Tj1aC5rnBjV1wMthNSRBG
+	80o7nXykv3tnyASKnhm6yGrXIOW9LrKu6PKkJ5+riSCVYHgWdvt2HO9dOZS9uiyAnPMlFR
+	Zc6kykqsyTeP0GlIti7ww6vtQqWgWl0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-155-tsPbTVRfOBWmJksmP35gdw-1; Tue, 25 Feb 2025 05:58:35 -0500
+X-MC-Unique: tsPbTVRfOBWmJksmP35gdw-1
+X-Mimecast-MFC-AGG-ID: tsPbTVRfOBWmJksmP35gdw_1740481114
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-438e180821aso27556345e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:58:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740481113; x=1741085913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0JGPiOmgCbw/F87CIh3Is7mEUP2E4VCB+H+lpf/rx8=;
-        b=B+RerslHNVysxo6YqQ3syds9QShwpY5h1Jk1/M+g3vrjT8PA8THuL6lIXN9aPN8tk3
-         qad70yA95t29pc8PhTJTzQEk/uWHqgj+b/CU0Owsrwooue2fp/3R4ed1qNatn+YVFbLr
-         EAWrHYZwIAFGuqnc4AJltra1j2BKq7EE7QVwa9sUXIvwwI1a0HtuoT/BGiIZgWtsIOf+
-         TWTyyp2gSD8EljlfFFIhzxPgQYpRV43vG5iagZh5Bi88A3TQkG2Zodb/hwYcQqbtBz8V
-         uAmm59SG0xzgCZvmXVLunflXr149cRN0AYgPC/iFH07sxlU8CtkQBImCi/zOjKGkOBgs
-         3kIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVX3D+DVYVoSnvRK/Piq0y0AQZJzWdm/iE56wgidVBiKAzwzFOcQ/r2I65DWb6EXM+1+EBRt7iaA1W9V1k=@vger.kernel.org, AJvYcCXD1Koo7ZgKihc4gGlhYQIZNP3Qjs2QV+eE870NMgTU2rm+sRnWvBjMI/Jv1mfkeS1Yp8OJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdLOXSt11Kqi7GS33SGrKPoG/oU7jA3uiPqqy9py56cBtvbz9y
-	WULS1l4ejO1C+rheZcvbxcE+xGJKYKhcvWSo4+UVFIwUw089pV1e
-X-Gm-Gg: ASbGncsk2HtX1wMY2JTNhouE35TBU6xgDFmc4nDzY6tPmz3EBxhs5/aRe73sxrGbfli
-	e2tDbk9jRgkUZvehRkT38dJo3XzVmJE9v2XGCGhTeBJURqT8gvsahOAzFbo8L7/AIkdzWUqyawW
-	jJuS/Zv8v3Nif904mQhCWL8amH9fvN5z0RPOAlCIK9/5bzPulGLYvqkCKgbHQmCPRNdAKQlRQl1
-	C28KfJ6jD7TNzfvuhOW7H8tTvSUV4lBMV8ClZAJG12hPBHF5K9lPrmDszde+nSPBofcZu/tFamk
-	44bTR9/L8534IDlsu51EiPGDm13uHFu1omhUm3f2Hbn4RNAM
-X-Google-Smtp-Source: AGHT+IFqRMF/ZEp84MklHdhBOMn2RmvmaEjMttQo5Zdw9ZrcnY4Yb1/NHEuPf8tpXnsL42cA+TvrQA==
-X-Received: by 2002:a05:6512:2247:b0:545:f1d:6f1f with SMTP id 2adb3069b0e04-548510dc14fmr912005e87.26.1740481112614;
-        Tue, 25 Feb 2025 02:58:32 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548522a6368sm110451e87.255.2025.02.25.02.58.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:58:32 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 25 Feb 2025 11:58:29 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2 1/3] rcutorture: Allow a negative value for
- nfakewriters
-Message-ID: <Z72iVbIZJ4jAMz4j@pc636>
-References: <20250224133659.879074-1-urezki@gmail.com>
- <c299a0b1-3271-4229-bdb9-2d4904ac0e13@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1740481114; x=1741085914;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vEth7nzYvrjkKd1whpPyCvFueH4OjZj2aRFsP1dAlyY=;
+        b=ZGB/6kCuPh+xxwHD+PofSA+zf+KzE17V94H5v0dZg23snoxLEtQ9u8gF58SIDBTZaa
+         JC1kkwM4kv3AlNtWqQ4E4TmOrr3WBcg9xCD7xbooAurBMJXEykiBWkfDhj7RifZII9tC
+         eBpgi5r0nd5344XWuFPKaPwQZ++vse1/a8oqkM7TlUc03FNxsjnrSkj0kJOESgMi2Kmp
+         V/Db1uvXEotlS0iC+b/KBv41hna/NW3Dnn+FM6qiBrztAF4joOLB6/agIZeeDiCy96LI
+         L3JulCz54ZWd2UsgrDAxYAnpweZejA6dOkiqKKUDfBLDCs+d08TW478hDGgKpXrhKQeI
+         xUHQ==
+X-Gm-Message-State: AOJu0YzxUWSzDDrUSXUzBb+18RxIE9dBO2OKZM6D21kCYGZWUrChPj6J
+	UZWgd61CMP/Uinp5LqDZ6kxuiln53NOJMYjJ36fk6nJFZH1ymnoLmwVpJTUsTGu9wj0DiyeHj06
+	3vCBRuaZWH1iB5VT5Ge9toM7K1HcNMYFbZEW/XsZFQPTL75uot9u4Az8DmkyW9A==
+X-Gm-Gg: ASbGnctWRKNrNiZ9mRxpokoJKyph62X4IT16DycECwF1QWM6op30Snz9SzNgRXPV7PO
+	HnCKI9Bx6of/BXiu1JGQ0k44KIsGRhoPtoqczrqIV1PutPLZa/IYFq1rAKRX6VvgjvuvyRODyy0
+	fwZXGUg3A2pQCvqrk93wI5pVCxTeoZ+6RL+EcAC9lDl8+Xk0YmzSpCozvRrKLBU73DZuQ9p9FV0
+	oVWYCtshghaFinMYykqjNadNCRS5eN/nhQtjVMnGjMOMtl7a6MykciMtVWlROYFulBFJ+9a49Zt
+	n7sdGv3YyLG9okCaFqJ7WzgTJVRmKARWepuLFSwpwxw=
+X-Received: by 2002:a05:6000:1a85:b0:38d:e6b6:5096 with SMTP id ffacd0b85a97d-390cc605129mr2312124f8f.15.1740481113922;
+        Tue, 25 Feb 2025 02:58:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHjdQiVvavRaSoN9CRp/mwY7qApYqPB49bwDzGzkrUN+Aiu2HiyMMYaSQ12oZibePy8ox8MLw==
+X-Received: by 2002:a05:6000:1a85:b0:38d:e6b6:5096 with SMTP id ffacd0b85a97d-390cc605129mr2312090f8f.15.1740481113525;
+        Tue, 25 Feb 2025 02:58:33 -0800 (PST)
+Received: from [192.168.88.253] (146-241-59-53.dyn.eolo.it. [146.241.59.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86ca0asm1912961f8f.32.2025.02.25.02.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 02:58:33 -0800 (PST)
+Message-ID: <af7de03d-6d31-4659-b1f0-e571fbc77cb0@redhat.com>
+Date: Tue, 25 Feb 2025 11:58:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c299a0b1-3271-4229-bdb9-2d4904ac0e13@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/2] net: hsr: Fix PRP duplicate detection
+To: Jaakko Karrenpalo <jkarrenpalo@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Lukasz Majewski <lukma@denx.de>, MD Danish Anwar <danishanwar@ti.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+References: <20250221101023.91915-1-jkarrenpalo@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250221101023.91915-1-jkarrenpalo@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 10:41:03AM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 24, 2025 at 02:36:57PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Currently "nfakewriters" parameter can be set to any value but
-> > there is no possibility to adjust it automatically based on how
-> > many CPUs a system has where a test is run on.
-> > 
-> > To address this, if the "nfakewriters" is set to negative it will
-> > be adjusted to num_online_cpus() during torture initialization.
-> > 
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+On 2/21/25 11:10 AM, Jaakko Karrenpalo wrote:
+> From: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
 > 
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> Add PRP specific function for handling duplicate
+> packets. This is needed because of potential
+> L2 802.1p prioritization done by network switches.
+
+This is IMHO a too terse description of the whys. I don't see how
+prioritization should create duplicates. Please expand the commit
+message. A cover letter could help
 > 
-Applied and i will resend a v3 :)
+> Signed-off-by: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+> Signed-off-by: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
 
-Thank you!
+Just one of the 2 ;)
 
---
-Uladzislau Rezki
+> ---
+>  net/hsr/hsr_device.c   |  2 +
+>  net/hsr/hsr_forward.c  |  4 +-
+>  net/hsr/hsr_framereg.c | 93 ++++++++++++++++++++++++++++++++++++++++--
+>  net/hsr/hsr_framereg.h |  8 +++-
+>  net/hsr/hsr_main.h     |  2 +
+>  5 files changed, 102 insertions(+), 7 deletions(-)
+> 
+> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+> index b6fb18469439..2c43776b7c4f 100644
+> --- a/net/hsr/hsr_device.c
+> +++ b/net/hsr/hsr_device.c
+> @@ -616,6 +616,7 @@ static struct hsr_proto_ops hsr_ops = {
+>  	.drop_frame = hsr_drop_frame,
+>  	.fill_frame_info = hsr_fill_frame_info,
+>  	.invalid_dan_ingress_frame = hsr_invalid_dan_ingress_frame,
+> +	.register_frame_out = hsr_register_frame_out,
+>  };
+>  
+>  static struct hsr_proto_ops prp_ops = {
+> @@ -626,6 +627,7 @@ static struct hsr_proto_ops prp_ops = {
+>  	.fill_frame_info = prp_fill_frame_info,
+>  	.handle_san_frame = prp_handle_san_frame,
+>  	.update_san_info = prp_update_san_info,
+> +	.register_frame_out = prp_register_frame_out,
+>  };
+>  
+>  void hsr_dev_setup(struct net_device *dev)
+> diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
+> index a4bacf198555..aebeced10ad8 100644
+> --- a/net/hsr/hsr_forward.c
+> +++ b/net/hsr/hsr_forward.c
+> @@ -536,8 +536,8 @@ static void hsr_forward_do(struct hsr_frame_info *frame)
+>  		 * Also for SAN, this shouldn't be done.
+>  		 */
+>  		if (!frame->is_from_san &&
+> -		    hsr_register_frame_out(port, frame->node_src,
+> -					   frame->sequence_nr))
+> +			hsr->proto_ops->register_frame_out &&
+> +		    hsr->proto_ops->register_frame_out(port, frame))
+
+The formatting is quite inconsistent and hard to follow in several
+places. I'm surprised checkpatch does not complain. Please align the
+condition to the relevant bracket.
+
+[...]
+> @@ -482,9 +486,11 @@ void hsr_register_frame_in(struct hsr_node *node, struct hsr_port *port,
+>   *	 0 otherwise, or
+>   *	 negative error code on error
+>   */
+> -int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+> -			   u16 sequence_nr)
+> +int hsr_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
+>  {
+> +	struct hsr_node *node = frame->node_src;
+> +	u16 sequence_nr = frame->sequence_nr;
+> +
+>  	spin_lock_bh(&node->seq_out_lock);
+>  	if (seq_nr_before_or_eq(sequence_nr, node->seq_out[port->type]) &&
+>  	    time_is_after_jiffies(node->time_out[port->type] +
+> @@ -499,6 +505,87 @@ int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+>  	return 0;
+>  }
+>  
+> +/* Adaptation of the PRP duplicate discard algorithm described in wireshark
+> + * wiki (https://wiki.wireshark.org/PRP)
+> + *
+> + * A drop window is maintained for both LANs with start sequence set to the
+> + * first sequence accepted on the LAN that has not been seen on the other LAN,
+> + * and expected sequence set to the latest received sequence number plus one.
+> + *
+> + * When a frame is received on either LAN it is compared against the received
+> + * frames on the other LAN. If it is outside the drop window of the other LAN
+> + * the frame is accepted and the drop window is updated.
+> + * The drop window for the other LAN is reset.
+> + *
+> + * 'port' is the outgoing interface
+> + * 'frame' is the frame to be sent
+> + *
+> + * Return:
+> + *	 1 if frame can be shown to have been sent recently on this interface,
+> + *	 0 otherwise
+> + */
+> +int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
+> +{
+> +	enum hsr_port_type other_port;
+> +	enum hsr_port_type rcv_port;
+> +	struct hsr_node *node;
+> +	u16 sequence_nr;
+> +
+> +	/* out-going frames are always in order
+> +	 *and can be checked the same way as for HSR
+> +	 */
+> +	if (frame->port_rcv->type == HSR_PT_MASTER)
+> +		return hsr_register_frame_out(port, frame);
+> +
+> +	/* for PRP we should only forward frames from the slave ports
+> +	 * to the master port
+> +	 */
+> +	if (port->type != HSR_PT_MASTER)
+> +		return 1;
+> +
+> +	node = frame->node_src;
+> +	sequence_nr = frame->sequence_nr;
+> +	rcv_port = frame->port_rcv->type;
+> +	other_port =
+> +		rcv_port == HSR_PT_SLAVE_A ? HSR_PT_SLAVE_B : HSR_PT_SLAVE_A;
+> +
+> +	spin_lock_bh(&node->seq_out_lock);
+> +	if (time_is_before_jiffies(node->time_out[port->type] +
+> +	    msecs_to_jiffies(HSR_ENTRY_FORGET_TIME)) ||
+> +	    (node->seq_start[rcv_port] == node->seq_expected[rcv_port] &&
+> +	    node->seq_start[other_port] == node->seq_expected[other_port])) {
+> +		/* the node hasn't been sending for a while
+> +		 * or both drop windows are empty, forward the frame
+> +		 */
+> +		node->seq_start[rcv_port] = sequence_nr;
+> +	} else if (seq_nr_before(sequence_nr, node->seq_expected[other_port]) &&
+> +	    seq_nr_before_or_eq(node->seq_start[other_port], sequence_nr)) {
+> +		/* drop the frame, update the drop window for the other port
+> +		 * and reset our drop window
+> +		 */
+> +		node->seq_start[other_port] = sequence_nr + 1;
+> +		node->seq_expected[rcv_port] = sequence_nr + 1;
+> +		node->seq_start[rcv_port] = node->seq_expected[rcv_port];
+> +		spin_unlock_bh(&node->seq_out_lock);
+> +		return 1;
+> +	}
+> +
+> +	/* update the drop window for the port where this frame was received
+> +	 * and clear the drop window for the other port
+> +	 */
+> +	node->seq_start[other_port] = node->seq_expected[other_port];
+> +	node->seq_expected[rcv_port] = sequence_nr + 1;
+> +	if ((u16)(node->seq_expected[rcv_port] - node->seq_start[rcv_port])
+> +	    > PRP_DROP_WINDOW_LEN)
+> +		node->seq_start[rcv_port] =
+> +			node->seq_expected[rcv_port] - PRP_DROP_WINDOW_LEN;
+
+I could be too sensible, but the above really hurts my eyes;) something
+alike:
+
+	u16 seq_exp, seq_diff;
+
+	// [...]
+
+	seq_exp = node->seq_expected[rcv_port]
+	seq_diff = seq_exp - node->seq_start[rcv_port];
+	if (seq_diff > PRP_DROP_WINDOW_LEN)
+		node->seq_start[rcv_port] = seq_exp - PRP_DROP_WINDOW_LEN;
+
+would be better.
+	
+Cheers,
+
+Paolo
+
 
