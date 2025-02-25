@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-531741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96569A44452
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:27:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACC5A44460
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D942B172BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46AEC3BC221
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A68D26B968;
-	Tue, 25 Feb 2025 15:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A533326E634;
+	Tue, 25 Feb 2025 15:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RUYgTBkL"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSYmaP9Y"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FF226B95B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8EC26BD8A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497220; cv=none; b=jj8kmdYlX+fIPXBjaj7M9MTuOPNsURh5NxDjIvbBLxOMd9OEwmOxAGpO5Oi2WXKA7SBDOhZDygnjFDHD8Ew+AAQrAi4QKb2dSatdwC+jNPy6AaJyV+eaieBvjObeUzyNomZXo3YdOUL0R3meoMnXhY59NT1Byn/3fQw76b8dWys=
+	t=1740497267; cv=none; b=nZiUQ5xXGDEGvnIoQJXCU8irGdIExlRhQJdy3pMCC42jX7FtbDLzLg5ciV35iqvMTpxLF+JXb3F9Mnzhe7P1QhXVRp/G7+bP0c0OPs3GN05fwIaOwiVyXOuuUWCqDTabti/ONoN+XJGEeiYO4dV5XV0ftwdqsBWDaRtDDavuWlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497220; c=relaxed/simple;
-	bh=R3eOfvTKD8GbF+X93jYcj93Ugx4SD0tD0JNmsutwA+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z3gdaWxIgZ+2x9kF6Olq6o9fcJ0TtfQsM5d2OhLcADEcAw7AiE9Kl5PJtuRwEujblvC9WQ0UgsZT2EueFL3AcQaim3u3XHzSDNKPb5d5tygdps7OQ7WraX8DaiOOgkSazv87gdqi7xyfGt1v7tjCxCz3CE398rCzs5ybiS8UYaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RUYgTBkL; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7272f9d216dso3159613a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:26:58 -0800 (PST)
+	s=arc-20240116; t=1740497267; c=relaxed/simple;
+	bh=7S0+Zh7bx00KedsQeG+Vi+B61V2GRVFmBCadrSzhX3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jSugUZ1tTP2t5oYpF4DTecqBaOiDOjgZMz/2aer4RfTNMwlOHxWAYeVyeyODUMSOREX2DKe2eru1lSRo7GVLcQmIKkXyfygO9TorJ4+dXM6EJBxK6NGDcAQVANCI/c/0EDpabDu6BO1bsIHG70Moz7RvXSFBCv5csnYFDeKqrz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSYmaP9Y; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-548409cd2a8so4027925e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:27:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740497218; x=1741102018; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZEFMtqXWJ11nWI2h5TBKW+yhwiEH+1Jx79XU7n+Tvio=;
-        b=RUYgTBkLJc5LcVmJKtlOa7wXn18qyGd8nUJcH6hAelS/mZOyWGLFKCBwC0ZAlJ+JyD
-         VsOAwCt80OOkaQYpJ5D+avEDU8rjUh0IOg1wzOZo8plr7Bf+48ebEknTTBIsOoE7bPic
-         glQLOOVc9bgAn7Kb2oXJj+WGuMAptlZ4dy8lj1rQx8K6dw18WLiTDTQHnVX0WrZCY58u
-         QXuNEcKwKLW286CwJPV47//X3nbWmpwM96clBnDNBWeTIIw35HsHT1dFrMv/5aD9tdSF
-         2cH1x0u0TgMd1BsWb2Gsld6GTKXn3s8v2Jz8PpdrezpDlL02hUXe5dQS5vRWZW9eZhtD
-         RqVw==
+        d=linaro.org; s=google; t=1740497263; x=1741102063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7S0+Zh7bx00KedsQeG+Vi+B61V2GRVFmBCadrSzhX3s=;
+        b=dSYmaP9YWad+LzNZDn18QkcctWuSJ6F0/bh61H3UgmObOGxy1Kat7E9UGvyGH1pCFk
+         8acntJYeuQ7LUak08BFvyqfwsu0rIUjGP+PRCNoO5K1AgxbZ6h3/fKWzgnMsC8urh21L
+         ffDfvut5fpvI7RB8AMJI8ZXQpnr2OM72mnGzUa5JEToriOTx2NXeFSMKrY4C5bDh6ldm
+         bYvLLF0QQGtT+TJaYxkCzyvnYaYBk5JrIFXyRt1j3BtAAS02m8INNouLqy+nBBRbRzgK
+         CX7khHqrYqCVgu4S9z/oPL/GyTOGE1U87layRiGbXT6ZV/LxfeQaXTGVT5p9HMQgndyO
+         HIcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740497218; x=1741102018;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEFMtqXWJ11nWI2h5TBKW+yhwiEH+1Jx79XU7n+Tvio=;
-        b=fj/PgA+lMQDBH76t94Juk/Pp4Z3ITe+Wk498sphKDKaGZmSi49i29zUR9KV3OAXJy+
-         lkRNsb023J64maFfhStQB3kYMFxBNnXHz8Fsr4WlO0LfALoYQaeieuLeILG6Nv2hp2vl
-         bJWUkCtGD1u4cQiVwXX4iCs9a2XhfE7wBGZkZSTQvIPJUARKMx2fyDWISvJmpaQ40RN0
-         l2jyXcgXGdZzyXT26vuzVP8DP+LMGpGf/touj681UF4hbDnbgtjRgv+vZpkYSdeJBOTE
-         K3fL55caURDi9F+3nm8B9RpbHquq+SE5hV5wx2oNHdsYrlyFc31PDdnvLI3UVFAj9xA9
-         qsxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzSa5f5Um7a+tuxoyixTnpV7XiIQrKRRUol1/O7AquxJn/oRP2tl2H6P1mms6GMVR2JdlPn105pQA5N6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4h1Gn38g6PIySszMDNYEQ2WQr9J2J2Icxb8jZeJsrKoCz9SXb
-	ARzbCnKAfMPfyCz5UP+KU6CsMhBKdNnY640GrGpsEMTdkaxILem/TB0DZAl4gIg=
-X-Gm-Gg: ASbGncuznpnTpDWl80FGoKdEmN98ucvWdh88n9ee2vRDljiQKMiNPvTFaN3Zh5l2+UN
-	qsRkzIdA/2M/MUEwPlerMNZE7UNJ8YheQNY9RpNhTQ38A3XTWzBane2csoOZ/GKTjl0RV4AE40w
-	ODzdPWenl51tg6a33shkpIegAQY4iWRNJDP4PtHFNJxeENByX94XlWnyRNF8+rdoEoLTN2HiBHe
-	fBnyov5XzCGqAioPbyu46D8ApMVsEpEutVjo/AF+4FbMpaaOdHcExGVyNumnEG/7SWQA0nsL9wr
-	3lFozC+5oXnp8x37LXrWWu0fKwFwKqoSjuYnpLQUN1aRADqAvoO1cdcugjaxXEY=
-X-Google-Smtp-Source: AGHT+IFGCyY/0apfFgHzqIrY9A63Ru1cUYpVgHHxAiTBgOOrsAuBzOUsIBrLonLqsT9Pl1DiMc3++w==
-X-Received: by 2002:a05:6830:2b07:b0:727:2e61:c831 with SMTP id 46e09a7af769-7274c235252mr14195332a34.25.1740497218150;
-        Tue, 25 Feb 2025 07:26:58 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-728a42cdcd9sm25002a34.11.2025.02.25.07.26.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 07:26:57 -0800 (PST)
-Message-ID: <d1af7490-5d91-4b30-a86f-8df3a8d17af7@baylibre.com>
-Date: Tue, 25 Feb 2025 09:26:56 -0600
+        d=1e100.net; s=20230601; t=1740497263; x=1741102063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7S0+Zh7bx00KedsQeG+Vi+B61V2GRVFmBCadrSzhX3s=;
+        b=dewgcRM+WVMFRAaaL/6F+qjyClhY/0YkdScl8RSoyzYI8ni20ktfnFqzGAQmGDMOTL
+         fl3k41jE2fU/x7FHAep8yhsUk+m6tmSlNPerIqHUSareJbDHITaGZRIu8a/CUaqjlb2c
+         MxtnSd+zpr3pHCrBvunpFIYvIVOsXC2eJS0uke8kLEBg0auJujYgWQsjCVlz/6bpU+1A
+         vrHyfRsYVgZnCYXg18LszDo16z6yClXZKSYwhtYEq6NxcjyzXjkeqralNV/25F34pfGI
+         HWGom35ebRZ6ov7oRR1LYeHNH6pP+6vhfebSdvGjKJEH69CoTv92c9bxLl55c6hQOvuh
+         VAhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Jptii7TQShZWamVjMPRxO+khjz6hYrb2auBPQQwjOTkdluspwHTa30AiHiXGhtL2LMWPuunH9axIqEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Hv5f+5EVd/fd1DjRH83epAERGHKx1RdoVheQDy33ycLFC78S
+	u4SSO2ul1L93mjuvwOZj7jF8FS+vnV7Y9rygebpIOk209Xg120q3OMtrX7PAXGNVDRqtv7E0qqv
+	kl2Ar9QrYkXw90yaMSbkUfVJPxK6Tziid15ShSQ==
+X-Gm-Gg: ASbGnctR23hpMbcTUENezJepZO4rJnOoEhvVmotjYYubkOo8xBn2qf1YkcAMVqVMOR7
+	NYqxgKun0JY2TGOiJOQWGD78pauT5OmyBggxisPHvl9KkkvmUioKoA3HH5W+mLIR7TFRCGi9Ojn
+	4/yUVzDks=
+X-Google-Smtp-Source: AGHT+IFgTJGE+RjBrEO8OC8TeDJzFMHUlzAIhSFbfMnj8/Q8uFWtMIjrMUGLsz+zRCyCJyT9lKeUrhXtO4KqUE8JmSg=
+X-Received: by 2002:a05:6512:a93:b0:546:2f7a:38b9 with SMTP id
+ 2adb3069b0e04-548510ce891mr1958352e87.3.1740497263319; Tue, 25 Feb 2025
+ 07:27:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/14] Documentation: ABI: testing: ad4080 docs
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
- <20250220135429.8615-15-antoniu.miclaus@analog.com>
- <8f588f4b88d122815df694660d19672e8ccd3d70.camel@gmail.com>
- <fd3ba169-c5e0-4405-961f-d7c11c68dffb@baylibre.com>
- <3f4bb345c1d76e7521d8bdbf4b4552e727c7dc1c.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <3f4bb345c1d76e7521d8bdbf4b4552e727c7dc1c.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250220180427.3382482-1-vincenzo.frascino@arm.com> <20250220180427.3382482-4-vincenzo.frascino@arm.com>
+In-Reply-To: <20250220180427.3382482-4-vincenzo.frascino@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Feb 2025 16:27:31 +0100
+X-Gm-Features: AWEUYZlv7NPRpHplJoYHtLorhg9CL7rEI01TWd7nd5BSlHowCiDOAXdzpMqpzHs
+Message-ID: <CACRpkdY8TdiDyZU7Wye=hj5csC=8HKBghPwFxggrhc=7nbwtnQ@mail.gmail.com>
+Subject: Re: [PATCH v6 03/10] dt-bindings: arm: Add Morello fvp compatibility
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Jessica Clarke <jrtc27@jrtc27.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/25/25 3:16 AM, Nuno Sá wrote:
-> On Thu, 2025-02-20 at 12:27 -0600, David Lechner wrote:
->> On 2/20/25 8:53 AM, Nuno Sá wrote:
->>> On Thu, 2025-02-20 at 15:54 +0200, Antoniu Miclaus wrote:
+On Thu, Feb 20, 2025 at 7:04=E2=80=AFPM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
 
-...
+> Add compatibility to Arm Morello Fixed Virtual Platform.
+>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
->>>> +
->>>> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate
->>>> +Date:		February 2025
->>>> +KernelVersion:
->>>> +Contact:	linux-iio@vger.kernel.org
->>>> +Description:
->>>> +		Set the filter’s decimation rate.
->>>> +
->>>> +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate_available
->>>> +Date:		February 2025
->>>> +KernelVersion:
->>>> +Contact:	linux-iio@vger.kernel.org
->>>> +Description:
->>>> +		Return the available filter's decimation rates.
->>>> +
->>>> +
->>>
->>> I'm not yet convinced we need the dec_rate custom attr. I'll add more
->>> comments
->>> in the driver.
->>
->> If we do need it, in another driver recently we concluded that
->> decimation rate is the same as oversampling ratio and there is
->> already a standard attribute for oversampling ratio, so we used
->> that.
->>
-> 
-> Yeah, in theory decimation is about averaging samples. Makes sense to me even
-> though I never thought about using the oversampling ratio attr. I was biased by
-> the IMUs drivers where we configure the dec_rate as part of the sampling
-> frequency attr since these filters directly affect the chip ODR. 
-> 
-> Out of curiosity, how did you handled this in the other driver? I would be
-> tempted to only allow reading the sampling frequency attribute which means that
-> the oversampling ratio attr is the one we can write (which then directly affects
-> sampling frequency).
-> 
-> - Nuno Sá
 
-The other driver is still under review:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-https://lore.kernel.org/linux-iio/2c3ce1701545e435238605342397e45657a0fb2a.1739368121.git.Jonathan.Santos@analog.com/
-
-It is modifying an existing driver, so in that case, we still have to preserve
-writing to sampling_frequency even if that isn't the ideal way to set it up.
+Yours,
+Linus Walleij
 
