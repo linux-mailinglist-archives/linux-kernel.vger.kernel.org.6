@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-530437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B183A4336F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFA9A43377
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FB93A7DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE2DA3B69CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56C7214816;
-	Tue, 25 Feb 2025 03:12:35 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEAB2206A6;
+	Tue, 25 Feb 2025 03:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTSd+a/o"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2326A2135BC;
-	Tue, 25 Feb 2025 03:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7114481727
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740453155; cv=none; b=j0dMcgLyGy1cIDV1MKqgnHuFTiF811pg50DjPf7DAWQRgXMaXdE43l76HX0Ra56HPnXFwwQztmW7aJwO8v/ssUvBEmzrqzyYqNxAMTd/3AhOmi6yLTk5L0cIHeywBHrojZnai0DmjKCvjHS0310zQyd44rH5aazA80+P54fJufA=
+	t=1740453275; cv=none; b=b7Gn1pt2IsTW1RzJO8sd1p6ZIuXG2oThH99xV3syWve8oxBSOtoVS5XdKPg1PO6n/VDLpWpWtkyW0/+7/gGTnsSgTj8hTkTjkcoqdKuR9cReGwyxR+nG/SXuQeVCqH8cNrkLr7gCzf0pWatwCRyXwIwgIOfQg3OY5nT6bPE2BCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740453155; c=relaxed/simple;
-	bh=kjl+s6sWQ2AJgnYEcm8bFURklJKF/fJp4g1rYKQXWyM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=d4SSGtO727oXmgL6sOdPsf3QgDL5RgjnICGK/4NzDbKYYXZlhoOe+SXe2F39XU37zLa6qMis54WjoWF4SccPB68ffIJfHmgf8zizQcrhLurXtARbrScZz0mYP+EYadqBB7A1bMqRw4zE5qHmW6JYda7IMuptoiVwjEBvhkPOUmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z22hM5wt8z4f3kvf;
-	Tue, 25 Feb 2025 11:12:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0FD1C1A0DCC;
-	Tue, 25 Feb 2025 11:12:27 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGAZNb1nh_xKEw--.65158S3;
-	Tue, 25 Feb 2025 11:12:26 +0800 (CST)
-Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
- <20250222092823.210318-3-yukuai1@huaweicloud.com> <Z7nAJSKGANoC0Glb@fedora>
- <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
- <Z7vnTyk6Y6X4JWQB@fedora>
- <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
- <Z7w0P8ImJiZhRsPD@fedora>
- <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
- <Z70btzRaN83FbTJp@fedora>
- <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
- <Z70qvZEBdq6L3-Yb@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
-Date: Tue, 25 Feb 2025 11:12:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740453275; c=relaxed/simple;
+	bh=MTiii+zQqPJopvoIqRNCl49x8lpdFSLa6UIMeGztj1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oF2cv+FirVe9wq6/efT0GeQabVfVIwk772WhljBwagc4JVkdVlcOtaW3+2B7ABJVOI0W7masaWuIUENbIFIArecL7zyV3JuAXOWDJfmPzbRiY1OV5KG0B9VwGuo7F6bQwKUYac72ArUs0jgcsNZEEdJCG4DHqONSJboWy+WAKRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTSd+a/o; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220cb083491so10642655ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:14:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740453274; x=1741058074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MTiii+zQqPJopvoIqRNCl49x8lpdFSLa6UIMeGztj1o=;
+        b=VTSd+a/o6JmPO5HNpNbuh/n3LNPE4l1PgRiBb/QCAZFOaN9A9/HecRPR9lWbeexmG1
+         g6w1R8pt5K3RWiHRqMw+mOs+kV7tFvfZVXgVwEL+oTKXTMKGBH9TOC+7+HzJwvwftUBh
+         0IyLWX+c+ZD5zfSQLaZSAp/8aF4UeAoptG7OkJNOi2GWfoVrfrvfKlxbHChV1Ec5fSEI
+         aSUvJ6sqnmEvdSflQAeYns+96g+9WGoUxH03ffCdG0eGmlUKgzChDTxsn290ABGAeg3n
+         jOFqC3qy9vFWCn1quNSs8l2DPktzyp3H/k2PF2K5u2UJjzTz7qliHKpIYNpc7++RpIuL
+         RDCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740453274; x=1741058074;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MTiii+zQqPJopvoIqRNCl49x8lpdFSLa6UIMeGztj1o=;
+        b=pq0Qm+bDAINsHHJfhJn6FqHUphSu+ul53JhynTE72NDjFuGknplqfUdpYZHysAncrN
+         bBG+ZNw3pz/7ESrQYQz4pKphHPszQrb3FBs6e26lEdbiAUZFh2hvwHnmS/0KHnQ2Ofbg
+         mfnZYFD7RNajCF+oIZKiDbhpFsMh5NkMvCwD0f5PBeOswA++LlVEClIpcGSuDGXUURvl
+         JXbUI2CkzUFpgfwASCapZ3Xm8gVpXd+E6F2iQcrqAPrqsND+BxdLtTY3X+KkCdwMt2jC
+         22hEhg5YErp/vySDNwpzn90HKHhYbnarfg+18ykyGspwOF1wkRjnu8+87O9YXz73PbxT
+         JhuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZpZPz1CseojIZ8BOn7oTCfjmuTlMEI3cuWH8WHkPK+TXNT9QMDdnkRNOfpJg38umZDjS7Y3ZC3EmvqFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ0ht+NMNJHsySN2O0++PsIcMAXRDAaZJNscs1MZHnmkhhl143
+	f7pI0T5izqsiiVOxAhc64KvQtnEP35Fgcozj7incNQVuJVwxswIo
+X-Gm-Gg: ASbGncsOxv9NkjfUdFfjNZ2KwXzxV3ToqeCxwXXRsi0OPgQ+3Ox8GZSCHy7kvD1szIu
+	FdN1MFrMwojvnIYb7K3Gdbf3+Oj33iUlOke/KwZsRQkTMxxbm2cToBG9Dfx+f7GyVBB9cx71BN8
+	H1pryEH3/ZJndCGxn5+QQ4A2eNGP2hj6jKMFcjFSSmlJyR1ettkPGshP3svXzvdweqRNCkjug6N
+	g+mhPA7QVxGGxEKsgWFKU1Y/R3ZP7QivgB4w3nuptsf/canciT4NZVA1vf1v4QM9aoHkWiCDmoS
+	RgWl4loziNKIbhIU9TWJquZ7SpRLr0sapljXKazoeD/SUTkiJ3JYmz5sxL4LXIep38CV2Dh/xyD
+	q4wU=
+X-Google-Smtp-Source: AGHT+IENisR31wnapQP5UILjmjga6+1j4+iRyv5pEpuKq0rZqZjB5Dc4GFMjy8dLP7W44x5xyZLSqw==
+X-Received: by 2002:a17:902:da90:b0:212:48f0:5b6f with SMTP id d9443c01a7336-2219ffbdf18mr96244445ad.9.1740453273602;
+        Mon, 24 Feb 2025 19:14:33 -0800 (PST)
+Received: from localhost.localdomain (210-61-187-174.hinet-ip.hinet.net. [210.61.187.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0ae9acsm3491085ad.225.2025.02.24.19.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 19:14:33 -0800 (PST)
+From: Qianyi Liu <liuqianyi125@gmail.com>
+To: phasta@mailbox.org
+Cc: airlied@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	dakr@kernel.org,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	liuqianyi125@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	matthew.brost@intel.com,
+	mripard@kernel.org,
+	phasta@kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+Date: Tue, 25 Feb 2025 11:12:25 +0800
+Message-Id: <20250225031225.44102-1-liuqianyi125@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
+References: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z70qvZEBdq6L3-Yb@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHrGAZNb1nh_xKEw--.65158S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr13Zw13Aw48uFWfCr4DJwb_yoWkXFX_uF
-	9xJwn3Cwn8CFn7uF4YkFy8K3y7Xr1Svry8C3yfGry7Z34IqFs7Z3WxGasa9ry2qa93X3Z0
-	vFn8AF1xGFn3WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi, Ming!
+Hello Philipp,
 
-在 2025/02/25 10:28, Ming Lei 写道:
-> Can you explain in details why it signals that the rate is expected now?
-> 
-> If rate isn't expected, it will cause trouble to trim, even just the
-> previous part.
+Thank you for your patient reply. Let's first clarify the issue and send a new
+patch if necessary.
 
-Ok, for example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
-slice is 20ms(2 jiffies).
+As soon as it enters the drm_sched_entity_kill function, the entity
+->last_scheduled reference count is incremented by 1. If there are still jobs in
+the current entity, it will enter the while loop, assuming there is only one job
+left. If entity->last_scheduled has already been signaled, it will enter
+drm_sched_entity_kill_jobs_cb, but because null is passed in, the
+last_scheduled reference count will not be correctly reduced by 1.
 
-expected rate is 1000 / 1000 * 20 = 20 bytes per slice.
+Because the prev pointer has been updated to &s_fence->finished, the
+dma_fence_put in the last line only reduces the reference count of s_fence->finished.
+The reference count of entity->last_scheduled was not reduced by
+1, causing a memory leak.
 
-If user issue two 21 bytes IO, then wait time will be 30ms:
+We should subtract 1 from the reference count of the prev when dma_fence_add_callback
+fails, which is called balance.
 
-bytes_allowed = 20, extra_bytes = 1;
-jiffy_wait = 1 + 2 = 3 jiffies
-
-and consider
-extra 1 jiffies by timer, throtl_trim_slice() will be called at:
-
-jiffies = 40ms
-slice_start = 0ms, slice_end= 40ms
-bytes_disp = 21
-
-In this case, before the patch, real rate in the first two slice is is
-10.5 bytes per slice, and slice will be updated:
-
-jiffies = 40ms
-slice_start = 40ms, slice_end = 60ms,
-bytes_disp = 0;
-
-Hence the second IO will have to wait another 30ms;
-
-With the patch, the real rate in the first slice is 20 bytes per slice,
-which is the same as expected, and slice will be updated:
-
-jiffies=40ms,
-slice_start = 20ms, slice_end = 60ms,
-bytes_disp = 1;
-
-And now, the second IO will only have to wait 10ms;
-
-Thanks,
-Kuai
-
+Best Regards.
+QianYi.
 
