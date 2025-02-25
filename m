@@ -1,211 +1,105 @@
-Return-Path: <linux-kernel+bounces-531441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5C9A4408E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:20:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43940A4409F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87D31889C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7013B04DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E82C2690D7;
-	Tue, 25 Feb 2025 13:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CEF26989F;
+	Tue, 25 Feb 2025 13:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="DA9NYiZF"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="PQ6t27+J"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDAA2561A9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1F726981C;
+	Tue, 25 Feb 2025 13:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489473; cv=none; b=LMxXOL+v46Pt5076I2yIvHCW0MrGvqLoqWFzsZZ+KVNWKVaNsBzw56fQmR9YdR89LIWltMnT5ZvQ+ri0hZxCNlJQwQEjm32bDu67tukuDbFGN006k7xm+b/r30Z8xEg5gakgpY9xvEuuuiTnZzMyiNtxUYx96zGYjjRXCKX4EpY=
+	t=1740489540; cv=none; b=rWuIc999DjGtKawcvVHPD9QcwXl0q8cs1b0N21qiMK+cTeq3g2ZrR4lCEM86+GdR4mZb7EpHTZSCKA8W+rLSHsghAgG40ImZCSlLewpodQs08a9NdOUOie/TgL06kM8b5aTnliVpxwv/yxnCypnzWcagmYMdvpDN4V7cx6GiePo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489473; c=relaxed/simple;
-	bh=coiQ5jWlh487ykX7qP20FSX2c9/+vfsqreI546F9X4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IsWsGjpiQs/MJRiIsk8BleUjCociZ5bWrFKnZees4NoncRKA6YN6U+XPdJBxQl+d8WAKRp8Aq1FeoXp2a+K9mwJcymzvWC6Bys8m+i6dQZILE6P6AJzoO2ZCypcRSSU7id9NzndL189sMyLRlq3e5ETAsJ1iOYuk0rV8AOBeySs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=DA9NYiZF; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so38593405e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:17:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740489469; x=1741094269; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZHiSBuspqa+Lo7NvOnsuxzepVxm+Oqk2YJCR3kKklRA=;
-        b=DA9NYiZF699A75JqnUh8A0U4nXgBFbyfaREnAdMIbHmVwF/boFrphom8b/2TB26TMK
-         c2rGZEOgDpdZ2IZTgiPmiN68K+z8vjBe6FPkALZza0J4pJwFuE9sWrAeqeYpAyzMjMUT
-         HtKSOzbZUlRu7MSyK4VLxXIWrgHyWlnJadY7IkhZSdCZM+hBoEkKrl4F451X3vvw2Ii1
-         fyQ5FUugRb9QYp7ayI6ycU7f1a+H/n+gySA6fDm7VsnlhH0hqqJls+ouaSy8cHH9OrFj
-         e7DE3BMIPYew5DqLdC+1WcgxjnTdsMupGV5tSNFIc/bO08ZqeyoLjMsx830fA5wi+4Ar
-         mUHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489469; x=1741094269;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZHiSBuspqa+Lo7NvOnsuxzepVxm+Oqk2YJCR3kKklRA=;
-        b=bVPksNeS7Te2t+RTC8Y+FiXJacZvKJ4uyW+sxDpSm2E+N9vQINg57L7WK1jUr22CXo
-         7Y4dgSzv4ghz7aCZZNGVhM9wEOw0YLA/NLkKESjlUw4HQPQbn5hd61GuWbwAfwdSNTlS
-         L9oHjq7XIEsVCynXqk3f2yV0PK8ol5Xyi+/lBTDitMDQixTCBfbJMW+Y7+vTpeBJ1kUu
-         Ac5NelwjWsYT2EG202sDcvQKhRcI2Miec8Mg06kLwwTfeG020ywz6IL5PXwpnrQWeZTw
-         6Q4/Z1Wpc/B+bofjBah4Yp4V5b9HopYRPo6uFm1496F8tnUoA+Dj6IrlYNH9pKJT+EhX
-         xlrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6awVTVqAXM3080HR6wUmiJdSnHaHO6vPMK8D5MdzR9aQLnIaFnB8+CaMPkZbAKkpw3G6/H8UVEcQNd4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTq1OdHCJrPJZBKVSKI4LAELwcCd4g5DJdLExa/cmU5KojXbgd
-	vCz7kWLiic5KbCkK4xc9Kb+m9MoCRp0E17QxnohJ94jGWua8AllRYM2/svlWXuA=
-X-Gm-Gg: ASbGncvIHHrp7c4r+LlyiKJLgKxRky1bbLcVh2cn3O4XPtOXEZIPKzjLGYxE5mQvOS6
-	TQsTdRhuC9THMDQNvS0HFxLr3AUMkK/D6e+Ef2TsOSOtX8JVRWPRD/x18Sa1RUTfQXGjZEXVwVU
-	I6OHyrwUpIbdAsrje9ZhAviFqlinOCfO+AVa9FmggI+aiVfl+zYOf0owVYYOSi3xb1Hfz8fiheK
-	k0RPPGZESlHmE11v6A3uFYYGYn8Iahig52DCRzgN0KZMSoQI0JGr/JMtDxfJoGunqA2mQTmOfkW
-	bdv30NJGeZmVYguZFGcq
-X-Google-Smtp-Source: AGHT+IGkWRdahuDVdr65bSLK9QOPfwKfuKfP4bPrJ2wj5uN+i6AmgCZDHsE7NQNlDpcvnBZLlkfL+Q==
-X-Received: by 2002:a5d:59ac:0:b0:38d:d8f7:8f75 with SMTP id ffacd0b85a97d-38f6160f9a0mr18157036f8f.17.1740489468688;
-        Tue, 25 Feb 2025 05:17:48 -0800 (PST)
-Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1546df4sm25505865e9.17.2025.02.25.05.17.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:17:48 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:17:43 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	christian.loehle@arm.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, hongyan.xia2@arm.com, ke.wang@unisoc.com,
-	di.shen@unisoc.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] sched/uclamp: Add uclamp_is_used() check before
- enable it
-Message-ID: <20250225131743.id4q2hotdfvzhkfh@airbuntu>
-References: <20250220055950.4405-1-xuewen.yan@unisoc.com>
- <20250220055950.4405-2-xuewen.yan@unisoc.com>
- <20250224234511.godsizj7kuv7zrtl@airbuntu>
- <CAB8ipk_NOi0rZQR0X7zveyyL-E7mJVLX92sKVO0=C0TmkcvDOQ@mail.gmail.com>
+	s=arc-20240116; t=1740489540; c=relaxed/simple;
+	bh=3Br8De3rsbk5eXKIjNmSvdHO8Uz1uZyZg2mMvLBwt5M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PqtJRLKgQ9URON6iWbqhNPhziB1vmtGPWg8CY8SXFQquxBakJJskMmZSJVUYT56etIByGAvmI1O8aZBYf3n2knpQltz2wnXXmRPv+g9PbK/igRtKCbJkbkCNJfVecLouZ3vlV2vtrg6XJfLT7b1s5CKX1ULnXtCcUz1fVVzJ3JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=PQ6t27+J; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P4j5jJ001538;
+	Tue, 25 Feb 2025 07:18:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=icybtQtm8VTLJVPt
+	AfJ8hZ7tG9SIv3LwIg71SMmRhM8=; b=PQ6t27+J8rJd2k8VbOw4CR62VkBGaNaj
+	wD3SLPYg3Y1Ptkj0fFRWQGSx8jOuNm3cEdwlpJtOamtVPkdNh1S/ZkTWzqxg+8Kr
+	1sZ4Fz9GNvgaPPgiKIrGDYC7MazXr+vDgYGHRE0IFdqpbjZ8sHlah19G5AfeAMEk
+	84jmiIjY1726LmozPiqXj5SNfjXkRUTuk12SNRhTqxIKa+UBKiVOlxDtv2DfMs+p
+	VxAEHMIPipYxQci5mrSBmVUDOsyREYj/EgjojhyBml4PsiNZSDdqnuD0oOm1YdRC
+	M2Skag3mNgR4Y9Ch1ZLagpVxbSolfEZK/qWi6uA+oWtc1k7v01IPmg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44ycv5ptdu-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 07:18:47 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 25 Feb
+ 2025 13:18:43 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Tue, 25 Feb 2025 13:18:43 +0000
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 43F6682025A;
+	Tue, 25 Feb 2025 13:18:43 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>, <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 0/2] ALSA: cs35l56: Fix for races when soft-resetting on SPI
+Date: Tue, 25 Feb 2025 13:18:41 +0000
+Message-ID: <20250225131843.113752-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB8ipk_NOi0rZQR0X7zveyyL-E7mJVLX92sKVO0=C0TmkcvDOQ@mail.gmail.com>
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=HoqMG1TS c=1 sm=1 tr=0 ts=67bdc337 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=T2h4t0Lz3GQA:10 a=oBivd6-D-XcVIxPnMd4A:9
+X-Proofpoint-GUID: OVvdlIHVe5Z_bjjltr5ErmOuOVfJK4kO
+X-Proofpoint-ORIG-GUID: OVvdlIHVe5Z_bjjltr5ErmOuOVfJK4kO
+X-Proofpoint-Spam-Reason: safe
 
-On 02/25/25 14:23, Xuewen Yan wrote:
-> On Tue, Feb 25, 2025 at 7:45 AM Qais Yousef <qyousef@layalina.io> wrote:
-> >
-> > On 02/20/25 13:59, Xuewen Yan wrote:
-> > > Because the static_branch_enable() would get the cpus_read_lock(),
-> > > and sometimes users may frequently set the uclamp value of tasks,
-> > > and this operation would call the static_branch_enable()
-> > > frequently, so add the uclamp_is_used() check to prevent calling
-> > > the cpus_read_lock() frequently.
-> > > And to make the code more concise, add a helper function to encapsulate
-> > > this and use it everywhere we enable sched_uclamp_used.
-> > >
-> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-> > > ---
-> >
-> > [...]
-> >
-> > > +/*
-> > > + * Enabling static branches would get the cpus_read_lock(),
-> > > + * check uclamp_is_used before enabling it. There is no race
-> > > + * issue because we never disable this static key once enabled.
-> > > + */
-> > > +static inline void sched_uclamp_enable(void)
-> > > +{
-> > > +     if (!uclamp_is_used())
-> > > +             static_branch_enable(&sched_uclamp_used);
-> > > +}
-> > > +
-> >
-> > As I indicated in [1] I think the pattern of repeatedly enable is actually sane
-> > and what we probably should be doing is modify the static_key_enable() logic to
-> > do the early bail out logic outside of the lock. I had this code this way FWIW
-> > initially and Peter asked for it to be called unconditionally instead.
-> >
-> > I think repeated calls to static_key_enable/disable() should be made cheap and
-> > I don't see a side effect of _replicating_ the early bail out logic outside of
-> > the lock so that if we have already enabled/disabled we just return immediately
-> > without any side effect (holding the lock in this case). I agree the hotplug
-> 
-> Because of the jump_lable_lock(), early bailout could indeed be a good idea.
+These two patches fix a race condition between driver and amp when issuing
+a soft-reset over SPI. The main problem with the race is that the driver
+could read the amp status as fully booted, when in fact the amp is about
+to reset or is in the process of resetting.
 
-Yeah AFAICS the current code already handles the double enable, but it's
-embedded within the cpus_read_lock(). I don't see why they must be inside.
-Though I think we can't just move the code, we must replicate it outside the
-lock in case the two enables race. I don't think the atomic_t will protect and
-force one of them only to proceed. The lock will be stronger synchronization to
-serialize, but one of them will end up doing the actual enable and the other
-one will bail out after holding the lock. All future redundant enables will
-bail out before holding the lock safely AFAICT.
+This is mainly contained within the ASoC driver code but a small change is
+needed to the HDA driver.
 
-> 
-> > lock is ugly and if we can avoid touching it when we don't really need to that
-> > would be better.
-> >
-> > --->8---
-> >
-> > diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-> > index d9c822bbffb8..17583c98c447 100644
-> > --- a/kernel/jump_label.c
-> > +++ b/kernel/jump_label.c
-> > @@ -214,6 +214,13 @@ EXPORT_SYMBOL_GPL(static_key_enable_cpuslocked);
-> >
-> >  void static_key_enable(struct static_key *key)
-> >  {
-> > +       STATIC_KEY_CHECK_USE(key);
-> > +
-> > +       if (atomic_read(&key->enabled) > 0) {
-> > +               WARN_ON_ONCE(atomic_read(&key->enabled) != 1);
-> > +               return;
-> > +       }
-> > +
-> >         cpus_read_lock();
-> >         static_key_enable_cpuslocked(key);
-> >         cpus_read_unlock();
-> > @@ -239,6 +246,13 @@ EXPORT_SYMBOL_GPL(static_key_disable_cpuslocked);
-> >
-> >  void static_key_disable(struct static_key *key)
-> >  {
-> > +       STATIC_KEY_CHECK_USE(key);
-> > +
-> > +       if (atomic_read(&key->enabled) > 0) {
-> > +               WARN_ON_ONCE(atomic_read(&key->enabled) != 1);
-> > +               return;
-> > +       }
-> 
-> Maybe here should be just check whether == 0, because when enabling
-> the static key, the enable may occur to be -1.
+The first patch, to cs_dsp, is to remove async regmap writes so that the
+cs35l56 driver can call spi_bus_lock() without breaking firmware download to
+other amps on the same SPI bus.
 
-If it is -1 then the code is already being patched to enable the key and this
-call to enable is redundant and can be ignored, no? ie: if we check for ==
-0 then we'll hold the lock to bail out anyway.
+Richard Fitzgerald (2):
+  firmware: cs_dsp: Remove async regmap writes
+  ASoC: cs35l56: Prevent races when soft-resetting using SPI control
 
-There's no need for the warning though as this can trigger incorrectly, yes.
+ drivers/firmware/cirrus/cs_dsp.c  | 24 +++-------
+ include/sound/cs35l56.h           | 31 ++++++++++++
+ sound/pci/hda/cs35l56_hda_spi.c   |  3 ++
+ sound/soc/codecs/cs35l56-shared.c | 80 +++++++++++++++++++++++++++++++
+ sound/soc/codecs/cs35l56-spi.c    |  3 ++
+ 5 files changed, 123 insertions(+), 18 deletions(-)
 
-> 
-> +       if (atomic_read(&key->enabled) == 0)
-> +               return;
-> 
-> > +
-> >         cpus_read_lock();
-> >         static_key_disable_cpuslocked(key);
-> >         cpus_read_unlock();
-> >
-> > --->8---
-> >
-> > [1] https://lore.kernel.org/all/20250222233627.3yx55ks5lnq3elby@airbuntu/
-> 
-> BR
+-- 
+2.39.5
+
 
