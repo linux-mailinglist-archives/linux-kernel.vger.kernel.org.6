@@ -1,177 +1,98 @@
-Return-Path: <linux-kernel+bounces-530574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE478A4353B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:30:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA955A43530
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A461A3B539C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D85718849B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E6A25A329;
-	Tue, 25 Feb 2025 06:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A82257422;
+	Tue, 25 Feb 2025 06:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="T/3enqJ2"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKiOLds6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF5E257437;
-	Tue, 25 Feb 2025 06:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB59256C92;
+	Tue, 25 Feb 2025 06:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464952; cv=none; b=BgfpwN86VmX6rhoOxggzhQLNVxIV22fLZsjwumeBefKufVTRgyPDjLWPhurlQVTYbQw75NMs74a44OCAECli059ZRmibdijGJ88WcyBRii+PgvLLa8S2JY/R5vAZ1SAgEHKU60J/pd3b1zGlZKS2ZpjUI1YTklyoEW/6zwk2lp4=
+	t=1740464822; cv=none; b=ZijAhxV3WhebL+yUsgn4vEBd/DzFq787NPY6QfmAg5vV3xvq+mfiDWB7+I0M23yEU49dsJE4nJjxt9wmIymSAR/ryrDiAFghG9aamke4zIzWnoN10uMQX9ynYYXacoULcgypSgSf2xlMn9W7fYxfMJNqYhd/RLewNH2bjgBrD9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464952; c=relaxed/simple;
-	bh=6H5elsDLfN7x4ABCoiVo5OmOsniFojqAYjePdFe5/Xk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cBZVo6ZgkhJpv1nqoVv1taiCmpARqw2mDjoTjKuOYo7plSib3x69yEUrolhnkiQMbvTNmEwHBfDtAGFWRFns6qUgxtgZX1G/ocm52Ovjj+1QePxjse9JNT6y4tjeWiJVh67KewI2qLtRsxmKJWS1yyrThrIeHklsDEG0H5xqfEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=T/3enqJ2; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740464952; x=1772000952;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6H5elsDLfN7x4ABCoiVo5OmOsniFojqAYjePdFe5/Xk=;
-  b=T/3enqJ224qkljWNA4RgZ3p04RvpLkhOcSd7fdIfpmjNazDwd34kN+mt
-   5Wxlexek54StqQvClmd4EzOIwq8ZQdyaQ4ZgmZaEXFMahRINXt3UTI60M
-   oq7fVCktaVCHGnfXBp49V6NUGSGik2T71T4KZACO4azPSi1kfxNkc03Dt
-   z3bTiPibt9WOHbK12syspRJCZIBVvfVYizltY5YM5WgEvxLTNUoMmdZDN
-   EyJv461foOhqJQCsm/WqZ/ECAHZnnKbqAS7TFy+DOxNRnoOWZhdKSNzZL
-   m/O2GEpQcbsLJ7HGPpHqYrWbSUCgzmie0DYUklRQQStlhzhD2VVM9fvpH
-   g==;
-X-CSE-ConnectionGUID: ADVUi8D6REKc6zSlr8EjjA==
-X-CSE-MsgGUID: m5i9WV8IQVmrAieeOjZClg==
-X-IronPort-AV: E=Sophos;i="6.13,313,1732604400"; 
-   d="scan'208";a="38087711"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Feb 2025 23:29:03 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 24 Feb 2025 23:28:27 -0700
-Received: from microchip1-OptiPlex-9020.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 24 Feb 2025 23:28:24 -0700
-From: shravan kumar <shravan.chippa@microchip.com>
-To: <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>
-CC: <kieran.bingham@ideasonboard.com>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <conor.dooley@microchip.com>,
-	<valentina.fernandezalanis@microchip.com>, <praveen.kumar@microchip.com>,
-	<shravan.chippa@microchip.com>
-Subject: [PATCH V5 2/2] media: i2c: imx334: add modes for 720p and 480p resolutions
-Date: Tue, 25 Feb 2025 11:56:35 +0530
-Message-ID: <20250225062635.3566513-3-shravan.chippa@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250225062635.3566513-1-shravan.chippa@microchip.com>
-References: <20250225062635.3566513-1-shravan.chippa@microchip.com>
+	s=arc-20240116; t=1740464822; c=relaxed/simple;
+	bh=KN2IyK+4qxOMlogFBDhVp3us+v9KROEgmandKUYf3sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pCI5GGDKthvRcPXodP9tLXFukC7FKcSz3PoBjeGG9Kkm1CaYQUydMiw5oMX1aR/vEz35780wC9uDwYENq9UUJ87fHw7wi6Qaco7h+fYQcNZxjxR7Yfq5zUEEpQ6vz9JNGGjCxO5rSxImg26dvlxbtAeHDODvcD7TJP/4iXp/qFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKiOLds6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B80DC4CEDD;
+	Tue, 25 Feb 2025 06:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740464822;
+	bh=KN2IyK+4qxOMlogFBDhVp3us+v9KROEgmandKUYf3sY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uKiOLds6ul53xwa+JklX5leCg+9+kK5Rzyxz1euYXG8EtPtqj/iLZorVW9o9kVpla
+	 bGLy3D+JzZovqtQU7LYQaLFLYiITuFjrv3PgzG6pWyea7SneoyKASPPo5lYD9F7f4B
+	 JT7MfKUnQiMqKYHBzdq7OVpjTpjgyy3Ihzpxy+vbCdxS6tu8tCJyNy4vMRUVgwGHKP
+	 dKOTfcdkZyuzzmFTqJGlFiYGXf4sEeKBKk1HpR3uwOSMBLO4Jp/ngz2pWmtb/sM1y6
+	 Gvy2np4Ir8hlSjwvK4VyQTIpoj9UnVYKKa6u8mRWdC8fHnH2CiOyk+HdfaLwo5jx8N
+	 Fr7QfeUlD3c5w==
+Date: Tue, 25 Feb 2025 07:26:58 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/39] scripts/kernel-doc: rename it to
+ scripts/kernel-doc.pl
+Message-ID: <20250225072658.38e0a200@foz.lan>
+In-Reply-To: <874j0j2ahi.fsf@trenco.lwn.net>
+References: <cover.1740387599.git.mchehab+huawei@kernel.org>
+	<52d0e3a45dac63af3dfad23103cd4365fb12686c.1740387599.git.mchehab+huawei@kernel.org>
+	<874j0j2ahi.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Shravan Chippa <shravan.chippa@microchip.com>
+Em Mon, 24 Feb 2025 16:23:21 -0700
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Added support for 1280x720@30 and 640x480@30 resolutions
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > In preparation for deprecating scripts/kernel-doc in favor of a
+> > new version written in Perl, rename it to scripts/kernel-doc.pl.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  scripts/{kernel-doc => kernel-doc.pl} | 0
+> >  1 file changed, 0 insertions(+), 0 deletions(-)
+> >  rename scripts/{kernel-doc => kernel-doc.pl} (100%)
+> >
+> > diff --git a/scripts/kernel-doc b/scripts/kernel-doc.pl
+> > similarity index 100%
+> > rename from scripts/kernel-doc
+> > rename to scripts/kernel-doc.pl
+> > -- 
+> > 2.48.1  
+> 
+> A pretty tiny nit but ... this isn't bisectable.  I'm not sure how
+> worried we are about that, but I thought I'd point it out.
 
-Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
----
- drivers/media/i2c/imx334.c | 66 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+I wrote this in separate to make the diff clear that this patch
+just renames the script without any changes. This helps you to
+review.
 
-diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-index b2ad19abaca8..0172406780df 100644
---- a/drivers/media/i2c/imx334.c
-+++ b/drivers/media/i2c/imx334.c
-@@ -314,6 +314,46 @@ static const struct imx334_reg common_mode_regs[] = {
- 	{0x3002, 0x00},
- };
- 
-+/* Sensor mode registers for 640x480@30fps */
-+static const struct imx334_reg mode_640x480_regs[] = {
-+	{0x302c, 0x70},
-+	{0x302d, 0x06},
-+	{0x302e, 0x80},
-+	{0x302f, 0x02},
-+	{0x3074, 0x48},
-+	{0x3075, 0x07},
-+	{0x308e, 0x49},
-+	{0x308f, 0x07},
-+	{0x3076, 0xe0},
-+	{0x3077, 0x01},
-+	{0x3090, 0xe0},
-+	{0x3091, 0x01},
-+	{0x3308, 0xe0},
-+	{0x3309, 0x01},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
-+/* Sensor mode registers for 1280x720@30fps */
-+static const struct imx334_reg mode_1280x720_regs[] = {
-+	{0x302c, 0x30},
-+	{0x302d, 0x05},
-+	{0x302e, 0x00},
-+	{0x302f, 0x05},
-+	{0x3074, 0x84},
-+	{0x3075, 0x03},
-+	{0x308e, 0x85},
-+	{0x308f, 0x03},
-+	{0x3076, 0xd0},
-+	{0x3077, 0x02},
-+	{0x3090, 0xd0},
-+	{0x3091, 0x02},
-+	{0x3308, 0xd0},
-+	{0x3309, 0x02},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
- /* Sensor mode registers for 1920x1080@30fps */
- static const struct imx334_reg mode_1920x1080_regs[] = {
- 	{0x302c, 0xf0},
-@@ -436,6 +476,32 @@ static const struct imx334_mode supported_modes[] = {
- 			.num_of_regs = ARRAY_SIZE(mode_1920x1080_regs),
- 			.regs = mode_1920x1080_regs,
- 		},
-+	}, {
-+		.width = 1280,
-+		.height = 720,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_1280x720_regs),
-+			.regs = mode_1280x720_regs,
-+		},
-+	}, {
-+		.width = 640,
-+		.height = 480,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_640x480_regs),
-+			.regs = mode_640x480_regs,
-+		},
- 	},
- };
- 
--- 
-2.34.1
+When applying it, I would merge this one with the next patch, to
+prevent bisect issues.
 
+Thanks,
+Mauro
 
