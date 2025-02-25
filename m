@@ -1,177 +1,171 @@
-Return-Path: <linux-kernel+bounces-532507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309B8A44EB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:24:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EEEA44EB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7893F3A952F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98337188CE22
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E41820E6F0;
-	Tue, 25 Feb 2025 21:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7F920F06C;
+	Tue, 25 Feb 2025 21:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WuVRlsDd"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="VZMI05Lf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE0119CD1E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518552; cv=none; b=OzYV4fp2C9a+HAF0O3oegC1+V0kzEh4drQ+LOGm4mqNa2Ahzw1l1BbPxAJlivtbNv3E3AvJHU7h7Uo1z+1aAjnfAzviZkFP6ISMbew9XTl1hVabYPRIisKyZtGfTCotcpnDtHMfdRaX6rjVN19wIuttsZfkoJlS+IuGaDOX02Kg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518552; c=relaxed/simple;
-	bh=Xtnq3RhDI1F0mjpN2gEvr8f5Yewsi+xjtiZxWthnvNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g3sm1foFotWSI5YmyUbe4v17i4KXFEwlEZ7+JGIrA6/ZQvX8K3VrdQQGpDTt6409+uD85E+U7WvMxZ64oMmoWvMAc0aD0YLD0HUFbVxUdPVZZ+vILmoX9BHsHT392s0070qN6t4rRmniGN8XsV50WV65CwQggZylpRK8y8tLzd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WuVRlsDd; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so6430216f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:22:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740518548; x=1741123348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=O+TAAzGVnDWDFtlFc6W2oZXUMNHkoRIXgVMUB+sYZ44=;
-        b=WuVRlsDdDHW9/9DYpUB+jCcW3te6ln/6Lzv4xkbE8cwwHkT2XPDuqvjRW8X/nEUmqf
-         Amk3KwA0hXk41TtoH/ewCea+XJ+ty+tiUKZW/xMquxxWWVRjYyjH4WKeCpLeO2Rdd+5H
-         iyGhClxUc6A2g+CekSyB/faNLRtvPD74JmjtQnQkMLEME1Ugi7LeCBnND3sRdJM9UiBn
-         5yCiHseawgYhmLjEDIFfkwNQz+Tm64TopRZ0c0Aq1V+ObrHPVRze18rsLBPetA+I3ZAd
-         cpHSfupEdywGQR66uRgv/inXqbsayKgRq1KGVmITw1SIe666+w8RK6rkORwMuGsdxUlH
-         aLNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740518548; x=1741123348;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O+TAAzGVnDWDFtlFc6W2oZXUMNHkoRIXgVMUB+sYZ44=;
-        b=HCc7SA8xKiJnP39THCLlEy/LLu1EKNix0/HpVO1cuDvrKKO1GIh701IPS1xreSgh3v
-         Ykt6g7tMJ70GlwuWrqrNG8YLZ9ptL7cPLQFjstRFsUExObAh1Hk/IsP4VTYGBETneAvd
-         KBhyMeEcEzyeSQTuNNIaqAYL7VjXeVuXD/25tIanzEbURgop6BKtDkBWjCLYR9mxm7vl
-         wWob7SgmMuNBKdga3HPgLXEnz8sGBuAQsrivrftp5LPtS2yAygcT+shLUZ93MV5A2y/T
-         RgSpkZEquPDGnhqRUGlisyK1aV8wbU2kC24x3OCxb1JpJHXwBxYWytEPu6Yq6l/DzB0n
-         gqJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6CBZ3HiexXhIPJRuWVK6MeMJ8aGh9z3+yeWzb3yRF/afBMx1vc40iXQRXU6H24s7HJ+XOrMlGJVfuSmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6PXSHjiXPzcJlyV4d1IEaQHHM91h3xVB5kP0LOVTnwN3BOJmX
-	WnCEenGBMu58qBbvgSix/bLQRBnLMFPFr4QKE3RJNBTrMLmW3XozKft7+elMJY0=
-X-Gm-Gg: ASbGncvla9srWNZQZAB8YtPAAGF5PlqCVG23hy/GG3yTqSE5B0NHjOJVhxbiY7OAXFe
-	TE2sg+yT0YEtcLnwL1paPTYWuDMXdvgIn/npeO2MPa2F1lLCkcP7SrUMGJSzoUJMUq29qpTrLUY
-	A4SI/6hbpIxBLZ+Iz1a/CqswyImsNl2dtdxWPliKpm0C7qwKIuvE/xAyJFF7NabH4iU5IuE8Gg0
-	z14CjFIJEjypavBmaxWgL1uo7MT6P4PNQmHBb6+kD78wLo08SzmHuVFfVRIMnpOL5KQZ30bj+PG
-	XvR9idkhSQW0QC9IAlivUmfYe7p61X45nM/p3rhRXumc40nI4+n9tw==
-X-Google-Smtp-Source: AGHT+IE75e9DPZfshqgcyz53q9QKQceztLXtBTDV3gXXaoLOI+hnMjNK3s6gZgjyBeOFutornyMF3w==
-X-Received: by 2002:a05:6000:1549:b0:38d:df29:e14f with SMTP id ffacd0b85a97d-390cc631b46mr5227528f8f.43.1740518548098;
-        Tue, 25 Feb 2025 13:22:28 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f7de2sm2065200b3a.106.2025.02.25.13.22.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 13:22:27 -0800 (PST)
-Message-ID: <1cfc2f43-8ea4-4c39-b543-1f54ba9b284e@suse.com>
-Date: Wed, 26 Feb 2025 07:52:21 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9E81A23BD;
+	Tue, 25 Feb 2025 21:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740518651; cv=pass; b=IloHQ9c5uRcJueq/5vMXZ17B2OnjKzwtzEX+2j34MdzEfUH31yEW3Se52xhAiYQhBoEpQO2UNge7a+XSAGDqSa1bOPnPOKUJwHoT5rts7njVnDynMYQgVE7TMrYftTNhF6RT/oXGBhY0yE7rnN7e5Y45cv9Ex2PROY6v5eTwasA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740518651; c=relaxed/simple;
+	bh=yifWYicXzI3Racy3WLNPfPX3gSInoMk9MGp4tHcStF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+0uozk4BFIFb31un9OVrSHzWHWrXR592FFFDK6GWH2Goonklq7NXFimrkEvANjsvOs5hBXoGlzaBJraogH+s1h75rvjHhLzXVitT9TdLlU+lwFBo1ePhEy7jblXHnZv/Ve6JfnSCky7/1SeZEUVdupiFHjXB0rgiz4eUw9jflQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=VZMI05Lf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740518576; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VQ2zUjBknzn2fmSl3OndjkBykCq6GH3YuUXD5yu7z5+pqCpQNl+Ruz2gb6ReS+PlvB7W790tIhDa3l/BV+tCifHsB3Dn+li2pohgJn8XbT+Wvbx7HFL7knG09YzGcU8EAF0gTtK+wUfpT13Xa5nPWLjHBLXpKBSHOC0GIJ2XLtY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740518576; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PDVTKSM1rcFjNwRRV/0KaHspAmH3vDFXNZuyf3meR0Y=; 
+	b=KAqxisptIvOtUWOG3/+nOvLQaLBf8bUImwjIguK5eZHbHnM+kgZK9KxTWbfs5dlGJdHYlvssxgGUmaKlbeOzkvdZFn72sEaN9KaSaEwQ3/bwrzYdno7PYDAl2Iw7FZTQvYNOkSS3NgpBZ5P2lgnymWItTMmsE/QLjOwxyqpzte4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740518576;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=PDVTKSM1rcFjNwRRV/0KaHspAmH3vDFXNZuyf3meR0Y=;
+	b=VZMI05LfLyyWPl0+UeCgDE5+u4fdSF4zFhcfpdraUnoy8v/M835dRL/zZFPtJC3j
+	RLfixi+m2Bzvlxl6W0sDDNBAV8Gg0bhbeLS7vUzTjosyt1C3Ub+da+pZI3WKB8ifLP7
+	O9qzAZPA+h8Q6SweL1iTFwYgc7ut3LVgkZYd/SnA=
+Received: by mx.zohomail.com with SMTPS id 17405185698304.8376916548969575;
+	Tue, 25 Feb 2025 13:22:49 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 7E04D18040A; Tue, 25 Feb 2025 22:22:42 +0100 (CET)
+Date: Tue, 25 Feb 2025 22:22:42 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
+	David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+	Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 7/7] power: supply: core: convert to fwnnode
+Message-ID: <duzge5bpxv4cd7b27pq2daisqtaw6mtt6oxl2u3hcdxcnh5tkw@yasxlx33yxbi>
+References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
+ <20250225-psy-core-convert-to-fwnode-v1-7-d5e4369936bb@collabora.com>
+ <a98547f0-f125-45dc-8bb6-a154ad78f672@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] btrfs: use min_t() for mismatched type comparison
-To: Arnd Bergmann <arnd@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Anand Jain <anand.jain@oracle.com>, Filipe Manana <fdmanana@suse.com>,
- Li Zetao <lizetao1@huawei.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225194416.3076650-1-arnd@kernel.org>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20250225194416.3076650-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hdfg4ybxxtxchsut"
+Content-Disposition: inline
+In-Reply-To: <a98547f0-f125-45dc-8bb6-a154ad78f672@redhat.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/240.490.19
+X-ZohoMailClient: External
 
 
+--hdfg4ybxxtxchsut
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 7/7] power: supply: core: convert to fwnnode
+MIME-Version: 1.0
 
-在 2025/2/26 06:14, Arnd Bergmann 写道:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> loff_t is a signed type, so using min() to compare it against a u64
-> causes a compiler warning:
-> 
-> fs/btrfs/extent_io.c:2497:13: error: call to '__compiletime_assert_728' declared with 'error' attribute: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
->   2497 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
->        |                           ^
-> 
-> Use min_t() instead.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502211908.aCcQQyEY-lkp@intel.com/
-> Fixes: aba063bf9336 ("btrfs: prepare extent_io.c for future larger folio support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hello Hans,
 
-Thanks a lot, those fixes will be merged into the next version.
+On Tue, Feb 25, 2025 at 02:16:12PM +0100, Hans de Goede wrote:
+> Hi Sebastian,
+>=20
+> Thank you for your work on this.
+>
+> A few small remarks inline / below.
+>=20
+> On 25-Feb-25 12:21 AM, Sebastian Reichel wrote:
+>=20
+> <snip>
+>=20
+> > diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> > index a785742f97721e7e70d0e4c17a1ded7b985acb6d..9afde8c04efc72691c81a37=
+3d8dd03477b4efd7e 100644
+> > --- a/include/linux/power_supply.h
+> > +++ b/include/linux/power_supply.h
+> > @@ -805,7 +805,7 @@ static inline struct power_supply *power_supply_get=
+_by_name(const char *name)
+> >  { return NULL; }
+> >  #endif
+> >  #ifdef CONFIG_OF
+> > -extern struct power_supply *power_supply_get_by_phandle(struct device_=
+node *np,
+> > +extern struct power_supply *power_supply_get_by_phandle(struct fwnode_=
+handle *fwnode,
+> >  							const char *property);
+>=20
+> this function now no longer is DT/OF/open-firmware specific, so I think i=
+t should be moved
+> outside of the #ifdef CONFIG_OF block now ?  The same goes for the devm v=
+ariant I think
+> and the implementations of course also should no longer be "#ifdef CONFIG=
+_OF".
 
-For now the series is only for test purposes as there is a backlog of 
-subpage block size related patches pending.
+Good point. I suppose ideally the name should also change to power_supply_g=
+et_by_reference,
+since phandle is a DT/OF term. I will prepare these two changes for v2.
 
-Thanks,
-Qu
+Greetings,
 
-> ---
->   fs/btrfs/extent_io.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index f0a1da40d641..7dc996e7e249 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2485,7 +2485,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
->   		 * code is just in case, but shouldn't actually be run.
->   		 */
->   		if (IS_ERR(folio)) {
-> -			cur_end = min(round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
-> +			cur_end = min_t(u64, round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
->   			cur_len = cur_end + 1 - cur;
->   			btrfs_mark_ordered_io_finished(BTRFS_I(inode), NULL,
->   						       cur, cur_len, false);
-> @@ -2494,7 +2494,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
->   			continue;
->   		}
->   
-> -		cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
-> +		cur_end = min_t(u64, folio_pos(folio) + folio_size(folio) - 1, end);
->   		cur_len = cur_end + 1 - cur;
->   
->   		ASSERT(folio_test_locked(folio));
+-- Sebastian
 
+> >  extern struct power_supply *devm_power_supply_get_by_phandle(
+> >  				    struct device *dev, const char *property);
+>=20
+> Regards,
+>=20
+> Hans
+>=20
+>=20
+
+--hdfg4ybxxtxchsut
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme+NJcACgkQ2O7X88g7
++poO0w/+PtjuypiPttq8FXdCRzUhU78WLqWOJidkFzOKBqamTFhS0xbCsok/IUFQ
+AZSGVeoVEmZoASd8PRsXkGrfTDTq7LU3mcJArxufUITgc3y4xqEBJ82761VW16mJ
+g6koal4Wi4eQ/6BPKPXlXk8fcRiMNKmy2dZbTbivI2q7fmFzVTQLmgMTCi9241XP
+XYiyyHC7cI7/iHtXomgitOXCTF6qXBdXuB7nx/yE+qUofYF8akM/cD+ya5ktzGym
+ZKoizoAVDpu9DyHK6uyJuwBBc6wgmyaH91iIrw8xlfYR+OSHy+HRUyM8NTbROpSr
+nrD0I1ORi3uxjJUeoZ5v/bi70gLMXDEDaxQk7FXrqfBRgw43pHGnMIZsACK+b2Zv
+sFEez70kMZFHJM99oDJ9ZgvBZwrKXc6ZWvYXakX1IW7iNWUoEhXBLnXf2Zrni/Zx
+FMq6lr7s9/QnEtet/17dUKvCp9F3V23kvDbrJRV8C0ujkpW9wfo2VEvfPJNH9Ku+
+vdFDUeYNn7RvwHAsHYlmB/GyCUGdYLDsvyHPMbp4l989RUtNC0OF4t9bAVwJFdUt
+3oN7y6BOqfQa4EcP0fv3Ui9ITiak9BweFCVPm8aHqsKkqnIbzx1N9aaLB+TqS3is
+Xgz0BGWOempPbvaca4fuYrmSOsnC/gNIKFi+LMd5QmMhyO1ybi8=
+=g2xY
+-----END PGP SIGNATURE-----
+
+--hdfg4ybxxtxchsut--
 
