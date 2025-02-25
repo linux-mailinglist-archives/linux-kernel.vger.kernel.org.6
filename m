@@ -1,227 +1,158 @@
-Return-Path: <linux-kernel+bounces-531951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5B2A44711
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619BFA44709
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3487B01F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:49:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001627AFBE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8756F19CC0E;
-	Tue, 25 Feb 2025 16:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBEC1946DA;
+	Tue, 25 Feb 2025 16:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="DerIyJ8c"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3OXbNl0F"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BE4199E88;
-	Tue, 25 Feb 2025 16:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF36CA52
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501986; cv=none; b=EQLvvodEYYsFy58KCtUYLI0Pg7Pi9LswWjhnBU7FAZF56Hdt3xRXK29+7eoc6HhQ4oxn1Ak4fGRBUPWA1eVvpR+LCZ7K1oIsNLAdWxEzxp2fzjN+rEaamU4iXjDysBIRJ4V34weRGAjEmBeSD7hXfGsrExrQevUYLaEbHlpenKQ=
+	t=1740501962; cv=none; b=sl3G7e/kUmLDmFSpVdH9vyo4KrySfUWmm1QBqIdzsHIwtePJBv3NoMeeSLXXob6FHwtMBXYn5bEbAT3LwcD4XIX3XBoAo5DQOJjhcx/xukiiKjB0U01wXuidCCDU0WG2O+5E4KH+KUYQ3/QHVXkcTp2aOLC4FAlwQ6RW9VIsvfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501986; c=relaxed/simple;
-	bh=/Bl7bGe++8isDlcz6Yj2CRmk4+9xThGrSHZAAT8K00E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mczRtXTxsUWLkCTiuokh8UP9Zb6gbCVLpvKynIRZ/Y26ubgZXGH7HQrhulBSv0agx+b0KfJLKLYWVZ/oH+01NlUtVNiTCacmjV6fjRWq6sZ09yjiWTKM9ZZg3cq3t33+dgkq/EanMmjriSL7t6L6AL0WyZtUDFO1c7NhQ+dS7KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=DerIyJ8c; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id d0c76005e8e4e746; Tue, 25 Feb 2025 17:46:15 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0AA6622C28BF;
-	Tue, 25 Feb 2025 17:46:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1740501975;
-	bh=/Bl7bGe++8isDlcz6Yj2CRmk4+9xThGrSHZAAT8K00E=;
-	h=From:Subject:Date;
-	b=DerIyJ8cOL8sFe0ssqaBLAhjptKb0jb+awo4bNfQCj8BMmtKGyQjTH2dMWFOL9o+G
-	 FOv5nXZugVANCRDq1KTNw+O/4WTow7dMhMkAKBrSpedXxMET8I41PtnmffvVCWBH6r
-	 WAHs83oGhiKEeK0ea45WVqTB8K48y7Q9w3VJPNiKLpeTse9umHhkAjebdAek4kpYHw
-	 vyPSpa6NtdkWm0oKSipvou5+O/kYASjV8uOad/TdAri4bUtJl15XR0XsOTD9SeIv62
-	 r1A9SPyCOMjPs3dH2XF0MZetmt44+f0Zti115u2pNVtznIRJSCxXdu7QnJTyyPq9FJ
-	 K3iKFaWsOCqAQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Saravana Kannan <saravanak@google.com>
-Subject:
- [PATCH v1 5/5] PM: sleep: Make late and noirq suspend of devices more
- asynchronous
-Date: Tue, 25 Feb 2025 17:45:37 +0100
-Message-ID: <2016539.usQuhbGJ8B@rjwysocki.net>
-In-Reply-To: <13709135.uLZWGnKmhe@rjwysocki.net>
-References: <13709135.uLZWGnKmhe@rjwysocki.net>
+	s=arc-20240116; t=1740501962; c=relaxed/simple;
+	bh=3pkC9Zan/5soR9iiYT3dS1raXOelzZooR8jSMhW1DW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDj6pu7Wur09PT9B3V4b5Vuw4BIcgOzZmjYvXAS9M6B7uxlSwgB+4Nyz0uBTmqU+dvLszw0642jAcbVl39PJ0M3HLTakEMjhx6SFuTB4pds6DhSMH+4XLn5uz1uX5KQByRUkvkJneFr1CHoZG58Gai/7nEkxDmPHehn0gwVc1zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3OXbNl0F; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2212222d4cdso172585ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:46:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740501960; x=1741106760; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DvJy2eU2NKOX06+H5Vs2S45nqKcJ32b1n8dkLQorqiw=;
+        b=3OXbNl0FmQhnBdz6jgjsTg84gcwmwcN6RiQ27ezIdnf8Nz5HO+Nn7DcT4dmzHynpQj
+         hD5uoexR93icrEKisIiCIv/KqCF4XOXl2KBM6LlptZyPFF6lo0alxk82Kf2Goyvo7Wn9
+         YB6nln/odKfL8J6Z2hJRj1XKWXJHlLaOp4K6O7PHU17cqtgljSSK5F+x/6URpbZb5Vff
+         fIOR7Th/kIaiki3fgE6k7N68M4wmwW0e/GxovKAm5l4H94VDngJ+XJz7Ww6fjH0bQ7Eo
+         KL+HhDxeZbutkWDyXQsXq22JQ0Qs/2qc5IypJEyk1aMc/HZekjS5J/bgS7QEhXJ9u5ff
+         yIxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740501960; x=1741106760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DvJy2eU2NKOX06+H5Vs2S45nqKcJ32b1n8dkLQorqiw=;
+        b=YsLF5odRsouJUYRxcN7mjzXXA97/r1BG+WgG44V1L2cVHJA2PkmWlUumla0HGAWxlZ
+         9OJ39RREnDXELRygz6wvdFcFB1YrWgq7EFY6R75AyJ0ZQsBvOh1yRCEyeWdYmzoTcahP
+         7qeNVuNF+3AxzktcFbxhSIEdZy0WCegxnITClmUwq3HAPK6d/SL4fK6W41MxJ2LuQ+BY
+         v1pAplwBlUoanDk3YOYix3+Ecb6hf0R0F7FWqzdCmcx92+B8EZNEmbWSKd4CbmLRHA+g
+         B1yPdJ1zLOu9XUchX1RAhm08gzVD6MgJLgfmLzeEAohccuIIccJWX/a8msX1flkaeHLJ
+         VZBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXArskJpsOxKdsDeCGmelc4Rd4PuxGPizOM4UtVAAVOwgUVwpSmnEkxrl+/gtBnkSdHHRxEeVMQQ3g8z+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJegUpJowjHKzHNg+XhAlae1YhdBratp8UcpMor/PqXqaeCGRG
+	tYj/xf9uFsGnEkKNsMP12RcECjlDj2l0TDQ9kEbNpX8i+hYYDxeojOpoCdufAg==
+X-Gm-Gg: ASbGncvJQqRmEC1rGc5kFYTy5+hh8UWkwOm5jrByhRaDb/uS5lVClPFixf7sHxw+eK8
+	jUfeYBwk/NAW3Qw06rqnoN2i5/+HqSro6TkRXppeSAtHvWsJ5RzPbYa7SqPvM3KBjku/1EjmXSJ
+	LCQyt8YlRZiw8Tm1NssXdjVCIKcJVDEDyC1hOu1qMFINlg26xolSCXMCA2dRB+yIVUBQjiMfYq5
+	6b/7ibGyx1ir9KH4TmkV5BC7RKeTs7EthoS/5SQe9hw9MscfWgOMBmlPiWqqDIGlltGRF9vVmFX
+	+x/kVmniwcjqTN2jiTzYSM82KLPlMHNaMl2ljBXIVcnzYfA18J0izGA2iP+JNvM=
+X-Google-Smtp-Source: AGHT+IEN5DYqq3Kc3cWdCDht37pR+ox7Pyn1fNUO9eOSCsjsyhHHqegeAVtSYgiTkCHpwG2cFWbA4w==
+X-Received: by 2002:a17:903:2445:b0:215:9ab0:402 with SMTP id d9443c01a7336-22307a98a03mr3458305ad.18.1740501959581;
+        Tue, 25 Feb 2025 08:45:59 -0800 (PST)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6fa230sm1709220b3a.70.2025.02.25.08.45.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:45:58 -0800 (PST)
+Date: Tue, 25 Feb 2025 16:45:48 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	corbet@lwn.net, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 12/14] iommu/arm-smmu-v3: Introduce struct
+ arm_smmu_vmaster
+Message-ID: <Z73zvIbsXzJMCaNt@google.com>
+References: <cover.1740238876.git.nicolinc@nvidia.com>
+ <be799951a817557ac093ac3e18d02a631306aa35.1740238876.git.nicolinc@nvidia.com>
+ <Z7zYLBLZGKim-5UL@google.com>
+ <Z7zlH74/orq9HF7Q@Asurada-Nvidia>
+ <Z7zqdrQn7Q8yXfcn@google.com>
+ <Z7zxsbJsOFp41Dzd@Asurada-Nvidia>
+ <Z70EnQ5CXacc4ysT@Asurada-Nvidia>
+ <20250225160225.GA593877@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225160225.GA593877@nvidia.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Feb 25, 2025 at 12:02:25PM -0400, Jason Gunthorpe wrote:
+> On Mon, Feb 24, 2025 at 03:45:33PM -0800, Nicolin Chen wrote:
+> 
+> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> > @@ -95,8 +95,6 @@ int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> >  
+> >  	iommu_group_mutex_assert(state->master->dev);
+> >  
+> > -	if (domain->type != IOMMU_DOMAIN_NESTED)
+> > -		return 0;
+> >  	nested_domain = to_smmu_nested_domain(domain);
+> >  
+> >  	/* Skip invalid vSTE */
+> > @@ -122,19 +120,9 @@ void arm_smmu_attach_commit_vmaster(struct arm_smmu_attach_state *state)
+> >  {
+> >  	struct arm_smmu_master *master = state->master;
+> >  
+> > -	mutex_lock(&master->smmu->streams_mutex);
+> > -	if (state->vmaster != master->vmaster) {
+> > -		kfree(master->vmaster);
+> > -		master->vmaster = state->vmaster;
+> > -	}
+> > -	mutex_unlock(&master->smmu->streams_mutex);
+> > -}
+> > -
+> > -void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master)
+> > -{
+> >  	mutex_lock(&master->smmu->streams_mutex);
+> >  	kfree(master->vmaster);
+> > -	master->vmaster = NULL;
+> > +	master->vmaster = state->vmaster;
+> >  	mutex_unlock(&master->smmu->streams_mutex);
+> >  }
+> 
+> I'd leave the clear_vmaster just for clarity. Commit should not be
+> unpaired with prepare in the other functions.
+> 
 
-In analogy with previous changes, make device_suspend_late() and
-device_suspend_noirq() start the async suspend of the device's parent
-and suppliers after the device itself has been processed and make
-dpm_suspend_late() and dpm_noirq_suspend_devices() start processing
-"async" leaf devices (that is, devices without children or consumers)
-upfront because they don't need to wait for any other devices.
+Ack. I'd like to pair prepare and commit as well. I'm just confused
+about the check if (state->vmaster != master->vmaster). Maybe a helpful
+comment about what are we checking for would make things cleaner.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/main.c |   60 +++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 8 deletions(-)
+With this nit:
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1317,6 +1317,8 @@
- 	device_links_read_unlock(idx);
- }
- 
-+static void async_suspend_noirq(void *data, async_cookie_t cookie);
-+
- /**
-  * device_suspend_noirq - Execute a "noirq suspend" callback for given device.
-  * @dev: Device to handle.
-@@ -1396,7 +1398,13 @@
- Complete:
- 	complete_all(&dev->power.completion);
- 	TRACE_SUSPEND(error);
--	return error;
-+
-+	if (error || async_error)
-+		return error;
-+
-+	dpm_async_suspend_superior(dev, async_suspend_noirq);
-+
-+	return 0;
- }
- 
- static void async_suspend_noirq(void *data, async_cookie_t cookie)
-@@ -1410,6 +1418,7 @@
- static int dpm_noirq_suspend_devices(pm_message_t state)
- {
- 	ktime_t starttime = ktime_get();
-+	struct device *dev;
- 	int error = 0;
- 
- 	trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, true);
-@@ -1419,15 +1428,28 @@
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Start processing "async" leaf devices upfront because they don't need
-+	 * to wait.
-+	 */
-+	list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entry) {
-+		dpm_clear_async_state(dev);
-+		if (dpm_leaf_device(dev))
-+			dpm_async_fn(dev, async_suspend_noirq);
-+	}
-+
- 	while (!list_empty(&dpm_late_early_list)) {
--		struct device *dev = to_device(dpm_late_early_list.prev);
-+		dev = to_device(dpm_late_early_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_noirq_list);
- 
--		dpm_clear_async_state(dev);
--		if (dpm_async_fn(dev, async_suspend_noirq))
-+		dpm_async_unless_in_progress(dev, async_suspend_noirq);
-+
-+		if (dev->power.work_in_progress)
- 			continue;
- 
-+		dev->power.work_in_progress = true;
-+
- 		get_device(dev);
- 
- 		mutex_unlock(&dpm_list_mtx);
-@@ -1492,6 +1514,8 @@
- 	spin_unlock_irq(&parent->power.lock);
- }
- 
-+static void async_suspend_late(void *data, async_cookie_t cookie);
-+
- /**
-  * device_suspend_late - Execute a "late suspend" callback for given device.
-  * @dev: Device to handle.
-@@ -1568,7 +1592,13 @@
- Complete:
- 	TRACE_SUSPEND(error);
- 	complete_all(&dev->power.completion);
--	return error;
-+
-+	if (error || async_error)
-+		return error;
-+
-+	dpm_async_suspend_superior(dev, async_suspend_late);
-+
-+	return 0;
- }
- 
- static void async_suspend_late(void *data, async_cookie_t cookie)
-@@ -1586,6 +1616,7 @@
- int dpm_suspend_late(pm_message_t state)
- {
- 	ktime_t starttime = ktime_get();
-+	struct device *dev;
- 	int error = 0;
- 
- 	trace_suspend_resume(TPS("dpm_suspend_late"), state.event, true);
-@@ -1597,15 +1628,28 @@
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Start processing "async" leaf devices upfront because they don't need
-+	 * to wait.
-+	 */
-+	list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry) {
-+		dpm_clear_async_state(dev);
-+		if (dpm_leaf_device(dev))
-+			dpm_async_fn(dev, async_suspend_late);
-+	}
-+
- 	while (!list_empty(&dpm_suspended_list)) {
--		struct device *dev = to_device(dpm_suspended_list.prev);
-+		dev = to_device(dpm_suspended_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_late_early_list);
- 
--		dpm_clear_async_state(dev);
--		if (dpm_async_fn(dev, async_suspend_late))
-+		dpm_async_unless_in_progress(dev, async_suspend_late);
-+
-+		if (dev->power.work_in_progress)
- 			continue;
- 
-+		dev->power.work_in_progress = true;
-+
- 		get_device(dev);
- 
- 		mutex_unlock(&dpm_list_mtx);
+Reviewed-by: Pranjal Shrivastavat <praan@google.com>
 
-
+Thanks,
+Praan
 
 
