@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-530847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E30A43936
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:20:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5376A43940
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F4E17F77D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9EE440F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71524215772;
-	Tue, 25 Feb 2025 09:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C+UKbjAT"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9A0261591;
+	Tue, 25 Feb 2025 09:15:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3C1262D29
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACE1261372;
+	Tue, 25 Feb 2025 09:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474907; cv=none; b=owvlpZN1pPugdzghJgGKwpQQsh4sJG8Izlpmr7/VWMtHcfYGl0jZ3wJSiNFsH5/mLKUhw198Q2ScvKMSEP/PjWQGZxSIhX4O7dCyJI9MjmTZgAcfz3wtD/nT5nMmHSuJ0nv7GznAEqycZ6XYHjoMpYhPRcOiFh8yFNIg8rFEFOI=
+	t=1740474903; cv=none; b=NLf/cSZl4eFTjmca5D5lu9VHn+5Dotc9oIkj2inGpAN6uk7pm2JMH5xjxEISYSpejBVbglhBFlPeBEb6e8bmvHt1DivxdJIFv+RLkBGle2KlhfkNVzpCC/7Lg9y5tl9m2pdMtynMf9idxdTn7c4gM3xE7hbYXhjT0nVk0xiL9zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474907; c=relaxed/simple;
-	bh=/aoKHTFCh/xZrGmXea5tqIzv5tq6WilIrV4jsOaJ6AU=;
+	s=arc-20240116; t=1740474903; c=relaxed/simple;
+	bh=VweTxZD+mpHaLGE+OHVC/Csqi8x0/lUXXIvTXvC+g4w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G8vp/GgCUXi9EzDKnf7TXXAiEdnRzIFeL6ZAJDxfKkpZm3Z7xUTz7ZZzRpsT1VS0uyDO7bkNkZJ7bhkSE8ElM3TKKYDTa2Sl4OceP9yTv6Kks5vCEt1qod+pWUWgtN/XjksROZIRGFD4AqdQ173FJBeMZ4z3CynGw5bcRBq5Mt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C+UKbjAT; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a042e0ff-3c9e-45f9-a621-c15a8fc27965@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740474904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NwOgRv8FWM7xC0FLic5dPPFOQVWWI1lXpTN1kw/ZIng=;
-	b=C+UKbjATfvY0KqJWT6lphcLfXqHfKo7sdCeqWUhAYnvzIZ4Yr1OGgyBr+bJvChgYPNaTW5
-	TpxMuj2FPHWVPSBP7hLMCJsjU0skTjFQehT+r5cBYNUPKViVXigjO7QrL7b+XxdYtJLE96
-	WGniK67QN5MD30Jb6CMLXv1kbwh13ew=
-Date: Tue, 25 Feb 2025 17:14:51 +0800
+	 In-Reply-To:Content-Type; b=KPQVmqrBeWeTuXOFvW8vdiRGqMX5+Xsfetk1LjhC5VmVqGI0QPNbdrHmV9bQXeIzRs+xFX+01sMm7Ju9KcNPe79A4Yqec0pd1ekP9NhiDsja9Ivu+hS8eX19ObTHPK5yq/AiRUTcvB+u7obuBJRnIbqXz3hA0JfxGK0uWdXE2wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2Bkn00bjz4f3jt0;
+	Tue, 25 Feb 2025 17:14:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 723FB1A1306;
+	Tue, 25 Feb 2025 17:14:57 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP3 (Coremail) with SMTP id _Ch0CgAne8UQir1naVwhEw--.30950S3;
+	Tue, 25 Feb 2025 17:14:57 +0800 (CST)
+Message-ID: <e352650c-93b7-4f0e-ae40-3988644da39d@huaweicloud.com>
+Date: Tue, 25 Feb 2025 17:14:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 4/4] stmmac: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>, Philipp Stanner
- <phasta@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Huacai Chen <chenhuacai@kernel.org>, Yinggang Gu <guyinggang@loongson.cn>,
- Feiyang Chen <chenfeiyang@loongson.cn>, Jiaxun Yang
- <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250224135321.36603-2-phasta@kernel.org>
- <20250224135321.36603-6-phasta@kernel.org>
- <f1c3e538e19aca7fd46dd7f10da190d691bace83.camel@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <f1c3e538e19aca7fd46dd7f10da190d691bace83.camel@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 06/12] badblocks: fix the using of MAX_BADBLOCKS
+To: Zhu Yanjun <yanjun.zhu@linux.dev>,
+ Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, yukuai3@huawei.com,
+ dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ ira.weiny@intel.com, dlemoal@kernel.org, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-7-zhengqixing@huaweicloud.com>
+ <f8ad5677-5fc9-468e-a888-8cd55c3a37d7@linux.dev>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <f8ad5677-5fc9-468e-a888-8cd55c3a37d7@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:_Ch0CgAne8UQir1naVwhEw--.30950S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZryfKr47Wr47Jr48tr48tFb_yoW8CryxpF
+	sYq3W5GrWUGr18Xa1UZF1Yqry8Ww1xJay8Wa1rXa4UCry5Jwn2qrZ7Xw4YgryUXr4xWF1v
+	qF1Y9345Z34xCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBqb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI
+	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
+	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0xcTPUUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
-在 2/25/25 3:16 PM, Philipp Stanner 写道:
-> On Mon, 2025-02-24 at 14:53 +0100, Philipp Stanner wrote:
->> From: Philipp Stanner <pstanner@redhat.com>
+
+在 2025/2/21 18:09, Zhu Yanjun 写道:
+> 
+> On 21.02.25 09:11, Zheng Qixing wrote:
+>> From: Li Nan <linan122@huawei.com>
 >>
->> The PCI functions
->>    - pcim_iomap_regions() and
->>    - pcim_iomap_table()
->> have been deprecated.
+>> The number of badblocks cannot exceed MAX_BADBLOCKS, but it should be
+>> allowed to equal MAX_BADBLOCKS.
 >>
->> Replace them with their successor function, pcim_iomap_region().
->>
->> Make variable declaration order at closeby places comply with reverse
->> christmas tree order.
->>
->> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>> Fixes: aa511ff8218b ("badblocks: switch to the improved badblock handling 
+>> code")
+>> Signed-off-by: Li Nan <linan122@huawei.com>
 >> ---
->>   .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   | 11 ++++-------
->>   drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 14 ++++++------
->> --
->>   2 files changed, 10 insertions(+), 15 deletions(-)
+>>   block/badblocks.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
->> b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
->> index f3ea6016be68..25ef7b9c5dce 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
->> @@ -521,10 +521,10 @@ static int loongson_dwmac_acpi_config(struct
->> pci_dev *pdev,
->>   static int loongson_dwmac_probe(struct pci_dev *pdev, const struct
->> pci_device_id *id)
->>   {
->>   	struct plat_stmmacenet_data *plat;
->> +	struct stmmac_resources res = {};
->>   	struct stmmac_pci_info *info;
->> -	struct stmmac_resources res;
->>   	struct loongson_data *ld;
->> -	int ret, i;
->> +	int ret;
->>   
->>   	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
->>   	if (!plat)
->> @@ -554,13 +554,11 @@ static int loongson_dwmac_probe(struct pci_dev
->> *pdev, const struct pci_device_id
->>   	pci_set_master(pdev);
->>   
->>   	/* Get the base address of device */
->> -	ret = pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
->> +	res.addr = pcim_iomap_region(pdev, 0, DRIVER_NAME);
->> +	ret = PTR_ERR_OR_ZERO(res.addr);
->>   	if (ret)
->>   		goto err_disable_device;
->>   
->> -	memset(&res, 0, sizeof(res));
->> -	res.addr = pcim_iomap_table(pdev)[0];
->> -
->>   	plat->bsp_priv = ld;
->>   	plat->setup = loongson_dwmac_setup;
->>   	ld->dev = &pdev->dev;
->> @@ -603,7 +601,6 @@ static void loongson_dwmac_remove(struct pci_dev
->> *pdev)
->>   	struct net_device *ndev = dev_get_drvdata(&pdev->dev);
->>   	struct stmmac_priv *priv = netdev_priv(ndev);
->>   	struct loongson_data *ld;
->> -	int i;
-> Just saw that this is a left-over that actually should be in patch 3.
-> Will fix.
->
-Yeah, with this
+>> diff --git a/block/badblocks.c b/block/badblocks.c
+>> index a953d2e9417f..87267bae6836 100644
+>> --- a/block/badblocks.c
+>> +++ b/block/badblocks.c
+>> @@ -700,7 +700,7 @@ static bool can_front_overwrite(struct badblocks *bb, 
+>> int prev,
+>>               *extra = 2;
+>>       }
+>> -    if ((bb->count + (*extra)) >= MAX_BADBLOCKS)
+>> +    if ((bb->count + (*extra)) > MAX_BADBLOCKS)
+>>           return false;
+> 
+> 
+> In this commit,
+> 
+> commit c3c6a86e9efc5da5964260c322fe07feca6df782
+> Author: Coly Li <colyli@suse.de>
+> Date:   Sat Aug 12 01:05:08 2023 +0800
+> 
+>      badblocks: add helper routines for badblock ranges handling
+> 
+>      This patch adds several helper routines to improve badblock ranges
+>      handling. These helper routines will be used later in the improved
+>      version of badblocks_set()/badblocks_clear()/badblocks_check().
+> 
+>      - Helpers prev_by_hint() and prev_badblocks() are used to find the bad
+>        range from bad table which the searching range starts at or after.
+> 
+> The above is changed to MAX_BADBLOCKS. Thus, perhaps, the Fixes tag should 
+> include the above commit?
+> 
+> Except that, I am fine with this commit.
+> 
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+> 
+> Zhu Yanjun
+> 
 
+Thank! I will bring this fix tag in v2.
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
-
+-- 
 Thanks,
-Yanteng
+Nan
 
 
