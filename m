@@ -1,181 +1,167 @@
-Return-Path: <linux-kernel+bounces-531967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81B3A44720
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:59:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA790A44730
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5565D16A22C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13FB13AA7AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173CD19D88B;
-	Tue, 25 Feb 2025 16:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA96D19EEBF;
+	Tue, 25 Feb 2025 16:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XDZezrhO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Plc0twXl"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57DF19CC29
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755D119DFA2;
+	Tue, 25 Feb 2025 16:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502372; cv=none; b=KtqvOELSnbggz/upemobOy92Fb74TGGB5qDjvTk0q+C2vMibe5hnrYN8QppycZq9kRW5g3Ipp1QjTpgz/oTcaAdSPs9nswFgjEiU+TtdCyqAQzw055/3IW5FCtKqq5ubqHvdBDMkuIzrmUriXPtcl1BYN9ExSQGWxJt7CbsIVGY=
+	t=1740502433; cv=none; b=EVGrMPvlB+In0M6iKnixWceeNhlJDjxSkxe052vymWacRzSPFk52Jp4yJyzuPWyooznIodD64WOjnlkBJUtLoQWl/T6FbyCJBTmX7gpBiZwcWeK1Tzd27H5GipFRTa98NCtYjx+cQy6Bek/TjqsDX1OoYBbbboiksq+Doyr8fzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502372; c=relaxed/simple;
-	bh=C+tFZN9mWiR7ZHbPkAa5+JvBoxMYFnFbyHOCCfPiQTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CpZXO6+zTbR7f934n9D1Pzm4GRd0UxcHuqPlcQKm1xp8vcy/Yz1lhgrMo3AP1CyDu14+HYovBXgo0sbew4FJXQ1+HJ/ZO68IUu1wyx1330zxJaMHXV1m1HZ4U5dkHVh0adA8abfF8+EoM3VEKMszvwWkxvw2OuoDzi5JKQQQZGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XDZezrhO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740502369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ybxboWusnqyTjKvs03gdfQgRYiuSjJraiMkFJv9TEnw=;
-	b=XDZezrhOsWknMAzcJtBBOyRhNu5xuRpofBldrODUbIymPpkPf2Jk9BdWb0y0ZB/MvDyIJC
-	trdptuj7VZ5l8/Mj5GAaTJ5Cc9bj0fgsvDedQd/Q8AfQaqEWHJA7XS+BWn5AX2PNd3OCul
-	X0qQ2kseaqA0uMcgCbUtyVsCJGJweqE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-249-S2GpuMlUPE6ZYrkUIvfM5w-1; Tue, 25 Feb 2025 11:52:48 -0500
-X-MC-Unique: S2GpuMlUPE6ZYrkUIvfM5w-1
-X-Mimecast-MFC-AGG-ID: S2GpuMlUPE6ZYrkUIvfM5w_1740502367
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f455a8e43so2238993f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:52:47 -0800 (PST)
+	s=arc-20240116; t=1740502433; c=relaxed/simple;
+	bh=fAZ9eBfqUZ1j1hJE/SKqho5/8TZT9csYTO59O+is2ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiaqxvqZmU5dYjB9W569mI2n61VZRQcG2zSIBfYEJq79vxTlj9uEIEL3VWO6KHoKHjG1876QTx7/CMZBwrjLfUNtZT471xjIl2YrKlxO3xpTSXI/r48eOage2FHEcvFpHY72M2ehidxmzyN/M5/qrUh2VbOHNAXhtja8H/LH6zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Plc0twXl; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46fcbb96ba9so71193991cf.0;
+        Tue, 25 Feb 2025 08:53:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740502429; x=1741107229; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8bdae5F+VYfuzrIBEblkvYdYq9m8ykaFmUEScrQDhWY=;
+        b=Plc0twXlEqOoRpeEMLVcPpeSjFk0AStf0c4d3nftTw7ZnYR6o7vFwng050asiDzigt
+         Wzczr7UJlO70fbjXy8aKu8IIUMnePz4uzwSVzp2jfX4+4j7lXa//iylosisscXAfRgVD
+         3SclX9/sYD6LQuKlDPk9g3t7Pb4dnKgFXB2aL1gT4/y96tAMJ2BfdtWlrgv0KNBcMVXY
+         wdNYD+uw+lIwQQOgBx5R2YxIb1fPnS329ZDbayXqF08AumnhfpFen3msSb1Noosjp+yO
+         tZlXbv+AXRKDyOO4XwfEgZM/j+nhF7GO44Rcl2y1iUjgrouiRM/VBH6iQJhhjQAHZpC6
+         slIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502367; x=1741107167;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ybxboWusnqyTjKvs03gdfQgRYiuSjJraiMkFJv9TEnw=;
-        b=a6fbzDOwJij59WHFZLAhJ1COCI1NBiheoVLSGKBa2O0HJWMw4Bn1aICI77+SfudwwG
-         lHGgZCas+2p4mAmdNvOfxfgGv8NV6z2BkAwWXZkXbUjIGBbk2mVS33+wR/j2H1sOMY3i
-         J/c3FcR/aC23xhF98+AyTq7NDiomQJtwGJ8Zs5DDSFrh+MZzuuL+8yq86LpllYW+iXsI
-         Wmdhdj4w0OTve0OTSqpiT1YA3QtkBGd/GrgU+iysAZ9F2wcUNEIGtlTsKdaqkT12NLue
-         SfpRaOPI6SiCk00pP77Ogtz/oXEY5AiqnvKNB3lV89eds72/obhVhD3HMt/n7Da0RbXN
-         krTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIuESCPfNL4Mwa0Zdz2p8tk+l+SFGKjwpQCSpvl11GmKv+1BjUYj9V6/4vNPEyP6QroZzGjCZjAMGkVVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNG5f2W512rQbJvSRTfbFMx3dDSTHl9AlqXMykNhb5kWQ60wou
-	QAqNFvwxgWZmRvO4zzwd7ywHDC7RyUMSJNR73eDz8TRyfObi9EFzQ2X2Iq41OSsMWkitoPifbaL
-	eY4Abx8prkYomDo6s0VtMXAmC7iu8FW8Csnq4A9O9XMs+GpRSOyWdRQu1H7cCHw==
-X-Gm-Gg: ASbGncscWA8luc6wF0daX9pUYRDj2hVZkrEwT6Yt7WGI8/tft4hicb4HoXPpDyJ4rII
-	WBr744xBwQ5z+e9fSIjGtNtst4lRRqh4atYf8vSRIft9AM6+ICnQQULs6IFvy7wrf8txxp5D5IV
-	Ku+ILG03lUNOYCazdIDv7bMCFKFekV1aU1GaZ2aXymldOGG+vwnN69tCrsM5jgI+k3OFJQG29U0
-	5bsNdewdXJA+SQv5CITgdjTnepRXwNAuf7wiSlg4T2XaW39618FO90mMviGf9+QgmZ5ZGgghExl
-	PfnXcw75A5lzJXkwHga/Y/p5SAjW8vPao2KKBg5RXxIIzoZGT1knHZ5Vph86DpJsN1FlP2GEtCu
-	HKU2kNuxhn3ZbxPuHqrVcHpG0Ae2Wg6bkBkgPDtTPqnc=
-X-Received: by 2002:a05:6000:1a8a:b0:38d:d0ca:fbd5 with SMTP id ffacd0b85a97d-390cc605518mr3098295f8f.22.1740502366835;
-        Tue, 25 Feb 2025 08:52:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHkp5nTxzC3mH+QfPQ2OcYNGz6wgylsGdXkNqE7sPvdo2LKF2uZNL9mmhTxt1LgwuC8gCNgdw==
-X-Received: by 2002:a05:6000:1a8a:b0:38d:d0ca:fbd5 with SMTP id ffacd0b85a97d-390cc605518mr3098250f8f.22.1740502366450;
-        Tue, 25 Feb 2025 08:52:46 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd866ec7sm2868347f8f.3.2025.02.25.08.52.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:52:45 -0800 (PST)
-Message-ID: <d686092d-bc86-4a65-b580-04f0e42e96dc@redhat.com>
-Date: Tue, 25 Feb 2025 17:52:43 +0100
+        d=1e100.net; s=20230601; t=1740502429; x=1741107229;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8bdae5F+VYfuzrIBEblkvYdYq9m8ykaFmUEScrQDhWY=;
+        b=JU8OvTlgx4qeoCI4DxaBTR+DPIxt/skoHvFtz5luWTHhz9X4okJz7SRX2cK5Zx6e8v
+         /7TEQzdHeLn5d2wSqOqDp2/T8MzXW0/AHMAYb7J2KuML6TVdOUi8GdOBr9Zb3YqYWK+w
+         jqYn/Nqafx7Lx+571UNDopZ6xaNSlTbz9fv0CmLK4paQAv0J9yuwv3Hci5ScOw0VeyDc
+         ZlewcLbMpdS9ZFJ2KIHeT4MNF+d8A1anQzDtCrmuQs1OaKGUuiSTrhxKFdxbAw9KVIQ0
+         EAYF9KxKjXo1iLjRq5pEtRNP0FlH5bejMR9NO2ETE4TvRtUwvqLzHbX3G/iyP9K7mpfF
+         5RnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz0oMeBFFjAp34TTQkaeqqC9qWvCbwwK/kYwsPHeN4rho26KB7VQQ2uiDFKAg5AMfqtbMTZy/Mai/mBMy9eg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7FHKi6RcrL/IRER15LTWwZDL5pD5R+OlZgqhgUOQ4G4vc5ppQ
+	VNqtxxuJVpp4GUpvqQjtQs/wlVR4uPTZO+GPTiUG2A+PMza5XJJt
+X-Gm-Gg: ASbGncv3DnUzJVneR/gd56MF1+uFucsrD9ygfv29x+obTRy47Q++x21QaJjUjl6/QFH
+	M+168EBbhdhcUoyEb7wgCDPDNIdf0ZMXDCqPasm0YcTt2Q9SurJyZlMKtWIpC3wIrqzmAaM9XxN
+	BR2QxSV6lafA+OP/sogEf3AnCrQhLjue6avXtU1ETZimJvHcSZGtq6M0+6cAlwBpEi0sQMecdem
+	iRDCHP3cla0VaCg7NS6oOphw6I2ZzcerJ+yQdqvGS8gCZq2gcV9xbnW+/VlmtmVFs4R0EHgHoCH
+	ekFhgaLeFRZCY1amoV8+e+njI1P1NrLIAqygYdpY/Xt7VG6n04xfYYS6u0MTv+T2mNfVVH2wWmw
+	v6Km+r/X118WMQa97
+X-Google-Smtp-Source: AGHT+IEdAlXI9gLk8gU5udKtO9vQTmAP70Bf9d5luqy/QHbshdtVPFsvLdDyNnBaZ3uXW70i7Xahag==
+X-Received: by 2002:ac8:7f51:0:b0:471:eca0:1135 with SMTP id d75a77b69052e-4737725d52emr49743711cf.40.1740502428751;
+        Tue, 25 Feb 2025 08:53:48 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47377e071c2sm11930861cf.10.2025.02.25.08.53.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:53:48 -0800 (PST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id D6A9D1200068;
+	Tue, 25 Feb 2025 11:53:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Tue, 25 Feb 2025 11:53:47 -0500
+X-ME-Sender: <xms:m_W9ZwFv5B-L0DBfAQq7kAKGnBzgm8yW2l2PIA1C9D50RuqMZiv4sQ>
+    <xme:m_W9Z5VF4Eqy8zr1-8gMwEYXNAOcKVHAFccNQYtbTL4sv9U1DinQayLAZSFjRdORR
+    MpUYj4A8AgMzYcxhg>
+X-ME-Received: <xmr:m_W9Z6LWvbK_Wi_dTc8RNr_EzjhVFOkqMghS2nhf5utnVDiLX-XKHE70Ug>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfeikeekffejgeegueevffdtgeefudet
+    leegjeelvdffteeihfelfeehvdegkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
+    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
+    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhush
+    htqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrh
+    gvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehojhgvug
+    grsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
+    ihhlrdgtohhm
+X-ME-Proxy: <xmx:m_W9ZyFb5Uc9vuFNsBspS5ZMZpwOp-UtoC-FzDF5uTv6vjfhSZIN6w>
+    <xmx:m_W9Z2U3N4lvgrEjIQzNPDaZAAL_h5qwwJiaJz48ZB2ApiuHviNmGQ>
+    <xmx:m_W9Z1PwSTDLmDRE0M-iQPWn2LrlbPTgcdSmehM6h03bWVJSEf3xCg>
+    <xmx:m_W9Z912h_abwn0eIpITxof1Fl6TG3E5PHML1Om2fvb9NBPOBlvLdw>
+    <xmx:m_W9Z_X25O6fun012i9ZeKl4W_7EntffNmOOsBAIE40sYD9_6XnQX8zh>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Feb 2025 11:53:47 -0500 (EST)
+Date: Tue, 25 Feb 2025 08:53:46 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
+Message-ID: <Z731mvxPATfDhQ6l@Mac.home>
+References: <20250223072114.3715-1-boqun.feng@gmail.com>
+ <CAH5fLgi2iXKg+Mwze41KHk1rLa1=f7=ofhbq_wz6mxmC4GNe6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] mm/secretmem: set AS_NO_DIRECT_MAP instead of
- special-casing
-To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
-Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
- akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
- graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
- derekmn@amazon.com, jthoughton@google.com
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-3-roypat@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250221160728.1584559-3-roypat@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgi2iXKg+Mwze41KHk1rLa1=f7=ofhbq_wz6mxmC4GNe6w@mail.gmail.com>
 
-On 21.02.25 17:07, Patrick Roy wrote:
-> Make secretmem set AS_NO_DIRECT_MAP on its struct address_space, to drop
-> all the vma_is_secretmem()/secretmem_mapping() checks that are based on
-> checking explicitly for the secretmem ops structures.
+On Mon, Feb 24, 2025 at 12:19:27PM +0100, Alice Ryhl wrote:
+> On Sun, Feb 23, 2025 at 8:21 AM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > To provide examples on usage of `Guard::lock_ref()` along with the unit
+> > test, an "assert a lock is held by a guard" example is added.
+> >
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 > 
-> This drops a optimization in gup_fast_folio_allowed() where
-> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
-> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
-> by default"), so the secretmem check did not actually end up elided in
-> most cases anymore anyway.
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 > 
-> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
-> ---
 
-Ah, there it is. Can both patches somehow be squashed?
+Thanks!
 
--- 
-Cheers,
+> > This depends on Alice's patch:
+> >
+> >         https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a@google.com/
+> >
+> > I'm also OK to fold this in if Alice thinks it's fine.
+> 
+> I think we can just keep two patches :)
+> 
 
-David / dhildenb
+Fine by me.
 
+Regards,
+Boqun
+
+> Alice
 
