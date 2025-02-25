@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-532288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD4DA44B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:09:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D958AA44B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675DD3B49CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:08:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18FFD7A9C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7A120DD74;
-	Tue, 25 Feb 2025 19:08:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E27C1CEAB2;
-	Tue, 25 Feb 2025 19:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BADE1A2567;
+	Tue, 25 Feb 2025 19:15:12 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9672A1917F1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740510482; cv=none; b=lm3OcsYzE68LypdiWXjyqtlXENQyL0tWx8viHrFTNCRQhTdpZrSX6Nj5XtxhTqH0HrnoPpnBFG6XBgcqZG1giNN5S1R5EETbvlLG4mmnFzEsKKON8oJiJlIcdmStp2UmKaqzlZVgi/7MzIJsr7qQltVjzvHDbPlmzP69qZUMDWo=
+	t=1740510911; cv=none; b=dWucaMFWafJOXh1GA2up9JYkkckvzv7zl9x6yTJ4jyaNsV+d5Gl2CLsdEao+AnqCOI/ECSAlB2Yzh5LPfGhTqwJUGsEZ87fDu2FxaK1lZQhEHbthsE5aI8nBwoN0Eiiy0haIgFOo8C9c0WFUX3slA2Ge9NdbLn+vTcx4bxB5sCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740510482; c=relaxed/simple;
-	bh=8HFWOPfaQ6julYwmLt/9ypWpA6ib6AebIuo0sdAJ4YQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UecimwBS/3oWbSd07RHmtNJmp8GBWLgtkNxrvqnGSUXa/Cu9feaKE4DAqqHz4vQXwGEvRdizxzrZXW+LcKSWJVPFKEONyrUcTMCt4EeYsyJN0uRh7K10jUofNfm94sbCdKJNKdSIa/G+Z+quh7EW3kBPPpthO80cqYGA6/GmDJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A492152B;
-	Tue, 25 Feb 2025 11:08:16 -0800 (PST)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EBDC3F5A1;
-	Tue, 25 Feb 2025 11:07:58 -0800 (PST)
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-To: linux-sound@vger.kernel.org
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
-Date: Tue, 25 Feb 2025 19:07:46 +0000
-Message-ID: <20250225190746.541587-5-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250225190746.541587-1-vincenzo.frascino@arm.com>
-References: <20250225190746.541587-1-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1740510911; c=relaxed/simple;
+	bh=GE+T00s9Gkl4VgJz8rKYqK53bfXaAZFrgk4B4xLv2Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apRzyO1XDEjis34zvI9PmzD0aHyM7BSe6un7cQ92tuIhkGlrejcBseK4Gs+gOuNnqE7U1DHfj6B0+W++q3xOsyLE6jpPS8h2d9XNrCrGG1guzvzDuoSSO0XyHeo7h3SvpFrD89obGwIopcWJFqwtQk/LDE0hvOSQa9E/2pY00eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.94.2)
+	(envelope-from <laforge@gnumonks.org>)
+	id 1tn0OW-005gaG-FX; Tue, 25 Feb 2025 20:15:04 +0100
+Received: from laforge by nataraja.fritz.box with local (Exim 4.98)
+	(envelope-from <laforge@gnumonks.org>)
+	id 1tn0Ho-00000000kIs-003o;
+	Tue, 25 Feb 2025 20:08:08 +0100
+Date: Tue, 25 Feb 2025 20:08:07 +0100
+From: Harald Welte <laforge@gnumonks.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, david@rowetel.com
+Subject: Re: users of drivers/misc/echo ?
+Message-ID: <Z74VF1Uw5sRVbXhy@nataraja>
+References: <Z7tZhYET41DAoHVf@gallifrey>
+ <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
+ <Z724l3DFJbGevtPF@nataraja>
+ <Z72_EnXyHoDACRk5@gallifrey>
+ <Z73MevharqkC5dt8@nataraja>
+ <Z74OSsZqeboJml9c@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z74OSsZqeboJml9c@gallifrey>
 
-Add Vincenzo Frascino <vincenzo.frascino@arm.com> as Xilinx Sound Driver
-Maintainer.
+Hi Dave,
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tue, Feb 25, 2025 at 06:39:06PM +0000, Dr. David Alan Gilbert wrote:
+> > Actually, looking at DAHDI, I really don't think anyone is still using
+> > the dahdi_echocan_oslec code.  It is disabled by default and only built
+> > if explicitly enabled by the user, and indeed if anyone did that it
+> > would fail to build for any kernels that have moved it out of staging.
+> 
+> It looks like Debian is including and enabling it in it's DKMS build:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index db9588b1065c..98c878b1aa05 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26011,6 +26011,14 @@ S:	Maintained
- F:	drivers/pwm/pwm-xilinx.c
- F:	include/clocksource/timer-xilinx.h
- 
-+XILINX SOUND DRIVERS
-+M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
-+F:	Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-+F:	Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
-+F:	sound/soc/xilinx/*
-+
- XILINX SD-FEC IP CORES
- M:	Derek Kiernan <derek.kiernan@amd.com>
- M:	Dragan Cvetic <dragan.cvetic@amd.com>
+thanks, I didn't realize that.  You could reach out to the Debian maintainer of the package
+if you'd want clarification.
+
 -- 
-2.43.0
-
+- Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
+============================================================================
+"Privacy in residential applications is a desirable marketing option."
+                                                  (ETSI EN 300 175-7 Ch. A6)
 
