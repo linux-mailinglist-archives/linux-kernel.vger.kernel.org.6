@@ -1,425 +1,193 @@
-Return-Path: <linux-kernel+bounces-531786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15DEA444E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:47:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251D7A444EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B7E189494A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F2842021C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444E0156960;
-	Tue, 25 Feb 2025 15:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE191624D4;
+	Tue, 25 Feb 2025 15:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="afa7Jbbs"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kPyHM3yg"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97661199B9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCCC13C80C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498422; cv=none; b=aWL1WozuCqOzuD+zgVkQgPxzgBkEbxWzVMvSmiJku/v8OMBtvP046vILAlr3G0v3XAAFJIdvuBJKfPjODvnH2rI10hTgUWxZssKNhrhpMmtPfr/tYrjuGqU4WRNzCb8UTZENUR7KB8ZKbkXUyxRC58DIOWxy4bojgRm7xRrv37o=
+	t=1740498440; cv=none; b=qboRZO/PMI9eZD/qNOlpBu3MCNreL1cJxjcU5fWZr2lrGkQCDp+ZTYaB2nD5bSEZDjJOR7w7oYWoqIPLVD4OcSPeLcTUvpcvBtffF+5NI/IIl+j0Y32ejahGFDIU/x3tHPzzS5oqeQ3nLJORwJMqJmUinAd8sXLzqk7mYtjBfak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498422; c=relaxed/simple;
-	bh=WaS5q9D9A8BdSRS0NBUGWqDjDBzwj9GEPxqaZXdbuEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TTmRS/7KOP1yJM0zx/a8TxZZtKU4ys3fkZimYYoEezlnuehZIPlY5GzBFqZzuUf99GZUTVoGavAIvx/xr/GJ6icIzpFagOn4otJn5KPrXRB+zMEPURvlOV9Kz632exvrajNytcRHujEqWM1ezJsddu3WLGN6+jLfBowERif1TKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=afa7Jbbs; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C7004429D;
-	Tue, 25 Feb 2025 15:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740498417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bzDPxLUdNty4pQsCfli/sP1l1GeyUx5l4lgbIIDK4uw=;
-	b=afa7Jbbswbg/tCX2EW8J6PC1gR9lNc/MhWqDQCWiD6NLycYXj6zqzvp97z276yIgcliyg0
-	rMZrTIodBz4LfKWeKpyI2uDdxbagx3zejy/DVXCABkLxH40Z94dGTSiod7cZYH3QfrxQ8U
-	GeoKeT4IUlNKgsrBZ88MyIaI7PnyOKCHqKSPNexDGhxzVtGMtfziI26WPBQh/lx2smtUQr
-	6HAfD1BfBWjBBNOdg7BsuTRs4yqnJlFijj0M+2oR+Cz+iauz6SbBv4YuMjr35cvT/qIGFa
-	vgoZoWATskUkoKoCqqFABhDRExDcOxh0B00RH0ehsD8TS1D7kfL4QEoppSTtBA==
-Message-ID: <e98d2da9-139a-48a6-841b-8ef8f94aa7df@bootlin.com>
-Date: Tue, 25 Feb 2025 16:46:56 +0100
+	s=arc-20240116; t=1740498440; c=relaxed/simple;
+	bh=zk6bicPnPeHDRfcDyxulStrgL6rN1JQbN5GdNzuumig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXrN0Hvb4RWZGyILIYqQt6C12SysnXhjjMYHEyFXrOEfAPpA0Aw8CaxgcRGzMpTaW0DCu0jciwGO71IYZWJOsWmBb2Es1fGWqqZW/J7tULccAq2S0qpXRLe+mKbZsRBVbi8wofCWu/bBB5vM20OypTsq0qFzSvWKVyMOFYZASF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kPyHM3yg; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43994ef3872so35624735e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:47:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740498436; x=1741103236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RL7ikpdpwTIHUvgLFfPq1GGLDdUjM4D8YM1CAoVeQq0=;
+        b=kPyHM3ygLymE9N6fyWY1U6Dm1xuSwucDzN+tWH2v2smPJeQtqOsySHFwouBppo2Dpk
+         KGpnzWHjnGapk3tCMN/g2x8IqJGxeR1R0zeIpnVXTzEb3+4jjHzjbpM5+Mk8TZCcRW8q
+         xcLgdAETUHsk1rTPfPnXgYsx6XA++MupBKQCN4g1WpPtKv6tvj3c3RuyGWTSxODP6xNp
+         84ZGtb/Qx6SOdmFW3Lhi8Sr2UG1wmSrXFxlxXAzVg5z76lGKJW47NU7ODfVg8pe3uR8C
+         L4dsHNUGTBc2T+ZePkDe5P/thc9Uw7FnRbMX5+7oQRUIs8iFF7lB3MaZ/DiDgb0m16hN
+         epwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740498436; x=1741103236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RL7ikpdpwTIHUvgLFfPq1GGLDdUjM4D8YM1CAoVeQq0=;
+        b=ezmWhH8zQsZvzox4ChYVtHwMmt3+dxmxTTsnuEb0jljF3WfaNHvPsaKD7+ZIbul0q+
+         2skUdvkZ2rKgXnQXmNvtPNZwJsELb3DUxG4LsPKoPU2e++ws3hieJPnDas5hvC7m9V5k
+         Yi3pKK2+0rpElvWhZJsqhLHumGXMNlkmFEHqm5qVHowH+M3YWSiYcvkJ3WK+7nM29Dns
+         skoZIdo7UgWwpdPZ65/5+H53N1qflOig4Uto/cBC7oakqV6n73dmpcs019Bsaw0Sb2fp
+         NCTmYviOkJ5JSaZKIex9t220sh7UtmATzzWCid2owtPfPN22y4Xw2YiE4Gptffi1rFGj
+         mbPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7nlv3YeDs+ArSX53PqhtNLapJNIxxCo3pgDWzztAo9J2JdnrL+0EUe0NdVVwiBURwbrbGgnbcr0kZg9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBONwi2OwfvgZ5b/gmb28tsMdFDnaZ36HAaE9mcH1u7tJaQ0P
+	FE1JBPkoWgKWAPJ7yUjDdrl/HZ/W0ePrkSJ+iL1iJf88u04aIryBQKP5PcCLRTA=
+X-Gm-Gg: ASbGncv1EqDskrnXdu+UcUCDgTfUYjYVKdbyk9QNCim5o9jf/5XhOW7lQmrg/zU2024
+	VQKoxg1zboQLUU5PY8GUYQ/tHkKH05BrswZLv6uJR5GWfDROekD79IQgf0Mv3+dttOfocm2RmRE
+	hE+jYAqq1/Os7zuqFMRDmhuZqtNsssX0115jIQlUQgtgxtIMk87JIDspP3R4hCgli/dMU2kQyaB
+	nXzmSItGTpubD/tK2FCmVUoQ2yJj8s1CEfYLhDYdO5FkjUGN+Hz2MjDYy7XcNyJVfLwzG/GKi72
+	pmf6kpPu82/OjZ+df3hl/EZIfOAu+U3w9H6C8sgs8F7weWI4MlXsop5OVPZUZuRgDPY/
+X-Google-Smtp-Source: AGHT+IHtPuDfuhLmrc1DEpJvBrIbtOvABx17RUyOzeb8wjvJkw062EMza3VLmzP2KVFZ1hOuW1Hblw==
+X-Received: by 2002:a05:600c:4753:b0:439:a1ef:c238 with SMTP id 5b1f17b1804b1-43ab0f3cc86mr32918495e9.13.1740498436294;
+        Tue, 25 Feb 2025 07:47:16 -0800 (PST)
+Received: from localhost (p200300f65f083b0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f08:3b04::1b9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f23c2sm147993495e9.17.2025.02.25.07.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 07:47:15 -0800 (PST)
+Date: Tue, 25 Feb 2025 16:47:14 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Yu Jiaoliang <yujiaoliang@vivo.com>, Oliver Graute <oliver.graute@kococonnector.com>, 
+	linux-input@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] Input: stmpe-ts - mark OF related data as maybe
+ unused
+Message-ID: <6xoycaft6wnd4sm74f2o4koc7lvyl2mtxp2kc6lc4dzpjvby53@ejm5ssbfzbph>
+References: <20250225145332.1116557-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-To: Maxime Ripard <mripard@kernel.org>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, jose.exposito89@gmail.com,
- dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
- <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
- <20241126-overjoyed-knowing-cuttlefish-c8d0f6@houat>
- <Z2GqEOiVkdgB3IXy@louis-chauvet-laptop>
- <20250219-versatile-smilodon-of-felicity-cbcc4d@houat>
- <Z7XZYVs6LL1gEzIF@phenom.ffwll.local>
- <4e0d66f7-6234-4265-bfbb-a919224ecb2a@bootlin.com>
- <Z7b5OcewxCEsDGo9@phenom.ffwll.local>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <Z7b5OcewxCEsDGo9@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgheehgeevudekvdetfeeifeelveeffffhieevtefhueelheettdeuhfeugfeuueenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoughrihhgohhsihhquhgvihhrrghmvghlohesghhmrghilhdrtghomhdprhgtphhtthhopehmvghlihhsshgrrdhsrhifsehgmhgrihhlr
- dgtohhmpdhrtghpthhtohepmhgrihhrrggtrghnrghlsehrihhsvghuphdrnhgvthdprhgtphhtthhopehhrghmohhhrghmmhgvugdrshgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bmiwcubc5vrvxiy6"
+Content-Disposition: inline
+In-Reply-To: <20250225145332.1116557-1-arnd@kernel.org>
 
 
+--bmiwcubc5vrvxiy6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] [v2] Input: stmpe-ts - mark OF related data as maybe
+ unused
+MIME-Version: 1.0
 
-Le 20/02/2025 à 10:43, Simona Vetter a écrit :
-> On Wed, Feb 19, 2025 at 05:28:37PM +0100, Louis Chauvet wrote:
->> Le 19/02/2025 à 14:15, Simona Vetter a écrit :
->>> On Wed, Feb 19, 2025 at 10:28:56AM +0100, Maxime Ripard wrote:
->>>> On Tue, Dec 17, 2024 at 05:42:56PM +0100, Louis Chauvet wrote:
->>>>> Hi,
->>>>>
->>>>>>> Hi all,
->>>>>>>
->>>>>>> I am also currently working on MST emulation for VKMS. If someone can read
->>>>>>> what I already did and at tell me if my implementation seems on the right
->>>>>>> track it could be nice.
->>>>>>>
->>>>>>> The current status is not very advanced: I can emulate a mst HUB, but not
->>>>>>> a screen. I am currently working on properly emulating the HUB by using an
->>>>>>> other hub.
->>>>>>>
->>>>>>> You can find the branch for this work here:
->>>>>>> https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-mst
->>>
->>> Can't look at this because it's private.
->>
->> Hi Maxime, Sima,
->>
->> Normally, those should work:
->>
+On Tue, Feb 25, 2025 at 03:53:26PM +0100, Arnd Bergmann wrote:
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> When compile tested with W=3D1 on x86_64 with driver as built-in:
+>=20
+>   stmpe-ts.c:371:34: error: unused variable 'stmpe_ts_ids' [-Werror,-Wunu=
+sed-const-variable]
+>=20
+> Ideally this would be referenced from the platform_driver, but since
+> the compatible string is already matched by the mfd driver for its
+> parent device, that would break probing.
+>=20
+> In this case, the of_device_id table just serves as a module alias
+> for loading the driver, while the device itself is probed using
+> the platform device name.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Link: https://lore.kernel.org/lkml/20240403080702.3509288-8-arnd@kernel.o=
+rg/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/input/touchscreen/stmpe-ts.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchsc=
+reen/stmpe-ts.c
+> index a94a1997f96b..3900aa2e3a90 100644
+> --- a/drivers/input/touchscreen/stmpe-ts.c
+> +++ b/drivers/input/touchscreen/stmpe-ts.c
+> @@ -366,7 +366,7 @@ static struct platform_driver stmpe_ts_driver =3D {
+>  };
+>  module_platform_driver(stmpe_ts_driver);
+> =20
+> -static const struct of_device_id stmpe_ts_ids[] =3D {
+> +static const struct of_device_id stmpe_ts_ids[] __maybe_unused =3D {
+>  	{ .compatible =3D "st,stmpe-ts", },
+>  	{ },
+>  };
 
-[1]:https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/vkms-mst[1]:https://github.com/Fomys/linux/tree/vkms-mst
+Following this we have
 
->>
->> I just re-tested, this is broken, probably because I never had the time to
->> properly finish my last idea: simplifying vkms_connector by creating
->> vkms_mst_emulator_root. With the rest of the code (i.e.
->> vkms_mst_hub/display_emulator + vkms_connector), I was able to make this
->> config working:
->>
->> HUB1 -> HUB2 -> DISPLAY1
->>       |       -> DISPLAY2
->>       -> DISPLAY3
->>
->> (working == it was listed properly by modetest + did not report any issue
->> when using a connector with modetest -s)
->>
->> Few things to note: no ConfigFS support, no eBPF support, poorly tested
->> (there are probably multithread/recursion issues)
->>
->> I had to stop working on it because I don't have anymore time, I plan to at
->> least rebase + send an RFC once the VKMS+ConfigFS work is done.
+	MODULE_DEVICE_TABLE(of, stmpe_ts_ids);
 
-I fixed it, so now [1] contains a working mst emulation with dp-aux 
-emulation. It is far from perfect and probably have many flaws, but it 
-works.
+=2E
 
-The last commit creates the following configuration:
+With=20
 
-host 0->0 hub1 1->0 display1
-                2->0 hub2 1->0 display2
-                          2-> Not Connected
-                3-> NC
-                4-> NC
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 30e5b19bafa9..014f033ef1ba 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -250,7 +250,8 @@ extern void cleanup_module(void);
+ extern typeof(name) __mod_device_table__##type##__##name		\
+   __attribute__ ((unused, alias(__stringify(name))))
+ #else  /* !MODULE */
+-#define MODULE_DEVICE_TABLE(type, name)
++#define MODULE_DEVICE_TABLE(type, name)					\
++static const typeof(name) *__mod_device_table__##type##__##name##_ptr __at=
+tribute__((unused)) =3D &(name)
+ #endif
+=20
+ /* Version of form [<epoch>:]<version>[-<extra-version>].
 
->>
->>>>>> I think this is exactly the kind of things where we'll want eBPF I
->>>>>> think. There's no way you'll be able to model each possible test
->>>>>> scenarios for MST through configfs, even more so with a stable
->>>>>> interface.
->>>>>
->>>>> I just spent some time to think about it. I agree that eBPF seems
->>>>> applicable: we want to allows userspace to emulate any MST device, and we
->>>>> don't want to create huge uAPI + whole emulation in the kernel.
->>>>>
->>>>> As most of the protocol is similar accros device kind, I currently built
->>>>> my code around the struct vkms_mst_sideband_helpers to specify only the
->>>>> changed behavior (this way the "write to registers" "parse command"... is
->>>>> only done in one place). The choice of function is not definitive at all
->>>>> (it was just practical at this moment).
->>>>>
->>>>> With eBPF, I know three different way to attach programs to the kernel:
->>>>>    - Using a kprobe/attaching to a function: I can change the behavior of
->>>>>      all the device, there is no way "attach prog1 to hub" and "attach prog2
->>>>>      to screen1", it will be "attach prog1 to the function
->>>>>      `vkms_mst_emulator_handle_transfer_write`, and all the device will be
->>>>>      affected. This should be very easy to implement (maybe it already
->>>>>      works without modification?), but very limited / make userspace stuff
->>>>>      very ugly => Not ideal at all
->>>>>    - Creating a whole architecture to attach eBPF programs in vkms: VKMS
->>>>>      manage the list of attached eBPF programs, call them when it needs...
->>>>>      This is probably the "most flexible" option (in the sense "VKMS can do
->>>>>      whatever we need to fit our usecase"). This seems not trivial to
->>>>>      implement (drm complexity + MST complexity + BPF complexity in the same
->>>>>      driver seems a bad idea, espicially because VKMS don't have a lot of
->>>>>      maintainance and I don't feel confident introducing more complexity)
->>>>>      => Can work, require some work, but may bring more complexity in VKMS
->>>>>    - Using BPF struct_ops: I can "simply" create/complete a struct ops for
->>>>>      diverse mst callbacks (see the proposition bellow). I looked at some
->>>>>      example, this seems to be "easy" to do, and the work in VKMS should be
->>>>>      limited.
->>>>>      => Can work, a bit less flexible than the previous solution, but avoid
->>>>>      a lot of complexity
->>>>>
->>>>> I don't know if I will be able to finish the implementation but I imagine
->>>>> something like that may be a nice interface (may be not possible "as is"):
->>>>>
->>>>> // vkms_mst.c struct_ops that can be filled by userspace with custom
->>>>> // functions
->>>>> // Known limitation: maximum 64 functions in this table
->>>>> struct vkms_mst_ops {
->>>>> 	// Completly overide the transfer function, so the userspace can
->>>>> 	// do whatever he wants (even emulating a complex MST tree
->>>>> 	// without using stuff in vkms)
->>>>> 	handle_transfer(drm_dp_aux_msg);
->>>>>
->>>>> 	// If default transfer function is used, those are the callback
->>>>> 	// you can use (again, they will come with default
->>>>> 	// implementation)
->>>>> 	clear_payload_id_table(..);
->>>>> 	link_address(..);
->>>>> 	enum_path_ressources(..);
->>>>> 	[...]
->>>>>
->>>>> 	// Used to identify this kind of device, in my example the
->>>>> 	// userspace could register "LG_screen", "dell dock", "HP screen",
->>>>> 	// and then configure each mst device with the correct kind
->>>>> 	name = "<unique name for this device kind>",
->>>>>
->>>>> 	// If you want to use the default "hub" implementation, but only
->>>>> 	// tweak one specific behavior, you can use this
->>>>> 	base = "<name of the other structops>"
->>>>> }
->>>>>
->>>>>
->>>>> // Needed to implement eBPF struct_ops, called when userspace registers a
->>>>> // struct_ops of type vkms_mst_ops
->>>>> void register_struct_ops(new_ops...) {
->>>>> 	vkms_registered_ops.append(new_ops).
->>>>> }
->>>>>
->>>>> // In vkms_connector.c
->>>>> // Callback called by drm core to do transfer on the connector
->>>>> void vkms_mst_transfer(aux, msg) {
->>>>> 	mst_emulator = get_mst_emulator(aux);
->>>>>
->>>>> 	ops = vkms_registered_ops.search_for(mst_emulator.name);
->>>>> 	ops->handle_transfer(msg);
->>>>> }
->>>>>
->>>>> // mst_ebpf.c In the BPF program, userspace side
->>>>> void handle_transfer(...) {
->>>>> 	[...]
->>>>> }
->>>>> struct vkms_mst_ops {
->>>>> 	handle_transfer = handle_transfer;
->>>>> 	name = "lg-screen";
->>>>> 	base = "default-screen"
->>>>> }
->>>>
->>>> I don't think MST is the right abstraction there. We should have MST
->>>> related helper functions available to eBPF programs, but we should load
->>>> them at the connector level, ie, implement a full blown connector
->>>> atomic_check for example. It's more flexible and will allow to implement
->>>> other use-cases people have been interested in (like panels).
->>>
->>> So since I can't look at the code I'll just drop my thoughts here.
->>>
->>> - I think validating the MST helpers implementation should be done with
->>>     kunit tests. So these are out of scope for vkms testing I think
->>>     entirely.
->>
->> Yes, I agree with this, and it joins your last comment: the full dp-aux
->> emulation does not belong only to VKMS. I had this idea only because my
->> solution only use the normal core MST implementation (no special handling in
->> VKMS, just pure dp-aux emulation), so technically you could also stress-test
->> drm core with it.
->>
->>> - Next up are the driver implementations. There we might want to be able
->>>     to inject fake mst devices to stress-test driver corner cases. But I
->>>     don't think that's a job for vkms either.
->>
->> I agree, VKMS is not here to test other drivers.
->>
->>> - Now for vkms itself, I think the interesting case here is being able to
->>>     test compositors against funny mst corner-cases, but for that we don't
->>>     really need an mst operation at all. So no dp-aux or anything like that,
->>>     we just hotplug-create connectors with names and PATH property and MST
->>>     type, without any of the kernel-internal presentations for hubs/branch
->>>     points and all that stuff. Because userspace doesn't ever see that.
->>
->> I knew that user space don't really see the MST information (apart from
->> PATH), but I did not think about this solution. This may work well to test
->> user space, I agree!
->>
->> I think we are on the good track with José, he is trying to implement
->> connector hot-creation through ConfigFS [1]. To add "MST emulation", we can
->> "simply" add the PATH property through ConfigFS.
-> 
-> Yeah, I think that's the way to go. Well maybe with a change to always
-> include the PATH property, because currently that's true for all
-> hotpluggable connectors. And we probably want to keep that if we extend it
-> to hotpluggable bridges or similar.
-> 
->> [1]: Few discussions here
->> https://lore.kernel.org/all/Z5zJ1rEZyBEgd7DN@louis-chauvet-laptop/
-> 
-> Agreeing with you, connector hotplug is something we need to tackle as an
-> extension of the basic configfs support, since it's quite complex.
-> 
->>> - Next up is expressing all the funny constraints that can result in,
->>>     across different drivers. For that I think we want ebpf to implement the
->>>     various atomic_check hooks, so that you can implement all the funny
->>>     constraints of mst link bw limitations, but also host-side display
->>>     limitations. And I concur with Maxime that this ebpf support should be
->>>     entirely agnostic and just allow you to attach atomic_check
->>>     implementations to connectors, planes and crtcs. And then maybe one for
->>>     the overall commit, so that global constraints are easier to implement.
->>
->> If I understand correctly, this has nothing to do with VKMS + MST?
->> I don't clearly understand the use case: why do we want the user space to
->> express hardware limitations? If you have already discussed this on the
->> mailing list, can you share the discussion?
-> 
-> Not sure this was discussed in-depth, but when you get into more complex
-> output configurations, there's all kinds of funny hw constraints that pop
-> up. Examples:
-> - Multiple mst outputs on the same physical port share the overall
->    bandwidth. So individually you might be able to light up each connector
->    at max resolution, but if you try to light up all of them, there's a
->    limitation. This is the mst specific case.
-> - There's also lots of display hw constraints, like a limited amount of
->    clocks (fewer than crtc), or memory bw constraints for scanout, and
->    similar things.
-> 
-> The idea is to express these constraints with ebpf programs, so that you
-> can validate that a compositor correctly handles these cases and doesn't
-> try an invalide configuration and then just fails instead of trying to
-> fall back to something that works.
-> 
-> So it's a much bigger issue, but multi-connector mst is a fairly important
-> case here.
+the warning goes away and stmpe_ts_ids isn't included in the .o file
+without having to add __maybe_unused to the driver.
 
-I think I understood. I don't think I will have the time to work on this 
-issue, but it is clearly a good idea. I submitted [2] to add it on the 
-TODO list.
+I would consider that a superior approach.
 
-[2]:https://lore.kernel.org/all/20250225-vkms-update-todo-v1-1-afb1e6f7d714@bootlin.com/ 
-(not yet on lore)
+Best regards
+Uwe
 
-Thanks,
-Louis Chauvet
+--bmiwcubc5vrvxiy6
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> Cheers, Sima
-> 
->>> So summary: MST testing in vkms only needs to look like MST to userspace.
->>> Internally we'll just hand-roll the entire connector hotplug and leave out
->>> everything else. Because testing driver dp mst implementations and the
->>> helpers is better covered through different means.
->>>
->>> Eventually we might want to implement fake i2c and dp-aux implementations
->>> for additional features like TV remote control and fun stuff like that (I
->>> forgot the CEA/HDMI name for these). But I think that's waaaayyyyyy down
->>> the road.
->>
->> I think I am not that far from a full dp-aux emulation, it is precisely what
->> I tried to do in VKMS. I don't have the time to transform it to kunit tests.
->>
->> Thanks a lot for your feedback!
->> Louis Chauvet
->>
->>> Cheers, Sima
->>
->> -- 
->> Louis Chauvet, Bootlin
->> Embedded Linux and Kernel engineering
->> https://bootlin.com
->>
-> 
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAme95gAACgkQj4D7WH0S
+/k41fAgAsiG8eMcqxYHNh+Ky669sked7nMyC/TQEQFV0SUv+wg92u8/vFDlkldP7
+H6WjVz3r08uWIyg04k+7e2ybBjuwwbRgCfHMDsht96y2I0dFuviQ+krb4laT1lty
+TJm0S+x18lKbJ+/wChNRi2JJ5NImAyjHS++f7KzDKWCo1pkNYk4R+mEUkdPeT1T7
+EEY7bC3rgUELAmTkj2+wJCkXgXpLH98JXtQK8d5jjhouR1XpfsGFYf2dk+jKRG80
+lZOE50QtJYOXkT9u0RLFU4R2dAMwsSEWB8lWbbBPiOY9dGdYvSb0+h6/4haQflbG
+0i7od2UQ4QTAXLquHYDOUHpV3+yyuw==
+=/Pv1
+-----END PGP SIGNATURE-----
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+--bmiwcubc5vrvxiy6--
 
