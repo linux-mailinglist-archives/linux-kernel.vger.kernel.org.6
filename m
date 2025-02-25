@@ -1,148 +1,102 @@
-Return-Path: <linux-kernel+bounces-532522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FF8A44EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:30:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4EFA44EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7CA17F64A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:29:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F73E7A1486
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC6D21148B;
-	Tue, 25 Feb 2025 21:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD7520E6FC;
+	Tue, 25 Feb 2025 21:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GZconbnL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zqPQAaKr"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GdepzR04"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069881922DD;
-	Tue, 25 Feb 2025 21:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DAB1A23BD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518953; cv=none; b=YhVIdEP3IUrnFzmlEf6F6cTwLHO4T0Wtvq8QF3WrS7qHRAWU+E0pohh3il0cWS7n06KoDoygBEIz4L0NVCDtUriyamG6jIAgr2M2tTB3J/sBbjUAWU+NlNlH7wY6W/S5ek7EQeZYV5Y1UXev+3otR8Xxjj99ejHwv66R1IKBYmI=
+	t=1740518952; cv=none; b=Vztehf7QaJd/4HLj4UdSdmV5NI6QZAp+uMhxnMiA8q6/di9Dmnifhzsmp+iakYw6aOfrhU/6d0mewQ8GM2R/N1bl2dEM3vQJ5t2UFueFgoudMiMM0d0m2oBHiVwgd7/zlu+iEzG7jOYPRrwAmD+CKytDcDOY91D0qp6+SAY3IWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518953; c=relaxed/simple;
-	bh=FxwfQzdbz6KatbH/+0YlWUJBtEi3hcVntsB9J35auAQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ERP9pJZrFOU8wfJylEJsvcFEIO3gF6iEkxktFpbODLCj0UU7QmnViYH/1D8MDfWtI+0Oj+Ov1geZ0Vsu/Xf1+5Xf0IkUBs97o8MMs722m6FVV8JwjuhyX6EcpukBJhnLprwK2Z6fpgVAuSPxizP9yui3qnABu+M+hF/36tDjfYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GZconbnL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zqPQAaKr; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CE99B1140101;
-	Tue, 25 Feb 2025 16:29:10 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 16:29:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740518950;
-	 x=1740605350; bh=v8iPHUFSnne9b1cDj8M4Dt4vwU+27ni91gVpMbu0RLU=; b=
-	GZconbnLJHwZjSaN7/pqMDjyStBjFpPUkRxHtLaEcpI6AXa/j85uK0FXECc0uFax
-	TG+k6u3SC5H9QLpkr7ksEY+qBDmcuo+z3JlFdpQauE0jO/HQuO7PK/swik8zRPZu
-	zFh0AUvypTGn64NcPQjapv1pkdS8Ooct0T0qUq8S8yCeldK3ZfRgYTJL+G88vrXf
-	qsIi1sVzC75ogpKFJS31knwW7omV8aPnsx7vpXPme1WzcH3t7F41eVn57UBaFItg
-	87VqrnDNrtFI3taLo/PL9XuTMIuEK9FhuQDxpEERMcQ1DLoy7SH6bdlg7nXF/Y7Z
-	WQpktOUWwlEJAkzYigPizg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740518950; x=
-	1740605350; bh=v8iPHUFSnne9b1cDj8M4Dt4vwU+27ni91gVpMbu0RLU=; b=z
-	qPQAaKrYnLn7knnyN0HkR9LO+O/v1OzZeH9bMmTySev+o0+E4AJBI0hikdp3yW0u
-	yO22jBz6S2z0shSTnokMaWEJsTom1MLpyiauOLa+pBtuk7UUotZIaYqnz8o7XdmF
-	16vPpA6yjxNsXnuB8BcqzPrUxAPW4Brnd4TUUBOWh++kNH2vtW4YcVSDR6C6WISN
-	dminVLq683Mq6runo0kldjFGJMC+S1PrdSi1gnP5WsesdXn1AcpGnlEAsowe9zuE
-	gRIHnUrEDLrMtJQCHWJwhXVYqFmsFOrqcA7Lfzo93xL1SedD7cpDpV2C2pu24nb1
-	0uaKLC5H6VHYkZFOujJ2g==
-X-ME-Sender: <xms:Jja-Z06D7Ob1uPFYivGOWE7-Ko3FlJKF97WKFZs1jzv3PVqDpDPv9w>
-    <xme:Jja-Z14Yisjj4ZG-ydvCnp0ibxuFJxi7JNX93u-sPH0nA3paKVOA76Ab6M3gPrCDb
-    UV0Ru9DrV9gxYiljSs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdejkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeekvdeuhfeitdeuieejvedtieeijeefleevffef
-    leekieetjeffvdekgfetuefhgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegtlhhmsehfsgdrtghomhdprhgtphhtthhopehlihiivghtrghoudeshhhu
-    rgifvghirdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtth
-    hopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnrghnugdrjhgrihhn
-    sehorhgrtghlvgdrtghomhdprhgtphhtthhopegushhtvghrsggrsehsuhhsvgdrtghomh
-    dprhgtphhtthhopehfughmrghnrghnrgesshhushgvrdgtohhmpdhrtghpthhtohepfihq
-    uhesshhushgvrdgtohhmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrd
-    gtohhm
-X-ME-Proxy: <xmx:Jja-ZzcsuWbb-CF01DgWVqKWfIJ0cFyrEHM50S3u8XCC2PTVUaKzyQ>
-    <xmx:Jja-Z5KpKNSB4J8skgXAJfFo1hLLE_EGg1LEnuvlSkxEpgLkWT-qXg>
-    <xmx:Jja-Z4IjhQg_2woQqDR167w630MR5T7KYw-QIQpgyrYcN-Qok6pnbA>
-    <xmx:Jja-Z6yGVTfSBaj-BmXPHY6z7WFx3ZAhCgmN0tTqJZ3UzMIHjofVuQ>
-    <xmx:Jja-Z2ycSnzBxyjF4fkEvvvcLPoSEM6E-efm2rwHd4HdnNXNsxxQvYfM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 082A72220071; Tue, 25 Feb 2025 16:29:09 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740518952; c=relaxed/simple;
+	bh=H0nqRbCByViU1xjhp7Dx7fcYBfMIWPdsMoNXbbQoMlg=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=ZEP7XnWaQwEC7YitIUD8rK+/gQHScaXVNg7Idx4gGv3G6LmjI7vDmO3jTkKvIfUzehqOFLM3lpnBn5jqJFgkWaeOqzoNtW9n8xPFiOitWabmKyOJsBxkRZDZYy2c4/QQ1BQMhxfsoYZFj/bJ0HNLyRbVZwyC92gjgdgIDrSrY4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GdepzR04; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 22:28:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Qu Wenruo" <wqu@suse.com>, "Arnd Bergmann" <arnd@kernel.org>,
- "Chris Mason" <clm@fb.com>, "Josef Bacik" <josef@toxicpanda.com>,
- "David Sterba" <dsterba@suse.com>
-Cc: "kernel test robot" <lkp@intel.com>,
- "Johannes Thumshirn" <johannes.thumshirn@wdc.com>,
- "Anand Jain" <anand.jain@oracle.com>, "Filipe Manana" <fdmanana@suse.com>,
- "Li Zetao" <lizetao1@huawei.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <d3917385-c852-490a-b600-7cb5d6d12465@app.fastmail.com>
-In-Reply-To: <1cfc2f43-8ea4-4c39-b543-1f54ba9b284e@suse.com>
-References: <20250225194416.3076650-1-arnd@kernel.org>
- <1cfc2f43-8ea4-4c39-b543-1f54ba9b284e@suse.com>
-Subject: Re: [PATCH 1/2] btrfs: use min_t() for mismatched type comparison
-Content-Type: text/plain; charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740518939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/89WU6W64pAO6mTgkt5TaBrkeX/9/DXa+3FL51mqM/8=;
+	b=GdepzR04DpXYaw7NLiPK67yqbgIcnWkHmV/HYvLDfKunHfcxjaVcJeyO+iuYZGxqAWZatA
+	o57ffZulXDa+NUx3wx+4oLoIPc5A46dEmNjoDFF8i0illZwfzARbuzx7kA/31wCnN9NZG8
+	m4yK4kutNeZoZyEKrpctBq6pfmR5NBw=
+Date: Tue, 25 Feb 2025 21:28:56 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yosry Ahmed" <yosry.ahmed@linux.dev>
+Message-ID: <76526510ba3a81f812d16aabb3b45e2dead2fa35@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH 1/6] x86/bugs: Move the X86_FEATURE_USE_IBPB check into
+ callers
+To: "Sean Christopherson" <seanjc@google.com>
+Cc: x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
+ <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
+ "Pawan Gupta" <pawan.kumar.gupta@linux.intel.com>, "Andy Lutomirski"
+ <luto@kernel.org>, "Paolo Bonzini" <pbonzini@redhat.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <Z74eaeYm_EgHbmNn@google.com>
+References: <20250219220826.2453186-1-yosry.ahmed@linux.dev>
+ <20250219220826.2453186-2-yosry.ahmed@linux.dev>
+ <Z74eaeYm_EgHbmNn@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 25, 2025, at 22:22, Qu Wenruo wrote:
-> =E5=9C=A8 2025/2/26 06:14, Arnd Bergmann =E5=86=99=E9=81=93:
->> From: Arnd Bergmann <arnd@arndb.de>
->>=20
->> loff_t is a signed type, so using min() to compare it against a u64
->> causes a compiler warning:
->>=20
->> fs/btrfs/extent_io.c:2497:13: error: call to '__compiletime_assert_72=
-8' declared with 'error' attribute: min(folio_pos(folio) + folio_size(fo=
-lio) - 1, end) signedness error
->>   2497 |                 cur_end =3D min(folio_pos(folio) + folio_siz=
-e(folio) - 1, end);
->>        |                           ^
->>=20
->> Use min_t() instead.
->>=20
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202502211908.aCcQQyEY-l=
-kp@intel.com/
->> Fixes: aba063bf9336 ("btrfs: prepare extent_io.c for future larger fo=
-lio support")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thanks a lot, those fixes will be merged into the next version.
->
-> For now the series is only for test purposes as there is a backlog of=20
-> subpage block size related patches pending.
+February 25, 2025 at 11:47 AM, "Sean Christopherson" <seanjc@google.com> =
+wrote:
+>=20
+>=20On Wed, Feb 19, 2025, Yosry Ahmed wrote:=20
+>=20>=20
+>=20> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> >  index 6c56d5235f0f3..729a8ee24037b 100644
+> >  --- a/arch/x86/kvm/vmx/vmx.c
+> >  +++ b/arch/x86/kvm/vmx/vmx.c
+> >  @@ -1478,7 +1478,8 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu,=
+ int cpu,
+> >  * may switch the active VMCS multiple times).
+> >  */
+> >  if (!buddy || WARN_ON_ONCE(buddy->vmcs !=3D prev))
+> >  - indirect_branch_prediction_barrier();
+> >  + if (cpu_feature_enabled(X86_FEATURE_USE_IBPB))
+>=20
+>=20Combine this into a single if-statement, to make it readable and beca=
+use as-is
+> the outer if would need curly braces.
+> And since this check will stay around in the form of a static_branch, I=
+ vote to
+> check it first so that the checks on "buddy" are elided if vcpu_load_ib=
+pb is disabled.
+> That'll mean the WARN_ON_ONCE() won't fire if we have a bug and someone=
+ is running
+> with mitigations disabled, but I'm a-ok with that.
 
-Ok, thanks! Please double-check that the calculation in
-patch 2/2 is actually correct though, as I wasn't entirely
-sure about that part.=20
 
-     Arnd
+SGTM, will do that in the next version. Thanks!
 
