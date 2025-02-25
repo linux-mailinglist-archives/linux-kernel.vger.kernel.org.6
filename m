@@ -1,196 +1,157 @@
-Return-Path: <linux-kernel+bounces-531318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68CDA43EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:12:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF20AA43D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973593A08A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819D41710FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981DE20D4F4;
-	Tue, 25 Feb 2025 12:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF915267AE1;
+	Tue, 25 Feb 2025 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sSysr4Xe"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aJ9kvOky"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AD71C861B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355DB19259E;
+	Tue, 25 Feb 2025 11:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485475; cv=none; b=QYDlu+GVhc+vTAQZp4gjkNl3GbUvjfdsvaTmGHFjtgRshMT0791o/Mevff7+23yNiS4DdYgnKl/mZL+FkhKlMzyv1d1IdAoPRiQmkKk/73mrXA3k8ECGH//GIMblCVk9hxcmjzwvI9SO+C/8jhR2GeMNGHPJ65LLVck010HOzfQ=
+	t=1740482975; cv=none; b=gcccb7Gb99/0YBOaLwqyBoFrG2oqZBfQI8nF8E+7Q1POq3IXxmj05Y7itXm9MtIhrp7Q9wt2Hrybh8KLL9V7j7xA6AsplcpATs5gOKTvz4l1NK3OsWhmBH4y0f9yBycINHXtLD4JsI01BUTugthlbraIeSWawhFUj+4HvRWtwG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485475; c=relaxed/simple;
-	bh=mupDgIFSB428VsZ0r0Qf+AsjIPxgiJGMc8QIwD0RPb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=u6rA+sZ+aTWJQyJPp453yQ+kqlyz6EiIggMpX/MmIomBVX+jt59vxrOPhcK/FE6U1FR+bvgTETEKAofzNU91tWB/FKpOPnBD6TzX8k3mhIeFDDim0CERIKgae2XClJiJyzZA1OpfLMgtNMKMOmN5B5VTb8FxSj4nJH+16s+oqXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sSysr4Xe; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250225121111epoutp0171cbc4bcbf861ff669a782a315cbe6c3~nclCSGXPh0780707807epoutp01L
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:11:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250225121111epoutp0171cbc4bcbf861ff669a782a315cbe6c3~nclCSGXPh0780707807epoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740485471;
-	bh=RcQbcIRPhgbrGNK3mt3Ax8w0cEnsBxoR5jzT9YjIjIY=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=sSysr4Xe6XXkvuCGVJ4RxOeIlK8e336x9x6MLX5/UmJf/7uL8rRJRBbxFhQOmxe+b
-	 5pepSservRPa42+zGa344Cti/LJFwKJDk3rgcx0h96as+W8rWThQ3Fed1EfmlHfhXb
-	 QhaSyg9gxcj83ksQr9PK1+JHzg/YOP4bx2xlOpWU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250225121111epcas5p47c4908e94c88acfb74dbcdcef5417044~nclCD_MUp1149311493epcas5p4y;
-	Tue, 25 Feb 2025 12:11:11 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z2GfP4m4jz4x9Pw; Tue, 25 Feb
-	2025 12:11:09 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	19.8E.19933.C53BDB76; Tue, 25 Feb 2025 21:11:08 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250225121108epcas5p21761527ebd3ed503904ae7684af06344~nck-YdcUy1274912749epcas5p2w;
-	Tue, 25 Feb 2025 12:11:08 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250225121108epsmtrp2e5c5da0b405c74d3dbd9aa3ccef555ab~nck-XioJJ0170301703epsmtrp2M;
-	Tue, 25 Feb 2025 12:11:08 +0000 (GMT)
-X-AuditID: b6c32a4a-b87c770000004ddd-9a-67bdb35c9228
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	44.0F.23488.C53BDB76; Tue, 25 Feb 2025 21:11:08 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.6]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250225121106epsmtip1c2363ee1e5c923b84e0fc2dc8438dc03~nck_IkAmQ0342503425epsmtip1b;
-	Tue, 25 Feb 2025 12:11:06 +0000 (GMT)
-From: Anindya Sundar Gayen <anindya.sg@samsung.com>
-To: andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-Subject: [PATCH] i2c-algo-bit: Improve sendbytes() with bus recovery
-Date: Tue, 25 Feb 2025 16:58:50 +0530
-Message-Id: <20250225112850.10057-1-anindya.sg@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7bCmhm7M5r3pBtdu6Fjc/9rBaHFo81Z2
-	i46/XxgtLu+aw2axaOsXdgdWj02rOtk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91W
-	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-	I7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtjzQWRgo+CFWv7zzM2MK7m62Jk
-	55AQMJHos+5i5OIQEtjNKPHxzHE2COcTo8Ts/b2MEM43Rom79zazdzFygjUc2/WeBSKxl1Hi
-	2q/fUC3NTBJtK2exdjFycLAJGEu0PagEaRARCJH41rOfEcRmFjCTmHn3NAuILSzgInG74QQb
-	SDmLgKrEhTnJIGFeAWuJbXdvMUPskpdYveEAM8h4CYF+don5y2YxQiRcJG7tnQplC0u8Or4F
-	6jgpic/v9oLNlBDIl1hyNhsinCNxYPkDJgjbXuLAlTksICXMApoS63fpQ1zGJ9H7+wkTRCev
-	REebEISpIjGxgwVm9uwfO6AO85Bovd8PtlNIIFZi/c5lzBMYZWYhzFzAyLiKUTK1oDg3PbXY
-	tMAoL7UcHivJ+bmbGMHJRstrB+PDBx/0DjEycTAeYpTgYFYS4eXM3JMuxJuSWFmVWpQfX1Sa
-	k1p8iNEUGEYTmaVEk/OB6S6vJN7QxNLAxMzMzMTS2MxQSZy3eWdLupBAemJJanZqakFqEUwf
-	EwenVANTTdC9nyr3fnIqu6mW9i/8oXlSO8drBnN6/rqpETWzV046Kqt0zoGRT3dtRHhh3M9H
-	sns/nPN6tiyo/NOiH0HpV1nnax+fVcL/a0Gibfu6xQq86WaFHSpqK474Lp/6fo5/+fb6S89e
-	iTYcj/vidv3sZP4n5z5ZqbjzrnW7XNEqpbnccmXijmyXZqHoiIenF/xay//7ZyFXz8ys13Jl
-	8TOTg1+s3+3Ht0cu0un3b9Pn7xoMjW7bRZRoTKmKLaqW/5PyQVJ7s9+MSI3gTjOJT6x8lzpf
-	l1fecN2rpb4igLXuWlp77uZ5bUtUpXq175+I6WPaZJ1nLx1U1zs5R3HGorlKp9keCmRnONo8
-	T+LnuaDEUpyRaKjFXFScCABNpo3mvwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJMWRmVeSWpSXmKPExsWy7bCSnG7M5r3pBi3LuS3uf+1gtDi0eSu7
-	RcffL4wWl3fNYbNYtPULuwOrx6ZVnWwefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlbHmgkjB
-	R8GKtf3nGRsYV/N1MXJySAiYSBzb9Z6li5GLQ0hgN6PEulfbWCESUhK3/3cyQtjCEiv/PWeH
-	KGpkkri7eAGQw8HBJmAs0fagEsQUEQiT+LxJB6ScWcBCYuWWg8wgtrCAi8TthhNsICUsAqoS
-	F+Ykg4R5Bawltt29xQwxXV5i9YYDzBMYeRYwMqxilEwtKM5Nz002LDDMSy3XK07MLS7NS9dL
-	zs/dxAgOCy2NHYzvvjXpH2Jk4mA8xCjBwawkwsuZuSddiDclsbIqtSg/vqg0J7X4EKM0B4uS
-	OO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA5NZLy9/S8K/459fX/mhnpuscs31+57L0mu08kz2
-	vpx8q+2Fm0e9+qRDC+Rs21jWf7t5/tDUmUqvLp72Zos6GNodfedy5eTL1bfmFYQ0hGZ8Tj3/
-	p64lsE5jaaJi0c+/H0L2dxyzLkn4u2Ovxf3pFY4HNvtfO31LP7aQ9+6L3zML3ZfypCXxLzud
-	OUcsufuhD29DAquLhO0iricu3y8skF7NXJ1ooCWzK5eZo/HutGL16Qm/Z+aY3f73O4xlitHr
-	I87ywiGS0rnLm8qSLScs17k8+dSEBWcfbGew6Xoqf2DBq6xlwUtKRZ07oj4sWMmy88n7eEOt
-	ibP0gi61bbty+PX1nKKyF3y8TVn3fZz6ZuQpsRRnJBpqMRcVJwIAPS9uJnoCAAA=
-X-CMS-MailID: 20250225121108epcas5p21761527ebd3ed503904ae7684af06344
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250225121108epcas5p21761527ebd3ed503904ae7684af06344
-References: <CGME20250225121108epcas5p21761527ebd3ed503904ae7684af06344@epcas5p2.samsung.com>
+	s=arc-20240116; t=1740482975; c=relaxed/simple;
+	bh=NKedsfUkieXfxiUN7z3yWpWCUJzwcsbZVYDJyCoU/r4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tMss/DrggfFaF+3XdxwBNgKPfTzFwlx/NHDtxZ45ID7MqXcjeiexiVnsana/5VCwzLsSrmGdIOYwBZg7o9apQsZ4LWi1STbBg4IpLRM0cU1H0689W4F3fajCHkLb55l0CWo42WbweAXMAfAeBh79wxxuw/Zfk8PSi/BDhehE8Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aJ9kvOky; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740482973; x=1772018973;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=NKedsfUkieXfxiUN7z3yWpWCUJzwcsbZVYDJyCoU/r4=;
+  b=aJ9kvOkya8DhuPu6V5i0XokyNv6Eh1SSrJ1Qfj/UKSPd6cMPP1MTk+C3
+   I5v6tP07wVR1CDihLGE23DcIa7ZNb5YAYbTaCoPxTXwkoLpHpB278UHqM
+   9xCm6uaKxpk6GXZNTAJcp8CaHElGeQyBAPDxaslHWD1DiTZDJbGNm9vXp
+   BAd5ruAWAys0FRPw13CrPdYz/06KF6rfKvdqpLQ8PDe2SgbEZbx4qJhQC
+   jvILuvitbJtmVnSiObGFFOK8lYsMt63sZOlYIzf3v2js+glITqLg8BHpd
+   Md9eyWz9iOJggEZl3jtkKKCl3sK2M547+ScNig6ig7UHOSAp9yuaudvBD
+   Q==;
+X-CSE-ConnectionGUID: yNkY8SyuSguEtGvlh96iug==
+X-CSE-MsgGUID: 5TzVwhHwQeC/zET2s3a0YQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41198780"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="41198780"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:29:32 -0800
+X-CSE-ConnectionGUID: /fXmTyiFQkG/6ivPziotjA==
+X-CSE-MsgGUID: i7XrO8h1R2mz9UkjF/+iig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121615259"
+Received: from monicael-mobl3 (HELO localhost) ([10.245.246.246])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:29:24 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Abel Vesa
+ <abel.vesa@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Karol Herbst
+ <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
+ <dakr@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, Johan Hovold <johan+linaro@kernel.org>,
+ Imre Deak <imre.deak@intel.com>
+Subject: Re: [PATCH v5 0/4] drm/dp: Rework LTTPR transparent mode handling
+ and add support to msm driver
+In-Reply-To: <frsbcvxcvtp45mh45cld3rzbgl52gomzmzs73crv53pwbc4fns@sygnt6z2avht>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250203-drm-dp-msm-add-lttpr-transparent-mode-set-v5-0-c865d0e56d6e@linaro.org>
+ <frsbcvxcvtp45mh45cld3rzbgl52gomzmzs73crv53pwbc4fns@sygnt6z2avht>
+Date: Tue, 25 Feb 2025 13:29:20 +0200
+Message-ID: <87o6yq5kkv.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Earlier in i2c-algo-bit driver there was no bus recovery logic
-which will help to unlock the i2c bus hangs due to non-responsive
-slave.
+On Fri, 21 Feb 2025, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> On Mon, Feb 03, 2025 at 12:57:55PM +0200, Abel Vesa wrote:
+>> Looking at both i915 and nouveau DP drivers, both are setting the first
+>> LTTPR (if found) in transparent mode first and then in non-transparent
+>> mode, just like the DP v2.0 specification mentions in section 3.6.6.1.
+>> 
+>> Being part of the standard, setting the LTTPR in a specific operation mode
+>> can be easily moved in the generic framework. So do that by adding a new
+>> helper.
+>> 
+>> Then, the msm DP driver is lacking any kind of support for LTTPR handling,
+>> so add it by reading the LTTPR caps for figuring out the number of LTTPRs
+>> found on plug detect and then do exactly what the i915 and nouveau drivers
+>> do with respect to toggling through operating modes, just like the
+>> up-mentioned section from DP spec describes.
+>> 
+>> At some point, link training per sub-segment will probably be needed, but
+>> for now, toggling the operating modes seems to be enough at least for the
+>> X Elite-based platforms that this patchset has been tested on.
+>> 
+>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>
+> [...]
+>> 
+>> ---
+>> Abel Vesa (4):
+>>       drm/dp: Add helper to set LTTPRs in transparent mode
+>>       drm/nouveau/dp: Use the generic helper to control LTTPR transparent mode
+>>       drm/i915/dp: Use the generic helper to control LTTPR transparent mode
+>
+> Lyude, Jani, what would be your preferred way of merging these patches?
+> Would you ack merging of those through drm-misc or would you prefer for
+> the first patch only to be landed to drm-misc, which you can then pull
+> into nouveau and i915 trees.
 
-In this patch we are adding recover_bus() logic to handle bus
-lockups by toggling SCL 9 times and send stop bit. This helps
-release a stuck slave device by forcing it to reset and ensures
-proper bus recovery after an arbitration loss.
+Either way is fine with me, up to you. But please try to ensure these
+get into drm-misc-next pull request by this cycle, so we can backmerge
+and catch up sooner rather than later.
 
-Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
----
- drivers/i2c/algos/i2c-algo-bit.c | 34 ++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index eddf25b90ca8..4f74737e070b 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -29,7 +29,7 @@
- #define bit_dbg(level, dev, format, args...) \
- 	do {} while (0)
- #endif /* DEBUG */
--
-+#define RETRY_PULSE_CNT 9
- /* ----- global variables ---------------------------------------------	*/
- 
- static int bit_test;	/* see if the line-setting functions work	*/
-@@ -223,6 +223,27 @@ static int i2c_inb(struct i2c_adapter *i2c_adap)
- 	return indata;
- }
- 
-+static void recover_bus(struct i2c_algo_bit_data *adap)
-+{
-+	int i;
-+
-+	pr_warn("Attempting I2C bus recovery...\n");
-+
-+	/* Toggle SCL 9 times to attempt recovery */
-+	for (i = 0; i < RETRY_PULSE_CNT; i++) {
-+		sclhi(adap);
-+		udelay(adap->udelay);
-+		scllo(adap);
-+		udelay(adap->udelay);
-+	}
-+
-+	/* Generate a STOP condition */
-+	i2c_stop(adap);
-+	udelay(adap->udelay);
-+
-+	pr_warn("I2C bus recovery completed.\n");
-+}
-+
- /*
-  * Sanity check for the adapter hardware - check the reaction of
-  * the bus lines only if it seems to be idle.
-@@ -248,7 +269,16 @@ static int test_bus(struct i2c_adapter *i2c_adap)
- 	scl = adap->getscl ? getscl(adap) : 1;
- 	if (!scl || !sda) {
- 		pr_warn("%s: bus seems to be busy (scl=%d, sda=%d)\n", name, scl, sda);
--		goto bailout;
-+		recover_bus(adap);
-+
-+		/* Recheck bus status after recovery attempt */
-+		sda =  adap->getsda ? getsda(adap) : 1;
-+		scl =  adap->getscl ? getscl(adap) : 1;
-+
-+		if (!scl || !sda) {
-+			pr_err("%s: bus recovery failed (scl=%d, sda=%d)\n", name, scl, sda);
-+			goto bailout;
-+		}
- 	}
- 
- 	sdalo(adap);
+
+
+>
+>>       drm/msm/dp: Add support for LTTPR handling
+>> 
+>>  drivers/gpu/drm/display/drm_dp_helper.c            | 61 ++++++++++++++++++++++
+>>  .../gpu/drm/i915/display/intel_dp_link_training.c  | 24 ++-------
+>>  drivers/gpu/drm/msm/dp/dp_display.c                | 15 ++++++
+>>  drivers/gpu/drm/nouveau/nouveau_dp.c               | 17 +-----
+>>  include/drm/display/drm_dp_helper.h                |  2 +
+>>  5 files changed, 85 insertions(+), 34 deletions(-)
+>> ---
+>> base-commit: 00f3246adeeacbda0bd0b303604e46eb59c32e6e
+>> change-id: 20241031-drm-dp-msm-add-lttpr-transparent-mode-set-136cd5bfde07
+>> 
+>> Best regards,
+>> -- 
+>> Abel Vesa <abel.vesa@linaro.org>
+>> 
+
 -- 
-2.17.1
-
+Jani Nikula, Intel
 
