@@ -1,161 +1,106 @@
-Return-Path: <linux-kernel+bounces-530693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A48A436F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0166DA43707
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D8A3A9E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89C93BB10A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC6B25B665;
-	Tue, 25 Feb 2025 08:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B9725D551;
+	Tue, 25 Feb 2025 08:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TiNpYwCR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QltTdTC7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08D4A1A;
-	Tue, 25 Feb 2025 08:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404D21577D;
+	Tue, 25 Feb 2025 08:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470797; cv=none; b=YUJ/qVs8e+MbZIle4Ltva0FM7ZbMm5L+BabgS/FKFtkgnWP75wcPtPw8HSTRTAaUMq3rDoxAwfVyAjTD6SCIhNsLM9h97QWleXU/EWFOCq1t/b7JH/WVv+EC/+3X3Exz/H49J3GGe25a58g0tImzJkF2795/XPJTm7FKJk6yoOo=
+	t=1740470934; cv=none; b=tGkO4OygFPUuB7Bx2g9AlGYF+LhUrySqNlpu4HUWrRf/53xt9oPhPdlxOfmMhEPGpIukPnpaDEYq1A36G4+uG0APCrVqJSyB3d2FIfWllGer39Sz/XcVtNbMjLnnIg5Z5zM7PY3REvjktqo97sTODjmFjKodfMTS93ImFdVU0eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470797; c=relaxed/simple;
-	bh=nTVauD8mUtF0eeGZkVyKSxs/AAJdpcyUJOrGpJCMI/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PVsBUnvwe/4+CKq7SVUkXQ7KrRMoDVaCNzAJGYp0MparqZZ5zuY7IewoK4bh7/t/QG5GD63BPfbx6OMTTga0X/D2ONnSNukKmD3TkOr/mqAMdwtoYz5VJgYrmOVOLJS+vdgYaDkKvU8Sbia3MV0M1lHmRedNX1Sxmkr7eGPDtEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TiNpYwCR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOYRu010037;
-	Tue, 25 Feb 2025 08:06:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5O68Mj+7dFmG6ZMWG24pX3oU3pJbZ3qlRJlq0dxmRLk=; b=TiNpYwCRISTP0hn1
-	oHcyOtzTB+YDPJAXv7bHpSBwZelaQmM0WuhiH5fbCFvnemUbIsqJmiltlsAC9n6K
-	dNNqqRaPMqnw6BBTSt5pRXxdMNGodVeBkf+2smhD+JdqU7uZYX/odFImlbGV9QAe
-	uAXe5l9c2rmTNzqxIeKYzlmFtumBihJdyz6oz7KNgIlSYt92xCaDmQQkzl7s4b25
-	v2pWLMN+E49EXk3ucTU2Ryd9l65lVUAMpDbNqjTCWtBge59vpIwxd7H0U1EUGvVw
-	UfuB78l3jqVwuc90qDxIdowSOu+8qASwXa1znsm7FUdq7D8b6pfKwIcDHTm/GKE6
-	Zk5ovw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xnga4w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 08:06:23 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P86MEc008205
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 08:06:22 GMT
-Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
- 2025 00:06:19 -0800
-Message-ID: <eea55dfa-3dd3-488b-958c-cd20e18a7d7d@quicinc.com>
-Date: Tue, 25 Feb 2025 16:06:16 +0800
+	s=arc-20240116; t=1740470934; c=relaxed/simple;
+	bh=sQAfVvcp7n1ezVIbtvacOocV6jhjjc+IvNo1mmfimAs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D41EiHktmVu9RDjtpqW72wLKG4bcScMQYeK3CXKcehWJymzsUrxKSI7tjn6zZjH3fZe73eRoO0ig3mV8UNFjnpYa6CHR1soOdlFjJgEw9wfyOu3Jpj1CVNi0piTLfDksGYRWpuBjdw63fekFZpLHew/TD29D+MGdyj+OsHqenjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QltTdTC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7FBC4CEDD;
+	Tue, 25 Feb 2025 08:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740470934;
+	bh=sQAfVvcp7n1ezVIbtvacOocV6jhjjc+IvNo1mmfimAs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QltTdTC730e2XfTORBjLo/b8UfZZHeQCwQEBANfSrd3lgpPqdyodmLREjd7sM6I9m
+	 yOWRZ9+4ZYl9EjB97+sSBOv0rTolcXjcuU1rNOiRrgRncJcBlTBf350QHcjtVKrAfT
+	 5mTgpIXWX2iWvvI3xzQECPy4zQIFNVhu0OKqdZERZfSP4IP5GzvuvEHVymTUDi5vEb
+	 HDFcoY3qcmDxMEmtiDtvTcKqlsf1Wb3LSU5BAzSjodWkdxu9rN8rKa8g6Ba09VQFYn
+	 Hp0lWx0rSpJoALlhgDFjH3+rUsW8yGU4SIGE5Bc8X9K4ULxKdRXbZesZAc8RZZ83X8
+	 3PKaUilpjMvJw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Janne Grunau" <j@jannau.net>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis
+ Chamberlain" <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
+ <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
+ <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <CANiq72ns264CeAHPKv9m4rUxS7b8J6+2Mwrk=+xSEQs5wPNoxg@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Tue, 25 Feb 2025 02:51:33 +0100")
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+	<20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org>
+	<20250224223032.GA615664@robin.jannau.net>
+	<d65H4u7WH99Iku0t8049xM2-SeBQVjpkNmYJdZadlG0WENXnb9BmG3U8DXYAQedZSSZ3C4ruU4D_cpEgwxgSxw==@protonmail.internalid>
+	<CANiq72ns264CeAHPKv9m4rUxS7b8J6+2Mwrk=+xSEQs5wPNoxg@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 25 Feb 2025 09:07:51 +0100
+Message-ID: <87ikoyxx9k.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
-        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
-        <quic_devipriy@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
- <20250220102253.755116-3-quic_wenbyao@quicinc.com>
- <20250224073301.aqbw3gxjnupbejfy@thinkpad>
- <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
- <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
- <20250224122439.njrcoyrfsisddoer@thinkpad>
-Content-Language: en-US
-From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-In-Reply-To: <20250224122439.njrcoyrfsisddoer@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aJUzIFz9JneBG7BE_VGzNqbmuREjOsMs
-X-Proofpoint-GUID: aJUzIFz9JneBG7BE_VGzNqbmuREjOsMs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502250053
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2/24/2025 8:24 PM, Manivannan Sadhasivam wrote:
-> On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
->> On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
->>> On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
->>>> On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
->>>>> From: Qiang Yu <quic_qianyu@quicinc.com>
->>>>>
->>>>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->>>>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->>>>> but retains register values, which means PHY setting can be skipped during
->>>>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->>>>> after that.
->>>>>
->>>>> Hence, determine whether the PHY has been enabled in bootloader by
->>>>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->>>>> available, skip BCR reset and PHY register setting to establish the PCIe
->>>>> link with bootloader - programmed PHY settings.
->>>>>
->>>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->>>> Some nitpicks below.
->>>>
->>>>> ---
->> [...]
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+
+> On Mon, Feb 24, 2025 at 11:30=E2=80=AFPM Janne Grunau <j@jannau.net> wrot=
+e:
 >>
->>>>> +     * In this way, no matter whether the PHY settings were initially
->>>>> +     * programmed by bootloader or PHY driver itself, we can reuse them
->>>> It is really possible to have bootloader not programming the init sequence for
->>>> no_csr reset platforms? The comment sounds like it is possible. But I heard the
->>>> opposite.
->>> PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
->>> manually in UEFI shell if we want.
->> IIUC this will not be a concern going forward, and this is a special case
->>
-> I'm wondering how many *special* cases we may have to deal with going forward.
-> Anyhow, I would propose to atleast throw an error and fail probe() if:
+>> The errors go away after exchanging i128 with i64 (while breaking the
+>> parsing for large values).
 >
-> * the platform has no_csr reset AND
-> * bootloader has not initialized the PHY AND
-> * there are no init sequences in the kernel
->
-> - Mani
+> I don't think we can use 128-bit integers unconditionally for all
+> architectures (we could eventually get it to work for some though). So
+> we should do one of the other approaches discussed in the previous
+> versions, like call into the C one.
 
-Hmmm, regardless of whether it's a special case, we can't assume that UEFI
-will enable the PHY supporting no_csr reset on all platforms. It's a bit
-risky. If we make such an assumption, we also won't need to check whether
-the PHY is enabled by UEFI during powering on. We just need to check
-whether no_csr reset is available.
+I don't want to call into the C functions for this task if I can stay in
+safe Rust.
 
-But it makes sense to check the exsitence of PHY senquence. How about
-adding the check in qmp_pcie_init, if a PHY supports no_csr reset and isn't
-initialized in UEFI and there is no cfg->tbls, return error and print some
-error log so that the PCIe controller will fail to probe.
+I think I can solve the issue by parsing into a unsigned version of the
+integer and then test the sign bit, or compare against the max value for
+the signed version.
 
--- 
-With best wishes
-Wenbin
+
+Best regards,
+Andreas Hindborg
 
 
