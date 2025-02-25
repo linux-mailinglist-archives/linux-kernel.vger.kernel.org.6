@@ -1,224 +1,231 @@
-Return-Path: <linux-kernel+bounces-530526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1FAA434D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:50:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457D9A434D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8D43B50D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D5C17A281
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BCE256C7D;
-	Tue, 25 Feb 2025 05:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675362566F1;
+	Tue, 25 Feb 2025 05:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcLSdeYF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MWMy7NN9"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12B7256C6A;
-	Tue, 25 Feb 2025 05:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740462618; cv=none; b=RyStwVwpVnzVdcHcQQXWyd/bjlqW+Mt09OaE3/e6R0Zm/jAVcL4qRmv714s352d8mc2Zkg56YsTzrlPsiz9OjdbublQMqEwTSM/rCSO5VCUkU1LK5itFjNQV2jaUBsHV5yvMG7JmgGg9jndrtT1MvqeH1bSGOIdEfDTORpCSKKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740462618; c=relaxed/simple;
-	bh=t8sdQCeTTX8RFNuY4/UZFxd3x4bZVIhocjtE7FRwH4Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uyhV95JaxDOdZRRP3bA5L/lOU6VuFlGGtZtZv8dOnKW73euKaqnjAmmfx92809vbAzIYVxtWR9OqvfW/42tnQ65o3OSyg4gICqkLoLtMakYHoqDyv8qkaEESnliMDjvoxjgKlDh3dIkqVX3zwXGc5Tv6YaCFCmd+jwGhAHYGWac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcLSdeYF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E389DC4CEDD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13036124;
 	Tue, 25 Feb 2025 05:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740462617;
-	bh=t8sdQCeTTX8RFNuY4/UZFxd3x4bZVIhocjtE7FRwH4Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pcLSdeYF2uwgdKN18NTuJjZ8qapOh38MSQJpaWef4g5OKoGjcqOUHbVcwB4hcbs4x
-	 1J9aY3PUWihYsyOAzFuHyyQuqOiPirQ6pzJmZ0lm0jMpvkSDeNb1QRavHmebGX4mcE
-	 mPvpdDTa/WpJK5/9016U8JPThzqyrPDNzgXoKdZNVFQshtX6Prevy1n5IsdT8MWFHp
-	 6fdC2qmh593yL67IMPMOpJUa7Ek4ZC9qZpRFaBwam0FrigKdfugu4A4T1Qfus8Gyom
-	 p+K251bKoWgVYnBIxuzTjlrUA17DAZ+jDP+sx91/INOAGL9fhi2r74KvrIiDYA4cZz
-	 gmEHPQ1Y0cA5Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,  "Frederic Weisbecker"
- <frederic@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <Z7zVE_CvmIVukkXB@boqun-archlinux> (Boqun Feng's message of "Mon,
-	24 Feb 2025 12:22:43 -0800")
-References: <Z7yUTNEg6gMW0G7b@Mac.home>
-	<CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
-	<Z7ye0MsACNWe7Mbr@Mac.home>
-	<CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
-	<WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
-	<Z7yl-LsSkVIDAfMF@Mac.home> <87msebyxtv.fsf@kernel.org>
-	<4UoaifxB7JgBVKsNQyFR_T8yc3Vtn5TLAEdxdXrojNmOzJSEncopauEyjDpnbqzr8Z74ZWjd_N-bB-BwBS-7aQ==@protonmail.internalid>
-	<Z7zF8KF9qTCr_n4l@boqun-archlinux> <87bjuryvb0.fsf@kernel.org>
-	<063qoO_vJBc-GBX1qwkecM_QHJE1_67s71TdEk7Nlc-sDOjDXhvV3FVKAt_81jGxJY6S-oCv5i-gLatkQPfj3Q==@protonmail.internalid>
-	<Z7zVE_CvmIVukkXB@boqun-archlinux>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 06:50:01 +0100
-Message-ID: <875xkyzi7q.fsf@kernel.org>
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740462615; cv=fail; b=AUAYhQM+g/gIfh+uar8aeHF1Ki6dm9qWk8N8bGQufhrc7pmBWJ2cUZ+lu25z41eppZTCZTd8+kS2CTgadtprRByueSDz/DZy3+F5cI9hMTbz9+rXqUxayXMa9rKVs1mD2H2CV2sWn+qlQkAsHaU2clYPsQavF9e3oyQJpXzdcvU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740462615; c=relaxed/simple;
+	bh=De9HflAEHxMDdFHLBnxanByIo3+poRQLcGt8Pm7AZe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=npAIFpfV03lohoBZ1O7tpqgPMSfglnbTP7wZfp7EK4ySTd9Wgvx8Y+XGuXie9bFLgBCJ4GnGYeLeK9d3scEz0j33lGZ7suVtJntsCG0wCEKacGItTVGiJJXMtFsqaOYcoZ8r3y3voPJ1ZKokhjYizKwfnUHL1CONuTUolR16Nvs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MWMy7NN9; arc=fail smtp.client-ip=40.107.93.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DEJIfG+xGiorMtcotkXmPMx1USePDIcqT5xlM8qe9sX9GQEr/Htu6RQDNcMclMA/VjSk0/S4LkkrhBmnMAYvoArll5UwYC5CYvJc/52zGl+OPzzdqScZawrjSC+rKN1Je/z4/JpyoLgSNZzJ4L57VWRHTyheACHlABJCABErfSLGPS+f6FKeQdZ4vO5v3hkxL8YXnfAhBIjsXnioUGSeg93Rocs1GRKIXynAB6HLpBwGkKb4do4uMYBlgMVFENDp1TaejoJouTp81Ddkm6aMxKUrdbpK34Td57cxlmoLLh/tEhEo/H5/FtoXyPAJFITQBQZhoWSA6GSkpFVJgqrwcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fplV91QASSm99aHRnQEj8sdb8Ms1z7g9mZJRNTp8oLQ=;
+ b=whTG4+UEuA9fw5Cejj5lJ0UVDBKpZS6/5YPwHeZBbun02nAlqxfb356m59+/GvHFs6f1PG9GcY97/6dgDbpYcdJEa90vB/hxjYT5Yzsu9xzKhIn+VluK9vkwnxtu9Kv9/HfBGzVKk95p/hK7pwxAphLgFAotFCclNgods760qpMqsKPhaVvznxAUs2RBdj1iJKznQoQvJYEwxO5vsmWVMS/gEmxGFyVGnZjCDnTUTKITqcrUGy3fIP6Rv9U2Vux8kxOq/ANIj9MLBJcPmd8WS4woyFkcT0q9TUSN8qmQOi/eTDpOSu69Xl6Ny1XpMEJveQfPFtLxxyRInZt6l4cqEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fplV91QASSm99aHRnQEj8sdb8Ms1z7g9mZJRNTp8oLQ=;
+ b=MWMy7NN9zVfi9jjxuKglEddLpTGOvnSHfj9ICkEqbLx/clnZPNoJnG1C+GRUbH4dwpc/bH5jO6oB67gISmJ9RV3gUruok129mo9neCVuMX3ESTYINWCmmDN07NbAg2H4DJdnaXr6RPzPWoP3auhJLa8zq615qG/CXVu/bjTT36Roo+qc3HdPUfPPZKwXK0fWesNQRmWQofGeCMkLYpbJc+jmwwNSp968usuJwAcZ/VtJREpeeqsHVEuWFEwT5sw4WJhctjNLIkfYJKutDA/ec52ZDjB+l3ENr/1bczAOBJ1YLqe1vOT8VUlqO7/4Pykfk46eroXr5ES9CxCgKiUNcg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
+ by PH7PR12MB5952.namprd12.prod.outlook.com (2603:10b6:510:1db::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
+ 2025 05:50:10 +0000
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::4b06:5351:3db4:95f6%6]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 05:50:10 +0000
+Date: Tue, 25 Feb 2025 16:50:05 +1100
+From: Alistair Popple <apopple@nvidia.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, j@jannau.net, 
+	fabien.parent@linaro.org, chrisi.schrefl@gmail.com, paulmck@kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
+Message-ID: <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
+References: <20241219170425.12036-1-dakr@kernel.org>
+ <20241219170425.12036-8-dakr@kernel.org>
+ <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
+ <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
+X-ClientProxiedBy: SY5P300CA0019.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1ff::11) To CY8PR12MB7705.namprd12.prod.outlook.com
+ (2603:10b6:930:84::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|PH7PR12MB5952:EE_
+X-MS-Office365-Filtering-Correlation-Id: e34f3c03-e034-4347-1c5a-08dd556043e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGJFcE9LcFoxZ2NOR1dJcWFiMlZNNjJaS1FrZTJkNXBsa2drUHY2TDFTWHln?=
+ =?utf-8?B?c1I3eUI4SjVoTVJDTmtXN0w5N2xaYjVYVTlzaGVTZi93K0xOd0cvd0JoS1c2?=
+ =?utf-8?B?NTdKVU1OZ01jcTZiQjRHRFREaHVKNkZFaXRKNXZMN3g3WXRUeFZWdFlTcXdZ?=
+ =?utf-8?B?NG1wa3piOWc1SStUMnFTRE1RS1N5anJjTVhIcjNKbnBJS2RTQitMbzZPa1pz?=
+ =?utf-8?B?OFM3RWJpNUducUNFT3lIbU5jSzZWU243RVN5ZVkzeUppUnRWeWNZazVRaFFH?=
+ =?utf-8?B?b1dROGZHZ0ViT0gyRDR4YkQvdUVQa1o1REZIQ081dTFIUG1BYitlQS9FbU1R?=
+ =?utf-8?B?QktGN0UraWF5TFpObDMvQXdWbWlySnEvZnY4OHZ4WTV5bnNUTndvSnVHOWZu?=
+ =?utf-8?B?N1BUMEhYOFhhRDRIL0lSTUlhYzJqT2FLZ3VPbmVlQjg2dHNQUElza0s3emRq?=
+ =?utf-8?B?cStLMmk3YTlCcktScDlhbWpncXJWazBQTUxSU3MxakQwZWhrckdpeGRLcjBP?=
+ =?utf-8?B?NDQvZjA4WVRJOXIrNFVWdVVwazRnZ2lIMCsybzFxZHNnWDR2c2ppWmJqRlY4?=
+ =?utf-8?B?ajBWQ2U3eTFrRkRZZGhORm5XMTNBRzVZZzZmaVNvSlpidTBRQkxwZThoTTAy?=
+ =?utf-8?B?WnF3MUhZclc4ZkIzaWJPMlQxU1UvdURSN2xUOExIb0wzTTlRRGkvNTR5OG9N?=
+ =?utf-8?B?M1JucG5kRGRTU1lsN2xmT2VZem9rYVdvSm1QZ2VZeExuYjVib29oKzJZeXZ0?=
+ =?utf-8?B?aEl0Sk5WWXBYQ2Z4ODYvM3V3OG1iMHNjZlJIKzJrV2FXdFc5b0xjeGdIV013?=
+ =?utf-8?B?WFZMK0VsTWg4WmljdCtQR08rZEVqT0xBSU9GUmMrSnZqL3ZVRGpOTUVZbUdV?=
+ =?utf-8?B?ZkRhdWhBNmlsNUQwdmVrbThNZzlBMURxOFFxY0wwbVYyT2FyNnk0cjNXVFpp?=
+ =?utf-8?B?Q1B5RSttU0V3cTBKYTJlUUdaT1U5MVhtUC93SmRYZ25MZ2VPMU4va09aaVBI?=
+ =?utf-8?B?UWZnb3lMeWhpc1gvSHcyOXhKR01Yb1NyZTM2ZkxEZFV0VUl2cHdhL09lMzBB?=
+ =?utf-8?B?LzdXUHEyKzNDRmpXL1QxLzIvTm15Y0VHTUpkQ1ladm02UDJkZmFFcFI5NVdS?=
+ =?utf-8?B?amxRN0NrNmIyNGdrQ1VzNnNmd0FvOXZ6K0ljY1pKbngwUlIwajFWdzVkeElK?=
+ =?utf-8?B?aHQrV014K0ZNV2x2WlVYOVZiTU84SmdKNDNLUXlCQ0J4TGNzalRkSnEwKzFp?=
+ =?utf-8?B?amZuUTd4aDBmWXduN0dyTURIUW1oTGxwRElvMmRjenNVWGNmUzZnbXZ0a2hp?=
+ =?utf-8?B?YkM3YVpmeGxPdFNrM09rbWJzaHJENUd4dXhQNnFzbjYrWUhsV0RrTWZ5SGZz?=
+ =?utf-8?B?eDk2L09OYWhrM1AyYWFHdi9xenU3N3VlYlFZdnQ5WUc1eENVL3VreDFNalJp?=
+ =?utf-8?B?bmFVeFBpYVZSRVRWb2VDOUx0TVJGTmZOUmZrelNJa3EwSzNNME5MK3VRaVA1?=
+ =?utf-8?B?ZFNCRUlDZUlVNXZVSUdZTUdHSk1xR29NOUdYakNPR2IyWjd0VlNFdlJ5SDhG?=
+ =?utf-8?B?Vm9EVEZDTzJqR2RQQmU4UlczeGZtd01pOTJsMURNOHBuOEJpQ0t3UHU0ZDlT?=
+ =?utf-8?B?TFdIckR0V2ZhdzIzNnNSN1FYWkxveHhudTh0WHVpaVVDMytTZVFJb1N2amdY?=
+ =?utf-8?B?clV6b3RlYjQ2TDJHWm9xTUFZQU5oQmxQVXYxSXdTcTlqaVhGUXB5SzlFeTlz?=
+ =?utf-8?B?YlVyZXZ3cFc2MmMydks4VWlrMDN0MU1qOENRaWxBaUJSVDRJSHJLUHlmSzAr?=
+ =?utf-8?B?MHo0dm5UYzA1YlRQc012UEVpSE1mRFZRRGZmNnFPVlJPNnBjOGhvOER2QWdN?=
+ =?utf-8?Q?usWJJu2wtMkzA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MUpuWWxhOG8weUxndUNMOUNuSndCc2NHRkdpZ1ZRNFU3a0pJSDYydmhyVXZy?=
+ =?utf-8?B?bGVlOHJrK2hjL1dQb1lWNFA3b0o2c1lCRFVETXUvRDNwL21WcFRIdVp6bldh?=
+ =?utf-8?B?eGplVHpOa2VYV050Ty94YVIvUkdOTnMvOXZvS01WRk9DbmxEUG43cWloUWt2?=
+ =?utf-8?B?YnE0R2U4QjRjdmRqYXRqZzlnc2NvY3JMb2RmZGFYSW1IbUozcWE1dVdUQ1F1?=
+ =?utf-8?B?VWVaM3lHamJXSm0zMFhGaGsrNXZHU2FydCtMRXFHcENiVDR6enkxNXp5K0Yv?=
+ =?utf-8?B?NDl1STdPTjVnb2F5VllKaVdSUEp4bUlVZUlqeDgxOTcwWkR4YlQzYjIwNmhC?=
+ =?utf-8?B?N0RKVnNFeVM3bURlNFNqcDNEeHFYYStUSklyYmdLS3VLaFNCODVzdXBMSUJa?=
+ =?utf-8?B?aHVabnFkS20vbUQ2VlBXU08rYmVLdmxGNXhiRnhpbHo1QjdhYkNvSzl4cWUz?=
+ =?utf-8?B?NUZnZFFodzhKTC9vR3NMK0dtRlBtU1Q5cndDS0pYVE1OVTRsT0pHQkFvOUFH?=
+ =?utf-8?B?cDVlK0ZrU3BFUWx4TEtwcWx4Z2xDZjNkdHUrVVdHazZwMzRaZ05kOGpKMXdj?=
+ =?utf-8?B?a0NJKy9hZWUyamw4NEpCbFpQUVUveW1pQy9taC9kd1N0V0VsTXAyRTZCZWph?=
+ =?utf-8?B?V2NmQzByaVVyTlJBdnRnblhqQ1ZCdEd0cStqZzFrMTNJeUdzQ0VPNmgxVzMw?=
+ =?utf-8?B?ZnJXSklYMlNPcU5LQm5URWI4UDFTZzNvNWpSYzgrYnRBUUEvOVpOaUowRnUv?=
+ =?utf-8?B?ZU1jM1hRdEh5V05RZlU3RmlhWFZjSFFvcmhOblh0S3Zlekd3bTlQd0lOdUFm?=
+ =?utf-8?B?UkZLbm9Pb2k3YkR0NDZ2U0llU1p0RnNlTGN6SG1ZakMzVzZHeGJkK1RFVGs5?=
+ =?utf-8?B?L3pzUnROZXBEeU1jVGRSaS9tVzR2MWhKdFdrUlVycGFVOTV6REdxRjU4ZUJk?=
+ =?utf-8?B?azZEUGxnUG56MnhXQklSTTFWZSs2TjVtUDFDSnFlaDQvSko3TzMrYkNacnZT?=
+ =?utf-8?B?V2RrcFRrdHc4YktVd1ZFNW10SnBKbmN3OE43WVFiaUk4T052OFlZVzE2Unl1?=
+ =?utf-8?B?aVNmSXVFR2JUSCs1eUozK0xac3pmV05Lai8vN1M3aHBhWUV6UC9Dc2NxS2w4?=
+ =?utf-8?B?TVlHVUgxNFlzNFlkTXI4bDFaaGptTk4rc0NQZk82emhGc2RPZkczMGlwNkdB?=
+ =?utf-8?B?U0licEJNZkxaa1RHcmk0Vk9CK2VzUmlOZ1hkZjhjc3d0NDZPWjZhaHYzOWVx?=
+ =?utf-8?B?OGd6cklOekpJekt1WHUwZEp0QWx4QW1zdHFFZ1g1REU5cndYaEpONytUY3Bl?=
+ =?utf-8?B?SjdOWU1iS2txa2ZBZjNNa0c3TERtZGV1YkVYNGlQZ3R0UmpiZXY0TFkwc0Fv?=
+ =?utf-8?B?L2QzUEVvZXAxWG9mazFnS2paaVdRTml2bFphMjFrTmpVZlhnZVFRcytTcWZC?=
+ =?utf-8?B?aDgwRVB6a3hRK0M3YW5aNlJ0M0JNYUhsamM0eC9sYlJUUUJqa3NkeVJ3ZldQ?=
+ =?utf-8?B?ay9DT2d0Sm96STE5bUpuM2o5bG5RelFmbGkzS0R1R1hNcG0vRDZlOVFqYU83?=
+ =?utf-8?B?dEVQRFVDYUhTd1o0aGNvSmJSZXpKMFRpdEovWmt1SlVqaUM5Q0xucXNuUWZC?=
+ =?utf-8?B?UnZUbndnUUhybnBQRUVQYXhVMHFDL3NKZTh4Wm5SSmsrSFE0Z2xPU3FPSWtT?=
+ =?utf-8?B?ZGJTVVdpY2tYUldGQklRVk9xaWRTSU1aM1UyNmovUDMrTlFCQlc4bmtIVmpo?=
+ =?utf-8?B?NTM5UUM4anovL1AvTmJGV2Fzb1phNUhzUmpRenk0SWN5SGRJejAwTDZTc0cz?=
+ =?utf-8?B?eC9BNm9kbkhKaEVNdVhCbGdLZ0FWa1pzcXBsZ0FxYXRRVXJoUVdrOFNFTFg5?=
+ =?utf-8?B?Zno3bTVCUmZmVmVWV3M1RVpId2dVa0lHay9yUVlDc3E1YXdJeUE5TDJOSFdB?=
+ =?utf-8?B?MzlqSENaUnNlWDVMSHRwUXRVbG5FaksydVc2eGZoOCtrb0liZEtMck9iUENV?=
+ =?utf-8?B?NDVxRUFncDdtTDZIbk9LRlR2T1lZVm1nOFNwU0FKNEwyQ29LOXBlbXpDSTlm?=
+ =?utf-8?B?MzJrNWg1VnljTGYrOEJwUW9ESk4wL0RuRDFwajZiQVlZdmlrRVBYajJXTVFl?=
+ =?utf-8?Q?FzdPQMBjkF/1X47olyq3JvWJ4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e34f3c03-e034-4347-1c5a-08dd556043e4
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 05:50:10.2315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +wJlgULlBT0Y/2KvEFNWtiSZiEJKCVP4Gx75ripgzyXhrSFtWfmQqza/fEf+UuTIkqtwJH0wslvw4GF6xSDgzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5952
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+On Fri, Feb 21, 2025 at 04:58:59AM +0100, Miguel Ojeda wrote:
+> Hi Alistair,
+> 
+> On Fri, Feb 21, 2025 at 2:20 AM Alistair Popple <apopple@nvidia.com> wrote:
+> >
+> > Is this a known issue or limitation? Or is this a bug/rough edge that still
+> > needs fixing? Or alternatively am I just doing something wrong? Would appreciate
+> > any insights as figuring out what I'd done wrong here was a bit of a rough
+> > introduction!
+> 
+> Yeah, it is a result of our `build_assert!` machinery:
+> 
+>     https://rust.docs.kernel.org/kernel/macro.build_assert.html
+> 
+> which works by producing a build (link) error rather than the usual
+> compiler error and thus the bad error message.
+> 
+> `build_assert!` is really the biggest hammer we have to assert
+> something is true at build time, since it may rely on the optimizer.
+> For instance, if `static_assert!` is usable in that context, it should
+> be instead of `build_assert!`.
+> 
+> Ideally we would have a way to get the message propagated somehow,
+> because it is indeed confusing.
 
-> On Mon, Feb 24, 2025 at 08:52:35PM +0100, Andreas Hindborg wrote:
->> "Boqun Feng" <boqun.feng@gmail.com> writes:
->>
->> > On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
->> >> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
->> >> >> On Mon, Feb 24, 2025 at 5:31=E2=80=AFPM Boqun Feng <boqun.feng@gma=
-il.com> wrote:
->> >> >> >
->> >> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
->> >> >> > >
->> >> >> > > side -- Andreas and I discussed it the other day. The descript=
-ion of
->> >> >> > > the issue has some lines, but perhaps the commit message could
->> >> >> >
->> >> >> > Do you have a link to the issue?
->> >> >>
->> >> >> Sorry, I meant "description of the symbol", i.e. the description f=
-ield
->> >> >> in the patch.
->> >> >>
->> >> >
->> >> > Oh, I see. Yes, the patch description should provide more informati=
-on
->> >> > about what the kconfig means for hrtimer maintainers' development.
->> >>
->> >> Right, I neglected to update the commit message. I will do that if we
->> >> have another version.
->> >>
->> >> >
->> >> >> > I asked because hrtimer API is always available regardless of the
->> >> >> > configuration, and it's such a core API, so it should always be =
-there
->> >> >> > (Rust or C).
->> >> >>
->> >> >> It may not make sense for something that is always built on the C
->> >> >> side, yeah. I think the intention here may be that one can easily
->> >> >> disable it while "developing" a change on the C side. I am not sure
->> >> >> what "developing" means here, though, and we need to be careful --
->> >> >> after all, Kconfig options are visible to users and they do not ca=
-re
->> >> >> about that.
->> >> >>
->> >> >
->> >> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily becaus=
-e as
->> >> > you mentioned below, people can disable Rust entirely during
->> >> > "developing".
->> >> >
->> >> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
->> >> > config provides hrtimer maintainers a way that they could disable R=
-ust
->> >> > hrtimer abstraction (while enabling other Rust component) when they=
-'re
->> >> > developing a change on the C side, right? If so, it's hrtimer
->> >> > maintainers' call, and this patch should provide more information on
->> >> > this.
->> >> >
->> >> > Back to my personal opinion, I don't think this is necessary ;-)
->> >> > Particularly because I can fix if something breaks Rust side, and I=
-'m
->> >> > confident and happy to do so for hrtimer ;-)
->> >>
->> >> As Miguel said, the idea for this came up in the past week in one of =
-the
->> >> mega threads discussing rust in general. We had a lot of "what happens
->> >> if I change something in my subsystem and that breaks rust" kind of
->> >> discussions.
->> >>
->> >
->> > So far we haven't heard such a question from hrtimer maintainers, I
->> > would only add such a kconfig if explicitly requested.
->>
->> It gives flexibility and has no negative side effects. Of course, if it
->
-> The negative side effects that I can think of:
->
-> * It doubles the work for testing, it's a Kconfig after all, so every
->   reasonable test run will have to run at least one build with it and
->   one build without it combined with other configs.
->
-> * It may compelicate other component. For example, if I would like
->   use hrtimer in a doc test of a lock component (the component itself
->   doesn't depend on hrtimer, so it exists with CONFIG_RUST_HRTIMER=3Dn),
->   because I would like to unlock something after a certain time. Now
->   since CONFIG_RUST_HRTIMER can be unset, how would I write the test?
->
->   #[cfg(CONFIG_RUST_HRTIMER)]
->   <use the Rust timer>
->   #[cfg(not(CONFIG_RUST_HRTIMER))]
->   <use the C timer? with unsafe??>
->
-> A new kconfig is not something free. We will need to cope with it in
-> multiple places.
+Are there any proposals or ideas for how we could do that?
 
-Alright, those are valid arguments.
+> I hope that helps.
 
->
->> is unwanted, we can just remove it. But I would like to understand the
->> deeper rationale.
->>
->>
->> >
->> >> For subsystems where the people maintaining the C subsystem is not the
->> >> same people maintaining the Rust abstractions, this switch might be
->> >> valuable. It would allow making breaking changes to the C code of a
->> >> subsystem without refactoring the Rust code in the same sitting. Rath=
-er
->> >
->> > That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
->> > longer-term, more and more people will get more or less Rust knowledge,
->> > and I'd argue that's the direction we should head to. So my vision is a
->> > significant amount of core kernel developers would be able to make C a=
-nd
->> > Rust changes at the same time. It's of course not mandatory, but it's
->> > better collaboration.
->>
->> Having this switch does not prevent longer term plans or change
->> directions of anything. It's simply a convenience feature made
->> available. I also expect the future you envision. But it is an
->> envisioned _future_. It is not the present reality.
->>
->
-> The reality is: we haven't heard hrtimer maintainers ask for this,
-> right? I know you're trying to do something nice, I do appreciate your
-> intention, but if hrtimer maintainers haven't asked for this, maybe it
-> implies that they can handle or trust that wouldn't be a problem?
+Kind of, but given the current state of build_assert's and the impossiblity of
+debugging them should we avoid adding them until they can be fixed?
 
-Thanks for explaining.
+Unless the code absolutely cannot compile without them I think it would be
+better to turn them into runtime errors that can at least hint at what might
+have gone wrong. For example I think a run-time check would have been much more
+appropriate and easy to debug here, rather than having to bisect my changes.
 
-For reference, we do not have this feature in block, and it was not a
-problem yet.
+I was hoping I could suggest CONFIG_RUST_BUILD_ASSERT_ALLOW be made default yes,
+but testing with that also didn't yeild great results - it creates a backtrace
+but that doesn't seem to point anywhere terribly close to where the bad access
+was, I'm guessing maybe due to inlining and other optimisations - or is
+decode_stacktrace.sh not the right tool for this job?
 
-Let's await hrtimer maintainers and follow their lead.
+Thanks.
 
+ - Alistair
 
-
-Best regards,
-Andreas Hindborg
-
-
+> Cheers,
+> Miguel
 
