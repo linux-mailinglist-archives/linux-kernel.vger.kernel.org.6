@@ -1,129 +1,224 @@
-Return-Path: <linux-kernel+bounces-530524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C037A434CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:47:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1FAA434D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177F916FEC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8D43B50D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791C3254856;
-	Tue, 25 Feb 2025 05:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BCE256C7D;
+	Tue, 25 Feb 2025 05:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gkw2BujI"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcLSdeYF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0436124
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12B7256C6A;
+	Tue, 25 Feb 2025 05:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740462470; cv=none; b=kFiwmiDornlIWZfO0EfpeHuBgJC5kdnwqvQq1IQP5aB0ZIW6th8i6Apiews29XT5ZLWjp0/qUambqW3WBNcbFEnzXhRB/nocceOEfvEfHcNbGGxN08KqhsipME68VfYkiCcvovjzilbZqVz+J271390+oznJx0a+L8+0oXzPeRs=
+	t=1740462618; cv=none; b=RyStwVwpVnzVdcHcQQXWyd/bjlqW+Mt09OaE3/e6R0Zm/jAVcL4qRmv714s352d8mc2Zkg56YsTzrlPsiz9OjdbublQMqEwTSM/rCSO5VCUkU1LK5itFjNQV2jaUBsHV5yvMG7JmgGg9jndrtT1MvqeH1bSGOIdEfDTORpCSKKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740462470; c=relaxed/simple;
-	bh=NvoYsgUp5d6NpDXCb8qxI57ENMzFAXlczNdVparJ6oI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N29qjHEiFYlgxwGXpox/iKq0D1u8pb7hrw/r+LWDLftqCnzUMFRh/JI+KYoM5zSSTyTqR4/Yexi4nnZ6qNGxAi/v8SWclet8fgzzfeHscj6uju40wS3dA7r8yxN0+yh5W5Hh1/hVZaGYwJ65JReUrZNRTpwDfLFkSoRS4c1tIyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gkw2BujI; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <edec731d-3370-46b8-baad-b8bf181bcce3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740462467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lewt0tJpzsq7kpEV1YECazH5tYD1TWvuXI8bOOxWE9g=;
-	b=gkw2BujIsqajSKWK+ZB5Y3erHPkTIBnUpNFmJ1dv7pYI5U62rTeCNfZuXkzASsFtc1U1DN
-	Fv9n4RnVwil36lV/vpEviv2J61rQFGnuDm++rZuxCT0pafO9thYP/2gw/Y6FQdSi+Z2Rvt
-	3U5w9bMWFC2or8LlQdleRl3r7u4fN7Q=
-Date: Tue, 25 Feb 2025 13:47:38 +0800
+	s=arc-20240116; t=1740462618; c=relaxed/simple;
+	bh=t8sdQCeTTX8RFNuY4/UZFxd3x4bZVIhocjtE7FRwH4Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uyhV95JaxDOdZRRP3bA5L/lOU6VuFlGGtZtZv8dOnKW73euKaqnjAmmfx92809vbAzIYVxtWR9OqvfW/42tnQ65o3OSyg4gICqkLoLtMakYHoqDyv8qkaEESnliMDjvoxjgKlDh3dIkqVX3zwXGc5Tv6YaCFCmd+jwGhAHYGWac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcLSdeYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E389DC4CEDD;
+	Tue, 25 Feb 2025 05:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740462617;
+	bh=t8sdQCeTTX8RFNuY4/UZFxd3x4bZVIhocjtE7FRwH4Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pcLSdeYF2uwgdKN18NTuJjZ8qapOh38MSQJpaWef4g5OKoGjcqOUHbVcwB4hcbs4x
+	 1J9aY3PUWihYsyOAzFuHyyQuqOiPirQ6pzJmZ0lm0jMpvkSDeNb1QRavHmebGX4mcE
+	 mPvpdDTa/WpJK5/9016U8JPThzqyrPDNzgXoKdZNVFQshtX6Prevy1n5IsdT8MWFHp
+	 6fdC2qmh593yL67IMPMOpJUa7Ek4ZC9qZpRFaBwam0FrigKdfugu4A4T1Qfus8Gyom
+	 p+K251bKoWgVYnBIxuzTjlrUA17DAZ+jDP+sx91/INOAGL9fhi2r74KvrIiDYA4cZz
+	 gmEHPQ1Y0cA5Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,  "Frederic Weisbecker"
+ <frederic@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
+  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <Z7zVE_CvmIVukkXB@boqun-archlinux> (Boqun Feng's message of "Mon,
+	24 Feb 2025 12:22:43 -0800")
+References: <Z7yUTNEg6gMW0G7b@Mac.home>
+	<CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
+	<Z7ye0MsACNWe7Mbr@Mac.home>
+	<CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
+	<WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
+	<Z7yl-LsSkVIDAfMF@Mac.home> <87msebyxtv.fsf@kernel.org>
+	<4UoaifxB7JgBVKsNQyFR_T8yc3Vtn5TLAEdxdXrojNmOzJSEncopauEyjDpnbqzr8Z74ZWjd_N-bB-BwBS-7aQ==@protonmail.internalid>
+	<Z7zF8KF9qTCr_n4l@boqun-archlinux> <87bjuryvb0.fsf@kernel.org>
+	<063qoO_vJBc-GBX1qwkecM_QHJE1_67s71TdEk7Nlc-sDOjDXhvV3FVKAt_81jGxJY6S-oCv5i-gLatkQPfj3Q==@protonmail.internalid>
+	<Z7zVE_CvmIVukkXB@boqun-archlinux>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 25 Feb 2025 06:50:01 +0100
+Message-ID: <875xkyzi7q.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v8 3/5] libbpf: Add libbpf_probe_bpf_kfunc API
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, chen.dylane@gmail.com,
- Tao Chen <dylane.chen@didiglobal.com>
-References: <20250224165912.599068-1-chen.dylane@linux.dev>
- <20250224165912.599068-4-chen.dylane@linux.dev>
- <CAEf4BzYr9WzYbmyq8=nVETDqYvmYmObhD6x+_TQYpSUWxxGLLg@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAEf4BzYr9WzYbmyq8=nVETDqYvmYmObhD6x+_TQYpSUWxxGLLg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/2/25 09:15, Andrii Nakryiko 写道:
-> On Mon, Feb 24, 2025 at 9:02 AM Tao Chen <chen.dylane@linux.dev> wrote:
->>
->> Similarly to libbpf_probe_bpf_helper, the libbpf_probe_bpf_kfunc
->> used to test the availability of the different eBPF kfuncs on the
->> current system.
->>
->> Cc: Tao Chen <dylane.chen@didiglobal.com>
->> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
->> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/lib/bpf/libbpf.h        | 19 ++++++++++++-
->>   tools/lib/bpf/libbpf.map      |  1 +
->>   tools/lib/bpf/libbpf_probes.c | 51 +++++++++++++++++++++++++++++++++++
->>   3 files changed, 70 insertions(+), 1 deletion(-)
->>
-> 
-> [...]
-> 
->> +       buf[0] = '\0';
->> +       ret = probe_prog_load(prog_type, insns, insn_cnt, btf_fd >= 0 ? fd_array : NULL,
->> +                             buf, sizeof(buf));
->> +       if (ret < 0)
->> +               return libbpf_err(ret);
->> +
->> +       if (ret > 0)
->> +               return 1; /* assume supported */
->> +
->> +       /* If BPF verifier recognizes BPF kfunc but it's not supported for
->> +        * given BPF program type, it will emit "calling kernel function
->> +        * <name> is not allowed". If the kfunc id is invalid,
->> +        * it will emit "kernel btf_id <id> is not a function". If BTF fd
->> +        * invalid in module BTF, it will emit "invalid module BTF fd specified" or
->> +        * "negative offset disallowed for kernel module function call". If
->> +        * kfunc prog not dev buound, it will emit "metadata kfuncs require
->> +        * device-bound program".
->> +        */
->> +       if (strstr(buf, "not allowed") || strstr(buf, "not a function") ||
->> +          strstr(buf, "invalid module BTF fd") ||
-> 
-> why is invalid module BTF FD not an error (negative return)?
-> 
->> +          strstr(buf, "negative offset disallowed") ||
->> +          strstr(buf, "device-bound program"))
->> +               return 0;
->> +
->> +       return 1;
->> +}
->> +
->>   int libbpf_probe_bpf_helper(enum bpf_prog_type prog_type, enum bpf_func_id helper_id,
->>                              const void *opts)
->>   {
->> --
->> 2.43.0
->>
+"Boqun Feng" <boqun.feng@gmail.com> writes:
 
-In probe_prog_load, err will be checked and converted into either 0 or 1.
+> On Mon, Feb 24, 2025 at 08:52:35PM +0100, Andreas Hindborg wrote:
+>> "Boqun Feng" <boqun.feng@gmail.com> writes:
+>>
+>> > On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
+>> >> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
+>> >> >> On Mon, Feb 24, 2025 at 5:31=E2=80=AFPM Boqun Feng <boqun.feng@gma=
+il.com> wrote:
+>> >> >> >
+>> >> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
+>> >> >> > >
+>> >> >> > > side -- Andreas and I discussed it the other day. The descript=
+ion of
+>> >> >> > > the issue has some lines, but perhaps the commit message could
+>> >> >> >
+>> >> >> > Do you have a link to the issue?
+>> >> >>
+>> >> >> Sorry, I meant "description of the symbol", i.e. the description f=
+ield
+>> >> >> in the patch.
+>> >> >>
+>> >> >
+>> >> > Oh, I see. Yes, the patch description should provide more informati=
+on
+>> >> > about what the kconfig means for hrtimer maintainers' development.
+>> >>
+>> >> Right, I neglected to update the commit message. I will do that if we
+>> >> have another version.
+>> >>
+>> >> >
+>> >> >> > I asked because hrtimer API is always available regardless of the
+>> >> >> > configuration, and it's such a core API, so it should always be =
+there
+>> >> >> > (Rust or C).
+>> >> >>
+>> >> >> It may not make sense for something that is always built on the C
+>> >> >> side, yeah. I think the intention here may be that one can easily
+>> >> >> disable it while "developing" a change on the C side. I am not sure
+>> >> >> what "developing" means here, though, and we need to be careful --
+>> >> >> after all, Kconfig options are visible to users and they do not ca=
+re
+>> >> >> about that.
+>> >> >>
+>> >> >
+>> >> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily becaus=
+e as
+>> >> > you mentioned below, people can disable Rust entirely during
+>> >> > "developing".
+>> >> >
+>> >> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
+>> >> > config provides hrtimer maintainers a way that they could disable R=
+ust
+>> >> > hrtimer abstraction (while enabling other Rust component) when they=
+'re
+>> >> > developing a change on the C side, right? If so, it's hrtimer
+>> >> > maintainers' call, and this patch should provide more information on
+>> >> > this.
+>> >> >
+>> >> > Back to my personal opinion, I don't think this is necessary ;-)
+>> >> > Particularly because I can fix if something breaks Rust side, and I=
+'m
+>> >> > confident and happy to do so for hrtimer ;-)
+>> >>
+>> >> As Miguel said, the idea for this came up in the past week in one of =
+the
+>> >> mega threads discussing rust in general. We had a lot of "what happens
+>> >> if I change something in my subsystem and that breaks rust" kind of
+>> >> discussions.
+>> >>
+>> >
+>> > So far we haven't heard such a question from hrtimer maintainers, I
+>> > would only add such a kconfig if explicitly requested.
+>>
+>> It gives flexibility and has no negative side effects. Of course, if it
+>
+> The negative side effects that I can think of:
+>
+> * It doubles the work for testing, it's a Kconfig after all, so every
+>   reasonable test run will have to run at least one build with it and
+>   one build without it combined with other configs.
+>
+> * It may compelicate other component. For example, if I would like
+>   use hrtimer in a doc test of a lock component (the component itself
+>   doesn't depend on hrtimer, so it exists with CONFIG_RUST_HRTIMER=3Dn),
+>   because I would like to unlock something after a certain time. Now
+>   since CONFIG_RUST_HRTIMER can be unset, how would I write the test?
+>
+>   #[cfg(CONFIG_RUST_HRTIMER)]
+>   <use the Rust timer>
+>   #[cfg(not(CONFIG_RUST_HRTIMER))]
+>   <use the C timer? with unsafe??>
+>
+> A new kconfig is not something free. We will need to cope with it in
+> multiple places.
 
--- 
-Best Regards
-Tao Chen
+Alright, those are valid arguments.
+
+>
+>> is unwanted, we can just remove it. But I would like to understand the
+>> deeper rationale.
+>>
+>>
+>> >
+>> >> For subsystems where the people maintaining the C subsystem is not the
+>> >> same people maintaining the Rust abstractions, this switch might be
+>> >> valuable. It would allow making breaking changes to the C code of a
+>> >> subsystem without refactoring the Rust code in the same sitting. Rath=
+er
+>> >
+>> > That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
+>> > longer-term, more and more people will get more or less Rust knowledge,
+>> > and I'd argue that's the direction we should head to. So my vision is a
+>> > significant amount of core kernel developers would be able to make C a=
+nd
+>> > Rust changes at the same time. It's of course not mandatory, but it's
+>> > better collaboration.
+>>
+>> Having this switch does not prevent longer term plans or change
+>> directions of anything. It's simply a convenience feature made
+>> available. I also expect the future you envision. But it is an
+>> envisioned _future_. It is not the present reality.
+>>
+>
+> The reality is: we haven't heard hrtimer maintainers ask for this,
+> right? I know you're trying to do something nice, I do appreciate your
+> intention, but if hrtimer maintainers haven't asked for this, maybe it
+> implies that they can handle or trust that wouldn't be a problem?
+
+Thanks for explaining.
+
+For reference, we do not have this feature in block, and it was not a
+problem yet.
+
+Let's await hrtimer maintainers and follow their lead.
+
+
+
+Best regards,
+Andreas Hindborg
+
+
 
