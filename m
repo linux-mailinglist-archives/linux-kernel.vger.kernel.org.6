@@ -1,80 +1,129 @@
-Return-Path: <linux-kernel+bounces-531040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33BAEA43B69
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:24:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F62A43B6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCF73A843C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9643B5E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B70F267F60;
-	Tue, 25 Feb 2025 10:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD099266B51;
+	Tue, 25 Feb 2025 10:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUdWeKNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FUFXCAYa"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C7D265610;
-	Tue, 25 Feb 2025 10:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734FB199931
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478821; cv=none; b=ZnyPYgLEMzu2GMYP0feUysVaHGnfw84RysAMgeuchx1udwE238aq61VGEvNsUT27V9OOplev0HwJXMi1rZQUiWJ9ops3TZbRY3b/MBaA3Ak/uwcZje8cXYK/GdE3dBuXs8K84zdrsJmBYYGlJVJ+SGAFODJi8z5AqfqLnQ5na9g=
+	t=1740478842; cv=none; b=JwmusdT488LQbuNmB9CPhoAH7Zl92CoscjbVEFdJVvSMXuXiI9qD60RFAmd5jH9zur+FNQi03Z1nVN06A3TIyqd0pz9lptrLRmOKsUEVHp7JVxUrvOZUM7LDoP1BGS5RxwBfqEfHTmOa95GbewqvZvG/qUe9bsUXmuG1ELDfuQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478821; c=relaxed/simple;
-	bh=lYM4lD+scZacbH4xPuSPV5g1oNE8/gag3PHCknE58nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QeUPvPKkwZcpYiLebboqqpJKFKyj1F/8CFKzpSIvjQAP3Dzirt49PlGq4ozv91o38Blcmob5IkcopgGtFhWoNdizpIw1reYfd6n5LdwxH/e/CRMK27jALgDq/FnCW1NTn4aVVA4MVoTSDnXOfVk9CsZXF5Qi2wZudrBz8gW45pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUdWeKNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D89C4CEDD;
-	Tue, 25 Feb 2025 10:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740478821;
-	bh=lYM4lD+scZacbH4xPuSPV5g1oNE8/gag3PHCknE58nc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUdWeKNva59QntulRJg48j3lOUbPcTzPz88yR3ZQs3Dv+SF4xILyQjhEDt8AqtjmZ
-	 6dYIm2fYC5Jci5CuAyTekifWgebJUR+/TH0xXDb3s6a73iEtPgthrIYox1qbML9CjV
-	 2Hy/Og1SCQxRqDs2SiQ3GaCLRrOqPZN71rh1m1d3aRZhIoPagR+ESYJG0VxRF+rTyL
-	 WfZBYo5XCmqW0EyimPvRgCBcny7CEFzkyxlpL9ES/VARLTZPUsgpLFhxloKsDFQL3o
-	 OInYfIWZe4XDHYCyjp6+AGV7pJ6MCOT99B5lelF2tjgwWuuyG4F8S0i6+ehaxHUIK2
-	 Q4nQLB/DEZF9Q==
-Date: Tue, 25 Feb 2025 10:20:16 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next 3/7] netconsole: add taskname to extradata entry
- count
-Message-ID: <20250225102016.GO1615191@kernel.org>
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-3-21c86ae8fc0d@debian.org>
+	s=arc-20240116; t=1740478842; c=relaxed/simple;
+	bh=3gNOUzctXpsYMZme95M0wK8S8AMUTll3AeAdeanqip8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d8AskXtXAjeb27OLH/yUfo07PX4kg+OkAdoulOsD8vAbFnXPN9y2knp05vKijff9pwKS8xBSgKlLT7Ilo24pw6sFNKeGak9JOiT4xfjovnwXx8PO/UUZcqO2QtQ7LewYhinrBPYjRreDKveLCmAdruLqq/Fb9iWaj4oO4JjjXwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FUFXCAYa; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb9e81c408so93185766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:20:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740478839; x=1741083639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aMAiIGxOhs/NRNnqxe1Q5w1Z2sjpATlomzVPp7WhyYE=;
+        b=FUFXCAYatArtXh0+NYN2nKxxLEcH13WbLIgXiNf/g4TiC4tRIGXJD3Tw9oVebktSUa
+         PabbevfRoIqoa13TlKs8ABOrtSZAmw86F96l8BfNOdsu4+3/yhjCr5PFnvVtvZ4W/Nl5
+         mUBiw+gz/XByG7GkIu8V6/n4COzM7lb7Sg6gqnHvU1Rb8M5g2pT/dX518E1r0Jg1+5Od
+         0iksDgZLkPWVGVOb+17xzmpxQwZz0oJUwBgF07qd6Hex822SWqdHpLUI0SSWO2gqSQiO
+         EJXOMtPm48X1Nnu+n3cxOZp4KBnjohmxSXP9IOVEneyKX/KfcTrG0jXW310aVbmPXe5N
+         hiJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740478839; x=1741083639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aMAiIGxOhs/NRNnqxe1Q5w1Z2sjpATlomzVPp7WhyYE=;
+        b=oxUMOCVelz3ArmjJkzboVO7wdY5DW9uiSKeVFHDtc5SzOIACLQFwIJSSmTpmwPFsrv
+         LVduLU6dp6RWD7xChtUz9HvmHK1JeCKT/pviTfv7fpzW9NcehAdOUb4FkWn9bdLcWmse
+         /ZPigGl7Vm5U3QjJYw4nCsciwWatR2chIPXaDoxKJpyEfWg9Ia1utMu28eyGTpE1Jo2u
+         TCRTFi2C/C+s2IQcWM664qvoUuOH6JblCsVYXtGXj+oBpzn5zkNFCuZ+9VN5jNnbybBI
+         FeVn5e7tn453t8YgUZdi1wHGF4siq2tU7/K2r+duXmufSm4OIDSCB5p/cvEFB6xm97pw
+         136g==
+X-Forwarded-Encrypted: i=1; AJvYcCWTfcGz0k5ruJustdBM+C97EsOWvtdiEkA2hCNsZ68erHlJhUCGbrVH0YDLEdRAHEnjjHCwEWoKkd7rl+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFWyhg/H6dfN7L78nDrxgOZHaSnBRDm2J6P8CHxY+JtQBI7y2
+	wLf+NzmK2/ij+F0ofVtzJMbVvYYZPb43Mynr9M8F8o4goxVftIZrnL9XGeaoS1c=
+X-Gm-Gg: ASbGncuvid8bil+VYb8H/J7I+I9/7dvJaG7iVaYZgpg9EJFcVu96xypaolC9jXKNm5B
+	YqRjblvVjez5hsIUxp9pa3I9+zZhOmdjGkxuaiZ0k/sA8CVklzmDQRlsz92nU27tptiTjniQupc
+	r4wotQQjDTSLtuhc2CytV20+SfQTvVacNXXVvpboPm7kKCuRQ3+ZMe3TmschoDTGfw0ghNbBay9
+	hM0pnqQTzsuuPTIG966JYWmQgDdVsY2fX2B7qJRBr5V8K+QQck90NRkuY/BiwcG9/olheH2U+eH
+	T/hslUNPsp85gomb8L+W1lkeJ5nvwLM/6NAjkfq2ifqwXieVzannIjZ192d7602+V5G4XFfDNVw
+	=
+X-Google-Smtp-Source: AGHT+IEZErkXFchQBHcjhpLOcz0ntlnRWjG+dqb6HL0cgbpdGQt3G9rUQQ9bKlCBwVV+K4XlTqA59A==
+X-Received: by 2002:a17:906:fb09:b0:abe:9c69:b71e with SMTP id a640c23a62f3a-abe9c69c1d6mr280644666b.3.1740478838702;
+        Tue, 25 Feb 2025 02:20:38 -0800 (PST)
+Received: from krzk-bin.. (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2010decsm116931666b.98.2025.02.25.02.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 02:20:38 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RFC] arm64: dts: rockchip: Switch to undeprecated qcom,calibration-variant on RK3399
+Date: Tue, 25 Feb 2025 11:20:36 +0100
+Message-ID: <20250225102036.107913-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221-netcons_current-v1-3-21c86ae8fc0d@debian.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 05:52:08AM -0800, Breno Leitao wrote:
-> New SYSDATA_TASKNAME feature flag to track when taskname append is enabled.
-> 
-> Additional check in count_extradata_entries() to include taskname in
-> total, counting it as an entry in extradata. This function is used to
-> check if we are not overflowing the number of extradata items.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+The property qcom,ath10k-calibration-variant was deprecated in favor of
+recently introduced generic qcom,calibration-variant, common to all
+Qualcomm Atheros WiFi bindings.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Change will affect out of tree users, like other projects, of this DTS.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
+
+Dependency/RFC!
+
+RFC, because this should be merged release after driver support is
+merged:
+https://lore.kernel.org/linux-devicetree/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org/T/#t
+---
+ arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-dumo.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-dumo.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-dumo.dts
+index 9e4b12ed62cb..be3ae473e562 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-dumo.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-dumo.dts
+@@ -36,6 +36,6 @@ wifi@0,0 {
+ 		compatible = "qcom,ath10k";
+ 		reg = <0x00000000 0x0 0x00000000 0x0 0x00000000>,
+ 		      <0x03000010 0x0 0x00000000 0x0 0x00200000>;
+-		qcom,ath10k-calibration-variant = "GO_DUMO";
++		qcom,calibration-variant = "GO_DUMO";
+ 	};
+ };
+-- 
+2.43.0
 
 
