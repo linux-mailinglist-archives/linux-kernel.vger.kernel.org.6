@@ -1,117 +1,171 @@
-Return-Path: <linux-kernel+bounces-530419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C386EA4333A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:41:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF636A4333B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD433B91F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:41:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949BD7A57E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC88214F9F7;
-	Tue, 25 Feb 2025 02:41:09 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665FC14A627;
+	Tue, 25 Feb 2025 02:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nBZjsb2p"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4344433D1;
-	Tue, 25 Feb 2025 02:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3A0199B9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740451269; cv=none; b=hTeYC9nIl1EyAKCxurLV+8RGhw8bKGzc0/rF9s3MKCLTZdDCkNrHNTjD9D2adXNYE1PAibvJ23HEwTNKGTP9yPuZGjjrmo9RKJp7J0ciY2WMPO2CJemS7VVZgjDDi496Syefc2uL5mFj2VHigUP+h3pY2ETyyDq3K+0r4+9SRDo=
+	t=1740451357; cv=none; b=kOkJ+HbMK4MSHFo1eJugWI6QlYZ+4tcejDfy3Hy2GMSKXUvuhaGJwGi+UNoncJ1+u9nE8Zob6Ro7uynlMfoCfzJt1qC9fFEGimLiZ0/1gjb+KiDWT9efZxc8G8pJjdb4AQY37KI5kfTz2dwpPoTkKLEi1kFjYvj1bQNyV7ttKQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740451269; c=relaxed/simple;
-	bh=bUPGmmze+2yYO/R07OBpXdoDaaUY81P4TEL18u2/P7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jfGh7ncNdAqAp4dZZf+CPbxQkuoAYj5ByMtlrZJ9heqNZ5iHBqWnkCrpH9JCKL4tKGxJXrR2YqRuqdDEFNo6sjoVtQHX2THM9gS63p9dN7rG0tbW5sLiT+pufxDDvTtSvFprFaVzTWxX6XcLhSO7TYdnZSKRWJqBbYliGVZGx8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-545316f80beso4543105e87.1;
-        Mon, 24 Feb 2025 18:41:06 -0800 (PST)
+	s=arc-20240116; t=1740451357; c=relaxed/simple;
+	bh=W8bVT3KdKXtHJWTSCayGdVWSdCOptjFaSdECSOxAXbo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oT+JyW1z35qkOvSb6CcvULloMks1kFJGzsWqNiutpMn+CV0t3A292FVUp9/enSuUd2OU+1EiSzz7ejQVNQQR7nK17M3Ahx4pPragY6BwKkADf5L6RV7tTt+Wp8UUEDK1zvlhIHb+xB4bBHYITquHdXEHr/dbgUDiQ0jLcqaFlx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nBZjsb2p; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fa5af6d743so7922178a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:42:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740451355; x=1741056155; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aZanNtGerLw/d8sQjxfza/brPslbbPWAc0F+e/+SVZc=;
+        b=nBZjsb2p64lSHV3UQfHh8/HkbMUTV3vN+/Y/kzx1VGutq9pBRMQpRddKp+x+GeyIf+
+         kcnVYe1yCGIiaE0aYLwrPZuG/VjJHp3U4wKXCjdudwRZO4fXlnRNy0iaySpnXFh7F+FR
+         4sdWM5mJY8JBfVb5/MNAGaamtHocF8VXhVPViJH+nc36Y/w/E83/5FgNp9lukIPTLpa1
+         IsUxIEwbScXz6s98iGm+OaE3iIMW5xKhwovUpRmlFGf17qS7wypvTefZA/RdmTRUou+7
+         SpUTL3+ZInn8AofNYDrjgayDaGbMZU7ovlgD8u8JeuDYRW/OqHgEf/OjMZ8wUcQMc2k4
+         D6uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740451262; x=1741056062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GDRQSfyrqWB3i9K9f0iWL42UBxbxZ8n8vvLDHbOhuRA=;
-        b=aBXJKGzZFmdCJwyfgBQFFke/nEi9QOQmVWpFmQPl797FqhkXSqKwY0nLt4/oSAVxQv
-         P/Wh6JfPm7+k8yErXJvJaJKD+Cii0OxK3WdU1w/FIxBsDTMAsrZa6D5XoTKMNkkFaOt/
-         5fk7Fpa6U3n/RMYTVaifocc6mDavW+z4kUEe5lPcUFujoYAEkpzrNEX94Etk3d74dRVd
-         ZT0R342aYzP/NuhOK+HH9Rq9vNwpTa3FjmeYIgH0m9snse+YNY5qpWr6JM7woCSAauKE
-         5ST0VXgZw5TFsaUgB5ZlgWsY5X4oqRJPBSE3pbTaB63Qd46Wdw7ef4X7j99/2R+4QZkG
-         ny3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDDUtaVW3NumxzEMn7pqJSUez0BjYQQtWHGxpje/4Mm57fd0x9mNYKJZmAkkV1x5/PTxgU0seBvw1HNhE=@vger.kernel.org, AJvYcCWXwORBXNJmlZJOn//B5beCvR5PqBLs8rI85NGl2Ig3qsJT+MQ72tGjTqIZrumGjEUP6ahxonSg2+Y=@vger.kernel.org, AJvYcCXi3ayEcOfG99pXsIJnd8JXzpcdu5khluGUDqXUfh68z5a/yRVpMtNEIKWnfmdC/0Z2jo71UJdYEExd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyysmYD0tSGrwFnpZVnrVHxWHwzpdqwNKrgAyb+X/vsM5SIMMz2
-	hVRA2a/vc7FnQF29xK1yXKxXIlsNDC73tQXyhZvJg04AI7vzzWVaKlhMfjtO
-X-Gm-Gg: ASbGncvT2lKI/TQ8afo3MVkpeTxqqIy0EFVHAaQzpFK5tuu/4+urSY+8XsnCyc7RPs5
-	4X4nDjJVsPzVRpO1whmKfZJgjRfVL8pO1+fgQXV1vD1BsmQ//ZF/2obA+fkoZMT+yi5z0tJyIxI
-	TDxve680du7A9QBdbBnOLCGFE3HWLcyJMPqfyccoyhvEyVqtirdTF3O62PHT0b+mTOz3KgYsrBu
-	Zeqpj41D6DeIpmxfz6FFgH6/uI2JWFAdRm94rj/rXiSTT9Ew+PDX6sTiy/9xEzKdT2il9/8V7na
-	8inm2h39Qm8QzzWnBhdGta5krItAaJK4OBYrD8BTx5p3Tvt4eeGqXQoHV3E=
-X-Google-Smtp-Source: AGHT+IEZe49LqgId3ON5wmec8micMrYJ/QvPiKVtwo4zNx+AQnvppoevZJTySU3BsuxH1cXelRGslA==
-X-Received: by 2002:a05:6512:104e:b0:545:ae6:d73f with SMTP id 2adb3069b0e04-548510ed625mr495420e87.46.1740451261935;
-        Mon, 24 Feb 2025 18:41:01 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514bda6fsm59294e87.106.2025.02.24.18.41.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 18:41:01 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30613802a6bso53275491fa.1;
-        Mon, 24 Feb 2025 18:41:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWGJbWkaTPB4a+fP5QIaLYsnVGWbhzBvX1JSZ5UOZrIIjLp7xn7lUzKQZILYSRb1LaXyFORZJMjfL+Dkrs=@vger.kernel.org, AJvYcCWH/uNkGq4jrDbOrFfCbst/chgD6yJvE7nRGmH3tSVqgVkIFg/ss/GMVgBGFiG5o7i8LAaOGO4+rKQ=@vger.kernel.org, AJvYcCXVDHrJTrnPJyFVHJfzWXUmOSPHCEdoAZNaF5O4JVKYbMPHM2H6lj5zYlzIT105Cn0EaDOdX6qC8OGF@vger.kernel.org
-X-Received: by 2002:a2e:95ce:0:b0:302:1b18:2bfe with SMTP id
- 38308e7fff4ca-30a80c9a9bdmr5379131fa.25.1740451260110; Mon, 24 Feb 2025
- 18:41:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740451355; x=1741056155;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aZanNtGerLw/d8sQjxfza/brPslbbPWAc0F+e/+SVZc=;
+        b=PWnwcU2BFQpgaPqqYgilrIxx5XiH/ThDxQuoH0HaBQNPgj9a4vj+r21W29o+lRliNC
+         ZH9wN0weKFKY/VaxVCrc3eSJbuCdfwPdEXAY/RuC3YBzQ6o2lHLrcb0MSYM6+74tVbXH
+         SvwG2uKh0teuSAL6JNaJrjE5kpIShswsbVquNp4DLLv6iCdmR+WpdejKMtywJ6hvHYhk
+         c3ezESVlFDHbhQ+JhbhwnrGmmB7lviDPM76AcJoopHjKgRs+LonsYqqEdqP6LaqO5lVC
+         3CQJtiUv7UpUdrUwqV17QxRKBsxEmyYtCyV1gHkpTeOwuonuqiK7xLS3ahP7YOxfuArU
+         Xf+g==
+X-Gm-Message-State: AOJu0YyLjQqUueyo7USdQVpH3s97XMBDXMlMz5oDO9A0JehHPz3ThMm0
+	0+XkON8s55nMGYKG6kC+/hqbuhHl+t39H5QOEwdEYXSyZ823I0TK9qk1Y+YOYV0=
+X-Gm-Gg: ASbGncsxde/Ygaj2h+RaopaZTO1UXdPUZm12F/FAdgmlqAUD9UECs2m9iHD+WhC1eVJ
+	wub3rsgowbpPFZ68bkVqunY8NxT8bO1LKJX4BjOYCu5NcUzatTkbBNDJxKU8Z71bK9ETL/u08JI
+	BLIWQoTWwEoyzq0DmWmKP5WTFDtkYiqqBqCF6xX6SXtQVJmkKxjXhtg+5j0rI+X6aRvaCQVSTPp
+	f35GL4rlxy8Sd0yjlfGJ+sOxtElEl5lnmGa5Hv5v8SW/zlszLHS46LThmpLugGQu1OOVFJG8FHE
+	XCV6DW25uHOq1JJ891UsnQmR2Lx0CBp8w/H66B9e+w==
+X-Google-Smtp-Source: AGHT+IH9Mpxjv6YP2dwaBxfmSmdJtkTNXmqQrMZT7HWbkyf1jCK+dNT3UgG+ZQDzaPqR9bpDWYMqpQ==
+X-Received: by 2002:a17:90b:56ce:b0:2eb:140d:f6df with SMTP id 98e67ed59e1d1-2fe68ac9543mr2456297a91.1.1740451355356;
+        Mon, 24 Feb 2025 18:42:35 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a09d819sm3163885ad.163.2025.02.24.18.42.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 18:42:34 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Mon, 24 Feb 2025 18:42:21 -0800
+Subject: [PATCH] riscv: tracing: Fix __write_overflow_field in
+ ftrace_partial_regs()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-4-d5e4369936bb@collabora.com>
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-4-d5e4369936bb@collabora.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 25 Feb 2025 10:40:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64h2znE6KpbWRPWD6ebN=aJpRiOUej82rRefAXoAW1R6Q@mail.gmail.com>
-X-Gm-Features: AWEUYZneU2nxWc2oRTXD4Kr8TpvpktBVkE5hzoKA5lPTcw0D_0oTFLZls5e3gIQ
-Message-ID: <CAGb2v64h2znE6KpbWRPWD6ebN=aJpRiOUej82rRefAXoAW1R6Q@mail.gmail.com>
-Subject: Re: [PATCH 4/7] power: supply: all: switch psy_cfg from of_node to fwnode
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
-	David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-fix_ftrace_partial_regs-v1-1-54b906417e86@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAAwuvWcC/x2MUQqAIBAFrxL7nWBSBF0lQpZ81kJUrBFBePekz
+ 4GZeSlBBYmG6iXFLUmOvUBTVzSvvC8wEgqTs66zzrUmyuPjpTzDn6yX8OYVSzIIgWPLPToEKvW
+ pKOp/HqecP9rKXD9pAAAA
+X-Change-ID: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
+To: Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2184; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=W8bVT3KdKXtHJWTSCayGdVWSdCOptjFaSdECSOxAXbo=;
+ b=owGbwMvMwCXWx5hUnlvL8Y3xtFoSQ/pePaFXX7s2bp3zKU+I8VTyye6Hcs5ZQW55OV0N6vaia
+ hpWz592lLIwiHExyIopsvBca2BuvaNfdlS0bALMHFYmkCEMXJwCMBFnD0aGFYa+ihbXIxac9TD4
+ 9vNykqqDfbtqVTSP5KIzEwJEHk4QZ/hnnpNy6V9D9YeoQjaz4m0ray4lp765IDFlloPj0tglt+y
+ 5AQ==
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On Tue, Feb 25, 2025 at 7:22=E2=80=AFAM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> When registering a power-supply device, either a of_node or the more
-> recent fwnode can be supplied. Since fwnode can also contain an of_node,
-> let's try to get rid of it.
->
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
+The size of &regs->a0 is unknown, causing the error:
 
->  drivers/power/supply/axp20x_ac_power.c      | 2 +-
->  drivers/power/supply/axp20x_battery.c       | 2 +-
->  drivers/power/supply/axp20x_usb_power.c     | 2 +-
+../include/linux/fortify-string.h:571:25: warning: call to
+'__write_overflow_field' declared with attribute warning: detected write
+beyond size of field (1st parameter); maybe use struct_group()?
+[-Wattribute-warning]
 
-For AXP stuff,
+Fix this by wrapping the required registers in pt_regs with
+struct_group() and reference the group when doing the offending
+memcpy().
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ arch/riscv/include/asm/ftrace.h |  2 +-
+ arch/riscv/include/asm/ptrace.h | 18 ++++++++++--------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
+index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..ec6db1162021fbf4fa48fc87e7984266040aa7d9 100644
+--- a/arch/riscv/include/asm/ftrace.h
++++ b/arch/riscv/include/asm/ftrace.h
+@@ -207,7 +207,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+ {
+ 	struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
+ 
+-	memcpy(&regs->a0, afregs->args, sizeof(afregs->args));
++	memcpy(&regs->a_regs, afregs->args, sizeof(afregs->args));
+ 	regs->epc = afregs->epc;
+ 	regs->ra = afregs->ra;
+ 	regs->sp = afregs->sp;
+diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+index b5b0adcc85c18e15c156de11172a5d7f03ada037..2910231977cb71dac3cc42f2dc32590284204057 100644
+--- a/arch/riscv/include/asm/ptrace.h
++++ b/arch/riscv/include/asm/ptrace.h
+@@ -23,14 +23,16 @@ struct pt_regs {
+ 	unsigned long t2;
+ 	unsigned long s0;
+ 	unsigned long s1;
+-	unsigned long a0;
+-	unsigned long a1;
+-	unsigned long a2;
+-	unsigned long a3;
+-	unsigned long a4;
+-	unsigned long a5;
+-	unsigned long a6;
+-	unsigned long a7;
++	struct_group(a_regs,
++		unsigned long a0;
++		unsigned long a1;
++		unsigned long a2;
++		unsigned long a3;
++		unsigned long a4;
++		unsigned long a5;
++		unsigned long a6;
++		unsigned long a7;
++	);
+ 	unsigned long s2;
+ 	unsigned long s3;
+ 	unsigned long s4;
+
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
+-- 
+- Charlie
+
 
