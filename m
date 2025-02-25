@@ -1,197 +1,114 @@
-Return-Path: <linux-kernel+bounces-530502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5AFA4343F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:42:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F200EA43458
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5405917AFB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38343AA587
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2082505A2;
-	Tue, 25 Feb 2025 04:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C118524F5A5;
+	Tue, 25 Feb 2025 04:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IK4Q1qfa"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THuKP8tQ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6504D5AB;
-	Tue, 25 Feb 2025 04:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6AD4D5AB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740458538; cv=none; b=aRB1q6nTsnjpb68uNuj1uMscLw3Q0LbwdNwEEtT3Co+IbzzVfQTjnly7v9t0becMi/T4hhaqUo1iYjLGmbfQ3Ih7AVtwHGjAnIOS7oMnBSklKmvXoneo1wblI3DSqe2gWfaRQPBODBW6XU/o+U3JXsl63VF0IBtTAsMQD/HHsA8=
+	t=1740458583; cv=none; b=XY93O9mI3r16LqK6H/MJX/vuJlAI2/aillKVdK5OYV1360F08rveVL795RhA6qr7uLTE5Wrfd0vUAa9AX9+pUauWsmUbw7l/vwngxy7TZev4RJEya2NhcDrUGFmKQ08/xKHyt8P6nM2XejFWPucw2BLws2Y9IEjeg47yMYAnibg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740458538; c=relaxed/simple;
-	bh=v9T+B0y3NgzEn7lGEYaaaJwmIjnTy+JIkpd0BYOY/6U=;
+	s=arc-20240116; t=1740458583; c=relaxed/simple;
+	bh=DGZqoc7R40hr25U/Ymra7GCAV4yvZ0OpxJrDNy3WqB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdhXnGuQa5ySrBUcnlVGLhMmiJZOXXeb5jXlTX6fiwMtWLU0jsjCXSI7U4sr6jxpO+JapU663t+9lKUfnT5Cv9sK2gRGCr82K/7DwINiHLe/OaXDKv3nZMZVQDU20y3Q07RxZrn+alJgu6Fo+GnxcP3704h2YatTMoOu6UbTXSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IK4Q1qfa; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740458526; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=cBUl1NEp9OqdS9s8T2iCnWrW+e1GgC4qCc83R/nWRZ4=;
-	b=IK4Q1qfawfPwJxjXXr9DBSbixTgSvuLFCNiIsAyBCyTtCKmppoXfFc7pcB44HMj/KxqklHsaFrz6SKgnQMyvPB6EP4OKB5Kmu5pWJvFyjcCCsxFjrV8JumQoZIbVRR6S7eMHZy59bWeiVC3Cf0iFeHHJUcar3c+Yqtz/PzJcX70=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQDJ-d-_1740458525 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 12:42:05 +0800
-Date: Tue, 25 Feb 2025 12:42:04 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Lukas Wunner <lukas@wunner.de>, rafael@kernel.org
-Cc: rafael@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
-	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z71KHDbgrPFaoPO7@U-2FWC9VHC-2323.local>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
- <20250224034500.23024-3-feng.tang@linux.alibaba.com>
- <Z7y2e-EJLijQsp8D@wunner.de>
- <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
- <Z71Ap7kpV4rfhFDU@wunner.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NtZ+N5DC4yU4v5A7B+JpVauVnoo8OcOwtXNZ9zXsT3qliniM5kCNz13NDcIt5Xy8pE1rX/loiPbfsjsf8bxHnYhhukY+NvHuBNtrtXhCQO63jJguEk+vsf4nMjNbkrjpHEg6AJcuIrIkjjog0vtTk1a8IuZsO2RDzfSv6BLR+vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=THuKP8tQ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220e83d65e5so98006585ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740458581; x=1741063381; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bUCWi4bZErdgQd6eqhjY5DFB+7kfj6KVOsc3f/JicmY=;
+        b=THuKP8tQKidffXdi4TIHiiA/r/XCxS3Hg/FKWsYIv6pvdILiMH0noBOcFKlp4vXLTn
+         M8FDXSJ00Zibmg/KJ3Gx9+Ag7IPypq/xs/5ka7VhSPhDUF+pjmrqg7l6NqFEZO5e4gyg
+         yyvvANptrDHS+ZvKvKIr7jNwLU2umbzkwJaPk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740458581; x=1741063381;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bUCWi4bZErdgQd6eqhjY5DFB+7kfj6KVOsc3f/JicmY=;
+        b=B80AWTDgOMRVkqwwTJIY/Ce82EZDmSickZ5Aq6pDmHfVwpxukPkZt5i1sNiw3KdB4A
+         pi8ql/Z19smoXmKRl2KrFIUa0o7dS8QE9z+qiZItyUQV7bK+WDISbVgFbF5WksTQV8e7
+         YYq7gNWMp2A7P56Td2cC+4PFJhl50bcwgKZy9xI/+OBx7r5A3x4g97nY/6Br5p38183z
+         P0q2zAyvrRN5TDaMpVChJ9Y7crofbb0qXDy5tQnDnBAeeMm0M8aRAbWBK0RQRQoTApkY
+         jzeX/FeslhtdeeGK504Z20H3VZ7LYHSct9nbbUZeUmY0xqX+V+HnaJCZU6mvGClhxjH0
+         5i/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXHrMBMgUWCwQSf+DhTn9yag1Vzi9nk/7WvtOI4BwSlF8N+sD5A10fLKaDIjCML7VoNk0Pj8a8xvsy8PxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiGIdJB8r5ha+0bnaBgswCevRTvqNBYwzlIQt6s44nq+Hjt2B5
+	4YRWwujlBi2cnHAzLQTvpxmnoMv1tU+SNhd9T7zZErqlaFUrJtVvIajC3PnbyA==
+X-Gm-Gg: ASbGncuV+5C9Wtn6ugSVvxr3c+hf0Nld/mWXQuohYKo1QaumO2+vxqYdB7I6htUgA+N
+	2lNI/Fb/3OBi0BpWohDhy8Jr8Ud53IJ5e9h+CzAIv3AhzCIWNvlyS69oD5oThDxtHwuLyUpXwRF
+	TL2asftBkkWMtEFocDlowyqKyU15lQr9Q0FCn+Kx42DZVAurnYxoOGqsx7BGQ8owhiObIWAkYjL
+	DPjWDpifmGaSf2sobGHsa10hSFrQ1HqA79z7Iyk87122aCsUwvscexrgHTx4tqr81AaC39lYtnY
+	Wfk4ixBtCTFvAcZSx+1IOG9s4+IAKg==
+X-Google-Smtp-Source: AGHT+IFr0nitVOoP5X+Q+Wz2949pPDsDe3Yp8CEi9Dc/JwmleByYQKSkdppAuP/1rSKlJXrNVOTYMg==
+X-Received: by 2002:a17:902:d507:b0:220:c2bf:e8c6 with SMTP id d9443c01a7336-221a000add9mr277835185ad.53.1740458581179;
+        Mon, 24 Feb 2025 20:43:01 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:e27d:842a:e0d1:29c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00a970sm4651855ad.69.2025.02.24.20.42.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 20:43:00 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:42:55 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/17] zram: permit reclaim in zstd custom allocator
+Message-ID: <vh3uzody42dfcfduwrhnha3wrjm6wi7awwferzed35zuodn4zu@txo4zpftf2uq>
+References: <20250221222958.2225035-1-senozhatsky@chromium.org>
+ <20250221222958.2225035-15-senozhatsky@chromium.org>
+ <20250224091036.Y9fHrKr-@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z71Ap7kpV4rfhFDU@wunner.de>
+In-Reply-To: <20250224091036.Y9fHrKr-@linutronix.de>
 
-Hi Lukas,
-
-On Tue, Feb 25, 2025 at 05:01:43AM +0100, Lukas Wunner wrote:
-> On Tue, Feb 25, 2025 at 11:06:50AM +0800, Feng Tang wrote:
-> > On Mon, Feb 24, 2025 at 07:12:11PM +0100, Lukas Wunner wrote:
-> > > On Mon, Feb 24, 2025 at 11:44:58AM +0800, Feng Tang wrote:
-> > > > @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
-> > > >  		 * Disable hot-plug interrupts in case they have been enabled
-> > > >  		 * by the BIOS and the hot-plug service driver is not loaded.
-> > > >  		 */
-> > > > -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> > > > -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> > > > +		pcie_disable_hp_interrupts_early(dev);
-> > > >  	}
-> > > 
-> > > Moving the Slot Control code from pciehp to portdrv (as is done in
-> > > patch 1 of this series) is hackish.  It should be avoided if at all
-> > > possible.
-> > 
-> > I tried to remove the code duplication of 2 waiting function, according
-> > to Bjorn's comment in https://lore.kernel.org/lkml/20250218223354.GA196886@bhelgaas/.
-> > Maybe I didn't git it right. Any suggestion?
+On (25/02/24 10:10), Sebastian Andrzej Siewior wrote:
+> On 2025-02-22 07:25:45 [+0900], Sergey Senozhatsky wrote:
+> >  static void *zstd_custom_alloc(void *opaque, size_t size)
+> >  {
+> > -	if (!preemptible())
+> > +	/* Technically this should not happen */
+> > +	if (WARN_ON_ONCE(!preemptible()))
+> >  		return kvzalloc(size, GFP_ATOMIC);
 > 
-> My point is just that you may not need to move the code from pciehp to
-> portdrv at all if you follow my suggestion.
- 
-I see.
+> This check works only on preemptible kernels.
 
-> 
-> > There might be some misunderstaning here :), I responded in
-> > https://lore.kernel.org/lkml/Z6LRAozZm1UfgjqT@U-2FWC9VHC-2323.local/
-> > that your suggestion could solve our issue.
-> 
-> Well, could you test it please?
+I'm not sure this is true.
 
-I don't have the hardware right now, will try to get from firmware
-developers. But from code logic, your suggestion can surely solve the
-issue unless I still miss something. From bug report (also commit log),
-the first PCIe hotplug command issued is here, and the second command
-comes from pciehp driver. In our kernel config, CONFIG_HOTPLUG_PCI_PCIE=y,
-so the first command won't happen, and all following commands come
-from pciehp driver, which setup its own waiting for command logic.
+> If you run this on !PREEMPTIBLE kernels, preemptible() reports always 0
+> so that WARNING will always trigger there.
 
-> A small change like the one I proposed is definitely preferable to
-> moving dozens of lines of code around.
+I thought that preemptible() depends on PREEMPT_COUNT, not on
+PREEMPTIBLE, because even on !PREEMPTIBLE preempt-count still
+holds hard/soft irq counts, etc.
 
-Agree.
-
-> 
-> > And the reason I didn't take it is I was afraid that it might hurt
-> > the problem what commit 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port
-> > services during port initialization") tried to solve.
-> > 
-> > As you mentioned, the comment for 2bd50dd800b5 is "a bit confusing",
-> > and I tried to guess in my previous reply: 
-> > "
-> > I'm not sure what problem this piece of code try to avoid, maybe
-> > something simliar to the irq storm isseu as mentioned in the 2/2 patch?
-> > The code comments could be about the small time window between this
-> > point and the loading of pciehp driver, which will request_irq and
-> > enable hotplug interrupt again.
-> > "
-> > 
-> > The code comment from 2bd50dd800b5 is:
-> > 
-> > 	/*
-> > 	 * Disable hot-plug interrupts in case they have been
-> > 	 * enabled by the BIOS and the hot-plug service driver
-> > 	 * is not loaded.
-> > 	 */
-> > 
-> > The "is not loaded" has 2 possible meanings:
-> > 1. the pciehp driver is not loaded yet at this point inside
-> >    get_port_device_capability(), and will be loaded later
-> > 2. the pciehp will never be loaded, i.e. CONFIG_HOTPLUG_PCI_PCIE=n 
-> > 
-> > If it's case 2, your suggestion can solve it nicely, but for case 1,
-> > we may have to keep the interrupt disabling.
-> 
-> The pciehp driver cannot be bound to the PCIe port when
-> get_port_device_capability() is running.  Because at that point,
-> portdrv is still figuring out which capabilities the port has and
-> it will subsequently instantiate the port service devices to which
-> the drivers (such as pciehp) will bind.
- 
-Yes, the time window between here and the following initialization of
-pciehp service driver is very small, and your suggestion sounds quite
-safe to me.
-
-> So in that sense, case 1 cannot be what the code comment is
-> referring to.
-
-Hi Rafel,
-
-Could you help to confirm this?
-
-> 
-> My point is that if CONFIG_HOTPLUG_PCI_PCIE=y, there may indeed be
-> another write to the Slot Control register before the command written
-> by portdrv has been completed.  Because pciehp will write to the
-> register on probe.  But in this case, there shouldn't be a need for
-> portdrv to quiesce the interrupt because pciehp will do that anyway
-> shortly afterwards.
-> 
-> And in the CONFIG_HOTPLUG_PCI_PCIE=n case, pciehp will not quiesce
-> the interrupt, so portdrv has to do that.  I believe that's what
-> the code comment is referring to.  It should be safe to just write
-> to the Slot Control register without waiting for the command to
-> complete because there shouldn't be another Slot Control write
-> afterwards (not by pciehp anyway).
-> 
-> If making the Slot Control write in portdrv conditional on
-> CONFIG_HOTPLUG_PCI_PCIE=n does unexpectedly *not* solve the issue,
-> please try to find out where the second Slot Control write is
-> coming from.  E.g. you could amend pcie_capability_write_word()
-> with something like:
-> 
-> 	if (pos == PCI_EXP_SLTCTL) {
-> 		pci_info(dev, "Writing %04hx SltCtl\n", val);
-> 		dump_stack();
-> 	}
-
-Thanks for the suggestion, and we added similar debug to figure
-out them.
-
-Thanks,
-Feng
+I ran CONFIG_PREEMPT_NONE=y zram-zstd tests and didn't see any
+warnings.
 
