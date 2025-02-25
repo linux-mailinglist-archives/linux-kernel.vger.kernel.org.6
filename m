@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-532027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679B6A447BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:19:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B58A447C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937DC42127F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD28C423247
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0921DDC2C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B748F1DF98F;
 	Tue, 25 Feb 2025 17:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r0mOhkKe"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DL0GYxMp"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD791DC9B1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EED1EDA19
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740503570; cv=none; b=MuTzZMvGKFygWkL98CO/oHclvABDgKCQMsD+ckUR4155EhFnRnhGlE4dyhTuUeHXwGrmlLYGqTRxeeEGjWpIPvszuI+0ez06/Diq04/dMAibO6Zn0J463yob/Q6GsJSV/+jpCGeh0yIqwhdNgImbmQetvZEmxvDgM2HbfugrXlk=
+	t=1740503571; cv=none; b=N4gsE3CBSMJtCGOMQlKFhYDKaJRfASa5R6TaNvU2u2u4sPreOY6V6tX/ZUFPLoZEl7jxv6VkpsjwIZL5vKWAE1xw8sVJGDVTphDn8Eogn2dinMnL5cqL1mafksfw5l7VekbgvjdcS2UT2bAejT2tEvdQviiNGYAzP5jR2XEGj0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740503570; c=relaxed/simple;
-	bh=ednjTSjvw9Gt99tA22MMvDogCLInNdUvhE7Mq9C+1L4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lxS76n0XgV90XoswX2EBp/I9tAJqgv30HilqgR4JNBK+rqlhfU7KQs4N3y5L1451ymBWzxM0KO9gTaPrCyk4/yDUMXNJdyQteA14Wr+CAaRxkJTIKpwS1sQtISC0YktG8KOg9vjhGyz1MCbuOfzoPYOVfmtw4nxNoVzp9hLKd28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r0mOhkKe; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4398c8c8b2cso59636035e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:12:48 -0800 (PST)
+	s=arc-20240116; t=1740503571; c=relaxed/simple;
+	bh=solmisJfOwq7tSo+vQhMg46du8qP0Mm5gMU1KVww0NI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CqaHo0omd4Z2Sb+CGHzfT418kAkih1LGLV+gMb9/TWGcM/+Apgz9Dx2mxMtMu4dd4wVOlcXhYO3HX4IEYFaE37pNIJWMAqF797ofQsiz4hGYByJrDCJNACTeZc58+NBEEKrXn4KEHgrrcO4DSJRwp5EoRB4+mhg69zwyIzMXPts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DL0GYxMp; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2211acda7f6so133301025ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:12:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740503567; x=1741108367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ednjTSjvw9Gt99tA22MMvDogCLInNdUvhE7Mq9C+1L4=;
-        b=r0mOhkKe52C5HSBcSuZib+01ooiaaXSa8OeULguCFDcuOUlBBec4b4bsNwAmhh7LhX
-         pImjvjtHsEUr+NIL8ekHZHzIFmnjHK7RAP19zt65Gv905ZFC+9z9s9spGvti+jwlE3h6
-         sWtl3AF094JttZd8Zlnu+E9OCTdv0UwdxE1c/m0OAjMZA1RRsuDzhzashXa5RY1NWdeX
-         P7+o3ugmbKIKha43Qmw3KLGS+YUrTKYzt77gJ1Jx0kP0viM0FFo0ev5IwQhlSWY1JOsY
-         ucO9JdJ5flqRygi0xl9nsd72kjwjkUWErL6K8unClBs+33NWuBD03oVhjdN0wN6qfC2T
-         FHvg==
+        d=linaro.org; s=google; t=1740503569; x=1741108369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jG0W9H5EHgY60+XGt77vkeLnWA8gkbVQ9cdgHwuEC4=;
+        b=DL0GYxMpYglS0lhWClMZUGd6/PdKyx+WD1rk6Tv0FBVSU3YyysYRMh1Qe/DkRWTfRj
+         vW1WE7lf+746zeXLyKws+xqtj6Px9kg2Y/Ij70iiaQkMwBh16tc6JEiTtN2ZPZSdW9fW
+         z/wsNALWMHfgrraBwtO56qAdhzXX7TKXl/jg5twhwQvwZTw4XNbRlxpdJLqR6U1kIFKZ
+         0eDw3zjEhw+psATGHZUZ022Wg2GUTH2Ww6lwlaKeOdKew7E1Ug/uamqU5WPq9RBt5vMX
+         5Zof/sH5KlrlqOyEJ/db4Vyg4qLsnbhXC+ea1Ax+dOM1xxG4HngabVOoP3fSYlwzUc/j
+         B1hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740503567; x=1741108367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ednjTSjvw9Gt99tA22MMvDogCLInNdUvhE7Mq9C+1L4=;
-        b=LcqHvdfQLgWgR5xFWuB2bXwt5MJNvdpNc9nbzTGwC+GUpNRm3FKGbTi4DWqib7dkLS
-         WpGpWY7puMRr35yBa4qGtTL3XD1rXQmuQPs6gnzGpX6MRbWLear4ExIWAN3pgC3F0HFe
-         0OShGHqWwPCzB3Xukw3jJiSd9y2Z4iTPuPf6AOQJZk5oQzOolJnZu1j/NJ4qnpx3Yl3H
-         Hon3ESU2rvxq8KkLTgYZPSP4pdhkhUQb6xNf7IejL99xMquEiF8463ni+wTzoWXWuQep
-         eeI2mmeKwGfsKb1lH0Cfpde21SSEnPQBoVXubVGcW9aFfQb9N/Ko279Qd9tQ3BiUW9a+
-         YffQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk//IiOU0AO8iwikZp0bbg0CHIcZYHWh11Hvqm79iEM5t9nSF2EH+gFFWQ5Kn/HV7pP4Ynty+NDoBUQ8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmvQX6Rxqv9bfr0o/NgA0amnhv1HofKWo2EQk1kxVUIi8FJkKK
-	N8nsYiBPI/D6eD8kun5BxCJ9qCeMBRTg8h/hkBxB5gsNseNNlpb93pqpx+xRX3DO096r6qJYCpb
-	fbHVNGd2E8upAdc2eECsJhDorQ3Ak9uwye3T4
-X-Gm-Gg: ASbGnctUU8mjh0oEnpXXHM9HqAw2f88qjgNuU/gOQ89yNtcbGBwAQ5Z5g9uiyq+6i4I
-	BEFoqPa4Y96xe+81NN6Uhh/IjG/yDGLYlDE0QT9U4ygANT+Mn4Ak3L+9trrNiELaP/s7J2vX8vG
-	qd8RD4aF8HZbEGeynrUfk8uNQek4H3eHUJMY6YXw==
-X-Google-Smtp-Source: AGHT+IENL3tkr5YY1W1LPao/+fxPS1FpvFsCT1UPYovJTPV5D1zitQeIdtwEVZnuTIAS+IO71JyVmXj+d+y+IFJL6GI=
-X-Received: by 2002:a5d:6c6e:0:b0:38d:dce1:f207 with SMTP id
- ffacd0b85a97d-390cc631a3emr4656547f8f.44.1740503567098; Tue, 25 Feb 2025
- 09:12:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740503569; x=1741108369;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9jG0W9H5EHgY60+XGt77vkeLnWA8gkbVQ9cdgHwuEC4=;
+        b=pGsrQOG4qQ9H1DgdhORXD4S7qsSlW8p6IcrbRofOAPopOv5UgdZTr7mcXlw9UuEM+R
+         kTn/hEOQYIytZGxC2IrB79kr6DYTptcXpD85UPmaXRBzt+5u3NyNUIN9RI3QLE4FgICB
+         WwRxKrSFVS3Bm8r3Aiehh1XK4P5/jT5sQ+oARaDsijiwD2X3tpfIljh3/GtGGMm8etEv
+         TdLnxFHOHtiffDN2v97OKdX6y7sB8J3sFst5aPZ5tkNMIKOLJTQX3ZxEHoiEmEFc8nkW
+         VefVI+9ZeCQWTDvkxe6Tb+wG8dQEUHz/uhB4tqi+c0rXwEqFF2pEQ2HHJ5A0lIL8OrvW
+         lSfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnlYxTvroK8fHA01s61R3KHqMEX+cTFI9fnPIiusNwxDQSvxEt4iRdyN4yzEFbG0X9lkW4NxPub0WC63w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmEhuY2ZW7YUzgcxrkMxPbhS9bMZyfzbBUZBQNcQyMDuQKViyK
+	PYahColAWjMM1+UR/oCiMRp3vuras3iL3GohGs8wS007af5kgfjfBV0e8RKhqg==
+X-Gm-Gg: ASbGnctg2HHNlInJDa00sgR+otJEVGeF8w91wXxGAfLMEnRE+T22Q/48VdiIStw3UYa
+	p7umFIqciKNqQfT+7s969iLRbB9p00yJ9ETgv0QsHAjvjUxPFtsP1UoTaJ3C/nisfJhgjSk9EuF
+	wWSpC981KFbIRzO+FmNOhYq2pVzDyx5b+yGuSHMQzotu+BLhsdHNNG4cnn3JZzY8VNsUkmdO3gP
+	/KBQizAa/Z+CeAi2QRe9yT7NhJepN4GgIFOeUJHjHJWQ4YQQqlIo4FCsZtqJxHwNz4wA7ODzJZy
+	t7JBJmwKusLte3/FP2QF0Padj+MEmUlHIQPhwXKSeABNaX6V1scEDA==
+X-Google-Smtp-Source: AGHT+IHjmQd2iyEjNZ5iWvHuuhwXr+ROlu+iTqFwv0oDwguUc9oGY/92+rxd8sOUv0ftc2AvvJk1eg==
+X-Received: by 2002:a17:902:e892:b0:220:e63c:5b08 with SMTP id d9443c01a7336-223200853e2mr3925605ad.11.1740503568871;
+        Tue, 25 Feb 2025 09:12:48 -0800 (PST)
+Received: from localhost.localdomain ([120.60.68.212])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a095f40sm16844925ad.144.2025.02.25.09.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:12:48 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: jingoohan1@gmail.com,
+	lpieralisi@kernel.org,
+	kw@linux.com
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shradha.t@samsung.com,
+	cassel@kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/2] PCI: dwc-debugfs: Couple of fixes
+Date: Tue, 25 Feb 2025 22:42:37 +0530
+Message-Id: <20250225171239.19574-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740475625.git.viresh.kumar@linaro.org> <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
- <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
- <20250225114830.64p56bndn4hkkkgq@vireshk-i7> <CAH5fLghUDz8tpkTuvWZgwT2_VKgxuS+iZKnoT4prKwS9tbp8wA@mail.gmail.com>
- <CAKohpo=uiCS6nyissb3ugiyniwnZYu5kCf4+bp32dDzRhgGfCQ@mail.gmail.com>
-In-Reply-To: <CAKohpo=uiCS6nyissb3ugiyniwnZYu5kCf4+bp32dDzRhgGfCQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 25 Feb 2025 18:12:35 +0100
-X-Gm-Features: AQ5f1JrsvkSYfxf47nMcctFkIDr7cuUGNXZJBCZDafLE5kFdCo2jxMcIoSYI5eI
-Message-ID: <CAH5fLggyEXyyaFNnmBCPOSX051TiFyAp0B8GfahbPg=+LrtUWA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	Danilo Krummrich <dakr@redhat.com>, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 6:02=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On Tue, 25 Feb 2025 at 17:23, Alice Ryhl <aliceryhl@google.com> wrote:
->
-> > Is it a problem if a value of type struct cpumask is moved? It looks
-> > like it is just an array of longs?
->
-> With the current code, if I replace the Box with an on-stack variable,
-> the kernel crashes.
->
-> In my usecase, the pointer to the cpumask array is sent to the OPP
-> core, which may update the content, though it doesn't save the pointer.
->
-> But for another usecase, the C code may end up saving the pointer.
+Hi,
 
-I don't think that case applies here. Variables that could be stashed
-like that need a destructor that removes the pointer from the relevant
-C structures. This is because pinning only prevents the owner from
-moving the variable - it doesn't prevent the owner from destroying it.
+This series has a couple of fixes for the recently merged debugfs patches.
+This series is rebased on top of pci/controller/dwc branch.
 
-Alice
+- Mani
+
+Manivannan Sadhasivam (2):
+  PCI: dwc-debugfs: Perform deinit only when the debugfs is initialized
+  PCI: dwc-debugfs: Return -EOPNOTSUPP if an event counter is not
+    supported
+
+ .../controller/dwc/pcie-designware-debugfs.c   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+-- 
+2.25.1
+
 
