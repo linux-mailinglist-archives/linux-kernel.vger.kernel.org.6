@@ -1,216 +1,283 @@
-Return-Path: <linux-kernel+bounces-530855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB31AA43945
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0AFA43954
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A4997A1EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A116616ED26
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7505261573;
-	Tue, 25 Feb 2025 09:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F182D155CB3;
+	Tue, 25 Feb 2025 09:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VytEYfiR"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GzcOzCoR"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1F6260A54;
-	Tue, 25 Feb 2025 09:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9BF214203;
+	Tue, 25 Feb 2025 09:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475196; cv=none; b=KT60vLOHcnB0y+m5v3EH/EMzOLiamzGh1lTy4/QDo6NhsYlJQLiZg0GvAmLJY85U4DouTLRDMTtRq7kyJ5xKUyfP8cLxfM4HthWP7D+3E/o6qIlws7AUqbw4Nn+7boG3BBDRs4DTsmfvhYJDwijH2ZUg6vTd2MRxJr1wZvrZMl0=
+	t=1740475224; cv=none; b=IakdsGPCfbl0+SzX7UL5HRVN00i4Sp4yAXrxPuRsozANYtWeKABilbFToriXuvvoGdtiQkiq0CPjCpHNgZ7YSZ++ZObOVZIGhIOY3dsUQFwh5uOXrcJ81qpThVZe4Tujtf8Tq3Fs2sql84Ob7xTsELmHg5xAtWq03D/6+hTQRe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475196; c=relaxed/simple;
-	bh=mxjeNY/gI1DEE5UWt79KGSeGfVjKaB/ATptNamQXRwU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXSPD37G6LIXmxZZLfqFl3+3IcTcxQjUyrN4bh/fY98Wu58IB3wVbSwn11oElHsR43F8Ybo/dKwem47g4Njxuu2wqMB+B3J0G0xYNShrP+oNYlIrcjsIZ7Y3DilpluEy/CfdoRrtimjmjk6zScs7eHaiHdAx2Hfju+u9Tip/NyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VytEYfiR; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-222e8d07dc6so33347435ad.1;
-        Tue, 25 Feb 2025 01:19:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740475194; x=1741079994; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nj3QvJrkZQTbm/14d0IKWFHBOShY4xnuFmDq9qgKrl0=;
-        b=VytEYfiRHf6StH3SVyWkCqKqSuE9EuzJVKOn9+z+O2MJWo2CcXOBY+K1Emz5jQ8ND8
-         X7TwLCrZe88HhOcTdxnzGemQpUSQIlTzJ5lXpyJUmcjefq3iGw3S7cq+sNZvRVrIa/Xs
-         Zzttm43FZC2Dpt13UjV2TlGcQcOv5JRoJqU5rkqbewoejc61TkcSA5VTbDNUbYWVuUqF
-         4b2TFDKA+HjWYWqI0XIIfFJ5oOFPBnPZkVO1tzanhWXnTn7voXviJvcOlE4rIPcY2FGE
-         on8QWDPkTThmIndLdj70U9Jttt5AzxlVghWn1U240sWfWEfy6U4QGQXQAlw9RY+Wdrtb
-         /Wyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740475194; x=1741079994;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nj3QvJrkZQTbm/14d0IKWFHBOShY4xnuFmDq9qgKrl0=;
-        b=xRxAanGUf5YZp6Qgs3nrY8WxVB6b76QICdjKrGo0v9G3qjzlvp+10W3PGL9PagiTaC
-         nAMp8IPJKDRDfpm8eNMg3WVJAl7oxWbUOlhKJxAGMpp1Otk9twzCgd6WYYGSZaLKQCm5
-         f6DSQNyCQ4PEi7KxnI6Syx+SuAsPYYQr6r8mZyFEtShO8SrHDAQJeEFjudjlv1qx7QTu
-         mfJmiTRGvUrZBMENSVY/i6jG9flbysI652tQwE1SZaiXDhoFSAKs0RefwHP/ETPb3/Nk
-         OeUGxwMvsWsOWS9TDmzwhcphOhyAdOq4RONr8GK1xGnXGUjsCj66Ga0K+lPGqH/JRkqs
-         D1iw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8E3TaOPOvwxOiP1IB3QI5M7nl5OUUrRaUc4VQGSNilCAqGQLYxImwz0tIBgHaNbWsi6xmcuRN2eHP@vger.kernel.org, AJvYcCXNNrC72xRc8yUgLMSjd+pnv2+PMCFWygv83DOK9gmheb1pBXDrHhTJxjkvnFH7cG1W+R7a3Wkid9AN0kLU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVKqncetKOADVITlDxhTZADtO2Niu5yNWDBYvZ/7xsxtuFQl2Z
-	NtiXYO46DfrbLyuOOXmV7RUvNQmSrjPu5tLgSnaKAyK56CjZcHSG2Usku0yX5Og=
-X-Gm-Gg: ASbGnct2KXp4N2b8djb7fTwBCbht5qAl1c0JgCkdrfz+bORM3EliI5SOGKE+B2pp3yv
-	O+MG4bztH2cc+nxrDw6igusejIYwMc7IO6540gr7di9b650JYd05PxJaY2z7wwvtD2PCTiOA/UE
-	o8B3hB36ey7d6hm+Uq2IAMs0XgtJUIFyGiMdV8tDfOgTSwzpYq1ZqZghMhTzGi+MbvZi1kCycEM
-	gfAk5TxkSYw6VlEug8Ji1kqoyuIuqGfVTUFNBU70pTgrjJy4UaonvUM1k9hQI9RXZ1t6ZOvqTLl
-	F73LmvSLhhCA+M0k7gQ6t2BDkwI=
-X-Google-Smtp-Source: AGHT+IE9YBdCkNq/S4TjozYMNc2eD/oYxsI6+U8AdO2NGvsUJBfklT61ZkIl1cuk5oEXWFTnMRX1eg==
-X-Received: by 2002:a17:903:2ec6:b0:21f:6ce8:29df with SMTP id d9443c01a7336-2218c3cfab6mr358683895ad.3.1740475193891;
-        Tue, 25 Feb 2025 01:19:53 -0800 (PST)
-Received: from [127.0.1.1] ([2601:644:8501:1640:4148:75aa:e7ad:9664])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a000542sm9679975ad.17.2025.02.25.01.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:19:53 -0800 (PST)
-From: Rudraksha Gupta <guptarud@gmail.com>
-Date: Tue, 25 Feb 2025 01:19:44 -0800
-Subject: [PATCH] ARM: dts: qcom: msm8960: add tsens
+	s=arc-20240116; t=1740475224; c=relaxed/simple;
+	bh=7ZG22BNc2QXkfk05oKYDUHOhxJRgeTa/U7Fyfb6Cgf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrTkczbMpzS8GYaY48vi3N/LZu0zaz/YoqNELDRiJvRCweDiXdIofP1ml0tVIPfCgAVkR4KX9Vblfld6g7K1+flMPY8tkod62WY5ls27V7HO6YkQJIWOpnjkM6XA/B2M7NLTCdcRsenc12/F/M85pjQZYzGpJEi+PHZf6C0RMa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GzcOzCoR; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740475217; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=p41PXiy621mvHbTwxjgNE5Get64HPOSU10V/f0sqEEI=;
+	b=GzcOzCoR9RwCXfjwUy7+7c749BgrMH+va4IcFrcYIRQ/Tlb6WzbiipMEKipF0M7Bzbhjf89MnynX/p0GWGChclE0Dj7gY//38oCKf3t8Dbs4CMXYsxgHp58I7OvRQUSR7hJXfSFYeP0rXGNq1drBUPMOYsdsevG74ZHSPxPVbnA=
+Received: from 30.74.144.116(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQEGUCr_1740475216 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 17:20:16 +0800
+Message-ID: <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 17:20:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-expressatt-tsens-v1-1-024bee5f2047@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAC+LvWcC/x2MQQqAIBAAvxJ7TjBRk74SHSS32ouFKyGIf086D
- sNMBcZEyLAMFRK+xHTHDtM4wH75eKKg0BmUVEYqZQSWJyGzz1lkxshC2qCtcbM3TkPPuj6o/Mt
- 1a+0DrixKuWIAAAA=
-X-Change-ID: 20250225-expressatt-tsens-06d46587a584
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, wctrl <wctrl@proton.me>, 
- Rudraksha Gupta <guptarud@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740475192; l=2826;
- i=guptarud@gmail.com; s=20250208; h=from:subject:message-id;
- bh=mxjeNY/gI1DEE5UWt79KGSeGfVjKaB/ATptNamQXRwU=;
- b=G8RELbz18xURPb3s3D2SAYZXoJ8dZZ8e1UejFDFquMrE8XFzPZ9SvLdkdq48f4c5n5aDGhRsm
- Vktv5b5qCWfCeCJ0pnaO8FNRqv8QJ7YFD8n4FvTsegWQll0pHzISbln
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=5lJNaiR/Bu7edToWFLriO5zXOrVqSQWrBKbAKwuEw04=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
+ shmem_split_large_entry()
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20250218235444.1543173-1-ziy@nvidia.com>
+ <20250218235444.1543173-3-ziy@nvidia.com>
+ <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
+ <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
+ <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
+ <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
+ <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
+ <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
+ <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Copy tsens node from ap8064 and adjust some values
 
-Co-developed-by: wctrl <wctrl@proton.me>
-Signed-off-by: wctrl <wctrl@proton.me>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
- arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 62 +++++++++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-index 865fe7cc39511d7cb9ec5c4b12100404f77e2989..167953605447bfaa0d33b0e41b581220f86c72e6 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-@@ -52,6 +52,40 @@ memory@80000000 {
- 		reg = <0x80000000 0>;
- 	};
- 
-+	thermal-zones {
-+		cpu0-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 0>;
-+			coefficients = <1199 0>;
-+
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature = <60000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
-+		cpu1-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 1>;
-+			coefficients = <1132 0>;
-+
-+			trips {
-+				cpu_alert1: trip0 {
-+					temperature = <60000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+	};
-+
- 	cpu-pmu {
- 		compatible = "qcom,krait-pmu";
- 		interrupts = <GIC_PPI 10 0x304>;
-@@ -115,6 +149,20 @@ timer@200a000 {
- 			cpu-offset = <0x80000>;
- 		};
- 
-+		qfprom: efuse@700000 {
-+			compatible = "qcom,qfprom";
-+			reg = <0x00700000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			tsens_calib: calib@404 {
-+				reg = <0x404 0x10>;
-+			};
-+			tsens_backup: backup-calib@414 {
-+				reg = <0x414 0x10>;
-+			};
-+		};
-+
- 		msmgpio: pinctrl@800000 {
- 			compatible = "qcom,msm8960-pinctrl";
- 			gpio-controller;
-@@ -127,7 +175,7 @@ msmgpio: pinctrl@800000 {
- 		};
- 
- 		gcc: clock-controller@900000 {
--			compatible = "qcom,gcc-msm8960";
-+			compatible = "qcom,gcc-msm8960", "syscon";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			reg = <0x900000 0x4000>;
-@@ -135,6 +183,18 @@ gcc: clock-controller@900000 {
- 				 <&pxo_board>,
- 				 <&lcc PLL4>;
- 			clock-names = "cxo", "pxo", "pll4";
-+
-+			tsens: thermal-sensor {
-+				compatible = "qcom,msm8960-tsens";
-+
-+				nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-+				nvmem-cell-names = "calib", "calib_backup";
-+				interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "uplow";
-+
-+				#qcom,sensors = <5>;
-+				#thermal-sensor-cells = <1>;
-+			};
- 		};
- 
- 		lcc: clock-controller@28000000 {
+On 2025/2/21 10:38, Zi Yan wrote:
+> On 20 Feb 2025, at 21:33, Zi Yan wrote:
+> 
+>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
+>>
+>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
+>>>
+>>>> On 2025/2/20 17:07, Baolin Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/2/20 00:10, Zi Yan wrote:
+>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
+>>>>>>
+>>>>>>> Hi Zi,
+>>>>>>>
+>>>>>>> Sorry for the late reply due to being busy with other things:)
+>>>>>>
+>>>>>> Thank you for taking a look at the patches. :)
+>>>>>>
+>>>>>>>
+>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
+>>>>>>>> During shmem_split_large_entry(), large swap entries are covering n slots
+>>>>>>>> and an order-0 folio needs to be inserted.
+>>>>>>>>
+>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by the folio
+>>>>>>>> need to be split and the remaining n-1 shadow entries can be retained with
+>>>>>>>> orders ranging from 0 to n-1.  This method only requires
+>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
+>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
+>>>>>>>> xas_split_alloc() + xas_split() one.
+>>>>>>>>
+>>>>>>>> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
+>>>>>>>> is 6), 1 xa_node is needed instead of 8.
+>>>>>>>>
+>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls to
+>>>>>>>> xas_try_split() during split.
+>>>>>>>
+>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by skipping the swap cache, we will split the large swap entry stored in the shmem mapping into order-0 swap entries, rather than splitting it into other orders of swap entries. This is because the next time we swap in a shmem folio through shmem_swapin_cluster(), it will still be an order 0 folio.
+>>>>>>
+>>>>>> Right. But the swapin is one folio at a time, right? shmem_split_large_entry()
+>>>>>
+>>>>> Yes, now we always swapin an order-0 folio from the async swap device at a time. However, for sync swap device, we will skip the swapcache and swapin the whole large folio by commit 1dd44c0af4fa, so it will not call shmem_split_large_entry() in this case.
+>>>
+>>> Got it. I will check the commit.
+>>>
+>>>>>
+>>>>>> should split the large swap entry and give you a slot to store the order-0 folio.
+>>>>>> For example, with an order-9 large swap entry, to swap in first order-0 folio,
+>>>>>> the large swap entry will become order-0, order-0, order-1, order-2,… order-8,
+>>>>>> after the split. Then the first order-0 swap entry can be used.
+>>>>>> Then, when a second order-0 is swapped in, the second order-0 can be used.
+>>>>>> When the last order-0 is swapped in, the order-8 would be split to
+>>>>>> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 will be used.
+>>>>>
+>>>>> Yes, understood. However, for the sequential swapin scenarios, where originally only one split operation is needed. However, your approach increases the number of split operations. Of course, I understand that in non-sequential swapin scenarios, your patch will save some xarray memory. It might be necessary to evaluate whether the increased split operations will have a significant impact on the performance of sequential swapin?
+>>>
+>>> Is there a shmem swapin test I can run to measure this? xas_try_split() should
+>>> performance similar operations as existing xas_split_alloc()+xas_split().
+>>>
+>>>>>
+>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all swap entries
+>>>>>> are order-0, which can lead to issues. There should be some check like
+>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() should
+>>>>>> be used.
+>>>>>>>
+>>>>>>> Moreover I did a quick test with swapping in order 6 shmem folios, however, my test hung, and the console was continuously filled with the following information. It seems there are some issues with shmem swapin handling. Anyway, I need more time to debug and test.
+>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not allocate
+>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
+>>>>>> error below. Let me know if there is anything I can help.
+>>>>>
+>>>>> I encountered some issues while testing order 4 and order 6 swapin with your patches. And I roughly reviewed the patch, and it seems that the new swap entry stored in the shmem mapping was not correctly updated after the split.
+>>>>>
+>>>>> The following logic is to reset the swap entry after split, and I assume that the large swap entry is always split to order 0 before. As your patch suggests, if a non-uniform split is used, then the logic for resetting the swap entry needs to be changed? Please correct me if I missed something.
+>>>>>
+>>>>> /*
+>>>>>    * Re-set the swap entry after splitting, and the swap
+>>>>>    * offset of the original large entry must be continuous.
+>>>>>    */
+>>>>> for (i = 0; i < 1 << order; i++) {
+>>>>>       pgoff_t aligned_index = round_down(index, 1 << order);
+>>>>>       swp_entry_t tmp;
+>>>>>
+>>>>>       tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+>>>>>       __xa_store(&mapping->i_pages, aligned_index + i,
+>>>>>              swp_to_radix_entry(tmp), 0);
+>>>>> }
+>>>
+>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this out.
+>>>
+>>>>
+>>>> In addition, after your patch, the shmem_split_large_entry() seems always return 0 even though it splits a large swap entry, but we still need re-calculate the swap entry value after splitting, otherwise it may return errors due to shmem_confirm_swap() validation failure.
+>>>>
+>>>> /*
+>>>>   * If the large swap entry has already been split, it is
+>>>>   * necessary to recalculate the new swap entry based on
+>>>>   * the old order alignment.
+>>>>   */
+>>>>   if (split_order > 0) {
+>>>> 	pgoff_t offset = index - round_down(index, 1 << split_order);
+>>>>
+>>>> 	swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>>>> }
+>>>
+>>> Got it. I will fix it.
+>>>
+>>> BTW, do you mind sharing your swapin tests so that I can test my new version
+>>> properly?
+>>
+>> The diff below adjusts the swp_entry_t and returns the right order after
+>> shmem_split_large_entry(). Let me know if it fixes your issue.
+> 
+> Fixed the compilation error. It will be great if you can share a swapin test, so that
+> I can test locally. Thanks.
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b35ba250c53d..bfc4ef511391 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2162,7 +2162,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   {
+>   	struct address_space *mapping = inode->i_mapping;
+>   	XA_STATE_ORDER(xas, &mapping->i_pages, index, 0);
+> -	int split_order = 0;
+> +	int split_order = 0, entry_order = 0;
+>   	int i;
+> 
+>   	/* Convert user data gfp flags to xarray node gfp flags */
+> @@ -2180,6 +2180,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   		}
+> 
+>   		order = xas_get_order(&xas);
+> +		entry_order = order;
+> 
+>   		/* Try to split large swap entry in pagecache */
+>   		if (order > 0) {
+> @@ -2192,23 +2193,23 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   				xas_try_split(&xas, old, cur_order, GFP_NOWAIT);
+>   				if (xas_error(&xas))
+>   					goto unlock;
+> +
+> +				/*
+> +				 * Re-set the swap entry after splitting, and the swap
+> +				 * offset of the original large entry must be continuous.
+> +				 */
+> +				for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
+> +					pgoff_t aligned_index = round_down(index, 1 << cur_order);
+> +					swp_entry_t tmp;
+> +
+> +					tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+> +					__xa_store(&mapping->i_pages, aligned_index + i,
+> +						   swp_to_radix_entry(tmp), 0);
+> +				}
+>   				cur_order = split_order;
+>   				split_order =
+>   					xas_try_split_min_order(split_order);
+>   			}
 
----
-base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-change-id: 20250225-expressatt-tsens-06d46587a584
+This looks incorrect to me. Suppose we are splitting an order-9 swap 
+entry, in the first iteration of the loop, it splits the order-9 swap 
+entry into 8 order-6 swap entries. At this point, the order-6 swap 
+entries are reset, and everything seems fine.
 
-Best regards,
--- 
-Rudraksha Gupta <guptarud@gmail.com>
+However, in the second iteration, where an order-6 swap entry is split 
+into 63 order-0 swap entries, the split operation itself is correct. But 
+when resetting the order-0 swap entry, it seems incorrect. Now the 
+'cur_order' = 6 and 'split_order' = 0, which means the range for the 
+reset index is always between 0 and 63 (see __xa_store()).
 
+ > +for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
+ > +	pgoff_t aligned_index = round_down(index, 1 << cur_order);
+ > +	swp_entry_t tmp;
+ > +
+ > +	tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+ > +	__xa_store(&mapping->i_pages, aligned_index + i,
+ > +		swp_to_radix_entry(tmp), 0);
+ > +}
+
+However, if the index is greater than 63, it appears that it is not set 
+to the correct new swap entry after splitting. Please corect me if I 
+missed anyting.
+
+> -
+> -			/*
+> -			 * Re-set the swap entry after splitting, and the swap
+> -			 * offset of the original large entry must be continuous.
+> -			 */
+> -			for (i = 0; i < 1 << order; i++) {
+> -				pgoff_t aligned_index = round_down(index, 1 << order);
+> -				swp_entry_t tmp;
+> -
+> -				tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+> -				__xa_store(&mapping->i_pages, aligned_index + i,
+> -					   swp_to_radix_entry(tmp), 0);
+> -			}
+>   		}
+> 
+>   unlock:
+> @@ -2221,7 +2222,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   	if (xas_error(&xas))
+>   		return xas_error(&xas);
+> 
+> -	return split_order;
+> +	return entry_order;
+>   }
+> 
+>   /*
+> 
+> 
+> Best Regards,
+> Yan, Zi
 
