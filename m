@@ -1,174 +1,197 @@
-Return-Path: <linux-kernel+bounces-532661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A7A4506D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:45:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4BAA45075
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589FF167B3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1973A9E6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239E5225795;
-	Tue, 25 Feb 2025 22:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764A4230D14;
+	Tue, 25 Feb 2025 22:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ah36awh1"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUcU74Do"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F17D2236E5;
-	Tue, 25 Feb 2025 22:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8B22FF3A;
+	Tue, 25 Feb 2025 22:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740523524; cv=none; b=KsduryUS1apPMexJwNUVXD/g7Sw4GRO5p7kNHtSKLFhTaZLAhgJmtvTe9sJaK6I+JF17gri69IBw9NwDOM1UjNitd9C70OgVDH7AdZ+WL2oKDB08Ta76O0jsqkTmB95SsCoK1j7w1kwJJ2XpitYfSyc7P3Yq8Zv6P8qL+APseGU=
+	t=1740523589; cv=none; b=iwuvOuCru/NhDnyCbs8XISwXHUW3b8qIMGZ0pFrIfICQdekBccHeYHVNKFhgO1icncsHQ7pnRVbDvz5imu54AIk3nomWSJQXwcXiyMpskNZ6+xEvbu1TdF+yu6mU/L/z7iGReXLniOM1IZSPzIXC30bclW1GxtAwuTYna2+2ByE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740523524; c=relaxed/simple;
-	bh=2994Cx+0BEvrnRr3hg0JQaVKoaoIXzC1cKTbjQ8vkWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pup72/U6pdkY+UFK4v+ohYC35JVs6CrlCBCq1zbYxKHk/h0HoF9TqbvmwhVz27gqs/Isdg3dhOmwL6RqCbe4Ql5XvBsK+ZWgpFxi01V02ry7p+IskJSDCJW6y1HPew9/ThFtUuEWvA3V1XxvOmVRlJhRigpF3GeIPOgvIo03FHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ah36awh1; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1740523589; c=relaxed/simple;
+	bh=hDdsaKuLGPPO2QMEwawtpGkH8Byraw3yse7aBvdGdaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kjnqrcmVOByK9mAtJZFKSxXPyL1DrhuqyzT709/JyaqfDID9bCSsI3BNxxwEaGRf6pYyGxDsjKhDEAzUvqnfPtJENrjteKOfgaNpjCsCHObKU6HDnn0Sr2TTd1vY02HQ1AUWBeQKn1B5sVQr5qMOq7Kew0eme1kJvsVudw00Twg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUcU74Do; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so1550454a91.1;
-        Tue, 25 Feb 2025 14:45:22 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so1710225e9.0;
+        Tue, 25 Feb 2025 14:46:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740523522; x=1741128322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740523586; x=1741128386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BREjBIu3LhC9CjTs4V1jX9U/z2RLLn2jYU7SiNJkd7A=;
-        b=Ah36awh1+YGVdua/jDOpvfCCi+3Uekelgg2fCxr1wjyBiRFj+coNbiSc82QDIlQrMM
-         sG1lJ38R+glDZjadaXjL0Oon/qm3UL+vFUcsVZJEcsSnk0y6jCjmJibjcXqrkROuILak
-         9/39h8ZJhxaIkc8SCx2zxsaUvQYvUHq5MThj8GgkM2ubcNykkJ8blGMAtmUIedRaZpgq
-         TcJ8RpoyC2iO6yZCJHO4aNRGiUDt4bwp9/1bFwvpInLpJrAGr/IltU47CMmLhVcWjW/4
-         xQfqDrZCew9hZnOUW58sFdDZcRQDg+y5feHoet0oVObxUh80w7Ura76VlFGjOe/rJ56G
-         Pvaw==
+        bh=3xEzm5a7MvJg/wvZ+Z8+F/9tGDPPJZX+eI/HEgAntBA=;
+        b=IUcU74DoHKoBFhqHqPpR5SQggee6J36UZ4NL0eZTB51wogpIgFfTaYaQmoMUX73S+W
+         GIGnZyyQch8RlMP2+aWkw8z9gtDj+SkMnOAU3QdZdgcNmskGUpLHqZQ26PZGpTO/9suV
+         DKLXPzdO88LBf6oe+cWPeGPgYX7fUUTzCrDssHWP+pOy8cf2VCpuBz0BB51inAxXuoTu
+         BVmSxG6ZtxjhY9a3/1sJL8tC0I6Km09/eQ2O2gEcLjpxygtMO3z42WhWS7lwXDKK3Wwh
+         T6Q2tf0XjG78mopihuebjDmZJ2R+tvWEGth/a/NAe5MeCAX7xqG1SjKX1q7/W0WX6Yaz
+         3Nqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740523522; x=1741128322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740523586; x=1741128386;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BREjBIu3LhC9CjTs4V1jX9U/z2RLLn2jYU7SiNJkd7A=;
-        b=o4S5EVIu2WZDPz1wiwITW86KctbCQOQtuEv/vAvUejK1k43hyTjXZMc7/yLtKtJHTm
-         b52Gc1hZutkKnOStF5y33uxRKRI/XRAnkEUdCnp3jZwBsqVneDmtEtYkXkbgOHPxkBZz
-         jxsDLqujHPUNLRRexPBZnzCmRNL1ITbZLcXcMPYdcKeABm7bksoigZVmVVIfr4l9DWzN
-         3Ruawbgb7aDaHP/Dj2tueIcPXtCrSg9bSKq9tPdxHWk9KXR9X04qllxm1oAorsJQZcXp
-         6xd+K8o+GSmXzR96uNZW9zxu9xEfpTyDufVHCWmRZ7JqiQelhTpFNWF/bdkVHdTgTTv5
-         XEGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVScC6fSZ6daKDGF720o8MiGdz84KHojk50NOoCGwAstAvEIvyjyHUjb9egnmSCZOlGogN2VOiVAVcsbWk=@vger.kernel.org, AJvYcCX0zbuq/uEQ0EFAW31MfuBePyouea1vsBlbRYkNT/biIFfeG5fVcMEeGOv6Fm30F2D/Z5Gsq7ExX7sAlh1QCO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Q4phpoFimOqgIQacQenr8eSaiE2ZU0wcEetMPSs2SfK7cfFG
-	IDmx8+SHUcZpT7zTdNZmqH4ZegnYQVYkeb0eM00NFSi0qarcxkYDHFvotuo+BR3xOgHfbREcfUk
-	IQbDe8EkaRYMjeBWOY/Khu0PpbPc=
-X-Gm-Gg: ASbGnctjEbvUtLC8E1GqlijoPmIXPlHYkZyO8L1L1VTMJkklZ+iDLfWV1+6ypUBAnTb
-	Hn/B+ghY6WDzSgI/YUUzq3qgbZ5P2rRvUdUYNAzGuSED9M2sGqLiXdXwbgXTikfdOoJD4Q0Recg
-	PfAfdHLMg=
-X-Google-Smtp-Source: AGHT+IHW/s/T1gk//zFpUU2//2FctOurcPUs7k9tldIQX5WWLhusS9PC80LFS5bIUyvczF3LpCt7Z9oB8SZfEuTLt8k=
-X-Received: by 2002:a17:90b:4c0a:b0:2ee:b665:12c2 with SMTP id
- 98e67ed59e1d1-2fce769a322mr12045299a91.2.1740523522212; Tue, 25 Feb 2025
- 14:45:22 -0800 (PST)
+        bh=3xEzm5a7MvJg/wvZ+Z8+F/9tGDPPJZX+eI/HEgAntBA=;
+        b=kJzv/PnasdCF9hx4KALki2q+ZRShawgrDQIVC7HXzLi0rAsoHEcTSVqZARLZxgojvM
+         XqgpzenpK0/Gvbl9oaoAbd4MHz/cK2iQmd2sqSUilRq+oDRf7qVbZKnbMs5uK0dhJfrq
+         uHC9KARaijowWK1K6Ubf4Nr91xWzjLYEgyjCje2kxivSpU44VT5ugBJCV+f9iV9rg+Mk
+         bdf6XejXnTz0i9WpYYtu24WczX3GBSUpO6WETBWlYa20jN+G2z944f4ifqWMS5qk/7pL
+         lPnOsG0+BzxYlqMLA9pWBy642EZcoEJow6H2Uk0yX75X2hD9KjS7dupCDJBpotI2Uryb
+         iM7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJF4nxrj6rsUgdeQo7ypN9E7cNSDhU2Ch9y0kavM508oRHnv9zqlm7CqTSmo+CPMGIb8c1+z0AM7RX7LR3@vger.kernel.org, AJvYcCWAnQil3ZMe5OwYmJd5zeQnS5p4a5XD9rYvI1sXduLBMUr6a2JQfvlCiOmtmhnytgPDismBecfHsrBiOtc=@vger.kernel.org, AJvYcCWuHIeeNNNEE8s2BxZpyEFew4Dq/dmjmQn8X8pqM4GBRkSfNsbi4wfaCnI7jie4cIXNDlqEnH5c@vger.kernel.org, AJvYcCX2cm8RJpTTUWr96GYqVxsVk7e38Wr0doLb779AfeWS9KUXLQVSUrOw5cYPwDayE6hx8PBglKb4+xub+AI=@vger.kernel.org, AJvYcCX32993tip4Wk+R1NVWEymsz5fL1oWPepAUmaueHIpI8ikdl9LSJkOIQKE8q65ZqNVRGMS+pyZW5fwmjdef@vger.kernel.org, AJvYcCX6c9M6BvnWv0Np7/MaLPokGIgMuhd/xoL3BN2eII5KXYz+bnjd9WL7WOkK+eG8YGof1VI41wpOnUKrfica75k=@vger.kernel.org, AJvYcCXCO/dX/I0Ax0KErb1V2SZet1QHNdpwdD1CmfJ+0qb1ir0wWm5j2dfg2oIM6DjlzrzS3AY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzWFRIH4+hD/+cBPeTvpiTRDdwWjaqVGuY7zZzmkxAbqvYdh9i
+	qzwuiWYC0MvVBXJlsXnNYQLkF/Z9aHTvqGed8Oc+Nz+EB6W+uOhe
+X-Gm-Gg: ASbGncu9hgNjwDor857YjeUfzzuAXzA4TCMlkxvcITLv9plqxosY7pTMbQ3AaC2izzd
+	bdZdCGnoJHsaAfozyIpOX1FHOvG3ndtF3lkbYmJoGYjB18stMolGltDd6xvBif/dfPSSC4L1xz0
+	pDUfUIAvynf30q1INtXOSNpBsI+WxqhebmOpEu8tPRpbqSKptcOW4uRa+Ab2SGsXdHwhxC7N6pE
+	KiGSBf6nmjf6MuTi0ekNOPV5v5feJ6skhv96iY7CvGTHw6Sq9u32sufYoA2txEyvBP0rorONVMI
+	Z/RXx7cqXBaN7ngFDdUaDerBjWywTbrJreicCK9oCdDjygGTka+8vF6PJMigibVC
+X-Google-Smtp-Source: AGHT+IFjrInluoqnbFjbjbGFkCsa4TCd0YMAhHctzgy+ODQ6ToD9u7urtlYhpUHFZQok7JnATsU7Wg==
+X-Received: by 2002:a05:6000:144d:b0:38f:4f17:ee29 with SMTP id ffacd0b85a97d-38f6f3dca7amr14183257f8f.17.1740523586194;
+        Tue, 25 Feb 2025 14:46:26 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd88295dsm3621054f8f.45.2025.02.25.14.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 14:46:25 -0800 (PST)
+Date: Tue, 25 Feb 2025 22:46:23 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Kuan-Wei Chiu <visitorckw@gmail.com>,
+ tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+ eajames@linux.ibm.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
+ hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
+ vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+ johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, yury.norov@gmail.com, akpm@linux-foundation.org,
+ mingo@kernel.org, alistair@popple.id.au, linux@rasmusvillemoes.dk,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+ Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 03/17] x86: Replace open-coded parity calculation with
+ parity8()
+Message-ID: <20250225224623.6edaaaa9@pumpkin>
+In-Reply-To: <e0b1c299-7f19-4453-a1ce-676068601213@zytor.com>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+	<20250223164217.2139331-4-visitorckw@gmail.com>
+	<d080a2d6-9ec7-1c86-4cf4-536400221f68@gmail.com>
+	<e0b1c299-7f19-4453-a1ce-676068601213@zytor.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6> <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Feb 2025 23:45:09 +0100
-X-Gm-Features: AQ5f1Jovuvs9MoeS3e0E3JJ3UTqjDjDZQtBXriL-HUMRHDG6UIjWV-N8PidE8Qg
-Message-ID: <CANiq72kSdPvh81uOm=N-=37f7NT7udRV-PozfO2pcfbT6aaWyw@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Alice Ryhl <aliceryhl@google.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 9:25=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> No, that's most definitely NOT the whole point of unsafe.
+On Mon, 24 Feb 2025 13:55:28 -0800
+"H. Peter Anvin" <hpa@zytor.com> wrote:
 
-There are a few viewpoints here, which can be understood as correct in
-different senses.
+> On 2/24/25 07:24, Uros Bizjak wrote:
+> > 
+> > 
+> > On 23. 02. 25 17:42, Kuan-Wei Chiu wrote:  
+> >> Refactor parity calculations to use the standard parity8() helper. This
+> >> change eliminates redundant implementations and improves code
+> >> efficiency.  
+...
+> Of course, on x86, parity8() and parity16() can be implemented very simply:
+> 
+> (Also, the parity functions really ought to return bool, and be flagged 
+> __attribute_const__.)
+> 
+> static inline __attribute_const__ bool _arch_parity8(u8 val)
+> {
+> 	bool parity;
+> 	asm("and %0,%0" : "=@ccnp" (parity) : "q" (val));
+> 	return parity;
+> }
+> 
+> static inline __attribute_const__ bool _arch_parity16(u16 val)
+> {
+> 	bool parity;
+> 	asm("xor %h0,%b0" : "=@ccnp" (parity), "+Q" (val));
+> 	return parity;
+> }
 
-It is true that unsafe Rust is supposed to be used when you cannot
-implement something in safe Rust (be it because the safe subset does
-not support it or for performance reasons). In that sense, the point
-of unsafe is indeed to expand on what you can implement.
+The same (with fixes) can be done for parity64() on 32bit.
 
-It is also true that `unsafe` blocks in Rust are just a marker, and
-that they don't change any particular rule -- they "only" enable a few
-more operations (i.e the only "rule" they change is that you can call
-those operations). Of course, with those extra operations one can then
-implement things that normally one would not be able to.
+> 
+> In the generic algorithm, you probably should implement parity16() in 
+> terms of parity8(), parity32() in terms of parity16() and so on:
+> 
+> static inline __attribute_const__ bool parity16(u16 val)
+> {
+> #ifdef ARCH_HAS_PARITY16
+> 	if (!__builtin_const_p(val))
+> 		return _arch_parity16(val);
+> #endif
+> 	return parity8(val ^ (val >> 8));
+> }
+> 
+> This picks up the architectural versions when available.
 
-So, for instance, the aliasing rules apply the same way within
-`unsafe` blocks or outside them, and Rust currently passes LLVM the
-information which does get used to optimize accordingly. In fact, Rust
-generally passes so much aliasing information that it surfaced LLVM
-bugs in the past that had to be fixed, since nobody else was
-attempting that.
+Not the best way to do that.
+Make the name in the #ifdef the same as the function and define
+a default one if the architecture doesn't define one.
+So:
 
-Now, the thing is that one can use pointer types that do not have
-aliasing requirements, like raw pointers, especially when dealing with
-`unsafe` things. And then one can wrap that into a nice API that
-exposes safe (and unsafe) operations itself, e.g. an implementation of
-`Vec` internally may use raw pointers, but expose a safe API.
+static inline parity16(u16 val)
+{
+	return __builtin_const_p(val) ? _parity_const(val) : _parity16(val);
+}
 
-As an example:
+#ifndef _parity16
+static inline _parity16(u15 val)
+{
+	return _parity8(val ^ (val >> 8));
+}
+#endif
 
-    fn f(p: &mut i32, q: &mut i32) -> i32 {
-        *p =3D 42;
-        *q =3D 24;
-        *p
-    }
+You only need one _parity_const().
 
-optimizes exactly the same way as:
+> 
+> Furthermore, if a popcnt instruction is known to exist, then the parity 
+> is simply popcnt(x) & 1.
 
-    fn f(p: &mut i32, q: &mut i32) -> i32 {
-        unsafe {
-            *p =3D 42;
-            *q =3D 24;
-            *p
-        }
-    }
+Beware that some popcnt instructions are slow.
 
-Both of them are essentially `restrict`/`noalias`, and thus no load is
-performed, with a constant 42 returned.
+	David
 
-However, the following performs a load, because it uses raw pointers instea=
-d:
+> 
+> 	-hpa
+> 
+> 
 
-    fn f(p: *mut i32, q: *mut i32) -> i32 {
-        unsafe {
-            *p =3D 42;
-            *q =3D 24;
-            *p
-        }
-    }
-
-The version with raw pointers without `unsafe` does not compile,
-because dereferencing raw pointers is one of those things that unsafe
-Rust unblocks.
-
-One can also define types for which `&mut T` will behave like a raw
-point here, too. That is one of the things we do when we wrap C
-structs that the C side has access to.
-
-Cheers,
-Miguel
 
