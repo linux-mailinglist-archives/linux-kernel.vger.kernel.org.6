@@ -1,130 +1,251 @@
-Return-Path: <linux-kernel+bounces-531545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA56A441A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:03:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D352FA441D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C61E17AD6F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56412189FC57
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEAF26A090;
-	Tue, 25 Feb 2025 14:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE62126A1DA;
+	Tue, 25 Feb 2025 14:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BVdosQ43"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNyKJh5J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8D32641CA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BF52690D4;
+	Tue, 25 Feb 2025 14:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492061; cv=none; b=DlkOI04vOk1Eab1R9cf3jK8w1zjHIIydyV9sEa2kaBNhWk5+K2Hp0dIAScnzBItPdFbxNcGXWtz7TcRCs7wr0EW4MNRFYfnKaMFLX5S9k9YXY2MopaZfWPHobgIRZ3q/IDBK48WFtWNykMBt+PHACs8i0F+889Ta+e/+EkVIJ80=
+	t=1740492357; cv=none; b=kUa4EahgMazl2FH3DwmLxlpw8vq85nFATgxNi18K9qi//26HL/A9wgrSNG2Ga8DavO0KMC312XMyO3k688E/LU6txXhn9M2BJGcF3oZWvFBHYJg9uJIoigDa15WvmLxHuQFdA/gn0a0SqsZkSFx5eEMDaPmddEjPUIdTgFcg5o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492061; c=relaxed/simple;
-	bh=fev5X7UnHuVO/6+0FZ5in0g4uDdh7qp5GkZtIQv/7GM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mSX8jEN735+W3GsCFJfuo3HC/twsC1dHeyLtfDlCbphYcA4bOa8xWPXu9lP0jqntPqQMU96WdtuMSj08zWD15FwXNt278gtmY8gitIRBNGYVGuR2cKZv3MPEJpdR/ACW7MbhyUDv3uR5FI5TnAgt7xYsH7QAvwTbXP+Aq+czwbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BVdosQ43; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740492027; x=1741096827; i=markus.elfring@web.de;
-	bh=HIc4omP8IbDtggPZZGnEqQnknZ3Pe8zMXVMDeyALcDo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BVdosQ43RXaej7khcdx8PGH40RKeuQYZa+AIXDIyBEZKnY5kbP5LekRgo2T3Apz2
-	 Zyg4B+Mwb2sJgbZRNzUTm631b3TQEHkDro8AcyXpuV35aEABcXt587fUY0oYvYcCs
-	 hiQGUWFFYN/m8MnsHhA3yE3ijVvNcAhcOQDAvaL2oYDDbndAGRi2Hux1t45PjuQsr
-	 PuLMl0g93SQpH5GWq0BZt5Vp6nseH/G3OXsQuI7KDPZQJlsao5bwlGFGFrNNAkr3R
-	 ibWxDmJUHF/noLq4FU8aafpPD+zQg65BBJc7R85ZNaj5lwoo2qcXOKhVHDiDHF0Uo
-	 Ka8RCsYyUOMXTnovWw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.36]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mcpqq-1tE8td0t6o-00asfo; Tue, 25
- Feb 2025 15:00:27 +0100
-Message-ID: <bc3ae5a6-9b04-4f1b-9045-2182138f748e@web.de>
-Date: Tue, 25 Feb 2025 15:00:23 +0100
+	s=arc-20240116; t=1740492357; c=relaxed/simple;
+	bh=pdPlp0rDL1jfLw0dpmJfYk+F666XwJmSc0932Ij+l7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eyFOMYDTvOvEAOhoJtiD3R5RjDV8wETY7MIwCjXmkck8Ytz4zkjkwjVtzDJWIBuk590kvcbfcdnS6WH4EHo7rcUy4z4Sd7sk4p3GWU+wrp/wmnJhvpNRdDsqxWhwe9d7iFtpAbCIupnOidXr6Fa0+c9L4KvwZum5STEhenGhxdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WNyKJh5J; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740492356; x=1772028356;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=pdPlp0rDL1jfLw0dpmJfYk+F666XwJmSc0932Ij+l7s=;
+  b=WNyKJh5JZpkL6lRQVLK3w6MmtE4ir9zR0df5jLDetjqKzPoNoAykBS1l
+   LGT1qz5PJlMpQQDnuEdPh8Mo9vc9jcbZvdX1lmRHNh3YqyY3bviYgXToQ
+   I1uqZ4fELtLstiWu7MTb+ali49T3LoEMiMkEUD0vbDqUpG9LnUqcqDAol
+   Lfbs9y/Q2xx9HVBqjamQJwF8XQ0XkTDP0hAvUn/d15vH2rSOaGtMJhSol
+   sycFk/SkkX2QvWkPKE+v3+IY6JcXgd7xkoSZqRzNr+gDVnO5sIc62IE1l
+   eTztfOmZ/IlxBTJ7bDvyLpvIubBt2GDIRi9Dxncqfb7v4OZO1x+1rLbxx
+   A==;
+X-CSE-ConnectionGUID: UsN3LzVqRPyrfyyhujcDnQ==
+X-CSE-MsgGUID: 6vdRe1y6SzGC0JBdPhO+Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="51513798"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="51513798"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:05:42 -0800
+X-CSE-ConnectionGUID: VzWe+/YeR0W/uh6YQZcfXg==
+X-CSE-MsgGUID: kkeWeCHnS1e4ahFVdyY1dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117326296"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by orviesa008.jf.intel.com with ESMTP; 25 Feb 2025 06:05:35 -0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@redhat.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>,
+	Michael Wang <yun.wang@linux.alibaba.com>,
+	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
+	David Rientjes <rientjes@google.com>,
+	Raghavendra K T <raghavendra.kt@amd.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [RFC PATCH 3/3] sched/numa: Allow intervale memory allocation for numa balance
+Date: Tue, 25 Feb 2025 22:00:40 +0800
+Message-Id: <b2193c946639598e1c506a555afcfc0224f1cecf.1740483690.git.yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1740483690.git.yu.c.chen@intel.com>
+References: <cover.1740483690.git.yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qianyi Liu <liuqianyi125@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Matthew Brost <matthew.brost@intel.com>, Maxime Ripard <mripard@kernel.org>,
- Philipp Stanner <phasta@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250221062702.1293754-1-liuqianyi125@gmail.com>
-Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250221062702.1293754-1-liuqianyi125@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5cuqKylqTNFjYrhDL/rMPd351yTTTVW7fp9A6kzA7t79GRUkJfx
- dxhbz3J3AwlqLbO7PpR180PnYanEbE0dBHAdy3q/qLfyvA4BzvRJBU70lbJa5NQhGBVIpnO
- FJ4zpGl4dyjMIzr8ctB+HJajsRFSYPwO2grpgelfE7dPHEF0qumWBtPFARJeCw44YyJXALA
- /MGSovTRxfE26Ol94WuDw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qoTXesFAs04=;LuYDJvGE4k3+uxvn5P+XMBzEvsI
- DMPnxvTcXXOPMzG3sdamynSLB/aAuhT4sGY/c8FqmCUS3LF855BcFElXlPPSvCa/mEmpR6DQ5
- WrdMyQdRW+G1jDbq++SQ73RzBUm8XOyixPVihvbxzQLHRkf+oOzOJJSehaXZmV48t34418dyX
- BJ28O+bIQ7pzGLtq07Fzm9U8Vv1loUesSoZ69fqkdbdeS8ktxcdBSBOaarGl22hQWT0SFpDvg
- Y5ZB52dC/VvlGsTvjDOoKr4z7UNVhNIil1hNfW2hEIIyE1DNxdjKsW62sGjkoHVPwaKXhOAUT
- +IkVoerzblUXsqeQUJg55s/HC/fwGe9jOkt6/TZdTtyw1DFfLH4kxN/3MBabnAXmCV9BhKK4X
- se/kZZWaLIGn7zuH9LtRreVKYzBZH2x2w5IXdAEELg39/D4p89zVivys+DOPJVg33VP4aM32L
- XXp0m8Pb15kH9I0PiydvVJYmjVFjrGVC0gQcAuoLSW6+6GKCTf9Sf6CSRcXSCYkQHhhhoFA0c
- 5UKLc+uRkXeQzHGzD+lNKB2lktX9faWF4d/OzDieFn3gqwPT0XF8AETc+QnH41BuQ2ANhNeWx
- HVS9Lzt6G39I9UZ/4nocCTV2Cziex7BWRgwJfqr5RHWq5PcRBl8pk+vooYmMEzomZRXrQBZN7
- e0x7XL/UAoWlYYyXoTk6j2OzssqhG5K/fciPIyNiF2VCCSiRKnmKgSOjrvTvy0zxoEFa+ortH
- KvVoJblcvgKDi720c3M1nxPjBLM5gk3uWP/Orj2g2hkI9hm2/RBOn7pLX1lAj97EwrM5RApqw
- 0H2uN5Ja9vFPqQoF4Y/VeGGXYwdZr+0QpgqsQU6HbP+/wNaO1oTYidhSsDpH6S20wEHjcNvz8
- 0C3TBInTKEpCeg18IKX82h0NfcNt+PAV/F4R9p6KQdbdUKGqfcDzvGodHekbd+EWPk5d2/HjQ
- 4BnUHp89fyWNjPJDFY/mS7T0isFulHH7KuU0ZyJ84Rz05lQLeAnwXmhWBX7jRi/geqw9podCE
- bPtabC9rfPfl2yxUw/80itf6Jqz6XURJ52lRN3ioXvBsIe5/Z7IHUy2bQIKCWDNty2kISi35p
- KVWA6dsFYF6Oh1QpV9PpYozUY06s/SkK5w1zMazU2sa1jTLmwUpkt06Y8w0XnFEpPeyfaY36L
- sCS861Qm/BJtDXQoxexqOdC61RpfBDJa2F/fy84abZqXCM8VhdMClzzZsFV4IZuzS2uM1tyCC
- rZERvwYKPEVYuvWYZeMHvmqthcdFZzalkrCnh2JWI+16PFkFcaBPvgYK+mJ/IGnTscHxFGNtl
- QVWSHWN+QYs1cGW6nd6UEEgHjFn55hwdavftXJuXxryKAkCz3P2ayplKzqEEzIKElniiAMPOf
- FXHi/QRTEfOlStdBM5kURFN/OUPYkW9JD0X/Ja/VoN0e6LuXQWF4KwfDOjg/ZVc4/lAT6bpaj
- OtuAgu57/ZgqI+sf7tx09wzid/is=
+Content-Transfer-Encoding: 8bit
 
-> Problem: If prev(last_scheduled) was already signaled I encountred a
+MPOL_INTERLEAVE is used to allocate pages interleaved across different
+NUMA nodes to make the best use of memory bandwidth. Under MPOL_INTERLEAVE
+mode, NUMA load balance page migration does not occur because the page is
+already in its designated place. Similarly, NUMA load task migration does
+not occur either—mpol_misplaced() returns NUMA_NO_NODE, which instructs
+do_numa_page() to skip page/task migration. However, there is a scenario
+in the production environment where NUMA balance could benefit
+MPOL_INTERLEAVE. This typical scenario involves tasks within cgroup g_A
+being bound to two SNC (Sub-NUMA Cluster) nodes via cpuset, with their
+pages allocated only on these two SNC nodes in an interleaved manner
+using MPOL_INTERLEAVE. This setup allows g_A to achieve good resource
+isolation while effectively utilizing the memory bandwidth of the two
+SNC nodes. However, it is possible that tasks t1 and t2 in g_A could
+experience remote access patterns:
 
-                                               signalled? encountered?
+	Node 0		Node 1
+	t1		t1.page
+	t2.page		t2
 
+Ideally, a NUMA balance task swap would be beneficial:
 
-> memory leak in drm_sched_entity_fini. This is because the
-> prev(last_scheduled) fence is not free properly.
+	Node 0		Node 1
+	t2		t1.page
+	t2.page		t1
 
-                                    freed?
+In other words, NUMA balancing can help swap t1 and t2 to improve NUMA
+locality without migrating pages, thereby still honoring the
+MPOL_INTERLEAVE policy. To enable NUMA balancing to manage MPOL_INTERLEAVE,
+add MPOL_F_MOF to the MPOL_INTERLEAVE policy if the user has requested
+it via MPOL_F_NUMA_BALANCING (similar to MPOL_BIND). In summary, pages
+will not be migrated for MPOL_INTERLEAVE, but tasks will be migrated to
+their preferred nodes.
 
+Tested on a system with 4 nodes, 40 Cores(80 CPUs)/node, using
+autonumabench NUMA01_THREADLOCAL, with some minor changes to support
+MPOL_INTERLEAVE:
 
-> Fix: Balance the prev(last_scheduled) fence refcnt when
-=E2=80=A6
-                                              reference count?
+  p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, \
+		MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  set_mempolicy(MPOL_INTERLEAVE | MPOL_F_NUMA_BALANCING, \
+		&nodemask_global, max_nodes);
+  ...
+  //each thread accesses 4K of data every 8K,
+  //1 thread should access the pages on 1 node.
 
+No obvious score difference was observed, but noticed some Numa balance
+task migration:
 
-Would a summary phrase like =E2=80=9CFix memory leak when last_scheduled s=
-ignalled=E2=80=9D
-be more appropriate?
+                                 baseline_nocg_interleav      nb_nocg_interlave
+                                 baseline_nocg_interleave     nb_nocg_interlave/
+Min       syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+Min       elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
+Amean     syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+Amean     elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
+Stddev    syst-NUMA01_THREADLOCAL        0.00 (   0.00%)        0.00 (   0.00%)
+Stddev    elsp-NUMA01_THREADLOCAL        0.00 (   0.00%)        0.00 (   0.00%)
+CoeffVar  syst-NUMA01_THREADLOCAL        0.00 (   0.00%)        0.00 (   0.00%)
+CoeffVar  elsp-NUMA01_THREADLOCAL        0.00 (   0.00%)        0.00 (   0.00%)
+Max       syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+Max       elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
+BAmean-50 syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+BAmean-50 elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
+BAmean-95 syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+BAmean-95 elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
+BAmean-99 syst-NUMA01_THREADLOCAL     7156.34 (   0.00%)     7267.28 (  -1.55%)
+BAmean-99 elsp-NUMA01_THREADLOCAL       90.73 (   0.00%)       90.88 (  -0.17%)
 
+delta of /sys/fs/cgroup/mytest/memory.stat during the test:
+numa_pages_migrated: 0
+numa_pte_updates:    9156154
+numa_hint_faults:    8659673
+numa_task_migrated:  282  <--- introduced in previous patch
+numa_task_swaped:    114  <---- introduced in previous patch
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc4#n145
+More tests to come.
 
-Regards,
-Markus
+Suggested-by: Aubrey Li <aubrey.li@intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ include/linux/numa.h           | 1 +
+ include/uapi/linux/mempolicy.h | 1 +
+ mm/memory.c                    | 2 +-
+ mm/mempolicy.c                 | 7 +++++++
+ 4 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/numa.h b/include/linux/numa.h
+index 3567e40329eb..6c3f2d839c76 100644
+--- a/include/linux/numa.h
++++ b/include/linux/numa.h
+@@ -14,6 +14,7 @@
+ 
+ #define	NUMA_NO_NODE	(-1)
+ #define	NUMA_NO_MEMBLK	(-1)
++#define	NUMA_TASK_MIG	(1)
+ 
+ static inline bool numa_valid_node(int nid)
+ {
+diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+index 1f9bb10d1a47..2081365612ac 100644
+--- a/include/uapi/linux/mempolicy.h
++++ b/include/uapi/linux/mempolicy.h
+@@ -64,6 +64,7 @@ enum {
+ #define MPOL_F_SHARED  (1 << 0)	/* identify shared policies */
+ #define MPOL_F_MOF	(1 << 3) /* this policy wants migrate on fault */
+ #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
++#define MPOL_F_MOFT	(1 << 5) /* allow task but no page migrate on fault */
+ 
+ /*
+  * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+diff --git a/mm/memory.c b/mm/memory.c
+index 539c0f7c6d54..4013bbcbf40f 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5683,7 +5683,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 
+ 	target_nid = numa_migrate_check(folio, vmf, vmf->address, &flags,
+ 					writable, &last_cpupid);
+-	if (target_nid == NUMA_NO_NODE)
++	if (target_nid == NUMA_NO_NODE || target_nid == NUMA_TASK_MIG)
+ 		goto out_map;
+ 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
+ 		flags |= TNF_MIGRATE_FAIL;
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index bbaadbeeb291..0b88601ec22d 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1510,6 +1510,8 @@ static inline int sanitize_mpol_flags(int *mode, unsigned short *flags)
+ 	if (*flags & MPOL_F_NUMA_BALANCING) {
+ 		if (*mode == MPOL_BIND || *mode == MPOL_PREFERRED_MANY)
+ 			*flags |= (MPOL_F_MOF | MPOL_F_MORON);
++		else if (*mode == MPOL_INTERLEAVE)
++			*flags |= (MPOL_F_MOF | MPOL_F_MOFT);
+ 		else
+ 			return -EINVAL;
+ 	}
+@@ -2779,6 +2781,11 @@ int mpol_misplaced(struct folio *folio, struct vm_fault *vmf,
+ 	if (!(pol->flags & MPOL_F_MOF))
+ 		goto out;
+ 
++	if (pol->flags & MPOL_F_MOFT) {
++		ret = NUMA_TASK_MIG;
++		goto out;
++	}
++
+ 	switch (pol->mode) {
+ 	case MPOL_INTERLEAVE:
+ 		polnid = interleave_nid(pol, ilx);
+-- 
+2.25.1
+
 
