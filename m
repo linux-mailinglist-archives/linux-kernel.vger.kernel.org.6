@@ -1,223 +1,208 @@
-Return-Path: <linux-kernel+bounces-531373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5808BA43FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:47:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465F7A43FA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451191756EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:47:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EF4189C836
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF18267AE1;
-	Tue, 25 Feb 2025 12:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="kBd/YKwy"
-Received: from enterprise01.smtp.diehl.com (enterprise01.smtp.diehl.com [193.201.238.219])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA7664D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.201.238.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C467267F6D;
+	Tue, 25 Feb 2025 12:49:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F831DD874
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740487644; cv=none; b=gDCdWv92q7yqnnKCSqAEjq1i+9ws6dy5hLGaq16ZJnljmEx9iMrIXOTtB/e8oMHhqSEivyychX6Eyxig34TYwtyHPP2+fHxIrVhbQe8XcKKnN15rsgwU2G3MzHsgQpixlo4sZXsEvCvFHm+GTLfQfaK/4Jm8eWeYtEg8IQxWfpo=
+	t=1740487770; cv=none; b=iWsbu8wE+cCVjuez/yV+kR1jQDedn5Xhkc0sYgaVe709BCnliFQ+YgVDthBVFOFfxjO7JBrfdUKJvQbB+tQWizqROyfDof+mvH7BzcikvutSyID5NZ+i4B7SvTzAjGSpu5XoMIFT+PEZvz8K+5FHHra9eRIH4xmSr6avif/lPVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740487644; c=relaxed/simple;
-	bh=G33KLMczFbZ0skB57D/aTY79oWw1IttlKd5MAzRrlZU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eRRI2ea3cNLXLmjoTBfRT0alZgmUPsZ0URF1bF0sRO33Q6LQowgXHThNdoV5WUIOqdWoRtit9IOxZZi895kGnCaoHBZxdY/Q0R/Vmfrypg9qCWkHNwuqWnplnL705x6cyu0TW9LKvy6bP7kXACFdHHT32WrpoNALY0snMI8ytQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com; spf=pass smtp.mailfrom=diehl.com; dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b=kBd/YKwy; arc=none smtp.client-ip=193.201.238.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diehl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
-  t=1740487642; x=1772023642;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=G33KLMczFbZ0skB57D/aTY79oWw1IttlKd5MAzRrlZU=;
-  b=kBd/YKwyCzGNVSzfdK4uYBiQ7PFE+jBDrZMUJKtDtPi2q9UUSk8eNk2z
-   0WfEP4Z5IILPdq2fRybs9T8tEtDDaRJCfUE7w7BtQNXQWN3HxA+ONAYRZ
-   dEOxehvZfSl4cEuMHiWW5qsJoMu2Xmtr0xbScH3+5NOq/5flTKPCqvPtJ
-   5Z1XZRCmWOL0OnIxUz7GSUbvlYZ+Vu3bMtOoZYklJICcYrm5ACP69TyRw
-   kBakQgXuEfw5UwldGLqZRpGixxArHUrF9jcXYzPwpZMMPMtv48ONNlgG1
-   I7smKcF0jNiq4RgnDwFbg4G806Brohzsjg9eGatEirSaLayMuTz/vcwIY
-   A==;
-X-CSE-ConnectionGUID: IFIII/FsRyuamWL5KNROYg==
-X-CSE-MsgGUID: YMvSkPU3Tg++hD/4bCSWoQ==
-X-ThreatScanner-Verdict: Negative
-IronPort-Data: A9a23:yQicoKlCqRQNFw+O0u+ZBxno5gzqJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
- xIbCmmGO/ePN2rye4h3YdixpEsEucSDyN9nQApk/CxgEC4T+ZvOCOrCIxarNUt+DCFhoGFPs
- p9CMImQdKjYaleG+39B55C49SEUOZmgH+S6UKicfHgsGWeIcQ954Tp7gek1n4V0ttawBgKJq
- LvartbWULOf82cc3lk8teTa83uDgNyo4GlF5gZkOKgR1LPjvyJ94Kw3dPjZw0TQEtE88t6SH
- 47r0Ly/92XFyBYhYvvNuqr7aEADXonJNgGIjHdMM4D66vSVjnVvukqTHKN0hXZ/011lrfgoo
- Dl+ncXYpTMSA0H5sL91vy+0sc1JFfYuFLfveRBTuCEIpqHMWyOEL/5GVCnaMWCEkwre7K4nG
- fEwcVgwgh6/a+2e4Zyaa8grqN8ZPdTiObw751JG9xboAqNzKXzDa/2iCd5w5hwcrYVrNNf6P
- JJfYj11dFLMYhBPPhEcD5dWcOWA3yG5KmAD7gnT/PFvi4TQ5FUZPLzFPNfTe8fMQt5Jk1ycr
- 2TK12j4DxEecteYzFJp91r137OUzXKiAtx6+LuQx9t0u16r+zcvB15VVXf8/fOSsXG5YocKQ
- 6AT0m90xUQoz2SkT974UgGkoVaJuBgRVtxWHqsx7wTl4q7V5RuJQ2sJVDhMbPQ4u8IsAz8nz
- FmEm5XuHzMHjVGOYSvFsO7J9nXpf3FOdQfueBM5cOfM2PG7yKlbs/4FZooL/HKd5jEtJQzN/
- g==
-IronPort-HdrOrdr: A9a23:78ghW68X7cyMcy4wtpFuk+DlI+orL9Y04lQ7vn2ZKCYlFPBw8v
- rF8cjzuiWUtN98YhEdcKm7VpVoGEmsjaKdgrNhWotKPjOW3VdARbsKheDfKlvbak7DH4ZmuZ
- uIGJIObOEYY2IK7/oTP2GDfOrJp7G8gdmVuds=
-X-Talos-CUID: 9a23:8WiH72PlSYh9IO5DeQdG1W9TNNsfY2DUyUj0fmyeM0FYR+jA
-X-Talos-MUID: =?us-ascii?q?9a23=3A4tQGGg8WC1fFkdEpwythjEuQf/ZN/Z+tMH1WrZp?=
- =?us-ascii?q?F+MmocnB6EAyiiw3iFw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="6.13,314,1732575600"; 
-   d="scan'208";a="114389126"
-From: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Re: [PATCH] pps: add epoll support
-Thread-Topic: Re: [PATCH] pps: add epoll support
-Thread-Index: AQHbh4Nj03DZJP6gzkeTd+a2YSs2hA==
-Date: Tue, 25 Feb 2025 12:47:11 +0000
-Message-ID: <af668744b0e54ce2b324900c07fdef16@diehl.com>
-References: <0653b036d2b44d57914f8cb3e405aa0d@diehl.com>
- <97190cf3-259e-4a3c-93c1-83a86416ff3a@enneenne.com>
-In-Reply-To: <97190cf3-259e-4a3c-93c1-83a86416ff3a@enneenne.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-disclaimerprocessed: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740487770; c=relaxed/simple;
+	bh=SGn5zFsyTCdBCoHQbWVsLK+bJDNm4mYXk4dcPXTK3PI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQ/B5r3askpJ/gdWNh4ynPXZ0O0GjzI9Y8kckH9cvTBsC1hpBKYAfanAENBE3iE3HR3wfeJyrjqvN1xcAwRucYC0xv2PpzdvnQuKbCwO/1MvXPjZ0P08F8r65cl2sdMi40U06Xm8mzwCJW8DY94lKodG5ZS/72kJP0iZnwE6Myg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC02E152B;
+	Tue, 25 Feb 2025 04:49:44 -0800 (PST)
+Received: from [10.57.38.173] (unknown [10.57.38.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F8673F6A8;
+	Tue, 25 Feb 2025 04:49:26 -0800 (PST)
+Message-ID: <cdecd882-64ed-426c-98e1-9e8815f1c6ad@arm.com>
+Date: Tue, 25 Feb 2025 12:49:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-GBS-PROC: JH31JkgOAVpzNaKNEwNMTdsBEnTr/aI1KpXmPGeTfcVjvzLaHr3UjvGd+OkMj/I6
-X-GBS-PROCJOB: IfTlpgoaCMeQX9XylYIEZY6wFB7pUAv3ZqLXChm7guYlmVuHkCWIdAJkV8SQaMqS
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dma: Introduce generic dma_decrypted/dma_encrypted
+ helpers
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
+ catalin.marinas@arm.com
+Cc: maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ aneesh.kumar@kernel.org, steven.price@arm.com,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250219220751.1276854-1-suzuki.poulose@arm.com>
+ <20250219220751.1276854-3-suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250219220751.1276854-3-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-PiBIaSwNCj4NCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9kb2xmbyBH
-aW9tZXR0aSA8Z2lvbWV0dGlAZW5uZWVubmUuY29tPg0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5
-IDI0LCAyMDI1IDY6MzkgUE0NCj4gVG86IERlbmlzIE9TVEVSTEFORC1IRUlNIDxkZW5pcy5vc3Rl
-cmxhbmRAZGllaGwuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBT
-dWJqZWN0OiBSZTogW1BBVENIXSBwcHM6IGFkZCBlcG9sbCBzdXBwb3J0DQo+DQo+ID4gVGhlIGlk
-ZWEgaXMgdG8gdXNlIHBvbGwgdG8gd2FpdCBmb3IgdGhlIG5leHQgZGF0YSBiZWNvbWUgYXZhaWxh
-YmxlLg0KPiA+IFRoZSBzaG91bGQgcG9sbCB3b3JrIGxpa2UgYHdhaXRfZXZlbnRfaW50ZXJydXB0
-aWJsZShwcHMtPnF1ZXVlLCBldiAhPSBwcHMtPmxhc3RfZXYpYCwNCj4gPiB3aGVyZSBgcG9sbF93
-YWl0KGZpbGUsICZwcHMtPnF1ZXVlLCB3YWl0KWAgYWxyZWFkeSBkb2VzIHRoZSBmaXJzdCBwYXJ0
-LA0KPiA+IGJ1dCB0aGUgY29uZGl0aW9uIGBldiAhPSBwcHMtPmxhc3RfZXZgIGlzIG1pc3Npbmcu
-DQo+ID4NCj4gPiBQb2xsIHNoYWxsIHJldHVybiAwIGlmIGV2ID09IHBzLT5sYXN0X2V2DQo+ID4g
-YW5kIHNoYWxsIHJldHVybiBFUE9MTElOIGlmIGV2ICE9IHBzLT5sYXN0X2V2OyBFUE9MTFJETk9S
-TSBpcyBlcXVpdmFsZW50W14xXSBzbyBiZXR0ZXIgcmV0dXJuIGJvdGgNCj4gPg0KPiA+IEluIGNh
-c2Ugb2YgaW9jdGwoUFBTX0ZFVENIKSBldiBpcyBzdG9yZWQgb24gdGhlIHN0YWNrLg0KPiA+IElm
-IHR3byBhcHBsaWNhdGlvbnMgYWNjZXNzIG9uZSBwcHMgZGV2aWNlLCB0aGV5IGJvdGggZ2V0IHRo
-ZSByaWdodCByZXN1bHQsIGJlY2F1c2UgdGhlIHdhaXRfZXZlbnQgdXNlcyB0aGUgZXYgZnJvbSB0
-aGVpciBzdGFjay4NCj4gPiBUbyBkbyBzbyB3aXRoIHBvbGwoKSBldiBuZWVkcyB0byBiZSBhdmFp
-bGFibGUgdmlhIGZpbGUsIGJlY2F1c2UgZXZlcnkgYXBwbGljYXRpb25zIG9wZW5zIGEgc2VwYXRl
-IGZpbGUgYW5kIHRoZSBmaWxlIGlzIHBhc3NlZCB0byBwb2xsLg0KPiA+IFRoYXQgaXMgd2hhdCBt
-eSBwYXRjaCBkb2VzLg0KPiA+IEl0IGFkZHMgYSBwZXIgZmlsZSBzdG9yYWdlIHNvIHRoYXQgcG9s
-bCBoYXMgdGhlIGV2IHZhbHVlIG9mIHRoZSBsYXN0IGZldGNoIHRvIGNvbXBhcmUuDQo+DQo+IEkg
-YWdyZWUsIGJ1dCBhcmUgeW91IHN1cmUgdGhhdCB5b3VyIHNvbHV0aW9uIHdpbGwgc2F2ZSB5b3Ug
-aW4gY2FzZSBvZiBmb3JrKCk/DQpXZWxsLCBJIGhhdmUgbm90IHRlc3RlZCBpdC4NCkkgd291bGQg
-ZXhwZWN0IHRoYXQgcmVndWxhciBmaWxlcyBiZWhhdmUgdGhlIHNhbWUgYW5kIGEgcmVhZCBpbiB0
-aGUgZm9ya2VkIHByb2Nlc3MgaW5mbHVlbmNlcyB0aGUgZl9wb3MgaW4gdGhlIG9yaWdpbiBwcm9j
-ZXNzIGFzIHdlbGwuDQpTbyB0aGlzIHdvdWxkIGJlIG5vdCBzdXBwcmlzaW5nIHRoYXQgdGhlIGZv
-cmsgbWF5ICJzdGVhbHMiIHRoZSBwb2xsIGNvbmRpdGlvbi4NCg0KPiBTbywgd2h5IGRvbid0IHNp
-bXBseSBhZGQgYSBuZXcgdmFyaWFibGUgYXMgYmVsb3c/DQpJZiBtb3JlIHRoYW4gb25lIHByb2Nl
-c3Mgb3BlbnMgdGhlIHNhbWUgcHBzLCB0aGV5IHJlZmVyIGFsbCB0byB0aGUgc2FtZSBwcHNfZGV2
-aWNlIHN0cnVjdHVyZS4NClRoZXkgaGF2ZSBhbGwgdGhlaXIgb3duIGZpbGUgc3RydWN0LCBidXQg
-dGhhdCByZWZlciB0byB0aGUgc2FtZSBwcHNfZGV2aWNlLg0KSSBndWVzcyB0aGlzIGxlYWRzIHRv
-IHRoZSBzaXR1YXRpb24gdGhhdCBvbmx5IG9uZSBwcm9jZXNzIHNlZXMgdGhlIGBsYXN0X2ZldGNo
-ZWRfZXYgIT0gbGFzdF9ldmAgY29uZGl0aW9uLCBidXQgSSB3aWxsIHRlc3QuDQoNCkkgd2lsbCBn
-aXZlIHlvdXIgcGF0Y2ggYSB0cnkgYW5kIHJlcG9ydC4NCg0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9wcHMvcHBzLmMgYi9kcml2ZXJzL3Bwcy9wcHMuYw0KPiBpbmRleCA2YTAyMjQ1ZWEzNWYu
-LmRkZWQxNDUyYzNhOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wcHMvcHBzLmMNCj4gKysrIGIv
-ZHJpdmVycy9wcHMvcHBzLmMNCj4gQEAgLTQwLDggKzQwLDExIEBAIHN0YXRpYyBfX3BvbGxfdCBw
-cHNfY2Rldl9wb2xsKHN0cnVjdCBmaWxlICpmaWxlLCBwb2xsX3RhYmxlDQo+ICp3YWl0KQ0KPiAg
-ICAgICAgICBzdHJ1Y3QgcHBzX2RldmljZSAqcHBzID0gZmlsZS0+cHJpdmF0ZV9kYXRhOw0KPg0K
-PiAgICAgICAgICBwb2xsX3dhaXQoZmlsZSwgJnBwcy0+cXVldWUsIHdhaXQpOw0KPiArICAgICAg
-IGlmIChwcHMtPmluZm8ubW9kZSAmIFBQU19DQU5XQUlUKQ0KPiArICAgICAgICAgICAgICAgaWYg
-KHBwcy0+ZmV0Y2hlZF9ldiAhPSBwcHMtPmxhc3RfZXYpDQo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIHJldHVybiBFUE9MTElOIHwgRVBPTExSRE5PUk07DQptYXliZSBsZWF2ZSBwb2xsIGRpcmVj
-dCB3aXRoIGVycm9yIGNvbmRpdGlvbiwgdG8gc2lnbmFsIHRoYXQgdGhpcyBpcyBub3Qgc3VwcG9y
-dCBpbnN0ZWFkIG9mIG5vcm1hbCB0aW1lb3V0IGJlaGF2aW9yDQoNCitpZiAoKHBwcy0+aW5mby5t
-b2RlICYgUFBTX0NBTldBSVQpID09IDApDQorcmV0dXJuIEVQT0xMRVJSOw0KK2lmIChwcHMtPmZl
-dGNoZWRfZXYgIT0gcHBzLT5sYXN0X2V2KQ0KK3JldHVybiBFUE9MTElOIHwgRVBPTExSRE5PUk07
-DQoNCg0KPg0KPiAtICAgICAgIHJldHVybiBFUE9MTElOIHwgRVBPTExSRE5PUk07DQo+ICsgICAg
-ICAgcmV0dXJuIDA7DQo+ICAgfQ0KPg0KPiAgIHN0YXRpYyBpbnQgcHBzX2NkZXZfZmFzeW5jKGlu
-dCBmZCwgc3RydWN0IGZpbGUgKmZpbGUsIGludCBvbikNCj4gQEAgLTE4Niw5ICsxOTUsMTEgQEAg
-c3RhdGljIGxvbmcgcHBzX2NkZXZfaW9jdGwoc3RydWN0IGZpbGUgKmZpbGUsDQo+ICAgICAgICAg
-ICAgICAgICAgaWYgKGVycikNCj4gICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBlcnI7
-DQo+DQo+IC0gICAgICAgICAgICAgICAvKiBSZXR1cm4gdGhlIGZldGNoZWQgdGltZXN0YW1wICov
-DQo+ICsgICAgICAgICAgICAgICAvKiBSZXR1cm4gdGhlIGZldGNoZWQgdGltZXN0YW1wIGFuZCBz
-YXZlIGxhc3QgZmV0Y2hlZCBldmVudCAgKi8NCj4gICAgICAgICAgICAgICAgICBzcGluX2xvY2tf
-aXJxKCZwcHMtPmxvY2spOw0KPg0KPiArICAgICAgICAgICAgICAgcHBzLT5sYXN0X2ZldGNoZWRf
-ZXYgPSBwcHMtPmxhc3RfZXY7DQo+ICsNCj4gICAgICAgICAgICAgICAgICBmZGF0YS5pbmZvLmFz
-c2VydF9zZXF1ZW5jZSA9IHBwcy0+YXNzZXJ0X3NlcXVlbmNlOw0KPiAgICAgICAgICAgICAgICAg
-IGZkYXRhLmluZm8uY2xlYXJfc2VxdWVuY2UgPSBwcHMtPmNsZWFyX3NlcXVlbmNlOw0KPiAgICAg
-ICAgICAgICAgICAgIGZkYXRhLmluZm8uYXNzZXJ0X3R1ID0gcHBzLT5hc3NlcnRfdHU7DQo+IEBA
-IC0yNzIsOSArMjgzLDExIEBAIHN0YXRpYyBsb25nIHBwc19jZGV2X2NvbXBhdF9pb2N0bChzdHJ1
-Y3QgZmlsZSAqZmlsZSwNCj4gICAgICAgICAgICAgICAgICBpZiAoZXJyKQ0KPiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgcmV0dXJuIGVycjsNCj4NCj4gLSAgICAgICAgICAgICAgIC8qIFJldHVy
-biB0aGUgZmV0Y2hlZCB0aW1lc3RhbXAgKi8NCj4gKyAgICAgICAgICAgICAgIC8qIFJldHVybiB0
-aGUgZmV0Y2hlZCB0aW1lc3RhbXAgYW5kIHNhdmUgbGFzdCBmZXRjaGVkIGV2ZW50ICAqLw0KPiAg
-ICAgICAgICAgICAgICAgIHNwaW5fbG9ja19pcnEoJnBwcy0+bG9jayk7DQo+DQo+ICsgICAgICAg
-ICAgICAgICBwcHMtPmxhc3RfZmV0Y2hlZF9ldiA9IHBwcy0+bGFzdF9ldjsNCj4gKw0KPiAgICAg
-ICAgICAgICAgICAgIGNvbXBhdC5pbmZvLmFzc2VydF9zZXF1ZW5jZSA9IHBwcy0+YXNzZXJ0X3Nl
-cXVlbmNlOw0KPiAgICAgICAgICAgICAgICAgIGNvbXBhdC5pbmZvLmNsZWFyX3NlcXVlbmNlID0g
-cHBzLT5jbGVhcl9zZXF1ZW5jZTsNCj4gICAgICAgICAgICAgICAgICBjb21wYXQuaW5mby5jdXJy
-ZW50X21vZGUgPSBwcHMtPmN1cnJlbnRfbW9kZTsNCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
-dXgvcHBzX2tlcm5lbC5oIGIvaW5jbHVkZS9saW51eC9wcHNfa2VybmVsLmgNCj4gaW5kZXggYzdh
-YmNlMjhlZDI5Li5hYWIwYWViYjUyOWUgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvcHBz
-X2tlcm5lbC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvcHBzX2tlcm5lbC5oDQo+IEBAIC01Miw2
-ICs1Miw3IEBAIHN0cnVjdCBwcHNfZGV2aWNlIHsNCj4gICAgICAgICAgaW50IGN1cnJlbnRfbW9k
-ZTsgICAgICAgICAgICAgICAgICAgICAgIC8qIFBQUyBtb2RlIGF0IGV2ZW50IHRpbWUgKi8NCj4N
-Cj4gICAgICAgICAgdW5zaWduZWQgaW50IGxhc3RfZXY7ICAgICAgICAgICAgICAgICAgIC8qIGxh
-c3QgUFBTIGV2ZW50IGlkICovDQo+ICsgICAgICAgdW5zaWduZWQgaW50IGxhc3RfZmV0Y2hlZF9l
-djsgICAgICAgICAgIC8qIGxhc3QgZmV0Y2hlZCBQUFMgZXZlbnQgaWQgKi8NCj4gICAgICAgICAg
-d2FpdF9xdWV1ZV9oZWFkX3QgcXVldWU7ICAgICAgICAgICAgICAgIC8qIFBQUyBldmVudCBxdWV1
-ZSAqLw0KPg0KPiAgICAgICAgICB1bnNpZ25lZCBpbnQgaWQ7ICAgICAgICAgICAgICAgICAgICAg
-ICAgLyogUFBTIHNvdXJjZSB1bmlxdWUgSUQgKi8NCj4NCj4gPiBJZiB5b3Ugd2FudCB0byBhdm9p
-ZCB0aGlzIGV4dHJhIGFsbG9jIGFuZCBkZXJlZmVycywgd2UgbWF5IHVzZSBmaWxlIHBvc2l0aW9u
-IChmaWxlLmZfcG9zKSB0byBzdG9yZSBsYXN0IGZldGNoZWQgZXYgdmFsdWUuDQo+ID4gVGhlIHBw
-cyBkb2VzIG5vdCBwcm92aWRlIHJlYWQvd3JpdGUsIHNvIGZfcG9zIGlzIHVudXNlZCBhbnl3YXku
-DQo+ID4NCj4gPiBJIGFtIGEgbGl0dGxlIGJpdCBwdXp6ZWxlZCBhYm91dCB5b3VyIHNlY29uZCBk
-aWZmLg0KPiA+IEV2ZXJ5IHBwcyBjbGllbnQgdGhhdCB1c2VzIHBwc19ldmVudCgpIHN1cHBvcnRz
-IFdBSVRFVkVOVCwgYmVjYXVzZSB0aGlzIGlzIGluIHRoZSBnZW5lcmljIHBhcnQuDQo+ID4gVG8g
-bWUgbm90IHVzaW5nIHBwc19ldmVudCgpIGJ1dCByZWltcGxlbWVudCBwYXJ0cyBvZiBwcHNfZXZl
-bnQoKSBzZWVtcyB0byBiZSBhIGJhZCBpZGVhLg0KPiA+IFRoYXTigJlzIHdoeSBJIHRoaW5nIHRo
-YXQgdGhpcyBkaWZmIGlzIG5vdCBuZWVkZWQuDQo+DQo+IEFsbCBjbGllbnRzIHNwZWNpZnkgdGhl
-aXIgUFBTIGluZm9ybWF0aW9uIHdpdGhpbiB0aGUgc3RydWN0IHBwc19zb3VyY2VfaW5mbywgYW5k
-DQo+IGlmIGZvciBzb21lIHJlYXNvbiBvbmUgc291cmNlIGRvZXNuJ3QgYWRkIHRoZSBQUFNfQ0FO
-V0FJVCBmbGFnLCB3ZSBzaG91bGQNCj4gcHJvcGVybHkgc3VwcG9ydCB0aGlzIHNldHRpbmcuDQo+
-DQo+IEhvd2V2ZXIsIHRoaXMgaXMgcmVsYXRlZCB0byB0aGUgcG9sbCgpIHN1cHBvcnQsIGFuZCB3
-ZSBjYW4gZGVmZXIgaXQgZm9yIHRoZSBtb21lbnQuDQpJIHNlZS4gTWF5YmUgaXQgaXMgZWFzaWVy
-IHRvIHJlYXNvbiBhYm91dCB0aGUgZGV0YWlscyB3aGVuIGEgcmVhbCBuZWVkIGFyYWlzZXMuDQoN
-Cj4NCj4gVGhhbmsgeW91IHNvIG11Y2ggZm9yIHlvdXIgc3VnZ2VzdGlvbnMgYW5kIHRlc3RzISA6
-KQ0KWW91wrRyZSB3ZWxjb21lLg0KDQpSZWdhcmRzLCBEZW5pcw0KPg0KPiBDaWFvLA0KPg0KPiBS
-b2RvbGZvDQo+DQo+IC0tDQo+IEdOVS9MaW51eCBTb2x1dGlvbnMgICAgICAgICAgICAgICAgICBl
-LW1haWw6IGdpb21ldHRpQGVubmVlbm5lLmNvbQ0KPiBMaW51eCBEZXZpY2UgRHJpdmVyICAgICAg
-ICAgICAgICAgICAgICAgICAgICBnaW9tZXR0aUBsaW51eC5pdA0KPiBFbWJlZGRlZCBTeXN0ZW1z
-ICAgICAgICAgICAgICAgICAgICAgcGhvbmU6ICArMzkgMzQ5IDI0MzIxMjcNCj4gVU5JWCBwcm9n
-cmFtbWluZw0KPg0KRGllaGwgTWV0ZXJpbmcgR21iSCwgRG9uYXVzdHJhc3NlIDEyMCwgOTA0NTEg
-TnVlcm5iZXJnDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IEFuc2JhY2gsIFJlZ2lzdGVyZ2VyaWNo
-dDogQW5zYmFjaCBIUkIgNjkNCkdlc2NoYWVmdHNmdWVocmVyOiBEci4gQ2hyaXN0b2YgQm9zYmFj
-aCAoU3ByZWNoZXIpLCBEaXBsLi1Eb2xtLiBBbm5ldHRlIEdldXRoZXIsIERpcGwuLUtmbS4gUmVp
-bmVyIEVkZWwsIEplYW4tQ2xhdWRlIEx1dHRyaW5nZXINCg0KQml0dGUgZGVua2VuIFNpZSBhbiBk
-aWUgVW13ZWx0LCBiZXZvciBTaWUgZGllc2UgRS1NYWlsIGRydWNrZW4uIERpZXNlIEUtTWFpbCBr
-YW5uIHZlcnRyYXVsaWNoZSBJbmZvcm1hdGlvbmVuIGVudGhhbHRlbi4gU29sbHRlbiBkaWUgaW4g
-ZGllc2VyIEUtTWFpbCBlbnRoYWx0ZW5lbiBJbmZvcm1hdGlvbmVuIG5pY2h0IGbDvHIgU2llIGJl
-c3RpbW10IHNlaW4sIGluZm9ybWllcmVuIFNpZSBiaXR0ZSB1bnZlcnp1ZWdsaWNoIGRlbiBBYnNl
-bmRlciBwZXIgRS1NYWlsIHVuZCBsb2VzY2hlbiBTaWUgZGllc2UgRS1NYWlsIGluIElocmVtIFN5
-c3RlbS4gSmVkZSB1bmJlcmVjaHRpZ3RlIEZvcm0gZGVyIFJlcHJvZHVrdGlvbiwgQmVrYW5udGdh
-YmUsIEFlbmRlcnVuZywgVmVydGVpbHVuZyB1bmQvb2RlciBQdWJsaWthdGlvbiBkaWVzZXIgRS1N
-YWlsIGlzdCBzdHJlbmdzdGVucyB1bnRlcnNhZ3QuIEluZm9ybWF0aW9uZW4genVtIERhdGVuc2No
-dXR6IGZpbmRlbiBTaWUgYXVmIHVuc2VyZXIgSG9tZXBhZ2U8aHR0cHM6Ly93d3cuZGllaGwuY29t
-L21ldGVyaW5nL2RlL2ltcHJlc3N1bS11bmQtcmVjaHRsaWNoZS1oaW53ZWlzZS8+Lg0KDQpCZWZv
-cmUgcHJpbnRpbmcsIHRoaW5rIGFib3V0IGVudmlyb25tZW50YWwgcmVzcG9uc2liaWxpdHkuVGhp
-cyBtZXNzYWdlIG1heSBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbi4gSWYgeW91IGFy
-ZSBub3QgYXV0aG9yaXplZCB0byByZWNlaXZlIHRoaXMgaW5mb3JtYXRpb24gcGxlYXNlIGFkdmlz
-ZSB0aGUgc2VuZGVyIGltbWVkaWF0ZWx5IGJ5IHJlcGx5IGUtbWFpbCBhbmQgZGVsZXRlIHRoaXMg
-bWVzc2FnZSB3aXRob3V0IG1ha2luZyBhbnkgY29waWVzLiBBbnkgZm9ybSBvZiB1bmF1dGhvcml6
-ZWQgdXNlLCBwdWJsaWNhdGlvbiwgcmVwcm9kdWN0aW9uLCBjb3B5aW5nIG9yIGRpc2Nsb3N1cmUg
-b2YgdGhlIGUtbWFpbCBpcyBub3QgcGVybWl0dGVkLiBJbmZvcm1hdGlvbiBhYm91dCBkYXRhIHBy
-b3RlY3Rpb24gY2FuIGJlIGZvdW5kIG9uIG91ciBob21lcGFnZTxodHRwczovL3d3dy5kaWVobC5j
-b20vbWV0ZXJpbmcvZW4vZGF0YS1wcm90ZWN0aW9uLz4uDQo=
+On 2025-02-19 10:07 pm, Suzuki K Poulose wrote:
+> AMD SME added __sme_set/__sme_clr primitives to modify the DMA address for
+> encrypted/decrypted traffic. However this doesn't fit in with other models,
+> e.g., Arm CCA where the meanings are the opposite. i.e., "decrypted" traffic
+> has a bit set and "encrypted" traffic has the top bit cleared.
+> 
+> In preparation for adding the support for Arm CCA DMA conversions, convert the
+> existing primitives to more generic ones that can be provided by the backends.
+> i.e., add helpers to
+>   1. dma_encrypted - Convert a DMA address to "encrypted" [ == __sme_set() ]
+>   2. dma_decrypted - Convert a DMA address to "decrypted" [ None exists today ]
+>   3. dma_clear_encryption - Clear any "encryption"/"decryption" bits from DMA
+>      address [ SME uses __sme_clr() ]
+
+Nit: I'd still prefer to have as much distinction as possible between 
+manipulation of the address representation itself, and any other aspects 
+such as the manipulation of underlying pagetable attributes also implied 
+by force_dma_unencrypted() on x86. So how about:
+
+dma_addr_encrypted
+dma_addr_unencrypted
+dma_addr_clear_encryption
+
+?
+
+Note that we intentionally avoided "decrypted" in the existing APIs to 
+minimise confusion, the only time any actual decryption is involved is 
+for an "encrypted" address.
+
+(Stuff like that being why I personally would prefer to generalise away 
+from encryption as an implementation detail at all, but since everyone 
+else seems to be accustomed to the existing terminology and not 
+complaining, I'm prepared to compromise that far!)
+
+Otherwise, the overall shape looks good to me.
+
+Thanks,
+Robin.
+
+> Since the original __sme_xxx helpers come from linux/mem_encrypt.h, use that
+> as the home for the new definitions and provide dummy ones when none is provided
+> by the architectures.
+> 
+> With the above, phys_to_dma_unencrypted() uses the newly added dma_decrypted()
+> helper and to make it a bit more easier to read and avoid double conversion,
+> provide __phys_to_dma().
+> 
+> No functional changes intended. Compile tested on x86 defconfig with
+> CONFIG_AMD_MEM_ENCRYPT.
+> 
+> Suggested-by: Robin Murphy <robin.murphy@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   include/linux/dma-direct.h  | 12 ++++++++----
+>   include/linux/mem_encrypt.h | 23 +++++++++++++++++++++++
+>   2 files changed, 31 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> index d20ecc24cb0f..9b5cc0ee86d5 100644
+> --- a/include/linux/dma-direct.h
+> +++ b/include/linux/dma-direct.h
+> @@ -78,14 +78,18 @@ static inline dma_addr_t dma_range_map_max(const struct bus_dma_region *map)
+>   #define phys_to_dma_unencrypted		phys_to_dma
+>   #endif
+>   #else
+> -static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+> -		phys_addr_t paddr)
+> +static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
+>   {
+>   	if (dev->dma_range_map)
+>   		return translate_phys_to_dma(dev, paddr);
+>   	return paddr;
+>   }
+>   
+> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+> +						phys_addr_t paddr)
+> +{
+> +	return dma_decrypted(__phys_to_dma(dev, paddr));
+> +}
+>   /*
+>    * If memory encryption is supported, phys_to_dma will set the memory encryption
+>    * bit in the DMA address, and dma_to_phys will clear it.
+> @@ -94,14 +98,14 @@ static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+>    */
+>   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+>   {
+> -	return __sme_set(phys_to_dma_unencrypted(dev, paddr));
+> +	return dma_encrypted(__phys_to_dma(dev, paddr));
+>   }
+>   
+>   static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
+>   {
+>   	phys_addr_t paddr;
+>   
+> -	dma_addr = __sme_clr(dma_addr);
+> +	dma_addr = dma_clear_encryption(dma_addr);
+>   	if (dev->dma_range_map)
+>   		paddr = translate_dma_to_phys(dev, dma_addr);
+>   	else
+> diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
+> index ae4526389261..c8dcc1be695a 100644
+> --- a/include/linux/mem_encrypt.h
+> +++ b/include/linux/mem_encrypt.h
+> @@ -26,11 +26,34 @@
+>    */
+>   #define __sme_set(x)		((x) | sme_me_mask)
+>   #define __sme_clr(x)		((x) & ~sme_me_mask)
+> +
+> +#define dma_encrypted(x)	__sme_set(x)
+> +#define dma_clear_encryption(x)	__sme_clr(x)
+> +
+>   #else
+>   #define __sme_set(x)		(x)
+>   #define __sme_clr(x)		(x)
+>   #endif
+>   
+> +/*
+> + * dma_encrypted() and dma_decrypted() are for converting a given DMA
+> + * address to the respective type of addressing.
+> + *
+> + * dma_clear_encryption() is used to reverse the conversion back to "normal"
+> + * DMA address.
+> + */
+> +#ifndef dma_encrypted
+> +#define dma_encrypted(x)	(x)
+> +#endif
+> +
+> +#ifndef dma_decrypted
+> +#define dma_decrypted(x)	(x)
+> +#endif
+> +
+> +#ifndef dma_clear_encryption
+> +#define dma_clear_encryption(x)	(x)
+> +#endif
+> +
+>   #endif	/* __ASSEMBLY__ */
+>   
+>   #endif	/* __MEM_ENCRYPT_H__ */
+
 
