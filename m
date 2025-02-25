@@ -1,196 +1,129 @@
-Return-Path: <linux-kernel+bounces-530564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2D0A4352A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:25:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC2DA43522
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:23:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA8B17AB4C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C40493AE88A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92642256C95;
-	Tue, 25 Feb 2025 06:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE0B257455;
+	Tue, 25 Feb 2025 06:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPLpWHa+"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="O4G4xvSh"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F6256C9F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062DB256C9F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464610; cv=none; b=HMf0mUqPeDbCpKBNw5+h5HTCe8DyJGkV6xl18zVXnpN98VhjlLsx9FlK3iQw4XTO78tqW28SkS/RPt9n2kGivW/bFTkxWotgsGUvXKR3Jf4gMSHqI+TeX9KedSGQMPXBRORD1DGcgw2jJlAaiSLPn0WGniTBewojTyVHIgd/76I=
+	t=1740464619; cv=none; b=MhiEhvxASNiFeobdM7SkNMR3donkJEHFGJacJDgiMlmxOlG6hM7CPxj5G9Ud13u061zqWJlB4pUNu2YGnm/SzMzEkW0wDJmij/QB9mAuUzODlZOkxfqdLGv1FeXMhO3G2rSFT/VYD84g3JPJ+4z5Dt9ufZ1qcA//NH7w6HulHHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464610; c=relaxed/simple;
-	bh=7XrWL/mfJYaxpUkKboQd5WFxOxUGJ1yfAX6kGCsFGZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=besr4eWgLTxTPpp6dnHb8YBPBWuHuVQATSkxMkg8OGQj3nQEAg+gahrmkafGHxBS9PQjbm5rhJ07lQwuNYhwa2BClWo/CJF5Im9zlhDDX4/EqD4/hZ3wr892kNqdQgKK4u19VyCZyVlosv5AgcxBunW9rkSf222xldyhOAbW/0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPLpWHa+; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so11240741a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:23:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740464607; x=1741069407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D5VaoRwGRt5rhI0585yryJiuNqsJailyleI/CBPAMbA=;
-        b=TPLpWHa+KmHPk+dWT2gvTUEbB+Sxb6WaMjxfx7BJVPXUvzv05EELu0jxiiyNR4LmGg
-         9keLC+VBgDnds7TKA5EOSuIb2IrbF5LxJuYSoLpzqldUl/q1TvWJgSLzTf8Tzh9yWew3
-         ddqYOOAUspGI7PDA19tkEG8aLxA3+mwHXOcUzJdFcZkN+sSOv48XXR97nArY2+9yICLf
-         QnHDhl78/tWjqLMnj1NwdeT4apYCBWxyZF6DyYkEPONHqAhSpmuwKEDPqe72Iy/VzjqB
-         BVgf6lcRPu8GZTL8WfjhcYZJO6M7uu8Le20QZdoWEXmuf9G8ZC9wMP8g07ytO0CWyRnY
-         hWXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740464607; x=1741069407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D5VaoRwGRt5rhI0585yryJiuNqsJailyleI/CBPAMbA=;
-        b=M/sRSVKHS4+LeFIWrojqbC1mtAC4COA0Y5ZTW88lAnMP6nHy0nFjR1UIiVKJJ1A75g
-         RKR/StNG490EeP8sE4nBI4i7DzXbxn2ZEhHLuWQipnCenM04+UeEbZckd7REJr4PBk3V
-         yMN7ei8o2mIA3gwmjelEUBUySdMW5YlP21UzirVw2TvKTdZvf9XJBeRbSx/07l/4XPQZ
-         pgz3fadh75bcQjIP4Va1S4e9xQc/AE0Ror7nxA8GRrrctyR79jAU0G0ZUaYSF8Cthffa
-         KViYSpFWZYxAE2a0Di09dfnfSrFoa5kWL0XjBom7Dw5FFbl91LGjLQPOI/LhqQtnUeOA
-         rzHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnTUBzlRpFHDpWAUoNdxy6UeVTvf1pwYRG7wr/zNLFBb0ZRAlbMiFUJLjLUydiULiGT/+5ByBo3bcERQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygt1h7Cs8NK87XdlXVL4tfC0/IHXYEx/JszwQJY17/mbLY49xQ
-	uetYnJaqAG0C/QSSvmiZyvJUcjCB0gp85frXKyHs4kgAtGUdPRooO8a9N9qOkEgVhGji8saUFtC
-	GDoC6Yivqai0kWU3Yyn0U/zcowsY=
-X-Gm-Gg: ASbGncs/rvOZu45rThfhLOzHMD9mk8ckPYrgmqJH1d2nhpxoNdqp4pFwkSuTNIPfEjK
-	yyX5pqSOFWTfsdI99h9f1zla+0jhmR/7H1Qg11EEkgcDIek3GTennJPN9MxzvxaD0Xr1nXFAsJp
-	IRt8UIu1QT
-X-Google-Smtp-Source: AGHT+IFWxTHVb9OnRBgD45vXv1XLuJL2UZSsumqhHxpJWayZovCq+ciAkyfWhNTgWrNEHjJ3sZfIXnzbngrkIHck8DA=
-X-Received: by 2002:a17:907:720a:b0:aba:6385:576e with SMTP id
- a640c23a62f3a-abc0ae1aed3mr1510502666b.3.1740464606329; Mon, 24 Feb 2025
- 22:23:26 -0800 (PST)
+	s=arc-20240116; t=1740464619; c=relaxed/simple;
+	bh=InjPphvXvck7XZQVAEzYp3L5qLZyOZNGayaXBVX5opQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WiylwmGQiOkETz4iqM7h0moZTHCD/uITfW/oIkAscSffr3h0P5lgmA3bA//TUmcrWqKjVXC1F4Xf/JG0eNBH1mKrAjJIpaPMwu9jSGfJw/r+1UNJo9c4wmLhLQiz16DT9D9VWed1ioqTgLJ1AOW7fFUMt5POBxJCiVk48vbBFJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=O4G4xvSh; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
+	by cmsmtp with ESMTPS
+	id mblDtDkyAXshwmoLqteoRe; Tue, 25 Feb 2025 06:23:30 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id moLptBdU0bZHUmoLqt3qdI; Tue, 25 Feb 2025 06:23:30 +0000
+X-Authority-Analysis: v=2.4 cv=M/dLKTws c=1 sm=1 tr=0 ts=67bd61e2
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=B77GYMjoi4kFFzLnU8gYlsi6rIvhF1nmTqb6FN5GZvs=; b=O4G4xvShRUp+ijSWsMOnKFSH3c
+	7zfEJ820lKzdKts+t8+x1xhnWpi5nIRQ9xGYqGGTJZ3PpNOR73KU28hUVDI8ECQ4J9foScuReNO4b
+	ZhRyFfQUstNw37O3s1+6yfdBi7GiYeuCKeP99UR+Ohdd6b80b5IiB1iGULMP1FestiigZmGG7tmqy
+	Yx/MRGBvV4TbN3RUz/0WPZWK3mtWWyJyZWzP/D52IJMH2/93d45VknZBUi7cAwEldSPTSDFUdXBdo
+	jCQ2TIyOhdBy7xkhnf21Ar/Kh4rnQMhmftzfjLqMwPjckE5fWcveVrumwwkITeU834aprIm4/F6vM
+	NHhRR8qA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:56256 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tmoLn-0048lH-2a;
+	Mon, 24 Feb 2025 23:23:27 -0700
+Message-ID: <30b018a0-0468-43a0-844b-82a00e2ae677@w6rz.net>
+Date: Mon, 24 Feb 2025 22:23:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220055950.4405-1-xuewen.yan@unisoc.com> <20250220055950.4405-2-xuewen.yan@unisoc.com>
- <20250224234511.godsizj7kuv7zrtl@airbuntu>
-In-Reply-To: <20250224234511.godsizj7kuv7zrtl@airbuntu>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Tue, 25 Feb 2025 14:23:14 +0800
-X-Gm-Features: AQ5f1Jp0Q0U23cCJV93wuWeIq3IOUlRyMAzD94B1K2bxjGrFcldVxFFIkj0qAVQ
-Message-ID: <CAB8ipk_NOi0rZQR0X7zveyyL-E7mJVLX92sKVO0=C0TmkcvDOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] sched/uclamp: Add uclamp_is_used() check before
- enable it
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, christian.loehle@arm.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, hongyan.xia2@arm.com, 
-	ke.wang@unisoc.com, di.shen@unisoc.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/154] 6.12.17-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250224142607.058226288@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250224142607.058226288@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tmoLn-0048lH-2a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:56256
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 35
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBJacIz0CX44rBuWtoigZ62koh73JfrQrR9R//jT3EaQDfxy3GcpFGpY24mld+Q87BRNS6Ps0H7P/fERy0x4Yuv8+6YtCcQZP+uywstHXmFPrhGhDrit
+ Ap7cQqvKHeKrHWwoUpW8l/tzdHCaLsJ/4xW11xndRSBrzz/ub1x/VYOBt5ckpL5ncm2CRlM4xVO/Lk8WH1sRh+HRCYIuY5K/Tj4=
 
-On Tue, Feb 25, 2025 at 7:45=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
-rote:
+On 2/24/25 06:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.17 release.
+> There are 154 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On 02/20/25 13:59, Xuewen Yan wrote:
-> > Because the static_branch_enable() would get the cpus_read_lock(),
-> > and sometimes users may frequently set the uclamp value of tasks,
-> > and this operation would call the static_branch_enable()
-> > frequently, so add the uclamp_is_used() check to prevent calling
-> > the cpus_read_lock() frequently.
-> > And to make the code more concise, add a helper function to encapsulate
-> > this and use it everywhere we enable sched_uclamp_used.
-> >
-> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-> > ---
+> Responses should be made by Wed, 26 Feb 2025 14:25:29 +0000.
+> Anything received after that time might be too late.
 >
-> [...]
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.17-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
 >
-> > +/*
-> > + * Enabling static branches would get the cpus_read_lock(),
-> > + * check uclamp_is_used before enabling it. There is no race
-> > + * issue because we never disable this static key once enabled.
-> > + */
-> > +static inline void sched_uclamp_enable(void)
-> > +{
-> > +     if (!uclamp_is_used())
-> > +             static_branch_enable(&sched_uclamp_used);
-> > +}
-> > +
+> thanks,
 >
-> As I indicated in [1] I think the pattern of repeatedly enable is actuall=
-y sane
-> and what we probably should be doing is modify the static_key_enable() lo=
-gic to
-> do the early bail out logic outside of the lock. I had this code this way=
- FWIW
-> initially and Peter asked for it to be called unconditionally instead.
->
-> I think repeated calls to static_key_enable/disable() should be made chea=
-p and
-> I don't see a side effect of _replicating_ the early bail out logic outsi=
-de of
-> the lock so that if we have already enabled/disabled we just return immed=
-iately
-> without any side effect (holding the lock in this case). I agree the hotp=
-lug
+> greg k-h
 
-Because of the jump_lable_lock(), early bailout could indeed be a good idea=
-.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> lock is ugly and if we can avoid touching it when we don't really need to=
- that
-> would be better.
->
-> --->8---
->
-> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-> index d9c822bbffb8..17583c98c447 100644
-> --- a/kernel/jump_label.c
-> +++ b/kernel/jump_label.c
-> @@ -214,6 +214,13 @@ EXPORT_SYMBOL_GPL(static_key_enable_cpuslocked);
->
->  void static_key_enable(struct static_key *key)
->  {
-> +       STATIC_KEY_CHECK_USE(key);
-> +
-> +       if (atomic_read(&key->enabled) > 0) {
-> +               WARN_ON_ONCE(atomic_read(&key->enabled) !=3D 1);
-> +               return;
-> +       }
-> +
->         cpus_read_lock();
->         static_key_enable_cpuslocked(key);
->         cpus_read_unlock();
-> @@ -239,6 +246,13 @@ EXPORT_SYMBOL_GPL(static_key_disable_cpuslocked);
->
->  void static_key_disable(struct static_key *key)
->  {
-> +       STATIC_KEY_CHECK_USE(key);
-> +
-> +       if (atomic_read(&key->enabled) > 0) {
-> +               WARN_ON_ONCE(atomic_read(&key->enabled) !=3D 1);
-> +               return;
-> +       }
+Tested-by: Ron Economos <re@w6rz.net>
 
-Maybe here should be just check whether =3D=3D 0, because when enabling
-the static key, the enable may occur to be -1.
-
-+       if (atomic_read(&key->enabled) =3D=3D 0)
-+               return;
-
-> +
->         cpus_read_lock();
->         static_key_disable_cpuslocked(key);
->         cpus_read_unlock();
->
-> --->8---
->
-> [1] https://lore.kernel.org/all/20250222233627.3yx55ks5lnq3elby@airbuntu/
-
-BR
 
