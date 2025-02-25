@@ -1,344 +1,304 @@
-Return-Path: <linux-kernel+bounces-530862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4036A4396E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:27:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C98A4397C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1BE16667F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5F81885F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D826E260A3A;
-	Tue, 25 Feb 2025 09:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D88025EF9A;
+	Tue, 25 Feb 2025 09:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwOhoI/a"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gdk7E+GP"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F1827453;
-	Tue, 25 Feb 2025 09:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206531FE465;
+	Tue, 25 Feb 2025 09:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475617; cv=none; b=nMKAHGRECRhaoQ7LKOwwHfgODO4Mm9lUGzl5qt1sHebr0WWjXa0e+hyecX883PsQlOshf0h7PC39oZhbxsxjYRmPUDCVQpiCiFTR3Z629uQ9/VXQztPn2Gu6ZIF/NdkBJkfx3FVkIoB/OXI5CvpKnRoSi5UtiSL4/xwl7YWIZPo=
+	t=1740475742; cv=none; b=cALRuN3TZUZlY5z0NizhciHSv6ruz3tv80hxyl3y0FTb/CC3BQFERv34VtUVOV1St1HJ2SCu85y4IKS/SW2q3G0DmRZm7n/BFzY76//1712BsjLBhC5VXtjJ3P5H56GA6qWqX6Y678kMSxgfwKLWuw8+q/TTEADoaaHmretUtfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475617; c=relaxed/simple;
-	bh=wvA6dNGhP7FQUGI5EqH2LMyL9GYEhfpbGbNXmHeQeLg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mTdHKjEPeDw7+qmmGfc9SHN42fKlQjCzG90wGDz1NQ83W7VAhScycw1XkcuXRbVx2zCE3VQXq6TS6KKCsaEP5LWXMcuQ3D0p0DFgw4oJ3ATQvhcdGNsKCUtNgxkgBTWm71UpKCBHXFjI1h+W2kw+OfjRj9gjFX+o23kePk/4dAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WwOhoI/a; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1740475742; c=relaxed/simple;
+	bh=OdzuHQdFfMJy5x96fUs0BOGptZ7qLb7hY+obT5tqo5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n8GL0E9VQfo9PsUgGuxRWAlpKYj7p4v0eRGg0f1SjU6clW7PJz/yQfRRXu1YkPPC1TW4rG2b3is1IoirSKb+N3goCwWES0PijuMZwauiLPWEhcEkUwaq0Q7gpNS4kCb78JPMkljMzOoQd2zdq3OwOYrFpAt4SWJBNU3XE9Urbl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gdk7E+GP; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f24fc466aso3979472f8f.2;
-        Tue, 25 Feb 2025 01:26:53 -0800 (PST)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d2f5a93a32so6861155ab.0;
+        Tue, 25 Feb 2025 01:29:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740475612; x=1741080412; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BoeTa4IvySQUhH0y618KDoeEQekAQiqrQ4nhoxtfnZA=;
-        b=WwOhoI/a6aWW7Cl27eTNFUMpOgOw2ONVEBbw9wj5vgptSyzBrowAqqpUSCfvoWEykk
-         1fvIZXdyXgFoKyq0Gp1tZOaLImImWUt6hXJMbjKzMeD3vBULrw7N6kxFf7wcYraS8jxk
-         VllbF7pOlTqLvVQV0C+bJwvv1+1CaMuyWkACaI1Cfl1llGMGyodfRM2SH0Rh/V/6vz4N
-         lSb2aOeDPNYBMcbRvXK8Il/uMFyM/kVG1YY81AgVI3r6yvSBi++E+CYjh9qRZLRrOr/K
-         sWvPAXz7IJzlnVexqd+4YXfE+dYQK4VvMV+jKuZ/a/Hu6OqHZAEs5CwR2embZYVC15c1
-         wExw==
+        d=gmail.com; s=20230601; t=1740475740; x=1741080540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N5RAcrBB50TjVM/sWT6LRaM+Bt33WtMy317v0E/ly18=;
+        b=Gdk7E+GP0+BDUqjJAcppCDPMxh57tkfFCaR0jx0chdLDrpvQMB/h8DoZxYd7K4a2yG
+         hma/jkRNg2gfW0xwiL3qF6turZsq/qK+VsdRBJNEVqAekbv79s5BsaD84PlojCASPpnq
+         pdeQR78txKAjRqw4KnHIvdP+rT5iSWR5Z/jMHb36VgBPYU2kw6VNoDWCjcAhg2Z8z2UM
+         MeqUo8knLSOsLXeHwZZqwi5tTs4U6vG4UgVsVKad9FcmFTiZZ3B0NeyQedyROg1TVVHz
+         enJDRJH4yFuf8cKj94oEiFL17zpXCaPcaQW+v6TRPl7FTbypNT3UaWKWNBhXaO+2GMkR
+         qQig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740475612; x=1741080412;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BoeTa4IvySQUhH0y618KDoeEQekAQiqrQ4nhoxtfnZA=;
-        b=LfUnsW1bRHKVSXBt8JPm5FEt6MGZ+aMiWAvl+9qT5yVuhtjK8bN+LXilGxnP0GCGfO
-         A0QBviq4WQ9jwBwRbWg6cMhAdfY+3EdrlR/12BwpszJxLqis0RgpD0gJbGcWyoefTaBr
-         OKi7czqQ/547SxYpLgwC9CnESS2YBj+vzowZPRWLqzGvROjys8hgvLDHkngbpBqLR6Yh
-         sHaSBJRWSglGlIYUXlBPsCXa0ciCM4BM2AVnG+1RJRz2AGoTvkuBInf6+8oIDXgIl6QB
-         1jvRbROV3ti3SmP2Rb8gzcMckW+IWskv2wXrdD/iJVPCvSXP2eXlgVLxQDuvNxqXtOGV
-         T8yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ+gBntfB2skV28rodrQcICRyvRWcoQDMAiw3nnwFWIdaOeHyHegmta6bv4gdCenLHdpkVLZyEewEX@vger.kernel.org, AJvYcCVqwkd3fVCMA5G+3mAWvyCeAXofJOw2n5/QfRirGCS3+ZUyGgz5Uw8X1U/eNbhNz3C/locbgaSFVR4K@vger.kernel.org, AJvYcCVtgdPeWVBiIE3oBFwILtU3PZGa1z7YDe1A6oKd/s/LxR+tB945XQ5PYbN1XWLbS/2Tb0SJ75CbTAEE@vger.kernel.org, AJvYcCXUwSu/LSeoXfwHpJb9ahd7jNyaITpbo5Rt/2RI32dmpEaJKy5FqrkF5NccJAINK0HqWfOS5ZsBKrsCY/mE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxukA3xv+1XbuUklgAaCq9bKdVkLQLxIr0UFNkeBBoOiNYqexqq
-	s4nwKlJAURTEjczP4AsJU/AkMQegu1/Vie2WUxYbJLjs9kxZ9Cl0
-X-Gm-Gg: ASbGncuQUmcXSl5KKK9rAERYRqAZGl3y2V719GAsZ8K1Ft9ZTmqSFJwVsjUCPVuV5/s
-	qmTA1q6RL6XGfipGp0bIoBc6oxkGzJB1ImG43pHv7U53mkDKI5RRF3D6AH7iytREBU4BHg/w1ge
-	C0Vj/OqX/K4cw5FeS1PpQq5zDNhUIUskLZ7IWbH6jo7wKRW4BNa3IzxLg/yHAhhDrLvIt5lTyGW
-	KoV1yRsJGlWGzSa+zsk+O2+WEBbixEy99xgP5lYidirXnG+BuTsNHOVsoCcUdNW9X8VAR/vGD2s
-	eIA4AASa3UPtHFyhasn3+Bq4i2YuExPPRT0ElnKdTJtcIo03WJV82BgEcXMKHsb5F5OIm+aUbg=
-	=
-X-Google-Smtp-Source: AGHT+IGKR5FdofxNOKP+qxKxSYIfHIHMFWegnDiA4Uxlry5eM8hOqCDEIcHmmairlELksJynZ+fJbQ==
-X-Received: by 2002:a5d:5987:0:b0:38a:88ac:f115 with SMTP id ffacd0b85a97d-38f70826511mr10518653f8f.34.1740475612128;
-        Tue, 25 Feb 2025 01:26:52 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd866ed2sm1664976f8f.16.2025.02.25.01.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:26:51 -0800 (PST)
-Message-ID: <e527ea625d48239fb765a1a9e0a9c458936b06bf.camel@gmail.com>
-Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550 support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, "Budai, Robert"
-	 <Robert.Budai@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, "Hennerich, Michael"	
- <Michael.Hennerich@analog.com>, "Sa, Nuno" <Nuno.Sa@analog.com>, 
- "Gradinariu, Ramona" <Ramona.Gradinariu@analog.com>, "Miclaus, Antoniu"
- <Antoniu.Miclaus@analog.com>, Rob Herring	 <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,  "linux-iio@vger.kernel.org"	
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"	
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"	
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"	
- <linux-doc@vger.kernel.org>
-Date: Tue, 25 Feb 2025 09:26:56 +0000
-In-Reply-To: <20250222123815.0521df87@jic23-huawei>
-References: <20250217105753.605465-1-robert.budai@analog.com>
-		<20250217105753.605465-6-robert.budai@analog.com>
-		<aee93ef96e71adf70a48ee5877bd75966d9c78c1.camel@gmail.com>
-		<45d64de8a1074788b7c4bffc29788742@analog.com>
-	 <20250222123815.0521df87@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+        d=1e100.net; s=20230601; t=1740475740; x=1741080540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N5RAcrBB50TjVM/sWT6LRaM+Bt33WtMy317v0E/ly18=;
+        b=XNSepfCV93N7VM9L8mIFQHYP+phfmHHi5lL1/3oTlZOAGRTZ3r4p2DJRENiMypYoME
+         ezu/23renVetUpeeiLKOphP50jqgW0tRynsd3kFkYfRlIRxUzUE0K4exQjff6+czN6W4
+         J4H/AYoymMO7pE61o8MNc/ECDoBRiF5hMndeHlpoAHjQlcWG5rLyDohXm/1L+vE5hYxk
+         m9sv0sPC6sHTUYrt+4l+Es/oNX2DzbhhGOlYVRyYbSstkKvRl0nREY79M7mI7HJxtCCB
+         u+RkkRwLFDIUB6e/jcqQAj2t4ginFzQJH35IqU2ItSOzxcXQDcrFNgQYHektmVfyzZGX
+         2MaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgL/R836sIdfevBH+5PaFZ5JefU2vO78BT4Gc4Bx7WjBYv1OC0eLSOkwa0f6WYv3GgtC+zVTS9LKt0@vger.kernel.org, AJvYcCWb0b3mJ8FbJ/eQsGxyo/rpHM16inch6Cl/K21SN5IsrYu7HMnRU02y4g+keY2TCX3ous+3qxLjzslYxW9h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzodDi7rjbWFzAl4Zty0FAXqNVks2Md7mhXLJooRynJ7nUwy4Fc
+	+voXqPcXBCsz6689vz7+saqPBGhdrc3Mr9tuTuMRxz/+h+TBGtI+fQXAbffcU+AT+zay9y4v7wj
+	33GnkdRgz4K3BD1l2DkETufbpzbs/dEci
+X-Gm-Gg: ASbGncvzjXjqnmIv1VgF3thUADLoZSXAX64Kh8Ko6lRPYl2oG54ZzB3wQmsxXKEZBCb
+	Cp3pabxBjWd2l9a1mFR/eycj3n2OzfI4VR/qBj9PJjRo7kj2PHIbBj6bBOOaZ4ndRs0l0Ou2E4D
+	NcB/Hdc3wbpQ==
+X-Google-Smtp-Source: AGHT+IG3S+miW8bytlxRLt4dF7J/MfWpqEtjKRP9Ux3q3q1rZRYxIzuRpYtll427KSmxvQf/Y4UVMgRQ4T9nILpToM8=
+X-Received: by 2002:a05:6e02:3e06:b0:3d2:a5a0:8b02 with SMTP id
+ e9e14a558f8ab-3d2cae6b894mr154201355ab.6.1740475739996; Tue, 25 Feb 2025
+ 01:28:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250224083908.1880383-1-yschu@nuvoton.com> <20250224083908.1880383-4-yschu@nuvoton.com>
+ <Z7yfEunAWuR8jchq@lizhi-Precision-Tower-5810>
+In-Reply-To: <Z7yfEunAWuR8jchq@lizhi-Precision-Tower-5810>
+From: Stanley Chu <stanley.chuys@gmail.com>
+Date: Tue, 25 Feb 2025 17:28:48 +0800
+X-Gm-Features: AQ5f1JpwY1gJAPYPQYccJ75GsOFquINzIz5MccpQ2uTgTVgAk5Kh2gziYHclTmE
+Message-ID: <CAPwEoQNZef_CeeCDNFGG4oJHCiM3MN9-juq+xX3hB5DKp4vorQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] i3c: master: svc: Fix npcm845 FIFO empty issue
+To: Frank Li <Frank.li@nxp.com>
+Cc: miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-i3c@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2025-02-22 at 12:38 +0000, Jonathan Cameron wrote:
-> On Thu, 20 Feb 2025 13:43:04 +0000
-> "Budai, Robert" <Robert.Budai@analog.com> wrote:
->=20
-> > > -----Original Message-----
-> > > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
-> > > Sent: Thursday, February 20, 2025 10:22 AM
-> > > To: Budai, Robert <Robert.Budai@analog.com>; Lars-Peter Clausen
-> > > <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
-> > > Sa, Nuno <Nuno.Sa@analog.com>; Gradinariu, Ramona
-> > > <Ramona.Gradinariu@analog.com>; Miclaus, Antoniu
-> > > <Antoniu.Miclaus@analog.com>; Jonathan Cameron <jic23@kernel.org>; Ro=
-b
-> > > Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; =
-Conor
-> > > Dooley <conor+dt@kernel.org>; Jonathan Corbet <corbet@lwn.net>; linux=
--
-> > > iio@vger.kernel.org; devicetree@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org;
-> > > linux-doc@vger.kernel.org
-> > > Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550
-> > > support
-> > >=20
-> > > [External]
-> > >=20
-> > > On Mon, 2025-02-17 at 12:57 +0200, Robert Budai wrote:=C2=A0=20
-> > > > The ADIS16550 is a complete inertial system that includes a triaxis
-> > > > gyroscope and a triaxis accelerometer. Each inertial sensor in the
-> > > > ADIS16550 combines industry leading MEMS only technology with signa=
+On Tue, Feb 25, 2025 at 12:32=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Mon, Feb 24, 2025 at 04:39:06PM +0800, Stanley Chu wrote:
+> > From: Stanley Chu <yschu@nuvoton.com>
+> >
+> > I3C HW stalls the write transfer if the transmit FIFO becomes empty,
+> > when new data is written to FIFO, I3C HW resumes the transfer but the
+> > first transmitted data bit may have the wrong value.
+> > Fill the FIFO in advance to prevent FIFO from becoming empty.
+> >
+> > Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> > ---
+> >  drivers/i3c/master/svc-i3c-master.c | 44 ++++++++++++++++++++---------
+> >  1 file changed, 31 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/s=
+vc-i3c-master.c
+> > index 8834f87a4767..07506ae0f914 100644
+> > --- a/drivers/i3c/master/svc-i3c-master.c
+> > +++ b/drivers/i3c/master/svc-i3c-master.c
+> > @@ -942,7 +942,7 @@ static int svc_i3c_master_do_daa_locked(struct svc_=
+i3c_master *master,
+> >                                       u8 *addrs, unsigned int *count)
+> >  {
+> >       u64 prov_id[SVC_I3C_MAX_DEVS] =3D {}, nacking_prov_id =3D 0;
+> > -     unsigned int dev_nb =3D 0, last_addr =3D 0;
+> > +     unsigned int dev_nb =3D 0, last_addr =3D 0, dyn_addr;
+> >       u32 reg;
+> >       int ret, i;
+> >
+> > @@ -985,6 +985,17 @@ static int svc_i3c_master_do_daa_locked(struct svc=
+_i3c_master *master,
+> >               if (SVC_I3C_MSTATUS_RXPEND(reg)) {
+> >                       u8 data[6];
+> >
+> > +                     /*
+> > +                      * One slave sends its ID to request for address =
+assignment,
+> > +                      * pre-filling the dynamic address can reduce SCL=
+ clock stalls
+> > +                      * and also fix the SVC_I3C_QUIRK_FIFO_EMPTY quir=
+k.
+> > +                      */
+> > +                     dyn_addr =3D i3c_master_get_free_addr(&master->ba=
+se, last_addr + 1);
+> > +                     if (dyn_addr < 0)
+> > +                             return -ENOSPC;
+> > +
+> > +                     writel(dyn_addr, master->regs + SVC_I3C_MWDATAB);
+> > +
+>
+> Although there is 64 clock time after issue do_daa, it is still better if
+> prefill dyn_addr before sent do daa command?
+>
+> If add a debug message before i3c_master_get_free_addr(), does it trigger
+> hardware issue?
+>
+> Frank
+
+Ideally, prefilling before the processDAA command is better. However,
+it requires an additional check to write the dyn_addr at the right time
+because the driver needs to write the processDAA command twice for one
+assignment
+
+Prefilling here is safe and efficient because the FIFO starts filling
+within a few hundred nanoseconds on the npcm845, which is significantly
+faster compared to the 64 SCL clock cycles.
+
+
+>
+> >                       /*
+> >                        * We only care about the 48-bit provisioned ID y=
+et to
+> >                        * be sure a device does not nack an address twic=
+e.
+> > @@ -1063,21 +1074,16 @@ static int svc_i3c_master_do_daa_locked(struct =
+svc_i3c_master *master,
+> >               if (ret)
+> >                       break;
+> >
+> > -             /* Give the slave device a suitable dynamic address */
+> > -             ret =3D i3c_master_get_free_addr(&master->base, last_addr=
+ + 1);
+> > -             if (ret < 0)
+> > -                     break;
+> > -
+> > -             addrs[dev_nb] =3D ret;
+> > +             addrs[dev_nb] =3D dyn_addr;
+> >               dev_dbg(master->dev, "DAA: device %d assigned to 0x%02x\n=
+",
+> >                       dev_nb, addrs[dev_nb]);
+> > -
+> > -             writel(addrs[dev_nb], master->regs + SVC_I3C_MWDATAB);
+> >               last_addr =3D addrs[dev_nb++];
+> >       }
+> >
+> >       /* Need manual issue STOP except for Complete condition */
+> >       svc_i3c_master_emit_stop(master);
+> > +     svc_i3c_master_flush_fifo(master);
+> > +
+> >       return ret;
+> >  }
+> >
+> > @@ -1225,8 +1231,8 @@ static int svc_i3c_master_read(struct svc_i3c_mas=
+ter *master,
+> >       return offset;
+> >  }
+> >
+> > -static int svc_i3c_master_write(struct svc_i3c_master *master,
+> > -                             const u8 *out, unsigned int len)
+> > +static int svc_i3c_master_write(struct svc_i3c_master *master, const u=
+8 *out,
+> > +                             unsigned int len, bool last)
+> >  {
+> >       int offset =3D 0, ret;
+> >       u32 mdctrl;
+> > @@ -1243,7 +1249,7 @@ static int svc_i3c_master_write(struct svc_i3c_ma=
+ster *master,
+> >                * The last byte to be sent over the bus must either have=
+ the
+> >                * "end" bit set or be written in MWDATABE.
+> >                */
+> > -             if (likely(offset < (len - 1)))
+> > +             if (likely(offset < (len - 1)) || !last)
+> >                       writel(out[offset++], master->regs + SVC_I3C_MWDA=
+TAB);
+> >               else
+> >                       writel(out[offset++], master->regs + SVC_I3C_MWDA=
+TABE);
+> > @@ -1274,6 +1280,17 @@ static int svc_i3c_master_xfer(struct svc_i3c_ma=
+ster *master,
+> >                      SVC_I3C_MCTRL_RDTERM(*actual_len),
+> >                      master->regs + SVC_I3C_MCTRL);
+> >
+> > +             if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) && !r=
+nw && xfer_len) {
+> > +                     u32 len =3D min_t(u32, xfer_len, SVC_I3C_FIFO_SIZ=
+E);
+> > +
+> > +                     ret =3D svc_i3c_master_write(master, out, len,
+> > +                                                xfer_len <=3D SVC_I3C_=
+FIFO_SIZE);
+> > +                     if (ret < 0)
+> > +                             goto emit_stop;
+> > +                     xfer_len -=3D len;
+> > +                     out +=3D len;
+> > +             }
+> > +
+>
+> The same here, you prefill data after issue sent out address, timing stil=
 l
-> > > > conditioning that optimizes dynamic performance. The factory calibr=
-ation
-> > > > characterizes each sensor for sensitivity, bias, and alignment. As =
-a
-> > > > result, each sensor has its own dynamic compensation formulas that
-> > > > provide accurate sensor measurements.
-> > > >=20
-> > > > Co-developed-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> > > > Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> > > > Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> > > > Signed-off-by: Robert Budai <robert.budai@analog.com>
-> > > > ---
-> > > > =C2=A0
-> > >=20
-> > > I guess it would make sense a Co-developed-by: for Robert?
->=20
-> The From is set to Robert, so that is implicit.=C2=A0 It is an odd chain
-> though. Now I've looked at it this doesn't
-> seem quite right but I am struggling with what it should be :(
->=20
-> I think this chain means that Ramona, Antoniu and Robert made significant
-> contributions. Robert's was after Nuno had handled the patch on some
-> ADI tree?=20
->=20
+> tight, only 9 SCL clock time. should it prefill before issue address?
+>
+> Frank
 
-So, I was the one that original wrote the driver (I think about 3 years ago=
-) and
-the needed modifications on the adis lib. Then, Ramona, Antoniu and Robert =
-all
-worked on the driver after me when someone remembered it was about time to
-upstream this :)
+The entire transaction can consist of multiple read and write
+transfers. In the case
+of S+7E/W+Sr+dyn_addr/W+data+P, If the data is prefilled before Sr, it
+will be emitted
+immediately and become part of the previous transfer.
 
-...
+It is not a problem to fill FIFO here, the reason is the same as above.
+I will also modify the code as below to make it efficient and keep
+svc_i3c_master_write unchanged.
 
->=20
->=20
-> diff --git a/drivers/iio/imu/adis16550.c b/drivers/iio/imu/adis16550.c
-> index 16f01c61a429..8ec3afe6140b 100644
-> --- a/drivers/iio/imu/adis16550.c
-> +++ b/drivers/iio/imu/adis16550.c
-> @@ -509,10 +509,10 @@ static int adis16550_get_accl_filter_freq(struct
-> adis16550 *st, int *freq_hz)
-> =C2=A0static int adis16550_set_accl_filter_freq(struct adis16550 *st, int=
- freq_hz)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 en =3D freq_hz ? 1 : 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 val =3D FIELD_PREP(ADIS16550_AC=
-CL_FIR_EN_MASK, en);
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return __adis_update_bits(&st-=
->adis, ADIS16550_REG_CONFIG,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16550_ACCL_FIR_EN_MASK,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(ADIS16550_ACCL_FIR=
-_EN_MASK, en));
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16550_ACCL_FIR_EN_MASK, v=
-al);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int adis16550_get_gyro_filter_freq(struct adis16550 *st, int=
- *freq_hz)
-> @@ -535,10 +535,10 @@ static int adis16550_get_gyro_filter_freq(struct
-> adis16550 *st, int *freq_hz)
-> =C2=A0static int adis16550_set_gyro_filter_freq(struct adis16550 *st, int=
- freq_hz)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 en =3D freq_hz ? 1 : 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 val =3D FIELD_PREP(ADIS16550_GY=
-RO_FIR_EN_MASK, en);
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return __adis_update_bits(&st-=
->adis, ADIS16550_REG_CONFIG,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16550_GYRO_FIR_EN_MASK,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(ADIS16550_GYRO_FIR=
-_EN_MASK, en));
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16550_GYRO_FIR_EN_MASK, v=
-al);
-> =C2=A0}
->=20
+                if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) &&
+!rnw && xfer_len) {
+                        u32 len =3D min_t(u32, xfer_len, SVC_I3C_FIFO_SIZE)=
+;
 
-LGTM
+                        while (len--) {
+                                if (xfer_len =3D=3D 1)
+                                        writel(out[0], master->regs +
+SVC_I3C_MWDATABE);
+                                else
+                                        writel(out[0], master->regs +
+SVC_I3C_MWDATAB);
+                                xfer_len--;
+                                out++;
+                        }
+                }
 
-> =C2=A0enum {
-> @@ -832,7 +832,6 @@ static u32 adis16550_validate_crc(__be32 *buffer, con=
-st u8
-> n_elem)
-> =C2=A0
-> =C2=A0static irqreturn_t adis16550_trigger_handler(int irq, void *p)
-> =C2=A0{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 crc;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 dummy;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool valid;
-> @@ -1143,7 +1142,7 @@ module_spi_driver(adis16550_driver);
-> =C2=A0MODULE_AUTHOR("Nuno Sa <nuno.sa@analog.com>");
-> =C2=A0MODULE_AUTHOR("Ramona Gradinariu <ramona.gradinariu@analog.com>");
-> =C2=A0MODULE_AUTHOR("Antoniu Miclaus <antoniu.miclaus@analog.com>");
-> -MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>")
-> +MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>");
-> =C2=A0MODULE_DESCRIPTION("Analog Devices ADIS16550 IMU driver");
-> =C2=A0MODULE_IMPORT_NS("IIO_
->=20
-> > >=20
-> > > Anyways, all looks good except for one thing that I just spotted...
-> > > =C2=A0=20
-> > > > v8:
-> > > > - removed __aligned from struct adis16550, as suggested
-> > > > - crc buffer extraction into the crc check function
-> > > > - passed buffer into crc validation as original, __be32 and perform=
-ed
-> > > > check
-> > > > using be32_to_cpu conversion of the buffer
-> > > > - added trailing comma to line 993
-> > > > - removed trailing comma from line 877
-> > > >=20
-> > > > =C2=A0drivers/iio/imu/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
- 13 +
-> > > > =C2=A0drivers/iio/imu/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
-=A0 1 +
-> > > > =C2=A0drivers/iio/imu/adis16550.c | 1149=C2=A0=20
-> > > +++++++++++++++++++++++++++++++++++=C2=A0=20
-> > > > =C2=A03 files changed, 1163 insertions(+)
-> > > > =C2=A0create mode 100644 drivers/iio/imu/adis16550.c
-> > > > =C2=A0
-> > >=20
-> > > ...
-> > > =C2=A0=20
-> > > >=20
-> > > > +static int adis16550_set_freq_hz(struct adis16550 *st, u32 freq_hz=
-)
-> > > > +{
-> > > > +	u16 dec;
-> > > > +	int ret;
-> > > > +	u32 sample_rate =3D st->clk_freq_hz;
-> > > > +	/*
-> > > > +	 * The optimal sample rate for the supported IMUs is between
-> > > > +	 * int_clk - 1000 and int_clk + 500.
-> > > > +	 */
-> > > > +	u32 max_sample_rate =3D st->info->int_clk * 1000 + 500000;
-> > > > +	u32 min_sample_rate =3D st->info->int_clk * 1000 - 1000000;
-> > > > +
-> > > > +	if (!freq_hz)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	adis_dev_auto_lock(&st->adis);
-> > > > +
-> > > > +	if (st->sync_mode =3D=3D ADIS16550_SYNC_MODE_SCALED) {
-> > > > +		unsigned long scaled_rate =3D lcm(st->clk_freq_hz,
-> > > > freq_hz);
-> > > > +		int sync_scale;
-> > > > +
-> > > > +		if (scaled_rate > max_sample_rate)
-> > > > +			scaled_rate =3D max_sample_rate / st->clk_freq_hz
-> > > > * st-=C2=A0=20
-> > > > > clk_freq_hz;=C2=A0=20
-> > > > +		else
-> > > > +			scaled_rate =3D max_sample_rate / scaled_rate *
-> > > > scaled_rate;
-> > > > +
-> > > > +		if (scaled_rate < min_sample_rate)
-> > > > +			scaled_rate =3D roundup(min_sample_rate, st-=C2=A0=20
-> > > > > clk_freq_hz);=C2=A0=20
-> > > > +=C2=A0=20
-> > >=20
-> > > I would imagine the above is the same deal as in other devices [1] or=
- do
-> > > you
-> > > know for a fact this one is different? Maybe it's simple enough for
-> > > Jonathan to
-> > > tweak while applying...
-> > >=20
-> > > [1]:
-> > > https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.13.3/=
-source
-> > > /drivers/iio/imu/adis16475.c*L364__;Iw!!A3Ni8CS0y2Y!7Y71yPaQAxVzNRd
-> > > O_jT7wEz4k-
-> > > s6z4tJHOcES84HYkq8qNGsgJH7zxwjfPNjLF3OEGVInSolo1ennLU_mwpmEbo$
-> > >=20
-> > > - Nuno S=C3=A1=C2=A0=20
-> >=20
-> > [Robert Budai]=20
-> > No differences were found in the scaled_sync behavior of the ADIS16475 =
-and
-> > ADIS16550. It is safe to add from my side.
-> >=20
-> If we want to do such a module parameter override I am fine with adding
-> it but as a separate patch on top that provides the reasoning etc.
-> It is a little to messy for me to do as a tweak.
->=20
 
-That's fair
-
-- Nuno S=C3=A1
-
+>
+> >               ret =3D readl_poll_timeout(master->regs + SVC_I3C_MSTATUS=
+, reg,
+> >                                SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000)=
+;
+> >               if (ret)
+> > @@ -1335,7 +1352,7 @@ static int svc_i3c_master_xfer(struct svc_i3c_mas=
+ter *master,
+> >       if (rnw)
+> >               ret =3D svc_i3c_master_read(master, in, xfer_len);
+> >       else
+> > -             ret =3D svc_i3c_master_write(master, out, xfer_len);
+> > +             ret =3D svc_i3c_master_write(master, out, xfer_len, true)=
+;
+> >       if (ret < 0)
+> >               goto emit_stop;
+> >
+> > @@ -1362,6 +1379,7 @@ static int svc_i3c_master_xfer(struct svc_i3c_mas=
+ter *master,
+> >  emit_stop:
+> >       svc_i3c_master_emit_stop(master);
+> >       svc_i3c_master_clear_merrwarn(master);
+> > +     svc_i3c_master_flush_fifo(master);
+> >
+> >       return ret;
+> >  }
+> > --
+> > 2.34.1
+> >
 
