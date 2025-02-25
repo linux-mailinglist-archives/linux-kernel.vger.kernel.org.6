@@ -1,101 +1,85 @@
-Return-Path: <linux-kernel+bounces-530816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23673A438BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:08:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0873A438BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9AB17DF79
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A0917D540
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8727D267B0D;
-	Tue, 25 Feb 2025 09:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mad34g9i"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C726560F;
+	Tue, 25 Feb 2025 09:03:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4972673B3;
-	Tue, 25 Feb 2025 09:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1666D267703
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474160; cv=none; b=FAEOBEtdOrRUQ+rO2GnXvnl9xiPJvVl8BiRCrjYuOsoOtEh1vC+x5tmL0X+llDJpx26ZC1l/TwSc0dFj4JpAs/7DbNlQuXCy+o/Q/w1k+A9lRQHAsPxQROi+m33ZhsM613JKxaJA/AhOHb+u36ZYeBsBT4Jfc4dCiXwj2q4N7lI=
+	t=1740474187; cv=none; b=isKlDWBHlZhiQmzJAeyku83PSjvU6YgSwSCfDRoHe8+ElByp4NyS2BsVHCaVkX0gca1JpYjYKWbNNoFvEwvuT13tvvQo1Lalr/NoLMweXPI6SJ4Gnx//OPFVBhDlwpKbC1qFVD8rjR+V1vwd77yscjfcJY+m6Sy7MvcbgbaxqkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474160; c=relaxed/simple;
-	bh=RwD9Gz02QH5eAwhS1aHv2+U1ENtiqeTZVSrKrGfP2dU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hjsU6YGwOuKkcNB1L5LN9cwJ8K+OKaPsxoX5eoOqFjm93+GvOQw4IQ9OCmrYRXSc+q4QrkaonFamdw3giTCN/WHDi7Zf6Te5JT7IENmn0KzZKwecn820dq0wRJZ8CusFLnvhT2N9VNUl3HycP5NIRs4TLetXbupJb9RV0tnS8+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mad34g9i; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740474156;
-	bh=RwD9Gz02QH5eAwhS1aHv2+U1ENtiqeTZVSrKrGfP2dU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mad34g9i/Acnl3b3bjkV/XIYDG+h63kRAtLqDy1H60vvcFWoD0JAwFNTrA3WoOT48
-	 k05gGSpJrlxAACdz+Iet2xyV97LFujkaEAbyNZybRU3UO9hRCXxQzHBiMdhi82/vUm
-	 VhwQ4kVPYQvmucasQVX6QukQBRWH9tK8JI7FNvPXtllmZnsfF73eyi/LC9reiNRmR0
-	 AUe4EqsmFyy+ThuTuis9sjrVa9uXvRYzC9ZagCGw8C6S0KeiAuMiVYhO8zLJkZ1VRv
-	 1/Irl+it6iJOE0n9RbfpSpeI4lxCevSpRSKp8KIBpcfhNa8XpKxn0MJxJMUskp8OWF
-	 jmoUznt7wHSNg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BED1517E1016;
-	Tue, 25 Feb 2025 10:02:35 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- matthias.bgg@gmail.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, pablo.sun@mediatek.com
-In-Reply-To: <20250220110948.45596-1-angelogioacchino.delregno@collabora.com>
-References: <20250220110948.45596-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 0/4] MediaTek MT8188 Display Graph:
- Chromebooks+Genio
-Message-Id: <174047415570.19243.8135103122459285284.b4-ty@collabora.com>
-Date: Tue, 25 Feb 2025 10:02:35 +0100
+	s=arc-20240116; t=1740474187; c=relaxed/simple;
+	bh=ph9J2T2tkv6wl4oG1Qjb46B3HKdgnhT3IAY+Rqwbtx8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eJG6ZzimvlpHKq7N1UxkheMrQ8xhdhom+uNTir7P1UZHxu+OARDoVfFDrnCkw6/aFq2eFWdKgSaFs6HvjAOmPfD0izTPhAKIBRN/nzXKNgLMjQCCQItm9h8bi1tKwlJ7SDjXlbdhsak4hnklA2erc8DqgjnVE2gkuGNbyI2sUTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ce81a40f5cso114468235ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:03:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740474185; x=1741078985;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hhkqq4jjozW1nvqYWPjbkQaT1qBiVATIebTUIlROaOo=;
+        b=fDTv6o1J+Ful0kmDTAoO99I/WG9zaf+4AXQZgdfOlwQIOh6uLi6kFAB/1P43V5++DS
+         y1evScO07H1DR72YY5+HNsleRabiUVxphtncstRYxwpekHFA/GLuA75rShHFnJ0Li3lQ
+         9ieVzCzYF5JWJ0UPKbcX4bFIp3q6iZEdbTIjmEjmLw8gtNho9V6Iau6+NhT4svKw1Dwe
+         urQLpZ/oPtmejMFG2N4kh8/EiHtp+w5Y8r+ngMgntVL98nSFsfkBow9nLFsK0fz5F0w4
+         /Yf2oWtuEIj7G+BCQpiq/fD7bB76s9NnYrVXRPFTVbebK18CEAJrfeLMGMRet8Caw8zJ
+         mA2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQh2WuJeXUqmEWFl8K2AVr4HmIRmUSyz4pC2n4XxrjJ2ZX/kmY0Xg2sb0B+0vZYBYhfhigN8oXYCIcVqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQX1IAqJmc4uMILwsT2Wvy2RqeABUvaxqdm020rWL7hApFekpD
+	VQfXDrvwT+T+Tku3wQPiQfNVgfcnJNS3pLXlXO+2ZSa0W0DttlwjRmMcsDy37jpNwfFN5jMyiS5
+	2HocwjSWYpxJr2M7BHVQfJZeR9K4oWGCYMdqZ7ngQm94DxLgWI/MpL/s=
+X-Google-Smtp-Source: AGHT+IFLsCOJUUj8CK9vNXNbqMUJC4mTVTcOffAFpSxqWkdGJ1NB4AXek/WMlOjHIFyi90lJ9vMYReAM++p8bQgCzxA8BWrUGNnC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6e02:170f:b0:3cf:cd87:1bf9 with SMTP id
+ e9e14a558f8ab-3d30489e1femr26327065ab.22.1740474185335; Tue, 25 Feb 2025
+ 01:03:05 -0800 (PST)
+Date: Tue, 25 Feb 2025 01:03:05 -0800
+In-Reply-To: <tencent_A58D9392315DBB5DE51976CFB48D98A58207@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bd8749.050a0220.bbfd1.00a2.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
+From: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 20 Feb 2025 12:09:44 +0100, AngeloGioacchino Del Regno wrote:
-> Like already done for MT8195 in a parallel series, this one adds a
-> base display controller graph for the MT8188 SoC, migrates the Geralt
-> Chromebooks to use it, and adds support for the DSI display found on
-> the Genio 510 and Genio 700 boards.
-> 
-> While at it, this also adds pinmux configuration for switching on/off
-> the fixed power supply of the touchscreen IC found in Genio 510 and 700
-> IoT boards to stop relying on the bootloader preconfiguring it as GPIO
-> before booting the kernel.
-> 
-> [...]
+Hello,
 
-Applied to v6.14-next/dts64, thanks!
+syzbot tried to test the proposed patch but the build/boot failed:
 
-[1/4] arm64: dts: mediatek: mt8188: Add base display controller graph
-      commit: affbd1197886bf0e05a0a71d3fdeb0a1abd9703d
-[2/4] arm64: dts: mediatek: mt8390-genio-common: Add Display on DSI0
-      commit: e9596d5c78d08936e57af15ee9e59ecbfa51a85e
-[3/4] arm64: dts: mediatek: mt8188-geralt: Add graph for DSI and DP displays
-      commit: 67bd5834f6a72f9971fea6c07830d0c336d3fbee
-[4/4] arm64: dts: mediatek: mt8390-genio-common: Configure touch vreg pins
-      commit: 39371656c1592262205fa75bbd25bbda5592446f
+<stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
 
-Cheers,
-Angelo
 
+Tested on:
+
+commit:         0226d0ce Add linux-next specific files for 20250225
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=556fda2d78f9b0daa141
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15d3c6e4580000
 
 
