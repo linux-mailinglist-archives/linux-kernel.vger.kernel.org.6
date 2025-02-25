@@ -1,89 +1,201 @@
-Return-Path: <linux-kernel+bounces-531778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1474A444C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C57A444C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484AD17A624
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218061674B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67954140E3C;
-	Tue, 25 Feb 2025 15:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="CWgPECr+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE32F14A627;
-	Tue, 25 Feb 2025 15:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A59156F57;
+	Tue, 25 Feb 2025 15:43:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90FD1514EE;
+	Tue, 25 Feb 2025 15:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498151; cv=none; b=hJjcLGnm/TAZ/aXDXTB0hjvXChmM7vTR7X/XNnLzs2/f6k0faP2asPSOVu/KiBjUOb29urhGVEmgG+yV0jMbqwOyWwRIpKNgCncgcxOdzdgzZ6Dy5/pMq2dSqZ93OGip77BybE9hEhjFJ94FOEL00StGZxh9vwnZFhTgml/oHs0=
+	t=1740498193; cv=none; b=QBiXPvQYVy6nj6hQgSlTbcW8rgjfxJJHJ2p65R/aTWGYE0oHFjPMYttbIvxGKnMCpKY0IAJzuYM6YITAhKOflo75RSzn3gXrqk0Q0hccE1E6vovRpGN0LG7rtG9z25No0bnuS3qiMBsKvy+p8NWqIdJoULbNCRylePVSWbdP2iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498151; c=relaxed/simple;
-	bh=onozFvlgtS5C+M6OWjVfwwdRmRVuXkGoh6ZZnb4TH2E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KpTqUGchbQKh0PV1R+hVAfmyDDA18kl8ed2jgX4NfJWK9uj+RCZsaWc5Fpk7+XtO72gGCFQ4g4zKZdbN5kabo1JLwRnwQdnMxXphD9Q8QV87Zl6nPTaXUXzh81FRraaK8JSF9OVVJwc7y/941KAGdhDwSElZJiLujZ9A303zTJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=CWgPECr+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51PFgKn21329958
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 25 Feb 2025 07:42:21 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51PFgKn21329958
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740498142;
-	bh=onozFvlgtS5C+M6OWjVfwwdRmRVuXkGoh6ZZnb4TH2E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=CWgPECr+v+nsYievNAxJAMrXPU4mLjMa86deAsHfSC3+8r9qPOzR65khmAC9IbehW
-	 S/eZuKfQ1CEWbEGusk1ZMlyx9Aq2zSem1mj+4ulqu0j5WwOwtBPK4F1ffOkSAuTyLz
-	 oH0nRCfPDX8b5Bb8nHIay1D4JQ4orpROHTwttPjwKUJ2oMg9KYQTDCoGP6hJYIYYkF
-	 VvUOIn8stbZ5Hgxb3iwzAYkQgrr+tEOLhjYxLmCJwB8+zgTYfTN1JjAG4ZduoCd9cV
-	 Jbk4HUb4PZ0haelG1nyyaZvfzW04nOyA+dSD9Y1sbq+SbXgSMJccJtLeXJtdBPvFWZ
-	 ELKqjUDzy7Q6w==
-Date: Tue, 25 Feb 2025 07:42:19 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Ventura Jack <venturajack85@gmail.com>, torvalds@linux-foundation.org
-CC: airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
-        ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org,
-        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-        miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAFJgqgRZ1w0ONj2wbcczx2=boXYHoLOd=-ke7tHGBAcifSfPUw@mail.gmail.com>
-References: <CAFJgqgRZ1w0ONj2wbcczx2=boXYHoLOd=-ke7tHGBAcifSfPUw@mail.gmail.com>
-Message-ID: <9610C397-39C8-479B-A727-1091BB8548C9@zytor.com>
+	s=arc-20240116; t=1740498193; c=relaxed/simple;
+	bh=xAP+47DZFKHEnYSdNqrf7th9LYPiSBegW0KKE2VHFYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VaVG6hHgJQjbiyKLNhIZrrFD80KQ5WgipSQowSfJpPLHa215f/Pk6sPWuRsC8HANJ3PjgCJ0Sfzq29z2yQul5PKx69C/7ANXcDRspey0/8mWB0CchxHLb6b9/faVm2BIK7SAqOQawkx4T5BnTTcQbLwWrLxA77N3syGLKPuBxsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A0CD1BCB;
+	Tue, 25 Feb 2025 07:43:27 -0800 (PST)
+Received: from [10.1.27.154] (XHFQ2J9959.cambridge.arm.com [10.1.27.154])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF7D43F5A1;
+	Tue, 25 Feb 2025 07:43:05 -0800 (PST)
+Message-ID: <290f858c-07d4-4690-998c-2aefac664d7b@arm.com>
+Date: Tue, 25 Feb 2025 15:43:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] mm: hugetlb: Add huge page size param to
+ huge_ptep_get_and_clear()
+Content-Language: en-GB
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+ Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250217140419.1702389-1-ryan.roberts@arm.com>
+ <20250217140419.1702389-2-ryan.roberts@arm.com>
+ <Z73Szw4rSHSyfpoy@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z73Szw4rSHSyfpoy@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On February 22, 2025 2:03:48 AM PST, Ventura Jack <venturajack85@gmail=2Eco=
-m> wrote:
->>Gcc used to initialize it all, but as of gcc-15 it apparently says
->>"Oh, the standard allows this crazy behavior, so we'll do it by
->default"=2E
+On 25/02/2025 14:25, Alexander Gordeev wrote:
+> On Mon, Feb 17, 2025 at 02:04:14PM +0000, Ryan Roberts wrote:
+> 
+> Hi Ryan,
+> 
+>> In order to fix a bug, arm64 needs to be told the size of the huge page
+>> for which the huge_pte is being set in huge_ptep_get_and_clear().
+>> Provide for this by adding an `unsigned long sz` parameter to the
+>> function. This follows the same pattern as huge_pte_clear() and
+>> set_huge_pte_at().
 >>
->>Yeah=2E People love to talk about "safe C", but compiler people have
->>actively tried to make C unsafer for decades=2E The C standards
->>committee has been complicit=2E I've ranted about the crazy C alias
->>rules before=2E
->
->Unsafe Rust actually has way stricter rules for aliasing than C=2E For yo=
-u
->and others who don't like C's aliasing, it may be best to avoid unsafe Ru=
-st=2E
+>> This commit makes the required interface modifications to the core mm as
+>> well as all arches that implement this function (arm64, loongarch, mips,
+>> parisc, powerpc, riscv, s390, sparc). The actual arm64 bug will be fixed
+>> in a separate commit.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+> ...
+>> diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
+>> index 7c52acaf9f82..420c74306779 100644
+>> --- a/arch/s390/include/asm/hugetlb.h
+>> +++ b/arch/s390/include/asm/hugetlb.h
+>> @@ -26,7 +26,11 @@ void __set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+>>  pte_t huge_ptep_get(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
+>>  
+>>  #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+>> -pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
+>> +pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+>> +			      unsigned long addr, pte_t *ptep,
+>> +			      unsigned long sz);
+> 
+> Please, format parameters similarily to set_huge_pte_at() few lines above.
 
-From=20what I was reading in this tree, Rust doesn't actually have any rules=
- at all?!
+Appologies. I've fixed this for the next version.
+
+> 
+>> +pte_t __huge_ptep_get_and_clear(struct mm_struct *mm,
+>> +			      unsigned long addr, pte_t *ptep);
+> 
+> The formatting is broken, but please see below.
+
+Formatting fixed here too.
+
+> 
+>>  static inline void arch_clear_hugetlb_flags(struct folio *folio)
+>>  {
+>> @@ -48,7 +52,7 @@ static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
+>>  static inline pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
+>>  					  unsigned long address, pte_t *ptep)
+>>  {
+>> -	return huge_ptep_get_and_clear(vma->vm_mm, address, ptep);
+>> +	return __huge_ptep_get_and_clear(vma->vm_mm, address, ptep);
+>>  }
+>>  
+>>  #define  __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>> @@ -59,7 +63,7 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>  	int changed = !pte_same(huge_ptep_get(vma->vm_mm, addr, ptep), pte);
+>>  
+>>  	if (changed) {
+>> -		huge_ptep_get_and_clear(vma->vm_mm, addr, ptep);
+>> +		__huge_ptep_get_and_clear(vma->vm_mm, addr, ptep);
+>>  		__set_huge_pte_at(vma->vm_mm, addr, ptep, pte);
+>>  	}
+>>  	return changed;
+>> @@ -69,7 +73,7 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>  static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>>  					   unsigned long addr, pte_t *ptep)
+>>  {
+>> -	pte_t pte = huge_ptep_get_and_clear(mm, addr, ptep);
+>> +	pte_t pte = __huge_ptep_get_and_clear(mm, addr, ptep);
+>>  
+>>  	__set_huge_pte_at(mm, addr, ptep, pte_wrprotect(pte));
+>>  }
+>> diff --git a/arch/s390/mm/hugetlbpage.c b/arch/s390/mm/hugetlbpage.c
+>> index d9ce199953de..52ee8e854195 100644
+>> --- a/arch/s390/mm/hugetlbpage.c
+>> +++ b/arch/s390/mm/hugetlbpage.c
+>> @@ -188,8 +188,8 @@ pte_t huge_ptep_get(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
+>>  	return __rste_to_pte(pte_val(*ptep));
+>>  }
+>>  
+>> -pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+>> -			      unsigned long addr, pte_t *ptep)
+>> +pte_t __huge_ptep_get_and_clear(struct mm_struct *mm,
+>> +				unsigned long addr, pte_t *ptep)
+>>  {
+>>  	pte_t pte = huge_ptep_get(mm, addr, ptep);
+>>  	pmd_t *pmdp = (pmd_t *) ptep;
+>> @@ -202,6 +202,12 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+>>  	return pte;
+>>  }
+>>  
+>> +pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+>> +			      unsigned long addr, pte_t *ptep, unsigned long sz)
+>> +{
+>> +	return __huge_ptep_get_and_clear(mm, addr, ptep);
+>> +}
+> 
+> Is there a reason why this is not a header inline, as other callers of
+> __huge_ptep_get_and_clear()?
+
+I was trying to make the change as uninvasive as possible, so didn't want to
+change the linkage in case I accidentally broke something. Happy to make this an
+inline in the header though, if you prefer?
+
+Thanks,
+Ryan
+
+> 
+>>  pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+>>  			unsigned long addr, unsigned long sz)
+>>  {
+> ...
+> 
+> Thanks!
+
 
