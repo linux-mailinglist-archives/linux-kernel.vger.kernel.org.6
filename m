@@ -1,182 +1,143 @@
-Return-Path: <linux-kernel+bounces-530527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3F6A434D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:51:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED010A434D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:53:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697593B513C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 661C27A8306
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E0D2566DF;
-	Tue, 25 Feb 2025 05:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C512566DF;
+	Tue, 25 Feb 2025 05:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NfPhTd+4"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkelMVso"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC87C1527B4;
-	Tue, 25 Feb 2025 05:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4207536124;
+	Tue, 25 Feb 2025 05:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740462692; cv=none; b=TsAsCJZoeFVco/S7dnWgV4I4skEfgeVinVThe6yF2NrK+6c3jBM8mMYHfhhV5+tmdvh9904j4dBn3cYOU7ypI4ONuvKhCDy0GU9o63kxqnPLYFdiiJinn3CzOW6s8BqvNi4ogRZfb+P7Bknl7eUGja6LaQ/u7wObVpAPDVkS0Mk=
+	t=1740462777; cv=none; b=fBVcXxCHDsxAGKaQvxvq0AJFOi+FL+piIOqQW77ER6wRhSrKSIepH4OmqZhCtQYCFQRyVZ07K40tBA1gdpKi/0SwXKa6Wo9B6Rhp9ZUI6AUPGL8Q9fBT3XITC0FEnAJMW4Fxy4mKA9BvUsOgpc44eXdbw2Qu+Wk0uIxkMerNC4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740462692; c=relaxed/simple;
-	bh=uSeNCFcf9l+vWtdG/0tKAMg223d8tkTSUki3qIrQlxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGw35dUBsse0kMUiBs6SyCARYCz9Axw/yTSjeQRlocFEmC05YDwnyrfQSAOz42jTM8qWqDbv2oNumzwn8Ad/gDWCuoUEPWQHG9p2NcCiJzboys04YfurQEgbpss+l+01oQTNJAHqiGMZCFlgYI5vDKhXdEoS0/YgpRaq4CwqzU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NfPhTd+4; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740462677; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=0r00Uji6tpD1hBuVL7S7gy2Eu/d/pslK9pXro2M2coM=;
-	b=NfPhTd+4Rn3OfJez/IGJX8a32L/+AouDT9jXbZed3dRg2YUL8DsDDbSbsRTiL/gCMZ+hmasq/MO0LV2bzX7/1lcJVc1IxDVnZz5Xq3+re3y4r7e+Hag03OTOAM/ieJU+sf+/pVq2O4JVvN8/4rbkT4O0McYbZ1al9Vg26Hvh4w0=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQDSZrT_1740462675 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 13:51:16 +0800
-Date: Tue, 25 Feb 2025 13:51:15 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z71aU3ZOQf2xGHp_@U-2FWC9VHC-2323.local>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
- <20250224034500.23024-3-feng.tang@linux.alibaba.com>
- <abb50795-df83-511a-8850-cdf30f187935@linux.intel.com>
+	s=arc-20240116; t=1740462777; c=relaxed/simple;
+	bh=plyhqDSil5qjh5CX+n9oacA+uh+ZXsBXhBfRTVKjaEQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GWq7Mi6v0mSuzAE8KPRb9ra66gbhMkPs/3FCrqDNx/VkpVEb+q5x2aU8EYEk8ksdEigY256RTN8dBIq4D8NrexHmPeM+VobK/2iR7hrKsJzGPJokNGtiUmCLN4pkZfsjzm3L7UkaTFMwqWFggd8SMWvZ1ydY/ZTb/boy3cl1Gcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkelMVso; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F63FC4CEDD;
+	Tue, 25 Feb 2025 05:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740462776;
+	bh=plyhqDSil5qjh5CX+n9oacA+uh+ZXsBXhBfRTVKjaEQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TkelMVsoIY0+tXB+zTRI3UN/7W1jPXRkGE+4IerFSvbjCIt59s8yeukyG/zzk8Ujx
+	 NBp3pY2pVWrAuDQ8UGWYGryZIneA2WUXHRQTDSzEWuoBUDElL4ob7NnD0QwiXEiM1I
+	 nqFX67wxqfC9a53WjzQAJtwtmDN/qrLZ082/IOD6+4/kFs2XdGs74XewARjxcrL9pJ
+	 SMhCxjWfRMOFmlG8GBxR/itwoKTwJDyZP2bJ4Cjij7BHYveb5378L47ehs3qbElqx5
+	 PJiqvhfMzoWeWAF0FRGjesmRsElAAIaMTFLa/EFPkt47STN+JJ9l49uXqNJqcGTzbD
+	 HTAtSlQkrEMEw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  "Peter Zijlstra"
+ <peterz@infradead.org>,  "Ingo Molnar" <mingo@redhat.com>,  "Will Deacon"
+ <will@kernel.org>,  "Waiman Long" <longman@redhat.com>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>
+Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
+In-Reply-To: <e3fc00dd-144a-4885-b8c7-76cd9322211a@proton.me> (Benno Lossin's
+	message of "Mon, 24 Feb 2025 22:50:44 +0000")
+References: <20250223072114.3715-1-boqun.feng@gmail.com>
+	<87wmdf22ae.fsf@kernel.org>
+	<abHXLME4gEkYx7XkPVjZGIFs7Uuur8t0PkXDscTQPCvJCRsEfxM7gUS3K4MqegDt_nBDQJQDjLf5utZREFhDzA==@protonmail.internalid>
+	<304505cb-9f68-4d34-b4f1-7d703baba012@proton.me>
+ <87r03n1tmd.fsf@kernel.org>
+	<t26Ffiqds7WyT_9w9BXDV0sjsIMXiMURZrOWuMFTloZBD0S5WvJgkpZXbjxzYjFp-rPmBdi0yMPyFUO4hqZL4w==@protonmail.internalid>
+	<e3fc00dd-144a-4885-b8c7-76cd9322211a@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 25 Feb 2025 06:52:48 +0100
+Message-ID: <87zfiay3in.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <abb50795-df83-511a-8850-cdf30f187935@linux.intel.com>
+Content-Type: text/plain
 
-Hi Ilpo, 
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-On Mon, Feb 24, 2025 at 05:00:03PM +0200, Ilpo Järvinen wrote:
-> On Mon, 24 Feb 2025, Feng Tang wrote:
-> 
-> > There was problem reported by firmware developers that they received
-> > two PCIe hotplug commands in very short intervals on an ARM server,
-> > which doesn't comply with PCIe spec, and broke their state machine and
-> > work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> > to wait at least 1 second for the command-complete event, before
-> > resending the command or sending a new command.
-> > 
-> > In the failure case, the first PCIe hotplug command firmware received
-> > is from get_port_device_capability(), which sends command to disable
-> > PCIe hotplug interrupts without waiting for its completion, and the
-> > second command comes from pcie_enable_notification() of pciehp driver,
-> > which enables hotplug interrupts again.
-> > 
-> > Fix it by adding the necessary wait to comply with PCIe spec.
-> > 
-> > Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
-> > Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
-> > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> > ---
-> >  drivers/pci/pci.h          |  2 ++
-> >  drivers/pci/pcie/portdrv.c | 19 +++++++++++++++++--
-> >  2 files changed, 19 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > index 4c94a589de4a..a1138ebc2689 100644
-> > --- a/drivers/pci/pci.h
-> > +++ b/drivers/pci/pci.h
-> > @@ -760,6 +760,7 @@ static inline void pcie_ecrc_get_policy(char *str) { }
-> >  void pcie_reset_lbms_count(struct pci_dev *port);
-> >  int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
-> >  int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms);
-> > +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
-> >  #else
-> >  static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
-> >  static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
-> > @@ -770,6 +771,7 @@ static inline int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms)
-> >  {
-> >  	return 0;
-> >  }
-> > +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
-> >  #endif
-> >  
-> >  struct pci_dev_reset_methods {
-> > diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> > index bb00ba45ee51..ca4f21dff486 100644
-> > --- a/drivers/pci/pcie/portdrv.c
-> > +++ b/drivers/pci/pcie/portdrv.c
-> > @@ -230,6 +230,22 @@ int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms)
-> >  	return  ret;
-> >  }
-> >  
-> > +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
-> > +{
-> > +	u16 slot_ctrl = 0;
-> 
-> Unnecessary initialization
- 
-The reason I put it to 0 is, very unlikely, the pcie_capability_read_word()
-might fail, and 0 can avoid the early return.
+> On 24.02.25 12:15, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>
+>>> On 24.02.25 09:08, Andreas Hindborg wrote:
+>>>> Boqun Feng <boqun.feng@gmail.com> writes:
+>>>>
+>>>>> To provide examples on usage of `Guard::lock_ref()` along with the unit
+>>>>> test, an "assert a lock is held by a guard" example is added.
+>>>>>
+>>>>> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+>>>>> ---
+>>>>> This depends on Alice's patch:
+>>>>>
+>>>>> 	https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a@google.com/
+>>>>>
+>>>>> I'm also OK to fold this in if Alice thinks it's fine.
+>>>>>
+>>>>>  rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
+>>>>>  1 file changed, 24 insertions(+)
+>>>>>
+>>>>> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+>>>>> index 3701fac6ebf6..6d868e35b0a3 100644
+>>>>> --- a/rust/kernel/sync/lock.rs
+>>>>> +++ b/rust/kernel/sync/lock.rs
+>>>>> @@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for Guard<'_, T, B> {}
+>>>>>
+>>>>>  impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
+>>>>>      /// Returns the lock that this guard originates from.
+>>>>> +    ///
+>>>>> +    /// # Examples
+>>>>> +    ///
+>>>>> +    /// The following example shows how to use [`Guard::lock_ref()`] to assert the corresponding
+>>>>> +    /// lock is held.
+>>>>> +    ///
+>>>>> +    /// ```
+>>>>> +    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backend, Guard, Lock}};
+>>>>> +    ///
+>>>>> +    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
+>>>>> +    ///     // Address-equal means the same lock.
+>>>>> +    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
+>>>>> +    /// }
+>>>>
+>>>> This seems super useful. Perhaps add this method as part of the lock api
+>>>> instead of just having it in the example?
+>>>
+>>> I don't think it should be an assert. Instead make it return a
+>>> `Result<(), ()>`. (or create better named unit error types)
+>>
+>> No, this should not be part of usual control flow, and developers should
+>> not make control flow decisions based on this. It would always be an
+>> assertion. But you are right that `assert!` is probably not what we
+>> want. `debug_assert!` might be fine though.
+>
+> I agree, that it shouldn't be used for driver logic, but you still might
+> want to warn/warn_once instead of panic (or debug_assert).
 
-> > +
-> > +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
-> > +	/* Bail out early if it is already disabled */
-> > +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
-> > +		return;
-> > +
-> > +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> > +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> 
-> Align to (. You might need to put the bits to own lines.
+It might be useful to have an `assert!` that just does `pr_once!` on
+failed assertion. I sort of said I would pick up the `pr_once!` patches,
+so perhaps I should add that?
 
-OK.
 
-> > +
-> > +	if (pcie_poll_sltctl_cmd(dev, 1000))
-> > +		pci_info(dev, "Timeout on disabling PCIe hot-plug interrupt\n");
-> > +}
-> > +
-> >  /**
-> >   * get_port_device_capability - discover capabilities of a PCI Express port
-> >   * @dev: PCI Express port to examine
-> > @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
-> >  		 * Disable hot-plug interrupts in case they have been enabled
-> >  		 * by the BIOS and the hot-plug service driver is not loaded.
-> >  		 */
-> > -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> > -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> > +		pcie_disable_hp_interrupts_early(dev);
-> 
-> Doesn't calling this here delay setup for all portdrv services, not just 
-> hotplug? And the delay can be relatively long.
+Best regards,
+Andreas Hindborg
 
-I don't quite follow, physically there is only one root port, the code
-from commit 2bd50dd800b5 just does it once. Also the 1 second is just the
-maxim waiting time, the wait will end once the command completed event
-bit is set. The exact time depends on platform (x86 and ARM) and the
-firmeware implementation, and it is much smaller than 1 second AFAIK.
 
-Thanks,
-Feng
 
-> >  	}
-> >  
-> >  #ifdef CONFIG_PCIEAER
-> > 
-> 
-> -- 
->  i.
+
 
