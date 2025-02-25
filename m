@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-530927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51178A43A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:51:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39190A43A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6283B2A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:47:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FD21898F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F94262D1B;
-	Tue, 25 Feb 2025 09:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B002673A0;
+	Tue, 25 Feb 2025 09:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="WkOHmzOu"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J6+QNen+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A6261591
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF6266F1C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476840; cv=none; b=LUQ1A3RjSocRKAljyHWb1uIm59+PoAhzTzZHrYw1BzyTSzt7QZO5L/rjNU2zBEhoVxdEtoXP7MNAsPALZs0XDvZb4fvpOIn2XSU+wInwwu6qW17XZugCvKfGsfw4YTBNcQonD0Ku8fFth/G0tiK0435RnVIqxTITy/TRC25EKTo=
+	t=1740476851; cv=none; b=FmD6MUCpOjpP2UDUb4bBITIrDqK1PCXhYeyyJpl6dtJSNfMc6QIKAlKQaBvSXH6sN2S6kSRlLvAKDiGwCra7xra6yPOVJVh1tQc6C28F6Oq9EidJKxswSj9JlwH87h7iP3vK/wWEV+Ky317JyLrZvrWoAwX/iXfYuJajnYTHvio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476840; c=relaxed/simple;
-	bh=1IHwqesQk08lufeZTBYIk2f7P1gwtjDf0lQkrtr/4QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fg2oleUKTtpFvOIaJ+X2OA1EmKnKS3Pe2yYnCmUP4Rd/zM5mp87WilZ6ATjhtO5/uNRm/h0dqYSW8clRb0Z5cd++mRoFGQ9Q1bD/mTUDtbVKZ20KPdRAD7zWlPLBM6kLGVLLYvAZTpWm5pW1/5B+Lwj2G1manXMTKT76oOIMQ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=WkOHmzOu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso33425145e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:47:18 -0800 (PST)
+	s=arc-20240116; t=1740476851; c=relaxed/simple;
+	bh=0ejApvusm+PXgcgqxCm24+gSHcjnJ6Jl3ndWCY+M5ik=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aKs5rimfMgB/qoRDkwZAF6nPw+lMmVXoxh2UDcSan1PzawsHNWpSIVOqin/l0DEmNbzhYbpbszIzruGI9ZaL/wClKpD9urJECLMgwQ1poNsaCtMosEZ/P2qRTiaN6DR2oBeTS2WhocOLfXYBGCBK6fu3zFYO6KSqId48PEkZqQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J6+QNen+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220d398bea9so84800595ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:47:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740476837; x=1741081637; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bU6pYEvOEizzQLjYkTI7JJD3Z+QYLCwitlQcIgyNBJQ=;
-        b=WkOHmzOumY1waLkpjZw3tzL3PpXCVevPmR4kQrkd5p5vU/JgrqVMCrTBZYJMX0Nt8H
-         8thHkM3Bq/e6U9llu74NZwYlZuBJQhb9y44XqMsXlGXWJt9FH0DFjX6PiD+UYThczyAB
-         uJhizL991Q15oSU5f1BXEroqPXTdjg3OoOvZhH6zTy5ULmYXBFJK0iutp6KlBzba2iX/
-         n/SOxo6jpikliu/BZaO4khcBuCEBV0rjOTIY8eKDUqKNkWL7JvFficEcwMXARJ18iNV+
-         jQDxKq0GROiELff3l6ovzhG0WWdlfowseAbmxr+CuDLcroMnoEBCRRwZoSMVLT4eSdRh
-         gjBA==
+        d=linaro.org; s=google; t=1740476849; x=1741081649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Y0W7UheN6mSPqJhQH55oXPueVCUP+Q3dgB84Hlr1jE=;
+        b=J6+QNen+iqUN141k5GjIzbtpj86UAoKC0mzwtvywEjjnFQWHGJ8CNJrV1B3HGr7Ypr
+         3Ug9NqRPHERULM3NGv/mWyK1xkFsUb16E4n8tiuICzaSS/8IBgg7hc9OKaJfAhaOS0aS
+         x56gPNurmTJYduKvJVb6qX7yWhW7v8+SaGX3NvekhuhUcJUC/eWnVe5xsjB2qBLXDkks
+         tUHa8nuavyLsEbt6imQMeZME9wSI5yDJ6pejs3lkxzGSK37y/LEdIZrv85ZCOSxxqR0o
+         ZCYDp2mq8T0EaUF2g2a8KjNEUyiOGtm9rFn/YCaayy5Bw8OQyx8ydw8SQ/zQFtzyrb28
+         ldpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740476837; x=1741081637;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bU6pYEvOEizzQLjYkTI7JJD3Z+QYLCwitlQcIgyNBJQ=;
-        b=cCy5aE/XbULzEAHul6d9Zc8lzsmoW/3lyqJgczVb5nbZJR43SCzoyEuIpmO+GxlZXT
-         /JMXVpb5kUT/i7kaHzUveqoAV+tH1Y5NdZgjGdorDf1Zc1DXycvALbClfFZPFXFAfIyN
-         9CZNL1/k7+cHA1M5f01rZhhhNLvonDhmyk3C6801MO369zuGGhACad0+NakfQECxM52N
-         B8PIL0zY7/DC16WwJtD4nd7hzSKpulL0rzAjbP+mpJKIYeFT78IECRDtRD22x+zcUP5z
-         4wbRXnjrJjgUYy4VRHLOQ97xzngBjqZWdrSXzXkAhUcHi7gKGMJsQ245e5XJ+zOqa+fo
-         1aqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIvraOTJAoI6+KQM6jnHu+CiWE4cZRT6BPb8XSCyD4UENSPV06/vGgXjZRbuFITcNe6KsQFIj2q//vwA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Q8RdSs57XRDMaypba5/fa5uNT0uCR7oir+7y31Y0fphP6MDS
-	Buo1lEJzpHvKvtPhGd4nRJVU6Vo+B+UlWFZ4jTH8EyGNpNv5qlPPF3/iA1tMHsU=
-X-Gm-Gg: ASbGnctt5a5ZI68s85TyDjo+XFshe4SNiczROrvqlgeAybOExE+m7YtdU2yTParrnWC
-	sv8yvj/LmXOJyTuC/J9CidRSPkbSD0fTBHLwgpbnc9cQpsD7GI55XphqgmRTF27mCKFRcoQifck
-	Zgkzg15Xfaim22cH5YLRGqzDkZi2sB5u31mKrcPAdNwF7UnSTZEUL9cOxHOKEUD6UVnkjdU22Lz
-	eLj+2nwBWmnsPrwzxoDNkdp2UcKrtM+PTuQQZcd377N6zoSpB4QeqziUuf4zBzKmEaatS3Ush+5
-	hh0eN7S9N+10r2DyFx6oPRfHcXVKTuKCZe06UQJNhIzF6j5yv45kg6gJbA==
-X-Google-Smtp-Source: AGHT+IEH9BuTR7e3cX9hlXLEtnZAxiSr3msyKmpW1dMtJNLMv3DVluSpKIXlP3IFKnIPJE4Vi+6X+w==
-X-Received: by 2002:a05:600c:1c18:b0:439:96b2:e8f with SMTP id 5b1f17b1804b1-439ae21d19fmr131970375e9.28.1740476837202;
-        Tue, 25 Feb 2025 01:47:17 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce740sm134182475e9.4.2025.02.25.01.47.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 01:47:16 -0800 (PST)
-Message-ID: <2907ae61-5e67-4db7-89df-821da999fbf1@blackwall.org>
-Date: Tue, 25 Feb 2025 11:47:15 +0200
+        d=1e100.net; s=20230601; t=1740476849; x=1741081649;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Y0W7UheN6mSPqJhQH55oXPueVCUP+Q3dgB84Hlr1jE=;
+        b=vPlZEHdNjnfGO5qJhWkxt6PhjD420TLlBhivvgG3F7ukyauJtoa9gPQtxycvfnSjmu
+         ujdWlW2wkoBkO67KzUuhtcK1QS2FDzbc4LUqo5NL7Rim1yiaGadj8kTqe/hhR8HJN1x3
+         Telq9l2m8RnO+r0DtFB5l/++lo9L9vQAw3rAHK4U6YFVFxh1zjy3KlrCIz1o+tQT/aE1
+         8NeHRA44A6yR9GcljlbEmNMiPVA2dpZ+ihMIPLPpvmRzKfy0BlFUfMUvYevay07lggEV
+         5HzbAedfgASPmkxaE6rQvT4xuY4U25AjWSiyhzi7Z+GfkKoNBcNb4rRTUaRcib0/TDG0
+         3oOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT1oBNhwD7Y4RBJxMHNOZw6HjBVDNF0jEDemHeLp9gHuztvdtWppVZ37Yg6gArwer+qqJx6bCx4OUUKjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwVmqqwEDi1tjfKWNKEXE+O/HTbvIMBVuBS5dXxEBvOFyfL3Ly
+	Gao0OfS0Sde4wSbCwUgeGeCH2H828qxQn33xeZQB0ChirJ9K5/Qt7610MWGqTTc=
+X-Gm-Gg: ASbGncuBanOaqYH2a9xBMRngFm+Z2RdjXu50OHxJMZJV9HFFNLPccID9GOB+s7OfKF0
+	w0BTiPLCR8Y0dFUYUTidXJ2UrWDbBVHEbqNgpQiMxxwiPx7ZCRhIXp7dPV/aV/LGXVzTb1er6cl
+	payS9L6kqA/0lZUizOM0byUpWuHWCkUYgWMuEugtlSqExSpr3k026x/JMc0ZLE/aag73nWsOAhQ
+	/eA+fFRYfBS4IqaigZh7HczrIt6ifjuiFZXS/LrJMDXorHqzM1JP2F+XhYvICR1GDMaM3MaV8Mf
+	BpL/1vgIfatmq5r7O8qB6PAXajA=
+X-Google-Smtp-Source: AGHT+IFMG/soZLRcXoKfyCP0+FxL3eEOXtCUItNCtSz47RVliZKe7vtNrSUTsGyoRvocVgft4WRZSg==
+X-Received: by 2002:a05:6a00:2192:b0:730:75b1:721b with SMTP id d2e1a72fcca58-73426d7273bmr26247209b3a.18.1740476848937;
+        Tue, 25 Feb 2025 01:47:28 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f8f24sm1094883b3a.60.2025.02.25.01.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 01:47:28 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>,
+	rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 2/2] MAINTAINERS: Add entry for Rust bitmap API
+Date: Tue, 25 Feb 2025 15:17:15 +0530
+Message-Id: <8c6249c6631f47565541d584fbec78cd2fbe60c1.1740475625.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1740475625.git.viresh.kumar@linaro.org>
+References: <cover.1740475625.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net-next] bonding: report duplicate MAC address in all
- situations
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250225033914.18617-1-liuhangbin@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250225033914.18617-1-liuhangbin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2/25/25 05:39, Hangbin Liu wrote:
-> Normally, a bond uses the MAC address of the first added slave as the bond’s
-> MAC address. And the bond will set active slave’s MAC address to bond’s
-> address if fail_over_mac is set to none (0) or follow (2).
-> 
-> When the first slave is removed, the bond will still use the removed slave’s
-> MAC address, which can lead to a duplicate MAC address and potentially cause
-> issues with the switch. To avoid confusion, let's warn the user in all
-> situations, including when fail_over_mac is set to 2 or not in active-backup
-> mode.
-> 
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> ---
-> 
-> v2: add fail_over_mac != BOND_FOM_ACTIVE to condition (Jakub Kicinski)
-> 
-> ---
->  drivers/net/bonding/bond_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index 7d716e90a84c..7d98fee5a27f 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -2548,7 +2548,7 @@ static int __bond_release_one(struct net_device *bond_dev,
->  
->  	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
->  
-> -	if (!all && (!bond->params.fail_over_mac ||
-> +	if (!all && (bond->params.fail_over_mac != BOND_FOM_ACTIVE ||
->  		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
->  		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
->  		    bond_has_slaves(bond))
+Update the MAINTAINERS file to include the Rust abstractions for bitmap
+API.
 
-LGTM,
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+Yury has indicated that he does not wish to maintain the Rust code but
+would like to be listed as a reviewer.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ec2428b82103..17e98d757b9b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4034,6 +4034,12 @@ M:	Yury Norov <yury.norov@gmail.com>
+ S:	Maintained
+ F:	rust/helpers/cpumask.c
+ 
++BITMAP API [RUST]
++M:	Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
++R:	Yury Norov <yury.norov@gmail.com>
++S:	Maintained
++F:	rust/kernel/cpumask.rs
++
+ BITOPS API
+ M:	Yury Norov <yury.norov@gmail.com>
+ R:	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+-- 
+2.31.1.272.g89b43f80a514
 
 
