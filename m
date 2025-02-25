@@ -1,89 +1,116 @@
-Return-Path: <linux-kernel+bounces-532188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B502AA449DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:13:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F60A449F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106F07A973D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A181899CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAA319D086;
-	Tue, 25 Feb 2025 18:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C5319FA8D;
+	Tue, 25 Feb 2025 18:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DSL/nSIo"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="P5OkpPjp"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C26221ABBB;
-	Tue, 25 Feb 2025 18:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C0B17AE1D;
+	Tue, 25 Feb 2025 18:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507222; cv=none; b=R93lH2D3D6uvAYlpifFoActXJpx2bZ6vEnSYmg0Q9Cn+hBtU09Ss89n64FI4fMOWoB65K6fTXjy6uO47aDeXovcq3xO+Q3MB5Fqj5Y1SijQD5eNcbiz034kpzLqr1U0HkfgjotGWydpsvkWXgdQT2BUkJIaE/ArwCFlp0hTRnH8=
+	t=1740507314; cv=none; b=c4hpOg8wDi2JZmQRZGfuE7gVPzHh/gm9Omgf21mVtEufoLiLo513QxU4sJnmxB33IRdhVmZPW4O9vKuXKiu0syKFMOCFJYVsH5P9FPcKj5rM2ygssT6UsyIEoBUS649lzRRDMN6EqhbmeVoSQ/URgUoDUtuzomASwrrfo6qVDYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507222; c=relaxed/simple;
-	bh=Bk0u/iGHXg9Ki1eeZ9mntntqXtE97d+Kic6DcoUWm8Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lAxOLznIpZZV6p3Wze/4xFZaqYxsyRe03RIKW55v92uKnxSFvLNAW2/0v6li4UXP2A35mz6rijpH8OsC/3xGm8wzsl2vWA/lHGgWB0vRwHsJ3MmNtlJVYFzUzPT034xv+j0XtUgqxcWcqJ91ao9X6DM+dPOwSnncCnAc+AUDndw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DSL/nSIo; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5FCA348EBA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1740507219; bh=Gwb7WVKf5nB6J5KPNqOALeQvZiHduU+S0+mZMtNtu+o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DSL/nSIo3z/y2GPq+/eOpF7S0Q/YhDnPCtzjxYWKHe8hQ1jUlueP64QUz88Oq8xLN
-	 kCH91O5dLlphWlu69lSVqx/RfWizWT1qTHKM1//h8WbL0wrzJwhXNMYXqRCdnyzS+h
-	 +YV4ghglrAGNY8pEp5kzON2AIJBH4XNVcqhZhN9j/iVqLrbsKbl+WidJymcWpwXNZ4
-	 M41x036ecicgpjb2a3adMLaKm+8zJ+45InGla87DpbkMl41s+G0wiRhGHC53xRAFMv
-	 pm2uIgtahGhmQ4/bF/ykPKIcEaNFEpDpCIOsVPlQ7sdL+7ZA6dbTuF9ZIaHszZaHK+
-	 BMEd3l6WGrxBw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 5FCA348EBA;
-	Tue, 25 Feb 2025 18:13:39 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: jiang.kun2@zte.com.cn, alexs@kernel.org, si.yanteng@linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: xu.xin16@zte.com.cn, yang.yang29@zte.com.cn, wang.yaxin@zte.com.cn,
- fan.yu9@zte.com.cn, he.peilin@zte.com.cn, tu.qiang35@zte.com.cn,
- qiu.yutan@zte.com.cn, zhang.yunkai@zte.com.cn, ye.xingchen@zte.com.cn
-Subject: Re: [PATCH linux next] Docs/zh_CN: Translate msg_zerocopy.rst to
- Simplified Chinese
-In-Reply-To: <20250225194456879v1ipo2r4_8PJZn1s1J9Ge@zte.com.cn>
-References: <20250225194456879v1ipo2r4_8PJZn1s1J9Ge@zte.com.cn>
-Date: Tue, 25 Feb 2025 11:13:38 -0700
-Message-ID: <87cyf5zyct.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1740507314; c=relaxed/simple;
+	bh=XHxdY81R8t+/RmvatRzuo6jUL/I2H2cPlYYvQNLa43k=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ENgMqwc4wsGenYTziU63UuPW04NP7OIuqHonXC2cO1SOv6pM8oxjGcCVXac/RkNVEFeWqq369kR576FmSxxoXd0hCsCaGmsL5B+mq5ipn8bNgZXJGZWUcUdlOmlcPqYeqXVnCCpjSWP6vQ94zVXhBidfBiPSMf9lyLq3nX4Gaf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=P5OkpPjp; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id BBD4F258EF;
+	Tue, 25 Feb 2025 19:15:03 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id mv2hwPv3ETNy; Tue, 25 Feb 2025 19:14:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740507282; bh=XHxdY81R8t+/RmvatRzuo6jUL/I2H2cPlYYvQNLa43k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=P5OkpPjp9cgPggD/4AL6BT+aqzuGhKIkiM6xNYlh84BqmaR/9chNG2xEpoD6+8Pkb
+	 nwuQ4vB9U+LKkGl/nw10aPCAPH/zuxBVHQEq2fpRn1HzG2JBDWAsKC3QyCQD/I11pr
+	 DCKQQQ/p094atnD+I4uAwJgw2DqzUxMcQqJJgivniPsjNmp+yfEyukqyckiHPYqTfn
+	 uZYXyO0fhHqagN+ypR7VjuOhFPv5J9a2bj/iRIFivvzNxOdpKu03hPxnZnbSFLFuYc
+	 G6MO1WpKHNQhoGCzlr1LwkejeypdMC2nb11U5mpFwA8zUrEgC1yXfs9J6IK5N/1Hjn
+	 5UKqBGH/tx4eg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Date: Tue, 25 Feb 2025 23:44:41 +0530
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones
+ <lee@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kaustabh
+ Chakraborty <kauschluss@disroot.org>
+Subject: Re: [PATCH v2 2/3] mfd: sec: add support for S2MPU05 PMIC
+In-Reply-To: <07634537-0750-4616-9c88-800d1672dcfc@kernel.org>
+References: <20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org>
+ <20250219-exynos7870-pmic-regulators-v2-2-1ea86fb332f7@disroot.org>
+ <20250223-outrageous-bizarre-hedgehog-8a3bbd@krzk-bin>
+ <11387d3d0478d7fa1899ee3d0409541b@disroot.org>
+ <07634537-0750-4616-9c88-800d1672dcfc@kernel.org>
+Message-ID: <69c58c0ba04ad85f0ddd3f379bcb8390@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-<jiang.kun2@zte.com.cn> writes:
+On 2025-02-25 00:48, Krzysztof Kozlowski wrote:
+> On 24/02/2025 18:37, Kaustabh Chakraborty wrote:
+>> On 2025-02-23 16:10, Krzysztof Kozlowski wrote:
+>>> Missing bindings.
+>>
+>> Bindings have been applied in v1.
+> 
+> Heh, I see email from Lee now but mainline does not have them, next from
+> 19th Feb neither.
 
-> From: Wang Yaxin <wang.yaxin@zte.com.cn>
->
-> translate the "msg_zerocopy.rst" into Simplified Chinese
->
-> Update to commit bac2cac12c26("docs: net: description of
-> MSG_ZEROCOPY for AF_VSOCK")
->
-> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-> Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-> Reviewed-by: He Peilin <he.peilin@zte.com.cn>
+I see it in lee/mfd/for-mfd-next. [1]
 
-So how did these reviews happen?  I have certainly not seen them on the
-public lists...
+> 
+> BTW, what happened with all the review tags? Nothing in cover letter nor
+> changelog explains dropping reviews.
 
-Thanks,
+Haven't explicitly mentioned dropping the tags, but I've changed the
+macros a bit, among other things (which is mentioned in cover). I assume
+that's the standard procedure.
 
-jon
+> 
+>> 
+>>> BTW, don't combine independent patches from different subsystems into
+>>> one patchset. It's not helping anyone especially without explaining
+>>> dependencies/merging in the cover letter or here in changelog.
+>> 
+>> Alright I'm a bit lost here. The binding patch (the one you enquired
+>> for above) referenced the regulator bindings, whereas the regulator
+>> driver is including the S2MU005 PMIC header which defines the
+>> register addresses, etc.
+> 
+> You have entire cover letter to explain dependencies and merging... If
+> you target specific subsystem - write.
+
+Okay, I do have that in there, but the wording is indeed quite vague.
+Will try to improve it in v3.
+
+Though the PMIC's dt-binding patch has been merged... so not really
+sure what to assert now.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=d237e8037d524bc5683d27268086620c5df605ea
 
