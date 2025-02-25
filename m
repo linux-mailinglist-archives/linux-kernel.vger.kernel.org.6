@@ -1,290 +1,208 @@
-Return-Path: <linux-kernel+bounces-531297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B99A43E98
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F13A43ECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990EF19C45C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C3E19C7C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F1F267F55;
-	Tue, 25 Feb 2025 12:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4GX/Xkc"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30B51FC7ED;
-	Tue, 25 Feb 2025 12:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72765268685;
+	Tue, 25 Feb 2025 12:06:53 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C162529CF0;
+	Tue, 25 Feb 2025 12:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484848; cv=none; b=qntBO+IY5rNixIkV2nylWJpYgr4etfsdgzAOUn5lweITgzsUgT6MKK+Gn2OcLVu2nl1InCY5I7ksg+h4P6OjuyHNqZfFx6/y8cTReBUiA2nDUkoqfL4XQqnQdrVWf2QPWqsyo40Dwvf9FHu8He+63B2zOq9xOvAsMQng1ekNdpI=
+	t=1740485213; cv=none; b=qPjTkc1+jcMrhA1QnRF1vQy19O/bXe026NgXHqVOmAplYFZp+PJFu3CKCQMJedFITbPJ9lYZYVEYPUF8E7/fTFKBh9khNEWAnn+3HXTLVFhOXZdTOeBT7vl93LS+uToctVAqeMCOC+CKlRoTYrd/lzmbbEO1fCkXMpUA/1J3t4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484848; c=relaxed/simple;
-	bh=qYkO5LfimN1/Jer9OMR+Qou9Gu4IEH+fQfeFB5lkWSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=II4fa5joE/ohRyx4uy8gQqkvJ+DCia6agX5g56jwY210UHS4z6VXVF9ukfcgWE3YnJOgM5xtJzmuEm1fJxI5hvYxWYxRXpHYQXizjDjmyvCjZKSEGNKi/k/2owXlFkMV+EWXl6AP1IvzLSCY21wXsLQ7JVf3LxKuAmCX0loI4tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4GX/Xkc; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f378498c9so5371018f8f.1;
-        Tue, 25 Feb 2025 04:00:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740484843; x=1741089643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AMXPKOnzcnUZjITiabLZD5X8E/oVFJtUkF9Rv7OIemk=;
-        b=k4GX/Xkc0PFzG6FPwW+5EQJab+HWPam9QWr6t/HkgJyCJB2JdcAA0SZBSBBlL/ccrN
-         oXmQY0l06XzTzjx+6ZqtqCXXV5VRNSrzk+heJ5tugBslX5EON4YvhUR9JIP3TqxPcH8R
-         Tw8+Ch7sjKtC9kWDlrTqrdzno8PZZsBnPQS9kGzKTGDR5eEQlbY2ii3/6lxbzaoyCn9S
-         fAcygWEmCz+Y2dft+ovU888WsbV0yl5xfsH3V/vwRrqRdEqsDxtWe2ma5sGF20nBNgAK
-         jhpF/vBUXOPzFf1liPkx5JtAPlbQ01J2WGqRdpuOLk9Yz4LYYcNXn5EPgZjeV3PkhtVi
-         MWYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484843; x=1741089643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AMXPKOnzcnUZjITiabLZD5X8E/oVFJtUkF9Rv7OIemk=;
-        b=iSb6JUbfmLSMPveASCou2RBzwfGd/cZSCEcDJg5qRXi3l/iebxLvsISKlZUKDAPRf9
-         jTwSpE3IFTyDQtZcsZU3qRJZ7on4hgNwlqXu5NMzZkR5JlM0JvVRriLvArAarg70HjnJ
-         mA0SLHQcGyY1djAFyjA38liI1wr08WTn2wjZkS4/Mb3h1cpsbgUhhzCVSrv606QNae/X
-         Nv2IWM8oAoG2tW8RifA3nF4oZhLfTeWPHRMqPh5jERufADqE7pqj+vk3zblxj4r9e5cJ
-         IhC9E069NGp/1oCwkmwre1jMgvQ3G66kzlyJf5KEktzr8YDhZaae+RskuujiQfEh959k
-         6ElQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbvi/rRhnrwULDGnjvXUGmAyJTnWUDk6IYrZZjUm28C3xV/eVZE/sRlLEmTDqFXwOJHIzUyiDXnKP1DTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhOa6HMF9k79aCVVLk0mdVvLxoEvkHrsJldj0gRlrozqE5zdOx
-	PsY02gxsat+M204GXxfFtFUXQ25kAK5tAh8csUb1zE/v3OqGo0JddEF9jA==
-X-Gm-Gg: ASbGncvUABxcK5MA6esuoDM5BHiqlZpWiQpY9cxx9OD9l6J8IaMAC3aat0p4zM1HqbJ
-	vQuqoK56ba74Tr7iUonK/GUHaeQ2C8kgmbjsieGb6643WWg/FtKipYaNpWWZaMiRvafFP8slbiF
-	nPbE59C7K3EIGUfdD8zrrWCivxVyz9TSEk893cBKzGnUZqWbCEnkFRciOE5mvGrPE6N6vP0sthI
-	ElWRsSprxHPtABbYiq2wRdDl9S8XnIe9vVDQRpQxc/LVXNeZyQ6xfD0nwcMQ5jF8DHUDJzbmxBu
-	xKh0BM0xU9/uYiUolfVpyIv156CXXocjuVMoIetwX2E=
-X-Google-Smtp-Source: AGHT+IHJvSiOfl5TzDxqlHeDmI9+bsr6/FH6tBTba1O0k/BRjAEYRfaxlO6UbS5Kxi233TrBpbOS8Q==
-X-Received: by 2002:a05:6402:2812:b0:5df:25e8:26d2 with SMTP id 4fb4d7f45d1cf-5e444853ee3mr6864975a12.5.1740484831860;
-        Tue, 25 Feb 2025 04:00:31 -0800 (PST)
-Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2012142sm128078866b.117.2025.02.25.04.00.31
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 25 Feb 2025 04:00:31 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:00:27 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] usb: xhci: Unify duplicate inc_enq() code
-Message-ID: <20250225130027.6ace8a2f@foxbook>
-In-Reply-To: <20250225125750.1b345e2c@foxbook>
-References: <20250225125750.1b345e2c@foxbook>
+	s=arc-20240116; t=1740485213; c=relaxed/simple;
+	bh=Zeua9U34mpIZzVNmoPv424NWh2Wy8ELnVKvzqhinVv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i03HtnOqg69vlB4K3QIi9IBFrlXB3jWXPvHK5vTWA6IlvwvVe/CMebSUxhPmVX8rsorRIM5bkd8edj4xQALQRDdBsQQVPVsyKdw38k8y+TfAsfZv4/WiD0oatcbgv5L6mRAJBuciUIGZzeAXfwCIZYBsm7ac9UFZDzv0LE7Suh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51PC1Gsg013755;
+	Tue, 25 Feb 2025 06:01:16 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51PC1E2h013753;
+	Tue, 25 Feb 2025 06:01:14 -0600
+Date: Tue, 25 Feb 2025 06:01:14 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+Message-ID: <20250225120114.GA13368@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 25 Feb 2025 06:01:16 -0600 (CST)
 
-Extract a block of code copied from inc_enq() into a separate function
-and call it from inc_enq() and the other function which used this code.
-Remove the pointless 'next' variable which only aliases ring->enqueue.
+On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
 
-Note: I don't know if any 0.95 xHC ever reached series production, but
-"AMD 0.96 host" appears to be the "Llano" family APU. Example dmesg at
-https://linux-hardware.org/?probe=79d5cfd4fd&log=dmesg
+For the record, further documentation of our replies to TSEM technical
+issues.
 
-pci 0000:00:10.0: [1022:7812] type 00 class 0x0c0330
-hcc params 0x014042c3 hci version 0x96 quirks 0x0000000000000608
+> On Thu, Jan 16, 2025 at 11:47???PM Dr. Greg <greg@enjellic.com> wrote:
+> > > > +In order to handle modeling of security events in atomic context, the
+> > > > +TSEM implementation maintains caches (magazines) of structures that
+> > > > +are needed to implement the modeling and export of events.  The size
+> > > > +of this cache can be configured independently for each individual
+> > > > +security modeling namespace that is created.  The default
+> > > > +implementation is for a cache size of 32 for internally modeled
+> > > > +namespaces and 128 for externally modeled namespaces.
+> > > > +
+> > > > +By default the root security namespace uses a cache size of 128.  This
+> > > > +value can be configured by the 'tsem_cache' kernel command-line
+> > > > +parameter to an alternate value.
+> >
+> > > I haven't looked at the implementation yet, but I don't understand
+> > > both why a kmem_cache couldn't be used here as well as why this
+> > > implementation detail is deemed significant enough to be mentioned
+> > > in this high level design document.
+> >
+> > TSEM does use kmem_cache allocations for all of its relevant data
+> > structures.
+> >
+> > The use of a kmem_cache, however, does not solve the problem for
+> > security event handlers that are required to run in atomic context.
+> > To address the needs of those handlers you need to serve the
+> > structures out of a pre-allocated magazine that is guaranteed to not
+> > require any memory allocation or sleeping locks.
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 134 +++++++++++++++--------------------
- 1 file changed, 57 insertions(+), 77 deletions(-)
+> This still seems somewhat suspicious as there are a couple of GFP
+> flags that allow for non-blocking allocations in all but a few cases,
+> but I'll defer further discussion of that until I get to the code.  In
+> my opinion, there are still enough red flags in these documentation
+> reviews to keep me from investing the time in reviewing the TSEM code.
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index fd2d5b371483..f325b8959a5a 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -203,6 +203,50 @@ void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
- 	return;
- }
- 
-+/*
-+ * If enqueue points at a link TRB, follow links until an ordinary TRB is reached.
-+ * Toggle the cycle bit of passed link TRBs and optionally chain them.
-+ */
-+static void inc_enq_past_link(struct xhci_hcd *xhci, struct xhci_ring *ring, u32 chain)
-+{
-+	unsigned int link_trb_count = 0;
-+
-+	while (trb_is_link(ring->enqueue)) {
-+
-+		/*
-+		 * Section 6.4.4.1 of the 0.95 spec says link TRBs cannot have the chain bit
-+		 * set, but other sections talk about dealing with the chain bit set. This was
-+		 * fixed in the 0.96 specification errata, but we have to assume that all 0.95
-+		 * xHCI hardware can't handle the chain bit being cleared on a link TRB.
-+		 *
-+		 * On 0.95 and some 0.96 HCs the chain bit is set once at segment initalization
-+		 * and never changed here. On all others, modify it as requested by the caller.
-+		 */
-+		if (!xhci_link_chain_quirk(xhci, ring->type)) {
-+			ring->enqueue->link.control &= cpu_to_le32(~TRB_CHAIN);
-+			ring->enqueue->link.control |= cpu_to_le32(chain);
-+		}
-+
-+		/* Give this link TRB to the hardware */
-+		wmb();
-+		ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
-+
-+		/* Toggle the cycle bit after the last ring segment. */
-+		if (link_trb_toggles_cycle(ring->enqueue))
-+			ring->cycle_state ^= 1;
-+
-+		ring->enq_seg = ring->enq_seg->next;
-+		ring->enqueue = ring->enq_seg->trbs;
-+
-+		trace_xhci_inc_enq(ring);
-+
-+		if (link_trb_count++ > ring->num_segs) {
-+			xhci_warn(xhci, "Link TRB loop at enqueue\n");
-+			break;
-+		}
-+	}
-+}
-+
- /*
-  * See Cycle bit rules. SW is the consumer for the event ring only.
-  *
-@@ -211,11 +255,6 @@ void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
-  * If we've enqueued the last TRB in a TD, make sure the following link TRBs
-  * have their chain bit cleared (so that each Link TRB is a separate TD).
-  *
-- * Section 6.4.4.1 of the 0.95 spec says link TRBs cannot have the chain bit
-- * set, but other sections talk about dealing with the chain bit set.  This was
-- * fixed in the 0.96 specification errata, but we have to assume that all 0.95
-- * xHCI hardware can't handle the chain bit being cleared on a link TRB.
-- *
-  * @more_trbs_coming:	Will you enqueue more TRBs before calling
-  *			prepare_transfer()?
-  */
-@@ -223,8 +262,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
- 			bool more_trbs_coming)
- {
- 	u32 chain;
--	union xhci_trb *next;
--	unsigned int link_trb_count = 0;
- 
- 	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
- 
-@@ -233,48 +270,16 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
- 		return;
- 	}
- 
--	next = ++(ring->enqueue);
--
--	/* Update the dequeue pointer further if that was a link TRB */
--	while (trb_is_link(next)) {
--
--		/*
--		 * If the caller doesn't plan on enqueueing more TDs before
--		 * ringing the doorbell, then we don't want to give the link TRB
--		 * to the hardware just yet. We'll give the link TRB back in
--		 * prepare_ring() just before we enqueue the TD at the top of
--		 * the ring.
--		 */
--		if (!chain && !more_trbs_coming)
--			break;
--
--		/* If we're not dealing with 0.95 hardware or isoc rings on
--		 * AMD 0.96 host, carry over the chain bit of the previous TRB
--		 * (which may mean the chain bit is cleared).
--		 */
--		if (!xhci_link_chain_quirk(xhci, ring->type)) {
--			next->link.control &= cpu_to_le32(~TRB_CHAIN);
--			next->link.control |= cpu_to_le32(chain);
--		}
--		/* Give this link TRB to the hardware */
--		wmb();
--		next->link.control ^= cpu_to_le32(TRB_CYCLE);
--
--		/* Toggle the cycle bit after the last ring segment. */
--		if (link_trb_toggles_cycle(next))
--			ring->cycle_state ^= 1;
--
--		ring->enq_seg = ring->enq_seg->next;
--		ring->enqueue = ring->enq_seg->trbs;
--		next = ring->enqueue;
--
--		trace_xhci_inc_enq(ring);
--
--		if (link_trb_count++ > ring->num_segs) {
--			xhci_warn(xhci, "%s: Ring link TRB loop\n", __func__);
--			break;
--		}
--	}
-+	ring->enqueue++;
-+
-+	/*
-+	 * If we are in the middle of a TD or the caller plans to enqueue more
-+	 * TDs as one transfer (eg. control), traverse any link TRBs right now.
-+	 * Otherwise, enqueue can stay on a link until the next prepare_ring().
-+	 * This avoids enqueue entering deq_seg and simplifies ring expansion.
-+	 */
-+	if (trb_is_link(ring->enqueue) && (chain || more_trbs_coming))
-+		inc_enq_past_link(xhci, ring, chain);
- }
- 
- /*
-@@ -3188,7 +3193,6 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
- static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
- 		u32 ep_state, unsigned int num_trbs, gfp_t mem_flags)
- {
--	unsigned int link_trb_count = 0;
- 	unsigned int new_segs = 0;
- 
- 	/* Make sure the endpoint has been added to xHC schedule */
-@@ -3236,33 +3240,9 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
- 		}
- 	}
- 
--	while (trb_is_link(ep_ring->enqueue)) {
--		/* If we're not dealing with 0.95 hardware or isoc rings
--		 * on AMD 0.96 host, clear the chain bit.
--		 */
--		if (!xhci_link_chain_quirk(xhci, ep_ring->type))
--			ep_ring->enqueue->link.control &=
--				cpu_to_le32(~TRB_CHAIN);
--		else
--			ep_ring->enqueue->link.control |=
--				cpu_to_le32(TRB_CHAIN);
--
--		wmb();
--		ep_ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
--
--		/* Toggle the cycle bit after the last ring segment. */
--		if (link_trb_toggles_cycle(ep_ring->enqueue))
--			ep_ring->cycle_state ^= 1;
--
--		ep_ring->enq_seg = ep_ring->enq_seg->next;
--		ep_ring->enqueue = ep_ring->enq_seg->trbs;
--
--		/* prevent infinite loop if all first trbs are link trbs */
--		if (link_trb_count++ > ep_ring->num_segs) {
--			xhci_warn(xhci, "Ring is an endless link TRB loop\n");
--			return -EINVAL;
--		}
--	}
-+	/* Ensure that new TRBs won't overwrite a link */
-+	if (trb_is_link(ep_ring->enqueue))
-+		inc_enq_past_link(xhci, ep_ring, 0);
- 
- 	if (last_trb_on_seg(ep_ring->enq_seg, ep_ring->enqueue)) {
- 		xhci_warn(xhci, "Missing link TRB at end of ring segment\n");
--- 
-2.48.1
+As a group, we can state quite affirmatively to the fact that we have
+experience and understanding in use of memory allocation instruction
+flags.  Our use of namespace specific event processing structure
+caches is not driven by unfamiliarity with the use and implications of
+GFP_ATOMIC.
+
+The use of independent structure magazines, for security events
+running in atomic context in a security modeling namespace, is driven
+by the need to prevent security adversaries from placing pressure on
+the global kernel atomic page reserves.
+
+These namespace specific event magazines prevent an adversary from
+waging a memory denial of service attack against the kernel at large.
+Adversaries can only impair their own functionality in a security
+modeling namespace through the use of a synthetic attack workload that
+stresses the availability of atomic context memory.
+
+Further, TSEM is formulated on the premise that software teams,
+as a by product of CI/CD automation and testing, can develop precise
+descriptions of the security behavior of their workloads.  One
+component of that description is the cache depth needed to support
+security event handlers running in atomic context.
+
+Exceeding that cache depth would be a sentinel forensic event for a
+workload.  For anyone unfamiliar with modern IT security
+architectures, a very specific alert on your security dashboard that
+one of the tens of thousands of workloads that are running is doing
+something it shouldn't.
+
+Adversaries really hate to be noticed.
+
+> Regardless, I stand by my previous comment that discussion of these
+> caches may be a bit more detail that is needed in this document, but
+> of course that is your choice.  It's a balancing act between providing
+> enough high level detail to satisfy users and reviewers, and producing
+> a document that is so verbose that the time required to properly
+> review it is prohibitive.
+
+It was our understanding that the administrative guides to a security
+architecture are intended to provide comprehensive information on the
+use and management of the implementation.
+
+We were attempting to be thorough in the description and rationale for
+all the technical aspects of TSEM.  The discourse in
+Documentation/memory-barriers.txt would seem to provide justification
+for intimate detail on important operational issues in the kernel.
+
+> > > > +The 'cache' keyword is used to specify the size of the caches used to
+> > > > +hold pointers to data structures used for the internal modeling of
+> > > > +security events or the export of the security event to external trust
+> > > > +orchestrators.  These pre-allocated structures are used to service
+> > > > +security event hooks that are called while the process is running in
+> > > > +atomic context and thus cannot sleep in order to allocate memory.
+> > > > +
+> > > > +The argument to this keyword is a numeric value specifying the number
+> > > > +of structures that are to be held in reserve for the namespace.
+> > > > +
+> > > > +By default the root security modeling namespace and externally modeled
+> > > > +namespaces have a default value of 128 entries.  An internally modeled
+> > > > +namespace has a default value of 32 entries.  The size requirements of
+> > > > +these caches can be highly dependent on the characteristics of the
+> > > > +modeled workload and may require tuning to the needs of the platform
+> > > > +or workload.
+> >
+> > > Presumably TSEM provides usage statistics somewhere so admins can
+> > > monitor and tune as desired?  If so, it seems like it would be a
+> > > good idea to add a reference here.
+> >
+> > We have trended toward the Linus philosophy of reducing the need to
+> > worry about properly tuning knobs.
+
+> I agree that generally speaking the less tuning knobs to get wrong,
+> the better.  However, that assumes a system that can adjust itself
+> as necessary to ensure a reasonable level of operation.  If TSEM can
+> not dynamically adjust itself you should consider exposing those
+> tunables.
+
+The atomic structure magazine sizes (cache depth) can be set on a per
+namespace basis, including the root modeling namespace.
+
+Our current development tree, on our GitHub site if anyone is
+interested, has simplified the cache sizing by using a single default
+value that is of sufficient size to boot a standard Linux (Debian)
+implementation.
+
+For subordinate modeling namespaces, experience has shown that to be
+more than what is needed, but it greatly simplifies the ability to use
+TSEM 'out of the box'.
+
+We still need to update the documentation to call out this fact and
+note that development teams can adjust this value downward for
+subordinate workloads that require lower levels of atomic event
+reserves, if there is a desire to save memory.  Or upward if a
+workload generates a pathologically large corpus of security events
+that run in atomic context.
+
+One could arguably make this self-tuning by setting a low water mark
+that would trigger the expansion of the depth of the event structure
+caches.  Which would invariably lead to a request to have a tunable to
+set that low water mark....
+
+Not to mention an argument about the performance impacts of locking
+the namespace context to prevent atomic context events from running
+while the event magazines are expanded.
+
+> paul-moore.com
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
