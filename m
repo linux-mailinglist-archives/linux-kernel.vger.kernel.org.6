@@ -1,145 +1,128 @@
-Return-Path: <linux-kernel+bounces-531010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0801A43B00
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:13:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A5DA43B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2978018884E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A266017F994
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBA3263F28;
-	Tue, 25 Feb 2025 10:09:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3B01519A5;
-	Tue, 25 Feb 2025 10:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C8266B61;
+	Tue, 25 Feb 2025 10:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YYa5YrIh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F524EF9D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478181; cv=none; b=o8mXNBxYh36iMnYgSkPyHpNCEljO9qlCy78lz9mzToiwbhssZc6OanBRcyOM/g9VAFjeDuxHDUvpIjhWp/nalHyNojTf3eSh+lgIHtRuAAAYLGvvPJ9+r8BqNlNzWJN1IXDrZZKbeLUFSxbNemABz26qmRpS+DGSZpk97pqkd2k=
+	t=1740478211; cv=none; b=mUuJrskjK8W06y8VIKLEo6H1pGzrHOZzOKjsa6v2szl/cUbhxbvD/F8PhxjnF6Ioc0l5rVO7tIWA6+97A9gq7wgMNCxFVQOAnTONazmLQYoKboJTaZ+EQWUgYNQ6wucs/ktW9Gx4tvApqEVCVTm962guV5vvyJolDJn2PfXvt/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478181; c=relaxed/simple;
-	bh=bQ19GPyEpcj0UVq+Sl5IbDI1kfRuc1RHQHJ5d5vyfwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NOjYi4XNwDE/jAdYO9gtH8B8To4itPmI2LZYPrCMuoJAYywiKgEvpUJaIlHuVAfgRXjfWDv2WUTMEIxJex0kzVDEWxSFqnCd+uRWJSiUGoCeCtt36T5RiHM7O7rbn6ZbndpQoQL2U5eazgfVr6yQInpLx7Mg5Y9dP8caj5xfGOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEDF01516;
-	Tue, 25 Feb 2025 02:09:54 -0800 (PST)
-Received: from [10.1.35.64] (unknown [10.1.35.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C244C3F6A8;
-	Tue, 25 Feb 2025 02:09:32 -0800 (PST)
-Message-ID: <cbb364c8-5008-4fa4-b604-2d04e0095c9c@arm.com>
-Date: Tue, 25 Feb 2025 10:09:30 +0000
+	s=arc-20240116; t=1740478211; c=relaxed/simple;
+	bh=73qkubxYAKv8s4JCwe6ccYSBzZa/m+3Q11RVn1IbDtM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uaztPsg2N43dtApV4o7hM+sauAKIxPg+sMct7Y5z/hEhmC3VQsiB0SCXo1e7fa9gUEmOVyKhselC9ZMDApHuQZviTqUkBmv7RURIOztRbTW0w0BqIQXTXZO8tsnV6BkIcXu5hXl73rennfNH6CYJERRtNyjpPR2SHf3MxuH6LdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YYa5YrIh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8GQC0029304;
+	Tue, 25 Feb 2025 10:10:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=t4C3DL+tGYZMQDFK92O7UU
+	xkgkHHfg0P1fCk8DxIELs=; b=YYa5YrIhLrbv0Lmas4Usp7tD0rrXwkOu6fxd0N
+	B0AsOkgoffNE5v1nk1IqIy2RL9zjW0l6Mn+xlc07Agonfs9AW/l9Y8BhJmXYywv+
+	C5UdO1kdLPqGDh0SHzuWsgq1mzx43hfrHxD54IHxaG2mNYmOuLInKu/cPchK7jrk
+	KBCsbBDiegcHumf5wedgU/JaKLNpUMtbcA8MySiDo25hnPpbJej0775I2DBB4lRe
+	fthv4xuviiOfwmdixhQIO0bLLc0vTnfcO7si8nAbTyCieeirI0c+vmX/fcvmHY/b
+	Ncm1YXIDJWAyMbYyb+7i0zUbfVGRHW036G6ydYdGPtzE7kZQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y49egmqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 10:10:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PAA0L0016820
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 10:10:00 GMT
+Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Feb 2025 02:09:57 -0800
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Date: Tue, 25 Feb 2025 15:39:40 +0530
+Subject: [PATCH] arm64: defconfig: Enable iris video driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>, Qais Yousef <qyousef@layalina.io>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <20250216163340.ttwddti5pzuynsj5@airbuntu>
- <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
- <20250222235936.jmyrfacutheqt5a2@airbuntu>
- <Z7w7g1zb0nfu9-C7@jlelli-thinkpadt14gen4.remote.csb>
- <20250225000237.nsgbibqigl6nhhdu@airbuntu>
- <Z72Rka_g1imcX5lt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z72Rka_g1imcX5lt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOOWvWcC/x2MWwqAIBAAryL7nWCLPegq0YeP1RbCQiGC8O5Jn
+ zMw80KhzFRgES9kurnwmRr0nQC3mxRJsm8MqHBQiIOkZOzRbOYiPQV3psBR+tHODoPV46ShtVe
+ mwM//XbdaPw/LgdZnAAAA
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740478197; l=809;
+ i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=73qkubxYAKv8s4JCwe6ccYSBzZa/m+3Q11RVn1IbDtM=;
+ b=MHys0LpHWsKNIBLb3lH0qKWgAjiuSc0LSS5QEvkWUdYYJELYAz7ZUY+SoSZTtohu5MhJoroUD
+ RZJLO5+Rlu3B+QF0oO7Nu/Vi9veZX1gv/wxsy/oecI6qsc+pWp2yapH
+X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
+ pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VANBj5h4EObH-bsSi-3qBEjP6fdnwKET
+X-Proofpoint-GUID: VANBj5h4EObH-bsSi-3qBEjP6fdnwKET
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=496 lowpriorityscore=0 mlxscore=0
+ adultscore=0 malwarescore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250070
 
-On 2/25/25 09:46, Juri Lelli wrote:
-> On 25/02/25 00:02, Qais Yousef wrote:
->> On 02/24/25 10:27, Juri Lelli wrote:
->>
->>>> Okay I see. The issue though is that for a DL system with power management
->>>> features on that warrant to wake up a sugov thread to update the frequency is
->>>> sort of half broken by design. I don't see the benefit over using RT in this
->>>> case. But I appreciate I could be misguided. So take it easy on me if it is
->>>> obviously wrong understanding :) I know in Android usage of DL has been
->>>> difficult, but many systems ship with slow switch hardware.
->>>>
->>>> How does DL handle the long softirqs from block and network layers by the way?
->>>> This has been in a practice a problem for RT tasks so they should be to DL.
->>>> sugov done in stopper should be handled similarly IMHO. I *think* it would be
->>>> simpler to masquerade sugov thread as irq pressure.
->>>
->>> Kind of a trick question :), as DL doesn't handle this kind of
->>
->> :-)
->>
->>> load/pressure explicitly. It is essentially agnostic about it. From a
->>> system design point of view though, I would say that one should take
->>> that into account and maybe convert sensible kthreads to DL, so that the
->>> overall bandwidth can be explicitly evaluated. If one doesn't do that
->>> probably a less sound approach is to treat anything not explicitly
->>> scheduled by DL, but still required from a system perspective, as
->>> overload and be more conservative when assigning bandwidth to DL tasks
->>> (i.e. reduce the maximum amount of available bandwidth, so that the
->>> system doesn't get saturated).
->>
->> Maybe I didn't understand your initial answer properly. But what I got is that
->> we set as DL to do what you just suggested of converting it kthread to DL to
->> take its bandwidth into account. But we have been lying about bandwidth so far
->> and it was ignored? (I saw early bailouts of SCHED_FLAG_SUGOV was set in
->> bandwidth related operations)
-> 
-> Ignored as to have something 'that works'. :)
-> 
-> But, it's definitely far from being good.
-> 
->>>> You can use the rate_limit_us as a potential guide for how much bandwidth sugov
->>>> needs if moving it to another class really doesn't make sense instead?
->>>
->>> Or maybe try to estimate/measure how much utilization sugov threads are
->>> effectively using while running some kind of workload of interest and
->>> use that as an indication for DL runtime/period.
->>
->> I don't want to side track this thread. So maybe I should start a new thread to
->> discuss this. You might have seen my other series on consolidating cpufreq
->> updates. I'm not sure sugov can have a predictable period. Maybe runtime, but
->> it could run repeatedly, or it could be quite for a long time.
-> 
-> Doesn't need to have a predictable period. Sporadic (activations are not
-> periodic) tasks work well with DEADLINE if one is able to come up with a
-> sensible bandwidth allocation for them. So for sugov (and other
-> kthreads) the system designer should be thinking about the amount of CPU
-> to give to each kthread (runtime/period) and the granularity of such
-> allocation (period).
+Enable the building of the iris video driver by default.
 
-The only really sensible choice I see is
-rate_limit * some_constant_approximated_runtime
-and on many systems that may yield >100% of the capacity.
-Qais' proposed changes would even remove the theoretical rate_limit cap here.
-A lot of complexity for something that is essentially a non-issue in practice
-AFAICS...
+Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index cb7da4415599..9cc06923c280 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -845,6 +845,7 @@ CONFIG_VIDEO_IMX8_ISI=m
+ CONFIG_VIDEO_IMX8_ISI_M2M=y
+ CONFIG_VIDEO_IMX8_JPEG=m
+ CONFIG_VIDEO_QCOM_CAMSS=m
++CONFIG_VIDEO_QCOM_IRIS=m
+ CONFIG_VIDEO_QCOM_VENUS=m
+ CONFIG_VIDEO_RCAR_ISP=m
+ CONFIG_VIDEO_RCAR_CSI2=m
+
+---
+base-commit: b2c4bf0c102084e77ed1b12090d77a76469a6814
+change-id: 20250225-enable-iris-defconfig-d6b8c2fb4674
+
+Best regards,
+-- 
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+
 
