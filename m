@@ -1,139 +1,102 @@
-Return-Path: <linux-kernel+bounces-531693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A404FA443A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:57:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F582A443AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2FEF179BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:54:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94987A84B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9CC260A54;
-	Tue, 25 Feb 2025 14:54:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A72C21ABDE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F221ABC6;
+	Tue, 25 Feb 2025 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgOS9yfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D02221ABB2;
+	Tue, 25 Feb 2025 14:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495281; cv=none; b=slhjagVoMHNg5FECJI95rMNUaVpDx5wZyGdm7k3xJtsd7UoUDPy+uulWOp5fCQJQ0ulhAkzTQ4uTVtW0WII7ZepbSr2+m4JjXaaRAGWP4yJHjgRDMIDrIVdCQ57OC0r/7QdFS1f1mcy7s/0s48hiThWmx/08yok0t7sAuw/okUU=
+	t=1740495297; cv=none; b=BT/6j58icfUfGKBsOLNyYwhgzYA0opNfXsPsoKMw75dTPFb8NANuoDhNmh7E6p5kvQlPjSqC/EooYHZ5X6EbdhRgqmBLXfAg5QQhxUoiTMc3I/Vrba61SeSOxjFjxeC4Q2wS7bnl/azbrZTBSy0I37rwN668+Nj/hJqxWzo8Ffk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495281; c=relaxed/simple;
-	bh=kwTo9338g4qpp97NasrZXAc4mVGqCi372qG39LHHeU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BKVR2CTib0lw0mkNwFxoH7EnlsV+FhgEfJMJrxNelHausFwCJ5gyLf8bT4IYqMVegfopUmQ1qOhCPhaV9dX8OU8l6LqMiTr9d62/+0PJMi3gW21Yy0TiDUX3N73IneYXnoaFs2NzVqA/1klpSBsP7X/oBd8mlIPp+B5SOcfh1zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC1CB1BCB;
-	Tue, 25 Feb 2025 06:54:54 -0800 (PST)
-Received: from [10.1.27.154] (XHFQ2J9959.cambridge.arm.com [10.1.27.154])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABFED3F5A1;
-	Tue, 25 Feb 2025 06:54:37 -0800 (PST)
-Message-ID: <5edf6a80-1fbd-4be2-912b-497c044ba0f8@arm.com>
-Date: Tue, 25 Feb 2025 14:54:36 +0000
+	s=arc-20240116; t=1740495297; c=relaxed/simple;
+	bh=IAZmZupfWPhUfgk4lZe0NsfW4XTnGX4gwlCfIrMA8Wg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MqYq8+FkxNv5+q+4rLQ5AVda8aB1uSSl/iK4JIc/s7Bfb2kVtORq/9TsPT5GdgkJjzgj0p02vNNQqhO6OEbg+FQcVv9MFYTHJ6iZlxxm6l4W8uzLI/5khjpTlcnUextwR02fQnzQPamKhGNJEQpb5tcqIXoTWASYlLIzXfbrokE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgOS9yfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13575C4CEDD;
+	Tue, 25 Feb 2025 14:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740495296;
+	bh=IAZmZupfWPhUfgk4lZe0NsfW4XTnGX4gwlCfIrMA8Wg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WgOS9yfpjE+KWaYWPUS/RZgHbThsyBPh8Fs4M6MiHWrLG/MR8ymb/kU5R150TOhCd
+	 TuG94czczt9WPUO4dAFhz8rkK7kxFYknyXNb2ua4XhxI/PYtExNFRnEAtrq/7HEjy9
+	 4wTE8PCgtOIovdI83kyD9/EOXoaJwHtEcBmQZroo6xucjyCF8wn5hyt/hBeb3Zvi+6
+	 lOgGUPMeJbsjRDy9n5rZPgRtcX5yltHJ4+9oJmjfS0HI7CBOSi9tA+MuHx5X/opE0m
+	 KPlpkZ2d87YitWNY2gpTGAzUGiCHT8JkovswSHYG4b32E7PYYhF46SigBI1OnUTlfm
+	 JnjaWaxTPsXUQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Takashi Iwai <tiwai@suse.de>,
+	Jonathan Denose <jdenose@google.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [RESEND] Input: synaptics: hide unused smbus_pnp_ids[] array
+Date: Tue, 25 Feb 2025 15:54:38 +0100
+Message-Id: <20250225145451.1141995-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] arm64/hugetlb: Consistently use pud_sect_supported()
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250220050534.799645-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250220050534.799645-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/02/2025 05:05, Anshuman Khandual wrote:
-> Let's be consistent in using pud_sect_supported() for PUD_SIZE sized pages.
-> Hence change hugetlb_mask_last_page() and arch_make_huge_pte() as required.
-> Also re-arranged the switch statement for a common warning message.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Thanks, Anshuman, this looks much cleaner now, to my eye at least.
+When SMBUS is disabled, this is never referenced, causing a W=1 warning:
 
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+drivers/input/mouse/synaptics.c:164:27: error: 'smbus_pnp_ids' defined but not used [-Werror=unused-const-variable=]
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Hide the array behind the same #ifdef as the code referencing it.
 
-> ---
-> This patch applies on v6.14-rc3
-> 
-> Changes in V3:
-> 
-> - Re-arranged the switch statement for a common warning message per Ryan
-> 
-> Changes in V2:
-> 
-> https://lore.kernel.org/linux-arm-kernel/20250218113639.475947-1-anshuman.khandual@arm.com/
-> 
-> - Added an warning when PUD_SIZE is requested but not supported per Ryan
-> 
-> Changes in V1:
-> 
-> https://lore.kernel.org/linux-arm-kernel/20250217065414.49489-1-anshuman.khandual@arm.com/
-> 
->  arch/arm64/mm/hugetlbpage.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-> index 98a2a0e64e25..fd7448bb8c80 100644
-> --- a/arch/arm64/mm/hugetlbpage.c
-> +++ b/arch/arm64/mm/hugetlbpage.c
-> @@ -342,7 +342,9 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
->  	switch (hp_size) {
->  #ifndef __PAGETABLE_PMD_FOLDED
->  	case PUD_SIZE:
-> -		return PGDIR_SIZE - PUD_SIZE;
-> +		if (pud_sect_supported())
-> +			return PGDIR_SIZE - PUD_SIZE;
-> +		break;
->  #endif
->  	case CONT_PMD_SIZE:
->  		return PUD_SIZE - CONT_PMD_SIZE;
-> @@ -364,23 +366,21 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
->  	switch (pagesize) {
->  #ifndef __PAGETABLE_PMD_FOLDED
->  	case PUD_SIZE:
-> -		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
-> +		if (pud_sect_supported())
-> +			return pud_pte(pud_mkhuge(pte_pud(entry)));
->  		break;
->  #endif
->  	case CONT_PMD_SIZE:
-> -		entry = pmd_pte(pmd_mkcont(pte_pmd(entry)));
-> -		fallthrough;
-> +		return pmd_pte(pmd_mkhuge(pmd_mkcont(pte_pmd(entry))));
->  	case PMD_SIZE:
-> -		entry = pmd_pte(pmd_mkhuge(pte_pmd(entry)));
-> -		break;
-> +		return pmd_pte(pmd_mkhuge(pte_pmd(entry)));
->  	case CONT_PTE_SIZE:
-> -		entry = pte_mkcont(entry);
-> -		break;
-> +		return pte_mkcont(entry);
->  	default:
-> -		pr_warn("%s: unrecognized huge page size 0x%lx\n",
-> -			__func__, pagesize);
->  		break;
->  	}
-> +	pr_warn("%s: unrecognized huge page size 0x%lx\n",
-> +		__func__, pagesize);
->  	return entry;
->  }
->  
+Fixes: e839ffab0289 ("Input: synaptics - add support for Intertouch devices")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Sent this about a year ago, the patch is still needed, so resending without changes
+---
+ drivers/input/mouse/synaptics.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index aba57abe6978..309c360aab55 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -161,6 +161,7 @@ static const char * const topbuttonpad_pnp_ids[] = {
+ 	NULL
+ };
+ 
++#ifdef CONFIG_MOUSE_PS2_SYNAPTICS_SMBUS
+ static const char * const smbus_pnp_ids[] = {
+ 	/* all of the topbuttonpad_pnp_ids are valid, we just add some extras */
+ 	"LEN0048", /* X1 Carbon 3 */
+@@ -196,6 +197,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"SYN3257", /* HP Envy 13-ad105ng */
+ 	NULL
+ };
++#endif
+ 
+ static const char * const forcepad_pnp_ids[] = {
+ 	"SYN300D",
+-- 
+2.39.5
 
 
