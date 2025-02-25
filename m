@@ -1,199 +1,91 @@
-Return-Path: <linux-kernel+bounces-530698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A262A43708
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:10:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61173A4370E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 674E17A4916
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29EE71892CA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF4D25A647;
-	Tue, 25 Feb 2025 08:10:27 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1264F25E478;
+	Tue, 25 Feb 2025 08:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pj3jIVHo"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4EC192B77
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E38625E464;
+	Tue, 25 Feb 2025 08:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471026; cv=none; b=nCPW5Jo5cutNAWZFThUjTQ1Cp2XKpbLSrHY/ZekYebHX+skHzF3jzJcUgZFCKdNF/Xh+e0A0hIb8c/CRnWfLT6QrELnsbf8M7llvF5ZZVKN/gTSOOSvxYd6dLL8vNntiu26Uuwqc2amzvHetijEgw4BdxVKJ/XijELmPS1Ygur4=
+	t=1740471033; cv=none; b=mA7IG6TohXjtlxxRAby6n5r1u9e6DaMkIzn6DkQnr1bOUZpP+qiuzHrP6UBhIWmt5ynLJd/gipXBpa8p7CeJgdhrLagU49vVCa/QM/lIaOJi616XpkHDx+UkgcXR3wu69necJVd8Pazhfd7+JZyEHGkpxz+g7jGOAtZ7ZQz9sBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471026; c=relaxed/simple;
-	bh=uXlJ/8uX3vH1mAgnAEZX6cLjaJ0/Wc/Prk2XJX5CDQ8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=b3Gc2vr7PIxDovQYBMBYwP9kN2nE1yMNanEpjXLK5NzwkNjFiA67XQZqmJCsZQ76zSU97o8A1NsvN9xxppPX6gb6Mhi92plPK0oD3DVvupx19F2bAtJyPbdm9BjTxrL5z6DUFOzs9AEoYY+fp3nvCuM0aZ9Yu6fRZy1ERxI380o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b3882febso35258735ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:10:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740471024; x=1741075824;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oAPT8sSyB+EAkcL0UXOlyTDITtKzKp59XJne9PMGRng=;
-        b=XgFIJT7AOZBQfxlBq6VRUfut4elQ8PaLQIbxaH05a02Vu3W+AzFVc+hIJyRBlncEQx
-         dGpFyXheXz9Uihh7uoiuCLtjWPOV4R7nuSYSpq30pzIl9CpwYiqN3ucYnNhyU4OBN/d0
-         Xi+Z1d13tHZpqXyIJnu3xv09f8BVas25Qu/p3VoK0MhqapxVuuMY+hiibVAvnZ8xXOiI
-         iY+ASF0HfmfNC9zB4CyAO8QliDLY4q5KQkL5V40xtn0r1B3BpYgeB7dx/ptZHdtvNpu1
-         tko4hkzOppmXesZeMxnFvcqXKX2YeiD0NK+MRy43sIVIqF78XV++qcr7Ta7FB1EiZDPY
-         l/Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjY0ExO77ckmfldLUqPc/0YXxtGkfOdI06V4bGgcdbA9M+DqmjIqcN7477zLX4oU3k4NB9kuDpFRevLVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdIfN0PJiJ5LiA83DPlJSLhTaUT2HaFPx7Q8Xg+maS5DXcV2Ez
-	ncTR8sbFcLfF4xOIdzURzQ5jpP9dipaQJO4lLhRd2CpyFW3I2qpcZGmIQNRzabz+FeawBJEIBRL
-	ibJisxxxm01OjW6VioZRIGJ0DEzbTNv0tDg6cE3j+k6CSHuVZDwmNIa0=
-X-Google-Smtp-Source: AGHT+IHrjQnUBRkr5I/m8OuD5OeNoV3cV8jABSa/CAmx8uyTY9FivBJR0pFUxPRbl/TNlHa11sO+FkBf8AMhUodQEekJcGQchgMF
+	s=arc-20240116; t=1740471033; c=relaxed/simple;
+	bh=+svhfhYuJY7OVs+rmd1ZfwBLwkNKNJf0d25JfNojUlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wq+gWndfymIWYEofF/wr1h0WEo62+qivxybFnuEvzAXYXram2D28eoa9E6dTHJricg8VBIB1WZA54VygdGO5OyRTi/gzQ3uS7bBC0Ry0EMKzI3iAtm6dVRVPCqH3nvlS5mI98+V/6iOGqECZgwlvfxZvCNfY4I+gLMZxBw3UgR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pj3jIVHo; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BD84544367;
+	Tue, 25 Feb 2025 08:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740471029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pi+Na0fzjBWz9wqBgnbiA7m300Bd7Wdc0xgW8pAyLxE=;
+	b=Pj3jIVHoLwdm61MlRS5kqdr8Oumi0jTCd+jmjq5fz7CESRhuqmw4lb5It5k3vaPjkSJMWa
+	KHA4RkOw09deCogM8X5t01+5JDLgH9a/M8YbVMT/I6v2IQBd2tWo6dUeLlsxOPb8kfRaD9
+	NdKfLoNuklBCsI7jsU7FUU5I8vHaDXr4BLKzQa5UexeXFj4FmJslmStstHVY55fR3ljyC2
+	GYcpzOLjii/iYEY3TWRCqreuHgnDnUp8xCnrdHMHZ40xrMP2imqoCSB9ynWBkMA2v/rh41
+	mnjqbQEiWhRdYJa8fc3m5vO0fz+VtxtLb12KkF8kXWFof8GsBp+w16oC3YU5tw==
+Date: Tue, 25 Feb 2025 09:10:27 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Harshal Chaudhari <hchaudhari@marvell.com>
+Cc: <marcin.s.wojtas@gmail.com>, <linux@armlinux.org.uk>,
+ <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+ <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] net: mvpp2: cls: Fixed Non IP flow, with vlan tag
+ flow defination.
+Message-ID: <20250225091027.1af0384c@fedora.home>
+In-Reply-To: <20250225042058.2643838-1-hchaudhari@marvell.com>
+References: <20250225042058.2643838-1-hchaudhari@marvell.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0c:b0:3d2:b4ea:5f60 with SMTP id
- e9e14a558f8ab-3d2fc0d38a4mr22388945ab.6.1740471024102; Tue, 25 Feb 2025
- 00:10:24 -0800 (PST)
-Date: Tue, 25 Feb 2025 00:10:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com>
-Subject: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
-From: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	shivankg@amd.com, surenb@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekuddukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehhtghhrghuughhrghrihesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehmrghrtghinhdrshdrfihojhhtrghssehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnu
+ higrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello,
+On Mon, 24 Feb 2025 20:20:58 -0800
+Harshal Chaudhari <hchaudhari@marvell.com> wrote:
 
-syzbot found the following issue on:
+> Non IP flow, with vlan tag not working as expected while
+> running below command for vlan-priority. fixed that.
+> 
+> ethtool -N eth1 flow-type ether vlan 0x8000 vlan-mask 0x1fff action 0 loc 0
+> 
+> Fixes: 1274daede3ef ("net: mvpp2: cls: Add steering based on vlan Id and priority.")
+> Signed-off-by: Harshal Chaudhari <hchaudhari@marvell.com>
 
-HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1643b498580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-dashboard link: https://syzkaller.appspot.com/bug?extid=556fda2d78f9b0daa141
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138207a4580000
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+Thank you,
 
-The issue was bisected to:
-
-commit 0670f2f4d6ff1cd6aa351389130ba7bbafb02320
-Author: Suren Baghdasaryan <surenb@google.com>
-Date:   Thu Feb 13 22:46:49 2025 +0000
-
-    mm: replace vm_lock and detached flag with a reference count
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1355bfdf980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d5bfdf980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1755bfdf980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com
-Fixes: 0670f2f4d6ff ("mm: replace vm_lock and detached flag with a reference count")
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 27018 Comm: syz.1.4414 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:vma_refcount_put include/linux/mm.h:712 [inline]
-RIP: 0010:vma_end_read include/linux/mm.h:811 [inline]
-RIP: 0010:lock_vma_under_rcu+0x578/0xac0 mm/memory.c:6454
-Code: be 5d b1 ff 49 be 00 00 00 00 00 fc ff df 4d 85 ff 74 0d 49 81 ff 01 f0 ff ff 0f 82 a3 02 00 00 49 83 ff f5 0f 85 55 03 00 00 <41> 80 3e 00 74 0a bf 05 00 00 00 e8 28 df 18 00 4c 8b 34 25 05 00
-RSP: 0000:ffffc9000b837d80 EFLAGS: 00010246
-RAX: fffffffffffffff5 RBX: 0000000000000000 RCX: ffff888079eb8000
-RDX: ffff888079eb8000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000b837ed8 R08: ffffffff8210a26a R09: 1ffff110068be328
-R10: dffffc0000000000 R11: ffffed10068be329 R12: ffffc9000b837e10
-R13: ffff88802890aa20 R14: dffffc0000000000 R15: fffffffffffffff5
-FS:  00005555908b1500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000400000002fc0 CR3: 0000000011df6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_user_addr_fault arch/x86/mm/fault.c:1328 [inline]
- handle_page_fault arch/x86/mm/fault.c:1480 [inline]
- exc_page_fault+0x17b/0x920 arch/x86/mm/fault.c:1538
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f617a954ed8
-Code: fc 89 37 c3 c5 fa 6f 06 c5 fa 6f 4c 16 f0 c5 fa 7f 07 c5 fa 7f 4c 17 f0 c3 66 0f 1f 84 00 00 00 00 00 48 8b 4c 16 f8 48 8b 36 <48> 89 37 48 89 4c 17 f8 c3 c5 fe 6f 54 16 e0 c5 fe 6f 5c 16 c0 c5
-RSP: 002b:00007ffc20f24718 EFLAGS: 00010246
-RAX: 0000400000002fc0 RBX: 0000000000000004 RCX: 0031313230386c6e
-RDX: 0000000000000008 RSI: 0031313230386c6e RDI: 0000400000002fc0
-RBP: 0000000000000000 R08: 00007f617a800000 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000009 R12: 00007f617aba5fac
-R13: 00007f617aba5fa0 R14: fffffffffffffffe R15: 0000000000000006
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:vma_refcount_put include/linux/mm.h:712 [inline]
-RIP: 0010:vma_end_read include/linux/mm.h:811 [inline]
-RIP: 0010:lock_vma_under_rcu+0x578/0xac0 mm/memory.c:6454
-Code: be 5d b1 ff 49 be 00 00 00 00 00 fc ff df 4d 85 ff 74 0d 49 81 ff 01 f0 ff ff 0f 82 a3 02 00 00 49 83 ff f5 0f 85 55 03 00 00 <41> 80 3e 00 74 0a bf 05 00 00 00 e8 28 df 18 00 4c 8b 34 25 05 00
-RSP: 0000:ffffc9000b837d80 EFLAGS: 00010246
-RAX: fffffffffffffff5 RBX: 0000000000000000 RCX: ffff888079eb8000
-RDX: ffff888079eb8000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000b837ed8 R08: ffffffff8210a26a R09: 1ffff110068be328
-R10: dffffc0000000000 R11: ffffed10068be329 R12: ffffc9000b837e10
-R13: ffff88802890aa20 R14: dffffc0000000000 R15: fffffffffffffff5
-FS:  00005555908b1500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff182f3cf98 CR3: 0000000011df6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	5d                   	pop    %rbp
-   1:	b1 ff                	mov    $0xff,%cl
-   3:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
-   a:	fc ff df
-   d:	4d 85 ff             	test   %r15,%r15
-  10:	74 0d                	je     0x1f
-  12:	49 81 ff 01 f0 ff ff 	cmp    $0xfffffffffffff001,%r15
-  19:	0f 82 a3 02 00 00    	jb     0x2c2
-  1f:	49 83 ff f5          	cmp    $0xfffffffffffffff5,%r15
-  23:	0f 85 55 03 00 00    	jne    0x37e
-* 29:	41 80 3e 00          	cmpb   $0x0,(%r14) <-- trapping instruction
-  2d:	74 0a                	je     0x39
-  2f:	bf 05 00 00 00       	mov    $0x5,%edi
-  34:	e8 28 df 18 00       	call   0x18df61
-  39:	4c                   	rex.WR
-  3a:	8b                   	.byte 0x8b
-  3b:	34 25                	xor    $0x25,%al
-  3d:	05                   	.byte 0x5
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Maxime
 
