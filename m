@@ -1,59 +1,63 @@
-Return-Path: <linux-kernel+bounces-532120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362BBA44921
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:57:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44637A448E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3005C880F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52ED117BFC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672919B3CB;
-	Tue, 25 Feb 2025 17:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1hDAtND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0761E195B1A;
-	Tue, 25 Feb 2025 17:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A65519A2A3;
+	Tue, 25 Feb 2025 17:48:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320919992C;
+	Tue, 25 Feb 2025 17:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505649; cv=none; b=g9aN5ftgnHbWhiRkxaHmfvrS3UW3/RsuNOPKxhUHHYzI4IIHw5g7PjXnCIQE/R6/B4y2zf7dDayuKaF3DsPSJJT54y1ACe/Q5igH8cYUn0SDlCzfED8fDv7p1bIhlnwbUtlTNF+5P9NKQirWqYbVMz+Dm57cOpCa5Eo543H8BAc=
+	t=1740505691; cv=none; b=K1ypQcVKgJRLQW+71nahLEXOWMnwhTLpz8tml+hyHU/3YuTNPldb9pZ9+M38sqDJAx0PBdYW4ZewJWNxfhVKtTCAla7imKnw9TwHzpAp/WIyzIIzhYR7lxcq+Djx/SFRZ4bgOqPRJ0AMDN4MPq1mUYHbDYvAu+PhHo1hy67FoMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505649; c=relaxed/simple;
-	bh=9uuqhp6RkiJhtMT5zR1Cc/fblk44OMPAt2hYASfkTws=;
+	s=arc-20240116; t=1740505691; c=relaxed/simple;
+	bh=UlYAL7cYAm+wK2/XoBjCh1V7JGWLMwEiAoOcbv3rOHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tw+mszZdnWV2GQNX/uNEAtwIP/uEGzAoAZyz8Q9NZqB1qGeWIdABwEQcruqGs48Ra/D+N7hX7v904PGcFRHDInQD6oUOdHDKEZPa2LXrN5n1tIVGNN5LV8QqFXHpsr+pUEOkrh8ucG1z4Ply2rc7dkdiQIB+wuDi/p6cVGxAOdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1hDAtND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661EDC4CEDD;
-	Tue, 25 Feb 2025 17:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740505648;
-	bh=9uuqhp6RkiJhtMT5zR1Cc/fblk44OMPAt2hYASfkTws=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1hDAtNDBKcWq3l+2TtaxUcY1SdWwI+2HJ1SKw/KP9e95d1ebfzEE+PS5uUcsppOD
-	 PArlM2tieL8GgmNdsXRuORZP3wYf1fJFwsHLgI4xZa+6z7+Z/nLolYmDOZeIZXPA/d
-	 9wOXCEaUF/1iEfJ+q8NN01MoZTtmFhLSJaWdyO3zrxuO0/QWAS5RPX4j9tr+k2ACOT
-	 myVchm/lwOyLaxEEWD9KTosuLud9sEKVnamSaVyEy+Bu04fYAW6YSQJMdsVGY2WoMJ
-	 sC1fYYirgvZhO/JEIQM2h9RemKV0nA6z2WMeVrbE0dJ5HbjSBuJ0R4Jhx38gBlrAf1
-	 5uPAb/boF6YRg==
-Date: Tue, 25 Feb 2025 09:47:27 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 07/11] xfs: iomap CoW-based atomic write support
-Message-ID: <20250225174727.GF6242@frogsfrogsfrogs>
-References: <20250213135619.1148432-1-john.g.garry@oracle.com>
- <20250213135619.1148432-8-john.g.garry@oracle.com>
- <20250224201333.GD21808@frogsfrogsfrogs>
- <4e78abd2-4f84-4002-b84c-6f90e2f869a8@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=soajJz4vkG6+huhPtdgGwBth8p2XGT/Dvro9orb402SK0U0HqVVxJqscrbfsn3NL98esqc4CP7n/DdjHBdbt9uArhBwfCXEsCVS2NNtoC8FyXBj9o9UM89TtOHPshw7vH5zo/PJdgRCltsad5uAGk6/FkWgBmqhSK83Q4Cu9WUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 806481BCB;
+	Tue, 25 Feb 2025 09:48:24 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D48783F5A1;
+	Tue, 25 Feb 2025 09:48:07 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:48:03 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+Message-ID: <20250225174803.GB1821331@e132581.arm.com>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
+ <20250224122507.GE8144@e132581.arm.com>
+ <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+ <20250224140317.GF8144@e132581.arm.com>
+ <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+ <20250224180301.GI8144@e132581.arm.com>
+ <Z72xMLsd37I6X_5-@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,249 +66,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e78abd2-4f84-4002-b84c-6f90e2f869a8@oracle.com>
+In-Reply-To: <Z72xMLsd37I6X_5-@J2N7QTR9R3>
 
-On Tue, Feb 25, 2025 at 11:06:50AM +0000, John Garry wrote:
-> On 24/02/2025 20:13, Darrick J. Wong wrote:
-> > On Thu, Feb 13, 2025 at 01:56:15PM +0000, John Garry wrote:
-> > > In cases of an atomic write occurs for misaligned or discontiguous disk
-> > > blocks, we will use a CoW-based method to issue the atomic write.
-> > > 
-> > > So, for that case, return -EAGAIN to request that the write be issued in
-> > > CoW atomic write mode. The dio write path should detect this, similar to
-> > > how misaligned regalar DIO writes are handled.
-> > > 
-> > > For normal HW-based mode, when the range which we are atomic writing to
-> > > covers a shared data extent, try to allocate a new CoW fork. However, if
-> > > we find that what we allocated does not meet atomic write requirements
-> > > in terms of length and alignment, then fallback on the CoW-based mode
-> > > for the atomic write.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/xfs_iomap.c | 72 ++++++++++++++++++++++++++++++++++++++++++++--
-> > >   1 file changed, 69 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > > index ab79f0080288..c5ecfafbba60 100644
-> > > --- a/fs/xfs/xfs_iomap.c
-> > > +++ b/fs/xfs/xfs_iomap.c
-> > > @@ -795,6 +795,23 @@ imap_spans_range(
-> > >   	return true;
-> > >   }
-> > > +static bool
-> > > +imap_range_valid_for_atomic_write(
+On Tue, Feb 25, 2025 at 12:01:52PM +0000, Mark Rutland wrote:
+
+[...]
+
+> > > Critically, the brbe_enable() function merges the filters of all
+> > > *active* events which have been installed into hardware. It does not
+> > > track all events which can be rotated, and the resulting filter is not
+> > > the same -- it can change as a result of rotation.
 > > 
-> > xfs_bmap_valid_for_atomic_write()
+> > In a perf session has multiple events, and events have different branch
+> > filters, seems to me, a simple way is to return error for this case.
 > 
-> I'm ok with this.
+> FWIW, I'd generally prefer to do that since it avoids a number of
+> horrible edge-cases and gets rid of the need to do SW filtering, which
+> falls somewhere between "tricky" and "not entirely possible". However,
+> that's not what LBR and others do, which is why we went with filter
+> merging.
 > 
-> But we do have other private functions without "xfs" prefix - like
-> imap_needs_cow(), so a bit inconsistent to begin with.
+> If folk on the tools side are happy with the kernel rejecting
+> conflicting events, then I'd be more than happy to do that. What I don't
+> want is that we start off with that approach and people immediately
+> start to complain that the BRBE driver rejects events that the LBR
+> driver accepts.
+> 
+> See the last time this came up.
 
-Yeah, others prefer shorter names but I try at least to maintain
-consistent prefixes for namespacing.
+Thanks for the shared links.  Based on the info, let's say we can have two
+cases:
 
-> > 
-> > > +	struct xfs_bmbt_irec	*imap,
-> > > +	xfs_fileoff_t		offset_fsb,
-> > > +	xfs_fileoff_t		end_fsb)
-> > > +{
-> > > +	/* Misaligned start block wrt size */
-> > > +	if (!IS_ALIGNED(imap->br_startblock, imap->br_blockcount))
-> > > +		return false;
-> > > +
-> > > +	/* Discontiguous or mixed extents */
-> > > +	if (!imap_spans_range(imap, offset_fsb, end_fsb))
-> > > +		return false;
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > >   static int
-> > >   xfs_direct_write_iomap_begin(
-> > >   	struct inode		*inode,
-> > > @@ -809,12 +826,20 @@ xfs_direct_write_iomap_begin(
-> > >   	struct xfs_bmbt_irec	imap, cmap;
-> > >   	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-> > >   	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
-> > > +	bool			atomic_cow = flags & IOMAP_ATOMIC_COW;
-> > > +	bool			atomic_hw = flags & IOMAP_ATOMIC_HW;
-> > >   	int			nimaps = 1, error = 0;
-> > >   	bool			shared = false;
-> > >   	u16			iomap_flags = 0;
-> > > +	xfs_fileoff_t		orig_offset_fsb;
-> > > +	xfs_fileoff_t		orig_end_fsb;
-> > > +	bool			needs_alloc;
-> > >   	unsigned int		lockmode;
-> > >   	u64			seq;
-> > > +	orig_offset_fsb = offset_fsb;
-> > 
-> > When does offset_fsb change?
-> 
-> It doesn't, so this is not really required.
-> 
-> > 
-> > > +	orig_end_fsb = end_fsb;
-> > 
-> > Set this in the variable declaration?
-> 
-> ok
-> 
-> > 
-> > > +
-> > >   	ASSERT(flags & (IOMAP_WRITE | IOMAP_ZERO));
-> > >   	if (xfs_is_shutdown(mp))
-> > > @@ -832,7 +857,7 @@ xfs_direct_write_iomap_begin(
-> > >   	 * COW writes may allocate delalloc space or convert unwritten COW
-> > >   	 * extents, so we need to make sure to take the lock exclusively here.
-> > >   	 */
-> > > -	if (xfs_is_cow_inode(ip))
-> > > +	if (xfs_is_cow_inode(ip) || atomic_cow)
-> > >   		lockmode = XFS_ILOCK_EXCL;
-> > >   	else
-> > >   		lockmode = XFS_ILOCK_SHARED;
-> > > @@ -857,6 +882,22 @@ xfs_direct_write_iomap_begin(
-> > >   	if (error)
-> > >   		goto out_unlock;
-> > > +	if (flags & IOMAP_ATOMIC_COW) {
-> > 
-> > 	if (atomic_cow) ?
-> > 
-> > Or really, atomic_sw?
-> 
-> Yes, will change.
-> 
-> > 
-> > > +		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-> > > +				&lockmode,
-> > > +				(flags & IOMAP_DIRECT) || IS_DAX(inode), true);
-> > > +		/*
-> > > +		 * Don't check @shared. For atomic writes, we should error when
-> > > +		 * we don't get a CoW fork.
-> > 
-> > "Get a CoW fork"?  What does that mean?  The cow fork should be
-> > automatically allocated when needed, right?  Or should this really read
-> > "...when we don't get a COW mapping"?
-> 
-> ok, I can change as you suggest
-> 
-> > 
-> > > +		 */
-> > > +		if (error)
-> > > +			goto out_unlock;
-> > > +
-> > > +		end_fsb = imap.br_startoff + imap.br_blockcount;
-> > > +		length = XFS_FSB_TO_B(mp, end_fsb) - offset;
-> > > +		goto out_found_cow;
-> > > +	}
-> > 
-> > Can this be a separate ->iomap_begin (and hence iomap ops)?  I am trying
-> > to avoid the incohesion (still) plaguing most of the other iomap users.
-> 
-> I can try, and would then need to try to factor out what would be much
-> duplicated code.
+  Case 1: set different branch filters in a single perf session:
 
-<nod> I think it's pretty straightforward:
+    perf record -e armv8_pmuv3_0/r03,branch_type=any_call/u \
+                -e armv8_pmuv3_0/r04,branch_type=any_ret/k ...
 
-xfs_direct_cow_write_iomap_begin()
-{
-	ASSERT(flags & IOMAP_WRITE);
-	ASSERT(flags & IOMAP_DIRECT);
-	ASSERT(flags & IOMAP_ATOMIC_SW);
+  Case 2: set different branch filters in multiple perf sessions:
 
-	if (xfs_is_shutdown(mp))
-		return -EIO;
+    perf record -e armv8_pmuv3_0/r03,branch_type=any_call/u ...
 
-	/*
-	 * Writes that span EOF might trigger an IO size update on
-	 * completion, so consider them to be dirty for the purposes of
-	 * O_DSYNC even if there is no other metadata changes pending or
-	 * have been made here.
-	 */
-	if (offset + length > i_size_read(inode))
-		iomap_flags |= IOMAP_F_DIRTY;
+    perf record -e armv8_pmuv3_0/r04,branch_type=any_ret/k ...
 
-	lockmode = XFS_ILOCK_EXCL;
-	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-	if (error)
-		return error;
+In my previous reply, I was suggesting that we should reject the case 1.
+IMO, it is not quite useful to configure different filters for events in
+the same session, especially if this leads complexity in the driver due
+to the hardware limitation.
 
-	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb,
-			&imap, &nimaps, 0);
-	if (error)
-		goto out_unlock;
+For case 2, when create a new session, if the perf tool can read out the
+current branch filter setting (e.g. via sysfs node) and give suggestion
+what branch filter is compabile with existed sessions, seems to me, this
+is a feasible solution.  My understanding this is a rare case, and a
+clear guidance for users would be sufficient if this happens.  (Maybe
+we can give recommendation for how to use BRBE in the perf doc).
 
-	error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-			&lockmode, true, true);
-	if (error)
-		goto out_unlock;
+To be clear, an important factor is the trace modes with modifier 'u'
+(user) and 'k' (kernel) should be supported for different events and for
+different sessions.  In a mixed cases (some events are userspace only
+and some are kernel only), the BRBE driver needs to filter out branch
+records for specific mode when taking a sample.
 
-	endoff = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
-	trace_xfs_iomap_found(ip, offset, endoff - offset, XFS_COW_FORK,
-			&cmap);
-	if (imap.br_startblock != HOLESTARTBLOCK) {
-		seq = xfs_iomap_inode_sequence(ip, 0);
-		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0,
-				seq);
-		if (error)
-			goto out_unlock;
-	}
-	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
-	xfs_iunlock(ip, lockmode);
-	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
-			IOMAP_F_SHARED, seq);
-
-out_unlock:
-	if (lockmode)
-		xfs_iunlock(ip, lockmode);
-	return error;
-}
-
---D
-
-> > > +
-> > >   	if (imap_needs_cow(ip, flags, &imap, nimaps)) {
-> > >   		error = -EAGAIN;
-> > >   		if (flags & IOMAP_NOWAIT)
-> > > @@ -868,13 +909,38 @@ xfs_direct_write_iomap_begin(
-> > >   				(flags & IOMAP_DIRECT) || IS_DAX(inode), false);
-> > >   		if (error)
-> > >   			goto out_unlock;
-> > > -		if (shared)
-> > > +		if (shared) {
-> > > +			if (atomic_hw &&
-> > > +			    !imap_range_valid_for_atomic_write(&cmap,
-> > > +					orig_offset_fsb, orig_end_fsb)) {
-> > > +				error = -EAGAIN;
-> > > +				goto out_unlock;
-> > > +			}
-> > >   			goto out_found_cow;
-> > > +		}
-> > >   		end_fsb = imap.br_startoff + imap.br_blockcount;
-> > >   		length = XFS_FSB_TO_B(mp, end_fsb) - offset;
-> > >   	}
-> > > -	if (imap_needs_alloc(inode, flags, &imap, nimaps))
-> > > +	needs_alloc = imap_needs_alloc(inode, flags, &imap, nimaps);
-> > > +
-> > > +	if (atomic_hw) {
-> > > +		error = -EAGAIN;
-> > > +		/*
-> > > +		 * Use CoW method for when we need to alloc > 1 block,
-> > > +		 * otherwise we might allocate less than what we need here and
-> > > +		 * have multiple mappings.
-> > > +		*/
-> > > +		if (needs_alloc && orig_end_fsb - orig_offset_fsb > 1)
-> > > +			goto out_unlock;
-> > > +
-> > > +		if (!imap_range_valid_for_atomic_write(&imap, orig_offset_fsb,
-> > > +						orig_end_fsb)) {
-> > 
-> > You only need to indent by two more tabs for a continuation line.
+> > If we can unify branch filter within a perf session, would this be
+> > much easier for handling?
 > 
-> ok
+> Do you mean if the perf tool ensured that all events in a given session
+> had the same filter? From the kernel's PoV there's no such thing as a
+> "perf session", and I'm not sure whether you're suggesting doing that in
+> userspace or withing the kernel.
+
+My understanding is this would be not difficult to do such kind checking
+in the tool.  E.g., the perf tool can iterate every event and check the
+branch filter and detect incompabile issue.
+
+> Doing that in the perf tool would certianly make a stronger argument for
+> the kernel taking the "reject conflicting branch filters" option.
 > 
-> Thanks,
-> John
-> 
+> Doing that within the kernel isn't really possible.
+
+As said above, if the BRBE driver can provide a knob in sysfs to indicate
+what is the current branch filter in the existed sessions, this would be
+helpful for the tool to do the checking and remind users.
+
+I haven't done any experiments for this. If you think this is the way
+to move forward, I might do a prototype and get back to you to ensure we
+don't run into any unexpected issues.
+
+[...]
+
+To make the discussion easier, I would like reply separately regarding
+the branch record save and restore issue.
+
+Thanks,
+Leo
 
