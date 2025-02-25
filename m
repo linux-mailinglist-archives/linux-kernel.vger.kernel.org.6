@@ -1,116 +1,185 @@
-Return-Path: <linux-kernel+bounces-531780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33DCA444CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:45:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14053A444D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D9317EA62
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D4986090B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F53C15DBB3;
-	Tue, 25 Feb 2025 15:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oylOxP/G"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C22188736;
+	Tue, 25 Feb 2025 15:45:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161571514EE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3221627701;
+	Tue, 25 Feb 2025 15:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498252; cv=none; b=q15ySSJI26d58KSdrfrLCgGijrjK5OEkaNswn5qkpqFlNAl/N4nIr5UIxHOpwujwdWnqxAN11X7UkUl5t+lYgUBnexZAag1omYFKrjOZ6yB20bzwOzn7h7DbVmvYHsetuvAOQLvWbTwLIUVrum7Y4HVffGxQkLqDp5oDY8PZv+M=
+	t=1740498319; cv=none; b=BpFxwbypgL4dDeLpd56fzAA3f1jl0465fUnmR9hA1V4zIK0f1qJ/HHKh2F03Gp74FZsOG2ftJ6oIEecId+WfhRnTW48hXYxcPkmI5EIfFT/WlnszHg1XOj2B5H6K+7WNhQj26HKCol+zh1K4abHJ057NL4lb0nBpXwHAgAIe8g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498252; c=relaxed/simple;
-	bh=M+rmIynp+O1RcPF3wh/xEw9cDhFQl32O96orhBpPcyE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bjIXryDPCDYs+750SvxO4yZCJjdJ5cCCiJIEwaqx0tQIG38uWGi1fdx/yrJW0thqneO+Fy1qHqdeNPdTwKENqvKwbfvxrn+SnZ057yEtqtkyodkeRhEKP9bRAYwAPkDFMzCb91ddW5IkfmxCoJTRD0/E79HYnnkO8eBM0as2inY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oylOxP/G; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d18bf1c8faso16981225ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:44:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740498250; x=1741103050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=61c684Is4Axo0A1sNSCxaz4L4naeHUra5lJQHTcqa08=;
-        b=oylOxP/GMppC+sheUAmxmX+K2HZ/fH92VEZuYCKPB33lZ5C9iSpX2fHJaux82yYlaI
-         xxS+xD6zPQnuN2l1JLU8W/gvzm7nhh5BLGYcMOhN3fQlpWY4OzpiOxWJ0r4aRmVvjiHy
-         d1qfJJs58CCx6bEUy6sd5d/xOoYjmU0wZ+Cx5b9AgazmBUeEkEysoxP2uOHN6rvFASld
-         ib4ZEofhobiMboWKQRYdz4Vy/Em0BaFkfpsVHOIzZJYC17bSj50Ad+A0LB5mv7DhzV0e
-         WBdJaUQmAL831qrxLotiDz92CtM9a536dMLVZujQMqCSVheHlBJPgDe8dpJmobWfdxCp
-         iIxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740498250; x=1741103050;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=61c684Is4Axo0A1sNSCxaz4L4naeHUra5lJQHTcqa08=;
-        b=nM/ENYnty6esZBpufuOIvjThXFqn1rIKeZoj0roBA8ccBqgER9Yj6hq2jkWnyZEixC
-         iUm7avjHZ71ws1wlgcQSGPvRvxwyCJGiyRCkGyP/RGRbP/duNjCnIbNsijd3THQYGW5l
-         stOWI6O5nkwEn4r9T7HuENuLa2KhsBj0m6Je2EZdX9zIvluwIAYi6QRO46Hym/QoJn5h
-         8QJeB9HDFUcyT6Zn8wMoxi7lb0/L8fNVWIETQZ5n7bmZr98LuAvETL+qsXX6Ql7WlTqg
-         A/ZKvI3v3zDOJ9iEYWKEOEJetJP8reIPB1eo+kw9qsbxOy7+E7bK40tPLTUOy+R7jRFs
-         ih1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrbg1+Kj+4zlVbpc5cyfeIrp/XdD+p7Ikyh7HdvH5WovoltV8YUhi9BcP9bLThhlmn2zsiuzKa4o2qc2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC51bvMIYGtkzuv2AE+udbaPDkJVjNNYuWAuQOWTJqSRFdIkMB
-	o7wMxhlLsrHtliaAaHiUmqrF1C3tOTn2jSfLkVrI8HF1AFQxMB+2NBSuEb87/eM=
-X-Gm-Gg: ASbGncstSzBLAEqMHs1f7w/zzm0PWEl3USFHit+0UACeUqJlTLGx5Yfb6GfyWT3C4HD
-	C1Q2o5GmAS+zyHnBOKyziRrYzPWJvIUc2aRe5C8rLwV4NKY0awpfHbGbuCH3ltXTBq3Od6/jFBR
-	Yi7fKlbPvTYNmzgTSPstOkD7mU8QYBLpmV1qGk8l51e4wg2pQOXIZEdRgcAR1Rj6GgJDMIWGhk2
-	+T0dI7Ostf87LjT6np7K3G8YaOBp7YrChmkkIuiATvjxxju0FqwVPxU3O3osE8u1Fy2O3jSxdHz
-	fSVlMb+7ZeVZYEtf
-X-Google-Smtp-Source: AGHT+IFTQyALoW1kg9S23FSV3Ap0OKeFeZkA3Ze0CNSF58PPgAodOBnTUupL5i4cA+NFXJJuhaOHMw==
-X-Received: by 2002:a92:cd8a:0:b0:3d1:9236:ca50 with SMTP id e9e14a558f8ab-3d3d1ea4a0cmr740885ab.0.1740498250218;
-        Tue, 25 Feb 2025 07:44:10 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d367fef1f5sm3700075ab.62.2025.02.25.07.44.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 07:44:09 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: yukuai1@huaweicloud.com, Tang Yizhou <yizhou.tang@shopee.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250213100611.209997-1-yizhou.tang@shopee.com>
-References: <20250213100611.209997-1-yizhou.tang@shopee.com>
-Subject: Re: [PATCH v2 0/2] Fix and cleanup some comments in blk-wbt
-Message-Id: <174049824924.2143405.7515075277897160831.b4-ty@kernel.dk>
-Date: Tue, 25 Feb 2025 08:44:09 -0700
+	s=arc-20240116; t=1740498319; c=relaxed/simple;
+	bh=J5MY8MNJZjjXvPf3aaubOgBeUIi+hFPi+Z9UdY1nir8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nK9pU3kwkxs2liFoJgNs7SIU6m6mRJfMALg4oAbNUr+fB5plefHRRmSimoh0bJIMhZOEfMTUN/0WA3H/9KLDXn/DlonfBo+u8FiIot/ivRjV2XVjCS9OCBkOEL96ubnihLgyVeaSriJmFTNynj9MgLe4APwpAPKxYBxk/3LwEbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16DDC4CEDD;
+	Tue, 25 Feb 2025 15:45:14 +0000 (UTC)
+Date: Tue, 25 Feb 2025 10:45:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, "Masami
+ Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, "Masahiro Yamada"
+ <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>, "Nicolas
+ Schier" <nicolas@fjasle.eu>, "Zheng Yejian" <zhengyejian1@huawei.com>,
+ "Martin Kelly" <martin.kelly@crowdstrike.com>, "Christophe Leroy"
+ <christophe.leroy@csgroup.eu>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Vasily Gorbik"
+ <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v5 2/6] scripts/sorttable: Have mcount rela sort use
+ direct values
+Message-ID: <20250225104552.2acc5909@gandalf.local.home>
+In-Reply-To: <91523154-072b-437b-bbdc-0b70e9783fd0@app.fastmail.com>
+References: <20250218195918.255228630@goodmis.org>
+	<20250218200022.538888594@goodmis.org>
+	<893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com>
+	<20250224172147.1de3fda5@gandalf.local.home>
+	<20250224211102.33e264fc@gandalf.local.home>
+	<91523154-072b-437b-bbdc-0b70e9783fd0@app.fastmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
 
+On Tue, 25 Feb 2025 09:45:52 +0100
+"Arnd Bergmann" <arnd@arndb.de> wrote:
 
-On Thu, 13 Feb 2025 18:06:09 +0800, Tang Yizhou wrote:
-> v2: Take Yuai's advice. Modify the subject of patch #1. Move the
-> modifications to the comments for wb_timer_fn to patch #2.
-> 
-> Tang Yizhou (2):
->   blk-wbt: Fix some comments
->   blk-wbt: Cleanup a comment in wb_timer_fn
-> 
-> [...]
+> It fixes the build issue for me. I tried booting as well, but ran
+> into a BUG() when I enable ftrace. I assume this is an unrelated
+> issue, but you can find the output for reference in case this is
+> relevant.
 
-Applied, thanks!
+Thanks, can you try this patch instead? I'll be breaking it up if this works.
 
-[1/2] blk-wbt: Fix some comments
-      commit: 5d01d2df85f01ce083e0372bd3bd4968155e2911
-[2/2] blk-wbt: Cleanup a comment in wb_timer_fn
-      commit: 8ac17e6ae1bf4625b8fa457f135865c1fd86beae
+This also removes the kaslr_offset() code.
 
-Best regards,
--- 
-Jens Axboe
+-- Steve
 
-
-
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 27c8def2139d..fdd5ffe268de 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7004,7 +7004,6 @@ static int ftrace_process_locs(struct module *mod,
+ 	unsigned long count;
+ 	unsigned long *p;
+ 	unsigned long addr;
+-	unsigned long kaslr;
+ 	unsigned long flags = 0; /* Shut up gcc */
+ 	unsigned long pages;
+ 	int ret = -ENOMEM;
+@@ -7056,25 +7055,37 @@ static int ftrace_process_locs(struct module *mod,
+ 		ftrace_pages->next = start_pg;
+ 	}
+ 
+-	/* For zeroed locations that were shifted for core kernel */
+-	kaslr = !mod ? kaslr_offset() : 0;
+-
+ 	p = start;
+ 	pg = start_pg;
+ 	while (p < end) {
+ 		unsigned long end_offset;
+-		addr = ftrace_call_adjust(*p++);
++
++		addr = *p++;
++
+ 		/*
+ 		 * Some architecture linkers will pad between
+ 		 * the different mcount_loc sections of different
+ 		 * object files to satisfy alignments.
+ 		 * Skip any NULL pointers.
+ 		 */
+-		if (!addr || addr == kaslr) {
++		if (!addr) {
++			skipped++;
++			continue;
++		}
++
++		/*
++		 * If this is core kernel, make sure the address is in core
++		 * or inittext, as weak functions get zeroed and KASLR can
++		 * move them to something other than zero. It just will not
++		 * move it to an area where kernel text is.
++		 */
++		if (!mod && !(is_kernel_text(addr) || is_kernel_inittext(addr))) {
+ 			skipped++;
+ 			continue;
+ 		}
+ 
++		addr = ftrace_call_adjust(addr);
++
+ 		end_offset = (pg->index+1) * sizeof(pg->records[0]);
+ 		if (end_offset > PAGE_SIZE << pg->order) {
+ 			/* We should have allocated enough */
+diff --git a/scripts/sorttable.c b/scripts/sorttable.c
+index 23c7e0e6c024..10aff2aeb868 100644
+--- a/scripts/sorttable.c
++++ b/scripts/sorttable.c
+@@ -611,13 +611,16 @@ static int add_field(uint64_t addr, uint64_t size)
+ 	return 0;
+ }
+ 
++/* Used for when mcount/fentry is before the function entry */
++static int before_func;
++
+ /* Only return match if the address lies inside the function size */
+ static int cmp_func_addr(const void *K, const void *A)
+ {
+ 	uint64_t key = *(const uint64_t *)K;
+ 	const struct func_info *a = A;
+ 
+-	if (key < a->addr)
++	if (key + before_func < a->addr)
+ 		return -1;
+ 	return key >= a->addr + a->size;
+ }
+@@ -827,9 +830,14 @@ static void *sort_mcount_loc(void *arg)
+ 		pthread_exit(m_err);
+ 	}
+ 
+-	if (sort_reloc)
++	if (sort_reloc) {
+ 		count = fill_relocs(vals, size, ehdr, emloc->start_mcount_loc);
+-	else
++		/* gcc may use relocs to save the addresses, but clang does not. */
++		if (!count) {
++			count = fill_addrs(vals, size, start_loc);
++			sort_reloc = 0;
++		}
++	} else
+ 		count = fill_addrs(vals, size, start_loc);
+ 
+ 	if (count < 0) {
+@@ -1248,6 +1256,8 @@ static int do_file(char const *const fname, void *addr)
+ #ifdef MCOUNT_SORT_ENABLED
+ 		sort_reloc = true;
+ 		rela_type = 0x403;
++		/* arm64 uses patchable function entry placing before function */
++		before_func = 8;
+ #endif
+ 		/* fallthrough */
+ 	case EM_386:
 
