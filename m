@@ -1,194 +1,117 @@
-Return-Path: <linux-kernel+bounces-532645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1949A4503B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:33:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37B3A4503C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932B9189AD31
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957E1189849D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79A52139B0;
-	Tue, 25 Feb 2025 22:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8730B214803;
+	Tue, 25 Feb 2025 22:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZDvCyclB"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btCnrTsC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA21C2135AC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2821129E;
+	Tue, 25 Feb 2025 22:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522689; cv=none; b=N3UlxAVMAqZB7cO30d+8Rv1yzp/xZ6jkbBz/e+vLRnzZVMXmSQjKMFkR0JoLkOutwA4ucuCj93qzFATdqvs1llBs1FjEL37qEXq1dAMMotcCOoyUFIRYwTf5tNhci98S5qUJOvjQ9gr7AWRPPbNYWV+qwjV1tcstDlANYBYaf1k=
+	t=1740522737; cv=none; b=rsr94eEgwtBnOwjbLPv2i7A4b6eDYtkRNo8UCakvDN4RheUF9PDdQ+e6jpDBKQfy3mUsH9vAOukAPoBUbNTPo74sJop7kfuAesPhW+mST442SYA7glkrWDrY0DkCTr8k0jqkR45FwUCbEuvmCe7rZmiFxSF3D0l89lxV5wzzTEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522689; c=relaxed/simple;
-	bh=6ixyMCqUzAUiFMlHIYc5wUruyG75kjSXWJ52Zs4Avug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UaOR8IiojIdN+xlZZDMEOHKDRdB7F8miCTqSo04fgEky7uxbwLB+qnvprbH89l0KfcOBe2scLoq6eLlXh93PkdSUZklW9bBHlev569Qv0R9z6rTiPAWQSWgJkaZfPJ3gykVnyiI0UtdolwxOBoTTC8x2mrKqRd2IodkJO+kjvWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZDvCyclB; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72726a5db1aso723126a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740522686; x=1741127486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VhVJnXoXNIW2rGxv8B6ZSncID97nXixrn2BTeKZTqPw=;
-        b=ZDvCyclByWxsnqZVS908FvI1fIuti3yx+FWEIV9ytpOZJ8jXpOaY/o+h6xMV8RilyM
-         7AcQawnzKjmO0oXPIjiu+qzUNJKgHOs458lM26oiDv5/4XWv0b44pvNGK2ogdDa1K2kY
-         9jeQ9cPpGz95rI1zQecYYcUGT/ThNvJ5L1LD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740522686; x=1741127486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VhVJnXoXNIW2rGxv8B6ZSncID97nXixrn2BTeKZTqPw=;
-        b=WqYPz9eWTXZMtyfXvWIbRndl8HDlP7dtxBb8NQId+vxlL6C47D+LptWD0fn5nvJr8a
-         8Rx3qM+voB+ZzoPq2eHhpMFcEIZlTxA48BEU8+kK06PoKmFj5R1PUX9tHeOpduexY9Op
-         2XpHC2yNfW02MqsOUt79QN1a2CkJ/Cytf5pBXPgH59IJX0uf2vRUiXFDSA/ag5W+M4zZ
-         G2fjH2zkdwmyEOD20zOnZYCNdCCzkzp6/9nLPsuSn5ST6j4Z5Jkm7EUmnnOhBEbfYDV4
-         vdNHOSu0xDPKkrh1t4nkjoVszP6QQ5GKjmuPeuphJyh7fTWKrgauoQO/WL2wMEE2FhWC
-         bpkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX78bvsz+a632Zpm9lueC/WO63Igjp9muMWapw+Pbg4re1aOJD3gKfBRPv8Js5UzsoQCZQ/cTuulH87ZmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKdR6H5jBizQSl/mC9xTLEbrogGCe3kZSLjDQxDDuqrUOjAIkQ
-	g1YWEZnx5Y6DIchLHfKbgIB0hLIg/VmEtHUJ2Y/12AXU71Md+KSrFmvddxLYXPVnN3ZBKd2mW/5
-	EzZ/2/gSWti1RTRFfG6SgowiJ+KWrUbR+sS7r
-X-Gm-Gg: ASbGncsdMb3+EF4d7AyLcDuQgObKn9rqcEVUN57yOIt55L1Otc9x3hELFmVB58yjj3v
-	lrW2RhYYkHSCVI7Dk9/6GxFDAz8A6s5jE9OBgbc/DkG6esiQhhAzKQ3G1dGXKs01dJaVuu+KlKg
-	WN1/JjOn/ZG5xvUyjaM9MB0i2/cLROIbM5qRY=
-X-Google-Smtp-Source: AGHT+IHoaMAAgdkvcmv5t1AQw6jtQdqKZWncQLCcLVaz8sqam9zUFQ4TMcxQ/lXq3PaVotyYolINO/Z9y4l3VyM3fvQ=
-X-Received: by 2002:a4a:e9b0:0:b0:5fc:f416:e315 with SMTP id
- 006d021491bc7-5fd3c5e739cmr1951152eaf.0.1740522686604; Tue, 25 Feb 2025
- 14:31:26 -0800 (PST)
+	s=arc-20240116; t=1740522737; c=relaxed/simple;
+	bh=o+i9nObUcHywXRlODRiDLTHO7kajo7zEsnp5EZ0py7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkjIHhuDNIGP1ErEyyrWzyw2E/KRkKqNYjS8Ds1xwvZApHVvnLNwpTqzq7tw665llU7iY4AWHo3Ns+9MHcpnT2hbDMssVgqRh6e3l4QA7cX3B4AakTkZnE8l+l2wgp6kBfAGsHW9LXE4mCQz5ApGFooeXsCpQqlGwlJYfa7hfO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btCnrTsC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29161C4CEDD;
+	Tue, 25 Feb 2025 22:32:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740522737;
+	bh=o+i9nObUcHywXRlODRiDLTHO7kajo7zEsnp5EZ0py7A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=btCnrTsCT4QMrPdQ+utkCFD6AUiS4pY6njhHEIWv+/KyXHXHSxPf50eRa3gN3gHOM
+	 P7uz7gnsyv8JMHgrYOdL1RxA09/QfhzOYHdwMe/1yjjUHjL+9eADQeflKQ2UZBE31x
+	 fST4WvyXkavTGMmnzfAfE4un7kELsLLd0MhrO9bU+oUiwnxTNE8S4o1PDNlqNsKkQF
+	 zOfJejQejojFnZM7g0tL8/l7U63R8PwGnX11UgY0T+PI5Fd55Pbh795QIS8rYS0/ek
+	 h4z5K0C6QdS7lmNcwrGTjqH4Yh2grJ6+IG8t31BUJxY3Slb5soEotxfrQWfb8FAIIm
+	 S6mdI63m5yrkQ==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	mingo@kernel.org
+Cc: oleg@redhat.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	kernel-team@meta.com,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Breno Leitao <leitao@debian.org>
+Subject: [PATCH perf/core] uprobes: remove too strict lockdep_assert() condition in hprobe_expire()
+Date: Tue, 25 Feb 2025 14:32:14 -0800
+Message-ID: <20250225223214.2970740-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224174513.3600914-1-jeffxu@google.com> <20250224174513.3600914-8-jeffxu@google.com>
- <7e1bfbf2-3115-408d-a40c-ae51a7ffffe4@lucifer.local>
-In-Reply-To: <7e1bfbf2-3115-408d-a40c-ae51a7ffffe4@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 25 Feb 2025 14:31:15 -0800
-X-Gm-Features: AQ5f1JoJSfGG8fQ3nGvTUL51w2Ec0D2tO9bUoVRzqnmWDbvkaEe5CXAEBzAgSss
-Message-ID: <CABi2SkXcYnSOTPHy=VYCUGA9UpXSt_2fCqF8sWS8nxrah5ziPw@mail.gmail.com>
-Subject: Re: [PATCH v6 7/7] mseal, system mappings: update mseal.rst
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 10:07=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Feb 24, 2025 at 05:45:13PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Update memory sealing documentation to include details about system
-> > mappings.
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > ---
-> >  Documentation/userspace-api/mseal.rst | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/user=
-space-api/mseal.rst
-> > index 41102f74c5e2..10147281bf2d 100644
-> > --- a/Documentation/userspace-api/mseal.rst
-> > +++ b/Documentation/userspace-api/mseal.rst
-> > @@ -130,6 +130,13 @@ Use cases
-> >
-> >  - Chrome browser: protect some security sensitive data structures.
-> >
-> > +- System mappings:
-> > +  If supported by an architecture (via CONFIG_ARCH_HAS_MSEAL_SYSTEM_MA=
-PPINGS),
-> > +  the CONFIG_MSEAL_SYSTEM_MAPPINGS seals system mappings, e.g. vdso, v=
-var,
-> > +  uprobes, sigpage, vectors, etc. CHECKPOINT_RESTORE, UML, gVisor, rr =
-are
-> > +  known to relocate or unmap system mapping, therefore this config can=
-'t be
-> > +  enabled universally.
->
-> Thanks for adding this.
->
-> Similar comments to the Kconfig update - you are listing features that do=
- not
-> exist yet, please just list what you're doing, specifically, and avoid th=
-e vague
-> 'etc.', we don't need to be vague.
->
-OK, I will remove etc and list the known mappings here.
+hprobe_expire() is used to atomically switch pending uretprobe instance
+(struct return_instance) from being SRCU protected to be refcounted.
+This can be done from background timer thread, or synchronously within
+current thread when task is forked.
 
-> As per the Kconfig comment - you need to be a lot more clear, I think you=
-'re
-> duplicating the text from there to here, so again I suggest something lik=
-e:
->
-> WARNING: This feature breaks programs which rely on relocating or
->          unmapping system mappings.
->
->          Known broken software at the time of writing includes
->          CHECKPOINT_RESTORE, UML, gVisor and rr.
->
-Sure.
+In the former case, return_instance has to be protected through RCU read
+lock, and that's what hprobe_expire() used to check with
+lockdep_assert(rcu_read_lock_held()).
 
-> You also seem to be writing very little here, it's a documentation page, =
-you can
-> be as verbose as you like :)
->
-> You really need to add some more detail here in general - you aren't expl=
-aining
-> why people would want to enable this, what you're mitigating, etc. from t=
-hat you
-> explain _why_ it doesn't work for some things.
->
-The mseal.rst already includes below regarding the protection/mitigation.
+But in the latter case (hprobe_expire() called from dup_utask()) there
+is no RCU lock being held, and it's both unnecessary and incovenient.
+Inconvenient due to the intervening memory allocations inside
+dup_return_instance()'s loop. Unnecessary because dup_utask() is called
+synchronously in current thread, and no uretprobe can run at that point,
+so return_instance can't be freed either.
 
+So drop rcu_read_lock_held() condition, and expand corresponding comment
+to explain necessary lifetime guarantees. lockdep_assert()-detected
+issue is a false positive.
 
+Fixes: dd1a7567784e ("uprobes: SRCU-protect uretprobe lifetime (with timeout)")
+Reported-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/events/uprobes.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index e783da1d1762..4d2140cab7ec 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -762,10 +762,14 @@ static struct uprobe *hprobe_expire(struct hprobe *hprobe, bool get)
+ 	enum hprobe_state hstate;
+ 
+ 	/*
+-	 * return_instance's hprobe is protected by RCU.
+-	 * Underlying uprobe is itself protected from reuse by SRCU.
++	 * Caller should guarantee that return_instance is not going to be
++	 * freed from under us. This can be achieved either through holding
++	 * rcu_read_lock() or by owning return_instance in the first place.
++	 *
++	 * Underlying uprobe is itself protected from reuse by SRCU, so ensure
++	 * SRCU lock is held properly.
+ 	 */
+-	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
++	lockdep_assert(srcu_read_lock_held(&uretprobes_srcu));
+ 
+ 	hstate = READ_ONCE(hprobe->state);
+ 	switch (hstate) {
+-- 
+2.43.5
 
-
-> You're also not mentioning architectural limitations here, for instance t=
-hat you
-> can only do this on arches that don't require VDSO relocation and listing
-> known-good arches.
->
-> This is a documentation file, you can go wild :) the more information her=
-e the
-> better.
->
-> WARNING
-> =3D=3D=3D=3D=3D=3D=3D
->
-> > +
-> >  When not to use mseal
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  Applications can apply sealing to any virtual memory region from users=
-pace,
-> > --
-> > 2.48.1.601.g30ceb7b040-goog
-> >
 
