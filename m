@@ -1,179 +1,189 @@
-Return-Path: <linux-kernel+bounces-532559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5993A44F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:52:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C57A44F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F25F189C90E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4273B359E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B5321324E;
-	Tue, 25 Feb 2025 21:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D2212D83;
+	Tue, 25 Feb 2025 21:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NqApXhHl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v3+REmFG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ce2SbEsp"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C446220FA9E;
-	Tue, 25 Feb 2025 21:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53C221171A;
+	Tue, 25 Feb 2025 21:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520345; cv=none; b=Fjb81pwUl+sZoT2QSP0aZO02A1Mh8T43HEtBS+m03Zr3MgKQDixktIoKNMJyKEBkIeaQork5iyIFfqxs5uxOB8hB+ZeyHAmJs7+xu8gue1BHWD8sYT8CMlY7LD1IIIe1PnkTuN/fbhtv2QKZJPHBetHRw/UVxoWwLbMFe82Y47I=
+	t=1740520365; cv=none; b=T3xyvvAUiTlMNFdSfN8TnidHYnQnNU+5g4QeJ1DJ3FrG5yfmIVC3BEYliwE/JwiCNHpsXBlHVnVpXAERCIOEcjy3fOyny5ij3yeBHp5onMkWR3gI33fWFrq188nKu57m0tYC7SdLw+MKjwMuXW4yy1pKHlglwqW86OA1qJQPWD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520345; c=relaxed/simple;
-	bh=EkgP9w6/bdiMS2k43ItnJ9qXnJAWv56ObwRU0pbjUg0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Og7fDi79RY8uVg6mCNM9D7+V7tBt8zqqfd4IWo5fc3I+A0JKtrDxL4N9fTsUqPandmnW1XQF2B71WLp2a55Qed5sqNarp8EVhoc9nUBHXAOnp3JwRc2dq8oxkdtOALaHM4h9lEjyJsGMB7HZ3DAEqtuUDLcpBrciN57GhLwVf/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NqApXhHl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v3+REmFG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Feb 2025 21:52:21 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740520341;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZoKY9Ur2qsmMd+voVsP00YjHJ+OXTo+/MxuABB/abSg=;
-	b=NqApXhHlYb0tGjOv67MkTabuCYVJf9L1rhw9gUOF2bQcOnYrRjA4gG84mSSap9Ap1mK1Sa
-	65zqu8NVLQXr9Wj1Bv0/P1MF2XPyeaVqWdCZ9trHE/lF3BTUkwrESOtM/ka/BnItXSIyq/
-	35To8I0nisafTGwug4Wwan/JJ7+zN4G2SfHkoD350JrFgk+zJX4ksn4r/ZxA5gpkuv3QH0
-	JEqHnHRZGf3dHj0EKyfgqIUxkDy3U9SbenV9bHvucP0F/50Ef+31lo2LfPdsY88aUyFyCi
-	TYV8KYJD7xWr7TvA/lRH+5EhCTY4o4yhEm0YnJV3TIlDwUHSYiGclxZyPv4zSg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740520341;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZoKY9Ur2qsmMd+voVsP00YjHJ+OXTo+/MxuABB/abSg=;
-	b=v3+REmFGc9ANH0S9agLY+pLna3U4GyAD8xtqQaGSjSCwT7t9zkQdMQWJsFb1CuibLCLQp8
-	CEIwG4NgdKiQIyDA==
-From: "tip-bot2 for Russell Senior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/CPU: Fix warm boot hang regression on AMD
- SC1100 SoC systems
-Cc: Russell Senior <russell@personaltelco.net>, Ingo Molnar <mingo@kernel.org>,
- Matthew Whitehead <tedheadster@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <CAHP3WfOgs3Ms4Z+L9i0-iBOE21sdMk5erAiJurPjnrL9LSsgRA@mail.gmail.com>
-References:
- <CAHP3WfOgs3Ms4Z+L9i0-iBOE21sdMk5erAiJurPjnrL9LSsgRA@mail.gmail.com>
+	s=arc-20240116; t=1740520365; c=relaxed/simple;
+	bh=8Y9rmuMcKl0zy+sdizyBBwu0pZypzvQMyyqv5Rrr5wA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RP6Ai2mAncDIyDP/nX/7+CCw5IQltHO2d/lWHxHq8zaDXBQYsTKYXro1vJd8HDe+Pg/Y6qkqX8gbT8+BPcgIwoIX1VWTMYCd5sbzSSd0i/O7NLgCy+VpXh4Mn7mu7yfynFsSjH9MIk9nSqMNfcLBmOgl0ABQIjb+3kMKVVplZPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ce2SbEsp; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc1843495eso9080667a91.1;
+        Tue, 25 Feb 2025 13:52:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740520363; x=1741125163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BB6oxdGmdWsniKQ7DCrH6iIic1TMC3/1oTlo14itLWw=;
+        b=ce2SbEsp/QdQH/JpHXp1xvOydp2nu/y2qOcamvxuocd/FvsNUMhhiwgmBVgT7OqD4/
+         N8/EEHYnQ+yEXO/8CMi6C5KMAZBGsM9qLB00oea2i+zRgmhdproMSxtoZeYqXGx8WOhD
+         kW01pZ9P7ox+SRvekbn73c3HbXO80l1Hmlxezv0dKci7Y9sRmfdnCLlZzoFvaAp1x7o/
+         94zV/Jq4EBZ965Se/9X6ZS2tHN+fXlk28lZklnCCeMVjV+lkTv14YbMGxkCSM+ymqODS
+         w8rMS/uE4boqp2Ct+8SUKk7iifJbcPFjmLh3+WRw/BrqkvfSEmbE+nYLEqztaIpASRQW
+         Q/QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740520363; x=1741125163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BB6oxdGmdWsniKQ7DCrH6iIic1TMC3/1oTlo14itLWw=;
+        b=IWU56jiSTK78i9UFNuY1kUJLpphWF7oz92mbpBbU18ZvOZMXfctfjULWR7wa+Uuwva
+         zgR+U2SX4z8kWKmOZuV/fY0YnzKtwjeUnRWYyCdMbdAqeezZnCfPdgrKmgNtg6tjXY/W
+         BYGtvKWzCGFcorids1xecAHfB4M/EQnBhr+qhh0dbE5DeVTPY7wuEZ+0c1TobSJd2t/P
+         qFaey3IgerJTuKPdMPlPGXLfomVR2jaE/rsqa8UDhI5vfoQKqlZO1c4B8t0mu8SUuWlW
+         OhFHzCsZG8/NTR8ZJ++o5/KS9sGpQSAHdhl/7rIS9Maj+dyt5l7a0fi+TrYnl+dmzphS
+         QNNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2tBcoWjdjyQV605szbQTGZA13JseVkyI6WB72wXui4yK9pPHTxZya52yqDSEmIe5tP6Y=@vger.kernel.org, AJvYcCUB1JaTbENCtFGFXNylSPOUikIN8qxL0ZAcbElIPk9KUgYE2v4nL/DPPx53fKuZzsbBin74quZB9WduKw==@vger.kernel.org, AJvYcCUKn8hk79Bbku9WHbBWJUt9u4cs+EnRQt+65nuq00ruXWHU6aQwd5+cPrRmBTb41/qSuDRmMH/OE3ymSxJWkfzT@vger.kernel.org, AJvYcCWZU6UoR+y0bgxSIbGgmTYjOMQtvda2JVOD9LeFy/RfUwHzofd48V328NjggsEGqkRYRxsdDojGrzVjzCZQ@vger.kernel.org, AJvYcCXrW0KqmFRvKwLROurFVxEdsIUV41Mw61K2Ifa/bvo4/dbd/zUjn98SKr0gEZXL45bT/8ovtKQHV3OO9VGu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa492i5zt88HJ3Iuj1wOgPz2qnkCwTKM8xwSgoAyG32gdslcP+
+	T68xyr6M3vLsiEBIN7PfFrsQN8UPmiEr31VydrtzDzlow8L8HGjkfBSIZCQSXLlPGUpUGJ5CCTr
+	sCn9r5JJcRdJfxLnCZh1832oeshs=
+X-Gm-Gg: ASbGnctoXzsrVTkp4Bp7oiewCqiV/MoZNy0e602hnoGKkk2DXtEG7+tlSXVetcFZC7E
+	0P9Lgp/LGW8lfpf2Dgy3fbcYZcFz6FnxLv7m7y7Rs7qFNCPd55ohh+b+JqR0gROfeKgYtEiFOKr
+	h49ep9q3c2BG+Xd0Z+iYQq08A=
+X-Google-Smtp-Source: AGHT+IGRomNE8qud7Uu+5mcp3y45cfmiKLTBWoGo5gkppuz16rT0/tPr1Y4UqBxU2B1PV6obQyISvJoYI/p5wMgzZFs=
+X-Received: by 2002:a17:90b:5202:b0:2ee:bc7b:9237 with SMTP id
+ 98e67ed59e1d1-2fce7b04f9bmr30219633a91.27.1740520362970; Tue, 25 Feb 2025
+ 13:52:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174052034115.10177.15718168706868821118.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250207012045.2129841-1-stephen.s.brennan@oracle.com>
+ <20250207012045.2129841-3-stephen.s.brennan@oracle.com> <CAADnVQLiyezBW34dhkwZw+mWmkFAYMZUdHbOa4uYCdPbgS10SQ@mail.gmail.com>
+ <83a42276-22cc-4642-8ce6-7ef16fa93d9c@oracle.com>
+In-Reply-To: <83a42276-22cc-4642-8ce6-7ef16fa93d9c@oracle.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 25 Feb 2025 13:52:30 -0800
+X-Gm-Features: AWEUYZnYhl-iPxCkwOD_3RmI5SjMUyi3IqiNvLAQBYwML34ZoIPnPey0X-PqGl8
+Message-ID: <CAEf4BzYvFnqeZjNy_b_VP9DEpBaTMWuMAau8j6ZAWtgwcE5ysg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] btf: Add the option to include global variable types
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kees Cook <kees@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Sami Tolvanen <samitolvanen@google.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	linux-arch <linux-arch@vger.kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Jann Horn <jannh@google.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, linux-debuggers@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, Feb 25, 2025 at 2:02=E2=80=AFAM Alan Maguire <alan.maguire@oracle.c=
+om> wrote:
+>
+> On 07/02/2025 23:50, Alexei Starovoitov wrote:
+> > On Thu, Feb 6, 2025 at 5:21=E2=80=AFPM Stephen Brennan
+> > <stephen.s.brennan@oracle.com> wrote:
+> >> When the feature was implemented in pahole, my measurements indicated
+> >> that vmlinux BTF size increased by about 25.8%, and module BTF size
+> >> increased by 53.2%. Due to these increases, the feature is implemented
+> >> behind a new config option, allowing users sensitive to increased memo=
+ry
+> >> usage to disable it.
+> >>
+> >
+> > ...
+> >> +config DEBUG_INFO_BTF_GLOBAL_VARS
+> >> +       bool "Generate BTF type information for all global variables"
+> >> +       default y
+> >> +       depends on DEBUG_INFO_BTF && PAHOLE_VERSION >=3D 128
+> >> +       help
+> >> +         Include type information for all global variables in the BTF=
+. This
+> >> +         increases the size of the BTF information, which increases m=
+emory
+> >> +         usage at runtime. With global variable types available, runt=
+ime
+> >> +         debugging and tracers may be able to provide more detail.
+> >
+> > This is not a solution.
+> > Even if it's changed to 'default n' distros will enable it
+> > like they enable everything and will suffer a regression.
+> >
+> > We need to add a new module like vmlinux_btf.ko that will contain
+> > this additional BTF data. For global vars and everything else we might =
+need.
+> >
+>
+> In this area, I've been exploring adding support for
+> CONFIG_DEBUG_INFO_BTF=3Dm , so that the BTF info for vmlinux is delivered
+> via a module. From the consumer side, everything looks identical
+> (/sys/kernel/btf/vmlinux is there etc), it is just that the .BTF section
+> is delivered via btf_vmlinux.ko instead. The original need for this was
+> that embedded folks noted that because in the current situation BTF data
+> is in vmlinux, they cannot enable BTF because such small-footprint
+> systems do not support a large vmlinux binary. However they could
+> potentially use kernel BTF if it was delivered via a module. The other
+> nice thing about module delivery in the general case is we can make use
+> of module compression. In experiments I see a 5.8Mb vmlinux BTF reduce
+> to a 1.8Mb btf_vmlinux.ko.gz module on-disk.
+>
+> The challenge in delivering vmlinux BTF in a module is that on module
+> load during boot other modules expect vmlinux BTF to be there when
+> adding their own BTF to /sys/kernel/btf. And kfunc registration from
+> kernel and modules expects this also. So support for deferred BTF module
+> load/kfunc registration is required too. I've implemented the former and
+> now am working on the latter. Hope to have some RFC patches ready soon,
+> but it looks feasible at this point.
 
-Commit-ID:     bebe35bb738b573c32a5033499cd59f20293f2a3
-Gitweb:        https://git.kernel.org/tip/bebe35bb738b573c32a5033499cd59f20293f2a3
-Author:        Russell Senior <russell@personaltelco.net>
-AuthorDate:    Tue, 25 Feb 2025 22:31:20 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Feb 2025 22:44:01 +01:00
+Lazy btf_vmlinux.ko loading when BTF is actually needed (i.e., when
+user reads /sys/kernel/btf/vmlinux for the first time; or when BPF
+program is validated and needs kernel BTF) would be great. Curious too
+see how all that fits together!
 
-x86/CPU: Fix warm boot hang regression on AMD SC1100 SoC systems
+>
+> Assuming such an option was available to small-footprint systems, should
+> we consider adding global variables to core vmlinux BTF along with
+> per-cpu variables? Then vmlinux BTF extras could be used for some of the
+> additional optional representations like function site-specific data
+> (inlines etc)? Or are there other factors other than on-disk footprint
+> that we need to consider? Thanks!
 
-I still have some Soekris net4826 in a Community Wireless Network I
-volunteer with. These devices use an AMD SC1100 SoC. I am running
-OpenWrt on them, which uses a patched kernel, that naturally has
-evolved over time.  I haven't updated the ones in the field in a
-number of years (circa 2017), but have one in a test bed, where I have
-intermittently tried out test builds.
+I'd keep BTF for variables separate from "core" vmlinux BTF. We can
+have /sys/kernel/btf/vmlinux.vars, which would depend on
+/sys/kernel/btf/vmlinux as a base BTF. Separately, we could eventually
+have /sys/kernel/btf/vmlinux.inlines which would also have
+/sys/kernel/btf/vmlinux as base BTF. If no one needs vmlinux.vars on
+the system, we won't need to waste memory on it. Seems more modular
+and extensible.
 
-A few years ago, I noticed some trouble, particularly when "warm
-booting", that is, doing a reboot without removing power, and noticed
-the device was hanging after the kernel message:
-
-  [    0.081615] Working around Cyrix MediaGX virtual DMA bugs.
-
-If I removed power and then restarted, it would boot fine, continuing
-through the message above, thusly:
-
-  [    0.081615] Working around Cyrix MediaGX virtual DMA bugs.
-  [    0.090076] Enable Memory-Write-back mode on Cyrix/NSC processor.
-  [    0.100000] Enable Memory access reorder on Cyrix/NSC processor.
-  [    0.100070] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
-  [    0.110058] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
-  [    0.120037] CPU: NSC Geode(TM) Integrated Processor by National Semi (family: 0x5, model: 0x9, stepping: 0x1)
-  [...]
-
-In order to continue using modern tools, like ssh, to interact with
-the software on these old devices, I need modern builds of the OpenWrt
-firmware on the devices. I confirmed that the warm boot hang was still
-an issue in modern OpenWrt builds (currently using a patched linux
-v6.6.65).
-
-Last night, I decided it was time to get to the bottom of the warm
-boot hang, and began bisecting. From preserved builds, I narrowed down
-the bisection window from late February to late May 2019. During this
-period, the OpenWrt builds were using 4.14.x. I was able to build
-using period-correct Ubuntu 18.04.6. After a number of bisection
-iterations, I identified a kernel bump from 4.14.112 to 4.14.113 as
-the commit that introduced the warm boot hang.
-
-  https://github.com/openwrt/openwrt/commit/07aaa7e3d62ad32767d7067107db64b6ade81537
-
-Looking at the upstream changes in the stable kernel between 4.14.112
-and 4.14.113 (tig v4.14.112..v4.14.113), I spotted a likely suspect:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=20afb90f730982882e65b01fb8bdfe83914339c5
-
-So, I tried reverting just that kernel change on top of the breaking
-OpenWrt commit, and my warm boot hang went away.
-
-Presumably, the warm boot hang is due to some register not getting
-cleared in the same way that a loss of power does. That is
-approximately as much as I understand about the problem.
-
-More poking/prodding and coaching from Jonas Gorski, it looks
-like this test patch fixes the problem on my board: Tested against
-v6.6.67 and v4.14.113.
-
-Fixes: 18fb053f9b82 ("x86/cpu/cyrix: Use correct macros for Cyrix calls on Geode processors")
-Debugged-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: Russell Senior <russell@personaltelco.net>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/CAHP3WfOgs3Ms4Z+L9i0-iBOE21sdMk5erAiJurPjnrL9LSsgRA@mail.gmail.com
-Cc: Matthew Whitehead <tedheadster@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/kernel/cpu/cyrix.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index 9651275..dfec2c6 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -153,8 +153,8 @@ static void geode_configure(void)
- 	u8 ccr3;
- 	local_irq_save(flags);
- 
--	/* Suspend on halt power saving and enable #SUSP pin */
--	setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
-+	/* Suspend on halt power saving */
-+	setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x08);
- 
- 	ccr3 = getCx86(CX86_CCR3);
- 	setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);	/* enable MAPEN */
+>
+> Alan
+>
+> > pw-bot: cr
+> >
+>
 
