@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-531124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260A8A43C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42079A43C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBA23BC1CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10290189F923
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446C32676FD;
-	Tue, 25 Feb 2025 10:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD98267AF2;
+	Tue, 25 Feb 2025 10:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="E/L05BNj"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j36kgmgJ"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC30267389
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F062676F2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481158; cv=none; b=m5GnHNU7eYLdtJFCJ68JA4h3UegfGW+xh0+K8CyJR2qBiD4uKDNGxz9I1vObONEI1IdbC4q8rYV7eOmPw4tfPphj7IHgBhzicOxWHOM8uaUWhuEME/gaFAnrfablCENHFm7pKAZqXhdxGoLpuUG3LzXdM/wj5naBEE5/06zuUdI=
+	t=1740481160; cv=none; b=s/5eUnTc2bQIAskw4D0XWvDnLsov30Pw94HGTuDcmZZA1y3cw9iyXTs1H3Avhuit7HjvR4Yep0E3tMlFdSBaSddM85IQF54+IqShH3/TU2KlT/lniKXmMTne70jGuqedRB47DEfU6vBaTBgPGTIjTa2h74dztKMvprsc6X9rLAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481158; c=relaxed/simple;
-	bh=o8r6VoDayWho+fFv7e/gyRno+ziuEWDCAaPrX4Z89JU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=taTFFGqkJ/OD1vWuy//UG/Iud/X32/l9Lz4DFTMo6gH4IxceLYqgjslykHWqVI2iEHm3RdB4HTb4rxfHzZdXYloawUnV6B2RaOGEKqPua2u5iCFUJpXU9EFn7W1mYwr9RRcsN3pp9uXb54ZX8/Pd1MpQyOB4lmZZRfI4qrmsdKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=E/L05BNj; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1740481160; c=relaxed/simple;
+	bh=aRLrhUecBs7vYsSHOF02+roIq61av/C2p8cKhrDLy5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jJTZ1Zv1RwYYa0LAicbIMPV1G7S5+V5l2LXxGn0YtbIpugr3FT+qdJrwc23KfvZi4SE1grq860e7ggv25i2xn94au+yMdyYVj0PSFcAO2DCKrTOU2lh6BkEmF3pTCrwwDdf307bm3yUI+ppgJdl4u79D6raeY7QNGYFWM9JDxw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j36kgmgJ; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso4289683f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:59:15 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso31437995e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:59:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740481154; x=1741085954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VukLdfasfQBJ7tQS9WN8QAGcoRYc+03mfvZcv/fClqA=;
-        b=E/L05BNjXV/0bRMBQWfhyzoIJxIksrRK914J9uGQfIDxZFOSxyluXnAhSf/aSyxrvh
-         B5MSDBK4ZrgjJlyWVfLHgnWajA/CmMk3Z1deBTx0dNrLzjNtJ5HX/7QrjGFPYMgLQM8e
-         sJo/r2UifbYZkJRaCLQURYu8gbnwLVPb3XR4h3p7XZdma0CaMQ0RLvCtSQuxA55Mtmww
-         WgsmBi4bwbYL207YI8v4SyRMNmgDBCHfj0JH6FbXDdkRHMWIt/ByQUFRWMp6fcDve6Xj
-         n1HuXvaHr83PbNjThPXdhYKf8QSF3Gs+sD8EXjvNUdjTLpx0OVAGp35iWmliRakdYvIa
-         rMuw==
+        d=tuxon.dev; s=google; t=1740481156; x=1741085956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kH7eCOhtqxJ18+f2Lrbq8HST1vCFK6UWg0TuF7cMRvY=;
+        b=j36kgmgJ/5DR06t9WgegxnMIDjZrGf3MYCnIGqzQEUG4Sm3gRD3xPDsRS9aaE2oA63
+         3qZqayhp4q+hAmHHhksC2TcxE3PLGYTnJhjQsVg/8SsUxW2FyQv87+EPTfRT+BYM4J8T
+         yoZfDL5ikvE0L2Y5nEhyl3gPAzE6WqwX/lUvwBg5S9mQaxoIAgnIEOUXh9HyRznmEDkA
+         QpIai/tgk3IoNqFSEDRubUSCgjMjS80zZJDvg57a3YVDxKs1jcFVYI/IyFC1p6ucK5d2
+         F1SjP5wlHrH7t/arsHBEG3mqYxL/7vhn+eaLWETMz20YBf53TqrkTfQKOYf2jQ3XhLTg
+         Fvew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740481154; x=1741085954;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VukLdfasfQBJ7tQS9WN8QAGcoRYc+03mfvZcv/fClqA=;
-        b=EqTBQcswc4ILvEexVuL+30cgdUdysbUZODry/ooTndurmG/caloYyDRUt+rxim+me1
-         o8mxS9ZT8Vy8ksu+64+LA+d8XMQUTDLxebbLUKg/8Pf3OQbSxdXitvNvf1ky+SDs0v//
-         9eOQxQd+dKFUgrNEqny2SdjRNJHSwXTeau8sz4qO1UJMsx+2z/WWaetirBSTJGC5Ki9j
-         cguidzyvD+jTskrixAy5PsZu0XC+FaBCElG9u2o/NCE+E9hbna3Ks9fnkT3WMemHxk5C
-         +8KAQzvRrnFsHbFvl84psVz3OUHAB1OVO6tydtyVR9jgY9heQ5Y3bNR5N4CW18FRCxdh
-         EsPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnXMSACl0tKZTMc/vlUByxcR5lWrUCgvZ3dOLeSo25bOwAINqvP4DiILlSWiTBnCYW075eI+J8zuTbfRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWFVv3M3hf4Kr5c8QkSuKu4Ow8nwklzfUXX50fSx00eOGp5dGH
-	vRW72ncUZfxpiQar3owMfVgxV2hrD6PoAf7/nvIn8bvD8kfjScpgrOH3JEWT6aI=
-X-Gm-Gg: ASbGnctP3xsjrealfFILDIIY2o3SzNOWPDhbzB50l/BB+8DkzLABIlRoHUSRlDCrity
-	WNrfnntgNZyq4ahnsPOqFc3QHB9u1hCKtSh/FREs0ZbK7dNRne31MU7AAZSa9Gf/SFt3qk/P1Ul
-	4h1A+uhLv7ahBWUDKvSP0S3DhxMnNsswQxftcPAe5HGWGl4W9bihb0CxZaksaYXeydgewwzVbA2
-	mcL/PwIxps9Ecx9skx3sCkuR9mTbBd+yS9rcngEp4oOcwwtdUHybjrASSivOH/hXBSNnRglxaxS
-	tNDbuuTmmSeQq0kWx+DnygAYIFQ4Mn44mUQJIASJMeWZJCpklYgnBDg=
-X-Google-Smtp-Source: AGHT+IEOkq5gHMIs+2pPeri3jTIlWyLpg/AoBdUKgKzIKml00dWLCYeREqM/1PAF7HKRFa7tW8kiuw==
-X-Received: by 2002:a05:6000:4011:b0:38f:457e:3f2b with SMTP id ffacd0b85a97d-38f6e757322mr12822172f8f.6.1740481153865;
-        Tue, 25 Feb 2025 02:59:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740481156; x=1741085956;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kH7eCOhtqxJ18+f2Lrbq8HST1vCFK6UWg0TuF7cMRvY=;
+        b=Sliv1SVaPzBXBPtX8ZUHkABxJjB2HrhzLTg0LAxbFF2eMCF/Ek+PK7MkF/rkCrdV9R
+         Dz0GFaFMuXBm5dd7ya8ZUhVGxnsbsxtaxrRivtvMUWMdAiIcjg5AWPGK6DWvvhpu5dpM
+         bUnwg1PPY0DB6R8agd/fulzuvLRH95t03Oq+8zOEWE5NPi+gUtKUOGaznYHBHlwuI5zE
+         AJt2W7AjjfwUzsu5YJdbVVCQgBI0D7xN4MuQ+34uP+lwiCltp/bvvsOTypc7ryq0mKFo
+         m0JWoJzWfBYpUFZR+IsUNI495uBi9Z7tLoEGXE6W4BYzEk/kjdAOFgK2LshrCrnbloDZ
+         p+zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZTZ+KQy0blQP7zspqjWdFgZboKa16H/7JQH3zWzqz16kIRmm1IzAUPPFoM7py5b9mAlBqjl5G6MjAwa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx27RtFQZn9czJUNYkCDK4RaU0JSHRuwas5v0eoS36kBzVUeRAa
+	IlrQvWL+bYrmzJXaI9D7zcXydXYnQ7igv7fBOPq8HSt/sAO2fJyC7Yw8dKl1YVA=
+X-Gm-Gg: ASbGncvk9WcteI3JA1rVHWcJJi7ugkyo8C2phnwZNvrb9e6EkHH60RBRJck5TC1Pfzf
+	D63H0llZfW5BOAo+sIlcI89dI8T0FY8IoNq+RmIo8lhXUuPpMkG9eKZu8M6WDXR59yjr951Ha07
+	GYKVE9FlGCABMZsySZNdiTN7gmyF24d09Djtkm7BiTZ4fZ8nXB0gCP1zIeBYCWUEZajFoC0rrYy
+	ODIVI/IzOuA515WYgX48NzCLqs8kLcswHIgHzIxaDDuM34ki5K+i9joeISx8TXEaG/ADHmSCC37
+	I/e6fp0e0r61BIffPU0oVIjgpkrxfoc7KqX3cRbwXT4VloSGRdZzwj8=
+X-Google-Smtp-Source: AGHT+IFdOUFXqI73ftpxREcI5cD1cyJ6UWKG6ZRltd1AfX3lyAlJrJ3iiVYWT+u+hgxLgX7yWWhCJw==
+X-Received: by 2002:a05:600c:4507:b0:439:8e95:795b with SMTP id 5b1f17b1804b1-439aebf38b2mr148209225e9.31.1740481155909;
+        Tue, 25 Feb 2025 02:59:15 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c50dcfsm12588815e9.0.2025.02.25.02.59.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c50dcfsm12588815e9.0.2025.02.25.02.59.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:59:13 -0800 (PST)
+        Tue, 25 Feb 2025 02:59:15 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: yoshihiro.shimoda.uh@renesas.com,
@@ -80,11 +82,14 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-renesas-soc@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 0/5] phy: renesas: rcar-gen3-usb2: Fixes for Renesas RZ/G3S
-Date: Tue, 25 Feb 2025 12:59:02 +0200
-Message-ID: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/5] phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
+Date: Tue, 25 Feb 2025 12:59:03 +0200
+Message-ID: <20250225105907.845347-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,54 +100,121 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+It has been observed on the Renesas RZ/G3S SoC that unbinding and binding
+the PHY driver leads to role autodetection failures. This issue occurs when
+PHY 3 is the first initialized PHY. PHY 3 does not have an interrupt
+associated with the USB2_INT_ENABLE register (as
+rcar_gen3_int_enable[3] = 0). As a result, rcar_gen3_init_otg() is called
+to initialize OTG without enabling PHY interrupts.
 
-Series add fixes for the Renesas USB2 PHY driver identified while
-working on the Renesas RZ/G3S USB support. These changes are
-needed for the upcomming RZ/G3S USB support (especially for the
-power management support).
+To resolve this, add rcar_gen3_is_any_otg_rphy_initialized() and call it in
+role_store(), role_show(), and rcar_gen3_init_otg(). At the same time,
+rcar_gen3_init_otg() is only called when initialization for a PHY with
+interrupt bits is in progress. As a result, the
+struct rcar_gen3_phy::otg_initialized is no longer needed.
 
-Series (with [1] on top) was tested on Renesas RZ/G3S with consecutive
-unbind/bind and data transfer tests before/after the unbind/bind.
-
-The unbind/bind was also tested on the devices with the following
-device trees but w/o checking the data transfer (as I only had
-remote access w/o USB devices connected):
-- r8a7742-iwg21d-q7.dts
-- r8a7743-iwg20d-q7.dts
-- r8a7744-iwg20d-q7.dts
-- r8a7745-iwg22d-sodimm.dts
-- r8a77470-iwg23s-sbc.dts
-- r8a774a1-hihope-rzg2m-ex.dts
-- r8a774b1-hihope-rzg2n-ex.dts
-- r8a774e1-hihope-rzg2h-ex.dts
-- r9a07g043u11-smarc.dts
-- r9a07g044c2-smarc.dts
-- r9a07g044l2-smarc.dts
-- r9a07g054l2-smarc.dts
-- r9a07g043f01-smarc.dts
-
-Thank you,
-Claudiu Beznea
+Fixes: 549b6b55b005 ("phy: renesas: rcar-gen3-usb2: enable/disable independent irqs")
+Cc: stable@vger.kernel.org
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
 Changes in v2:
-- dropped RFT
 - collected tags
-- fixed checkpatch.pl warnings
 
-[1] https://lore.kernel.org/all/20250219161239.1751756-1-claudiu.beznea.uj@bp.renesas.com/
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 33 ++++++++++--------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
-Claudiu Beznea (5):
-  phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
-  phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
-  phy: renesas: rcar-gen3-usb2: Lock around hardware registers and
-    driver data
-  phy: renesas: rcar-gen3-usb2: Assert PLL reset on PHY power off
-  phy: renesas: rcar-gen3-usb2: Set timing registers only once
-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 135 +++++++++++++----------
- 1 file changed, 75 insertions(+), 60 deletions(-)
-
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 775f4f973a6c..46afba2fe0dc 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -107,7 +107,6 @@ struct rcar_gen3_phy {
+ 	struct rcar_gen3_chan *ch;
+ 	u32 int_enable_bits;
+ 	bool initialized;
+-	bool otg_initialized;
+ 	bool powered;
+ };
+ 
+@@ -320,16 +319,15 @@ static bool rcar_gen3_is_any_rphy_initialized(struct rcar_gen3_chan *ch)
+ 	return false;
+ }
+ 
+-static bool rcar_gen3_needs_init_otg(struct rcar_gen3_chan *ch)
++static bool rcar_gen3_is_any_otg_rphy_initialized(struct rcar_gen3_chan *ch)
+ {
+-	int i;
+-
+-	for (i = 0; i < NUM_OF_PHYS; i++) {
+-		if (ch->rphys[i].otg_initialized)
+-			return false;
++	for (enum rcar_gen3_phy_index i = PHY_INDEX_BOTH_HC; i <= PHY_INDEX_EHCI;
++	     i++) {
++		if (ch->rphys[i].initialized)
++			return true;
+ 	}
+ 
+-	return true;
++	return false;
+ }
+ 
+ static bool rcar_gen3_are_all_rphys_power_off(struct rcar_gen3_chan *ch)
+@@ -351,7 +349,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 	bool is_b_device;
+ 	enum phy_mode cur_mode, new_mode;
+ 
+-	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
++	if (!ch->is_otg_channel || !rcar_gen3_is_any_otg_rphy_initialized(ch))
+ 		return -EIO;
+ 
+ 	if (sysfs_streq(buf, "host"))
+@@ -389,7 +387,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+ 
+-	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
++	if (!ch->is_otg_channel || !rcar_gen3_is_any_otg_rphy_initialized(ch))
+ 		return -EIO;
+ 
+ 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
+@@ -402,6 +400,9 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val;
+ 
++	if (!ch->is_otg_channel || rcar_gen3_is_any_otg_rphy_initialized(ch))
++		return;
++
+ 	/* Should not use functions of read-modify-write a register */
+ 	val = readl(usb2_base + USB2_LINECTRL1);
+ 	val = (val & ~USB2_LINECTRL1_DP_RPD) | USB2_LINECTRL1_DPRPD_EN |
+@@ -465,12 +466,9 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+ 	writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM_TIMSET);
+ 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
+ 
+-	/* Initialize otg part */
+-	if (channel->is_otg_channel) {
+-		if (rcar_gen3_needs_init_otg(channel))
+-			rcar_gen3_init_otg(channel);
+-		rphy->otg_initialized = true;
+-	}
++	/* Initialize otg part (only if we initialize a PHY with IRQs). */
++	if (rphy->int_enable_bits)
++		rcar_gen3_init_otg(channel);
+ 
+ 	rphy->initialized = true;
+ 
+@@ -486,9 +484,6 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
+ 
+ 	rphy->initialized = false;
+ 
+-	if (channel->is_otg_channel)
+-		rphy->otg_initialized = false;
+-
+ 	val = readl(usb2_base + USB2_INT_ENABLE);
+ 	val &= ~rphy->int_enable_bits;
+ 	if (!rcar_gen3_is_any_rphy_initialized(channel))
 -- 
 2.43.0
 
