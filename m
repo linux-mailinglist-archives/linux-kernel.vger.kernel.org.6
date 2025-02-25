@@ -1,82 +1,74 @@
-Return-Path: <linux-kernel+bounces-532463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED9AA44E10
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:55:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679A1A44E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA693AEF0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C173AEF0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7420C03B;
-	Tue, 25 Feb 2025 20:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="TWB+zjWh"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2266620B1E1;
+	Tue, 25 Feb 2025 20:54:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCD0DF59;
-	Tue, 25 Feb 2025 20:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA441A238B;
+	Tue, 25 Feb 2025 20:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740516937; cv=none; b=GPXlDnCUUKmL7hf8QH8AUlI572mpB0taEq36CSTHUNco6W1BmvEsM412d5eeXHMcwGO9P93ts0zGrBrKNlueKKGFjQcC6LtQQQKsn3G8xCwiudTloHoj6JiroV45aD4jrAO75LpmEEuz50mFpdPleiVIKUaOgHPXuc2hWrIIkrs=
+	t=1740516895; cv=none; b=fXn2Vomd8EVTq8A2jKdt69bRt01yeBR66JlpivdG694Cr/8jBCiLUyqS/4UwReF/d2x2jNuBFd5wzjzTXxx05P+0ky+4j6WlQBD5sm6K7kIP7ZUFG4cwqY5uk/m/wjfgiRecqXg1F+CzEbcIDRNXqb17uZSbklRKuh33McyMh/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740516937; c=relaxed/simple;
-	bh=lco9n0RxUuvAOMk5F/ODYsml2IC7jczYWBV1xX6v8nI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gL1J5AWuIdDTNLqNtUvA7FNxpmy/LVP4b2yZ3NtpDoww+MLnnwrfsZ6g4KeWkaz6eWNkVkEWn2hZLg59CAt6PZTBnMNB+9+fckVSshxEhWmljA02WbahI1f8SY0rwHbV13vrke1XTmw8fu9X9k+SIyMPa+SeEw7NfzzGVGyJD+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=TWB+zjWh; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Z2VHN62PqzlgdL4;
-	Tue, 25 Feb 2025 20:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1740516927; x=1743108928; bh=lco9n0RxUuvAOMk5F/ODYsml
-	2IC7jczYWBV1xX6v8nI=; b=TWB+zjWhX+MrxF35TSdsCelXH9JRaI4IplaTbIg1
-	JgAoC+/m7KmujkcDe4C/7m9TjPMvwsI1EPDNgDssGlhzN+0HiUF9DBmfYUjS+Mc7
-	qYYvpeREFltqvlxz794fulJiQdlGy3hbXjSqMMHybSx+/hUT/l2l8bQSMURpNbpd
-	9ARushmTP/XY86ARXC750XVYpI0xQEwePzBtqC9xiwpTTtQpQUIMSNh11A5neeqc
-	bJ/xAizY/fWiooktqwAELE+qVQwIF+PkEn1fScRp20VrdqiTdTUiVJal/o6vOZPs
-	4KSshjAbafG1Kz4MAtj4es9z2TEFxzZksuj9EvS6cKghUg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 8lZd0LW-LFXu; Tue, 25 Feb 2025 20:55:27 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Z2VHL500NzlgSFk;
-	Tue, 25 Feb 2025 20:55:26 +0000 (UTC)
-Message-ID: <88f09f1c-c80b-4c8c-8e7d-08ab9cdb7a9c@acm.org>
-Date: Tue, 25 Feb 2025 12:55:25 -0800
+	s=arc-20240116; t=1740516895; c=relaxed/simple;
+	bh=Q8bOBbwK70JATCAXEsg1UCeZtitZYWqzs0E2yEcpOq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kmHFrtl7TW8/x1XGD6BoGI0yfGc04zoOCgbheAJB5huWbl3f0bA5novjMwdQDBiKt7qlq4JDaAjAQUQborX3B9wmQWjzaj81NrXUvk6Pd7BEVQkS6B1S5ZF04eSDIpXfsVYnacIgTWpguXOHxxVgxxFpJtyH471aaX99eisAbS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5775CC4CEDD;
+	Tue, 25 Feb 2025 20:54:54 +0000 (UTC)
+Date: Tue, 25 Feb 2025 15:55:32 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v4 0/2] tracing: Make persistent ring buffer freeable
+Message-ID: <20250225155532.0eb75041@gandalf.local.home>
+In-Reply-To: <173989132750.230693.15749600013776132201.stgit@devnote2>
+References: <173989132750.230693.15749600013776132201.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: fix missing lock protection
-To: Chaohai Chen <wdhh66@163.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250221030755.219277-1-wdhh66@163.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250221030755.219277-1-wdhh66@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/20/25 7:07 PM, Chaohai Chen wrote:
-> async_scan_lock is designed to protect the scanning_hosts list,
-> but there is no protection here.
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+On Wed, 19 Feb 2025 00:08:47 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> Hi,
+> 
+> Here is the 4th version of patches for making the persistent ring buffer
+> freeable. The previous version is here;
+> 
+> https://lore.kernel.org/all/173928521419.906035.17750338150436695675.stgit@devnote2/
+> 
+> In this version, I used free_reserved_area() instead of custom releasing
+> code. This seems working correctly. Thanks Mike!
+> 
+
+Thanks Masami,
+
+I'll start testing this after the fixes I have get tested. I'm currently
+testing the fixes for the sorttable linux-next fixes, after that I'm going
+to test the histogram fix, and then I'll test these patches.
+
+-- Steve
 
