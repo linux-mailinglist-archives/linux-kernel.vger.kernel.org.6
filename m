@@ -1,202 +1,375 @@
-Return-Path: <linux-kernel+bounces-530891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55084A439E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0D7A439E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF68B1795F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C8F17CC89
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE17C261590;
-	Tue, 25 Feb 2025 09:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2BB264A62;
+	Tue, 25 Feb 2025 09:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="D5us9oTW"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010002.outbound.protection.outlook.com [52.103.68.2])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kfBhauOp"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377AB20101A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54D2770B;
+	Tue, 25 Feb 2025 09:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476232; cv=fail; b=oUUfzJs7cVkb/mLSykXziKZcr6pv4OIIsJUEgsDGGjz+X/xq4XTdjQth/8PtYX2qSB6Kwc8rVe724GNhsaCoYqr5tXmYw0BtpPh/DYhLv5j0zrHnUZ4niFEX3Nmh8x9PeqXmWfcxN5jpZXwqYzg1dYnllz7tSLW+env1y7h0x+s=
+	t=1740476318; cv=pass; b=cI1B/Bf4IJYXL+09cYlUQTEGoIjHyb69kCLF2Sn4xo/b8IjRcWpCNCeCR5udagUENzeUPeCFVGNqq4wnRCWw6GESacXMx9fnACJK0H/we4KMzV7SDtKsgnBOnkcF/u/o1fFfzmtp955r0TiyaiHqZ/nsGtxhEWYiQrPyOOi0I2g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476232; c=relaxed/simple;
-	bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EMrhp0ENopFdrdWP/yHtWuwPusxtSXWhjN25qE1OyyoxVVsZt0A/BicJhVsWsqaw4Kg5XSuBZ2zd36RPvdGQDyKS6hV6gvEy1i1bafFz2SlXIlBtBfIvcVGWkYqGYejyyyLjdg1Rm2IziU1/mdwnO1DYzFszTwJEe3MG00IBcVQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=D5us9oTW; arc=fail smtp.client-ip=52.103.68.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mmMQXURsXi7AGpd8j4LWHXDxMGeg8ZxhqkN5s+WOK9H3/1wdCxR17P3ZT7qPVMwZObqtePEY3D69R9fG591/0Y4UJ3XWL2JU2sqKV2bk0AbKkd7s61QmK9r2SXartUWKLMK6sHOYkNPRwjirRkOokCM/BjR5/KgSX3EokxweEP0XyC3CzLKjsK7Xgt4P9AFDtB9nm4YzqqyBZxcaYOPeGsdWPtt2JnCwjl7iSDSM7gfGFwPgIt17XzbgH30C5honPC/L4est1rvsPHC3rZiz66iSS8X7phCUKT/4m07KzaO1L0B/bx5Im8wv7lLC5Hx7O0vq297RXv1MXd425kE1mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
- b=EUldxVYNTKxupBUzv/OpVS7tA9ZfQF5ha+q35i3iMKOFZXRllekD/irwLwbm/ka7R4ADjV3O+JpZkMjp98u5rb9jtowfPDVU5gOw1bilVQ5U3W6yZifBdrQbyan/G8Vn1J32Ns4rIecTdzn2fKKJoQFR1NsPKiJSzHxhbCj5JVeblFz6u7NB34VlAi18tRT1dj0g1+o6irp2uXXu+L1hYp39IklmeAhL+IfdumovCaT8+QYp98l8ObL3hmRhZiqPD+ibTSKFEb5hexaGkoxXh++1eucea9mPHxgy4k5P6N40l3OH5Soa39bRik0Y4jgcR+GIBrOnUu37xtuWZqX5yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=txhvf9tIX/eGufgkA/Hi1wikxh7y0CK5imLbFg52UBE=;
- b=D5us9oTWTpm5RPHhrZu0w/NhWH/zEZrCvqGxZNGHEgS4n5sDHqpgj+8ZrCURRWGwTTzTBYs93rNmGpp/RqqGKsB6R1R/XWCD2gmkpG+he8ZZL5OuupT7LYPW53OXNPaWvjTDlEuQxM0WMBRnJGCQAf7LR5JiCSHu/jxgC31CKIRnJdIxGWXQFyL08bAY6oYsIJt+uBR79ybjLDTrGTptdq0PK2F90ZzCyouCmW7BKGP4MgMpUmYIugb5HMjafvJgG5QTOJfac36lZpcZg/42/0Gp8bU/IrJOoobXF21YO5HoKlqp/E2tQljfMCmwyT3SeaEKRV1LtXcSekF61mDzGA==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN0PR01MB5803.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:66::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 09:37:04 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 09:37:04 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Topic: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index:
- AQHbhsGm46fWR/3mxEipqc6+PMbxkrNWrTuIgAD67QCAABL7QIAAANpQgAAHqwCAAAB7rA==
-Date: Tue, 25 Feb 2025 09:37:04 +0000
-Message-ID:
- <PN3PR01MB95976ED2D5FDC48C5F9E6EF7B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
- <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
- <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
- <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB959719792308EBB9370993DFB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <a4bc0440-5451-49e7-b7a3-9299c5200a2e@suse.de>
-In-Reply-To: <a4bc0440-5451-49e7-b7a3-9299c5200a2e@suse.de>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB5803:EE_
-x-ms-office365-filtering-correlation-id: b3cd1422-9399-4ef8-4f0f-08dd557ff6e1
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|7092599003|461199028|8062599003|6072599003|8060799006|19110799003|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TjJHTmtVTytjOXdRdmJFTC9BQktQMlNWakp5SVo0ZEZZTW41K25TdndoaUFS?=
- =?utf-8?B?NDQraWZvclJOTGVQSitSZDVZUjBKNHJtVGVTQXRiRlhUMUhMQ3pZelNYYTZU?=
- =?utf-8?B?Z1RicWpJdXdqNlI0eTc5U2tSclkzMUR3QzdpNUhhSG9uY3l5SXRWUU1wMGtZ?=
- =?utf-8?B?RDVkSE9ucXA4TDhURy9VQlBYbWRYTEpRT0RNOHUzWFBhTW4yU09sckhXUzg0?=
- =?utf-8?B?MWU2V2RLa2RHdjk3NVBGcUVLL2hXWnJLUUttNlowcGhIV05GZHFOT3RLMHdp?=
- =?utf-8?B?M3JBZkt3Uzk0ZEtmc1AycjJXdmhzSUtFdlJEbFI5aEpnbkE2ZXRzeFpYM202?=
- =?utf-8?B?M05FQmFXR2Y3bCtNZ0t4VUs5RFB3WUIxRW9yQ0R0TWIwUkRiaW0zSnBrTFJE?=
- =?utf-8?B?YnVLMzg5SHo0REtkb2VaOVJvYzZsOXI2dTVZSHRsaHZtdDBIbSt4S3pvRlp6?=
- =?utf-8?B?dnJLWFkxU0JWQUh4UXdVWS9Bc1haMmZZU3BPMm4rVkcrRE5aQ3BwaGFFRnFX?=
- =?utf-8?B?Tm8ySUVUVmhONUhMZ3JiYk40bkVxQ2VoY3VoUi9Jd29KS2hwU0h3U0JHVGJP?=
- =?utf-8?B?UVF4RzZ3R0w3eGFDaElZK0V2UUs5MDFqbzFSUXpxT3dycUlXaVZ1NFcwbjlJ?=
- =?utf-8?B?dlFEWVBHQU81Y3ppbEQrd1NHSU80eUFiNXV3R25SZGJnQ0FvVURvQVFpaC9L?=
- =?utf-8?B?SXFFWmZRT0FvRVZyUHFTZGw0K1ZkNHJGZHpQSmIrZ3BvVWdiM0NyaXBRK3Yx?=
- =?utf-8?B?ZEc3UGcwTUxtYVJNY0xqZllTRUtKODlmRVZBNjlnYUptUG5BMkZ6U1B0OVZE?=
- =?utf-8?B?NWNaaDhoWUo3Qm5kS1Fjd0ZYb2ZCaGIvL3IyMm5XS2trK3RhVHdTS0lEN0JT?=
- =?utf-8?B?UEY5VEI4bXYxY1ZEdFY0RkF1dGQ2TEpvOXlIeng1R3BZZG11NVlTSDdMUSs4?=
- =?utf-8?B?aTErSnRzdURiaHhEbGYxL0hndHRjUjRPRU5XQjBYdEtJWGRhU00rOVJ0SEQ5?=
- =?utf-8?B?S3pVcloxM3BKallxelFtOURmVmZLeFhFYjJTeDN2Y3AvNVhPcWFlVkpONEsr?=
- =?utf-8?B?dk9IRXFHay9LWVMrQnJRZHB4cGFxeXpvSTQxVzZaeVJJVnIyRThPT1VTTUsw?=
- =?utf-8?B?ZnV1R3JFbThGVFpUY3IwMzIwYU41NWRvaDI4Wlk1dTZ1TkpHVTZ4bHFjazFY?=
- =?utf-8?B?LytMVlNEZW5UWEhjOHBWVlIrdEI5NkdmZ0NPbDRmamRGYjdMY1hEcHFBWm9s?=
- =?utf-8?B?aGxwbnpzWTMzRXFYSVFheStUNllhZER5ci9aaGkvRjVuSHlNM3RnNVZzYlIw?=
- =?utf-8?B?dUsyd1llTW1NWHpGYjlRVGtVYlZPWTUrcUpSalQ2VURoZ2doWjhTVi8wVHlJ?=
- =?utf-8?B?OUtMNkhVSEplNnVhaWlEbURiYmpHa2lYYkZuamovRDk0YkpxbHpObFNtSDBk?=
- =?utf-8?B?b0wrUVk4TGNOL2EzVElNZmZjc0ZkRGp3dGc0S3BjdGpaVFVObVM4SUxNRnNB?=
- =?utf-8?Q?nvL2xQ=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Y0FyTVpkSExoaDE5eUpZcld2Lzd5M2VZbG0rc0JHUi9DK250VDdONmM2WlEr?=
- =?utf-8?B?YTJrOU1qSjRKMWs2Wk44QnFFRWczaytSN25rdUQybm5YdkpkenBhc3cxTFFa?=
- =?utf-8?B?S2RGcjNTMGtPZm1wRGNiUVF2aHZGdVRnYitBUU4vTk1zVEZNZ0FJRVRvZ2ZM?=
- =?utf-8?B?cmdPMWswUHlMQkFraHhVaFlDSUh5NlJoV1pHWStsaWV5R2g0WTE4L0F6TWZQ?=
- =?utf-8?B?N2ZTdmk3c0IvQi82T3FvL0o0alJMeGVxcUNwVE00TFJRbWZ4aGxMdkluSnF2?=
- =?utf-8?B?czhCdlhqOUkwdzFCVTA1K0J1d1ZydVVvaW5TSXZnY044ZC94d2xXdGhoQlpH?=
- =?utf-8?B?cXdld3ZnZEVoVllhTTg3Um11bCtZYldUcExiNTBMSDVaZGU2UDZYbUxHdG1J?=
- =?utf-8?B?dWN2Qm9NbmV4Z3oxMkhXUTdOdWFCOGo4cHdEYVdlS1ZrcnJtbG1mS1dyMDRN?=
- =?utf-8?B?c3kvUksrM3c4c2lRM0VyNms1Rm1qN3FvQXZXVkQ1eHNjRUJ6cjIvbTNKVWtx?=
- =?utf-8?B?Q1lBTkg5cmxTYlVrZk5aVU5VSmdvOVpEcGs3TXdML0JwTVlDcDBYcWNGUkZU?=
- =?utf-8?B?dU16KzdpQi96bUppYkUxZzdvb2swL29SV2NWWGhhQVB2VjJ1ZXp5VUJyL25S?=
- =?utf-8?B?OS9WUVNRTnpSMUxXV0piNE9qMk1ONnEyVUEyNWF5QmUvdWZYU2tpQzBTdEFn?=
- =?utf-8?B?M2ZLUXBvV1FITDNrUGFmL3V3TG5CTXNYbm44VDVzbUZrTEdBNGI3dWo4RVM5?=
- =?utf-8?B?VnBLd0N2akRVbTVDUTQ1Y0gwcTg1bTJMQkg0dGJkRlIxdkE5MDg2UHh6SFNX?=
- =?utf-8?B?MDJ2UFNFTFRjdm5hY2RGT3cxQlRNWVE1bEY5UWZsNmdxaFZhdVVNQlEyZlJ0?=
- =?utf-8?B?a3huMkJWRzVYZmdQS0wyZHpIT2lCYUNkRG1qaEl0OUEvM3hOWC9DeFZoZkgv?=
- =?utf-8?B?TmZ5V2NDWVplOWV4NEFqQ3NlV2g3MUJqVytVclpzQzRZMmcyTjZGMGNaMlNx?=
- =?utf-8?B?anJEcDZBS1pzUkVCQzFtdHdCMThJcTNtUTlRWDNyNkJNTHBxbHdEWGVFZVhr?=
- =?utf-8?B?d1dOQkhLSU9FTmdlS0NGU3lWeTB3aytjQVJUN0liemtyMUxJK01zekRwdlNo?=
- =?utf-8?B?Vm5EVEtOby90KzZjOGJpckJQQVBTNzVzRkNmeWFlWmlTaFVoNWlNa0p3N1Vi?=
- =?utf-8?B?U1dyenNuVUV2bjVjZU5GWVpXS3ZrZ2E2RXRGbVZKNTk4UmxrVE9nT0VHMzZD?=
- =?utf-8?B?RTJwY1hVQkxHWHRDa0thZ2pCb0MybmMrZ2RhVkZNYmZtZmZmNjZFelYrS25K?=
- =?utf-8?B?b0N6R2ZEYkZHZWM2alhsQnhIQjFwaUV0dUJiN0ladlBBKzBtOWVrVG9taDRJ?=
- =?utf-8?B?a1NFSUJHSTVaU0pyaU04YWwrQlB1cVBDa3oxbHlTTGYweVkzQkFING84US8y?=
- =?utf-8?B?OGxMWFYyU2ZQV2ZVZmdxOUtZdDhwVkRKRlVXQURtM1pTMEtFcThqdG0wNS91?=
- =?utf-8?B?OWlDQ0pTQjZmVFo3SzRhSXVaTjFoakc0aEhFWVlSWXFCZzlrUVNMRFJhM1RV?=
- =?utf-8?B?T2NCWmdWR2RtRDBnZUFjbG5STnI5YUd3YUNnOXNOOERpdE82bHd0cmJ3NHND?=
- =?utf-8?Q?c4bBX/G9iiV2eZUOS8lJfsyvHjtt0PGk/j+E/1Q/Ix4M=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740476318; c=relaxed/simple;
+	bh=WepjCdKpfsDunMZVmF4JsfqfzSNxfOKfCAManVRjDIE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=H+R/d2w3wgITZB3QvLqZMZ4MnezEYT2q0Wjxo0k/hgVHrUytD/3wkDBrxogKd3F7LchN770MdYdn+4AzLYxC9nca7Ez62fNhCTWAJ+EPmO4cADYp3BwHXbYxCx8dTAbTTfc2DcVtWZQKnD45uArf/74Z8Rv6q5eTTAhVV2D9YpQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kfBhauOp; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740476275; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iaTLHNWzZANWkSHvQcnjLdTiITwmdvrVbtSt5VyOreKwgtOBOEZwnyiqL+yBSNJxRD7WU6/p0nC88LBMtQP4WeFgHQgWR45lreSsc+jkUrTus3cp0qnLiIKq2JJyLc8QwYEEYXC7dX1xRRuQB00p3b3P1kiNUC98hcFJqPpruPg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740476275; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mbIJtXwXjtJlIQdygGWRyuQlQVKs6xykb4NhbVC0jk0=; 
+	b=PAkZYUXivVj1LZkFibsPdym0/v4lm/bmG0WQFIl71w+JQMewJ+pymYDhAdlz5Awbz0dt8fGKe7BXKVDRjsROvD8ty2MZkTzWiKOtqnU3sUxUvo1ZrJ32l8Iq7TkMuUb1o9a7P4Nj1njNU1gU97Umh6tfmcuqCayEqaZg1L8JRhg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740476275;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=mbIJtXwXjtJlIQdygGWRyuQlQVKs6xykb4NhbVC0jk0=;
+	b=kfBhauOpyXn5U3+2bHhvOFmpCeKRSeksX8Sr/JDXvYSeqKuCcHOvnWcicNlsfcOG
+	pWutrWUidti8m3p+hwBUM2QoYSpqr+7uV1mbZOyEiHSmt3NEhks1MJlSM290VsxF1MH
+	NKqb5HQfPVoq496TRo+jcZamq40WPJBwSGQ2Lmig=
+Received: by mx.zohomail.com with SMTPS id 1740476271960416.2806493078207;
+	Tue, 25 Feb 2025 01:37:51 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3cd1422-9399-4ef8-4f0f-08dd557ff6e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 09:37:04.7333
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB5803
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v4 3/4] rust: configfs: add a sample demonstrating
+ configfs usage
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
+Date: Tue, 25 Feb 2025 06:37:33 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Joel Becker <jlbec@evilplan.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Fiona Behrens <me@kloenk.dev>,
+ Charalampos Mitrodimas <charmitro@posteo.net>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com>
+References: <20250224-configfs-v4-0-9af9b5e611f6@kernel.org>
+ <20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDM6MDXigK9QTSwgVGhvbWFzIFppbW1lcm1hbm4gPHR6
-aW1tZXJtYW5uQHN1c2UuZGU+IHdyb3RlOg0KPiANCj4g77u/SGkNCj4gDQo+PiBBbSAyNS4wMi4y
-NSB1bSAxMDowNyBzY2hyaWViIEFkaXR5YSBHYXJnOg0KPj4gDQo+Pj4+IE9uIDI1IEZlYiAyMDI1
-LCBhdCAyOjM04oCvUE0sIEFkaXR5YSBHYXJnIDxnYXJnYWRpdHlhMDhAbGl2ZS5jb20+IHdyb3Rl
-Og0KPj4+IA0KPj4+IO+7vw0KPj4+IA0KPj4+PiBPbiAyNSBGZWIgMjAyNSwgYXQgMToyN+KAr1BN
-LCBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4gd3JvdGU6DQo+Pj4+IA0K
-Pj4+PiDvu79IaQ0KPj4+PiANCj4+Pj4gQW0gMjQuMDIuMjUgdW0gMTc6NTggc2NocmllYiBBZGl0
-eWEgR2FyZzoNCj4+Pj4gWy4uLl0NCj4+Pj4+PiArY29uZmlnIERSTV9BUFBMRVRCRFJNDQo+Pj4+
-Pj4gKyAgICB0cmlzdGF0ZSAiRFJNIHN1cHBvcnQgZm9yIEFwcGxlIFRvdWNoIEJhcnMiDQo+Pj4+
-Pj4gKyAgICBkZXBlbmRzIG9uIERSTSAmJiBVU0IgJiYgTU1VDQo+Pj4+Pj4gKyAgICBzZWxlY3Qg
-RFJNX0dFTV9TSE1FTV9IRUxQRVINCj4+Pj4+PiArICAgIHNlbGVjdCBEUk1fS01TX0hFTFBFUg0K
-Pj4+Pj4+ICsgICAgc2VsZWN0IEhJRF9BUFBMRVRCX0JMDQo+Pj4+PiBCdHcgSSBoYXZlIGEgZG91
-YnQgcmVnYXJkaW5nIHRoaXMgZGVwZW5kZW5jeS4gV2hpbGUgaGlkLWFwcGxldGItYmwgaGFzIG1h
-ZGUgaW50byB0aGUgbGludXgtbmV4dCB0cmVlLCBpdCBoYXMgc3RpbGwgbm90IGJlZW4gbWVyZ2Vk
-IGludG8gTGludXMnIHRyZWUsIGFuZCBuZWl0aGVyIHRoZSBkcm0gdHJlZSBJIGFzc3VtZS4gSXQg
-cG90ZW50aWFsbHkgY291bGQgY2F1c2UgaXNzdWVzPw0KPj4+PiBZZXMuIFdlIGNhbm5vdCBtZXJn
-ZSB0aGlzIGRyaXZlciB1bnRpbCB3ZSBoYXZlIHRoaXMgc3ltYm9sIGluIG91ciB0cmVlLiBCdXQg
-dGhhdCB3aWxsIGhhcHBlbiBzb29uZXIgb3IgbGF0ZXIuDQo+Pj4+IA0KPj4+PiBNb3JlIHByb2Js
-ZW1hdGljIGlzIHRoYXQgeW91ciBkcml2ZXIgc2VsZWN0cyBISURfQVBQTEVUQl9CTC4gRnJvbSB3
-aGF0IEkndmUgc2VlbiwgdGhpcyBzeW1ib2wgaXMgdXNlciBjb25maWd1cmFibGUsIHNvIHRoZSBk
-cml2ZXIgc2hvdWxkbid0IHNlbGVjdCBpdC4gWW91IG5lZWQgdG8gdXNlICdkZXBlbmRzIG9uJyBp
-bnN0ZWFkIG9mICdzZWxlY3QnIGhlcmUuDQo+Pj4gTG9va2luZyBhdCB0aGlzIGFnYWluLCBtYXli
-ZSBpdCBzaG91bGQgYmUgc2VsZWN0ZWQuIElmIHlvdSBzZWUgdGhlIGtlcm5lbCBjb25maWcgb2Yg
-VElOWURSTV9IWDgzNTdELCB3aGljaCBpcyBhbHNvIGluIGRybS90aW55LCBpdCBpcyBzZWxlY3Rp
-bmcgQkFDS0xJR0hUX0NMQVNTX0RFVklDRS4NCj4gDQo+IFRoaXMgZHJpdmVyIGRvZXMgaXQgd3Jv
-bmcuDQo+IA0KPj4gVG8gbWFrZSB0aGluZ3MgbW9yZSBjbGVhciwNCj4+IA0KPj4gMS4gaGlkLWFw
-cGxldGItYmwgaXMgZm9yIHRoZSBiYWNrbGlnaHQgb2YgdGhlIHRvdWNoYmFyLiBUaGUgRFJNIGNv
-ZGUgcmVtYWlucyBzZXBhcmF0ZS4NCj4+IDIuIGhpZC1tdWx0aXRvdWNoIGlzIHRvIG1ha2UgdGhl
-IHRvdWNoYmFyIGEgdG91Y2ggc2NyZWVuLiBZb3UgY2FuIHN0aWxsIHVzZSB0aGUgZHJpdmVyIHdp
-dGhvdXQgdGhlIHRvdWNoIGZ1bmN0aW9uYWxpdHkuDQo+IA0KPiBJZiB5b3VyIGRyaXZlciBkb2Vz
-IG5vdCByZXF1aXJlIHRoaXMsIGl0IHNob3VsZG4ndCBzZWxlY3Qgb3IgZGVwZW5kIG9uIGl0Lg0K
-DQpDb3VsZCB5b3UgZXhwbGFpbiBtZSBpbiB3aGF0IHNpdHVhdGlvbnMgd291bGQgc2VsZWN0IGJl
-IHVzZWQ/
+Hi Andreas,
+
+> On 24 Feb 2025, at 10:21, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Add a sample to the samples folder, demonstrating the intended use of =
+the
+> rust configfs API.
+
+nit: this is not the first time I see Rust not capitalized in this =
+series.
+
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> samples/rust/Kconfig          |  11 +++
+> samples/rust/Makefile         |   1 +
+> samples/rust/rust_configfs.rs | 179 =
+++++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 191 insertions(+)
+>=20
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index 918dbead2c0b..2f97bf9a7b4c 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -10,6 +10,17 @@ menuconfig SAMPLES_RUST
+>=20
+> if SAMPLES_RUST
+>=20
+> +config SAMPLE_RUST_CONFIGFS
+> + tristate "Configfs sample"
+> + depends on CONFIGFS_FS
+> + help
+> +  This option builds the Rust configfs sample.
+> +
+> +  To compile this as a module, choose M here:
+> +  the module will be called rust_configfs.
+> +
+> +  If unsure, say N.
+> +
+> config SAMPLE_RUST_MINIMAL
+> tristate "Minimal"
+> help
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index 5a8ab0df0567..72122f010caf 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -6,6 +6,7 @@ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE) +=3D =
+rust_misc_device.o
+> obj-$(CONFIG_SAMPLE_RUST_PRINT) +=3D rust_print.o
+> obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI) +=3D rust_driver_pci.o
+> obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM) +=3D rust_driver_platform.o
+> +obj-$(CONFIG_SAMPLE_RUST_CONFIGFS) +=3D rust_configfs.o
+>=20
+> rust_print-y :=3D rust_print_main.o rust_print_events.o
+>=20
+> diff --git a/samples/rust/rust_configfs.rs =
+b/samples/rust/rust_configfs.rs
+> new file mode 100644
+> index 000000000000..36a2c848a979
+> --- /dev/null
+> +++ b/samples/rust/rust_configfs.rs
+> @@ -0,0 +1,179 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Rust configfs sample.
+> +
+> +use kernel::alloc::flags;
+> +use kernel::c_str;
+> +use kernel::configfs;
+> +use kernel::configfs_attrs;
+> +use kernel::new_mutex;
+> +use kernel::page::PAGE_SIZE;
+> +use kernel::prelude::*;
+> +use kernel::sync::Mutex;
+> +
+> +module! {
+> +    type: RustConfigfs,
+> +    name: "rust_configfs",
+> +    author: "Rust for Linux Contributors",
+> +    description: "Rust configfs sample",
+> +    license: "GPL",
+> +}
+> +
+> +#[pin_data]
+> +struct RustConfigfs {
+> +    #[pin]
+> +    config: configfs::Subsystem<Configuration>,
+> +}
+> +
+> +#[pin_data]
+> +struct Configuration {
+> +    message: &'static CStr,
+> +    #[pin]
+> +    bar: Mutex<(KBox<[u8; PAGE_SIZE]>, usize)>,
+> +}
+> +
+> +impl Configuration {
+> +    fn new() -> impl PinInit<Self, Error> {
+> +        try_pin_init!(Self {
+> +            message: c_str!("Hello World\n"),
+> +            bar <- new_mutex!((KBox::new([0; PAGE_SIZE], =
+flags::GFP_KERNEL)?, 0)),
+> +        })
+> +    }
+> +}
+> +
+> +impl kernel::InPlaceModule for RustConfigfs {
+> +    fn init(_module: &'static ThisModule) -> impl PinInit<Self, =
+Error> {
+> +        pr_info!("Rust configfs sample (init)\n");
+> +
+> +        let item_type =3D configfs_attrs! {
+> +            container: configfs::Subsystem<Configuration>,
+> +            data: Configuration,
+> +            child: Child,
+> +            attributes: [
+> +                message: 0,
+> +                bar: 1,
+> +            ],
+> +        };
+
+As I said in the previous patch, this macro is a bit complex. Is there =
+anything more you can do with it?
+
+If so, it better be in this driver, because I hardly think anybody will =
+go through the source code itself
+to figure out. My 2c.
+
+
+> +
+> +        try_pin_init!(Self {
+> +            config <- configfs::Subsystem::new(
+> +                c_str!("rust_configfs"), item_type, =
+Configuration::new()
+> +            ),
+> +        })
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::GroupOperations for Configuration {
+> +    type Child =3D Child;
+> +
+> +    fn make_group(&self, name: &CStr) -> Result<impl =
+PinInit<configfs::Group<Child>, Error>> {
+> +        let tpe =3D configfs_attrs! {
+> +            container: configfs::Group<Child>,
+> +            data: Child,
+> +            child: GrandChild,
+> +            attributes: [
+> +                baz: 0,
+> +            ],
+> +        };
+> +
+> +        Ok(configfs::Group::new(name.try_into()?, tpe, Child::new()))
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::AttributeOperations<0> for Configuration {
+> +    type Data =3D Configuration;
+> +
+> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> =
+Result<usize> {
+> +        pr_info!("Show message\n");
+> +        let data =3D container.message;
+> +        page[0..data.len()].copy_from_slice(data);
+> +        Ok(data.len())
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::AttributeOperations<1> for Configuration {
+> +    type Data =3D Configuration;
+> +
+> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> =
+Result<usize> {
+> +        pr_info!("Show bar\n");
+> +        let guard =3D container.bar.lock();
+> +        let data =3D guard.0.as_slice();
+> +        let len =3D guard.1;
+> +        page[0..len].copy_from_slice(&data[0..len]);
+> +        Ok(len)
+> +    }
+> +
+> +    fn store(container: &Configuration, page: &[u8]) -> Result {
+> +        pr_info!("Store bar\n");
+> +        let mut guard =3D container.bar.lock();
+> +        guard.0[0..page.len()].copy_from_slice(page);
+> +        guard.1 =3D page.len();
+> +        Ok(())
+> +    }
+> +}
+> +
+> +#[pin_data]
+> +struct Child {}
+
+nit: you don=E2=80=99t need the braces here
+
+> +
+> +impl Child {
+> +    fn new() -> impl PinInit<Self, Error> {
+> +        try_pin_init!(Self {})
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::GroupOperations for Child {
+> +    type Child =3D GrandChild;
+> +
+> +    fn make_group(&self, name: &CStr) -> Result<impl =
+PinInit<configfs::Group<GrandChild>, Error>> {
+> +        let tpe =3D configfs_attrs! {
+> +            container: configfs::Group<GrandChild>,
+> +            data: GrandChild,
+> +            attributes: [
+> +                gc: 0,
+> +            ],
+> +        };
+> +
+> +        Ok(configfs::Group::new(
+> +            name.try_into()?,
+> +            tpe,
+> +            GrandChild::new(),
+> +        ))
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::AttributeOperations<0> for Child {
+> +    type Data =3D Child;
+> +
+> +    fn show(_container: &Child, page: &mut [u8; PAGE_SIZE]) -> =
+Result<usize> {
+> +        pr_info!("Show baz\n");
+> +        let data =3D c"Hello Baz\n".to_bytes();
+> +        page[0..data.len()].copy_from_slice(data);
+> +        Ok(data.len())
+> +    }
+> +}
+> +
+> +#[pin_data]
+> +struct GrandChild {}
+
+=E2=80=A6nor here
+
+> +
+> +impl GrandChild {
+> +    fn new() -> impl PinInit<Self, Error> {
+> +        try_pin_init!(Self {})
+> +    }
+> +}
+> +
+> +#[vtable]
+> +impl configfs::AttributeOperations<0> for GrandChild {
+> +    type Data =3D GrandChild;
+> +
+> +    fn show(_container: &GrandChild, page: &mut [u8; PAGE_SIZE]) -> =
+Result<usize> {
+> +        pr_info!("Show baz\n");
+
+As I said in the cover letter, perhaps this one slip through :)
+
+> +        let data =3D c"Hello GC\n".to_bytes();
+> +        page[0..data.len()].copy_from_slice(data);
+> +        Ok(data.len())
+> +    }
+> +}
+>=20
+> --=20
+> 2.47.0
+>=20
+>=20
+
+I=E2=80=99m OK with this patch. It works, and it does what it=E2=80=99s =
+supposed to do, i.e.: showcase the API.
+
+With the =E2=80=9CShow baz=E2=80=9D nit fixed:
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
 
