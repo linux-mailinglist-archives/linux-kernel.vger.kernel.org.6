@@ -1,112 +1,77 @@
-Return-Path: <linux-kernel+bounces-531729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC7EA44438
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:21:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCEDA44433
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6311A3BB76F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495661741BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE6F26B0BF;
-	Tue, 25 Feb 2025 15:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A4226B2AD;
+	Tue, 25 Feb 2025 15:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oKlnI6hM";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NrX6Sk7g"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="z8/bQpQq"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E920AF82;
-	Tue, 25 Feb 2025 15:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640CB42A92;
+	Tue, 25 Feb 2025 15:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740496775; cv=fail; b=XU6YqA6vPI3eGt2nggEwD0daNtvbNUPbR+mFGXwEwdy3H3V0Ee2q7HDs5L/Cwln7jGnpHDD4IbDMzbHMoxtkXkYK+Oe8Yw5efngHO443igftWlw/pe+CxAiNEdzk3ybaGcYugCn4M3nwfQHEzlYGml4xC13IUkZSL/dbMGIqWaE=
+	t=1740496738; cv=fail; b=bSK3jOwwNUDkKg7SZiFAa+TTiV602Rib2RSnvqvcK58umObKrKT7rxy8yoRsMZTzWeprNmgCWiPalm/EBhH/yctdBdi6iqcx/rzfO3/i2Hvcb3dox9D5zZKmRqzZvA2hs5o66aoqdY/kOdYzxxEO96L0vPTPkX3IsiOl4brKDDE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740496775; c=relaxed/simple;
-	bh=gvEx/vxoSnblfi6h5N42rtt9NChR0gioamreQQBgwAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bq/mHBHIDb/4lJEJh8BvcbtSXNRu00Zs1DLSkNkL5PaAACdrfUsKjWWBLa7unvEOwSZrsmNJfmDqvCO/XppHz+iL6nl8SKEqwjy1rHgQx4d06TnqaWl+m/KlXMMNTYFUMpJVW1NNX1Yi7ADBtIHP5BpcWXoibhNuOia4gqu8+E8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=oKlnI6hM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NrX6Sk7g; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PFCMkH011937;
-	Tue, 25 Feb 2025 15:18:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=T22PzFk6Fi6K0EBQ2+
-	fk0coXQf7eOyeOw9UbFs0QTYc=; b=oKlnI6hMXLXnuBCZdwVWn5yTrW+1+LaIhn
-	H2GQ113HF3JkQDp6t4SXbW3/IXm0zkvEDiwJkVFCnOr1CgoJ0xgQMWwHuYvYALKk
-	/PAyB5s5oQKUXDrPuKck8W7uBxdHmob+ZmPIuBglT4i3P/+8pyGfQ69JDyEenQjO
-	TvdWLvdlYOYPcXjMjbVKWgalHgsrwSes05EPn7pN30TM2XDczR/UdSSnkUPX2Xvl
-	kKiiLvT1UFqxmHCFjnQze7Q1Z/GbexO6y06DX4EDRWYCR694d3RdqbrxcZuS3tXe
-	aFwp4wKhsa2DRXea8tZ0tZeBx70/CYyzlsRaminlMfScXIJikYPw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y74t5fbw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 15:18:44 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51PEHHAm008186;
-	Tue, 25 Feb 2025 15:18:42 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44y51fce35-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 15:18:42 +0000
+	s=arc-20240116; t=1740496738; c=relaxed/simple;
+	bh=xTTM2iSMT8k0//mLo+YX9p9/DUaXwOqZVplXVqeWwUU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kJW8ogjqjYa1Ev9F9zOpXgkGBBjr6n26pE9yiDoglgg/HkY6hiexlzEccR/6I1wFzBcJA2eb9bqZyb1AJlP7+W2JcGQl9s47ehHYl0vBq7A4lmP17+sjJ1hZLMAiAgbjFUFzO94z9UP2vFlb0cI6pBgxlV23UAaZsdPHrdsPazM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=z8/bQpQq; arc=fail smtp.client-ip=40.107.92.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=beEQ0vvu0HjEbAF5bOOPbmUfBjHNrFDp7QF9KlK98mc6vRENN2j1+geNxdQWMt9WM0YyMqOWuJvbVolge/1ROaz/z18NxbjFM7WwqpSvNsX9rIzVq22ovjHhSdADVurTyh0xNPKkou0cbFVOSYwvTpVxxJ63bSQW6J2QOBez5YIx+ZQgXlE15AJcT1YpF2/yKV+f3rCQClQec/kk3Nduwu3wFoKXkjHcMSL2H3g7A2MIhEffAI132MlG52hqFMXO9VmifIbkg9xnvZqmQZianp/S5h309YUCTTVjSAdeoIUSCYRdvH7hH3ICu/c3/EYjB+nuJC8Qf1+yaSbza/PQTA==
+ b=xKNrt4rNy12HzYiOIE3mz72G027vwOJai9rV1yDYea5/1V+WPOgT+wNAFP1tvSEyhdYubo/jGuUqFjk8gVlHbFV6ovgqNbwiMUyeADNcHcKMloPT/04It+1UhMSCfgJSheMQk3lr0wl3KMVNpDb6D99pUIoq8b5gOKEUuWRNuD+e63/7vlrJ5yWUl2LQdeNu8YskjZ7VYf1jjaaPWzBYHYc0gTmSo9q6PMAfiSJEk/5EO+asODKbMvltt+WXtkwsQCjOs1Ghbcw+9f/NReQg9rcX3uUhVtgW04RiEsgy0ZMNK/ubsfNfMZwr7jOP95PBHb/ZaJKauqZkWUY7+ecOpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T22PzFk6Fi6K0EBQ2+fk0coXQf7eOyeOw9UbFs0QTYc=;
- b=cuCAqi7kC1/HUHdIKqO5ivYiuUOLVD0IzTMeRydulcdxH5Njqc7eaCfGdSulI0N0n0s7xYOqvoTcpK1zQ2hCo6GNUp2sIu1owqQFuX1nysxDDW2qjvdu/5UAlGg+4JQe/kCOKwxaQBdhTvaY57kzcIoPM0KzSDelmQ8PuwQv42kf0xfCHwCaxisAQxQREDNx77GspihU0e2zJqI0RYNVB9PZAgi0y/Ud5IAW3YmxnLnFXp3QeySwe2JNMqV3r0fzLrx4BqjsFM4bL4GJdmXfPQrjOsuAxQA8m34vGyRbHKuy+0tePPbOHt8LVvHciQO+3KUhD67zLIFS1b+RUsKGLQ==
+ bh=n2fMkPZpvjH2yKfGZy0X1zHGKRmdm65QHoJBBXCigG8=;
+ b=gcftUKH57lsuY3ywB60wPbJBN6WQYMJqn9YKrc3EE6HP8AAJWzjjQy3hQwhnTXQYEtsjuNPHJAUsTJLNxYmaAwoj7rDktY5VQ1b/DKTWUz9rPWckP+Wg+kqiOJkQFsCGKsIHoPuVqxbrxIozqX3NJhq+DE3QJtl84MXEt4ZctF968KVU47Cgi8XRFoV4odPlk4nMxup/+uC5Hv+H9u0Dj54/KLRAxL5GUIBszeB9+LxzoB8q6ZJoJBh/FdhxX+cn/FKsjtJmzMuvsYdaasF2MKrI8AD+TFY/gKPCvE22nNUsBB9pM2SW3ILHLiLmP8QXl1LNZM0gnnKS8ZoJnEKnIw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T22PzFk6Fi6K0EBQ2+fk0coXQf7eOyeOw9UbFs0QTYc=;
- b=NrX6Sk7gJgAsqYT4mJm7/NSvYE/hbgfAQXe8uR4n2cbWx983vTtRt1aPaeT7A78GqrrLLqNJXeMIrEMmtjBsrNVbuirIN5gZ+lFdNaxeUaJIq6HGG7JjdTwEsPSTm/mx8DGMUPL95sVQAMOase9KklOQ55VDY2EXyDCY8CvQuWo=
-Received: from BN8PR10MB4099.namprd10.prod.outlook.com (2603:10b6:408:b7::32)
- by MN0PR10MB5910.namprd10.prod.outlook.com (2603:10b6:208:3d2::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
- 2025 15:18:38 +0000
-Received: from BN8PR10MB4099.namprd10.prod.outlook.com
- ([fe80::5db:fa9a:dfe:2a2d]) by BN8PR10MB4099.namprd10.prod.outlook.com
- ([fe80::5db:fa9a:dfe:2a2d%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 15:18:38 +0000
-Date: Tue, 25 Feb 2025 15:18:34 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-        torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
-        adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
-        benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-        jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
-        ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
-        johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
-        willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
-        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-        enh@google.com, rientjes@google.com, groeck@chromium.org,
-        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-        mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 0/7]  mseal system mappings
-Message-ID: <e697ee1d-6075-4f24-8365-32aa4bc84d7e@lucifer.local>
-References: <20250224225246.3712295-1-jeffxu@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224225246.3712295-1-jeffxu@google.com>
-X-ClientProxiedBy: LO4P123CA0608.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:314::8) To BN8PR10MB4099.namprd10.prod.outlook.com
- (2603:10b6:408:b7::32)
+ bh=n2fMkPZpvjH2yKfGZy0X1zHGKRmdm65QHoJBBXCigG8=;
+ b=z8/bQpQqKiaMvGW7uRrLx/AVrOtQgSKT5Hw/f25Q/QVE9o8E++4m+mRHCYT0vS7jBVuLdeq8hJ/w5xiHxnO3QiQuJ/MDF569hTLE+luhi1Y67+kyBmHOvcVxXABJnMttzTNNLOHM9IizOCvCfP5/L/RZm9Z12V1wyyPhXNavNbA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
+ DM4PR12MB6038.namprd12.prod.outlook.com (2603:10b6:8:ab::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.20; Tue, 25 Feb 2025 15:18:54 +0000
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 15:18:54 +0000
+Message-ID: <323ade14-4d11-49b4-9657-a7f1900ec334@amd.com>
+Date: Tue, 25 Feb 2025 07:18:51 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: Refactor Ally suspend/resume
+To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ bentiss@kernel.org, jikos@kernel.org
+References: <20250225081744.92841-1-luke@ljones.dev>
+ <20250225081744.92841-3-luke@ljones.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250225081744.92841-3-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0201.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::26) To DS7PR12MB6095.namprd12.prod.outlook.com
+ (2603:10b6:8:9c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,277 +79,389 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR10MB4099:EE_|MN0PR10MB5910:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ba3e0d8-789d-4ef6-9c11-08dd55afadde
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|DM4PR12MB6038:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9aafb456-614c-4b54-1512-08dd55afb734
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?70IV5xTU0U6gDDihT4JMqke769h3lD8K1jhDyb17LOsymAVFu/gYHYU7DV6/?=
- =?us-ascii?Q?JQsvXlR6M3KvASL7oQN0XZtISjHEw1NI+WHB8nVl0c+V11Dzx0eP2pwqeGoM?=
- =?us-ascii?Q?IgXHTYJNdVeXXLq+Q213YmBnHFUOtsghGXG0XXik35te+PIHs7UHk4FtGgyu?=
- =?us-ascii?Q?R3eSIMK31TxPAhD4p+a2/ofDNCegE1kgzd3dGjnzSr357ZxPjuP9At9l1rv7?=
- =?us-ascii?Q?fxger0I0Gw/qOuIufSJiLVNyd1Vicdu+00t6lo7WmNZ8dHL3TE3ieoSLYGKE?=
- =?us-ascii?Q?sK/myUJyA+KoDoHA0woEo/TW8VlEBOg+lA/VZwYULI9DErcuxSNg6nSCX7Uo?=
- =?us-ascii?Q?+1IzO7/RbRtAEye7+amCRaoWjOLx6cTqxI4ZgfCseRadJixy7NEaEPfHKIZg?=
- =?us-ascii?Q?9zx09/Czgzh1rj3w0JmDSztKiBPq8clIg0+glpFwov/Q2viVcqomf8wDtwOC?=
- =?us-ascii?Q?vbLhvIff10deqUcKMq9Eztyy8crfcfCIhS9OJ+0HfznO6SaOYN6tdLHqTLWL?=
- =?us-ascii?Q?0GsS6f8FPdo7Z5Md/PzeHRM0qFsX3bRXG6HumF/I5GUuuHfZjhl+0HbxMuZn?=
- =?us-ascii?Q?/d3rrFU4qNx9oTBRiHvxR8OB1RkCXDUwZmATDUnk45207u6kwmCTzV2SQymj?=
- =?us-ascii?Q?wwZQX/289hZ/Oxy/nC7KRYaX/1JeE6yF6GtFMWZrKywwMFDQshCwDB5Dkhk9?=
- =?us-ascii?Q?rcLbIldMFvI1lHOQRIYDIZL/9h6IV0gbJQyYK1Ly3wFBB7qBNtkWa5gzi9x5?=
- =?us-ascii?Q?/WcnTUwTv3gHa9Ao9MsLT499JMX88Q6MlDm8LiWaOK/edm5ct47VwWiYew4G?=
- =?us-ascii?Q?49IA3bUcNZlHLUapyWq5Pxk9z2GRwlRmNhI5PeSy0umg0h4HtvKRuDOe7eqK?=
- =?us-ascii?Q?M7oU4UKvcpT4lDIMecVbTfB0quuehzjBooCNvVx5oeygfFRdOB7qosTLtlx7?=
- =?us-ascii?Q?xVzKoitBb62C+J3XteHlvcD/L/6x3MiXFTYqYWmT3xwi3zMhDgMRW3L23MpJ?=
- =?us-ascii?Q?4l+7yEc7Ip4L1h09z5zTfai5PLSoGahDKDoV6Qb8eJDFDH2QNdMc7BcIZlcL?=
- =?us-ascii?Q?jNE9xHtGYwfDDxH3JI3B9HFDJjkqb39dDrdRGHRVgZqIUKnBug0/qUsH9Gb8?=
- =?us-ascii?Q?hBNEDEwvP58o5ejjbMDQyLwGvBv7PhKXmeOf9k3EONjd55HchZfEBcMwUKIG?=
- =?us-ascii?Q?SdCKcntmbt26NAReNMmztLXUX3JIhSsBdPMYIWUIWFIoVlaRrfpoF9Tpea0n?=
- =?us-ascii?Q?lYZTUAsYgTK7k1fOC7qj7dzufoXSPJ7Sb7EwPM5yblVmX5zXE8l6yH16LusY?=
- =?us-ascii?Q?c8RXBdvN02LR+jq0ptwVwjkg29JIGtaa01WeG2ZZ+/4hDcK40Sc1vcOQjCA7?=
- =?us-ascii?Q?tSStR9DTH50mLRx67fgytcHiqLj/hm2/jFw9wVIgrVYwOrHgkA=3D=3D?=
+	=?utf-8?B?MXNpWFFtWnplc3NnNDVBQzFnd3pqdjFldnhBaVZsNjY0SlFUNkoxaStRSDhI?=
+ =?utf-8?B?c0VtRSt3b0YrUVBROUhGWlFWekYwNEpIZjhHUkc3bUNLdXp4dUJxQjlhOFpp?=
+ =?utf-8?B?WTltSlVYRDhYSzY0SzkxTG5HN3pueUNkUVBhYUE2b2lLVEk5WDdHdUQyaENQ?=
+ =?utf-8?B?c3YwQ1EvSXg3M1k5cXhIWDNqVjJtRjZpdFdqWk5CMnFSQ2doOFhSaFFPL0FN?=
+ =?utf-8?B?NHhEZ3l0QUdEV2tnZjczdExFZFNpT3pXVFl4dXdLT0VIYTZtU0ppTmwwYnJO?=
+ =?utf-8?B?akF5Q3JMd0JmTk5nRitoV1VzdnNvSWNHQmdHM2c5bHBienI1MVJpblpuUisr?=
+ =?utf-8?B?UFZIeUhnQS9VRzhpalBPeFRFa215WmxxWUI5aVBINWJtdHFiUFJaQXcwY2l3?=
+ =?utf-8?B?NDBPYmVMYk04U21pMkdIMXN2YlFRMmUwd3ZGWVZQVjBZOGRsN2M1S1dGdUF1?=
+ =?utf-8?B?MlF1QW9ZczFleFd4YzhiL0R0S3NtemkwRU1Ia0IxNjRZejZTb0tYNXh6VWRi?=
+ =?utf-8?B?bVZqVnBvMWI0cyttK1lMdG1mTE41UldJWU5wZ0J6NFptUGw5TEowQW9rQ1FM?=
+ =?utf-8?B?NlAvSEliZ2w3YXlpVUN5TzlBNmt1TDBsbUlFaDhRNDRPRXJOYjBZeVd4QWtI?=
+ =?utf-8?B?Y0oxMjdzSDEvK09rUkxxclA1cUJub2VoS2hkQUgyQ2RpMnI3dFR4c1dkbXdv?=
+ =?utf-8?B?cElFMXJBWU9uOUpNdEZqOTZXaDEwVkt1d0lRSnh4dU1Dait3NGVGa0FreVpS?=
+ =?utf-8?B?dEpsTGtoRGRKOEJQdXhWVkwyanV2T0VLVHpLNk1lckRiY01nVi9VRE96RnVW?=
+ =?utf-8?B?R3ROdjZQTG5VY28rdHhMQnJac1dUZG9FcmZMWkJocVZBdXFlTXhlSk5rQ3U2?=
+ =?utf-8?B?ZWpHdVZKWVlEKzhwY25qMExnQWVpbnRhN3o3aElCNTNrQWZsa1ZLTlh3RG9C?=
+ =?utf-8?B?RW5FSVQ0Qnh1OHJ4OCtRWDlQRisxMTVuZ0pZYWJraUtGZHVaeEYrSWEwd25H?=
+ =?utf-8?B?bllkSktjWkRqWkdiZ2ZwVGxGSUh0ZHVTSjhqbHdOOHJ0Q09aV28wNi9wcFFJ?=
+ =?utf-8?B?SU1FSDhnNkpkbXJMQ3JldHBwYTRRdFE2VlVjeGo2am5mdGtndHNoTHRrczZy?=
+ =?utf-8?B?aFhjZS9qSSt2VnlkenFZekthQmxRVzg5YzZ2Rkd1eGdmRVlwOEZQTnplbGtZ?=
+ =?utf-8?B?M2t5Z1AyZnVBSnFTUXlPM2tJenBQM3FyMjRIWWdza0w0cytha0lPL1VnV1Aw?=
+ =?utf-8?B?WDM2MHZVSzNRRThzZEFFOUtldDU2b3VOWlNSQzBXTTg1akdPaUVNU0Y2MFd3?=
+ =?utf-8?B?UDRRNDRYVU4wUG9PM3hQdHQrODNvRzJQOFZmVWRKcCtHZSswcjJ2U0tLWmNr?=
+ =?utf-8?B?NFdaSXlnWW5KcVIxR2U5eTNQL0xleU50b2hJMTMwZVBLOE1vdUg4Zmx2bXJG?=
+ =?utf-8?B?cmw4OGlwWHhVZWJFUnVkTXdCMjlzUG10eklrWGc2N0lWMTluQjNOT3I0Wkl3?=
+ =?utf-8?B?WGRTaGcxTjdPNWRIbUJzRW5xVmVXN0FDV3dLSXNHNDRHQ1RTMTZRQTlRR0JL?=
+ =?utf-8?B?b2FObjJwbERHY1B4blNqM1plb2N3Q050UE1WalFvWnhjcWlFUmhYVFhya3pK?=
+ =?utf-8?B?Y2kzYkh1ZEZqTmJHcFF1ZjhacXp2UzUxeVRQVk9qc21VKzc4Q2F0NURKOStm?=
+ =?utf-8?B?MU9kbWhVY0RjMEZ3US9wTzJtd0tIdDlHU0JCTWs2d3RmanFmQm94Sk9kQlVX?=
+ =?utf-8?B?QUZCYnlMTVdsSWg1WHRra1dtSDVTUTVnaGVnK3RLcHJJWDNieEpMd0p3RGpH?=
+ =?utf-8?B?UlAveldtWW13YlNIT0ZHb3RPMmQyNncvbWZ0bGYyeW9RTjFMRU1qQnZYMlBE?=
+ =?utf-8?Q?/Hp5mmIApNo1t?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB4099.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tjjyvFs27aJw6f9MFo362M0QhPWhgK+7f4ETsiUuSGL4l67T9sUfUBWq5LHz?=
- =?us-ascii?Q?ziZ0PjGU/TWo2ckF7gWpCItRAnva53ZWcpXdtG1TXh4W8NVAQm1dDCXua7vm?=
- =?us-ascii?Q?RV9CGomIh9fz8fw6GbxROA1ixfn5fpIlCdHyhGCyurUnXaELNnlGcsWbYgyu?=
- =?us-ascii?Q?u3HCULQGCeTQRSMmjfvrXzSkWHpyaRed4AEywHp9u/XlNkWB+ycqh+NBIOmi?=
- =?us-ascii?Q?wfz4mHp6qFt+vFRreDBfl0VFOYaUtJBbWsqMbDV/5M7k/wJ429wZUJ+Jet76?=
- =?us-ascii?Q?wSRs4+KUlg+WaH4lf1ZsAKYlYWQElhx+wQks2yeSvfpoIW8VuLYZzJfJHFnR?=
- =?us-ascii?Q?R5R5i0uzNODBuwMZDW/D4IWV5mTQOQA3s4OyHydVzdfVOvC9iEUvqkPACIjt?=
- =?us-ascii?Q?4uF11cPcyZ5dSKuqAy5HrZhWi8xMzSAAcTtqxj33yrlOeYKvWmx7HBHayVgw?=
- =?us-ascii?Q?qGu0TCtkCYnJpEhhL17/8L7D2s5fzMOYpYZS8LWoFPwUBEzv2DCSRZlnbE9e?=
- =?us-ascii?Q?ArZrizyRg0BKR7suYPp4Nf9LbS/YFHjD4mcyECLqzzb+k3Hp3UOYjrPYk/D0?=
- =?us-ascii?Q?67GY6csAMl959G/GLilJxXEgPCz+c+UXxL8uUHzxuXZ1jIRhnYcmsHpIfX5H?=
- =?us-ascii?Q?NcmKNLyr6BgNnY+WdvXyfNyXF/6W+IBjXZn+i9bcfc1jHeqQ/E3XkPGDWuYu?=
- =?us-ascii?Q?CYFIy3dYdw5ibn4M6jV4hLiSpI3CHu+s7Xosb/RBsGRbZwH73HaSgxxlJ1kn?=
- =?us-ascii?Q?wag0r0vt824TbKDJCsju3am+dx4cu3xzntP1J6+EAkwJ8XC+nugL8l2+L0vp?=
- =?us-ascii?Q?0somTf0Nzrv3JJW7Zhgot7nfqambGvMXwm1RvdKT+AWvpsJWOyQzMMQYs7bx?=
- =?us-ascii?Q?uBXxMgasTL1P+pgKkPc2CEwgXcJ/PYhwW7Ewzjm9dSRhr4hm2fg6cbAxS/SN?=
- =?us-ascii?Q?jh1OJf9pi3p3eudTgjA5WihdNxdAeZH+0TjtZ2pGJpJneJfVYDfUI/2gRqKH?=
- =?us-ascii?Q?FWANOprlokOopKHFX2IBl5g3sbDHYVPvIC4Qb8zAzodMZfholAJnMupfyyiB?=
- =?us-ascii?Q?5ASiD40MSJ3PZtBcNGCf1iP7EoA1pYhDAZ+FHT9bZNSJ791WpeBLsA7aAMh3?=
- =?us-ascii?Q?CJdr+sHuIOp3DFj5qlBPUcyNAQkSyl6yBYoiD7MSSeRTBQ6Nv2e29QDGq7MX?=
- =?us-ascii?Q?yPLhBowDqY+nrMtZ/3/5QQ4ruF3PoFH6Y4av7oj3Uyfwa54mo4/j5Q4Jc1vI?=
- =?us-ascii?Q?kZHvXQbUPeSMrTrz4ZJbiXVSl1QVM3tHgSJkBZ0k1K+sFEAlu6+2iXDKPB4A?=
- =?us-ascii?Q?bEqdTNcmzXd//Dref0NpVV3P0eracXaIPiiRZnXBSG2nqHpwH/mA18xsa8WY?=
- =?us-ascii?Q?FNu4fqHOe3g3dNN/Hg6AM0B9h/RDMF61bk2Wxj4FlVrXfT8i6nKj1StZu99q?=
- =?us-ascii?Q?uBlVDoMfI4gfCw86T0i4rXTxHJ4lYKRD8nr2MEC7M5aKNxe5JCDOG0dqLeAN?=
- =?us-ascii?Q?iUq037bJN6u6HJPYE70+YP4Yv4kyq8PiFRxiqR/Lplo7fLXiA6qBnAg7sSju?=
- =?us-ascii?Q?keJGlfGrwTVtSGqXIE2GzXPbrgtpJ6uEJDtAUA0CdFjEnm6T+UABBJPekn2x?=
- =?us-ascii?Q?aA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	+qncushjv1xfCU4lVSCwdRxo0AK5FCwSohNgpNgeRdMTPZlKbCZ2IDD1giv5/WJ6tmEEoVgf4pGggo7OQK+0rPCrAu7NPA3rU05Skk5ifumgo+sAv5vRkJfAmoxOTxw23zBgx/MPnrn8S6Hf7sJJDBRHakrk99cbhPM3P1xXQRScEUifq01iPK9w6R540UqqLWYP1u8jrh39Uocfoe6OHmWElI3g7aw//TtQAe4mKUvp7fj/LKxvdWT600qUsh1l+DtJODfajsxNdaZ5im1bBop/5xCXiIWcMIWTxzwhkjbGVpbA/DTXAMrmzXB5zgtnz5sp35PXmD8amo4qxhrOjaTZlIv76ZEopUZzm1+7l9lR8MXd486UPHJupjVhJ7rPFjuJMv4BAqwjk9vdHpZbep9rrowlWO6ta5LqH9rkAj1ZLjbj5qgZlCFoHd1ZxI41RiV2FMbsqa7AZXBig17iembfTSg+0K5x5R9G6MAT+GIylGO4+bj49UTwBuQDvExEzyjQ8ecGlL6aKkENLjdJeLx8dSTXo/MNx8Rh5F1lXtSNu0ccYQoW9H6AGRrtBQ3dm/aMo7sZBw5yOUfKe4U3W7qB7iYAcoAexSxqswZDOc8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ba3e0d8-789d-4ef6-9c11-08dd55afadde
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR10MB4099.namprd10.prod.outlook.com
+	=?utf-8?B?L3ZxWlNDWWZnaHM5d1AzS096WWZKbVFrYzlYS0I5QXdKNjRxWHE1dTluWVk2?=
+ =?utf-8?B?MGVHL2E2VkRVVWgyb0tqdG9pcW5OVU5nUnVUQ1cwUlp4RFluUnRmUDhnbkpm?=
+ =?utf-8?B?ZVdMOGJQcWpuUGNwcTY4Nm82Y2JHYkZYWGF3cFpua0N5SnA0M2JiNERDblRR?=
+ =?utf-8?B?ZmtqaEk3MjZNdlRRc3hnMXBqQUhJaUN5WXJuTHlIenZvYjQ2SGFSUEFuSm9r?=
+ =?utf-8?B?MHFkeGtnOWpzUUdMMG4ra0pTbTc1b0huelpEM0ZOT0lGMkRUbE8rMjVod1Bq?=
+ =?utf-8?B?WVRqSEdybWpNd3Yva0RCcHZwUjViT3cwOFRaZ0t6NGdCSGptOHEzTmJ6a21I?=
+ =?utf-8?B?NllhODZyVUkyUm1UdXZCNVlVNVIzWktaUVF5WVBSRjI4bWo5ZFhjRVYzOThn?=
+ =?utf-8?B?QjFEZ0gxTVQ2SWxoY0paZnYycFFBQ1pROGZNeENDU09JQjArNTlTUXVMcitV?=
+ =?utf-8?B?UDRvUk5iNW02NDZhZVRkMjcwSktPRUZRWFBKNXRnQkR4VXJFMW4yMlpCa0xv?=
+ =?utf-8?B?S21iZ2lxaU83dFZzcEVUeS9qaE5IZW01elRHUWZjY1FMYTNCbmdnWmRlYXgz?=
+ =?utf-8?B?c1loalhzMXp0ZEpmWWVvUUZkT01lYXF3UURUa3A4QTBxcWRPY1B4QndjNTdo?=
+ =?utf-8?B?akNhR1R5UUNac1BJbXdVd1VDYXlBUUsxVS9nNGVSeDNJTjJ0aUtIbXdCRmps?=
+ =?utf-8?B?Y3JuV1BUVmtncHY2aVhQamRqVm5PNWRQU2JUZzVFZU5WcUdnYy9jSFBidFVM?=
+ =?utf-8?B?Vi9uM0pNVEI3QXZ1RSswSWFMS1pTUFF0V0JmWEY0MklZYlRoejhmTXVTQk5w?=
+ =?utf-8?B?Wm9xdDB6dUV4SGpIbEJNbTJpaVUzMStFK081VVQ2Y3c5R1JTa1RzQ1p1VXVX?=
+ =?utf-8?B?eWJQclFINndlOWRuMnRpa0NwM1RDNVpYU3BQM0hjT2dkN1RnM2h4VXJJUWVl?=
+ =?utf-8?B?VDhPVlBCSWVDZDFPekcybE5ldEFZSFplM2l2Mm85UFd2by9LU01BU0taK0VH?=
+ =?utf-8?B?aXIvVXh0d3F5YUs3YmdkdXd5OWhYVmNLa2VSTXRhNlNwQ1NsSVdzWlQwOW5j?=
+ =?utf-8?B?LzN2a1RaekZ1d2JaY2NnS21scWJVTmtmR2RmQUdyV1A4ZHk3SnJmbjFQTkpK?=
+ =?utf-8?B?aCt4emR5bU5BVldHWVVzU3gyZ1hvZm53KzRNbDEzbE5LWDBXU3dzeDhuakdG?=
+ =?utf-8?B?Z1p0em5BSklXbEFFdXZrT0FFMG1VbTVhMjYwVGN4alA1akRiSDZiaGRMUnUw?=
+ =?utf-8?B?MFVsbmRwZ2hUTjRpSVBxellPdzhtRU9SWUJGczFvbk5qQ2hMbnEyWTcvVkF5?=
+ =?utf-8?B?aVNBOHpJakxGRUtGR1g0S3VyMWRERlVFbGE3M21USDNJc0VHb0sxRFBrK3RJ?=
+ =?utf-8?B?cUtKYTl6aWg3YW03WklZOTBoRi8wcDZVeXRJVzB6Y1hlRy9waFVoeDZtMXl0?=
+ =?utf-8?B?bmwvMVIzbkgzVVRDelBkYndyUGNCSDVYUWFwY0oxTERMRjFFSDhkUTFEM3Vt?=
+ =?utf-8?B?SStwZnhSWHZlbGRZc3pESXlEc1ROMUtPWXpNY2l3RkdkemhEMHhEeVBmandM?=
+ =?utf-8?B?ZnA3djFNNGNGaGhsdk5GZ0ZPVDVSQ0hwQnBweUhQZ1BWRGZZU3lmSldTWDQ4?=
+ =?utf-8?B?YVVselh3NktIV2pTN084YURpUmN6bmhhWFBuUzdvVUFGVXgxeTQzWUk3Sk1C?=
+ =?utf-8?B?LzNuTU43RDRISVlUS1hiK3lGa3ZzYTlldXlNaTVJY3krRmhTTFRWUGc4b3Zx?=
+ =?utf-8?B?Wk53RjltaHVpQTF0QkFMWG9SbFVNT2ZxU0pRczRjU0cyelh6UnY0MThGQVJh?=
+ =?utf-8?B?K3pBa08xTWEyOWlqWStmOEtSTktwUm85OWZQNmhMZWY5emF6Qzh6clpyWTFN?=
+ =?utf-8?B?MjdnQWZHQ2IrOFlJSjFVWWk5T0JKeUhvVTU1NkZwTSttbldFVlRqUWZZemRw?=
+ =?utf-8?B?bXVPVXlUL29MbW1tRnNaRzFRSFRLVEh1Q2VzTE1IT3BnMHR6YzBUUk50cGp4?=
+ =?utf-8?B?MHBNRGdZclROdHE3dldKc2lZTnBtRDY1TmZlaWh2R2V1eXQ5Q2tUUW1XMHZO?=
+ =?utf-8?B?eGRpTWljUnFMcFhRajFpOTlsY0hxeDNxQm81aGhjOEZZUk9qMzlqd0FCeSt1?=
+ =?utf-8?Q?sLUuvvhHN09QAU0UUQFvOgLHR?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9aafb456-614c-4b54-1512-08dd55afb734
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 15:18:38.2515
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 15:18:53.9704
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FqI9xgVRENgocJim4MxrQtdVOj+EV03f5QT3TyXnnQZ1YxT6W3xDogZUisszhDRI/CNSIBbNYS2Hl/pR9ODMtPccAGBZCGcjM/WtZFidl6c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5910
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 phishscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502100000 definitions=main-2502250101
-X-Proofpoint-GUID: BZ4JmLQSydKbhyHZ1TSVdw7psJYyqKsK
-X-Proofpoint-ORIG-GUID: BZ4JmLQSydKbhyHZ1TSVdw7psJYyqKsK
+X-MS-Exchange-CrossTenant-UserPrincipalName: YNl/LPUMABl+2aUpCBPmsz+7Iawn5T7dkIHxt8xyZnWCce8XqcHl9nx+XAofnlrw6TMG+kwlrKBFckhfZ1FY6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6038
 
-Jeff - looking further in this series, I asked for a couple things for this
-series which you've not provided:
+On 2/25/2025 00:17, Luke Jones wrote:
+> From: "Luke D. Jones" <luke@ljones.dev>
+> 
+> Adjust how the CSEE direct call hack is used.
+> 
+> The results of months of testing combined with help from ASUS to
+> determine the actual cause of suspend issues has resulted in this
+> refactoring which immensely improves the reliability for devices which
+> do not have the following minimum MCU FW version:
+> - ROG Ally X: 313
+> - ROG Ally 1: 319
+> 
+> For MCU FW versions that match the minimum or above the CSEE hack is
+> disabled and mcu_powersave set to on by default as there are no
+> negatives beyond a slightly slower device reinitialization due to the
+> MCU being powered off.
+> 
+> As this is set only at module load time, it is still possible for
+> mcu_powersave sysfs attributes to change it at runtime if so desired.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>   drivers/hid/hid-asus.c                     |   4 +
+>   drivers/platform/x86/asus-wmi.c            | 124 ++++++++++++++-------
+>   include/linux/platform_data/x86/asus-wmi.h |  15 +++
+>   3 files changed, 104 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index e1e60b80115a..58794c9024cf 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -614,6 +614,9 @@ static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
+>   			 "The MCU firmware version must be %d or greater\n"
+>   			 "Please update your MCU with official ASUS firmware release\n",
+>   			 min_version);
+> +	} else {
+> +		set_ally_mcu_hack(false);
 
-1. Some assurance based on code that the kernel-side code doesn't rely on
-   VDSO/VVAR etc. mapping. I gave up waiting for this and went and checked
-   myself, it looks fine for arm64, x86-64. But it might have been nice had
-   you done it :) Apologies if you had and I just missed it.
+Rather than calling this to set a global, how about just unregistering 
+the s2idle devops?
 
-2. Tests - could you please add some tests to assert that mremap() fails
-   for VDSO for instance? You've edited an existing test for VDSO in x86 to
-   skip the test should this be enabled, but this is not the same as a self
-   test. And obviously doesn't cover arm64.
+> +		set_ally_mcu_powersave(true);
+>   	}
+>   }
+>   
+> @@ -1420,4 +1423,5 @@ static struct hid_driver asus_driver = {
+>   };
+>   module_hid_driver(asus_driver);
+>   
+> +MODULE_IMPORT_NS("ASUS_WMI");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 38ef778e8c19..9dba88a29e2c 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -142,16 +142,20 @@ module_param(fnlock_default, bool, 0444);
+>   #define ASUS_MINI_LED_2024_STRONG	0x01
+>   #define ASUS_MINI_LED_2024_OFF		0x02
+>   
+> -/* Controls the power state of the USB0 hub on ROG Ally which input is on */
+>   #define ASUS_USB0_PWR_EC0_CSEE "\\_SB.PCI0.SBRG.EC0.CSEE"
+> -/* 300ms so far seems to produce a reliable result on AC and battery */
+> -#define ASUS_USB0_PWR_EC0_CSEE_WAIT 1500
+> +/*
+> + * The period required to wait after screen off/on/s2idle.check in MS.
+> + * Time here greatly impacts the wake behaviour. Used in suspend/wake.
+> + */
+> +#define ASUS_USB0_PWR_EC0_CSEE_WAIT	600
+> +#define ASUS_USB0_PWR_EC0_CSEE_OFF	0xB7
+> +#define ASUS_USB0_PWR_EC0_CSEE_ON	0xB8
+>   
+>   static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+>   
+>   static int throttle_thermal_policy_write(struct asus_wmi *);
+>   
+> -static const struct dmi_system_id asus_ally_mcu_quirk[] = {
+> +static const struct dmi_system_id asus_rog_ally_device[] = {
+>   	{
+>   		.matches = {
+>   			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> @@ -274,9 +278,6 @@ struct asus_wmi {
+>   	u32 tablet_switch_dev_id;
+>   	bool tablet_switch_inverted;
+>   
+> -	/* The ROG Ally device requires the MCU USB device be disconnected before suspend */
+> -	bool ally_mcu_usb_switch;
+> -
+>   	enum fan_type fan_type;
+>   	enum fan_type gpu_fan_type;
+>   	enum fan_type mid_fan_type;
+> @@ -335,6 +336,9 @@ struct asus_wmi {
+>   	struct asus_wmi_driver *driver;
+>   };
+>   
+> +/* Global to allow setting externally without requiring driver data */
+> +static bool use_ally_mcu_hack;
+> +
+>   /* WMI ************************************************************************/
+>   
+>   static int asus_wmi_evaluate_method3(u32 method_id,
+> @@ -549,7 +553,7 @@ static int asus_wmi_get_devstate(struct asus_wmi *asus, u32 dev_id, u32 *retval)
+>   	return 0;
+>   }
+>   
+> -static int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+>   				 u32 *retval)
+>   {
+>   	return asus_wmi_evaluate_method(ASUS_WMI_METHODID_DEVS, dev_id,
+> @@ -1343,6 +1347,38 @@ static ssize_t nv_temp_target_show(struct device *dev,
+>   static DEVICE_ATTR_RW(nv_temp_target);
+>   
+>   /* Ally MCU Powersave ********************************************************/
+> +
+> +/*
+> + * The HID driver needs to check MCU version and set this to false if the MCU FW
+> + * version is >= the minimum requirements. New FW do not need the hacks.
+> + */
+> +void set_ally_mcu_hack(bool enabled)
+> +{
+> +	use_ally_mcu_hack = enabled;
+> +	pr_info("Disabled Ally MCU suspend quirks");
+> +}
+> +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_hack, "ASUS_WMI");
+> +
+> +/*
+> + * mcu_powersave should be enabled always, as it is fixed in MCU FW versions:
+> + * - v313 for Ally X
+> + * - v319 for Ally 1
+> + * The HID driver checks MCU versions and so should set this if requirements match
+> + */
+> +void set_ally_mcu_powersave(bool enabled)
+> +{
+> +	int result, err;
+> +
+> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_MCU_POWERSAVE, enabled, &result);
+> +	if (err)
+> +		pr_warn("Failed to set MCU powersave: %d\n", err);
+> +	if (result > 1)
+> +		pr_warn("Failed to set MCU powersave (result): 0x%x\n", result);
+> +
+> +	pr_info("Set mcu_powersave to enabled");
+> +}
+> +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_powersave, "ASUS_WMI");
+> +
+>   static ssize_t mcu_powersave_show(struct device *dev,
+>   				   struct device_attribute *attr, char *buf)
+>   {
+> @@ -4711,6 +4747,18 @@ static int asus_wmi_add(struct platform_device *pdev)
+>   	if (err)
+>   		goto fail_platform;
+>   
+> +	use_ally_mcu_hack = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+> +				&& dmi_check_system(asus_rog_ally_device);
+> +	if (use_ally_mcu_hack && dmi_match(DMI_BOARD_NAME, "RC71")) {
+> +		/*
+> +		 * These steps ensure the device is in a valid good state, this is
+> +		 * especially important for the Ally 1 after a reboot.
+> +		 */
+> +		acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> +					   ASUS_USB0_PWR_EC0_CSEE_ON);
+> +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> +	}
+> +
+>   	/* ensure defaults for tunables */
+>   	asus->ppt_pl2_sppt = 5;
+>   	asus->ppt_pl1_spl = 5;
+> @@ -4723,8 +4771,6 @@ static int asus_wmi_add(struct platform_device *pdev)
+>   	asus->egpu_enable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_EGPU);
+>   	asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
+>   	asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
+> -	asus->ally_mcu_usb_switch = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+> -						&& dmi_check_system(asus_ally_mcu_quirk);
+>   
+>   	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
+>   		asus->mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+> @@ -4910,34 +4956,6 @@ static int asus_hotk_resume(struct device *device)
+>   	return 0;
+>   }
+>   
+> -static int asus_hotk_resume_early(struct device *device)
+> -{
+> -	struct asus_wmi *asus = dev_get_drvdata(device);
+> -
+> -	if (asus->ally_mcu_usb_switch) {
+> -		/* sleep required to prevent USB0 being yanked then reappearing rapidly */
+> -		if (ACPI_FAILURE(acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE, 0xB8)))
+> -			dev_err(device, "ROG Ally MCU failed to connect USB dev\n");
+> -		else
+> -			msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> -	}
+> -	return 0;
+> -}
+> -
+> -static int asus_hotk_prepare(struct device *device)
+> -{
+> -	struct asus_wmi *asus = dev_get_drvdata(device);
+> -
+> -	if (asus->ally_mcu_usb_switch) {
+> -		/* sleep required to ensure USB0 is disabled before sleep continues */
+> -		if (ACPI_FAILURE(acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE, 0xB7)))
+> -			dev_err(device, "ROG Ally MCU failed to disconnect USB dev\n");
+> -		else
+> -			msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> -	}
+> -	return 0;
+> -}
+> -
+>   static int asus_hotk_restore(struct device *device)
+>   {
+>   	struct asus_wmi *asus = dev_get_drvdata(device);
+> @@ -4978,11 +4996,34 @@ static int asus_hotk_restore(struct device *device)
+>   	return 0;
+>   }
+>   
+> +static void asus_ally_s2idle_restore(void)
+> +{
+> +	if (use_ally_mcu_hack) {
+> +		acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> +					   ASUS_USB0_PWR_EC0_CSEE_ON);
+> +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> +	}
+> +}
+> +
+> +static int asus_hotk_prepare(struct device *device)
+> +{
+> +	if (use_ally_mcu_hack) {
+> +		acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> +					   ASUS_USB0_PWR_EC0_CSEE_OFF);
+> +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> +	}
+> +	return 0;
+> +}
+> +
+> +/* Use only for Ally devices due to the wake_on_ac */
+> +static struct acpi_s2idle_dev_ops asus_ally_s2idle_dev_ops = {
+> +	.restore = asus_ally_s2idle_restore,
+> +};
+> +
+>   static const struct dev_pm_ops asus_pm_ops = {
+>   	.thaw = asus_hotk_thaw,
+>   	.restore = asus_hotk_restore,
+>   	.resume = asus_hotk_resume,
+> -	.resume_early = asus_hotk_resume_early,
+>   	.prepare = asus_hotk_prepare,
+>   };
+>   
+> @@ -5010,6 +5051,10 @@ static int asus_wmi_probe(struct platform_device *pdev)
+>   			return ret;
+>   	}
+>   
+> +	ret = acpi_register_lps0_dev(&asus_ally_s2idle_dev_ops);
+> +	if (ret)
+> +		pr_warn("failed to register LPS0 sleep handler in asus-wmi\n");
+> +
+>   	return asus_wmi_add(pdev);
+>   }
+>   
+> @@ -5042,6 +5087,7 @@ EXPORT_SYMBOL_GPL(asus_wmi_register_driver);
+>   
+>   void asus_wmi_unregister_driver(struct asus_wmi_driver *driver)
+>   {
+> +	acpi_unregister_lps0_dev(&asus_ally_s2idle_dev_ops);
+>   	platform_device_unregister(driver->platform_device);
+>   	platform_driver_unregister(&driver->platform_driver);
+>   	used = false;
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 783e2a336861..a32cb8865b2f 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -158,8 +158,23 @@
+>   #define ASUS_WMI_DSTS_LIGHTBAR_MASK	0x0000000F
+>   
+>   #if IS_REACHABLE(CONFIG_ASUS_WMI)
+> +void set_ally_mcu_hack(bool enabled);
+> +void set_ally_mcu_powersave(bool enabled);
+> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval);
+>   int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+>   #else
+> +static inline void set_ally_mcu_hack(bool enabled)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline void set_ally_mcu_powersave(bool enabled)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+> +{
+> +	return -ENODEV;
+> +}
+>   static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+>   					   u32 *retval)
+>   {
 
-   This should be relatively strightforward right? You already have code
-   for finding out whether VDSO is msealed, so just use that to see if you
-   skip, then attempt mremap(), mmap() over etc. + assert it fails.
-
-   Ideally these tests would cover all the cases you've changed.
-
-Please do try to ensure you address requests from maintainers to save on
-iterations, while I get the desire to shoot out new versions (I've been
-guilty of this in the past), it makes life so much easier and will reduce
-version count if you try to get everything done in a one go.
-
-Having said the above, we're really not far off this being a viable
-series. You just need to address comments here (+ in v6...) + provide some
-tests.
-
-Thanks!
-
-On Mon, Feb 24, 2025 at 10:52:39PM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
->
-> This is V7 version, addressing comments from V6, without code logic
-> change.
->
-> --------------------------------------------------
->
-> History:
-> V7:
->  - Remove cover letter from the first patch (Liam R. Howlett)
->  - Change macro name to VM_SEALED_SYSMAP (Liam R. Howlett)
->  - logging and fclose() in selftest (Liam R. Howlett)
->
-> V6:
->   https://lore.kernel.org/all/20250224174513.3600914-1-jeffxu@google.com/
->
-
-Nitty, but it's really useful to actually include the history for all of
-these.
-
-> V5
->   https://lore.kernel.org/all/20250212032155.1276806-1-jeffxu@google.com/
->
-> V4:
->   https://lore.kernel.org/all/20241125202021.3684919-1-jeffxu@google.com/
->
-> V3:
->   https://lore.kernel.org/all/20241113191602.3541870-1-jeffxu@google.com/
->
-> V2:
->   https://lore.kernel.org/all/20241014215022.68530-1-jeffxu@google.com/
->
-> V1:
->   https://lore.kernel.org/all/20241004163155.3493183-1-jeffxu@google.com/
->
-> --------------------------------------------------
-> As discussed during mseal() upstream process [1], mseal() protects
-> the VMAs of a given virtual memory range against modifications, such
-> as the read/write (RW) and no-execute (NX) bits. For complete
-> descriptions of memory sealing, please see mseal.rst [2].
->
-> The mseal() is useful to mitigate memory corruption issues where a
-> corrupted pointer is passed to a memory management system. For
-> example, such an attacker primitive can break control-flow integrity
-> guarantees since read-only memory that is supposed to be trusted can
-> become writable or .text pages can get remapped.
->
-> The system mappings are readonly only, memory sealing can protect
-> them from ever changing to writable or unmmap/remapped as different
-> attributes.
->
-> System mappings such as vdso, vvar, and sigpage (arm), vectors (arm)
-> are created by the kernel during program initialization, and could
-> be sealed after creation.
->
-> Unlike the aforementioned mappings, the uprobe mapping is not
-> established during program startup. However, its lifetime is the same
-> as the process's lifetime [3]. It could be sealed from creation.
->
-> The vsyscall on x86-64 uses a special address (0xffffffffff600000),
-> which is outside the mm managed range. This means mprotect, munmap, and
-> mremap won't work on the vsyscall. Since sealing doesn't enhance
-> the vsyscall's security, it is skipped in this patch. If we ever seal
-> the vsyscall, it is probably only for decorative purpose, i.e. showing
-> the 'sl' flag in the /proc/pid/smaps. For this patch, it is ignored.
->
-> It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-> alter the system mappings during restore operations. UML(User Mode Linux)
-> and gVisor, rr are also known to change the vdso/vvar mappings.
-> Consequently, this feature cannot be universally enabled across all
-> systems. As such, CONFIG_MSEAL_SYSTEM_MAPPINGS is disabled by default.
->
-> To support mseal of system mappings, architectures must define
-> CONFIG_ARCH_HAS_MSEAL_SYSTEM_MAPPINGS and update their special mappings
-> calls to pass mseal flag. Additionally, architectures must confirm they
-> do not unmap/remap system mappings during the process lifetime.
->
-> In this version, we've improved the handling of system mapping sealing from
-> previous versions, instead of modifying the _install_special_mapping
-> function itself, which would affect all architectures, we now call
-> _install_special_mapping with a sealing flag only within the specific
-> architecture that requires it. This targeted approach offers two key
-> advantages: 1) It limits the code change's impact to the necessary
-> architectures, and 2) It aligns with the software architecture by keeping
-> the core memory management within the mm layer, while delegating the
-> decision of sealing system mappings to the individual architecture, which
-> is particularly relevant since 32-bit architectures never require sealing.
->
-> Prior to this patch series, we explored sealing special mappings from
-> userspace using glibc's dynamic linker. This approach revealed several
-> issues:
-> - The PT_LOAD header may report an incorrect length for vdso, (smaller
->   than its actual size). The dynamic linker, which relies on PT_LOAD
->   information to determine mapping size, would then split and partially
->   seal the vdso mapping. Since each architecture has its own vdso/vvar
->   code, fixing this in the kernel would require going through each
->   archiecture. Our initial goal was to enable sealing readonly mappings,
->   e.g. .text, across all architectures, sealing vdso from kernel since
->   creation appears to be simpler than sealing vdso at glibc.
-> - The [vvar] mapping header only contains address information, not length
->   information. Similar issues might exist for other special mappings.
-> - Mappings like uprobe are not covered by the dynamic linker,
->   and there is no effective solution for them.
->
-> This feature's security enhancements will benefit ChromeOS, Android,
-> and other high security systems.
->
-> Testing:
-> This feature was tested on ChromeOS and Android for both x86-64 and ARM64.
-> - Enable sealing and verify vdso/vvar, sigpage, vector are sealed properly,
->   i.e. "sl" shown in the smaps for those mappings, and mremap is blocked.
-> - Passing various automation tests (e.g. pre-checkin) on ChromeOS and
->   Android to ensure the sealing doesn't affect the functionality of
->   Chromebook and Android phone.
->
-> I also tested the feature on Ubuntu on x86-64:
-> - With config disabled, vdso/vvar is not sealed,
-> - with config enabled, vdso/vvar is sealed, and booting up Ubuntu is OK,
->   normal operations such as browsing the web, open/edit doc are OK.
->
-> In addition, Benjamin Berg tested this on UML.
->
-> Link: https://lore.kernel.org/all/20240415163527.626541-1-jeffxu@chromium.org/ [1]
-> Link: Documentation/userspace-api/mseal.rst [2]
-> Link: https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/ [3]
->
->
->
->
-> Jeff Xu (7):
->   mseal, system mappings: kernel config and header change
->   selftests: x86: test_mremap_vdso: skip if vdso is msealed
->   mseal, system mappings: enable x86-64
->   mseal, system mappings: enable arm64
->   mseal, system mappings: enable uml architecture
->   mseal, system mappings: uprobe mapping
->   mseal, system mappings: update mseal.rst
->
->  Documentation/userspace-api/mseal.rst         |  7 +++
->  arch/arm64/Kconfig                            |  1 +
->  arch/arm64/kernel/vdso.c                      | 22 +++++++---
->  arch/um/Kconfig                               |  1 +
->  arch/x86/Kconfig                              |  1 +
->  arch/x86/entry/vdso/vma.c                     | 16 ++++---
->  arch/x86/um/vdso/vma.c                        |  6 ++-
->  include/linux/mm.h                            | 10 +++++
->  init/Kconfig                                  | 18 ++++++++
->  kernel/events/uprobes.c                       |  5 ++-
->  security/Kconfig                              | 18 ++++++++
->  .../testing/selftests/x86/test_mremap_vdso.c  | 43 +++++++++++++++++++
->  12 files changed, 132 insertions(+), 16 deletions(-)
->
-> --
-> 2.48.1.658.g4767266eb4-goog
->
 
