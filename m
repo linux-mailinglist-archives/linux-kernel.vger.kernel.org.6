@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-531817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF823A44571
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B286A4456D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253E519C5664
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A991218964CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C6718C93C;
-	Tue, 25 Feb 2025 16:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1614188A0C;
+	Tue, 25 Feb 2025 16:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="n6l0kFEB"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jfM037W6"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B107C188724
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF6717B502
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499465; cv=none; b=itBH1h/ew122ZEkLbdw8FLvf+eu6is0E6jabTzV7eEfo0lNg4Lokk+Fuy8vqaESdPgFRXfwliyq0XOrx7CZYk6UGrTrq99c2ZPXGhm7mYqP7FEOJOsWCakpLXhgekuYe4i2lcPI7oAqBE8o1tIhSVHebWDzsHDeFNxwN07gEkZI=
+	t=1740499463; cv=none; b=Gn5Ve/uETRmPq911rw3/knOlsOnE1JAAhLNnaoLkfXQEEtt58ALCWUc5UJ/csFo+tulk5AJBX/tfdt1JHdeFRzzYzWD4dJjSdfX/2+GfoMCB5AKm2iXJrLDgUoOiw54R++ONB2jjfuvLgLGc286gTvhge/51qS1yGpioStBCDuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499465; c=relaxed/simple;
-	bh=VTW1IS7i/OjNtZuLaIVXuuL/aHNYaFf4pMMoQV0ML5s=;
+	s=arc-20240116; t=1740499463; c=relaxed/simple;
+	bh=ZWUvknXfYYLvFqt4wPTgbskSKIiWK+wf2r8m18E1vnc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6UY5yCpXvbjh5Sbi4OlScOpWy2t2eQ4/vDx1DVJYKv6WSBZ5UXTqEOLl9lETnavc8i5KiNUyEc35l8UVTWlAX5zyil/s6T+lrzlzZ8kYFMxHU+5HTO7BnGqtCwZ9a4sylrWIphdBFOBNzl86vHtu9ezGK6io95KXKcp565kyNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=n6l0kFEB; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc0026eb79so11749211a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:04:23 -0800 (PST)
+	 To:Cc:Content-Type; b=fd4I+2VDj74q+i9uFKpOISF66LRHU5o8TFfMUmBaIuuAb0HRjN0kqR4rU4AvVAoiZb+mNfmqfMfzP3T1QxApN1L4peSvgmk51QFql/koOrXH/LGQd0dig6w86csjUNb5Dg6KwQtp8PYi8VJfbT+gTa99pbekWpKatbVH+KeJw+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jfM037W6; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5452c29bacfso6267749e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:04:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb.com; s=google; t=1740499463; x=1741104263; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740499456; x=1741104256; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hRKvkOnD9TtTQxj3HCyksPuAKJutP4jLh4PJeGhnrRw=;
-        b=n6l0kFEBaw1y+hHHRWpmuP2QrM99f7jt54Os7OTwZDGjWpuEiCGMbJfjDRceyhwWc5
-         V0pOgELXXjut4AOQ7Ofgys+m7IVOIX4rXStLHTpxlpuMf0lVSfbV/v0IsOloOvoTDbmL
-         Nlu2Zn/qqd2TdvJeQO/+AoeH3X09RKEVsW1TAbn+5X4Et/i65/c8U4cwA0J8u5VnOscN
-         gUIYbpe3SQQt2KLATEN7VEt+JAZUmlk1muwj7+xDH7wF07JAPArYWnpzlp9EWrLA6jgt
-         4Hw1GEW3isNIJVCdyev3YAoWCoZ80208HErHcXHbzzliUlm1XFb9KTwVRxylClvpCkDo
-         vXTQ==
+        bh=ZWUvknXfYYLvFqt4wPTgbskSKIiWK+wf2r8m18E1vnc=;
+        b=jfM037W6npixrvHkU2dAPgCmCfVgmjgOFuioD0HZVD1MOfJYnZDM9FDrKA9c4NO9/o
+         qip1kCOHiU+cXPSCgc+ct0ZpuOqa5iejwTQO0/5YiDrWRHLDg3mdNI/oTfEYwAbQRiFB
+         ZbM3Eb8dYV30YYUmJHLU0UhhcdXKWAA9NKLXTO1XN8xz3UxpO6auieacaqnEc0OUQWI8
+         YI8KTYdoxbTIs+txMrk6BC0Nd9w4Wl41wnmi4uO+YBS75iL71/Z8SkQjDAQpiXvjkwtY
+         319eE2pxYCD+fUR1PecFps0A8NxWBwIkG77sNO8jjKZgMvfLU8ewNZGzEnQ6uT9P9awz
+         G6qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740499463; x=1741104263;
+        d=1e100.net; s=20230601; t=1740499456; x=1741104256;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hRKvkOnD9TtTQxj3HCyksPuAKJutP4jLh4PJeGhnrRw=;
-        b=v/l3QvELwT/oS3m9tToBPmRSRl+KoqL4i+Zqu39bQPhaoqFLsBDsAY4CpUmgFCVmSX
-         YYt5h0mBTBuo02kSitsIvSLBQqx0K6htMiXWH+iAhaMvqQdd7Sr9zZdKIDiRwnYk1RRv
-         eFZ/Dhr/Ia5LNvnpdDUeVISF/mazynKfTl1hagDWwxmd7Im6/TLi+mPuZNPTTKHS2992
-         WyQRMvtHo5/8zl4Iu99+hMCRcArrr/GZosCMqJa+A/vXRFqIaPjti9STl3ZnRe2ZZcSE
-         Nn+TeWakrXvmKt7NvW+zr79U/NM1lrrP1lnCQxrbCiagYATXI8/LanRpEbzQln2sEqxu
-         Flvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwOwkedJ2qewvmRenwatJNu9goEfVRBVuRwYZcQlTSsh7qamWakMcB5bfFFtmtKxX3MkBNWCiBYNsulGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA5tPFUgFjAJ9CL4SNZ+b3kjAMoJ5hdwThRPAQDQNq79+LACNv
-	0h2UE+2Kr/+o9qA4Kl4QvvPkOCk5JIb+lw5oPz13QbRpkKeuXNaYjLtB+i8f/RAl84V5OAc1Zre
-	Oihn0eRzowu/LLki8ODJUZugYvGZ0H9Dz83728FtvTGA3vtXzJOgw2egi38D3KlpjT9ef50ATgn
-	tyrh/zd54CeHi05gw9ESppZvl2+vz2/Lmv7y1cpQoKRj5pUH4AmhP5Ow/NQaTzSWjrq8fk41hdE
-	YNLRMt05RrNlxYX7zyPgsi+qONOf7TwyTp0rDWkMM5ofm6WwtChqBtYcJLHftGl3+QMTJD0iRBg
-	StGMzsQT4G/lJFgJO7LqRFuA5R/jy6QImz7/qNOGVqNJjHN4Sk0EGszuCjrGmYLZo30ebeGDjO6
-	1r1LAsgYeph40TvB3aLif
-X-Gm-Gg: ASbGnctFcxK4wQmMe4PALJdTAGRpBAsGmzt1NYAmRjGY5T1Q6qmWAGoExjcWYXtqfbm
-	mR2Y6ssWBkcYWOha9o5YZrYWsEZ/pbl84C9ZCfu+o4L1OUbF6bhGpCHJFWGIce2BdVKUCWXVxvT
-	7FGbaEVrHRRm6jlfqTePEROzkN
-X-Google-Smtp-Source: AGHT+IGyh1jWG7kvXPe8EQRd9GcQQNFYExzpyCfQNpHjeoLN1FUP/xzECarfl4fqw7bw9I5wDY/K15SD3y8rUQxdngU=
-X-Received: by 2002:a17:90a:ec8d:b0:2f6:f32e:90ac with SMTP id
- 98e67ed59e1d1-2fce78a9aeamr31654991a91.11.1740499461044; Tue, 25 Feb 2025
- 08:04:21 -0800 (PST)
+        bh=ZWUvknXfYYLvFqt4wPTgbskSKIiWK+wf2r8m18E1vnc=;
+        b=oDOJmLceXQ/EWzdufWrPDhHunEtTerTNk+lXYVtm5bqQVah8CVjxEqgF7rHLab5+w6
+         /S3L5NdAJlV6X4r9rti73hzBgCyzhJkJm6JHImrPpA5SeOU50xDh9C0o26HvBuTVgR58
+         1BppWtQeuXoJqQtYWRCq0EiGjYn6bF0TavN+qSM+wkr/f8vIJ3EOb9Ho15ESdNEJHa1H
+         jQTi41A6/MJw1fgGFFc5sD6JBYQ4k3rXwlL7ylTpjXxNriOjcRvnrXcqi8/xjf86pUEE
+         ipEF60HMUSK+9j+rJ3us+v1pOwVzgp7SrGt4TG0QdHi/L9cP21kS0UFMNjIsbvj3SlWr
+         RS5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVoV3+UYYMEmv6X2gsOmFTGgzmK3FAmIt8eHdC+ASCYkJUoXAztiyDNK0FtU3gjWyYoPu+99L79BfcebTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqY5YfL6c9EkX49nGr3bjNCR9SbU2pavZ88CkXVlvhGS9xB2sP
+	E8Ex6W8TTXgcq2dvZOS5FPf/8cpN98HdsOqTwd6Gi6SlMqf9ekmoptQS+y7IwwqYPO+8J0Ra77N
+	DX+yneykgJz7yVWH8bGDUQ7ymzHseGflyFfuTbA==
+X-Gm-Gg: ASbGncuOvnGNIKv6nSIqUjoMT+EBJlLZkjphlyAYmXTo2XA9WOie1nrcUTGD5bEFN1h
+	hJeHUO6lcytNrplu32Wt4XSu68zUJAFktPcWHEtKMODcPNrEqLEcxkly1HzUvpRWwy/5fPFxgwg
+	F/mTgKr/4=
+X-Google-Smtp-Source: AGHT+IHNL/Gah3mevPZy4cnB+3l/3UaI9egw81hpQvTsWfBgPed86olYK84spCPWAgNJnWS+LPsg/bk0GhoKPm/zotM=
+X-Received: by 2002:a05:6512:3e1b:b0:545:8cb:218d with SMTP id
+ 2adb3069b0e04-54839268650mr7339170e87.41.1740499456063; Tue, 25 Feb 2025
+ 08:04:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224081328.18090-1-raphaelsc@scylladb.com>
- <20250224141744.GA1088@lst.de> <Z7yRSe-nkfMz4TS2@casper.infradead.org>
- <20250224160209.GA4701@lst.de> <CAKhLTr0bG6Xxvvjai0UQTfEnR53sU2EMWQKsC033QAfbW1OugQ@mail.gmail.com>
-In-Reply-To: <CAKhLTr0bG6Xxvvjai0UQTfEnR53sU2EMWQKsC033QAfbW1OugQ@mail.gmail.com>
-From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Date: Tue, 25 Feb 2025 13:04:04 -0300
-X-Gm-Features: AWEUYZnSwsts3AlnyMyPnDoZIO5Ek4gNZJVOo4qq2rXtoP6hhryN1CYaV-mMojI
-Message-ID: <CAKhLTr1HtH7gnSKSE+8LR9+MpNGYK0PYr8NGSTav-0sgf4y+gw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	djwong@kernel.org, Dave Chinner <david@fromorbit.com>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com> <20250221180349.1413089-10-vincenzo.frascino@arm.com>
+In-Reply-To: <20250221180349.1413089-10-vincenzo.frascino@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Feb 2025 17:04:05 +0100
+X-Gm-Features: AWEUYZmNsEy3fFFOlFl9Mr8FzjBUhEhxzOfrGNxvr7eNpQOWSTLd5B3Z3JZojQY
+Message-ID: <CACRpkda2A-3LDM=rbdLO9F=hAnMY02a+_m0hLxp6Rp6dsHWoLQ@mail.gmail.com>
+Subject: Re: [PATCH v7 09/10] arm64: dts: morello: Add support for fvp dts
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Jessica Clarke <jrtc27@jrtc27.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
 
-On Mon, Feb 24, 2025 at 1:15=E2=80=AFPM Raphael S. Carvalho
-<raphaelsc@scylladb.com> wrote:
->
-> On Mon, Feb 24, 2025 at 1:02=E2=80=AFPM Christoph Hellwig <hch@lst.de> wr=
-ote:
-> >
-> > On Mon, Feb 24, 2025 at 03:33:29PM +0000, Matthew Wilcox wrote:
-> > > I don't think it needs a comment at all, but the memory allocation
-> > > might be for something other than folios, so your suggested comment
-> > > is misleading.
-> >
-> > Then s/folio/memory/
->
-> The context of the comment is error handling. ENOMEM can come from
-> either folio allocation / addition (there's an allocation for xarray
-> node). So is it really wrong to say folios given the context of the
-> comment? It's not supposed to be a generic comment, but rather one
-> that applies to its context.
->
-> Maybe this change:
-> -                         * When NOWAIT I/O fails to allocate folios this=
- could
-> +                         * When NOWAIT I/O fails to allocate memory for =
-folio
->
-> Or perhaps just what hch suggested.
+On Fri, Feb 21, 2025 at 7:04=E2=80=AFPM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
 
-Matthew, please let me know what you think, so we can move forward
-with this. Thanks.
+> The Morello architecture is an experimental extension to Armv8.2-A,
+> which extends the AArch64 state with the principles proposed in
+> version 7 of the Capability Hardware Enhanced RISC Instructions
+> (CHERI) ISA.
+>
+> Introduce Morello fvp dts.
+>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
