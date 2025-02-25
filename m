@@ -1,176 +1,103 @@
-Return-Path: <linux-kernel+bounces-531435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F817A44082
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EF4A440A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:25:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217017E66E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428DE166386
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAF02690F2;
-	Tue, 25 Feb 2025 13:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B215A2690DB;
+	Tue, 25 Feb 2025 13:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWkh7cpj"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="vceDglkQ"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A055268FDB;
-	Tue, 25 Feb 2025 13:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A1B2690CE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489249; cv=none; b=Q1ryTaQ/Y5ct/hPA04oQysfIwlGS6DANebokKWWgeFsFAasTWcrhD67lzjZVaO9nFWz136eE/Ej9fVGNNS+pvJ+1hnmSZGJx/RroVnlcKgxxeL2eSnDmp6TOS1ht4KtifcE4KnksWsXKx5m9Mf5tHJVJ1shNkOgXzH2WI8u/KPA=
+	t=1740489640; cv=none; b=gaaJff2S3W4x0V4tHlrVLzBEEe4HQMTDnevAGRmzSydbghZ35R2Buta79FDTq+jWO4LFDCrYeb4dty0/qj2qTk5+6bF9ISF9IN8hsjD5XGUd6HyaIK2Qa0WUnLnSJw1IXklbUIBOUkavM1u+B9Fh6O0CEj0F6cVz1G/VcQLTT5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489249; c=relaxed/simple;
-	bh=v1iIaERknrbs8eqWlTOb/MgMkMtkVDqJt5teF3ovGX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ni/nOR2w9cufLLaYiKdJInU3yDd263CR5GEZvABJDEqWk5XOmLNV2Edv96WYMGTAFpsgbIw1t9Q4iPkKPJ6V2koB9j1+VCOKZZs/5uIAHrH+xVYJYBBn1IQzMW2llsIRJjtkCU9ZCav4ncn7rC0WNUkdaZVwzkqQW53hLbr3jHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWkh7cpj; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-222e8d07dc6so37664805ad.1;
-        Tue, 25 Feb 2025 05:14:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740489247; x=1741094047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYLcWu+xpfN0lDdZpNbKgmtUozIU0xde+CMOHsFz2oM=;
-        b=QWkh7cpjXk9zH33ZTrEVDc7sskl4Epabbf7Lh0AA/204wbWWuIdntPI2Hm6nz4IVLx
-         WAQ3eP3+kzj67hCvHsmvoimZWTeFsmJwoseuqjudjyAUHl66yT+cKLY51W3lfZFWdSkK
-         cZosshd+vW09EEL7n6w/p60fqk5S1bkv1ongwoPbfxLBwbU2LpKXWaS16BQV8Olqw6Zc
-         +kS10e4tFrXuh1ng0iFgn+V+ernPWaCMSLmeL7/v4G1YyB8Y9gozul9d6Da59LmIa9Vb
-         PtcMgM+NfD8F7ek4/6ZN32ktLuSaDS2O+lCA+M7COjjmWudndORSahxRdn4EFq2Eg5bk
-         y+lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489247; x=1741094047;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sYLcWu+xpfN0lDdZpNbKgmtUozIU0xde+CMOHsFz2oM=;
-        b=YfsParCCH/mg6wwfeXldOn8ZccNOFfZ2gzsMeCTTh5LJVtjsWnW1RhucRsFCFS78Ke
-         ho5iH++vJirf4CyLAkQAd0mfGStUG8vkm6yCIniCL3LtH+QGb7ZaRMh8IYbmwx3WewuR
-         hFPkhq8x4XQBKJR3tQPWSNDUQgaY9c+9QBgzeYk0SlgkfpAhRlQwI6/Oa/zCeSByiSAW
-         kqGKOslHIQD5/Qe9WDQSzuhSuuAbf5Oeq75VHHD1RH3jV4331WuQVLr15XdrfQlJhQZa
-         hLTweJFHDtD/r3GKsB7SEMVmqInoh4HEbEZXMpuiQ5Tl9jOjadK9DrfSR8jNyvwkVWtx
-         fWYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMC/jEiKPw/7Ev3z9zF/3ueOtXRq+poxzhtjPqAaQ/RBSnb/+PJoqSM8LPoIZ1SgtJicHJARKDFjfgRQED@vger.kernel.org, AJvYcCWsxQNq9gTrODK9zvofZSDZjx+Q+RrT5gbQmrn9ksiKng8GMY9DlA1cF9NwlkoJ8K2Q5lq4NztSieA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPHH/oQR2OuBYEGvZcjNfGS8Qfd3ZSWpCAy1eR9z/lUAKY6hOG
-	cJLmxdH6UX0Muidi5WVLBMdU0vFxgaDFanP6vNMsOyFH2TY64hXW
-X-Gm-Gg: ASbGncuJqJIYB7Nz824AK/cIGCazUOYKZic4oasLLLvn/4i0wKwMzTgmNLKpLrD9qXd
-	SSTUnRk117xycTtKT3pW8HYMBQjPVs21cDFj7pcRvVEdJ9B8nvahsQNTSbpFURJDRKxy/zJnp05
-	kM8U++aYFarNF5qrqGODxEwkY2FlBNoSlXBTrjSV8+/YIgyrU/RwgaEn1mSnk9ZEGfeZkK6yRUC
-	iOUx1RIxIJbOiZXUDFPeT4sLJfg/Es3UWMjKgBBqsypd0o5xZJzfEkd7lD8u8fNwKnJEkbfSJ5u
-	kbFSm4Dvrcj21ELuvrs8VnNrT3d6YzSWb6lWhaKrbQU+XCjDBki10EhFfQ3yGX2Sy3B6uzkkS3M
-	=
-X-Google-Smtp-Source: AGHT+IF9xSVNNuEnu6Nb7s+MD3IYoAuPzopICChiSlU5gJPgycSfrX2OtQiuNgsgcv93eNwA8suD2w==
-X-Received: by 2002:a17:903:32c7:b0:215:5600:18cc with SMTP id d9443c01a7336-221a0010c3amr294829325ad.22.1740489246673;
-        Tue, 25 Feb 2025 05:14:06 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0aec2dsm13697015ad.221.2025.02.25.05.14.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:14:06 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <3308b190-b639-4aff-a1f8-3ad9761dd991@roeck-us.net>
-Date: Tue, 25 Feb 2025 05:14:05 -0800
+	s=arc-20240116; t=1740489640; c=relaxed/simple;
+	bh=u3yEwLudzQn5Appg1EKIWuwC8eP34YxzNljiK7UUCCg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9Jvvy0pUCUr2CQdw99SSbx18N/ZDhrC4CX2OMwmLYSVyhNDN5PQKXpLphdvAaSoYrVlhg4j9k6nRqEqMxZQX1DjO4t38WEVzdcX0gDo2WGE99IHEqrQPpCvfkBV856DFIuAdQEy+5N+KlmVxnw7kpTBbTl5x4L+WEDcst3nqfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=vceDglkQ; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1740489327;
+	bh=+oQG0kubNNcrUEyDC0x1SXjD6cJ/muvA92NEGb9rnSs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=vceDglkQgrwvb/l71lq6tNX5AivBJf7PHhg0WpslKeAkEbD9s5SMJ1dMxhJv9STtT
+	 JH3+MhM+JbM6Ac94WjVUXw+095nUErB/9pNzdjAnoA9cjCHVvehOerfBzajg4OZCRf
+	 ECRhw9bpjaw7TM3BftwSlFsD74WSvwhnzIkNc14A=
+Received: from chenyu5-mobl2 ([118.114.56.201])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 3D80A29F; Tue, 25 Feb 2025 21:15:24 +0800
+X-QQ-mid: xmsmtpt1740489324ty7p96lgy
+Message-ID: <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
+X-QQ-XMAILINFO: NyTsQ4JOu2J2E6enTI6knP98gdgIednHXvZvEccsRAn9oe1QGR85OzNNIkaslU
+	 Q+h5S9Q1+2jjv1ibfUEDZ8WjHmIsJuCdBSokzipwjIAldc3a8CrJTh6bhbQCGqg8ZIzGWQE46gy2
+	 6kr5DGGTUMwBtLiHN++HGGETiGq/ScptKEOPD0v3ewPGqNV/fcXbUw8q1lNN+oQ7g1c2hVshM910
+	 ciRiT7BsPcTBREqtrGnRRXmFO6ghcxSZI8pvbR0tiKm5WvhPtmFCRbL798g4eMP4xkZE/CeTp+GX
+	 MAfEXVCBdZ15TtEr2/Lr1nQcfDvXdZPLxHWRo6yAzMXZsLy6P6Pm1YcSOZeJeHF5KI1oq9MdaVFE
+	 Ab0Ayfx4eUwN3YgSuUB2IR1Js10SPUmKFZGg+yuDXUq44VS/BQkJLN7KeugpQdwK/1WoFjwy410P
+	 VCzckYVh1FYCQ54DqqkEm/Ht6mjba/PIFuDYYwk2rJRNBVvoj9xzeHELV8UCmvyhokdOsTeKXyRJ
+	 rwsK6JnlEdWSNjcpovR2tIUOHT0pYzvBUS8sOA87WYR/BKTOZNqB1nEuQ4J5Zj8/hyQJTP0FyWhg
+	 C/yeTC92fyzKuwSIiJtNJFDHTqSc+ojmsUYKApwwLlPecGg0wkLSPQ02BPlcBPJ4o1iIdpF0nnJu
+	 QV6WICJ1ChGZYJZpavGvm3yEEOYdxDoxF9qKl2HJEO8j18W0z69EOnFTKV9nLjtC/go3hLGad2t+
+	 1pe/HbNuE7qs3vjXz3EyJ3jEhtYZQu9LCPvY/qBFWuC3ZOtli0StsOzHaKX7ofDXX0hh9GSZT2er
+	 8V/Wp3v1E44dO0Pfb14rWQYWfcZHaCgnKVX+Ief4tBOVE5Cs7QQuombY+EPmx/iJzKooqC19v0cg
+	 /+wTonDgeIUgMDTrb/RqTKJlh0WJXkikKstYBmkqOaApQjzR0rXNisFPa2gRi8LsW6h/6QiMY8Nr
+	 bZPfmQjgNXppMuDnjMoF+5toFXjbEOqcuaB53IaM/IcRd1NKfhxA==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+Date: Tue, 25 Feb 2025 21:15:56 +0800
+From: Chen Yu <yu.chen.surf@foxmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: zihan zhou <15645113830zzh@gmail.com>, oe-lkp@lists.linux.dev,
+	kernel test robot <oliver.sang@intel.com>, lkp@intel.com,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
+ regression
+X-OQ-MSGID: <Z73CjBppcf/zhrOW@chenyu5-mobl2>
+References: <202502251026.bb927780-lkp@intel.com>
+ <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
+ <20250225122705.GD34233@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers: watchdog: Add support for panic notifier
- callback
-To: George Cherian <george.cherian@marvell.com>, wim@linux-watchdog.org,
- corbet@lwn.net
-Cc: linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225095203.2139482-1-george.cherian@marvell.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250225095203.2139482-1-george.cherian@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225122705.GD34233@noisy.programming.kicks-ass.net>
 
-On 2/25/25 01:52, George Cherian wrote:
-> Watchdog is not turned off in kernel panic situation.
-> In certain systems this might prevent the successful loading
-> of kdump kernel. The kdump kernel might hit a watchdog reset
-> while it is booting.
+On 2025-02-25 at 13:27:05 +0100, Peter Zijlstra wrote:
+> On Tue, Feb 25, 2025 at 05:31:34PM +0800, Chen Yu wrote:
 > 
-> To avoid such scenarios add a panic notifier call back function
-> which can stop the watchdog. This provision can be enabled by
-> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
+> > 
+> > But consider that the 6% regression is not that high, and the user might customize
+> > base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
+> > future(we have encountered some SPECjbb regression due to over-preemption).
 > 
-> Signed-off-by: George Cherian <george.cherian@marvell.com>
-> ---
-> Changelog:
-> v1 -> v2
-> - Remove the per driver flag setting option
+> You can specify a per-task slice using sched_attr::sched_runtime. Also
+> see commit 857b158dc5e8 ("sched/eevdf: Use sched_attr::sched_runtime to
+> set request/slice suggestion")
+> 
+>
 
-You didn't actually remove it.
+Thanks, we'll have a try during the next test cycle.
 
-> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
-> index d46d8c8c01f2..8cbebe38b7dd 100644
-> --- a/drivers/watchdog/watchdog_core.c
-> +++ b/drivers/watchdog/watchdog_core.c
-...>
-> +/* Use the following function to stop the watchdog on panic */
-> +static inline void watchdog_stop_on_panic(struct watchdog_device *wdd)
-> +{
-> +	set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-> +}
-
-Under what circumstance could or would a _driver_ request this ?
-I do not see the use case, sorry.
-
-Guenter
+thanks,
+Chenyu
 
 
