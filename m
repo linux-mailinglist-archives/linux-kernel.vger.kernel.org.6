@@ -1,253 +1,127 @@
-Return-Path: <linux-kernel+bounces-532418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCDCA44D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:33:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F7CA44D75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09153B6516
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815DD3B248D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DAC212B3B;
-	Tue, 25 Feb 2025 20:23:02 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E12321507A;
+	Tue, 25 Feb 2025 20:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="5cPPTy+A"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA62D210180
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3371ACED7;
+	Tue, 25 Feb 2025 20:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740514982; cv=none; b=sUBmMWA96LfAQywLrTbCL4AuK3QztQyH8+amX8EjmBUz/ObPGby/1Om0N9PKW9Dk5T+LWnWqjbeyNNLtTT3GqfsDDqSB6UrF6P64Mnj3OGxm98/NCpZqMl+hJ2lW4+F0Xk87Av6HzR+w/ZGSE/OgurdGIoMRdjRQV5LL/VHg37U=
+	t=1740515078; cv=none; b=tQouXTe+mXd0Upl7XBh/f5AYiO3qgRZeIweutAREr2/JgEjku40B1otxs6Fp22cloCmM+GbbQS4UEXxO8Y12q5E466oKmvQdVTqs1kZZkXHmbSvNV/JvAVmkSPAbhBXk6c7vDBmFT9hWHzCV6gHpJv2ipMAV0XwjLOxS8lC0QLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740514982; c=relaxed/simple;
-	bh=/c7M8LOhrTFQYrkCQvXBLQJ6ku0jlywQflSi1BFyCd8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=stQQK6G4Ao5v/lmMGeNpwMB2k7ATEKww7WumF7r2RIrXDoxA8nrzS01S/jOCd4yU2Z808c9aUe0deM7ZOm0D/VXYTosatgnFesrUTsumplzKTijt8WB6ZTbwhuxnHhudZLMQ/Zqw6NVerzbdgps+j2McQTPiuews3G9FaHiRtn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tn1Rm-000000007sa-2iZv;
-	Tue, 25 Feb 2025 15:22:30 -0500
-Message-ID: <b24e6e4dbf4b4f51fb564b848c01156237bd663c.camel@surriel.com>
-Subject: Re: [PATCH v13 07/14] x86/mm: global ASID allocation helper
- functions
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, 	mingo@kernel.org
-Date: Tue, 25 Feb 2025 15:22:30 -0500
-In-Reply-To: <20250224141601.GIZ7x_IXs-wla5BRsd@fat_crate.local>
-References: <20250223194943.3518952-1-riel@surriel.com>
-	 <20250223194943.3518952-8-riel@surriel.com>
-	 <20250224141601.GIZ7x_IXs-wla5BRsd@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740515078; c=relaxed/simple;
+	bh=AcwTcKmfInQbAZOqb4dvorihzjJAczTme/Zg1EZMMRI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNnTDfNMkIEWgZI8SijMfHvOgFxeMU+0xuZhG3m/y1EPmlwE97KQEYJxGEYgY1bUFOR43WGLzdIOiSKiQFQm48zaAC4PNW/eE1YLINaxnF2qfs8hsO1KOfDAwar9fAyjut0Pxqz+xyW1q1xwb55Q2kfU90vStMj6xK/ALn93FqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=5cPPTy+A; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id D0DAA2E07BC8;
+	Tue, 25 Feb 2025 22:24:30 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740515071;
+	bh=AcwTcKmfInQbAZOqb4dvorihzjJAczTme/Zg1EZMMRI=;
+	h=Received:From:Subject:To;
+	b=5cPPTy+A/x48DQvmCMvpBlhHmDgfk2VE+a1VsTMAy2hXOagQAg1lQW8RLTYxY8zcu
+	 SWhjv0/3XHKCjQNvIJ+TwRx/4vnBt/3D3FVxKZK+gBSds+FrOF1nXPmOkJba8w47xz
+	 YoZhw+f9FYd8I6dKmZyPkytEHTlYN9s2WOHzipm8=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.176) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f176.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f176.google.com with SMTP id
+ 38308e7fff4ca-3092643f4aaso1761431fa.1;
+        Tue, 25 Feb 2025 12:24:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUAMJJ+NE6NZzzK4+3pacZ3z1iejTZCkj7TNm+viyz/MePeVBNnRUtX32REnvoffh58Kpf3y3MF2dQmcMvl@vger.kernel.org,
+ AJvYcCW0KiaIIH+IN0Vdy0RYFIt4C0gu39NeVsvIhkcWGP1Nuv73BKxRyV9YhHsYTTJeyGqe+yJuYlc/Ckr3@vger.kernel.org,
+ AJvYcCXkxVf9MPTqpcdrndeXyWJniQA6vZidnDa2STg4F0r0Oyg3oORd9XRtJZzlxuL2j7w/D6yIxa6YkfZw5wCo7WO4XpUX1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDszEcXT1j44L6di79Y0SEVMx48yG6eZudxxbjdFWGb2S1l3+6
+	uvbcDXKDOhpahGe9glmJNiS4uPAGEBdM6dFE+SAFXhlPWGOmQux7vBNW8NsXJ0qbEWj2GfwG9bJ
+	VmzHdB16XaUSREPdzHRWA2xv5zzE=
+X-Google-Smtp-Source: 
+ AGHT+IFW1BzXd/SWdychJfJva4EEaTal6rwJbQZHyDydFnbFd5/UhiKgmrA/liDXhCS6EvXSmcqemGbqUMvSajr5J+Q=
+X-Received: by 2002:a2e:c49:0:b0:309:2696:c293 with SMTP id
+ 38308e7fff4ca-30a505bbb9bmr93748571fa.4.1740515070102; Tue, 25 Feb 2025
+ 12:24:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+References: <20250224195059.10185-1-lkml@antheas.dev>
+ <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+ <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
+ <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+ <9fa91732-3085-4e79-9a8f-b38263ee7d08@gmx.de>
+ <CAGwozwHZCLaVD8iRgRxvQNqw3v+T9J+omMF+JoNe1r=+S1-OsA@mail.gmail.com>
+ <CAGwozwEEbsLOJROm7rW-240Zoqh3K_JOtZE_NL8AnLy1eChR6A@mail.gmail.com>
+ <CAJZ5v0jpSN_Tq6D3OrRj5KDuXwqVuzcwyNXwEuL90fr=juH48g@mail.gmail.com>
+In-Reply-To: 
+ <CAJZ5v0jpSN_Tq6D3OrRj5KDuXwqVuzcwyNXwEuL90fr=juH48g@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Tue, 25 Feb 2025 21:24:18 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwHAKbR4y9cW8H0nmESS7yv6RrXtgcZyEdz1Wy2e8tAdqQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo-YXTQsk6kizRYpFDfvj0ZJrBEf8feP27iP90wsb9JW8GXNp7UBJhdpgk
+Message-ID: 
+ <CAGwozwHAKbR4y9cW8H0nmESS7yv6RrXtgcZyEdz1Wy2e8tAdqQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
+ multiple handlers
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Armin Wolf <W_Armin@gmx.de>, Luke Jones <luke@ljones.dev>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Limonciello, Mario" <mario.limonciello@amd.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+	me@kylegospodneti.ch
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <174051507137.19406.17156529916513827378@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Mon, 2025-02-24 at 15:16 +0100, Borislav Petkov wrote:
-> On Sun, Feb 23, 2025 at 02:48:57PM -0500, Rik van Riel wrote:
-> >=20
-> > =C2=A0arch/x86/include/asm/mmu.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-11 +++
-> > =C2=A0arch/x86/include/asm/tlbflush.h |=C2=A0 43 ++++++++++
-> > =C2=A0arch/x86/mm/tlb.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 144
-> > +++++++++++++++++++++++++++++++-
-> > =C2=A03 files changed, 195 insertions(+), 3 deletions(-)
->=20
-> arch/x86/mm/tlb.c:378:6: warning: no previous prototype for
-> =E2=80=98destroy_context_free_global_asid=E2=80=99 [-Wmissing-prototypes]
-> =C2=A0 378 | void destroy_context_free_global_asid(struct mm_struct *mm)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~=
-~~~~~~~~~~~~~~~~~~~~~~
-> arch/x86/mm/tlb.c:355:13: warning: =E2=80=98use_global_asid=E2=80=99 defi=
-ned but not
-> used [-Wunused-function]
-> =C2=A0 355 | static void use_global_asid(struct mm_struct *mm)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~
-> arch/x86/mm/tlb.c:327:13: warning: =E2=80=98mm_active_cpus_exceeds=E2=80=
-=99 defined
-> but not used [-Wunused-function]
-> =C2=A0 327 | static bool mm_active_cpus_exceeds(struct mm_struct *mm, int
-> threshold)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~
->=20
-> If those functions are going to remain global they better get a
-> proper prefix
-> like "tlb_".
->=20
-I've renamed the global function to=20
-tlb_destroy_context_free_global_asid
+This is what this patch series essentially does. It makes amd-pmf
+accept all choices but only show its own in its own handler and when
+it is the only option
 
-> And add the functions with their first use - no need to pre-add them.
-
-That's what I originally had. Dave requested I split
-out the patch into multiple ones.
-
-That means either introducing helper functions in a
-separate patch, or coming up with one version of the
-code in one patch, and then replacing that code in
-the next, resulting in a bunch of extra code to review.
-
-https://lore.kernel.org/linux-kernel/b067a9fc-ff5f-4baa-a1ff-3fa749ae4d44@i=
-ntel.com/
->=20
-> >=20
-> > +static inline void assign_mm_global_asid(struct mm_struct *mm, u16
-> > asid)
->=20
-> mm_assign_global_asid()
-
-Done.
-
-> > +/*
-> > + * Global ASIDs are allocated for multi-threaded processes that
-> > are
-> > + * active on multiple CPUs simultaneously, giving each of those
-> > + * processes the same PCIDs on every CPU, for use with hardware-
-> > assisted
->=20
-> "the same PCID" or "the same PCIDs"?
->=20
-> Does a multithreaded process get one or more than one PCIDs? I'd
-> expect only
-> one ofc.
-
-It's only one. Fixed the commment.
-
->=20
-> > +	asid =3D find_next_zero_bit(global_asid_used,
-> > MAX_ASID_AVAILABLE, last_global_asid);
-> > +
-> > +	if (asid >=3D MAX_ASID_AVAILABLE) {
->=20
-> 	if (asid >=3D MAX_ASID_AVAILABLE && !global_asid_available)
-
-Done.
-
-> > +/*
-> > + * Check whether a process is currently active on more than
-> > "threshold" CPUs.
->=20
-> @threshold - then it is clear that you mean the function argument.
->=20
-Done. Thank you.
-
-> > + * This is a cheap estimation on whether or not it may make sense
-> > to assign
-> > + * a global ASID to this process, and use broadcast TLB
-> > invalidation.
-> > + */
-> > +static bool mm_active_cpus_exceeds(struct mm_struct *mm, int
-> > threshold)
-> > +{
-> > +	int count =3D 0;
-> > +	int cpu;
->=20
-> Is this function supposed to hold some sort of a lock?
-
-I don't think we care too much about total accuracy here.
-
-Not holding up other CPUs is probably more important.
-
->=20
-> > +
-> > +	/* This quick check should eliminate most single threaded
-> > programs. */
-> > +	if (cpumask_weight(mm_cpumask(mm)) <=3D threshold)
-> > +		return false;
-> > +
-> > +	/* Slower check to make sure. */
-> > +	for_each_cpu(cpu, mm_cpumask(mm)) {
->=20
-> Needs CPU hotplug protection?
-
-I don't see CPU hotplug protection in most other loops
-that iterate over CPUs and do nothing but read some
-per-CPU data.
-
-What are we trying to protect against?
-
-What kind of protection do we need?
-
->=20
-> > +	/* The last global ASID was consumed while waiting for the
-> > lock. */
-> > +	if (!global_asid_available) {
-> > +		VM_WARN_ONCE(1, "Ran out of global ASIDs\n");
->=20
-> And? Why do we want to warn here? We need to reset global ASIDs
-> anyway.
-
-This warning prints if we run out of global ASIDs,
-but have more processes in the system that want one.
-
-This basically helps us figure out whether or not
-we should bother implementing more aggressive ASID
-re-use (like ARM and RISCV have), which might
-require us to figure out how to make that re-use
-more scalable than it is today.
-
->=20
-> > +		return;
-> > +	}
-> > +
-> > +	asid =3D allocate_global_asid();
-> > +	if (!asid)
-> > +		return;
-> > +
-> > +	assign_mm_global_asid(mm, asid);
-> > +}
-> > +
-> > +void destroy_context_free_global_asid(struct mm_struct *mm)
->=20
-> That name is a mouthful. mm_free_global_asid() is just fine.
->=20
-Done.
-
---=20
-All Rights Reversed.
+On Tue, 25 Feb 2025 at 21:22, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Feb 25, 2025 at 7:07=E2=80=AFAM Antheas Kapenekakis <lkml@antheas=
+.dev> wrote:
+> >
+> > Yes, making asus-wmi use low-power is indeed the easiest solution, but
+> > if I thought it was good enough, I would have done that already as a
+> > downstream consumer of the kernel.
+> >
+> > I just want to be done with this once and for all, so I spent an extra
+> > hour today solving this in a cleaner way.
+>
+> What about adding "quiet" as a "hidden choice" to amd-pmf such that it
+> would allow the test_bit(*bit, handler->choices) check in
+> _store_class_profile() to pass, but it would not cause this "choice"
+> to become visible in the new I/F (or when amd-pmf becomes the only
+> platform-profile driver) and it would be aliased to "low-power"
+> internally?
 
