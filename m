@@ -1,166 +1,104 @@
-Return-Path: <linux-kernel+bounces-531049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B110A43B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:28:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C208BA43BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:32:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15763B1372
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B219C73C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB3B267F5A;
-	Tue, 25 Feb 2025 10:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6985726738F;
+	Tue, 25 Feb 2025 10:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQ+eArjQ"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n0J+ghyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F082676EB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F238F4A;
+	Tue, 25 Feb 2025 10:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478950; cv=none; b=CYT4AzQPlaxyffoBrCY66SeA/QlxxIrpvp47bPbJSANOPxsGzw8yYsZv46E+jbrBPnAfrmI/qJQzqSgmT9PZza3XPvsAwyFRzFsiu+RDVBRHXr2k/CfVsWA1ub8rSFVXFOiChjRjdk8BX/miG8Vx8NlEa3YjtGmM8FmsmOLWj+g=
+	t=1740479053; cv=none; b=cWQFnJvPYVNGb12It5eyzRQ/1ms3taqTYWd4wizM78Pj/E7U2FGn2lKqigS7DkVXbskkzGgsDGr94+Yv/Y4pjb2ScDz2g6tYYhGmlwLJUumrDuLp6GxIQqtKWnuvuoDJ9JI/UWHM/oi7jI5tpGR2wexeQlCSjvkGb9pRDkCH18Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478950; c=relaxed/simple;
-	bh=U5zkt/oMGFqmvC1+SOvMTHXlaeCxYp1H/iVGRBn1FbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AL6Ann/bV6muk5Nh4aZIx/MTp+NFpHPC6CS44LjIlgN4VKJ4x6qG03ILESJ7pVWGyuCTDIb9LH1pI+DZnJ3AOY1BbqprmgB2ohDXq1RfUIbV251b++HFd5t2KoNojQYi/aG0S6DFV/S+pbNcXN/TzzGQlu8bs0zFEvb8VN1vkyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IQ+eArjQ; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ded7cb613eso1073262a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:22:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740478947; x=1741083747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sNm9CF22nxSn0y6dAdKNE8VFXGgWPtm2tN0cbfkS55c=;
-        b=IQ+eArjQAl+J8MhniyuafBycpo3z+gyEu6MYjuUTjmwUVJM/1KfAzMXRh3KQRHLHU2
-         5d9cfClaplqoprvPXUWNb57xatazT5r7yM2+hdcKMzCn/6fniPaMiNcUkgMXYHzBrMI5
-         YcaA/R9NgIf0d9mRg0w3blGtP2UQSISUI8xBkJdZ+o2wz85VnDfTmCU44H3mmajaNFh6
-         XTHNwyUPsJTaFAUNW481XTeMnjaNtx8TEWgF7tMb+t5helP4FGE8Golu6adJJkh6WzX/
-         s92GnSxJA9jkqmRCyZXnP89g8IppHvAx+j3tpcq3OfT9zJhw1RF0mFTGyBPH1adyFC9s
-         tu2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740478947; x=1741083747;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sNm9CF22nxSn0y6dAdKNE8VFXGgWPtm2tN0cbfkS55c=;
-        b=PZzodE/rhoQW1cG+N1BgG4fsXfzR5fxCj0uvjn8r/O+1x1+tTJDvyD3OVWvCbeG4Wz
-         MbkFX7qEXLySPxChhzewk5l7VS51aixxLnZ67EjGDHzHGyZxX0rIeXJyzrHYyEVGV+CN
-         Wi0HgVxGwC7ukUCwEY4M3E9LjkhqIrHK2Ste4nLXD2AxxlM6p1unQNX1ttxuBKKfT3uw
-         lvrI0T5Osh4PSDZztWdDn56Qz4ehARE3x0zdomT2buLA9dTfZTRGea41c7iKnJEGE7YC
-         h6GajRPTbz9I3XzTcpnS8yXPIxJmnSBkE4WbY+teCAPirKha5h5lZtI9aIG1Rxvj/6kC
-         g9Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhkNqSccAfUxblLcMqJmLZUNOUPuyLUekL3v7oW/iR3YBm2WZLERmNwkIFSt2z9sfIoQGkBDj2cn4nUZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Z3r3DMIquCxXrwLJkS1AR4EzhSDt2kfwdfiY6NFvchzPGMlb
-	sSsiyQEMBxJaHAfXQiJyIJiZQ94t8GxOoIRKZBM2wmxFSWvk+y2crPePTKt4mRM=
-X-Gm-Gg: ASbGnctaSRh5LogEzwQ9I+PI1xF1GdDXg/5LyHkx65eRrqGsMIBD+2XgKaqm8MMR/hB
-	e3Ez7WZ1VGbOi46Fyb+/IOOhD9BkVcN6aWRicj6TZTgt3/HvsgX8mRJ86scj+gmIF9e1dLL76BH
-	lNdDnFWfsF2aBG6wFw3in3bYrO2v85E0lj+Au1nPH8b79y8+TmWWwExCa+JpDBzQHNR5KTTO1Jl
-	M+6xuQqTw4f439QzkvrgsAmuS9KsVhdGdLhISICsb6DHXiTxiNo9ql8zJsktCaHudUf+5wBNecj
-	K1JzdAmgrcIxh8j/xGZ/7hfvd+Ejo2uT/Z6OMB57ZUQI71tkBFzVerM6NSdc2j4I4CcMqGT+xpZ
-	4TGBF
-X-Google-Smtp-Source: AGHT+IHtffeLLh1yLu7nCHYhcNqtippdudVEDeBKKKKJEXeyYUCZJ5Ybf+sLAGKVXPIbB1aDmboHMA==
-X-Received: by 2002:a17:907:7e90:b0:abb:ebfe:d5e9 with SMTP id a640c23a62f3a-abc09becfd6mr572181266b.9.1740478947358;
-        Tue, 25 Feb 2025 02:22:27 -0800 (PST)
-Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20122b0sm117367966b.107.2025.02.25.02.22.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 02:22:26 -0800 (PST)
-Message-ID: <7b54e965-3395-4349-8ae7-51a28c759235@linaro.org>
-Date: Tue, 25 Feb 2025 11:22:25 +0100
+	s=arc-20240116; t=1740479053; c=relaxed/simple;
+	bh=6h84qLfGwbImfITzfTzkYlb6/rJQLyKiI2OtAkuKs38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ik6b8VcklNyVlNNtbIiPOC2XTQVUqMwZzpor/HfG938MokR2hnwYbpvk+VmbYFglCYQfA1wXVRz/4FJjRfVEaqxJslwhMlA81GJoY1CkPGIe1uLHPQk1Jv5b8WEcpsmSXFn5hW9SStyndpn37rtmXiFctyHWB9OQwIn+GlfiKZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n0J+ghyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B74C4CEDD;
+	Tue, 25 Feb 2025 10:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740479053;
+	bh=6h84qLfGwbImfITzfTzkYlb6/rJQLyKiI2OtAkuKs38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n0J+ghyw53Zmv7eUA0gehh3FmrVJ1Qb0IFjnKgl5/Qjyr5h+kz7UQ8v7iVUnWW7HI
+	 nu19c2c2h09tgoSNtxWHfLlaKjn3OqMk0MUXNLAitT4k4PqNQonrKeTDPN4SjYiiWJ
+	 nE0W3Jkw5MmcUsPbal/ExLmJ3ORuSmLofw7H+pRI=
+Date: Tue, 25 Feb 2025 11:23:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: miscdevice: change how f_ops vtable is constructed
+Message-ID: <2025022523-charbroil-overtime-4e68@gregkh>
+References: <20250117-miscdevice-fops-change-v1-1-ec04b701c076@google.com>
+ <2025021926-transport-fridge-bc43@gregkh>
+ <CAH5fLggCjB0ePQvPFeTuy9m0UC_KkHa6-qU8AhQ+P8oHbAhZLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-slim7x: Drop incorrect
- qcom,ath12k-calibration-variant
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jeff Johnson <jjohnson@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ath12k@lists.infradead.org
-References: <20250225093051.58406-1-krzysztof.kozlowski@linaro.org>
- <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLggCjB0ePQvPFeTuy9m0UC_KkHa6-qU8AhQ+P8oHbAhZLA@mail.gmail.com>
 
-On 25/02/2025 10:50, Dmitry Baryshkov wrote:
-> On Tue, Feb 25, 2025 at 10:30:51AM +0100, Krzysztof Kozlowski wrote:
->> There is no such property as qcom,ath12k-calibration-variant: neither in
->> the bindings nor in the driver.  See dtbs_check:
->>
->>   x1e80100-lenovo-yoga-slim7x.dtb: wifi@0: 'qcom,ath12k-calibration-variant' does not match any of the regexes: 'pinctrl-[0-9]+'
->>
+On Tue, Feb 25, 2025 at 11:10:17AM +0100, Alice Ryhl wrote:
+> On Wed, Feb 19, 2025 at 4:58 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Jan 17, 2025 at 02:22:32PM +0000, Alice Ryhl wrote:
+> > > I was helping someone with writing a new Rust abstraction, and we were
+> > > using the miscdevice abstraction as an example. While doing this, it
+> > > became clear to me that the way I implemented the f_ops vtable is
+> > > confusing to new Rust users, and that the approach used by the block
+> > > abstractions is less confusing.
+> > >
+> > > Thus, update the miscdevice abstractions to use the same approach as
+> > > rust/kernel/block/mq/operations.rs.
+> > >
+> > > Sorry about the large diff. This changes the indentation of a large
+> > > amount of code.
+> > >
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > ---
+> > >  rust/kernel/miscdevice.rs | 295 ++++++++++++++++++++++------------------------
+> > >  1 file changed, 141 insertions(+), 154 deletions(-)
+> >
+> > This doesn't apply against a clean 6.14-rc2 tree, what is is made
+> > against?
 > 
-> Adding Jeff and ath12k@ to the cc list. Is the driver able to find the
-> calibration variant in case it is not running on the ACPI system? I see
-> that it uses dmi_walk. Does it work in the non-ACPI case?
+> I will rebase.
+> 
+> Are there any other miscdevice commits that have landed this cycle
+> that it might conflict with? If so, I can base it on your branch to
+> avoid such conflicts.
 
+Nope, I don't see any at the moment, or in my review queue, so it should
+be fine.
 
-But nothing parses such string as 'qcom,ath12k-calibration-variant' (see
-git grep), so how would driver use it?
+thanks,
 
-
-Best regards,
-Krzysztof
+greg k-h
 
