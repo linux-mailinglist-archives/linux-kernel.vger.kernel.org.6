@@ -1,195 +1,110 @@
-Return-Path: <linux-kernel+bounces-532162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BD0A44977
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:06:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43340A449C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6F54214F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3A28803A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97C119EED3;
-	Tue, 25 Feb 2025 18:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1F31A0712;
+	Tue, 25 Feb 2025 18:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkkGLWS7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ONTjA/tD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4F219D88F;
-	Tue, 25 Feb 2025 18:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23BE38385;
+	Tue, 25 Feb 2025 18:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506452; cv=none; b=EiZM7lrjnZA4Tb74SgwrCoX5F/u8Y7l1vaztMTNRhQfGK6gd1E+SSJyIxaP9J4mEswFYPxQ1yCdeuBLA2ztMhceEqVatm8u6BIlr53aAOz97PEnzioPszv0KtpD285YRjgMOfiDLGqOBEvgbSYVNMih55oG9M+9WYepsM9zajQk=
+	t=1740506482; cv=none; b=Fw7IP8FBGP3nYMSi24UNwTlvvc7Mz6F4J/Az359PQkGenXfnbO8zdRgM629LeJerJT9nmyTYHYhejrqqv2FX4WBOvXT58qaKcRjpSUdstH3n69Nget97zAKqhSLdB0qrH+YbqUMKJ7B4EPOvx3A1sm9AnDzH8zasqSVCr206tgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506452; c=relaxed/simple;
-	bh=HlX8DGTi9nlLo2x1LU/ru3/CQMoDi9iaqMlhlLom/Dw=;
+	s=arc-20240116; t=1740506482; c=relaxed/simple;
+	bh=OaUA5KG7GJsiLn/eX1jGar3uO3VKFszWeLehSmVHy4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlOICuQaK27WPwRYTyrMDasTZ21EjHn65MUJc3HlrJhM/f+Mz3AzMZDJ/1Q5ZjFpXRLrr3xAe3llXuGpMTWCOCTzkdCO1tGt4n+75J3S5CqpxCeWMUewGEgzUaXRRpeB3i6K7hDDJDWqtgIJZbSGn2xpD7dhZ5eqtWoYxnStI8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkkGLWS7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C29C4CEDD;
-	Tue, 25 Feb 2025 18:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740506451;
-	bh=HlX8DGTi9nlLo2x1LU/ru3/CQMoDi9iaqMlhlLom/Dw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2IRxo+lXvpDpRyYMY1x7Da6yOqnHSpM1iziTwSpD9rl+1OCeaUrJkfYHGXUPhvBV9FET+zWiwjmlHe2QCKAsRfckUGo5FlMrbKtwESGs7elLPAXUGmtS57H3jZH4PmzZ5qrM2l8yfYxikrGFqXlBtsrw5dnfSyg3zh+sYLluYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ONTjA/tD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 46AF540E01AE;
+	Tue, 25 Feb 2025 18:01:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id aGpFAGBqRbPm; Tue, 25 Feb 2025 18:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740506473; bh=kPJ+m0qviqj+7KaVjxLrm03uugK9+y0F+hSfBBTxARk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AkkGLWS7I4U/Tu8ufmRHEFa5dZlmB0zA/1VzZkqyK4uMLmiWLepcNXTZ07W9vTqC8
-	 QYyzE5opMVpatD+MjawiqGwK45AUlHwbAYPe3I9esEw2mloPUPZRYUJXDIAdk7JkE4
-	 Ydy1yYUFFBIFuSTms75YI4yz3Ynbbb+PsYLBQQ0zj0bCQAGYo+3g5JOu8bBlL+QPnv
-	 z8p65oX7D4E7apD1UlPlvA2xTZDRiNNwfq+t8wsEjn/vM562WhJMoh1NmXe8LULRM3
-	 m579cJNTcOzgbsn4pHlWcZxDffmvFC0DZPpfV+oJNobbBLz+hNO4OGooZLBEISCQ/T
-	 jFuCpsbg589Aw==
-Date: Tue, 25 Feb 2025 11:00:44 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	bpf <bpf@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Zheng Yejian <zhengyejian1@huawei.com>,
-	Martin Kelly <martin.kelly@crowdstrike.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [for-next][PATCH 4/6] scripts/sorttable: Zero out weak functions
- in mcount_loc table
-Message-ID: <20250225180044.GA3655100@ax162>
-References: <20250219151815.734900568@goodmis.org>
- <20250219151904.476350486@goodmis.org>
- <20250225025631.GA271248@ax162>
- <20250224222833.0a9f2f4c@batman.local.home>
- <20250225104726.5e4eed32@gandalf.local.home>
+	b=ONTjA/tD1lmTgd8BFl0JvFTr/SJJbZe3lSBv/alcgsQFlCGPBCUEdfS+0+qAWPmUI
+	 d7bvinqoSWlXJO23l6JayKRYjxrFLNO249GmLLa23gCtWh9xd3KuiyukFVVpgzblDG
+	 3pQq0G9uLowKV9K8o1aQI3EoN0HxaH+GjT6T14qTnB5cTh+pG+FgIK358FbVRR0LWt
+	 hCfn8GuXjR1+7vesTuo98CD4CRVsUJ8W7Xh1+qRYzU+KQZq7qn5AU7OASyfQpTrG3F
+	 x1NIIXuq3LpC393nF5Z3aGGRosaZkM6Vk6NCSfBx6SGv/Uyt2ZSnOyObiNO5UL4wHK
+	 pnVZEmj8WNFKCPYk34NyaS2C2gw4rHc+wSHbanxSaOIzKj7aJzAlA6pHDiaacEue1z
+	 q5DpbaCgln5+rrBXEnhFU3T8Vjke5ImG7OEmCJyFcm4wzqT9Cw+HVHmx36+O5szX2+
+	 TsqlCtN8sil8dmvxChF+8HZ2fSc1NaoK8WxcX+TwI3YaspdzL/qkxNQJVvHlk24K7L
+	 lPMJebnhC8NPhhvZfMOWP2Y8gVyY5Nvj48bLell9fDOYhQQt09AZMHix4n69H+q8w2
+	 W2YKNcls5fdFt0CzuofkGJbjVvTrVikINSxAuCbXbssYWmT3Q+vdiR/zBzc/60dzIQ
+	 IAOz34ljBa0P/uijUuewS5Y0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 367DD40E01AD;
+	Tue, 25 Feb 2025 18:00:56 +0000 (UTC)
+Date: Tue, 25 Feb 2025 19:00:51 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, will@kernel.org, peterz@infradead.org,
+	yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
+	namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v5 0/5] x86/cpufeatures: Automatically generate required
+ and disabled feature masks
+Message-ID: <20250225180051.GCZ74FU-PrcosEHZb1@fat_crate.local>
+References: <20250106070727.3211006-1-xin@zytor.com>
+ <20250223102723.GAZ7r4C7C6sTUnbe4I@fat_crate.local>
+ <1a444a2e-75b6-46f9-8f38-0458655873ac@zytor.com>
+ <20250225174915.GBZ74Cm2Xpc_WwS3oe@fat_crate.local>
+ <8973bfd4-d8b2-4dd7-ae1a-3f685dff769f@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250225104726.5e4eed32@gandalf.local.home>
+In-Reply-To: <8973bfd4-d8b2-4dd7-ae1a-3f685dff769f@suse.com>
 
-On Tue, Feb 25, 2025 at 10:47:26AM -0500, Steven Rostedt wrote:
-> On Mon, 24 Feb 2025 22:28:33 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Feb 25, 2025 at 07:54:50PM +0200, Nikolay Borisov wrote:
+> But don't we use perl even now:
 > 
-> > Thanks, I'm about to go to bed soon and I'll take a look more into it tomorrow.
-> 
-> Can you try this patch (it has the clang fix too).
+> $ find . -iname *.pl | wc -l
+> 55
 
-Yup, that appears to fix all my issues with my initial tests.
+You're searching wrong:
 
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+$ git grep -w perl arch/x86/
+arch/x86/crypto/poly1305-x86_64-cryptogams.pl:1:#!/usr/bin/env perl
+$
 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 27c8def2139d..bec7b5dbdb3b 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -7004,7 +7004,6 @@ static int ftrace_process_locs(struct module *mod,
->  	unsigned long count;
->  	unsigned long *p;
->  	unsigned long addr;
-> -	unsigned long kaslr;
->  	unsigned long flags = 0; /* Shut up gcc */
->  	unsigned long pages;
->  	int ret = -ENOMEM;
-> @@ -7056,25 +7055,37 @@ static int ftrace_process_locs(struct module *mod,
->  		ftrace_pages->next = start_pg;
->  	}
->  
-> -	/* For zeroed locations that were shifted for core kernel */
-> -	kaslr = !mod ? kaslr_offset() : 0;
-> -
->  	p = start;
->  	pg = start_pg;
->  	while (p < end) {
->  		unsigned long end_offset;
-> -		addr = ftrace_call_adjust(*p++);
-> +
-> +		addr = *p++;
-> +
->  		/*
->  		 * Some architecture linkers will pad between
->  		 * the different mcount_loc sections of different
->  		 * object files to satisfy alignments.
->  		 * Skip any NULL pointers.
->  		 */
-> -		if (!addr || addr == kaslr) {
-> +		if (!addr) {
-> +			skipped++;
-> +			continue;
-> +		}
-> +
-> +		/*
-> +		 * If this is core kernel, make sure the address is in core
-> +		 * or inittext, as weak functions get zeroed and KASLR can
-> +		 * move them to something other than zero. It just will not
-> +		 * move it to an area where kernel text is.
-> +		 */
-> +		if (!mod && !(is_kernel_text(addr) || is_kernel_inittext(addr))) {
->  			skipped++;
->  			continue;
->  		}
->  
-> +		addr = ftrace_call_adjust(addr);
-> +
->  		end_offset = (pg->index+1) * sizeof(pg->records[0]);
->  		if (end_offset > PAGE_SIZE << pg->order) {
->  			/* We should have allocated enough */
-> diff --git a/scripts/sorttable.c b/scripts/sorttable.c
-> index 23c7e0e6c024..7b4b3714b1af 100644
-> --- a/scripts/sorttable.c
-> +++ b/scripts/sorttable.c
-> @@ -611,13 +611,16 @@ static int add_field(uint64_t addr, uint64_t size)
->  	return 0;
->  }
->  
-> +/* Used for when mcount/fentry is before the function entry */
-> +static int before_func;
-> +
->  /* Only return match if the address lies inside the function size */
->  static int cmp_func_addr(const void *K, const void *A)
->  {
->  	uint64_t key = *(const uint64_t *)K;
->  	const struct func_info *a = A;
->  
-> -	if (key < a->addr)
-> +	if (key + before_func < a->addr)
->  		return -1;
->  	return key >= a->addr + a->size;
->  }
-> @@ -827,9 +830,14 @@ static void *sort_mcount_loc(void *arg)
->  		pthread_exit(m_err);
->  	}
->  
-> -	if (sort_reloc)
-> +	if (sort_reloc) {
->  		count = fill_relocs(vals, size, ehdr, emloc->start_mcount_loc);
-> -	else
-> +		/* gcc may use relocs to save the addresses, but clang does not. */
-> +		if (!count) {
-> +			count = fill_addrs(vals, size, start_loc);
-> +			sort_reloc = 0;
-> +		}
-> +	} else
->  		count = fill_addrs(vals, size, start_loc);
->  
->  	if (count < 0) {
-> @@ -1248,6 +1256,8 @@ static int do_file(char const *const fname, void *addr)
->  #ifdef MCOUNT_SORT_ENABLED
->  		sort_reloc = true;
->  		rela_type = 0x403;
-> +		/* arm64 uses patchable function entry placing before function */
-> +		before_func = 8;
->  #endif
->  		/* fallthrough */
->  	case EM_386:
+That's some crypto-special thing.
+
+This'll force it on *everything*.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
