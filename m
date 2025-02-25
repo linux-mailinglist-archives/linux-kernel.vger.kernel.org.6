@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-530407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA0CA43312
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:31:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0062A43315
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C1917CB42
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415E21899785
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D51547E3;
-	Tue, 25 Feb 2025 02:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJQoKo5s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4688E13C9B8;
+	Tue, 25 Feb 2025 02:32:02 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8CB15B980;
-	Tue, 25 Feb 2025 02:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2BC3FE4;
+	Tue, 25 Feb 2025 02:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740450607; cv=none; b=W+raRhG0R+Oco0cFD+Z8q3RbPOxp9NBYMOpWyuPHALaUhB3qmV4bkBD2HNUvuiMl7rviGplJxf+deBgCg8SPXw75u+HddGGPkgisQAPA+XfFZuOw0Ftjr9FlhXT6FgOGMOkw+XNbH6Uuu+WouVorq3PlyOfTZsFgo9iXgFGGnrE=
+	t=1740450721; cv=none; b=OdwDoR5z4VRPT7XaMN+yu9fobRxZo0RFTbRI9PLS8Ftebu7zmpiRQVd65/wiacWaFL2VBUzIIdsnL3vd0Y/pAyC3MBOrXQeblqoV8o6auhdmZDWFN+IGHSaD9YfIX7aw4p9UWuWfi7zDDhr2IWd40O7mrMI6Cxu4+gelrDOAkjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740450607; c=relaxed/simple;
-	bh=pGhIeDgVro3WnQNDUGPY/gM/16DqF2aP+gTqj6q8N04=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=k5yl2XH+9HtBzdOt3D1EB9ZbnU0okOVKQ0Y8E72CqZV32ol0c7lfbUfXehoCl3hB/mTkslHRPtHgDptEsaFSoT4Hy7OHUKiRlfJsqNgpQeQWTfqX5FHdsqdCJaMwnobx791qkok6UAzIEWohvXxbGz/slMpOCNHX5aMtVaOCzk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJQoKo5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A03C4CEE8;
-	Tue, 25 Feb 2025 02:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740450607;
-	bh=pGhIeDgVro3WnQNDUGPY/gM/16DqF2aP+gTqj6q8N04=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uJQoKo5sf5OYoqteSmlIO9TGMJn2RMod1UP5fFubTO0QQivqoPu+44uJlRv4hXGFW
-	 5swiUlULqdcpNKk82m9/jAHgi5L+gkpGcA1bxNtPFNU3HXY/azckeRScxG3lXJkXJj
-	 9XYRzxF40mtZokSkGX6xB/dNMrYy2gKyvKkioIom1ezYo1U5L0viSxOiI8XF1IXsH0
-	 FARm3Gp9SeZ+lTknzF9ZTLQZGHamu+uohvmftYXy9450RsmmgGAHlyFBv4satqPzg0
-	 fI9Ur31G07QilTzEXeIhP7dNQPRLIJbKLFcmoo02YWWDrC0CGS/UmzYvoLqVzif+cy
-	 /1x8uZy5s6yDQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCFC380CFD8;
-	Tue, 25 Feb 2025 02:30:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740450721; c=relaxed/simple;
+	bh=sS6epZ/Q0dmr2tgVut1X+sY8gavr366YXLTOVDwcdzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sCuwcFoNKxv3au9B+BNEHAOxUO30IEUwjIMoDiLSU3EsDUb14oiKbg9i172b+E0AejC2OnLEzpoDkUDOz/oLP4oGAZCkGPiClTCTIcO8knd8So/jvC9d31Hc4xWHJ5pPmDGP3gtwejUpHl7p1A8X/pIyJvwVwnFd2JOnkEVhFuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAAXHdGHK71ntYgzEA--.12478S2;
+	Tue, 25 Feb 2025 10:31:52 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jckuo@nvidia.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
+Date: Tue, 25 Feb 2025 10:31:34 +0800
+Message-Id: <20250225023134.3176171-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,59 +53,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/10] mptcp: pm: misc cleanups, part 3
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174045063849.3682145.16015341527538028739.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Feb 2025 02:30:38 +0000
-References: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
-In-Reply-To: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+X-CM-TRANSID:qwCowAAXHdGHK71ntYgzEA--.12478S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DKFWkAF15tFW3Aw4fKrg_yoW8XFyDpa
+	1DGas8Kr9YgrWkKF4jvF409Fy5GF42k3yrur1rJ34akrn3W348tas8trWxXa4UArZ7uF4U
+	ArnxJa4kJFyUC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAxhLUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hello:
+If device_add() fails, do not use device_unregister() for error
+handling. device_unregister() consists two functions: device_del() and
+put_device(). device_unregister() should only be called after
+device_add() succeeded because device_del() undoes what device_add()
+does if successful. Change device_unregister() to put_device() call
+before returning from the function.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
-On Fri, 21 Feb 2025 16:43:53 +0100 you wrote:
-> These cleanups lead the way to the unification of the path-manager
-> interfaces, and allow future extensions. The following patches are not
-> all linked to each others, but are all related to the path-managers,
-> except the last three.
-> 
-> - Patch 1: remove unused returned value in mptcp_nl_set_flags().
-> 
-> [...]
+Found by code review.
 
-Here is the summary with links:
-  - [net-next,01/10] mptcp: pm: remove unused ret value to set flags
-    https://git.kernel.org/netdev/net-next/c/bc337e8c0e76
-  - [net-next,02/10] mptcp: pm: change to fullmesh only for 'subflow'
-    https://git.kernel.org/netdev/net-next/c/145dc6cc4abd
-  - [net-next,03/10] mptcp: pm: add a build check for userspace_pm_dump_addr
-    https://git.kernel.org/netdev/net-next/c/63132fb05474
-  - [net-next,04/10] mptcp: pm: add mptcp_pm_genl_fill_addr helper
-    https://git.kernel.org/netdev/net-next/c/f8fe81746573
-  - [net-next,05/10] mptcp: pm: drop match in userspace_pm_append_new_local_addr
-    https://git.kernel.org/netdev/net-next/c/640e3d69d0bc
-  - [net-next,06/10] mptcp: pm: drop inet6_sk after inet_sk
-    https://git.kernel.org/netdev/net-next/c/dc41695200a1
-  - [net-next,07/10] mptcp: pm: use ipv6_addr_equal in addresses_equal
-    https://git.kernel.org/netdev/net-next/c/7720790fd56b
-  - [net-next,08/10] mptcp: sched: split get_subflow interface into two
-    https://git.kernel.org/netdev/net-next/c/9771a96a7a35
-  - [net-next,09/10] mptcp: sched: reduce size for unused data
-    https://git.kernel.org/netdev/net-next/c/b68b106b0f15
-  - [net-next,10/10] mptcp: blackhole: avoid checking the state twice
-    https://git.kernel.org/netdev/net-next/c/8275ac799ee1
+Cc: stable@vger.kernel.org
+Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the bug description as suggestions.
+---
+ drivers/phy/tegra/xusb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 79d4814d758d..c89df95aa6ca 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -548,16 +548,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 
+ 	err = dev_set_name(&port->dev, "%s-%u", name, index);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_device;
+ 
+ 	err = device_add(&port->dev);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_device;
+ 
+ 	return 0;
+ 
+-unregister:
+-	device_unregister(&port->dev);
++put_device:
++	put_device(&port->dev);
+ 	return err;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
