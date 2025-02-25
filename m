@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-530725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75138A43789
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:25:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF5BA43783
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978A67AC899
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9AE175EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EC72638BA;
-	Tue, 25 Feb 2025 08:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E8260A2E;
+	Tue, 25 Feb 2025 08:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ETY/Jcws";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yj/d7+Wa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7VchIXZ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588325EFB8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B625EFB8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471561; cv=none; b=XFd++yXkpHyxIDVK7bi5Xz/cIAlWFCf/jDHQfRZry1mLknTdfSa2sx4fnbQTyNCV8VFdETrLCZ05u31Gtw+QgQwawoJsfNAgsUrR56pqhx6Kblpl0SRRddelRhKx0EDKgrVvqM/dBdZdV7tFIboJ4ioxbHYKBC6n61WpJ7BTqV4=
+	t=1740471584; cv=none; b=hzDoaCUzfh3KwjBkngxWgOcCsdknSzS6Wx6HOcCmQV2Gs/ruP2xihrXs2hWICHfXUmQa0qRE+2lLdnJVxVZCkjvAAq5gwvcIBID0uHp86oppsaYTfGM04TH0x2BK1DkrjiaxW5JCbRYm/U9wHOGFpo3FkZYd+dJzxNEHSxWc3do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471561; c=relaxed/simple;
-	bh=tvnMnAyzoSvIGys78PXOVZpqioKeO9qUoVCsBob8w0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjC1OohPMuIQP4IjtFbMIU9t8fZgU7h9F9636nq8V8cJpTQqNF2eQofhfzeWJJ2TTcAkfYIqg61fyqj0/tdNISWt8bPQOqmEkwVIGhK+mZIAusHouJ74iPpuY48rw/tA0rtdAK4mzzX3r2OSVyydD0kS8mKZgEVdgzbAzap6mUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ETY/Jcws; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yj/d7+Wa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Feb 2025 09:19:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740471557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MbmGE3lh0+rEmbWN8ci1bBU7IZ/e52tY6v25JTl98TM=;
-	b=ETY/Jcws9iN3+iLmGHdsECVEC/bWqYwDEohdXe6fxA892cgHkwXS7icb1PQeuoVKI59psh
-	eoTksaQAK5djqOSCwXRwWNNogSiJ7PxurzkYnu59biBWMxXs85kaJK0SllNrYjNDGL64zo
-	GgkXWWqYVYkvGCGg6oZD6D1Pc7otPqvnI6o/z5FnMIjAJB1DCPG3OU19ROmedbt2MeTjRg
-	Zy3EJVVADe12/dsB/+ZhbjRnvLbero2PYougZQ+LOpODV60hTdoF6jGTsPWWBTmb0VWSvC
-	d2TiRTxmhCBR3TuCHtu286U6dkktd1qvIxu2IgwKzI5gTWcwyJ4UMEUFlASa5A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740471557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MbmGE3lh0+rEmbWN8ci1bBU7IZ/e52tY6v25JTl98TM=;
-	b=Yj/d7+WaDLF6XW2kHzohhFYpb9iUmVk+7t86CnWvVyGepa1QkW/dgDwRIe4OuQh5EOdLxg
-	12fyjzKLV50iXxDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Don't use %pK through printk
-Message-ID: <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
-References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de>
- <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
- <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
+	s=arc-20240116; t=1740471584; c=relaxed/simple;
+	bh=X4Rwqhge4ZHSgWe7CXXfacQmhKs7JKLp0sW/JwbmXq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UT/l3CpFnJ9GzNP73iv5JmghAD7ah9NKOCZlYlchRnGtyXE8FkvWeeJf0T7fJ0X3Q/X6uTiW1v6iuuHV8iUIiPtuKOBU/wue+Fl/aQlkoCT2AtVag+SFHOmSgYfQ6tnB2sd5vslkgiwx6jejRmzUisAl6DdbbvXAYNe2z8gumrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7VchIXZ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21f8f3bd828so11628465ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:19:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740471582; x=1741076382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mx2QrLQuirMCQwy2aokgi/+k+IY05gOk7VQO5JEmOBQ=;
+        b=a7VchIXZCJHvwGhgmTpjZgQtTaC7bGgsXPklUocqnmjq9UbzGAEEcjkUpPos/E3i9R
+         L6nq6SQav4+HoiW7LXgRcxME7eYbsI3iQJtoQRlYxQZUBBnkUcLigOb60Et4B+w+YMVW
+         yMCqW1k8v4LgtB+MDO0TuxvG4hLA47Zls6tey7IHMpn+xLK2a6uXHAe7/TEa6pmUeKEs
+         BnMDM7FGRtG4x8f743jKk7M0nFpUBIHfmEp4PXEHFPMZXLdW3uON42uZob35It+uLua6
+         AL/8oq7y5Uhf1l+3KLLQdSeBYeyS9ms74NYRXFKtbQsD62jUB85izPRB2C04M+xb9iQx
+         6sAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740471582; x=1741076382;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mx2QrLQuirMCQwy2aokgi/+k+IY05gOk7VQO5JEmOBQ=;
+        b=Coz+jm5BmwMsoFY6YKNBiIfad2PJGz5A7vojtrzuRyeoYHDtyMyGL+/Qe4cwNY3jNt
+         DxusmdL4fIQPazVQLibFTpJMhhS7CqGfpJyq+1NT9fSurfdMTZwWftjbG1h1COiB7kA6
+         gt62gzs2akVXmdz7kdIcjLnwo1blYRDip4U0d/1xTX0H7UIDVWbzkWdwe4xoHQHdUT/a
+         d30+YXfDuDJmVBS0TD/wH6SbjSPSDCtGegx1I9cGd1sj/36CcppUhtrl8srr/2IWtFB5
+         25xLRMaPYvhPvzjDbBQFwX6XdNZ0d4RlqgOi3nKQWCqyJjueRyx/N2COThQXaI9jbcvQ
+         j8PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGrp8T0esi1ikaKFtmomUJwptZFDSfb4Uc4cLENqKbGs2GUpxxd/LaD5TjVN2p2fR3+2Ae674kzZuxKuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0TE6Mr35IscsskFmgOdJnah/M38ZgyTRA9bgiczZW/ZMT2IyI
+	Du7MLWBdYfPHqnhux647/+BdXmc7r/gcoM9UTuxVFOEoa2WzrjlL
+X-Gm-Gg: ASbGnctUMvTl1FTJPnzJaG9GWtrKnm9WuowUlAw6Nln9sUl8QJG1+pBT1dZpimADrwN
+	h+lKVxwrKcYl8mlFRnF2MFNAdiQMbESqcIQxbM0eWBVzJv3dchrCFLevnEWNFCIiwH2Ns2XMYX9
+	nfJ8Y8FWW5gOfmYyBOa2x8vpCegXw23v9s2ZnFAB0CqIYPmQJv+AOcgxoN0qUwN3ACQuoeyLuYF
+	vX5CINJP8qvzU4k8bu2PzzMy5HZOUu3ELZOHe86EKd6osflvrM8dXym9uqSvbxb+wwvZ+vKzsvR
+	S9lBglzgFqMZza0sclAGxqYvNU7YsWLWoBjXCmWlhQ==
+X-Google-Smtp-Source: AGHT+IFUZ921XcZ5J+TM3sPegqR9smZXw0NsQmGLu6WmXG02pXk6UoE/wAMIzm34jMd5imF3JFw22w==
+X-Received: by 2002:a05:6a00:641a:b0:734:3d2e:18b1 with SMTP id d2e1a72fcca58-7343d2e19b4mr7936256b3a.2.1740471582432;
+        Tue, 25 Feb 2025 00:19:42 -0800 (PST)
+Received: from localhost.localdomain ([182.148.13.61])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6ada9fsm943955b3a.17.2025.02.25.00.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 00:19:42 -0800 (PST)
+From: Qianyi Liu <liuqianyi125@gmail.com>
+To: matthew.brost@intel.com
+Cc: airlied@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	dakr@kernel.org,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	liuqianyi125@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	phasta@kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+Date: Tue, 25 Feb 2025 16:19:32 +0800
+Message-Id: <20250225081932.175586-1-liuqianyi125@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <Z71ZM9Cs1Wb4mhD3@lstrano-desk.jf.intel.com>
+References: <Z71ZM9Cs1Wb4mhD3@lstrano-desk.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
 
-On Mon, Feb 24, 2025 at 06:54:47PM +0000, Maciej W. Rozycki wrote:
-> On Mon, 24 Feb 2025, Christophe Leroy wrote:
-> 
-> > > Restricted pointers ("%pK") are not meant to be used through printk().
-> > > It can unintentionally expose security sensitive, raw pointer values.
-> > > 
-> > > Use regular pointer formatting instead.
-> > > 
-> > > Link:
-> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023%40linutronix.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C75a852a0fef54fa43a3608dd4f263f45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638753747883689862%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aUgq6pXb1ySaQ6e%2FdyM09jfc4MNLE71Njw0%2FnCg%2F6VU%3D&reserved=0
-> > > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > 
-> > Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > 
-> > > ---
-> > >   arch/powerpc/kernel/eeh_driver.c | 2 +-
-> > >   arch/powerpc/perf/hv-24x7.c      | 8 ++++----
-> > >   2 files changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/arch/powerpc/kernel/eeh_driver.c
-> > > b/arch/powerpc/kernel/eeh_driver.c
-> > > index
-> > > 7efe04c68f0fe3fb1c3c13d97d58e79e47cf103b..10ce6b3bd3b7c54f91544ae7f7fd3f32a51ee09a
-> > > 100644
-> > > --- a/arch/powerpc/kernel/eeh_driver.c
-> > > +++ b/arch/powerpc/kernel/eeh_driver.c
-> > > @@ -907,7 +907,7 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
-> > >   		/* FIXME: Use the same format as dump_stack() */
-> > >   		pr_err("EEH: Call Trace:\n");
-> > >   		for (i = 0; i < pe->trace_entries; i++)
-> > > -			pr_err("EEH: [%pK] %pS\n", ptrs[i], ptrs[i]);
-> > > +			pr_err("EEH: [%p] %pS\n", ptrs[i], ptrs[i]);
-> > >     		pe->trace_entries = 0;
-> > >   	}
-> 
->  But shouldn't this be using `%px' then instead?  It would be sad if all 
-> the address information from error reports such as below:
-> 
-> EEH: Call Trace:
-> EEH: [000000008985bc3b] __eeh_send_failure_event+0x78/0x150
-> EEH: [000000008c4c5782] eeh_dev_check_failure+0x388/0x6b0
-> EEH: [000000001fb766c1] eeh_check_failure+0x98/0x100
-> EEH: [000000004b9af8c6] dfx_port_read_long+0xb0/0x130 [defxx]
-> EEH: [00000000e23999c1] dfx_interrupt+0x80/0x8c0 [defxx]
-> EEH: [00000000c7884fb7] __handle_irq_event_percpu+0x9c/0x2f0
-> EEH: [000000008d4e9afd] handle_irq_event_percpu+0x44/0xc0
-> EEH: [000000008c39ece4] handle_irq_event+0x74/0xc0
-> EEH: [00000000d85114a9] handle_fasteoi_irq+0xd4/0x220
-> EEH: [00000000a692ef4e] generic_handle_irq+0x54/0x80
-> EEH: [00000000a6db243b] __do_irq+0x68/0x200
-> EEH: [0000000040ccff9e] call_do_irq+0x14/0x24
-> EEH: [00000000e8e9ddf7] do_IRQ+0x78/0xd0
-> EEH: [0000000031916539] replay_soft_interrupts+0x180/0x370
-> EEH: [000000001b7e5728] arch_local_irq_restore+0x48/0xc0
-> EEH: [00000000088691b7] cpuidle_enter_state+0x108/0x560
-> EEH: [00000000e6e26f30] cpuidle_enter+0x50/0x70
-> EEH: [000000007c26474c] call_cpuidle+0x4c/0x80
-> EEH: [0000000036b8a2fc] do_idle+0x360/0x3b0
-> EEH: [0000000048702083] cpu_startup_entry+0x38/0x40
-> EEH: [00000000d3b1fb8d] start_secondary+0x62c/0x660
-> EEH: [0000000041a9a815] start_secondary_prolog+0x10/0x14
-> 
-> was suddenly lost from the kernel log, the access to which unprivileged 
-> users can be denied if so desired according to the site policy.  Whereas 
-> running the kernel such as to have all output from plain `%p' exposed just 
-> to cope with this proposed change, now that seems like a security risk.
+Hello Matt,
 
-Your point makes sense.
-*But* the addresses in your example are already hashed,
-as indicated by the all-zero upper 32 bits.
-By default, when kptr_restrict is set to 0, %pK behaves the same as %p.
-The same happened for a bunch of other architectures and nobody seems
-to have noticed in the past.
-The symbol-relative pointers or pointer formats designed for backtraces,
-as notes by Christophe, seem to be enough.
+>> 
+>> But also be handy of could share the kmemleak trace.
+>>
 
-But personally I'm also fine with using %px, as my goal is to remove the
-error-prone and confusing %pK.
+> Agree kmemleak trace would good, include in commit message, but the
+> patch looks correct to me.
 
-Thomas
+Unfortunately, as trace involves private code of our driver, our driver has not
+yet officially entered the community yet, but it is already on the way. So I
+cannot provide trace information at this time. But I will update the commit in
+V2.
+
+Best Regards.
+QianYi.
 
