@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-530713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8AAA43764
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:21:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A612CA4376A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3121C17D7FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3723B4175
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1852926658A;
-	Tue, 25 Feb 2025 08:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D1B25EFB1;
+	Tue, 25 Feb 2025 08:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nolsGwql"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="QX/Bvna7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LP3VBxZg"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5A925EF82;
-	Tue, 25 Feb 2025 08:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9744D261360;
+	Tue, 25 Feb 2025 08:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471454; cv=none; b=stM9vcgWw2ih2hSTXRK4P000ERqcHe3J/rMubwKs9ZOYvygmOcnwp6aqGYV8hCrvuUYgVFdDyB77Ai7chIJEoTrrQvMpnXPKcyy1jIRILE/Oj0nkhmBWwmLXJRNEQH7LpMfukAxgVipQOFEPfA+p4IbvDl9KXi9YDjvfUPGhug4=
+	t=1740471475; cv=none; b=goesgCRCGaYVRsNA1JUiQ6N4rhXlSK8pThVxbXXZf1uSwOHbJ+cMpg/lBChcDSxP93RsUPiFR29hU+u3vPc3j0ACe7s+Vs1Y5Ix6nZzWpHZF+TmQEcp/l0xSQR5uyxBJ6kpISYvcfHntJWvbElRd1ihoBQxt/JR7jFdo/xIJ214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471454; c=relaxed/simple;
-	bh=HZO2f8Ky8dbSMzYbONAVILHhqJE44ad//F2VLMyxgfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUp7DcjZtQQWOAasgYWFgrKR7I9yMrjQQbE+zOgpOD1OiJ0cn5wZIDl4buRlGK4FY3VCZO5wttbnHzv7jIKTlWV2t5NzfmVms+AiYcd5m6Qa/IhTcuWvylARJvpAOsWPbwOFKzqQRTfOD4iG7IQkWacdr6fNTZIW9JP9+8fWpI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nolsGwql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4813CC4CEDD;
-	Tue, 25 Feb 2025 08:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740471453;
-	bh=HZO2f8Ky8dbSMzYbONAVILHhqJE44ad//F2VLMyxgfA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nolsGwqlaPU7Jwuy92yZhxfiJt/GY3cD0xehdjOIPGGeBVA1LsKP87FdQue+dMu+Q
-	 gf7O/PXOKDXrT3YVpIs6GyE0iYDXkEWZq+9VAqlttpsRf/6k6dmq4BqaoiDPLmrPwL
-	 rmfnzvjrcDfQXRhYRN9Hdzhi42UBsmj4ITEKEV/Y8iLVKZGAokNXnZYuY5jNOGsEeq
-	 SgkT7rS+ei5h1lTJMnhwv1SUt9B/nwyl0MZnZXdnHFBIZqAj3xG0ppetreHwVEl6Xg
-	 reggk7DCDYJKUzjBcNZ9SfZUFoxbA6dBDyH1HkLgiRTPpLGNB/gmkKPpFu02IeFiwy
-	 GK4/WUHEsuSNQ==
-Message-ID: <0dd44da7-b3e3-4639-9acb-a296cba03b68@kernel.org>
-Date: Tue, 25 Feb 2025 09:17:27 +0100
+	s=arc-20240116; t=1740471475; c=relaxed/simple;
+	bh=+U8N0q/4tVwBbUeq2+WhDUghvs71woUXYAKsqO4KBIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBajCOqQ45l9y/ijWFttli6JfBN3CJPJ0WA7QJWce1Zwj5810aDsYAF4snIKhuW5pi4NkiOLnC1V8vR8PZQrGGkhLY3Nl9ZvI7Ynt0J8qK62jm2VcsAxClNSWXhtwUOvPENDyI6s1XdClWr5RIjOQ9L+knnst9PjMp5ntw84VPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=QX/Bvna7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LP3VBxZg; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 626F31381684;
+	Tue, 25 Feb 2025 03:17:52 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 25 Feb 2025 03:17:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1740471472; x=1740557872; bh=bdIllsSKWBpK9vaOW5DvD
+	l4NNgJuhqdEomPLmN+ytAA=; b=QX/Bvna7Q5Bk650sS0FtRueZco53KDOdvjtmP
+	ROtsXWCvYEjuV+IA7tZgh320E12GYd+ErtPVXqVkQWFzYZiqCpwpgTBx04uKwaeE
+	wlGaC5psouT3Qn1Oc+P+Z5T+WGWU6FPBLk5d/9Rc1U+BDyp7VHbDE4ZOXUE84Cxf
+	T7uS8aLW9ntYgtqHAYit72x65KinpPgLGv5mVUJK0jtwihn/On/zjJZB0nGd5UX4
+	2E/NwaHrB6hxovB+qwCxJ06G05i91vYAdaP9usklR+KF/z/j7eld4ZYO9pDYwZhs
+	0qZuAgifZtnpxNzLQCjPNzDBCxvjKhckm5FgraqBbKekOLlBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740471472; x=1740557872; bh=bdIllsSKWBpK9vaOW5DvDl4NNgJuhqdEomP
+	LmN+ytAA=; b=LP3VBxZgDQ+OK0y2CZotJg2dzv2SMvMaYa6yV05y9s7KyYSLbLw
+	6nnapv/oA/Pmf4X57M+8gG6pZ7vCLAvPLtbFuoysdW1Tu+kH7zQcCyMZs3ms05Xn
+	5yGDwxZwRdr8ZJlZNBRGiselYFQkZJ+M/Lv/iweOX6eSMxzdUNTOkrLgcUi/j4FL
+	kKiRpATgJZLnUY4hRJYAXffDepdrgDXcS6E95MNNDXjbvt0GkBILwMGqkOKKHykZ
+	gHH8Po28YAUd8HQWwhK6mT1PNV8upaEvn0AlbevXvj0WLwWIhHpHk8bwPcxaMwhR
+	4D2o1YKlJucvYUzAcQYxGU6DmxXAF5BL+YQ==
+X-ME-Sender: <xms:r3y9Z747xVkjSwoKD1mfX8K0QkpQhVqf5SKYHDQoYNsjSgrF7D9b_Q>
+    <xme:r3y9Zw5AxYtavcuVhw9jG4PtcDEJq8ze6kv67hAW-DzZFSZxK2jVPSuTCwZw4g_Zx
+    K3NZPcsFQF-MFOpqAI>
+X-ME-Received: <xmr:r3y9Zycy0eJqZqnGS-9INZvYSfoVj2gWcJ_Z-CK95Z88FGAkixHYyEjTLeQH4cqa4WhtY9MPZ0oUM9Sgyw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekuddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvve
+    fufffkofgggfestdekredtredttdenucfhrhhomhepnfhukhgvucflohhnvghsuceolhhu
+    khgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnheptdektdeitdetueehue
+    etteffffeggfefhfeitddvgeeifeejheelheffjefggfehnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
+    dpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhi
+    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephh
+    guvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhv
+    ihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphhlrghtfhhorh
+    hmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:r3y9Z8LQ-NjSBWs7btz_OQi93yjr0wsYVuhWKvfowFf3e8hzNe3ZeQ>
+    <xmx:r3y9Z_Lymtivsx3a4kfMmAiPsxjivQB1Gt1pVbZPPA9ZQGoY9-47tg>
+    <xmx:r3y9Z1x5PcRS0wc01Xi3Irq48tk3_9Q2gy5-e-S5XnRnUHqCXJH_Lg>
+    <xmx:r3y9Z7LlouR3llojwESBJN7jh7SQb2Oi6uoFD9g4BsYFLuSD-90MHw>
+    <xmx:sHy9Z8rpVkA8w7Z-S9UgUweEOeMyic2PMHFOY3ZeaHNVy49GORCy9uXZ>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Feb 2025 03:17:48 -0500 (EST)
+From: Luke Jones <luke@ljones.dev>
+To: linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	Luke Jones <luke@ljones.dev>
+Subject: [PATCH 0/2] hid-asus: asus-wmi: refactor Ally suspend/resume
+Date: Tue, 25 Feb 2025 21:17:42 +1300
+Message-ID: <20250225081744.92841-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/2] ASoC: codecs: Add aw88166 amplifier driver
-To: wangweidong.a@awinic.com
-Cc: broonie@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- ivprusov@salutedevices.com, jack.yu@realtek.com, krzk+dt@kernel.org,
- lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, nuno.sa@analog.com,
- paulha@opensource.cirrus.com, perex@perex.cz, quic_pkumpatl@quicinc.com,
- rf@opensource.cirrus.com, robh@kernel.org, tiwai@suse.com,
- yijiangtao@awinic.com, zhoubinbin@loongson.cn
-References: <20250223-vigilant-cooperative-snake-2d810b@krzk-bin>
- <20250225074214.29902-1-wangweidong.a@awinic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225074214.29902-1-wangweidong.a@awinic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/02/2025 08:42, wangweidong.a@awinic.com wrote:
-> Thank you very much for your review
-> 
-> On Fri, Feb 23, 2025 at 12:46:14 +0100, krzk@kernel.org wrote:
->> On Fri, Feb 21, 2025 at 06:26:23PM +0800, wangweidong.a@awinic.com wrote:
->>> +
->>> +static void aw88166_hw_reset(struct aw88166 *aw88166)
->>> +{
->>> +	if (aw88166->reset_gpio) {
->>> +		gpiod_set_value_cansleep(aw88166->reset_gpio, 1);
->>> +		usleep_range(AW88166_1000_US, AW88166_1000_US + 10);
->>> +		gpiod_set_value_cansleep(aw88166->reset_gpio, 0);
->>> +		usleep_range(AW88166_1000_US, AW88166_1000_US + 10);
->>> +		gpiod_set_value_cansleep(aw88166->reset_gpio, 1);
-> 
->> Why do you keep reset as active after reset? How is it suppose to work?
-> 
-> The gpio port of the AW88166 is reset when it is low.
+This short series refactors the Ally suspend/resume functionality in the
+asus-wmi driver along with adding support for ROG Ally MCU version checking.
 
-The value here is not value on the pin, but logical value for Linux. 1
-means make it active.
+The version checking is then used to toggle the use of older CSEE call hacks
+that were initially used to combat Ally suspend/wake issues arising from the MCU
+not clearing a particular flag on resume. ASUS have since corrected this
+especially for Linux in newer firmware versions.
 
-> So it's working now, I will modify it as follows:
+- hid-asus requests the MCU version and displays a warning if the version is
+  older than the one that fixes the issue.
+- hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
+version is high enough.
 
-Really? Your DTS example has ACTIVE_LOW, so with combination of above it
-cannot work. Unless this is wrong or your DTS is wrong or this is not
-reset but "enable" pin etc.
+Luke D. Jones (2):
+  hid-asus: check ROG Ally MCU version and warn
+  platform/x86: asus-wmi: Refactor Ally suspend/resume
 
+ drivers/hid/hid-asus.c                     | 101 ++++++++++++++++-
+ drivers/platform/x86/asus-wmi.c            | 124 ++++++++++++++-------
+ include/linux/platform_data/x86/asus-wmi.h |  15 +++
+ 3 files changed, 199 insertions(+), 41 deletions(-)
 
-Best regards,
-Krzysztof
+--
+2.48.1
 
