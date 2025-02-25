@@ -1,288 +1,99 @@
-Return-Path: <linux-kernel+bounces-532094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11895A44891
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:41:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D0EA44901
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE4816CFA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4879B8824EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ADE1A2392;
-	Tue, 25 Feb 2025 17:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="MjFXpwVj"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E4019C546
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE451A8F95;
+	Tue, 25 Feb 2025 17:32:16 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E4A18C91F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504671; cv=none; b=gyhAYRYsn0xoydXtXPdz9pIOJF51dRcsLDwZ2t94k2PAa3aDDbb0c3FLJj04cAGfzTk+xvmBdfNGTYWbJQZTEpXhLOXPqByFbnF7w/xDC2fVszsIl9+uXrHmI+7jFpSEfO1xLC1zyaAvOMDleUZSkbSgeHd0l6JgxmPdv8WKaLc=
+	t=1740504735; cv=none; b=ebwLXQoRa670NTpKRWMJDQPmZn0XH6pa6nqoW9vWQU3BDU4IHjVtfX3MR0giSQa4FVPeVKiifOfhqDKr7B3w2tkxzv1++sA9AkvyiuKdsYpZzDuFx8rDMxlC1oqvETUVwnsrvbMVjLkJhEbyHl5bCLsYT7YZo0Y64yw3dyl5eVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504671; c=relaxed/simple;
-	bh=MmVKquil6mmQ3xpk1eRUf/E0TrskgYszVWtL0BZFMDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iqZmfJMb6/IvzYUokcka4uq0mk+hDqvOaM1pGNiicuchgBz3pFw+U8PBdLtP1CgSinH8WdOku2wuoGGE5wf6JotM/RsN3nhPVA+rvh9kVG234s2NRA6ECWYHlD8q2xLv4pdKCo7lkjeP7cglX01k5Go6GgSn+VV4FSJhhpLjaNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=MjFXpwVj; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3072f8dc069so60544131fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:31:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1740504667; x=1741109467; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sr0lGKah3/e1a4myY+vuvPqjngZ6J7nGdFvX+CNC6oA=;
-        b=MjFXpwVj8s41TDtH4gisFRuZnTOZRd0XxJrh33e81HJtWyfbghfaz0Bsqg0OXw5Iv1
-         1WI6Pjk6X/HR+p6JdMrI35C0Irz5uycG/fSj5vgaJR6sW5xdyTDiGQyYKZVufLprBAHj
-         eqy4vwrWKcnBoCgTzuLL7ZpnLYLkNurNg1JZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740504667; x=1741109467;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sr0lGKah3/e1a4myY+vuvPqjngZ6J7nGdFvX+CNC6oA=;
-        b=flRhEvP6GACcJ/CCFvS0V0Oj1+VHyd56Wu8v3C4vzRQEYs/CrJpI74icAQvQlbwwfV
-         GPoWIv24x3mbClFzWV3LCHv8PO5whD4cZTh6fLqAB3CvgRKO5VbTMcwCjRxuUPZUi9yn
-         w+Ls+TkfMOb3ZRxQuRK7BbCIObQ/t/eGkOKNr1DqhaRPCg3x79l1JbPwOsbASi5Zoil9
-         rPyR1B5aY8fnrgSu6lDVflinErXpsWbu9cIniTlOEmeF5lHLIA5UePmxtNXMFJUfOFk2
-         uBJazJV3MZvNHynwpfOxi11XhiDtxYX8B7kc5jEdisFAeH4peXk/z4MRN2cmmot81lzf
-         T/tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9O88gwiDEeF8BiahQ6H4YXR1pLM0WG64RSw/miA+AoRNsty5+z1RzGX0vdWXS2HnWOBMJH+4tEgB0jkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7cMsoZDk5Xqpqo0+CjaEZPzmFGX0/Gy3GozR6h8iTY5Xfo0n9
-	+Zb5voO/2xfGzbV8xXy7+SeFFXT0eSHtwfHYyzbIkfOOOZqYLXps7KoSF2UZ7FKp32/W/CRKiZt
-	6wNTKwWQ6+68RQOjIoFpOJAdonGu9gtk4O5oYJw==
-X-Gm-Gg: ASbGnctNO1dXgKxLB+prE4uw7coDNU6D9p8EJC12d0w0yXmrDxsbmG8pnrkY9G4rcHf
-	1DgKrr6POfHKoCOgekAuU3iPKEZklc3ddM3matFaR3ZTphWSGxmEZ3WlWX8HnCIUI6kFD8/3ydS
-	RNnF1ZKJ+D
-X-Google-Smtp-Source: AGHT+IHKA343AalMF74L8JxUwbWM37GE3WpO7wyx52fYQdPhMdvql53UVqLAYK+QW17iKHLscQ29ybGBGuJOAlqGu2s=
-X-Received: by 2002:a05:6512:230c:b0:545:721:b7d1 with SMTP id
- 2adb3069b0e04-5493c57a8bemr166377e87.15.1740504666804; Tue, 25 Feb 2025
- 09:31:06 -0800 (PST)
+	s=arc-20240116; t=1740504735; c=relaxed/simple;
+	bh=/px6YTPNN3C+iqrbhPzASwpTLJh6IQkRT7RPVBXwWgo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bVmdoX+ZfN7uCZnZ4otdBqsV25cQP4LQXhfjfG++wtVBCfatpiJG+pdToex3KNos1mXGlHDQdOLeC0EnqvjGyBX5028yoscbfVrNwFQw/Sg0P0FpcpVE3rg47Os44+tfIgI91nMZxa4OzPBlNyLVki8BWIM5MS6FifGK8QaS7TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 3AC7B92009C; Tue, 25 Feb 2025 18:32:12 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 3651F92009B;
+	Tue, 25 Feb 2025 17:32:12 +0000 (GMT)
+Date: Tue, 25 Feb 2025 17:32:12 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, 
+    Madhavan Srinivasan <maddy@linux.ibm.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+    Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't use %pK through printk
+In-Reply-To: <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
+Message-ID: <alpine.DEB.2.21.2502251654370.65342@angie.orcam.me.uk>
+References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de> <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu> <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk> <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221170249.890014-1-mkoutny@suse.com> <20250221170249.890014-3-mkoutny@suse.com>
-In-Reply-To: <20250221170249.890014-3-mkoutny@suse.com>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 25 Feb 2025 18:30:55 +0100
-X-Gm-Features: AQ5f1Jox-7JY9Yq2cjjD4WYD_GzEdOQ4l8mmUecA8Ynp2bchP3f7oX2UthEQhrQ
-Message-ID: <CAJqdLrpjx6nRRMO+349T8W4xFyoYav7N+ys+AvLGWFsOLfsHeg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Eric W . Biederman" <ebiederm@xmission.com>, Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Am Fr., 21. Feb. 2025 um 18:02 Uhr schrieb Michal Koutn=C3=BD <mkoutny@suse=
-.com>:
->
-> Noone would need to use this allocation strategy (it's slower, pid
-> numbers collide sooner). Its primary purpose are pid namespaces in
-> conjunction with pids.max cgroup limit which keeps (virtual) pid numbers
-> below the given limit. This is for 32-bit userspace programs that may
-> not work well with pid numbers above 65536.
->
-> Link: https://lore.kernel.org/r/20241122132459.135120-1-aleksandr.mikhali=
-tsyn@canonical.com/
-> Signed-off-by: Michal Koutn=C3=BD <mkoutny@suse.com>
+On Tue, 25 Feb 2025, Thomas Weißschuh wrote:
 
-Dear Michal,
+> > was suddenly lost from the kernel log, the access to which unprivileged 
+> > users can be denied if so desired according to the site policy.  Whereas 
+> > running the kernel such as to have all output from plain `%p' exposed just 
+> > to cope with this proposed change, now that seems like a security risk.
+> 
+> Your point makes sense.
+> *But* the addresses in your example are already hashed,
+> as indicated by the all-zero upper 32 bits.
 
-sorry for such a long delay with reply on your patches.
+ Darn it!
 
-> ---
->  Documentation/admin-guide/sysctl/kernel.rst |  2 ++
->  include/linux/pid_namespace.h               |  3 +++
->  kernel/pid.c                                | 12 +++++++--
->  kernel/pid_namespace.c                      | 28 +++++++++++++++------
->  4 files changed, 36 insertions(+), 9 deletions(-)
->
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/=
-admin-guide/sysctl/kernel.rst
-> index a43b78b4b6464..f5e68d1c8849f 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one task=
- using this sysctl
->  lives in) pid namespace. When selecting a pid for a next task on fork
->  kernel tries to allocate a number starting from this one.
->
-> +When set to -1, first-fit pid numbering is used instead of the next-fit.
-> +
->
->  powersave-nap (PPC only)
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.=
-h
-> index f9f9931e02d6a..10bf66ca78590 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -41,6 +41,9 @@ struct pid_namespace {
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->         int memfd_noexec_scope;
->  #endif
-> +#ifdef CONFIG_IA32_EMULATION
+> By default, when kptr_restrict is set to 0, %pK behaves the same as %p.
+> The same happened for a bunch of other architectures and nobody seems
+> to have noticed in the past.
+> The symbol-relative pointers or pointer formats designed for backtraces,
+> as notes by Christophe, seem to be enough.
 
-Unfortunately, this does not work for our use case as it's x86-specific.
+ I do hope so.
 
-In the original cover letter [1] it was written:
+> But personally I'm also fine with using %px, as my goal is to remove the
+> error-prone and confusing %pK.
 
->In any case, there are workloads that have expections about how large
->pid numbers they accept. Either for historical reasons or architectural
->reasons. One concreate example is the 32-bit version of Android's bionic
->libc which requires pid numbers less than 65536. There are workloads
->where it is run in a 32-bit container on a 64-bit kernel. If the host
+ It's clear that `%pK' was meant to restrict access to /proc files and the 
+like that may be accessible by unprivileged users:
 
-And I have just confirmed with folks from Canonical, who work on Anbox
-(Android in container project),
-that they use Arm machines (both armhf/arm64). And one of the reasons
-to add this feature is to
-make legacy 32-bit Android Bionic libc to work [2].
+"
+kptr_restrict
+=============
 
-[1] https://lore.kernel.org/all/20241122132459.135120-1-aleksandr.mikhalits=
-yn@canonical.com/
-[2] https://android.googlesource.com/platform/bionic.git/+/HEAD/docs/32-bit=
--abi.md#is-too-small-for-large-pids
+This toggle indicates whether restrictions are placed on
+exposing kernel addresses via ``/proc`` and other interfaces.
+"
 
-Kind regards,
-Alex
+and not the kernel log, the information in which may come from rare events 
+that are difficult to trigger and hard to recover via other means.  Sigh. 
+Once you've got access to the kernel log, you may as well wipe the system 
+or do any other harm you might like.
 
-> +       bool pid_noncyclic;
-> +#endif
->  } __randomize_layout;
->
->  extern struct pid_namespace init_pid_ns;
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index aa2a7d4da4555..e9da1662b8821 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -191,6 +191,10 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_=
-t *set_tid,
->
->         for (i =3D ns->level; i >=3D 0; i--) {
->                 int tid =3D 0;
-> +               bool pid_noncyclic =3D 0;
-> +#ifdef CONFIG_IA32_EMULATION
-> +               pid_noncyclic =3D READ_ONCE(tmp->pid_noncyclic);
-> +#endif
->
->                 if (set_tid_size) {
->                         tid =3D set_tid[ns->level - i];
-> @@ -235,8 +239,12 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_=
-t *set_tid,
->                          * Store a null pointer so find_pid_ns does not f=
-ind
->                          * a partially initialized PID (see below).
->                          */
-> -                       nr =3D idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -                                             pid_max, GFP_ATOMIC);
-> +                       if (likely(!pid_noncyclic))
-> +                               nr =3D idr_alloc_cyclic(&tmp->idr, NULL, =
-pid_min,
-> +                                                     pid_max, GFP_ATOMIC=
-);
-> +                       else
-> +                               nr =3D idr_alloc(&tmp->idr, NULL, pid_min=
-,
-> +                                                     pid_max, GFP_ATOMIC=
-);
->                 }
->                 spin_unlock_irq(&pidmap_lock);
->                 idr_preload_end();
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 0f23285be4f92..ceda94a064294 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -113,6 +113,9 @@ static struct pid_namespace *create_pid_namespace(str=
-uct user_namespace *user_ns
->         ns->pid_allocated =3D PIDNS_ADDING;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->         ns->memfd_noexec_scope =3D pidns_memfd_noexec_scope(parent_pid_ns=
-);
-> +#endif
-> +#ifdef CONFIG_IA32_EMULATION
-> +       ns->pid_noncyclic =3D READ_ONCE(parent_pid_ns->pid_noncyclic);
->  #endif
->         return ns;
->
-> @@ -260,7 +263,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_n=
-s)
->         return;
->  }
->
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->  static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->                 void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> @@ -271,12 +274,23 @@ static int pid_ns_ctl_handler(const struct ctl_tabl=
-e *table, int write,
->         if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
->                 return -EPERM;
->
-> -       next =3D idr_get_cursor(&pid_ns->idr) - 1;
-> +       next =3D -1;
-> +#ifdef CONFIG_IA32_EMULATION
-> +       if (!pid_ns->pid_noncyclic)
-> +#endif
-> +               next +=3D idr_get_cursor(&pid_ns->idr);
->
->         tmp.data =3D &next;
->         ret =3D proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-> -       if (!ret && write)
-> -               idr_set_cursor(&pid_ns->idr, next + 1);
-> +       if (!ret && write) {
-> +               if (next > -1)
-> +                       idr_set_cursor(&pid_ns->idr, next + 1);
-> +               else if (!IS_ENABLED(CONFIG_IA32_EMULATION))
-> +                       ret =3D -EINVAL;
-> +#ifdef CONFIG_IA32_EMULATION
-> +               WRITE_ONCE(pid_ns->pid_noncyclic, next =3D=3D -1);
-> +#endif
-> +       }
->
->         return ret;
->  }
-> @@ -288,11 +302,11 @@ static const struct ctl_table pid_ns_ctl_table[] =
-=3D {
->                 .maxlen =3D sizeof(int),
->                 .mode =3D 0666, /* permissions are checked in the handler=
- */
->                 .proc_handler =3D pid_ns_ctl_handler,
-> -               .extra1 =3D SYSCTL_ZERO,
-> +               .extra1 =3D SYSCTL_NEG_ONE,
->                 .extra2 =3D &pid_max,
->         },
->  };
-> -#endif /* CONFIG_CHECKPOINT_RESTORE */
-> +#endif /* CONFIG_CHECKPOINT_RESTORE || CONFIG_IA32_EMULATION */
->
->  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
->  {
-> @@ -449,7 +463,7 @@ static __init int pid_namespaces_init(void)
->  {
->         pid_ns_cachep =3D KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACC=
-OUNT);
->
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->         register_sysctl_init("kernel", pid_ns_ctl_table);
->  #endif
->
-> --
-> 2.48.1
->
+  Maciej
 
