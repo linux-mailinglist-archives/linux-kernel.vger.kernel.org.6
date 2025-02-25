@@ -1,54 +1,82 @@
-Return-Path: <linux-kernel+bounces-531625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9989DA442DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:34:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3B9A442DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5408E161525
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D2D3A1FCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44694269D06;
-	Tue, 25 Feb 2025 14:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRyh6RS5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CC426B089;
+	Tue, 25 Feb 2025 14:33:30 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21051FCFD9;
-	Tue, 25 Feb 2025 14:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EEA2698A8;
+	Tue, 25 Feb 2025 14:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493921; cv=none; b=joWajE2Za/ZBbUzmxlhQl0a9qHYD4PrLO2Fr1is4xRZBDqRBrAflV53e50xnkvosRg692FU7SaHvfWtszQ8a9wNeNBhMMveRr87Cq5g1TR2ebChlhbRVBPZzfPG7atj2Z5ly6D+LXX4Rz0E/59TSdzsheBPEWTYIhvmcrxqwnvI=
+	t=1740494010; cv=none; b=YZRhBb3aepPgIiOeqHdNHeDZlHjuEmBGDIJQev7z+3khG9jdj/tXqoD4xZislTm6jkVJJckPKUJzquzes8/PlhcKQJumXYKz/xiIKIo14IDfgpNmeqPdMY6TEqiME/vQbr1yySxglURYQj11yBsw+ladj75fdvkA3eCNUo5vJ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493921; c=relaxed/simple;
-	bh=+xRF9Tk3XNeOHq+GTk8RWa8l8wzWPABhjbAB/Kg4TfI=;
+	s=arc-20240116; t=1740494010; c=relaxed/simple;
+	bh=2E/xivADWUmMltm294B490hpFTUkS2KD5I5zSos4jPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezuy3cVm1oB76Q9mYUQIYRqEelGd8WQ27df2ib8rzRAEWpjEORMufASv3524XpniXLBpuQ8D6dxqA7dtkit5e8ctRgE4PL7qn0eDxlPjmcbmayTtnI4Ayo7RxAfXyi7IFVUYc7YuJcNnVqBs5cq1EG4/nX+IwCOyiMyLcM+h2qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRyh6RS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 832D2C4CEDD;
-	Tue, 25 Feb 2025 14:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740493921;
-	bh=+xRF9Tk3XNeOHq+GTk8RWa8l8wzWPABhjbAB/Kg4TfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CRyh6RS5qByJiJPKiX0zP+SMcqbGPXIjtJmcph1ahsM967orLfmLFAh3tGN3bOPBz
-	 hwKGTNb66NYJ+Om1Okw6Z9oipuZXMtipMSVUhFq5ka57gK6rxlNzk3WL9vvxPOfOrA
-	 Vaz7TcyEUxkMN+ItHCVMOtE1E6ZaJukGu4kLKkX/reEhm5MBkO5x7+r1LhtGOpb0aC
-	 TimGEkRF3cuxgnm9ob4gifcI9qOmZ/Krt1ZLLXHAPPrMDunQDxZ+vstmXKIT4rIg6r
-	 c2Vb8RuAJNvl7FtSZz4PpkeMfJsDYNzBPK3EGWBCqFsVGvIJFOg3ZHqcO3kzevL6Un
-	 SWb85NvrDvKsA==
-Date: Tue, 25 Feb 2025 16:31:55 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: torvalds@linux-foundation.org, m.szyprowski@samsung.com,
-	robin.murphy@arm.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: update MAINTAINERS
-Message-ID: <20250225143155.GA3167815@unreal>
-References: <20250224162724.349679-1-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJj5B9HYgdmY5mz2+HwytO8Nde87NVlfY+3mkBRS2W040hAjq7unL9P7os3BtpC5ndcAgWkxAKK8dZo29zUrUIPxXW+nrIXOClM/fIaY3g8yEvEWnGENCMB6yWCpbwybLMVHDUjo0C3QR1kd1roauMyPlIVuC9PJPvvyt9L6SHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220f4dd756eso119740795ad.3;
+        Tue, 25 Feb 2025 06:33:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740494008; x=1741098808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wfjw1HKQVvRq0BsR7wxCvBaXgth/Ba/pzPz08eLvgdM=;
+        b=wSAvAissHnZ1Y7bzHhOIl+ZcSR1lwMG6fEl8rOB+iXwvOKO4E4Csj8+eltaHBV6H+e
+         ZzTz+I5T9vq1TjX8PKUmGjECer7CMBEBvpYiBM35H25LASHA0PpzU1CxNR8L620DsDYJ
+         95R9jN8t9rjxgwkQFXHlp7o0L3+mbTG+ujk5UjJLlqyXozTMJyQ7liXUIZX+w7ZHq8//
+         tKJ1fijgMYLG9H6tccRTdVscVRNysGSDuK4FiUlnyi4StfkO+96qafv36MmituI2Wega
+         Ls7Bm9GT+sZ/b/g65agKvcwF/NtYm3+azCkbVmMTP9j79+UDDQrFa0cC6g+mc3G1mrB5
+         pOGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/5VdUtPEIdnnhdZ/2srnfiE1uw317Q/CsuZiyLVlqBQoYyNguae/9069GZIyyEcCyQVmEONNqCSMXiwo=@vger.kernel.org, AJvYcCUgP3nzIwFPhImsHtRiXg+QWEl1J6QdglUujgp7Yk8RkOY6F8IR44XGFHOwdfOKlp1Fs8llCN/Na3Y7@vger.kernel.org, AJvYcCUnfRQ0ggnBxJmw6dOltDq/SbFqjFoev3RKaJkbpAvmZIxftIGwdva72MbK3bjhKRO0AXpugmsOXzHCSGmOOBv/uQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/W5VnS2SvAIaf3vGHmAXNoe4scbqP1GRC8ppJnMlGxvAez6Up
+	IbfAunvbgPgWIt6RmtYYQQfW+OQCel8wSKH2H2KmsiFK0VKAHo9SKkhW9IPatKQ=
+X-Gm-Gg: ASbGnct+roD2vZOMlHXBDllK8zmnIQZX3Ar8qOFrQly5UzSrZITGgCjdGqU9hQqPo+/
+	pH0rApUWkfO/3CN1+Qo7H43Fbl26ucwsWqO1sTxkR40DrNwkoKuIXKz5UQHs5Jk9QfrXgwI3tXf
+	nrPeNP/C9z4hGjldGE7hTrSDTZ1BGWbLUHXm6IidttD8mVPIPKmQNuIbrJZc4Sb6TJaepQWV6UH
+	jm88jjO5jkoZLSZMGp8E2UC7UE4bioxxm3VHbZUt04SRCZXMt4kWwx/+wMAabNy/77IxYYL+TkQ
+	cHDV3oyAFdGoS63Wk3SCK45WiuORD1Y+lB5PJybLUeOLyem/L+CD83rCoX/H
+X-Google-Smtp-Source: AGHT+IFiIC1p2JsvGz1HBLa46/0n3Ly+kaAqBACASxC9/r77WzUjMbOSLV/Jfp7om7mV9KcQCdz2UQ==
+X-Received: by 2002:a05:6a20:d492:b0:1f1:458:fe80 with SMTP id adf61e73a8af0-1f10458fe98mr2109104637.25.1740494007946;
+        Tue, 25 Feb 2025 06:33:27 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aeda75a224esm1420946a12.15.2025.02.25.06.33.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:33:27 -0800 (PST)
+Date: Tue, 25 Feb 2025 23:33:25 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Niklas Cassel <cassel@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
+	nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
+ PCIe DW
+Message-ID: <20250225143325.GB1556729@rocinante>
+References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
+ <20250221131548.59616-1-shradha.t@samsung.com>
+ <Z7yniizCTdBvUBI0@ryzen>
+ <20250225082835.dl4yleybs3emyboq@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,16 +85,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250224162724.349679-1-hch@lst.de>
+In-Reply-To: <20250225082835.dl4yleybs3emyboq@thinkpad>
 
-On Mon, Feb 24, 2025 at 08:27:21AM -0800, Christoph Hellwig wrote:
+Hello,
 
-<...>
+[...]
+> Yes, it would be appropriate to return -EOPNOTSUPP in that case. But I'd like to
+> merge this series asap. So this patch can come on top of this series.
 
->  DMA MAPPING HELPERS
-> -M:	Christoph Hellwig <hch@lst.de>
+I pulled the series so that we can get some mileage out of the 0-day bot,
+so to speak, and also get some testing via the linux-next tree.
 
-It is sad change to see.
+That said, while looking at the code, there have been bits where I wanted
+to get some clarification.  Nothing will be a blocker.
 
-Thanks
+	Krzysztof
 
