@@ -1,170 +1,187 @@
-Return-Path: <linux-kernel+bounces-530450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26235A4339C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:30:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CA7A4339B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C861177EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F6E3B8103
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC9624C689;
-	Tue, 25 Feb 2025 03:28:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD9F24E4DA;
+	Tue, 25 Feb 2025 03:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLCawBuI"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FBAB64A;
-	Tue, 25 Feb 2025 03:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573F9B64A;
+	Tue, 25 Feb 2025 03:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454118; cv=none; b=GDnTJu7lQrCwbJ4IJ5jqJbl5Yazb0La7hCKTOp+Osc0p8ravWThFq1RQjM3BZNq5hTXX3fjqz4X/MfWMSRAZ0umvS6lwdA2zwL4iRviMXn/DRgyaQk/SDCIIUzZahbrkQHjkSEhbZSsFGQ5y75qvZxqThVmbhzbWzlyty5Np+Ow=
+	t=1740454145; cv=none; b=hIY6ZNH2wVsyl34CfM2I3Q2VZMwsFRzyXylvqpHRmpXgrAR1Uj1WVCHjdGmgG+EKzCyxx29UPwdCJtPkCc00OVx7P8+NWFmuY6sX0Qh0j0IU2BeLRPiGs4grdGg8P0tD+31M6rouZ/pMBqq9XhWiaaG4mB19x5iCtW9/5jGE+gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454118; c=relaxed/simple;
-	bh=NngLfemLVKOGvu3RSCVS+VwbkguzmUn/OliWZ6I/8/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WXDLj0aTrkwm8wLkngdKglwt/NdqTuB2p85BJz75r5tVAAaFnbUABfkukKQ2J4w/mMx7X1v2pudfx7D6RiYljYEFP9XwVN/7kCuhjKPquZ1mZVi3fZMBk2jdJaqO9TgBZ2NHRZCr53qSjD8pYkzCnA4T6ynDRtA2+noSiO3R5v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BB5C4CEE2;
-	Tue, 25 Feb 2025 03:28:35 +0000 (UTC)
-Date: Mon, 24 Feb 2025 22:28:33 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Zheng Yejian <zhengyejian1@huawei.com>, Martin Kelly
- <martin.kelly@crowdstrike.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@redhat.com>, Heiko
- Carstens <hca@linux.ibm.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [for-next][PATCH 4/6] scripts/sorttable: Zero out weak
- functions in mcount_loc table
-Message-ID: <20250224222833.0a9f2f4c@batman.local.home>
-In-Reply-To: <20250225025631.GA271248@ax162>
-References: <20250219151815.734900568@goodmis.org>
-	<20250219151904.476350486@goodmis.org>
-	<20250225025631.GA271248@ax162>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740454145; c=relaxed/simple;
+	bh=HNF5qY7BcDGhNusjatnaf1e0WWQ+PW81UQ8dQHSQ784=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=I+LiLKXPVzNRn3rFH52w6T5ULa8tqFFqeOj4uVIfbGkF72DUP30LFUdulOtCjzO6Ljzo8xD+duLB7km+FA/QKqzDPCvjFZ0QRDQVFRZXXlh5Uyf5jT118WKsQ1D/UJYpv9DW0+QiHCmZsBj3rpWIN3bCyLa062o24UfYcmuLuqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLCawBuI; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc0026eb79so10462809a91.0;
+        Mon, 24 Feb 2025 19:29:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740454144; x=1741058944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fql5ZM7tGQctn/RMDADJ21jSeiX4fcV+EhY7+A0lcRM=;
+        b=FLCawBuIVx4pkjPpgL31QYhuE3EWgaZSMCC53GqSI0mAKPTkSne5Cy4PEA9rIrPNbO
+         ZbyneiA2LiAtVmLLuqpw30FbEW/M2QzR9KU0hfCsVSY/f2Lj1f3m4sSIKOXim5B9zIpJ
+         43zkBzamMI9Ju4GRkAf+xL2AGMdedWf8RiNOIkHg2bTyjAI0zk96XAQpkwclgpvD+aP7
+         fxmvEV7hKMFSE76awGaufeIpkzK6nmHJ0H4ktt0fg57XBA6OZUajIP8+HOJIJkHxQNL8
+         M7bstP1UQG3O+RO7xKD45UGbnCPtEZnjrG2lsfZz7Z4sXufGy1P0AezWiAyfl3U6vFic
+         bfJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740454144; x=1741058944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fql5ZM7tGQctn/RMDADJ21jSeiX4fcV+EhY7+A0lcRM=;
+        b=LW5OgNxZ3IHtY3DjzjYQEithZT20pSSNR9G9ucfj6T2HqI/+kYRXBSKzaj8sj9DmF8
+         kvuEaIQSl0QD6bg1ffkeMxUe1n2FHqa65iCsGnITA/tuJ3FB698THRMhGDQ/na8DHeKl
+         bmOaru9NU71rdTTBCRBSQR2Hpqlf7fGgFFzekPRo+ObUAhMEQrVZxQWpG5fd95h6bZXZ
+         AyLgbrymF0hkPTrnSlQCsRg6TUbKhHtXulm6ngWe0thdteaj33IH/ZrjU0Pf9ZwdPGL5
+         VVVd0k+dWpI9mr6aTM9Ay2T4x8MkRcZ8E7inrikavDwGjcg8M0RML0Yasyt2ft4ielz3
+         0+jA==
+X-Forwarded-Encrypted: i=1; AJvYcCULxWZbfTQBePWaJ89jWJKCbO5fdPUuJO+rFFwiSGqHLKtJd4GxAhrZsnBjZEeJs0FtDYWFf2dT@vger.kernel.org, AJvYcCUMkRWYVNv3yhim4wCQ21novoqhkxUcj7PVrGwRZoEQxOQEPxPetfPpGbY/Dvh+lgcaYLMomqlmJUsKyNU=@vger.kernel.org, AJvYcCXZoXM8NDBGH3I3USGgRsEHviczA0pVfTogBIEAyZl5vCnACnLrU3HvfkRRUL2+LTpUSDk7xLuSl9en@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVcMDZumISl6SV+bRDRYYBuRertTyI40N54wkIzfWXdS7IqsLe
+	te4NRPfcHUpG6idN50IBhpu6JbXUqpCDmsOYXhB5kTwJJ6r0Ozg7
+X-Gm-Gg: ASbGnct/Ytcw8wGObeQm74kQ4lSAXXN8UVZz1LiJ6MiWTpzcxEkMFh+AngtiR0/zRjh
+	I3QFrYKpAuRsLZ8ys+jO1QpvCn0XFKyrPbGrVosDbTNEmxKxOy6aPVOpDsqC2I0uD5XTCIkwDVO
+	13+RHb6ndcbZq8okG/D9lmduX2YPl443nlRljCCDVhAp5R/rm8NRK20MU9K/CVxx4TW5/e16gbv
+	AAjmk3oGpwCm8qQX+wSu/4Xz87okMnG9dnX4n1im5YN852Pcyc2Qc/EI+x3pMyWKq3zmXTcAwwa
+	/t12Rn1UtWKmsQz19pY=
+X-Google-Smtp-Source: AGHT+IGadayqsnieMR0Q2/Su+sqJ3Jn4Yqpo4+g/vzmlYcvooG/4D/PkCb2/acemOSpHE1JfpHkiCg==
+X-Received: by 2002:a05:6a20:1586:b0:1ee:8520:f979 with SMTP id adf61e73a8af0-1eef3dd06b6mr32454428637.36.1740454143461;
+        Mon, 24 Feb 2025 19:29:03 -0800 (PST)
+Received: from gmail.com ([116.237.135.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a837592sm396474b3a.168.2025.02.24.19.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 19:29:03 -0800 (PST)
+From: Qingfang Deng <dqfext@gmail.com>
+To: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Michal Ostrowski <mostrows@earthlink.net>,
+	James Chapman <jchapman@katalix.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-ppp@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH net-next v2] ppp: use IFF_NO_QUEUE in virtual interfaces
+Date: Tue, 25 Feb 2025 11:28:55 +0800
+Message-ID: <20250225032857.2932213-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Feb 2025 18:56:31 -0800
-Nathan Chancellor <nathan@kernel.org> wrote:
+For PPPoE, PPTP, and PPPoL2TP, the start_xmit() function directly
+forwards packets to the underlying network stack and never returns
+anything other than 1. So these interfaces do not require a qdisc,
+and the IFF_NO_QUEUE flag should be set.
 
-> I am also seeing a crash when booting arm64 with certain configurations
-> that I don't see at the parent change.
+Introduces a direct_xmit flag in struct ppp_channel to indicate when
+IFF_NO_QUEUE should be applied. The flag is set in ppp_connect_channel()
+for relevant protocols.
 
-Thanks, I also just bisected it down to this. But I didn't have early
-printk on so I didn't see what was crashing. So this is helpful.
+Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+---
+RFC v1 -> v2: Conditionally set the flag for relevant protocols.
 
-> 
->   $ printf 'CONFIG_%s=y\n' FTRACE FUNCTION_TRACER >kernel/configs/repro.config
-> 
->   $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- mrproper virtconfig repro.config Image.gz
-> 
->   $ qemu-system-aarch64 \
->       -display none \
->       -nodefaults \
->       -cpu max,pauth-impdef=true \
->       -machine virt,gic-version=max,virtualization=true \
->       -append 'console=ttyAMA0 earlycon' \
->       -kernel arch/arm64/boot/Image.gz \
->       -initrd rootfs.cpio \
->       -m 512m \
->       -serial mon:stdio
->   [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
->   [    0.000000] Linux version 6.14.0-rc4-next-20250224-dirty (nathan@ax162) (aarch64-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT Mon Feb 24 18:47:59 PST 2025
->   ...
->   [    0.000000] ------------[ cut here ]------------
->   [    0.000000] kernel BUG at arch/arm64/kernel/patching.c:39!
->   [    0.000000] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
->   [    0.000000] Modules linked in:
->   [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-rc4-next-20250224-dirty #1
->   [    0.000000] Hardware name: linux,dummy-virt (DT)
->   [    0.000000] pstate: 000000c9 (nzcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->   [    0.000000] pc : patch_map.constprop.0+0xfc/0x108
->   [    0.000000] lr : patch_map.constprop.0+0x3c/0x108
->   [    0.000000] sp : ffff96c0b6fa3ce0
->   [    0.000000] x29: ffff96c0b6fa3ce0 x28: ffff96c0b6faafd0 x27: 00000000000000ff
->   [    0.000000] x26: fff9f3a0c2408080 x25: 0000000000000001 x24: fff9f3a0c2408000
->   [    0.000000] x23: 0000000000000000 x22: ffff96c0b72391d8 x21: 00000000000000c0
->   [    0.000000] x20: 000016c035400000 x19: 000016c035400000 x18: 00000000f0000000
->   [    0.000000] x17: 0000000000000068 x16: 0000000000000100 x15: ffff96c0b6fa39c4
->   [    0.000000] x14: 0000000000000008 x13: 0000000000000000 x12: ffffe9ce43090280
->   [    0.000000] x11: fff9f3a0dfef80c8 x10: ffffe9ce43090288 x9 : 0000000000000000
->   [    0.000000] x8 : fff9f3a0dfef80b8 x7 : fffa5ce02929a000 x6 : ffff96c0b6fa39d0
->   [    0.000000] x5 : 0000000000000030 x4 : 0000000000000000 x3 : ffff96c0b69b4000
->   [    0.000000] x2 : ffff96c0b69b4000 x1 : 0000000000000000 x0 : 0000000000000000
->   [    0.000000] Call trace:
->   [    0.000000]  patch_map.constprop.0+0xfc/0x108 (P)
->   [    0.000000]  aarch64_insn_write_literal_u64+0x38/0x80
->   [    0.000000]  ftrace_init_nop+0x40/0xe0
->   [    0.000000]  ftrace_process_locs+0x2a8/0x530
->   [    0.000000]  ftrace_init+0x60/0x130
->   [    0.000000]  start_kernel+0x4ac/0x708
->   [    0.000000]  __primary_switched+0x88/0x98
->   [    0.000000] Code: d1681000 a8c27bfd d50323bf d65f03c0 (d4210000)
->   [    0.000000] ---[ end trace 0000000000000000 ]---
->   [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
->   [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
-> 
-> I see the same crash with clang (after applying your suggested fix for
-> the issue that Arnd brought up).
-> 
->   [    0.000000] Unable to handle kernel paging request at virtual address 00001cb7f7800008
->   [    0.000000] Mem abort info:
->   [    0.000000]   ESR = 0x000000009600002b
->   [    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
->   [    0.000000]   SET = 0, FnV = 0
->   [    0.000000]   EA = 0, S1PTW = 0
->   [    0.000000]   FSC = 0x2b: level -1 translation fault
->   [    0.000000] Data abort info:
->   [    0.000000]   ISV = 0, ISS = 0x0000002b, ISS2 = 0x00000000
->   [    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   [    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->   [    0.000000] [00001cb7f7800008] user address but active_mm is swapper
->   [    0.000000] Internal error: Oops: 000000009600002b [#1] PREEMPT SMP
->   [    0.000000] Modules linked in:
->   [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-rc4-next-20250224-dirty #1
->   [    0.000000] Hardware name: linux,dummy-virt (DT)
->   [    0.000000] pstate: 400000c9 (nZcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->   [    0.000000] pc : ftrace_call_adjust+0x44/0xd0
->   [    0.000000] lr : ftrace_process_locs+0x1e0/0x560
->   [    0.000000] sp : ffff9cb878f93da0
->   [    0.000000] x29: ffff9cb878f93da0 x28: ffff9cb879234000 x27: ffff9cb879234000
->   [    0.000000] x26: 00001cb7f7800000 x25: ffff9cb878ed8578 x24: fffac24642008000
->   [    0.000000] x23: ffff9cb878f3cf90 x22: fffac24642008000 x21: 0000000000000000
->   [    0.000000] x20: 0000000000001000 x19: 00001cb7f7800000 x18: 0000000000000068
->   [    0.000000] x17: 0000000000000002 x16: 00000000fffffffe x15: ffff9cb878fa58c0
->   [    0.000000] x14: 0000000000000000 x13: 0000000000000001 x12: 0000000000000000
->   [    0.000000] x11: 0000000000000000 x10: 0000000000000000 x9 : 00007fff80000000
->   [    0.000000] x8 : 000000000000201f x7 : 0000000000000000 x6 : 6d6067666871ff73
->   [    0.000000] x5 : 0000000000000001 x4 : 0000000000000000 x3 : 0000000000000001
->   [    0.000000] x2 : 0000000000000004 x1 : 0000000000000040 x0 : 00001cb7f7800000
->   [    0.000000] Call trace:
->   [    0.000000]  ftrace_call_adjust+0x44/0xd0 (P)
->   [    0.000000]  ftrace_process_locs+0x1e0/0x560
->   [    0.000000]  ftrace_init+0x7c/0xc8
->   [    0.000000]  start_kernel+0x160/0x3b8
->   [    0.000000]  __primary_switched+0x88/0x98
->   [    0.000000] Code: aa1f03e0 14000014 aa0003f3 528403e8 (b8408e74)
-> 
-> If there is any other information I can provide or patches I can test, I
-> am more than happy to do so.
+I'm not sure if ppp_connect_channel can be invoked while the device
+is still up. As a qdisc is attached in dev_activate() called by
+dev_open(), setting the IFF_NO_QUEUE flag on a running device will have
+no effect.
 
-Thanks, I'm about to go to bed soon and I'll take a look more into it tomorrow.
+ drivers/net/ppp/ppp_generic.c | 4 ++++
+ drivers/net/ppp/pppoe.c       | 1 +
+ drivers/net/ppp/pptp.c        | 1 +
+ include/linux/ppp_channel.h   | 1 +
+ net/l2tp/l2tp_ppp.c           | 1 +
+ 5 files changed, 8 insertions(+)
 
--- Steve
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index 6220866258fc..815108c98b78 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -3493,6 +3493,10 @@ ppp_connect_channel(struct channel *pch, int unit)
+ 		ret = -ENOTCONN;
+ 		goto outl;
+ 	}
++	if (pch->chan->direct_xmit)
++		ppp->dev->priv_flags |= IFF_NO_QUEUE;
++	else
++		ppp->dev->priv_flags &= ~IFF_NO_QUEUE;
+ 	spin_unlock_bh(&pch->downl);
+ 	if (pch->file.hdrlen > ppp->file.hdrlen)
+ 		ppp->file.hdrlen = pch->file.hdrlen;
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index 2ea4f4890d23..68e631718ab0 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -693,6 +693,7 @@ static int pppoe_connect(struct socket *sock, struct sockaddr *uservaddr,
+ 		po->chan.mtu = dev->mtu - sizeof(struct pppoe_hdr) - 2;
+ 		po->chan.private = sk;
+ 		po->chan.ops = &pppoe_chan_ops;
++		po->chan.direct_xmit = true;
+ 
+ 		error = ppp_register_net_channel(dev_net(dev), &po->chan);
+ 		if (error) {
+diff --git a/drivers/net/ppp/pptp.c b/drivers/net/ppp/pptp.c
+index 689687bd2574..5feaa70b5f47 100644
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -465,6 +465,7 @@ static int pptp_connect(struct socket *sock, struct sockaddr *uservaddr,
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
+ 
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
++	po->chan.direct_xmit = true;
+ 	error = ppp_register_channel(&po->chan);
+ 	if (error) {
+ 		pr_err("PPTP: failed to register PPP channel (%d)\n", error);
+diff --git a/include/linux/ppp_channel.h b/include/linux/ppp_channel.h
+index 45e6e427ceb8..3b50802d66fc 100644
+--- a/include/linux/ppp_channel.h
++++ b/include/linux/ppp_channel.h
+@@ -44,6 +44,7 @@ struct ppp_channel {
+ 	int		speed;		/* transfer rate (bytes/second) */
+ 	/* the following is not used at present */
+ 	int		latency;	/* overhead time in milliseconds */
++	bool		direct_xmit;	/* no qdisc, xmit directly */
+ };
+ 
+ #ifdef __KERNEL__
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index 53baf2dd5d5d..fc5c2fd8f34c 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -806,6 +806,7 @@ static int pppol2tp_connect(struct socket *sock, struct sockaddr *uservaddr,
+ 	po->chan.private = sk;
+ 	po->chan.ops	 = &pppol2tp_chan_ops;
+ 	po->chan.mtu	 = pppol2tp_tunnel_mtu(tunnel);
++	po->chan.direct_xmit	= true;
+ 
+ 	error = ppp_register_net_channel(sock_net(sk), &po->chan);
+ 	if (error) {
+-- 
+2.43.0
+
 
