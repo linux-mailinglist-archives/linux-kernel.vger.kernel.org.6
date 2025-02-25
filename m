@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-531366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9766AA43F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:40:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF47A43F99
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE8316740E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B588A3A7410
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A072686A1;
-	Tue, 25 Feb 2025 12:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE772686A6;
+	Tue, 25 Feb 2025 12:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSJeqb1R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="ZGwN9TGX"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669173A1DB;
-	Tue, 25 Feb 2025 12:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740487191; cv=none; b=Z/psk/d5CptWMA7LPiBGnJJ5PbSAyrtp9U7uAHWnFhS+Zu2E+gi+yQqH2mCCB/VNQ6hCSnFl4jCC+Efg2OGYfsSQtGmENQM7LeCUCOZbgv3sEOC1nM9aw/N+GTbGRIiN+I8MV2xP13PVtYnFxH76dnp3v4RQdkqXNn6AoaLOFYs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740487191; c=relaxed/simple;
-	bh=ysdTSoy5+tQu1v8OXYYLwr1gFllUvzipKpvwf+BiQp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EYQaJerN/e8Zi0sJqAbwJExbp1Ph4mY44dzykdbU5daIRwRCOKo1MK0CzkvgOP81ka7Wkf7jsiE0JLV/TKyq2CMFblCC9tXsMr5Wy7QAQh3hfYmcJhhdlNsA3doK7gwsRcUplh6LbGJ+ypekQAH6RBjnKNtNA1joDlI19fcWTAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSJeqb1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3D3C4CEDD;
-	Tue, 25 Feb 2025 12:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740487190;
-	bh=ysdTSoy5+tQu1v8OXYYLwr1gFllUvzipKpvwf+BiQp4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=SSJeqb1Ro7U1paI/dFGI4o8yb/mJVt6N2bOYk0ERj/uqMi36Xf8tlqyShWlODGjcA
-	 svbKvfG7YSaqdFFlcHpDC8Dgu4Iqiek0jVEyGAr6SKmRPu3SoY+6rBK/0n8hbCuYRU
-	 x6rAjp5uwQ2DQAHXRk6gxYt2tfyklHFOUr6MxnCUSshQ3tcFK7bo9Y9HEDerFQTiaW
-	 p8Ycj/vycjyBADbjT1esAzFqf3R7nyPMpoU1gNL/I6v7FY7NvsYIVkq+annvYo5E61
-	 rO1OlC1Lpat9399d09gIrXdCAh2v2eUdrrUivkN0UUs0LJhZd8Se9sZYeJzND/3uO1
-	 p+GA38n/i2ySw==
-Message-ID: <80a7c6b5-2a58-4b0f-a856-87b9c3c03a83@kernel.org>
-Date: Tue, 25 Feb 2025 06:39:49 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C057E3A1DB;
+	Tue, 25 Feb 2025 12:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740487271; cv=pass; b=CSU0ZC1+hjJjflVHhHEuSYhpLVbchaPVmRmvIapgfAszbgI4fLgic6m+WbtXD1YgGQMumaXJ6T24REBQDmfu3tUtG3Hv+mA93Gl+vEprvgknBKH3fKIXO5PfNwYgYMYoh2f5rZLDRXkgXJnKJhrFCoDZ1psgfkJlzAvU0iTxzcA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740487271; c=relaxed/simple;
+	bh=AUEz4a3RiSL5/cLF/pQMmxgREDX4arxTDXKFwwi9EuA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PHnNxdXtTwAm3nnGvqN832Ij3H7ATQAQ6bi6kALLTsVB+uogAXGxlg+FD8r+eoAlhIiF8wy5QmuGvnTHAM1bHU042lm0TYZQgXfChlfdEsjlpCekuzHLLzGO8X1AQpI/Cosmv+xAHsYDVv2mD57DlSn9jQZjA0mircfK6Sx9ahY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=ZGwN9TGX; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740487242; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aL/yndbaWtbjDj26LcXfza+N/18ktplU4cYjzN8NJ6uso/gKOkg7hpxUkXtm6+TW9MNu5kPYtZS3bbCXt3JL4CNeyoFLWQ3JpwROIijZPuKQTJhjmoFqtgAiNv2codaijnCBQmPq50D771VEUONIigk/j9mq+D6pn+U2+eprEek=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740487242; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kDN54TSKQCXwGr0WnQvfL3hvKdHgbSFGpuQMUeaewhA=; 
+	b=TpklSVtemRmlUXiIKkZorzpWgRCMGq+RAMxdZZAA0QYZZEhi5vRtiGs8qQaeyxjddrjUY2xxrv93BX/P2LhHpBypv+kwYaentedbx2oCq5D05O3pk8eXwian+77VYaGAILNuKfOl8VAF4e2ozi+gIa02jTJM/X8vDbiKp9yGBkM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740487242;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=kDN54TSKQCXwGr0WnQvfL3hvKdHgbSFGpuQMUeaewhA=;
+	b=ZGwN9TGX/W+xjOAr4VQfD1lO+OtDQobGeGI+OUKCkythx6wVHbHLodDOuWutdUX0
+	FCVJ6LFC/mFCXpvN5rQKvXcuzUSCPLuoq1nQr5/YcTCcVzPgArTYEHZZdRvdjPkV5k1
+	iwjD1stQtv9UvpWqyTLObc3oA6pAT9iDUYj43eFU=
+Received: by mx.zohomail.com with SMTPS id 1740487240110120.34947032551383;
+	Tue, 25 Feb 2025 04:40:40 -0800 (PST)
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Boris Brezillon <boris.brezillon@collabora.com>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Alex Bee <knaerzche@gmail.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Sebastian Fricke <sebastian.fricke@collabora.com>
+Subject: [PATCH] fixup! media: v4l2-common: Add helpers to calculate bytesperline and sizeimage
+Date: Tue, 25 Feb 2025 13:40:08 +0100
+Message-Id: <20250225124008.195405-1-sebastian.fricke@collabora.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com>
+References: <20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: add qspi flash node
-To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250205101153.1778622-1-niravkumar.l.rabara@intel.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250205101153.1778622-1-niravkumar.l.rabara@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 2/5/25 04:11, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> 
-> Add Micron qspi nor flash node for Intel SoCFPGA Agilex5.
-> 
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> ---
-> 
-> changes in v2:
->    * Removed unexpected properties to fix dts build warnings.
-> 
-> Link to v1:https://lore.kernel.org/all/20250108112834.2880709-1-niravkumar.l.rabara@intel.com/
->   
->   .../boot/dts/intel/socfpga_agilex5_socdk.dts  | 31 +++++++++++++++++++
->   1 file changed, 31 insertions(+)
-> 
->
+---
+ drivers/media/v4l2-core/v4l2-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied!
+diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+index 07a999f75755..aa86b8c6aa75 100644
+--- a/drivers/media/v4l2-core/v4l2-common.c
++++ b/drivers/media/v4l2-core/v4l2-common.c
+@@ -360,7 +360,7 @@ static inline unsigned int v4l2_format_block_height(const struct v4l2_format_inf
+ }
+ 
+ static inline unsigned int v4l2_format_plane_stride(const struct v4l2_format_info *info, int plane,
+-						   unsigned int width)
++						    unsigned int width)
+ {
+ 	unsigned int hdiv = plane ? info->hdiv : 1;
+ 	unsigned int aligned_width =
+-- 
+2.25.1
 
 
