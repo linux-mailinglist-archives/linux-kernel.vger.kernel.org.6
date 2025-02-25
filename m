@@ -1,116 +1,261 @@
-Return-Path: <linux-kernel+bounces-532174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D20A449C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:11:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1980A449A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264B43BEC8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D86189E3EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB019D071;
-	Tue, 25 Feb 2025 18:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D25219D090;
+	Tue, 25 Feb 2025 18:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4oifWZd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WO7iCP4X"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D8B156F3A;
-	Tue, 25 Feb 2025 18:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1217B194A59
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506797; cv=none; b=YDfASeEtKn/8SCRcpNTtmr8MPdKgU21cNMcF/+Tn2PgA+L/PUTEZitlayVIznqZ/RpD5DAYZGJqmeeNyBhRio1m9XG957mzr2heW2Px0QJ6+vz2PNEl1fwvhwHbJTRPzScWKGX6ily+7EzmZk0oLZyOa+i94rp4bQFe2osdwoM8=
+	t=1740506810; cv=none; b=otcMI7j2WOCJYdoxy7BMqoqgi3uPTcizyV8IVfRWzQpqvXFYIgYx9+mXxA4q2iBnMv/RirlhMT9tP9BZH7K0GKN2mfqRjzEAhkifVOv98CigqjyacN4DU2SXQSB5kCB7SXVe5NKLELyUx5reHMQniKbL9cOMoovGhWeu/vu1WmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506797; c=relaxed/simple;
-	bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=omw6/bzf5Pe6xaULbxanKbDmdZ3z+FCMz5POjx50taJ6op7mYhFE8BllNZf5S7P/VQd5xeGvfSWHC4nA4VR2JEHGZY7XixRyswRp83RJJY+c3+VKB67pmT1Y1eypFxGS5z7xWhUEdvJ2wWHNsLkHx/zgJH5HvXDbiXTHJUJ2T/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4oifWZd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so15406255e9.2;
-        Tue, 25 Feb 2025 10:06:35 -0800 (PST)
+	s=arc-20240116; t=1740506810; c=relaxed/simple;
+	bh=4v0tqcOFwjmcLPpSug39OWWVlUv5nOP55AKdOd+8Mn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5B7I6zq168YwdXTHI1Jfq9UtakkFsNEIGiEf3oGQxKYy9Znvl9sEJt/5QpgLHonPN0XgCt321oyQv1opDt44EIdoCXcDybWGLWCkRS/lp4pe2RmR2yVS4BOqwH6OEFdF+DbxfDso1mnyqFUmdJfrAx21epK67aL9vfrS3E0dkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WO7iCP4X; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5485646441cso920512e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:06:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740506793; x=1741111593; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
-        b=Y4oifWZdg4UIF2bN0BfWa9urTM3jRZzoW1QN6DcLlXirvkiAKj6aDDGEBMjrfKlL+t
-         xy+Lz7k6BMECbFed8A9wnsL1S4Oge1kJMqY9YTUET1/NUEiGbl0jAP86uCdoZ8UeUMEg
-         HAm2NrCOaPHlheOnwOM9dAw0k7ZW//nadzEYUyUXfzygwjuqi4nlUt4YC4Zz67C4vw2f
-         UJq6GrmNEkfmo5SZk5vRuOk5nwdPEEGi/rjNHs4pcJbSgqg5uAXokHPWlCxBrWmJBQBi
-         9aLvPPaKm3bNZ7BZTHvzMKFO5MauM8hzUS8+j9BKcwnAiQIDfzbwjTjmghel+fL1t12V
-         LuMg==
+        d=linaro.org; s=google; t=1740506806; x=1741111606; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=liHjdtQWk9Ug7883/cTC3d+H3muBAx5KFW4f/OQ4sjw=;
+        b=WO7iCP4XNQj+Ux4luyHdKNSTYhDhDb3tozg9fgcXLmW91iekLOWltCw+2S21G79TDC
+         cLHnlXBq1h+g8CZlohAYqWAF4qJ/PdTOcfYwzU1JaoJr4BU33vDj/PCrnD8UHxXffA2A
+         +EHd/lacDKPArno6mIsQZb4fUN9p8KZPHmJFNHoRrnizUaj0AQu02pkBNY1l/ULxfU7h
+         gvuw7zSh0PVRoAtcndMn4AFg/1VZTZSaEwCrym2ogvm8WicuJm7UrUduHv62N5ivuXET
+         h2yAL05xZ5fqohXH8w6EIikVRTfYjQocsFZYqCl3zSoiJe/mPOyM3z1wPTGTdj8dowYu
+         zyvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506793; x=1741111593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zchtCEfEGcKd3MAmswqArfI+K6HNuL7Cz7XDtG3NbNA=;
-        b=HP68725Feem9g5QDjwLjxfpAPzaRagT8+URSKDSvV+3axFBae72g8nabqztGn/+Og8
-         B4/UDbEEBqOO6SOB/di66VqvgYTJNRc3I/uCVuL6Xse+rVy7Ta57i4Rwh36fnIbXmpSq
-         4YXYhZD15pa+8up3ZqbxuBjwwt4bOAdOchrYd9S9OvNlK4VCFkXzuiIB1zQPCTYVdTyY
-         oqoq4x4a3rRdLEmC/uBcrJWGGR1ONxHiL4aNkI/IAuP6fL3yAtEBuI45/NNcKGNYv+Qc
-         AXT2x1+he3pc5iZIyngfRYOuEeV/K6eYRLg7fxqvuc32f2Eov5sFDALtCo2RBQevo4ah
-         hxew==
-X-Forwarded-Encrypted: i=1; AJvYcCW4t5davvoATg/D+1oVAeqj/VUP7dnwfXP8f+0AKzxlsmSVeoD80FnfbzBO8GcR7Q7FNis=@vger.kernel.org, AJvYcCWl6QkI3dmc/XohEhTW5Y5IaLdwpSnX1LjQ7cEJY45szxpSMCA25gEqWT2lVCe4er8odv/ya4QdcjbQEbrk@vger.kernel.org, AJvYcCX7PjBgC546bUBAbYlyL7YYWEer8bvrCz4zaSUBaRUqKb7gxkGvA5ZWW991LSBTniRTFi3YrwkLq3TQtZjB3H4rN+Jg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi7KIyi6TnoVNDeu48TmByxQzP/FKAX0Tm1LEuPyYYU5xQiff6
-	2HUK5ZhDC0EonB2HQNDHSjnDF4jzhPUi3fhm8AnvBQOM5hyeEFR3jzSdZvOCwTxoEa4PW1YyvD+
-	l3NXlYwk/LzCSLIGJpq+j/OS85L+WxMUB
-X-Gm-Gg: ASbGncuNiOaYT9OkRy/Bhrv490UDKGvP8MiamexKrP6162v+2xROlF2tJsP4Bi57vb8
-	VEcT/QIs9U3hY2xZ6lRwYTbeI5oG8FOEEY30HhJxAiObYKsnauIoqLXyIfvvsQooVTqvgDtU+lP
-	jefdjSLAksVdarprttrpV+sXs=
-X-Google-Smtp-Source: AGHT+IGlwkwtt8yLazHetKUrxIo1z6pDXtJnI2CGJXL07EgtfUktZVrpKCWsb3EHD1nsxtvSR1Y7t73KP/dUgPFF8CA=
-X-Received: by 2002:a05:6000:1fae:b0:38d:cbc2:29f6 with SMTP id
- ffacd0b85a97d-38f6e947434mr14144173f8f.17.1740506793340; Tue, 25 Feb 2025
- 10:06:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740506806; x=1741111606;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=liHjdtQWk9Ug7883/cTC3d+H3muBAx5KFW4f/OQ4sjw=;
+        b=Es11KXIgJrBp4od35GFGCWkQ2k5bd+qCOQQz59V6sR/NV0MBhxDT50eMvzThQr6nPw
+         4yRrIfWEzCI9rRt1EAy847fE9zNW9wk9kyRVY89hMfDIszb1x9HEe0hp44BRVXf4BFrZ
+         8xHOYVjg9fNmabF/WlsP2wBovxQu2qrY5Y7olGXXLQ6AuQ2DKw+h+7thVZuUEq8AJIIF
+         WjbzsjC7GZEpmPFuWzBJhzDL4JnX/XdghrI0bf9vKz2ejAVr3M5d2BiOeG2R0NmisW7I
+         A4Fh8/SGVF+AoF7DaQehC6ftcMIZ06T4xIGtxqEoj+lewCvZMP+dKo4y1jBzYAr7BFAi
+         VPTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUN0A9OmyWfg7gZ2cBQx3QVYIENMmNmyrM3jBKXg9rGTZ7DUnKYjtbctitKCc31d1aBRU9KvUCD4uyTwxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFcawCiJgL3+YtZUAZDY02g5WYKC+bk3cxW+Gqc58GMoUJri2G
+	zAWY3KscfITpmbRcaWf+jOGn/RoPVHhFIEbOv3TTbcloNmruLKXPw4lI+XXrHgg=
+X-Gm-Gg: ASbGncvuIIKqsVnpMudcTtBDt+3Q2/d2+yVaz6x/RTBzOs41jjmcfrFCoUlK3OSd/Sm
+	ujPOj+gj2SIa00ajsxnx/m4thCheJofToSwSpfr5cDOA0+4glnOSpeAVLB9gzI0vsInuA7GpNRr
+	Pc5FT8Pt3u4McsNzlerzGswbmOaqgqxBLc4CLpb8a61IzLEbStd/fRklSoblfkywfXb+CsjAS9S
+	MgKU5Yfmn+LDsxnggAUXL3mbt5k7e7cGB8/acBBQREBQddqnX7QHFjY04WVb3ddzMkZ7kYqpXbP
+	AbDj4zefK1iMMXTvpUdmolC4mA9uKbt6jbbPqryxnRrIM1qxxoUtsyihb3slXdxhijoAoDBFV9W
+	idM5GPQ==
+X-Google-Smtp-Source: AGHT+IFG9vK9LeGy0ABgeQe3Sg97nV2oZD6uSHV6RIbDsB3ZEJgPHJfYrBz7BblqAeiQNBHuC32YWA==
+X-Received: by 2002:a05:6512:b1d:b0:545:1d04:5dfc with SMTP id 2adb3069b0e04-548510ed0b9mr1899807e87.38.1740506806157;
+        Tue, 25 Feb 2025 10:06:46 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514efd8esm236035e87.158.2025.02.25.10.06.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 10:06:45 -0800 (PST)
+Date: Tue, 25 Feb 2025 20:06:44 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: neil.armstrong@linaro.org
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] media: platform: qcom/iris: add reset_controller &
+ power_off_controller to vpu_ops
+Message-ID: <5mnho424mrrj2fwrtbdzjtkgvhlmoxcy5ba2rjjn4hvrgbmco7@7q6ezfbgi6m4>
+References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
+ <20250225-topic-sm8x50-iris-v10-v1-2-128ef05d9665@linaro.org>
+ <ityd34gfiyt6fvyuopnh3bi3edc5t2ubop4i72d54xyhhz3ixf@n6rnt5mwgw4b>
+ <48f339f5-09f8-4498-83f2-4e2d773c3e23@linaro.org>
+ <CAA8EJppFCF9Mf_LXr4EMV94rVw9qHJQFKtfXwuqTmtHQA=2gnA@mail.gmail.com>
+ <fe25be80-9b5a-436f-9f50-7adf059d8726@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224140151.667679-1-jolsa@kernel.org> <20250224140151.667679-9-jolsa@kernel.org>
- <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com> <Z73HDU5IZ5NV3BtM@krava>
-In-Reply-To: <Z73HDU5IZ5NV3BtM@krava>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 25 Feb 2025 10:06:19 -0800
-X-Gm-Features: AQ5f1JonQ3bzFeYH2MPwYc-bN0juQN4SqNxsA6Q12e74EuGvHeE7xiA9aTlZ6Xg
-Message-ID: <CAADnVQKNeWKFkZxb_-Fuenvmfy47-t6Z7KLY_j3UUOrj5pFP-g@mail.gmail.com>
-Subject: Re: [PATCH RFCv2 08/18] uprobes/x86: Add uprobe syscall to speed up uprobe
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe25be80-9b5a-436f-9f50-7adf059d8726@linaro.org>
 
-On Tue, Feb 25, 2025 at 5:35=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> > In later patches I see nop5 is replaced with a call to
-> > uprobe_trampoline_entry, but which part saves
-> > rdi and other regs?
-> > Compiler doesn't automatically spill/fill around USDT's nop/nop5.
-> > Selftest is doing:
-> > +__naked noinline void uprobe_test(void)
-> > so just lucky ?
->
-> if you mean registers that would carry usdt arguments, ebpf programs
-> access those based on assembler operand string stored in usdt record:
+On Tue, Feb 25, 2025 at 06:55:58PM +0100, neil.armstrong@linaro.org wrote:
+> On 25/02/2025 11:41, Dmitry Baryshkov wrote:
+> > On Tue, 25 Feb 2025 at 12:04, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> > > 
+> > > On 25/02/2025 11:02, Dmitry Baryshkov wrote:
+> > > > On Tue, Feb 25, 2025 at 10:05:10AM +0100, Neil Armstrong wrote:
+> > > > > In order to support the SM8650 iris33 hardware, we need to provide specific
+> > > > > reset and constoller power off sequences via the vpu_ops callbacks.
+> > > > > 
+> > > > > Add those callbacks, and use the current helpers for currently supported
+> > > > > platforms.
+> > > > > 
+> > > > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > > > ---
+> > > > >    drivers/media/platform/qcom/iris/iris_vpu2.c       |  2 ++
+> > > > >    drivers/media/platform/qcom/iris/iris_vpu3.c       |  2 ++
+> > > > >    drivers/media/platform/qcom/iris/iris_vpu_common.c | 14 ++++++++++----
+> > > > >    drivers/media/platform/qcom/iris/iris_vpu_common.h |  4 ++++
+> > > > >    4 files changed, 18 insertions(+), 4 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> > > > > index 8f502aed43ce2fa6a272a2ce14ff1ca54d3e63a2..093e2068ec35e902f6c7bb3a487a679f9eada39a 100644
+> > > > > --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
+> > > > > +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> > > > > @@ -33,6 +33,8 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
+> > > > >    }
+> > > > > 
+> > > > >    const struct vpu_ops iris_vpu2_ops = {
+> > > > > +    .reset_controller = iris_vpu_reset_controller,
+> > > > >       .power_off_hw = iris_vpu_power_off_hw,
+> > > > > +    .power_off_controller = iris_vpu_power_off_controller,
+> > > > >       .calc_freq = iris_vpu2_calc_freq,
+> > > > >    };
+> > > > > diff --git a/drivers/media/platform/qcom/iris/iris_vpu3.c b/drivers/media/platform/qcom/iris/iris_vpu3.c
+> > > > > index b484638e6105a69319232f667ee7ae95e3853698..95f362633c95b101ecfda6480c4c0b73416bd00c 100644
+> > > > > --- a/drivers/media/platform/qcom/iris/iris_vpu3.c
+> > > > > +++ b/drivers/media/platform/qcom/iris/iris_vpu3.c
+> > > > > @@ -117,6 +117,8 @@ static u64 iris_vpu3_calculate_frequency(struct iris_inst *inst, size_t data_siz
+> > > > >    }
+> > > > > 
+> > > > >    const struct vpu_ops iris_vpu3_ops = {
+> > > > > +    .reset_controller = iris_vpu_reset_controller,
+> > > > >       .power_off_hw = iris_vpu3_power_off_hardware,
+> > > > > +    .power_off_controller = iris_vpu_power_off_controller,
+> > > > >       .calc_freq = iris_vpu3_calculate_frequency,
+> > > > >    };
+> > > > > diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> > > > > index fe9896d66848cdcd8c67bd45bbf3b6ce4a01ab10..ec8b10d836d0993bcd722a2bafbb577b85f41fc9 100644
+> > > > > --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> > > > > +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> > > > > @@ -211,7 +211,7 @@ int iris_vpu_prepare_pc(struct iris_core *core)
+> > > > >       return -EAGAIN;
+> > > > >    }
+> > > > > 
+> > > > > -static int iris_vpu_power_off_controller(struct iris_core *core)
+> > > > > +int iris_vpu_power_off_controller(struct iris_core *core)
+> > > > >    {
+> > > > >       u32 val = 0;
+> > > > >       int ret;
+> > > > > @@ -264,23 +264,29 @@ void iris_vpu_power_off(struct iris_core *core)
+> > > > >    {
+> > > > >       dev_pm_opp_set_rate(core->dev, 0);
+> > > > >       core->iris_platform_data->vpu_ops->power_off_hw(core);
+> > > > > -    iris_vpu_power_off_controller(core);
+> > > > > +    core->iris_platform_data->vpu_ops->power_off_controller(core);
+> > > > >       iris_unset_icc_bw(core);
+> > > > > 
+> > > > >       if (!iris_vpu_watchdog(core, core->intr_status))
+> > > > >               disable_irq_nosync(core->irq);
+> > > > >    }
+> > > > > 
+> > > > > -static int iris_vpu_power_on_controller(struct iris_core *core)
+> > > > > +int iris_vpu_reset_controller(struct iris_core *core)
+> > > > 
+> > > > If these functions are platform-specific, please rename them
+> > > > accordingly, like iris_vpu2_3_foo() or just iris_vpu2_foo().
+> > > 
+> > > They are not, this is the whole point.
+> > 
+> > I think they are, you are adding them to the platform-specific ops. In
+> > the end, they are not applicable to 3.3.
+> 
+> Vpu 3.3 is added on the next patch, with specific callbacks
+> for 3.3, this very patch has no functional change, it still uses
+> the same "common" reset and controller power off for vpu2 and vpu3.
+> 
+> This very patch is a preparation for vpu33, using common helpers
+> in vpu_ops is already done in the vpu2 support, I simply extend
+> the same logic here.
 
-No. I'm talking about all normal registers that trap-style uprobe
-preserves, but this nop5->call will scratch.
-Instead of void uprobe_test(void)
-add some arguments to it, and read them before and after nop5 uprobe.
-They must remain the same.
+I'd really expect that iris_vpu_foo() functions apply to every platform.
+These functions are now being used for VPU2 and VPU3 only. Thus I assume
+that they are platform specific and should have platform-specific
+prefix.
+
+> 
+> Neil
+> 
+> > 
+> > > 
+> > > Neil
+> > > 
+> > > > 
+> > > > >    {
+> > > > >       u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+> > > > > +
+> > > > > +    return reset_control_bulk_reset(rst_tbl_size, core->resets);
+> > > > > +}
+> > > > > +
+> > > > > +static int iris_vpu_power_on_controller(struct iris_core *core)
+> > > > > +{
+> > > > >       int ret;
+> > > > > 
+> > > > >       ret = iris_enable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+> > > > >       if (ret)
+> > > > >               return ret;
+> > > > > 
+> > > > > -    ret = reset_control_bulk_reset(rst_tbl_size, core->resets);
+> > > > > +    ret = core->iris_platform_data->vpu_ops->reset_controller(core);
+> > > > >       if (ret)
+> > > > >               goto err_disable_power;
+> > > > > 
+> > > > > diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> > > > > index 63fa1fa5a4989e48aebdb6c7619c140000c0b44c..c948d8b5aee87ccf1fd53c5518a27294232d8fb8 100644
+> > > > > --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> > > > > +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> > > > > @@ -12,7 +12,9 @@ extern const struct vpu_ops iris_vpu2_ops;
+> > > > >    extern const struct vpu_ops iris_vpu3_ops;
+> > > > > 
+> > > > >    struct vpu_ops {
+> > > > > +    int (*reset_controller)(struct iris_core *core);
+> > > > >       void (*power_off_hw)(struct iris_core *core);
+> > > > > +    int (*power_off_controller)(struct iris_core *core);
+> > > > >       u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
+> > > > >    };
+> > > > > 
+> > > > > @@ -21,7 +23,9 @@ void iris_vpu_raise_interrupt(struct iris_core *core);
+> > > > >    void iris_vpu_clear_interrupt(struct iris_core *core);
+> > > > >    int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
+> > > > >    int iris_vpu_prepare_pc(struct iris_core *core);
+> > > > > +int iris_vpu_reset_controller(struct iris_core *core);
+> > > > >    int iris_vpu_power_on(struct iris_core *core);
+> > > > > +int iris_vpu_power_off_controller(struct iris_core *core);
+> > > > >    void iris_vpu_power_off_hw(struct iris_core *core);
+> > > > >    void iris_vpu_power_off(struct iris_core *core);
+> > > > > 
+> > > > > 
+> > > > > --
+> > > > > 2.34.1
+> > > > > 
+> > > > 
+> > > 
+> > 
+> > 
+> 
+
+-- 
+With best wishes
+Dmitry
 
