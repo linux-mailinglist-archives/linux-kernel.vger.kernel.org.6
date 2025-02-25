@@ -1,181 +1,144 @@
-Return-Path: <linux-kernel+bounces-531976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5A5A4475C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7090CA447CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 507D83A8E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEBB86759C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAEE18DB34;
-	Tue, 25 Feb 2025 17:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBD7199E8D;
+	Tue, 25 Feb 2025 17:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7UDOO39"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="AhqIDzWN"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9752B1922E0;
-	Tue, 25 Feb 2025 17:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576F1624D1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502812; cv=none; b=o5p2BbCucyoC0jv+MniVfcXKot1VEBOXRjeXm1Gvk/cIsGx4ebIWFuTyJ9/9kqRVG/KPJ65LXrq+JSFQDbFB5xixzO6frPRUW0le8vsC03Mbifn1ZZSK6Zby48oSzZqDtovgx1RMxefITZISow5TY04khDTL7myZ3Jq6Nc0JsZE=
+	t=1740503350; cv=none; b=GzieKxiY9IuleDAlkE7uySoMG9Bd847Yieval58vxHvJ8bBQc8vvlBl/JJ8Z3NflRuI7VK+K9u5PXSGzgxYBcdFefIRrSEhBihZ9VzH2rNQYjqv9TBhek/3eKbNjMUGWkJKi8C1IY+NIHA0UAbRZFGMm5804YkKJbeBVdNTIq5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502812; c=relaxed/simple;
-	bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n8sDg1U+DFc+aWp/OLsD/bEmr+h+1fGuIrGai43pC1yoc4or+h5p7JYSCKunQ2VDBXaT0cEFWKwTBw0gV6zrUQFauKrfC5cC0d5+nbSw3f1mjXcfUC5MEkxrTrkDnvMm3ULohWoTYJpOcaNylZBfFqWamE8N2VOxJhKFN7J2DbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7UDOO39; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so9161494a91.1;
-        Tue, 25 Feb 2025 09:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740502810; x=1741107610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
-        b=B7UDOO39sm6KY2KbFodq2tgW4Y9J03JDMgI1iRcB7lDiCVcONCGc2VDYiYyAIsA172
-         GHujYXxtQshW/o1RKls9fD8qijzeyb5S+EA8VD3Gi+ABD2RL+m6W84OHbOQWdNqsxj1d
-         Xq7R0Cm9SkUCNaifnubZzeL3gfsPeFtnXQ8lOeYNROa/j3u0vbzymEFR+xrBeTZL/DnX
-         VZpU0PES12MCA445jdjcJmLMD9EAkWbDhy1FNQlRimTrzVn8uQJQQxZDhvT2iStY2SJc
-         L4pQr9G94M1d86h7s6ibvFMnS6zWunCKFPBprObIzfQ4Zp4is4c0FDhwhLdeytMPEPr8
-         Y04w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502810; x=1741107610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zGSOvI3eokZTCm8J4P/eTT839Us8R/hog2lZsbFk+hU=;
-        b=cG6OUbbPbqw6zP32mIU5jhSRsMFHyz8wfOtInGV2cuL5LzLV/JHMC0kLVMy4fQJXDB
-         V9mSsYC1FW1Wxwm7dcgOcVst5Lk0swphTntsYIgB+OZKOde9H8cHp+/VBmMQAhEojdJD
-         ZzrdHZfxnVu97RbiWdjQyfDKZvE4VuWKCavJDCX7g9ULHvEys96uYMj7z+uw31Sa8Bnu
-         7J3XNNfo7w1yoQygWGxwn3+0WgTE5MTdv6WHZM8dilX0Q6HIBVHpX58kmshWWwAocfmW
-         cw4dlwDERp1lxh+xe48NrHvaYoPPUdxRReCd28djbEGeMwwRhKaAtCQXOfAh9rKlGO0v
-         60Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Z4RcegwOUORhB26ENUVvMKoc5sfL6eOBp2kfWi0q4MLvbeJJrCNJRp/trInwrMcrIWJk78+5/eFvY/3Y@vger.kernel.org, AJvYcCVxF4rFmnL9469JLQFIcjKZqa0yblqUJDsHBn3lPOOGZcO3G4kguWlHWqUg5OFmY2/a7KucVDooT7wKLg==@vger.kernel.org, AJvYcCWcp1bt869Wl55LdEqJjvU9IkbBL4xpO9dA6LVThpdLcVpS0kILIETblLxSZu5O1zCP//k=@vger.kernel.org, AJvYcCWf0f98lgCWn9Rf8hqUPI+Wq1KIfDiHLJmiciv8ZYBzKn0WeUVDCq16sVhbB5ZZi+IOw+JICAKpyf8+OnKQ@vger.kernel.org, AJvYcCXCtJgG55d6QU2sNwMW5HyH0BmkbnyTnr9z7K6c8HHLerWZHyX/ztYhoVZgPb9MrDnMUHCYWZYGcqsAG2q5rS4j@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOdJsx7TyLu8cLtg6jfOJvZu9uPpv3RndVPqUzbvZ+KYQ7SK6E
-	xWIXVbgCMe8o9d2/mvPBWiduWI+VJc6bSrjKAExoI4qNaRbRMFrY3H9loZ9rzgWGsWGEHLCWJo5
-	lQWn1NULbcClUvotnhvteJ6HpbLM=
-X-Gm-Gg: ASbGnctIHi1wHaVEbtMBRqEkICT9PKKGncAHidipL6ScQp84A52in3fpC/BlHAmCtGe
-	UZkoM5ABrzwHnt9KfPafqA4tFZfkZdZqJ8sEBCMP+rUk9/xXNkKMuEMbnxAlfogdbGWqs7OJCs0
-	YBRQuIWoOLk9gUMg3/NjyKNt8=
-X-Google-Smtp-Source: AGHT+IEqGX/0s3L9HOzk4Sz5iomAqtCqwfcqNvGFpgeCqLV+ITRzR2oQPU+QlnRFoROJ8TnyuhJGLs8Sn0eBQ85lycM=
-X-Received: by 2002:a17:90b:6c4:b0:2fa:1a23:c01d with SMTP id
- 98e67ed59e1d1-2fe68ae3f9dmr5490807a91.21.1740502807682; Tue, 25 Feb 2025
- 09:00:07 -0800 (PST)
+	s=arc-20240116; t=1740503350; c=relaxed/simple;
+	bh=YrCbpp9TYHBD/VlN2lOwxwORNWzE7tZi9l8Lic7j8D0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HmPY5rMk350IkwqLocKJCRw2KVm9lSkr2NwpKTd8NV7d06sFmMkWDGD6tQAmZy8uXzG44FwH7yo/mEKTbXFTVMVGSPPN0VtYxA4YLGYcGqP83KiK7zUjRW38i9uOARvSrf+Bw/SwFGvMySXKI8k2c/nGcG+JedqVEMH4YzNy14o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=AhqIDzWN; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1740503338;
+	bh=YrCbpp9TYHBD/VlN2lOwxwORNWzE7tZi9l8Lic7j8D0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=AhqIDzWNcEBLy3ruKtkqlFI1o3LzuNe+nSNoL21nlWcAM8hVwoHuX94mQIKR/3inp
+	 AHSIGfuECFCSgtYLICGektJmr/YbuZQh+ho9zUzJ+602uamIt4I9bg6/B7v3wgNuy1
+	 ir0nNldGQAyuowqjhGrOlcpScvreureboVi5y2IU=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Tue, 25 Feb 2025 18:00:47 +0100
+Subject: [PATCH v2] posix-clock: Remove duplicate ioctl handler
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207012045.2129841-1-stephen.s.brennan@oracle.com>
- <20250207012045.2129841-2-stephen.s.brennan@oracle.com> <CAK7LNAQokoST0FnByeWywaghTMP2aG7hQaV1T=TcQ=1v4ZLQrg@mail.gmail.com>
- <CAEf4Bzb9rYHTVkuxxSuoW=0P84M7UPkBr-4991KiMnFsv10hjA@mail.gmail.com> <87eczm6ckn.fsf@oracle.com>
-In-Reply-To: <87eczm6ckn.fsf@oracle.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 25 Feb 2025 08:59:54 -0800
-X-Gm-Features: AWEUYZm71T4KvCmI2nwm6g0nvCi2k88IvtzTenbxtSBKIzvf9AgIN9hu_viY36I
-Message-ID: <CAEf4BzZnQmjWLijCZdsNvFTmrAM+ioDW3YygmOZRHqadCg1_rw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kallsyms: output rodata to ".kallsyms_rodata"
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Andrii Nakryiko <andrii@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kees Cook <kees@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Sami Tolvanen <samitolvanen@google.com>, Eduard Zingerman <eddyz87@gmail.com>, linux-arch@vger.kernel.org, 
-	Stanislav Fomichev <sdf@fomichev.me>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, Jiri Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Jann Horn <jannh@google.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
-	Daniel Borkmann <daniel@iogearbox.net>, Nathan Chancellor <nathan@kernel.org>, 
-	linux-debuggers@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250225-posix-clock-compat-cleanup-v2-1-30de86457a2b@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAD73vWcC/42OsQ6CMBRFf4V0tqYtIaCT/2EYSnnYF7WtfQUxh
+ H+34uDqeM5wz10YQUQgdiwWFmFCQu8yqF3BjNXuAhz7zEwJVQmpKh484czNzZsrN/4edMoA2o2
+ BG9U1vdAw6FKyPBAiDDhv4+f2yxEeY26kn7RIycfXdmCSH/tXa5JcctN0Yijr+iCq7vQEJCJjR
+ 7t3kFi7rusbb3/tDd4AAAA=
+X-Change-ID: 20250125-posix-clock-compat-cleanup-c2b8d0aefa31
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, 
+ Richard Cochran <richardcochran@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Cyrill Gorcunov <gorcunov@gmail.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740502903; l=2228;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=YrCbpp9TYHBD/VlN2lOwxwORNWzE7tZi9l8Lic7j8D0=;
+ b=B7ifjwp01FUhVa1iMSEWrf0leIwjQxFonpTFA27al0RX1RAYgy6uZE9NEPxRJXzXXRrfp943Z
+ HtvTp6dRfu5A+h23sGl2CsRa0O0DkPATe3tywv7Kr4Ja+0VIt6JnSv0
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Mon, Feb 24, 2025 at 5:24=E2=80=AFPM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
->
-> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
-> > On Sat, Feb 15, 2025 at 6:21=E2=80=AFAM Masahiro Yamada <masahiroy@kern=
-el.org> wrote:
-> >>
-> >> On Fri, Feb 7, 2025 at 10:21=E2=80=AFAM Stephen Brennan
-> >> <stephen.s.brennan@oracle.com> wrote:
-> >> >
-> >> > When vmlinux is linked, the rodata from kallsyms is placed arbitrari=
-ly
-> >> > within the .rodata section. The linking process is repeated several
-> >> > times, since the kallsyms data size changes, which shifts symbols,
-> >> > requiring re-generating the data and re-linking.
-> >> >
-> >> > BTF is generated during the first link only. For variables, BTF incl=
-udes
-> >> > a BTF_K_DATASEC for each data section that may contain a variable, w=
-hich
-> >> > includes the variable's name, type, and offset within the data secti=
-on.
-> >> > Because the size of kallsyms data changes during later links, the
-> >> > offsets of variables placed after it in .rodata will change. This me=
-ans
-> >> > that BTF_K_DATASEC information for those variables becomes inaccurat=
-e.
-> >> >
-> >> > This is not currently a problem, because BTF currently only generate=
-s
-> >> > variable data for percpu variables. However, the next commit will ad=
-d
-> >> > support for generating BTF for all global variables, including for t=
-he
-> >> > .rodata section.
-> >> >
-> >> > We could re-generate BTF each time vmlinux is linked, but this is qu=
-ite
-> >> > expensive, and should be avoided at all costs. Further as each chunk=
- of
-> >> > data (BTF and kallsyms) are re-generated, there's no guarantee that
-> >> > their sizes will converge anyway.
-> >> >
-> >> > Instead, we can take advantage of the fact that BTF only cares to st=
-ore
-> >> > the offset of variables from the start of their section. Therefore, =
-so
-> >> > long as the kallsyms data is stored last in the .rodata section, no
-> >> > offsets will be affected. Adjust kallsyms to output to .rodata.kalls=
-yms,
-> >> > and update the linker script to include this at the end of .rodata.
-> >> >
-> >> > Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> >> > ---
-> >>
-> >> I am fine if this is helpful for BTF.
-> >
-> > This seems like a useful change all by itself even while the main
-> > feature of this patch set is still being developed and reviewed.
-> > Should we land just this .kallsyms_rodata change?
->
-> I would be happy to see it merged now.
->
-> I don't think it would help anything other than BTF, because most other
-> things (e.g. kallsyms) refer to symbols via an absolute address. Using
-> the section offset seems pretty uncommon.
->
-> But it still is a nice cleanup anyway.
+The normal and compat ioctl handlers are identical,
+which is fine as compat ioctls are detected and handled dynamically
+inside the underlying clock implementation.
+The duplicate definition however is unnecessary.
 
-I was thinking about possible use cases of some tooling wanting to
-access kallsyms data from vmlinux (instead of from /proc/kallsyms).
-But, frankly, having a separate section doesn't help all that much
-even there. We either way seem to have ELF symbols pointing to
-relevant pieces of information, so it's not hard to get it even if
-it's part of .rodata. So I guess we don't have to rush landing this
-patch separately.
+Just reuse the regular ioctl handler also for compat ioctls.
 
->
-> Thanks,
-> Stephen
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+---
+Changes in v2:
+- Drop #ifdef and move .compat_ioctl next to .unlocked_ioctl
+- Pick up review tag
+- Rebase onto latest mainline
+- Link to v1: https://lore.kernel.org/r/20250125-posix-clock-compat-cleanup-v1-1-c8b0f377905b@weissschuh.net
+---
+ kernel/time/posix-clock.c | 24 +-----------------------
+ 1 file changed, 1 insertion(+), 23 deletions(-)
+
+diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
+index 1af0bb2cc45c0aab843f77eb156992de469c8fb9..7f4e4fb7381ef05e5f4766181abd0a9887f53c19 100644
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -90,26 +90,6 @@ static long posix_clock_ioctl(struct file *fp,
+ 	return err;
+ }
+ 
+-#ifdef CONFIG_COMPAT
+-static long posix_clock_compat_ioctl(struct file *fp,
+-				     unsigned int cmd, unsigned long arg)
+-{
+-	struct posix_clock_context *pccontext = fp->private_data;
+-	struct posix_clock *clk = get_posix_clock(fp);
+-	int err = -ENOTTY;
+-
+-	if (!clk)
+-		return -ENODEV;
+-
+-	if (clk->ops.ioctl)
+-		err = clk->ops.ioctl(pccontext, cmd, arg);
+-
+-	put_posix_clock(clk);
+-
+-	return err;
+-}
+-#endif
+-
+ static int posix_clock_open(struct inode *inode, struct file *fp)
+ {
+ 	int err;
+@@ -171,11 +151,9 @@ static const struct file_operations posix_clock_file_operations = {
+ 	.read		= posix_clock_read,
+ 	.poll		= posix_clock_poll,
+ 	.unlocked_ioctl	= posix_clock_ioctl,
++	.compat_ioctl	= posix_clock_ioctl,
+ 	.open		= posix_clock_open,
+ 	.release	= posix_clock_release,
+-#ifdef CONFIG_COMPAT
+-	.compat_ioctl	= posix_clock_compat_ioctl,
+-#endif
+ };
+ 
+ int posix_clock_register(struct posix_clock *clk, struct device *dev)
+
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250125-posix-clock-compat-cleanup-c2b8d0aefa31
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
