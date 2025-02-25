@@ -1,206 +1,209 @@
-Return-Path: <linux-kernel+bounces-531972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8893A4472A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6ADA44732
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5B8424ADF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F50C1665A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD6116CD33;
-	Tue, 25 Feb 2025 16:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkMW0v+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFBE21ABC4;
-	Tue, 25 Feb 2025 16:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60606192D7C;
+	Tue, 25 Feb 2025 16:57:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9A01422A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502672; cv=none; b=AWRMq7MsnYKhaekt+U1Pls1X7hhUBvto1osx0/JUQ90DTipWeeiiNkqk9H5PHGaHdbXXhsYTcbDwiaFO2To2XKgKJZCipin3K5ws5Q6kp7QvqONBxoY8l48/PT9Jr7LU/MXeZsbJNqAklJwGywASb21oZtvS/tcQa547TaQPpN0=
+	t=1740502674; cv=none; b=uGaLml3aSkGp99cu2M+mrdeRvxnN91yETRXKA92/yJb/nVOgc6IcE+lOR3zvpZtBPj9FiapzjX5QemiLQb9GgLCWaDhi99EuVZhoOQTANzP+2KlzSnnI37OZ+WKd1ZNeGeZyXF/3mErTlt0SLBuFFk2FNfoBbE06v0ytuWeAyv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502672; c=relaxed/simple;
-	bh=qadF+V0pCnFQNycLz+FvUseJRs1YmaEo0AdSamAZ7zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KxmgXXy3yIrjnXVmpOZ9Qxc/MBswewwXIgYpdIq/5vOFQgq38CsizEdhbHctWhydRfkLHjal65fLVualib7rtF8aIMjCkUqsZIbrcF3tsAP8DNbxn03UggHGxUXR0urceGVXmFoNH+CaK/ew0h7SYnj2vey39CgKK7lQknysd1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkMW0v+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0296CC4CEDD;
-	Tue, 25 Feb 2025 16:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740502671;
-	bh=qadF+V0pCnFQNycLz+FvUseJRs1YmaEo0AdSamAZ7zg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SkMW0v+iW9ctHfiu3Qcq3SQLpY+OEbUio/MjSX4deqcR6Bpb87ooZrB7Y68V22dxG
-	 dZWzG9Zwfh6lhxscJsRHGaoivs+A6QRXF1cJYH3uolKkA1X3dhc97KkH0RdAuAAgTc
-	 DxRVBFCGdY4IxaAYv6LVoFpU2r7Xr8KxMoaT44tXGbW/GPJAV016sGnFxWZDmLHBpw
-	 jyedUAZIzFE2Dm4We9hmaY5F02LucYFBFcwgXSHxhEPF1rdk4CY2bmoXE/aSrq5a4t
-	 vvis4/fewAytbGhaOO9fIAxwmvRbs4RGxRhglxoUay349tnmAzfIEEkhbCK1ZrQG9l
-	 mkUTAPEtDa75g==
-Date: Tue, 25 Feb 2025 18:57:46 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
-Message-ID: <20250225165746.GH53094@unreal>
-References: <c93a253b24701513dbeeb307cb2b9e3afd4c74b5.1737271118.git.leon@kernel.org>
- <20250225160542.GA507421@bhelgaas>
+	s=arc-20240116; t=1740502674; c=relaxed/simple;
+	bh=R2ZILA4ovUqbE6Hwq/fiwCbEt6d4ytV2rIk8FwhuoRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fJzmgEiitiv2ZsfM/TVlmFSLmK2e8+4o85ythVyah58MyOFuBnOaH/NH7iclNRYyNMxFWaD9A8YhtjdmoBsf0gPLmCouAe7ta/Sw1EXlEUtYNAhtBpJXhPK11wzmsQPqnd237RehyOs+PHOOYYG0UA3KGHEFOx07v0fByXq0Eds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC69C1BCB;
+	Tue, 25 Feb 2025 08:58:07 -0800 (PST)
+Received: from [10.1.27.154] (XHFQ2J9959.cambridge.arm.com [10.1.27.154])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F24403F5A1;
+	Tue, 25 Feb 2025 08:57:48 -0800 (PST)
+Message-ID: <601fa2ab-aa75-4a34-8754-65c1d0b9a8c7@arm.com>
+Date: Tue, 25 Feb 2025 16:57:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225160542.GA507421@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/14] arm64/mm: Support huge pte-mapped pages in vmap
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250217140809.1702789-1-ryan.roberts@arm.com>
+ <20250217140809.1702789-11-ryan.roberts@arm.com> <Z7xgKjhMZAY5mOwK@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z7xgKjhMZAY5mOwK@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 10:05:42AM -0600, Bjorn Helgaas wrote:
-> On Sun, Jan 19, 2025 at 09:27:54AM +0200, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > The Vital Product Data (VPD) attribute is not readable by regular
-> > user without root permissions. Such restriction is not needed at
-> > all for Mellanox devices, as data presented in that VPD is not
-> > sensitive and access to the HW is safe and well tested.
-> > 
-> > This change changes the permissions of the VPD attribute to be accessible
-> > for read by all users for Mellanox devices, while write continue to be
-> > restricted to root only.
-> > 
-> > The main use case is to remove need to have root/setuid permissions
-> > while using monitoring library [1].
+On 24/02/2025 12:03, Catalin Marinas wrote:
+> On Mon, Feb 17, 2025 at 02:08:02PM +0000, Ryan Roberts wrote:
+>> Implement the required arch functions to enable use of contpte in the
+>> vmap when VM_ALLOW_HUGE_VMAP is specified. This speeds up vmap
+>> operations due to only having to issue a DSB and ISB per contpte block
+>> instead of per pte.
 > 
-> As far as I can tell, this is basically a device identification
-> problem, which would be better handled by the Vendor, Device, and
-> Revision IDs.  If that would solve the problem, it would also make
-> standard unprivileged lspci output more specific.
+> For non-cont PTEs, do you happen to know how often vmap_pte_range() is
+> called for multiple entries? 
 
-Yes, unfortunately these devices have same IDs as "regular" NICs and the
-difference in some FW configuration.
+It's mostly when vmalloc_huge() is called and for remapping io regions I
+believe. I don't have numbers though.
 
-> 
-> VPD has never been user readable, so I assume you have some existing
-> method for device identification?
+> It might be worth changing that to use
+> set_ptes() directly and we get some benefit as well.
 
-We always read VPD by using "sudo ..." command, until one of our customers
-requested to provide a way to run monitoring library without any root access.
-It runs on hypervisor and being non-root there is super important for them.
+I thought about that, but it's a bit of a pain, given the current
+arch_vmap_pte_range_map_size() opt-in for set_huge_pte_at().
 
-> 
-> Other concerns raised in previous threads include:
-> 
->   - Potential for sensitive information in VPD, similar to dmesg and
->     dmidecode
-> 
->   - Kernel complexity of reading VPD (mutex, address/data registers)
-> 
->   - Performance and potential denial of service as a consequence of
->     mutex and hardware interaction
-> 
->   - Missing EEPROMs or defective or incompletely-installed firmware
->     breaking VPD read
-> 
->   - Broken devices that crash when VPD is read
+Ideally I think we would just set_ptes() the whole lot (or at least in chunks of
+max_page_shift so we honour the "must belong to same folio" requirement). Then
+let contpte decide when to use contiguous mappings. But we currently block
+contpte operations for kernel mappings because of the potential need to
+invalidate, which can cause faults. So that would need work. And we would need
+to rework powerpc somehow.
 
-This patch allows non-root read for Mellanox (NICs) devices only and
-such access is going to be used only once during library initiation
-flow. So nothing from above is applicable in our case.
+The alternative would be to keep the arch_vmap_pte_range_map_size() opt-in and
+somehow expose the alignment/size requirements to vmap_pte_range() so it can do
+set_ptes() in the gaps. But that all felt quite messy.
 
-In general case, all devices in the world were accessed at least once
-with "sudo lspci ....", during their bringup, installation, daily use
-e.t.c. Broken devices are filtered by kernel and have limited access
-to VPD.
-
-So if it is broken, it will be broken with sudo too.
+In the end, I decided we would be getting the benefits via arch_make_huge_pte()
+for >=64K folios, and decided not to worry about the <=3K folio cases.
 
 > 
->   - Potential for issues with future Mellanox devices, even though all
->     current ones work fine
+>> But it also means that the TLB pressure reduces due
+>> to only needing a single TLB entry for the whole contpte block.
+>>
+>> Since vmap uses set_huge_pte_at() to set the contpte, that API is now
+>> used for kernel mappings for the first time. Although in the vmap case
+>> we never expect it to be called to modify a valid mapping so
+>> clear_flush() should never be called, it's still wise to make it robust
+>> for the kernel case, so amend the tlb flush function if the mm is for
+>> kernel space.
+>>
+>> Tested with vmalloc performance selftests:
+>>
+>>   # kself/mm/test_vmalloc.sh \
+>> 	run_test_mask=1
+>> 	test_repeat_count=5
+>> 	nr_pages=256
+>> 	test_loop_count=100000
+>> 	use_huge=1
+>>
+>> Duration reduced from 1274243 usec to 1083553 usec on Apple M2 for 15%
+>> reduction in time taken.
+>>
+>> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>  arch/arm64/include/asm/vmalloc.h | 46 ++++++++++++++++++++++++++++++++
+>>  arch/arm64/mm/hugetlbpage.c      |  5 +++-
+>>  2 files changed, 50 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/vmalloc.h b/arch/arm64/include/asm/vmalloc.h
+>> index 38fafffe699f..40ebc664190b 100644
+>> --- a/arch/arm64/include/asm/vmalloc.h
+>> +++ b/arch/arm64/include/asm/vmalloc.h
+>> @@ -23,6 +23,52 @@ static inline bool arch_vmap_pmd_supported(pgprot_t prot)
+>>  	return !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
+>>  }
+>>  
+>> +#define arch_vmap_pte_range_map_size arch_vmap_pte_range_map_size
+>> +static inline unsigned long arch_vmap_pte_range_map_size(unsigned long addr,
+>> +						unsigned long end, u64 pfn,
+>> +						unsigned int max_page_shift)
+>> +{
+>> +	/*
+>> +	 * If the block is at least CONT_PTE_SIZE in size, and is naturally
+>> +	 * aligned in both virtual and physical space, then we can pte-map the
+>> +	 * block using the PTE_CONT bit for more efficient use of the TLB.
+>> +	 */
+>> +
+> 
+> Nit: unnecessary empty line.
 
-It is not different from any other feature. MLNX devices exist for more
-than 25 years already and we never exposed anything sensitive through VPD.
-
-I'm confident that we have no plans to change this policy in the future
-either.
+Will fix.
 
 > 
-> This is basically similar to mmapping a device BAR, for which we also
-> require root.
-
-It is kernel controlled exposure, through well defined sysfs file and
-in-kernel API for very specific PCI section. Device BAR is much more
-than that.
-
-Thanks
-
+>> +	if (max_page_shift < CONT_PTE_SHIFT)
+>> +		return PAGE_SIZE;
+>> +
+>> +	if (end - addr < CONT_PTE_SIZE)
+>> +		return PAGE_SIZE;
+>> +
+>> +	if (!IS_ALIGNED(addr, CONT_PTE_SIZE))
+>> +		return PAGE_SIZE;
+>> +
+>> +	if (!IS_ALIGNED(PFN_PHYS(pfn), CONT_PTE_SIZE))
+>> +		return PAGE_SIZE;
+>> +
+>> +	return CONT_PTE_SIZE;
+>> +}
+>> +
+>> +#define arch_vmap_pte_range_unmap_size arch_vmap_pte_range_unmap_size
+>> +static inline unsigned long arch_vmap_pte_range_unmap_size(unsigned long addr,
+>> +							   pte_t *ptep)
+>> +{
+>> +	/*
+>> +	 * The caller handles alignment so it's sufficient just to check
+>> +	 * PTE_CONT.
+>> +	 */
+>> +	return pte_valid_cont(__ptep_get(ptep)) ? CONT_PTE_SIZE : PAGE_SIZE;
+>> +}
+>> +
+>> +#define arch_vmap_pte_supported_shift arch_vmap_pte_supported_shift
+>> +static inline int arch_vmap_pte_supported_shift(unsigned long size)
+>> +{
+>> +	if (size >= CONT_PTE_SIZE)
+>> +		return CONT_PTE_SHIFT;
+>> +
+>> +	return PAGE_SHIFT;
+>> +}
+>> +
+>>  #endif
+>>  
+>>  #define arch_vmap_pgprot_tagged arch_vmap_pgprot_tagged
+>> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+>> index 8ac86cd180b3..a29f347fea54 100644
+>> --- a/arch/arm64/mm/hugetlbpage.c
+>> +++ b/arch/arm64/mm/hugetlbpage.c
+>> @@ -217,7 +217,10 @@ static void clear_flush(struct mm_struct *mm,
+>>  	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++)
+>>  		ptep_get_and_clear_anysz(mm, ptep, pgsize);
+>>  
+>> -	__flush_hugetlb_tlb_range(&vma, saddr, addr, pgsize, true);
+>> +	if (mm == &init_mm)
+>> +		flush_tlb_kernel_range(saddr, addr);
+>> +	else
+>> +		__flush_hugetlb_tlb_range(&vma, saddr, addr, pgsize, true);
+>>  }
+>>  
+>>  void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
 > 
-> > [leonro@vm ~]$ lspci |grep nox
-> > 00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
-> > 
-> > Before:
-> > [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> > -rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> > After:
-> > [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> > -rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> > 
-> > [1] https://developer.nvidia.com/management-library-nvml
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> > Changelog:
-> > v4:
-> >  * Change comment to the variant suggested by Stephen
-> > v3: https://lore.kernel.org/all/18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org
-> >  * Used | to change file attributes
-> >  * Remove WARN_ON
-> > v2: https://lore.kernel.org/all/61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org
-> >  * Another implementation to make sure that user is presented with
-> >    correct permissions without need for driver intervention.
-> > v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
-> >  * Changed implementation from open-read-to-everyone to be opt-in
-> >  * Removed stable and Fixes tags, as it seems like feature now.
-> > v0: https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
-> > ---
-> >  drivers/pci/vpd.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-> > index a469bcbc0da7..c873ab47526b 100644
-> > --- a/drivers/pci/vpd.c
-> > +++ b/drivers/pci/vpd.c
-> > @@ -332,6 +332,13 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
-> >  	if (!pdev->vpd.cap)
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * On Mellanox devices reading VPD is safe for unprivileged users,
-> > +	 * so just add needed bits to allow read.
-> > +	 */
-> > +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
-> > +		return a->attr.mode | 0044;
-> > +
-> >  	return a->attr.mode;
-> >  }
-> >  
-> > -- 
-> > 2.47.1
-> > 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
 
