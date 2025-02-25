@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-531434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAD0A44086
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:20:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F817A44082
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C719441200
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217017E66E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C671269899;
-	Tue, 25 Feb 2025 13:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAF02690F2;
+	Tue, 25 Feb 2025 13:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PL071skN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWkh7cpj"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2B826982F;
-	Tue, 25 Feb 2025 13:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A055268FDB;
+	Tue, 25 Feb 2025 13:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489235; cv=none; b=GyhQtwJevVDULCJGDSKTBSbTLBlD0tYzxPEcjROkzoastOPmX/lLziPGbFY4MMJhFowQZUr4nZAL72T5srwI72CP4d4CnBzNjFp9f9NUafC0V7a5dzKdwSDI1qQgc7IyPGC0Eqox/Jl4/hDdkjttqlUXVNwl05Q3q4QJhOqH6fc=
+	t=1740489249; cv=none; b=Q1ryTaQ/Y5ct/hPA04oQysfIwlGS6DANebokKWWgeFsFAasTWcrhD67lzjZVaO9nFWz136eE/Ej9fVGNNS+pvJ+1hnmSZGJx/RroVnlcKgxxeL2eSnDmp6TOS1ht4KtifcE4KnksWsXKx5m9Mf5tHJVJ1shNkOgXzH2WI8u/KPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489235; c=relaxed/simple;
-	bh=DGNBCAm2Bb+g82225Nn5nxVsAmT5j6wYmXnlyqkoNZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mIR6u9xaw5PYzx0s7icEUQVVaZ8m05d8gm2tv97JrWXTER/FJx+ee+0WDjN2ZqGYtNG7At129wI1GRccsoOcykaAbiC8tZtfb70FxSh1okn/hFxHBRCKbXapnrGPgEACPGDdiZwMj6VV6/rYnwY8UY2QysRe0GzU4fscuKMvn3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PL071skN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE82C4CEDD;
-	Tue, 25 Feb 2025 13:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740489234;
-	bh=DGNBCAm2Bb+g82225Nn5nxVsAmT5j6wYmXnlyqkoNZk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=PL071skNzUMHIjpJ4IgSnCe6G1rGpbFGvVtBnLiV8bUuMOHEAVafTbHGUy9/1YsD4
-	 jc3990mUZnfv0Be5thjANFysWpneqy7gM2SEDYNRuMvw0beBOxRosL6YDKhk9d8Tna
-	 KEudHQln+jDL82X6QqnUV+dlNwf/JmYfXwb4BSEeKvdXAvJbAQz8wsLGUsohlw20hg
-	 u3+DWJB5T2/HHoyD5+Gxt5vyzwKpJMT0pQxqoESiLPzXeK2DpBBTo0yCI2cOdtzmPO
-	 uAH6EdHW2fig+x2JmoiVnCAoh+ZMj+Q4zUl6V/cUACoYEmvo/bWxmoi2FUqH5xNbGq
-	 wn68QzeOHC+gg==
-Message-ID: <c4727195-757a-4624-8580-78e5c32e9290@kernel.org>
-Date: Tue, 25 Feb 2025 14:13:48 +0100
+	s=arc-20240116; t=1740489249; c=relaxed/simple;
+	bh=v1iIaERknrbs8eqWlTOb/MgMkMtkVDqJt5teF3ovGX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ni/nOR2w9cufLLaYiKdJInU3yDd263CR5GEZvABJDEqWk5XOmLNV2Edv96WYMGTAFpsgbIw1t9Q4iPkKPJ6V2koB9j1+VCOKZZs/5uIAHrH+xVYJYBBn1IQzMW2llsIRJjtkCU9ZCav4ncn7rC0WNUkdaZVwzkqQW53hLbr3jHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWkh7cpj; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-222e8d07dc6so37664805ad.1;
+        Tue, 25 Feb 2025 05:14:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740489247; x=1741094047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=sYLcWu+xpfN0lDdZpNbKgmtUozIU0xde+CMOHsFz2oM=;
+        b=QWkh7cpjXk9zH33ZTrEVDc7sskl4Epabbf7Lh0AA/204wbWWuIdntPI2Hm6nz4IVLx
+         WAQ3eP3+kzj67hCvHsmvoimZWTeFsmJwoseuqjudjyAUHl66yT+cKLY51W3lfZFWdSkK
+         cZosshd+vW09EEL7n6w/p60fqk5S1bkv1ongwoPbfxLBwbU2LpKXWaS16BQV8Olqw6Zc
+         +kS10e4tFrXuh1ng0iFgn+V+ernPWaCMSLmeL7/v4G1YyB8Y9gozul9d6Da59LmIa9Vb
+         PtcMgM+NfD8F7ek4/6ZN32ktLuSaDS2O+lCA+M7COjjmWudndORSahxRdn4EFq2Eg5bk
+         y+lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740489247; x=1741094047;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYLcWu+xpfN0lDdZpNbKgmtUozIU0xde+CMOHsFz2oM=;
+        b=YfsParCCH/mg6wwfeXldOn8ZccNOFfZ2gzsMeCTTh5LJVtjsWnW1RhucRsFCFS78Ke
+         ho5iH++vJirf4CyLAkQAd0mfGStUG8vkm6yCIniCL3LtH+QGb7ZaRMh8IYbmwx3WewuR
+         hFPkhq8x4XQBKJR3tQPWSNDUQgaY9c+9QBgzeYk0SlgkfpAhRlQwI6/Oa/zCeSByiSAW
+         kqGKOslHIQD5/Qe9WDQSzuhSuuAbf5Oeq75VHHD1RH3jV4331WuQVLr15XdrfQlJhQZa
+         hLTweJFHDtD/r3GKsB7SEMVmqInoh4HEbEZXMpuiQ5Tl9jOjadK9DrfSR8jNyvwkVWtx
+         fWYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMC/jEiKPw/7Ev3z9zF/3ueOtXRq+poxzhtjPqAaQ/RBSnb/+PJoqSM8LPoIZ1SgtJicHJARKDFjfgRQED@vger.kernel.org, AJvYcCWsxQNq9gTrODK9zvofZSDZjx+Q+RrT5gbQmrn9ksiKng8GMY9DlA1cF9NwlkoJ8K2Q5lq4NztSieA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPHH/oQR2OuBYEGvZcjNfGS8Qfd3ZSWpCAy1eR9z/lUAKY6hOG
+	cJLmxdH6UX0Muidi5WVLBMdU0vFxgaDFanP6vNMsOyFH2TY64hXW
+X-Gm-Gg: ASbGncuJqJIYB7Nz824AK/cIGCazUOYKZic4oasLLLvn/4i0wKwMzTgmNLKpLrD9qXd
+	SSTUnRk117xycTtKT3pW8HYMBQjPVs21cDFj7pcRvVEdJ9B8nvahsQNTSbpFURJDRKxy/zJnp05
+	kM8U++aYFarNF5qrqGODxEwkY2FlBNoSlXBTrjSV8+/YIgyrU/RwgaEn1mSnk9ZEGfeZkK6yRUC
+	iOUx1RIxIJbOiZXUDFPeT4sLJfg/Es3UWMjKgBBqsypd0o5xZJzfEkd7lD8u8fNwKnJEkbfSJ5u
+	kbFSm4Dvrcj21ELuvrs8VnNrT3d6YzSWb6lWhaKrbQU+XCjDBki10EhFfQ3yGX2Sy3B6uzkkS3M
+	=
+X-Google-Smtp-Source: AGHT+IF9xSVNNuEnu6Nb7s+MD3IYoAuPzopICChiSlU5gJPgycSfrX2OtQiuNgsgcv93eNwA8suD2w==
+X-Received: by 2002:a17:903:32c7:b0:215:5600:18cc with SMTP id d9443c01a7336-221a0010c3amr294829325ad.22.1740489246673;
+        Tue, 25 Feb 2025 05:14:06 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0aec2dsm13697015ad.221.2025.02.25.05.14.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 05:14:06 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3308b190-b639-4aff-a1f8-3ad9761dd991@roeck-us.net>
+Date: Tue, 25 Feb 2025 05:14:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +83,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
- define
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
- <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
- <f810b8a2-4261-4b68-b59b-4efa0219b5db@kernel.org>
- <OS8PR06MB7541D685A626D300AC730A5BF2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <2b64a9d7-7048-4842-9cc1-fe23f5abdd00@kernel.org>
- <OS8PR06MB75411AE082C9630314966F2AF2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v2] drivers: watchdog: Add support for panic notifier
+ callback
+To: George Cherian <george.cherian@marvell.com>, wim@linux-watchdog.org,
+ corbet@lwn.net
+Cc: linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250225095203.2139482-1-george.cherian@marvell.com>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OS8PR06MB75411AE082C9630314966F2AF2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250225095203.2139482-1-george.cherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/02/2025 10:49, Ryan Chen wrote:
->>>> Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1
->>>> clock define
->>>>
->>>> On 24/02/2025 10:55, Ryan Chen wrote:
->>>>> -remove redundant SOC0_CLK_UART_DIV13:
->>>>> SOC0_CLK_UART_DIV13 is not use at clk-ast2700.c, the clock source
->>>>> tree is uart clk src -> uart_div_table -> uart clk.
->>>>>
->>>>> -Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX:
->>>>> modify clock tree implement.
->>>>> older CLK_AHB use mpll_div_ahb/hpll_div_ahb to be ahb clock source.
->>>>> mpll->mpll_div_ahb
->>>>>                   -> clk_ahb
->>>>> hpll->hpll_div_ahb
->>>>
->>>>
->>>> I can barely understand it and from the pieces I got, it does not
->>>> explain need for ABI break.
->>>>
->>>
->>> #1. SCU0_CLK_UART_DIV13 is redundant, it does not impact ABI break
->>
->> You did not explain how it does not impact. Clock was exported, there was a
->> user and now there is no clock. User stops working. ABI break.
->>
+On 2/25/25 01:52, George Cherian wrote:
+> Watchdog is not turned off in kernel panic situation.
+> In certain systems this might prevent the successful loading
+> of kdump kernel. The kdump kernel might hit a watchdog reset
+> while it is booting.
 > 
-> Sorry, SCU0_CLK_UART_DIV13 was defined, but was never referenced in any upstream device trees.
-
-
-That's incomplete definition of ABI
-
-> Since there is no in-tree usage of `SCU0_CLK_UART_DIV13`, its removal does not cause an ABI break.
-
-
-You ignored out of tree users. Please read carefully ABI docs.
-
-
+> To avoid such scenarios add a panic notifier call back function
+> which can stop the watchdog. This provision can be enabled by
+> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
 > 
->>> #2. Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX Older
->> implement
->>> where `mpll_div_ahb` and `hpll_div_ahb` were **hardcoded dividers** for
->> AHB.
->>> In **the new approach (v8)**, I refactored the clock tree to clock tree.
->>
->> I still cannot parse sentences like "refactoring A to A". It's meaningless to me.
->>
->>> It should be ABI-safe change
->>
->> No, you do not understand the ABI. You removed a clock ID, that's the ABI
->> change.
->>
->> Otherwise explain how this is not changing ABI.
->>
->>
->>>
->>> Or you want to keep original SOC0_CLK_HPLL_DIV_AHB define and then add
->> SOC0_CLK_AHBMUX.
->>> To be 1st patch, then 2n patch remove redundant
->> SOC0_CLK_HPLL_DIV_AHB?
->>
->> If you break the ABI you need to clearly explain why. We have long
->> conversations and you still did not say why.
->>
-> Sorry, my point will be following steps to avoid potential ABI issues, 
-> I can modify the patch series as follows:
-> 1. **Patch 1:** Add `SOC0_CLK_AHBMUX` without removing `SOC0_CLK_HPLL_DIV_AHB`.
-> 2. **Patch 2:** Finally remove `SOC0_CLK_HPLL_DIV_AHB`.
+> Signed-off-by: George Cherian <george.cherian@marvell.com>
+> ---
+> Changelog:
+> v1 -> v2
+> - Remove the per driver flag setting option
 
+You didn't actually remove it.
 
-I do not understand what changed here. You remove exported clock which
-is ABI, so how is this answering my question.
+> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
+> index d46d8c8c01f2..8cbebe38b7dd 100644
+> --- a/drivers/watchdog/watchdog_core.c
+> +++ b/drivers/watchdog/watchdog_core.c
+...>
+> +/* Use the following function to stop the watchdog on panic */
+> +static inline void watchdog_stop_on_panic(struct watchdog_device *wdd)
+> +{
+> +	set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
+> +}
 
-You keep dodging my questions. Here I asked "why". I do not see any
-answer why.
+Under what circumstance could or would a _driver_ request this ?
+I do not see the use case, sorry.
 
-Best regards,
-Krzysztof
+Guenter
+
 
