@@ -1,161 +1,222 @@
-Return-Path: <linux-kernel+bounces-531902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA17A44681
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:43:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F84FA446AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226A7172440
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C353B9CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6557F1624DA;
-	Tue, 25 Feb 2025 16:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8098194AF9;
+	Tue, 25 Feb 2025 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X70Fbqhc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJl3M2sH"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F7C19A28D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593DD4430;
+	Tue, 25 Feb 2025 16:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501493; cv=none; b=eoU1SPuU+kd3pryf7EV4hKOc1Kezg1fu2+b6f67gWUjsZ97sdH7q1SIU6sV5eUuIrnVopRSihKyUtLgP1EOlxdYth/PZEUn1RYXc5jGYqY1lv1UoATxFQ4ttxUDMaaLz60EIkNXgJfaKTaeLjCDFZPOtz1eNJGBFcc3Vkg6OyBk=
+	t=1740501561; cv=none; b=KJjvjxWXY1OFQK7nna/vwv0VjDmGTB8kolAHO4rhpjW2EBB30UTZaAAYz9RbCQ6eZWeNEM4euUZgDJQrTyBRqAQVmAAiY0X6jQqn1rYTZBNMgNigwHdE5U2Pqn0o7zdnlzMyb9I9Qrj38vDfWzksLVWh/e9GOquCpqjnvQzXedU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501493; c=relaxed/simple;
-	bh=ffqXUVO4r2Rd42jh6DWGeVqd33e+qddFH3kH1x24sA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g6JmccVMFKIacnS3f9rt4uxlVKhwgjpg3P8MtHVM0hFydhvzdw2rJSnwwHaMLfoMLEYdNgfzuOx9cjJJ97ssayZkb9xAKEj/uUeP19/FasK9HUjVJ8cnQiCq2/WR6O0IYpy3manDNx5bTEmbo9GXO1MyANG4Fm4H/YogUZAXexw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X70Fbqhc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740501490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=deHG3kMqc4H+yY3J+VmhJp18IRiomtpSS2OVfJI4Mrw=;
-	b=X70FbqhcO3locN/J4fR+/pYdQODptwl2ehsBMyFzwvXp9JunGhPP32tQIxL+Wkh6lOTQ5h
-	eAqBt4j6iDscjjzyPlLk3UlKOxMaB7x691r8pqUYwYbJFSTp9LjgKzeHWJqjaeA1D5Pb2u
-	r70VnIMdT4Cj1rtEs8VY7jYUMpIxs1Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-PQ3ewo2NOZSCfW4PZDzxqg-1; Tue, 25 Feb 2025 11:38:09 -0500
-X-MC-Unique: PQ3ewo2NOZSCfW4PZDzxqg-1
-X-Mimecast-MFC-AGG-ID: PQ3ewo2NOZSCfW4PZDzxqg_1740501488
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43947a0919aso55231845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:38:09 -0800 (PST)
+	s=arc-20240116; t=1740501561; c=relaxed/simple;
+	bh=0ncF/Suw8t5tbvwfNLzo4sbw5QHseLqdhB++Fm6EcO0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UCI3cpFjJieyVZ+/OpdtimwiR/W+rATc7MTsvN+gphhQYxlbNh2ffbER8r+SbkUQcAmWlwkRYv9JBVvJVMjR16MCCoI23NruaAbK79BLS/dBpIpbMRBWIxIe2AmeCU8QOoAUPMdmkxvvDrZgEgrrs/CpWXJOw943GQFQaYhHth8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJl3M2sH; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaeec07b705so971575166b.2;
+        Tue, 25 Feb 2025 08:39:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740501557; x=1741106357; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/f0/c9NItxQ84dUWhseX6e9bwXNqG8M3X9k63MirzB4=;
+        b=gJl3M2sHQZIbQbkgWYwQjM9qa5IyYunKMpRUPOLz3I73RzGJawsGNH1UCTLO2PgDbN
+         tTi4Io5NCpoLraZ4hvgy/9SPDSMVnXO0JIJ94mGyJvlpqXQsiq92uRQgRHAX9gx6rYxh
+         ZbQB0HVPU2AafoPtvO2us66Qz4enNumZtFLFqjhOzqWvtNwfrb31pH1qSqhX08kOX2s1
+         tLUDg8s2g9e2FjF/N0ESYFY2p5KMTEk5rQdamwZnktqfMlGsAE8i0OMc0DlJ6HDv8kpO
+         f0p+jJKmc5Fnq3Z/Ife8g3LjxVIvYtVISj2JFDWd1XKFWJiLdxF4p5XdBze12Q6Od3yB
+         mqvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740501488; x=1741106288;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=deHG3kMqc4H+yY3J+VmhJp18IRiomtpSS2OVfJI4Mrw=;
-        b=s6/RyJpdyfx6Yj8z+q2D0sWo0aUHfYWmAmCIbYuX6xUVeqKtL7AHfVI1FTwxRyHoFA
-         9GVKJFhje2Ts9HjKfDVsj1Hbz0DPNa0kdpw3roZal/zfKXXehyuXsyTnlSZYTF05RwsX
-         mH1Qkg+gU13x1aXsR4hWKwAeggJihiy0T9yiu1glveb+OtHFy7C7wUT2QeJXBh9p4l/+
-         UOVVgRW4lv+e+MwDltLQpEiNxUiU9/5fA/H8AqVRB1Al4nPz+IFNKCLyEaNQGcLXylx3
-         jGyAERIw+YOLFdQQVQ6TqEZ61wGhH9ds7XZRy4Pb7xEg5XyERvzv354q1GIpTdmiUMeS
-         xZ5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ6BVgtjTBeE8OjdzDhCj3v8YTTgY0RNIEx+f6PJTi9Gx07toftWiaIoGC/HC48n2qRbYWR3+jEkdA65M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg/jClg4KBtiTJck9wSD7ssvxyuCko6t9c39by770/Xe0ma2l0
-	Huz9bGSxefA/FCLk2CUqzuHTuof1fUufQY66RmOA/5Oi7tivFlyAAAEx+kc6PyrHzTYUj8Houwt
-	8RcINmDWjp9Ep1JNXGaJP76rr0Do0p2EM729ThXAy5RHQD7lOfq4HF5X7gidtaQ==
-X-Gm-Gg: ASbGnct5HSQgh+NaPjJmrfVByTS2xrJBPunZQI5qeqmMwjPRr5s5sthAzBpVyTo0ZTQ
-	KUUpxt8wjhHvGJj7LOPDz+oQWYInRJDwSpWhbfK5muG1UXAbrE+HAuB6n2VwzeW+h09XR3cA800
-	nS7mJBMZREU2IyEgLtltNnMV4mK1tjPne7/YiK/u1DPot3f4WxDnegoy41I1tSOxIGVJyvbAlsJ
-	Lhr3Ndzlmh7NLq4l+P3HHb3Wi+Eti+MVJhENXtLBSrOnagTUzxSUl2DCjfAMyAUH6Ysn/+HnIQ2
-	KYeD8RIvZrIZmWOpVkOJFraVQHudA1kAa/ym6zw2Fbpi24pYOUZCqcV6lNYTEkKq1k+tu4pENlm
-	gyV/EJ1oFwXbvhna9dbUR+7BWxYXftOLvXthnUNrkaMQ=
-X-Received: by 2002:a05:600c:3114:b0:439:9b80:ca6f with SMTP id 5b1f17b1804b1-43ab0f255a3mr46306445e9.5.1740501488304;
-        Tue, 25 Feb 2025 08:38:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHbswXdzscRbkD7zoGe8jnXtMfHylGoBuMvn2dyPISdvs79CV5Ni259ksaKK8Uy0oi/po9mYw==
-X-Received: by 2002:a05:600c:3114:b0:439:9b80:ca6f with SMTP id 5b1f17b1804b1-43ab0f255a3mr46306135e9.5.1740501487978;
-        Tue, 25 Feb 2025 08:38:07 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab155eba2sm33154155e9.27.2025.02.25.08.38.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:38:07 -0800 (PST)
-Message-ID: <6b9f6679-8655-44cb-8a0a-16d4032a89bc@redhat.com>
-Date: Tue, 25 Feb 2025 17:38:06 +0100
+        d=1e100.net; s=20230601; t=1740501557; x=1741106357;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/f0/c9NItxQ84dUWhseX6e9bwXNqG8M3X9k63MirzB4=;
+        b=uBJrS12cEao2tTMPQ2xg8T97BaZanRzNIdrmiOB6Qn20afH7hQ/enaC3PBLbpKCWXm
+         WkAX/W8iluoyi1FtMxAXSGceC0ugCtFsqvoni5Q9gw6fKHm1ISBUDvDQKv7aDPCS2R1R
+         E77ePst4flNGlVj3vqVsiVjRNcwbGNykNq4RqGbJjabTrxKFMWSxGD23dtdnpLMVfvf9
+         gwOFIK6RiBu7fQqQCTcqEnIWlSyroyj8C7dNDvvfIl722BD9hsgPlWBwmloRxrDHG3Py
+         LpCvsXoEg4urrMI2oqPpK+JEu4iRHdziUH9C2i4V5dQWLfdwIdI0s+ZY1lkv9vlHpglS
+         ZMwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdVE2TPntIhXSkhikUNeBEox9yVI/GkNsuP/OljCFzH3cSdfwrLsU1IXO9ZM0Cj1m52S13UKUCbjAD@vger.kernel.org, AJvYcCWi/53mY6LtmA9DEO4ktOUs7tfmEuOvUfkPygyDVALakrT6Nv1SY5+MbrXBWtz3PTMl0BAsbE13omsdbtSi@vger.kernel.org, AJvYcCX4sSB3ZZ+wOi4tAzkXNjDDUovoz+sJDuzZ86+ril9948Hwb+d2guUvP0vQ9oy9Aund8lggLFr6GQLCuX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaOlWUDXycFgK33+ravEUxpX1FD0nQGzTJQ3SdsChsHPJ9dbHj
+	+j5VpftztXVmh/EyxfjiEkI8JuXGPnIeMYu+UNjI/5p3jwyXlcj3OsOm6WaV
+X-Gm-Gg: ASbGncu4Ac05oqdSlx3SvX3bS32A8YAJZfNPeqEylDcncJdlQxOdlWDipBpzdSq959N
+	VlCu5Gd5h9qE6ruxFddg+yiJ5K0GrXAxJ/H8ROILYtIeyvmn50PvUYuWGPYtQGdl3D0Uh6B7GL5
+	5wG8q+QnM0FuYcz201ivxJx1seqYVZ5+OZORXIwXsyUUUiQwJxrvVcz1GEi2a2EOJT3q6bHQi7g
+	qIv4TUFDeY1lTHjqqbnkXutToiQa7a+8ncCnP377SSRC+pYnYWPJXlJQ7NamWsgpKgUnL1eNcNG
+	D7f3xzxEaaT4rlLf8MtHq8CN
+X-Google-Smtp-Source: AGHT+IEJQXDO6bE471CYaGsZ8DY6GWmlh2mA9SI6FSdZDKoSbV9lCTuvhc3Li2czoa0ROl6jJqQCOg==
+X-Received: by 2002:a17:906:3088:b0:ab7:9bea:4e04 with SMTP id a640c23a62f3a-abc0d9d99e9mr1504207766b.15.1740501557221;
+        Tue, 25 Feb 2025 08:39:17 -0800 (PST)
+Received: from [127.0.1.1] ([46.53.242.22])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-abed2055011sm163999866b.156.2025.02.25.08.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:39:16 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v9 00/12] This is continued work on Samsung S9(SM-9600)
+ starqltechn
+Date: Tue, 25 Feb 2025 19:38:51 +0300
+Message-Id: <20250225-starqltechn_integration_upstream-v9-0-a5d80375cb66@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] mm: page_ext: make lookup_page_ext() public
-To: Luiz Capitulino <luizcap@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, yuzhao@google.com, pasha.tatashin@soleen.com
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev
-References: <cover.1740434344.git.luizcap@redhat.com>
- <fb46436ec9ef892b6f40b9e48d40237b9855ac16.1740434344.git.luizcap@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <fb46436ec9ef892b6f40b9e48d40237b9855ac16.1740434344.git.luizcap@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABvyvWcC/43Sy26EIBQG4FeZsK4NcrervkfTTBAPSqI4A2jaT
+ Hz34vQyxk1d/ifh+yGcG4oQHET0crqhALOLbvQ5VE8nZDrtWyhckzMimDAsSlnEpMO1T2A6f3Y
+ +QRt0ymfO0yWmAHooaqOE4rgmFijKTK0jFHXQ3nQZ8lPf5+ElgHUf996395w7F9MYPu/XmOk6/
+ W1U/zfOtMAFUCuEILiU2ry2g3b9sxkHtOIze4BVSQ+ALIOkIWAbbriScg/yDUjEAZBnsCFYMSG
+ JtcTuQfEHlhgfebLIIGeMU8EbijnZg/IBEswPgDKDitlKU86kwnQPqi1YHQDV+ilGYMZU2Yiq3
+ ILL9woEuE5549LPHizLF93SVIyPAgAA
+To: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740501555; l=5151;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=0ncF/Suw8t5tbvwfNLzo4sbw5QHseLqdhB++Fm6EcO0=;
+ b=ak0XAyErIzXbkDqP2m2cvKT/MBUAshlb7/OBKJGTr9D1iiDsK1ARCehEv2jPfpjhvqZ8Psdgj
+ jqoWWQz9rxcC8IdnQswWSR7KqpXFslWK+cLokNUEw1gLos9w1eJTi+n
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On 24.02.25 22:59, Luiz Capitulino wrote:
-> The next commit will use it.
+Contains starqltechn device tree changes.
+Add support for new features:
+- sound (headphones and mics only)
+- gpu
+- panel
+- buttons
+- MAX77705 MFD:
+  - charger
+  - fuelgauge
+  - haptic
+  - led
 
-This should likely be squashed into the next patch, where people also 
-have the context why this is required.
+Binding Dependencies:
+- s2dos05: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com
+  - This series was applied to krzk/linux.git (for-next)
 
+- max77705: https://lore.kernel.org/r/20241209-starqltechn_integration_upstream-v11-4-dc0598828e01@gmail.com
+  - applied to
+    git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
 
+- s6e3ha8 panel: https://lore.kernel.org/r/20241006-starqltechn_integration_upstream-v6-0-8336b9cd6c34@gmail.com
+  - applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+
+Runtime Dependencies:
+- gcc845 gp clock: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com
+  - applied to clk-next
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v9:
+- update applied dependency patchsets
+- Link to v8: https://lore.kernel.org/r/20241209-starqltechn_integration_upstream-v8-0-ec604481d691@gmail.com
+
+Changes in v8:
+- add reviewed tags
+- minor fixes
+- remove 'reg' property in fuel-gauge to comply with v11 max77705 mfd
+- Link to v7: https://lore.kernel.org/r/20241205-starqltechn_integration_upstream-v7-0-84f9a3547803@gmail.com
+
+Changes in v7:
+- review fixes.
+- new patch with dt-binding header for wcd934x
+- Link to v6: https://lore.kernel.org/r/20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com
+
+Changes in v6:
+- refactor: no space between tags in commit message
+- rename starqltechn to sdm845-starqltechn in commit summaries
+- Link to v5: https://lore.kernel.org/r/20240926-starqltechn_integration_upstream-v5-0-d2084672ff2f@gmail.com
+
+Changes in v5:
+- Split patchset per subsystem
+- Add links to subsystem patchsets in description
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
+
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
+
+Changes in version 3:
+- disable crypto patch removed(disabled on distro level)
+- dts framebuffer node along with related patches removed,
+because panel driver added
+- fix 'make O=.output_arm64 CHECK_DTBS=y qcom/sdm845-samsung-starqltechn.dtb'
+errors, but it still complains on 'monitored-battery' and
+'power-supplies' though I have 'power-supply.yaml' link in charger
+and fuel gauge bindings.
+
+---
+Dzmitry Sankouski (12):
+      arm64: dts: qcom: sdm845: enable gmu
+      arm64: dts: qcom: sdm845-starqltechn: remove wifi
+      arm64: dts: qcom: sdm845-starqltechn: fix usb regulator mistake
+      arm64: dts: qcom: sdm845-starqltechn: refactor node order
+      arm64: dts: qcom: sdm845-starqltechn: remove excess reserved gpios
+      arm64: dts: qcom: sdm845-starqltechn: add gpio keys
+      arm64: dts: qcom: sdm845-starqltechn: add max77705 PMIC
+      arm64: dts: qcom: sdm845-starqltechn: add display PMIC
+      arm64: dts: qcom: sdm845-starqltechn: add touchscreen support
+      arm64: dts: qcom: sdm845-starqltechn: add initial sound support
+      arm64: dts: qcom: sdm845-starqltechn: add graphics support
+      arm64: dts: qcom: sdm845-starqltechn: add modem support
+
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                   |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts                      |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts      | 600 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           |   4 ---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi                         |   2 --
+ arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts         |   4 ---
+ 11 files changed, 591 insertions(+), 47 deletions(-)
+---
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Dzmitry Sankouski <dsankouski@gmail.com>
 
 
