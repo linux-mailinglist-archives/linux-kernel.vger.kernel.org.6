@@ -1,109 +1,186 @@
-Return-Path: <linux-kernel+bounces-531134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD09A43C8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCFEA43CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B2418892D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837353A6ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC34D267F56;
-	Tue, 25 Feb 2025 11:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3AB267F6A;
+	Tue, 25 Feb 2025 11:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k5FEkeRd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMmSyc37"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD70267B71;
-	Tue, 25 Feb 2025 11:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C22267B97;
+	Tue, 25 Feb 2025 11:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481225; cv=none; b=YDERoDEHqVT/kNNSZnAiDZ1Py+PxBQHo2JqVAGl9MHXX/X8cXl515H415ju0E1cP3zXzBp0d8jvzxQmgfALp29e109/V511EmE7RWOiMDwuuBZ+SClm8dy736biG2Rd5XNXdipIXhtfcwVs8sRR7Dpw4AskKgTQMUv3dcgsJrak=
+	t=1740481226; cv=none; b=JOjzBCx1rburyzwlqWdM7T3dhFGmbERfTUxTQw0+bOZH3Cqi9aBdHT8NFm+YeDIRzOji+9pQjCSDXRQKD4nO4nW0t36kExBAet5nuRbGeCJkzAiqf7wAHwI5jedFFZjGGbi1g7ze1r8iCCkhub0Ve6huy4WWPbVSGOO5jjmUqj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481225; c=relaxed/simple;
-	bh=J1HWkZJkiWOegQfp5vHIqN+whL/4IGe+JzHch6uSDhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxvbRZK2Bu0Ikh3Gm41lo7BGWqHPtT+7FKoswqPfmKhqO37kHS09z9vu3owic/2XaovovyX8jqQcmfGoTk+Nqh3xHmTRIoNoIvaixfiEt8aCpiS9/Pd7o4QZBOH3TrZkfjrq7pP2XVktgE0LoJA4PCcYnRE0YYZVIC+yzI049no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k5FEkeRd; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740481224; x=1772017224;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J1HWkZJkiWOegQfp5vHIqN+whL/4IGe+JzHch6uSDhM=;
-  b=k5FEkeRd3zMogToEymcl2ViDiFGVnWactS7FbzVePQIPGxbnfbJ557mL
-   fIeLCEVynlOgMzjXjQZ/0kNCZTtMGxX5VU5zoqBPWeh6GFrX1/p6LVb7L
-   d8J6JrjAycXpGH8qBPZJ/SnEbVUt4GbNbBDiWYee2yOVN7z17HdkTpjx1
-   2a9w09ncP5+H5PglEf8lbMlNmHgS0duNYG4sGj/NxQEsem8gFvYIBibOM
-   Y/NCuuR/0WnIWVrINZvnsimXRSNt7HgCLlMtVXpqLqez96kXHY3Uec+MB
-   9Q9PFY2H4W+EITbDqyrb10sJEYhQ1gZlA6T1Gze2cG/hIvBfx2F9CT780
-   g==;
-X-CSE-ConnectionGUID: i2Fb9CGFSGOOcAvkb1zP/g==
-X-CSE-MsgGUID: V5BhLf/yTdSh80tmxi0HHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58821997"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="58821997"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:00:23 -0800
-X-CSE-ConnectionGUID: VKcO8oSbTdGI6udia3EFxg==
-X-CSE-MsgGUID: jyifJL4kRbGD9sqL2GIF/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="153538303"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:00:22 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmsfi-0000000Ext0-47Ej;
-	Tue, 25 Feb 2025 13:00:18 +0200
-Date: Tue, 25 Feb 2025 13:00:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
-Message-ID: <Z72iwgbvlYFCz5q0@smile.fi.intel.com>
-References: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1740481226; c=relaxed/simple;
+	bh=3QC7bLLQ/zkEb/zgxj1H5xIc9uVr/+bRhetdiLgORIM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qy2VqDNx1J40uNgSTiH9OSgIh1UQC3U6Sp2JMsLWy4wiMH/vbiYUSndVERq0XmXpsOyMaOzWbC6X8SLaV44LhiyMNdsdCRHwUZ+JCGNAMlrEL7uF/DMB6DAMWGHsd0KFOtB3zI0rp+bG2L28F3fUk2gcLSxJ/SiG51GdVd5U8WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMmSyc37; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5461f2ca386so4668153e87.1;
+        Tue, 25 Feb 2025 03:00:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740481223; x=1741086023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=miA+E2wD4Pd4SV+NIcjk6rwZpf9OynLUKJ339stxcis=;
+        b=bMmSyc378ScpxzmJJBFTAr/qMJQBysla/daIhnk5rdmzb2GAXDBx3RN3pz6O1Wnmli
+         kqYS6h2Sdda2aYGjQMtsFFV2rSf/Zzw7BghirbPQp8O89QFq/QSohcwsoGk1rB3Djmrv
+         hGoJCl1g56Mtuqy1nYsoeP3C74KfP+Ammml4H2+YAyWJxpilG+1xHWS6qpqV3iWK2q7B
+         nDCU9U0+NcKZ0D0WpoP69Pz2A5YRfJF24EYQA50VrVB4cXzt7TBCc5bPAHl89LC1kE5B
+         RTb5XnGzxf5jDGdrQdSLnqmhjbOyj1eGPb+Xmbj0KqrmDczQLiGMMP9lfgEz6J9OVC35
+         74wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740481223; x=1741086023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=miA+E2wD4Pd4SV+NIcjk6rwZpf9OynLUKJ339stxcis=;
+        b=IOcZXxbLLbytL2R/jkMS1OOxNlI4JMjV7dv5ugDTNep0yTmvWjnvjZzxnccRa8lF6o
+         itAPxQAK9u3ttgEdfwaDBoMEn2OuJWpA/VVu9uuYsiivnvF800+Q/bI029rTyDapNQpb
+         y1v4oraoTxxh66TKe4hzhDNSPVAeuSJLDyTD1gGrdI0YcBzxheNyVYRTqaHz/wf0CxQ1
+         57P2c1Z2Idy9YHtN+o55AITv4BbVYCj9hVCMNHdmyL5qGebqJsY46dHJQtwgGJalwy5J
+         oAZ/7NGkjYnVkPLYTjVojdure/IsqkZtFZ8RDHypdDPYfeMHKQnzMBUft3h79Vnz2rS/
+         wIxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXi+qC8HWA3DzZdBNxk5lRuIUG0YqOvTo6zKsMTahAnHny7+eY57Go7SlrPkF6ss2NNTOf5zRE6cj9xUhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF7Ux96InybvkGDCh853VgHqJMNliSYsdEZO9OL58gPYaF6Jf8
+	mWU2vb6ggn1DCZZZjSwoncvvaTws9j2xOoXZtJuC0TbSK+pnqt0d
+X-Gm-Gg: ASbGncv/mLaadHav0/03SGDVf6ht33wRcQJ4ebfRgGuQQOnaINzZCxiooI53zIx9j5L
+	BbL3lm4wIpn32M5N0WA9qhgWlo9OFIJuijEWCQFVwihPNnO3+MnWSf9GyyRfW5wD3X8TSxWC6i7
+	8r8YOcN4IhnwoJ0RsPxn9EBrGylnCkZgoOrL2UetIPPHIOpQm/j6KZFvxnS/uvfRUmAIKwC4RfK
+	XCnwx+Ff38k7FIVce5zPZDf7p56hgxNLE+1GKgIuLR0lWXECZX1QizenUo60j9dQFYxhT65ywsg
+	mP8rYk2oXPU2I3ohu08ZIw==
+X-Google-Smtp-Source: AGHT+IETbAXIoIWzB9fO+htnlh5GeNXoYelbVkB32w3oybvIUeQtcTfGyBpIkXj6AQXbtlpZtX8MDQ==
+X-Received: by 2002:a05:6512:3b2b:b0:545:a1a:5576 with SMTP id 2adb3069b0e04-5483914012cmr6514678e87.22.1740481222380;
+        Tue, 25 Feb 2025 03:00:22 -0800 (PST)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b9886sm143850e87.71.2025.02.25.03.00.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 03:00:21 -0800 (PST)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH v3 1/3] rcutorture: Allow a negative value for nfakewriters
+Date: Tue, 25 Feb 2025 12:00:18 +0100
+Message-Id: <20250225110020.59221-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 11:58:04AM +0200, Andy Shevchenko wrote:
-> Tidy up ACPI ID table:
-> - drop ACPI_PTR() and hence replace acpi.h with mod_devicetable.h
-> - remove explicit driver_data initializer
-> - drop comma in the terminator entry
-> 
-> With that done, extend compile test coverage.
+Currently "nfakewriters" parameter can be set to any value but
+there is no possibility to adjust it automatically based on how
+many CPUs a system has where a test is run on.
 
-...
+To address this, if the "nfakewriters" is set to negative it will
+be adjusted to num_online_cpus() during torture initialization.
 
->  config NIC7018_WDT
->  	tristate "NIC7018 Watchdog"
-> -	depends on X86 && ACPI
-> +	depends on HAS_IOMEM
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Oh, this should be HAS_IOPORT, compiling on X86 won't help to find this issue
-:-)
-
-> +	depends on ACPI || COMPILE_TEST
->  	select WATCHDOG_CORE
-
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index d98b3bd6d91f..f376262532ce 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
+ 
+ static int nrealnocbers;
+ static int nrealreaders;
++static int nrealfakewriters;
+ static struct task_struct *writer_task;
+ static struct task_struct **fakewriter_tasks;
+ static struct task_struct **reader_tasks;
+@@ -1763,7 +1764,7 @@ rcu_torture_fakewriter(void *arg)
+ 	do {
+ 		torture_hrtimeout_jiffies(torture_random(&rand) % 10, &rand);
+ 		if (cur_ops->cb_barrier != NULL &&
+-		    torture_random(&rand) % (nfakewriters * 8) == 0) {
++		    torture_random(&rand) % (nrealfakewriters * 8) == 0) {
+ 			cur_ops->cb_barrier();
+ 		} else {
+ 			switch (synctype[torture_random(&rand) % nsynctypes]) {
+@@ -2568,7 +2569,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
+ 		 "nocbs_nthreads=%d nocbs_toggle=%d "
+ 		 "test_nmis=%d "
+ 		 "preempt_duration=%d preempt_interval=%d\n",
+-		 torture_type, tag, nrealreaders, nfakewriters,
++		 torture_type, tag, nrealreaders, nrealfakewriters,
+ 		 stat_interval, verbose, test_no_idle_hz, shuffle_interval,
+ 		 stutter, irqreader, fqs_duration, fqs_holdoff, fqs_stutter,
+ 		 test_boost, cur_ops->can_boost,
+@@ -3644,7 +3645,7 @@ rcu_torture_cleanup(void)
+ 	rcu_torture_reader_mbchk = NULL;
+ 
+ 	if (fakewriter_tasks) {
+-		for (i = 0; i < nfakewriters; i++)
++		for (i = 0; i < nrealfakewriters; i++)
+ 			torture_stop_kthread(rcu_torture_fakewriter,
+ 					     fakewriter_tasks[i]);
+ 		kfree(fakewriter_tasks);
+@@ -4066,6 +4067,14 @@ rcu_torture_init(void)
+ 
+ 	rcu_torture_init_srcu_lockdep();
+ 
++	if (nfakewriters >= 0) {
++		nrealfakewriters = nfakewriters;
++	} else {
++		nrealfakewriters = num_online_cpus() - 2 - nfakewriters;
++		if (nrealfakewriters <= 0)
++			nrealfakewriters = 1;
++	}
++
+ 	if (nreaders >= 0) {
+ 		nrealreaders = nreaders;
+ 	} else {
+@@ -4122,8 +4131,9 @@ rcu_torture_init(void)
+ 					  writer_task);
+ 	if (torture_init_error(firsterr))
+ 		goto unwind;
+-	if (nfakewriters > 0) {
+-		fakewriter_tasks = kcalloc(nfakewriters,
++
++	if (nrealfakewriters > 0) {
++		fakewriter_tasks = kcalloc(nrealfakewriters,
+ 					   sizeof(fakewriter_tasks[0]),
+ 					   GFP_KERNEL);
+ 		if (fakewriter_tasks == NULL) {
+@@ -4132,7 +4142,7 @@ rcu_torture_init(void)
+ 			goto unwind;
+ 		}
+ 	}
+-	for (i = 0; i < nfakewriters; i++) {
++	for (i = 0; i < nrealfakewriters; i++) {
+ 		firsterr = torture_create_kthread(rcu_torture_fakewriter,
+ 						  NULL, fakewriter_tasks[i]);
+ 		if (torture_init_error(firsterr))
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5
 
 
