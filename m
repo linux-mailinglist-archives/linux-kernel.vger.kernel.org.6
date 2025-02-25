@@ -1,283 +1,165 @@
-Return-Path: <linux-kernel+bounces-531053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC9AA43BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:31:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40667A43B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A48424B39
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0E63AA69C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767DC26739C;
-	Tue, 25 Feb 2025 10:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43382673B9;
+	Tue, 25 Feb 2025 10:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VA+Re3qo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTwC28WN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A4D266B62;
-	Tue, 25 Feb 2025 10:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98293266190
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479024; cv=none; b=R7mXsi1WmoubIqdpWM0zAOR2b901IhnVX0tMyRDG55GqsegpbVX5+QpN8qbGu3lrRpI/DvMZfpDT0jE7292jWI5DipdSvVYVKBrAjUr5o+z6ljy2QLcAQYXHKxEttKRmO1WRCFKSztTwCFSjm0h2MU5w20DceheSVHj8jZsY2ak=
+	t=1740479097; cv=none; b=rqtu9yysHkkECXE4PyYsKMhlzQE2FH3xblJslXwdK6L7jtzYThdri0w+i+BsUPpn5bvorCXMr1SR1514peF1HN/LErEaJsdHlQvNoRMvyK5NWDlb2n6FABhBODlgKREBZq+g97OimoSV97u1XdJFQiNCPmK2ofk6ghpsBEezggA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479024; c=relaxed/simple;
-	bh=OL7+WhfqMOlCT5NqZZrkzMvgJrl1fo1sSNbR/WMWItM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NoOv9x/UW7hE8ptCB26fj0NMMk/1r4VinNUNlaR2RSwu6zd2kSB0KiE4qijY0yofY9X//9OSTdwA7FaaN8450ZOGt7cz4a1+YpIv+ZgoPzSgkMhCPB2jnKjlubTrUBAHTaRAp2pORCuM0r/W1HsKZBrHw8JomY/IV+1lHR7K8Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VA+Re3qo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86CBC4CEDD;
-	Tue, 25 Feb 2025 10:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740479023;
-	bh=OL7+WhfqMOlCT5NqZZrkzMvgJrl1fo1sSNbR/WMWItM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=VA+Re3qoylvKvbXFzQkmRV9ABh85iVOXJub7z4pDJrhRZKI02nzLKpC0uTXFu4LMB
-	 /hB8zIW+EKnR03s6TiKoNzE7TwW6mSrZfs4TnLg2s9DACupBAna/Mc2NlUzYUDPk7i
-	 KRP+LjahDFczzI3mFxrX/YdUXNWwZf0558obPR/XL2WVsT6yj6K3tyyk3t6koeACdb
-	 nQnskVCEXPLRKnIEWQASvJj/Zmre9YYpu8z3TgN+tVWIeEgwgraNVrXU2uc5hHji5u
-	 yGJaFP1yJd1DUkkkrvkiG6ReScTr/14o+umXrzA1UK82R57hQg/9Zazmg83lAGq7Ah
-	 0rX4i/11wpDAQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Joel Becker" <jlbec@evilplan.org>,  "Christoph Hellwig" <hch@lst.de>,
-  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
- <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
- <longman@redhat.com>,  "Fiona Behrens" <me@kloenk.dev>,  "Charalampos
- Mitrodimas" <charmitro@posteo.net>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/4] rust: configfs: add a sample demonstrating
- configfs usage
-In-Reply-To: <CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com> (Daniel
-	Almeida's message of "Tue, 25 Feb 2025 06:37:33 -0300")
-References: <20250224-configfs-v4-0-9af9b5e611f6@kernel.org>
-	<20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
-	<gFsQNuXNmyVQmdawZnfoGhTe3Fu7W0K5VeoiM5tjROpKWVojf48IOHIQT0JY77AFiTPPLHk3f_gjzEGilH7vLQ==@protonmail.internalid>
-	<CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 11:23:30 +0100
-Message-ID: <87jz9ewcf1.fsf@kernel.org>
+	s=arc-20240116; t=1740479097; c=relaxed/simple;
+	bh=KJi6fGx2qAW3OOyEjyDwdnC/hKQyC55feyHtoB8Hh+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blWecKAAH7xRZ4vSih4m6u+qo34hmTYc708ZkKVIqQeUb925JNXnNQMOc1T2N8zUc9pMfJWWlFZ4UG7T7uvHvsZkBUNUlPGhYXFhbFK8vkrWEbVBll0RleBFSMXbSpcO5Jq40PA6wEPYYtxf+sQnhVHuSvWSokALSQkrVOlf7aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTwC28WN; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740479096; x=1772015096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KJi6fGx2qAW3OOyEjyDwdnC/hKQyC55feyHtoB8Hh+Q=;
+  b=MTwC28WNmEVHs2sIhyVOBdvfU/QIbIrZyaoe+t+mBCu3VzkYKl8fXWV4
+   HtUUf/ia7TRmGtIJFrE5dbx70e8r0mr0jjgRdRlnlqpgFL9PlwsRLQIxg
+   c5zcNi19ekBx+U4z9Ahhlxy+S8fIs+NkuUVSWogQHvjsqGGN0XaYYx4dg
+   QyMb0b20EA9tKv/vOU2Ldu44rwUESCxhA5kF06PCxvnVosmv0Tjxs1wn6
+   yWfX1oH/yo2Gz01/0ifZKq5AfqKTbe5zSn29Cxx/bBr75cyyyjNyw/52E
+   Wf5pkSCFTMmrFzFzyEuET+S4iZNcrxVnoelcKE0b+PjUGprfXUiytWP4V
+   g==;
+X-CSE-ConnectionGUID: VE4nXlBtTu6NWD2OzErd0A==
+X-CSE-MsgGUID: jvmW2SbmTemEKTklxmbiTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41158820"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="41158820"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:24:55 -0800
+X-CSE-ConnectionGUID: xO4dWD+qS42xRL47uWu9lA==
+X-CSE-MsgGUID: 5SjyaEnGQZWpLxskDmf7FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="121292015"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:24:51 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tms7M-0000000ExQ9-3UHb;
+	Tue, 25 Feb 2025 12:24:48 +0200
+Date: Tue, 25 Feb 2025 12:24:48 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 1/2] drm/format-helper: Add conversion from XRGB8888
+ to BGR888
+Message-ID: <Z72acJ0MoSOK5_RI@smile.fi.intel.com>
+References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+ <03FA573F-6D01-40E8-A666-CEA17A917036@live.com>
+ <Z7yCLxBN4Cl4btQm@smile.fi.intel.com>
+ <466c38c3-7f74-46db-8270-bebafacf0007@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <466c38c3-7f74-46db-8270-bebafacf0007@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+On Tue, Feb 25, 2025 at 08:37:32AM +0100, Thomas Zimmermann wrote:
+> Am 24.02.25 um 15:29 schrieb andriy.shevchenko@linux.intel.com:
+> > On Mon, Feb 24, 2025 at 01:38:32PM +0000, Aditya Garg wrote:
 
-> Hi Andreas,
->
->> On 24 Feb 2025, at 10:21, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> Add a sample to the samples folder, demonstrating the intended use of the
->> rust configfs API.
->
-> nit: this is not the first time I see Rust not capitalized in this series.
+...
 
-Will fix =F0=9F=91=8D
+> > > +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+> > Okay the xrgb8888 is the actual pixel format independently on
+> > the CPU endianess.
+> > 
+> > > +{
+> > > +	u8 *dbuf8 = dbuf;
+> > > +	const __le32 *sbuf32 = sbuf;
+> > But here we assume that sbuf is __le32.
+> > And I think we may benefit from the __be32 there.
+> 
+> No, please. XRGB is the logical order. The raw physical byte order for DRM
+> formats is always* little endian, hence reversed from the logical one. sbuf
+> points to raw memory and is therefore __le32. DRM-format byte order is
+> impossible to understand, I know. But that code is correct.
 
-[...]
+Okay, so it's only about the colour (top-level) layout, the input and output
+data is always in little endian?
 
->> +impl kernel::InPlaceModule for RustConfigfs {
->> +    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
->> +        pr_info!("Rust configfs sample (init)\n");
->> +
->> +        let item_type =3D configfs_attrs! {
->> +            container: configfs::Subsystem<Configuration>,
->> +            data: Configuration,
->> +            child: Child,
->> +            attributes: [
->> +                message: 0,
->> +                bar: 1,
->> +            ],
->> +        };
->
-> As I said in the previous patch, this macro is a bit complex. Is there an=
-ything more you can do with it?
->
-> If so, it better be in this driver, because I hardly think anybody will g=
-o through the source code itself
-> to figure out. My 2c.
+> *) White lie: there's a DRM format flag signalling physical big endianess.
+> That isn't the case here. So nothing here should ever indicate big
+> endianess.
 
-I can add some inline comments on the usage here. Is that what you are
-thinking of?
+But should it indicate the little? To me sounds like neither...
 
->
->
->> +
->> +        try_pin_init!(Self {
->> +            config <- configfs::Subsystem::new(
->> +                c_str!("rust_configfs"), item_type, Configuration::new()
->> +            ),
->> +        })
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::GroupOperations for Configuration {
->> +    type Child =3D Child;
->> +
->> +    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::=
-Group<Child>, Error>> {
->> +        let tpe =3D configfs_attrs! {
->> +            container: configfs::Group<Child>,
->> +            data: Child,
->> +            child: GrandChild,
->> +            attributes: [
->> +                baz: 0,
->> +            ],
->> +        };
->> +
->> +        Ok(configfs::Group::new(name.try_into()?, tpe, Child::new()))
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<0> for Configuration {
->> +    type Data =3D Configuration;
->> +
->> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> R=
-esult<usize> {
->> +        pr_info!("Show message\n");
->> +        let data =3D container.message;
->> +        page[0..data.len()].copy_from_slice(data);
->> +        Ok(data.len())
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<1> for Configuration {
->> +    type Data =3D Configuration;
->> +
->> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> R=
-esult<usize> {
->> +        pr_info!("Show bar\n");
->> +        let guard =3D container.bar.lock();
->> +        let data =3D guard.0.as_slice();
->> +        let len =3D guard.1;
->> +        page[0..len].copy_from_slice(&data[0..len]);
->> +        Ok(len)
->> +    }
->> +
->> +    fn store(container: &Configuration, page: &[u8]) -> Result {
->> +        pr_info!("Store bar\n");
->> +        let mut guard =3D container.bar.lock();
->> +        guard.0[0..page.len()].copy_from_slice(page);
->> +        guard.1 =3D page.len();
->> +        Ok(())
->> +    }
->> +}
->> +
->> +#[pin_data]
->> +struct Child {}
->
-> nit: you don=E2=80=99t need the braces here
+> > > +	unsigned int x;
+> > > +	u32 pix;
+> > > +
+> > > +	for (x = 0; x < pixels; x++) {
+> > > +		pix = le32_to_cpu(sbuf32[x]);
+> > > +		/* write red-green-blue to output in little endianness */
+> > > +		*dbuf8++ = (pix & 0x00ff0000) >> 16;
+> > > +		*dbuf8++ = (pix & 0x0000ff00) >> 8;
+> > > +		*dbuf8++ = (pix & 0x000000ff) >> 0;
+> > 		pix = be32_to_cpu(sbuf[4 * x]) >> 8;
+> > 		put_unaligned_le24(pix, &dbuf[3 * x]);
+> > 
+> > > +	}
+> > Or, after all, this __le32 magic might be not needed at all. Wouldn't the below
+> > be the equivalent
+> > 
+> > static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+> > {
+> > 	unsigned int x;
+> > 	u32 pix;
+> > 
+> > 	for (x = 0; x < pixels; x++) {
+> > 		/* Read red-green-blue from input in big endianess and... */
+> > 		pix = get_unaligned_be24(sbuf + x * 4 + 1);
+> > 		/* ...write it to output in little endianness. */
+> > 		put_unaligned_le24(pix, dbuf + x * 3);
+> > 	}
+> > }
+> > 
+> > The comments can even be dropped as the code quite clear about what's going on.
+> > 
+> > > +}
+> > But it's up to you. I don't know which solution gives better code generation
+> > either.
 
-Can't do that. The `pin_data` macro won't eat it. I'll add a comment.
-
->
->> +
->> +impl Child {
->> +    fn new() -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {})
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::GroupOperations for Child {
->> +    type Child =3D GrandChild;
->> +
->> +    fn make_group(&self, name: &CStr) -> Result<impl PinInit<configfs::=
-Group<GrandChild>, Error>> {
->> +        let tpe =3D configfs_attrs! {
->> +            container: configfs::Group<GrandChild>,
->> +            data: GrandChild,
->> +            attributes: [
->> +                gc: 0,
->> +            ],
->> +        };
->> +
->> +        Ok(configfs::Group::new(
->> +            name.try_into()?,
->> +            tpe,
->> +            GrandChild::new(),
->> +        ))
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<0> for Child {
->> +    type Data =3D Child;
->> +
->> +    fn show(_container: &Child, page: &mut [u8; PAGE_SIZE]) -> Result<u=
-size> {
->> +        pr_info!("Show baz\n");
->> +        let data =3D c"Hello Baz\n".to_bytes();
->> +        page[0..data.len()].copy_from_slice(data);
->> +        Ok(data.len())
->> +    }
->> +}
->> +
->> +#[pin_data]
->> +struct GrandChild {}
->
-> =E2=80=A6nor here
-
->
->> +
->> +impl GrandChild {
->> +    fn new() -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {})
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<0> for GrandChild {
->> +    type Data =3D GrandChild;
->> +
->> +    fn show(_container: &GrandChild, page: &mut [u8; PAGE_SIZE]) -> Res=
-ult<usize> {
->> +        pr_info!("Show baz\n");
->
-> As I said in the cover letter, perhaps this one slip through :)
-
-Yes, thank you.
-
->
->> +        let data =3D c"Hello GC\n".to_bytes();
->> +        page[0..data.len()].copy_from_slice(data);
->> +        Ok(data.len())
->> +    }
->> +}
->>
->> --
->> 2.47.0
->>
->>
->
-> I=E2=80=99m OK with this patch. It works, and it does what it=E2=80=99s s=
-upposed to do, i.e.: showcase the API.
->
-> With the =E2=80=9CShow baz=E2=80=9D nit fixed:
->
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
-Thanks!
-
-
-Best regards,
-Andreas Hindborg
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
