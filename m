@@ -1,159 +1,291 @@
-Return-Path: <linux-kernel+bounces-531565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BA3A44204
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:12:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EABAA44209
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B977D177577
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91E41177ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365AE26AAAF;
-	Tue, 25 Feb 2025 14:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631C626157A;
+	Tue, 25 Feb 2025 14:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfpNrfvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GH0/jDdP"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866FC2698A2;
-	Tue, 25 Feb 2025 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D9E2698A2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492498; cv=none; b=Bsg3BRHjHg/ukSFgRdJnl8fOT+AfLVVh+QFHTLrxAqSnW1igCC5uRVlnsHpCDo5yNHsVQkkTxW2Zwl/5wX63y1nV0mqtb2wwSxwpOSAh9YIogoUta/4G1rXzBk1/YcUq5ZHNV24qQo3Gb/uFOUcKOsSB1624nZJ9K9l3dKadWeo=
+	t=1740492527; cv=none; b=OEM3lNGaIPe8WKYmueoGgE0xhdT78Z7p8Clnv0QM25iE07+xcZzo4gXJ+ZXfGy7oVa+PLstrBbiMYCWKXGmMdHtpVDWIB0lldgLCOA8HgCUs88B2py4LT1snDMrJ3HlIu+rIzBBd3sB2rMIzhhd/58qRotyAD4+nXVr7WNkmTTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492498; c=relaxed/simple;
-	bh=agLMng6UV0rzQJfX3gB/TEHY9nLHE/M+0WctUU7L3p0=;
+	s=arc-20240116; t=1740492527; c=relaxed/simple;
+	bh=Rgq3HA/ZneqhXhB4g0rncVjuenkIKOpUZUhet7VbWvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ig7Kvm3F+HIFp3VjmSXK35GP6Ge7dFzUgLCSlxGldBjqPxARWbezaTXKXTVKYaq8jEwSstI9LvVxdmnqDpu8SgwdD5d2APwc9iTPK+H+JB9zi4vZrFbjZ5nh5I9WzctlPTgRrJKfA+VD0uAOoUCnlvUF914TI9tJ6Ybwmno7i/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfpNrfvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C31C4CEDD;
-	Tue, 25 Feb 2025 14:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740492498;
-	bh=agLMng6UV0rzQJfX3gB/TEHY9nLHE/M+0WctUU7L3p0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FfpNrfvfIigB/A0z/RS3QwyHB6692+C8GbgY+b2HE1jfQpcEssFeHl8D63nfv5PFm
-	 IKU3P+dHBocLEP96eRaOckIcW3RomNy9Oc+kRiE7xl5X/SRCWU8jWGBQ9bVmbeYX4r
-	 Z7GdO4554ffptxCp1c8VkV7dJaKmcPbrX0kyjMRs/+z0nkj90gPVKQTRrKySFdW5Zb
-	 ObePE0pbW+yFzQu83m8qHRfj8Z4rIQAUqqn/8JmiZiE9wygy00VBWPzdgMnOM/iYGS
-	 38HGOPL2SpmJPx3Pff1fWAUiyNbiYnFAZ0Kujx19lwkhw58bUNVtHDYoOPIeAhpEUB
-	 rbLXiHYP/G3vg==
-Date: Tue, 25 Feb 2025 14:08:13 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next 2/7] netconsole: refactor CPU number formatting
- into separate function
-Message-ID: <20250225140813.GU1615191@kernel.org>
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-2-21c86ae8fc0d@debian.org>
- <20250225101748.GL1615191@kernel.org>
- <20250225-diamond-gaur-of-anger-b0f77e@leitao>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iTHIeA1u0nwhF8Rtk6wEiLAXCLjRnAuXLhiu4ycDEDLeCQT/w2Ipu00kpduSy/3q71We7SH1F98o7NCfAKwdytiVtXjO7X70NlyvNtNDdHssbjLW+KO3EKk5adQuJ2dOfszc85krGeX8sIiP59B+34xrGDFB6+ibjhNTbc1E13c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GH0/jDdP; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 68AB3442CE;
+	Tue, 25 Feb 2025 14:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740492517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Czqb92Brl1EGX23HDpCKV1eCwuLVj6SrAdd+HBGJTxI=;
+	b=GH0/jDdPwO3/z7mmPPbHLfgzMTO7qwKlmAqypasxHd3uoCPqFmgHYADSRHcTKBXMQ8OAk/
+	RIdiB7u5FRXznON51dDomr0eVRO553NjsH+1nfvNLyN57TTLF1QRlxvvwv7f6qMOjiQJ9f
+	SM4ICWZVTvwmjS9/Wi6M8PB5oOhpxJ/kZm+Vmbdgwzpbv7rFpqg63tyVRTLy+e/AlcVtal
+	JMw7fmQg99V+YuW4+wSVZhSuHEQKfWjj6HpxHL4NwblzoOm8pbNTOMCPqIcAVPdJh/6BCZ
+	hrPbDPJQEUAHOFgZLXitgM5JXATh6wVrJd5UZCU/Ee4+2xBVxWALtXQ7fzFnHg==
+Date: Tue, 25 Feb 2025 15:08:35 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 05/63] dyndbg: replace classmap list with a vector
+Message-ID: <22989ed1-90a4-4acd-9ca0-00f65677ad4f@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-6-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250225-diamond-gaur-of-anger-b0f77e@leitao>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250125064619.8305-6-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Tue, Feb 25, 2025 at 03:09:20AM -0800, Breno Leitao wrote:
-> Hello Simon,
-> 
-> On Tue, Feb 25, 2025 at 10:17:48AM +0000, Simon Horman wrote:
-> > On Fri, Feb 21, 2025 at 05:52:07AM -0800, Breno Leitao wrote:
-> > > Extract CPU number formatting logic from prepare_extradata() into a new
-> > > append_cpu_nr() function.
-> > > 
-> > > This refactoring improves code organization by isolating CPU number
-> > > formatting into its own function while reducing the complexity of
-> > > prepare_extradata().
-> > > 
-> > > The change prepares the codebase for the upcoming taskname feature by
-> > > establishing a consistent pattern for handling sysdata features.
-> > > 
-> > > The CPU number formatting logic itself remains unchanged; only its
-> > > location has moved to improve maintainability.
-> > > 
-> > > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > > ---
-> > >  drivers/net/netconsole.c | 18 +++++++++++-------
-> > >  1 file changed, 11 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > > index c086e2fe51f874812379e6f89c421d7d32980f91..26ff2ed4de16bce58e9eeaf8b5b362dfaafaca0a 100644
-> > > --- a/drivers/net/netconsole.c
-> > > +++ b/drivers/net/netconsole.c
-> > > @@ -1117,13 +1117,21 @@ static void populate_configfs_item(struct netconsole_target *nt,
-> > >  	init_target_config_group(nt, target_name);
-> > >  }
-> > >  
-> > > +static int append_cpu_nr(struct netconsole_target *nt, int offset)
-> > > +{
-> > > +	/* Append cpu=%d at extradata_complete after userdata str */
-> > > +	return scnprintf(&nt->extradata_complete[offset],
-> > > +			 MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
-> > > +			 raw_smp_processor_id());
-> > > +}
-> > > +
-> > >  /*
-> > >   * prepare_extradata - append sysdata at extradata_complete in runtime
-> > >   * @nt: target to send message to
-> > >   */
-> > >  static int prepare_extradata(struct netconsole_target *nt)
-> > >  {
-> > > -	int sysdata_len, extradata_len;
-> > > +	int extradata_len;
-> > >  
-> > >  	/* userdata was appended when configfs write helper was called
-> > >  	 * by update_userdata().
-> > > @@ -1133,12 +1141,8 @@ static int prepare_extradata(struct netconsole_target *nt)
-> > >  	if (!(nt->sysdata_fields & SYSDATA_CPU_NR))
-> > >  		goto out;
-> > >  
-> > > -	/* Append cpu=%d at extradata_complete after userdata str */
-> > > -	sysdata_len = scnprintf(&nt->extradata_complete[nt->userdata_length],
-> > > -				MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
-> > > -				raw_smp_processor_id());
-> > > -
-> > > -	extradata_len += sysdata_len;
-> > > +	if (nt->sysdata_fields & SYSDATA_CPU_NR)
-> > > +		extradata_len += append_cpu_nr(nt, nt->userdata_length);
-> > 
-> > Hi Breno,
-> > 
-> > As this is the only caller of append_cpu_nr() I'm wondering
-> > if it would be nicer if nt was the only argument to append_cpu_nr().
-> 
-> Yes, I can do it. I just kept both functions the same:
-> 
->   static int append_taskname(struct netconsole_target *nt, int offset)
->   static int append_cpu_nr(struct netconsole_target *nt, int offset)
-> 
-> Another option is to use extradata_len as the second argument, instead
-> of nt->userdata_length. That might(?) make the code easier to read? it
-> would look like the following:
-> 
->           extradata_len = nt->userdata_length;
->           if (nt->sysdata_fields & SYSDATA_CPU_NR)
->                   extradata_len += append_cpu_nr(nt, extradata_len);
->           if (nt->sysdata_fields & SYSDATA_TASKNAME)
->                   extradata_len += append_taskname(nt, extradata_len);
-> 
-> What would you write yourself?
 
-I think that I would reduce the number of parameters of append_cpu_nr() and
-append_taskname(). But really, any of the options, including this patch
-as-is, are fine. So please chose whichever you think is best.
+
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> Classmaps are stored in an elf section/array, but are individually
+> list-linked onto dyndbg's per-module ddebug_table for operation.
+> 
+> This is unnecessary; even when ddebug_attach_classmap() is handling
+> the builtin section (with classmaps for multiple builtin modules), its
+> contents are ordered, so a module's possibly multiple classmaps will
+> be consecutive in the section, and could be treated as a vector/block,
+> since both start-address and subrange length are in the ddebug_info arg.
+> 
+> IOW, this treats classmaps similarly to _ddebugs, which are already
+> kept as vector-refs (address+len).
+> 
+> So this changes:
+> 
+> struct ddebug_class_map drops list-head link.
+> 
+> struct ddebug_table drops the list-head maps, and gets: classes &
+> num_classes for the start-address and num_classes, placed to improve
+> struct packing.
+> 
+> The loading: in ddebug_attach_module_classes(), replace the
+> for-the-modname list-add loop, with a forloop that finds the module's
+> subrange (start,length) of matching classmaps within the possibly
+> builtin classmaps vector, and saves those to the ddebug_table.
+> 
+> The reading/using: change list-foreach loops in ddebug_class_name() &
+> ddebug_find_valid_class() to walk the array from start to length.
+> 
+> Also:
+> Move #define __outvar up, above an added use in a fn-prototype.
+> Simplify ddebug_attach_module_classes args, ref has both address & len.
+> 
+> no functional changes
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> ---
+>   include/linux/dynamic_debug.h |  1 -
+>   lib/dynamic_debug.c           | 61 ++++++++++++++++++-----------------
+>   2 files changed, 32 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index b9afc7731b7c..2b0057058ecf 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -83,7 +83,6 @@ enum class_map_type {
+>   };
+>   
+>   struct ddebug_class_map {
+> -	struct list_head link;
+>   	struct module *mod;
+>   	const char *mod_name;	/* needed for builtins */
+>   	const char **class_names;
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 55df35df093b..41cbaa96f83d 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -45,10 +45,11 @@ extern struct ddebug_class_map __start___dyndbg_classes[];
+>   extern struct ddebug_class_map __stop___dyndbg_classes[];
+>   
+>   struct ddebug_table {
+> -	struct list_head link, maps;
+> +	struct list_head link;
+>   	const char *mod_name;
+> -	unsigned int num_ddebugs;
+>   	struct _ddebug *ddebugs;
+> +	struct ddebug_class_map *classes;
+> +	unsigned int num_ddebugs, num_classes;
+>   };
+>   
+>   struct ddebug_query {
+> @@ -147,13 +148,15 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+>   		  query->first_lineno, query->last_lineno, query->class_string);
+>   }
+>   
+> +#define __outvar /* filled by callee */
+
+Hi Jim,
+
+What is the goal of this __outvar define? I can't find any other #define 
+of it in the kernel.
+
+>   static struct ddebug_class_map *ddebug_find_valid_class(struct ddebug_table const *dt,
+> -							  const char *class_string, int *class_id)
+> +							const char *class_string,
+> +							__outvar int *class_id)
+
+The order between __outvar and int is not important? Here you have 
+__outvar before int, but later [1] the __outvar is after int.
+
+[1]:https://elixir.bootlin.com/linux/v6.14-rc3/source/lib/dynamic_debug.c#L183
+
+Thanks,
+Louis Chauvet
+
+>   {
+>   	struct ddebug_class_map *map;
+> -	int idx;
+> +	int i, idx;
+>   
+> -	list_for_each_entry(map, &dt->maps, link) {
+> +	for (map = dt->classes, i = 0; i < dt->num_classes; i++, map++) {
+>   		idx = match_string(map->class_names, map->length, class_string);
+>   		if (idx >= 0) {
+>   			*class_id = idx + map->base;
+> @@ -164,7 +167,6 @@ static struct ddebug_class_map *ddebug_find_valid_class(struct ddebug_table cons
+>   	return NULL;
+>   }
+>   
+> -#define __outvar /* filled by callee */
+>   /*
+>    * Search the tables for _ddebug's which match the given `query' and
+>    * apply the `flags' and `mask' to them.  Returns number of matching
+> @@ -1114,9 +1116,10 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
+>   
+>   static const char *ddebug_class_name(struct ddebug_iter *iter, struct _ddebug *dp)
+>   {
+> -	struct ddebug_class_map *map;
+> +	struct ddebug_class_map *map = iter->table->classes;
+> +	int i, nc = iter->table->num_classes;
+>   
+> -	list_for_each_entry(map, &iter->table->maps, link)
+> +	for (i = 0; i < nc; i++, map++)
+>   		if (class_in_range(dp->class_id, map))
+>   			return map->class_names[dp->class_id - map->base];
+>   
+> @@ -1200,30 +1203,31 @@ static const struct proc_ops proc_fops = {
+>   	.proc_write = ddebug_proc_write
+>   };
+>   
+> -static void ddebug_attach_module_classes(struct ddebug_table *dt,
+> -					 struct ddebug_class_map *classes,
+> -					 int num_classes)
+> +static void ddebug_attach_module_classes(struct ddebug_table *dt, struct _ddebug_info *di)
+>   {
+>   	struct ddebug_class_map *cm;
+> -	int i, j, ct = 0;
+> +	int i, nc = 0;
+>   
+> -	for (cm = classes, i = 0; i < num_classes; i++, cm++) {
+> +	/*
+> +	 * Find this module's classmaps in a subrange/wholerange of
+> +	 * the builtin/modular classmap vector/section.  Save the start
+> +	 * and length of the subrange at its edges.
+> +	 */
+> +	for (cm = di->classes, i = 0; i < di->num_classes; i++, cm++) {
+>   
+>   		if (!strcmp(cm->mod_name, dt->mod_name)) {
+> -
+> -			v2pr_info("class[%d]: module:%s base:%d len:%d ty:%d\n", i,
+> -				  cm->mod_name, cm->base, cm->length, cm->map_type);
+> -
+> -			for (j = 0; j < cm->length; j++)
+> -				v3pr_info(" %d: %d %s\n", j + cm->base, j,
+> -					  cm->class_names[j]);
+> -
+> -			list_add(&cm->link, &dt->maps);
+> -			ct++;
+> +			if (!nc) {
+> +				v2pr_info("start subrange, class[%d]: module:%s base:%d len:%d ty:%d\n",
+> +					  i, cm->mod_name, cm->base, cm->length, cm->map_type);
+> +				dt->classes = cm;
+> +			}
+> +			nc++;
+>   		}
+>   	}
+> -	if (ct)
+> -		vpr_info("module:%s attached %d classes\n", dt->mod_name, ct);
+> +	if (nc) {
+> +		dt->num_classes = nc;
+> +		vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
+> +	}
+>   }
+>   
+>   /*
+> @@ -1256,10 +1260,9 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   	dt->num_ddebugs = di->num_descs;
+>   
+>   	INIT_LIST_HEAD(&dt->link);
+> -	INIT_LIST_HEAD(&dt->maps);
+>   
+>   	if (di->classes && di->num_classes)
+> -		ddebug_attach_module_classes(dt, di->classes, di->num_classes);
+> +		ddebug_attach_module_classes(dt, di);
+>   
+>   	mutex_lock(&ddebug_lock);
+>   	list_add_tail(&dt->link, &ddebug_tables);
+> @@ -1372,8 +1375,8 @@ static void ddebug_remove_all_tables(void)
+>   	mutex_lock(&ddebug_lock);
+>   	while (!list_empty(&ddebug_tables)) {
+>   		struct ddebug_table *dt = list_entry(ddebug_tables.next,
+> -						      struct ddebug_table,
+> -						      link);
+> +						     struct ddebug_table,
+> +						     link);
+>   		ddebug_table_free(dt);
+>   	}
+>   	mutex_unlock(&ddebug_lock);
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
