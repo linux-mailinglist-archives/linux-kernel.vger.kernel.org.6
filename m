@@ -1,79 +1,68 @@
-Return-Path: <linux-kernel+bounces-531192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC58A43D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:17:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA5EA43D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC61719C0CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F663ADF02
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C6C266B5E;
-	Tue, 25 Feb 2025 11:17:41 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B9B266B5E;
+	Tue, 25 Feb 2025 11:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EsTZvl69"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2670B1A239E;
-	Tue, 25 Feb 2025 11:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D715B980;
+	Tue, 25 Feb 2025 11:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482260; cv=none; b=TvQViiDLZIeJlGsnApVsY9pBxLhVYWuA1GQfo9qFsGh1tN5VyE0KzjSb+zUysklgXTOl28ar1feUq/cUaKJJ0yUrwSR7WLWPMNdOBcaVXczOw90ihht3AgwnNmErJ2pBxtC1FakbaLg0Wr9rPr46MVGk4Pb1YuJbWgnGWhmYtTQ=
+	t=1740482293; cv=none; b=FYZVsOrCjzocNFmyEeaoTPB0WE453TavGn+suLJIU5RCr1JNnCmmfBHYFvaeIJtYMH29AVFgzcNmnnrQXvqKudMpx80B/w2uJvEK9p1t8f4x1ZqdaRVjPQQWm1woQH3J5FLKGryTUFF/pKxwZe6b/S/VDWelG7yV270Xnvfod0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482260; c=relaxed/simple;
-	bh=Y4qrHsZ4YlKYiMw1liY09TYi5suU2srUrdPV71CkQiE=;
+	s=arc-20240116; t=1740482293; c=relaxed/simple;
+	bh=rS5A7G2PPNZ64d4wsZYQSjrh/llTleB0yD7V7HiWEOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTxMbz0RPtPbdbYhm/sYFzh34FU0LxdJ1OgGLQQEjcaBjWMLxyJQ2h02lq+SCfu4llqH32+g0BuRcDZ2HQua2MSV8ccvbyrLrPWRSSm6KN+MrvPskXrC0BSbk/J09mAOd+7YPH2j+aQUpmyijD9QCiFK6tllxZ8sM+6SmtYDmvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb999658fbso681915766b.3;
-        Tue, 25 Feb 2025 03:17:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740482257; x=1741087057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1j29+YwywkVdnOwJpODDXLXoxVQ80C41eZ3nGoHPbf4=;
-        b=Df+K/BVTSZ/FqgrWjulI3eyLIxO3aIZSwXCw7zluU+nT/HVEYg/RgauJAOlO3VdhBs
-         4EuASt3XFlhFLici9PYpIDVpDmx/AwFiGdoMQWsN7jywrlHs4SE0N9Fc9akwzhYeqgTy
-         Aa7n0u7ykIIHlN1H3CFaCIUekzXRoKthjz2jdvqFFSIA9CCGe14q6AaeON07tZRpmvfr
-         lOuDsw98ERZqM4wpqDYk/wxb1uAa4jhjy/R6AiA6US9hoEgrVDHxTwoQ6YO20qtrZOkC
-         ypvR2v9wXeLJtJVgAm0Kwx8SR06+JqQivFSRPlCVyd3w7VojSkR+MqzLWPpooAFG3H8k
-         TFZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP7juvDNcZzQZiHBW78+8HwecbW/lnEA9GsQBn/Waem2Nw+gN7P2RKvUk/n0cIYLVC3GOYiRFI@vger.kernel.org, AJvYcCW4CTCPWntj3TpSgI8TVXiAJePaiuYuk5E+JEGEDOxI+E3WFoinpGjdiZQ3tGhXV66Or45djW8zJjU=@vger.kernel.org, AJvYcCWmt3hUi4jRx8f+ECaUOkHXx23MegENHGHMoIo3rHPqvRKZIeaypcTsPXGeIxIi8CbjjnAQy9tii+vCjeM2@vger.kernel.org, AJvYcCXLDJOa2USegPdllpZWmNmd61QVJnq8KYV6pzzpKQC7iEa9wsnY6MkW2iH+LlT7N7b0ZEx1n0p5vm3/LbEUK3Ho@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO4EXn6N/vDmUSKbK1BPoylpZwMMy/U39h+RNo9rZqv2gPKsx7
-	qy8XiCfqTUHDCX2qNBYaaA2uJSk+Fvbkr7jZor4aZFwSQpqNC1pw
-X-Gm-Gg: ASbGncsrBl0ISsRmfKyFlDO1sPyve6HKgiNSWNjMl4L4idsaRs9CMyUMCWXhEcv/Mwp
-	4OOfGFn/ZyP+9Ouq+46hQ2KPnsVKBS+lJhYHNxvAVpldQqN9K7KlyG9DSghM6PJxzsiEfe1vsA9
-	Lt7AzD9uHE3vF77CQEEzXYPg2SJHnY5gRh/J1RYmkNP2OnywQrg/7HMGVugSwGnoVnWJ5p4h04t
-	hpn4pfCFvCn1Q5lPQqqchXN5hcXUoZyRLFoJRbAYreGFJWU+jO6llSGidlHqmvWX2dtIxTlZfwp
-	6xcyvglItCaqEFugGA==
-X-Google-Smtp-Source: AGHT+IF9N08H7jTMLFCvTUzvTml6TjwoMntNUKf+GwIhdyS7gvhSXa+0EhXsIhy4Y/1NGXa86oTn0A==
-X-Received: by 2002:a05:6402:34d0:b0:5e0:818a:5f4d with SMTP id 4fb4d7f45d1cf-5e44bb36997mr7209455a12.28.1740482257036;
-        Tue, 25 Feb 2025 03:17:37 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e45a8b8b48sm1069172a12.20.2025.02.25.03.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:17:35 -0800 (PST)
-Date: Tue, 25 Feb 2025 03:17:33 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next 5/7] netconsole: add task name to extra data
- fields
-Message-ID: <20250225-doberman-of-scientific-champagne-640c69@leitao>
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-5-21c86ae8fc0d@debian.org>
- <20250225101910.GM1615191@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyXJycnPt5BowzedlSqqJD8so+hKjgSo4HhcSSD4vjIMUuZpfNWtXqWgKlAUFVeL1NrlVl41Hyio+TSi+E0ommwQSdx7mxVP2YV/dP9Uxee86DXPPALbtLTSKmHFtbQYx5XGD5MF1xfHRkwaB3IlVYme6hvqiyNH8ps47KfzG9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EsTZvl69; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PG5kCQLkC4Qdt9FOaQJJ0ba0zTFUJgKo/opSo8xQitE=; b=EsTZvl69dRJtWaMQoshZ9unPem
+	aZqIQoyY5z69yMu9hVoi+QvSDzlut1naIQEezFg81teH5p1nCtHTfrq6qLeu0jED0zb/dJFSY2DIz
+	sCi/R0d1pj/GFcJS5DobEjs65pzdosDn2OCCuipWHmwmca7sjRKV6OkGgs5p2z9k+7tAkkZ3zYI9X
+	jdJExG1EtmcKyo9CgIR1gk/i/Vctr2cGw0X2R14lIbzU3yUU1hGX3Zoiqk+WuNrf5pkX3cpk+MV5v
+	b6j/BMp9T+zVzByZw5suLJkegEKCwWXT9LDWPX2w7xKVnlgyfciwdhd3/gniWmZU0KWB4hfRJwbSz
+	5VwUvINw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmsww-0000000B3IX-0CLx;
+	Tue, 25 Feb 2025 11:18:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 568B8300472; Tue, 25 Feb 2025 12:18:05 +0100 (CET)
+Date: Tue, 25 Feb 2025 12:18:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+Message-ID: <20250225111805.GL11590@noisy.programming.kicks-ass.net>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,57 +71,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225101910.GM1615191@kernel.org>
+In-Reply-To: <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
 
-Hello Simon,
+On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
+> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
+> buffer physical address. This patch allocates arch-PEBS buffer and then
+> initialize IA32_PEBS_BASE MSR with the buffer physical address.
 
-On Tue, Feb 25, 2025 at 10:19:10AM +0000, Simon Horman wrote:
-> On Fri, Feb 21, 2025 at 05:52:10AM -0800, Breno Leitao wrote:
-> > This is the core patch for this whole patchset. Add support for
-> > including the current task's name in netconsole's extra data output.
-> > This adds a new append_taskname() function that writes the task name
-> > (from current->comm) into the target's extradata buffer, similar to how
-> > CPU numbers are handled.
-> > 
-> > The task name is included when the SYSDATA_TASKNAME field is set,
-> > appearing in the format "taskname=<name>" in the output. This additional
-> > context can help with debugging by showing which task generated each
-> > console message.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  drivers/net/netconsole.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > index 5a29144ae37ee7b487b1a252b0f2ce8574f9cefa..625f4c0be11d8deb454139b1c526abc842697219 100644
-> > --- a/drivers/net/netconsole.c
-> > +++ b/drivers/net/netconsole.c
-> > @@ -1179,12 +1179,22 @@ static int append_cpu_nr(struct netconsole_target *nt, int offset)
-> >  			 raw_smp_processor_id());
-> >  }
-> >  
-> > +static int append_taskname(struct netconsole_target *nt, int offset)
-> > +{
-> > +	if (WARN_ON_ONCE(!current))
-> > +		return 0;
-> 
-> Hi Breno,
-> 
-> I gather that theoretically this could occur, but it isn't expected
-> to happen in practice. Is that right?
+Not loving how this patch obscures the whole DS area thing and naming.
 
-That's correct. `current` isn't expected to be NULL in practice.
-I've been running this code on several servers for days and have never
-encountered this warning. 
 
-While the taskname feature isn't enabled during early boot, netconsole
-might be active at that time, which is why I exercised extra caution
-here.
+> @@ -624,13 +604,18 @@ static int alloc_pebs_buffer(int cpu)
+>  	int max, node = cpu_to_node(cpu);
+>  	void *buffer, *insn_buff, *cea;
+>  
+> -	if (!x86_pmu.ds_pebs)
+> +	if (!intel_pmu_has_pebs())
+>  		return 0;
+>  
+> -	buffer = dsalloc_pages(bsiz, GFP_KERNEL, cpu);
+> +	buffer = dsalloc_pages(bsiz, preemptible() ? GFP_KERNEL : GFP_ATOMIC, cpu);
 
-If you also think this is safe, I am more than happy to remove this
-check.
+But this plain smells bad, what is this about?
 
-Thanks for the review,
---breno
+>  	if (unlikely(!buffer))
+>  		return -ENOMEM;
+>  
+> +	if (x86_pmu.arch_pebs) {
+> +		hwev->pebs_vaddr = buffer;
+> +		return 0;
+> +	}
+> +
+>  	/*
+>  	 * HSW+ already provides us the eventing ip; no need to allocate this
+>  	 * buffer then.
 
