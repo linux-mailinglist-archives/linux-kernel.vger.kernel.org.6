@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-531356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D769FA43F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:33:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB5CA43F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0283F19C1195
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0AEA16EA00
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE12690CC;
-	Tue, 25 Feb 2025 12:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0844267F55;
+	Tue, 25 Feb 2025 12:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="o8dGidXs"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="s7zLi+W5"
+Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8A32686B8;
-	Tue, 25 Feb 2025 12:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B5E264A62
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486750; cv=none; b=YKgaiRqm1ObYyOmG5qtFApABimL5t0VpFW9SQtfJhn93odTuDGbpWicGQvlYPQErUP3fRcCgX/pJb2DK4UUsIpY/5i8m++Hgb1s1tA7QpwK+WUxWk8aTnoFn3/zFQvNZyfZNvtIGhHpbZ7q3N3hwe8H21g0OS5Ktq8pww0P/dwM=
+	t=1740486794; cv=none; b=gzTr92CFrzau5+pZ2epAloiS5Ui9JVZGO76IrPfSzH2jXVOmGeVoA2Ok4AmAmExiOeq0lbmK7UBeTBPQ8nre84dChwwGlYzu3SNgcFv6R5ycEPw2WVY0sm2tJf5jwkAdBFp88hoMvpEdI566VkMH86n8exXWLVwNXo5ssafoHpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486750; c=relaxed/simple;
-	bh=twedXejbs0nq+ksMdQ1vMCmEi4SWHyHVxLXcEmDOJL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gpV0YKQLe5Nw/Lq/Gcu34jdoWz0t+oHRN6UyXjOQ32bhap95LJRbCLTJNkmLVDyfnIu4iAwFcmBEBfHU1rxpMZAu8CcFH66YbJMIhe6zOO8Me7SIUXZhgQxX/Djw529akUUf++mPutgdhwWS/ydIuqT8kJlBvhg3DPhs/S2ZCVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=o8dGidXs; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1740486736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HJwIHBMCpWGqDSfH1Y+aSqVcFdIzOTc9QCQgARpEMGU=;
-	b=o8dGidXsz0V+1HWLVWM54KwkrcQs9fFq2tWeObizgwMb++P/7N3Qzb/ZdeLhW+mWj0804A
-	9ZGbWf3CfqYu7S8dhG0sFsyDRa7e9NYGrPmEP8ATGZ1xzsbjKDrG4mwqsiSMqs73WqOmU0
-	4JRJ6fhOD1K4S8oXGuxgKnoLu59XJak=
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-	Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH 5.10] crypto: tcrypt - Fix missing return value check
-Date: Tue, 25 Feb 2025 15:32:14 +0300
-Message-ID: <20250225123215.26154-1-arefev@swemel.ru>
+	s=arc-20240116; t=1740486794; c=relaxed/simple;
+	bh=flqKRrG+cUbNuOxatPRrz3/xQCwHu4Csd5h3eiZGLzI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B1pSWyx2zTqChAi6x2AKmRlbkVmmuN+vJtrN3i3VdyxCiiaH1hX6I4tFuMLwGgfCX5FV4/ikzEJKfYR1J2erw42C/1z+LYuSRghKPeMdymb1UYVCIjugo8k7nAyTjtadK/yDItUYA4Q7qteHTFyZpbA3wBDEpy6ymUqs80Itn/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=s7zLi+W5; arc=none smtp.client-ip=17.58.6.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=b2KIEz2420Bb2pMgV6oZ8yidp4SHbkJXc5kwpa6Ezmw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme;
+	b=s7zLi+W5e6GuO2xN4gm26yNFYJzhl8upFxKnD6eKHIf03zgJfuIaJqOqMu6hU7D00
+	 aMbPQ8hGa6cIOxWXZ1Jgbl0GtNTPSDbLrk3mUeubUL4w3rnW5mLCRIM374CKVc52ku
+	 wkEuuXmZdAM+ItF/mlgZDxDWKB7ePq0y0ulQNa1pK3XiY0v22PyUtlxvU5M/4+NCWq
+	 C2udzH6dgZwHB3kIDx6wzNzwDBdQB6CzMlDozxqTaOolbdCEILaurlGiPJVxXGu1BR
+	 OkdJjy8KCAr1Xit61DpG7g74Sv0JfaLti+/JdDbOVquFHvWGLDXR6q1FBGOd7Pld2Q
+	 Ua/nqjTQjVInQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id DBA9E6803DD;
+	Tue, 25 Feb 2025 12:33:05 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH RESEND 0/2] phy: core: Remove 2 APIs
+Date: Tue, 25 Feb 2025 20:32:37 +0800
+Message-Id: <20250225-remove-apis-v1-0-e49b4a1941fd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
+ Yanteng Si <si.yanteng@linux.dev>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: 4yt0iayngGT9xwSqldJKZ_x5gqqXu5m-
+X-Proofpoint-GUID: 4yt0iayngGT9xwSqldJKZ_x5gqqXu5m-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=557 mlxscore=0 bulkscore=0
+ adultscore=0 spamscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502250088
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+This patch series is to remove the following 2 APIs:
 
-commit 7b3d52683b3a47c0ba1dfd6b5994a3a795b06972 upstream.
+devm_of_phy_provider_unregister()
+devm_phy_destroy()
 
-There are several places where the return value check of crypto_aead_setkey
-and crypto_aead_setauthsize were lost. It is necessary to add these checks.
+Both APIs have not had callers for more than 10 years.
 
-At the same time, move the crypto_aead_setauthsize() call out of the loop,
-and only need to call it once after load transform.
-
-Fixes: 53f52d7aecb4 ("crypto: tcrypt - Added speed tests for AEAD crypto alogrithms in tcrypt test suite")
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[Denis: minor fix to resolve merge conflict.]                                           
-Signed-off-by: Denis Arefev <arefev@swemel.ru> 
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- crypto/tcrypt.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+Zijun Hu (2):
+      phy: core: Remove API devm_of_phy_provider_unregister()
+      phy: core: Remove API devm_phy_destroy()
 
-diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
-index 7972d2784b3b..580c50afa587 100644
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -290,6 +290,11 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
- 	}
- 
- 	ret = crypto_aead_setauthsize(tfm, authsize);
-+	if (ret) {
-+		pr_err("alg: aead: Failed to setauthsize for %s: %d\n", algo,
-+		       ret);
-+		goto out_free_tfm;
-+	}
- 
- 	for (i = 0; i < num_mb; ++i)
- 		if (testmgr_alloc_buf(data[i].xbuf)) {
-@@ -315,7 +320,7 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
- 	for (i = 0; i < num_mb; ++i) {
- 		data[i].req = aead_request_alloc(tfm, GFP_KERNEL);
- 		if (!data[i].req) {
--			pr_err("alg: skcipher: Failed to allocate request for %s\n",
-+			pr_err("alg: aead: Failed to allocate request for %s\n",
- 			       algo);
- 			while (i--)
- 				aead_request_free(data[i].req);
-@@ -565,13 +570,19 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
- 	sgout = &sg[9];
- 
- 	tfm = crypto_alloc_aead(algo, 0, 0);
--
- 	if (IS_ERR(tfm)) {
- 		pr_err("alg: aead: Failed to load transform for %s: %ld\n", algo,
- 		       PTR_ERR(tfm));
- 		goto out_notfm;
- 	}
- 
-+	ret = crypto_aead_setauthsize(tfm, authsize);
-+	if (ret) {
-+		pr_err("alg: aead: Failed to setauthsize for %s: %d\n", algo,
-+		       ret);
-+		goto out_noreq;
-+	}
-+
- 	crypto_init_wait(&wait);
- 	printk(KERN_INFO "\ntesting speed of %s (%s) %s\n", algo,
- 			get_driver_name(crypto_aead, tfm), e);
-@@ -607,8 +618,13 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
- 					break;
- 				}
- 			}
-+
- 			ret = crypto_aead_setkey(tfm, key, *keysize);
--			ret = crypto_aead_setauthsize(tfm, authsize);
-+			if (ret) {
-+				pr_err("setkey() failed flags=%x: %d\n",
-+					crypto_aead_get_flags(tfm), ret);
-+				goto out;
-+			}
- 
- 			iv_len = crypto_aead_ivsize(tfm);
- 			if (iv_len)
-@@ -618,15 +634,8 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
- 			printk(KERN_INFO "test %u (%d bit key, %d byte blocks): ",
- 					i, *keysize * 8, *b_size);
- 
--
- 			memset(tvmem[0], 0xff, PAGE_SIZE);
- 
--			if (ret) {
--				pr_err("setkey() failed flags=%x\n",
--						crypto_aead_get_flags(tfm));
--				goto out;
--			}
--
- 			sg_init_aead(sg, xbuf, *b_size + (enc ? 0 : authsize),
- 				     assoc, aad_size);
- 
+ Documentation/driver-api/phy/phy.rst               | 11 ++-----
+ .../translations/zh_CN/driver-api/phy/phy.rst      | 12 ++------
+ drivers/phy/phy-core.c                             | 36 ----------------------
+ include/linux/phy/phy.h                            | 11 -------
+ 4 files changed, 6 insertions(+), 64 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250210-remove-apis-b4e48d4c4712
+
+Best regards,
 -- 
-2.43.0
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
