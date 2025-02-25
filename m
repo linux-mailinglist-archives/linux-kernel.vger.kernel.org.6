@@ -1,47 +1,74 @@
-Return-Path: <linux-kernel+bounces-531411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8BDA44024
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC758A44036
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0603BFC2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54AD73AE68F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16898268FE9;
-	Tue, 25 Feb 2025 13:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7C268FE9;
+	Tue, 25 Feb 2025 13:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d47K0QFR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ilycD+hK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775741E485
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C0F20C01A;
+	Tue, 25 Feb 2025 13:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488818; cv=none; b=bEPU7KYDJL3VEFSRFLAl3q0zYHT/Keb5wFhEue7lsNExA7tlKkR0V7ak4JxkCLWa7iuTz/ClWFZEFRH1PDvSTJVEpyjUEWWubFlWMYDxQ1FAJSnB5gyLuRToEE3nx5ZomaSZQveHaYKPdbewhRr1ZKqWYU3G8SlFgDEZQyMqMDk=
+	t=1740488897; cv=none; b=iUjEDpZPaiaNrxGFRF8tJ1x0ircsZpjs1JU1XbDRlsE14zqzFFD2+dHwsNVLYWJ1NOSDm3FKK0/s4ciaC5a4VHD1fVqVdBAr2jGY9l5hFjGxcQd7VCWwOMKFDiWlWdZ63PO4q6ik3nkeCkSjlYCaZPnpOY60Rgjpl2HxkUcdQJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488818; c=relaxed/simple;
-	bh=HGxpJnDx9gWoDIeHrVycioE7JbtGoUw2jn2z8E1lQOM=;
+	s=arc-20240116; t=1740488897; c=relaxed/simple;
+	bh=99rOgsYmtxJ2T5rqMM/Ztjfgx7KuJRuns+c60HqCCwM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D6014nebWYSb3era2sPpix8HxrKOq85P00f5AvZ/HDp9OycRsf9T8A+UOMwOdW8gkvuJHqzQLOxcohRMjIahoR1JbOm4XCj+e8FNWrS2qfLfUlVKkonRPvzkiF/RPVhfbw4YQfpgb407nZ0DTLf8lyE/aqlMTZE062+nSBHSEvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d47K0QFR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6A4C4CEDD;
-	Tue, 25 Feb 2025 13:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740488818;
-	bh=HGxpJnDx9gWoDIeHrVycioE7JbtGoUw2jn2z8E1lQOM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d47K0QFRSLdcdX0nD+KtNaCOGDpTlgBNw6lPZNCHDEZ3FeCgagpIeOzVPJyynOuk+
-	 yzsP4pae492Uxp7xgvd/WjiVUHP5RThb7MOBoWNKvCCkq34wn8xDTJcd+kJeqihudE
-	 RTkZFsz1m8VmYbl0EsBSNQkfgwJBvTxGMdB5SHMzh6cYq5zPfLkIxTxq6URVHv+nB2
-	 6ontFnxE/QKey+ubACx4EHJRTprNfrhkvGHyGUVahLvEaQd5zlTZ3W82d4MIyA2oT5
-	 sfScxaoA2pZsdL3AKg2HhAnr5nUUOTk5KQuid0kNJfC4kJBOXGd1rKpzK0mK9nhzT1
-	 JdiPHGm+nrdeQ==
-Message-ID: <2bfb37fe-6e6a-4f9a-82be-5776935563cc@kernel.org>
-Date: Tue, 25 Feb 2025 14:06:54 +0100
+	 In-Reply-To:Content-Type; b=olWutMrDs2K7tDoynzk8zwDYHsTog7J68t9d6tQQiEr/2dThExgvpn+brzbU32m1jfZMUSj66ZhODRpw9EUZ7EVamuH6d6UDjYidcqxe71dkz4XvpCIMh9Eo5oh4pXXFxCid36RaGtbDe0DG1UP+DFFxsRFcQnmDy/snbH/dIaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ilycD+hK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PBPWMs011423;
+	Tue, 25 Feb 2025 13:08:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mBEFsS
+	/88ZtLdQox7D5tTupoUIMxzZwHoC8VeKMOMIU=; b=ilycD+hKwrTyReIwhMYpcu
+	uwmx9OmVvXoauqF3yjWEKDlA+bG8diBWONDjcXwM1ZxZdryjja38qiKS4CeAl/JU
+	BDMziDt1jlxXQ2a4UFU4+jioLSrKSRHmqS8lU2uNUUizZ3yjT8eyfm/9w0ngSUDc
+	uHTnnbfeByD4+xKJboqqtXiAYaJJhOTsZrgxDisivu/rUJONfUp08kSHz3pSZGIf
+	9H6TQmK4p0FjNd0NRwUzvu6TwqAr1/a1UYK5rCXSJtC691jkOZE4p3ItM6WSubRw
+	DpjTcy/9amdBs1X7qxpQOK/WBQ0jgKjB3ECTiwBn26+ed0hzy30A+SdHyVkVvlLw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4513x9tyjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 13:08:10 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51PAogif026961;
+	Tue, 25 Feb 2025 13:08:09 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ytdkcvuq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 13:08:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51PD854L58524128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 13:08:05 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E09C2004B;
+	Tue, 25 Feb 2025 13:08:05 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E6C020043;
+	Tue, 25 Feb 2025 13:08:05 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 25 Feb 2025 13:08:05 +0000 (GMT)
+Message-ID: <8d51c268-aef2-469d-bfd7-a269422803a3@linux.ibm.com>
+Date: Tue, 25 Feb 2025 14:08:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,69 +76,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Enable iris video driver
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Vikash Garodia <quic_vgarodia@quicinc.com>, Hans Verkuil <hverkuil@xs4all.nl>
-References: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 25/02/2025 11:09, Dikshita Agarwal wrote:
-> Enable the building of the iris video driver by default.
+Subject: Re: [PATCH 1/2] KVM: s390: Don't use %pK through tracepoints
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250217-restricted-pointers-s390-v1-0-0e4ace75d8aa@linutronix.de>
+ <20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de>
+From: Michael Mueller <mimu@linux.ibm.com>
+In-Reply-To: <20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: W8k0KDZ0WjSHGxeYS2x6WirWGr2TKaWo
+X-Proofpoint-GUID: W8k0KDZ0WjSHGxeYS2x6WirWGr2TKaWo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ mlxlogscore=748 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250090
 
 
-1. Why?
 
-2. This was already sent by Neil...
+On 17.02.25 14:13, Thomas Weißschuh wrote:
+> Restricted pointers ("%pK") are not meant to be used through TP_format().
+> It can unintentionally expose security sensitive, raw pointer values.
+> 
+> Use regular pointer formatting instead.
+> 
+> Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Best regards,
-Krzysztof
+Reviewed-by: Michael Mueller <mimu@linux.ibm.com>
+
+> ---
+>   arch/s390/kvm/trace-s390.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/trace-s390.h b/arch/s390/kvm/trace-s390.h
+> index 9ac92dbf680dbbe7703dd63945968b1cda46cf13..9e28f165c114caab99857ed3b53edc6ed5045dfa 100644
+> --- a/arch/s390/kvm/trace-s390.h
+> +++ b/arch/s390/kvm/trace-s390.h
+> @@ -56,7 +56,7 @@ TRACE_EVENT(kvm_s390_create_vcpu,
+>   		    __entry->sie_block = sie_block;
+>   		    ),
+>   
+> -	    TP_printk("create cpu %d at 0x%pK, sie block at 0x%pK",
+> +	    TP_printk("create cpu %d at 0x%p, sie block at 0x%p",
+>   		      __entry->id, __entry->vcpu, __entry->sie_block)
+>   	);
+>   
+> @@ -255,7 +255,7 @@ TRACE_EVENT(kvm_s390_enable_css,
+>   		    __entry->kvm = kvm;
+>   		    ),
+>   
+> -	    TP_printk("enabling channel I/O support (kvm @ %pK)\n",
+> +	    TP_printk("enabling channel I/O support (kvm @ %p)\n",
+>   		      __entry->kvm)
+>   	);
+>   
+> 
+
 
