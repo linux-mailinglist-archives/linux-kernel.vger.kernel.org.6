@@ -1,306 +1,134 @@
-Return-Path: <linux-kernel+bounces-530929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50242A43A47
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:51:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51178A43A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CCF170642
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6283B2A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACB2266F1B;
-	Tue, 25 Feb 2025 09:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F94262D1B;
+	Tue, 25 Feb 2025 09:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qPpCwHwY"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="WkOHmzOu"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78113264A92
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A6261591
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476848; cv=none; b=lohkWlUl/3fjWoIAhzNvt4QqJ61nEQ2qBC9Hd3tU/wT05QPYlOqmGjkdLdeCRX8yRnXOdnn/hUR5bmuSsfJzxJmVgQnM6sOTMrkc+ShsGQ3fK1nvb5UOFA4i5tD9c6K2t6R9TBzCKyo4Vfq7V9PzLpi+Wdc2kDn+LNu1YXj+SQc=
+	t=1740476840; cv=none; b=LUQ1A3RjSocRKAljyHWb1uIm59+PoAhzTzZHrYw1BzyTSzt7QZO5L/rjNU2zBEhoVxdEtoXP7MNAsPALZs0XDvZb4fvpOIn2XSU+wInwwu6qW17XZugCvKfGsfw4YTBNcQonD0Ku8fFth/G0tiK0435RnVIqxTITy/TRC25EKTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476848; c=relaxed/simple;
-	bh=w/w7+XqbJM363GS88ChRO6m42wpHOoqdaSX8I91x+6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HBOzYwBBjN4uB6K0k8QRVD2ZMBLDtFVn7+JXBa2/dxFuRS0T3etoMB+IbngIGX+xZRnZpU4V5ng3Y1Ra4ND8i/7glL3jWqiIzZxGHJ/V+J0NymFvbQXj1IWhTdXV4oD4r5uZ/2E5ozCgeOx6kHl0XqOAjAu7AOLUB2LR8IpGhB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qPpCwHwY; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220c665ef4cso93212885ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:47:26 -0800 (PST)
+	s=arc-20240116; t=1740476840; c=relaxed/simple;
+	bh=1IHwqesQk08lufeZTBYIk2f7P1gwtjDf0lQkrtr/4QE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fg2oleUKTtpFvOIaJ+X2OA1EmKnKS3Pe2yYnCmUP4Rd/zM5mp87WilZ6ATjhtO5/uNRm/h0dqYSW8clRb0Z5cd++mRoFGQ9Q1bD/mTUDtbVKZ20KPdRAD7zWlPLBM6kLGVLLYvAZTpWm5pW1/5B+Lwj2G1manXMTKT76oOIMQ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=WkOHmzOu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso33425145e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:47:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740476846; x=1741081646; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cBgFHzuwU9c2MmDgYbIXSZZ6rPSavRDlD3LXgFpJuuA=;
-        b=qPpCwHwYMXmtcXQt3Y1ZuOKkuIIfXb5ulbGAts8hRvVaPFoxDqFy+LJuvfo0eQnDvB
-         ABZjWbyf8u4fi/a+IGEUYYfwY20Kq97JiPvBhyMaU1STIPAyW/zp8AiJH233zIaXRMY3
-         Hsk5+EN3yV/uwuBYXDH1NfYEF4RGR/8OBIg/Dkqs0uN0I30nD1fwQpW7i2o3y1jTuPiK
-         tKTLhn5HchitFEpQKUXiWULIAEiajSbx2JTFBxvc3YWXf71Y7YV30r4sZebYkZHDC9u/
-         HYmPKeKT8YcAh9WVaIwLlKsY7Acg+/tyQJOyccpyb7KQMck2E5T9+vGPCrfXzXy5boAG
-         FDug==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740476837; x=1741081637; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bU6pYEvOEizzQLjYkTI7JJD3Z+QYLCwitlQcIgyNBJQ=;
+        b=WkOHmzOumY1waLkpjZw3tzL3PpXCVevPmR4kQrkd5p5vU/JgrqVMCrTBZYJMX0Nt8H
+         8thHkM3Bq/e6U9llu74NZwYlZuBJQhb9y44XqMsXlGXWJt9FH0DFjX6PiD+UYThczyAB
+         uJhizL991Q15oSU5f1BXEroqPXTdjg3OoOvZhH6zTy5ULmYXBFJK0iutp6KlBzba2iX/
+         n/SOxo6jpikliu/BZaO4khcBuCEBV0rjOTIY8eKDUqKNkWL7JvFficEcwMXARJ18iNV+
+         jQDxKq0GROiELff3l6ovzhG0WWdlfowseAbmxr+CuDLcroMnoEBCRRwZoSMVLT4eSdRh
+         gjBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740476846; x=1741081646;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cBgFHzuwU9c2MmDgYbIXSZZ6rPSavRDlD3LXgFpJuuA=;
-        b=fK71boFjlHnyrXDXccbqUXN7X45n3/vy+U6x/O0DFeibyNJxs1ei1pVTGq3bzxppkx
-         E2bHf7bBv7inwbnVU2UqOq0nGHJXeiuVP263HRMq97pyjVqfzDiosnifCi8vwUCIT5zI
-         t07oweaHdnsg+h7ZkuWRnVOF+aX+95rP7SkmVG/2TJkMpkOMtyPIqymn8JP6aLojDCc1
-         bi0vvpId/mo8yXYBAILUjAs9lDiHmmeomKOWCD9nlMyd7yG93w2Q/Kpth0ofjXVVQDqh
-         WOv73uofRSNW/F04a6POddFxW6Y8erFHZZP6HlLp+ZT6kYu+CdyazwpNCtYurJ5l6P9/
-         ahUg==
-X-Gm-Message-State: AOJu0YwybaV9YNqyRFbrzii6reaejvtRMDJJGs/ByHmgo5F0blis6OaN
-	jw3EHyEvNbrJhJ4qM6ar8FJZPZ0p762+ExdC0jtWuUBNxv8N0sMMRRIigI8rLlY=
-X-Gm-Gg: ASbGncumuCEfrFiZLUaqjlF5oggkYShRIXTc//ZKAmr6ggq9b3hqnS1ah8+4gwUwO23
-	0I9y4346F6U45TOQ5QYoB0PQvb1imeT0cTOAlJObwh1q0i0g5EcPsKaSm+uz6fyTQglDXKNmnIy
-	2XzoAV+3NUvkJsS2HVybkVFadb2jutkZwV22iFYrxu2ysZiEysZ3kd+DP5fzkqiG9fEnE2Oq0QP
-	KeYbWgfLgilZX4Af7DF0H5pWs/GP9gOgDB7Xc5nbzo99/YceNNDtMUdHgtv9AVsF64U/llKNCRH
-	yXDKj7EAlvSue8ln4tMx04Wz3d8=
-X-Google-Smtp-Source: AGHT+IHQvVV2yfAGYGvrl3auNFetfeDoHyjHUhSN1ifv7FjxIj1JaEYuDCf4ZkwupeFaJMCPEfgPiQ==
-X-Received: by 2002:a05:6a21:6d99:b0:1ee:5d05:a18f with SMTP id adf61e73a8af0-1eef3daaa38mr30245298637.35.1740476845688;
-        Tue, 25 Feb 2025 01:47:25 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f5c07sm1050959b3a.38.2025.02.25.01.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:47:25 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Cc: linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>,
-	rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 1/2] rust: Add initial cpumask abstractions
-Date: Tue, 25 Feb 2025 15:17:14 +0530
-Message-Id: <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1740475625.git.viresh.kumar@linaro.org>
-References: <cover.1740475625.git.viresh.kumar@linaro.org>
+        d=1e100.net; s=20230601; t=1740476837; x=1741081637;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bU6pYEvOEizzQLjYkTI7JJD3Z+QYLCwitlQcIgyNBJQ=;
+        b=cCy5aE/XbULzEAHul6d9Zc8lzsmoW/3lyqJgczVb5nbZJR43SCzoyEuIpmO+GxlZXT
+         /JMXVpb5kUT/i7kaHzUveqoAV+tH1Y5NdZgjGdorDf1Zc1DXycvALbClfFZPFXFAfIyN
+         9CZNL1/k7+cHA1M5f01rZhhhNLvonDhmyk3C6801MO369zuGGhACad0+NakfQECxM52N
+         B8PIL0zY7/DC16WwJtD4nd7hzSKpulL0rzAjbP+mpJKIYeFT78IECRDtRD22x+zcUP5z
+         4wbRXnjrJjgUYy4VRHLOQ97xzngBjqZWdrSXzXkAhUcHi7gKGMJsQ245e5XJ+zOqa+fo
+         1aqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIvraOTJAoI6+KQM6jnHu+CiWE4cZRT6BPb8XSCyD4UENSPV06/vGgXjZRbuFITcNe6KsQFIj2q//vwA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Q8RdSs57XRDMaypba5/fa5uNT0uCR7oir+7y31Y0fphP6MDS
+	Buo1lEJzpHvKvtPhGd4nRJVU6Vo+B+UlWFZ4jTH8EyGNpNv5qlPPF3/iA1tMHsU=
+X-Gm-Gg: ASbGnctt5a5ZI68s85TyDjo+XFshe4SNiczROrvqlgeAybOExE+m7YtdU2yTParrnWC
+	sv8yvj/LmXOJyTuC/J9CidRSPkbSD0fTBHLwgpbnc9cQpsD7GI55XphqgmRTF27mCKFRcoQifck
+	Zgkzg15Xfaim22cH5YLRGqzDkZi2sB5u31mKrcPAdNwF7UnSTZEUL9cOxHOKEUD6UVnkjdU22Lz
+	eLj+2nwBWmnsPrwzxoDNkdp2UcKrtM+PTuQQZcd377N6zoSpB4QeqziUuf4zBzKmEaatS3Ush+5
+	hh0eN7S9N+10r2DyFx6oPRfHcXVKTuKCZe06UQJNhIzF6j5yv45kg6gJbA==
+X-Google-Smtp-Source: AGHT+IEH9BuTR7e3cX9hlXLEtnZAxiSr3msyKmpW1dMtJNLMv3DVluSpKIXlP3IFKnIPJE4Vi+6X+w==
+X-Received: by 2002:a05:600c:1c18:b0:439:96b2:e8f with SMTP id 5b1f17b1804b1-439ae21d19fmr131970375e9.28.1740476837202;
+        Tue, 25 Feb 2025 01:47:17 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce740sm134182475e9.4.2025.02.25.01.47.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 01:47:16 -0800 (PST)
+Message-ID: <2907ae61-5e67-4db7-89df-821da999fbf1@blackwall.org>
+Date: Tue, 25 Feb 2025 11:47:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 net-next] bonding: report duplicate MAC address in all
+ situations
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250225033914.18617-1-liuhangbin@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250225033914.18617-1-liuhangbin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add initial Rust abstractions for struct cpumask, covering a subset of
-its APIs. Additional APIs can be added as needed.
+On 2/25/25 05:39, Hangbin Liu wrote:
+> Normally, a bond uses the MAC address of the first added slave as the bond’s
+> MAC address. And the bond will set active slave’s MAC address to bond’s
+> address if fail_over_mac is set to none (0) or follow (2).
+> 
+> When the first slave is removed, the bond will still use the removed slave’s
+> MAC address, which can lead to a duplicate MAC address and potentially cause
+> issues with the switch. To avoid confusion, let's warn the user in all
+> situations, including when fail_over_mac is set to 2 or not in active-backup
+> mode.
+> 
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+> 
+> v2: add fail_over_mac != BOND_FOM_ACTIVE to condition (Jakub Kicinski)
+> 
+> ---
+>  drivers/net/bonding/bond_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index 7d716e90a84c..7d98fee5a27f 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -2548,7 +2548,7 @@ static int __bond_release_one(struct net_device *bond_dev,
+>  
+>  	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
+>  
+> -	if (!all && (!bond->params.fail_over_mac ||
+> +	if (!all && (bond->params.fail_over_mac != BOND_FOM_ACTIVE ||
+>  		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
+>  		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
+>  		    bond_has_slaves(bond))
 
-These abstractions will be used in upcoming Rust support for cpufreq and
-OPP frameworks.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- rust/kernel/cpumask.rs | 168 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 2 files changed, 169 insertions(+)
- create mode 100644 rust/kernel/cpumask.rs
-
-diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-new file mode 100644
-index 000000000000..13864424420b
---- /dev/null
-+++ b/rust/kernel/cpumask.rs
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! CPU mask abstractions.
-+//!
-+//! C header: [`include/linux/cpumask.h`](srctree/include/linux/cpumask.h)
-+
-+use crate::{bindings, error::Result, prelude::ENOMEM};
-+
-+#[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
-+use crate::prelude::{KBox, GFP_KERNEL};
-+
-+#[cfg(CONFIG_CPUMASK_OFFSTACK)]
-+use core::ptr;
-+
-+/// A simple implementation of `struct cpumask` from the C code.
-+pub struct Cpumask {
-+    ptr: *mut bindings::cpumask,
-+    owned: bool,
-+}
-+
-+impl Cpumask {
-+    /// Creates cpumask.
-+    #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-+    fn new_inner(empty: bool) -> Result<Self> {
-+        let mut ptr: *mut bindings::cpumask = ptr::null_mut();
-+
-+        // SAFETY: Depending on the value of `gfp_flags`, this call may sleep. Other than that, it
-+        // is always safe to call this method.
-+        if !unsafe {
-+            if empty {
-+                bindings::zalloc_cpumask_var(&mut ptr, bindings::GFP_KERNEL)
-+            } else {
-+                bindings::alloc_cpumask_var(&mut ptr, bindings::GFP_KERNEL)
-+            }
-+        } {
-+            return Err(ENOMEM);
-+        }
-+
-+        Ok(Self { ptr, owned: true })
-+    }
-+
-+    /// Creates cpumask.
-+    #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
-+    fn new_inner(empty: bool) -> Result<Self> {
-+        let ptr = KBox::into_raw(KBox::new([bindings::cpumask::default(); 1], GFP_KERNEL)?);
-+
-+        // SAFETY: Depending on the value of `gfp_flags`, this call may sleep. Other than that, it
-+        // is always safe to call this method.
-+        if !unsafe {
-+            if empty {
-+                bindings::zalloc_cpumask_var(ptr, bindings::GFP_KERNEL)
-+            } else {
-+                bindings::alloc_cpumask_var(ptr, bindings::GFP_KERNEL)
-+            }
-+        } {
-+            return Err(ENOMEM);
-+        }
-+
-+        Ok(Self {
-+            ptr: ptr as *mut _,
-+            owned: true,
-+        })
-+    }
-+
-+    /// Creates empty cpumask.
-+    pub fn new() -> Result<Self> {
-+        Self::new_inner(true)
-+    }
-+
-+    /// Creates uninitialized cpumask.
-+    fn new_uninit() -> Result<Self> {
-+        Self::new_inner(false)
-+    }
-+
-+    /// Clones cpumask.
-+    pub fn try_clone(&self) -> Result<Self> {
-+        let mut cpumask = Self::new_uninit()?;
-+
-+        self.copy(&mut cpumask);
-+        Ok(cpumask)
-+    }
-+
-+    /// Creates a new abstraction instance of an existing `struct cpumask` pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that `ptr` is valid, and non-null.
-+    #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-+    pub unsafe fn get_cpumask(ptr: &mut *mut bindings::cpumask) -> Self {
-+        Self {
-+            ptr: *ptr,
-+            owned: false,
-+        }
-+    }
-+
-+    /// Creates a new abstraction instance of an existing `struct cpumask` pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that `ptr` is valid, and non-null.
-+    #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
-+    pub unsafe fn get_cpumask(ptr: &mut bindings::cpumask_var_t) -> Self {
-+        Self {
-+            ptr: ptr as *mut _,
-+            owned: false,
-+        }
-+    }
-+
-+    /// Obtain the raw `struct cpumask *`.
-+    pub fn as_raw(&mut self) -> *mut bindings::cpumask {
-+        self.ptr
-+    }
-+
-+    /// Sets CPU in the cpumask.
-+    ///
-+    /// Update the cpumask with a single CPU.
-+    pub fn set(&mut self, cpu: u32) {
-+        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
-+        // call `cpumask_set_cpus()` for any CPU.
-+        unsafe { bindings::cpumask_set_cpu(cpu, self.ptr) };
-+    }
-+
-+    /// Clears CPU in the cpumask.
-+    ///
-+    /// Update the cpumask with a single CPU.
-+    pub fn clear(&mut self, cpu: i32) {
-+        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
-+        // call `cpumask_clear_cpu()` for any CPU.
-+        unsafe { bindings::cpumask_clear_cpu(cpu, self.ptr) };
-+    }
-+
-+    /// Sets all CPUs in the cpumask.
-+    pub fn set_all(&mut self) {
-+        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
-+        // call `cpumask_setall()`.
-+        unsafe { bindings::cpumask_setall(self.ptr) };
-+    }
-+
-+    /// Gets weight of a cpumask.
-+    pub fn weight(&self) -> u32 {
-+        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
-+        // call `cpumask_weight()`.
-+        unsafe { bindings::cpumask_weight(self.ptr) }
-+    }
-+
-+    /// Copies cpumask.
-+    pub fn copy(&self, dstp: &mut Self) {
-+        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
-+        // call `cpumask_copy()`.
-+        unsafe { bindings::cpumask_copy(dstp.as_raw(), self.ptr) };
-+    }
-+}
-+
-+impl Drop for Cpumask {
-+    fn drop(&mut self) {
-+        if self.owned {
-+            // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe
-+            // to call `free_cpumask_var()`.
-+            unsafe { bindings::free_cpumask_var(self.ptr) }
-+
-+            #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
-+            // SAFETY: The pointer was earlier initialized from the result of `KBox::into_raw()`.
-+            unsafe {
-+                drop(KBox::from_raw(self.ptr))
-+            };
-+        }
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 496ed32b0911..efbd7be98dab 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -40,6 +40,7 @@
- pub mod block;
- #[doc(hidden)]
- pub mod build_assert;
-+pub mod cpumask;
- pub mod cred;
- pub mod device;
- pub mod device_id;
--- 
-2.31.1.272.g89b43f80a514
+LGTM,
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
 
