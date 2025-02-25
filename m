@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-530581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88717A4354E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:32:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD56A43553
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F84178778
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E1C17C249
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE365136341;
-	Tue, 25 Feb 2025 06:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A5025A2A5;
+	Tue, 25 Feb 2025 06:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ATVTdfAo"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xpowKU6/"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B425D54D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41A1259483
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465007; cv=none; b=gGxP9cs43aRhEiqLhzXMo5enDtOPkvLXOhQZFQ9LCUfyL3mORTvq7dyAArt7UN+eIVe31cn1I5F9T6hcjjtPSr///ckmR5JBwNMDmxifU5vpI81oHN9msXA1qakP3JR7grjY/OzXhyXUNRVmbQQ9owObTkgQLMScqpmcItovBUY=
+	t=1740465071; cv=none; b=ecrKVAMxKZzWBwDerld0BjpBTzNmyxviPn90GwPpPkaoMs1/rJuUPWauJ+XHr061Nt+L+bkpb5Z6pFDkwjAhSfxdNKDR6jV1kg2lKac36rB5eq6WnF6Ub0UiAb4zbWs6ubbTp0AbIzSQopX3w+Ei0dvRF2grpUDaYUbuzEid+ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465007; c=relaxed/simple;
-	bh=RYfyD32sRASx29xi497H3XJdDF3XXVn40eOIf2rnFm0=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=i2CSn7IoaqRkZs6NgXB30D1fTDv9nFt6aytQCVdP40jTtnrOy5Xrnaxv369CXzPQFi7iNbaR6SsFZYs9Du7c/oA7BTxbN2G27he5fMRCjVGtjZsuHKf0fEPWOPSj+ZdnG/qU7Jnb1kPUIqDEksKvawW6o1tH0s38E7lrZOM5SC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ATVTdfAo; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f417de5e25so2366363b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:30:05 -0800 (PST)
+	s=arc-20240116; t=1740465071; c=relaxed/simple;
+	bh=hObuqr58Vys7yvCIUz9aDi5+qmfGDohQ6KYOsjWCgm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pdVg01mUQaX3Q2w2XxLzXRzJ0j3LkpRxcuGVgabLYp2AFJZJceBse+04Wx6VE+l/tFU4NfPI8t1xOnfqdltBEcjGk/wA6kD33FfGF1xGNRYpRZuZcS81ZNCjMDlkHe1nEradHANYw3MNzFCYr1rVxilTViQegMAKa0z8hwSqL/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xpowKU6/; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220e0575f5bso111735ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:31:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1740465004; x=1741069804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4+mBAQq6Mkez/2/DMWHStf85qnBYyGFLVJqfvqnbkxk=;
-        b=ATVTdfAoZ8/xxq1ZmnjF7OLKA0Xgvb7CoBQQ87W4nCqYvgoKGF1WfWw7itwOEF/kQ2
-         qSEC712GTgta39biH0N9ptdUCZON99uEGDNtQAHraF5yqKkiQif0P3PLLx4dOpd02hU3
-         w51m7o1mLP/kdvlplhEAUBZB0iorvyx/M6eRY=
+        d=google.com; s=20230601; t=1740465069; x=1741069869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B89x8UxUtUDBpdRWHV+ScsYjiWuhgi0mOW8ExhQoZ9U=;
+        b=xpowKU6/T7oJ2eo8y9xAg8xKMHK4aLFUkuOJ2TA5NtLUYFN2btN13dW650UnTOITaz
+         w1bUrpyhjxvaxaQAypMDQNYrPLR69UkDX1j3pX8hhy8DoaZqCnzKcMxzRMSTi9RqVMqZ
+         JLdHIEdo2qJzG3cCw3deM9NxOL2dmu8JQKCEMlgPE+hTCHtMFLecAFDAYVRSS/3zj62/
+         bX+6ETroJOF/PkvdHTPaqXPGUqEApNwlNAhoihMPQ0nJIorsxPmaD1e5clxI0Ju8B0Vk
+         zVybvjAXrwXtgLcobp9PIB9WomF2MSCMENu/MWtW4H4pnPh3GZJK1tDCIdOfc7Wyo9xs
+         bZFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740465004; x=1741069804;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4+mBAQq6Mkez/2/DMWHStf85qnBYyGFLVJqfvqnbkxk=;
-        b=tZC8L1BifpVzU6BieSQPcfKvZ5zbGpFf6EwEKfrBCRar83QDmH90cz/rKw/nie3x1b
-         sRbeiSujIsWoJM4g6ThBrzxYHEkfu7bElr67AwCDyQuW1r/gEGaydOLmm23aTwvsPL/O
-         PW53b4fuEIDNo0SBpig4OZEAnay12bP1htaImqxenPo7otq7ypBJfyxj3+vT79AJ8RlD
-         viWxM0Cf5GWhElcXn2RfgquLNEfNG1wmfNa6b9DeeofrHAcYaOHT0CJbj//+rUC/Bfua
-         OTuQwu0RuwUOT1qlO+NefENnsuFx8dCCB3IQ5K+6iHeMe3HNIKm8DECLraI19LWMsnpr
-         LJVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBkmnI0AIhEYOKNI9LR1GyRFtV3I6agMr380QrM/Rdy+aikWjOmtGnZzwrEJDmU8SoulM82tQfGz06Rho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypku0IMbUAsOouXiayVOCH4OWhOnemosowlh5USP5+xiglQCpS
-	0bivkmnhm3rNOWAlLNbb85l03Cb4cK7qDCM/GdpD8dwaC1/cyESc+Xr+akSP+g==
-X-Gm-Gg: ASbGncuM66K90OXmIRG14/fgll9cEwKRbwMOHcsfYtxI+kRxL+q0R2IrboIH6PX9nfu
-	9pQJ2+SYJytS4fcfTT+XVJWqMOYcbdwM4Wnsle3ErBnnExJxcg2TSMHyuwp5kdn+R56NhDFzrp+
-	qTufp9XKPXZ5LhdhNhytjTMl4kMGGtbm2cA2h8GMlMDBkjzoAIfWITC01E8ShMGnvft/IneIqrM
-	OLvKywzmqHBJ9NL+uML0Neh9Xupp+Dh0bur7SYnXIYMcEcoTF006ohH71nLF1AQM09M8UWBkHN3
-	TUe0B9qrkyGHMTOqozV08hjfaUyj7UTW7aqhR9/64Ka5+RjAdCamlPjLtjTuRq9E
-X-Google-Smtp-Source: AGHT+IFdXMbhGx7fP9GFKGlpguOITWaZZGOBzMRAt9OnDAJpr0Tf6LoZNYE9WcUj4WMJOinaxdWK7Q==
-X-Received: by 2002:a05:6808:3c8f:b0:3f3:e8e7:2001 with SMTP id 5614622812f47-3f424777eb0mr12305946b6e.26.1740465004283;
-        Mon, 24 Feb 2025 22:30:04 -0800 (PST)
-Received: from [192.168.178.74] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f541bd992bsm190300b6e.16.2025.02.24.22.29.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 22:30:03 -0800 (PST)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: "Kuan-Wei Chiu" <visitorckw@gmail.com>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>, <jk@ozlabs.org>, <joel@jms.id.au>, <eajames@linux.ibm.com>, <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>, <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>, <dmitry.torokhov@gmail.com>, <mchehab@kernel.org>, <awalls@md.metrocast.net>, <hverkuil@xs4all.nl>, <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>, <louis.peens@corigine.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>, <parthiban.veerasooran@microchip.com>, <johannes@sipsolutions.net>, <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <yury.norov@gmail.com>, <akpm@linux-foundation.org>
-CC: <hpa@zytor.com>, <alistair@popple.id.au>, <linux@rasmusvillemoes.dk>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux-fsi@lists.ozlabs.org>, <dri-devel@lists.freedesktop.org>, <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>, <linux-mtd@lists.infradead.org>, <oss-drivers@corigine.com>, <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-serial@vger.kernel.org>, <bpf@vger.kernel.org>, <jserv@ccns.ncku.edu.tw>, "Yu-Chun Lin" <eleanor15x@gmail.com>
-Date: Tue, 25 Feb 2025 07:29:46 +0100
-Message-ID: <1953bcc1790.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <20250223164217.2139331-12-visitorckw@gmail.com>
-References: <20250223164217.2139331-1-visitorckw@gmail.com>
- <20250223164217.2139331-12-visitorckw@gmail.com>
-User-Agent: AquaMail/1.54.1 (build: 105401536)
-Subject: Re: [PATCH 11/17] wifi: brcm80211: Replace open-coded parity calculation with parity32()
+        d=1e100.net; s=20230601; t=1740465069; x=1741069869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B89x8UxUtUDBpdRWHV+ScsYjiWuhgi0mOW8ExhQoZ9U=;
+        b=DolRqxn2tlADawt/HjK1EQTztiaUDSsVHR8u36RFsRpOZIbHGEbu6Va3cABZnE2bh0
+         Hk07iOW8sbtr5z296ksaQBqA0n+GBooUVO+HyumVK3TCKw0ZFOjilZxy/j9AVJD7g7ZO
+         XZD9gpstcI9Ghoai/TE/eRgfLdDzzhfbGPxEXtqwWYBAOjFjK97Xovq0tdlkwccO9ohI
+         927lRpV3LwFQlUxpe7yFFXx0GDafGGILr2oDt+7xRPv8GufXz/4/75t1CrbmRxS6ShS/
+         hICQ9aYuPtjiluVO2K5izxyVgTsUUHDta7vaH4z3oZ+0nMeQHZBmi3bUFa66n52LHf6B
+         L3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZqwouF4gl4Di1EooH/BGEzEpHVev/dHlo4hyw8oDqhIJL1X0Y4c0TnLFViua5mcSu09d3vk8A05nyTTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXYzLr6xmA3xYm4JIvmxdHr82/7vxKy/nb1E6CB0MoOHKbmFyl
+	/JW+QMnRQ7WuMEQrF+v+p8MV071lGJM+VgnnLLtbw2h0fh++JOfBPXF0h0GQgJHzh0gKc3d7rXH
+	suDOgtoWhfqTT0bjNxm2Xp1jsQo55+h2TQTtp
+X-Gm-Gg: ASbGncuK57hq1HcGBtr1uOSC/EzEhQ4MECVPCfWPfwM39ic9E6itkfHuXuEdBguasqD
+	/Hyqhmcvm92p5vkVFJAS2SahcfUM17FOQrK+Nju7Yw1deIdRjdaBy+I6XcNvH4g2zNpEg0vVUKo
+	VywtcehLzR
+X-Google-Smtp-Source: AGHT+IG/cVq/zgRr9ZKtB+tC0r+WKjogtfFF3yKm3sbrXczDnxrbXP6eWeymjeRSi3vk7pHFaO/1Vw/RG8zdJVtc7TQ=
+X-Received: by 2002:a17:903:2346:b0:21f:44eb:80f4 with SMTP id
+ d9443c01a7336-22307a2e210mr2213605ad.4.1740465068875; Mon, 24 Feb 2025
+ 22:31:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+References: <20250109075108.7651-1-irogers@google.com> <CAP-5=fXL=nS1-m1+gJsYfWfvyn0ouikX3=RvyKdiM7+ewS9-mg@mail.gmail.com>
+ <CAP-5=fU3beskCJLQdKE8Mjdsx0wTiihh7Z9k7VQtZuJBZC5b6Q@mail.gmail.com>
+ <Z6pWj7jlH6ucKXDu@google.com> <CA+JHD90PDGA-Zbu6hUZ1DZQbSD71FBPRbBdGd1dWCxhi3q6Q1g@mail.gmail.com>
+In-Reply-To: <CA+JHD90PDGA-Zbu6hUZ1DZQbSD71FBPRbBdGd1dWCxhi3q6Q1g@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 24 Feb 2025 22:30:57 -0800
+X-Gm-Features: AWEUYZk2tqNh9d4T7EZXmVbwrzS_Mujjt2E5f47ad9PQ0SZBD4nQ3dCMAYZ25yI
+Message-ID: <CAP-5=fVu4GzCv7W1x3DBdpq2cmHKepxm7Vq96VJO27WyyhiVig@mail.gmail.com>
+Subject: Re: [PATCH v1 00/11] Python improvements for a real use of parse_events
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On February 23, 2025 5:44:54 PM Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-
-> Refactor parity calculations to use the standard parity32() helper.
-> This change eliminates redundant implementations and improves code
-> efficiency.
-
-While the dust settles on the exact implementation from driver perspective 
-looks fine to me so...
-
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+On Mon, Feb 10, 2025 at 1:52=E2=80=AFPM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
 >
-> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> ---
-> .../wireless/broadcom/brcm80211/brcmsmac/dma.c   | 16 +---------------
-> 1 file changed, 1 insertion(+), 15 deletions(-)
+>
+>
+> On Mon, Feb 10, 2025, 4:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>>
+>> Hi Ian,
+>>
+>> On Mon, Feb 10, 2025 at 08:06:34AM -0800, Ian Rogers wrote:
+>> > On Tue, Feb 4, 2025 at 2:23=E2=80=AFPM Ian Rogers <irogers@google.com>=
+ wrote:
+>> > >
+>> > > On Wed, Jan 8, 2025 at 11:51=E2=80=AFPM Ian Rogers <irogers@google.c=
+om> wrote:
+>> > > >
+>> > > > While parse_events access in python was added, it wasn't used by a=
+ny
+>> > > > python script. In enabling this for the tracepoint.py script a num=
+ber
+>> > > > of latent bugs and necessary improvements were discovered.
+>> > >
+>> > > Ping.
+>> >
+>> > Ping.
+>>
+>> Thanks for the reminder.  I'll review pending patches this week.
+>>
+>> Arnaldo, can you please help reviewing this series?
+>
+>
+> Sure, I'm getting back to doing that, more slowly than I'd like this time=
+. :-/
 
+Ping.
 
-
+Thanks,
+Ian
 
