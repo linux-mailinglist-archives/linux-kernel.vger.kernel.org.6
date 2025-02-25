@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-531648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBE3A44306
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:39:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0104A44338
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D7707AB7B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837D3861973
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058B4280A5F;
-	Tue, 25 Feb 2025 14:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D08B26E62A;
+	Tue, 25 Feb 2025 14:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4TBIAJdx"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BW06Z4Zv"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F46280A2A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDCE38DEC;
+	Tue, 25 Feb 2025 14:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494144; cv=none; b=MeYrCb/2fF4ejgqVV5F5kKrGm/nj7dUztfX2PFC64l6swi4OTgYSJhnXeiqnRDswImBpmE0RNdZEA2AbKOeycR+1ZrCe3+kAEIQVnVSDvyffNfxd/JJag0Mx9dgz76w0y4PjTA1vBxGH8tL37huwuUFr8WRxyyFqMomM4Im9GwE=
+	t=1740494217; cv=none; b=FPOYI9Kc+i7fOx07mVYXr4eFcxapTYbwX5RkPb5OqLj2HnwDgNR3V/gFLdlDBfgIAwEltXZdU2/zRAbe+Rox7k/9oINQNOnZbV9tbLIWKdXHlXOuo9ooOCOwY+U0+eCw2PgEtU+2qqbiZ1Gb1PaVvIjA3PqsrQ11kOHlUql2++Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494144; c=relaxed/simple;
-	bh=9hyuXWtcrt6qYFRuvHO0bnjXrHF/CkXG7yP6ynsJrjs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=X2G39f92x/6pk5NQvHwBNiaAUNey6JQ3eiZWLrYQG+T5L1lBHm9NjzrnFGWDa8dzrqv9WPNUOpU+h21J2gtIdokQWW8VP0pldEXD7Bg/yujeuWzt74pKSLWUfOOJKQXajAIK++ejXM8P6Y6GR5P2nS1+x+EKSTlAuZp3joVt+zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4TBIAJdx; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so11902101a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:35:42 -0800 (PST)
+	s=arc-20240116; t=1740494217; c=relaxed/simple;
+	bh=GIMdMLj6BbS/txxma/JVtTFZH3g2DvEeT4hV4F/TP48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=J70bC68qQwhKKk3nzHsJX7GDWnGpNNs5As7Q6qB8KV7gWpE1QbZH2khqkN6VPwBbAIwOnTM3XW6T/doMIz6FemvTWIIaCwbSMp0ijGc0jl6kjLBbB75++sQ9y4sMtWThb10oImCcW9mKPNISZzXzk0v+00XCdFUP+xuHLwJ7HzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BW06Z4Zv; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43994ef3872so34893955e9.2;
+        Tue, 25 Feb 2025 06:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740494142; x=1741098942; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3OyWMfMyDgx+55Ind0kZ2lpQA8/mHOXTjN2aQVmO4M=;
-        b=4TBIAJdxZuNNjUSEmpRBFjteVkgFAruncnIrqJ4LUXIwes9texKhNKx3yNMu5nj2Of
-         +1XkL1NFqyOB7QG8mnvtMp3ijTF95zE0RA4z2SvTGB1nlPPiW9hdQLxReFkrEDpbSiSL
-         VYUBQmJ7bUXnfeYuKh4q93nUVzNyWLbYgJ37mfr/ueg8MUL1N/4IODoeGagy715MnVN4
-         ywbuIQyb3eZM+wwMI/jwVXmUkCe3X3S+L0yifLjE0mVl4BlROlAbA+vAY7JJmp0gOcbA
-         1RMPsJLfSaT94Kzk61YdJCSnh/K5L0Gs40VHLn8BCvMlLFRT7qR9AJTDLw8cOq6Kw2ii
-         0lvA==
+        d=gmail.com; s=20230601; t=1740494213; x=1741099013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZwiobQ+ov2NGgIChlOLIJyU8mL2VZ/8aCAPBJC6i4xg=;
+        b=BW06Z4Zvo06ID70Awo/w//Ebx9mTy2rQnKtB21SWJVzIoLRDOqaRhbB4oWmUQ57vN3
+         9SjnMBOS7Spr8pb1NxHFiQpKd+34Ysb+Ji0LP+goyuZwl5IkGldXMQP5dH/PcBJEpwrM
+         SzCu5RR3iNUi86jFsrsQJbbCTUhZ8dHm/cgVm+yiwwGoiul5uWtqiiUbSnlAZEg6LOy7
+         pkUX1nXpsxF51kp420r9hLA5+47HRryFb/nKzKN5ZeEUA1TNY23sOHATIg94CP9RkNlX
+         n7oDgukuiyXl9N7npgRiBg88RgRLCImz67+afHhkSxnkEm2+JFr4RaC2spI8P6tFONFM
+         iAcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494142; x=1741098942;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3OyWMfMyDgx+55Ind0kZ2lpQA8/mHOXTjN2aQVmO4M=;
-        b=LSq7pKYfnNDYUpzJKCc1qEHIX3buFB0cQ286FXarDIMiaiAAI3hWx/cWCfk1EsMWAr
-         JQi9oBdvSTR0OpOqml+MYJCg5Idy4Q9/YvYSgDTsOE2d6MEJKi6s9Qkf9BglBo/1TNAi
-         T2x1BRmAtR91Jai01M4nfDY/I5oko8gdB6iBl+ZD4nEX1/rbKVhia6lUDuVDNIvVQnfE
-         h/rUKcqKVi9rQjbvijVmgHPV9FSH6kB/zXZEMnf8c9J7xCVEWCI5s/fmXZg8w10lhGlo
-         qSWhIyOLg/n+qOTVKvJ5hRxi4I0unpo/hEgqupXz32VTPkiKXjR3HFJ4MlVH1UwapFPN
-         +TBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxIs5pXo/IaeNQUGMyGLJSpz2a4jy6t+w+WcUI4Hp0TXdTnuYggSbj+Q9WV13gMPnL+8ima25g2C6GSxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjYpgZpRNs9RybC3A4sxSB+V+wgvOawnP+C3KMFicMPKwb8RNO
-	p2weLmzlQpd5+PllvnNtCDn7ZY/9dPvY8CFTORccNG2bhKQ5Y46CDl5LNTbqY3v0LBMLMJuFf8l
-	uAw==
-X-Google-Smtp-Source: AGHT+IFXh/XOoHWCgjyYmqDQFrw6VQ+lwV1XpaGwsHvB9OE+S78BXcvOxN0p4LNeKFLBgsLwKA4Y+N0kitA=
-X-Received: from pjbdj6.prod.google.com ([2002:a17:90a:d2c6:b0:2fa:1fac:269c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f8e:b0:2ee:c9b6:c26a
- with SMTP id 98e67ed59e1d1-2fe68ada3bemr5889698a91.11.1740494141828; Tue, 25
- Feb 2025 06:35:41 -0800 (PST)
-Date: Tue, 25 Feb 2025 06:35:40 -0800
-In-Reply-To: <Z71sOEu7/ewnWZU2@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1740494213; x=1741099013;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZwiobQ+ov2NGgIChlOLIJyU8mL2VZ/8aCAPBJC6i4xg=;
+        b=FGmmK1LF5PAceljNpmnl5DvemXSmDFahTb4YE0OMc9QJ+9LIbXfts8DM5dTcUMzcfr
+         lCc0mZtLG/4/GRqA9xZ9LNReJZvfCeBPsHeDVW9Ap7v2mP6zXOiORPdkkOaGwUNx9gex
+         Uv1wDQgt9bCpB3URAFScZcIbgP0B+XpddVeUGr/ZPZQgV9HK8aEztNzEp+wC/Uqa+C2X
+         7MEevCR6W70iN5R7gCOCBsCgHY+RoOI6iY5heuS5Qxgx8t3lsOkD0plJHfObGa37zrXp
+         Y1oZIqPv/svZAvgzpGOJhKHpiJK/M1HHNPd4Nh1ITSKB8sDL5DZBC1fvrkXYtgRPrgvP
+         xhmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPvVxMokleBjH1WRiitX3HsygnwTgUU3ECvSc6Irwmdcw91LpzjsnrV3keFrEyRa+Sx1yEAX8qaVLzPKs=@vger.kernel.org, AJvYcCXGq00qlOChta6wqOeYiVD/TAL9Hrhnn0/JXfVWpkiWX+cASYNUHUmRozqEytFBSITcDZ/7Q9g8xgXJ6mNzZKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNXSXkkfyUIxogOlUKXZ8mgi9irB26hWR35qTV85BwhW9e+reA
+	7gV6syKVhoe87O6YyJwRJx38x9Elp3JyV1XY0Me5Vg0DtOyV4Gdb
+X-Gm-Gg: ASbGncvLSckYMqJNVm1a7fXjdUS4etwKN5AA9rDicwHecAeiLx3prMXdhfOGaR2/F/q
+	vZcNJtrktCUQCtmPnjJyekRuroOqZwkWzMbSbrS7xh6rB4k+6W7sWklP+w5LNwKhNAaJdPgN86t
+	iV3xOaclNHdHraaSffkEGLAq86xesiaT/J2uDf1jFIfKGk9F4BfhSaNIpPIw3FJ2erBYuXZSBZh
+	Ecrwanpy8tz+S7F+3E26b7o3jG7ZczAItKxS5KhHb3gNIl/i1sMm484HgJJSuk2U+awvLW7cIz+
+	rhbHYU1BCBc4gUhbUNuxjD/iyU+PodMK/G5Yhuv9XQcbU8zv8cMLOyGn3eBQIQk=
+X-Google-Smtp-Source: AGHT+IHqYyNIhjlrYWJKlXkPU9c+6qRV/sFcYlFP3Oo19VLSLbGLfo17beLiyZrjDoc/9WsbiQBXqQ==
+X-Received: by 2002:a05:600c:35cb:b0:439:942c:c1cd with SMTP id 5b1f17b1804b1-43ab0f41698mr32827425e9.15.1740494212733;
+        Tue, 25 Feb 2025 06:36:52 -0800 (PST)
+Received: from Junction.dargent.eu (242.76.29.93.rev.sfr.net. [93.29.76.242])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8829cesm2474493f8f.49.2025.02.25.06.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 06:36:52 -0800 (PST)
+From: Regis Dargent <regis.dargent@gmail.com>
+To: 
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-watchdog@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] watchdog: sunxi_wdt: Allow watchdog to remain enabled after probe
+Date: Tue, 25 Feb 2025 15:36:37 +0100
+Message-Id: <20250225143638.1989755-1-regis.dargent@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250224235542.2562848-1-seanjc@google.com> <20250224235542.2562848-4-seanjc@google.com>
- <Z71sOEu7/ewnWZU2@yzhao56-desk.sh.intel.com>
-Message-ID: <Z73U38mSuk_tOpqT@google.com>
-Subject: Re: [PATCH 3/7] KVM: Assert that a destroyed/freed vCPU is no longer visible
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Aaron Lewis <aaronlewis@google.com>, Jim Mattson <jmattson@google.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025, Yan Zhao wrote:
-> On Mon, Feb 24, 2025 at 03:55:38PM -0800, Sean Christopherson wrote:
-> > After freeing a vCPU, assert that it is no longer reachable, and that
-> > kvm_get_vcpu() doesn't return garbage or a pointer to some other vCPU.
-> > While KVM obviously shouldn't be attempting to access a freed vCPU, it's
-> > all too easy for KVM to make a VM-wide request, e.g. via KVM_BUG_ON() or
-> > kvm_flush_remote_tlbs().
-> > 
-> > Alternatively, KVM could short-circuit problematic paths if the VM's
-> > refcount has gone to zero, e.g. in kvm_make_all_cpus_request(), or KVM
-> > could try disallow making global requests during teardown.  But given that
-> > deleting the vCPU from the array Just Works, adding logic to the requests
-> > path is unnecessary, and trying to make requests illegal during teardown
-> > would be a fool's errand.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  virt/kvm/kvm_main.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 201c14ff476f..991e8111e88b 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -489,6 +489,14 @@ void kvm_destroy_vcpus(struct kvm *kvm)
-> >  	kvm_for_each_vcpu(i, vcpu, kvm) {
-> >  		kvm_vcpu_destroy(vcpu);
-> >  		xa_erase(&kvm->vcpu_array, i);
-> > +
-> > +		/*
-> > +		 * Assert that the vCPU isn't visible in any way, to ensure KVM
-> > +		 * doesn't trigger a use-after-free if destroying vCPUs results
-> > +		 * in VM-wide request, e.g. to flush remote TLBs when tearing
-> > +		 * down MMUs, or to mark the VM dead if a KVM_BUG_ON() fires.
-> > +		 */
-> > +		WARN_ON_ONCE(xa_load(&kvm->vcpu_array, i) || kvm_get_vcpu(kvm, i));
-> As xa_erase() says "After this function returns, loading from @index will return
-> %NULL", is this checking of xa_load() necessary?
+Hi,
 
-None of this is "necessary".  My goal with the assert is to (a) document that KVM
-relies the vCPU to be NULL/unreachable and (b) to help ensure that doesn't change
-in the future.  Checking xa_load() is mostly about (a).
+V3 of the patch allowing sunxi watchdog to remain enabled after probe.
+This 3rd version is mainly about code cleanup.
 
-That said, I agree checking xa_load() is more than a bit gratuitous.  I have no
-objection to checking only kvm_get_vcpu().
+Best regards,
+Regis
+
+Jernej Škrabec:
+  I wouldn't add checks on CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED here.
+  My understanding is that this config is already managed in the generic
+  watchdog part, as long as the WDOG_HW_RUNNING bit matches the actual
+  state of the HW watchdog timer.
+  I only saw one reference in a HW driver, stm32_iwdg, where they cannot
+  read the watchdog state, so they start it and set the WDOG_HW_RUNNING
+  bit so that both match.
+
+
 
