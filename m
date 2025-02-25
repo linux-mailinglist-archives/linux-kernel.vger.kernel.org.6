@@ -1,197 +1,127 @@
-Return-Path: <linux-kernel+bounces-530868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41210A4398E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774F4A43984
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378C41888208
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C0016F1C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A560C262812;
-	Tue, 25 Feb 2025 09:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B838D263F2F;
+	Tue, 25 Feb 2025 09:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXfIAagz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ZnCuW7Q8"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB95B26156F;
-	Tue, 25 Feb 2025 09:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A6026389C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740475870; cv=none; b=R/Nz3ouF9BVPFp0TH+Lj9bVVZbXbYSN8OESRqIj3jCnxoqbgbWwAZ8gHFysIiyfETdJzmtYWwWwXos1xSwZ2nTagQbGBtAM46Gho2h5/lK2BgoleU+m+PMCPjOVC4I80hpc5/w6DSSnq8wBrtYi/e6imQOlStTeDQtrd0Q5sI+Q=
+	t=1740475879; cv=none; b=ga1wj67qV8U2MGmrY2lxuYOaM7rcJRAhqPxT+NiCaAbWtzrbq1T+tAyWFIBfUUt7u/ReMeaB4aKwi1o7jjG+I0f9oqLUIysTUrvWf8hut5E28ihOKMyj6fHnd1/83or3u+ao6HeGgkYJ5FrDgVgrNOVAne+sFOG1Ui8Da+xMA4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740475870; c=relaxed/simple;
-	bh=VhqhUEKJybMC5Ioqu2TlM8kjWfRxkvh6hF8HPB9/5wA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m1ZYqux8mVsZTETChxR2Sz9dM+Qtdjh+76erY/5qmBV1OBffW0PesnC1cy1f96TokNwtPe1OsELVxz5R+HChAG9FjilNnoY50F4k/6boaMa4tzlQMQLGg4La94gRr/MV6dcHnfGTSgEhlzAfRrFmus4K11x1VH/8tJMLz2RYKa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXfIAagz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF16C4AF09;
-	Tue, 25 Feb 2025 09:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740475867;
-	bh=VhqhUEKJybMC5Ioqu2TlM8kjWfRxkvh6hF8HPB9/5wA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EXfIAagzfTqvwWsRGznCUK3ZkWhLbD7NPhK4kB6yq1P7xsid+Jxuj9M05vjK46gYk
-	 3xEUD5L4kt7jgVgmhutEnYpZy/x04g+8QzkG9TZZOLMuynarF+R4825SDG6/c16yWv
-	 hugaeESVhquFZn7pAzz5jzYhh1gM6Bu4HVuyfgKmSUhPEdwvzHkwfFrW+h+HU5Zb+s
-	 7lXaIemT3IQisCddKoSlWBBoIwSZW/ViiyJKSS7+eTLmA8Jvsp1ZfGzwyn5cq4Gvhq
-	 WQ7cfRa0RC2dTKKnz3yQYWeTrLaQsjneKUhDcP3nEkLI3YI3iCiE/iMat4+B60vNTN
-	 woaslJT0QpaYg==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so7689492a12.1;
-        Tue, 25 Feb 2025 01:31:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV+5kf+rc1unRQtKSCfyXLk0kPPIbN8i7UzriZJLENebWgGNOMfI+tBpAr4CZAo9CHaDdEz24uB@vger.kernel.org, AJvYcCWgC7KgsDeMl5HRiQKCiy06nr5fT+qt3QeVpn6IIIffujBNboaZIJF6F/WVHPJVbOEIiKAlw+X92Jo2GJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvvhoLUt0mwInmAg8Wo3A6Ey50kzLQV8gSa+592US81kflvhnq
-	dPzQTQyZi4caAVOV7/923p0okiJK8F1jogB97PU+YRhlbPSnrCPThYNa83xv89RZiN9p0bAv0If
-	I2pcE1pGNR2q0UlAUe7RmJPuK3Xk=
-X-Google-Smtp-Source: AGHT+IGLJYv/e1oxPDxFKFsKBaEaUHmq0pFseR1OcvNHLehzMt/+mZLqCUb2pCHMmsax354c1CbJrvmsMW+1OBmxUh8=
-X-Received: by 2002:a17:906:3151:b0:aba:5e50:6984 with SMTP id
- a640c23a62f3a-abc099ead3amr1554594166b.2.1740475865854; Tue, 25 Feb 2025
- 01:31:05 -0800 (PST)
+	s=arc-20240116; t=1740475879; c=relaxed/simple;
+	bh=vDsEiamb3M+Mmy27y8EplwRdWCku4uyVDcOnwntuzxo=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLFwXIlGA6WDNz900CyrbJCPrMPHhuusEelKEeN+tw6DU01zC0PNXfPVXXb9Joqx6kxmqyzOdrEenvUJjtkNv4CZ4FX3s9JNbqiVb3ymudgF7OY2pMiy/l40UMNzpGoULZC6BRVNQPaJXBxrLfbNRqrI14pivLgdv+KnQWVrK2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ZnCuW7Q8; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1740475865;
+	bh=aKBjUG98HQzVsVaLctKLhwcLcI10ldf6jcbX57WesZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ZnCuW7Q8me5OA2Sti55jI8aKaJfgTui+bZgILV6r4ScMXo0E6MxYjGFnOM6WqDC0j
+	 J3rzb0LOPCFwgV75TQdMXIo1EgCnN34FRXOJAxBuJV41k0Mee2/6OQf1jHGmD0nqt8
+	 XzUvESIVGmg4AoG6mINdGpMhGB1aDINTAJTmst54=
+Received: from chenyu5-mobl2 ([118.114.56.201])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 7C19BE72; Tue, 25 Feb 2025 17:31:01 +0800
+X-QQ-mid: xmsmtpt1740475861thw19023d
+Message-ID: <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
+X-QQ-XMAILINFO: MQ+wLuVvI2LQXEKluU0QGaNMGYtho6EYQosrSrVaIqFLw1AKg0YQHpUgmkMTwV
+	 9iE7HEIWj4lAS1N6iNB+1lRmIjEHr94IYg/a1KMAqRO1jJBG1nfQMGUl3mtjHpEMgU3uuqTyx7rc
+	 3fL6iHz5+0xZzWB4smmqAgwvED841vFyUBVaL5nmnIzdoQxNDs2xjLXTMiywB9GW90rGXAQUnHqt
+	 rUQ0CRkuQTL4O20A7hxhmWigdb27ggVkdIzzkeI2ndjQOMwh/O4iwruiOIXr8+dNeHowQmYhZTmJ
+	 1fP74ycrM3qKOFUzip5nTdBCZPro6CiF7ZuTPQbEYZ2R7WETs1UAqgUDwZxkB2d+gDRJ7ykjpvJj
+	 O/rRVTN5mKlervn4zpHko+0qvvEBc9Spu8CSAxBbrgY3NWBzzu91yLa0cGBu+4SPm3DO//wm8NLF
+	 5oyiwilC4k3HmfNQbm59iIHyXEvn55akde+nBjx3B8yH1pfPfufNpmouKdqowi7qoJXzwGeWWVGu
+	 rI7fxnnbjd+HJFoCgMxZQcrDDHxmXJzys+sEi8WT+ZWjEjWYqbHfcKoNLslq1vWjN0Fpyaw4RQU3
+	 r9dGhqoF2jGH93wEAktgi68JuUVWnq+WlychEXRj8X7yDZAFsk9Th3W+Za6ATYdp7Ay8gBjqmGZc
+	 5vSJuiNmkmbzkvn0W2cUXAxejsYtDJoyCHwa70r61JbYyT7HgZW9lomzu2nZIhn/HzLv0HyI/Ukw
+	 wQ+r6iq7hdms4vAcnS25hUpcQwGiabgf/SdSFVD9yNSRHzx7K6JkEtYsEr8gi2xLfB2S842s/3aK
+	 0sBxhEwNvc4zSCspYpJHdnox2wHPXbQQ/7JTwnHrLL3c2nkqehjK+9lyCdk12ksK92FwvDGPbE8y
+	 zK42Apsl9nDQDxK7bbv6moFgzj2WjZ4SWH41WOqymgFCd7oLDJDMYQBgSoXDIf/+79P2dlodWtxZ
+	 X46acF5wwuvRlRPvep9Nnp5xdTcpDWo+3NYurvrq4=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+Date: Tue, 25 Feb 2025 17:31:34 +0800
+From: Chen Yu <yu.chen.surf@foxmail.com>
+To: zihan zhou <15645113830zzh@gmail.com>
+Cc: oe-lkp@lists.linux.dev, kernel test robot <oliver.sang@intel.com>,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
+ regression
+X-OQ-MSGID: <Z72N9qZfX32UMrrG@chenyu5-mobl2>
+References: <202502251026.bb927780-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224135321.36603-2-phasta@kernel.org> <20250224135321.36603-6-phasta@kernel.org>
-In-Reply-To: <20250224135321.36603-6-phasta@kernel.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 25 Feb 2025 17:30:54 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5OH7JLUUCjDAP=qfzGUVLt1HfiAYtc6Hr0oHURM0Pa9A@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrr8qZL58Do6GOisELNPoK9P0OBrnmwiGAX3q4INVgQhFafk3UcjXTs7oU
-Message-ID: <CAAhV-H5OH7JLUUCjDAP=qfzGUVLt1HfiAYtc6Hr0oHURM0Pa9A@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 4/4] stmmac: Replace deprecated PCI functions
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu <guyinggang@loongson.cn>, 
-	Feiyang Chen <chenfeiyang@loongson.cn>, Philipp Stanner <pstanner@redhat.com>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202502251026.bb927780-lkp@intel.com>
 
-On Mon, Feb 24, 2025 at 9:53=E2=80=AFPM Philipp Stanner <phasta@kernel.org>=
- wrote:
+On 2025-02-25 at 10:32:13 +0800, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed a 6.2% regression of hackbench.throughput on:
+> 
+> 
+> commit: 2ae891b826958b60919ea21c727f77bcd6ffcc2c ("sched: Reduce the default slice to avoid tasks getting an extra tick")
+> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git sched/core
+> 
+> [test failed on linux-next/master d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa]
+> 
+> testcase: hackbench
+> config: x86_64-rhel-9.4
+> compiler: gcc-12
+> test machine: 128 threads 2 sockets Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz (Ice Lake) with 256G memory
+> parameters:
+> 
+> 	nr_threads: 100%
+> 	iterations: 4
+> 	mode: process
+> 	ipc: socket
+> 	cpufreq_governor: performance
+> 
+> 
+>   39754543 ±  3%     +56.8%   62349308        hackbench.time.involuntary_context_switches
 >
-> From: Philipp Stanner <pstanner@redhat.com>
->
-> The PCI functions
->   - pcim_iomap_regions() and
->   - pcim_iomap_table()
-> have been deprecated.
->
-> Replace them with their successor function, pcim_iomap_region().
->
-> Make variable declaration order at closeby places comply with reverse
-> christmas tree order.
->
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-> ---
->  .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   | 11 ++++-------
->  drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 14 ++++++--------
->  2 files changed, 10 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drive=
-rs/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> index f3ea6016be68..25ef7b9c5dce 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> @@ -521,10 +521,10 @@ static int loongson_dwmac_acpi_config(struct pci_de=
-v *pdev,
->  static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_d=
-evice_id *id)
->  {
->         struct plat_stmmacenet_data *plat;
-> +       struct stmmac_resources res =3D {};
->         struct stmmac_pci_info *info;
-> -       struct stmmac_resources res;
->         struct loongson_data *ld;
-> -       int ret, i;
-> +       int ret;
->
->         plat =3D devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
->         if (!plat)
-> @@ -554,13 +554,11 @@ static int loongson_dwmac_probe(struct pci_dev *pde=
-v, const struct pci_device_id
->         pci_set_master(pdev);
->
->         /* Get the base address of device */
-> -       ret =3D pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
-> +       res.addr =3D pcim_iomap_region(pdev, 0, DRIVER_NAME);
-> +       ret =3D PTR_ERR_OR_ZERO(res.addr);
->         if (ret)
->                 goto err_disable_device;
->
-> -       memset(&res, 0, sizeof(res));
-> -       res.addr =3D pcim_iomap_table(pdev)[0];
-> -
->         plat->bsp_priv =3D ld;
->         plat->setup =3D loongson_dwmac_setup;
->         ld->dev =3D &pdev->dev;
-> @@ -603,7 +601,6 @@ static void loongson_dwmac_remove(struct pci_dev *pde=
-v)
->         struct net_device *ndev =3D dev_get_drvdata(&pdev->dev);
->         struct stmmac_priv *priv =3D netdev_priv(ndev);
->         struct loongson_data *ld;
-> -       int i;
->
->         ld =3D priv->plat->bsp_priv;
->         stmmac_dvr_remove(&pdev->dev);
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/n=
-et/ethernet/stmicro/stmmac/stmmac_pci.c
-> index 91ff6c15f977..37fc7f55a7e4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> @@ -155,9 +155,9 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
->  {
->         struct stmmac_pci_info *info =3D (struct stmmac_pci_info *)id->dr=
-iver_data;
->         struct plat_stmmacenet_data *plat;
-> -       struct stmmac_resources res;
-> -       int i;
-> +       struct stmmac_resources res =3D {};
->         int ret;
-> +       int i;
->
->         plat =3D devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
->         if (!plat)
-> @@ -188,13 +188,13 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
->                 return ret;
->         }
->
-> -       /* Get the base address of device */
-> +       /* The first BAR > 0 is the base IO addr of our device. */
->         for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
->                 if (pci_resource_len(pdev, i) =3D=3D 0)
->                         continue;
-> -               ret =3D pcim_iomap_regions(pdev, BIT(i), pci_name(pdev));
-> -               if (ret)
-> -                       return ret;
-> +               res.addr =3D pcim_iomap_region(pdev, i, STMMAC_RESOURCE_N=
-AME);
-> +               if (IS_ERR(res.addr))
-> +                       return PTR_ERR(res.addr);
->                 break;
->         }
->
-> @@ -204,8 +204,6 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
->         if (ret)
->                 return ret;
->
-> -       memset(&res, 0, sizeof(res));
-> -       res.addr =3D pcim_iomap_table(pdev)[i];
->         res.wol_irq =3D pdev->irq;
->         res.irq =3D pdev->irq;
->
-> --
-> 2.48.1
->
+This patch shrinks the base_slice so the deadline is reached earlier to trigger the
+tick preemption IIUC. For the hackbench case, my assumption is that hackbench seems to
+encounter more wakeup preemption and hurts throughtput. If more frequent tick preemption
+is needed, but more frequent wakeup preemption is not, are we able to do this base_slice
+shrink for tick preemption only rather than the wakeup preemption? A wild guess, can we
+add smaller base_slice 0.7 in update_deadline() for tick preemption, but remains the old
+value 0.75 in update_deadline() for wakeup preemption during enqueue.
+
+But consider that the 6% regression is not that high, and the user might customize
+base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
+future(we have encountered some SPECjbb regression due to over-preemption).
+
+thanks,
+Chenyu
+
 
