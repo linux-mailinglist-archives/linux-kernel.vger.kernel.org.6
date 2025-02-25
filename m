@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-532496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23D8A44E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B0FA44E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF0F17E405
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479143A3B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3100D2135A6;
-	Tue, 25 Feb 2025 21:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA64211A00;
+	Tue, 25 Feb 2025 21:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="HV00NfTQ"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZF1IjJ2"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F574212B0D;
-	Tue, 25 Feb 2025 21:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B9211486;
+	Tue, 25 Feb 2025 21:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518102; cv=none; b=eVvz0T9Tb7TMA0YO9HX/O0mag51UrQFvggcMH/TzWblsa847gJQRNgxk7nVg0WuiiSrgJ7GcE5n1of1iCLqJdm7aBMSIaL/miN8t2WqIUmxfy1eJ5g+u2F0E2wBTkFeL3tzQwWrRkgRvZyqbfGJmvpg0ddWX7cAcDVAd7eVoCwY=
+	t=1740518097; cv=none; b=NWUnKgQ+uZTCIvs/YHDKCs7ucKiupqB2Cg31ZMbez0hwjRjfNbz/E7JhHFNs1YfVw22eq53GPB0mT7El6jesr4fg8mUq2LGX+rKvP8VMQOOX/cIni8X0eaQth59guYVUQ9+5voMuh/5Q7hkfJ0irZUVo5VTiwPERYxZpfw1ah3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518102; c=relaxed/simple;
-	bh=nR6hbYFkUCK7cDGEqRMA6HXEwebdg5p8Ni/y5RZ8urg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O/jFqAfr5afpHSIO393yg6nqNmDSZvYXdsYpngllN1eEHwzlo20DHcEQO/khbu8FwjWE9vIlMOcOPhkIEuXcC3nmv0Y1+WC290+2XOtWgUOozL78SaqoP2SKS/HNHRTOmhgYjkDYypkQ2vbQaeW2YUpT8XERbO19pGBBiNBmA7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=HV00NfTQ; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1740518093; bh=nR6hbYFkUCK7cDGEqRMA6HXEwebdg5p8Ni/y5RZ8urg=;
-	h=From:Subject:Date:To:Cc;
-	b=HV00NfTQJrtce6Kh8S2yuDRUVwmPdjUf/2qTRg4Hanqg9nhVS47ezJ8D+wezJhAYV
-	 LuewNpMdPj2N5m5Ztm7YG7rNBqc8kNssJt8qC1YLREvX3vKdsGW+0fy5cAOtV1INsj
-	 lp7kN5EqayamNHxumnPWjqJKVpRBnKGfzWe9rUxc=
-From: Luca Weiss <luca@lucaweiss.eu>
-Subject: [PATCH v2 0/4] Add display support for Fairphone 3 smartphone
-Date: Tue, 25 Feb 2025 22:14:28 +0100
-Message-Id: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
+	s=arc-20240116; t=1740518097; c=relaxed/simple;
+	bh=iy7RzMcseFqoBKxXRI1szKiJ7QaVa9fG/SmJIRyWj/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMhLbla5g3Ss1JEaUdo+Go8rzILiJXRTNohnbfNo8G/u83/6+FM1fY6+ZmSfMpLplOKLfo2ngcTpjhggXYgYxrNY6Q4VY+9q5nuX92RRYBzOlMGz1lsWlzaleLDR/ujWFPELfJ69vnrdRZHXwLB8xk/trQbct3qqbz4639CULN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZF1IjJ2; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb181331bso1805452e0c.0;
+        Tue, 25 Feb 2025 13:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740518095; x=1741122895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AW5QcpgIQeo7y06TiRKbv/Zl5iFBz580MvzxJVvIe9c=;
+        b=UZF1IjJ2KE3LbKLY00rCLeba9sq4ggApqhuWCqhfvZGGhCzUNx6g6jMKfKaQeg98KP
+         qB+QHOU68UkL0u+J3ABHF6DRu10GYHi0lqDw/Vg3Dse6NxiMalIYp5gvn/HEVyM8gFaq
+         OleEdJsVdrDpku1U6StjlpahePAe5RVKFv0O4FDgfoOS22Cw/NuI7ljtRN1VMU0e131f
+         +sli4cqWBom49j4WlVoODHqIWsaJV/E+KuZmSJlBMPZCjQTFZFY4Ss/NsCYDnozYnW6z
+         DCNomcjPNxSNlUBH5d/Bc6LGALyTainrKaEeKi17P0IsU48ws/9eGBTNY8PHfSkwR9Lb
+         /H2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740518095; x=1741122895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AW5QcpgIQeo7y06TiRKbv/Zl5iFBz580MvzxJVvIe9c=;
+        b=FNGEs1S9Bmc0T6V0matSSfeGENGk4rjjiIVwSip8HIKE25wgDRBpeyj64kOibKqS2F
+         Q11XYsJOqNkOGEViLIW2erH5dCG9Tk0ZlDuke7rRl/mwzTVod8GCIxJmolSDWtaXK7AM
+         s2Br4msxDzRFIeer8a1YlsUmCBOqOhjAPQhX/b+toPYsUjZQKaGlWo5smDQyIZDBkBiJ
+         hzUw+pP0t3UZmeT3aOyBvl5aZ46t3I2FwDY6a3G59KGR/71PhOQkolE1VKbZ5kMWOnJb
+         zAZCPmHC54+5TETqIpX7l6Y1ORjXRkoWo8JE/kgqRIZqpdoOGTXXGvSRARo9353MgmW8
+         14TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkYP3Y89AELLi8WfdqLAXPHfOXyzbAMKIWcbGlrsHfsX7SYmvLZy0I8cKBbbc2k79tSsIyHyaHDIgcBVf6aLvkJeo=@vger.kernel.org, AJvYcCXWLPxuD3kGSJvu+uniaVB5iC7Fl/nfPGlNxwnai/4EUEaZe6h4VpkpRLMcLUPXqoxgvsTZG3HA@vger.kernel.org, AJvYcCXoVdR4JqSmElsboUCZTqYheSMi1gz7pKdQ/ntwTDJh0/lxDTs4Rw6Pz1iSllkWnQnYF1WMhIDe44OL4DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmm4bgGv/FJh1c00Kc8vKlqrPVT/y2F6PTIB8EIJzPk8SVU2wJ
+	j0ti+Hd3yJQJA16SLVQ4VE6vaYZLD+rmXZrg6uCgPWKZnG2DBWL3SKqV+D+u5ob/B9MYe0xek/k
+	ukgJR4SjCgClncqcb7hgVylO6xvYUv3JVXIE=
+X-Gm-Gg: ASbGncvpg91gjHB67UHKVRBUnCqSPoTI4j2dt8PJelZ2FAjcDKZvNHv/UEGSKhJc+eF
+	qr1uvP5tXnoObAlMc3sFbbuDqvlz1yQA2eBjHZByd9/R2QeEo+u3uuC3WuPKx0BodG5Ox8qzxNA
+	Wek0FsECA=
+X-Google-Smtp-Source: AGHT+IH+22l/nhV/eo+LsoUBWcRRFcH+qjcSVfVQhj06cmg5RN57DPWPOTTnjdaIgqgufqGoSWJZ4zcmh/LpTAenPzM=
+X-Received: by 2002:a05:6122:370f:b0:51f:3e67:75df with SMTP id
+ 71dfb90a1353d-5223cd67f1cmr2916625e0c.10.1740518094826; Tue, 25 Feb 2025
+ 13:14:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALQyvmcC/23MQQ6CMBCF4auQWVtDhxTFlfcwLGg7yCQESEeqh
- PTuVtYu/5e8bwehwCRwK3YIFFl4nnLgqQA3dNOTFPvcgCWaEhFVv1TKsyxjtyl7aZytqoZqYyE
- /lkA9fw7t0eYeWF5z2A486t/634lalco5f9VIum4M3sfVdW9ikTOt0KaUvuJrZIapAAAA
-X-Change-ID: 20250222-fp3-display-b79cb339e65b
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1333; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=nR6hbYFkUCK7cDGEqRMA6HXEwebdg5p8Ni/y5RZ8urg=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnvjLArkbrqXjAPVx7+znIk3YYPUv79ruiJ0V6b
- TX4iCQIZPKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ74ywAAKCRBy2EO4nU3X
- VugzD/9O7r+tOdJPcuS2PL50nLO9kIANHsyzPjubgmIHTZYzi8WWmCeCutjLBicUZVBqoRBXw6m
- lkJEUESiWUCGWRziJjn0HThCbh2RPESdAM6Yey5v9y+LZQMNrrs2RqqbCIwMEtFyTuDBwjZI4zi
- Erj0ZTGOr8fynA5/Pno9zyo0r/VXjkEhkrUZfinI2Vya53ug3iww5vK/BntEC4YHTxboxUQLBGZ
- k2tVybx1mNglwySxWWs+Sy4lKzMBuAqQdpM/wUgx11EW2CtbCCRe0xek/Dsuqn1caTDxc6NkSsF
- qjdT7ZQjRXqAUgwjG4YQn8Cc69xaif8lz89MKSX66RB+yBaFVdrmBHj3qxDSNyFFfhEtLIf7FmE
- nSdPEYuTI/iVajWjofAzJ5nLjNBEEPyYBHxWge5+KeWOfV7Lj2fxCdy6hDKrMbvHOHCBCkeXm72
- F2VVFuXu6RGbOg7HkSjtX2bJ3DnYrRL6Eu6G1XscrWROhFk4+x1R5qPnu1YAdGrB4ESbK3CeQel
- oSOKjqNnG6niahxbNzTIWv8kUj8Pd/Muy7v0J70TuoDiGqsYj8voy6QEKGhmEtkvpD3rvnigc33
- p2VrUkyEUVaC/mUKeq26XKTU4aUe73NCebhaDKtc9yMnQIep5G+liKzkO7hUw3v1MlL/HFsOfJM
- kK1vndaWpbQua7w==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com> <20250225105907.845347-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250225105907.845347-5-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Feb 2025 21:14:28 +0000
+X-Gm-Features: AQ5f1JpFrcLSR2PdWwsq0IaFGDrBnxPMoaqIzSsoFrcOvJ3nNscVLCVZEzeeiPI
+Message-ID: <CA+V-a8sX4TwV=7rr17_fhaYKQr2cB6nScFgydqdTmb2jVBqaRg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] phy: renesas: rcar-gen3-usb2: Assert PLL reset on
+ PHY power off
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org, 
+	horms+renesas@verge.net.au, fabrizio.castro.jz@renesas.com, 
+	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a driver for the HX83112B-based panel, and enable it on Fairphone 3
-to enable display output, and enable GPU as well.
+On Tue, Feb 25, 2025 at 11:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Assert PLL reset on PHY power off. This saves power.
+>
+> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver=
+")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - collected tags
+> - add an empty line after definition of val to get rid of
+>   the checkpatch.pl warning
+>
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
-Changes in v2:
-- Change compatible to "djn,98-03057-6598b-i" based on other docs I
-  found
-- Pick up tags
-- Link to v1: https://lore.kernel.org/r/20250222-fp3-display-v1-0-ccd812e16952@lucaweiss.eu
+Cheers,
+Prabhakar
 
----
-Luca Weiss (4):
-      dt-bindings: vendor-prefixes: document Shenzhen DJN Optronics Technology
-      dt-bindings: display: panel: Add Himax HX83112B
-      drm/panel: Add driver for DJN HX83112B LCD panel
-      arm64: dts: qcom: sdm632-fairphone-fp3: Enable display and GPU
-
- .../bindings/display/panel/himax,hx83112b.yaml     |  75 ++++
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- arch/arm64/boot/dts/qcom/msm8953.dtsi              |   2 +-
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts  |  62 +++
- drivers/gpu/drm/panel/Kconfig                      |  10 +
- drivers/gpu/drm/panel/Makefile                     |   1 +
- drivers/gpu/drm/panel/panel-himax-hx83112b.c       | 430 +++++++++++++++++++++
- 7 files changed, 581 insertions(+), 1 deletion(-)
----
-base-commit: 197aed880d4de2127c80c389ec62601b7d837351
-change-id: 20250222-fp3-display-b79cb339e65b
-
-Best regards,
--- 
-Luca Weiss <luca@lucaweiss.eu>
-
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+> index 5c0ceba09b67..21cf14ea3437 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -537,9 +537,17 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *=
+p)
+>         struct rcar_gen3_chan *channel =3D rphy->ch;
+>         int ret =3D 0;
+>
+> -       scoped_guard(spinlock_irqsave, &channel->lock)
+> +       scoped_guard(spinlock_irqsave, &channel->lock) {
+>                 rphy->powered =3D false;
+>
+> +               if (rcar_gen3_are_all_rphys_power_off(channel)) {
+> +                       u32 val =3D readl(channel->base + USB2_USBCTR);
+> +
+> +                       val |=3D USB2_USBCTR_PLL_RST;
+> +                       writel(val, channel->base + USB2_USBCTR);
+> +               }
+> +       }
+> +
+>         if (channel->vbus)
+>                 ret =3D regulator_disable(channel->vbus);
+>
+> --
+> 2.43.0
+>
+>
 
