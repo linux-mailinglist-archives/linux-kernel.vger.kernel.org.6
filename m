@@ -1,107 +1,199 @@
-Return-Path: <linux-kernel+bounces-531477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79694A44118
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09667A44101
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FE8F16A8F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA052188FD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BEA26981E;
-	Tue, 25 Feb 2025 13:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A726983E;
+	Tue, 25 Feb 2025 13:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4Ds20wG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c45E3FOn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC086268FF8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B27026772D;
+	Tue, 25 Feb 2025 13:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490521; cv=none; b=f6+TPbFH25EKtV4B7KUd+8XWTjnqQk62N14aX9sGFjmFLkgLITP2nxILF7n/NW2/PZAzm1f6GHmADwSK6M8sCsgquEQ7jV7Y75BnQVHMzRfyr8IwABkexe3n/uzjJCG2OIMIp3GiaQTyBwUJvwoEhQ5w/X0KwiugZ0+3h1Pzyvw=
+	t=1740490544; cv=none; b=nu+9S6+yCPW/4pg/DLunl4Tdxy7raZQL54rKeqoaJdHw9bgtcfaipsgtWNTmr5JUbgMlY8ZD7oHnYkrRud5nPHZM3Fbt/GZtqWvgTysfb5hfRBdDy8bZeW80jX4PwkTqtgPmkpR+Xs4T9Au0pFHJkwVgLSaBetg1o8AvazH+juQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490521; c=relaxed/simple;
-	bh=vpWPcNVLmkBSbC5ElRatTgDIB7BIfVf5XaBoa9gZcN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2BiZTYy2U7k8FrZH1zxNZx3AKYsjGefAhRXnzNukQv6TuQON3cJI85a/+2BoClPFGwhcB+IvgeO3/z8uUd6cFS6j7ymHVgK8lN70861W8Hqh3XAw9WH2BfeRBg5lDKac/HVLluTAtvum84n3K3BqnGstDz2MZtvq6E+QseLNTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4Ds20wG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4434AC4CEDD;
-	Tue, 25 Feb 2025 13:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740490521;
-	bh=vpWPcNVLmkBSbC5ElRatTgDIB7BIfVf5XaBoa9gZcN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q4Ds20wGywnswOj7inuhX6Uc5uieTRA9OUPyOCP3zN0n03DHgD5xjrKjQnf9dR9sP
-	 IbpDBbT7+8cGbYJDOCCxXpOmnY1XMrLpH+7dUWJ3Q6oQx1tyUzyGQQld9vdSo6OCdT
-	 PUg6nPgQwtB2LWKqLBufE8uW6t7O4U9/WJuuvQFTQ7heMtko/2Q0BC0hM2gGMvcsSW
-	 BYYSYf9XbNbEmMPeCyPJhfa4ZUwT0auOQJ0GTbN1XmvV1I2Sp84klIj1p9OW5P1LJy
-	 L9jrrUGV+o39UdYEX0oJaOOhSxjl4V55b1RPwB/pb3rGHq/xm3/3+3HjcVRfVMskU2
-	 sRp5l6R8b0HaA==
-Date: Tue, 25 Feb 2025 14:35:10 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/mtrr: Remove unnecessary strlen() in mtrr_write()
-Message-ID: <Z73HDk9p2P_Zigu2@gmail.com>
-References: <20250225131621.329699-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740490544; c=relaxed/simple;
+	bh=ucXOOXen6EfBi1st8qEzQiNdZQ9t1hTv+Day5P0J/ko=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y3XoDrau+bMdkWIbEoqaBJPiFurHElEg4zvIvf3QfiZx5ETJePY1uwcDI1Zi66I2mc1xPPmSsiUcG0CLvORgwXKuyEaf3pvskPLwUA7cbXPxyU5jJ1/bSbiBpnHqeo6qdaow2BqyPh71k0r7ArPNs+yszdnYDv+YGE0azCihyLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c45E3FOn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so4058609f8f.0;
+        Tue, 25 Feb 2025 05:35:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740490540; x=1741095340; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tnPmEicx+PRAtzm6pe4Eno9ZF32qRgxFaSmqT4meCGw=;
+        b=c45E3FOn7uIwmzIAun9trZ3S+jvnEcc5Yt0tc5++jIknqFnCQSyQUxTiF176WYfXAg
+         kTYAjAKsckLHMuJASup+Cvtc/cu9H+mrNgWZDZPGCq0eEvOjAqCHr2KLzGXt3FITHquY
+         G2/fRJhp5XTrFX5szkcP3cg3csnQl5b6kT7hoe6iYMwREvOFA0F8xdUPMYVRdT2CNvmH
+         hIvUMNyQ0k5sWw1tzrMF2g67gdkWz4JeijesSOCbOrEtSn6MLU4bb4huEqSu3LWo0Elf
+         rSsoQPtDkZLF0zsrWlVFEDGetzPyO+td82OhmCmInxwHco8ZZWNQSGqFRpf44cGvuXFm
+         KHCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740490540; x=1741095340;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnPmEicx+PRAtzm6pe4Eno9ZF32qRgxFaSmqT4meCGw=;
+        b=ZyJq/PeOexZMCUmr3HWdtLf8YbTJbp5LqO11Ez/2vh1pT+KEqvjlLry9PgfwXtA2jO
+         IpdgdOA/Cm2gmp9cG5CeGuBT16T6AgBWeHNHi4gfhTr6/4Pfq0IVfEEjZwH7w6KZR7w8
+         bocGCshzKPC1Ffj6eecv8aKBYrFcEDpk2m8Zc9tjfJcKKypUizzlzyh6U4ktJMj7QBKT
+         iYKUOMYcnNjNbkfQcu5buModQpiWqrv/5k5mqgCHyRx+8tT9mWDWCq5sA/D9wyhNd6RY
+         l8KG4aozHWP/8rT22KprARinmpqe3tg3m8j8Sj18RJNv9ADlRICs8s0NuRcMUlqe7LQ2
+         wPEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmA7AHSkxuwjCYIGBsghL9ejM+Z03G5nSkqkbt8jl91Wn1C5f4htVro+BhWDR+TNx4nPs=@vger.kernel.org, AJvYcCVyJQvnXVyQY58RFcMp/rfQ/LKO6BHRhSKvCMJWXpwvGZe5Yi4g5vabXKDImKIz4+aNdjJO/2Wg060n0wPv@vger.kernel.org, AJvYcCX3LHig6HX84PwxddqatUW6u4oo4Dsc5PIUjlf72OlqI4LsDikn5iRmYBfmH4X88FRXAwTNtpHZqgq4SoeUyqzoE4bR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxftJHv2DEye53ZCv77rS+f+PDVln7i6peyGcYla5DanzSC+kTO
+	67EjvcXdVjn1POz1MJKMPt82I77Q7hoejgFmjlJlG9oUZz+/rIff
+X-Gm-Gg: ASbGncueQ1ulaxMQxMiMQGhZEgDR0d7sI6lMO76UfMSZqwRPh/Oj0sHa4CJ//y+a9MC
+	2EETSGcK/Ey6t/FQQhucZ0QbF9LTd3gddKZntF2a24xJac8l/gIQCCG1453v9M82VTO3rcqrhWv
+	TpFmRGjl6cmdAhmfl+6Z0kIo0p9ocjlhX0FkIUH4So5syErmwGJK8dsRvHw71iv4uz1TO+SNg2e
+	UR5t1dsgfHrDW2wfC9wytQJZk3dJoqi4d/VFNoFUCSUWUCLyWkDTyO1q2/ms7MKsWEA1kqmpoqC
+	PzFIoe6qXqotGkkr6Qs=
+X-Google-Smtp-Source: AGHT+IHycTtTcXq7MrkPyPlqMfLwfA3JqA0emRZEu9JW7bvsTOpXwu9WBSiB5eInJrlK4691Xip5Mg==
+X-Received: by 2002:a5d:6d8f:0:b0:38f:2111:f5ac with SMTP id ffacd0b85a97d-38f707b0941mr14871078f8f.31.1740490539972;
+        Tue, 25 Feb 2025 05:35:39 -0800 (PST)
+Received: from krava ([2a00:102a:5013:7b7d:132e:7dd4:845b:548e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c992sm2294723f8f.27.2025.02.25.05.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:35:39 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 25 Feb 2025 14:35:36 +0100
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Subject: Re: [PATCH RFCv2 08/18] uprobes/x86: Add uprobe syscall to speed up
+ uprobe
+Message-ID: <Z73HDU5IZ5NV3BtM@krava>
+References: <20250224140151.667679-1-jolsa@kernel.org>
+ <20250224140151.667679-9-jolsa@kernel.org>
+ <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250225131621.329699-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com>
 
-
-* Thorsten Blum <thorsten.blum@linux.dev> wrote:
-
-> The local variable length already holds the string length after calling
-> strncpy_from_user(). Using another local variable linlen and calling
-> strlen() is therefore unnecessary and can be removed. Remove linlen
-> and strlen() and use length instead.
+On Mon, Feb 24, 2025 at 11:22:42AM -0800, Alexei Starovoitov wrote:
+> On Mon, Feb 24, 2025 at 6:08 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > +SYSCALL_DEFINE0(uprobe)
+> > +{
+> > +       struct pt_regs *regs = task_pt_regs(current);
+> > +       unsigned long bp_vaddr;
+> > +       int err;
+> > +
+> > +       err = copy_from_user(&bp_vaddr, (void __user *)regs->sp + 3*8, sizeof(bp_vaddr));
+> > +       if (err) {
+> > +               force_sig(SIGILL);
+> > +               return -1;
+> > +       }
+> > +
+> > +       /* Allow execution only from uprobe trampolines. */
+> > +       if (!in_uprobe_trampoline(regs->ip)) {
+> > +               force_sig(SIGILL);
+> > +               return -1;
+> > +       }
+> > +
+> > +       handle_syscall_uprobe(regs, bp_vaddr - 5);
+> > +       return 0;
+> > +}
+> > +
+> > +asm (
+> > +       ".pushsection .rodata\n"
+> > +       ".balign " __stringify(PAGE_SIZE) "\n"
+> > +       "uprobe_trampoline_entry:\n"
+> > +       "endbr64\n"
 > 
-> Compile-tested only.
+> why endbr is there?
+> The trampoline is called with a direct call.
+
+ok, that's wrong, will remove that
+
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/x86/kernel/cpu/mtrr/if.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> > +       "push %rcx\n"
+> > +       "push %r11\n"
+> > +       "push %rax\n"
+> > +       "movq $" __stringify(__NR_uprobe) ", %rax\n"
 > 
-> diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
-> index a5c506f6da7f..4049235b1bfe 100644
-> --- a/arch/x86/kernel/cpu/mtrr/if.c
-> +++ b/arch/x86/kernel/cpu/mtrr/if.c
-> @@ -99,7 +99,6 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
->  	char *ptr;
->  	char line[LINE_SIZE];
->  	int length;
-> -	size_t linelen;
->  
->  	memset(line, 0, LINE_SIZE);
->  
-> @@ -108,9 +107,8 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
->  	if (length < 0)
->  		return length;
->  
-> -	linelen = strlen(line);
-> -	ptr = line + linelen - 1;
-> -	if (linelen && *ptr == '\n')
-> +	ptr = line + length - 1;
-> +	if (length && *ptr == '\n')
->  		*ptr = '\0';
+> To avoid introducing a new syscall for a very similar operation
+> can we disambiguate uprobe vs uretprobe via %rdi or
+> some other way?
+> imo not too late to change uretprobe api.
+> Maybe it was discussed already.
 
-I see no corner-case analysis in the changelog about what may happen if 
-the copy fails partially.
+yes, I recall discussing that early during uretprobe work with the decision to
+have separate syscalls for each uprobe and uretprobe.. however wrt recent seccomp
+changes, it might be easier just to add argument to uretprobe syscall to handle
+uprobe
 
-Thanks,
+too bad it's not the other way around.. uprobe syscall with argument to do uretprobe
+would sound better
 
-	Ingo
+> 
+> > +       "syscall\n"
+> > +       "pop %rax\n"
+> > +       "pop %r11\n"
+> > +       "pop %rcx\n"
+> > +       "ret\n"
+> 
+> In later patches I see nop5 is replaced with a call to
+> uprobe_trampoline_entry, but which part saves
+> rdi and other regs?
+> Compiler doesn't automatically spill/fill around USDT's nop/nop5.
+> Selftest is doing:
+> +__naked noinline void uprobe_test(void)
+> so just lucky ?
+
+if you mean registers that would carry usdt arguments, ebpf programs
+access those based on assembler operand string stored in usdt record:
+
+  stapsdt              0x00000048       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: test
+    Name: usdt3
+    Location: 0x0000000000712f2f, Base: 0x0000000002f516b0, Semaphore: 0x0000000003348ec2
+->  Arguments: -4@-1192(%rbp) -8@-1200(%rbp) 8@%rax
+
+it's up to bpf program to know which register(+offset) to access, libbpf have all
+this logic hidden behind usdt_manager_attach_usdt and bpf_usdt_arg bpf call
+
+the trampoline only saves rcx/r11/rax, because they are changed by syscall instruction
+
+but actually I forgot to load these saved values (of rcx/r11/rax) and rsp into regs that
+are passed to ebpf program, (like we do in uretprobe syscall) will fix that in next version
+
+I'll add tests for optimized usdt with more arguments
+
+thanks,
+jirka
 
