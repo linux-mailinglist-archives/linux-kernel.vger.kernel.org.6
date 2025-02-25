@@ -1,269 +1,196 @@
-Return-Path: <linux-kernel+bounces-531211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D205BA43DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:31:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68CDA43EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F883A4440
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973593A08A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E822C267731;
-	Tue, 25 Feb 2025 11:28:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF30919259E;
-	Tue, 25 Feb 2025 11:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981DE20D4F4;
+	Tue, 25 Feb 2025 12:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sSysr4Xe"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AD71C861B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482929; cv=none; b=I5xUwoj0+YmVr9YIPJS0iEm/aEXi7Ge26XJ2Qj+oG4zPMgwIGMrSOKRQpMpCQO8bivISo4M+UWn3776RU06wHa9drttpS95iLg5caUpfwaYX73O42NLThNqy8IO57xSuc6AetWp6p6P751+GjKL9o/2z/eFGhuHksFDhQckKx4Q=
+	t=1740485475; cv=none; b=QYDlu+GVhc+vTAQZp4gjkNl3GbUvjfdsvaTmGHFjtgRshMT0791o/Mevff7+23yNiS4DdYgnKl/mZL+FkhKlMzyv1d1IdAoPRiQmkKk/73mrXA3k8ECGH//GIMblCVk9hxcmjzwvI9SO+C/8jhR2GeMNGHPJ65LLVck010HOzfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482929; c=relaxed/simple;
-	bh=4N4sE1FmHGRGYMUMbzc2iDZq6cPiV731uxTPKSJWtQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyC0xCTUsOZw02M8rStvWNnoRfp2N6mJtOB1kyIm/8Zicy0+hobo6WaK4sPcbA2SlyY+ygI1xqoUR/nnThctjKbjR3Y9jozTp6/ffmMiP3sTWhqq3od4JTmaaEj7EuNekIyOuEzMuSH+zosgQMa6wrtrSes7xb2QaO7DSX3BW7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A19BD1516;
-	Tue, 25 Feb 2025 03:29:03 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24A463F673;
-	Tue, 25 Feb 2025 03:28:45 -0800 (PST)
-Date: Tue, 25 Feb 2025 11:28:42 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 6/7] firmware: imx: Add i.MX95 SCMI CPU driver
-Message-ID: <Z72paopAu67kQCBC@pluto>
-References: <20250212-imx-lmm-cpu-v2-0-3aee005968c1@nxp.com>
- <20250212-imx-lmm-cpu-v2-6-3aee005968c1@nxp.com>
+	s=arc-20240116; t=1740485475; c=relaxed/simple;
+	bh=mupDgIFSB428VsZ0r0Qf+AsjIPxgiJGMc8QIwD0RPb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=u6rA+sZ+aTWJQyJPp453yQ+kqlyz6EiIggMpX/MmIomBVX+jt59vxrOPhcK/FE6U1FR+bvgTETEKAofzNU91tWB/FKpOPnBD6TzX8k3mhIeFDDim0CERIKgae2XClJiJyzZA1OpfLMgtNMKMOmN5B5VTb8FxSj4nJH+16s+oqXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sSysr4Xe; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250225121111epoutp0171cbc4bcbf861ff669a782a315cbe6c3~nclCSGXPh0780707807epoutp01L
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:11:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250225121111epoutp0171cbc4bcbf861ff669a782a315cbe6c3~nclCSGXPh0780707807epoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740485471;
+	bh=RcQbcIRPhgbrGNK3mt3Ax8w0cEnsBxoR5jzT9YjIjIY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=sSysr4Xe6XXkvuCGVJ4RxOeIlK8e336x9x6MLX5/UmJf/7uL8rRJRBbxFhQOmxe+b
+	 5pepSservRPa42+zGa344Cti/LJFwKJDk3rgcx0h96as+W8rWThQ3Fed1EfmlHfhXb
+	 QhaSyg9gxcj83ksQr9PK1+JHzg/YOP4bx2xlOpWU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250225121111epcas5p47c4908e94c88acfb74dbcdcef5417044~nclCD_MUp1149311493epcas5p4y;
+	Tue, 25 Feb 2025 12:11:11 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z2GfP4m4jz4x9Pw; Tue, 25 Feb
+	2025 12:11:09 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	19.8E.19933.C53BDB76; Tue, 25 Feb 2025 21:11:08 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250225121108epcas5p21761527ebd3ed503904ae7684af06344~nck-YdcUy1274912749epcas5p2w;
+	Tue, 25 Feb 2025 12:11:08 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250225121108epsmtrp2e5c5da0b405c74d3dbd9aa3ccef555ab~nck-XioJJ0170301703epsmtrp2M;
+	Tue, 25 Feb 2025 12:11:08 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-9a-67bdb35c9228
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	44.0F.23488.C53BDB76; Tue, 25 Feb 2025 21:11:08 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.6]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250225121106epsmtip1c2363ee1e5c923b84e0fc2dc8438dc03~nck_IkAmQ0342503425epsmtip1b;
+	Tue, 25 Feb 2025 12:11:06 +0000 (GMT)
+From: Anindya Sundar Gayen <anindya.sg@samsung.com>
+To: andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+Subject: [PATCH] i2c-algo-bit: Improve sendbytes() with bus recovery
+Date: Tue, 25 Feb 2025 16:58:50 +0530
+Message-Id: <20250225112850.10057-1-anindya.sg@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7bCmhm7M5r3pBtdu6Fjc/9rBaHFo81Z2
+	i46/XxgtLu+aw2axaOsXdgdWj02rOtk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91W
+	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+	I7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtjzQWRgo+CFWv7zzM2MK7m62Jk
+	55AQMJHos+5i5OIQEtjNKPHxzHE2COcTo8Ts/b2MEM43Rom79zazdzFygjUc2/WeBSKxl1Hi
+	2q/fUC3NTBJtK2exdjFycLAJGEu0PagEaRARCJH41rOfEcRmFjCTmHn3NAuILSzgInG74QQb
+	SDmLgKrEhTnJIGFeAWuJbXdvMUPskpdYveEAM8h4CYF+don5y2YxQiRcJG7tnQplC0u8Or4F
+	6jgpic/v9oLNlBDIl1hyNhsinCNxYPkDJgjbXuLAlTksICXMApoS63fpQ1zGJ9H7+wkTRCev
+	REebEISpIjGxgwVm9uwfO6AO85Bovd8PtlNIIFZi/c5lzBMYZWYhzFzAyLiKUTK1oDg3PbXY
+	tMAoL7UcHivJ+bmbGMHJRstrB+PDBx/0DjEycTAeYpTgYFYS4eXM3JMuxJuSWFmVWpQfX1Sa
+	k1p8iNEUGEYTmaVEk/OB6S6vJN7QxNLAxMzMzMTS2MxQSZy3eWdLupBAemJJanZqakFqEUwf
+	EwenVANTTdC9nyr3fnIqu6mW9i/8oXlSO8drBnN6/rqpETWzV046Kqt0zoGRT3dtRHhh3M9H
+	sns/nPN6tiyo/NOiH0HpV1nnax+fVcL/a0Gibfu6xQq86WaFHSpqK474Lp/6fo5/+fb6S89e
+	iTYcj/vidv3sZP4n5z5ZqbjzrnW7XNEqpbnccmXijmyXZqHoiIenF/xay//7ZyFXz8ys13Jl
+	8TOTg1+s3+3Ht0cu0un3b9Pn7xoMjW7bRZRoTKmKLaqW/5PyQVJ7s9+MSI3gTjOJT6x8lzpf
+	l1fecN2rpb4igLXuWlp77uZ5bUtUpXq175+I6WPaZJ1nLx1U1zs5R3HGorlKp9keCmRnONo8
+	T+LnuaDEUpyRaKjFXFScCABNpo3mvwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJMWRmVeSWpSXmKPExsWy7bCSnG7M5r3pBi3LuS3uf+1gtDi0eSu7
+	RcffL4wWl3fNYbNYtPULuwOrx6ZVnWwefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlbHmgkjB
+	R8GKtf3nGRsYV/N1MXJySAiYSBzb9Z6li5GLQ0hgN6PEulfbWCESUhK3/3cyQtjCEiv/PWeH
+	KGpkkri7eAGQw8HBJmAs0fagEsQUEQiT+LxJB6ScWcBCYuWWg8wgtrCAi8TthhNsICUsAqoS
+	F+Ykg4R5Bawltt29xQwxXV5i9YYDzBMYeRYwMqxilEwtKM5Nz002LDDMSy3XK07MLS7NS9dL
+	zs/dxAgOCy2NHYzvvjXpH2Jk4mA8xCjBwawkwsuZuSddiDclsbIqtSg/vqg0J7X4EKM0B4uS
+	OO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA5NZLy9/S8K/459fX/mhnpuscs31+57L0mu08kz2
+	vpx8q+2Fm0e9+qRDC+Rs21jWf7t5/tDUmUqvLp72Zos6GNodfedy5eTL1bfmFYQ0hGZ8Tj3/
+	p64lsE5jaaJi0c+/H0L2dxyzLkn4u2Ovxf3pFY4HNvtfO31LP7aQ9+6L3zML3ZfypCXxLzud
+	OUcsufuhD29DAquLhO0iricu3y8skF7NXJ1ooCWzK5eZo/HutGL16Qm/Z+aY3f73O4xlitHr
+	I87ywiGS0rnLm8qSLScs17k8+dSEBWcfbGew6Xoqf2DBq6xlwUtKRZ07oj4sWMmy88n7eEOt
+	ibP0gi61bbty+PX1nKKyF3y8TVn3fZz6ZuQpsRRnJBpqMRcVJwIAPS9uJnoCAAA=
+X-CMS-MailID: 20250225121108epcas5p21761527ebd3ed503904ae7684af06344
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250225121108epcas5p21761527ebd3ed503904ae7684af06344
+References: <CGME20250225121108epcas5p21761527ebd3ed503904ae7684af06344@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212-imx-lmm-cpu-v2-6-3aee005968c1@nxp.com>
 
-On Wed, Feb 12, 2025 at 03:40:28PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The i.MX95 System manager exports SCMI CPU protocol for linux to manage
-> cpu cores. The driver is to use the cpu Protocol interface to
-> start, stop a cpu cores (eg, M7).
-> 
+Earlier in i2c-algo-bit driver there was no bus recovery logic
+which will help to unlock the i2c bus hangs due to non-responsive
+slave.
 
-Hi,
+In this patch we are adding recover_bus() logic to handle bus
+lockups by toggling SCL 9 times and send stop bit. This helps
+release a stuck slave device by forcing it to reset and ensures
+proper bus recovery after an arbitration loss.
 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/firmware/imx/Kconfig    | 11 +++++
->  drivers/firmware/imx/Makefile   |  1 +
->  drivers/firmware/imx/sm-cpu.c   | 91 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/firmware/imx/sm.h | 29 +++++++++++++
->  4 files changed, 132 insertions(+)
-> 
-> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
-> index c3e344d6ecc645df1f0e3ee8078934c47f347fd7..91c753921dffbe16ced8c10565d44c15b66b2797 100644
-> --- a/drivers/firmware/imx/Kconfig
-> +++ b/drivers/firmware/imx/Kconfig
-> @@ -23,6 +23,17 @@ config IMX_SCU
->  	  This driver manages the IPC interface between host CPU and the
->  	  SCU firmware running on M4.
->  
-> +config IMX_SCMI_CPU_DRV
-> +	tristate "IMX SCMI CPU Protocol driver"
-> +	depends on IMX_SCMI_CPU_EXT || COMPILE_TEST
-> +	default y if ARCH_MXC
-> +	help
-> +	  The System Controller Management Interface firmware (SCMI FW) is
-> +	  a low-level system function which runs on a dedicated Cortex-M
-> +	  core that could provide cpu management features.
-> +
-> +	  This driver can also be built as a module.
-> +
->  config IMX_SCMI_LMM_DRV
->  	tristate "IMX SCMI LMM Protocol driver"
->  	depends on IMX_SCMI_LMM_EXT || COMPILE_TEST
-> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
-> index 7762855d2a771169d4f1867d27e0d51be7c9ad03..3bbaffa6e3478112638ed031375602389f18ef09 100644
-> --- a/drivers/firmware/imx/Makefile
-> +++ b/drivers/firmware/imx/Makefile
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
->  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
-> +obj-${CONFIG_IMX_SCMI_CPU_DRV}	+= sm-cpu.o
->  obj-${CONFIG_IMX_SCMI_MISC_DRV}	+= sm-misc.o
->  obj-${CONFIG_IMX_SCMI_LMM_DRV}	+= sm-lmm.o
-> diff --git a/drivers/firmware/imx/sm-cpu.c b/drivers/firmware/imx/sm-cpu.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1ce694a34b22843db5c1697ecb33c0479edb2ed9
-> --- /dev/null
-> +++ b/drivers/firmware/imx/sm-cpu.c
-> @@ -0,0 +1,91 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <linux/firmware/imx/sm.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/scmi_protocol.h>
-> +#include <linux/scmi_imx_protocol.h>
-> +
-> +static const struct scmi_imx_cpu_proto_ops *imx_cpu_ops;
-> +static struct scmi_protocol_handle *ph;
-> +
-> +int scmi_imx_cpu_reset_vector_set(u32 cpuid, u64 vector, bool start, bool boot,
-> +				  bool resume)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	return imx_cpu_ops->cpu_reset_vector_set(ph, cpuid, vector, start,
-> +						 boot, resume);
-> +}
-> +EXPORT_SYMBOL(scmi_imx_cpu_reset_vector_set);
-> +
-> +int scmi_imx_cpu_start(u32 cpuid)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	return imx_cpu_ops->cpu_start(ph, cpuid);
-> +};
-> +EXPORT_SYMBOL(scmi_imx_cpu_start);
-> +
+Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
+---
+ drivers/i2c/algos/i2c-algo-bit.c | 34 ++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
-...same as in LMM...this...
+diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+index eddf25b90ca8..4f74737e070b 100644
+--- a/drivers/i2c/algos/i2c-algo-bit.c
++++ b/drivers/i2c/algos/i2c-algo-bit.c
+@@ -29,7 +29,7 @@
+ #define bit_dbg(level, dev, format, args...) \
+ 	do {} while (0)
+ #endif /* DEBUG */
+-
++#define RETRY_PULSE_CNT 9
+ /* ----- global variables ---------------------------------------------	*/
+ 
+ static int bit_test;	/* see if the line-setting functions work	*/
+@@ -223,6 +223,27 @@ static int i2c_inb(struct i2c_adapter *i2c_adap)
+ 	return indata;
+ }
+ 
++static void recover_bus(struct i2c_algo_bit_data *adap)
++{
++	int i;
++
++	pr_warn("Attempting I2C bus recovery...\n");
++
++	/* Toggle SCL 9 times to attempt recovery */
++	for (i = 0; i < RETRY_PULSE_CNT; i++) {
++		sclhi(adap);
++		udelay(adap->udelay);
++		scllo(adap);
++		udelay(adap->udelay);
++	}
++
++	/* Generate a STOP condition */
++	i2c_stop(adap);
++	udelay(adap->udelay);
++
++	pr_warn("I2C bus recovery completed.\n");
++}
++
+ /*
+  * Sanity check for the adapter hardware - check the reaction of
+  * the bus lines only if it seems to be idle.
+@@ -248,7 +269,16 @@ static int test_bus(struct i2c_adapter *i2c_adap)
+ 	scl = adap->getscl ? getscl(adap) : 1;
+ 	if (!scl || !sda) {
+ 		pr_warn("%s: bus seems to be busy (scl=%d, sda=%d)\n", name, scl, sda);
+-		goto bailout;
++		recover_bus(adap);
++
++		/* Recheck bus status after recovery attempt */
++		sda =  adap->getsda ? getsda(adap) : 1;
++		scl =  adap->getscl ? getscl(adap) : 1;
++
++		if (!scl || !sda) {
++			pr_err("%s: bus recovery failed (scl=%d, sda=%d)\n", name, scl, sda);
++			goto bailout;
++		}
+ 	}
+ 
+ 	sdalo(adap);
+-- 
+2.17.1
 
-> +int scmi_imx_cpu_started(u32 cpuid, bool *started)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	if (!started)
-> +		return -EINVAL;
-> +
-> +	return imx_cpu_ops->cpu_started(ph, cpuid, started);
-> +};
-> +EXPORT_SYMBOL(scmi_imx_cpu_started);
-> +
-> +int scmi_imx_cpu_stop(u32 cpuid)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	return imx_cpu_ops->cpu_stop(ph, cpuid);
-> +};
-> +EXPORT_SYMBOL(scmi_imx_cpu_stop);
-> +
-
-...and this can be just one with ONLY one symbol exported...
-
-> +static int scmi_imx_cpu_probe(struct scmi_device *sdev)
-> +{
-> +	const struct scmi_handle *handle = sdev->handle;
-> +
-> +	if (!handle)
-> +		return -ENODEV;
-> +
-> +	if (imx_cpu_ops) {
-> +		dev_err(&sdev->dev, "sm cpu already initialized\n");
-> +		return -EEXIST;
-> +	}
-> +
-> +	imx_cpu_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_IMX_CPU, &ph);
-> +	if (IS_ERR(imx_cpu_ops))
-> +		return PTR_ERR(imx_cpu_ops);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct scmi_device_id scmi_id_table[] = {
-> +	{ SCMI_PROTOCOL_IMX_CPU, "imx-cpu" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-> +
-> +static struct scmi_driver scmi_imx_cpu_driver = {
-> +	.name = "scmi-imx-cpu",
-> +	.probe = scmi_imx_cpu_probe,
-> +	.id_table = scmi_id_table,
-> +};
-> +module_scmi_driver(scmi_imx_cpu_driver);
-> +
-> +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-> +MODULE_DESCRIPTION("IMX SM CPU driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/firmware/imx/sm.h b/include/linux/firmware/imx/sm.h
-> index e02b7b558afb6f430f6fbeeaf3ee1f59feea3c1b..0eff427e5ba2cb3f93c26f7d055c346a1d1433f0 100644
-> --- a/include/linux/firmware/imx/sm.h
-> +++ b/include/linux/firmware/imx/sm.h
-> @@ -21,6 +21,35 @@
->  int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);
->  int scmi_imx_misc_ctrl_set(u32 id, u32 val);
->  
-
-Same kind of heads up here too..
-
-> +#if IS_ENABLED(CONFIG_IMX_SCMI_CPU_DRV) || IS_ENABLED(CONFIG_COMPILE_TEST)
-> +int scmi_imx_cpu_start(u32 cpuid);
-> +int scmi_imx_cpu_started(u32 cpuid, bool *started);
-> +int scmi_imx_cpu_stop(u32 cpuid);
-> +int scmi_imx_cpu_reset_vector_set(u32 cpuid, u64 vector, bool start, bool boot,
-> +				  bool resume);
-> +#else
-> +static inline int scmi_imx_cpu_start(u32 cpuid)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int scmi_imx_cpu_started(u32 cpuid, bool *started)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int scmi_imx_cpu_stop(u32 cpuid)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int scmi_imx_cpu_reset_vector_set(u32 cpuid, u64 vector,
-> +						bool start, bool boot, bool resume)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
->  #if IS_ENABLED(CONFIG_IMX_SCMI_LMM_DRV) || IS_ENABLED(CONFIG_COMPILE_TEST)
->  int scmi_imx_lmm_boot(u32 lmid);
->  int scmi_imx_lmm_info(u32 lmid, struct scmi_imx_lmm_info *info);
-> 
-
-Other than this:
-
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
 
