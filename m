@@ -1,210 +1,325 @@
-Return-Path: <linux-kernel+bounces-532478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1191AA44E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11098A44E52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC097AB2E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582EB188820D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC71212FAA;
-	Tue, 25 Feb 2025 21:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7976213E8D;
+	Tue, 25 Feb 2025 21:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0OtJOAnf"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2067.outbound.protection.outlook.com [40.107.96.67])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BWSE2bIz"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC331ACED7;
-	Tue, 25 Feb 2025 21:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A21A7044;
+	Tue, 25 Feb 2025 21:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517344; cv=fail; b=VIMSvH9ELhQUFkMua/lNEDI0Wsn56Eh41hkUNysV1V6L55s6JPVmoy98K0oC2dOYJej+tHthzppU7mbNwwZBrmkLmqcp+1L2L0NhL1heIakYgzl3sA051W+EZE3FS46dUieTQ3S1BeJRK6adimn2WE7l+7vCWoTjbhiCVhGYxic=
+	t=1740517354; cv=fail; b=k6R8zvTERu5Xe5ksoyuuUC+QeaHCsoTdRlW/pEfiVZiE6PZyX9yfk1VrY0YG6Rtt4KNhVPGyU2SyxOO7ETZef4EtxGUmGiSkwOIkQzqlriICbOg9JAIeRQyADZbQOa4CYgXERQUwXNYavM1+KAxHOS6gXycbR6ua+EWNgWrY/Eo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517344; c=relaxed/simple;
-	bh=p0BgXyh+NOtBXF5xbIBRRyWoW75l4NOMwGMQj6OYf1g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I8MyFmvQKdUp5gbhPrQZXnkYd1JkwexSjsTqNd99Cm1VQOrYnNbAwHINWJVJd/TBfgXHtk7OuGt/dCIjghqUGXQrN3I5DXN0+bd6V5cluXrWQf0qrSTEbwr61nNDvaFuvVD5UMC4kkpd9tzu4F6mQ/D2a1x2BNXIhXsAf68KKfc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0OtJOAnf; arc=fail smtp.client-ip=40.107.96.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1740517354; c=relaxed/simple;
+	bh=yiF+euSSgVpwSVcmzAa0AdR6IM/quVR92dSDbmgFlpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eDjfXVd+iuNDaHxQx0jxInlWdTOebso8d+InFUOghyn0/sFIMsVwNm1S9qHrVvnswz0Zltg6VVMLnIx5tGx434BIrBlNeN5U/iupcb81Ln3sqwQPi6whl9Z2LU7FN/xMyeHknHDEwn9kpS+DsSlKJJDFsSCQSVjYSZyJTNIjYA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BWSE2bIz; arc=fail smtp.client-ip=40.107.94.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wLwQRKqAwDzo4vpfL2FwGE6zuNfLV/sYzWCj33A56H8Y2ENYzFDmot/aCGEU5pHCKCB0xSTbWUo6YFwJumZ+uqa8bCpE2f0bS8l6pCRbAd5/NYwM269Q92JyvbU15IVS3h2iLRfPs+gfg4llMB+V2xWcnL0LlKTtS70n8mTGNXVZu4mL6XZfSJAlscIgJkvm2ZNwa+Z/CfEULoLcYP75UdnkZ9AYx8Foio15Z+9xurBN61trb2SeS3i4ut9p3GVuVWXQQACz/vA2H3BicZsg4izcQ4HEDyB7rD8YZglLAzx/HvO/d1DgBiLVByQf03ysr577SOWgRXatfLbn13M+OQ==
+ b=fP82h7LcEhOpr4wX8dnDanYiCBPNqL96GZFbbmB3v9GffM6stfxPbkkNd7InFbL6aLaoG3aUg4lQeaoRweL0yfyxqFnuhOo/OIif4T952YcldIxeP1p8SIDI4uUxV/fWXoaV7Uwr3A3uVq1OIXp7i7zOVTMV0gSPLQ9vC+QEWdxlOTXHidOqnCAGNis4BLt/1/Hih0AcOhERMRBNFleXpzbW4kz33rDJE7Z9Vz2K/kXzstWR4qBijnj6MLwB3KBrJLA/SvfpnGREHorb7O+GsoXkEK1oqvPXAqha+HeGDdlL0aItvUTQU6JlCBXgZUL3sGXZOFdC4mFzQe0O6JDtpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SiulrPXwQOQQq5n5DhfafszW8wKDlwGwHkJVWNgxFpE=;
- b=qgMIXi9Y/nLmZz8x1/siag3dyHL6I7x5JmQsGOePOecOe3P/eQ9d9IO+e3nuTTfzNvZmjiGhYx8hs/30HXac1jlkZVGsL8dgexFrVGrA9CF1n30RflPl2XI76ChaIpa0SOFopZstHNFL31CH/j0t9xuc+36P6behzoDiw2+RugQ3QL9Op1w4oIXxp5oekkG1uhFdhZ65PamcZAJtVOauHU/gDicpO5GDoKZ1mLEaMo0YGfqAe2vyIz92nez524Aaf09xRBCfdO0SCwcmpKurkYUBk/N8xY+GMb+AUODAPtB6Y9YK+U+FUEYCb3hr8N1/eFlDkM0aFBSulvP4t8YWEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=T/JDlv985s7SMkDyrawNWQM/qQ+AzbeSVAc0b7mQ9Bo=;
+ b=aZaWmBKOVuMT8Ju/mQc1eMU8oYi3idxFRQ2Rx4IOiozbKB5f12+88DfSZ0pET+fFeeRPFOnkjy2QFs5vChnb5aI1rm7jS4zj+b/pnu1Pg1AfSqbNbEuOPe7slVZKw3DVQ085juOswv6P9PfLiynAUq50VaTzB87TFaMq1B6WmpTn6vJPBrLHGoXg8V/uq/UReTBFFWTKOgYEJAO12z8ttWA0NgH4r4grMD7uLMhM1lL/wiv8pT7Oq4g5nrejYUgA6f0KKPXsLjztfxtJVUylJPkjPBpidmMnvGAZ7rk6o8LYCKM4IR55yDNDaqCv+ycOlTDcXZnkCL7NvRy0D5bNDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SiulrPXwQOQQq5n5DhfafszW8wKDlwGwHkJVWNgxFpE=;
- b=0OtJOAnf5TfYJROXJ0C4sprtt48J0PHm/h2a5uimZ7xDNuEKMbsf9J04wvJJ+6+wgXWZ822dprTtxlB5Udq1F0Ed8Zp5EmCrT8n9T3eArFDeo2pW9Ab/RwVzPt4x7T+C/pdOkNEa3D5NzR5PzNZm0PiN6D/VYiQxANsl/ZqpoJE=
-Received: from BN9P223CA0027.NAMP223.PROD.OUTLOOK.COM (2603:10b6:408:10b::32)
- by PH7PR12MB9075.namprd12.prod.outlook.com (2603:10b6:510:2f0::20) with
+ bh=T/JDlv985s7SMkDyrawNWQM/qQ+AzbeSVAc0b7mQ9Bo=;
+ b=BWSE2bIzzDUtgdfY3pTphBF8sBLZ/S81KStdV6Nezo9kEE003sDZXo5ihj8+RCLuAvX6CpkukRKel2bIUnLRUc4+bnMgKzvPv2w6IgzhoFXxBrt5b7CUv9giABmIaWiOg1DZ2kFON7xdmJ0iwXvRLOA4WMAIy/OffwcdydW+CsoBa3BJ5bvIIixTmsRZCDAN8AjzwXEtMimMQobbWmKyVC1kKLDnMC1/FuEzpHctJeljTFcqKhLsRnXfech566+P6Qb85mye1PE2qlmr/c9nXjR6LU4ESpgeSVQU49uZjc65INXWPW3HDr8h7oXIwi+nuzhgshdPUh91ksfVUMwTZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by DS0PR12MB8576.namprd12.prod.outlook.com (2603:10b6:8:165::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
- 2025 21:02:17 +0000
-Received: from BN1PEPF00006000.namprd05.prod.outlook.com
- (2603:10b6:408:10b:cafe::f8) by BN9P223CA0027.outlook.office365.com
- (2603:10b6:408:10b::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Tue,
- 25 Feb 2025 21:02:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00006000.mail.protection.outlook.com (10.167.243.232) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Tue, 25 Feb 2025 21:02:17 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 15:02:14 -0600
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <thomas.lendacky@amd.com>,
-	<john.allen@amd.com>, <herbert@gondor.apana.org.au>
-CC: <michael.roth@amd.com>, <dionnaglaze@google.com>, <nikunj@amd.com>,
-	<ardb@kernel.org>, <kevinloughlin@google.com>, <Neeraj.Upadhyay@amd.com>,
-	<aik@amd.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH v5 7/7] crypto: ccp: Move SEV/SNP Platform initialization to KVM
-Date: Tue, 25 Feb 2025 21:02:02 +0000
-Message-ID: <6c8dbb978e0785ee5a33165a9c43d555991fc505.1740512583.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1740512583.git.ashish.kalra@amd.com>
-References: <cover.1740512583.git.ashish.kalra@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 21:02:30 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 21:02:30 +0000
+Date: Tue, 25 Feb 2025 16:02:28 -0500
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250225210228.GA1801922@joelnvbox>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
+ <Z7xg8uArPlr2gQBU@pollux>
+ <Z7xh5bEyh_MII4WV@pollux>
+ <20250224184502.GA1599486@joelnvbox>
+ <Z70EcwNIX0KtWy36@cassiopeiae>
+ <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z73rP4secPlUMIoS@cassiopeiae>
+X-ClientProxiedBy: MN0PR02CA0006.namprd02.prod.outlook.com
+ (2603:10b6:208:530::24) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006000:EE_|PH7PR12MB9075:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6de0b60f-0e07-4158-ac0f-08dd55dfafbb
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS0PR12MB8576:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe9c7ef6-dd9e-4271-43e3-08dd55dfb75e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|7053199007|921020;
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9LqfDprtQ5lVTWs/tQ5c/N/fsC4YX8eZVq/IRLqHXZMdGTNvrjjoWj1bleI7?=
- =?us-ascii?Q?tkvrV0+X/9+I/5724t2jKTJ4jgMVXN0fxrwXcRbp1Ye12AedNpArc1tqfmjF?=
- =?us-ascii?Q?egR3Iz/DWUVY5d1HpQed1XTMyM/bD0UCJCci80dC0njJPJ1OxLqPhoKpkbmk?=
- =?us-ascii?Q?lei9UFks55Vw9inmojy+tNM57ahG5QA9FOL+Ln4oOrM8olOMVGmGFu+QMu5R?=
- =?us-ascii?Q?5EpmLqIFiX/cLU+b+TnVyjzfZsYR29Z3KAW5qJDV4GxfKGouTsN6o1DczCRq?=
- =?us-ascii?Q?eiRNwjh4JmXJwvgDzcVyCuVjTfmPeSiCZaoqpO/vwzduu6DQKveK+8HuT1Ng?=
- =?us-ascii?Q?YUq97mgNh0vReRxKUaTVHHgLafHVKDtW1qXATtG0wQ0pU+51kUdjgVnKURTS?=
- =?us-ascii?Q?yZOqJYukuu943mw2EoukUg2JuEBGVUDU14UhntaTZQlmDPm9mp2rgei2cjYA?=
- =?us-ascii?Q?gYZWKWYAI9V/s9mvcE7yDBZ2V8AzmOCzVUkFAk0WGiddKV7OVWX8Hi2Zqus8?=
- =?us-ascii?Q?DorVWPKhWeaoc33jjQ1H015OU6rn83JeNW2dJMhuvqqc0t+8LlD61pNimqZg?=
- =?us-ascii?Q?iFl6qLZcE5jwmNjfd44iK0fpaUn8Qhkb/Ge9FJrPN1ECskuq89N8pWgXE0nR?=
- =?us-ascii?Q?OVzVhvbmT/azu5GIhZofXmJ13bRCICI9PMB+Dw0hV9VRmGcIi0DCQw3NZ+ZW?=
- =?us-ascii?Q?p6AMo2aWU2tEGZI6pTHsutqCvodeg4xShbMphfV1iFnsihd0ef16p0Ar+ZjV?=
- =?us-ascii?Q?qthrVDZx93haFTRfNvPhebCbBOzNOFoY1YifvzSW0wtLOWyEYpFykVWQgdDD?=
- =?us-ascii?Q?XJRTqjbievvsFG+1muKAZsZl9NiXeE0361dxFsxRxe4obahBjPR4yxBIE98K?=
- =?us-ascii?Q?FWjm8uDICPIXrLk/EFrW+XGwH0DU5FncMVgeUeWuedICW6JAn4MJRUXfMcuR?=
- =?us-ascii?Q?Nfafu59YzCdhOILJndtH8ozqFN24WO7vmWco8YpfOYi/ReWYyaiyt7Lvz84L?=
- =?us-ascii?Q?aZDvUSl671G14froCK1RsdGsJXz9NWLfuk8LmfNj2Hmcockgtmm5sMFq8YT2?=
- =?us-ascii?Q?in3+8tez08CPy5lQbpzsfGV1gUKCodixYYoHxPNXVW5FeLBKnB2rE2IcwSlt?=
- =?us-ascii?Q?Vg5SUpY+QV9rJJysKeOSD1oSpyP154ePjgmyOrjVLnHmvIRpIg8YBXH7LdvD?=
- =?us-ascii?Q?Ghe5yctb/I+/VLiNynTnI2XwVDMu1AvREXKOcDfMjOd1mZKEOH9EP8NyaE3H?=
- =?us-ascii?Q?hEhNisXZXARvvmKaGtsxKqCYWPTIz6Lq0ixuWFGhgJ5G4NfvIXm683vVKM0Q?=
- =?us-ascii?Q?xIyRTjKZfxAxepmmitKzxxkgyrty8im+UmawsRJDkbmiqzwm9RDRX+QeK9zx?=
- =?us-ascii?Q?4WfDZJvgogi4imkLno+Hvkio6rzYwTmItn9ers4iHdeW9hXKpVvhgpyvbMdF?=
- =?us-ascii?Q?wGDH21bt/+U2DpnahBQwqkqkarSxDyIFo6LL4I1kdOZDpx6TQKhxsD3gBq7X?=
- =?us-ascii?Q?i7zXOWF1jiUIxM0Ms83dLAwwyLfA157FebIC?=
+	=?us-ascii?Q?cG13QlN2croAkAZi1497K3iB35kpgmV6DuyLPkCJ1KFTzcN9tbGiljMZO1jJ?=
+ =?us-ascii?Q?9gij6uD3XJXdwEJEMFhNjSOsybROu71PwB7/T+deB1wA0kFw4UbadDQs0khw?=
+ =?us-ascii?Q?F9zYcS1zpMAwmxpsWmf+j6T9rrJrpgr7J9fRuq7pXX5nRDQ6MtFgU4Nd6fzU?=
+ =?us-ascii?Q?Pg7keeAs5409xWB7VHMlA7GA+XH/4ZTl5BajdA7Y8s6ScaEBSEB3zu3TcYUm?=
+ =?us-ascii?Q?TFgM0MAQ7X55j4h3M+i6kfpxvf6y6ZcIUusaRitrwxNCv/SLRAa+EVEHfN96?=
+ =?us-ascii?Q?/OpYP3qvBJPPayv8QbAEV+sfQYCO20IwO0VeHI7iuV3aPPW79nD06RKZSk6c?=
+ =?us-ascii?Q?hu0tNWeje7Z9bQ44NXcY8o2WY4jrgywTZkXxhKxECqAZn/slEyhZtFdt9yFK?=
+ =?us-ascii?Q?VvnK5nkHu03kTK1ruhQJmAswKaelK5fKRsrZ6COCoQSU5c39do+/Y0TUCgWR?=
+ =?us-ascii?Q?b+u5hRE6lGDloH/W5Qyi99YcktgcQ5UU0Ol6gwOM8dWIT26YGdSxW8lU6LVx?=
+ =?us-ascii?Q?kdsGh+XEEK+Lk7Wt0CQyYmGydt5zPy1p/Db6vY/WwwWKCOwbEZ0Sy0httEqx?=
+ =?us-ascii?Q?dqdadOftcw+33ugfxvoX/K5dp1SM9xSYKblQeMWSEl6Nkw7FFfKRGCVzRIN2?=
+ =?us-ascii?Q?23mAI9JOUqHTy5/aL69ob603KTXqFOEsvqMxYDqgzu3yN8GYK4xzpLLVoc2Z?=
+ =?us-ascii?Q?C/GZ9X/Kg+LSesNZdgD1hOM52H/HRqmQBKo2oDuy0jjXqhG6OQ6jkb+cWido?=
+ =?us-ascii?Q?fFrdfzvNZYxdHH0J14Et1KXZW0quDm4qbm0AqdPZZ4SqJleSJV6Kh80TRI1C?=
+ =?us-ascii?Q?58wYwEZ7l/KIA0NnBe/i9NvzR0tFhLulhIwQ4+kOsVMVWU/AUKWLK1gXclHL?=
+ =?us-ascii?Q?cQHgk0umil8tNUfi6jtLXIe7rNQjrkv+bApX16MV3OyrbnfOz5psL24sHXn0?=
+ =?us-ascii?Q?P6r9PvnlY/dD4xCbTmZX9tJh/ssPi3OesJdspabSo3Sn+PQkwReNnfoddlmW?=
+ =?us-ascii?Q?gAhX4KdZxfrVAvshBxDkx8YGDvBozlsQFlckhmuyQH6G1Hvw1I77ILjMcIig?=
+ =?us-ascii?Q?F2xUrVJNRc6G9Rior9/Y0tBMFjCIzf6mCq+OZaWhAwjXgkLTcRs0UsaYFW/i?=
+ =?us-ascii?Q?F7lEGqrTVdbjwNb5tX/9Px4+2tOCVeS9Vk/fj+vtwCwHOUFEOq0TXfhTUzDi?=
+ =?us-ascii?Q?Bleqb3NRhOJVSSbAm9NVSFwTsWWL7fan/4/XRezPwSD4SukKRBb1Z/j+Hdm2?=
+ =?us-ascii?Q?wo2lq8vk13qIcUyf+rF1y4j/Fksr6CVhl92ci3G7D0FHSqJl2B242UPg+khb?=
+ =?us-ascii?Q?QW6vyOx3MWrqABhm7jczdOcEERFOJtX5C/J6g2iND4rF3+NZbHotwlsOTHdv?=
+ =?us-ascii?Q?PJGQySy7mhCAF1k9YNKq8Baz3yWu?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 21:02:17.0389
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lTz5Y6D+rvRIE9rB+SMu/NOTM83sKPNXHC5l3P2lHT5tZAFzXqYjv860Mcoc?=
+ =?us-ascii?Q?cNEMAzZVTCYKyDNIdxQx0+f4aYoQb/4f3feqU79U3QL9RSHiD6FoT9O0p3P1?=
+ =?us-ascii?Q?HyhfKc1uh5g7X4yK3RBz71DYwlfYgfsnKJ38n14/PtSZuX3igq5u1oqAzK4T?=
+ =?us-ascii?Q?Bf9RqA3xJBBn84QixJZwXIFt96AXwV5n3BJqDt57jBbm5BiQJJdH4hiwy1FE?=
+ =?us-ascii?Q?VSyBQjjiAphihyr93R4uV+plgxUef3+KTWjeemNdpslaNJLaz105vLJqhlfi?=
+ =?us-ascii?Q?6tRBaz0X/0sCCcJwxgqoYkZXskuSJz+CwaDvC/ga2TopEW2SH5q4dyIaL86J?=
+ =?us-ascii?Q?oSmqaK8zZtWgVxfVzK3cbQjbmF7WgiOCi/pHlIg0vRubc9f3vCxBIkhvexVJ?=
+ =?us-ascii?Q?FP8vDA0RBrL1wVMxy4DdKAQl7MoNqcHFdHR3166Gl+FTPAtLUktogO18e3c+?=
+ =?us-ascii?Q?61LPZhLijmJpTlngT7DF6noCZ6QhIsHNni7h/zTS0ByWva8mzjVILnlrRqEw?=
+ =?us-ascii?Q?UUC4OmHVq4msEn2bUlk5rtoQJ/O+iWHFTxfFW28jjyoS5GssLIzhKaXiAjFP?=
+ =?us-ascii?Q?fG28+iwLQsAfvxBBdXXWwEj603T9iuCy2JdHznmWn8lH+lJqLsp/6ZW3NHev?=
+ =?us-ascii?Q?n5rSrqeb6wCOXqEEQCspKGAbrmq7cfc7jLJsmc53gZFODODyMVkJ+pkFCAyd?=
+ =?us-ascii?Q?gy2wcXydNWmsilGW2drS5To6zYmwRbPY2lSl346XnuXOiA+pGhIrObxltQLS?=
+ =?us-ascii?Q?Wi/VmXO4Owcb26SEAWJK0jiNdZAsZ7wJMzgkLTGGyqtbrxwRxXldDIeuns6q?=
+ =?us-ascii?Q?OKspkWk/ovIUPWnNrsRQ5SB+HetbGfqsT6jmJShpyf6rAJtbljE/7Xw0q/li?=
+ =?us-ascii?Q?SOsqWTk2SUTFm61saJEDAFKiVrghsLaaJceEgkvIyI9i+aHtwVEEgP6ul9f7?=
+ =?us-ascii?Q?U6DzZPzcARWEfi86BVvyeC+WEWVP91LIKRhw/g6HVLfJDW1lSt6XkxebdiZp?=
+ =?us-ascii?Q?MN6YPauaMJFaPI0d/tZVWpx5HtoEPwri+h/Q90n67t506UaVW65uvm3BvjuZ?=
+ =?us-ascii?Q?cS9W4huJRb8HQN3Xd4WUpV75adMy0xpMIz1BCDz3X9bQOEiodWaQuKp+DxsC?=
+ =?us-ascii?Q?a+pCVS2nXs3ga6S1JzzI61uJRVdJlb5QNU76R1Rl29A98J/wsSXkuhyEKr8u?=
+ =?us-ascii?Q?XcSjpR0oqDXQapwrppSAk2bIx0Z+atU1/AwhV1CsJpU/62ksBVwsUPftl37m?=
+ =?us-ascii?Q?DyWkix6/rrl70aWvl8dBrEEqRwZncYuC1lfJqU8ePASqXsvXp4VaVganirnF?=
+ =?us-ascii?Q?42n/Z+eNnvNvjfb4oZ/9CKjE8TNGQEVpPHeK5gMgtqUnz9Sh2JFUUwBbHKD1?=
+ =?us-ascii?Q?FOHPK4bjPTZMfqECHS1T2NBvZXdToD90Z4YiN2F2ege3RjWDGDEnwkoSgBUX?=
+ =?us-ascii?Q?xiEK77wXpQRe1n0hu3mzJ0TnZfw4+6xWuXghVMFadkVdWY4dfU+QxnRNqLH8?=
+ =?us-ascii?Q?7hpNU4oo45L9lOR/GjZmSm+lv+J9V0OWlSM0ezD0FSt17TzF7WNroWblYU1+?=
+ =?us-ascii?Q?r3UFTex9ps465dUD3UaewZWry1Rpx1Awh+xWeukD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe9c7ef6-dd9e-4271-43e3-08dd55dfb75e
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 21:02:30.0536
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6de0b60f-0e07-4158-ac0f-08dd55dfafbb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006000.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9075
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9VnS5BsuIDwkp/w4nE5uxcg7Xpab2mSS/5NmPSNKpVk7/YjfnBatXb2/9tsq2t3d67w9/HA35vDletdmrSaOvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8576
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+On Tue, Feb 25, 2025 at 05:09:35PM +0100, Danilo Krummrich wrote:
+> On Tue, Feb 25, 2025 at 10:52:41AM -0500, Joel Fernandes wrote:
+> > 
+> > 
+> > On 2/24/2025 6:44 PM, Danilo Krummrich wrote:
+> > > On Mon, Feb 24, 2025 at 01:45:02PM -0500, Joel Fernandes wrote:
+> > >> Hi Danilo,
+> > >>
+> > >> On Mon, Feb 24, 2025 at 01:11:17PM +0100, Danilo Krummrich wrote:
+> > >>> On Mon, Feb 24, 2025 at 01:07:19PM +0100, Danilo Krummrich wrote:
+> > >>>> CC: Gary
+> > >>>>
+> > >>>> On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
+> > >>>>> This inability to sleep while we are accessing registers seems very
+> > >>>>> constraining to me, if not dangerous. It is pretty common to have
+> > >>>>> functions intermingle hardware accesses with other operations that might
+> > >>>>> sleep, and this constraint means that in such cases the caller would
+> > >>>>> need to perform guard lifetime management manually:
+> > >>>>>
+> > >>>>>   let bar_guard = bar.try_access()?;
+> > >>>>>   /* do something non-sleeping with bar_guard */
+> > >>>>>   drop(bar_guard);
+> > >>>>>
+> > >>>>>   /* do something that might sleep */
+> > >>>>>
+> > >>>>>   let bar_guard = bar.try_access()?;
+> > >>>>>   /* do something non-sleeping with bar_guard */
+> > >>>>>   drop(bar_guard);
+> > >>>>>
+> > >>>>>   ...
+> > >>>>>
+> > >>>>> Failure to drop the guard potentially introduces a race condition, which
+> > >>>>> will receive no compile-time warning and potentialy not even a runtime
+> > >>>>> one unless lockdep is enabled. This problem does not exist with the
+> > >>>>> equivalent C code AFAICT
+> > >>>
+> > >>> Without klint [1] it is exactly the same as in C, where I have to remember to
+> > >>> not call into something that might sleep from atomic context.
+> > >>>
+> > >>
+> > >> Sure, but in C, a sequence of MMIO accesses don't need to be constrained to
+> > >> not sleeping?
+> > > 
+> > > It's not that MMIO needs to be constrained to not sleeping in Rust either. It's
+> > > just that the synchronization mechanism (RCU) used for the Revocable type
+> > > implies that.
+> > > 
+> > > In C we have something that is pretty similar with drm_dev_enter() /
+> > > drm_dev_exit() even though it is using SRCU instead and is specialized to DRM.
+> > > 
+> > > In DRM this is used to prevent accesses to device resources after the device has
+> > > been unplugged.
+> > 
+> > Thanks a lot for the response. Might it make more sense to use SRCU then? The
+> > use of RCU seems overly restrictive due to the no-sleep-while-guard-held thing.
+> 
+> Allowing to hold on to the guard for too long is a bit contradictive to the goal
+> of detecting hotunplug I guess.
+> 
+> Besides that I don't really see why we can't just re-acquire it after we sleep?
+> Rust provides good options to implement it ergonimcally I think.
+> 
+> > 
+> > Another colleague told me RDMA also uses SRCU for a similar purpose as well.
+> 
+> See the reasoning against SRCU from Sima [1], what's the reasoning of RDMA?
+> 
+> [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
 
-SNP initialization is forced during PSP driver probe purely because SNP
-can't be initialized if VMs are running.  But the only in-tree user of
-SEV/SNP functionality is KVM, and KVM depends on PSP driver for the same.
-Forcing SEV/SNP initialization because a hypervisor could be running
-legacy non-confidential VMs make no sense.
+Hmm, so you're saying SRCU sections blocking indefinitely is a concern as per
+that thread. But I think SRCU GPs should not be stalled in normal operation.
+If it is, that is a bug anyway. Stalling SRCU grace periods is not really a
+good thing anyway, you could run out of memory (even though stalling RCU is
+even more dangerous).
 
-This patch removes SEV/SNP initialization from the PSP driver probe
-time and moves the requirement to initialize SEV/SNP functionality
-to KVM if it wants to use SEV/SNP.
+For RDMA, I will ask Jason Gunthorpe to chime in, I CC'd him. Jason, correct
+me if I'm wrong about the RDMA user but this is what I recollect discussing
+with you.
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
----
- drivers/crypto/ccp/sev-dev.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+> > 
+> > >> I am fairly new to rust, could you help elaborate more about why these MMIO
+> > >> accesses need to have RevocableGuard in Rust? What problem are we trying to
+> > >> solve that C has but Rust doesn't with the aid of a RCU read-side section? I
+> > >> vaguely understand we are trying to "wait for an MMIO access" using
+> > >> synchronize here, but it is just a guest.
+> > > 
+> > > Similar to the above, in Rust it's a safety constraint to prevent MMIO accesses
+> > > to unplugged devices.
+> > > 
+> > > The exact type in Rust in this case is Devres<pci::Bar>. Within Devres, the
+> > > pci::Bar is placed in a Revocable. The Revocable is revoked when the device
+> > > is detached from the driver (for instance because it has been unplugged).
+> > 
+> > I guess the Devres concept of revoking resources on driver detach is not a rust
+> > thing (even for PCI)... but correct me if I'm wrong.
+> 
+> I'm not sure what you mean with that, can you expand a bit?
 
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index cde6ebab589d..42988d757665 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -1345,10 +1345,6 @@ static int _sev_platform_init_locked(struct sev_platform_init_args *args)
- 	if (sev->state == SEV_STATE_INIT)
- 		return 0;
- 
--	/*
--	 * Legacy guests cannot be running while SNP_INIT(_EX) is executing,
--	 * so perform SEV-SNP initialization at probe time.
--	 */
- 	rc = __sev_snp_init_locked(&args->error);
- 	if (rc && rc != -ENODEV) {
- 		/*
-@@ -2516,9 +2512,7 @@ EXPORT_SYMBOL_GPL(sev_issue_cmd_external_user);
- void sev_pci_init(void)
- {
- 	struct sev_device *sev = psp_master->sev_data;
--	struct sev_platform_init_args args = {0};
- 	u8 api_major, api_minor, build;
--	int rc;
- 
- 	if (!sev)
- 		return;
-@@ -2541,16 +2535,6 @@ void sev_pci_init(void)
- 			 api_major, api_minor, build,
- 			 sev->api_major, sev->api_minor, sev->build);
- 
--	/* Initialize the platform */
--	args.probe = true;
--	rc = sev_platform_init(&args);
--	if (rc)
--		dev_err(sev->dev, "SEV: failed to INIT error %#x, rc %d\n",
--			args.error, rc);
--
--	dev_info(sev->dev, "SEV%s API:%d.%d build:%d\n", sev->snp_initialized ?
--		"-SNP" : "", sev->api_major, sev->api_minor, sev->build);
--
- 	return;
- 
- err:
--- 
-2.34.1
+I was reading the devres documentation earlier. It mentios that one of its
+use is to clean up resources. Maybe I mixed up the meaning of "clean up" and
+"revoke" as I was reading it.
+
+Honestly, I am still confused a bit by the difference between "revoking" and
+"cleaning up".
+
+> > 
+> > > By revoking the Revocable, the pci::Bar is dropped, which implies that it's also
+> > > unmapped; a subsequent call to try_access() would fail.
+> > > 
+> > > But yes, if the device is unplugged while holding the RCU guard, one is on their
+> > > own; that's also why keeping the critical sections short is desirable.
+> > 
+> > I have heard some concern around whether Rust is changing the driver model when
+> > it comes to driver detach / driver remove.  Can you elaborate may be a bit about
+> > how Rust changes that mechanism versus C, when it comes to that?
+> 
+> I think that one is simple, Rust does *not* change the driver model.
+> 
+> What makes you think so?
+
+Well, the revocable concept for one is rust-only right?
+
+It is also possibly just some paranoia based on discussions, but I'm not sure
+at the moment.
+
+> > Ideally we
+> > would not want Rust drivers to have races with user space accesses when they are
+> > detached/remove. But we also don't want accesses to be non-sleepable sections
+> > where this guard is held, it seems restrictive (though to your point the
+> > sections are expected to be small).
+> 
+> In the very extreme case, nothing prevents you from implementing a wrapper like:
+> 
+> 	fn my_write32(bar: &Devres<pci::Bar>, offset: usize) -> Result<u32> {
+> 		let bar = bar.try_access()?;
+> 		bar.read32(offset);
+> 	}
+> 
+> Which limits the RCU read side critical section to my_write32().
+> 
+> Similarly you can have custom functions for short sequences of I/O ops, or use
+> closures. I don't understand the concern.
+
+Yeah, this is certainly possible. I think one concern is similar to what you
+raised on the other thread you shared [1]:
+"Maybe we even want to replace it with SRCU entirely to ensure that drivers
+can't stall the RCU grace period for too long by accident."
+
+[1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
+
+thanks,
+
+ - Joel
+
 
 
