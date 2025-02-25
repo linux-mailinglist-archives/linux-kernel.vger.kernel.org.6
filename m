@@ -1,177 +1,177 @@
-Return-Path: <linux-kernel+bounces-531594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE52BA4427A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:22:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5565AA44288
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208853B6D08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E5D19C4595
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A2326A091;
-	Tue, 25 Feb 2025 14:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D94A26B0B6;
+	Tue, 25 Feb 2025 14:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LbSTngRZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KCXZaeAm"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3441C20F076
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED4B26B0A2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493057; cv=none; b=j44juNkgybvJ6EuSfiJezbIvgLw/dwBsqcw1yduwP3PkKAt/WB5kXNRdP9+C1g1IiCbYeqxqmhTuDFm0erFtkAqSsJOHmDknz7OkG6ROPlY4mkoNB6YOJmdWZ4O2GzKylfT55N7FBSrMGze5zptpv3r0U6M0FooB7IK0myRQeuk=
+	t=1740493066; cv=none; b=YuaEKSnVzJlSe68yWFq3D+WDKkz9KBetA5E6sga752z8vp28O4Laf/nby07CXA1jCHX3Q8uG30hZFYBzKtGR34fUngoka1hy/8XPUjYUl37HWaw4W1ReXI9FUmz0v5psRsc7VtXRyfn2aA7XgPpuv/uyt7Pg3KVXXQgqpEfFmbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493057; c=relaxed/simple;
-	bh=yTbYCkPyDs9HJxuZtoE4K/vi15XYDIgffTPgZMP+G3w=;
+	s=arc-20240116; t=1740493066; c=relaxed/simple;
+	bh=lo3+cbd6dYJ5eg3PHIuyiAb/5v6vgRiC8GZKvU9kk0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzfV9Hft5MfmLg/p59gvAktkf78E4Dgq4luss06ayPTQrhaIF0EYLYqoBIH6HUX8HmBjjgMZKcq3/WeQpV/zsQQyA6J7hRuMtaRfSv9MEQJ2wP9Y8CPvyWlVF54mTkLG+ssXFuy7DLckcEONOe3P0fYc0pMokEzxZWWty5ZPb0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LbSTngRZ; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740493056; x=1772029056;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yTbYCkPyDs9HJxuZtoE4K/vi15XYDIgffTPgZMP+G3w=;
-  b=LbSTngRZ6C4u4+WNYKdzItxw4EWg/q3kA0pgL74YrYLBIWP4avRvY8D7
-   nPLWmrXMlwkI+Wz02D9Okf5bMjOpZsTQwOZXirdskqszqY72x0Ou8f0zq
-   9M1gW3aFs2byjObORrWl3zFWu9XzBBHtm6LO6dD8iDopafaW+cJHgJSSH
-   8Wzp/+kiar8Jv1xjdKw5wIxLJau3L0ki9FpxGH6awtPyxf3UNIiYPZVS0
-   dOZLjQHZdzhhQuUPWfkwUVV7eGDlJd+tNVFe3zDKFON5c7QUif0jBlOjX
-   TbCDRV4ev3oDBTFQUECbBDC3bE1Sx5e3P0DFvVWv0zJJ+Wct5uOFicQXR
-   g==;
-X-CSE-ConnectionGUID: kODELuPoTq2tIvF3JaS0EA==
-X-CSE-MsgGUID: hW1XqzrzRWCHAoc01dvOyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58721191"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="58721191"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:17:35 -0800
-X-CSE-ConnectionGUID: RZ3Uz0IuSXqYNtv0TCeFew==
-X-CSE-MsgGUID: VjTSyfcwSc2zxpxaTWjU/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="147219225"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:17:31 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmvkW-0000000F0yK-03rr;
-	Tue, 25 Feb 2025 16:17:28 +0200
-Date: Tue, 25 Feb 2025 16:17:27 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Aditya Garg <gargaditya08@live.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z73Q99khFU9pvoNx@smile.fi.intel.com>
-References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
- <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
- <Z72chunE_vvxtjLQ@smile.fi.intel.com>
- <PN3PR01MB9597BF95EC490951D75748F1B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z72foRL3diil9icd@smile.fi.intel.com>
- <PN3PR01MB9597B5ECF47B04E3201DD56BB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z72jHeCG6-ByMyhh@smile.fi.intel.com>
- <9efdb233-2bca-4a5d-a6bc-de81fa96efb3@suse.de>
- <Z73FSWR-DK0HxMb2@smile.fi.intel.com>
- <71123020-f345-4de3-9044-ad58f8066d86@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAEk0TKQyrKIbsBj0LykSc0F4rqavBNkUTiR9UOQMt/Y8CYUa/tn8CODcmMPM+gtTza3oz1/TRmY6yLvwvJ9xau21MPKs48DbL2+qCJJOt30OR2LLmGWKZEK6c60rVNTOfbZh8CNL4fDK2d+kpA2wfFG/16+YBsEjjYja8NySc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KCXZaeAm; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6FD9C44280;
+	Tue, 25 Feb 2025 14:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740493063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ngybRTkc4Ma7pkH5YlW7U8BggN94fh6wjcbQZdI+hvg=;
+	b=KCXZaeAmRCKEY3wCI5qXmG3E8oXXOA7mBd4a8am1/VBIYqTIW47xfzDAwF2R661XZcqXBs
+	5o9ZP9g9TH+U6SPFZN13pcP1ze98Re+EK+2my1wYejaKE6lR1NlGaSP69jVu/kKREzRgoB
+	9my1O71pITSNMPsHCXptMGRHeBbX146zXF39dsHPcO8Sqwm2uFRX6pIEzgq2e1OXgYEUTq
+	9kNmVT8uhkAUdNOvCiqmN5xpC/UdSAMOaCxdGE73LDEC+/wtyymbewb339U58AspSO808r
+	3uZIA1ceneXIXQebaxzRCLBzRCTcnVrZhlzvc3nPs9CuvtZQ1Y6tBwpqBQZ10w==
+Date: Tue, 25 Feb 2025 15:17:40 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 17/63] dyndbg: check DYNDBG_CLASSMAP_DEFINE args at
+ compile-time
+Message-ID: <29ca1dc2-3a21-405f-a9b6-06bea7bd75ae@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-18-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <71123020-f345-4de3-9044-ad58f8066d86@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250125064619.8305-18-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Tue, Feb 25, 2025 at 02:53:15PM +0100, Thomas Zimmermann wrote:
-> Am 25.02.25 um 14:27 schrieb andriy.shevchenko@linux.intel.com:
-> > On Tue, Feb 25, 2025 at 12:59:43PM +0100, Thomas Zimmermann wrote:
-> > > Am 25.02.25 um 12:01 schrieb andriy.shevchenko@linux.intel.com:
-> > > > On Tue, Feb 25, 2025 at 10:48:53AM +0000, Aditya Garg wrote:
-> > > > > > On 25 Feb 2025, at 4:17â€¯PM, andriy.shevchenko@linux.intel.com wrote:
-> > > > > > On Tue, Feb 25, 2025 at 10:36:03AM +0000, Aditya Garg wrote:
-> > > > > > > > > On 25 Feb 2025, at 4:03â€¯PM, andriy.shevchenko@linux.intel.com wrote:
-> > > > > > > > On Tue, Feb 25, 2025 at 10:09:42AM +0000, Aditya Garg wrote:
 
-...
 
-> > > > > > > > > +static int appletbdrm_probe(struct usb_interface *intf,
-> > > > > > > > > +                const struct usb_device_id *id)
-> > > > > > > > > +{
-> > > > > > > > > +    struct usb_endpoint_descriptor *bulk_in, *bulk_out;
-> > > > > > > > > +    struct device *dev = &intf->dev;
-> > > > > > > > > +    struct appletbdrm_device *adev;
-> > > > > > > > > +    struct drm_device *drm;
-> > > > > > > > > +    int ret;
-> > > > > > > > > +
-> > > > > > > > > +    ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, NULL, NULL);
-> > > > > > > > > +    if (ret) {
-> > > > > > > > > +        drm_err(drm, "Failed to find bulk endpoints\n");
-> > > > > > > > This is simply wrong (and in this case even lead to crash in some circumstances).
-> > > > > > > > drm_err() may not be used here. That's my point in previous discussions.
-> > > > > > > > Independently on the subsystem the ->probe() for the sake of consistency and
-> > > > > > > > being informative should only rely on struct device *dev,
-> > > > > > > I'm not sure how drm_err works,
-> > > > > > It's a macro.
-> > > > > > 
-> > > > > > > but struct drm_device does have a struct device *dev as well.
-> > > > > > Yes, but only when it's initialized.
-> > > > > > 
-> > > > > > > Anyways, this is something I'll leave for Thomas to reply.
-> > > > > > The code above is wrong independently on his reply :-)
-> > > > > I'm kinda stuck between contrasting views of 2 kernel maintainers lol,
-> > > > > so I said let Thomas reply.
-> > > > Sure. I also want him to clarify my question about potential drm_err_probe().
-> > > These threads get a little lengthy. What is the question?
-> > How drm_err_probe() can be (consistently) implemented as there are and will be
-> > cases when we want to return an error code with the message and having DRM devce
-> > not being available, please?
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> Add __DYNDBG_CLASSMAP_CHECK to implement these arg-checks at compile:
+> 	0 <= _base < 63
+> 	class_names is not empty
+> 	class_names[0] is a string
+> 	(class_names.length + _base) < 63
 > 
-> The DRM logging works with a DRM device pointer of NULL. It'll simply leave
-> out device infos.
-
-Right and that's what makes it less informative than pure dev_*() macros.
-For the probe it should really take the struct device instead of struct drm
-in my opinion. Otherwise we may end up with the code like above, which has
-hidden bugs.
-
-> > Also, drm_err() has a downside of not checking for deferred probe and
-> > potentially leads to the noisy log floods.
+> These compile-time checks will prevent several misuses; 4 such
+> examples are added to test_dynamic_debug_submod.ko, and will fail
+> compilation if -DDD_MACRO_ARGCHECK is added to cflags.
 > 
-> I think it should be possible to export __dev_probe_failed() [1] from the
-> core and write drm_err_probe() and drm_warn_probe() around this.
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> ---
+> - split static-asserts to __DYNDBG_CLASSMAP_CHECK
+> - move __DYNDBG_CLASSMAP_CHECK above kdoc for DYNDBG_CLASSMAP_DEFINE
+>    silences kernel-doc warnings
+> ---
+>   include/linux/dynamic_debug.h |  9 +++++++++
+>   lib/test_dynamic_debug.c      | 11 +++++++++++
+>   2 files changed, 20 insertions(+)
+> 
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index dc610a12b91c..2b0c943af330 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -99,6 +99,14 @@ struct ddebug_class_map {
+>   	enum ddebug_class_map_type map_type;
+>   };
+>   
+> +#define __DYNDBG_CLASSMAP_CHECK(_clnames, _base)			\
+> +	static_assert(((_base) >= 0 && (_base) < _DPRINTK_CLASS_DFLT),	\
+> +		      "_base must be in 0..62");			\
+> +	static_assert(ARRAY_SIZE(_clnames) > 0,				\
+> +		      "classnames array size must be > 0");		\
+> +	static_assert((ARRAY_SIZE(_clnames) + (_base)) < _DPRINTK_CLASS_DFLT, \
+> +		      "_base + classnames.length exceeds range")
+> +
+>   /**
+>    * DYNDBG_CLASSMAP_DEFINE - define debug classes used by a module.
+>    * @_var:   name of the classmap, exported for other modules coordinated use.
+> @@ -112,6 +120,7 @@ struct ddebug_class_map {
+>    */
+>   #define DYNDBG_CLASSMAP_DEFINE(_var, _mapty, _base, ...)		\
+>   	static const char *_var##_classnames[] = { __VA_ARGS__ };	\
+> +	__DYNDBG_CLASSMAP_CHECK(_var##_classnames, (_base));		\
+>   	extern struct ddebug_class_map _var;				\
+>   	struct ddebug_class_map __aligned(8) __used			\
+>   		__section("__dyndbg_classes") _var = {			\
+> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> index 1838f62738c4..b1555b0a2bb1 100644
+> --- a/lib/test_dynamic_debug.c
+> +++ b/lib/test_dynamic_debug.c
+> @@ -123,8 +123,19 @@ DYNDBG_CLASSMAP_PARAM(level_num, p);
+>   DYNDBG_CLASSMAP_USE(map_disjoint_bits);
+>   DYNDBG_CLASSMAP_USE(map_level_num);
+>   
+> +#if defined(DD_MACRO_ARGCHECK)
+> +/*
+> + * Exersize compile-time arg-checks in DYNDBG_CLASSMAP_DEFINE.
+> + * These will break compilation.
+> + */
+> +DYNDBG_CLASSMAP_DEFINE(fail_base_neg, 0, -1, "NEGATIVE_BASE_ARG");
+> +DYNDBG_CLASSMAP_DEFINE(fail_base_big, 0, 100, "TOOBIG_BASE_ARG");
+> +DYNDBG_CLASSMAP_DEFINE(fail_str_type, 0, 0, 1 /* not a string */);
+> +DYNDBG_CLASSMAP_DEFINE(fail_emptyclass, 0, 0 /* ,empty */);
 
-Yep, we can do that
+Hi Jim,
 
-> The output then looks like a DRM logging, but behaves like dev-based logging.
-> Note that DRM logging already is an elaborate wrapper around the dev-based
-> logging, so it will be more of the same.
+This test is nice, but can we move it in the *_submod.c directly? They 
+don't need anything from this file.
 
-Okay, this sounds promising. My only worries are the possibilities of misuse of
-the API and/or leaving it non- or less informative (in comparison to the existing
-helpers).
+Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-> [1] https://elixir.bootlin.com/linux/v6.13.4/source/drivers/base/core.c#L5008
+Thanks,
+Louis Chauvet
+
+>   #endif
+>   
+> +#endif /* TEST_DYNAMIC_DEBUG_SUBMOD */
+> +
+>   /* stand-in for all pr_debug etc */
+>   #define prdbg(SYM) __pr_debug_cls(SYM, #SYM " msg\n")
+>   
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
