@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-530436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDFCA4336B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:12:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B183A4336F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FE119C0EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FB93A7DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52DA2135A1;
-	Tue, 25 Feb 2025 03:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIHgZqEG"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56C7214816;
+	Tue, 25 Feb 2025 03:12:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76B93C38;
-	Tue, 25 Feb 2025 03:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2326A2135BC;
+	Tue, 25 Feb 2025 03:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740453050; cv=none; b=EJWIhpbr49uoOUDSre6UhkBH1CFJHxrhHUTGjQFqw4hFOmGW439rSMt9Qtp8OBoJ3iodDvV4maXJtllP7iKlnuJzVVmAT+mynoQd0L4vwPBFmc/FjCsrFkg5EhscZHy269+oyEPw2QotaeaeRsoEfFJ/AGBUfvCcY3RPDhKAzpU=
+	t=1740453155; cv=none; b=j0dMcgLyGy1cIDV1MKqgnHuFTiF811pg50DjPf7DAWQRgXMaXdE43l76HX0Ra56HPnXFwwQztmW7aJwO8v/ssUvBEmzrqzyYqNxAMTd/3AhOmi6yLTk5L0cIHeywBHrojZnai0DmjKCvjHS0310zQyd44rH5aazA80+P54fJufA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740453050; c=relaxed/simple;
-	bh=sbS2idndESK6uIlRWTKAuHHfhhjeCIcNbrN+0pFB9GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYOeZtwb4gzZ2rGbqLNUpfqLZKEyJyjmy/TqectmfikK7Vkn1Jc2Vs6eb22KWX1XYjbA8m2VqzkT/fCEt88W8mQp5h04EGxT9ZcnhPy71f10FxRAiMH21GSRVU4+u7H9p9zL4t3X7R6XzpFWud+eDCHznTUcN/EDiBoGqPvUQIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIHgZqEG; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c2a87378so85965485ad.1;
-        Mon, 24 Feb 2025 19:10:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740453048; x=1741057848; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RwaAivTVAfPxjfSB+ftZsaeu+CUh+Id1DP+wiDv5Isg=;
-        b=aIHgZqEGcGwy7nIFvEWVz7OU6v6D4ijpa/PkFgHv1IOwmEozc3xVXUF3R4mCGID5ac
-         dvXQWA7XBUyhrSnEX/u1AhqM8S7QVXf6JLn2HMyCsi+awBd0mWth+uvSpdm1NZxN9cNm
-         UMNS430/ZL9AKL3ozxQAXhJW3njaT6M9O47e1X2wrbdLF/3TjyEkLyCYKylmWz7lIHVF
-         p6Cnsf0BbDmGcB5SSSQ796amjuNEaLnKM1EFLj/QKdmGm6q1wNeex/ITjhdCSUs/EZBc
-         8fUa9JOAu40oA6+0JiBpgYMQOgPnywnOn+LHwvcoJnI1UhrUF34y8aSbKiApb7LRhZqY
-         91tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740453048; x=1741057848;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwaAivTVAfPxjfSB+ftZsaeu+CUh+Id1DP+wiDv5Isg=;
-        b=GrE1u9Y6c4JXIxxSbM25ANgvBpeI+iPqSzrC2ywZW7Hi9q36QIfymcmDq2RiSTK8kn
-         8mvJgemBo0/rTSnNNz8da5mX6JUB57MvIVUGR0JpZmuEGFTYCgrj4pTtXvXGkwOA+ppO
-         JgAd0rfCQTEIRqF7GxoeRcyXSoZ93FjW0GL4T+g5U1I2mBjonPXV+mZSwIII3UPActXd
-         +yWvJERlYe9BUL9BNoSyvNnhwkJM/dZ9Krao83thVGdEeBo172Nk0oJhrNTD9K4kOMLx
-         oAtn/Pjz4UvpQTlPMOBy/Wp19wJfj6yGGIpnandPUNSmb/J37hkrwsxvgDE2obZcQIT0
-         A4Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZbwk2dQxeV4/8bWT9p+AIShO+UiO8JgCm5jM5mAPd+AFmnj1EBl3pKOCz2UWpqkQfXrbI6ZSXIQMLE94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDnO7xkZ5JWMd0KWm0042nQLrfQZhrjIAOaInAQdIn3X3DA8Rp
-	PShtN+OzZXLenOC6OHMICDJCM4piVy6A4OC849mdUVLtuRjhdAcH
-X-Gm-Gg: ASbGncsN+q1vI8i8xPZD/qqU2nkxf/C5lWfqZ7hruwKi1ZO9tyWw/cmo6wA29VU/7Vz
-	zdZ5qegs8vUenCuRgIajOmnqfBpoWzn7NvLeYkqX00AplpNMa4u6bYjRYRvj4LlhUOFzGmZvK/b
-	il0Etem82foQxvykUwfgFcsEtaLvbNyZWRWQghmXIwN12wHn9/ebfYK7JkimSFI2LlZTkFhV62G
-	X4AsT9hc4GNYRmiXHDIrw/+sty/rJSNfptc5TrD0JDro1hpmGv6hhvZuFFbjq+Qq8fQ/usbDwln
-	ke8CH0rQxaAm7MJpN80VE23O6ojhmTQ=
-X-Google-Smtp-Source: AGHT+IFx4sPgeARzSxw1BUYY3TeFk6utRjQgIomRcUkS1u01ORqFXsd5sMF8tm0Tg9qy8W0IA3Wnbw==
-X-Received: by 2002:a05:6a00:b86:b0:730:937f:e838 with SMTP id d2e1a72fcca58-73426d8fa97mr23852033b3a.22.1740453047742;
-        Mon, 24 Feb 2025 19:10:47 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a81ecd3sm396994b3a.132.2025.02.24.19.10.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 19:10:47 -0800 (PST)
-Date: Tue, 25 Feb 2025 03:10:40 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] bonding: report duplicate MAC address in all
- situations
-Message-ID: <Z700sKO3sBkxf8Ra@fedora>
-References: <20250219075515.1505887-1-liuhangbin@gmail.com>
- <20250224141008.3ee3a74b@kernel.org>
+	s=arc-20240116; t=1740453155; c=relaxed/simple;
+	bh=kjl+s6sWQ2AJgnYEcm8bFURklJKF/fJp4g1rYKQXWyM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=d4SSGtO727oXmgL6sOdPsf3QgDL5RgjnICGK/4NzDbKYYXZlhoOe+SXe2F39XU37zLa6qMis54WjoWF4SccPB68ffIJfHmgf8zizQcrhLurXtARbrScZz0mYP+EYadqBB7A1bMqRw4zE5qHmW6JYda7IMuptoiVwjEBvhkPOUmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z22hM5wt8z4f3kvf;
+	Tue, 25 Feb 2025 11:12:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0FD1C1A0DCC;
+	Tue, 25 Feb 2025 11:12:27 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHrGAZNb1nh_xKEw--.65158S3;
+	Tue, 25 Feb 2025 11:12:26 +0800 (CST)
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
+ <20250222092823.210318-3-yukuai1@huaweicloud.com> <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+ <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+ <Z7w0P8ImJiZhRsPD@fedora>
+ <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
+ <Z70btzRaN83FbTJp@fedora>
+ <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
+ <Z70qvZEBdq6L3-Yb@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
+Date: Tue, 25 Feb 2025 11:12:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <Z70qvZEBdq6L3-Yb@fedora>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224141008.3ee3a74b@kernel.org>
+X-CM-TRANSID:gCh0CgBHrGAZNb1nh_xKEw--.65158S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr13Zw13Aw48uFWfCr4DJwb_yoWkXFX_uF
+	9xJwn3Cwn8CFn7uF4YkFy8K3y7Xr1Svry8C3yfGry7Z34IqFs7Z3WxGasa9ry2qa93X3Z0
+	vFn8AF1xGFn3WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Jakub,
-On Mon, Feb 24, 2025 at 02:10:08PM -0800, Jakub Kicinski wrote:
-> On Wed, 19 Feb 2025 07:55:15 +0000 Hangbin Liu wrote:
-> > Normally, a bond uses the MAC address of the first added slave as the
-> > bond’s MAC address. And the bond will set active slave’s MAC address to
-> > bond’s address if fail_over_mac is set to none (0) or follow (2).
-> > 
-> > When the first slave is removed, the bond will still use the removed
-> > slave’s MAC address, which can lead to a duplicate MAC address and
-> > potentially cause issues with the switch. To avoid confusion, let's warn
-> > the user in all situations, including when fail_over_mac is set to 2 or
-> > in active-backup mode.
+Hi, Ming!
+
+在 2025/02/25 10:28, Ming Lei 写道:
+> Can you explain in details why it signals that the rate is expected now?
 > 
-> Makes sense, thanks for the high quality commit message.
-> 
-> False positive warnings are annoying to users (especially users who
-> monitor all warnings in their fleet). Could we stick to filtering out
-> the BOND_FOM_ACTIVE case? Looks like this condition:
-> 
-> 	if (bond->params.fail_over_mac != BOND_FOM_ACTIVE ||
-> 	    BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP) {
-> 
-> exists a few lines later in __bond_release_one()
+> If rate isn't expected, it will cause trouble to trim, even just the
+> previous part.
 
+Ok, for example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+slice is 20ms(2 jiffies).
 
-You are right. The bond will change the mac address later if
-bond mode is active_backup and fail_over_mac is active
+expected rate is 1000 / 1000 * 20 = 20 bytes per slice.
 
-        if (oldcurrent == slave)
-                bond_change_active_slave(bond, NULL);
+If user issue two 21 bytes IO, then wait time will be 30ms:
 
-With the upper mode and parameter, during the slave_warn(), bond is still
-using the same mac addr with the first join and released slave's mac address
-and cause false positive warn.
+bytes_allowed = 20, extra_bytes = 1;
+jiffy_wait = 1 + 2 = 3 jiffies
 
-I will update the if condition. Thanks for your review.
+and consider
+extra 1 jiffies by timer, throtl_trim_slice() will be called at:
 
-Regards
-Hangbin
-> 
-> > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > index e45bba240cbc..ca66107776cc 100644
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -2551,13 +2551,11 @@ static int __bond_release_one(struct net_device *bond_dev,
-> >  
-> >  	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
-> >  
-> > -	if (!all && (!bond->params.fail_over_mac ||
-> > -		     BOND_MODE(bond) != BOND_MODE_ACTIVEBACKUP)) {
-> > -		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
-> > -		    bond_has_slaves(bond))
-> > -			slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM - is still in use by bond - set the HWaddr of slave to a different address to avoid conflicts\n",
-> > -				   slave->perm_hwaddr);
-> > -	}
-> > +	if (!all &&
-> > +	    ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
-> > +	    bond_has_slaves(bond))
-> > +		slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM - is still in use by bond - set the HWaddr of slave to a different address to avoid conflicts\n",
-> > +			   slave->perm_hwaddr);
-> -- 
-> pw-bot: cr
+jiffies = 40ms
+slice_start = 0ms, slice_end= 40ms
+bytes_disp = 21
+
+In this case, before the patch, real rate in the first two slice is is
+10.5 bytes per slice, and slice will be updated:
+
+jiffies = 40ms
+slice_start = 40ms, slice_end = 60ms,
+bytes_disp = 0;
+
+Hence the second IO will have to wait another 30ms;
+
+With the patch, the real rate in the first slice is 20 bytes per slice,
+which is the same as expected, and slice will be updated:
+
+jiffies=40ms,
+slice_start = 20ms, slice_end = 60ms,
+bytes_disp = 1;
+
+And now, the second IO will only have to wait 10ms;
+
+Thanks,
+Kuai
+
 
