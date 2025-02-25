@@ -1,197 +1,165 @@
-Return-Path: <linux-kernel+bounces-531018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F471A43B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BE5A43B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:17:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D0B1885B95
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C316E1886AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA75264A95;
-	Tue, 25 Feb 2025 10:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22BE265CB1;
+	Tue, 25 Feb 2025 10:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bpI/ExiQ"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tN/8iZaR"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370122139A6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F92225486D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478400; cv=none; b=BcNvSHscYb9FrIYmbkLh9tMNwGtOz/5KSPtiqljK5HL3u657FmukRymGSC38zCMZxfGAF4U6n7OUXcHJfwbf2kf4LxRdSMZrXqwiRNlDU2junn0a4/Oav3tOlWeKCqb2XIdnT8qqNlvTnxcuZgNEbHeKGkNjvG4/B3nLUaonKlA=
+	t=1740478409; cv=none; b=Srx1BY2ErBLC5r9ZmRLYibn3bpshFK949VYfXMGbOTVLuBWqa0hJErYxH5AjrvhX/IJqGuRuecaLeFFFsTqABEqknWionhTIyODgk7RGYQEKzRtMCMiV+Rw5LXDhi78SokQYAroqul7qrapSx8Slj5TlSBvuS7BbgYIyBKrWYf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478400; c=relaxed/simple;
-	bh=dh+DdXrD41FoDCiywpl4Jl9pY722E2W/HNmKBDuQ+KQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D+N1YGSzig4lFRpqrbIu3bxpdtiLmU+28iC9s7g2qTzIVwbC2XEpGr4zEwKl6imLuGFoLHzGbcv4yWO+Pojt4BlmzsJJ7qpSODQMCRwcQwMGNPjY8X7PqH/THoJfDfOlXVmMjVo+5ZipMnOmejHTFBstMNwvifTbr+HG2YYQqWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bpI/ExiQ; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1740478409; c=relaxed/simple;
+	bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PWN0HNVYQ8FgCNXTvqlpB9Ww2sY8bx3R85Av5Un8jxRVu99SxPlE4J1bQ0a51h4y+p+W/0XHsXLjRY749MhWZEPVfX1y7iHPodHEdH1CX9Rlu+SswtpLTPBiKFtXxV7EknjINjd4HfjjUv1vPkG1l6incNfUJHmvH0yU9QfyWNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tN/8iZaR; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so31873005e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:13:16 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so9672135a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:13:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740478395; x=1741083195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UIEVpBfqzlAIj3t3+p9Xkb4HBEKJwXzTRtthqqzde8o=;
-        b=bpI/ExiQEfbjr1ajIorqrAiG2xTl2IszTDwfIKhZ5MoR0F4yef9N5LUNZWZXRwuxmQ
-         9oWsegbJ8CwRlHpwqff6hPLFA8N+JQVaN7JqeayROFhGCt2KvHviQvwtWyaBnS5PyB57
-         m9RjPq7RJrM0WAdyJvhm/8UZB09HtzLXCo46gFApn1RZ2jurOJwcTATILixML1BYxkm8
-         GjNAPjavVr+DSmSATjYbSYYugNRz+zB/5cKaL/jt9s4fylZs1iX7FlmI2O3Spnqbghu9
-         cJO0yMzokz3XGC4nk3d1kD2igTKXmRD3CadER1qHIjAE38W8jOzWuGo14o3joV3bQOdC
-         wT3Q==
+        d=linaro.org; s=google; t=1740478405; x=1741083205; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
+        b=tN/8iZaRJBptsCbYlIe9njuwvXjQzgU5BQCsxVWEApQjzH2QYMk4q1da+xEqBlMMPq
+         Ffo9d0d/nsu7AXMKMpPlVJRh5X3lKRzbZljmGlqnlsKQCZeG4cPPB+391Nr66QCkjoZp
+         zls42s8eHlI5YUHon0b7ureop1FbMMzExoBPKFZK64mA8X2Rd+0zHivFwJKEAHSscB/0
+         CSkENoaIgPcP7AErrYxMoUgfWkm2RM0Sr9dFLanYWbUWJX4Q/EDBRI+/4EYktwyn7o9S
+         JvDbYoyERVNQ8KpId31QJ9d60U9kdrCdbHgGpzelaJe3Z/vINDg/+2agBdtVowZsvAzX
+         oSrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740478395; x=1741083195;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UIEVpBfqzlAIj3t3+p9Xkb4HBEKJwXzTRtthqqzde8o=;
-        b=be/4+CLhpugxpHElitS534GfAGHfwalhadoWgfSPuFIKsuFH5HoL5SH4Kseu7j3wiv
-         I8JsKp7dEGxUPsmTGyC5ZTho475xSg0b1Rlm3VJBr6fpSaeBTIwzTHK9Rj+phGFRhRSe
-         Srq9DMj7AWgQsj14syGdtTr0WPZliX55k3bFJHK1AofcgdLEKFvuwgGfm/EQ5R8M0Vw2
-         QYNaLPSqtyGTk72i3H01cFH6nZQB6e/glOZTZ88nB4NGikiAz87Az9GMWL/YZ6H7aSYn
-         C9jLRXkZRho/k9wAF5HHP5tK2Wxw+DDdm2bQxdTr8YYYRQ+So9iPedemyCQ6NBie/o+U
-         vPRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUytYZ0AYq+b3awDY3nMqaAjsJ+E1eUAgZSynFeqCCvrpoDIIoT3ExtZ88zFnVnx4nmJShhTM/J6VfpMYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY8vYkAwl4hH46+VUcFtqUB6PpM99w0kvxYQ8NqUP1sOrBEpQF
-	F2QLZpmTq0jDRZSVA8IFpy3kXkavbBftHdLNNHkEXfWtDpZwUTHDtwUpsbgUlnM=
-X-Gm-Gg: ASbGncvcH35loUOV6N6wsJw6g3ro1suedX1i2Hwe4a7F9JrbRqNvB+8eQgEPxnqZXm1
-	otA1raeHQ8NpHMbLXaGXRRb4vuDyQ36dyObHKsCpoK3kW/aRefAX3JZu3G4Ct6A74994B3ZPKP3
-	tmINZ/HdrX3+qIgAzOpwZhNJ7TJVjONZbH44HmUyemqh2ztOLxqNTKuDHMbjuozPxkcoP2IYlZa
-	r+NJYnPF/9NiSFAVpk4GPu7gAwPsGossjWC9xUuJhN82qKWPzkFH9dX+vRDNXADSiMMoS77SCtp
-	IPqQ8cNEthj6O0534CjQ7g1MKIJ8FxVB/J9/
-X-Google-Smtp-Source: AGHT+IHuxrFve4RrQxTJm/qq5KQxrxMVsYCL+f8dws0ADcO/Z7yzKKpEwdKKdpFUHyiamvR4ZVYVPw==
-X-Received: by 2002:a05:600c:46ca:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-439ae2d1f3fmr129669155e9.3.1740478395441;
-        Tue, 25 Feb 2025 02:13:15 -0800 (PST)
-Received: from [192.168.1.100] ([37.167.173.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce615sm135803455e9.5.2025.02.25.02.13.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 02:13:15 -0800 (PST)
-Message-ID: <d4903cb5-f876-4229-b89c-c1fafd77fc3c@linaro.org>
-Date: Tue, 25 Feb 2025 11:13:12 +0100
+        d=1e100.net; s=20230601; t=1740478405; x=1741083205;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
+        b=bfoQlkx8usmxldA2QOslDfvbdGn9AiPgiOIYMgzzmD37nDSWiSq2r/4k2eOQPVmlVx
+         m7L8ojJMePRhCNI1drYrCtDbYs3QTPqc+/GACe0aXMK8VmPWCpFdatOsLpqGWthdaO70
+         uIT99a+SkLLmTGgpFm09CLMeQda0qYeBeyxCJgHmF28Z2AB5DiPRKf4TGiJZIpN55j7N
+         JtoHPtcnmzheFd8OBblxLpqfqm4QI8kcMBz6YNcAFSnj/gyajNyQ1ubrg6HffijyBfbZ
+         Sp4ylPyBBhqPRYpmtanJPBRlMTaizFDsVykpOkzaYuHxTgmtLlvp2ThODTIEmf7iON/O
+         5RkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Oa7vubQQFubc+h9YzxtiryeN0RVecFt4eOEZl2KRWMqV1okQV5b10P81sJQgUtcDRWSYtB0zEb1OFnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWIj8i5N4inxj4lDxIsUUizwu3MhVFr/vOCLBjjQwz8Lk9V/nm
+	voiVTBWT39UPoqYxD0x4alXxVeHIN4uBCep1oPjQkcpr67T48WlCy4GL6Rr1l4My3AdHn1JJ3FN
+	bwgs51nadPG6vDOfqApxHkZRAvokwUsrz2EhUWg==
+X-Gm-Gg: ASbGncuzy9QprZXPwGrUr+MKLEgl6QfooHSvk9yyMv0TGHKccUz9B5SMwfjRt8Vefmn
+	kP6hMMg/awGQEMpSm9PzujR4tOw080XtnVZkRV4MvzFcHLAvy5HR+a5zU9dglrNFQao2y4rC6e7
+	qyOZKefhGbr2huw/uM5TEa86mNEwPp0tSlohPI
+X-Google-Smtp-Source: AGHT+IHRStcu9HegPXd2HjXOYrNAxroYBpglNd/obIxLjZ6LqADm2z000PieLRyQ+GzPVyjZk8kBb0aXPwWxrx/BJpM=
+X-Received: by 2002:a17:906:308f:b0:ab7:e73a:f2c8 with SMTP id
+ a640c23a62f3a-abed0d3eb46mr221769566b.26.1740478405372; Tue, 25 Feb 2025
+ 02:13:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 08/14] drm/panel: simple: Add BOE AV123Z7M-N17 panel
-To: maudspierings@gocontroll.com, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
- <20250224-initial_display-v1-8-5ccbbf613543@gocontroll.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250224-initial_display-v1-8-5ccbbf613543@gocontroll.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250208074821.11832-1-15645113830zzh@gmail.com>
+ <20250208075322.13139-1-15645113830zzh@gmail.com> <20250210012931.ym337oexdcjmwwzv@airbuntu>
+ <20250210091352.GC10324@noisy.programming.kicks-ass.net> <CAKfTPtCLg_kuRtknPsiLwRdKpvb4CYHqv+BRh5yJV8Z+o4oQcw@mail.gmail.com>
+ <20250225002521.t5w2deyyw6uqxo3r@airbuntu> <CAKfTPtDLRWVWhZ3QNEL_fQMwwh_LMZPPFcAEQ=shhRyVdmGQPg@mail.gmail.com>
+In-Reply-To: <CAKfTPtDLRWVWhZ3QNEL_fQMwwh_LMZPPFcAEQ=shhRyVdmGQPg@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 25 Feb 2025 11:13:13 +0100
+X-Gm-Features: AWEUYZkKaAFQNk4lRK3ptlA3d2BKCSsdlpNHog2a1Ku1EfADdnG9UxxHcpIW7S0
+Message-ID: <CAKfTPtDjEHZkJR6C0vv2OLq2vZgvFKu6NMRCLsU6MK+6R7iLCA@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks
+ getting an extra tick
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Peter Zijlstra <peterz@infradead.org>, zihan zhou <15645113830zzh@gmail.com>, bsegall@google.com, 
+	dietmar.eggemann@arm.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org, 
+	mgorman@suse.de, mingo@redhat.com, rostedt@goodmis.org, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/02/2025 14:50, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
-> 
-> Add support for the BOE AV123Z7M-N17 12.3" LVDS panel.
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> ---
->   drivers/gpu/drm/panel/panel-simple.c | 32 ++++++++++++++++++++++++++++++++
->   1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index a52977ab73dc2edab0d1954c702fd797d6a5b969..232b03c1a259eb15e423b9d452d28e2ff95c70f8 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1403,6 +1403,35 @@ static const struct panel_desc boe_av101hdt_a10 = {
->   	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->   };
->   
-> +static const struct display_timing boe_av123z7m_n17_timing = {
-> +	.pixelclock = { 86600000, 88000000, 90800000, },
-> +	.hactive = { 1920, 1920, 1920, },
-> +	.hfront_porch = { 10, 10, 10, },
-> +	.hback_porch = { 10, 10, 10, },
-> +	.hsync_len = { 9, 12, 25, },
-> +	.vactive = { 720, 720, 720, },
-> +	.vfront_porch = { 7, 10, 13, },
-> +	.vback_porch = { 7, 10, 13, },
-> +	.vsync_len = { 7, 11, 14, },
-> +	.flags = DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW,
-> +};
-> +
-> +static const struct panel_desc boe_av123z7m_n17 = {
-> +	.timings = &boe_av123z7m_n17_timing,
-> +	.bpc = 8,
-> +	.num_timings = 1,
-> +	.size = {
-> +		.width = 292,
-> +		.height = 110,
-> +	},
-> +	.delay = {
-> +		.prepare = 50,
-> +		.disable = 50,
-> +	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-> +};
-> +
->   static const struct drm_display_mode boe_bp101wx1_100_mode = {
->   	.clock = 78945,
->   	.hdisplay = 1280,
-> @@ -4845,6 +4874,9 @@ static const struct of_device_id platform_of_match[] = {
->   	}, {
->   		.compatible = "boe,av101hdt-a10",
->   		.data = &boe_av101hdt_a10,
-> +	}, {
-> +		.compatible = "boe,av123z7m-n17",
-> +		.data = &boe_av123z7m_n17,
->   	}, {
->   		.compatible = "boe,bp082wx1-100",
->   		.data = &boe_bp082wx1_100,
-> 
+On Tue, 25 Feb 2025 at 02:29, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Tue, 25 Feb 2025 at 01:25, Qais Yousef <qyousef@layalina.io> wrote:
+> >
+> > On 02/24/25 15:15, Vincent Guittot wrote:
+> > > On Mon, 10 Feb 2025 at 10:13, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Mon, Feb 10, 2025 at 01:29:31AM +0000, Qais Yousef wrote:
+> > > >
+> > > > > I brought the topic up of these magic values with Peter and Vincent in LPC as
+> > > > > I think this logic is confusing. I have nothing against your patch, but if the
+> > > > > maintainers agree I am in favour of removing it completely in favour of setting
+> > > > > it to a single value that is the same across all systems.
+> > > >
+> > > > You're talking about the scaling, right?
+> > > >
+> > > > Yeah, it is of limited use. The cap at 8, combined with the fact that
+> > > > its really hard to find a machine with less than 8 CPUs on, makes the
+> > > > whole thing mostly useless.
+> > > >
+> > > > Back when we did this, we still had dual-core laptops. Now phones have
+> > > > 8 or more CPUs on.
+> > > >
+> > > > So I don't think I mind ripping it out.
+> > >
+> > > Beside the question of ripping it out or not. We still have a number
+> > > of devices with less than 8 cores but they are not targeting phones,
+> > > laptops or servers ...
+> >
+> > I'm not sure if this is in favour or against the rip out, or highlighting a new
+> > problem. But in case it is against the rip-out, hopefully my answer in [1]
+>
+> My comment was only about the fact that assuming that systems now have
+> 8 cpus or more so scaling doesn't make any real diff at the end is not
+> really true.
+>
+> > highlights why the relationship to CPU number is actually weak and not really
+> > helping much - I think it is making implicit assumptions about the workloads and
+> > I don't think this holds anymore. Ignore me otherwise :-)
+>
+> Then regarding the scaling factor, I don't have a strong opinion but I
+> would not be so definitive about its uselessness as there are few
+> things to take into account:
+> - From a scheduling PoV, the scheduling delay is impacted by largeer
+> slices on devices with small number of CPUs even for light loaded
+> cases
+> - 1000 HZ with 1ms slice will generate 3 times more context switch
+> than 2.8ms in a steady loaded case and if some people were concerned
+> but using 1000hz by default, we will not feel better with 1ms slice
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Figures showing that there is no major regression to use a base slice
+< 1ms everywhere would be a good starting point.
+Some slight performance regression has just been reported for this
+patch which moves base slice from 3ms down to 2.8ms [1].
+
+[1] https://lore.kernel.org/lkml/202502251026.bb927780-lkp@intel.com/
+
+
+> - 1ms is not a good value. In fact anything which is a multiple of the
+> tick is not a good number as the actual time accounted to the task is
+> usually less than the tick
+> - And you can always set the scaling to none with tunable_scaling to
+> get a fixed 0.7ms default slice whatever the number of CPUs
+>
+> >
+> > FWIW a raspberry PI can be used as a server, a personal computer, a multimedia
+> > entertainment system, a dumb sensor recorder/relayer or anything else. I think
+> > most systems expect to run a variety of workloads and IMHO the fact the system
+> > is overloaded and we need a reasonable default base_slice to ensure timely
+> > progress of all running tasks has little relation to NR_CPUs nowadays.
+> >
+> > [1] https://lore.kernel.org/all/20250210230500.53mybtyvzhdagot5@airbuntu/
 
