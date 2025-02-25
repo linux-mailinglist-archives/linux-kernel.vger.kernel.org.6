@@ -1,235 +1,192 @@
-Return-Path: <linux-kernel+bounces-531995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0160A447A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:16:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D5FA447A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B55866946
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723FB8671F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0EE19048D;
-	Tue, 25 Feb 2025 17:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E371946A2;
+	Tue, 25 Feb 2025 17:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HYGpa7hR"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2068.outbound.protection.outlook.com [40.107.247.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1+90Mwc2"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C118DB10;
-	Tue, 25 Feb 2025 17:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740503303; cv=fail; b=Yz1p7R8eRNMtZex+8GswolwYXkerKLAif3MHCf6OE2xl84iq9VgP6/rYkYHJ1vuo76zvYTrhDRy9qSJFcX9BcLwV0TOUXb4kgNurQSSkvXIoLBNvRNVcPRl9R7Z5RMex8NEJIqm5KTSIRnj/DuBPQc/t5Pa3KcuOBpxCrm2npz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740503303; c=relaxed/simple;
-	bh=99ZfC5hAPmu8W6QEU5oapLglhNMCwlKyYj92FBA7Oek=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MQig4AVgbjZBwhheIRr2nbENHHq5Wgs6VrH6tYc/KTKet25m5sbyYeZkXhLQOAmiI+NtFHFUoSAQlsuxJd/nCXYa3T0hn9qMuE000yoxc5NpOPnxl69E1JMrNime1vLP/teU2vpkjwPbZdpLiZ9TEkmznGf9gVBpT5DOvEm5YN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HYGpa7hR; arc=fail smtp.client-ip=40.107.247.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fM+TTTrPQnXs0oYAcyWLQ7ZEhi4nX9t91dOQ/sFfej+g6ajaLfavNlvkV4T4SITlWJmCF/BJ15U50wqrZjWFodUbwFmsNpHwMJnoObrcBxEX6JKc20AaeNdmbiB/aVgjDF7V6RhUtQkHejlnFQ6UMkAzF0lXTg+tlcCCbOihKQSBFLy0hsfAIISV5XReaGo61Y+pAaZIfwJF4LJ/0ky6cWo5Mm6KCTXbJc+BWibRN5aNquVZrQ7vS8AEO0SYS7TGA0ZM89Q0V26mbN49s0jX2VKWJVrQoHJpfjGdoJx9R6G/vDbfxS0PRoInr+gSISmnwdbFZoZwOuSbU3SXChG6Ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IyRcL0g1jRe+/iFg5sLskj4FCwUkTQfSPSOlEIXo7b8=;
- b=xOu7w3Iq1Rb/H+uokg7o1ZYpPATNsY4Ev0klXAhmll9RL/9YabNleID4CoeNVI0U3H4iGDUzwKQ3a1w5v5IMcJLlvX1Gwa4lQDK9369ibj9B0pnDHW4gIx4xFtQA8ArPDIrEbNoLyLPLSVJMpOPmOWq7y5OQajIm5FKZLECPl+QpQUdXbvwO+bSM6eWObMMR+w3hMq+XjHsO+aVlCDsCQk9q7Dlg4aWSXyhhC1W+D/YwHt883uzB7wmQBOeaelB8wkFSOxXz2ewkVM6pHpKbmiywGKSJHb3s2Au9iQG4wN0Y/wvf14dd8hQ6ODhy4RGuk/M7sAnw5sqHQagunmL/dA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IyRcL0g1jRe+/iFg5sLskj4FCwUkTQfSPSOlEIXo7b8=;
- b=HYGpa7hRBmJXh7PZB9sn1YValQqzgYL4Z+TF6jzbm/13I9DngdE+1ABG1AbzvLK4K1Phzh2nOr5Ro2tH3gR5eKtFiiaua7uloRjgSdl1KmhHrOczYCl1DcuRpXPvnBvYxnkd+BZF8rzgvXb4+kfmV1ddleA6FaOqdva2DFoiW0Fvplgvmg4iroapfteEYwmjoUewvJ2NROf80FPXhYvX16axE7/TMJZ4Az0pWmT0TWFJHpft/Qdd1iq5QPgza0HXMlWdkjJXx5irFRWy9q7JIGOPW62OD+cEiLv0vKzWS/pseM5rFkyX38uwlbQbXF5ghfqHPq+iPSVd4l99HJy5bQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB9308.eurprd04.prod.outlook.com (2603:10a6:10:36c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 17:08:18 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 17:08:18 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 1/1] arm64: dts: imx95: add ref clock for pcie nodes
-Date: Tue, 25 Feb 2025 12:08:02 -0500
-Message-Id: <20250225170802.2671972-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR08CA0025.namprd08.prod.outlook.com
- (2603:10b6:a03:100::38) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9742B19258C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740503312; cv=none; b=ladeRZPmn02bYNKgxT7ys1+XeNwOLAfXAzTxW9YYY49hS7hpTQxh+fMU8iNNgxCEgnjNY1cn0AIqqoDEIM6rJJtA9iR/SJi55EiDFXd537U/Ue1iBXHzTpJvfMjJ0y2u318nx/BNfizYi10hvOjc9vnFQ3HLSpWQJpT2gOSgqAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740503312; c=relaxed/simple;
+	bh=SS9kgyaImj6RHK5LJn7d2R6kJ3V1FoRJ0mFcyFKs1aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhvmZitxB+QFVdyo8BNlG811EkGctHUzfEe1NvjybagD55BcdeM6CjijyxZlY+7NtBSmENYvShUiaDFKE7cMDjq2T7WSTpfFNCAIiiXWkM5G2W6/QAAxj/L7oFEaO97zFR12CLksWWk3TVxC5DzIcRAs1ZRDp2AqKG/q06+5Yow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1+90Mwc2; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22117c396baso201245ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:08:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740503309; x=1741108109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1QM6kau2iQ4j6ZEaDdmG4fMZZFTf4UoSv3ypQuKbFJw=;
+        b=1+90Mwc2tBTehc48eAdUaVeASRqHpq6148FESDI3wonZcgPuiM8ddmoGqsMMpOOGWF
+         RwHdsMJL/7i0ZPXQzGm1EnbMF/WPCBqHcKcSHykx7E6VhAgejGNnmm8aD76BADryfK52
+         rDwA/mLwrT/Xv6W7jwP3T0qYWMf6NY3BEdyQRVKYinPBktKurSCW+RYXr4K0g//SjNT2
+         V/6qieZycgjxgyBjkYvto6mxcEM5kRgn+QG2LSluWa9LuJcuejeOlWlAQMnP4oB+dx19
+         6uklvoKdzZp3m4PV/YTtO9fJ9Kn2ziOW4/OPm36Qil/8SSnyQkFFWeuN7++7MVESIf+9
+         KoZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740503309; x=1741108109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1QM6kau2iQ4j6ZEaDdmG4fMZZFTf4UoSv3ypQuKbFJw=;
+        b=XDuPTuk6H6MbTYAleQjf4MbobBxoxdK2pOg1ANhFyVVd9hXDm0/LrsmEgMapnVyWoH
+         1tL+k24RfMaTjXsYzIE1GKJl78Peut2t0YoUeN+OX0I01fljMEtO4itdtDpi9Vz24Zv6
+         /kMa1wYczVGk6FVUdULgj12zLUe+mxv1BoGlIctYyyyJODKVtEpItfBYiXQQB2SuzHpy
+         KDAW9hmlGjNs1E/CZp+Omx9OAxOu2WJnfGq39EefU21NoGJsr9HnUCo3Tn6cP5PQxW16
+         3KbfJkqjQGuoxv3zZ14rTxrp89cDP5ShbASqeMPJGT4TGXMOilVoXa4Aks2LwrRpMOet
+         aeJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl80In3i6Q5hR6juUM6ZDngjTsbLCVH8nCjihCF9jYUJOzg+94YVjMFFE1dGC7auZvARf2PuPvLdl6FRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3hfM5FJiM6OqUUAac7RDWGxex3R2UODXot7QkcU//da9oc+65
+	ZLC9qp3ltcM2QCOYMWMO5uMrmLLEQGjgInsJ590tH/t9itaj+vwgahygCJDbfg==
+X-Gm-Gg: ASbGncv3kCwrLBK4C87JIpgqM9boH9L7Dw1aZ8Yddpicc4cqcmNYCL5IgxHRr4rJliY
+	9mxEb2HF9EFFaRg1NGTepk0HTb9SRSfIXUHx+n4H2xgjLs0mcTtWHj92be+WXR+Jwb0i6+ACK14
+	3NQYgefWkXGMRwBn/vwAMn1KrCsMjWQSrsC1KLd6TA+OYB8XWA8k8KNg8RWT5Yc/zhfKr2+zZNX
+	lbn5P4at6ynrqBC6EdlF1YAvlt2YMAqfUhr7APA0nvLLYQbSjta6HfTUC+0v5EZ4P1zbGtcJ5Rl
+	3Vvulu/9HVneYuzdX6kspNd6ZLZmiJNMB67Tu5mmjqWHK1fJOjVQIAJ33HtZ02I=
+X-Google-Smtp-Source: AGHT+IHxrabWDtym7s/ddOkqBHoBfq1ZqP6yAIbeWpN90fX7xeP+90KuPUzmekpH3adGkKddVDiEdg==
+X-Received: by 2002:a17:902:ec90:b0:216:607d:c867 with SMTP id d9443c01a7336-22307aabb1cmr3599065ad.29.1740503308535;
+        Tue, 25 Feb 2025 09:08:28 -0800 (PST)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9ae8sm1757069b3a.120.2025.02.25.09.08.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:08:27 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:08:16 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, kevin.tian@intel.com, corbet@lwn.net,
+	will@kernel.org, joro@8bytes.org, suravee.suthikulpanit@amd.com,
+	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	shuah@kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 12/14] iommu/arm-smmu-v3: Introduce struct
+ arm_smmu_vmaster
+Message-ID: <Z735AMlhP29YEndU@google.com>
+References: <cover.1740238876.git.nicolinc@nvidia.com>
+ <be799951a817557ac093ac3e18d02a631306aa35.1740238876.git.nicolinc@nvidia.com>
+ <Z7zYLBLZGKim-5UL@google.com>
+ <Z7zlH74/orq9HF7Q@Asurada-Nvidia>
+ <Z7zqdrQn7Q8yXfcn@google.com>
+ <Z7zxsbJsOFp41Dzd@Asurada-Nvidia>
+ <Z70EnQ5CXacc4ysT@Asurada-Nvidia>
+ <20250225160225.GA593877@nvidia.com>
+ <Z73yt4r0iDFwbty2@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9308:EE_
-X-MS-Office365-Filtering-Correlation-Id: aba17cdf-3559-4012-fbc1-08dd55beffba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?x72NuTW8zlcDJRe/h7Rteoq0gTWlbUe1ViWeXtkM+GdlCcf3mIo7ixIqsBqa?=
- =?us-ascii?Q?zi3Jc42vrq6oa4Nzs2kKZSPvlj7qF96UeJ+4IPX2lk4j8XkRl0Qqpil2ldR0?=
- =?us-ascii?Q?YfQKO7fjvpF1e+i9tEE0pGhqTiKcgktDDwUB4upzKPjwzMayLFunLnKMw1H9?=
- =?us-ascii?Q?CoaAylnL7vAw3NQiAWz6Y3egWem+eL5Tbbzq3X1PT6I3XGpaoJU9C27KC3LN?=
- =?us-ascii?Q?z7eE3CCXNvaQTMSU0NtcpSR9aHkbw3EpJr+ohpwNEq1PSfCBDTdLw3LV90oQ?=
- =?us-ascii?Q?JD6u1JaZeSMpYCs6aYY2Xk14E5WdfNDwQbI+6K4MSxU8F9Ofke8i44yKClwp?=
- =?us-ascii?Q?9n3vRZOumM7sc/6/k2XQ/2jxrShq1RqavkERjD7l4W38JsNr/kKUJzXfk434?=
- =?us-ascii?Q?GZz5XjYQFHoFHSzhlBWkhEAmiucEmbYzyG1CorRdTb7cdyosKXmsdgfIRHIK?=
- =?us-ascii?Q?cwsZOCHAMVvQELkM2UyeqfEQYwMcmNVhNL5Tx1Wi638XdOXUiR0Pwba3oBzW?=
- =?us-ascii?Q?CBfE717DYmRfwze450CboT7GqE8Ibm1DDL5TyNVUOVdD2y/FN2FqNeAwRK/8?=
- =?us-ascii?Q?HPhsSmyeun0cmiT5YwqUjwchLAGEW8meqHgqNwOYlbGyDo3wznWBia7pCISf?=
- =?us-ascii?Q?4LTdqbiT7XcZBGx9lm4cfycOW+gvlWa1EOO7kHC6juiShh3ub9CQHBzq8Vnt?=
- =?us-ascii?Q?3UarIrJ/qQy9D8+bYPExx/3N079Y6H2g3pzT34LXcOac3XQQGpVwCRGFW+ZO?=
- =?us-ascii?Q?uIg2d5pNqNswItfjc2IixmF30blcO77CtxWqfsoWjhVUUVXqitmIw5eYFGYQ?=
- =?us-ascii?Q?JBBO4svoirNiM+xWULduCABsQgRxyxnn8e+DbLNaP94YVrnsINNgxWf6XdQG?=
- =?us-ascii?Q?f/pzsS5j6c11dkEYGyU3PEGkMjZm751aXl0JCDjdoniOZSonz5scDCO91FSK?=
- =?us-ascii?Q?L+epWju7Saf6fFbWHsVXdyq+hcjYGn6LesJrn2rS5vRgeXchnFeVXmIyG/5w?=
- =?us-ascii?Q?CDbw8rzwoCbOVktOibGHQkZru8te34dJBaz8driOf0XU6/bV1pRkZjWAI1iI?=
- =?us-ascii?Q?owRm5B5lo0GIHMNXvvo24xu2TrJxjB7iGOKtFQSCIP808d/Q2xcXIIQazSCR?=
- =?us-ascii?Q?Y2aCtJfjYGJNWsqBE6/UNsWxXJJ6PoM4+ZWFlDMtTA8Oy1S2HgDJj1pKgLPt?=
- =?us-ascii?Q?PCXJZ5iYz5Gji969uDvDCuI6llancQEgOvkpX83Tk0Xz8dcvFZo9LxgpqUOW?=
- =?us-ascii?Q?CBhJJeuN5BMICEDIafly0eooGITVxSXkolNJswe6Yfq5GhC8rKyLIKwitrfp?=
- =?us-ascii?Q?iFhXhTXgsOyNt9UG9asP8vdr9P5NEsy7VUJiq9nTxApFkOl6KsC80Ak3/UAp?=
- =?us-ascii?Q?9x6WjtYKnlkm+iiHJRlIT/Ev7/BKUp5bfJo7i2cfICjXmcGNRg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?urwJiDWfTbvJ3HgWjgCsr9FcF14wbhleomOIzqs2UzNYRmmX6V0xSvOtaF0r?=
- =?us-ascii?Q?V7eHGbeJ2xH6XZsCm9O5EYbXYldyYU5beznxp/vHY8SUtkB9ATxjsMKEPZHq?=
- =?us-ascii?Q?4iHpyf79Y1KaHPa54uM6OzbJ7WeBP0oE0HWzXqAO8zTjWp1nEROQTl5Q84iB?=
- =?us-ascii?Q?Dzv6nWZlmh9hcuoHfRXO60qgd3+PDmfTAeqlbrn9j+ez4EOvYb7J8LiM72uI?=
- =?us-ascii?Q?FqvDiJ2/emNRg7xno+0YhPJ4XyT7L16UVHBOOn4CN2zhwmBgWXNG8Rdfx2w4?=
- =?us-ascii?Q?hmWgqKXi42viPvSCDTFztU4CO2WPSCmkpyOfWu+KFYtfmmzHHQzWHmc+1LLM?=
- =?us-ascii?Q?iJQSAQL9yxX3BxlXmpu13Kv4ItMcjW9jEbH74Of9b4xQhAPHunPvygNH1S6W?=
- =?us-ascii?Q?JAVbPfiqqD44z3PTeW1CfssOOcSJ4gT6W+8PvhJGk3sZJaiScd6wrcP+lOFp?=
- =?us-ascii?Q?seW1yuvuIq/S/jMNiPXvF1kLqFs2rY8111Bgj/0RFU84xARviM/6mlARjEw4?=
- =?us-ascii?Q?hSU4aDZ/Mkp1zw4sgubg40Ilpq+icY3vAMCLKhYn3lsyE6Re0wrxCbTPDC64?=
- =?us-ascii?Q?eoexIrLYlFoPJeTwUvWEcENCQYADvezuCROIJt77mpF+ZAAWjqDLV+xuaXAN?=
- =?us-ascii?Q?//J0IPgEfJ5cFu9+0Abf88/cjGw5XRk3FizRVKqXHb0DU2mi8gGJZw4er32i?=
- =?us-ascii?Q?CKewNLTUeD7U6klMHn8b2oH8Qlqjk+JV/pRK58VIsq+tmJgKP1roxzpuKrfm?=
- =?us-ascii?Q?HhFp8FLQcbgkjSV/7JfLtI1VeTxVGzUi0fYJzGsgrGOL7JCgkyiCCUYZDDY2?=
- =?us-ascii?Q?M1m0fKNwyfWCk8n7W5plniUkEZtrcXQ2gXjDMXexUYVXNu9YElnj89crf4um?=
- =?us-ascii?Q?zjVOgMEvnwFM3b/dyTHasPLaBkR5ARHVoT3dPzNxIKrFCzpHMFs75VRd06Kd?=
- =?us-ascii?Q?NUKuaucdyttVBeNiiaXbKxQjjPMlCl/TcANngrpWet4fwTWYdGdNP2vw+Og6?=
- =?us-ascii?Q?NVC2wvFcMN4kjfssCf40gTR/HrQCQQOPtnvtVmTh5VEmI/3xOm1yNmmV7TrH?=
- =?us-ascii?Q?0YGXJhr5AqbIPYoVH8rf+yZ5QDhVS+PPkx0Uh4gLqM7OthAfM8cbMk8jirxe?=
- =?us-ascii?Q?znLZBtauFkEyzywDK3g+GoeNgq2hXZKOPTXhhnkpXVY4ktPpX0zUVKMAv+ab?=
- =?us-ascii?Q?LncZcEDBMsdblfvNRCPrnjkjz8ektMvuuZOPlAfHg7wl6oh/a3ptFzjWQpTy?=
- =?us-ascii?Q?ODFInCb+mY7Gq5mXFSjVvVEfbfz+3OKOfcV3tXuXk+o64hL9hCgjlCNMUVT6?=
- =?us-ascii?Q?NDjdqYKnXqJOM+2Qr9x8epsfsTXHKY9jTf6e4u2CaVNPVAjsJth3r3YYGGCm?=
- =?us-ascii?Q?tftSWPLFVMZSprvyTu4UdJXlnBk7Tp43yfGe0usrKetAIK8gzT5pjdKInvLu?=
- =?us-ascii?Q?GWrB5JiDFlnwpLvK7ES7o835cY5uWP4IR9QFGGHYGiH66pwi0h0R5MNStrVH?=
- =?us-ascii?Q?Ocm3kmG8038LuB1jMUJVa9KUa1fPbEE6kgk/yPTYUfPj29WxIhLXWp6wkh99?=
- =?us-ascii?Q?N/erwzTEAU/YkRVcTdY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba17cdf-3559-4012-fbc1-08dd55beffba
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 17:08:18.2506
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yO5mzqMj/LMgh/Vnl/+/vXUv5qWLCyVDWTQapiY0cm11okfyjBFZP2hYRJh3mLTY+8U3VIuTn/kuBeWRlu3ZDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9308
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z73yt4r0iDFwbty2@Asurada-Nvidia>
 
-Add "ref" clock for i.MX95's pcie and fix below CHECK_DTBS warnings:
-arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: pcie@4c300000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml
+On Tue, Feb 25, 2025 at 08:41:27AM -0800, Nicolin Chen wrote:
+> On Tue, Feb 25, 2025 at 12:02:25PM -0400, Jason Gunthorpe wrote:
+> > On Mon, Feb 24, 2025 at 03:45:33PM -0800, Nicolin Chen wrote:
+> > 
+> > > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> > > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> > > @@ -95,8 +95,6 @@ int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> > >  
+> > >  	iommu_group_mutex_assert(state->master->dev);
+> > >  
+> > > -	if (domain->type != IOMMU_DOMAIN_NESTED)
+> > > -		return 0;
+> > >  	nested_domain = to_smmu_nested_domain(domain);
+> > >  
+> > >  	/* Skip invalid vSTE */
+> > > @@ -122,19 +120,9 @@ void arm_smmu_attach_commit_vmaster(struct arm_smmu_attach_state *state)
+> > >  {
+> > >  	struct arm_smmu_master *master = state->master;
+> > >  
+> > > -	mutex_lock(&master->smmu->streams_mutex);
+> > > -	if (state->vmaster != master->vmaster) {
+> > > -		kfree(master->vmaster);
+> > > -		master->vmaster = state->vmaster;
+> > > -	}
+> > > -	mutex_unlock(&master->smmu->streams_mutex);
+> > > -}
+> > > -
+> > > -void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master)
+> > > -{
+> > >  	mutex_lock(&master->smmu->streams_mutex);
+> > >  	kfree(master->vmaster);
+> > > -	master->vmaster = NULL;
+> > > +	master->vmaster = state->vmaster;
+> > >  	mutex_unlock(&master->smmu->streams_mutex);
+> > >  }
+> > 
+> > I'd leave the clear_vmaster just for clarity. Commit should not be
+> > unpaired with prepare in the other functions.
+> > 
+> > It looks fine with this on top too
+> > 
+> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+> Ack. I added it back and a #ifdef to the vmaster: 
+> 
+> +void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master)
+> +{
+> +       struct arm_smmu_attach_state state = { .master = master };
+> +
+> +       arm_smmu_attach_commit_vmaster(&state);
+> +}
+> [...]
+> @@ -824,6 +829,9 @@ struct arm_smmu_master {
+>         struct arm_smmu_device          *smmu;
+>         struct device                   *dev;
+>         struct arm_smmu_stream          *streams;
+> +#ifdef CONFIG_ARM_SMMU_V3_IOMMUFD
+> +       struct arm_smmu_vmaster         *vmaster; /* use smmu->streams_mutex */
+> +#endif
+>         /* Locked by the iommu core using the group mutex */
+>         struct arm_smmu_ctx_desc_cfg    cd_table;
+>         unsigned int                    num_streams;
+> @@ -972,6 +980,9 @@ struct arm_smmu_attach_state {
+>         bool disable_ats;
+>         ioasid_t ssid;
+>         /* Resulting state */
+> +#ifdef CONFIG_ARM_SMMU_V3_IOMMUFD
+> +       struct arm_smmu_vmaster *vmaster;
+> +#endif
+>         bool ats_enabled;
+>  };
+> 
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change from v2 - v3
-- fix typo 1000000
+Umm.. I'm not too sure how I feel about these #ifdefs _between_ a struct
+definition. Given that currently, the arm_smmu_v3.h file doesn't have
+such `#ifdef CONFIG`s between structs. I'd say, in case
+CONFIG_ARM_SMMU_V3_IOMMUFD is turned off, we can simply leave the
+vmaster ptr NULL?
 
-change from v1 - v2
-- rebase to dt/dt64
-- add clock 100mhz
----
- arch/arm64/boot/dts/freescale/imx95.dtsi | 25 ++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-index 51625bc9154ec..9bb26b466a061 100644
---- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-@@ -291,6 +291,13 @@ sai5_mclk: clock-sai-mclk5 {
- 		clock-output-names = "sai5_mclk";
- 	};
- 
-+	clk_sys100m: clock-sys100m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "clk_sys100m";
-+	};
-+
- 	osc_24m: clock-24m {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -1595,6 +1602,14 @@ usb3_dwc3: usb@4c100000 {
- 			};
- 		};
- 
-+		hsio_blk_ctl: syscon@4c0100c0 {
-+			compatible = "nxp,imx95-hsio-blk-ctl", "syscon";
-+			reg = <0x0 0x4c0100c0 0x0 0x1>;
-+			#clock-cells = <1>;
-+			clocks = <&clk_sys100m>;
-+			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
-+		};
-+
- 		usb3_phy: phy@4c1f0040 {
- 			compatible = "fsl,imx95-usb-phy", "fsl,imx8mp-usb-phy";
- 			reg = <0x0 0x4c1f0040 0x0 0x40>,
-@@ -1633,8 +1648,9 @@ pcie0: pcie@4c300000 {
- 			clocks = <&scmi_clk IMX95_CLK_HSIO>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
--				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-+				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-+				 <&hsio_blk_ctl 0>;
-+			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
- 			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
- 					 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-@@ -1706,8 +1722,9 @@ pcie1: pcie@4c380000 {
- 			clocks = <&scmi_clk IMX95_CLK_HSIO>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
--				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-+				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-+				 <&hsio_blk_ctl 0>;
-+			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
- 			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
- 					 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--- 
-2.34.1
+-Praan
+
+
 
 
