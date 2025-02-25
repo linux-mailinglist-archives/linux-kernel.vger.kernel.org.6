@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-532242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080C4A44AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:41:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12062A44A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC5F3BB360
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF8A19C7798
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B267B1DB375;
-	Tue, 25 Feb 2025 18:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD81A23BD;
+	Tue, 25 Feb 2025 18:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVOiPB79"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byILlQzb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176B41C8602;
-	Tue, 25 Feb 2025 18:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FC6198E63;
+	Tue, 25 Feb 2025 18:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740508391; cv=none; b=mjsK5FLcKaidL/u36BL/Nw9ZpWaiUYUmJuXcNLGsGD60EtmksKwXa3w+1CaKCivOC8weY4GzeOK5UYgM+4ugnwLTC6ZiXCybLV42ZG46EVrAVXlx+VZqVadak1/9Pq8vbve1hW3V6jEfQms7E9HukK3SCEVqeCfyMkaUxMJfd/E=
+	t=1740508410; cv=none; b=bzmx3T8G3gFZCZaE/pF9y3/OisO/3nx0PdhFx/dsHGFUWTw44T3FnpV3HmMLv483rqKbYm5XBoJpQSkycW6jc8JDLPFamFvZ6eAAjfWFBT7JMekkiMXjv+53cTXBWjSq1nKFQbLiEmj/iDNgIUHZkGQ5eqzCiCmpxLN0Vt9/CL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740508391; c=relaxed/simple;
-	bh=03NqTDrUs0oMO9xVqWE+ZbeCfpofpmt7PAlvxMuUudU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdBCsxzkQlr16SNByPhMQeEM6yf9paeOLZhRDt4jwFNmpfCJXeONxyZM1BsD93wzfdge2XKz1io/VeTLdUjcaCZ8COJeDuBOBryfEcswwAC7FFhcf5QRD295jzW8mTv0oxrxBX8keSxiuiDXAg/gyEBDOeSY324ymKSNcSEvm8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVOiPB79; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAD8C4CEDD;
-	Tue, 25 Feb 2025 18:33:10 +0000 (UTC)
+	s=arc-20240116; t=1740508410; c=relaxed/simple;
+	bh=bBItIqzwltwC+TCsuqofxmj3GfVFhtE23r50c2BKncQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l6nTvDw5y1rxAoDTIoUMQYZPIXF/Jc7uIxZrfDi1U74rLOoXDscgXEeFFe/QiiL7tviGtH6D6+srS7j8zArboPDZbZTKNPfoepKyoQK/b+MRURXvtuPpHKootVW1eF02//nogqCcJ88djAcpKkEW/7H22hqPKaBxvla5kpykhP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byILlQzb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61763C4CEE2;
+	Tue, 25 Feb 2025 18:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740508390;
-	bh=03NqTDrUs0oMO9xVqWE+ZbeCfpofpmt7PAlvxMuUudU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VVOiPB79Rqw0x71AHmLqjt0kR1L9ieScgWEwU0ZJ2MZ3duW88KCLUaChtLjPMAklC
-	 fD61BHnainx9uHmhCHl77RITR5IeMNOvLjXJudrpH5k7kMQ+kFbZHHYm7R7JA9GLEc
-	 blYxFgwEjm7gYKte3ihH7iURUBuBrgQiMyiDbQm6Fkbw2ejjTZ5COFEPxzbrAKJ5Fm
-	 0tqxD8bV2ZcdFZuihHebw0t0PqDQq3fBHman/m8Ux3ODYhqfW5lm9SrnOevNCJVptI
-	 3dY8QghUDmtgKs+W9qqXkTe6l8LrVe8ApUGULNvv/6IJpBHsdFFAE3XF6K5OfJgO+l
-	 woc06mva7u0uQ==
-Date: Tue, 25 Feb 2025 10:33:08 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] livepatch: Replace tasklist_lock with RCU
-Message-ID: <20250225183308.yjtgdl3esisvlhab@jpoimboe>
-References: <20250223062046.2943-1-laoar.shao@gmail.com>
- <20250223062046.2943-3-laoar.shao@gmail.com>
+	s=k20201202; t=1740508409;
+	bh=bBItIqzwltwC+TCsuqofxmj3GfVFhtE23r50c2BKncQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=byILlQzbc5JGnFIQUA0x5qdJlCR0vxEvzYMNH6CrS1ES+sOY0ipN8SnyTX7AeXkJw
+	 O7aHFFrdrUiaQvQFOZKa0+ECESde8BT0DKOQaU978clpnH0k5gdkSVkqzCjQV1n6zE
+	 Qb6p985UtN50Pq53joGLRy8KSSrsXqGsv5r+JooCRkNsK6miRm+GmB44zvNL0Vjgqb
+	 ozcStsf9w2bROIvxar3WjDgFk/aMpOYFi8DKRUg7DsGer0bVGOn9+/M7kupUn2OznI
+	 o2H+aRsgqUCLTJKIeN0Z4V6RnrZhRJMbb1lkfU02Cl2d6NaSXtKXMw0mxCDfHgQCmx
+	 7nZgOr98SGN2Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0514ECE045A; Tue, 25 Feb 2025 10:33:29 -0800 (PST)
+Date: Tue, 25 Feb 2025 10:33:28 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	kernel-team@meta.com, rcu@vger.kernel.org
+Cc: john.ogness@linutronix.de, pmladek@suse.com, rostedt@goodmis.org,
+	senozhatsky@chromium.org, boqun.feng@gmail.com
+Subject: [PATCH printk] Flush console log from kernel_power_off()
+Message-ID: <5f743488-dc2a-4f19-bdda-cf50b9314832@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250223062046.2943-3-laoar.shao@gmail.com>
 
-On Sun, Feb 23, 2025 at 02:20:46PM +0800, Yafang Shao wrote:
-> +++ b/kernel/livepatch/patch.c
-> @@ -95,7 +95,12 @@ static void notrace klp_ftrace_handler(unsigned long ip,
->  
->  		patch_state = current->patch_state;
->  
-> -		WARN_ON_ONCE(patch_state == KLP_TRANSITION_IDLE);
-> +		/* If the patch_state is KLP_TRANSITION_IDLE, it indicates the
-> +		 * task was forked after klp_init_transition(). For this newly
-> +		 * forked task, it is safe to switch it to klp_target_state.
-> +		 */
-> +		if (patch_state == KLP_TRANSITION_IDLE)
-> +			current->patch_state = klp_target_state;
+Kernels built with CONFIG_PREEMPT_RT=y can lose significant console output
+and shutdown time, which hides shutdown-time RCU issues from rcutorture.
+Therefore, make pr_flush() public and invoke it after then last print
+in kernel_power_off().
 
-Hm, but then the following line is:
+[ paulmck: Apply John Ogness feedback. ]
+[ paulmck: Appy Sebastian Andrzej Siewior feedback. ]
+[ paulmck: Apply kernel test robot feedback. ]
 
->  		if (patch_state == KLP_TRANSITION_UNPATCHED) {
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ include/linux/printk.h |    6 ++++++
+ kernel/printk/printk.c |    4 +---
+ kernel/reboot.c        |    1 +
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-Shouldn't the local 'patch_state' variable be updated?
-
-It also seems unnecessary to update 'current->patch_state' here.
-
-> @@ -294,6 +294,13 @@ static int klp_check_and_switch_task(struct task_struct *task, void *arg)
->  {
->  	int ret;
->  
-> +	/* If the patch_state remains KLP_TRANSITION_IDLE at this point, it
-> +	 * indicates that the task was forked after klp_init_transition(). For
-> +	 * this newly forked task, it is now safe to perform the switch.
-> +	 */
-> +	if (task->patch_state == KLP_TRANSITION_IDLE)
-> +		goto out;
-> +
-
-This also seems unnecessary.  No need to transition the patch if the
-ftrace handler is already doing the right thing.  klp_try_switch_task()
-can just return early on !TIF_PATCH_PENDING.
-
-> @@ -466,11 +474,11 @@ void klp_try_complete_transition(void)
->  	 * Usually this will transition most (or all) of the tasks on a system
->  	 * unless the patch includes changes to a very common function.
->  	 */
-> -	read_lock(&tasklist_lock);
-> +	rcu_read_lock();
->  	for_each_process_thread(g, task)
->  		if (!klp_try_switch_task(task))
->  			complete = false;
-> -	read_unlock(&tasklist_lock);
-> +	rcu_read_unlock();
-
-Can this also be done for the idle tasks?
-
--- 
-Josh
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 4217a9f412b26..5b462029d03c1 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -207,6 +207,7 @@ void printk_legacy_allow_panic_sync(void);
+ extern bool nbcon_device_try_acquire(struct console *con);
+ extern void nbcon_device_release(struct console *con);
+ void nbcon_atomic_flush_unsafe(void);
++bool pr_flush(int timeout_ms, bool reset_on_progress);
+ #else
+ static inline __printf(1, 0)
+ int vprintk(const char *s, va_list args)
+@@ -315,6 +316,11 @@ static inline void nbcon_atomic_flush_unsafe(void)
+ {
+ }
+ 
++static inline bool pr_flush(int timeout_ms, bool reset_on_progress)
++{
++	return true;
++}
++
+ #endif
+ 
+ bool this_cpu_in_panic(void);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 07668433644b8..057db78876cd9 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2461,7 +2461,6 @@ asmlinkage __visible int _printk(const char *fmt, ...)
+ }
+ EXPORT_SYMBOL(_printk);
+ 
+-static bool pr_flush(int timeout_ms, bool reset_on_progress);
+ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progress);
+ 
+ #else /* CONFIG_PRINTK */
+@@ -2474,7 +2473,6 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+ 
+ static u64 syslog_seq;
+ 
+-static bool pr_flush(int timeout_ms, bool reset_on_progress) { return true; }
+ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progress) { return true; }
+ 
+ #endif /* CONFIG_PRINTK */
+@@ -4466,7 +4464,7 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+  * Context: Process context. May sleep while acquiring console lock.
+  * Return: true if all usable printers are caught up.
+  */
+-static bool pr_flush(int timeout_ms, bool reset_on_progress)
++bool pr_flush(int timeout_ms, bool reset_on_progress)
+ {
+ 	return __pr_flush(NULL, timeout_ms, reset_on_progress);
+ }
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index b5a8569e5d81f..41ab9e1ba3575 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -704,6 +704,7 @@ void kernel_power_off(void)
+ 	migrate_to_reboot_cpu();
+ 	syscore_shutdown();
+ 	pr_emerg("Power down\n");
++	pr_flush(1000, true);
+ 	kmsg_dump(KMSG_DUMP_SHUTDOWN);
+ 	machine_power_off();
+ }
 
