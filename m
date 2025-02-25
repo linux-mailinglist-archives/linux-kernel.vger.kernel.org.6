@@ -1,95 +1,110 @@
-Return-Path: <linux-kernel+bounces-531097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C25A43C29
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:48:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346A8A43C32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:49:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410D9168360
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85BA6188F30C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B80826770E;
-	Tue, 25 Feb 2025 10:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C00266EFA;
+	Tue, 25 Feb 2025 10:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BgDo5EVc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RPUpgYZr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC32254858;
-	Tue, 25 Feb 2025 10:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A2A2661BF;
+	Tue, 25 Feb 2025 10:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740480470; cv=none; b=eQolSK/0uf2cbYptaWAhosR1PkdDsh61t6VW5wjWhdB4ZScGasIrHjHiArhJRX928GDboCEMtlqwtt1Pai/uZ8AaibUDPhnjs9F9nY5lLaMrRc6vygCqX3Cgh4GQ9/7yRXD1+eNmWzESbRWck5TofwcSay7qvOcCOZ9wWm9chSY=
+	t=1740480527; cv=none; b=pjslda/r+ARTN4AoBriCVq/atFkuXw6JKOecu3147Z6Ecs281DvpgdyVSSy/edpxUqh01yNX0yxU7yzoiMjpYTcb7xX5QHNmQ69BH4Nf2W8AM9cRRt3dOct8C1fAW1VWnnqkrq3zpM4/Hof5ebHSCqsIdgYxHBl31pE1SF8KDRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740480470; c=relaxed/simple;
-	bh=Ee3FEgFuqLCisMqY83kVOp2qLpb7WjG85o1mDsEfUqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CF9qZ6MA7QktUwQpTexWmzCw5WQfxfsAMVpeNtXwBL6mhbGJIK2DoGVWM+SuE6hRt32M1fA8zXnfVEy52nD5sGkUQqDJZ6nV8UGOfl0kXWoBjD0Q/oSV95JeRbZ0gByn26s35BUaJL1XoGOi2pOhEPQ26gBRAc++UmcHoPXqT+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BgDo5EVc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740480467;
-	bh=Ee3FEgFuqLCisMqY83kVOp2qLpb7WjG85o1mDsEfUqw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BgDo5EVcS2JzMU/rI1UWVc3xVMHh4/wy2Py1vbzKo48wO1RYtK0ViPnOqYGnFQ4wC
-	 /5auWWUkjp1XNI7uk1eKTBxXdhorFyPOhY2LB+4ZUOZqmIxAVACUDFsO+n409LVkZD
-	 3vA80Y8IPyaHRL+jsZaKOPcIsLvcMKcpY4kYM9ngbKNFnVOvGxUe3DMF9IuM21QCqB
-	 Yo6H7LtgsgrXYwNNrt939NVduid5XjoURht+lM+87Nmg+udEQKlRmifEz31p3OyRU9
-	 G7WanBlxa/ai7THuY0g5OoOLHnjUY9Fou13XFYqMHHqOvDcjF96+wtMUYvlr6xndip
-	 tUrj2wmjehmZA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B97A917E0B63;
-	Tue, 25 Feb 2025 11:47:45 +0100 (CET)
-Message-ID: <7a683733-ea2e-4032-9aeb-5498876a92b3@collabora.com>
-Date: Tue, 25 Feb 2025 11:47:45 +0100
+	s=arc-20240116; t=1740480527; c=relaxed/simple;
+	bh=EZKl7xM2WjqoTZlxLf/CzLm4NBTsfbDvB7dPSIoct5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSmcC+ngvE3Hw4fRUz89WsI46jJ+6UEm4DKvxduiSafMKnMp8t8sO85pw9Bzd3QKIRpPxgFQiBIUuy1Raw0YmafoHT9keIX14a+2O9azGvvgMZQe7Ra+GP3aj+9EJ4l57/2u8gUTxNjBUzj7CA87qElzuBYeF2Q5nQMn3g4p3Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RPUpgYZr; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740480526; x=1772016526;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EZKl7xM2WjqoTZlxLf/CzLm4NBTsfbDvB7dPSIoct5M=;
+  b=RPUpgYZrnuOG2f8YGbJdF97ruE/GuYfUZLP0ppCsnTTfnOsHc6jQ6EGl
+   j+znUi58fFGs47uiibV9RN2d4UQECx7Yz9908nxbsNfxK+qkrYnyzDQ0P
+   ci5asP4zlvhUbuUBuC+/M8W/y/cx5N18KU+II24Nvn1fi4GS06fJ/yVw7
+   8T9X+A6wenos7/jrDFWYQLp+rlwyFPaYptu2h3AzMbb75gGy7vntVdaCQ
+   3ZKHV9X8bKPEJF4E+I9VciOv1beNgJhLwKzSJ6z+ty+lHShu5LJt/TBSq
+   +GTqcm+EJUt5v0+YzppXtMwTyfc782BhZowEVsYG8t5E14GU51DXvFSE2
+   g==;
+X-CSE-ConnectionGUID: ZSSH63FaSJGaX7vhEbHtOA==
+X-CSE-MsgGUID: g6FCnYdtStekxjDyuwIytA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58820754"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="58820754"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:48:45 -0800
+X-CSE-ConnectionGUID: vwyC81D1ROOtVro34sXGOg==
+X-CSE-MsgGUID: P5oBdL3NR5mjjo1tMZr/1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="116339812"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:48:44 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmsUT-0000000Exjr-0jss;
+	Tue, 25 Feb 2025 12:48:41 +0200
+Date: Tue, 25 Feb 2025 12:48:40 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR()
+ protections
+Message-ID: <Z72gCD7B0_jj-f2s@smile.fi.intel.com>
+References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
+ <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
+ <Z72dfxKzLLORkLl1@smile.fi.intel.com>
+ <745ff032-1e71-4569-ac9f-07c44cbcb344@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
- Samuel Holland <samuel@sholland.org>, David Lechner <david@lechnology.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <745ff032-1e71-4569-ac9f-07c44cbcb344@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Il 25/02/25 00:21, Sebastian Reichel ha scritto:
-> This removes .of_node from 'struct power_supply', since there
-> is already a copy in .dev.of_node and there is no need to have
-> two copies.
+On Tue, Feb 25, 2025 at 11:42:48AM +0100, Arnd Bergmann wrote:
+> On Tue, Feb 25, 2025, at 11:37, Andy Shevchenko wrote:
+> > On Tue, Feb 25, 2025 at 11:29:05AM +0100, Arnd Bergmann wrote:
+> >> On Tue, Feb 25, 2025, at 11:08, Andy Shevchenko wrote:
+> >
+> >> Subject: [PATCH] [SUBMITTED 20240403] spi: remove incorrect of_match_ptr
+> >>  annotations
+> >
+> > Was it applied (and the rest you provided here)?
 > 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> It was part of a longer series. Some were applied, but the ones
+> I provided here are those that for some reason did not make it.
+> They should apply cleanly to today's linux-next.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I can review them and give a tag if you issue a new version.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
