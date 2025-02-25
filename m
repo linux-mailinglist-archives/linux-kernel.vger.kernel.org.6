@@ -1,359 +1,197 @@
-Return-Path: <linux-kernel+bounces-530501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31862A43434
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5AFA4343F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB0C17AF5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5405917AFB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562C224FC09;
-	Tue, 25 Feb 2025 04:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2082505A2;
+	Tue, 25 Feb 2025 04:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xoJxJZlB"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IK4Q1qfa"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6DF4D5AB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6504D5AB;
+	Tue, 25 Feb 2025 04:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740458452; cv=none; b=GcxPSZVW+ZA7gx3n+cdbMdaFSa3mAj6aINJ7MIBvWAPWTWYmzZ4FB6Y1Ogy8Nqg9clGFKamTeFG9UPYiBf/v0BKGNyec82y2YbKT0dkEyHTTXOsY1LqK1l1rJtJuk9I7AxuOJpZoIz2os5DrRr/uMbts6uE1dZIWDQy4EETt0x4=
+	t=1740458538; cv=none; b=aRB1q6nTsnjpb68uNuj1uMscLw3Q0LbwdNwEEtT3Co+IbzzVfQTjnly7v9t0becMi/T4hhaqUo1iYjLGmbfQ3Ih7AVtwHGjAnIOS7oMnBSklKmvXoneo1wblI3DSqe2gWfaRQPBODBW6XU/o+U3JXsl63VF0IBtTAsMQD/HHsA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740458452; c=relaxed/simple;
-	bh=jmHpqU8Tw+XjLzSjlPepYMQyciQ3uXFUsvvUzYHSFaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bzhvv3f88e+Lm/NyzLRXZW20sVolqRcmTeU4Of1IzBQkQV8wS9a1LQDQk2d3qPp8iGsINkXfN24n1c3xH7KeCHHvIw6nfkJGYmFACVyyLbFCKmjMUr/um69sRoYhR7AZQvdv3YaXva4k/bSjpR1+7MPvzujQM6/052tIlWyDlAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xoJxJZlB; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22117c396baso71345ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:40:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740458450; x=1741063250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1zsdiMTXDV6ZhJHfzsay+wcqTS1rTUPK7gP/JhrUIs=;
-        b=xoJxJZlB6SNfwK6xIAs2KmP6zsY+SGKQJ0k1U56J/12Xz7xjGlqzb8ZpWYkstzC1nH
-         sNKqDvjcfTbJAEfo7h78POyypIcFunzvQrV7PMz7jQQxOW+JKTSf5Pagxh153P+mmYs6
-         kkTSnI9uGMN6fGCoD4Iz0I82ZI/TeykiBMOsoOljZM4Jpr6OLB0WIIBCbHmu7rhy2ky0
-         J70ZdBq07oNaX5uxLLaMCTeIHN2c+avUOXeHhajH61HqqDe3J1EguEM7XvDobwbggcxz
-         9SX3+NGmYtnvVWNft71VwqNH+2a0bN0endxYpyKrcnbA/0fezPVFDvSR3+wk1fkHEM0o
-         ofTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740458450; x=1741063250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1zsdiMTXDV6ZhJHfzsay+wcqTS1rTUPK7gP/JhrUIs=;
-        b=sHTMK7msKlMmKD+Go/DbBRvNzRprnDGqO0UpCQAC5+/xHhSd+cXdDuEoU/qRaujjV+
-         Kdn1pZgQF1DMqMjFJYT1kxsWhtXYq1QU+HvDgMfWxoKc1ABTIze23dxiGEEVBu+nJRsl
-         SpTBiOBsGLOE6Iwya2y53KeJqLMc3ODHmfwmWF0y9/4rayMBpVCEDnaNLkJomlggfg2w
-         TeIG37TW3aTVRuV56aLHBGKX1/PPVemoP7Yvclcu1tERYQf1LZgIFCbgXfl9Uwm2haPV
-         3TsQPAwvECw2Vz0lTCFqjFe0C/QvNdKpBycRelp2RDZRsbQDUxErt9BN4ptgQECoMNMC
-         Hzng==
-X-Forwarded-Encrypted: i=1; AJvYcCWYxEPbo9eAu10viTW6odDDq4QRDAHH/M2Y6lsj3vfQZc5uPrVt88hCGqEpdG8c2MLAESQlZe/uIQXRnWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxql7H75njDcmmgJEPmTrBCzsDteYUtp6LMRRR7yZGjZqjjOvOC
-	BvQ+ZO7uRiBuLB0kduJaMOA6bsUuxTlIHYkplqQZOk8TlzC3SeBSURXRkYL+69nduiyH0lyeccG
-	Bgq7L2hsvf4rwrB3fWyACw0Vzh6P+hBv+i66n
-X-Gm-Gg: ASbGncsRMfZ3uiulb/F092JTce4TRWbtJKTDX8dDO8WrM6Rb0/rx7S715/v6G5mJZma
-	MRDyAzkppEEAKnKyn5pXsCgUl/IKT9FYyYqZ47oPawnbT/4Hpd973yIc7JfSVbArth7YkWkKQ28
-	BXGGb1T/q1
-X-Google-Smtp-Source: AGHT+IFa1AEvP9ljfsJOlRWizCzprUG3Rj1cZgMEJgENmaVXmFGH0wXOZ2oYFLWdEKlcH8lL81dvvUNDkq5kV96FFb4=
-X-Received: by 2002:a17:902:d581:b0:220:c905:689f with SMTP id
- d9443c01a7336-22307aab530mr2039075ad.25.1740458449763; Mon, 24 Feb 2025
- 20:40:49 -0800 (PST)
+	s=arc-20240116; t=1740458538; c=relaxed/simple;
+	bh=v9T+B0y3NgzEn7lGEYaaaJwmIjnTy+JIkpd0BYOY/6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdhXnGuQa5ySrBUcnlVGLhMmiJZOXXeb5jXlTX6fiwMtWLU0jsjCXSI7U4sr6jxpO+JapU663t+9lKUfnT5Cv9sK2gRGCr82K/7DwINiHLe/OaXDKv3nZMZVQDU20y3Q07RxZrn+alJgu6Fo+GnxcP3704h2YatTMoOu6UbTXSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IK4Q1qfa; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740458526; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=cBUl1NEp9OqdS9s8T2iCnWrW+e1GgC4qCc83R/nWRZ4=;
+	b=IK4Q1qfawfPwJxjXXr9DBSbixTgSvuLFCNiIsAyBCyTtCKmppoXfFc7pcB44HMj/KxqklHsaFrz6SKgnQMyvPB6EP4OKB5Kmu5pWJvFyjcCCsxFjrV8JumQoZIbVRR6S7eMHZy59bWeiVC3Cf0iFeHHJUcar3c+Yqtz/PzJcX70=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQDJ-d-_1740458525 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 12:42:05 +0800
+Date: Tue, 25 Feb 2025 12:42:04 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Lukas Wunner <lukas@wunner.de>, rafael@kernel.org
+Cc: rafael@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
+	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z71KHDbgrPFaoPO7@U-2FWC9VHC-2323.local>
+References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+ <20250224034500.23024-3-feng.tang@linux.alibaba.com>
+ <Z7y2e-EJLijQsp8D@wunner.de>
+ <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
+ <Z71Ap7kpV4rfhFDU@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z6_CL0RpUUvw0lR7@x1> <Z7TvZGjVix2asYWI@x1> <Z7T1LVSLo8EEMmkM@x1>
- <Z7UDlZKnqXRqNqQa@google.com> <Z7XsltyqUWrdKma0@x1> <Z7XvEFEZtCRZKG7Y@x1>
- <Z7ZIqpwffQbibwL2@google.com> <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
- <Z7gllQZeg6U2OvZE@google.com> <CAP-5=fXEEMFgPF2aZhKsfrY_En+qoqX20dWfuE_ad73Uxf0ZHQ@mail.gmail.com>
- <Z70wHEl6Sp0H0c-3@google.com>
-In-Reply-To: <Z70wHEl6Sp0H0c-3@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 24 Feb 2025 20:40:37 -0800
-X-Gm-Features: AWEUYZm_oZZtXaDtbiRjDUhef71EJcifF8LJrpDuZ4qdgo0Mm6cgo1e7w7jChXI
-Message-ID: <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z71Ap7kpV4rfhFDU@wunner.de>
 
-On Mon, Feb 24, 2025 at 6:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
-> > On Thu, Feb 20, 2025 at 11:04=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
-org> wrote:
-> > >
-> > > On Thu, Feb 20, 2025 at 09:12:46AM -0800, Ian Rogers wrote:
-> > > > On Wed, Feb 19, 2025 at 1:10=E2=80=AFPM Namhyung Kim <namhyung@kern=
-el.org> wrote:
-> > > > >
-> > > > > On Wed, Feb 19, 2025 at 03:47:44PM +0100, Arnaldo Carvalho de Mel=
-o wrote:
-> > > > > > On Wed, Feb 19, 2025 at 03:37:10PM +0100, Arnaldo Carvalho de M=
-elo wrote:
-> > > > > > > On Tue, Feb 18, 2025 at 02:03:01PM -0800, Namhyung Kim wrote:
-> > > > > > > > On Tue, Feb 18, 2025 at 10:01:33PM +0100, Arnaldo Carvalho =
-de Melo wrote:
-> > > > > > > > > On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalh=
-o de Melo wrote:
-> > > > > > > > > > So the call to maps_fixup_end() will set maps->end_brok=
-en to false,
-> > > > > > > > > > since it fixed up the map ends, etc, but then we insert=
- more maps with
-> > > > > > > > > > broken ends:
-> > > > > > > > >
-> > > > > > > > > > #6  0x0000000000633d52 in check_invariants (maps=3D0xf9=
-67c0) at util/maps.c:95
-> > > > > > > > > > 95                                            assert(ma=
-p__end(prev) <=3D map__end(map));
-> > > > > > > > > > (gdb) p prev->dso->name
-> > > > > > > > > > $1 =3D 0xfc47ab "bpf_trampoline_6442522522"
-> > > > > > > > >
-> > > > > > > > > So the above map is created overlapping a previously exis=
-ting map:
-> > > > > > > > >
-> > > > > > > > > root@number:~# perf probe -l
-> > > > > > > > >   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/ma=
-ps.c in /home/acme/bin/perf with maps)
-> > > > > > > > >   probe_perf:maps_insert (on maps__insert:1@util/maps.c i=
-n /home/acme/bin/perf with maps name start end)
-> > > > > > > > > root@number:~#
-> > > > > > > > >
-> > > > > > > > > root@number:~# perf trace --lib -e probe_perf:maps* perf =
-record sleep
-> > > > > > > > > <SNIP>
-> > > > > > > > >    319.791 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0x=
-ffffffffc0160788 end=3D0xffffffffc01607c8)
-> > > > > > > > >    319.810 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0=
-xffffffffc01647b8 end=3D0xffffffffc01647f8)
-> > > > > > > > >    319.822 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0x=
-ffffffffc016482c end=3D0xffffffffc016486c)
-> > > > > > > > >    319.834 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0=
-xffffffffc01648ac end=3D0xffffffffc01648ec)
-> > > > > > > > >    319.845 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_prog_be31ae23198a0378_sd_devices" start=3D0xff=
-ffffffc0186388 end=3D0xffffffffc01864b2)
-> > > > > > > > >    319.857 perf/1732173 probe_perf:maps_insert((634e5e) m=
-aps=3D0x2d9715d0 name=3D"bpf_trampoline_6442522522" start=3D0xffffffffc0147=
-640 end=3D0xffffffffc0148640)
-> > > > > > > > > [ perf record: Captured and wrote 0.035 MB perf.data (7 s=
-amples) ]
-> > > > > > > > > perf: util/maps.c:95: check_invariants: Assertion `map__e=
-nd(prev) <=3D map__end(map)' failed.
-> > > > > > > > > root@number:~#
-> > > > > > > > >
-> > > > > > > > > So a PERF_RECORD_KSYMBOL processing will add a map for
-> > > > > > > > > "bpf_trampoline_6442522522" that has its start after befo=
-re the
-> > > > > > > > > "bpf_prog_40ddf486530245f5_sd_devices" start, ok, but end=
-s after
-> > > > > > > > > "bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
-> > > > > > > > >
-> > > > > > > > > machine__process_ksymbol_register() does:
-> > > > > > > > >
-> > > > > > > > > 713                     map__set_start(map, event->ksymbo=
-l.addr);
-> > > > > > > > > 714                     map__set_end(map, map__start(map)=
- + event->ksymbol.len);
-> > > > > > > > > 715                     err =3D maps__insert(machine__ker=
-nel_maps(machine), map);
-> > > > > > > > >
-> > > > > > > > > And:
-> > > > > > > > >
-> > > > > > > > > (gdb) p /x event->ksymbol.addr
-> > > > > > > > > $2 =3D 0xffffffffc0147a2c
-> > > > > > > > > (gdb) p event->ksymbol.len
-> > > > > > > > > $3 =3D 306
-> > > > > > > >
-> > > > > > > > Hmm.. so I think the situation is like below.
-> > > > > > > >
-> > > > > > > >              (bpf_trampoline_6442522522)
-> > > > > > > >       +---------------------------------------+
-> > > > > > > >       |                                       |
-> > > > > > > >       |       +------------------------+      |
-> > > > > > > >       |       | (bpf_prog_40ddf486...) | <----+----  adding=
- this
-> > > > > > > >       |       |                        |      |
-> > > > > > > >       |       |                        |      |
-> > > > > > > >       |   c0147a2c                            |
-> > > > > > > >       |                                       |
-> > > > > > > >   c0147640                                 c0148640
-> > > > > > > >
-> > > > > > > > And it failed to add bpf_prog_40ddf486... in check_invarian=
-ts() because
-> > > > > > > > the end address is smaller than the previous map.
-> > > > > > >
-> > > > > > > No, it didn't fail to add, it managed to do it which left the=
- kernel
-> > > > > > > maps in a broken state, with overlappings while it had a clea=
-red
-> > > > > > > ends_broken, then, later, when the checks_invariant is finall=
-y called at
-> > > > > > > perf record exit time:
-> > > > > >
-> > > > > > Nope, __maps__insert() should notice that the ends are broken a=
-nd set
-> > > > > > it:
-> > > > > >
-> > > > > >         if (nr_maps =3D=3D 1) {
-> > > > > >                 /* If there's just 1 entry then maps are sorted=
-. */
-> > > > > >                 maps__set_maps_by_address_sorted(maps, true);
-> > > > > >                 maps__set_maps_by_name_sorted(maps, maps_by_nam=
-e !=3D NULL);
-> > > > > >         } else {
-> > > > > >                 /* Sorted if maps were already sorted and this =
-map starts after the last one. */
-> > > > > >                 maps__set_maps_by_address_sorted(maps,
-> > > > > >                         maps__maps_by_address_sorted(maps) &&
-> > > > > >                         map__end(maps_by_address[nr_maps - 2]) =
-<=3D map__start(new));
-> > > > > >                 maps__set_maps_by_name_sorted(maps, false);
-> > > > > >         }
-> > > > > >         if (map__end(new) < map__start(new))
-> > > > > >                 RC_CHK_ACCESS(maps)->ends_broken =3D true;
-> > > > > >
-> > > > > >
-> > > > > > humm, RC_CHK_ACCESS(maps)->ends_broken should be set for the ca=
-se we
-> > > > > > have and I think it isn't being... Then the bpf trampoline map =
-that is
-> > > > > > the last entry to be added is before the last entry and thus
-> > > > > > maps_by_address_sorted is set to false, ends_broken continues f=
-alse and
-> > > > > > at the end maps_by_address_sorted is set to true and the last
-> > > > > > check_invariants triggerrs the asserts...
-> > > > >
-> > > > > Right, probably it needs to set the ends_broken when the end addr=
-ess of
-> > > > > the new map is smaller than the previous (but the start address i=
-s
-> > > > > bigger) and fixup the end address when it sorts the maps by addre=
-ss.
-> > > >
-> > > > Ugh, I get git blamed for ends_broken and I was wondering what the =
-heck it is:
-> > > > https://lore.kernel.org/all/20240210031746.4057262-2-irogers@google=
-.com/
-> > > > My memory is that when the rb-tree was built the maps put in it cou=
-ld
-> > > > be broken and ends_broken was to capture we were in this state as t=
-he
-> > > > sorting would get broken, invariants be off, etc.. The rb-tree
-> > > > constructing code would then call maps__fixup_end. Having the calle=
-r
-> > > > call maps__fixup_end seems error prone, as does the whole
-> > > > "ends_broken" thing - remember I was in the code to fix memory leak=
-s
-> > > > so modifying the maps API wasn't front of mind. I added ends_broken=
-,
-> > > > the original rb-tree had no notion of it, because I was trying to g=
-et
-> > > > the invariants right for the testing I could do and ends_broken was
-> > > > the pragmatic thing to do for odd cases like kernel modules before
-> > > > maps__fixup_end is called.
-> > > >
-> > > > The maps API has evolved and we have a pretty robust, but possibly =
-not
-> > > > fast, maps__fixup_overlap_and_insert:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/maps.h?h=3Dperf-tools-next#n69
-> > > > I think ideally we'd make maps__insert uphold the invariants and no=
-t
-> > > > have ends_broken. I'm worried that making ends_broken more load
-> > > > bearing isn't the right thing to do, we may even be able to not hav=
-e
-> > > > the variable for the "ifndef NDEBUG" case, which making it load
-> > > > bearing would completely defeat.
-> > > >
-> > > > So I think the fix here should be to understand the maps constructi=
-on
-> > > > code for the modules, try to work out why maps__fixup_end wasn't
-> > > > called, perhaps migrate the code to maps__fixup_overlap_and_insert =
-or
-> > > > add a missed maps__fixup_end call.
-> > >
-> > > IIUC module size in /proc/modules are wrong due to the reason in the
-> > > commit 876e80cf83d10585 ("perf tools: Fixup end address of modules") =
-and
-> > > it called maps__fixup_end() for that.
-> > >
-> > > But the problem is some BPF maps processed at real-time during the
-> > > build-id processing at the end of perf record.  One map is inside of
-> > > another and check_invariants() didn't expect such maps and crashed.
-> >
-> > I thought the real-time processing had to use
-> > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
-> > events only give us VMA data and two mmaps may have been merged.
-> > Shouldn't doing this change be the simplest fix?
->
-> Make sense.  How about this?
+Hi Lukas,
 
-Lgtm, I have no way to test the issue. Why does maps__fixup_end need
-to get pushed later?
+On Tue, Feb 25, 2025 at 05:01:43AM +0100, Lukas Wunner wrote:
+> On Tue, Feb 25, 2025 at 11:06:50AM +0800, Feng Tang wrote:
+> > On Mon, Feb 24, 2025 at 07:12:11PM +0100, Lukas Wunner wrote:
+> > > On Mon, Feb 24, 2025 at 11:44:58AM +0800, Feng Tang wrote:
+> > > > @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
+> > > >  		 * Disable hot-plug interrupts in case they have been enabled
+> > > >  		 * by the BIOS and the hot-plug service driver is not loaded.
+> > > >  		 */
+> > > > -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> > > > -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> > > > +		pcie_disable_hp_interrupts_early(dev);
+> > > >  	}
+> > > 
+> > > Moving the Slot Control code from pciehp to portdrv (as is done in
+> > > patch 1 of this series) is hackish.  It should be avoided if at all
+> > > possible.
+> > 
+> > I tried to remove the code duplication of 2 waiting function, according
+> > to Bjorn's comment in https://lore.kernel.org/lkml/20250218223354.GA196886@bhelgaas/.
+> > Maybe I didn't git it right. Any suggestion?
+> 
+> My point is just that you may not need to move the code from pciehp to
+> portdrv at all if you follow my suggestion.
+ 
+I see.
+
+> 
+> > There might be some misunderstaning here :), I responded in
+> > https://lore.kernel.org/lkml/Z6LRAozZm1UfgjqT@U-2FWC9VHC-2323.local/
+> > that your suggestion could solve our issue.
+> 
+> Well, could you test it please?
+
+I don't have the hardware right now, will try to get from firmware
+developers. But from code logic, your suggestion can surely solve the
+issue unless I still miss something. From bug report (also commit log),
+the first PCIe hotplug command issued is here, and the second command
+comes from pciehp driver. In our kernel config, CONFIG_HOTPLUG_PCI_PCIE=y,
+so the first command won't happen, and all following commands come
+from pciehp driver, which setup its own waiting for command logic.
+
+> A small change like the one I proposed is definitely preferable to
+> moving dozens of lines of code around.
+
+Agree.
+
+> 
+> > And the reason I didn't take it is I was afraid that it might hurt
+> > the problem what commit 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port
+> > services during port initialization") tried to solve.
+> > 
+> > As you mentioned, the comment for 2bd50dd800b5 is "a bit confusing",
+> > and I tried to guess in my previous reply: 
+> > "
+> > I'm not sure what problem this piece of code try to avoid, maybe
+> > something simliar to the irq storm isseu as mentioned in the 2/2 patch?
+> > The code comments could be about the small time window between this
+> > point and the loading of pciehp driver, which will request_irq and
+> > enable hotplug interrupt again.
+> > "
+> > 
+> > The code comment from 2bd50dd800b5 is:
+> > 
+> > 	/*
+> > 	 * Disable hot-plug interrupts in case they have been
+> > 	 * enabled by the BIOS and the hot-plug service driver
+> > 	 * is not loaded.
+> > 	 */
+> > 
+> > The "is not loaded" has 2 possible meanings:
+> > 1. the pciehp driver is not loaded yet at this point inside
+> >    get_port_device_capability(), and will be loaded later
+> > 2. the pciehp will never be loaded, i.e. CONFIG_HOTPLUG_PCI_PCIE=n 
+> > 
+> > If it's case 2, your suggestion can solve it nicely, but for case 1,
+> > we may have to keep the interrupt disabling.
+> 
+> The pciehp driver cannot be bound to the PCIe port when
+> get_port_device_capability() is running.  Because at that point,
+> portdrv is still figuring out which capabilities the port has and
+> it will subsequently instantiate the port service devices to which
+> the drivers (such as pciehp) will bind.
+ 
+Yes, the time window between here and the following initialization of
+pciehp service driver is very small, and your suggestion sounds quite
+safe to me.
+
+> So in that sense, case 1 cannot be what the code comment is
+> referring to.
+
+Hi Rafel,
+
+Could you help to confirm this?
+
+> 
+> My point is that if CONFIG_HOTPLUG_PCI_PCIE=y, there may indeed be
+> another write to the Slot Control register before the command written
+> by portdrv has been completed.  Because pciehp will write to the
+> register on probe.  But in this case, there shouldn't be a need for
+> portdrv to quiesce the interrupt because pciehp will do that anyway
+> shortly afterwards.
+> 
+> And in the CONFIG_HOTPLUG_PCI_PCIE=n case, pciehp will not quiesce
+> the interrupt, so portdrv has to do that.  I believe that's what
+> the code comment is referring to.  It should be safe to just write
+> to the Slot Control register without waiting for the command to
+> complete because there shouldn't be another Slot Control write
+> afterwards (not by pciehp anyway).
+> 
+> If making the Slot Control write in portdrv conditional on
+> CONFIG_HOTPLUG_PCI_PCIE=n does unexpectedly *not* solve the issue,
+> please try to find out where the second Slot Control write is
+> coming from.  E.g. you could amend pcie_capability_write_word()
+> with something like:
+> 
+> 	if (pos == PCI_EXP_SLTCTL) {
+> 		pci_info(dev, "Writing %04hx SltCtl\n", val);
+> 		dump_stack();
+> 	}
+
+Thanks for the suggestion, and we added similar debug to figure
+out them.
 
 Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
->
-> ---8<---
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 316f0879e5e08d66..d80b34717090db44 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -717,7 +717,7 @@ static int machine__process_ksymbol_register(struct m=
-achine *machine,
->
->                 map__set_start(map, event->ksymbol.addr);
->                 map__set_end(map, map__start(map) + event->ksymbol.len);
-> -               err =3D maps__insert(machine__kernel_maps(machine), map);
-> +               err =3D maps__fixup_overlap_and_insert(machine__kernel_ma=
-ps(machine), map);
->                 if (err) {
->                         err =3D -ENOMEM;
->                         goto out;
-> @@ -1459,8 +1459,6 @@ static int machine__create_modules(struct machine *=
-machine)
->         if (modules__parse(modules, machine, machine__create_module))
->                 return -1;
->
-> -       maps__fixup_end(machine__kernel_maps(machine));
-> -
->         if (!machine__set_modules_path(machine))
->                 return 0;
->
-> @@ -1554,6 +1552,8 @@ int machine__create_kernel_maps(struct machine *mac=
-hine)
->                 }
->         }
->
-> +       maps__fixup_end(machine__kernel_maps(machine));
-> +
->  out_put:
->         dso__put(kernel);
->         return ret;
+Feng
 
