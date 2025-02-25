@@ -1,1035 +1,1502 @@
-Return-Path: <linux-kernel+bounces-530818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C308BA438E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:12:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3771AA438B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC4419E0068
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:07:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB30E7AB185
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB58B17F7;
-	Tue, 25 Feb 2025 09:04:45 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453B52686BA;
+	Tue, 25 Feb 2025 08:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="b5i+gDkQ"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C7018BB9C;
-	Tue, 25 Feb 2025 09:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C893E267F49;
+	Tue, 25 Feb 2025 08:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474284; cv=none; b=MfkO0b+KdzSMq3Hic3wAt+9tuEvJ8Ooxik8bVhB+jMLLGQaZEgWFhkSkaYgg4JoT4csbiRz8CvZklmwSeUmVMmMY4EdrhijbrOQEPSC02pCFEsMaPBshZwNdmBQSkgE7ZdQ0UwtWzODJoUEqBrCtdMsV96OQyIxPeUjhxyhtnCw=
+	t=1740473871; cv=none; b=RO2ErVOGIvlO8j+k5S4P72fmNxOMIkvVvMB0WsoI5sVbUpRMNheKFNeYo+6S5F61XuzfbjghiAHJT2bA6kP80XCev8PDZjRysAcz3Fe/CaaTRz1shKroM2kTdq4hhh+ByV1XoHLxM3FEbR3EciUFUJrIYNQCzdNoPrKIf3ZcX1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474284; c=relaxed/simple;
-	bh=qKfVtuQYYK46bbyotNANakW1TEPcNNUrJw04XqoOn4s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HApdBfpWDeGFqBs+2KuILm9gdC5Od0aGVB4VhmbHHo0i7jVtfZLVS56aJtfaLuuu2WmYiW6RnwnjQ2wEi/pLXYo26AA+AiFP/MUTqhwtx6pb51s8QaFqfDLPvnMImBwzMrUSJ+TPH8scmGO5e+D7xcuslGpTloCIae76EaUw4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z2BQV5xLfz1ltcQ;
-	Tue, 25 Feb 2025 17:00:34 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01BDE1401E9;
-	Tue, 25 Feb 2025 17:04:37 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 25 Feb 2025 17:04:24 +0800
-Received: from localhost.localdomain (10.28.79.22) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Feb 2025 17:04:23 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <linux@roeck-us.net>, <jdelvare@suse.com>
-CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>,
-	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
-Subject: [RFC] hwmon: (acpi_power_meter) Replace hwmon_device_register
-Date: Tue, 25 Feb 2025 16:51:58 +0800
-Message-ID: <20250225085158.6989-1-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1740473871; c=relaxed/simple;
+	bh=nwd9lE9OG4DRDhM4saDEzLfvAM2TVB7lbWTsz/JCopo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=pjQrQ7KRMYtX7qwQinFfa8XqyXf2oXHX/hWFO/qUnbNCGNfBiUOlh8+BykjLXS2Thk5Hpya6F8sGsPzwg1bVwC+NoWp6pqtR426rPRFZlh3oY+jYrOhYKlHQqx6ugi6lqqiIXEpZuRtwJnV9yWfROiG0JHYNOPVeNR+8Oz+sSW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=b5i+gDkQ; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P7lrwk000770;
+	Tue, 25 Feb 2025 09:57:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	3jy4gMwriDHOXWUwe86xdKl11bzTlPib3KRdsJ6Svww=; b=b5i+gDkQhlwmKxmX
+	ED9qfeTIGGSoqrEEqFjepVa81U5Wfh0O0zoN/ugGjd7cxPDMWBd2gfKrx85Ffeyw
+	FEFnxncRsvLVW/GiQlwcz5TvAsTyOHq1y+tl4abzOK3N76Ckd6ZK5uOY3SI23LtA
+	dQL/9cH29aJAfdYSOoYT9iT+rcigs4JRM1ihdC4KPnbv+xE2Xb/JixReKlNC4NMy
+	WEkWxcB/zWslj+H11TwSIYjixiciMVJgD96PrTRY0QL0FVRmphiibOFDNRnCJkGy
+	PegY7NEWefZc+bjEpwTkrJ3EFQIqog+EiiUpQqrcepCILb4Y4fUw5uP2TPIZUr2h
+	8v/qhg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp1u65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 09:57:34 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2922740090;
+	Tue, 25 Feb 2025 09:56:16 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 407E842879C;
+	Tue, 25 Feb 2025 09:54:33 +0100 (CET)
+Received: from localhost (10.48.87.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 09:54:32 +0100
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Date: Tue, 25 Feb 2025 09:54:08 +0100
+Subject: [PATCH v2 05/10] arm64: dts: st: introduce stm32mp23 SoCs family
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250225-b4-stm32mp2_new_dts-v2-5-1a628c1580c7@foss.st.com>
+References: <20250225-b4-stm32mp2_new_dts-v2-0-1a628c1580c7@foss.st.com>
+In-Reply-To: <20250225-b4-stm32mp2_new_dts-v2-0-1a628c1580c7@foss.st.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
 
-When load this mode, we can see the following log:
-"power_meter ACPI000D:00: hwmon_device_register() is deprecated. Please
- convert the driver to use hwmon_device_register_with_info()."
+From: Alexandre Torgue <alexandre.torgue@foss.st.com>
 
-So replace hwmon_device_register with hwmon_device_register_with_info.
+STM32MP23 family is composed of 3 SoCs defined as following:
 
-To avoid any changes in the display of some sysfs interfaces, some of
-necessary changes in hwmon.c must be made:
-1> For 'power1_average_interval_max/min' interface, insert 'average' to the
-   string corresponding to hwmon_power_average_interval_max/max in
-   hwmon_power_attr_templates[]. I guess that is what's missing.
-2> Add some string attributes in power sensor type because of below items:
-   a) power1_accuracy  --> display like '90.0%'
-   b) power1_cap_hyst  --> display 'unknown' when its value is 0xFFFFFFFF
-   c) power1_average_min/max --> display 'unknown' when its value is
-                                 negative.
-Note: All the attributes modified above in hwmon core are not used by other
-drivers.
+-STM32MP231: common part composed of 1*Cortex-A35, common peripherals
+like SDMMC, UART, SPI, I2C, parallel display, 1*ETH ...
 
-Please note that the path of these sysfs interfaces are modified
-accordingly if use hwmon_device_register_with_info():
-old: all sysfs interfaces are under acpi device.
-now: all sysfs interfaces are under hwmon device.
+-STM32MP233: STM32MP231 + 1*Cortex-A35 (dual CPU), a second ETH, CAN-FD.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
+-STM32MP235: STM32MP233 + GPU/AI and video encode/decode, DSI and LDVS
+display.
+
+A second diversity layer exists for security features/ A35 frequency:
+-STM32MP23xY, "Y" gives information:
+ -Y = A means A35@1.2GHz + no cryp IP and no secure boot.
+ -Y = C means A35@1.2GHz + cryp IP and secure boot.
+ -Y = D means A35@1.5GHz + no cryp IP and no secure boot.
+ -Y = F means A35@1.5GHz + cryp IP and secure boot.
+
+Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
 ---
-Hi all,
-
-This patch is aimed to replace a deprecated interface this driver used.
-The biggest difficulty is how to avoid ABI changes.
-Welcome to join the discussion.
-  
+Changes in v2:
+- Comply with DTS coding style
+- interrupt-controller node moved under soc node
 ---
- drivers/hwmon/acpi_power_meter.c | 782 ++++++++++++++-----------------
- drivers/hwmon/hwmon.c            |  13 +-
- 2 files changed, 362 insertions(+), 433 deletions(-)
+ arch/arm64/boot/dts/st/stm32mp231.dtsi  | 1214 +++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp233.dtsi  |   94 +++
+ arch/arm64/boot/dts/st/stm32mp235.dtsi  |   16 +
+ arch/arm64/boot/dts/st/stm32mp23xc.dtsi |    8 +
+ arch/arm64/boot/dts/st/stm32mp23xf.dtsi |    8 +
+ 5 files changed, 1340 insertions(+)
 
-diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
-index 44afb07409a4..4c7641cd46c3 100644
---- a/drivers/hwmon/acpi_power_meter.c
-+++ b/drivers/hwmon/acpi_power_meter.c
-@@ -87,25 +87,12 @@ struct acpi_power_meter_resource {
- 	bool		power_alarm;
- 	int			sensors_valid;
- 	unsigned long		sensors_last_updated;
--	struct sensor_device_attribute	sensors[NUM_SENSORS];
--	int			num_sensors;
- 	s64			trip[2];
- 	int			num_domain_devices;
- 	struct acpi_device	**domain_devices;
- 	struct kobject		*holders_dir;
- };
- 
--struct sensor_template {
--	char *label;
--	ssize_t (*show)(struct device *dev,
--			struct device_attribute *devattr,
--			char *buf);
--	ssize_t (*set)(struct device *dev,
--		       struct device_attribute *devattr,
--		       const char *buf, size_t count);
--	int index;
--};
--
- /* Averaging interval */
- static int update_avg_interval(struct acpi_power_meter_resource *resource)
- {
-@@ -124,62 +111,6 @@ static int update_avg_interval(struct acpi_power_meter_resource *resource)
- 	return 0;
- }
- 
--static ssize_t show_avg_interval(struct device *dev,
--				 struct device_attribute *devattr,
--				 char *buf)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--
--	mutex_lock(&resource->lock);
--	update_avg_interval(resource);
--	mutex_unlock(&resource->lock);
--
--	return sprintf(buf, "%llu\n", resource->avg_interval);
--}
--
--static ssize_t set_avg_interval(struct device *dev,
--				struct device_attribute *devattr,
--				const char *buf, size_t count)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
--	struct acpi_object_list args = { 1, &arg0 };
--	int res;
--	unsigned long temp;
--	unsigned long long data;
--	acpi_status status;
--
--	res = kstrtoul(buf, 10, &temp);
--	if (res)
--		return res;
--
--	if (temp > resource->caps.max_avg_interval ||
--	    temp < resource->caps.min_avg_interval)
--		return -EINVAL;
--	arg0.integer.value = temp;
--
--	mutex_lock(&resource->lock);
--	status = acpi_evaluate_integer(resource->acpi_dev->handle, "_PAI",
--				       &args, &data);
--	if (ACPI_SUCCESS(status))
--		resource->avg_interval = temp;
--	mutex_unlock(&resource->lock);
--
--	if (ACPI_FAILURE(status)) {
--		acpi_evaluation_failure_warn(resource->acpi_dev->handle, "_PAI",
--					     status);
--		return -EINVAL;
--	}
--
--	/* _PAI returns 0 on success, nonzero otherwise */
--	if (data)
--		return -EINVAL;
--
--	return count;
--}
--
- /* Cap functions */
- static int update_cap(struct acpi_power_meter_resource *resource)
- {
-@@ -198,61 +129,6 @@ static int update_cap(struct acpi_power_meter_resource *resource)
- 	return 0;
- }
- 
--static ssize_t show_cap(struct device *dev,
--			struct device_attribute *devattr,
--			char *buf)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--
--	mutex_lock(&resource->lock);
--	update_cap(resource);
--	mutex_unlock(&resource->lock);
--
--	return sprintf(buf, "%llu\n", resource->cap * 1000);
--}
--
--static ssize_t set_cap(struct device *dev, struct device_attribute *devattr,
--		       const char *buf, size_t count)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
--	struct acpi_object_list args = { 1, &arg0 };
--	int res;
--	unsigned long temp;
--	unsigned long long data;
--	acpi_status status;
--
--	res = kstrtoul(buf, 10, &temp);
--	if (res)
--		return res;
--
--	temp = DIV_ROUND_CLOSEST(temp, 1000);
--	if (temp > resource->caps.max_cap || temp < resource->caps.min_cap)
--		return -EINVAL;
--	arg0.integer.value = temp;
--
--	mutex_lock(&resource->lock);
--	status = acpi_evaluate_integer(resource->acpi_dev->handle, "_SHL",
--				       &args, &data);
--	if (ACPI_SUCCESS(status))
--		resource->cap = temp;
--	mutex_unlock(&resource->lock);
--
--	if (ACPI_FAILURE(status)) {
--		acpi_evaluation_failure_warn(resource->acpi_dev->handle, "_SHL",
--					     status);
--		return -EINVAL;
--	}
--
--	/* _SHL returns 0 on success, nonzero otherwise */
--	if (data)
--		return -EINVAL;
--
--	return count;
--}
--
- /* Power meter trip points */
- static int set_acpi_trip(struct acpi_power_meter_resource *resource)
- {
-@@ -287,34 +163,6 @@ static int set_acpi_trip(struct acpi_power_meter_resource *resource)
- 	return 0;
- }
- 
--static ssize_t set_trip(struct device *dev, struct device_attribute *devattr,
--			const char *buf, size_t count)
--{
--	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	unsigned long temp, trip_bk;
--	int res;
--
--	res = kstrtoul(buf, 10, &temp);
--	if (res)
--		return res;
--
--	temp = DIV_ROUND_CLOSEST(temp, 1000);
--
--	guard(mutex)(&resource->lock);
--
--	trip_bk = resource->trip[attr->index - 7];
--	resource->trip[attr->index - 7] = temp;
--	res = set_acpi_trip(resource);
--	if (res) {
--		resource->trip[attr->index - 7] = trip_bk;
--		return res;
--	}
--
--	return count;
--}
--
- /* Power meter */
- static int update_meter(struct acpi_power_meter_resource *resource)
- {
-@@ -341,202 +189,6 @@ static int update_meter(struct acpi_power_meter_resource *resource)
- 	return 0;
- }
- 
--static ssize_t show_power(struct device *dev,
--			  struct device_attribute *devattr,
--			  char *buf)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--
--	mutex_lock(&resource->lock);
--	update_meter(resource);
--	mutex_unlock(&resource->lock);
--
--	if (resource->power == UNKNOWN_POWER)
--		return -ENODATA;
--
--	return sprintf(buf, "%llu\n", resource->power * 1000);
--}
--
--/* Miscellaneous */
--static ssize_t show_str(struct device *dev,
--			struct device_attribute *devattr,
--			char *buf)
--{
--	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	acpi_string val;
--	int ret;
--
--	mutex_lock(&resource->lock);
--	switch (attr->index) {
--	case 0:
--		val = resource->model_number;
--		break;
--	case 1:
--		val = resource->serial_number;
--		break;
--	case 2:
--		val = resource->oem_info;
--		break;
--	default:
--		WARN(1, "Implementation error: unexpected attribute index %d\n",
--		     attr->index);
--		val = "";
--		break;
--	}
--	ret = sprintf(buf, "%s\n", val);
--	mutex_unlock(&resource->lock);
--	return ret;
--}
--
--static ssize_t show_val(struct device *dev,
--			struct device_attribute *devattr,
--			char *buf)
--{
--	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	u64 val = 0;
--	int ret;
--
--	guard(mutex)(&resource->lock);
--
--	switch (attr->index) {
--	case 0:
--		val = resource->caps.min_avg_interval;
--		break;
--	case 1:
--		val = resource->caps.max_avg_interval;
--		break;
--	case 2:
--		val = resource->caps.min_cap * 1000;
--		break;
--	case 3:
--		val = resource->caps.max_cap * 1000;
--		break;
--	case 4:
--		if (resource->caps.hysteresis == UNKNOWN_HYSTERESIS)
--			return sprintf(buf, "unknown\n");
--
--		val = resource->caps.hysteresis * 1000;
--		break;
--	case 5:
--		if (resource->caps.flags & POWER_METER_IS_BATTERY)
--			val = 1;
--		else
--			val = 0;
--		break;
--	case 6:
--		ret = update_meter(resource);
--		if (ret)
--			return ret;
--		/* need to update cap if not to support the notification. */
--		if (!(resource->caps.flags & POWER_METER_CAN_NOTIFY)) {
--			ret = update_cap(resource);
--			if (ret)
--				return ret;
--		}
--		val = resource->power_alarm || resource->power > resource->cap;
--		resource->power_alarm = resource->power > resource->cap;
--		break;
--	case 7:
--	case 8:
--		if (resource->trip[attr->index - 7] < 0)
--			return sprintf(buf, "unknown\n");
--
--		val = resource->trip[attr->index - 7] * 1000;
--		break;
--	default:
--		WARN(1, "Implementation error: unexpected attribute index %d\n",
--		     attr->index);
--		break;
--	}
--
--	return sprintf(buf, "%llu\n", val);
--}
--
--static ssize_t show_accuracy(struct device *dev,
--			     struct device_attribute *devattr,
--			     char *buf)
--{
--	struct acpi_device *acpi_dev = to_acpi_device(dev);
--	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
--	unsigned int acc = resource->caps.accuracy;
--
--	return sprintf(buf, "%u.%u%%\n", acc / 1000, acc % 1000);
--}
--
--static ssize_t show_name(struct device *dev,
--			 struct device_attribute *devattr,
--			 char *buf)
--{
--	return sprintf(buf, "%s\n", ACPI_POWER_METER_NAME);
--}
--
--#define RO_SENSOR_TEMPLATE(_label, _show, _index)	\
--	{						\
--		.label = _label,			\
--		.show  = _show,				\
--		.index = _index,			\
--	}
--
--#define RW_SENSOR_TEMPLATE(_label, _show, _set, _index)	\
--	{						\
--		.label = _label,			\
--		.show  = _show,				\
--		.set   = _set,				\
--		.index = _index,			\
--	}
--
--/* Sensor descriptions.  If you add a sensor, update NUM_SENSORS above! */
--static struct sensor_template meter_attrs[] = {
--	RO_SENSOR_TEMPLATE(POWER_AVERAGE_NAME, show_power, 0),
--	RO_SENSOR_TEMPLATE("power1_accuracy", show_accuracy, 0),
--	RO_SENSOR_TEMPLATE("power1_average_interval_min", show_val, 0),
--	RO_SENSOR_TEMPLATE("power1_average_interval_max", show_val, 1),
--	RO_SENSOR_TEMPLATE("power1_is_battery", show_val, 5),
--	RW_SENSOR_TEMPLATE(POWER_AVG_INTERVAL_NAME, show_avg_interval,
--			   set_avg_interval, 0),
--	{},
--};
--
--static struct sensor_template misc_cap_attrs[] = {
--	RO_SENSOR_TEMPLATE("power1_cap_min", show_val, 2),
--	RO_SENSOR_TEMPLATE("power1_cap_max", show_val, 3),
--	RO_SENSOR_TEMPLATE("power1_cap_hyst", show_val, 4),
--	RO_SENSOR_TEMPLATE(POWER_ALARM_NAME, show_val, 6),
--	{},
--};
--
--static struct sensor_template ro_cap_attrs[] = {
--	RO_SENSOR_TEMPLATE(POWER_CAP_NAME, show_cap, 0),
--	{},
--};
--
--static struct sensor_template rw_cap_attrs[] = {
--	RW_SENSOR_TEMPLATE(POWER_CAP_NAME, show_cap, set_cap, 0),
--	{},
--};
--
--static struct sensor_template trip_attrs[] = {
--	RW_SENSOR_TEMPLATE("power1_average_min", show_val, set_trip, 7),
--	RW_SENSOR_TEMPLATE("power1_average_max", show_val, set_trip, 8),
--	{},
--};
--
--static struct sensor_template misc_attrs[] = {
--	RO_SENSOR_TEMPLATE("name", show_name, 0),
--	RO_SENSOR_TEMPLATE("power1_model_number", show_str, 0),
--	RO_SENSOR_TEMPLATE("power1_oem_info", show_str, 2),
--	RO_SENSOR_TEMPLATE("power1_serial_number", show_str, 1),
--	{},
--};
--
--#undef RO_SENSOR_TEMPLATE
--#undef RW_SENSOR_TEMPLATE
--
- /* Read power domain data */
- static void remove_domain_devices(struct acpi_power_meter_resource *resource)
- {
-@@ -638,107 +290,362 @@ static int read_domain_devices(struct acpi_power_meter_resource *resource)
- 	return res;
- }
- 
--/* Registration and deregistration */
--static int register_attrs(struct acpi_power_meter_resource *resource,
--			  struct sensor_template *attrs)
-+static int set_trip(struct acpi_power_meter_resource *resource, u32 attr,
-+		    unsigned long trip)
- {
--	struct device *dev = &resource->acpi_dev->dev;
--	struct sensor_device_attribute *sensors =
--		&resource->sensors[resource->num_sensors];
--	int res = 0;
-+	unsigned long trip_bk;
-+	int ret;
- 
--	while (attrs->label) {
--		sensors->dev_attr.attr.name = attrs->label;
--		sensors->dev_attr.attr.mode = 0444;
--		sensors->dev_attr.show = attrs->show;
--		sensors->index = attrs->index;
-+	trip = DIV_ROUND_CLOSEST(trip, 1000);
- 
--		if (attrs->set) {
--			sensors->dev_attr.attr.mode |= 0200;
--			sensors->dev_attr.store = attrs->set;
--		}
-+	guard(mutex)(&resource->lock);
- 
--		sysfs_attr_init(&sensors->dev_attr.attr);
--		res = device_create_file(dev, &sensors->dev_attr);
--		if (res) {
--			sensors->dev_attr.attr.name = NULL;
--			goto error;
--		}
--		sensors++;
--		resource->num_sensors++;
--		attrs++;
-+	trip_bk = resource->trip[attr - hwmon_power_average_max];
-+	resource->trip[attr - hwmon_power_average_max] = trip;
-+	ret = set_acpi_trip(resource);
-+	if (ret)
-+		resource->trip[attr - hwmon_power_average_max] = trip_bk;
+diff --git a/arch/arm64/boot/dts/st/stm32mp231.dtsi b/arch/arm64/boot/dts/st/stm32mp231.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..8820d219a33e6e4849d31dbdc2e9102a2a7adc85
+--- /dev/null
++++ b/arch/arm64/boot/dts/st/stm32mp231.dtsi
+@@ -0,0 +1,1214 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
++ * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
++ */
++#include <dt-bindings/clock/st,stm32mp25-rcc.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/regulator/st,stm32mp25-regulator.h>
++#include <dt-bindings/reset/st,stm32mp25-rcc.h>
 +
-+	return ret;
-+}
++/ {
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+static int set_cap(struct acpi_power_meter_resource *resource,
-+		   unsigned long cap)
-+{
-+	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
-+	struct acpi_object_list args = { 1, &arg0 };
-+	unsigned long long data;
-+	acpi_status status;
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	cap = DIV_ROUND_CLOSEST(cap, 1000);
-+	if (cap > resource->caps.max_cap || cap < resource->caps.min_cap)
-+		return -EINVAL;
-+	arg0.integer.value = cap;
++		cpu0: cpu@0 {
++			compatible = "arm,cortex-a35";
++			reg = <0>;
++			device_type = "cpu";
++			enable-method = "psci";
++			power-domains = <&cpu0_pd>;
++			power-domain-names = "psci";
++		};
++	};
 +
-+	guard(mutex)(&resource->lock);
-+	status = acpi_evaluate_integer(resource->acpi_dev->handle, "_SHL",
-+				       &args, &data);
-+	if (ACPI_FAILURE(status)) {
-+		acpi_evaluation_failure_warn(resource->acpi_dev->handle, "_SHL",
-+					     status);
-+		return -EINVAL;
- 	}
-+	resource->cap = cap;
- 
--error:
--	return res;
-+	/* _SHL returns 0 on success, nonzero otherwise */
-+	if (data)
-+		return -EINVAL;
++	arm-pmu {
++		compatible = "arm,cortex-a35-pmu";
++		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>;
++		interrupt-parent = <&intc>;
++	};
 +
-+	return 0;
- }
- 
--static void remove_attrs(struct acpi_power_meter_resource *resource)
-+static int set_avg_interval(struct acpi_power_meter_resource *resource,
-+			    unsigned long val)
- {
--	int i;
-+	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
-+	struct acpi_object_list args = { 1, &arg0 };
-+	unsigned long long data;
-+	acpi_status status;
- 
--	for (i = 0; i < resource->num_sensors; i++) {
--		if (!resource->sensors[i].dev_attr.attr.name)
--			continue;
--		device_remove_file(&resource->acpi_dev->dev,
--				   &resource->sensors[i].dev_attr);
-+	if (val > resource->caps.max_avg_interval ||
-+	    val < resource->caps.min_avg_interval)
-+		return -EINVAL;
-+	arg0.integer.value = val;
++	arm_wdt: watchdog {
++		compatible = "arm,smc-wdt";
++		arm,smc-id = <0xb200005a>;
++		status = "disabled";
++	};
 +
-+	guard(mutex)(&resource->lock);
-+	status = acpi_evaluate_integer(resource->acpi_dev->handle, "_PAI",
-+				       &args, &data);
-+	if (ACPI_FAILURE(status)) {
-+		acpi_evaluation_failure_warn(resource->acpi_dev->handle, "_PAI",
-+					     status);
-+		return -EINVAL;
- 	}
-+	resource->avg_interval = val;
- 
--	remove_domain_devices(resource);
-+	/* _PAI returns 0 on success, nonzero otherwise */
-+	if (data)
-+		return -EINVAL;
- 
--	resource->num_sensors = 0;
-+	return 0;
- }
- 
--static int setup_attrs(struct acpi_power_meter_resource *resource)
-+static int get_power_alarm_state(struct acpi_power_meter_resource *resource,
-+				 long *val)
- {
--	int res = 0;
-+	int ret;
- 
--	/* _PMD method is optional. */
--	res = read_domain_devices(resource);
--	if (res && res != -ENODEV)
--		return res;
-+	ret = update_meter(resource);
-+	if (ret)
-+		return ret;
- 
--	if (resource->caps.flags & POWER_METER_CAN_MEASURE) {
--		res = register_attrs(resource, meter_attrs);
--		if (res)
--			goto error;
-+	/* need to update cap if not to support the notification. */
-+	if (!(resource->caps.flags & POWER_METER_CAN_NOTIFY)) {
-+		ret = update_cap(resource);
-+		if (ret)
-+			return ret;
- 	}
- 
--	if (resource->caps.flags & POWER_METER_CAN_CAP) {
--		if (!can_cap_in_hardware()) {
--			dev_warn(&resource->acpi_dev->dev,
--				 "Ignoring unsafe software power cap!\n");
--			goto skip_unsafe_cap;
-+	*val = resource->power_alarm || resource->power > resource->cap;
-+	resource->power_alarm = resource->power > resource->cap;
++	clk_dsi_txbyte: clock-0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+	return 0;
-+}
++	clk_rcbsec: clk-64000000 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <64000000>;
++	};
 +
-+static umode_t power_meter_is_visible(const void *data,
-+				      enum hwmon_sensor_types type,
-+				      u32 attr, int channel)
-+{
-+	const struct acpi_power_meter_resource *res = data;
++	firmware {
++		optee: optee {
++			compatible = "linaro,optee-tz";
++			method = "smc";
++			interrupt-parent = <&intc>;
++			interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		};
 +
-+	if (type != hwmon_power)
-+		return -EINVAL;
++		scmi {
++			compatible = "linaro,scmi-optee";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			linaro,optee-channel-id = <0>;
 +
-+	switch (attr) {
-+	case hwmon_power_average:
-+	case hwmon_power_accuracy:
-+	case hwmon_power_average_interval_min:
-+	case hwmon_power_average_interval_max:
-+		if (res->caps.flags & POWER_METER_CAN_MEASURE)
-+			return 0444;
-+		break;
-+	case hwmon_power_average_interval:
-+		if (res->caps.flags & POWER_METER_CAN_MEASURE)
-+			return 0644;
-+		break;
-+	case hwmon_power_cap_min:
-+	case hwmon_power_cap_max:
-+	case hwmon_power_cap_hyst:
-+	case hwmon_power_alarm:
-+		if (res->caps.flags & POWER_METER_CAN_CAP && can_cap_in_hardware())
-+			return 0444;
-+		break;
-+	case hwmon_power_cap:
-+		if (res->caps.flags & POWER_METER_CAN_CAP && can_cap_in_hardware()) {
-+			if (res->caps.configurable_cap)
-+				return 0644;
-+			else
-+				return 0444;
- 		}
-+		break;
-+	case hwmon_power_average_min:
-+	case hwmon_power_average_max:
-+		if (res->caps.flags & POWER_METER_CAN_TRIP)
-+			return 0x644;
-+		break;
-+	default:
-+		break;
-+	}
- 
--		if (resource->caps.configurable_cap)
--			res = register_attrs(resource, rw_cap_attrs);
--		else
--			res = register_attrs(resource, ro_cap_attrs);
-+	return 0;
-+}
- 
--		if (res)
--			goto error;
-+static int power_meter_read(struct device *dev, enum hwmon_sensor_types type,
-+			    u32 attr, int channel, long *val)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+	int ret = 0;
- 
--		res = register_attrs(resource, misc_cap_attrs);
--		if (res)
--			goto error;
-+	if (type != hwmon_power)
-+		return -EINVAL;
++			scmi_clk: protocol@14 {
++				reg = <0x14>;
++				#clock-cells = <1>;
++			};
 +
-+	guard(mutex)(&res->lock);
++			scmi_reset: protocol@16 {
++				reg = <0x16>;
++				#reset-cells = <1>;
++			};
 +
-+	switch (attr) {
-+	case hwmon_power_average:
-+		ret = update_meter(res);
-+		if (ret)
-+			return ret;
-+		if (res->power == UNKNOWN_POWER)
-+			return -ENODATA;
-+		*val = res->power * 1000;
-+		break;
-+	case hwmon_power_average_interval_min:
-+		*val = res->caps.min_avg_interval;
-+		break;
-+	case hwmon_power_average_interval_max:
-+		*val = res->caps.max_avg_interval;
-+		break;
-+	case hwmon_power_average_interval:
-+		ret = update_avg_interval(res);
-+		if (ret)
-+			return ret;
-+		*val = (res)->avg_interval;
-+		break;
-+	case hwmon_power_cap_min:
-+		*val = res->caps.min_cap * 1000;
-+		break;
-+	case hwmon_power_cap_max:
-+		*val = res->caps.max_cap * 1000;
-+		break;
-+	case hwmon_power_alarm:
-+		ret = get_power_alarm_state(res, val);
-+		if (ret)
-+			return ret;
-+		break;
-+	case hwmon_power_cap:
-+		ret = update_cap(res);
-+		if (ret)
-+			return ret;
-+		*val = res->cap * 1000;
-+		break;
-+	default:
-+		break;
- 	}
- 
--skip_unsafe_cap:
--	if (resource->caps.flags & POWER_METER_CAN_TRIP) {
--		res = register_attrs(resource, trip_attrs);
--		if (res)
--			goto error;
-+	return 0;
-+}
++			scmi_voltd: protocol@17 {
++				reg = <0x17>;
 +
-+static int power_meter_read_string(struct device *dev,
-+				   enum hwmon_sensor_types type, u32 attr,
-+				   int channel, const char **str)
-+{
-+#define POWER_METER_MAX_READ_STR_LENGTH		32
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+	static char buf[POWER_METER_MAX_READ_STR_LENGTH];
-+	u64 val;
++				scmi_regu: regulators {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+	if (type != hwmon_power)
-+		return -EINVAL;
++					scmi_vddio1: regulator@0 {
++						reg = <VOLTD_SCMI_VDDIO1>;
++						regulator-name = "vddio1";
++					};
++					scmi_vddio2: regulator@1 {
++						reg = <VOLTD_SCMI_VDDIO2>;
++						regulator-name = "vddio2";
++					};
++					scmi_vddio3: regulator@2 {
++						reg = <VOLTD_SCMI_VDDIO3>;
++						regulator-name = "vddio3";
++					};
++					scmi_vddio4: regulator@3 {
++						reg = <VOLTD_SCMI_VDDIO4>;
++						regulator-name = "vddio4";
++					};
++					scmi_vdd33ucpd: regulator@5 {
++						reg = <VOLTD_SCMI_UCPD>;
++						regulator-name = "vdd33ucpd";
++					};
++					scmi_vdda18adc: regulator@7 {
++						reg = <VOLTD_SCMI_ADC>;
++						regulator-name = "vdda18adc";
++					};
++				};
++			};
++		};
++	};
 +
-+	memset(buf, 0, sizeof(buf));
-+	guard(mutex)(&res->lock);
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
 +
-+	switch (attr) {
-+	case hwmon_power_accuracy:
-+		sprintf(buf, "%llu.%llu%%\n", res->caps.accuracy / 1000,
-+			res->caps.accuracy % 1000);
-+		*str = buf;
-+		break;
-+	case hwmon_power_cap_hyst:
-+		if (res->caps.hysteresis == UNKNOWN_HYSTERESIS)
-+			sprintf(buf, "unknown\n");
-+		else
-+			sprintf(buf, "%llu\n", res->caps.hysteresis * 1000);
-+		*str = buf;
-+		break;
-+	case hwmon_power_average_min:
-+	case hwmon_power_average_max:
-+		if (res->trip[attr - hwmon_power_average_max] < 0) {
-+			sprintf(buf, "unknown\n");
-+		} else {
-+			val = res->trip[attr - hwmon_power_average_max] * 1000;
-+			sprintf(buf, "%llu\n", val);
-+		}
-+		*str = buf;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
- 	}
- 
--	res = register_attrs(resource, misc_attrs);
--	if (res)
--		goto error;
-+	return 0;
-+}
- 
--	return res;
--error:
--	remove_attrs(resource);
--	return res;
-+static int power_meter_write(struct device *dev, enum hwmon_sensor_types type,
-+			     u32 attr, int channel, long val)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+	int ret;
++		cpu0_pd: power-domain-cpu0 {
++			#power-domain-cells = <0>;
++			power-domains = <&cluster_pd>;
++		};
 +
-+	if (type != hwmon_power)
-+		return -EINVAL;
++		cluster_pd: power-domain-cluster {
++			#power-domain-cells = <0>;
++			power-domains = <&ret_pd>;
++		};
 +
-+	switch (attr) {
-+	case hwmon_power_average_max:
-+	case hwmon_power_average_min:
-+		ret = set_trip(res, attr, val);
-+		break;
-+	case hwmon_power_cap:
-+		ret = set_cap(res, val);
-+		break;
-+	case hwmon_power_average_interval:
-+		ret = set_avg_interval(res, val);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+	}
++		ret_pd: power-domain-retention {
++			#power-domain-cells = <0>;
++		};
++	};
 +
-+	return ret;
-+}
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&intc>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		always-on;
++	};
 +
-+static const struct hwmon_channel_info * const power_meter_info[] = {
-+	HWMON_CHANNEL_INFO(power, HWMON_P_ACCURACY | HWMON_P_AVERAGE |
-+		HWMON_P_AVERAGE_INTERVAL | HWMON_P_AVERAGE_INTERVAL_MIN |
-+		HWMON_P_AVERAGE_INTERVAL_MAX | HWMON_P_CAP | HWMON_P_CAP_MIN |
-+		HWMON_P_CAP_MAX | HWMON_P_CAP_HYST | HWMON_P_ALARM |
-+		HWMON_P_AVERAGE_MIN | HWMON_P_AVERAGE_MAX),
-+	NULL
++	soc@0 {
++		compatible = "simple-bus";
++		ranges = <0x0 0x0 0x0 0x80000000>;
++		interrupt-parent = <&intc>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		hpdma: dma-controller@40400000 {
++			compatible = "st,stm32mp25-dma3";
++			reg = <0x40400000 0x1000>;
++			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&scmi_clk CK_SCMI_HPDMA1>;
++			#dma-cells = <3>;
++		};
++
++		hpdma2: dma-controller@40410000 {
++			compatible = "st,stm32mp25-dma3";
++			reg = <0x40410000 0x1000>;
++			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&scmi_clk CK_SCMI_HPDMA2>;
++			#dma-cells = <3>;
++		};
++
++		hpdma3: dma-controller@40420000 {
++			compatible = "st,stm32mp25-dma3";
++			reg = <0x40420000 0x1000>;
++			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&scmi_clk CK_SCMI_HPDMA3>;
++			#dma-cells = <3>;
++		};
++
++		rifsc: bus@42080000 {
++			compatible = "st,stm32mp25-rifsc", "simple-bus";
++			reg = <0x42080000 0x1000>;
++			ranges;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			#access-controller-cells = <1>;
++
++			i2s2: audio-controller@400b0000 {
++				compatible = "st,stm32mp25-i2s";
++				reg = <0x400b0000 0x400>;
++				#sound-dai-cells = <0>;
++				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_BUS_SPI2>, <&rcc CK_KER_SPI2>;
++				clock-names = "pclk", "i2sclk";
++				resets = <&rcc SPI2_R>;
++				dmas = <&hpdma 51 0x43 0x12>,
++				       <&hpdma 52 0x43 0x21>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 23>;
++				status = "disabled";
++			};
++
++			spi2: spi@400b0000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x400b0000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI2>;
++				resets = <&rcc SPI2_R>;
++				dmas = <&hpdma 51 0x20 0x3012>,
++				       <&hpdma 52 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 23>;
++				status = "disabled";
++			};
++
++			i2s3: audio-controller@400c0000 {
++				compatible = "st,stm32mp25-i2s";
++				reg = <0x400c0000 0x400>;
++				#sound-dai-cells = <0>;
++				interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_BUS_SPI3>, <&rcc CK_KER_SPI3>;
++				clock-names = "pclk", "i2sclk";
++				resets = <&rcc SPI3_R>;
++				dmas = <&hpdma 53 0x43 0x12>,
++				       <&hpdma 54 0x43 0x21>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 24>;
++				status = "disabled";
++			};
++
++			spi3: spi@400c0000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x400c0000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI3>;
++				resets = <&rcc SPI3_R>;
++				dmas = <&hpdma 53 0x20 0x3012>,
++				       <&hpdma 54 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 24>;
++				status = "disabled";
++			};
++
++			spdifrx: audio-controller@400d0000 {
++				compatible = "st,stm32h7-spdifrx";
++				reg = <0x400d0000 0x400>;
++				#sound-dai-cells = <0>;
++				clocks = <&rcc CK_KER_SPDIFRX>;
++				clock-names = "kclk";
++				interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&hpdma 71 0x43 0x212>,
++				       <&hpdma 72 0x43 0x212>;
++				dma-names = "rx", "rx-ctrl";
++				access-controllers = <&rifsc 30>;
++				status = "disabled";
++			};
++
++			usart2: serial@400e0000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x400e0000 0x400>;
++				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_USART2>;
++				dmas = <&hpdma 11 0x20 0x10012>,
++				       <&hpdma 12 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 32>;
++				status = "disabled";
++			};
++
++			usart3: serial@400f0000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x400f0000 0x400>;
++				interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_USART3>;
++				dmas = <&hpdma 13 0x20 0x10012>,
++				       <&hpdma 14 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 33>;
++				status = "disabled";
++			};
++
++			uart4: serial@40100000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x40100000 0x400>;
++				interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_UART4>;
++				dmas = <&hpdma 15 0x20 0x10012>,
++				       <&hpdma 16 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 34>;
++				status = "disabled";
++			};
++
++			uart5: serial@40110000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x40110000 0x400>;
++				interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_UART5>;
++				dmas = <&hpdma 17 0x20 0x10012>,
++				       <&hpdma 18 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 35>;
++				status = "disabled";
++			};
++
++			i2c1: i2c@40120000 {
++				compatible = "st,stm32mp25-i2c";
++				reg = <0x40120000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupt-names = "event";
++				interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_I2C1>;
++				resets = <&rcc I2C1_R>;
++				dmas = <&hpdma 27 0x20 0x3012>,
++				       <&hpdma 28 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 41>;
++				status = "disabled";
++			};
++
++			i2c2: i2c@40130000 {
++				compatible = "st,stm32mp25-i2c";
++				reg = <0x40130000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupt-names = "event";
++				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_I2C2>;
++				resets = <&rcc I2C2_R>;
++				dmas = <&hpdma 30 0x20 0x3012>,
++				       <&hpdma 31 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 42>;
++				status = "disabled";
++			};
++
++			i2c7: i2c@40180000 {
++				compatible = "st,stm32mp25-i2c";
++				reg = <0x40180000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupt-names = "event";
++				interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_I2C7>;
++				resets = <&rcc I2C7_R>;
++				dmas = <&hpdma 45 0x20 0x3012>,
++				       <&hpdma 46 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 47>;
++				status = "disabled";
++			};
++
++			usart6: serial@40220000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x40220000 0x400>;
++				interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_USART6>;
++				dmas = <&hpdma 19 0x20 0x10012>,
++				       <&hpdma 20 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 36>;
++				status = "disabled";
++			};
++
++			i2s1: audio-controller@40230000 {
++				compatible = "st,stm32mp25-i2s";
++				reg = <0x40230000 0x400>;
++				#sound-dai-cells = <0>;
++				interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_BUS_SPI1>, <&rcc CK_KER_SPI1>;
++				clock-names = "pclk", "i2sclk";
++				resets = <&rcc SPI1_R>;
++				dmas = <&hpdma 49 0x43 0x12>,
++				       <&hpdma 50 0x43 0x21>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 22>;
++				status = "disabled";
++			};
++
++			spi1: spi@40230000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x40230000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI1>;
++				resets = <&rcc SPI1_R>;
++				dmas = <&hpdma 49 0x20 0x3012>,
++				       <&hpdma 50 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 22>;
++				status = "disabled";
++			};
++
++			spi4: spi@40240000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x40240000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI4>;
++				resets = <&rcc SPI4_R>;
++				dmas = <&hpdma 55 0x20 0x3012>,
++				       <&hpdma 56 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 25>;
++				status = "disabled";
++			};
++
++			spi5: spi@40280000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x40280000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI5>;
++				resets = <&rcc SPI5_R>;
++				dmas = <&hpdma 57 0x20 0x3012>,
++				       <&hpdma 58 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 26>;
++				status = "disabled";
++			};
++
++			sai1: sai@40290000 {
++				compatible = "st,stm32mp25-sai";
++				reg = <0x40290000 0x4>, <0x4029a3f0 0x10>;
++				ranges = <0 0x40290000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				clocks = <&rcc CK_BUS_SAI1>;
++				clock-names = "pclk";
++				interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc SAI1_R>;
++				access-controllers = <&rifsc 49>;
++				status = "disabled";
++
++				sai1a: audio-controller@40290004 {
++					compatible = "st,stm32-sai-sub-a";
++					reg = <0x4 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI1>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 73 0x43 0x21>;
++					status = "disabled";
++				};
++
++				sai1b: audio-controller@40290024 {
++					compatible = "st,stm32-sai-sub-b";
++					reg = <0x24 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI1>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 74 0x43 0x12>;
++					status = "disabled";
++				};
++			};
++
++			sai2: sai@402a0000 {
++				compatible = "st,stm32mp25-sai";
++				reg = <0x402a0000 0x4>, <0x402aa3f0 0x10>;
++				ranges = <0 0x402a0000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				clocks = <&rcc CK_BUS_SAI2>;
++				clock-names = "pclk";
++				interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc SAI2_R>;
++				access-controllers = <&rifsc 50>;
++				status = "disabled";
++
++				sai2a: audio-controller@402a0004 {
++					compatible = "st,stm32-sai-sub-a";
++					reg = <0x4 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI2>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 75 0x43 0x21>;
++					status = "disabled";
++				};
++
++				sai2b: audio-controller@402a0024 {
++					compatible = "st,stm32-sai-sub-b";
++					reg = <0x24 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI2>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 76 0x43 0x12>;
++					status = "disabled";
++				};
++			};
++
++			sai3: sai@402b0000 {
++				compatible = "st,stm32mp25-sai";
++				reg = <0x402b0000 0x4>, <0x402ba3f0 0x10>;
++				ranges = <0 0x402b0000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				clocks = <&rcc CK_BUS_SAI3>;
++				clock-names = "pclk";
++				interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc SAI3_R>;
++				access-controllers = <&rifsc 51>;
++				status = "disabled";
++
++				sai3a: audio-controller@402b0004 {
++					compatible = "st,stm32-sai-sub-a";
++					reg = <0x4 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI3>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 77 0x43 0x21>;
++					status = "disabled";
++				};
++
++				sai3b: audio-controller@502b0024 {
++					compatible = "st,stm32-sai-sub-b";
++					reg = <0x24 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI3>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 78 0x43 0x12>;
++					status = "disabled";
++				};
++			};
++
++			usart1: serial@40330000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x40330000 0x400>;
++				interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_USART1>;
++				dmas = <&hpdma 9 0x20 0x10012>,
++				       <&hpdma 10 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 31>;
++				status = "disabled";
++			};
++
++			sai4: sai@40340000 {
++				compatible = "st,stm32mp25-sai";
++				reg = <0x40340000 0x4>, <0x4034a3f0 0x10>;
++				ranges = <0 0x40340000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				clocks = <&rcc CK_BUS_SAI4>;
++				clock-names = "pclk";
++				interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc SAI4_R>;
++				access-controllers = <&rifsc 52>;
++				status = "disabled";
++
++				sai4a: audio-controller@40340004 {
++					compatible = "st,stm32-sai-sub-a";
++					reg = <0x4 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI4>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 79 0x63 0x21>;
++					status = "disabled";
++				};
++
++				sai4b: audio-controller@40340024 {
++					compatible = "st,stm32-sai-sub-b";
++					reg = <0x24 0x20>;
++					#sound-dai-cells = <0>;
++					clocks = <&rcc CK_KER_SAI4>;
++					clock-names = "sai_ck";
++					dmas = <&hpdma 80 0x43 0x12>;
++					status = "disabled";
++				};
++			};
++
++			uart7: serial@40370000 {
++				compatible = "st,stm32h7-uart";
++				reg = <0x40370000 0x400>;
++				interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_UART7>;
++				dmas = <&hpdma 21 0x20 0x10012>,
++				       <&hpdma 22 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 37>;
++				status = "disabled";
++			};
++
++			rng: rng@42020000 {
++				compatible = "st,stm32mp25-rng";
++				reg = <0x42020000 0x400>;
++				clocks = <&clk_rcbsec>, <&rcc CK_BUS_RNG>;
++				clock-names = "core", "bus";
++				resets = <&rcc RNG_R>;
++				access-controllers = <&rifsc 92>;
++				status = "disabled";
++			};
++
++			spi8: spi@46020000 {
++				compatible = "st,stm32mp25-spi";
++				reg = <0x46020000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SPI8>;
++				resets = <&rcc SPI8_R>;
++				dmas = <&hpdma 171 0x20 0x3012>,
++				       <&hpdma 172 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 29>;
++				status = "disabled";
++			};
++
++			i2c8: i2c@46040000 {
++				compatible = "st,stm32mp25-i2c";
++				reg = <0x46040000 0x400>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				interrupt-names = "event";
++				interrupts = <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_I2C8>;
++				resets = <&rcc I2C8_R>;
++				dmas = <&hpdma 168 0x20 0x3012>,
++				       <&hpdma 169 0x20 0x3021>;
++				dma-names = "rx", "tx";
++				access-controllers = <&rifsc 48>;
++				status = "disabled";
++			};
++
++			csi: csi@48020000 {
++				compatible = "st,stm32mp25-csi";
++				reg = <0x48020000 0x2000>;
++				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc CSI_R>;
++				clocks = <&rcc CK_KER_CSI>, <&rcc CK_KER_CSITXESC>,
++					 <&rcc CK_KER_CSIPHY>;
++				clock-names = "pclk", "txesc", "csi2phy";
++				access-controllers = <&rifsc 86>;
++				status = "disabled";
++			};
++
++			dcmipp: dcmipp@48030000 {
++				compatible = "st,stm32mp25-dcmipp";
++				reg = <0x48030000 0x1000>;
++				interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
++				resets = <&rcc DCMIPP_R>;
++				clocks = <&rcc CK_BUS_DCMIPP>, <&rcc CK_KER_CSI>;
++				clock-names = "kclk", "mclk";
++				access-controllers = <&rifsc 87>;
++				status = "disabled";
++			};
++
++			sdmmc1: mmc@48220000 {
++				compatible = "st,stm32mp25-sdmmc2", "arm,pl18x", "arm,primecell";
++				reg = <0x48220000 0x400>, <0x44230400 0x8>;
++				arm,primecell-periphid = <0x00353180>;
++				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_SDMMC1 >;
++				clock-names = "apb_pclk";
++				resets = <&rcc SDMMC1_R>;
++				cap-sd-highspeed;
++				cap-mmc-highspeed;
++				max-frequency = <120000000>;
++				access-controllers = <&rifsc 76>;
++				status = "disabled";
++			};
++
++			ethernet1: ethernet@482c0000 {
++				compatible = "st,stm32mp25-dwmac", "snps,dwmac-5.20";
++				reg = <0x482c0000 0x4000>;
++				reg-names = "stmmaceth";
++				interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "macirq";
++				clock-names = "stmmaceth",
++					      "mac-clk-tx",
++					      "mac-clk-rx",
++					      "ptp_ref",
++					      "ethstp",
++					      "eth-ck";
++				clocks = <&rcc CK_ETH1_MAC>,
++					 <&rcc CK_ETH1_TX>,
++					 <&rcc CK_ETH1_RX>,
++					 <&rcc CK_KER_ETH1PTP>,
++					 <&rcc CK_ETH1_STP>,
++					 <&rcc CK_KER_ETH1>;
++				snps,axi-config = <&stmmac_axi_config_1>;
++				snps,mixed-burst;
++				snps,mtl-rx-config = <&mtl_rx_setup_1>;
++				snps,mtl-tx-config = <&mtl_tx_setup_1>;
++				snps,pbl = <2>;
++				snps,tso;
++				st,syscon = <&syscfg 0x3000>;
++				access-controllers = <&rifsc 60>;
++				status = "disabled";
++
++				mtl_rx_setup_1: rx-queues-config {
++					snps,rx-queues-to-use = <2>;
++					queue0 {};
++					queue1 {};
++				};
++
++				mtl_tx_setup_1: tx-queues-config {
++					snps,tx-queues-to-use = <4>;
++					queue0 {};
++					queue1 {};
++					queue2 {};
++					queue3 {};
++				};
++
++				stmmac_axi_config_1: stmmac-axi-config {
++					snps,blen = <0 0 0 0 16 8 4>;
++					snps,rd_osr_lmt = <0x7>;
++					snps,wr_osr_lmt = <0x7>;
++				};
++			};
++		};
++
++		bsec: efuse@44000000 {
++			compatible = "st,stm32mp25-bsec";
++			reg = <0x44000000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			part_number_otp@24 {
++				reg = <0x24 0x4>;
++			};
++
++			package_otp@1e8 {
++				reg = <0x1e8 0x1>;
++				bits = <0 3>;
++			};
++		};
++
++		rcc: clock-controller@44200000 {
++			compatible = "st,stm32mp25-rcc";
++			reg = <0x44200000 0x10000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			clocks = <&scmi_clk CK_SCMI_HSE>,
++				<&scmi_clk CK_SCMI_HSI>,
++				<&scmi_clk CK_SCMI_MSI>,
++				<&scmi_clk CK_SCMI_LSE>,
++				<&scmi_clk CK_SCMI_LSI>,
++				<&scmi_clk CK_SCMI_HSE_DIV2>,
++				<&scmi_clk CK_SCMI_ICN_HS_MCU>,
++				<&scmi_clk CK_SCMI_ICN_LS_MCU>,
++				<&scmi_clk CK_SCMI_ICN_SDMMC>,
++				<&scmi_clk CK_SCMI_ICN_DDR>,
++				<&scmi_clk CK_SCMI_ICN_DISPLAY>,
++				<&scmi_clk CK_SCMI_ICN_HSL>,
++				<&scmi_clk CK_SCMI_ICN_NIC>,
++				<&scmi_clk CK_SCMI_ICN_VID>,
++				<&scmi_clk CK_SCMI_FLEXGEN_07>,
++				<&scmi_clk CK_SCMI_FLEXGEN_08>,
++				<&scmi_clk CK_SCMI_FLEXGEN_09>,
++				<&scmi_clk CK_SCMI_FLEXGEN_10>,
++				<&scmi_clk CK_SCMI_FLEXGEN_11>,
++				<&scmi_clk CK_SCMI_FLEXGEN_12>,
++				<&scmi_clk CK_SCMI_FLEXGEN_13>,
++				<&scmi_clk CK_SCMI_FLEXGEN_14>,
++				<&scmi_clk CK_SCMI_FLEXGEN_15>,
++				<&scmi_clk CK_SCMI_FLEXGEN_16>,
++				<&scmi_clk CK_SCMI_FLEXGEN_17>,
++				<&scmi_clk CK_SCMI_FLEXGEN_18>,
++				<&scmi_clk CK_SCMI_FLEXGEN_19>,
++				<&scmi_clk CK_SCMI_FLEXGEN_20>,
++				<&scmi_clk CK_SCMI_FLEXGEN_21>,
++				<&scmi_clk CK_SCMI_FLEXGEN_22>,
++				<&scmi_clk CK_SCMI_FLEXGEN_23>,
++				<&scmi_clk CK_SCMI_FLEXGEN_24>,
++				<&scmi_clk CK_SCMI_FLEXGEN_25>,
++				<&scmi_clk CK_SCMI_FLEXGEN_26>,
++				<&scmi_clk CK_SCMI_FLEXGEN_27>,
++				<&scmi_clk CK_SCMI_FLEXGEN_28>,
++				<&scmi_clk CK_SCMI_FLEXGEN_29>,
++				<&scmi_clk CK_SCMI_FLEXGEN_30>,
++				<&scmi_clk CK_SCMI_FLEXGEN_31>,
++				<&scmi_clk CK_SCMI_FLEXGEN_32>,
++				<&scmi_clk CK_SCMI_FLEXGEN_33>,
++				<&scmi_clk CK_SCMI_FLEXGEN_34>,
++				<&scmi_clk CK_SCMI_FLEXGEN_35>,
++				<&scmi_clk CK_SCMI_FLEXGEN_36>,
++				<&scmi_clk CK_SCMI_FLEXGEN_37>,
++				<&scmi_clk CK_SCMI_FLEXGEN_38>,
++				<&scmi_clk CK_SCMI_FLEXGEN_39>,
++				<&scmi_clk CK_SCMI_FLEXGEN_40>,
++				<&scmi_clk CK_SCMI_FLEXGEN_41>,
++				<&scmi_clk CK_SCMI_FLEXGEN_42>,
++				<&scmi_clk CK_SCMI_FLEXGEN_43>,
++				<&scmi_clk CK_SCMI_FLEXGEN_44>,
++				<&scmi_clk CK_SCMI_FLEXGEN_45>,
++				<&scmi_clk CK_SCMI_FLEXGEN_46>,
++				<&scmi_clk CK_SCMI_FLEXGEN_47>,
++				<&scmi_clk CK_SCMI_FLEXGEN_48>,
++				<&scmi_clk CK_SCMI_FLEXGEN_49>,
++				<&scmi_clk CK_SCMI_FLEXGEN_50>,
++				<&scmi_clk CK_SCMI_FLEXGEN_51>,
++				<&scmi_clk CK_SCMI_FLEXGEN_52>,
++				<&scmi_clk CK_SCMI_FLEXGEN_53>,
++				<&scmi_clk CK_SCMI_FLEXGEN_54>,
++				<&scmi_clk CK_SCMI_FLEXGEN_55>,
++				<&scmi_clk CK_SCMI_FLEXGEN_56>,
++				<&scmi_clk CK_SCMI_FLEXGEN_57>,
++				<&scmi_clk CK_SCMI_FLEXGEN_58>,
++				<&scmi_clk CK_SCMI_FLEXGEN_59>,
++				<&scmi_clk CK_SCMI_FLEXGEN_60>,
++				<&scmi_clk CK_SCMI_FLEXGEN_61>,
++				<&scmi_clk CK_SCMI_FLEXGEN_62>,
++				<&scmi_clk CK_SCMI_FLEXGEN_63>,
++				<&scmi_clk CK_SCMI_ICN_APB1>,
++				<&scmi_clk CK_SCMI_ICN_APB2>,
++				<&scmi_clk CK_SCMI_ICN_APB3>,
++				<&scmi_clk CK_SCMI_ICN_APB4>,
++				<&scmi_clk CK_SCMI_ICN_APBDBG>,
++				<&scmi_clk CK_SCMI_TIMG1>,
++				<&scmi_clk CK_SCMI_TIMG2>,
++				<&scmi_clk CK_SCMI_PLL3>,
++				<&clk_dsi_txbyte>;
++				access-controllers = <&rifsc 156>;
++		};
++
++		exti1: interrupt-controller@44220000 {
++			compatible = "st,stm32mp1-exti", "syscon";
++			reg = <0x44220000 0x400>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			interrupts-extended =
++				<&intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_0 */
++				<&intc GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_10 */
++				<&intc GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 0   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 1   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,						/* EXTI_20 */
++				<&intc GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_30 */
++				<&intc GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_40 */
++				<&intc GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_50 */
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,						/* EXTI_60 */
++				<&intc GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 10  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_70 */
++				<0>,
++				<&intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,						/* EXTI_80 */
++				<0>,
++				<0>,
++				<&intc GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		syscfg: syscon@44230000 {
++			compatible = "st,stm32mp23-syscfg", "syscon";
++			reg = <0x44230000 0x10000>;
++		};
++
++		pinctrl: pinctrl@44240000 {
++			compatible = "st,stm32mp257-pinctrl";
++			ranges = <0 0x44240000 0xa0400>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			interrupt-parent = <&exti1>;
++			st,syscfg = <&exti1 0x60 0xff>;
++			pins-are-numbered;
++
++			gpioa: gpio@44240000 {
++				reg = <0x0 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOA>;
++				st,bank-name = "GPIOA";
++				status = "disabled";
++			};
++
++			gpiob: gpio@44250000 {
++				reg = <0x10000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOB>;
++				st,bank-name = "GPIOB";
++				status = "disabled";
++			};
++
++			gpioc: gpio@44260000 {
++				reg = <0x20000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOC>;
++				st,bank-name = "GPIOC";
++				status = "disabled";
++			};
++
++			gpiod: gpio@44270000 {
++				reg = <0x30000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOD>;
++				st,bank-name = "GPIOD";
++				status = "disabled";
++			};
++
++			gpioe: gpio@44280000 {
++				reg = <0x40000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOE>;
++				st,bank-name = "GPIOE";
++				status = "disabled";
++			};
++
++			gpiof: gpio@44290000 {
++				reg = <0x50000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOF>;
++				st,bank-name = "GPIOF";
++				status = "disabled";
++			};
++
++			gpiog: gpio@442a0000 {
++				reg = <0x60000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOG>;
++				st,bank-name = "GPIOG";
++				status = "disabled";
++			};
++
++			gpioh: gpio@442b0000 {
++				reg = <0x70000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOH>;
++				st,bank-name = "GPIOH";
++				status = "disabled";
++			};
++
++			gpioi: gpio@442c0000 {
++				reg = <0x80000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOI>;
++				st,bank-name = "GPIOI";
++				status = "disabled";
++			};
++
++			gpioj: gpio@442d0000 {
++				reg = <0x90000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOJ>;
++				st,bank-name = "GPIOJ";
++				status = "disabled";
++			};
++
++			gpiok: gpio@442e0000 {
++				reg = <0xa0000 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOK>;
++				st,bank-name = "GPIOK";
++				status = "disabled";
++			};
++		};
++
++		rtc: rtc@46000000 {
++			compatible = "st,stm32mp25-rtc";
++			reg = <0x46000000 0x400>;
++			clocks = <&scmi_clk CK_SCMI_RTC>,
++				 <&scmi_clk CK_SCMI_RTCCK>;
++			clock-names = "pclk", "rtc_ck";
++			interrupts-extended = <&exti2 17 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		pinctrl_z: pinctrl@46200000 {
++			compatible = "st,stm32mp257-z-pinctrl";
++			ranges = <0 0x46200000 0x400>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			interrupt-parent = <&exti1>;
++			st,syscfg = <&exti1 0x60 0xff>;
++			pins-are-numbered;
++
++			gpioz: gpio@46200000 {
++				reg = <0 0x400>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				clocks = <&scmi_clk CK_SCMI_GPIOZ>;
++				st,bank-name = "GPIOZ";
++				st,bank-ioport = <11>;
++				status = "disabled";
++			};
++
++		};
++
++		exti2: interrupt-controller@46230000 {
++			compatible = "st,stm32mp1-exti", "syscon";
++			reg = <0x46230000 0x400>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			interrupts-extended =
++				<&intc GIC_SPI 17  IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_0 */
++				<&intc GIC_SPI 18  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 19  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 20  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 21  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 22  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 23  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 24  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 25  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 26  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 27  IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_10 */
++				<&intc GIC_SPI 28  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 29  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 30  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 31  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 32  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 12  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 13  IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<0>,						/* EXTI_20 */
++				<&intc GIC_SPI 14  IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 15  IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_30 */
++				<&intc GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_40 */
++				<0>,
++				<0>,
++				<&intc GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 11  IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 5   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 4   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 6   IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_50 */
++				<&intc GIC_SPI 7   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 2   IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 3   IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,
++				<0>,						/* EXTI_60 */
++				<&intc GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<&intc GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
++				<&intc GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				<0>,
++				<0>,
++				<&intc GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;	/* EXTI_70 */
++		};
++
++		intc: interrupt-controller@4ac10000 {
++			compatible = "arm,cortex-a7-gic";
++			reg = <0x4ac10000 0x1000>,
++			      <0x4ac20000 0x2000>,
++			      <0x4ac40000 0x2000>,
++			      <0x4ac60000 0x2000>;
++			#interrupt-cells = <3>;
++			#address-cells = <1>;
++			interrupt-controller;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/st/stm32mp233.dtsi b/arch/arm64/boot/dts/st/stm32mp233.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..78f4059fca5db6b2625ddc8046656bb6ceaa25cf
+--- /dev/null
++++ b/arch/arm64/boot/dts/st/stm32mp233.dtsi
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
++ * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
++ */
++#include "stm32mp231.dtsi"
++
++/ {
++	cpus {
++		cpu1: cpu@1 {
++			compatible = "arm,cortex-a35";
++			reg = <1>;
++			device_type = "cpu";
++			enable-method = "psci";
++			power-domains = <&cpu1_pd>;
++			power-domain-names = "psci";
++		};
++	};
++
++	arm-pmu {
++		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
++	};
++
++	psci {
++		cpu1_pd: power-domain-cpu1 {
++			#power-domain-cells = <0>;
++			power-domains = <&cluster_pd>;
++		};
++	};
++
++	timer {
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
 +};
 +
-+static const struct hwmon_ops power_meter_ops = {
-+	.is_visible = power_meter_is_visible,
-+	.read = power_meter_read,
-+	.read_string = power_meter_read_string,
-+	.write = power_meter_write,
++&optee {
++	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
 +};
 +
-+static const struct hwmon_chip_info power_meter_chip_info = {
-+	.ops = &power_meter_ops,
-+	.info = power_meter_info,
++&rifsc {
++	ethernet2: ethernet@482d0000 {
++		compatible = "st,stm32mp25-dwmac", "snps,dwmac-5.20";
++		reg = <0x482d0000 0x4000>;
++		reg-names = "stmmaceth";
++		interrupts-extended = <&intc GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "macirq";
++		clock-names = "stmmaceth",
++			      "mac-clk-tx",
++			      "mac-clk-rx",
++			      "ptp_ref",
++			      "ethstp",
++			      "eth-ck";
++		clocks = <&rcc CK_ETH2_MAC>,
++			 <&rcc CK_ETH2_TX>,
++			 <&rcc CK_ETH2_RX>,
++			 <&rcc CK_KER_ETH2PTP>,
++			 <&rcc CK_ETH2_STP>,
++			 <&rcc CK_KER_ETH2>;
++		snps,axi-config = <&stmmac_axi_config_2>;
++		snps,mixed-burst;
++		snps,mtl-rx-config = <&mtl_rx_setup_2>;
++		snps,mtl-tx-config = <&mtl_tx_setup_2>;
++		snps,pbl = <2>;
++		snps,tso;
++		st,syscon = <&syscfg 0x3400>;
++		access-controllers = <&rifsc 61>;
++		status = "disabled";
++
++		mtl_rx_setup_2: rx-queues-config {
++			snps,rx-queues-to-use = <2>;
++			queue0 {};
++			queue1 {};
++		};
++
++		mtl_tx_setup_2: tx-queues-config {
++			snps,tx-queues-to-use = <4>;
++			queue0 {};
++			queue1 {};
++			queue2 {};
++			queue3 {};
++		};
++
++		stmmac_axi_config_2: stmmac-axi-config {
++			snps,blen = <0 0 0 0 16 8 4>;
++			snps,rd_osr_lmt = <0x7>;
++			snps,wr_osr_lmt = <0x7>;
++		};
++	};
 +};
+diff --git a/arch/arm64/boot/dts/st/stm32mp235.dtsi b/arch/arm64/boot/dts/st/stm32mp235.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..2719c088dd594ba90f683d8809b54fecf471ba40
+--- /dev/null
++++ b/arch/arm64/boot/dts/st/stm32mp235.dtsi
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
++ * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
++ */
++#include "stm32mp233.dtsi"
 +
-+static ssize_t power1_is_battery_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%u\n",
-+			  res->caps.flags & POWER_METER_IS_BATTERY ? 1 : 0);
-+}
-+
-+static ssize_t power1_model_number_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%s\n", res->model_number);
-+}
-+
-+static ssize_t power1_oem_info_show(struct device *dev,
-+				    struct device_attribute *attr,
-+				    char *buf)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%s\n", res->oem_info);
-+}
-+
-+static ssize_t power1_serial_number_show(struct device *dev,
-+					 struct device_attribute *attr,
-+					 char *buf)
-+{
-+	struct acpi_power_meter_resource *res = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%s\n", res->serial_number);
-+}
-+
-+static DEVICE_ATTR_RO(power1_is_battery);
-+static DEVICE_ATTR_RO(power1_model_number);
-+static DEVICE_ATTR_RO(power1_oem_info);
-+static DEVICE_ATTR_RO(power1_serial_number);
-+
-+#define POWER_EXTRA_BATTERY_ATTR_IDX	3
-+static struct attribute *power_extra_attrs[] = {
-+	&dev_attr_power1_model_number.attr,
-+	&dev_attr_power1_oem_info.attr,
-+	&dev_attr_power1_serial_number.attr,
-+	&dev_attr_power1_is_battery.attr,
-+	NULL
++&rifsc {
++	vdec: vdec@480d0000 {
++		compatible = "st,stm32mp25-vdec";
++		reg = <0x480d0000 0x3c8>;
++		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&rcc CK_BUS_VDEC>;
++		access-controllers = <&rifsc 89>;
++	};
 +};
+diff --git a/arch/arm64/boot/dts/st/stm32mp23xc.dtsi b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..e33b00b424e1207dc6212e75235785f8c61e5055
+--- /dev/null
++++ b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
++ * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
++ */
 +
-+ATTRIBUTE_GROUPS(power_extra);
++/ {
++};
+diff --git a/arch/arm64/boot/dts/st/stm32mp23xf.dtsi b/arch/arm64/boot/dts/st/stm32mp23xf.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..e33b00b424e1207dc6212e75235785f8c61e5055
+--- /dev/null
++++ b/arch/arm64/boot/dts/st/stm32mp23xf.dtsi
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
++ * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
++ */
 +
-+static void update_power_extra_groups(struct acpi_power_meter_resource *res)
-+{
-+	power_extra_attrs[POWER_EXTRA_BATTERY_ATTR_IDX] =
-+			(res->caps.flags & POWER_METER_CAN_MEASURE) ?
-+			&dev_attr_power1_is_battery.attr : NULL;
- }
- 
- static void free_capabilities(struct acpi_power_meter_resource *resource)
-@@ -848,13 +755,24 @@ static void acpi_power_meter_notify(struct acpi_device *device, u32 event)
- 	case METER_NOTIFY_CONFIG:
- 		mutex_lock(&resource->lock);
- 		free_capabilities(resource);
-+		remove_domain_devices(resource);
-+		hwmon_device_unregister(resource->hwmon_dev);
- 		res = read_capabilities(resource);
--		mutex_unlock(&resource->lock);
- 		if (res)
--			break;
--
--		remove_attrs(resource);
--		setup_attrs(resource);
-+			dev_err_once(&device->dev, "read capabilities failed.\n");
-+		res = read_domain_devices(resource);
-+		if (res && res != -ENODEV)
-+			dev_err_once(&device->dev, "read domain devices failed.\n");
-+		update_power_extra_groups(resource);
-+		resource->hwmon_dev =
-+			hwmon_device_register_with_info(&device->dev,
-+							ACPI_POWER_METER_NAME,
-+							resource,
-+							&power_meter_chip_info,
-+							power_extra_groups);
-+		if (IS_ERR(resource->hwmon_dev))
-+			dev_err_once(&device->dev, "register hwmon device failed.\n");
-+		mutex_unlock(&resource->lock);
- 		break;
- 	case METER_NOTIFY_TRIP:
- 		sysfs_notify(&device->dev.kobj, NULL, POWER_AVERAGE_NAME);
-@@ -928,11 +846,15 @@ static int acpi_power_meter_add(struct acpi_device *device)
- 	resource->trip[0] = -1;
- 	resource->trip[1] = -1;
- 
--	res = setup_attrs(resource);
--	if (res)
-+	/* _PMD method is optional. */
-+	res = read_domain_devices(resource);
-+	if (res && res != -ENODEV)
- 		goto exit_free_capability;
- 
--	resource->hwmon_dev = hwmon_device_register(&device->dev);
-+	update_power_extra_groups(resource);
-+	resource->hwmon_dev = hwmon_device_register_with_info(&device->dev, ACPI_POWER_METER_NAME,
-+						    resource, &power_meter_chip_info,
-+						    power_extra_groups);
- 	if (IS_ERR(resource->hwmon_dev)) {
- 		res = PTR_ERR(resource->hwmon_dev);
- 		goto exit_remove;
-@@ -942,7 +864,7 @@ static int acpi_power_meter_add(struct acpi_device *device)
- 	goto exit;
- 
- exit_remove:
--	remove_attrs(resource);
-+	remove_domain_devices(resource);
- exit_free_capability:
- 	free_capabilities(resource);
- exit_free:
-@@ -961,7 +883,7 @@ static void acpi_power_meter_remove(struct acpi_device *device)
- 	resource = acpi_driver_data(device);
- 	hwmon_device_unregister(resource->hwmon_dev);
- 
--	remove_attrs(resource);
-+	remove_domain_devices(resource);
- 	free_capabilities(resource);
- 
- 	kfree(resource);
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 9703d60e9bbf..4f1af2ed091a 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -483,12 +483,19 @@ static ssize_t hwmon_attr_store(struct device *dev,
- 	return count;
- }
- 
-+static bool power_is_string_attr(u32 attr)
-+{
-+	return attr == hwmon_power_label || attr == hwmon_power_accuracy ||
-+		attr == hwmon_power_cap_hyst || attr == hwmon_power_average_min ||
-+		attr == hwmon_power_average_max;
-+}
-+
- static bool is_string_attr(enum hwmon_sensor_types type, u32 attr)
- {
- 	return (type == hwmon_temp && attr == hwmon_temp_label) ||
- 	       (type == hwmon_in && attr == hwmon_in_label) ||
- 	       (type == hwmon_curr && attr == hwmon_curr_label) ||
--	       (type == hwmon_power && attr == hwmon_power_label) ||
-+	       (type == hwmon_power && power_is_string_attr(attr)) ||
- 	       (type == hwmon_energy && attr == hwmon_energy_label) ||
- 	       (type == hwmon_humidity && attr == hwmon_humidity_label) ||
- 	       (type == hwmon_fan && attr == hwmon_fan_label);
-@@ -646,8 +653,8 @@ static const char * const hwmon_power_attr_templates[] = {
- 	[hwmon_power_enable] = "power%d_enable",
- 	[hwmon_power_average] = "power%d_average",
- 	[hwmon_power_average_interval] = "power%d_average_interval",
--	[hwmon_power_average_interval_max] = "power%d_interval_max",
--	[hwmon_power_average_interval_min] = "power%d_interval_min",
-+	[hwmon_power_average_interval_max] = "power%d_average_interval_max",
-+	[hwmon_power_average_interval_min] = "power%d_average_interval_min",
- 	[hwmon_power_average_highest] = "power%d_average_highest",
- 	[hwmon_power_average_lowest] = "power%d_average_lowest",
- 	[hwmon_power_average_max] = "power%d_average_max",
++/ {
++};
+
 -- 
-2.22.0
+2.25.1
 
 
