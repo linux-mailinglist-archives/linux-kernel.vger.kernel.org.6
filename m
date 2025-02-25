@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-530656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A94AA43644
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FF4A4366D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E2C17707A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA27166D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1636C1F60A;
-	Tue, 25 Feb 2025 07:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="mohV7Dk/"
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D30257423;
-	Tue, 25 Feb 2025 07:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.182.119.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947D825A32D;
+	Tue, 25 Feb 2025 07:50:05 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994D7204C31
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740469194; cv=none; b=b5sGTqXCeTzBG05UHkfpT7DG+yr8jDHJSPkW8t7QvGuT3/J7ROlr1OuTfXQfIutf14h3XGtzaenVwsWpzYFc0G/rneu7vZNkjXbQ834aSTTnaxmlWkfP8V8bF1heU9NwdBDN9gYkFhb8Tc0I3knn8lUvy7Vbtu1TI9coEfgDaqM=
+	t=1740469805; cv=none; b=d8qSJI/wnaWnTQhtkpctGvChtfBrIjQRDSIl991llVBfQDwtXAkDlWfZctyqhTOZnqRUHljfmLDltfcgxQjtHwVjyX6RUnmDNBjwYw4TyVIAu3SoxYiw9dcdsFbR8jBiW4GVqwzdwkM5kZ8e0fcTprX3T2qvrEwlZINzuwg/BOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740469194; c=relaxed/simple;
-	bh=jJv616jfTn0ZGbYwwYOpX5lWgGqrU9i3HLdGP4o/yI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hNt1ZwZA1pAL4K7Wrs00wExZ0fed0KUpIFUPIYmh/FLcVekN619hK8G7OrMlpJxqggizP/wWnjivk5NmBJVsU+3yiQ19VGVXqNNGUbpgJ772S3gSSh6zETIPvqO5sP+0IhWiDG/7CeymVM033Q/US3UbeP6KZvE/vg8p1HclsXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=mohV7Dk/; arc=none smtp.client-ip=217.182.119.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay3.mymailcheap.com (Postfix) with ESMTPS id 1B67B3E917;
-	Tue, 25 Feb 2025 07:39:51 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 897A84023E;
-	Tue, 25 Feb 2025 07:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1740469190; bh=jJv616jfTn0ZGbYwwYOpX5lWgGqrU9i3HLdGP4o/yI8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mohV7Dk/6gbHatB+pznBJbKYR3zzmfXMIYKZUlHQhSxTRi+mgvypiWZ9bXfoiwWX6
-	 k7UblRqmPpaPLQFUa6sR3J705ccGOtPrwf6IuUreTEd2CsQEFHGlmDOXOq8KqiqcHP
-	 7D52fpiNBtJ5v7IjRGlPXxrI7uLsabDwJAQGowkA=
-Received: from JellyNote.localdomain (unknown [203.175.14.48])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 55F72413A7;
-	Tue, 25 Feb 2025 07:39:44 +0000 (UTC)
-From: Mingcong Bai <jeffbai@aosc.io>
-To: linux-kernel@vger.kernel.org
-Cc: Kexy Biscuit <kexybiscuit@aosc.io>,
-	stable@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Ashutosh Dixit <ashutosh.dixit@intel.com>,
-	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
-	Pallavi Mishra <pallavi.mishra@intel.com>,
-	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-	Ilia Levi <ilia.levi@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/xe/regs: remove a duplicate definition for RING_CTL_SIZE(size)
-Date: Tue, 25 Feb 2025 15:31:01 +0800
-Message-ID: <20250225073104.865230-1-jeffbai@aosc.io>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740469805; c=relaxed/simple;
+	bh=09ibOkxEH89zpgu/YOvZXAOdkjAqyD57M71vN9DlDIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XaLm0UWPGBagvDyPdcgogLw0iGYN24KxJLbX+cD9OE+SB2yjYQTlKO4mEGJJavuTE9d8s6Se7heidc248VKjk1cDCKWJ+gTreJgcRjBWc183AKc0AdGThImWXRa20Q33MIBxUaQCywTOOXIqAiwfMtRgHQ0IZDt8lf/XtQZBf+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z28XW5p6Cz9sSH;
+	Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LNoX8tsTPzIV; Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z28XW50Xsz9sS8;
+	Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 98D598B780;
+	Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id D597ggcl3448; Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 283828B77C;
+	Tue, 25 Feb 2025 08:35:39 +0100 (CET)
+Message-ID: <7d23db63-6909-48e2-8262-fb000aa714a5@csgroup.eu>
+Date: Tue, 25 Feb 2025 08:35:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call warning
+ for bl+mflr pattern
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Sathvika Vasireddy <sv@linux.ibm.com>, jpoimboe@kernel.org,
+ peterz@infradead.org, npiggin@gmail.com, maddy@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ llvm@lists.linux.dev
+References: <20250219162014.10334-1-sv@linux.ibm.com>
+ <3223ec0e-c445-4bbf-ae72-276688e40908@csgroup.eu>
+ <d5ada017-1ba2-4a89-8a58-4555f09f9d97@csgroup.eu>
+ <8f4ec6d4-2646-4a87-b3a1-edfaecff2a01@csgroup.eu>
+ <20250224170922.GA585841@ax162>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250224170922.GA585841@ax162>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: 897A84023E
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.40 / 10.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[stable.vger.kernel.org:server fail,jeffbai.aosc.io:server fail];
-	FREEMAIL_CC(0.00)[aosc.io,vger.kernel.org,intel.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,lists.freedesktop.org];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[]
 
-Commit b79e8fd954c4 ("drm/xe: Remove dependency on intel_engine_regs.h")
-introduced an internal set of engine registers, however, as part of this
-change, it has also introduced two duplicate `define' lines for
-`RING_CTL_SIZE(size)'. This commit was introduced to the tree in v6.8-rc1.
 
-While this is harmless as the definitions did not change, so no compiler
-warning was observed.
 
-Drop this line anyway for the sake of correctness.
+Le 24/02/2025 à 18:09, Nathan Chancellor a écrit :
+> On Mon, Feb 24, 2025 at 02:19:14PM +0100, Christophe Leroy wrote:
+>> Well, this problem already exists on clang 18 it seems:
+>>
+>> 00000004 <btext_map>:
+>>     4:   7c 08 02 a6     mflr    r0
+>>     8:   94 21 ff e0     stwu    r1,-32(r1)
+>>     c:   93 c1 00 18     stw     r30,24(r1)
+>>    10:   90 01 00 24     stw     r0,36(r1)
+>>    14:   93 a1 00 14     stw     r29,20(r1)
+>>    18:   48 00 00 05     bl      1c <btext_map+0x18>
+>>    1c:   38 a0 00 00     li      r5,0
+>>    20:   7f c8 02 a6     mflr    r30
+>>
+>> While GCC generates:
+>>
+>> 00000418 <btext_map>:
+>>   418:   94 21 ff e0     stwu    r1,-32(r1)
+>>   41c:   7c 08 02 a6     mflr    r0
+>>   420:   42 9f 00 05     bcl     20,4*cr7+so,424 <btext_map+0xc>
+>>   424:   39 20 00 00     li      r9,0
+>>   428:   93 c1 00 18     stw     r30,24(r1)
+>>   42c:   7f c8 02 a6     mflr    r30
+>>
+>> So lets make the kernel tolerate it allthough it should be fixed on clang at
+>> the end.
+>>
+>> I can't find any related issue in the clang issues database
+>> (https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fllvm%2Fllvm-project%2Fissues&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C3c10d37fecd94c692acb08dd54f5ff51%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638760137702082512%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=qOjbONjWUuXFKUNb42yEPXgXmvU6x%2BuwbGSg2Ep6WRk%3D&reserved=0), should we open one ?
+> 
+> Yes please, especially if you happen to have a simplified reproducer
+> (but no worries if not). I can make sure it gets labeled for the PowerPC
+> backend folks to take a look at.
+> 
 
-Cc: <stable@vger.kernel.org> # v6.8-rc1+
-Fixes: b79e8fd954c4 ("drm/xe: Remove dependency on intel_engine_regs.h")
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
----
- drivers/gpu/drm/xe/regs/xe_engine_regs.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/xe/regs/xe_engine_regs.h b/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-index d86219dedde2a..b732c89816dff 100644
---- a/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-+++ b/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-@@ -53,7 +53,6 @@
- 
- #define RING_CTL(base)				XE_REG((base) + 0x3c)
- #define   RING_CTL_SIZE(size)			((size) - PAGE_SIZE) /* in bytes -> pages */
--#define   RING_CTL_SIZE(size)			((size) - PAGE_SIZE) /* in bytes -> pages */
- 
- #define RING_START_UDW(base)			XE_REG((base) + 0x48)
- 
--- 
-2.48.1
-
+Done, see https://github.com/llvm/llvm-project/issues/128644
 
