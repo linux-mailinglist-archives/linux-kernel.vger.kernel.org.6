@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-530635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D50A43605
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:19:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FE9A43603
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9588C3B7529
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520A97A91B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D6325A2C8;
-	Tue, 25 Feb 2025 07:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000D825A2A2;
+	Tue, 25 Feb 2025 07:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="IDkQE1t8"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="n9xnlE09"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9C618A6BA;
-	Tue, 25 Feb 2025 07:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783DC158851
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740467948; cv=none; b=exaz92AsjBvEK5v+XYd0Bsa3n505P3m7b6i2fabfOW3oazBLGpTdZdBiJWWhwAqZcFVNUI3rdPTZN8Qyr6/er2Ea4ccgURNjixppJp7aWn+2Ft13MDjP+LYIR++zP/X2lS94vaULyUC7A6Zikofsw3qMBL8OQD1csPzHCoiuSaM=
+	t=1740467948; cv=none; b=OTq1TRi4AKmmEuXooiaLzx7gYVMKW9VrWkqmLmMoJd4fb5r/8K41t2jVI1dMC2ak721q27XboDQYhzgCcRF2bdMYpyxH7SHA+wWR5CFxOYcTgTQfvzNLy9Bey1p2v2U8NjL/uENGRHuw1n0ls0nOfrhQLJo6fpzmN9so9gOoPOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740467948; c=relaxed/simple;
-	bh=jJv616jfTn0ZGbYwwYOpX5lWgGqrU9i3HLdGP4o/yI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BmCCzW3K/8AgnezZbLvXbAnvCmnb3yg2mgyX1R38NnvDbdCtB8+0cWEjONIHMPPna5mPu88yMvCdciHYVsMV+XE4CBsA1j091nHH3zfFmD04FjwUB5CF+QhTc/Mx6l0bHtHk8JyZ/wXarsZYVZ0RQYNDQ7fy1iiCfRR3yvAytU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=IDkQE1t8; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [217.182.66.162])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id D2559260EB;
-	Tue, 25 Feb 2025 07:18:58 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay2.mymailcheap.com (Postfix) with ESMTPS id 38EE23E8A5;
-	Tue, 25 Feb 2025 07:18:51 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 0F6AC40078;
-	Tue, 25 Feb 2025 07:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1740467928; bh=jJv616jfTn0ZGbYwwYOpX5lWgGqrU9i3HLdGP4o/yI8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IDkQE1t8xRbZN/mwwZFvUmhXPNlSQRtgAb8WAUTtEocKf5kG84sKN4Cnf9sXtvBMB
-	 f9zCH2gG7dtxxZmgZKFnLQjSxHb2PDXeSHCGjGqG5s/ikcm9zqdFjyXBZuliRcyz5o
-	 FfoFhBpkXVTPwnfaTxDkcqK7PzrfQeg1uZtaSQQs=
-Received: from JellyNote.localdomain (unknown [203.175.14.48])
+	bh=JOLttplp4Lz7xrSC3AO36IZTZQK3AzRP3lq0XDH9zHg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aensIkHH5rXoC5FJ+rJKvZJOnJGjOc/GaNSIndCT75xvm42bf/pN6OOIl8kkpvMQGcd3zrknGyehX2Kvl2UNf74H/FMgwLm6iiiCgodbIrcOyVW6K/du0Ph4p9+B0DdkYt47DfQ2rqpaZyjjkAvbOo6UqqTyTbIMLljabWlTChI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=n9xnlE09; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 239E240875;
-	Tue, 25 Feb 2025 07:18:40 +0000 (UTC)
-From: Mingcong Bai <jeffbai@aosc.io>
-To: linux-kernel@vger.kernel.org
-Cc: Kexy Biscuit <kexybiscuit@aosc.io>,
-	stable@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Ashutosh Dixit <ashutosh.dixit@intel.com>,
-	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
-	Ilia Levi <ilia.levi@intel.com>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH 1/5] drm/xe/regs: remove a duplicate definition for RING_CTL_SIZE(size)
-Date: Tue, 25 Feb 2025 15:18:29 +0800
-Message-ID: <20250225071832.864133-1-jeffbai@aosc.io>
-X-Mailer: git-send-email 2.48.1
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z289L4YD0z9t7J;
+	Tue, 25 Feb 2025 08:19:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1740467942; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gTqWOsuaameKwBwP2PW1oZAO/zijrhZJI/nRbm8lIX0=;
+	b=n9xnlE09xFqeQXdUQ1SXlb4QeEkEBZdOcmAnl8P+r0QwpYhb3zr3SpOckymXrM5yLfffCC
+	7xNbaV/rcQMHdrnK6cGWaAxNszvVyUWN1Jobh8sGVTB5/aeeykF98AUE0KLVvopGHjqmRx
+	27AQYMXB7yLmPyhpCNzitAuCVFXLVzec4nVSmeKbPk1w/DC0qJyJxu8RNT956Q8GN6FadZ
+	sG8FhlzxRkfdAhEWO5+Pb/k4h9kC8DyTQTXk29Ho2lvnSs/ubNtMYgJkynANo3MrhE0eaQ
+	EeUogJH/X1jz6zPn2zrDGt0OeW35ZkorjJSyVvOULDz/iO5UPZdNquPJOFnbTQ==
+Message-ID: <141295638b73e885f51a4b82ea7e417a6b0f5140.camel@mailbox.org>
+Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: phasta@kernel.org, qianyi liu <liuqianyi125@gmail.com>, Danilo Krummrich
+ <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 25 Feb 2025 08:18:59 +0100
+In-Reply-To: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
+References: <20250221062702.1293754-1-liuqianyi125@gmail.com>
+	 <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0F6AC40078
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [1.40 / 10.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,stable.vger.kernel.org:server fail];
-	FREEMAIL_CC(0.00)[aosc.io,vger.kernel.org,intel.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,lists.freedesktop.org];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Action: no action
+X-MBO-RS-META: d1huoh5qwmwhghcxnmkjt9ygpurkxqnf
+X-MBO-RS-ID: 04853c29170cc312e34
 
-Commit b79e8fd954c4 ("drm/xe: Remove dependency on intel_engine_regs.h")
-introduced an internal set of engine registers, however, as part of this
-change, it has also introduced two duplicate `define' lines for
-`RING_CTL_SIZE(size)'. This commit was introduced to the tree in v6.8-rc1.
+On Mon, 2025-02-24 at 10:52 +0100, Philipp Stanner wrote:
+> Hello,
+>=20
+> subject line: please write "drm/sched" instead of "drm/scheduler". It
+> has become the norm
+>=20
+> On Fri, 2025-02-21 at 14:27 +0800, qianyi liu wrote:
+> > Problem: If prev(last_scheduled) was already signaled I encountred
+> > a
+>=20
+> prev(last_scheduled) almost reads like a function call. Maybe write
+> "prev / last_scheduled"?
+>=20
+> > memory leak in drm_sched_entity_fini. This is because the
+> > prev(last_scheduled) fence is not free properly.
+>=20
+> s/free/freed
+>=20
+> >=20
+> > Fix: Balance the prev(last_scheduled) fence refcnt when
+> > dma_fence_add_callback failed.
 
-While this is harmless as the definitions did not change, so no compiler
-warning was observed.
+Oh, and importantly, I forgot:
 
-Drop this line anyway for the sake of correctness.
+Since this is clearly a bug fix, it needs a "Fixes: " tag and put the
+stable kernel on Cc.
 
-Cc: <stable@vger.kernel.org> # v6.8-rc1+
-Fixes: b79e8fd954c4 ("drm/xe: Remove dependency on intel_engine_regs.h")
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
----
- drivers/gpu/drm/xe/regs/xe_engine_regs.h | 1 -
- 1 file changed, 1 deletion(-)
+P.
 
-diff --git a/drivers/gpu/drm/xe/regs/xe_engine_regs.h b/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-index d86219dedde2a..b732c89816dff 100644
---- a/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-+++ b/drivers/gpu/drm/xe/regs/xe_engine_regs.h
-@@ -53,7 +53,6 @@
- 
- #define RING_CTL(base)				XE_REG((base) + 0x3c)
- #define   RING_CTL_SIZE(size)			((size) - PAGE_SIZE) /* in bytes -> pages */
--#define   RING_CTL_SIZE(size)			((size) - PAGE_SIZE) /* in bytes -> pages */
- 
- #define RING_START_UDW(base)			XE_REG((base) + 0x48)
- 
--- 
-2.48.1
+> >=20
+> > Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
+> > ---
+> > =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
+> > =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
+> > b/drivers/gpu/drm/scheduler/sched_entity.c
+> > index 69bcf0e99d57..1c0c14bcf726 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> > @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
+> > drm_sched_entity *entity)
+> > =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
+> > =C2=A0
+> > =C2=A0		dma_fence_get(&s_fence->finished);
+> > -		if (!prev || dma_fence_add_callback(prev, &job-
+> > > finish_cb,
+> > -					=C2=A0=C2=A0
+> > drm_sched_entity_kill_jobs_cb))
+> > +		if (!prev ||
+> > +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
+> > +					=C2=A0=C2=A0
+> > drm_sched_entity_kill_jobs_cb)) {
+> > +			dma_fence_put(prev);
+>=20
+> But now the fence will also be put when prev =3D=3D NULL. Is that
+> intentional? It doesn't seem correct to me from looking at the commit
+> message, which states "Balance [=E2=80=A6] refcnt when dma_fence_add_call=
+back
+> failed"
+>=20
+> It didn't get clear to me immediately which dma_fence_get() your new
+> dma_fence_put() balances. Can you ellaborate on that or maybe write a
+> comment?
+>=20
+> But also be handy of could share the kmemleak trace.
+>=20
+>=20
+> Thanks
+> P.
+>=20
+> > =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
+> > > finish_cb);
+> > +		}
+> > =C2=A0
+> > =C2=A0		prev =3D &s_fence->finished;
+> > =C2=A0	}
+>=20
 
 
