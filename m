@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-531326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48F5A43F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:17:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A721A43F0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD4C164318
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2A63B0712
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA196241CA6;
-	Tue, 25 Feb 2025 12:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3B8267731;
+	Tue, 25 Feb 2025 12:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JSHLtlv7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="e+uRd4ZU"
+Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7A92571AD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263551DD874
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485865; cv=none; b=ls5lXBjAjyab4/CEUyQoB+KfCwVlpw24OhTMAPijynnaJA6sW5zGx1jV3n7+Wz5LfAVOuL5mnJugvr5/fX1HiZKDnVEs2VFg8D1pejll3mPKlaz00h7AR5L/xZogpgUkGc+luSD6XlD2f6k7/87pqLmAXn06xjNE+VvYfq6F7y8=
+	t=1740485857; cv=none; b=B/IY15L82itr18cp15hOdxUf5pnEJL0khHyM2p7NoefLO35TeDTq/2CQCnkhXiyBj2HC2BWEXdX+pzD5r2xjRvmLNUcU2EakkTdrPenqFc+mhha0O7Rpy+rZFKZEoDzfHFfrWkX2vRzcEyZ7eyKCWLonzanEpJ0cD7roGuX0138=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485865; c=relaxed/simple;
-	bh=F2vZaOS9f5dPxo1fJQc1/bBdBD5kzX1Fyp6Pv+/djS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CSNlsuq7cOCRD6u2IEUNyRSd07JkU3tJe2n4bSIEL/UiOy6PDIOgriOMlPICpD5umfpGX1t0htMBCnO4ZdRoc6i13K3vYo9hL+5/l8pO+8SPqEsTE5nhrNQVYhX4Fk/8hc15f+YB0hhxxxP859szT+t2pigY+Cpf1M83xoVU3Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JSHLtlv7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740485862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUj8pOCsz76dhsi/SG3EEBuJV5Q3s6LEl5sicjNVCjQ=;
-	b=JSHLtlv7Tx5EJpb4JdQ+8lz0eprX1s6JGMNIE/hCfmGaQzX9g0eBMX3ZEA/4KX82aJ4X57
-	KA85jeuim7z0GQ19MV5zuXhsmHgoY6djKFP9t5pgPa+fM6hlmvBeOIZJSGTmmlAOBTeAX3
-	rI4XD31y2nkYGhzu8zc9Sy27wfJkGEs=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-BDvqBJfcMO-k0lI09nG7JA-1; Tue, 25 Feb 2025 07:17:41 -0500
-X-MC-Unique: BDvqBJfcMO-k0lI09nG7JA-1
-X-Mimecast-MFC-AGG-ID: BDvqBJfcMO-k0lI09nG7JA_1740485860
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc2b258e82so12077827a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:17:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740485860; x=1741090660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sUj8pOCsz76dhsi/SG3EEBuJV5Q3s6LEl5sicjNVCjQ=;
-        b=OreiNhmfMDmjSlNx1bOURd4CN614rc/jABB+YYt2N7H4r+hfqVc0OcTnr49OSNuhtV
-         o+WgzGeYSCAix/vxOAHUhxaYpyHqcYextUAP+QinxhTIexkSyjTdLUcJdzz3JNCC9oDc
-         ZzmgWM5by1hZQ2dxobFw+D6s3mLMiHrbcjsNX4ueHfDPxzx+sbqYmg0DMB2JZhqDOQuX
-         +TOw8gzExnS2zo4WlB8mrYMXvbYeel8tYkuURqnj3X3/zuCtrZLr+sdXHCAKNnoLUoAu
-         /29V0U+UV6/MbJTI5DTB3La23jhOtMD/L64Xk/tFsjYghYMX2K0XvjVYPBa8XgePPiNP
-         F8eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOLdYzKUUFvCR4j+hqpunl+3mQodLID0evG3uNXYvt4ZitLVzXY7mk8uM5NjAmk0OOUdWKMaikxluDEXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/AzsL0sRpxAccvqXlTP6aq/3s2Hfix2Q3a/KD5AHNFGPz8Ive
-	PhncF+qhp8cqdBjW1IrFqEUoAKaPznWMokPn+plyVqHgg4NC/9HhBcCZ8YBxs4iKUB9Z7tE+pzD
-	hCnuWFl6C2oQgFRZFER905ca4f4WxP2U3X65L8NfxydkrEeZJKKLscy4fSKJP7Db5tXd+U4AwOk
-	HkkMgSOuNsQslMUcJGwGeozXMQA2WnxmZTZ4O8
-X-Gm-Gg: ASbGncvV3+S+RTNry6ibqoJcyavkgNxgxglB90Tm/UvJQ9YV2rcWSLhTq2tqzE385lk
-	asKWSFvsm7qfP/YgJJrzeLiCWKiboq+qOFkqU5iuP2+FrWrsGwCbeQdkXoI+u8BFhnYfgjVM=
-X-Received: by 2002:a17:90b:2590:b0:2ea:5dea:eb0a with SMTP id 98e67ed59e1d1-2fce769a8aemr27308463a91.4.1740485860043;
-        Tue, 25 Feb 2025 04:17:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE/2zzJb5wvZ7QqLIuzcDLskP+j6OTP1hc+levVyCYPy4thU+0z+g/gmtEF0bRntfAknjp+kHEctUeQsLn49kA=
-X-Received: by 2002:a17:90b:2590:b0:2ea:5dea:eb0a with SMTP id
- 98e67ed59e1d1-2fce769a8aemr27308438a91.4.1740485859755; Tue, 25 Feb 2025
- 04:17:39 -0800 (PST)
+	s=arc-20240116; t=1740485857; c=relaxed/simple;
+	bh=icoN91cmWBN01191An2uItH1mFg3GCSkgD5Hl99R4Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXv1XvTwDA10gDdRzeAZy4GhjX8waQR9SJTugR7ScG2P1+tiTzJY0czAqMDDutPan83Iek/tkuCDG5ZSs2784oTNu4ZM1XV3WG8z3k+9ieKa3fXkdl8GhM4sh2MaX4e2Xwi4wytQv7D7gq15VdpdlHsLLJhI6ci3RRTumNkFTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=e+uRd4ZU; arc=none smtp.client-ip=17.58.6.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=tQVDiJM72BgasMuPn0E8GujAR5KguG27heLo2tUkt5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=e+uRd4ZU1VAu519YY62aDnwBuPiGbz+bWxHHbAjdrshEv4Kcxex2SYMGVfqezk73J
+	 ygl2jG3IJjwWNCQJDuTijwEP73BcKmDpsXY9dWTUMIiCIw2HfIPvW0ML+Bp1eDcN3q
+	 F/8OifILc0jpE5naSoXySxq9cjW49Cp+w39hqL2vtbOWy9n67r0c+fDCd1v5BeQNMY
+	 IJ3sUJnuAawDrU0UTfM2LMRHKhYdtrQZ7lgpyjL1MtLd6lJyv8sfYsUZ+aeNFGICwv
+	 xmNNQQaHwQYTR4vI4Xvma20mtK3cWNHiGEIQnuKbPXZfxZ50zM0apj/r5fznqVezNT
+	 2EKweQKkHkG5Q==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 45652CC6951;
+	Tue, 25 Feb 2025 12:17:28 +0000 (UTC)
+Message-ID: <4e6ed786-4e72-4f22-9ce1-cdf6c384a5bb@icloud.com>
+Date: Tue, 25 Feb 2025 20:17:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250121103346.1030165-1-eperezma@redhat.com> <20250224164956-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250224164956-mutt-send-email-mst@kernel.org>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Tue, 25 Feb 2025 13:17:02 +0100
-X-Gm-Features: AWEUYZl9o1wkJEhPYQV6xj-jLOpXFm58am5y2uOOONMp9W8KB-2y7XkozzEpMWw
-Message-ID: <CAJaqyWfir7+oVtC3Z+eC+jbDxkACs0J9a4-wnx_dgU5VeFhr8A@mail.gmail.com>
-Subject: Re: [PATCH] vduse: add virtio_fs to allowed dev id
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Hanna Reitz <hreitz@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Jason Wang <jasowang@redhat.com>, German Maglione <gmaglione@redhat.com>, stefanha@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] of: fix bugs about refcount
+To: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+ Stefan Wiehler <stefan.wiehler@nokia.com>, Tony Lindgren <tony@atomide.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Julia Lawall <Julia.Lawall@lip6.fr>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+ stable@vger.kernel.org
+References: <20250209-of_irq_fix-v2-0-93e3a2659aa7@quicinc.com>
+ <20250224232645.GA117818-robh@kernel.org>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20250224232645.GA117818-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: buODABNUr5CF9BrUMMIQ-7sGwBIbv_Rh
+X-Proofpoint-ORIG-GUID: buODABNUr5CF9BrUMMIQ-7sGwBIbv_Rh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=834
+ spamscore=0 suspectscore=0 clxscore=1015 bulkscore=0 malwarescore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502250086
 
-On Mon, Feb 24, 2025 at 10:51=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Tue, Jan 21, 2025 at 11:33:46AM +0100, Eugenio P=C3=A9rez wrote:
-> > A VDUSE device that implements virtiofs device works fine just by
-> > adding the device id to the whitelist.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
->
->
-> OK, but the commit log really should say why
-> you are doing this.
+On 2025/2/25 07:26, Rob Herring wrote:
+>> ---
+>> Zijun Hu (9):
+>>       of: unittest: Add a case to test if API of_irq_parse_one() leaks refcount
+>>       of/irq: Fix device node refcount leakage in API of_irq_parse_one()
+>>       of: unittest: Add a case to test if API of_irq_parse_raw() leaks refcount
+>>       of/irq: Fix device node refcount leakage in API of_irq_parse_raw()
+>>       of/irq: Fix device node refcount leakages in of_irq_count()
+>>       of/irq: Fix device node refcount leakage in API irq_of_parse_and_map()
+>>       of/irq: Fix device node refcount leakages in of_irq_init()
+>>       of/irq: Add comments about refcount for API of_irq_find_parent()
+>>       of: resolver: Fix device node refcount leakage in of_resolve_phandles()
+>>
+>>  drivers/of/irq.c                               | 34 ++++++++++---
+>>  drivers/of/resolver.c                          |  2 +
+>>  drivers/of/unittest-data/tests-interrupts.dtsi | 13 +++++
+>>  drivers/of/unittest.c                          | 67 ++++++++++++++++++++++++++
+>>  4 files changed, 110 insertions(+), 6 deletions(-)
+> I've applied the series. I made a few adjustments to use __free() 
+> cleanup and simplify things.
 
-Sure I can expand on the motivation.
-
-Something like "Allowing VDUSE FS type allows to build filesystems
-that run in userspace and can be presented transparently to the host
-and the guest. After modifying userland's libfuse, this allows to
-expose a good amount to already available userland FS through vDPA."
-
-I'd add using the high performance virtio protocol but I still need to
-do more tests for this TBH.
-
-> And also why is it safe.
->
-
-Can you expand on the scenarios you think this is insecure? While I
-understand it's security sensitive, you already need root to perform
-vdpa device operations. Is FS different from net or block?
-
-Thanks!
-
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 7ae99691efdf..6a9a37351310 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -144,6 +144,7 @@ static struct workqueue_struct *vduse_irq_bound_wq;
-> >  static u32 allowed_device_id[] =3D {
-> >       VIRTIO_ID_BLOCK,
-> >       VIRTIO_ID_NET,
-> > +     VIRTIO_ID_FS,
-> >  };
-> >
-> >  static inline struct vduse_dev *vdpa_to_vduse(struct vdpa_device *vdpa=
-)
-> > --
-> > 2.48.1
->
-
+thank you, LGTM for all adjustments but perhaps a mistake fixed by
+https://lore.kernel.org/all/20250225-fix_auto-v1-1-cf8b91a311dd@quicinc.com/
 
