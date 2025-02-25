@@ -1,225 +1,119 @@
-Return-Path: <linux-kernel+bounces-531240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFD3A43E00
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:44:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A605A43DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9B63ABE2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BD417F7D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B2026868B;
-	Tue, 25 Feb 2025 11:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7772686A8;
+	Tue, 25 Feb 2025 11:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0JZC0Zwt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WN3VmE+C";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0JZC0Zwt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WN3VmE+C"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpGofq2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A409267F64
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3020C267B18;
+	Tue, 25 Feb 2025 11:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483700; cv=none; b=OF57xj7RmY3oi14YhUch9PJlWgSN3TnQzDHxODAYtAAdIijjHbvDeO31rAIizY3cq9o0qj0vb7emq4p8ayy/+RYyHZgLXJyfN6Ks43Sfc6LY/87VkKTe2Tgqv/QCUeO7CjWkCdtK2Bnr4fw+80vj5dFzV5dozrPcTp6MLbzVQ20=
+	t=1740483712; cv=none; b=Nav2+kKz4oDR8Rprj2NdqknFraPQt2EenkCnw8pPo/4TsfTLOrGdiXUOU3n/8i/cfP8se/urt2vYOGnM8NXkPnN+5xobVbZ8SrioMs/cIc9x2Tdp18YLNw58lGRMhEO7T1kn+YSEo53IWMOCuJzYik1R6csvYttLKWb4/n7fhy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483700; c=relaxed/simple;
-	bh=E1V6508zNUccyqy2uSeE8ZccUTOvY3wLWIxatRFbS1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IUtwUNgmKN3bnWrA6kkml4p4IxcOHxHmVontDL9qZirnf9o5zmdBoQhYxS9OU84rA++VNpMP4X90/h/UZ50s03/6c7gcWYRIro0dK6Jp/2EXZItIRxWQrBDLwSWbrm0/jwop8ck1VFUSmHWF5pZqKnHWotnrEdzbx49GrhVb7PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0JZC0Zwt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WN3VmE+C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0JZC0Zwt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WN3VmE+C; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ABE7D1F44F;
-	Tue, 25 Feb 2025 11:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740483696; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UbsGQ9aQt0jmmsDa4NSHqjZXwDsdSzxo3e8MlkHByxU=;
-	b=0JZC0ZwtsRG5PNFqFzv2uyjg0djWNy5a7Me6o6HwegoGYfepnjLFxklkIYDTQE8X9CajDM
-	51GbJv4kqWVCbaZiiu9vNE82M0zBQLZxYyuFT7rWNFzVN/sBLl/pAbjNCsIr+Lq+vHiDmP
-	b2AjCEmv1kd3mZP3g/h2nCuz0tjJFcE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740483696;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UbsGQ9aQt0jmmsDa4NSHqjZXwDsdSzxo3e8MlkHByxU=;
-	b=WN3VmE+C0NweJ5MWe+tstnV3mrGoI5oXyjEKQQ9UOJxYaKYDaARMV+nTFXeRtBNuSh8mWR
-	WTPHyxHoVZSUrnDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740483696; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UbsGQ9aQt0jmmsDa4NSHqjZXwDsdSzxo3e8MlkHByxU=;
-	b=0JZC0ZwtsRG5PNFqFzv2uyjg0djWNy5a7Me6o6HwegoGYfepnjLFxklkIYDTQE8X9CajDM
-	51GbJv4kqWVCbaZiiu9vNE82M0zBQLZxYyuFT7rWNFzVN/sBLl/pAbjNCsIr+Lq+vHiDmP
-	b2AjCEmv1kd3mZP3g/h2nCuz0tjJFcE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740483696;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UbsGQ9aQt0jmmsDa4NSHqjZXwDsdSzxo3e8MlkHByxU=;
-	b=WN3VmE+C0NweJ5MWe+tstnV3mrGoI5oXyjEKQQ9UOJxYaKYDaARMV+nTFXeRtBNuSh8mWR
-	WTPHyxHoVZSUrnDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24F8113332;
-	Tue, 25 Feb 2025 11:41:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id My/YB3CsvWfkQAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 25 Feb 2025 11:41:36 +0000
-Message-ID: <f1ea30fe-8cb8-41fd-bc85-d511c800e594@suse.de>
-Date: Tue, 25 Feb 2025 12:41:35 +0100
+	s=arc-20240116; t=1740483712; c=relaxed/simple;
+	bh=h+T2raKsJQ4RIjg6WeCVYCV+c6BCAPildkAWxCUIX/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cP6z0ugy3KekUlfq4rvJwMIZfPndVPc392t95Bmax7Dpc1VM+Q4wCTD0QQp97SQ6QkW59U4JJRJiipFlsKxQa+xunqLed15UAChjw+VpRENGD9x2BD17sOu/acQMWAJAGz+D6I3X3ud8tB82zhAqCz/qXeBG2Qw1LfMuAD8gZAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpGofq2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF78C4CEE8;
+	Tue, 25 Feb 2025 11:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740483711;
+	bh=h+T2raKsJQ4RIjg6WeCVYCV+c6BCAPildkAWxCUIX/w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IpGofq2AcmbR4vt31xCxO64zinsSFkZJJ5nItKx3Fhmd6tieLHJOJo/x0GC6o8UGu
+	 RlAYCEc7aH/Lu6ACM2g+MsmNEFKgkliPGyY/o9nt+PinIP8GLtXrlq8pyfHSSn3eYA
+	 2MWw7xQrPyXNPjcPmtNy2aD0OBQIfThDEze8tfeHdOX5sBgg3ihlW7E2hA/y263Ab6
+	 fSPmRg6lKJc374JGY9CxoDLFdKHxanRBeoVinvZYx+9iCtU2MS/D6oLKCLB1c/ulNl
+	 wDZoqsusxBCqxRi4Xj0hXOtj13e6SlncTreuJ6IdHoKLRe9OmLyk6gDd6PoGrIdN2i
+	 kSJLDED4XtNmA==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2a9ef75a20dso322559fac.2;
+        Tue, 25 Feb 2025 03:41:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXC/fbdzrMxUSSN2GP1yNIj0F06r7i8UJz6lvAggbM7H4i8rK6Uhu3dV0lMMc9rn+yrByWT/gk+Fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+7QH1WQArnVfwHKcEdW2yIhalvG0oZDnIvShzUF83QjEcElfi
+	zzW95cqJrlhEiwwvV7yR5G96JpJhZl1LnNEzY72OyKLejEUry0YnbDC2nFoViHFv4Gu+OByzCQ5
+	BZFA5BOUJeLTw5hzegPXLWjhKGZg=
+X-Google-Smtp-Source: AGHT+IESOKAn6/6SxHhIFWP1AFVhPJkMLAgNGXvllYRSJo64sMAw0+x+uc3N5W3CH98SANCjk/yMzlu76qtnIH5ufa0=
+X-Received: by 2002:a05:6871:a0c7:b0:2b8:3c87:f36 with SMTP id
+ 586e51a60fabf-2c10f25d68dmr1773131fac.13.1740483711039; Tue, 25 Feb 2025
+ 03:41:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 9/9] drm/vkms: convert to use faux_device
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Lukas Wunner <lukas@wunner.de>,
- Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mairacanal@riseup.net>, Robin Murphy <robin.murphy@arm.com>,
- Simona Vetter <simona.vetter@ffwll.ch>, Zijun Hu <quic_zijuhu@quicinc.com>,
- linux-usb@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Melissa Wen <melissa.srw@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- dri-devel@lists.freedesktop.org
-References: <2025021023-sandstorm-precise-9f5d@gregkh>
- <2025021029-snout-swivel-9a45@gregkh> <Z6oPNmRo4XQQVEI8@louis-chauvet-laptop>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <Z6oPNmRo4XQQVEI8@louis-chauvet-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[linuxfoundation.org,vger.kernel.org,redhat.com,kernel.org,intel.com,linux.intel.com,google.com,huawei.com,gmail.com,wunner.de,riseup.net,arm.com,ffwll.ch,quicinc.com,lists.freedesktop.org];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <12621866.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <12621866.O9o76ZdvQC@rjwysocki.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 25 Feb 2025 12:41:39 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
+X-Gm-Features: AWEUYZk3UVbVtstv3dpzo5EDIv7DprcgjKQT6sFuqRWhkPgtXZR1G4XYFGJhHPk
+Message-ID: <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: intel_idle: Update MAINTAINERS
+To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
-
-Am 10.02.25 um 15:37 schrieb Louis Chauvet:
-> On 10/02/25 - 13:30, Greg Kroah-Hartman wrote:
->> The vkms driver does not need to create a platform device, as there is
->> no real platform resources associated it,  it only did so because it was
->> simple to do that in order to get a device to use for resource
->> management of drm resources.  Change the driver to use the faux device
->> instead as this is NOT a real platform device.
->>
->> Cc: Louis Chauvet <louis.chauvet@bootlin.com>
->> Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Melissa Wen <melissa.srw@gmail.com>
->> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> Cc: Maxime Ripard <mripard@kernel.org>
->> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: dri-devel@lists.freedesktop.org
->> Reviewed-by: Lyude Paul <lyude@redhat.com>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-> Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+On Thu, Feb 20, 2025 at 9:11=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
 >
-> Thanks for the modification, it seems to work.
-
-Should this patch be merged through DRM trees? drm-misc-next is at 
-v6.14-rc4 and has struct faux_device.
-
-Best regards
-Thomas
-
-
-
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> Louis chauvet
+> Update the intel_idle record in MAINTAINERS to reflect the current
+> state of affairs.
 >
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> v1 -> v2:
+>    * Add an alternative address for Artem and change his role to M.
+>    * Change the development git tree link.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+I am assuming no objections.
 
+> ---
+>  MAINTAINERS |    8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11669,12 +11669,14 @@
+>  F:     drivers/crypto/intel/iaa/*
+>
+>  INTEL IDLE DRIVER
+> -M:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+> -M:     Len Brown <lenb@kernel.org>
+> +M:     Rafael J. Wysocki <rafael@kernel.org>
+> +M:     Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+> +M:     Artem Bityutskiy <dedekind1@gmail.com>
+> +R:     Len Brown <lenb@kernel.org>
+>  L:     linux-pm@vger.kernel.org
+>  S:     Supported
+>  B:     https://bugzilla.kernel.org
+> -T:     git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
+> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm=
+.git
+>  F:     drivers/idle/intel_idle.c
+>
+>  INTEL IDXD DRIVER
+>
+>
+>
+>
 
