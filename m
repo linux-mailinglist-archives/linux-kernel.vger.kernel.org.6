@@ -1,205 +1,319 @@
-Return-Path: <linux-kernel+bounces-531244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B26A43E13
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:46:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6815A43E6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5B83BFC61
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D89487A428B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C29267F58;
-	Tue, 25 Feb 2025 11:43:39 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B59268684;
+	Tue, 25 Feb 2025 11:54:29 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F94267F53
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA89267F7B;
+	Tue, 25 Feb 2025 11:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483819; cv=none; b=rZtYgH/Ck6XgUVaLF9aDUTN6SIqygt3NO0eAn06QRBUUeQQuPBGkJkpNXRZ4lvN+eR++3lwUUV7OLQ2lBotOmNh+gSg27jBeWeNAuAJV70bWz3F2CfJqKq6Rlh+oeQ5rOp7FZSrsPpTsWsbMsdK0n1CpjkQYo4BxNoPPVCIfx+s=
+	t=1740484468; cv=none; b=o347qZ8JXrZLQEJC217TeM6BI1+JDl9gD8Iwdh6I+sz7rzcQZ0knYWbxhpsv6sgjNwYxClyVIUl9bxIEDM8YSVdHcYNZndx8/5iF0+7Vo/HOmDtBcDgz7MbMK0X0gB/3BqDOqKMMV8rRWQqvuUG+vg21GIjkvJNUYadGIUdQYR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483819; c=relaxed/simple;
-	bh=A0H+uA5AcuxpI89I3toRLh3HSxHEqNAQR44KjeeZe9M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Obd3tdbOr5KFoNOccRWWgoxKrSNnID/FxY7bN0MT/4hF5whyTPRWErxyEPhajzzhh/BduOYbPvJOQKp2fGeyj1a+K57eq64NIpYStW4dClDnJqRsnixHtmj2qvDr28Dc9fNGD6V9/L40Is4nYBtIh9ch02AyvgTS2zJ60/j08Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2b3a2f2d4so108358815ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:43:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740483816; x=1741088616;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gHUPwMMe6tL/hSjkxiVP3JeiNcJ8v+AqTWhilBCfmyU=;
-        b=WgJZXCNSI/4yKd4QezZbpZ8mntngPHtJ1g8S8hxKuDjsd4GKTmfrnkpYXrEVJraPdd
-         0BCFt6Ln3aiqgaNTsmpNk/EyhSjLiqNat/Ka837AjAZZnD1VVu4vCtvYQh7eyv2VWMOx
-         Ylhfg4SZUUb49aS/ua/WkGDfKCy9UL7xR7VJPf61kd/s/r9Fx8glUqQ0wavhAqs5aCKL
-         3Ik4XL7Tl+WUoCoIgftTe/Vwj3PLAKtY9E6lFQbszIBbPHNM9kpN9I9XfZe+J0TTuB0u
-         ljR0HILYGpA3wWK7vpbz2dNh3yz5U3NP8LN/uXBBcZ7/CTiJaCOIqwwkqH9E4S4nLkOW
-         eh5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUaZ8b95h2thpqo25ERpMLovgCEUc2GJk/kCqtcdMT1wVR+Tg/HJ1Ww2OwQ8JltLVANWHhUOhew+Ekam/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrsTLgu/Gfi32enAXM76GNpAiyk0r7hm4WYh1kqZYWk4+keXjW
-	Sqiuhghwp/n9RKotivYqqz8wcx2H1erGxpcizHgAISiCgoRbBB1Kq/7v/qOlSqSMsnuWSbjQ+fJ
-	HyEEBi+ql6AKTybVBGx/lzpXsVMGU185Y0zy4t68PXN9xZy0G3bapync=
-X-Google-Smtp-Source: AGHT+IFj1NHM3myWluJ/MLqEZZdrQqAer5LCyfIFbALYWLAaIEavN+NNUifjDGoWsNuzZvQIzUnrcyBSXJF1jPv5ha2RRM5WyYyF
+	s=arc-20240116; t=1740484468; c=relaxed/simple;
+	bh=8uqSU9g/Z7TXfxQDqugu98jENClfSwtOsnky93zJkPE=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ClRmQZN/TcpLIX1zXcYvZHhi3FzoKagB+oXZLAEG8zlDBicXWxkBnZoQGInIoN5Tx1TlZ7VhtXEj/YJtJkL1y+XCdseniDTbclIp2wBGKY8nED8FnuxcCvkt1gNnOL7Rvp3sDwd97avdydfR/J/bPzgd58UpWO2X99F+CzEmQiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Z2G4Y1G8KzKhl;
+	Tue, 25 Feb 2025 19:45:17 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Z2G4S0TC6zBRHKT;
+	Tue, 25 Feb 2025 19:45:12 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Z2G4G1qwNz5B1LX;
+	Tue, 25 Feb 2025 19:45:02 +0800 (CST)
+Received: from njb2app07.zte.com.cn ([10.55.22.95])
+	by mse-fl1.zte.com.cn with SMTP id 51PBirfO019687;
+	Tue, 25 Feb 2025 19:44:53 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njb2app06[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Tue, 25 Feb 2025 19:44:56 +0800 (CST)
+Date: Tue, 25 Feb 2025 19:44:56 +0800 (CST)
+X-Zmail-TransId: 2afe67bdad38ffffffffd53-28c3b
+X-Mailer: Zmail v1.0
+Message-ID: <20250225194456879v1ipo2r4_8PJZn1s1J9Ge@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4602:b0:3d3:ce1b:5e84 with SMTP id
- e9e14a558f8ab-3d3ce1b6053mr8414535ab.22.1740483816347; Tue, 25 Feb 2025
- 03:43:36 -0800 (PST)
-Date: Tue, 25 Feb 2025 03:43:36 -0800
-In-Reply-To: <67bd6bef.050a0220.bbfd1.009d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bdace8.050a0220.bbfd1.00a6.GAE@google.com>
-Subject: Re: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in fbcon_prepare_logo
-From: syzbot <syzbot+0c815b25cdb3678e7083@syzkaller.appspotmail.com>
-To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIERvY3MvemhfQ046IFRyYW5zbGF0ZSBtc2dfemVyb2NvcHkucnN0IHRvClNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 51PBirfO019687
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67BDAD4B.005/4Z2G4Y1G8KzKhl
 
-syzbot has found a reproducer for the following issue on:
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f56db0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1635bf4c5557b92
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c815b25cdb3678e7083
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172e77f8580000
+translate the "msg_zerocopy.rst" into Simplified Chinese
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/323a5d590eec/disk-d082ecbc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f7c4b6e33fd9/vmlinux-d082ecbc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c518bbd55334/bzImage-d082ecbc.xz
+Update to commit bac2cac12c26("docs: net: description of
+MSG_ZEROCOPY for AF_VSOCK")
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0c815b25cdb3678e7083@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in scr_memcpyw include/linux/vt_buffer.h:38 [inline]
-BUG: KASAN: slab-out-of-bounds in fbcon_prepare_logo+0xa15/0xc80 drivers/video/fbdev/core/fbcon.c:614
-Read of size 256 at addr ffff888032edef60 by task syz.2.2428/8600
-
-CPU: 0 UID: 0 PID: 8600 Comm: syz.2.2428 Not tainted 6.14.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xd9/0x110 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
- scr_memcpyw include/linux/vt_buffer.h:38 [inline]
- fbcon_prepare_logo+0xa15/0xc80 drivers/video/fbdev/core/fbcon.c:614
- fbcon_init+0xd41/0x1890 drivers/video/fbdev/core/fbcon.c:1146
- visual_init+0x31d/0x620 drivers/tty/vt/vt.c:1011
- do_bind_con_driver.isra.0+0x57a/0xbf0 drivers/tty/vt/vt.c:3831
- vt_bind drivers/tty/vt/vt.c:3987 [inline]
- store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
- dev_attr_store+0x55/0x80 drivers/base/core.c:2439
- sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
- kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb44418d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe52f027e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fb4443a5fa0 RCX: 00007fb44418d169
-RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007fb44420e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fb4443a5fa0 R14: 00007fb4443a5fa0 R15: 0000000000000003
- </TASK>
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32edc
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-head: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-head: 00fff00000000002 ffffea0000cbb701 ffffffffffffffff 0000000000000000
-head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x140dc0(GFP_USER|__GFP_COMP|__GFP_ZERO), pid 8600, tgid 8600 (syz.2.2428), ts 463971995066, free_ts 463963903452
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
- __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4773
- __alloc_pages_node_noprof include/linux/gfp.h:265 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:292 [inline]
- ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4239
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4266
- __do_kmalloc_node mm/slub.c:4282 [inline]
- __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4306
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- vc_do_resize+0x1e3/0x10f0 drivers/tty/vt/vt.c:1174
- vc_resize include/linux/vt_kern.h:49 [inline]
- fbcon_init+0xd1d/0x1890 drivers/video/fbdev/core/fbcon.c:1143
- visual_init+0x31d/0x620 drivers/tty/vt/vt.c:1011
- do_bind_con_driver.isra.0+0x57a/0xbf0 drivers/tty/vt/vt.c:3831
- vt_bind drivers/tty/vt/vt.c:3987 [inline]
- store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
- dev_attr_store+0x55/0x80 drivers/base/core.c:2439
- sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
- kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
-page last free pid 8600 tgid 8600 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
- __folio_put+0x32a/0x450 mm/swap.c:112
- vc_do_resize+0xe31/0x10f0 drivers/tty/vt/vt.c:1194
- vc_resize include/linux/vt_kern.h:49 [inline]
- fbcon_startup+0x406/0xb70 drivers/video/fbdev/core/fbcon.c:997
- do_bind_con_driver.isra.0+0x207/0xbf0 drivers/tty/vt/vt.c:3794
- vt_bind drivers/tty/vt/vt.c:3987 [inline]
- store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
- dev_attr_store+0x55/0x80 drivers/base/core.c:2439
- sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
- kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888032edef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888032edef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888032edf000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-                   ^
- ffff888032edf080: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
- ffff888032edf100: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-==================================================================
-
+Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+Reviewed-by: He Peilin <he.peilin@zte.com.cn>
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ .../zh_CN/networking/msg_zerocopy.rst         | 218 ++++++++++++++++++
+ 1 file changed, 218 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+
+diff --git a/Documentation/translations/zh_CN/networking/msg_zerocopy.rst b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+new file mode 100644
+index 000000000000..80c4da5efae4
+--- /dev/null
++++ b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+@@ -0,0 +1,218 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/networking/msg_zerocopy.rst
++
++:翻译:
++
++   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
++
++============
++MSG_ZEROCOPY
++============
++
++简介
++====
++
++MSG_ZEROCOPY 标志用于启用套接字发送调用的免拷贝功能。该功能目前适用于 TCP、UDP 和 VSOCK
++（使用 virtio 传输）套接字。
++
++机遇与注意事项
++--------------
++
++在用户进程与内核之间拷贝大型缓冲区可能会消耗大量资源。Linux 支持多种免拷贝的接口，如sendfile
++和 splice。MSG_ZEROCOPY 标志将底层的拷贝避免机制扩展到了常见的套接字发送调用中。
++
++免拷贝并非毫无代价。在实现上，它通过页面固定（page pinning）将按字节拷贝的成本替换为页面统计
++（page accounting）和完成通知的开销。因此，MSG_ZEROCOPY 通常仅在写入量超过大约 10 KB 时
++才有效。
++
++页面固定还会改变系统调用的语义。它会暂时在进程和网络堆栈之间共享缓冲区。与拷贝不同，进程在系统
++调用返回后不能立即覆盖缓冲区，否则可能会修改正在传输中的数据。内核的完整性不会受到影响，但有缺
++陷的程序可能会破坏自己的数据流。
++
++当内核返回数据可以安全修改的通知时，进程才可以修改数据。因此，将现有应用程序转换为使用
++MSG_ZEROCOPY 并非总是像简单地传递该标志那样容易。
++
++更多信息
++--------
++
++本文档的大部分内容是来自于 netdev 2.1 上发表的一篇长篇论文。如需更深入的信息，请参阅该论文和
++演讲，或者浏览 LWN.net 上的精彩报道，也可以直接阅读源码。
++
++  论文、幻灯片、视频：
++    https://netdevconf.org/2.1/session.html?debruijn
++
++  LWN 文章：
++    https://lwn.net/Articles/726917/
++
++  补丁集：
++    [PATCH net-next v4 0/9] socket sendmsg MSG_ZEROCOPY
++    https://lore.kernel.org/netdev/20170803202945.70750-1-willemdebruijn.kernel@gmail.com
++
++接口
++====
++
++传递 MSG_ZEROCOPY 标志是启用免拷贝功能的最明显步骤，但并非唯一的步骤。
++
++套接字设置
++----------
++
++当应用程序向 send 系统调用传递未定义的标志时，内核通常会宽容对待。默认情况下，它会简单地忽略
++这些标志。为了避免为那些偶然传递此标志的遗留进程启用免拷贝模式，进程必须首先通过设置套接字选项
++来表明意图：
++
++::
++
++    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)))
++        error(1, errno, "setsockopt zerocopy");
++
++传输
++----
++
++对 send（或 sendto、sendmsg、sendmmsg）本身的改动非常简单。只需传递新的标志即可。
++
++::
++
++    ret = send(fd, buf, sizeof(buf), MSG_ZEROCOPY);
++
++如果零拷贝操作失败，将返回 -1，并设置 errno 为 ENOBUFS。这种情况可能发生在套接字超出其
++optmem 限制，或者用户超出其锁定页面的 ulimit 时。
++
++混合使用免拷贝和拷贝
++~~~~~~~~~~~~~~~~~~~~
++
++许多工作负载同时包含大型和小型缓冲区。由于对于小数据包来说，免拷贝的成本高于拷贝，因此该
++功能是通过标志实现的。带有标志的调用和没有标志的调用可以安全地混合使用。
++
++通知
++----
++
++当内核认为可以安全地重用之前传递的缓冲区时，它必须通知进程。完成通知在套接字的错误队列上
++排队，类似于传输时间戳接口。
++
++通知本身是一个简单的标量值。每个套接字都维护一个内部的无符号 32 位计数器。每次带有
++MSG_ZEROCOPY 标志的 send 调用成功发送数据时，计数器都会增加。如果调用失败或长度为零，
++则计数器不会增加。该计数器统计系统调用的调用次数，而不是字节数。在 UINT_MAX 次调用后，
++计数器会循环。
++
++通知接收
++~~~~~~~~
++
++下面的代码片段展示了 API 的使用。在最简单的情况下，每次 send 系统调用后，都会对错误队列
++进行轮询和 recvmsg 调用。
++
++从错误队列读取始终是一个非阻塞操作。poll 调用用于阻塞，直到出现错误。它会在其输出标志中
++设置 POLLERR。该标志不需要在 events 字段中设置。错误会无条件地发出信号。
++
++::
++
++    pfd.fd = fd;
++    pfd.events = 0;
++    if (poll(&pfd, 1, -1) != 1 || pfd.revents & POLLERR == 0)
++        error(1, errno, "poll");
++
++    ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
++    if (ret == -1)
++        error(1, errno, "recvmsg");
++
++    read_notification(msg);
++
++
++这个示例仅用于演示目的。在实际应用中，不等待通知，而是每隔几次 send 调用就进行一次非阻塞
++读取会更高效。
++
++零拷贝通知可以与其他套接字操作乱序处理。通常，拥有错误队列套接字会阻塞其他操作，直到错误
++被读取。然而，零拷贝通知具有零错误代码，因此不会阻塞 send 和 recv 调用。
++
++通知批处理
++~~~~~~~~~~~~
++
++可以使用 recvmmsg 调用来一次性读取多个未决的数据包。这通常不是必需的。在每条消息中，内核
++返回的不是一个单一的值，而是一个范围。当错误队列上有一个通知正在等待接收时，它会将连续的通
++知合并起来。
++
++当一个新的通知即将被排队时，它会检查队列尾部的通知的范围是否可以扩展以包含新的值。如果是这
++样，它会丢弃新的通知数据包，并增大未处理通知的范围上限值。
++
++对于按顺序确认数据的协议（如 TCP），每个通知都可以合并到前一个通知中，因此在任何时候在等待
++的通知都不会超过一个。
++
++有序交付是常见的情况，但不能保证。在重传和套接字拆除时，通知可能会乱序到达。
++
++通知解析
++~~~~~~~~
++
++下面的代码片段演示了如何解析控制消息：前面代码片段中的 read_notification() 调用。通知
++以标准错误格式 sock_extended_err 编码。
++
++控制数据中的级别和类型字段是协议族特定的，对于 TCP 或 UDP 套接字，分别为 IP_RECVERR 或
++IPV6_RECVERR。对于 VSOCK 套接字，cmsg_level 为 SOL_VSOCK，cmsg_type 为 VSOCK_RECVERR。
++
++错误来源是新的类型 SO_EE_ORIGIN_ZEROCOPY。如前所述，ee_errno 为零，以避免在套接字上
++阻塞地读取和写入系统调用。
++
++32 位通知范围编码为 [ee_info, ee_data]。这个范围是包含边界值的。除了下面讨论的 ee_code
++字段外，结构中的其他字段应被视为未定义的。
++
++::
++
++    struct sock_extended_err *serr;
++    struct cmsghdr *cm;
++
++    cm = CMSG_FIRSTHDR(msg);
++    if (cm->cmsg_level != SOL_IP &&
++        cm->cmsg_type != IP_RECVERR)
++        error(1, 0, "cmsg");
++
++    serr = (void *) CMSG_DATA(cm);
++    if (serr->ee_errno != 0 ||
++        serr->ee_origin != SO_EE_ORIGIN_ZEROCOPY)
++        error(1, 0, "serr");
++
++    printf("completed: %u..%u\n", serr->ee_info, serr->ee_data);
++
++
++延迟拷贝
++~~~~~~~~
++
++传递标志 MSG_ZEROCOPY 是向内核发出的一个提示，让内核采用免拷贝的策略，同时也是一种约
++定，即内核会对完成通知进行排队处理。但这并不保证拷贝操作一定会被省略。
++
++拷贝避免不总是适用的。不支持分散/聚集 I/O 的设备无法发送由内核生成的协议头加上零拷贝用户
++数据组成的数据包。数据包可能需要在协议栈底层转换为一份私有数据副本，例如用于计算校验和。
++
++在所有这些情况下，当内核释放对共享页面的持有权时，它会返回一个完成通知。该通知可能在（已
++拷贝）数据完全传输之前到达。因此。零拷贝完成通知并不是传输完成通知。
++
++如果数据不在缓存中，延迟拷贝可能会比立即在系统调用中拷贝开销更大。进程还会因通知处理而产
++生成本，但却没有带来任何好处。因此，内核会在返回时通过在 ee_code 字段中设置标志
++SO_EE_CODE_ZEROCOPY_COPIED 来指示数据是否以拷贝的方式完成。进程可以利用这个信号，在
++同一套接字上后续的请求中停止传递 MSG_ZEROCOPY 标志。
++
++实现
++====
++
++环回
++----
++
++对于 TCP 和 UDP：
++如果接收进程不读取其套接字，发送到本地套接字的数据可能会无限期排队。无限期的通知延迟是不
++可接受的。因此，所有使用 MSG_ZEROCOPY 生成并环回到本地套接字的数据包都将产生延迟拷贝。
++这包括环回到数据包套接字（例如，tcpdump）和 tun 设备。
++
++对于 VSOCK：
++发送到本地套接字的数据路径与非本地套接字相同。
++
++测试
++====
++
++更具体的示例代码可以在内核源码的 tools/testing/selftests/net/msg_zerocopy.c 中找到。
++
++要留意环回约束问题。该测试可以在一对主机之间进行。但如果是在本地的一对进程之间运行，例如当使用
++msg_zerocopy.sh 脚本在跨命名空间的虚拟以太网（veth）对之间运行时，测试将不会显示出任何性能
++提升。为了便于测试，可以通过让 skb_orphan_frags_rx 与 skb_orphan_frags 相同，来暂时放宽
++环回限制。
++
++对于 VSOCK 类型套接字的示例可以在 tools/testing/vsock/vsock_test_zerocopy.c 中找到。
+-- 
+2.25.1
 
