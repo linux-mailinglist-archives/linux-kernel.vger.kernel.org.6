@@ -1,257 +1,194 @@
-Return-Path: <linux-kernel+bounces-531794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700DDA44504
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5AFA4450F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1A619C52EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C3219C5979
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69781632F2;
-	Tue, 25 Feb 2025 15:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0474D188736;
+	Tue, 25 Feb 2025 15:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oTcX3Vfh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3j6myiMX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oTcX3Vfh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3j6myiMX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0Xb9Imb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD4E1547E3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8AE1624D4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498866; cv=none; b=Frxs/HMcBT+EZhpSOAES1Mzs9TeRF+3xFjF7McDXj5wxcu3oFMyInI6U/9pf0r8XIeor61YrBHRR9NnrxF/Jj0wK9HVRUFA2Zm/I48P3bbxjh0Qu1yTjL6uYgrlcjXJqDSqJBAkVIEivX+2D7ZU02QAMgzWPSZC6EBwqt65i3as=
+	t=1740498878; cv=none; b=qDw+dbjIgdb6BFchxsHQqK2/6vkuPWlXq3HeeQsv/axiizeXRhGSTFTdkVKYbFqNAxEc3SRZem4qTx+z0yG7RReOpPStMzgI4pzltCOEl9bVcKprtbHiALNTCHLlTJBtaPoW1Z8c7tnXs4Vf4xr5elYzn2//PB3PcycJcrmn8I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498866; c=relaxed/simple;
-	bh=siMjE7KE9lqHRtIJmfA4/PmU8WGku/thbzmfXPBq+iA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LmhxW1wHUHB//dZnaVPrYPSCp6VrrrtgJYe0fzgd2uoIalPWXXeF20v1KqEPLX9Vc51GdxR9DamBC9mER1ce72W13+gTjGVK9iQ+/OZjT3FbjFlPrbJMXV/DDwGjnVDfqrioYSXm5gtzK0O+FpLeZLRx/bLjGs/r6/nGkoyBNlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oTcX3Vfh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3j6myiMX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oTcX3Vfh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3j6myiMX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A84C1F455;
-	Tue, 25 Feb 2025 15:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740498863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
-	b=oTcX3VfhbE0TjL1fIL40szodu8FLIzpUXngT5EubANsyGFeX0mSWBI1L8is3B4zLnDr/j8
-	w81/Q0f8g32T8T7YSl70HxM8Eqmz6wwAy4yepQNymejEKNlMn5LcOaUCXTV36iafzLqhCy
-	xpBiRx4vRganm1CbTDlL3pOBpGbWsgc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740498863;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
-	b=3j6myiMXbz1GED977Dyje9fnBRxL6kjioXdSfitS8ndiNTRPS/p+1KqDQZlqhMOgY2Nyvc
-	iiqZlI6Oub+WtkAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oTcX3Vfh;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3j6myiMX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740498863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
-	b=oTcX3VfhbE0TjL1fIL40szodu8FLIzpUXngT5EubANsyGFeX0mSWBI1L8is3B4zLnDr/j8
-	w81/Q0f8g32T8T7YSl70HxM8Eqmz6wwAy4yepQNymejEKNlMn5LcOaUCXTV36iafzLqhCy
-	xpBiRx4vRganm1CbTDlL3pOBpGbWsgc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740498863;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lBYuAw66CA3JfHfUK9Bjsw6IqRY+91rrORHN8kXl2pA=;
-	b=3j6myiMXbz1GED977Dyje9fnBRxL6kjioXdSfitS8ndiNTRPS/p+1KqDQZlqhMOgY2Nyvc
-	iiqZlI6Oub+WtkAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35AAB13332;
-	Tue, 25 Feb 2025 15:54:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vp/CDK/nvWcfMwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 25 Feb 2025 15:54:23 +0000
-Message-ID: <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
-Date: Tue, 25 Feb 2025 16:54:22 +0100
+	s=arc-20240116; t=1740498878; c=relaxed/simple;
+	bh=B6guPeoLoNZZxbWYmAHZ5bN7rRVPk1E7b3Qht1EElwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIJe9vyO85w5lg8xT+1a1/KoZUhWoKxez9WWKTyKcoli/DsGh6qlN91yHCJP1d7JyNr45Bq2L0AYhdXgUn+BEuKiniDARp/WDL4d8LM7GoSBaMle2ny/wdZe+vNPOXchjfpLGAMSaTQB5ViwdbcxolcrjaILnRQgrjOE/jCzSCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0Xb9Imb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740498875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RM+x+J7eeR+zYm9ULF/axeMhLxPe1qiv9A3ZyXjbFuI=;
+	b=F0Xb9ImbEyM3uuj158DXXlV+aPH7jG74ZaApdmrb3ftWomUJ+5uAl7nbF/pbJ6305Ad6JU
+	N9JQmm0MrDvDbQfLrlWdx2P6zR0XT+gHWoAW8cGVH08Xsj7QC8OyTGQTL1c1ud7z+7xo7j
+	4EDPwrW0E5g8O6qoRuNX5ml6sAma+Vk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-122-mpCti8JjM0-1nlJiPHG2lw-1; Tue, 25 Feb 2025 10:54:33 -0500
+X-MC-Unique: mpCti8JjM0-1nlJiPHG2lw-1
+X-Mimecast-MFC-AGG-ID: mpCti8JjM0-1nlJiPHG2lw_1740498872
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f3eb82fceso2258139f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:54:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740498872; x=1741103672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RM+x+J7eeR+zYm9ULF/axeMhLxPe1qiv9A3ZyXjbFuI=;
+        b=m/pefNflXn3vn+s+34+TmxVBDUhWdi6PLjbhmGSfS5LfXyq/AizRQzByvUUqYuBdG+
+         kokCHipvOmDysCwn5DgSKxQHReuEd/mC/FFaIkbgd+hOgCA1Nwsp3+z8AdjhHlavPYsG
+         z2lhTSAFN6zENAAaVFGOiwGcKDfLLi3mzC5Cn1Zwm9WyWuzsDEJXKUUGGTpvaLsPfXec
+         6VYJoeUZaM4l85Iu2Uvxsx3y6eOhnlS6Xvrya7JS2/YsdIUHP2jz2ScnnMdvlLtNJmDA
+         XqEoZn6ccM+ogpid1zzX2thEezvwLtjZPLj6Do+TFjSf3axVdKH6oEsLuZTlu/BPr98n
+         71Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHTQIEbwIOmxYFnRjM1q65WHGkZIC7AJDH+Z/1xxDmhOiWfogahB7WSgIMejbVYlrz2hmOHTMc+heJI0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw92ygbFffto1RGFglxedR+0tQcSV0bv1QChwGhM3S26S0ieBZx
+	QRug66rV0WZzSpFcF76ICWTXFL0XWjvpltEh5K0GTIz5sQZkyHeQjRusgVNW6MsibBsTsc0sFmT
+	/PJdVnSx1tBPXGfDmGzUmrHzMYep+H7VZudCwE3O8iMaU7dWFO7OgpnFIBFzBGA==
+X-Gm-Gg: ASbGnctUoqob6WMpMucz1C2ZiF0by9qk2kyvVSmBzw91qnF+d71iQwMIcYXQ9QnOEmT
+	7xZe+9IxrIka/78498vGHeidcwkfVJf+dMXu65Uc+NR6o4grnTvPMiEBF+9xOyn3V2eB4xyZLuh
+	EP3iPObwMys+/orIsoGCchtPMyPKaePcMrccD+Q5/BXAjnWJ/eiVJ/hJazVWVKn8p9/JuwMnx0e
+	I7nP2j9Mq9kwWNZjgpCmvA/0cDZYKQukJ+ZaAG42GoWkxReOvIHQis7f72vA4nszrUjZj+SnpF+
+X-Received: by 2002:a05:6000:4008:b0:38f:4e30:6bba with SMTP id ffacd0b85a97d-390cc609228mr3580801f8f.23.1740498872436;
+        Tue, 25 Feb 2025 07:54:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHN4AARjN7wYgWWN9IZdCNUwZ68WPfkZ8QQrVfbimeKsOa/InqaQkeFml1FEQVyd0AsQFCcmw==
+X-Received: by 2002:a05:6000:4008:b0:38f:4e30:6bba with SMTP id ffacd0b85a97d-390cc609228mr3580751f8f.23.1740498871961;
+        Tue, 25 Feb 2025 07:54:31 -0800 (PST)
+Received: from redhat.com ([2.52.7.97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1532d9dsm32083345e9.6.2025.02.25.07.54.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 07:54:31 -0800 (PST)
+Date: Tue, 25 Feb 2025 10:54:27 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
+	gerhard@engleder-embedded.com, jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com, kuba@kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>
+Subject: Re: [PATCH net-next v4 0/4] virtio-net: Link queues to NAPIs
+Message-ID: <20250225105420-mutt-send-email-mst@kernel.org>
+References: <20250225020455.212895-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
- mappings
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <fbfae348-909b-48fa-9083-67696b02f15e@suse.cz>
- <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
- <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
- <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
- <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
- <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
- <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
- <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
- <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
- <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5A84C1F455
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:mid];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225020455.212895-1-jdamato@fastly.com>
 
-On 2/18/25 18:28, Lorenzo Stoakes wrote:
-> On Tue, Feb 18, 2025 at 06:25:35PM +0100, David Hildenbrand wrote:
->>
->> > > >
->> > > > It fails because it tries to 'touch' the memory, but 'touching' guard
->> > > > region memory causes a segfault. This kind of breaks the idea of
->> > > > mlock()'ing guard regions.
->> > > >
->> > > > I think adding workarounds to make this possible in any way is not really
->> > > > worth it (and would probably be pretty gross).
->> > > >
->> > > > We already document that 'mlock()ing lightweight guard regions will fail'
->> > > > as per man page so this is all in line with that.
->> > >
->> > > Right, and I claim that supporting VM_LOCKONFAULT might likely be as easy as
->> > > allowing install/remove of guard regions when that flag is set.
->> >
->> > We already allow this flag! VM_LOCKED and VM_HUGETLB are the only flags we
->> > disallow.
->>
->>
->> See mlock2();
->>
->> SYSCALL_DEFINE3(mlock2, unsigned long, start, size_t, len, int, flags)
->> {
->> 	vm_flags_t vm_flags = VM_LOCKED;
->>
->> 	if (flags & ~MLOCK_ONFAULT)
->> 		return -EINVAL;
->>
->> 	if (flags & MLOCK_ONFAULT)
->> 		vm_flags |= VM_LOCKONFAULT;
->>
->> 	return do_mlock(start, len, vm_flags);
->> }
->>
->>
->> VM_LOCKONFAULT always as VM_LOCKED set as well.
+On Tue, Feb 25, 2025 at 02:04:47AM +0000, Joe Damato wrote:
+> Greetings:
 > 
-> OK cool, that makes sense.
+> Welcome to v4.
 > 
-> As with much kernel stuff, I knew this in the past. Then I forgot. Then I knew
-> again, then... :P if only somebody would write it down in a book...
+> Jakub recently commented [1] that I should not hold this series on
+> virtio-net linking queues to NAPIs behind other important work that is
+> on-going and suggested I re-spin, so here we are :)
 > 
-> Yeah then that makes sense to check explicitly for (VM_LOCKED | VM_LOCKONFAULT)
-> in any MADV_GUARD_INSTALL_LOCKED variant as obviously this would be passively
-> excluded right now.
+> This is a significant refactor from the rfcv3 and as such I've dropped
+> almost all of the tags from reviewers except for patch 4 (sorry Gerhard
+> and Jason; the changes are significant so I think patches 1-3 need to be
+> re-reviewed).
+> 
+> As per the discussion on the v3 [2], now both RX and TX NAPIs use the
+> API to link queues to NAPIs. Since TX-only NAPIs don't have a NAPI ID,
+> commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present") now
+> correctly elides the TX-only NAPIs (instead of printing zero) when the
+> queues and NAPIs are linked.
+> 
+> See the commit message of patch 3 for an example of how to get the NAPI
+> to queue mapping information.
+> 
+> See the commit message of patch 4 for an example of how NAPI IDs are
+> persistent despite queue count changes.
+> 
+> Thanks,
+> Joe
 
-Sorry for the late reply. So AFAIU from your conversations, guards can't be
-compatible with VM_LOCKED, which means e.g. any attempts of glibc to use
-guards for stacks will soon discover that mlockall() users exist and are
-broken by this, and the attempts will fail? That's a bummer.
 
-As for compatibility with VM_LOCKONFAULT, do we need a new
-MADV_GUARD_INSTALL_LOCKED or can we say MADV_GUARD_INSTALL is new enough
-that it can be just retrofitted (like you retrofit file backed mappings)?
-AFAIU the only risk would be breaking somebody that already relies on a
-failure for VM_LOCKONFAULT, and it's unlikely there's such a somebody now.
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
+> v4:
+>   - Dropped Jakub's patch (previously patch 1).
+>   - Significant refactor from v3 affecting patches 1-3.
+>   - Patch 4 added tags from Jason and Gerhard.
+> 
+> rfcv3: https://lore.kernel.org/netdev/20250121191047.269844-1-jdamato@fastly.com/
+>   - patch 3:
+>     - Removed the xdp checks completely, as Gerhard Engleder pointed
+>       out, they are likely not necessary.
+> 
+>   - patch 4:
+>     - Added Xuan Zhuo's Reviewed-by.
+> 
+> v2: https://lore.kernel.org/netdev/20250116055302.14308-1-jdamato@fastly.com/
+>   - patch 1:
+>     - New in the v2 from Jakub.
+> 
+>   - patch 2:
+>     - Previously patch 1, unchanged from v1.
+>     - Added Gerhard Engleder's Reviewed-by.
+>     - Added Lei Yang's Tested-by.
+> 
+>   - patch 3:
+>     - Introduced virtnet_napi_disable to eliminate duplicated code
+>       in virtnet_xdp_set, virtnet_rx_pause, virtnet_disable_queue_pair,
+>       refill_work as suggested by Jason Wang.
+>     - As a result of the above refactor, dropped Reviewed-by and
+>       Tested-by from patch 3.
+> 
+>   - patch 4:
+>     - New in v2. Adds persistent NAPI configuration. See commit message
+>       for more details.
+> 
+> v1: https://lore.kernel.org/netdev/20250110202605.429475-1-jdamato@fastly.com/
+> 
+> [1]: https://lore.kernel.org/netdev/20250221142650.3c74dcac@kernel.org/
+> [2]: https://lore.kernel.org/netdev/20250127142400.24eca319@kernel.org/
+> 
+> Joe Damato (4):
+>   virtio-net: Refactor napi_enable paths
+>   virtio-net: Refactor napi_disable paths
+>   virtio-net: Map NAPIs to queues
+>   virtio_net: Use persistent NAPI config
+> 
+>  drivers/net/virtio_net.c | 100 ++++++++++++++++++++++++++++-----------
+>  1 file changed, 73 insertions(+), 27 deletions(-)
+> 
+> 
+> base-commit: 7183877d6853801258b7a8d3b51b415982e5097e
+> -- 
+> 2.45.2
 
 
