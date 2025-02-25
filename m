@@ -1,263 +1,614 @@
-Return-Path: <linux-kernel+bounces-532377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFF8A44C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79E6A44C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961031776E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0B5164DD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F10210180;
-	Tue, 25 Feb 2025 20:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3582E20E71E;
+	Tue, 25 Feb 2025 20:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZIJf8gwV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0g3S9AB"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFEC20E6F0;
-	Tue, 25 Feb 2025 20:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740514399; cv=fail; b=sPP5J0OjQ5dWprj4iSh4BGeK+2NG5uqAKmg/iXAMvapkMPGXYnH+CPBTlqgrJjHhsAXoAZIAX7tBxReNomu7RRSeLzsC+DvA/qURddDxOzQ+oF+ylFZZthnyHzIqsIwBYYySKr1ymD0JXrL9tA0bfgrs6vGYsmx6ZWBEH47Ej2c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740514399; c=relaxed/simple;
-	bh=avNPlPN3+tqo52s2jor9UhFEWKG77bzI7ua4wxFSqsA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VKyTEAC3NKyNdaRtU+WhFykn6xKuFIPhW0lmxikVchz2HKWRFSUvmf4npijO0pnZKCFctSfE6qygVfmw+SkO7xhhu2hFR/kd79czkhuguaaBzYp1EGr06GkII8rW1OhShYp6P5JSLhnwmO7AuynvtdE+BEXXh8LPijjgwFpNtZ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZIJf8gwV; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740514398; x=1772050398;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=avNPlPN3+tqo52s2jor9UhFEWKG77bzI7ua4wxFSqsA=;
-  b=ZIJf8gwVy4Q70JNn+C6LvF2A6q+21DNE3KqPs9sJYd99oklty84Yzrn1
-   84GPaw91Q/6BUd55ReGxOACxUZUuseud6KQpQZyzOjCVVJZwTnNkM5zJQ
-   JsgZ40EZqqMhb3vbkiKo7F/pO8erj5eGUO4IqIsBE/hlmriYoTsQMmvot
-   HYLRvB0ABWlkQgYo9vRq5u6s1gdxvL4P6sa0709C1h+TAaRbZuEQuV3Q/
-   394NhL8Umz/I44KjxbCVk214h2kY5QcpphNxi9gS0+XPqxzR2xfaHvQRK
-   w8tFXPndiHOOS4Xib8oS1xrWSfgptVOInWQUj1J0vIns+bkbdb7PMkkq7
-   g==;
-X-CSE-ConnectionGUID: 0kxNog2JQ2WI0V8g13H0vg==
-X-CSE-MsgGUID: zn+wPI/7RsWkaQtm/y1PAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45254915"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="45254915"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 12:13:17 -0800
-X-CSE-ConnectionGUID: uNxAQiCITX+E+vBU/uNi3Q==
-X-CSE-MsgGUID: PnN6e/KUSGKJF27r8F1kQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="116687891"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 12:13:14 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 25 Feb 2025 12:13:13 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Tue, 25 Feb 2025 12:13:13 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 25 Feb 2025 12:13:13 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XyW2tPBSmHCu9rwbjggO5j7Wbqe02lRkew+l23OBYglwisky43hWsqS687JJVPoAdtbrQBxWGkt31HhKK62jctjgi8ljO/KUwSyHKjddXqAzKNCnZVIeFZ8jZKFHR2M9nJUDRDLASSFJEUH+mTCY9TDPiA5chREgMVahBtGuPyZe6H3Wi7+DJeh6DS2lAeFQjo9jsYeWYlRM3FsE5n/3GnXv9O8xJjSt4MNDMerg/RlsiEFY9D97yQZJn2GbdajKAZppEnZTI+YKfr0yjRDKyYSdzgwKxjXffhhIKU7lUU5aeSpL8lF9d/TXHcAflShPZ0rJfC0bpurl1wX6LhNnsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rZ+Vqt0SmfpAya6lJpdolVaaTxyKt689D6R8z4gg+dM=;
- b=Xm4anYc6qDoDcNq9cMc1id6nTrUc0T/dvGBfIDDlMjW2Uz+ly3Wa/63pistGMjXToW5m6Tuw9DTobyZebuIOtRGNZAmiV9yt0iNok+4dKsGUCqB+UtWcc34ZHlnpkb9XruxAuzGsTYcLbSc9XybGBbUCJLoJWJBZaLi7HyLVEmToQyQVWOdoi4+PIrQQSw1CCrx3g/5Nhe3B2KF5BYKFvgu74MZkFh4HeDJQq47nML8pshwGhS2vNvtRO1AGPAyKu0BVIYEZqaK5uZ42qhxl3NaMxNPgm+LAqGi9xqkN0G6fFK/nFnzX/ZD21Xj/C94Ps5hmIlIj0C5tirD6PD1mnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by DS0PR11MB8071.namprd11.prod.outlook.com (2603:10b6:8:12e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 20:13:10 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 20:13:10 +0000
-Date: Tue, 25 Feb 2025 21:12:57 +0100
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-CC: <kees@kernel.org>, <julian.stecklina@cyberus-technology.de>,
-	<kevinloughlin@google.com>, <peterz@infradead.org>, <tglx@linutronix.de>,
-	<justinstitt@google.com>, <catalin.marinas@arm.com>,
-	<wangkefeng.wang@huawei.com>, <bhe@redhat.com>, <ryabinin.a.a@gmail.com>,
-	<kirill.shutemov@linux.intel.com>, <will@kernel.org>, <ardb@kernel.org>,
-	<jason.andryuk@amd.com>, <dave.hansen@linux.intel.com>,
-	<pasha.tatashin@soleen.com>, <guoweikang.kernel@gmail.com>,
-	<dwmw@amazon.co.uk>, <mark.rutland@arm.com>, <broonie@kernel.org>,
-	<apopple@nvidia.com>, <bp@alien8.de>, <rppt@kernel.org>,
-	<kaleshsingh@google.com>, <richard.weiyang@gmail.com>, <luto@kernel.org>,
-	<glider@google.com>, <pankaj.gupta@amd.com>,
-	<pawan.kumar.gupta@linux.intel.com>, <kuan-ying.lee@canonical.com>,
-	<tony.luck@intel.com>, <tj@kernel.org>, <jgross@suse.com>,
-	<dvyukov@google.com>, <baohua@kernel.org>, <samuel.holland@sifive.com>,
-	<dennis@kernel.org>, <akpm@linux-foundation.org>,
-	<thomas.weissschuh@linutronix.de>, <surenb@google.com>,
-	<kbingham@kernel.org>, <ankita@nvidia.com>, <nathan@kernel.org>,
-	<ziy@nvidia.com>, <xin@zytor.com>, <rafael.j.wysocki@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <cl@linux.com>, <jhubbard@nvidia.com>,
-	<hpa@zytor.com>, <scott@os.amperecomputing.com>, <david@redhat.com>,
-	<jan.kiszka@siemens.com>, <vincenzo.frascino@arm.com>, <corbet@lwn.net>,
-	<maz@kernel.org>, <mingo@redhat.com>, <arnd@arndb.de>, <ytcoode@gmail.com>,
-	<xur@google.com>, <morbo@google.com>, <thiago.bauermann@linaro.org>,
-	<linux-doc@vger.kernel.org>, <kasan-dev@googlegroups.com>,
-	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>
-Subject: Re: [PATCH v2 01/14] kasan: sw_tags: Use arithmetic shift for shadow
- computation
-Message-ID: <6wdzi5lszeaycdfjjowrbsnniks35zhatavknktskslwop5fne@uv5wzotu4ri4>
-References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
- <168f775c4587f3a1338271390204a9fe16b150dd.1739866028.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZcVSwUAC9_xtVAHvO6+RWDzt6wOzWN623m=dT-3G=NnTQ@mail.gmail.com>
- <cik7z3nwspdabtw5n2sfoyrq5nqfhuqcsnm42iet5azibsf4rs@jx3qkqwhf6z2>
- <CA+fCnZd6O0_fc1U-D_i2shcF4Td-6389F3Q=fDkdYYXQupX1NA@mail.gmail.com>
- <uup72ceniis544hgfaojy5omctzf7gs4qlydyv2szkr5hqia32@t6fgaxcaw2oi>
- <gisttijkccu6pynsdhvv3lpyxx7bxpvqbni43ybsa5axujr7qj@7feqy5fy2kgt>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <gisttijkccu6pynsdhvv3lpyxx7bxpvqbni43ybsa5axujr7qj@7feqy5fy2kgt>
-X-ClientProxiedBy: DUZPR01CA0039.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:468::17) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ED220E31D;
+	Tue, 25 Feb 2025 20:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740514472; cv=none; b=AHWioTBcm5PzyPyguvfAik2vhAwM1/L1qlLTEEnPhS4qeJQE2gRmV5KtfMMZivoq5bi+A5CtMV2aUNlzSUnmDxc/eXPJovmjmCJdqEIqF0z/O8UCrcCXGYUBN2qQhb+47wu2kxG0bOdCbjFPMB3j5m4sCeOI+JyTDBslZ8Pp7tQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740514472; c=relaxed/simple;
+	bh=WSHJRS/WC9a7DJlTNESaXrfIaBnqS3djb5rLi0rbv5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Eio1jmroeDCqTxmnryAUZNYSFl86lAU7oUiotZbFlP0HkS2ixWmx0UIi2FjLyXO4x+ZhleF3B3OhEb59uPBMqSkHyZU1yalm+KJcUKhER81LpqKg00my37ZYj7bOFjK637URRdgL6N+u6rS1EAqX3N+cUJ1UzmNLWuIzxtV84uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0g3S9AB; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30797730cbdso60029361fa.3;
+        Tue, 25 Feb 2025 12:14:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740514468; x=1741119268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FEhVEVpaHkHund2Wz0G88JG3mgB9gPu0MlqcSXuEYL8=;
+        b=N0g3S9ABvbIx3RzAaNVYk+UB7gVU6CcYuhApab6REoMLnjJXiXflTH7fJSvkxNKNuU
+         1P+fS7o1wGpid3CpnjZpg35TTsM0s7136/QlSjsqsn1RSVYLQ5FuuzKMQ4z38eaEfWDU
+         GzI/Sr2uxbcmYo+kve7fi5KPWrd7YLcU3pACQQHwTCqyxywp/Aan4MdH7vjFReSlCbpq
+         ghdoQeWjzwKJfUwolery/1PO6aRfnRAXwLy1PjTK+2rtVp5zVwwAUBxYDdzIyucDo5Yg
+         jDy8GOYZKj79G4Msa4tApAITgFfQVoX/iOq5BTbxNpBY9d2uAnUD4gGxr7qCDNTai0ux
+         SlPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740514468; x=1741119268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FEhVEVpaHkHund2Wz0G88JG3mgB9gPu0MlqcSXuEYL8=;
+        b=FXoInT11kou6/daHxtI/f3AjoIaMoljFWQ0hKj5fY2bzzzpYlw+tVb3NAf2RRW7Q4U
+         oMmcHorVqiPQTFEsbqXTiOUTVUXg3ViPMwWBeTc4Emheop7ybitbRLTVmhN5LlIyJ/UY
+         BT34dk8BUYb+xDKzvypmqS0/WFmrxFxfhiHCe74J0TjNR/56puaWY+cLUA3zGzlX/CIs
+         evgkg5sFVHa5QLKe29C92hPxpFoh8x2adnpWFPVWorRwH8fSevAPr4EAiUeLuG90bcYb
+         CLeYgxNmRn2iWymkAtoq6BXUN4tfpgozZsklOXAq5mZMt9O9FDUWULzt5BMyaHDo8X6H
+         HwYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb9x/ht4aNX8drfAVWNECtNRgg/YgB/WCpgova0N2H90Xu6MvYrurL7c7tHOyKpJpf4OL3yjb51tKvcboMBwA=@vger.kernel.org, AJvYcCV+jXQHZDjj0elro/Sy51vuBSwldxUuk6g5D3VeAAymHksizox0ksDLPDvf2XUnH8t9dkZp+6sJx+it+uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Yc//n5g49DoXDgPGOmHf8ScuFExcjGe4xxdgWx9idS8YesRP
+	Uzdp8wNkVreXtz9A2XqUoyt55vPyYbuuJbK/QxsWCF1eq+LE5PIKsf3EpV8nQBUs683UYxIr4MP
+	7NeH91xFOAw5UgjVFoCsW/k4Fids=
+X-Gm-Gg: ASbGnct1GdACh31lgQyGgZ3KJxGUZvpau494b3olnpbXdzkSMFxmr41VnShELxoCXfL
+	ZwMOhzhhrOb4Si4eznKYxIX9PPUOdyRzExhYrAbqOetYkMN5qqYCGr3Jo0GejrGGCZm838eTn8K
+	UmkXh/6Xq8gDWOks8UBJm3jHg=
+X-Google-Smtp-Source: AGHT+IGg1HymmDyvV39MYw065HEhKfYhO2zJbyrhmvmZNM434Hw3OFuENFsqzPWKGMwMFGZSIGNN7H/64Uw41jijoIM=
+X-Received: by 2002:a2e:91d6:0:b0:308:f01f:182c with SMTP id
+ 38308e7fff4ca-30b79163ee6mr10051851fa.12.1740514467273; Tue, 25 Feb 2025
+ 12:14:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|DS0PR11MB8071:EE_
-X-MS-Office365-Filtering-Correlation-Id: 569f7643-d808-44c9-034b-08dd55d8d35a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MitIYmNjdUV4Sm13NFpqbjhrYSt1MFcwclgvNThFbEJxK1VuUS93N0liWlpF?=
- =?utf-8?B?bXNjTWdFZGNnUHQ4MmtDd0lkdXFiSFQybTJ4MDIxMHlDQ29SZ25zMlo4OGdx?=
- =?utf-8?B?ZXRlOVhyNWZRdVRBa3lJUEw2K3pyNzVUMEk0d3M3cnpFdWQ3V3BDTS9OcVJw?=
- =?utf-8?B?WnVPUS95V2lKTldyWmhCVjI2SmlaRUg4bGhMWm1BTDYyenZmeU1RRTU4N2JL?=
- =?utf-8?B?RFZ1blVVSXVJQ0hHWUJCaWc3QSs3aTFiY0pCcmRzT0NDYmxtNmZTaWxjTDdk?=
- =?utf-8?B?QzVKWjg3Qm9MY1MwcVY4d1UzTDJ5SmJTOGt6clU1ckdoTXRRcWpRZHRQREZE?=
- =?utf-8?B?K0xSWW94WThGYkJhK2VsbCtNVTYreHU4ZHg3WVJFb1pZeUxMcEF2cjNGYm1I?=
- =?utf-8?B?cFFBdlhDcVFXajJ6RmQxaXBrWnZMSmFQUTdXQVZsWlA1T0tlR042dWZzcFJq?=
- =?utf-8?B?bmtVbmQvR0t6QWk5ZVc5YlBZNzZlOVRVd2lTbHlhV1ZzMVMzR3lSaEV5YkxE?=
- =?utf-8?B?cWdmcVlCWlJ6NkJNSDFYT1dMc2ZIcHBVQzFxYzFCZW5HSWRSTFA3TGk4Z3JH?=
- =?utf-8?B?eHlsRnFZclZZZEpmNXNSRC9SeEp0NnljVTlvUno1TzJ3N2Nma0owRTVYcTZR?=
- =?utf-8?B?MVlkS1UrSy9pUVlZaFJ3NDlQWUQwUG5Dd1NNOFAyQkpzS3BkZnh4eFFFUVpI?=
- =?utf-8?B?blBKcTRweHYrOUQ2MzVVN1hGSlRkME0rR3dUb2o0VTRwQkRucXE2WE44dmhw?=
- =?utf-8?B?b3VWY1EycHVIK2p5WDhEY2FHQVc2S1NmWkRzZ0xyU2V1elhINTdEbGlYaUNp?=
- =?utf-8?B?ckVaR0YzQzZFaXgrN1liK01mdkRUcTJ6TW1La0JQbytpQURENnN6WHJta3NG?=
- =?utf-8?B?NG9MKzVnTzRsZkFSdyt4MW5DNFYwTTBMVFhJVzh2VnFFU24xMmM3WXkrZTI0?=
- =?utf-8?B?SjVuMkpyKzkvNXJFUVJLK0lJcGREa2pKbmNFTU1IbkN3dHB4ampJUDFWM2hR?=
- =?utf-8?B?Z1lGdGYxYmhUSEt0aTlnUklGamtmdWxYM0hLblBPdnNkeG8vc3dFWG5uOExC?=
- =?utf-8?B?d2tOL2RKc2prMlBHRytyVFJGVEdJa28vRUpiVTlIR2tYaVNGTFdMeEFSVkV6?=
- =?utf-8?B?VGkycUFXcjhzc0tBSStaaHlkb3VnWHp4ZXZIbE4rQ3JDekpkV0krcUN2ODJn?=
- =?utf-8?B?WUxPeVoyQmVIYVZEckk0ZzZaTjJSdEpDZnhXNVNNUHZmLzIvekN2cFQ1YmM1?=
- =?utf-8?B?V0Q0d00xNm1qanZvYStOQWJJYnJ3Y3JTdGdObVBRWElIQWJqTlQ5QVU4dTI5?=
- =?utf-8?B?dUVIWDBESm9LUXZxTlY1dzZtcnBIMGJuVm01VmhCcDlZdG5hR0I1bjREMFNz?=
- =?utf-8?B?TXlVWkpjWU5jUGlXR1JLMnBrNi9QV2ZjN0h1aWlSeFZwYlAwVDNjZXd0bkJK?=
- =?utf-8?B?dDhJN1FKb2I4eWkvV3hZTzYzVWNneGc2RnFBS1QrQXU5NVh4S0sraFhYN1dT?=
- =?utf-8?B?SVBQTmRoUlBJbnNhdTF4RDk5em1yN1VFSS9obkI2QUdKNTEzOG9DMjNzN0NM?=
- =?utf-8?B?RGloQnJFbTk2K1Fub1ZpamRTM2M0d1YzdFI3eEcwTzMwU090SDBBOU4xT0Q5?=
- =?utf-8?B?NGlIN3RsMmtNaDdiVW51bzNCaythYWh1TkJ1R2lLaGcwckwvbWhudi95MnlX?=
- =?utf-8?B?N25jY1dxTHdBcDRVRFUyK3poeXR0VjNuQWxTVWZUelY3bVEveCs0YUVEYUln?=
- =?utf-8?B?cS9mRnhkVmlxU3Z0SFZsdXdTd0dQUzZENTdvQyswSUZOeW9VTUlnOUpQZU9J?=
- =?utf-8?B?OTBiQlIrWHJGTE5kcC8xUWdvWENPU0VWN2Jta1hwYmc1TzZRUFMwUGlDMUdO?=
- =?utf-8?Q?b/kHggWgXyh+X?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0RraWtFWGlXVTZFYWE0dVlaR3YybjNoVlpvMFczbUpUSWxJS2swUjlldGdM?=
- =?utf-8?B?V0FxMys5Z3JRQkc2Z0pCajVwdUUyQUlraTd3bXFQVk5TTG40MWc0dVpaKytX?=
- =?utf-8?B?TU1qQ1Y0R3czV3JNNzI5dGdqc3U5L3BiM2dZQnFBaThmcWIzcUNnZGx3elcz?=
- =?utf-8?B?T2Qzc1p0Y25lUkkxSUxyZk5OZVZoa3RUQ1V3blUxUUViKytuS1B0Q0hHbkh3?=
- =?utf-8?B?MGxSYStUVjBMRW5YbDdVSXYyM2hpcWRQR21CaDR5R29iT05qOTNTNVg0R3Yv?=
- =?utf-8?B?VXZ1MFUyWkFuSXYwbFhwMzAxRUducy9IeURFRE0ybExOYlQ5TEc3b2Urc3p4?=
- =?utf-8?B?bjNJeDExSnNNVE5iZWxsR3JSV1FPdUZvNndKb1BvcFdHZUtsY0NVR090MXhr?=
- =?utf-8?B?Zlc4UVhMdDAvMzQrTTYrclExbS9qTUNDK0l4ejBHWmdlaGdwcEQ1bmJjSW9W?=
- =?utf-8?B?cnNiNUFWUGRobG9ORUI1T2RaeXFoS0lwOHBoVkMxWkZJSUwvRWNTMHRKb3A2?=
- =?utf-8?B?Y2EzeTA4YnllVVJ5ZjdET1U0V1ZOWGJHUXdjUVZMbDZlV2Nxb1F2bEJDc3Fs?=
- =?utf-8?B?Z1BRQlZjVm1rcHpJUUVBMjBpZWZhRldNWjlkQ3RxV0lvNWhZYmNNQU81LzJa?=
- =?utf-8?B?ZVJFUmRQUEw5T21sRDd0TDZ0a2ZMY0RMOFMrYW5oWTF1ekloZHVCSmNDT3Rm?=
- =?utf-8?B?NS94bXpVekowOU5kQ29PTEtWeG40L29QZHRhcHEyNlBwR1VmWUpiTzFjVnlh?=
- =?utf-8?B?MytGUlRnNlVwRm5seWFnNlVkNklpT1drUHZpeVI5RWR5Q0xZVE0xU3dacWJp?=
- =?utf-8?B?ZG1tSUpGdDRVcXNpMnhHc2x1b2ZONXdhL3JEWjB6b1RoUjNRQjN3dWJVelJu?=
- =?utf-8?B?N2xsOTBmdHR1UDg2ajFTN1J3clVqV2I1RkVnVk9DdXNEbDZucnBuT2VpOGRt?=
- =?utf-8?B?Rm00TlNJRHo3SkpNTEZKZEtWYWU0ejFraFpHRS92VEY5UmZQOXFMWGh5YWxI?=
- =?utf-8?B?SjV5QTZ5QWtneDd3NS82YUhCMThRSlFhR2dQcDdEczNtdGZQL0tOaHpmdlJt?=
- =?utf-8?B?TXJyNFlzRXFTZjVHOFhNeHdTS3RFUXdEUjN1S3ZDNVZsL25kSVNuZ0Q5YlRN?=
- =?utf-8?B?Mnp6QXQ1L0l3N2RZWm1maXN6NnZKSjgxR21hNGx2Z0Mxd3JRYVQ3V2g3RlB5?=
- =?utf-8?B?UXE5d2RrWWx4ZXc2bll5VlkzTkNhdzUzRkVqajRXKzdhb3hBWE1iRlBzYnFX?=
- =?utf-8?B?TXFqZU9JSWV6WUE3RWN2Z1dEK3lGbWZvVzQ3TituT1RVOE5rTjdjZjQ0MnZy?=
- =?utf-8?B?WmRyeVV0dzRaRmpXSGpnQnAxbDBuaERhbTB1RGlHOXhyKzI1ZVVVK1d4Mito?=
- =?utf-8?B?dFBDc2xyUkxWTnRVOUZvbU0wWU5WWjhzdlpzMUZLRURnV2F5QThTSjVSdFRu?=
- =?utf-8?B?eVkwWk5QWDBhc3Z0RDdDeU1rVHhKN1ROeHBlaEk4Qzlra1BJcGl5cXUxV2J0?=
- =?utf-8?B?R0VCd3NVVWl3aUpzNFl4WVdOZzlrcUN3MDRzVDJuZ3VxZFVoZmpBemtHeEZZ?=
- =?utf-8?B?OU9tUWtEeW1WWkZSMFhCYlBtK2tybnpGQVpBRVl5UGtZOUVGRDQ2M1ZKS0xk?=
- =?utf-8?B?cFVRK3pzVCtUNDVMM3BsNG0zM2lRNkpucHU2b3gyNXVLZldqM1VMcnJ5b29n?=
- =?utf-8?B?M0xTWnJEN1l1NStGZUd2ZWUvNm00TW1RQzkyd0ZjVXRxamJ1SWJhTXBuZVNN?=
- =?utf-8?B?Um1hVG9HNmhnaXJxZ3AweG1mSWNRME9xZjZkNTVhOXVzNUJOZGhnbmhISS9z?=
- =?utf-8?B?UXJ6d1J2MHdYUTFRMDFyNGxMU2VDSDR1SEZQdUxQaUFJcDNGd0VMd29aNExU?=
- =?utf-8?B?NU96alJSRGRmMVNjOUZPam42M1R5c0RUOTk1RDkwaEw2UlVtaXd6SWRZQzlw?=
- =?utf-8?B?cjFkNkI2Nmt3SGorcnBkMkEvZmUxOGVIdGlmR3NFNXhXWWxxbUIxeW0vRVcy?=
- =?utf-8?B?WFp5bTZrNDEzZ0RaMll3eWYxb1MwSkVGYUQvYWhTVC9pbERmOTdqdkQ4UElT?=
- =?utf-8?B?SjU1QmNpbVhkN1VuaGNPR0N6VnFJY0hzQmwrZDFIN2JWTXBGdzh3QkF5OFVu?=
- =?utf-8?B?K3hnb1d4T0d6bi9oRlRNMndyb05aQ05qY1g1VTQwZDBMV25VRytxYXprQzBn?=
- =?utf-8?Q?ZnleW8xktxON/UKyCavoMeg=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 569f7643-d808-44c9-034b-08dd55d8d35a
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 20:13:10.5528
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VWUVci0fibAsZmEC5XyQ/PY/TfJSIlZw4H2oEhhMmWnDEIx+DJEkXQ/johDDuQNyslvYhvDboWj3wjj0m2JXAnX7cG9pgB+AkUp8uvh6bFc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8071
-X-OriginatorOrg: intel.com
+References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
+ <20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
+ <q5sIYQbnCqKmdnZZy-eaKvSUY7O5pOy2-QzwWwCo9VoormFcKS6RS3OVIIby-Pf5PDpTRh67txem3sXQKSB1JQ==@protonmail.internalid>
+ <CAJ-ks9nj8+fXM_oo0LJo4O6Q=skFRcHwz8TLxw-yB3QTcDF9GA@mail.gmail.com>
+ <87cyf6xv7g.fsf@kernel.org> <Wy3wqzRK5qG3GyHC7oEg3NR3tv9-Uv7m_tmgKZTHNEU6aZX5hxrIXLudLfzQvuZNvIz1Av2fKzH5eTvomny1Vg==@protonmail.internalid>
+ <CAJ-ks9=PR-Laj37NqG5s_TbKddONWxp4-Cf3C57AMk9z92mfDQ@mail.gmail.com> <87r03lvnx4.fsf@kernel.org>
+In-Reply-To: <87r03lvnx4.fsf@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 25 Feb 2025 15:13:51 -0500
+X-Gm-Features: AQ5f1JoiXix8JuxqvWmqdLNwLeWM5j9G_9j1nyNzWq6OiI7HVR0zn_pVQuY-9bs
+Message-ID: <CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, 
+	Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-02-25 at 20:12:40 +0100, Maciej Wieczor-Retman wrote:
->On 2025-02-25 at 18:20:08 +0100, Maciej Wieczor-Retman wrote:
->>On 2025-02-22 at 16:06:02 +0100, Andrey Konovalov wrote:
->>>On Fri, Feb 21, 2025 at 2:12 PM Maciej Wieczor-Retman
->>><maciej.wieczor-retman@intel.com> wrote:
->>>> >                   Thus, the possible values a shadow address can
->>>> >take are the result of the memory-to-shadow mapping applied to
->>>> >[0xff00000000000000, 0xffffffffffffffff], not to the whole address
->>>> >space. So we can make this check more precise.
->>>>
->>>> In case my question above didn't lead to this: what happens to the rest of the
->>>> values if they get plugged into kasan_mem_to_shadow()?
->>>
->>>We will get some invalid addresses. But this should never happen in
->>>the first place.
->>
->>Thanks for letting me know about the tag resets, that should make changing the
->>check in kasan_non_canonical_hook() easier.
+On Tue, Feb 25, 2025 at 2:12=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
 >
->Ah, but the [0xff00000000000000, 0xffffffffffffffff] won't be true for x86
->right? Here the tag reset function only resets bits 60:57. So I presume
->[0x3e00000000000000, 0xffffffffffffffff] would be the range?
+> "Tamir Duberstein" <tamird@gmail.com> writes:
+>
+> > On Tue, Feb 25, 2025 at 3:52=E2=80=AFAM Andreas Hindborg <a.hindborg@ke=
+rnel.org> wrote:
+> >>
+> >> "Tamir Duberstein" <tamird@gmail.com> writes:
+> >>
+> >> > Hi Andreas, mostly grammar and prose clarity comments below.
+> >> >
+> >> > I still think HasHrTimer::OFFSET is less clear and more fragile than
+> >> > just generating compiler-checked implementations in the macro (you'r=
+e
+> >> > already generating OFFSET and one method implementation rather than
+> >> > generating 2 method implementations).
+> >>
+> >> I don't agree with you assessment. My argument is that I would rather
+> >> generate as little code as possible in the macro, and the trait would =
+in
+> >> practice never be implemented by hand.
+> >
+> > In the current patch, the trait:
+> > - provides raw_get_timer
+> > - provides timer_container_of
+> > and the macro:
+> > - defines OFFSET
+> > - defines raw_get_timer
+> >
+> > The justification for the redundancy is that without defining
+> > raw_get_timer in the macro the user might invoke the macro
+> > incorrectly.
+>
+> It's not that they might invoke the macro incorrectly, it's that we
+> would not be able to make the macro safe. The way it is implemented now,
+> it will only compile if it is safe.
+>
+> > But why is that better than defining both methods in the
+> > macro?
+>
+> Because it is generating less code. I would rather write the library code=
+ than
+> have the macro generate the code for us on every invocation.
 
-Sorry, brain freeze, I meant [0x1e00000000000000, 0xffffffffffffffff]
+How is it less code? It's the same amount, just harder to reason about
+because you're doing pointer arithmetic rather than relying on
+existing macros like container_of.
 
--- 
-Kind regards
-Maciej Wieczór-Retman
+>
+> > Either way the macro provides 2 items. The key benefit of
+> > defining both methods in the macro is that there's no dead-code
+> > implementation of raw_get_pointer in the trait. It also reduces the
+> > surface of the trait, which is always a benefit due to Hyrum's law.
+>
+> When you say that the surface would be smaller, you mean that by
+> dropping OFFSET entirely, the trait would have fewer items?
+
+Yes.
+
+
+> I'm not familiar with Hyrum's law.
+
+TL;DR is that anything that can become load bearing will. So even if
+the intent is that OFFSET is an implementation detail, there's no way
+to enforce that, and so someone will misuse it.
+
+> >
+> >>
+> >> >
+> >> > On Mon, Feb 24, 2025 at 7:06=E2=80=AFAM Andreas Hindborg <a.hindborg=
+@kernel.org> wrote:
+> >> >>
+> >>
+> >> [...]
+> >>
+> >> >> +//! # Vocabulary
+> >> >> +//!
+> >> >> +//! States:
+> >> >> +//!
+> >> >> +//! - Stopped: initialized but not started, or cancelled, or not r=
+estarted.
+> >> >> +//! - Started: initialized and started or restarted.
+> >> >> +//! - Running: executing the callback.
+> >> >> +//!
+> >> >> +//! Operations:
+> >> >> +//!
+> >> >> +//! * Start
+> >> >> +//! * Cancel
+> >> >> +//! * Restart
+> >> >> +//!
+> >> >> +//! Events:
+> >> >> +//!
+> >> >> +//! * Expire
+> >> >> +//!
+> >> >> +//! ## State Diagram
+> >> >> +//!
+> >> >> +//! ```text
+> >> >> +//!                                                   Return NoRes=
+tart
+> >> >> +//!                       +---------------------------------------=
+------------------------------+
+> >> >> +//!                       |                                       =
+                              |
+> >> >> +//!                       |                                       =
+                              |
+> >> >> +//!                       |                                       =
+                              |
+> >> >> +//!                       |                                       =
+  Return Restart              |
+> >> >> +//!                       |                                      +=
+------------------------+     |
+> >> >> +//!                       |                                      |=
+                        |     |
+> >> >> +//!                       |                                      |=
+                        |     |
+> >> >> +//!                       v                                      v=
+                        |     |
+> >> >> +//!           +-----------------+      Start      +---------------=
+---+           +--------+-----+--+
+> >> >> +//!           |                 +---------------->|               =
+   |           |                 |
+> >> >> +//! Init      |                 |                 |               =
+   |  Expire   |                 |
+> >> >> +//! --------->|    Stopped      |                 |      Started  =
+   +---------->|     Running     |
+> >> >> +//!           |                 |     Cancel      |               =
+   |           |                 |
+> >> >> +//!           |                 |<----------------+               =
+   |           |                 |
+> >> >> +//!           +-----------------+                 +---------------=
++--+           +-----------------+
+> >> >> +//!                                                     ^         =
+|
+> >> >> +//!                                                     |         =
+|
+> >> >> +//!                                                     +---------=
++
+> >> >> +//!                                                      Restart
+> >> >> +//! ```
+> >> >> +//!
+> >> >> +//!
+> >> >> +//! A timer is initialized in the **stopped** state. A stopped tim=
+er can be
+> >> >> +//! **started** by the `start` operation, with an **expiry** time.=
+ After the
+> >> >> +//! `start` operation, the timer is in the **started** state. When=
+ the timer
+> >> >> +//! **expires**, the timer enters the **running** state and the ha=
+ndler is
+> >> >> +//! executed. After the handler has finished executing, the timer =
+may enter the
+> >> >> +//! **started* or **stopped** state, depending on the return value=
+ of the
+> >> >> +//! handler. A running timer can be **canceled** by the `cancel` o=
+peration. A
+> >> >> +//! timer that is cancelled enters the **stopped** state.
+> >> >
+> >> > This is a bit confusing because it sounds like you're describing a
+> >> > *started* timer. After reading the next paragraph I think this wordi=
+ng
+> >> > applies to both *started* and *running*, but it isn't unambiguous.
+> >>
+> >> Right, I think I understand. It's a mistake. Last sentence should be:
+> >>
+> >>   A timer in the **started** or **running** state be **canceled** by t=
+he
+> >>   `cancel` operation. A timer that is cancelled enters the **stopped**
+> >>   state.
+> >
+> > I think you meant "*may* be canceled"? I assume this replaces the last
+> > two sentences?
+>
+> Yes and yes.
+>
+>
+> > I noticed below I had suggested talking about the handler as
+> > "returning" rather than "finishing execution"; please consider that
+> > throughout.
+>
+> I do not prefer one over the other. Do you care strongly about this one?
+
+I prefer return since it's more obvious but don't feel strongly about
+the choice, only that the usage is consistent.
+
+>
+> >
+> >>
+> >> >
+> >> >> +//!
+> >> >> +//! A `cancel` or `restart` operation on a timer in the **running*=
+* state takes
+> >> >> +//! effect after the handler has finished executing and the timer =
+has transitioned
+> >> >> +//! out of the **running** state.
+> >> >
+> >> > There's no external restart, right?
+> >>
+> >> There will be, eventually. Conceptually there is, because the state
+> >> diagram and this text describe the operation.
+> >
+> > OK.
+> >
+> >>
+> >> > I think this wording is confused
+> >> > by the unification of cancel and restart under operations, though th=
+ey
+> >> > are not isomorphic.
+> >>
+> >> Hmm, I am not following. Can you elaborate? The set of operations is
+> >> start, cancel, restart.
+> >
+> > I wrote this when I thought there was no external restart. By the way,
+> > what is the difference between restart and start? Can a running timer
+> > not be started, or does that do something other than reset it to the
+> > new expiry time?
+>
+> That is good question. I will add the following to address that
+> question:
+>
+> //! When a type implements both `HrTimerPointer` and `Clone`, it is possi=
+ble to
+> //! issue the `start` operation while the timer is in the **started** sta=
+te In
+> //! this case the `start` operation is equivalent to the `restart` operat=
+ion.
+>
+> >> > Restart (as I understand it) can only happen from
+> >> > the handler, and cancel can only happen via a call to hrtimer_cancel=
+.
+> >>
+> >> This text introduces the restart operation. There is no code path to
+> >> reach it from rust at the moment, but I am inclined to add the functio=
+n
+> >> due to this confusion. It would be dead code for now though.
+> >>
+> >> > It's also a bit strange that start isn't mentioned whenever cancel a=
+nd
+> >> > restart are mentioned.
+> >>
+> >> Why is that?
+> >
+> > See above - I think I am confused about the difference between start
+> > and restart when called on a running timer.
+>
+> OK.
+>
+> [...]
+>
+> >> >
+> >> > But maybe this should use the same wording from Opaque::raw_get?
+> >> >
+> >> >     /// This function is useful to get access to the value without
+> >> > creating intermediate
+> >> >     /// references.
+> >>
+> >> To me those two wordings have the same effect. I don't mind changing t=
+he
+> >> wording if you feel strongly about it.
+> >
+> > Yeah, I would prefer the wording be the exact same if it is intended
+> > to have the same meaning. Using different wording may trigger Chekov's
+> > Gun in the reader's mind (as it did for me).
+>
+> I'm not familiar with any guns =F0=9F=98=85
+>
+> I'll apply your suggestion.
+>
+> [...]
+>
+> >> >
+> >> >> +    ///
+> >> >> +    /// # Safety
+> >> >> +    ///
+> >> >> +    /// `ptr` must point to a live allocation of at least the size=
+ of `Self`.
+> >> >> +    unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer =
+{
+> >> >> +        // SAFETY: The field projection to `timer` does not go out=
+ of bounds,
+> >> >> +        // because the caller of this function promises that `ptr`=
+ points to an
+> >> >> +        // allocation of at least the size of `Self`.
+> >> >> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*ptr).timer)=
+) }
+> >> >> +    }
+> >> >> +
+> >> >> +    /// Cancel an initialized and potentially running timer.
+> >> >> +    ///
+> >> >> +    /// If the timer handler is running, this will block until the=
+ handler is
+> >> >> +    /// finished.
+> >> >
+> >> > nit: s/is finished/returns/ and maybe clarify the ordering, namely
+> >> > that the timer is definitely in a stopped state after this returns.
+> >>
+> >>     /// If the timer handler is running, this function will block unti=
+l the
+> >>     /// handler returns. Before this function returns, the timer will =
+be in the
+> >>     /// stopped state.
+> >>
+> >> If we have a concurrent call to start, the timer might actually be in
+> >> the started state when this function returns. But this function will
+> >> transition the timer to the stopped state.
+> >
+> > Got it. Consider dropping the last sentence ("before this function
+> > returns..."), I don't think it makes this clearer.
+>
+> OK.
+>
+> >
+> >>
+> >> >
+> >> >> +    ///
+> >> >> +    /// Users of the `HrTimer` API would not usually call this met=
+hod directly.
+> >> >> +    /// Instead they would use the safe [`HrTimerHandle::cancel`] =
+on the handle
+> >> >> +    /// returned when the timer was started.
+> >> >> +    ///
+> >> >> +    /// This function does not create any references.
+> >> >> +    ///
+> >> >> +    /// # Safety
+> >> >> +    ///
+> >> >> +    /// `self_ptr` must point to a valid `Self`.
+> >> >
+> >> > Why use different phrasing here than on raw_get? The parameter name =
+is
+> >> > also different. Would be nice to be consistent.
+> >>
+> >> They are different requirements, one is stronger than the other. I
+> >> construct safety requirements based on the unsafe operations in the
+> >> function. The unsafe operations in these two functions have different
+> >> requirements. I would not impose a stronger requirement than I have to=
+.
+> >
+> > Ah, the requirement is stronger here than on `raw_get`. Thanks for clar=
+ifying.
+> >
+> > How about the parameter name bit? Can we be consistent?
+> > Opaque::raw_get calls it "this".
+>
+> Yes, I applied this throughout where a pointer to `Self` is passed.
+>
+> >
+> >>
+> >> >
+> >> >> +    #[allow(dead_code)]
+> >> >> +    pub(crate) unsafe fn raw_cancel(self_ptr: *const Self) -> bool=
+ {
+> >> >> +        // SAFETY: timer_ptr points to an allocation of at least `=
+HrTimer` size.
+> >> >> +        let c_timer_ptr =3D unsafe { HrTimer::raw_get(self_ptr) };
+> >> >> +
+> >> >> +        // If the handler is running, this will wait for the handl=
+er to finish
+> >> >> +        // before returning.
+> >> >> +        // SAFETY: `c_timer_ptr` is initialized and valid. Synchro=
+nization is
+> >> >> +        // handled on C side.
+> >> >
+> >> > missing article here.
+> >>
+> >> =F0=9F=91=8D
+> >>
+> >> >
+> >> >> +        unsafe { bindings::hrtimer_cancel(c_timer_ptr) !=3D 0 }
+> >> >> +    }
+> >> >> +}
+> >> >> +
+> >> >> +/// Implemented by pointer types that point to structs that embed =
+a [`HrTimer`].
+> >
+> > This comment says "embed a [`HrTimer`]" but in `trait HrTimer` the
+> > wording is "Implemented by structs that contain timer nodes."
+>
+> I don't follow. There is no `trait HrTimer`, there is a `struct
+> HrTimer`, but it has no such wording.
+>
+> > Is the difference significant?
+>
+> No, I would say they are semantically the same. Whether a struct
+> contains a field of a type or it embeds another struct - I would say
+> that is the same.
+
+Can we use the same wording in both places then?
+
+>
+> > Also the naming of the two traits feels inconsistent; one contains
+> > "Has" and the other doesn't.
+>
+> One is not a trait, not sure if you are looking on another item than
+> `struct HrTimer`?
+
+Sorry, I meant HasHrTimer and HrTimerPointer rather than HrTimer and
+HrTimerPointer.
+
+> >
+> >> >> +///
+> >> >> +/// Target (pointee) must be [`Sync`] because timer callbacks happ=
+en in another
+> >> >> +/// thread of execution (hard or soft interrupt context).
+> >> >
+> >> > Is this explaining the bound on the trait, or something that exists
+> >> > outside the type system? If it's the former, isn't the Sync bound on
+> >> > the trait going to apply to the pointer rather than the pointee?
+> >>
+> >> It is explaining the bound on the trait, and as you say it is not
+> >> correct. Pointer types that do not apply synchronization internally ca=
+n
+> >> only be `Sync` when their target is `Sync`, which was probably my line
+> >> of thought.
+> >>
+> >> I will rephrase:
+> >>
+> >>   `Self` must be [`Sync`] because timer callbacks happen in another
+> >>   thread of execution (hard or soft interrupt context).
+> >
+> > How about "...because it is passed to timer callbacks in another
+> > thread of execution ..."?
+>
+> OK.
+>
+> >
+> >> >
+> >> >> +///
+> >> >> +/// Starting a timer returns a [`HrTimerHandle`] that can be used =
+to manipulate
+> >> >> +/// the timer. Note that it is OK to call the start function repea=
+tedly, and
+> >> >> +/// that more than one [`HrTimerHandle`] associated with a [`HrTim=
+erPointer`] may
+> >> >> +/// exist. A timer can be manipulated through any of the handles, =
+and a handle
+> >> >> +/// may represent a cancelled timer.
+> >> >> +pub trait HrTimerPointer: Sync + Sized {
+> >> >> +    /// A handle representing a started or restarted timer.
+> >> >> +    ///
+> >> >> +    /// If the timer is running or if the timer callback is execut=
+ing when the
+> >> >> +    /// handle is dropped, the drop method of [`HrTimerHandle`] sh=
+ould not return
+> >> >> +    /// until the timer is stopped and the callback has completed.
+> >> >> +    ///
+> >> >> +    /// Note: When implementing this trait, consider that it is no=
+t unsafe to
+> >> >> +    /// leak the handle.
+> >> >
+> >> > What does leak mean in this context?
+> >>
+> >> The same as in all other contexts (I think?). Leave the object alive f=
+or
+> >> 'static and forget the address. Thus never drop it and thus never run
+> >> the drop method.
+> >
+> > Got it. Is leaking memory generally allowed in the kernel? In other
+> > words, is there nothing that will complain about such memory never
+> > being reclaimed?
+>
+> Leaking is generally unacceptable in the kernel. However, leaking is
+> considered safe in rust and is possible within the safe subset of rust.
+>
+> The first time I implemented this trait, it was unsound in the face of
+> the handle being leaked. Of curse this is no different than any other
+> code, and we can generally not hinge soundness on things not being
+> leaked. But after I foot gunned myself with this, I put the comment.
+>
+> [...]
+>
+> >> >> +/// A handle representing a potentially running timer.
+> >> >> +///
+> >> >> +/// More than one handle representing the same timer might exist.
+> >> >> +///
+> >> >> +/// # Safety
+> >> >> +///
+> >> >> +/// When dropped, the timer represented by this handle must be can=
+celled, if it
+> >> >> +/// is running. If the timer handler is running when the handle is=
+ dropped, the
+> >> >> +/// drop method must wait for the handler to finish before returni=
+ng.
+> >> >> +///
+> >> >> +/// Note: One way to satisfy the safety requirement is to call `Se=
+lf::cancel` in
+> >> >> +/// the drop implementation for `Self.`
+> >> >> +pub unsafe trait HrTimerHandle {
+> >> >> +    /// Cancel the timer, if it is running. If the timer handler i=
+s running, block
+> >> >> +    /// till the handler has finished.
+> >> >
+> >> > Here's another case where "running" is confusingly used to refer to
+> >> > the timer being in the state before the handler has begun to execute=
+,
+> >> > and also to the state after the handler has begun to execute.
+> >>
+> >> Thanks for catching this. How is this:
+> >>
+> >>     /// Cancel the timer, if it is in the started or running state. If=
+ the timer
+> >>     /// is in the running state, block till the handler has finished e=
+xecuting.
+> >
+> > Certainly better. Consider dropping "if it is in the started or running=
+ state".
+>
+> OK.
+>
+>
+> Best regards,
+> Andreas Hindborg
+>
+>
 
