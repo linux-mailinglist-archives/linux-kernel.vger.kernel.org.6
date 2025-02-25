@@ -1,295 +1,236 @@
-Return-Path: <linux-kernel+bounces-531342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3C6A43F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD1BA43F5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 192451726F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FAA8173074
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CEF267AE9;
-	Tue, 25 Feb 2025 12:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED824267B82;
+	Tue, 25 Feb 2025 12:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="mLpk/US7"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2102.outbound.protection.outlook.com [40.107.249.102])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="GLnD6WDj"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105CB19C54F;
-	Tue, 25 Feb 2025 12:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486257; cv=fail; b=dToXv5VvTKII/mp9dUScTeVynb08RtFNKIBztZiJdd3Fxsh9iRS2+9wWeD9ufbLDtnGsHlxPC6tPvUqiaPXPnKpl2PKtbmBx/Y+gLz9rrPiF9QiAu9SUCEOcS+/unlI9rsNF71zqK31HSNP3QHEXeRIv+WaGP2s/EZafvKgtMYM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486257; c=relaxed/simple;
-	bh=d7weKjZz+ZHmIw4XnMzEwDLnpTVSDWqySPUaclt6rME=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GccVajdmIBQPoEkh8hn9CbzqsiL8LaNqpbhMc/HbvR04lDzx0wbUCCokOiY5udlA8dqk+pTj36gluD4My3scIYMi8TMtdV/ddw6IwoHpYVaUqPWOAjklUorkWimSiEPvxo1vrbvq2ur/9Qut7vJLiJtsZyWRDSzAzObewK2m0WE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=mLpk/US7; arc=fail smtp.client-ip=40.107.249.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zBqUMYwgidIaxsaiBbXS9BWf/Qs/RqiQr9CZ8ktkwqKNVPfAdYILVV9ejOEScu/eClPqhymI2sYLg6TsJ4+wvzobxjMFdRrjRO30VpM+PwhsmqXkyZQI42sqeYdan5x5OY77QnF4eM8QbR0zvT+dMQSxXgQqnSCWY+gaAD8LCYMIjcgHvDE6Vfw3v6buVBJ2C9lfgBLg0BPV5aigsdW9B9Q1LgQMupgtd2xMcvQLe9BX/NGFIkF6H3M1tDy24nWn/PlNW8IIndR7Djv7Lq2a5KlRbNoVgIL4/6b0vErTqX4/3C7mDjC3xJo02g7EBttRGK7qlKTnic+TJwGOB88KwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d7weKjZz+ZHmIw4XnMzEwDLnpTVSDWqySPUaclt6rME=;
- b=VluapiWOF0rCuwsIvf/sHZVsVHyRoaUwIPWw4t/rYolNEyqcqTIrp4OTTPxN4D4OcpoPQ3Istk0Nl8OIGgxEYJj0XkYsgv/t/vjuezTnd1FqC1ayGzF+ppUY0A9p9fx0Nedqb9/VHCHrPjRRnC22J8hA7MHsdiS9w3yjCAJU7t+S3b33WrR4xC1ro5D0/mkGUR+J78Qn0mu4J9E506tIUTw7lA/7Y9860ScZAbjPOyGdHCIHYgz/f6q6QXKDBtKtvFZT6I4+v1bphbgsGkHUBVm4Knb5Ou6yXB8fHpBchb2f4lDPBllX7NGnyf3hsyxelSwEHguNrmyL/oe+rRRD4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=gocontroll.com; dmarc=pass action=none
- header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d7weKjZz+ZHmIw4XnMzEwDLnpTVSDWqySPUaclt6rME=;
- b=mLpk/US7Gdnbr3RTP298WWttKFoyuREH3tTxA1AtGPvgG2m6THeTTf2Ak53BQzsEygGs/Bv77fejyhBPe0nQP7yOQxt51TYqrvBqtgjH8duRtksrvIYzOzI1ULIUMZIJ/TkOFJcl84MoLcSOgTAz3YaxbjW+oD5f3zgkTDfFfxTX5pMyAbKWsTWA99bdGEBmxsnBRqkO/D8h2tZ901SwqRRPf1ZpKbXF7afbg5MrVlKGMNdZH631j6yhruPHkKaP4qdM9DuTwIqzfyBXxaQ+s9Gop+n8Fk1A2RFEiMz8GkW6R8UK2xhTiysSltjKFmCSxbEVPI4CbR8cOo5Xh+5Aqg==
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com (2603:10a6:102:ec::16)
- by VI0PR04MB10784.eurprd04.prod.outlook.com (2603:10a6:800:266::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 12:24:09 +0000
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f]) by PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 12:24:09 +0000
-From: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Liu Ying
-	<victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
- Moduline IO modules
-Thread-Topic: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
- Moduline IO modules
-Thread-Index: AQHbhsMosk0/ripJzU6HkH3zRHdpDrNW7EQAgACtnhWAAFAuAIAABT4Z
-Date: Tue, 25 Feb 2025 12:24:09 +0000
-Message-ID:
- <PA4PR04MB76306D77C93FF2C51524BD95C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
-References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
- <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
- <20250224204428.GA4050751-robh@kernel.org>
- <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
- <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
-In-Reply-To: <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=gocontroll.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB7630:EE_|VI0PR04MB10784:EE_
-x-ms-office365-filtering-correlation-id: fec05d91-8d6e-4128-3ca3-08dd55974ddb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?z6JpjhtmQvVZRjCMxgcH2NzT7A0DW9k5PTql1yUoIA01yHHKbXfZpb3UY7?=
- =?iso-8859-1?Q?+AWc+4bSZZ4OM4fsxdUzBnKPqs0zG+DsySeFVZedllOIH0+lKFynMopSJ2?=
- =?iso-8859-1?Q?BaBoparlBIyq9KMLGL6jZIMz4hYgxU9ZAjpgMX9W/Sd4K/kbIp6raDNtcI?=
- =?iso-8859-1?Q?U8THooCNLNrE8+TJwiSzkaDylaiv6t/Uv0brquZvmdSxG+ak0wTbTXGVlp?=
- =?iso-8859-1?Q?8pUmnlTHzZgbfEEnBwmXEIeR+f4PcrRfpfuCH778nEMxmT5bwONb2zK37B?=
- =?iso-8859-1?Q?0WrgiH8pyW75QLkWdGYhj8PDVrHtMqcmfM/1k2nnDu7V042orBn1H3Yr/l?=
- =?iso-8859-1?Q?LJEI0UiiAhufkQSG256g4vr79lF7q58l9UPHSJVxEWpNSmtWF/n5AelevF?=
- =?iso-8859-1?Q?Jq/KWnEFsnANhFkrM6gAi88/nmQ/YWyrNyY/XLQToT6+d3V4evaMZb3rjU?=
- =?iso-8859-1?Q?4R5kt6LVDPPbHmkEODk5tiE5eAxhU6i0zRS96Gu62mhX2I64tLLl6rsyjz?=
- =?iso-8859-1?Q?cvi03c9J692UuPIo0FJGPnMvyl4ocAqS0281mUhkZ+8pZpGgeSq6env2Af?=
- =?iso-8859-1?Q?cbP/g5Vgsu39HLyAgRkv8GFSa+VEB9Cdn1glOuTe/vjDI41E6GMIJyJjBz?=
- =?iso-8859-1?Q?pcyX5AzyG72OHQ5C2Jn7xIMfu5wHNsXFenE1AWCJThkCkbkzWYZwSAU1Cj?=
- =?iso-8859-1?Q?5hxiuaIh5pwyvOMw6acy1O4zlGZW8qhE4ZGtRijndg5ug1p1Y+Gok49LVJ?=
- =?iso-8859-1?Q?kdZQcXGVLW1yuHsvSSDKgRDj5klIA+u/IziV7hCqw8b+5F7b1Ga3ksPwU3?=
- =?iso-8859-1?Q?9GyfS/m9jX5vm6R2ty33eXb3GeAwgqjF3YwODyefBquAbU1i8y71CSUe1u?=
- =?iso-8859-1?Q?8qPREyOC9ZelOil/b1nOKAv/mU6wpJU4J0JyjI7gtt/kuAM7XbJKTQPbFK?=
- =?iso-8859-1?Q?M3SwRQxpDSoOvtbLVFV97r3t9KCyrINh4bgXce2KudU7X7XWD02g0n4mKx?=
- =?iso-8859-1?Q?gzTnRt+8pGcoOGnVKOHWEYCOBtqZRjbQoQTX/9czPq9NYxKE/soKGbsy0y?=
- =?iso-8859-1?Q?l1kLc4lFgJ64OAUIxWNwliUs3I1+k5HPsaxsdNDb0iYY3yg9FwIx01KsqT?=
- =?iso-8859-1?Q?11oUYXNgeDaDYVCAvpnCQPvhABd2MWV6/6A/pAKbnN2s1PsVRd0V9MtsYo?=
- =?iso-8859-1?Q?ZDLpHdQ8761s+RNUiNC39sw7vKvWdVn6tJntzAGHeg/t7s0AuyHnmjUky3?=
- =?iso-8859-1?Q?KRWymHQ2e13sEg93i3MFzdBKzB1wtCrZ9SXTLJINKH6erFrvCpl5tQ8PXA?=
- =?iso-8859-1?Q?rbL9VoRsT2zWTsJCgCUaME1IjcprpnV4UPsdL7gIdxjj9lgzjnReS5hmWA?=
- =?iso-8859-1?Q?YLWaOs1Uv1BZHs2ffTVjK4+QUqTdLgq22kb+ViBStWsCi11v3kk1MdbEh/?=
- =?iso-8859-1?Q?q3PpcwwhZ9KMgwz0zOfhgWQFMoHG7H2ZLM1ZTD2nBK3qer5PGCfZTBSW7q?=
- =?iso-8859-1?Q?TolcvNI5nc1A6CrfudpSDy?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7630.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?JWhKC3yf/S9xKaWKgySku0xjjqXa3fK8l09pYa++5YvYzBMYzZIwnE8/vK?=
- =?iso-8859-1?Q?S64vvtT1Hn3crK2NibkPdhbQYlPs30SZnWmAjwKnW+Lxd5E7tFBYTKk2tA?=
- =?iso-8859-1?Q?JEm/phBMvxhcH79IvoFEfpA325BfxQ8yG4Kdo+GQdKxxGbGMLGvZIClpNj?=
- =?iso-8859-1?Q?/EYPBoY9mD6l1Ms71BjsO+QWZu8YiNcASJjlqSmPw05emXMFNr0IIj+1ud?=
- =?iso-8859-1?Q?kqTQPspGjgmB4sgVQjOepj6lE4szdh9kSPcCmiha+/qk6MuNo0EnJMpXZT?=
- =?iso-8859-1?Q?oRbtMN8Thlvx8zWtDmoOk63Epns8dlml/UZnwf585nmvdUAe4nNREMVh5w?=
- =?iso-8859-1?Q?mLt9bsJ/oBoPs6DvRAsUQds0yslmnLYEeIOgvW2KR+zKBAYnOZpq0ttHJl?=
- =?iso-8859-1?Q?6ITj1G3S5vD+DfnScknENAQZAUQa7Tvigr68Z6MgfChPBv8/2Ded/CQXyK?=
- =?iso-8859-1?Q?RhwVGFHCIEUW426fMqKKZj8NJwByxtokXsFnxkTLAqoAptVVi17CEXDpjy?=
- =?iso-8859-1?Q?b7Pxr5ay9RO+7WbOOxnxF5ROtPB5UIVZEjFGkY7V+PScvwC9C2XHmtXgHS?=
- =?iso-8859-1?Q?CjNCaAxNwsTpnl6HCpD5Qt7eLkS/ushwVdJzryc3+iASGI1uq2P/eAhaAi?=
- =?iso-8859-1?Q?WeQ26crD53cRbg7tr3sIDacjWNuQB+xdLWYpj81bwh3Bxmg8pq79vTMC7K?=
- =?iso-8859-1?Q?BTIo3FuKISRHeeHqMrtRrSruG7lLWTBXkNTt01LUzXfmCZ0OTmIX0qHv3N?=
- =?iso-8859-1?Q?9yTj2Cw1c56ZFQDZzDJWEzEbrhXqxaPwIEQf9h456GXcj8FUBcA9sMorRc?=
- =?iso-8859-1?Q?Iw4EuxWMQCs8GQ7c3yfDSUOA+wytqD8H+JjvPQwfSI855wX1ueFyDQatDg?=
- =?iso-8859-1?Q?PbMF01ZOJp1BR+jEgJa4MoYAjygZGaa3RFIrDQ8ZuDN0meYpy2ARKm2f7R?=
- =?iso-8859-1?Q?TVyHYlofK/P5KtO4t2ZFcShQp1SqGqbHc8Pno+vQCDHYP+irBcTqg5/04u?=
- =?iso-8859-1?Q?dqAALuUsTvjLHgJbALO7/36nATeRXSsxTVk21uzUJHCcasW0V2wvtEil1H?=
- =?iso-8859-1?Q?+pwBaZ8RkZQPbwnr/vcMB6BOCJmQY0eXWwzl3JEWkb/qI295Wu3jNs6o0K?=
- =?iso-8859-1?Q?tcZCnqfnuM3GIvjsQM1jLKRqa6EIb2VRV9JW74VD/h7gPVe5XdfiiWttJW?=
- =?iso-8859-1?Q?e/tYQQ/Q2CbvPE1knXrJr2fPzsd0xkBtGPtcfi0sr/dyOQkGy1M6MGN2YF?=
- =?iso-8859-1?Q?CwZ048+z7HDbhK0dhO6/Uz8Q80cou9crS+Xple/RjPDzRDD2BrpO0jPkZg?=
- =?iso-8859-1?Q?CHHv01hhoCPQ58D88ObxY1DCbXfAVIZyTni4tiiU5/cS1KwW0iWP6ZkTzB?=
- =?iso-8859-1?Q?U6ij5+wmm4kv0Y/UZGoCyYVeBy55G3GRY5k1e03jDmsmhjVqBKmiUhj4ev?=
- =?iso-8859-1?Q?hkTWmNUjMAXkPJI1Ku3FAHXqv1tPnucRJz55hxFpzi+eaj+IaOtfNaQpqV?=
- =?iso-8859-1?Q?CQV33NJTpWMa6CM1lbbgbTB9DfNVJ/AfO9FkZQNu8FgWhjhy6O2dBuzWl7?=
- =?iso-8859-1?Q?IgQqNOxkmaw/E8/7fyAOXxZ7DmXhlNbHf6SYAcxjywyTZldE63mlSQN9za?=
- =?iso-8859-1?Q?8FIzs868C0IpZ0UUSl/9yc/CpiJShodMFTwwexSvlbeK8D+EPYjgUcxl+o?=
- =?iso-8859-1?Q?FdyWyhFFqrPMRsFk0QdqOC/X956f8eNNaUQo6wIvAaBa3p8errYdpUlXMg?=
- =?iso-8859-1?Q?zMwQ=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC07264A7C;
+	Tue, 25 Feb 2025 12:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740486336; cv=none; b=SU17EFMJJ/zafnxBPuOmSCZSiUh80SfOXOe9J4plMsiUCYY75/8Rfl0YtFOhYjvq3ZZXjNzmeizlPSwquxQu+vSJ73VFGY3UiTSTwM0C78UVTxen4yaFcIDePNPvQTkkO4fdp4i8xQ2JPb4HVTV0Gb5Z4Vo0cv1bEisuuWHKwII=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740486336; c=relaxed/simple;
+	bh=EUNR7x+ErTX7SwFbNwN3cTFManKB3FcLuuXplKAYYS8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UX2fKG0Pt2OUuwl/WHona0QL+y9k8vNegTumRabKej3T8Eb4DN6LxHIXLQ7EeLFosbaZTKWIEi4TvF+KgE1XoDQqOTOlrleKPK1YZqVcAZqbXAiCD8D7zm/0gkvkohoDXCIK8y7YaeYIlckVTdw51L7+OGODzzQZKzYp5iunJ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=GLnD6WDj; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=RW9/j1aXxH33eV1Xb7A0zQmmh3OO9ZTRX9XziHJWwh4=;
+	t=1740486334; x=1741695934; b=GLnD6WDj6fIiUDyjRmxQ08Rraz9j3nkHSCUbkOyuCoaP49J
+	q4wWNQCIQjGKO5SrZFf2TlmsOtjvmRLBCpzPu9K9EDeQS/rhHpvsetFoue6JfLsiFvfJOdrFJLNxe
+	/DcPVZERVmXxq7oahuR78HWxntwqcm2r8dievGCX106abDEQPdH2MhRq3ZuVf26no4zrvBTS53WAu
+	9iFpi+YiOwmuJQqKP8rNpr/jLl8jfBSZgFrbugGQCfQX1Zbw5WUsO5K1eMzYsMeFCKkFUDSLGPpxT
+	XD4GO6OWQKtcJH6l6YLgZv+BjbuCtio0rimHQ4Za6I2texPYYdcQNXHc658G8jiQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1tmtzX-00000009sLI-41WK;
+	Tue, 25 Feb 2025 13:24:52 +0100
+Message-ID: <7e91bea34552472757a8eec425d1d10643ca584b.camel@sipsolutions.net>
+Subject: Re: [PATCH v7 5/7] mseal, system mappings: enable uml architecture
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "jeffxu@chromium.org" <jeffxu@chromium.org>, "Jason@zx2c4.com"	
+ <Jason@zx2c4.com>, "adobriyan@gmail.com" <adobriyan@gmail.com>,
+ "deller@gmx.de"	 <deller@gmx.de>, "gerg@kernel.org" <gerg@kernel.org>, 
+ "anna-maria@linutronix.de"	 <anna-maria@linutronix.de>,
+ "davem@davemloft.net" <davem@davemloft.net>,  "avagin@gmail.com"	
+ <avagin@gmail.com>, "mhocko@suse.com" <mhocko@suse.com>, "enh@google.com"	
+ <enh@google.com>, "thomas.weissschuh@linutronix.de"	
+ <thomas.weissschuh@linutronix.de>, "hch@lst.de" <hch@lst.de>, 
+ "hca@linux.ibm.com"	 <hca@linux.ibm.com>, "peterz@infradead.org"
+ <peterz@infradead.org>,  "adhemerval.zanella@linaro.org"	
+ <adhemerval.zanella@linaro.org>, "linux-kernel@vger.kernel.org"	
+ <linux-kernel@vger.kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>, 
+ "jannh@google.com"	 <jannh@google.com>, "f.fainelli@gmail.com"
+ <f.fainelli@gmail.com>,  "sroettger@google.com"	 <sroettger@google.com>,
+ "ardb@google.com" <ardb@google.com>,  "jorgelo@chromium.org"	
+ <jorgelo@chromium.org>, "rdunlap@infradead.org" <rdunlap@infradead.org>, 
+ "mark.rutland@arm.com"	 <mark.rutland@arm.com>, "Liam.Howlett@oracle.com"
+ <Liam.Howlett@oracle.com>,  "vbabka@suse.cz"	 <vbabka@suse.cz>,
+ "mpe@ellerman.id.au" <mpe@ellerman.id.au>, "oleg@redhat.com"	
+ <oleg@redhat.com>, "willy@infradead.org" <willy@infradead.org>, 
+ "keescook@chromium.org"	 <keescook@chromium.org>, "peterx@redhat.com"
+ <peterx@redhat.com>,  "mike.rapoport@gmail.com"	 <mike.rapoport@gmail.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,  "rientjes@google.com"	
+ <rientjes@google.com>, "groeck@chromium.org" <groeck@chromium.org>, 
+ "linus.walleij@linaro.org"	 <linus.walleij@linaro.org>,
+ "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,  "ardb@kernel.org"	
+ <ardb@kernel.org>, "42.hyeyoo@gmail.com" <42.hyeyoo@gmail.com>, 
+ "linux-mm@kvack.org"	 <linux-mm@kvack.org>, "johannes@sipsolutions.net"
+ <johannes@sipsolutions.net>,  "linux-hardening@vger.kernel.org"	
+ <linux-hardening@vger.kernel.org>, "torvalds@linux-foundation.org"	
+ <torvalds@linux-foundation.org>, "akpm@linux-foundation.org"	
+ <akpm@linux-foundation.org>, "dave.hansen@linux.intel.com"	
+ <dave.hansen@linux.intel.com>, "aleksandr.mikhalitsyn@canonical.com"	
+ <aleksandr.mikhalitsyn@canonical.com>
+Date: Tue, 25 Feb 2025 13:24:49 +0100
+In-Reply-To: <d2aeeb56-ba8c-49f3-957d-1ac790522233@lucifer.local>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+		 <20250224225246.3712295-6-jeffxu@google.com>
+		 <c5d3927e-06e3-49e7-a1d6-f4c9e817def4@lucifer.local>
+		 <96ebddf3fe31353c89f6a4680eaeb2793c25cd09.camel@intel.com>
+		 <d2aeeb56-ba8c-49f3-957d-1ac790522233@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: gocontroll.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7630.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fec05d91-8d6e-4128-3ca3-08dd55974ddb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 12:24:09.0995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mtmDnLrkqNqTXZiEyYhjqVi/G5RKv2F3oCTmOG2EGENM6b1qXGPWiWlbKc08C/adfYQYpfL+BaBz5Y7ccWlxZDtsZ2G4+Ks6qto0Ab69ekU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10784
+X-malware-bazaar: not-scanned
 
-From:=A0Krzysztof Kozlowski <krzk@kernel.org>=0A=
-Sent:=A0Tuesday, February 25, 2025 12:52 PM=0A=
-=A0=0A=
->On Tue, Feb 25, 2025 at 07:39:52AM +0000, Maud Spierings | GOcontroll wrot=
-e:=0A=
->> From:=A0Rob Herring <robh@kernel.org>=0A=
->> Sent:=A0Monday, February 24, 2025 9:44 PM=0A=
->> =A0=0A=
->> >On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:=0A=
->> >> The main point of the Moduline series of embedded controllers is its=
-=0A=
->> >> ecosystem of IO modules, these currently are operated through the spi=
-dev=0A=
->> >> interface. Ideally there will be a full dedicated driver in the futur=
-e.=0A=
->> >>=0A=
->> >> Add the gocontroll moduline-module-slot device to enable the required=
-=0A=
->> >> spidev interface.=0A=
->> >>=0A=
->> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>=0A=
->> >> ---=0A=
->> >>=A0 Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++=0A=
->> >>=A0 1 file changed, 2 insertions(+)=0A=
->> >>=0A=
->> >> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b=
-/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c=
-7fb46f771a300926f05 100644=0A=
->> >> --- a/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml=0A=
->> >> @@ -107,6 +107,8 @@ properties:=0A=
->> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - fsl,mpl3115=0A=
->> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 # MPR121: Proximity Capacitive=
- Touch Sensor Controller=0A=
->> >>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - fsl,mpr121=0A=
->> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 # GOcontroll Moduline module slot =
-for spi based IO modules=0A=
->> >=0A=
->> >I couldn't find anything about SPI for GOcontroll Moduline. Can you=0A=
->> >point me to what this hardware looks like. Based on what I did find,=0A=
->> >this seems incomplete and not likely a trivial device.=0A=
->>=0A=
->> I'll give some more details, if there is a v2 of this patch I will also=
-=0A=
->> add more information in the commit message.=0A=
->>=0A=
->> The module slots have a number of pins, a lot of them currently unused a=
-s=0A=
->> they have not found a function yet, this is very much still a developing=
-=0A=
->> product. The currently used interfaces to the SoC are:=0A=
->> 1. SPI bus as a spidev to ease developing new modules and quickly=0A=
->> integrate them. This is the main communication interface for control and=
-=0A=
->> firmware updates.=0A=
->> 2. A reset pin, this is/was driven with the gpio-led driver but I doubt=
-=0A=
->> that would get accepted upstream so I intend to switch to the much bette=
-r=0A=
->> suited libgpio.=0A=
->=0A=
->reset-gpios is not in trivial devices, so that's already a hint you=0A=
->cannot use this binding.=0A=
->=0A=
->> 3. An interrupt pin, this is currently only used in the firmware update=
-=0A=
->> utility [2] to speed up the update process. Other communication is done =
-at=0A=
->> a regular interval.=0A=
->>=0A=
->> What is unused:=0A=
->> 1. A potentially multi-master i2c bus between all the module slots and=
-=0A=
->> the SoC=0A=
->> 2. An SMBus alert line is shared between the modules, but not the SoC.=
-=0A=
->> 3. A shared line designated as a clock line, intended to in the future=
-=0A=
->> aid with synchronizing modules to each other for time critical control.=
-=0A=
->>=0A=
->> current software that is used to work with the modules can be found at=
-=0A=
->> [2] and [3], one of them is a Node-RED module the other is a blockset fo=
-r=0A=
->> Matlab/Simulink generated code.=0A=
->>=0A=
->> If you know a better way I could describe this in the devicetree then I=
-=0A=
->=0A=
->You need dedicated binding where you describe entire device, entire=0A=
->hardware, not what your driver supports in current release.=0A=
-=0A=
-I see now that I also forgot the patch that adds this compatible to the=0A=
-spidev driver. Didn't check for the spidevs in testing I guess.=0A=
-=0A=
-Could I write bindings for this device, and then add the compatible to the=
-=0A=
-spidev driver for now? So it probes that driver, and then later when there=
-=0A=
-is a driver remove the compatible there and keep it only in the purpose=0A=
-built driver?=0A=
-=0A=
-So I'll write gocontroll,moduline-module-slot.yaml, don't quite know where=
-=0A=
-that would go. Define all these attributes in there and then add the =0A=
-compatible to drivers/spi/spidev.c=0A=
-=0A=
-Is that okay?=0A=
-=0A=
-Kind regards,=0A=
-Maud=0A=
+Hi,
+
+On Tue, 2025-02-25 at 10:37 +0000, Lorenzo Stoakes wrote:
+> On Tue, Feb 25, 2025 at 08:45:21AM +0000, Berg, Benjamin wrote:
+> > Hi,
+> >=20
+> > On Tue, 2025-02-25 at 06:22 +0000, Lorenzo Stoakes wrote:
+> > > On Mon, Feb 24, 2025 at 10:52:44PM +0000, jeffxu@chromium.org=C2=A0wr=
+ote:
+> > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > >=20
+> > > > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on UML, covering
+> > > > the vdso.
+> > > >=20
+> > > > Testing passes on UML.
+> > >=20
+> > > Maybe expand on this by stating that it has been confirmed by Benjami=
+n (I
+> > > _believe_) that UML has no need for problematic relocation so this is=
+ known to
+> > > be good.
+> >=20
+> > I may well be misreading this message, but this sounds to me that this
+> > is a misinterpretation. So, just to clarify in case that is needed.
+> >=20
+> > CONFIG_MSEAL_SYSTEM_MAPPINGS does work fine for the UML kernel.
+> > However, the UML kernel is a normal userspace application itself and
+> > for this application to run, the host kernel must have the feature
+> > disabled.
+> >=20
+> > So, UML supports the feature. But it still *cannot* run on a host
+> > machine that has the feature enabled.
+>=20
+> Sigh ok. Apologies if I misunderstood.
+>=20
+> Is there any point having this for the 'guest' system? I mean security wi=
+se are
+> we concerned about sealing of system mappings?
+>=20
+> I feel like having this here might just add confusion and churn if it's n=
+ot
+> useful.
+>=20
+> If this is useless for UML guest, let's just drop this patch.
+
+I figured it is not a lot of churn and there isn't really any cost to
+enabling the feature.
+
+That said, the only possible real-life use case I can see is doing MM
+subsystem testing using UML. We certainly do not need the feature to
+run our UML based wireless stack and driver tests.
+
+Benjamin
+
+>=20
+> >=20
+> > Benjamin
+> >=20
+> > >=20
+> > > >=20
+> > > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > > > Tested-by: Benjamin Berg <benjamin.berg@intel.com>
+> > >=20
+> > > Anyway I know UML has at any rate been confirmed to be good to go +
+> > > patch looks
+> > > fine, so:
+> > >=20
+> > > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>=20
+> OK guess drop this tag please until we can figure this out, sorry Jeff.
+>=20
+> > >=20
+> > > > ---
+> > > > =C2=A0arch/um/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1=
+ +
+> > > > =C2=A0arch/x86/um/vdso/vma.c | 6 ++++--
+> > > > =C2=A02 files changed, 5 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> > > > index 18051b1cfce0..eb2d439a5334 100644
+> > > > --- a/arch/um/Kconfig
+> > > > +++ b/arch/um/Kconfig
+> > > > @@ -10,6 +10,7 @@ config UML
+> > > > =C2=A0	select ARCH_HAS_FORTIFY_SOURCE
+> > > > =C2=A0	select ARCH_HAS_GCOV_PROFILE_ALL
+> > > > =C2=A0	select ARCH_HAS_KCOV
+> > > > +	select ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
+> > > > =C2=A0	select ARCH_HAS_STRNCPY_FROM_USER
+> > > > =C2=A0	select ARCH_HAS_STRNLEN_USER
+> > > > =C2=A0	select HAVE_ARCH_AUDITSYSCALL
+> > > > diff --git a/arch/x86/um/vdso/vma.c b/arch/x86/um/vdso/vma.c
+> > > > index f238f7b33cdd..fdfba858ffc9 100644
+> > > > --- a/arch/x86/um/vdso/vma.c
+> > > > +++ b/arch/x86/um/vdso/vma.c
+> > > > @@ -54,6 +54,7 @@ int arch_setup_additional_pages(struct
+> > > > linux_binprm *bprm, int uses_interp)
+> > > > =C2=A0{
+> > > > =C2=A0	struct vm_area_struct *vma;
+> > > > =C2=A0	struct mm_struct *mm =3D current->mm;
+> > > > +	unsigned long vm_flags;
+> > > > =C2=A0	static struct vm_special_mapping vdso_mapping =3D {
+> > > > =C2=A0		.name =3D "[vdso]",
+> > > > =C2=A0	};
+> > > > @@ -65,9 +66,10 @@ int arch_setup_additional_pages(struct
+> > > > linux_binprm *bprm, int uses_interp)
+> > > > =C2=A0		return -EINTR;
+> > > >=20
+> > > > =C2=A0	vdso_mapping.pages =3D vdsop;
+> > > > +	vm_flags =3D
+> > > > VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC;
+> > > > +	vm_flags |=3D VM_SEALED_SYSMAP;
+> > > > =C2=A0	vma =3D _install_special_mapping(mm, um_vdso_addr,
+> > > > PAGE_SIZE,
+> > > > -		VM_READ|VM_EXEC|
+> > > > -		VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+> > > > +		vm_flags,
+> > > > =C2=A0		&vdso_mapping);
+> > > >=20
+> > > > =C2=A0	mmap_write_unlock(mm);
+> > > > --
+> > > > 2.48.1.658.g4767266eb4-goog
+> > > >=20
+> >=20
+> > Intel Deutschland GmbH
+> > Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
+> > Tel: +49 89 99 8853-0, www.intel.de
+> > Managing Directors: Sean Fennelly, Jeffrey Schneiderman, Tiffany Doon S=
+ilva
+> > Chairperson of the Supervisory Board: Nicole Lau
+> > Registered Office: Munich
+> > Commercial Register: Amtsgericht Muenchen HRB 186928
+
 
