@@ -1,109 +1,164 @@
-Return-Path: <linux-kernel+bounces-531707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160CCA443FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:10:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA97A443F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14C13BA2A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A985D3A9C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFA9268692;
-	Tue, 25 Feb 2025 15:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ESMyZAlv"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D455E26A1C1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495906; cv=none; b=Acr4pGduA93zp9e+/qX51F+kE2WZ464DiWT0wT2zOmsPdzK7SpkTuJ3ZFL60UxsehQfF0QkbtAG+YoqEBNCBGBhvjciwzFxJJjG5ZZqJyZvfo4QCXXf7PVfhWA4+L2XghUr15FLbdOpVYmXwbRqe7wraW83duYEi6T8zSnfbUd8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495906; c=relaxed/simple;
-	bh=OqIUwNrI2NRVYapWjZN4ov2VJL8MMbFqYHRE3TL8lps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KSEFodt98BGm0dnl0dUvMcgfnOqSYE6oBmWu0Ikq8/JuUMuTXXbfI6o0m77gIjDVuO/LQcP1QRbQHh2bwvxNoGe+GW6meqt3jmnOzJyswnn3Bb5TCOsjk9HsmhZpW6kngRZ+luYTydSrzGCtOp/clkarVTO1QwHdwchv1/h2PZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ESMyZAlv; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=q87VqXrF2/CmhKNXioWRVSBysK57pH279yUQysqPB0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=ESMyZAlvgvWfdOYJZRFBB97U30piSmDiH0/KmQJ0XSHfol0Xb1WzIdOEjTP7eggeX
-	 47DDRfGAtpIe97KSZgtbUr/5IziZx3MItS22LCIcbLptFq8PPNKTn9ZS5xrifGhHh7
-	 GbN+R4cXAlRItzoPoUjfR/Zf9QVmQN/kY5xLgm38ySpVLWtRaqnRCCJAxutThHOxTv
-	 zHyJJ39O3qGxGskuGj3kWCDgXMxlE3znp92g6AWv+gBbZ7zLe5b0FZAnSTfoe0ilKk
-	 GXKnqzh6ISHo25oz/1qJI7lsJ3AV6GdOVYeuFeRUqT+q1SRzvAgEJMR6yU4oYPs2be
-	 YrybiI1z9Lj5g==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id EC8DE1804BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A849B26B0BF;
 	Tue, 25 Feb 2025 15:04:59 +0000 (UTC)
-Message-ID: <e6faab90-b4f3-4c73-b486-2e44d15d22a2@icloud.com>
-Date: Tue, 25 Feb 2025 23:04:55 +0800
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xBeN/Yg6"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767FE268692
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740495899; cv=none; b=hZS1WWMGMvLhHzV0nhes4GWX7yk9rK5dTP0aX27za6mTEiu7yKk5ISyIvyhonK/SagysuujiA4DOXaEmVdFKblZXo59QTrviDh3KKlDldI521y/iEfRExSIT9b/QfZvjuadx/uZkT5nxIeLH1/gEfgUXK6QtG7wdqTbrduAKXyo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740495899; c=relaxed/simple;
+	bh=vHxREudX9bj9dETQmre2TyJ+AerbIUB9johHAra0OcY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ghCD4geiREQ2ig04SmmMLrfTUUt8adc4F29h+QMAAq9m7O9l9j6ZIHLLysqbHIFLIQxG7njHswnuKE8eA0EVz/2V+SSM40iLBw+Ozcr4YhwIXZkEpV7d/1PygzLVgdd1tc/6e4zlF0IIsaTnKjiKmncwYrm3FFnlLPmbzN1oIag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xBeN/Yg6; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2f81a0d0a18so12372910a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:04:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740495897; x=1741100697; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SksBvCkZJsvM7Rmqh0mGEf+0QRJJwMrgdQAdOhKbL9I=;
+        b=xBeN/Yg6seyw2+zB6ZEiNjX9hpxkH/QBdcXGsrWIN7M0zfX1n3KZREQovfsb5sHBCB
+         BBCj3RS0xtpAB/TaL5zpddubnYGjgCckKobWK9b5wsQqk+Iv4kahgb8m3rMVNe8dlrh7
+         T78QtLJX/3Fq5wuzdvbQTR9QbEl431bQ/VPsg/4CePOy4EqfaES+j/3GWIdNyQLPrPdk
+         k33GeSW1YbQTMa63TCG6yMVykOG0s3BymxU1V8p58hnBKHxjP2CgDT+FgM9T1DJ92UrO
+         zYl7qOszMIfcpHt+f3UcZxQFRf7GXVQAqLJzLmTuwNF1hxdnT6YdSmFoE+o2IbCTo6M7
+         Gxgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740495897; x=1741100697;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SksBvCkZJsvM7Rmqh0mGEf+0QRJJwMrgdQAdOhKbL9I=;
+        b=v29XqbLKqOpUCUEp//fdFbeqroIRJJ7Q/lg4FjVPZuhpjBDda1Qba4IFX1lgV0aGAD
+         aGoPPvbzBLDpv3PaxGWNj8F/vYGjDNqRWak1eZWzhFvKWc955uxaH788RRY9AwvRrT6Y
+         FEsFfAMMO49XwJye+pm1C3uUWXn+m0z5ar8P0d/wFnqm53i4FOLRgxgguhaf3PjrjzWW
+         m0/dyg5FBzBI5JcqymUFWZ3oTL7qbaGmV0glmo4h/kIWcJdce06+zZ9xg8VztcRGkc5o
+         5vieFiDrUJXqFM0PZ9UA/DR6PVV+bCOgz9uvqiZJECIcsrcSpxQX5zmLV9FIk4lLFg0s
+         T7fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpxJL8vE9bpZixtMhVWn7XD0NqtFNg3FIae0BzNI+FzLa2LcLg2gDijW2d3uOr+EzbngkX5IcgSVDEPY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY2QhoEXAgDJ0iyzIP0sOuhNfqRdmX0yB0eSIBkViCfbX19m5t
+	aJHvyxTeeIlEgJxTLpH545ozb3UneDbZADxFimL/YYnDh8ou9j9IB1m234Ps6ZwKBQL743AEECX
+	v2w==
+X-Google-Smtp-Source: AGHT+IGZHL7uZNM7BfQEbB7Kx7BtB5DxGYYXBfSiN251AAOj3wJWNSwzk9hwQvuFf2tqN0hxCASkCwncVrs=
+X-Received: from pgmm27.prod.google.com ([2002:a05:6a02:551b:b0:ad5:4c6b:ab72])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9d8f:b0:1f0:e430:43f8
+ with SMTP id adf61e73a8af0-1f0fbff6f36mr6428815637.1.1740495896725; Tue, 25
+ Feb 2025 07:04:56 -0800 (PST)
+Date: Tue, 25 Feb 2025 07:04:55 -0800
+In-Reply-To: <Z71072F7FMz5aq/Q@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] of: Correct property name comparison in
- __of_add_property()
-To: Rob Herring <robh@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20250224-of_bugfix-v1-0-03640ae8c3a6@quicinc.com>
- <20250224-of_bugfix-v1-3-03640ae8c3a6@quicinc.com>
- <20250225143844.GA2279028-robh@kernel.org>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20250225143844.GA2279028-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: --H0-2Ohtd1z-A1QUBh5rO5UZOF2IauI
-X-Proofpoint-ORIG-GUID: --H0-2Ohtd1z-A1QUBh5rO5UZOF2IauI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=628 malwarescore=0
- suspectscore=0 mlxscore=0 spamscore=0 phishscore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502250101
+Mime-Version: 1.0
+References: <20250224235542.2562848-1-seanjc@google.com> <20250224235542.2562848-2-seanjc@google.com>
+ <Z71072F7FMz5aq/Q@yzhao56-desk.sh.intel.com>
+Message-ID: <Z73cF_pWIFMreOf5@google.com>
+Subject: Re: [PATCH 1/7] KVM: x86: Free vCPUs before freeing VM state
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Aaron Lewis <aaronlewis@google.com>, Jim Mattson <jmattson@google.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2025/2/25 22:38, Rob Herring wrote:
-> On Mon, Feb 24, 2025 at 10:27:59PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> __of_add_property() compares property name by strcmp(), and that is
->> improper for SPARC which wants strcasecmp().
-> Except that 'name' is the nodename (usually, with a few rare 
-> exceptions). Sparc node names are case sensitive, so strcmp was correct. 
+On Tue, Feb 25, 2025, Yan Zhao wrote:
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 58b82d6fd77c..045c61cc7e54 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -12890,11 +12890,11 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+> >  		mutex_unlock(&kvm->slots_lock);
+> >  	}
+> >  	kvm_unload_vcpu_mmus(kvm);
+> > +	kvm_destroy_vcpus(kvm);
+> >  	kvm_x86_call(vm_destroy)(kvm);
+> >  	kvm_free_msr_filter(srcu_dereference_check(kvm->arch.msr_filter, &kvm->srcu, 1));
+> >  	kvm_pic_destroy(kvm);
+> >  	kvm_ioapic_destroy(kvm);
+> > -	kvm_destroy_vcpus(kvm);
+> >  	kvfree(rcu_dereference_check(kvm->arch.apic_map, 1));
+> >  	kfree(srcu_dereference_check(kvm->arch.pmu_event_filter, &kvm->srcu, 1));
+> >  	kvm_mmu_uninit_vm(kvm);
+> After this change, now the sequence is that
+> 
+> 1. kvm_arch_pre_destroy_vm()
+> 2. kvm_arch_destroy_vm()
+>    2.1 kvm_destroy_vcpus()
+>    2.2 .vm_destroy hook
+>    2.3 kvm_mmu_uninit_vm() --> mirror root ref is 1 upon here. Zap the mirror
+>                                root and reclaim SETP page table pages.
+>    2.4 .vm_free hook
+> 
+> Since TDX needs to reclaim the TDR page after reclaiming all other pages, we
+> currently added a vm_free hook at 2.4, after 2.3.
+> 
+> Could we move kvm_mmu_uninit_vm() before the .vm_destroy hook and after
+> kvm_destroy_vcpus()?
+> 
+> Or move the .vm_destroy hook after kvm_mmu_uninit_vm(), e.g. after
+> kvm_page_track_cleanup()?
 
-Here, it is property's name and NOT node's name.
+I would go for the first option.  I'll tack on a patch since I need to test all
+of these flows anyways, and I would much prefer to change course sooner rather
+than later if it doesn't work for whatever reason.
 
-arch/sparc/include/asm/prom.h:
+Is this comment accurate?
 
-#define of_compat_cmp(s1, s2, l) strncmp((s1), (s2), (l))
-#define of_prop_cmp(s1, s2)	strcasecmp((s1), (s2)) //SPARC HERE
-#define of_node_cmp(s1, s2)	strcmp((s1), (s2))
-
-
-include/linux/of.h:
-/* Default string compare functions, Allow arch asm/prom.h to override */
-#if !defined(of_compat_cmp)
-#define of_compat_cmp(s1, s2, l) strcasecmp((s1), (s2))
-#define of_prop_cmp(s1, s2)	strcmp((s1), (s2))      // others HERE
-#define of_node_cmp(s1, s2)	strcasecmp((s1), (s2))
-#endif
-
-actually, later __of_update_property() and __of_find_property() use
-of_prop_cmp() instead of strcmp() to compare property name.
-
-perhaps, compatible and node name also have similar issues in current
-OF codes.
-
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1e5f6f820c0b..f5685f153e08 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12874,13 +12874,19 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+                mutex_unlock(&kvm->slots_lock);
+        }
+        kvm_destroy_vcpus(kvm);
++
++       /*
++        * Do final MMU teardown prior to calling into vendor code.  All pages
++        * that were donated to the TDX module, e.g. for S-EPT tables, need to
++        * be reclaimed before the VM metadata page can be freed.
++        */
++       kvm_mmu_uninit_vm(kvm);
+        kvm_x86_call(vm_destroy)(kvm);
+        kvm_free_msr_filter(srcu_dereference_check(kvm->arch.msr_filter, &kvm->srcu, 1));
+        kvm_pic_destroy(kvm);
+        kvm_ioapic_destroy(kvm);
+        kvfree(rcu_dereference_check(kvm->arch.apic_map, 1));
+        kfree(srcu_dereference_check(kvm->arch.pmu_event_filter, &kvm->srcu, 1));
+-       kvm_mmu_uninit_vm(kvm);
+        kvm_page_track_cleanup(kvm);
+        kvm_xen_destroy_vm(kvm);
+        kvm_hv_destroy_vm(kvm);
 
