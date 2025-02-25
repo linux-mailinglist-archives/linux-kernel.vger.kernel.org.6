@@ -1,206 +1,110 @@
-Return-Path: <linux-kernel+bounces-531759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB88A44482
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:35:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA66A44484
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D565179A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78DC717DEB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03079156960;
-	Tue, 25 Feb 2025 15:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C9415198B;
+	Tue, 25 Feb 2025 15:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rbYcIPYs"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpovPZ8x"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E47642A8C;
-	Tue, 25 Feb 2025 15:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD181624C4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497591; cv=none; b=JkmCH4lLT2uWA56AOffNKavoDVEFWqzAIr9Gkp+h4y+8P/LFQTBi9OtkyKeid5Xbqc4ZqoDtPvJxPHpmu8Mz2h9CXB3EEJfJ0cgVmbmcnp9YxhhVinGi2RCSXsbj2oQf1S+0biNeQ7tC6pjQO9IOmar2hGDnKvWwPm/eGaUqgi4=
+	t=1740497596; cv=none; b=GmbnJ7O4qOOqSlmkimv9PEVcka5PS13oO2n8/bE3nEVXMgClz6rv0oGG+5M0Q2A3KIi/X+HvVCFW05VsuTJNLHOA5I/f+iSplSJw5VhUlXKQbuk5T/v3lcur3NseX2QjRsYba7MUKhGhXF+sp5uIpO6SJ+7f4LUnKLCZMhmBZCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497591; c=relaxed/simple;
-	bh=NB3Ck5iopHslm0lllp1K8pfnwoMHYcDXFKgUU42IWKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvcIX5HxOBOXMCysstAO4IcrCeAtOwoHpVVm+1JD8gadINqKBlXhxI5fnw74dnaowGkB6L32r/whDpjItnl9Lxa3YFR9M6gXql0OW9YTLu80mbU4WpZSJZG2hM2ovgyMvotlquesEiFTWK8mrmrOqlG9c6kOe6oGa9sYs+55jaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rbYcIPYs; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MZEzMJLWhR18exaXAwg6HdM4ASsrIPJJFCYkErtszkQ=; b=rbYcIPYswSC/DeKeX96XqlAq+M
-	gRAoGGSuuCTCNV9RSSfJaytPzEKfJXHqOa5VvI2yQrnDqHt3116cdNwcMsgEUUo6wwssjMsAc1r2/
-	hBdCpd9s3jHXO9DTuo7RvB1LertfZTxdMfcxJ9Z/Ia7rcfT3RL6CNPdJDMzXF3ntWxLzDFxFO1wq5
-	g7qOTByJYodjMJA0dJIG4DtpQow+2pM76++zPnrUBG5ErnQRr28X9MM4Zmcf5nu1/AMfkeP/Ibias
-	JychAqRNOfwH6gllx4QCZi7+W7fVuwpJ/ZtSUAKD83WEJ+P5wwvhGQJjF9Od7PrAaz19LpI9Uk0E2
-	V4E5P1vw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmwva-00000003MGd-3FKz;
-	Tue, 25 Feb 2025 15:32:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B010D300472; Tue, 25 Feb 2025 16:32:57 +0100 (CET)
-Date: Tue, 25 Feb 2025 16:32:57 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 18/24] perf/x86/intel: Support arch-PEBS vector
- registers group capturing
-Message-ID: <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1740497596; c=relaxed/simple;
+	bh=Tq0JAILQnrwUNJlWo2imokvsNwFjJTOC1cGqEdpzsok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IgIvhXOKa/ef7dhM/asDDkVuhF/fJE6FGcyyY+lnWqRzgvkuHX96lkgANF+Ph8j0d7s5yI9+Mym9xkXDM5wbj5mamZPHFcg12pJdbOr6odyaOx5nDL3KLvxQuJFUaqIimR80iCYkJ36NoVUWKUGOkyi7DElMUNNGFnZa3G4+Ngc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpovPZ8x; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3072f8dc069so59180261fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:33:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740497592; x=1741102392; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tq0JAILQnrwUNJlWo2imokvsNwFjJTOC1cGqEdpzsok=;
+        b=hpovPZ8xTcI6Jy93VnRnKaYvPVMOb4jLhMZoy4QL6kidBbCPG97TSx6pM+72DpV4Yp
+         d+DX6NJVro64tgeHkap4MLduQEIcgqAnMMVzHDuOsz78MPe0xdwAtoiKw9vyFPjt3LTi
+         Ntr+CcUNVFIdF79sTe7fbWao2Gd2vJYzCJFp9zgTmuzWsYyEXyFND97M2yylntM3uOAT
+         sFOp4VlfnbIUck0MfgzFE1lHGlGxyw5rsyU5mmKe8gptN8NOhgL2yMmGUfliWWsVJYqZ
+         oIHrdo1+kp7R8ehTtHpYaFqkPTTz3lcT1h1UoyI70NtSlp6Rhkczink8svXXokJZIWMN
+         wLqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740497592; x=1741102392;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tq0JAILQnrwUNJlWo2imokvsNwFjJTOC1cGqEdpzsok=;
+        b=h/Nzr2olF8QUPWfL3g1I4GvYMI3Abxn5GonWOXfwBZYdf1QjN9Y9OBifJ9s7OwpCFF
+         h9OzDQgd3kN777+MEO0VAM+0vJ2onixwlP2q061s8wplOd2kN7J7d8WkWCYohXi8gFLl
+         Sx0oQ0td1iYcbvenpvUJPDQXan+b/K4Nr8PbCMRXGO1e7BbBxJwu7hJbC8pqcLsllAxh
+         tqMjIDwuWZ26FT3nc6eKuD7PU1U8SUDW70hTuJwFIMzFMq1arskViwPKD1IdctIRKveg
+         AKhJTD3uFCNFoP9i1l6KhsW3TmXbWTSCtLxBJPrqkcBWSnP+LabcDzhFT/Wdgs518+of
+         kFTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzPHUPgATz0L9V6UTERASLOVqTFlj9xkYMkaDRnX0KTPxqdzSbK/OBqDtbO7n+I5jmbNSOWKcC950J+4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRlCKCz/FNH7j1YHi7Ct42svtTdarwmAYE8q94/VRWZ1JRIQHd
+	2RobbpXZztxTC7npkHFVE90buwgVTceqS95rnbIKNS9gdiJ3G58oiyOZ6KqcsNiTB7dGPhAve3K
+	WeZ9hFwIpy/c2iwblwwgveQasnAlLzp3SX1HnSQ==
+X-Gm-Gg: ASbGnctNZeINgIOiNX1lqdCMVrsI02JLUqdEmPSOTtj8FW/PIXzIgYy0gNZeJ3Qf9Ap
+	y9oqHzsqrmPI0GPiHrW9Fpquwby0n+aqvE3sNJzjEHfFfVRDbBO6TR/6UIXmuR6W/HQ//tlLid7
+	NI501k/vk=
+X-Google-Smtp-Source: AGHT+IGObra9Tx3ZHxqC0tnEIpcJ9EtsRQQnnThFPr2iy8wxSLtweQx5fZAZ2r60/7qKj5zUv2tlIOi/SsAuuP89YE8=
+X-Received: by 2002:a2e:9583:0:b0:302:1fce:3938 with SMTP id
+ 38308e7fff4ca-30b7915f78dmr51951fa.11.1740497592318; Tue, 25 Feb 2025
+ 07:33:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com> <20250221180349.1413089-3-vincenzo.frascino@arm.com>
+In-Reply-To: <20250221180349.1413089-3-vincenzo.frascino@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Feb 2025 16:33:00 +0100
+X-Gm-Features: AWEUYZlmYF-dBAz6Af0Nh3BXuPzjG8T7cjYs05yRSwlUmuQ4nt6ckOluFYjoK9Q
+Message-ID: <CACRpkdYR7zCOfRcbixPbtupLue-QsaCCh5WyX-fGBk5zMQ15NA@mail.gmail.com>
+Subject: Re: [PATCH v7 02/10] dt-bindings: arm: Add Morello compatibility
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Jessica Clarke <jrtc27@jrtc27.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 03:28:12PM +0000, Dapeng Mi wrote:
-> Add x86/intel specific vector register (VECR) group capturing for
-> arch-PEBS. Enable corresponding VECR group bits in
-> GPx_CFG_C/FX0_CFG_C MSRs if users configures these vector registers
-> bitmap in perf_event_attr and parse VECR group in arch-PEBS record.
-> 
-> Currently vector registers capturing is only supported by PEBS based
-> sampling, PMU driver would return error if PMI based sampling tries to
-> capture these vector registers.
+On Fri, Feb 21, 2025 at 7:04=E2=80=AFPM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
 
-
-> @@ -676,6 +709,32 @@ int x86_pmu_hw_config(struct perf_event *event)
->  			return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * Architectural PEBS supports to capture more vector registers besides
-> +	 * XMM registers, like YMM, OPMASK and ZMM registers.
-> +	 */
-> +	if (unlikely(has_more_extended_regs(event))) {
-> +		u64 caps = hybrid(event->pmu, arch_pebs_cap).caps;
-> +
-> +		if (!(event->pmu->capabilities & PERF_PMU_CAP_MORE_EXT_REGS))
-> +			return -EINVAL;
-> +
-> +		if (has_opmask_regs(event) && !(caps & ARCH_PEBS_VECR_OPMASK))
-> +			return -EINVAL;
-> +
-> +		if (has_ymmh_regs(event) && !(caps & ARCH_PEBS_VECR_YMM))
-> +			return -EINVAL;
-> +
-> +		if (has_zmmh_regs(event) && !(caps & ARCH_PEBS_VECR_ZMMH))
-> +			return -EINVAL;
-> +
-> +		if (has_h16zmm_regs(event) && !(caps & ARCH_PEBS_VECR_H16ZMM))
-> +			return -EINVAL;
-> +
-> +		if (!event->attr.precise_ip)
-> +			return -EINVAL;
-> +	}
-> +
->  	return x86_setup_perfctr(event);
->  }
->  
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index f21d9f283445..8ef5b9a05fcc 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -2963,6 +2963,18 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
->  			if (pebs_data_cfg & PEBS_DATACFG_XMMS)
->  				ext |= ARCH_PEBS_VECR_XMM & cap.caps;
->  
-> +			if (pebs_data_cfg & PEBS_DATACFG_YMMS)
-> +				ext |= ARCH_PEBS_VECR_YMM & cap.caps;
-> +
-> +			if (pebs_data_cfg & PEBS_DATACFG_OPMASKS)
-> +				ext |= ARCH_PEBS_VECR_OPMASK & cap.caps;
-> +
-> +			if (pebs_data_cfg & PEBS_DATACFG_ZMMHS)
-> +				ext |= ARCH_PEBS_VECR_ZMMH & cap.caps;
-> +
-> +			if (pebs_data_cfg & PEBS_DATACFG_H16ZMMS)
-> +				ext |= ARCH_PEBS_VECR_H16ZMM & cap.caps;
-> +
->  			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
->  				ext |= ARCH_PEBS_LBR & cap.caps;
->  
-> @@ -5115,6 +5127,9 @@ static inline void __intel_update_pmu_caps(struct pmu *pmu)
->  
->  	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_XMM)
->  		dest_pmu->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
-> +
-> +	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_EXT)
-> +		dest_pmu->capabilities |= PERF_PMU_CAP_MORE_EXT_REGS;
->  }
-
-There is no technical reason for it to error out, right? We can use
-FPU/XSAVE interface to read the CPU state just fine.
-
-
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index 4b01beee15f4..7e5a4202de37 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-
-> @@ -1437,9 +1438,37 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
->  	if (gprs || (attr->precise_ip < 2) || tsx_weight)
->  		pebs_data_cfg |= PEBS_DATACFG_GP;
->  
-> -	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
-> -	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
-> -		pebs_data_cfg |= PEBS_DATACFG_XMMS;
-> +	if (sample_type & PERF_SAMPLE_REGS_INTR) {
-> +		if (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK)
-> +			pebs_data_cfg |= PEBS_DATACFG_XMMS;
-> +
-> +		for_each_set_bit_from(bit,
-> +			(unsigned long *)event->attr.sample_regs_intr_ext,
-> +			PERF_NUM_EXT_REGS) {
-
-This is indented wrong; please use cino=(0:0
-if you worry about indentation depth, break out in helper function.
-
-> +			switch (bit + PERF_REG_EXTENDED_OFFSET) {
-> +			case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
-> +				pebs_data_cfg |= PEBS_DATACFG_OPMASKS;
-> +				bit = PERF_REG_X86_YMMH0 -
-> +				      PERF_REG_EXTENDED_OFFSET - 1;
-> +				break;
-> +			case PERF_REG_X86_YMMH0 ... PERF_REG_X86_ZMMH0 - 1:
-> +				pebs_data_cfg |= PEBS_DATACFG_YMMS;
-> +				bit = PERF_REG_X86_ZMMH0 -
-> +				      PERF_REG_EXTENDED_OFFSET - 1;
-> +				break;
-> +			case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMM16 - 1:
-> +				pebs_data_cfg |= PEBS_DATACFG_ZMMHS;
-> +				bit = PERF_REG_X86_ZMM16 -
-> +				      PERF_REG_EXTENDED_OFFSET - 1;
-> +				break;
-> +			case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM_MAX - 1:
-> +				pebs_data_cfg |= PEBS_DATACFG_H16ZMMS;
-> +				bit = PERF_REG_X86_ZMM_MAX -
-> +				      PERF_REG_EXTENDED_OFFSET - 1;
-> +				break;
-> +			}
-> +		}
-> +	}
->  
->  	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
->  		/*
+> Add compatibility to Arm Morello System Development Platform.
+>
+> Note: Morello is at the same time the name of an Architecture [1], an SoC
+> [2] and a Board [2].
+> To distinguish in between Architecture/SoC and Board we refer to the firs=
+t
+> as arm,morello and to the second as arm,morello-sdp.
+>
+> [1] https://developer.arm.com/Architectures/Morello
+> [2] https://www.morello-project.org/
+>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
