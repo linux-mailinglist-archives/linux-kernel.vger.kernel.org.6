@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-531072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8958FA43BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:37:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB50FA43BDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332AD1885CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1C1165AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDFD1E1020;
-	Tue, 25 Feb 2025 10:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A12260A26;
+	Tue, 25 Feb 2025 10:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D1LUvCjJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YtYJ9t6b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8598024EF9D;
-	Tue, 25 Feb 2025 10:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DA01C8625;
+	Tue, 25 Feb 2025 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479545; cv=none; b=QnykZHf8CYZrJFljtzIlR75zLVquJk0D1n5Gb3YUhSkAI9Wu1uhtFPnGwCFs3K2uDG3h02/k37OQ6G1FwNDrYOgk9WMb7eFtIByR2wKDZ66a8LLAcO4rdk8e3d3pf1AY/v0Hj4EIoyqdmqnxvsYFpBJI+E7KaVHJ2tCwVlUrpo0=
+	t=1740479612; cv=none; b=McfNer5x4I4PJ+nXWMdhIGk2ZKWf7fwTq3lJCvw2WPZjUM97nxOhCiriKIQDv+VHP4/HWk96H6DQe5Q1tz4jBiqchdC3lC/616AFxD44/Y7VsG+4HyqT1/y6K8C0D9h+mgfmUPfvHsndjkVu6QK3AQiG9YLXKclnB2fXIQElg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479545; c=relaxed/simple;
-	bh=+OCR+GIe5xLZeikUC6PfXnk5joRi3BkvxLM8KgsPD/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I4y7i/HIIjFfgUWK8N2F0nTXdzxecPYXeVpnASy6oIZeQn3vxUm/XEBpd4cfE3FyFiqzE3J7KvriPdtspVR4w4d46qPLJyGI9qmug/TviDFMRa0W8sv9DVpKt+YNTVMfdliVkmE+9uN1+x5xGifRWwjWyhMoLUrv436lzWSDArM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D1LUvCjJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740479535;
-	bh=+OCR+GIe5xLZeikUC6PfXnk5joRi3BkvxLM8KgsPD/I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D1LUvCjJ/Lp9/MzZCTPHnFDrM/RaVCl63na+WpzXRc258xsAnex+V63/K8eHEI9AZ
-	 S07lTsMu1yM1M7uoFWiTkDQPHXgvb0L8Zf9gs5NUCWOxrz0ukXyAR9xqEGDJdBt/9B
-	 KyHuEc5Hsfoiy2d3Iuk52Ns0Fr9tMh5G2gJCFMkd4sHRPgR8vOi3P6QX8xWHOArICs
-	 8AQ4dbE3VSVzfoqGqYG3C5W1R2kI/sVsT3wJLYqUrya5tiO/phtTFyC0CWuSLl3flo
-	 Ul8m6a1ivzYJ6wVyaaXEskD9gTVokV0snqchY1o+eeu6fPQhEzwpb3awOlo2uhh2xO
-	 EHSLXkmPxIEbA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0881917E0B64;
-	Tue, 25 Feb 2025 11:32:14 +0100 (CET)
-Message-ID: <184de5d2-ad02-4387-b850-b45b615cf164@collabora.com>
-Date: Tue, 25 Feb 2025 11:32:14 +0100
+	s=arc-20240116; t=1740479612; c=relaxed/simple;
+	bh=NasLaFCTh8OVIdznOnAP+iiGwnp+cgpHZ9eZS5tukHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWGXOhe1YMGPDgJRtaX2YhbY+wafjO9zmWkijor7cNg4qetzN2hiYHA97wLuLLmfYq/8O9aD+yEK8XMCkQOzqBIm/r2z6Pt2P6U1DHJkcPYwB976lPs1gl9tMrcZ7cV4uyjt8qvfHhgFrmmOi5GkpeMqONiKwuvepFLfzHaWKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YtYJ9t6b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B5FC4CEDD;
+	Tue, 25 Feb 2025 10:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740479612;
+	bh=NasLaFCTh8OVIdznOnAP+iiGwnp+cgpHZ9eZS5tukHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YtYJ9t6boa1zdSHm0JT0wqm4N0mW/bGXnuMbBC7tPuW8GN2vit4kDkNJRb7bDuIWR
+	 jdmdBtNdB39ygnMHwgozRkEfh0oDrsIQqWLTPV8z0tizz6x53L01FDrtL4aGWkcZK2
+	 NZZG2mNiKqlh0630ixm6GueFEc8UoMoVMCMKQdBw=
+Date: Tue, 25 Feb 2025 11:32:22 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
+Message-ID: <2025022514-malt-decade-1518@gregkh>
+References: <20250225064750.953124108@linuxfoundation.org>
+ <e8372ca2-1f23-447e-a8c9-7afc7a19bc74@rnnvmail204.nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] wifi: ath10k/ath11k/ath12k: Strip device prefix from
- calibration properties
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
- ath11k@lists.infradead.org, ath12k@lists.infradead.org
-References: <20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8372ca2-1f23-447e-a8c9-7afc7a19bc74@rnnvmail204.nvidia.com>
 
-Il 25/02/25 10:05, Krzysztof Kozlowski ha scritto:
-> Devicetree properties describing exactly the same thing should be
-> reusable between device bindings.  All Qualcomm Atheros WiFi chips needs
-> certain calibration data, so properties should not be prefixed with
-> device family (ath10k).
+On Tue, Feb 25, 2025 at 01:30:08AM -0800, Jon Hunter wrote:
+> On Tue, 25 Feb 2025 07:49:18 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.13.5 release.
+> > There are 137 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.5-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Deprecate qcom,ath10k-calibration-variant and alike, so we gradually
-> switch to a common property.  This will also allow moving these
-> properties to common schema, if desired.
+> All tests passing for Tegra ...
 > 
-> Why? Because people add qcom,ath12k-calibration-data and probably they
-> will add qcom,ath13k-calibration-data, qcom,ath14k-calibration-data and
-> so on.
+> Test results for stable-v6.13:
+>     10 builds:	10 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     116 tests:	116 pass, 0 fail
 > 
-> I will fix DTS in separate series.
+> Linux version:	6.13.5-rc2-g1a0f764e17e3
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
 > 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-For the whole series
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (5):
->        dt-bindings: wireless: ath10k: Strip ath10k prefix from calibration properties
->        dt-bindings: wireless: ath11k: Strip ath11k prefix from calibration property
->        dt-bindings: wireless: ath12k: Strip ath12k prefix from calibration property
->        wifi: ath10k: Deprecate qcom,ath10k-calibration-variant properties
->        wifi: ath11k: Deprecate qcom,ath11k-calibration-variant properties
-> 
->   .../bindings/net/wireless/qcom,ath10k.yaml         | 25 ++++++++++++++++++++--
->   .../bindings/net/wireless/qcom,ath11k-pci.yaml     |  9 +++++++-
->   .../bindings/net/wireless/qcom,ath11k.yaml         |  7 ++++++
->   .../bindings/net/wireless/qcom,ath12k-wsi.yaml     | 13 ++++++++---
->   drivers/net/wireless/ath/ath10k/core.c             | 13 ++++++++---
->   drivers/net/wireless/ath/ath11k/core.c             |  5 ++++-
->   6 files changed, 62 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
-> change-id: 20250225-b-wifi-qcom-calibration-variant-92a02995e996
-> 
-> Best regards,
-
+Wonderful, thanks for the quick testing!
 
