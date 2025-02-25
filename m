@@ -1,205 +1,208 @@
-Return-Path: <linux-kernel+bounces-531003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A708CA43B07
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:14:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F35EA43AF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335D3170150
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C75A3AC8CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793804A1E;
-	Tue, 25 Feb 2025 10:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438E1266599;
+	Tue, 25 Feb 2025 10:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mL7oyq2O"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="lAb+X3tR"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011030.outbound.protection.outlook.com [52.103.68.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE941519A5;
-	Tue, 25 Feb 2025 10:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478013; cv=none; b=e7nmUayazoYncU5vJ58hD4Ce3CwAZfKWSjRwdBn5A8eP75i4ETv2CCjkcPcwca1jFeqj6/4JOovz9qIf5+lgzODiRnYumhAnzXA/1TUGsw7ZAvSy0ticzUc8NlDHGmNNQ3KcWHIxSynLwVdeBMUnIhEe4ESWKBTj6PcP+JdAFXQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478013; c=relaxed/simple;
-	bh=BdXYIMubP68iO4yl2tcuwaKsQURZC7iC1Rei84h8/PY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mmpVhgB5HkprHGIdkoUZQnoTbjOIHb86p6EgDiu9woaXkmb64VEWw/Y+onaL9u6En3IbFi1MdubYJFGBaDcD7ROVCxl2U/MvYnMmjccgxI3qBbwtaT5l/MdX6fToAJZAFhbfoGeACJoVrGNnW2h1UmxzQ22fzqPf+EJ6lb+vU98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mL7oyq2O; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8dnNP013317;
-	Tue, 25 Feb 2025 10:06:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3eaFx6OR3vSlzAH+D+Vm5WEpKwhhMdM90BqPI5fV0kY=; b=mL7oyq2Ox96LAXZg
-	b2hN0qzx5F4h+zJ7TvDePRD+z04H3vy1DStOWRGvnkzWKAK557wKZx4YwTnopbwB
-	9hzBIH/PfzEM/8FNmOjzBkMED1jeTSIKFDA7v8PSewG998K9ffzcvu1A9pRmta91
-	SbmmGfht5kncrON9l3tyAtgSzGe6OKepHynpSly4genojRbOUW8L1JZqVcvXHc8T
-	ek82DGi56j9cUwvugULdlGJVo1PFHJjGZLu91TOilfPfud583x7vp33UrP5Hj6YI
-	pxgxpxPmnmtPGDuk6agoB1mPs7PP2SiMlbhN7RE5MyT5sM16yfBBao7l6BSlwDHn
-	g/f8NA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgrhus-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 10:06:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PA6LlS009496
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 10:06:21 GMT
-Received: from [10.216.17.28] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
- 2025 02:06:14 -0800
-Message-ID: <29809286-cc04-fbc4-60bd-460821c4bc72@quicinc.com>
-Date: Tue, 25 Feb 2025 15:36:10 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D51519B4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740478017; cv=fail; b=iTjMQyPB2R6mB0ElFHDUxsotQmLAEPROInIECQrLUUo+8xox6yhtsKdTHbx6CUGf+RLXrE4Ihv0SqG5eQMjZ66WjefMuqs9KWXPgkKgSN+xMTiaznqLen833VO1DFRdCH3V7IrGtFLU358IETEgn8kuJhkJaiPrNZ3YtCTdkZPI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740478017; c=relaxed/simple;
+	bh=gpuRfLQ9ie+e1VfqnlL/l5O5P9tMIX0igeGKoIt0ReM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gwCuQbrMV1BLaU3rxSbiQgAA2f+V8nE23SiToWqY879i/VWWr8QZ9bcpxdINhyPPY4X/A15FVN6hlcryn0kgaBUI9JGB5VRZIWJdFz1QqfdDBQjp4d5F5A+5ST41f5A35w7nkTKwVjctZp+zWXEqq98TFZKiL008GDWRs8hO/3g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=lAb+X3tR; arc=fail smtp.client-ip=52.103.68.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UZf02gNA9krj0YDuDJYFAA3D35zrPbl8sEXcH/INmKx27WKlTfefKd7Xrp9jrNdMzmMXulBHLH8bWhwkIAzGqMqvDMteJrN0FnuPJP3gQU/KinV2ohjjmo+D8+/h83CMQRgwQqfc8F6HmB1sRxLJsurFx+ks5a5mRL0EGRPbBFgMG4RBt6S0FWmojqDa3du0oo4MzLQKpLEZjaAzM7mIGhdkh0NhuCYGq0+f8pjs96CohQ0GUvnC1qOdBFu286AL4OVtEf00OYzoEatNkj2BVFGs0NCvInl6j5qMmFn9+cIuY1fs/53DJBEBMbKzWxJHgNh2+MM1P4paeCxT1FKphg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HrRHHC7oqituIgsFV504np49h9R3IfVUCymLOUY7pjM=;
+ b=VLP3z+BTt1F0MBrZXC54CmP7mkASR8+qvm3shsK99Xa2nXGWTozIr16bDw05VLCB2ffZIE6d5udn3YtyYX2703jDnVcZAZ6UpVAp/Ys+kl2+wLyocGjMrqyec8/6hGh3f/AIUPcdH4JNOyoVQB4Rg7LRVavnayS6V+5CxjDyEGjVvnl5sIag+nEJbChKm8LmwYb8dMqtuAaSJmmuEWfzZrqVpFGN6N+CPEg3pOSjBxGKbGQWCqRYC9qHpi8DjogJdzIeY8hxZKXPblk+2pf2WmfESELhI/7gtraQ+pKIE/LIIEbDJIoHPiNYHf5pV/dH1xAL9J9aPpCvhWGG0nz3gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HrRHHC7oqituIgsFV504np49h9R3IfVUCymLOUY7pjM=;
+ b=lAb+X3tRpalSncoKZobMUeyPnnPwcT0EFV9bMrESO0rlAjeVhMx6sNw3ff76gg3huRX9TCfI4vzSCmR9+BLBqmNHPqq+qkqD7RpPb5lEXEH2uCj3PjSkcAUrOU5PKchBIRuUN3SV0UTAje2YQWlZgBxNx7yj0z39CUeYJ1dEAy6F1cDurVURKFf5KBYaHgiIbt3NAAUCMAKSZ3MxHMRnQ0iI+7NjnIQYbqJFWUXswDd1U+UvD/d9n+6hd5nnb0v26sWXHKqAGmm5Ba/IqZ7T2M9edn4eWM2v7AkyUCBsUbTryRYGGR9U36OtWrpGjPHWONMGObTdE7iRzNigk2rf1g==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB7966.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:35::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
+ 2025 10:06:49 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 10:06:49 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>
+CC: Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: [PATCH v5 0/2] Touch Bar DRM driver for x86 Macs
+Thread-Topic: [PATCH v5 0/2] Touch Bar DRM driver for x86 Macs
+Thread-Index: AQHbh2z8jbAjUQblGUW5lXIZ3XfKkA==
+Date: Tue, 25 Feb 2025 10:06:49 +0000
+Message-ID: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB7966:EE_
+x-ms-office365-filtering-correlation-id: a04773ad-2ecf-435b-3444-08dd55841e89
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|19110799003|7092599003|461199028|8060799006|8062599003|102099032|1602099012|4302099013|3412199025|440099028|10035399004;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?DEQfCxAFZpNzRDLo6PGIc9gfc0uDVCMI41b9oqo7HJAuyI+A+ZGev1vYF3zt?=
+ =?us-ascii?Q?L08LvjJp2wbhE6/DozNgNpq9oImr4acWe1tBwpnJhihHd8UJMQexDqXi3O3m?=
+ =?us-ascii?Q?UB+HIdaV/JaWXLVzudNvKM+8kccqJY6hCPoJctIRihBTlnjPctglcqiJnBn0?=
+ =?us-ascii?Q?YQVPIgiI+A8Bbm4PrWW+VaUNQBvOvsVXEHtnISxOn3bGMXqzvgzYL59S+e2u?=
+ =?us-ascii?Q?/WeyN0lZDh/54qfsUkrge6TKju9NoLxJkC91/5zmspTmSBcvu05+eIA6TdDH?=
+ =?us-ascii?Q?22Yzw6kSK0y0LZXYustZqzNR9yticvjRl0+2O9l4Rl/FRPWoQvyt1q9R0oej?=
+ =?us-ascii?Q?5WURi6QogaQ313tB/DyjMeKacvQ79niVdeBrl90nQgDM/7LgIFd2hzLAxNlF?=
+ =?us-ascii?Q?8t3mZbi8VlBAqIMWkrgNAaHmrJhpouD6MunAZ7xisHJpRCtdw4toB47nkJwz?=
+ =?us-ascii?Q?cXdLTVPqwQrvwmr5hqI9p7/hynMZxg7MCehN3Qsl/iMXPd+ROxH8f/i5DlGD?=
+ =?us-ascii?Q?pRewpmJtL62Z8D7+XYmFVH9yFWIxBqMgb2l6PQ3JSC+iXpuUKyj5t5G3JoVt?=
+ =?us-ascii?Q?3mwE6KdFhJF5IT4XazfY3NLSVsIaCKlJyKgjYP/iVc7AJYo91YCFMleMKqSe?=
+ =?us-ascii?Q?pQJ1DYE1QIq42gOZmbByWXlZjpBeVW0Bextd/s90/bTSaMvV9xOamqDPFFSo?=
+ =?us-ascii?Q?9FE49hFa1Ii0x2y4mm1/1fMQ1+U2xHLh6zXFiN7KHoxAD3FE4bxmsUHKe+PU?=
+ =?us-ascii?Q?C3eBdK3YTpKBlQ7nVq3oj2/mjCCutQcTbiMZItzVqDcZOp8hTvemvceJJzI0?=
+ =?us-ascii?Q?CP68pNZpEpgbU5SUM9HVQmNr68ivxZzYFhQQl63Py8tYmQFTJeNTyMez7h3a?=
+ =?us-ascii?Q?xf3kd0mqHEjvje8wyA5i2D7G4kG4bOpDemiZg/TAG8Txm0efzaRHwcHiuzWT?=
+ =?us-ascii?Q?GoJ/g98uLHuc1OvobEAKTTDfJqx0I0V0HcB8JukvS5tur1u8oJ3jGfqzKJ3q?=
+ =?us-ascii?Q?v0W4TzyJExHkE4W+kWmvkM9Wm5jsNRvNBThpviUcSa8qQm3avJzIdrPIlTQS?=
+ =?us-ascii?Q?69KH0s7WsU4GUswl9Mk55oDG7PY/ykgPeSfiwLT/+cPf5sS740UjUiOIrySG?=
+ =?us-ascii?Q?qva/f3xcsuQC/4Pq7e4Ffh39Zp6584L6v5oSMsc/E0jbwFdtwOO/jbbBGzpm?=
+ =?us-ascii?Q?76Ba8Zn1ZmywEd83?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ZvSB++YP5VQo/s9b8V2r1V7fuHMuQbFrtHzzISbFw47SWc82wncL7Q721v/p?=
+ =?us-ascii?Q?Z0r+sziOstLW59H8KZ/h7aBYziFeCyIAp8+M6ee3Y1yXNi7MxGXmKly0Szzy?=
+ =?us-ascii?Q?3GC4wTDVN6Z80i91CXEJbA7wyNkxJrgI/bZ45QfOlNDX3okZboOt64AkYCPU?=
+ =?us-ascii?Q?0441s5jDAnU+HvA7/VAkkg0XG2/qzf0KUByh55apSugfBvzQMeY9l8erj9vB?=
+ =?us-ascii?Q?Xf0wBN7un75bYcNl7/WdfReGeSIt9Vz4fO/Yef0HWFsLUHdZiHh96xyK8IJo?=
+ =?us-ascii?Q?zWdU3NwUApcb7qGz7f3XVEWqicj9hWtGeYdQlsex0ZLdZRLMQp6n9bmzY2rF?=
+ =?us-ascii?Q?VEamykQWDaILogpiM/OqKmGePiOEoiZd+h6DDLGF1WmvFx3pPWBHPwx4cut+?=
+ =?us-ascii?Q?eCc+tbW5t8jpJGyEXgCvnU7PfqhrVWM9ZEckFyipZSfx0Vy89V5odLqaNs/W?=
+ =?us-ascii?Q?5ZYdJrNhOAqZExouq/2UtJcWL16Nqh7p/iMElDhyr+HzmguCiLfaK9rhqyo4?=
+ =?us-ascii?Q?aPVMuha0Gfnk8bmfKmmybL8ebRkGPSTW+LufXURNvR1wkqtPcIGOwhQHycVE?=
+ =?us-ascii?Q?95VPAqUXi/rXnSRI7dnyoNCMB3/ThqdoxONbYv7YddIuIESD+aXs0rQ5/o3B?=
+ =?us-ascii?Q?SwxK484ijYGqXFKhoho8YmRzfL+IWlBSjYTMIj4OHsgYLCSasrpkfwAORabb?=
+ =?us-ascii?Q?k2r3C0OFQmyzDY7+wUruKs60zcccaP/jgI1vR3et3LYRgS4nZihkutQMFG7j?=
+ =?us-ascii?Q?ntJ+DxF8tBOethImxWyAafDHZKZMYsTWkP1alEOlBcCrMhEZZ+PQ7SfnW5wA?=
+ =?us-ascii?Q?9WIeMS0c/hThAOPZKfTvb9CHIyJvPUeEJhAQBHfmFCuD+WeVqpCD6GqLMlFb?=
+ =?us-ascii?Q?C2s7QxWEnKFS7jsE0HfhRqRTX2dG9NxFHEwtemDAehCJVmpAh6cawa0i5bt7?=
+ =?us-ascii?Q?UPMxV+OqIZKN+GPeQcxWzZHSkocOkTLzrJkjda4dFtGTn0GQy8rhvwu05xo3?=
+ =?us-ascii?Q?jMCt2QqnzXPe/1kdOZKTPJgrgJq6DKjtVTMINOtZAh0ZZSvV/j984w2clWV4?=
+ =?us-ascii?Q?pa0XobsAGC4QGGc+gRPje519FoR3etxsrXsSogyTPH9QOY00ena8qZrLbHot?=
+ =?us-ascii?Q?9yGsG7CIpgewfX/3vQf0l4G5NXAGFHCGj3F7cMeba3vDKJDIXZ+mszLlB7sj?=
+ =?us-ascii?Q?PgelgYoHw/7rOgLbAyCB8zdJRDWFHdebEgX8xjq5oIqRsXQISHATQw+CA9VC?=
+ =?us-ascii?Q?inWUbSftZWqp87sYD3gV6Q5BRBBnK1AF/id8zYFOCEzT6MQrOWcm1s/1TyrA?=
+ =?us-ascii?Q?0mC4aHAqBXvNTXYk2p6+n+9N?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <690FC4CF83C2984C842BD80A466A8877@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 07/10] PCI: PCI: Add pcie_is_link_active() to determine
- if the PCIe link is active
-Content-Language: en-US
-To: Lukas Wunner <lukas@wunner.de>,
-        Krishna Chaitanya Chundru
-	<krishna.chundru@oss.qualcomm.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        Krzysztof Wilczy??ski <kw@linux.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Jingoo Han
-	<jingoohan1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_vbadigan@quicnic.com>,
-        <amitk@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <jorge.ramirez@oss.qualcomm.com>
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-7-e08633a7bdf8@oss.qualcomm.com>
- <Z72TRBvpzizcgm9S@wunner.de>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <Z72TRBvpzizcgm9S@wunner.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Y_GkRtIcYlsQfTa9XnF0htPFgpJHWRAM
-X-Proofpoint-ORIG-GUID: Y_GkRtIcYlsQfTa9XnF0htPFgpJHWRAM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1011 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502250070
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a04773ad-2ecf-435b-3444-08dd55841e89
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 10:06:49.2215
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB7966
 
+Hi all!
 
+This patch series aims to improve the Touch Bar support for x86 Macs.
 
-On 2/25/2025 3:24 PM, Lukas Wunner wrote:
-> On Tue, Feb 25, 2025 at 03:04:04PM +0530, Krishna Chaitanya Chundru wrote:
->> Introduce a common API to check if the PCIe link is active, replacing
->> duplicate code in multiple locations.
-> [...]
->> --- a/drivers/pci/hotplug/pciehp_hpc.c
->> +++ b/drivers/pci/hotplug/pciehp_hpc.c
->> @@ -234,18 +234,7 @@ static void pcie_write_cmd_nowait(struct controller *ctrl, u16 cmd, u16 mask)
->>    */
->>   int pciehp_check_link_active(struct controller *ctrl)
->>   {
->> -	struct pci_dev *pdev = ctrl_dev(ctrl);
->> -	u16 lnk_status;
->> -	int ret;
->> -
->> -	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
->> -	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
->> -		return -ENODEV;
->> -
->> -	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
->> -	ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
->> -
->> -	return ret;
->> +	return pcie_is_link_active(ctrl_dev(ctrl));
->>   }
-> 
-> Please replace all call sites of pciehp_check_link_active() with a call
-> to the new function.
-> 
-> 
-ack
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -4923,8 +4922,7 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
->>   		if (!dev->link_active_reporting)
->>   			return -ENOTTY;
->>   
->> -		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &status);
->> -		if (!(status & PCI_EXP_LNKSTA_DLLLA))
->> +		if (pcie_is_link_active(dev))
->>   			return -ENOTTY;
-> 
-> Missing negation.
-> 
-> 
-ack
->> +/**
->> + * pcie_is_link_active() - Checks if the link is active or not
->> + * @pdev: PCI device to query
->> + *
->> + * Check whether the link is active or not.
->> + *
->> + * If the config read returns error then return -ENODEV.
->> + */
->> +int pcie_is_link_active(struct pci_dev *pdev)
-> 
-> Why not return bool?
-> 
-pciehp_check_link_active is expecting int to make sure this new function
-not disturbing the hotplug driver I added return type as int, I can 
-change it to bool if it fine with hotplug drivers.
-> I don't quite like the function name because in English the correct word
-> order is subject - predicate - object, i.e. pcie_link_is_active() or
-> even shorter, pcie_link_active().
-> 
-ack
-> 
->> @@ -2094,6 +2095,10 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
->>   {
->>   	return -ENOSPC;
->>   }
->> +
->> +static inline int pcie_is_link_active(struct pci_dev *dev)
->> +{ return -ENODEV; }
->> +
->>   #endif /* CONFIG_PCI */
-> 
-> Is the empty inline really necessary?  What breaks if you leave it out?
-> 
-ack I will remove it.
+Recently, the hid-appletb-kbd and hid-appletb-bl drivers were upstreamed
+into the Linux kernel [1]. They enabled the Touch Bar to display a
+predefined set of media and function keys, exactly the same it does on
+Windows Bootcamp.
 
-- Krishna Chaitanya.
-> Thanks,
-> 
-> Lukas
+Now, we are adding support for the DRM mode of the Touch Bar via these
+patches. The DRM mode enables the Touch Bar to act as a second display,
+just like macOS. So now you can add a widget, put a clock or anything
+else on the Touch Bar as long as you can develop a daemon.
+
+Credits for this driver should goto Ben (Bingxing) Wang on GitHub [2],
+who reverse engineered the protocol and made a Windows driver for the
+same. Credits also goto Kerem Karabay, the author of this patch series,
+who ported this Windows driver to Linux.
+
+The first patch adds emulation helper from XRGB8888 to BGR888 which is
+needed by this device and the driver.
+
+The second patch is the main DRM driver, required for the DRM mode.
+Currently, only T2 Macs are supported.
+
+Currently, a daemon named tiny-dfr [3] by Asahi Linux supports the
+Touch Bar in this mode by displaying the Function and Media keys.
+More such daemons can be made with more customisation in the future.
+
+For the case of T2 Macs, apple-bce [4], the driver for the T2 Security
+Chip is also needed for all the peripherals, including the Touch Bar
+to work. It is still WIP, and will be subsequently sent later to the
+appropriate tree. Till then, I'll suggest for get the driver from [4],
+or more preferably, get Linux support from https://t2linux.org/.
+
+Cheers
+Aditya
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=3Df=
+or-6.15/apple
+[2]: https://github.com/imbushuo/DFRDisplayKm
+[3]: https://github.com/AsahiLinux/tiny-dfr
+[4]: https://github.com/t2linux/apple-bce-drv
+
+Kerem Karabay (2):
+  drm/format-helper: Add conversion from XRGB8888 to BGR888
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+
+ MAINTAINERS                                   |   8 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 ++
+ drivers/gpu/drm/tiny/Kconfig                  |  12 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 844 ++++++++++++++++++
+ include/drm/drm_format_helper.h               |   3 +
+ 7 files changed, 1003 insertions(+)
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+
+--=20
+2.43.0
+
 
