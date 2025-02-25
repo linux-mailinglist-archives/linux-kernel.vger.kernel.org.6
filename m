@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-530930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39190A43A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:50:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C67A43A4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FD21898F76
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9FD16F675
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B002673A0;
-	Tue, 25 Feb 2025 09:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J6+QNen+"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF6266F1C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70957266B7F;
+	Tue, 25 Feb 2025 09:47:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858C2265617
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476851; cv=none; b=FmD6MUCpOjpP2UDUb4bBITIrDqK1PCXhYeyyJpl6dtJSNfMc6QIKAlKQaBvSXH6sN2S6kSRlLvAKDiGwCra7xra6yPOVJVh1tQc6C28F6Oq9EidJKxswSj9JlwH87h7iP3vK/wWEV+Ky317JyLrZvrWoAwX/iXfYuJajnYTHvio=
+	t=1740476858; cv=none; b=Y/f71OmMUhHNvN7zvqR+pw7yh9yjoaGJQr2bpxZe6kkJ9Z+azBVYPRT4A+e3+d2Cs+27N7hLd7Ov6kaaU9x6AoZwqf5QCRl3e2ig2iaHnWJBPrJfoH2Cc7L3iiA3+4pALgVKNneVtheBNFq8NyN7kTIIvU5GDEf08qOKODIAhmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476851; c=relaxed/simple;
-	bh=0ejApvusm+PXgcgqxCm24+gSHcjnJ6Jl3ndWCY+M5ik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aKs5rimfMgB/qoRDkwZAF6nPw+lMmVXoxh2UDcSan1PzawsHNWpSIVOqin/l0DEmNbzhYbpbszIzruGI9ZaL/wClKpD9urJECLMgwQ1poNsaCtMosEZ/P2qRTiaN6DR2oBeTS2WhocOLfXYBGCBK6fu3zFYO6KSqId48PEkZqQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J6+QNen+; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220d398bea9so84800595ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:47:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740476849; x=1741081649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Y0W7UheN6mSPqJhQH55oXPueVCUP+Q3dgB84Hlr1jE=;
-        b=J6+QNen+iqUN141k5GjIzbtpj86UAoKC0mzwtvywEjjnFQWHGJ8CNJrV1B3HGr7Ypr
-         3Ug9NqRPHERULM3NGv/mWyK1xkFsUb16E4n8tiuICzaSS/8IBgg7hc9OKaJfAhaOS0aS
-         x56gPNurmTJYduKvJVb6qX7yWhW7v8+SaGX3NvekhuhUcJUC/eWnVe5xsjB2qBLXDkks
-         tUHa8nuavyLsEbt6imQMeZME9wSI5yDJ6pejs3lkxzGSK37y/LEdIZrv85ZCOSxxqR0o
-         ZCYDp2mq8T0EaUF2g2a8KjNEUyiOGtm9rFn/YCaayy5Bw8OQyx8ydw8SQ/zQFtzyrb28
-         ldpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740476849; x=1741081649;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Y0W7UheN6mSPqJhQH55oXPueVCUP+Q3dgB84Hlr1jE=;
-        b=vPlZEHdNjnfGO5qJhWkxt6PhjD420TLlBhivvgG3F7ukyauJtoa9gPQtxycvfnSjmu
-         ujdWlW2wkoBkO67KzUuhtcK1QS2FDzbc4LUqo5NL7Rim1yiaGadj8kTqe/hhR8HJN1x3
-         Telq9l2m8RnO+r0DtFB5l/++lo9L9vQAw3rAHK4U6YFVFxh1zjy3KlrCIz1o+tQT/aE1
-         8NeHRA44A6yR9GcljlbEmNMiPVA2dpZ+ihMIPLPpvmRzKfy0BlFUfMUvYevay07lggEV
-         5HzbAedfgASPmkxaE6rQvT4xuY4U25AjWSiyhzi7Z+GfkKoNBcNb4rRTUaRcib0/TDG0
-         3oOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT1oBNhwD7Y4RBJxMHNOZw6HjBVDNF0jEDemHeLp9gHuztvdtWppVZ37Yg6gArwer+qqJx6bCx4OUUKjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwVmqqwEDi1tjfKWNKEXE+O/HTbvIMBVuBS5dXxEBvOFyfL3Ly
-	Gao0OfS0Sde4wSbCwUgeGeCH2H828qxQn33xeZQB0ChirJ9K5/Qt7610MWGqTTc=
-X-Gm-Gg: ASbGncuBanOaqYH2a9xBMRngFm+Z2RdjXu50OHxJMZJV9HFFNLPccID9GOB+s7OfKF0
-	w0BTiPLCR8Y0dFUYUTidXJ2UrWDbBVHEbqNgpQiMxxwiPx7ZCRhIXp7dPV/aV/LGXVzTb1er6cl
-	payS9L6kqA/0lZUizOM0byUpWuHWCkUYgWMuEugtlSqExSpr3k026x/JMc0ZLE/aag73nWsOAhQ
-	/eA+fFRYfBS4IqaigZh7HczrIt6ifjuiFZXS/LrJMDXorHqzM1JP2F+XhYvICR1GDMaM3MaV8Mf
-	BpL/1vgIfatmq5r7O8qB6PAXajA=
-X-Google-Smtp-Source: AGHT+IFMG/soZLRcXoKfyCP0+FxL3eEOXtCUItNCtSz47RVliZKe7vtNrSUTsGyoRvocVgft4WRZSg==
-X-Received: by 2002:a05:6a00:2192:b0:730:75b1:721b with SMTP id d2e1a72fcca58-73426d7273bmr26247209b3a.18.1740476848937;
-        Tue, 25 Feb 2025 01:47:28 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f8f24sm1094883b3a.60.2025.02.25.01.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:47:28 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>,
-	rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 2/2] MAINTAINERS: Add entry for Rust bitmap API
-Date: Tue, 25 Feb 2025 15:17:15 +0530
-Message-Id: <8c6249c6631f47565541d584fbec78cd2fbe60c1.1740475625.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1740475625.git.viresh.kumar@linaro.org>
-References: <cover.1740475625.git.viresh.kumar@linaro.org>
+	s=arc-20240116; t=1740476858; c=relaxed/simple;
+	bh=otozORp1LUAeuRPnVmD/a9N4A7uUDPEVNRGLipcMklQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJW37mnHh+aD5OIrx5hAZ/vFVdV1VcnJAYoPehlWoDbNMDDpvGSRVUKs8GkYj6sT+dzgmH3OC7MT9tR5ggSfQsB/WYb1ZbRi9TvJLmbe9vxgo6XAJ0cvw4FasBFkU4x6XJpqqm7VgN1+QQz0SkhNU5+CfK1MFh9o8EKgUmDA9nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F18311516;
+	Tue, 25 Feb 2025 01:47:49 -0800 (PST)
+Received: from [10.57.84.186] (unknown [10.57.84.186])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4972E3F673;
+	Tue, 25 Feb 2025 01:47:32 -0800 (PST)
+Message-ID: <b39a37c8-c9b5-406d-a97a-24fa67622b49@arm.com>
+Date: Tue, 25 Feb 2025 09:47:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: kernel BUG at arch/arm64/mm/mmu.c:185!
+Content-Language: en-GB
+To: Luiz Capitulino <luizcap@redhat.com>, LKML
+ <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Cc: ardb@kernel.org,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <will@kernel.org>
+References: <a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com>
+ <fe95f4c8-4b09-4d8e-99c9-987ddc2761e3@arm.com>
+ <9f5600b3-6525-4045-ad1f-4408dfc9ce0f@redhat.com>
+ <cf2b32a4-2217-4a31-b6d7-e60a9f4ef7dd@arm.com>
+ <789c17e6-5ebc-4e37-93cd-19d24f148fd8@redhat.com>
+ <dee18de8-7938-4df1-badb-c00832d6995f@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <dee18de8-7938-4df1-badb-c00832d6995f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Update the MAINTAINERS file to include the Rust abstractions for bitmap
-API.
+(Adding arm folks for visibility)
 
-Yury has indicated that he does not wish to maintain the Rust code but
-would like to be listed as a reviewer.
+See original report here for context:
+https://lore.kernel.org/all/a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com/
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+TL;DR is that 6.14 doesn't boot on Ampere Altra when kaslr is enabled.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec2428b82103..17e98d757b9b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4034,6 +4034,12 @@ M:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	rust/helpers/cpumask.c
- 
-+BITMAP API [RUST]
-+M:	Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
-+R:	Yury Norov <yury.norov@gmail.com>
-+S:	Maintained
-+F:	rust/kernel/cpumask.rs
-+
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
- R:	Rasmus Villemoes <linux@rasmusvillemoes.dk>
--- 
-2.31.1.272.g89b43f80a514
 
+On 20/02/2025 20:08, Luiz Capitulino wrote:
+> On 2025-02-19 09:40, Luiz Capitulino wrote:
+> 
+>>>> Btw, I'll try to bisect again and will also try to update the system's firmware
+>>>> just in case.
+> 
+> I tried to bisect it and again, got nowhere.
+> 
+> Git bisect says the first bad commit is 8883957b3c9de2087fb6cf9691c1188cccf1ac9c .
+> But I'm able to boot that tree...
+> 
+
+OK, think I've found the dodgy commit:
+
+Commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and use it consistently")
+
+Based on the changes it certainly looks like it could be the issue, but I
+haven't spotted exactly what the problem is yet. Ard, could you take a look?
+
+I managed to hack multi ram bank support into kvmtool, so I can now repro the
+issue in virtualization. Then was able to bisect to get to the above commit.
+
+I'll keep digging to see if I can get to the root cause, but I suspect Ard is
+best placed to hypothesise at this point.
+
+Thanks,
+Ryan
 
