@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-531957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23EBA4470B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:56:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30BDA4472E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A383421FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:52:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D397A28F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A82C1A00FE;
-	Tue, 25 Feb 2025 16:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719271A7262;
+	Tue, 25 Feb 2025 16:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U0gyxRI7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oFn/OcM8"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FA719D890
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188D41A0B15
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502036; cv=none; b=kd5F0oCAmnlZhZMYJVC3CvBcJ93YP2FFQVErLQA92OG7iqXcJTZ903jQDqO7cBtCkrjnN5IAwmjBj/55O1STP/RBRP2q6JasXb+ep8Ddsd06Pq+pbwKWYlEH/heXRlg7xHFnFQlCCUUOpV1Gw3wh9ZeW7GcAO38ySwQpm7azG+A=
+	t=1740502045; cv=none; b=F+fBHql8sv7lKkd63E0XZrnkAH19TwsEl3dixsXb5qtjtvBmlF8eA8CNZX4WoDhxeMO/y7VmQPWAahfxoBsSKZE66rVL4Mr5OjegDN0I7R7ZUl7PTQ03DRI/TXHGCxvn6bzxko3YE0IDSJCQ2ykoKb/O2/vHt8zXz2lmND6KBuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502036; c=relaxed/simple;
-	bh=fJcj3avQNuqrPvfGogvQDFTwhN88MwqiTHVq32AqoM4=;
+	s=arc-20240116; t=1740502045; c=relaxed/simple;
+	bh=wrHzNVnId8j0qsMaPAMXfUrcKGMkQwXnH6urFQaWqoo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QB33WwbLK2JtlcP7mlzf9LjrzXNfmqTL7wvUUHqAtN2m1TRmOKR8ZZIH2hPbTt7ATUU2mPxJ+znfSLkmJ/Emp9DuB3PBP87x2IDrlVn++eJ4A953RlMb3vk27Bdyq2e12U1L39n+1CAyUlDQWWyZnqTkCke0FGBPzDJNpJD9vAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U0gyxRI7; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=ISmKRSQQ2AnKXmGu2KOmlY5/7m9lawC5e//nwrLMVZT5MJWQlwPfAcYRSvnwSBhCmEbHPVD2VJ+HRBRapGwCLjKj2XmC8aZ6SDcfL4WDzH1LkweXqvZAZpaWLzCRMnTBtQ/zGnC4bJwk1407OYnM2w0sV9p+pm+ZWqF0ZZzpSpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oFn/OcM8; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4399d14334aso51341295e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:47:12 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso59392045e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:47:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740502031; x=1741106831; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740502042; x=1741106842; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T6zYunsslfLFaIghaKuBbDgwSTYPPEUyCdstyv8nGIk=;
-        b=U0gyxRI7RGugzyu1uBefwjMdLMrNAns2UpJb5zn7i3gZcnHlBGr7f4u0XkooxVOU1H
-         kk3YfTEGemNZ+P7oDio9F4Wm6h59z2UoAi//rPbw+Y8cEwkWSyWEiJ6Awg4DggRgPrel
-         lKh2xOkS2u0ynlTE3vzCevhXuHjyEn6BHKnoUrASJG8Xm8lOsKNT1PPdYkmwH+ii6v8q
-         NArWo+2Dwz6KRNUoD0jeJYk18PoFqsTF0Wetg6bBAJGpU1Rnr2nBQUO1CE2Kuq97Kyxx
-         xIphUR2aNrsArg2RNxlS5a4lYEIxMIxkJ6p66LJsXL76pxnTpBVFhqNvAeRQCUDcSwb5
-         VJAg==
+        bh=X6UJaQQmZ+Nba7bOv2fyokA++hlexbBX/filKGo9hKY=;
+        b=oFn/OcM8FSb+FS6Ue+3+IaXtzTj/EjDq1Ylfue4wQfppqTuZedC/Ich3daEnKdUs7+
+         dbDNVZHrXQ1bcKnIlVPc45O74U520iDJHL7AwmpPRPPEpAIfpOouQi+Tk+SY/fGizt8T
+         8fyUtMbCIc/iaYyaGvO2mEH/okGJLAfKRsrcmX3pyTgmjTGlg+GNDUVMebz3rAVNYm/s
+         Z5d68FWr9zDgPs4T8GSgFa/RLXUIgW2qCWxG/75cWYV4n6DYtzhb9cE56X4lCmfhALd/
+         YbT5dQy1pld7JcNWQqKVQs+nU3u1AhG729WjO6reojog6AuFMNyxUA4thUxsMHDiZU1T
+         652w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502031; x=1741106831;
+        d=1e100.net; s=20230601; t=1740502042; x=1741106842;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T6zYunsslfLFaIghaKuBbDgwSTYPPEUyCdstyv8nGIk=;
-        b=OgZ/uZUs59dsIkIIs+q8+BoC8k75qY9ixtuRr9sqWV0Xu6pui6wd35YjRweT4JuWA1
-         USW38NH8ZrdIQPkPhLL/nYUgXfqJ5LL9LzeIwQPnxw564xUH+/ku+xAOyUTJGBwcK0YR
-         M2X06enGFwOUky2lVCNsdOPmWhRh/+q1tvVmWRDmjMIUKP33V7OLDu3g3igF8Gg4eSE4
-         +1/oGEW5MpebxOf/37U9S/QGg+cn4a2t33Exknm2S8Ch2hsoXb54JgJsc8XazpAghcrF
-         R/Rtkcsgp/M9Es7Reokh91TwY8lvt5fUrwHOIVyJmd8vuF5VHNOMOTBujW8ibPR35ebP
-         D2/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVp5I9ONGNvB+7W/wLGZBxg9r3hCbl8RlogZaNUCE6PUh43D+p1GL8bzrVpCBgmV0WJB7IUqt3ga1Qlhrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJVMvIWEDw9PXsnfVE4LvQ4x9pCASBM0sIulrI1atx1fK9WnaJ
-	PFbgM0/e7KbJ/JN+Mz/SRIVBC1DlbP+R6a6TSLQt2a1I96cHCCUfjFtOjiZ+fCU=
-X-Gm-Gg: ASbGncvMFcM+JaT/dXTC5FCiIOpzfQjdJo7Negy1amQFn4cQ6kYjArHg6ZPZ10gcRQK
-	587lGC4ekifYLBOitrtZ6Bb1WNx2zbd3+GG1db+Tyn1NTPhQOYYknHiK2AQWcEMY+YtOBjRZrAB
-	oEFpJcznJhjwt+F19soGyaQxXIG9AAhhrwrTcmvDxmebHG/pQbqSn8imsV+QZEEkqQWosQKBirP
-	TbCXlUNT0OqrKr48EZ1fpkeE+MYp5Q7AY7984ZvQ/6nUfGayTR6sDRmr004Miv9RZx9lyNFQ+cz
-	zhQHXmY+AcMTPLqZexwxaLLC+Q==
-X-Google-Smtp-Source: AGHT+IHxcabNYd68N3fAYJwzKJtxAGyEN4XVr5OMEsGkvW8AeGZ4ctNdJiH2U7/OsTMvRHxz0sqrjw==
-X-Received: by 2002:a05:600c:3507:b0:439:9225:2f76 with SMTP id 5b1f17b1804b1-43ab8fe97d8mr2239285e9.18.1740502031441;
-        Tue, 25 Feb 2025 08:47:11 -0800 (PST)
+        bh=X6UJaQQmZ+Nba7bOv2fyokA++hlexbBX/filKGo9hKY=;
+        b=KRdsLcrJ87/8233zsRjjr1ih+4ICwyU79cunNx6oTut0ITD/by8P1QlKoMQPpPApMP
+         tM/jrmYcopCq7HpRsS8N4/I5sNBVnp9smxzhsP5pgRDFO8ewh+3Su+bCaTLA3P0n+z4X
+         6mqv76XvfFVFYEe5Nx0TttN6m9XjQY4GFvuf+Gd7w8uJRuzs23M67VTgTJK+PZHM23de
+         bfrewAtfFwzXSXbaL5LjV0BqiDN6lYLqOvAUXHarj7huliSAjG5o7ZsDLVAFQhmzEPY8
+         aH7t7YinqJJlRuCCopqIG5XNnPVeigtjtC41RpoKiTUOAZLx652vT5UlIFhkBt62mf7Z
+         t4Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW780CRWyT42/D1uQ2sgqbyKe9IsjWT7z/UyLc69WO9hHXb0N6k4SPHu9NJtadMaWc7O4c8EgKAm3mx2p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfVnp5jaPypRcbyyjDtByTC6v2LRWyC3FXdbP3bKhfDRaL3BWm
+	Kw5WYiz2sBddRNOKhK2YBCkvyRMPKHXw1XkB6Cpnq6tiVQKO4IHP6jZ6zRrkggE=
+X-Gm-Gg: ASbGncuhFSz/hZxK5WEF65YZr1dxWnxhIwhqxmHeFDwVktlVAL5WTKOonSQprd0kHVy
+	VVV4G593GUrF+W5ooln9QivC+1p5+VegfVfQocvo/LPluw6El/5aGY7IxYWDLmeirwZYzpRDTP3
+	zCD0IZKhHXf+PqCV56IvFycYBKUY/nVtFI/4qfdB6CisCMw5OpNn9YbwIcBZsYIDBk3Coroy0Er
+	Nol0fLMUYswVwoDx+jSXoqrwUn1ok7lkfV3N04aT7OZ8Rs5D8smUJHHdYVlzBlxvoNoBs6AWZUB
+	7fZqSw3szFVUls6l371kVgCyWA==
+X-Google-Smtp-Source: AGHT+IF/oE/rQ1PppVOBOg8I0Vrf8wEOV9x9RbiBK34mWqlWgLOTXGDyIkC+P3rKPQxR+xXeJ89KKg==
+X-Received: by 2002:a05:600c:3516:b0:439:88bb:d023 with SMTP id 5b1f17b1804b1-43ab0f2dd01mr49558465e9.11.1740502042272;
+        Tue, 25 Feb 2025 08:47:22 -0800 (PST)
 Received: from pop-os.lan ([145.224.90.0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab154754esm32072415e9.21.2025.02.25.08.47.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab154754esm32072415e9.21.2025.02.25.08.47.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 08:47:11 -0800 (PST)
+        Tue, 25 Feb 2025 08:47:21 -0800 (PST)
 From: James Clark <james.clark@linaro.org>
 To: linux-perf-users@vger.kernel.org,
 	irogers@google.com,
@@ -85,15 +85,15 @@ Cc: James Clark <james.clark@linaro.org>,
 	Jiri Olsa <jolsa@kernel.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Weilin Wang <weilin.wang@intel.com>,
 	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Weilin Wang <weilin.wang@intel.com>,
 	Junhao He <hejunhao3@huawei.com>,
 	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] perf pmu: Dynamically allocate tool PMU
-Date: Tue, 25 Feb 2025 16:46:28 +0000
-Message-Id: <20250225164639.522741-2-james.clark@linaro.org>
+Subject: [PATCH 2/3] perf pmu: Don't double count common sysfs and json events
+Date: Tue, 25 Feb 2025 16:46:29 +0000
+Message-Id: <20250225164639.522741-3-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250225164639.522741-1-james.clark@linaro.org>
 References: <20250225164639.522741-1-james.clark@linaro.org>
@@ -105,91 +105,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-perf_pmus__destroy() treats all PMUs as allocated and free's them so we
-can't have any static PMUs that are added to the PMU lists. Fix it by
-allocating the tool PMU in the same way as the others. Current users of
-the tool PMU already use find_pmu() and not perf_pmus__tool_pmu(), so
-rename the function to add 'new' to avoid it being misused in the
-future.
+After pmu_add_cpu_aliases() is called, perf_pmu__num_events() returns an
+incorrect value that double counts common events and doesn't match the
+actual count of events in the alias list. This is because after
+'cpu_aliases_added == true', the number of events returned is
+'sysfs_aliases + cpu_json_aliases'. But when adding 'case
+EVENT_SRC_SYSFS' events, 'sysfs_aliases' and 'cpu_json_aliases' are both
+incremented together, failing to account that these ones overlap and
+only add a single item to the list. Fix it by adding another counter for
+overlapping events which doesn't influence 'cpu_json_aliases'.
 
-perf_pmus__fake_pmu() can remain as static as it's not added to the
-PMU lists.
+There doesn't seem to be a current issue because it's used in perf list
+before pmu_add_cpu_aliases() so the correct value is returned. Other
+uses in tests may also miss it for other reasons like only looking at
+uncore events. However it's marked as a fixes commit in case any new fix
+with new uses of perf_pmu__num_events() is backported.
 
-Fixes the following error:
-
-  $ perf bench internals pmu-scan
-
-  # Running 'internals/pmu-scan' benchmark:
-  Computing performance of sysfs PMU event scan for 100 times
-  munmap_chunk(): invalid pointer
-  Aborted (core dumped)
-
-Fixes: 240505b2d0ad ("perf tool_pmu: Factor tool events into their own PMU")
+Fixes: d9c5f5f94c2d ("perf pmu: Count sys and cpuid JSON events separately")
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/util/pmus.c     |  2 +-
- tools/perf/util/tool_pmu.c | 23 +++++++++++------------
- tools/perf/util/tool_pmu.h |  2 +-
- 3 files changed, 13 insertions(+), 14 deletions(-)
+ tools/perf/util/pmu.c | 7 ++++---
+ tools/perf/util/pmu.h | 5 +++++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-index 8a0a919415d4..c1815edaca37 100644
---- a/tools/perf/util/pmus.c
-+++ b/tools/perf/util/pmus.c
-@@ -268,7 +268,7 @@ static void pmu_read_sysfs(unsigned int to_read_types)
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index ec3878c890a9..72aa6167c090 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -596,7 +596,7 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
+ 			};
+ 			if (pmu_events_table__find_event(pmu->events_table, pmu, name,
+ 							 update_alias, &data) == 0)
+-				pmu->cpu_json_aliases++;
++				pmu->cpu_common_json_aliases++;
+ 		}
+ 		pmu->sysfs_aliases++;
+ 		break;
+@@ -1884,9 +1884,10 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+ 	if (pmu->cpu_aliases_added)
+ 		 nr += pmu->cpu_json_aliases;
+ 	else if (pmu->events_table)
+-		nr += pmu_events_table__num_events(pmu->events_table, pmu) - pmu->cpu_json_aliases;
++		nr += pmu_events_table__num_events(pmu->events_table, pmu) -
++			pmu->cpu_common_json_aliases;
+ 	else
+-		assert(pmu->cpu_json_aliases == 0);
++		assert(pmu->cpu_json_aliases == 0 && pmu->cpu_common_json_aliases == 0);
  
- 	if ((to_read_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) != 0 &&
- 	    (read_pmu_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) == 0) {
--		tool_pmu = perf_pmus__tool_pmu();
-+		tool_pmu = perf_pmus__new_tool_pmu();
- 		list_add_tail(&tool_pmu->list, &other_pmus);
- 	}
- 	if ((to_read_types & PERF_TOOL_PMU_TYPE_HWMON_MASK) != 0 &&
-diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-index 3a68debe7143..45eae810b205 100644
---- a/tools/perf/util/tool_pmu.c
-+++ b/tools/perf/util/tool_pmu.c
-@@ -490,17 +490,16 @@ int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread)
- 	return 0;
- }
- 
--struct perf_pmu *perf_pmus__tool_pmu(void)
-+struct perf_pmu *perf_pmus__new_tool_pmu(void)
- {
--	static struct perf_pmu tool = {
--		.name = "tool",
--		.type = PERF_PMU_TYPE_TOOL,
--		.aliases = LIST_HEAD_INIT(tool.aliases),
--		.caps = LIST_HEAD_INIT(tool.caps),
--		.format = LIST_HEAD_INIT(tool.format),
--	};
--	if (!tool.events_table)
--		tool.events_table = find_core_events_table("common", "common");
--
--	return &tool;
-+	struct perf_pmu *tool = zalloc(sizeof(struct perf_pmu));
-+
-+	tool->name = strdup("tool");
-+	tool->type = PERF_PMU_TYPE_TOOL;
-+	INIT_LIST_HEAD(&tool->aliases);
-+	INIT_LIST_HEAD(&tool->caps);
-+	INIT_LIST_HEAD(&tool->format);
-+	tool->events_table = find_core_events_table("common", "common");
-+
-+	return tool;
- }
-diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
-index a60184859080..268f05064d03 100644
---- a/tools/perf/util/tool_pmu.h
-+++ b/tools/perf/util/tool_pmu.h
-@@ -51,6 +51,6 @@ int evsel__tool_pmu_open(struct evsel *evsel,
- 			 int start_cpu_map_idx, int end_cpu_map_idx);
- int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread);
- 
--struct perf_pmu *perf_pmus__tool_pmu(void);
-+struct perf_pmu *perf_pmus__new_tool_pmu(void);
- 
- #endif /* __TOOL_PMU_H */
+ 	if (perf_pmu__is_tool(pmu))
+ 		nr -= tool_pmu__num_skip_events();
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index f5306428c03f..b93014cc3670 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -136,6 +136,11 @@ struct perf_pmu {
+ 	uint32_t cpu_json_aliases;
+ 	/** @sys_json_aliases: Number of json event aliases loaded matching the PMU's identifier. */
+ 	uint32_t sys_json_aliases;
++	/**
++	 * @cpu_common_json_aliases: Number of json events that overlapped with sysfs when
++	 * loading all sysfs events.
++	 */
++	uint32_t cpu_common_json_aliases;
+ 	/** @sysfs_aliases_loaded: Are sysfs aliases loaded from disk? */
+ 	bool sysfs_aliases_loaded;
+ 	/**
 -- 
 2.34.1
 
