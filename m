@@ -1,163 +1,174 @@
-Return-Path: <linux-kernel+bounces-532613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92BEA44FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:26:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA17BA44FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A219119C2408
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:25:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD527AC34F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECF62153E9;
-	Tue, 25 Feb 2025 22:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD2521420D;
+	Tue, 25 Feb 2025 22:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LC3ir0+O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNgRVUNu"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCB2153C3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7012135A0;
+	Tue, 25 Feb 2025 22:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522196; cv=none; b=Mp6xv4w0+s/ZLNEj6Qoj7cVUHa3492NE1fgGDp7pG8eCs0p/Lsn2m7H1XFqhZ3tAxo4Bi0DIHqVa2ZhjV6DQ5F/4XTPebLNQGby8TXZrvxJh31k2JmhG9MfuJfK3x6d67YuejJGjbbr1SM9PtjBSCtaZCiQXv/XRftJLdiwsNx0=
+	t=1740522099; cv=none; b=L0a4P4naY35S7N8tdiWgaWKCXhtM+ThoYKUDbewF54jNUE2TGkpWoDmDkVEFK8hhOmGaaSZnBGCiqgD9SoZH3FUWjmr5jijHAigJwf503Pa/u8uw+cyFo+zsii02WdevgLEGlS2aKasRWMRFKriUqoN2D+orE71Mw603dMid33s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522196; c=relaxed/simple;
-	bh=/15qlsboM6yCAvaydvQcsEN4W06HB6cK0UlxWA8+/dI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ofgTETT9xyJ3CaG2j32fTn8rSOHfWmZA392mqqaixouuG+MNuaSuDYouwG3A6YJGml0apk9QkDMi7WsUfTx0c+5onxE5u8Z4xsLeL0o/Ggfjx0caiqRg2E54VIsYvJLBjxuQZfXE1x9AKXrwHoS8IMoGLuE3TSVXLaihC78ohPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LC3ir0+O; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4YKTxXn5l9L/3067x1ZnZ8w6M1gB59GICvb9XtTgB0s=;
-	b=LC3ir0+OZKAoIFN09kk7QIu3MUoz2vSTyEdNft0hRwMd0ptV/NW82p4k+JAWm6Glyqc6pZ
-	JxRt/2wPaoLjhBng/0k7NHz6gPVL8BH0R5B49IY1IAPQecE9VM+35JbOHnQ4D3nnsrtAGr
-	wLNTD5jp0yFzi5kmzqCfN2FpA6r+gzk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-oa49bnmHNVqMO6CG_JqJbQ-1; Tue,
- 25 Feb 2025 17:23:08 -0500
-X-MC-Unique: oa49bnmHNVqMO6CG_JqJbQ-1
-X-Mimecast-MFC-AGG-ID: oa49bnmHNVqMO6CG_JqJbQ_1740522183
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D68F01903085;
-	Tue, 25 Feb 2025 22:23:00 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4D5CD1800357;
-	Tue, 25 Feb 2025 22:22:51 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Tue, 25 Feb 2025 17:20:53 -0500
-Subject: [PATCH RESEND 12/12] Documentation: Update the todo
+	s=arc-20240116; t=1740522099; c=relaxed/simple;
+	bh=4dV3qMEaY+/b58WRuHTItVUPpAgVVn9pTDo0iht+B4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fMcE8nLrxvZLg2zMtR3XNDGpWV6uDT7k+sXxd/0kldXdG2gIj1Iyj4xm5+xCGOtzS1GaTjYK1lPf0YxLf8j/5uqDcynPoLhYdUKvE/wticlnmSWVulefXnEdNiV/9tkMcfZuquhPvteIzCUpdwFN4SHKKtCJqGUISlYv+kyp2X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNgRVUNu; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43989226283so42252565e9.1;
+        Tue, 25 Feb 2025 14:21:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740522096; x=1741126896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VHOvPuR/Wi9UO5iZQxG9fC7V2bgAgdFZoJjL8l7B2iU=;
+        b=kNgRVUNuNdwo5DBBGGunBP1m3r2f/78DATIwdGdSn664wub+RM4XGB91Op7S3I2V5N
+         oePRRq2c0mFTlcgBTBEHarXr3pTYp3N2/hg/e1mjm0lgd0C8vrtUoCkeXWYxEsh8BBjo
+         OQi/Hw6cyU1qW9EQngQo34+l+WDElcca3jgd3BCqLBBEf7x3s3b8bVfzpYyxaxuaXL8W
+         wznnOpimxpGJTWcQ2Q6w3HS2Pc9UTewbvgC2Z3pXo1UJAF6T491GeLkv08zLcOK+fMQD
+         Rrw+3IER7tSfLzcOb8X6c5pKb59zml0omTZBn6xtTB55u6BspMZ5jWFQcBmG3tEqBrUk
+         7aEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740522096; x=1741126896;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VHOvPuR/Wi9UO5iZQxG9fC7V2bgAgdFZoJjL8l7B2iU=;
+        b=ZkG1MBKPU988OLWvTnFhKmb9fvYDGBFOXblvyxoG4tYl+61QfLjNzBsQaIkSOQVq55
+         DSRHfHDau1PdIGq5LANaBTEIlfbeaNmEEf1vc8f/yMtSeaYCvc7ITP0Y03XiJK0v1jl5
+         35Dw/NXGsl2efdlcRsKDUhJ89wfc0HUHfAjOEvziobHGdByY9jwkf5qqxY4Lcdcy22GZ
+         imIosCx3WoyGCuw9+eDj+aq/051Dcxk0q8yBVuIKdbAauoV8p51QaBjuxRr6nEWGY0Wk
+         IGLvJ2zyG+A0+vEABDBfcDLltDAhI9pXlp7erWaO69oNpTCiZ/gMMnndKTqPERKs3E15
+         ImdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVArfQ5+AMyItRglMHD1yLp8CwLlxV9qB84NgaewgDfx84dZylNDtZ9KuCckmauKzSg4eAwSA5gBPmcJtE=@vger.kernel.org, AJvYcCVxm8ZOqdoaPnQzbULYPdrYfLqSVICAKHaEmzuQyCfW8MlvlKwkSDHFY1xQc/YvVYTgCmaCaAyWtSRQ08MC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEwjWnmF509rOr4jmh5Z24n0Yt3/XIv69x/sVEZM7efv4UwDz3
+	Syy0wOZ3AuM0SC1TLXjcP5FggI0LwJnBhhWmsFNH0V6aiFj5feMm
+X-Gm-Gg: ASbGncs+tpcEntc/G8woxMoITasF4sqKlfCDNwOIEo/cmkN+MmLy0uA/AxsIO+I9XH9
+	r/7UU/jpuLbP4UkUqmSwDzWk3sNFEmudlix5QOvrd8PvN9yfy5fyg9cn0S1b6R8xwi4cJo9j5D+
+	uJhO+OSHuU0ZA+DlQqP5pT7o0mHt6MF5fYFDhKT1iYcUkwrbJPFyB0OI9JwxXAZnSrItTKoDY0d
+	Vm2T942sjufX9DTlR/uz/Evi2p9OXbl3KeMc1qwAkIgC9mJ0FafGUQzsn26El9VdwY+xI9cu43+
+	ENDMmKeh/b9WYOR69ZSx7ygnKeM774uhtaPgNsx2W7Eh/yEisd+j+jymyjwIUS/G
+X-Google-Smtp-Source: AGHT+IGhuQdlW93oN+iObz2oloQDQjhab7e/6iloMoMzZrb9scHCZGmdXSbo/tQq2HlfvypbqG9OAg==
+X-Received: by 2002:a05:600c:1c13:b0:439:98b0:f911 with SMTP id 5b1f17b1804b1-439ae1e9aa8mr179552915e9.10.1740522095603;
+        Tue, 25 Feb 2025 14:21:35 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b591sm1452315e9.6.2025.02.25.14.21.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 14:21:35 -0800 (PST)
+Date: Tue, 25 Feb 2025 22:21:33 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Xiao Liang <shaw.leon@gmail.com>, x86@kernel.org,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel
+ <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>
+Subject: Re: [RFC PATCH 1/2] x86/fpu: make kernel-mode FPU reliably usable
+ in softirqs
+Message-ID: <20250225222133.395f7194@pumpkin>
+In-Reply-To: <20250221193124.GA3790599@google.com>
+References: <20250220051325.340691-1-ebiggers@kernel.org>
+	<20250220051325.340691-2-ebiggers@kernel.org>
+	<CABAhCOQjnSsos3gm4GWrxFUdV8dw-=r_mMn0+xdjnZjJ0PQ9MA@mail.gmail.com>
+	<20250221193124.GA3790599@google.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-memory-drm-misc-next-v1-12-9d0e8761107a@redhat.com>
-References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
-In-Reply-To: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
-To: Joel Stanley <joel@jms.id.au>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
- Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
- Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Alexey Brodkin <abrodkin@synopsys.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=1573;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=/15qlsboM6yCAvaydvQcsEN4W06HB6cK0UlxWA8+/dI=;
- b=ctwB++vs/uJo3W74tDO1hgYWH+/4RjK1rS8II5NkImDP6J2u1dRysoaEir8KpfcS5eR2mtRZk
- klKUEMHenKeDWvB9gJk66H8NhG2Mti3PcGp+7DJwrN0qR8FJ1Dt9Wf3
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Update the Documentation to be more precise.
+On Fri, 21 Feb 2025 19:31:24 +0000
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-v2: Update for clarity
-v3: Further details in Todo
+> Hi Xiao,
+> 
+> On Fri, Feb 21, 2025 at 03:38:27PM +0800, Xiao Liang wrote:
+> > > Therefore, this patch updates x86 accordingly to reliably support
+> > > kernel-mode FPU in softirqs (except when hardirqs are disabled).
+> > >
+> > > This is done by just disabling softirq processing in kernel-mode FPU
+> > > sections, as that prevents the nesting that was problematic.
+> > >
+> > > This will delay some softirqs slightly, but only ones that would have
+> > > otherwise been nested inside a task context kernel-mode FPU section.
+> > > Any such softirqs would have taken the slow fallback path before if they
+> > > tried to do any en/decryption.  Now these softirqs will just run at the
+> > > end of the task context kernel-mode FPU section (since local_bh_enable()
+> > > runs pending softirqs) and will no longer take the slow fallback path.  
+> > 
+> > I think this will delay all softirqs, including those that don't use
+> > FPU. Will there be a performance impact?
+> > (I guess you've noticed the patch I submitted last year. And this is
+> > the main reason why it was implemented in the way you mentioned as
+> > the second alternative.)  
+> 
+> Thanks for taking a look at this patch!  It's true that this patch makes all
+> softirqs on the same CPU be delayed until the end of the current kernel-mode FPU
+> section.  But, I'm a bit skeptical that it actually matters enough on x86 to go
+> with a more complex solution that would allow nested kernel-mode FPU.
+> Kernel-mode FPU sections are generally short; the usual cases are en/decrypting
+> disk sectors or network packets that are 4 KiB or less.
+> 
+....
+> I think it's also important to note that when local_bh_enable() re-enables
+> softirq processing (when called from kernel_fpu_end()), it also immediatelly
+> runs any pending softirqs.  Thus there would be no additional delay; the CPU
+> will *immediately* run any pending softirqs.
 
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- Documentation/gpu/todo.rst | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+I'd also have thought that anything time-critical shouldn't rely on softirq.
+The network stack will run a lot of code in softirq context, a bit of time
+with softirq disabled isn't going to make any difference to real-world latency.
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index 256d0d1cb2164bd94f9b610a751b907834d96a21..c57777a24e03d91b1ffe04365f7356f2d938befd 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -441,14 +441,15 @@ Contact: Thomas Zimmermann <tzimmermann@suse.de>
- 
- Level: Intermediate
- 
--Request memory regions in all drivers
---------------------------------------
-+Request memory regions in all fbdev drivers
-+--------------------------------------------
- 
--Go through all drivers and add code to request the memory regions that the
--driver uses. This requires adding calls to request_mem_region(),
-+Old/ancient fbdev drivers do not request their memory properly.
-+Go through these drivers and add code to request the memory regions
-+that the driver uses. This requires adding calls to request_mem_region(),
- pci_request_region() or similar functions. Use helpers for managed cleanup
--where possible.
--
-+where possible. Problematic areas include hardware that has exclusive ranges
-+like VGA. VGA16fb does not request the range as it is expected.
- Drivers are pretty bad at doing this and there used to be conflicts among
- DRM and fbdev drivers. Still, it's the correct thing to do.
- 
+I do wonder though whether the network napi code should be running in softint
+context at all.
+With the amount of data it is trivial to get through a single 'consumer' ethernet
+interface it can easily cause the scheduler to mis-behave.
+I'd guess that google (etc) use threaded napi, multiple rx queues and RFS to get
+the network processing spread out and non contending with process code.
 
--- 
-2.48.1
+> 
+> As for supporting nested kernel-mode FPU if we wanted to go that way: yes, your
+> patch from last year
+> https://lore.kernel.org/lkml/20240403140138.393825-1-shaw.leon@gmail.com/
+> ostensibly did that.  However, I found some bugs in it; e.g., it didn't take
+> into account that struct fpu is variable-length.  So it didn't turn out as
+> simple as that patch made it seem.  Just extending fpregs_{lock,unlock}() to
+> kernel-mode FPU is a simpler solution with fewer edge cases, and it avoids
+> increasing the memory usage of the kernel.  So I thought I'd propose that first.
+
+Since many kernel users don't want the traditional fpu, they just need to use
+an instruction that requires an AVX register or two, is it possible for code
+to specify a small save area for just two or four registers and then use just
+those registers? (so treating then all as caller-saved).
+I know that won't work with anything that affects the fpu status register,
+but if you want a single wide register for a PCIe read (to generate a big TLP)
+it is more than enough.
+
+I'm sure there are horrid pitfalls, especially if IPI are still used to for
+deferred save of fpu state.
+
+	David
+
 
 
