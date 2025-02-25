@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-531607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974D9A442A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B47A442AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02CB174D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66BEB1750D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDDA26A0CB;
-	Tue, 25 Feb 2025 14:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFB726A0A4;
+	Tue, 25 Feb 2025 14:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6c6N6Yn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="bKo/+XI2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C723626770B;
-	Tue, 25 Feb 2025 14:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188726770B;
+	Tue, 25 Feb 2025 14:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493479; cv=none; b=jlNrmwO6zx991GEv4/2vQdfa/6469sWT/tHUEVCp1kvSi/N/vLjBbeIx0WEtrs9ugrRkoSQiaZK4ja4/vJRB8unIecjs+tsOevaRUngO8udrZcsp/jP0KTsUonZhLGthRRPi7q/iu16Cu6GV3SmZgbD6TkjoUX+SWrDFwZ4JyxM=
+	t=1740493524; cv=none; b=VtEEcjaFS7233tT4dhsUqTVU2rtF0C+GI7FgC+BDQ/kYtSdzRQPVPGI0oQ8V0NrrTHGRgj3vMX++YzGfC4b3cxD8fXfsEz6v4xHifImJfHXPSutb3zjByqB3jbGNqvanfZSwr20rz7utRvvd6AJua+yjqMXk5VSvPiJYa24b5wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493479; c=relaxed/simple;
-	bh=Tc/+WyJ8Iu+Vv+jAgKujCKC+Po6J5sopxIY2TPW8Xjc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=eImSM3EnTFbYeyijhUCsm3LWqV9+2jkTODO5iEzviaGPLFD1GWfRh7TmYXP/RLKNJ8TsDJf6y/0j56WZ/HqEU1kyTeC0xm9cQWd9ooOb1bacNqwtjkMOdx8/2wc7Vlt9modXDsCeEmLURKiD9m6ljLbRvcE1F+zGytEb2FQOKr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6c6N6Yn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C99CC4CEDD;
-	Tue, 25 Feb 2025 14:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740493479;
-	bh=Tc/+WyJ8Iu+Vv+jAgKujCKC+Po6J5sopxIY2TPW8Xjc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=A6c6N6Yn7j53oak37Og95xt1rMTVpfmjwcHxJfJ43MK8NIMZh5JwLQXaN8RnwLT3R
-	 nzvYY6s5w9mfB1n7oypQDTYcdau2q6QVY97RcU57DQf5MAWDMjaBd4Z6noqZlVCzZg
-	 IYTsbhIloDhv2JjfrlfncWupCp6K2tQvw5lGkZ7zCl1m1MlDLOspXXoZrOMXwwKEQq
-	 v0GXdbNBY1vwedcQzhejheZB+adUQzneLBCVH3LOsjiPOj/SznCDjtj1R7+TZePlaa
-	 upPZSNfu3RvPRVuj0g7EQwYYHuaixfpuCNGPiCM6BTiPHYNbay6Td1sbCF34aPENi7
-	 9Vwq8goStZtpg==
-Date: Tue, 25 Feb 2025 08:24:37 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740493524; c=relaxed/simple;
+	bh=Q3RJil+VHeqSzKmw90XF0Ub/vSs2FGhiO8M1TWVwjXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MKZh4biwZ1DxlhTKoGROFGZXRZLQ7/yLAXohfvzItqvsz5ATabphmio4vRtG/Bi9+AdOI9PU72pKofe1XHTFk4Ma2Fafy/aPdLYk3JtaoQjWFZXfh977wzp7fuS7WTYallOKkNnR9EdmISczr8u8eqUZTfJeOjwdwmIMFn8fR8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=bKo/+XI2; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso57208065e9.1;
+        Tue, 25 Feb 2025 06:25:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1740493521; x=1741098321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AZf/o+N6Kz1RJg00ifbZNFSz2scXP1N3IPoo+w/Gz88=;
+        b=bKo/+XI2aLEcD29B3+8d/h0kkJFq+X4Y3g5QOYNCRWXSnOLF5QGqzdqlHZ+Z+dSbWE
+         LbWWJSYpl4wIjr24sux+/+/VE4j+c6FUAZsoIw/rQAtryaxAWaGgMC1Zup8XncTHQqeP
+         vrpgZ2i3AFBgBQy6eGrnAV1CyfJHmZsRqAVwaH2/XphMaA8qAmr2Wtnu/9Oj3lxFY+pe
+         ypyTqRV5gDHu8nGE0u4gaXDruxCRn6DgZT4B+3sPg0PURABm1ATagOyOyN6jWxjXYYlS
+         epPHHlxRTrVYQX5oAkUJAyULqwYtX+hR1e5jLhh8pm2Cliyi8n1fkVdyMKC1t29ihW7J
+         EzAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740493521; x=1741098321;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AZf/o+N6Kz1RJg00ifbZNFSz2scXP1N3IPoo+w/Gz88=;
+        b=FG7U4IK27ojM0+c6Q183yVv1S3bS0LV/KXOR16Sp/S3VqiqHUzzGshVNRvjvJBwSwt
+         z8WrgospxNgypiTYzPhvd06AXznlUq9bLkcTfSCSu60FwQAFf1qCKPHNoJvev0qdIKTJ
+         tSEvl+FVa03DsevPBsRPnBepRQYtN7Q5wKpY2MRr0tYh0IjygaC+f5uvSD7E2KwCk4Cj
+         W/+nCmHzF4iOWoBVmjEWodskuMkA0ETpcv5R9j1njx2jT8prNhCMa0osledn8ZYf40dE
+         zlWxkzOSK9KvHRE96HPKqcuZAij5CqG7yPF2+f3ZB8hupOcIVZiFefQNrTTu41LpsQoa
+         3G3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOv8mMYkbSPpi8MHxPDBFN20FATBC0lpSSYAoYcizhqef8Wm11K8fZ9CQzNBDFn+lx6Hg2naPF8BS6pl4=@vger.kernel.org, AJvYcCVeI0cJeD1HbydKCUOD1hi5NNisN50gn9i+Ij+qyh0mydPyNokw6OO12CsbmZZxGsghauGUya7J@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdeflfRmRGFQbv4EDUKZzFrYoL/yrRFgCfGq54XRECf1H3CzlJ
+	Lan7H6dvxbsM/zhNyJNwI+oGPExSB5295p3FvNJ4f1YxORGmN4jQHxP0IxD0Cw==
+X-Gm-Gg: ASbGnctrwTXDFuneYeOqbWVVupJq0NOYjDT/3jJHSZthuqPbD61MfwYtk+/BAZjSvmG
+	zWpqMz7f1olyz8I8ibmy6XbfWSYSePxvc+onKpGFNYxP0vWdP6mCaFftdLrH79cNn0q/f9NEHV4
+	HJprpfgHXH70wq5BYOU2asCvaBZea/7khre+pajsQZOO5dKM49N6LTA/8DSKn+yn8vu1ZIrWjww
+	WrAruRKZtm44g+BZUISnK3NmJ87netXTGo65fUAa89PrQ5CG76M3wQ6g3dHTPov4g4FBsNdJ67t
+	oc0jPQmVAMN+WPmF+lYIiix9b0bMrfZqF7id6on9Ozq7XgdsctNQTw7xpYUJYlK3CnXYvJoN5R5
+	MGRdM
+X-Google-Smtp-Source: AGHT+IGhdhiXQ4ECqTY9URWLiprLLnF779OXP/tKMzgBk9NQek5Qvqkfk5EpfkDRo1p5zSibaF4ZuQ==
+X-Received: by 2002:a05:600c:4446:b0:439:9274:81cd with SMTP id 5b1f17b1804b1-43ab0f2566emr37255015e9.4.1740493520894;
+        Tue, 25 Feb 2025 06:25:20 -0800 (PST)
+Received: from [192.168.1.3] (p5b2aca7c.dip0.t-ipconnect.de. [91.42.202.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02e6cffsm142049515e9.19.2025.02.25.06.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 06:25:20 -0800 (PST)
+Message-ID: <8301ce47-ce5b-498e-b2e3-412a0741c4a3@googlemail.com>
+Date: Tue, 25 Feb 2025 15:25:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, quic_jesszhan@quicinc.com, rfoss@kernel.org, 
- jernej.skrabec@gmail.com, conor+dt@kernel.org, robh+dt@kernel.org, 
- jonas@kwiboo.se, linux-arm-msm@vger.kernel.org, 
- Laurent.pinchart@ideasonboard.com, quic_vproddut@quicinc.com, 
- neil.armstrong@linaro.org, konradybcio@kernel.org, andrzej.hajda@intel.com, 
- linux-kernel@vger.kernel.org, quic_rajeevny@quicinc.com, 
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- marijn.suijten@somainline.org, andersson@kernel.org, 
- dmitry.baryshkov@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com, 
- sean@poorly.run, devicetree@vger.kernel.org
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <20250225121824.3869719-4-quic_amakhija@quicinc.com>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-4-quic_amakhija@quicinc.com>
-Message-Id: <174049347715.2313013.4695405671704163724.robh@kernel.org>
-Subject: Re: [PATCH 03/11] dt-bindings: display: msm: document DSI
- controller and phy on SA8775P
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/153] 6.12.17-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250225064751.133174920@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250225064751.133174920@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Am 25.02.2025 um 07:49 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.17 release.
+> There are 153 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Like -rc1, no problems with -rc2 here. Builds, boots and works on my 2-socket Ivy Bridge 
+Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
-On Tue, 25 Feb 2025 17:48:16 +0530, Ayushi Makhija wrote:
-> Document DSI controller and phy on SA8775P platform.
-> 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  .../display/msm/qcom,sa8775p-mdss.yaml        | 170 ++++++++++++++++++
->  1 file changed, 170 insertions(+)
-> 
+Beste Grüße,
+Peter Schneider
 
-My bot found errors running 'make dt_binding_check' on your patch:
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^dsi@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^phy@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250225121824.3869719-4-quic_amakhija@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
