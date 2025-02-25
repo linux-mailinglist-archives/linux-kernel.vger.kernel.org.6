@@ -1,162 +1,153 @@
-Return-Path: <linux-kernel+bounces-531274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B3DA43E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:55:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4229FA43E66
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021381896B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3A719C16A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2652686AE;
-	Tue, 25 Feb 2025 11:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDE42690D7;
+	Tue, 25 Feb 2025 11:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XVHhDF2g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gMVhCUct"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04EC267B89
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBFB2690CF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484437; cv=none; b=BdWLNKXGG3vbOf8lwZePoPYQhym1gQDgCPCN75aq4JwvAsWiFF5EzZ9VSXnWk1hvq/GP773CDeA4nVYFo3lBZjMY1fqdkbm/NiwHqzmGAZUq8OrSNkylc3yLnnueD8mwi7CedBgncETz2UT+1veISTqPYXmWsd0CEqN+lR057ls=
+	t=1740484445; cv=none; b=drPUre5/XgPU/7zl77OXwp7AdjcnBNQM1BjvYvBEfr1xzg0gAdo7mbsct9ZL8x5vRw0addQqTB6uFOHhmAd7jX6TAuIFp97jH8ZIVYUrIzE06fZ4/ICpyqb5LeRISHgcrNhrSvbawGcDOXtZMChpPFgPsm23f+68C48FiXvEMVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484437; c=relaxed/simple;
-	bh=2Cm1/5hdJGpRsXa5i9WUTLuqLOaoa32H6ewApOaGaR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sS3ShFE9aQogwp6nOYm4T0Z5ZM6uIcaEMhhSiQKApwDe95IjmhfX10TT/p9C+pHz38cg6NOXOHDCopjRavGiq5WXVaILQUinxUZTGhZi3oCTxI4DfHrLqq6uqKjznsughB8VZUvrbUqa4laDpB5+iCyUHT0qoltGhI8Oa+QBSm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XVHhDF2g; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740484433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IbzJ0ciiaQnN9IyipfcPCPIA+1eXfEZQWeSNaJG5RbU=;
-	b=XVHhDF2gG4hJ939Tj5AqcJ5NPcStH4XaVTcvs6A+XamdAxIDvG3sCaO0FaRQf9se8AVhFD
-	gUMFiqeCznF77A4B9LI0N/xzy0WfYV0n70iSwZquupC6i0HaUZ5whDo1p+wd3cEr8XHpPz
-	EvqeLr99X9C7kWSXHiYTChjHUXicvgI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-184-dzWVxKGwMcmliJHoUDLZTQ-1; Tue, 25 Feb 2025 06:53:52 -0500
-X-MC-Unique: dzWVxKGwMcmliJHoUDLZTQ-1
-X-Mimecast-MFC-AGG-ID: dzWVxKGwMcmliJHoUDLZTQ_1740484431
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43935e09897so38228355e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:53:52 -0800 (PST)
+	s=arc-20240116; t=1740484445; c=relaxed/simple;
+	bh=5wJRqoBz+/ML3qvHag7dgPsecxHpHLK7X3G2sCfdXLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkqnZPzFhOJCUXQU8VRz4oANhFe8ORkY9LcIkebrzZTFH40rPd+bG7k75KwBHceRf8AzdWW9BxqZyg7ArZNIcO356HaqX0XXYYSBuLKUlGHJvDg3cf730p09zuaMk7W7bUgKCMBzuiIG0xj57M/DdmNhULUNYfMXaTEvRHYRK9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gMVhCUct; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54838cd334cso4486383e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:54:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740484440; x=1741089240; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ymFmWqNzSJ3xiwIj3jzQDBcrIOV0GW7dIG4JzK2f73k=;
+        b=gMVhCUcts7VkGP55IoZiRY2htS0d5LfWXIu06GTsI+vRzmxJAOSA06xsjVe90WFuAB
+         z2LQehH+nY4QCxRRMQ+0ZZSISgb0Nvy/qVZoTcX2h2tPoNgy0e+o4Ph/m/9cENLkOGoe
+         vIpZvkUN9htXefZTUagL9vSK0x3Yjo8ABL2KtXewwU4xumQ/tlXBAE6iSJQMYHTHoCke
+         EsxlRJ45cE2ACRIcJljCPMKUWfX2z+bQRij3aMkD2w+rqWdxJIYnXKdQJGN9uT2sN88h
+         tNDkUCC+5hNphbCKofQw8I6HHFzmI3sxQ887seXUPHlnrgFM82KM9MPkDB7LQ+/9QV8l
+         aVEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484431; x=1741089231;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IbzJ0ciiaQnN9IyipfcPCPIA+1eXfEZQWeSNaJG5RbU=;
-        b=MKKSHiyhp8GcUTjaEWTu9PqNXRQ9bA8oQeWzwA38VCCBYXqE1movahx6y5kglzWKrX
-         DzoGOHy+ur9WykDwTgiylPcalRsz7VIIicqNTzlWRvcBBXKKn5XZYncOMuuLaMZloRYo
-         RB5VerxdolcAVvFAzGETwheP961DS2NPrkWz/x1LC8nRdrXkQAq+ZWba7QB+6iFykQtO
-         G+lbk1pGKLhkBwncLs/LKCjdwkdypvjNLz2Uk32uAdZkrUsFbGpj4dbIyVsQGipRkdpJ
-         WZbGGObVIpx53/wAYG2s6VJCaia7GDgG1Z3qG3zQnCSMlsbf7aGYzCQAqArKlpYJ7Ewq
-         +7ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWBJ+LT+llx++pGDN5H+9vdjJxyQbYRIygu6JdCP2hTi8mjntqpX67L1FmV3hzGwJwYI4lUbIPVDzb4k/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLcF28CVOpW5Q8n2HXqfo+pieiy1+mkPceQFMq7KF13BIexthZ
-	fveoozgshF4Tw+r20t8k7h3n9MyWiHeNVAuo1h+L6WM4gLHPozSJDcw/tSx41Amh8kmemnBW62V
-	UIwkA+Vg4LLXgwlpGObYyy5exge1/UeUQJf0wxw1MAARKEi4wai4TrMerZ02duQ==
-X-Gm-Gg: ASbGncu0nFF//hXh4OLlT2da7Ffv+1/jb6OevcfDE5HmWRLLDJ17nSSjgC2gBLjdf+G
-	WT+Q7zxkmhq6ZKiaBUMK8M5cyt/tqEOHbssTI0IM2A3fJ6Rz9RgozpD3dax48DSYe+FZb1bN2ZZ
-	or71uDsVzrTK7oz3ny1S3zgza56LfTk92XwrZRGvlZQCE99jjc4/LwcORwuLECbyboSrVskRaay
-	0GF8MEMht+GeJCztushWpt6v8o1GpWt0bNjBQ6V7nh3xhlHqstLZqWfhNbazLMtOFGJpcxe8OT3
-	mCHRkMziT5HIoK68DGg8QccCHQiHfau2WZ7Z87H5UlY=
-X-Received: by 2002:a05:600c:4fd3:b0:439:9543:9488 with SMTP id 5b1f17b1804b1-439ae2196a6mr115868565e9.21.1740484431005;
-        Tue, 25 Feb 2025 03:53:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGp6HFbG6WupP50Yn0TY2alNimRWue32zDYWfmPTAw366oKsyjmPv7qJLmsbiU0vrQ+3ZRviw==
-X-Received: by 2002:a05:600c:4fd3:b0:439:9543:9488 with SMTP id 5b1f17b1804b1-439ae2196a6mr115868405e9.21.1740484430642;
-        Tue, 25 Feb 2025 03:53:50 -0800 (PST)
-Received: from [192.168.88.253] (146-241-59-53.dyn.eolo.it. [146.241.59.53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd866f0asm2045732f8f.12.2025.02.25.03.53.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 03:53:50 -0800 (PST)
-Message-ID: <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
-Date: Tue, 25 Feb 2025 12:53:49 +0100
+        d=1e100.net; s=20230601; t=1740484440; x=1741089240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymFmWqNzSJ3xiwIj3jzQDBcrIOV0GW7dIG4JzK2f73k=;
+        b=Na0rFIiV/6jAOwNEJxdNFJvEvEMZcpDJ0NcLmUYWJoo5A2Fw9jF/xg1dA0Nku73jVJ
+         hrHPLg4yg+SbdctSri1Mcl7w0U0ORRIag7AL+lWxU2wOsvmiKvOwraW53rKvcPmildMT
+         SIs2IwGuM0khxjyM0o/6wYJjV/UVnld40FTW77oELVJKWpCladZIEsUGI5sUjZpF7adx
+         ZgOWz7F5edWLiAaA3kazz8OlGyKd+yCcPezqvRpTp5MFKst8M2U11vj36uSGGz/0RJ4c
+         vjNrd5qyc0OmzY3yzfxzi1MOEx7arpS0JcVJ2cGtfG/40Gm9nPBTC5ttcrrlZvtAzXEH
+         +FoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy+v8mr8fc5UZhZWP3Ruka7aMD+NTarFsdRgqMfHQ7fY8kTcP/Fb2ICyuDjQqKx24WJCB7Fz/25gKcs2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy23Np6OsJU2Ij9TOrZmqQXwtPei4Ril/cDMnpG3OfbeAyFBfxr
+	h91D8M4pK006Hzf6CUmays9q25PKQRDdhvfG4Miu4YdupTkT+0eTtlzlyiwg6N4=
+X-Gm-Gg: ASbGnctxe+QuObShXBkizbxM6tqRmvolHb2+Fi3INGBk7qEVUplvwnXSe1/EyMuevi1
+	q23dKNnsfiA67tl+D/0Ub4QMlaf1csF/PNG//fvECVM/xbOjPY+MOshtFsi+YHpMTzh23hixuTk
+	acNuoKvHhdtGDV1GnAnDWmSyb9is+v8taw5ietvqK0G4w94InmADp1s4XB8nywHsvQ/TwDjs9HO
+	JO5fq2lv5ZNsMtF2gCG/eVh4SOfvSk2LeIaOFrpZlSHE4Q2YKgyZPD2IV3ydCkrUZSp15+aLhrM
+	Rt6NOO1f/CnZjiheXJRbAtTCQnYeCDeon282Yfv67l0izoxjvLxdjzY45oYDokDCkPOYGUUZzIG
+	0F7fpSQ==
+X-Google-Smtp-Source: AGHT+IETnRRjgsI1fqXk4lWiJqW+iKf/4tgebBXRXt/PZ6XSX/tsgllgQ/Pcz/grRT9jf15M1s7TEw==
+X-Received: by 2002:a05:6512:1305:b0:545:48c:6352 with SMTP id 2adb3069b0e04-54838f796fbmr7589865e87.43.1740484439781;
+        Tue, 25 Feb 2025 03:53:59 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a819e0c49sm2094591fa.10.2025.02.25.03.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 03:53:58 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:53:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 08/10] PCI: pwrctrl: Add power control driver for
+ tc956x
+Message-ID: <xpcgr3e6rbviuw46xh4ffmx2j3iryr7tfdnipl5z3ndwlu6k5c@uryhj2z7eduq>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 5/7] netconsole: add task name to extra data
- fields
-To: Breno Leitao <leitao@debian.org>, Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@meta.com
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-5-21c86ae8fc0d@debian.org>
- <20250225101910.GM1615191@kernel.org>
- <20250225-doberman-of-scientific-champagne-640c69@leitao>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250225-doberman-of-scientific-champagne-640c69@leitao>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com>
 
-On 2/25/25 12:17 PM, Breno Leitao wrote:
-> On Tue, Feb 25, 2025 at 10:19:10AM +0000, Simon Horman wrote:
->> On Fri, Feb 21, 2025 at 05:52:10AM -0800, Breno Leitao wrote:
->>> This is the core patch for this whole patchset. Add support for
->>> including the current task's name in netconsole's extra data output.
->>> This adds a new append_taskname() function that writes the task name
->>> (from current->comm) into the target's extradata buffer, similar to how
->>> CPU numbers are handled.
->>>
->>> The task name is included when the SYSDATA_TASKNAME field is set,
->>> appearing in the format "taskname=<name>" in the output. This additional
->>> context can help with debugging by showing which task generated each
->>> console message.
->>>
->>> Signed-off-by: Breno Leitao <leitao@debian.org>
->>> ---
->>>  drivers/net/netconsole.c | 14 +++++++++++++-
->>>  1 file changed, 13 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
->>> index 5a29144ae37ee7b487b1a252b0f2ce8574f9cefa..625f4c0be11d8deb454139b1c526abc842697219 100644
->>> --- a/drivers/net/netconsole.c
->>> +++ b/drivers/net/netconsole.c
->>> @@ -1179,12 +1179,22 @@ static int append_cpu_nr(struct netconsole_target *nt, int offset)
->>>  			 raw_smp_processor_id());
->>>  }
->>>  
->>> +static int append_taskname(struct netconsole_target *nt, int offset)
->>> +{
->>> +	if (WARN_ON_ONCE(!current))
->>> +		return 0;
->>
->> Hi Breno,
->>
->> I gather that theoretically this could occur, but it isn't expected
->> to happen in practice. Is that right?
+On Tue, Feb 25, 2025 at 03:04:05PM +0530, Krishna Chaitanya Chundru wrote:
+> TC956x is a PCIe switch which has one upstream and three downstream
+> ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> device. Other two downstream ports are supposed to connect to external
+> device. One Host can connect to TC956x by upstream port. TC956x switch
+> needs to be configured after powering on and before PCIe link was up.
 > 
-> That's correct. `current` isn't expected to be NULL in practice.
-> I've been running this code on several servers for days and have never
-> encountered this warning. 
+> The PCIe controller driver already enables link training at the host side
+> even before this driver probe happens, due to this when driver enables
+> power to the switch it participates in the link training and PCIe link
+> may come up before configuring the switch through i2c. Once the link is
+> up the configuration done through i2c will not have any affect.To prevent
+> the host from participating in link training, disable link training on the
+> host side to ensure the link does not come up before the switch is
+> configured via I2C.
 > 
-> While the taskname feature isn't enabled during early boot, netconsole
-> might be active at that time, which is why I exercised extra caution
-> here.
+> Based up on dt property and type of the port, tc956x is configured
+> through i2c.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/pci/pwrctrl/Kconfig              |   6 +
+>  drivers/pci/pwrctrl/Makefile             |   1 +
+>  drivers/pci/pwrctrl/pci-pwrctrl-tc956x.c | 625 +++++++++++++++++++++++++++++++
+>  3 files changed, 632 insertions(+)
+> 
+> diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
+> index 54589bb2403b..ae8a0a39f586 100644
+> --- a/drivers/pci/pwrctrl/Kconfig
+> +++ b/drivers/pci/pwrctrl/Kconfig
+> @@ -10,3 +10,9 @@ config PCI_PWRCTL_PWRSEQ
+>  	tristate
+>  	select POWER_SEQUENCING
+>  	select PCI_PWRCTL
+> +
+> +config PCI_PWRCTRL_TC956X
+> +	tristate "PCI Power Control driver for TC956x PCIe switch"
+> +	select PCI_PWRCTL
+> +	help
+> +	  Say Y here to enable the pwrctrl driver for TC956x PCIe switch.
 
-So `current` can't be NULL here. I think it's better to drop such check,
-it's presence would be misleading. i.e. like adding checks for UDP stack
-being initialized before calling send_msg_fragmented()
+If you were to resend the series for any reason, please include the
+defconfig changes to enable the driver. If not, please submit it
+separately.
 
-Cheers,
 
-Paolo
-
+-- 
+With best wishes
+Dmitry
 
