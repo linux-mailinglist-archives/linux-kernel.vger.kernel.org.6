@@ -1,118 +1,163 @@
-Return-Path: <linux-kernel+bounces-531353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3305A43F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:32:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D769FA43F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF18A1783CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0283F19C1195
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E8B268C48;
-	Tue, 25 Feb 2025 12:32:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D252264A62
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE12690CC;
+	Tue, 25 Feb 2025 12:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="o8dGidXs"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8A32686B8;
+	Tue, 25 Feb 2025 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486730; cv=none; b=SefQYPq7TV7xu0Z76Ic+oxqRnNaEZ2NIUEiBMyC5NaimGvREnOsCU6GveCJFiLbD2uoafpdD7HeDfuSQen3nrUvA+ciNiQWuW5n0VQ51oXDb04WnIcRef/BROJTaOY5WuS/Glii9zSRqmkaWr1J3rgyxtO5S04+jG9QiMEDe7RM=
+	t=1740486750; cv=none; b=YKgaiRqm1ObYyOmG5qtFApABimL5t0VpFW9SQtfJhn93odTuDGbpWicGQvlYPQErUP3fRcCgX/pJb2DK4UUsIpY/5i8m++Hgb1s1tA7QpwK+WUxWk8aTnoFn3/zFQvNZyfZNvtIGhHpbZ7q3N3hwe8H21g0OS5Ktq8pww0P/dwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486730; c=relaxed/simple;
-	bh=QpXoEDkYKpSmRt4xZzQ8pfU/exILKuqfy05zUgcayWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGTg0eeh9t1l+NOM1eSKchinx6INQEvUex8A7POzN2RF8Ouml4K5PQf72iRo5rSWue32mZocO3qzYuiFBz5AbR5L5AuTqy6uQvSFk9A8GFSQwBD7uX5yNxzbiR2I+CXAgw8UbzEyhSuza9xFdVhwMMOy/3D++iRzBEC/f8Ok23M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDA16152B;
-	Tue, 25 Feb 2025 04:32:23 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32AEF3F6A8;
-	Tue, 25 Feb 2025 04:32:06 -0800 (PST)
-Date: Tue, 25 Feb 2025 12:32:03 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: Explicit cast conversions to correct data type
-Message-ID: <Z724Q1ofM1GvKquV@J2N7QTR9R3>
-References: <20250219035646.536707-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1740486750; c=relaxed/simple;
+	bh=twedXejbs0nq+ksMdQ1vMCmEi4SWHyHVxLXcEmDOJL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gpV0YKQLe5Nw/Lq/Gcu34jdoWz0t+oHRN6UyXjOQ32bhap95LJRbCLTJNkmLVDyfnIu4iAwFcmBEBfHU1rxpMZAu8CcFH66YbJMIhe6zOO8Me7SIUXZhgQxX/Djw529akUUf++mPutgdhwWS/ydIuqT8kJlBvhg3DPhs/S2ZCVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=o8dGidXs; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1740486736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HJwIHBMCpWGqDSfH1Y+aSqVcFdIzOTc9QCQgARpEMGU=;
+	b=o8dGidXsz0V+1HWLVWM54KwkrcQs9fFq2tWeObizgwMb++P/7N3Qzb/ZdeLhW+mWj0804A
+	9ZGbWf3CfqYu7S8dhG0sFsyDRa7e9NYGrPmEP8ATGZ1xzsbjKDrG4mwqsiSMqs73WqOmU0
+	4JRJ6fhOD1K4S8oXGuxgKnoLu59XJak=
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+	Vitaly Chikunov <vt@altlinux.org>
+Subject: [PATCH 5.10] crypto: tcrypt - Fix missing return value check
+Date: Tue, 25 Feb 2025 15:32:14 +0300
+Message-ID: <20250225123215.26154-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219035646.536707-1-anshuman.khandual@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 09:26:46AM +0530, Anshuman Khandual wrote:
-> From: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> When CONFIG_ARM64_PA_BITS_52 is enabled, page table helpers __pte_to_phys()
-> and __phys_to_pte_val() are functions which return phys_addr_t and pteval_t
-> respectively as expected. But otherwise without this config being enabled,
-> they are defined as macros and their return types are implicit.
-> 
-> Until now this has worked out correctly as both pte_t and phys_addr_t data
-> types have been 64 bits. But with the introduction of 128 bit page tables,
-> pte_t becomes 128 bits. Hence this ends up with incorrect widths after the
-> conversions, which leads to compiler warnings.
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 
-Does 128-bit page table not imply 52-bit PAs?
+commit 7b3d52683b3a47c0ba1dfd6b5994a3a795b06972 upstream.
 
-> Fix the warnings by explicitly casting to the correct type after doing the
-> conversion.
+There are several places where the return value check of crypto_aead_setkey
+and crypto_aead_setauthsize were lost. It is necessary to add these checks.
 
-I think it would be simpler and clearer if we replaced the macros with
-functions, such that __pte_to_phys() and __phys_to_pte_val() are
-*always* functions.
+At the same time, move the crypto_aead_setauthsize() call out of the loop,
+and only need to call it once after load transform.
 
-That way it's easier to compar the CONFIG_ARM64_PA_BITS_52=y and
-CONFIG_ARM64_PA_BITS_52=n versions, and the types are always explciit
-for inputs and outputs, so there'd be less room for error and the
-compiler can warn us of type safety issues in any configuration.
+Fixes: 53f52d7aecb4 ("crypto: tcrypt - Added speed tests for AEAD crypto alogrithms in tcrypt test suite")
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[Denis: minor fix to resolve merge conflict.]                                           
+Signed-off-by: Denis Arefev <arefev@swemel.ru> 
+---
+ crypto/tcrypt.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-That and we can delete the comment block immediately above at the same
-time.
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index 7972d2784b3b..580c50afa587 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -290,6 +290,11 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
+ 	}
+ 
+ 	ret = crypto_aead_setauthsize(tfm, authsize);
++	if (ret) {
++		pr_err("alg: aead: Failed to setauthsize for %s: %d\n", algo,
++		       ret);
++		goto out_free_tfm;
++	}
+ 
+ 	for (i = 0; i < num_mb; ++i)
+ 		if (testmgr_alloc_buf(data[i].xbuf)) {
+@@ -315,7 +320,7 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
+ 	for (i = 0; i < num_mb; ++i) {
+ 		data[i].req = aead_request_alloc(tfm, GFP_KERNEL);
+ 		if (!data[i].req) {
+-			pr_err("alg: skcipher: Failed to allocate request for %s\n",
++			pr_err("alg: aead: Failed to allocate request for %s\n",
+ 			       algo);
+ 			while (i--)
+ 				aead_request_free(data[i].req);
+@@ -565,13 +570,19 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
+ 	sgout = &sg[9];
+ 
+ 	tfm = crypto_alloc_aead(algo, 0, 0);
+-
+ 	if (IS_ERR(tfm)) {
+ 		pr_err("alg: aead: Failed to load transform for %s: %ld\n", algo,
+ 		       PTR_ERR(tfm));
+ 		goto out_notfm;
+ 	}
+ 
++	ret = crypto_aead_setauthsize(tfm, authsize);
++	if (ret) {
++		pr_err("alg: aead: Failed to setauthsize for %s: %d\n", algo,
++		       ret);
++		goto out_noreq;
++	}
++
+ 	crypto_init_wait(&wait);
+ 	printk(KERN_INFO "\ntesting speed of %s (%s) %s\n", algo,
+ 			get_driver_name(crypto_aead, tfm), e);
+@@ -607,8 +618,13 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
+ 					break;
+ 				}
+ 			}
++
+ 			ret = crypto_aead_setkey(tfm, key, *keysize);
+-			ret = crypto_aead_setauthsize(tfm, authsize);
++			if (ret) {
++				pr_err("setkey() failed flags=%x: %d\n",
++					crypto_aead_get_flags(tfm), ret);
++				goto out;
++			}
+ 
+ 			iv_len = crypto_aead_ivsize(tfm);
+ 			if (iv_len)
+@@ -618,15 +634,8 @@ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
+ 			printk(KERN_INFO "test %u (%d bit key, %d byte blocks): ",
+ 					i, *keysize * 8, *b_size);
+ 
+-
+ 			memset(tvmem[0], 0xff, PAGE_SIZE);
+ 
+-			if (ret) {
+-				pr_err("setkey() failed flags=%x\n",
+-						crypto_aead_get_flags(tfm));
+-				goto out;
+-			}
+-
+ 			sg_init_aead(sg, xbuf, *b_size + (enc ? 0 : authsize),
+ 				     assoc, aad_size);
+ 
+-- 
+2.43.0
 
-Mark.
-
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.14-rc3
-> 
->  arch/arm64/include/asm/pgtable.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 0b2a2ad1b9e8..1da2421c9a15 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -84,8 +84,8 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
->  	return (phys | (phys >> PTE_ADDR_HIGH_SHIFT)) & PHYS_TO_PTE_ADDR_MASK;
->  }
->  #else
-> -#define __pte_to_phys(pte)	(pte_val(pte) & PTE_ADDR_LOW)
-> -#define __phys_to_pte_val(phys)	(phys)
-> +#define __pte_to_phys(pte)	((phys_addr_t)(pte_val(pte) & PTE_ADDR_LOW))
-> +#define __phys_to_pte_val(phys)	((pteval_t)(phys))
->  #endif
->  
->  #define pte_pfn(pte)		(__pte_to_phys(pte) >> PAGE_SHIFT)
-> -- 
-> 2.25.1
-> 
-> 
 
