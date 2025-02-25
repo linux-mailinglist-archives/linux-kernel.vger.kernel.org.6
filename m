@@ -1,143 +1,201 @@
-Return-Path: <linux-kernel+bounces-532279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F15A44B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:03:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817C7A44B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CDA07A8BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE46C188F012
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00507199396;
-	Tue, 25 Feb 2025 19:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AF01A5BBB;
+	Tue, 25 Feb 2025 19:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UxWtQcz4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5jPo6MYP"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuK41+cu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410A1199E88
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A631993A3;
+	Tue, 25 Feb 2025 19:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740510181; cv=none; b=JMlrsoARBvgQuZDcu2TnP3LdDe8r4ONcbCz93O+lIKoPcDorE4HGsqIy/Y2+j1JqIn4iMRZKIrVmCShglYpSxre/DcQoixEEf/QIpGvgBVZuZM2qnP2r6bV5z0VZbDVxs+Wu/AYJTkjHM8IZ1RSyLN/GtaeWD0hQbj8DuUIyQFw=
+	t=1740510256; cv=none; b=Lk1w4egf0952jv0f9+qnUZJKErDjlYBJvAiW9lW5cOEvdejp7PUzck7dp1V9lUB68FKIZ4g6jfHQrMug8PoIabuAYrcAuzrMLbfGcjyawh/3xOayFORMxfEWUKjXFsDs7TUq2NtguOW3xSfrA3k3V8xgSMn3N1eouMkLYo6EGvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740510181; c=relaxed/simple;
-	bh=syJ8sngRVDrJzNrZ2wDVjBiystI4anafE1fdpw4BpUs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GJ8SgUPop12bmN7Qs7bThD4PASG77UeWQ9Kh3iEzpCYHQ31+Ijvf1YVBigxwNmRfWgFXUcntX4a1wEaejYv1jM4txgd2LxMgb3srObcZ63dx3H6RNz+r316dqFTvdUkrajYOpf/So8UjGEyMzzqR+sJITPbSM7SYAO5TxPFPwHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UxWtQcz4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5jPo6MYP; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2EBFE11400A0;
-	Tue, 25 Feb 2025 14:02:58 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 14:02:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740510178;
-	 x=1740596578; bh=U1bc+78MhuovQPF1YquZvclztVsMOLeGmGgjTCdQjTY=; b=
-	UxWtQcz4C/APAdmoVfy4gN4lHbQMkI2jy4w2i/7nvqPTIsHQQ75My1Wop/H3kDkV
-	gqQSLawdu34WT4nW6FMi9J419wgq0/BuwNW2W0zQGJO8tCvQt8BobmOsN/Ddolx2
-	dqzdQIj26yatR2ELcA7shFo8TA++p7WjOMTj0REtNA751kOiJr4pBHy2v0bSyuFD
-	mjmQQquD0uRlMoHoPDISl+OZwiESgexvSdhIyQpVrEKzk5XqrbrhRTp9lB5zakiY
-	3At2T5v+5WgCGg8luTS4GoqNhgcbNvSbxt9XpOtnYNKdxvXFURabrkUzDTQ5rsOh
-	/x1hR2wIJ0CVWFQTJZRo2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740510178; x=
-	1740596578; bh=U1bc+78MhuovQPF1YquZvclztVsMOLeGmGgjTCdQjTY=; b=5
-	jPo6MYPsyPj7JrI6zx5UrrA3GjenXSoATNqK/xCOdQSy9xJ7pS2xseKeAcyIa0fN
-	mlcM9h5qSqxSf2JTipHSGzC/wylkWXfxtV+pw67YC8rnDCMh6ry9XLA1yuB1jRRp
-	rlNWaDAMYH59qZR1W8XBeNCNpkPKshfkzT4/62KMdkcaOfV/Y//EuqYSQYiJGcLF
-	q2pZEn8D4vkxtX9nCH32X8w7HN/2jJ4+BKgbk7PfgVdCS9jwYGBqxCvFPPJzIuBe
-	ptnt/BLRJ6t8KcnnRgLzAR2XPbJ2VRu9PsqYllKtlHQRk+nWuoP65oSB98jae8nl
-	aIE0iKzExrOfPjOCFhyMA==
-X-ME-Sender: <xms:4RO-ZyB30eogjq3zekWoyYQpPbyf1xoU6x33rbaaGoacMm9J2GSoqQ>
-    <xme:4RO-Z8iUrAXwC-kI2jOhPMLhJamzQDwFwFHApiClFp4_Gv77yYwyRFZnk75L2EBDL
-    u_RW7THx53IcgyPH1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeetkeffvedttddvtdegjeekledtuefgheevteef
-    ieeuvdegkeeggfehffehtedtleenucffohhmrghinhepuggvsghirghnrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheplhgrfhhorhhgvgesghhnuhhmohhnkhhsrdhorhhgpdhrtghpthhtohepghhr
-    vghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvh
-    hiugesrhhofigvthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigsehtrhgvsghlihhg
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:4RO-Z1lh5wfw8vMAUaau_xNt1Yt6xQULkkj56jCVJOKZrBdR1hV6CQ>
-    <xmx:4RO-ZwzV6W89jTDjJdxo1HFHO2_k38Jy0fZlLUKC5Ko30pm6DsyusA>
-    <xmx:4RO-Z3RCTMf-hj1VBlXKKtRZuO5eVQrG_Ys-HIESeURkqTVB0v2thw>
-    <xmx:4RO-Z7YfA7uWS_kyydLr9fd1fbveWLIOqIBtOGOJmnO8tb1tGqlwCw>
-    <xmx:4hO-Z1Nh3B1HsUCBweCMK4WD-ullLm2z0_KJw3d2bPxlD6F5D3-u2HxY>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5D3682220072; Tue, 25 Feb 2025 14:02:57 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740510256; c=relaxed/simple;
+	bh=wx9QBU6tAnYYzEaE8trWwMY6LtChTs+QPBWHOskxTn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JtrvllNjBBaXvtrrOBVmdLlsjkpDFlEG2IsDYQ1EcOS5UZDlBm+Qp6kCYeji8t9BC8M3D1jDpnWFqCqNOTGM3Zm5TvGHSR53Pxb1Q9p/MkX3mfTRmVCShp7s/pIbmsgFDqkSsz87OQ5zwBSo6yb5FaRwk74pn+ZNryXSY8SyvDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuK41+cu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780BEC4CEEE;
+	Tue, 25 Feb 2025 19:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740510255;
+	bh=wx9QBU6tAnYYzEaE8trWwMY6LtChTs+QPBWHOskxTn4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NuK41+cuisBhgv68qrrFTmegIiuQQ4fGmRPyXfR1HhatqCON8eIfYmFhej6MHWORk
+	 +Q95vz/0opiqOtIBbycCpiKUjLgCIFrHSXG+EjiiuOosxHz6SvZlqP0guZ5s1j7dG0
+	 0e35f0SqSFh7hnLinpSEnO9UhaU2+cdXthav/tetooLdYdeZlHTX25mfF4fiuI8vzm
+	 NSazbjJQwKMFn8oYWFN2wx4z1SBDYt8C8nZrtjk8+mYcTzFynuzZ7Yz+ocKdRNFjlE
+	 tkx1vQbIAAET5yYzIlKqG2GGMDFSSVQtZoNUHdqicOzwrIiWnQ7i1ZbTJ+rDGlJkq9
+	 diELxR40MH/Hw==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbae92be71so655114666b.2;
+        Tue, 25 Feb 2025 11:04:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWJ7ScVhV6RO4HfducFwpCywrLWK4iM6Rm9KXZObTg6mBukZKrZ+uzjF3ODyJ2z9B3AP4YOtZNTce+HadCS2FUbIg==@vger.kernel.org, AJvYcCWjhloqzRd5fkihihJLJDoawR6m0A2uAf9fR3tBJMwtswlDVKlIZ77RgGVEC48r1SJ9KBMRV7kb0ik=@vger.kernel.org, AJvYcCXtq/sB4zg9LOEpsNirZwf5Vh+P6Wdp4yLLXNil/ehdaKH/8a1riwqC6KjDpCyIO/n8bWF6t3zN3qfB52ER@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6ANZDwfCDVByCvDMQmo5YljBRavl8+nUtkRAMTFXv3LsW6G7d
+	Cnsky9KbKyrgeDpBAPK8SNAYy+TBGymmSFqOQnRhmGUZ0EKJzNrt6fztrHLEL5N/OrVYsq/DY2o
+	E0gTALNITrU4mT7yb6zldHWZWHw==
+X-Google-Smtp-Source: AGHT+IFar3mUfJFrfU/deMFPxUePXViU9VyVdcqCg6mKkuZ0S3VY/6Gk/ZI9rjPALypohCRcts86IPwkHDA1LjRRrSA=
+X-Received: by 2002:a05:6402:34d5:b0:5e0:82a0:50ce with SMTP id
+ 4fb4d7f45d1cf-5e44ba424d9mr10074864a12.27.1740510253810; Tue, 25 Feb 2025
+ 11:04:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 20:02:36 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: linux <linux@treblig.org>, "Harald Welte" <laforge@gnumonks.org>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, david@rowetel.com
-Message-Id: <71af20fc-ed19-4bda-af61-f6061fd1422b@app.fastmail.com>
-In-Reply-To: <Z74OSsZqeboJml9c@gallifrey>
-References: <Z7tZhYET41DAoHVf@gallifrey>
- <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
- <Z724l3DFJbGevtPF@nataraja> <Z72_EnXyHoDACRk5@gallifrey>
- <Z73MevharqkC5dt8@nataraja> <Z74OSsZqeboJml9c@gallifrey>
-Subject: Re: users of drivers/misc/echo ?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
+ <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+ <20250224140317.GF8144@e132581.arm.com> <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+ <20250224180301.GI8144@e132581.arm.com> <Z72xMLsd37I6X_5-@J2N7QTR9R3> <20250225174803.GB1821331@e132581.arm.com>
+In-Reply-To: <20250225174803.GB1821331@e132581.arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 25 Feb 2025 13:04:01 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKyiUYXLBxr_5kKyojXLsdkoRivtntmzPq-kjWv2V+Y=w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp6KAiLK5EIt7HxRu_fbcAPSrUpDqbcWrQjPWGul4dbIwchehQ5jnZ8SKs
+Message-ID: <CAL_JsqKyiUYXLBxr_5kKyojXLsdkoRivtntmzPq-kjWv2V+Y=w@mail.gmail.com>
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025, at 19:39, Dr. David Alan Gilbert wrote:
-> * Harald Welte (laforge@gnumonks.org) wrote:
-
+On Tue, Feb 25, 2025 at 11:48=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
 >
-> It looks like Debian is including and enabling it in it's DKMS build:
+> On Tue, Feb 25, 2025 at 12:01:52PM +0000, Mark Rutland wrote:
 >
-> # apt install dahdi-dkms
-> ...
-> dahdi_echocan_oslec.ko:
-> Running module version sanity check.
->  - Original module
->    - No original module exists within this kernel
->  - Installation
->    - Installing to /lib/modules/6.1.0-31-amd64/updates/dkms/
-> ...
-> # nm /lib/modules/6.1.0-31-amd64/updates/dkms/dahdi_echocan_oslec.ko
-> ...
->                  U oslec_create
->                  U oslec_free
->                  U oslec_update
-> ...
+> [...]
+>
+> > > > Critically, the brbe_enable() function merges the filters of all
+> > > > *active* events which have been installed into hardware. It does no=
+t
+> > > > track all events which can be rotated, and the resulting filter is =
+not
+> > > > the same -- it can change as a result of rotation.
+> > >
+> > > In a perf session has multiple events, and events have different bran=
+ch
+> > > filters, seems to me, a simple way is to return error for this case.
+> >
+> > FWIW, I'd generally prefer to do that since it avoids a number of
+> > horrible edge-cases and gets rid of the need to do SW filtering, which
+> > falls somewhere between "tricky" and "not entirely possible". However,
+> > that's not what LBR and others do, which is why we went with filter
+> > merging.
+> >
+> > If folk on the tools side are happy with the kernel rejecting
+> > conflicting events, then I'd be more than happy to do that. What I don'=
+t
+> > want is that we start off with that approach and people immediately
+> > start to complain that the BRBE driver rejects events that the LBR
+> > driver accepts.
+> >
+> > See the last time this came up.
+>
+> Thanks for the shared links.  Based on the info, let's say we can have tw=
+o
+> cases:
+>
+>   Case 1: set different branch filters in a single perf session:
+>
+>     perf record -e armv8_pmuv3_0/r03,branch_type=3Dany_call/u \
+>                 -e armv8_pmuv3_0/r04,branch_type=3Dany_ret/k ...
+>
+>   Case 2: set different branch filters in multiple perf sessions:
+>
+>     perf record -e armv8_pmuv3_0/r03,branch_type=3Dany_call/u ...
+>
+>     perf record -e armv8_pmuv3_0/r04,branch_type=3Dany_ret/k ...
+>
+> In my previous reply, I was suggesting that we should reject the case 1.
 
-I took a look at the debian sources in
-https://salsa.debian.org/pkg-voip-team/dahdi-linux/
+The driver cannot distinguish those 2 cases.
 
-Apparently the 'dahdi-linux' package contains a copy of
-the oslec module, which it puts in a local drivers/staging/echo
-directory.
+> IMO, it is not quite useful to configure different filters for events in
+> the same session, especially if this leads complexity in the driver due
+> to the hardware limitation.
+>
+> For case 2, when create a new session, if the perf tool can read out the
+> current branch filter setting (e.g. via sysfs node) and give suggestion
+> what branch filter is compabile with existed sessions, seems to me, this
+> is a feasible solution.  My understanding this is a rare case, and a
+> clear guidance for users would be sufficient if this happens.  (Maybe
+> we can give recommendation for how to use BRBE in the perf doc).
 
-It has done so since at least 2015 when the package moved
-from subversion to git.
+First, I don't think anything currently in sysfs for PMU changes based
+on current PMU usage. It is all static features. So you just added a
+2nd control interface in addition to the syscall/ioctl interface. It
+is also totally racy. As soon as you read sysfs, the information could
+be out of date because an event was added or removed.
 
-      Arnd
+Second, that is completely different from how x86 works. Folks don't
+want to know how to use BRBE. They want to do perf branch stack
+recording like they already do on existing platforms. That's what has
+been implemented here with the behavior as close as possible even for
+corner cases that seem questionable. For the userspace counter access
+support, folks were upset that it has to be explicitly enabled (in
+sysctl) and requested (in a configX bit) when you don't on x86. People
+notice and care if the behavior is different.
+
+> To be clear, an important factor is the trace modes with modifier 'u'
+> (user) and 'k' (kernel) should be supported for different events and for
+> different sessions.  In a mixed cases (some events are userspace only
+> and some are kernel only), the BRBE driver needs to filter out branch
+> records for specific mode when taking a sample.
+>
+> > > If we can unify branch filter within a perf session, would this be
+> > > much easier for handling?
+> >
+> > Do you mean if the perf tool ensured that all events in a given session
+> > had the same filter? From the kernel's PoV there's no such thing as a
+> > "perf session", and I'm not sure whether you're suggesting doing that i=
+n
+> > userspace or withing the kernel.
+>
+> My understanding is this would be not difficult to do such kind checking
+> in the tool.  E.g., the perf tool can iterate every event and check the
+> branch filter and detect incompabile issue.
+
+You could detect that in perf tool, but you can never do it in every
+tool because anyone can write their own.
+
+> > Doing that in the perf tool would certianly make a stronger argument fo=
+r
+> > the kernel taking the "reject conflicting branch filters" option.
+> >
+> > Doing that within the kernel isn't really possible.
+>
+> As said above, if the BRBE driver can provide a knob in sysfs to indicate
+> what is the current branch filter in the existed sessions, this would be
+> helpful for the tool to do the checking and remind users.
+>
+> I haven't done any experiments for this. If you think this is the way
+> to move forward, I might do a prototype and get back to you to ensure we
+> don't run into any unexpected issues.
+
+I don't think anyone does. I think this whole discussion has gone into
+the weeds.
+
+Rob
 
