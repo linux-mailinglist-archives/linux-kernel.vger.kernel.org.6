@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-531113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2644A43C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:56:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB8CA43C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A25119C2536
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C2217887D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA16267734;
-	Tue, 25 Feb 2025 10:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6E72676C8;
+	Tue, 25 Feb 2025 10:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9LZvC3e"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAz9vGXe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B4826159E;
-	Tue, 25 Feb 2025 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA73266583;
+	Tue, 25 Feb 2025 10:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740480878; cv=none; b=WLDg0R2N5mStLq9Rxqkk6DwWx18yvX+sFv4SlA8qUlRgOW9nrc2D707A8VWStzH6oFho7S9605vXQryAW4lmbn10Z0I3knGJKkPeQzpg7oRYoKzp4soFdkdAkHvL8UoF2Nl+ZWEG3Ceov/NNKxPFiJUTKb3recvR7BP8tfDYMi0=
+	t=1740480946; cv=none; b=f1RV2E2QqHBQ7k1GTQGXBKh/PIS7uDf46pk0RbxgNrFHKLMr0Q50NtHP9oYvs0QM+FDz/OoSNEYmZ4u34e4zPXEv4vL39jG4OSTQtiu4jK/4btMMA1hViAiJDcJfJ97C/eguGTjTVxMrpudU/UKBITIsaw4MTVrYr47Z0t9CxE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740480878; c=relaxed/simple;
-	bh=Ryw5sYWXbkK04L+veV0uDVkXTR+HOBKPnotAxN+8LKM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkhNA93vQ+CThZtY/0DZ03CcuNwaqKltQZYfXIoDd7suxGu76xDoYeJJiMrXW2W39gvVuALrB6aUjugwhhNOc1BB7RYVy53bm6zPDpwDU1dDeVOmF1eX4G6bplWhmu2rq3nJaxfzcXLn0y1tB8x9t3oxvnvCmz30U/+Uf4ul0zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9LZvC3e; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5462ea9691cso6069810e87.2;
-        Tue, 25 Feb 2025 02:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740480875; x=1741085675; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6HmNB9ABLLVuzaRgxVevCveVvbZ+G7bGWQTYZ55Pp10=;
-        b=B9LZvC3eSkppF42G0QqXwoPHCyyTG/7XR1nTu3M8BcLPxj0T1eA5OXExHu3F0o1Zf+
-         jZcVHYD432tXfrBBWaUFKD9jFe7MDxu+ddniviKV2shSFhUqzZuGuKugsKorYghxFdt9
-         9r648lz92SLvmRFpEcADyHVP9Fgex3EWUxnp6XMSe/3kQo1AsIYKP6iDTbaIm0EZ0Czt
-         cLD0UXhoDbpeQiAbJnuwXmLrUd8NKJXCNTWiYtltt4WZCwJWXKxhs1Dfw3BntnV6eJBa
-         DClToPbbQjntKUPg4nfuu3Yxitt8p18A8d84PrFHNyygsNCHvwkSAah65tjJ+fEz6znz
-         mWhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740480875; x=1741085675;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6HmNB9ABLLVuzaRgxVevCveVvbZ+G7bGWQTYZ55Pp10=;
-        b=fIj5vCOoWzA6tTHGZTCiQkd1b7/1CccyV8HfuUI/rNX+uvoM67BwWkHybF9Z6JzsbN
-         fRhUpXcT5LDlbS1SBU5nejhX8eM+YQagH/2uVK+o+BPSBxRqPSYDQrB/u34X3gos0fK8
-         BpqDhsjqSADTYmLmd5uBcS9BHSVO2OOpxx/Kw1HZfEfQMXsgodlvvx4NQNy97Y0M9WBX
-         jHS4LDL4OyWfeOEfTkCcbcFQ+py7SZYiIP1ioLDJlKMaUQPvVnC/lBYtYObLUBc6MhFo
-         C/Gim3PO7hIk2F8CtawWZ35c7ONuME0bvilvUSLeZi27UdDrGMK/7nNVguoqwCsAQtAa
-         pd4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV07LX1vE3P//ObjFxgkNrx6X8XeXux2AFpdrRZJqLBKI2Pv5mwhZRwcGNTjfRCmzbBf8bVmhTSmuyqd9Y=@vger.kernel.org, AJvYcCXjzhcWtKvN4CrHJMZpvSWusIyXlSqsaZHvVDOjpOcZ43h8j8R/EjCA95JcYfsI8yxW22vJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMqX7vx3OQ7klovRrxDk0539C4Fs9Jv0v8lTSbL1/8uaPJorli
-	+5rDPCViONKZW87Fw7FItWJe461NYTSxssmMOyEwOUVKQqQcQMB1
-X-Gm-Gg: ASbGnctFJe3DflnMUxsIZsCa/bsEp3y5O7UljKTHRUf+HqEKax6LsS6vdvWHDoLNv4c
-	OPiAn3fx+UqqpnWEGCS9RHOlf5AED0xm1nqP9avuUwcwSJArrU90uqWoKzHEg2cF3CFMM77gBKy
-	f7OIWRbzAzJ8Yvt2kCupLivuTyUWDlMqkxoheKTrxoPe9Cm9s+K4+r4fzUJZHTKYyHJGYzq+FdW
-	M9af1iM5Hz6XSCnTPc475jKu3j/oN001yptW1Nd6b5mzUB7plqcsyjXx3VA2yFdk2OGtz3yODXJ
-	Qk08W9qqyaJToSgIsFhtCVbaQl0XkVnvmBmXPpSZfsKhGEVK
-X-Google-Smtp-Source: AGHT+IHbf1GN3aLXGe750miHH5cSw0ry0Jfv/g1QUOwLirt+MK7do97DgegC4mqwqEBSqwrhoALthg==
-X-Received: by 2002:a05:6512:118d:b0:545:5be:a6b5 with SMTP id 2adb3069b0e04-54838f5e166mr7481272e87.49.1740480874476;
-        Tue, 25 Feb 2025 02:54:34 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b2370sm147561e87.35.2025.02.25.02.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:54:33 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 25 Feb 2025 11:54:30 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z72hZg323iI3P8B4@pc636>
-References: <20250224133659.879074-1-urezki@gmail.com>
- <20250224133659.879074-3-urezki@gmail.com>
- <400c9d5c-8725-4723-b129-c5f2976817a9@paulmck-laptop>
+	s=arc-20240116; t=1740480946; c=relaxed/simple;
+	bh=Ox8AP6FK5GpiUVv8lRcB0bP2MxQHPKpj2mjSGZtNk/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C8F8nzNu+LnvKriTp8gl12IO+1o/4s+r9x/y7eklkokU7dWqHs+Y0FBkrEqe7anZASp3NFtsRLEwSAe4CcmT8Z4myssDiq7K+bCHAeLGkEt0OWmpJ9VWrzq9AHynUZdRuRvXcwLXX2drDrL8ZGeaLzmgq+lgIbGOyGwm3uKJqpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAz9vGXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC1DDC4CEDD;
+	Tue, 25 Feb 2025 10:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740480946;
+	bh=Ox8AP6FK5GpiUVv8lRcB0bP2MxQHPKpj2mjSGZtNk/g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NAz9vGXe1jWDUf2U8Do0JNW5ylQYa4qq4CEwOIw0ap7kQtfC8ZLJR1S0GegaOQzGK
+	 Y2tiXTWfsYK5B8iTZhAC44tT0OZCsgF2ym6JpvnwBPAkRcu1p387N5wAClNOdaAd3R
+	 mC0KGyyE7Q/JmaIDzPDsGEqjEBWFVpXAPvnt4vLnc1Gq874i3hya8J83Svx0MH1Z/r
+	 AqRaKIp/9TVeE2e+9mq8XSP32KQGnfHbXtSa9EATlOVAw9rYOOci8pLRyk3ha1abyu
+	 +PG3Bqycikq1iIOcO5HRtdSmO2ntjpt/hdgGl8i5QP54rFdNM5nhyuvlcWhDvzmrEz
+	 aiwsdlY7Dr/SQ==
+From: Christian Brauner <brauner@kernel.org>
+To: djwong@kernel.org,
+	John Garry <john.g.garry@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iomap: Minor code simplification in iomap_dio_bio_iter()
+Date: Tue, 25 Feb 2025 11:55:39 +0100
+Message-ID: <20250225-hiebe-ringen-8f91ca4bf652@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250224154538.548028-1-john.g.garry@oracle.com>
+References: <20250224154538.548028-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <400c9d5c-8725-4723-b129-c5f2976817a9@paulmck-laptop>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=brauner@kernel.org; h=from:subject:message-id; bh=Ox8AP6FK5GpiUVv8lRcB0bP2MxQHPKpj2mjSGZtNk/g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTvXbjWW+Fh083Am7FZ8x7ofmucIbNKahHDjTkHZu+fc iM0YMNLoY5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJGDxl+F91nnNn8Mn9P6cv 43na9ChMTv9+6/lXyq4+KrEp1sL1N+IZ/ic6npfiWCWd/e74fm73J4eT3FpczC/637BlmjO96Y5 oARMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 11:06:01AM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 24, 2025 at 02:36:59PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Switch for using of get_state_synchronize_rcu_full() and
-> > poll_state_synchronize_rcu_full() pair for debug a normal
-> > synchronize_rcu() call.
-> > 
-> > Just using "not" full APIs to identify if a grace period
-> > is passed or not might lead to a false kernel splat.
-> > 
-> > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > ---
-> >  include/linux/rcupdate_wait.h | 4 ++++
-> >  kernel/rcu/tree.c             | 8 +++-----
-> >  2 files changed, 7 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/rcupdate_wait.h b/include/linux/rcupdate_wait.h
-> > index f9bed3d3f78d..a16fc2a9a7d7 100644
-> > --- a/include/linux/rcupdate_wait.h
-> > +++ b/include/linux/rcupdate_wait.h
-> > @@ -16,6 +16,10 @@
-> >  struct rcu_synchronize {
-> >  	struct rcu_head head;
-> >  	struct completion completion;
-> > +#ifdef CONFIG_PROVE_RCU
-> > +	/* This is for testing. */
-> > +	struct rcu_gp_oldstate oldstate;
-> > +#endif
+On Mon, 24 Feb 2025 15:45:38 +0000, John Garry wrote:
+> Combine 'else' and 'if' conditional statements onto a single line and drop
+> unrequired braces, as is standard coding style.
 > 
-> This causes the build to fail on TREE01.  One way to make the build
-> succeed is to remove the #ifdefs above.  Another way would be to add
-> #ifdefs to the WARN_ONCE() below.  I suspect that removing the #ifdefs
-> is best, at least until such time as people start passing many tens
-> of SRCU instances to synchronize_rcu_mult() or some such (which seems
-> quite unlikely).
+> The code had been like this since commit c3b0e880bbfa ("iomap: support
+> REQ_OP_ZONE_APPEND").
 > 
-> Thoughts?
 > 
-Right, i agree. I will repost this series.
+> [...]
 
-Thank you for checking and testing :)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
---
-Uladzislau Rezki
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] iomap: Minor code simplification in iomap_dio_bio_iter()
+      https://git.kernel.org/vfs/vfs/c/b5799106b44e
 
