@@ -1,176 +1,435 @@
-Return-Path: <linux-kernel+bounces-531005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407F2A43B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:15:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356DAA43AF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56CDA1727BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:09:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED36188E8E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6341125EF9A;
-	Tue, 25 Feb 2025 10:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DE2267399;
+	Tue, 25 Feb 2025 10:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+659pig"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="U4cqvkoU"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010000.outbound.protection.outlook.com [52.103.68.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF4D263C7C;
-	Tue, 25 Feb 2025 10:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478064; cv=none; b=Vmq2hEm1GTDiBUWOepdsZdrK75vi+hLEXIrv4qO1C59EnMk7DlhHz5cidIQbEnDTMoTRCnn1j7ibgh8xqsn/Y6sEb0nDOO6L0FzFxs2W6+uqqoX0urdkyux8M6r13pOq+QWBMDpgvcHxLBvX8/Dx1gciY/xvVBfcWRv8jYZ9V/Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478064; c=relaxed/simple;
-	bh=YTqMj4ps1llscSuDb/2p+FJjVauDFbLTY2iu1MZb15U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bu0weg1qmANcnOtlBT7uhsFBEEkEmvDCdV6awaJALy8K/owPg4k2wSeHxhCr8O9xlsHEbtoDpjhti8QEvQi0+65jfPkxiNG6t7EZe8v2mzwM9F3HJTc6k3winkeBvCbUEpWXN1y7nqhMTSLuVPP5VgBG0fwx4lZZeiA9ZAYWSU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+659pig; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3098088c630so50618121fa.1;
-        Tue, 25 Feb 2025 02:07:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740478061; x=1741082861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lAEbqPgmBi60dC78J9e9TaRL3Bq8nEEXaJp+eattnt8=;
-        b=B+659pigkcKaGAcqZYaxlphQIvHwA+vMv/vgSHMs/OkmA4REnPXOh/HSfGCwrP643e
-         yXvAHCFLY53ESkVtj2pS8q5tHUNhEOz0/Xl2SzLuwFMcyoAIO9H9LEYUCBpuKhvq3i1/
-         INYfaYxPvXMy0t8Hu1DBvaSdhLGXtkvabSDdUwNo5zZ+ARGdntuPojCOGKkXN1G9Eqga
-         hMcgoL8bjzVHzBi6B/4QLRQYcMBynXIQ3oISq1bQcGt47yPxliz9ye3nkgXpAM2Bmudc
-         y7jYnJ1lzW9BddfdpppaL1XEsl5TvGUBMIK2aMBOg4botv9ijMd70eL+4qvMp4tqdZDm
-         3CaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740478061; x=1741082861;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAEbqPgmBi60dC78J9e9TaRL3Bq8nEEXaJp+eattnt8=;
-        b=f+8wsbDU4163gXr2Ou33xEQbgCLxie1hBobJz+1QqfG3nVwR7auHL7Zv8xKKFH4odO
-         hgGfpwXa2fDiR5BWZpkljPGo7HF9VChwzuv//1M5OxqwYRAzz5Eb3pXSN+TvAvwXrEfu
-         MdVKWepbACj2L2zvYgEUr7W8gc8Yy3ndoRXQ3veiHiF/zzu/lBN8OAy5Zi9IfamZuTzW
-         wg0cu9xTRhHNmE/eczF2nbLq65AfeLqqtrcxjUCzAkAEJTNliNu9o2BM0awQ33ONUII8
-         eCW6Suah4kbpdAFrlrzLHyQI8C7c8Ihm/WOweuHtxmC2Q/7bRQ8FNuvGUyidbj5B3ubG
-         kHHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVegutySvs7ZMwAUmjigu53aRJ7a7FWZhlkksoidle9P9V7vZXR3jmFgBjnbZniPlryLoxcvm96hgO8@vger.kernel.org, AJvYcCVsv1nnd2byJUH81vyjiOCU1LoTBLQwStTm03sX09bGujfyBFk/TpSO786U5obYW4tE7pUxVXsgbBcwl4TTRu2/68w=@vger.kernel.org, AJvYcCW0kBesrTh212qJXJjbS8cvO5FKHBZ0EyK2y1WkrBHfks8wYwRb750O/5cN4T3vI8ahLr50CrJng7xsGg==@vger.kernel.org, AJvYcCXiyFqXxycxjuFLnuqRmcVsLNv86qTvQu2RUcWA34VRtVT2/TNQFvZ2BQf3gipazYhdHbICb1Red748@vger.kernel.org, AJvYcCXuEKEvpAMdllMOsm0nKN7cj+ms3MmE3U1XsyU04Ujp05TzDeh8c5C645hShI5Yu1oGEOZgTV/Y/Q0qWpvG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/kD06mV1RCY97r7GdddtKuavgL75kdCDBwJJRVDytgDaISuJS
-	lp64fCWtCy3mGhaJliAu+UA/McBX7yBCcaSzAqy70f4OwsHBxgNl
-X-Gm-Gg: ASbGncsmbiXNBMIYpEpkn8XEqWHcKLOnVWSoxIyFlzX5JVVjg8Ij+1Z9pFxHRbnLcKb
-	BLmK6FY7Xp97bADTWaj7clavF9B/UV1qPzAwdNCaWykwpJLUk5bOutEbzKCFZoev6I2GgqNhVIQ
-	YPZ4HX1lV2cIxaDd27YTOv+CIXJCQF0PbhqHpFnqzG8Vul3mkQaY4wBdn3A83aQ5SfrY9jtUE6L
-	qxmRRffeJ3/958SBtwJVyive9nVnejGCR3mhvMOS2jcGJ2rrArFrOKdqbeSexSuUlqsrvEJNK58
-	pwKdTmZcWcZRgx8E3xnl0PRjKr/Yt86yVtuteTE=
-X-Google-Smtp-Source: AGHT+IE9LtSoTYOkptRbtvW+Pr2kFGMFaZQ0FPl+alwBphqqI58uxcxrb6TXfUP19MarHnVygwrw5w==
-X-Received: by 2002:a05:6512:b8d:b0:545:2950:5360 with SMTP id 2adb3069b0e04-548510d7323mr856574e87.22.1740478060709;
-        Tue, 25 Feb 2025 02:07:40 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f477esm130333e87.187.2025.02.25.02.07.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 02:07:38 -0800 (PST)
-Message-ID: <c3cc7f2a-ea0c-42a0-940c-95735d008989@gmail.com>
-Date: Tue, 25 Feb 2025 12:07:37 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B12263C7C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740478086; cv=fail; b=RyX+vDHmgd8gdor/g+4gSdo4HY5y76C63uCoOr1gIJdzM39zJ/RdCUnKz5yX1w2gBZyW0O0WqeQALNwCeg6b1aJZFF4qo9j6Qp0RD+IdVzkA53m5J1LLmBNAK1gDDecqRPEZIgXPI6NTKiE1qWVy5nVqp9EDqdTGOb5VuBE6uc4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740478086; c=relaxed/simple;
+	bh=uH+5dSvjZuxDx7TZYeAiUyokj+kmoBLArnD3lsm4/9s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I5eKslct8jzxSuhXNIvaMCr1ZyTg9RdyQ0eFb022BViUNWc90RRsfav1vxCkIGFvCQrExrSE7DkohDpxorygyhiTXwEGR4H2yflzcusqpWKfCFcl+Mj45W2Q3O3Kr2d/j1Ub7ZCnTTILbAVGdzpLqNRcCrnkXjkJEv03m8BBFNw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=U4cqvkoU; arc=fail smtp.client-ip=52.103.68.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nMzwuVn2zEDcQd/QuH0kI1lVqrWBBHIhO9ZWU9FOfFxK821oc1tUEzz3ovDSRJqfhAVFCEILqCnNv1WS47cA25IuPC/jw1CPg2LcbgOTrx4nIUx7EVw6OwU75Uhjr2AKCRsjMaNvwUQmWJETS6d7vNq6h5+UXtTYTu+oPnFKaDQQP2LkgTh3ImlIIDp/4F0TvuYHDg6xRnHoYE8q1I6aLiuvEqpah0QWAR49i9S1yWGf38xfkoa1AEng3n0q8CkUgUqtsNoa04g9tp6mbkXEfvfQykFDMPT55YZtA8Ri8VFvB/DJadoxcpD5XoVNIxBiGDPhI3TMeFExE2Zu+nC8RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8JgHTf9xVn9SV/6jTT1YL1mhzpcCYrfQCr1BMktE79Y=;
+ b=rJioMe3S+Sj10TGD6jOiBiBAW5VhBTRgJ4zK17uoyIO1B1g8eS8S2ZqwXbbDqF6HDZlE+TWWy7+WaAK9RTHVyYAs6JLZTX9/ENXR0rXQ/tjkN3JOupzNIT3puQ474882We0sF4BNNc161uIAPyTJE4LcMnehp4G30xqJjpfuXvIUMmmoKHwnydh+3T8WqJ4F5eRtuBC9Dt6BL0vVHpQI3ifZhMZn0VSI40nzvj1kPIYvH929FInhaqQezjf+4YrMGkbplH68HDh0pGpxQlA2ZYgpGYyoJBIsaIjLf75Uw3CSK0l3xKeUcsO5BgZlVyInocGPNRah5NKNVjfxod559g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8JgHTf9xVn9SV/6jTT1YL1mhzpcCYrfQCr1BMktE79Y=;
+ b=U4cqvkoUmfo2C5ApRLnD06suMddksXr1yfDOuMRgNZTcMx8NunQoQTc/LU9P2F8/POaCrxZDt1SNPGtoA6bRrH7mrVUzAo/Toj1ECf+3JDEheyK7ydQZAQK4JEC6KkLslEvAxit3+1d1umCGb2OHmB824VHYy0ud8BxedrolOIoYhyH+36napN17YoTRFkzRL8jAoz1kAp811rfjEbUkR3r0N63NowSA7YmfwsQBwBfKdWXTdm/8s5SvVycFGIxanoRGgli1qkXRavvluhQjO3V7WuOHxs/PSKGZpGPjzQsrvdmt6fl+qLHLQFYuDLx36yKa9dzzmjGCUpZe9atZPA==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MA1PR01MB4370.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:13::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Tue, 25 Feb
+ 2025 10:07:58 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 10:07:58 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>
+CC: Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: [PATCH v5 1/2] drm/format-helper: Add conversion from XRGB8888 to
+ BGR888
+Thread-Topic: [PATCH v5 1/2] drm/format-helper: Add conversion from XRGB8888
+ to BGR888
+Thread-Index: AQHbh20lMrV/LxQfFkGuftYBqy5i8Q==
+Date: Tue, 25 Feb 2025 10:07:58 +0000
+Message-ID: <8997D0CC-621C-4373-9998-5125D91A7B61@live.com>
+References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
+In-Reply-To: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA1PR01MB4370:EE_
+x-ms-office365-filtering-correlation-id: a0cc1f16-408a-4128-506b-08dd55844799
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|19110799003|7092599003|461199028|8060799006|8062599003|102099032|3412199025|440099028|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?/Jf5jrfM6tXnLyoP9D3QZbF+DPpzjJTcH4l1j04vsf0+Euo60cHDWdfPH24C?=
+ =?us-ascii?Q?4SdBWgPIETvtcLGNBdv8M04JlT1n3CjjsCv8RutkpWXoLUG8CTR6BOORgapX?=
+ =?us-ascii?Q?qswp/d5Z5UIDmtwWO3sRk9AC5URotX6QX91G/Alp0iLjpPcu5Wj4EA4ZK4La?=
+ =?us-ascii?Q?+juxcHGvPbii9yXv0bbAoc7k55t8Jb1TUzvE0rCRuU8QGFFeW01Qm5l4N5EK?=
+ =?us-ascii?Q?zHGn9ctf/xy7gQUtZkYIzkZS8wEe+fe/jncDgbMf+q00u9c5PATNi3UM2zXY?=
+ =?us-ascii?Q?EXeGmBm5Mer2HPO4iwYhible/RCVxtrjQBOCphKaOmMzHP+4V0JCd7Ol8VZi?=
+ =?us-ascii?Q?XjaXsmKzxWxCH73lJGM8+b8TrydJCLAkzPwN7nNtd9g6tBWOiGVXDprgx5Kd?=
+ =?us-ascii?Q?wgkA2V6yitvbtGlfipJPIMkRaDOneNDpCnlwPWFOFizNtaJWRtDmjqccHAPy?=
+ =?us-ascii?Q?tPtBupSNUHOje+Tg8sH6V48xYtCj0nGu6MDhFVcoaQXbiWmohbOpFN0365LD?=
+ =?us-ascii?Q?L0BAgEfPoBRfRcbeq/KaHpDw5v7GutBFAiPp4OONF5ZVu95zZrgVOP98HtA2?=
+ =?us-ascii?Q?WLPW2tgT3yyMIa49bjrcZTgAT1ApRywO2gXZQUzSydij8sKtwxl6rp2nHeI8?=
+ =?us-ascii?Q?0sH6REGEK4RxDilf6xArSL6zBE4JfX8BeAb4PnVN++shvac6jkRfyXGVzsoc?=
+ =?us-ascii?Q?UUEHMT1zbkqeccm215BOKguF8d1SOiEgRVH/Y1GTC5/zfeda57BC2bakN2uC?=
+ =?us-ascii?Q?4Tl9LL5RscQlIZiH4kBfQJEhTM74LvUA2BMeZ7w9ekLjjvSaFpJD4VK3La+T?=
+ =?us-ascii?Q?XT/jzy7jv5lRgdS7xrlcrZd3VkxPD0+ARvhQr9wky0aFxF54KBhiBc72AFrB?=
+ =?us-ascii?Q?cvDqMy3aVsCO2ziDkA9GK45OzRah04X6JDXEnpqJeGBBhL5b925uXEhswFUs?=
+ =?us-ascii?Q?ZmYlrU9hgbRWSu4v6Rc+yyIzf9kU8P4n7aHG2JGeqHhnoLVmkuqiqCWP2XhA?=
+ =?us-ascii?Q?8BLK3OyfetgII3DPJ0hOganhuWxPCyhnK5vJtMNivxMVAuTV0dRgQrIlAyym?=
+ =?us-ascii?Q?mU6eKqqiM0Z05sDD+LtBx5S1/IQVZCpFMtmNr8qXE7aBWt7Nl/c=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?G+P7dMgBnOrBI7pxEG/HEE5y+Ag6P0q/6tiScQJsfpopz5znnOZu302liaKF?=
+ =?us-ascii?Q?/tu+Mi3vchf5wVQjarNWH7p5yYAeMJ92d76UCPbAIyDJexgEAAFnxOoVhmBH?=
+ =?us-ascii?Q?7Nh8iAuyqb/3fbpmHctvVtK6Fv66bq8ijtUtYZIjexi1YwwUpT7kQBmTa5/2?=
+ =?us-ascii?Q?/mgzq9cpndDEi5RDtRIzSgFcvJAwLIXZ90YlztpGnvnENgW7ZHZO9sE4uTOH?=
+ =?us-ascii?Q?mYCCwulPHiABO0nwcaXH1C0Xqzfy4a/Q/FoPRblBcQwXWq/9LI9/MaVAD3TQ?=
+ =?us-ascii?Q?sHRduh4wgG9Yq5wuKAhLpIzTYxaMZGP0/e2YbKRcrkMdQJHg7ezTmouF5rkl?=
+ =?us-ascii?Q?fizsPkvsdp6/HkIFszDPOcUOuW3Tt8mlj92WeiDf5w4otXOjnsJTjE/Tf2Mu?=
+ =?us-ascii?Q?4qaVBi/3Ek1fctizdVH9KBkQJoRZylkTe+bZMcRkNCD9/GIxByiXjAz88iWF?=
+ =?us-ascii?Q?LlVdgj24rrsOc5g/3/1StksYvcluGyISwRYvVUxwS6SVufCWkuMMmH+VmWaS?=
+ =?us-ascii?Q?RG86mVZuwV5+lcMKr9BcFpr2OHYlP8tILkFW0zmvVlwt2wqHkijgPQIXmWyh?=
+ =?us-ascii?Q?4IQ9xw/TxXoDeqR4qUC4p6vkbcqlhJE/iq6OfT090kpFIrUHfJ9TedObT6UC?=
+ =?us-ascii?Q?o2CWRexYhMvbuIW1EPt0dMcAWfBeTLkL0OLwv+I+RvNWLnYO9hTDGQ7M6JGL?=
+ =?us-ascii?Q?R12UqbX71dmNJ8tjuZaRBMAh8ndMSY42ThvEyVVwljjKUbQP+Lhpo7uoKS9I?=
+ =?us-ascii?Q?SiOD/txbx8rbNRP6ebydlNNHRpOeoY+lRIfFjUpZ8kv5fRdfC/oMiqv/MJgd?=
+ =?us-ascii?Q?zmcy2GeuwwKdrF2C8CmYEy0+kHKzAf2fO3bbREUrSYrBkX0nBQf76zjT5nMY?=
+ =?us-ascii?Q?cBd5KiuLoQ4ojpfdWS/iaXAR6c4JuGxsY39Gh3iHYOhYC38nypwxmwcMvcJg?=
+ =?us-ascii?Q?p13CTK2QZ3rqc7SF67rkmLCmnCJ3EQ+6CuhfCFVJZSGmISLH08S26TfftYtz?=
+ =?us-ascii?Q?H834rwA+GKzKVOlJqm4w8mZukSau49khxc5hj1q4Ls8MVgiI38piqm5DmJqN?=
+ =?us-ascii?Q?eCLu46KaDSUDlvwvvOr+VQ2NQwY75byPowsy6clVlO+LPh3P1al09z7QZnRL?=
+ =?us-ascii?Q?8qQDMVov7aOwdxoq3eds7h+e24uW71nxGXHa21dkXCCvgm3oINbRdbs/AN9Q?=
+ =?us-ascii?Q?njQaKzXrUa+lAZG7JHcau0i1B9CyP1pa6oVQVhMotAeFjwXykRRPgeU8gMoc?=
+ =?us-ascii?Q?EU1ljLmRe53nj5SkbSf4+7KrBawyjCBDStqIgFlCD0K5yQLJ57lOTFs6csKm?=
+ =?us-ascii?Q?nVSVGCs3QgK9XnuSyzPkKDZU?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <57F4AC347B39C84CBB2DC84F0EAC1437@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/10] property: Add
- device_get_child_node_count_named()
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
- <Z72QAOA9xXbP16K-@kuha.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z72QAOA9xXbP16K-@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0cc1f16-408a-4128-506b-08dd55844799
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 10:07:58.1284
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA1PR01MB4370
 
-On 25/02/2025 11:40, Heikki Krogerus wrote:
-> Hi,
-> 
->> +/**
->> + * device_get_child_node_count_named - number of child nodes with given name
->> + *
->> + * Scan device's child nodes and find all the nodes with a specific name and
->> + * return the number of found nodes. Potential '@number' -ending for scanned
->> + * names is ignored. Eg,
->> + * device_get_child_node_count(dev, "channel");
->> + * would match all the nodes:
->> + * channel { }, channel@0 {}, channel@0xabba {}...
->> + *
->> + * @dev: Device to count the child nodes for
->> + *
->> + * Return: the number of child nodes with a matching name for a given device.
->> + */
->> +unsigned int device_get_child_node_count_named(const struct device *dev,
->> +					       const char *name)
->> +{
->> +	struct fwnode_handle *child;
->> +	unsigned int count = 0;
->> +
->> +	device_for_each_child_node(dev, child)
->> +		if (fwnode_name_eq(child, "channel"))
-> 
-> s/"channel"/name/ ?
+From: Kerem Karabay <kekrby@gmail.com>
 
-Thanks Heikki for spotting this brainfart! :)
+Add XRGB8888 emulation helper for devices that only support BGR888.
 
-> 
->> +			count++;
->> +
->> +	return count;
->> +}
->> +EXPORT_SYMBOL_GPL(device_get_child_node_count_named);
-> 
-> I did not check how many users are you proposing for this, but if
-> there's only one, then IMO this should not be a global function yet.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+v2 -> Fix incorrect description
+v3 -> No change in this patch
+v4 -> No change in this patch
+v5 -> No change in this patch
 
-I have no strong opinion on this. It starts with just 1 user (IIO ADC 
-channel stuff), but I've a feeling there are other areas which do 
-look-up nodes by name. I suppose "channels" are looked-up in other areas 
-of IIO as well. Lookups are probably done outside the IIO as well. I 
-haven't audited this, but I wouldn't be surprized if at least LEDs (and 
-perhaps clks/regulators?) could find this useful too.
+ drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
+ .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
+ include/drm/drm_format_helper.h               |  3 +
+ 3 files changed, 138 insertions(+)
 
-> It just feels to special case to me. But let's see what the others
-> think.
+diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_form=
+at_helper.c
+index b1be458ed..4f60c8d8f 100644
+--- a/drivers/gpu/drm/drm_format_helper.c
++++ b/drivers/gpu/drm/drm_format_helper.c
+@@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, =
+const unsigned int *dst_pi
+ }
+ EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
+=20
++static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, u=
+nsigned int pixels)
++{
++	u8 *dbuf8 =3D dbuf;
++	const __le32 *sbuf32 =3D sbuf;
++	unsigned int x;
++	u32 pix;
++
++	for (x =3D 0; x < pixels; x++) {
++		pix =3D le32_to_cpu(sbuf32[x]);
++		/* write red-green-blue to output in little endianness */
++		*dbuf8++ =3D (pix & 0x00ff0000) >> 16;
++		*dbuf8++ =3D (pix & 0x0000ff00) >> 8;
++		*dbuf8++ =3D (pix & 0x000000ff) >> 0;
++	}
++}
++
++/**
++ * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
++ * @dst: Array of BGR888 destination buffers
++ * @dst_pitch: Array of numbers of bytes between the start of two consecut=
+ive scanlines
++ *             within @dst; can be NULL if scanlines are stored next to ea=
+ch other.
++ * @src: Array of XRGB8888 source buffers
++ * @fb: DRM framebuffer
++ * @clip: Clip rectangle area to copy
++ * @state: Transform and conversion state
++ *
++ * This function copies parts of a framebuffer to display memory and conve=
+rts the
++ * color format during the process. Destination and framebuffer formats mu=
+st match. The
++ * parameters @dst, @dst_pitch and @src refer to arrays. Each array must h=
+ave at
++ * least as many entries as there are planes in @fb's format. Each entry s=
+tores the
++ * value for the format's respective color plane at the same index.
++ *
++ * This function does not apply clipping on @dst (i.e. the destination is =
+at the
++ * top-left corner).
++ *
++ * Drivers can use this function for BGR888 devices that don't natively
++ * support XRGB8888.
++ */
++void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
+dst_pitch,
++			       const struct iosys_map *src, const struct drm_framebuffer *fb,
++			       const struct drm_rect *clip, struct drm_format_conv_state *state=
+)
++{
++	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] =3D {
++		3,
++	};
++
++	drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
++		    drm_fb_xrgb8888_to_bgr888_line);
++}
++EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
++
+ static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf,=
+ unsigned int pixels)
+ {
+ 	__le32 *dbuf32 =3D dbuf;
+@@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned=
+ int *dst_pitch, uint32_t d
+ 		} else if (dst_format =3D=3D DRM_FORMAT_RGB888) {
+ 			drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
+ 			return 0;
++		} else if (dst_format =3D=3D DRM_FORMAT_BGR888) {
++			drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
++			return 0;
+ 		} else if (dst_format =3D=3D DRM_FORMAT_ARGB8888) {
+ 			drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
+ 			return 0;
+diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/d=
+rm/tests/drm_format_helper_test.c
+index 08992636e..35cd3405d 100644
+--- a/drivers/gpu/drm/tests/drm_format_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
+@@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
+ 	const u8 expected[TEST_BUF_SIZE];
+ };
+=20
++struct convert_to_bgr888_result {
++	unsigned int dst_pitch;
++	const u8 expected[TEST_BUF_SIZE];
++};
++
+ struct convert_to_argb8888_result {
+ 	unsigned int dst_pitch;
+ 	const u32 expected[TEST_BUF_SIZE];
+@@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
+ 	struct convert_to_argb1555_result argb1555_result;
+ 	struct convert_to_rgba5551_result rgba5551_result;
+ 	struct convert_to_rgb888_result rgb888_result;
++	struct convert_to_bgr888_result bgr888_result;
+ 	struct convert_to_argb8888_result argb8888_result;
+ 	struct convert_to_xrgb2101010_result xrgb2101010_result;
+ 	struct convert_to_argb2101010_result argb2101010_result;
+@@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
+ases[] =3D {
+ 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
+ 			.expected =3D { 0x00, 0x00, 0xFF },
+ 		},
++		.bgr888_result =3D {
++			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
++			.expected =3D { 0xFF, 0x00, 0x00 },
++		},
+ 		.argb8888_result =3D {
+ 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
+ 			.expected =3D { 0xFFFF0000 },
+@@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
+ases[] =3D {
+ 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
+ 			.expected =3D { 0x00, 0x00, 0xFF },
+ 		},
++		.bgr888_result =3D {
++			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
++			.expected =3D { 0xFF, 0x00, 0x00 },
++		},
+ 		.argb8888_result =3D {
+ 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
+ 			.expected =3D { 0xFFFF0000 },
+@@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
+ases[] =3D {
+ 				0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+ 			},
+ 		},
++		.bgr888_result =3D {
++			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
++			.expected =3D {
++				0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
++				0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
++				0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
++				0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
++			},
++		},
+ 		.argb8888_result =3D {
+ 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
+ 			.expected =3D {
+@@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
+ases[] =3D {
+ 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 			},
+ 		},
++		.bgr888_result =3D {
++			.dst_pitch =3D 15,
++			.expected =3D {
++				0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
++				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++				0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
++				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++				0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
++				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++			},
++		},
+ 		.argb8888_result =3D {
+ 			.dst_pitch =3D 20,
+ 			.expected =3D {
+@@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kuni=
+t *test)
+ 	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+ }
+=20
++static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
++{
++	const struct convert_xrgb8888_case *params =3D test->param_value;
++	const struct convert_to_bgr888_result *result =3D &params->bgr888_result;
++	size_t dst_size;
++	u8 *buf =3D NULL;
++	__le32 *xrgb8888 =3D NULL;
++	struct iosys_map dst, src;
++
++	struct drm_framebuffer fb =3D {
++		.format =3D drm_format_info(DRM_FORMAT_XRGB8888),
++		.pitches =3D { params->pitch, 0, 0 },
++	};
++
++	dst_size =3D conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
++				       &params->clip, 0);
++	KUNIT_ASSERT_GT(test, dst_size, 0);
++
++	buf =3D kunit_kzalloc(test, dst_size, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
++	iosys_map_set_vaddr(&dst, buf);
++
++	xrgb8888 =3D cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
++	iosys_map_set_vaddr(&src, xrgb8888);
++
++	/*
++	 * BGR888 expected results are already in little-endian
++	 * order, so there's no need to convert the test output.
++	 */
++	drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->c=
+lip,
++				  &fmtcnv_state);
++	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
++
++	buf =3D dst.vaddr; /* restore original value of buf */
++	memset(buf, 0, dst_size);
++
++	int blit_result =3D 0;
++
++	blit_result =3D drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, =
+&src, &fb, &params->clip,
++				  &fmtcnv_state);
++
++	KUNIT_EXPECT_FALSE(test, blit_result);
++	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
++}
++
+ static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
+ {
+ 	const struct convert_xrgb8888_case *params =3D test->param_value;
+@@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases=
+[] =3D {
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_p=
+arams),
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_p=
+arams),
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_par=
+ams),
++	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_par=
+ams),
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_p=
+arams),
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_ge=
+n_params),
+ 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_ge=
+n_params),
+diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helpe=
+r.h
+index 428d81afe..aa1604d92 100644
+--- a/include/drm/drm_format_helper.h
++++ b/include/drm/drm_format_helper.h
+@@ -96,6 +96,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, c=
+onst unsigned int *dst_
+ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *=
+dst_pitch,
+ 			       const struct iosys_map *src, const struct drm_framebuffer *fb,
+ 			       const struct drm_rect *clip, struct drm_format_conv_state *state=
+);
++void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
+dst_pitch,
++			       const struct iosys_map *src, const struct drm_framebuffer *fb,
++			       const struct drm_rect *clip, struct drm_format_conv_state *state=
+);
+ void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int=
+ *dst_pitch,
+ 				 const struct iosys_map *src, const struct drm_framebuffer *fb,
+ 				 const struct drm_rect *clip, struct drm_format_conv_state *state);
+--=20
+2.43.0
 
-Yeah :) And thanks for spotting the "channel" -thing :)
-
-Yours,
-	-- Matti
 
