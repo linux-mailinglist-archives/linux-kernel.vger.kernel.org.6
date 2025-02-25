@@ -1,54 +1,46 @@
-Return-Path: <linux-kernel+bounces-532425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB708A44D88
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:35:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEF9A44D65
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E4F3AB1BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B90919C48C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA0D21B9C5;
-	Tue, 25 Feb 2025 20:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DD3216380;
+	Tue, 25 Feb 2025 20:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iKuXRQiU"
-Received: from smtp.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFF921B1A8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="V/Rh9+nl"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43337212D8D;
+	Tue, 25 Feb 2025 20:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515174; cv=none; b=G+eCHRu4S8EO7opB2TL9RktIRcKjPfJpNByUvH7wT4wzvUpwjbIAzS9kOV7BWXrnbuTctM41FyBFPvWoQmwgeyHb5Z9cijwX5Mi6maw12TUQHYid5m7zMx2zWTZ/O10/k2vmOHZKcpDC97Oz2mC7ZD/1xskAVyj0tTV00jFUiC0=
+	t=1740515103; cv=none; b=VENBU3raSGb4lFq+h3JQ87ENFx2s8J21mBvzZijx/1i4Uh2yApJTIVNdidVHU/+SKfftC4V326MRfGDLZyaMkpnpnSFksmXd9sahYhC+vOlRhcEHZRB6g6TWWMKdrQO2GDtM++zCkpCx2Bz+YLhfLPhj+Jry0a91UQxnFrzbA+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515174; c=relaxed/simple;
-	bh=sq4Py1SncPuWnYp7w/jC/603O9qbMx0qUhATBq2iLfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mB9nB0I6bUdg3iUB+HbqzHlgGz6nSeJ3A5iean+okk4rpX1vS7B87RU1tpYxP7WUQYnnpCn1X7T974UkGycn+cFGPO5zpTQ+1UX2DekgNugNWRRjuLkQ+1igOH4Bo39ralB0NNlbR1bGO5BZ+j8KVwBy+E7Wk3ESSws6+iYybZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iKuXRQiU; arc=none smtp.client-ip=80.12.242.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id n1U9t3mIzJOH0n1UCtJZCE; Tue, 25 Feb 2025 21:25:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740515102;
-	bh=7/99hPUZC748Mfc5SetBP+1lFgI4nJzICmyhFWlU/iY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=iKuXRQiUr4DSCN5YIjxL5fg+7xNtpFVZ388ceGflyCUTRIIraXZLLuxfLRt1rrdNq
-	 Mcjfh/bu78BMQ979Ocb32NIh4hMx/UBFK9+rWMK68e2oOfgtVSYYpvHuZQqqwhM2F4
-	 xRwYDyIJ9r0JB4PyvxQtQnEJN+jWAM02yipCG6hFatdFz8hlHfys2cnAVfkfdrAGCL
-	 pbmW/Xdk5r/cz1npcrMZCtEd64iGOZfOEwjYGUS28IlBKl6/iAZPdwpObirhwpHycQ
-	 /bAX2zUVl+6cKzjA3iPLpYnaLHwK17kJN5G8XVfsNCrSwwR8hPHbqGldVViffZaaPe
-	 7QvOVydYdewhQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 25 Feb 2025 21:25:02 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <dd1a326a-e165-4796-9005-6bff2019deef@wanadoo.fr>
-Date: Tue, 25 Feb 2025 21:24:56 +0100
+	s=arc-20240116; t=1740515103; c=relaxed/simple;
+	bh=THsDK7yd6BcZmc7cpXKPf8WHGvVoUBZfDW8QIJfvZSE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=u38RdJ2Iug9OXm8oFPle2JVSe3VYiP8BoySAt1dUKjUqf1X+i7yjDk9gRbWIC1Eun9vg6XLpbzDaWPvaLyUc3IheGudHZsbe+2oAdK8BB0c6Z46mmnRJA3Xt0NO21obB9BO/Lk8sRT9gwwvAiepyZKhtgq/r31E/110j5srIEcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=V/Rh9+nl; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.162.92] (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5191F203CDFA;
+	Tue, 25 Feb 2025 12:25:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5191F203CDFA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740515101;
+	bh=Jyr1W2i0apHpLVaBAxpMdrionoJIfFMi72X+ip6bMMQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=V/Rh9+nle434EIbuopM9xYrJYNBYrbLOW3WlEQkOknOqiCToz7hMLQUIFrnG8DXvX
+	 yvhD7z2wBqkGseO+sg4I4fJv6ATebbI1vRErjd+f0KCKZCXRNZme7+k0ebhA+Gn/ng
+	 4eDWKrdedP1lm6ZmqWkXb2DlKrIKwrjZudbMNMKQ=
+Message-ID: <ff51bcfc-10c8-4461-9f82-ea1d5ed784f8@linux.microsoft.com>
+Date: Tue, 25 Feb 2025 12:24:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,151 +48,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] orangefs: move s_kmod_keyword_mask_map[] into debugfs.c
-To: Arnd Bergmann <arnd@kernel.org>, Mike Marshall <hubcap@omnibond.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Martin Brandenburg <martin@omnibond.com>,
- Al Viro <viro@zeniv.linux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@lists.orangefs.org,
- linux-kernel@vger.kernel.org
-References: <20250225200901.4041575-1-arnd@kernel.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250225200901.4041575-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Cc: Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay
+ <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, James Smart
+ <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
+ Xiubo Li <xiubli@redhat.com>, Niklas Cassel <cassel@kernel.org>,
+ Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Frank Li <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Selvin Xavier <selvin.xavier@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ eahariha@linux.microsoft.com, cocci@inria.fr, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sound@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+ ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH v3 08/16] ata: libata-zpodd: convert timeouts to
+ secs_to_jiffies()
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Damien Le Moal <dlemoal@kernel.org>
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <20250225-converge-secs-to-jiffies-part-two-v3-8-a43967e36c88@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-8-a43967e36c88@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 25/02/2025 à 21:08, Arnd Bergmann a écrit :
-> From: Arnd Bergmann <arnd@arndb.de>
+On 2/25/2025 12:17 PM, Easwar Hariharan wrote:
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
 > 
-> gcc warns about unused const variables when building with W=1
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
 > 
->      In file included from fs/orangefs/protocol.h:287,
->                       from fs/orangefs/acl.c:8:
->      fs/orangefs/orangefs-debug.h:86:18: error: 'num_kmod_keyword_mask_map' defined but not used [-Werror=unused-const-variable=]
->         86 | static const int num_kmod_keyword_mask_map = (int)
->            |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+> @depends on patch@
+> expression E;
+> @@
 > 
-> This one is only used in one file, so just move the definition
-> next to its only user.
+> -msecs_to_jiffies
+> +secs_to_jiffies
+> (E
+> - * \( 1000 \| MSEC_PER_SEC \)
+> )
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 > ---
->   fs/orangefs/orangefs-debug.h   | 43 ----------------------------------
->   fs/orangefs/orangefs-debugfs.c | 43 ++++++++++++++++++++++++++++++++++
->   2 files changed, 43 insertions(+), 43 deletions(-)
-> 
-> diff --git a/fs/orangefs/orangefs-debug.h b/fs/orangefs/orangefs-debug.h
-> index 6e079d4230d0..d4463534cec6 100644
-> --- a/fs/orangefs/orangefs-debug.h
-> +++ b/fs/orangefs/orangefs-debug.h
-> @@ -43,47 +43,4 @@
->   #define GOSSIP_MAX_NR                 16
->   #define GOSSIP_MAX_DEBUG              (((__u64)1 << GOSSIP_MAX_NR) - 1)
->   
-> -/* a private internal type */
-> -struct __keyword_mask_s {
-> -	const char *keyword;
-> -	__u64 mask_val;
-> -};
-> -
-> -/*
-> - * Map all kmod keywords to kmod debug masks here. Keep this
-> - * structure "packed":
-> - *
-> - *   "all" is always last...
-> - *
-> - *   keyword     mask_val     index
-> - *     foo          1           0
-> - *     bar          2           1
-> - *     baz          4           2
-> - *     qux          8           3
-> - *      .           .           .
-> - */
-> -static struct __keyword_mask_s s_kmod_keyword_mask_map[] = {
-> -	{"super", GOSSIP_SUPER_DEBUG},
-> -	{"inode", GOSSIP_INODE_DEBUG},
-> -	{"file", GOSSIP_FILE_DEBUG},
-> -	{"dir", GOSSIP_DIR_DEBUG},
-> -	{"utils", GOSSIP_UTILS_DEBUG},
-> -	{"wait", GOSSIP_WAIT_DEBUG},
-> -	{"acl", GOSSIP_ACL_DEBUG},
-> -	{"dcache", GOSSIP_DCACHE_DEBUG},
-> -	{"dev", GOSSIP_DEV_DEBUG},
-> -	{"name", GOSSIP_NAME_DEBUG},
-> -	{"bufmap", GOSSIP_BUFMAP_DEBUG},
-> -	{"cache", GOSSIP_CACHE_DEBUG},
-> -	{"debugfs", GOSSIP_DEBUGFS_DEBUG},
-> -	{"xattr", GOSSIP_XATTR_DEBUG},
-> -	{"init", GOSSIP_INIT_DEBUG},
-> -	{"sysfs", GOSSIP_SYSFS_DEBUG},
-> -	{"none", GOSSIP_NO_DEBUG},
-> -	{"all", GOSSIP_MAX_DEBUG}
-> -};
-> -
-> -static const int num_kmod_keyword_mask_map = (int)
-> -	(ARRAY_SIZE(s_kmod_keyword_mask_map));
-> -
->   #endif /* __ORANGEFS_DEBUG_H */
-> diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-> index f52073022fae..6a34e6feac45 100644
-> --- a/fs/orangefs/orangefs-debugfs.c
-> +++ b/fs/orangefs/orangefs-debugfs.c
-> @@ -54,6 +54,49 @@
->   #define ORANGEFS_VERBOSE "verbose"
->   #define ORANGEFS_ALL "all"
->   
-> +/* a private internal type */
-> +struct __keyword_mask_s {
-> +	const char *keyword;
-> +	__u64 mask_val;
-> +};
-> +
-> +/*
-> + * Map all kmod keywords to kmod debug masks here. Keep this
-> + * structure "packed":
-> + *
-> + *   "all" is always last...
-> + *
-> + *   keyword     mask_val     index
-> + *     foo          1           0
-> + *     bar          2           1
-> + *     baz          4           2
-> + *     qux          8           3
-> + *      .           .           .
-> + */
-> +static struct __keyword_mask_s s_kmod_keyword_mask_map[] = {
 
-Unrelated to your patch, but I think that this could be made const.
+This was meant to carry Damien's ack once the subject line was fixed[1], but I fixed
+the subject line and missed adding the ack in. Damien, would you like to ack again?
 
-Just my 2c.
 
-CJ
+[1]: https://lore.kernel.org/all/f39cde78-19de-45fc-9c64-d3656e07d4a7@kernel.org/
 
-> +	{"super", GOSSIP_SUPER_DEBUG},
-> +	{"inode", GOSSIP_INODE_DEBUG},
-> +	{"file", GOSSIP_FILE_DEBUG},
-> +	{"dir", GOSSIP_DIR_DEBUG},
-> +	{"utils", GOSSIP_UTILS_DEBUG},
-> +	{"wait", GOSSIP_WAIT_DEBUG},
-> +	{"acl", GOSSIP_ACL_DEBUG},
-> +	{"dcache", GOSSIP_DCACHE_DEBUG},
-> +	{"dev", GOSSIP_DEV_DEBUG},
-> +	{"name", GOSSIP_NAME_DEBUG},
-> +	{"bufmap", GOSSIP_BUFMAP_DEBUG},
-> +	{"cache", GOSSIP_CACHE_DEBUG},
-> +	{"debugfs", GOSSIP_DEBUGFS_DEBUG},
-> +	{"xattr", GOSSIP_XATTR_DEBUG},
-> +	{"init", GOSSIP_INIT_DEBUG},
-> +	{"sysfs", GOSSIP_SYSFS_DEBUG},
-> +	{"none", GOSSIP_NO_DEBUG},
-> +	{"all", GOSSIP_MAX_DEBUG}
-> +};
-> +
-> +static const int num_kmod_keyword_mask_map = (int)
-> +	(ARRAY_SIZE(s_kmod_keyword_mask_map));
-> +
->   /*
->    * An array of client_debug_mask will be built to hold debug keyword/mask
->    * values fetched from userspace.
-
+Thanks, and apologies,
+Easwar (he/him)
 
