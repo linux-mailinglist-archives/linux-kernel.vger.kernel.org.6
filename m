@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-530840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2884A43934
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:20:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC7FA43924
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6088E19E1521
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A331725ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC12426657B;
-	Tue, 25 Feb 2025 09:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976E62676F8;
+	Tue, 25 Feb 2025 09:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcOj4Dlp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DDefn0rw"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B84241696;
-	Tue, 25 Feb 2025 09:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396DA26770E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474638; cv=none; b=kXxBEZFRUq4wt5Xeh+XspO0fJBbGwVFclu1uWZrAgUjqRao8zSNvkO3fL9faEpsJaV5VdvK2lM2x23n74e35hbgNFlOzxTqr2QoKNAMD1u3LJwLwU13EnVwznzZZql6iaStZk2f/f2EXWe2TMtdcQhsvIkgYWC3RrslDC3tAqc8=
+	t=1740474681; cv=none; b=FXiccEGZgLnFYh8h72XtvWOMs6QQE7EY1O55XLoKRb8/g6bBw5nHI+euac5hHaeTG1zDKZ9NnKP5ooBYBj6GJGJpgDjFSgLubq/H5rK5cp0xSCquSrz4mxZaC4yBG3lhzukVsppn3nrg3WVnXIfjvwpQMgo2nGqeIf+ONE+ecdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474638; c=relaxed/simple;
-	bh=sQpPwoXRcrLe1y7aA+MEVSALbJkK7A9Ad3ufdJ8khXk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ky3MJ3gOMI4eprxqUtU3PWUAwbh8SICgrEjn95wxgNopVdkLNULt7xeclorPEcwA7iApe6192c1MpR0yoAl7Qy+VgSB/CHXWi5htM3DZgBsJmoN9ca4k1pinE2z6RR//LLkNzoTKYIi7VjivWMn0I1jYcINxQVgvloIglPuB7lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcOj4Dlp; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740474637; x=1772010637;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=sQpPwoXRcrLe1y7aA+MEVSALbJkK7A9Ad3ufdJ8khXk=;
-  b=UcOj4DlpzgrEzGgt+mDmIgM5fAzVH4tx+bdCR5dXjct4/Shdy0S2Y8Wj
-   2EvRL/R9HlLpATilOSs6zH550iS2Pb+eNc7ykTedbmhHampUxuCNmo9ZN
-   F+cpLuhU7QjlYSiSWRoT9bfl3kiy60GKiIdnUF/FyBtv8mI6VXLdLJho5
-   1NGYdn6vpmWvddWLclRquU/iATod5nlUWq+D/i+jS30qHUBQfHvAIG7BJ
-   kSS5Qj2wiIyav0sxc+epecPZmO6LW7ur5UCGNVjMsbtszqtp3VK5uLKgz
-   4MtGyIJp29oeALVB5bd7+AB/b1pNSmheUw38PCnBLfSSUbNhq6FYDvFkF
-   w==;
-X-CSE-ConnectionGUID: 5YBSHX3/To6/WBsGC8CTgg==
-X-CSE-MsgGUID: dFk1x64nSwe2VSyIeQDVwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41185115"
-X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="41185115"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 01:10:36 -0800
-X-CSE-ConnectionGUID: lLouOT1dRo6qMbBUadUawQ==
-X-CSE-MsgGUID: XZD0O4wkT8KxtqRGM6PyHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
-   d="scan'208";a="116818412"
-Received: from monicael-mobl3 (HELO localhost) ([10.245.246.246])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 01:10:32 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Takashi Iwai <tiwai@suse.de>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
- vga_switcheroo_register_audio_client()
-In-Reply-To: <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
- <87eczn7adi.fsf@intel.com>
- <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
-Date: Tue, 25 Feb 2025 11:10:29 +0200
-Message-ID: <87zfia5r0a.fsf@intel.com>
+	s=arc-20240116; t=1740474681; c=relaxed/simple;
+	bh=ULVdGn7V1+B9/1+UvwyE2gO5D3tyEjU/3bIQJWQvo9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aszoi/GjJpT3Xu/EegU6dLT4xCFN8IMFg07Uz5rZ2e1x0pEYN6A5DyvbvxRZMhpQNpgg40x8DyicITBSdES8D7REv5cQE7ewtFJrCJfEKgpp6kqSZMZQ+rXM1bEMR3gOIa5LnLSEg/jH0TkkMd4tEV4pLXC/+FZMxBWWPxOW88c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DDefn0rw; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <425215fb-8fb5-4412-87e7-1d29c4ac0b7f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740474667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z+uneR/mJS3GnAKzOPOj3taPV7XZaDcHgKVZzaJi0fo=;
+	b=DDefn0rw48FmnpU4dE1uzQN58xOKblryXKII2hPkQlzaPz9m/h8jhLz7SHxlkpRBfpxqtO
+	zqlhWACWT2n6KotMuGTBKZH/4KDxrB1BeTioPMtSI5wvaY4aXn8wOp8uFvSG3FE52bafWy
+	gbI0sciBbXJFt9Pdp4DL92u1CiJP6VA=
+Date: Tue, 25 Feb 2025 17:10:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Subject: Re: [PATCH net-next v3 3/4] stmmac: Remove pcim_* functions for
+ driver detach
+To: Philipp Stanner <phasta@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Yinggang Gu <guyinggang@loongson.cn>,
+ Feiyang Chen <chenfeiyang@loongson.cn>, Philipp Stanner
+ <pstanner@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Qing Zhang <zhangqing@loongson.cn>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250224135321.36603-2-phasta@kernel.org>
+ <20250224135321.36603-5-phasta@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250224135321.36603-5-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 24 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> On Mon, Feb 24, 2025 at 03:14:33PM +0200, Jani Nikula wrote:
->> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->> > The "id" variable is an enum and in this context it's treated as an
->> > unsigned int so the error handling can never trigger.  The
->> > ->get_client_id() functions do not currently return any errors but
->> > I imagine that if they did, then the intention was to return
->> > VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
->> > and UNKNOWN_ID so we'll catch it either way.
->> >
->> > Reported-by: Su Hui <suhui@nfschina.com>
->> > Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
->> > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> > ---
->> >  drivers/gpu/vga/vga_switcheroo.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
->> > index 18f2c92beff8..216fb208eb31 100644
->> > --- a/drivers/gpu/vga/vga_switcheroo.c
->> > +++ b/drivers/gpu/vga/vga_switcheroo.c
->> > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
->> >  	mutex_lock(&vgasr_mutex);
->> >  	if (vgasr_priv.active) {
->> >  		id = vgasr_priv.handler->get_client_id(vga_dev);
->> > -		if (id < 0) {
->> > +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
->> 
->> Maybe we want to do something else here... see [1].
->> 
->> BR,
->> Jani.
->> 
->> 
->> [1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
->> 
+
+在 2/24/25 9:53 PM, Philipp Stanner 写道:
+> Functions prefixed with "pcim_" are managed devres functions which
+> perform automatic cleanup once the driver unloads. It is, thus, not
+> necessary to call any cleanup functions in remove() callbacks.
 >
-> I feel like my patch is good enough...  I guess the concern here is that
-> GCC could change enums to something else.  I don't think that's likely as
-> it would break a lot of code.  The other option, which is a good option,
-> is to change the function signature for vgasr_priv.handler->get_client_id()
-> so that we do:
+> Remove the pcim_ cleanup function calls in the remove() callbacks.
 >
-> 	ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
-> 	if (ret)
-> 		return;
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c |  7 -------
+>   drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c     | 10 ----------
+>   2 files changed, 17 deletions(-)
 >
-> That's better code, honestly.  But I can't find motivation enough to do
-> the work.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> index e3cacd085b3f..f3ea6016be68 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> @@ -614,13 +614,6 @@ static void loongson_dwmac_remove(struct pci_dev *pdev)
+>   	if (ld->loongson_id == DWMAC_CORE_LS_MULTICHAN)
+>   		loongson_dwmac_msi_clear(pdev);
+>   
+> -	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> -		if (pci_resource_len(pdev, i) == 0)
+> -			continue;
+> -		pcim_iounmap_regions(pdev, BIT(i));
+> -		break;
+> -	}
+> -
+>   	pci_disable_device(pdev);
+>   }
+>   
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> index 352b01678c22..91ff6c15f977 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> @@ -227,20 +227,10 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
+>    *
+>    * @pdev: platform device pointer
 
-The more I look at this, the more bonkers 4aaf448fa975 feels.
+>    * Description: this function calls the main to free the net resources
 
-Anyway, I don't think ->get_client_id() hooks should return negative
-error codes, and indeed none of them do. None of them return
-VGA_SWITCHEROO_UNKNOWN_ID either, but that would be a valid return.
+There is a missing full stop. You commented on the next email,
 
-I suggest only checking for id == VGA_SWITCHEROO_UNKNOWN_ID. And doing
-that in all the places that have that check, there are two more, but
-they assign the return value to an int. So the int ret should be changed
-to enum vga_switcheroo_unknown_id id I think.
-
-Any chance of finding enough motivation to do that? ;)
-
-BR,
-Jani.
+and it seems that you are already preparing for v4.  With this
 
 
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
--- 
-Jani Nikula, Intel
+Thanks,
+Yanteng
+
+> - * and releases the PCI resources.
+>    */
+>   static void stmmac_pci_remove(struct pci_dev *pdev)
+>   {
+> -	int i;
+> -
+>   	stmmac_dvr_remove(&pdev->dev);
+> -
+> -	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> -		if (pci_resource_len(pdev, i) == 0)
+> -			continue;
+> -		pcim_iounmap_regions(pdev, BIT(i));
+> -		break;
+> -	}
+>   }
+>   
+>   static int __maybe_unused stmmac_pci_suspend(struct device *dev)
 
