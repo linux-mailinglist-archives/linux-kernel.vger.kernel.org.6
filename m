@@ -1,283 +1,289 @@
-Return-Path: <linux-kernel+bounces-532671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2A7A4509A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:58:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ED9A4509B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A58E3ADA17
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D0C189BFD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D65204F9B;
-	Tue, 25 Feb 2025 22:58:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D777A2222D9;
+	Tue, 25 Feb 2025 22:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NfSvOF3g"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2041.outbound.protection.outlook.com [40.107.95.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB582222D9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524280; cv=none; b=i1wKQXMSgSRa7QweWzEvK9z0/u4yB7tbtQqd639Q/Wr7STr1O+irvQtxs1ViJkGZ5wgRq2gDinSrw3fhUP0yuBXKrU4eGBti9Z6Ehv2sPwPoQQNoat6+7h7CWtA4TmppzWyuNFM7t+Z1T9DpppT5hnlBSY2F3kUBn7jJdPiNFwQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524280; c=relaxed/simple;
-	bh=PoTlQ4385s5DrEh/kQ0+befiVswqZC276gg7tyJP8fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afM2fg3VJ00ZGH8cQWGKsHp/ixeC+ux29UD78Yj6bTXIL87TrVVx98TdVSggbK+Gs1lnjDW3xOPz/2TK8U2CoHQOw3FOLMSw0lXOKjTWdr97b81IjoyzH3WleW/ROOoVdQT84bQJLUZkZtfzZCvPTS0nXyMSbRt7sQP0bPl2WXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tn3s4-0000tz-9u; Tue, 25 Feb 2025 23:57:48 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tn3s3-002qjR-2f;
-	Tue, 25 Feb 2025 23:57:47 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 808E33CBDC8;
-	Tue, 25 Feb 2025 22:57:47 +0000 (UTC)
-Date: Tue, 25 Feb 2025 23:57:47 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Chris Ward <tjcw01@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	linux-kernel@vger.kernel.org, Chris Ward <tjcw@uk.ibm.com>, bpf@vger.kernel.org
-Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
-Message-ID: <20250225-radical-piquant-tench-4d2588-mkl@pengutronix.de>
-References: <CAC=wTOhhyaoyCcAbX1xuBf5v-D=oPjjo1RLUmit=Uj9y0-3jrw@mail.gmail.com>
- <CAC=wTOgrEP3g3sKxBfGXqTEyMR2-D74sK2gsCmPS2+H-wBH6QA@mail.gmail.com>
- <20250225-gay-awesome-copperhead-502cd2-mkl@pengutronix.de>
- <397970e484d2d0c1e0649d78cc723fbe3ad2ad5f.camel@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A86123370B;
+	Tue, 25 Feb 2025 22:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740524282; cv=fail; b=jigGDx1xR51Yf7eSh+QlVmBjbmbWnS9Q/tD6mtndc0lq5qo5JKVaSFBZ2golOcHRU6jD0GF+913uwMu3+D4P+M29MSRi34m+7Pcby/TRRcI4DcBKSdFZjaBk4Nwb/9WFr8OuNo0ZR6Folg1GERLeAXrCiM5ltOXpU4vo4eXRkIw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740524282; c=relaxed/simple;
+	bh=vZcynCd0neJi61FQ7cunm09U0B3HB8lVYnExNsB3bXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SYTvvVE7zjoP0W2cEmUZCZVCcG4JYi0vTN0nRtc1aaQDhN0JgNQVEuzkoOb8qHhnjEzZfizATaJPaY0bBmMhPmK6YdgJ5zOUVByNtlDHpB16bG8a2OZ3i/n0Mkn2Uvqpry8ZnoWJZ8WVGiASo0hLu0n0ja+N+7Ono1YbXH8k2l8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NfSvOF3g; arc=fail smtp.client-ip=40.107.95.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZLbBdFrwDu1FSuYsxYsCQYWA596pwWcBR2KP17YMI0goy+vTVJpJ0r5IR+lSF/VwftNtx6QThuIm863U0RsgKvl5lWmEkVZRg4TkfxSSPHwGR4x6OHQ+2wY5Dhr6MX0rgBqaCMBvXCpn711b4m/lnASO3I9RW3JtIrs3cm+T3dNcW+LvHNqtaWBdcIMdut2llIbNqspn6tkGyJy0u7sj305kVXsd8JJvUzwHjbHKWzu9WwWmS+2LLtj6POU4/3eijpQjpApxO38BGnU1YZMhOLxuKjQ63exQ0tow9nfQFn4BU2/NdYxft+RTF+ddp7whLWk43eJ10be11ae2oybiBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nSkCHC4WFWu+OgmeoWy997h9lRdsCE+ZTor58SiA5kM=;
+ b=CQClbZDJSdSbR2YZZOINuIzn4tGuaxdUQjrzqEwPomYe1rU7YUTiWpSocV1J58qkHJO2bOlEvdXKhV0dppMnepIoEnZmeUbNe5luyvU6Qq9Knod1KTx94MTowJYsiNn2l81Dyz9vDLEVupKha/wceOKt9mPOScKebsAmHEiOGURt1iHQvXnwtqmDr/pHcFjksyrRgr3IU+DAWuXFQWARukaMLq5l50Z4Kpypk5WzLPmwmZXcy0jC4J/TzHGRS+r1F71oyfoPJTX0Yh6BQC1idIoQZtbnobwUc1iycRbTOPewh6yqe8ceSiHmWR7SKugtbKrv+c9N19rp9G5m1l+LhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nSkCHC4WFWu+OgmeoWy997h9lRdsCE+ZTor58SiA5kM=;
+ b=NfSvOF3g2HuMne84eKYN3ifPe69c2tViL+k9IwRgRJF0wLvTr54nyTpsRrYVj34eU7sb3mzgFXeDMQZmG0VdCmYLiOqZRxYIxeAFyyww9ItYr9jLl69YRMFToWK03PTLYcSAlqZxZK3fO5q0NRrE5iYJb0uyQfpAgXAb2/dpAmiuqgDZvw9ViRTZN2FqhIO7FiGd/UpP7qkoWxXLcH2fO5x8d29BXptHq6t8mAgtARmsLaHgmGvxHxs1Ka/F1mGmON9qMU6VUGFGlTtd0uNWqRyy4+e4S8L5JML2haBXOaMVgEdzIi4BlgXENRI/x2WCwco5E0HcpUCuaJXY4eGHvA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SN7PR12MB6813.namprd12.prod.outlook.com (2603:10b6:806:267::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 22:57:58 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 22:57:57 +0000
+Date: Tue, 25 Feb 2025 18:57:56 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250225225756.GA4959@nvidia.com>
+References: <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
+ <Z7xg8uArPlr2gQBU@pollux>
+ <Z7xh5bEyh_MII4WV@pollux>
+ <20250224184502.GA1599486@joelnvbox>
+ <Z70EcwNIX0KtWy36@cassiopeiae>
+ <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225210228.GA1801922@joelnvbox>
+X-ClientProxiedBy: MN2PR05CA0007.namprd05.prod.outlook.com
+ (2603:10b6:208:c0::20) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4eimhjfg3mx4uc63"
-Content-Disposition: inline
-In-Reply-To: <397970e484d2d0c1e0649d78cc723fbe3ad2ad5f.camel@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB6813:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f4489b3-fcf7-4e06-27cc-08dd55efd84e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6Cq5J3doMs6y4Wd4S+sAg7H5jpLN9+IuhbvfjIW6CPFEnLHvg/S/sBsVrSrG?=
+ =?us-ascii?Q?DD014U0587Ab80U60ykuiLMFqLsuTLhyUOuAbY+RmDUIzGMx4Qbay4hZ4kji?=
+ =?us-ascii?Q?nu1zecH1470gxR1ghmD2MB7CojltNLZSIKu9PC5XCcrSVfkp5/W3G83S74RV?=
+ =?us-ascii?Q?X9R/n0ozQ/bT4rVTWi0rXb4q4/403oZgKjW/cVQfjaaNm4KkuSHJx8IUfI32?=
+ =?us-ascii?Q?/OO7uHij24czoYbk+zKq2lrZHrjSwaok5jmWIuOFN4MaLi4Owk0fGr0eOcpY?=
+ =?us-ascii?Q?OzrgIC3TBogqf9OIFqNfJZXoRVX1I/zS51szCBC4FioNHEjP7KJmDwfJr7cq?=
+ =?us-ascii?Q?rSJ09rwOXjo1nmMMsGUJTBifC1RDSHWxSgGf3RYFDJDxZIarYrQPgXxDIhAU?=
+ =?us-ascii?Q?l2pJZidYG8ON4ZOJVCymY7yzzsWpA5/ygEwCnkPSlvBBVgGvQcJMjRvEatv6?=
+ =?us-ascii?Q?4WxUqVUv1Z9P4fxkXTnX7ck/QfxY4XCK8ubnXSnVQq6/PWjoKlihuirPJRw0?=
+ =?us-ascii?Q?kdYB+ol00/KCshPClifNbs/Kv4/hx+8APH0ACaLN1WwpUyUJ7llXbVh/hIIV?=
+ =?us-ascii?Q?pIAqX0RVxEjhznq4jsC79yRTTJxZUEhijhr0f+C/zENbNwZBfud517kA3HoY?=
+ =?us-ascii?Q?TLHvRl/lklB9vGlkRz+1sHhaTmNEXelX6jft2+EclIbWuZxzxbqND3fNWSov?=
+ =?us-ascii?Q?F7BRUDMgCNQEecG4+8ToYU4XNSr6phM5xH+Wbvo6e/G054gmqw8Pg/weVkCE?=
+ =?us-ascii?Q?l3k7720cHdlIKo/7rKJmB1NKDTV1mdFl97NfKEhqVY/o1iGec44gLYDzsgYw?=
+ =?us-ascii?Q?eFqe/WcRl64Z8Regy8WfRXwv/G2653CmpjoMpmApeiuG041Qzba8Bjgi2Bjw?=
+ =?us-ascii?Q?PDu3bvKVyWRUv8ISkdlWDOj8OzWSXzlct6sbisMcO7sKWbqVE05CCLjhzTUT?=
+ =?us-ascii?Q?Bfcbe2KH1T1GoaVIlFiNOBcn6EXzDS21eaQpHkHpLCodS7UwURucQmQQfZ7Q?=
+ =?us-ascii?Q?7yOhoeKkY50Loi7eN5tzVYixt7ovicZ4N8pGoOTPLxSNt4bkiTwyqnScqtCF?=
+ =?us-ascii?Q?JOpaB6U2HW31GgmDSGCeztEuzKmebuAlneZc61mw/9AZZzgRXbpd3PpJ3HKo?=
+ =?us-ascii?Q?IgOd8B/huWWwhhjTrLxzR42IdO04eKyHXkjfXiWV6fLP1vbnlTfupOridp9f?=
+ =?us-ascii?Q?QVE+z1ByvQ1OZdwLLdYTRbffjWT40CQTcvX8IOgvFOP+hde1eCJWcQ7wKWCj?=
+ =?us-ascii?Q?IOp4/ah+CE01Aw8l+90imPJePownqlkcWdUfhLwzgxbx3g1lFhQOcdrXPcB/?=
+ =?us-ascii?Q?2hq+efWMG4Tt1ji/BIzELHPhLd4nEn7sfn3ED+ce5pCg+Isb24fLkhPQ0squ?=
+ =?us-ascii?Q?KpdGw4rffZ+CwfeqVG0u7vkko9pZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kwcA7gV7G+epv0oIse6YfDyEd10LAEW4J37yXP1KPEKuZUWo34fGsKCuZU1m?=
+ =?us-ascii?Q?pmBDjmo2c7blceevtWpb7qi/5p68TRsTs12BQo22SKGgbs9llv1fJRtoC+7E?=
+ =?us-ascii?Q?FlK7qSP8WCrJ58VQ0ogaplxJWbHOlSdJgK/Wwy+PPd9zFyrNv2nadPxsP16N?=
+ =?us-ascii?Q?lcbyd8NnodUIPV6caCf7MN6VavMD8Z1Zcm502dbxnG/C9oipCgw6wL++UXXH?=
+ =?us-ascii?Q?O0Mj7hj3ackA9EUvAdAplI38qnivI5pOcvHDMzpbHENgQZVkrdh47MlYkuFo?=
+ =?us-ascii?Q?S/cdpDg2trbvloUtOy+Aw1Z2v28cyCgDJhFfHRgli2tS4Cu/ncG4MATet/QL?=
+ =?us-ascii?Q?T8L7l5CP7wyFmW3Vqa1nL2uOaLY6sOEe1+jQTzXzuKlOIVChW6bXL5QLZgxQ?=
+ =?us-ascii?Q?ALQvxV7bUQTHXXxWWoO5lRqbcbD/G4YIZVCaGznMuRyBE1wbYRKHcIwIV2S1?=
+ =?us-ascii?Q?sNVkuiJ1n0tkkOZyDPz5DdPaK3h/ole28Fb6fz1J+xeO70jwsX6DrMADXrON?=
+ =?us-ascii?Q?G7bCWMZhmdALEgnJkjb1NU/shTaUCd2GAPO41PT7fKdZzxTrXv6T3+My/RH2?=
+ =?us-ascii?Q?KNjp+GfVDRa3u+xaPyrKcWQBrPya7s5+w98Kw1pGpoYm8XAySNfBXx2tWZBQ?=
+ =?us-ascii?Q?Brpo6Na0jiDRzW4lp4xHPUycOI36HY+Y+7F8W6aR3VtvJLbyYnIvnsn1qM0G?=
+ =?us-ascii?Q?9IM4kJ7uffONAeu7GjMlb+C8lUxChrAYSqGM1/sLpsi5KRSABRUX/daB8i6/?=
+ =?us-ascii?Q?wwX0PwdcZeLKsnnfA6yOZIBViK78u5joUMZduO3Istay5nMB3hHZ9Csfdw4W?=
+ =?us-ascii?Q?53u+3NwpDIOvCoUx/G+T75SZFt6RaWPIKe5xBpciHjIB98Rix89s71HFkhv0?=
+ =?us-ascii?Q?b1gcEVf2zW4j6kcV4bZ10UBCTJ55hq684OKQ4d2MaOeKWW1CTg7WajzH+cgp?=
+ =?us-ascii?Q?s3hi3EL8//kOfu6oHnAeQ1xpZJVnY/+Qmy2BQ8z8HMs9iRZVtv4IZ+aLiJfF?=
+ =?us-ascii?Q?R5ey8wkuNp3m0L5BQT08szLfdS8KIFvJBm5KCZx30GoMZY7+NXAgjaldCIdj?=
+ =?us-ascii?Q?wLx5UL3Kp82JTT2tI3PPJCG95WxC7cII1lgKsC5oVPJDvVAq1oYW4c9nPO+Y?=
+ =?us-ascii?Q?7y+vhQ8F7cNznvZ4LUYUo56DIqUKEBoltn51xgtIvq/su1EBf7B3uHSF9k4z?=
+ =?us-ascii?Q?OEa1/MBIqB21K5D0RAWRogJXbz6w7sfGGmqAe6XlszVTIwpvcZj1KFNCcCfU?=
+ =?us-ascii?Q?0cdRigNCuBHfpdS2M8/ZbaXE6h5BO3Cmj0f2B40OWlqh0ZMyRATTs9IYpnBc?=
+ =?us-ascii?Q?dB+krgAfIKrwn+/HgEkk3ON8Xz4LKS7XYf1LgFE0bmZHmsos0QqiC4zZAv0z?=
+ =?us-ascii?Q?kZ79gL/bharlJ66YA7UIInZ9qe6bB76VVqCmznk1ThVuKk2YQs1U5gxWq0fB?=
+ =?us-ascii?Q?l7iihP+yizk+eTlEZkjVVTsrtIhQIrQ/eksXb5/Y6Jt1Wfg+JdP58dIjGb8n?=
+ =?us-ascii?Q?ykpG92QvQu25J0qQYV6KAmFNqa6cCm8hQBiWApsXlY1qNwwoTZ4S6OBW896i?=
+ =?us-ascii?Q?6kvWLaYhW8KtC4HKW/g=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4489b3-fcf7-4e06-27cc-08dd55efd84e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 22:57:57.5504
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XZ9C33RpAiAdfGMXsgr+/FLf/oRG9eIL39XQ+QmzC6c2AO6zmExb6rZHCSXktzAw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6813
 
+On Tue, Feb 25, 2025 at 04:02:28PM -0500, Joel Fernandes wrote:
+> > Besides that I don't really see why we can't just re-acquire it after we sleep?
+> > Rust provides good options to implement it ergonimcally I think.
+> > 
+> > > 
+> > > Another colleague told me RDMA also uses SRCU for a similar purpose as well.
+> > 
+> > See the reasoning against SRCU from Sima [1], what's the reasoning of RDMA?
+> > 
+> > [1] https://lore.kernel.org/nouveau/Z7XVfnnrRKrtQbB6@phenom.ffwll.local/
 
---4eimhjfg3mx4uc63
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
-MIME-Version: 1.0
+> For RDMA, I will ask Jason Gunthorpe to chime in, I CC'd him. Jason, correct
+> me if I'm wrong about the RDMA user but this is what I recollect discussing
+> with you.
 
-On 25.02.2025 10:21:11, Eduard Zingerman wrote:
-> On Tue, 2025-02-25 at 16:55 +0100, Marc Kleine-Budde wrote:
-> > On 23.01.2023 12:35:41, Chris Ward wrote:
-> > > The 5.15.0 kernel (built by 'git checkout v5.15' from the kernel.org
-> > > torvalds tree) fails in the same way that the 6.2.0-rc5+ kernel fails.
-> > > So it seems that something Canonical did for the Ubuntu 20.04 kernel
-> > > causes eBPF to work correctly.
-> > >
-> > > On Mon, 23 Jan 2023 at 11:06, Chris Ward <tjcw01@gmail.com> wrote:
-> > > >
-> > > > I am trying to use the 'bleeding edge' kernel to determine whether a
-> > > > problem I see has already been fixed, but with this kernel the eBPF
-> > > > verifier will not load the dispatcher program that is contained wit=
-hin
-> > > > libxdp. I am testing kernel commit hash 2475bf0 which fails, and the
-> > > > kernel in Ubuntu 22.04 (5.15.0-58-generic) works properly. I am
-> > > > running the test case from
-> > > > https://github.com/tjcw/bpf-examples/tree/tjcw-explore-sameeth ; to
-> > > > build it go to the AF_XDP-filter directory and type 'make', and to =
-run
-> > > > it go to the AF_XDP-filter/runscripts/iperf3-namespace directory and
-> > > > type 'sudo FILTER=3Daf_xdp_kern PORT=3D50000 ./run.sh' .
-> > > > The lines from the run output indicating the failure are
-> > > > libbpf: prog 'xdp_dispatcher': BPF program load failed: Invalid arg=
-ument
-> > > > libbpf: prog 'xdp_dispatcher': -- BEGIN PROG LOAD LOG --
-> > > > Func#11 is safe for any args that match its prototype
-> > > > btf_vmlinux is malformed
-> > > > reg type unsupported for arg#0 function xdp_dispatcher#29
-> > > > 0: R1=3Dctx(off=3D0,imm=3D0) R10=3Dfp0
-> > > > ; int xdp_dispatcher(struct xdp_md *ctx)
-> > > > 0: (bf) r6 =3D r1                       ; R1=3Dctx(off=3D0,imm=3D0)
-> > > > R6_w=3Dctx(off=3D0,imm=3D0)
-> > > > 1: (b7) r0 =3D 2                        ; R0_w=3D2
-> > > > ; __u8 num_progs_enabled =3D conf.num_progs_enabled;
-> > > > 2: (18) r8 =3D 0xffffb2f6c06d8000       ; R8_w=3Dmap_value(off=3D0,=
-ks=3D4,vs=3D84,imm=3D0)
-> > > > 4: (71) r7 =3D *(u8 *)(r8 +0)           ; R7=3D1
-> > > > R8=3Dmap_value(off=3D0,ks=3D4,vs=3D84,imm=3D0)
-> > > > ; if (num_progs_enabled < 1)
-> > > > 5: (15) if r7 =3D=3D 0x0 goto pc+141      ; R7=3D1
-> > > > ; ret =3D prog0(ctx);
-> > > > 6: (bf) r1 =3D r6                       ; R1_w=3Dctx(off=3D0,imm=3D=
-0)
-> > > > R6=3Dctx(off=3D0,imm=3D0)
-> > > > 7: (85) call pc+140
-> > > > btf_vmlinux is malformed
-> > > > R1 type=3Dctx expected=3Dfp
-> > > > Caller passes invalid args into func#1
-> > > > processed 84 insns (limit 1000000) max_states_per_insn 0 total_stat=
-es
-> > > > 9 peak_states 9 mark_read 1
-> > > > -- END PROG LOAD LOG --
-> > > > libbpf: prog 'xdp_dispatcher': failed to load: -22
-> > > > libbpf: failed to load object 'xdp-dispatcher.o'
-> > > > libxdp: Failed to load dispatcher: Invalid argument
-> > > > libxdp: Falling back to loading single prog without dispatcher
-> > > >
-> > > > Can this regression be fixed before kernel 6.2 ships ?
-> >
-> > I'm seeing the same failure on 32 bit ARM on v6.13.
-> >
-> > Have you found a solution?
+In RDMA SRCU is not unbounded. It is limited to a system call
+duration, and we don't have system calls that become time unbounded
+inside drivers.
 
-> When I try the link from the discussion:
-> https://github.com/tjcw/bpf-examples/tree/tjcw-explore-sameeth
-> I get a 404 error from github.
+The motivation for RDMA was not really hotplug, but to support kernel
+module upgrade. Some data center HA users were very interested in
+this. To achieve it the driver module itself cannot have an elevated
+module refcount. This requires swapping the module refcount for a
+sleepable RW lock like SRCU or rwsem protecting all driver
+callbacks. [1]
 
-I'm have the same error as Chris Ward wrote in their original mail. But
-I'm using the xdp-tutorial's [1] basic01-xdp-pass/xdp_pass_user example.
+To be very clear, in RDMA you can open /dev/infiniband/uverbsX, run a
+ioctl on the FD and then successfully rmmod the driver module while
+the FD is open and while the ioctl is running. Any driver op will
+complete, future ioctls will fail, and the module will complete.
 
-[1] https://github.com/xdp-project/xdp-tutorial.git
+So, from my perspective, this revocable idea would completely destroy
+the actual production purpose we built the fast hot-plug machinery
+for. It does not guarentee that driver threads are fenced prior to
+completing remove. Intead it must rely on the FD itself to hold the
+module refcount on the driver to keep the .text alive while driver
+callbacks continue to be called. Making the module refcount linked to
+userspace closing a FD renders the module unloadable in practice.
 
-This is my error message.
+The common driver shutdown process in the kernel, that is well tested
+and copied, makes the driver single threaded during the remove()
+callback. Effectively instead of trying to micro-revoke individual
+resources we revoke all concurrency threads and then it is completely
+safe to destroy all the resources. This also guarentees that after
+completing remove there is no Execute After Free risk to the driver
+code.
 
-| sudo ./xdp_pass_user -d lan0
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: prog 'xdp_dispatcher': BPF program load failed: Invalid argument
-| libbpf: prog 'xdp_dispatcher': -- BEGIN PROG LOAD LOG --
-| btf_vmlinux is malformed
-  ^^^^^^^^^^^^^^^^^^^^^^^^
+SRCU/rwsem across all driver ops function pointer calls is part of
+this scheme, but also things like cancling/flushing work queues,
+blocking new work submission, preventing interrupts, removing syfs
+files (they block concurrent threads internally), synchronizing any
+possibly outstanding RCU callbacks, and more.
 
-Now I understand, what this error message wants to tell me. I should
-recompile my kernel with CONFIG_DEBUG_INFO_BTF=3Dy.
+So, I'd suggest that if you have system calls that wait, the typical
+expected solution would be to shoot down the waits during a remove
+event so they can become time bounded.
 
-| 0: R1=3Dctx() R10=3Dfp0
-| ; int xdp_dispatcher(struct xdp_md *ctx) @ xdp-dispatcher.c:118
-| 0: (bf) r6 =3D r1                       ; R1=3Dctx() R6_w=3Dctx()
-| ; __u8 num_progs_enabled =3D conf.num_progs_enabled; @ xdp-dispatcher.c:1=
-20
-| 1: (18) r8 =3D 0xc3b45cc8               ; R8_w=3Dmap_value(map=3Dxdp_disp=
-=2Erodata,ks=3D4,vs=3D124)
-| 3: (71) r7 =3D *(u8 *)(r8 +2)           ; R7_w=3D1 R8_w=3Dmap_value(map=
-=3Dxdp_disp.rodata,ks=3D4,vs=3D124)
-| 4: (b7) r0 =3D 2                        ; R0_w=3D2
-| ; if (num_progs_enabled < 1) @ xdp-dispatcher.c:123
-| 5: (15) if r7 =3D=3D 0x0 goto pc+136      ; R7_w=3D1
-| ; ret =3D prog0(ctx); @ xdp-dispatcher.c:125
-| 6: (bf) r1 =3D r6                       ; R1_w=3Dctx() R6_w=3Dctx()
-| 7: (85) call pc+135
-| btf_vmlinux is malformed
-| R1 type=3Dctx expected=3Dfp
-| Caller passes invalid args into func#1 ('prog0')
-| processed 7 insns (limit 1000000) max_states_per_insn 0 total_states 0 pe=
-ak_states 0 mark_read 0
-| -- END PROG LOAD LOG --
-| libbpf: prog 'xdp_dispatcher': failed to load: -22
-| libbpf: failed to load object 'xdp-dispatcher.o'
-| libxdp: Failed to load dispatcher: Invalid argument
-| libxdp: Falling back to loading single prog without dispatcher
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| Success: Loading XDP prog name:xdp_prog_simple(id:118) on device:lan0(ifi=
-ndex:4)
+> > > I have heard some concern around whether Rust is changing the driver model when
+> > > it comes to driver detach / driver remove.  Can you elaborate may be a bit about
+> > > how Rust changes that mechanism versus C, when it comes to that?
+> > 
+> > I think that one is simple, Rust does *not* change the driver model.
 
+I think this resource-revoke idea is deviating from the normal
+expected driver model by allowing driver code to continue to run in
+other threads once remove completes. That is definitely abnormal at
+least.
 
-With the CONFIG_DEBUG_INFO_BTF=3Dy kernel the verifier seems to be more
-happy. Now it fails with "-22":
+It is not necessarily *wrong*, but it sure is weird and as I explained
+above it has bad system level properties.
 
-| sudo ./xdp_pass_user -d lan0
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: prog 'xdp_pass': BPF program load failed: Invalid argument
-| libbpf: prog 'xdp_pass': -- BEGIN PROG LOAD LOG --
-| Extension programs should be JITed
-| processed 0 insns (limit 1000000) max_states_per_insn 0 total_states 0 pe=
-ak_states 0 mark_read 0
-| -- END PROG LOAD LOG --
-| libbpf: prog 'xdp_pass': failed to load: -22
-| libbpf: failed to load object 'xdp-dispatcher.o'
-| libxdp: Compatibility check for dispatcher program failed: Invalid argume=
-nt
-| libxdp: Falling back to loading single prog without dispatcher
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| Success: Loading XDP prog name:xdp_prog_simple(id:20) on device:lan0(ifin=
-dex:4)
+Further, it seems to me there is a very unique DRM specific issue at
+work "time unbounded driver callbacks". A weird solution to this
+should not be baked into the common core kernel rust bindings and
+break the working model of all other subsystems that don't have that
+problem.
 
+> > Similarly you can have custom functions for short sequences of I/O ops, or use
+> > closures. I don't understand the concern.
+> 
+> Yeah, this is certainly possible. I think one concern is similar to what you
+> raised on the other thread you shared [1]:
+> "Maybe we even want to replace it with SRCU entirely to ensure that drivers
+> can't stall the RCU grace period for too long by accident."
 
-After unloading and enabling the JIT...
+I'd be worried about introducing a whole bunch more untestable failure
+paths in drivers. Especially in areas like work queue submit that are
+designed not to fail [2]. Non-failing work queues is a critical property
+that I've relied on countless times. I'm not sure you even *can* recover
+from this correctly in all cases.
 
-| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
-=97) echo 1 |sudo tee /proc/sys/net/core/bpf_jit_enable                    =
-              =20
+Then in the other email did you say that even some memory allocations
+go into this scheme? Yikes!
 
-=2E.. the dispatcher fails to load with "524". Yes, the number is
-positive.
+Further, hiding a synchronize_rcu in a devm destructor [3], once per
+revocable object is awful. If you imagine having a rcu around each of
+your revocable objects, how many synchronize_rcu()s is devm going to
+call post-remove()?
 
-| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
-=97) sudo ./xdp_pass_user -d lan0 --unload-all
-| Success: Unloading XDP prog name: xdp_prog_simple
-| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
-=97) sudo ./xdp_pass_user -d lan0            =20
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| libxdp: Compatibility check for dispatcher program failed: Unknown error =
-524
-| libxdp: Falling back to loading single prog without dispatcher
-| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
-| Success: Loading XDP prog name:xdp_prog_simple(id:48) on device:lan0(ifin=
-dex:4)
+On a busy server it is known to take a long time. So it is easy to
+imagine driver remove times going into the many 10's of seconds for no
+good reason. Maybe even multiple minutes if the driver ends up with
+many of these objects.
 
-strace indicates this syscalls fails:
+[1] - Module .text is not unplugged from the kernel until all probed
+drivers affiliated with that module have completed their remove
+operations.
 
-| bpf(BPF_RAW_TRACEPOINT_OPEN, {raw_tracepoint=3D{name=3DNULL, prog_fd=3D17=
-}}, 16) =3D -1 ENOTSUPP (Unknown error 524)
+[2] - It is important that drivers shut down all their concurrency in
+workqueues during remove because work queues do not hold the module
+refcount. The only way .text lifecyle works is for drivers using work
+queues is to rely on [1] to protect against Execute after Free.
 
-I'm on a armv7l, i.e. a 32 bit ARM system. Maybe I'm missing some kernel
-option or BPF_RAW_TRACEPOINT_OPEN is not supported on armv7l. Will look
-deeper into the kernel config options tomorrow.
+[3] - Personally I agree with Laurent's points and I strongly dislike
+devm. I'm really surprised to see Rust using it, I imagined Rust has
+sufficiently strong object lifecycle management that it would not be
+needed :(
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---4eimhjfg3mx4uc63
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme+SugACgkQDHRl3/mQ
-kZym9QgAhImQR2nv2LbKQCYUtfl8kx4lC3rP4M/Zf4YR9P9qBIqShfyAMDBEMDrx
-m4c3OUPTugMDtYO6JLQM7A+SgCSn0lPkrj+yaygZb0f8YSvCNy8Z4PALaMm2R6wO
-dnY+DL0ysv1ECc0e3F0fhZSqxda1Dzxfi4KPOVHAfhLrij6ET+fQBggpKes567Kv
-5qruYFCqxj67v6e0qINB59Q/qFi280cUO9KmcXYe1aqgp2e1I36eqKkgMD6FQc/p
-PDjImetj6Gp92p3KXQW7oU3EW7EDSqNAHewyy9rH6+AcaTfmwDVD76fZJ5Y+ocm3
-5uvddOsEquEz9AAACpR4ZRCllCYuNg==
-=AB+9
------END PGP SIGNATURE-----
-
---4eimhjfg3mx4uc63--
+Jason
 
