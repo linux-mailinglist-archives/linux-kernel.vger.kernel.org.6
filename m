@@ -1,148 +1,193 @@
-Return-Path: <linux-kernel+bounces-531426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C106A4405F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF605A44080
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E753BAFF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF8B189CE7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D5A2690D7;
-	Tue, 25 Feb 2025 13:11:54 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C3B269895;
+	Tue, 25 Feb 2025 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="FtN1w/6v"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D681EBFE6;
-	Tue, 25 Feb 2025 13:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315D2690D7;
+	Tue, 25 Feb 2025 13:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489113; cv=none; b=W+fkG1Bf+Eu8h2eGlfMbIPP9DEcHybxn++0zD1Gmssz9PCgzlbt5J9hFkiGJp1kjaULSTyuo9n4PmpM8eXtWV+P9DWjvl3othYWZk/qSjEa8ajWTkQqnrXnJvJV+jvN7aql5TTgQbHD4iRvGTgfD5PzerWmmXqgz/Aryx6wEwVQ=
+	t=1740489257; cv=none; b=OER8ouSK21VaKyliedYdrOFCFWpfjPyj8wgxUP6HCFwWOXPr9k4xqdvzHHYiQ+3VGGzepLRWErHXSWq65cbWl9LXcwyjRlElBC+tGOnSp5jN/mtYCT8VXoUzppAcFDVVYR///Y3sA7y9AFccBCuP7jDU45ejB0SLR9DdqlWOu4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489113; c=relaxed/simple;
-	bh=Tc06KpHhdncY5vHPplX6+roo60GBAPDBnABoT57FjX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndxiqQHTqEEgFSLqSShj/ERrVAbkc1z13ALCzDdiAtWFZrIOd5CLlfPcxI28gtfV9I6XhfCx+8MBZzAXLjuFTt1EDXuaLdTzjNnYh5ucXcVo5bUisCBuxSLhMynT02L9hGRY2zpyVbzMGWbd2QtfhxBsCqrXpbBIaAnlDRmNuo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abec8b750ebso214848666b.0;
-        Tue, 25 Feb 2025 05:11:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489110; x=1741093910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bWZOk7RRTPc+ZkJlzirhO5rrxb3g158YcdwUTbEdDw4=;
-        b=wrbTf7ye80IbNV6wsoXQuylnFBcomRrzkUdugE8PXgSOmOWxbACLt33khj1WxaOHZi
-         c5bNt7c9MlUcwDgH2/VF7dNs8pDZFwrmSysgZHHkhnGwdGFj/bPp1u2yEir2o0Rx+xi9
-         RRSTMy5ojbyHpbvclS7Yk4CtsBJDncTvZvVgPmoT5NwN7cALuGlQunLy09vOE4iSG7I0
-         NMpp4FSBfsWpWHsisuKOUHaPhOV+Qg1yfdaotPCjWNrGtcCXn9FWYjd7mMVA0DIz9Lrc
-         Y56IWOTicshOOAIBbfharFaC7MahfElwSXHYgOGwpBBomKAyDyfPiLwnByWoT8HoEYKL
-         9Lgw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ykirT6upriIeMshKlZjdsFfoXh7zOT7qLj89Fxz1glTpsDqQjAEj53GgpCAttZ05ChKMHrSymQM1ZauQIwLX@vger.kernel.org, AJvYcCU8faJf3v2IGYqkMn/dZId8hI9U9vR2mZspGh88izXFgkHkYQUuHjc/z0t9mS++Twu2i6RoAww+WgM=@vger.kernel.org, AJvYcCVnPZM//mx8FozPXR3ZJBqG34tuZdun8Gd9VIN+BzVVKYsVQrTatsF2dg+ob8YlwrPLPk2NCHVk@vger.kernel.org, AJvYcCWeIBz+8DklpxHTH6jbpNhtL9csjfm9rST06lJKiUMYW8C4GqLKgiQWnQH1nyUz3W7FDkG8IeHvOqQQAxkS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLmhaqZBB+2Z0KPczejHjjDqTacTLwHtg1B+NFaFuGnkfQe7E/
-	U4USfjXBQCuYNVMpQugdgFeue9YMOmz+ITKypABu5pWj6nt789k5
-X-Gm-Gg: ASbGnctGGbNN539bejVkkf7cZSdsrPx9YupE5neCQtZSkxRmOCWCYQZ/Gckycbnb51K
-	XAu4JgtX2AhBswMKsn+V9yNYJDz+Vqn9P7W2uOQ7K4rSRdpfsYra3PdqcCZuPbp/8eTW4JyvpDA
-	2OxHs5LwWUXA9rUjkBB2pD+iTk6cS7j3b9KeOMgmeVhdyknHTgs6Iz1cWs8EWsshvictlNfg8jO
-	43HZtAbXQIZgD9ClnNUfW61fpgjXw7SbLJ2zym1I2X6Y/ruT8TnJh6hCQqeIJcEB/Iv9+qL85FH
-	v0S/8epvRg6Xuw7I8A==
-X-Google-Smtp-Source: AGHT+IGFvHYwvYql3mUsikF1Ks4rOTcJOh62lrefJB9Zvc8mdhl4bBBxZZYSPaW8NxhpSJFjRt6GQg==
-X-Received: by 2002:a17:907:724f:b0:ab7:bf87:d9de with SMTP id a640c23a62f3a-abc0de146b4mr1561996666b.37.1740489110209;
-        Tue, 25 Feb 2025 05:11:50 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d58sm139993866b.148.2025.02.25.05.11.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:11:49 -0800 (PST)
-Date: Tue, 25 Feb 2025 05:11:47 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next 5/7] netconsole: add task name to extra data
- fields
-Message-ID: <20250225-bright-jasmine-butterfly-aa1bb0@leitao>
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-5-21c86ae8fc0d@debian.org>
- <20250225101910.GM1615191@kernel.org>
- <20250225-doberman-of-scientific-champagne-640c69@leitao>
- <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
+	s=arc-20240116; t=1740489257; c=relaxed/simple;
+	bh=RwX3oSR1luX3Wb3W4lgKOFBSU88ndS6ozVoLUC0kTtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KnNgvme9BqacLEvhPmmnCjwy4Z2p42rafSb0C/PwqM1devRViRIeXTGOZxk314VJzNJWmiXkJ3Nea/CKxlbZ9xtTWIXjUvjJWxxBIAMeDZdqyauODcWAzadA9CO67QRgxDutFaNK3L2m6hgohvh4Re37Yss6HnM3QvyxQnH1TP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=FtN1w/6v; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740489182;
+	bh=RwX3oSR1luX3Wb3W4lgKOFBSU88ndS6ozVoLUC0kTtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=FtN1w/6vFw1VCH9UHTW50Z1faIq8qf4Yau3XA24clUsyo/+J/ZKg8biX1JUJ5S17x
+	 wpwT69GAolfyELJChYO8UPp4KszQXzoWpZTzqvRE1YRuJNkVNbPBQgfDwKKx0nwExF
+	 9HgJblql5CGAYMpXgq23XL8Y6uuh5WYj6Utc+/EA=
+X-QQ-mid: bizesmtpip3t1740489116thwmj9a
+X-QQ-Originating-IP: 6/30mZr5TR8b9ztJw35yzmcO8NNodfukdK+u0UiyNT8=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 25 Feb 2025 21:11:54 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2494615995650422906
+Message-ID: <0A01BD2F489C764A+647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
+Date: Tue, 25 Feb 2025 21:11:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
+ with "use_192_bytes_for_3f" attribute
+To: Bart Van Assche <bvanassche@acm.org>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, chenlinxuan@uniontech.com,
+ Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
+ Yujing Ming <mingyujing@uniontech.com>
+References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+ <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------WyKFM9ljjpPFMEt0017CGUNW"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MIYVF5Pddf3wJApsG0UREr+dCSYChXydDKfPURQBbDs0yY3d1wKMy16O
+	IDPHMp2DbUAUXbNtrbZGPlqVsQeEi7sGM27c9P3drjq211CMMTxCtmqMx7/nHzJ6p6g4liL
+	kQiad1chgOL7A1cTwC/yo3cjztg2qR5etN5oCfyjNe3gmm6YY1foYOrq1c6ClCqlV0+1+ek
+	OTR3A5Em+dQ81uoHbYyaWzrd8+28Diakx4gPKaJRvadP6Yq1jjXjecgKG3RrxQHRVSDRcNR
+	CB/HvaXjjkm4PClNoQTMhVTsmVjOeqeaVYboeJCJrVOemCqvuAk8K80GIWQHm6iGj0jJzxV
+	88E+xnJUGEv1ZjM+yCldZs36P99a0JYwFzjrTuF0o4lKOSDtrp4P0GwPzG+u/8plG74c0rW
+	A5iuskI/kgShuksPySNQnqA5EvK/5rc2+m3Oc317hGbLwT2JIcZIbBzqESWF4ZNvuWZtekJ
+	4ngMYa8SYtHd/H3/AbuAP2lX4+NeZie8mf4uuG/lvEnjWPOCl5p6cG9PYtdPOhkxbjRMcoO
+	OTrUUbMBlUduwIB1DoA1YdZsWQJUp0iYKXWWicTucs/BNwWePvlnx3V7KPQGz2yHK9z7jAm
+	ebLJOi1LWNCAhz4c7mifIsm/WBGmkBADkE7cT/eLM/hXQKzfBpnH8pnYKqQdKtldHZmaLNI
+	U6arNwuqs9i7fEYQcPBIuhAqoG6BaKogxWs48Y4b3xcbrj49otGK9K/XsLodumeabbRIfgQ
+	mehL4xyBpZN0yBiHmxBbP+BCvhgHPO+Ab2+kbC/2ixzUyHqKhm26UFHCfIUwnZIIY992yVy
+	le/gYRaRlXJNj62qGLkDTZWRYlzbDTTSzGctrd2xPpa7eeQY18yC1jbRJxMSzPZxL0y862f
+	834C14I2e3d8jJ5krjcZJ3w4cy8GrD0WIGMOvAp6itqKHV3OYGsEtIhOF0HqkN2IM/hxePD
+	JUAiJbZm2xxRVw2cgKSKr8GAGZys8t69gUPMdgQuRYJiF57ntizRWyoY3i+D7fqS0XkpgVc
+	DBKpI/MbnNLzi9XYGxEFlFLux2p7G2idwEGy6PXYvKJZLmdW/1ArN9Q71xY11s+G+KXZAjt
+	vtOGvNaMRPTZY1ie48nDog=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Hello Paolo,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------WyKFM9ljjpPFMEt0017CGUNW
+Content-Type: multipart/mixed; boundary="------------OM0ycHiqAXHv0H3uaNPqw9ej";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: Bart Van Assche <bvanassche@acm.org>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, chenlinxuan@uniontech.com,
+ Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
+ Yujing Ming <mingyujing@uniontech.com>
+Message-ID: <647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
+Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
+ with "use_192_bytes_for_3f" attribute
+References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+ <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+In-Reply-To: <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
 
-On Tue, Feb 25, 2025 at 12:53:49PM +0100, Paolo Abeni wrote:
-> On 2/25/25 12:17 PM, Breno Leitao wrote:
-> > On Tue, Feb 25, 2025 at 10:19:10AM +0000, Simon Horman wrote:
-> >> On Fri, Feb 21, 2025 at 05:52:10AM -0800, Breno Leitao wrote:
-> >>> This is the core patch for this whole patchset. Add support for
-> >>> including the current task's name in netconsole's extra data output.
-> >>> This adds a new append_taskname() function that writes the task name
-> >>> (from current->comm) into the target's extradata buffer, similar to how
-> >>> CPU numbers are handled.
-> >>>
-> >>> The task name is included when the SYSDATA_TASKNAME field is set,
-> >>> appearing in the format "taskname=<name>" in the output. This additional
-> >>> context can help with debugging by showing which task generated each
-> >>> console message.
-> >>>
-> >>> Signed-off-by: Breno Leitao <leitao@debian.org>
-> >>> ---
-> >>>  drivers/net/netconsole.c | 14 +++++++++++++-
-> >>>  1 file changed, 13 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> >>> index 5a29144ae37ee7b487b1a252b0f2ce8574f9cefa..625f4c0be11d8deb454139b1c526abc842697219 100644
-> >>> --- a/drivers/net/netconsole.c
-> >>> +++ b/drivers/net/netconsole.c
-> >>> @@ -1179,12 +1179,22 @@ static int append_cpu_nr(struct netconsole_target *nt, int offset)
-> >>>  			 raw_smp_processor_id());
-> >>>  }
-> >>>  
-> >>> +static int append_taskname(struct netconsole_target *nt, int offset)
-> >>> +{
-> >>> +	if (WARN_ON_ONCE(!current))
-> >>> +		return 0;
-> >>
-> >> Hi Breno,
-> >>
-> >> I gather that theoretically this could occur, but it isn't expected
-> >> to happen in practice. Is that right?
-> > 
-> > That's correct. `current` isn't expected to be NULL in practice.
-> > I've been running this code on several servers for days and have never
-> > encountered this warning. 
-> > 
-> > While the taskname feature isn't enabled during early boot, netconsole
-> > might be active at that time, which is why I exercised extra caution
-> > here.
-> 
-> So `current` can't be NULL here. I think it's better to drop such check,
-> it's presence would be misleading. i.e. like adding checks for UDP stack
-> being initialized before calling send_msg_fragmented()
+--------------OM0ycHiqAXHv0H3uaNPqw9ej
+Content-Type: multipart/mixed; boundary="------------6Mk1ZBCl3qWxES506fPP0gIU"
 
-Ack. I will remove the check then, and check if the UDP stack has been
-initialized before calling netpoll helpers.
+--------------6Mk1ZBCl3qWxES506fPP0gIU
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-What is the best way to make sure taht the UDP stack has been
-initialized?
+SGkgQmFydCBWYW4gQXNzY2hlLA0KDQpPbiAyMDI1LzIvMjUgMDI6MTEsIEJhcnQgVmFuIEFz
+c2NoZSB3cm90ZToNCj4gbHNodyBpcyBhIHVzZXIgc3BhY2UgdXRpbGl0eS4gdXNlXzE5Ml9i
+eXRlc19mb3JfM2YgaXMgbm90IGV4cG9zZWQgdG8NCj4gdXNlciBzcGFjZSBhcyBmYXIgYXMg
+SSBrbm93LiBTbyBob3cgY2FuIHRoZSBhYm92ZSBzdGF0ZW1lbnQgYmUgY29ycmVjdD8NCj4N
+CkRpc2tzwqBoYXZlwqB0aGXCoGF0dHJpYnV0ZcKgdXNlXzE5Ml9ieXRlc19mb3JfM2YswqB3
+aGljaMKgbWVhbnPCoHRoYXTCoGRpc2tzwqBvbmx5wqBhY2NlcHTCoE1PREXCoFNFTlNFwqB0
+cmFuc2ZlcsKgbGVuZ3Roc8Kgb2bCoDE5MsKgYnl0ZXMNCg0KSG93ZXZlcizCoHdoZW7CoGxz
+aHfCoHNlbmRzwqBNT0RFwqBTRU5TRcKgY29tbWFuZMKgdG/CoGRpc2tzLMKgdXNlXzE5Ml9i
+eXRlc19mb3JfM2bCoHdpbGzCoG5vdMKgYmXCoGNvbnNpZGVyZWQswqB3aGljaMKgd2lsbMKg
+Y2F1c2XCoHNvbWXCoGRpc2tzwqB3aXRowqB1c2VfMTkyX2J5dGVzX2Zvcl8zZsKgdG/CoGJl
+wqB1bnVzYWJsZQ0KDQpUb8Kgc29sdmXCoHRoaXPCoHByb2JsZW0swqBpdMKgaXPCoG5lY2Vz
+c2FyecKgdG/CoGRldGVybWluZcKgd2hldGhlcsKgdGhlwqBkZXZpY2XCoGhhc8KgdGhlwqB1
+c2VfMTkyX2J5dGVzX2Zvcl8zZsKgYXR0cmlidXRlwqBhdMKgdGhlwqBzY3NpwqBsZXZlbC7C
+oElmwqB0aGXCoGRldmljZcKgaGFzwqB1c2VfMTkyX2J5dGVzX2Zvcl8zZizCoHdoZW7CoGxz
+aHfCoG9ywqBvdGhlcsKgYXBwbGljYXRpb25zwqBzZW5kwqBNT0RFwqBTRU5TRcKgY29tbWFu
+ZMKgdGhyb3VnaMKgaW9jdGwswqB0aGXCoGNvbW1hbmTCoHdpdGjCoHRoZcKgZGF0YcKgbGVu
+Z3RowqBmaWVsZMKgb2bCoDB4ZmbCoG5lZWRzwqB0b8KgYmXCoGZpbHRlcmVkwqBvdXTCoHRv
+wqBhdm9pZMKgZGV2aWNlwqBhYm5vcm1hbGl0eS4gDQoNCj4NCj4gRnJvbSBpbmNsdWRlL3Nj
+c2kvc2NzaV9kZXZpY2UuaDoNCj4NCj4gdW5zaWduZWQgdXNlXzE5Ml9ieXRlc19mb3JfM2Y6
+MTsgLyogYXNrIGZvciAxOTIgYnl0ZXMgZnJvbSBwYWdlIDB4M2YgKi8NCj4NCj4gVGhlIGFi
+b3ZlIGNvZGUgdXNlcyB1c2VfMTkyX2J5dGVzX2Zvcl8zZiBmb3IgYW5vdGhlciBwdXJwb3Nl
+LiBQbGVhc2UgDQo+IHJlc3BlY3QgdGhlIHB1cnBvc2Ugb2YgdGhlIHVzZV8xOTJfYnl0ZXNf
+Zm9yXzNmIGJpdGZpZWxkLg0KPg0KPiBUaGFua3MsDQo+DQo+IEJhcnQuDQo+DQo+DQpUaGFu
+a3MsDQotLSANCldhbmdZdWxpDQo=
+--------------6Mk1ZBCl3qWxES506fPP0gIU
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review,
---breno
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------6Mk1ZBCl3qWxES506fPP0gIU--
+
+--------------OM0ycHiqAXHv0H3uaNPqw9ej--
+
+--------------WyKFM9ljjpPFMEt0017CGUNW
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ73BmgUDAAAAAAAKCRDF2h8wRvQL7vr7
+AQCKLeuair7/zCaLbMxiUky8fDh9C54r6sZWEWrXWBd75AEAtON+w6pLfxFL1RbBYufRXYvkcAf3
+jmt/hhjYzKoVfwU=
+=tOa5
+-----END PGP SIGNATURE-----
+
+--------------WyKFM9ljjpPFMEt0017CGUNW--
 
