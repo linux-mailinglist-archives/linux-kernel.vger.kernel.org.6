@@ -1,127 +1,196 @@
-Return-Path: <linux-kernel+bounces-530563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE98A43520
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:23:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2D0A4352A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B018F3AEDA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:23:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA8B17AB4C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375AA257451;
-	Tue, 25 Feb 2025 06:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92642256C95;
+	Tue, 25 Feb 2025 06:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWWElMs9"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPLpWHa+"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390A256C8B;
-	Tue, 25 Feb 2025 06:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F6256C9F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464593; cv=none; b=PjY9H/5CUXZQFHpOh4PXODjvazJ3//pK8k2cULJdYLXxNNzfkAQxIc48LMgxb2v+F8G2ZEyTE3amjgMAGIzlpb5b2w9T0qzJa9JPzNQkJ/UFj1pJGFO7cr7NWzi9Bt6GxxqKF2JkQVDT0LCc2g51PQL1mqzcE5ox6F9WkQoHi50=
+	t=1740464610; cv=none; b=HMf0mUqPeDbCpKBNw5+h5HTCe8DyJGkV6xl18zVXnpN98VhjlLsx9FlK3iQw4XTO78tqW28SkS/RPt9n2kGivW/bFTkxWotgsGUvXKR3Jf4gMSHqI+TeX9KedSGQMPXBRORD1DGcgw2jJlAaiSLPn0WGniTBewojTyVHIgd/76I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464593; c=relaxed/simple;
-	bh=YVeIwzDTtCyqXNkuVoCKtquXcD4I+MNGiP1f6BEIbhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/3OwuGQxR9cTJqjtnMRU3F213ZDEJY3Q4C4LzK9JVxFGN8Mg0AlzPlvovt9xYh4bt9+ObeL4bzbivhgMGWrWdoUfLUkohlubWJCSHUPmENiZCMy8tm4LkuD6x7xMV4W8lU6Q9R66DLGeK+nRdIIEu01pC3bWpYy+THuxBgmNMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWWElMs9; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1740464610; c=relaxed/simple;
+	bh=7XrWL/mfJYaxpUkKboQd5WFxOxUGJ1yfAX6kGCsFGZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=besr4eWgLTxTPpp6dnHb8YBPBWuHuVQATSkxMkg8OGQj3nQEAg+gahrmkafGHxBS9PQjbm5rhJ07lQwuNYhwa2BClWo/CJF5Im9zlhDDX4/EqD4/hZ3wr892kNqdQgKK4u19VyCZyVlosv5AgcxBunW9rkSf222xldyhOAbW/0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPLpWHa+; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2211acda7f6so116134275ad.3;
-        Mon, 24 Feb 2025 22:23:11 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so11240741a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:23:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740464591; x=1741069391; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7QzF0DMqKSo2WVEUbrWBzNJQGDM2P+lB3ezMHc1NlR8=;
-        b=IWWElMs9EpPwNPJgBoKGKOQK4B164CKI0AmxYp1GCuPk9iaPO4ZGxUdC9ufOYND71/
-         bWCv9H0nZVwHu/56HVz53VqXaooUF/KRLv/fS/wqul5IeauLihObQyB/NB9kXwzhXb13
-         PqAjKPu6pXXiytFE2NbLLMoL+nQdANF7TPWUJ01m6zPfNHeb41lILXtL985qxjph2i91
-         69jC/GIFCf0GZ+IoE2OjCTyKZ05Fi5gD7j1jm28zKI8nT75P3lRpNtMcwDV+cYh9I4tk
-         LepKr19rzk5mIY2oDEliYSTxNJJtFP609MAy8KuFYvM1ziMrqb5hAR3D7noOMI3HSObN
-         y4Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740464591; x=1741069391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740464607; x=1741069407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7QzF0DMqKSo2WVEUbrWBzNJQGDM2P+lB3ezMHc1NlR8=;
-        b=Hy44+0QSV8J1o1OQO964xo3qUnoBIe96Ix22ety3uH1pdD6oZSsAIgt2OXPc1VrQ9a
-         V/jUTRnwx6n2kxnFLKz0ReCBR8rzLBe9lWgtGTb53bllcrStPUqOQLH1hBA9FXaJ4C8j
-         qT9i8kmrN0D1Cw2qIKv6BSgxucF0viGzOQbx5uMZzbS1nvxg9KoBCMYw6lRLoYHrfZYv
-         v6Y5AZFzblc2msfAIUJdVcClfRkHeEwJ/UADh+/fT+tI8Izr7ZxwUFJk6i+dNu0RlIDd
-         lzMY64gFNHH4FtqOsZcB3z3GASdEcSgx8RNGl3GEn/aMhgQk84DqyYDG3iPlXsiuYSCt
-         R34g==
-X-Forwarded-Encrypted: i=1; AJvYcCXM1OYrmG96iaKLNdeq+tShgh+QEaEL5eMX1xe/TzWxwW1ytdgzBj6rHvSbQhawc+F81TNyrmLRNqKPCzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdrvw2LFTodKBZP0amnDHAUFPWoOweFsSZx75qca0ezuDXniMc
-	lDE7kkugzpHXps+oSf6non5STvUpqHPSsiM5jjas88IE+YZ8SZNh
-X-Gm-Gg: ASbGncun0TM06BFpjENl0KgaejlGrNleuS645bSzOKSd2s9yTZGJOsjWXKBLJP1A32A
-	6qrm3EwADkZKyF4ZKZ6qZvx1wZJVV928cov+8jpREW5POuDsgt4Yeu0qYliZVOOPHXgw3tPPACg
-	e+tYprR6JN31IMPwiObaWhal02Qn3L9o9ZD53kuAA1lvqbo8rS7K4W6h5hFdfpKMJh1j0JvD8yg
-	RUg/Oqb1gXo1x3MxwOmAMsk/Xbid1TMcamYYLyP64AUmJYEIBiB2jy8ju3FITG4cJW4kuMssV3C
-	G6Gevz99aXPgbAfEuOvy0viNzHI=
-X-Google-Smtp-Source: AGHT+IFclVUW/0xPsdueGkrCc6Oh1M4ZdZ85h8Qc6YgsOtm5BGCUA5ar4j71aNoLGYVp/VC4u73agQ==
-X-Received: by 2002:a05:6a00:4f8f:b0:730:9242:e68 with SMTP id d2e1a72fcca58-73426d96062mr25025869b3a.23.1740464591344;
-        Mon, 24 Feb 2025 22:23:11 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a81ef2esm707815b3a.145.2025.02.24.22.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:23:10 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:23:08 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Yunli Liu <ylliu3788@163.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH input] input: add BUS_I3C definition to input.h
-Message-ID: <Z71hzP-LYpnx-hyH@google.com>
-References: <20250215142035.1745664-1-ylliu3788@163.com>
+        bh=D5VaoRwGRt5rhI0585yryJiuNqsJailyleI/CBPAMbA=;
+        b=TPLpWHa+KmHPk+dWT2gvTUEbB+Sxb6WaMjxfx7BJVPXUvzv05EELu0jxiiyNR4LmGg
+         9keLC+VBgDnds7TKA5EOSuIb2IrbF5LxJuYSoLpzqldUl/q1TvWJgSLzTf8Tzh9yWew3
+         ddqYOOAUspGI7PDA19tkEG8aLxA3+mwHXOcUzJdFcZkN+sSOv48XXR97nArY2+9yICLf
+         QnHDhl78/tWjqLMnj1NwdeT4apYCBWxyZF6DyYkEPONHqAhSpmuwKEDPqe72Iy/VzjqB
+         BVgf6lcRPu8GZTL8WfjhcYZJO6M7uu8Le20QZdoWEXmuf9G8ZC9wMP8g07ytO0CWyRnY
+         hWXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740464607; x=1741069407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D5VaoRwGRt5rhI0585yryJiuNqsJailyleI/CBPAMbA=;
+        b=M/sRSVKHS4+LeFIWrojqbC1mtAC4COA0Y5ZTW88lAnMP6nHy0nFjR1UIiVKJJ1A75g
+         RKR/StNG490EeP8sE4nBI4i7DzXbxn2ZEhHLuWQipnCenM04+UeEbZckd7REJr4PBk3V
+         yMN7ei8o2mIA3gwmjelEUBUySdMW5YlP21UzirVw2TvKTdZvf9XJBeRbSx/07l/4XPQZ
+         pgz3fadh75bcQjIP4Va1S4e9xQc/AE0Ror7nxA8GRrrctyR79jAU0G0ZUaYSF8Cthffa
+         KViYSpFWZYxAE2a0Di09dfnfSrFoa5kWL0XjBom7Dw5FFbl91LGjLQPOI/LhqQtnUeOA
+         rzHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnTUBzlRpFHDpWAUoNdxy6UeVTvf1pwYRG7wr/zNLFBb0ZRAlbMiFUJLjLUydiULiGT/+5ByBo3bcERQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygt1h7Cs8NK87XdlXVL4tfC0/IHXYEx/JszwQJY17/mbLY49xQ
+	uetYnJaqAG0C/QSSvmiZyvJUcjCB0gp85frXKyHs4kgAtGUdPRooO8a9N9qOkEgVhGji8saUFtC
+	GDoC6Yivqai0kWU3Yyn0U/zcowsY=
+X-Gm-Gg: ASbGncs/rvOZu45rThfhLOzHMD9mk8ckPYrgmqJH1d2nhpxoNdqp4pFwkSuTNIPfEjK
+	yyX5pqSOFWTfsdI99h9f1zla+0jhmR/7H1Qg11EEkgcDIek3GTennJPN9MxzvxaD0Xr1nXFAsJp
+	IRt8UIu1QT
+X-Google-Smtp-Source: AGHT+IFWxTHVb9OnRBgD45vXv1XLuJL2UZSsumqhHxpJWayZovCq+ciAkyfWhNTgWrNEHjJ3sZfIXnzbngrkIHck8DA=
+X-Received: by 2002:a17:907:720a:b0:aba:6385:576e with SMTP id
+ a640c23a62f3a-abc0ae1aed3mr1510502666b.3.1740464606329; Mon, 24 Feb 2025
+ 22:23:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215142035.1745664-1-ylliu3788@163.com>
+References: <20250220055950.4405-1-xuewen.yan@unisoc.com> <20250220055950.4405-2-xuewen.yan@unisoc.com>
+ <20250224234511.godsizj7kuv7zrtl@airbuntu>
+In-Reply-To: <20250224234511.godsizj7kuv7zrtl@airbuntu>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Tue, 25 Feb 2025 14:23:14 +0800
+X-Gm-Features: AQ5f1Jp0Q0U23cCJV93wuWeIq3IOUlRyMAzD94B1K2bxjGrFcldVxFFIkj0qAVQ
+Message-ID: <CAB8ipk_NOi0rZQR0X7zveyyL-E7mJVLX92sKVO0=C0TmkcvDOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] sched/uclamp: Add uclamp_is_used() check before
+ enable it
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, christian.loehle@arm.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, hongyan.xia2@arm.com, 
+	ke.wang@unisoc.com, di.shen@unisoc.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yunli,
+On Tue, Feb 25, 2025 at 7:45=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
+rote:
+>
+> On 02/20/25 13:59, Xuewen Yan wrote:
+> > Because the static_branch_enable() would get the cpus_read_lock(),
+> > and sometimes users may frequently set the uclamp value of tasks,
+> > and this operation would call the static_branch_enable()
+> > frequently, so add the uclamp_is_used() check to prevent calling
+> > the cpus_read_lock() frequently.
+> > And to make the code more concise, add a helper function to encapsulate
+> > this and use it everywhere we enable sched_uclamp_used.
+> >
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+> > ---
+>
+> [...]
+>
+> > +/*
+> > + * Enabling static branches would get the cpus_read_lock(),
+> > + * check uclamp_is_used before enabling it. There is no race
+> > + * issue because we never disable this static key once enabled.
+> > + */
+> > +static inline void sched_uclamp_enable(void)
+> > +{
+> > +     if (!uclamp_is_used())
+> > +             static_branch_enable(&sched_uclamp_used);
+> > +}
+> > +
+>
+> As I indicated in [1] I think the pattern of repeatedly enable is actuall=
+y sane
+> and what we probably should be doing is modify the static_key_enable() lo=
+gic to
+> do the early bail out logic outside of the lock. I had this code this way=
+ FWIW
+> initially and Peter asked for it to be called unconditionally instead.
+>
+> I think repeated calls to static_key_enable/disable() should be made chea=
+p and
+> I don't see a side effect of _replicating_ the early bail out logic outsi=
+de of
+> the lock so that if we have already enabled/disabled we just return immed=
+iately
+> without any side effect (holding the lock in this case). I agree the hotp=
+lug
 
-On Sat, Feb 15, 2025 at 10:20:35PM +0800, Yunli Liu wrote:
-> Add BUS_I3C (0x21) bus type definition to the input subsystem header.
-> This value is reserved for devices utilizing the I3C bus, which is
-> increasingly adopted in modern embedded systems due to its enhanced
-> capabilities over I2C/SPI.
+Because of the jump_lable_lock(), early bailout could indeed be a good idea=
+.
 
-I would like to see a user of this #define before adding it to the
-kernel.
+> lock is ugly and if we can avoid touching it when we don't really need to=
+ that
+> would be better.
+>
+> --->8---
+>
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index d9c822bbffb8..17583c98c447 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -214,6 +214,13 @@ EXPORT_SYMBOL_GPL(static_key_enable_cpuslocked);
+>
+>  void static_key_enable(struct static_key *key)
+>  {
+> +       STATIC_KEY_CHECK_USE(key);
+> +
+> +       if (atomic_read(&key->enabled) > 0) {
+> +               WARN_ON_ONCE(atomic_read(&key->enabled) !=3D 1);
+> +               return;
+> +       }
+> +
+>         cpus_read_lock();
+>         static_key_enable_cpuslocked(key);
+>         cpus_read_unlock();
+> @@ -239,6 +246,13 @@ EXPORT_SYMBOL_GPL(static_key_disable_cpuslocked);
+>
+>  void static_key_disable(struct static_key *key)
+>  {
+> +       STATIC_KEY_CHECK_USE(key);
+> +
+> +       if (atomic_read(&key->enabled) > 0) {
+> +               WARN_ON_ONCE(atomic_read(&key->enabled) !=3D 1);
+> +               return;
+> +       }
 
-> 
-> Signed-off-by: Yunli Liu <ylliu3788@163.com>
-> ---
->  include/uapi/linux/input.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-> index 2557eb7b0561..c6fbcbad5b7c 100644
-> --- a/include/uapi/linux/input.h
-> +++ b/include/uapi/linux/input.h
-> @@ -275,6 +275,7 @@ struct input_mask {
->  #define BUS_CEC			0x1E
->  #define BUS_INTEL_ISHTP		0x1F
->  #define BUS_AMD_SFH		0x20
-> +#define BUS_I3C			0x21
->  
->  /*
->   * MT_TOOL types
-> -- 
-> 2.34.1
-> 
+Maybe here should be just check whether =3D=3D 0, because when enabling
+the static key, the enable may occur to be -1.
 
-Thanks.
++       if (atomic_read(&key->enabled) =3D=3D 0)
++               return;
 
--- 
-Dmitry
+> +
+>         cpus_read_lock();
+>         static_key_disable_cpuslocked(key);
+>         cpus_read_unlock();
+>
+> --->8---
+>
+> [1] https://lore.kernel.org/all/20250222233627.3yx55ks5lnq3elby@airbuntu/
+
+BR
 
