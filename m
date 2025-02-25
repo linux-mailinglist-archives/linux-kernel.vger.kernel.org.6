@@ -1,99 +1,120 @@
-Return-Path: <linux-kernel+bounces-532283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952E4A44B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:07:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDD5A44B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E65420D6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4BD442151B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608861A5BBB;
-	Tue, 25 Feb 2025 19:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/E+5alp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5F7376;
-	Tue, 25 Feb 2025 19:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FFE1ACEC9;
+	Tue, 25 Feb 2025 19:07:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B47B1993A3;
+	Tue, 25 Feb 2025 19:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740510441; cv=none; b=uqHSTLj1CY6P3OHVVET3S3NRF4wPRhTDPUWMXqghqaPSAs0IiIb1nhRL/e4vZzQ9mZBrgyAV3zWaLNB4PAce/bo3aESKel9CfG+fF/++PhGJPl2YIndQZsAUUt1mFQ0BLD+xn5m1Vga/R2BL7X0X5CJmUY3Ks3FO5J3YFxvDAag=
+	t=1740510475; cv=none; b=gRGlQRCdufVX88AI6D+N2nHNt6e47+DiVTnYxTMWo2rqQqVkYe8DEp/U3g1qLGtFwDYJdNjs5Tab7QrZdDL/jJNFsib2+su/LH3xhQ/gJIqIeHlopZDKMsLZ9ImuM/VWq+SYTTIiAMoz+0NkI8f2ybvmin5SB8vZkA25wdq1EME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740510441; c=relaxed/simple;
-	bh=FZwqJGKe6/A+tfCS8ySsYBYhYNrYgXfBIteR1CqltAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyAZVXDPq/e1XppQFTn+W7/4B8KOGID4Kn23b0HfbwLMvPyf2MrwaufO+4xfLBeph/qd1WC+hcziptbtyvDzhw1wnxcAYyoGRS72lM6PNYjhdRql0DDaJOGKi+tNoC28QpDhUXTzn6frv74RKrUQQRfvUmtzVKScdorhKOBGW6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/E+5alp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E22C4CEDD;
-	Tue, 25 Feb 2025 19:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740510441;
-	bh=FZwqJGKe6/A+tfCS8ySsYBYhYNrYgXfBIteR1CqltAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H/E+5alp2UOWKrVcnDXegC2Ym8468ccxau9GPj1KF0gu2sF5BkQnHPcHIH4cexF0O
-	 I8K3NrKS+6fJoRdqqVSLkppErV/NgtINf45K4CujgRjQ2t1oorKW6x7PC3e/uGWI78
-	 KxzhhO6IA9LP1DEgYna3qjWpQPbq8wfEimksnbqnmzD3k2eBMAnQN1sqjfSIQci922
-	 1/E5TN0S2OgqUlE68ih96XSeKi+yKTtFRUdh+k1FiMVvjqF6yFo8+XZR2p1N7dMd0B
-	 euMLY/N6R2h13QwnHaHnsUGNeb57VpPx2O5319m578n/8h03JEuxESd4AGlsptnn38
-	 5+F41UCyJEcqA==
-Date: Tue, 25 Feb 2025 20:07:18 +0100
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z74U5s7Yf0f6I7Mo@x1>
-References: <Z7UDlZKnqXRqNqQa@google.com>
- <Z7XsltyqUWrdKma0@x1>
- <Z7XvEFEZtCRZKG7Y@x1>
- <Z7ZIqpwffQbibwL2@google.com>
- <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
- <Z7gllQZeg6U2OvZE@google.com>
- <CAP-5=fXEEMFgPF2aZhKsfrY_En+qoqX20dWfuE_ad73Uxf0ZHQ@mail.gmail.com>
- <Z70wHEl6Sp0H0c-3@google.com>
- <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
- <Z712hzvv22Ni63f1@google.com>
+	s=arc-20240116; t=1740510475; c=relaxed/simple;
+	bh=g+deXqOloQCFwg54PuD8QZZavgR7jJw/KP46B1+ucYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TS1W6JewPRXknXhkykyUgj8dgkrs63jFmD/SnVHHnWPXwD8xO/FM0pIjWepgtYC/HMnkrAjSBrZqa9RpoQx92IEazFA4hJwbta5PITz+mslQgycGL6my4stWPUW3crPFPjH0LWUQs9vv68ANVktDNbGazGJnxi9cI1hEJJL4yfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80081152B;
+	Tue, 25 Feb 2025 11:08:08 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2B413F5A1;
+	Tue, 25 Feb 2025 11:07:50 -0800 (PST)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-sound@vger.kernel.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4] xlnx: dt-bindings: Convert to json-schema
+Date: Tue, 25 Feb 2025 19:07:42 +0000
+Message-ID: <20250225190746.541587-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z712hzvv22Ni63f1@google.com>
 
-On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
-> On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
-> > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
-> [SNIP]
-> > > > I thought the real-time processing had to use
-> > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
-> > > > events only give us VMA data and two mmaps may have been merged.
-> > > > Shouldn't doing this change be the simplest fix?
-> > >
-> > > Make sense.  How about this?
-> > 
-> > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
-> > to get pushed later?
-> 
-> I just noticed it would add extra kernel maps after modules.  I think it
-> should fixup end address of the kernel maps after adding all maps first.
-> 
-> Arnaldo, can you please test this?
+This series converts the folling Xilinx device tree binding documentation:
+ - xlnx,i2s
+ - xlnx,audio-formatter
+ - xlnx,spdif
+to json-schema.
 
-Trying it now.
+To simplify the testing a linux tree rebased on 6.13-rc4 is accessible
+at [1].
 
-- Arnaldo
+[1] https://codeberg.org/vincenzo/linux/src/branch/xlnx/dt-bindings/v5
+
+Note: These bindings are required for future work on the ARM Morello
+Platforms device tree.
+
+Cc: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Changes
+=======
+v5:
+  - Address review comments.
+v4:
+  - Address review comments.
+v3:
+  - Address an issue with the MAINTAINERS file reported by the kernel
+    test robot. 
+v2:
+  - Address review comments.
+  - Rebase on 6.14-rc4.
+
+Vincenzo Frascino (4):
+  ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
+  ASoC: dt-bindings: xlnx,audio-formatter: Convert to json-schema
+  ASoC: dt-bindings: xlnx,spdif: Convert to json-schema
+  MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
+
+ .../bindings/sound/xlnx,audio-formatter.txt   | 29 -------
+ .../bindings/sound/xlnx,audio-formatter.yaml  | 75 +++++++++++++++++
+ .../devicetree/bindings/sound/xlnx,i2s.txt    | 28 -------
+ .../devicetree/bindings/sound/xlnx,i2s.yaml   | 65 +++++++++++++++
+ .../devicetree/bindings/sound/xlnx,spdif.txt  | 28 -------
+ .../devicetree/bindings/sound/xlnx,spdif.yaml | 83 +++++++++++++++++++
+ MAINTAINERS                                   |  8 ++
+ 7 files changed, 231 insertions(+), 85 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
+
+-- 
+2.43.0
+
 
