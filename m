@@ -1,129 +1,93 @@
-Return-Path: <linux-kernel+bounces-530618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1372EA435D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:56:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA753A435D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447873A88EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70AE179943
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D352586CD;
-	Tue, 25 Feb 2025 06:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FBC2580D7;
+	Tue, 25 Feb 2025 06:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hArMpTSv"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LEugYbsC"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78F126C10;
-	Tue, 25 Feb 2025 06:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F79126C10
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466541; cv=none; b=SsBy17nmCMglR63cnhOgOpcA7sDMarjtsSP/Ph1oQAhEAAFJxADvPQBIhw43RXZzpDvrIsTz11WdFiGBr3D9HbB5ODeYSdHE4qAwClm7yi7eueBM8TqRMlPUPFQYPZV3n+Q7t2NXI/kTYYK5ZThsoWWY2XiKGPYZRZ/g5gyCTRA=
+	t=1740466620; cv=none; b=YRTxC6WjeOkC6g4qMQNzqIhkQBkOE9FETiuP8TjYxq75681sYy83f/nMgfPpNaHt75k3XI3wgV8NI+PrixW1B0l14SuNvVPkLL55J492Lc9W63eIU4KuIsNmb9w2atOjnTuSdg0RN7ry+oIenLzIq7PA7OGZpTg5FEwDbBgsM38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466541; c=relaxed/simple;
-	bh=XdaHfHNVzH2DxfM7R+6reWaHUTDC4IadlQSZggIho7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDSWy2NNMwaDEBYPv7y79pyTM3kwBygZEvFcczQBJqTcbGdbbr+Ylo8hyVJkUzRjCHNnRzXLBaUhqB1yBKCJin015JP51LYZluHoYM3SD29FgkjTXNg/H9Fjarxs2JkdaUDT6LvzdEQrMhFdDEabL+Q3OS/UgMBjR98FYKMSj6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hArMpTSv; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220c8eb195aso3889145ad.0;
-        Mon, 24 Feb 2025 22:55:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740466539; x=1741071339; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SK+sB2NYj3xrsqhJk5JpYZAhuhVIkEl/E3zvyx25wmA=;
-        b=hArMpTSv04+UfpE5GIDtcEGfq+h/MWkRmvMiaZlmwxxOspsTmi7ByFrfc60/8DGH6r
-         OnWBgo1oJjKVlekuSyKogo0RbHPGpNunDw3+8XfErepofzAkwVW5AB357OCxuMuDkzlR
-         ZX2NwmuoWUBL4Te3jvy4OHAeH+UYxfZWxpNIVqcBhIhheKzJZVXe23lfb4qQjKt4PXHA
-         x0xyKxVc9cqPFdXR3DUk+7CZ1wQQqbcKNA5UPttx9xNApn8iKrXxzzwC5brnlKRgjGY3
-         DZmv/tMfG4vtawmvwLLnsxpFa9HacXaJPdgojycbhAyVjDYbsFzROobwHncnlWm00ldM
-         J+ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740466539; x=1741071339;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SK+sB2NYj3xrsqhJk5JpYZAhuhVIkEl/E3zvyx25wmA=;
-        b=T6+hjUDQDEEWoExPrCuJb8++xPeTLNhXXM0OAIPcic5iZ2YxkS2fvYbZzvwezi0Fu2
-         HGJ02klFNR8UkFOAklkwbLLuJ9c2dsM5+NRsoBN1Knhrhplvsd1UbS1u8xbA8GQb5Zil
-         oLX1Oh2REE4IGXQ8hB4Zvyf6zavJ6egv1M7yyxUcPd2oCvRP4+OHn2I9wFjvkh1SXw5C
-         YBgfeiUR43xK1fI5ilAXJzQ4wcV4Ky/WAMOJ8gtfb2et0rQswB7kBz+wT5B3oZxWaqph
-         B3LEQ11nOlQlv8tc1KTLAXSyCKSLMOrybadoYDiUP3cY9hv+7a2kWqq/JuPl/JlUjDg8
-         V2NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvld+zHmzsQE6r5Mdli/5XzitfgnVZqWTMo8H6tVwNa56cSYR6iUpYbIPAar99XFy7WglwHVyL0k5l7Fk=@vger.kernel.org, AJvYcCX/OzmCEF/82f/Dc2P8r2n05FHiUJ3TEzIGSyypbg6ozjMyFkpWNCpBRpi5CWZNTHhSVFZjZX8VoJRlAizY@vger.kernel.org, AJvYcCXvlAa2817DNkXRcIQZNU6QYxIyp0G6XhrbSyyFBbQZKcwlVMSVaBYnYIJ/D5Hs7Yk/BddggDKN6VZN@vger.kernel.org
-X-Gm-Message-State: AOJu0YySSG1a2pTxcJbfZtHOYSx64ZCQEJeQcSQmPPB26lxrxWMpO0sZ
-	yHgY7sSuowOSK6uUJNvwdvO20Z1DIN5UybXsooyJ46irV6ia4mgO
-X-Gm-Gg: ASbGncsqFjycVmdsCREZ/oR1bH9n7u2z6FA/1WQbSTcmV/qDWLVXrIdzoT6Cmrm9kkp
-	gHhI25aOIVKREC/DYYNHw4AHsfL31UP4Lj3z0d6ZsAhsuhMj1EoThW2osvfn1rTk8gbuB/+HkcX
-	+lt4FOvCNLpl1ZKuN4ThEWF+7Whv2x0Ex+s2MIXI3jvFNsdNvuots9jnldWEhtW58Mx0QFzts5o
-	GtDxhqcZ5oBrtNMilkq0GvqXlHeiEifQUEsx+xUKx2BCpiUV7jJQ4CsoI5HYgOjHmg9laJX49vf
-	oxdQz0VEcpfZ3TRTfSIWnna0iaY=
-X-Google-Smtp-Source: AGHT+IFK8dw+y+DNVUgtLr73+PNIRRyKNRO7yFn7L9Z/isc+4Mn2dvGrMONR/glLOu2wtdPi5Hixuw==
-X-Received: by 2002:a17:903:2a8d:b0:21f:6584:2085 with SMTP id d9443c01a7336-2219ffc4928mr290706985ad.42.1740466539239;
-        Mon, 24 Feb 2025 22:55:39 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0007dcsm7135085ad.1.2025.02.24.22.55.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:55:38 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:55:36 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Manuel Traut <manuel.traut@mt.com>
-Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] Input: matrix_keypad - use fsleep for variable
- delay duration
-Message-ID: <Z71paM0nDwVj85ls@google.com>
-References: <20250110054906.354296-1-markus.burri@mt.com>
- <20250110054906.354296-2-markus.burri@mt.com>
- <Z7YIKaG0jBHV2FSE@mt.com>
- <Z71l9046XyjxicFf@google.com>
+	s=arc-20240116; t=1740466620; c=relaxed/simple;
+	bh=e3+aNYTnbKWJivg+q+Hi3DtLQsrRb9Bk6wUzOAsG45k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPnIIHVBMLXbvqZq5gdOUbjXNj3LoUvbsa6QNKte8NJ8CHr7zGg84KwzwfyBK0s/lsySHgxqSK44PcKSwqTp1LQLio/sskrXzHfWwCyUcuQatH3ehXlUBfpniUozBKE/nHnxpEA52br4xZ3aW4Z7zF7s6nfVKo9nG9cXVIl6HPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LEugYbsC; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740466614; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=T6xkjDjtY7QYfVEzscO1gyxYmDDVuGprPC6v4IGloFQ=;
+	b=LEugYbsCrtVyzRn+C6sFG2K3TxyoIlpDw1T+a94fj9BDPoulJ4/1LtFTj5fbYi1NH31HvTbTViTT1ork+d0nN3+mzwsGnc5Fh7FLdZBLIQZs6sqb7dzKnPF+tGkSG3cvZXy7/UIcrPNwsVHpSEC007/6M3UfXDkYtNKzU8S+jCs=
+Received: from 30.74.130.67(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WQDcYiu_1740466603 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 14:56:53 +0800
+Message-ID: <61589e0e-a3d7-490c-8bba-a1ce25f585c3@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 14:56:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z71l9046XyjxicFf@google.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 2/2] sched/fair: Fix premature check of WAKEUP_PREEMPTION
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Josh Don <joshdon@google.com>,
+ "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
+ Abel Wu <wuyun.abel@bytedance.com>
+References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
+ <20250221111226.64455-3-wuyun.abel@bytedance.com>
+ <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
+ <6097164a-aa99-4869-b666-9dc7018c1f96@bytedance.com>
+ <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
+ <9d9d7432-9a5d-4216-ac53-a0f333a35d8f@bytedance.com>
+ <d1237acd-9e3c-4ab9-8628-31d98fcf7638@linux.ibm.com>
+ <83f8b833-af79-4d77-a179-5065aec994dc@bytedance.com>
+ <CAKfTPtBL4aPbEDOa8jJ+h2wQ9CLU80=0mQdrc07vfqBVswzAsg@mail.gmail.com>
+Content-Language: en-US
+From: Tianchen Ding <dtcccc@linux.alibaba.com>
+In-Reply-To: <CAKfTPtBL4aPbEDOa8jJ+h2wQ9CLU80=0mQdrc07vfqBVswzAsg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 10:40:55PM -0800, Dmitry Torokhov wrote:
-> On Wed, Feb 19, 2025 at 05:34:49PM +0100, Manuel Traut wrote:
-> > On Fri, Jan 10, 2025 at 06:49:00AM +0100, Markus Burri wrote:
-> > > The delay is retrieved from a device-tree property, so the duration is
-> > > variable. fsleep guesses the best delay function based on duration.
-> > > 
-> > > see Documentation/timers/delay_sleep_functions.rst
-> > > 
-> > > Signed-off-by: Markus Burri <markus.burri@mt.com>
-> > 
-> > Reviewed-by: Manuel Traut <manuel.traut@mt.com> 
-> 
-> As I mentioned in other review activate_col() may be called in atomic
-> context where we can not sleep:
-> 
-> "activate_col() may be called in atomic context, and if fsleep() turns
-> into usleep_range() or msleep() we are going to have a bad time.
-> 
-> We should either stop using request_any_context_irq() or figure out if
-> interrupt handler can sleep or not and adjust behavior properly."
-> 
-> Unfortunately this was completely ignored.
 
-My apologies, it looks like it only is called from work handler, so my
-comment was wrong.
 
-Thanks.
+On 2/24/25 9:47 PM, Vincent Guittot wrote:
+[...]
+> 
+> Or we should just remove it. I'm curious to know who used it during
+> the last couple of years ? Having in mind that lazy preemption adds
+> another level as check_preempt_wakeup_fair()  uses it so sched-idle
+> tasks might not always be immediately preempted anyway.
+> 
 
--- 
-Dmitry
+I just remembered that I've mentioned this issue in another thread[1] 
+before. Can we do preempt SCHED_IDLE immediately even in PREEMPT_LAZY? (to 
+achieve better response time for SCHED_NORMAL)
+
+[1] 
+https://lore.kernel.org/all/8e6f02a0-2bd0-4e75-9055-2cb7c508ce4e@linux.alibaba.com/
 
