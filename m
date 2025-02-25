@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-532660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99013A4506B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:44:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A7A4506D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACDEA7A27A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589FF167B3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730092222DE;
-	Tue, 25 Feb 2025 22:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239E5225795;
+	Tue, 25 Feb 2025 22:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqnRFAdK"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ah36awh1"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3843D2222DD;
-	Tue, 25 Feb 2025 22:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F17D2236E5;
+	Tue, 25 Feb 2025 22:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740523389; cv=none; b=evJKDmI3CKAttF4872mCxflFR1zHhgH5u2KZYRkSboDp6VPwwxjRgIQbM5EvRmHpdHg8rCLVxJ9S1EYhoGUrmv1KI0GJRCDDHscwEy6N7nKtm93cZzvO8DII2u0ox2aSllWtH6OE8w6fy+ilmqRYpyu/sdeCY+U60Bc3EklCVi8=
+	t=1740523524; cv=none; b=KsduryUS1apPMexJwNUVXD/g7Sw4GRO5p7kNHtSKLFhTaZLAhgJmtvTe9sJaK6I+JF17gri69IBw9NwDOM1UjNitd9C70OgVDH7AdZ+WL2oKDB08Ta76O0jsqkTmB95SsCoK1j7w1kwJJ2XpitYfSyc7P3Yq8Zv6P8qL+APseGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740523389; c=relaxed/simple;
-	bh=t2y+1hyLZ9tCfpnu5MkiJTZ0i7gEN7OmTpDXZK1o+Pw=;
+	s=arc-20240116; t=1740523524; c=relaxed/simple;
+	bh=2994Cx+0BEvrnRr3hg0JQaVKoaoIXzC1cKTbjQ8vkWo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qD2eWb/r0qyR9Wy2eVjaeuMcejTLjeH0furgyXlPH4EMyQTCmfOiPQxg3+yP3x+308VJf3WvI5ry175YGEVwxSmWBXNdEvjzOrjq6FytLKfCup6U0tIndyBx4pRxclqVhOV9/bIB7ifFP+CEe+duSKu7f0+rgFGtNahOBE4xnjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqnRFAdK; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=pup72/U6pdkY+UFK4v+ohYC35JVs6CrlCBCq1zbYxKHk/h0HoF9TqbvmwhVz27gqs/Isdg3dhOmwL6RqCbe4Ql5XvBsK+ZWgpFxi01V02ry7p+IskJSDCJW6y1HPew9/ThFtUuEWvA3V1XxvOmVRlJhRigpF3GeIPOgvIo03FHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ah36awh1; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30a2e3c8158so4766831fa.0;
-        Tue, 25 Feb 2025 14:43:07 -0800 (PST)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so1550454a91.1;
+        Tue, 25 Feb 2025 14:45:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740523386; x=1741128186; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740523522; x=1741128322; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1Yga5K/x6Wl6/t8h2fecPgE6qaCtJyQQ9C0xTTZzLcA=;
-        b=fqnRFAdKxYCbxA0xwjB6g6b4SE3XKDF78A7HRZ62qIcmyouH/eWSmHDrq5G/O2+97S
-         qeLYhIEfATORs8/veAYgQ7CnSE1sQsNjM/f70KtRigWvoF61X1i9L5wPGxjRGKJAsWR4
-         w484RIxJ8IkNWlGzfjOV2ZL88ZVFeMr9WuTPy/AbnUoosKqits1WL0T/irjJg0D5r4xc
-         mqYMlg9CoFBkBnoCZxLDLFc8ADO8lPSoaTRDrGmPjRDNe1T2zYdelowIEtslHZXFL/aV
-         ZddazAhQobl3hb59pok0gFqTeRybTW/W9oq9XvVsDz2SBWYiN5gV1HXq9EyRxBVOzqqu
-         FVEA==
+        bh=BREjBIu3LhC9CjTs4V1jX9U/z2RLLn2jYU7SiNJkd7A=;
+        b=Ah36awh1+YGVdua/jDOpvfCCi+3Uekelgg2fCxr1wjyBiRFj+coNbiSc82QDIlQrMM
+         sG1lJ38R+glDZjadaXjL0Oon/qm3UL+vFUcsVZJEcsSnk0y6jCjmJibjcXqrkROuILak
+         9/39h8ZJhxaIkc8SCx2zxsaUvQYvUHq5MThj8GgkM2ubcNykkJ8blGMAtmUIedRaZpgq
+         TcJ8RpoyC2iO6yZCJHO4aNRGiUDt4bwp9/1bFwvpInLpJrAGr/IltU47CMmLhVcWjW/4
+         xQfqDrZCew9hZnOUW58sFdDZcRQDg+y5feHoet0oVObxUh80w7Ura76VlFGjOe/rJ56G
+         Pvaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740523386; x=1741128186;
+        d=1e100.net; s=20230601; t=1740523522; x=1741128322;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1Yga5K/x6Wl6/t8h2fecPgE6qaCtJyQQ9C0xTTZzLcA=;
-        b=uoRwYpcRGYvAqfoXOYXAL5pgGkulJBwJ+efmfIWaArC3/tcj3oma5Tx+FCV5Gtmc8u
-         bvuwCuAhmW6mc5ZTL+xlcVgzFRJwXuKExEZSVfYRD632SVakeKtgx/R6eRkKyvgeJiEt
-         nrkXJhhZ8lC//LtKVoXzJFNBEb0E9ahkveXtNjDVkT9mmp9HpC+dR3Y54wpC4jJj+CnL
-         m+AcXCjGQ7RT1CARmMPRj2V1dJN9OjpdYVKNdVGL4/TbMTdAxqzF+0LZQs/xrCrWsaRw
-         aF2XQbhnEDRApPaZo1l9VKrFgBgUMDhzzHqzl9Jy1BopepWWNeWWudfSHiJfFfJvqd3L
-         6NwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpNBV29GVRxFLYD9QrE8KkE8A47fYlFLnzlalpGqM8JdFBmawcSENmo/K1XQUmB+MGsY/k138la1nNpF4=@vger.kernel.org, AJvYcCVV4Mq2Z0J0H8/S2M9+78Xqbne59nLcFIcYR5G1FHixaG0FuD2tzENgUaF1ox9LA/f5Ke7TCv3WTEod80zNFkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlCD5G45nhIqDP99omt7bGn8yrGwyx2fxskBeDlSFgxIe22siZ
-	pXoVRtV4IQS0RH+zTo65I0tzQYX9cxKrOLoMRUt8NYlUR3R/IRKQecUiVCDPJAkxPWyfbpSEZaG
-	FPLCtS0xZsFmCffrDp8lHfX8anYg=
-X-Gm-Gg: ASbGnctRJ5wRvak2o30sIbMGs7TppRHmo2lzBeAXg68dSGDfoLiDft+qGGqDvJh1IkV
-	ck9ZI2ekePGpm5Fd2TiMR1TD9Uwf+QsIV7RouiHAs1NSODDoWwWWVizQe7PFc/PXJRrbWmHSh+2
-	qBtlmkblw=
-X-Google-Smtp-Source: AGHT+IH/KKQWDeEI5zLaYzjMloaCm9aig6LY9VFFxT2Lj+vROONYUCNWMwM7XEj/ITbW4w1Lc6MlqvDYNKFyUzA7glU=
-X-Received: by 2002:a2e:bd06:0:b0:308:e54d:61a9 with SMTP id
- 38308e7fff4ca-30a599bd6c1mr33802571fa.10.1740523386027; Tue, 25 Feb 2025
- 14:43:06 -0800 (PST)
+        bh=BREjBIu3LhC9CjTs4V1jX9U/z2RLLn2jYU7SiNJkd7A=;
+        b=o4S5EVIu2WZDPz1wiwITW86KctbCQOQtuEv/vAvUejK1k43hyTjXZMc7/yLtKtJHTm
+         b52Gc1hZutkKnOStF5y33uxRKRI/XRAnkEUdCnp3jZwBsqVneDmtEtYkXkbgOHPxkBZz
+         jxsDLqujHPUNLRRexPBZnzCmRNL1ITbZLcXcMPYdcKeABm7bksoigZVmVVIfr4l9DWzN
+         3Ruawbgb7aDaHP/Dj2tueIcPXtCrSg9bSKq9tPdxHWk9KXR9X04qllxm1oAorsJQZcXp
+         6xd+K8o+GSmXzR96uNZW9zxu9xEfpTyDufVHCWmRZ7JqiQelhTpFNWF/bdkVHdTgTTv5
+         XEGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVScC6fSZ6daKDGF720o8MiGdz84KHojk50NOoCGwAstAvEIvyjyHUjb9egnmSCZOlGogN2VOiVAVcsbWk=@vger.kernel.org, AJvYcCX0zbuq/uEQ0EFAW31MfuBePyouea1vsBlbRYkNT/biIFfeG5fVcMEeGOv6Fm30F2D/Z5Gsq7ExX7sAlh1QCO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Q4phpoFimOqgIQacQenr8eSaiE2ZU0wcEetMPSs2SfK7cfFG
+	IDmx8+SHUcZpT7zTdNZmqH4ZegnYQVYkeb0eM00NFSi0qarcxkYDHFvotuo+BR3xOgHfbREcfUk
+	IQbDe8EkaRYMjeBWOY/Khu0PpbPc=
+X-Gm-Gg: ASbGnctjEbvUtLC8E1GqlijoPmIXPlHYkZyO8L1L1VTMJkklZ+iDLfWV1+6ypUBAnTb
+	Hn/B+ghY6WDzSgI/YUUzq3qgbZ5P2rRvUdUYNAzGuSED9M2sGqLiXdXwbgXTikfdOoJD4Q0Recg
+	PfAfdHLMg=
+X-Google-Smtp-Source: AGHT+IHW/s/T1gk//zFpUU2//2FctOurcPUs7k9tldIQX5WWLhusS9PC80LFS5bIUyvczF3LpCt7Z9oB8SZfEuTLt8k=
+X-Received: by 2002:a17:90b:4c0a:b0:2ee:b665:12c2 with SMTP id
+ 98e67ed59e1d1-2fce769a322mr12045299a91.2.1740523522212; Tue, 25 Feb 2025
+ 14:45:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,45 +79,95 @@ References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
  <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
  <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
  <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com> <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
-In-Reply-To: <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
+ <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+ <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6> <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Feb 2025 23:42:51 +0100
-X-Gm-Features: AQ5f1JrnWqaTGiu3U7FTh9LsfrjKTJW24XGJwpEE92tGL6toEdwgbBX4AyneZuc
-Message-ID: <CANiq72kd2eTaPMcYSiQ61tZ2nX0jLM9SgsnbPEEbdNx+JQYFdg@mail.gmail.com>
+Date: Tue, 25 Feb 2025 23:45:09 +0100
+X-Gm-Features: AQ5f1Jovuvs9MoeS3e0E3JJ3UTqjDjDZQtBXriL-HUMRHDG6UIjWV-N8PidE8Qg
+Message-ID: <CANiq72kSdPvh81uOm=N-=37f7NT7udRV-PozfO2pcfbT6aaWyw@mail.gmail.com>
 Subject: Re: C aggregate passing (Rust kernel policy)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alice Ryhl <aliceryhl@google.com>, 
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Alice Ryhl <aliceryhl@google.com>, 
 	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
 	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
 	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
 	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
+	rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 8:48=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
+On Tue, Feb 25, 2025 at 9:25=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I think the one thing that's missing w.r.t. aliasing that Rust could
-> maybe use is a kasan-style sanitizer, I think with treeborrows and "now
-> we have an actual model for aliasing optimizations" it should be possible
-> to write such a sanitizer. But the amount of code doing complicated
-> enough stuff with unsafe should really be quite small, so - shouldn't be
+> No, that's most definitely NOT the whole point of unsafe.
 
-Miri implements those models and can check code for conformance. It
-can be used easily in the Rust playground (top-right corner -> Tools
--> Miri):
+There are a few viewpoints here, which can be understood as correct in
+different senses.
 
-    https://play.rust-lang.org
+It is true that unsafe Rust is supposed to be used when you cannot
+implement something in safe Rust (be it because the safe subset does
+not support it or for performance reasons). In that sense, the point
+of unsafe is indeed to expand on what you can implement.
 
-However, it does not work when you involved C FFI, though, but you can
-play there. For more advanced usage, e.g. testing a particular model
-like Tree Borrows, I think you need to use it locally, since I am not
-sure if flags can be passed yet.
+It is also true that `unsafe` blocks in Rust are just a marker, and
+that they don't change any particular rule -- they "only" enable a few
+more operations (i.e the only "rule" they change is that you can call
+those operations). Of course, with those extra operations one can then
+implement things that normally one would not be able to.
 
-I would like to get it, plus other tools, into Compiler Explorer, see
-e.g. https://github.com/compiler-explorer/compiler-explorer/issues/2563.
+So, for instance, the aliasing rules apply the same way within
+`unsafe` blocks or outside them, and Rust currently passes LLVM the
+information which does get used to optimize accordingly. In fact, Rust
+generally passes so much aliasing information that it surfaced LLVM
+bugs in the past that had to be fixed, since nobody else was
+attempting that.
+
+Now, the thing is that one can use pointer types that do not have
+aliasing requirements, like raw pointers, especially when dealing with
+`unsafe` things. And then one can wrap that into a nice API that
+exposes safe (and unsafe) operations itself, e.g. an implementation of
+`Vec` internally may use raw pointers, but expose a safe API.
+
+As an example:
+
+    fn f(p: &mut i32, q: &mut i32) -> i32 {
+        *p =3D 42;
+        *q =3D 24;
+        *p
+    }
+
+optimizes exactly the same way as:
+
+    fn f(p: &mut i32, q: &mut i32) -> i32 {
+        unsafe {
+            *p =3D 42;
+            *q =3D 24;
+            *p
+        }
+    }
+
+Both of them are essentially `restrict`/`noalias`, and thus no load is
+performed, with a constant 42 returned.
+
+However, the following performs a load, because it uses raw pointers instea=
+d:
+
+    fn f(p: *mut i32, q: *mut i32) -> i32 {
+        unsafe {
+            *p =3D 42;
+            *q =3D 24;
+            *p
+        }
+    }
+
+The version with raw pointers without `unsafe` does not compile,
+because dereferencing raw pointers is one of those things that unsafe
+Rust unblocks.
+
+One can also define types for which `&mut T` will behave like a raw
+point here, too. That is one of the things we do when we wrap C
+structs that the C side has access to.
 
 Cheers,
 Miguel
