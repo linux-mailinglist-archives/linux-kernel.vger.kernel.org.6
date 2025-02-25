@@ -1,180 +1,260 @@
-Return-Path: <linux-kernel+bounces-530459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EA9A433B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA32A433BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB0753ACC3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B90D177FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0482B2505B1;
-	Tue, 25 Feb 2025 03:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFC02505CA;
+	Tue, 25 Feb 2025 03:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="WbJE7U5v"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011071.outbound.protection.outlook.com [40.107.74.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sVCQfkiw"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415A8367;
-	Tue, 25 Feb 2025 03:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454847; cv=fail; b=EfNPZp82bw5O3A5yN7UUsbak6qucixVhIaJV9JjPYzwxuHUn/qNS1XCl4BFgMu22693rRomvW8s7PKwa1W48Mr9GmLx+uFy4STPYD2a6MB5OvMZxgR/3blK2Ixa/z0q7uFUFQqCNJ+jGG336VuPJWVZ7pXInjXwA0tmrHg2CQi8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454847; c=relaxed/simple;
-	bh=z6mcIvtnUWQYOQSvoBFPx7/JUFx4NBk/iJaVeNNqlyw=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=IY/7G3q7rbZgQGAl2r2iL2zev8MoAPjauPbMUznXBdHo89PTz4Ci3ly8F/ehtS3GRFdVzoYjvEeOTyaiaZIR4LhJRniLgHuniuqPo+cQybVNcZC4kqSHro+S5056yZs2cignNvZlfLedhcc1kSQ2sU7xGkRaVSXrgyqDp92nN8o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=WbJE7U5v; arc=fail smtp.client-ip=40.107.74.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yJ2TeuLGZAur884/bOvioEvmlHtzc5QKqenm4XbIOL0D3YOa/iccLQjE82pAkwhRbQSwqOyOpUgegvwcKsFBJQhwSP/9eFs7R4w2eAgZ718ZfhMJ/J4hW2oR1vyxc2/0fznnggcf3/SpsDuwwWIxcqBb8gbsqJYBtR2KGqB5n4kIc7veRGvGqoJkF8AQUaNhYI08OM+BB93YXwo+OY+BO/FT+qX6wO9NAiuP7OkK+5hb++/vPbpCV0pJSPII2n23bquo9zvRNZ2KbS+Y9LCC54B+SMooFWRSF5Bq/vbKjnl+I3u0CY49WS7kGTgVhxko5EL8jH2hgloU17oJQ40wIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xuFNEbDIeFDpvp/TS+4r0Jg88+KbBSbgpG3yZXIVHZI=;
- b=DZLjvv27EPFbzgb6YXJ7eK0zkkK5lJIewKiXi9+nwqSyaXVcXP/kYkq8weXCugZFvRCVCyhlFWLrypJJ3GCItohpPcESibjgma/U8rt8Px92hxe+si/hY4vduj+cKkUarBB6+z1uG6PkJ1qfr9opzemDTeYUD8azjgEj/TfQzJAOy7IHeWKim5yoLK2/WFI+uT9pMgI49IwQ+tyKZFLHI2DkBCI9goRBWAzy/6Md+IqIkPIDhqaYC8x087ZR9ScjdAmHlTxK5e0yhtSYsyPNExhhOcvaNDTO2e1HlUvUdbkCWBuGqHmIJ1yySHb8a6jWW/V4qbu978QHA04dHwlT1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xuFNEbDIeFDpvp/TS+4r0Jg88+KbBSbgpG3yZXIVHZI=;
- b=WbJE7U5v2/VrCNhstL1Ii8bpFbVQiLlzqIjJaGGKJ6xYBR63kxMkWLiH7C8CLNCp/NWyOhMdRr9CLWNY+1zqF6FqdQJq+1OSgMow6DqA17psYEVGbv49TtsF0L4FSvbICYLPFTERMK5noFJ+716pYeFwobcQNqVbr47ROFyfE/o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TY4PR01MB12797.jpnprd01.prod.outlook.com
- (2603:1096:405:1e7::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
- 2025 03:40:41 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.8466.020; Tue, 25 Feb 2025
- 03:40:40 +0000
-Message-ID: <87bjuqsnd3.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	linux-hardening@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D324A07F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740454940; cv=none; b=KqgKUmn+MZHbGDgnF4iKHInWLzqz4AFHKoZxNxILJvccY7IVwZjP3FSvehiWDXcqqoU5NoqLQb6SIDZu3gcDDdxo2VmZ1DCcttMLS9xZVqU5NTxAHFf5+QpUdOEzqwnpDyg+AqlY24Cs2iRWrk+/G/xfela+hKlCPTGmJIoDcoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740454940; c=relaxed/simple;
+	bh=9jj19+NzLuiuNb0sAf3HxNj5pndd5pUpK7+tsjaRNrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pp8UmvfuUxIPt+knYjDMBteU29WDop1+tf2oZmJ/mW/e6mfxCJhzPB6EJn5mSi3ryhKC/y3PRxxBcHAa2KMnPfUQW+RGXDMavpnx0y8vyABDxTFR8DuYZ6IreDY173PLjE27AeuIvCu5OtNLgJXG2tXSvsM9NLTLYtQY+TNnZ3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sVCQfkiw; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220d601886fso77247965ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:42:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1740454938; x=1741059738; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
+        b=sVCQfkiwm7U/0MXbJuF2xus/d6Nt0iYqQ4AXqiTcTVk22l6gG6ccQrniqq4yBWi6zN
+         c/VHLu+mOFR/+k1kxlWTpDqnqU9HZxIBoN+Fpz7zxBHrkGFud5AZRF0aEqQclkzMQLjw
+         NK0QHfRn8nGn17GAZTIZjy7wHJ7jOTtsHOa1e6beg6Mcluf/2Ml0DIQHaVx8qLenLfBB
+         17taZWkhNGgMqIYnNNTx1Ngdbg2Tm4dsS0ca8ocbh6sOxPpj0MZhbmhZC6KiPhu2hynv
+         vTFBKbX3J88WXdaW2MTNbQhwiC9v/TUryX1AzJFN5fxqR2FHohszZEEc7PuxORRM/IHA
+         L9TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740454938; x=1741059738;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
+        b=qrfZKQituN2McRNCOwo6RsA1Yo3T4KwYb0N0irWZmxyslKJgCCdsQCBi3S2/JMVkhE
+         Sa3hT0u43pGflb7/gYymKp7JlRPAYQ8fWkp5wY8eEG/U/ryt6Hr3l9dF3VAqSDq5YMI0
+         kEyoBerqB+vpGxsc2gonKIKVvDjNWXn2Gl0ZoqAOknSJUbdDnh98b6PC+wU36u7D9BDM
+         e3gsHuZmSaWIppele0lSqjrOrT58GDOjSEP67zh2yF6hobkLNI8S7IlifMzs/GMaJh38
+         YyjmOFQEWLSybCP6kIrrAMQszb647+76rsjsDEsxTlyBTQ697D8RNRNOT8jOmUzcwdvu
+         DyVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiOkNLEMkwCzek02nsAvN2YNezzEYbyusdJXFa/Z8s9wAY0wPQniQ7jINCuMAO5mmXn7aErRZedQUw0jM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTU3Lb+X3m3ZUkF/0/5cwQ+h8ryDLuxiIXqgqrlgKsL5GLWNV7
+	nevPh5fSpuILpEXl69NMETWwzv8GzKANAcR40Mpe9q5NaYlooF8w05CKyMgk1aBZDqB+FNVQLCk
+	w
+X-Gm-Gg: ASbGncv/3OJ67I7XbXupAdEyAKNwnoItlgzrVw4fCv/VWjnxYIL7Je4GFy07oB3Xdt6
+	DSg7NdsJ+8UQY6sl3BdWC1wrOzIQMIwh9yVZnqDv1OTRzKN+18P9X1hau/yFEtZnS6mY2ws8wwP
+	u47619dcz6GdJMZd9VA6A6o3XYIMlOv5rYw+eFpH8D8+QWn3WxPrGLLiiRRjjD2aE2z+Hd8n/qF
+	nI4mFGRKJ1Vo++IEeUDVfkwYHNP7vrPuzGlWOw/3Dsk1HRq6wXNOV+9HFgK43CxI053JvBt9/ix
+	5khFJys0HCL2lE1tkKxzx5HlfjZQ7RaBFk2cD19dYJtzIJWBqFgij4QzEqeaTFyF3pqRbtw8Qzx
+	jpQ==
+X-Google-Smtp-Source: AGHT+IFu9ZTqMmFmKgq2BwNevmgyVHSAbFB+fe6KcaqwYov8nGeJ6zB/x+emYSs02kt5foE3WTELdQ==
+X-Received: by 2002:a05:6a00:1310:b0:730:9567:c3d5 with SMTP id d2e1a72fcca58-7347909fee5mr2844300b3a.4.1740454938499;
+        Mon, 24 Feb 2025 19:42:18 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aedaa643b1asm285306a12.49.2025.02.24.19.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 19:42:17 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tmlpm-00000005cIf-1lpb;
+	Tue, 25 Feb 2025 14:42:14 +1100
+Date: Tue, 25 Feb 2025 14:42:14 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: Question about strings of string_choices.h
-In-Reply-To: <202502241928.4405326B13@keescook>
-References: <87eczmssrp.wl-kuninori.morimoto.gx@renesas.com>
-	<202502241928.4405326B13@keescook>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 25 Feb 2025 03:40:40 +0000
-X-ClientProxiedBy: TYCPR01CA0198.jpnprd01.prod.outlook.com
- (2603:1096:405:7a::19) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+Message-ID: <Z708FirwXbRFBqGj@dread.disaster.area>
+References: <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali>
+ <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+ <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+ <20250218192701.4q22uaqdyjxfp4p3@pali>
+ <Z7UQHL5odYOBqAvo@dread.disaster.area>
+ <20250218230643.fuc546ntkq3nnnom@pali>
+ <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
+ <20250221163443.GA2128534@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TY4PR01MB12797:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0d8decf-ccab-4350-d1ed-08dd554e2cf3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+4jBuNVA7PFZqoQvnoy9Hs92KNn7fLmaYc+azvDlf+jjZSlf00RR1B4BXkpB?=
- =?us-ascii?Q?V3jUOxI8rWE2Uidc50fe6WJkT7OgHXtOY37L7ozwErlHCu2yXD4DIm34B6yR?=
- =?us-ascii?Q?QHSKDkRAWFnhuPH/s4O4N1yihyKn1u+fmUwE/j1dWPr7zXYM2xlcBHE38WXt?=
- =?us-ascii?Q?SIzu36o8lWC3W28YXUdmW7hJLU7CYw3RWbhLxXnQJrcUt0fFJ8x3Ooe2rDZ5?=
- =?us-ascii?Q?8AvpE4tRGJV1ZiyLeuIa9GaVPIypbRM5fZgf9k+MyWTtoUnmaAdVERsnmjvF?=
- =?us-ascii?Q?OC4PRZAQP4s9XQbu3iaVRjajjHpCb5k3W88u0vXd9SQH7dBR10KlVywudjkm?=
- =?us-ascii?Q?5EdDjFZzsZQWVTt3HCzEcCzqp1PZIBeCzI9G8BatgX/9wj3sna6B+yo44mR3?=
- =?us-ascii?Q?30Uhs7rhFoYMznIsNVewD211rb0HilnQ+amID1b3LrgZJWQwYmFZUpeGy48H?=
- =?us-ascii?Q?Rc6QdJHWG+f7iZ/CmBt4zVKT02SA8YuYTVIwSYrOaVTLih3EWFiC3m+/LjAy?=
- =?us-ascii?Q?URPMkDzc/pzFL36QQb5dXyxo5xi4JpDEkCBhQWKfg7ueUih6yd9jYck5W8vr?=
- =?us-ascii?Q?mEIsBmcyBQSwd9AbLUX0t8PcME+NhFAp50SvnT4eOKugRnBJXlVTNpHpBZGs?=
- =?us-ascii?Q?l4i9oJ0D2d3il0pOWQ6Yp5+q50eWYg3txWRPDkOepRBeqPmQoZB0AcUyfwSi?=
- =?us-ascii?Q?Vor0EpGZzSWk28enMRGxeEkLUWD/sLjIzzewW5nuJcQaTfh+uWhRYkeqLnxc?=
- =?us-ascii?Q?9PrWc8/rYDRO5HQ+Z7Q6FsgAsk6aPoF9Q5+BkIEx6q8enaEThVedMdfxPsT5?=
- =?us-ascii?Q?LKQSt7Q3LALGlyblPGkA52b/Tb6pv0l+u+3QnziI7yT5h934zi3/NmGuXeKb?=
- =?us-ascii?Q?E3CcqdZwtbRT/ZRKL5nMMmYeyVEtgjg4eOb3dTXBb0w0nt+/QLzKpJMVuUKg?=
- =?us-ascii?Q?B/ow1ZYQrvRcQU5hR/knFyH9bHocIQEByd9/Vmn0KRp0C5dFBn0Kf1Lr2asp?=
- =?us-ascii?Q?0bHknOR9HGUvaYKYL01qIcAc8FExIeO1JIDYHi4+yHnryflnTKRSoPE1HCZh?=
- =?us-ascii?Q?e9gu7sIm0uo6EURwn0lEDvNuGFi24nDwU6owYR9eYuClR/seIix9X60Hz9KP?=
- =?us-ascii?Q?nYGZlssvWX2MtJstz01a52AiqavQ+bBAfobMPUEbQEBBZVYuydO+fXZTiJYo?=
- =?us-ascii?Q?XqyKrwC5A2ofrviUg8exUCO7RxJmIejDEy7WjUSpktMmgDPJAafSA7ste5UO?=
- =?us-ascii?Q?Oc/LMUUDfa3SeIBX/oMa12bwW7/xZ6g5f91YRc9RFPrCxbb08L3x+LLieiP/?=
- =?us-ascii?Q?N5+ztw0V7P1hy8rzwhjV4VFQx2Lv64ftg7cZY1fIOc3EudZ6lxm1CQKdemwx?=
- =?us-ascii?Q?acIfySMVWEYHaHCCLbHiiqhgP/Bn5JW2oOfxYJHhMD2n2rUQvMEOObkeosLo?=
- =?us-ascii?Q?fGkYOWuxcywDG0AVxgWdOyP3xcIhHhVh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UdWt+Nf15ysIs3ei+M+c+5q0hMMwUZ286ydKTara+x9pOsYR9SKjYAkv+Xvl?=
- =?us-ascii?Q?nlajt066COMFZ0NBewWe1ThmchRIBM67BYlepEtCFYHdhMia6U4f2Aa74GPi?=
- =?us-ascii?Q?iFW5ZfteFH+7HsSHocfNf5fARGROLPLWzN0i13jlyvUT4Ux7BO/i05MEbxt7?=
- =?us-ascii?Q?zGcJnhNQS+vAYGuiTrcZIO8yvA9l6uk5yeOgUsO5J2D0XP5oOH0XoMZG86q0?=
- =?us-ascii?Q?duUzvtIyY7aXM0h7mU4J7fituW5QE7zQi1BJ10Krjok66c3x+NzBPy0Y5rok?=
- =?us-ascii?Q?HJJDgqThk4tlCDNI/4GmpqdJrrXLozTUcMxuORqOAdDNNq1emUYxpMl1RSDS?=
- =?us-ascii?Q?YjbNqupw11J8UuBfPO32oW2Z2zRQDfAt90Ckvp2yeuGw/rwvmvjhPa46OJdQ?=
- =?us-ascii?Q?PbEuXXnzRnCzCxPHvPPIQNy/mLcfjoYC7VVwhcOg13VtH4ovPe2nSCRswgnU?=
- =?us-ascii?Q?NVQs7DCzK/Bz2QoTORi1G5tOuTtWgQyDha63izjRFEz0vIzqzIbfyfeBvTqn?=
- =?us-ascii?Q?IwSmQrAf706R/U35NGe2OEdtoTRuUAJPHRlnT+YRvtYiBh3yCLyWBPcgFtad?=
- =?us-ascii?Q?xe1UwwBBuUys8B2z0ZvpaH4FoUPiUhYp7vEaa/BQ+IbWE6auQugDr3U7O+ry?=
- =?us-ascii?Q?a4kl1KGVMTnSm/RGJU40lss01aIS9Hcv3vcREbdY27iZcRE5hSPzLUow4jLP?=
- =?us-ascii?Q?mT7+zU9St0dyTlRdC4NTcTSPJg3iSXlWZ9ZlOl7P4r/e5LQDka1HOqTZ6jpw?=
- =?us-ascii?Q?rANr+Axzv+W29+2Wcl+K7xKUW7jtj0U5iX49XCCvwUvcrjKG2ewApsfSaDfZ?=
- =?us-ascii?Q?Bxq3kIUwDRaCk4zunmgqTTbu9HEJY7PvLEMuIVmZV8CXBQLD5vLtG0UAvspv?=
- =?us-ascii?Q?uWfuIR+u6PBOo87XHSNK9ptD2e34WOa/bQbfVKRfiSAimCkJbb1fGLdTFcuV?=
- =?us-ascii?Q?IDWHlzKH479DcNrBzE92hEquoQLkuHFb2lbYKBAwZmi4FBhwP6UfZir/kQog?=
- =?us-ascii?Q?2i9B/iy2zDm9SHGOGbT0aBd1AyNMZMj8CIDziM/0smc02RXonYnJWBzyVbei?=
- =?us-ascii?Q?Bo7A07jmGwNqIF/i/P0HykfPOS7QgajtWsgU3JdxfNCvVa6p2+HVkjEIeYkZ?=
- =?us-ascii?Q?eFebcQ7971ybvmYk+KXSwT7FRQzCNLTu1gA0VbDZuJ5/mquzWgeHM/SnZxOo?=
- =?us-ascii?Q?cVJQOYrl5q+XfMj/iHp67J8uOCF1Z+Sv0g1Pcf4guso101b9CcF8G56bDXJ1?=
- =?us-ascii?Q?xmscPo5tIiiYspFJ4v+AMmXy9YUiJkVXfsLfXOrSWvDEmzoHsyUPHGvun3rd?=
- =?us-ascii?Q?91K8nHUmpFOgZ6t6GWzH+vQAQ0weWibAC8NQ/V/SE9PunCKrmEPpcunnD7o7?=
- =?us-ascii?Q?BPIyNi1jNIaDQhOzUVlktqyNL9gsaxvW+bom4CEeH1IGjmwve9NfaiSpOWaI?=
- =?us-ascii?Q?FTACTqpxDG/py//2E4tHbNHBrYE26/YA7S1gviUW5H6l506ST6y2n21CytSk?=
- =?us-ascii?Q?7DCHReyyD7+/g2sJxvWKRY4dOQJwH5TIoX2oSn+J9yvHKpoFO3oWV6rFLKTu?=
- =?us-ascii?Q?V19O3ozcMQ+FrgeGGNdKDsCGreG8raXQqWovzxgkPAw2TIM2ZwpJ5ibAZPgq?=
- =?us-ascii?Q?mRbB7KRkMRWFfIJtJs+HaIs=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0d8decf-ccab-4350-d1ed-08dd554e2cf3
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 03:40:40.8449
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vp3+sTjQpQTyRggDMJ9TH7qPDP1MlVwHcl1jsAMqLjWJzhHb33t8GgTzH0bqtuvngHyWqE/efBDf7X80GhqMe6sqEpJlUCIvFTf3nqr76cdo6GaEG25nulSzoPQe5pcG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB12797
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221163443.GA2128534@mit.edu>
 
+On Fri, Feb 21, 2025 at 11:34:43AM -0500, Theodore Ts'o wrote:
+> I think a few people were talking past each other, because there are two
+> fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
+> is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
 
-Hi Kees
+I don't think anyone has been confusing the two - the entire
+discussion has been about fsx_xflags and the struct fsxattr...
 
-> > I would like to use string_choices helper, and want to add well used
-> > but not yet supported strings. But before that I would like to ask one
-> > thing about it.
-> > 
-> > I wonder is it guaranteed that the strings were persist after the
-> > function returned ? In normally, function local variable will disappear
-> > when it returns from the function. But I'm not sure in case of
-> > static inline const, etc.
-> > 
-> > If it is guaranteed, I'm very happy.
+> started getting used by many other file systems, starting with
+> resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
+> that flags word were both the ioctl ABI and the on-disk encoding, and
+> because we were now allowing multiple file systems to allocate bits,
+> and we needed to avoid stepping on each other (for example since btrfs
+> started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
+> at least not for a publically exported flag).
 > 
-> Yes, the compiler puts them in the .rodata section, so they will always
-> be present.
+> So we started running out of space in the FS_FLAG_*_FL namespace, and
+> that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
 
-Thanks. Nice to know !
+No, that is most certainly not how this API came about. 
 
-Best regards
----
-Kuninori Morimoto
+The FS_IOC_[GS]ETXATTR ioctls were first implement on IRIX close on
+30 years ago. They were ported to Linux with the XFS linux port over
+2 decades ago. Indeed, we've been using them for xfsdump/xfs_restore
+since before XFS was ported to linux.
+
+They got lifted to the VFS back in 2016 so that ext4 could use the
+interface for getting/setting project IDs on files. This was done so
+that existing userspace functionality for setting up
+project/directory quotas on XFS could also be used on ext4.
+
+> FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
+> positions, by my count.
+> 
+> As far as the arguments about "proper interface design", as far as
+> Linux is concerned, backwards compatibility trumps "we should have
+> done if it differently".  The one and only guarantee that we have that
+> FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
+
+That's a somewhat naive understanding of the overall API. The struct
+fsxattr information is also directly exported to userspace via the
+XFS blukstat ioctls. i.e. extent size hints, fsx_xflags, project
+IDs, etc are all exported to userspace via multiple ioctl
+interfaces.
+
+This is all used by xfsdump/xfs_restore to be able to back up and
+restore the inode state that is exposed/controlled by the
+GET/SETXATTR interfaces.
+
+> The use case of "what if a backup program wants to backup the flags
+> and restore on a different file system" is one that hasn't been
+> considered, and I don't think any backup programs do it today.
+
+Wrong. As I've already said: we have been doing exactly this for 20+
+years with xfsdump/restore.
+
+xfsdump uses the bulkstat version of the GET interface, whilst
+restore uses the FS_IOC_SETXATTR interface.
+
+> For
+> that matter, some of the flags, such as the NODUMP flag, are designed
+> to be instructions to a dump/restore system, and not really one that
+> *should* be backed up.
+
+Yes. xfsdump sees this in the bulkstat flags field for the inode and
+then omits the inode from the dump.
+
+Further, xfs_fsr (the online file defragmenter for XFS) uses
+bulkstat and looks at the FS_XFLAGS returned from bulkstat for each
+inode it scans.
+
+> Again, the only semantic that was guaranteed
+> is GETXATTR or GETXATTR followed by SETXATTR.
+
+For making a single delta state change, yes.
+
+For the dump/restore case, calling SETXATTR on a newly created file
+with a preconstructed struct fsxattr state retreived at dump time is
+also supported.
+
+This is not a general use case - it will destroy any existing state
+that file was created with (e.g. override admin inheritence
+settings) by overwriting it with the state from the backup.
+
+It should also be noted that xfs_restore does this in two SETXATTR
+calls, not one. i.e. it splits the set operation into a
+pre-data restore SETXATTR, and one post-data restore SETXATTR.
+
+Why?
+
+Because stuff like extent size hints and realtime state needs to be
+restored before any data is written whilst others can only be set
+after the data has been written because they would otherwise prevent
+data restoration:
+
+/* extended inode flags that can only be set after all data
+ * has been restored to a file.
+ */
+#define POST_DATA_XFLAGS        (XFS_XFLAG_IMMUTABLE |          \
+                                  XFS_XFLAG_APPEND |            \
+                                  XFS_XFLAG_SYNC)
+
+Yup, you can't restore data to the file if it has already been
+marked as immutable....
+
+IOWs, any changes to the flag space also needs to be compatible with
+the XFS bulkstat shadowing of the fsxattr fields+flags and the
+existing usage of these APIs by xfsdump, xfs_restore and xfs_fsr.
+
+> We can define some new interface for return what xflags are supported
+> by a particular file system.
+
+Why do we even care?
+
+On the get side, it just doesn't matter - if the flag isn't set, it
+either is not active or not supported. Either way, it doesn't
+matter if there's a "this is supported mask".
+
+On the set side, adding a mask isn't going to change historic
+behaviour: existing applications will ignore the new mask because
+they haven't been coded to understand it. And vice versa, an old
+kernel will ignore the feature mask if the app uses it because it
+ignores unknown flags/fields.
+
+IOWs, adding a feature mask doesn't solve any of the problems
+related to forwards/backwards compatibility of new features, and so
+we are back to needing to use the API as a GET/SET pair where the
+GET sets all the known state correctly such that a SET operation
+will either do nothing, change the state or return an error because
+an invalid combination of known parameters was passed.
+
+> I suppose the field could double as the bitmask field when
+> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
+> set of semantics.  If someone really wants to do that, I wouldn't
+> really complain, but then what we would actually call the field
+> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
+
+That effectively prevents the existing dump/restore usage of the
+API.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
