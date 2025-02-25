@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-530996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8267FA43AD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:09:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCF9A43AE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A5E188C7F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589D917CA32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD3266B73;
-	Tue, 25 Feb 2025 10:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F412661A1;
+	Tue, 25 Feb 2025 10:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KS+Js9EK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/EX3EdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8890266B4F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1832144BF;
+	Tue, 25 Feb 2025 10:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477695; cv=none; b=mWOqFgd8ZLebd23pqPc/SW+S5ig6OaFo0lu20aLqo9OH1TGlfOf6r5UrYljdog9jfPp7pE2AVLeS60ey2zSwZEfl75NaKx3SOJElOPOUfcHOBHq8gZR6E2UK1uHVzHdRZS385LVwx2AM4AArEITB9WNsk0OupoHbRa+N8c4Ntyo=
+	t=1740477642; cv=none; b=J7hGS3WWKGSV7y+yQNbYMWdHaRC7PsVMygjs0fERYFBiPwb0cjdQLg40DVkm2D+w14/FmYW9c3Or7+LXVKfeBxgpRuNrjUFCoImBnHPFgjKjbgSyxltZZr2oVN9cQtm/FLLjzyNFx5OeWlukyloxrIwNhgsQfLQKx+peDRj0jYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477695; c=relaxed/simple;
-	bh=80W3jRUeJgHuN6c6wY/5SS6Zo5/zBaxfdTgmqQWxMCs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcggDhTt5G7OlvMPQKWLVSWbWSEhKu2CMukwlsOQytj9VIa/NQjCOoFNXh2TEOYUw8xRAXX0dhZByiliMrtqPsx1/44ymoh5pW+k+SYgIaHlNJqzAbg+E1kcCYY+FP7JPxUSiVKI3UpCfUVb6UUM5nA/VUdoX0WCcFtS8WbbHjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KS+Js9EK; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740477694; x=1772013694;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=80W3jRUeJgHuN6c6wY/5SS6Zo5/zBaxfdTgmqQWxMCs=;
-  b=KS+Js9EKMcqCueuR8VYeesBDoA1+7cTy6q3JGsRrQAJ0pnf1dHCZ/FZA
-   RKYwAyXV1LacL97VRVTGw8LSo4o5XKDHT/g/b+GTweTgJzYQTIu7zYYus
-   SxUSqmwCYgWM/L/l1Inmwfg6fiGgOL1oaz+/rZoHTw03r/oLpZe9StHgj
-   EYHxq3k/6EWtA4SIOlP2GmRU0oX0zHNJqTReI4b+5WNZszDYi1vtjMZKA
-   cMFH5GT6Y0qZAzEA/fjgq15W1Vlt6TaFiL+7GoVR3q1Eb9qcBD/bZVdU7
-   v5hjP5EjlDTrrgE3evBKJgsbTTt4NoFYto4XXlGZuJgSjkjY8DcHJgOzQ
-   g==;
-X-CSE-ConnectionGUID: u5EGqvTPRrG+qo0rh3KUuA==
-X-CSE-MsgGUID: Tmg3facpSDOUyzGW72MZwA==
-X-IronPort-AV: E=Sophos;i="6.13,313,1732604400"; 
-   d="scan'208";a="38095043"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Feb 2025 03:01:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 25 Feb 2025 03:01:22 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 25 Feb 2025 03:01:22 -0700
-Date: Tue, 25 Feb 2025 10:59:30 +0100
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Herve Codina <herve.codina@bootlin.com>
-CC: <p.zabel@pengutronix.de>, <Steen.Hegelund@microchip.com>,
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] reset: mchp: sparx5: Fix for lan966x
-Message-ID: <20250225095930.paeqka2z2tjuxp6g@DEN-DL-M31836.microchip.com>
-References: <20250224092923.2648680-1-horatiu.vultur@microchip.com>
- <20250224140443.42ddc57c@bootlin.com>
+	s=arc-20240116; t=1740477642; c=relaxed/simple;
+	bh=EJ6vWPnC77dmHQ122+ULTLzJINIW/YADLEaC8xWgSdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=anfKquX6OevGXsv6kX6Pmtb7kyME4Mic1jyUtTNRuQyxwTIJ63dggmz1nKwXuZcXHDU9MG/ACycKMvT2y/sdqymrt1VaDAuUKe+1OdPmzWlyf/pbWdMx5pYl/eJCr3I/O845A+bvoG/fkVdiZ+kZbPTBlGAD6C3VfOUxEiP+vTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/EX3EdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09937C4CEDD;
+	Tue, 25 Feb 2025 10:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740477642;
+	bh=EJ6vWPnC77dmHQ122+ULTLzJINIW/YADLEaC8xWgSdU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s/EX3EdZcCQwj+vOkoAQGUfKYstjdbERK+kapSdyZawDWna2/5gYNVG3LYrmWn0wh
+	 XZZwQRVd7YoYnyt6uYviJYE7tQTivy7x2BGKz93PdUBtD6/lk0TKCI1PLIcDzdw9jj
+	 VxVpW2t8Fspeh55tPT1fQ9an9AodsMWZUvFCifRDmldmg8OFGnKdWxUbBhEsUOmEEM
+	 krjW+0lnhqQNXsuCYi2FKQ3drzegl7JrTMVPUyBi7PxAs40PbnaRhwYsIrmgK4pEF6
+	 fHuPvvHAULVqqYIQD5/fPVtONczn+CNjV0UXLcG/mFQOcqW1Eq+TNrBAhM+hdvM0kv
+	 Cesf+tCODHeJQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] [v3] kbuild: hdrcheck: fix cross build with clang
+Date: Tue, 25 Feb 2025 11:00:31 +0100
+Message-Id: <20250225100037.2709624-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224140443.42ddc57c@bootlin.com>
 
-The 02/24/2025 14:04, Herve Codina wrote:
-> 
-> Hi Horatiu,
+From: Arnd Bergmann <arnd@arndb.de>
 
-Hi Herve,
+The headercheck tries to call clang with a mix of compiler arguments
+that don't include the target architecture. When building e.g. x86
+headers on arm64, this produces a warning like
 
-> 
-> On Mon, 24 Feb 2025 10:29:23 +0100
-> Horatiu Vultur <horatiu.vultur@microchip.com> wrote:
-> 
-> > With the blamed commit it seems that lan966x doesn't seem to boot
-> > anymore when the internal CPU is used.
-> > The reason seems to be the usage of the devm_of_iomap, if we replace
-> > this with of_iomap, this seems to fix the issue as we use the same
-> > region also for other devices.
-> >
-> > Fixes: 0426a920d6269c ("reset: mchp: sparx5: Map cpu-syscon locally in case of LAN966x")
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > ---
-> >  drivers/reset/reset-microchip-sparx5.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-> > index aa5464be7053b..5a75f9833a91a 100644
-> > --- a/drivers/reset/reset-microchip-sparx5.c
-> > +++ b/drivers/reset/reset-microchip-sparx5.c
-> > @@ -8,6 +8,7 @@
-> >   */
-> >  #include <linux/mfd/syscon.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_address.h>
-> >  #include <linux/module.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/property.h>
-> > @@ -72,14 +73,17 @@ static struct regmap *mchp_lan966x_syscon_to_regmap(struct device *dev,
-> >                                                   struct device_node *syscon_np)
-> >  {
-> >       struct regmap_config regmap_config = mchp_lan966x_syscon_regmap_config;
-> > -     resource_size_t size;
-> > +     struct resource res;
-> >       void __iomem *base;
-> >
-> > -     base = devm_of_iomap(dev, syscon_np, 0, &size);
-> > -     if (IS_ERR(base))
-> > -             return ERR_CAST(base);
-> > +     if (of_address_to_resource(syscon_np, 0, &res))
-> > +             return ERR_PTR(-ENOMEM);
-> >
-> > -     regmap_config.max_register = size - 4;
-> > +     base = of_iomap(syscon_np, 0);
-> > +     if (!base)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     regmap_config.max_register =  resource_size(&res) - 4;
-> >
-> >       return devm_regmap_init_mmio(dev, base, &regmap_config);
-> >  }
-> 
-> In the Lan966x PCI device use case, the reset driver can be loaded, unloaded
-> and re-loaded.
-> 
-> When the driver is unloaded, resources have to be released and so with a
-> call to of_iomap(), a call to iounmap() is needed.
-> 
-> Maybe .remove() function in this driver should handle the needed iounmap()
-> call.
+   clang: warning: unknown platform, assuming -mfloat-abi=soft
 
-Thanks for the comments.
-I think you are right. I will update this in the next version.
+Add in the KBUILD_CPPFLAGS, which contain the target, in order to make it
+build properly.
 
-> 
-> Best regards,
-> Hervé
+See also 1b71c2fb04e7 ("kbuild: userprogs: fix bitsize and target
+detection on clang").
 
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Fixes: feb843a469fb ("kbuild: add $(CLANG_FLAGS) to KBUILD_CPPFLAGS")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: use same approach as the other patch.
+v3: fix changelog text
+---
+ usr/include/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index 58a9cbe4eba4..b9a2640b4bb7 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -10,7 +10,7 @@ UAPI_CFLAGS := -std=c90 -Wall -Werror=implicit-function-declaration
+ 
+ # In theory, we do not care -m32 or -m64 for header compile tests.
+ # It is here just because CONFIG_CC_CAN_LINK is tested with -m32 or -m64.
+-UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS))
++UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+ 
+ # USERCFLAGS might contain sysroot location for CC.
+ UAPI_CFLAGS += $(USERCFLAGS)
 -- 
-/Horatiu
+2.39.5
+
 
