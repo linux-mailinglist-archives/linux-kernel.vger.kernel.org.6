@@ -1,306 +1,94 @@
-Return-Path: <linux-kernel+bounces-532089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCADA448A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:42:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF01AA44871
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B385C3B9C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB638188CE9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45BA19CCF5;
-	Tue, 25 Feb 2025 17:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0j7GZOTS"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEC819992C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99EA19E804;
+	Tue, 25 Feb 2025 17:29:14 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3068817B418
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504533; cv=none; b=lnvIskN5ydxlpQhiVXCLsy2rDlSTnX3kAXf+u7xTNQ4G8GClPk6JJQeZaPWo5hrNj4m8nRlBPDuWsfZz28Njd4suSmMIU2eurjqlSkdL+IKkF7T1Jl/D8UXOdfsPpmY2YTDK6ahFyI939gKgWxWUkBlai7norOAqstYMx0omBJc=
+	t=1740504554; cv=none; b=snso4KkgXADX8UBtIj7ODF9mIdJ3oTMjPUsW5s1NT4WfxtcxmqMl8cEjqiKyTEAifsVeNIUEzf2iVLs/qyGFO9G90dtwNZ5xpk54rDlg627m5vW8LcuM1Uk4XQ404w10/xVgRusd40ShreJFjyJhxV4jhPx2kb4UKxMDHxPz54Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504533; c=relaxed/simple;
-	bh=xssk7r6GD77nVJokw+O90QXNptvnUYuZqjKgbyfdpCk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=skpSDC1bYjCbWkodFDcrzO+0+o4f6S1+GdnGf+coIw/OVkmY3kcXRYKVg8kYVgnS6v1kt9DEu900roaD4gTfVa4Ug2BoPnvTkIB5Czy2tQr6VRTVSmZxThzzAQ4/1R6rukRVmdqIJCOk/PeSyt4lTU83ZaiFyezSc2x+2gumAos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0j7GZOTS; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc404aaed5so19389770a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:28:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740504529; x=1741109329; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kp/kK8Nq6EAHPL6vafMzGhBPqvyWvzwjvBM1N34P0S0=;
-        b=0j7GZOTSjM7IjeSUDXLznQZBeCvPZZyBkFEjH9I53mT8S0swA5LZMBqlfbe8cGbcmY
-         sY7FYXh60SQHOauNyobNLAK8WEnXrOuML59Y8jYYPqrlt1Bkp/8UaGYD0RJolmVcBYSV
-         Y8EO5e2jyM7TkLZTiuBXf7Iet90L0xDIKiu4CloX9/kZsZTE2ttLr2pGc84nzXF6Pgmi
-         tqqYwaXwEqkBB6gbeXrCq7ATXzP7CB3/ePjM9EYaqd+CUp7SyzsryUrpKDf5mhMuEx1G
-         plgOKJZaqvadKc3gasJ1+Fa3RyuU1la7dQodtgrSx4RDij0NuDxFE3nx55PZPkSZoy2E
-         RKWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740504529; x=1741109329;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kp/kK8Nq6EAHPL6vafMzGhBPqvyWvzwjvBM1N34P0S0=;
-        b=eifpKUwOQVmBMH8/6b7qu0JKOF70FutY/jrPfgs3h1ju8kYMoKkl1A4r73V5MuFWhR
-         h4f1wd+GZEgxxk9NfkWPUmqABtjK9bmkmwhQFnyms3zotXGbJtyyVGYU/h5CAjeeGOdo
-         i0lACRvo6YlW5IJHI51GLX15iHuFQZMZpmr02z1h9KNXofBALXiYkLTwoTYE+jID9bVh
-         6dY4JeyuxO6K5M7jCzuyg/Tk8f2XZaY/icnyjjTgHURLLN2OMI8y3z8af+5d2QJXVYc3
-         ziQmdW0+/76PLxv9ep7fwxRxuCjkbOVNNe2ZnxhsZcMlYzLALa6tZcgKfbUdXRcK38r5
-         6SOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9OVeSe3lQrEs9tQzC9SCUbYFdF7WKnZHums4YnvUPGK1ULJ04kfwEgDlZV/khKKkPvKNX7a+/AjCAFYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCbcNOKfQcoiFE8qWHtfWVjMnwMaGV2zG+k2op998MeYlXch9L
-	cHUyRGtKvoX1M/rli3O1El5VQjWbycCPHpnxTq9v/gekNgXxrliB++/sIffTvxJLueWmJmoBB+q
-	tTw==
-X-Google-Smtp-Source: AGHT+IGTvcRUA6OpnNrnqKRmtujbXTgGf5Jtp8a1i0NXeuvpsdxCzwhvJ/m9zCtVPFCeAGo5v7x+9YDTpxg=
-X-Received: from pjbtb12.prod.google.com ([2002:a17:90b:53cc:b0:2ea:9d23:79a0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:350e:b0:2ee:9902:18b4
- with SMTP id 98e67ed59e1d1-2fe7e39f1bbmr248876a91.27.1740504529279; Tue, 25
- Feb 2025 09:28:49 -0800 (PST)
-Date: Tue, 25 Feb 2025 09:28:33 -0800
-In-Reply-To: <5582cf56-0b22-4603-b8e2-6b652c09b4fa@zytor.com>
+	s=arc-20240116; t=1740504554; c=relaxed/simple;
+	bh=+3/HyB4QuuPOf5t/WmOnKXVbHUTEErYfCEcPq6iMK90=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ToJBB6zMBh4Q3vP3VE3rmLCo4Dz34wbboKcu+LcdzHIWKCPS8oCp8/b9jrdLyD4dWiCrRAIFTTi3keqzcTxYeyIM39ayeBZghF/QIc7DTIZjBcWMoPrUvkH4eZn0xMGR/9zR+KRv5FbpKUJ/2X2YuePL1RmMPgg+lNHPGKYTonQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 10D1992009C; Tue, 25 Feb 2025 18:29:10 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 0CEBB92009B;
+	Tue, 25 Feb 2025 17:29:10 +0000 (GMT)
+Date: Tue, 25 Feb 2025 17:29:09 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, 
+    Madhavan Srinivasan <maddy@linux.ibm.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+    Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't use %pK through printk
+In-Reply-To: <a7a135c9-c65b-48a8-a3a8-6aa98afe77d0@csgroup.eu>
+Message-ID: <alpine.DEB.2.21.2502251703450.65342@angie.orcam.me.uk>
+References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de> <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu> <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk> <a7a135c9-c65b-48a8-a3a8-6aa98afe77d0@csgroup.eu>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241001050110.3643764-1-xin@zytor.com> <20241001050110.3643764-4-xin@zytor.com>
- <ZxYQvmc9Ke+PYGkQ@intel.com> <10aa42de-a448-40d4-a874-514c9deb56a3@zytor.com>
- <ZxcSPpuBHO8Y1jfG@intel.com> <5582cf56-0b22-4603-b8e2-6b652c09b4fa@zytor.com>
-Message-ID: <Z739wdGmk4ZuWJ8v@google.com>
-Subject: Re: [PATCH v3 03/27] KVM: VMX: Add support for the secondary VM exit controls
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, 
-	peterz@infradead.org, andrew.cooper3@citrix.com
-Content-Type: multipart/mixed; charset="UTF-8"; boundary="6p5+kLFLXaqTdVYq"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 25 Feb 2025, Christophe Leroy wrote:
 
---6p5+kLFLXaqTdVYq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Oct 22, 2024, Xin Li wrote:
-> > > > > 		_vmentry_control &= ~n_ctrl;
-> > > > > 		_vmexit_control &= ~x_ctrl;
-> > > > 
-> > > > w/ patch 4, VM_EXIT_ACTIVATE_SECONDARY_CONTROLS is cleared if FRED fails in the
-> > > > consistent check. this means, all features in the secondary vm-exit controls
-> > > > are removed. it is overkill.
-> > > 
-> > > Good catch!
-> > > 
-> > > > 
-> > > > I prefer to maintain a separate table for the secondary VM-exit controls:
-> > > > 
-> > > >    	struct {
-> > > >    		u32 entry_control;
-> > > >    		u64 exit2_control;
-> > > > 	} const vmcs_entry_exit2_pairs[] = {
-> > > > 		{ VM_ENTRY_LOAD_IA32_FRED, SECONDARY_VM_EXIT_SAVE_IA32_FRED |
-> > > > 					   SECONDARY_VM_EXIT_LOAD_IA32_FRED},
-> > > > 	};
-> > > > 
-> > > > 	for (i = 0; i < ARRAY_SIZE(vmcs_entry_exit2_pairs); i++) {
-> > > > 	...
-> > > > 	}
-> > > 
-> > > Hmm, I prefer one table, as it's more straight forward.
-
-Heh, that's debatable.  Also, calling these triplets is *very* misleading.
-
-> > One table is fine if we can fix the issue and improve readability. The three
-> > nested if() statements hurts readability.
+> > was suddenly lost from the kernel log, the access to which unprivileged
+> > users can be denied if so desired according to the site policy.  Whereas
+> > running the kernel such as to have all output from plain `%p' exposed just
+> > to cope with this proposed change, now that seems like a security risk.
 > 
-> You're right!  Let's try to make it clearer.
+> The purpose of hashed addresses is to avoid kernel addresses to leak to the
+> kernel log. Here you have function names, if you get real function addresses
+> at the same time, then you know everything about kernel addresses and for
+> instance KASLR becomes just pointless.
 
-I agree with Chao, two tables provides better separation, which makes it easier
-to follow what's going on, and avoids "polluting" every entry with empty fields.
+ Why is it so important not to have kernel addresses in the kernel log?  
+This defeats the purpose of having diagnostics for such fatal events.
 
-If it weren't for the new controls supporting 64 unique bits, and the need to
-clear bits in KVM's controls, it'd be trivial to extract processing to a helper
-function.  But, it's easy enough to solve that conundrum by using a macro instead
-of a function.  And as a bonus, a macro allows for adding compile-time assertions
-to detect typos, e.g. can detect if KVM passes in secondary controls (u64) pairs
-with the primary controls (u32) variable.
+ If your site policy so requires, you can disable access to the kernel log 
+for unprivileged users, in which case once you do have one you can poke at 
+/dev/mem too and have a thousand other ways to do harm.  And if you are a 
+sloppy admin and have /var/log/messages world-readable where you really 
+ought not to, then well, what can I say?
 
-I'll post the attached patch shortly.  I verified it works as expected with a
-simulated "bad" FRED CPU.
+ From the description of `%pK' I infer it's been meant for /proc files and 
+the like that may be readable to unprivileged users, and I can certainly
+understand the security implications here.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c9e5576d99d0..4717d48eabe8 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2621,6 +2621,7 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
-        u32 _vmentry_control = 0;
-        u64 basic_msr;
-        u64 misc_msr;
-+       u64 _vmexit2_control = BIT_ULL(1);
- 
-        /*
-         * LOAD/SAVE_DEBUG_CONTROLS are absent because both are mandatory.
-@@ -2638,6 +2639,13 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
-                { VM_ENTRY_LOAD_IA32_RTIT_CTL,          VM_EXIT_CLEAR_IA32_RTIT_CTL },
-        };
- 
-+       struct {
-+               u32 entry_control;
-+               u64 exit_control;
-+       } const vmcs_entry_exit2_pairs[] = {
-+               { 0x00800000,                           BIT_ULL(0) | BIT_ULL(1) },
-+       };
-+
-        memset(vmcs_conf, 0, sizeof(*vmcs_conf));
- 
-        if (adjust_vmx_controls(KVM_REQUIRED_VMX_CPU_BASED_VM_EXEC_CONTROL,
-@@ -2728,6 +2736,12 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
-                                       _vmentry_control, _vmexit_control))
-                return -EIO;
- 
-+       if (vmx_check_entry_exit_pairs(vmcs_entry_exit2_pairs,
-+                                      _vmentry_control, _vmexit2_control))
-+               return -EIO;
-+
-+       WARN_ON_ONCE(_vmexit2_control);
-+
-        /*
-         * Some cpus support VM_{ENTRY,EXIT}_IA32_PERF_GLOBAL_CTRL but they
-         * can't be used due to an errata where VM Exit may incorrectly clear
+> By the way, why do you need the addresses at all in addition to function names
+> ? When I look at x86 dump stack, they only print function name, using %pBb
 
---6p5+kLFLXaqTdVYq
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-KVM-VMX-Extract-checks-on-entry-exit-control-pairs-t.patch"
+ They can be handed over to GDB, `objdump' and similar debug tools when 
+working with `vmlinux'.  Function names do help, giving you assistance to 
+make sure you work with matching `vmlinux'.
 
-From b1def684c93990d1a62c169bb23706137b96b727 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 25 Feb 2025 09:10:32 -0800
-Subject: [PATCH] KVM: VMX: Extract checks on entry/exit control pairs to a
- helper macro
+ NB I don't know what x86 does, I've done little in that area in the 
+recent ~20 years, mostly taking care about my legacy 32-bit i486/i586 
+stuff.
 
-Extract the checking of entry/exit pairs to a helper macro so that the
-code can be reused to process the upcoming "secondary" exit controls (the
-primary exit controls field is out of bits).  Use a macro instead of a
-function to support different sized variables (all secondary exit controls
-will be optional and so the MSR doesn't have the fixed-0/fixed-1 split).
-Taking the largest size as input is trivial, but handling the modification
-of KVM's to-be-used controls is much trickier, e.g. would require bitmap
-games to clear bits from a 32-bit bitmap vs. a 64-bit bitmap.
-
-Opportunistically add sanity checks to ensure the size of the controls
-match (yay, macro!), e.g. to detect bugs where KVM passes in the pairs for
-primary exit controls, but its variable for the secondary exit controls.
-
-To help users triage mismatches, print the control bits that are checked,
-not just the actual value.  For the foreseeable future, that provides
-enough information for a user to determine which fields mismatched.  E.g.
-until secondary entry controls comes along, all entry bits and thus all
-error messages are guaranteed to be unique.
-
-To avoid returning from a macro, which can get quite dangerous, simply
-process all pairs even if error_on_inconsistent_vmcs_config is set.  The
-speed at which KVM rejects module load is not at all interesting.
-
-Keep the error message a "once" printk, even though it would be nice to
-print out all mismatching pairs.  In practice, the most likely scenario is
-that a single pair will be mismatch on all CPUs.  Printing all mismatches
-generates redundant messages in that situation, and can be extremely noisy
-on systems with large numbers of CPUs.  If a CPU has multiple mismatches,
-not printing every bad pair is the least of the user's concerns.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/vmx.c | 48 +++++++++++++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 17 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b71392989609..c9e5576d99d0 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2582,6 +2582,34 @@ static u64 adjust_vmx_controls64(u64 ctl_opt, u32 msr)
- 	return  ctl_opt & allowed;
- }
- 
-+#define vmx_check_entry_exit_pairs(pairs, entry_controls, exit_controls)	\
-+({										\
-+	int i, r = 0;								\
-+										\
-+	BUILD_BUG_ON(sizeof(pairs[0].entry_control) != sizeof(entry_controls));	\
-+	BUILD_BUG_ON(sizeof(pairs[0].exit_control)  != sizeof(exit_controls));	\
-+										\
-+	for (i = 0; i < ARRAY_SIZE(pairs); i++) {				\
-+		typeof(entry_controls) n_ctrl = pairs[i].entry_control;		\
-+		typeof(exit_controls) x_ctrl = pairs[i].exit_control;		\
-+										\
-+		if (!(entry_controls & n_ctrl) == !(exit_controls & x_ctrl))	\
-+			continue;						\
-+										\
-+		pr_warn_once("Inconsistent VM-Entry/VM-Exit pair, " 		\
-+			     "entry = %llx (%llx), exit = %llx (%llx)\n",	\
-+			    (u64)(entry_controls & n_ctrl), (u64)n_ctrl,	\
-+			    (u64)(exit_controls & x_ctrl), (u64)x_ctrl);	\
-+										\
-+		if (error_on_inconsistent_vmcs_config)				\
-+			r = -EIO;						\
-+										\
-+		entry_controls &= ~n_ctrl;					\
-+		exit_controls &= ~x_ctrl;					\
-+	}									\
-+	r;									\
-+})
-+
- static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 			     struct vmx_capability *vmx_cap)
- {
-@@ -2593,7 +2621,6 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 	u32 _vmentry_control = 0;
- 	u64 basic_msr;
- 	u64 misc_msr;
--	int i;
- 
- 	/*
- 	 * LOAD/SAVE_DEBUG_CONTROLS are absent because both are mandatory.
-@@ -2697,22 +2724,9 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 				&_vmentry_control))
- 		return -EIO;
- 
--	for (i = 0; i < ARRAY_SIZE(vmcs_entry_exit_pairs); i++) {
--		u32 n_ctrl = vmcs_entry_exit_pairs[i].entry_control;
--		u32 x_ctrl = vmcs_entry_exit_pairs[i].exit_control;
--
--		if (!(_vmentry_control & n_ctrl) == !(_vmexit_control & x_ctrl))
--			continue;
--
--		pr_warn_once("Inconsistent VM-Entry/VM-Exit pair, entry = %x, exit = %x\n",
--			     _vmentry_control & n_ctrl, _vmexit_control & x_ctrl);
--
--		if (error_on_inconsistent_vmcs_config)
--			return -EIO;
--
--		_vmentry_control &= ~n_ctrl;
--		_vmexit_control &= ~x_ctrl;
--	}
-+	if (vmx_check_entry_exit_pairs(vmcs_entry_exit_pairs,
-+				       _vmentry_control, _vmexit_control))
-+		return -EIO;
- 
- 	/*
- 	 * Some cpus support VM_{ENTRY,EXIT}_IA32_PERF_GLOBAL_CTRL but they
-
-base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
--- 
-2.48.1.658.g4767266eb4-goog
-
-
---6p5+kLFLXaqTdVYq--
+  Maciej
 
