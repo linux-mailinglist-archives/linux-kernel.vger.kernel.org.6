@@ -1,236 +1,168 @@
-Return-Path: <linux-kernel+bounces-532101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04045A448A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:43:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B3AA44878
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8F216F5ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9C057AC95A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B6219922F;
-	Tue, 25 Feb 2025 17:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BFB2054F4;
+	Tue, 25 Feb 2025 17:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AJSv+rNn"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="muXSm/zo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C4516130C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A894816A95B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504983; cv=none; b=I252vuiU0cchGt21dm25eCdbhJX0HessQxRHUqWzrf2faP6m2jv8q687FHpkruP23T8fwBzpa+BOE6xHkl3iRXwHDWGfxh1+vriq/h7nSGm5HWAMPU1FaLfFH3nV88tKTk59nE+qxhquc7Uqp43zVCOyKPdMxUdhu2KufnSy6zk=
+	t=1740504986; cv=none; b=XEKts28JPEHUbYwEC7DVNCEYpUu8Qxuc1rULK6Gx0U7VE+B37MmFD6TpLqVn4+BCi1tLAKVZqWH8s1Ybo2OC0pfoQ2kFac8Mphf9HFhYNS+cUx4wst76upLDSn6d5J3gj5hdI/8NottkmisFtMynJ1pa/FTC5R+BerkIFjT/zto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504983; c=relaxed/simple;
-	bh=gOl/36Ytrp1zDSvgkiGrHn22n77JQLii4H7PNe1Rj8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GM+1L8W0qxatG4tj1t1Msr5Kb5i0798PEJyxj6fUAJkLLFkgQ+5OPBIEYX7Kx2/82xSevit42on9h+KQEdYx967rq0E/f6K2Hg5x26T0k1VruCxdtme2pyN8ihFSpW4M192XKs/6cwYWeaeF7vrYP3CLQVPQfQDwJ/SQMg3TpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AJSv+rNn; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4398c8c8b2cso59898045e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740504979; x=1741109779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jb7TDT/aVvgdtxg6kdFOwwgVqkaL6U92QY48yAXPGLY=;
-        b=AJSv+rNnAStmwd6xYcjFg/j9ptQuRMvrGj5oFP2Y67J5jQNKVjx1/X3hLWpZJ1aLlZ
-         kCDc0UliYwjo6nsAMVz9JsYHqYM4gqy7sJZl5AYpMjOfvBHdfqmZICEY7+VmlBzK+TXy
-         xeM4QRyl4yciqbaFTuqV4JLL2X1zQ+3XXlb4u35zBszbdyuCTZLJY4BmFyq9G4uMb3Sq
-         /SVQfwqALAeZ+QI66MC5jXl4SyjO1hljM1XISQgIO/U1LBwT1Vcs1xqKwlmm9GG9cDao
-         DeXX9Xdzd3uCzwxU4TzyflUIR26oAW0k1tYn94TVULrcGJah6q8sKhRbxb9VSjMzxgn9
-         srbQ==
+	s=arc-20240116; t=1740504986; c=relaxed/simple;
+	bh=vMpMt5v73FW7ggM23zoCt5cN9QuMLVUvflsLEKOSyKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wh1OWrrOXGsmzu8OmAN3BM1wl5L6KS44LFYi2zTpS5H3zycVTKvgnFe/PczRa8HW+DES3pfJBiAs1iE8UycnZL8ufXphk9h4SwIVQHIM06u1ayc+pSXYG3fT51ai5CvZ/pt5/z4JxBd/OdOi4VIVr6ZyVVhawoo2qse8EF6HKak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=muXSm/zo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8G4bh031843
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:36:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PY156n79dtgyG547BmE7z4tz9qFqyESVtay+ztcM35s=; b=muXSm/zoLUrDUdLv
+	RVO8vy97Q8kxT7j7yu/Oxf/RbYbUb5J1UoUQ11baEgXCYj052Z0KU+zvs7U+1Kpm
+	04TpRDaSKV263B1BELeKYZCxqpe2fxnPGXQCAhNoWJjzhyKPVFGy9AJziBvCS7aC
+	WiuWqCmaB8mMyU5BGEgoSNq+SZjEO+/0ESiRrW1+q2aAq/7Id1/UZ2lImxej0G+B
+	LMNEHYwZe5Ar5NiP2wrGXh8KMomYG5vDdzl/EfqU5IByni+t9jFQKstNcwPhNTzr
+	NreLpEicJ6hHm+FO5IRCixq49uGX6+Dh8bf1AMh7rVTzvddCzJ7YFYpj3++v8sdc
+	q226Bw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6nu1qg0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:36:23 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22126a488d7so130839425ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:36:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740504979; x=1741109779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jb7TDT/aVvgdtxg6kdFOwwgVqkaL6U92QY48yAXPGLY=;
-        b=oO+MIF3YfQyKGFM+CWDPwk26/4nWaBQtkUpQzsM5fNdUINvrKmKYfOVBXc9yaTHEFZ
-         van1J9euRw7nBx3Rdt+/V3uk/os00io4XAf9K7d0/7UvE8ABjkFp3qYzECW2tJi2AUge
-         77+QfxFUHXLTk2UByQ9XloqQK/4qtOlXDb6edNIVuw7xaNQaDrJ8o1E8gUa/FBCVYByD
-         cr5G/4DI4Mkf2Ovs2agx1qWuVVtk2Ex7h2uIcuLxGzN5CfXpt8DSgRh9q+z9uxcMLEYe
-         +1ovtA2Ix9AHIYWX2TqrUcWOTcb8ue2zgqJluCOQ0/ULl37A7wQfQ1/2KIOTanfTPAkG
-         nWAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY2ylzerhbjfoIjBA1v/X5wk7J8o1EOMdGkuoaZ7wfgk8vd9C7ERdwwJE77fsrjkpGxAC3U/sDUZ/n4ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2gpxMS2ntP819XigWH+aWsECYFchQV54amrocP2G9UrNjtcIV
-	K+F7meS+gWVB5jmb7QPxq2J1hmMPyvV3UFq9pIMeRkBRCx2RQ3Ee4sF5sPcWAUSRGkKfke8u/AN
-	fPj6Bnm27b8n6UNQ5igC9pgKsIJIu2aqLLCxQ
-X-Gm-Gg: ASbGncvFcx6k9Os9LRoZJaJKbH5x/5u1MuIse9jr/0jbsgit0gZYdcyZ4bXtdYG09RN
-	7oHE83Ee3RQNDbqsyrDhJys94ndPjdcCYLW7s4nx62/eJ8ajH+WMz8MRGg+Ug7AQUdtLpSUzhAb
-	zJXp7gJQXZDF/E/JsHZ92TvqB80pPtasoSas+Pzg==
-X-Google-Smtp-Source: AGHT+IEKeLbYDcWbkUCjv9WAAKpj5i9urIXFAIil9bTEvJFu6/6yC9kyIte/8TvLmHWUW8IDBAxxehZuyfy5A6xga1I=
-X-Received: by 2002:a05:600c:1d8c:b0:439:98ca:e39b with SMTP id
- 5b1f17b1804b1-43ab44b58c3mr31936975e9.29.1740504979330; Tue, 25 Feb 2025
- 09:36:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740504982; x=1741109782;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PY156n79dtgyG547BmE7z4tz9qFqyESVtay+ztcM35s=;
+        b=wH0zFu5mOJWsYe3giZF/VKQxTQramu9rN0eT2vIPL/5OFM2k2qv+HtRZ4oaq42lKxa
+         ArYS/AHOGS9HwqjjqaoRHU6f9tFKb6yGTfN/BoYIORHVdmDEIu46WAM7tSsU3acgBjlX
+         1suaiuooFZQ0PFNZopUVa0GYb93W6b6ARoq/USlR9JtDrSd1+heXmRaieVL+6RSilzOu
+         RFF8f0X49PEYQsWzXTf5qFwU7pT7DM8dWIiBRlCR3hQKaAav6CHWy+4T5Hu4wkMxqRLu
+         ANW4hILCznz0ULstQ9W4TMPCezcx1gJ4Nkx7bElHWEPIjAyyj6UeqSXcPyG/bHn8Slkv
+         kzAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFtVxwJEjzvEKYdOeivm1J2IsWsopmZXftGdHW6ljedmwrEmE1HOo/djLRvfRPugXkPubYjhK9A48hBwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySNTw5/c2nnnEB+Q2B1rON3VtKOhKYm9tGYwTD4GgpWvASfdL6
+	/+h3TOSAEo7y9gyXL+i2YqD7iGrisNlmhn864/y85E9PvaB6cCjo9FyDjVn1m31LxaENuBN9MU1
+	2GYpFmLvUE9jd3QVDIi8vlSetgRGU2UZ4f3kklBRPWD/Fi0j0Lg61tgmWp0dN04k=
+X-Gm-Gg: ASbGncs3Tz9/2aZVZSksJ+RxVHnGGZGXA0hMbIM6L7XUyBcfrpAa7yEfHfe1ZhLGh4+
+	g5TPpEd/ssKcQE1Y0nDxBOt6ZfDHhqEWDAvFZodvoOAkHnEXQhhZaZFBDeEvxJPuEdjOvuZdh+r
+	+AS0wJtiZU8pkAxIdR4MQ5ysPgND9Pv8tThPATJvKTy63FMLBNTduaSGuUZGjrpNGo4DkrRj4cA
+	QmMVwfpdJg+DvL334RTTl891rO/46Uu9eJqkl2fkNvdFRWbjB0Dl/4tzPif5Sl7IqDpd60BHBUN
+	iJpgekLeiKN6o6uNGC5Ad2hS3okf6j9qW1x0sGjP7iViXXrU/HNUNEqCZFZJgG/lDA0OgRE=
+X-Received: by 2002:a17:902:f68c:b0:21b:d2b6:ca7f with SMTP id d9443c01a7336-22307e6b767mr73470665ad.32.1740504982008;
+        Tue, 25 Feb 2025 09:36:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFw8TV2N1DWUVbvHR3m0t6e0ifAA4ibMwsVXoLdv9Y7Qb3v7ZoTUZ06wLZmqsF37ryqtGQ7PQ==
+X-Received: by 2002:a17:902:f68c:b0:21b:d2b6:ca7f with SMTP id d9443c01a7336-22307e6b767mr73470115ad.32.1740504981602;
+        Tue, 25 Feb 2025 09:36:21 -0800 (PST)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0ad990sm17124675ad.215.2025.02.25.09.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 09:36:21 -0800 (PST)
+Message-ID: <71019e23-f339-4485-8599-c4e40ad979a9@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 09:36:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com> <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
-In-Reply-To: <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 25 Feb 2025 18:36:07 +0100
-X-Gm-Features: AQ5f1Jrk5Ircg0d1PeSghOYiJs5Q14TTxoym4eosxDvw1DHTRuGD27YpgvptUqQ
-Message-ID: <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Ventura Jack <venturajack85@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-slim7x: Drop incorrect
+ qcom,ath12k-calibration-variant
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath12k@lists.infradead.org
+References: <20250225093051.58406-1-krzysztof.kozlowski@linaro.org>
+ <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
+ <7b54e965-3395-4349-8ae7-51a28c759235@linaro.org>
+ <kce6gzso22fp3ze2wp43fvy4tv6yqkaijm72kh5qk34jwijk2l@3ifaiz5tgjvl>
+ <d93789c6-61d9-4761-98f5-aa3dbec14d82@linaro.org>
+ <21ad3381-4d65-4c68-892d-9f485bf13735@oss.qualcomm.com>
+ <c55f615e-6831-4470-9ea2-73fe605b8a5f@linaro.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <c55f615e-6831-4470-9ea2-73fe605b8a5f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Q8gAn-YHBst6Scv1adv7u98LGScS4ZCy
+X-Proofpoint-GUID: Q8gAn-YHBst6Scv1adv7u98LGScS4ZCy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250111
 
-On Tue, Feb 25, 2025 at 6:21=E2=80=AFPM Ventura Jack <venturajack85@gmail.c=
-om> wrote:
->
-> On Tue, Feb 25, 2025 at 9:12=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
- wrote:
-> >
-> > On Sun, Feb 23, 2025 at 4:30=E2=80=AFPM Ventura Jack <venturajack85@gma=
-il.com> wrote:
-> > >
-> > > Just to be clear and avoid confusion, I would
-> > > like to clarify some aspects of aliasing.
-> > > In case that you do not already know about this,
-> > > I suspect that you may find it very valuable.
-> > >
-> > > I am not an expert at Rust, so for any Rust experts
-> > > out there, please feel free to point out any errors
-> > > or mistakes that I make in the following.
-> > >
-> > > The Rustonomicon is (as I gather) the semi-official
-> > > documentation site for unsafe Rust.
-> > >
-> > > Aliasing in C and Rust:
-> > >
-> > > C "strict aliasing":
-> > > - Is not a keyword.
-> > > - Based on "type compatibility".
-> > > - Is turned off by default in the kernel by using
-> > >     a compiler flag.
-> > >
-> > > C "restrict":
-> > > - Is a keyword, applied to pointers.
-> > > - Is opt-in to a kind of aliasing.
-> > > - Is seldom used in practice, since many find
-> > >     it difficult to use correctly and avoid
-> > >     undefined behavior.
-> > >
-> > > Rust aliasing:
-> > > - Is not a keyword.
-> > > - Applies to certain pointer kinds in Rust, namely
-> > >     Rust "references".
-> > >     Rust pointer kinds:
-> > >     https://doc.rust-lang.org/reference/types/pointer.html
-> > > - Aliasing in Rust is not opt-in or opt-out,
-> > >     it is always on.
-> > >     https://doc.rust-lang.org/nomicon/aliasing.html
-> > > - Rust has not defined its aliasing model.
-> > >     https://doc.rust-lang.org/nomicon/references.html
-> > >         "Unfortunately, Rust hasn't actually
-> > >         defined its aliasing model.
-> > >         While we wait for the Rust devs to specify
-> > >         the semantics of their language, let's use
-> > >         the next section to discuss what aliasing is
-> > >         in general, and why it matters."
-> > >     There is active experimental research on
-> > >     defining the aliasing model, including tree borrows
-> > >     and stacked borrows.
-> > > - The aliasing model not being defined makes
-> > >     it harder to reason about and work with
-> > >     unsafe Rust, and therefore harder to avoid
-> > >     undefined behavior/memory safety bugs.
-> >
-> > I think all of this worrying about Rust not having defined its
-> > aliasing model is way overblown. Ultimately, the status quo is that
-> > each unsafe operation that has to do with aliasing falls into one of
-> > three categories:
-> >
-> > * This is definitely allowed.
-> > * This is definitely UB.
-> > * We don't know whether we want to allow this yet.
-> >
-> > The full aliasing model that they want would eliminate the third
-> > category. But for practical purposes you just stay within the first
-> > subset and you will be happy.
-> >
-> > Alice
->
-> Is there a specification for aliasing that defines your first bullet
-> point, that people can read and use, as a kind of partial
-> specification? Or maybe a subset of your first bullet point, as a
-> conservative partial specification? I am guessing that stacked
-> borrows or tree borrows might be useful for such a purpose.
-> But I do not know whether either of stacked borrows or tree
-> borrows have only false positives, only false negatives, or both.
+On 2/25/2025 9:07 AM, Krzysztof Kozlowski wrote:
+> On 25/02/2025 17:44, Jeff Johnson wrote:
+>>>>>
+>>>>> But nothing parses such string as 'qcom,ath12k-calibration-variant' (see
+>>>>> git grep), so how would driver use it?
+>>>>
+>>>> That's what I'm asking: is the property redundant or is it correct and
+>>>> it is a driver that needs to be fixed?
+>>>
+>>> I assume driver will need something like that property, but that's not a
+>>> reason to accept incorrect one in DTS. One cannot add properties to DTS
+>>> without bindings, so bypassing bindings review, and then claim "but my
+>>> driver needs them". Send proper patches for driver first which will get
+>>> a review.
+>>
+>> We definitely need a calibration variant entry.
+>> I've pinged the development team to get the driver patch.
+> 
+> 
+> The patches were on the lists but were not accepted. Therefore DTS
+> property cannot get into the kernel. I am sorry, but this is not somehow
+> fluid or flexible that internal team can squeeze something into the kernel.
 
-In general I would say read the standard library docs. But I don't
-know of a single resource with everything in one place.
+I see bindings and DTS patches but no driver patch, even in my internal queue.
 
-Stacked borrows and tree borrows are attempts at creating a full model
-that puts everything in the two first categories. They are not
-conservative partial specifications.
+> 
+> Also post factum reasoning is not correct, because this would open the
+> gate to bypass any sort of review. Just squeeze your stuff into the DTS
+> and then you can bypass all DT maintainers :/
+> 
+> All properties must be documented and bindings must be accepted *before*
+> DTS patch is applied.
 
-> For Rust documentation, I have heard of the official
-> documentation websites at
->
->     https://doc.rust-lang.org/book/
->     https://doc.rust-lang.org/nomicon/
->
-> And various blogs, forums and research papers.
->
-> If there is no such conservative partial specification for
-> aliasing yet, I wonder if such a conservative partial
-> specification could be made with relative ease, especially if
-> it is very conservative, at least in its first draft. Though there
-> is currently no specification of the Rust language and just
-> one major compiler.
->
-> I know that Java defines an additional conservative reasoning
-> model for its memory model that is easier to reason about
-> than the full memory model, namely happens-before
-> relationship. That conservative reasoning model is taught in
-> official Java documentation and in books.
+There is no intention to bypass DT maintainers. We are just trying to upstream
+a large amount of downstream code, and in the process some pieces are coming
+out of order. And there is also confusion if binding, driver, and DTS changes
+should be in one series or three separate series.
 
-On the topic of conservative partial specifications, I like the blog
-post "Tower of weakenings" from back when the strict provenance APIs
-were started, which I will share together with a quote from it:
+We are moving towards an upstream-first model, but we still have to address
+the existing technical debt.
 
-> Instead, we should have a tower of Memory Models, with the ones at the to=
-p being =E2=80=9Cwhat users should think about and try to write their code =
-against=E2=80=9D. As you descend the tower, the memory models become increa=
-singly complex or vague but critically always more permissive than the ones=
- above it. At the bottom of the tower is =E2=80=9Cwhatever the compiler act=
-ually does=E2=80=9D (and arguably =E2=80=9Cwhatever the hardware actually d=
-oes=E2=80=9D in the basement, if you care about that).
-> https://faultlore.com/blah/tower-of-weakenings/
-
-You can also read the docs for the ptr module:
-https://doc.rust-lang.org/stable/std/ptr/index.html
-
-> On the topic of difficulty, even if there was a full specification,
-> it might still be difficult to work with aliasing in unsafe Rust.
-> For C "restrict", I assume that "restrict" is fully specified, and
-> C developers still typically avoid "restrict". And for unsafe
-> Rust, the Rust community helpfully encourages people to
-> avoid unsafe Rust when possible due to its difficulty.
-
-This I will not object to :)
-
-Alice
+/jeff
 
