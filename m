@@ -1,113 +1,93 @@
-Return-Path: <linux-kernel+bounces-531609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1820DA442BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:29:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A6CA442AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D834A189267D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ABEA3B4FB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846C126A0A4;
-	Tue, 25 Feb 2025 14:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A13A26B0AD;
+	Tue, 25 Feb 2025 14:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Z1X26bi7"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="terzUy0u"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB1A126C18;
-	Tue, 25 Feb 2025 14:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375182698A8;
+	Tue, 25 Feb 2025 14:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493565; cv=none; b=mOGDfmiMAa0jrFSORDM4Glp584scycujEsIrlfz6LZFZYB26S5JXbIPGw22ok1wWTA0zVheZHoj87lHJ75xsgbJjPAW0+eaXZr4/FztIUYeQyCaRtVZwNvTR73sqFdh7vK5NDTysSI2ZEFshs2ae/6xTWudTunCOuZf4pCfMGm0=
+	t=1740493569; cv=none; b=az5v+OyGL31Co7ngi0eQKuwmoVlX114r7z1AF3CaLYcSEkeQE4CQFviOnhRhuPgmP8FJQ1ViUBPpNRS5OwSt2TrRs9WQ4KrHpS1vknQnTQ1jS/eTNGibIzowLxTr6GP5BVRiXMGamncXInDRel3Wx2wqLyB2+T1qF9Fu/1NQGVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493565; c=relaxed/simple;
-	bh=362uBNCJSL6/D4zf+C/aqFC5d3W5hFLgF8NaryGLpW4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=a272LvG0xyLMzt4f4cT/vmpZ0EDKdsZZeWNpNXoPXIquGjKRw6w7IufFAQp54OmsRqxSWLnAMaYdRgO4V7UPz/LVTgaxfxCGLL1YKkrNc+bS5+sgYSnrliY0W7/cWto83KlmILfSKNfXGwtiMJLtuAGLwm4maWhQBfZZzvrDEtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Z1X26bi7; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1740493569; c=relaxed/simple;
+	bh=jpEqmQ45wBRCVC0jxGc+LOlCURwWWVUWO5MCp8cspTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BFrxg4VAXGOzgiobKobycA8iPMLqNXZp96gyPTxQON0EcR7/tgBZ5iD8w9s9DLxqf/yyZ0vvHXSkA+3puv+BW3kBwUws9VAe2bHnzU/VcwHcC6X1R3Nh4QmWb7LzGYSuiXKRGLABYb16auYvtUuTdC73e0qmRleoxItax8qoHGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=terzUy0u; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 8A6372E08B57;
+	Tue, 25 Feb 2025 16:25:59 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740493560;
+	bh=jpEqmQ45wBRCVC0jxGc+LOlCURwWWVUWO5MCp8cspTs=; h=From:To:Subject;
+	b=terzUy0utYQeZbKu94hIf8N7x1dL0dIxBLhFvqoOD1qLJRuaCooqJ1pd6vihfgwdq
+	 5uWQLr3+c0DY9nNA2su6xb/2cVbqjQFGXbEVdl75aYWXlofeR7YrfxzWDg1vCrH/6H
+	 y9zfsCHz8h/ilVia6S/B2iXIKzTep1N7MrZrW0hc=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: luke@ljones.dev,
+	mario.limonciello@amd.com
+Cc: corentin.chary@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: RE: [PATCH] platform/x86: asus-wmi: change quiet to low-power
+Date: Tue, 25 Feb 2025 15:25:55 +0100
+Message-ID: <20250225142555.14005-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250224223551.16918-1-luke@ljones.dev>
+References: <20250224223551.16918-1-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1740493553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WyyxfZ8er5WqZOvIZ6mxo74JK7+5Nk5jVOc6g/QyEzY=;
-	b=Z1X26bi7ygLBS3+YP89D2JR7/QWR7eXXN3q1RGtCQ3+EEEyHxoYQpXbp52wPDrgNXaWacW
-	Ounh1eXsGBBwxBLd/7Di5n93VbT9HhQvf9jl6Vim2qNKGD88nD/ML295fQfTRkhorE6Uh1
-	y9/DreYBRT9Ekl/916EWFharGXpsOWZAg8lKC7+bIk95ZpLm9A2QquEqUmFbsIvtuqNN1C
-	4ZcGeWx8hn/TuKWiLzmG9cjzglaqrwc+FI0Mp947mgR3+gwUWye4wIzhBT3xLoaC/9pm3l
-	jLiZSSPJRpbr5cs+7oCYYjNE6rHgNRvYE+JeSFarEusZ3TABB7gKfJhq1GWuSg==
-Date: Tue, 25 Feb 2025 15:25:52 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Justin Klaassen <justin@tidylabs.net>
-Cc: Tianling Shen <cnsztl@gmail.com>, Kever Yang
- <kever.yang@rock-chips.com>, Johan Jonker <jbx6244@gmail.com>, Heiko
- Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: fix u2phy1_host status for NanoPi
- R4S
-In-Reply-To: <20250224170925.39126-1-justin@tidylabs.net>
-References: <20250224170925.39126-1-justin@tidylabs.net>
-Message-ID: <48c705e65cc8e8d4716b41a4a87170e3@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174049356048.12946.16381279399138541255@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Hello Justin,
+Hi Luke,
+please add appropriate attribution.
 
-Thanks for the patch!  Please, see a few comments below.
+Closes: https://lore.kernel.org/all/20250224195059.10185-1-lkml@antheas.dev/
+Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-On 2025-02-24 18:09, Justin Klaassen wrote:
-> The u2phy1_host should always have the same status as usb_host1_ehci,
-> otherwise the ehci driver may be initialized for a disabled usb port.
-> 
-> Signed-off-by: Justin Klaassen <justin@tidylabs.net>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-> index b1c9bd0e63ef..8d94d9f91a5c 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-> @@ -115,7 +115,7 @@ &u2phy0_host {
->  };
-> 
->  &u2phy1_host {
-> -	status = "disabled";
-> +	phy-supply = <&vdd_5v>;
->  };
-> 
->  &uart0 {
+For me, this patch series plus the multi-platform profile one constitute
+a double ABI break. Not only does the legacy sysfs for platform profile
+regress when there is a second profile handler for a device, but all
+hardcoded scripts for Asus devices will have to be updated.
 
-Indeed, the rk3399-nanopi4.dtsi file, which rk3399-nanopi-r4s.dtsi
-extends, enables u2phy1_host, usb_host1_ehci and usb_host1_ohci,
-so disabling u2phy1_host in rk3399-nanopi-r4s.dtsi makes no sense.
+While I would personally like to avoid this, I am ok with it, given
+appropriate attribution, since I did go through the effort of reporting it
+and providing a mitigation.
 
-After checking the NanoPi R4S schematic, I can confirm that the
-phy-supply references the right regulator.  There are some strange
-things in the schematic, but they're unrelated to this patch.
+@Mario: you added Reviewed-by to a patch without proper attribution. Let's
+not rehash our discussion from few days ago. Please try to do better when
+it comes to attributions in the future.
 
-However, there should be a v2 of this patch with the proper Fixes
-and CC: stable tags, so this bugfix also gets propagated into the
-long-term kernels.  Please, feel free to also include
-
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+Antheas
 
