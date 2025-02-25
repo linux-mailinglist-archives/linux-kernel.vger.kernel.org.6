@@ -1,153 +1,119 @@
-Return-Path: <linux-kernel+bounces-531268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5ACA43E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:52:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F0EA43E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C5A188A7DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F04188C495
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25998267B8B;
-	Tue, 25 Feb 2025 11:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE1E267B9D;
+	Tue, 25 Feb 2025 11:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXlo5udt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fhhx23vt"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846BF267738;
-	Tue, 25 Feb 2025 11:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7198267B1D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484279; cv=none; b=esUZ0xfY0jIbzmoi1SnzuFXTYMb+bEVmmXN0WeNs78IHrdxs/d7v+BD/jD0vOeZRNYCq2OeNK1T9rZHb7OjC0mTyiVTcz3kKHETMC8NnFVHmEm/juVss1UoPK4Hsb0TFojz9tqde1FMXSgeN/ovTCrHlR86tEVrZGsDWNzlsFxk=
+	t=1740484329; cv=none; b=TVy64c63QTnQlgqkIv0kWA2LWBnpMD/lHF0LzvuRbN3zuIAGAQ94rEkecf7teMSWkGsNuglH2Ay77CZzMpmgJHpjJKcQGWDE5k9gtD9Gw/j1QOMx3kO7qrOEZ7SOyKUNP41a6hrqJj+B//UAEPoud7ph3QWnIZdDHwfSFmmq9n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484279; c=relaxed/simple;
-	bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LUxv4e6LM1a/uUpyBXCaOVbckZEmKV/JRvNaFI2Zj/HiDwBkGb6ou5uG5xUIfqeAhgHsncQqc9kNjqV3GypvvJgdcEVbXi2w1Bn/uzb2eWlpWeWC5DNXeOr+nNVaOWbhJhSpe3i0NcEVnysaerwcxORuZaSA5Wxs3blBd71X9QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXlo5udt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B740BC4CEE8;
-	Tue, 25 Feb 2025 11:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740484278;
-	bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TXlo5udtTLn0TMoIg/jFOS87YAgyBIcG/GPS7bi3VURLodA7AYYtcoi1g/AWv2gam
-	 8ij02sqNOSu1hdNl8QmHGjwYlbkFCzqht3WW0lh6e7dnT4yx6xaVgliGMLhcs2NEzJ
-	 pI7Du/JUMevaEp+Cr+Zuy9TZU+/u4mCdWE/osiQKnxDXA1J8IfpPTq0IBGBFPUpilw
-	 xcodaj6/Ic0wr25AAqZkmrSrsk3J1ssabHh/hnbnDWznvRgen5B2si6uaLs1wvRYHE
-	 IlSXd6PPEpIE7Vbvnkw/eX8E3zjHxgfDB5cYRGBe7hzT3XdPyZVghgwIGb13a2DJtd
-	 AJwR9Ly/YRcew==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Tue, 25 Feb 2025 12:51:12 +0100
-Message-ID: <20250225-vfs-fixes-093d8cb2fe3b@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740484329; c=relaxed/simple;
+	bh=06Py7aJp14BHUIJAvzvlfHnZrSajm4jMw3RXc7l2ukA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZD7KNnxcrtibn6R1Td949XpGK8kkzT2ktlui1nzWjh3f5EdY8p5WLIfm8pf4IgZI9UsNgz3HbyQXp4qtcf4iKlZepUmM/yUBvAGr+A6ejWBU67QF6+WqqeSO9B0s+GlP8sp+7uvXX+8PSSxa/oO0BOKQNU3Tln9hsGqpLmPX9mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fhhx23vt; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54605bfcc72so7340685e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740484326; x=1741089126; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wS9tak0NaNpAhLlFW6uyty61j0I79uv4Vz/GWJtmTk=;
+        b=Fhhx23vtDyhPWmr52coCHVGH3HTuXpIT+JMJoX+OyQ5JSQIqiLiGO5Ix+5otyrU9c4
+         R7kUTZ3HMznaOxWFuV3TUSXLHi8T5YVAm8mLz4aVEAwcapnLwZySY9wTbmHc3M8gZXAL
+         qnA/S4uFMWTii4KQayzWa0BXkVOzkx+ACKFJUyOR8fxUqvRU0VhrghE32Jod1YlL/MI2
+         BAXG4wssYVUL2DetcQ0eVbnU2XhdW3kzWywWEiB3nVr2AyEnM699J8s8PNhdrHbPCjBa
+         4LHAQZbHPrq12e1AdKRGqNUXmh+OXUCIn0MnoMzpS3V435udP07OXuhL4D0L1NegVeKA
+         DH+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740484326; x=1741089126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wS9tak0NaNpAhLlFW6uyty61j0I79uv4Vz/GWJtmTk=;
+        b=k5E/2QwO4+6jOpbtyNWfEjj/ngC3R6cvIUKgqcQD4jNtelSHfxIayXS5zPQAECUYL7
+         pQ6yHav8WO6KjRtFA0BwwQmGpcAz2vyhDUdG/VmUUFY6KvirZ2RGFNsfT1N7tckqyXHH
+         soEQqK2ualA6XDGooMXgroFqeqaUuTbNLo2XNHydRLNi73+mTI+/rirscCXiwwT5rAZD
+         uqg05CxDiKF70mgNVllwfoeg6D6X2WfnQlY+fs4quT2Pt1eb45YYXuTtWtR1FgRkmNh0
+         C/hE9LTJObJ2gN5XJsgWXUEW/5o6TnmiARKK/15H1ciJ0WMys4LZcm5Q7XyF6wkyD70t
+         z9HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoYtk2utHdxSz8nSSHGBiKW4At6EZtYUGDITya3gHNpe6WVaLabN6uOKmel494+8MBD0bwtd4424mqCJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/IU8X5bYmERyuTH0Vr91j1yDTyENAdiii3loRPK8vuQuNIyPO
+	3kVZ27TPhobtYOdiSL31q4dbziiakF065Yl6Oje605dINXKtaV+6WGrFgBVhBo0=
+X-Gm-Gg: ASbGncuo5/YXU2Vehcq7x6AwMAtbnpU9qncoTP+RsuoytvuPFt68+CN3xkObGXPnegZ
+	Z9aGedP8ob5Aroxuo04ZOe4z/CnbNhQ014WJX8FW76e/DeI1ixomz1o1Knp28gwyhyP8THP+y/d
+	1nuZusC9IkqLmo2zv/jcslhfkgpWst4G3vCZnPm79zRO6ykp47NiFhyIQS9qmhdTQScnEK6InAt
+	BSmj6X4V9vO4esOq2DX88HzbhLneIjv3X+RNpn8b7EQX1f0ouTZ9zaJ8CsnDTVuNQ+E1QCs95rY
+	/C+uZbVPyGKQ5QLBzvye8rwtxUOy5mQpYfGpJSDqmg75UBo6hVChc15epZDne8zvaCvvnSvB+J1
+	ftszSAg==
+X-Google-Smtp-Source: AGHT+IHaCOYYY1hFZ2o6pI3+gD73kquLWGQBBvEHfmt0Roiv69QaC0Cnq2VStk0d5J4mPbpT0ertdw==
+X-Received: by 2002:a05:6512:e88:b0:545:457:e588 with SMTP id 2adb3069b0e04-54838c5e762mr6148340e87.10.1740484325931;
+        Tue, 25 Feb 2025 03:52:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514fa1d7sm151829e87.238.2025.02.25.03.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 03:52:04 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:52:02 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com
+Subject: Re: [PATCH v4 10/10] arm64: dts: qcom: sc7280: Add 'global'
+ interrupt to the PCIe RC nodes
+Message-ID: <kkqydwutpaxzj6beqbdkmjanpzvvloqc3csm4ze2phoibmvmoy@asxc2ffipkgj>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-10-e08633a7bdf8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2769; i=brauner@kernel.org; h=from:subject:message-id; bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTvXbfxdufHnwVZ8dVBq5bZfe589VZZqWj/JtUjZ/SLd v5YcVnsUEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBETv9l+J8pNSXz/OTZPx+d S5jRtD71dfMUhelp4Vwif6T3nZZdF1TOyNDx+fynxHVCxu5cZ9kUDzaV7Dv6ODxz75n3SqoyFyZ M6uIGAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-qps615_v4_1-v4-10-e08633a7bdf8@oss.qualcomm.com>
 
-/* Summary */
+On Tue, Feb 25, 2025 at 03:04:07PM +0530, Krishna Chaitanya Chundru wrote:
+> Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
+> to the host CPUs. This interrupt can be used by the device driver to
+> identify events such as PCIe link specific events, safety events, etc...
+> 
+> Hence, add it to the PCIe RC node along with the existing MSI interrupts.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
 
-This contains various fixes for this cycle:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-- Use __readahead_folio() in fuse again to fix a UAF issue when using splice.
-
-- Remove d_op->d_delete method from pidfs.
-
-- Remove d_op->d_delete method from nsfs.
-
-- Simplify iomap_dio_bio_iter().
-
-- Fix a UAF in ovl_dentry_update_reval.
-
-- Fix a miscalulated file range for filemap_fdatawrite_range_kick()
-
-- Don't skip skip dirty page in folio_unmap_invalidate().
-
-/* Testing */
-
-gcc version (Debian 14.2.0-8) 14.2.0
-Debian clang version 19.1.4 (1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 2408a807bfc3f738850ef5ad5e3fd59d66168996:
-
-  Merge tag 'vfs-6.14-rc4.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2025-02-17 10:38:25 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc5.fixes
-
-for you to fetch changes up to b5799106b44e1df594f4696500dbbc3b326bba18:
-
-  iomap: Minor code simplification in iomap_dio_bio_iter() (2025-02-25 11:55:26 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc5.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc5.fixes
-
-----------------------------------------------------------------
-Christian Brauner (4):
-      Merge tag 'fuse-fixes-6.14-rc4' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse
-      Merge patch series "fixes for uncached IO"
-      pidfs: remove d_op->d_delete
-      nsfs: remove d_op->d_delete
-
-Jingbo Xu (2):
-      mm/filemap: fix miscalculated file range for filemap_fdatawrite_range_kick()
-      mm/truncate: don't skip dirty page in folio_unmap_invalidate()
-
-Joanne Koong (1):
-      fuse: revert back to __readahead_folio() for readahead
-
-John Garry (1):
-      iomap: Minor code simplification in iomap_dio_bio_iter()
-
-Miklos Szeredi (1):
-      fuse: don't truncate cached, mutated symlink
-
-Vasiliy Kovalev (1):
-      ovl: fix UAF in ovl_dentry_update_reval by moving dput() in ovl_link_up
-
- fs/fuse/dev.c          |  6 ++++++
- fs/fuse/dir.c          |  2 +-
- fs/fuse/file.c         | 13 +++++++++++--
- fs/iomap/direct-io.c   |  8 +++-----
- fs/namei.c             | 24 +++++++++++++++++++-----
- fs/nsfs.c              |  1 -
- fs/overlayfs/copy_up.c |  2 +-
- fs/pidfs.c             |  1 -
- include/linux/fs.h     |  6 ++++--
- mm/filemap.c           |  2 +-
- mm/truncate.c          |  2 --
- 11 files changed, 46 insertions(+), 21 deletions(-)
+-- 
+With best wishes
+Dmitry
 
