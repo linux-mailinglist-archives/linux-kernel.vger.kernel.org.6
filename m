@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-532438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A10F7A44DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:39:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65466A44DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE713B7C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A527A9010
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BB0211471;
-	Tue, 25 Feb 2025 20:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE692135DC;
+	Tue, 25 Feb 2025 20:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1o+YzKQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rAbBPoQH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XkG9IFJi"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8571448E3;
-	Tue, 25 Feb 2025 20:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D03B4A1E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515726; cv=none; b=sAopNrkMYS+SNcrEPCtupiUD23TLIGfeUxN0Qtk3GR1TqzsT+YQqOpgP9eJQgxpyLqtkLpg4lYn9E60I64Jj3ywtd0aXHdjENd1foqXP5ZTzpBWjhGWqi8u7xu89/kbV5JVH4pmcpCYpM94wVfIZ4T2N3h5/Iv04U15JgciLcw0=
+	t=1740515782; cv=none; b=llBEHXlNslC2IJ6jRVw8MuPuYsbaEGQoB6EQGprgnw9g+OZxLUs565/KQSHL/lKLDVrj/inzHjPB3/rD8/1DQhnyLDMAMiJqbF8IO/PV0SvhvGTflS1QczNaDjAfxfsZ/lCEfUHW8i6CQEyD9h0Uj3v6bwZDUCRYaaNEn3wcNAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515726; c=relaxed/simple;
-	bh=7Wg1p0f2ypkxnC0TFBuDHULqBARMpNOuEl5fgz8O5K4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OKkkLlMrIiTBLy2y30CoeHBqDTIjkPSOumJE9yiUVQkGPbFtIu/pZnlXTns8oLTN4+SsOGU/41F7c2KNjpPnC08YXs2R1uwnej0LEuamYL3DAljoG9S3+uL1dszuCx5Z3B3Aar5jvvfJW5qBPIKvkeVeEf1A9yK9le/TxF5nxdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1o+YzKQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4012C4CEDD;
-	Tue, 25 Feb 2025 20:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740515726;
-	bh=7Wg1p0f2ypkxnC0TFBuDHULqBARMpNOuEl5fgz8O5K4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=u1o+YzKQTjiHFa378K9/JNzh8aDmB6+8eSlzj2e0oqKfk3HNpjqojfcknEQf7dasY
-	 03hMuuQtgsENKquMorrWqUGoeNDbnhT8OWNv2SkWWLV2eGDqCJKtwkf01YgUUcP3em
-	 0vF1gkPM7D3w3aowShgQuXbYAygbru0he6FEP1lpDrHz9VHeTVcmNxKMqIdyJgFqm4
-	 XCKGzWr5q/xPyIjix/RGoEOSV0Bbd2ZAqusDGXt9sZ/henPtK7X/J0rhcR9MmW6NaV
-	 yjkjWzQ+We+5C2wMW9aH5ZtmatdkVY+qCKe3UQk5io0s0ECF90mFWsoYbS4vjIrMLR
-	 29Dh1G9eqw+eQ==
-Date: Tue, 25 Feb 2025 14:35:24 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Alexandra Winter <wintera@linux.ibm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Gerd Bayer <gbayer@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Thorsten Winkler <twinkler@linux.ibm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Julian Ruess <julianr@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] vfio/pci: s390: Fix issues preventing
- VFIO_PCI_MMAP=y for s390 and enable it
-Message-ID: <20250225203524.GA516498@bhelgaas>
+	s=arc-20240116; t=1740515782; c=relaxed/simple;
+	bh=J2XYNnf+yOUe3k4gQM0drsOfsUb37QQyfUWGVgTP9vM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qXrEujGzlcOjMh+goL3WEp6U+Y7v5U/GhwhrMlJC+jBucMQGoHI47TGKAnaZhYQVIRvD9dqVdwhFQBXVWzy+APM2I4bT2UpkwILJUvAdI+x2VaiEbvGu/AHg2JlG1Mc3a+BoeBR8OzuuFSyVJjPtTVuNz3WBBUSfQj3uivLTPKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rAbBPoQH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XkG9IFJi; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1C6941380A38;
+	Tue, 25 Feb 2025 15:36:19 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 15:36:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740515779;
+	 x=1740602179; bh=7D6bJfmXOGzdLvZy1vlb2xlVVaSEYnFr82KLKUChPY8=; b=
+	rAbBPoQH11CHKHyUr0RELVm34qQSrNSNm+EvdAhA/XQ4PNwnk5aOex5emNXiwbvk
+	0un6wFPwOL/eXuYgqRwLvtTj7er3n5Gy4jROr9p8Zl+Tyib22UyAm4xMw/jYntc9
+	5pMDeMMUeiq+6bejmRhSBgaAsC5KIDn2y3gNUwGxcbYwj2VAYJAPevbsuwFg67do
+	zsYvIRtP55yNGE+OAf4p40qZlDoUabtYfrj6slFReOB7eKI5SpbNNuW5hvvGw2k/
+	dI0jfRof5uyNGuTKKO91dEpvcFf4mrxNO5cUsD+ntqiM2Y5gwTuSiZL3ILXptpQA
+	yGsT/97YEMWB+NffPuTz+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740515779; x=
+	1740602179; bh=7D6bJfmXOGzdLvZy1vlb2xlVVaSEYnFr82KLKUChPY8=; b=X
+	kG9IFJiTjJs14yVFZDzYsJNs7EaVYZRl4JEStaxfLTaIabVoexI0otEpl8LnIEgP
+	FrRTWwlCwV90IHznNA3h2a/l+cZr1WaDbkzad85bU6P35WHkMBjas1uphbyiBjm5
+	+t6Eeakl5Ok698LgzaSjDrAb/ldMiekucJls3cB+jdpYwDIKHlr/DNyi+/dl852+
+	XEaA9mcEtTXXb7RkWhzIqlsU3K0bfqqQ5tDT6gMCILHHwnGFiNaHrr/Lw0fXsyZz
+	FyzFZYlYqbCDiMcc8S/BHJF/yxAZfekIoXqQjVnTiRYhtoreLJ1ESZOl8gMtl5fK
+	Z6BcovI7+b0T0gakByiKg==
+X-ME-Sender: <xms:wim-Z9DtxNbK3DsuI8S-dAS5saT-y3T-a3VW4-QU2e4lJllYG50tMA>
+    <xme:wim-Z7g9OEN9_uYtLd4nenKKQAjyllQsL4LzeyRW_Fwt510OyPW-CkgT4Z0ppnJHc
+    E3g9R3BP1Uy8Si1vXE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
+    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepuggvvhgvlheslhhishhtshdrohhrrghnghgvfhhsrdhorhhgpdhrtg
+    hpthhtohephhhusggtrghpsehomhhnihgsohhnugdrtghomhdprhgtphhtthhopehmrghr
+    thhinhesohhmnhhisghonhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhrhhishhtohhphhgv
+    rdhjrghilhhlvghtseifrghnrgguohhordhfrhdprhgtphhtthhopehvihhrohesiigvnh
+    hivhdrlhhinhhugidrohhrghdruhhk
+X-ME-Proxy: <xmx:wim-Z4nvZZPpY4TtFhyd1mCPoKAsn3bhs-Ty62_78Z4Jz0c_7WlaLQ>
+    <xmx:wim-Z3x_yzxr6iOzQEhDnT_xhW312zdVqzr7lkxgiGlokaJU3702Wg>
+    <xmx:wim-ZyR0wgFAyphUbGIowmnmr1j2a8VXzMEyJ1Lrf2qhvSSk4QRUTQ>
+    <xmx:wim-Z6ZnOj4Rsjn21J4Q_C6blLzic47SpxqHLt2ovBzht7Gs_DHOAw>
+    <xmx:wym-Z_SljGvPzzGiuZq_a-sWn7Rrc-JJ_r3FMPHup926LSf7r0zV4a89>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 53B2B2220072; Tue, 25 Feb 2025 15:36:18 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bcd6de5f40b2ee6d4d6758e3d2473172bd9b990.camel@linux.ibm.com>
+Date: Tue, 25 Feb 2025 21:35:56 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Mike Marshall" <hubcap@omnibond.com>
+Cc: "Martin Brandenburg" <martin@omnibond.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, devel@lists.orangefs.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <def39f2c-abc0-457b-9807-9a76e7da3161@app.fastmail.com>
+In-Reply-To: <dd1a326a-e165-4796-9005-6bff2019deef@wanadoo.fr>
+References: <20250225200901.4041575-1-arnd@kernel.org>
+ <dd1a326a-e165-4796-9005-6bff2019deef@wanadoo.fr>
+Subject: Re: [PATCH] orangefs: move s_kmod_keyword_mask_map[] into debugfs.c
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 09:59:13AM +0100, Niklas Schnelle wrote:
-> On Mon, 2025-02-24 at 14:53 -0600, Bjorn Helgaas wrote:
-> > On Fri, Feb 14, 2025 at 02:10:51PM +0100, Niklas Schnelle wrote:
-> > > With the introduction of memory I/O (MIO) instructions enbaled in commit
-> > > 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
-> > > gained support for direct user-space access to mapped PCI resources.
-> > > Even without those however user-space can access mapped PCI resources
-> > > via the s390 specific MMIO syscalls. There is thus nothing fundamentally
-> > > preventing s390 from supporting VFIO_PCI_MMAP, allowing user-space
-> > > drivers to access PCI resources without going through the pread()
-> > > interface. To actually enable VFIO_PCI_MMAP a few issues need fixing
-> > > however.
-> > > 
-> > > Firstly the s390 MMIO syscalls do not cause a page fault when
-> > > follow_pte() fails due to the page not being present. This breaks
-> > > vfio-pci's mmap() handling which lazily maps on first access.
-> > > 
-> > > Secondly on s390 there is a virtual PCI device called ISM which has
-> > > a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
-> > > which leads to any attempt to mmap() it fail with the following message:
-> > > 
-> > >     vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
-> > > 
-> > > Even if one tried to map this BAR only partially the mapping would not
-> > > be usable on systems with MIO support enabled. So just block mapping
-> > > BARs which don't fit between IOREMAP_START and IOREMAP_END. Solve this
-> > > by keeping the vfio-pci mmap() blocking behavior around for this
-> > > specific device via a PCI quirk and new pdev->non_mappable_bars
-> > > flag.
-> > > 
-> > > As noted by Alex Williamson With mmap() enabled in vfio-pci it makes
-> > > sense to also enable HAVE_PCI_MMAP with the same restriction for pdev->
-> > > non_mappable_bars. So this is added in patch 3 and I tested this with
-> > > another small test program.
-> > > 
-> > > Note:
-> > > For your convenience the code is also available in the tagged
-> > > b4/vfio_pci_mmap branch on my git.kernel.org site below:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
-> > > 
-> > > Thanks,
-> > > Niklas
-> > > 
-> > > Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
-> > > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > > ---
-> > > Changes in v6:
-> > > - Add a patch to also enable PCI resource mmap() via sysfs and proc
-> > >   exlcluding pdev->non_mappable_bars devices (Alex Williamson)
-> > > - Added Acks
-> > > - Link to v5: https://lore.kernel.org/r/20250212-vfio_pci_mmap-v5-0-633ca5e056da@linux.ibm.com
-> > 
-> > I think the series would be more readable if patch 2/3 included all
-> > the core changes (adding pci_dev.non_mappable_bars, the 3/3
-> > pci-sysfs.c and proc.c changes to test it, and I suppose the similar
-> > vfio_pci_core.c change), and we moved all the s390 content from 2/3 to
-> > 3/3.
-> 
-> Maybe we could do the following:
-> 
-> 1/3: As is
-> 
-> 2/3: Introduces pdev->non_mappable_bars and the checks in vfio and
-> proc.c/pci-sysfs.c. To make the flag handle the vfio case with
-> VFIO_PCI_MMAP gone, a one-line change in s390 will set pdev-
-> >non_mappable_bars = 1 for all PCI devices.
+On Tue, Feb 25, 2025, at 21:24, Christophe JAILLET wrote:
+> Le 25/02/2025 =C3=A0 21:08, Arnd Bergmann a =C3=A9crit=C2=A0:
+>> From: Arnd Bergmann <arnd@arndb.de>
 
-What if you moved the vfio_pci_core.c change to patch 3?  Then I think
-patch 2 would do nothing at all (since there's nothing that sets
-non_mappable_bars), and all the s390 stuff would be in patch 3?
+>> + *      .           .           .
+>> + */
+>> +static struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
+>
+> Unrelated to your patch, but I think that this could be made const.
+>
 
-Not sure if that's possible, but I think it's a little confusing to
-have the s390 changes split across patch 2 and 3.
+Right, but not trivially, probably something like the change below.
 
-> 3/3: Changes setting pdev->non_mappable_bars = 1 in s390 to only the
-> ISM device using the quirk handling and adds HAVE_PCI_MMAP.
-> 
-> Thanks,
-> Niklas
+There are obviously countless variables that should be const.
+
+     Arnd
+
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -73,7 +73,7 @@ struct __keyword_mask_s {
+  *     qux          8           3
+  *      .           .           .
+  */
+-static struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
++static const struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
+        {"super", GOSSIP_SUPER_DEBUG},
+        {"inode", GOSSIP_INODE_DEBUG},
+        {"file", GOSSIP_FILE_DEBUG},
+@@ -131,7 +131,7 @@ static int orangefs_prepare_cdm_array(char *);
+ static void debug_mask_to_string(void *, int);
+ static void do_k_string(void *, int);
+ static void do_c_string(void *, int);
+-static int keyword_is_amalgam(char *);
++static int keyword_is_amalgam(const char *);
+ static int check_amalgam_keyword(void *, int);
+ static void debug_string_to_mask(char *, void *, int);
+ static void do_c_mask(int, char *, struct client_debug_mask **);
+@@ -764,7 +764,7 @@ static void do_k_string(void *k_mask, int index)
+ {
+        __u64 *mask =3D (__u64 *) k_mask;
+=20
+-       if (keyword_is_amalgam((char *) s_kmod_keyword_mask_map[index].k=
+eyword))
++       if (keyword_is_amalgam((const char *) s_kmod_keyword_mask_map[in=
+dex].keyword))
+                goto out;
+=20
+        if (*mask & s_kmod_keyword_mask_map[index].mask_val) {
+@@ -811,7 +811,7 @@ static void do_c_string(void *c_mask, int index)
+        return;
+ }
+=20
+-static int keyword_is_amalgam(char *keyword)
++static int keyword_is_amalgam(const char *keyword)
+ {
+        int rc =3D 0;
+=20
 
