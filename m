@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-532581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D4EA44F84
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:05:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39913A44F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1744019C1192
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:03:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D953AE693
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B400620E31E;
-	Tue, 25 Feb 2025 22:03:46 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B0920E31E;
+	Tue, 25 Feb 2025 22:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="cH9oo3rI"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7DF19B5B4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB761C84A2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740521026; cv=none; b=n+UOdea8VE5os0ocDq2molp8Str4u9F+5kSx59Ifa0oVhM6os3V02bBEvfGIaRx686xcFJNjjWwE5V6jb2lFQG08Yu7YyaYIUq4JRJ0IQ1aJsGQw81T/xaM3b47kABUukBjv8HhST1DQsHBBJ7FiriGpodU2ed5K3HHJaq2OuLQ=
+	t=1740521055; cv=none; b=iblkRgH/8PjLnTcQlkGKuALkh3wUvsqpzi88xslCeOiboJ3V1wOhwuP00r+6J0VWRF4PiHbI0hvfG+K1ZtDVgr8Ix0iPNzWctoOfv7GckUXA8LOKYcolnTa4yX8dfOGv2iDmXj07SGA7zuJIKLKSgyYU4OHeMDlCzPgKVqMEcb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740521026; c=relaxed/simple;
-	bh=ZfI8pacriMRJtKkw2w6Swv5paM45wJov7uJ0m/Ya+gU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VqIri2gR2w/5q3K7UPbzegy7C69ggsynudcilmiN0zWUpNUNRSRu02Tsskybbj2p+dQHKLbMoVEXr1W58YJRCKGXv+bhW+wsxf+25z2yTsqTOncxPCW0YI9PkQz9DLgnd57YnJ2bodwV1eJYKC9iuYA24xmQfkXm32GJ8fIM9Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tn31K-000000002Ov-41lq;
-	Tue, 25 Feb 2025 17:03:18 -0500
-Message-ID: <253e4fc720343695570d1241c34ecdd93f08882c.camel@surriel.com>
-Subject: Re: [PATCH v13 06/14] x86/mm: use broadcast TLB flushing for page
- reclaim TLB flushing
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, 	mingo@kernel.org
-Date: Tue, 25 Feb 2025 17:03:18 -0500
-In-Reply-To: <20250225210300.GHZ74wBP2ogmM5P5lP@fat_crate.local>
-References: <20250223194943.3518952-1-riel@surriel.com>
-	 <20250223194943.3518952-7-riel@surriel.com>
-	 <20250224132711.GHZ7xzr0vdhva3-TvK@fat_crate.local>
-	 <7c2baf33265444089ab780848de29a1336a9a4cc.camel@surriel.com>
-	 <20250225203803.GGZ74qK1oZWk8u69O4@fat_crate.local>
-	 <20250225210300.GHZ74wBP2ogmM5P5lP@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740521055; c=relaxed/simple;
+	bh=E1WFXZ5M060RidnoHbaNnPS+Ry4dIrVralh5eVRwac8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqJhKnS+t+FhhyWKYpnRby4qGRupdvG+uFfQLJ4oJXO5s/O9fEvR2Eef2PVmV6A/QfSgNNs0c8DG658Zi6vHLmFI7XZXFH/24EFjn3zyu0VsvDWcgr5b3rBqF881kI8DwDd9wVW8T/xjOZvCrRX7k5cG6P0+zcPe5jnfUBC+F8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=cH9oo3rI; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=RaO592to9W7gWl/XuWjiz67LTCCDHdzr1MxJ208aT78=; b=cH9oo3rIWzq5DOmK
+	Dh4VflC06nmGsh4xyQnrT+Pl3ny3r9RsC7F4qP85YqkuKrcU2QRECOAoOv4kcw38W8N70ulZKHpNK
+	vwaNtlxUsuTFyRkmRAy+d2OAXHF3IKCH6288TnvuACe2DaMHLapA91ltsRaRE9jpEQLfR6m4ZiU1P
+	wI3nbYtTc8l+93qa6hf5I0XzrWn3ONoaUBgfCiJI+3EbIRzBhnrZlGDGEPENK/0eAtOwk94staVF5
+	VohVCHQarx0Hnh9kYcYi89hUv0FsJkfKhoNVtt7E4EJxxStVB+fbuQpXM8rNF2XiurZtVyrqWJwih
+	NoYm2pFKVCuQGUYk/w==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tn327-000qd1-2W;
+	Tue, 25 Feb 2025 22:04:07 +0000
+Date: Tue, 25 Feb 2025 22:04:07 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Harald Welte <laforge@gnumonks.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, david@rowetel.com
+Subject: Re: users of drivers/misc/echo ?
+Message-ID: <Z74-VwtwSa3k2E0m@gallifrey>
+References: <Z7tZhYET41DAoHVf@gallifrey>
+ <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
+ <Z724l3DFJbGevtPF@nataraja>
+ <Z72_EnXyHoDACRk5@gallifrey>
+ <Z73MevharqkC5dt8@nataraja>
+ <Z74OSsZqeboJml9c@gallifrey>
+ <Z74VF1Uw5sRVbXhy@nataraja>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <Z74VF1Uw5sRVbXhy@nataraja>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:52:48 up 293 days,  9:06,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Tue, 2025-02-25 at 22:03 +0100, Borislav Petkov wrote:
-> On Tue, Feb 25, 2025 at 09:38:03PM +0100, Borislav Petkov wrote:
-> > On Tue, Feb 25, 2025 at 02:17:20PM -0500, Rik van Riel wrote:
-> > > Who do we need to ask to confirm that reading?
-> >=20
-> > Lemme figure it out.
->=20
-> Confirmed - that really is the case.
+* Harald Welte (laforge@gnumonks.org) wrote:
+> Hi Dave,
+> 
+> On Tue, Feb 25, 2025 at 06:39:06PM +0000, Dr. David Alan Gilbert wrote:
+> > > Actually, looking at DAHDI, I really don't think anyone is still using
+> > > the dahdi_echocan_oslec code.  It is disabled by default and only built
+> > > if explicitly enabled by the user, and indeed if anyone did that it
+> > > would fail to build for any kernels that have moved it out of staging.
+> > 
+> > It looks like Debian is including and enabling it in it's DKMS build:
+> 
+> thanks, I didn't realize that.  You could reach out to the Debian maintainer of the package
+> if you'd want clarification.
 
-Awesome, thank you for checking that!
+Given that Debian build etc - what's your preference?   I'm happy to
+grind a patch to remove the kernel copy if Debian is using their own copy.
+Or do we leave it and fix up Debian to use it?
 
---=20
-All Rights Reversed.
+Dave
+
+> -- 
+> - Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
+> ============================================================================
+> "Privacy in residential applications is a desirable marketing option."
+>                                                   (ETSI EN 300 175-7 Ch. A6)
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
