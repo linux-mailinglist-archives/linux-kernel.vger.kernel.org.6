@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-532480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F61A44E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:04:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C7BA44E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7391724DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:04:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22DF63A371F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5E52147FB;
-	Tue, 25 Feb 2025 21:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577BA2135D7;
+	Tue, 25 Feb 2025 21:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2A9xDAg"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JMgL7+5o"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B8F2135C3;
-	Tue, 25 Feb 2025 21:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0450F212B3B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517364; cv=none; b=s0RYn2Yz+rZkUmN/+KQKsyZdAX/clW+bWD1ATPwWWcLS61LoBl9LOqlOWYUsiENePkd+njAPBzmy7IwfH2tTt1f/prS2K1+tdbXM8Vrhi6dXH7aldwIx99tshUGWadMclPNU3C6Epow5eJOZMQNh711y0GROizdFKywottl39y4=
+	t=1740517411; cv=none; b=Ps8/V54ICRjkjQg3P6ZSjVYjs5oOJywBpk3GaEApE5nWzs5TWt0uiQmYct5Ry2PLtya0GqheNXchvZ80wGCx+HvTEIq32g9xZIrKxskwqVlbdTKUs8M+pH1I/dIjC/Ptmkq5x6yRkH+T938fkUurv5phdeXie4Mu7KQFBaQAkAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517364; c=relaxed/simple;
-	bh=k2bAZRH/vT28zRkdeBRPQ7B4kTZgLHZd8twEY7tXRzY=;
+	s=arc-20240116; t=1740517411; c=relaxed/simple;
+	bh=u7u8qa3o0CRq8+28X/DVzlbTKCg681qHjy2TBF7RW20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfWtNTKWTeJWuOTwSG4MzZG/D8z8NwHLkGH8vHXmKn5IrLsD7sVNrt9RFoq4Y76376PajkDCmeUAQMNzs3pTTGTY0MDtSllLs+jSHekit0POqcW+iihKY0C9NqMuAtp4DKxjsWThMGQHSZukpLTSjm8DZawJZdnMSBjlg3zTF0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2A9xDAg; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22113560c57so38237695ad.2;
-        Tue, 25 Feb 2025 13:02:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740517362; x=1741122162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ka/SwCQ3OPJpGyoJlcRKErlP9IhLnGv+6NuwlSMDeI=;
-        b=c2A9xDAgXpiKVcqehdCVwHoBlx8Fkhsql45/F9Wm8i1O7I5WcJCHJOORx/pAblNHWr
-         45jsBt5MtQgoL637qHocwGp+yCrHJvYjrPhBQvPrDQfe7x4KnWC3Jh4HNspmFytqp7xv
-         4gfiNf27FVoo8WeeWSxzM+yDw6WuR/lO6KuEmL+vN5YSdMfygPpFfmik258e9dVnaY23
-         RWSp4vbySlfO6VlimmkxTz7WLRLjpFpKieCbiMwlLCysDiIbmWzJ1U3BMaATWD6HOd/s
-         7lBU+UFJ2F+zQXBqc1oNQ2URuyy9DBGloWLYJvLETJlIKC5hr+W64sKjGn1toD1IS2sa
-         ccuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740517362; x=1741122162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ka/SwCQ3OPJpGyoJlcRKErlP9IhLnGv+6NuwlSMDeI=;
-        b=JdrMdyMr3iFJrNoAwDWWzf34zaotBqN+0ffZsFeylBkvIt5WHfsMK9QkkY/iHqLeCy
-         HEl9XAu7qMoXEfgcwkh6TSPIjZ7tLCb6lADhTx4HniBX8kEb3ViIoDn58mAYm+hZMSl4
-         7AXhr6iw/BgcMklWxUoBrPtUFn8fRc0vYBwUA57rUUFQ14yc3zz5tfjCHXvh7/rUzohq
-         9Z9z3DUa7Dud6qCHU6QMNaGIGr6YHxR3IsgZchyDPZ/Bl0A24BNGIAQMOdGtse4+YoWQ
-         H8Vv4ZdLCWZJoAjGgugdcjz/nTUPhofnfHQmgrABSW/KkUHt5xswog8l+p+GuVdcO9sS
-         1p7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAUJ4HYBeCefhAvSM2JqBuSsa0WESjWUWV4T72VEYbeCaME6HJAAmzEsT4pyTq98KMWgGUr4C8F/ZZ1oI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0OCAxGVISBq5v1AFS+fFyNHAoLDO83bhJFx/lMDOjQW43FNO1
-	W4L4u6cVN73DRfESvaN+8LPLrd5e2Lk6/om8KACk745gMFZXd82v
-X-Gm-Gg: ASbGnctKM0EIyAG93m2n0+SZxwgCnf61ePERD2QmNTM8igB5KzOJswiW3fWa7htOK72
-	lAGOUmCFfbZQ65egDdJET2YM1KtK3Mt44EA45vqpC1JvpAv12pF+1N4wxrr5dMTNvB0VBCKEb6i
-	1sJIAi4URtr8SBACozehL6/A35+7vJFWQmaqxq9/9n0qoIWC4ld5pMX2SPdclCfWjQwgQpgr9c5
-	uvsLzEkr3FIv8VTmRu7GlWr+AaTAM/4Ch9hls6eCh4XPw1ijbdQy5TMwXuU2uATKjC8p0hTWM8H
-	qXhrXWSCjyHPNzrX0N5+hx8U9E6F4VN5+vQXnWpGF0GtPg==
-X-Google-Smtp-Source: AGHT+IEoT+SDYoTWeQfzXv5VosnpcKmYO3GBDwGylcY2HYy48JfZQlvNGBsExZk1VL48JnTFQTm2Jw==
-X-Received: by 2002:a05:6a00:4b54:b0:732:6217:8c69 with SMTP id d2e1a72fcca58-73426c94ad6mr35357923b3a.3.1740517362216;
-        Tue, 25 Feb 2025 13:02:42 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:987e:29fc:176a:2ed5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda7f83fa8sm1830115a12.29.2025.02.25.13.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 13:02:41 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:02:39 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Input: i8042: Swap old quirk combination with new
- quirk for NHxxRZQ
-Message-ID: <Z74v7xXiavs3d9J8@google.com>
-References: <20250221230137.70292-1-wse@tuxedocomputers.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=plqeOTO8rQi1jefP0v3Uh0eMlT7/o0HtUSifho5uoxS88BjlSzMsrq6JIFO0jQBRl2OQ5Z01sRzrPwS7LMkYX1Oa3vL6w43ZEkAzsw9jtT5xcsCrOhIpYjctPHo74YkT4kf7wJU6BnuUC8MJ4jUa5czb9QjCiQs2nxRJqLH71oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JMgL7+5o; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 61A9740E01AD;
+	Tue, 25 Feb 2025 21:03:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BufiWpZA3Kh9; Tue, 25 Feb 2025 21:03:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740517403; bh=RW7EXBWZRnw4HvjQHbP/KC89pF9FScloDAfWFmC/zP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JMgL7+5owRQsYhrS0LpvJMpyfC1ZGd7umIldHeF3ju5fAXdx+NiAuVKw26Y1nqU5k
+	 sX6fjSfyVLfb2e4eFNn+ZylYorMx8obUuLowfA7Gv1iBhkEITwR/99+Dex3mg7P56N
+	 h+dKN5FPzI8zEnRzwd3c+r+XaGnDCx8RWxBunj5MQ4Fv/xahUYhgwg+lTEzV30Za9+
+	 j6pqPlVyNDR9Vi2EFrXKPMBeh6iHGdJmVxxBItvN/wDUfKUwanxn8sWchflr3fsS+4
+	 rZUs9RIVWpwXeBkHqTjpnEiReaZCOU1KwWp65xAxxAadE8ruvxcOz/XHyUWm/r6Iix
+	 QbXt/SyxIO7ljexJWKj5JNN9flHnr8Wz7sJ/OcM6rs6YG5g2h9IPRK1FXDSRQFYLQ1
+	 sQAjHoPA31vnFiDcLERAyuTI3ptlcqkn6pljqIus6sdHVB5Dt3whzlhY7dTJJvQUra
+	 ytSKxQ/UeifIyn+jP0F5lNDu/MYDr/H6if/g59mhjTvADLt79ik+eQtK6pzy4xijBV
+	 pKBPaliQXxmMaaLCGkL6QXwJ0X7r79/J7zsaHiV0Uxx3lq/brm7jxQQWCYY2ntKmRN
+	 +ffK6Plz+fAc7kCZvkYDq4FGLH/rhREEokk8jZyVasNqpLx4i+KTqn0ToBl9OxvaGp
+	 hE7KLWzQcFdSPHlppk3ykVfo=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5E38840E01A0;
+	Tue, 25 Feb 2025 21:03:06 +0000 (UTC)
+Date: Tue, 25 Feb 2025 22:03:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v13 06/14] x86/mm: use broadcast TLB flushing for page
+ reclaim TLB flushing
+Message-ID: <20250225210300.GHZ74wBP2ogmM5P5lP@fat_crate.local>
+References: <20250223194943.3518952-1-riel@surriel.com>
+ <20250223194943.3518952-7-riel@surriel.com>
+ <20250224132711.GHZ7xzr0vdhva3-TvK@fat_crate.local>
+ <7c2baf33265444089ab780848de29a1336a9a4cc.camel@surriel.com>
+ <20250225203803.GGZ74qK1oZWk8u69O4@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221230137.70292-1-wse@tuxedocomputers.com>
+In-Reply-To: <20250225203803.GGZ74qK1oZWk8u69O4@fat_crate.local>
 
-On Sat, Feb 22, 2025 at 12:01:22AM +0100, Werner Sembach wrote:
-> Some older Clevo barebones have problems like no or laggy keyboard after
-> resume or boot which can be fixed with the SERIO_QUIRK_FORCENORESTORE
-> quirk.
+On Tue, Feb 25, 2025 at 09:38:03PM +0100, Borislav Petkov wrote:
+> On Tue, Feb 25, 2025 at 02:17:20PM -0500, Rik van Riel wrote:
+> > Who do we need to ask to confirm that reading?
 > 
-> With the old i8042 quirks this devices keyboard is sometimes laggy after
-> resume. With the new quirk this issue doesn't happen.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
+> Lemme figure it out.
 
-Applied the lot, thank you.
+Confirmed - that really is the case.
+
+Thx.
 
 -- 
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
