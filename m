@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-530942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93189A43A61
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:55:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B8CA43A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1443A2789
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A128E164C94
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F6C262D2D;
-	Tue, 25 Feb 2025 09:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823C263F4D;
+	Tue, 25 Feb 2025 09:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tzC1qgKO"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXpGzSwk"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A982824EF9D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80D2054FD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477304; cv=none; b=It0OQ85NaglK5TmqeQPhetRDSov9/wTPjm2EnFGCBrGyzhiI7NUKWqtYse4+kk9V9xcHrkbgLtxA9RoGM+FClqJ6EHcF+ERN7bzwxJng8NuWaBpMDFv1TtkCwUsKiuM8Qvk+OOgo/iMsGsBgdP/7dDF3Yylipx3U4iAr1tZs5BE=
+	t=1740477305; cv=none; b=EZRoU31WvYz09bXTnipZ9CXO463jIEy1+T9SsBzCYmDOeqD8iosodwjEJjLi2UtHmMfvOqvXKieoQMoYwYu0fvRvU7JLJUEGqDtbX4fHQDX2KMYWhkwWadzPivCaS4ivYs6hBYtv7Iyjv4UT9ds4C0FVquFUySi55m6yi7XFrag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477304; c=relaxed/simple;
-	bh=14U0ZFqNhjjw9E+TCTCsgolcWhF3eoCcGTNYVrgmoTI=;
+	s=arc-20240116; t=1740477305; c=relaxed/simple;
+	bh=9bf1s4H2SqLZ79zTukwsYu+F5BulFXGKPVAOZYJS8XA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m8rcZaG9kDrnKxdMjo1+d/IIAp/sfg+/5+MR5RHuBFNF9TqkXwqxgUJR9QWnolqQ6v6iXDVR4JKYvgCuaTWWPOz6A2f0dfCBr0LT53/sFjmuMahuIfZiA8VhD7LhzBZ1+yI4zCbe1IBePGuwjzgke3g6TyfeiiMUG/EoPn1u+vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tzC1qgKO; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:To:Cc; b=iHJS2Se/KNNmccUgqIZ8nMTlJ4bZjTrGI4Q8qukXG3gVzWvI3+1aZm1BHmtGFxMKmPoQeZFMTWnwpgas9UclzGpmp3ZXDqXIf56zLhcki+9s8hOiEAeL2Ip6vpu6dblFMKGBskDCzb2/7OAV7WicM3q6aEyFgTEUToSAo2qJHhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXpGzSwk; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-548430564d9so3039757e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:55:02 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30795988ebeso56037181fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:55:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740477301; x=1741082101; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740477302; x=1741082102; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2IJUdaO+5dTLVXPMwfcKz8isZKL74F9HfpoDdIYxpPA=;
-        b=tzC1qgKOGohHuvhmjBewcDJA0HG5Q4SZpieQgzQROV3x+bIuRxG8AYj6kZys/hR11l
-         YAT2uhKITDJUsLC58LhA94kPwJ3hXTMwC8il6OPOy5XUhyJbeP6MXeGUheH72jRyUZIe
-         iyPR/pEbw6nox1J4SQRK6uNt8WXTD5JGQmYNCKZq7O2/JnfBH4tb1ecYAjQrmdd/qYZI
-         DTBRRVXKw+O6jifYG/1u2G1Ny1tMVPvk61cN3mhU6xEFLD0VtWXKCGgl2E78WrAavjxX
-         HeHVAYk1Iid7GZfBkHNbz3oF9eUuRAJORGpGAiKAn9IQzhCoCIy+ZUAD1alCcVzcsdQO
-         zRMQ==
+        bh=LeNYI4Yc1OrceUVt/GJDCyO7YwVHZ9lpFFe5ekDh0x0=;
+        b=zXpGzSwk4iypnzXV4ocwsaVte4oY8MB3x1s9coaKradt97+V1Oz1VyzHezXRd4KU6l
+         BYi4IHmIpVIJb+3Csf+6OK8+19nGjEf1Op4nUsO4p9UzVjKHaRz2z/ycnhJrojv4/3n2
+         9JbOOzE8sG1qf8iA8Me7SOMT2+QQqBAFJ3AIqIqjvztPcwQgmwy+Hs8NhROH81k38BD3
+         ckCO4WnXXDgrUvTjj9Gnkq36xrNOMbqlqHc6uQThxehTTdRkRXckpyMJa3h88iwOISAi
+         qeHtZP+MDT/oQ8RO/cn5+T/2uE71mMMpk4zyRFCI2le41EfC0Z9DQ99toaQeEiUgBrYj
+         yPBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740477301; x=1741082101;
+        d=1e100.net; s=20230601; t=1740477302; x=1741082102;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2IJUdaO+5dTLVXPMwfcKz8isZKL74F9HfpoDdIYxpPA=;
-        b=hS3nkJc8ebnnBT2qi9K1NQNaqbh93IGb4wRqgzDJ8tROQJrYkFWEPmm/IC4WlAsSka
-         BhiLa86QSlEhXAjkCIOCGw2cupQJSAlsfMZsNYD/D6vsR71peU0EATzuaH2ixdBnKhKp
-         8oQhvuPdaxe3gpNTefGlN32IpjjrmRwKQJk0ue7lE2A5YrAkAZlxjn/tPkUzwlh72wqv
-         Oyq8okfGRRRMscx+7ZSgP/MlgfpRH76oQkE/vj9aqF7AhYPtgsyXeIfnM+VT9wBeZXcB
-         afpMUxNO3Lau2wcvR7y2vMiAoshs90waECCJR/JwZ0Jgo596t2NNKkjagDrG7kU7lgMT
-         Y2IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6QoHGmHLbJi2Pnxwl91AlzcfGcJ74i2CxkOD2I9EgRH208wLsDXK3otYD3EVdCdqmmolGqNzIUkjr49g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEcaLWYA57aDhQu3aHErDXN01LBw5Y7JBuknLyfeweZnuEPNTY
-	Q9dneNZ3BaXuD/1MAIAaP3dg6QUN2GWlGxTtXdxLDwelG621dYJn5vpfNHSk/Jg=
-X-Gm-Gg: ASbGncvwIj01Om1HGeYG7xy64V8rFx0aoyPZwJyzGYovffm/URLj0SzgVDZZC59NWSN
-	NtYFxLUmeduHg4xU9QxrZ0fEMpjwsosMPAWOegEn7+YUiTUepDNXsz17zbuv7hwdZGeMH907ep3
-	oM9aP2XAx31tfZ5ngpLlfpV4de45Ng8AcMXpnMoPArLU961pMbNX+GYEPuyIRv+qFi0pFRkhICf
-	Ds8JOoP/1gUsqnOF+7HZav22Y3+Vj7tMaMMbhFz7Ris2nWlyoHHOWPB2z/dzNMk/14aWeV1Ksh3
-	N+ThpKfTylr/I9AAQtvLsx7BvHBfxlURWC36
-X-Google-Smtp-Source: AGHT+IHd+JITPLxMXULU7ZpD1f9xac7PGEst2Tk9nAmNTghxAif9Rd8qWrav88C8IW+IaffyeOes+A==
-X-Received: by 2002:a05:6512:2310:b0:545:16a5:10f5 with SMTP id 2adb3069b0e04-548391452b5mr5483522e87.30.1740477300601;
-        Tue, 25 Feb 2025 01:55:00 -0800 (PST)
+        bh=LeNYI4Yc1OrceUVt/GJDCyO7YwVHZ9lpFFe5ekDh0x0=;
+        b=dzOdyKdrWZF3stkDwegrJnOkrSOykzJCmfo7HJFpvAjMZFr5T0NQm+hDjHjO6q9mfg
+         I6hgPSKB1Iz7UMu5mie3tRan/frHXqJXGtLWmfBAHFGY2fk7TELWvogIxSLDABOIL/N8
+         pZdwlxvYhFwOeR2GIUhrAxZDNFvpdzdKan8QMrGKIG4gCLEYTGsE/v54YeQN/27eeI5N
+         H1ZGn+Wk2svdkLWSv4u9PK4xMo1zd++gcbm2UB+PbgUyEQEYG9EY40saEI5efgad0hGw
+         PzbQiuejcDCaQBQuSVfyeGaVQA4R++S30NxG0nwk4LTYMYyAG6wuPOY2oFnD78U0RvRe
+         5Bmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlkN/PH2V19Y6kkmFQnMM/cXpVqsLO0iqjys4hE12CXpRo87eGRiMXIyZ1kX+DsVwQFdq7haz8v6JyawM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+/wPR+ESIBvBfO9Y6p4bW1LQQiLoRovzg2M+U0rtwpsRl+8ze
+	RkkZ6eVSKyh4FwgaHwGaEvnF3BxEL1fFANiYy2/0bRlFXuzojvv7dFMZMo98INI=
+X-Gm-Gg: ASbGncvdh6xefV1eiPyYY+28wGtPp6ZLy+ayFmtU1Q4fU7qEO+Z0HLstv1e5N6WJWUk
+	gRW4lQu28YfvWzWqqN2ofOehrBmoZe7oZ7JxKTsxGy4ZQTHTW/U9Y5dTPSjrD6zJgz9Gcl5QIr8
+	cRFSx3owNecat4MhGC+CiGZ5cdGxfY3l++UmiE/ZlGOMTkiqb0ISv9gDznL9cg5M5ZBfp14afAK
+	w3fATqR56to2UzW5j31KGJ3DcNw8q5yf/iGWdF7un6Gqqzic7Bes3jp4nfzqOtJt7ocNCsFdhU1
+	W8g8LgjATrCRtzGG/6vYAu8zDShNbvUtyEPU
+X-Google-Smtp-Source: AGHT+IGq0OxvT7/cZlFfZbbX0H/MkEPa6FnOUXsHEgn9uErHuYCGdCabGyfw1Gq2rovjVGQpSBjALQ==
+X-Received: by 2002:a05:6512:130b:b0:545:3032:91fd with SMTP id 2adb3069b0e04-548510cf943mr985679e87.16.1740477301678;
+        Tue, 25 Feb 2025 01:55:01 -0800 (PST)
 Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b261esm132867e87.24.2025.02.25.01.54.59
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b261esm132867e87.24.2025.02.25.01.55.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:55:00 -0800 (PST)
+        Tue, 25 Feb 2025 01:55:01 -0800 (PST)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 25 Feb 2025 10:54:48 +0100
-Subject: [PATCH v5 01/31] ARM: Prepare includes for generic entry
+Date: Tue, 25 Feb 2025 10:54:49 +0100
+Subject: [PATCH v5 02/31] ARM: ptrace: Split report_syscall()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-arm-generic-entry-v5-1-2f02313653e5@linaro.org>
+Message-Id: <20250225-arm-generic-entry-v5-2-2f02313653e5@linaro.org>
 References: <20250225-arm-generic-entry-v5-0-2f02313653e5@linaro.org>
 In-Reply-To: <20250225-arm-generic-entry-v5-0-2f02313653e5@linaro.org>
 To: Dmitry Vyukov <dvyukov@google.com>, Oleg Nesterov <oleg@redhat.com>, 
@@ -96,46 +96,79 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.2
 
-The generic entry code needs a static inline function for
-regs_irq_disabled() so add this, in further requires the signature
-of on_thread_stack() to be __always_inline so add this as
-well.
+The generic entry code requires that report_syscall() be provided
+in two parts: report_syscall_enter() and report_syscall_exit()
+so split the combined function in two.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/include/asm/ptrace.h     | 5 +++++
- arch/arm/include/asm/stacktrace.h | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/kernel/ptrace.c | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/include/asm/ptrace.h b/arch/arm/include/asm/ptrace.h
-index 6eb311fb2da06fa393f8be7caec8d997637a88b2..a01c66f0ad907882af2a383e53de8aca68c551e5 100644
---- a/arch/arm/include/asm/ptrace.h
-+++ b/arch/arm/include/asm/ptrace.h
-@@ -52,6 +52,11 @@ struct svc_pt_regs {
- #define fast_interrupts_enabled(regs) \
- 	(!((regs)->ARM_cpsr & PSR_F_BIT))
- 
-+static inline int regs_irqs_disabled(struct pt_regs *regs)
-+{
-+	return !interrupts_enabled(regs);
-+}
-+
- /* Are the current registers suitable for user mode?
-  * (used to maintain security in signal handlers)
-  */
-diff --git a/arch/arm/include/asm/stacktrace.h b/arch/arm/include/asm/stacktrace.h
-index f80a85b091d6c4ff365e15ae7100af1c3aed597f..815b5f256af164daa053f3bfd6cb2f54042a8d2b 100644
---- a/arch/arm/include/asm/stacktrace.h
-+++ b/arch/arm/include/asm/stacktrace.h
-@@ -26,7 +26,7 @@ struct stackframe {
- #endif
+diff --git a/arch/arm/kernel/ptrace.c b/arch/arm/kernel/ptrace.c
+index c421a899fc84c476a672cbfe1c8ece8355d8512d..07b0daf47441f1f76a8af416acc74fa5ed770403 100644
+--- a/arch/arm/kernel/ptrace.c
++++ b/arch/arm/kernel/ptrace.c
+@@ -827,31 +827,45 @@ enum ptrace_syscall_dir {
+ 	PTRACE_SYSCALL_EXIT,
  };
  
--static inline bool on_thread_stack(void)
-+static __always_inline bool on_thread_stack(void)
+-static void report_syscall(struct pt_regs *regs, enum ptrace_syscall_dir dir)
++static void report_syscall_enter(struct pt_regs *regs)
  {
- 	unsigned long delta = current_stack_pointer ^ (unsigned long)current->stack;
+ 	unsigned long ip;
  
+ 	/*
+ 	 * IP is used to denote syscall entry/exit:
+-	 * IP = 0 -> entry, =1 -> exit
++	 * IP = 0 -> entry
+ 	 */
+ 	ip = regs->ARM_ip;
+-	regs->ARM_ip = dir;
++	regs->ARM_ip = PTRACE_SYSCALL_ENTER;
+ 
+-	if (dir == PTRACE_SYSCALL_EXIT)
+-		ptrace_report_syscall_exit(regs, 0);
+-	else if (ptrace_report_syscall_entry(regs))
++	if (ptrace_report_syscall_entry(regs))
+ 		current_thread_info()->abi_syscall = -1;
+ 
+ 	regs->ARM_ip = ip;
+ }
+ 
++static void report_syscall_exit(struct pt_regs *regs)
++{
++	unsigned long ip;
++
++	/*
++	 * IP is used to denote syscall entry/exit:
++	 * IP = 1 -> exit
++	 */
++	ip = regs->ARM_ip;
++	regs->ARM_ip = PTRACE_SYSCALL_EXIT;
++
++	ptrace_report_syscall_exit(regs, 0);
++
++	regs->ARM_ip = ip;
++}
++
+ asmlinkage int syscall_trace_enter(struct pt_regs *regs)
+ {
+ 	int scno;
+ 
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE))
+-		report_syscall(regs, PTRACE_SYSCALL_ENTER);
++		report_syscall_enter(regs);
+ 
+ 	/* Do seccomp after ptrace; syscall may have changed. */
+ #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+@@ -892,5 +906,5 @@ asmlinkage void syscall_trace_exit(struct pt_regs *regs)
+ 		trace_sys_exit(regs, regs_return_value(regs));
+ 
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE))
+-		report_syscall(regs, PTRACE_SYSCALL_EXIT);
++		report_syscall_exit(regs);
+ }
 
 -- 
 2.48.1
