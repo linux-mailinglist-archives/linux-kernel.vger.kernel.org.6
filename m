@@ -1,55 +1,93 @@
-Return-Path: <linux-kernel+bounces-532124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E2DA448E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA5FA448F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A611886879
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D54F188402C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF5F19ABD4;
-	Tue, 25 Feb 2025 17:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B40619ABD4;
+	Tue, 25 Feb 2025 17:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBu8XFIc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nt80qRTs"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AE818E34A;
-	Tue, 25 Feb 2025 17:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDC166F29
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505846; cv=none; b=KIYgvyUjA6S9Leu5/nsarZhpi7Fo0lnYRGXhPBXT3/W3mzrCt8l18MLndUib87B2ySsYDWei6NzRlThZJtJrpt3TTBvExSyElmic88hqo1zLwUT75/vYJy/b7HAd9POj14FuO1+USdiICuZ+0v4u88ABwu8GNxRqBHi71VL2hhs=
+	t=1740505949; cv=none; b=nd5aqY2+Di40F4IXVNv3/cXQwzBy4CE57h4Jrig+GTqDyH6eaadMmtXgS9rLpTSqU9RB8zVmAJZl23+rRrr3uqbBMSmc29VRrIh0AbIJCTGW5lrrHM073Si/M/uSt6VV/sYJqXPFIbWOlsoR4ipO+RqP2YAp551dlwNkcV8rI6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505846; c=relaxed/simple;
-	bh=O7jDYX7iRfrB1UVmAe+E/vNwrykYgFudqrrJuLaSk8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=gJpw9DOis9q8HV4pdNJeEOjyov2qZU0Hy6+whGLXBPfq9x0Uua5WutyTRnuRj3HlkWAgsTeFZPK0K5Na4SxqUgqsquA4CVulCSHEoJsGbBVINvW+8nFK9rdbtCjTDN8ZT84xLbUVV4ZJ25w8TVqgHCaMrTtlsmxd6C+7wkssKqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBu8XFIc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE98C4CEDD;
-	Tue, 25 Feb 2025 17:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740505846;
-	bh=O7jDYX7iRfrB1UVmAe+E/vNwrykYgFudqrrJuLaSk8Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fBu8XFIcBwXzPCuLucy0C2svFoYEU7W3Qe5lu2eqGEffvvnNv0C0iCPp8VORRutU3
-	 5uyHQFGoNTYDjQkY4fY31ezuZEtnFIihih/DII6i2X52enZ7LkErjBNUKOpLMy8u7p
-	 BBNv7jZ5EEcnVdWHgvufYa0XyFu+HBSQxbPrGkqH7boD0AFZOtAi4aty6G02iNg0fv
-	 WNnftdTe3QrC/vx7KxIjB5UaGeorD5QutGt+yqSlrfYUQHZueIRyA8p+KBtjzxix9T
-	 WvBbJVXxSJS7G2onhV18w40avekUuD0Z1KNoWMH9wx8OakVnqoHyk2c4SVpzeNV7Ye
-	 CMl9laZL1JrSQ==
-Date: Tue, 25 Feb 2025 11:50:44 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frediano Ziglio <frediano.ziglio@cloud.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] xen: Add support for XenServer 6.1 platform device
-Message-ID: <20250225175044.GA511149@bhelgaas>
+	s=arc-20240116; t=1740505949; c=relaxed/simple;
+	bh=TITnbcgolKPMPksTb0kVckLbIOLQEkwI2FcyCceIkT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDw0pqf+ekXr2rJxIvDKeTecFdrPzpQ4Ft4KU+419t8OgCY3akQkcExMTDjKF0cpxGmjfolbGafQ6IZwxUC4Ez0cv9j10oVbgD86zKWYKf/k0oOy//r+7W+9lxr+jjG0K9OmW2hE82CuBwTuaco05XkrrVkIyRPOXhUmmt9KKlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nt80qRTs; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-221ac1f849fso1795ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:52:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740505948; x=1741110748; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dN8nBA+Qh6D4N+wqpSDyJLyiHWYbmS4OUKXh0N+DSqI=;
+        b=Nt80qRTsdIMKwK77eOr5LzLlJ6jv6oZ1XHDd6JlCzx539zK4aJJyWsue9Zgfdk2bNZ
+         /hGVuCPln+75Wikzcy+h5VjgkFl6JnaCzXw5kkA/bWco+Pr8zsaL1TRrP8Vs26Kwt2Uf
+         ZCh3SNk3gj/QHBWnV32g7+9XZLcqSbOvlMlSiwfDQcP4j5+/8mZuHlgdhtGZVbosLN4b
+         YijJmCwdSeGE1PM9npYMVeeXv18y+YSX7Cxpc1iFn/2RWwp5+0JvQI4+EtO6k1uSmWtT
+         /nkdvxmIEiqivOK5B+R5cf5yNBCHijxkPzGB7A62mx4+/f+Lf8l0TCMRqHL3+Z86IkCL
+         QBiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740505948; x=1741110748;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dN8nBA+Qh6D4N+wqpSDyJLyiHWYbmS4OUKXh0N+DSqI=;
+        b=ofTQ/SBasBuV6RSKG3zX2Qb7sp8eqTyMX1DMrbocLlwQNl/tsQpO8aU6YTmWupC5sz
+         S/g7akz+0TabLVK8pEzT/eY1gqTWJWpjw8ABIamUaGXBIuwtaXcH37cONaxRf+Cn4zwY
+         J5LBydDuhdqGKYBAGkrpOtiLHPVEONCY1tVeVJ3r8SOlNAlbPnAhe8pWCj2UROCjrSG+
+         6H9KsErWZ7j0+OTlD9ZhzGXklQJjDP1srLfZa9XuMZsMVKQAhcBHMbmVfY7lHjr7XNGa
+         OyvbBSEVrUmLMPegTH1gnlNGehkGXIm/KE1MO1yE5SPGUZpB1To1uxDqrolV61eI8a6O
+         sMjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkSBF2mOOrChN1prRv3CVBwCG2E3Xi18zeiGZb7qpnAOHKqPxDUWhfHqknNu12vJDk01Pwpeu68axHYPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK3oJ9eeynDrmhhYUEvNCWNWrTIw0ClphY2UvIWOavA9gZ//Xl
+	JiR75AL/RCKR+qZpA/WJdkJEcZINHvy65pEdyaPIYH/wiLbugnqgmzDH4uT7EQ==
+X-Gm-Gg: ASbGncsPZG+Hso7zDw/fWw+s+mKORgrzpUBvZjB1IbktfV0pIgRnUdZGGf2TGZ0rMAu
+	2ko/vCHf8bZzEiYYHcV5XgA7jcyzRtEsAF/+fzawPHV4j/EFRt2znbpDQZ/qJp7pAkUk/AARREs
+	okMpPfe0vWWM/HfWKkbOdmHRMYWgJTeMvKs3qDZeVuE8a9SA8P61l2sAi9lE3DYJmDn85A+WUCk
+	AEm0Zni2zB5BYlUu32ZEuuGfenxW6pdye8icby0Nc4eQrnxMjPvah8LHxy+1RlquicPDI0goByi
+	FlXWXIjdr7c/fm46MMgzJbPApb6odHXshN1UH26IS0KaT9SYgt9q9niUQio5uaQ=
+X-Google-Smtp-Source: AGHT+IHCwCn1SF2NMONCzfAyHzGrJNS1HAUTJPist+TAdk8bMDyf0wMytHFuTMKOTPJoVoDGnbqb0g==
+X-Received: by 2002:a17:903:244d:b0:216:48d4:b3a8 with SMTP id d9443c01a7336-22307a60187mr3928025ad.16.1740505947317;
+        Tue, 25 Feb 2025 09:52:27 -0800 (PST)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a43ccb3sm1861445a91.39.2025.02.25.09.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 09:52:26 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:52:16 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	joro@8bytes.org, suravee.suthikulpanit@amd.com,
+	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v8 12/14] iommu/arm-smmu-v3: Introduce struct
+ arm_smmu_vmaster
+Message-ID: <Z74DUPcl9KRZcvpW@google.com>
+References: <cover.1740504232.git.nicolinc@nvidia.com>
+ <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,66 +96,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225140400.23992-1-frediano.ziglio@cloud.com>
+In-Reply-To: <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
 
-On Tue, Feb 25, 2025 at 02:03:53PM +0000, Frediano Ziglio wrote:
-> On XenServer on Windows machine a platform device with ID 2 instead of
-> 1 is used.
-> This device is mainly identical to device 1 but due to some Windows
-> update behaviour it was decided to use a device with a different ID.
-> This causes compatibility issues with Linux which expects, if Xen
-> is detected, to find a Xen platform device (5853:0001) otherwise code
-> will crash due to some missing initialization (specifically grant
-> tables).
-> The device 2 is presented by Xapi adding device specification to
-> Qemu command line.
-
-Add blank lines between paragraphs.
-
-A crash seems unfortunate.  And it sounds like a user mistake, e.g., a
-typo in the Qemu device specification, could also cause a crash?
-
-If the crash is distinctive, a hint here like a dmesg line or two
-might help users.
-
-> Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
+On Tue, Feb 25, 2025 at 09:25:40AM -0800, Nicolin Chen wrote:
+> Use it to store all vSMMU-related data. The vsid (Virtual Stream ID) will
+> be the first use case. Since the vsid reader will be the eventq handler
+> that already holds a streams_mutex, reuse that to fenche the vmaster too.
+> 
+> Also add a pair of arm_smmu_attach_prepare/commit_vmaster helpers to set
+> or unset the master->vmaster point. Put these helpers inside the existing
+> arm_smmu_attach_prepare/commit().
+> 
+> For identity/blocked ops that don't call arm_smmu_attach_prepare/commit(),
+> add a simpler arm_smmu_master_clear_vmaster helper to unset the vmaster.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
->  drivers/xen/platform-pci.c | 2 ++
->  include/linux/pci_ids.h    | 1 +
->  2 files changed, 3 insertions(+)
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 28 ++++++++++++
+>  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 45 +++++++++++++++++++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 18 +++++++-
+>  3 files changed, 90 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/xen/platform-pci.c b/drivers/xen/platform-pci.c
-> index 544d3f9010b9..9cefc7d6bcba 100644
-> --- a/drivers/xen/platform-pci.c
-> +++ b/drivers/xen/platform-pci.c
-> @@ -174,6 +174,8 @@ static int platform_pci_probe(struct pci_dev *pdev,
->  static const struct pci_device_id platform_pci_tbl[] = {
->  	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM,
->  		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-> +	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM_XS61,
-> +		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
->  	{0,}
->  };
->  
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 1a2594a38199..e4791fd97ee0 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -3241,6 +3241,7 @@
->  
->  #define PCI_VENDOR_ID_XEN		0x5853
->  #define PCI_DEVICE_ID_XEN_PLATFORM	0x0001
-> +#define PCI_DEVICE_ID_XEN_PLATFORM_XS61	0x0002
 
-If this is the only place PCI_DEVICE_ID_XEN_PLATFORM_XS61 is used, we
-would put this in platform-pci.c, per the pci_ids.h comment:
+Apologies for my spelling error in [1]. It's supposed to be:
 
- *      Do not add new entries to this file unless the definitions
- *      are shared between multiple drivers.
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
->  #define PCI_VENDOR_ID_OCZ		0x1b85
->  
-> -- 
-> 2.48.1
-> 
+For all the other patches too. Correct spelling in [2].
+
+Thanks,
+Praan
+
+[1] https://lore.kernel.org/all/Z73zvIbsXzJMCaNt@google.com/
+[2] https://lore.kernel.org/all/Z730M3XptvDRObBp@google.com/ 
+
 
