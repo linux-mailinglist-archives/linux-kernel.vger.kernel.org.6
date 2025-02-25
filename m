@@ -1,280 +1,138 @@
-Return-Path: <linux-kernel+bounces-531684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697F4A44387
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:52:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EC3A443AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC067AB65C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E06E3AE244
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520E421ABC6;
-	Tue, 25 Feb 2025 14:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF94321ABBA;
+	Tue, 25 Feb 2025 14:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GrZMSiuY"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEAE3Qve"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C3221ABA2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333EB21ABC6;
+	Tue, 25 Feb 2025 14:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495128; cv=none; b=LVuWgbbPHqeYV625Xvh2FP1uVRVFjsfi+bTN8i60qDyuiNeqDC36Rf3C8YYwApB8omQvMqx+QCcdqbVzbnvm7F5ACJjQhLpRx8yfjBYtZ9lOfDYI0IBdPA8hHzOFqOQznzKQLHspM/UCJNvdrB6iujyS9hxuVDFJgZbAQA1ywlI=
+	t=1740495169; cv=none; b=iVEz4zml19PtHqsd8o+2dNFnOcpEacp+8HaCOBdB6TdS7kAqEBZFHTfUeiqLoo3Qgre7+FEfWz0GdmfRgWHtiJ959E+1HIC6Lk9JBLCQkMe4fOfwD/SuMQUxOnMTjgBfkvGd+jqL9a0NYl9T3+UsSWXmqUJNwd3BIEWjP88JA5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495128; c=relaxed/simple;
-	bh=XL6Y8Ue4UX2AcVMROAhI+8cR7pMUyhVI3kHk7llgoXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q6MVqX1Dd1fmBeQN6r4sGOoYiOgNtwbimQcjMBNjzUXU2HnR/RuN5hY03DOEVjH0xjOvrwmScrV6qCZzjjYtdKXTWKDtZJ5ene/xp1oiPi8C1T2mXbK4OHNVdR1vcYLGEPcRopCsY6HvL5G5QFS0hq4bsJ9X2U4mBoH6Td8M5pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GrZMSiuY; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30795988ebeso59138641fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:52:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740495124; x=1741099924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3tuPHequGzMuR1EjYE/aLgHiotFNF4oRKllhFvzBpe4=;
-        b=GrZMSiuYdoMDt2hNjYsl0k2ExhPG2qVEIJHVFXdANo9b+EB49I/PizdLx8c+bvT4gE
-         /Q6z8tC18JL71sLndAvEyAgjkF7q1zXzyfMIqA0SduVj2q2Hdyo2gKqxfmZ8B49sAnOq
-         vFirW9tUZjIy2ELV0atWfKO/+pxAsSBWckoFNTYXSai1lVPRIuwumDjNsIntrz99ysAQ
-         TxbjMDgCk/nSNXBO3j7eYWfJsRJv45p3MtoBEGaend5s1yDARZwqtThFud3hU0UWM7bN
-         21vI2n3FtEDxGtwhyvCuuKZL23GzLmStHefbwwz0QH9uJhHNv2+gopWYt9kaS8/P54Oe
-         Md9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740495124; x=1741099924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3tuPHequGzMuR1EjYE/aLgHiotFNF4oRKllhFvzBpe4=;
-        b=ZDey1qu6sJzAMhIbvcMRbqQBWPubjihGuq3j5bPuOaunevd916naIPozGF2mRIdGdk
-         aB1cWgiGLuMTMavPP75opOIBwvtWx1+Pty44pZjfhYP29zAQReabyVQSVTjpIu1hHAwa
-         skTy7ejBwVz4c59ZY0DJLeI2i48y0Nyvx2wutDRaeiL8WVQiCfBb4PQOQEujlZScoRy3
-         XeyiqPHVBXRgZAJteIEZK47VG0j5B7PXfaS6HtB4KDG0NcbQyxSK2wOuoAv6YtuXhUv+
-         NTiWCHZtrWGGSQLBRAypisXDpVYyyarOQxTJsiZxB6ISn51ZP4na1Is4hQclMLvzvfxw
-         LL/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhSxBeFOXLDD4qrJTqoPqKyDCfj6gqzG++bt47ml7FdiC0AzNvZlCSus3eBZFFNCnoWxAAwunLN0bzdoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztAlV5cSwR7FefkJ4lF/eIMJXW5qanIsN4lJMcsdlNR0LKqRkx
-	m4kV+1doKkPu5XyFMk8wyApsd87KUmuaMmTE3kkcln6nGEf0Gxg9ef/vMnkRaew4e5gwW9WE6yB
-	Yn1cETjSe4flujVVEJ/DXD2gzfwZQ8j4vZ3oA
-X-Gm-Gg: ASbGncvF/mGyICPxzUPs11UdyqVtqvIxGQ+l5LDzR9GfDihXEHhNlS6CO792SXgLxex
-	oyD+G/5bUpf47j16Vs2l3wFPUbMNfEmZS396/lFul5Q5dtKqp6f5SqTpGRsOn5oNdSkmDuzv7oj
-	dyEMPX8JSM/Ymdr33Z07p1qxpZiuAQOaRZXrn3osyH
-X-Google-Smtp-Source: AGHT+IEvl4Xp01m/kppPffjbL0eDt/euUOdlf9I44GRPPQliiNFucatiPdpuDRc0W2rY2o86qqMn3vYGjkVwcPXQoRk=
-X-Received: by 2002:a2e:9207:0:b0:304:d8e7:7ea1 with SMTP id
- 38308e7fff4ca-30a80c99384mr15641891fa.23.1740495124392; Tue, 25 Feb 2025
- 06:52:04 -0800 (PST)
+	s=arc-20240116; t=1740495169; c=relaxed/simple;
+	bh=GGaYiwaYa4N9Fv/e4cYbdBiELgwBwoSdz0V5iPN1NwU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BM0Hgs9ARM1ny23bU624vcxrh0gfLpZ++96jwf1IvYatqEa8Meu4azabjcsCKx+eEuwpUoY+gCQa82HRkoKgH2qH3ehyJjruA/i26+YKPwOpJe80Z93hlUA/W1y40U2mVOL7Is/ocNQr+E3giEHyE5ZPd9bQWyhKFZxKL91TUR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEAE3Qve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40553C4CEDD;
+	Tue, 25 Feb 2025 14:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740495168;
+	bh=GGaYiwaYa4N9Fv/e4cYbdBiELgwBwoSdz0V5iPN1NwU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nEAE3Qve0EZ0H0F2bLur/AK3DmCsUBfeU/CEzdAAxPpT5AKgB5Pa8zUQOmMw50gf4
+	 gouJ6A+TvwwgAYZBgYYlrAIKv3u9zZDjHgJFa5D8krvLaBkGXOjsaS8QtBJNFLrDPv
+	 qO6ORzvzjwIQwqj35Yaqh0dVWLiecHHScRfuVnJ3zE3t0g9EWZIyjklEC99751U1Rn
+	 e2wwdmqEuovI+YZj5YMK3l1oxJRbSxn5c8BWpb28+B+N0BkPcVSTwFIUmFlgYVdp+s
+	 9j4L8pzu6kHa8Pxwq9hPUz8NPmHY0t4cVaDmSeOYy1Ius0Az+wFhOOkiXJFIWdXU3d
+	 0F4K6Bf15dAeA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	NeilBrown <neilb@suse.de>,
+	"J. Bruce Fields" <bfields@fieldses.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Simon Horman <horms@kernel.org>,
+	Yang Erkun <yangerkun@huawei.com>,
+	linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [RESEND] sunrpc: suppress warnings for unused procfs functions
+Date: Tue, 25 Feb 2025 15:52:21 +0100
+Message-Id: <20250225145234.1097985-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740403209.git.dvyukov@google.com> <4e93f7da6dfa450d488fafa3599306349e6e34e8.1740403209.git.dvyukov@google.com>
- <b18e6478-ef4b-42b3-8cc4-42467b3a0a7f@efficios.com> <CACT4Y+YxmkW6opFVJFOOFd=c73gz7yFvwBBCnjMndj-jffjBCw@mail.gmail.com>
- <b42dc8d7-2f2e-466f-bdca-0d532a0d5928@efficios.com>
-In-Reply-To: <b42dc8d7-2f2e-466f-bdca-0d532a0d5928@efficios.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 25 Feb 2025 15:51:52 +0100
-X-Gm-Features: AQ5f1JrdanOBkPkT1d4jyQL0fz7Spx-npcfmQUgm9CxzN_uowr3ptYoR1j91ol8
-Message-ID: <CACT4Y+Y9RodZO7T2RSJGohwjAdgBktgySCvCZ9xaPdVJafYzJw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] rseq: Make rseq work with protection keys
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	aruna.ramakrishna@oracle.com, elver@google.com, 
-	"Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Feb 2025 at 15:28, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2025-02-25 09:07, Dmitry Vyukov wrote:
-> > On Mon, 24 Feb 2025 at 20:18, Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >>
-> >> On 2025-02-24 08:20, Dmitry Vyukov wrote:
-> >>> If an application registers rseq, and ever switches to another pkey
-> >>> protection (such that the rseq becomes inaccessible), then any
-> >>> context switch will cause failure in __rseq_handle_notify_resume()
-> >>> attempting to read/write struct rseq and/or rseq_cs. Since context
-> >>> switches are asynchronous and are outside of the application control
-> >>> (not part of the restricted code scope), temporarily switch to
-> >>> pkey value that allows access to the 0 (default) PKEY.
-> >>
-> >> This is a good start, but the plan Dave and I discussed went further
-> >> than this. Those additions are needed:
-> >>
-> >> 1) Add validation at rseq registration that the struct rseq is indeed
-> >>      pkey-0 memory (return failure if not).
-> >
-> > I don't think this is worth it for multiple reasons:
-> >   - a program may first register it and then assign a key, which means
-> > we also need to check in pkey_mprotect
-> >   - pkey_mprotect may be applied to rseq of another thread, so ensuring
-> > that will require complex code with non-trivial synchronization and
-> > will add considerable overhead to pkey_mprotect call
-> >   - a program may assign non-0 pkey but have it always accessible, such
-> > programs will break by the new check
-> >   - the misuse is already detected by rseq code, and UNIX errno-based
-> > reporting is not very informative and does not add much value on top
-> > of existing reporting
-> >   - this is not different from registering rseq and then unmap'ing the
-> > memory, checking that does not look like a good idea, and checking
-> > only subset of misuses is inconsistent
-> >
-> > Based on my experience with rseq, what would be useful is reporting a
-> > meaningful siginfo for access errors (address/unique code) and fixing
-> > signal delivery. That would solve all of the above problems, and
-> > provide useful info for the user (not just confusing EINVAL from
-> > mprotect/munmap).
-> >
-> > But I would prefer to not mix these unrelated usability improvements
-> > and bug fixes with this change. That's not related to this change.
->
-> I agree with your arguments. If Dave is OK with it, I'd be fine with
-> leaving out the pkey-0 validation on rseq registration, and eventually
-> bring meaningful siginfo access errors as future improvements.
->
-> So the new behavior would be that both rseq and rseq_cs are required
-> to be pkey-0. If they are not and their pkey is not accessible in the
-> current context, it would trigger a segmentation fault. Ideally we'd
-> want to document this somewhere in the UAPI header.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Makes sense. I will wait for Dave comments/ack before sending v6. But
-to save a round-trip, does this look reasonable?
+There is a warning about unused variables when building with W=1 and no procfs:
 
---- a/include/uapi/linux/rseq.h
-+++ b/include/uapi/linux/rseq.h
-@@ -58,6 +58,10 @@ struct rseq_cs {
-  * contained within a single cache-line.
-  *
-  * A single struct rseq per thread is allowed.
-+ *
-+ * If struct rseq or struct rseq_cs is used with Memory Protection Keys,
-+ * then the assigned pkey should either be accessible whenever these structs
-+ * are registered/installed, or they should be protected with pkey 0.
-  */
- struct rseq {
+net/sunrpc/cache.c:1660:30: error: 'cache_flush_proc_ops' defined but not used [-Werror=unused-const-variable=]
+ 1660 | static const struct proc_ops cache_flush_proc_ops = {
+      |                              ^~~~~~~~~~~~~~~~~~~~
+net/sunrpc/cache.c:1622:30: error: 'content_proc_ops' defined but not used [-Werror=unused-const-variable=]
+ 1622 | static const struct proc_ops content_proc_ops = {
+      |                              ^~~~~~~~~~~~~~~~
+net/sunrpc/cache.c:1598:30: error: 'cache_channel_proc_ops' defined but not used [-Werror=unused-const-variable=]
+ 1598 | static const struct proc_ops cache_channel_proc_ops = {
+      |                              ^~~~~~~~~~~~~~~~~~~~~~
 
+These are used inside of an #ifdef, so replacing that with an
+IS_ENABLED() check lets the compiler see how they are used while
+still dropping them during dead code elimination.
 
+Fixes: dbf847ecb631 ("knfsd: allow cache_register to return error on failure")
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This patch from last year is still needed, resending without changes
+---
+ net/sunrpc/cache.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-> >> 2) The pkey-0 requirement is only for struct rseq, which we can check
-> >>      for at rseq registration, and happens to be the fast path. For struct
-> >>      rseq_cs, this is not the same tradeoff: we cannot easily check its
-> >>      associated pkey because the rseq_cs pointer is updated by userspace
-> >>      when entering a critical section. But the good news is that reading
-> >>      the content of struct rseq_cs is *not* a fast-path: it's only done
-> >>      when preempting/delivering a signal over a thread which has a
-> >>      non-NULL rseq_cs pointer.
-> >
-> > rseq_cs is usually accessed on a hot path since rseq_cs pointer is not
-> > cleared on critical section exit (at least that's what we do).
->
-> Fair point.
->
-> >
-> >>      Therefore reading the struct rseq_cs content should be done with
-> >>      write_permissive_pkey_val(), giving access to all pkeys.
-> >
-> > You just asked me to redo the code to simplify it, won't this
-> > complicate it back again? ;)
->
-> I'm fine with the pkey-0 approach for both rseq and rseq_cs if Dave is
-> also OK with it.
+diff --git a/net/sunrpc/cache.c b/net/sunrpc/cache.c
+index 6e36b1204f51..004cdb59f010 100644
+--- a/net/sunrpc/cache.c
++++ b/net/sunrpc/cache.c
+@@ -1678,12 +1678,14 @@ static void remove_cache_proc_entries(struct cache_detail *cd)
+ 	}
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int create_cache_proc_entries(struct cache_detail *cd, struct net *net)
+ {
+ 	struct proc_dir_entry *p;
+ 	struct sunrpc_net *sn;
+ 
++	if (!IS_ENABLED(CONFIG_PROC_FS))
++		return 0;
++
+ 	sn = net_generic(net, sunrpc_net_id);
+ 	cd->procfs = proc_mkdir(cd->name, sn->proc_net_rpc);
+ 	if (cd->procfs == NULL)
+@@ -1711,12 +1713,6 @@ static int create_cache_proc_entries(struct cache_detail *cd, struct net *net)
+ 	remove_cache_proc_entries(cd);
+ 	return -ENOMEM;
+ }
+-#else /* CONFIG_PROC_FS */
+-static int create_cache_proc_entries(struct cache_detail *cd, struct net *net)
+-{
+-	return 0;
+-}
+-#endif
+ 
+ void __init cache_initialize(void)
+ {
+-- 
+2.39.5
 
-It should work for my current use case, at least how I currently see
-it. Ways people use pkeys are pretty unique, so it's hard to
-extrapolate. But there is one more possibility: when a program
-switches PKEYs, it may also clear stale rseq_cs pointer from rseq.
-This way rseq_cs may have non-0 keys assigned, but they are always
-accessible while installed.
-
-
-
-> Thanks,
->
-> Mathieu
->
-> >
-> >
-> >> Thanks,
-> >>
-> >> Mathieu
-> >>
-> >>>
-> >>> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> >>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> >>> Cc: Boqun Feng <boqun.feng@gmail.com>
-> >>> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >>> Cc: Ingo Molnar <mingo@redhat.com>
-> >>> Cc: Borislav Petkov <bp@alien8.de>
-> >>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >>> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >>> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-> >>> Cc: x86@kernel.org
-> >>> Cc: linux-kernel@vger.kernel.org
-> >>> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
-> >>>
-> >>> ---
-> >>> Changes in v4:
-> >>>    - Added Fixes tag
-> >>>
-> >>> Changes in v3:
-> >>>    - simplify control flow to always enable access to 0 pkey
-> >>>
-> >>> Changes in v2:
-> >>>    - fixed typos and reworded the comment
-> >>> ---
-> >>>    kernel/rseq.c | 11 +++++++++++
-> >>>    1 file changed, 11 insertions(+)
-> >>>
-> >>> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> >>> index 2cb16091ec0ae..9d9c976d3b78c 100644
-> >>> --- a/kernel/rseq.c
-> >>> +++ b/kernel/rseq.c
-> >>> @@ -10,6 +10,7 @@
-> >>>
-> >>>    #include <linux/sched.h>
-> >>>    #include <linux/uaccess.h>
-> >>> +#include <linux/pkeys.h>
-> >>>    #include <linux/syscalls.h>
-> >>>    #include <linux/rseq.h>
-> >>>    #include <linux/types.h>
-> >>> @@ -402,11 +403,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
-> >>>    void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
-> >>>    {
-> >>>        struct task_struct *t = current;
-> >>> +     pkey_reg_t saved_pkey;
-> >>>        int ret, sig;
-> >>>
-> >>>        if (unlikely(t->flags & PF_EXITING))
-> >>>                return;
-> >>>
-> >>> +     /*
-> >>> +      * Enable access to the default (0) pkey in case the thread has
-> >>> +      * currently disabled access to it and struct rseq/rseq_cs has
-> >>> +      * 0 pkey assigned (the only supported value for now).
-> >>> +      */
-> >>> +     saved_pkey = enable_zero_pkey_val();
-> >>> +
-> >>>        /*
-> >>>         * regs is NULL if and only if the caller is in a syscall path.  Skip
-> >>>         * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
-> >>> @@ -419,9 +428,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
-> >>>        }
-> >>>        if (unlikely(rseq_update_cpu_node_id(t)))
-> >>>                goto error;
-> >>> +     write_pkey_val(saved_pkey);
-> >>>        return;
-> >>>
-> >>>    error:
-> >>> +     write_pkey_val(saved_pkey);
-> >>>        sig = ksig ? ksig->sig : 0;
-> >>>        force_sigsegv(sig);
-> >>>    }
 
