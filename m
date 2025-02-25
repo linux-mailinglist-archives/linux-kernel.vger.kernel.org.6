@@ -1,104 +1,139 @@
-Return-Path: <linux-kernel+bounces-531701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16E5A443D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:05:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4111A445F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099173AEDD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB7B18979CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D882626AA93;
-	Tue, 25 Feb 2025 14:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0285A19342E;
+	Tue, 25 Feb 2025 16:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vo8mUfK7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VAucme6b"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91725269CF0;
-	Tue, 25 Feb 2025 14:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0C18DB2C;
+	Tue, 25 Feb 2025 16:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495522; cv=none; b=ADrtQ+uKVX++KVkKj/8Kzq9Nhz1Pcf0p6hpjaHZcv1av6/JGbcEOvG1f6sv4xxqCJOw5O/T5sHeV/uQiut99L9XXskh5IMumJNl4lrffk3ZJSS+aQ8i3lWGocL8XfYbn2vrAPOovpmj5aExZSlWKLjXa/weHM05sJ/XB/DgxzwI=
+	t=1740500620; cv=none; b=k7ykf04GdYHAUlIuLkQ6NXMhrV49m6dqjsCboRcl38vydwBbgaNJrjyR4tATVQDF31/R1xVpLvkcjADg7IwU6VmCFpvwxC9sPW7UkKP7fCX6KpPnRK2IhKGGaIeOMiuzDOyOjituTeEjtSpsQTP1tldCXQWbpVOIm34NeQc7ISY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495522; c=relaxed/simple;
-	bh=OOOQ2iAV9RcPK+sRsOM15Eslihb9DrXX+GRWkHK3Fa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDhyXoMgzEYGSEdBqyOxniqbJt4OWt3EN7MhyjqGcWmHOqjimgF3wOkod9Lla/IpW9+LP4Ij6AoAHFnXQ9HaFcS6VVV0r/d9cwdxh9MPY6P3qbT7NMJORJlgy5qWc6BRF072Vj7ITAF/J9f3E9tHBH1YVqEEFOz8SuMU8XbKPhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vo8mUfK7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5k1IwHxZahOlLQH5uLv2uOHgVzjElueHHZLb0aGMJJE=; b=vo8mUfK7nomK6vqCYsV+6lfUOV
-	so90WcZBZhs48naQkAFpfJLqj+w6uSbN2oRVY4o2reMHjYoFEkajY37SJVX8X56adoOzb8sF7tmFD
-	SScQV/JwzB7DtujduYp3qqxhefU/4exb0+O5N+zbuBXNdC08haloUzBUHYaLuTNzNbJg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tmwOF-00HXlC-B9; Tue, 25 Feb 2025 15:58:31 +0100
-Date: Tue, 25 Feb 2025 15:58:31 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
- module access
-Message-ID: <caa65ad9-9489-4d22-9e87-dd30e4e16cca@lunn.ch>
-References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
- <20250225112043.419189-2-maxime.chevallier@bootlin.com>
- <6ff4a225-07c0-40f6-9509-c4fa79966266@lunn.ch>
- <20250225145617.1ed1833d@fedora.home>
+	s=arc-20240116; t=1740500620; c=relaxed/simple;
+	bh=5araWQ0s2WBnyVth0FZ5AloNSO2WyifLLBTHMeBvnYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SbcEtviJdCgzca2m+y7crtq3Zm05B+bM1SF3BoK4TwvX+OL+jahy81WDgeynzH2WRmijtz/Y9JbToN/+PWxNMgJWH7R86ADZbHYNpZK6iF/x5YMF7vkZDyyT2JAVrVoE6fby9PbM5tiS3F14mTv5TFltgnfgouroPfpJOb3jFw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VAucme6b; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PF69IC022886;
+	Tue, 25 Feb 2025 17:23:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	PXz/daQoPl9vRa9N4mM+seFELokRLIOzCneeJp1maXM=; b=VAucme6bAbNWdggq
+	b0PvGfNYPnsbc2ydRLnri3S16Bo1Fx9tWERsEoZ49Fd+yVHacE22cDmcv8tUCtRd
+	AxXho4yG7VSaMv84JB5yspb3Pf+ErNOL7hMkA20VnqEwGtHf5Xq6Wz5oFM/UhO8Z
+	iCCNX27M6wR83ph58WaV54kbx5cFN4aIC7EG350RuuGX9ksPpAoRISe2R4CBbOlx
+	GJzs66XcVVsuvOn9pnlKrKms4FLsy3r7tIWhYh0UloJqermZbkGZ2ExwJyEH3jCy
+	jPOf5nOPUjlYZMEtKTFziwd/BDXkyMhbpfK8H7TI7U/BIzfbzK2HAHU4Imgz6j4F
+	NucuTg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp4kbf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 17:23:27 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0290540074;
+	Tue, 25 Feb 2025 17:22:19 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EBEE141878C;
+	Tue, 25 Feb 2025 15:58:48 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 15:58:48 +0100
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 15:58:47 +0100
+Message-ID: <4ffc3fe3-78ab-43b2-b0d5-8f9cb545f9c5@foss.st.com>
+Date: Tue, 25 Feb 2025 15:58:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225145617.1ed1833d@fedora.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] counter: stm32-lptimer-cnt: add support for stm32mp25
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <wbg@kernel.org>, <jic23@kernel.org>, <daniel.lezcano@linaro.org>,
+        <tglx@linutronix.de>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
+ <20250224180150.3689638-7-fabrice.gasnier@foss.st.com>
+ <20250225-pelican-of-pleasurable-might-e9a7e8@krzk-bin>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250225-pelican-of-pleasurable-might-e9a7e8@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
 
-> You might be correct. As I have been running that code out-of-tree for
-> a while, I was thinking that surely I'd have noticed if this was
-> wrong, however there are only a few cases where we actually write to
-> SFP :
+On 2/25/25 13:02, Krzysztof Kozlowski wrote:
+> On Mon, Feb 24, 2025 at 07:01:48PM +0100, Fabrice Gasnier wrote:
+>> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
+>> this new HW variant, even if no major change is expected on the counter
+>> driver.
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>> ---
+>>  drivers/counter/stm32-lptimer-cnt.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/counter/stm32-lptimer-cnt.c b/drivers/counter/stm32-lptimer-cnt.c
+>> index b249c8647639..a5dce017c37b 100644
+>> --- a/drivers/counter/stm32-lptimer-cnt.c
+>> +++ b/drivers/counter/stm32-lptimer-cnt.c
+>> @@ -508,6 +508,7 @@ static SIMPLE_DEV_PM_OPS(stm32_lptim_cnt_pm_ops, stm32_lptim_cnt_suspend,
+>>  
+>>  static const struct of_device_id stm32_lptim_cnt_of_match[] = {
+>>  	{ .compatible = "st,stm32-lptimer-counter", },
+>> +	{ .compatible = "st,stm32mp25-lptimer-counter", },
 > 
->  - sfp_modify_u8(...) => one-byte write
->  - in sfp_cotsworks_fixup_check(...) there are 2 writes : one 1-byte
-> write and a 3-bytes write.
-> 
-> As I don't have any cotsworks SFP, then it looks like having the writes
-> mis-ordered would have stayed un-noticed on my side as I only
-> stressed the 1 byte write path...
-> 
-> So, good catch :) Let me triple-check and see if I can find any
-> conceivable way of testing that...
+> So fully compatible? Why this change then?
 
-Read might be more important than write. This is particularly
-important for the second page containing the diagnostics, and dumped
-by ethtool -m. It could be the sensor values latch when you read the
-higher byte, so you can read the lower byte without worrying about it
-changing. This is why we don't want HWMON, if you can only do byte
-access. You might be able to test this with the temperature
-sensor. The value is in 1/256 degrees. So if you can get is going from
-21 255/256C to 22 0/256C and see if you ever read 21 0/256 or 22
-255/256C.
+Hi Krzysztof,
 
-	Andrew
+I should have mentioned it in the commit message:
+
+Currently, same feature list as on STM32MP1x is supported.
+New capture input stage is now available in the hardware. It's not added
+yet to the driver.
+
+The Low Power Timer (LPTIM) hardware isn't fully backward compatible,
+hence add a new compatible to properly support it.
+
+Best regards,
+Fabrice
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
