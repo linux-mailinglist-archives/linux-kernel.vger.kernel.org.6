@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-531745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D215A44462
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:29:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9389EA4445F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E163B48B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:28:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1877A8E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A6626BDB7;
-	Tue, 25 Feb 2025 15:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE4326BDA5;
+	Tue, 25 Feb 2025 15:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6ldRKld"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DMYlqlDh"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B449268692
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93382267B9D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497288; cv=none; b=el92RUNqRKvRrtddzpLlWWTc0LsPx3A0ZjMO0Yh5Rca4JDK1wmSMeKJUqi4JyZKoBWhASOW8qW8SORvj/xZcQDcPSxEX9DpcPhjFvLOHLtVv2lwQC3qRc7hap/9IU9t5yzEo+muOAeH54j7ahVLrajvta3y+hLdHerbc4A4MUHg=
+	t=1740497312; cv=none; b=pQ+TGDXznTEbH0eaZqtc5iAn1gM3ZUvaY6JSUczzgz4ysjZBU7/6tTsNb6NwNHDpsc3/vQJYhsaqHJhy2v22Rl2ZGz8cS2aps4TanvuBtyiTgVuCyutWwmzxnOXgVKgBMWmEZz2djatVMt3vkJr5CQAcZZ9/i9cU+a4J3uf996U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497288; c=relaxed/simple;
-	bh=hGCiGjD3rT8WeMapv2F6JsVOidAV9/I18pkLa1aTeys=;
+	s=arc-20240116; t=1740497312; c=relaxed/simple;
+	bh=rSEl3QGwsciK3DZesh967er1Ic9Jq5iFZZ00R3tL8wc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q+P5/f3thCNQm3HFIo3iHpgU11ZMpTSnwIxoHm8J7VD65YnoaLArM9mwPHN7O9DltV0iGQFD7nfwB/x9N2tgf0ml09+MK7mE+7OUCNZyX4nD54I38VqvSt/XkU+qRUr3dKnrgecCzhgBWTucMdjxmspAezRWtreCaokKifZgYPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6ldRKld; arc=none smtp.client-ip=209.85.208.177
+	 To:Cc:Content-Type; b=k1Z2a6plEux4haFlmOj+afAiK9XEVllsI5rV3mpl6JJrvUXm3OXe4RcyXQrRQPLsY0NXNPavSeC+Ned6x0Yhw5O5A1Nu6eeFLMWZk8IB6loiFdqj2SiataVvWTNnriJyEYJ4LYwzKedG3//QN8OjjwJJm5a3r65skekd7jpKMOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DMYlqlDh; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-307c13298eeso66400341fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:28:05 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30918c29da2so61315561fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:28:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740497283; x=1741102083; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740497309; x=1741102109; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hGCiGjD3rT8WeMapv2F6JsVOidAV9/I18pkLa1aTeys=;
-        b=n6ldRKldJeb4JM6Jhqi+EorQ8Cov5fjfKXfnxoPy+3DjaBoCw2DkCSohapBCnwG9PS
-         fbvZodAEenviHsb0vR5i4xBPqBsIR76pbEBDdUV6ZglfHORvPv0Ubwbetg0Izf7q99Pe
-         C0U6DD4Wu2A39S06e4ZUX0babUuLz5G+vXV/QdJX4FmwBE30A7Ot/D724VbFXx2HMs2B
-         kxEYbL76pvXkfifeoPcEg+zOK981sdB4oyufjRUTutp9reN4YolAKYJUU0qX/Zo28VEI
-         I9vNYUn3lbV3CMCBi0l3ErbUlSmE7ZF1l7Q96CYoK8a3raOt2uvkHiSumGAFbWG6PksF
-         G3kA==
+        bh=rSEl3QGwsciK3DZesh967er1Ic9Jq5iFZZ00R3tL8wc=;
+        b=DMYlqlDh2WyxTfxyDyYTUfYNUfTLyGIJqFNeFefPtHKUrGzMPMwjki4a3UTnMDQG3A
+         nD6sf3V6xWbYEoElXjZQ07t+VVBCXcKIQ3JtudqhfGfbRnAL4d9iBOHpqvwccS33QdMX
+         SqZnk26Jy2vIEFF/mjoCOu4/RoW2JV7VbtoCUDjRPBZb9aRzYaGRVGe4jmONRhzZfeik
+         P8rYCskQ9aLbpZL++TCghLGUhAxZfcURWCi3CRm0vT2/61l6IVK2ZFojKadipYu/X4zE
+         1QRQs66Dh8FyzuqVVKt9Qjw8SAjGJVka12rCCQV7VA3i+xMpdDzr6FbyNx6oP7aZyflc
+         pQUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740497283; x=1741102083;
+        d=1e100.net; s=20230601; t=1740497309; x=1741102109;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hGCiGjD3rT8WeMapv2F6JsVOidAV9/I18pkLa1aTeys=;
-        b=ga5gQOtxQ2MNRHFG9DEVqh+sSGUxv3E4lhPLm+JPFHG9an09Ga/3u8Ff7QA9NlVpfp
-         trMs0aor4YUV8yCs2Fk30EAvDu1a4l0xobinJ1lCVeMNvGbUwLdvGJzvLWh1I0kGQ/Rj
-         /+fE28S13+4GIRC4v5AsgcOSMkCVM0yixWRr7CLI6OiVCAp/Qh6BSfOY4BnJ9h1io42A
-         NUoVVVRAiRY472X9n5y/epUQaS5AY+hduni39r5uyhViIraKaJMKdzlxEuQq+GfkRneT
-         iMlMYXIdRgo7qpeIq5Fauy5rXC6WsrQfUhPtlAoI9XP/K66jtiggt4CPmIBZEekgXfrU
-         fHmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVczW7nG/Y6cfUI3EJvJ7hFqEEqwe+FL3FbKvbwjaOTJMDm2i9xpkP4cU6Yz0xsTHFyMnsOMsyb27UCMXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDCjeTyJySVBkvP+VICasUkO88WyV6Q27ufp7Nzxq7X+lDE11
-	7PUU9OkndpN3TGKcLC7bB0D+rRMrp/QGGUtTq2V7ij7BztfouYDESpGyCZdZR8dHcys42F/zzgo
-	sSqIu+Sq9ZbIojF2czNPtb9BGZQjEqN5z/NgTYQ==
-X-Gm-Gg: ASbGncvd5nOxRKb1S8jtrMTTbfSZp9B+PkjEeyVUJMgYy9CHg8suBm5npHeaZGJtDH4
-	veYNjDPkpkDifKqhq0a6pN2s222T74nxHc5423ORh11LcQl2waOnyRftPqNWZTpeCu2pIYHGnaf
-	N685nWkCo=
-X-Google-Smtp-Source: AGHT+IFIC691aWiQ6fX2Kh346loDQMF7svt4x3kP5BbJgZi/TCTQ5bjaKhl56TTJAVegI/rJyBI4FUJAROWzfxVZ1R0=
-X-Received: by 2002:a2e:98ce:0:b0:30a:2b40:af0a with SMTP id
- 38308e7fff4ca-30a505bbbb3mr72437221fa.2.1740497283523; Tue, 25 Feb 2025
- 07:28:03 -0800 (PST)
+        bh=rSEl3QGwsciK3DZesh967er1Ic9Jq5iFZZ00R3tL8wc=;
+        b=p0y9jxP3Xeylyu5g0Wp6YB8CkmIc4ANXRw117PXuujEJiVIpRrM6Gd5ZwBDg32lA94
+         fYam4ENYov31A+kG+ndbYEoOJChBFnjEEWBD4DUQ+fNIvkkFaKlmXpj+PZ7+jd7D1TGf
+         KTp98f8T2Mpa5gr/X1+4yhjzCQK3mX6etu+Vm+1rcXi2jdfX5inYq/tzge+CDLkLpA5X
+         eIXpLVANtgAseXL04cULaXCInFes4bNWW1A2Rtv/QrXuR/I4zWfTWy7p71kVQD951ibN
+         2xBD6VvX0EOqnO/6BqjICYqTLvhlpKeCaEXTXE+/8y+aFz2upNf1U6QXv7OgOD4qaNbp
+         qwbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7I8QyOcif9C9ZJukP2t3kKfPT4qZkON++AwY5RotdoqaZsaTtMc1veF1MLv5CC7OG0bIZ4GZVTqTQXGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoDKj7+fWpxQwPPFCSQ1lT4scbj6qT+x1B/WC05qfLncVXZvwc
+	E+x+otv/bRwco+aG91ZJeYJMA1AI+bWq3Yvtv3ZVOKrhnXZygkV+hzlIZLAIjlc9tn/CmDxsSoz
+	DbPxgRwCyRtWEltfpIDaiaep8b9JaKVaeEpL9MQ==
+X-Gm-Gg: ASbGncvebrhLi/uQm5InvKD5sXALcq+0gOunSkRIGUaz2XvP+A3X8LIM6gLdEvxe94H
+	bjfkQ3rAmoSloC7+WVTEr+Hgzzq9XiQW1IIFlChnJN65YI5TMHTRdpt4tw96syEG3icDI2M6YHv
+	czImCRArU=
+X-Google-Smtp-Source: AGHT+IGhBcI3R96Ygjl+ia9NcJw/ZFQLjv7p2n56sPt5viyPNoWWS80PuvTaUtF7NwD5c1yT/18+krfoAge6OiTuJt4=
+X-Received: by 2002:a2e:b38c:0:b0:2ff:e7c3:9e2e with SMTP id
+ 38308e7fff4ca-30a80c16470mr16634731fa.17.1740497308697; Tue, 25 Feb 2025
+ 07:28:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220180427.3382482-1-vincenzo.frascino@arm.com> <20250220180427.3382482-5-vincenzo.frascino@arm.com>
-In-Reply-To: <20250220180427.3382482-5-vincenzo.frascino@arm.com>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com> <20250221180349.1413089-6-vincenzo.frascino@arm.com>
+In-Reply-To: <20250221180349.1413089-6-vincenzo.frascino@arm.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 25 Feb 2025 16:27:52 +0100
-X-Gm-Features: AWEUYZmXC8d0HT56SyUltkg7iyFAN4LOhovsbEmG_24mIAewVxMQQtWLIB3aLtU
-Message-ID: <CACRpkdbCZr9ZWirwfrL4MFDXzYmHLWQYzw9bTtGFu31QTKo5DQ@mail.gmail.com>
-Subject: Re: [PATCH v6 04/10] dt-bindings: arm: Add Rainier compatibility
+Date: Tue, 25 Feb 2025 16:28:17 +0100
+X-Gm-Features: AWEUYZm9-GSXUNrjqwaX5LIfxqSFIktvtYAfGG9Wtd97LclpY3yNzhXHmiBivzk
+Message-ID: <CACRpkdYX3Ad4PDDwFV-9FG5KgB_55JmiRMuCetVAAhmw38NBHg@mail.gmail.com>
+Subject: Re: [PATCH v7 05/10] dt-bindings: arm-pmu: Add support for ARM
+ Rainier PMU
 To: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
@@ -91,12 +92,10 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 7:04=E2=80=AFPM Vincenzo Frascino
+On Fri, Feb 21, 2025 at 7:04=E2=80=AFPM Vincenzo Frascino
 <vincenzo.frascino@arm.com> wrote:
 
-> The Arm Morello System Development Platform uses Rainier CPUs.
->
-> Add compatibility to Rainier.
+> Add support for the ARM Rainier CPU core PMU.
 >
 > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
