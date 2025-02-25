@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-530554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB151A4350B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:17:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA52A43512
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE40E175A87
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:17:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB127AA6DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBAA257423;
-	Tue, 25 Feb 2025 06:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799D1256C89;
+	Tue, 25 Feb 2025 06:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ho/bdoeE"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rju6issL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0D5254B11;
-	Tue, 25 Feb 2025 06:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1028D182D9;
+	Tue, 25 Feb 2025 06:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464243; cv=none; b=LcuXJtacqGZMKGSMuEDKaCIFubgvFdz0znAq7mvL/tVgX7Lrjfr0i7YVPOWQd9Qk6SPWEbxfh/upIb4Cq0QNEswS42x+6pvtwKuWp/zfsToXcV0H1g5U9wWjmWblNqBKXpfUBzhTw+6vWKHA0EEmA5wTAybm/k8iN4RFi+CfJZI=
+	t=1740464274; cv=none; b=G8egv6isbBV1X3UbP2Sq74/zvx9AlaayOQjJDfl+yaJ2dcuVg/UsiywGHFGCQ11bV1o/e46DwObBuHrWruU4iVT3DTF4+Hmapx2ZNe+7egcZxavIKc6ErNxAHUwseLedFw5Sx/bfSBa+Q9ewMPC9MlNAHWlNQyQdiXEosC1Z5nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464243; c=relaxed/simple;
-	bh=+OIw2U7cW2Aih9mzXBesBSFmW2rsvEzWJRPKAL7iUgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwBQSTd2aCrTlX52jbYKmwdadLRtafyOuqh8R1fRGie7uLxx8vfRipbY69g2fcA4mwI2lEVVdbMcYWmQZsBp2uSlyWrhv0cRFU07KpINPQEdvNDZ9Q6uXAbaluiODfTjKEtGMW2Zm+KaEIcYln4Z4+GamMJFa9JCpdu8JX2pEjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ho/bdoeE; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22114b800f7so103194305ad.2;
-        Mon, 24 Feb 2025 22:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740464241; x=1741069041; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w/ATSqnAwKiVvZcf6pu7CEp14XGA+aCxxd64pSRjACU=;
-        b=ho/bdoeEi9zEFFPGynem4ixJehgzM7qjJU5oNe52Gkrkwjv1D7rIaFlboWZ/JjUSZw
-         bw0KUZ8uIhg6xR7bqRXlvcTwxMIfOt6A/b4ijs1a/59X+cgtnn2hIRW/pk6t9bS0WFjo
-         nGaKdulScbVJSGrcn+9Sn6V/BW3b6f0jpg4vuBJMi5f6mfoh2jr3936BljsfZJFlgQMS
-         yIPdN5b6E4EntF1akVOzMUxsESQeHYuMvBeg5OLgNDYIAWxMyooNSTKl2M2d9XDGjliX
-         3cvCQY3CXKFb17yxcCYsPYSLw5kHaotaOxkM8H/+OGkHrzndM75aXoJwq29EUvW7nwsd
-         k05A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740464241; x=1741069041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w/ATSqnAwKiVvZcf6pu7CEp14XGA+aCxxd64pSRjACU=;
-        b=BnrV8i628hmH7bd7H5jtJS2vQpfWLRYhmPMlm3sNp1/CeeVtytSK7AoAwaBedNYVpm
-         F1u/YnyQF8YM28hlAhXkEsOjsaNBWQojDcc/LAozyB1CMix8pctefA41Pv1KYCsnJ1JT
-         ycvRgYyZfAeaHZSiMan6oevdCGDtHi1FqVYSHoGHuqjz2i4Qbmck9OgQ2UUYqnaXF3aG
-         AuJlA4lQv5cZH31QIck8sBhyEcmBqy+PSsPzIU1KPKrlxx1v8sEXlhA+OWnNnVNbYv5f
-         LoAA2wAzjYr6xdXeY2kSWs4/jRTW8pLSz1DzgeJMIQ1IvJXaivI4I4ORoO5yEzbGk7l/
-         m3Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs+Eh6GGq6EYi3/Q/nXiG8KvP1cWpvgVyvAaOYlFxzK6QnX/tmFO0tsEW8rWL9XpOH6FxTsV4fqpXezges@vger.kernel.org, AJvYcCX/ytqd5V6PmK+vQpSsa3gsGg1Cimj5yRnyUqaGSxJxlJWJF9LYVT88sa1cGb1NO1/xZjLnARUjUFAaBb0=@vger.kernel.org, AJvYcCXuLPfZhrsDF53CY/drMWJ//xKP87LBk5xG1qnNlCTxu7MAu/+LTv7SODLMSmXuuo+2SxsFMOmj6PwP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTLi8XGAxA34ftEVSyJ6uJMybez5rfCd7xShUVrkpVVtg8hOae
-	01xNNc/iiORX/7sASLVaNBOgow631RScAnWBpqO8VHYO1aDlJfez
-X-Gm-Gg: ASbGncsBMW10k8MRb5PmSTyXqn+nEbiRNogVEzMFg6sY/SuA9n4dmCa8wVf/4aLNUn1
-	TGvxkxDwrlXep2XZ2jXSmc4v9qU97xuJ9AkAnOdfN/ECpj0jqyXtTltYcAEyOjIzQjt3FsefNDm
-	aQqCLGox5I/8WyZRlH7PgfEQy/0+Wd+PrC0EtFH7S6GdHH/KEhQA3YahZx9WmxBi57cEAvG3O6b
-	ANVo3O/xgLfJ+aekUCpOMShyKbmC8rTBFVdVuTYu0s2fIn1a8Yxi750HxamwQ4IDqqjuK2uboI2
-	tGkt5uZB5sKugo5cJyeD3JgRdA4=
-X-Google-Smtp-Source: AGHT+IFdfc+NREhBU5f8tx8tcf6BbapEfu39IDYdFhX5e4nIcAOaurJrGx0qrdviMD4V0yM96cEyOQ==
-X-Received: by 2002:a05:6a20:6a10:b0:1ee:73ee:bcf4 with SMTP id adf61e73a8af0-1eef3c49054mr30784128637.2.1740464241392;
-        Mon, 24 Feb 2025 22:17:21 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9b5csm686996b3a.90.2025.02.24.22.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:17:21 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:17:18 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: fnkl.kernel@gmail.com
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH RESEND v6 1/4] dt-bindings: input: touchscreen: Add Z2
- controller
-Message-ID: <Z71gbmXAHjX-BTrD@google.com>
-References: <20250217-z2-v6-0-c2115d6e5a8f@gmail.com>
- <20250217-z2-v6-1-c2115d6e5a8f@gmail.com>
+	s=arc-20240116; t=1740464274; c=relaxed/simple;
+	bh=BX++zZ7wpWeIo8YSpr+54NZRUpXQKNaqas7+DSsXj0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uUL2engGwr0nU3+MSoohQlcaG+2vw0jY/n/LgY0v1qCPWynR9E0cmcBHgu8z4KwmTpPQL1UonpNMYeysR4p3A/MZgNN5mM4xalQByc8uCEhw1DRlBAjbUusi446hY9KzNglNB/i3/CGNAVXHTeYjt2YVQ/TodcqQODe/eK6STG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rju6issL; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740464273; x=1772000273;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BX++zZ7wpWeIo8YSpr+54NZRUpXQKNaqas7+DSsXj0s=;
+  b=Rju6issLdLVCISVXgwPhAymvMspLVmmvWr3J0xsBT3npLSlhtp1yJQNW
+   LH1HHO+sSjU1O2pqZYnHAZAMXMXX4i7IVDbMgIrpkiCYRMJ1C2mRdtEXm
+   2VhoMycCclJCBq62NKyZ3Q9X7NzRN3yVAy58V+UoiC+gNxzw/+V9SbuBm
+   N9d6a3jLqPTcX7PHnsatZpwxt0lD5M9SqMe9Zl+0okTT5GOG/VyI3oCH0
+   3dQ+/EjUf/pJ37Ob7l2lt0FgNFQ05ER/psULTIR0OSqBeiExH3+G8UxVC
+   pQuOpbg2BdjoR9fpIEOB4ZfXxkdreg40ptw93kN5IIemF+5YXF5JYaKgG
+   A==;
+X-CSE-ConnectionGUID: nYG4T1vjTkq8C15m1pgQSg==
+X-CSE-MsgGUID: aN7Cx/EKQAy9RZaoNI216Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="66624180"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="66624180"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 22:17:52 -0800
+X-CSE-ConnectionGUID: +zrk8AMCRzelKXGCqa8j7A==
+X-CSE-MsgGUID: jFoHQj07TDiTMiflPPSkIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="116920481"
+Received: from yujie-x299.sh.intel.com ([10.239.159.77])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 22:17:48 -0800
+From: Yujie Liu <yujie.liu@intel.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Martin Liska <martin.liska@hey.com>
+Subject: [PATCH] perf script: Update brstack syntax documentation
+Date: Tue, 25 Feb 2025 14:17:36 +0800
+Message-Id: <20250225061736.1698175-1-yujie.liu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217-z2-v6-1-c2115d6e5a8f@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 12:38:01PM +0100, Sasha Finkelstein via B4 Relay wrote:
-> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> 
-> Add bindings for touchscreen controllers attached using the Z2 protocol.
-> Those are present in most Apple devices.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+The following commits appended new fields to the end of the branch info
+list, such as branch type and branch speculation info.
 
-Applied, thank you.
+commit 1f48989cdc7d ("perf script: Output branch sample type")
+commit 6ade6c646035 ("perf script: Show branch speculation info")
 
+Update brstack syntax documentation to be consistent with the latest
+branch info list. Improve the descriptions to help users interpret the
+fields accurately.
+
+Signed-off-by: Yujie Liu <yujie.liu@intel.com>
+---
+ tools/perf/Documentation/perf-script.txt | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+index b72866ef270b..8bd105084280 100644
+--- a/tools/perf/Documentation/perf-script.txt
++++ b/tools/perf/Documentation/perf-script.txt
+@@ -239,13 +239,15 @@ OPTIONS
+ 	i.e., -F "" is not allowed.
+ 
+ 	The brstack output includes branch related information with raw addresses using the
+-	/v/v/v/v/cycles syntax in the following order:
+-	FROM: branch source instruction
+-	TO  : branch target instruction
+-        M/P/-: M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
+-	X/- : X=branch inside a transactional region, -=not in transaction region or not supported
+-	A/- : A=TSX abort entry, -=not aborted region or not supported
+-	cycles
++	FROM/TO/PRED/INTX/ABORT/CYCLES/TYPE/SPEC syntax in the following order:
++	FROM  : branch source instruction
++	TO    : branch target instruction
++	PRED  : M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
++	INTX  : X=branch inside a transactional region, -=not in transaction region or not supported
++	ABORT : A=TSX abort entry, -=not aborted region or not supported
++	CYCLES: the number of cycles that have elapsed since the last branch was recorded
++	TYPE  : branch type
++	SPEC  : branch speculation info
+ 
+ 	The brstacksym is identical to brstack, except that the FROM and TO addresses are printed in a symbolic form if possible.
+ 
 -- 
-Dmitry
+2.34.1
+
 
