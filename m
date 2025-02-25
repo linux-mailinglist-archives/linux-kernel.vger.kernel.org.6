@@ -1,112 +1,171 @@
-Return-Path: <linux-kernel+bounces-530376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA09BA432A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:52:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F819A432AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30A867A892B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2539716668C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A2E12EBE7;
-	Tue, 25 Feb 2025 01:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpUl4s+w"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094BA823DE;
+	Tue, 25 Feb 2025 01:53:18 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11873450FE;
-	Tue, 25 Feb 2025 01:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAA8450FE;
+	Tue, 25 Feb 2025 01:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740448309; cv=none; b=K+srec9CRb7nzKXywJmLLtnqgpiMK1bzbTwitZ1HEmTAkfhOCeu5QjpKv8EXEykwqO1IsogeaMzFtdZWm0YwKjrCwYCmyzCm9aZWzciAiQKU2eKEtLxe4pxuiHqhhu3bGtAMQdbmXKTX1JpRgxKocjXwuBn0AYRKT1X2hkjnRwk=
+	t=1740448397; cv=none; b=iAgV1TUglCAh0wdiX/R06S6OZUfd7E/8XxJwFjtiA22iDv5KcViuZM1jWayVyaXDGgN35JoWJLoYeq79ExdAX5KdO15xEfJ+7NdZYC/AYbO4WQ3SM5hgWyBUcwZAtMlKxJeTkpQGw9ltjRZLvFJAUyecEy3NH758nmBOcmfuCU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740448309; c=relaxed/simple;
-	bh=WfFzdi2h0H9yGqlvka48MuPJR8qMHP+nRMTXge4JZzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OnYXS5AdBfyMoU7bk3Qb3mpY7D/ZOP92xfQSFPpvhbX37NjZDNqXW2WwQSfBBvBaOlYOm4nLJ1SIaYHqgQslliip/7i8FCDsD125jMKT5NVD3N2xBIGuXLBL0/JFPpAwsoXwNNoqA29HCbyQUqrNjLlE0Sj5XiV63ay+7IIe+LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NpUl4s+w; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220d27fcdaaso10656485ad.0;
-        Mon, 24 Feb 2025 17:51:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740448307; x=1741053107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WfFzdi2h0H9yGqlvka48MuPJR8qMHP+nRMTXge4JZzA=;
-        b=NpUl4s+wp3SXlbRprkEWXxShWlK4nOSmMGOnvoBFwbY3X1Fi+D0zOnE1mIC8KfEo2K
-         GUtisepQ7hvQk66MIW1ZdctpesMXIISA999ursJXPHLbyN4j5F64TOPnJ2EItcLcCJQt
-         D+Gfo1ggx11KpQ2C/pjoVm7DPJVtd+t/FyEmiUl+zLiH9Lk8uXr9v4GD7tPrKalMrazj
-         iZsXPFDg1SEWeoInpSZkrNGR5PJk2c/GhPhDWcQnN+DwfJwuMNkiHEkFSHsbLE0qTKkS
-         ckdwDwEYd4s+oIa8zvl1XdEbeVmDSkDOOIDLL9IoxzquKggcnG4AVQzjTzOwe1h35cdv
-         W9Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740448307; x=1741053107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WfFzdi2h0H9yGqlvka48MuPJR8qMHP+nRMTXge4JZzA=;
-        b=IbujhmRz+yJrk2euyk1MwpyYgVBEOyrYUdhRMeq3lpA/tvkXfFWcuczhnyr+LKMapU
-         Ytk1eyhBkEQMiOQwIjnhvUPHi+04SckWVOpV/UBvtKUbToTduYJcN4BNZL2njAKR7/Ep
-         DH/wTx3de6OXCL9g5UyYBAqE3WP6qW/LVmjQ42X4Kqh33S/qpMFSnIiN4tG1FRCLEzLM
-         cHERGgB5apm6H2ERgOqot8mjuqAjBq6idI5Cf3wdhFCtg9J8JR4TDHUsgfX3IQNYiUWt
-         GEO28ZW9TfDHP/YwNfA+o1Nz0Ty4v3pYXjm2BD1Zi/mEO4CMYUR29W87n9arq67aORcJ
-         zavA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwbsJsGJujRiAnwk28aJw3kUBBeK9VE/21jBgBwrrnQdMY4OVjZ6hU9NFB8b+9EkMOgBFRLqal5gPZ45WxAw==@vger.kernel.org, AJvYcCW0t3ouS82g7pS/luQyJlCLDPL5JofvlVWNx4cdZU9ARTC1Uk/FnXY4E+Rj70CM4f8uYAv5PuSnRmZu1Ubn@vger.kernel.org, AJvYcCWpyJrebP7nrCelz5qVtgryfPz5EnZk45pjIaQDQK68S0G4OywMdMb2st/MdaI9kGmyaUow0AEnr/fGJ1U=@vger.kernel.org, AJvYcCXxUMw6JoVvgiwCtTW8nPVgtWZspmpFY7NAuBy4Qezf4sfVF89Jv8KcV/ATQgpnELZOv3W3udqSw6DpQK7PIQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyT6MKqcx7dovPG4CX2n5Kjkf9ZXyXNXDcaGO/IJ2X+yXR3z2M
-	mnJv5ULbRmejj9LF6x9rPYHGHc0qq1tDWyn7uIQaZZI28DIVf5frhOst6szXAdjAjqqmgnS7dfG
-	lpUO2Ys+dUpaDBkpi/OlcuKh5u+I=
-X-Gm-Gg: ASbGncujUg2h7IzhyHDX7//ZZeDKuuOcw/VjC298G2REBN3psAHs7QwbTnnwbiosDhr
-	GX23Jxliket9N8QlUbpa+wGv3bdlidwlv4Y+z2dHHciatZ/VhISDJmqQjHGjuuLMGEIkYzLSmmM
-	wZYbaeyd4=
-X-Google-Smtp-Source: AGHT+IEnoBAjE2CkoJFgQSrKbCTfJQy1crOZg/ALuG9lKJS8aVrTZMkhYHdBvHWLjgg0WC+w9rQ10MHGTh4Xvkiv9B0=
-X-Received: by 2002:a17:903:98d:b0:215:2bfb:3cd7 with SMTP id
- d9443c01a7336-2219ffba7f3mr101974795ad.10.1740448307274; Mon, 24 Feb 2025
- 17:51:47 -0800 (PST)
+	s=arc-20240116; t=1740448397; c=relaxed/simple;
+	bh=gKtdkH/FUJhSmNeXPSQGpNJZSyRDX4r/ZF51CLUAd9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HhGAMDnlxVXdAscLea9UZcdrZl0lnTi+GWEKBmUVZiKGcafXO6oCOVHgVvn46uTM35Dm9A1ALoOqOv/vF4ZlTn6INzWRtlKhG2RqunKNYPWxgRZ4QZ1PG1lLm6K6Y1a7fEfgMU778JenOVe9G5qmSdTAyyh6W/oXWj35tDKy1NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z20vZ11RPz1HLxh;
+	Tue, 25 Feb 2025 09:51:38 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C38D1A016C;
+	Tue, 25 Feb 2025 09:53:12 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Feb
+ 2025 09:53:11 +0800
+Message-ID: <3f9a67e2-ef08-47d4-b35e-41841e24bb71@huawei.com>
+Date: Tue, 25 Feb 2025 09:53:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
- <20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org> <20250224223032.GA615664@robin.jannau.net>
-In-Reply-To: <20250224223032.GA615664@robin.jannau.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Feb 2025 02:51:33 +0100
-X-Gm-Features: AQ5f1JqBQysGuc51REO15MAi92-gEKXouYKMgma-ffUQAmk7HPHu-6QHElzi5DA
-Message-ID: <CANiq72ns264CeAHPKv9m4rUxS7b8J6+2Mwrk=+xSEQs5wPNoxg@mail.gmail.com>
-Subject: Re: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing functions
-To: Janne Grunau <j@jannau.net>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Luis Chamberlain <mcgrof@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Adam Bratschi-Kaye <ark.email@gmail.com>, 
-	linux-kbuild@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ext4: only defer sb update on error if SB_ACTIVE
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Mahesh Kumar
+	<maheshkumar657g@gmail.com>, Ritesh Harjani <ritesh.list@gmail.com>, Yang
+ Erkun <yangerkun@huawei.com>
+References: <cover.1740212945.git.ojaswin@linux.ibm.com>
+ <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Mon, Feb 24, 2025 at 11:30=E2=80=AFPM Janne Grunau <j@jannau.net> wrote:
+On 2025/2/22 16:40, Ojaswin Mujoo wrote:
+> Presently we always BUG_ON if trying to start a transaction on a journal
+> marked with JBD2_UNMOUNT, since this should never happen. However while
+> running stress tests it was observed that in case of some error handling
+> paths, it is possible for update_super_work to start a transaction after
+> the journal is destroyed eg:
 >
-> The errors go away after exchanging i128 with i64 (while breaking the
-> parsing for large values).
+> (umount)
+> ext4_kill_sb
+>    kill_block_super
+>      generic_shutdown_super
+>        sync_filesystem /* commits all txns */
+>        evict_inodes
+>          /* might start a new txn */
+>        ext4_put_super
+> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+>          jbd2_journal_destroy
+>            journal_kill_thread
+>              journal->j_flags |= JBD2_UNMOUNT;
+>            jbd2_journal_commit_transaction
+>              jbd2_journal_get_descriptor_buffer
+>                jbd2_journal_bmap
+>                  ext4_journal_bmap
+>                    ext4_map_blocks
+>                      ...
+>                      ext4_inode_error
+Just curious, since jbd2_journal_bmap() only queries the map and does not
+create it, how does it fail here? Is there more information in dmesg?
+Is s_journal_inum normal after file system corruption?
 
-I don't think we can use 128-bit integers unconditionally for all
-architectures (we could eventually get it to work for some though). So
-we should do one of the other approaches discussed in the previous
-versions, like call into the C one.
+Thanks,
+Baokun
+>                        ext4_handle_error
+>                          schedule_work(&sbi->s_sb_upd_work)
+>
+>                                                 /* work queue kicks in */
+>                                                 update_super_work
+>                                                   jbd2_journal_start
+>                                                     start_this_handle
+>                                                       BUG_ON(journal->j_flags &
+>                                                              JBD2_UNMOUNT)
+>
+> Hence, make sure we only defer the update of ext4 sb if the sb is still
+> active.  Otherwise, just fallback to an un-journaled commit.
+>
+> The important thing to note here is that we must only defer sb update if
+> we have not yet flushed the s_sb_update_work queue in umount path else
+> this race can be hit (point 1 below). Since we don't have a direct way
+> to check for that we use SB_ACTIVE instead. The SB_ACTIVE check is a bit
+> subtle so adding some notes below for future reference:
+>
+> 1. Ideally we would want to have a something like (flags & JBD2_UNMOUNT
+> == 0) however this is not correct since we could end up scheduling work
+> after it has been flushed:
+>
+>   ext4_put_super
+>    flush_work(&sbi->s_sb_upd_work)
+>
+>                             **kjournald2**
+>                             jbd2_journal_commit_transaction
+>                             ...
+>                             ext4_inode_error
+>                               /* JBD2_UNMOUNT not set */
+>                               schedule_work(s_sb_upd_work)
+>
+>     jbd2_journal_destroy
+>      journal->j_flags |= JBD2_UNMOUNT;
+>
+>                                        **workqueue**
+>                                        update_super_work
+>                                         jbd2_journal_start
+>                                          start_this_handle
+>                                            BUG_ON(JBD2_UNMOUNT)
+>
+> Something like the above doesn't happen with SB_ACTIVE check because we
+> are sure that the workqueue would be flushed at a later point if we are
+> in the umount path.
+>
+> 2. We don't need a similar check in ext4_grp_locked_error since it is
+> only called from mballoc and AFAICT it would be always valid to schedule
+> work here.
+>
+> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+> Suggested-by: Ritesh Harjani <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>   fs/ext4/super.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index a963ffda692a..b7341e9acf62 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
+>   		 * constraints, it may not be safe to do it right here so we
+>   		 * defer superblock flushing to a workqueue.
+>   		 */
+> -		if (continue_fs && journal)
+> +		if (continue_fs && journal && (sb->s_flags & SB_ACTIVE))
+>   			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+>   		else
+>   			ext4_commit_super(sb);
 
-Cheers,
-Miguel
+
 
