@@ -1,128 +1,180 @@
-Return-Path: <linux-kernel+bounces-531889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF44A4462E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:36:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF299A44651
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C52F7AA47C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041851737ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1265193086;
-	Tue, 25 Feb 2025 16:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A712C1865E2;
+	Tue, 25 Feb 2025 16:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZcW+nm2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NkCpq6uI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1401B175D5D;
-	Tue, 25 Feb 2025 16:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A15175D5D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501361; cv=none; b=R3HaMdC11YNiZ4e2Gg8PquN7ak5jZI6wzJ3i9P0+hwhBBxc/8eEiM1MoYjouuah9XVxJHaW4D/o9W0Uwz22LIWcpcJ9VAc9b+/gwRp99XDumKX28WYBSkfFZvoR8mePWl1UVHhF1o7nKGO5KB7UqX0+u12vpcKU+eJe2pcOAdMY=
+	t=1740501392; cv=none; b=HxB6ncuJghK7E9OH81Qb3ygaWwxo+HapoX6rYyTJ1h53psDdU5GDadqcvZc4CiUky9TATb0jBPW40ZMsbpCOmrKm6CVVlcEpynSDtmeEU7HAlukPOVHk+i3lmy02DxgboGWKIyL5hBFNiIvkEcalHpPz2KhmaRNZPYmvCUrRznE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501361; c=relaxed/simple;
-	bh=1wLbTyZpyrnh0HaPTC3hRYX/EzNCdBJG7jxtJKU4pcs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KMtWlvLkl3aky9uWM4g3WLQnYlIF0J++g4x72C4fCO/C62/aj9zDS6Dptu15KsUxJlCVsVbFTxr9tTSSVzvzqRJjs52mKH0H5iRxGsj50TSnXpQ60vTvkT6dxFfXzrC031Zbe2RUdPwKRxZ/ZbJEKnmZGv5DOOg+0vlBu/IwuM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZcW+nm2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BCDC4CEDD;
-	Tue, 25 Feb 2025 16:35:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740501360;
-	bh=1wLbTyZpyrnh0HaPTC3hRYX/EzNCdBJG7jxtJKU4pcs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nZcW+nm2jbZiPBblDJ54HjvOIhO0EFCkMKSZanOXkJMza/OcPcMa18XwYX2IQf3IB
-	 dkEaV8rvCk89y9gUdHKH+InPs+gp+EXT082UMXe8MP7dibogBEpVJ+cSk/6oOJGHVz
-	 9QJ2YM4TZLWbuR3w/Nl/iCl1FIAUm/SIqnOzYK/6urdND86Vf2ZHJZ260k1jV4bZMv
-	 jZvf+WqqAgKDCeh5IXIvsypExXR/A/EYOOfpOWIuU618tgxySjIBwd2dBCLtg/MOIW
-	 c5xu+uPPzg6cvfxcZT9QAW5var2YzMSFaAqqPo0Y5VWkrRPpcV8hV3ADEbC88xcOG+
-	 VJAlOP23LQeWg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Russell King <linux@armlinux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] tty: serial: pl011: remove incorrect of_match_ptr annotation
-Date: Tue, 25 Feb 2025 17:35:37 +0100
-Message-Id: <20250225163556.4169086-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740501392; c=relaxed/simple;
+	bh=bWOlvCKoR2I0cAuzAJUDNhUDJULknMjTjASxL6OoCqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eX1NtifMLphyigVwNgLmuXF+LdWDuVynhtf/ztnXEtDsxQ/b2J1MTqgiIxK29qnkEZpS8BbBN0l7GXJgTWjWjVbhe/J2M5ziXmLo4jBG72c2DmvKGHWBcf8hxTlkzyBeP70/2O3+XvE3Dw+PgXBjmbUKpMWDGVz0capviCOgPWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NkCpq6uI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740501389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXy1eV7pOVh2nuyHy2Hir2zwnR7Ervc2YgoUJkp+6Qc=;
+	b=NkCpq6uIYndAZnVUMEHvhgnCUTKTvtywKHnjkSv53m8FIZ7y/VCUaxm10J82HTFvhosCO6
+	9Xxe8ZDTM5asbwiPhk49cRqQ4+B1Q2Uupntp+5AM/bK0y7G3VW3uAGc/cvaGwTnOmeBm7b
+	91KrNrbtK+EiHjiSuhG24Q46ReZ2mSw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-uJ1mM8kiMGaebtzWqsUbHw-1; Tue,
+ 25 Feb 2025 11:36:25 -0500
+X-MC-Unique: uJ1mM8kiMGaebtzWqsUbHw-1
+X-Mimecast-MFC-AGG-ID: uJ1mM8kiMGaebtzWqsUbHw_1740501384
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F80319783B3;
+	Tue, 25 Feb 2025 16:36:24 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.211])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 724291800352;
+	Tue, 25 Feb 2025 16:36:21 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Feb 2025 17:35:54 +0100 (CET)
+Date: Tue, 25 Feb 2025 17:35:50 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
+ the callbacks.
+Message-ID: <20250225163549.GB29585@redhat.com>
+References: <20250221170530.L3yMvO0i@linutronix.de>
+ <20250223224014.GC23282@redhat.com>
+ <Z73Tj3SAzNjaHwV3@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z73Tj3SAzNjaHwV3@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 02/25, Frederic Weisbecker wrote:
+>
+> Le Sun, Feb 23, 2025 at 11:40:15PM +0100, Oleg Nesterov a écrit :
+> >
+> > I'll try to find and read the previous discussions tomorrow, but iirc Frederic
+> > had another solution?
+>
+> This:
+>
+> 	https://lore.kernel.org/all/Zx-B0wK3xqRQsCOS@localhost.localdomain/
+>
+> Though I'm not entirely happy with it either.
 
-Building with W=1 shows a warning about sbsa_uart_of_match being unused when
-CONFIG_OF is disabled:
+Yes, thanks...
 
-    drivers/tty/serial/amba-pl011.c:2945:34: error: unused variable 'sbsa_uart_of_match' [-Werror,-Wunused-const-variable]
+Can we do something else and avoid this rcuwait_wait_event() altogether?
 
-The driver is not actually used on any machines that are built
-with CONFIG_OF disabled, so using of_match_ptr() won't save any
-actual memory, and it can be best removed.
+To simplify the discussion, suppose we add a global XXX_LOCK. Just in
+case, of course we shouldn't do this ;) But lets suppose we do.
 
-The corresponding ACPI_PTR() annotation does save a few bytes on
-32-bit arm since CONFIG_ACPI is not available, but for consistency
-it seems better to remove both along with the __maybe_unused
-annotation on the ACPI table.
+Now, can _something_ like the (incomplete, ugly as hell) patch below work?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Oleg.
 ---
- drivers/tty/serial/amba-pl011.c    | 6 +++---
- drivers/tty/serial/ma35d1_serial.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 04212c823a91..e3b8590bc880 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -3001,7 +3001,7 @@ static const struct of_device_id sbsa_uart_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sbsa_uart_of_match);
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5304,12 +5304,12 @@ static void perf_pending_task_sync(struct perf_event *event)
+ 		return;
+ 	}
  
--static const struct acpi_device_id __maybe_unused sbsa_uart_acpi_match[] = {
-+static const struct acpi_device_id sbsa_uart_acpi_match[] = {
- 	{ "ARMH0011", 0 },
- 	{ "ARMHB000", 0 },
- 	{},
-@@ -3014,8 +3014,8 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 	.driver	= {
- 		.name	= "sbsa-uart",
- 		.pm	= &pl011_dev_pm_ops,
--		.of_match_table = of_match_ptr(sbsa_uart_of_match),
--		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.of_match_table = sbsa_uart_of_match,
-+		.acpi_match_table = sbsa_uart_acpi_match,
- 		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
-diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
-index 8dcad52eedfd..285b0fe41a86 100644
---- a/drivers/tty/serial/ma35d1_serial.c
-+++ b/drivers/tty/serial/ma35d1_serial.c
-@@ -799,7 +799,7 @@ static struct platform_driver ma35d1serial_driver = {
- 	.resume     = ma35d1serial_resume,
- 	.driver     = {
- 		.name   = "ma35d1-uart",
--		.of_match_table = of_match_ptr(ma35d1_serial_of_match),
-+		.of_match_table = ma35d1_serial_of_match,
- 	},
- };
+-	/*
+-	 * All accesses related to the event are within the same RCU section in
+-	 * perf_pending_task(). The RCU grace period before the event is freed
+-	 * will make sure all those accesses are complete by then.
+-	 */
+-	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
++	spin_lock(XXX_LOCK);
++	if (event->pending_work) {
++		local_dec(&event->ctx->nr_no_switch_fast);
++		event->pending_work = -1;
++	}
++	spin_unlock(XXX_LOCK);
+ }
  
--- 
-2.39.5
+ static void _free_event(struct perf_event *event)
+@@ -5369,7 +5369,15 @@ static void _free_event(struct perf_event *event)
+ 	exclusive_event_destroy(event);
+ 	module_put(event->pmu->module);
+ 
+-	call_rcu(&event->rcu_head, free_event_rcu);
++	bool free = true;
++	spin_lock(XXX_LOCK)
++	if (event->pending_work == -1) {
++		event->pending_work = -2;
++		free = false;
++	}
++	spin_unlock(XXX_LOCK);
++	if (free)
++		call_rcu(&event->rcu_head, free_event_rcu);
+ }
+ 
+ /*
+@@ -6981,7 +6989,14 @@ static void perf_pending_task(struct callback_head *head)
+ {
+ 	struct perf_event *event = container_of(head, struct perf_event, pending_task);
+ 	int rctx;
++	bool free = false;
+ 
++	spin_lock(XXX_LOCK);
++	if ((int)event->pending_work < 0) {
++		free = event->pending_work == -2u;
++		event->pending_work = 0;
++		goto unlock;
++	}
+ 	/*
+ 	 * All accesses to the event must belong to the same implicit RCU read-side
+ 	 * critical section as the ->pending_work reset. See comment in
+@@ -7004,6 +7019,12 @@ static void perf_pending_task(struct callback_head *head)
+ 
+ 	if (rctx >= 0)
+ 		perf_swevent_put_recursion_context(rctx);
++
++unlock:
++	spin_unlock(XXX_LOCK);
++
++	if (free)
++		call_rcu(&event->rcu_head, free_event_rcu);
+ }
+ 
+ #ifdef CONFIG_GUEST_PERF_EVENTS
 
 
