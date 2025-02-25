@@ -1,375 +1,196 @@
-Return-Path: <linux-kernel+bounces-530894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0D7A439E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E38DA439DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C8F17CC89
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E13F3BB168
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2BB264A62;
-	Tue, 25 Feb 2025 09:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB52263C85;
+	Tue, 25 Feb 2025 09:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kfBhauOp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bvXGLVmZ"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54D2770B;
-	Tue, 25 Feb 2025 09:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747488F5E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476318; cv=pass; b=cI1B/Bf4IJYXL+09cYlUQTEGoIjHyb69kCLF2Sn4xo/b8IjRcWpCNCeCR5udagUENzeUPeCFVGNqq4wnRCWw6GESacXMx9fnACJK0H/we4KMzV7SDtKsgnBOnkcF/u/o1fFfzmtp955r0TiyaiHqZ/nsGtxhEWYiQrPyOOi0I2g=
+	t=1740476269; cv=fail; b=VBxPTkgbXZ80qdPcK5yJkJyNaxWChF4EhWGR+Zd0qk3WvDw4FrZXOZbblaSrhX3vJS5G5jWIU4WJNtSGNN/EkNJg6mXqqqaTkDfgZrvD8lIQ/NLTwyUC5pB02tU/kvn1CnOAvTvy6KQqo1tnCrJ4pr26lF/DkI48I9cV0mSe10s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476318; c=relaxed/simple;
-	bh=WepjCdKpfsDunMZVmF4JsfqfzSNxfOKfCAManVRjDIE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=H+R/d2w3wgITZB3QvLqZMZ4MnezEYT2q0Wjxo0k/hgVHrUytD/3wkDBrxogKd3F7LchN770MdYdn+4AzLYxC9nca7Ez62fNhCTWAJ+EPmO4cADYp3BwHXbYxCx8dTAbTTfc2DcVtWZQKnD45uArf/74Z8Rv6q5eTTAhVV2D9YpQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kfBhauOp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740476275; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iaTLHNWzZANWkSHvQcnjLdTiITwmdvrVbtSt5VyOreKwgtOBOEZwnyiqL+yBSNJxRD7WU6/p0nC88LBMtQP4WeFgHQgWR45lreSsc+jkUrTus3cp0qnLiIKq2JJyLc8QwYEEYXC7dX1xRRuQB00p3b3P1kiNUC98hcFJqPpruPg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740476275; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mbIJtXwXjtJlIQdygGWRyuQlQVKs6xykb4NhbVC0jk0=; 
-	b=PAkZYUXivVj1LZkFibsPdym0/v4lm/bmG0WQFIl71w+JQMewJ+pymYDhAdlz5Awbz0dt8fGKe7BXKVDRjsROvD8ty2MZkTzWiKOtqnU3sUxUvo1ZrJ32l8Iq7TkMuUb1o9a7P4Nj1njNU1gU97Umh6tfmcuqCayEqaZg1L8JRhg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740476275;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=mbIJtXwXjtJlIQdygGWRyuQlQVKs6xykb4NhbVC0jk0=;
-	b=kfBhauOpyXn5U3+2bHhvOFmpCeKRSeksX8Sr/JDXvYSeqKuCcHOvnWcicNlsfcOG
-	pWutrWUidti8m3p+hwBUM2QoYSpqr+7uV1mbZOyEiHSmt3NEhks1MJlSM290VsxF1MH
-	NKqb5HQfPVoq496TRo+jcZamq40WPJBwSGQ2Lmig=
-Received: by mx.zohomail.com with SMTPS id 1740476271960416.2806493078207;
-	Tue, 25 Feb 2025 01:37:51 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740476269; c=relaxed/simple;
+	bh=lV3sMLCtvbE1ZfFSJHnTqGLK4mkcmXN41E600RHK7MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DQIAtW21KRUYbdF6LwSgMauuqoZ8EVPStEErBnIM3KsY+qcPtpswH87JUithzk7al1/FgVk+E0iSJdxeqt7R+ewaKU47wKlAV0g6a9vkJh9P62bOE0PUmFi5gZzLns2/h4zSFkGgPWpLlws2+KDW5ppvzkOtvjfHIrHr3DBaRQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bvXGLVmZ; arc=fail smtp.client-ip=40.107.220.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fTu7+lXBnCZHLstY3DX0/5gCXkMnsL+uN8AgCUOinhjiHIN2CpxP4asEnIfYaEIAn7ctVrhjZXKxB9DFeT5QMd45BfUtrOumbB/vklUBz4/VaDJKmTGRp9mj+6zlZHwccg46hS5QEZGEfAiTfRh5Z8SFlLL4HVgT5ow/DYtOGXBhapweDQUhv6/Evd7LHTrkgBGXzAWvy7D13dBnzJfqrTYa73h33ZLQeWyB1j6o0PoNrz8Q9kpzLve3QduUt5um3Ui5UwTALzA1UGeiNc1OQwTwqRQZijEG1hpo200Syna63QZzzP3ZYQQqGzyW92cJsjjlHOIL+L04m15GBGIFUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MLP8autDq7oktiukDOt0qdO1+CTOAfirjlxVEbQw2ME=;
+ b=Pohya6n9qBDAkwJZGx9tMj2N2WeTdFw/SgU9kokLz25J+QYVDMIlR3TiK92aC9JFzaiZDsg246l1/U2EshwqHvxy+mMK2ePzxqkfaSxsa+GU70lkKMT78UnAvZfXJzKNZHuPribO2Moe4IdJk21EzQk+x59XqMBiWonEiU6n/dLgGqMOIzqWskEdnn5xdafVI/OCIVj/HiITfby5WmEvLBcjemH/ju9A7QoG28tmib8ofrYK5g1/DJO3JjJyCSvAj5ktsE0y5Smx0cbMbTk7CFY5LEPlGDEYx9w7s2j1KEen2yapIGpMJmne7mVbcSIcpFx480HJB4egqcJ+0MlA2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MLP8autDq7oktiukDOt0qdO1+CTOAfirjlxVEbQw2ME=;
+ b=bvXGLVmZF1xFNEL4/+Q0avW0PdB/Hn29zlhS29QIB3MdtXKSF6CEF9M1EBaaZWkZ7xoKrKrAQzTpBL5H4HPTqJAprGhT86Vm+1lOopXknxmkpBqih6jnkKam36eHXELp81sHUY566TcWgETsxCAfULd8xkPw3Vu2JFHRhV2ptqok7iN1SImFtXbqlb0I/gMVBDdBiaT0p9W0XUM76AvBErE8cm/AJ8I+DA6IPGhJ/aGftu4hDx9T2NzeQQ/8BJTk8zlfn5nA1lsRWgetMTQxLNl+VTlXbsE0pAi9+M1sJgHBf+74djlLMPryTNfynKweyXgJmRcYitcvpgmOC62N+Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by SJ2PR12MB8781.namprd12.prod.outlook.com (2603:10b6:a03:4d0::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
+ 2025 09:37:46 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 09:37:46 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.15] sched_ext: idle: Fix scx_bpf_pick_any_cpu_node() behavior
+Date: Tue, 25 Feb 2025 10:37:42 +0100
+Message-ID: <20250225093742.51597-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LNXP265CA0081.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:76::21) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v4 3/4] rust: configfs: add a sample demonstrating
- configfs usage
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
-Date: Tue, 25 Feb 2025 06:37:33 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Joel Becker <jlbec@evilplan.org>,
- Christoph Hellwig <hch@lst.de>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Fiona Behrens <me@kloenk.dev>,
- Charalampos Mitrodimas <charmitro@posteo.net>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CB975A56-A8D5-4615-8755-04D7B0BBBCA5@collabora.com>
-References: <20250224-configfs-v4-0-9af9b5e611f6@kernel.org>
- <20250224-configfs-v4-3-9af9b5e611f6@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SJ2PR12MB8781:EE_
+X-MS-Office365-Filtering-Correlation-Id: a12adee2-de4a-4d0f-0851-08dd55800f6f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uPPi+dpROo71TjAe1+B1flNy685aJrZNPG++eZo2aDLTz1mV6HZHCOUGRhiv?=
+ =?us-ascii?Q?AVRcOy4fyw8EocjvNnOSRcuqrCvjczx80Pdhm0jKmEshahcA7RlRR5gI3Kdd?=
+ =?us-ascii?Q?IWlFCNy+MtBvUEwXsMUl9QZIUdneilxhcTXRuB8SpdjZVnjazNi/8KSsVguY?=
+ =?us-ascii?Q?21XAkra/8y+0dEt9tr702vLYcGfK3w4wFwHweX7b6Z0u5QLbJC504T56vcVg?=
+ =?us-ascii?Q?uf7ElkhyClH9ai+3IlX0S/i64ktdcdGpHUXMxwvcP6qV8jPwvPhqknyAMwDA?=
+ =?us-ascii?Q?1yCWnGEti1qovNG+HCmQ/6T87ZZtwrkZTFQCoNf0PDL5kvuKsPQSXnKih2pp?=
+ =?us-ascii?Q?GxEt6MgIbIb59JYsI0l3cAfGJK4zFgj6QW/QcDEPdYuAeZ4geDUSRsD04jAk?=
+ =?us-ascii?Q?5Q4srowXQG1haWz3Thp6nqP8CB32S+XbDAbZ7ik+ETX58cLrjP0heXXirU+I?=
+ =?us-ascii?Q?iwAuZ19X3JUkPIQGmMp3XwM8z6tbfZNrfGLx5xZYKs2rbDFyTLz3WFTsKsWk?=
+ =?us-ascii?Q?LBF51qa+qdAvabzoHfftiTwjYof73bDeR1kBz6cvFix+ehAW+ImNIJAzf9Jx?=
+ =?us-ascii?Q?ApHuqDTsr5pku+f0rR2reE6o/rxCuyh2hyTZvbPdFH2bHgIIpTyAM6mQkacB?=
+ =?us-ascii?Q?F9bcwnvSGq4qQFZ4x3yxY4BPIdwkdn4iFD6JZCxryaIkxW9q7Ne8g13F74NX?=
+ =?us-ascii?Q?IFRfjQoGRd2akW3Q7I+KS3fuOjTXHHPaklNQousGMo+U7hIe2idpDp4ED99K?=
+ =?us-ascii?Q?PmpdlM6DFA7BKdgVJGR2wrAfJLRij99yHAgimgR/HLa9gYO2hZWkwJYKKIXo?=
+ =?us-ascii?Q?dNUJFlZ94adO9l6isMXbfvUjax2q+1Z4DAjguL0WsInewnlq3gwnzuNWcKkS?=
+ =?us-ascii?Q?deLUziHErnMUz9xIid+MwwVmnjbYufGWEexgLWIHJInMclDkdnQufaG5vvd5?=
+ =?us-ascii?Q?EEyIJViNVTJBRiNe/D/emOiBJtjU/QGx9MXKguavI0HYhfpjxMjxBuZtM6sT?=
+ =?us-ascii?Q?k97GuYTMyrkLu8Vm9Yef9NIQNRg9EB3h1qUVC4QqjhJ1nwERMzZXJYqQkCpc?=
+ =?us-ascii?Q?zB+8rfmgpQ6Omwa9Fim00qfT7bDnAJOCbsRWmJR99YqBui4yvkanRSlp7tcx?=
+ =?us-ascii?Q?PG2k5qPYU9XyKDLqP+hGm2LfvfQSbc1uaMbK33kfDolKZlTF62mRJX/yOtL8?=
+ =?us-ascii?Q?J4faWA5wmDfcVnG4LG+j+Qyv7u43rbrWhWjjqEbSOjGAgZOzaYFWfqtw1Ift?=
+ =?us-ascii?Q?Ty51ATkhVlzvxijPAC2MgcllHz1tGmEiFILz3R80oShZm+LWhQHH5vMyZcB3?=
+ =?us-ascii?Q?KQKXe99q/RodTOephSxrsbz2+snehHUXTTJxJ/09FoI63tyM2GEY+fods1m7?=
+ =?us-ascii?Q?2rcB08mRPE+wU7rGutdqg3crbnSS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mIQFbHV9ES8rohneYdEdnp0Xqu6psBZzs+JJdLZgW+Id70G/3E2LJrYpNFl3?=
+ =?us-ascii?Q?hn4rLVGou5fWpcjKqnAPJfHZ3H6xAPkwVja6Vhe9dPDtAHLBI02AHNp6pUCW?=
+ =?us-ascii?Q?VbMZn3aBCYs/t9Tzi3v94bFUStv3R5nAAX4uDbeb3Lf+eih82/IOfEWTiUlW?=
+ =?us-ascii?Q?L00J3LXZRNghUCBklda/TOi7O8gQKqPV1nQtAfo79Fb6mcfTVJH5b58o5HbX?=
+ =?us-ascii?Q?YnDoYVrKabgfk1QzTyNq8Vz5qJyjGHTqFPfp9WTGB+1nY5JO+wKjVDc8XYoG?=
+ =?us-ascii?Q?c5tQr4QbfN4Tpa2+AzUZlB94ne+lTjLza1uJshBUhVkplcQrbWm43A81X+kS?=
+ =?us-ascii?Q?qffDsMcLx9RwDkVnkYGB5jULQCQtHj0/RU8skhEOjpU/xFBmBhaoJlNyKfgV?=
+ =?us-ascii?Q?Jwk1N+XBJtmgFanmP6iWPG+aQ0osAagaDvSAG+mz+mq1APfCsLY73d0lb0KN?=
+ =?us-ascii?Q?uJzgmMGXdEWwjtpGZ4bVsnLhp3BcUvCecgnpYYhsnNW9M6ZLMk/cFtA9+65Z?=
+ =?us-ascii?Q?/mxGWTtWkyNqfmk6NTFa34JcQKp3Ii+6M2wYfBPDQ5cth5CLP6LwGqAqvQ/s?=
+ =?us-ascii?Q?d2AGlMOv+tyuLwbSRxgsQcqYpDN1zzBl4C94q2QgWzBocRsnJC6uWQVVkV+d?=
+ =?us-ascii?Q?Wl5zi7VnDDPjcYIJdfK3PYv0yVt1A5jHywRbmv9H0HKJwrlS4ENsNGTjJnWz?=
+ =?us-ascii?Q?NWd3AdS34B7sgaLF9RUrh2jR/y2rfwGdOqSyviuU5ZK/2lDVbAHogeWwOCiR?=
+ =?us-ascii?Q?+qZR+wH2L9tJWKA5euTskjCtnn0lQZbV6SoV7mutr+aK9XpDt998Flva2kP4?=
+ =?us-ascii?Q?Wg5x8gZ8Yf+aKoDF+lc889EvWYaM5Ij1229PpJfaBjN9JSgqQa9ya3ZgSBIy?=
+ =?us-ascii?Q?cff4RfnCUWid4deiEZQNMPC6B+xy7Mj54fQ/t/b4gYpFuiCn+0L0hptZvxnE?=
+ =?us-ascii?Q?0JIgBvq/peLIIDqcbviqhGS9k+HM0jVD06MadCOfJAi3gEaynl+TyWnXNo4x?=
+ =?us-ascii?Q?OmQ9sJ7C2uklhcS+SelWVpcj3RZuak0lxpwRUWPY7FljKr5jBl5K6ZJWCeVg?=
+ =?us-ascii?Q?0q7JqwLy6gNuob2sXYUI3MkUQsSYyE/Wg8eQS4tdjTyL6dKsSaBMij5pb+Bh?=
+ =?us-ascii?Q?+/dc2oGoQTOrg7fJWrXmqn/l4HvGmuIAXZEaLkE70Lwm2CtmlsLrfD83u0Kf?=
+ =?us-ascii?Q?BHTZfIhvxa3Rw25xL9aGC/EH7yyHMAcT4Sz2z98o30Iqv75x3xEpBnDRKzJd?=
+ =?us-ascii?Q?Po+zxtQ+a4paaFH8oRUnMlkEBIb9UvZ15HT23yE1OuK017Kxpuvp+W3NywqN?=
+ =?us-ascii?Q?CtF2w62ScIh3u2a+w79W5lcU7YyE7hyVSnLzKnVV5UU4Uegg4scMx2vxoG+O?=
+ =?us-ascii?Q?DktbZSptpPKhANgymdQU9zt0nT4Jhf0OU8H+miSwahUXsi/tVn6bIboSyG9u?=
+ =?us-ascii?Q?bPXN9kLincSQx9HQlYZZdeg5ECy6Hvm2BM2fzYJsHngJ7pomG6PG/Du1jepD?=
+ =?us-ascii?Q?MHCXJEcowZm/d7V+YCO02WvPh68WVi7BcTnNaBCcddE8mbNrotnOOVJj9vdp?=
+ =?us-ascii?Q?xSS6zKGjFHTxxotiU6NDFSeMExR0wjuLLRR09aLj?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a12adee2-de4a-4d0f-0851-08dd55800f6f
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 09:37:46.0972
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +I5TcTXUSXQcLZaO8LsQwkMBY1NhcdG5bPnbxqyNH2TdrptcIrNWZb2xBY+l5zMa5B10sHWZNplriMstvenTOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8781
 
-Hi Andreas,
+When %SCX_PICK_IDLE_IN_NODE is specified, scx_bpf_pick_any_cpu_node()
+should always return a CPU from the specified node, regardless of its
+idle state.
 
-> On 24 Feb 2025, at 10:21, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Add a sample to the samples folder, demonstrating the intended use of =
-the
-> rust configfs API.
+Also clarify this logic in the function documentation.
 
-nit: this is not the first time I see Rust not capitalized in this =
-series.
+Fixes: 01059219b0cfd ("sched_ext: idle: Introduce node-aware idle cpu kfunc helpers")
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ kernel/sched/ext_idle.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> samples/rust/Kconfig          |  11 +++
-> samples/rust/Makefile         |   1 +
-> samples/rust/rust_configfs.rs | 179 =
-++++++++++++++++++++++++++++++++++++++++++
-> 3 files changed, 191 insertions(+)
->=20
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index 918dbead2c0b..2f97bf9a7b4c 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -10,6 +10,17 @@ menuconfig SAMPLES_RUST
->=20
-> if SAMPLES_RUST
->=20
-> +config SAMPLE_RUST_CONFIGFS
-> + tristate "Configfs sample"
-> + depends on CONFIGFS_FS
-> + help
-> +  This option builds the Rust configfs sample.
-> +
-> +  To compile this as a module, choose M here:
-> +  the module will be called rust_configfs.
-> +
-> +  If unsure, say N.
-> +
-> config SAMPLE_RUST_MINIMAL
-> tristate "Minimal"
-> help
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index 5a8ab0df0567..72122f010caf 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE) +=3D =
-rust_misc_device.o
-> obj-$(CONFIG_SAMPLE_RUST_PRINT) +=3D rust_print.o
-> obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI) +=3D rust_driver_pci.o
-> obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM) +=3D rust_driver_platform.o
-> +obj-$(CONFIG_SAMPLE_RUST_CONFIGFS) +=3D rust_configfs.o
->=20
-> rust_print-y :=3D rust_print_main.o rust_print_events.o
->=20
-> diff --git a/samples/rust/rust_configfs.rs =
-b/samples/rust/rust_configfs.rs
-> new file mode 100644
-> index 000000000000..36a2c848a979
-> --- /dev/null
-> +++ b/samples/rust/rust_configfs.rs
-> @@ -0,0 +1,179 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Rust configfs sample.
-> +
-> +use kernel::alloc::flags;
-> +use kernel::c_str;
-> +use kernel::configfs;
-> +use kernel::configfs_attrs;
-> +use kernel::new_mutex;
-> +use kernel::page::PAGE_SIZE;
-> +use kernel::prelude::*;
-> +use kernel::sync::Mutex;
-> +
-> +module! {
-> +    type: RustConfigfs,
-> +    name: "rust_configfs",
-> +    author: "Rust for Linux Contributors",
-> +    description: "Rust configfs sample",
-> +    license: "GPL",
-> +}
-> +
-> +#[pin_data]
-> +struct RustConfigfs {
-> +    #[pin]
-> +    config: configfs::Subsystem<Configuration>,
-> +}
-> +
-> +#[pin_data]
-> +struct Configuration {
-> +    message: &'static CStr,
-> +    #[pin]
-> +    bar: Mutex<(KBox<[u8; PAGE_SIZE]>, usize)>,
-> +}
-> +
-> +impl Configuration {
-> +    fn new() -> impl PinInit<Self, Error> {
-> +        try_pin_init!(Self {
-> +            message: c_str!("Hello World\n"),
-> +            bar <- new_mutex!((KBox::new([0; PAGE_SIZE], =
-flags::GFP_KERNEL)?, 0)),
-> +        })
-> +    }
-> +}
-> +
-> +impl kernel::InPlaceModule for RustConfigfs {
-> +    fn init(_module: &'static ThisModule) -> impl PinInit<Self, =
-Error> {
-> +        pr_info!("Rust configfs sample (init)\n");
-> +
-> +        let item_type =3D configfs_attrs! {
-> +            container: configfs::Subsystem<Configuration>,
-> +            data: Configuration,
-> +            child: Child,
-> +            attributes: [
-> +                message: 0,
-> +                bar: 1,
-> +            ],
-> +        };
-
-As I said in the previous patch, this macro is a bit complex. Is there =
-anything more you can do with it?
-
-If so, it better be in this driver, because I hardly think anybody will =
-go through the source code itself
-to figure out. My 2c.
-
-
-> +
-> +        try_pin_init!(Self {
-> +            config <- configfs::Subsystem::new(
-> +                c_str!("rust_configfs"), item_type, =
-Configuration::new()
-> +            ),
-> +        })
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::GroupOperations for Configuration {
-> +    type Child =3D Child;
-> +
-> +    fn make_group(&self, name: &CStr) -> Result<impl =
-PinInit<configfs::Group<Child>, Error>> {
-> +        let tpe =3D configfs_attrs! {
-> +            container: configfs::Group<Child>,
-> +            data: Child,
-> +            child: GrandChild,
-> +            attributes: [
-> +                baz: 0,
-> +            ],
-> +        };
-> +
-> +        Ok(configfs::Group::new(name.try_into()?, tpe, Child::new()))
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<0> for Configuration {
-> +    type Data =3D Configuration;
-> +
-> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        pr_info!("Show message\n");
-> +        let data =3D container.message;
-> +        page[0..data.len()].copy_from_slice(data);
-> +        Ok(data.len())
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<1> for Configuration {
-> +    type Data =3D Configuration;
-> +
-> +    fn show(container: &Configuration, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        pr_info!("Show bar\n");
-> +        let guard =3D container.bar.lock();
-> +        let data =3D guard.0.as_slice();
-> +        let len =3D guard.1;
-> +        page[0..len].copy_from_slice(&data[0..len]);
-> +        Ok(len)
-> +    }
-> +
-> +    fn store(container: &Configuration, page: &[u8]) -> Result {
-> +        pr_info!("Store bar\n");
-> +        let mut guard =3D container.bar.lock();
-> +        guard.0[0..page.len()].copy_from_slice(page);
-> +        guard.1 =3D page.len();
-> +        Ok(())
-> +    }
-> +}
-> +
-> +#[pin_data]
-> +struct Child {}
-
-nit: you don=E2=80=99t need the braces here
-
-> +
-> +impl Child {
-> +    fn new() -> impl PinInit<Self, Error> {
-> +        try_pin_init!(Self {})
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::GroupOperations for Child {
-> +    type Child =3D GrandChild;
-> +
-> +    fn make_group(&self, name: &CStr) -> Result<impl =
-PinInit<configfs::Group<GrandChild>, Error>> {
-> +        let tpe =3D configfs_attrs! {
-> +            container: configfs::Group<GrandChild>,
-> +            data: GrandChild,
-> +            attributes: [
-> +                gc: 0,
-> +            ],
-> +        };
-> +
-> +        Ok(configfs::Group::new(
-> +            name.try_into()?,
-> +            tpe,
-> +            GrandChild::new(),
-> +        ))
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<0> for Child {
-> +    type Data =3D Child;
-> +
-> +    fn show(_container: &Child, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        pr_info!("Show baz\n");
-> +        let data =3D c"Hello Baz\n".to_bytes();
-> +        page[0..data.len()].copy_from_slice(data);
-> +        Ok(data.len())
-> +    }
-> +}
-> +
-> +#[pin_data]
-> +struct GrandChild {}
-
-=E2=80=A6nor here
-
-> +
-> +impl GrandChild {
-> +    fn new() -> impl PinInit<Self, Error> {
-> +        try_pin_init!(Self {})
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<0> for GrandChild {
-> +    type Data =3D GrandChild;
-> +
-> +    fn show(_container: &GrandChild, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        pr_info!("Show baz\n");
-
-As I said in the cover letter, perhaps this one slip through :)
-
-> +        let data =3D c"Hello GC\n".to_bytes();
-> +        page[0..data.len()].copy_from_slice(data);
-> +        Ok(data.len())
-> +    }
-> +}
->=20
-> --=20
-> 2.47.0
->=20
->=20
-
-I=E2=80=99m OK with this patch. It works, and it does what it=E2=80=99s =
-supposed to do, i.e.: showcase the API.
-
-With the =E2=80=9CShow baz=E2=80=9D nit fixed:
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
+index 759a06774b5b3..dc40e0baf77c5 100644
+--- a/kernel/sched/ext_idle.c
++++ b/kernel/sched/ext_idle.c
+@@ -1029,8 +1029,9 @@ __bpf_kfunc s32 scx_bpf_pick_idle_cpu(const struct cpumask *cpus_allowed,
+  * empty.
+  *
+  * The search starts from @node and proceeds to other online NUMA nodes in
+- * order of increasing distance (unless SCX_PICK_IDLE_IN_NODE is specified,
+- * in which case the search is limited to the target @node).
++ * order of increasing distance (unless %SCX_PICK_IDLE_IN_NODE is specified,
++ * in which case the search is limited to the target @node, regardless of
++ * the CPU idle state).
+  *
+  * If ops.update_idle() is implemented and %SCX_OPS_KEEP_BUILTIN_IDLE is not
+  * set, this function can't tell which CPUs are idle and will always pick any
+@@ -1049,7 +1050,10 @@ __bpf_kfunc s32 scx_bpf_pick_any_cpu_node(const struct cpumask *cpus_allowed,
+ 	if (cpu >= 0)
+ 		return cpu;
+ 
+-	cpu = cpumask_any_distribute(cpus_allowed);
++	if (flags & SCX_PICK_IDLE_IN_NODE)
++		cpu = cpumask_any_and_distribute(cpumask_of_node(node), cpus_allowed);
++	else
++		cpu = cpumask_any_distribute(cpus_allowed);
+ 	if (cpu < nr_cpu_ids)
+ 		return cpu;
+ 	else
+-- 
+2.48.1
 
 
