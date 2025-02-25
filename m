@@ -1,210 +1,137 @@
-Return-Path: <linux-kernel+bounces-531574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037EAA4423C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:17:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF442A4422C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDBC19C40C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6732C3BE602
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B0826AAA7;
-	Tue, 25 Feb 2025 14:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5D26A0F5;
+	Tue, 25 Feb 2025 14:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J55+h/Ob"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fPMZ7W12"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BA026A0AB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08542676C8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492681; cv=none; b=dTGf5r2wbet7He2X+MBHEfsWLDsZECxw4Wx1BRdxJwDkSwrMj20x+JQDlRBWj732Wi/Iv1Zts0JqHCfRRbvKUPQSbHfWdOLIf2bpVNLHCQ9vLpnJh04LA2u1TIqAKNrWXzcp3+zfG4tyWNSjhAEbUVGuwHoFLN1dm/yrOXu8wlA=
+	t=1740492698; cv=none; b=m6t+jgrZqVHel2dXgsmPYWQxj5xAsN6+KnV4+7znOciQQaMSnlXwNr9CENzE2g1+KS43H1BGgdlq1NJf03bxC/d3joNLqVnvAaX2R+8WmiFOkV4tt3vExfyNJo5XBlcRy8rgbUF58vu8nIlbJbOP7j39PDgFpLp7OymhcNhVids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492681; c=relaxed/simple;
-	bh=JYAuHpQN0jdohteR+QOb1gdS2Iz8AWrwTZWX0+tVOa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eaIu9FMiPATD+2tMlA+0Cd1D4+VVoaxNbUmqDvnnGngAVLjmODfN+Y+Mhqw4WHNe8kA82aC/5YhHB/YF6AbwIezw/yoMtFVoF+6QLbfDNVK/+sQgAlWq8eqmLrgpgozsRy9/98+UAK1y1hh9VQWQPqQoZVmcnEJpidK8ScLpmww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J55+h/Ob; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740492678;
+	s=arc-20240116; t=1740492698; c=relaxed/simple;
+	bh=RYZ2LGJ/9k8sqBARHzY9mERx9WzoJ2QmsF4ozxptjSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3EQ482rencvKexsaxmFJ//rwgzN77M96wcTIxChEMSPSE+bYYXJDdKy/ac1YbbK8b9fkzTxNXMxPMVBA1pid6bJNkUHonB6vg0r0xygSVztoVCGwoZXR0aiaEi+JoZ0f+EWYFKE1LzUPcOmT2DZ/bihtfRol44acqOYMoax1ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fPMZ7W12; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4961C441D2;
+	Tue, 25 Feb 2025 14:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740492695;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4ij9laTgkz4RR9Ifclr6dZ8YPlK5TkYLDkN0fKJZO94=;
-	b=J55+h/Ob8DVPvCqeQM8GkXlbHmS7DKZUuiDn+7ER6n9x+eEcoZS57C32N6x5lAvY126TPy
-	rnKugXoNGDmMU4/EvXJH/b8/tqnJONbKc7Dftp6pBJKoCZ+AXH1tu+QWc2eqYDE61IkQIW
-	rlLU8BLkihcLfGGm0X0gUoWIdFt3l1M=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-VzfJfe-ZNTmdf9pgPiAifA-1; Tue, 25 Feb 2025 09:11:16 -0500
-X-MC-Unique: VzfJfe-ZNTmdf9pgPiAifA-1
-X-Mimecast-MFC-AGG-ID: VzfJfe-ZNTmdf9pgPiAifA_1740492673
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f455a8fcaso4160614f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:11:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740492672; x=1741097472;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ij9laTgkz4RR9Ifclr6dZ8YPlK5TkYLDkN0fKJZO94=;
-        b=RB4rx9b7LqTSV/4mnHBXs4XPWwn4RuamXRIhEt3P/xsdZVMm/5zrOkQ8b18ur8ESww
-         cn899v7G2wuH+2D0xAm+xn6tkjewbsZLyMEfVnpuvrVIFWZ9OnuRclSCwHPpxDRxm9kV
-         jXSswjps8c5jOhdASiWa0gd1YP8nJ3jAwM/7+qddvqERKpp6x+jc4sgHql7sfzTS6fpV
-         3eARGfOrxCtRbc7q6CZ813gyWrGzDJ7n7blOiuNKnqbxEcP601JdZeQ76wkNGyMb/WrS
-         IwCJvs51Q8HnJ8ZrnPKUaDYQZYwOBvcWd89Fxwl0COFffAjjBqPn55bSRys9kEd4BM1P
-         M/Ag==
-X-Gm-Message-State: AOJu0Yz+W/m1ksVMu+bjMQZYmBPoS+KN3XZ0D/a7WMyIVymcwhLq+yS9
-	HEWrtqaGzY5ehPRBvMuJpFTnBnt2b5DMRtSaPFndAv1MnoRZ/Tj/X+JZqA/PXDCmWMnc5viUG74
-	vGvGxrjqAwWB9BJyvajGP9oNr/MYx6uWULijpahssWNfwaWGNJoqx9pW/Bf2QZg==
-X-Gm-Gg: ASbGncsw9jieWOKYl/USOjTaqTLzcvND5z9gWLB+kA/xCmNLog3Cevtc82sM8QCNfyq
-	Uqieg1dLghs/CTJPEaffKh2ch4v9FU4G/81cAUOz3JGprv+yBOGTqi62307b05mj54cCGSYSbqY
-	VIeTK2cOBa/KYhF+04Ib7TeiH9DpQ6kqGNTAURClQ0FlENdki5y3dHVb/qLrwYSOwkoqNl9lYku
-	FPCBDAUnXRez3hir5ln9S2W4PPSTi5wOXuBpNp51DAJ7UdYXWvKTRbJRVKcXQgxNx9ebnpY7/3H
-	rF+uzn1XAeT/7A/q/HkFAMroSXkrMEEOl1RsZuSVYt5zCkBqdj7sSdkUKg==
-X-Received: by 2002:a05:6000:1562:b0:38f:3141:8912 with SMTP id ffacd0b85a97d-38f6e97c6dbmr12267572f8f.24.1740492672637;
-        Tue, 25 Feb 2025 06:11:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHz/Lj6mGhXgLbS6Jsu6dZh4afgO/E6Y/RudVLGc6PVHt5IzT0vO+YZHzS+pfkAxXQ+Rn+aBQ==
-X-Received: by 2002:a05:6000:1562:b0:38f:3141:8912 with SMTP id ffacd0b85a97d-38f6e97c6dbmr12267549f8f.24.1740492672268;
-        Tue, 25 Feb 2025 06:11:12 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab3741596sm15188585e9.1.2025.02.25.06.11.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 06:11:11 -0800 (PST)
-Message-ID: <95e730a2-9670-44d6-bf4f-1b09697e5e31@redhat.com>
-Date: Tue, 25 Feb 2025 15:11:09 +0100
+	bh=6RLWBnzHMT4Lq6CI5Bgms/o16OkUBhbIiLtOpET2pFE=;
+	b=fPMZ7W122enahIEvwltDlvOm3T7H22v4SEFh92x0YUz/4DNuofv6+LJYT2nReAh5/7vlph
+	6UPmeG25AE8deChJMlHCC/+/8He4NSo/2c0+pLELWM5qaoPAThX+w7Ph47RQHKftn7C84u
+	q5nVSnbtKEEmB/NK75H+OBorBCwLHoDO75pGK15aS+eYBUYgXDaonpKYq60XwhmQ+TsS/Q
+	Aj+UFHcA7F/DJ7a+nODu3TlrNK1Glb1YQuCgQbL/AxECG7BIvuBO7XBdZEK8qvQUOrIwUD
+	gAFPL5lTSKHwYRR7W8Dh9fHuDvfxG3XJ8ZD0GzgRQdRkSuIUAkU/wi09euB02A==
+Date: Tue, 25 Feb 2025 15:11:32 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 11/63] dyndbg: tighten ddebug_class_name() 1st arg type
+Message-ID: <91e7b038-2270-45ac-8ebb-e49bda98ce99@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-12-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio: break and reset virtio devices on
- device_shutdown()
-Content-Language: en-US
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Hongyu Ning <hongyu.ning@linux.intel.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- virtualization@lists.linux.dev
-References: <c1dbc7dbad9b445245d3348f19e6742b0be07347.1740094946.git.mst@redhat.com>
- <7fa37894-7d73-4087-a849-2957f31ad7f4@redhat.com>
- <20250224143029-mutt-send-email-mst@kernel.org>
-From: Eric Auger <eauger@redhat.com>
-In-Reply-To: <20250224143029-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250125064619.8305-12-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Michael,
 
-On 2/24/25 8:31 PM, Michael S. Tsirkin wrote:
-> On Mon, Feb 24, 2025 at 08:49:09AM +0100, Eric Auger wrote:
->> Hi Michael,
->>
->> On 2/21/25 12:42 AM, Michael S. Tsirkin wrote:
->>> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
->>> accesses during the hang.
->>>
->>> 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
->>> 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
->>> 	...
->>>
->>> It was traced down to virtio-console. Kexec works fine if virtio-console
->>> is not in use.
->>>
->>> The issue is that virtio-console continues to write to the MMIO even after
->>> underlying virtio-pci device is reset.
->>>
->>> Additionally, Eric noticed that IOMMUs are reset before devices, if
->>> devices are not reset on shutdown they continue to poke at guest memory
->>> and get errors from the IOMMU. Some devices get wedged then.
->>>
->>> The problem can be solved by breaking all virtio devices on virtio
->>> bus shutdown, then resetting them.
->>>
->>> Reported-by: Eric Auger <eauger@redhat.com>
->>> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
->>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->> Tested-by: Eric Auger <eric.auger@redhat.com>
->>
->> Thanks!
->>
->> Eric
->>> ---
->>>  drivers/virtio/virtio.c | 31 +++++++++++++++++++++++++++++++
->>>  1 file changed, 31 insertions(+)
->>>
->>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->>> index c1cc1157b380..e5b29520d3b2 100644
->>> --- a/drivers/virtio/virtio.c
->>> +++ b/drivers/virtio/virtio.c
->>> @@ -377,6 +377,36 @@ static void virtio_dev_remove(struct device *_d)
->>>  	of_node_put(dev->dev.of_node);
->>>  }
->>>  
->>> +static void virtio_dev_shutdown(struct device *_d)
->>> +{
->>> +	struct virtio_device *dev = dev_to_virtio(_d);
->>> +	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
->>> +
->>> +	/*
->>> +	 * Stop accesses to or from the device.
->>> +	 * We only need to do it if there's a driver - no accesses otherwise.
->>> +	 */
->>> +	if (!drv)
->>> +		return;
->>> +
->>> +	/*
->>> +	 * Some devices get wedged if you kick them after they are
->>> +	 * reset. Mark all vqs as broken to make sure we don't.
->>> +	 */
->>> +	virtio_break_device(dev);
->>> +	/*
->>> +	 * The below virtio_synchronize_cbs() guarantees that any interrupt
->>> +	 * for this line arriving after virtio_synchronize_vqs() has completed
->>> +	 * is guaranteed to see vq->broken as true.
->>> +	 */
->>> +	virtio_synchronize_cbs(dev);
->>> +	/*
->>> +	 * As IOMMUs are reset on shutdown, this will block device access to memory.
->>> +	 * Some devices get wedged if this happens, so reset to make sure it does not.
->>> +	 */
-> 
-> Eric,
-> Could you pls drop the below line (reset), and retest?
-> I want to make sure the above comment is right.
-> Thanks!
-If I removed the line below, I hit the issue again:
 
-qemu-system-aarch64: virtio: zero sized buffers are not allowed
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> Change function's 1st arg-type, and deref in the caller.
+> The fn doesn't need any other fields in the struct.
+> 
+> no functional change.
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-So to me this is needed and the comment is right.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Eric
+> ---
+>   lib/dynamic_debug.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
->>> +	dev->config->reset(dev);
-> 
-> 
->>> +}
->>> +
->>>  static const struct bus_type virtio_bus = {
->>>  	.name  = "virtio",
->>>  	.match = virtio_dev_match,
->>> @@ -384,6 +414,7 @@ static const struct bus_type virtio_bus = {
->>>  	.uevent = virtio_uevent,
->>>  	.probe = virtio_dev_probe,
->>>  	.remove = virtio_dev_remove,
->>> +	.shutdown = virtio_dev_shutdown,
->>>  };
->>>  
->>>  int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
-> 
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index c27965180a49..a3849ac3be23 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -1120,12 +1120,12 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
+>   #define class_in_range(class_id, map)					\
+>   	(class_id >= map->base && class_id < map->base + map->length)
+>   
+> -static const char *ddebug_class_name(struct ddebug_iter *iter, struct _ddebug *dp)
+> +static const char *ddebug_class_name(struct ddebug_table *dt, struct _ddebug *dp)
+>   {
+> -	struct ddebug_class_map *map = iter->table->classes;
+> -	int i, nc = iter->table->num_classes;
+> +	struct ddebug_class_map *map = dt->classes;
+> +	int i;
+>   
+> -	for (i = 0; i < nc; i++, map++)
+> +	for (i = 0; i < dt->num_classes; i++, map++)
+>   		if (class_in_range(dp->class_id, map))
+>   			return map->class_names[dp->class_id - map->base];
+>   
+> @@ -1159,7 +1159,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+>   	seq_putc(m, '"');
+>   
+>   	if (dp->class_id != _DPRINTK_CLASS_DFLT) {
+> -		class = ddebug_class_name(iter, dp);
+> +		class = ddebug_class_name(iter->table, dp);
+>   		if (class)
+>   			seq_printf(m, " class:%s", class);
+>   		else
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
