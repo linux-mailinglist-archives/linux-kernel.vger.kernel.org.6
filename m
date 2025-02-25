@@ -1,193 +1,109 @@
-Return-Path: <linux-kernel+bounces-531436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF605A44080
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45664A4406E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF8B189CE7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDFD3ACD5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C3B269895;
-	Tue, 25 Feb 2025 13:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A4D2690D7;
+	Tue, 25 Feb 2025 13:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="FtN1w/6v"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R+P5YuYy"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315D2690D7;
-	Tue, 25 Feb 2025 13:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D24268FE0;
+	Tue, 25 Feb 2025 13:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489257; cv=none; b=OER8ouSK21VaKyliedYdrOFCFWpfjPyj8wgxUP6HCFwWOXPr9k4xqdvzHHYiQ+3VGGzepLRWErHXSWq65cbWl9LXcwyjRlElBC+tGOnSp5jN/mtYCT8VXoUzppAcFDVVYR///Y3sA7y9AFccBCuP7jDU45ejB0SLR9DdqlWOu4s=
+	t=1740489140; cv=none; b=mqpAjUqzY+yYvOiyYyKhR43iF+UN4lLNkbzJxZlyN1R6goFi5614HLHIoTl2ar8EV6i4G8SSZadhnyTuZQFyHqfluLc+RVfbFTSSS/UKW25T0q/mqT1pnorSDQJg9cRQ6VbMEusKrJhN3/TplFAAR0KsQ658m2Z5/zMSjpqqXTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489257; c=relaxed/simple;
-	bh=RwX3oSR1luX3Wb3W4lgKOFBSU88ndS6ozVoLUC0kTtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KnNgvme9BqacLEvhPmmnCjwy4Z2p42rafSb0C/PwqM1devRViRIeXTGOZxk314VJzNJWmiXkJ3Nea/CKxlbZ9xtTWIXjUvjJWxxBIAMeDZdqyauODcWAzadA9CO67QRgxDutFaNK3L2m6hgohvh4Re37Yss6HnM3QvyxQnH1TP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=FtN1w/6v; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740489182;
-	bh=RwX3oSR1luX3Wb3W4lgKOFBSU88ndS6ozVoLUC0kTtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=FtN1w/6vFw1VCH9UHTW50Z1faIq8qf4Yau3XA24clUsyo/+J/ZKg8biX1JUJ5S17x
-	 wpwT69GAolfyELJChYO8UPp4KszQXzoWpZTzqvRE1YRuJNkVNbPBQgfDwKKx0nwExF
-	 9HgJblql5CGAYMpXgq23XL8Y6uuh5WYj6Utc+/EA=
-X-QQ-mid: bizesmtpip3t1740489116thwmj9a
-X-QQ-Originating-IP: 6/30mZr5TR8b9ztJw35yzmcO8NNodfukdK+u0UiyNT8=
-Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 25 Feb 2025 21:11:54 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2494615995650422906
-Message-ID: <0A01BD2F489C764A+647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
-Date: Tue, 25 Feb 2025 21:11:54 +0800
+	s=arc-20240116; t=1740489140; c=relaxed/simple;
+	bh=IvLxYoqof+h1zVJG/BNtTm2YaSAll3uDPKebnBkZeA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OjsWvDrm3cDUxD3OL3Whg5u2OJFN/Dnr5IKWDKnCDHPoFnBPBFOnjlSjibFWgL1Iysn5UZdQViZC0wpe3KQV1snrIAI8bqtuqCQePxvHopit8wSgt7dg+GX7G36eBuF5d0TDuMlVoE2ruED7CFwPuO9D43f8PrBv9o8KNW/mai8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R+P5YuYy; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BE0BB40E01AE;
+	Tue, 25 Feb 2025 13:12:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id c4bYqnj3_9Ty; Tue, 25 Feb 2025 13:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740489130; bh=aiTNWBEfHf+ez36sasAzHhMIQIMyctxZwHgo6gKB6Mw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R+P5YuYy+OZ/H0lPGjVJHQxWsJs04IfzWC+ISVcf3ZN9KSB6OvDodmMfex4Yy1x2u
+	 r6faDzQZKIU3Iu2tTqVpaQKKGaCuhok+p1Hq5YRGt+YdutTwG6HmBcIxb4x9F7dlgB
+	 2gfbgmisBe1wtaiLS/qvowXP3wNnvPzbtKJZZnN0HQo8vvowQM5/3SpS9Q87y9orve
+	 ikFk8PaPmjBKIY2iMAPyW/YxM8zC74sDdsp1xuRx+SkN3SSHXJuuzq8RRWs43ktXGp
+	 AxC8j6B1EwTkKEYIvViQ2NXIwNmZbGfyLRAoQjluKomqXv6HYdEQ1WUmyZ8pHkghUo
+	 gI2YB7UQvqgt4xMUl4us6aAF1YdzoiFWYglTeswsdEhJWjJq46AXgdDTjQPd53da/k
+	 5zNH9Ram6tMTb93FdSAzpUGYI3q1dnrqwuQG9iXweUhJxXrs9Ngq9LIc4VzqeCDoYx
+	 +Ul8FNkMblB3xcPK90Mw+t5RsurnHqla6Lhyj+GT+qPZzbzrrBfhjpTE6fm7RKTPFX
+	 Tqz2Qs/caOiTNY06+7z1lgSiJgJ7K0OoxZRHuYwBWtmHydBVMRcLKGX+no07gVrMra
+	 1CWrloNwXOKyBh0dNoPy1v/AG98jabIY0XDVrDpVLx68C3Bly9mqRmHn/i79z8DXOU
+	 qfOiIi/2qI0blmaahfLhHqrU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E989240E0177;
+	Tue, 25 Feb 2025 13:12:04 +0000 (UTC)
+Date: Tue, 25 Feb 2025 14:12:03 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v2 3/3] x86/mce: Make mce_notify_irq() depend on
+ CONFIG_X86_MCELOG_LEGACY
+Message-ID: <20250225131203.GLZ73Bo6OgcD302H5e@fat_crate.local>
+References: <20250210154707.114219-1-nik.borisov@suse.com>
+ <20250210154707.114219-4-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
- with "use_192_bytes_for_3f" attribute
-To: Bart Van Assche <bvanassche@acm.org>,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com, chenlinxuan@uniontech.com,
- Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
- Yujing Ming <mingyujing@uniontech.com>
-References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
- <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------WyKFM9ljjpPFMEt0017CGUNW"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MIYVF5Pddf3wJApsG0UREr+dCSYChXydDKfPURQBbDs0yY3d1wKMy16O
-	IDPHMp2DbUAUXbNtrbZGPlqVsQeEi7sGM27c9P3drjq211CMMTxCtmqMx7/nHzJ6p6g4liL
-	kQiad1chgOL7A1cTwC/yo3cjztg2qR5etN5oCfyjNe3gmm6YY1foYOrq1c6ClCqlV0+1+ek
-	OTR3A5Em+dQ81uoHbYyaWzrd8+28Diakx4gPKaJRvadP6Yq1jjXjecgKG3RrxQHRVSDRcNR
-	CB/HvaXjjkm4PClNoQTMhVTsmVjOeqeaVYboeJCJrVOemCqvuAk8K80GIWQHm6iGj0jJzxV
-	88E+xnJUGEv1ZjM+yCldZs36P99a0JYwFzjrTuF0o4lKOSDtrp4P0GwPzG+u/8plG74c0rW
-	A5iuskI/kgShuksPySNQnqA5EvK/5rc2+m3Oc317hGbLwT2JIcZIbBzqESWF4ZNvuWZtekJ
-	4ngMYa8SYtHd/H3/AbuAP2lX4+NeZie8mf4uuG/lvEnjWPOCl5p6cG9PYtdPOhkxbjRMcoO
-	OTrUUbMBlUduwIB1DoA1YdZsWQJUp0iYKXWWicTucs/BNwWePvlnx3V7KPQGz2yHK9z7jAm
-	ebLJOi1LWNCAhz4c7mifIsm/WBGmkBADkE7cT/eLM/hXQKzfBpnH8pnYKqQdKtldHZmaLNI
-	U6arNwuqs9i7fEYQcPBIuhAqoG6BaKogxWs48Y4b3xcbrj49otGK9K/XsLodumeabbRIfgQ
-	mehL4xyBpZN0yBiHmxBbP+BCvhgHPO+Ab2+kbC/2ixzUyHqKhm26UFHCfIUwnZIIY992yVy
-	le/gYRaRlXJNj62qGLkDTZWRYlzbDTTSzGctrd2xPpa7eeQY18yC1jbRJxMSzPZxL0y862f
-	834C14I2e3d8jJ5krjcZJ3w4cy8GrD0WIGMOvAp6itqKHV3OYGsEtIhOF0HqkN2IM/hxePD
-	JUAiJbZm2xxRVw2cgKSKr8GAGZys8t69gUPMdgQuRYJiF57ntizRWyoY3i+D7fqS0XkpgVc
-	DBKpI/MbnNLzi9XYGxEFlFLux2p7G2idwEGy6PXYvKJZLmdW/1ArN9Q71xY11s+G+KXZAjt
-	vtOGvNaMRPTZY1ie48nDog=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210154707.114219-4-nik.borisov@suse.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------WyKFM9ljjpPFMEt0017CGUNW
-Content-Type: multipart/mixed; boundary="------------OM0ycHiqAXHv0H3uaNPqw9ej";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Bart Van Assche <bvanassche@acm.org>,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com, chenlinxuan@uniontech.com,
- Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
- Yujing Ming <mingyujing@uniontech.com>
-Message-ID: <647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
-Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
- with "use_192_bytes_for_3f" attribute
-References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
- <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
-In-Reply-To: <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+On Mon, Feb 10, 2025 at 05:47:06PM +0200, Nikolay Borisov wrote:
+> mce_notify_irq() really depends on the legacy mcelog being enabled as
+> otherwise mce_work_trigger() will never schedule the trigger work as
+> mce_helper can't be set unless CONFIG_X86_MCELOG_LEGACY is defined.
+> 
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index d55b1903fde6..8b8553e144ce 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -591,11 +591,13 @@ EXPORT_SYMBOL_GPL(mce_is_correctable);
+>   */
+>  static int mce_notify_irq(void)
+>  {
+> +#ifdef CONFIG_X86_MCELOG_LEGACY
 
---------------OM0ycHiqAXHv0H3uaNPqw9ej
-Content-Type: multipart/mixed; boundary="------------6Mk1ZBCl3qWxES506fPP0gIU"
+You can't do that - I see mce_notify_irq() in mce_timer_fn().
 
---------------6Mk1ZBCl3qWxES506fPP0gIU
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+-- 
+Regards/Gruss,
+    Boris.
 
-SGkgQmFydCBWYW4gQXNzY2hlLA0KDQpPbiAyMDI1LzIvMjUgMDI6MTEsIEJhcnQgVmFuIEFz
-c2NoZSB3cm90ZToNCj4gbHNodyBpcyBhIHVzZXIgc3BhY2UgdXRpbGl0eS4gdXNlXzE5Ml9i
-eXRlc19mb3JfM2YgaXMgbm90IGV4cG9zZWQgdG8NCj4gdXNlciBzcGFjZSBhcyBmYXIgYXMg
-SSBrbm93LiBTbyBob3cgY2FuIHRoZSBhYm92ZSBzdGF0ZW1lbnQgYmUgY29ycmVjdD8NCj4N
-CkRpc2tzwqBoYXZlwqB0aGXCoGF0dHJpYnV0ZcKgdXNlXzE5Ml9ieXRlc19mb3JfM2YswqB3
-aGljaMKgbWVhbnPCoHRoYXTCoGRpc2tzwqBvbmx5wqBhY2NlcHTCoE1PREXCoFNFTlNFwqB0
-cmFuc2ZlcsKgbGVuZ3Roc8Kgb2bCoDE5MsKgYnl0ZXMNCg0KSG93ZXZlcizCoHdoZW7CoGxz
-aHfCoHNlbmRzwqBNT0RFwqBTRU5TRcKgY29tbWFuZMKgdG/CoGRpc2tzLMKgdXNlXzE5Ml9i
-eXRlc19mb3JfM2bCoHdpbGzCoG5vdMKgYmXCoGNvbnNpZGVyZWQswqB3aGljaMKgd2lsbMKg
-Y2F1c2XCoHNvbWXCoGRpc2tzwqB3aXRowqB1c2VfMTkyX2J5dGVzX2Zvcl8zZsKgdG/CoGJl
-wqB1bnVzYWJsZQ0KDQpUb8Kgc29sdmXCoHRoaXPCoHByb2JsZW0swqBpdMKgaXPCoG5lY2Vz
-c2FyecKgdG/CoGRldGVybWluZcKgd2hldGhlcsKgdGhlwqBkZXZpY2XCoGhhc8KgdGhlwqB1
-c2VfMTkyX2J5dGVzX2Zvcl8zZsKgYXR0cmlidXRlwqBhdMKgdGhlwqBzY3NpwqBsZXZlbC7C
-oElmwqB0aGXCoGRldmljZcKgaGFzwqB1c2VfMTkyX2J5dGVzX2Zvcl8zZizCoHdoZW7CoGxz
-aHfCoG9ywqBvdGhlcsKgYXBwbGljYXRpb25zwqBzZW5kwqBNT0RFwqBTRU5TRcKgY29tbWFu
-ZMKgdGhyb3VnaMKgaW9jdGwswqB0aGXCoGNvbW1hbmTCoHdpdGjCoHRoZcKgZGF0YcKgbGVu
-Z3RowqBmaWVsZMKgb2bCoDB4ZmbCoG5lZWRzwqB0b8KgYmXCoGZpbHRlcmVkwqBvdXTCoHRv
-wqBhdm9pZMKgZGV2aWNlwqBhYm5vcm1hbGl0eS4gDQoNCj4NCj4gRnJvbSBpbmNsdWRlL3Nj
-c2kvc2NzaV9kZXZpY2UuaDoNCj4NCj4gdW5zaWduZWQgdXNlXzE5Ml9ieXRlc19mb3JfM2Y6
-MTsgLyogYXNrIGZvciAxOTIgYnl0ZXMgZnJvbSBwYWdlIDB4M2YgKi8NCj4NCj4gVGhlIGFi
-b3ZlIGNvZGUgdXNlcyB1c2VfMTkyX2J5dGVzX2Zvcl8zZiBmb3IgYW5vdGhlciBwdXJwb3Nl
-LiBQbGVhc2UgDQo+IHJlc3BlY3QgdGhlIHB1cnBvc2Ugb2YgdGhlIHVzZV8xOTJfYnl0ZXNf
-Zm9yXzNmIGJpdGZpZWxkLg0KPg0KPiBUaGFua3MsDQo+DQo+IEJhcnQuDQo+DQo+DQpUaGFu
-a3MsDQotLSANCldhbmdZdWxpDQo=
---------------6Mk1ZBCl3qWxES506fPP0gIU
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------6Mk1ZBCl3qWxES506fPP0gIU--
-
---------------OM0ycHiqAXHv0H3uaNPqw9ej--
-
---------------WyKFM9ljjpPFMEt0017CGUNW
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ73BmgUDAAAAAAAKCRDF2h8wRvQL7vr7
-AQCKLeuair7/zCaLbMxiUky8fDh9C54r6sZWEWrXWBd75AEAtON+w6pLfxFL1RbBYufRXYvkcAf3
-jmt/hhjYzKoVfwU=
-=tOa5
------END PGP SIGNATURE-----
-
---------------WyKFM9ljjpPFMEt0017CGUNW--
+https://people.kernel.org/tglx/notes-about-netiquette
 
