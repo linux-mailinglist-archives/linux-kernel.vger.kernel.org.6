@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-531490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59087A44119
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58492A44121
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909A73B7AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4D791885B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A192698AB;
-	Tue, 25 Feb 2025 13:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC802269AED;
+	Tue, 25 Feb 2025 13:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gr2KeRKs"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="dSEWQXhi"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DE25EF8A;
-	Tue, 25 Feb 2025 13:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5B626989E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490824; cv=none; b=OpUnYkcCwYfeiMST7mr0AAwwFKaNKvaF0M+qVHxYJaEWk9d0r041ueGDELbaznRj3U1JYMgKl2wSh9PBaYV1u/MpngLa7goBs1g08lG+ntsa8txhrTsw27K7w8ayxE5wV3TxaBslb4bB89k8r0BOuTbFKebs1YIIy7CCjrQk9do=
+	t=1740490948; cv=none; b=SCwkyaoOsAC5R1Nf6/2aXurEcForFaQKNO5PZKzLE3tGeWf6OSNG2K0X0HLQLbSI6eGmLkqD4g7eC7+RIJc+NfDkEUd+GbTSKOTtsQld38Il2qatgHsojpxlLWFMtIlOvaTFfGtZMW3e019ZMrWL6OlI+N+0v+q+7jfyu/r2CwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490824; c=relaxed/simple;
-	bh=ZHfwPlIcEqwwyokGZO5UWjLSpzt2Pib8HNJGFAPJi3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJl6hefw3ufbAB7oj5end05MdhcTy0dQENBNUUIZQen9eyOSbKbWCoh5BlIPFzSwe09hxtsdNQEUG6jSjmNrsEhteB4Ea+R+Zg0feAEiRWoZkxIY636gKzfRQkla/C/BQVdBElnmAy/p9WXrVgJbmT7Q7ae7DsJSAcVFiJG2cv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gr2KeRKs; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c92c857aso94659335ad.0;
-        Tue, 25 Feb 2025 05:40:22 -0800 (PST)
+	s=arc-20240116; t=1740490948; c=relaxed/simple;
+	bh=BnR1UEhkD2s11wwqzNvj/RhJsief2AsOyiHWF4nIWnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VKUxPpQcP9l/hXwlThAYfMtjHr4aiIXhqnQ5RkvsBXphui8MlpKIsKUS5wc8qgGayjI/Jn1CoDIVkiZVqmwp7/shhrJDWrg6C1xLgdPrPOAenI+SoRjE9Zg+uobglFjiUaTuoiGRffLTFxp665SgpbvtaQOQ57sgwTVItiTmhGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=dSEWQXhi; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4399a1eada3so48996675e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:42:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740490822; x=1741095622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=btIzpaiXBm39xMpzgFyr6PPx6n79OgifTZ30SVyZSrU=;
-        b=gr2KeRKspfEAm9ZC9v0SaxGrUAibKYMYD4TdjYbIBtZ4h0oIBT3qLvKvbFd+FgY9KQ
-         yaex0aNCSYKV2KE1NHTf/ITW5by8g0ggTY6GbBb3/V2AL6O5+v3TW04TcwRWAb8IAPzN
-         fE9toXEsl6lXarLtpe2slrerEh/OXt9+MK/sIQeFpt+nqEAabmrJDSEvVofEOUVrLwTQ
-         dHfMKqDh1inD+t/l1iUEH95XW+tUgEFKy9t55V2wUgJbzeewvVvHUroFY+GucgzhgxbA
-         Ny/xuiY1oF4cyOH58wPIEXE3xF0GeE+ksKCkwWaoyDM/+kP6RrSx2BNvaGiuqd6l45/C
-         rzBw==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740490945; x=1741095745; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j3XL4nlHnnlyPH4jYVrMU0QnNTngOwLFMHwhGLj0jSQ=;
+        b=dSEWQXhi7J5ZiWC0r1WAU4qdDss4BfmtHbpqYlNA6YnzRvkM1G/yqcXp4SfV6SgU80
+         dLCygOh7LnAtcbXdPjEI4ibNIJiYtDbl2Wm2Tr3sGLZ3IDK8AHKCKcvQS2V/L+OWWw06
+         kE8/yhFBA0mVCg2vnF5zorGWdMDUTjtE2P2gjCbOEe9k3rq0dl8gb8+5Uu4ezUObvB8K
+         7dcMhdvTIv1AU9214rpqDdSnMIM2yc+IYrlZjoyjSPJnDGHBQSrV/96npJ7SdQF+kcIL
+         lEHFHENumW3LPJ+5fyHMip5DCNChGZmKQbPe7SAHXNgwiMtNJ5qQf/mOaZsNAFNxivm7
+         eP1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490822; x=1741095622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=btIzpaiXBm39xMpzgFyr6PPx6n79OgifTZ30SVyZSrU=;
-        b=Wp/RnX44uH4Er75gPQnVBIoI8fYuFhDCA2XIHg3nULbTcNPPPpt29TucIILL1jo3oS
-         d8FAQ5Z6UyyW0KGGzoL+FYQKWd3vFG0ZDS0tvNHkFzkYWtQO3hK7avmFb5F8SYT7OLvs
-         emexeJ9ETiHBvNgGLOFtpx15BX4SSrZfhJrSOMIAKCCEd4TNsusK5838wh62PqH/Ew0c
-         7oslPzueX6hONtwXHxzC+pOL6vhVA1OW9WnZBrxk6WEIr/kv/NnDvCV40na2OS1b3T0q
-         LhyXKbyITnEl9Xr3SsEaTeSDnDj53J/82LCXcUgqpn23fhAcrcgyZSIkvEbf911he3/h
-         YB5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUktf77P8IIR+4TS6RhriIwCIMWHTDZ7aJFFtn1WWfWZtG/Q8yGnrofC+WtUIfuR6nprGYGrTSHn+G7@vger.kernel.org, AJvYcCWVoZAQtZHENVVmTRE+oJWhuGPOiiXpHEhNA4EFVUcaE/47d5SIjW3dRYt1mdynrtNSjhFIc4RsIKB/qp4sq3akNA==@vger.kernel.org, AJvYcCWtxSFP6dc+9pjWLrqjLrGFWRgRHz6Y+hJQKNX3lID8Hm0c8RPID4++wBFuL2DzdW7h7GXMQz4mcR7ySobP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTUs9mBqXjn40R+9bCvJGrzlGvPqDIB6aYqr/zOMxzTykMDChD
-	pVbVxSJUu4aFU4geztwQ9mEHU+oHdyi1o/QJ/UBtY3YxO9Q2UCc4PtOA4WGOD3EkdIgpa1er5Qa
-	5ca6egYwiotsIzYo2VO1wJbBxLhU=
-X-Gm-Gg: ASbGnct/KsFrMkHe9Vr+9Le0b/8MZ3oT4WQYQUq63ONic2eWCrnD4017fdUHDC00ufZ
-	zr4CXhc7EWW2TsDNeyKmeENfWjH1VAPobFY55F1fzrZ2wpyMuCXlQ4fXzDkrWO3I3msyDdf0NKs
-	kB/hPx
-X-Google-Smtp-Source: AGHT+IEqvx+vLUoWU+bH7g7MTRR7upTwyq8plc/LIRpW15G1pS1TD1Y8exEPj6fQZzzsjKBHvHSHg/l/PmukuoidDeo=
-X-Received: by 2002:a17:902:d4cf:b0:21f:6546:9adc with SMTP id
- d9443c01a7336-2218c3f4333mr351935475ad.13.1740490822321; Tue, 25 Feb 2025
- 05:40:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740490945; x=1741095745;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3XL4nlHnnlyPH4jYVrMU0QnNTngOwLFMHwhGLj0jSQ=;
+        b=DW1As7noHkOtSXiQFv0XCOJ5lB2g2Vez1SuvGEc26LE/XgaxrUKcI0kZwSsq1HiBIp
+         vPcYH1rodhb6RIRDnwfTvOvevZKLTtSvFDZjJt0L5MqblH9UtdkiR02gAUB9p+98OZbZ
+         q5NheE9HKIZkAncYv2bMVG6lh6R1p5KBMx0fs+TxV+spiRKso/O78sPpqHrvMNpWqwQ+
+         mdqX9PqVZK7uNU03ViRevE0wUXXFZjTSfqCN4OdIRwWEXaarLnop9yT76uzxdi4vQVO+
+         5dVJwxX+0HiBL+rxJtHFruBPfP3ybcuG9AMzCHs5PYXW+dfqzn2zctgc72anrdnV4cNO
+         1qWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXy/M8qfGdW7Kg+bktrLxeHQYEY2JrJAxGHG8A075qv5ljSFEt91foIbEVhRHxM9HwC4Jd0dcPsVDPa++o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+JgNHwb3+PNzmp7uz8Ge3BBLxEO7O7S43cRrOcVfwhurmDNWl
+	P9FY5AkByhCgL5xk8n2jRHOSpYdFMJin50YPq1VTLVEhNDFvL/ZPcTp2HcCWx08=
+X-Gm-Gg: ASbGncsrfwPeNsk3kGhLcBTCkQ6zXL5vhT3sQxlnhfkQtCEjraSdHD3G1n//92ayvSy
+	d+bz/EeQGvoTa48J4jHSLH4AZAfef1eHNCWzfIzbyykoQVJFqBvGKIHgn8Y6ufp152tmJrd4Wqx
+	+1jgAoKnXtN2NrgwJ9ESgUbA89NvbcycFN2VIWP9XlQ+kzgUT+hE6QnppBdfSmzJlRsp8LIoPL6
+	2AbD4NJV1eZDbyElFOYKICDLR1QCVKBkHSh3makekU2hoAnaRy67expkrlR42+t2l74ovrg/krr
+	mvVq99JEJZJZmPgtFix5
+X-Google-Smtp-Source: AGHT+IHz/kHuckgA3TvrA+/LI4qYIECysjjksxwCyLbpI4maWhZXofOF7yzDRNHHsxuldeUWnRaCCg==
+X-Received: by 2002:a05:600d:5:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-439b04f9d29mr123525755e9.9.1740490944720;
+        Tue, 25 Feb 2025 05:42:24 -0800 (PST)
+Received: from airbuntu ([46.186.201.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b037213dsm142703895e9.40.2025.02.25.05.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 05:42:24 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:42:20 +0000
+From: Qais Yousef <qyousef@layalina.io>
+To: Chen Yu <yu.chen.surf@foxmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	zihan zhou <15645113830zzh@gmail.com>, oe-lkp@lists.linux.dev,
+	kernel test robot <oliver.sang@intel.com>, lkp@intel.com,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
+ regression
+Message-ID: <20250225134220.qjctfqwwhjz7bspp@airbuntu>
+References: <202502251026.bb927780-lkp@intel.com>
+ <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
+ <20250225122705.GD34233@noisy.programming.kicks-ass.net>
+ <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225102005.408773-1-daniel.baluta@nxp.com>
- <20250225102005.408773-3-daniel.baluta@nxp.com> <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
-In-Reply-To: <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 25 Feb 2025 15:41:58 +0200
-X-Gm-Features: AWEUYZkKeH8Ee9X0dKf1ks0eIJRo2-c4LR6sVRs9-5VD4M6vPScOpUqA3j5lyUI
-Message-ID: <CAEnQRZBL+r2-CRDszK54SD_8E9=1QRKRj3_YDHsM7YetKMcs_w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	shawnguo@kernel.org, mathieu.poirier@linaro.org, conor+dt@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	andersson@kernel.org, Frank.Li@nxp.com, peng.fan@nxp.com, 
-	laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
 
-Hello Philipp,
+On 02/25/25 21:15, Chen Yu wrote:
+> On 2025-02-25 at 13:27:05 +0100, Peter Zijlstra wrote:
+> > On Tue, Feb 25, 2025 at 05:31:34PM +0800, Chen Yu wrote:
+> > 
+> > > 
+> > > But consider that the 6% regression is not that high, and the user might customize
+> > > base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
+> > > future(we have encountered some SPECjbb regression due to over-preemption).
+> > 
+> > You can specify a per-task slice using sched_attr::sched_runtime. Also
+> > see commit 857b158dc5e8 ("sched/eevdf: Use sched_attr::sched_runtime to
+> > set request/slice suggestion")
+> > 
+> >
+> 
+> Thanks, we'll have a try during the next test cycle.
 
-Thanks for your comments!
+Could you also try with HRTICK enabled?
 
-> The DAP core reset is mentioned in the commit message. Why is it
-> missing here? After reading the discussion in [1], I'd expect both the
-> stall and the (core) reset signal to be documented, something like:
-
-There is no reset controller driver for DAP area yet. We manipulate
-the bits directly by
-remapping the DAP address space inside remoteproc driver.
-
-See for example: drivers/remoteproc/imx_dsp_rproc.c
-
-/* Reset function for DSP on i.MX8MP */
-static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
-{
-=C2=BB       void __iomem *dap =3D ioremap_wc(IMX8M_DAP_DEBUG,
-IMX8M_DAP_DEBUG_SIZE);
-=C2=BB       int pwrctl;
-
-=C2=BB       /* Put DSP into reset and stall */
-=C2=BB       pwrctl =3D readl(dap + IMX8M_DAP_PWRCTL);
-=C2=BB       pwrctl |=3D IMX8M_PWRCTL_CORERESET;
-=C2=BB       writel(pwrctl, dap + IMX8M_DAP_PWRCTL);
-
-
-If we agree that this is the right way to go, the next step would be
-to create a new reset
-controller driver for DAP area.
-
-I want to keep this as a follow up patch in order to not compilate
-this patch series even more.
-
-<snip>
-
-> >        memory-region =3D <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
-> >                        <&dsp_vdev0vring1>, <&dsp_reserved>;
-> > -      fsl,dsp-ctrl =3D <&audio_blk_ctrl>;
->
-> Is there nothing else in this range that will have to be controlled by
-> the DSP driver in the future, such as the IMPWIRE register or the
-> XOCDMODE[OCDHALTONRESET] bit?
-
-We are internally running SOF for couple of years now and we didn't
-need any of these bits.
+	echo HRTICK | sudo tee /sys/kernel/debug/sched/features
 
