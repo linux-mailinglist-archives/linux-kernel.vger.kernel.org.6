@@ -1,214 +1,136 @@
-Return-Path: <linux-kernel+bounces-532653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEBBA4505E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:40:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBD0A4505D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D90167C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239FE3AE713
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7B221D3E0;
-	Tue, 25 Feb 2025 22:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B381E21B9FD;
+	Tue, 25 Feb 2025 22:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cSf1Negk"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="K1vrbbA4"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767D21D3C4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E17421B9C6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740523080; cv=none; b=unE2k97cAMy8jVbVQsj0i2NJSP9BA+4xyEHsN0dCaL4tnOUslQMwN1T2VvoaXl9Ujf73BCbY3aNSBss8DzlPr5u/ytHM1mtgTKCTktiRQAE6o7vzJa7bFsU1bmTqHZRvM5OGKkNTNneIBYYkYFFLQgim2XeutiyTrB0UfVYGOyM=
+	t=1740523076; cv=none; b=PUkvveGSFHvDUBRgfsuDAlPz0gMCtN8qkBps1wwSvpFLaYFvaWp3WM6ySqYguVaEnQvOjxQNLWJsgO8NPku4TapqJXRH4G8zNTPok5oJxPjlu+nTBfxjS3ikuAbjk1m6Tu47lFLUR9Ms3sD1HXuXQDMYwQOZYpXOq8EZ8JUMreQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740523080; c=relaxed/simple;
-	bh=aXrabKXlM0IsIZuDH6QT6eCKq7zU4WZZRKh8RcjzM6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dsx+TLkkUGSvRIqxcCponbMqlRy1L2n2hUks0qtvFpKA9VEYBr9+6plDUgyFlcCRxl/Lyftvp6fi9o1YHpk+Fvk0ZHCbmzi6I8i4IZ4A66gSYQmiyeOyoC0QnIdhraLMKSip9RFQTYh6Etf9gCJEcvDfp6pmUoanUKBN40mjWxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cSf1Negk; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-724daedf8c3so1567739a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:37:58 -0800 (PST)
+	s=arc-20240116; t=1740523076; c=relaxed/simple;
+	bh=BogXE9uzwFPy580Hc+AtaZjDNH4/vFPQzai2+yXISIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blvGXxUVkFN8KcFVcialdMVunGNVTBXkmz0IJYWwpv91B2fI0ylgsFStzsnZY643C2UwSiN/42G8YGkpSr869DiOJ1D+r8joS6BnXAWjbeDDMp3EtqZVS89Vg+UV8JJr81GraXuQVZ+I+3LXIbO6azmel84haYTy9EONYllW950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=K1vrbbA4; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-472087177a5so77232421cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:37:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740523078; x=1741127878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TM09Vy3kN6bqyw39MdyhtNezW+WJUnfi9H/ALFTk9Q8=;
-        b=cSf1Negkg/Ryr7WSJ7S2yPded28YGB1f25ttqVD5kxbAWuN/9ZDbl0nEquaFuQdHOJ
-         PxDToikmLTU6tcQdLvsazmQj9ZuU86fblBps8Ezk0CFo0hOILvJe9sV8WbSFW3WwZ0DH
-         NlbLEI8ukfOmVqJ3qEBQxzUAqSJefCFg46yxY=
+        d=rowland.harvard.edu; s=google; t=1740523073; x=1741127873; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=n4ofxXiAeBUmvDKjkXIUMtsheZQdXumF3WhU8fMVP8o=;
+        b=K1vrbbA4uI6LcaHGJewaR8EkZYvsvfFfSKriZzIxGzUAaTMyVMsijcDVajROgtnrDJ
+         plDTD72YoVpydaP5Rp4JodfWWo9scnaXNbpwGfG1Vwu6VhTE3/Wm1NFC6EVQ8obQraJk
+         bJChD3lLl6WzbCo88f4t0CiD+6R8NVqy5O0KUkAj2hAMXxZF8ZzwCE3niOxZnGuFy7W8
+         kz5gUp0m3Z5eZbuzosvUhKbCGwPX4G4VFjUPQlN7wdmvW2i3fbzsEQHaWTobsNVIbADm
+         gN0juY5hIA+E/shGXPnFUI4UFgKo5wRqyIy3wsYFfRgVzhOC6IoEipmLLXiwvg2gBADd
+         vh6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740523078; x=1741127878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TM09Vy3kN6bqyw39MdyhtNezW+WJUnfi9H/ALFTk9Q8=;
-        b=G56nzQsRIHicAfwrU/Fqdi3TZLMWohmr8IFPL2GYMtPE3d2JVOyzsvaEQkWZ8GSCh/
-         KI3lGK80w6aKLqr5dnuPxj6Mar53NDXSU7v5vellhRHZjvh/VnGgIPBb285cVfPMqIUT
-         oW0cgUHbQqiyzCs2uNcwtsH2Tq/PM5Zn+MqFehHSUn1rYRpn/Lk9Vd2NTRPFPjl9NVpH
-         s8L46oC6yE0EgL+DbyVgb5sVx4DDgRf7Y9OXKTPrDEA/oeZRZc08j/bq6dgs9vYI1A27
-         7xRe3Q4c1bZI4fMnJSiit5las0Szwsh7HGGguxhio6xbag41JPQ+FCWfQGe9RhReDVRc
-         GsKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGuOQr6CsC1Usl/UoYvx5grwvrPzqw6BMKFJp6BGUnCzxEM3L/8nr71tieLeQ5sOpa/LwIX/MhOzLmIJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3aFh1EnAYWad1AwXKAgZ0t2tYauhP7qaH/vx62Tw/Ji0Jtrvc
-	dBzpYaAyNDCDe1ug5s1dlkHJ27oZ0htOLg5h4RdAng/991JHdkCKUVuRVXy2ENfenw4qD4stms5
-	NcL08qvSIBlZG95uaIfWfZsGkalgzSDmEzw/a
-X-Gm-Gg: ASbGncv3eJvZ+6PLRKoGRNYSSd+rnCoXsnhs+P/REKev4tKv8ldlL9YXI/ybGJQ8vND
-	EvKVanKXBcD1kWrl8QRqHVZx/4lI/TKc6/3S5RLPRxNxjzOT9zgkwEhcGKk4TJj/wq5Bn7dCguh
-	c4SkwZVb4JzJaAnWkhAlSHEJHN8wFmqCTSC+I=
-X-Google-Smtp-Source: AGHT+IEpcvXgYiPClCySX5ynQ10F8Hy35U+lAZUo00/td8VvueGsr0yfG4XsKHGe1Drl9rCIX+ro1GOLwaDthyw6wO4=
-X-Received: by 2002:a05:6830:3106:b0:727:2b73:cbb7 with SMTP id
- 46e09a7af769-7274c257d4emr4278353a34.4.1740523077707; Tue, 25 Feb 2025
- 14:37:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740523073; x=1741127873;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n4ofxXiAeBUmvDKjkXIUMtsheZQdXumF3WhU8fMVP8o=;
+        b=hUW+MFrjAZCIB195JmxT8ijsqwBugmfP3HsYdjnj4rWe0ReSHRcAceEimByMHZOuGq
+         7iawSZKrV2NVbjlpN0opT86hogW76LxsY18YHwoZP7emXg/rrFTZVn98Y9+NelPpxBrA
+         wrWmWw3aptx0t644+bMHGqFKzgwjq5CMSPc+YbJaXONwjxdDcGSsc+Sm7sw7iTaq45pZ
+         /+bgkcnfYlleRlfxnt0ij84aqmAYh37qNx4xMTFb1jn98JDSwMTpiEfMMp/bbMvAYc/j
+         xJf1S1tmz2bms2r3q7hCR11FBJt8A+0x1B2j1g5q6/hZMqiTj6+HxQHvN6f59Xy7f3Wy
+         Xbyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXVZy0TOAERRjTxmVEAoQguFy8PMcYTz8N7DkFqtu6YuZ5S9kIQ7LYf3ZRTG+1h1qeb/BA2Qc19XLwObc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNcF8396xY5Vi/A1uvAhlJMm/2USyH63/kKE1eMCEERNW3LgcR
+	HGInLHIZLI8RV3Xuc31ccGXRbYZ3HnlwG5yXlVK3FVEpaJ7b3r6jQno+PZ9/kw==
+X-Gm-Gg: ASbGncvFRpRXzJL9/N1GHkhLTIEvvIYV8v53lFnRWEKOLKoUOodnBJPRQqi1DDjW8BQ
+	bxbqBHJfvQi1XGu1Tg8tqMgC5HXTe9Z07k5saMI1Ar789pqP2jekPgsjSTwsBzEfeGe19I5x0fv
+	YWUrLRp7y+pPOfXCwh05n8IUV32Ga6SJ8U/vMyBbhK+Dv3qjB0PtGzJM6QNeldyEF0u7Zk8vXFJ
+	QYr6nS7gcDmx83MdcDNoGDsDpnPNl4LLvWpaRsqWnXz7gnvtX9AqKcineRDsNDZ1qnV25hf0lxL
+	o8qXH+OJochBN5TUQUUCWJHplh0=
+X-Google-Smtp-Source: AGHT+IGZ7WZcLwjn8faa6TaB0x9SlVLEgp5QWhOqfgxU0rZgTCA8rtirEWjJCmVBU73IhmPdtD5SIQ==
+X-Received: by 2002:a05:622a:14f:b0:472:1ee7:d2b with SMTP id d75a77b69052e-47377116e56mr67231801cf.4.1740523073483;
+        Tue, 25 Feb 2025 14:37:53 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::2dc7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47377e071d2sm15695531cf.11.2025.02.25.14.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 14:37:52 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:37:49 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Mingcong Bai <jeffbai@aosc.io>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH] USB: core: Enable root_hub's remote wakeup for wakeup
+ sources
+Message-ID: <4db69da5-199d-4db4-b82b-165d8eb1679b@rowland.harvard.edu>
+References: <2a8d65f4-6832-49c5-9d61-f8c0d0552ed4@aosc.io>
+ <06c81c97-7e5f-412b-b6af-04368dd644c9@rowland.harvard.edu>
+ <6838de5f-2984-4722-9ee5-c4c62d13911b@aosc.io>
+ <6363c5ba-c576-42a8-8a09-31d55768618c@rowland.harvard.edu>
+ <9f363d74-24ce-43fe-b0e3-7aef5000abb3@aosc.io>
+ <425bf21b-8aa6-4de0-bbe4-c815b9df51a7@rowland.harvard.edu>
+ <0ca08039-73fb-4c4b-ad10-15be8129d1b7@aosc.io>
+ <5b4349c8-26ae-4c95-8e60-9cccbb1befe6@aosc.io>
+ <6c9b295c-3199-4660-b162-188a9ab5a829@aosc.io>
+ <c2b8f8af-db2b-4b64-9e45-83e2b0a3d919@aosc.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-3-jeffxu@google.com>
- <f300404f-91a9-40ae-8fcc-2e855b43ac76@lucifer.local>
-In-Reply-To: <f300404f-91a9-40ae-8fcc-2e855b43ac76@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 25 Feb 2025 14:37:46 -0800
-X-Gm-Features: AQ5f1JoKtUHhlK-Y7z-DtFO5DD67q41dfSZq435LKdak_34AMb1q5CdQGGx9fmY
-Message-ID: <CABi2SkWXvc0p5u+AwFEHXVM00nX=n3ROKwEp8RaYWEZ-3-n5sw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/7] selftests: x86: test_mremap_vdso: skip if vdso is msealed
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c2b8f8af-db2b-4b64-9e45-83e2b0a3d919@aosc.io>
 
-On Mon, Feb 24, 2025 at 10:15=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Feb 24, 2025 at 10:52:41PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Add code to detect if the vdso is memory sealed, skip the test
-> > if it is.
->
-> I feel this is a little succinct of a commit message, but I guess it gets=
- to the
-> heart of what you're doing here.
->
-> Fundamentally I mean it makes sense, but I'm concerned that x86 has a tes=
-t
-> -expliictly checking- whether mremap() of VDSO is possible - are there ca=
-ses
-> where x86 might want to do this internal to the kernel?
->
-> I guess not since this is essentially a userland self test and probably
-> asserting you can do this in the way rr, etc. do.
->
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > Reviewed-by: Kees Cook <kees@kernel.org>
->
-> Anyway, this aside, this looks fine, aside from nit below, so:
->
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->
-> > ---
-> >  .../testing/selftests/x86/test_mremap_vdso.c  | 43 +++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >
-> > diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/tes=
-ting/selftests/x86/test_mremap_vdso.c
-> > index d53959e03593..94bee6e0c813 100644
-> > --- a/tools/testing/selftests/x86/test_mremap_vdso.c
-> > +++ b/tools/testing/selftests/x86/test_mremap_vdso.c
-> > @@ -14,6 +14,7 @@
-> >  #include <errno.h>
-> >  #include <unistd.h>
-> >  #include <string.h>
-> > +#include <stdbool.h>
-> >
-> >  #include <sys/mman.h>
-> >  #include <sys/auxv.h>
-> > @@ -55,13 +56,55 @@ static int try_to_remap(void *vdso_addr, unsigned l=
-ong size)
-> >
-> >  }
-> >
-> > +#define VDSO_NAME "[vdso]"
-> > +#define VMFLAGS "VmFlags:"
-> > +#define MSEAL_FLAGS "sl"
-> > +#define MAX_LINE_LEN 512
-> > +
-> > +bool vdso_sealed(FILE *maps)
->
-> Should be static?
->
-sure.
+On Wed, Feb 26, 2025 at 01:41:14AM +0800, Mingcong Bai wrote:
+> Hi Alan,
+> 
+> 在 2025/2/9 18:22, Mingcong Bai 写道:
+> > Hi again,
+> > 
+> > Oops. I missed the dmesg.
+> > 
+> 
+> <snip>
+> 
+> Gentle ping as it has been almost a month since our last correspondence. Can
+> you please advise if you would need any further information and, since the
+> fix is probably incorrect, if you have any suggestions as to how we could
+> move forward with a better fix or platform-specific quirk?
 
-> > +{
-> > +     char line[MAX_LINE_LEN];
-> > +     bool has_vdso =3D false;
-> > +
-> > +     while (fgets(line, sizeof(line), maps)) {
-> > +             if (strstr(line, VDSO_NAME))
-> > +                     has_vdso =3D true;
-> > +
-> > +             if (has_vdso && !strncmp(line, VMFLAGS, strlen(VMFLAGS)))=
- {
-> > +                     if (strstr(line, MSEAL_FLAGS))
-> > +                             return true;
-> > +
-> > +                     return false;
-> > +             }
-> > +     }
-> > +
-> > +     return false;
-> > +}
-> > +
-> >  int main(int argc, char **argv, char **envp)
-> >  {
-> >       pid_t child;
-> > +     FILE *maps;
-> >
-> >       ksft_print_header();
-> >       ksft_set_plan(1);
-> >
-> > +     maps =3D fopen("/proc/self/smaps", "r");
-> > +     if (!maps) {
-> > +             ksft_test_result_skip(
-> > +                     "Could not open /proc/self/smaps, errno=3D%d\n",
-> > +                      errno);
-> > +
-> > +             return 0;
-> > +     }
-> > +
-> > +     if (vdso_sealed(maps)) {
-> > +             ksft_test_result_skip("vdso is sealed\n");
-> > +             return 0;
-> > +     }
-> > +
-> > +     fclose(maps);
-> > +
-> >       child =3D fork();
-> >       if (child =3D=3D -1)
-> >               ksft_exit_fail_msg("failed to fork (%d): %m\n", errno);
-> > --
-> > 2.48.1.658.g4767266eb4-goog
-> >
+I was waiting to see if your last email (Feb 9) to Huacai Chen got a 
+reply, since you suggested the problem was Loongson-specific.
+
+As for a platform-specific solution...  I wonder if it might not be 
+better to fix this in userspace, by making Powertop (or whatever tool is 
+responsible for managing wakeup settings) automatically enable root-hub 
+wakeups on Loongson platforms.
+
+Another possibility is to ask somebody at Intel if Loongson has some 
+special way to handle UHCI wakeups that we don't currently support.  The 
+driver does contain support for the USBRES_INTEL register (see 
+uhci-hcd.h and uhci-pci.c).  Is this different for Loongson?
+
+Alan Stern
 
