@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-530547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277FCA43503
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:16:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FD5A434FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3731B189F1FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C05F172EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CAB256C89;
-	Tue, 25 Feb 2025 06:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF5E256C7D;
+	Tue, 25 Feb 2025 06:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+JcAQ0Z"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T5b7b4hQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47714B080;
-	Tue, 25 Feb 2025 06:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9363207;
+	Tue, 25 Feb 2025 06:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740464092; cv=none; b=IQDGukMSq/Rwv8KPQVYI0TY4jRObM+uITl1Rz3Rmk8lFoODOd1rbZI/s2GPxXOWG4sEQYoNcQs3jAslzldweKPB0OBfe6YvsUCf7KFltYFlXw7Vn+YPB7C4dVh8vtgWD05bXY7bEvsbRbGM5Eg63SppVy4YqbiuGpu0reU1OkkE=
+	t=1740464123; cv=none; b=WnQKLTsVZxCNLqtHr8yYZJh+ga3bPr0hMUJ36xzm5f14wSsjX48k6VZc0nHyksN0aNra8zo5mkpv6/U0HkbaX0RdC2PGtYjNYoGfF6754+S4xq0iqvWfc+ni9Ss1kteFSaCcdEf960qDm0wRoPRmNADt3az8PhajLJ5ojy6VvG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740464092; c=relaxed/simple;
-	bh=agvOuJoTNh8OTM20uhL6EZgzAA082YyQcg0WmGwlpK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MA4357bafG3uYV/YjpWQ5xm6aw7Yzk/NcWiTAjui645qTeOt0/BkvtEbl34LYBizeQ7hcOsII1fYQOI5hJ5JNsflOYJNEkhib33+oR7M7ViAHUZqQVLCnmYoGfLIEDelU9/4xDoB75AI/7f7i5pxSzdEGioLkkH3QxZ8kpPLLMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+JcAQ0Z; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220d601886fso78509995ad.1;
-        Mon, 24 Feb 2025 22:14:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740464091; x=1741068891; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAVQolx9KExb7Tb78lU8f9flTHmTgz7gOctqgRk6LUA=;
-        b=H+JcAQ0ZPpcABOqhNMGnRCEpWKjlHxKiuDROAovMMpUZkS+cMnCqokophf2l0eqgnJ
-         D40WYn5LAKbZUiqt1os8EWQq+VXReRIyWELVV//dtDGhrDV0JVCMft1gOCTx9g25+NIb
-         DxNeb3ZpGcjGWPceAqUDYAHI5xBvMSOMJHSl0V0BH7l0BJqSMWNvjbhav1qFjrZNDQQX
-         ThlnH/0/OHcX/gPH6oz4adYRDpM70DSjEECE8z1aOyoLQgq6fUdwrzH+quc8JK70Uwdk
-         UlU7gTtplILZZW76qSNPlBjSbseHU5VpKR9fZOp/7HdChiChwM5APzYl28VMRgYxIyw2
-         eMkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740464091; x=1741068891;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PAVQolx9KExb7Tb78lU8f9flTHmTgz7gOctqgRk6LUA=;
-        b=xKrJK4c3heEkmoC4pu+p1MknSPjWEFRjCldtrchFvotD9D8Yu5sLVPke+EGRkCHSzF
-         +M7nu7abEmSd5RbC3JTdY/5KQZI2szaihz4zO5x7GUKXO3tEQ7JtQYYAusOEsT+Wi3XG
-         7qIpLgoXsSGXRA6PtGkOSY7yGljKyhb8sKpFQx4yJDNL4FlcvkNQiLorZjzWMP/WofjO
-         MSYjrmzmPOmF+RGsLx3AjUQA3rUoTO5HBHhzA26Gw2eo2DYsxZmYnd2qOx1Ob6bMZOuq
-         PowU7LSgfc1p5jIROBxGGDOQ/kr5aSiVB7FUhFMUMM+PwYZGRJwbpHl3uizGzj8gZMPq
-         UWvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtEurN6EZ1YD7UWP06Cb4tpUX6sEv7+IyTWGXKC5icZPYqrzXKxZswLM7AQHQ74UnytX3sXPqehwFbfKOj@vger.kernel.org, AJvYcCVLevMiBWZx7v2rEyvmQf5q1nswD9URQuqEUvh0qLjsnyi3QPrMdex3mMUg7SqEIMgyApYN6LXj4HZm83I=@vger.kernel.org, AJvYcCXE5ebonN/yaVja0AjsnLVr6ttu5qVZuSRKtgRAHaE4Ktse2QvcZhFbk4E8DJ6M78QPzPIKC0OjXNHG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqhsFEAoIjLFarZTvVBSXv4ezMZAaqyaeXk3NiL0JybnjRVLB9
-	OlQcjSsvih/zA4PNXZhfAnqg3DZNtrfDFgdvbC60hzw15UpB9hrAX5Fj7Q==
-X-Gm-Gg: ASbGncuBx1w2zwqGV+Rks1IGnISGvA+6Nhzd/ibCjy37sIb37hzqkj0JiBwC5Rwn0vP
-	3O38ALw9yqZpHjI17P5pNS3CFxpGtOFd1UNyQpuj2mfu61mJbK/rOQZCTFll+MKZyd+7EXKBSBu
-	Ysk3j6druh3XEcpb9QbWeUYD36klZCSKxyMwT8uWPJe4QORK0pZXUmjQNj2zMdffDgtJXHjeF8c
-	JasHjS5PjQxghvy0qkZtouHu2c4GV2M9mGoHsvG1qKpgNB/KJYMZrS4YNXeV8FYqlG4J1fsyzjt
-	I8g5kpGFkdxHZyhbkrrRhC7X9CE=
-X-Google-Smtp-Source: AGHT+IGwkid3k/avMSIUbwqT5je0rV66CDm1UlnOW0Q6bT9hXylAJGMLD+sehIyy1nTfXR9ACddpGQ==
-X-Received: by 2002:a17:903:22c2:b0:21f:55e:ed71 with SMTP id d9443c01a7336-22307b45598mr38223475ad.5.1740464090521;
-        Mon, 24 Feb 2025 22:14:50 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0927a7sm6292795ad.143.2025.02.24.22.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:14:50 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:14:47 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: fnkl.kernel@gmail.com
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Neal Gompa <neal@gompa.dev>, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v7 0/4] Driver for Apple Z2 touchscreens.
-Message-ID: <Z71f18TQLEiexUaD@google.com>
-References: <20250224-z2-v7-0-2746f2bd07d0@gmail.com>
+	s=arc-20240116; t=1740464123; c=relaxed/simple;
+	bh=I3qm5+CSklWRZcZj1DbMA18hIAMTOCxMuw2PspIntbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dCSQtBU3zHFCNMbdj0rSKlXKvQrPff7cdfmL/CIbpkm3JehBs0KDoVa03v7HahwjMV5o1bVprRBmDpVt3VHNGdnh3YyUVTHo6zXFKmgBOKaOk3lyo74XX5zK7UpLUIebNoJONpSZi0dF6V5KOEUXcTG+Ev98eK6XUD0++H9/7ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T5b7b4hQ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740464120; x=1772000120;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=I3qm5+CSklWRZcZj1DbMA18hIAMTOCxMuw2PspIntbg=;
+  b=T5b7b4hQ48olhetPg0OpznZ07HfurlWES2rqNfr+0RGJ0wATtb9uEQjJ
+   BiNeweTukcyq7IvdkW3XNFBC1BRT/SY/1j9tOsFoBMzjo/J0QlQsEhdw5
+   mjK3Vdk6yl/Z7MPlxUkT3QO81kRpGCKLYs+8XSYbb9fauTYux7U4sb0bH
+   iOwj/D1lpFptRaRcbxlcVpydqKDxDTPXUoDkRJ0UM/VZxl51JElPKSW9a
+   5Dl+yjsaqYVYN3X6v3aoIEIspe/JXpCSu4M0KyCT7WM6wuBchDLgKdi2N
+   XPi6a5KnAxGS0b+2ejd9yG9HibB9q7R7mgS1UiC+1201CznBxA/aA68ma
+   g==;
+X-CSE-ConnectionGUID: tNM7gh2FTlyUh/Xy9bcBQA==
+X-CSE-MsgGUID: v+8iw8KnS1WYp4vPILTdKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="44911793"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="44911793"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 22:15:20 -0800
+X-CSE-ConnectionGUID: ADSFX5fQQGCqJJCwvC5HkA==
+X-CSE-MsgGUID: vjCewvt0QCmZAIeTT1Bq4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153482922"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 22:15:15 -0800
+Message-ID: <d9924ccd-7322-48aa-93be-82620f72791c@intel.com>
+Date: Tue, 25 Feb 2025 14:15:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224-z2-v7-0-2746f2bd07d0@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 05/12] KVM: TDX: Implement TDX vcpu enter/exit path
+To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ binbin.wu@linux.intel.com, dmatlack@google.com, isaku.yamahata@intel.com,
+ nik.borisov@suse.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20250129095902.16391-1-adrian.hunter@intel.com>
+ <20250129095902.16391-6-adrian.hunter@intel.com>
+ <06c73413-d751-45bf-bde9-cdb4f56f95b0@intel.com>
+ <632ea548-0e64-4a62-8126-120e42f4cd64@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <632ea548-0e64-4a62-8126-120e42f4cd64@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Sasha,
-
-On Mon, Feb 24, 2025 at 12:01:08PM +0100, Sasha Finkelstein via B4 Relay wrote:
-> Hi.
+On 2/24/2025 8:27 PM, Adrian Hunter wrote:
+> On 20/02/25 15:16, Xiaoyao Li wrote:
+>> On 1/29/2025 5:58 PM, Adrian Hunter wrote:
+>>> +#define TDX_REGS_UNSUPPORTED_SET    (BIT(VCPU_EXREG_RFLAGS) |    \
+>>> +                     BIT(VCPU_EXREG_SEGMENTS))
+>>> +
+>>> +fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
+>>> +{
+>>> +    /*
+>>> +     * force_immediate_exit requires vCPU entering for events injection with
+>>> +     * an immediately exit followed. But The TDX module doesn't guarantee
+>>> +     * entry, it's already possible for KVM to_think_ it completely entry
+>>> +     * to the guest without actually having done so.
+>>> +     * Since KVM never needs to force an immediate exit for TDX, and can't
+>>> +     * do direct injection, just warn on force_immediate_exit.
+>>> +     */
+>>> +    WARN_ON_ONCE(force_immediate_exit);
+>>> +
+>>> +    trace_kvm_entry(vcpu, force_immediate_exit);
+>>> +
+>>> +    tdx_vcpu_enter_exit(vcpu);
+>>> +
+>>> +    vcpu->arch.regs_avail &= ~TDX_REGS_UNSUPPORTED_SET;
+>>
+>> I don't understand this. Why only clear RFLAGS and SEGMENTS?
+>>
+>> When creating the vcpu, vcpu->arch.regs_avail = ~0 in kvm_arch_vcpu_create().
+>>
+>> now it only clears RFLAGS and SEGMENTS for TDX vcpu, which leaves other bits set. But I don't see any code that syncs the guest value of into vcpu->arch.regs[reg].
 > 
-> This series adds support for Apple touchscreens using the Z2 protocol.
-> Those are used as the primary touchscreen on mobile Apple devices, and for the
-> touchbar on laptops using the M-series chips. (T1/T2 laptops have a coprocessor
-> in charge of speaking Z2 to the touchbar).
+> TDX guest registers are generally not known but
+> values are placed into vcpu->arch.regs when needed
+> to work with common code.
 > 
-> Originally sent as a RFC at https://lore.kernel.org/all/20230223-z2-for-ml-v1-0-028f2b85dc15@gmail.com/
-> The changes since then mostly address the review feedback, but also
-> add another machine that has this specific controller.
+> We used to use ~VMX_REGS_LAZY_LOAD_SET and tdx_cache_reg()
+> which has since been removed.
 > 
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
-> Changes in v7:
-> - Added a dependency on ARCH_APPLE to prevent potential confusion on x86
-> - Link to v6: https://lore.kernel.org/r/20250205-z2-v6-0-cc60cbee1d5b@gmail.com
+> tdx_cache_reg() did not support RFLAGS, SEGMENTS,
+> EXIT_INFO_1/EXIT_INFO_2 but EXIT_INFO_1/EXIT_INFO_2 became
+> needed, so that just left RFLAGS, SEGMENTS.
 
-My apologies, I already applied v6 (patches 1, 2 and 4). Could you
-please resend against linux-next (or my 'next' branch)?
+Quote what Sean said [1]
 
-Patch #3 should go through Sven's tree.
+   “I'm also not convinced letting KVM read garbage for RIP, RSP, CR3, or
+   PDPTRs is at all reasonable.  CR3 and PDPTRs should be unreachable,
+   and I gotta imagine the same holds true for RSP.  Allow reads/writes
+   to RIP is fine, in that it probably simplifies the overall code.”
 
-Thanks.
+We need to justify why to let KVM read "garbage" of VCPU_REGS_RIP,
+VCPU_EXREG_PDPTR, VCPU_EXREG_CR0, VCPU_EXREG_CR3, VCPU_EXREG_CR4,
+VCPU_EXREG_EXIT_INFO_1, and VCPU_EXREG_EXIT_INFO_2 are neeed.
 
--- 
-Dmitry
+The changelog justify nothing for it.
+
+btw, how EXIT_INFO_1/EXIT_INFO_2 became needed? It seems I cannot find 
+any TDX code use them.
+
+[1] https://lore.kernel.org/all/Z2GiQS_RmYeHU09L@google.com/
+
+>>
+>>> +    trace_kvm_exit(vcpu, KVM_ISA_VMX);
+>>> +
+>>> +    return EXIT_FASTPATH_NONE;
+>>> +}
+>>
+> 
+
 
