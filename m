@@ -1,191 +1,128 @@
-Return-Path: <linux-kernel+bounces-532534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2F0A44EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF69A44EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB1F1899887
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA613ADAEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC38212B3B;
-	Tue, 25 Feb 2025 21:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289D820E711;
+	Tue, 25 Feb 2025 21:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="NXNBRF3c"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FusTekW9"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E718DB1B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C255320E31F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740519345; cv=none; b=WwgnQ7OF7bYmE/9yRgahhwSbaDj4WCB7T1c62pcl3LfBi8k9d49rJHFbqflQ6dKTtIN2/S1eT6Z/QM2b2i0p9VwFe9FqLepidTW4NpPKfokcizjeRMsp12y7Zc87N+A6oMgmWlP9RPoCS+8TWpxS5mrTyFZWzW5VL8Od9h8MQWU=
+	t=1740519379; cv=none; b=bofsrfLIaDN9qOaMJg/+iFRJDpURFajw/578FA3tZvnrm6aPu+qXqm3eS19oQK2KbDBWTp5A6c+sz8+aFDAt0gukt/wdIHhsGxkjTWuZ5wlLXQQH3WdGJck94SFWWfQ+2Y+jBizw4NbBg2Xdec886byy1NbQmD5NrDkyf5KDDMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740519345; c=relaxed/simple;
-	bh=FUaTnXw8Eh9mm3P9QBYvD2GKvGuQyztGJ7YcatN8jbg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=S+MAcPZy1eYZ+/H/jf9ANK4rebACOZsZjMMzOm9PCMFYnbQy0r/kxBGzQtkmdShuEz5ojkY6JjY8fAiYNoi6z5ZBy4BIYhzUKFVrczgLLOInP9rOyh46Y4azRrM8DlN2BvfKGehbv/arUfbKhFSS3qfvGbXGPhNdFk0rgQFvRbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=NXNBRF3c; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1740519340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SQB6S+lh0hzINQjumNTIEedaSDDvME+crToOT8AlV2s=;
-	b=NXNBRF3ciaiAgahfJskC2owN0RJ208InN9vyPrDN/99bHUMcg+F7Y18W+SSC8c3ymk8Wzq
-	HQNxApnYwinlC0ByDlAdjSx3nNHDnA28eDZYHGT1/uQa3grlk58C6luKBAoob7rJdYhTGg
-	PK3/5HuMSXHYKOHzCAmXv352eDFBAO1OLxTI7gXxYvMugMVJ5l8d6JxZUUxm6mVc/6ESrj
-	g08Rrf/rBBOEAc7+izEwLGOuu3rsnOE6ZcSlM917qbwnWC+lX/IJkNxiTGivyTJyEKkVhc
-	TTFhy6JXj/O9GYj/hWUh/lU/fHzwYVMKqn1dwz+Gc+I/zbaXCgBoL0EG3pgh8w==
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Date: Tue, 25 Feb 2025 16:35:36 -0500
-Subject: [PATCH v2] drm: add modifiers for Apple GPU layouts
+	s=arc-20240116; t=1740519379; c=relaxed/simple;
+	bh=jsgR1CcpkfBKgCwcL7kNHyDvZ8Ph78Owzp8FKLFEBPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G4oJrDVtQ4xXDHjLZaP5OBKRUeLDnrjftaHCQGQzAK6l0rbxtLHmtxftXTfYR0Mz4oqcimaGFnLykpESxsK/VzChxGyKzQtWgqbeA2V6dnEp+jpqmdLkV17MMvJQamsVNY08FdQA+WEIpGhdIcMTAuzK07fFCNuq7QkQL/4UN3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FusTekW9; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a2cdb2b98so61583751fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740519375; x=1741124175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QgsKhYzK0ccEnXiVc5xNUD/gNvmfefBesZ2KsZO47bU=;
+        b=FusTekW9a8FDaxU2TI2hXZBMD/94OtjS1tqtZZRDZoGZSACh7E7E4OVq9ZIk2CBr18
+         Pwb9NKuAOLqeiTHiOCveVeygOr07j/vtyCT6pe0IumUOpuLLS0UiHOtAutK4nTBNd0m1
+         /5yY9W9VH5yn4sqG9zgQIcaOtTwhqmo74SxSQqNAA2s+4lWBT8lS3dzDAsxAd9OTDKLs
+         tRd/DvfVQ0NNQ4Av7cnRQPh1Ib47yO0oAinSJc7xa/xbgvDl4N+1ULsartSlFDpmw5f2
+         5he2mAFY6eS7JX3PlEO/jpBAbbQ4Bl5h2rOsc1tM2X6fs+xo0xzgOdkmKYBVfXu0GZSg
+         sM2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740519375; x=1741124175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QgsKhYzK0ccEnXiVc5xNUD/gNvmfefBesZ2KsZO47bU=;
+        b=TL/5zzOMWRnJMJWJhgCsYptcOSoWd7vIR0Rf1O/7YjRqhxEH0UfGtmmspJBthpxLol
+         8YqrhoeT0q4J7kk2lmoFiTY17t+9daV7Z9cD2t+2sMzqUl+gebwdAXgbeGzXj7noSyGc
+         /3W0qhZ/HhSgvS6xM2zLbbqM6td2u0IVqgS/xvfnoDpoPjIMxsx68BHJfXmJMzKuoU5K
+         96Nj0JhKJK+oq0s4gL7zjOM+BYJ91zFgrye1iHPONkILNEqDCtRAv7OKE/uHbjvJVmem
+         rRRXnyTU7cFsAyOHDfI4OQwqS+eNnPcuBM5PfaMkWi6Qi/wlxM45A5EvOoYutKecTpRf
+         q9Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlRHgB7K75IZMc0gtyeVj6pbFAcCOsd8LO4/G1zfxnIObwBEkaFVebgeCyaRtHdml4Ko0zzbyXWmWSoWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw1UsF9udPJQhrZ11+qKiptzaU8wExOFT9EPClOfbS/N0fh7ju
+	IIJvYAvyMaBtHVar6xCYM5m8WhUGhE2nHmWj/G6jLmS1uQSGO8wboDbTj0QmjB/NfCdWMWSycmu
+	FszLhpN8M+bGTHDwYmgGu8V++x4VLN7FJqTqQ6u6+TM/F/wlsUxw=
+X-Gm-Gg: ASbGncshzKP86udrRpJHqqj/3KkMID4bCmi8BGC1UbpugqyEgeku22WAKoW0jbUDreh
+	gQnVr8pch1jXaiyphtvcXsKT++s1Rgv9/u1w8TRujGWTYT740HLqegsnKL6NkFgRFBWlQhvNMv1
+	Waz8Rzdq4=
+X-Google-Smtp-Source: AGHT+IHtK0GrikirtfWiHMcu4twRuE4bwiVH2TqDeFM1nOp8IzyFh/GRwHs9tMlflIxoYxAaZLfP6DCmyG0toUUaOvE=
+X-Received: by 2002:a2e:900e:0:b0:300:3778:4dbb with SMTP id
+ 38308e7fff4ca-30a5b171675mr69335381fa.1.1740519374778; Tue, 25 Feb 2025
+ 13:36:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io>
-X-B4-Tracking: v=1; b=H4sIAKc3vmcC/42NQQ6CMBBFr0Jm7ZhOAUNceQ/CotApTIKUtARUw
- t2tnMDle8l/f4fIQTjCPdsh8CpR/JRAXzLoBjP1jGITg1a6VJoqNPM8Mi6bWDuyxae34oRDRGe
- ZzM0VuVIdpPkc2MnrTNdN4kHi4sP7fFrpZ/+IroSEVVlSa9oi1+QewUeePhtLfxUPzXEcXzcg6
- 3XEAAAA
-X-Change-ID: 20250218-apple-twiddled-modifiers-fde1a6f4300c
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3985; i=alyssa@rosenzweig.io;
- h=from:subject:message-id; bh=FUaTnXw8Eh9mm3P9QBYvD2GKvGuQyztGJ7YcatN8jbg=;
- b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnvjerxYTOPrAVSscpy1D7BqUFO3V2fZ1m7eL8g
- kPjZrBe/CGJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ743qwAKCRD+/lBaCvVY
- DTF5D/4osviRwizOiiPhiA2bg5pZ10GBDMFUCxokWl6xikeoD6uJT6LZYDm4Dou3M7xVdQ6iFl9
- HAY2H6r/CzPV0tkQ6nRAta/z6wu0YcUBV4RGYYOthIiWmfp7V8KZK9aCubUEW7lMEiWuntBeNo0
- kJNii0XMKO8J6DyDWw88IFtVUki3hPqv6WhQ0G/RLEbESNYRsk/oI4Z9W1r0kkDvg4aIOaPZUwF
- stbz+hVEZ+5IaY6JrUjciuLq2zMYGzrQjDf2ItZSRuKW1HCV7nSEs2VbiXE95fNE0C54NNZAV6Q
- zAWtIC1cuuFKpEJ3hGZpKU7fWeLSBBQ8wsZLCkFmQneT1wRC07dJChYSnEnR8WYMCUk3CUik/Z3
- HvBvIbnTXnKi3yaOLrlf55StzhdZbn3yzFOHj3+a5eTxrsogxiZUW8/oNJOfcIS2UShhR498WVY
- O8jhao7CE5A7+np03TZK+xMSqMDGE3CppY7OG7GVHp0PKsGn9nFCfo84aM84wXVNC26SNSlc1t4
- kpzRqS/lCoxKq+F6U7gwlKyCNrvyFBNa+K49T/YKuHOwzOLN6iHZWApBkN+8YAEpIHoQgHHhAMM
- cwKd5n0RMX/KgR1UV5A6P/gbWU7JBqgYd95Q2KofilFSl84HNJWV88rJc2xdDAE9cWEiTD04GIJ
- 7MmoebZFT0srwcA==
-X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
- fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
-X-Migadu-Flow: FLOW_OUT
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+In-Reply-To: <Z71qphikHPGB0Yuv@mva-rohm>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Feb 2025 22:36:03 +0100
+X-Gm-Features: AWEUYZm9IB8uZx5il-FUDE7JKvkQMqjNNI8CBvjDggXboSfqsX5Hba7CBEVyDck
+Message-ID: <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Apple GPUs support various non-linear image layouts. Add modifiers for
-these layouts. Mesa requires these modifiers to share non-linear buffers
-across processes, but no other userspace or kernel support is
-required/expected.
+On Tue, Feb 25, 2025 at 8:01=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-These layouts are notably not used for interchange across hardware
-blocks (e.g. with the display controller). There are other layouts for
-that but we don't support them either in userspace or kernelspace yet
-(even downstream), so we don't add modifiers here.
+> The valid_mask member of the struct gpio_chip is unconditionally written
+> by the GPIO core at driver registration. Current documentation does not
+> mention this but just says the valid_mask is used if it's not NULL. This
+> lured me to try populating it directly in the GPIO driver probe instead
+> of using the init_valid_mask() callback. It took some retries with
+> different bitmaps and eventually a bit of code-reading to understand why
+> the valid_mask was not obeyed. I could've avoided this trial and error if
+> it was mentioned in the documentation.
+>
+> Help the next developer who decides to directly populate the valid_mask
+> in struct gpio_chip by documenting the valid_mask as internal to the
+> GPIO core.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
----
-Changes in v2:
-- Rename "Twiddled" to "GPU-tiled" to match what I now believe is the canonical name.
-- Add modifiers for the actual "Twiddled" layouts.
-- Clarify that the body of compressed images are laid out like their
-  uncompressed counterparts.
-- Link to v1: https://lore.kernel.org/r/20250218-apple-twiddled-modifiers-v1-1-8551bab4321f@rosenzweig.io
----
- include/uapi/drm/drm_fourcc.h | 58 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+Ah typical.
 
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index e41a3cec6a9ed18760f3b0c88ba437c9aba3dd4f..8668c0275677bbc0a82a1028f122bacfb44a867b 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -422,6 +422,7 @@ extern "C" {
- #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
- #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
- #define DRM_FORMAT_MOD_VENDOR_MTK     0x0b
-+#define DRM_FORMAT_MOD_VENDOR_APPLE   0x0c
- 
- /* add more to the end as needed */
- 
-@@ -1494,6 +1495,63 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
- /* alias for the most common tiling format */
- #define DRM_FORMAT_MOD_MTK_16L_32S_TILE  DRM_FORMAT_MOD_MTK(MTK_FMT_MOD_TILE_16L32S)
- 
-+/*
-+ * Apple GPU-tiled layout.
-+ *
-+ * GPU-tiled images are divided into tiles. Tiles are always 16KiB, with
-+ * dimensions depending on the base-format. Within a tile, pixels are fully
-+ * interleaved (Morton order). Tiles themselves are raster-order.
-+ *
-+ * Images must be 16-byte aligned.
-+ *
-+ * For more information see
-+ * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
-+ *
-+ * When lossless compression is impossible, this is the preferred layout.
-+ */
-+#define DRM_FORMAT_MOD_APPLE_GPU_TILED fourcc_mod_code(APPLE, 1)
-+
-+/*
-+ * Apple compressed GPU-tiled layout.
-+ *
-+ * Compressed GPU-tiled images contain a body laid out like
-+ * DRM_FORMAT_MOD_APPLE_GPU_TILED followed by a metadata section.
-+ *
-+ * The metadata section contains 8 bytes for each 16x16 compression subtile. The
-+ * metadata section pads the image to power-of-two dimensions, and compression
-+ * subtiles are interleaved (Morton order). By convention, the metadata
-+ * immediately follows the body, after padding the body to 128-bytes.
-+ *
-+ * Images must be 16-byte aligned.
-+ *
-+ * This is the preferred layout.
-+ */
-+#define DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED fourcc_mod_code(APPLE, 2)
-+
-+/*
-+ * Apple twiddled layout.
-+ *
-+ * Twiddled images are padded to power-of-two dimensions, with pixels fully
-+ * interleaved (Morton order).
-+ *
-+ * Images must be 16-byte aligned.
-+ *
-+ * GPU-tiling is preferred to twiddling. Twiddled images are mainly useful for
-+ * sparse images, due to a limitation of the PBE unit.
-+ */
-+#define DRM_FORMAT_MOD_APPLE_TWIDDLED fourcc_mod_code(APPLE, 3)
-+
-+/*
-+ * Apple compressed twiddled layout.
-+ *
-+ * Compressed twiddled images contain a body laid out like
-+ * DRM_FORMAT_MOD_APPLE_TWIDDLED layout followed by metadata laid out like
-+ * DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED metadata.
-+ *
-+ * Images must be 16-byte aligned.
-+ */
-+#define DRM_FORMAT_MOD_APPLE_TWIDDLED_COMPRESSED fourcc_mod_code(APPLE, 4)
-+
- /*
-  * AMD modifiers
-  *
+>          * If not %NULL, holds bitmask of GPIOs which are valid to be use=
+d
+> -        * from the chip.
+> +        * from the chip. Internal to GPIO core. Chip drivers should popu=
+late
+> +        * init_valid_mask instead.
+>          */
+>         unsigned long *valid_mask;
 
----
-base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
-change-id: 20250218-apple-twiddled-modifiers-fde1a6f4300c
+Actually if we want to protect this struct member from being manipulated
+outside of gpiolib, we can maybe move it to struct gpio_device in
+drivers/gpio/gpiolib.h?
 
-Best regards,
--- 
-Alyssa Rosenzweig <alyssa@rosenzweig.io>
+This struct exist for every gpio_chip but is entirely gpiolib-internal.
 
+Then it becomes impossible to do it wrong...
+
+Yours,
+Linus Walleij
 
