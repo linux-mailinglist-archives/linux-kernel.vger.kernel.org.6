@@ -1,254 +1,225 @@
-Return-Path: <linux-kernel+bounces-531919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0438DA4468F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:44:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E03A44691
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC911899CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9BD189ED12
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78862190462;
-	Tue, 25 Feb 2025 16:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="U0MRBMSm"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011026.outbound.protection.outlook.com [52.103.67.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B618EFDE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501662; cv=fail; b=m28ZnB7SKwYoTM3geiyrnTyc/jypGTG8DMxlPtTwrdBFYbuNdpQBrMvEvMIYGM3eAFLgZ6IjCFYpscOa9dc/vf/CnXDY/SxqbswN5fPIHPGGosUrT4qXbUCtgcMbby3zamS+ipDO2sAa8klT9x/96aUus0LXy77c0IOMs+k0lAo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501662; c=relaxed/simple;
-	bh=szNc/GRz3caln/7NrDu/S+0B7Sju4pYHaDwtIVxlWm4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MhIgzD109ZSeZb1PueKqntcqsyb+P1A+J52k/wSqOA4UvqAmj9FpGeuBUKbmjH4WUa87C4udO4FvVQfT9/36DyepnDfK6wb/td5LOQNxMjl6Lc9NoCD0mTzOOdLzrWcwaWDfHFJBlytVoBUHJX1Bq8Xgor8pvP6p+24CdQcdwFk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=U0MRBMSm; arc=fail smtp.client-ip=52.103.67.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BWGIbtutUUGWNovSBzxFOtCSBPtsOaA/JEy/x9R8y3xi5i+rpIdvciX7YfUJhZPaJUJOS+bF3CI4jxCVslraUFLIEExGwk9TpdFov7homuhcs1qKRq1PSZ9ZjbCBvhd10eTQpoSeMZxgtU0z7O3X9jTzeHQz8NZR5RvBIoGRB01ANn7Uvhc9zjirrDkFOCFXYyjAX8v6z7pXS3ZFdRQD4n0IoLn75YJIx6e8/tOudqTWSpH7Ip4c0Qq+FVtVJMM1KiptIgY58wQ5LNtwG7a78PYfd7POjYXaZQXqiKkF9982+v6GGl/opm07e8gubFM67JMvsFsO/xGjN37mdjiTxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=szNc/GRz3caln/7NrDu/S+0B7Sju4pYHaDwtIVxlWm4=;
- b=QSFZGMVziRQMX9USrLLpqDC/ucK+6mkQbTUZPXWHFlLN0Zeo/37ZzZN7YabSyFGsgNfQfqVHRW9xClLhNITjjJPFSDXZVoJMY4vHBqkITzE6GiX4sk9DzhweEh2X0nL3oaeG1Y7epYoh4AFmwo5My3qA1TU4AYRsdHq2FkCEJ0jr2sN9RrtGlWn3Td0ptXCQaVvWFYUSBSvL609Qn+c0ZtrzDZ/0Y8RYR3uwIEH6axEm59tP8cU07fF+5heHbFc+Kz5ESyMbU0CswDtC25oJTACxrFvZ8zAUDvb4b8NEzCRPzWtELSGTtvceeDIUPdQg1wp3JRAzK0Am5p1OCLXHCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=szNc/GRz3caln/7NrDu/S+0B7Sju4pYHaDwtIVxlWm4=;
- b=U0MRBMSm9W/6sRXdKtc3ziueFqLXcCKrVi/huB+NCkXGuxUjkEceBLcX7N6npkfcVExWL27W0FaejWvvEkndgbU5GQXH36uCgsrUnWsdJyoyEhnMyJpFwqv6YSt+gfac3qLEnyt2znENIcP5AgkYjxxZTlRMY7F+Qj3ZxT2fzhi4EtLICW/96fnYxQrpwK8e1pBOFSHcz04lF5AM3B4me0v6zh1EBJDDAAEdiAmj/aCqeqROdoVi03wFQSLACLrMWKvuhr58X8Q5Qme7ItWPyv9M9GtTSuJbVaIwE0ARHnlSTYiwGckPvAcH0YwA9QNFnrSibKPV2yEa/F9ppkKEpw==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN2PR01MB9876.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:12a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 16:40:54 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 16:40:54 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, Kerem Karabay
-	<kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>, Aun-Ali Zaidi
-	<admin@kodeit.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Topic: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index:
- AQHbh21jOPDlavrp2kW5T/JI6UK95bNX0p8AgAAXooCAADE6yoAAFCiAgAAAtSqAAAjSgA==
-Date: Tue, 25 Feb 2025 16:40:54 +0000
-Message-ID: <5C84C111-B1F1-4B6C-9671-559F6E1BDB78@live.com>
-References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
- <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
- <Z72chunE_vvxtjLQ@smile.fi.intel.com>
- <c0249cd8-68e4-4860-b5c3-e054df10ae30@suse.de>
- <PN3PR01MB9597287D0FFDBD11CC1F6167B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <28e67cc5-6932-48ac-84ef-93af893b2ed9@suse.de>
- <PN3PR01MB9597AC25AAC82FC9BAC0598AB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-In-Reply-To:
- <PN3PR01MB9597AC25AAC82FC9BAC0598AB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PR01MB9876:EE_
-x-ms-office365-filtering-correlation-id: 7477f048-ae24-4b74-b102-08dd55bb2c65
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|8060799006|19110799003|7092599003|15080799006|6072599003|461199028|440099028|3412199025|10035399004|4302099013|41001999003|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cmgzd01ROGJneTYxdUFiZXZ4dHE2enlTU0owQjRPcW82eWM2dG9aTGVyV3k5?=
- =?utf-8?B?b3M4cEV4U3g3bWhVZVFML1RxVjdUZmM1UlpHMXc1SUtFeVlMVFRDbzJvRity?=
- =?utf-8?B?ditId3Nmem1xVTY1byszMmFRMVhDMis5VW9WbW8zUC9hRHpZRGpPczFXZzlq?=
- =?utf-8?B?eHlSNVZMOW82OFZPQTc5cUFib2hpeWRiRFduSEJBM1Q5bXE3RzBQZkpWZG05?=
- =?utf-8?B?SkQ0OUFaZHFSMlpmTU5WbFhwQUFBT1JUZzA2aXZjbVdMRWlUWGhYU2ludllx?=
- =?utf-8?B?b1dEN1hWZ3pzSi9pS1U3cUJ1a2gxUXIyYVYvaXNLRXlyd0M0S04vTXZHRXds?=
- =?utf-8?B?WjBqT2RtVytuQU8yWmlmazlSemU0ajlUU3I2eWNvYXFXK0h4NjUyYURVdXpF?=
- =?utf-8?B?SVBQUlIrZ1FCeXBUOEYzOVM2dm1oYkRreTVWV25pZm03YXhJdUU1ZTk5a2dq?=
- =?utf-8?B?SEJlYVpudFBUVDJIVk04MUQvbUxuVGVNd1BUbjZFZC81Z29DQ3hFcExrak9k?=
- =?utf-8?B?RHpBN2dUK1hFWWwxYmJURXVnWStrdVJzQlZuMEdCM2s3RHlPbFRxNzFUV3ZT?=
- =?utf-8?B?Tjk4aGJ2cGZTTDJud3ZBWmwxeWlwRXBMT1NNTk5pS01NZ0twS2xMS1lrUlVi?=
- =?utf-8?B?Z0hLclR4R3ZNWUFRUXN4eExwUWhLdWR3NGhwcGx5Rklsc1ZEUDZMaks4aE1B?=
- =?utf-8?B?YXlrNHZEeElJOW1icWJhRnlxMjY0ZER1aVBRVkkxZ3NVZFk4UWduM3RYQkRy?=
- =?utf-8?B?ZW9GM2dYVytkU0ZwYUdRT01pK04wbG1IbmxrWXVEa3dzRko3dzlMMEdaN01m?=
- =?utf-8?B?MVhJakYrMlY1cmNiQTJodUlzMzdUNmRxc085c3lvK1FxNWIrNUpOLy9TNGJa?=
- =?utf-8?B?eUZGbzNybXJjZ0s4K0FYeDZjdlkyS1FqbjUvaGNKbjM0Y3hHdVQvWm0vbXFX?=
- =?utf-8?B?VHpTbnFYS09YR0F4NUhPRGdOVnR0T05uSzRnb0Evak04VnUwN1JOMys5a2xN?=
- =?utf-8?B?cTJxRG1iVnl5cjNmVExWLzJqaGc0SlZIam0xRzdWUlNDaG1nL2lINkhLYUky?=
- =?utf-8?B?UzVaUGZNbUE5MWxESllwKy9nU2RwMkpRMlJDZzZrOUtkRWtmbnZINUdLTnVS?=
- =?utf-8?B?WkZPa2U1SFFvU1l2YzljLzF1MGtOek0zNTJ4TFFIU0dIWlN1aWNNK3U1QUti?=
- =?utf-8?B?RTk4Z0FxK1FvREM1OFlMdlBLdnk3a2U5eG9xSjcvdy9TS1ZSVlVSVS8xU2k4?=
- =?utf-8?B?MjdYYkpaK3M1WXd5WG1jWGhnSFZZOEUyUC9vRGRHVTFsOTU4M3RJLzJSVHFS?=
- =?utf-8?B?aE80cG9DSWtuSkFFVHh0elVHWk1MZXNUQ3N5aUcva2c3Z3NLdXpONlNGRmdy?=
- =?utf-8?B?TkFqY1R3bDVTdGwxZU1RcEprejNLRStwN3Z3OXoycmIrbnNKMW9LMjVaVTRz?=
- =?utf-8?B?MVIwekN4NnREbDhiMW50NS9SeW9vcnBvQ28rZ2Ixd1EraGc5bi9ZZjNTdVpS?=
- =?utf-8?B?ZEF2YmM4eDY5elF6b0N0Q3lKT01PZzQ3c0hUMjc5U09rTG1zWlZJMmNMeEky?=
- =?utf-8?B?dkR0Z05CaHg2aEk1K0ZnZGJlUDE0Q1hVa1dkenpTS21qMmpQWHMxK2lGTTI1?=
- =?utf-8?B?R21nZXUzZGtET1BDdDc5NGdEUWlhN1EySVlINjlwSE1aaUFvZVlRUmZGRGVU?=
- =?utf-8?B?Q2h4OHlYSmFwTXV2U2hyL2g4N1hXc2ExV25qSXNub0JyUnFxcjE0Z3R3PT0=?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?czN2c2lVa3dRczM2QTNjeW5ReFBnRUU3ZStNRFBtd3ZZUWtLNnYvR3lzS1Rx?=
- =?utf-8?B?ZUVhdmVma1NVeVNDTmxzR3lGYnczSllNVnY3aG9MR20yY0FYKzR6TzN1Y1Js?=
- =?utf-8?B?ZTgrYUtPZXFCcHI5M1RBS0JWMGV3dENhbU5HbEZ4cUJoYmtPcWJpZnJqK0tC?=
- =?utf-8?B?SkxBRExOc2pObnFWNGh3MW9HZHF6MnB0MVhWY1owN1dUVkhoeExKQmNkMHdV?=
- =?utf-8?B?ZUNwZk8yK05ESnUvRXUwOHFaWVZ5cFBBTXh4b2JNcnRnbUdFeXVSeXFyKzgz?=
- =?utf-8?B?azhIQ2pXUHJVQVVNY0laRlRHS01mVXBsbHI2K21RYm1HdmpObEJlZUhTdER5?=
- =?utf-8?B?V296ZTQ5eDd6RFBGUTd1aTM5TnIvSzIzbzFoaHBhVDhRNmJ3N0xzSlNtUm5m?=
- =?utf-8?B?R1VwU21uUmtBSWNLb1dIa25iWGFBSHhoTUxpSjdEK2xYSEM4ZjNvK3JsUi9s?=
- =?utf-8?B?TUJrMnJvTUpoaWxHM0tIWFR5NHFseU9TdWgwb2FnM1Q2NnBzN21QbUFsTlVF?=
- =?utf-8?B?dVA0SUdDZ1NmNWgvT08zRzFlaGpFN2dPdlg5b2h0dExMdzNkeTdUQVphanI0?=
- =?utf-8?B?K2J5VHprakIxVFYzT2wydGxPZnB2YitwcUg0VUdxRmhWam1qSHF5TGxpeXhk?=
- =?utf-8?B?U0x1Q2lnclBuenZrMjRCTXJVUys3cENOU1NIcU1kVS9TaUVTaTVNUk1sRzhm?=
- =?utf-8?B?Qk4wQjQ1L2U1T1ZxNGFCdFVOMlExcWl4eFE0U2JEamlmV1hlRW9tZFFTcVda?=
- =?utf-8?B?OXFHZGJnc0VmTE1NOXhDS29oditrYjZ2aDVmMHcyMVhHcEQ1RHhJS0htL3lu?=
- =?utf-8?B?VzlpV2kxLy9aUXdMMS8ySWUyZXQwV1NCcm5SZlRCYXYzNzZ1S1BtU0s4SUlm?=
- =?utf-8?B?VHRJRHFZempNb1ZqVDFUZGY2eTdvYzcxR1JZcy82WEFoY2pqam9PNWdHSHpS?=
- =?utf-8?B?aE9aWkFEcVVxcnVwL2xDU0U3MmxDWWcwUjQxR254ZUM3c2sxTkRMMXhvcU80?=
- =?utf-8?B?ZnFUSWpicjRKYkE2Rk1sYmdEdDJ0N3hMQ0NVZW9rSE9qUmVlSzFqN0F5UmQx?=
- =?utf-8?B?ZE1oemEwT3orRjlvT2NKaWtJaE42RkFKT2pTK1Q5M29nbGtJZkFGSVpuY1k3?=
- =?utf-8?B?a2d3eDFQK1pQZm55RVlzSTBuV2taa2Mwd2lVeUdYWFBMbTZVdEFKcFh3NlFa?=
- =?utf-8?B?TGdXOXZ2VS9BNGY4K1hVMStZOTlucnNxU3U1Z1c4WUlFbm41dUpXVWxxZndX?=
- =?utf-8?B?L0ppVU52ZGdDVTVTOFk4V2VEZ2xoWk5Sc1YrRVdkRkRWTW9IdDM1d0hwdCty?=
- =?utf-8?B?YTByK0tSWk8xRDFNYjcwc1psZmxCaGlkWHJXRk5RVWxSQzBYK1RieGhXVDk3?=
- =?utf-8?B?c3V0b3BPamZhTlJ3VldObndVbXordDVGZU1Ma2s5b2YxeTBWS1RJMnRzMG1j?=
- =?utf-8?B?T25xdFRHVXRTcFZLZFJtQXNHVklNZ1JITHM1V0JYVWtFa054MWJSaXpKTm1I?=
- =?utf-8?B?WGw5R256cExGL2JrNDg5TEFDeFY1eis2OU1hQTlWUnRkYjRQcTc5YjFNQnVo?=
- =?utf-8?B?WlVOUTJaTW9VVTJwdXZOQzNLYnJ2N1Y5eG15bjNxMk9jcE4zSDhWeERpUmJo?=
- =?utf-8?B?UUx5RHhzeFFxTy93SVlITGNYMENIbldlV241bmt5WlcvQnJoODArUjJEaG12?=
- =?utf-8?B?aWVrK0FUUGRjalFBQ0trSmtXOXNuSWt5VkUwTVdyR3p3V1NmeURaQ1A4SDJ5?=
- =?utf-8?Q?Y0O29sDtIzN7aCFPGVQ1VHL+4lOu2+fXY37X6Q0?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <49114E88B71DBA44A98316B9558B37A8@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8370119CC39;
+	Tue, 25 Feb 2025 16:41:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81F619CC36
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740501676; cv=none; b=ZVSnk9RhswjkRcEBk9XFfjLnKpQzmhJv26w9oyG576xe0LFK43IAjYtohDHd0+czD/U+xYj6t043830aC3b2w40IKCEPqD0eieEFP35UhqPWI5oaQxxXHW5D1tTua410pNuVVe564lsCIjoPIMw1iUaAt9ykWh1pAiH9WK5zBxI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740501676; c=relaxed/simple;
+	bh=3Zev8Gv6kDDTK1jXqktFq2F/c8kVG8AGGKHx5YaEY6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SPnFkmvoF6kROKkZXdHq8zui45Qa4TH1cjVE/Ifwfu7aAhfGeyyED9Uthnd8MZJbb1pxahAf1bj2xD4D1yak7YXO7xIOunTZiN+7bQNHluvv9pPVhqGUWUK4sDrI1k9y7d5kDN15MPcU1P1dmcSqSGypOON52jOOEvr5WKlRfxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70A6628C7;
+	Tue, 25 Feb 2025 08:41:29 -0800 (PST)
+Received: from [10.1.27.154] (XHFQ2J9959.cambridge.arm.com [10.1.27.154])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B0BE3F6A8;
+	Tue, 25 Feb 2025 08:41:10 -0800 (PST)
+Message-ID: <baa34c09-48a1-4835-842b-4612e3f632f8@arm.com>
+Date: Tue, 25 Feb 2025 16:41:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7477f048-ae24-4b74-b102-08dd55bb2c65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 16:40:54.8005
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB9876
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] arm64/mm: Avoid barriers for invalid or
+ userspace mappings
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250217140809.1702789-1-ryan.roberts@arm.com>
+ <20250217140809.1702789-8-ryan.roberts@arm.com> <Z7nOe78W4JXFAkMb@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z7nOe78W4JXFAkMb@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDk6MznigK9QTSwgQWRpdHlhIEdhcmcgPGdhcmdhZGl0
-eWEwOEBsaXZlLmNvbT4gd3JvdGU6DQo+IA0KPiANCj4gDQo+PiBPbiAyNSBGZWIgMjAyNSwgYXQg
-OTozNuKAr1BNLCBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4gd3JvdGU6
-DQo+PiANCj4+IO+7v0hpDQo+PiANCj4+IEFtIDI1LjAyLjI1IHVtIDE1OjU0IHNjaHJpZWIgQWRp
-dHlhIEdhcmc6DQo+PiBbLi4uXQ0KPj4+Pj4+ICtzdGF0aWMgaW50IGFwcGxldGJkcm1fcHJvYmUo
-c3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGYsDQo+Pj4+Pj4gKyAgICAgICAgICAgICAgICBjb25z
-dCBzdHJ1Y3QgdXNiX2RldmljZV9pZCAqaWQpDQo+Pj4+Pj4gK3sNCj4+Pj4+PiArICAgIHN0cnVj
-dCB1c2JfZW5kcG9pbnRfZGVzY3JpcHRvciAqYnVsa19pbiwgKmJ1bGtfb3V0Ow0KPj4+Pj4+ICsg
-ICAgc3RydWN0IGRldmljZSAqZGV2ID0gJmludGYtPmRldjsNCj4+Pj4+PiArICAgIHN0cnVjdCBh
-cHBsZXRiZHJtX2RldmljZSAqYWRldjsNCj4+Pj4+PiArICAgIHN0cnVjdCBkcm1fZGV2aWNlICpk
-cm07DQo+Pj4+Pj4gKyAgICBpbnQgcmV0Ow0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIHJldCA9IHVz
-Yl9maW5kX2NvbW1vbl9lbmRwb2ludHMoaW50Zi0+Y3VyX2FsdHNldHRpbmcsICZidWxrX2luLCAm
-YnVsa19vdXQsIE5VTEwsIE5VTEwpOw0KPj4+Pj4+ICsgICAgaWYgKHJldCkgew0KPj4+Pj4+ICsg
-ICAgICAgIGRybV9lcnIoZHJtLCAiRmFpbGVkIHRvIGZpbmQgYnVsayBlbmRwb2ludHNcbiIpOw0K
-Pj4+Pj4gVGhpcyBpcyBzaW1wbHkgd3JvbmcgKGFuZCBpbiB0aGlzIGNhc2UgZXZlbiBsZWFkIHRv
-IGNyYXNoIGluIHNvbWUgY2lyY3Vtc3RhbmNlcykuDQo+Pj4+PiBkcm1fZXJyKCkgbWF5IG5vdCBi
-ZSB1c2VkIGhlcmUuIFRoYXQncyBteSBwb2ludCBpbiBwcmV2aW91cyBkaXNjdXNzaW9ucy4NCj4+
-Pj4+IEluZGVwZW5kZW50bHkgb24gdGhlIHN1YnN5c3RlbSB0aGUgLT5wcm9iZSgpIGZvciB0aGUg
-c2FrZSBvZiBjb25zaXN0ZW5jeSBhbmQNCj4+Pj4+IGJlaW5nIGluZm9ybWF0aXZlIHNob3VsZCBv
-bmx5IHJlbHkgb24gc3RydWN0IGRldmljZSAqZGV2LA0KPj4+PiBUaGF0J3MgbmV2ZXIgZ29pbmcg
-dG8gd29yayB3aXRoIERSTS4gVGhlcmUncyBzbyBtdWNoIGNvZGUgaW4gYSBEUk0gcHJvYmUgZnVu
-Y3Rpb24gdGhhdCB1c2VzIHRoZSBEUk0gZXJyb3IgZnVuY3Rpb25zLg0KPj4+PiANCj4+Pj4gVGhp
-cyBzcGVjaWZpYyBpbnN0YW5jZSBoZXJlIGlzIHdyb25nLCBhcyB0aGUgZHJtIHBvaW50ZXIgaGFz
-bid0IGJlZW4gaW5pdGlhbGl6ZWQuIEJ1dCBhcyBzb29uIGFzIGl0IGlzLCBpdCdzIG11Y2ggYmV0
-dGVyIHRvIHVzZSBkcm1fZXJyKCkgYW5kIGZyaWVuZHMuIEl0IHdpbGwgZG8gdGhlIHJpZ2h0IHRo
-aW5nIGFuZCBnaXZlIGNvbnNpc3RlbnQgb3V0cHV0IGFjcm9zcyBkcml2ZXJzLg0KPj4+PiANCj4+
-PiBPayBzbyB0aGlzIGlzIGFjdHVhbGx5IGFuIGludGVyZXN0aW5nIGNhc2UsIHNpbmNlIEkgYW0g
-dHJ5aW5nIHRvIGZpeCBpdC4gVG8gaW5pdGlhbGlzZSB0aGUgZHJtIHBvaW50ZXIsIHdlIG5lZWQg
-dG8gaW5pdGlhbGlzZSBhZGV2LCBhbmQgdG8gaW5pdGlhbGlzZSBhZGV2LCB3ZSBuZWVkIHRvIHJ1
-biB1c2JfZmluZF9jb21tb25fZW5kcG9pbnRzIGZpcnN0LiBTbyBJTU8sIHdlIGNhbm5vdCB1c2Ug
-ZHJtX2VyciBoZXJlLCBidXQgcmF0aGVyIGRldl9lcnJfcHJvYmUgY2FuIGJlIHVzZWQuDQo+PiAN
-Cj4+IE1heWJlIHN0YXJ0IHJlYWRpbmcgdGhvc2UgY29tcGlsZXIgd2FybmluZ3MuIFRoZXkgYXJl
-IHRoZXJlIGZvciBhIHJlYXNvbi4gWW91ciBjb21waWxlciB0ZWxscyB5b3UgdGhhdCB5b3UgYXJl
-IGRlcmVmZXJlbmNpbmcgYW4gdW5pbml0aWFsaXplZCBwb2ludGVyLCByaWdodCBoZXJlOg0KPiAN
-Cj4gVGhlIHRoaW5nIGlzLCB0aGF0IEkgZGlkbid0IGdldCBhbnkgY29tcGlsZXIgd2FybmluZ3Ms
-IGV2ZW4gd2l0aCBzcGFyc2UuDQoNCkV2ZW4gdGhvdWdoIEkgcmVhbGx5IGRpZG4ndCBnZXQgYW55
-IGNvbXBpbGVyIHdhcm5pbmdzLCBhbmQgdGhlIGRybV9lcnIgd2FzIGFjdHVhbGl0eSB3b3JraW5n
-IHdpdGggZHJtIHVuaW5pdGlhbGlzZWQgKGl0IGp1c3Qgc2hvd2VkIE5VTEwgaW4gcGxhY2Ugb2Yg
-YXBwbGV0YmRybSksIEnigJl2ZSBzdGlsbCBjbGVhcmVkIGl0IHRvIE5VTEwgYW5kIHNlbnQgYSB2
-NjoNCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvZHJpLWRldmVsLzBCQUIyNkJFLTVCQjYtNDY3
-Ri1CRUQzLTlBQThERTI1NDMzQkBsaXZlLmNvbS9ULyN0DQoNCg0KPj4gDQo+PiBodHRwczovL2Vs
-aXhpci5ib290bGluLmNvbS9saW51eC92Ni4xMy40L3NvdXJjZS9pbmNsdWRlL2RybS9kcm1fcHJp
-bnQuaCNMNTg2DQo+PiANCj4+IENsZWFyaW5nIHRoYXQgcG9pbnRlciB0byBOVUxMIHdpbGwgZml4
-IHRoZSBlcnJvciBhbmQgbWFrZSBkcm1fZXJyKCkgd29yay4NCj4+IA0KPj4gQmVzdCByZWdhcmRz
-DQo+PiBUaG9tYXMNCj4+IA0KPj4+PiANCj4+Pj4+PiArICAgICAgICByZXR1cm4gcmV0Ow0KPj4+
-Pj4+ICsgICAgfQ0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIGFkZXYgPSBkZXZtX2RybV9kZXZfYWxs
-b2MoZGV2LCAmYXBwbGV0YmRybV9kcm1fZHJpdmVyLCBzdHJ1Y3QgYXBwbGV0YmRybV9kZXZpY2Us
-IGRybSk7DQo+Pj4+Pj4gKyAgICBpZiAoSVNfRVJSKGFkZXYpKQ0KPj4+Pj4+ICsgICAgICAgIHJl
-dHVybiBQVFJfRVJSKGFkZXYpOw0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIGFkZXYtPmluX2VwID0g
-YnVsa19pbi0+YkVuZHBvaW50QWRkcmVzczsNCj4+Pj4+PiArICAgIGFkZXYtPm91dF9lcCA9IGJ1
-bGtfb3V0LT5iRW5kcG9pbnRBZGRyZXNzOw0KPj4+Pj4+ICsgICAgYWRldi0+ZG1hZGV2ID0gZGV2
-Ow0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIGRybSA9ICZhZGV2LT5kcm07DQo+Pj4+Pj4gKw0KPj4+
-Pj4+ICsgICAgdXNiX3NldF9pbnRmZGF0YShpbnRmLCBhZGV2KTsNCj4+Pj4+PiArDQo+Pj4+Pj4g
-KyAgICByZXQgPSBhcHBsZXRiZHJtX2dldF9pbmZvcm1hdGlvbihhZGV2KTsNCj4+Pj4+PiArICAg
-IGlmIChyZXQpIHsNCj4+Pj4+PiArICAgICAgICBkcm1fZXJyKGRybSwgIkZhaWxlZCB0byBnZXQg
-ZGlzcGxheSBpbmZvcm1hdGlvblxuIik7DQo+Pj4+Pj4gKyAgICAgICAgcmV0dXJuIHJldDsNCj4+
-Pj4+PiArICAgIH0NCj4+Pj4+PiArDQo+Pj4+Pj4gKyAgICByZXQgPSBhcHBsZXRiZHJtX3NpZ25h
-bF9yZWFkaW5lc3MoYWRldik7DQo+Pj4+Pj4gKyAgICBpZiAocmV0KSB7DQo+Pj4+Pj4gKyAgICAg
-ICAgZHJtX2Vycihkcm0sICJGYWlsZWQgdG8gc2lnbmFsIHJlYWRpbmVzc1xuIik7DQo+Pj4+Pj4g
-KyAgICAgICAgcmV0dXJuIHJldDsNCj4+Pj4+PiArICAgIH0NCj4+Pj4+PiArDQo+Pj4+Pj4gKyAg
-ICByZXQgPSBhcHBsZXRiZHJtX3NldHVwX21vZGVfY29uZmlnKGFkZXYpOw0KPj4+Pj4+ICsgICAg
-aWYgKHJldCkgew0KPj4+Pj4+ICsgICAgICAgIGRybV9lcnIoZHJtLCAiRmFpbGVkIHRvIHNldHVw
-IG1vZGUgY29uZmlnXG4iKTsNCj4+Pj4+PiArICAgICAgICByZXR1cm4gcmV0Ow0KPj4+Pj4+ICsg
-ICAgfQ0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIHJldCA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAw
-KTsNCj4+Pj4+PiArICAgIGlmIChyZXQpIHsNCj4+Pj4+PiArICAgICAgICBkcm1fZXJyKGRybSwg
-IkZhaWxlZCB0byByZWdpc3RlciBEUk0gZGV2aWNlXG4iKTsNCj4+Pj4+PiArICAgICAgICByZXR1
-cm4gcmV0Ow0KPj4+Pj4+ICsgICAgfQ0KPj4+Pj4+ICsNCj4+Pj4+PiArICAgIHJldCA9IGFwcGxl
-dGJkcm1fY2xlYXJfZGlzcGxheShhZGV2KTsNCj4+Pj4+PiArICAgIGlmIChyZXQpIHsNCj4+Pj4+
-PiArICAgICAgICBkcm1fZXJyKGRybSwgIkZhaWxlZCB0byBjbGVhciBkaXNwbGF5XG4iKTsNCj4+
-Pj4+PiArICAgICAgICByZXR1cm4gcmV0Ow0KPj4+Pj4+ICsgICAgfQ0KPj4+Pj4+ICsNCj4+Pj4+
-PiArICAgIHJldHVybiAwOw0KPj4+Pj4+ICt9DQo+Pj4+IC0tDQo+Pj4+IC0tDQo+Pj4+IFRob21h
-cyBaaW1tZXJtYW5uDQo+Pj4+IEdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXINCj4+Pj4gU1VTRSBT
-b2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQo+Pj4+IEZyYW5rZW5zdHJhc3NlIDE0Niwg
-OTA0NjEgTnVlcm5iZXJnLCBHZXJtYW55DQo+Pj4+IEdGOiBJdm8gVG90ZXYsIEFuZHJldyBNeWVy
-cywgQW5kcmV3IE1jRG9uYWxkLCBCb3VkaWVuIE1vZXJtYW4NCj4+Pj4gSFJCIDM2ODA5IChBRyBO
-dWVybmJlcmcpDQo+Pj4+IA0KPj4gDQo+PiAtLQ0KPj4gLS0NCj4+IFRob21hcyBaaW1tZXJtYW5u
-DQo+PiBHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQo+PiBTVVNFIFNvZnR3YXJlIFNvbHV0aW9u
-cyBHZXJtYW55IEdtYkgNCj4+IEZyYW5rZW5zdHJhc3NlIDE0NiwgOTA0NjEgTnVlcm5iZXJnLCBH
-ZXJtYW55DQo+PiBHRjogSXZvIFRvdGV2LCBBbmRyZXcgTXllcnMsIEFuZHJldyBNY0RvbmFsZCwg
-Qm91ZGllbiBNb2VybWFuDQo+PiBIUkIgMzY4MDkgKEFHIE51ZXJuYmVyZykNCg0KDQo=
+On 22/02/2025 13:17, Catalin Marinas wrote:
+> On Mon, Feb 17, 2025 at 02:07:59PM +0000, Ryan Roberts wrote:
+>> __set_pte_complete(), set_pmd(), set_pud(), set_p4d() and set_pgd() are
+>> used to write entries into pgtables. And they issue barriers (currently
+>> dsb and isb) to ensure that the written values are observed by the table
+>> walker prior to any program-order-future memory access to the mapped
+>> location.
+>>
+>> Over the years some of these functions have received optimizations: In
+>> particular, commit 7f0b1bf04511 ("arm64: Fix barriers used for page
+>> table modifications") made it so that the barriers were only emitted for
+>> valid-kernel mappings for set_pte() (now __set_pte_complete()). And
+>> commit 0795edaf3f1f ("arm64: pgtable: Implement p[mu]d_valid() and check
+>> in set_p[mu]d()") made it so that set_pmd()/set_pud() only emitted the
+>> barriers for valid mappings.
+> 
+> The assumption probably was that set_pmd/pud() are called a lot less
+> often than set_pte() as they cover larger address ranges (whether table
+> or leaf).
+
+Yes you're probably right. From an optimization perspective I doubt we are
+seeing much improvement from the reduction in barriers for pmd/pud/p4d/pgd
+levels. I made the change more for the benefit of uniformity.
+
+> 
+>> set_p4d()/set_pgd() continue to emit the barriers unconditionally.
+> 
+> We probably missed them, should have been the same as set_pmd().
+
+So perhaps the middle ground is for pmd/pud/p4d/pgd to all have the same
+implementation (emit barriers for valid mappings only). And then let pte level
+continue with the additional optimization of only emitting barriers for valid
+*kernel* mappings.
+
+The only problem there is that it gets confusing when you bring set_pmd_at() and
+set_pud_at() into the picture, which today end up calling __set_pte(). So
+pmds/puds set by that route *already* has the same optimizations applied as ptes
+today.
+
+Personally, I'd prefer to have a single pattern for all levels.
+
+> 
+>> This is all very confusing to the casual observer; surely the rules
+>> should be invariant to the level? Let's change this so that every level
+>> consistently emits the barriers only when setting valid, non-user
+>> entries (both table and leaf).
+> 
+> Also see commit d0b7a302d58a ("Revert "arm64: Remove unnecessary ISBs
+> from set_{pte,pmd,pud}"") why we added back the ISBs to the pmd/pud
+> accessors and the last paragraph on why we are ok with the spurious
+> faults for PTEs.
+
+Yes, I was already aware of that behaviour (thanks to MarkR for patiently
+explaining it to me!). But my changes should still be compatible with that
+requirement; we always issue an ISB after updating the page table with a valid,
+kernel mapping.
+
+As an aside, my understanding is that if the system supports FEAT_ETS2, then the
+CPU promises not to store that "faulting" state in the pipeline, and the ISB
+should not be needed; we could patch that out in future with an alternative.
+
+> 
+> For user mappings, the translation fault is routed through the usual
+> path that can handle mapping new entries, so I think we are fine. But
+> it's worth double-checking Will's comment (unless he only referred to
+> kernel table entries).
+> 
+>> It seems obvious that if it is ok to elide barriers all but valid kernel
+>> mappings at pte level, it must also be ok to do this for leaf entries at
+>> other levels: If setting an entry to invalid, a tlb maintenance
+>> operation must surely follow to synchronise the TLB and this contains
+>> the required barriers.
+> 
+> Setting to invalid is fine indeed, handled by the TLB flushing code,
+> hence the pmd_valid() checks.
+> 
+>> If setting a valid user mapping, the previous
+>> mapping must have been invalid and there must have been a TLB
+>> maintenance operation (complete with barriers) to honour
+>> break-before-make.
+> 
+> That's not entirely true for change_protection() for example or the
+> fork() path when we make the entries read-only from writeable without
+
+For fork() we use ptep_set_wrprotect() (or these days, wrprotect_ptes(), right?)
+
+> BBM. We could improve these cases as well, I haven't looked in detail.
+> ptep_modify_prot_commit() via change_pte_range() can defer the barriers
+> to tlb_end_vma(). Something similar on the copy_present_ptes() path.
+
+But yes, I agree my comments are not fully correct for all corner cases. But the
+point is that for all of these corner cases, the higher level causes appropriate
+TLBI operations to be issued, which include the appropriate barriers.
+
+> 
+>> So the worst that can happen is we take an extra
+>> fault (which will imply the DSB + ISB) and conclude that there is
+>> nothing to do. These are the arguments for doing this optimization at
+>> pte level and they also apply to leaf mappings at other levels.
+> 
+> It's worth clarifying Will's comment in the commit I mentioned above.
+
+By my interpretation of Will's comment, it agrees with what I'm trying to say
+here. Perhaps I've missed something?
+
+> 
+>> For table entries, the same arguments hold: If unsetting a table entry,
+>> a TLB is required and this will emit the required barriers. If setting a
+>> table entry, the previous value must have been invalid and the table
+>> walker must already be able to observe that. Additionally the contents
+>> of the pgtable being pointed to in the newly set entry must be visible
+>> before the entry is written and this is enforced via smp_wmb() (dmb) in
+>> the pgtable allocation functions and in __split_huge_pmd_locked(). But
+>> this last part could never have been enforced by the barriers in
+>> set_pXd() because they occur after updating the entry. So ultimately,
+>> the wost that can happen by eliding these barriers for user table
+>> entries is an extra fault.
+>>
+>> I observe roughly the same number of page faults (107M) with and without
+>> this change when compiling the kernel on Apple M2.
+> 
+> That's microarch specific, highly dependent on timing, so you may never
+> see a difference.
+
+Fair. Are you advocating for keeping the higher levels not conditional on user
+vs kernel? If so, then my preference would be to at least simplfy to 2 patterns
+as I describe above.
+
+> 
+>> +static inline bool pmd_valid_not_user(pmd_t pmd)
+>> +{
+>> +	/*
+>> +	 * User-space table entries always have (PXN && !UXN). All other
+>> +	 * combinations indicate it's a table entry for kernel space.
+>> +	 * Valid-not-user leaf entries follow the same rules as
+>> +	 * pte_valid_not_user().
+>> +	 */
+>> +	if (pmd_table(pmd))
+>> +		return !((pmd_val(pmd) & (PMD_TABLE_PXN | PMD_TABLE_UXN)) == PMD_TABLE_PXN);
+>> +	return pte_valid_not_user(pmd_pte(pmd));
+>> +}
+> 
+> With the 128-bit format I think we lost the PXN/UXNTable bits, though we
+> have software bits if we need to. 
+
+Indeed. I've already fed back to Anshuman that in my opinion, those bits need to
+be maintained as SW bits. Otherwise it all gets a bit fragile if a SW agent
+tries to check the value of those bits in D128 mode vs D64 mode.
+
+> I just wonder whether it's worth the
+> hassle of skipping some barriers for user non-leaf entries. Did you see
+> any improvement in practice?
+
+As I said, I doubt there is much of a performance improvement in practice, my
+main motivation was unifying around a single pattern to simplify.
+
+Thanks,
+Ryan
+
+
 
