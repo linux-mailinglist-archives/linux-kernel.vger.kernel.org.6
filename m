@@ -1,99 +1,67 @@
-Return-Path: <linux-kernel+bounces-531271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA983A43E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:54:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE34A43E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7F3420FE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB5A1656E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28C1267F46;
-	Tue, 25 Feb 2025 11:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F09A26868B;
+	Tue, 25 Feb 2025 11:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuNZN2h6"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axOr7SQB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD793267F49
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA01B267B8B;
+	Tue, 25 Feb 2025 11:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484367; cv=none; b=aUdtrJ8TeM40zLvq2iqaY3hn66A4oX6cxCH7dL50zav2zBWFraG20bb1FnQfKS8sxHsXu8w4A5edaYKLjRZWG9i5b77m+wM6+0LJqtmzMUxnoi2wXZKs8n8WpNWyk55JsyaFOTeVAVp6weKNCoYpZit07oKCA9ffEp9PWEWzCN8=
+	t=1740484373; cv=none; b=poWIJSvVKy2TehaaHLsRIb0GfHPjoAYPdMMXLXnwfWpxIrcFmBwZk2+sL5I3dAfQ6l9VA5vDBl+aiF8OVZvLhQoMQ0a8ehoLBV9B8t6HZoHnZ9RCruTLE2s6Cz8crmG3DXdGsnuglQKlfWH+0TKjoPxf7monH/77rzv7QsTKKgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484367; c=relaxed/simple;
-	bh=iauTMNsGMEck+UBS5zMelSzVlcGUNR/zltR0cFu/GS4=;
+	s=arc-20240116; t=1740484373; c=relaxed/simple;
+	bh=hSHb3rOa9k5tsPmaPPeA5bikJl+Av+tcshX5VjzhvP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ohyzqj9jn3KHd1pXBTYs2lcFE67Fab3D3Pbuhv7qOb1Xel8aPQ1rLxhIuTwaR4bcCsSS4K/9RQH0OjAYXEMB+zNLEeZpaBcnLK9zf8rHofHn5D8dhGHsNgojs6jWOcCf4lQR8TYSTEhqICqU+SnZSFFqx9TTFVP5t9x9zFHQ8yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TuNZN2h6; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fcc99efe9bso8463119a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:52:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740484364; x=1741089164; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UKkZk3XYe10sI4SqCfaUF2vUj6jiQSGLjxCT1Jj6tXs=;
-        b=TuNZN2h6263tUqtvy+c8SZE/abdYlsEl4V9HK3+qeZirzxzwbSYjjqntQTD+kk0vs5
-         eLiZn7FIZ2nDMaOcbIzKemuqnLXOoLcWmys1llhktTkGB5p6dlaC0BfyP2xNc6q7euAY
-         PldzvRxto0RTfjIyfZ590+sp7YMw00zLIAh+EJ/P+AYUktLg8v+eLK19y3N0K326PoWA
-         ypCfXJlf1vnWTcJKXbcuwIl+F2j+q1WiQ9tvpcGz8NW/CR4QNTFYEBczyEPoTqyvjv3+
-         4Ocd98HT/7fWqqhlSV1jtAJUMeD51Ah/lo6oV7ZiluaxsnAf+o1NMU+/AYbwf2EBqWCk
-         8wFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484364; x=1741089164;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UKkZk3XYe10sI4SqCfaUF2vUj6jiQSGLjxCT1Jj6tXs=;
-        b=T+WFAtQJU1Uy7hE9aIKwog/IT4bzNQxfwWBxy48bdThTppi8uR0Pb68pJ2/h2Xigil
-         TSwE7b3V2jCkYvZnm4+ecabq6OjAKpP1bjp0iyNARllmE2n2LiOuPs6ktCejDNlKxOY3
-         B24RJrMqr7LcY+SW6zmbgDSKY3OPlHrGhkdbiEE8GDn8yRdValUUUNg/a7/vQYPcgYX1
-         dha6E1cHUm10rtYkqR8iIuYAZvRh0pbV4qFG4R4OK8ZvGB4p17xzhj31ODr6eR/BwNvx
-         +CPFoD+VXJiIpLRY9Ktx92kN6hs4/4TQuJell3zBRpSXxVPXjeOnM4tPvHAfvth1n9Qb
-         qBtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWe8T8vPl23uaUpGXXoZJj6gOOhQ/WdtLY28AMkLyIDp5rJfo9R9CJrce01gBxopBdFsJNT1UkBvLGM/98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhD83YStvBQdRxStEFjhkWvhe0Hf2sUqzw9LF6SxY0GDhH1TRN
-	CJ83ql0aInbmUlBm9EAexsHsCFkraECXiG4Ws40EfRm+9MTncuTYTpmn/eewFqo=
-X-Gm-Gg: ASbGncsPfr/vk13KqyhITXObpW5Fracrs1RIehLnC432QIY7M5nEMctI/WWfh4Tho2T
-	seNNNhbMcR/qpcWalzQPb/a5aAuNjJ0EPr8UDdd+j/4FNAMT4GC5+jPQvpLNW9ZWWH4Um/4FBm5
-	zN3U328qfeS2bZ4xVfxzb4DKW2Dgmykk5B1IAg2ZwSQux2i9WgsDO1exFgx3UrFRRpCf1huUUPl
-	P7wG1hCsODAlbJK98ozT7eRcZ6go38f8TH2CZ1+U4KxCgpgeplx0qNGTgq5ThqaZJFq9VSbIi+B
-	tSDTR14Uj78icYT2osHSAVrxZKs=
-X-Google-Smtp-Source: AGHT+IF5Kl4zanHSbJ5ugAs5izPcChWCGh6n67Lw/yDYylYVv6mlKOvTyZomHkrigKbNsZ2kNLDp1A==
-X-Received: by 2002:a17:90b:3b81:b0:2ee:9d36:6821 with SMTP id 98e67ed59e1d1-2fce873b2d4mr26764094a91.27.1740484364195;
-        Tue, 25 Feb 2025 03:52:44 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a3dec52sm1346475a91.20.2025.02.25.03.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:52:43 -0800 (PST)
-Date: Tue, 25 Feb 2025 17:22:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
-Message-ID: <20250225115241.cm5qdpa22gzi26fr@vireshk-i7>
-References: <cover.1740475625.git.viresh.kumar@linaro.org>
- <68ac0f0ee3c0ebd3d3cc078a6270752778a1b732.1740475625.git.viresh.kumar@linaro.org>
- <CAH5fLgg7o7hs5B4mMzPd6RzYm+RcX8gw1Aw8voJqnmfnA_aM4Q@mail.gmail.com>
- <20250225105425.ooqvefiae5bmr723@vireshk-i7>
- <CAH5fLgjbW0yGm0TQcQEG9cc+i3WxbF8JKaqBUFD7=pJ-JkJ9zg@mail.gmail.com>
- <20250225113642.5fek3cy3jvmusunz@vireshk-i7>
- <CAH5fLggYMHxuoc1m385UL7sNB1ojAg=pwZ-_xfgHiFSV1-xpfw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsLABwmXe1J+yhMKrJc8f3Q5qutjXkpuhtyyADhtk12pCIeILZLy64GOD4UEFAgNOrWPdwTg1G4S9rbwIdFVvG9bVb9EBoIFJvQxtCnrcgXmjXmF0rxvY+E9r8MXeGgoq13hfm1yJ2VeiIxcCPBfeqNi3ANvuXvD3pQ76wLOKjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axOr7SQB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803AEC4CEDD;
+	Tue, 25 Feb 2025 11:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740484373;
+	bh=hSHb3rOa9k5tsPmaPPeA5bikJl+Av+tcshX5VjzhvP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=axOr7SQBeGTA3q1VBqZiED6W6FPt3G7EHRdpdlPTJ0aengiP2RL4qJAdZWRpjahev
+	 cDz78xYjfg9QCWpj4+1wn4OPbZxS/oPm5lQvVulupYW2VrnWu9g0+hl1zvPCcEKwPQ
+	 GjQqtL0Wl1GPrV/BonDqWLaNdgTD+pl8eAhReFDmL5VD2aAJSHg4aKnwmao35N6n9h
+	 srvpA/g6CXOqMvbFoVB4cuSwEPPw3JCFxB8A8W23s/NxTasqq/ZWVVGLJddeeDW0iH
+	 2EMxexvwXOQr7cbFohPt+WksCavde2D181k0HtfIMi7HlNJY1s1ia5TziH+sey/x+B
+	 DfF36Ne7eCc5Q==
+Date: Tue, 25 Feb 2025 12:52:50 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
+ Moduline IO modules
+Message-ID: <20250225-smart-industrious-groundhog-41deb2@krzk-bin>
+References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
+ <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
+ <20250224204428.GA4050751-robh@kernel.org>
+ <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,27 +70,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggYMHxuoc1m385UL7sNB1ojAg=pwZ-_xfgHiFSV1-xpfw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <PA4PR04MB763009E88F6406CD84ACBD33C5C32@PA4PR04MB7630.eurprd04.prod.outlook.com>
 
-On 25-02-25, 12:39, Alice Ryhl wrote:
-> On Tue, Feb 25, 2025 at 12:36 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Tue, Feb 25, 2025 at 07:39:52AM +0000, Maud Spierings | GOcontroll wrote:
+> From:=C2=A0Rob Herring <robh@kernel.org>
+> Sent:=C2=A0Monday, February 24, 2025 9:44 PM
+> =C2=A0
+> >On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:
+> >> The main point of the Moduline series of embedded controllers is its
+> >> ecosystem of IO modules, these currently are operated through the spid=
+ev
+> >> interface. Ideally there will be a full dedicated driver in the future.
+> >>
+> >> Add the gocontroll moduline-module-slot device to enable the required
+> >> spidev interface.
+> >>
+> >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> >> ---
+> >>=C2=A0 Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+> >>=C2=A0 1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/=
+Documentation/devicetree/bindings/trivial-devices.yaml
+> >> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c7=
+fb46f771a300926f05 100644
+> >> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> >> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> >> @@ -107,6 +107,8 @@ properties:
+> >>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - fs=
+l,mpl3115
+> >>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 # MPR121: Proximity Capacitive Touch Sensor Controller
+> >>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - fs=
+l,mpr121
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # =
+GOcontroll Moduline module slot for spi based IO modules
 > >
-> > On 25-02-25, 12:34, Alice Ryhl wrote:
-> > > Hmm, ok. I would have expected it to format on one line:
-> > > unsafe { drop(KBox::from_raw(self.ptr)) };
-> >
-> > I did try this earlier and rustfmt suggested to format it the way I
-> > have done it currently :)
-> >
-> > > That is what normally happens when the semi-colon is outside the
-> > > block. Not sure why it did not happen in this case.
-> 
-> Very weird. I'd guess that the #[cfg] is at fault.
+> >I couldn't find anything about SPI for GOcontroll Moduline. Can you
+> >point me to what this hardware looks like. Based on what I did find,
+> >this seems incomplete and not likely a trivial device.
+>=20
+> I'll give some more details, if there is a v2 of this patch I will also
+> add more information in the commit message.
+>=20
+> The module slots have a number of pins, a lot of them currently unused as
+> they have not found a function yet, this is very much still a developing
+> product. The currently used interfaces to the SoC are:
+> 1. SPI bus as a spidev to ease developing new modules and quickly
+> integrate them. This is the main communication interface for control and
+> firmware updates.
+> 2. A reset pin, this is/was driven with the gpio-led driver but I doubt
+> that would get accepted upstream so I intend to switch to the much better
+> suited libgpio.
 
-Dropping #[cfg] does make it complain with current code and suggests
-to format on one line.
+reset-gpios is not in trivial devices, so that's already a hint you
+cannot use this binding.
 
--- 
-viresh
+> 3. An interrupt pin, this is currently only used in the firmware update
+> utility [2] to speed up the update process. Other communication is done at
+> a regular interval.
+>=20
+> What is unused:
+> 1. A potentially multi-master i2c bus between all the module slots and
+> the SoC
+> 2. An SMBus alert line is shared between the modules, but not the SoC.
+> 3. A shared line designated as a clock line, intended to in the future
+> aid with synchronizing modules to each other for time critical control.
+>=20
+> current software that is used to work with the modules can be found at
+> [2] and [3], one of them is a Node-RED module the other is a blockset for
+> Matlab/Simulink generated code.
+>=20
+> If you know a better way I could describe this in the devicetree then I
+
+You need dedicated binding where you describe entire device, entire
+hardware, not what your driver supports in current release.
+
+Best regards,
+Krzysztof
+
 
