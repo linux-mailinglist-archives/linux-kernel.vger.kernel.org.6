@@ -1,233 +1,292 @@
-Return-Path: <linux-kernel+bounces-530852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A0FA4393E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:21:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24430A4395A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEBC17130A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D733BB7C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1D25A2DB;
-	Tue, 25 Feb 2025 09:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5704C1AA782;
+	Tue, 25 Feb 2025 09:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1zbKpTs"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HABREqoi"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9471A5BA1;
-	Tue, 25 Feb 2025 09:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA101A0BCF;
+	Tue, 25 Feb 2025 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740474976; cv=none; b=I+ZaKthxkFCSPJ/09l5HbgeR6KqH5Gr+u5N5cFQDArwoQZ7VPpJausYxMiK0erdvrGquo63PoX6nZ24qDSb14P2J0rSjvGrkAKwc868Bxi16R7ztkVwLIy5EIm1HEKqFqXFz3SFrxX1Z/pA0HZ+xG/wNIm0PJxXdUyG59Y8RFT0=
+	t=1740475051; cv=none; b=t3D1T1pXIR5zygzsh8q/IiAIqAHwyK+e1wAGqNvdPMLHWVEAJwuLHb8Mvuv/UqXN5eGbEflJKqZ+GYvOvCB05w5j4y0bdU6NQX7YsKyXPjfhm9ErHR2D9vr29BEYMcjiJ9QJDI9e7e3OAcGh86Nmu2/WS4BgvGocURMj2C3RFSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740474976; c=relaxed/simple;
-	bh=x07AImckdsutiWV6cJI2jieqhqmK1oZS3qzMypzQ/Ok=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L2MWy9GgL+RO6z3gcEoQzCguAvLCjT5LpIFcMpWZXgFSeRBzKZBNmfOVwMEo/Ljbk9E13Wm7fTW1YiW/Zxl/D5unirc3enF4FCQetpdkZ8DIab0NOmck+ngInvfJ+ahgUn0aSayIf6nnzmjQEpjlPGEGcwpL9iaAtZx+2SV0d3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1zbKpTs; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43994ef3872so32288495e9.2;
-        Tue, 25 Feb 2025 01:16:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740474972; x=1741079772; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ND03FSByttfluhwaHZ2jqr8q/QaCO04nzZNHbR2z+Eg=;
-        b=m1zbKpTsLYv7xtRFy7SDYXhETuBiALnX5iDzcphFVPvaAHJOIismFJAiJLye2Cy2fn
-         djfarGIlinSyo6V0f2y9TZ3o6fO6sCb88MJXdcTAZuztY5qgtDBnfTyjXOHrHfLL/BDY
-         EdxzOEsIpXXfbN18AILtsS7rDKX/RC+CGyEQ/MZBxr558hLVolYr6txP42cXmNaZGLPp
-         iqWMGhqA5spEurui5Xlnkse623u6125x6Rjx9qrDut1SNsFHdetbZEmq6ljwXinIKEge
-         FFmx9IGjwYRDvAeDJ5IyxapSuSIirBRum9zhzs0yz5dEGI66vDsI79dUts4zZwibhXNM
-         qTDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740474972; x=1741079772;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ND03FSByttfluhwaHZ2jqr8q/QaCO04nzZNHbR2z+Eg=;
-        b=KPaGl74QxJHdLubsZkUUkK/0qO4Z7bmuTXBRxQ4X4E+F85Bh/0QIDzsfjRkbbCObZT
-         7pCyS42a2FCDR2LJSwJ14PpRyFGavIFjLvkzU9wy+4OgXMAizQWQqBsNBs0UkxCUHRk6
-         m/hzlzbCAWeDXcek9RsLxeiwgoRuaQAwxUiLmPZMZ2WIqv8X4qlp9nb6TfEBi7z7ATJS
-         N2ixw6hGjLVBH5IklsMx1DlKC39T5Vk52eOJDYLzWGwZd3sZwxUPxPbK4YjuOq6RUhSB
-         xSLkLKzv8g2FoV5D/S0qiq+K4SmKVN/6M9OnHwAlc1NdzKEIb8XyZFQFmeZQQ6wrpIjs
-         +nCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNKK3CphNr1FoyI3M7xtVIgKCUDgPVVod3nFHN4hcUudWxthc1HEYiUmjYxrJOkx35yj3jwmw8fCb2@vger.kernel.org, AJvYcCX6fPQ6s7Jm+oso6VgaPx9vOi3eGqVPxnH4WJ6fZOOpzbZzqtlhOtyKstYogmrru2HVdpRFOMSWpH5v@vger.kernel.org, AJvYcCXtv7nYgJL8/9TxhwYmhbEpHECBSbwTBbmZ9gJdltcPajNRjGJeb/Cmx2FN4sLmfU56SV4w0Yi9F2tQjxNc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk1/VbelB+uFA4IWTd+xtBdz7lEtw+hlILoZNJ+XSr550IdQDA
-	lpX5mX8OjyJWvUooJ3YgFNnYwpxE4vsXeah7TBnxbgvZJniEHGCi
-X-Gm-Gg: ASbGnctPU+67Z3UzAXwYzc35gjFF0sBXc0mgtxuBSVn0FCg3VLKXnqxX/59UKAUHa3Q
-	0fjvLdV1mt+zx0XAtmIlqVB8ORhpA4vQ3fIgFeMBVwOPZ7/iAsGp+ePl9TFWU3mcee8CcUVEDba
-	xtmi9wytNvG5SZUDcIcvqqDpz3mkSPFzK7xzWAeohRGQvZysOFBk+eWHVfFx2rOm4YdrQlm2IKK
-	sNfE6W6/UHF3fVVCDnFq17tvgjBUQXLafOcqM8p0+on3j2j/4hES176jQpL7W66giTf1XdQTp/P
-	0Gg7QXe2QftXoSOcr0OtGttuj8mt0YYdYuhyWjB22KtgMcSzV/M7A0g5Y8Sagk0j7BI0JV8FoA=
-	=
-X-Google-Smtp-Source: AGHT+IHkPPl0DIWuFtS3gq+AAlC/4I0hHnM9EEjvhghkzGZg2/3hI7L63xeUfFD30DTXR0o1cu2sVA==
-X-Received: by 2002:a05:600c:4684:b0:439:56f3:d40f with SMTP id 5b1f17b1804b1-43ab0f6dedcmr16273745e9.21.1740474972163;
-        Tue, 25 Feb 2025 01:16:12 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c4051bsm10769545e9.0.2025.02.25.01.16.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 01:16:11 -0800 (PST)
-Message-ID: <3f4bb345c1d76e7521d8bdbf4b4552e727c7dc1c.camel@gmail.com>
-Subject: Re: [PATCH 14/14] Documentation: ABI: testing: ad4080 docs
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus	
- <antoniu.miclaus@analog.com>, jic23@kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- 	linux-kernel@vger.kernel.org
-Date: Tue, 25 Feb 2025 09:16:16 +0000
-In-Reply-To: <fd3ba169-c5e0-4405-961f-d7c11c68dffb@baylibre.com>
-References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
-	 <20250220135429.8615-15-antoniu.miclaus@analog.com>
-	 <8f588f4b88d122815df694660d19672e8ccd3d70.camel@gmail.com>
-	 <fd3ba169-c5e0-4405-961f-d7c11c68dffb@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740475051; c=relaxed/simple;
+	bh=hKBuY3atHB1kNwjegwLeb7BjxqbPDgjTdxV3Ep+3p/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i+07s1euef/3kvpeZXjv5icZdvUumwnZTqtHiM/m+Uif8Yu7bphv+Y08Xwlovt2tmqOG5X7mWEgUpA7u2LzOm0T94ptYPUGHjaDZVp6nbtnMSmytujb7amao8qf9gyLDCB6VaQfTKtnYiRjtSdAn/NIHMRp5jcObjpzmD6btvF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HABREqoi; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740475047;
+	bh=hKBuY3atHB1kNwjegwLeb7BjxqbPDgjTdxV3Ep+3p/8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HABREqoi7oiYMQPIIu/pX9GFUzmyUePflONtLnpnvP0gFGVpb/0/5rY/SvNTY06Bz
+	 UKX/OJWzZbvplZc4sdyahfxbLMls/6VTwjylG6t2I9ZK9O79J1p1OlPisbzKiZJB+r
+	 ZPXqpu80ThPCq9BI2YV7FVJdIfC0x78MFxKNizXfS8xKnU6CHmfPUHmR2yeG1508B0
+	 nwlH+ptbJt6o/oCJLSCc2Tu7hSPBzOCy94+MWHU3Zqv0X/tN6r4YdLipwZ5E1gr4Fa
+	 vQeI1nv8fbZEk7B1YnXIkS3qTX1aSSMs7zSKXN1FhnO6ZQnsPO3Jw7MExa6PYHssxe
+	 /GmIevN6Uq+3Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 13B2F17E0B63;
+	Tue, 25 Feb 2025 10:17:26 +0100 (CET)
+Message-ID: <8ddcd6da-6b01-4188-b58d-aeb752b6f944@collabora.com>
+Date: Tue, 25 Feb 2025 10:17:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/43] Add support for MT8195/88 DPI, HDMIv2 and DDCv2
+To: chunkuang.hu@kernel.org
+Cc: p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com,
+ jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com,
+ ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com,
+ jason-jh.lin@mediatek.com
+References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-02-20 at 12:27 -0600, David Lechner wrote:
-> On 2/20/25 8:53 AM, Nuno S=C3=A1 wrote:
-> > On Thu, 2025-02-20 at 15:54 +0200, Antoniu Miclaus wrote:
-> > > Add documentation for the ad4080 attributes.
-> > >=20
-> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > ---
-> > > =C2=A0.../ABI/testing/sysfs-bus-iio-adc-ad4080=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 55 +++++++++++++++++++
-> > > =C2=A01 file changed, 55 insertions(+)
-> > > =C2=A0create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-=
-ad4080
-> > >=20
-> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> > > b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> > > new file mode 100644
-> > > index 000000000000..e37bfba0e989
-> > > --- /dev/null
-> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4080
-> > > @@ -0,0 +1,55 @@
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/lvds_sync
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		This attribute handles the data synchronization
-> > > process.Because the CNV
-> > > +		signal is not taken into account by the FPGA when
-> > > capturing
-> > > the data, we
-> > > +		need a process that configures the ADC to output pattern
-> > > data, writes the
-> > > +		SYNC bit in the axi_adc register map, waits until the
-> > > custom
-> > > HDL syncs the
-> > > +		data correctly, and then changes the output mode to
-> > > analog
-> > > data instead of
-> > > +		the fixed pattern.
-> >=20
-> > I'll comment this one in the driver. I have some questions on how this
-> > works...
-> >=20
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/lvds_lvds
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		Configures the signal type of the CNV signal. The value
-> > > can
-> > > be either CMOS
-> > > +		(lvds_cnv=3D0) or LVDS (lvds_cnv=3D1).
-> >=20
-> > The name seems to be wrong with what you have implemented. From this
-> > description, I would think of this as a DT property? Can the signal typ=
-e
-> > really
-> > change at runtime?
-> >=20
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		This attribute enables the digital filter functionality
-> > > of
-> > > the AD4080.In
-> > > +		order to capture data correctly, the function must
-> > > configure
-> > > the ADC
-> > > +		through SPI to select the filter type and enable data
-> > > capture
-> > > in filter
-> > > +		mode through axi_adc(In this mode, data is gated by a
-> > > signal
-> > > generated by
-> > > +		the AD4080 (GPIO1 and is not continuous as it is when the
-> > > filter is
-> > > +		disabled).
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/filter_sel_available
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		Return the available filter modes that can be set.
-> >=20
-> > There's a standard attr for this. I think we settled=20
->=20
-> Yup. filter_type and filter_type_available.=20
->=20
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		Set the filter=E2=80=99s decimation rate.
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/sinc_dec_rate_available
-> > > +Date:		February 2025
-> > > +KernelVersion:
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		Return the available filter's decimation rates.
-> > > +
-> > > +
-> >=20
-> > I'm not yet convinced we need the dec_rate custom attr. I'll add more
-> > comments
-> > in the driver.
->=20
-> If we do need it, in another driver recently we concluded that
-> decimation rate is the same as oversampling ratio and there is
-> already a standard attribute for oversampling ratio, so we used
-> that.
->=20
+Il 17/02/25 16:47, AngeloGioacchino Del Regno ha scritto:
+> Changes in v7:
+>   - Split more patches as requested by CK
+>   - Changed the order of the interlaced variable addition as requested
+>   - Cleanups in DDCv2 as requested by CK
+>   - Removed comment from
+>     drm/mediatek: mtk_hdmi: Move output init to mtk_hdmi_register_audio_driver()
+>     as that was forgotten from reintroduction of print in v5
+>   - Some more small nitpicks as pointed out by CK here and there
+> 
 
-Yeah, in theory decimation is about averaging samples. Makes sense to me ev=
-en
-though I never thought about using the oversampling ratio attr. I was biase=
-d by
-the IMUs drivers where we configure the dec_rate as part of the sampling
-frequency attr since these filters directly affect the chip ODR.=C2=A0
+Hello CK,
 
-Out of curiosity, how did you handled this in the other driver? I would be
-tempted to only allow reading the sampling frequency attribute which means =
-that
-the oversampling ratio attr is the one we can write (which then directly af=
-fects
-sampling frequency).
+Is there any other concern about this series, or can we finally get HDMI support
+for MT8188/MT8195 upstream?
 
-- Nuno S=C3=A1
+Regards,
+Angelo
+
+> Changes in v6:
+>   - Split the TVD clock enable/disable calls in a different commit
+>   - Changed `is_internal_hdmi` to two different variables, one for
+>     DPI input clock from HDMI, and one for AFIFO 1T1P output and
+>     conversion (mtk_dpi)
+>     - Clarified why MT8195/88 HDMI-reserved DPI1 is different
+>   - Moved `input_2p_en` bit to platform data to cleanup DPI vs DPINTF
+>     - 1T2P enable bit is different between DPI and DPINTF, but usage
+>       is actually the same
+>   - Cleaned up headers inclusion in mtk_hdmi_v2.c, mtk_hdmi_ddc_v2.c
+>     - Removed some unused headers, added missing bitfield.h header
+>   - Split some prints cleanup commits as requested by CK
+>   - Split the introduction of mtk_hdmi_conf as requested by CK
+>   - Split commit to make CEC optional as requested by CK
+>   - Reintroduced forgotten no_capture_mute in codec_pdata (mtk_hdmi_common)
+>   - Reintroduced error print for audio clocks enablement failure (mtk_hdmi)
+>   - Added cleanup syscon_regmap_lookup_by_phandle commit from Krzysztof K
+> 
+> Changes in v5:
+>   - Rebased over next-20250113
+>   - Resolved merge issues with next-20250113
+>   - Added bitfield.h inclusion in mtk_dpi in commit [02/33] to resolve
+>     build issue from 0day CI
+>   - Removed .atomic_check callback from mtk_hdmi_v2 as it is now part
+>     of drm_bridge_connector as pointed out by Dmitry B
+>   - Removed call to pm_runtime_disable() as the driver uses devm
+>   - Tested again :-)
+> 
+> Changes in v4:
+>   - DDCv2 binding erroneously dropped in v3 is included again (oops!)
+>   - Added reference to dai-common.yaml in HDMIv2 binding
+>   - Dropped pinctrl entries from HDMIv2 binding
+>   - Fixed required list in HDMIv2 binding and changed node name to
+>     'hdmi' instead of 'hdmi-tx'
+>   - Fixed issue in mtk_hdmi derived from wrong commit splitting action
+>     from version 3
+>   - Exported necessary symbols and added namespaces for those
+>   - Fixed module build for both HDMIv1 and HDMIv2
+>   - Other cleanups
+> 
+> Changes in v3:
+>   - Added hpd_enable() and hpd_disable() callbacks as suggested by Dmitry B
+>   - Removed audio mute call in bridge_enable() as suggested by CK
+>   - Reworked commonization commits for mtk_hdmi/mtk_hdmi_common and split
+>     out debugfs/abist implementation as suggested by CK
+>   - Removed .mode_valid() callback as it is now provided by the bridge
+>     API in drm_bridge_connector_helper_funcs
+>   - A bit of cleanups here and there
+>   - Tested again on HW especially for new hpd_enable/disable callbacks.
+> 
+> Changes in v2:
+>   - Merged series "Add support for MT8195/8188 and Pattern Generator"
+>     and "drm/mediatek: Add support for HDMIv2 and DDCv2 IPs" in one
+>     as they are directly related, as requested by CK Hu
+>   - More commonization: moved some audio functions to mtk_hdmi_common
+>   - Fixed a bug in DDCv2 driver to allow sending a message with len=1
+>   - Renamed some functions in HDMIv2 to consistently use the prefix
+>     mtk_hdmi_v2_ across the driver
+>   - Added .mode_valid() callback to HDMIv2
+>   - Added .atomic_check() callback to HDMIv2
+>   - Reordered drm_bridge_funcs in HDMIv2 driver
+>   - Rewritten .edid_read() callback in HDMIv2 to move checking audio
+>     availability to bridge_pre_enable() stage, and to stop using the
+>     drm_edid_read_ddc() in favor of drm_edid_read()
+>   - Added support for API provided HDMI Helpers
+>   - Added .tmds_char_rate_valid() callback to HDMIv2 for HDMI helpers
+>   - Added .hdmi_{read,write}_infoframe() callback to HDMIv2 for helpers
+>   - Added support for Vendor infoframes in HDMIv2
+>   - Added missing audio-dai-cells to HDMIv2 binding to fix check error
+>   - Added more information to the HDMIv2 binding for clocks and PHY
+>   - Added some comments to the HDMIv2 code to clarify why the controller
+>     is preconfigured in bridge_pre_enable() instead of bridge_enable()
+>   - Added a mention of the differences in HPD between v1 and v2 to the
+>     commit introducing the v2 driver (v2 is not using CEC for HPD)
+>   - ...and tested again on HW! :-)
+> 
+> 
+> This series adds support for the HDMI-TX v2 Encoder and DDCv2, and for
+> the direct connection DPI as found in MT8195, MT8188 and their variants.
+> 
+> Tested on Genio 700 EVK:
+>   - ABIST ON: ok, pattern generated internally from HDMI is shown on
+>     HDMI screen at the correct resolution;
+>   - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
+>     shown on HDMI screen at the correct resolution;
+>   - Can negotiate up to 4k60
+> 
+> and on MT8395 Radxa NIO 12L:
+>   - ABIST ON: ok, pattern generated internally from HDMI is shown on
+>     HDMI screen at the correct resolution;
+>   - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
+>     shown on HDMI screen at the correct resolution;
+>   - Dual screen usecase validated (DSI + HDMI 3840x2160p 60Hz)
+>   - Can negotiate up to 4k60
+> 
+> Please note that this submission does *not* include support for HDCP
+> nor for CECv2, as I want this to be upstream before implementing
+> additional features which are not strictly required for simple
+> HDMI output.
+> 
+> Bonus in this series is the addition of support for the Pattern Generator
+> found in the DPI HW: since I needed this for debugging during development,
+> I had to code in the actual support bits and it looked like a waste of
+> time to just remove it.
+> I instead decided to clean it up and upstream it, as this will anyway come
+> handy for multiple things, of which the most important (imo) are:
+>   - Adding support for new SoCs in the future will be less time consuming
+>     as this driver already has the pattern generator in;
+>   - CI Testing might be able to make use of this to validate that the
+>     data that comes out is not garbled (so, to help testing display
+>     support in an automated manner).
+> 
+> AngeloGioacchino Del Regno (41):
+>    dt-bindings: display: mediatek: dpi: Add MT8195 and MT8188 compat
+>    drm/mediatek: mtk_dpi: Add support for Pattern Generator in debugfs
+>    drm/mediatek: mtk_dpi: Use an array for pixclk factor calculation
+>    drm/mediatek: mtk_dpi: Move pixel clock setting flow to function
+>    drm/mediatek: mtk_dpi: Add checks for reg_h_fre_con existence
+>    drm/mediatek: mtk_dpi: Move the input_2p_en bit to platform data
+>    drm/mediatek: mtk_dpi: Add support for DPI input clock from HDMI
+>    drm/mediatek: mtk_dpi: Support AFIFO 1T1P output and conversion
+>    drm/mediatek: mtk_dpi: Explicitly manage TVD clock in power on/off
+>    drm/mediatek: Add support for MT8195 Digital Parallel Interface
+>    dt-bindings: display: mediatek: Add binding for HDMIv2 DDC
+>    dt-bindings: display: mediatek: Add binding for MT8195 HDMI-TX v2
+>    drm/mediatek: mtk_cec: Switch to register as module_platform_driver
+>    drm/mediatek: mtk_hdmi_ddc: Switch to register as
+>      module_platform_driver
+>    drm/mediatek: mtk_hdmi: Convert to module_platform_driver macro
+>    drm/mediatek: mtk_hdmi: Compress of_device_id array entries
+>    drm/mediatek: mtk_hdmi: Unregister audio platform device on failure
+>    drm/mediatek: mtk_hdmi: Fix typo for aud_sampe_size member
+>    drm/mediatek: mtk_hdmi: Disgregate function mtk_hdmi_audio_set_param()
+>    drm/mediatek: mtk_hdmi: Move audio params selection to new function
+>    drm/mediatek: mtk_hdmi: Move plugged_cb/codec_dev setting to new
+>      function
+>    drm/mediatek: mtk_hdmi: Move N/CTS setting to new function
+>    drm/mediatek: mtk_hdmi: Move vendor/product strings to drm_bridge
+>    drm/mediatek: mtk_hdmi: Use dev_err_probe() in
+>      mtk_hdmi_dt_parse_pdata()
+>    drm/mediatek: mtk_hdmi: Move CEC device parsing in new function
+>    drm/mediatek: mtk_hdmi: Remove unused members of struct mtk_hdmi
+>    drm/mediatek: mtk_hdmi: Move output init to
+>      mtk_hdmi_register_audio_driver()
+>    drm/mediatek: mtk_hdmi: Use devm managed version of drm_bridge_add
+>    drm/mediatek: mtk_hdmi: Remove ifdef for CONFIG_PM_SLEEP
+>    drm/mediatek: mtk_hdmi: Remove goto in mtk_hdmi_clk_enable_audio()
+>    drm/mediatek: mtk_hdmi: Remove driver bound to HDMI print
+>    drm/mediatek: mtk_hdmi: Cleanup function mtk_hdmi_resume()
+>    drm/mediatek: mtk_hdmi: Improve mtk_hdmi_get_all_clk() flexibility
+>    drm/mediatek: mtk_hdmi: Add HDMI IP version configuration to pdata
+>    drm/mediatek: mtk_hdmi: Split driver and add common probe function
+>    drm/mediatek: mtk_hdmi_common: Make CEC support optional
+>    drm/mediatek: mtk_hdmi_common: Assign DDC adapter pointer to bridge
+>    drm/mediatek: mtk_hdmi_common: Add OP_HDMI if helper funcs assigned
+>    drm/mediatek: mtk_hdmi_common: Add var to enable interlaced modes
+>    drm/mediatek: Introduce HDMI/DDC v2 for MT8195/MT8188
+>    drm/mediatek: mtk_hdmi_v2: Add debugfs ops and implement ABIST
+> 
+> Guillaume Ranquet (1):
+>    drm/mediatek: hdmi: Use regmap instead of iomem for main registers
+> 
+> Krzysztof Kozlowski (1):
+>    drm/mediatek/hdmi: Use syscon_regmap_lookup_by_phandle_args
+> 
+>   .../display/mediatek/mediatek,dpi.yaml        |    5 +
+>   .../mediatek/mediatek,mt8195-hdmi-ddc.yaml    |   41 +
+>   .../mediatek/mediatek,mt8195-hdmi.yaml        |  151 ++
+>   drivers/gpu/drm/mediatek/Kconfig              |   18 +-
+>   drivers/gpu/drm/mediatek/Makefile             |   11 +-
+>   drivers/gpu/drm/mediatek/mtk_cec.c            |    7 +-
+>   drivers/gpu/drm/mediatek/mtk_dpi.c            |  323 +++-
+>   drivers/gpu/drm/mediatek/mtk_dpi_regs.h       |   10 +
+>   drivers/gpu/drm/mediatek/mtk_drm_drv.c        |    2 +
+>   drivers/gpu/drm/mediatek/mtk_hdmi.c           |  803 ++-------
+>   drivers/gpu/drm/mediatek/mtk_hdmi.h           |   14 -
+>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c    |  435 +++++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h    |  198 +++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c       |    2 +-
+>   drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c    |  385 +++++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h   |  263 +++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c        | 1475 +++++++++++++++++
+>   17 files changed, 3347 insertions(+), 796 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>   delete mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi.h
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+> 
+
+
 
