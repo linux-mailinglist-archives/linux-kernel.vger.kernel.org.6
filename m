@@ -1,225 +1,115 @@
-Return-Path: <linux-kernel+bounces-531765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C9BA4448B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:36:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A5BA44486
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193244238B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F53B531B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840001624F7;
-	Tue, 25 Feb 2025 15:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DF121ABAF;
+	Tue, 25 Feb 2025 15:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MacJrO2+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="dMSz8DNC"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A716B1624DD;
-	Tue, 25 Feb 2025 15:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063F42FB2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497723; cv=none; b=cKCgYT5ZcM4W9nNlmJ7n9TGd7afHBU1TTFi/2F0N3ChTQkOu+v6+veAcqKHWFn++Lh2ebQR8InXeNgRoRFLKgchtmrKf/OAqb167Gnm2xdsDkBDN6BOeta8AUeSKIjHog9RdK8I1RW5rvLO55w4+HD+8nhj0fTe147hZfWt40v8=
+	t=1740497701; cv=none; b=Gy1KK33+zSVHQslnH/fxWbrt5jx/DDlU1a8lCwEBNp9NxRaDNCSyjj0jqiGtSgbLtNAwNofYa7AAGXAjGhCWMqi61hbDICyKj7AHS0MrCa9QZfTC6W3u4bXb5tujuUMNZ+RVVVj/eliQtKz2uYsuc26nHbgAZSIKpaBHhKIPqN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497723; c=relaxed/simple;
-	bh=XItyUEZepBSi+iNDaSIT9S/Mq6Xh426aEX3xchTQv4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e640nWYMQIlVmhhvLjHNatdTXM380s2YxiyB3RkxWUy704Xb3Py8LvRDaxQIfn7VsaVDXUMPu3BgwyLP6BxQN1JuRHEIZ4oeMxbxTxQYYKX4SdEeh4F0nxE5vlxQYg6T0kCfM4xIO7yGZomzq/Ww5RxK6iKVPsFp7DN+UROCZfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MacJrO2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2C7C4CEEB;
-	Tue, 25 Feb 2025 15:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740497723;
-	bh=XItyUEZepBSi+iNDaSIT9S/Mq6Xh426aEX3xchTQv4s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MacJrO2+ftUHpyu1YUk3rA0JXXCu9Qww0QjDsWQIY2Eg5Z3EJ+uYMDEcIMLXjRY8z
-	 yS5ELmu5jINaiK0034HiA131r2iKw6sCPKLB9vKr+XkcT1h/z9z2ZrSdLtfJEN/dxV
-	 tvJJLTlJwglsFIKrLbNV9UPnfgF7Yy1IQXT3Jjn0Uo2c+elJvM+/IDeKgf7mfgtov7
-	 L7TqPtFDJvZF1DPMoDnmVqfYwRl3vDg/gE0xt6mLfdNX7E5wxNw6terDqAeMAu2QWr
-	 9WpIDLcIFeMGRx7QTH+nmEQODtBCovzodoZhl/dGfNrKj+dqRgpaeDWtAkJgqRRaLT
-	 mE/HtNPBy+j1Q==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so10276814a12.1;
-        Tue, 25 Feb 2025 07:35:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWNVZlQLxPHTdjREUckPmGLshVrspfcRiXaWUURWphtXreu7xBB9t3hbvcS5xpsdlkOPE8vdQb08tRAOVG4@vger.kernel.org, AJvYcCWlU7CV152kWwNFPJfqZOrm5i3DdZp3bLv4c+t/CIaACsXOFqPQAVx6pkuiUyR/Ah6LDUZf8r5eiVA=@vger.kernel.org, AJvYcCWnxiTHrgNUjratomYnbiydHVTZsCXfYzCxWSDE9RDm3DGmSG2deC5bPztfqeybzpyhjcka265ld1vG9rnKzDwBBQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAiIdiQo68a4wp5N/v73PHSyItuSN8UIYmQgnaPgfExTkBcy5c
-	GbUtVUWmw6nZry+mmliBKO883f83N1VjNTIVLingEFoZiHcfQ/RuJ/ONCTvBj/CjfZfew1Yn4hN
-	bRAuQL5PCrsgoUS6jDcqj1t7LXg==
-X-Google-Smtp-Source: AGHT+IG3W78BIijkWq7Fyxr+xyyGetXy3PWKs3KsePxUk1BA+35b6sqYHWgJT8HK9oC/8GAmOY2QdyNYtk6IUss22yk=
-X-Received: by 2002:a05:6402:3587:b0:5de:3c29:e834 with SMTP id
- 4fb4d7f45d1cf-5e44b7635damr3926277a12.27.1740497721673; Tue, 25 Feb 2025
- 07:35:21 -0800 (PST)
+	s=arc-20240116; t=1740497701; c=relaxed/simple;
+	bh=cH9XXCTkke3kcqKJcWscebkNcrtTiyEFYNCyYJ71YPI=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpIpldofHPUwN4A3Ucz8rHIPcpACV83SAo+XX2FNQ8LTiLVbNcsl1Dp3Rm18GY2lJIMMCoghv9zbJTquxiNBXBVqZS/VRGhnsHVmiJ6ZN4mwhBd1V11sNguCe/rp7QUyDI5mUqsSIev3J5HVTZPeLt3mHXOj5r6iak1jPYy6lPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=dMSz8DNC; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1740497684;
+	bh=xQdbII/iD5bkXAKYncYT8QMWFld/fkb7ZKGb7EsJbA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dMSz8DNCtdVfaHpmbs9GtyHZ/8qc1SICtKufSaeTVPwzmt3OhGunFWqT2hx4tfJDQ
+	 gGMF2BnTAUPM3pt0XX6kANWx46ZGHViazJOTlUMGGpBHpK6+LvHn3l4nB0hFgymDkn
+	 NoDxj3lDAsmoiuNu4ZNGbTcn2/6aevT1YeFmNHoI=
+Received: from chenyu5-mobl2 ([118.114.56.201])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 8A81E0C4; Tue, 25 Feb 2025 23:34:40 +0800
+X-QQ-mid: xmsmtpt1740497680twkk9gkul
+Message-ID: <tencent_1A4C28B62DA5726C31A985601B07F664250A@qq.com>
+X-QQ-XMAILINFO: M2SvzgchpLqfcHTOwq7x0UZAN8Ik6Zg5Qb8N7t8wsIolvnA2zs9KbZ9C9Gp85Z
+	 rql3+TknS8MOWkVRXiYIGuqK8u/RMuLKJOxacd5mZ2ZKP1zWF2AGsBSrur9rtMiUPrDbmkSSkGMo
+	 pN7vgeej5xssB02mTaV1NvQ+quZ21BaFsI6lywT+8xgNwGONkTLs67N5S74f4QMyfZN1YM2DSL4h
+	 IsaNM3/QuOe26CKAHp387sQrKtmoBPqUWr9E1s1bfhtYp4MwHjl2lov9kzaztnbWynW6+85lf64p
+	 ghJTIKLipCBrvD/q+7fOJ9VztZNWgcD9uGaaHp26rWidxJS6vX1x+iD0pl94dMSmgJ0GXBrJktnU
+	 eh4SmVmoYTMM9N0oIJmq4O1lCwViMIC6OM8jcJFOGEV681epgvjrskYchDbYcA8ITUwSNHwAvV2t
+	 WMEdbPkcxZFjFEWefY+1qb+X0O3YN8FGA8SVswQn05s5iDbZ/qtEYjyor7wpLKDkD6AlqJHmkj82
+	 JcnPB35Xwf2JHyQlHKmW0EE8gIDNufulOM97C0dr01QcxMD0rpSQuAJ0ntHr1G/V4GIFFevP7JEX
+	 IwnU5GtdHYv5xVyXrXDUgXb0SxMu35xdG2sL87C/OiUQUxk7g8P3aYxfoNL9thZxec32W8xlgb6r
+	 zE/xEeFnERdPl2DD9Zg6pW4LV2GBA618A3anoJKUQGhdW8D4K9+fBAxW9s2JlzGH5uGdymSsRIHa
+	 OTb5VL3C1JRg/0PeIqku7GgvfX/KeMOEA6hWoYlak3jBJmhhs1/rUfONVr5drknogILjvoBBv5YX
+	 MrKnEBoKlObSaFeaWKQXMWKZX5UJKxEa0YeM/myjSCn26WGffbNEX0nXWC2WKjZrbIJrfaK43EvS
+	 fyvrjJJX5PtTqt2oOHQBA98B47t/YXafOUgIB+xbjZBTqvMpqMZ1UgkS2OBSHlH3oioJMWeO4rDW
+	 xXHGbvYjfHxJRdunCO5W8PACzgfnXW4ddQ4xwvlyGhNgF0y1koMgTIauGQVNji
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+Date: Tue, 25 Feb 2025 23:35:12 +0800
+From: Chen Yu <yu.chen.surf@foxmail.com>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	zihan zhou <15645113830zzh@gmail.com>, oe-lkp@lists.linux.dev,
+	kernel test robot <oliver.sang@intel.com>, lkp@intel.com,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/core] [sched]  2ae891b826:  hackbench.throughput 6.2%
+ regression
+X-OQ-MSGID: <Z73jMA2oJGrA3p5b@chenyu5-mobl2>
+References: <202502251026.bb927780-lkp@intel.com>
+ <tencent_6D9B516AFF16965A3BB652A049D6CA847706@qq.com>
+ <20250225122705.GD34233@noisy.programming.kicks-ass.net>
+ <tencent_CC411B43EAD996961A06366F606C96DD0406@qq.com>
+ <20250225134220.qjctfqwwhjz7bspp@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
- <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
- <20250224140317.GF8144@e132581.arm.com> <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
- <20250224180301.GI8144@e132581.arm.com> <CAL_JsqKNad6eEBerUOco=SDWxdp6dgRD3FDrSt5OpGQYwwstSg@mail.gmail.com>
- <20250225123813.GA1821331@e132581.arm.com>
-In-Reply-To: <20250225123813.GA1821331@e132581.arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 25 Feb 2025 09:35:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ4cSGVjkBqU9uZdB2gjF6FyfQaD=jmcqEamEoqWLYGaQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo1RJnU8UBv-NkgDA5mYeZ3KtlYf8lNMthdII-jEnwh4DVqd7qs9q-S8Hk
-Message-ID: <CAL_JsqJ4cSGVjkBqU9uZdB2gjF6FyfQaD=jmcqEamEoqWLYGaQ@mail.gmail.com>
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-To: Leo Yan <leo.yan@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225134220.qjctfqwwhjz7bspp@airbuntu>
 
-On Tue, Feb 25, 2025 at 6:38=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Mon, Feb 24, 2025 at 07:31:52PM -0600, Rob Herring wrote:
->
-> [...]
->
-> > > > > When event rotation happens, if without context switch, in theory=
- we
-> > > > > should can directly use the branch record (no invalidation, no in=
-jection)
-> > > > > for all events.
-> > > >
-> > > > No; that only works in *some* cases, and will produce incorrect res=
-ults
-> > > > in others.
-> > > >
-> > > > For example, consider filtering. Imagine a PMU with a single counte=
-r,
-> > > > and two events, where event-A filters for calls-and-returns and eve=
-nt-B
-> > > > filters for calls-only. When switching from event-A to event-B, it'=
-s
-> > > > theoretically possible to keep the existing records around, knowing=
- that
-> > > > the returns can be filtered out later. When switching from event-B =
-to
-> > > > event-A we cannot keep the existing records, since there are gaps
-> > > > whenever a return should have been recorded.
+On 2025-02-25 at 13:42:20 +0000, Qais Yousef wrote:
+> On 02/25/25 21:15, Chen Yu wrote:
+> > On 2025-02-25 at 13:27:05 +0100, Peter Zijlstra wrote:
+> > > On Tue, Feb 25, 2025 at 05:31:34PM +0800, Chen Yu wrote:
+> > > 
+> > > > 
+> > > > But consider that the 6% regression is not that high, and the user might customize
+> > > > base_slice via debugfs on-demand, we can keep an eye on this and revist it in the
+> > > > future(we have encountered some SPECjbb regression due to over-preemption).
+> > > 
+> > > You can specify a per-task slice using sched_attr::sched_runtime. Also
+> > > see commit 857b158dc5e8 ("sched/eevdf: Use sched_attr::sched_runtime to
+> > > set request/slice suggestion")
+> > > 
 > > >
-> > > Seems to me, the problem is not caused by event rotation.  We need to
-> > > calculate a correct filter in the first place - the BRBE driver shoul=
-d
-> > > calculate a superset for all filters of events for a session.  Then,
-> > > generate branch record based event's specific filter.
-> >
-> > The driver doesn't have enough information. If it is told to schedule
-> > event A, it doesn't know anything about event B. It could in theory
-> > try to remember event B if event B had already been scheduled, but it
-> > never knows when event B is gone.
->
-> E.g., I tried below command for enabling 10 events in a perf session:
->
->   perf record -e armv9_nevis/r04/ -e armv9_nevis/r05/ \
->               -e armv9_nevis/r06/ -e armv9_nevis/r07/ \
->               -e armv9_nevis/r08/ -e armv9_nevis/r09/ \
->               -e armv9_nevis/r10/ -e armv9_nevis/r11/ \
->               -e armv9_nevis/r12/ -e armv9_nevis/r13/ \
->               -- sleep 1
->
-> For Arm PMU, the flow below is invoked for every event on every
-> affinied CPU in initialization phase:
->
->   armpmu_event_init() {
->     armv8pmu_set_event_filter();
->   }
+> > 
+> > Thanks, we'll have a try during the next test cycle.
+> 
+> Could you also try with HRTICK enabled?
+> 
+> 	echo HRTICK | sudo tee /sys/kernel/debug/sched/features
 
-That function is passed *1* event. It is not intended to go looking at
-all events or muck with any global state. Could we go poking around
-all the data structures? Probably, it's C and data structures are
-often not opaque when they should be, so that wouldn't be a good idea.
-If you think it is, I'd recommend you stay away from Rust.
+Sure. Is HRTICK supposed to encourage preemption? I thought
+hackbench might be sensitive to preemption(downgrading).
 
-Furthermore, an event here may not actually be enabled. A user could
-open 2 events and handle them as mutually exclusive continuously
-disabling one and enabling the other. If the branch filters that they
-want are not overlapping, we'd be reducing our effective branch record
-size. Maximizing the size seems much more important to me than keeping
-some branches in a few corner cases.
+thanks,
+Chenyu
 
-> Shouldn't we calculate a superset branch filter for all events, store
-> it into a per-CPU data structure and then apply the filter on BRBE?
-
-Suppose we do that, what happens when a 2nd session (as Mark pointed
-out, sessions only exist in the perf tool, not the kernel) adds more
-events. We configured the filters and now we have to change them
-again. So we have to invalidate the branch record. It's the same thing
-with event rotation (though less frequent (probably)).
-
-> > > > There are a number of cases of that shape given the set of configur=
-able
-> > > > filters. In theory it's possible to retain those in some cases, but=
- I
-> > > > don't think that the complexity is justified.
-> > > >
-> > > > Similarly, whenever kernel branches are recorded it's necessary to =
-drop
-> > > > the stale branches whenever branch recording is paused, as there's
-> > > > necessarily a blackout period and hence a gap in the records.
-> > >
-> > > If we save BRBE record when a process is switched out and then restor=
-e
-> > > the record when a process is switched in, should we can keep a decent
-> > > branch record for performance profiling?
-> >
-> > Keep in mind that there's only 64 branches recorded at most. How many
-> > branches in a context switch plus reconfiguring the PMU? Not a small
-> > percentage of 64 I think. In traces where freeze on overflow was not
-> > working (there's an example in v18), just the interrupt entry until
-> > BRBE was stopped was a significant part of the trace. A context switch
-> > is going to be similar.
->
-> That is true for kernel mode enabled tracing.  But we will have no
-> such kind noises for userspace only mode tracing.
->
-> [...]
->
-> > > > Do you have a reason why you think we *must* keep events around?
-> > >
-> > > Here I am really concerned are cases when a process is preempted or
-> > > migrated.  The driver doesn't save and restore branch records for the=
-se
-> > > cases, it just invalidates all records when a task is scheduled in.
-> > >
-> > > As a result, if an event overflow is close to context switch, it is
-> > > likely to capture incomplete branch records.  For a userspace-only
-> > > tracing, it is risk to capture empty branch record after preemption
-> > > and migrations.
-> >
-> > There's the same risk if something else is recording kernel branches
-> > when you are recording userspace only. I think the user has to be
-> > aware if other things like context switches are perturbing their data.
->
-> I am confused for the decription above.  Does it refer to branch
-> recording cross different sessions?  It is fine for me that the branch
-> data is interleaved by different sessions (e.g. one is global tracing
-> and another is only per-thread tracing).
->
-> We might need to consider an intact branch record for the single perf
-> session case.  E.g. if userspace program calls:
->
->     func_a -> func_b -> func_c
->
-> In a case for only userspace tracing, we will have no chance to preserve
-> the call sequence of these functions after the program is switched out.
-
-So you miss the few times that happens in a context switch. But we are
-sampling and all/most of the other samples are going to be fine. How
-much is that really going to affect your profile?
-
-Rob
 
