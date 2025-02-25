@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-532605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA48A44FDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E49CDA44FE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E5487ABBF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:22:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C87157AC5B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6BD2153DC;
-	Tue, 25 Feb 2025 22:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BD62153FE;
+	Tue, 25 Feb 2025 22:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BXmTb7q5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvgOUoc4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2FD2153D6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B01215772
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522124; cv=none; b=ayDxvyiUic4oXbYqK3sf2UZHn0aDBmBG8w1T5rgdqZcmCqP78DaWfP5WLPgeOkebR5dPnziZyBQSRdQiiRa+PdcMyqO0QLkIWPN/bQqcCZOT74oMLvTm+fOsuT9f4m8o4xKjiuUtorFLlDlHl+acvUYHTzxJA1NpxW91ZlFaLnk=
+	t=1740522130; cv=none; b=fbkvE4CC263UQB/l6vKBhsiIWNyq9i1o27XL2lz+XVRYWae9QJO2svazRbQUEhtC2nZABJRuppqCrxVCQab4b4Ln6j7d8LKk6yPJQxDdf97qkeR3HEye38VspkgOkqFUz4oSkfDlBSnfXjg+XH2Rmf+gyWqjNH1yOlrGCj2GiXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522124; c=relaxed/simple;
-	bh=+h+zwJrqhz4KcKBFOtg5ltWWvHHlCjpJOJiBG2cNAao=;
+	s=arc-20240116; t=1740522130; c=relaxed/simple;
+	bh=3GvObaqWVecXvIaUUvN4z6ePOZ5r7DgV7vbJjYy7kic=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mkNo2Z2ENlbMszkpnTsIDhaAJRINIjnFSKo8FaDyKfx6U2E0pOvGt/6nZvZ9ektXtuY1HwsyMxSzsFirwTwdDM+wUy11wi4SitcKhHePbVAkSQL5GM/mMpF+gZMmgKhT9w9vAqqcY6jD3XWyrTF4A8sUOfG8XiMB7CjxlDDOgw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BXmTb7q5; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=Yjqu3LM+QKrsdk7SVI2xh2NCHnELD2B0nWD5wsjlk+ExXSSwlmq4KocVkaKucfGyv/hKHmH9ePVQsZ4o39eiqMD+D/OKR76zyyMJHIQyrnRn1OvR4NJnZZwBketTN5KPC2UiK1rlbw89ZMkhcRnpTbiwBoONZSwhdOyvNY3fHi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvgOUoc4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522121;
+	s=mimecast20190719; t=1740522127;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kpyWlOaModCxFl+Tqqpp85hFGJYXyqIGL3Cy6JBVo+g=;
-	b=BXmTb7q5hd9WFUtP3AcTtv5Q5t9okoenqZH665Kh3MXilIdeF+BmGoCpb665q0ze990T+d
-	AvE9aNat2JptzrEmddaKOSbxOF0DZonv5t3hc7FXw3iiS4eA0T5E5Yf/dFSNsqao/yrjcO
-	0extFKdN1/knI/5xCjvdqUMlSi/5hDs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=qma+QfUy8KGPfOfPhTryFSVfq+1sjRK0BOxM/l5EZBU=;
+	b=DvgOUoc4PKDdtHVjVcZNX7Ut5dlfJ7CfRNood3HzMPDP1DmZKCqRGStGvRUYg4+HkPRDVH
+	Y+C1Zyr+N99KP7ReNOfbSvkmE7c6gvBihPbeibDarLfsmN1IA8Qmx+aGWW/Ul8PDQjOe4f
+	Abw1kHuJIdFS4fiV46ufadLU5OKaDmc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-WLAVCRtaPzugI92OkZ8Qiw-1; Tue,
- 25 Feb 2025 17:22:00 -0500
-X-MC-Unique: WLAVCRtaPzugI92OkZ8Qiw-1
-X-Mimecast-MFC-AGG-ID: WLAVCRtaPzugI92OkZ8Qiw_1740522114
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-7JuP_WIlO1yPp2Xc0Ik_jA-1; Tue,
+ 25 Feb 2025 17:22:04 -0500
+X-MC-Unique: 7JuP_WIlO1yPp2Xc0Ik_jA-1
+X-Mimecast-MFC-AGG-ID: 7JuP_WIlO1yPp2Xc0Ik_jA_1740522124
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 452B718EB2C3;
-	Tue, 25 Feb 2025 22:21:54 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DEDA01800873;
+	Tue, 25 Feb 2025 22:22:03 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07B12180035F;
-	Tue, 25 Feb 2025 22:21:44 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8F9AE1800367;
+	Tue, 25 Feb 2025 22:21:54 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Tue, 25 Feb 2025 17:20:46 -0500
-Subject: [PATCH RESEND 05/12] drm/mxsfb: move to
+Date: Tue, 25 Feb 2025 17:20:47 -0500
+Subject: [PATCH RESEND 06/12] drm/sprd: move to
  devm_platform_ioremap_resource() usage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-memory-drm-misc-next-v1-5-9d0e8761107a@redhat.com>
+Message-Id: <20250225-memory-drm-misc-next-v1-6-9d0e8761107a@redhat.com>
 References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 In-Reply-To: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 To: Joel Stanley <joel@jms.id.au>, 
@@ -110,84 +110,89 @@ Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=2524;
+ linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=2443;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=+h+zwJrqhz4KcKBFOtg5ltWWvHHlCjpJOJiBG2cNAao=;
- b=k+LJjuc8ROIZ94VcX2vJBYoSZVLRroxcG4/mX7Ow5YRn2etCmM+Q7u1YmoWhA+q5GPKLk/sq8
- Mmua5UaO4QXCZYG7SAUnmnYGEXvMwqhAWGkBzsIQqT0LS2AQdLILv0U
+ bh=3GvObaqWVecXvIaUUvN4z6ePOZ5r7DgV7vbJjYy7kic=;
+ b=qhTHbBYOVh4KQ1m+0ltr+OG8m2WZ6JMlMT9QI2bckvb6bMt/OOWYTFMoySG+rb1HmtU+ofH+o
+ kKDa3yo3OxCBvcVP9ydSuFIs2kVzH7GZAqdh7H8cULF5htakCrNdbL/
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Replace platform_get_resource + devm_ioremap_resource
+Replace platform_get_resource + devm_ioremap
 with just devm_platform_ioremap_resource()
 
 Used Coccinelle to do this change. SmPl patch:
-@rule_1@
+@rule_2@
 identifier res;
-expression ioremap_res;
+expression ioremap;
 identifier pdev;
 @@
 -struct resource *res;
 ...
 -res = platform_get_resource(pdev,...);
--ioremap_res = devm_ioremap_resource(...);
-+ioremap_res = devm_platform_ioremap_resource(pdev,0);
+<...
+-if (!res) {
+-...
+-}
+...>
+-ioremap = devm_ioremap(...);
++ioremap = devm_platform_ioremap_resource(pdev,0);
 
-Cc: Marek Vasut <marex@denx.de>
-Cc: Stefan Agner <stefan@agner.ch>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/mxsfb/lcdif_drv.c | 4 +---
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/sprd/sprd_dpu.c | 9 +--------
+ drivers/gpu/drm/sprd/sprd_dsi.c | 9 +--------
+ 2 files changed, 2 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-index 8ee00f59ca821cea8e823e7100fb4d7534283994..fcb2a7517377e9a5bbd2997c578c579b1b079f92 100644
---- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-+++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-@@ -134,7 +134,6 @@ static int lcdif_load(struct drm_device *drm)
+diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+index cb2816985305fd19eac27413c214681a5a1e9ffa..65cd5aa1634eee5a6735ccffa4ee3979844d92ce 100644
+--- a/drivers/gpu/drm/sprd/sprd_dpu.c
++++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+@@ -784,16 +784,9 @@ static int sprd_dpu_context_init(struct sprd_dpu *dpu,
  {
- 	struct platform_device *pdev = to_platform_device(drm->dev);
- 	struct lcdif_drm_private *lcdif;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct dpu_context *ctx = &dpu->ctx;
 -	struct resource *res;
  	int ret;
  
- 	lcdif = devm_kzalloc(&pdev->dev, sizeof(*lcdif), GFP_KERNEL);
-@@ -144,8 +143,7 @@ static int lcdif_load(struct drm_device *drm)
- 	lcdif->drm = drm;
- 	drm->dev_private = lcdif;
- 
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	lcdif->base = devm_ioremap_resource(drm->dev, res);
-+	lcdif->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(lcdif->base))
- 		return PTR_ERR(lcdif->base);
- 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 59020862cf65e5cc488903f1263ed16dfbce06f9..377d4c4c9979ad9538cfec5464827a82936f811b 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -215,7 +215,6 @@ static int mxsfb_load(struct drm_device *drm,
+-	if (!res) {
+-		dev_err(dev, "failed to get I/O resource\n");
+-		return -EINVAL;
+-	}
+-
+-	ctx->base = devm_ioremap(dev, res->start, resource_size(res));
++	ctx->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!ctx->base) {
+ 		dev_err(dev, "failed to map dpu registers\n");
+ 		return -EFAULT;
+diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
+index 8fc26479bb6bce0aa94914f49d0986a7e19326c1..1668bb4166ab0ad3812c5654244544a9caf249a6 100644
+--- a/drivers/gpu/drm/sprd/sprd_dsi.c
++++ b/drivers/gpu/drm/sprd/sprd_dsi.c
+@@ -901,15 +901,8 @@ static int sprd_dsi_context_init(struct sprd_dsi *dsi,
  {
- 	struct platform_device *pdev = to_platform_device(drm->dev);
- 	struct mxsfb_drm_private *mxsfb;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct dsi_context *ctx = &dsi->ctx;
 -	struct resource *res;
- 	int ret;
- 
- 	mxsfb = devm_kzalloc(&pdev->dev, sizeof(*mxsfb), GFP_KERNEL);
-@@ -226,8 +225,7 @@ static int mxsfb_load(struct drm_device *drm,
- 	drm->dev_private = mxsfb;
- 	mxsfb->devdata = devdata;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mxsfb->base = devm_ioremap_resource(drm->dev, res);
-+	mxsfb->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mxsfb->base))
- 		return PTR_ERR(mxsfb->base);
- 
+-	if (!res) {
+-		dev_err(dev, "failed to get I/O resource\n");
+-		return -EINVAL;
+-	}
+-
+-	ctx->base = devm_ioremap(dev, res->start, resource_size(res));
++	ctx->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!ctx->base) {
+ 		drm_err(dsi->drm, "failed to map dsi host registers\n");
+ 		return -ENXIO;
 
 -- 
 2.48.1
