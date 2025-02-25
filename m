@@ -1,192 +1,128 @@
-Return-Path: <linux-kernel+bounces-531155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF204A43CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:05:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA4AA43CF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA3A1885E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:05:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33896168508
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C46B26770B;
-	Tue, 25 Feb 2025 11:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C661267F47;
+	Tue, 25 Feb 2025 11:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XWsxPICX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f8L/Ov7Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b1WXHAbc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kKmat18i"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1UR7qNU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1971C84A4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6630264F9D;
+	Tue, 25 Feb 2025 11:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481379; cv=none; b=SWpW2Yv/FZQdeB52em+0uGyfD3h0B+NXfUhzHw4NP9HMvNe7JwX7VylaWsKLz2FwfEq5+2zuDa5JxqqOod0B8fMlEu0ZJI2XtRp8S9FN/u7aMJDyhKrtc/byTeW2UZp5vjpwwZG1ynrLIxHBzXC6hTHDVYoJ0FsZeedlAxpy5bM=
+	t=1740481485; cv=none; b=lKlUHNW4EGbAOILzzS13NPAM4gOP0H4mHT3w4QOnWklZd8TJhd5N+0TGO8b31L4UtFYG7y+XdtU8WeMxSKD6LAFSUvjQRKt7euZnEqsMrmXJpdQ+98Md9CC1Cp6wUzO4jYTPVFkEIPtAmLddSQ4odEqr2R8dIny1K3C5aYRRaz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481379; c=relaxed/simple;
-	bh=/5oehaQRDfOqwYSy2tdlesHLrXTpR04f0MVfMIs+KO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7mMM/QTke9GGHva4X216GS7ozgSUGITAXxr2J1+Oc0zhybJUImxlXYVLEBgHdmPedQrTdM807EiXL0FfkusOX2IoFqOP+XOwN8KULFj0zSWbSageURnq6YkdPsFclDMo28Cy4rGIWN+jLLIVRdQ+r+Si2f2l+jgDdO0MKhxZHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XWsxPICX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f8L/Ov7Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b1WXHAbc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kKmat18i; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1CDD51F44F;
-	Tue, 25 Feb 2025 11:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740481376; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKA2XWFjIGM3qi+J2PbpE1/yIHpAHqo3iyJqNOFmVXs=;
-	b=XWsxPICXmfGCOTot0Tox7l36Iff0cStxpCyUd1bAgE2bbMyK18xXdnAdRP+nzVy6FGFZjF
-	H+JEv4wK36fEOkNdkDcxkxCfpR4U0GKn+Qg2nYzsZ06kT0TrTEB1YayDoh3NjnwsOkIFZi
-	VA2RH8Rvy8O91gKnrNaeY1KD5QPXHx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740481376;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKA2XWFjIGM3qi+J2PbpE1/yIHpAHqo3iyJqNOFmVXs=;
-	b=f8L/Ov7ZMDqtusNKBZDZA4ZyMlsEN8xWKS+dhGnSAsXeqeLOXnKcaOIP+7sFjV1/ebR7ON
-	umZKGs7KuSnyc4DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b1WXHAbc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kKmat18i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740481375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKA2XWFjIGM3qi+J2PbpE1/yIHpAHqo3iyJqNOFmVXs=;
-	b=b1WXHAbc8wMKduifpMVY6J+bhPRDI0tAYAcD6630blGyijgOSwVtgnNzfc68+sbbWItRrf
-	0i3Tkxdlhi1a0RbVtH2mrkrXP7Dr0iQ7ciOTrcRIDAB861cWpuaER2z3oOMCYvt3pzjucP
-	QYsUgqF+iJ1bKJs8e2rhD9ujgHqAb44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740481375;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aKA2XWFjIGM3qi+J2PbpE1/yIHpAHqo3iyJqNOFmVXs=;
-	b=kKmat18ilnQUMPitIgawMhqx8kEdNCON91ZoYblNBd5b14C6uhI6CGj5pCzZrKclsbo9t+
-	IpjPdcYkDJYtP6CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CCBD13332;
-	Tue, 25 Feb 2025 11:02:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yHWvAl+jvWc6NAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 25 Feb 2025 11:02:55 +0000
-Message-ID: <e6b42857-6be5-48c3-a25e-f44fef2225d4@suse.cz>
-Date: Tue, 25 Feb 2025 12:02:54 +0100
+	s=arc-20240116; t=1740481485; c=relaxed/simple;
+	bh=yG++BUr1pNW36WEJ6xY32Zg5CTCOUnmylM4FpVv0kMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B24Qxb+deaOrk5zTL29EbeGtmBzxCCtDkWDx8uhjsQwX2eJSpjt5m1ZIZ//JC3vJMPyUvETrxv/XiIlJd3kYY6EZP7So0jZgTrK0VKxkpdd2/89Ia7HACWcaBAltYrw4YQ2d2F4dxp7jclpsD9+RaaxsDDFLTsxjeGYERfWWvY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1UR7qNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA153C4CEDD;
+	Tue, 25 Feb 2025 11:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740481484;
+	bh=yG++BUr1pNW36WEJ6xY32Zg5CTCOUnmylM4FpVv0kMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A1UR7qNUbDGRyiD1BhKsH5VWnThtZcFC0d27b9VJeHmkHZxNCdC6Ckq8KDmabuyhu
+	 L5g08E7PlSDrM54pDhgvaMHfZ09mqWSNccGhPVlc9rG+G/Pzxtbn4U0v4PjUpe8Ppj
+	 gF+fG5gJ5z3rnDfLDakSHIpRa9mnNEkPEQP9c5XPXefnzdLkCzk2k+0hN5ht3Ps6ym
+	 E5Z6gu8sEAqI6Xfpe/EdrXaSR14kPDAYqZAWoFcVIhFfC25WFfRJQpfuAH5JueBd98
+	 ayRBqiZirbr4/LPy8PqGdeSdPtSxZVfcrjBNBto088z/zUVFJm5w8ANmqTbw/CyUD8
+	 lZJP6AlKfBcqA==
+Date: Tue, 25 Feb 2025 12:04:35 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, paulmck@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	rcu@vger.kernel.org
+Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
+Message-ID: <Z72jw3TYJHm7N242@pollux>
+References: <20241219170425.12036-1-dakr@kernel.org>
+ <20241219170425.12036-8-dakr@kernel.org>
+ <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
+ <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
+ <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mm: page_alloc: group fallback functions together
-Content-Language: en-US
-To: Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Brendan Jackman <jackmanb@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250225001023.1494422-1-hannes@cmpxchg.org>
- <20250225001023.1494422-4-hannes@cmpxchg.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250225001023.1494422-4-hannes@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 1CDD51F44F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,cmpxchg.org:email];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
 
-On 2/25/25 01:08, Johannes Weiner wrote:
-> The way the fallback rules are spread out makes them hard to
-> follow. Move the functions next to each other at least.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+On Tue, Feb 25, 2025 at 04:50:05PM +1100, Alistair Popple wrote:
+> Kind of, but given the current state of build_assert's and the impossiblity of
+> debugging them should we avoid adding them until they can be fixed?
 
-Vlastimil Babka <vbabka@suse.cz>
+If you build the module as built-in the linker gives you some more hints, but
+I agree it's still not great.
 
+I think build_assert() is not widely used yet and, until the situation improves,
+we could also keep a list of common pitfalls if that helps?
+
+> Unless the code absolutely cannot compile without them I think it would be
+> better to turn them into runtime errors that can at least hint at what might
+> have gone wrong. For example I think a run-time check would have been much more
+> appropriate and easy to debug here, rather than having to bisect my changes.
+
+No, especially for I/O the whole purpose of the non-try APIs is to ensure that
+boundary checks happen at compile time.
+
+> I was hoping I could suggest CONFIG_RUST_BUILD_ASSERT_ALLOW be made default yes,
+> but testing with that also didn't yeild great results - it creates a backtrace
+> but that doesn't seem to point anywhere terribly close to where the bad access
+> was, I'm guessing maybe due to inlining and other optimisations - or is
+> decode_stacktrace.sh not the right tool for this job?
+
+I was about to suggest CONFIG_RUST_BUILD_ASSERT_ALLOW=y to you, since this will
+make the kernel panic when hitting a build_assert().
+
+I gave this a quick try with [1] in qemu and it lead to the following hint,
+right before the oops:
+
+[    0.957932] rust_kernel: panicked at /home/danilo/projects/linux/nova/nova-next/rust/kernel/io.rs:216:9:
+
+Seeing this immediately tells me that I'm trying to do out of bound I/O accesses
+in my driver, which indeed doesn't tell me the exact line (in case things are
+inlined too much to gather it from the backtrace of the oops), but it should be
+good enough, no?
+
+[1]
+
+diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
+index 1fb6e44f3395..2ff3af11d711 100644
+--- a/samples/rust/rust_driver_pci.rs
++++ b/samples/rust/rust_driver_pci.rs
+@@ -13,7 +13,7 @@ impl Regs {
+     const OFFSET: usize = 0x4;
+     const DATA: usize = 0x8;
+     const COUNT: usize = 0xC;
+-    const END: usize = 0x10;
++    const END: usize = 0x2;
+ }
+
+ type Bar0 = pci::Bar<{ Regs::END }>;
 
