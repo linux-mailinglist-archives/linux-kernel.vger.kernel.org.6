@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-532227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62FBA44A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:29:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5227A44AAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F793424EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1149E3A62F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E792036FD;
-	Tue, 25 Feb 2025 18:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71391A315D;
+	Tue, 25 Feb 2025 18:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e58QKnME"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKcrpguM"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DED51F4177;
-	Tue, 25 Feb 2025 18:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51BB19AA63;
+	Tue, 25 Feb 2025 18:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507942; cv=none; b=jB6945nNW70iIHEPtNSzmYGFuxHPkb8Opm4w6hFbL70EP2RYNUZbS7xP3wAcNiUI8mUs1oTiUUAnVBy9RRNxj01lf43Kuz3XQBnANRSK71ghG5xT4WOdfCF6BxDSHRvzBjlA4ahUVHTnQboDoe/37HMXnIqAzIg4+I9wKnEWHA0=
+	t=1740508004; cv=none; b=DBBvUUpnqyPOb5l1yBx8q5xqIJDjfrYf/FIPPR7jYUauf6beABzdO0OPxnR3L9+LvgX1aHoAoA0DYeJ+jWek2EwROCCfN3woHlrvDmJHEosBcWWQ4KFmvZUZ3gpu+zZTBYZ9CXSXA0LZucj9HC8H9254Y2x9VN4atnDUIuyuJ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507942; c=relaxed/simple;
-	bh=FI4npKmJzzOhR1wCpGxwR49Q+jIScuTUHT5YRTQ/ivI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XIpQTiHUWdV19gytdsVswnKNHahSmS9U4+VrPaZIcfVI+zXLXV+03XC4dks9g7LLAOOJbh7DCQ+qQ4FO04O2pRy++bfPi7dyDPiFtLe7+8knNHd+ktpiA8mpqY1bR/UkhHBAeFGHw684lOdlYsOdjCh8vgpAFg3STeb3wboK0yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e58QKnME; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0F5C4CEDD;
-	Tue, 25 Feb 2025 18:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740507941;
-	bh=FI4npKmJzzOhR1wCpGxwR49Q+jIScuTUHT5YRTQ/ivI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=e58QKnMEpZZKN6nblA3HDiCdV03Ctn0C1iZ2O0Y5LB1nSJXWlGMuir4BBQUVf6FVn
-	 OY1bVsgPKOKeWMpwnrDqvmyxFeoKN0Wn9nKn1FqLshhZON087DmmRAC+GeCNmhEpLW
-	 AuySps3tktYI77AAVmXF/VUcWkbixdSWPsX7l5m2mrEglugfGAbFZMDg029umBF1ZJ
-	 DjotcfDjD1d0BjkATvgF+JVm3RNVYN9UV93cIhjPa/BX0doaCwYy3saY/xrvKpqU01
-	 KNpjgg4h1uHrH0OiBVokBwSRCb0uonivoIdKGyxJ1UILiANScz5ZTDepKGMDoNdbrs
-	 N+4nVCucGg6Ng==
-Date: Tue, 25 Feb 2025 12:25:40 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740508004; c=relaxed/simple;
+	bh=Cu9wG7ZBz95WikpGH7F6FGb1NfH0hS44wFnRTG8v2IQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=ISe8RbGzlx5kzmsccG6KrwLJDjOzLpRk/SZTNGBzik3/WrqMyNM5swz8yJ/LmaPpzsB25SnmZFjMIZyJp1veaKVTahtjlRp2OdgCzj9S+3SGM/NmYYRvH29GJgekFMcQW43fvotf1ZfVcPHAyMfHrR/w3SHirePr9y1SqfqZpvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKcrpguM; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c0893f9aa6so536213585a.1;
+        Tue, 25 Feb 2025 10:26:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740508001; x=1741112801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5gDZQ9BD+kFiQmfLAnOLzXMn4KMvNYmUm2rUCj72UEY=;
+        b=GKcrpguMMD+310ykZ5Ww4kbbHZvJ/KrMgKgQERf2BtgG9x4l/14NQS8oHH9ZJ90LjH
+         rEhGHnj71Jorc1tzjOTAOEx5x14JZOyHCUdnBC8ByBn7QZD4Q9Z1Y88s9ZgQQagz4GHC
+         2JXVLZJqC7+kdLky2Wh3B2ng9/ypElCUFtOIzlmVp8C4iUADdeLqFnEIJaqJux/xYopj
+         ENJ90ZQ00jK981a4llc6puUXKHZATjA8d2D33GmmkpbfyTnGnc9UNgdPZVcHxMFZ7a2y
+         80s+mVt0acCvXHC+fGUob8p5kOhFjgjenyTxJZvcAerLERW7qd1tD30/mBS4T3cXmQAF
+         u8kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740508001; x=1741112801;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5gDZQ9BD+kFiQmfLAnOLzXMn4KMvNYmUm2rUCj72UEY=;
+        b=J28JBqDykbLBbzjBxNaQMePJcMBbX173fZU+Ku9XGFjKQ4Ybc0PH3WgOFGMH7QN48+
+         BKAaqbKGjzEKOu/+z54Fd9CFBtLewpNHNBRvLLQxpEPZTzol86/hE3tFKvF/I7SwDnzk
+         MaHIsgmJDv/WbpIe3Jkpolui1xwPcSKnRADxyoFK9W3rGr/giaspU5/l5Z5wPLX7X8Ky
+         26MudEkbpuAK2aGRc5VVE6z1WZWcTJVd5iD94Y1TAdrmlaU6MflPbVwtIx4UxCNjLC8/
+         WWEctd23J1pn+gNkcMGntRfOzxFgFKfbmXJqNA/GASajlUlaEFMphCmtvyADJZ87svKb
+         FSvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSOaW/mrECTAPLR0touTQz4mGBh0hDzgXzGA4PA2nIMDKMxXIbqqipp6xDaEwwYVZrU42tWiCfCWE4jbXR@vger.kernel.org, AJvYcCUksNmQLBhuyoHG40bADrHPFdieD4VaiX61VEuOu8Ww6IHyOGFXx/XcDhQknmBRJPwbJRmrYKC1@vger.kernel.org, AJvYcCUtbNNuyybmNuxoGgbsH2E1PH6WJopeOx2P2tLRSYvBrfOGG+Yzw3uV6y2cjuRx4a5bR/M=@vger.kernel.org, AJvYcCXSwUC5NXf30qzTTbX9Jy6rTp0LvgUCw1sLpQbRYpOZYlKhd2MvUhZHBQt+yGpghHA4CArv6ZJZGrswVj7Sj5oI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyicsegMFSxlhRctqSJSV3bCk6ZwgqTc840zz0T6SaQ+YezlbJi
+	tXdgTBIoaZ99D7JM/Vg9QTULvD22FrWfFS9tg7JXRMM9vjyWnt/n
+X-Gm-Gg: ASbGncs8hyZME7reeoJLunRAtyz3ZeXSm889fRpDqqVSKz6yBhy1xkBhQilaKtHQsFB
+	KvPMlTlYy9ci2eSRPzl6WZhBk7BVl6yUWdF1dMXgPeitJ5vTLaACdtFxhpQxtAJ213jx7mZ+74Q
+	fS5j7tnBOBAkGJStEk2oeNH2tSoTt9IWJIxFF/Jt+xtZMaJGP8C8MMnIqE4/p4zqXmhCduuThfa
+	rjWopIefnuwlm+k3oDArsMrFyN/dBa3w/iwbHhZN5DFJREqHx+2VDJlB6ix7Pu88MZOCQj9Lw3H
+	BpVa4MnD/E9sTDkDuJJXJFQxvZs6lbQBOvhw/2iiCiUyNzsDuLNQ0WNy0niNvwBNsoNsNzaSuEr
+	5jF0=
+X-Google-Smtp-Source: AGHT+IG2L9+/QnRBY30Z5GQpQaOCH6qq9WKM/KL20ZK9jkyMwUHw3tKODUV92fSWRpapIs1d3AUtRg==
+X-Received: by 2002:a05:620a:4552:b0:7c0:a46d:fa87 with SMTP id af79cd13be357-7c0cf8e624bmr2664114485a.27.1740508001598;
+        Tue, 25 Feb 2025 10:26:41 -0800 (PST)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b06dc0esm12237956d6.22.2025.02.25.10.26.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 10:26:40 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:26:40 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com, 
+ andrew+netdev@lunn.ch, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ andrii@kernel.org, 
+ eddyz87@gmail.com, 
+ mykolal@fb.com, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ martin.lau@linux.dev, 
+ song@kernel.org, 
+ yonghong.song@linux.dev, 
+ john.fastabend@gmail.com, 
+ kpsingh@kernel.org, 
+ sdf@fomichev.me, 
+ haoluo@google.com, 
+ jolsa@kernel.org, 
+ shuah@kernel.org, 
+ hawk@kernel.org, 
+ marcus.wichelmann@hetzner-cloud.de
+Message-ID: <67be0b60a6b36_25ccfc294f5@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250224152909.3911544-3-marcus.wichelmann@hetzner-cloud.de>
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250224152909.3911544-3-marcus.wichelmann@hetzner-cloud.de>
+Subject: Re: [PATCH bpf-next v3 2/6] net: tun: enable transfer of XDP metadata
+ to skb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: lee@kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-leds@vger.kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, pavel@kernel.org
-To: Nam Tran <trannamatk@gmail.com>
-In-Reply-To: <20250225170601.21334-2-trannamatk@gmail.com>
-References: <20250225170601.21334-1-trannamatk@gmail.com>
- <20250225170601.21334-2-trannamatk@gmail.com>
-Message-Id: <174050793997.2798870.5121158567249735734.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add LP5812 LED driver
- bindings
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 26 Feb 2025 00:06:00 +0700, Nam Tran wrote:
-> This documentation ensures proper integration of the LP5812
-> in Device Tree-based systems.
+Marcus Wichelmann wrote:
+> When the XDP metadata area was used, it is expected that the same
+> metadata can also be accessed from TC, as can be read in the description
+> of the bpf_xdp_adjust_meta helper function. In the tun driver, this was
+> not yet implemented.
 > 
-> Signed-off-by: Nam Tran <trannamatk@gmail.com>
-> ---
->  .../devicetree/bindings/leds/ti,lp5812.yaml   | 34 +++++++++++++++++++
->  MAINTAINERS                                   |  6 ++++
->  2 files changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+> To make this work, the skb that is being built on XDP_PASS should know
+> of the current size of the metadata area. This is ensured by adding
+> calls to skb_metadata_set. For the tun_xdp_one code path, an additional
+> check is necessary to handle the case where the externally initialized
+> xdp_buff has no metadata support (xdp->data_meta == xdp->data + 1).
 > 
+> More information about this feature can be found in the commit message
+> of commit de8f3a83b0a0 ("bpf: add meta pointer for direct access").
+> 
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: [error] syntax error: expected '<document start>', but found '<block mapping start>' (syntax)
-./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:6:13: [error] empty value in block mapping (empty-values)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/ti,lp5812.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: expected '<document start>', but found ('<block mapping start>',)
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/leds/ti,lp5812.example.dts'
-Documentation/devicetree/bindings/leds/ti,lp5812.yaml:4:1: expected '<document start>', but found ('<block mapping start>',)
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/leds/ti,lp5812.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250225170601.21334-2-trannamatk@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
