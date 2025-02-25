@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-532112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F49CA448DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:50:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD007A448BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05CA882EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1191888323
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6105419E804;
-	Tue, 25 Feb 2025 17:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C37197558;
+	Tue, 25 Feb 2025 17:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lskBRkid"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWlbLCpn"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0712F19CC0C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973D2745E;
+	Tue, 25 Feb 2025 17:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505320; cv=none; b=oKbIci7Dj0VdxxiXeqCgYPIUnK3CaAMnRpb9kqFZn7wSktJqBYWlNpjWBmRyz4YXeoKL7C6ek9M4FnThZJdZ/HL9TL7n9mXxfkq1ThDxzV+PQJpBYjjEF6bb4FxGBzHzE4bcLU1zvqUoggun0+52UbPP46zGPuoi4FFXcWaIHjA=
+	t=1740505407; cv=none; b=BEiUZqjqYq7OOzSYWBHITzWmvBjMloZMhFkS2tWUVM72qrtkgKLKLnpq0PJwGXrYqx6F/1flzzj+1eMEqpl67NOmf9//otxsgYz+stp/r7/lWMSUA8r7+Ku7+Rvbjfwpib2v+yBb6vkpVA1YgjF+Nhq8VzcTdUGMW1QguTMSY/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505320; c=relaxed/simple;
-	bh=70HK7HBG2n7VP/Z60nAkf4u8jZifgdcTpHsjW7quBFg=;
+	s=arc-20240116; t=1740505407; c=relaxed/simple;
+	bh=8SMUcbvWrgFIo6mzw0rWkV5ZNdmXUJdhiqyteRrtR1Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOD3h6kfEpW7bNOQSw2K6GCbuXWtwfbEOo0hhC9kqA9FE1WjZaMz05aGURndulcUDDIO4fGLXC3yU5EvEF4ztPhVfcrHhwFfKNFm3QekU6RqFK52PtNKGXd/7Oni6XYG9HtvfQfu/oUHj/4ZcpMB7PShIzgKFcbaisL7Z3C0IkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lskBRkid; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30930b0b420so51330661fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:41:58 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3NtKALKS3qAE9ZQeKVA5I5TQh0UDZ+XNxS1JC0o71M8A8F6Sk06WscuY+KGZTqCDmckaEnAPjTE66kCGIDpcVke3YNRzQxQn7PlGajUix9ncc9bIm3JHdft5TL3fVnOe0eHDGzB1/S5TSgujEnWzkKdQBn9pw6t8V+kwmnPAxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWlbLCpn; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22104c4de96so104095325ad.3;
+        Tue, 25 Feb 2025 09:43:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740505317; x=1741110117; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740505405; x=1741110205; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hGyWaQIzn0tRIGg7LsrZt14gQY4q2FyEI8TrfL/lzng=;
-        b=lskBRkidox4vBKQO/WemNZw4InkdhTbjvYSuTviij8WzW0Kep96MrQfQNcpBx5oMx/
-         dhXo1LHQG8oFk60VZk04Twh/UlXy7E8vozcb0GRmsbLbF5fvgroPYBHK/SvDxxNma2nW
-         RawP8cBhRu19xrv5iCdxIeCpVHexItJ5Amqozg+eICFbhl4UMqrGJkzt+imYp1kwgkJS
-         AYQD/I7mBbl3HhVlMlb/x5GNr2ibJ5F/XnyfqE2PEjbP2KH4/Iz1qmrOaM2zuQ93vzXl
-         O149qSw7jzFNzzeW8Ef1tgcL/PyJLnIlDtkCW1zfiWuWAB4IlYzzMG8VXcld2dSpgqG1
-         Fi5Q==
+        bh=T3r5kbbTS1bAR/hyaPIYrOmPixuDOxwP0LFuexuXlwc=;
+        b=dWlbLCpnmrfbZREv51tbf5q0TqHyTC6fO6LnEdoBW23Jp6wWuP6ADA5dbKtlpt/WYK
+         QMQaM360cjUx/t/EVOFOo1alV4h85yj/lXXtNI38y/99TBW4ZbAL73hGIcaI9reopVIF
+         FudrXC1bTJrq91G2CcyUCXAIZN6ZHpyKLC6iCZX5u5saL5h3Wa6KSkJEZQzgGs3sIyv5
+         3pUsHitOYhWS8oTiwt538dXSMLINz1t2I/+k+2Klg+VkvctPcNfUl6WyR896KagFDTmD
+         DCo7XkVKS2Ulk0YbVyIqYXqEYSKEpjVfmslUPr4igT9XAKX1zFWK8G+PiFnFBDhb534M
+         xctQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740505317; x=1741110117;
+        d=1e100.net; s=20230601; t=1740505405; x=1741110205;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hGyWaQIzn0tRIGg7LsrZt14gQY4q2FyEI8TrfL/lzng=;
-        b=iPlcj9OZBI+xlkJccbJJU9PbmIODmTyySyX1ULXgbSjfb6gXJ9SOk4sId93Y2cqTYY
-         mN8PDAy0F/ySk6bBTr+OHAOaZ/IKEvr7SKItUgUPa/1BJtvGrllaif0mWsM1ucxAGb3U
-         OPRyUYG798TBQfFcd61DfhVDYiQFQOlXKamvCmyEDgiSiGT/CB/m470HRxHRvbheZD1W
-         5iSNMTHpYN7TLh6B8BYuLfoiymOUHYujpKcmeUwi70qbwpAdrP9Dn2DR3AKZKntHcNeR
-         nPPKs42cdU7TjYOlCydVOLnlL7shGFYPki41sLUo08u8PS8zVu1bLiWPYr7tThHCCBIo
-         eehQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1BjZf/AcUC4Ad1WnnDZ8lX+HB2/BTsZr1XuegCQCpd7P6VSqV12bEQbgCLeZFIEpZjWVvvJO6pSkJIJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWH5H5iXUjwClEn3JtY80xvCYZakb0QofN1i7qcuy94CDNFgbN
-	LGmw52hIHXGZhCD11YPakw0v0d1KbpCIygCxRiSssyfL6EPOBvhzRIXaFSHYnBo=
-X-Gm-Gg: ASbGncvnnno89593/VLZq/2tckh7Fqk0vEWH69ECXQpOcvLBGr/d8O/ezi+CDaJ4i/0
-	/MbmXw3Hn1NQPKp5knm54+2++TLLHzNen4GIqNyajLEdsIo85McrdSeUuGHlT/at3VNgkD4gjC7
-	tLMEJp+1CgjrKFx2gSN+JAgUCDrg01WOTMEVrGHYTyc077GOLvo+rNKHL3EAOOy/YuFw2ovefB8
-	fisd5Q+0GGhlOZQusZpdtOFEcwYAhIsht3ZW75z/KQAB3d9jMTOKptHfi6e3m9FilkT5ZLlI6xn
-	BQpRFFiQ/mv0yksknPoQnz5Lo7zo031KATEO8lDVX4Q7fNvDus2gYK5MqIixTahOcA4XLQQozp4
-	xfh/3HA==
-X-Google-Smtp-Source: AGHT+IHEne9NXWRmeaKHFaxNKBm56TZDZJt9JjVGVe+iGN7IpuMXMithW5dQI52NU795ttOePGE2zg==
-X-Received: by 2002:a2e:9f47:0:b0:30a:45af:c18d with SMTP id 38308e7fff4ca-30b792d7e3cmr4328091fa.25.1740505317050;
-        Tue, 25 Feb 2025 09:41:57 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a81ac3151sm2797611fa.68.2025.02.25.09.41.55
+        bh=T3r5kbbTS1bAR/hyaPIYrOmPixuDOxwP0LFuexuXlwc=;
+        b=HOox70K+1TYO8tEOGgHtYDUKz6yqA0x5dojUXvtHkslejc6tcvFiaDbdHcgEAOJx8J
+         4vwpDOzLrIIliVWfHG6VpztExw7bJ5ph/IcP0ZaUgEd+laqp2xWMulvDYdBpMlgRGLyE
+         CR9Ykxk18jcqrTNPm8EfkOdpjzlyz0BGPzmG5R1+Y41mJctsIdOpImq6YveWPP3BjXSE
+         kdW3akfOnnwI6cPn7A6vf+CFjSpZ/UpJ9l6K5jAkkXKqEadY6yV2vKqKSPcOyYf53jMW
+         wSEASeKGQ94QeIOQL2q7cxUuOwqr8vtyUuH7sx8MebWH4v7LzzCJhxk9+MOQIz1ysIsH
+         aSbw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5b7eIWnT6FbbXkUiaJd3ezNFKJx+QYMHGJvkFbKuxzxuP3ZBCgl2Q5koXy/kwPDSZKOJDwCp+TPFHnPA=@vger.kernel.org, AJvYcCUly70ztJiAspyKmxITBjtPvwt35opn8zciXEzZR2hlJ+DiMzI2kN28tyggyJQ9GBeyMxvIh+ll2TmJ@vger.kernel.org, AJvYcCWHekSLw5G59HivYSpnyBwrRA4gMfCCiCTkO/oiypdAkne8bA/uiCOgEQSP5eWyGdPB66a30b9zNl7Gzl7V@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwZKoP/6kZDvzUOLtTZzE4+9xtX/eVDFHKHh51mE+7wElNCiOE
+	bpD2Rb18dTnHFY3l+IjOI6c4z+UM4BLmUFB469bjD+FsMPpLMR6i
+X-Gm-Gg: ASbGncue9N1fGhWsMQlaNQhGbiCNph2sa0Fl6THOrYRXGtQZySjaamxUTVxnFGi9ZRM
+	A/FpSR29HHgj99PRSWggBTv0HJKJdOEMbmVh3ff4ee0GEhVUfm0g2v7TWJWThx/ouGMD9s2VNUF
+	SmzquQvKbnnJyCJdk3ZdXK1ku/gMDSvGmedrXbWu8VPqUTdi3OsTWFbwoIPd5+AI9f0XVYVw85G
+	GclrAly7ChOMLZpWlEjBlEyGDd8ldtu0ghmR+tomaqBlBxaKU/75lTl9xw+Un37/SrjJidYSpmP
+	JsqZcjyz97kZ2eSsoH4mqXc5h18=
+X-Google-Smtp-Source: AGHT+IFWMKEcImNMeSU1SQDiPwNLY2ovr5xPyebh6qbVh87UAvoQNd5v8CnWMDD4g74lVRsC5Ykwzg==
+X-Received: by 2002:a17:902:e885:b0:21c:fb6:7c3c with SMTP id d9443c01a7336-22307b4c04cmr65827695ad.17.1740505404974;
+        Tue, 25 Feb 2025 09:43:24 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:987e:29fc:176a:2ed5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f9ea7sm1860430b3a.65.2025.02.25.09.43.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:41:55 -0800 (PST)
-Date: Tue, 25 Feb 2025 19:41:53 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, sean@poorly.run, marijn.suijten@somainline.org, 
-	andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org, 
-	konradybcio@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com, 
-	quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
-Subject: Re: [PATCH 07/11] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI to
- DP bridge nodes
-Message-ID: <2jsornaajavpg6srqzjuwvzt4usvmzmwqdbzw2bydgxisfsrdy@csujibqx2zi3>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-8-quic_amakhija@quicinc.com>
+        Tue, 25 Feb 2025 09:43:24 -0800 (PST)
+Date: Tue, 25 Feb 2025 09:43:21 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Markus Burri <markus.burri@mt.com>
+Cc: Manuel Traut <manuel.traut@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] dt-bindings: input: matrix_keypad - add missing
+ property
+Message-ID: <Z74BOePro-J4hSTD@google.com>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-5-markus.burri@mt.com>
+ <Z7YJ2ENZ04Nktnwf@mt.com>
+ <Z71nMdTvyIg5a85Y@google.com>
+ <Z72YZwBuzW2D9q0b@Debian-VM-Markus.debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,20 +95,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225121824.3869719-8-quic_amakhija@quicinc.com>
+In-Reply-To: <Z72YZwBuzW2D9q0b@Debian-VM-Markus.debian>
 
-On Tue, Feb 25, 2025 at 05:48:20PM +0530, Ayushi Makhija wrote:
-> Add anx7625 DSI to DP bridge device nodes.
+On Tue, Feb 25, 2025 at 11:16:07AM +0100, Markus Burri wrote:
+> On Mon, Feb 24, 2025 at 10:46:09PM -0800, Dmitry Torokhov wrote:
+> > On Wed, Feb 19, 2025 at 05:42:00PM +0100, Manuel Traut wrote:
+> > > On Fri, Jan 10, 2025 at 06:49:03AM +0100, Markus Burri wrote:
+> > > > The property is implemented in the driver but not described in dt-bindings.
+> > > > Add missing property 'gpio-activelow' to DT schema.
+> > > > 
+> > > > Signed-off-by: Markus Burri <markus.burri@mt.com>
+> > > 
+> > > Reviewed-by: Manuel Traut <manuel.traut@mt.com>
+> > > 
+> > > > ---
+> > > >  .../devicetree/bindings/input/gpio-matrix-keypad.yaml       | 6 ++++++
+> > > >  1 file changed, 6 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > > index 0f348b9..9c91224 100644
+> > > > --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > > +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > > > @@ -40,6 +40,12 @@ properties:
+> > > >      type: boolean
+> > > >      description: Do not enable autorepeat feature.
+> > > >  
+> > > > +  gpio-activelow:
+> > > > +    type: boolean
+> > > > +    deprecated: true
+> > > > +    description:
+> > > > +      The GPIOs are low active (deprecated).
+> > > > +      Use the GPIO-flags in gpio controller instead of this property.
+> > 
+> > No, we unfortunately can not rely on GPIO-flags. This is not how driver
+> > works: current driver behavior is to force GPIOs as active high if the
+> > property is missing and ignore polarity specified in GPIO property.
 > 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 136 ++++++++++++++++++++-
->  1 file changed, 135 insertions(+), 1 deletion(-)
-> 
+> So you mean this property is still valid?
+> Current implementation toggle the GPIO flags to low active if the property and the GPIO flags are different.
+> So in case of missing property (false) the settings from GPIO flags will be used.
+> In case of gpio-activelow (true) GPIO flags are set to low active.
 
-Missing dp-connector devices. Please add them together with the bridges.
+The driver does:
+
+	active_low = device_property_read_bool(&pdev->dev, "gpio-activelow");
+
+	...
+
+		if (active_low ^ gpiod_is_active_low(keypad->col_gpios[i]))
+			gpiod_toggle_active_low(keypad->col_gpios[i]);
+
+f the property is present active_low is true. If it is absent active_low
+is false. And the code below, if GPIO polarity setting from DT disagree
+with active_low value it will flip GPIO polarity.
+
+You probably think that gpiod_toggle_active_low() sets line as active
+low, when in fact it flips to opposite setting:
+
+void gpiod_toggle_active_low(struct gpio_desc *desc)
+{
+	VALIDATE_DESC_VOID(desc);
+	change_bit(FLAG_ACTIVE_LOW, &desc->flags);
+
+	^^^ flip, not set or clear.
+
+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+}
+
+> 
+> So I will remove the deprecated flag and change the description to:
+> "Force GPIO flags to active low. Use GPIO flags if property is missing."
+> OK?
+
+No. It should say:
+
+"Force GPIO polarity to active low. In the absence of this property
+GPIOs are treated as active high."
+
+Thanks.
 
 -- 
-With best wishes
 Dmitry
 
