@@ -1,39 +1,40 @@
-Return-Path: <linux-kernel+bounces-532210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA71A44A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBDFA44A25
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A799F188D5F8
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9BD189B378
 	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC3E1A8F95;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBC81A8F79;
 	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114619D886;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10F71993B2;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507615; cv=none; b=BDnOJA55I5JGLVIeEm7Vpp+LFjElvoHhBiiifcwBfz+QuMJ2d1atKpQYncnOXMIBKccyEL4DV9g5SKpG5KK+Gj29j1XDllmih0ClM6WG3u8ooCVNKyrDwCSz/CI5j1f0Fjxhev+DqtGg7ruyvgZ2YarigRtuVUwz1Cld5WIKSRE=
+	t=1740507615; cv=none; b=W+vnFNLVzN1XCyJDHf1APbbYrrdLI6apW/l4SxTl5xfhpn4p+bxJMOqrpAM9HguASuJrJyP0LLLlQ4z1l08sES/jSYiQ6sRxUxXKg4zZ+gBmUkv+YdFXg8YjWlFYdqUP9zGx5vjgLXLzoJCoqG/tIE51M37cy98kad1g7nGc5nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740507615; c=relaxed/simple;
-	bh=2YKOghZ86hQATb80S+0y70FRgLQaXaEINmhPfDP613Q=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=TuWvOBY2VsGG5GmBtXRwBIgqAKaSodOWqDuKphpRGeEbfiXhBQnGb+3Sa2csRqBwJaMkEmNyKFLpkduPyw7CRCqK2eAhst5KstvNG9ebloqDt9u4T2v1LaZtSGFeAcozJJWOmAx5sn57AfCKJIvfO46PL+zC3XmPSVePp5a1/YQ=
+	bh=mawHT+XCFiZ2E8sUhLd3IyCVPgu+SmxgXKOIoYUw0VE=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=DuOFF5s6E8wgFk0gHN9dqYrWrKjJOJ9YtJu9P0NK9/UD+LIwcGvSftrXHh6XxUEXoahyaqhKVHEzQBciqKLbJCVLl0LIyPFpayQaKbEdJ5C8LiqoOdkpAhUlZvq/8dip2DZHz2/xv98Oame2o/S+a1jJ7OlTnlKQmZOAAnv1ZWw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6936EC4CEE2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63DA3C4CEDD;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tmzY6-000000095XP-15hU;
+	id 1tmzY6-000000095Xv-1qYA;
 	Tue, 25 Feb 2025 13:20:54 -0500
-Message-ID: <20250225182004.473875894@goodmis.org>
+Message-ID: <20250225182054.290128736@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 25 Feb 2025 13:20:04 -0500
+Date: Tue, 25 Feb 2025 13:20:05 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -48,53 +49,61 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Nathan Chancellor <nathan@kernel.org>,
  "Arnd Bergmann" <arnd@arndb.de>,
  Mark Brown <broonie@kernel.org>
-Subject: [PATCH 0/4] scripts/sorttable: ftrace: Fix some bugs with sorttable and ARM 64
+Subject: [PATCH 1/4] ftrace: Test mcount_loc addr before calling ftrace_call_addr()
+References: <20250225182004.473875894@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+From: Steven Rostedt <rostedt@goodmis.org>
+
+The addresses in the mcount_loc can be zeroed and then moved by KASLR
+making them invalid addresses. ftrace_call_addr() for ARM 64 expects a
+valid address to kernel text. If the addr read from the mcount_loc section
+is invalid, it must not call ftrace_call_addr(). Move the addr check
+before calling ftrace_call_addr() in ftrace_process_locs().
+
+Fixes: ef378c3b8233 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Reported-by: "Arnd Bergmann" <arnd@arndb.de>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+Closes: https://lore.kernel.org/all/20250225025631.GA271248@ax162/
+Closes: https://lore.kernel.org/all/91523154-072b-437b-bbdc-0b70e9783fd0@app.fastmail.com/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ftrace.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 27c8def2139d..183f72cf15ed 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7063,7 +7063,9 @@ static int ftrace_process_locs(struct module *mod,
+ 	pg = start_pg;
+ 	while (p < end) {
+ 		unsigned long end_offset;
+-		addr = ftrace_call_adjust(*p++);
++
++		addr = *p++;
++
+ 		/*
+ 		 * Some architecture linkers will pad between
+ 		 * the different mcount_loc sections of different
+@@ -7075,6 +7077,8 @@ static int ftrace_process_locs(struct module *mod,
+ 			continue;
+ 		}
+ 
++		addr = ftrace_call_adjust(addr);
++
+ 		end_offset = (pg->index+1) * sizeof(pg->records[0]);
+ 		if (end_offset > PAGE_SIZE << pg->order) {
+ 			/* We should have allocated enough */
+-- 
+2.47.2
 
 
-A few bugs with ARM 64 has been reported with the removal of the unused
-weak functions code.
-
-One was that kaslr_offset() may not be defined by all architectures and
-it's reference would cause the build to fail. This was fixed by removing
-the kaslr_offset() to check valid mcount_loc addresses and use the
-is_kernel_text() instead.
-
-Another was that clang doesn't do the trick of storing the mcount_loc
-addresses in the Elf_Rela sections like gcc does. Clang does it like
-other achitectures do. To handle this, the Elf_Rela is first used
-but no functions were found there, it then falls back to the same
-code that all the other architectures use.
-
-When reading the mcount_loc and creating the ftrace descriptors, the
-architecture specific function ftrace_call_addr() is called on the
-address from the mcount_loc. But because the unused weak functions were
-zeroed out, but KASLR can still modify them, it can make the address
-invalid. The ftrace_call_addr() from ARM 64 will crash if the address
-passed in is invalid. Have the valid tests done before calling that
-function.
-
-On bug that was found while debugging this but was not reported was that
-the test against the nm output to determine if a function is an unused
-weak function or not was triggering false postives for all functions.
-That's because the address in mcount_loc for ARM 64 is just before
-the function entry. The check against nm would see if the address was
-within the function text, but 8 bytes before is not in the function text
-and this would cause all the functions to be considered unused weak
-functions and there would be no function left to trace.
-
-Steven Rostedt (4):
-      ftrace: Test mcount_loc addr before calling ftrace_call_addr()
-      ftrace: Check against is_kernel_text() instead of kaslr_offset()
-      scripts/sorttable: Use normal sort if there's no relocs in the mcount section
-      scripts/sorttable: Allow matches to functions before function entry
-
-----
- kernel/trace/ftrace.c | 23 +++++++++++++++++------
- scripts/sorttable.c   | 16 +++++++++++++---
- 2 files changed, 30 insertions(+), 9 deletions(-)
 
