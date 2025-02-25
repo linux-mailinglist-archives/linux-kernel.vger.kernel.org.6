@@ -1,152 +1,156 @@
-Return-Path: <linux-kernel+bounces-531546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DCDA441C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95325A441C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F03218886D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39444442BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA09F26A09F;
-	Tue, 25 Feb 2025 14:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433D726B097;
+	Tue, 25 Feb 2025 14:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fEar1t4h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnFEFeYs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7705233CFC;
-	Tue, 25 Feb 2025 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AE326A0A4;
+	Tue, 25 Feb 2025 14:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492286; cv=none; b=K86/bYJjseGDa8oZFQ4+pVAelNGlyeeJmJbCJ9+URQpiMJ7Pk6x8LvP5YUvAgrlf3/WeexOp+pW2naJL4BMPrNH5mC+VjX1K2qzyu9WEgsOpyJcwVD2a/e/d3jdIXDimLREcGPBvJWr5H590tNDZUo5xOg23y7K1xEmtHuGiLwo=
+	t=1740492012; cv=none; b=teFmOvRnMjmkh470H2jkWcSNdIcO9mtfXdoJLYFK8fZglQLoD//kzQXB5GzMfDavAIZ3hJ2lJbwfc4uKIjjEaPU5MRc1eI3jrRQREHaskBtEdoMmIYOhwMvfalFqOwqpOyb/6+yNRvSTbHQyJtQaN45I+wwHgHHukReV1q24v9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492286; c=relaxed/simple;
-	bh=sUXTHt6eh+QXI81EQBaYj0iPTuZrYTa5Od8UTyPzP8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IiSSdy4NADt1Ldyp7aAba6riAk+LkoDWtSFkgKperq4/zwAc0/O6MR2pgu6RKH5Qnui6/RbcOi/Um3DbrkkZcPjL1Ho+Qu+93InDV8+HlqMdvlxVIEqRe1Jh0ULbk7bECTB0GKqTEQ6UFwYM7XFsqGkwu0cj6bxfULNaC9+jQHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fEar1t4h; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1740492012; c=relaxed/simple;
+	bh=z0NM4k/FSSDfqS2mjYdariSVt/ETmZ+fP+JtXH7aT5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1C6hLOlHdfmtj7KtYo1bCKaRtMjxFOOrcSWzU27NtkQ5SMoIO7xfmXMai76pqDSd8TOo1K3kHC/2tCCE/B/P6HTOtq/IQkarssn8vLiuHw5Hhi4z5ux3xZFTDRSp1bYWK+qCyrV/NDeCkvV1o5mCJLBA/v2cpam6hX7W2OgwFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnFEFeYs; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740492285; x=1772028285;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sUXTHt6eh+QXI81EQBaYj0iPTuZrYTa5Od8UTyPzP8E=;
-  b=fEar1t4how0iMWoj0GdcED7yPNQmSznw2pMM0KIUIBzmPI2k8ePuiCgE
-   Obu+mBoSgc7Ud8WVy0SfVY05nUc/+zFwGtcFUF91CpjWYLRoJ2TUUeZcW
-   bTotjmfaaRJLETOUjMDdQnryBK2KPu1BI/nvH8K7UDTzP+Od6hcyoUCcX
-   aTajly2t5q1L3XLoG5ODRS/jZhvBGWR5xaooRrRCcIvviLmxjgCFZSWAt
-   VU4jaZXrmMqSJIpxcV+qgcP3c6T7SywltR1bFABCbAp4mENht4frMd+oL
-   d73QxuuLfSr+/Y9TqldzdpRlGP31fOOpDlNWwLvGCjeinnsGWu9SCVl/X
-   A==;
-X-CSE-ConnectionGUID: vqU87cMgQ6e9R/cKGVM8mQ==
-X-CSE-MsgGUID: UdVqnBnOR5C9FkFe2TY7ZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41424557"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="41424557"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:04:44 -0800
-X-CSE-ConnectionGUID: DLHCB871RPS+O8m+2dz66Q==
-X-CSE-MsgGUID: vS2aVbs+RjSh1G++J6j2IA==
+  t=1740492010; x=1772028010;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z0NM4k/FSSDfqS2mjYdariSVt/ETmZ+fP+JtXH7aT5c=;
+  b=BnFEFeYs5WvgShhEO3zjeYqdiwPp8U1AL5wJ9Vwwyu4kGCrPqTGtP2t9
+   +n5wcvlmF9OdQKINQGmtXi/1ispDF2G6AcYelMFia1BULqpIyB9mj4VFW
+   6SpEeQIPnHj83pipWCZpF5unakpFfDFgMTGCH1VxYH/tJjHXPoS0C77w4
+   br9tsK/dUX7ivzRRxvsdAJ+GXCGsmvoLp5jh1+bNBKBdncRqGY8N6Me+v
+   1OdDEjOF661hSIlPuyywPJiDLiZ7jpnn478/UIJT7DFHL87lAPiJZm9xs
+   S3ByjzUAg7wkFqRYTd66qQcjmjj4hFgnnyDBSY7QZFfuH/BOejApO1bfF
+   g==;
+X-CSE-ConnectionGUID: SqwrGY74SfeYSku1DNJ6EA==
+X-CSE-MsgGUID: yotztxgiSOmvf8pldCj9bA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41500373"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41500373"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:00:09 -0800
+X-CSE-ConnectionGUID: 5wdBO304QIGqIKmBnH0WxA==
+X-CSE-MsgGUID: o2kscnJVSLCiJ/DTQH/+dw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="116590673"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by fmviesa008.fm.intel.com with ESMTP; 25 Feb 2025 06:04:38 -0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Rik van Riel <riel@redhat.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Aubrey Li <aubrey.li@intel.com>,
-	Michael Wang <yun.wang@linux.alibaba.com>,
-	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
-	David Rientjes <rientjes@google.com>,
-	Raghavendra K T <raghavendra.kt@amd.com>,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>
-Subject: [RFC PATCH 0/3] sched/numa: Introduce per cgroup numa balance control 
-Date: Tue, 25 Feb 2025 21:59:33 +0800
-Message-Id: <cover.1740483690.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120502479"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:00:02 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmvTa-0000000F0fX-0FCE;
+	Tue, 25 Feb 2025 15:59:58 +0200
+Date: Tue, 25 Feb 2025 15:59:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v4 02/10] property: Add
+ device_get_child_node_count_named()
+Message-ID: <Z73M3Ua6u1FpgBEK@smile.fi.intel.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+ <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
+ <Z72QAOA9xXbP16K-@kuha.fi.intel.com>
+ <Z72Zp8tpnvlFGdQ_@smile.fi.intel.com>
+ <ad39b453-7e5b-49bd-a4fd-6a4988636130@gmail.com>
+ <Z72d7TzZ21WITW3f@smile.fi.intel.com>
+ <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Introduce a per-cgroup interface to enable NUMA balancing
-for specific cgroups. The system administrator needs to set
-the NUMA balancing mode to NUMA_BALANCING_CGROUP=4 to enable
-this feature. When in the NUMA_BALANCING_CGROUP mode, all
-cgroups' NUMA balancing is disabled by default. After the
-administrator enables this feature for a specific cgroup,
-NUMA balancing for that cgroup is enabled.
+On Tue, Feb 25, 2025 at 03:29:17PM +0200, Matti Vaittinen wrote:
+> On 25/02/2025 12:39, Andy Shevchenko wrote:
+> > On Tue, Feb 25, 2025 at 12:29:31PM +0200, Matti Vaittinen wrote:
+> > > On 25/02/2025 12:21, Andy Shevchenko wrote:
+> > > > On Tue, Feb 25, 2025 at 11:40:16AM +0200, Heikki Krogerus wrote:
 
-This per-cgroup NUMA balancing control was once proposed in
-2019 by Yun Wang[1]. Then, in 2024, Kaiyang Zhao mentioned
-that he was working with Meta on per-cgroup NUMA control[2]
-during a discussion with David Rientjes.
+...
 
-I could not find further discussion regarding per-cgroup NUMA
-balancing from that point on. This set of RFC patches is a
-rough and compile-passed version, and may have unhandled cases
-(for example, THP). It has not been thoroughly tested and is
-intended to initiate or resume the discussion on the topic of
-per-cgroup NUMA load balancing.
+> > > > > 
+> > > > > I did not check how many users are you proposing for this, but if
+> > > > > there's only one, then IMO this should not be a global function yet.
+> > > > > It just feels to special case to me. But let's see what the others
+> > > > > think.
+> > > > 
+> > > > The problem is that if somebody hides it, we might potentially see
+> > > > a duplication in the future. So I _slightly_ prefer to publish and
+> > > > then drop that after a few cycles if no users appear.
+> > > 
+> > > After taking a very quick grep I spotted one other existing place where we
+> > > might be able to do direct conversion to use this function.
+> > > 
+> > > drivers/net/ethernet/freescale/gianfar.c
+> > > 
+> > > That'd be 2 users.
+> > 
+> > I haven't checked myself, I believe your judgement,
+> 
+> I took a better look and you obviously shouldn't believe :) The gianfar used
+> of_node instead of the fwnode. So, it'd be a single caller at starters.
 
-The first patch is a NUMA load balancing statistics enhancement.
-The second patch introduces per-cgroup NUMA balancing. The third
-one enhances NUMA load balancing for the MPOL_INTERLEAVE policy.
-
-Any feedback would be appreciated.
-
-[1] https://lore.kernel.org/linux-fsdevel/60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com/
-[2] https://lore.kernel.org/linux-mm/ZrukILyQhMAKWwTe@localhost.localhost/T/
-
-Chen Yu (3):
-  sched/numa: Introduce numa balance task migration and swap in
-    schedstats
-  sched/numa: Introduce per cgroup numa balance control
-  sched/numa: Allow intervale memory allocation for numa balance
-
- include/linux/numa.h           |  1 +
- include/linux/sched.h          |  4 ++++
- include/linux/sched/sysctl.h   |  1 +
- include/linux/vm_event_item.h  |  2 ++
- include/uapi/linux/mempolicy.h |  1 +
- kernel/sched/core.c            | 42 ++++++++++++++++++++++++++++++++--
- kernel/sched/debug.c           |  4 ++++
- kernel/sched/fair.c            | 18 +++++++++++++++
- kernel/sched/sched.h           |  3 +++
- mm/memcontrol.c                |  2 ++
- mm/memory.c                    |  2 +-
- mm/mempolicy.c                 |  7 ++++++
- mm/mprotect.c                  |  5 ++--
- mm/vmstat.c                    |  2 ++
- 14 files changed, 89 insertions(+), 5 deletions(-)
+...which is the same as dev_of_node(), which means that you can use your
+function there.
 
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
