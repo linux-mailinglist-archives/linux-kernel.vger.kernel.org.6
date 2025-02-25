@@ -1,103 +1,89 @@
-Return-Path: <linux-kernel+bounces-531626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3B9A442DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:34:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888ECA442E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D2D3A1FCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2C5175B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CC426B089;
-	Tue, 25 Feb 2025 14:33:30 +0000 (UTC)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473142673BC;
+	Tue, 25 Feb 2025 14:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fJ2lbiyl"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EEA2698A8;
-	Tue, 25 Feb 2025 14:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B04E267B9D;
+	Tue, 25 Feb 2025 14:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494010; cv=none; b=YZRhBb3aepPgIiOeqHdNHeDZlHjuEmBGDIJQev7z+3khG9jdj/tXqoD4xZislTm6jkVJJckPKUJzquzes8/PlhcKQJumXYKz/xiIKIo14IDfgpNmeqPdMY6TEqiME/vQbr1yySxglURYQj11yBsw+ladj75fdvkA3eCNUo5vJ9o=
+	t=1740494027; cv=none; b=sGfLS+cmgIuvLMRvPB6roagFO84uFhTIg3/i9H80jQnAMLBQm5E60IkRqnzio+uGPbjG9qROAPpsvw1Fgl0SLOkv9mKdWfyhiziTAaC5vnsAUNszeIlynTgxuNQ9VgC1ecvcJWpg3QI35IQjH40g7M1lx9gjUDIsv1nd+YNE2Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494010; c=relaxed/simple;
-	bh=2E/xivADWUmMltm294B490hpFTUkS2KD5I5zSos4jPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJj5B9HYgdmY5mz2+HwytO8Nde87NVlfY+3mkBRS2W040hAjq7unL9P7os3BtpC5ndcAgWkxAKK8dZo29zUrUIPxXW+nrIXOClM/fIaY3g8yEvEWnGENCMB6yWCpbwybLMVHDUjo0C3QR1kd1roauMyPlIVuC9PJPvvyt9L6SHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220f4dd756eso119740795ad.3;
-        Tue, 25 Feb 2025 06:33:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494008; x=1741098808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wfjw1HKQVvRq0BsR7wxCvBaXgth/Ba/pzPz08eLvgdM=;
-        b=wSAvAissHnZ1Y7bzHhOIl+ZcSR1lwMG6fEl8rOB+iXwvOKO4E4Csj8+eltaHBV6H+e
-         ZzTz+I5T9vq1TjX8PKUmGjECer7CMBEBvpYiBM35H25LASHA0PpzU1CxNR8L620DsDYJ
-         95R9jN8t9rjxgwkQFXHlp7o0L3+mbTG+ujk5UjJLlqyXozTMJyQ7liXUIZX+w7ZHq8//
-         tKJ1fijgMYLG9H6tccRTdVscVRNysGSDuK4FiUlnyi4StfkO+96qafv36MmituI2Wega
-         Ls7Bm9GT+sZ/b/g65agKvcwF/NtYm3+azCkbVmMTP9j79+UDDQrFa0cC6g+mc3G1mrB5
-         pOGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/5VdUtPEIdnnhdZ/2srnfiE1uw317Q/CsuZiyLVlqBQoYyNguae/9069GZIyyEcCyQVmEONNqCSMXiwo=@vger.kernel.org, AJvYcCUgP3nzIwFPhImsHtRiXg+QWEl1J6QdglUujgp7Yk8RkOY6F8IR44XGFHOwdfOKlp1Fs8llCN/Na3Y7@vger.kernel.org, AJvYcCUnfRQ0ggnBxJmw6dOltDq/SbFqjFoev3RKaJkbpAvmZIxftIGwdva72MbK3bjhKRO0AXpugmsOXzHCSGmOOBv/uQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/W5VnS2SvAIaf3vGHmAXNoe4scbqP1GRC8ppJnMlGxvAez6Up
-	IbfAunvbgPgWIt6RmtYYQQfW+OQCel8wSKH2H2KmsiFK0VKAHo9SKkhW9IPatKQ=
-X-Gm-Gg: ASbGnct+roD2vZOMlHXBDllK8zmnIQZX3Ar8qOFrQly5UzSrZITGgCjdGqU9hQqPo+/
-	pH0rApUWkfO/3CN1+Qo7H43Fbl26ucwsWqO1sTxkR40DrNwkoKuIXKz5UQHs5Jk9QfrXgwI3tXf
-	nrPeNP/C9z4hGjldGE7hTrSDTZ1BGWbLUHXm6IidttD8mVPIPKmQNuIbrJZc4Sb6TJaepQWV6UH
-	jm88jjO5jkoZLSZMGp8E2UC7UE4bioxxm3VHbZUt04SRCZXMt4kWwx/+wMAabNy/77IxYYL+TkQ
-	cHDV3oyAFdGoS63Wk3SCK45WiuORD1Y+lB5PJybLUeOLyem/L+CD83rCoX/H
-X-Google-Smtp-Source: AGHT+IFiIC1p2JsvGz1HBLa46/0n3Ly+kaAqBACASxC9/r77WzUjMbOSLV/Jfp7om7mV9KcQCdz2UQ==
-X-Received: by 2002:a05:6a20:d492:b0:1f1:458:fe80 with SMTP id adf61e73a8af0-1f10458fe98mr2109104637.25.1740494007946;
-        Tue, 25 Feb 2025 06:33:27 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aeda75a224esm1420946a12.15.2025.02.25.06.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 06:33:27 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:33:25 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Niklas Cassel <cassel@kernel.org>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
-	nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
- PCIe DW
-Message-ID: <20250225143325.GB1556729@rocinante>
-References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
- <20250221131548.59616-1-shradha.t@samsung.com>
- <Z7yniizCTdBvUBI0@ryzen>
- <20250225082835.dl4yleybs3emyboq@thinkpad>
+	s=arc-20240116; t=1740494027; c=relaxed/simple;
+	bh=dd0Lvu9vWtwP6hlte0aze2JQWGVV9KkpYgCO1cFK9G0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rp0nPGQFiQ1U86ZkUzdGSDMrJIaBTvQSSYaSfFoUlCme+SErHiTnvq9lnYA/UEFd7SfgCiMpNlgz84FJUlOOOCvWj6u0D6n/h9YxZqdHM1bQYSWiXP28OrvTH0cbNSOsmSsXi+c6j/Zyl1mhR6BGGQr7yJVMeDq63CSKA6EXxyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fJ2lbiyl; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 34F2548EC5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1740494025; bh=8knubZjmHbdNkHXs0YlcIjXdMA+wkzMRlO4Ystvh0HU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fJ2lbiyl+z6/FsuYjWGBrBwIHkHmPy7ibREYGbz9UuV60mZK4BNRPz1Lgo1WVIQq9
+	 19Pyfw84KfLZbaLggWDVZckJRO0sTWXEuxMWGK/vRLwccHhnuPIEMv+F4plDw7aAOs
+	 EEUTstgDy3GFZmy/C42fY5fJblcGTbg6wcMyMN+JoyKm07/XT0VeDpHSiigRISWYq1
+	 QlgCJhHwSQmGRo5wubqAAvQQlu4DfljzHFRWHd9Rv7sQOaMY88EWvAr8voOPs0i80p
+	 DFzYgP9CZkY+KrfT78qIcNx4/anbyvEOUeYpkLtAOKdcTieCzVFai/+NUGuhidDU6Z
+	 t4hahOylxScGQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 34F2548EC5;
+	Tue, 25 Feb 2025 14:33:45 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bingbu Cao
+ <bingbu.cao@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Takashi Sakamoto
+ <o-takashi@sakamocchi.jp>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ linux-arch@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2 00/39] Implement kernel-doc in Python
+In-Reply-To: <20250225085406.7fa87ee3@foz.lan>
+References: <cover.1740387599.git.mchehab+huawei@kernel.org>
+ <87msea29ah.fsf@trenco.lwn.net> <20250225085406.7fa87ee3@foz.lan>
+Date: Tue, 25 Feb 2025 07:33:44 -0700
+Message-ID: <8734g214c7.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225082835.dl4yleybs3emyboq@thinkpad>
+Content-Type: text/plain
 
-Hello,
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-[...]
-> Yes, it would be appropriate to return -EOPNOTSUPP in that case. But I'd like to
-> merge this series asap. So this patch can come on top of this series.
+> There's no need to rush things there, provided that people refrain
+> touching the Perl version of kernel-doc. So yeah, postponing it to
+> the next merge window makes sense to me. Perhaps we should announce
+> somewhere that we're in the process of doing such replacement, asking
+> people to wait for 6.15-rc before sending any changes to kernel-doc.
 
-I pulled the series so that we can get some mileage out of the 0-day bot,
-so to speak, and also get some testing via the linux-next tree.
+I have no problem with sending an announcement ... but I wouldn't worry
+about a flood of changes to the Perl script creating more work.  There's
+not a lot of people willing to dive into that thing in the first
+place...
 
-That said, while looking at the code, there have been bits where I wanted
-to get some clarification.  Nothing will be a blocker.
+Thanks,
 
-	Krzysztof
+jon
 
