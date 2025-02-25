@@ -1,236 +1,162 @@
-Return-Path: <linux-kernel+bounces-532136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FB2A4491E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:57:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BB1A4491F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CED166ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1641891ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D6B19C554;
-	Tue, 25 Feb 2025 17:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7310118A93F;
+	Tue, 25 Feb 2025 17:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNcKaNbH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MQszEG6i"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219119ABC3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177841891AA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506212; cv=none; b=pKu3eqFGdJrgOYsuczTdLN+LLb7vFIQkaPMDkbxhbAuiHY/PuQbqyAXCezL4J9i9kP+LVKSAUBLLD1bmZsqWo8uXZRye30NR0z2fHgAFXotMa/mSRIA7nJ8R1CnjDvIUfug6bxJRCQ/Z5iYtnDvpf9TQz9qNaSlu10pTVuByXBk=
+	t=1740506225; cv=none; b=QymsKbREYhhIa0XZjKl3m669+G6hQIWBSV7gJJIOYIXXuR6qQimpFdCcpgpCmswKkpcWE6yc8QMJPAR0M5ZFp9oyKFp+55kIN2dmUUErTyF6idgfVvhBQ1Fo+Z9q8r4SgVhHk5IZEV9S3gZ/sLUEb1Oo6MEwW9j2lP9yvLv+a0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506212; c=relaxed/simple;
-	bh=voYBb2r//dRBt6lfBvNnss+/7ly2F5ArI4Tjl5Zq5NI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afxnKN/iFQENnnKNPPaqHXUj6dXj+LU5PJ4AoNJz+dxM49z8iBcyo6EkTDcbJMEkd5IY3ehgraQJO/XMLcnc6gEvykm6fUe9ibq7ojyZTq6fmcE3lbNmEo8uWivV8i9IEkDazQOnOD3NuRjaJxBAj9+ifnR809wwjSX2ET7yddw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNcKaNbH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so40813995e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:56:50 -0800 (PST)
+	s=arc-20240116; t=1740506225; c=relaxed/simple;
+	bh=hfqAN0fagSCmL2HyOK5nwh1j0eHuaZ5mjszK1wKU/EI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YN1lPsYcpDdfk5TAH30QOykkyyFlaKSTYZ0UA4t6H1RmTxA6dSx0YCkXcg3T9Ej5gGczt256/AWQAgnJdBWr/QJKs2eTcV8Dv0RWkLhrPFcWBpdynr6EnCZi0eS9EdpkaCxc9EJb+Pyy8ZneAkhWs/tI7CToWPkD8VIi7LRrkLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MQszEG6i; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso37830435e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:57:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740506209; x=1741111009; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gOCUaU/7gnEaJ3IHdehXrJI4tg+whLlR3VL26FFaPrM=;
-        b=VNcKaNbH6G9IyZbF67VjWRQg365aaW0kSo3eUBEDQxMSgvZpNCz0jFyZM2Aey8A3uo
-         Cf8xTvrHGjNxkQVFviUPYut7aN5XtipWY5W27HWDnMSsgYk9V+AiKb+cvVF/ecHC1sT6
-         mfYITVQQDXRd5hdrbasLUaTG0NCGRE4QTkMh910MCCcR5yHWaUvnoZJlU6KmCcY5ZKte
-         zxqKV4Xif/R9tU5RICi1yTiL9bOSiGzA+NTWv14AZnJnAtmWoDhRQG5Lyf1pjvDymaXT
-         4EuMfrnIY40iJlSI2+N35sbP0XJsnXGx0mxPFkH6FpKKVTO/R3rbGoCp76djEie7OGyS
-         GXGg==
+        d=linaro.org; s=google; t=1740506222; x=1741111022; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e9USewdvJ7PYqMLaARTkWJYtBQaK26VR+XCGXeZgq7M=;
+        b=MQszEG6iu9Kgxy6NAOk2hcRc+Y0rU8qUKK1fwAOteZXggH2i9jpE+9ChBVglvuTids
+         qRsnZOpN+RcYVGFmn6Hu+uptscwubAHjkdV0aPmKc4t1o4BiSVxG3depkkMN3QhcHFcT
+         j75NvKfSaXRG/aPU2Ep7l9U2phh55dlexdu/F29ddw/7bqc5DYhZE72Dqo+NOtikbsHy
+         Xz7xQWmEIBFSYPjXjqa8ItOEZWEXATyP/0OEprKylLyAEPRcr6wLudNHeTwiEtcSUxgc
+         PK5EK0RrNhEIZvri2zvJrtiAMkMB85aj5U8YHNPJfvGenvUEoNCVkfGEw7yEpfnLfiXE
+         5G2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506209; x=1741111009;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOCUaU/7gnEaJ3IHdehXrJI4tg+whLlR3VL26FFaPrM=;
-        b=LxmvSgm7To7+a/+SuSlggOczmNP4w9l86cda0XLukMYFs83vSdDnxsdoGoOovkcpQG
-         9AzhJdzHX/E12wO6beDjlrT1/08LDJMkj6NOuIzNFsnOXsZX0lTzZv6aG0Lwrwq9TGlK
-         wA+8dTZHTli89KQ0XrWbaAEMEyZUMocwnqfWS3grGXz6lF7s8EHFgbvPVKEBoHPMY357
-         FEGTi5IIIdSzjysCtdDJuAMANVuZuQXjidiE3pNUkl6bffQTWZVRIwPuhidPmyUGKARS
-         lDntQLMkNdnSfQqS8MsOlunHLSM59wRoMisJNDUqSPUamxnFgmOc/eQZjVbqFjqV2GZN
-         UYAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWO8KhWvE8PIH7qC+G9RbgrPwaGSu55Nq1SiAcvH4thT1ax7XznqkO3sgQvPvUk31EgnQDz+ZIBQHgySWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ1kEol5bZlBFMgGdSyyVRmkjuhzQ0m4ONfBfwsNKv6q+Sb6JT
-	n4OpvRJOp1uEQglDrzNOfQ9H8WFE2fsEZjkdJcxS/k8GTimpwX7m
-X-Gm-Gg: ASbGncumxbeH7rJHKo1ALYLxQfUmRsTRe3biJ5nORAJiQjiHBoAkrcnhFnGluOskS3S
-	7nHXmUPRw5SYqhPw2oOtClaUQslqzPohzh0BCwzGZdmGMNQt/FOwi4THMXDqYz/2nwGsj7R0re8
-	HTLL8XVrDAwXDGNdEBQ87JoyNhHoGh7LCIfFzAcn+T5JmUa0B90PoA4TYphYvsG3MQalnkmTB9I
-	wkoGmwx6ANBzBopWsph4vL2Xk4SV3MSYOOuGtyKy6MQnnPRIGuPGh7MbGKizuSTD2ftwwQ+SKbz
-	iRDm962LzM733JcF6sGcwDjTXQ==
-X-Google-Smtp-Source: AGHT+IExSFlTbctQ0zHvNEtFI4zl9JtgMobqQSi8OH4T7IPG24I3S3Zyhi0/pqqwm+YXvOwqJapctw==
-X-Received: by 2002:a05:600c:3c86:b0:439:9d75:9e7d with SMTP id 5b1f17b1804b1-439ae21d1d0mr136975665e9.22.1740506208497;
-        Tue, 25 Feb 2025 09:56:48 -0800 (PST)
-Received: from fedora ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b036756csm148728425e9.31.2025.02.25.09.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:56:47 -0800 (PST)
-Date: Tue, 25 Feb 2025 18:56:46 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/16] drm/vkms: Add configfs support
-Message-ID: <Z74EXo_qL1bZ2uNo@fedora>
-References: <20250218170808.9507-1-jose.exposito89@gmail.com>
- <Z72jJtFCMypHpW_K@louis-chauvet-laptop>
+        d=1e100.net; s=20230601; t=1740506222; x=1741111022;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e9USewdvJ7PYqMLaARTkWJYtBQaK26VR+XCGXeZgq7M=;
+        b=f0q80hfAq56/4KjTRQtbM537rSIaA/Yj+PFv3H4Ug7//8DMkww9nCOGzYYhVC7pl1X
+         yW2HskufxRroV1Z+ctvUClLgDYQxTv/1gWuXUnu30FJbHzP07O29Qw0vBXPOC8rLLPbF
+         n7eCwKxSITCJlIAFn3AWoB5wB4QGFhLttXlUWLdpsLSNjZzfJMdzHFI6JW7LEOUB7ljp
+         6IfrA4YdCuX5NDfANg64XjFBH8u3hLgof7FmFs0v5gmw1QC5ZklC+TJ6jDAY+yvBOwbX
+         683DhnhTMmPzupV5rd95eXcC4G0gAZ010bqxtyNda7+TzlgxMlGoxJ8+pu38E4Xwd6BM
+         BO5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWL3a/s8dCzlt3dA85/XtVpT9KFf2rm3P099X8EBDGru839JriMHEGoXhYWKNxjMNIh1/VBdr+yjO82LLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaejR7e7/anbBJZgwBa76ZVinc91+yGGp7uz3LKd6YsT8V4Zln
+	5yG58oowrVhpWcSjAknT+LBe900ViIyeXoge3LqcOAuNGTU875alj6q/JHGbF8Y=
+X-Gm-Gg: ASbGncv8j/Xc2L8dgKxOBy75VVsvsMkGVEbt9wx8yd42mgcChmbCIOk2sQu/6BMEZ+g
+	AFbiX59N/i+VlJPL07idE71UYZcIE1qP77wDodPEAojXVutZjj8H9UdTBSqqL9cvE8SYOmqELl9
+	TwBi5azu1EVVPzv+pFRnm9QNO4Z9/Eed9O9/l4Pn/J0YgCFRmDqHA4rB18xLjrs7AT9fKrktDII
+	8SA7PXT9SKFAqMOlgNJVJ8J6kIvkzVnoZyWoMwxEmTpv4sYAnd9QtSfded0OVn433fnF2AVZsT7
+	ctZvXDNu3jVJBDccgYwprzxlcr3POHBL8D5FzFq5IPUfmRV+iQfQQab+fkxF11bJ1+THI7fV9Af
+	3glY=
+X-Google-Smtp-Source: AGHT+IHUAgL2tByhpFFBEFGQOdfrkVcNwwIG2P9l39t0NBi1UKfkNO4hyH6LvwamNSW5TxfMBytNRw==
+X-Received: by 2002:a5d:5f8a:0:b0:38f:260f:b319 with SMTP id ffacd0b85a97d-390d4f84733mr232456f8f.44.1740506222366;
+        Tue, 25 Feb 2025 09:57:02 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:23a1:f1ec:7a08:3a2b? ([2a01:e0a:982:cbb0:23a1:f1ec:7a08:3a2b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fc1f9sm3000134f8f.88.2025.02.25.09.57.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 09:57:02 -0800 (PST)
+Message-ID: <07d7f05b-ed3c-444d-8879-9df99174b7c9@linaro.org>
+Date: Tue, 25 Feb 2025 18:56:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z72jJtFCMypHpW_K@louis-chauvet-laptop>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] arm64: defconfig: enable Qualcomm IRIS & VIDEOCC_8550 as
+ module
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250225-topic-sm8x50-upstream-iris-defconfig-v1-1-8a17e2e193d9@linaro.org>
+ <e959c772-9c10-4c87-a22b-e2f91ca05af8@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <e959c772-9c10-4c87-a22b-e2f91ca05af8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Louis,
-
-Thanks a lot for the super fast review, you are the best!
-
-On Tue, Feb 25, 2025 at 12:01:58PM +0100, Louis Chauvet wrote:
-> On 18/02/25 - 18:07, José Expósito wrote:
-> > Hi everyone,
-> > 
-> > This series, to be applied on top of [1], allow to configure one or more VKMS
-> > instances without having to reload the driver using configfs.
-> > 
-> > The series is structured in 3 blocks:
-> > 
-> >   - Patches 1..11: Basic device configuration. For simplicity, I kept the
-> >     available options as minimal as possible.
+On 25/02/2025 14:08, Krzysztof Kozlowski wrote:
+> On 25/02/2025 10:10, Neil Armstrong wrote:
+>> In order to support the Qualcomm IRIS driver on the Qualcomm SM8550
+>> platform, enable the IRIS and the VIDEOCC_8550 dependency as modules.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   arch/arm64/configs/defconfig | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index a1cc3814b09b31ee659536a64b7db704153d6fe9..710452f75133896af2e3a19ae544f139e1c28a98 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -847,6 +847,7 @@ CONFIG_VIDEO_IMX8_ISI_M2M=y
+>>   CONFIG_VIDEO_IMX8_JPEG=m
+>>   CONFIG_VIDEO_QCOM_CAMSS=m
+>>   CONFIG_VIDEO_QCOM_VENUS=m
+>> +CONFIG_VIDEO_QCOM_IRIS=m
 > 
-> Thanks for this series, it is really nice!
 > 
-> I did some review, that can be sumarized in two point:
-> - Do we want to use scoped_guard?
-
-Since all mutex locks were unlock at the end of the file, I replaced
-mutex_lock/unlock with guard(mutex)(...). The resulting code is now
-much cleaner.
-
-Thanks for pointing me to cleanup.h, my Linux kernel books are too
-old to include these helpers and I wasn't aware of them.
-
-> - -EPERM, -EINVAL or -EBUSY when attempting to do something while the
->   device is enabled
-
-I replaced all the cases with EBUSY, thanks!
-
-> >   - Patches 12, 13 and 14: Allow to hot-plug and unplug connectors. This is not
-> >     part of the minimal set of options, but I included in this series so it can
-> >     be used as a template/example of how new configurations can be added.
-> > 
-> >   - Patches 15 and 16: New option to skip the default device creation and to-do
-> >     cleanup.
+> Does not look really as Kconfig-ordered. iris is before venus in Kconfig
+> include.
 > 
-> For the next iteration, can you move those patch before 12, 13, 14, so
-> 1..11 could be merged before 12..14 (I need to think about the connector 
-> API to check if it will works with dynamic connector)?
-
-Sure, I moved them to the end in v2.
-
-I experimented with dynamic connectors a little bit and I think that it is
-possible to make it backwards compatible:
-
- - We could add a "enabled" file for connectors
- - At the moment, connectors can only be created while the device is disabled.
-   To keep compatibility, if the device is disabled, we need to set
-   connector->enabled to 1 by default.
- - If the device is enabled, we'd need to set connector->enabled to 0. This
-   would allow the user to configure the connector before it is hot-added.
- - We'd need to store if the connector is static or dynamic to allow hot-remove
-   only dynamic connectors.
-
-I believe that, if we implemented it like this, we'd be able to keep compatibility.
-
-> > The process of configuring a VKMS device is documented in "vkms.rst".
 > 
-> This is a really good documentation!
+
+Surem I'll re-order.
+
+Thanks,
+Neil
+
 > 
-> > Finally, the code is thoroughly tested by a collection of IGT tests [2].
-> 
-> I quickly looked on them, it seems nice! Thank you for this huge
-> improvment!
+> Best regards,
+> Krzysztof
 
-If you could comment on that mailing list, I'm sure that a LGTM from the
-maintainer will help :)
-
-Thanks a lot for your work Louis.
-
-Sending v2,
-Jose
-
-> Louis Chauvet
-> 
-> > Best wishes,
-> > José Expósito
-> > 
-> > [1] https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
-> > [2] It is not in patchwork yet, but it'll appear here eventually:
-> >     https://patchwork.freedesktop.org/project/igt/patches/?submitter=19782&state=*&q=&archive=both&delegate=
-> > 
-> > José Expósito (16):
-> >   drm/vkms: Expose device creation and destruction
-> >   drm/vkms: Add and remove VKMS instances via configfs
-> >   drm/vkms: Allow to configure multiple planes via configfs
-> >   drm/vkms: Allow to configure the plane type via configfs
-> >   drm/vkms: Allow to configure multiple CRTCs via configfs
-> >   drm/vkms: Allow to configure CRTC writeback support via configfs
-> >   drm/vkms: Allow to attach planes and CRTCs via configfs
-> >   drm/vkms: Allow to configure multiple encoders via configfs
-> >   drm/vkms: Allow to attach encoders and CRTCs via configfs
-> >   drm/vkms: Allow to configure multiple connectors via configfs
-> >   drm/vkms: Allow to attach connectors and encoders via configfs
-> >   drm/vkms: Allow to configure connector status
-> >   drm/vkms: Allow to update the connector status
-> >   drm/vkms: Allow to configure connector status via configfs
-> >   drm/vkms: Allow to configure the default device creation
-> >   drm/vkms: Remove completed task from the TODO list
-> > 
-> >  Documentation/gpu/vkms.rst                    |  98 +-
-> >  drivers/gpu/drm/vkms/Kconfig                  |   1 +
-> >  drivers/gpu/drm/vkms/Makefile                 |   3 +-
-> >  drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
-> >  drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
-> >  drivers/gpu/drm/vkms/vkms_config.h            |  26 +
-> >  drivers/gpu/drm/vkms/vkms_configfs.c          | 918 ++++++++++++++++++
-> >  drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
-> >  drivers/gpu/drm/vkms/vkms_connector.c         |  26 +-
-> >  drivers/gpu/drm/vkms/vkms_connector.h         |  18 +-
-> >  drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
-> >  drivers/gpu/drm/vkms/vkms_drv.h               |   4 +
-> >  drivers/gpu/drm/vkms/vkms_output.c            |   2 +-
-> >  13 files changed, 1138 insertions(+), 16 deletions(-)
-> >  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
-> >  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-> > 
-> > 
-> > base-commit: 9b6c03cb96b9e19bce2c2764d2c6dd4ccbd06c5d
-> > prerequisite-patch-id: 1bff7bbc4ef0e29266265ac3dc009011c046f745
-> > prerequisite-patch-id: 74a284d40a426a0038a7054068192238f7658187
-> > prerequisite-patch-id: c3e34e88ad6a0acf7d9ded0cdb4745a87cf6fd82
-> > prerequisite-patch-id: 9cd0dfaf8e21a811edbe5a2da7185b6f9055d42d
-> > prerequisite-patch-id: f50c41578b639370a5d610af6f25c2077321a886
-> > prerequisite-patch-id: 5a7219a51e42de002b8dbf94ec8af96320043489
-> > prerequisite-patch-id: 67ea5d4e21b4ce4acbd6fc3ce83017f55811c49b
-> > prerequisite-patch-id: 37a7fab113a32581f053c09f45efb137afd75a1b
-> > prerequisite-patch-id: 475bcdc6267f4b02fb1bb2379145529c33684e4f
-> > prerequisite-patch-id: d3114f0b3da3d8b5ad64692df761f1cf42fbdf12
-> > prerequisite-patch-id: d1d9280fb056130df2050a09b7ea7e7ddde007c5
-> > prerequisite-patch-id: 2c370f3de6d227fa8881212207978cce7bbb18ba
-> > prerequisite-patch-id: 938b8fe5437e5f7bc22bffc55ae249a27d399d66
-> > prerequisite-patch-id: ab0a510994fbe9985dc46a3d35e6d0574ddbb633
-> > -- 
-> > 2.48.1
-> > 
 
