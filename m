@@ -1,430 +1,149 @@
-Return-Path: <linux-kernel+bounces-531658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E02A4435D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:47:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D245CA4433D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E229188C273
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9C417E38F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4184026BDB6;
-	Tue, 25 Feb 2025 14:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4E421ABA8;
+	Tue, 25 Feb 2025 14:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VYxLhWeG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O/xgNeZU"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583D626B089
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F01F21ABA1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494375; cv=none; b=deiJaFusqEGrwSYiz0/mnWIGeJfOkt/yvAQqletsvVvYh0Eue1e0hhvzEopOt0t/8rXZnluoOPLS1yO6lJ157muNLvj9aTEzXZIo0aBT/D4LPkT8OOvzwLCjOOJfYZ6HX6lTRkMLRE1oPZH2A0bUVT7A1CHcMYBYLRGuMmiJHfA=
+	t=1740494420; cv=none; b=EE5semAk8JnzSDu9r/Tf4H9yICMl0hc/K/wsxn5zVG9S+r0zbN22Iblu222eSZfKfgtTRtV8RlU4uPOFFYDdzMQQ/fS4gvJomUC6MfSkGPaufuP1vUljz6AyGQXKr/wecDrl7iuX5RCg3aSJpHYBFMfoTTpuZQeKkynYxO8xhNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494375; c=relaxed/simple;
-	bh=rpxxA6Yp4ev+eJOt8GflBMQ5MWpoeZqXMu5jx+nfPSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AwFxPSib2mf2LkXnMfZmK0JfunUtBQEDKNjgMSlafqHmcVZupXt1eSNLOKndwp25+DDT07ZLOY+C0XVrDz9tT8gAoQg/qc2C9EJqEHha4wFYfBJBdxPN6TtfpjzT3/7CKsgSFf9CJketdcng//3D3B0N+xeqB1MlwhKSuuezsrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VYxLhWeG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740494371;
-	bh=rpxxA6Yp4ev+eJOt8GflBMQ5MWpoeZqXMu5jx+nfPSI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VYxLhWeGs7vboQ/UdPFONGMYVJY8Asc/3yVSZB+lCTT4Xy0KCBOKu19RbbTK96J0v
-	 znieq7gfA+NCeb+KP9xxpiqTqIkGCVF42jr1PFcJmxst2ccY5epea96pyHeHwGF6sY
-	 8RsVVuhlOyWi6vCGqTwbhcVBOAx6MFpK4xn6ACWhtOEZeVybP5Sc7Ngo93FAW4PLbX
-	 QGIeml/b7hPkLy9mBJXbJTB+fnHVMeLZw8cd9B8Vq7oiimavdkgKOroM7IpsGAmYyF
-	 PfrObZpKHqBAvk+Oy6DoCYppeBNjKOPYL6OENCj2zwHd5W68P/FSWpqWH3p21f1Yhy
-	 CnZicZaHNFbdA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 169AB17E0DB7;
-	Tue, 25 Feb 2025 15:39:31 +0100 (CET)
-Date: Tue, 25 Feb 2025 15:39:25 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Steven
- Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com
-Subject: Re: [RFC PATCH 5/7] drm/shmem: Implement sparse allocation of pages
- for shmem objects
-Message-ID: <20250225153925.10443056@collabora.com>
-In-Reply-To: <20250218232552.3450939-6-adrian.larumbe@collabora.com>
-References: <20250218232552.3450939-1-adrian.larumbe@collabora.com>
-	<20250218232552.3450939-6-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740494420; c=relaxed/simple;
+	bh=Gcu0/y2YMP2LlNhJAtEESlhx/D3SReNbDRxbsrVxZnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvfAWQjSdfNMVbGa+B0Wl37D9FTDgZSHU0j5Mwa3pmTRRsI9ObhyJBiEM4EoQzAvc76JUjNZMDTBUrLoLuVxUQue5NtHQBg0rfTT42hpvqVuzgXsmgzsZpTDnOanxSQ9BNhR0NGA5A3G+kxC4Saz53IKvk1x8hej1YeIOH6AVbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O/xgNeZU; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740494415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RLRUQ6K3ZxrvBuZuKZAonhzQHThtxFHbpTnpSZBjIXA=;
+	b=O/xgNeZU7zk6zS7kTLRt0naInEXik3C/Jeirb8KGy2+4zmAONIGQJAXkW1OLlKpAGI9LVJ
+	/HBQmNyVhxSpxfKe3kk0YTr/L7SvFijVqO2uGQ29nrDGKr6ebZmLFylSpVoIkay66mSfA9
+	1o4QNWsBxZ2ieE1FJYnin6QLGnP6eUs=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: horms@kernel.org,
+	kuba@kernel.org
+Cc: bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	ricardo@marliere.net,
+	viro@zeniv.linux.org.uk,
+	dmantipov@yandex.ru,
+	aleksander.lobakin@intel.com,
+	linux-ppp@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Paul Mackerras <paulus@samba.org>
+Subject: [PATCH net-next 0/1] ppp: Fix KMSAN uninit-value warning with bpf
+Date: Tue, 25 Feb 2025 22:40:03 +0800
+Message-ID: <20250225144004.277169-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 18 Feb 2025 23:25:35 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Syzbot caught an "KMSAN: uninit-value" warning [1], which is caused by the
+ppp driver not initializing a 2-byte header when using socket filters.
 
-> Add a new function that lets drivers allocate pages for a subset of the s=
-hmem
-> object's virtual address range. Expand the shmem object's definition to i=
-nclude
-> an RSS field, since it's different from the base GEM object's virtual siz=
-e.
->=20
-> Add also new function for putting the pages of a sparse page array. There=
- is
-> refactorisation potential with drm_gem_put_pages, but it is yet to be dec=
-ided
-> what this should look like.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/drm_gem.c              |  32 +++++++
->  drivers/gpu/drm/drm_gem_shmem_helper.c | 123 ++++++++++++++++++++++++-
->  include/drm/drm_gem.h                  |   3 +
->  include/drm/drm_gem_shmem_helper.h     |  12 +++
->  4 files changed, 165 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index ee811764c3df..930c5219e1e9 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -679,6 +679,38 @@ void drm_gem_put_pages(struct drm_gem_object *obj, s=
-truct page **pages,
->  }
->  EXPORT_SYMBOL(drm_gem_put_pages);
-> =20
-> +void drm_gem_put_sparse_xarray(struct xarray *pa, unsigned long idx,
-> +				unsigned int npages, bool dirty, bool accessed)
+Here's a detailed explanation:
 
-How about renaming that one drm_gem_put_xarray_page_range()? The sparse
-property is something decided by the caller IMHO, and this aspect
-doesn't necessarily have to leak through the drm_gem API.
+The following code can generate a PPP filter BPF program:
+'''
+struct bpf_program fp;
+pcap_t *handle;
+handle = pcap_open_dead(DLT_PPP_PPPD, 65535);
+pcap_compile(handle, &fp, "ip and outbound", 0, 0);
+bpf_dump(&fp, 1);
+'''
+Its output is:
+'''
+(000) ldh [2]
+(001) jeq #0x21 jt 2 jf 5
+(002) ldb [0]
+(003) jeq #0x1 jt 4 jf 5
+(004) ret #65535
+(005) ret #0
+'''
 
-> +{
-> +	struct folio_batch fbatch;
-> +	struct page *page;
-> +
-> +	folio_batch_init(&fbatch);
-> +
-> +	xa_for_each(pa, idx, page) {
-> +		struct folio *folio =3D page_folio(page);
-> +
-> +		if (dirty)
-> +			folio_mark_dirty(folio);
-> +		if (accessed)
-> +			folio_mark_accessed(folio);
-> +
-> +		/* Undo the reference we took when populating the table */
-> +		if (!folio_batch_add(&fbatch, folio))
-> +			drm_gem_check_release_batch(&fbatch);
-> +
-> +		xa_erase(pa, idx);
-> +
-> +		idx +=3D folio_nr_pages(folio) - 1;
-> +	}
-> +
-> +	if (folio_batch_count(&fbatch))
-> +		drm_gem_check_release_batch(&fbatch);
-> +
-> +	WARN_ON((idx+1) !=3D npages);
-> +}
-> +EXPORT_SYMBOL(drm_gem_put_sparse_xarray);
+wen can find similar code at the following link:
+https://github.com/ppp-project/ppp/blob/master/pppd/options.c#L1680
+The maintainer of this code repository is also the original maintainer
+of the ppp driver.
 
-Since you already expose a helper to return pages in an xarray range,
-why not add a helper to allocate/get pages? That's basically
-drm_gem_shmem_get_sparse_pages_locked() but without the sgt logic, and
-with the xarray passed as an argument (plus a gfp_t argument to specific
-allocation constraints).
 
-> +
->  static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
->  			  struct drm_gem_object **objs)
->  {
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
-_gem_shmem_helper.c
-> index d63e42be2d72..40f7f6812195 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -10,7 +10,6 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/slab.h>
->  #include <linux/vmalloc.h>
-> -#include <linux/xarray.h>
-> =20
->  #ifdef CONFIG_X86
->  #include <asm/set_memory.h>
-> @@ -161,6 +160,18 @@ struct drm_gem_shmem_object *drm_gem_shmem_create_wi=
-th_mnt(struct drm_device *de
->  }
->  EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
-> =20
-> +static void drm_gem_shmem_put_pages_sparse(struct drm_gem_shmem_object *=
-shmem)
-> +{
-> +	unsigned int n_pages =3D shmem->rss_size / PAGE_SIZE;
-> +
-> +	drm_WARN_ON(shmem->base.dev, (shmem->rss_size & (PAGE_SIZE - 1)) !=3D 0=
-);
-> +	drm_WARN_ON(shmem->base.dev, !shmem->sparse);
-> +
-> +	drm_gem_put_sparse_xarray(&shmem->xapages, 0, n_pages,
-> +				   shmem->pages_mark_dirty_on_put,
-> +				   shmem->pages_mark_accessed_on_put);
-> +}
-> +
->  /**
->   * drm_gem_shmem_free - Free resources associated with a shmem GEM object
->   * @shmem: shmem GEM object to free
-> @@ -264,10 +275,15 @@ void drm_gem_shmem_put_pages(struct drm_gem_shmem_o=
-bject *shmem)
->  		set_pages_array_wb(shmem->pages, obj->size >> PAGE_SHIFT);
->  #endif
-> =20
-> -	drm_gem_put_pages(obj, shmem->pages,
-> -			  shmem->pages_mark_dirty_on_put,
-> -			  shmem->pages_mark_accessed_on_put);
-> -	shmem->pages =3D NULL;
-> +	if (!shmem->sparse) {
-> +		drm_gem_put_pages(obj, shmem->pages,
-> +				  shmem->pages_mark_dirty_on_put,
-> +				  shmem->pages_mark_accessed_on_put);
-> +		shmem->pages =3D NULL;
-> +	} else {
-> +		drm_gem_shmem_put_pages_sparse(shmem);
-> +		xa_destroy(&shmem->xapages);
-> +	}
->  }
->  EXPORT_SYMBOL(drm_gem_shmem_put_pages);
-> =20
-> @@ -765,6 +781,81 @@ static struct sg_table *drm_gem_shmem_get_pages_sgt_=
-locked(struct drm_gem_shmem_
->  	return ERR_PTR(ret);
->  }
-> =20
-> +static struct sg_table *drm_gem_shmem_get_sparse_pages_locked(struct drm=
-_gem_shmem_object *shmem,
-> +							       unsigned int n_pages,
-> +							       pgoff_t page_offset)
+3. Current problem
+The problem is that the skb->data generated by ppp_write() starts from the
+'Protocol' field.
 
-Can we keep the page allocation and sgt creation distinct, with a
-drm_gem_shmem_sparse_populate_locked() returning an int, and
-drm_gem_shmem_sparse_get_sgt_for_range() returning an sgt for a
-previously populated range.
+But the BPF program skips 2 bytes of data and then reads the 'Protocol'
+field to determine if it's an IP packet just like the comment in
+'drivers/net/ppp/ppp_generic.c':
+/* the filter instructions are constructed assuming
+   a four-byte PPP header on each packet */
 
-> +{
-> +	struct drm_gem_object *obj =3D &shmem->base;
-> +	gfp_t mask =3D GFP_KERNEL | GFP_NOWAIT;
+In the current PPP driver implementation, to correctly use the BPF filter
+program, a 2-byte header is added, after running the socket filter, it's
+restored:
+'''
+1768 *(u8 *)skb_push(skb, 2) = 1;
+1770 bpf_prog_run()
+1782 skb_pull(skb, 2);
+'''
 
-You shouldn't mix GFP_KERNEL and GFP_NOWAIT, as GFP_KERNEL implies
-GFP_RECLAIM.
+The issue is that only the first byte indicating direction is initialized,
+while the second byte is not initialized. For normal BPF programs
+generated by libpcap, uninitialized data won't be used, so it's not a
+problem.
 
-> +	size_t size =3D n_pages * PAGE_SIZE;
-> +	struct address_space *mapping;
-> +	struct sg_table *sgt;
-> +	struct page *page;
-> +	bool first_alloc;
-> +	int ret, i;
-> +
-> +	if (!shmem->sparse)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* If the mapping exists, then bail out immediately */
-> +	if (xa_load(&shmem->xapages, page_offset) !=3D NULL)
-> +		return ERR_PTR(-EEXIST);
+However, for carefully crafted BPF programs, such as those generated by
+syzkaller [2], which start reading from offset 0, the uninitialized data
+will be used and caught by KMSAN.
 
-You're only checking the first page here. Maybe we should just
-ignore the case where some pages are already populated, and populate
-the missing ones. This implies leaving already allocated pages in place
-if an error occurs in the middle instead of trying to revert what we've
-allocated, but that's probably okay.
+4. Fix
+The fix is simple: initialize the entire 2-byte header.
 
-> +
-> +	dma_resv_assert_held(shmem->base.resv);
-> +
-> +	first_alloc =3D xa_empty(&shmem->xapages);
-> +
-> +	mapping =3D shmem->base.filp->f_mapping;
-> +	mapping_set_unevictable(mapping);
-> +
-> +	for (i =3D 0; i < n_pages; i++) {
-> +		page =3D shmem_read_mapping_page_nonblocking(mapping, page_offset + i);
+Cc: Paul Mackerras <paulus@samba.org>
 
-Looks like we're mixing the sparse and non-blocking aspects. I'd rather
-make the non-blocking property by passing gfp_t flags to this function.
+[1] https://syzkaller.appspot.com/bug?extid=853242d9c9917165d791
+[2] https://syzkaller.appspot.com/text?tag=ReproC&x=11994913980000
 
-> +		if (IS_ERR(page)) {
-> +			ret =3D PTR_ERR(page);
-> +			goto err_free_pages;
-> +		}
-> +
-> +		/* Add the page into the xarray */
-> +		ret =3D xa_err(xa_store(&shmem->xapages, page_offset + i, page, mask));
-> +		if (ret) {
-> +			put_page(page);
-> +			goto err_free_pages;
-> +		}
-> +	}
-> +
-> +	sgt =3D kzalloc(sizeof(*sgt), mask);
-> +	if (!sgt) {
-> +		ret =3D -ENOMEM;
-> +		goto err_free_pages;
-> +	}
-> +
-> +	ret =3D sg_alloc_table_from_page_xarray(sgt, &shmem->xapages, page_offs=
-et, n_pages, 0, size, mask);
-> +	if (ret)
-> +		goto err_free_sgtable;
-> +
-> +	ret =3D dma_map_sgtable(obj->dev->dev, sgt, DMA_BIDIRECTIONAL, 0);
-> +	if (ret)
-> +		goto err_free_sgtable;
-> +
-> +	if (first_alloc)
-> +		shmem->pages_use_count =3D 1;
-> +
-> +	shmem->rss_size +=3D size;
-> +
-> +	return sgt;
-> +
-> +err_free_sgtable:
-> +	kfree(sgt);
-> +err_free_pages:
-> +	while (--i) {
-> +		page =3D xa_erase(&shmem->xapages, page_offset + i);
-> +		if (drm_WARN_ON(obj->dev, !page))
-> +			continue;
-> +		put_page(page);
-> +	}
+---
+v3 -> v4: Use macro instead.
 
-Why not call drm_gem_put_sparse_xarray() here?
+Jiayuan Chen (1):
+  ppp: Fix KMSAN warning by initializing 2-byte header
 
-> +	return ERR_PTR(ret);
-> +}
-> +
->  /**
->   * drm_gem_shmem_get_pages_sgt - Pin pages, dma map them, and return a
->   *				 scatter/gather table for a shmem GEM object.
-> @@ -796,6 +887,28 @@ struct sg_table *drm_gem_shmem_get_pages_sgt(struct =
-drm_gem_shmem_object *shmem)
->  }
->  EXPORT_SYMBOL_GPL(drm_gem_shmem_get_pages_sgt);
-> =20
-> +struct sg_table *drm_gem_shmem_get_sparse_pages_sgt(struct drm_gem_shmem=
-_object *shmem,
-> +						     unsigned int n_pages, pgoff_t page_offset)
-> +{
-> +	struct drm_gem_object *obj =3D &shmem->base;
-> +	struct sg_table *sgt;
-> +	int ret;
-> +
-> +	if (drm_WARN_ON(obj->dev, !shmem->sparse))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	ret =3D dma_resv_lock(shmem->base.resv, NULL);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	sgt =3D drm_gem_shmem_get_sparse_pages_locked(shmem, n_pages, page_offs=
-et);
+ drivers/net/ppp/ppp_generic.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-Let's make the page allocation explicit (force the caller to call
-drm_gem_shmem_sparse_populate_locked() before this function), and return
-an error if pages are not populated in the requested range.
-
-> +
-> +	dma_resv_unlock(shmem->base.resv);
-> +
-> +	return sgt;
-> +}
-> +EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sparse_pages_sgt);
-> +
->  /**
->   * drm_gem_shmem_prime_import_sg_table - Produce a shmem GEM object from
->   *                 another driver's scatter/gather table of pinned pages
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index fdae947682cd..4fd45169a3af 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -38,6 +38,7 @@
->  #include <linux/dma-resv.h>
->  #include <linux/list.h>
->  #include <linux/mutex.h>
-> +#include <linux/xarray.h>
-> =20
->  #include <drm/drm_vma_manager.h>
-> =20
-> @@ -532,6 +533,8 @@ int drm_gem_create_mmap_offset_size(struct drm_gem_ob=
-ject *obj, size_t size);
->  struct page **drm_gem_get_pages(struct drm_gem_object *obj);
->  void drm_gem_put_pages(struct drm_gem_object *obj, struct page **pages,
->  		bool dirty, bool accessed);
-> +void drm_gem_put_sparse_xarray(struct xarray *pa, unsigned long idx,
-> +				unsigned int npages, bool dirty, bool accessed);
-> =20
->  void drm_gem_lock(struct drm_gem_object *obj);
->  void drm_gem_unlock(struct drm_gem_object *obj);
-> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shm=
-em_helper.h
-> index 902039cfc4ce..fcd84c8cf8e7 100644
-> --- a/include/drm/drm_gem_shmem_helper.h
-> +++ b/include/drm/drm_gem_shmem_helper.h
-> @@ -44,6 +44,14 @@ struct drm_gem_shmem_object {
->  	 */
->  	unsigned int pages_use_count;
-> =20
-> +	/**
-> +	 * @rss_size:
-> +	 *
-> +	 * Size of the object RSS, in bytes.
-> +	 * lifetime.
-> +	 */
-> +	size_t rss_size;
-
-Let's do that in a separate patch series dealing with memory
-accounting for sparse GEMs, if you don't mind. This can probably stay
-driver specific until the rest of the changes have been accepted.
-
-> +
->  	/**
->  	 * @madv: State for madvise
->  	 *
-> @@ -107,6 +115,7 @@ struct drm_gem_shmem_object {
->  	container_of(obj, struct drm_gem_shmem_object, base)
-> =20
->  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
-, size_t size);
-> +struct drm_gem_shmem_object *drm_gem_shmem_create_sparse(struct drm_devi=
-ce *dev, size_t size);
->  struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
-vice *dev,
->  							   size_t size,
->  							   struct vfsmount *gemfs);
-> @@ -138,6 +147,9 @@ void drm_gem_shmem_purge(struct drm_gem_shmem_object =
-*shmem);
->  struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_shmem_object =
-*shmem);
->  struct sg_table *drm_gem_shmem_get_pages_sgt(struct drm_gem_shmem_object=
- *shmem);
-> =20
-> +struct sg_table *drm_gem_shmem_get_sparse_pages_sgt(struct drm_gem_shmem=
-_object *shmem,
-> +						     unsigned int n_pages, pgoff_t page_offset);
-> +
->  void drm_gem_shmem_print_info(const struct drm_gem_shmem_object *shmem,
->  			      struct drm_printer *p, unsigned int indent);
-> =20
+-- 
+2.47.1
 
 
