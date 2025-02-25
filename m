@@ -1,64 +1,72 @@
-Return-Path: <linux-kernel+bounces-532347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32C4A44BE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:58:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A395CA44BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9121417159F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F597A3A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B81C20DD4D;
-	Tue, 25 Feb 2025 19:58:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65FD205AB6;
-	Tue, 25 Feb 2025 19:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5BF204F77;
+	Tue, 25 Feb 2025 20:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/Bm221U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A7E1A0BD6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740513505; cv=none; b=cpNE5Y+vgqb/YOVvmQCUFNIrHGxTaAKI/a1Wz42L0Br7iotb1Od1MwygkF5yGfWk58TaH/fkOjCbDU3+bzc7jEw/DfP3iymu8y6KmkijbMErcBtwo+GK9+YADcEWhPYeQURn1MySzcTtC/fpSfVItReajT9BO4eQG9yKBdjaMTM=
+	t=1740513650; cv=none; b=gPnu4YbjWn5X2kL6kUDeFy4hXGFJJTFbkH079PM7C/+h1U+48aVNYSh0BKugM4wERMukZxamieVGiMHsOwEplDbiST5cFygTwK8acgdUTi3Kh9UcjJ632BH4bnrNQu1RcQCYN+5MXYQOQoVK3npcIpDbtKAWaO43o5L4W6QZFZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740513505; c=relaxed/simple;
-	bh=TauguYtmPWqQDsCynGgZIXK+z1cbbQZwXFdW9dEVRF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLSn1UgxhDAmvSoRTjAHpgFQAxC1D25bsHHptqi2GroKSw2IFdScxXs/B9GhJMRUK6K3TK9HSaO+2eJJEP9jQswwl7/IdgHNK+Z3z4qX8SnMapSC7yqH0lZE0K9FFAD14ODPUsaVZJtvfUf1PFY/LrsvDZApOsqgDvAzCDPP3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 427E6152B;
-	Tue, 25 Feb 2025 11:58:39 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD9303F6A8;
-	Tue, 25 Feb 2025 11:58:20 -0800 (PST)
-Date: Tue, 25 Feb 2025 19:58:18 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-Message-ID: <Z74g2vUT9-KtlIvo@J2N7QTR9R3.cambridge.arm.com>
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
- <20250224122507.GE8144@e132581.arm.com>
- <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
- <20250224140317.GF8144@e132581.arm.com>
- <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
- <20250224180301.GI8144@e132581.arm.com>
- <Z72xMLsd37I6X_5-@J2N7QTR9R3>
- <20250225174803.GB1821331@e132581.arm.com>
+	s=arc-20240116; t=1740513650; c=relaxed/simple;
+	bh=oLTkvWNLPVYhtsMmPnDmBjn+UY0z6FDAOmaxpoJigrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oMHB1z/JlpyzyC7hOu6ENssL81s9M78qfR3piSFXNDWlSNCcVIk0hzg7v0/PstsHxssoM8y7h14R8KF/rCJcg1Jsh+aNBsxe2A+N+eUj88fViumRbyqN3+KVgJUUAC/AjOnhaLIgw/ajCBMwmZqsRv+H0KNy6AOVlwQrZ6E4jDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/Bm221U; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740513649; x=1772049649;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=oLTkvWNLPVYhtsMmPnDmBjn+UY0z6FDAOmaxpoJigrc=;
+  b=I/Bm221UmZpJq2+ALf79L4fdYegDyB99d28Rrv/Iww0ZUiQgICcs4A7h
+   3/7aHdSCrj85DuDlJdTk6B6OBssjLebka8MvpsSiP+V7CmlhYsrCFnCL/
+   3Tn3eamMupPW2Q/W/RSuGUCZa7rbkIAUQjy3512bH+weyC2/Ovbb9TfJY
+   jvFZGKVkDsCBP2Bt7Jm6+zbG9DECw/vLlttZSFi5BDjH/IFPHF1WcU8pf
+   1soMoVVRxfn8LvvLX4tiNU/P/OVIyh6Nq+3oop05GL5sB1z+dzETIy3sd
+   9B23zHyQBT2bdTYOKcYIdrwUJVyqaDlmdCbhfFUS02fOJl2hVjOye0JIX
+   A==;
+X-CSE-ConnectionGUID: aQjZFnTeRlGOd69gXpfOfA==
+X-CSE-MsgGUID: XMeNPcxTRui5LTrOhL1kqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="51970640"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="51970640"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 12:00:48 -0800
+X-CSE-ConnectionGUID: GuX5MFcnSNa27PE9Oirm8A==
+X-CSE-MsgGUID: dIJ8GuMdRv2/lw0k41mvvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="117099588"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 25 Feb 2025 12:00:47 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tn16e-000Aig-2d;
+	Tue, 25 Feb 2025 20:00:41 +0000
+Date: Wed, 26 Feb 2025 04:00:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: undefined reference to `gen_pool_size'
+Message-ID: <202502260351.kWkpfnZB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,133 +75,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225174803.GB1821331@e132581.arm.com>
 
-On Tue, Feb 25, 2025 at 05:48:03PM +0000, Leo Yan wrote:
-> On Tue, Feb 25, 2025 at 12:01:52PM +0000, Mark Rutland wrote:
-> 
-> [...]
-> 
-> > > > Critically, the brbe_enable() function merges the filters of all
-> > > > *active* events which have been installed into hardware. It does not
-> > > > track all events which can be rotated, and the resulting filter is not
-> > > > the same -- it can change as a result of rotation.
-> > > 
-> > > In a perf session has multiple events, and events have different branch
-> > > filters, seems to me, a simple way is to return error for this case.
-> > 
-> > FWIW, I'd generally prefer to do that since it avoids a number of
-> > horrible edge-cases and gets rid of the need to do SW filtering, which
-> > falls somewhere between "tricky" and "not entirely possible". However,
-> > that's not what LBR and others do, which is why we went with filter
-> > merging.
-> > 
-> > If folk on the tools side are happy with the kernel rejecting
-> > conflicting events, then I'd be more than happy to do that. What I don't
-> > want is that we start off with that approach and people immediately
-> > start to complain that the BRBE driver rejects events that the LBR
-> > driver accepts.
-> > 
-> > See the last time this came up.
-> 
-> Thanks for the shared links.  Based on the info, let's say we can have two
-> cases:
-> 
->   Case 1: set different branch filters in a single perf session:
-> 
->     perf record -e armv8_pmuv3_0/r03,branch_type=any_call/u \
->                 -e armv8_pmuv3_0/r04,branch_type=any_ret/k ...
-> 
->   Case 2: set different branch filters in multiple perf sessions:
-> 
->     perf record -e armv8_pmuv3_0/r03,branch_type=any_call/u ...
-> 
->     perf record -e armv8_pmuv3_0/r04,branch_type=any_ret/k ...
-> 
-> In my previous reply, I was suggesting that we should reject the case 1.
+Hi Grygorii,
 
-Do you mean that the kernel should reject that, or that userspace should
-reject that.
+FYI, the error/warning still remains.
 
-As mentioned earlier, I am ok with the idea that we reject *scheduling*
-events with mismatched filters, as we do for other resource conflicts.
-That would necessarily mean rejecting *groups* of events with
-inconsistent filters at open time.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+commit: 99f629718272974405e8d180d2fa70c03c06d61f net: ethernet: ti: cpsw: drop TI_DAVINCI_CPDMA config option
+date:   6 years ago
+config: alpha-randconfig-r004-20230123 (https://download.01.org/0day-ci/archive/20250226/202502260351.kWkpfnZB-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250226/202502260351.kWkpfnZB-lkp@intel.com/reproduce)
 
-However, I do not think that we should reject indepenent events which
-happen to have mismatched filters, regardless of whether they're opened
-by the same "session".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502260351.kWkpfnZB-lkp@intel.com/
 
-> IMO, it is not quite useful to configure different filters for events in
-> the same session, especially if this leads complexity in the driver due
-> to the hardware limitation.
+All errors (new ones prefixed by >>):
 
-I generally agree, but IIRC userspace does this today.
+   alpha-linux-ld: warning: arch/alpha/lib/styncpy.o: missing .note.GNU-stack section implies executable stack
+   alpha-linux-ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+   alpha-linux-ld: warning: arch/alpha/lib/styncpy.o: missing .note.GNU-stack section implies executable stack
+   alpha-linux-ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+   alpha-linux-ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permissions
+   alpha-linux-ld: drivers/net/ethernet/ti/davinci_cpdma.o: in function `cpdma_desc_pool_destroy':
+>> (.text+0x34): undefined reference to `gen_pool_size'
+>> alpha-linux-ld: (.text+0x38): undefined reference to `gen_pool_size'
+>> alpha-linux-ld: (.text+0x48): undefined reference to `gen_pool_avail'
+   alpha-linux-ld: (.text+0x50): undefined reference to `gen_pool_avail'
+   alpha-linux-ld: (.text+0xb4): undefined reference to `gen_pool_size'
+   alpha-linux-ld: (.text+0xb8): undefined reference to `gen_pool_size'
+   alpha-linux-ld: (.text+0xc8): undefined reference to `gen_pool_avail'
+   alpha-linux-ld: (.text+0xd0): undefined reference to `gen_pool_avail'
+   alpha-linux-ld: drivers/net/ethernet/ti/davinci_cpdma.o: in function `cpdma_desc_pool_create.constprop.0':
+>> (.text+0x3f4): undefined reference to `devm_gen_pool_create'
+>> alpha-linux-ld: (.text+0x428): undefined reference to `devm_gen_pool_create'
+   alpha-linux-ld: (.text+0x4a4): undefined reference to `gen_pool_add_virt'
+   alpha-linux-ld: (.text+0x4ac): undefined reference to `gen_pool_add_virt'
+   alpha-linux-ld: drivers/net/ethernet/ti/davinci_cpdma.o: in function `__cpdma_chan_free':
+>> (.text+0x714): undefined reference to `gen_pool_free'
+   alpha-linux-ld: (.text+0x71c): undefined reference to `gen_pool_free'
+   alpha-linux-ld: drivers/net/ethernet/ti/davinci_cpdma.o: in function `cpdma_chan_submit':
+>> (.text+0x1bcc): undefined reference to `gen_pool_alloc'
+   alpha-linux-ld: (.text+0x1bd8): undefined reference to `gen_pool_alloc'
+   alpha-linux-ld: (.text+0x205c): undefined reference to `gen_pool_free'
+   alpha-linux-ld: (.text+0x206c): undefined reference to `gen_pool_free'
+   alpha-linux-ld: drivers/net/ethernet/ti/davinci_cpdma.o: in function `cpdma_check_free_tx_desc':
+>> (.text+0x20f4): undefined reference to `gen_pool_avail'
+   alpha-linux-ld: (.text+0x20f8): undefined reference to `gen_pool_avail'
 
-> For case 2, when create a new session, if the perf tool can read out the
-> current branch filter setting (e.g. via sysfs node) and give suggestion
-> what branch filter is compabile with existed sessions, seems to me, this
-> is a feasible solution.  My understanding this is a rare case, and a
-> clear guidance for users would be sufficient if this happens.  (Maybe
-> we can give recommendation for how to use BRBE in the perf doc).
-
-No. We are not going to expose *dynamic* information about the PMU
-hardware via sysfs. This is not as simple as you make it out to be.
-At any point in time there can be an arbitrary number of events open,
-and some arbitrary subset currently scheduled.
-
-I agree that ideally this should be rare, though, and hence either of
-the two options I have suggested thus far should handle that acceptably.
-
-> To be clear, an important factor is the trace modes with modifier 'u'
-> (user) and 'k' (kernel) should be supported for different events and for
-> different sessions.  In a mixed cases (some events are userspace only
-> and some are kernel only), the BRBE driver needs to filter out branch
-> records for specific mode when taking a sample.
-
-I hate to repeat myself, but the driver has *no concept whatsoever* of a
-"session". It only knows:
-
-* Which events are currently active in hardware.
-
-* Which events have been grouped together.
-
-* Which events have been opened for a given task or CPU context.
-
-... and *NONE* of those correspond directly to a "session" managed by
-the userspace perf tool.
-
-> > > If we can unify branch filter within a perf session, would this be
-> > > much easier for handling?
-> > 
-> > Do you mean if the perf tool ensured that all events in a given session
-> > had the same filter? From the kernel's PoV there's no such thing as a
-> > "perf session", and I'm not sure whether you're suggesting doing that in
-> > userspace or withing the kernel.
-> 
-> My understanding is this would be not difficult to do such kind checking
-> in the tool.  E.g., the perf tool can iterate every event and check the
-> branch filter and detect incompabile issue.
-
-Cool, sounds like we could do that then!
-
-> > Doing that in the perf tool would certianly make a stronger argument for
-> > the kernel taking the "reject conflicting branch filters" option.
-> > 
-> > Doing that within the kernel isn't really possible.
-> 
-> As said above, if the BRBE driver can provide a knob in sysfs to indicate
-> what is the current branch filter in the existed sessions, this would be
-> helpful for the tool to do the checking and remind users.
-
-Sorry, as above, that is not going to happen. It is not practical and
-will cause many other problems.
-
-> I haven't done any experiments for this. If you think this is the way
-> to move forward, I might do a prototype and get back to you to ensure we
-> don't run into any unexpected issues.
-
-What specifically are you proposing to prototype?
-
-Mark.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
