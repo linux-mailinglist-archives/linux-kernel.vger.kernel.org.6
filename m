@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-531121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5F3A43C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D002A43C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1A61893322
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173FB3BE717
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00A92676F7;
-	Tue, 25 Feb 2025 10:58:18 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B46F2676F1;
+	Tue, 25 Feb 2025 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvivoxQD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE3379D0;
-	Tue, 25 Feb 2025 10:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4361A5B9B;
+	Tue, 25 Feb 2025 10:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481098; cv=none; b=IKmrYb/DMax8UTjmwFv+i//oWvdhwFYV9MI+rcyqWVAfGa1w9/9TORXafIRhdzQ0Es7aq3n0eoMavRlimqnskYlCUwPEHE2fC8kcaYGgXK6Ja4pyNFUMUoD6UoBVQhxK9yWFXKCxhiI9Y/Pe6wVvyaXnaAf48iUoYp6EeuHr01s=
+	t=1740481116; cv=none; b=EDSJzRE08mNfdhFT13Mqo2o6zwhscweZQmZDnQK0ZKSal0D3HeIzAVvSrXJVeEWv5tTJYdcsVENoc8Od5qf5j60hcHYsexIV2xLBKX/jUwkGGj6W6aZqHDeAki8wKoLKSEVFpDcpBqCPCOtyL2wKUqLbONysZmG5rywpSJk1t44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481098; c=relaxed/simple;
-	bh=YE2cVH7ILPdji763dvBKtSttuGhyBEY/b0k+dsw7F3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZx4dJ+2v6WhAvTBLk7qRs7XLS7oRzmLauW+/8fGoVjZw7pBVUK0F35xhwrwTr1jc4fEIC3CA9H3ibcBvn/cEg7FuMO/nCwmkKvPa72sOjeUgHJrvQuKvr9iAAYUcF0pqfKaU51d5POGNOG6rkG5zn+/NjM8zD7+v3c/EZRLnVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1740481116; c=relaxed/simple;
+	bh=TVlNyn10UOhOsfDb5reyqEProfJES17CfL7cj0kr9nU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMsOi9fuJ1HqEW8YKDAX57FDgrSKxqd6tVlx7MkJDRVG6LRF02QU9fnS+kKzy/EWL+xDcuzs8c8zyq61Ld1QhFXIE0HUrOszDBGCv7r3qA2OKi09DsahCfrCgwQIVopM+/11wz2zO/iG4yCND/eCLDqK8humTfNKbsS2hIUay2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvivoxQD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so7831989a12.1;
-        Tue, 25 Feb 2025 02:58:15 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54524740032so5634533e87.3;
+        Tue, 25 Feb 2025 02:58:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740481113; x=1741085913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A0JGPiOmgCbw/F87CIh3Is7mEUP2E4VCB+H+lpf/rx8=;
+        b=kvivoxQDXm90qUZVbQZfCmGyBBM+fPxa/pDj81LiMXfEHqv0Kf5N4vb89UeRDrUcsw
+         iZ4KGeuyJOic3khP3XPjw1Y9TpRo8g3ZrkRuVfSYOPYD/DSp6mw9p0yNznjVlYYkZRzA
+         ARNvxQ9ml/nHewthklS3NqP7Wsu8maRQTIqJlBGscg+tsIP3sa6jU+dFx9RCs2X4t5PK
+         iEf9o21LSv142QyyLWz3gMaTsHDgFTIz7P4YHt3g3YAer40MDZFHSJhFDqH0ulfP8+jG
+         3083EXdiRfEVD5goCiAMNClqcRtRD1GIdkJVJtIJRk1qQayAFgwAw33m6H1Zq+HMmh1r
+         I2DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740481094; x=1741085894;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVLEsWhXKjAp+8uIFfafhY+8jwVrpBjpGy0ScKqrlr4=;
-        b=uUNczNCTxdyTj8J768jGx47vQvboekOEmK/O1sXKzuHB/ckmhiWTHkbK7wdzta+UTT
-         p1A2N5VpBuyHrs3ZaiW3258S41n9zCz+WNALLbNL3r5PBNwyPCRp/fCMltb0sxcCw+A2
-         BmDKTfBowWA4Stf6zV++TaS9UPjs2o2GsszYtYdn/IS7lkjAEGqrLymM8MpZL4/hx4jH
-         8qT5AVL8Ur2GrWERD7SGDtuIdv70PhVZv8lecs9m1jZnDIN4aYNyMZcKua4wlJ3g5FGv
-         w2QZJJtjK4ilvhkvci/hkBLIH8MNWqr4Mw93ZmRcVkNPF8Gk3+bM/cOqon98/IYzoo3u
-         +TOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPsMDQn1I8q6F+nnKT2p13YxijBpXdJX0RH2CZorM6mE4KAVz+Gnxi9FdyIL4RV5weYLNXmGK7isje36U=@vger.kernel.org, AJvYcCVXA9EIQsiWrpIlUIcScSBbKppQxv8lxKQ6ng+zBvFf4ndsuhKRcsHqutcfAxdlilvnLQM5bUxm@vger.kernel.org, AJvYcCXcccvsHkIbseytSzwADgYUz0gZ763WN896ll9RITftgBp7k78fSMbZqgFscbq+poNjYy2TFAAL+naXpcUkde9p0xEg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGPiKN17UtElzGmRPFcS/ozUtxNCL+VJm7t5tllyqYMhN86QRa
-	uzzzIyqZioqf/lcZpzU/gt1ciXLBPxpjpMzAqTedNhdREKfteIpU
-X-Gm-Gg: ASbGncuRe6pePO9Nc4Z+Jklj/sD+X2TfK6b2Huer3c0YHDWfWgSzfYfHxtnFi1eHYY3
-	h4ohPA20d2ykUgzH1lWMAGBhzDDLNkBqmq1abd95tyBOmzljv5dq6pjfit3pr0wIdv+GPORAgNC
-	5ziWP4gYZNnZ+JNhQyUss5ZPzEv2tkD6hU0LFKdpXYMoA0CFPf40+bEeFRrPW1TLMpWvela1RWa
-	oqcSR9vWA0OcUJI90LxatXV+iqTBIFqm27ZQpmIxNJ4a8yIvCfD+cgneyNbybWWxyC+o6X0M97a
-	LbVaobDmLQkne0CE
-X-Google-Smtp-Source: AGHT+IEfEbllpJqiUZsNY0r/y/6uQFmExRBKuIYrUFWMQE/Vjz9p0dnbVslSpj4Y3IbZeejiizwMxw==
-X-Received: by 2002:a17:907:3f92:b0:abb:e259:2a64 with SMTP id a640c23a62f3a-abc09b21c99mr1664018866b.33.1740481093781;
-        Tue, 25 Feb 2025 02:58:13 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1da0befsm121016066b.74.2025.02.25.02.58.12
+        d=1e100.net; s=20230601; t=1740481113; x=1741085913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A0JGPiOmgCbw/F87CIh3Is7mEUP2E4VCB+H+lpf/rx8=;
+        b=B+RerslHNVysxo6YqQ3syds9QShwpY5h1Jk1/M+g3vrjT8PA8THuL6lIXN9aPN8tk3
+         qad70yA95t29pc8PhTJTzQEk/uWHqgj+b/CU0Owsrwooue2fp/3R4ed1qNatn+YVFbLr
+         EAWrHYZwIAFGuqnc4AJltra1j2BKq7EE7QVwa9sUXIvwwI1a0HtuoT/BGiIZgWtsIOf+
+         TWTyyp2gSD8EljlfFFIhzxPgQYpRV43vG5iagZh5Bi88A3TQkG2Zodb/hwYcQqbtBz8V
+         uAmm59SG0xzgCZvmXVLunflXr149cRN0AYgPC/iFH07sxlU8CtkQBImCi/zOjKGkOBgs
+         3kIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX3D+DVYVoSnvRK/Piq0y0AQZJzWdm/iE56wgidVBiKAzwzFOcQ/r2I65DWb6EXM+1+EBRt7iaA1W9V1k=@vger.kernel.org, AJvYcCXD1Koo7ZgKihc4gGlhYQIZNP3Qjs2QV+eE870NMgTU2rm+sRnWvBjMI/Jv1mfkeS1Yp8OJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdLOXSt11Kqi7GS33SGrKPoG/oU7jA3uiPqqy9py56cBtvbz9y
+	WULS1l4ejO1C+rheZcvbxcE+xGJKYKhcvWSo4+UVFIwUw089pV1e
+X-Gm-Gg: ASbGncsk2HtX1wMY2JTNhouE35TBU6xgDFmc4nDzY6tPmz3EBxhs5/aRe73sxrGbfli
+	e2tDbk9jRgkUZvehRkT38dJo3XzVmJE9v2XGCGhTeBJURqT8gvsahOAzFbo8L7/AIkdzWUqyawW
+	jJuS/Zv8v3Nif904mQhCWL8amH9fvN5z0RPOAlCIK9/5bzPulGLYvqkCKgbHQmCPRNdAKQlRQl1
+	C28KfJ6jD7TNzfvuhOW7H8tTvSUV4lBMV8ClZAJG12hPBHF5K9lPrmDszde+nSPBofcZu/tFamk
+	44bTR9/L8534IDlsu51EiPGDm13uHFu1omhUm3f2Hbn4RNAM
+X-Google-Smtp-Source: AGHT+IFqRMF/ZEp84MklHdhBOMn2RmvmaEjMttQo5Zdw9ZrcnY4Yb1/NHEuPf8tpXnsL42cA+TvrQA==
+X-Received: by 2002:a05:6512:2247:b0:545:f1d:6f1f with SMTP id 2adb3069b0e04-548510dc14fmr912005e87.26.1740481112614;
+        Tue, 25 Feb 2025 02:58:32 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548522a6368sm110451e87.255.2025.02.25.02.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:58:13 -0800 (PST)
-Date: Tue, 25 Feb 2025 02:58:10 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Yonghong Song <yhs@meta.com>, Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>
-Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
-Message-ID: <20250225-interesting-nocturnal-okapi-b43735@leitao>
-References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
- <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
- <SA3PR15MB5630CFBB36C212008DA8ACC7CAC02@SA3PR15MB5630.namprd15.prod.outlook.com>
- <CANn89i+zxMje+wbQzLKbSq_WKYnwGdMyAdStMm4GqkdJCvWPOg@mail.gmail.com>
+        Tue, 25 Feb 2025 02:58:32 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 25 Feb 2025 11:58:29 +0100
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2 1/3] rcutorture: Allow a negative value for
+ nfakewriters
+Message-ID: <Z72iVbIZJ4jAMz4j@pc636>
+References: <20250224133659.879074-1-urezki@gmail.com>
+ <c299a0b1-3271-4229-bdb9-2d4904ac0e13@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89i+zxMje+wbQzLKbSq_WKYnwGdMyAdStMm4GqkdJCvWPOg@mail.gmail.com>
+In-Reply-To: <c299a0b1-3271-4229-bdb9-2d4904ac0e13@paulmck-laptop>
 
-Hello Eric,
-
-On Mon, Feb 24, 2025 at 08:23:00PM +0100, Eric Dumazet wrote:
-> On Mon, Feb 24, 2025 at 8:13 PM Yonghong Song <yhs@meta.com> wrote:
-> >
-> > > ________________________________________
-> > >
-> > > On Mon, Feb 24, 2025 at 7:24 PM Breno Leitao <leitao@debian.org> wrote:
-> > >>
-> > >> Add a lightweight tracepoint to monitor TCP sendmsg operations, enabling
-> > >> the tracing of TCP messages being sent.
-> > >>
-> > >> Meta has been using BPF programs to monitor this function for years,
-> > >> indicating significant interest in observing this important
-> > >> functionality. Adding a proper tracepoint provides a stable API for all
-> > >> users who need visibility into TCP message transmission.
-> > >>
-> > >> The implementation uses DECLARE_TRACE instead of TRACE_EVENT to avoid
-> > >> creating unnecessary trace event infrastructure and tracefs exports,
-> > >> keeping the implementation minimal while stabilizing the API.
-> > >>
-> > >> Given that this patch creates a rawtracepoint, you could hook into it
-> > >> using regular tooling, like bpftrace, using regular rawtracepoint
-> > >> infrastructure, such as:
-> > >>
-> > >>         rawtracepoint:tcp_sendmsg_tp {
-> > >>                 ....
-> > >>         }
-> > >
-> > > I would expect tcp_sendmsg() being stable enough ?
-> > >
-> > > kprobe:tcp_sendmsg {
-> > > }
-> >
-> > In LTO mode, tcp_sendmsg could be inlined cross files. For example,
-> >
-> >   net/ipv4/tcp.c:
-> >        int tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
-> >   net/ipv4/tcp_bpf.c:
-> >        ...
-> >       return tcp_sendmsg(sk, msg, size);
-> >   net/ipv6/af_inet6.c:
-> >        ...
-> >        return INDIRECT_CALL_2(prot->sendmsg, tcp_sendmsg, udpv6_sendmsg, ...)
-> >
-> > And this does happen in our production environment.
+On Mon, Feb 24, 2025 at 10:41:03AM -0800, Paul E. McKenney wrote:
+> On Mon, Feb 24, 2025 at 02:36:57PM +0100, Uladzislau Rezki (Sony) wrote:
+> > Currently "nfakewriters" parameter can be set to any value but
+> > there is no possibility to adjust it automatically based on how
+> > many CPUs a system has where a test is run on.
+> > 
+> > To address this, if the "nfakewriters" is set to negative it will
+> > be adjusted to num_online_cpus() during torture initialization.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 > 
-> And we do not have a way to make the kprobe work even if LTO decided
-> to inline a function ?
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 > 
-> This seems like a tracing or LTO issue, this could be addressed there
-> in a generic way
-> and avoid many other patches to work around this.
+Applied and i will resend a v3 :)
 
-I understand that the {raw}tracepoint ensures the compiler cannot
-interfere with these hook points. For everything else, we rely on the
-hope that the compiler behaves favorably, which is far from ideal.
+Thank you!
+
+--
+Uladzislau Rezki
 
