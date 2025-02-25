@@ -1,216 +1,168 @@
-Return-Path: <linux-kernel+bounces-532568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E4FA44F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A8EA44F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5931B1883B67
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB681885DF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4308F212B2D;
-	Tue, 25 Feb 2025 21:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EA120E31E;
+	Tue, 25 Feb 2025 22:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MGdKQ4p1"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2053.outbound.protection.outlook.com [40.107.101.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWIO8p1R"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A3120D4F0;
-	Tue, 25 Feb 2025 21:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520754; cv=fail; b=thiD3WkdSN+7bBk4UD8u4PemRT2bzTvZ9yFB87WKtbhhvSDHk3pwH0u4+xYMf21fBj92I8DyRmKfFrMCP9fYgZN4CAdtQABVi4+yVZNBUFAlH82bnFhnE2oepRnjuszkWKzIm2TF+8cUHeLNeAGZZ6ffkXUYyMp+A9DNB+LmCAw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520754; c=relaxed/simple;
-	bh=Qh1emhWsYnIhhxUN4MtQ7q3oCUX/rn+WlEytd+nKIRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CbccOO2nVTNTJT3iML2cawX7ztGi8dtcxrzKTqprYtfpoPUxSgJ+zz5qFhRTpyYOT1CyQ4ca8aHv2prDp4GSeuS9XzA4Hi84z6Mj+SErHTWYuGJszCAmu2yKAhdJRqBlmdQVjgmdNPxEpEwnSr9xeZfT1UB26m8kDQL/+Y9Pk7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MGdKQ4p1; arc=fail smtp.client-ip=40.107.101.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XMIzEBVQpXGKfvbPjWVbkur0TNaP9SXwekmq0khgSXVKRouQzv3qR4D3H+biWvgHtzAt7tVo084y+UdAR3vbMQ/ZEn6Zeka32eG1BLcSNesG5wRTblJe53yexvh9pmu4rsAMTCJDYl9rTbLgh+8izaE/Jwt4CLPx+cPRx9FPxXvstMje/mWaOJBzo+3C7sbDgFFpnyM89Dhll0ESZQV/3rhtIJyO5pXfmtvlquTJQPQTVW3hyw4iH5ZfsHpeLQ7tMNtniMNYdsh5hcG82le1xqT0GKbbts0rLMOtt6c1tq///5drH1B/t731PdOy4az9mwJ2FZzTYhsLylwOWrvb8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gi3gMGZh5S9lPP9K8AxrNfkjSZ4iAQiAeOhpCFkxA3E=;
- b=k2v3HYf7Ac3psOKhPrDq/Q1t/3UZFMpWXHbTUXBwvw/EUowhsJwq9bexi3t9rmkyot+lTV6yONSlLTfNTRsdqCCIVrNKeJzVzrtC+XV9TxREZyk0IhOOT/0pWft7tCz2XLuIjddClgF2JttZfx9yG2FSrS+fUl9tTn33YYtNIF30h8wpRuA8SEI4HY2oUFnVPTGB5bb0JD4wHuBr9xqdBBUMrV6MqZStwur3D7VT1iIAn292r+JU1473iSJ/Ivp1NKCa3FrRzPVRg3pnmNOBblWEV7uFCao3H8viNXa4m6NlwRqNsTfHSM/rEUHG6GAYDxtQ7K/tHux0L4LzpqViWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gi3gMGZh5S9lPP9K8AxrNfkjSZ4iAQiAeOhpCFkxA3E=;
- b=MGdKQ4p1GNle1CrL7dTSp7hbKvAcTyblnmjlXinm44oq1SZBLDQ7ljQwk+XdGOkETlqSEi+YhTcIyybWyQ6imuHkLrCWllKV9dtz9cleEniy93aTYULDwTvczj9+/L4YB1qEpUsLFC/ujO8zc4tixOoI9+LD8zjDVAlF7JFPMrRNzNheBtTDg/C1RCrnccKYq+X+MGYaWtm2EClirH4k991+BKO7poGivqmfnuogkfpEGxiON5mD79wPODlsVtEqe67KZnLs/ev6pKIGXI5RQefIU8goalf6As+rzX6T4zFQiWQt+VuNhI1mmwb0LdQs3vUQt852MS+yWawPWLraZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA0PR12MB4351.namprd12.prod.outlook.com (2603:10b6:806:71::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
- 2025 21:59:10 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 21:59:10 +0000
-Date: Tue, 25 Feb 2025 16:59:08 -0500
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/3] rcu/exp: Remove confusing needless full barrier on
- task unblock
-Message-ID: <20250225215908.GA1812344@joelnvbox>
-References: <20250213232559.34163-1-frederic@kernel.org>
- <20250213232559.34163-3-frederic@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213232559.34163-3-frederic@kernel.org>
-X-ClientProxiedBy: BL1P221CA0023.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:2c5::10) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3445518DB04;
+	Tue, 25 Feb 2025 22:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740520849; cv=none; b=UfEmZwYYbwL7YFE8W5DXjYX/E1ExSqIvGw+hFikdDcGLzJuZC9Br7vGOJJQZSMOGCxL7pxq+oH+ZHaoy3Vzl4NEQ3X5CmmnP0RYi9x64x3Vbwz8as8YNy5Oj7fkMba91vblE5ivhZXstiS0HY4tn5lJnIULmXwI8KF0WHV843bA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740520849; c=relaxed/simple;
+	bh=RNm65QYAVgpRA3ro29fG8ikUByn3M+cakGh4NEAcs4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdVGStEyuo0Z3NEpDO475Cj5SQf71YNPFIx1hXVwx9ZqFs9y4IWV1DBui2hum27n3XWpwQGVV3GeUrxNoE02HK3Hf8tesFab300mbgZVXy2wKJ/iajx7MTe3lD+/F/SivgCR3Nl8u4saN4jLVkhjaLn4/CVa8IvQXpdpsf8HTlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWIO8p1R; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220ca204d04so102424125ad.0;
+        Tue, 25 Feb 2025 14:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740520847; x=1741125647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LkgmoiPvcQgjbdtHJ8zqyvbS8YBHxv17CNJXQL+7xas=;
+        b=KWIO8p1RxoKC9AvGbttcWDjhHCzPQ2AVdtP1HdROHYpjPRkS7jnGaThUXXRfEZW664
+         r4XQXYB1Zzn4/9fP6c4h0apP6yTJWr3odFTEKYDM19K1qsHoU7PVfW/MlpF7fRyg8T7c
+         bChtHyhhI3pOOjOWhO4sOGybRLZgJUacL6rFmLjmU9NozFQYEkCTLZrYZuOAr8c8xm7L
+         piH/hCPIi14ACXtVSbB/VQEjK/Pc2U+x7iCoOICrEgr404G8R9pl06TfhLmoZ18oOxVB
+         KoVLw+akRad2dhjfkLxFcE3y5WpGk/R0X9HeisLXar1Z4z/XWzdejfuRjXkD/pE5e9WK
+         QG3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740520847; x=1741125647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LkgmoiPvcQgjbdtHJ8zqyvbS8YBHxv17CNJXQL+7xas=;
+        b=AIRKAn4+ZN7dJtszlNLtLeBzcu+Kef3S93Gw+1GmwGKZuli4c+jDpXdEYXLyXAO836
+         AvaQMq4eVoEAoZCLvItDLDq0yAvSqP2bxHA4s7dwQFO909GM2h/+pmuZ2bG/uJFOV/nf
+         XiIpSKnIKz3iw6X79lnAb6dGJ3vc94wmhqBNvnOEG9xIk0x7KoWvL5yuhw1oJaiQsYvF
+         0dxbGiG9RCPLiItRlML5EcDqI5RyKfHKUMRLxTIRL6GkPNUgmjEqVLjPBuPi2jjsGjsh
+         q+vFlO4EZ3JOZkyUwtRAxxaTZTalPv13boMKLBnvy89cSCfWJ+PojDyTM7KYBnvSBvU8
+         AxUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTLnfHp6zEApMcEgX/jKnd9Wf5ktUJPTQhml8T/tgD9Mu3C8wdauyy7QTGLgLWra0765APEHyVmSUTy54u@vger.kernel.org, AJvYcCVFMYa+1d/n1+MHvZ7Z1OEX8/6zk91C2SUJwtySwViZH48yFT12N0D7eAdNPabSXSEqNuCHEQ1rhjfXsPbf+Mq9coSPVQ==@vger.kernel.org, AJvYcCXpM80NaqicqOhNbpS23lzt5tol2m6EW7YCFML6KuYlHzg2iZ6NV+MCyyJZbeoD6dRMTTE4xNDVz/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6pCYOHquRfKIi9eDK33ZjkrHquELj++U6x7X/nB5M7FhSFcjE
+	y2lP2vmHOOat3D471kVLV4lUU/iBRjVNi3n1YJexJaoWA75kRtGL
+X-Gm-Gg: ASbGncteNKU6BXNNyP/kH8rJfOuH9+bNUTgarMKoWMp0w4rCBlW9SmeoVjl8QqUrJX0
+	dt3iwQMYXSr6Pf12GzG8ufwDqXP8bCd6pMRDnQ0cgQnJXitizdFGrUvgS2AJ/S+eNxqgU3dLe8o
+	4oy5CNQ7C/BA5s1NhkpTWpwXseow1RwoIMTxhUifn1m2dO98KoEQhJu4WkU5k3Zw8+4sJ/UsVWD
+	0lnZ+81zPxc6ix8YbH4JSLGK3UA5e+k06LGyqr1q6U7bPqah3Lcy5ZPxevTn8Aj/SXuCTdxB5Po
+	ZFzNIqVjkRvERPB+sKHJSlJ7gy+/Z4Bd8BjyqW8JaE1DZejlUu6Gz+UdCYn17O4BoTx6mKQKNQR
+	P3RBtkRl1mBIY4rnWueIwlBOGW+N41ansE61Eo9O9r1Q=
+X-Google-Smtp-Source: AGHT+IHSoH5gEHhmrQME0JdH9Y25pdCOtj/IncPehWT7c2sPue0/sW23QAmFGwFjJFvspX0JL0qXew==
+X-Received: by 2002:a05:6a00:1808:b0:730:f1b7:9bc4 with SMTP id d2e1a72fcca58-7348bda7ee6mr1404731b3a.4.1740520846936;
+        Tue, 25 Feb 2025 14:00:46 -0800 (PST)
+Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f912fsm2114122b3a.61.2025.02.25.14.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 14:00:45 -0800 (PST)
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Armin Wolf <W_Armin@gmx.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mario Limonciello <superm1@kernel.org>,
+	Luke Jones <luke@ljones.dev>,
+	Xino Ni <nijs1@lenovo.com>,
+	Zhixin Zhang <zhangzx36@lenovo.com>,
+	Mia Shao <shaohz1@lenovo.com>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+	"Cody T . -H . Chiu" <codyit@gmail.com>,
+	John Martens <johnfanv2@gmail.com>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] platform/x86: Add Lenovo Gaming Series WMI Drivers
+Date: Tue, 25 Feb 2025 13:59:51 -0800
+Message-ID: <20250225220037.16073-1-derekjohn.clark@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA0PR12MB4351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61157bfd-1946-4986-ed23-08dd55e7a22b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4ckJP6DtDWnDoerSSr4QLnl5a46hYUWGyVs27Bg26lUxXF1Rgz0xOlBVnCab?=
- =?us-ascii?Q?3IRTGxUC8kHezFfKTSO1JS7otehIKR4XzoQobMD8OdO1Ua/ATq4kPfWpylBq?=
- =?us-ascii?Q?YcsMqw6t11J3dh4dTtuPisMZM24w4nBSB2J28UXhkqPveAnL8g1RxwTUGoqM?=
- =?us-ascii?Q?bkBzJsXMbbEX6v6UlzwrmGPrmy3C3K8DqUFs+DTqCRKao2Cu8TCGIJKSijzX?=
- =?us-ascii?Q?yPddPKDkBWzmbQCmt689BMfR53vsMoIw4cs+vmV3u1otTfwh6/VPUTQxX2D9?=
- =?us-ascii?Q?zCbRx33tU4Pg+U57v02GTvwUym6JDiErPpzbhV6OwCGiAmfPTRBhwaUAfeiv?=
- =?us-ascii?Q?oZ9zBSaYveCIeqpwAL5kHCLUDUxOctHNBbKUHc+RRMzuuwtlUftLJBF9QRCB?=
- =?us-ascii?Q?tNQ2d5dF52BuEyva2Gv/4Rlg+KaN3Rfh8ZoezTy97P0CGXdtpXOMIBmc5VtN?=
- =?us-ascii?Q?oHvThXibsN/BUq/W+vkCqzJe4+KNGjxI5aXTFnTa49qgvj94ve2AL2ivzznb?=
- =?us-ascii?Q?1erEJ5ISUhWBd0PqlUs/2bhK/8QZJmCv/AxmkuXC1f2DOKQpR3HZZUE60iiz?=
- =?us-ascii?Q?U3qhRwiTV85m43Jq7snUDBxzPUz47leDPd5JFINB4padnNSemK54bYRBVFvT?=
- =?us-ascii?Q?f132fZBVuKxMrgkmNylR6kqka5flHdJRRBZSaaaOwVD1amaae9r2GtctkjqE?=
- =?us-ascii?Q?ILNiYLJetu4FiYVQBHqtYTDi6y1+yku0lBpQ9bl1VZlAERHfOEVoUF7PtWa+?=
- =?us-ascii?Q?1q86cAmDYX9tisxl66LWWZNog0iODDTgvNdSjGU7BhtJz4l3+0g2dtbTgMW7?=
- =?us-ascii?Q?CTnwvfwMwrch6cPT1fE25NZ0O5wiYYBjHm56feZgmjWGMzHXiKfDR0BDdACG?=
- =?us-ascii?Q?knIXkka5D+bfj96xDQyi+w2XWgmZNtCfjDp5ms+I+zdSOc+IeVczw7T8HLQf?=
- =?us-ascii?Q?mm+Io4879hEyCZG9wDgbOqqTEWtZkq7opVp7kByqY7Yno98t5GFF1moj6PCp?=
- =?us-ascii?Q?BeWPC9SxYIPdv/q5hJnw0ru/i6qq0eLxvtYX1lj+iCCDeK10xJ+FfcnRZbvB?=
- =?us-ascii?Q?OwmWaSXpdF1SB9OFQ32Bk22WPhMVRypfBMBOpsJcFSrnEgToUvDRz2Cn5Klm?=
- =?us-ascii?Q?l2HpgSLANzLzqmm52x/oPtD2KkT6idqCYTCok14Fbtm5QHEE0rP7g2bqIHS+?=
- =?us-ascii?Q?QuPlYnmAg+4hTDmgpSweOhiy+jcK4rDJ3vAxJ6gs/PHqPNM5htrLI6n7O7uJ?=
- =?us-ascii?Q?R2M+vUEtAzTzPWcY7Ah9RHq3dB4iKkO18+Nx4zlWZDVG0Cxcyaeuu4JxFRIG?=
- =?us-ascii?Q?qQvlE/C8uFncrVZq1fs8VqggF98ylwXEO4d2HdFSG7nhqtwApU7+ifcJp0D7?=
- =?us-ascii?Q?i1h2cHqfWbVgeDT8LuyBEK0lR+hT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?j3DsJtjPoOtmpcBAwgUSjEmb70dE3r2Dvggmk0VvRgA8acVpSDA9woKwQ4FD?=
- =?us-ascii?Q?ggQMgN0P4NcTxc/GGOpCtu/lcZybze6PUGqulZzI7DooqN1iqtOxmBX/yIc/?=
- =?us-ascii?Q?rRxAUH927YY3jth8gafWpw07bbUM8TN5t7jm0T990qAbb6BhYNNvxjAXUnVU?=
- =?us-ascii?Q?VQmHI/S01JCcYIaCwpoaaNolqaqlz4UVrAVEuy88Oz96sZDUIRbHySVyz94J?=
- =?us-ascii?Q?BfiVwJYgKsy91DQK81OPpe8YtBZYCXpLoRzCgAnZGq4RuF29CRt3mS28cRJ7?=
- =?us-ascii?Q?bMQPKPnEYYN/feJJHzk+LXYqGX0oes0yk9hgfP899jgdc0yyF+GupwhLo93/?=
- =?us-ascii?Q?T5k9tVJl2ro2hxRtH9odT6MgOCbJjiNqCyrOoQrmMu7edPNDIS8Pj7ioMhIm?=
- =?us-ascii?Q?kW7EhY+y3GYZdft8miro5SE3n0PBe1ZLlS5Ezikgg01j8aQOJRHGtHFqLpzY?=
- =?us-ascii?Q?MeiRmZspxgqVUk9rWLxoYVsHxF+MCj9fmGH06wviQs/ZNP6Jsto5y56kMZlY?=
- =?us-ascii?Q?X4EYn0cbxoLvj/4vI90e/Ti8UUxDeP5Vbhos75bf1l3mf8knCO88S6uSLGS0?=
- =?us-ascii?Q?yNrHICkIe+lRMe9R7LkwimzRjl4USHW/Od36TP3j97XzGjpv7PA8foMpLoxL?=
- =?us-ascii?Q?jIEEGPtZ+Xg0+FcQEZzXeLCyuzUecDiov6zr0NFRZjarPdww3UYsdGHptua4?=
- =?us-ascii?Q?IspbwEeujOSYK0oyp168DRuZ+k+k+u2Ae71JqnrUKmMBqBuIYoHhmRpXx8+d?=
- =?us-ascii?Q?633hpmrnT3TXPre4/uZzHE3PYMeeX+biYSR+uI33tUbLyAGFO/YyFy2+z1AT?=
- =?us-ascii?Q?kmER16iHm2WcOv6k9Jd+n4+AlUDQh5Qu004e2i7uiAKIYyJ53obWJq8/QqxC?=
- =?us-ascii?Q?bS2HBFYxfn2pTifH5TsWkyyrEiIEpZXSJCjxc9VfOUCkFQ103+jeI15VJmkr?=
- =?us-ascii?Q?T+E3CFq9tGn9PVgCuAYCQ6UAHLmaRd4Vwn++uFrHTgsmAnhyiBxkur3tArvG?=
- =?us-ascii?Q?QlB+IyAKVlb0HE5sVEfRr+MFCSiBVweaj+HffyAYCpYWB0KqqOdKlkMLBkBn?=
- =?us-ascii?Q?5xUgo9odkGcE8XxJpMmrqLP03UqYb4w5/zJTa1RXz5mT05qE8IaBCcNTODcP?=
- =?us-ascii?Q?LpS3L1L2nSvhdtvOx4EItEP1nF8j2F1mb0s/aq7NP0eZIlq7/vVEPYuxicmM?=
- =?us-ascii?Q?s96uj0Qsb4g8tVkOS0Jsg7ALeIKLus4RgY+COpku9FOk8cctqF4kAOyXyZJQ?=
- =?us-ascii?Q?0BmXFny9WplMCECmSMPkxY5f/cQ92KpOVIYnYA9EGsE7B/A1VCqRL5aAJDHQ?=
- =?us-ascii?Q?4ZZLS1B+pBL5MEEfcXAJRy3Kn/W2C6ij6SHj1XutjacQbgLnlHxctTytKBUh?=
- =?us-ascii?Q?0nwDm0V3IsXxOsF0xhSTt254JY8BKLq6Knf/nv3BswOP+0yjYrGNpyNvukWO?=
- =?us-ascii?Q?VV9jJTAaZbUzR0hrpBonbAox9Wem4HMs67z54FO+lmdDz9glhOStlOQpRRYn?=
- =?us-ascii?Q?8yDSCOp2xDr8K7waDSLkyVPoaffoyVAMBPW4DZpAxwTD+09kfw94XbXiJQGY?=
- =?us-ascii?Q?aw3gWqUpaE3rdf1inoDNJZ33QxRYUceUoNGU+RQA?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61157bfd-1946-4986-ed23-08dd55e7a22b
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 21:59:10.4742
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K0JDSgRhzlem0xH7XWq89oUYNsQeRD6p1jlLNRSQKOyKS6oIhvSNzq/WQAY/7jA+zTyho0vcyVIG3y33cgJwsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4351
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 12:25:58AM +0100, Frederic Weisbecker wrote:
-> A full memory barrier in the RCU-PREEMPT task unblock path advertizes
-> to order the context switch (or rather the accesses prior to
-> rcu_read_unlock()) with the expedited grace period fastpath.
-> 
-> However the grace period can not complete without the rnp calling into
-> rcu_report_exp_rnp() with the node locked. This reports the quiescent
-> state in a fully ordered fashion against updater's accesses thanks to:
-> 
-> 1) The READ-SIDE smp_mb__after_unlock_lock() barrier accross nodes
->    locking while propagating QS up to the root.
-> 
-> 2) The UPDATE-SIDE smp_mb__after_unlock_lock() barrier while holding the
->    the root rnp to wait/check for the GP completion.
-> 
-> 3) The (perhaps redundant given step 1) and 2)) smp_mb() in rcu_seq_end()
->    before the grace period completes.
-> 
-> This makes the explicit barrier in this place superflous. Therefore
-> remove it as it is confusing.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/rcu/tree_plugin.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 3c0bbbbb686f..d51cc7a5dfc7 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -534,7 +534,6 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
->  		WARN_ON_ONCE(rnp->completedqs == rnp->gp_seq &&
->  			     (!empty_norm || rnp->qsmask));
->  		empty_exp = sync_rcu_exp_done(rnp);
-> -		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
+Adds support for the Lenovo "Gaming Series" of laptop hardware that use
+WMI interfaces that control various power settings. There are multiple WMI
+interfaces that work in concert to provide getting and setting values as
+well as validation of input. Currently only the "Gamezone", "Other
+Mode", and "LENOVO_CAPABILITY_DATA_01" interfaces are implemented, but
+I attempted to structure the driver so that adding the "Custom Mode",
+"Lighting", and other data block interfaces would be trivial in a later
+patches.
 
-I was wondering though, this is a slow path and the smp_mb() has been there
-since 2009 or so. Not sure if it is super valuable to remove it at this
-point. But we/I should definitely understand it.
+This driver is distinct from, but should be considered a replacement for
+this patch:
+https://lore.kernel.org/all/20241118100503.14228-1-jonmail@163.com/
 
-I was wondering if you could also point to the fastpath that this is racing
-with, it is not immediately clear (to me) what this smp_mb() is pairing with :(
+This driver attempts to standardize the exposed sysfs by mirroring the
+asus-armoury driver currently under review. As such, a lot of
+inspiration has been drawn from that driver.
+https://lore.kernel.org/all/20240930000046.51388-1-luke@ljones.dev/
 
-thanks,
+The drivers have been tested by me on the Lenovo Legion Go and Legion Go
+S.
 
- - Joel
+v3:
+- Added notifier chain to Gamezone and Other Mode drivers.
+- Added component framework to lenovo-wmi-other driver with
+  lenovo-wmi-capdata01 acting as a component.
+- Completed all suggestions from v2.
+- Checkpatch produces CHECK complaints about the Other Mode macros
+  reusing some variable names. This don't appear to create the condition
+  it highlights in my testing.
 
+v2:
+https://lore.kernel.org/platform-driver-x86/20250102004854.14874-1-derekjohn.clark@gmail.com/t/#m9682cee65783ff3a9e927f2ad1f55c4cbfc37615
+v1:
+https://lore.kernel.org/platform-driver-x86/CAFqHKTna+kJpHLo5s4Fm1TmHcSSqSTr96JHDm0DJ0dxsZMkixA@mail.gmail.com/T/#t
 
+Suggested-by: Mario Limonciello <superm1@kernel.org>
+Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+Derek J. Clark (4):
+  platform/x86: Add lenovo-wmi drivers Documentation
+  platform/x86: Add Lenovo Gamezone WMI Driver
+  platform/x86: Add Lenovo Capability Data 01 WMI Driver
+  platform/x86: Add Lenovo Other Mode WMI Driver
 
+ .../wmi/devices/lenovo-wmi-gamezone.rst       | 355 +++++++++++
+ .../wmi/devices/lenovo-wmi-other-method.rst   | 142 +++++
+ MAINTAINERS                                   |  12 +
+ drivers/platform/x86/Kconfig                  |  35 ++
+ drivers/platform/x86/Makefile                 |   4 +
+ drivers/platform/x86/lenovo-wmi-capdata01.c   | 140 +++++
+ drivers/platform/x86/lenovo-wmi-gamezone.c    | 374 ++++++++++++
+ drivers/platform/x86/lenovo-wmi-other.c       | 549 ++++++++++++++++++
+ drivers/platform/x86/lenovo-wmi.c             |  77 +++
+ drivers/platform/x86/lenovo-wmi.h             |  94 +++
+ 10 files changed, 1782 insertions(+)
+ create mode 100644 Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+ create mode 100644 Documentation/wmi/devices/lenovo-wmi-other-method.rst
+ create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.c
+ create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.c
+ create mode 100644 drivers/platform/x86/lenovo-wmi-other.c
+ create mode 100644 drivers/platform/x86/lenovo-wmi.c
+ create mode 100644 drivers/platform/x86/lenovo-wmi.h
 
+-- 
+2.48.1
 
->  		np = rcu_next_node_entry(t, rnp);
->  		list_del_init(&t->rcu_node_entry);
->  		t->rcu_blocked_node = NULL;
-> -- 
-> 2.46.0
-> 
 
