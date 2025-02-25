@@ -1,161 +1,179 @@
-Return-Path: <linux-kernel+bounces-532629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58677A4500F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:29:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59005A4502D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0538F188B131
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4712416CCCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B02821E0AF;
-	Tue, 25 Feb 2025 22:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GmOF2vVu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D830F21D3E2;
-	Tue, 25 Feb 2025 22:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A352192FD;
+	Tue, 25 Feb 2025 22:26:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45E5214803;
+	Tue, 25 Feb 2025 22:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522327; cv=none; b=d5Mte+cQAZY9R8EAki3CjTCrtuoOpa1Yupcxn1Ez0SWFzeaxlTAoh8bWoTDGYKoD4cQJ4vBOXde8ItdAGfN1flnFtPO/UCTl0wdL11C7mOx2tA/8JYE4AjGAlAu72oMVbXEbJEzWh5GRVrUHKfdyFZqCb4vEyJFQLVahftbrZQU=
+	t=1740522374; cv=none; b=Ju+yCuVXI99nJesJcbnISHkaSBRlZGtvNvov3/xDiX0ZL7tWwZhPDVlU104nhdmjSmoQPrk1xQY0uMrxn1mW1uEK4fuu2yoz6JH5AoJ3BmTY7YiopAeslwP5O7LH28t2FZ5Lq6v6d5NUMms1XfHrn/ab8E13zaK8nUC9PXtI4as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522327; c=relaxed/simple;
-	bh=t5XHU8FuzTxYJsQJ0aplVsiqJvj2QQrZy+BDGGLfJeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYfC3F3K9wMOXY+843JE3lM826/fK5k29FP2oU2FiETg9DhsXFk4z85Bcx5ES/x6OqilSfsBGpak2nfDe2/GNj3OUydrU9WGnEcgWn+xCyQxMaCTUb2lt/h9DxB0Le0boL7cFRHNdB7QDK3axMZMcDmALZcAqKpoxuFcEOeTbyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GmOF2vVu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1BF1D203CDFE;
-	Tue, 25 Feb 2025 14:25:25 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1BF1D203CDFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740522325;
-	bh=4snbY5kKjPs+fqnW4bDVzUWCVcYb+NMujdrOx1UsTIo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GmOF2vVuCkJZ1DfUd1ljj8/fusb2yUMbDy2WmYxFrMMfaTTzbAqkWEUBwLUg55zpF
-	 Eal2Uv7psJ6AMd7GHQIuT0F5bT24oqPS+VN9NVDy5j/15vSuizsFBxdX1p+w7B0n5d
-	 f2jfhVcFODVbMweP0SK+AakuXEGuKdQiYOukQldU=
-Message-ID: <a96f9469-a22e-43e7-825d-f67ef550898f@linux.microsoft.com>
-Date: Tue, 25 Feb 2025 14:25:24 -0800
+	s=arc-20240116; t=1740522374; c=relaxed/simple;
+	bh=hWweZgKdfZikXRAiePO+25+q5jfijM1HiOLlPaRwrjg=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=TO5AYx3jKzEOasYT+L8KwXYhsNMuQR7Ab7mb6KUa2+03jmY8DLzdxzZMjS0vVFcLqDS8lCrWoI20WCs3gLpMNyeo03gEqPQp8GksRcCzj9d80uhtYkEHHv9gmKkAmd+/k3bWG67rGW34Vc968Z/TWtqC9a6hlIiRwamabOadjb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39890C4CEDD;
+	Tue, 25 Feb 2025 22:26:14 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tn3O9-00000009CIB-2Clv;
+	Tue, 25 Feb 2025 17:26:53 -0500
+Message-ID: <20250225222601.423129938@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 25 Feb 2025 17:26:01 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Guo Ren <guoren@kernel.org>,
+ Donglin Peng <dolinux.peng@gmail.com>,
+ Zheng Yejian <zhengyejian@huaweicloud.com>,
+ bpf@vger.kernel.org
+Subject: [PATCH v3 0/4] ftrace: Add function arguments to function tracers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect
- hypervisor presence
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com,
- bhelgaas@google.com, Borislav Petkov <bp@alien8.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "H. Peter Anvin" <hpa@zytor.com>, krzk+dt@kernel.org,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Ingo Molnar <mingo@redhat.com>, Rob Herring <robh@kernel.org>,
- ssengar@linux.microsoft.com, Thomas Gleixner <tglx@linutronix.de>,
- Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
- devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-2-romank@linux.microsoft.com>
- <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
- <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
- <97887849-faa8-429b-862b-daf6faf89481@app.fastmail.com>
- <6e4685fe-68e9-43bd-96c5-b871edb1b971@linux.microsoft.com>
- <14a199d8-1cf3-49bc-8e0d-92d9c8407b4f@linux.microsoft.com>
- <55b65ba6-4abe-478c-a173-4622c30ddd7b@app.fastmail.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <55b65ba6-4abe-478c-a173-4622c30ddd7b@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
 
+These patches add support for printing function arguments in ftrace.
 
-On 2/24/2025 11:24 PM, Arnd Bergmann wrote:
-> On Tue, Feb 25, 2025, at 00:22, Roman Kisel wrote:
->> Hi Arnd,
+Example usage:
 
-[...]
+function tracer:
 
-> If you want to declare a uuid here, I think you should remove the
-> ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_{0,1,2,3} macros and just
-> have UUID in normal UUID_INIT() notation as we do for
-> other UUIDs.
+ ~# cd /sys/kernel/tracing/
+ ~# echo icmp_rcv >set_ftrace_filter
+ ~# echo function >current_tracer
+ ~# echo 1 >options/func-args
+ ~# ping -c 10 127.0.0.1
+[..]
+ ~# cat trace
+[..]
+            ping-1277    [030] ..s1.    39.120939: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    39.120946: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    40.179724: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    40.179730: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    41.219700: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    41.219706: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    42.259717: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    42.259725: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    43.299735: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    43.299742: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
 
-I'd gladly stick to that provided I have your support of touching
-KVM's code! As the SMCCC document states, there shall be an UUID,
-and in the kernel, there would be
+function graph:
 
-#define ARM_SMCCC_VENDOR_KVM_UID UUID_INIT(.......)
-#define ARM_SMCCC_VENDOR_HYP_UID UUID_INIT(.......)
+ ~# cd /sys/kernel/tracing
+ ~# echo icmp_rcv >set_graph_function
+ ~# echo function_graph >current_tracer
+ ~# echo 1 >options/funcgraph-args
 
-Hence, the ARM_SMCCC_VENDOR_HYP_UID_*_REG_{0,1,2,3} can be removed as
-you're suggesting.
+ ~# ping -c 1 127.0.0.1
 
-That looks enticing enough semantically as though we're building layers
-from the SMCCC spec down to the "on-wire format" -- the only part that
-needs "deserializing" the UUID from `struct arm_smccc_res` the
-hypervisor returns.
+ ~# cat trace
 
-To add to that, anyone who wishes to implement a hypervisor for arm64
-will have to use some RFC 9562-compliant UUID generating facility. Thus,
-the UUID predates these 4 dwords. Using UUIDs in the kernel code will
-relieve of the chore of figuring out the 4 dwords from the UUID.
+ 30)               |  icmp_rcv(skb=0xa0ecab00) {
+ 30)               |    __skb_checksum_complete(skb=0xa0ecab00) {
+ 30)               |      skb_checksum(skb=0xa0ecab00, offset=0, len=64, csum=0) {
+ 30)               |        __skb_checksum(skb=0xa0ecab00, offset=0, len=64, csum=0, ops=0x232e0327a88) {
+ 30)   0.418 us    |          csum_partial(buff=0xa0d20924, len=64, sum=0)
+ 30)   0.985 us    |        }
+ 30)   1.463 us    |      }
+ 30)   2.039 us    |    }
+[..]
 
-Also, for the Gunyah folks will be pretty easy to use this infra:
-define the UUID in the header (1 line), call the new function (1 line),
-done.
+This was last posted by Sven Schnelle here:
 
-> 
-> If you want to keep the four 32-bit values and pass them into
-> arm_smccc_hyp_present() directly, I think that is also fine,
-> but in that case, I would try to avoid calling it a UUID.
+  https://lore.kernel.org/all/20240904065908.1009086-1-svens@linux.ibm.com/
 
-IMO, that approach provides a simplicity where anyone can see if the
-code is wrong from a quick glance: just compare 4 dwords. The fact that
-the 4 dwords form an UUID is bypassed though (as it is in the existing
-code). Somehow feels not spec-accurate imo. Also when I remove the UID
-part from the names, I'm going to have a rather weak justification as
-to why this is a benefit.
+As Sven hasn't worked on it since, I decided to continue to push it
+through. I'm keeping Sven as original author and added myself as
+"Co-developed-by".
 
-Likely, there are two levels of improvement here:
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20241223201347.609298489@goodmis.org/
 
-1. Just refactor the common parts out and have
-    `bool arm_smccc_hyp_present(u32 reg0, u32 reg1, u32 reg2, u32 reg2);`
+- Removed unneeded headers
 
-2. Introduce the UUID usage throughout and have a spec-accurate
-    prototype of
-    `bool arm_smccc_hyp_present(const uuid_t *hyp_uuid);`
+- Put back removed '\n' that was accidentally erased.
 
-and would be great to go for the second one :)
+- Do not use bpf_get_btf_vmlinux() to get btf element as
+  btf_find_func_proto() will handle that.
 
-> 
-> How are the kvm and hyperv values specified originally?
->>From the SMCCC document it seems like they are meant to be
-> UUIDs, so I would expect them to be in canonical form rather
-> than the smccc return values, but I could not find a document
-> for them.
+- Fixed how structures are printed
 
-For hyperv case, `uuidgen` produced the UUID and that is used.
-Likely the same for kvm.
+Changes since Sven's work:
 
-> 
->       Arnd
+- Made the kconfig option unconditional if all the dependencies are set.
 
--- 
-Thank you,
-Roman
+- Not save ftrace_regs in the ring buffer, as that is an abstract
+  descriptor defined by the architectures and should remain opaque from
+  generic code. Instead, the args are read at the time they are recorded
+  (with the ftrace_regs passed to the callback function), and saved into
+  the ring buffer. Then the print function only takes an array of elements.
 
+  This could allow archs to retrieve arguments that are on the stack where
+  as, post processing ftrace_regs could cause undesirable results.
+
+- Made the function and function graph entry events dynamically sized
+  to allow the arguments to be appended to the event in the ring buffer.
+  The print function only looks to see if the event saved in the ring
+  buffer is big enough to hold all the arguments defined by the new
+  FTRACE_REGS_MAX_ARGS macro and if so, it will assume there are arguments
+  there and print them. This also means user space will not break on
+  reading these events as arguments will simply be ignored.
+
+- The printing of the arguments has some more data when things are not
+  processed by BPF. Any unsupported argument will have the type printed
+  out in the ring buffer. 
+
+- Also removed the spaces around the '=' as that's more in line to how
+  trace events show their fields.
+
+- One new patch I added to convert function graph tracing over to using
+  args as soon as the user sets the option even if function graph tracing
+  is enabled. Function tracer did this already by default.
+
+
+Steven Rostedt (1):
+      ftrace: Have funcgraph-args take affect during tracing
+
+Sven Schnelle (3):
+      ftrace: Add print_function_args()
+      ftrace: Add support for function argument to graph tracer
+      ftrace: Add arguments to function tracer
+
+----
+ include/linux/ftrace_regs.h          |   5 ++
+ kernel/trace/Kconfig                 |  12 +++
+ kernel/trace/trace.c                 |  12 ++-
+ kernel/trace/trace.h                 |   4 +-
+ kernel/trace/trace_entries.h         |  12 +--
+ kernel/trace/trace_functions.c       |  46 ++++++++--
+ kernel/trace/trace_functions_graph.c | 170 ++++++++++++++++++++++++++++-------
+ kernel/trace/trace_irqsoff.c         |   4 +-
+ kernel/trace/trace_output.c          | 103 ++++++++++++++++++++-
+ kernel/trace/trace_output.h          |   9 ++
+ kernel/trace/trace_sched_wakeup.c    |   4 +-
+ 11 files changed, 328 insertions(+), 53 deletions(-)
 
