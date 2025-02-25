@@ -1,110 +1,170 @@
-Return-Path: <linux-kernel+bounces-530587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62B5A43565
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:37:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D99C1A4357D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFF13A6624
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0AF3A40B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB52256C9F;
-	Tue, 25 Feb 2025 06:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8B6257AD8;
+	Tue, 25 Feb 2025 06:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QjV336V8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H7Jep5N7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6300A254AE0;
-	Tue, 25 Feb 2025 06:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893A254AE0;
+	Tue, 25 Feb 2025 06:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465422; cv=none; b=VnMxBRfMtLMcgdoX99UCI4L/0Y00shcPy8gwhnyMnE2AELaXizNiMpoYhLN4K9Hwc9yrLIte3CDidBNqe9ZKm9JnolfVy4vO4hazBMKQ7Vm2i+HimNQSEePL14BJX22BPrVyujUf2YTTf5fjO4dA73dHc3Ci9JK+YGB9hpfLayE=
+	t=1740465427; cv=none; b=ZfMccuDRT7L2fqoDaTWEB+6RA0w/NsPzb+GfzxTC+IL8a1OQsa1SVv2h4J9CjaFdeCjr0qTiy3gq3iW+vB+elxNz+gl8LcF1HXnRa09gP/xldzqL7x94eT6V4GpX7nREKex6SDx2H4VmckkFMWk6kLsURuczdzhWe2saAZme/cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465422; c=relaxed/simple;
-	bh=zmf1BVxC0a6BVEtBTXrRMRPg+UxzEgS6AlCS1ZVuRak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mubv/apBKz2HvEYmO5bGsk5ORtiTUGQOGjXgVT25DqyndDtbE866FURL5Eyfo/7MevYVNcX+9lSYH9amNWNe7X5YEQHa91auOXDvQpbE0RaMVwENDaMKQDxtQngQwu3uCGmrt+843/2NoZhIWr49ap4w941J0t2DcUDgbt0MFTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QjV336V8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E8DC4CEDD;
-	Tue, 25 Feb 2025 06:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740465421;
-	bh=zmf1BVxC0a6BVEtBTXrRMRPg+UxzEgS6AlCS1ZVuRak=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QjV336V8aed5lDhxO8cUVwtntyqcr17IdLVODRAxYbp5v0JuOgK8HNvnfJoLuNsgJ
-	 MCOay4oN3xUHGXEkDW0fY5sHQzmfiRd6ucGVUxVEfJHS6VFjKW01SbodTNfWRcKmDO
-	 fZ3YaQVXCqoX37tiMqRMWXTkz9OQuW4O2HsVLrTM=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: rust-for-linux@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kurt Borja <kuurtb@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH] driver core: faux: only create the device if probe() succeeds
-Date: Tue, 25 Feb 2025 07:35:46 +0100
-Message-ID: <2025022545-unroasted-common-fa0e@gregkh>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740465427; c=relaxed/simple;
+	bh=CygHYav3x+5x5+yb+++lfNtySbmnAkHqeVWsdn8wP/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Cte9tD9wVi/VJiNOn/5C3Qfab+S0IWWawm6QWHYyNoUWrj99q21XK+74ED2FNE6/V0kLaSAqRTxB2eN1wyBps34QRyDHELsHN0szFEJIIFCg1l5LOHqFqPEVo+3KTdJzgrXt0Ayb5bX/BmkTHk0gpj4+2k33Fx00rLtFrp0HZMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H7Jep5N7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKONt9020059;
+	Tue, 25 Feb 2025 06:36:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EFTr1omY/36Zc/A0Hj9WYT9KmGBOYpdjr/SrE1PVDp4=; b=H7Jep5N7z00MHWXJ
+	sKfHIuUlL9kj2oZV2V4Izh/6gU4JPgB4+Wl9tgWJKGw0XFsLBB28ST8667de3c2B
+	/jcM5a86eYj/9IBqA7E+7eUkVTYPJ0Qjj1IwWv9fPxF2t/ErVBODZRhDjZWEe63r
+	HSyD6IbfSOys0F+rbk5Ng60jJf/ejZ6olQ3WLC1PACzuz1fem6gPIQySZ/hZV0bQ
+	onh3Up/nKRUheGY8h/EN5ZLFEkRCocsdPkBFqEoHM8lchfmUwIflrKhC1zswu7OB
+	XMOXf0iVFnu+BIqrBRaQiIDcNA4gUD6TBf7s5waEeFpIsjJZibg4vD+pcV0BG4oX
+	tdI5jA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6t2qnwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 06:36:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P6arZm031164
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 06:36:53 GMT
+Received: from [10.216.12.26] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
+ 2025 22:36:46 -0800
+Message-ID: <ae1cc6be-4834-4266-bc77-54d25f72fc96@quicinc.com>
+Date: Tue, 25 Feb 2025 12:06:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 49
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1967; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=zmf1BVxC0a6BVEtBTXrRMRPg+UxzEgS6AlCS1ZVuRak=; b=owGbwMvMwCRo6H6F97bub03G02pJDOl7Uw6K3Fzz7VTbLGv5pMb4N2HeLG6Guunf5xyfzf5L8 u7vC/rLOmJZGASZGGTFFFm+bOM5ur/ikKKXoe1pmDmsTCBDGLg4BWAi+4IY5qk0/3imaHw2IjNX ZIcl+zKdxhghO4b52Z9PZcbIWp4z3xq3PWxJ8HqvsrefAA==
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm/msm/a6xx: Add support for Adreno 623
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Jie Zhang <quic_jiezh@quicinc.com>
+References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
+ <20250213-a623-gpu-support-v1-2-993c65c39fd2@quicinc.com>
+ <4a3eec8a-4f71-4ac7-a6e6-0e8490c020bc@oss.qualcomm.com>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <4a3eec8a-4f71-4ac7-a6e6-0e8490c020bc@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2yiweo9wjLZDJMIeMdho8gTahRfJ1uGH
+X-Proofpoint-GUID: 2yiweo9wjLZDJMIeMdho8gTahRfJ1uGH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_02,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250041
 
-It's really hard to know if a faux device properly passes the callback
-to probe() without having to poke around in the faux_device structure
-and then clean up.  Instead of having to have every user of the api do
-this logic, just do it in the faux device core itself.
+On 2/13/2025 10:51 PM, Konrad Dybcio wrote:
+> On 13.02.2025 5:10 PM, Akhil P Oommen wrote:
+>> From: Jie Zhang <quic_jiezh@quicinc.com>
+>>
+>> Add support for Adreno 623 GPU found in QCS8300 chipsets.
+>>
+>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c   | 29 +++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       |  8 ++++++++
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 +-
+>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  5 +++++
+>>  4 files changed, 43 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> index edffb7737a97..ac156c8b5af9 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -879,6 +879,35 @@ static const struct adreno_info a6xx_gpus[] = {
+>>  			{ 0, 0 },
+>>  			{ 137, 1 },
+>>  		),
+>> +	}, {
+>> +		.chip_ids = ADRENO_CHIP_IDS(0x06020300),
+>> +		.family = ADRENO_6XX_GEN3,
+>> +		.fw = {
+>> +			[ADRENO_FW_SQE] = "a650_sqe.fw",
+>> +			[ADRENO_FW_GMU] = "a623_gmu.bin",
+>> +		},
+>> +		.gmem = SZ_512K,
+>> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>> +			ADRENO_QUIRK_HAS_HW_APRIV,
+>> +		.init = a6xx_gpu_init,
+>> +		.a6xx = &(const struct a6xx_info) {
+>> +			.hwcg = a620_hwcg,
+> 
+> On downstream a663 hwcg table is used, with the following differences:
+> 
+> < A620
+>> A663
+> 
+> < {REG_A6XX_RBBM_CLOCK_CNTL_TP0, 0x02222222},
+>> {REG_A6XX_RBBM_CLOCK_CNTL_TP0, 0x22222222},
+> 
+> < {REG_A6XX_RBBM_CLOCK_HYST_TEX_FCHE, 0x00000777},
+>> {REG_A6XX_RBBM_CLOCK_HYST_TEX_FCHE, 0x00000000}
 
-This makes the use of a custom probe() callback for a faux device much
-simpler overall.
+Thanks. We ended up reviewing this with HW folks and found that the
+downstream code is incorrect too. Will send another revision.
 
-Suggested-by: Kurt Borja <kuurtb@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/faux.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+-Akhil.
 
-diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-index 531e9d789ee0..407c1d1aad50 100644
---- a/drivers/base/faux.c
-+++ b/drivers/base/faux.c
-@@ -102,7 +102,9 @@ static void faux_device_release(struct device *dev)
-  *
-  * Note, when this function is called, the functions specified in struct
-  * faux_ops can be called before the function returns, so be prepared for
-- * everything to be properly initialized before that point in time.
-+ * everything to be properly initialized before that point in time.  If the
-+ * probe callback (if one is present) does NOT succeed, the creation of the
-+ * device will fail and NULL will be returned.
-  *
-  * Return:
-  * * NULL if an error happened with creating the device
-@@ -147,6 +149,17 @@ struct faux_device *faux_device_create_with_groups(const char *name,
- 		return NULL;
- 	}
- 
-+	/*
-+	 * Verify that we did bind the driver to the device (i.e. probe worked),
-+	 * if not, let's fail the creation as trying to guess if probe was
-+	 * successful is almost impossible to determine by the caller.
-+	 */
-+	if (!dev->driver) {
-+		dev_err(dev, "probe did not succeed, tearing down the device\n");
-+		faux_device_destroy(faux_dev);
-+		faux_dev = NULL;
-+	}
-+
- 	return faux_dev;
- }
- EXPORT_SYMBOL_GPL(faux_device_create_with_groups);
+> 
+> Konrad
+
 
