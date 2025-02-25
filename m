@@ -1,92 +1,126 @@
-Return-Path: <linux-kernel+bounces-530496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7B6A43426
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:34:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14FCA4342A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A7F167674
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979653AB8AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE68C1422A8;
-	Tue, 25 Feb 2025 04:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE24186E40;
+	Tue, 25 Feb 2025 04:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yrajGa6T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Nn/qGNw8"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4397C1362;
-	Tue, 25 Feb 2025 04:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740458037; cv=none; b=n0iQ5XEHuxxACrE/llUJn+AshqJev1VourTgusZIovIxIocF87Hn/HOoU/OvnymMhhOjIkH6z0u6RjHccGQ8EQp2QaK3/UdIu6Lc+eRDmQpVlBSrffU3CmT9v06/Wr6eVNqItqIgP2z7cW6D6+bd487efcIhnBB02hOCFCmsrqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740458037; c=relaxed/simple;
-	bh=eUyOIgdhZEGdlkSyY9vqN1/2N2DmG9kzcX6jjLMiPEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YSck53L33csAmJTqBAWZuPqwVsV7LeyUxoaMUKSsYn6ZvqE2TKkcEP1LtAHyQtYpbiwidZDv9PumbqbkBpNzPNgKWePFhjmE973Y/b2JDK/w9KTTHderRNj5G8oIp8/3QJCEVElIOuFAVfMcHKDUt0WajmYMUAgeU2imwJM77e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yrajGa6T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D683C4CEDD;
-	Tue, 25 Feb 2025 04:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740458036;
-	bh=eUyOIgdhZEGdlkSyY9vqN1/2N2DmG9kzcX6jjLMiPEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yrajGa6T5whGU5YBXQ6oD5IjJJIhgM8Tv3j2Mc3ngdVFupSoPO0178DIDpgV/bPjQ
-	 NyTvAvlyjL9THIz1KAwEiOk12eyt8P+sRqS6WgQrEo6P+BetaUs0Y5Jo0bhKj9CGDb
-	 vp3MSh6NPAB4lykGwCM9uluC6LLnNrj1kG8HADgY=
-Date: Tue, 25 Feb 2025 05:32:46 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Alan Mackenzie <acm@muc.de>, Simona Vetter <simona@ffwll.ch>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: More than 256/512 glyphs on the Liinux console
-Message-ID: <2025022528-humble-chatter-4e7d@gregkh>
-References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
- <2025022243-street-joylessly-6dfa@gregkh>
- <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
- <2025022355-peroxide-defacing-4fa4@gregkh>
- <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
- <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4266D4314B;
+	Tue, 25 Feb 2025 04:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740458049; cv=pass; b=T1Inc91pnYXYPzfcdEg2o1X77yZfjEBOXRXp0Z4M4fZLc81WRKFw7DWZOih+pfA58rpBUOV65buE8+WTOlPrl+iXRKryY2IKsHtuYGdSnDFFIXY+BP0nvwtvMVAdAH5wHvhNoRjJiWOijChunW8oT0e4bhuHlqyoliessLBmWaA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740458049; c=relaxed/simple;
+	bh=gTe5v8l1VH5gFAihYrwP2eBOVzREeDC09z/rFJ76vwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uOMkJ4r5lDmxvxJ1milYJIlLWna38QumctJawBAzNfcZ84s0hzbmVtm4gtRA5PtAB4pPc+oiyyB5R/Zu/I+S27IMxRRew8rb+kriyh9Kuwq5wwlg6kPz7ybJoO2mfkQ6daEu2ZmxhIrj6adQSRKPHdTvXVveedaXb1Pf5R/ctOg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Nn/qGNw8; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740457998; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TXii39EQ5FAcgTEj4t8f8Lscd+8BiUzu0W5uN1Na7ScGR2yEikZAA8ZNqwOQDiYIwG9RU64j6PKsWJNO2cdoQmrOu3vDLCVEEuQ7ATEstXr7UEAlfuRSs5Ie2C2lp4VardGB5SAJPwzBok6e/Qo1xRaWE2ApfR9igji0df96UPM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740457998; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7G/gL85HWy7cmw4nvxOEIPjq5uTYWJrzYdeG9NWQ2D4=; 
+	b=FLbvR+uuHZ+WIJYV4POO8u5AFVgwVSvFbfwq9WxWHNJbzoeId+haUJ9uGO16NQdYubKazI8GxmkH7Z4qm958/cycUY5GNCL0z2lXbqXrKrr8QBJZCJugKRu0pzhi5hzmoXpx6gBOmCueiXvl6SwJKTGtEoF0nDBgckvaEHx3j6w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740457998;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=7G/gL85HWy7cmw4nvxOEIPjq5uTYWJrzYdeG9NWQ2D4=;
+	b=Nn/qGNw8+b8b4bq3FTOoaUXdECu6NGK43rgGUCLotPGDYa4dyqNejQ02vtCiiSXm
+	tH5tGCO+N/dYiF3p0XS2u5DuWQSKta/oIxwiakgndhvIUPoOqdpZ5utzEkHHKgXAUaV
+	OiaKqWflSGQ08lUG6zzIV0yvDlbb1y+2HTCXI/Gw=
+Received: by mx.zohomail.com with SMTPS id 1740457996648580.9844468334069;
+	Mon, 24 Feb 2025 20:33:16 -0800 (PST)
+Message-ID: <268834ba-f6fe-4f7b-a211-7ee2b8f0bd46@collabora.com>
+Date: Tue, 25 Feb 2025 07:33:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
+ <20250223173019.303518-5-dmitry.osipenko@collabora.com>
+ <88b02c37-6741-459b-b966-d6d58d1f9b6f@wanadoo.fr>
+ <c30a291b-c81b-4da1-a0ae-270d323b28e3@collabora.com>
+ <bc1f5334-b0fb-4e81-979d-feb17886ac40@wanadoo.fr>
+ <d13f13ac-1501-4427-b6d3-ee161eeb932a@collabora.com>
+ <29687c3c-d983-4d1f-8cde-fde82df84e0e@wanadoo.fr>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <29687c3c-d983-4d1f-8cde-fde82df84e0e@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, Feb 24, 2025 at 09:08:50PM +0100, Jiri Slaby wrote:
-> On 24. 02. 25, 19:22, Alan Mackenzie wrote:
-> > Hello, Greg.
-> > 
-> > On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
-> > > On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
-> > > > On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
-> > 
-> > [ .... ]
-> > 
-> > > > But I think you are also asking why I use the console at all.  That's
-> > > > a fair question which I'll try to answer.
-> > 
-> > > I'm not disputing using the console, it's the vt layer that I'm talking
-> > > about.  The DRM developers have the long-term goal of getting rid of
-> > > CONFIG_VT which will remove a ton of mess that we have overall.
-> > > DRM-based consoles should provide the same functionality that a vt
-> > > console does today.  If not, please let them know so that the remaining
-> > > corner cases can be resolved.
-> > 
-> > Does a DRM based console exist at the moment?  I spent quite some time
-> > looking for it yesterday, but found nothing.
+On 2/24/25 22:16, Christophe JAILLET wrote:
+> Le 24/02/2025 à 05:19, Dmitry Osipenko a écrit :
+>> On 2/24/25 00:11, Christophe JAILLET wrote:
+>>>>>
+>>>>>> +    ret = cec_register_adapter(cec->adap, cec->dev);
+>>>>>> +    if (ret < 0) {
+>>>>>> +        dev_err(cec->dev, "cec register adapter failed\n");
+>>>>>> +        cec_unregister_adapter(cec->adap);
+>>>>>
+>>>>> Is it needed to call cec_unregister_adapter() when
+>>>>> cec_register_adapter() fails?
+>>>>
+>>>> Yes, it's confusing, but unregister is needed to free the adapter
+>>>> properly, it's prepared to do it. Thanks for the review.
+>>>>
+>>>
+>>> I don't know this API, so you'll get the last word, but
+>>> cec_unregister_adapter() does not seem to do that many things in such a
+>>> case, unless I miss something. See [1].
+>>>
+>>> CJ
+>>>
+>>> [1]: https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/media/
+>>> cec/core/cec-core.c#L370
+>>
+>> On a second look, apparently you're right and
+>> cec_notifier_cec_adap_unregister() should be used there.
+>>
 > 
-> I didn't read the thread, but are you looking e.g. for kmscon?
+> So, maybe in the .remove() function as well?
 
-Yes, that is what I was referring to, but couldn't remember the name,
-thanks for the pointer.
+Nah, cec_unregister_adap shall be used on removal. It itself unregs
+notifiers and etc.
 
-greg k-h
+-- 
+Best regards,
+Dmitry
 
