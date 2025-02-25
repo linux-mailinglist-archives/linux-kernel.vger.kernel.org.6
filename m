@@ -1,203 +1,137 @@
-Return-Path: <linux-kernel+bounces-531459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E94CA440BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:29:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C78AA440C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5752164905
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45223177751
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2660526981E;
-	Tue, 25 Feb 2025 13:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4139B269CEC;
+	Tue, 25 Feb 2025 13:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afghwKL4"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIL69+8t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5006257420;
-	Tue, 25 Feb 2025 13:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1324269AE0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489929; cv=none; b=tSh2RgLvvrEACc9kifMqA/u7CNbzsZT+nuF2cW7jmKoBqORZyIwgteWLuK32OTp0HHkeuYs4QsvEsaAUTZddMWonq65YucSCfH+Yz+BsZnxCE30dcufhZI+Gq/W0x696NIu4s7JrLTRneU8cz3YY2Kpdu/rLIdfzE91OiQO/b/E=
+	t=1740489936; cv=none; b=FPSaY+9oVGqIX9uJN+ZxRMI+vMeJfLlObxxoy51AToHAomFmEzC3TYhVTyb2dTq4EvKZqLzVSOGXXM5P5AaBBkKGMX8PCtOP41nqlPiiQDXtRNffejibmc5yHMAZzY8C6zkjhRzny9r8iFwYBW0MUkNI+mqyFIvDXCzqNITRXsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489929; c=relaxed/simple;
-	bh=MQ/HzIihWeJrPqBPMrEmNmq8jxK9pS+ZfIERMDAVCWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/Na0dcnGrKGqxrSsyMSDEXM8+jgGUh8FINROKSsFHLjMh25dyd1G6rg7Q2iBnE2wgKp0qwlGMBNjLe25+4qg29l55Jz/o8fHWxjm7DLfJAosVkJVz0bJTWJiqs8yh2I48Vv8SFclXJXPEyv4oYJ4WBcBQy3XThjEKsTilk7TBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afghwKL4; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-546210287c1so5713297e87.2;
-        Tue, 25 Feb 2025 05:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740489926; x=1741094726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S290suCX82CQhBBsqJd9GKbce+6amsZtyfvkT5bRDu0=;
-        b=afghwKL4XzJ6i7UDrTtWE74Q0fgNHfkvzgxD9DfCgeYSMbRxLbchToyzoJaPVC9eUl
-         UP5/wBzmIeA82O03Ksz4u/HQshQcRJV7uL6eDT5ByCFdE+rdSqKULAIwK0DeQORr0OCu
-         tY3cdCaB9uvf7hJ9y/sYyk4Wal17rFR+jLxcadvTafdIUqWYM0axNMDgU/H/QFt9mytG
-         WMGZ/yA/cJY/JHP8wKxmZgDzXmXu+aS82mgpHxMNDlY6/Z30wGmoOqlmr5W708h8ow/N
-         E1yO8UL94sZ4gYTGQ7D3FwtLe/cMBzxjGO0KFWeKMo4IPvZJRgbsW+oUSfWJBpvQhyB4
-         tNhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489926; x=1741094726;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S290suCX82CQhBBsqJd9GKbce+6amsZtyfvkT5bRDu0=;
-        b=LuLa5vWGAeyqNN+y+3qiWqSlhGCqyYiaC9VUcgjwbII1cxDVtREYGAdd8kS4ampjgD
-         Zv3u6/BheHuKNHv6pZkUmxfmLJjDe71UHIzbC/T7X/7kbOfcGYfm4WT2RC8UnLivEPih
-         8Wjeryf2MmXnY+jN6SMnTufQ2+JaA/2DEIUjAPwnUTNaWaNnrf6+opETYo3/nLojBLIj
-         xU5CLv7hVd1aoiMX/KvtY8QpaPsFpCc64UTbvj7NyFIQh121CaRmK67IODw0NUbgrDC9
-         w4jsOH+YnVQVv7QyPywFBqfPJVOkn405tj+ttVOz6B+fdD/EzVlOgRVrJUa/Jm/g62Tr
-         /Cwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvm8VzuWGGhyeumdzU8qrk2qvNSuF+6ibqhsy+Mmg/s+ZElTkXQ6TdZAZr4WjM4WiXScnRL/kGuN1X@vger.kernel.org, AJvYcCVzKVwUVMVpqQtWOiGTN5JI/tzs3ICCvn77zFZyhAHwhHEujElbzq/sDSUV1OC5DxRTRTpiyldnwxYi2ZI=@vger.kernel.org, AJvYcCXKKf/3IrkF5OhneC1HiQWVtFVAYXCJieV+rNZ1Nnnenxb6Ac12gsdsOHNtM5VbFp4ciqAG3xK8A8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9f0HpOTi5C2x0xMPc7qk21SuWm7oLb/VIM1fU/g/BkhkR8pLv
-	FYMfYFRSuMnQAPzo+oCgcExG7tCn/TLZnzdKyYHcAvum79QmtBn3
-X-Gm-Gg: ASbGncv9Nveqs+Pc/mpirR7u5kLi2SJHXMqLfoOYIiJGFQteQLsCoD5PDSRE0fKzZ/n
-	FjdQ9NJnbp3xAPysn7Ei73BSSYfw/c9QDXf5dHKvO7wcXtjiQGi07gD4KBi689jj0DYLWKeXGUe
-	o3eI+ro2obmNkHfKim8Hno83XAM+uyfvZjAqqWAm/kulVEU2A4AGnKIYvG/sowHdttUJsRvpMCJ
-	YuwPyPtpHhnYc5xNIoPHl1itsyVvYwHZdPFgSB3pVvDgirM4Kmo+NAIBuoZUuAHxkDxvWmYbaso
-	XOo5r+gd7Z+4Hjon7hoWesWxtK0V5L6B+M9SKhM=
-X-Google-Smtp-Source: AGHT+IFejrBBfOFcU1sAJrwx6tnm7K9qw63EN5U2xbDg42R9CV9q19QCV8RsbFYG3hE/AEwYlTUIUw==
-X-Received: by 2002:a05:6512:3b82:b0:545:2335:6597 with SMTP id 2adb3069b0e04-54839263d23mr6441551e87.50.1740489925388;
-        Tue, 25 Feb 2025 05:25:25 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f4d7dsm171988e87.174.2025.02.25.05.25.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:25:24 -0800 (PST)
-Message-ID: <bf74173f-ccd9-43c0-a190-68512c6f63cc@gmail.com>
-Date: Tue, 25 Feb 2025 15:25:23 +0200
+	s=arc-20240116; t=1740489936; c=relaxed/simple;
+	bh=qEEiXRmbmH15S7cSjAiyYqtzG/R8Me/5JqNxRGlCemk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMrYmitc6dm1QinykyCbT6ABIOHok3HIOPEOEXKLRis4EJn4tIebpWgwQhgx1btf54crEzh1Xc+1ogTi+QqgG8Xqq4vRAPO2xvn0Bak3g2iWGmcGUqJLQ+Ix+ObBGtN3OsIjoBeLk/Qa4Nwr8X+wDD8MZ4YZ2ST/noJckCgX1CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIL69+8t; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740489936; x=1772025936;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qEEiXRmbmH15S7cSjAiyYqtzG/R8Me/5JqNxRGlCemk=;
+  b=FIL69+8tVqmvnpDmgu4tPjIQTV4ycGHQAxfQ1ZcuPohaYhWxdTiiQO5z
+   vyHTDxmQiNiyQE+wqWGiIy8JAiHppmKYq35ef+8f2UEvMMEGbjCSBiI74
+   BoHVjdQ0NlXShpCTkvn12CeX/qN3uHtW/mJoPdJATSKw4x9uen+b9MMct
+   TchjqU/D3m3fqTbHI8sJ+s2JxbwttulkiDJm8S9pAaqIjg4j6wzmu+2k8
+   rKogfZEOS9KM/r3W7oN72kx65nRRqrOz8sGKE7sBdTjwE2ieI2E6dekgO
+   A8mUFf0ryamssEpLq4pshtGvQsN0ktJsP4u1YY7EIwoEvzpbZhDWwcuPl
+   w==;
+X-CSE-ConnectionGUID: SoW40jCmQZ6IwwNFMW0V3Q==
+X-CSE-MsgGUID: IbtSx0/uQWijGpl6MSVYyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58716561"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="58716561"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 05:25:34 -0800
+X-CSE-ConnectionGUID: u360bJP2QKSSwuDGNw0hLA==
+X-CSE-MsgGUID: pxn6umOwRN2Mi/+YYbpfzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121638078"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 05:25:30 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmuwA-0000000F0Dy-2Lx5;
+	Tue, 25 Feb 2025 15:25:26 +0200
+Date: Tue, 25 Feb 2025 15:25:26 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Message-ID: <Z73ExmFOcOoozjxS@smile.fi.intel.com>
+References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
+ <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
+ <Z72chunE_vvxtjLQ@smile.fi.intel.com>
+ <c0249cd8-68e4-4860-b5c3-e054df10ae30@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] power: supply: core: get rid of of_node
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Hans de Goede
- <hdegoede@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>,
- David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-1-d5e4369936bb@collabora.com>
- <491e20bb-5ab4-40e9-bb35-5e05dc7bd46c@gmail.com>
- <ocbwzuqk56yx34kc5vp6aaxnhxqd4zp2wixlv7p3mex66ibntu@ahigikrf5cg4>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <ocbwzuqk56yx34kc5vp6aaxnhxqd4zp2wixlv7p3mex66ibntu@ahigikrf5cg4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0249cd8-68e4-4860-b5c3-e054df10ae30@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 25/02/2025 15:11, Sebastian Reichel wrote:
-> Hi,
+On Tue, Feb 25, 2025 at 12:58:17PM +0100, Thomas Zimmermann wrote:
+> Am 25.02.25 um 11:33 schrieb andriy.shevchenko@linux.intel.com:
+> > On Tue, Feb 25, 2025 at 10:09:42AM +0000, Aditya Garg wrote:
+
+...
+
+> > > +static int appletbdrm_probe(struct usb_interface *intf,
+> > > +			    const struct usb_device_id *id)
+> > > +{
+> > > +	struct usb_endpoint_descriptor *bulk_in, *bulk_out;
+> > > +	struct device *dev = &intf->dev;
+> > > +	struct appletbdrm_device *adev;
+> > > +	struct drm_device *drm;
+> > > +	int ret;
+> > > +
+> > > +	ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, NULL, NULL);
+> > > +	if (ret) {
+> > > +		drm_err(drm, "Failed to find bulk endpoints\n");
+> > This is simply wrong (and in this case even lead to crash in some circumstances).
+> > drm_err() may not be used here. That's my point in previous discussions.
+> > Independently on the subsystem the ->probe() for the sake of consistency and
+> > being informative should only rely on struct device *dev,
 > 
-> On Tue, Feb 25, 2025 at 01:14:03PM +0200, Matti Vaittinen wrote:
->> On 25/02/2025 01:21, Sebastian Reichel wrote:
->>> This removes .of_node from 'struct power_supply', since there
->>> is already a copy in .dev.of_node and there is no need to have
->>> two copies.
->>>
->>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->>> ---
->>>    drivers/power/supply/power_supply_core.c | 17 ++++++++---------
->>>    include/linux/power_supply.h             |  1 -
->>>    2 files changed, 8 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
->>> index d0bb52a7a0367a8e07787be211691cad14a41a54..11030035da6f121ca76bebf800c06cfd5db57578 100644
->>> --- a/drivers/power/supply/power_supply_core.c
->>> +++ b/drivers/power/supply/power_supply_core.c
->>> @@ -200,11 +200,11 @@ static int __power_supply_populate_supplied_from(struct power_supply *epsy,
->>>    	int i = 0;
->>>    	do {
->>> -		np = of_parse_phandle(psy->of_node, "power-supplies", i++);
->>> +		np = of_parse_phandle(psy->dev.of_node, "power-supplies", i++);
->>>    		if (!np)
->>>    			break;
->>> -		if (np == epsy->of_node) {
->>> +		if (np == epsy->dev.of_node) {
->>>    			dev_dbg(&psy->dev, "%s: Found supply : %s\n",
->>>    				psy->desc->name, epsy->desc->name);
->>>    			psy->supplied_from[i-1] = (char *)epsy->desc->name;
->>> @@ -235,7 +235,7 @@ static int  __power_supply_find_supply_from_node(struct power_supply *epsy,
->>>    	struct device_node *np = data;
->>>    	/* returning non-zero breaks out of power_supply_for_each_psy loop */
->>> -	if (epsy->of_node == np)
->>> +	if (epsy->dev.of_node == np)
->>>    		return 1;
->>>    	return 0;
->>> @@ -270,13 +270,13 @@ static int power_supply_check_supplies(struct power_supply *psy)
->>>    		return 0;
->>>    	/* No device node found, nothing to do */
->>> -	if (!psy->of_node)
->>> +	if (!psy->dev.of_node)
->>>    		return 0;
->>>    	do {
->>>    		int ret;
->>> -		np = of_parse_phandle(psy->of_node, "power-supplies", cnt++);
->>> +		np = of_parse_phandle(psy->dev.of_node, "power-supplies", cnt++);
->>>    		if (!np)
->>>    			break;
->>> @@ -606,8 +606,8 @@ int power_supply_get_battery_info(struct power_supply *psy,
->>>    	const __be32 *list;
->>>    	u32 min_max[2];
->>> -	if (psy->of_node) {
->>> -		battery_np = of_parse_phandle(psy->of_node, "monitored-battery", 0);
->>> +	if (psy->dev.of_node) {
->>> +		battery_np = of_parse_phandle(psy->dev.of_node, "monitored-battery", 0);
->>>    		if (!battery_np)
->>>    			return -ENODEV;
->>
->> This reminded me of a change I once did to power_supply - but maybe never
->> got it further than RFC stage. Anyways, do you think it would be possible to
->> decouple the battery info and struct power_suppply (while at it)?
->>
->> I believe that the chargers and especially fuel-gauges which are designed to
->> operate with different batteries (and which get battery details using static
->> battery nodes), would like to get the battery info _before_ registering the
->> power_supply (to avoid sending bogus values while operating on defaults,
->> before the battery info is read and before things are set accordingly).
->>
->> I know this may be a bit much to ask, but I believe it'd be an improvement.
->>
->> Other than that, looks good to me.
-> 
-> I was thinking about adding an init function to power_supply_desc,
-> which would be called directly before psy->initialized is set to
-> true in the power-supply registration phase. I think that would be
-> the right place to setup device registers based on battery-info data.
+> That's never going to work with DRM. There's so much code in a DRM probe
+> function that uses the DRM error functions.
 
-Hm. I suppose that would work.
+> This specific instance here is wrong, as the drm pointer hasn't been
+> initialized. But as soon as it is, it's much better to use drm_err() and
+> friends. It will do the right thing and give consistent output across
+> drivers.
 
-> But it's definitely not a thing for this series.
+Okay and my question was how is it possible to create drm_err_probe() for such
+cases?
 
-Fair enough. I thought that might be the case but decided to ask 
-anyways, because, AFAIR there were no real problems what comes to not 
-requiring the struct power_supply for reading the battery_info. But yes, 
-I can see why killing the of_nodes is a big enough series, even without 
-added complexity :)
+> > > +		return ret;
+> > > +	}
 
-Yours,
-	-- Matti
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
