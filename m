@@ -1,486 +1,160 @@
-Return-Path: <linux-kernel+bounces-531939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBC1A446BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:48:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7639DA446FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D15188329C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:48:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF5747AF133
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806DA20D4EE;
-	Tue, 25 Feb 2025 16:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0EE195B1A;
+	Tue, 25 Feb 2025 16:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HBrg/oT0"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kzWYpvpT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C9C20969D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE7018DB0C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501882; cv=none; b=o2bmI8Y3WP4Kg+2S3myBfhx+uSMxMK5eoauyxx/ceUGasFsk45DpQ1LP6Zl1zykPa2L5izoc+GsnuaxeloOGoze+pBVXPC62cS06vsRCCsJAAg2Soamg92fN13f6iwZdtW0rlisuBna4CVo4tJ2JSHmRxyI+SHUKjj4V2qrTXOQ=
+	t=1740501904; cv=none; b=IY9vOO9NHsbXxCH1ktrI3Q1XIUQnW3S0mjQaRjmgSEaqwdxtMqboVB0V8pIsGPRAZb6ASOMLBZH4k0iy6Gx5IjS/SoSolOsHYxL7hCUZVbVpkOtzMsbHDtFolnxKZRi8naHmfs3fVjxhn2kRnmX5o5pU2CiKBLYmE+o8/euPJ2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501882; c=relaxed/simple;
-	bh=kJnD+0JaTLrFOyAxLZ70o0LwwXfWT6yvIZpu36g0Tjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVa5ex6q0Hv/2vuJEzX0/g5dGEOeI7DzZARudZjIa6UqJ3O+UBhfYE3UHKDn4xC3CvoQsCwNwMo5THAXxgnUSgKtXLEKLfs5JUQ3D9W5n+DE53rHv2y4uzpJjr0LFdp86isvxapiATqmn1qmK9CGSWfcoh8+1VvU0IGaIJLvBpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HBrg/oT0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2212222d4cdso172325ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:44:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740501879; x=1741106679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mGSs/JSI8SEUQCLYMu6kZkdG6dALsaStwDncGnOsLsM=;
-        b=HBrg/oT0SRysqSvBRimUWhHwWVeun7nUjcmMyBTrC4j1aXoLOTdnFPmISo7sSUZKMi
-         lULcj3dM/oTs6oPbFCoWg7Iunf6D/EMxaszNz0cDEEjmCnkTAEoj1g7R34E+lb7phOJt
-         5+L961ZDBABc/8AltUI4a/RsfLb6nV+Eg/U0/FMAoSQ7w1WeyEhB7a9x35Tkt4xSCDrW
-         IX7nortNx6hOyuVOC9ykRf5NILqL1yNIejiGSbDoIFB6kjpvd6A9Lhw6C0KBp1IivCbz
-         9szwvn16X6KH3VaEv9dI1KA0jtKNWRIZyQ+JLGpQzhzkkAPgjJHlk9pTw3eXkQPQrRAP
-         5rSQ==
+	s=arc-20240116; t=1740501904; c=relaxed/simple;
+	bh=L2FmnGukcA0y4f65aXO6bVtDOK+71WB4L3u56d6qH0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eRyD4ysxfhd10IQC8nOl0dPNAKTM/9epOsyoG9ORdZXBhNcVVJF9AXMI+2ay9UdGL5SdEY9hShUkOjVYcZ+Mz1bBLezMLmjCvQBfDfA0cyOv1HRspTRnj29ZSx3vUTocqsg+eZIfPbvtU4+0k3nO9ruJ6YekxXTvNaI+5Ph0ZeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kzWYpvpT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P86qE3013314
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:45:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ULUpptJwI6ThaUvM4CSWgxzRITrdZBlHcTREM3kcByM=; b=kzWYpvpTjBl8zND8
+	95vNpAKACM6V2TErk2q+N3/vSaSJ+UrON9VohH9ngZ6Y0VELEmspHxdnS88TtOV7
+	s08ike/9NvKa1Ht+g1W7U/qbYuNFpcPonMBAVgsZzhVlpPg+hUdJQI/d4GFTExjY
+	FhcMx5uHcGxO4KpTbqE3GwRw+jMVnH/ro4r30x6U2cAmayCi71rokVL4iP1MrHyQ
+	3pWtQwZy/cYw5RwcFv+RsvhldVozHYbNKDGZwUN6wNAQUFNOfG42FHcHkuED751j
+	LZQO4rZwHpE+rkbgS60lchf9n+wTY7WoVDEFo/dPJfvsur37++hi6lNjdlto7Wqd
+	wFlKWA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgskn4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:45:01 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fc0bc05afdso12754459a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:45:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740501879; x=1741106679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGSs/JSI8SEUQCLYMu6kZkdG6dALsaStwDncGnOsLsM=;
-        b=plpg1lHL/k+yWBnb51jznTclni1w7pXCL0eFEX60OxSzj1Xal0D7ZzXF2kbxMNfMsp
-         aXcfgUyMDJFStWPk18LHcc+MUFxd+O5DztqeVcg7TCrXu0PgEf+q3VGMNlPasQd/YGDd
-         QWyMBEwxjcu6Vzzh5F+6hrQmfF22Xg9uC7VIP2z2ITMalljaeHDBJaz0ZABExVomgLuf
-         /xLXjPmgMrpV8rW3k8YpYd+OLJRK0K51P6EUt7lTWDTiUF3Abegdd8TCnIj/5rQ3H7iS
-         njWS68V3FZ1TC0ZT+6f3Ua9QdShTtTBMiGomPdgmcwZeFjJuxJKiSFxE/g2K9/7INY/m
-         AajA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMoZ9vgjDT6NAfqZrv5Z0PAJrIcrpNRJ2IeAbXli9xGXf8smLe2uiEV2xoQFbpRA2yIpxBXkmX19HP6Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt4agWTusur8F49Zhr5T6u9VP3bNTP1fEkDv+s1oiUMxZ9tAA+
-	zA1kPxW/PMGin7UGEqsQBIIn84yPJN7rvHVQ/EBYsz/fPJtx15E7MA0TT3zgLKHdMnVWWRDvWRR
-	nv3i6jS/RhWMkHSWSeLA7vhuogLIYCQURdMh/
-X-Gm-Gg: ASbGncsOXzrepg7Qb6hKS2dStz7msxZUOrMLCwvbaNKSphB0QY2k46R1ULgrplVof2R
-	sM+0G3FfNUkendCRXMvdNTX3R5tRZrxNzDkFDTwWI96qeR03YZXJQExzMkJ/p36AU3IDe9JK0D2
-	ZewCSmhTd9uoluVL1lqHAOcxANUq/JYCgPfEU=
-X-Google-Smtp-Source: AGHT+IHfLN0CJT0NjsZF0SbQ2PniysFKbdfeS7mbnxQfY/V/txeRKepNOzJvQ9J1WAoiISRI3YrpMOYOm7/Kcuc34Hg=
-X-Received: by 2002:a17:902:db10:b0:21f:2306:e453 with SMTP id
- d9443c01a7336-22307a3d994mr3582995ad.7.1740501877848; Tue, 25 Feb 2025
- 08:44:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740501900; x=1741106700;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULUpptJwI6ThaUvM4CSWgxzRITrdZBlHcTREM3kcByM=;
+        b=HIpUb3uxEptKut5/eyE+OOQtmk7V6M9u0UKu5huoWyLSiHiOjIDcvhSzs/aajJV75I
+         hMAzMvG8ihpGO8S3BMF630rTAYJCGnGRMJI7LcOcAXI2Z5GwcYp0eOyNGAdag0BUoPHM
+         37rXcHOHVGWTynm35oddkaos+ATnBxi/ziiZJizTkeAzZB8uP1toV1gYTZR90eG4Adux
+         /R9uXfYp0v3CrxU7dguxdNdaruiNI8/60Pt35Pt9FP4oBr/NKREG8zgZFTFkuk5Mn1RT
+         /KdWGTsfVU08DGuqWVyahHKgUDkeeT2VgT6ZvdWKDLCt0kNRdK+x5uVokD572SsHetT1
+         8MCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL0xAVe6Xcp6HzmzjcsBkHGFBY6dVlguuAewLgtxfgRdRF3+igUJ18EQAIhwHeVqO5nhzcpOvvkEC/n08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+v01PAFfP0SHAsSOScizNw+2KW1K+4XL4usCtfbNsFX4yq2L/
+	dtD4G5ATK5vQDL90PqMXt1m2vW/O6CXfgTedwoclFeSdRR1n3dfv5cK7jlX4DyVC4HsqVBkuO05
+	Sgsu1Inl+sT/SitfxCPZ8Ydz1K5RHUHuQoUrN4V2eZFYQY8NHWruKS8T/kRZQYX0=
+X-Gm-Gg: ASbGnctGTxg1c3vjKL910MpKUUmdOQXecGq93M162qNeIXlXwdLUiJ68wohOhpR1Q/w
+	zVTtobnT17BrH/+0mpS1FZDScR0IOotBh5uI1h2gCl+OEXPC8f9QNZ/l6LqB4L8AcShANrKAuwf
+	Hwd6FmN/NsPOQ2YbFN+w9hC7qrFw1FinmT5S9f/Ztb24S4wKZATcH5jZ1ZP19NMpGhdtWbyMCLu
+	qdOWfp0BsagsZMbO4eGtOBoH2cCXFaQoUgBTi8rFW8dmL3tomwW9AIXFwPKr9dx+prtPt71ErVo
+	jt7QTDMqta+TD2mg8ZVFf0sY8c8t7UVIcKRrl5HbJFoJ8vRDkxdfbr2wwoWP5aeN9+f529Y=
+X-Received: by 2002:a05:6a21:7a93:b0:1ee:e785:a08a with SMTP id adf61e73a8af0-1f0fc781da5mr7421842637.29.1740501900063;
+        Tue, 25 Feb 2025 08:45:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFzhySqJhghGiZsMKmpZdjhwmssEsTGd4irosiubrI41LuqK1kzfshthHtszlA7LkJtnyROAA==
+X-Received: by 2002:a05:6a21:7a93:b0:1ee:e785:a08a with SMTP id adf61e73a8af0-1f0fc781da5mr7421800637.29.1740501899691;
+        Tue, 25 Feb 2025 08:44:59 -0800 (PST)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f8258sm1727164b3a.112.2025.02.25.08.44.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 08:44:59 -0800 (PST)
+Message-ID: <21ad3381-4d65-4c68-892d-9f485bf13735@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 08:44:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225075929.900995-1-namhyung@kernel.org>
-In-Reply-To: <20250225075929.900995-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 25 Feb 2025 08:44:26 -0800
-X-Gm-Features: AWEUYZlyy0R7OVA4dyKqHRMJGSB5LQ4A4TKH9eQBnOo-S1n7wGoFbXKFQtvfQ8M
-Message-ID: <CAP-5=fW+48MMa13weoC2FE7Vt1UTVEO7uza5Kyi_NHZKDfZ9vA@mail.gmail.com>
-Subject: Re: [RFC/PATCH] perf lock contention: Add -J/--inject-delay option
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: emery@cs.umass.edu, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-slim7x: Drop incorrect
+ qcom,ath12k-calibration-variant
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath12k@lists.infradead.org
+References: <20250225093051.58406-1-krzysztof.kozlowski@linaro.org>
+ <sfhcmlz3x254fdowufeeuh4uiwxfgkphm4ch4laceivbrs3zir@qvqk6jxi6zhf>
+ <7b54e965-3395-4349-8ae7-51a28c759235@linaro.org>
+ <kce6gzso22fp3ze2wp43fvy4tv6yqkaijm72kh5qk34jwijk2l@3ifaiz5tgjvl>
+ <d93789c6-61d9-4761-98f5-aa3dbec14d82@linaro.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <d93789c6-61d9-4761-98f5-aa3dbec14d82@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 72cgApr7rLCkgqkd4Tyy-COnpUymVznK
+X-Proofpoint-ORIG-GUID: 72cgApr7rLCkgqkd4Tyy-COnpUymVznK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=820 spamscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250107
 
-On Mon, Feb 24, 2025 at 11:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> This is to slow down lock acquistion (on contention locks) deliberately.
-> A possible use case is to estimate impact on application performance by
-> optimization of kernel locking behavior.  By delaying the lock it can
-> simulate the worse condition as a control group, and then compare with
-> the current behavior as a optimized condition.
+On 2/25/2025 4:14 AM, Krzysztof Kozlowski wrote:
+> On 25/02/2025 12:45, Dmitry Baryshkov wrote:
+>> On Tue, Feb 25, 2025 at 11:22:25AM +0100, Krzysztof Kozlowski wrote:
+>>> On 25/02/2025 10:50, Dmitry Baryshkov wrote:
+>>>> On Tue, Feb 25, 2025 at 10:30:51AM +0100, Krzysztof Kozlowski wrote:
+>>>>> There is no such property as qcom,ath12k-calibration-variant: neither in
+>>>>> the bindings nor in the driver.  See dtbs_check:
+>>>>>
+>>>>>   x1e80100-lenovo-yoga-slim7x.dtb: wifi@0: 'qcom,ath12k-calibration-variant' does not match any of the regexes: 'pinctrl-[0-9]+'
+>>>>>
+>>>>
+>>>> Adding Jeff and ath12k@ to the cc list. Is the driver able to find the
+>>>> calibration variant in case it is not running on the ACPI system? I see
+>>>> that it uses dmi_walk. Does it work in the non-ACPI case?
+>>>
+>>>
+>>> But nothing parses such string as 'qcom,ath12k-calibration-variant' (see
+>>> git grep), so how would driver use it?
+>>
+>> That's what I'm asking: is the property redundant or is it correct and
+>> it is a driver that needs to be fixed?
+> 
+> I assume driver will need something like that property, but that's not a
+> reason to accept incorrect one in DTS. One cannot add properties to DTS
+> without bindings, so bypassing bindings review, and then claim "but my
+> driver needs them". Send proper patches for driver first which will get
+> a review.
 
-This is great! There are similarities to me with coz (Emery Berger
-cc-ed for a headsup and possible input):
-https://github.com/plasma-umass/coz
+We definitely need a calibration variant entry.
+I've pinged the development team to get the driver patch.
 
-> The syntax is 'time@function' and the time can have unit suffix like
-> "us" and "ms".  For example, I ran a simple test like below.
->
->   $ sudo perf lock con -abl -L tasklist_lock -- \
->     sh -c 'for i in $(seq 1000); do sleep 1 & done; wait'
->    contended   total wait     max wait     avg wait            address   =
-symbol
->
->           92      1.18 ms    199.54 us     12.79 us   ffffffff8a806080   =
-tasklist_lock (rwlock)
->
-> The contention count was 92 and the average wait time was around 10 us.
-> But if I add 100 usec of delay to the tasklist_lock,
->
->   $ sudo perf lock con -abl -L tasklist_lock -J 100us@tasklist_lock -- \
->     sh -c 'for i in $(seq 1000); do sleep 1 & done; wait'
->    contended   total wait     max wait     avg wait            address   =
-symbol
->
->          190     15.67 ms    230.10 us     82.46 us   ffffffff8a806080   =
-tasklist_lock (rwlock)
->
-> The contention count increased and the average wait time was up closed
-> to 100 usec.  If I increase the delay even more,
->
->   $ sudo perf lock con -abl -L tasklist_lock -J 1ms@tasklist_lock -- \
->     sh -c 'for i in $(seq 1000); do sleep 1 & done; wait'
->    contended   total wait     max wait     avg wait            address   =
-symbol
->
->         1002      2.80 s       3.01 ms      2.80 ms   ffffffff8a806080   =
-tasklist_lock (rwlock)
->
-> Now every sleep process had contention and the wait time was more than 1
-> msec.  This is on my 4 CPU laptop so I guess one CPU has the lock while
-> other 3 are waiting for it mostly.
->
-> For simplicity, it only supports global locks for now.
->
-> Suggested-by: Stephane Eranian <eranian@google.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/Documentation/perf-lock.txt        | 11 +++
->  tools/perf/builtin-lock.c                     | 74 +++++++++++++++++++
->  tools/perf/util/bpf_lock_contention.c         | 28 +++++++
->  .../perf/util/bpf_skel/lock_contention.bpf.c  | 43 +++++++++++
->  tools/perf/util/lock-contention.h             |  8 ++
->  5 files changed, 164 insertions(+)
->
-> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Document=
-ation/perf-lock.txt
-> index d3793054f7d35626..151fc837587b216e 100644
-> --- a/tools/perf/Documentation/perf-lock.txt
-> +++ b/tools/perf/Documentation/perf-lock.txt
-> @@ -215,6 +215,17 @@ CONTENTION OPTIONS
->  --cgroup-filter=3D<value>::
->         Show lock contention only in the given cgroups (comma separated l=
-ist).
->
-> +-J::
-> +--inject-delay=3D<time@function>::
-> +       Add delays to the given lock.  It's added to the contention-end p=
-art so
-> +       that the (new) owner of the lock will be delayed.  But by slowing=
- down
-> +       the owner, the waiters will also be delayed as well.  This is wor=
-king
-> +       only with -b/--use-bpf.
-> +
-> +       The 'time' is specified in nsec but it can have a unit suffix.  A=
-vailable
-> +       units are "ms" and "us".  Note that it will busy-wait after it ge=
-ts the
-> +       lock.  Please use it at your own risk.
-> +
->
->  SEE ALSO
->  --------
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 5d405cd8e696d21b..3ef452d5d9f5679d 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -62,6 +62,8 @@ static const char *output_name =3D NULL;
->  static FILE *lock_output;
->
->  static struct lock_filter filters;
-> +static struct lock_delay *delays;
-> +static int nr_delays;
->
->  static enum lock_aggr_mode aggr_mode =3D LOCK_AGGR_ADDR;
->
-> @@ -1971,6 +1973,8 @@ static int __cmd_contention(int argc, const char **=
-argv)
->                 .max_stack =3D max_stack_depth,
->                 .stack_skip =3D stack_skip,
->                 .filters =3D &filters,
-> +               .delays =3D delays,
-> +               .nr_delays =3D nr_delays,
->                 .save_callstack =3D needs_callstack(),
->                 .owner =3D show_lock_owner,
->                 .cgroups =3D RB_ROOT,
-> @@ -2474,6 +2478,74 @@ static int parse_cgroup_filter(const struct option=
- *opt __maybe_unused, const ch
->         return ret;
->  }
->
-> +static bool add_lock_delay(char *spec)
-> +{
-> +       char *at, *pos;
-> +       struct lock_delay *tmp;
-> +       unsigned long duration;
-> +
-> +       at =3D strchr(spec, '@');
-> +       if (at =3D=3D NULL) {
-> +               pr_err("lock delay should have '@' sign: %s\n", spec);
-> +               return false;
-> +       }
-> +       if (at =3D=3D spec) {
-> +               pr_err("lock delay should have time before '@': %s\n", sp=
-ec);
-> +               return false;
-> +       }
-> +
-> +       *at =3D '\0';
-> +       duration =3D strtoul(spec, &pos, 0);
-> +       if (!strcmp(pos, "ns"))
-> +               duration *=3D 1;
-> +       else if (!strcmp(pos, "us"))
-> +               duration *=3D 1000;
-> +       else if (!strcmp(pos, "ms"))
-> +               duration *=3D 1000 * 1000;
-> +       else if (*pos) {
-> +               pr_err("invalid delay time: %s@%s\n", spec, at + 1);
-> +               return false;
-> +       }
-> +
-> +       tmp =3D realloc(delays, (nr_delays + 1) * sizeof(*delays));
-> +       if (tmp =3D=3D NULL) {
-> +               pr_err("Memory allocation failure\n");
-> +               return false;
-> +       }
-> +       delays =3D tmp;
-> +
-> +       delays[nr_delays].sym =3D strdup(at + 1);
-> +       if (delays[nr_delays].sym =3D=3D NULL) {
-> +               pr_err("Memory allocation failure\n");
-> +               return false;
-> +       }
-> +       delays[nr_delays].time =3D duration;
-> +
-> +       nr_delays++;
-> +       return true;
-> +}
-> +
-> +static int parse_lock_delay(const struct option *opt __maybe_unused, con=
-st char *str,
-> +                           int unset __maybe_unused)
-> +{
-> +       char *s, *tmp, *tok;
-> +       int ret =3D 0;
-> +
-> +       s =3D strdup(str);
-> +       if (s =3D=3D NULL)
-> +               return -1;
-> +
-> +       for (tok =3D strtok_r(s, ", ", &tmp); tok; tok =3D strtok_r(NULL,=
- ", ", &tmp)) {
-> +               if (!add_lock_delay(tok)) {
-> +                       ret =3D -1;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       free(s);
-> +       return ret;
-> +}
-> +
->  int cmd_lock(int argc, const char **argv)
->  {
->         const struct option lock_options[] =3D {
-> @@ -2550,6 +2622,8 @@ int cmd_lock(int argc, const char **argv)
->         OPT_BOOLEAN(0, "lock-cgroup", &show_lock_cgroups, "show lock stat=
-s by cgroup"),
->         OPT_CALLBACK('G', "cgroup-filter", NULL, "CGROUPS",
->                      "Filter specific cgroups", parse_cgroup_filter),
-> +       OPT_CALLBACK('J', "inject-delay", NULL, "TIME@FUNC",
-> +                    "Inject delays to specific locks", parse_lock_delay)=
-,
->         OPT_PARENT(lock_options)
->         };
->
-> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_=
-lock_contention.c
-> index fc8666222399c995..99b64f303e761cbc 100644
-> --- a/tools/perf/util/bpf_lock_contention.c
-> +++ b/tools/perf/util/bpf_lock_contention.c
-> @@ -183,6 +183,27 @@ int lock_contention_prepare(struct lock_contention *=
-con)
->                 skel->rodata->has_addr =3D 1;
->         }
->
-> +       /* resolve lock name in delays */
-> +       if (con->nr_delays) {
-> +               struct symbol *sym;
-> +               struct map *kmap;
-> +
-> +               for (i =3D 0; i < con->nr_delays; i++) {
-> +                       sym =3D machine__find_kernel_symbol_by_name(con->=
-machine,
-> +                                                                 con->de=
-lays[i].sym,
-> +                                                                 &kmap);
-> +                       if (sym =3D=3D NULL) {
-> +                               pr_warning("ignore unknown symbol: %s\n",
-> +                                          con->delays[i].sym);
-> +                               continue;
-> +                       }
-> +
-> +                       con->delays[i].addr =3D map__unmap_ip(kmap, sym->=
-start);
-> +               }
-> +               skel->rodata->lock_delay =3D 1;
-> +               bpf_map__set_max_entries(skel->maps.lock_delays, con->nr_=
-delays);
-> +       }
-> +
->         bpf_map__set_max_entries(skel->maps.cpu_filter, ncpus);
->         bpf_map__set_max_entries(skel->maps.task_filter, ntasks);
->         bpf_map__set_max_entries(skel->maps.type_filter, ntypes);
-> @@ -272,6 +293,13 @@ int lock_contention_prepare(struct lock_contention *=
-con)
->                         bpf_map_update_elem(fd, &con->filters->cgrps[i], =
-&val, BPF_ANY);
->         }
->
-> +       if (con->nr_delays) {
-> +               fd =3D bpf_map__fd(skel->maps.lock_delays);
-> +
-> +               for (i =3D 0; i < con->nr_delays; i++)
-> +                       bpf_map_update_elem(fd, &con->delays[i].addr, &co=
-n->delays[i].time, BPF_ANY);
-> +       }
-> +
->         if (con->aggr_mode =3D=3D LOCK_AGGR_CGROUP)
->                 read_all_cgroups(&con->cgroups);
->
-> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/=
-util/bpf_skel/lock_contention.bpf.c
-> index 6533ea9b044c71d1..0ac9ae2f1711a129 100644
-> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> @@ -11,6 +11,9 @@
->  /* for collect_lock_syms().  4096 was rejected by the verifier */
->  #define MAX_CPUS  1024
->
-> +/* for do_lock_delay().  Arbitrarily set to 1 million. */
-> +#define MAX_LOOP  (1U << 20)
-> +
->  /* lock contention flags from include/trace/events/lock.h */
->  #define LCB_F_SPIN     (1U << 0)
->  #define LCB_F_READ     (1U << 1)
-> @@ -114,6 +117,13 @@ struct {
->         __uint(max_entries, 1);
->  } slab_caches SEC(".maps");
->
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_HASH);
-> +       __uint(key_size, sizeof(__u64));
-> +       __uint(value_size, sizeof(__u64));
-> +       __uint(max_entries, 1);
-> +} lock_delays SEC(".maps");
-> +
->  struct rw_semaphore___old {
->         struct task_struct *owner;
->  } __attribute__((preserve_access_index));
-> @@ -143,6 +153,7 @@ const volatile int needs_callstack;
->  const volatile int stack_skip;
->  const volatile int lock_owner;
->  const volatile int use_cgroup_v2;
-> +const volatile int lock_delay;
->
->  /* determine the key of lock stat */
->  const volatile int aggr_mode;
-> @@ -348,6 +359,35 @@ static inline __u32 check_lock_type(__u64 lock, __u3=
-2 flags)
->         return 0;
->  }
->
-> +static inline long delay_callback(__u64 idx, void *arg)
-> +{
-> +       __u64 target =3D *(__u64 *)arg;
-> +
-> +       if (target <=3D bpf_ktime_get_ns())
-> +               return 1;
-> +
-> +       /* just to kill time */
-> +       (void)bpf_get_prandom_u32();
-> +
-> +       return 0;
-> +}
-> +
-> +static inline void do_lock_delay(__u64 duration)
-> +{
-> +       __u64 target =3D bpf_ktime_get_ns() + duration;
-> +
-> +       bpf_loop(MAX_LOOP, delay_callback, &target, /*flags=3D*/0);
-> +}
-> +
-> +static inline void check_lock_delay(__u64 lock)
-> +{
-> +       __u64 *delay;
-> +
-> +       delay =3D bpf_map_lookup_elem(&lock_delays, &lock);
-> +       if (delay)
-> +               do_lock_delay(*delay);
-> +}
-> +
->  static inline struct tstamp_data *get_tstamp_elem(__u32 flags)
->  {
->         __u32 pid;
-> @@ -566,6 +606,9 @@ int contention_end(u64 *ctx)
->                 data->min_time =3D duration;
->
->  out:
-> +       if (lock_delay)
-> +               check_lock_delay(pelem->lock);
-> +
+I'm also verifying internally that there are no issues with your renaming
+proposal: qcom,ath1*k-calibration-variant => qcom,calibration-variant
+https://msgid.link/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org
 
-So the delay happens when a lock is coming out of contending, ideally
-I think the code should slow releasing the lock as you are trying to
-see how different tasks are impacted (how sensitive they are) to the
-critical sections done when a lock is held. I don't believe there is a
-way to do this with a regular kernel and BPF due to not having
-tracepoints on the lock fast paths, it may be possible if the LOCKDEP
-build option has been enabled for the kernel. Perhaps this work can
-motivate the tracepoints on the fast paths.
-
-Thanks,
-Ian
-
->         pelem->lock =3D 0;
->         if (need_delete)
->                 bpf_map_delete_elem(&tstamp, &pid);
-> diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-con=
-tention.h
-> index a09f7fe877df8184..12f6cb789ada1bc7 100644
-> --- a/tools/perf/util/lock-contention.h
-> +++ b/tools/perf/util/lock-contention.h
-> @@ -18,6 +18,12 @@ struct lock_filter {
->         char                    **slabs;
->  };
->
-> +struct lock_delay {
-> +       char                    *sym;
-> +       unsigned long           addr;
-> +       unsigned long           time;
-> +};
-> +
->  struct lock_stat {
->         struct hlist_node       hash_entry;
->         struct rb_node          rb;             /* used for sorting */
-> @@ -140,6 +146,7 @@ struct lock_contention {
->         struct machine *machine;
->         struct hlist_head *result;
->         struct lock_filter *filters;
-> +       struct lock_delay *delays;
->         struct lock_contention_fails fails;
->         struct rb_root cgroups;
->         unsigned long map_nr_entries;
-> @@ -148,6 +155,7 @@ struct lock_contention {
->         int aggr_mode;
->         int owner;
->         int nr_filtered;
-> +       int nr_delays;
->         bool save_callstack;
->  };
->
-> --
-> 2.48.1.658.g4767266eb4-goog
->
+/jeff
 
