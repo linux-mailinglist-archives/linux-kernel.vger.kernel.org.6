@@ -1,131 +1,262 @@
-Return-Path: <linux-kernel+bounces-532487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117DFA44E63
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:09:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA8EA44E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 026DE7A3A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B41717AFC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8561A2567;
-	Tue, 25 Feb 2025 21:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EE1A9B58;
+	Tue, 25 Feb 2025 21:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BnJV8tek"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXUhKbaU"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858F51A3142
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1301A0BCD;
+	Tue, 25 Feb 2025 21:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517759; cv=none; b=NnTC7QkLYjNV5Ha/s7k5ivA1u6/E8np01IOb+PHsoqC3GcxIe223ieeerbo3keofizphXImxAi+2qjEbMG5dHCxTLDbd+V4fhr7813OxiIkm5JUxC5JHd7zbbieueMJ5uR7UctJESl2vXW8P/I1ZV+MgjaLSvELyRDh4t9g1vEE=
+	t=1740517800; cv=none; b=jVS9kQdWXaBXffCuED0xmKZxUg5TfcxU81qeg0rQzcCs2p4Xck3vFqJ8vcJEkn2YTC/RxUBE3HvyLMX6CPiHHR/6cES51ObxjKYErirEXsYFRpWMqVRuFDhgp/idvVHyYuCv0jpCPRzF9QcjPx3JKrNtWTkhSdHyn2pOL21w6UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517759; c=relaxed/simple;
-	bh=f9nu/gjYpScp2GZzc6dQlyISc0mFy1UpPKMQt+2+SPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ov/KD+sJINj5z2grAkCXmFAceU/qn09qz8FD/PN/LxgOhBpsDzlEaO+6ObITiMAHYBgiZQLJ1yRuN5I7mG7+uxiHA4SzvHX8mV+TFfm/KeRG6hZRzmj1plBUazCubMUlOS5w83haqeWKkqqNb+jgZp08/qgmjkVQqUjb/e81Ylw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BnJV8tek; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3072f8dc069so62853281fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:09:17 -0800 (PST)
+	s=arc-20240116; t=1740517800; c=relaxed/simple;
+	bh=Z+iaNm/CbiyBgxvdgSxp4XJmuOgH6m9D8eLOzDl2Rxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlQSrt6l4cvluxFxwPc20g2Nys50EjPx5d9fRJtFcT5yGk3Kg0RVe35B+eIRf0bHO6iSWJcvRWsQsFdR79UTnePnWlifWxVii220XtaWJkr93PiRMeKNQJj7kCRuoDINFtbJdoTDjw6i4Ib3dOLFVqZDInUkFSCfkVcoN8d1btc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXUhKbaU; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-521b5bd2268so3480832e0c.0;
+        Tue, 25 Feb 2025 13:09:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740517755; x=1741122555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4XoCEWv2ZTyY24QshaT4Wp49xDJ3qBHY1WAxKeHvOQ=;
-        b=BnJV8tek0H2lBSDSA1XJYLnSTGkX5dc7IAY3Bcy7+6xD5yTFyClsz7CB9j2aKrnjs2
-         Pwr2aY4vrxkpZQaMaz8clZQhNxTSNvZpvy4U5eWAd1F6TSgBF5ARLJ3vo2vgrIQA0nyc
-         37TMXeGfvF9gJuYAHcmcWQNCM6lYq4h3eIqFxxa6O4uHgaU4RfqqHQfK9mprkU3QnsVh
-         UoExr8p2tBvij30C89bFkKXq+E9ZyyD0YveWloESi7rb6LMJ7lnxd83iZpeUYTFKt5cA
-         hpdkr0aQvbL0gEKafcJgwd1u1ZksD8FwvOvU+mzSxaiSWuaFjSRgulHcJ8d1vSLC4tOA
-         s6AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740517755; x=1741122555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740517797; x=1741122597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M4XoCEWv2ZTyY24QshaT4Wp49xDJ3qBHY1WAxKeHvOQ=;
-        b=JwWVm2DAoLXtQSzN9ndERA42CmQLlxgQ8DCvOY2s/koYsyAYPSauLbh1lTGe9V3U6k
-         5Ksl85+4FZQzatsxOJJv3+/a7rP8Ntm8Wm8ogyw4zFrKpJhGdOJ9MscMrMj0zNUjXnqq
-         6Q6ieXIs0yZ0D2uH8aYPBA+eOGvSds45/XDm1iQviN1wRkTTtA7p3/fBeXyHsDAlw9R/
-         Pjtjqq/amEKLQBijCaDRhwXaOqnkVn4g1fhcns64J0MaXLI5H0bl85cLwnmrmWuMAYiY
-         NyCnvIILfltXwb1NZ9r82hYSPAVwpW4vgb/0ET8NwJoSkjuUQ0ElxU8bbXwBxtufyt09
-         2+vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpFWLyMXbkaucK6qP/+LCqtqE67zRSbsSIf/V4g4iiqW4eUupAcZnHGuol+tDWqh6QW9gAmwmtX8hCBrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMLr8l77zhuNN6Hx4wFgaK20YJqpj6toFcCqrm54+2c73x4vhP
-	iywP31CxB1fg1Yte5EWrHehWwr5bOZ69HD+A61lz01ihZtMLcnsJEEtcxaKf59c=
-X-Gm-Gg: ASbGncuCjcHjjH1t14Dl7hRGMqtwC7hbeaaOkCc/+aFv70cySjkxqWaSzCPvVDjxU4+
-	79c0C0q4uVcd8WZUkZvsbopEXoLzbuqGRXjdDmCbhJl6BQ+z+QcfD7YiTQOmwQqdUvfA+mt/qkg
-	1gkQv7UGT1PJBEqyx/MpBVyUqUHzkLm6Wm4WJYG8geByYy2QrPt17vHhjhfoB+RIUB1Gb5ZNrMj
-	Pg2Cnuli9xo/eaLhulX7k7RZfH3up3G8xh2Siq7ZRKZ22ub3NI98T1TjgD+BLJQRzsoRYZbp46s
-	OG8B50/i4HEQZuid6LCgj739xxPTbDTuvHARE1iTSc6+fTLnyMMQ3a6gyegzWuHPlsY2GiYaRmn
-	uqejwjA==
-X-Google-Smtp-Source: AGHT+IHZW6d9rnGPSbTopC+zVuHs8+WHbIcOmyVc/br2TV9KZrFgTMvD/wPr004/MWm+y+QcUxD/DA==
-X-Received: by 2002:a2e:9c02:0:b0:308:e9ae:b5b3 with SMTP id 38308e7fff4ca-30b79132d13mr10353661fa.1.1740517755543;
-        Tue, 25 Feb 2025 13:09:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a81ae82d6sm3139931fa.110.2025.02.25.13.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 13:09:14 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:09:12 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	david.collins@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] thermal: qcom-spmi-temp-alarm: Add temp alarm
- data struct based on HW subtype
-Message-ID: <n57hjxg6v7z34qmlvygfwakol45dtj6jgma56w3xqxbj67op3x@5n7yoyydnxm4>
-References: <20250225192429.2328092-1-anjelique.melendez@oss.qualcomm.com>
- <20250225192429.2328092-3-anjelique.melendez@oss.qualcomm.com>
+        bh=SOR5cTk1MfDjtZsccw3VnmvVGIbB3SXF6xEA02QDYvk=;
+        b=MXUhKbaUDuaiT5yr/hIzsKu3eZoJ2Kh8UYM2cnkaKdgt9zXY6b1pC1RqdHFO8/WEsZ
+         4DbF6ZDBIR7GHtMEbReOVeuHDtYXxBs6IYfy2TqSOE4k9DE1XHiP3+JzCR+wB0k+KJGy
+         8AgvUiybZiwM3AoQj22kWoQlI0iBzadlWUif0LMDWeZA2h+zojNKIJXyHR+wpbxOE3FQ
+         eVDmvqRrKipYu28hS921OT6LzjQ3tecXKEN2bEK46PLUvpTC8dS9pkLttGakfRnM2unl
+         X/uHiEmd/W2HfBRvwA6/oje/qB8M1XE8Un+QL/vELMq+ufIUdyxs5EBcXONeAq5D94kG
+         /AWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740517797; x=1741122597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SOR5cTk1MfDjtZsccw3VnmvVGIbB3SXF6xEA02QDYvk=;
+        b=OLL3gdB8ub1vMU/HPRxL/uQfI0sdmDt1uhuOEWo1NB7a2xXMH8lSvCgjSQnXFy17FC
+         h/YAEj2RBa1IoNmKe+cjmfN5ZWoQHp6RcL4U3db4tVx0L1TRbG73z9pmt3ecFrueg/+p
+         v6+IIS1MDKnN9yBjwNe1MDy6rJUq9a6lutOwYu2MLx4urAUOHHRt1R/8AUXxVcYASmA4
+         gDVOcnBClnm7bjEyus4Og8Bat7W4mLPQ+C32aJ7kbORirTjHGhgwykJzMyGjnZ/U/rPK
+         Ql2FoEEvmnCjDEEGJaZTA411Sh0hKNZwKXXm1Brwc1+PcJWBX2oOOB75LEEAF/utTEOO
+         JV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Yh2q7MFOEFLtDNffcjd0SkjbENwO2xb/s32vTOsAwq3jki21HBQlp6pMhKCkP4OJh4ruMnOf9TE8d4u+LRQwTeM=@vger.kernel.org, AJvYcCU2ZExe4mAAOd66qyHP6cOZRti0O7ciuixW3X5RX6Rat4pyTDTmp/cBFLuyqDrJuGN+yrqxy5j7MB0euRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX4wRQ5j+k1rTKEbn+7FDX6F3HH3xfKAicBVt8+/yo7ADTmQNT
+	mYfKzq82oDo5PRNzclS1Gq/TLuA3jUvQVqVR7tLJcgxgxi5oyFsI+e+v8C7xz89OqPeBRatbf7K
+	OeyE3HfoUs/YlRDPD6GItyX/4ni2Y5ejjGUQ=
+X-Gm-Gg: ASbGncujTKvQ5wvmzng7inVCuV4H1Ve+11UJrXJTUyKo+qcczFwTY0ZTr+zdfTWe5hv
+	i5YLA3o1pEepaY4u1JtH1I6AWqM/HM2ivInxAECEjsGMbeO7dyz1pvBNM/LDY7drQFR9fYe/0mS
+	cBnyGRwKg=
+X-Google-Smtp-Source: AGHT+IEZ4n9ZShSdryejSp0Dll4XjthRfrSp33D8IwRdnaU7WcKhyo+/LlXeqV9wsIUpxerFszpgB8+a2mgywwq0ii0=
+X-Received: by 2002:a05:6122:4009:b0:520:5a87:66f0 with SMTP id
+ 71dfb90a1353d-5224ca5f48amr671522e0c.0.1740517797488; Tue, 25 Feb 2025
+ 13:09:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225192429.2328092-3-anjelique.melendez@oss.qualcomm.com>
+References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com> <20250225105907.845347-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250225105907.845347-3-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Feb 2025 21:09:30 +0000
+X-Gm-Features: AQ5f1JpQJgx8-n0KxaKQyAOyx625Jj9XjopprYm-sqCSUpMvznb-yaEwd2QYPHs
+Message-ID: <CA+V-a8sS5m7jtKj6S3BaPN0f43Q4wCZ8vgMEY+A204HuzhqYgg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org, 
+	horms+renesas@verge.net.au, fabrizio.castro.jz@renesas.com, 
+	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 11:24:26AM -0800, Anjelique Melendez wrote:
-> Currently multiple if/else statements are used in functions to decipher
-> between SPMI temp alarm Gen 1, Gen 2 and Gen 2 Rev 1 functionality. Instead
-> refactor the driver so that SPMI temp alarm chips will have reference to a
-> spmi_temp_alarm_data struct which defines data and function callbacks
-> based on the HW subtype.
-> 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Hi Claudiu,
+
+Thank you for the patch.
+
+On Tue, Feb 25, 2025 at 11:00=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Commit 08b0ad375ca6 ("phy: renesas: rcar-gen3-usb2: move IRQ registration
+> to init") moved the IRQ request operation from probe to
+> struct phy_ops::phy_init API to avoid triggering interrupts (which lead t=
+o
+> register accesses) while the PHY clocks (enabled through runtime PM APIs)
+> are not active. If this happens, it results in a synchronous abort.
+>
+> One way to reproduce this issue is by enabling CONFIG_DEBUG_SHIRQ, which
+> calls free_irq() on driver removal.
+>
+> Move the IRQ request and free operations back to probe, and take the
+> runtime PM state into account in IRQ handler. This commit is preparatory
+> for the subsequent fixes in this series.
+>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 103 +++++++++++++-------
->  1 file changed, 68 insertions(+), 35 deletions(-)
->  }
->  
->  /**
->   * qpnp_tm_get_temp_stage() - return over-temperature stage
->   * @chip:		Pointer to the qpnp_tm chip
->   *
-> - * Return: stage (GEN1) or state (GEN2) on success, or errno on failure.
-> + * Return: stage on success, or errno on failure.
->   */
->  static int qpnp_tm_get_temp_stage(struct qpnp_tm_chip *chip)
-
--> qpnp_tm_gen1_get_temp_stage()
-
-With that fixed,
-
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
+>
+> Changes in v2:
+> - collected tags
+>
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 46 +++++++++++++-----------
+>  1 file changed, 26 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+> index 46afba2fe0dc..826c9c4dd4c0 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -120,7 +120,6 @@ struct rcar_gen3_chan {
+>         struct work_struct work;
+>         struct mutex lock;      /* protects rphys[...].powered */
+>         enum usb_dr_mode dr_mode;
+> -       int irq;
+>         u32 obint_enable_bits;
+>         bool extcon_host;
+>         bool is_otg_channel;
+> @@ -428,16 +427,25 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, =
+void *_ch)
 >  {
+>         struct rcar_gen3_chan *ch =3D _ch;
+>         void __iomem *usb2_base =3D ch->base;
+> -       u32 status =3D readl(usb2_base + USB2_OBINTSTA);
+> +       struct device *dev =3D ch->dev;
+>         irqreturn_t ret =3D IRQ_NONE;
+> +       u32 status;
+>
+> +       pm_runtime_get_noresume(dev);
+> +
+> +       if (pm_runtime_suspended(dev))
+> +               goto rpm_put;
+> +
+> +       status =3D readl(usb2_base + USB2_OBINTSTA);
+>         if (status & ch->obint_enable_bits) {
+> -               dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
+> +               dev_vdbg(dev, "%s: %08x\n", __func__, status);
+>                 writel(ch->obint_enable_bits, usb2_base + USB2_OBINTSTA);
+>                 rcar_gen3_device_recognition(ch);
+>                 ret =3D IRQ_HANDLED;
+>         }
+>
+> +rpm_put:
+> +       pm_runtime_put_noidle(dev);
+>         return ret;
+>  }
+>
+> @@ -447,17 +455,6 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+>         struct rcar_gen3_chan *channel =3D rphy->ch;
+>         void __iomem *usb2_base =3D channel->base;
+>         u32 val;
+> -       int ret;
+> -
+> -       if (!rcar_gen3_is_any_rphy_initialized(channel) && channel->irq >=
+=3D 0) {
+> -               INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
+> -               ret =3D request_irq(channel->irq, rcar_gen3_phy_usb2_irq,
+> -                                 IRQF_SHARED, dev_name(channel->dev), ch=
+annel);
+> -               if (ret < 0) {
+> -                       dev_err(channel->dev, "No irq handler (%d)\n", ch=
+annel->irq);
+> -                       return ret;
+> -               }
+> -       }
+>
+>         /* Initialize USB2 part */
+>         val =3D readl(usb2_base + USB2_INT_ENABLE);
+> @@ -490,9 +487,6 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
+>                 val &=3D ~USB2_INT_ENABLE_UCOM_INTEN;
+>         writel(val, usb2_base + USB2_INT_ENABLE);
+>
+> -       if (channel->irq >=3D 0 && !rcar_gen3_is_any_rphy_initialized(cha=
+nnel))
+> -               free_irq(channel->irq, channel);
+> -
+>         return 0;
+>  }
+>
+> @@ -698,7 +692,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
+evice *pdev)
+>         struct device *dev =3D &pdev->dev;
+>         struct rcar_gen3_chan *channel;
+>         struct phy_provider *provider;
+> -       int ret =3D 0, i;
+> +       int ret =3D 0, i, irq;
+>
+>         if (!dev->of_node) {
+>                 dev_err(dev, "This driver needs device tree\n");
+> @@ -714,8 +708,6 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
+evice *pdev)
+>                 return PTR_ERR(channel->base);
+>
+>         channel->obint_enable_bits =3D USB2_OBINT_BITS;
+> -       /* get irq number here and request_irq for OTG in phy_init */
+> -       channel->irq =3D platform_get_irq_optional(pdev, 0);
+>         channel->dr_mode =3D rcar_gen3_get_dr_mode(dev->of_node);
+>         if (channel->dr_mode !=3D USB_DR_MODE_UNKNOWN) {
+>                 channel->is_otg_channel =3D true;
+> @@ -784,6 +776,20 @@ static int rcar_gen3_phy_usb2_probe(struct platform_=
+device *pdev)
+>                 channel->vbus =3D NULL;
+>         }
+>
+> +       irq =3D platform_get_irq_optional(pdev, 0);
+You may want to propagate the error and fail in case of errors like below:
+            if (irq < 0 && irq !=3D -ENXIO) {
+                    ret =3D irq;
+                    goto error;
+            }
 
--- 
-With best wishes
-Dmitry
+Rest lgtm,
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Cheers,
+Prabhakar
+
+> +       if (irq =3D=3D -EPROBE_DEFER) {
+> +               ret =3D -EPROBE_DEFER;
+> +               goto error;
+> +       } else if (irq >=3D 0) {
+> +               INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
+> +               ret =3D devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq=
+,
+> +                                      IRQF_SHARED, dev_name(dev), channe=
+l);
+> +               if (ret < 0) {
+> +                       dev_err(dev, "Failed to request irq (%d)\n", irq)=
+;
+> +                       goto error;
+> +               }
+> +       }
+> +
+>         provider =3D devm_of_phy_provider_register(dev, rcar_gen3_phy_usb=
+2_xlate);
+>         if (IS_ERR(provider)) {
+>                 dev_err(dev, "Failed to register PHY provider\n");
+> --
+> 2.43.0
+>
+>
 
