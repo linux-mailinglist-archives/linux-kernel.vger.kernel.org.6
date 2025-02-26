@@ -1,254 +1,124 @@
-Return-Path: <linux-kernel+bounces-532867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1103CA4532D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:40:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4287A45331
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:41:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121AF7A13E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE733AB79B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1457421C9E4;
-	Wed, 26 Feb 2025 02:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC0D21CA0B;
+	Wed, 26 Feb 2025 02:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e2OVFNAh"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GS/Ckw96"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DF3EAFA
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E904F21C9ED
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740537644; cv=none; b=uabmlrzhUeLhEMQ4p80zmNc2XTxkgB5k7CU9Y/ksP9RQWMUjRMtrc6GRT20KsTuOD0H+P/hN3mr6IUQAPuJsalU18PBVrO2upt/laT0ASImo5/CFfLmXqAtKsyaNzRVqqlyjih4PQWoOWoxKYywGqjLRGI786EQu+7a3OIppvNg=
+	t=1740537656; cv=none; b=Xi/b+YK2VQ9O9Y//DG1eB6pKdTM3kgm9+tCT4rgBvaJbBIkq0w6Ugl2ZCIvECssj698dlCZz7A2sUa7L4a+k17zxZEM/U/9YtMx4LBzkjHupTea2vCNZ1I4tnwVlNWq/JHLgOutJzuBlx6swkr+vrTFDeNs45Ou76krwatXuqyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740537644; c=relaxed/simple;
-	bh=mdlUM44W6T3CT/yr++Cknq12keUsOkANBqZ+Qf5Lqh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVPFjU9G2KrEIXf1C6fo9FWchTIs/oblgohfQAoyz1NmHyldQ+Pw6NzCR40Sc3nxpOlHSUJp0tGVfvVXIPuHLlHt3bfo+Q8TmRLSIwMNzN//CF7A/vroHl0B9z0v4fjMSHfqNIB/66ht4fV8St5ZxKY7Fk7u+MArs02caz77qtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e2OVFNAh; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 02:40:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740537640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T4DzSfTGqtZ157FLjSkApLN27i1udx1HK0g7eBQ4qlk=;
-	b=e2OVFNAh1Js8neIqKUlPIsThYM4fHZZbV1ukHdf/latkSmhpIrdvAJ+TIgX0UOG2m9daj4
-	u5wVBpuvGqWitQiV9pW9gCOBd5/sA/f8iub0nmZREPY15veMA953lVeaXq7qPNaErOV1r2
-	6wvPmKOVkcewBQGzDCXBq8MG4CPzbqQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-Message-ID: <Z75_I5q7Qm_oPgMA@google.com>
-References: <20250225213200.729056-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1740537656; c=relaxed/simple;
+	bh=wjq1hhNmQD/Y69/cVuHxDfp8iNsL790jhspOLVSqRqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C25lopUSgqYTRXlJgsozVvBOOcLsTdXOypb6UygnKTCeUjSdtRL+45AD2mMaOul03RtcxD1OYWhuYLkRu2qcT57XrIqDEzxs+Pl31Sga1XqhOm8P/kasvA1YKjQ9myxmKonJpJkT41YfniiqVmKXZnVdnYkUTlLOGQ5RwmkzNoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GS/Ckw96; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fc3027c7aeso12443042a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:40:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740537654; x=1741142454; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=faw8k4TIY5A7eHVQZOGgzqUSa20esi5XC3jgrNGM418=;
+        b=GS/Ckw967HgEBztwhEXtWyn70THH/82RU5C07OL+zjPuB1o1Jv6xlSab1Ifir0ySI7
+         cL5y5aHYUTXGjIJG/uoPD8+e+FoBNATvn/b7FEXGf+5qZwa4gNPm0OYJgCeB0mU0d4zZ
+         KD4Uj+Qqp4Y+/6DXM+89Yi69FY4OgAztNGASRC3TWKzLTTAmhpYRPo0AoJUWs99X/hZ0
+         uOBDn9dxLPBSSwBQT2iBj5l5tFijagzV5pTSPoTfO8Hq9CNNPdc5VNomMbSKsdtWUiTd
+         0sdZIJXxiFqZSo3/wnZ5sc6jtX6iDba7Si66mju+5Rs2hqbxDcVsBLQy75GMk9DDElJM
+         6YfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740537654; x=1741142454;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=faw8k4TIY5A7eHVQZOGgzqUSa20esi5XC3jgrNGM418=;
+        b=hyJI0diGAXF1xBKCjSnrqBzhrLqFV/Bye3PLQLGu8m+1Bl0p2Bnvzzrf+rQjKK0qkl
+         2UWbpfElCZQcsKfFLhpN/8SvNS0Dw5n+O+U0si0E7U5lzP1R1b+sj89MIALr8QxtF1+X
+         Sj+7R1TcF3rWsHeJPpHFTnrEfeDprRg6CBfnbsVgct2Vtus5hrpacuqyTPVYgYh7SoC8
+         WJ3YMCJ2uTfhvCGnA1cR35mm2aSjpIgte0DGhHYDOpRD5vCeLOIcO6E5WglPB3o2Ipco
+         KRzcQW8JLMK2VB+kxSsv4Ys1ZF72C8XUBQaBpnt8R3ZTfSxdF/qfVrYaENMLAMv2VTHm
+         +pkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoaw7TVJ4pmyx7CTZhF8kkHOlO9CSRgb7tBtgTPaRlF7jmWkap0PBcdXQ62DWcIigpjsG+1EOgwyU6i4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL0WOErZPCO8c1YymswiCv5q/5HBQ65jr6DGH0G6hmVXoB8qPN
+	uFIt71urlAAX+jkI9i/kvBPBecNFCIRTt58345eFyjnlOsgw7AFgGbyubgYObXc=
+X-Gm-Gg: ASbGnctoD8/q5Y84VOcByE+raPLy77AH1G6hIHdN1JOrXbeuK5WqbTY6cUXWudNmCEo
+	EoANcYu38i9dljC/xeQVV/B/gyzZRpDx+rLZu2fqqkOGshnwZinu4Zo8oI+/891GR9dgmJKYaDm
+	cIKq+hpoklyfBnZKHOpxI+ZiI0I+qBsWsa2lM9pqFEp0Mvs2qKg9nudlJjKaDDoJnCoYOKRm0xj
+	cEkUDJrHCCgH5U8+jLHBB/CoBeg+3VLI9AiKPMfLli3AHOw/fx9ZiF40QX5PGGVTXNqg3t4/Liy
+	17tWyEKUA7b1O5K6+2/n36kVJUWhbwXXtIfj1QCcFi5vOKkO5g==
+X-Google-Smtp-Source: AGHT+IGBavOro6p44pm0knw7epDm1Ms4/cRCm5nI7A9v1bvB0aFlwIUaa3TK9A89BXdQQHklrRCMwg==
+X-Received: by 2002:a17:90b:2242:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-2fce868c4f9mr34212880a91.7.1740537654049;
+        Tue, 25 Feb 2025 18:40:54 -0800 (PST)
+Received: from [10.68.122.90] ([63.216.146.179])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a000a01sm21742845ad.40.2025.02.25.18.40.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 18:40:53 -0800 (PST)
+Message-ID: <3e3ab5b0-4669-4d7a-a7bd-6f5963662757@bytedance.com>
+Date: Wed, 26 Feb 2025 10:40:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225213200.729056-1-nphamcs@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] x86: pgtable: convert to use tlb_remove_ptdesc()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: peterz@infradead.org, kevin.brodsky@arm.com, riel@surriel.com,
+ vishal.moola@gmail.com, david@redhat.com, jannh@google.com,
+ hughd@google.com, willy@infradead.org, yuzhao@google.com,
+ muchun.song@linux.dev, will@kernel.org, aneesh.kumar@kernel.org,
+ npiggin@gmail.com, arnd@arndb.de, dave.hansen@linux.intel.com,
+ rppt@kernel.org, alexghiti@rivosinc.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-um@lists.infradead.org, x86@kernel.org, linux-riscv@lists.infradead.org
+References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
+ <36ad56b7e06fa4b17fb23c4fc650e8e0d72bb3cd.1740454179.git.zhengqi.arch@bytedance.com>
+ <20250225183519.91a5b75b13c0df6954c68576@linux-foundation.org>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20250225183519.91a5b75b13c0df6954c68576@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> Currently, we crash the kernel when a decompression failure occurs in
-> zswap (either because of memory corruption, or a bug in the compression
-> algorithm). This is overkill. We should only SIGBUS the unfortunate
-> process asking for the zswap entry on zswap load, and skip the corrupted
-> entry in zswap writeback.
 
-It's probably worth adding more details here. For example, how the
-SIGBUS is delivered (it's not super clear in the code), and the
-distinction between handling decompression failures for loads and
-writeback.
 
+On 2/26/25 上午10:35, Andrew Morton wrote:
+> On Tue, 25 Feb 2025 11:45:55 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 > 
-> See [1] for a recent upstream discussion about this.
+>> The x86 has already been converted to use struct ptdesc, so convert it to
+>> use tlb_remove_ptdesc() instead of tlb_remove_table().
+>>
 > 
-> [1]: https://lore.kernel.org/all/ZsiLElTykamcYZ6J@casper.infradead.org/
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+> This is dependent upon Rik's a37259732a7dc ("x86/mm: Make
+> MMU_GATHER_RCU_TABLE_FREE unconditional") from the x86 tree.  I'll add
 
-It's Yosry Ahmed <yosry.ahmed@linux.dev> now :P
+Yes.
 
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
-> ---
->  mm/zswap.c | 85 +++++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 58 insertions(+), 27 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index f6316b66fb23..31d4397eed61 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -62,6 +62,8 @@ static u64 zswap_reject_reclaim_fail;
->  static u64 zswap_reject_compress_fail;
->  /* Compressed page was too big for the allocator to (optimally) store */
->  static u64 zswap_reject_compress_poor;
-> +/* Load and writeback failed due to decompression failure */
+> Rik's patch to mm-unstable also and shall figure it out during the
+> merge window.
 
-Nit: Load or writeback?
-
-> +static u64 zswap_reject_decompress_fail;
->  /* Store failed because underlying allocator could not get memory */
->  static u64 zswap_reject_alloc_fail;
->  /* Store failed because the entry metadata could not be allocated (rare) */
-> @@ -953,11 +955,12 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
->  	return comp_ret == 0 && alloc_ret == 0;
->  }
->  
-> -static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> +static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  {
->  	struct zpool *zpool = entry->pool->zpool;
->  	struct scatterlist input, output;
->  	struct crypto_acomp_ctx *acomp_ctx;
-> +	bool ret = true;
->  	u8 *src;
->  
->  	acomp_ctx = raw_cpu_ptr(entry->pool->acomp_ctx);
-> @@ -984,12 +987,19 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  	sg_init_table(&output, 1);
->  	sg_set_folio(&output, folio, PAGE_SIZE, 0);
->  	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
-> -	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
-> -	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
-> +	if (crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait) ||
-> +			acomp_ctx->req->dlen != PAGE_SIZE) {
-> +		ret = false;
-> +		zswap_reject_decompress_fail++;
-> +		pr_alert_ratelimited(
-> +			"decompression failed on zswap entry with offset %08lx\n",
-> +			entry->swpentry.val);
-> +	}
-
-This can probably be prettier if we save the return value of
-crypto_wait_req() in a variable, and then do the check at the end of the
-function:
-
-zswap_decompress()
-{
-	mutex_lock();
-	...
-	ret = crypto_wait_req(..);
-	...
-	mutex_unlock();
-	...
-	if (ret || acomp_ctx->req->dlen != PAGE_SIZE) {
-		/* SHIT */
-		return false;
-	}
-	return true;
-}
+Thanks!
 
 
->  	mutex_unlock(&acomp_ctx->mutex);
->  
->  	if (src != acomp_ctx->buffer)
->  		zpool_unmap_handle(zpool, entry->handle);
-> +	return ret;
->  }
->  
->  /*********************************
-> @@ -1018,6 +1028,7 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_NONE,
->  	};
-> +	int ret = 0;
->  
->  	/* try to allocate swap cache folio */
->  	mpol = get_task_policy(current);
-> @@ -1034,8 +1045,8 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	 * and freed when invalidated by the concurrent shrinker anyway.
->  	 */
->  	if (!folio_was_allocated) {
-> -		folio_put(folio);
-> -		return -EEXIST;
-> +		ret = -EEXIST;
-> +		goto put_folio;
->  	}
->  
->  	/*
-> @@ -1048,14 +1059,17 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	 * be dereferenced.
->  	 */
->  	tree = swap_zswap_tree(swpentry);
-> -	if (entry != xa_cmpxchg(tree, offset, entry, NULL, GFP_KERNEL)) {
-> -		delete_from_swap_cache(folio);
-> -		folio_unlock(folio);
-> -		folio_put(folio);
-> -		return -ENOMEM;
-> +	if (entry != xa_load(tree, offset)) {
-> +		ret = -ENOMEM;
-> +		goto fail;
->  	}
->  
-> -	zswap_decompress(entry, folio);
-> +	if (!zswap_decompress(entry, folio)) {
-> +		ret = -EIO;
-> +		goto fail;
-> +	}
-> +
-> +	xa_erase(tree, offset);
->  
->  	count_vm_event(ZSWPWB);
->  	if (entry->objcg)
-> @@ -1071,9 +1085,14 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  
->  	/* start writeback */
->  	__swap_writepage(folio, &wbc);
-> -	folio_put(folio);
-> +	goto put_folio;
->  
-> -	return 0;
-> +fail:
-> +	delete_from_swap_cache(folio);
-> +	folio_unlock(folio);
-> +put_folio:
-> +	folio_put(folio);
-> +	return ret;
->  }
->  
->  /*********************************
-> @@ -1600,6 +1619,29 @@ bool zswap_load(struct folio *folio)
->  	if (WARN_ON_ONCE(folio_test_large(folio)))
->  		return true;
->  
-> +	/*
-> +	 * We cannot invalidate the zswap entry before decompressing it. If
-> +	 * decompression fails, we must keep the entry in the tree so that
-> +	 * a future read by another process on the same swap entry will also
-> +	 * have to go through zswap. Otherwise, we risk silently reading
-> +	 * corrupted data for the other process.
-> +	 */
-> +	entry = xa_load(tree, offset);
-
-We are doing load + erase here and in the writeback path now, so two
-xarray walks instead of one. How does this affect performance? We had a
-similar about the possiblity of doing a lockless xas_load() followed by
-a conditional xas_erase() for zswap_invalidate():
-
-https://lore.kernel.org/lkml/20241018192525.95862-1-ryncsn@gmail.com/
-
-Unfortunately it seems like we can't trivially do that unless we keep
-the tree locked, which we probably don't want to do throughout
-decompression.
-
-How crazy would it be to remove the entry from the tree and re-add it if
-compression fails? Does swapcache_prepare() provide sufficient
-protection for us to do this without anyone else looking at this entry
-(seems like it)?
-
-Anyway, this is all moot if the second walk is not noticeable from a
-perf perspective.
 
