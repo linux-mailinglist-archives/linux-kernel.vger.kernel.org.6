@@ -1,101 +1,55 @@
-Return-Path: <linux-kernel+bounces-533245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112E0A45746
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:56:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE13A456FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:49:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D473E7A77D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C491897893
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7350B24DFFE;
-	Wed, 26 Feb 2025 07:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA83E26BDA1;
+	Wed, 26 Feb 2025 07:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VlJEpF85"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2p9gC8v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311F924DFEF;
-	Wed, 26 Feb 2025 07:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553981898FB;
+	Wed, 26 Feb 2025 07:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556248; cv=none; b=SNTT8VdfO75E+nhEaCEik8+KRzw0VacjBl+l0cajLceyE5IRQoi2ocngrRZdBqp29DbLGD7J+xN9+CxS/3YNCFwboTqkJeyyHjQuk3HDa6BT+arrxOony46XOym5Ftp+EPKiVbrQy92Xo1TBVPUtF/ltvlHRvxxPuTEMHa61WUs=
+	t=1740556182; cv=none; b=k8Pa0J4+Tt6rmxQ5W+rPy9l77WWCk7eUWYZqIDX3jgol2oIIty99JJIsPAUyjPP8zNWoOO0azMARCkHTNlQHTmLhQAB7Oy5dUFh4oGVvyX0iPjiINPGt/xMkzsdZdovrK5f2JEiQ2ka0kaL/sKjPZD0MGxhGGe1uRcLGRfV/MfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556248; c=relaxed/simple;
-	bh=cmKtuwnc2KIDaRI+wvWtnzBRpft8byHlKWXn0enjH2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PSbpj7qqFkyShcXLnmHXyZV2lRSpwp+8sxAoeS8VkvygEfxDcc8vDDHoH1xQyBHd5fOmBlxNyzvPuOtZMo7XrbrnLfisPzq6rn8OchIws2S6Wsiv7Bs3fbepyCexO+qVZ+GIla2Q1LLzijoQbswwcBvTw+2YIXp0qpIlHEBlciU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VlJEpF85; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740556247; x=1772092247;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cmKtuwnc2KIDaRI+wvWtnzBRpft8byHlKWXn0enjH2M=;
-  b=VlJEpF85vpxG1blfr57K0TBp4rTSl0ZFXlGtB8aLLzSV9ucD9bL5At38
-   rlYTX2enFVN64WPBnTlFHXHgXYWd5h8YyK4RflhaoLjptPB7OF4JJUFn0
-   ++WXHe/dJg0b1BhSCfQZkTiSx2vNxCZXHpEKwCePAKQtfNzf1kcnMyi+Y
-   vaenx4C7oMMVNgbbFV/z0NhuWtcAi2CbqwQT17m2BzEvycNJac1J1kGaY
-   x0IljjrCzFHLCPTSenc0jcHfYydpEqOVuUVkuacbBYaAaYupdZkAGmbpK
-   Jo1SnIwV+mkiHgsreIV5yCTnvo6l6VvRgOPB44YhTqEU5nVLRPjRnfr+d
-   g==;
-X-CSE-ConnectionGUID: 2jHTjH6nTJWsIQ2eJxjdzA==
-X-CSE-MsgGUID: KpAWf5wyRyycFvw0tTt4xQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45305236"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="45305236"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:50:46 -0800
-X-CSE-ConnectionGUID: fM5vSBR0ToyfuZ21hlmvgA==
-X-CSE-MsgGUID: 7VkCjDaiTceTPs/wK8065A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120743067"
-Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Feb 2025 23:50:39 -0800
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-To: Simon Horman <horms@kernel.org>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	David E Box <david.e.box@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH net-next v8 6/6] stmmac: intel: interface switching support for ADL-N platform
-Date: Wed, 26 Feb 2025 15:48:37 +0800
-Message-Id: <20250226074837.1679988-7-yong.liang.choong@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250226074837.1679988-1-yong.liang.choong@linux.intel.com>
-References: <20250226074837.1679988-1-yong.liang.choong@linux.intel.com>
+	s=arc-20240116; t=1740556182; c=relaxed/simple;
+	bh=/V3ZHo7uBj9PHC+wKXtMnji8efJpacOWurlYYkXuH1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvvxRINUeSdFed8qbZbNBat7jI7g2M32fwIRpmgGj73uxGIwVq0j/ZJQ4az7vJF4qQBw/XQAGpl9o2xJ+aq9nXC4Lb9ndZK7BIL/V9Iu5QfOgIfy0U+OZA0htfqS+RRS4MSt0wVtP0gL7IAft14choQXSVT8j8dd/budg08/Y1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2p9gC8v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA736C4CEE2;
+	Wed, 26 Feb 2025 07:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740556181;
+	bh=/V3ZHo7uBj9PHC+wKXtMnji8efJpacOWurlYYkXuH1A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=h2p9gC8vevvOKvVYf810f9caaRHqSfSXzE4DOwlcHE5G9M0RtY+TS0+peDuqc5cO6
+	 ypL82rvRMxP8M7dVXhFLjw2cw+cmf46T1ICYEXwKp4IHESR215kNw827r8RRpaJt4t
+	 4TX8jMXwBepJQZfISVPeaOC8idjGrBxBt+ecDHYr7YjqMJFmMPzN/pLRnXK3UuD57T
+	 Y6OKTC0yvEUKSWQany+/YO0kp09wibS1JzGIjwGj1sBwbiX8mYpcvuYjEld+KigrdD
+	 YZ8l0ulgnuvX87aveOKAmNr6kPlzhIjs9btB0knAwiOmnkuDCV/VNRW76Pu8V1eFyI
+	 EweLgMVLEwVuQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v5 00/19] amd-pstate cleanups
+Date: Wed, 26 Feb 2025 01:49:15 -0600
+Message-ID: <20250226074934.1667721-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,96 +58,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The intel_config_serdes function was provided to handle interface mode
-changes for the ADL-N platform.
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-The Modphy register lane was provided to configure the serdes when
-changing interface modes.
+This series overhauls locking and drops many unnecessarily cached
+variables.
 
-Signed-off-by: Michael Sit Wei Hong <michael.wei.hong.sit@intel.com>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-intel.c | 52 ++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
+Debugging messages are also dropped in favor of more ftracing.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index f73a48f98581..9c8de47ee149 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -87,6 +87,7 @@ static const struct pmc_serdes_regs pid_modphy1_2p5g_regs[] = {
- };
- 
- static const int ehl_tsn_lane_regs[] = {7, 8, 9, 10, 11};
-+static const int adln_tsn_lane_regs[] = {6};
- 
- static int stmmac_pci_find_phy_addr(struct pci_dev *pdev,
- 				    const struct dmi_system_id *dmi_list)
-@@ -1004,6 +1005,55 @@ static int adls_sgmii_phy1_data(struct pci_dev *pdev,
- static struct stmmac_pci_info adls_sgmii1g_phy1_info = {
- 	.setup = adls_sgmii_phy1_data,
- };
-+
-+static int adln_common_data(struct pci_dev *pdev,
-+			    struct plat_stmmacenet_data *plat)
-+{
-+	struct intel_priv_data *intel_priv = plat->bsp_priv;
-+
-+	plat->rx_queues_to_use = 6;
-+	plat->tx_queues_to_use = 4;
-+	plat->clk_ptp_rate = 204800000;
-+
-+	plat->safety_feat_cfg->tsoee = 1;
-+	plat->safety_feat_cfg->mrxpee = 0;
-+	plat->safety_feat_cfg->mestee = 1;
-+	plat->safety_feat_cfg->mrxee = 1;
-+	plat->safety_feat_cfg->mtxee = 1;
-+	plat->safety_feat_cfg->epsi = 0;
-+	plat->safety_feat_cfg->edpp = 0;
-+	plat->safety_feat_cfg->prtyen = 0;
-+	plat->safety_feat_cfg->tmouten = 0;
-+
-+	intel_priv->tsn_lane_regs = adln_tsn_lane_regs;
-+	intel_priv->max_tsn_lane_regs = ARRAY_SIZE(adln_tsn_lane_regs);
-+
-+	return intel_mgbe_common_data(pdev, plat);
-+}
-+
-+static int adln_sgmii_phy0_data(struct pci_dev *pdev,
-+				struct plat_stmmacenet_data *plat)
-+{
-+	struct intel_priv_data *intel_priv = plat->bsp_priv;
-+
-+	plat->bus_id = 1;
-+	plat->phy_interface = PHY_INTERFACE_MODE_SGMII;
-+	plat->serdes_powerup = intel_serdes_powerup;
-+	plat->serdes_powerdown = intel_serdes_powerdown;
-+	plat->mac_finish = intel_mac_finish;
-+
-+	intel_priv->pid_1g.regs = pid_modphy1_1g_regs;
-+	intel_priv->pid_1g.num_regs = ARRAY_SIZE(pid_modphy1_1g_regs);
-+	intel_priv->pid_2p5g.regs = pid_modphy1_2p5g_regs;
-+	intel_priv->pid_2p5g.num_regs = ARRAY_SIZE(pid_modphy1_2p5g_regs);
-+
-+	return adln_common_data(pdev, plat);
-+}
-+
-+static struct stmmac_pci_info adln_sgmii1g_phy0_info = {
-+	.setup = adln_sgmii_phy0_data,
-+};
-+
- static const struct stmmac_pci_func_data galileo_stmmac_func_data[] = {
- 	{
- 		.func = 6,
-@@ -1386,7 +1436,7 @@ static const struct pci_device_id intel_eth_pci_id_table[] = {
- 	{ PCI_DEVICE_DATA(INTEL, TGLH_SGMII1G_1, &tgl_sgmii1g_phy1_info) },
- 	{ PCI_DEVICE_DATA(INTEL, ADLS_SGMII1G_0, &adls_sgmii1g_phy0_info) },
- 	{ PCI_DEVICE_DATA(INTEL, ADLS_SGMII1G_1, &adls_sgmii1g_phy1_info) },
--	{ PCI_DEVICE_DATA(INTEL, ADLN_SGMII1G, &tgl_sgmii1g_phy0_info) },
-+	{ PCI_DEVICE_DATA(INTEL, ADLN_SGMII1G, &adln_sgmii1g_phy0_info) },
- 	{ PCI_DEVICE_DATA(INTEL, RPLP_SGMII1G, &tgl_sgmii1g_phy0_info) },
- 	{}
- };
+This series is based off superm1/linux.git bleeding-edge branch.
+
+Mario Limonciello (19):
+  cpufreq/amd-pstate: Invalidate cppc_req_cached during suspend
+  cpufreq/amd-pstate: Show a warning when a CPU fails to setup
+  cpufreq/amd-pstate: Drop min and max cached frequencies
+  cpufreq/amd-pstate: Move perf values into a union
+  cpufreq/amd-pstate: Overhaul locking
+  cpufreq/amd-pstate: Drop `cppc_cap1_cached`
+  cpufreq/amd-pstate-ut: Use _free macro to free put policy
+  cpufreq/amd-pstate-ut: Allow lowest nonlinear and lowest to be the
+    same
+  cpufreq/amd-pstate-ut: Drop SUCCESS and FAIL enums
+  cpufreq/amd-pstate-ut: Run on all of the correct CPUs
+  cpufreq/amd-pstate-ut: Adjust variable scope
+  cpufreq/amd-pstate: Replace all AMD_CPPC_* macros with masks
+  cpufreq/amd-pstate: Cache CPPC request in shared mem case too
+  cpufreq/amd-pstate: Move all EPP tracing into *_update_perf and
+    *_set_epp functions
+  cpufreq/amd-pstate: Update cppc_req_cached for shared mem EPP writes
+  cpufreq/amd-pstate: Drop debug statements for policy setting
+  cpufreq/amd-pstate: Rework CPPC enabling
+  cpufreq/amd-pstate: Stop caching EPP
+  cpufreq/amd-pstate: Drop actions in amd_pstate_epp_cpu_offline()
+
+ arch/x86/include/asm/msr-index.h   |  20 +-
+ arch/x86/kernel/acpi/cppc.c        |   4 +-
+ drivers/cpufreq/amd-pstate-trace.h |  13 +-
+ drivers/cpufreq/amd-pstate-ut.c    | 211 +++++------
+ drivers/cpufreq/amd-pstate.c       | 574 +++++++++++++----------------
+ drivers/cpufreq/amd-pstate.h       |  63 ++--
+ 6 files changed, 395 insertions(+), 490 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
