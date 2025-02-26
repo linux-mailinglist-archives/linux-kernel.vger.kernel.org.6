@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-534277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69469A46501
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A67C4A4650D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604B319C017E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0177F189CC73
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F58224AE0;
-	Wed, 26 Feb 2025 15:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875732288D0;
+	Wed, 26 Feb 2025 15:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="mVOQ9Ss4"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="WH3Bf5Hp"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AD822259C;
-	Wed, 26 Feb 2025 15:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32D227E91;
+	Wed, 26 Feb 2025 15:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583923; cv=none; b=jFsWoGjIdfQDr+Gt+EhNhtaJ4S6j4vN/2W7zi5EtqYK2xiYigheDnutgLGqaX84fP1K5sEba72D5r4/QLZM09rDmIvEHfIhMrfwarkf+xlJA1MvpmRNtFm1p2jjRziq4hxA/T4Ht3aJiEo9PxkUSaeB+SrSLiGkq0e5COA0PAuc=
+	t=1740583931; cv=none; b=LD3xM0+4fKM6RpROerMozIm5jjrSWuDtpa86b7JBZqww9Zn7Hnxtfi6slP8hniagwoBb8RWuLwgHVIRDU5RHFGPmZWQ3FnLAYhZAFi38co9xCfw/FA83EPGFHx886FqEm+xSMzq8UitVZmkmJjZc0VmSjJFFyilE52u1uu0fuu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583923; c=relaxed/simple;
-	bh=mX1Ef/ro9gNsbQOiYPM49ljjKAuRYbPh+mOcDi0rO/U=;
+	s=arc-20240116; t=1740583931; c=relaxed/simple;
+	bh=QROLHpitftxJz93rFpf0GRpdzzkQV1U5H9dZKqjurFw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sBb6Lrm3knvw81nD2rBiVQku2Iyvev6QoqSvoNwZ1v8kJGXhrahhwBJcLw7vdPmUgBGzmgEY7GhUmkWgj0uf41FwL6wWUGiWevNjhiNVJl2t7vIpssBx9PUDERUVRc90rTbAwIh9LmYZsF3UtMZq3OGCEXfuqih2xvUu81Ayu8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=mVOQ9Ss4; arc=none smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=EOAeeMi0V/kAakZ5LHQyZCIYgtqKpEOHcsMyPrspmi2MjiGjlycvgQoxmu0EDGWXg/sjTxX+nNN9AiBSgVIWLkOrIIgVQpwK+hFY9jmAPJPIkcFGoRSlgo/4EOeKpHxPALK5k+fNTEMqJJVeyOAzi7TvDqBjCFIePev7EhgsWPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=WH3Bf5Hp; arc=none smtp.client-ip=67.231.149.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QFIYLk001993;
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QFJEx3014247;
 	Wed, 26 Feb 2025 09:31:41 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=ODRQrKEQ2CWaEfNEpD7LDwWk9Td86Aqzt95iMZ2VidM=; b=
-	mVOQ9Ss4a49wgVy5ULMC6TGrCchg5N0LTjvs0Yet1HZIAM11gongS42ylXU0RD32
-	yIpW/KKMtsOkaSX6d2pSO2ebJtk2sAqucO1C0QqxHRoRVmsOGqYbc6L+HdfkaFCh
-	RPQhl+NgvvxqwWjmICBDAkLxGvQcfvcGsr4z2YCZ4EEKnlw/a1JY2nRt6srbYQsy
-	3WxJfnkJNNZmrg+GTnh4wYsdcoHI7Yj6rsKK7y1oxQMmOnlqDgBO//hmlnO6b1hh
-	F/4hx2xM0EnQEc3vqY4gUaXRl14QD91FjJxCa2dM0J2BOWREvM6qN/so8WKpzkX+
-	Hbifb0DPyUntYT5lw6WkAA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 451pspsr13-4
+	PODMain02222019; bh=zPlfN0cFXudE0W4CMRPSUAzF0Qn+ZW4zAlumi1M16C8=; b=
+	WH3Bf5HpThkQ/3i6sxpQ+TxFDzqbBs0FA0DYBoN2vYUQBm0EgjL3PVDY6Q8pFwwF
+	22j4NtM5xnhEL2cu2YKUMCRW7FDn/2iEXGf4UQO3f/jH/4CDnKz3xptrnmzFiPN9
+	bWwJEofCyCpZWiKcBC971DXHQsUgJpVZkizhziDPZV1w23qBmXmGLgITqyH4nTte
+	2tfv+iov2JrsaGsQ/C14AV1Yy4n6SCFikPvNl1aHLjN9fuvTCPN5tXaUogN6U2g8
+	pLPxynfKqcN33NmWyN/pAGMdT+mBut+zk0Iw0KhN1pWqjOcaWOcJFUQdzVJNZ3W0
+	SWBoUT2dL64L9dAS3wHRTw==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 451pt3hq9w-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 09:31:40 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 26 Feb 2025 09:31:41 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 26 Feb
  2025 15:31:37 +0000
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
  anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
  15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 15:31:37 +0000
 Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id C71E782025A;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id D798482026B;
 	Wed, 26 Feb 2025 15:31:37 +0000 (UTC)
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: <broonie@kernel.org>
@@ -65,9 +65,9 @@ CC: <lgirdwood@gmail.com>, <peda@axentia.se>, <andrei.simion@microchip.com>,
         <baojun.xu@ti.com>, <srinivas.kandagatla@linaro.org>,
         <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>
-Subject: [PATCH 06/12] ASoC: wm9713: Use SOC_DOUBLE_EXT() helper macro
-Date: Wed, 26 Feb 2025 15:31:31 +0000
-Message-ID: <20250226153137.2791938-7-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 07/12] ASoC: wsa881x: Use SOC_SINGLE_EXT_TLV() helper macro
+Date: Wed, 26 Feb 2025 15:31:32 +0000
+Message-ID: <20250226153137.2791938-8-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250226153137.2791938-1-ckeepax@opensource.cirrus.com>
 References: <20250226153137.2791938-1-ckeepax@opensource.cirrus.com>
@@ -79,39 +79,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: qPMFKWqrY4CfVLZT7lwUDST-EHKRGEbF
-X-Proofpoint-ORIG-GUID: qPMFKWqrY4CfVLZT7lwUDST-EHKRGEbF
-X-Authority-Analysis: v=2.4 cv=U8ZoDfru c=1 sm=1 tr=0 ts=67bf33dc cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=PzMjCjVtb1Ub-jEo5JkA:9 a=YXXWInSmI4Sqt1AkVdoW:22
+X-Authority-Analysis: v=2.4 cv=XrQAOUF9 c=1 sm=1 tr=0 ts=67bf33dd cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=V7zCF8UxTbGbpslwMU0A:9 a=YXXWInSmI4Sqt1AkVdoW:22
+X-Proofpoint-ORIG-GUID: 95OgwlwIRn40zE5wb9Gy8iYx0pMaKJmF
+X-Proofpoint-GUID: 95OgwlwIRn40zE5wb9Gy8iYx0pMaKJmF
 X-Proofpoint-Spam-Reason: safe
 
 Rather than open coding use the helper macro provided by the ASoC core.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/codecs/wm9713.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ sound/soc/codecs/wsa881x.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/wm9713.c b/sound/soc/codecs/wm9713.c
-index 64b69316e4c70..0aa6491f2c842 100644
---- a/sound/soc/codecs/wm9713.c
-+++ b/sound/soc/codecs/wm9713.c
-@@ -284,13 +284,9 @@ static int wm9713_hp_mixer_get(struct snd_kcontrol *kcontrol,
- 	return 0;
- }
+diff --git a/sound/soc/codecs/wsa881x.c b/sound/soc/codecs/wsa881x.c
+index dd2d6661adc71..a3999bb6d5e22 100644
+--- a/sound/soc/codecs/wsa881x.c
++++ b/sound/soc/codecs/wsa881x.c
+@@ -199,13 +199,8 @@
+ #define WSA881X_PROBE_TIMEOUT 1000
  
--#define WM9713_HP_MIXER_CTRL(xname, xmixer, xshift) { \
--	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, \
--	.info = snd_soc_info_volsw, \
--	.get = wm9713_hp_mixer_get, .put = wm9713_hp_mixer_put, \
--	.private_value = SOC_DOUBLE_VALUE(SND_SOC_NOPM, \
--		xshift, xmixer, 1, 0, 0) \
--}
-+#define WM9713_HP_MIXER_CTRL(xname, xmixer, xshift) \
-+	SOC_DOUBLE_EXT(xname, SND_SOC_NOPM, xshift, xmixer, 1, 0, \
-+		       wm9713_hp_mixer_get, wm9713_hp_mixer_put)
+ #define WSA881X_PA_GAIN_TLV(xname, reg, shift, max, invert, tlv_array) \
+-{	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, \
+-	.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ |\
+-		 SNDRV_CTL_ELEM_ACCESS_READWRITE,\
+-	.tlv.p = (tlv_array), \
+-	.info = snd_soc_info_volsw, .get = snd_soc_get_volsw,\
+-	.put = wsa881x_put_pa_gain, \
+-	.private_value = SOC_SINGLE_VALUE(reg, shift, max, invert, 0) }
++	SOC_SINGLE_EXT_TLV(xname, reg, shift, max, invert, \
++			   snd_soc_get_volsw, wsa881x_put_pa_gain, tlv_array)
  
- /* Left Headphone Mixers */
- static const struct snd_kcontrol_new wm9713_hpl_mixer_controls[] = {
+ static struct reg_default wsa881x_defaults[] = {
+ 	{ WSA881X_CHIP_ID0, 0x00 },
 -- 
 2.39.5
 
