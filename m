@@ -1,135 +1,142 @@
-Return-Path: <linux-kernel+bounces-533864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6031FA45F7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:40:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CB1A45F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9E4164D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0B616A924
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D3C21576D;
-	Wed, 26 Feb 2025 12:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BD3218ADF;
+	Wed, 26 Feb 2025 12:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JPa35gLf"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mhauGAZU"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887A618024;
-	Wed, 26 Feb 2025 12:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C84217F48
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740573617; cv=none; b=XknllJfxORSphddO5sJmRcrew+zjI1DgNc6Jyq/s0WwGD0YizWZVQKRpboHSTwdLegOp2VwxnOK7M2mIKxHATr9xWNa/9uhDYAAWs3/oVcqEPCyax6h2KQ2eAj3JnPvwbfBnswB5N4o+67zA6qfmZi9w4kTsl8IycrWb+Jdhw1g=
+	t=1740573701; cv=none; b=hxs19OvEx9gnIIzUWYNBE8AEhASq5GoJ5mGovm7DetRg+0L0ydJfIfxP9vGM1hokXHXPo54C3CeH/RoAEBmOg0pNciSi1MWY+tV6rB3NBnaYhk8XxBpvzD5qrouR8Pzs2rOcEXZh0AxxKVUmrisbcpOdXTaWfFhyaL1NhZOGTFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740573617; c=relaxed/simple;
-	bh=hoTM6ye1U0cropi9cWGckjGlQYCb63GXZH+OrhAk56U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=svNH7EBoOeAW72O3Vlq26AuimnOpI6fnlRgXA2rRVKv4fbxcF6UEAlJALJJU4Z7YynestmLUslJkBLOkyEjwzbSUQWmw0sQYW4dfI/RZG4H4zpfKKAt2aTR2/XQiWYyaj2V8cvEPdQLSk80r8YKSmfTt5pm8c251wpeNdmqPYlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JPa35gLf; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Z2vFK6VcDz9tH5;
-	Wed, 26 Feb 2025 13:40:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740573605; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zZ+uIJiq3RhTKEA0gh5ZWipu0RfM+2RCWylSkxgmlWY=;
-	b=JPa35gLfjz9F0PVStYwlKmHjJ9E4k0AWCHhRXdZDYvnIfaMeuv1akUBer9uNAQCcsqpm0x
-	iS51R5FQ3Z1M20KjKqFaL1YQkQAt/giBv8Nv4FV2DCshI9pkqVXDFtcrRTOeXESoRNPxP0
-	lyETC7FJIB15e4qEL1Aw6KQzdK3wjVkM9GfdCRRo7DHJmwsZdF+YAYF24CS/QWbehQFX3e
-	mZIybZA4SkmML1T/0+1IFQzD8672eJ6JrchgxIa/yAM5zHex54bPEAh0QKnNcLyNzK/f7x
-	HylFjsXdhcxovtaRuiHhlTiO/wif3NStyEG5iGGLq7k2IvbNud+yUe9Okl9qwQ==
-Message-ID: <99a18daf596ca384d38e561675cf3e13a9ed3161.camel@mailbox.org>
-Subject: Re: [PATCH V3] drm/sched: Fix fence reference count leak
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Qianyi Liu <liuqianyi125@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
-  Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
- <phasta@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Wed, 26 Feb 2025 13:40:01 +0100
-In-Reply-To: <20250226090521.473360-1-liuqianyi125@gmail.com>
-References: <20250226090521.473360-1-liuqianyi125@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740573701; c=relaxed/simple;
+	bh=CpN5ncp6Qt22Yuf/xSLGcVxFK88132BWG8W+NqjEdfI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B/8p+3IRXB/SBj7wimfbQezZxh43P860gt8jpvqAT5D0GhSN3gWYZPCYj88I5LzIWE4eMQFR2JCCwa/Eytef4ufD70An4MTaPIPDTZf6xq+GGCfIqC7sfx4YlHrNcv7ATLuTeseZXcpjyiNGIbqGaTvo7xIW/ZoBn1B37lViH5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mhauGAZU; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so12066427a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740573698; x=1741178498; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQYuQIb36LWZwtlh3UmcRwVWXJSo9bU/1VRgIeGa67o=;
+        b=mhauGAZUPHLvhUHwvBfEMhdiuYrEIgFcka/5ziEhF1ncnA+sAdFYk80B++h6vpFfNL
+         wdANP3Fn/N31HBNiOiMEkc28CDDKsGiblFtAj8b1XCuxr6KttZLBACOR7JcPcqqtYN4M
+         rGZLSJeAI1shgxKPREVobZRRAG76vMgFd2ir/CkZ8+l88vZJQbUbt4AwzSdC12JtYziP
+         VRMappiB0FWrFaMgtvWhzEkLivMVqUJmVxiOD0l3bK/RqbLM8bLgWbtEEIesA9/7d1qR
+         lVcGAh2D2owtR0xiuNqVxzdzWB9vE10Hl4XEOSOX7r3mwr9jbLGVJo8S04iiuxYk/uUz
+         JExg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740573698; x=1741178498;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PQYuQIb36LWZwtlh3UmcRwVWXJSo9bU/1VRgIeGa67o=;
+        b=oAvcPU+C7VlOgNf/CJZvRH1/+yZSQANRDY2vH1i4cwIak8I4xFfsfRg3WVFBzhxkVB
+         54O/i9MDLLlhKRwbW80Ay2a2SFUVBT4VGkpJ1f6W6sk0fK64Jr8lrN7AzP1bmonET27Q
+         lGprryY/CeH2KJ1UXnVBOG1cNYhBFylMcM9tLqbnKs88r+0GReIW1mPyVmz9jV7kw9aw
+         FdXj0epTgvRBQGnYp6t2GAqtXqMgMQZWrtEH/ixqiFfUsSwzqYmRW25GWTQ1mNtRBybH
+         S2eos5uRfQf4O0M6lV4PKYTC89e+/tvbCasVUU1+3JUW7NUj9I3fHVz5GDKzexJe+srd
+         Dexg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxMkyep7/XvM500vIgoLiCV2rkatIyMLpy7Dq0loC8ZpEiQUAgFqa2LwzFgBvl+fFKYGFju6lIGgFgww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw74bdtI+Z68T9dZj9AqsnxNnmgmXlRu6LsmlFP2ZFcXGDwfII2
+	0xZRjlV9oH/s+iQqGz3UTYdZSIBYWqFSXF9G6PoSQTLdKbkWEPWGqrWo3bIABLkpYctfRhzGWI0
+	z/Lviq5T20eiZI0a6ewuUub/8eAaer6KkWsjX2g==
+X-Gm-Gg: ASbGncstMq0p6VEULt3NH8IdAodreKqT2IGzfZ+qALtyNKg3VNHr0pU5YU+x6GeJefP
+	v7D2XL5e5TyXtXbfdV613cvDrialJPjfH6p0OCAieDhJveus21ZYOs6MmGE6Btoyjhz8VPoWAlK
+	ArwYN4Vrs6
+X-Google-Smtp-Source: AGHT+IFtHHPi5hkmqH6TVnGYWDkR7e1ug4xFj2NVYSg1I6rAVT2CYI6tkXVgzP5D51jopDQyKEnAB6LZ0JyFSwgyBV8=
+X-Received: by 2002:a05:6402:400d:b0:5e4:b66f:880e with SMTP id
+ 4fb4d7f45d1cf-5e4b67ece50mr884897a12.7.1740573698000; Wed, 26 Feb 2025
+ 04:41:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: dcpuawum54q7wqs4efgup93ayfw5tcuh
-X-MBO-RS-ID: 4711bda07a75dfb2973
+References: <c2f50eac-3270-8dfa-2440-4c737c366b17@tuwien.ac.at> <8fd7f1d9-fc0d-4fa7-81be-378a3fc47d2a@acm.org>
+In-Reply-To: <8fd7f1d9-fc0d-4fa7-81be-378a3fc47d2a@acm.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 26 Feb 2025 13:41:00 +0100
+X-Gm-Features: AQ5f1JrR31HJzTDyJCuL3J36XOcjpMfg3bhgNxmvVH7R2MVXvJv9mjvlPkqUZlU
+Message-ID: <CAPDyKFpwZt9rezBhBbe9FeUX1BycD2br6RRTttvAVS_C99=TiQ@mail.gmail.com>
+Subject: Re: mmc0: error -95 doing runtime resume
+To: Thomas Haschka <thomas.haschka@tuwien.ac.at>, Bart Van Assche <bvanassche@acm.org>, 
+	=?UTF-8?B?5ZCz5piK5r6EIFJpY2t5?= <ricky_wu@realtek.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.peterson@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2025-02-26 at 17:05 +0800, Qianyi Liu wrote:
-> From: qianyi liu <liuqianyi125@gmail.com>
->=20
-> The last_scheduled fence leaked when an entity was being killed and
-> adding its callback failed.
->=20
-> Decrement the reference count of prev when dma_fence_add_callback()
-> fails, ensuring proper balance.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and
-> fini")
-> Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
++ Ricky
 
-@Matt: since you in principle agreed with this patch, could you give it
-an official RB?
+On Fri, 21 Feb 2025 at 18:20, Bart Van Assche <bvanassche@acm.org> wrote:
+>
+>
+> On 2/21/25 7:41 AM, Thomas Haschka wrote:
+> > Bug Fix: block: Improve stability of SD cards in Microsoft Surface GO 2 and
+> >               possibly other devices.
+> >
+> >
+> > The commit 65a558f66c308
+> >      block: Improve performance for BLK_MQ_F_BLOCKING drivers
+> >
+> > basically made the use of SD cards in my Microsoft Surface GO 2 impossible.
+> > The cards do stop functioning after about 15 minutes. Mostly at io
+> > intensive
+> > tasks.
+> >
+> > As outlined in https://bugzilla.kernel.org/show_bug.cgi?id=218821
+> > i bisected the problem that yielded an unstable operation of the cardreader
+> > on my Surface GO 2.
+> > I successfully reversed the commit 65a558f66c308 in 6.12.16 using
+> > the attached patch. As I suppose the bug introduced with this commit might
+> > hit other users of sd-cards in similar hardware I suggest this commit shall
+> > be reversed, even if the improved performance might be gone.
+>
+> Thank you for having bisected this issue and for having shared the
+> result of the bisection process. This is very useful information.
+>
+> Since the commit mentioned above is about 1.5 years old and has not
+> caused any issues for anyone who is not using an SD card reader, that
+> commit is probably not the root cause of the reported behavior. Are SD
+> cards controlled by the MMC driver? If so, I think the next step is to
+> take a close look at the MMC driver. I have Cc-ed the MMC driver maintainer.
 
-I could then take it [but will probably rephrase some nits in the
-commit message]
+There was another thread [1] where I tried to loop in Ricky Wu, but
+there was no response. I have added him to this tread too.
 
+For the record, I agree, even if reverting 65a558f66c308 solves the
+issue, it's not the correct fix.
 
-P.
+Unless we can get some help from Ricky, we can try to drop assigning
+"MMC_CAP_AGGRESSIVE_PM" in realtek_init_host() to see if that solves
+the problem. Or if debugfs is enabled, we can disable
+MMC_CAP_AGGRESSIVE_PM for the mmc host via the "caps" debugfs-node.
 
-> ---
-> v2 -> v3: Rework commit message (Markus)
-> v1 -> v2: Added 'Fixes:' tag and clarified commit message (Philipp
-> and Matthew)
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
-> =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
-> b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 69bcf0e99d57..1c0c14bcf726 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
-> drm_sched_entity *entity)
-> =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
-> =C2=A0
-> =C2=A0		dma_fence_get(&s_fence->finished);
-> -		if (!prev || dma_fence_add_callback(prev, &job-
-> >finish_cb,
-> -					=C2=A0=C2=A0
-> drm_sched_entity_kill_jobs_cb))
-> +		if (!prev ||
-> +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
-> +					=C2=A0=C2=A0
-> drm_sched_entity_kill_jobs_cb)) {
-> +			dma_fence_put(prev);
-> =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
-> >finish_cb);
-> +		}
-> =C2=A0
-> =C2=A0		prev =3D &s_fence->finished;
-> =C2=A0	}
+Thomas can you try to drop MMC_CAP_AGGRESSIVE_PM and see if that
+solves the problem?
 
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/CAPDyKFq4-fL3oHeT9phThWQJqzicKeA447WBJUbtcKPhdZ2d1A@mail.gmail.com/
 
