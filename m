@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-533139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2D4A45611
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:53:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87811A45614
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612473A4AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:53:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E47A681C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B8D269AED;
-	Wed, 26 Feb 2025 06:53:49 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08E269AED;
+	Wed, 26 Feb 2025 06:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DlXHZzBk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2625225E46F;
-	Wed, 26 Feb 2025 06:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02335028C;
+	Wed, 26 Feb 2025 06:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552829; cv=none; b=BdJzd3ng2h6i+VHhZHN0CzTzd96IJUKTWzxKsrLAWfUsN1ILo48uklsJpcIq4vufDDO3KxejC1cVukYCVkXRcohzQQ7ZYNlda2mjzNILJWsxKmIrKp6AXvvWZJ9i+rNzmSkpS3pfX7YSUygtv9O6h61S/ALVnc3TA6Pw1RCjYB4=
+	t=1740552969; cv=none; b=UVcS/qwY1Og0cyb3IiVaH2R0m8cygSkBXK6ux7uoXhGI2r4I0pw5b5ffoXaa9q69Fn+Jutl/Ykyh46j41xeagVksb6SrNPvY8erSxp+OVcjt71a/9tFUMSzgkvQXLWnZRk0xICwchrmgsPu2m/R0j406pP/LEbHmGFlAPBFD8MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552829; c=relaxed/simple;
-	bh=cnRAgNJRCc6VDZ8tFxoYsWu83A9Bi/ovMzqPefKNEiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWqtySb0bG62foyROMgBkJ6LtBzGF/IuIu3YatwCrkPS7faWCEaQJPVNctiqhhuDMt16O6oTUKW2v8FCcJV+3f+07DP7shqU89g4VWfb8oAPoAwoysdln5pQLjGsy5+8VnfFdoZobXTQ71hlBz+7cwujaIP0Ypu9vg3n03RxVko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c8f38febso135103775ad.2;
-        Tue, 25 Feb 2025 22:53:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740552827; x=1741157627;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hFQy5yv8F0Ur4ktKjedfp6/xfewAB3bA5wImrMkzGvc=;
-        b=UkXFOPKoMIfb8h+NS91R5uRE2q0dZpHZV+ApPJjzqcuGNfeh4OEGK93P7oz9F7RiXY
-         F4mBAyJLRVlvO16quljFS5jUVGMTjqisIYlE6FXZAPgiAHXRQFFnJPUCz5Etkt12I1M1
-         nBOh+h39JCCUWcalB3pUDYd2DHHGfe/A24Q3I8XCYt7JGP/SWLbIRCy7mLRhUNf4X34F
-         I79vPiResSn0ATkRese5W+OLWvLwkbxgFROI295yKaXAbZ49MWCeCqHRfL2KcJQ3y0+Z
-         kBBVkM4NoCR3uapgxGRqbQn/hTaXt+sZjgzYpTThODbo9F1GSqaAu76VrD28yhaK/qRg
-         aZoA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+QpAXTabdCAyOXbxg3vdk5w5cywmEw/Q0G9F1NpIFycwuDYUDTRsIqJN+RoH8m4QZmUfSXKXbsLZu@vger.kernel.org, AJvYcCXeGRs+NZEVxrBzPtqJN2+1aB6Pb2fttBaRqWQOa51gq7gzzovPU3ojlMYLwQPXX+H9LyYkmnH0ppO9IN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlJZ2E3WA5B+4WMgSAU7pt3dWxSK2E7ti6pztHESPb/Gi6hd7y
-	t1gkwfAYzBybJVFSKwYFSlX83K3+hZoQqkUpO6n3feJpQIT6gDw4
-X-Gm-Gg: ASbGnctFhe22ZlCq4/Svqa5YJdZKa/hETFCf9LzgP5BF9x8MmYlI7QEMyjV6c+W+ixa
-	tUhqsaBR/q834RhG1g7sCv1BWgshmK8Km6+7HVxypLdJuD13oX8PzVgWf6rMAIk4IWUVfYJThCk
-	uxbAUFx+6nHksrm48iO21elC7PaoxYhdr6DcoeHx0WHu0ma/Z0iGuGCmBjXDuo59UtH4CSbOXjb
-	a9wCOxtk+HR7ubTov9dZbUUG1Lh2w4v+1HdCsdJuw4+F6lvmK47xN3k+lZzXzLghafAS+iXkx+J
-	BLoxxPcwgWqVJujMNjUuS12y2Ars/vfKTH+tqf18OKEmXKbk6Cx31+i2mLib
-X-Google-Smtp-Source: AGHT+IGhhIvtnfl9cbWSjvM/0ifbg6NbMjqNWOrw/CwF3JzbhedQDCrLNQZfwrUSiOsURmZqdxzWbQ==
-X-Received: by 2002:a05:6a21:6d99:b0:1ee:5d05:a18f with SMTP id adf61e73a8af0-1eef3daaa38mr36546833637.35.1740552827377;
-        Tue, 25 Feb 2025 22:53:47 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7347a6ad32csm2701346b3a.32.2025.02.25.22.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:53:46 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:53:45 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: jingoohan1@gmail.com, lpieralisi@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shradha.t@samsung.com,
-	cassel@kernel.org
-Subject: Re: [PATCH 1/2] PCI: dwc-debugfs: Perform deinit only when the
- debugfs is initialized
-Message-ID: <20250226065345.GB951736@rocinante>
-References: <20250225171239.19574-1-manivannan.sadhasivam@linaro.org>
- <20250225171239.19574-2-manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1740552969; c=relaxed/simple;
+	bh=q4ZyS3nL2pCIXXvsUTTmZGs+Mzd+5hRRC6xwUNA1o98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HFIfEvvL5rBpyvuTfKVRHOURM7i4qVth6FZxZst3O7YqK/B+Mwo88DKq8BQLUgOK2tMENH03PY/rkjO36AC+aVxnud6Qs7/POaudI1UcSBmo6Ta4/09TcN9M1BrRkaZeNDL9fCnRVew+P7k4KiGPWwM9cXXzH6hOHCrn+YqQdVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DlXHZzBk; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740552968; x=1772088968;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=q4ZyS3nL2pCIXXvsUTTmZGs+Mzd+5hRRC6xwUNA1o98=;
+  b=DlXHZzBkAw8U7llBwcKhrxGDrYWdl4M2Co0Pcvz2mDoYeVBdVGX0fSHg
+   DG7pSLxPXleL4KQOBNX3+Y1VJQCnbWsoD/0u3FvdvVu3YOW/GxJ2jaFib
+   KA7htrs16jxw87xPt3Ha5PtTa97d9G+Ez+T7eIv1okwXFb4wgGq77xBjT
+   FenhMOl9MQBi8oNlJPHxiFeNDlc+KNDfHn0lWv6+6A30y+dc4K0nhCeTX
+   ptOgKvd3de6ihE9pTfQDqoG3EjK/P/9p7BADGEIyn/RvOR6ekJ8Kvy1iE
+   hMTtQMqwtgb9WRchkjzwZrUD/DVvShZTTga7HC4WU08mIwTN6nJXpnj1v
+   A==;
+X-CSE-ConnectionGUID: Oi+nmZdhSweLlk7Yb8RZ1w==
+X-CSE-MsgGUID: NAlxO4TSRXKPfdM3p4ya1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45036985"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="45036985"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:56:08 -0800
+X-CSE-ConnectionGUID: BLZlSfEPQImFfbcqS22cTA==
+X-CSE-MsgGUID: U6PHjfyKSNWS/Jpn1cL2UQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="121554118"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:56:04 -0800
+Message-ID: <5bbed578-db74-408d-a92e-76d869054738@linux.intel.com>
+Date: Wed, 26 Feb 2025 14:56:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250225171239.19574-2-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 15/24] perf/x86/intel: Add SSP register support for
+ arch-PEBS
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-16-dapeng1.mi@linux.intel.com>
+ <20250225115229.GN11590@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250225115229.GN11590@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-> Some endpoint controller drivers like pcie-qcom-ep, pcie-tegra194 call
-> dw_pcie_ep_cleanup() to cleanup the resources at the start of the PERST#
-> deassert (due to refclk dependency). By that time, debugfs won't be
-> registered, leading to NULL pointer dereference:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> Call trace:
-> dwc_pcie_debugfs_deinit+0x18/0x38 (P)
-> dw_pcie_ep_cleanup+0x2c/0x50
-> qcom_pcie_ep_perst_irq_thread+0x278/0x5e8
-> 
-> So perform deinit only when the debugfs is initialized.
+On 2/25/2025 7:52 PM, Peter Zijlstra wrote:
+> On Tue, Feb 18, 2025 at 03:28:09PM +0000, Dapeng Mi wrote:
+>
+>> +	if (unlikely(event->attr.sample_regs_intr & BIT_ULL(PERF_REG_X86_SSP))) {
+>> +		/* Only arch-PEBS supports to capture SSP register. */
+>> +		if (!x86_pmu.arch_pebs || !event->attr.precise_ip)
+>> +			return -EINVAL;
+>> +	}
+>> @@ -27,9 +27,11 @@ enum perf_event_x86_regs {
+>>  	PERF_REG_X86_R13,
+>>  	PERF_REG_X86_R14,
+>>  	PERF_REG_X86_R15,
+>> +	/* Shadow stack pointer (SSP) present on Clearwater Forest and newer models. */
+>> +	PERF_REG_X86_SSP,
+> The first comment makes more sense. Nobody knows of cares what a
+> clearwater forest is, but ARCH-PEBS is something you can check.
 
-Good catch!  With that...
+Sure. would modify it in next version.
 
-Reviewed-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
 
-Thank you!
+>
+> Also, this hard implies that anything exposing ARCH-PEBS exposes
+> CET-SS. Does virt complicate this?
 
-	Krzysztof
+Yes, for real HW, I think CET-SS would be always supported as long as
+arch-PEBS is supported, but it's not true for virt. So suppose we need to
+check CET-SS is supported before reading it.
+
+
+>
 
