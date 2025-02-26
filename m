@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-532774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFF9A4520E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:17:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24948A45219
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8CC1726AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDD4189C318
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2096B154BF0;
-	Wed, 26 Feb 2025 01:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBA714EC73;
+	Wed, 26 Feb 2025 01:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p11TR35k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JF8J6OZH"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7994A21;
-	Wed, 26 Feb 2025 01:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379A1151991
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740532624; cv=none; b=CrSSbynekKO+kCbnscPNCJUX9smmRwCVqLiloXqxUdpDC9RfzWSqUGYhQ32NlwzUVG0sgknH4+7UmzCPO92K750IJSjz/VIACEKcr+SQEPMAwn7e4KW5bcz4bvEEN7jQS8FUkdFzsXn6S1gCxiVf7MPbaK5a2E1NAwHIW0NOjUk=
+	t=1740532862; cv=none; b=XWnREOr/JGh20AWl0OfRXKC73hJt+O0QfET1bVXjizUygaetIGInVG+kAP/nInYdmLkMVwCDsbsH/egPtzLmOgEmkSEyRzyGgNr0ItyZzRXOaLLHKQiwqW9K4i1PbpMOXxF+KxQT+MU2buFrxPx5IKUjqBLeNWvH2Qgvzto5vhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740532624; c=relaxed/simple;
-	bh=/7QHcznAJAo2yO+ZPSdY6irpP6OfrWikh/lcuG95OFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEAeeImfOdX9r+gyoF1gFMpmbHR49vDkCxcoYfHODHPVMWJzLHmpENmz8WUDpgJxovyiiQZfmXfIvoi6chgXJt8ZAfkBoyJO4ydyCGBklGUAx7nkztb5W8P3m4a8VuubU2q76S9hxCPW5jiSeZdQhRpBHrolxsg1ZsgJYPDR+0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p11TR35k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B45C4CEDD;
-	Wed, 26 Feb 2025 01:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740532624;
-	bh=/7QHcznAJAo2yO+ZPSdY6irpP6OfrWikh/lcuG95OFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p11TR35kWUbmfwGxMqGmTqthyQsbWbW+CFGBtI5o/Ob8QMYY1UnP4MtYbTKTKEsgH
-	 FDFsOntZsdBX+turZ9wTl0d7BkacQd12/dVNgMLSEEN3gR7PnN708BO79xgfKX7xcF
-	 NaDUpeRCaupQBQ5LxeXT8g733HGkQLnoeWp/vVaI8Op1fNZp3N7licTuG71KCl+UHG
-	 GYJrZHgyb1ZLvbHXTe2fqHiZBXVKL+hLpdg6EibLqVp8VJuQP/+x1BE4jNP97570D4
-	 KSCdGtnoxJZM89fuGrkrgS8Dl3yEE7vr6/zkF7fFe0qnwwkTW4qkWX5hEU7BhnBWf0
-	 VaX+E7EGN3F1g==
-Date: Wed, 26 Feb 2025 02:16:58 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z75riltJo0WvOsS5@cassiopeiae>
-References: <Z7xg8uArPlr2gQBU@pollux>
- <Z7xh5bEyh_MII4WV@pollux>
- <20250224184502.GA1599486@joelnvbox>
- <Z70EcwNIX0KtWy36@cassiopeiae>
- <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
- <Z73rP4secPlUMIoS@cassiopeiae>
- <20250225210228.GA1801922@joelnvbox>
- <20250225225756.GA4959@nvidia.com>
- <Z75WKSRlUVEqpysJ@cassiopeiae>
- <20250226004916.GB4959@nvidia.com>
+	s=arc-20240116; t=1740532862; c=relaxed/simple;
+	bh=ej9DtK6/GIC7P6gUFFvgcMeLI/e2OMKxKBwv3JUqlfA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=b/KG+I4B3aUksQbOiy5DXr7L0zIH2Dlo6p9kNt3HrInOhDeBSRIhTy8jGxYXAv/I1aSMO/JJei6MVGxGHZG4bv9KpJjk07fVWIbVmw6ewWnu2N8qMpO7nHHEU5xhNWyln2WJfThgTovnTiGNMhG+tKV4JHHDjchnI9rPlYRiSRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JF8J6OZH; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so13507251a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:21:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740532860; x=1741137660; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2evnJTAT7xA7jPdud/d0boBZNUrVlDGplkZhVlal7I=;
+        b=JF8J6OZHs3i/gprr3UH6HFCXbV2H8SxYVBS1/TrmeLbPBZBVoKZhQHe1tOrziB2AC0
+         a4fm7XlKk/bKfIJjGlZ/tv/2AHSAl5Zs9DRgcHtbih6aRM7ME0MwbMSNNAE3fbl7EGSY
+         lO21Qt6+3XHZKtc4lae6iy/C3VSKza8D156/ePu4kpwEXdNT3pqepIcQEJS5la8wposL
+         xzGyXDSAQ117ZPS6ROVcp/glKCS/0zGMALiS7K3+hI0pLNPsOKA8U1Iq5cEvZutOkSbb
+         /sl/F8eV1dIP9fDl6VDMqkQD8W8sDVrKc+mM1m7Lwv0OZl5cUKld0My8gXb9MMZxVDFj
+         ACqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740532860; x=1741137660;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2evnJTAT7xA7jPdud/d0boBZNUrVlDGplkZhVlal7I=;
+        b=oxhn1RWXyIlAa1an/yrqKXmvWhmy57u80zn/gQNm1/J0EgPnKRoJOaNRLBNrNe1x0W
+         sCq0g4Y+Mq6oLByAN394paK/Jc5cOAhdUiBE5/eTqwvbf1dT97zU8gVKT3TelVXAtFmp
+         WNIYhOLpMb2qKv+Gu5m0YEQdKgCGZ8nDnZH3hAOjM5eIET1wA2QdNGmxvRfEYt9LPG3n
+         +IGlohYLmRNq2y/m97ocOLPcFTQsQMw2R6he28oqqYO2z2jyfbj9sbN0Xnq+9AW1YxR5
+         IE1YQC03lIoG24s7NZIjXTNnp1LdJpa3SHIsB5Exty443G1nxySHKephPL4vTasdd/e0
+         zCxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4deCM+jPSt8lyJ9AmuEbcq/Wu+qZ6IgJ14LFACUIp7FrVyMfa1evyv6KA86ZLGnwrReTXqT6Hdrtr13M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ8QjVIb0voUabLkMUxbmfdjxrIEsgKWE+vBqLUIBitDj2Uz4V
+	nhX+8JuC8qUpbbCBqu3x71VDeRIosyK88s2A6xE2v7YJHa4TblwZ1oNkfWKKkbVaSmqHd6PchnB
+	fRg==
+X-Google-Smtp-Source: AGHT+IHg18aY5r8Tckm8ifppI9xalzebABi31M7tGArAxnDvvCsGP5kXSFQLYelbvQ5IR8I5g7C00iuW5NM=
+X-Received: from pjbsw12.prod.google.com ([2002:a17:90b:2c8c:b0:2fa:284f:adae])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:f944:b0:2ee:f440:53ed
+ with SMTP id 98e67ed59e1d1-2fe68d058e5mr7870141a91.31.1740532860549; Tue, 25
+ Feb 2025 17:21:00 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:20:59 -0800
+In-Reply-To: <20250128015345.7929-4-szy0127@sjtu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226004916.GB4959@nvidia.com>
+Mime-Version: 1.0
+References: <20250128015345.7929-1-szy0127@sjtu.edu.cn> <20250128015345.7929-4-szy0127@sjtu.edu.cn>
+Message-ID: <Z75se_OZQvaeQE-4@google.com>
+Subject: Re: [PATCH v7 3/3] KVM: SVM: Flush cache only on CPUs running SEV guest
+From: Sean Christopherson <seanjc@google.com>
+To: Zheyun Shen <szy0127@sjtu.edu.cn>
+Cc: thomas.lendacky@amd.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	kevinloughlin@google.com, mingo@redhat.com, bp@alien8.de, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Feb 25, 2025 at 08:49:16PM -0400, Jason Gunthorpe wrote:
-> I'm pointing out the fundamental different in approachs. The typical
-> widely used pattern results in __device_release_driver() completing
-> with no concurrent driver code running.
-
-Typically yes, but there are exceptions, such as DRM.
-
+On Tue, Jan 28, 2025, Zheyun Shen wrote:
+> On AMD CPUs without ensuring cache consistency, each memory page
+> reclamation in an SEV guest triggers a call to wbinvd_on_all_cpus(),
+> thereby affecting the performance of other programs on the host.
 > 
-> DRM achieves this, in part, by using drm_dev_unplug().
-
-No, DRM can have concurrent driver code running, which is why drm_dev_enter()
-returns whether the device is unplugged already, such that subsequent
-operations, (e.g. I/O) can be omitted.
-
+> Typically, an AMD server may have 128 cores or more, while the SEV guest
+> might only utilize 8 of these cores. Meanwhile, host can use qemu-affinity
+> to bind these 8 vCPUs to specific physical CPUs.
 > 
-> The Rust approach ends up with __device_release_driver() completing
-> and leaving driver code still running in other threads.
+> Therefore, keeping a record of the physical core numbers each time a vCPU
+> runs can help avoid flushing the cache for all CPUs every time.
+> 
+> Signed-off-by: Zheyun Shen <szy0127@sjtu.edu.cn>
+> ---
+>  arch/x86/kvm/svm/sev.c | 30 +++++++++++++++++++++++++++---
+>  arch/x86/kvm/svm/svm.c |  2 ++
+>  arch/x86/kvm/svm/svm.h |  5 ++++-
+>  3 files changed, 33 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 1ce67de9d..4b80ecbe7 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -252,6 +252,27 @@ static void sev_asid_free(struct kvm_sev_info *sev)
+>  	sev->misc_cg = NULL;
+>  }
+>  
+> +void sev_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
-No, this has nothing to do with Rust device / driver or I/O abstractions.
+And now I'm very confused.
 
-It entirely depends on the driver you implement. If you register a DRM device,
-then yes, there may be concurrent driver code running after
-__device_release_driver() completes. But this is specific to the DRM
-implementation, *not* to Rust.
+v1 and v2 marked the CPU dirty in pre_sev_run(), which AFAICT is exactly when a
+CPU should be recorded as having dirtied memory.  v3 fixed a bug with using
+get_cpu(), but otherwise was unchanged.  Tom even gave a Tested-by for v3.
 
-Again, the reason a pci::Bar needs to be revocable in Rust is that we can't have
-the driver potentially keep the pci::Bar alive (or even access it) after the
-device is unbound.
+Then v4 comes along, and without explanation, moved the code to vcpu_load().
 
-A driver can also be unbound without the module being removed, and if the driver
-would be able to keep the pci::Bar alive, it would mean that the resource region
-is not freed and the MMIO mapping is not unmapped, because the resource region
-and the MMIO mapping is bound to the lifetime of the pci::Bar object. This would
-not be acceptable for a Rust driver.
+  Changed the time of recording the CPUs from pre_sev_run() to vcpu_load().
 
-That this also comes in handy for subsystems like DRM, where we could have
-attempts to access to the pci::Bar object after the device is unbound by design,
-can be seen as a nice side effect.
+Why?  If there's a good reason, then that absolutely, positively belongs in the
+changelog and in the code as a comment.  If there's no good reason, then...
+
+Unless I hear otherwise, my plan is to move this back to pre_sev_run().
+
+> +{
+> +	/*
+> +	 * To optimize cache flushes when memory is reclaimed from an SEV VM,
+> +	 * track physical CPUs that enter the guest for SEV VMs and thus can
+> +	 * have encrypted, dirty data in the cache, and flush caches only for
+> +	 * CPUs that have entered the guest.
+> +	 */
+> +	cpumask_set_cpu(cpu, to_kvm_sev_info(vcpu->kvm)->wbinvd_dirty_mask);
+> +}
+> +
+> +static void sev_do_wbinvd(struct kvm *kvm)
+> +{
+> +	/*
+> +	 * TODO: Clear CPUs from the bitmap prior to flushing.  Doing so
+> +	 * requires serializing multiple calls and having CPUs mark themselves
+> +	 * "dirty" if they are currently running a vCPU for the VM.
+> +	 */
+
+A comment is definitely warranted, but I don't think we should mark it TODO.  I'm
+not convinced the benefits justify the complexity, and I don't want someone trying
+to "fix" the code because it has a TODO.
+
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 43fa6a16e..82ec80cf4 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -112,6 +112,8 @@ struct kvm_sev_info {
+>  	void *guest_req_buf;    /* Bounce buffer for SNP Guest Request input */
+>  	void *guest_resp_buf;   /* Bounce buffer for SNP Guest Request output */
+>  	struct mutex guest_req_mutex; /* Must acquire before using bounce buffers */
+> +	/* CPUs invoked VMRUN call wbinvd after guest memory is reclaimed */
+> +	struct cpumask *wbinvd_dirty_mask;
+
+This needs to be cpumask_var_t, as the cpumask APIs expect the mask to be
+statically allocated when CONFIG_CPUMASK_OFFSTACK=n.  E.g. this will hit a NULL
+pointer deref.
+
+  static __always_inline bool zalloc_cpumask_var(cpumask_var_t *mask, gfp_t flags)
+  {
+	cpumask_clear(*mask);
+	return true;
+  }
+
+The wbinvd_dirty_mask name also turns out to be less than good.  In part because
+of the looming WBNOINVD change, but also because it kinda sorta collides with
+wbinvd_dirty_mask in kvm_vcpu_arch, which gets really confusing when trying to
+read the code.
+
+I don't have any great ideas, the best I came up with was have_run_cpus.
 
