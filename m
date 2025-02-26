@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-533264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A19AA4579D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3D8A45790
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:03:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBB4189C1C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63F5188D1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF4127FE7F;
-	Wed, 26 Feb 2025 07:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079BE22422E;
+	Wed, 26 Feb 2025 07:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWhxYNLD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="O/tkTSbO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qpxup3rq"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF052459EF;
-	Wed, 26 Feb 2025 07:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996A1E1DFB;
+	Wed, 26 Feb 2025 07:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556579; cv=none; b=iXVMH/WnrGk8gEYsRWMe/ONSn2ciJDUUGi4iVGxvrpjcCM5mrqqgd9i0GOL+ySmjD23cuGGfBEHwOAxTCZMUyBmIITMKLXnFu2J8vjtbvxLb1AZmAlje+ctNCiZnABhct+unxRLX5utE4rl8hwgHa5vUTMwwFXmTU1yZJ5X7JV8=
+	t=1740556539; cv=none; b=WGXLGqezjupnk9Ag5+ORVl2fsh7PDqmG8Miq7SuQhDJZxcY74+v4NXLQdr8VHfGQN5PFjyoQmzwjxBjIWQayPAlSbafj5VadAZgUR8Ex6eKGPzGr+8n0vUeddCil4dewRSJK820qDR1bFlanjWsS2MbeOssyL9wRbZQXr0Q+XrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556579; c=relaxed/simple;
-	bh=A9nOsgkrZlws3OAWkcO3SWqIV3wGnsh6MM4uV48Pvvg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TrZRoXv+bUy7px1cBI2d+PmdWrVGnEME/VJV8PmKQazDGxb/NJTVhBQ2ANta8l1Me30rHwvJ4rk3RD8hE2uw76EZAsJXcrNzekxxuZJI5y4pmCdoARgoXVerR+nAHVsO4p5pWgED8+za7IHgTm7P4+MzqIkd6F3TIXpUJyXz1xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWhxYNLD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWmPR021388;
-	Wed, 26 Feb 2025 07:55:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pncPTbc8c8CbMoKCx+IOc9kCeL9cQVJpuyVgp5vSbTE=; b=FWhxYNLD2THapjRL
-	l/fMi+DCxWiP9nnob2jgcb+d2XPqfxajVS7CP8HKHE4dXFN3fek/U9bniTwC+KPI
-	T5Nt0dw8rMrWSSEl8Z+/KrplDBm8g9CeEX6j+tCMW/TzpAG3lQ/ppiT/rNSj0s/3
-	DHIdEfX0HnWnTyDMe5uDNvuLXIf9CmJCnhUjUdF28w+a0M/UbYWA4lbHWeiCThNK
-	RX6KEzw/Ig2vRPy7NVH/p6+yyC3kGtPtrlTRRxLjeky7+ABz+uPrgMyQdZQR3gFY
-	j2rOdRJFB6Ap/wEESkBZgo9dDDYPWcUClyH0CG6KWut2gOFeu+h/91u15XPxNi9T
-	Ikbbqw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prkh5ja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 07:55:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q7tvO4021295
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 07:55:57 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 25 Feb 2025 23:55:48 -0800
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
-        <biju.das.jz@bp.renesas.com>, <ebiggers@google.com>,
-        <ross.burton@arm.com>, <elinor.montmasson@savoirfairelinux.com>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH v11 6/6] arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
-Date: Wed, 26 Feb 2025 13:24:49 +0530
-Message-ID: <20250226075449.136544-7-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250226075449.136544-1-quic_mmanikan@quicinc.com>
-References: <20250226075449.136544-1-quic_mmanikan@quicinc.com>
+	s=arc-20240116; t=1740556539; c=relaxed/simple;
+	bh=m+xrRvgwuYLrN4JztV5V76ixaE7nsY1/hfFoToWmS1w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Nmuv9ViKr1Gto1lKZHGtbYTWA1cHxndFZ7pvrcMIF94mQDlzkUNe6uuiMqc2kLh7vuRc30xzwj8h6svwd8rVmxYFVsy2DKDvimV3VTx9VQtQISVL1vYVhtbM07R3ZTWihA5yhX1H1M6ChFLvnf2KJGWf6VF5No9safrJvLLk6vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=O/tkTSbO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qpxup3rq; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CF6542540195;
+	Wed, 26 Feb 2025 02:55:35 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 02:55:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740556535;
+	 x=1740642935; bh=0lfVMDjZo5CB8ddhotjizAXW5wzmIW+8vVGHFlSkNxI=; b=
+	O/tkTSbOvJV94Iaf6WoPjb4B9fGynObugRnGl0gk773eFW7URrcxdHxm9btKC7nu
+	XKHsEXsSqu6oxzkrOyYBG4ZidF/hxSoMi5v2AwYQSEPvXTkI2XtCXj7W6+WiUHxN
+	q6lalbT2k5r0tZRiZ1q5Cd6UM6lLLVBSMo+O0uK9Ohvb6NXc7FaE6QY6G/TAhqR4
+	1ON31VDxMsDwzfbDyvhc473GfigyWaIK3XkwZAAagUHSGQ1gXxyugbWvdRXMcvEO
+	BNldS+9H1PPEJsLhybgJZ/AZJ1lEWv6BBGrm9OouWIn0gMAdueVq73RfeJgzVC7f
+	dxYREDp/4nAWdIVvi8kK3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740556535; x=
+	1740642935; bh=0lfVMDjZo5CB8ddhotjizAXW5wzmIW+8vVGHFlSkNxI=; b=Q
+	pxup3rqqWswG31LJz6phFx5YfQya2XhCculULTr3Vw1mJZI/IgaHzEv4WS1N23m4
+	R1W4YGYkg8qIzhdAKkrZxCpLMd16gxh41DeTknNK9d6Oft6v5zbDjHe+n/JBPoX5
+	QffjUSDZoUE0dNe5uJ64cLaUR4jlCoftwjseYd+FOMjbLerLrjvE+Vtx//PS/ReH
+	zuZcqY8aN5K8tTnBRa5kVBiTecUbFpUwRD+649xFe0FAFXiAtDFJXbFbzT6QbbnO
+	yqpOFa7LwBIDhv87QzlmcAMPfRmfNdWUMPQbY4UmiEPtE33edAvHoqa/OWjVwJ+6
+	L5gQxNGCramAsOLNdDWSA==
+X-ME-Sender: <xms:98i-Z5gp7UUrLdqU8dwrQX3Z2o3uGAYSYhruiGvNtgpc1OW39ryehA>
+    <xme:98i-Z-Bhb0nCCncAtPOwR-R9aQMMVOWE-wGzSs99gGHE1esXrBHlwlpmLcj2sfV_g
+    wP9VDlTOxnPog1PlPk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgedtfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
+    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
+    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
+    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthii
+    ihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvg
+    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:98i-Z5FEPMgvJmA8Kh9Pc9mZjD2JMgOwNwChq2VaHhUZ_AlqT14Ttg>
+    <xmx:98i-Z-Tj0p_rWAd9G8OsoBIii3ZmSFGy6xgLUI_5X7J7G9byZ7lU_A>
+    <xmx:98i-Z2yk_Y9gdeJmWud_qNcV0K64B40UJ_6MhYVZWpbrDVoliIXmwA>
+    <xmx:98i-Z06mLu0UM5St6S9XU5ZWOLF7fv7JjZY5ncoZ9EYcZagm2HIo3w>
+    <xmx:98i-Z9kk2B_X7E519FNYh5mtDir_cDTr5xUw_srlvnh1X03_63eW3xVy>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 409FB2220072; Wed, 26 Feb 2025 02:55:35 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 26 Feb 2025 08:55:14 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Arnd Bergmann" <arnd@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Helge Deller" <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
+In-Reply-To: <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bwohZy3bag4A93LdzYY4Eq45ATcVhUD9
-X-Proofpoint-ORIG-GUID: bwohZy3bag4A93LdzYY4Eq45ATcVhUD9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_01,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 phishscore=0 mlxlogscore=858 mlxscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260062
+Content-Transfer-Encoding: 7bit
 
-From: Devi Priya <quic_devipriy@quicinc.com>
+On Wed, Feb 26, 2025, at 08:48, Thomas Zimmermann wrote:
+> Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Dummycon is used as a fallback conswitchp for vgacon and fbcon
+>> in the VT code, and there are no references to it if all three
+>> are disabled, so just leave it out of the kernel image for
+>> configurations without those.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/video/console/Kconfig | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+>> index bc31db6ef7d2..1c4263c164ce 100644
+>> --- a/drivers/video/console/Kconfig
+>> +++ b/drivers/video/console/Kconfig
+>> @@ -47,8 +47,7 @@ config SGI_NEWPORT_CONSOLE
+>>   	  card of your Indy.  Most people say Y here.
+>>   
+>>   config DUMMY_CONSOLE
+>> -	bool
+>> -	default y
+>> +	def_bool VT || VGA_CONSOLE || FRAMEBUFFER_CONSOLE
+>
+> What about MDA_CONSOLE and STI_CONSOLE. Don't they require this as fallback?
+>
 
-NSSCC driver is needed to enable the ethernet interfaces present
-in RDP433 based on IPQ9574. Since this is not necessary for bootup
-enabling it as a module.
+MDA_CONSOLE clearly does not, because that is only the second
+console when VGA_CONSOLE is the main one.
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
-Changes in V11:
-	- No change.
+For sti_console, I don't see how it would do use it: when CONFIG_VT
+is enabled, the line above turns on DUMMY_CONSOLE, but without
+CONFIG_VT there seems to be no reference to it after
+58a5c67aadde ("parisc/sticon: Always register sticon console
+driver"). I also see that CONFIG_STI_CONSOLE is a 'bool' symbol,
+so there is no dynamic loading/unloading of the driver.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a1cc3814b09b..56a1fd81ab6c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1334,6 +1334,7 @@ CONFIG_IPQ_GCC_5332=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
- CONFIG_MSM_GCC_8994=y
--- 
-2.34.1
-
+    Arnd
 
