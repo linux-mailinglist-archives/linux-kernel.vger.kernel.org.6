@@ -1,98 +1,177 @@
-Return-Path: <linux-kernel+bounces-534381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6380A465FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:05:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC9FA46681
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEB07A1288
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B84F19C0D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AC021D5AE;
-	Wed, 26 Feb 2025 16:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2qJdy7O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DFE2222A9;
+	Wed, 26 Feb 2025 16:01:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636C521D59E;
-	Wed, 26 Feb 2025 16:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCE321D5BE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585672; cv=none; b=GSURSeTuNRgWSk9dx3j59WFpfwXxJLDVp2m8yvo/cMkOKPMmtYbpq9Khn36By8Orz4j5f/lsTxusXToBPI/9BdOUMKRVQZj+RphGFVbTJSXCnwbDsIRWuOFPMcWKJOXXE46GSyIAcGztZmTQRLneENvy351Vmp/RutfFP4gDGe8=
+	t=1740585683; cv=none; b=VAj9sxemG5H1tGnhhGucEKDLz6pkFXihO5eLEEK9bu0QRBYs6YYYIbsCr/gEnHQOO8a24Iv57vKWviiFHlDYrpvLhTtj2ewl7m24rKngYEJw4s+baN3L5JYdvqt8E1vmGLQemBtT7PeTKD4wUZ/XBQ0lhmR+BspMbBY/1fmexDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585672; c=relaxed/simple;
-	bh=CLpCeg61zbVIJylPqCIGZj0xsBtsuyYIWSkaXCsyGLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HdK5mRV9pBx4OqLxW4Mu6rM18YRftSL6i0RX+Wb36MZ8YOWYLr4SJtp7BVxtZhKd6TkASK3pCSKQedTZxl2IMs1zivmR5gELgYj7tisjw0KFboO7QgD83DnLePqvLQWHLSdKIBbesSMzSJ13+bccBcmu/Sg4XID5E2xchHfLIRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2qJdy7O; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740585667; x=1772121667;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CLpCeg61zbVIJylPqCIGZj0xsBtsuyYIWSkaXCsyGLM=;
-  b=G2qJdy7O/wQwqvPQ1WfagX2QOq5Eptp/C8LV9E7iOzRwEU+2KLrc4dKY
-   dE90D6vq7RXyTmUrebiqO2SCFMNYcunpmfRlGlD67Zj4QbBAlpLezG6MT
-   RBpP3KlZG4t0nIbdQaNCrCqG66CBKI1MHtUQ/Tq6aMJZSa0MUR2LlzTEo
-   ZgNZV11hj+CjzKzAtOeY5GJpRLJMzVr9D6edfJox9KEuo6/1wU6WUw719
-   DevcBmPZHciOiVkOrSdYJoT8bLtuyr9FIpdMzYBsvFMJf2uGNYGuCWt0m
-   89aCVlEaZdoJUqGy5iUyppsNgwinpoQrO8+6ArWa0K0JSEBXAjpMUFc7v
-   Q==;
-X-CSE-ConnectionGUID: rvxXFLUsTCi0Jdkv4WD5rQ==
-X-CSE-MsgGUID: uoarDMeAS/iEEuXrTZDEUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="63906686"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="63906686"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:01:06 -0800
-X-CSE-ConnectionGUID: i/5wr+VVRvKp1lTMafclqw==
-X-CSE-MsgGUID: HKW3kMehT76b62dS3QXOgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="116750742"
-Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.108.7]) ([10.125.108.7])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:01:05 -0800
-Message-ID: <2405a58e-77a0-49a3-a2d9-1f0d12685428@intel.com>
-Date: Wed, 26 Feb 2025 09:01:04 -0700
+	s=arc-20240116; t=1740585683; c=relaxed/simple;
+	bh=qfZYouDxsh/WAtD6+LlCLtcolQODxFnmFR0MCfqqnPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hfa8lk64ZffPICWAi95YCsi0kJ+8r2tp71XoFQnzoCy/6g99SPCHURuIZinZr5KHfGA/VyXLnPoYWn9WvdgQ+d0cwBTP0k8duzBh1ZAL0Qm9Ghs98APMWUmkU7In4gZG9jtdFFlFpzKk+Z8lKXVn/ArQEYFA+GG4u0LTfS1Iafw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnJqO-00084B-Av; Wed, 26 Feb 2025 17:01:08 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnJqN-002yPM-2Y;
+	Wed, 26 Feb 2025 17:01:07 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6C4183CC749;
+	Wed, 26 Feb 2025 16:01:07 +0000 (UTC)
+Date: Wed, 26 Feb 2025 17:01:05 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Chris Ward <tjcw01@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	linux-kernel@vger.kernel.org, Chris Ward <tjcw@uk.ibm.com>, bpf@vger.kernel.org
+Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
+Message-ID: <20250226-rigorous-idealistic-lemming-2fe868-mkl@pengutronix.de>
+References: <CAC=wTOhhyaoyCcAbX1xuBf5v-D=oPjjo1RLUmit=Uj9y0-3jrw@mail.gmail.com>
+ <CAC=wTOgrEP3g3sKxBfGXqTEyMR2-D74sK2gsCmPS2+H-wBH6QA@mail.gmail.com>
+ <20250225-gay-awesome-copperhead-502cd2-mkl@pengutronix.de>
+ <397970e484d2d0c1e0649d78cc723fbe3ad2ad5f.camel@gmail.com>
+ <20250225-radical-piquant-tench-4d2588-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the cxl tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250226154924.6446eec8@canb.auug.org.au>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250226154924.6446eec8@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ztrwt5mp4x6lpdhg"
+Content-Disposition: inline
+In-Reply-To: <20250225-radical-piquant-tench-4d2588-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--ztrwt5mp4x6lpdhg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
+MIME-Version: 1.0
 
-On 2/25/25 9:49 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the cxl tree, today's linux-next build (htmldocs) produced
-> this warning:
-> 
-> drivers/cxl/cxlmem.h:439: warning: Function parameter or struct member 'cxlfs' not described in 'cxl_dev_state'
-> drivers/cxl/cxlmem.h:439: warning: Excess struct member 'cxl_features' description in 'cxl_dev_state'
-> 
-> Introduced by commit
-> 
->   7d2bffbd7fb6 ("cxl: Add Get Supported Features command for kernel usage")
-> 
+On 25.02.2025 23:57:47, Marc Kleine-Budde wrote:
 
-Thanks Stephen. Should be fixed now. 
+[...]
+
+> With the CONFIG_DEBUG_INFO_BTF=3Dy kernel the verifier seems to be more
+> happy. Now it fails with "-22":
+>=20
+> | sudo ./xdp_pass_user -d lan0
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: prog 'xdp_pass': BPF program load failed: Invalid argument
+> | libbpf: prog 'xdp_pass': -- BEGIN PROG LOAD LOG --
+> | Extension programs should be JITed
+> | processed 0 insns (limit 1000000) max_states_per_insn 0 total_states 0 =
+peak_states 0 mark_read 0
+> | -- END PROG LOAD LOG --
+> | libbpf: prog 'xdp_pass': failed to load: -22
+> | libbpf: failed to load object 'xdp-dispatcher.o'
+> | libxdp: Compatibility check for dispatcher program failed: Invalid argu=
+ment
+> | libxdp: Falling back to loading single prog without dispatcher
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | Success: Loading XDP prog name:xdp_prog_simple(id:20) on device:lan0(if=
+index:4)
+>=20
+>=20
+> After unloading and enabling the JIT...
+>=20
+> | =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=
+=9C=97) echo 1 |sudo tee /proc/sys/net/core/bpf_jit_enable                 =
+                 =20
+>=20
+> ... the dispatcher fails to load with "524". Yes, the number is
+> positive.
+>=20
+> | =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=
+=9C=97) sudo ./xdp_pass_user -d lan0 --unload-all
+> | Success: Unloading XDP prog name: xdp_prog_simple
+> | =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=
+=9C=97) sudo ./xdp_pass_user -d lan0            =20
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | libxdp: Compatibility check for dispatcher program failed: Unknown erro=
+r 524
+> | libxdp: Falling back to loading single prog without dispatcher
+> | libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+> | Success: Loading XDP prog name:xdp_prog_simple(id:48) on device:lan0(if=
+index:4)
+>=20
+> strace indicates this syscalls fails:
+>=20
+> | bpf(BPF_RAW_TRACEPOINT_OPEN, {raw_tracepoint=3D{name=3DNULL, prog_fd=3D=
+17}}, 16) =3D -1 ENOTSUPP (Unknown error 524)
+>=20
+> I'm on a armv7l, i.e. a 32 bit ARM system. Maybe I'm missing some kernel
+> option or BPF_RAW_TRACEPOINT_OPEN is not supported on armv7l. Will look
+> deeper into the kernel config options tomorrow.
+
+FTR: I figured out that the dispatcher needs eBPF trampoline support,
+which doesn't exist on ARM.
+
+| https://docs.ebpf.io/linux/concepts/trampolines/
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ztrwt5mp4x6lpdhg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme/Or4ACgkQDHRl3/mQ
+kZz6nwgAhK3xtcL0y/nJMeIVoEr+IC8B0uXcCNwKvmEV3p3XGsDSxHe0gStqczK7
+QZ7urM55HcLG5/Ec3S/Ew8/LljZxH3LWAmEfqgnDLserCYp6aM20zt8gSrGzUd3g
+qhFjRpgRqKFyeqfMVRO2MtTPmzelX2EllHWxfv1d/xgSm9kJK4/kY8bcdhhHwH45
++jo6kYnaSK2BVcJg1GTdvZJhLTRb7CyQ4tABmKMHHC+vL+GhulboB0FF/xuaJ95I
+wKFSz+mtXdbu42Ae7MXbo/KbS3yI8egdBpka4NsU0n3Y31k7cxO0SyWZwfE+kAon
+AuMleAaLxAQwyK3IT5w+8UGQu6D/Aw==
+=k5RJ
+-----END PGP SIGNATURE-----
+
+--ztrwt5mp4x6lpdhg--
 
