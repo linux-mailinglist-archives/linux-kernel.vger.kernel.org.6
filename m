@@ -1,131 +1,124 @@
-Return-Path: <linux-kernel+bounces-533475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B4AA45AFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:59:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE995A45B07
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A621897BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816F01886708
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C091524DFEF;
-	Wed, 26 Feb 2025 09:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84F720F076;
+	Wed, 26 Feb 2025 10:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Avlx0PYe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FdiTqZPC"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24404238165;
-	Wed, 26 Feb 2025 09:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82939258CE0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563915; cv=none; b=ngaqFQ47sIwY4liZHZvXxGeLW1hoZJ/1Uf0HGLgxXDsF8ewKXV06l2SGaHv+w2pS/pwlB4pOWczPl7Kp6t1vf+cuW/RielnWVHPHEMUKDMG/2pFelMXJah4DjEaKhXvchqu8n4mt79plYJwaT01h41r92nzSjXJlklNuxbGyLU0=
+	t=1740564025; cv=none; b=Wj/PPcdoJDe61pktpLDHmPPCaWJHHDT4+vqKGbced+5tCD/t9lLYVQmAj2FydQ0WZ8HD/HXcrlTJWH9yZbCkwVZpmakK7cEKrkjhKJnHNfSfiTLm/MRGeCgSu7DSHtcOtZWsp5qdAOctQYB4OS9OXjx9jHM74qZSb4SN1aIKbxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563915; c=relaxed/simple;
-	bh=EvazlJDvIpSU8xWaHY1rfrsB8hsCd5XKw0hdPe8UWiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=am8K5zD5J/5KPBXk/dG7YzBZvRmoOGyVkJz6g1fPrXmcwkVxgwq/lPkbjATBgzlgI+kx0MCEsR1Sss+Y4FoxDjkznVUnGr9AZRwF0AfHz5YG7QLnON52IjX+kbvA+sfhS8pwfc9Oy2bIFv4yQg2yca5KZhXyF8uNLR15jIXGomo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Avlx0PYe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9321DC4CEE9;
-	Wed, 26 Feb 2025 09:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740563914;
-	bh=EvazlJDvIpSU8xWaHY1rfrsB8hsCd5XKw0hdPe8UWiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Avlx0PYeAPsIbsX7doARLDiRl4MUL0bVhphVW7ezkhMZnD1TLd2dYM61UpYblKun/
-	 uinfftczSMAtwDsD9MDph6dKFfELQjF9NfBjEu6TqTENnjYTW8ceYq/kPLGe9XZJ50
-	 n5AVTYKQVwn9CdiCs8MbsvEr8/VbOsxdr9pgI39RMn4O6yebHjnq6OZQXP9EJnHjRG
-	 rHBqc+DbFfyeYhzF0nm353hO9GOrPDTPuAvW7/xvY/7o9z/TzB4tZfNsqgPmYntVda
-	 S7dYN3J9T/gDblDWf+RyX0r+ONVtOjJJlO7b4FZsHG30ES8SZrzb6KQ8sW2QpDuoaR
-	 6UvlYd9EVgpFA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tnEBg-000000000Qe-2U3f;
-	Wed, 26 Feb 2025 10:58:45 +0100
-Date: Wed, 26 Feb 2025 10:58:44 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
-	cristian.marussi@arm.com, dmitry.baryshkov@linaro.org,
-	maz@kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org
-Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
-Message-ID: <Z77l1NflYXTnRyg0@hovoldconsulting.com>
-References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
- <20250226024338.3994701-3-quic_sibis@quicinc.com>
- <Z77M5iXHQsdMptWm@hovoldconsulting.com>
- <Z77W-fKBUqAALZKJ@hovoldconsulting.com>
- <759226e1-05aa-4ca2-b2f5-7f1a84dc427f@stanley.mountain>
+	s=arc-20240116; t=1740564025; c=relaxed/simple;
+	bh=kqmShXt5ryFIF4hMkWk32/80MUCwQhCRWauv2dnNPBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxtm5Nawdsn76gQvaRSKQ2Hi00POSLmjLLvYSE1UdHju4tFm4CmrqdkOUBWYDPhxFTspxEYJlFSOtp4sZka0Gf6oH501QWLlgq9VmnSRB7s/1UZ9WYUe6VY8nDiz5Oz/VhoMCIsl6L9ESuNz+k2Q0DFTsfRhhH5DgKDthVwR9hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FdiTqZPC; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-546210287c1so6658363e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:00:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740564021; x=1741168821; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqmShXt5ryFIF4hMkWk32/80MUCwQhCRWauv2dnNPBs=;
+        b=FdiTqZPCNjbkFI4F1MR79dDhDR7E5sdaCiyxmKtOgZPshp1NJ0WTyI0bhvWGwUYw6I
+         cXguj0aLsHlO1r8kJ8bYzrUCRzgiq2VAZORalcFd/Bi6cR80KUhPcB34lywiMwkcYgyj
+         TTRXN4pfYW3bswxKPxtJLWvzrwPGPEDLHub4d33UICQYi773oKninMlyvAc9uxSmDUj1
+         p/U/GtH4I8fIHKLx2Z81tL8fSmZUjzy/aRTuxhxBZk6UNp7J0tyn3BjmykcQI5g2w4bh
+         LNX6Jm3ScCgolwJbJZDZqvwT8GWba/u//vUtXtwp2wi9bIl6LvZLxi600kBaOTx7vrON
+         tCtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740564021; x=1741168821;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kqmShXt5ryFIF4hMkWk32/80MUCwQhCRWauv2dnNPBs=;
+        b=eUz+iLhSLarrqevksnrSJPEcn5IMzAK7LH5Fr6kky1tJ96DYChMiZPOGW1Uwv992OC
+         OmbXvIxrix/AZK24nbRI+dVhJVBeILNC7o5fXjgnoIgZvVZRWPEB71DK/ZfBQXrzeiO5
+         +t0cO3T2ObWw1NqUQvUBz03rAkwrCLxD8a++dPSgKbHwIsFYKwUMouly9H4GgbsPXX7g
+         by6+7zMPdxFBxqLcS4TSO2qfohC0lckk2T6vJ2YLoAdX/gYTFGIdoIsjU8lrxtfJpJjL
+         6SPjYzlQY2ipFJzPl11CT35T4e8/K8DycUmGDX3StXZ4Rr7dibriCOzdolTBQbPaEZs6
+         mYhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKlQ+6/G73lF3nTGosH+v+1Vw5T4lm4dRLFHHHWiByQtstlHnCnsWLWv21G8/GU7PLa0RA5gA4W8gy2UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRRbV/VM5VKpO8CNAt0ZhpluezJQG+pycaWYDKiZqHOAHkfi4c
+	JHzwrBUkU5WJNUkVKGV5naYNH7jr8PxiY/hlYNslW6TEK4PCFf8Vu2oFrjwugf1MetPfAU6+fPW
+	tEeg3Bwo3z+tM17hFnk0seu6igcH3maJ4jU+L
+X-Gm-Gg: ASbGncuTw0UhGsqn5NsQi21z+4ti0g2ZyXXFq6yuZc1i22iOmHdlRvRxHsVNruwsV0U
+	atX3rlacJK/IpMmvW+IgbdO7xyHZBLUWu9L9YiwmDrbtJooFeUZ80mN4mELxxDAmf758ZxO7Xai
+	p1JdnicpQDA4QssyxeGEWWcmdNERuctUhfLSuzQRyS
+X-Google-Smtp-Source: AGHT+IH4RRTXCYHyG8NuSUXvZw6gAqUmlh2UQb699E0ri/CYuCCym2rRgWREckEjuHRqBI/LpjvgxwkOS1OjqfaT/Ws=
+X-Received: by 2002:a05:6512:3f17:b0:545:2ddf:1189 with SMTP id
+ 2adb3069b0e04-5483912fc63mr9782576e87.6.1740564021354; Wed, 26 Feb 2025
+ 02:00:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <759226e1-05aa-4ca2-b2f5-7f1a84dc427f@stanley.mountain>
+References: <cover.1739790300.git.dvyukov@google.com> <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+ <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com> <CACT4Y+YmWrEW9m5zxKoD-Hu0TXKWPVAr0_Xe_X9WGtZWH5W1_g@mail.gmail.com>
+ <d352ab70-6c13-453b-a018-dcf19d1a9924@intel.com> <CACT4Y+Ynq=21v0gwZxQ2sQhrJHibYoP6QvcfPoGBFYNXjzodDA@mail.gmail.com>
+In-Reply-To: <CACT4Y+Ynq=21v0gwZxQ2sQhrJHibYoP6QvcfPoGBFYNXjzodDA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 26 Feb 2025 11:00:10 +0100
+X-Gm-Features: AQ5f1JqZR8q6hmhWfJ4tB-uDoTRxgHJ8hRMeL6gBhIcMT8N368t4G9CTcg2RoGc
+Message-ID: <CACT4Y+awOeS8aDkCTJbf4DQXui6pGhVadMkU6ukxnNA6ue88pA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
+	elver@google.com, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 12:31:27PM +0300, Dan Carpenter wrote:
-> On Wed, Feb 26, 2025 at 09:55:21AM +0100, Johan Hovold wrote:
-> > On Wed, Feb 26, 2025 at 09:12:23AM +0100, Johan Hovold wrote:
-> > > On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
-> > 
-> > > >  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
-> > > >  			     u8 describe_id, u32 message_id, u32 valid_size,
-> > > >  			     u32 domain, void __iomem **p_addr,
-> > > > -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
-> > > > +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
-> > > > +			     bool skip_check)
-> > > 
-> > > This does not look like it will scale.
-> > 
-> > After taking a closer look, perhaps it needs to be done along these
-> > lines.
-> > 
-> > But calling the parameter 'force' or similar as Dan suggested should
-> > make it more readable.
-> > 
-> > > >  {
-> > > >  	int ret;
-> > > >  	u32 flags;
-> > > > @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
-> > > >  
-> > > >  	/* Check if the MSG_ID supports fastchannel */
-> > > >  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
-> > > > -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
-> > > > +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
-> > > 
-> > > Why can't you just make sure that the bit is set in attributes as I
-> > > suggested? That seems like it should allow for a minimal implementation
-> > > of this.
-> > 
-> > My idea here was that you could come up with some way of abstracting
-> > this so that you did not have to update every call site. Not sure how
-> > feasible that is.
-> 
-> I'm having a hard time finding your email.
+On Tue, 25 Feb 2025 at 22:56, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >>> +#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
+> > >>> +
+> > >>> +/*
+> > >>> + * Common name for value of the register that controls access to PKEYs
+> > >>> + * (called differently on different arches: PKRU, POR, AMR).
+> > >>> + */
+> > >>> +typedef int pkey_reg_t;
+> > >> Tiny nit: Should this be an unsigned type?
+> > >>
+> > >> Nobody should be manipulating it, but I'd be surprised if any of the
+> > >> architectures have a signed type for it.
+> > > Since this is a stub type, can matching the real types do any good
+> > > besides masking programming errors?
+> > > I've changed it to char in v4 to surface more potential programming errors.
+> >
+> > I was more worried about copy-and-paste.
+> >
+> > I agree that 'char' is the most fragile, but it's going to fragile in
+> > subtle ways and I'm not sure subtly broken code (whether it's expected
+> > to be compiled in or not) is great to have in a code base.
+> >
+> > Do we have any types in sparse that would be appropriate? Could we mark
+> > the pkey_reg_t as being in a different address space when pkeys is
+> > compiled out so that sparse knows not to let it interact with other types?
+>
+> We could typedef it to some fake struct. Such a struct can't be passed
+> to any function accepting an integer type (real pkeys), and any
+> arithmetic won't work on it.
 
-	https://lore.kernel.org/lkml/Z4Dt8E7C6upVtEGV@hovoldconsulting.com/
- 
-> Why does the scmi_proto_helpers_ops struct even exist?  We could just
-> call all these functions directly.  Do we have plans to actually create
-> different implementations?
-> 
-> If we got rid of the scmi_proto_helpers_ops struct then we could just
-> rename scmi_common_fastchannel_init() to __scmi_common_fastchannel_init()
-> and create a default wrapper around it and a _forced() wrapper.
-> 
-> Some other potentially stupid ideas in the spirit of brainstorming are
-> that we could add a quirks parameter which takes a flag instead of a
-> bool.  Or we could add a quirks flag to the scmi_protocol_handle struct.
-
-Something like that, yes. :) I didn't try to implement it, but it seems
-like it should be possible implement this is a way that keeps the quirk
-handling isolated.
-
-Johan 
+Dave, how should we proceed? Do you think this is a potential misuse
+worth preventing proactively? If yes, I can send v7.
 
