@@ -1,206 +1,206 @@
-Return-Path: <linux-kernel+bounces-534114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6920DA462EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:33:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8595A462F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F21189D9D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7591686BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1699B221D8F;
-	Wed, 26 Feb 2025 14:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC37221711;
+	Wed, 26 Feb 2025 14:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="EKIewDmZ"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010031.outbound.protection.outlook.com [52.101.228.31])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NFtU+mCb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24ED192B77;
-	Wed, 26 Feb 2025 14:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580379; cv=fail; b=MZqSn7oS3pY5KbRi3dgNtEyXQLo3GqQ+NIpMpz/zuvgUrAid12gLj+OtDp/VUj/tRHNR1CslldoBqNVQuolU0NpjD4MeF+YCN8+Rgc3ARRUFKPdK3e5/tiwVL5hMzMX6numNaa2aqquCSbL1Pp4QTmwicQhD7GkxGiiLG2Xc1X4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580379; c=relaxed/simple;
-	bh=bxsxCCLK0OXxBS/JDJ+Yw9W6GBhlK9gvyABYWkzvnV4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DZalA7AUfiuCWKgWgMdNhcg/YDSUj1O5TTLm5YlHQ7Dbe2FAc8RIQbcZqtaURZGcvDRcvq8zvIgcGex0bgK8JHpYd80jumPTNx8YP/sB3GmgUku+DZ9ezDAmjkoURSGCRyW7eijbz3dJokHj9QPxepR7hVsclsDzhtCABVkPG8s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=EKIewDmZ; arc=fail smtp.client-ip=52.101.228.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N1uIhdmpz98ah/9fXefpp2v1L1Ec67zhtXTmf5thxsQvy67KhRnP649aoJGZPcuM7DVZ/o8PQw94Xv548kU7zdzDBWvY0vNFSMquwuhASykKsuaccsVXmKOGOK7fl4lJSVre2FSm2LIN0w73nzJbmz9ToXiZeH7bck96jew/l33aRc4kJxqhY9hAoTBIf5yfduTWfFJigktfOVfKK7R8HcfKfuSEf4HzpoW7NrmR8+3Vyl0L/a517N3CAMlsSGZYbJN/RL/Bq+m/6DkK7ooCXLlf/8qIMsRIFPWsZKzIdnR98gkbtz2P8zhpuFMb/tC5um9fmwX2tNP+FrfnWNqPXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bxsxCCLK0OXxBS/JDJ+Yw9W6GBhlK9gvyABYWkzvnV4=;
- b=aMaShOzGOTKlrgR8R5nStZXLa2gThRmi7OFgjCLoVV4KL1jdaf0H8EzKjl6qxn0GmVWGSEFr4BcX+f5MBmQ3EapI04IPNO0er/YPjWXLmq+8i7LIh7J4IytuJK81QUOUAF+HwabWz8Gp1HKUTOF0/ne2BemcamCPVT/8UzxYejfr30FUHTNaVU3tWgZ3hW+Yilg9cff/3cgEWYqqVBY24NnhIxoQPPyxTxwNyMN2lQOuMBJUEFQZGTBcs9nu8Sa12VIcVQcxaOo9ZNqumqcAnDrNWcw0f/bmpOhyQtsNFUbUiI9qnrzETfxLWj81td5s+I+KirQ1cBeFkVRlJMdqWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bxsxCCLK0OXxBS/JDJ+Yw9W6GBhlK9gvyABYWkzvnV4=;
- b=EKIewDmZ9y59+alx9sBN/Zd1MIOo2dJkDYEloKdRYwV0CgV/6zFSjFN7uI5trcJGRPkbrv4/C1wudUUvG3x2gC+rp1hiPi2ceLimSjs93P5YOx4/7mX/JpU4M2kohbqxq2K/zR3m5YMDEbCyJTpR1lPDZS4KPqt5kwEwK8Xod3Q=
-Received: from TYCPR01MB11492.jpnprd01.prod.outlook.com (2603:1096:400:37e::7)
- by TYWPR01MB9939.jpnprd01.prod.outlook.com (2603:1096:400:237::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
- 2025 14:32:52 +0000
-Received: from TYCPR01MB11492.jpnprd01.prod.outlook.com
- ([fe80::4a09:638d:4f7f:51ce]) by TYCPR01MB11492.jpnprd01.prod.outlook.com
- ([fe80::4a09:638d:4f7f:51ce%4]) with mapi id 15.20.8466.020; Wed, 26 Feb 2025
- 14:32:52 +0000
-From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "thierry.bultel@linatsea.fr"
-	<thierry.bultel@linatsea.fr>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>, Paul Barker
-	<paul.barker.ct@bp.renesas.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC
- option
-Thread-Topic: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC
- option
-Thread-Index: AQHbiE/a4G/Z4/2QWkiecfuwWl+1JrNZow+AgAAA7rA=
-Date: Wed, 26 Feb 2025 14:32:52 +0000
-Message-ID:
- <TYCPR01MB1149252F0825C9BCF6A1B832F8AC22@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-14-thierry.bultel.yh@bp.renesas.com>
- <fe4ccf6d-bdf0-41eb-bffe-83d459319689@kernel.org>
-In-Reply-To: <fe4ccf6d-bdf0-41eb-bffe-83d459319689@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB11492:EE_|TYWPR01MB9939:EE_
-x-ms-office365-filtering-correlation-id: 9b884b29-5f1a-49ab-af33-08dd567273e2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?x9/5bNxwxaDn5EvJ5oyUU6bbKmz+OBdWsMMJkdTLdqq0CKnGgcTLjckn8/?=
- =?iso-8859-1?Q?z6PSHOzXohk1P8gttuQ6mCr3/YIo5T60L06D1nHH78Or881Q3EHFA5NudG?=
- =?iso-8859-1?Q?Q7xSoIAB08mOog4ySZcep/5rBTLG6kDGFbaI1yOPaJxq2p9A8qWazDnVxi?=
- =?iso-8859-1?Q?1gPTL3vFzhR10cQKzFCWbi+HzOHvm6UPmk3r/RbgP4NAqCf3E0BLkK2F9O?=
- =?iso-8859-1?Q?CCywl76SPQpLnrFAotkZMAu6IsC07gPIgIRGdYus48283A84mCY7UOEKK7?=
- =?iso-8859-1?Q?PkKwo6MrNQF4916+JRw4hK6sC75CrLSFe7+P+YR9Zt5RTLa0nOmWkNNadq?=
- =?iso-8859-1?Q?ViQSmpuSto6+0oQjlCzliDCLhPdAnYwfha/ltosX9I65u/doW6KHen2gR6?=
- =?iso-8859-1?Q?PIW1syT9GcAg2MombL2vG+XvJC4y1iLfaMhG1Az1O4Zjhr25Vfow3uERL/?=
- =?iso-8859-1?Q?fw/ekE7T2D9rWJK1H7zC9n3sSb9LuaWD4h28/MdP4mtRmE6o6wIye5x6dx?=
- =?iso-8859-1?Q?PFr7xd+s02DK2VO3GEUkqY9IqwRip3M18JJO75PxpAjt60tjnWZahG1HYO?=
- =?iso-8859-1?Q?oyYmG+tBgFfm0Jluagf2r/kBMB+ct34J4uZXixZ1Tav5ms5v56RIMmSMeF?=
- =?iso-8859-1?Q?sZkv0D7eBIVR86+P0hoF2gV5KTf6pOwUa/u65OcV3bDJusR7ZoW+aTZJN5?=
- =?iso-8859-1?Q?HzCPW1tRhIFtguKcoLhEyYUPF0zfjpCNYt30Eet+SuvwqVBS7it65cN11t?=
- =?iso-8859-1?Q?UTMv8w/C7SQUXMYPfTvFpLaPyhzfdj9oTstNFuJrSwKnOyhhAHsv32PHpi?=
- =?iso-8859-1?Q?gIlWQrzMDsU1DucY/ZzlebCLJmREZqxmqZfG2+dRykI6drrFe75rZtr6t/?=
- =?iso-8859-1?Q?4tmI8uI3f60Svk0CPmzonVosIXeGyD9MNxHJjwsBq3JJV0pmTE5ICioECJ?=
- =?iso-8859-1?Q?u56aLbxS5zpAUR+dsJKT3U/CesrLmTcMKVdejQnebv/HoGvX91wUkS2ICS?=
- =?iso-8859-1?Q?OR5BV0nsXfxqJyHfcUm51X8lRt+T/wMqM3s6QxGEtkz7yKI/ifV2+35sKk?=
- =?iso-8859-1?Q?elliePYHtCUGl/X9RTD2XCO8mR3K5uYdXCsorufdCOBFvZDhLv4DO0G7lz?=
- =?iso-8859-1?Q?J9UkmuL2bxY6ELE6qyKvAWJv9y6ESTmi8l4gLSH8HhIWantBeeyQ3bAPHB?=
- =?iso-8859-1?Q?njK7yZF303JL7/6Qus+HrVKXKObq4XqxwbthEax3KZ+FEn1luxoY3KvOjD?=
- =?iso-8859-1?Q?BvBlvLFwyOnJtUJk3MBZWgO5uVp0HMXGyrsyWwU/oLDLGt4zrwxt3pI7xl?=
- =?iso-8859-1?Q?RSbTDF0eF8r5pwDlSuGsdHh0e6Kyw9o8hAQFtq9gCl/qr7G0ql+qSwcmTH?=
- =?iso-8859-1?Q?/1rfqSU6U+q0C0LLwwgfGxsQ03avzvk5twOrLA8mcE+xftl0Xq77hFNRpL?=
- =?iso-8859-1?Q?jXhM/+x9Sr7/qiWdJI3o3o2gy4DqXcnOR+yJesKiLee2MPoLRnuR/3C+1c?=
- =?iso-8859-1?Q?/FejjVc/oxo/lltBCiBjLv?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11492.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?Hl4Tof2nAFcN443myx8TXrkT9nabTZuLwfRn/L9LqxnacUt4zX3TFMnk6D?=
- =?iso-8859-1?Q?eABJMSs8hpiyw9Ah/W4RSxmpsMqI+WKisDEQ0mhbkFgeO9Q7F885nczXXN?=
- =?iso-8859-1?Q?939p/LTCvAtUkCCel/sC1ik8aGEVg95oWQJGzlHHym3/LPyF29W/b9wwOR?=
- =?iso-8859-1?Q?DmFhqBFwpNanJXeHEVlntGsdxo1jj+HS0bpWv/arLviMXsPyD/CEw5VDIu?=
- =?iso-8859-1?Q?9j8YVkI3qXPCTX7WIYLO5wdlzC1tFYOYL9bvaL/8MIN9Lxf4gPGhNPvIF5?=
- =?iso-8859-1?Q?aA9mBijvz4eLInX+34RPk5/VrGugGimZS08QHtY6wjdlRSMAKgfQJl6JTg?=
- =?iso-8859-1?Q?4deChCCrr9ZVZg1lHJskyUPu8TIb5webNNa737Gfw8iATvc0ATyIB6J495?=
- =?iso-8859-1?Q?WHQ8SbP+QyqcyG8qioEYgKrRuJpCO/k0JnsV6lCZv1RAGn5/nO+AmkMimy?=
- =?iso-8859-1?Q?U0/PPYTPJKBWCjfrY/MR7n7kUMOYc7jdDKlNgoZjU0l6SqBEYLnzyK+2s2?=
- =?iso-8859-1?Q?WY12DZRUtO60uVsoOO0jXDa7sATR+NPck7IZYSmXzPRDHBhyREYoma5gzG?=
- =?iso-8859-1?Q?9x3w1BMfCvg8pZFiJdDOrpkQJe1XDaZ7AYl8xFygyi3fpybUiO8Vzz0QOk?=
- =?iso-8859-1?Q?dqSdQADtuZvg5BoWNn99eNweUENTNXmv6ed/Qr2RUlrzeB8fswFqzK8FgW?=
- =?iso-8859-1?Q?Fq1gapLhyep3a5l0nSNKYm+LhYzI4ossC0rHWoDysc0ze9dTlsMjQO3urW?=
- =?iso-8859-1?Q?/UNvKyllb4bo2m4cUCuatoDr3G/XOJiKVsQ6FjA6Z2IJZ2g7MJPyMikD5o?=
- =?iso-8859-1?Q?5NVDPHlv6XGNgVL3peClxOIGo2JbW3sHxboT5H9oZV2iaCNcnzGao/BhC9?=
- =?iso-8859-1?Q?fagN8SCJWbbXMWfdON/v4E0VvM+p9m8wObBuS/JuUYZ2OGFe/vhgC6vnhF?=
- =?iso-8859-1?Q?7fDFEuFopHfbX5ojtbpgxG7xE1Tj4a19DznYq3Yr7sslpHMTK+Xd3XEHQm?=
- =?iso-8859-1?Q?YGjfkg9z/2s7hvqIU8Krty22eggeMuPFsrnfyXrABRaRUO7T+cImbGKYo8?=
- =?iso-8859-1?Q?NyBcPrLY5X3S2GiXGpB++a8ejBjsKU/+Q1mWFMdwgXamhb7dkjwnbWwFbm?=
- =?iso-8859-1?Q?Gb4kLc5AFD896Diepnz+Xcd58sRYyzv3GDWo1TrPSTAmwd/kzP1fBOmlb9?=
- =?iso-8859-1?Q?XsNh3OBGx0QNbfs+hr4Md7bQax8whtA/lTkrjpmGhfUQEtrjk5uDIcdfGN?=
- =?iso-8859-1?Q?0FHfCioMbGrZC93CDOu8d3uTJ3q1W6if2Q8L29Z/gvyDJsHjbyNz7wZU36?=
- =?iso-8859-1?Q?xwezSaxelvezhJvHeswy0Q09jYh8xy7caXuTXbyzQvFXVT/tD4EM6pv1xo?=
- =?iso-8859-1?Q?IeWqHsnGBOJvoS9ffJax0OnRu/IocY0RNj9EmRbv77jZFOd1BF+uRHIBYv?=
- =?iso-8859-1?Q?aCfQ2mO6hQKmtuzvC7bonnUWSX+zmeWXR6t6kdAtwOlWspChwQYAjW8b2b?=
- =?iso-8859-1?Q?DT2UIofm53SIQar72fZcDx2I91qvsfSWKEX+4+nMl9veKjhr/aHJrdWu/l?=
- =?iso-8859-1?Q?FnNoQSJZMq5H9tp2INGdrWRLJH7uyAKmZoC2YpjZIN54tIC7jX4P45c4F3?=
- =?iso-8859-1?Q?sHmI3sLTV7PVJ7I3s9lhRI5OpGx007fjEmZ3isK/4h5agDznbp9gyyRg?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AC321C9E7;
+	Wed, 26 Feb 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740580451; cv=none; b=DcA+f/dhofgBXt15o2TEcL+cFL9j7DR7Pydl37lsL6haDlFU7zS/xMB24Y31MY0/I4WTIxIuLG3LURluIniymJpz6+sw8Vf/kKlCO8sLOeCPMOWbowf9Zt9f1Z/VADsFYxPle/TDt8cyVQITykQO0YyvonPDwIq17JzAeo1ln/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740580451; c=relaxed/simple;
+	bh=w+jA4BG9fehLoPXddRUPe3xu1fzIVndYV/6iAT1JVXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOXB1B8ukxmJ7aL7+dEj35KpIbPB6mSF/bhTg+QrMsUYwj6UgISI0gJ0Gg+JdTOzlOn/dvhi9Az60BsddkFeoOoRf3tfV1YkiDOO6YFn8AJo589CWYxtYY1xVQX7fvC4DUsLvF/Cht6sJr53A797wykQout9WrjOFGL6Bntdh/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NFtU+mCb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36BBC4CED6;
+	Wed, 26 Feb 2025 14:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740580451;
+	bh=w+jA4BG9fehLoPXddRUPe3xu1fzIVndYV/6iAT1JVXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NFtU+mCb4jPbqTa/tIi5mhrF20f/j+7G9ydD/BSwzwg1X70ppLBnNlkjzj4OnBJo2
+	 ewLwB1P0odzlLzmzVp8VuKA/JtUUIl+uy5lpiv6ZVyvIoDNQA480rQ57u2Uu+s82As
+	 TlncZHzLkZ+yi8jCxS0dTo6msDLddVRGVS/9rLCY=
+Date: Wed, 26 Feb 2025 15:33:02 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Long Li <longli@microsoft.com>
+Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
+Message-ID: <2025022643-predict-hedge-8c77@gregkh>
+References: <20250225052001.2225-1-namjain@linux.microsoft.com>
+ <2025022504-diagnosis-outsell-684c@gregkh>
+ <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
+ <2025022515-lasso-carrot-4e1d@gregkh>
+ <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
+ <2025022627-deflate-pliable-6da0@gregkh>
+ <0a694947-809d-48b2-9138-d3f6175fe09d@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11492.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b884b29-5f1a-49ab-af33-08dd567273e2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 14:32:52.6845
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: T4XYkuFPqe2TqQ+ehlWlAPomTwXnAruAF15gE5B3VZMbAHwrncg8y7P0ij9L4rIHxLuIOYSzKi4BHrF3UTN1IAp5L7pG55FNs6c6o5HWJ4Tp31/v1myp9poeKUxlrjGz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9939
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a694947-809d-48b2-9138-d3f6175fe09d@linux.microsoft.com>
 
-Hi Krysztof,
+On Wed, Feb 26, 2025 at 05:51:46PM +0530, Naman Jain wrote:
+> 
+> 
+> On 2/26/2025 3:33 PM, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 26, 2025 at 10:43:41AM +0530, Naman Jain wrote:
+> > > 
+> > > 
+> > > On 2/25/2025 2:09 PM, Greg Kroah-Hartman wrote:
+> > > > On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
+> > > > > 
+> > > > > 
+> > > > > On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
+> > > > > > On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
+> > > > > > > On regular bootup, devices get registered to vmbus first, so when
+> > > > > > > uio_hv_generic driver for a particular device type is probed,
+> > > > > > > the device is already initialized and added, so sysfs creation in
+> > > > > > > uio_hv_generic probe works fine. However, when device is removed
+> > > > > > > and brought back, the channel rescinds and device again gets
+> > > > > > > registered to vmbus. However this time, the uio_hv_generic driver is
+> > > > > > > already registered to probe for that device and in this case sysfs
+> > > > > > > creation is tried before the device gets initialized completely.
+> > > > > > > 
+> > > > > > > Fix this by moving the core logic of sysfs creation for ring buffer,
+> > > > > > > from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+> > > > > > > attributes for the channels are defined. While doing that, make use
+> > > > > > > of attribute groups and macros, instead of creating sysfs directly,
+> > > > > > > to ensure better error handling and code flow.
+> 
+> <snip>
+> 
+> > > > > > > +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
+> > > > > > > +				       const struct bin_attribute *attr,
+> > > > > > > +				       struct vm_area_struct *vma)
+> > > > > > > +{
+> > > > > > > +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
+> > > > > > > +
+> > > > > > > +	if (!channel->mmap_ring_buffer)
+> > > > > > > +		return -ENODEV;
+> > > > > > > +	return channel->mmap_ring_buffer(channel, vma);
+> > > > > > 
+> > > > > > What is preventing mmap_ring_buffer from being set to NULL right after
+> > > > > > checking it and then calling it here?  I see no locks here or where you
+> > > > > > are assigning this variable at all, so what is preventing these types of
+> > > > > > races?
+> > > > > > 
+> > > > > > thanks,
+> > > > > > 
+> > > > > > greg k-h
+> > > > > 
+> > > > > Thank you so much for reviewing.
+> > > > > I spent some time to understand if this race condition can happen and it
+> > > > > seems execution flow is pretty sequential, for a particular channel of a
+> > > > > device.
+> > > > > 
+> > > > > Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
+> > > > > called in parallel to hv_uio_probe (which had set
+> > > > > channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
+> > > > > 
+> > > > > Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
+> > > > > 
+> > > > > vmbus_device_register
+> > > > >     device_register
+> > > > >       hv_uio_probe
+> > > > > 	  hv_create_ring_sysfs (W to non NULL)
+> > > > >           sysfs_update_group
+> > > > >             vmbus_chan_attr_is_visible (R)
+> > > > >     vmbus_add_channel_kobj
+> > > > >       sysfs_create_group
+> > > > >         vmbus_chan_attr_is_visible  (R)
+> > > > >         hv_mmap_ring_buffer_wrapper (critical section)
+> > > > > 
+> > > > > hv_uio_remove
+> > > > >     hv_remove_ring_sysfs (W to NULL)
+> > > > 
+> > > > Yes, and right in here someone mmaps the file.
+> > > > 
+> > > > I think you can race here, no locks at all feels wrong.
+> > > > 
+> > > > Messing with sysfs groups and files like this is rough, and almost never
+> > > > a good idea, why can't you just do this all at once with the default
+> > > > groups, why is this being added/removed out-of-band?
+> > > > 
+> > > > thanks,
+> > > > 
+> > > > greg k-h
+> > > 
+> > > The decision to avoid creating a "ring" sysfs attribute by default
+> > > likely stems from a specific use case where it wasn't needed for every
+> > > device. By creating it automatically, it keeps the uio_hv_generic
+> > > driver simpler and helps prevent potential race conditions. However, it
+> > > has an added cost of having ring buffer for all the channels, where it
+> > > is not required. I am trying to find if there are any more implications
+> > > of it.
+> > 
+> > You do know about the "is_visable" attribute callback, right?  Why not
+> > just use that instead of manually mucking around with the
+> > adding/removing of sysfs attributes at all?  That is what it was
+> > designed for.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Hi Greg,
+> Yes, I am utilizing that in my patch. For differentiating channels of a
+> uio_hv_generic device, and for *selectively* creating sysfs, we
+> introduced this field in channel struct "channel->mmap_ring_buffer",
+> which we were setting only in uio_hv_generic. But, by the time we set
+> this in uio_hv_generic driver, the sysfs creation has already gone
+> through and sysfs doesn't get updated dynamically. That's where there
+> was a need to call sysfs_update_group. I thought the better place to
+> keep sysfs_update_group would be in vmbus driver, where we are creating
+> the original sysfs entries, hence I had to add the wrapper functions.
+> This led us to the race condition we are trying to address now.
+> 
+> 
+> @@ -1838,6 +1872,10 @@ static umode_t vmbus_chan_attr_is_visible(struct
+> kobject *kobj,
+>  	     attr == &chan_attr_monitor_id.attr))
+>  		return 0;
+> 
+> +	/* Hide ring attribute if channel's mmap_ring_buffer function is not yet
+> initialised */
+> +	if (attr ==  &chan_attr_ring_buffer.attr && !channel->mmap_ring_buffer)
+> +		return 0;
+> +
+>  	return attr->mode;
 
->-----Original Message-----
->From: Krzysztof Kozlowski <krzk@kernel.org>=20
->Sent: mercredi 26 f=E9vrier 2025 15:22
->To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>; thierry.bultel@lina=
-tsea.fr
->Cc: linux-renesas-soc@vger.kernel.org; geert@linux-m68k.org; Paul Barker <=
-paul.barker.ct@bp.renesas.com>; linux-arm->kernel@lists.infradead.org; linu=
-x-kernel@vger.kernel.org
->Subject: Re: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC =
-option
->
->On 26/02/2025 14:09, Thierry Bultel wrote:
->> Selects support for RZ/T2H (aka r9a09g077), and SCI (serial) specific=20
->> code for it.
->>=20
->> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
->> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
->> ---
->
->You never responded to my comments at v1. So I asked at v2. Still no answe=
-r.
->
->That's v3 and still silence from your side.
+Ok, that's good.  BUT you need to change the detection of this to be
+before the device is set up in the driver.  Why can't you do it in the
+device creation logic itself instead of after-the-fact when you will
+ALWAYS race with userspace?
 
-Yes, I understand your position and have added a paragraph=20
-at the end of the cover letter about this point.
+thanks,
 
-Best regards
-Thierry
-
->
->NAK
->
->Best regards,
->Krzysztof
+greg k-h
 
