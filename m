@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-534357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5BBA4663D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:12:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA2BA465CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4574B44094A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4869C3B856B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07B021D5BA;
-	Wed, 26 Feb 2025 15:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6050D21CA1C;
+	Wed, 26 Feb 2025 15:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebRrTCn0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="gbx1pb3i"
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D820AF8E;
-	Wed, 26 Feb 2025 15:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FD82EAE4;
+	Wed, 26 Feb 2025 15:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585245; cv=none; b=mmyOL9vFdmAE90jxSh/ywZVL8Wdqgxr2TZDWGLbULW1mXJH4HW2k+TijB/3C6SSHjDMFgxXbsWbewKcUHda8SDKAYci73n3IUsrOfKZax9/7Si8cigiPcGvEhxde4IN6tno3SjccBGDc76a8p6t/mOJr4Y+S8WaVR5sFVhoTpXM=
+	t=1740585351; cv=none; b=TrozGv847eU0INdvFP2ZvXbtkdcCnSAo//6Ix3gAwMOXy+TvSRGDoKhCYhs9ogLm0HVouhivul6jKusAdk6BrsWSxb7GRnfOnoNbM3KfL5o2JqcNJXeIwJ//lB6x6gJ2tY/EHVXsOX6yhHVbqpKq8R7NoVxQO7Tn0PBuSE4BWKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585245; c=relaxed/simple;
-	bh=IHPkSRz8POGRAPI3+TsZtf+aSugk/+coyipS7hZDYFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jARmyNxrBMKlk2r2i8jFyHoMB/kW0x3Yfau+iuOhXrcJYuRckZMlPsmlIMToBX7LWJ+JDfuw61QtLuU7qelOcA40kyjjN+2msW5JNJpDnAd6Pwi43JCSAx9xFZyJGXHhuqW01H+JX4Dl4geXj1zFmJyWmhrqJhxmO20HrvfZNeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebRrTCn0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D0CC4CED6;
-	Wed, 26 Feb 2025 15:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740585244;
-	bh=IHPkSRz8POGRAPI3+TsZtf+aSugk/+coyipS7hZDYFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ebRrTCn0FtzefQG7EREqZV+fhlEodGXj9wNSk+4qoYb6UP5dS/y/P1v0gQ54I/juH
-	 zbvnuRNk8SaufOg5oUcragcZLJVgJaMahtSZT7gJn5vfkeFGrLhauR0Y1aHAiSE8In
-	 BbZcumY7bidvd8HoKmA7/0fbzPUOHtjdw3GhQ3JiYNsQEuLCR9m9b60KkHhaVYzil7
-	 kPgWEfJVI0vYEVLsfN+dAVflnpE5u5C0CFWEgdP5qaW2sg5ftTCG4LnzgXCZxjsJ7K
-	 SqF5eeujjSSpT+IfMlJTmyw9IRBi0SU5wimHcZASFDIJWXeFWQSJ5OzHiCQeuXdf3J
-	 8Y76xMSVlGm2w==
-Date: Wed, 26 Feb 2025 09:54:02 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
-	Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Pin-yen Lin <treapking@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: usb: Add binding for ChromeOS Pogo
- pin keyboard connector
-Message-ID: <174058524070.2499032.1136545857184253798.robh@kernel.org>
-References: <20250225223038.879614-1-swboyd@chromium.org>
- <20250225223038.879614-2-swboyd@chromium.org>
+	s=arc-20240116; t=1740585351; c=relaxed/simple;
+	bh=MK6GzxJ5jGo62okKzHOa4sSEHxenNlh2+oDHDZBnef8=;
+	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
+	 References:Message-ID; b=kpVB5epjsM5Mcp1Fs7BITABMJ55gg4mopYf9/wsPjuU2kBDEXGye2ETtRaIPRGUdq0JVbYDQBeqK5KGtoSitgWKShE2ZQd4kQp5aTquj2uLBgYxoIUlDBeJjUuS2svtHLdsazJf57R0eJiYnbLHHXUl0/Qe6LMFTVGOOVpJYWoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=gbx1pb3i; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [194.37.255.9] (helo=mxout.expurgate.net)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=916645903c=ms@dev.tdt.de>)
+	id 1tnJl7-0093Ff-9u; Wed, 26 Feb 2025 16:55:41 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ms@dev.tdt.de>)
+	id 1tnJl6-0020Lj-0x; Wed, 26 Feb 2025 16:55:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
+	s=z1-selector1; t=1740585339;
+	bh=6DTIZvB9ZKyPyxrGTYhLUZM1TdcZeH4MbCBRnoy1ij8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gbx1pb3iDQdqphjLSXKbnhN+y8ddMaU59rE/pEWQWjNK4/uq8i/19SsXFnezLLoEW
+	 wFpHmcH7xJcQQ4AGiV+JuSDq+/1Yh9THthgSC0WX/vziHP2DQ+3ljGn7c3GcPaJSmD
+	 2wjNzBnrVAet75BpmoVz8M50Uy5c9+pbG01nV3MwcPaFgdk614ZqCXKBU98P5WZmS0
+	 as+ka+VfaKFZce93ntxzezA/o7y3kK1cR9JmPsXV74NFXXFbnJiDPxcpCQv/QQMLVi
+	 4DZroS89IshHJ5tb0Dv6+H7shDq+8l45woFqxI+EIk7224MKUzz25SwfiW5xS6csHQ
+	 QIqiW9L47Af3Q==
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id 6DD04240041;
+	Wed, 26 Feb 2025 16:55:39 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id 669A2240036;
+	Wed, 26 Feb 2025 16:55:39 +0100 (CET)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+	by mail.dev.tdt.de (Postfix) with ESMTP id C8D1822442;
+	Wed, 26 Feb 2025 16:55:38 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225223038.879614-2-swboyd@chromium.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 26 Feb 2025 16:55:38 +0100
+From: Martin Schiller <ms@dev.tdt.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
+	hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
+ SFP+ module
+Organization: TDT AG
+In-Reply-To: <20250226162649.641bba5d@kmaincent-XPS-13-7390>
+References: <20250226141002.1214000-1-ms@dev.tdt.de>
+ <Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
+ <d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
+ <20250226162649.641bba5d@kmaincent-XPS-13-7390>
+Message-ID: <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
+X-Sender: ms@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1740585340-0351C41A-8D61EB6E/0/0
 
-
-On Tue, 25 Feb 2025 14:30:36 -0800, Stephen Boyd wrote:
-> Describe the set of pins used to connect the detachable keyboard on
-> detachable ChromeOS devices. The set of pins is called the "pogo pins".
-> It's basically USB 2.0 with an extra pin for base detection. We expect
-> to find a keyboard on the other side of this connector with a specific
-> vid/pid, so describe that as a child device at the port of the usb
-> device connected upstream.
+On 2025-02-26 16:26, Kory Maincent wrote:
+> On Wed, 26 Feb 2025 15:50:46 +0100
+> Martin Schiller <ms@dev.tdt.de> wrote:
 > 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: <devicetree@vger.kernel.org>
-> Cc: <chrome-platform@lists.linux.dev>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  .../usb/google,usb-pogo-keyboard.yaml         | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,usb-pogo-keyboard.yaml
+>> On 2025-02-26 15:38, Russell King (Oracle) wrote:
+>> > On Wed, Feb 26, 2025 at 03:10:02PM +0100, Martin Schiller wrote:
+>> >> Add quirk for a copper SFP that identifies itself as "FS"
+>> >> "SFP-10GM-T".
+>> >> It uses RollBall protocol to talk to the PHY and needs 4 sec wait
+>> >> before
+>> >> probing the PHY.
+>> >>
+>> >> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+>> >> ---
+>> >>  drivers/net/phy/sfp.c | 5 +++--
+>> >>  1 file changed, 3 insertions(+), 2 deletions(-)
+>> >>
+>> >> diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+>> >> index 9369f5297769..15284be4c38c 100644
+>> >> --- a/drivers/net/phy/sfp.c
+>> >> +++ b/drivers/net/phy/sfp.c
+>> >> @@ -479,9 +479,10 @@ static const struct sfp_quirk sfp_quirks[] = {
+>> >>  	// PHY.
+>> >>  	SFP_QUIRK_F("FS", "SFP-10G-T", sfp_fixup_fs_10gt),
+>> >>
+>> >> -	// Fiberstore SFP-2.5G-T uses Rollball protocol to talk to the
+>> >> PHY and
+>> >> -	// needs 4 sec wait before probing the PHY.
+>> >> +	// Fiberstore SFP-2.5G-T and SFP-10GM-T uses Rollball protocol to
+>> >> talk
+>> >> +	// to the PHY and needs 4 sec wait before probing the PHY.
+>> >>  	SFP_QUIRK_F("FS", "SFP-2.5G-T", sfp_fixup_fs_2_5gt),
+>> >> +	SFP_QUIRK_F("FS", "SFP-10GM-T", sfp_fixup_fs_2_5gt),
+>> >
+>> > Which makes sfp_fixup_fs_2_5gt mis-named. Please rename.
+>> 
+>> OK, I'll rename it to sfp_fixup_rollball_wait.
 > 
+> I would prefer sfp_fixup_fs_rollball_wait to keep the name of the 
+> manufacturer.
+> It can't be a generic fixup as other FSP could have other waiting time 
+> values
+> like the Turris RTSFP-10G which needs 25s.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+I think you're getting two things mixed up.
+The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
+there simply is an additional 4s wait at the beginning before we start
+searching for a phy.
 
