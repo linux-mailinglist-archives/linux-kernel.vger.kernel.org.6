@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-533363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A74A4590F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68638A45911
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1902618805F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820CA3A43E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2FB22423E;
-	Wed, 26 Feb 2025 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVDJWhkL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351E258CC2;
-	Wed, 26 Feb 2025 08:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD6E20DD4D;
+	Wed, 26 Feb 2025 08:55:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265EF258CF6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740560109; cv=none; b=R/sogeEZxrxVFGsSO7EMpyi8eCuHXUXAnd/ikjwk3x6L8wOrB6vDwShxcy6fNmIAk2rJnOPIGUzpIzAlMJgfYxxWBy3XfF6g4UMuWqDUEyosR6EqYFS6yvr4wf+y9q+WcnLLKU3hiRXi2jNlzEkg+rOe6HvcDdBQPNcX7T6vMq8=
+	t=1740560134; cv=none; b=MKdPucjyEl1k8xL/aLCOPdn7Xkrqsc/0ckYl4I9je0IhXO5yf8rbZmeRuoFa1vGAbtvZJi/2IMiwiOKYCzytXuvAxYDdWfOALXQZclR6XE1pQzLOoEofUFlQ9TbP1NONbGd/fp2yjMZH4zwTDF82nkQL3PNpZhqjfTuR2uV467U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740560109; c=relaxed/simple;
-	bh=k9Imo4Ndb+Av6okiCY/htILEn6oyEwrXzbQnbAjSjo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITcamPqDTfIX8u1fe3xDxYvL8L/plxI6fhxQDm1875MerY5nFfZSx5SbFynMB5DyhrRotkaDp4YkGRM9jYzaApveoNI5IFl7xOrD+WeUDGCbP9o5mVnyomnWD0BiQCLJhxvAAfjN7qJJIayQw4coDsqKSQnXYXphkV4HhVMUZMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVDJWhkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01663C4CED6;
-	Wed, 26 Feb 2025 08:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740560109;
-	bh=k9Imo4Ndb+Av6okiCY/htILEn6oyEwrXzbQnbAjSjo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mVDJWhkLl84U3eyL0yjbQXFgShXMKq3Ay6Mog2dflRLeJZVCBeTBR+E9F43TEA5iP
-	 wSN1Foc7A2kFeeM5JFDWbAbEPhtch38XJQKpb0POGXr0rHq+yWxFd74TN6LBUy9yac
-	 eXBzIfoIPpGBFqgorhgz8jVDVot8nifzXyFOU2KbOXy3c0o2Ix/HvjvGWE9WsQviKz
-	 iajrmmlAW0TY0/le6hESGZBTfxSJ/I2q3V9oPzsMntmRkLAJ1+LwK33W6s0GF+6yK6
-	 C3NtvikLi2Z+zRNhFjoSxAev4RpXFtyghSuZQdEYxnZdvh+se/tRh4JfZkWZJqKJbe
-	 rbJIlfRH0Tw8w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tnDCL-000000007d2-0AyI;
-	Wed, 26 Feb 2025 09:55:21 +0100
-Date: Wed, 26 Feb 2025 09:55:21 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
-	dmitry.baryshkov@linaro.org, maz@kernel.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org
-Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
-Message-ID: <Z77W-fKBUqAALZKJ@hovoldconsulting.com>
-References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
- <20250226024338.3994701-3-quic_sibis@quicinc.com>
- <Z77M5iXHQsdMptWm@hovoldconsulting.com>
+	s=arc-20240116; t=1740560134; c=relaxed/simple;
+	bh=0+51M4Nbyf6waNQ4dGj4iEc36P0jrC4pTrry9E2QESw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XeMdWZ6XlcvHBF3l9NqrkUbVNDbo6NRT252ZofWBKfLXX54eOZLXmzhzzP3lnI9fV09VZsimhinb/JJvzhpKILlsYZf59q+0JWBJn4cdCVC+jX5TPMuKJJ8Iua7BmsAaoioAJQbNrog3nYi78RG/6VMWONBQoRj6OyKat70wTes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 777091063;
+	Wed, 26 Feb 2025 00:55:47 -0800 (PST)
+Received: from [10.57.84.229] (unknown [10.57.84.229])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 523C43F6A8;
+	Wed, 26 Feb 2025 00:55:30 -0800 (PST)
+Message-ID: <b6b999c9-79cd-4945-9d7a-c5ee8158b7dc@arm.com>
+Date: Wed, 26 Feb 2025 08:55:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z77M5iXHQsdMptWm@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
+Content-Language: en-GB
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, Luiz Capitulino <luizcap@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250225114638.2038006-1-ryan.roberts@arm.com>
+ <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
+ <20250226001047.GA24197@willie-the-truck>
+ <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
+ <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com>
+ <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 09:12:23AM +0100, Johan Hovold wrote:
-> On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
-
-> >  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
-> >  			     u8 describe_id, u32 message_id, u32 valid_size,
-> >  			     u32 domain, void __iomem **p_addr,
-> > -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
-> > +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
-> > +			     bool skip_check)
+On 26/02/2025 08:33, Ard Biesheuvel wrote:
+> On Wed, 26 Feb 2025 at 09:07, Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 26/02/2025 06:59, Ard Biesheuvel wrote:
+>>> On Wed, 26 Feb 2025 at 01:10, Will Deacon <will@kernel.org> wrote:
+>>>>
+>>>> On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
+>>>>> Apologies for the breakage, and thanks for the fix.
+>>>>>
+>>>>> I have to admit that I was a bit overzealous here: there is no point
+>>>>> yet in using the sanitised value, given that we don't actually
+>>>>> override the PA range in the first place.
+>>
+>> But unless I've misunderstood something, parange is overridden; Commit
+>> 62cffa496aac (the same one we are fixing) adds an override to force parange to
+>> 48 bits when arm64.nolva is specified for LPA2 systems (see mmfr2_varange_filter()).
+>>
+>> I thought it would be preferable to honour that override, hence my use of
+>> arm64_apply_feature_override() in the fix. Are you saying we don't need to worry
+>> about that case?
+>>
 > 
-> This does not look like it will scale.
+> I wouldn't think so (but I'm glad you brought it up because this
+> didn't occur to me at all tbh)
+> 
+> With arm64.nolva, both the VA and PA ranges will be reduced, and so
+> the range of the linear map will be 47 bits. So if the PA range is
+> being reduced from 52 to 48, it will still exceed the size of the
+> linear map, and so it should make no difference in this particular
+> case.
 
-After taking a closer look, perhaps it needs to be done along these
-lines.
-
-But calling the parameter 'force' or similar as Dan suggested should
-make it more readable.
+OK, so I think you're saying it'll happen to work correctly even if we ignore
+that override? That sounds a bit fragile to me. Surely we should be consistent
+and either always honour the override or remove the override in the first place?
 
 > 
-> >  {
-> >  	int ret;
-> >  	u32 flags;
-> > @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
-> >  
-> >  	/* Check if the MSG_ID supports fastchannel */
-> >  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
-> > -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
-> > +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
-> 
-> Why can't you just make sure that the bit is set in attributes as I
-> suggested? That seems like it should allow for a minimal implementation
-> of this.
+> The use case I had in mind was to allow the PA range to be reduced to
+> a value that is substantially less than the range of the linear map,
+> e.g, 40 bits on a 48-bit VA kernel. On the Android side, the issue of
+> the missing linear map randomization has come up a couple of times,
+> but there is no clear direction at this point, so adding this feature
+> here was premature (mea culpa)
 
-My idea here was that you could come up with some way of abstracting
-this so that you did not have to update every call site. Not sure how
-feasible that is.
-
-> >  		return;
-> >  
-> >  	if (!p_addr) {
-
-Johan
 
