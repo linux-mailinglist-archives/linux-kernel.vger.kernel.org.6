@@ -1,277 +1,196 @@
-Return-Path: <linux-kernel+bounces-532969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40105A45446
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:07:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C978A45443
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FF01899E67
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:06:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85C8E7A59C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24A425A65A;
-	Wed, 26 Feb 2025 04:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHzNzaVk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9436D25D54D;
+	Wed, 26 Feb 2025 04:05:53 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D53433DF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AC233DF;
+	Wed, 26 Feb 2025 04:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740542765; cv=none; b=TjfI3UWqre4JtbeY46wk5cXNszPimcdswGElZjAugSA5GdIvgUeWSXLR9Q+jjCJgLtpE4qcPYquFErJrBj7BqAqBvtafYbdJ1tgPxtNb6TZojmmk7fnxe/AEiC3Pd7iUtNX400nseApwyHwektGi4ajbASszO30VDCk2+4WAInM=
+	t=1740542753; cv=none; b=B7Tt2MSk3xlBtSG0Q4YXmMs4ljntQpxsuwL+VGyWyDFl+tqUVYbOEFMkI6kc/3Z5OZLfeu4sxE3hXMiYSleEvdZstEro3bBzDjQ8vsniowkKhAGXFO+MC/iwJW2j2USHOmgKrPihofqvotxJi/bqhueKGagDRRDhtFmoIa49IDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740542765; c=relaxed/simple;
-	bh=P3pW0eZEsq4Rky8QmFi3pcoZ0BNh0GsgZ3ry24YZW5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=atNZUTPb1zfirVr12ZUj/FU/o3LHQUjDSJJFkrjNeXa8QxuK8CNlEHkMdR+2+hmjew0UWFLMaFeKOVtpfUvkuJv7LqGMI4AWMwaGGuujIpXIuWqMMsPuzS7ZbyLglyD2EazammthlburQP571cMMFgZuyn1ZcWLlguxOsw1nPA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHzNzaVk; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740542763; x=1772078763;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=P3pW0eZEsq4Rky8QmFi3pcoZ0BNh0GsgZ3ry24YZW5Y=;
-  b=OHzNzaVkJW9Jw23tEPCJ01cCLyYXM9xLumlJtCYBwmASFpDeFe6eyUMN
-   L+xeTcLA3wpkMTDNj91Gjv2u43KIrsFFBijsvMWRCuo00xwGkOapVT4ny
-   ldfh65vSWmo0AIWsINagGeDg7THoUxEF7rnIAchbeFwIahXKDjU/MAxNu
-   d0X+ZzYzxxttg01wf3i/I6dIs7a0slAjs5Gzo/tC0P175McMfsoBlUHgW
-   E4pb+dEEeqkeuhDtpPiohK+Wr+W8/s2WVno4ox3u/dt6+GvavzJI1oLUH
-   GBiajQqkBwpmnxT2mO3YcYPlVS/691uCLzxPRzg5eLfVq6jKx1Vc9hhkT
-   A==;
-X-CSE-ConnectionGUID: cCD4z290SGi+kgxf9g7cnw==
-X-CSE-MsgGUID: Y0GgQ5YnRFC/Np7q+xOMJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="44199041"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="44199041"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 20:06:03 -0800
-X-CSE-ConnectionGUID: HyQ5oFFFSkSQtUUjfMoEwg==
-X-CSE-MsgGUID: yjYsd3wfTBSMgVlWPOpZnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="116393879"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 25 Feb 2025 20:06:01 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tn8gJ-000B6T-0E;
-	Wed, 26 Feb 2025 04:05:59 +0000
-Date: Wed, 26 Feb 2025 12:05:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jordan Niethe <jniethe5@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Alistair Popple <alistair@popple.id.au>
-Subject: arch/powerpc/lib/sstep.c:1172:28: warning: variable 'suffix' set but
- not used
-Message-ID: <202502261215.YbtZ3kzV-lkp@intel.com>
+	s=arc-20240116; t=1740542753; c=relaxed/simple;
+	bh=dXlDjg2pNVnOI7c52EzxCpiStSzswa9gIBOFh2fPjwk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YWamOf5Gr5K7QmmujTk04DJ3qId8lGFnNe3CCFAZrmcrwuqi9eMknpNVqS+qeSowG0TCwB8DHyvtDnNbycFVVSHiERLGfDpuVK4u0nPnXsyPwQVyreUTTeZY+p0vUB+/EeIHEEB/peJQrBC8lxgWdBHaxpPOAbC656eShjuiaxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z2gqL2wzFz4f3jrs;
+	Wed, 26 Feb 2025 12:05:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3B45A1A10B0;
+	Wed, 26 Feb 2025 12:05:40 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP4 (Coremail) with SMTP id gCh0CgDXOV4Nk75nguOvEw--.31068S2;
+	Wed, 26 Feb 2025 12:05:37 +0800 (CST)
+Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
+ map atomically
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
+ bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Cody Haas <chaas@riotgames.com>, Hou Tao <hotforest@gmail.com>
+References: <20250204082848.13471-1-hotforest@gmail.com>
+ <20250204082848.13471-3-hotforest@gmail.com>
+ <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com>
+ <8734gr3yht.fsf@toke.dk>
+ <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com>
+ <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com>
+Date: Wed, 26 Feb 2025 12:05:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:gCh0CgDXOV4Nk75nguOvEw--.31068S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF4xWrW8GFyfGF4xKFyDJrb_yoWrtFy3pr
+	WrKF1jyF4DJa4j9wn2ywnruFWayrs3t3y8Xr1Dtry5Arn8Krn3Ar4Ika109ryrAr1rGr1Y
+	qw1jqrZIkayjkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07jIksgUUUUU=
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi Jordan,
+Hi,
 
-FYI, the error/warning still remains.
+On 2/26/2025 11:24 AM, Alexei Starovoitov wrote:
+> On Sat, Feb 8, 2025 at 2:17 AM Hou Tao <houtao@huaweicloud.com> wrote:
+>> Hi Toke,
+>>
+>> On 2/6/2025 11:05 PM, Toke Høiland-Jørgensen wrote:
+>>> Hou Tao <houtao@huaweicloud.com> writes:
+>>>
+>>>> +cc Cody Haas
+>>>>
+>>>> Sorry for the resend. I sent the reply in the HTML format.
+>>>>
+>>>> On 2/4/2025 4:28 PM, Hou Tao wrote:
+>>>>> Currently, the update of existing element in hash map involves two
+>>>>> steps:
+>>>>> 1) insert the new element at the head of the hash list
+>>>>> 2) remove the old element
+>>>>>
+>>>>> It is possible that the concurrent lookup operation may fail to find
+>>>>> either the old element or the new element if the lookup operation starts
+>>>>> before the addition and continues after the removal.
+>>>>>
+>>>>> Therefore, replacing the two-step update with an atomic update. After
+>>>>> the change, the update will be atomic in the perspective of the lookup
+>>>>> operation: it will either find the old element or the new element.
+> I'm missing the point.
+> This "atomic" replacement doesn't really solve anything.
+> lookup will see one element.
+> That element could be deleted by another thread.
+> bucket lock and either two step update or single step
+> don't change anything from the pov of bpf prog doing lookup.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
-commit: 650b55b707fdfa764e9f2b81314d3eb4216fb962 powerpc: Add prefixed instructions to instruction data type
-date:   4 years, 9 months ago
-config: powerpc-randconfig-003-20231218 (https://download.01.org/0day-ci/archive/20250226/202502261215.YbtZ3kzV-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250226/202502261215.YbtZ3kzV-lkp@intel.com/reproduce)
+The point is that overwriting an existed element may lead to concurrent
+lookups return ENOENT as demonstrated by the added selftest and the
+patch tried to "fix" that. However, it seems using
+hlist_nulls_replace_rcu() for the overwriting update is still not
+enough. Because when the lookup procedure found the old element, the old
+element may be reusing, the comparison of the map key may fail, and the
+lookup procedure may still return ENOENT.
+>
+>>>>> Signed-off-by: Hou Tao <hotforest@gmail.com>
+>>>>> ---
+>>>>>  kernel/bpf/hashtab.c | 14 ++++++++------
+>>>>>  1 file changed, 8 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+>>>>> index 4a9eeb7aef85..a28b11ce74c6 100644
+>>>>> --- a/kernel/bpf/hashtab.c
+>>>>> +++ b/kernel/bpf/hashtab.c
+>>>>> @@ -1179,12 +1179,14 @@ static long htab_map_update_elem(struct bpf_map *map, void *key, void *value,
+>>>>>             goto err;
+>>>>>     }
+>>>>>
+>>>>> -   /* add new element to the head of the list, so that
+>>>>> -    * concurrent search will find it before old elem
+>>>>> -    */
+>>>>> -   hlist_nulls_add_head_rcu(&l_new->hash_node, head);
+>>>>> -   if (l_old) {
+>>>>> -           hlist_nulls_del_rcu(&l_old->hash_node);
+>>>>> +   if (!l_old) {
+>>>>> +           hlist_nulls_add_head_rcu(&l_new->hash_node, head);
+>>>>> +   } else {
+>>>>> +           /* Replace the old element atomically, so that
+>>>>> +            * concurrent search will find either the new element or
+>>>>> +            * the old element.
+>>>>> +            */
+>>>>> +           hlist_nulls_replace_rcu(&l_new->hash_node, &l_old->hash_node);
+>>>>>
+>>>>>             /* l_old has already been stashed in htab->extra_elems, free
+>>>>>              * its special fields before it is available for reuse. Also
+>>>>>
+>>>> After thinking about it the second time, the atomic list replacement on
+>>>> the update side is enough to make lookup operation always find the
+>>>> existing element. However, due to the immediate reuse, the lookup may
+>>>> find an unexpected value. Maybe we should disable the immediate reuse
+>>>> for specific map (e.g., htab of maps).
+>>> Hmm, in an RCU-protected data structure, reusing the memory before an
+>>> RCU grace period has elapsed is just as wrong as freeing it, isn't it?
+>>> I.e., the reuse logic should have some kind of call_rcu redirection to
+>>> be completely correct?
+>> Not for all cases. There is SLAB_TYPESAFE_BY_RCU-typed slab. For hash
+>> map, the reuse is also tricky (e.g., the goto again case in
+>> lookup_nulls_elem_raw), however it can not prevent the lookup procedure
+>> from returning unexpected value. I had post a patch set [1] to "fix"
+>> that, but Alexei said it is "a known quirk". Here I am not sure about
+>> whether it is reasonable to disable the reuse for htab of maps only. I
+>> will post a v2 for the patch set.
+>>
+>> [1]:
+>> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.com/
+> yes. we still have to keep prealloc as default for now :(
+> Eventually bpf_mem_alloc is replaced with fully re-entrant
+> and safe kmalloc, then we can do fully re-entrant and safe
+> kfree_rcu. Then we can talk about closing this quirk.
+> Until then the prog has to deal with immediate reuse.
+> That was the case for a decade already.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502261215.YbtZ3kzV-lkp@intel.com/
+I see. In v2 I will fallback to the original idea: adding a standalone
+update procedure for htab of maps in which it will atomically overwrite
+the map_ptr just like array of maps does.
 
-All warnings (new ones prefixed by >>):
-
-   arch/powerpc/lib/sstep.c: In function 'analyse_instr':
->> arch/powerpc/lib/sstep.c:1172:28: warning: variable 'suffix' set but not used [-Wunused-but-set-variable]
-    1172 |         unsigned int word, suffix;
-         |                            ^~~~~~
-   arch/powerpc/lib/sstep.c:1168:38: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
-    1168 |         unsigned int opcode, ra, rb, rc, rd, spr, u;
-         |                                      ^~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for HOTPLUG_CPU
-   Depends on [n]: SMP [=y] && (PPC_PSERIES [=n] || PPC_PMAC [=n] || PPC_POWERNV [=n] || FSL_SOC_BOOKE [=n])
-   Selected by [y]:
-   - PM_SLEEP_SMP [=y] && SMP [=y] && (ARCH_SUSPEND_POSSIBLE [=y] || ARCH_HIBERNATION_POSSIBLE [=y]) && PM_SLEEP [=y]
-
-
-vim +/suffix +1172 arch/powerpc/lib/sstep.c
-
-  1153	
-  1154	/*
-  1155	 * Decode an instruction, and return information about it in *op
-  1156	 * without changing *regs.
-  1157	 * Integer arithmetic and logical instructions, branches, and barrier
-  1158	 * instructions can be emulated just using the information in *op.
-  1159	 *
-  1160	 * Return value is 1 if the instruction can be emulated just by
-  1161	 * updating *regs with the information in *op, -1 if we need the
-  1162	 * GPRs but *regs doesn't contain the full register set, or 0
-  1163	 * otherwise.
-  1164	 */
-  1165	int analyse_instr(struct instruction_op *op, const struct pt_regs *regs,
-  1166			  struct ppc_inst instr)
-  1167	{
-  1168		unsigned int opcode, ra, rb, rc, rd, spr, u;
-  1169		unsigned long int imm;
-  1170		unsigned long int val, val2;
-  1171		unsigned int mb, me, sh;
-> 1172		unsigned int word, suffix;
-  1173		long ival;
-  1174	
-  1175		word = ppc_inst_val(instr);
-  1176		suffix = ppc_inst_suffix(instr);
-  1177	
-  1178		op->type = COMPUTE;
-  1179	
-  1180		opcode = ppc_inst_primary_opcode(instr);
-  1181		switch (opcode) {
-  1182		case 16:	/* bc */
-  1183			op->type = BRANCH;
-  1184			imm = (signed short)(word & 0xfffc);
-  1185			if ((word & 2) == 0)
-  1186				imm += regs->nip;
-  1187			op->val = truncate_if_32bit(regs->msr, imm);
-  1188			if (word & 1)
-  1189				op->type |= SETLK;
-  1190			if (branch_taken(word, regs, op))
-  1191				op->type |= BRTAKEN;
-  1192			return 1;
-  1193	#ifdef CONFIG_PPC64
-  1194		case 17:	/* sc */
-  1195			if ((word & 0xfe2) == 2)
-  1196				op->type = SYSCALL;
-  1197			else
-  1198				op->type = UNKNOWN;
-  1199			return 0;
-  1200	#endif
-  1201		case 18:	/* b */
-  1202			op->type = BRANCH | BRTAKEN;
-  1203			imm = word & 0x03fffffc;
-  1204			if (imm & 0x02000000)
-  1205				imm -= 0x04000000;
-  1206			if ((word & 2) == 0)
-  1207				imm += regs->nip;
-  1208			op->val = truncate_if_32bit(regs->msr, imm);
-  1209			if (word & 1)
-  1210				op->type |= SETLK;
-  1211			return 1;
-  1212		case 19:
-  1213			switch ((word >> 1) & 0x3ff) {
-  1214			case 0:		/* mcrf */
-  1215				op->type = COMPUTE + SETCC;
-  1216				rd = 7 - ((word >> 23) & 0x7);
-  1217				ra = 7 - ((word >> 18) & 0x7);
-  1218				rd *= 4;
-  1219				ra *= 4;
-  1220				val = (regs->ccr >> ra) & 0xf;
-  1221				op->ccval = (regs->ccr & ~(0xfUL << rd)) | (val << rd);
-  1222				return 1;
-  1223	
-  1224			case 16:	/* bclr */
-  1225			case 528:	/* bcctr */
-  1226				op->type = BRANCH;
-  1227				imm = (word & 0x400)? regs->ctr: regs->link;
-  1228				op->val = truncate_if_32bit(regs->msr, imm);
-  1229				if (word & 1)
-  1230					op->type |= SETLK;
-  1231				if (branch_taken(word, regs, op))
-  1232					op->type |= BRTAKEN;
-  1233				return 1;
-  1234	
-  1235			case 18:	/* rfid, scary */
-  1236				if (regs->msr & MSR_PR)
-  1237					goto priv;
-  1238				op->type = RFI;
-  1239				return 0;
-  1240	
-  1241			case 150:	/* isync */
-  1242				op->type = BARRIER | BARRIER_ISYNC;
-  1243				return 1;
-  1244	
-  1245			case 33:	/* crnor */
-  1246			case 129:	/* crandc */
-  1247			case 193:	/* crxor */
-  1248			case 225:	/* crnand */
-  1249			case 257:	/* crand */
-  1250			case 289:	/* creqv */
-  1251			case 417:	/* crorc */
-  1252			case 449:	/* cror */
-  1253				op->type = COMPUTE + SETCC;
-  1254				ra = (word >> 16) & 0x1f;
-  1255				rb = (word >> 11) & 0x1f;
-  1256				rd = (word >> 21) & 0x1f;
-  1257				ra = (regs->ccr >> (31 - ra)) & 1;
-  1258				rb = (regs->ccr >> (31 - rb)) & 1;
-  1259				val = (word >> (6 + ra * 2 + rb)) & 1;
-  1260				op->ccval = (regs->ccr & ~(1UL << (31 - rd))) |
-  1261					(val << (31 - rd));
-  1262				return 1;
-  1263			}
-  1264			break;
-  1265		case 31:
-  1266			switch ((word >> 1) & 0x3ff) {
-  1267			case 598:	/* sync */
-  1268				op->type = BARRIER + BARRIER_SYNC;
-  1269	#ifdef __powerpc64__
-  1270				switch ((word >> 21) & 3) {
-  1271				case 1:		/* lwsync */
-  1272					op->type = BARRIER + BARRIER_LWSYNC;
-  1273					break;
-  1274				case 2:		/* ptesync */
-  1275					op->type = BARRIER + BARRIER_PTESYNC;
-  1276					break;
-  1277				}
-  1278	#endif
-  1279				return 1;
-  1280	
-  1281			case 854:	/* eieio */
-  1282				op->type = BARRIER + BARRIER_EIEIO;
-  1283				return 1;
-  1284			}
-  1285			break;
-  1286		}
-  1287	
-  1288		/* Following cases refer to regs->gpr[], so we need all regs */
-  1289		if (!FULL_REGS(regs))
-  1290			return -1;
-  1291	
-  1292		rd = (word >> 21) & 0x1f;
-  1293		ra = (word >> 16) & 0x1f;
-  1294		rb = (word >> 11) & 0x1f;
-  1295		rc = (word >> 6) & 0x1f;
-  1296	
-  1297		switch (opcode) {
-  1298	#ifdef __powerpc64__
-  1299		case 2:		/* tdi */
-  1300			if (rd & trap_compare(regs->gpr[ra], (short) word))
-  1301				goto trap;
-  1302			return 1;
-  1303	#endif
-  1304		case 3:		/* twi */
-  1305			if (rd & trap_compare((int)regs->gpr[ra], (short) word))
-  1306				goto trap;
-  1307			return 1;
-  1308	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
