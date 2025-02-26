@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-534010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34D9A46174
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:58:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B656A46170
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221BB189C2AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7589189076D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14AC221713;
-	Wed, 26 Feb 2025 13:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4177422068A;
+	Wed, 26 Feb 2025 13:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bPuQKdaa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2p6aK+cl"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S5jiPQm7"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3EE2206B3;
-	Wed, 26 Feb 2025 13:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E7784A2B;
+	Wed, 26 Feb 2025 13:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578269; cv=none; b=r3nGw7D7OVML3YM26NHj+pOYKAwv8cbwbwlFQ7T6C5zoWFtqcD7aeMbaoHlny5R3VXn1k+sYnEMuL9/YYeQTS/H/DdZYJgLQDO6S7spBdxOmTv8dZI4J14CHU0u1PMjrCi+z9ctkiuw2puVteiC32NhczRJ4JjaJWleW9KnhaxU=
+	t=1740578265; cv=none; b=idHWUQ/RQOIJjJfdUBz3S2HehJO6XvYGJlCGGs6ZR5Tkr/v+A2Nti5mRxz8BIccjCtP96j+q6iESA3sXaqv4QDRwsptvyseSCipTReW3Mus9acWmNy7r/M+UW+7pjWJN69BOolwjr579hQnRu6PICb3nwfA/NFrRH1FlvmEVsLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578269; c=relaxed/simple;
-	bh=6JvcNFx82rB512YBjhx8YLiZH3NuPw+ATigJCfDcCBU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MbymlWRgVyLv5GWcPdxdyz1zfNiyfUJFohdlg7Oo9PSfzXvNppHx3bI+O95IEfr3dMLjnoRE7wcXAQlixifLS5m2Uquev6o1NYFzTZ0Xuu8MaZbFzIVIEBre6tOqQ5ovxmrMZvf6CEpP34Ty/kIyJa5Brdw8lvTTifWjduKdX9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bPuQKdaa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=2p6aK+cl; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7B639114014E;
-	Wed, 26 Feb 2025 08:57:45 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 08:57:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740578265;
-	 x=1740664665; bh=tZXytPiubmxqPIS8uOUahYJafTAcorBGJm/Sc4uY4DM=; b=
-	bPuQKdaamYG6X7c/5heRAnYVR/n2WZ7jUfo+l69evzOhlDVujNWHITYgXwsS56jd
-	9c8wjcoZUFFXkRbqFKjzCqNn1zL17DGGMfg/RClEJh/UIm6zW921ozhV3LSrvWNS
-	Fk8EYeB2URFSgX268hc24t7BHJhh6K/JylEbZvuDw4pF4uijwomW2pVmVaUSq3ve
-	V/KPZgKTg0ntp0L0NIwKqlaJDDY3rCbfQXSM6ZtELPhF5zdAI5vTq97TA+F0lzI+
-	eIkxHEVeMP80AQdMfvnj/6U9x46wFxawG4fEs2h2t9bCNetTIB/ZBcfcgA3JvlGZ
-	QbgbW4TF89dMP2t6T0hQKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740578265; x=
-	1740664665; bh=tZXytPiubmxqPIS8uOUahYJafTAcorBGJm/Sc4uY4DM=; b=2
-	p6aK+clTQqinvRokGkoHOeAee7Ch/BcjiIgvYptz7ndme10+I7qdFx71/QpqYB+l
-	dkOjvzxZYJCrhg3PJ7+4OiqfD2YQjARnjHim9UBKXfNnHCLVwHDU4+01vy//Bqp8
-	LweavQ6jEHFaJCfKQ3Lg/fNuo/b/sdF4xwADT77nY7R5UefknIRwPHytDnqXEiDU
-	EYABC2C/u/uGN5NKiGWWm+gvQdSjugqYEhyMcoL0ix2c3S8bVZcc2y8hU5/8O4i1
-	2U5vpXZu7jOdSfCm5nh6F7Xj3McUMNpfsHAvKu+x4D7eqkbYDzWEZQ4fe2J+2FoU
-	iZ/GaS+SGDehHCOSTSnNg==
-X-ME-Sender: <xms:2B2_Z1NcLAU-ocoX2xOcC9doPyQMM3SzO-PZ0i4O0har6bE_x4wHmw>
-    <xme:2B2_Z3_9T20zc6f9v3gcS7Kty6-a1TxmrFM2q37e5uXIA_Hx9r09_Mm7BRyDhvqi_
-    _nJ-mxRoMsDEyt1_AE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeejiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
-    thhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheptghonhhorh
-    doughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlphhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifvghirdhl
-    ihhusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:2B2_Z0RhQzPCtPcX6rnHEdjOg46NTqG6e_kTNaFU-IVZMBqB6pFrcA>
-    <xmx:2B2_ZxvupkTidtC7S2F9HnrLl5IlU8tGgVOtQPtM1TAcmjBJMC2VfQ>
-    <xmx:2B2_Z9dnJ1xpQw-EStIG715rto0DeXe3SvYUODF7_HQNMR3EWyhxwQ>
-    <xmx:2B2_Z938LFEianfpCf7BbxOUaqE57XrdfvncdzqRzXROWA9LXO4Ixg>
-    <xmx:2R2_ZzHMsUfh9E43ZZvmvsw-qTD_hFBFCxx1blsqPSVrLbygxzPLoM2e>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A74052220072; Wed, 26 Feb 2025 08:57:44 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740578265; c=relaxed/simple;
+	bh=ws+1InrmhUma9fc64ZXG8y61cOhUI8SBlb6SItvojkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e3qI8+FwGrTnJaNor5YlLkmvrLVMwGHMpGo3NHeDAlcHqD9e/yjTA8EJkBJhscdNVG+0hwcfXrjJL52vZSRzPVwYh+0cqmFB5oMWJFUt6x8XkY8rmYh0RVO1RKOVKlN+yaqQNKNCe7UcZvRVxBrarRApYhf1FfqQWNdoxnglBe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S5jiPQm7; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QBYJpD027919;
+	Wed, 26 Feb 2025 13:57:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=NM2X6lTw/OSkrzDZOuaw2o8ET7uOo8
+	VB1Ds9KIx42aA=; b=S5jiPQm7xEDrKcFIWVYHUh1VgFKPS9ydn2+zvvbRFlxzao
+	ndkyhP+bgh/8KZv2gPo6r7nOY9EGzsjzjlooKc9Sm/5IV3GKBYhPQfBmeNroDwoJ
+	89V/zeHkMISWZ3mWMJyf1xyPrmZcaOkBm+Z8Rj9iHAU5+QvPZYkMUaybxlfMq+WR
+	RGiL5oPcSM6BhYR8n9gsUN3cGz1tMmepIKLMWFmX2Iu3SEjqyvpxfy+3Tvyx8gnP
+	wwGutsJdwEr7Z2kbVVDG0kOkaIuakRdG+bgfYvj6lhR0j8a99lzMicRtlj1RuSjT
+	7zwvQ2xn6n3noTR/V/OUlznJe9hPvtNgpgRz3Y6g==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5jbg1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:57:35 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QB4qxE012735;
+	Wed, 26 Feb 2025 13:57:34 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwsu62k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:57:34 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QDvVhe54198710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 13:57:31 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CA9020040;
+	Wed, 26 Feb 2025 13:57:31 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E614F20043;
+	Wed, 26 Feb 2025 13:57:30 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 26 Feb 2025 13:57:30 +0000 (GMT)
+Date: Wed, 26 Feb 2025 14:57:29 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3 5/5] selftests/ftrace: Update fprobe test to check
+ enabled_functions file
+Message-ID: <20250226135729.23133A21-hca@linux.ibm.com>
+References: <20250220202009.689253424@goodmis.org>
+ <20250220202055.733001756@goodmis.org>
+ <20250226105028.16208A53-hca@linux.ibm.com>
+ <20250226084759.05a4d573@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 14:57:24 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Roman Kisel" <romank@linux.microsoft.com>
-Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com,
- bhelgaas@google.com, "Borislav Petkov" <bp@alien8.de>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Dexuan Cui" <decui@microsoft.com>,
- "Haiyang Zhang" <haiyangz@microsoft.com>,
- "H. Peter Anvin" <hpa@zytor.com>, krzk+dt@kernel.org,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Rob Herring" <robh@kernel.org>,
- ssengar@linux.microsoft.com, "Thomas Gleixner" <tglx@linutronix.de>,
- "Wei Liu" <wei.liu@kernel.org>, "Will Deacon" <will@kernel.org>,
- devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Message-Id: <fe0221bb-b309-4e4b-a098-f6a246ac1f60@app.fastmail.com>
-In-Reply-To: <a96f9469-a22e-43e7-825d-f67ef550898f@linux.microsoft.com>
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-2-romank@linux.microsoft.com>
- <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
- <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
- <97887849-faa8-429b-862b-daf6faf89481@app.fastmail.com>
- <6e4685fe-68e9-43bd-96c5-b871edb1b971@linux.microsoft.com>
- <14a199d8-1cf3-49bc-8e0d-92d9c8407b4f@linux.microsoft.com>
- <55b65ba6-4abe-478c-a173-4622c30ddd7b@app.fastmail.com>
- <a96f9469-a22e-43e7-825d-f67ef550898f@linux.microsoft.com>
-Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect hypervisor
- presence
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226084759.05a4d573@gandalf.local.home>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QxbrBEOusbeZdoXbAZ2qcOwlJ4fuUqkp
+X-Proofpoint-ORIG-GUID: QxbrBEOusbeZdoXbAZ2qcOwlJ4fuUqkp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=489 phishscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260108
 
-On Tue, Feb 25, 2025, at 23:25, Roman Kisel wrote:
-> On 2/24/2025 11:24 PM, Arnd Bergmann wrote:
->> On Tue, Feb 25, 2025, at 00:22, Roman Kisel wrote:
->>> Hi Arnd,
->>
->> If you want to declare a uuid here, I think you should remove the
->> ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_{0,1,2,3} macros and just
->> have UUID in normal UUID_INIT() notation as we do for
->> other UUIDs.
->
-> I'd gladly stick to that provided I have your support of touching
-> KVM's code! As the SMCCC document states, there shall be an UUID,
-> and in the kernel, there would be
->
-> #define ARM_SMCCC_VENDOR_KVM_UID UUID_INIT(.......)
-> #define ARM_SMCCC_VENDOR_HYP_UID UUID_INIT(.......)
->
-> Hence, the ARM_SMCCC_VENDOR_HYP_UID_*_REG_{0,1,2,3} can be removed as
-> you're suggesting.
+On Wed, Feb 26, 2025 at 08:47:59AM -0500, Steven Rostedt wrote:
+> On Wed, 26 Feb 2025 11:50:28 +0100
+> Heiko Carstens <hca@linux.ibm.com> wrote:
+> > # cat tracing/enabled_functions 
+> > free_user_ns (1) R         
+> > bpf_lsm_path_mkdir (1) R   D   M        tramp: ftrace_regs_caller+0x0/0x68 (call_direct_funcs+0x0/0x20)
+> >         direct-->bpf_trampoline_6442505669+0x0/0x148
+> > bpf_lsm_path_mknod (1) R   D   M        tramp: ftrace_regs_caller+0x0/0x68 (call_direct_funcs+0x0/0x20)
+> >         direct-->bpf_trampoline_6442505671+0x0/0x14e
+> 
+> After I submitted the patches, I then remembered that some user space tools
+> add BPF programs that attach to functions, and those will show up in the
+> enabled_functions table (that's a feature as it is always good to know what
+> is modifying your kernel!). And I figured it will break this test.
+> 
+> I decided to wait until someone complains about it before fixing it ;-)
+...
+> > 
+> > This could be worked around for example with something like the patch
+> > below (against linux-next). But no idea what your preferred way to
+> > handle this would be.
+> 
+> Actually, when I thought about fixing this, your patch is pretty much what
+> I was thinking of doing.
 
-Yes, I think that's the best way forward, as it improves
-the existing KVM code and all future functions like it.
-
-    Arnd
+Ok, I'll send a proper patch then.
 
