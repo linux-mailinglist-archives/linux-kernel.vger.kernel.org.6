@@ -1,105 +1,162 @@
-Return-Path: <linux-kernel+bounces-533897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C955CA45FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:01:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75F8A46023
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4FB3ABC26
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F27418943BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C0921B9C6;
-	Wed, 26 Feb 2025 13:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA0421B9DE;
+	Wed, 26 Feb 2025 13:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kXJduQeG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kv0dbezb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D88313BAE4;
-	Wed, 26 Feb 2025 13:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355A21D3E7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740574872; cv=none; b=IPjIu7gUXd1agHD61UoUC5a9C97+CYverJkoHlFKub4UbYW/+qjKTgWvDRdsldbdPUZLQPCjYdefCkfc4WKwbP5mqNMzJZb00MxXvpC76nNsOUrGTfgIoIR5gA3BZuuhBYj2JSDiVpRPrecHdSUNyqhrG8nxrA5ENQhO02pSD1M=
+	t=1740575011; cv=none; b=H4QJnBLBPLFmuiU3jvGAeNsykdh2QBkmzMgYXtRms4/weQ0ElI9m5Fw7UwBZzreIkK1OuL3sMLl29gZNfDot5pS9Vy7t2bDIJJZ/Rdun127SlPQ3yfXxuLNInhJ+ozXJi+hnsG0gjAobfUHaGdLEUYskH+uwnkRfkHpW2/cXhIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740574872; c=relaxed/simple;
-	bh=A8QKChVlUKsBmVYbUeoNA+VyGNYEQSe0FDjm2a4c2W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fw3P0yx1eYULQtg5Ixt0HH/1Rx3w6ZEroBDZ08uQpZU3uIkpCB9v88cIuq/Jh2NKyxukuY6RxwThBF2CftA1L0U4u2BQ8Kc0RInJpZZFcs7ms6396pHT5urPk4DWhj6ybhUJ4AdL0Vb98i4AzE8Fl/FXRpiypUHPjyNSfnDqBik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kXJduQeG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740575011; c=relaxed/simple;
+	bh=PoxKI0ploMO04bMecVMc9KBs5Z5x4tVBjLfD2git3RU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KUQk94zyCkhwIa4K5OtYfdI1Zg+g24m7aoaQb83nAIMlNVXj6rJUD90JAwcZfc56fKP8qCFUY7m7g4JSZG5eGIsNitu9sXYkyOoG/Y630+Sd/xOULB6i6CEnpPZr/03yWxZaxFQ6q2LM+37WShOagfF2NNIb5DTVpYHHNE100BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kv0dbezb; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740574870; x=1772110870;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A8QKChVlUKsBmVYbUeoNA+VyGNYEQSe0FDjm2a4c2W4=;
-  b=kXJduQeGez3jrOnQEr6kOfSE/5GVsvd1aBjyUurZiFcjYEi5ltAd/sTB
-   uas54K74+a/sS+2cZJgv/iDiSlPiRvZB1rkLYfYjZ/wT62m1J+Cpk2dge
-   mTDK70zJ/YZ6/rjWQllsC+deI5jT4LsmIRa1vUcf97Ilt1bDtMZDAJSJt
-   Dihquxy1wSv+zs3v3FZ0EcjtyQ//7jOp1cv2KGEPxb0DjqqcfxtqqN3Vo
-   E5kN2LY5drO//81b0E1I5jP96Uc+65K+JDCxc34aNngbxvi4UehS6j9na
-   M5Qc8ykMjSq0mpwhLLGReIoBnu4hHoO1nWCKxL8wpivZqXAUxXZMuo5ak
-   g==;
-X-CSE-ConnectionGUID: l8IxWQ/pSomJPLB0iXIXuA==
-X-CSE-MsgGUID: PJAUGhU7Tjy1Mzh4Vkmbpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52050650"
+  t=1740575010; x=1772111010;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=PoxKI0ploMO04bMecVMc9KBs5Z5x4tVBjLfD2git3RU=;
+  b=kv0dbezbwbl3bMEkAm8xuI7sYx/4SCtxVHcBM92/ZyEaapIDBvZutlHN
+   Bzk7oIVswi6UONNxmzxpdAsJQ3J54ZScwlkXvJ30aPn71dSV34Db4m7NR
+   NcAt1fwmbcQiccz+rKz5VbgcXlCVdpDr2NPkdlCwHKxs6mt/YB/7IHs6f
+   9SYedcpOnX8K9F5P/7ZSSxsz6osKcbsRwkrgdD3iOzs7jtngj0AjjzYA+
+   NL9CDWFH2LaKhgMp3a/l2PUDLVGth01BZhR/IW67vySklFVDs5a8ly8Hm
+   XmUUJnRYQiCHGtcL5aLa5pnPynGsUnWa403vZDofhThA/SxenNLYcqhdp
+   Q==;
+X-CSE-ConnectionGUID: 3bg0ERbZSLmaNaNKcTalfw==
+X-CSE-MsgGUID: YVyUcfj1Tza+s1tuxWimog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41341587"
 X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="52050650"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:01:10 -0800
-X-CSE-ConnectionGUID: 0ZO+v/QpRxWHq/ccWnfWhQ==
-X-CSE-MsgGUID: BfU+kwl/R6esYFOaoReFUA==
+   d="scan'208";a="41341587"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:03:30 -0800
+X-CSE-ConnectionGUID: naYMxRl1SZ2Fv7oe9OpBxg==
+X-CSE-MsgGUID: FliEkHF9QHeMqaBpXsQl2A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121945785"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:01:08 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 97F7211F944;
-	Wed, 26 Feb 2025 15:01:05 +0200 (EET)
-Date: Wed, 26 Feb 2025 13:01:05 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Richard Leitner <richard.leitner@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
-Message-ID: <Z78QkUcv8-CBbvBS@kekkonen.localdomain>
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
- <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
- <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
- <ljhusn3jkbq64rn2ureul5kurenjwrtu7ppv5jjx5i542goe65@h4oltlieomfp>
- <CAPY8ntD3k48cPfOQK2iEveLHahhFMV9JMwfq3sV-SvnrsZkxng@mail.gmail.com>
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="121690825"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:03:24 -0800
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Oren Weil <oren.jer.weil@intel.com>,
+	linux-mtd@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH v5 06/11] mtd: intel-dg: align 64bit read and write
+Date: Wed, 26 Feb 2025 14:51:38 +0200
+Message-ID: <20250226125143.3791515-7-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250226125143.3791515-1-alexander.usyskin@intel.com>
+References: <20250226125143.3791515-1-alexander.usyskin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntD3k48cPfOQK2iEveLHahhFMV9JMwfq3sV-SvnrsZkxng@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Dave, Richard,
+GSC NVM controller HW errors on quad access overlapping 1K border.
+Align 64bit read and write to avoid readq/writeq over 1K border.
 
-On Wed, Feb 26, 2025 at 12:52:46PM +0000, Dave Stevenson wrote:
-> > So please feel free to ignore this patch. Should I send a new series
-> > with just the two minor patches of this series? Or should I include them
-> > in the next series for the ov9282 driver?
-> 
-> Up to Sakari.
-> The other two patches have my R-b responses, so taking those two and
-> ignoring this one should be fairly simple, but it just depends upon
-> workflows.
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+---
+ drivers/mtd/devices/mtd-intel-dg.c | 35 ++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-I can pick the two first patches of the set now.
-
+diff --git a/drivers/mtd/devices/mtd-intel-dg.c b/drivers/mtd/devices/mtd-intel-dg.c
+index 062e17b7d99a..785a52f2803d 100644
+--- a/drivers/mtd/devices/mtd-intel-dg.c
++++ b/drivers/mtd/devices/mtd-intel-dg.c
+@@ -238,6 +238,24 @@ static ssize_t idg_write(struct intel_dg_nvm *nvm, u8 region,
+ 		len_s -= to_shift;
+ 	}
+ 
++	if (!IS_ALIGNED(to, sizeof(u64)) &&
++	    ((to ^ (to + len_s)) & GENMASK(31, 10))) {
++		/*
++		 * Workaround reads/writes across 1k-aligned addresses
++		 * (start u32 before 1k, end u32 after)
++		 * as this fails on hardware.
++		 */
++		u32 data;
++
++		memcpy(&data, &buf[0], sizeof(u32));
++		idg_nvm_write32(nvm, to, data);
++		if (idg_nvm_error(nvm))
++			return -EIO;
++		buf += sizeof(u32);
++		to += sizeof(u32);
++		len_s -= sizeof(u32);
++	}
++
+ 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
+ 	for (i = 0; i < len8; i += sizeof(u64)) {
+ 		u64 data;
+@@ -295,6 +313,23 @@ static ssize_t idg_read(struct intel_dg_nvm *nvm, u8 region,
+ 		from += from_shift;
+ 	}
+ 
++	if (!IS_ALIGNED(from, sizeof(u64)) &&
++	    ((from ^ (from + len_s)) & GENMASK(31, 10))) {
++		/*
++		 * Workaround reads/writes across 1k-aligned addresses
++		 * (start u32 before 1k, end u32 after)
++		 * as this fails on hardware.
++		 */
++		u32 data = idg_nvm_read32(nvm, from);
++
++		if (idg_nvm_error(nvm))
++			return -EIO;
++		memcpy(&buf[0], &data, sizeof(data));
++		len_s -= sizeof(u32);
++		buf += sizeof(u32);
++		from += sizeof(u32);
++	}
++
+ 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
+ 	for (i = 0; i < len8; i += sizeof(u64)) {
+ 		u64 data = idg_nvm_read64(nvm, from + i);
 -- 
-Regards,
+2.43.0
 
-Sakari Ailus
 
