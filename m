@@ -1,100 +1,70 @@
-Return-Path: <linux-kernel+bounces-533450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92140A45A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CE1A45A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC5B37A5096
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6FE3AC9AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909B1238163;
-	Wed, 26 Feb 2025 09:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DFC2459D8;
+	Wed, 26 Feb 2025 09:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K18et+uI"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OAyxZ13v"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789122AE9A;
-	Wed, 26 Feb 2025 09:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8BD2459CC;
+	Wed, 26 Feb 2025 09:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563327; cv=none; b=oYEhKhVTnf7D34yidv3vK8kECqoJcaSIK+/98qrRKcwNyFhqZ2xn1u1hxeUEhzHY4xwbsqWyGRnCb94UZxOL9MkdGK/ohVuA40R91JcvGxYAkjRrcGZAoq8oZdtpTBn2kdxMQEygMwWVKxMotOXzegBCMljEXk6EDRMnJHb5qdM=
+	t=1740563332; cv=none; b=ZMVWMYhxkMzgrqLE2H3yABLOUZrwM1XAWCfO7AcwLGcVjSr1hytPIYG91JriekQfTD0YvrADD4eyigK7ZUx8FY28jk8bvaZLJXcn1Jr2NX/E9Le496HJk5akfliRdD0u+Ychl0pMjEhL7cksc+DM1/yTd8w/5wG2FBTRe6ntCXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563327; c=relaxed/simple;
-	bh=YHnWMxsDd4NI3G57XP3K3uhiH2OsB3c9BFnE3iwI+R4=;
+	s=arc-20240116; t=1740563332; c=relaxed/simple;
+	bh=QP93zTpIBj69URrJI/doxAsbsvpPaRP3UufccvOM9RI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cc/UpfxmJ8Uu/hA+8eMoEEXoimXmcM23UGq7zpNhpwYnraeLysZUk5jwRekdU8OD1NDE15qfKggmAy4Ah9wb2SZahl5dFC20wN9qQP1zT5zKGYxRdqc+hRAnBnpBc9tAhAZykFiHjh4/rzlIorFzqhTnvwl1x52Q7Wum3P49PiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K18et+uI; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso1113801a91.0;
-        Wed, 26 Feb 2025 01:48:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740563325; x=1741168125; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLcQO0F1bTUCUpJSJ+y0elRMBmjObmFBfYrryjf1JY8=;
-        b=K18et+uICN9DCMmdeyVcVVaBkpMS7rHSOBkvHCwsO0JhW3pw4lUzvDhC7QAw6jAsYi
-         VxQtDocSn2MhToJ7+YFRvWT9Iycfjb+3PcWoVTa4AMbvv6zO4gVyMQMGYW5MeCBKIi9j
-         tFgnS1a0M+hI0y3qdkapYpSygRwwlPV3UIwbCrz60CnWbqM1S4nTl2iJB9U7etz3a6oH
-         XGplcSQrt778yAjm+lArVMHr7wPCdkLjgjYpXyDDrFY6pwoHdBUcBsPgrKF9+9QDzyDo
-         7lVcQnm9fZR/sTOR+EZCuVqCfSmI2bhW2AwngCAr+Nk9C3uVXMlgg4ROPcpxaswVAfi9
-         XZzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740563325; x=1741168125;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLcQO0F1bTUCUpJSJ+y0elRMBmjObmFBfYrryjf1JY8=;
-        b=I/NwTdoeVAPQ4DgmmXHmPvNRrqJzD9CL1aahfHuURUx8Z8XJULOcEg/Kwy4juNtTqO
-         HSFnxmvJQIGspAah3F3AZzPDZiMiqE8La+DEiiVuzln3ITlf1TWOR6Pk5hj8ew5on9uI
-         Q2RraH2B8QlEL/7kAC3o331NesDVJ/6+7oxg/TvWkaksiGZGE6HFZC2wFjdVdX9G2gGX
-         wRImfyHBeP76LYIDCXt2DWIdrOJzha46lhRnlwQxCFKEAHrBSXEeoz1hVFyT+N6pw3Zx
-         J7/4z/WcsvtQ5f6y9oCDncRfH+xlsH7qQi2UZ8ABVSXiqKIIUQB2zH8ttwTFNiUqGHaH
-         BRXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZgWG4wGhhUxJkRv5IIs8/pgG4fAogAyD7pHstfnFWMEUQasEhnQoJG6Eh4Tdlimn64vCNocUhyQLs56kO+LtD@vger.kernel.org, AJvYcCWdRJ2ln8xuP2wNVuoe6tGGAPKEtN8mcKl63ecCQ9zXT/rZ2t614g4wa/wf4bHdFJkhQB5xSjkOLorBQ2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1+HU5CBM5hptsRsqCqPcQZWU9xl87tfogXO1cpHuPmO4lPYHB
-	T2nTx92f8WMZ8OdTQAVN1yJnmHU6kzi7PYn+qp34y8Ccy+ShRAlq
-X-Gm-Gg: ASbGnctU5B8oE7w4xXGy6do1fijdi8RtnOv5QqIhP3MbX4Mw9PA5puJYUMdadCPu0I7
-	OlCedlKVDbO79shitnH/bITmcdVogjGxa3r/Fx5Pe+4H0Supv49JVMP+CJOIqQWLNLcgOqN2fpy
-	BZwbKfFAa4Y+Vm7286KOeAeviqQCyqhv1hisKk58orysV4kyjNheLDq2ptXOVT/7w2pF9LXBWWr
-	pk7UaKB7iiLW0BIrLGJM/dho6eNIIAfrutx/IvAGRrrRaq7oGtykjivd+uIOBlUMuQXlrlqtjHU
-	VlT6hTRjOb3/8t6DV6DpcPsD2za3z/Y=
-X-Google-Smtp-Source: AGHT+IFlo4foFMWPg/DN45x8tUVnr6ByaRax2qGODemzI9Qn99M3p6q6BuIgPgp4/81TS1aJavK+Nw==
-X-Received: by 2002:a17:90b:1f8c:b0:2fa:9c9:20a3 with SMTP id 98e67ed59e1d1-2fce763d546mr36534184a91.0.1740563324499;
-        Wed, 26 Feb 2025 01:48:44 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6cf92bcfsm1844153a91.0.2025.02.26.01.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 01:48:43 -0800 (PST)
-Date: Wed, 26 Feb 2025 09:48:35 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Cosmin Ratiu <cratiu@nvidia.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"jarod@redhat.com" <jarod@redhat.com>,
-	"razor@blackwall.org" <razor@blackwall.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
-	"jv@jvosburgh.net" <jv@jvosburgh.net>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	Jianbo Liu <jianbol@nvidia.com>
-Subject: Re: [PATCHv2 net 1/3] bonding: move mutex lock to a work queue for
- XFRM GC tasks
-Message-ID: <Z77jc8AB3D2xWczl@fedora>
-References: <20250225094049.20142-1-liuhangbin@gmail.com>
- <20250225094049.20142-2-liuhangbin@gmail.com>
- <d298da7bc638c323e6d492b2dec7f1b9ea1e1350.camel@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8YC/YuGxKnKClnV993ghAu5QfaM+9jmt7AOXBuu2iDY44uPKXc6e+syYLSy6b00iENFg28+Jgfw/YkC5YqH9zr2PlgwMGzED5wM47h/vyRelKNtjAQG2bqlw79XbS8jHx5PyAqVGIoFuV8MLJJMIIFJRFmjYNYmsQjZ8hS0yfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OAyxZ13v; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=871hFDdRTS+OmWOz6zBCg95pt62GNhL4S6ODQibnhm4=; b=OAyxZ13v6drg2o41uBYCpG7hpY
+	YYwg7sFxGpGwOQLo/KE1Q0SNOr+2oXD103PoW7Z1HHVk+d5+BC3jxteMpEXlS/wzDMkE1m3+grPOS
+	Ru8iG2HGLHa6XRSpxnIx5Pz6kOMJwdJyWkz7bOTEgnSgwp/V1lYewaz6bi1r6JX2e/TVtCuywrDxP
+	xbsBMClWmez6YU2/rqC8izSbVTVygxW+aKGRi57QYct//tXbzL0o658FrQkvAuXvxZNvj9nYaGW5M
+	pokONrO/k8BZbDDXakEQ9Bz2iB00aRUnG2Hh+8RLOQvEKFbWlLhew/4ggqJLkFo6i1wTGVUcU2J48
+	CHjTNZJA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnE1y-0000000Ep3b-2VNh;
+	Wed, 26 Feb 2025 09:48:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 992A3300677; Wed, 26 Feb 2025 10:48:41 +0100 (CET)
+Date: Wed, 26 Feb 2025 10:48:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+Message-ID: <20250226094841.GT11590@noisy.programming.kicks-ass.net>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+ <20250225112543.GM11590@noisy.programming.kicks-ass.net>
+ <000043b8-1284-46f3-b117-9ece905f218e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,92 +73,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d298da7bc638c323e6d492b2dec7f1b9ea1e1350.camel@nvidia.com>
+In-Reply-To: <000043b8-1284-46f3-b117-9ece905f218e@linux.intel.com>
 
-Hi Cosmin,
-On Tue, Feb 25, 2025 at 02:00:05PM +0000, Cosmin Ratiu wrote:
-> This got me to stare at the code again. What if we move the removal of
-> the xs from bond->ipsec from bond_ipsec_del_sa to bond_ipsec_free_sa?
-> bond_ipsec_free_sa, unlike bond_ipsec_del_sa, is not called with x-
-> >lock held. It is called from the xfrm gc task or directly via
-> xfrm_state_put_sync and therefore wouldn't suffer from the locking
-> issue.
+On Wed, Feb 26, 2025 at 02:19:15PM +0800, Mi, Dapeng wrote:
 > 
-> The tricky part is to make sure that inactive bond->ipsec entries
-> (after bond_ipsec_del_sa calls) do not cause issues if there's a
-> migration (bond_ipsec_del_sa_all is called) happening before
-> bond_ipsec_free_sa. Perhaps filtering by x->km.state != XFRM_STATE_DEAD
-> in bond_ipsec_del_sa_all.
+> On 2/25/2025 7:25 PM, Peter Zijlstra wrote:
+> > On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
+> >> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
+> >> buffer physical address. This patch allocates arch-PEBS buffer and then
+> >> initialize IA32_PEBS_BASE MSR with the buffer physical address.
+> > Just to clarify, parts with ARCH PEBS will not have BTS and thus not
+> > have DS?
 > 
-> What do you think about this idea?
+> No, DS and BTS still exist along with arch-PEBS, only the legacy DS based
+> PEBS is unavailable and replaced by arch-PEBS.
 
-Thanks a lot for the comments. I also skipped the DEAD xs in add_sa_all.
-What about the patch like:
-
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index e45bba240cbc..0e4db43a833a 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -537,6 +537,12 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
- 	}
- 
- 	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-+		/* No need to handle DEAD XFRM, as it has already been
-+		 * deleted and will be freed later.
-+		 */
-+		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
-+			continue;
-+
- 		/* If new state is added before ipsec_lock acquired */
- 		if (ipsec->xs->xso.real_dev == real_dev)
- 			continue;
-@@ -592,15 +598,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
- 	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
- out:
- 	netdev_put(real_dev, &tracker);
--	mutex_lock(&bond->ipsec_lock);
--	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
--		if (ipsec->xs == xs) {
--			list_del(&ipsec->list);
--			kfree(ipsec);
--			break;
--		}
--	}
--	mutex_unlock(&bond->ipsec_lock);
- }
- 
- static void bond_ipsec_del_sa_all(struct bonding *bond)
-@@ -617,6 +614,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
- 
- 	mutex_lock(&bond->ipsec_lock);
- 	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-+		/* No need to handle DEAD XFRM, as it has already been
-+		 * deleted and will be freed later.
-+		 */
-+		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
-+			continue;
-+
- 		if (!ipsec->xs->xso.real_dev)
- 			continue;
- 
-@@ -666,6 +669,16 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
- 		real_dev->xfrmdev_ops->xdo_dev_state_free(xs);
- out:
- 	netdev_put(real_dev, &tracker);
-+
-+	mutex_lock(&bond->ipsec_lock);
-+	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-+		if (ipsec->xs == xs) {
-+			list_del(&ipsec->list);
-+			kfree(ipsec);
-+			break;
-+		}
-+	}
-+	mutex_unlock(&bond->ipsec_lock);
- }
- 
- /**
--- 
-2.46.0
-
+Joy. Is anybody still using BTS now that we have PT? I thought PT was
+supposed to be the better BTS.
 
