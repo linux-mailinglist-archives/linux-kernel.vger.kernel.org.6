@@ -1,142 +1,369 @@
-Return-Path: <linux-kernel+bounces-533183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C04A4568D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:23:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02764A456C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC27316A267
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76EA7A2BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00E269B1C;
-	Wed, 26 Feb 2025 07:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B86A26B97E;
+	Wed, 26 Feb 2025 07:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t8LDdl1j"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="sHkZr6Gu";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="qzo5Dqqe"
+Received: from mx0a-0014ca01.pphosted.com (mx0b-0014ca01.pphosted.com [208.86.201.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250B51993B1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554587; cv=none; b=XzaCqC3C+tf17S2nb639WaF439WSIFZ2Py/7sMinQwQqdF22q1DtDLueVAn6uOHPuaBAPtyIijR/ovzAuJC/uHNeLUEYeiEXkU0hNhGQ7pCXQ8KwicAiT/0zJ7y+sN+dsqRhEbwg0Ry0yxxWt77d1U3VmiFRqrxP3y0/hkTFjek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554587; c=relaxed/simple;
-	bh=eHGaW29Cr2Hlr/1eF6CZ4olB+Jsv5yiB7eZxMMiiz0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A7JwXF95OF9SR57hOTSdQLWawXdYLKWvPIph8XAtBLb2VmGDF5WNZBMzGbf+VsM+DX+SaxECYdEfzZvbd283pVSWBTc+Z/AfXJQhrtir214szo02ZP0hQxg63XFhE31u76mri4wolZfvTpeGQ1SJTXLOZbQqNNwZoSVEPhsaKzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t8LDdl1j; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740554581; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Qsij7OF84wNUFWpZiJMKkhiePiHWb5NpTxQGGeVUXXg=;
-	b=t8LDdl1jCUX0VOh+Myjv3sLKHxG3/sinFkFAWDsHtZf5tzx+xTJv6rB9lHdD0dl61Gbh50UyZimkQQMDTpoibI/aJJIBZwMwYA10226iSubwZyhD3ktihgNG5sGrPo0NwwE5mq0URF54cFHH5woT8dulHINeQ0Pso/uKQUiFIIw=
-Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQHJRGw_1740554579 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 26 Feb 2025 15:23:00 +0800
-Message-ID: <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
-Date: Wed, 26 Feb 2025 15:22:58 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5693B17F7;
+	Wed, 26 Feb 2025 07:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=208.86.201.193
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740555428; cv=fail; b=dO0wm+3ZqXOnTDT5EkPT5Wi0CA6U/Y1u47nNNdPTc6exa7JIcPqG3HKF75DDhWk6B+2i40i7YP2PaGvFKmaAeeM7S89Y9zr10Z7/eUFjeoBxGoc3wXj0Eq4TR6zs39vKk3ca7Duz1snJbf9YLiNtEAC3JW5Wt+BmN6Edu3MlkTA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740555428; c=relaxed/simple;
+	bh=ySXvUdmBxQtnUwWVFfGDzaEjneJ85OlMj4qTvEPXUeY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YgE3sGitpctacAIO3dC1BPJY/XdjGz+IjznTahsui3LiHRfYe7v1uwkYbjEwtcwh1Drc/jehjsmp/AvRwzBVvNIpx+IoHTPZTFYDWYuQk29fcLH1GcDjA+j0r8qtmXhFVjlOruVMBJ1SSW+MrchLc17+KcIA9ZZmUasoKQ4H8Mo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cadence.com; spf=pass smtp.mailfrom=cadence.com; dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b=sHkZr6Gu; dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b=qzo5Dqqe; arc=fail smtp.client-ip=208.86.201.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cadence.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cadence.com
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+	by mx0b-0014ca01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMaPuB026070;
+	Tue, 25 Feb 2025 23:23:20 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=proofpoint;
+	 bh=47jMKvR8HipXl5NHGPOJmBB8zM07WqqZFNER8e4HeUg=; b=sHkZr6GuwcCq
+	5RwehOcyQhsW92NTBpufAooQxbDAh1MDp5Bftcu16nQ8nGN16xA3p9U16DO+3N2U
+	PAY3vR/Ue0+f8OVU9bKX9KunmxkirA7n/C2+H5PEr5sGjOZqtRk5xeA//XuQdzAB
+	+IxxNAzPurDkC/dhp2VjODOoCibU8/kvp0zCSbFhQnh6gXa90QMvq8NP2qQ86Wxb
+	vNqP5doNHXt+M9TEaFF/FzsI2OATG8kCWJh37n/sHC+MeuhHyxcZdH862ikx/l+N
+	ZPPoAP4On309jus2xztE5AjqU8XgbTjG1jjZzAwwbq3YL+uIFMvgxmIxclMXHvsN
+	eyC6TEdRvw==
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazlp17012032.outbound.protection.outlook.com [40.93.1.32])
+	by mx0b-0014ca01.pphosted.com (PPS) with ESMTPS id 451pt7hka8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 23:23:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QD0/hDw6/hMauupB8VZYUrMLmK2v7gHPS4eU8uR8x1JN1F+n4MQv82Qw+Zr7jrByfhvh3ZU9bbeIwujaO8C20w78rBqeqni1dYpqDUUbsjCicnytFgdLPL0wNMEkjl5XIZby04GLBAie4Lw2ZIu/T7brOZJuAu+AKoAn3Nk54ZWVk1CTRhaf34jlepewUL34dsfJj8lR5gghud0Ntm0+qw495D5IOb8a6pxVvFWLmfBjOfj0zZMioI/DpmTnt437ubsIPIM2JOVflSmiAFPVHOKZFnhgXcUWAw4eGazDue1BgVIESNx1m9aBo17PozLHFqaYiYGPyZOKXBCOTeRA4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=47jMKvR8HipXl5NHGPOJmBB8zM07WqqZFNER8e4HeUg=;
+ b=U8QNnFp5LQo4JkkESpARzmBLL+xorAZC+Bk9IkJb3LIO8fJ/xhCGzP/10B9qILzmQyUPrGHSw6f9y/6+GNc2oPswqGkZktNOXr0iMd84CzKxqj9nZmhKHwasmm0PDDE0z2XS6VAZsfuQJz8Uxp2i9xnK5ye0hRbfOzyrhZ+uf3mwPIAp0zKk9sK2X4n/WQiTREcCol4SsGcjXyf397+NLUxoyx4OPDAOm+PhmCdnFXM4O172+k0gE5U8u5/KDWYsVQc33Hl88LY+R8YIiPVaFL5hJiyWBnrfX1d/sr0gRYiHhsrxBJ9NWjgnrn3+HHDulEYlqkiX5ExC4kjs2zR/oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=47jMKvR8HipXl5NHGPOJmBB8zM07WqqZFNER8e4HeUg=;
+ b=qzo5DqqeM4d/EFAM71+3ZM5na5GyhB1xSAuSsAS6nI8kuFGO8LyoXmu/YlaRdui7TSIOjvyDrx65F5qqfWwt4If6/a+OtNuX5eQA5P119RzHxBvkYAufXA93TW1pGcZMlIyKzhdOo64wl92zBQim6zjozi+BO59ByPlyVze2JtM=
+Received: from PH7PR07MB9538.namprd07.prod.outlook.com (2603:10b6:510:203::19)
+ by DM6PR07MB7209.namprd07.prod.outlook.com (2603:10b6:5:214::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Wed, 26 Feb
+ 2025 07:23:17 +0000
+Received: from PH7PR07MB9538.namprd07.prod.outlook.com
+ ([fe80::5dbd:49e3:4dc:ccc7]) by PH7PR07MB9538.namprd07.prod.outlook.com
+ ([fe80::5dbd:49e3:4dc:ccc7%7]) with mapi id 15.20.8466.020; Wed, 26 Feb 2025
+ 07:23:16 +0000
+From: Pawel Laszczak <pawell@cadence.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+        "javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
+        "make_ruc2021@163.com" <make_ruc2021@163.com>,
+        "peter.chen@nxp.com"
+	<peter.chen@nxp.com>,
+        "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Pawel Eichler <peichler@cadence.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH v2] usb: xhci: lack of clearing xHC resources
+Thread-Topic: [PATCH v2] usb: xhci: lack of clearing xHC resources
+Thread-Index: AQHbiB5tjmnPswcsHkKXQ8kMhVwcYrNZLX9w
+Date: Wed, 26 Feb 2025 07:23:16 +0000
+Message-ID:
+ <PH7PR07MB95385E2766D01F3741D418ABDDC22@PH7PR07MB9538.namprd07.prod.outlook.com>
+References: <20250226071646.4034220-1-pawell@cadence.com>
+In-Reply-To: <20250226071646.4034220-1-pawell@cadence.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-ref:
+ =?us-ascii?Q?PG1ldGE+PGF0IGFpPSIwIiBubT0iYm9keS50eHQiIHA9ImM6XHVzZXJzXHBh?=
+ =?us-ascii?Q?d2VsbFxhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUt?=
+ =?us-ascii?Q?NmI4NGJhMjllMzViXG1zZ3NcbXNnLTg5Y2JjMDUyLWY0MTItMTFlZi1hOGNi?=
+ =?us-ascii?Q?LTAwYmU0MzE0MTUxZVxhbWUtdGVzdFw4OWNiYzA1NC1mNDEyLTExZWYtYThj?=
+ =?us-ascii?Q?Yi0wMGJlNDMxNDE1MWVib2R5LnR4dCIgc3o9IjY3OTIiIHQ9IjEzMzg1MDI4?=
+ =?us-ascii?Q?MTk0MDE5NTAyNiIgaD0ieFZwV2dHL0YyeHFOWkIzd2pnWDhaVnVBMWxBPSIg?=
+ =?us-ascii?Q?aWQ9IiIgYmw9IjAiIGJvPSIxIiBjaT0iY0FBQUFFUkhVMVJTUlVGTkNnVUFB?=
+ =?us-ascii?Q?R0FJQUFEU2xpRk1INGpiQWNzTWFuQ0VQTmtueXd4cWNJUTgyU2NLQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUhBQUFBQXNCZ0FBbkFZQUFNUUJBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUVBQVFBQkFBQUFoRlY4eVFBQUFBQUFBQUFBQUFBQUFKNEFBQUJq?=
+ =?us-ascii?Q?QUdFQVpBQmxBRzRBWXdCbEFGOEFZd0J2QUc0QVpnQnBBR1FBWlFCdUFIUUFh?=
+ =?us-ascii?Q?UUJoQUd3QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHTUFaQUJ1QUY4QWRnQm9B?=
+ =?us-ascii?Q?R1FBYkFCZkFHc0FaUUI1QUhjQWJ3QnlBR1FBY3dBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFB?=
+ =?us-ascii?Q?QUFDQUFBQUFBQ2VBQUFBWXdCdkFHNEFkQUJsQUc0QWRBQmZBRzBBWVFCMEFH?=
+ =?us-ascii?Q?TUFhQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBTkFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFB?=
+ =?us-ascii?Q?QnpBRzhBZFFCeUFHTUFaUUJqQUc4QVpBQmxBRjhBWVFCekFHMEFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+x-dg-rorf: true
+x-dg-refone:
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFu?=
+ =?us-ascii?Q?Z0FBQUhNQWJ3QjFBSElBWXdCbEFHTUFid0JrQUdVQVh3QmpBSEFBY0FBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNBQUFBQUFDZUFBQUFjd0J2QUhVQWNn?=
+ =?us-ascii?Q?QmpBR1VBWXdCdkFHUUFaUUJmQUdNQWN3QUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQkFB?=
+ =?us-ascii?Q?QUFBQUFBQUFJQUFBQUFBSjRBQUFCekFHOEFkUUJ5QUdNQVpRQmpBRzhBWkFC?=
+ =?us-ascii?Q?bEFGOEFaZ0J2QUhJQWRBQnlBR0VBYmdBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFB?=
+ =?us-ascii?Q?QW5nQUFBSE1BYndCMUFISUFZd0JsQUdNQWJ3QmtBR1VBWHdCcUFHRUFkZ0Jo?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FBQUFBQUNlQUFBQWN3QnZBSFVB?=
+ =?us-ascii?Q?Y2dCakFHVUFZd0J2QUdRQVpRQmZBSEFBZVFCMEFHZ0Fid0J1QUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+x-dg-reftwo:
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJ6QUc4?=
+ =?us-ascii?Q?QWRRQnlBR01BWlFCakFHOEFaQUJsQUY4QWNnQjFBR0lBZVFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBeEFFQUFBQUFBQUFJQUFBQUFBQUFBQWdB?=
+ =?us-ascii?Q?QUFBQUFBQUFDQUFBQUFBQUFBQ2tBUUFBQ2dBQUFESUFBQUFBQUFBQVl3QmhB?=
+ =?us-ascii?Q?R1FBWlFCdUFHTUFaUUJmQUdNQWJ3QnVBR1lBYVFCa0FHVUFiZ0IwQUdrQVlR?=
+ =?us-ascii?Q?QnNBQUFBTEFBQUFBQUFBQUJqQUdRQWJnQmZBSFlBYUFCa0FHd0FYd0JyQUdV?=
+ =?us-ascii?Q?QWVRQjNBRzhBY2dCa0FITUFBQUFrQUFBQURRQUFBR01BYndCdUFIUUFaUUJ1?=
+ =?us-ascii?Q?QUhRQVh3QnRBR0VBZEFCakFHZ0FBQUFtQUFBQUFBQUFBSE1BYndCMUFISUFZ?=
+ =?us-ascii?Q?d0JsQUdNQWJ3QmtBR1VBWHdCaEFITUFiUUFBQUNZQUFBQUFBQUFBY3dCdkFI?=
+ =?us-ascii?Q?VUFjZ0JqQUdVQVl3QnZBR1FBWlFCZkFHTUFjQUJ3QUFBQUpBQUFBQUFBQUFC?=
+ =?us-ascii?Q?ekFHOEFkUUJ5QUdNQVpRQmpBRzhBWkFCbEFGOEFZd0J6QUFBQUxnQUFBQUFB?=
+ =?us-ascii?Q?QUFCekFHOEFkUUJ5QUdNQVpRQmpBRzhBWkFCbEFGOEFaZ0J2QUhJQWRBQnlB?=
+ =?us-ascii?Q?R0VBYmdBQUFDZ0FBQUFBQUFBQWN3QnZBSFVBY2dCakFHVUFZd0J2QUdRQVpR?=
+ =?us-ascii?Q?QmZBR29BWVFCMkFHRUFBQUFzQUFBQUFBQUFBSE1BYndCMUFISUFZd0JsQUdN?=
+ =?us-ascii?Q?QWJ3QmtBR1VBWHdCd0FIa0FkQUJvQUc4QWJnQUFBQ2dBQUFBQUFBQUFjd0J2?=
+ =?us-ascii?Q?QUhVQWNnQmpBR1VBWXdCdkFHUUFaUUJmQUhJQWRRQmlBSGtBQUFBPSIvPjwv?=
+ =?us-ascii?Q?bWV0YT4=3D?=
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR07MB9538:EE_|DM6PR07MB7209:EE_
+x-ms-office365-filtering-correlation-id: 3ac8168b-eb5b-4581-62b2-08dd5636702b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?kwIev2ytvB8HfiNmj6kKMJOoqvVawTDwZKorBf8Bqch4LGOezLJipKiYAcF4?=
+ =?us-ascii?Q?1hpCtfB+psqvK1/fQKedHcHEhc2QICif2hi+1wWiFwzGKMHRXhMJYQU57OQJ?=
+ =?us-ascii?Q?Zy+cZsUl61LLs717bupwpJLTnhOmQkccl5lEaRu36a2ph7pYKxn/u/I/R7j+?=
+ =?us-ascii?Q?Mazd4qAYIP1IWn8hTyCfmPBS+TqSmmsIXfEpgh7PISope0QbAcdFLUpRPqAV?=
+ =?us-ascii?Q?qzYuAMoBYe8P7rFioVP5bnTteiiKDJ4OyCoiZHgrqLe6Ew9Z8sn/BKd8GjW1?=
+ =?us-ascii?Q?rMVvAHGMXwKRby2g+r7jVtWbq7IlyVu83u/NkqqX1t529/6IsKxBbBvBr9eZ?=
+ =?us-ascii?Q?9V6CO3FQcsPXz15QxZ9ymh4tk20kS7/g8yIcmRB2o+YMu3+w4HSe9zyWipiy?=
+ =?us-ascii?Q?JONKkKEupxhCnEAMEqgH/PWc4NXK0ChCeFnq8NpEZezV+eQ/XHDbUlaKJ5TN?=
+ =?us-ascii?Q?q8YwgOXg5Ii7Hif8mbeZwbmofN8VAhj1OthaDJLm0m+3Ew8F7pWZVIBfXQpm?=
+ =?us-ascii?Q?tc+8n8gPEVpGNKNHnnzLAf4t+I1WBbKBeWcs9ITJ4I3ojNwQ1Uxid/N/8HMZ?=
+ =?us-ascii?Q?Ht9cMKZrK9nCcVS9ZL077hWaaOMHKCL845o4IeOSfT11/LN1Y+OvxULSOdJB?=
+ =?us-ascii?Q?I0X8vyqD4eNVd0Cdj1fyuYkjlcNX9JZzCztOA/suA7Olf16c5zydPO04BbH9?=
+ =?us-ascii?Q?LgyanVo1ICPJpTCFxju004yZaLadUPWq88+gNtWdu4iOG2o/CBIYMo3sUMjd?=
+ =?us-ascii?Q?unR87QmAi+X16G6Pawyzd/WrzqpIHxySxf5sPAeNcXSTQcOcuWMws+0jycjv?=
+ =?us-ascii?Q?mUoOaQYo03lUPL6+ukNrpMRXI/pfkTlwm1xwH4dWUiMTkkeT/ZBgieln31fS?=
+ =?us-ascii?Q?TRLOsMLt7QDFzwNR1423v3kPaUyyysPi93fe3mjbK2f96VhLU3LvZxI74RP1?=
+ =?us-ascii?Q?T1O7SVzmJ/6xYWrLON0Z6b7IXDASDM5YBe01ijGg7eXAazbFTDvXC4o+nbNR?=
+ =?us-ascii?Q?kHinHLt6HwMmu46NN9CSc/x3L7CAAcaBwdK6gFt9FqvpMd09okwv2fKtnPl9?=
+ =?us-ascii?Q?8DVlX84cskxX8ew66vd1nZzeQr1i4hmOMDKK8uTy0sUqVMpkhoDQtuxeH8+H?=
+ =?us-ascii?Q?GPqBEWwPq1G766eE5R2LN6df3Gi/4TkHUqUr132V3DGE83xY0JX2ht9QOFbK?=
+ =?us-ascii?Q?TjpyuE5JlIJuMxz6sMMFBbIr5IOImUwPEiyRotxG1liKsttKK80rGZ6+Kzi5?=
+ =?us-ascii?Q?BPE+hQYK+pjB9P1FWLK3HoHteo83zn24M5xyUBS0h3I3UnqSSOuVhHj1JjB7?=
+ =?us-ascii?Q?f2yFEeMST5jmJJW0y2ZFpb5Vwt9Sn6ZGouZU7wm6eaIw8S+YBXmeCzHM84Je?=
+ =?us-ascii?Q?KRekWayEJqOM9GUxzoywNztYoLSB08vfGLiSbVIhXsefIV0QIeExugsqUNAH?=
+ =?us-ascii?Q?hjSD+xERDmmExb/eAJ3wIixn+nLLvZNu?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR07MB9538.namprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+BvgWJqWPYxsYYaHmslpyORWX/8UOr/6BRiEzkRSGszcZ5kTjoEPpXRsZwbS?=
+ =?us-ascii?Q?yec0ePE3DekBF2UlCnT3dJfh9/85nU5oVgVP1RoZtT/h0tx4HDS+X0AZGQQ2?=
+ =?us-ascii?Q?z8CK5D9RbtK5/VobekYMNiO+kypDJhdYdol3UbGfqWUqkfe4ghxyWB/EZ58m?=
+ =?us-ascii?Q?IT2NfFVggvdy33VNYNK7a9BB0VZBImxp2QtDzCNGZc0Xd7srXNn12UNTZDFx?=
+ =?us-ascii?Q?I7s4dD3CsAxsvpgOvEdjY55yxMAUIu9Yss8HayWEQGZDJ3+B7ceu3RxLmg/Q?=
+ =?us-ascii?Q?7kGwJg8obkNJLhtv5vvPMWOP62xERa71HnXseKFPNhJZFamx62OQmMDrPAd1?=
+ =?us-ascii?Q?1vstD4MBa54OGtWU2y8B3n0twliLNwt2uZWdsMLsIddqj6mO+1++N/NLRXHz?=
+ =?us-ascii?Q?wKrTCIRXOyqA9zicCDmU6l0bY7P1BeUf72Qn7wFs/28MBDQtvUSlr3FXMU65?=
+ =?us-ascii?Q?I2xXxVlfArFWJPOsjWQPnflKOKK0Ckyu/3kO1rwaIdxgkfV1TT4gTraqkjwM?=
+ =?us-ascii?Q?173G0Z2wUm+liA2WlupktK57LHMGq57ISkzXdYO5tkeB7BmV3ib/R70o8kp7?=
+ =?us-ascii?Q?TOtSt7QFh/rw4lLlO0tOMN5Ludj6xVhmHEDqlc+zpOYf2+ZJ/Ib0+cmpwqSD?=
+ =?us-ascii?Q?lWS+aG2G0qEDJsbD2WWXTt5Bx9XHQ/MFQkbEAwLSuAnBH5lavgl/pFNFStPy?=
+ =?us-ascii?Q?4Xh7gawec2qpMUzMjSyQyttszc1uuRdKzihVr2wP4y+AKwndxItypBIxodyc?=
+ =?us-ascii?Q?ixN2avfy+jjzoMdd3y+SH3PMrh67IN3hxYLCH57ook9iQGYrYpJGO9aqf/nm?=
+ =?us-ascii?Q?U4/47DvjLXa/ilNFL5fiSwOgo5LU1DrsC/Gv5GQMuO9yfkddYk0p8W5JGDCq?=
+ =?us-ascii?Q?AGSYO1g6m5xw2tKyIJgpvwAPM5B9gL+YhwW2XdsDtqqoW/l/+oP3mKRkNbFl?=
+ =?us-ascii?Q?y1c1xKedp1SQFPBsm5JXPu+QCLuQWgTPiMPNiNGwPSgdyXbik9PkPTU8WjoB?=
+ =?us-ascii?Q?5WVhorOczN35qhdxMp9Zd0+ZFzvXOKenBvesP5qIc+xbh6CqeH1PaOQi7nDn?=
+ =?us-ascii?Q?5ncuiiVE320dKiSHFKRc3f8Sky1iieGqt0BQM9uDVBc/zoQ34W00sfXneGlp?=
+ =?us-ascii?Q?YT6aCTsunolQy8J7HVMZcpjMpgXAx8y7dxy4ATwNXNV4OCZkWVzx4R4RjIWV?=
+ =?us-ascii?Q?E/uXEE72e+z+gSkoJA8OgaD0T1mrO2rPJAC1dHVomnvMtI+LH0PI+5RVi05b?=
+ =?us-ascii?Q?Q+E7Gcb5mRz81VZSmeXF/6L12PCnMR34YFzg4D2DIt86padam45Cl7WaIyrc?=
+ =?us-ascii?Q?hCvbLqPCXQBAbXxfiMYsgPPc3D8+/YVMXEL60SXx3d9BdL4wXyEIIMHOQ9WN?=
+ =?us-ascii?Q?zrWB3FbYYdIa6wrBfAumimNLokyx18fD9dNGcgaPT8Mx3yYVaC9M8I5djqcj?=
+ =?us-ascii?Q?0Cx9C6ZBfsB4CCmdtq+5vWDfWPDNn186jzwFGZxqCwMP02EiNTlPLwcd9F4X?=
+ =?us-ascii?Q?hY2CqPKZrW8qgovDBaLtAIG2w5xEVic+NB+K8GIag/Xk8qho2rjCx4yl1vk5?=
+ =?us-ascii?Q?Y1uqkqguhL7gqUe8D5WGO70eRCDOGYl0R1OSu4BV?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Softlockup when test shmem swapout-swapin and compaction
-To: Liu Shixin <liushixin2@huawei.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Lance Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>
-References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR07MB9538.namprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac8168b-eb5b-4581-62b2-08dd5636702b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 07:23:16.6061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wZ9tyVUcCjvQh/ue91xLMbmVjDMa99+9/YYOmIuK+zgVCYbvPGWM1S50B1rgt6RFvBPDuAGtqWpjU7h+rUEhVhSKPPz/uG5oco1FfNhSRm0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB7209
+X-Proofpoint-ORIG-GUID: Pi22OaxRAKm5tdp-UaYo2mgBX6XPeD5u
+X-Authority-Analysis: v=2.4 cv=B8xD0PtM c=1 sm=1 tr=0 ts=67bec168 cx=c_pps a=fM4bIjZpJamw6RFag0UgWw==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=Zpq2whiEiuAA:10
+ a=VwQbUJbxAAAA:8 a=Br2UW1UjAAAA:8 a=fAtflJM7RsOH10yn2owA:9 a=CjuIK1q_8ugA:10 a=WmXOPjafLNExVIMTj843:22
+X-Proofpoint-GUID: Pi22OaxRAKm5tdp-UaYo2mgBX6XPeD5u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_08,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 impostorscore=0
+ mlxscore=0 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=709
+ clxscore=1015 malwarescore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260057
 
-Add Zi.
+The xHC resources allocated for USB devices are not released in correct
+order after resuming in case when while suspend device was reconnected.
 
-On 2025/2/26 15:03, Liu Shixin wrote:
-> Hi all,
-> 
-> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
-> 
->   watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
->   Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
->   CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
->   Tainted: [L]=SOFTLOCKUP
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->   RIP: 0010:xas_load+0x5d/0xc0
->   Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
->   RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
->   RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
->   RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
->   RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
->   R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
->   R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
->   FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
->   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->   PKRU: 55555554
->   Call Trace:
->    <IRQ>
->    ? watchdog_timer_fn+0x1c9/0x250
->    ? __pfx_watchdog_timer_fn+0x10/0x10
->    ? __hrtimer_run_queues+0x10e/0x250
->    ? hrtimer_interrupt+0xfb/0x240
->    ? __sysvec_apic_timer_interrupt+0x4e/0xe0
->    ? sysvec_apic_timer_interrupt+0x68/0x90
->    </IRQ>
->    <TASK>
->    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->    ? xas_load+0x5d/0xc0
->    xas_find+0x153/0x1a0
->    find_get_entries+0x73/0x280
->    shmem_undo_range+0x1fc/0x640
->    shmem_evict_inode+0x109/0x270
->    evict+0x107/0x240
->    ? fsnotify_destroy_marks+0x25/0x180
->    ? _atomic_dec_and_lock+0x35/0x50
->    __dentry_kill+0x71/0x190
->    dput+0xd1/0x190
->    __fput+0x128/0x2a0
->    task_work_run+0x57/0x90
->    syscall_exit_to_user_mode+0x1cb/0x1e0
->    do_syscall_64+0x67/0x170
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   RIP: 0033:0x7fd95776eb8b
-> 
-> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
-> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
-> compaction which is necessary for reproduction,  although without a clear why.
-> 
-> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
-> reproduction program. The reproduction program consists of three parts:
->   1. A process constantly changes the status of shmem large folio by these interfaces:
->          /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
->   2. A process constantly echo 1 > /proc/sys/vm/compact_memory
->   3. A process constantly alloc/free/swapout/swapin shmem large folios.
-> 
-> I'm not sure whether the first process is necessary but the second and third are. In addition,
-> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
-> so I guess the problem is in migration.
-> 
-> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
-> since I have confirmed this porblem still existed after merge the fixed patch.
+This issue has been detected during the fallowing scenario:
+- connect hub HS to root port
+- connect LS/FS device to hub port
+- wait for enumeration to finish
+- force host to suspend
+- reconnect hub attached to root port
+- wake host
 
-Could you check if your version includes Zi's fix[1]? Not sure if it's 
-related to the shmem large folio split.
+For this scenario during enumeration of USB LS/FS device the Cadence xHC
+reports completion error code for xHC commands because the xHC resources
+used for devices has not been property released.
+XHCI specification doesn't mention that device can be reset in any order
+so, we should not treat this issue as Cadence xHC controller bug.
+Similar as during disconnecting in this case the device resources should
+be cleared starting form the last usb device in tree toward the root hub.
+To fix this issue usbcore driver should call hcd->driver->reset_device
+for all USB devices connected to hub which was reconnected while
+suspending.
 
-[1] 
-https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
+Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD=
+ Driver")
+cc: <stable@vger.kernel.org>
+Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+
+---
+Changelog:
+v2:
+- Replaced disconnection procedure with releasing only the xHC resources
+
+ drivers/usb/core/hub.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a76bb50b6202..d3f89528a414 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -6065,6 +6065,36 @@ void usb_hub_cleanup(void)
+ 	usb_deregister(&hub_driver);
+ } /* usb_hub_cleanup() */
+=20
++/**
++ * hub_hc_release_resources - clear resources used by host controller
++ * @pdev: pointer to device being released
++ *
++ * Context: task context, might sleep
++ *
++ * Function releases the host controller resources in correct order before
++ * making any operation on resuming usb device. The host controller resour=
+ces
++ * allocated for devices in tree should be released starting from the last
++ * usb device in tree toward the root hub. This function is used only duri=
+ng
++ * resuming device when usb device require reinitialization - that is, whe=
+n
++ * flag udev->reset_resume is set.
++ *
++ * This call is synchronous, and may not be used in an interrupt context.
++ */
++static void hub_hc_release_resources(struct usb_device *udev)
++{
++	struct usb_hub *hub =3D usb_hub_to_struct_hub(udev);
++	struct usb_hcd *hcd =3D bus_to_hcd(udev->bus);
++	int i;
++
++	/* Release up resources for all children before this device */
++	for (i =3D 0; i < udev->maxchild; i++)
++		if (hub->ports[i]->child)
++			hub_hc_release_resources(hub->ports[i]->child);
++
++	if (hcd->driver->reset_device)
++		hcd->driver->reset_device(hcd, udev);
++}
++
+ /**
+  * usb_reset_and_verify_device - perform a USB port reset to reinitialize =
+a device
+  * @udev: device to reset (not in SUSPENDED or NOTATTACHED state)
+@@ -6131,6 +6161,9 @@ static int usb_reset_and_verify_device(struct usb_dev=
+ice *udev)
+=20
+ 	mutex_lock(hcd->address0_mutex);
+=20
++	if (udev->reset_resume)
++		hub_hc_release_resources(udev);
++
+ 	for (i =3D 0; i < PORT_INIT_TRIES; ++i) {
+ 		if (hub_port_stop_enumerate(parent_hub, port1, i)) {
+ 			ret =3D -ENODEV;
+--=20
+2.43.0
+
 
