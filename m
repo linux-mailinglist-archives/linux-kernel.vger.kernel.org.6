@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-533298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666F7A457FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:20:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1454A45803
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F42D3A9296
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9C03AA4C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89E61E1DEB;
-	Wed, 26 Feb 2025 08:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B228A226CE9;
+	Wed, 26 Feb 2025 08:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiIm1eue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxsG1Gal"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F70446426;
-	Wed, 26 Feb 2025 08:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15256224252;
+	Wed, 26 Feb 2025 08:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558044; cv=none; b=RI8JthibhhUA+JwPX1swNcXd0a4Rzq2t+p94St7pqS+v3t7u87AvVKztjLKwcVSWBk09AEDd6+slh3x+70uG/SCrX2RnJ2vEh9kdZfvsHwTkVvbnsRSZpg5QdgunD2430Y9Xqtpy5Lv8QwWS2eKLdB5wMcTZ/HAhItLsRUYycN0=
+	t=1740558153; cv=none; b=K5hY5jUVaszjmhqVmk80gMUVETOPUSCwNhYYcVOwPhtm0PdCDk+ekXIVSs+GCgGIcBOlJz/pnsvvxnDWVEZRc1BBV9UDLBaoviX6Pae7RQGa5dcPOwTWNSMf4t/vJ1qKzNdyp86gsGxp7aaXrD2m2plMQb6tqovkUrBTyBr03sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558044; c=relaxed/simple;
-	bh=4Pe8SdHpMNion2K2A1gVO1ETNWDlPyE6kIyEGg2L6M0=;
+	s=arc-20240116; t=1740558153; c=relaxed/simple;
+	bh=IXeKLcSbvMcqBKVSn5skB9BHbi03YvYAsNDK395OQeY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVRs7/qZXefsjpr2k9YtZyujNmZAguigpQIDTfQ/IzOP690P/V4lsligxIekh/RvHAyTH1CV+h7DttsdvWLPpInDLKe8+085XsZbeYWYI2HwHUMTvvzN+MzQIOY74lVgC0/LQSeX1dKoLSK02KBGMdJPq72mbhELfO5f1VDz6n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiIm1eue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B91C4CED6;
-	Wed, 26 Feb 2025 08:20:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKhu/tBL570DMJP9G0+SM8+GeghSs0qKqAJfl/Fesp96DNaoWYJKzaJogt0M393ZDoJVw+jzDsGCl0nDOYwtXhrR5Hqpgr3ByML3nuWBtH5F0pdD+fbl5tICOK6Gn5UcpEZSTT74PGS60QhLDWGH+tO0HoALvovAw4YCo3lYT5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxsG1Gal; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2139FC4CEE2;
+	Wed, 26 Feb 2025 08:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740558043;
-	bh=4Pe8SdHpMNion2K2A1gVO1ETNWDlPyE6kIyEGg2L6M0=;
+	s=k20201202; t=1740558152;
+	bh=IXeKLcSbvMcqBKVSn5skB9BHbi03YvYAsNDK395OQeY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YiIm1eueQybrvNRsuNh8H8qRFgt8iHMrY1eUb0Gn83kdwU35X8kuTonpjSy3fIA93
-	 oVOzTsR5oNN5Kniu/v3KeNVmg1Bh4DJ64S/GhHIViumtsLjV2PIYdDV0yBNAelZkKw
-	 JnJst47qH/M7Sm7+ZtORetxKK+ptFMd1SiPLeZB1tI29tiZvjEtCYKyvVyxJrPvGbS
-	 l5AsyBJ9PLYeqnrBNXZOFc1RWntYlfS2vCFNy6YGex2DNVYBg1ovbmPqINPZ3hLqqI
-	 10RxbDM5YgxNit/zXBSQqJ3ghCbCIh6opv8NXkhfteFs5wDQDLgoymGvuuP98ISZPl
-	 PNA/bEBabI9dw==
-Date: Wed, 26 Feb 2025 09:20:40 +0100
+	b=AxsG1GalGapRIo6NCASGUf8kylYzD0wwQr0usYQ94FO6Mer+N72etp5FxXFhrHc/u
+	 oOtAiN+gwcPkGrmvwDb7MrwMnru4CAdpFxwnNZVvDcv/qY+kCoOUUQIPfUB1rTl7DT
+	 ieCtXXtGP9V4G19Cppkox0qKZf3F4BiNGfeQhfauGUfR4R4eHVEMIs63jLf++/j++A
+	 +xjRXrTb6koJPIOd2ApJnenewnAuzIErygRes7ND5H2C3/7M/4CbQf97neRrLgh5/n
+	 g1+5GhWgasjDuIMUxqpOqfdAOQWJdbTHdsW3SjZH4YHSpW4/2nobxuXO7sy0CX7b1V
+	 o0uvDJI74WH3g==
+Date: Wed, 26 Feb 2025 09:22:29 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Cc: Rob Herring <robh@kernel.org>, 
+To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Jonathan Corbet <corbet@lwn.net>, Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
-Message-ID: <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
-References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
- <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
+	Trevor Wu <trevor.wu@mediatek.com>, kernel@collabora.com, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add
+ DMIC backend to dai-link
+Message-ID: <20250226-ludicrous-seagull-of-music-a40daf@krzk-bin>
+References: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
+ <20250225-genio700-dmic-v2-7-3076f5b50ef7@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,65 +64,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250225-genio700-dmic-v2-7-3076f5b50ef7@collabora.com>
 
-On Tue, Feb 25, 2025 at 09:01:13PM +0800, Cedric Encarnacion wrote:
-> Add Analog Devices LT3074 Ultralow Noise, High PSRR Dropout Linear
-> Regulator.
-> 
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+On Tue, Feb 25, 2025 at 11:33:53AM -0300, N=C3=ADcolas F. R. A. Prado wrote:
+> MT8188 platforms also have DMIC DAIs, which were previously undescribed.
+> Add DMIC_BE as a possible backend for the dai-link property.
+>=20
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 > ---
->  .../bindings/hwmon/pmbus/adi,lt3074.yaml           | 64 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 +++
->  2 files changed, 71 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..714426fd655a8daa96e15e1f789743f36001ac7a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/pmbus/adi,lt3074.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices LT3074 voltage regulator
-> +
-> +maintainers:
-> +  - Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> +
-> +description: |
-> +  The LT3074 is a low voltage, ultra-low noise and ultra-fast transient
-> +  response linear regulator. It allows telemetry for input/output voltage,
-> +  output current and temperature through the PMBus serial interface.
-> +
-> +  Datasheet:
-> +    https://www.analog.com/en/products/lt3074.html
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,lt3074
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  regulators:
-> +    type: object
-> +    description: |
-> +      list of regulators provided by this controller.
+>  Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt63=
+59.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.ya=
+ml
+> index 362e729b51b43ec16716aee70ad736420def81f3..8c77e7f68ad7b6f5b88b53ced=
+ccb291139a2eeea 100644
+> --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
+> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
+> @@ -62,6 +62,7 @@ patternProperties:
+>              - PCM1_BE
+>              - DL_SRC_BE
+>              - UL_SRC_BE
+> +            - DMIC_BE
 
-You have only one regulator, so drop the "regulators". vout could be
-here, but since you do not have any other resources, I doubt it stands
-on its own either. This is even visible in your DTS - you named the
-device as regulator, so logically this is the regulator. Regulator does
-not have regulators (otherwise they could also have regulators... so
-triple regulator).
-
-hwmon code might need some changes, but that's not really relevant for
-proper hardware description.
+Any reason why you keep adding to the end of the lists but not
+alphabetically sorted? It's enum, so it's expected to be sorted which
+reduces conflicts between edits. Last commit already broke sorting :/
 
 Best regards,
 Krzysztof
