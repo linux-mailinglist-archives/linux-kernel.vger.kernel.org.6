@@ -1,171 +1,146 @@
-Return-Path: <linux-kernel+bounces-533959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14CCA460BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 649D1A460A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD153AF5EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7907E3B0863
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD1F223327;
-	Wed, 26 Feb 2025 13:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABFA1552FD;
+	Wed, 26 Feb 2025 13:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cQZNmZ22"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R/59mtJJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7324F21D3C3
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A2B21930F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576216; cv=none; b=lEv91gx3YHfc3dBtwB/o4dFrVJeqtkr/rHesqSnmJJl96uqvmj+e3kLASXhOWZy8IJQkUBrkTkbh9a2C+yoHitoYgL5BOEDdeoPV9rTfypsMFkVK+mJoBuyL/JV1fMz0zpeZLl5bKuuEISgORT+EJ8AM4dgm+qVUc+02Q9zipaE=
+	t=1740576184; cv=none; b=ApU0okvoYqeBcjO0LD2jMAjOymDBDv3glFRw+LzAiMNN+uVf7Df8364MPr1Zf3dZMwFLVEeLZcP85oxAtT5H8z0itg82hg13IIXJ0KXeBSsldsqup+nM9P5p9etiscJ23MYF1HzcFiam97IiVUy8q6w5IEQyyoBoQq9RgA+N5JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576216; c=relaxed/simple;
-	bh=yAZjJLyw/IebtIgKWpxxhs5j/OrfIUla3tpApV7c8Q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FOSy+Bi380LNZtY2iwSBnp0OoMKnidmbo2lY+9ry7gR152DlSCWF9o3m7ScEM9+OmS1eO9z0Qs+u51gq2NOi6clpE9QeBpxoUWP3QbGRy03LpGca7/3T6X+phl+H4xL6EJn27GSojQE+jGGu46kxWG31YCxFgL79VI4hJZmSOz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cQZNmZ22; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740576212;
+	s=arc-20240116; t=1740576184; c=relaxed/simple;
+	bh=tLkaQa4cfAIJbGo+O9NomPzt44NtjxVBQYhijZ1Y1JU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qYpKTZy4HoHr+XOilqWbga2tyaKI3SMOqZSx49l1CbDNNW4ihedv09fNjaS9AEJqSeDhOu6Y05p7PdxolvUvHv4Ku49o0RyZ9Rk9SszVkLjZ/KwJ2XKa9G6cCPDAq62EUn22iraDiTpAjRnoFd05b/0uK1095KLYZQBcoLZpHgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R/59mtJJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740576182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=um3l3VNEj+uJx+qVUO51g5IGTLRvS/+KRCLqs2rdvQc=;
-	b=cQZNmZ22XPe0DWz5P6fT7i2mr0ueqZfyW3fr8Y23xHQhwH2Pj5psXHtwjNxf0Pgp7LAoMM
-	BWM9PaHWlmwpDM3n3cQC2rwDWGUvvzrbbnnrJuk6n7fJ1ABb1UIAaQeIJRuJOYSldVOnUP
-	fwhbdqXedGMHJyEJNmOwHRzme0QaJhM=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: cong.wang@bytedance.com,
-	john.fastabend@gmail.com,
-	jakub@cloudflare.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	mhal@rbox.co,
-	jiayuan.chen@linux.dev,
-	sgarzare@redhat.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	mrpre@163.com
-Subject: [PATCH bpf-next v1 3/3] selftests/bpf: Add edge case tests for sockmap
-Date: Wed, 26 Feb 2025 21:22:42 +0800
-Message-ID: <20250226132242.52663-4-jiayuan.chen@linux.dev>
-In-Reply-To: <20250226132242.52663-1-jiayuan.chen@linux.dev>
-References: <20250226132242.52663-1-jiayuan.chen@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0KIzQ88nSJEUkvPD/1MUYrSo7xR/JdvqjXJ/Jvu0wOc=;
+	b=R/59mtJJm8QmOXaE7ucfwTPC9VJpYCS2wiKTc31nu0n/MNKCwdcB11NbArHjvg/8xhVypC
+	OAleIpg/vLPYIKWdT63NXJfSo3hf0NE0fnNKfOmkXJqDbcDU4/hCW1clAHflu+ru7Owv9R
+	U2pUV8kZX3h0MT1+14ruhL/VBK3oB/U=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-zoZleFxePzCBl9WYWsNksw-1; Wed, 26 Feb 2025 08:23:00 -0500
+X-MC-Unique: zoZleFxePzCBl9WYWsNksw-1
+X-Mimecast-MFC-AGG-ID: zoZleFxePzCBl9WYWsNksw_1740576180
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4399a5afc72so34377755e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:23:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740576179; x=1741180979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0KIzQ88nSJEUkvPD/1MUYrSo7xR/JdvqjXJ/Jvu0wOc=;
+        b=KAAiWVpnhz5JljDYohQyAZCYGjscD/gR/FjHCHTattH4Bogr+XqrgoU1QPeC+IFq/L
+         G3/qHv5jswuWuPJQ/ClR50CdUiHi5qvn+YXngBtrwmkwqEi6XJkuZEhX13eQDRu4usc+
+         l+jpC8yb+BG4A7aBZ0zudjKCfE/egIKGJpAytuchktbJ/o068ZdaTfqIxwE/jajw5yiH
+         27s6/HWISo+dBoitNGNU6VaTZ3TfSxefa6QzBCc64+R2Sx2exsCyEnsj4WkGrXh5WezZ
+         AgZbM5Ugk2MSJ3FIMVLnYo0hJx0dpcN7G85+7SwNo9lwFFoT3p0/iHXgY4KWdxU1AmdZ
+         alTg==
+X-Gm-Message-State: AOJu0YyyzO2h3BfUG7JESTbXoGBofRT7HTueYzK2zDYcetQ7Ps43RRdS
+	10HhpwZqT7lHQHVYqoq4A9f5TWdYanEnJfpfk3WE7IP1OjngJSebzFyc7UFEO9mR2jvfo4HZqJA
+	NRBni6HVVK5IFBu5vC3130XHUkvZ7BVQ7DS1XtrHEzBJEkodeeb1hsZpVhvKIuwx7eCMF7J/GFs
+	28MA1KO5gNHQXAhSyTBrBC/hnECCC3tbj5rIj33ZNZoHUY
+X-Gm-Gg: ASbGnctG82yY9n1Y1/G+eDVeQbclpMxGVrReioVdGU+gMXhgcGDMFqKcjq+A5L+6OwQ
+	HZeAfZx/Wlqxm7wuAS1ZLjOJH8NEqGD1dN11w0wFkzDFpVHLAhp8tzYAVW9buiCqaM7yMuvv8+9
+	jXJWSsbgmqhzj44NpXK8dYZUUieQqT3cZcElMZ396G/CVgZo3kGy1EMnkKyD3lHI029BvjFJtAz
+	ZBwxmXwhzH0CBcdIdDnXUtDL8R8P0BNkWXA2pPqQSZWW0Juqk3ojIUiOuIkWjs+n9WdhrwxnDJ9
+	7VEElclMiSQX8Au99b1aSQnwDWf8hwWJGFXpgGGQ4tbwEWPMsZ2nk+GrsVdgGfdD+1+zcm5Nv4e
+	3
+X-Received: by 2002:a05:600c:1547:b0:439:884c:96ae with SMTP id 5b1f17b1804b1-439aebda78fmr163974925e9.27.1740576179649;
+        Wed, 26 Feb 2025 05:22:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEYmafSYOsvhjIUXUgOdRtbAha8lg9dhbnpxUsrIq8hUAH0/uonO6MpAq39RzjuvyC9SSC1fA==
+X-Received: by 2002:a05:600c:1547:b0:439:884c:96ae with SMTP id 5b1f17b1804b1-439aebda78fmr163974685e9.27.1740576179160;
+        Wed, 26 Feb 2025 05:22:59 -0800 (PST)
+Received: from localhost (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba532c32sm21210325e9.11.2025.02.26.05.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 05:22:58 -0800 (PST)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Alistair Popple <apopple@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v2 0/5] mm: cleanups for device-exclusive entries (hmm)
+Date: Wed, 26 Feb 2025 14:22:52 +0100
+Message-ID: <20250226132257.2826043-1-david@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add edge case tests for sockmap.
+Based on mm/mm-unstable, which already contains [1].
 
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- .../selftests/bpf/prog_tests/sockmap_basic.c  | 57 +++++++++++++++++++
- 1 file changed, 57 insertions(+)
+Some smaller device-exclusive cleanups I have lying around. Tested
+using the hmm selftests without surprises.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-index 1e3e4392dcca..e36b5c78fc98 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-@@ -1042,6 +1042,61 @@ static void test_sockmap_vsock_unconnected(void)
- 	xclose(map);
- }
- 
-+void *close_thread(void *arg)
-+{
-+	int fd = *(int *)arg;
-+
-+	sleep(1);
-+	close(fd);
-+	return NULL;
-+}
-+
-+void test_sockmap_with_close_on_write(int family, int sotype)
-+{
-+	struct test_sockmap_pass_prog *skel;
-+	int err, map, verdict, sent;
-+	pthread_t tid;
-+	int zero = 0;
-+	int c = -1, p = -1;
-+
-+	skel = test_sockmap_pass_prog__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-+		return;
-+
-+	verdict = bpf_program__fd(skel->progs.prog_skb_verdict);
-+	map = bpf_map__fd(skel->maps.sock_map_rx);
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach"))
-+		goto out;
-+
-+	err = create_pair(family, sotype, &c, &p);
-+	if (!ASSERT_OK(err, "create_pair"))
-+		goto out;
-+
-+	err = bpf_map_update_elem(map, &zero, &p, BPF_ANY);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem"))
-+		goto out;
-+
-+	err = pthread_create(&tid, 0, close_thread, &p);
-+	if (!ASSERT_OK(err, "pthread_create"))
-+		goto out;
-+
-+	sent = xsend(c, "a", 1, 0);
-+	if (!ASSERT_EQ(sent, 1, "xsend"))
-+		goto out;
-+
-+	pthread_join(tid, NULL);
-+	/* p was closed in thread */
-+	p = -1;
-+out:
-+	if (c > 0)
-+		close(c);
-+	if (p > 0)
-+		close(p);
-+	test_sockmap_pass_prog__destroy(skel);
-+}
-+
- void test_sockmap_basic(void)
- {
- 	if (test__start_subtest("sockmap create_update_free"))
-@@ -1108,4 +1163,6 @@ void test_sockmap_basic(void)
- 		test_sockmap_skb_verdict_vsock_poll();
- 	if (test__start_subtest("sockmap vsock unconnected"))
- 		test_sockmap_vsock_unconnected();
-+	if (test__start_subtest("sockmap with unix and close"))
-+		test_sockmap_with_close_on_write(AF_UNIX, SOCK_STREAM);
- }
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+
+v1 -> v2:
+ * Rebased on top of [1]
+ * "mm/memory: remove PageAnonExclusive sanity-check in
+    restore_exclusive_pte()"
+  -> Added
+ * "mm/memory: document restore_exclusive_pte()"
+  -> adjust/clarify/simplify documentation
+ * "mm/mmu_notifier: use MMU_NOTIFY_CLEAR in
+    remove_device_exclusive_entry()"
+  -> Use MMU_NOTIFY_EXCLUSIVE only for a single purpose such that we
+     always have the owner
+
+[1] https://lkml.kernel.org/r/20250210193801.781278-1-david@redhat.com
+
+David Hildenbrand (5):
+  lib/test_hmm: make dmirror_atomic_map() consume a single page
+  mm/memory: remove PageAnonExclusive sanity-check in
+    restore_exclusive_pte()
+  mm/memory: pass folio and pte to restore_exclusive_pte()
+  mm/memory: document restore_exclusive_pte()
+  mm/mmu_notifier: use MMU_NOTIFY_CLEAR in
+    remove_device_exclusive_entry()
+
+ include/linux/mmu_notifier.h |  8 ++---
+ lib/test_hmm.c               | 32 ++++++-------------
+ mm/memory.c                  | 60 ++++++++++++++++++++++++------------
+ 3 files changed, 55 insertions(+), 45 deletions(-)
+
+
+base-commit: 598d34afeca6bb10554846cf157a3ded8729516c
 -- 
-2.47.1
+2.48.1
 
 
