@@ -1,197 +1,158 @@
-Return-Path: <linux-kernel+bounces-533663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE179A45D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:43:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16AEA45D73
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17751683BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:43:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79467A298F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305B62153F5;
-	Wed, 26 Feb 2025 11:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B202185B1;
+	Wed, 26 Feb 2025 11:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="gHldOx0q"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013064.outbound.protection.outlook.com [40.107.159.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zmdofZKq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M2Wms+X9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0E92153C8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570227; cv=fail; b=WUOQASu7lt+LA20nXcX+jIeTtbY3UAAFPUJga1vvfsz1k8SX4GPU5KBGR/Yd9YTd9oPekntWcDq554aztvDs6hmXZQ4DJddMQJu7a3py+293qdy6BiqgdzG3c16PZcXvC7r3s0EzMyxpB2sVdEVMnVVFa82wVXhYX2xxqhlj3Rw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570227; c=relaxed/simple;
-	bh=tmcv+BwmUsvpD8sGWNFEisOYeTvXtl+yni1um+EEajU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fdEiPurvjIC/TB7mjq5lCpq8r/n4b78wiaHVkAEAcjWC77JbgXQ5YD2ZeI55xdjWCc8gDlwKVcf7Ub46o+HQXcj5QeG4Smw/kSKYWM1TYyn9/Q4Eixj5QqxfpEVb/fkHVUOBvfRxXKDkjPUssSGOxNwiDF/2rx9lt5t/rjjL/pI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=gHldOx0q; arc=fail smtp.client-ip=40.107.159.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KaK6DN87anPx+lz6MwABnSi9UJMqD/w0rcy/wno5aFUrXPhs9OXP2Y2QV70DWbTKXdmhMPTDwfZ4X2qz3Qf9AlmYdG4hUL34KJdNLJ1UoLS6pvoaI/9NOWVG6pYAV7CCuTUw1VfpfaIjPBtmblp403BH7AZ2DhrfiokkMEthHwPtIgf/69iiL+Z3kSLRrfMu8RLvt7GrxoJozzT2QQx4aTe6xLvk8fG6hddIjNwMdDNwGnAKSejsF33fNHEPZEXN+uqHngmhDm0uanNDSsNVa9W1WrZ9pllNPQV7SxPa1S+dgmD2QZMNC6i3fPaVpbH3DctLmWCqJIWj03UYsS4QOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ARlc+xcri0AhBumXNBXSoRsvaYTls3eVdJeFZXsDum4=;
- b=bz311Kx2rRCnheIgepASD8UxXKdN17Q2+Ov5kzu6l7h/lBji2Ih8F8HYgTucs6Qb8u/VD3bSVqIeP8hLya1P3varbOepf1chAct//zbN4KuxTyeorP0WK7KQ10kfdXnAUsQfjE9nn0e3zDgZ8FwGDsbeCXLdn5y27CPw7jrXuBQR2m6jopyBxpyB5Ueheq6nqt6RnsDe6C3IVJqDO76msLalbDWGmUcseIv7DhxdJC2Akk4txc+sfowwQT2GKi3K96nUCcTzMhxExy1FKi0Zw5lc8/9yabK3Z+KhbXZnrpEh4LUaC4vSTDb/fjimK2tZnzbyU0dWf+MxUt1/Pyxsew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ARlc+xcri0AhBumXNBXSoRsvaYTls3eVdJeFZXsDum4=;
- b=gHldOx0q0+0YIhA50USfm+OUmObD34eCWm4G6E394No5AId0lwawe1wc9xRMSNONj2gVKi5lRoyJRILDgecEanKNQIfj3TknONY2DbbGOTqv1s4023hDuFgbLjS1vDq4o5MDHSJcHWE+3u0DPXWoamvO20eqSsOFaXr9oFJ8l1I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DB8PR04MB6860.eurprd04.prod.outlook.com (2603:10a6:10:112::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
- 2025 11:43:40 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
- 11:43:40 +0000
-Message-ID: <05f16054-13f1-4826-a2a7-2533e2a5943e@cherry.de>
-Date: Wed, 26 Feb 2025 12:43:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] phy: rockchip: usbdp: move type-orientation-switch
- further down
-To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- sebastian.reichel@collabora.com, christophe.jaillet@wanadoo.fr,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20250226103810.3746018-1-heiko@sntech.de>
- <20250226103810.3746018-2-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250226103810.3746018-2-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0361.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::17) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA5F258CDB;
+	Wed, 26 Feb 2025 11:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740570313; cv=none; b=HxRSMYw2tovUfX/MsJ4M+rBRzlqzeoX9K+wLpx70S+/DqN+KKCrc/6gOoQIyHPUaWDBEr0Bl1shgA55KrXhvb27lc8Slc/dfCAdqWe6S7hORXWKpb5/l7/oBbmuLxrm7JAPlM7AFP0BphY0SyXFzNdmMHY1Cpd+ikF7mLyvMJz4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740570313; c=relaxed/simple;
+	bh=DsKFmSVUXHIq2lUncqo1DiHx1M4YqIuFyrpISSxzmuQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VD0jOOvl6XKV2CRNpKv+wed7J683+4RVXmzV42z46U0HXarblQWcBcABGJfguP21g0QzmiN7B4YguvcSleoVpcTuJatIbP+CNb8h24QFqouomQ/olPH5pOJbKSJSTgeaqJMHmJ5r6mB24rAYGjQPFy/b5oWxVe/MBs+rPHpNVaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zmdofZKq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M2Wms+X9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740570309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hPrRbYetXyN7EKcl5LmJ1P46VSZ9vvX2TwbzkjWRBsw=;
+	b=zmdofZKqnF5afZoMtDDABs/s8ck4H0d6qXMrb2VK48v//E15sLebMbpam6otSiOOptNd8Z
+	ovNq4+QRhb5j3MFlhrHsWX/qsPxsTPZC/zfJBOp3mMjcP5Nd4V5Vq+ZbswtF+MD2kFvVuh
+	FqdQiGPuIYcFzg8t+ZVmL7j6YNIZ2hqNeB5BwJIMdxO1dSPic4Fu8esBFt1eff5LSx7rKI
+	Dco0Y/41bvQw1pyKb8lUEn9k6eazDhsn8BUoDPuIOeRNpvH5Ndsy0NTAbBTX4anxNJ8Fqr
+	E5Dekbt2jlXZkS4HxA91OOiwzHR7zL3hUPN+twMSV16Py/V3s7SVfmYgHcl0MQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740570309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hPrRbYetXyN7EKcl5LmJ1P46VSZ9vvX2TwbzkjWRBsw=;
+	b=M2Wms+X9MOl6/Gm7t1HEt3gxuX6NPlE1lbWyIQHmxqAKMwc98nEfFAUlvRgXOrUE9W00nM
+	XBIj/4dU+P52F6CQ==
+Subject: [PATCH v2 00/16] selftests: vDSO: parse_vdso: Make compatible with
+ nolibc
+Date: Wed, 26 Feb 2025 12:44:39 +0100
+Message-Id: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DB8PR04MB6860:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3007c19-4260-4479-59bc-08dd565ad097
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tm1Ba2d0YkNGTThHbkR2aDRHQnVlSmNNS2EwWWVUNitBMHVUSTNraDNubmlK?=
- =?utf-8?B?S3Z4QVRFT2IzZlB6d3MyT2FreHJlU2RNa0lMWUkvL0pEdDlQN2JYbTJ2QXBq?=
- =?utf-8?B?T1hMcWxLckdUN1dVVURGZzdMMG0rNTRyTlhkb0M2c211Ry9yZTF5L1ZiNGVu?=
- =?utf-8?B?NU9zZm90YWJscjVNOXRNU3g3bUU0aTk2Q2dSVnBHYndKNUEwODVsYnBJS3RD?=
- =?utf-8?B?M2g5bnpvRVRtZkFOampXeWRRdCtDYURPUzJTWWxHVUQ5YWhzZEZTczlHbEFi?=
- =?utf-8?B?WmtadzBGTzJsK1gvMUVUM0ExSDVkZEl3STE1TTBJK0s5NEp1UEV3bURqVmho?=
- =?utf-8?B?ajAvSUdQZUxQR25CWHp2cS9qdGwyMXFML1l3QzRvb0RvYkVGUSs5WklnbzR5?=
- =?utf-8?B?Mm5RQXdwdUxYNUZuRndZZXB0d3dDb2pob2MvcDU0cjJWT2NPc2dmWHlCdDVT?=
- =?utf-8?B?T1pZT2thTGRTYUxtWUoyZUpLUk5QTUlXYjRjK09pdTlNWDNIdzRwU0oySkd6?=
- =?utf-8?B?Qjc0SjJDcEpHN0MvbGVrcThDM0kvaDlTZmMwUkVibnZLVWQ5MDhxWnFsWU5a?=
- =?utf-8?B?QkxBNWhOcloyZG0wbHZqakZNclI2YmtTampoSlkxMnJySzlkNk9ObDN0Vmwy?=
- =?utf-8?B?cmJyOEhOUm5XRHJBSHorZ0JhM2dRUjhOb0h6MTd6Wk90TG5iTExOcGc2TVpM?=
- =?utf-8?B?UTdXTmJjck1iWDNCeGJwWGo5TGt6OFhtS1Z1TmljUDJTRGR1dENGcDFLR0Fl?=
- =?utf-8?B?M1p1MVY4OWZ4MXZsRTNrRWZMSU9ZVlR5U2x5allaV0x4bmpkcWJpaUltOWZX?=
- =?utf-8?B?S05YSzRpQVRTUkc4MmI5bGJPZVZKaWtkZktpVHlCeHlhYW1jTGcwTnNwbUdw?=
- =?utf-8?B?c1V0MzI1MjVpWi9PanVaak1nR0hnWlZqUkE0OXN5TTQ0M2hJSzZRa3puaVRk?=
- =?utf-8?B?d3FPd1ZrNHlFek5hdCs4NjE5YjcxK0VhM2lHb3B2OTV0SW1KWDdzY0VkVmRS?=
- =?utf-8?B?c090bTZBdTN0ajFRWmMzZzJVcFRBeWNCTTNHVmc4UzFqcy9VbG15L2tTUHJl?=
- =?utf-8?B?QW9rUXhZRVRlMk1zL3lsTi8xa3N2bVhZbU1IK2VzenNuK3M3bVUxYXVWWXoy?=
- =?utf-8?B?R1BFcUJGZzlvMmpSbzRuYXBBMVFXQ3I2NzVrYTZRUldJeDZUWTBtWlhPQWhN?=
- =?utf-8?B?c3ZqbU9RYU9IUWNMS0xFWTFQeGh2TFRBYjlOMHFWOG1tV0xzZTNHVkIwOXgx?=
- =?utf-8?B?WkpINGtvZ1FnVEhXcWxlbEpqYk5keTRRVkhINVhKZngxYXlCeUt2anphSGlJ?=
- =?utf-8?B?am41L1Vtd0Z6eEpNWGpOMnhBQ2IzTkd1NXVPdTE1UEo3QlpITklGemJxTWdQ?=
- =?utf-8?B?dEplTlZSS0p5d20zcktndmtCTUJsNDhvM2RiMWswYXVBVkNjNjhBblphUFFq?=
- =?utf-8?B?c0Vua0lrVWpiT3ZXVHVqN3hTODRlVmttbE84c3Zsa1lGQmxhUnFWRFkzalEr?=
- =?utf-8?B?Y3p3dG5FdzNYZUlRd0lacFdWYXhQQmpHc0J3RXBiNklHQjRNcXpaaVRLN3hj?=
- =?utf-8?B?cEhTUmJvZEdsVlNGS0tNNG1oNlZBNmI3S2t3SG5TYmFyMk5ycTg2Q092UGJJ?=
- =?utf-8?B?T3FtdzJ4ZUxvWmdoSkF0RDdUYUQ4QlRkNDNmQXM2eWQwYjRVVExFSVNRNjh4?=
- =?utf-8?B?M2N5ajJLRkFHSjQybEJlRENtTUxPcEsvcURvelRsbWt5TmhHeCtGODd1b2RX?=
- =?utf-8?B?MDdzcTdQanVyb1Jhd2tUUG4xS09kL0tRWGRhTHNZZWlOMnNtcVJqU1ZxYk9I?=
- =?utf-8?B?UTJWTndGNmZWbW9rVTBpVVJtWHgybGRmbFJyRGZ6eUZFYnVQUEVUcUphREQ5?=
- =?utf-8?Q?gxx5EUr08s79x?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NDNRVVRIQ21HVTR1MzZlWTNGdTMwMkE5OURpazZWZ0l5N2ZCYjdZK3lVL2ho?=
- =?utf-8?B?REpIQzN3ejVadkw2eDBzR0NFV0xLRXQrOWdOdHREODUvc2hnUFRNdXdoU1Z4?=
- =?utf-8?B?ZXdrMmdaaktscXF0RW03RzdDb3hvNWtKcTdnL3BXV3NCZU1qMVdPQit0U0lT?=
- =?utf-8?B?QmwrdkJ1bjMvblBFclZZZWp1WXJybmVrMXIreTBNRzlHOTJkMWdJYlVLVlUx?=
- =?utf-8?B?UW95ZlJxanhnNnZ6cms5VWIrVEcwUDR1eldQNEtPT1JIRDZjc0tGNHBVeWZI?=
- =?utf-8?B?N3hmUEtCK0xCZTMyM256WkJNTWJXQm9Tb2JwdDBhY1MwZXNsdnRiQ3NXeDlP?=
- =?utf-8?B?dFJjZ1IyZy8yMnp4czhiZzc0L0tuZDdCNG4vdFZpZXdlc1JkcmpWMlBRRUI0?=
- =?utf-8?B?MjdTV3JOaXNGS1RYTElmSThpRHA3Zmd1VTJMdkducFp1N0Zaa0ZRUzNkWDZC?=
- =?utf-8?B?ckdNdHd6Z3JtMklYN3J3M3ZyT3IwMzIxWWdiQlhjYmpwNXBqQkxyMWdyT3hQ?=
- =?utf-8?B?L1V6d2t5Nm5oUUhCRU9pUTNKVkk2VEZZU2ozYzBuZ0FxZmJTVmQycXhFUHJC?=
- =?utf-8?B?ZEV5QWdVREcraE40bERNNFdmTXhUODBWeDFNTmVVUzlxZStXOWVNa0tVMURP?=
- =?utf-8?B?bVhtSWtoM3pjV2NITmo4SFVnOWJwWnJpU1ZIZ0RkM2cwaEc2cjZFK3E5dEh5?=
- =?utf-8?B?cDQrQ0dPQVg0MzlQQktXYjV6N0ZvVHZUdlc3UHlHWXhEQzlEZ1BFTlJmTGhq?=
- =?utf-8?B?b3pGdjg1bVVEQzIvUDlZWE5acHNKUjV2MjBQN3VRZ01nVDcrdDR0dG9sbVBE?=
- =?utf-8?B?bjk4dEFHanYwT0xxNTFkb20rd05Vd1RvaWVZZ3ZtOXVzQmY4ZG1iNWJ4eVdY?=
- =?utf-8?B?TGowOC80cC9NMW84SkNmL0w2Y2FTTWxvelBIbWQva1VTczFaT0xnRHJZQmRu?=
- =?utf-8?B?U3BhcmJLVFpiOTZabjB0akNJVndLMXhMdGQxY3RmbW5LU29jRTFoQkxhSGVw?=
- =?utf-8?B?S21BZGhwKzBKVXdNVTBxTTJkeWNjK2dOY1dGcDgwdmx3aHZhWjQvLzVNYWJo?=
- =?utf-8?B?WnQ0UEU3ZmJzR2k3RFozckREZDNvY3B0b21FSWlGY2NIb1RadjBrYVRBcDlN?=
- =?utf-8?B?K3N6OG41VS9palRKSytNalM4RHRuVC9TTXVJbmNsK1JURExVaThYZnlEN3Zv?=
- =?utf-8?B?RkVrc2VFbkc1Y3NLQ0dzTGdjWDRHc0I2UmQrL3RDejZQM1MwNWYrVzR3b29k?=
- =?utf-8?B?OHp6VlhJaHVxeDRkUTdjSWkvcDZqeDdhckhvQ3NJVG5RK3hFa2ZvOUFrbXl2?=
- =?utf-8?B?SkRXYllZSDQrQ2g3Z2x6YXlIc1JaM0lGcU9UdEJldW5YZFcreGxZdmZDc0xW?=
- =?utf-8?B?UUovaUk1bEFQN1lsczFuOXlsT1AyT1pwamhOZmVHMWZBRWdFNWZRVVlEQWlS?=
- =?utf-8?B?Z2pIdXlJbTgwcC9keEtyeTIxQUdLZHdpKzJWWWNYRlN1OWo2aitPWWh2KzI2?=
- =?utf-8?B?aFlzSnErbkVXOGowTm1TS1pvd011RGFuamNqTXdpVU1HdklvcU95cC82ZGdz?=
- =?utf-8?B?aytNUCtUU1VJSTkwNUk2ZXpIKzlMU1k3UnBnbjI3b0dVRXIyeDhrL20zajh3?=
- =?utf-8?B?K3RXaHJhS2xuWWFsRW96ODZXdkhlMUF6ejhGejlFajlJcE9YRWgrTFA4SHBi?=
- =?utf-8?B?TjVhME9Ka2J4cCtxSDY3bnBtcklSZUVTcmpGV1MwNGlRa1Mwc2Y5alZjWTNV?=
- =?utf-8?B?b01wTzNna083UHNLdGJhcWE2TTEvY0x2YkZGTWtaa0xkeDVETk9mbytBd3hE?=
- =?utf-8?B?NHJVWENoQ3FNQ3M0RDRUU2ttcnVBeUlBYXpzWXRyN3kxMEliV1ZjdStWbEZj?=
- =?utf-8?B?aW1tZGdkd2NkR3VGNFdWbW80MlVPUkRocmoxSU9wRFhQR1FUVTd1dWpnSnlk?=
- =?utf-8?B?dDFhQ0VCY240Q2RBWS9NbUViNThUa3d1ZThsTWtBWFAvemZvTGdPMm1wMnV4?=
- =?utf-8?B?M0dVK2FWUGdOMDRZekhoYVlrQzFnY2tRTWg2RFBPR053dGZJWWdJdUZaTEhk?=
- =?utf-8?B?bFhZVGFMcnJqRjZpeHIxbTJqbnlJZnY4N2lyMnpkTDhWdEtVTk5DWHF2QjBE?=
- =?utf-8?B?WkhwdmRnbVp0aFhHbWlwcWtaZEtRVmlCR0FxbGNSSElpazNhQ3BscWR1MFl4?=
- =?utf-8?B?V0E9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3007c19-4260-4479-59bc-08dd565ad097
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 11:43:40.4666
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YmS4T2u+kZRutd+eQ9HhZ9EcReaVtVPj0WTSJll8JmEAptzdIET6MGzROefy1Ag6xs3TpJeKIJ6tSilBpGtZJhvJdq3lLqPsfqWa50CgZJ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6860
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKf+vmcC/3WNywrCMBQFf6VkbSSJtWld+R9SJI8be0GSktRQK
+ f130y5Fl3Ng5iwkQURI5FItJELGhMEXEIeKmEH5B1C0hYlgouaMSzqqmOCebQrUhydqQ4E1nVZ
+ KOle3pHhjBIfz3rz1hQdMU4jv/SLzbd1qZ8YF+1HLnDKqnQWuu1rVhl+f6F9TDB7no4XtYLcFO
+ /2zO6Mb0bRWSg1fdr+u6wcLOFkP9AAAAA==
+X-Change-ID: 20241017-parse_vdso-nolibc-e069baa7ff48
+To: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+ Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ llvm@lists.linux.dev, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740570307; l=3393;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=DsKFmSVUXHIq2lUncqo1DiHx1M4YqIuFyrpISSxzmuQ=;
+ b=TC6HO3n1Fyr0Lj0hLMyg0/ixUTpUZ+35yMdWTwE8xXub343tQnGH7Rach2zk0DD5JzUBeKJ2W
+ Jg6/cXXIKiDDMcUHTLoJNg25mjaT6VJ1Pl6t+TJOGHoDMKCRhY1cRzM
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Hi Heiko,
+For testing the functionality of the vDSO, it is necessary to build
+userspace programs for multiple different architectures.
+It is additional work to acquire matching userspace cross-compilers with
+full C libraries and then building root images out of those.
+The kernel tree already contains nolibc, a small, header-only C library.
+By using it, it is possible to build userspace programs without any
+additional dependencies.
+For example the kernel.org crosstools or multi-target clang can be used
+to build test programs for a multitude of architectures.
+While nolibc is very limited, it is enough for many selftests.
+With some minor adjustments it is possible to make parse_vdso.c
+compatible with nolibc.
+As an example, vdso_standalone_test_x86 is now built from the same C
+code as the regular vdso_test_gettimeofday, while still being completely
+standalone.
+Also drop the dependency of parse_vdso.c on the elf.h header from libc and only
+use the one from the kernel's UAPI.
 
-On 2/26/25 11:38 AM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> Move the typec-orientation-switch functionality further down, next to
-> the typec-mux code. Not only brings this the typec-related functionality
-> closer together, but also the following change needs access to other
-> driver functions, that are below the current position.
-> 
-> No functional change.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+While this series is useful on its own now, it will also integrate with the
+kunit UAPI framework currently under development:
+https://lore.kernel.org/lkml/20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de/
 
-Checked with `meld`, the - and + diff are identical.
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Provide a limits.h header in nolibc
+- Pick up Reviewed-by tags from Kees
+- Link to v1: https://lore.kernel.org/r/20250203-parse_vdso-nolibc-v1-0-9cb6268d77be@linutronix.de
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Thomas Weißschuh (16):
+      MAINTAINERS: Add vDSO selftests
+      elf, uapi: Add definition for STN_UNDEF
+      elf, uapi: Add definition for DT_GNU_HASH
+      elf, uapi: Add definitions for VER_FLG_BASE and VER_FLG_WEAK
+      elf, uapi: Add type ElfXX_Versym
+      elf, uapi: Add types ElfXX_Verdef and ElfXX_Veraux
+      tools/include: Add uapi/linux/elf.h
+      selftests: Add headers target
+      tools/nolibc: add limits.h shim header
+      selftests: vDSO: vdso_standalone_test_x86: Use vdso_init_form_sysinfo_ehdr
+      selftests: vDSO: parse_vdso: Drop vdso_init_from_auxv()
+      selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers
+      selftests: vDSO: parse_vdso: Test __SIZEOF_LONG__ instead of ULONG_MAX
+      selftests: vDSO: vdso_test_gettimeofday: Clean up includes
+      selftests: vDSO: vdso_test_gettimeofday: Make compatible with nolibc
+      selftests: vDSO: vdso_standalone_test_x86: Switch to nolibc
 
-Thanks!
-Quentin
+ MAINTAINERS                                        |   1 +
+ include/uapi/linux/elf.h                           |  38 ++
+ tools/include/nolibc/Makefile                      |   1 +
+ tools/include/nolibc/limits.h                      |   7 +
+ tools/include/uapi/linux/elf.h                     | 524 +++++++++++++++++++++
+ tools/testing/selftests/lib.mk                     |   5 +-
+ tools/testing/selftests/vDSO/Makefile              |  11 +-
+ tools/testing/selftests/vDSO/parse_vdso.c          |  19 +-
+ tools/testing/selftests/vDSO/parse_vdso.h          |   1 -
+ .../selftests/vDSO/vdso_standalone_test_x86.c      | 143 +-----
+ .../selftests/vDSO/vdso_test_gettimeofday.c        |   4 +-
+ 11 files changed, 590 insertions(+), 164 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20241017-parse_vdso-nolibc-e069baa7ff48
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
