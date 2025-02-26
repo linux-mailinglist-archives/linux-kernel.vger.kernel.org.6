@@ -1,179 +1,133 @@
-Return-Path: <linux-kernel+bounces-533523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D1BA45BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:24:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A79A45BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A741889CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9462C3AA47B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBF8238171;
-	Wed, 26 Feb 2025 10:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0353E2459D0;
+	Wed, 26 Feb 2025 10:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNLGq8b8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hbh0LX3O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1DC226D1E;
-	Wed, 26 Feb 2025 10:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC242AB4;
+	Wed, 26 Feb 2025 10:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565422; cv=none; b=fpVp+s2pk6KCmVWRFpqnebbD0Ze3dwjgosWDg+1IXOH0x2WZvXYjeHlebnXeWOjnC75UzTaLnt2eSGQh20ueEyVM3sI1Mr4O/mZ3Xjb4nJEd8RHHJzcYw5ior0/FKE2MyStprHnr/eRaeGLOW4Bmyh7uIklgZpo6pganY3IECwo=
+	t=1740565472; cv=none; b=nmQMFbfRJet0YZR6jASTlqdLFHhs8XnjIgoFCFDgV5vIopZaWlZ4olHxLZQ+5zfn05d8YpjO9LMnJTEut1XzKGmQxLMyF+YZIjQwsc+ZEzTx8W7Aaeyd1eEO5j8WVOsGC80YfD89PmeToEXNHCAEwa3p36qBsl5WygH45A/xPAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565422; c=relaxed/simple;
-	bh=JUYF30zXLkCS1lAA8rBTYOxggTmbkwCo5KuReiWez2o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RLSzEo0Co8agMIpfLdxx7Xg47BuVUpvhQ043zc7NI/VJsJ+xTJCY4iUV0aH+xnbI+AEO91eSAbifttFxfOB0PSU5J0THyvh97kuDNJEcMEGJef4XLlD9aiwNZ7mqyoloGHn3tOZKNupowG0mJFJqwo3d2hsg24m8XwqJSJSuw8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNLGq8b8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E03AC4CED6;
-	Wed, 26 Feb 2025 10:23:39 +0000 (UTC)
+	s=arc-20240116; t=1740565472; c=relaxed/simple;
+	bh=W3UsMTl1eRoZNqDh2olgWY2KMFo9sL5/ZGwphflCQTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j4laiW0lZU+kcac+rgIN+Ln16ncgcp4E+oakdlvdTY2uusyv+SNVSvQGSd+yd00kjM9G0V18bm5gPiiAzNbO7PYJyKG8eu0Xnz4RFGFRX0dLJQ5B+XmLuZCp8OJ3k6MTZ+6t2fHtRbhK6F83hJb5YKdcLTgyF/Zsf+LtsbTmAlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hbh0LX3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDEEC4CEE2;
+	Wed, 26 Feb 2025 10:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740565419;
-	bh=JUYF30zXLkCS1lAA8rBTYOxggTmbkwCo5KuReiWez2o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TNLGq8b80js9FyHVPJjRXtMKtsdmapm9jAuzG5Hu8ao0CiQpzZkK0U1QubINKmTVx
-	 AcSAxsKGHycnY+Wacg1SZRuMsEcn1L/wiKM0Jtazx8N9rk56mqqidAYIwHOfVbO104
-	 7PPfufh538BcG64ZMbEYc+KviyAlj3E48I140tiVcn8b0R/khClmclunV6HdhBezTg
-	 JbQWHV7Y8GSzv//TPYb5RN2TnTdkh0VLpw3Qi10jpTX5BmjN++bNC4aEiTV1nj8vnF
-	 bzkH/yf4XagpI5UX/0L+pZmbfhiAHr7nkezIVAGOmOKcfN2b4HP0IzIAonw3MoDHuE
-	 zg11Pvxb405qA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>
-Cc: irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org,
- mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev,
- rostedt@goodmis.org, will@kernel.org
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-In-Reply-To: <da6aad99-3461-47fd-b9d8-65f8bb446ae1@oracle.com>
-References: <4356c17a-8dba-4da0-86dd-f65afb8145e2@oracle.com>
- <20250225235455.655634-1-wnliu@google.com>
- <da6aad99-3461-47fd-b9d8-65f8bb446ae1@oracle.com>
-Date: Wed, 26 Feb 2025 10:23:21 +0000
-Message-ID: <mb61ph64h9f8m.fsf@kernel.org>
+	s=k20201202; t=1740565471;
+	bh=W3UsMTl1eRoZNqDh2olgWY2KMFo9sL5/ZGwphflCQTc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Hbh0LX3OvqnEzXqoqBSlj+0QUOI0stsyv5l/YUTRzvHxhxhfJ1LfarmaQqLeK/PPX
+	 Nf21o64OI4SCRX28t4aiFSGyusLwvQx840jKEJHB+fZxT694bEi8IzpYvRbxaXycLi
+	 NJ3GqiVldGVUopIPO1mkyyqrhsJjFgQ+CyLV6SIWddcCZBSG/k4Mxfu/jRD/aCQNDJ
+	 my2P9E+PTlzSEztoe9ys00pcRBMNXsSKf7ead1UPUnlNUK72fqq4Q9SKntdaRVz1zJ
+	 o2aU9/8+I42b4h0S76IbryxhfNP5lJ3+ZdjpP216QDAfp7kYpj6TozMkOIBgRYRkqk
+	 jSnPTfQfm2jng==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5fd28093334so2400227eaf.3;
+        Wed, 26 Feb 2025 02:24:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVONQwkX/4wF3g0Mga9OUzzolRuQAtvs7VeEsOjBeDFjmVkngNHM8xf5euOYc24l9FeP1CEx62hB2v4+60=@vger.kernel.org, AJvYcCW36SG9BsFbnbP2f282T44+SYIJvTRxKUZNuXtPqx/NVBG5qCZTl6vs0cLB1QsYhqfP2GyXVWpXLxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFZFvaVsHyMa3FDxHJmhsGZJ7mwWzo9V/CW5GIDBydJS1sCIYf
+	fX146636A9WEcrlssYTbzafU4hnzhKLi+VwpuCbpEy59MOJTMo+swHzRAmTOf4DfvF2FFK4vEuX
+	rVaN0c45h/S4387E8ZWSo3Q2ZGqs=
+X-Google-Smtp-Source: AGHT+IGgEx4OXnx9BIFtFtCp5NL6tvorlL2rEvgAw6hgpWmJrhzDYNJls6DAs1pEStloVcNXyD5vvTw3VdxBifERd/0=
+X-Received: by 2002:a05:6871:7b87:b0:29e:559b:d694 with SMTP id
+ 586e51a60fabf-2bd518598bdmr15408803fac.32.1740565471114; Wed, 26 Feb 2025
+ 02:24:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain; charset=utf-8
+References: <10cf96aa-1276-4bd4-8966-c890377030c3.ref@yahoo.fr>
+ <10cf96aa-1276-4bd4-8966-c890377030c3@yahoo.fr> <22539099.EfDdHjke4D@debian>
+ <CANDhNCqdpbi=r81NyXVWBbB5POj5nmrc7qo3r2bi1yYqYBgiAg@mail.gmail.com>
+ <CANDhNCqFi1adk_MdejQC1bod5STHPDjaSB9imSGpRtJt3TbW1Q@mail.gmail.com>
+ <c1d1b79c-bb2e-4a69-888d-a3301bcbfeb2@yahoo.fr> <CANDhNCreiCQUKccmW1wBtvVzQrfB=xC0GFRO65SHG-+Wfu1wtA@mail.gmail.com>
+ <b9b58a9e-eb56-4acd-b854-0b5ccb8e6759@yahoo.fr> <87plkoau8w.ffs@tglx>
+ <15f4f44d-6f73-4031-a7dc-d2105672bc81@yahoo.fr> <874j0jhiag.ffs@tglx>
+ <5114de6a-e6ef-4459-9570-6dd2245fabd5@yahoo.fr> <87eczlg6ls.ffs@tglx> <87bjupfy7f.ffs@tglx>
+In-Reply-To: <87bjupfy7f.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Feb 2025 11:24:18 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hCqV+=05ojjzvymwC5Z97WccbihCwXT22_my0TRJiWoA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrACA-XbyyVs587zDWqD6pwPNTSLsblqgkJ_LQqoUVOrDE7wdkknfHvWQc
+Message-ID: <CAJZ5v0hCqV+=05ojjzvymwC5Z97WccbihCwXT22_my0TRJiWoA@mail.gmail.com>
+Subject: Re: [PATCH] intel_idle: Handle older CPUs, which stop the TSC in
+ deeper C states, correctly
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Fab Stz <fabstz-it@yahoo.fr>, John Stultz <jstultz@google.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, 
+	Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Indu Bhagat <indu.bhagat@oracle.com> writes:
+On Tue, Feb 25, 2025 at 11:37=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> The Intel idle driver is preferred over the ACPI processor idle driver,
+> but fails to implement the work around for Core2 generation CPUs, where
+> the TSC stops in C2 and deeper C-states. This causes stalls and boot
+> delays, when the clocksource watchdog does not catch the unstable TSC
+> before the CPU goes deep idle for the first time.
+>
+> The ACPI driver marks the TSC unstable when it detects that the CPU
+> supports C2 or deeper and the CPU does not have a non-stop TSC.
+>
+> Add the equivivalent work around to the Intel idle driver to cure that.
+>
+> Fixes: 18734958e9bf ("intel_idle: Use ACPI _CST for processor models with=
+out C-state tables")
+> Reported-by: Fab Stz <fabstz-it@yahoo.fr>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Tested-by: Fab Stz <fabstz-it@yahoo.fr>
+> Cc: stable@vger.kernel.org
+> Closes: https://lore.kernel.org/all/10cf96aa-1276-4bd4-8966-c890377030c3@=
+yahoo.fr
+> ---
+>  drivers/idle/intel_idle.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -56,6 +56,7 @@
+>  #include <asm/intel-family.h>
+>  #include <asm/mwait.h>
+>  #include <asm/spec-ctrl.h>
+> +#include <asm/tsc.h>
+>  #include <asm/fpu/api.h>
+>
+>  #define INTEL_IDLE_VERSION "0.5.1"
+> @@ -1799,6 +1800,9 @@ static void __init intel_idle_init_cstat
+>                 if (intel_idle_state_needs_timer_stop(state))
+>                         state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
+>
+> +               if (cx->type > ACPI_STATE_C1 && !boot_cpu_has(X86_FEATURE=
+_NONSTOP_TSC))
+> +                       mark_tsc_unstable("TSC halts in idle");
+> +
+>                 state->enter =3D intel_idle;
+>                 state->enter_s2idle =3D intel_idle_s2idle;
+>         }
 
-> On 2/25/25 3:54 PM, Weinan Liu wrote:
->> On Tue, Feb 25, 2025 at 11:38=E2=80=AFAM Indu Bhagat <indu.bhagat@oracle=
-.com> wrote:
->>>
->>> On Mon, Feb 10, 2025 at 12:30=E2=80=AFAM Weinan Liu <wnliu@google.com> =
-wrote:
->>>>> I already have a WIP patch to add sframe support to the kernel module.
->>>>> However, it is not yet working. I had trouble unwinding frames for the
->>>>> kernel module using the current algorithm.
->>>>>
->>>>> Indu has likely identified the issue and will be addressing it from t=
-he
->>>>> toolchain side.
->>>>>
->>>>> https://sourceware.org/bugzilla/show_bug.cgi?id=3D32666
->>>>
->>>> I have a working in progress patch that adds sframe support for kernel
->>>> module.
->>>> https://github.com/heuza/linux/tree/sframe_unwinder.rfc
->>>>
->>>> According to the sframe table values I got during runtime testing, loo=
-ks
->>>> like the offsets are not correct .
->>>>
->>>
->>> I hope to sanitize the fix for 32666 and post upstream soon (I had to
->>> address other related issues). =C2=A0Unless fixed, relocating .sframe
->>> sections using the .rela.sframe is expected to generate incorrect outpu=
-t.
->>>
->>>> When unwind symbols init_module(0xffff80007b155048) from the kernel
->>>> module(livepatch-sample.ko), the start_address of the FDE entries in t=
-he
->>>> sframe table of the kernel modules appear incorrect.
->>>
->>> init_module will apply the relocations on the .sframe section, isnt it ?
->>>
->>>> For instance, the first FDE's start_addr is reported as -20564. Adding
->>>> this offset to the module's sframe section address (0xffff80007b15a040)
->>>> yields 0xffff80007b154fec, which is not within the livepatch-sample.ko
->>>> memory region(It should be larger than 0xffff80007b155000).
->>>>
->>>
->>> Hmm..something seems off here. =C2=A0Having tested a potential fix for =
-32666
->>> locally, I do not expect the first FDE to show this symptom.
->>>
->>=20
-
-Hi,
-
-Sorry for not responding in the past few days.  I was on PTO and was
-trying to improve my snowboarding technique, I am back now!!
-
-I think what we are seeing is expected behaviour:
-
- | For instance, the first FDE's start_addr is reported as -20564. Adding
- | this offset to the module's sframe section address (0xffff80007b15a040)
- | yields 0xffff80007b154fec, which is not within the livepatch-sample.ko
- | memory region(It should be larger than 0xffff80007b155000).
-
-
-Let me explain using a __dummy__ example.
-
-Assume Memory layout before relocation:
-
- | Address | Element                                 | Relocation
- |  ....   | ....                                    |
- |   60    | init_module (start address)             |
- |   72    | init_module (end address)               |
- |  ....   | .....                                   |
- |   100   | Sframe section header start address     |
- |   128   | First FDE's start address               | RELOC_OP_PREL -> Put=
- init_module address (60) - current address (128)
-
-So, after relocation First FDE's start address has value 60 - 128 =3D -68
-
-Now, while doing unwinding we Try to add this value to the sframe
-section header's start address which is in this example 100,
-
-so 100 + (-68) =3D 32
-
-So, 32 is not within [60, 72], i.e. within init_module.
-
-You can see that it is possible for this value to be less than the start
-address of the module's memory region when this function's address is
-very close to the start of the memory region.
-
-The crux is that the offset in the FDE's start address is calculated
-based on the address of the FDE's start_address and not based on the
-address of the sframe section.
-
-
-Thanks,
-Puranjay
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZ77rmxQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2ncczAP9XQv1qvG5QCEfqUBX3HHJF4cyv8eWB
-B49aFu+bqtdZ/wEArbSbRVLmpy9+45qoLpOywsiqw6sK+Dtw6vwAGxJX7ws=
-=hyPk
------END PGP SIGNATURE-----
---=-=-=--
+Applied as a fix for 6.14-rc5, thank you!
 
