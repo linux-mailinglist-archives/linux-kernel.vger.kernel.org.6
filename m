@@ -1,206 +1,187 @@
-Return-Path: <linux-kernel+bounces-534880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90231A46C2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 343BCA46C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F397E188AA7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75426188B10D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7182755E0;
-	Wed, 26 Feb 2025 20:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SHNt6EG/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1167720E31F;
+	Wed, 26 Feb 2025 20:29:43 +0000 (UTC)
+Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870C210F2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D175275617;
+	Wed, 26 Feb 2025 20:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740601129; cv=none; b=qiMP++5axP2ZV56zizFhJ2Hl915wOm0RRY+q+zuWpL8NMBn5P6dvt393Q7RDIEki26z/AnJDfSPJQgatSBs+LsYdvF87UsA0LAZ/vZnps/Nei5BPr3eYSD8SVlYL5ILf3gR6hhStB6XzFT6KXbJ+MrRwAtNqGIrnz7UsOSQgzk0=
+	t=1740601782; cv=none; b=RUhRcbcRy0zb/mtZrm/6lpk+8zxk+OA03j8dCNxPsIZA/vIpb3kal0ZOTpqoueb2bPKoYrT70QKYQXBFc1gSwJpVQT776L1L8TwKBxya0rrlHI+QKw/Uwd5STz6+c0bUvrVCClS7ZV5Yf+bWqyBPIxyGw+LNrBSsVshnTyNdT90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740601129; c=relaxed/simple;
-	bh=a6Gr2fGBsSIxKNBsdnR8AcB356TYiEQ2ev9BeMjs/7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJ85F0bPYz7rhKdGNGyWavWvy/DJ9bk0wWcbJo78sNr/bB8splBGgKlUlW1u0C0lpkfG807QtXcQf3jv+aTGGsrWI1QequTsQxLJAu4Kc2cPl3Fi7PEXLdTL2P+wCJjCka93UYbIzzUPW6wJDfO8y12jvfPaRfaKM/BzdLfYIFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SHNt6EG/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740601126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DnRnPXT+HxB6Fa3LnjUopL2yefmMufyBefSBY059ozY=;
-	b=SHNt6EG/Nj0tBjDjRuMvs7EVaxpl4YfCXQxqTyVPdPt+Gcu8adzcbhfMMTxCPzj21kFWKm
-	+pzjA4WuqOpUlM4hmMHf8IVYi+kn4+zYAm2UD3Y3LUC3n0/AAniE6gDBNUIRHnUAhlaFpX
-	R/ch8e55XnfpAaVWjDezRdTWVUhOqxQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-DoOsbRtPN8qMr5OBIIobMA-1; Wed,
- 26 Feb 2025 15:18:45 -0500
-X-MC-Unique: DoOsbRtPN8qMr5OBIIobMA-1
-X-Mimecast-MFC-AGG-ID: DoOsbRtPN8qMr5OBIIobMA_1740601124
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B20A418009A5;
-	Wed, 26 Feb 2025 20:18:42 +0000 (UTC)
-Received: from random.internal.datastacks.com (unknown [10.22.82.64])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9C5B7180035E;
-	Wed, 26 Feb 2025 20:18:41 +0000 (UTC)
-From: Peter Jones <pjones@redhat.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	Lenny Szubowicz <lszubowi@redhat.com>,
-	Peter Jones <pjones@redhat.com>
-Subject: [PATCH] efi: don't map the entire mokvar table to determine its size
-Date: Wed, 26 Feb 2025 15:18:39 -0500
-Message-ID: <20250226201839.2374631-1-pjones@redhat.com>
+	s=arc-20240116; t=1740601782; c=relaxed/simple;
+	bh=yxQtZhATw7YZMwx8d0sQeR7D3tNH7pkKxlGCc/f7ick=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lg8ToDZvfWbCyxUiQ2WvETQ4sbR8yjqgf5VM+RiiDGlaF4uFFHpb0M6PQR+NTg/iaToZwr/QXMLr3UcD61IUQS0Hc6NDwHO3n3tAqsQnP/rtFsPqFRAEAJtEuO3u+P677lC4iZ2CyyG+G4Yrs+PDaUPsJ3RBDNlK8RBRmNTru2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 29B8D54145B;
+	Wed, 26 Feb 2025 21:21:00 +0100 (CET)
+Date: Wed, 26 Feb 2025 21:20:58 +0100
+From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Roopa Prabhu <roopa@nvidia.com>, linux-kernel@vger.kernel.org,
+	bridge@lists.linux.dev, Jan Hoffmann <jan@3e8.eu>,
+	Birger Koblitz <git@birger-koblitz.de>,
+	Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Subject: Re: [PATCH RFC net-next 00/10] MC Flood disable and snooping
+Message-ID: <Z793qqMMvxKuFxbM@sellars>
+References: <065b803f-14a9-4013-8f11-712bb8d54848@blackwall.org>
+ <804b7bf3-1b29-42c4-be42-4c23f1355aaf@gmail.com>
+ <20240405102033.vjkkoc3wy2i3vdvg@skbuf>
+ <935c18c1-7736-416c-b5c5-13ca42035b1f@blackwall.org>
+ <651c87fc-1f21-4153-bade-2dad048eecbd@gmail.com>
+ <20240405211502.q5gfwcwyhkm6w7xy@skbuf>
+ <1f385946-84d0-499c-9bf6-90ef65918356@gmail.com>
+ <20240430012159.rmllu5s5gcdepjnc@skbuf>
+ <b90caf5f-fa1e-41e6-a7c2-5af042b0828e@gmail.com>
+ <431e1af1-6043-4e3e-bc3b-5998ec366de7@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <431e1af1-6043-4e3e-bc3b-5998ec366de7@blackwall.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Currently when validating the mokvar table, we (re)map the entire table
-on each iteration of the loop, adding space as we discover new entries.
-If the table grows over a certain size, this fails due to limitations of
-early_memmap(), and we get a failure and traceback:
+Sorry for chiming in so late in this conversation, missed it due
+to the mailing list address change and how my procmail sorts
+things...
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 0 at mm/early_ioremap.c:139 __early_ioremap+0xef/0x220
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.15-200.fc41.x86_64 #1
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20250221-6.copr8698600 02/21/2025
-  RIP: 0010:__early_ioremap+0xef/0x220
-  Code: e5 00 f0 ff ff 48 81 e5 00 f0 ff ff 4c 89 6c 24 08 41 81 e4 ff 0f 00 00 4c 29 ed 48 89 e8 48 c1 e8 0c 41 89 c7 83 f8 40 76 04 <0f> 0b eb 82 45 6b ee c0 41 81 c5 ff 05 00 00 45 85 ff 74 36 83 3d
-  RSP: 0000:ffffffff96803dd8 EFLAGS: 00010002 ORIG_RAX: 0000000000000000
-  RAX: 0000000000000041 RBX: 0000000000000001 RCX: ffffffff97768250
-  RDX: 8000000000000163 RSI: 0000000000000001 RDI: 000000007c4c3000
-  RBP: 0000000000041000 R08: ffffffffff201630 R09: 0000000000000030
-  R10: 000000007c4c3000 R11: ffffffff96803e20 R12: 0000000000000000
-  R13: 000000007c4c3000 R14: 0000000000000001 R15: 0000000000000041
-  FS:  0000000000000000(0000) GS:ffffffff97291000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: ffff9f1d8000040e CR3: 00000000653a4000 CR4: 00000000000000f0
-  Call Trace:
-   <TASK>
-   ? __early_ioremap+0xef/0x220
-   ? __warn.cold+0x93/0xfa
-   ? __early_ioremap+0xef/0x220
-   ? report_bug+0xff/0x140
-   ? early_fixup_exception+0x5d/0xb0
-   ? early_idt_handler_common+0x2f/0x3a
-   ? __early_ioremap+0xef/0x220
-   ? efi_mokvar_table_init+0xce/0x1d0
-   ? setup_arch+0x864/0xc10
-   ? start_kernel+0x6b/0xa10
-   ? x86_64_start_reservations+0x24/0x30
-   ? x86_64_start_kernel+0xed/0xf0
-   ? common_startup_64+0x13e/0x141
-   </TASK>
-  ---[ end trace 0000000000000000 ]---
-  mokvar: Failed to map EFI MOKvar config table pa=0x7c4c3000, size=265187.
+First of all, many thanks Joseph for looking into this! I think I
+agree with you that there is an actual RFC4541 compatiblity
+issue for multicast offloading switches which (try to) use
+the kernel space Linux bridge IGMP/MLD snooping code. For both
+routable and non-routable multicast traffic.
 
-Mapping the entire structure isn't actually necessary, as we don't ever
-need more than one entry header mapped at once.
 
-This patch changes efi_mokvar_table_init() to only map each entry
-header, not the entire table, when determining the table size.  Since
-we're not mapping any data past the variable name, it also changes the
-code to enforce that each variable name is NUL terminated, rather than
-attempting to verify it in place.
+I see a lot of confusion and misunderstandings in this thread. And
+initially got very confused by the cover letter, too, and needed to
+recheck the MCAST_FLOOD flag behaviour in the code and in practice :-).
 
-Signed-off-by: Peter Jones <pjones@redhat.com>
----
- drivers/firmware/efi/mokvar-table.c | 41 +++++++++--------------------
- 1 file changed, 13 insertions(+), 28 deletions(-)
+> There is a use case where one would like to enable multicast snooping
+> on a bridge but disable multicast flooding on all bridge ports so that
+> registered multicast traffic will only reach the intended recipients and
+> unregistered multicast traffic will be dropped.
 
-diff --git a/drivers/firmware/efi/mokvar-table.c b/drivers/firmware/efi/mokvar-table.c
-index 5ed0602c2f7..66eb83a0f12 100644
---- a/drivers/firmware/efi/mokvar-table.c
-+++ b/drivers/firmware/efi/mokvar-table.c
-@@ -103,7 +103,6 @@ void __init efi_mokvar_table_init(void)
- 	void *va = NULL;
- 	unsigned long cur_offset = 0;
- 	unsigned long offset_limit;
--	unsigned long map_size = 0;
- 	unsigned long map_size_needed = 0;
- 	unsigned long size;
- 	struct efi_mokvar_table_entry *mokvar_entry;
-@@ -134,48 +133,34 @@ void __init efi_mokvar_table_init(void)
- 	 */
- 	err = -EINVAL;
- 	while (cur_offset + sizeof(*mokvar_entry) <= offset_limit) {
--		mokvar_entry = va + cur_offset;
--		map_size_needed = cur_offset + sizeof(*mokvar_entry);
--		if (map_size_needed > map_size) {
--			if (va)
--				early_memunmap(va, map_size);
--			/*
--			 * Map a little more than the fixed size entry
--			 * header, anticipating some data. It's safe to
--			 * do so as long as we stay within current memory
--			 * descriptor.
--			 */
--			map_size = min(map_size_needed + 2*EFI_PAGE_SIZE,
--				       offset_limit);
--			va = early_memremap(efi.mokvar_table, map_size);
--			if (!va) {
--				pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%lu.\n",
--				       efi.mokvar_table, map_size);
--				return;
--			}
--			mokvar_entry = va + cur_offset;
-+		if (va)
-+			early_memunmap(va, sizeof(*mokvar_entry));
-+		va = early_memremap(efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
-+		if (!va) {
-+			pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%zu.\n",
-+			       efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
-+			return;
- 		}
-+		mokvar_entry = va;
- 
- 		/* Check for last sentinel entry */
- 		if (mokvar_entry->name[0] == '\0') {
- 			if (mokvar_entry->data_size != 0)
- 				break;
- 			err = 0;
-+			map_size_needed = cur_offset + sizeof(*mokvar_entry);
- 			break;
- 		}
- 
--		/* Sanity check that the name is null terminated */
--		size = strnlen(mokvar_entry->name,
--			       sizeof(mokvar_entry->name));
--		if (size >= sizeof(mokvar_entry->name))
--			break;
-+		/* Enforce that the name is null terminated */
-+		mokvar_entry->name[sizeof(mokvar_entry->name)-1] = '\0';
- 
- 		/* Advance to the next entry */
--		cur_offset = map_size_needed + mokvar_entry->data_size;
-+		cur_offset += sizeof(*mokvar_entry) + mokvar_entry->data_size;
- 	}
- 
- 	if (va)
--		early_memunmap(va, map_size);
-+		early_memunmap(va, sizeof(*mokvar_entry));
- 	if (err) {
- 		pr_err("EFI MOKvar config table is not valid\n");
- 		return;
--- 
-2.48.1
+To clarify for others: This is exactly what the Linux bridge does
+right now. With bridge multicast snooping enabled and active
+(a querier is present) any snoopable, unregistered (no MDB entry)
+IP multicast payload traffic will only be forwarded to ports which
+were either manually set to a multicast router port or where a
+multicast router was detected via IGMP/MLD query, MRD or PIM
+snooping. And if no such port exists, will be dropped.
 
+The current per port MCAST_FLOOD flag implementation does not change this
+behaviour. Its current (unfortunately not very well documented)
+behaviour is basically, mainly to decide on what to do with packets
+which the bridge multicast snooping code *can not* deal with / can
+not learn about. Which can be because multicast snooping is
+disabled, because there is no IGMP/MLD querier, because they are
+IGMPv1/v2/MLDv1 packets, because they are not in the RFC4541
+defined snoopable address ranges - or because it is a multicast
+packet which is not an IP packet after all. The last case should
+make it clear why the MCAST_FLOOD is 1/enabled by default. Which
+might be a bit confusing/counterintuitive initially when
+coming and thinking from the other, the IP snooping direction.
+
+> bridge ports' mcast_flood flag implementation, it doesn't work as desired.
+
+The important context to the "it doesn't work as desired"
+can be found some lines later:
+"3. A hardware offloading switch is involved".
+
+The main issue seems that the learned or manually set multicast
+router ports in the Linux bridge are not propagated down to the
+actual multicast offloading switches. And therefore these switches
+won't be able to follow RFC4541, which will potentially lead to
+packet loss for multicast packets, both routable ones - as
+multicast routers are not detected - but also for non-routable ones
+due to potential IGMPv1/v2/MLDv1 report suppression.
+This is the main issue this patchset tries to tackle, making
+multicast offloading switches with kernelspace IGMP/MLD snooping
+RFC4541 compliant, I believe?
+
+-----
+
+> [PATCH RFC net-next 03/10] net: bridge: Always flood local subnet mc packets
+> ...
+> If multicast flooding is disabled on a bridge port, local subnet multicast
+> packets from the bridge will not be forwarded out of that port, even if
+> IGMP snooping is running and the hosts beyond the bridge port are sending
+> Reports to join these groups (e.g., 224.0.0.251)
+
+This is a fix for a regression which patch 01/10 introduced in the first place
+
+> [PATCH RFC net-next 02/10] net: bridge: Always multicast_flood Reports
+> ...
+> Fixes: b00589af3b04 ("bridge: disable snooping if there is no querier")
+
+This is a regression of patch 01/10, the "Fixes" line is
+incorrect.
+
+
+> [PATCH RFC net-next 09/10] net: dsa: mv88e6xxx: Enable mc flood for mrouter port
+
+So this is what the idea of repurposing/redefining of MCAST_FLOOD
+ultimately comes down to, I guess?
+
+I'm wondering, shouldn't the information you're looking for already
+be available inside the Linux bridge as is? As it
+right now correctly knows when to flood on a port?
+Hm, would it maybe alternatively be possible to somehow call the
+new dsa_switch_ops.port_mrouter you're adding - which
+seems to be a missing, key part to fix this in the DSA API -
+from for instance br_port_mc_router_state_change() instead?
+Without needing any new or redefined state or knob in the
+Linux bridge?
+
+I'm also not quite sure yet what effect your proposed changes to
+the MCAST_FLOOD knob would have to non-IP multicast packets -
+could it break them?
+
+-----
+
+For the discussion regarding more knobs for a more fine-grained
+control for flooding various types of packets: I agree that would
+be nice to have. But I don't think it's necessary to fix the
+original issue which Joseph tries to address.
+
+Also I think they maybe should be added afterwards, after fixing
+the issue with offloading switches? As already as is the port
+MCAST_FLOOD and BR_INPUT_SKB_CB(skb)->mrouters_only flags
+interactions are quite hard to follow and confusing in the
+Linux bridge code (qed.?).
+
+Regards, Linus
+
+
+PS: Also adding Jan Hoffmann, Birger Koblitz and
+Sebastian Gottschall to CC, as they seem to have been working on
+getting such a feature running in OpenWrt/DD-Wrt for rtl83xx
+DSA switches, too.
 
