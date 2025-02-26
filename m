@@ -1,160 +1,192 @@
-Return-Path: <linux-kernel+bounces-532724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5666BA4516B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:26:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD795A45177
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:31:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EB119C0753
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0BF178ED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1816BB5B;
-	Wed, 26 Feb 2025 00:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4BD1494C9;
+	Wed, 26 Feb 2025 00:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ajQVyawQ"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Vx7b+pHI"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9345933F7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9BB4C96;
+	Wed, 26 Feb 2025 00:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740529608; cv=none; b=SKp1SjeDOrAqsORP0g7sLyCXZa4AYzqJFPbxfXIVWXJRSHM9gtVNI21HohCTsta4O/My7xUN33fBbaZ2yW94X2me/5XgzZBRHbzt8iFfLESEjlI8Akp7ik3mY09imuNGaXhKqTY1G/Uzz4twA4a/HFd/UsZOWHojogzV29NS2bQ=
+	t=1740529853; cv=none; b=aWAoFOOo4y+sSEkT3d/YoSHE3rKpNIz60QsbBcvsg+O+U7d47jn+z6BfkAO/ggfZI/wf4bYrnKDU1lOKDVpQ2rtCaDEM9m6WHwE8ocULVWVMvWSxGsPDFopvNE45S+flJxGgGfEgHHPPPSgz1qu6qsoBaLElrRSQuJWD3KEzTU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740529608; c=relaxed/simple;
-	bh=U8EoAqRFMwNN0vkZxxuJ747c1TkFoXybVwKQXTpYFNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mv/zZiPcfhLC+fnuRhwCIYI4t9LmMYexe9dSfmI7ycCsSGPH7D2RQ3jwGw051lxxs5vdborTJLN29651yO5laD8waGUWUIiFvV7vMzNaxQrzzL7cYPD81VkH9yAatKCMNtk3atafVv1+vwwEN/4vYysGckXwbPDCqh6wSJkgKYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ajQVyawQ; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f546cbf71cso310325b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:26:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740529604; x=1741134404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TtkdEm0DhE9kMHrzm4v1hwSlsrJYtgXqAtJA7aT6OdM=;
-        b=ajQVyawQVJadBMDPUptySchMkqqVEJx1NM6ucacylDf+Nd6HU7JEw+KpIn8LQoCL1n
-         Q9TC7gKbBXw/M3iiMMvV3g40ZQUkZlOMGgVcZTC/N+WVl/XK+yE1oVZyWVfixvNEUobc
-         6csOi93pB71E1HL3ULzFP8prHxcNAa1BKh2ZBbG466jRvyBvC5i7Fe0LkjefqVFUfSp5
-         d5W5E1u0Z72z1byg9+8GU5ukPeS2Exz2uVc3hu4fz5hMhi8auubwcGBYFnDRQl0Mh4cJ
-         e/mSCeT+PCQjOk2P3vQFF0aw2jptNtKYfdyVVs/xPE5ScKmkiZXQK7qdeafAWiJ1MEOD
-         k/PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740529604; x=1741134404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TtkdEm0DhE9kMHrzm4v1hwSlsrJYtgXqAtJA7aT6OdM=;
-        b=CVRp9dEad2P8t6gercVGbKN4HQZkpV1AsgFV2Pisg92lqNVfnxmhxHuQEGQiA5Om1/
-         T765Jc72FDdKfol7sAbGjT0ZyfTO1QrtPD8PCswuKYgKCgunpqnGGsrLD7x7qUnBoX5y
-         Q+0FNJcrmH8Hi0i/RTy0Ii/MTujgLcN9ooTrwyruvUUTpjui/JlmfIRUXpUYexIHp0Jf
-         dHiGOrb+Hp/O8ahgj+0SyzpQ5UmCkJiAh3TMCF+Y97lvfFyijEnLAsT5nWNfmMdM3/0N
-         6xYeRoxL8I6wgBmmQVTWKAiG2759L+dbtk0o/npKRvhaM5QxvQQbz+oUajaTu11VJa7A
-         Ib8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ6/gw2WrAbg57r6jvVD4pL2z0/Xr1JhklK2tx8hy4pCiwSKN/JBMiuKEkSzFmlnH7xPJjkHHIMnGORdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy/ovT8sW+I12gndR6Y+ASDp4YEEQ2CPgPS4LGcS/KMGjg1jZn
-	nKOy+DaGDLy++7Ol+gZdpqY2jMqMofXDkLSLt9PEN0RSxYkjzipxWFd2D8/djng=
-X-Gm-Gg: ASbGncuiw5PvZlWQaIRnyywZhxF4TQualEh/KJ53VWKuJBAVYPZupvlX7pbKXNMRZg7
-	P0d4s/CZYKXW2OwPgd3H0/Bwa9W4I8q8mHozyzH2laifNTrsFYgmloQUg7csjHEd51jv8cBIphU
-	9Nv+gwvQDVQuVRpgvey+BOYW84o4WtbfeqBnS9oCrGOVtAeipD2VK7VYqTIzq6KcJ8xdh5RFlWE
-	cqRwF4dT2xCBTLjPh6Kt1Ar68YIlLvR5s9GDm3yUDtxcl3irBxeMq03Aml8ZQZ9EI/yA6hKX6SZ
-	fVhZsvyBhVyThzkKDYfRNrOnfyePEFIRPVRFKyR37IVJoOPN7cEX1bsqkBuCkHI=
-X-Google-Smtp-Source: AGHT+IHrEzlhOgkq+zDuK43ZJTHn/TAq6eat4Ph04G840iIXAUXagf0yq5sPkcY8nyRgOxiDTjBreA==
-X-Received: by 2002:aca:1a0e:0:b0:3f4:ad6:5190 with SMTP id 5614622812f47-3f547de878fmr763766b6e.2.1740529604637;
-        Tue, 25 Feb 2025 16:26:44 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f541c5bce1sm510105b6e.46.2025.02.25.16.26.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 16:26:43 -0800 (PST)
-Message-ID: <0de7b0ac-eca5-49ba-b1b3-f249655f3646@baylibre.com>
-Date: Tue, 25 Feb 2025 18:26:40 -0600
+	s=arc-20240116; t=1740529853; c=relaxed/simple;
+	bh=pJ1KehZbitu0kLsVW9eiCKwsgGO686FG7mqY1q5DjlY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Bj/BkWhpOHNBlBA53+pOA6qo18/fNedtLDxOoHw8Mu5hRr2L+OzUG5ZgMHIg+GKQfIlUjh9XVH1LTWO12KvIOCE0pF1yN3jMIv58ICnLUWyoNECaHYioNIRP788HMsZKZpgsmEEx2Lh6nN8BRXPtY3EzY50N4mgW+lAIya6UYY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Vx7b+pHI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51Q0Qj6t1485832
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 25 Feb 2025 16:26:45 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51Q0Qj6t1485832
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740529613;
+	bh=/hX8/LeT9m/0VDN5crD4IR806wwsnn6QY9gkxuzs4a0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Vx7b+pHI31WYClRevJ90WGCmYkzsC0O4yjSFPubrFkDlFo2vpZqzZ9G40N2ZAk70A
+	 1cQPgYLnd5I5ey7wLfCgJ8Wa0Jqy8sY2mmwkmCFEYEUtcYkP8RXNAjd1Y+xeDCqwyy
+	 AVyJIpfagXD4ZTFbnWuOR5XQI14sBmquPHuWbhW+8b2Y38BEQzTU/x+sgB61KqUTHa
+	 KrIofANBe7vt+iRKzcTlXNAf7DT6yzoW1HRWvAy9pthuwqTbtWlxOjUH2euKtYzuHK
+	 KQskzKcNpxdcsPJFrGasTa7yfZ2Zs9ZcwOmb/PzgE+W9UnEKLynUNcREeGm0XPaNtx
+	 a3lIkp85qLD3w==
+Date: Tue, 25 Feb 2025 16:26:43 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: David Laight <david.laight.linux@gmail.com>
+CC: Uros Bizjak <ubizjak@gmail.com>, Kuan-Wei Chiu <visitorckw@gmail.com>,
+        tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
+        joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+        dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
+        hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+        johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, yury.norov@gmail.com, akpm@linux-foundation.org,
+        mingo@kernel.org, alistair@popple.id.au, linux@rasmusvillemoes.dk,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+        brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+        Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_03/17=5D_x86=3A_Replace_open-c?=
+ =?US-ASCII?Q?oded_parity_calculation_with_parity8=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250225224623.6edaaaa9@pumpkin>
+References: <20250223164217.2139331-1-visitorckw@gmail.com> <20250223164217.2139331-4-visitorckw@gmail.com> <d080a2d6-9ec7-1c86-4cf4-536400221f68@gmail.com> <e0b1c299-7f19-4453-a1ce-676068601213@zytor.com> <20250225224623.6edaaaa9@pumpkin>
+Message-ID: <E07B61E5-324E-4CDC-AE68-A63CDF4325F4@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/10] iio: adc: add helpers for parsing ADC nodes
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <23f5ee3e3bf7179930d66c720d5c4c33cdbe8366.1740421248.git.mazziesaccount@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <23f5ee3e3bf7179930d66c720d5c4c33cdbe8366.1740421248.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2/24/25 12:33 PM, Matti Vaittinen wrote:
-> There are ADC ICs which may have some of the AIN pins usable for other
-> functions. These ICs may have some of the AIN pins wired so that they
-> should not be used for ADC.
-> 
-> (Preferred?) way for marking pins which can be used as ADC inputs is to
-> add corresponding channels@N nodes in the device tree as described in
-> the ADC binding yaml.
+On February 25, 2025 2:46:23 PM PST, David Laight <david=2Elaight=2Elinux@g=
+mail=2Ecom> wrote:
+>On Mon, 24 Feb 2025 13:55:28 -0800
+>"H=2E Peter Anvin" <hpa@zytor=2Ecom> wrote:
+>
+>> On 2/24/25 07:24, Uros Bizjak wrote:
+>> >=20
+>> >=20
+>> > On 23=2E 02=2E 25 17:42, Kuan-Wei Chiu wrote: =20
+>> >> Refactor parity calculations to use the standard parity8() helper=2E=
+ This
+>> >> change eliminates redundant implementations and improves code
+>> >> efficiency=2E =20
+>=2E=2E=2E
+>> Of course, on x86, parity8() and parity16() can be implemented very sim=
+ply:
+>>=20
+>> (Also, the parity functions really ought to return bool, and be flagged=
+=20
+>> __attribute_const__=2E)
+>>=20
+>> static inline __attribute_const__ bool _arch_parity8(u8 val)
+>> {
+>> 	bool parity;
+>> 	asm("and %0,%0" : "=3D@ccnp" (parity) : "q" (val));
+>> 	return parity;
+>> }
+>>=20
+>> static inline __attribute_const__ bool _arch_parity16(u16 val)
+>> {
+>> 	bool parity;
+>> 	asm("xor %h0,%b0" : "=3D@ccnp" (parity), "+Q" (val));
+>> 	return parity;
+>> }
+>
+>The same (with fixes) can be done for parity64() on 32bit=2E
+>
+>>=20
+>> In the generic algorithm, you probably should implement parity16() in=
+=20
+>> terms of parity8(), parity32() in terms of parity16() and so on:
+>>=20
+>> static inline __attribute_const__ bool parity16(u16 val)
+>> {
+>> #ifdef ARCH_HAS_PARITY16
+>> 	if (!__builtin_const_p(val))
+>> 		return _arch_parity16(val);
+>> #endif
+>> 	return parity8(val ^ (val >> 8));
+>> }
+>>=20
+>> This picks up the architectural versions when available=2E
+>
+>Not the best way to do that=2E
+>Make the name in the #ifdef the same as the function and define
+>a default one if the architecture doesn't define one=2E
+>So:
+>
+>static inline parity16(u16 val)
+>{
+>	return __builtin_const_p(val) ? _parity_const(val) : _parity16(val);
+>}
+>
+>#ifndef _parity16
+>static inline _parity16(u15 val)
+>{
+>	return _parity8(val ^ (val >> 8));
+>}
+>#endif
+>
+>You only need one _parity_const()=2E
+>
+>>=20
+>> Furthermore, if a popcnt instruction is known to exist, then the parity=
+=20
+>> is simply popcnt(x) & 1=2E
+>
+>Beware that some popcnt instructions are slow=2E
+>
+>	David
+>
+>>=20
+>> 	-hpa
+>>=20
+>>=20
+>
 
-I think "preferred?" is the key question here. Currently, it is assumed
-that basically all IIO bindings have channels implicitly even if the
-binding doesn't call them out. It just means that there is nothing
-special about the channel that needs to be documented, but the channel
-is still there.
+Seems more verbose than just #ifdef _arch_parity8 et al since the const an=
+d generic code cases are the same (which they aren't always=2E)
 
-Similarly, on several drivers we added recently that make use of adc.yaml
-(adi,ad7380, adi,ad4695) we wrote the bindings with the intention that
-if a channel was wired in the default configuration, then you would just
-omit the channel node for that input pin. Therefore, this helper couldn't
-be used by these drivers since we always have a fixed number of channels
-used in the driver regardless of if there are explicit channel nodes in
-the devicetree or not.
+But that part is a good idea, especially since on at least *some* architec=
+tures like x86 doing:=20
 
-In my experience, the only time we don't populate all available channels
-on an ADC, even if not used, is in cases like differential chips where
-any two inputs can be mixed and matched to form a channel. Some of these,
-like adi,ad7173-8 would have 100s or 1000s of channels if we tried to
-include all possible channels. In those cases, we make an exception and
-use a dynamic number of channels based on the devicetree. But for chips
-that have less than 20 total possible channels or so we've always
-provided all possible channels to userspace. It makes writing userspace
-software for a specific chip easier if we can always assume that chip
-has the same number of channels.
+#define _arch_parity8(x) __builtin_parity(x)
 
-> 
-> Add couple of helper functions which can be used to retrieve the channel
-> information from the device node.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
+=2E=2E=2E etc is entirely reasonable and lets gcc use an already available=
+ parity flag should one be available=2E
+
+The inline wrapper, of course, takes care of the type mangling=2E
 
