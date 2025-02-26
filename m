@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-533622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD11A45CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:11:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FE1A45CD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7EBE170882
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C041897814
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB89A214A67;
-	Wed, 26 Feb 2025 11:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC5421519A;
+	Wed, 26 Feb 2025 11:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="X7FSIOYi"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4UZjGRV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A820B213E87;
-	Wed, 26 Feb 2025 11:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6FF214207;
+	Wed, 26 Feb 2025 11:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740568248; cv=none; b=S8pTOgrw/m0SiQ38YSOL7fR4yFhwuyIaVmjV3Q9NVQlqyjcel9lCqivbmKfi+qAD+lPNH8nU2wlsUjuGC1FvnMHrJQvZEY9+ujN5lCIpOURjjbiLOvE9e3qF05Nz4cN4khyvIg4xfBt8UUdhtgl3rl8sHHGzL5a0hW2FM0ZtttM=
+	t=1740568341; cv=none; b=LIyke05fPD0vHhojyUvzafcpEGuE4KdSH+iNzzWJYWyGikCMxRskPogkUUZr1JzgW3i3rx8WDx0atFobafqLi+FheZynCnqTfYYAbk7lbGUMsrlwEKnlucavhP8u3U0gOAJu8/B+/xRsMifr59gaHQxfFKX8b3z+7WC09LHKLtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740568248; c=relaxed/simple;
-	bh=4I7omasySoZo/JUrFqUPmohfcJJOJWXiXsJQizCs3DE=;
+	s=arc-20240116; t=1740568341; c=relaxed/simple;
+	bh=jZw9UiUOrosfMM/sq64CfD9dAVrPX0T09356az2lcn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUea2mBUy2D7psLjB5gLpjaXDnh5EsmAJ5xypBHL3EcWUPoLofqUS7/52SOoXNYHpyvZJoDevxlYsTJUDkk7V1uvX1g9FwBOiu/H5jgNaVnEe3VvOQXAIEY9iyAoKjIVhzrmayPz4SUzwXQ271qJzcA/0dDQLvZlwyNI2NS/VqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=X7FSIOYi; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740568240; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vpAtcTJM/EJCDxxy2WMQ1RGo3EUw0Xe3GtPnY0G1MaE=;
-	b=X7FSIOYiW7AQXN6HaL0cIs7ZBQGdggEOG+3rwVAF2jfu9W17aoLsBFHyvYXNVJeH9OD4ACZV87APtHPAGvp+UdOqIuQQ+aNwQC24R5ixXBTVl8IvXqwB60m9Lqe+5GwLMGggNvvxFqKRdHCy7Db+owu2W2AQPz7tFP9gO7DyhtE=
-Received: from 30.221.130.195(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WQI5T1B_1740568238 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 26 Feb 2025 19:10:38 +0800
-Message-ID: <be8704b0-81a4-403b-8b42-d3612099279f@linux.alibaba.com>
-Date: Wed, 26 Feb 2025 19:10:36 +0800
+	 In-Reply-To:Content-Type; b=iMhF3KKKWgjCqIV0tgQWH+Jan/p4tfI5kwkRD3C3kY9p34BcM2/OJrpB07URYSZngLD4Y+RC5HFf/SD6ba3z8hC7GlUDGCDWpdqT0wDdEHkwap2sLDps7QceHb5fcWgEUIs6YUYCrEenotSnUsbEtWnsHLnyJRkR1/lDLZUxWUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4UZjGRV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDEEC4CED6;
+	Wed, 26 Feb 2025 11:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740568341;
+	bh=jZw9UiUOrosfMM/sq64CfD9dAVrPX0T09356az2lcn8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U4UZjGRVj/GAe6cQw0SBXKABZXheweZqqsnuaK4R7FEnAhhYuB8935c1pxzUuKy23
+	 iKjuW4Gyk85euPwoTSQRQZXO3d5OS/TLNhoYgQAOdHbBsHV7Xo2oLkm3xSXxMdV9Lc
+	 R0AQM+OizId6HH0sYEAvA0CGTxafjlOnDoPQMAWbfdDFf/r//XF22TUUvNUWqx1810
+	 ZQhPRTOagkhWDk8B9E/QspEnB24zRmoHkblV1OSbhEx26tV7D3NGJu8fa+snYKJKoH
+	 6jllMkSzApR7AHf3oNSAJRZM0SvgnJujN9hKmFDFVb8L+fipgtmQVaBEmobtFW0jfn
+	 /5ZnapxjCVNow==
+Message-ID: <6f01269a-bd64-46e7-800f-d8d59c4bf72e@kernel.org>
+Date: Wed, 26 Feb 2025 12:12:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,115 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] virtio-blk: add io_uring passthrough support.
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>
-References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
- <20250219020112.GB38164@fedora>
+Subject: Re: [PATCH v2 5/5] coresight-tnoc: add nodes to configure freq packet
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
+ <20250226-trace-noc-driver-v2-5-8afc6584afc5@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ferry Meng <mengferry@linux.alibaba.com>
-In-Reply-To: <20250219020112.GB38164@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250226-trace-noc-driver-v2-5-8afc6584afc5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 26/02/2025 12:05, Yuanfang Zhang wrote:
+> Three nodes for freq packet config are added here:
+> 
+> 1. freq_type: used to set the type of issued ATB FREQ packets.
+> 0: 'FREQ' packets; 1: 'FREQ_TS' packets.
+> 
+> 2. freq_req_val: used to set frequency values carried by 'FREQ'
+> and 'FREQ_TS' packets.
+> 
+> 3. freq_ts_req: writing '1' to issue a 'FREQ' or 'FREQ_TS' packet.
+> 
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tnoc.c | 97 ++++++++++++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+> index ad973749250644760adc4dfd855240026d0a744c..24b1add4c921866b944d756e563d50b4172d583a 100644
+> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+> @@ -112,10 +112,107 @@ static ssize_t flag_type_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RW(flag_type);
+>  
+> +static ssize_t freq_type_show(struct device *dev,
+> +			      struct device_attribute *attr,
+> +			      char *buf)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +
+> +	return sysfs_emit(buf, "%u\n", drvdata->freq_type);
+> +}
+> +
+> +static ssize_t freq_type_store(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf,
+> +			       size_t size)
 
-On 2/19/25 10:01 AM, Stefan Hajnoczi wrote:
-> On Wed, Dec 18, 2024 at 05:24:32PM +0800, Ferry Meng wrote:
->> This patchset implements io_uring passthrough surppot in virtio-blk
->> driver, bypass vfs and part of block layer logic, resulting in lower
->> submit latency and increased flexibility when utilizing virtio-blk.
-> Hi,
-> What is the status of this patch series?
->
-> Stefan
+No improvements. You got here comments and you got also later my
+complain that yo missed comments already.
 
-I apologize for the delayed response. It seems that the maintainer has 
-not yet provided feedback on this patch series, and I was actually 
-waiting for his comments before proceeding. I have received the feedback 
-from the other reviewers & have already discovered some obvious mistakes 
-in v1 series.
+You keep ignoring received feedback and that's a no go for me.
 
+Maybe process needs to be improved, so reach to your colleagues and
+learn how to interact with upstream. There is very comprehensive
+internal guideline in Qualcomm, so follow it carefully.
 
-Although I'm occupied with other tasks recently, I expect to send out v2 
-patches *in a week*.
+I expect still to respond to my original comment or implement it fully.
 
-
-Thanks.
-
->> In this version, currently only supports READ/WRITE vec/no-vec operations,
->> others like discard or zoned ops not considered in. So the userspace-related
->> struct is not complicated.
->>
->> struct virtblk_uring_cmd {
->> 	__u32 type;
->> 	__u32 ioprio;
->> 	__u64 sector;
->> 	/* above is related to out_hdr */
->> 	__u64 data;  // user buffer addr or iovec base addr.
->> 	__u32 data_len; // user buffer length or iovec count.
->> 	__u32 flag;  // only contains whether a vector rw or not.
->> };
->>
->> To test this patch series, I changed fio's code:
->> 1. Added virtio-blk support to engines/io_uring.c.
->> 2. Added virtio-blk support to the t/io_uring.c testing tool.
->> Link: https://github.com/jdmfr/fio
->>
->>
->> ===========
->> Performance
->> ===========
->>
->> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
->> scales better than block device access. (such as below, Virtio-Blk with QEMU,
->> 1-depth fio)
->> (passthru) read: IOPS=17.2k, BW=67.4MiB/s (70.6MB/s)
->> slat (nsec): min=2907, max=43592, avg=3981.87, stdev=595.10
->> clat (usec): min=38, max=285,avg=53.47, stdev= 8.28
->> lat (usec): min=44, max=288, avg=57.45, stdev= 8.28
->> (block) read: IOPS=15.3k, BW=59.8MiB/s (62.7MB/s)
->> slat (nsec): min=3408, max=35366, avg=5102.17, stdev=790.79
->> clat (usec): min=35, max=343, avg=59.63, stdev=10.26
->> lat (usec): min=43, max=349, avg=64.73, stdev=10.21
->>
->> Testing the virtio-blk device with fio using 'engines=io_uring_cmd'
->> and 'engines=io_uring' also demonstrates improvements in submit latency.
->> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u1 /dev/vdcc0
->> IOPS=189.80K, BW=741MiB/s, IOS/call=4/3
->> IOPS=187.68K, BW=733MiB/s, IOS/call=4/3
->> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u0 /dev/vdc
->> IOPS=101.51K, BW=396MiB/s, IOS/call=4/3
->> IOPS=100.01K, BW=390MiB/s, IOS/call=4/4
->>
->> =======
->> Changes
->> =======
->>
->> Changes in v1:
->> --------------
->> * remove virtblk_is_write() helper
->> * fix rq_flags type definition (blk_opf_t), add REQ_ALLOC_CACHE flag.
->> https://lore.kernel.org/io-uring/202412042324.uKQ5KdkE-lkp@intel.com/
->>
->> RFC discussion:
->> ---------------
->> https://lore.kernel.org/io-uring/20241203121424.19887-1-mengferry@linux.alibaba.com/
->>
->> Ferry Meng (3):
->>    virtio-blk: add virtio-blk chardev support.
->>    virtio-blk: add uring_cmd support for I/O passthru on chardev.
->>    virtio-blk: add uring_cmd iopoll support.
->>
->>   drivers/block/virtio_blk.c      | 320 +++++++++++++++++++++++++++++++-
->>   include/uapi/linux/virtio_blk.h |  16 ++
->>   2 files changed, 331 insertions(+), 5 deletions(-)
->>
->> -- 
->> 2.43.5
->>
+Best regards,
+Krzysztof
 
