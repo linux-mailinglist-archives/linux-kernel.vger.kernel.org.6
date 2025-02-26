@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-534530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FA8A46823
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:31:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A201A4681D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3873A941B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2963A4CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FE1224B15;
-	Wed, 26 Feb 2025 17:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E1F2253EF;
+	Wed, 26 Feb 2025 17:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="WM/0LC1U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tV02rHzg"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvuRHUyz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA3F224893
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FD7224AF8;
+	Wed, 26 Feb 2025 17:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740591097; cv=none; b=ADf73IAkbWaK/ZfPA8xYV0/idQVyVGYxCQRcyoy0aK0oKBHatH0+ZyvTMwr1FpU+o7EyDsUO33RIOVRPxNvO1mWQXv5j8/dqJNCEFa/cwJPiZhOgxRUdTJOQgpEgPUQ2EQ5qpWbEv7L5ceb5pdLWhYMYXgcKWOe1zicR1uopghc=
+	t=1740590997; cv=none; b=gyypa4cDEiPa8sIdSJqAIAj+vjbeIQXB7wxslD7ULW5o1eAq0p1+8I+gBNP3tb91K3DJcBMtTgGca3N4n6I+LDcEcB+n1/FhGrxqj31kjOXzZH2fdoi/E+tzOfNykW3k2PnbXCLLEO/MRW1wTjDQ5kDmMJ7hSzk/1/ApICoAO+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740591097; c=relaxed/simple;
-	bh=X3eyYVt4vGD0YkiOvQPOaR6KKn41whT8TQ6EBFqhtRI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RBBXnp9Wf7LRJzxoYGiwAFHE6nCuiDrtje8lURm85UkUw7qRqINFFPFbqbCBdSrByPPRA2nWBAP+F/nWXfJqBnypERi0Aqu2qkldG5PIBNp2DrucDDV9FEA+TVQZRVDNBBrM3CzVUN5fVFSa8RZeNPFVbhsqCr4A2WZMxAqVZ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=WM/0LC1U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tV02rHzg; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 43EF31380090;
-	Wed, 26 Feb 2025 12:31:34 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Wed, 26 Feb 2025 12:31:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1740591094; x=1740677494; bh=nUjbFqo2QU1rdCqx9p0fWtYPlF+MFrQB
-	YwjU1X0A1aU=; b=WM/0LC1UY6lCx1XQ3RQMgiC5qkWp3PQoHg/zMjPgz+8Gq8S0
-	FBenfcrQLGGoc5UF6zmDUP3l5ax0oHuMvWn4NraU7YrxngGwp2oOcZv2UOTxL6mb
-	O9wNmTpGS2PzhF32+3LKfli/5XAP3geTi4ZH6stjuRQMc5qeLCg/wuQuMwV2x8c3
-	aH4CsQa6Itghgtt93uX13spUhBejo1ZsVVsZZLdNhHOXy3TU2Y0wTmdYgXQ+bqZ2
-	JBefG1dr9UPz4Ig3DJGYFgKq4xqjcoCZz1vWwuyr62UyK58tMZMU8NMDyBw4JeS5
-	B7Eq9/dkO8h2qiWkNdUvPwaO47g38WHRdaJy/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740591094; x=
-	1740677494; bh=nUjbFqo2QU1rdCqx9p0fWtYPlF+MFrQBYwjU1X0A1aU=; b=t
-	V02rHzgC1pl8ZK+rDnzopS1aXDVwAw3HXJ313o9+R1x6Pz+0dcp6aEzlpRPWYBTD
-	EWyp5iG2UcTRJdF+C00/FzCdJx2+tc6Q9HwgB6SoIRylZqyuVf8LvdGJuERd20WB
-	9fpgaji04rE3N7+xwDAUKQpePeaLrJs2csHEt9/UCw0XPgQ+FORYeKGoi9ByLOdt
-	mCBuskbLWPeSWDzeNegT8kPp6itF+c46gZpz0aemAFuQWeBtqV1rSBiKWq3nbifd
-	LmCFC7FSwtMs8tw/Hl41SXgpt/hcC8pgDx0ZVzHqLPH6WeIXiyuVhJw96/tTOUZU
-	+JUTXr8s5v/L0GUmSDwCQ==
-X-ME-Sender: <xms:9U-_Z55QMmbaue7jPjXhTOPc2yJOxWxGcVdJtDRShFRS1JaB_8pNiw>
-    <xme:9U-_Z25jeFUVG2jM6psDfQiMtLOJbP-HhX1KBmJTmfIaPw-mbaxz7JZVTM67ccVtn
-    uKKftEi6v8ccc7LeGw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekhedulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
-    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
-    tghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhesjhgrnhhnrg
-    hurdhnvghtpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhs
-    rdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghsrghhiheslhhishhtshdrlh
-    hinhhugidruggvvhdprhgtphhtthhopehmrghrtggrnhesmhgrrhgtrghnrdhsthdprhgt
-    phhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9U-_ZweCX5KzNvhd_NpFBh_R4tdc8bGHGWS51T9n5Ct4tKBpTQiqMg>
-    <xmx:9U-_ZyIT1FZTvA0dG08CxtLhYmTRejfkzuVcFFTmUlnnCY-fbDA3yg>
-    <xmx:9U-_Z9J1GN3EYlpS2kbuxwhhEiIxLmsQ5z9DeMih4_F-cAgjffjR9g>
-    <xmx:9U-_Z7xyw1f3v0lL-nXRwO76DDO9t1sWzdQeD7tvALwEXH2AT_S8xA>
-    <xmx:9k-_Z7i6Koc12ngnRQwYUsJfAY3Ds7vuT0_vRi3o4B_Q3IEoHlXC_q6b>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A5F55BA006F; Wed, 26 Feb 2025 12:31:33 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740590997; c=relaxed/simple;
+	bh=B7w6kz3z2eZZW+849CoU9pf/lvE0LeYWzWllU/FXywM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=F7S52V3mnxCDmojPCA3LjOt2azDIPKeApjFLCsD8n3mT/L1G/LVlt4GscTYJ7qAtW2tJykYGrSLxt563Mdri1WWRQvdch3eY+iYYavNOGy9ded3ooWi39THI/lZmk5W3/Nw+lVmxX6Eq4X+YBRMLXkT+cTe5TOSpP/Y1KmSigd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvuRHUyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1288C4CEE8;
+	Wed, 26 Feb 2025 17:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740590996;
+	bh=B7w6kz3z2eZZW+849CoU9pf/lvE0LeYWzWllU/FXywM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=LvuRHUyzsDWBTphzSY4cpGJheves2OjCoffnc3zD1Cs3/7s9gDHGbCtO7REggRQHT
+	 AI/MP3MumtyjhM1PsyE4/MBrWPyHkdXlnJYkNmcJz5XXpy7pIvhg1M+32QCSOizCC5
+	 WycR9PU0apuL+WalxZdhnQCiglQ9C+E+Iwt4VKRv1OxHXjL+FPaSmlpOXQ3nQfq6Pa
+	 4HibuZPCwt4hN5y/MLqcTV4mPBorAnabrbhKYjwtpoqoxT3PCAjeh3dbctv6Eud3Ak
+	 cCqUEu1xn0TbvlZQvWjYiNBhQtjqkgSJ3Nvt+KLGtUswtYxweYIfAUHtQnD4x5yDuN
+	 jIho7uCRXlAbQ==
+Date: Wed, 26 Feb 2025 11:29:54 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 18:29:17 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Alyssa Rosenzweig" <alyssa@rosenzweig.io>
-Cc: "Janne Grunau" <j@jannau.net>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Hector Martin" <marcan@marcan.st>
-Message-Id: <dfef22a5-1f36-403b-99c4-2d910a38f9ea@app.fastmail.com>
-In-Reply-To: <Z79JyhOQUI_LV4oV@blossom>
-References: <20250222-apple-soc-misc-v1-0-1a3af494a48a@svenpeter.dev>
- <20250222-apple-soc-misc-v1-2-1a3af494a48a@svenpeter.dev>
- <Z7y14Q3ifu7U1tHI@blossom>
- <63c5cbfe-4751-4409-9be7-2fda21b09503@app.fastmail.com>
- <Z79JyhOQUI_LV4oV@blossom>
-Subject: Re: [PATCH 2/4] soc: apple: rtkit: Implement OSLog buffers properly
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Michael Ellerman <mpe@ellerman.id.au>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, dmaengine@vger.kernel.org, 
+ Crystal Wood <oss@buserror.net>, linuxppc-dev@lists.ozlabs.org, 
+ Nicholas Piggin <npiggin@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Naveen N Rao <naveen@kernel.org>
+To: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+In-Reply-To: <20250226-ppcyaml-dma-v3-1-79ce3133569f@posteo.net>
+References: <20250226-ppcyaml-dma-v3-1-79ce3133569f@posteo.net>
+Message-Id: <174059099427.2999773.4836262903761680275.robh@kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: dma: Convert fsl,elo*-dma to YAML
 
 
+On Wed, 26 Feb 2025 16:57:17 +0100, J. Neuschäfer wrote:
+> The devicetree bindings for Freescale DMA engines have so far existed as
+> a text file. This patch converts them to YAML, and specifies all the
+> compatible strings currently in use in arch/powerpc/boot/dts.
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+> I considered referencing dma-controller.yaml, but that requires
+> the #dma-cells property (via dma-common.yaml), and I'm now sure which
+> value it should have, if any. Therefore I did not reference
+> dma-controller.yaml.
+> 
+> V3:
+> - split out as a single patch
+> - restructure "description" definitions to use "items:" as much as possible
+> - remove useless description of interrupts in fsl,elo3-dma
+> - rename DMA controller nodes to dma-controller@...
+> - use IRQ_TYPE_* constants in examples
+> - define unit address format for DMA channel nodes
+> - drop interrupts-parent properties from examples
+> 
+> V2:
+> - part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
+>   Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-5-8137b0c42526@posteo.net/
+> - remove unnecessary multiline markers
+> - fix additionalProperties to always be false
+> - add description/maxItems to interrupts
+> - add missing #address-cells/#size-cells properties
+> - convert "Note on DMA channel compatible properties" to YAML by listing
+>   fsl,ssi-dma-channel as a valid compatible value
+> - fix property ordering in examples: compatible and reg come first
+> - add missing newlines in examples
+> - trim subject line (remove "bindings")
+> ---
+>  .../devicetree/bindings/dma/fsl,elo-dma.yaml       | 137 ++++++++++++++
+>  .../devicetree/bindings/dma/fsl,elo3-dma.yaml      | 125 +++++++++++++
+>  .../devicetree/bindings/dma/fsl,eloplus-dma.yaml   | 132 +++++++++++++
+>  .../devicetree/bindings/powerpc/fsl/dma.txt        | 204 ---------------------
+>  4 files changed, 394 insertions(+), 204 deletions(-)
+> 
 
-On Wed, Feb 26, 2025, at 18:05, Alyssa Rosenzweig wrote:
->> >> +	if (ep == APPLE_RTKIT_EP_OSLOG) {
->> >> +		buffer->size = FIELD_GET(APPLE_RTKIT_OSLOG_SIZE, msg);
->> >> +		buffer->iova = FIELD_GET(APPLE_RTKIT_OSLOG_IOVA, msg) << 12;
->> >> +	} else {
->> >> +		buffer->size = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg) << 12;
->> >> +		buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
->> >> +	}
->> >
->> > The shifts are suspiciously asymmetric. Are we really sure this is
->> > correct? My guess is that both size & iova for both oslog & buffer need
->> > to be page-aligned, so all 4 lines should be shifted, and the bit
->> > offsets should be adjusted in turn, and the lower 12-bits in oslog_size
->> > and buffer_iova are reserved. But that's just a guess.
->> >
->> > Anyway if this logic is really what we want it deserves a comment
->> > because it looks like a typo.
->> 
->> That guess can't be true for syslog since there's no change in behavior here
->> and the syslog endpoint has been working fine so far. This common code is
->> also used for other endpoints that request buffers and there haven't been
->> any issues there either. The size is just passed in "number of 4k chunks"
->> and the IOVA needs no additional fixups.
->> 
->> 
->> The entire reason for this commit is because this common logic just didn't
->> work for oslog. Our u-boot fork uses the same logic as used here [1]. We're stealing
->> a chunk of MTP's SRAM to make hand-off to Linux easier there. If either size or
->> IOVA was off by a factor 0x4000 this would've never worked in the first
->> place.
->
-> I'm not suggesting things are off by a factor of 4k. Rather I'm
-> questioning what the behaviour is when we're not 4k aligned. (I.e.
-> the syslog or oslog buffer does not both start and end at 4k
-> boundaries.)
->
-> If we're aligned, all our bottom bits are 0, and hypothetically we're
-> putting 0 into "reserved-must be zero" bits.
->
-> I guess it's inconsequential if everything is 4k aligned in practice.
-> But .. is it? I don't know.
+My bot found errors running 'make dt_binding_check' on your patch:
 
+yamllint warnings/errors:
 
-For the common buffers at least we sometimes _get_ the address from the
-co-processor when it e.g. points to its internal SRAM. We could access any
-buffer aligned to a 4 byte boundary in that case because it's just MMIO
-access then and I'm not even sure how strongly the buffer passed to us will be aligned.
-I'd rather not zero out bits there because we just cannot be sure those really
-are reserved.
-If the co-processor only asks for a buffer we'll grab it using dma_alloc_coherent
-and it's going to be aligned anyway then.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/fsl,elo-dma.example.dtb: dma-controller@82a8: '#dma-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/dma/dma-controller.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/fsl,eloplus-dma.example.dtb: dma-controller@21300: '#dma-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/dma/dma-controller.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/fsl,elo3-dma.example.dtb: dma-controller@100300: '#dma-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/dma/dma-controller.yaml#
 
+doc reference errors (make refcheckdocs):
 
-For oslog there aren't even any "reserved lower bits" in the message. It really
-expects the down-shifted address on the wire starting at bit 0.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250226-ppcyaml-dma-v3-1-79ce3133569f@posteo.net
 
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-Sven
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
