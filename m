@@ -1,269 +1,110 @@
-Return-Path: <linux-kernel+bounces-534430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DB5A466E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:45:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9C5A466EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FBC4407F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312FF17F5CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0B221DA0;
-	Wed, 26 Feb 2025 16:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37C5221D80;
+	Wed, 26 Feb 2025 16:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LHNBO8gP"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2040.outbound.protection.outlook.com [40.107.20.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNTEV8UQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533A31F16B;
-	Wed, 26 Feb 2025 16:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587500; cv=fail; b=PYbTZJ3rpp0WAMfGKp9u/hqDIeOH4dVt7N6K3k+7DXB2CZvDLebg82fY9SUgWiiVo3RIy/NcV7RdnroWVrvWn26JwzQ7EeTQPczI4kpUAkI/Vo5fyhOXMlG/0q5pHwSmN/6gbB2DXOPYBmoXWXQI/U4iATWWYYw67fX59rBUvXg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587500; c=relaxed/simple;
-	bh=AlFnrCBAlZdTrBNBQcOUzrwxSc5NwjAqwZlkxJotLOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D8gWWgh285mN79oP+e1vJgfuQ9Rde3jqzDhev6Tk3JbWlRfLFOz7wkU4Xg81Rn+H7eiUvEKo8Gfrdnp6zHorYhvoE7lvNKCM5P1sULnFTN1+uWmgvf+6IuCWHN7zzMNQdKrv8bh4PpBOfvWeeoxBSw1pcDU7NGxIpX41Bs+lndM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LHNBO8gP reason="signature verification failed"; arc=fail smtp.client-ip=40.107.20.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uZn/JJSsviy0Wn9SnJDox7lIQo5cnPpiMSONdDY8Gq8GmA6KQyT2rbPudezmJBdq8MyujAPKQP1rmwAGkzdW8XbnYQ6g+SUvQ63bAjz8Vfa+Bab1/vKKb4JLcSbcU2Tqmfb69IaIBQQPaEM4cd/81P0J/2C/+Z3UcuJ42kU97ZPJoZSDS5r+xZfDJqlsQXWfJkl8RqRjF5kBA9HSFIhW/Bo/HKsqtBVU4m60e26uJDGCHOhzWa34Ui7ClNGAQVEpmZdzydJdyITnb1kMIwkS83rg1SOGZLj+lu+Q0+HZW9lm+2v2F/Pf9WFWuFuUjJov44rhJ/x8aCUFILdpq3JadA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gv41jzHI2W38VLVxkLmri/ydcdjCiwCTVyL633dOnf0=;
- b=tcBMiw+lpWA5w/iZHCrKSsk+1JsvoGmMeg31klBMgIhFl/+oPi8e47ZEGE7XMeGihZg7T4DNDCu5c2rtPzNg/unbz+6Sm7agqz2rvVi89DL8QVXtyz3+n/olnlEafQP9Qj+A7rJV1wdA7egPg3OLbEwJUw9ZXlGDs/sIGKZ5TiWqWlyVep2ae7HGVZqGWtrmwwsCyYNEEL9LnQyRRG08QKbGRl2eaw1N/1sZ6F9mav9QfdOfA+sJMY3Vj1hM8yyYZkV2fY/pmUrBZtoe2SDgkA86ELatJanJxQDG2VX1rUdK5271PTm5uJ1EFicYYtDPQXYf0hhp2qd8ipCSapTqVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gv41jzHI2W38VLVxkLmri/ydcdjCiwCTVyL633dOnf0=;
- b=LHNBO8gP75laCPbwjq++ghv2qrP8li3xPeTTIJYjNWO72Jd+cISRK2N5p0YZe0Ohl/2YJuHju85N9CnCcXeo0lYhGHhGwpS5qzbStL2u0/FLZ4P5D2reebjkjDfPvDTVV04ttkc4w5WY6tUgsVZHwHXTH0iROcIZIWIoNRAdDm/fk8AA+fz9aucGXysjIPhJSlj5lrQhLMrNoc5/cbJyE3AnYFyq1BqDAQ/PnfWXowi+gEHCz6BV0XAMYGWE8j22P/TVvdDfXuvRyIbBJWyPjiZqBF+M5xr/gYGwOOJkDtNV5zjD9lTLK7VHWV3A3U7Efv+MiktKGOyZ4kc4IEZmTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by VE1PR04MB7325.eurprd04.prod.outlook.com (2603:10a6:800:1af::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Wed, 26 Feb
- 2025 16:31:35 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%6]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 16:31:35 +0000
-Date: Wed, 26 Feb 2025 11:31:26 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>, hongxing.zhu@nxp.com
-Subject: Re: [PATCH 4/5] arm64: dts: imx95: add PCIe's msi-map and iommu-map
- property
-Message-ID: <Z79B3pH0BwxJseHK@lizhi-Precision-Tower-5810>
-References: <20250128211559.1582598-1-Frank.Li@nxp.com>
- <20250128211559.1582598-4-Frank.Li@nxp.com>
- <1995746.PYKUYFuaPT@steina-w>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1995746.PYKUYFuaPT@steina-w>
-X-ClientProxiedBy: SJ0PR03CA0364.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::9) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1981F16B;
+	Wed, 26 Feb 2025 16:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740587492; cv=none; b=j8oqQw7OU/wP1mTQw/HKJPDW60+UDWq3L++jTNA/re+X1zD5NpM047mr1MPYity5s4A1olnkU1PPv+gAOP3qaeAp5RyCUrhQ/tCdJncSf4ivQ/QlvKDyFZTkZpmIW+PhjZdMcbu6FxFr/UNjlojiD4lb4EU7GOmwHDdhCsEVIzc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740587492; c=relaxed/simple;
+	bh=fbUyMbVzemgHgNjXulx1F/b+A8SvYzgDEV9k1ywZNr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEGNPgBTtR+b0IRXJQLbvQshzE1IzZ6ykheNulRTKZlgPr3kBV4GfhXCPHaaiZO//DtzvN4p6svTTLiVHS/NO5uGhXtpcHk7vnfnn/Meb2TkhzznsIsvVq85swNgYVjlcnozoubSog8bGa9dTlvV98T1QDTtwMa3WngZ+Eo/AWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNTEV8UQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689E0C4CED6;
+	Wed, 26 Feb 2025 16:31:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740587491;
+	bh=fbUyMbVzemgHgNjXulx1F/b+A8SvYzgDEV9k1ywZNr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JNTEV8UQ3w24YfxS2uL9nYsCo2h26uXzC+2iBxJ4wI6zk8ghUfiZDM4PkSyqpGjIu
+	 VwzzGVCfYRJuUwN2smbBoyQ0r1vjwvY8ht8mPeKMQgmVH2tlQJSH7+t8GX8vkdJYT3
+	 1msT3nxeKjxSgvA62ZyCbNaHmpbNRSkFFsfKLXYX+ZgCMwylrx4BS7TJIbZFWpNGf/
+	 zR5GcADgmdevAYk7qWcvPXASC5cdgi35rGmqetWoUXEs8HWirRQ8Hv/25XYUB4/AkQ
+	 fzvX1gL09nMp5SZKd1CWhZvEzsEhoo/6BQSgLsOC8ndfc8pZ/HFjb0zA+LdlbiUUPc
+	 dlEgOIMtp2h6g==
+Date: Wed, 26 Feb 2025 17:31:29 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+Message-ID: <Z79B4brrB_-SBstl@localhost.localdomain>
+References: <Z7yUTNEg6gMW0G7b@Mac.home>
+ <CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
+ <Z7ye0MsACNWe7Mbr@Mac.home>
+ <CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
+ <WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
+ <Z7yl-LsSkVIDAfMF@Mac.home>
+ <87msebyxtv.fsf@kernel.org>
+ <4UoaifxB7JgBVKsNQyFR_T8yc3Vtn5TLAEdxdXrojNmOzJSEncopauEyjDpnbqzr8Z74ZWjd_N-bB-BwBS-7aQ==@protonmail.internalid>
+ <Z7zF8KF9qTCr_n4l@boqun-archlinux>
+ <87bjuryvb0.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|VE1PR04MB7325:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf5c796c-09ed-49ea-c81a-08dd5683094d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?xz97nYGgdepF1sXpkTrZW+yRdf786OvqhTZl/fw3NA6/kEDw96hoLyBHTf?=
- =?iso-8859-1?Q?n1e4AN+6QFK0Hkc7vQgdhg8YrwAuejfh/I6F9JZv1Q5asGSxeM+BXssYkU?=
- =?iso-8859-1?Q?CtIqljnR0rpt8CA7NA/ecNy51/C2U9HeAA0X2P/Flx93bQ+dklV3+nxwH/?=
- =?iso-8859-1?Q?/UtIA3v1mB+CCOJqN4J0PRqA7kVkL3kGUeiZo9F2OT4rw0KFCdIbPpMKMO?=
- =?iso-8859-1?Q?6oHosuAFU22U44eCGW2axRgz25P42478EuBEA+/4VeW8FpF9FFdD5aSl98?=
- =?iso-8859-1?Q?nHCZKeDmnqsJHq7S3JD1MsQ96HFP0uXJU3bFo2k+5nj2tIEi+uQgnrHe1N?=
- =?iso-8859-1?Q?KeEQ+klYM3EcV/LQ2y3STHhPuZqveOSY2YogQoKGaw0jsYFNIRgIKbsKY/?=
- =?iso-8859-1?Q?bQoczyldvthgkgz3nFUIGM8qeh+OeVT1RIcLTe0sDSpQtlleiePXgicXo9?=
- =?iso-8859-1?Q?lMsF6b3fJcJl+LkTt1/m2T8MqLdVCoDVvw8H+t0D1gSpEvQixCV2cdTkz4?=
- =?iso-8859-1?Q?2WR/Urgpp91KpQww+eZgkDxs6SsexlvkUPWv9i8qq0AtA25xcoHkv9ZhBI?=
- =?iso-8859-1?Q?v5THoaPj4OO8Gn08nIWXA6OSgiQSL4bEYWvbQL8nv+MeoW//kTpqFxUJBc?=
- =?iso-8859-1?Q?curFJuu2G0Ad6zX3k2UiIss8b8v1LigH8/w5ZWAj3U8Q96Ob6RBv0SKYCl?=
- =?iso-8859-1?Q?LVO+6CnSW0GTDZM+fEazXo2/AN/SH06cLNQvlO64kMXd8C4v2IaeYxdbxA?=
- =?iso-8859-1?Q?TDdz/E1v3zM5rOlq0CAwe4/fQEbk9bC/noilWrlo6mZ7gMwjI26cSlWwcF?=
- =?iso-8859-1?Q?H/rsNRoSjJRKWvLddyWioqwI+GPGrAXFDrVtGVFPoPF7aUqAgGHKc6IUL6?=
- =?iso-8859-1?Q?2D/298Ogqd5vIjxlhUw6q6mt95W2iK1jfATFtYakRIyN/2Hs4MthfcZQdY?=
- =?iso-8859-1?Q?6AB7qnZEhrXtZYnJuSqq8QIN15XRZlrgIlVmoP3wUwCbnyfwmI54BM56cE?=
- =?iso-8859-1?Q?tp95wER7erm2lF1l/nDpkc5H3gjQ69qWUlU9sMzZvGzOZfIB0GcrauqUn4?=
- =?iso-8859-1?Q?bbgVLhRjfkl2QJVC8NfYFxpnhO9qzZwdYbBXm/jvQcE1bjekry3WMqcVZs?=
- =?iso-8859-1?Q?/1BS29w6GHr0Qi7bz9mHIHUMWIZQ81MvkO2bFfs7aiETd4QqANSqsxAMXa?=
- =?iso-8859-1?Q?p4eq3KDpDSV60HYnwJTQf/jqDFzuHIoDOixjcffDAuOyoS19a3MHl5NjAu?=
- =?iso-8859-1?Q?8+9nhEfOISPlFQJxS59knPM9eQeXzdY1EJqG7EXn2GIyrC9GXuPb7402n/?=
- =?iso-8859-1?Q?fhQC2mWBfqfOkG9EQgwOA095arr4YmVYhOXFvIW5kyz13d/CjOFLa1Meu8?=
- =?iso-8859-1?Q?M8vhQCj1Pn1Hkrw6ophvtsKo8OKMXkNkBbcf9a2ZflSf6sMG91SAHth+5M?=
- =?iso-8859-1?Q?O9trjptkxuqfBkkZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?2Tr6qmEM54NLe2OsADuxKsjFZv0InyHGHv+hKkZ7vihAQ4ydUFs6445ecM?=
- =?iso-8859-1?Q?q6gFXa4eo6jI76XmEYn5gOeRffMndC7qRLWiYljCnwPq3NxTLHV5yc0dSX?=
- =?iso-8859-1?Q?mbUtgZ2L/rd9K1YVB4j2P8jnOpuOng4waq1jVw5cgbgU9OpwtntKFuwZEk?=
- =?iso-8859-1?Q?CTHSk7f71/U3pD1vu3gELdDu+p8eUx9yY2omlJtj0gv4dOuEEGNJrWN1Vs?=
- =?iso-8859-1?Q?cyaJK+Y8z5vSHGi+IHi0JrHK99Yh0ah80YUrrw4ACgC1ER4nlvDdcYGwLd?=
- =?iso-8859-1?Q?5KblX/8jiqq+wBwWd4DLKvHQSxVX2VIsau3dwE212vBmq3yLkz8ywiNQHy?=
- =?iso-8859-1?Q?n9hBZgG+yzBcFXJ8D+0fx3sxWVwRrMPw2ngxr3zawEvnindiifBkYR4nQo?=
- =?iso-8859-1?Q?plpRqRHirH6k2gbm+ah8r+ob4aiMunh+Sa4f7YuXfkE2GviggZVmMOyFz0?=
- =?iso-8859-1?Q?qiSvc1DmK+Phs/Y4x02EHTPLAcEhQobpDe8gDSiibkcr+Lzi4Jw+7XpuDS?=
- =?iso-8859-1?Q?O/idnSHURImKuVgRwMfpS8y/mNqxJ3J7OJXPFEpFYBjX2V6Z8tXBuStKBr?=
- =?iso-8859-1?Q?k9Fl5VdhXH5agY3KuCFgZkTyZPJbhKDcqovcjgzoPIgy5LnrbQkj3ALSae?=
- =?iso-8859-1?Q?Rm9nPAE1AVm8TwebtPVrVRBc63ZaSqHoitdW5t84MJCbknuHrZZgfUVJne?=
- =?iso-8859-1?Q?oM1jofHLM/Rk8tsEuhCMyicK/20T7E+g/fMxVxDZmrqjnLJv2zffuR8m7c?=
- =?iso-8859-1?Q?F67QHhfHjB8Dgum0T97HmW+UvgxsRkskgbViag2Clx3pGACirjhdMK0Vxa?=
- =?iso-8859-1?Q?DXWGd3SKeXlaNl//XVLJWh/37ZAkLcIAhKgl1OlbFe1FMYcbOe/nW1JjnQ?=
- =?iso-8859-1?Q?Yw+0nwWU52qg69lcbmMsFK0khbYWx4TN3KDpFuNPVHZdERrW1HAakC5vBf?=
- =?iso-8859-1?Q?+aalWeu46gq+2cA0D54jj0N6EZF0yYX/UHHVX8ifBzB5S3w+zgxHrmWEGS?=
- =?iso-8859-1?Q?6h//fb9A0RUeGJFrpGj1+ZUbUJV1GRbtigY/g86nb1Uwe+M90GoFZrqmTC?=
- =?iso-8859-1?Q?JVeilds2f5AE7iv0hibQxm60HpOIIsSg4ujyDfwG30ZzC6lI8/ohyE6lOr?=
- =?iso-8859-1?Q?dt46x1qFmSsafOd1ABElRhCbAUVjH5ggEEp0UXVBHt0fUW22LuvYxjzkkB?=
- =?iso-8859-1?Q?8Op6cOtp/e21R468YG42FHYYcqcUMxSKVtI2iXYO/gg/T0ttC8L6Mim+LM?=
- =?iso-8859-1?Q?HhLrvp8fUhxQTSPliDwx2AGO6yMUBp6NJMgEFJ9tCYCclvy2ijsTZpsSz3?=
- =?iso-8859-1?Q?X36cMib+HUeYWyt7YTBqedgG7SpPZIqWuNz0W0gHcXfkiu6rA/T5HAf1ul?=
- =?iso-8859-1?Q?rEGS0QgPdtG186rW/mNTHiPso4GGCKBK9CKsqDqcOpo009NMeDCGdZNFN1?=
- =?iso-8859-1?Q?dK2xzGpOffHgriSRuMNN5q9o3J/2wi9pixcNP3ovQxzcGs1P6FVulqPJcl?=
- =?iso-8859-1?Q?Pho2nkJHq1z8tyK62oS+GjEh5QyXKhBpVdXKY6m5RWtAynZm1O8jtdbiSV?=
- =?iso-8859-1?Q?PX4giyHFpXY3gS7iMrymCl/ZCPR5LR3t96qL7t1G27CPYjhzkcbc5VW+oN?=
- =?iso-8859-1?Q?EkfPBePhHArVaa+ZKGs7kRE88phWAcXKB9?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf5c796c-09ed-49ea-c81a-08dd5683094d
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 16:31:35.4467
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EfyBtXoNqUJASwt+NGnh6MFPuPe3sfwl8XMHrl/EyhIxBKvKDEXbVKn7COIjHCZhwmSf+PxmuPEKMc+ZcYBBAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7325
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87bjuryvb0.fsf@kernel.org>
 
-On Wed, Feb 26, 2025 at 01:11:37PM +0100, Alexander Stein wrote:
-> Hi Frank,
->
-> Am Dienstag, 28. Januar 2025, 22:15:58 CET schrieb Frank Li:
-> > Add PCIe's msi-map and iommu-map property because i.MX95 support smmu and
-> > its.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx95.dtsi | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> > index 6b8470cb3461a..2cebeda43a52d 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> > @@ -1573,6 +1573,12 @@ pcie0: pcie@4c300000 {
-> >  			assigned-clock-parents = <0>, <0>,
-> >  						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
-> >  			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
-> > +			/* pcie0's Devid(BIT[7:6]) is 0x00, stream id(BIT[5:0]) is 0x10~0x17 */
-> > +			msi-map = <0x0 &its 0x10 0x1>,
-> > +				  <0x100 &its 0x11 0x7>;
->
-> Aren't you missing msi-map-mask = <0x1ff>; here? Similar to pcie1.
-> Either way, with this change PCIe on pcie0 is not working anymore,
-> regardless of msi-map-mask.
+Le Mon, Feb 24, 2025 at 08:52:35PM +0100, Andreas Hindborg a écrit :
+> > It's of course up to hrtimer maintainers. But I personally nack this
+> > kconfig, because it's not necessary, and hrtimer API has been stable for
+> > a while.
+> 
+> Having the switch is fine for me, removing it is fine as well. It's just
+> an added convenience that might come in handy. But having this kconfig
+> very close to zero overhead, so I do not really understand your
+> objection. I would like to better understand your reasoning.
 
-Yes, it should have msi-map-mask. During my test, I have not enable enetc
-so I have not found this problem.
+If you choose to make a such a Kconfig switch, it would only make sense
+in order to spare some bytes when no drivers use it for example. But if
+you're afraid that the Rust binding is on the way while the core is
+changing some API then I guess simply disabling Rust would be enough for
+testing.
 
->
-> Without msi-map-mask:
-> > OF: /soc/pcie@4c300000: iommu-map, using mask 000001ff, id-base: 00000100, out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> > OF: /soc/pcie@4c300000: no msi-map translation for id 0x300 on (null)
-> > r8169 0000:03:00.0: error -EINVAL: enable failure
-> > r8169 0000:03:00.0: probe with driver r8169 failed with error -22
->
-> With msi-map-mask:
-> > OF: /soc/pcie@4c300000: iommu-map, using mask 000001ff, id-base: 00000100, out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> > OF: /soc/pcie@4c300000: msi-map, using mask 000001ff, id-base: 00000100, out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> > r8169 0000:03:00.0: enabling device (0000 -> 0003)
-> > r8169 0000:03:00.0: enabling Mem-Wr-Inval
-> > r8169 0000:03:00.0: error -EIO: PCI read failed
-> > r8169 0000:03:00.0: probe with driver r8169 failed with error -5
+I don't think it's necessary (unless it's strictly selected by drivers).
+But it's your call.
 
-Can you try remove iommu-map and keep msi-map? then remove msi-map and
-keep iommu-map to check which one cause this problem.
+Thanks.
 
->
-> Without msi-map/iommu-map:
-> > r8169 0000:03:00.0: enabling device (0000 -> 0003)
-> > r8169 0000:03:00.0: enabling Mem-Wr-Inval
-> > r8169 0000:03:00.0 eth0: RTL8168g/8111g, d8:9d:b9:00:16:10, XID 4c0, IRQ 166
-> > r8169 0000:03:00.0 eth0: jumbo features [frames: 9194 bytes, tx checksumming: ko]
-> > r8169 0000:03:00.0 enp3s0: renamed from eth0
-> > r8169 0000:03:00.0: enabling bus mastering
-> > r8169 0000:03:00.0 enp3s0: Link is Down
->
-> pcie1 works as expected. But this is only a single PCIe device, rather than
-> having a PCIe bridge.
-> Any idea what's wrong here?
-
-Can you help dump more information at for PCIe bridge case:
-
-imx_pcie_add_lut(), need rid and sid information.
-drivers/pci/controller/dwc/pci-imx6.c
-
->
+> 
+> 
 > Best regards,
-> Alexander
->
-> > +			iommu-map = <0x000 &smmu 0x10 0x1>,
-> > +				    <0x100 &smmu 0x11 0x7>;
-> > +			iommu-map-mask = <0x1ff>;
-> >  			fsl,max-link-speed = <3>;
-> >  			status = "disabled";
-> >  		};
-> > @@ -1640,6 +1646,14 @@ pcie1: pcie@4c380000 {
-> >  			assigned-clock-parents = <0>, <0>,
-> >  						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
-> >  			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
-> > +			/* pcie1's Devid(BIT[7:6]) is 0x10, stream id(BIT[5:0]) is 0x18~0x1f */
-> > +			msi-map = <0x0 &its 0x98 0x1>,
-> > +				  <0x100 &its 0x99 0x7>;
-> > +			msi-map-mask = <0x1ff>;
-> > +			/* smmu have not Devid(BIT[7:6]) */
-> > +			iommu-map = <0x000 &smmu 0x18 0x1>,
-> > +				    <0x100 &smmu 0x19 0x7>;
-> > +			iommu-map-mask = <0x1ff>;
-> >  			fsl,max-link-speed = <3>;
-> >  			status = "disabled";
-> >  		};
-> >
->
->
-> --
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> http://www.tq-group.com/
->
->
+> Andreas Hindborg
+> 
+> 
 
