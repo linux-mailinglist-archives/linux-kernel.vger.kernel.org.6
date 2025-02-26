@@ -1,202 +1,319 @@
-Return-Path: <linux-kernel+bounces-533024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD30BA454EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:32:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D368A454EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E02B97A0FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:31:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E06179041
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61E61922DC;
-	Wed, 26 Feb 2025 05:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6F625D54D;
+	Wed, 26 Feb 2025 05:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNcSHEow"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhvF9A2E"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2514430
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579AC191499;
+	Wed, 26 Feb 2025 05:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740547922; cv=none; b=qdDXWkxXQcgjs+aTRsojdxBuazdtJd2jXK8FRLrEzubT/nZIGtrZLVPcnxoqU3BQrNnGmRT+KsScbrINbHTVBlefv2XnT8NkqUqQUbIOfIYGmigzEUXjjhDZ1oQpHfdNU8VfXG5sUvM7IQjyt/sW26TohmI2HCRblZFiW7Q64M4=
+	t=1740548273; cv=none; b=ZKFCHxO3fykpGwkEGHdY5IkbyYBzVcj5pqrvl0OnpBRG9elPoq/xKVi+Lj8YWAE5SDpDttQ78rjVUjS1ZW3xpJ1q+IfJ/KqOjzxrjGdB3ORS2ehEt8YKcCrW635spzItgQg4KiZGD8dNgAVLU/74GeEBLsc5RozXwjJzWOeT57M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740547922; c=relaxed/simple;
-	bh=aRqVdEuak5heTNn+0IQ7qSzt5Pfpvlefp5Eal42WI6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7tJmijibqZl6Zsir7gCTT4qrgvLSUvPqDAeI7PM1Akjc3vEcgUh82mfyJjtRZnleN4hUrccGvJtOb4MQAStQMBH2tbopch3ruNNCBPta8j/CXM6NjmkUq0e9RwEh7OM3uc4L7xkDlR9pxgKPIILvhHSkpauyigNLIJ3IN9o1q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UNcSHEow; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220d601886fso97781635ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:32:00 -0800 (PST)
+	s=arc-20240116; t=1740548273; c=relaxed/simple;
+	bh=iIIzRFSdkX6sxEgiLb11iU5KsBtpaJ1Xf/mkzL+MI/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uznPyAbZdwHd4efuKnoKp+FmzVvn1UURbpZxb+Aqef4bQrA6FqkeyC+T0yh8mZYcIxyTeQL2ORY9GZcsSHBW5g2m78RbS+JMsM16vPjf0J0xdNap1bV13WZkGiUT0k7kB4szzWDbxVaUvOxXo0416I7jOMB6YzQ4XbFlYR0rDi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhvF9A2E; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4bd3a8b88f3so3442045137.0;
+        Tue, 25 Feb 2025 21:37:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740547920; x=1741152720; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cs/FB4vjop09Xx6EiHePqeXJoRbdqusicfo9VoaYw5E=;
-        b=UNcSHEowNK9r1D3LFH/yGNXwxbZbKYfP+G2EMK/v3rydARUsj/HJ1618zBZoHZZZnC
-         P6B68dDbwL8sxmz52YTkov4tpQD+0l1txdYJC8smuFcpzTO02MvYE/rD/sp3toQdsYg0
-         ABekkQsLJurf+WpU8qrKoIoUNmhfpXNxIwdlLERnGsY58nBcOj+UIJxOe/oQFJigpQYZ
-         UtPEOFhcsfM8Vlo0hYpzCgWgIJaB5zdksVsobHs0qbKwLAsg1nSknWQe1a3Blw97TCKk
-         vDbA8+SAVz4ywvktewBD759dkaYy9xhvFK5bR/4VNk+0j6bbQ2qPsku5p9F822LcXi7O
-         XlBg==
+        d=gmail.com; s=20230601; t=1740548270; x=1741153070; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rva348BcHgLB5uMkGMZXZRRj+2pUfOtqtrulMF8LioE=;
+        b=XhvF9A2Ep771r5tAlQcNbf6rt3ksjfq9ckzmKeT1qflukRorVIYM5kL0aJ67ITwFqf
+         PtsZ4dAaL0Iat+aFFhrNFXKAvkxsZkAIGl5eVIbRppRIb7oo57loOiK+YE06IyB3d40/
+         3dk6svEdWDIhCniI46WKvVLjNFQOnL/MXjuMGR/gZv+nRvVHhuJg7wIjdMHBbyNZ7LgP
+         V7EmRPfINsWNQsoESd7WA7Cf4UW5PRPIV4J+D+6lGiC3Z4GnRf3d7U5xeucG5qCysTwp
+         IZPkV98dzVXI8hq0l5BxYOnHIJd++gcVUcwM3LtfRoofF/P1C1uIqZ5dy3aNyo+dIuWd
+         UZAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740547920; x=1741152720;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cs/FB4vjop09Xx6EiHePqeXJoRbdqusicfo9VoaYw5E=;
-        b=wWgKICj10i0Xh8z16I27h+zQcutEXXG2tY3jhFxqqunOiE/Eqez2b/A5YC0NUBo5rU
-         6hjzIFcMYm+O9e87w2u2FVc1tAxqN/69BdLWPYgudvzQGbVxRauuE0PiTQXMiiZb0481
-         kHkLBihki4NzRiRQRzBDhpPsnOu9cs3qyrNskT0DugR/EJJTAOb+0zCPm6DTC1vftcP4
-         T0BRzFp7x8iLFrCnZuK82/L8wikICbfxltVUAUbKoVha/qK0JLZC7CrEAT8CNK809lUK
-         iG8nIAlih/Lcm0mn7ikQsRe+RQCpLzLDCWbwLVNrswBhnGsmGeXfiT2g9E7P0/mBesTA
-         NAiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSpOLk0/WD4QVCiQ/uzHgyXbsMZDko8AeJZn4nBVoCSlt6eF4ERcieh/wTInz2hkL5xl82eGlhfiANm/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5ppvslHSGdeZqtEsFSndM8AHkMpRJ4gdw2DCHj+WRvAynybEe
-	pcRm8E1FaYIeDE7LFjFHfmJ9yEtuvN/gMLqeFOu3Zn7WjyY5yfClGNdM1Sx/sg==
-X-Gm-Gg: ASbGnctYwBHnBO2L9vqMavBzZseeWG6YmdJE9bDGBIUG75V+GLxMPVy3ioaN2x6wnLE
-	KeiDCclS1Vvd+UPeGxDlvQYQQLvA4yaFO7eYRt3/6I8fpEu6pZs2oi0XmdImgxdrshgzieV6zf3
-	gIU4Bh0ypw6WU9ggmSQ7gg2WD3BQ3OMxRVEi6WPwmALxl209sH7HbaUPJhsyIMmm38ftEKoPfR6
-	OUiT7pUHUhC8hSLGw61F7zAY3P83w5cn3FMZ1akDYOije5T/BcMT0e4AnFU+cdUoC/A/iskf7Pk
-	ILTv8Z3F/0MVQ26UaQEwfCsjYeYRVS8CeecvcGN1Gi8M0/brgpvXOMY=
-X-Google-Smtp-Source: AGHT+IEPcQAWKYX9SpkFskmh4pTKxjy5wF3kTp/GFxEcYxWygfsPcia+keXfCSwcEiGOT4D3V58cmw==
-X-Received: by 2002:a05:6a00:3d48:b0:730:75b1:7218 with SMTP id d2e1a72fcca58-7347918de02mr10524786b3a.16.1740547920456;
-        Tue, 25 Feb 2025 21:32:00 -0800 (PST)
-Received: from thinkpad ([120.60.72.190])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9aafsm2570705b3a.105.2025.02.25.21.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 21:32:00 -0800 (PST)
-Date: Wed, 26 Feb 2025 11:01:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Qiang Yu <quic_qianyu@quicinc.com>,
-	"Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org,
-	kishon@kernel.org, p.zabel@pengutronix.de, abel.vesa@linaro.org,
-	neil.armstrong@linaro.org, quic_devipriy@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Message-ID: <20250226053155.5cdzeorzb5jlvdna@thinkpad>
-References: <20250224073301.aqbw3gxjnupbejfy@thinkpad>
- <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
- <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
- <20250224122439.njrcoyrfsisddoer@thinkpad>
- <eea55dfa-3dd3-488b-958c-cd20e18a7d7d@quicinc.com>
- <20250225081744.3aprpztylrdgs2cl@thinkpad>
- <4a672888-a90e-434c-b494-bb58b91c99a2@quicinc.com>
- <zppwzqdi5xbggurbqho6ivuorvlubldpjw3pyw2fdgrap4nrhp@5otsko6o5cv3>
- <47f5ab83-d25f-4132-83a6-38236575510c@quicinc.com>
- <ophii26vvcogjtvktsexi6ffnug2wi5hjsppyb44uhypk43o5b@t4bbghgatd73>
+        d=1e100.net; s=20230601; t=1740548270; x=1741153070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rva348BcHgLB5uMkGMZXZRRj+2pUfOtqtrulMF8LioE=;
+        b=lHWgZzlBNvMQ0WOEeLkjprb+lbxXZ9aYODQ0Ktgb9/qeSkANkx/wvit+m0hSHI5saQ
+         9ExfRp6CRTjjMNSgU7uMYzZvzNwNh1n9Jn2E8DJuAPdKQDsl5HzFVefpXn2GKCf/UZXp
+         9ilBK1qsbQjAdmFyCRzSniiSlXuCf76iaLN7z4Q2GOQ84u7Emg0/qQFHi1W746bOyA2T
+         d3MPKYazO5KrOL61RqoKF4LyvwtqiagxrzmJEi/xvHYlzAVSeMkaNsYdbZxaJQvX4/+p
+         mL02KsOzeyV8brxLJFRtnWBDp4fwyAJWp0AH7LvfoGPNWjBm5/+uZ2XIlhZbC7jsiquq
+         Y7nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGp8RtWbyX+CbVqX+VvyrWNyu050YlaRTqwMGm+ixM/HheGM4+j0S246ZIcf0UKWhAlZ5I+/Pq@vger.kernel.org, AJvYcCWdhoohPk4323caO/GGgoO/oxtU+2qfoVcPjwvQnHyjLC5W4VSdlfpIh/vVwyMfqTjIPX8T/foPQcUR0X4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZJPSh9O74lhrKQf+aMmfka4zJYyjJFU/rUm1qxkYYV+or5P/G
+	SyhF4ziGj8LEnPM44e3cAb+r8X3Awn70x9mhNSVakiakiYjgazDUFN4RrTRXItZ8M2CW+R+detG
+	VzA5PQKCh4s1E7OI5uOm28rVlJDE=
+X-Gm-Gg: ASbGncstAQ2UKhjK5X6LLs4ZeLUSuVUEMnG+ACXqEuo+BwdUtOwcuJ/47ntrkcgrcey
+	MI3tutighNejjjjGdD0vWqzBj40NdUkZha0eJiI2e8PFSDwkMAxxfq2tNnv4StYl/a+JqTzwSfN
+	mxTEx5IkY=
+X-Google-Smtp-Source: AGHT+IHQFkIKiUHIUxEB2lVTJjxedvEbm9F3ys8fW3r69+IfXcro6uRKQ+aBJYROP1hdgz0AQBn2IIVhpcjM7WYcTOw=
+X-Received: by 2002:a05:6102:3047:b0:4bb:e8c5:b162 with SMTP id
+ ada2fe7eead31-4c01e1ef478mr1304696137.10.1740548270042; Tue, 25 Feb 2025
+ 21:37:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ophii26vvcogjtvktsexi6ffnug2wi5hjsppyb44uhypk43o5b@t4bbghgatd73>
+References: <69dbca2b-cf67-4fd8-ba22-7e6211b3e7c4@redhat.com>
+ <20250220092101.71966-1-21cnbao@gmail.com> <02f14ee1-923f-47e3-a994-4950afb9afcc@redhat.com>
+In-Reply-To: <02f14ee1-923f-47e3-a994-4950afb9afcc@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 26 Feb 2025 18:37:38 +1300
+X-Gm-Features: AQ5f1JqGJo3XkDARYkb97I0CjDFeXGkKxOdLuDL13q26aFGPeSu3TIseJtfuba4
+Message-ID: <CAGsJ_4yzOXE1KS7J927QSjPRUEyCdgs4VKH7fi_7kQ72a5XtUA@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
+To: David Hildenbrand <david@redhat.com>
+Cc: Liam.Howlett@oracle.com, aarcange@redhat.com, akpm@linux-foundation.org, 
+	axelrasmussen@google.com, bgeffon@google.com, brauner@kernel.org, 
+	hughd@google.com, jannh@google.com, kaleshsingh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lokeshgidra@google.com, 
+	mhocko@suse.com, ngeoffray@google.com, peterx@redhat.com, rppt@kernel.org, 
+	ryan.roberts@arm.com, shuah@kernel.org, surenb@google.com, 
+	v-songbaohua@oppo.com, viro@zeniv.linux.org.uk, willy@infradead.org, 
+	zhangpeng362@huawei.com, zhengtangquan@oppo.com, yuzhao@google.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 07:19:11AM +0200, Dmitry Baryshkov wrote:
-> On Wed, Feb 26, 2025 at 11:12:18AM +0800, Qiang Yu wrote:
-> > 
-> > On 2/25/2025 7:46 PM, Dmitry Baryshkov wrote:
-> > > On Tue, Feb 25, 2025 at 06:08:03PM +0800, Qiang Yu wrote:
-> > > > On 2/25/2025 4:17 PM, Manivannan Sadhasivam wrote:
-> > > > > On Tue, Feb 25, 2025 at 04:06:16PM +0800, Wenbin Yao (Consultant) wrote:
-> > > > > > On 2/24/2025 8:24 PM, Manivannan Sadhasivam wrote:
-> > > > > > > On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
-> > > > > > > > On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
-> > > > > > > > > On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
-> > > > > > > > > > On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
-> > > > > > > > > > > From: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > > > > > > > > 
-> > > > > > > > > > > Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
-> > > > > > > > > > > whole PHY (hardware and register), no_csr reset only resets PHY hardware
-> > > > > > > > > > > but retains register values, which means PHY setting can be skipped during
-> > > > > > > > > > > PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
-> > > > > > > > > > > after that.
-> > > > > > > > > > > 
-> > > > > > > > > > > Hence, determine whether the PHY has been enabled in bootloader by
-> > > > > > > > > > > verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
-> > > > > > > > > > > available, skip BCR reset and PHY register setting to establish the PCIe
-> > > > > > > > > > > link with bootloader - programmed PHY settings.
-> > > > > > > > > > > 
-> > > > > > > > > > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > > > > > > > > Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> > > > > > > > > > Some nitpicks below.
-> > > > > > > > > > 
-> > > > > > > > > > > ---
-> > > > > > > > [...]
-> > > > > > > > 
-> > > > > > > > > > > +     * In this way, no matter whether the PHY settings were initially
-> > > > > > > > > > > +     * programmed by bootloader or PHY driver itself, we can reuse them
-> > > > > > > > > > It is really possible to have bootloader not programming the init sequence for
-> > > > > > > > > > no_csr reset platforms? The comment sounds like it is possible. But I heard the
-> > > > > > > > > > opposite.
-> > > > > > > > > PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
-> > > > > > > > > manually in UEFI shell if we want.
-> > > > > > > > IIUC this will not be a concern going forward, and this is a special case
-> > > > > > > > 
-> > > > > > > I'm wondering how many *special* cases we may have to deal with going forward.
-> > > > > > > Anyhow, I would propose to atleast throw an error and fail probe() if:
-> > > > > > > 
-> > > > > > > * the platform has no_csr reset AND
-> > > > > > > * bootloader has not initialized the PHY AND
-> > > > > > > * there are no init sequences in the kernel
-> > > > > > > 
-> > > > > > > - Mani
-> > > > > > Hmmm, regardless of whether it's a special case, we can't assume that UEFI
-> > > > > > will enable the PHY supporting no_csr reset on all platforms. It's a bit
-> > > > > > risky. If we make such an assumption, we also won't need to check whether
-> > > > > > the PHY is enabled by UEFI during powering on. We just need to check
-> > > > > > whether no_csr reset is available.
-> > > > > > 
-> > > > > I am not supportive of this assumption to be clear. While I am OK with relying
-> > > > > on no_csr reset and bootloader programming the PHY, we should also make sure to
-> > > > > catch if the PHY doesn't initialize it. Otherwise, the driver would assume that
-> > > > > the PHY is working, but the users won't see any PCIe devices.
-> > > > > 
-> > > > > > But it makes sense to check the exsitence of PHY senquence. How about
-> > > > > > adding the check in qmp_pcie_init, if a PHY supports no_csr reset and isn't
-> > > > > > initialized in UEFI and there is no cfg->tbls, return error and print some
-> > > > > > error log so that the PCIe controller will fail to probe.
-> > > > > > 
-> > > > > Sounds good to me.
-> > > > I'm wondering is it necessary to add this check? In current PHY driver,
-> > > > for PHY that doesn't suppot no_csr reset there is also no such check.
-> > > > If a PHY supports no_csr reset and isn't init in UEFI and there is no
-> > > > cfg->tbls, the worst issue is link training fail and PCIe controller will
-> > > > also fail to probe. Adding sucj check seems not change the result.
-> > > Failing the training is a random error which can mean a lot, e.g. the
-> > > missing voltage rail. An explicit check is beneficial, it helps
-> > > developers (and users) to better understand the reason of the failure.
-> > In the struct qmp_phy_cfg, tbls is not a pointer, we can't directly check
-> > if tbls == NULL to determine if the PHY init sequence is available. Can we
-> > add a separate patch to change the definition from
-> > "const struct qmp_phy_cfg_tbls tbls" to
-> > "const struct qmp_phy_cfg_tbls *tbls" like tlbs_rc and tbls_ep, even though
-> > this will affect all platforms?
-> 
-> Of course no. There is no need to introduce extra indirection. Checking
-> for qmp_phy_cfg.tbls.serdes_num should be more than enough. No matter
-> what, the PHY with a proper configuration tables will have non-empty
-> SERDES table.
-> 
+On Thu, Feb 20, 2025 at 11:24=E2=80=AFPM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> On 20.02.25 10:21, Barry Song wrote:
+> > On Thu, Feb 20, 2025 at 9:40=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> On 19.02.25 19:58, Suren Baghdasaryan wrote:
+> >>> On Wed, Feb 19, 2025 at 10:30=E2=80=AFAM David Hildenbrand <david@red=
+hat.com> wrote:
+> >>>>
+> >>>> On 19.02.25 19:26, Suren Baghdasaryan wrote:
+> >>>>> On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@gmail.c=
+om> wrote:
+> >>>>>>
+> >>>>>> From: Barry Song <v-songbaohua@oppo.com>
+> >>>>>>
+> >>>>>> userfaultfd_move() checks whether the PTE entry is present or a
+> >>>>>> swap entry.
+> >>>>>>
+> >>>>>> - If the PTE entry is present, move_present_pte() handles folio
+> >>>>>>      migration by setting:
+> >>>>>>
+> >>>>>>      src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+> >>>>>>
+> >>>>>> - If the PTE entry is a swap entry, move_swap_pte() simply copies
+> >>>>>>      the PTE to the new dst_addr.
+> >>>>>>
+> >>>>>> This approach is incorrect because even if the PTE is a swap
+> >>>>>> entry, it can still reference a folio that remains in the swap
+> >>>>>> cache.
+> >>>>>>
+> >>>>>> If do_swap_page() is triggered, it may locate the folio in the
+> >>>>>> swap cache. However, during add_rmap operations, a kernel panic
+> >>>>>> can occur due to:
+> >>>>>>     page_pgoff(folio, page) !=3D linear_page_index(vma, address)
+> >>>>>
+> >>>>> Thanks for the report and reproducer!
+> >>>>>
+> >>>>>>
+> >>>>>> $./a.out > /dev/null
+> >>>>>> [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db19=
+c index:0xffffaf150 pfn:0x4667c
+> >>>>>> [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pages=
+_mapped:1 pincount:0
+> >>>>>> [   13.337716] memcg:ffff00000405f000
+> >>>>>> [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirty=
+|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
+> >>>>>> [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008507=
+b538 ffff000006260361
+> >>>>>> [   13.338831] raw: 0000000ffffaf150 0000000000004000 000000060000=
+0000 ffff00000405f000
+> >>>>>> [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff8000850=
+7b538 ffff000006260361
+> >>>>>> [   13.339204] head: 0000000ffffaf150 0000000000004000 00000006000=
+00000 ffff00000405f000
+> >>>>>> [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff000=
+00000 0000000000000001
+> >>>>>> [   13.339546] head: 0000000000000004 0000000000000000 00000000fff=
+fffff 0000000000000000
+> >>>>>> [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(foli=
+o, page) !=3D linear_page_index(vma, address))
+> >>>>>> [   13.340190] ------------[ cut here ]------------
+> >>>>>> [   13.340316] kernel BUG at mm/rmap.c:1380!
+> >>>>>> [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] P=
+REEMPT SMP
+> >>>>>> [   13.340969] Modules linked in:
+> >>>>>> [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.14=
+.0-rc3-gcf42737e247a-dirty #299
+> >>>>>> [   13.341470] Hardware name: linux,dummy-virt (DT)
+> >>>>>> [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SS=
+BS BTYPE=3D--)
+> >>>>>> [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+> >>>>>> [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+> >>>>>> [   13.342018] sp : ffff80008752bb20
+> >>>>>> [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 00=
+00000000000001
+> >>>>>> [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 00=
+00000000000001
+> >>>>>> [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: ff=
+fffdffc0199f00
+> >>>>>> [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 00=
+000000ffffffff
+> >>>>>> [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 66=
+2866666f67705f
+> >>>>>> [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: ff=
+ff800083728ab0
+> >>>>>> [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : ff=
+ff80008011bc40
+> >>>>>> [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : ff=
+ff8000829eebf8
+> >>>>>> [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 00=
+00000000000000
+> >>>>>> [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 00=
+0000000000005f
+> >>>>>> [   13.343876] Call trace:
+> >>>>>> [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+> >>>>>> [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+> >>>>>> [   13.344333]  do_swap_page+0x1060/0x1400
+> >>>>>> [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+> >>>>>> [   13.344504]  handle_mm_fault+0xd8/0x2e8
+> >>>>>> [   13.344586]  do_page_fault+0x20c/0x770
+> >>>>>> [   13.344673]  do_translation_fault+0xb4/0xf0
+> >>>>>> [   13.344759]  do_mem_abort+0x48/0xa0
+> >>>>>> [   13.344842]  el0_da+0x58/0x130
+> >>>>>> [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+> >>>>>> [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+> >>>>>> [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210000=
+)
+> >>>>>> [   13.345504] ---[ end trace 0000000000000000 ]---
+> >>>>>> [   13.345715] note: a.out[107] exited with irqs disabled
+> >>>>>> [   13.345954] note: a.out[107] exited with preempt_count 2
+> >>>>>>
+> >>>>>> Fully fixing it would be quite complex, requiring similar handling
+> >>>>>> of folios as done in move_present_pte.
+> >>>>>
+> >>>>> How complex would that be? Is it a matter of adding
+> >>>>> folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+> >>>>> folio->index =3D linear_page_index like in move_present_pte() or
+> >>>>> something more?
+> >>>>
+> >>>> If the entry is pte_swp_exclusive(), and the folio is order-0, it ca=
+nnot
+> >>>> be pinned and we may be able to move it I think.
+> >>>>
+> >>>> So all that's required is to check pte_swp_exclusive() and the folio=
+ size.
+> >>>>
+> >>>> ... in theory :) Not sure about the swap details.
+> >>>
+> >>> Looking some more into it, I think we would have to perform all the
+> >>> folio and anon_vma locking and pinning that we do for present pages i=
+n
+> >>> move_pages_pte(). If that's correct then maybe treating swapcache
+> >>> pages like a present page inside move_pages_pte() would be simpler?
+> >>
+> >> I'd be more in favor of not doing that. Maybe there are parts we can
+> >> move out into helper functions instead, so we can reuse them?
+> >
+> > I actually have a v2 ready. Maybe we can discuss if some of the code ca=
+n be
+> > extracted as a helper based on the below before I send it formally?
+> >
+> > I=E2=80=99d say there are many parts that can be shared with present PT=
+E, but there
+> > are two major differences:
+> >
+> > 1. Page exclusivity =E2=80=93 swapcache doesn=E2=80=99t require it (try=
+_to_unmap_one has remove
+> > Exclusive flag;)
+> > 2. src_anon_vma and its lock =E2=80=93 swapcache doesn=E2=80=99t requir=
+e it=EF=BC=88folio is not mapped=EF=BC=89
+> >
+>
+> That's a lot of complicated code you have there (not your fault, it's
+> complicated stuff ... ) :)
+>
+> Some of it might be compressed/simplified by the use of "else if".
+>
+> I'll try to take a closer look later (will have to apply it to see the
+> context better). Just one independent comment because I stumbled over
+> this recently:
+>
+> [...]
+>
+> > @@ -1062,10 +1063,13 @@ static int move_present_pte(struct mm_struct *m=
+m,
+> >       folio_move_anon_rmap(src_folio, dst_vma);
+> >       src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+> >
+> > -     orig_dst_pte =3D mk_pte(&src_folio->page, dst_vma->vm_page_prot);
+> > -     /* Follow mremap() behavior and treat the entry dirty after the m=
+ove */
+> > -     orig_dst_pte =3D pte_mkwrite(pte_mkdirty(orig_dst_pte), dst_vma);
+> > -
+> > +     if (pte_present(orig_src_pte)) {
+> > +             orig_dst_pte =3D mk_pte(&src_folio->page, dst_vma->vm_pag=
+e_prot);
+> > +             /* Follow mremap() behavior and treat the entry dirty aft=
+er the move */
+> > +             orig_dst_pte =3D pte_mkwrite(pte_mkdirty(orig_dst_pte), d=
+st_vma);
+>
+> I'll note that the comment and mkdirty is misleading/wrong. It's
+> softdirty that we care about only. But that is something independent of
+> this change.
+>
+> For swp PTEs, we maybe also would want to set softdirty.
+>
+> See move_soft_dirty_pte() on what is actually done on the mremap path.
 
-+1. The check needs to be present in this series itself and it makes absolute
-sense to have it. Otherwise, it will become a hard to debug issue.
+I actually don't quite understand the changelog in  commit 0f8975ec4db2
+(" mm: soft-dirty bits for user memory changes tracking").
 
-- Mani
+"    Another thing to note, is that when mremap moves PTEs they are marked
+    with soft-dirty as well, since from the user perspective mremap modifie=
+s
+    the virtual memory at mremap's new address."
 
--- 
-மணிவண்ணன் சதாசிவம்
+Why is the hardware-dirty bit not relevant? From the user's perspective,
+the memory at the destination virtual address of mremap/userfaultfd_move
+has changed.
+
+For systems where CONFIG_HAVE_ARCH_SOFT_DIRTY is false, how can the dirty s=
+tatus
+be determined?
+
+Or is the answer that we only care about soft-dirty changes?
+
+For the hardware-dirty bit, do we only care about actual modifications to t=
+he
+physical page content rather than changes at the virtual address level?
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
