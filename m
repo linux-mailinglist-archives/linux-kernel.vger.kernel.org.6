@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-534994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08718A46DA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62881A46DA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBEF53ADE89
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEF816D5AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78E225D539;
-	Wed, 26 Feb 2025 21:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63086266B73;
+	Wed, 26 Feb 2025 21:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFN2OZSN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syFJyoYO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9122661B5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCF92661B5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605875; cv=none; b=LsSdoTB+BVmE6z9bTbc0IGe6STkDenQ3NF3/cPq33QH2Q9nTpwg475Wn60xKcrl1xfBDrbN/Sd4EDodSDNODxJAWDJeN5ftm2O2cZeAbUas1PKcXyFrf1nAYRzVLeIFQ+pn0vshygrvVGPeW+ID1hG9kuaxwd49SNZptZNRkDqI=
+	t=1740605878; cv=none; b=nmbGr6OrWR0iIU+nvGRyunRGl3eYFjvqOZ7aJxggbbbmGi2TuVXJ4cJegg/FKVH4/4ZGKL7iDgwigWK9O4yw+oiKHD4NQF965j4D/D2MfI3YhUeqPVYSmoO4ixXvWfQfxices6Ayf6HudJVv680YRLgvNeTKMkzBa6FtHM2hbS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605875; c=relaxed/simple;
-	bh=zFHhKHiqgU3FhAAL2PwPWvWsa0XESYEOYyIQF5YlQzY=;
+	s=arc-20240116; t=1740605878; c=relaxed/simple;
+	bh=ifI9Snfcz3zQLA9mdjWdKtA//RgDy8KyxkOighq+7AM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bLQmZxwbTFNUa5w53hwsfAnFEoVNGRbXL+5MHDhh9nojLkbLMyQNB3NgBAWeyumOlZ7sgMQldR5+D6xnyz4PF4ZEmERVHcmSrR0bVSk+T+QrRmW9kBYFhPrX2bAW/o6VB05QfQnHtvcJCp6EbxsldxLMuG3uHOk86vbDHNviPjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFN2OZSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93F4C4CED6;
-	Wed, 26 Feb 2025 21:37:52 +0000 (UTC)
+	 MIME-Version; b=T4S4jIkEqihnHspvRbzzWIIsYd/bq3BDhTiLq9+MqCKHbUFyOu1Nl/kF/m4x3HeOWcJlpwjYrjpc51BzdIPDlmBVPT2mhQA6HKGTw/43DxQRtMJkycbZSy9EIv+uCnvwj68HoZUJCC4GPOuEJCrQK3ce18ZsPNyQ7FtES754n4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syFJyoYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94508C4CED6;
+	Wed, 26 Feb 2025 21:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605875;
-	bh=zFHhKHiqgU3FhAAL2PwPWvWsa0XESYEOYyIQF5YlQzY=;
+	s=k20201202; t=1740605877;
+	bh=ifI9Snfcz3zQLA9mdjWdKtA//RgDy8KyxkOighq+7AM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nFN2OZSNJ2KW6Q7Ls3iiQ+ZGPTcAv3lJXsm6H1tDXiRGXqUTrxoi3zwcNmAgw7RuV
-	 MB6NkIQgW0l8Ltpn8qty5UDH5aEGLeglAC7PyWUacAoBk5DojKLYJBg38zqd4Pz8wb
-	 z9CoW/e/hgivu4oULpn+MiLaPMnekTcpc2x6Jteo0Q8l6DsIIjMHlhhZxZFrmFT+M9
-	 kZqUBbrCR1LfOopgpuCAk/DLMsYsbmbZNbM3oy5UVRzdEs7GuFn+4flPXeFSxTUD9N
-	 TW2nwnZ32PeWlwZdUXl+cWKXluAUcwkJOExiubD2igezv0MGzPe6Yey3g7K0b6RIom
-	 WrJJEOmeszTlA==
+	b=syFJyoYO9efFR9Nf4TZf/C3HO3vUfSoLg+jGDXpSz/z5h2Lw7F4nHXrG22ngzTSjI
+	 fKCw1uLhfIYDaICw3Az9kCCcdrFApLt1I21hePwgj/e6xlef7ZIBkGOy975N/g3Ywh
+	 uUIkh/B61Ir1Thnb2KWzg9o/RQLP+g21cPZ4Cd251h6Z8zB5mCpMHSK81Jle/7m88J
+	 ELGc9TPb2wFxysy2c3fmpo2C0ZQUdUcGgy8mk8R3tP1UQoQfICaaWMDwLL8L3NCZgZ
+	 Tnw6Ax93puIlirmEVX4BhiJiI0FrLJAI5OSdyJBHPxJL7luqiPJaulzgExnHbhCAiL
+	 mYUjfZfFGMsOg==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -52,10 +52,10 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	Ferry Toth <fntoth@gmail.com>
-Subject: [PATCH v3 08/10] x86: document X86_INTEL_MID as 64-bit-only
-Date: Wed, 26 Feb 2025 22:37:12 +0100
-Message-Id: <20250226213714.4040853-9-arnd@kernel.org>
+	Davide Ciminaghi <ciminaghi@gnudd.com>
+Subject: [PATCH v3 09/10] x86: remove old STA2x11 support
+Date: Wed, 26 Feb 2025 22:37:13 +0100
+Message-Id: <20250226213714.4040853-10-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250226213714.4040853-1-arnd@kernel.org>
 References: <20250226213714.4040853-1-arnd@kernel.org>
@@ -69,114 +69,378 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The X86_INTEL_MID code was originally introduced for the 32-bit
-Moorestown/Medfield/Clovertrail platform, later the 64-bit
-Merrifield/Moorefield variants were added, but the final Morganfield
-14nm platform was canceled before it hit the market.
+ST ConneXt STA2x11 was an interface chip for Atom E6xx processors,
+using a number of components usually found on Arm SoCs. Most of this
+was merged upstream, but it was never complete enough to actually work
+and has been abandoned for many years.
 
-To help users understand what the option actually refers to, update the
-help text, and add a dependency on 64-bit kernels.
+We already had an agreement on removing it in 2022, but nobody ever
+submitted the patch to do it.
 
-Ferry confirmed that all the hardware can run 64-bit kernels these days,
-but is still testing 32-bit kernels on the Intel Edison board, so this
-remains possible, but is guarded by a CONFIG_EXPERT dependency now,
-to gently push remaining users towards using CONFIG_64BIT.
+Without STA2x11, the CONFIG_X86_32_NON_STANDARD no longer has any
+use.
 
-Cc: Ferry Toth <fntoth@gmail.com>
-Link: https://lore.kernel.org/lkml/d890eecc-97de-4abf-8e0e-b881d5db5c1d@gmail.com/
-Acked-by: Andy Shevchenko <andy@kernel.org>
+Suggested-by:  Davide Ciminaghi <ciminaghi@gnudd.com>
+Link: https://lore.kernel.org/lkml/Yw3DKCuDoPkCaqxE@arcana.i.gnudd.com/
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/Kconfig | 50 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 21 deletions(-)
+ arch/x86/Kconfig               |  32 +----
+ arch/x86/include/asm/sta2x11.h |  13 --
+ arch/x86/pci/Makefile          |   2 -
+ arch/x86/pci/sta2x11-fixup.c   | 233 ---------------------------------
+ 4 files changed, 3 insertions(+), 277 deletions(-)
+ delete mode 100644 arch/x86/include/asm/sta2x11.h
+ delete mode 100644 arch/x86/pci/sta2x11-fixup.c
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index aba32f88870d..42dd3c58abfb 100644
+index 42dd3c58abfb..14dd7b5abd5d 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -548,12 +548,12 @@ config X86_EXTENDED_PLATFORM
+@@ -547,7 +547,6 @@ config X86_EXTENDED_PLATFORM
+ 		AMD Elan
  		RDC R-321x SoC
  		SGI 320/540 (Visual Workstation)
- 		STA2X11-based (e.g. Northville)
--		Moorestown MID devices
+-		STA2X11-based (e.g. Northville)
  
  	  64-bit platforms (CONFIG_64BIT=y):
  		Numascale NumaChip
- 		ScaleMP vSMP
- 		SGI Ultraviolet
-+		Merrifield/Moorefield MID devices
+@@ -731,18 +730,6 @@ config X86_RDC321X
+ 	  as R-8610-(G).
+ 	  If you don't have one of these chips, you should say N here.
  
- 	  If you have one of these systems, or if you want to build a
- 	  generic distribution kernel, say Y here - otherwise say N.
-@@ -598,8 +598,31 @@ config X86_UV
- 	  This option is needed in order to support SGI Ultraviolet systems.
- 	  If you don't have one of these, you should say N here.
- 
--# Following is an alphabetically sorted list of 32 bit extended platforms
--# Please maintain the alphabetic order if and when there are additions
-+config X86_INTEL_MID
-+	bool "Intel Z34xx/Z35xx MID platform support"
-+	depends on X86_EXTENDED_PLATFORM
-+	depends on X86_PLATFORM_DEVICES
-+	depends on PCI
-+	depends on X86_64 || (EXPERT && PCI_GOANY)
-+	depends on X86_IO_APIC
-+	select I2C
-+	select DW_APB_TIMER
-+	select INTEL_SCU_PCI
-+	help
-+	  Select to build a kernel capable of supporting 64-bit Intel MID
-+	  (Mobile Internet Device) platform systems which do not have
-+	  the PCI legacy interfaces.
-+
-+	  The only supported devices are the 22nm Merrified (Z34xx)
-+	  and Moorefield (Z35xx) SoC used in the Intel Edison board and
-+	  a small number of Android devices such as the Asus Zenfone 2,
-+	  Asus FonePad 8 and Dell Venue 7.
-+
-+	  If you are building for a PC class system or non-MID tablet
-+	  SoCs like Bay Trail (Z36xx/Z37xx), say N here.
-+
-+	  Intel MID platforms are based on an Intel processor and chipset which
-+	  consume less power than most of the x86 derivatives.
- 
- config X86_GOLDFISH
- 	bool "Goldfish (Virtual Platform)"
-@@ -609,6 +632,9 @@ config X86_GOLDFISH
- 	  for Android development. Unless you are building for the Android
- 	  Goldfish emulator say N here.
- 
-+# Following is an alphabetically sorted list of 32 bit extended platforms
-+# Please maintain the alphabetic order if and when there are additions
-+
- config X86_INTEL_CE
- 	bool "CE4100 TV platform"
- 	depends on PCI
-@@ -624,24 +650,6 @@ config X86_INTEL_CE
- 	  This option compiles in support for the CE4100 SOC for settop
- 	  boxes and media devices.
- 
--config X86_INTEL_MID
--	bool "Intel MID platform support"
+-config X86_32_NON_STANDARD
+-	bool "Support non-standard 32-bit SMP architectures"
+-	depends on X86_32 && SMP
 -	depends on X86_EXTENDED_PLATFORM
--	depends on X86_PLATFORM_DEVICES
--	depends on PCI
--	depends on X86_64 || (PCI_GOANY && X86_32)
--	depends on X86_IO_APIC
--	select I2C
--	select DW_APB_TIMER
--	select INTEL_SCU_PCI
 -	help
--	  Select to build a kernel capable of supporting Intel MID (Mobile
--	  Internet Device) platform systems which do not have the PCI legacy
--	  interfaces. If you are building for a PC class system say N here.
+-	  This option compiles in the STA2X11 default
+-	  subarchitecture.  It is intended for a generic binary
+-	  kernel. If you select them all, kernel will probe it one by
+-	  one and will fallback to default.
 -
--	  Intel MID platforms are based on an Intel processor and chipset which
--	  consume less power than most of the x86 derivatives.
+-# Alphabetically sorted list of Non standard 32 bit platforms
 -
- config X86_INTEL_QUARK
- 	bool "Intel Quark platform support"
+ config X86_SUPPORTS_MEMORY_FAILURE
+ 	def_bool y
+ 	# MCE code calls memory_failure():
+@@ -752,19 +739,6 @@ config X86_SUPPORTS_MEMORY_FAILURE
+ 	depends on X86_64 || !SPARSEMEM
+ 	select ARCH_SUPPORTS_MEMORY_FAILURE
+ 
+-config STA2X11
+-	bool "STA2X11 Companion Chip Support"
+-	depends on X86_32_NON_STANDARD && PCI
+-	select SWIOTLB
+-	select MFD_STA2X11
+-	select GPIOLIB
+-	help
+-	  This adds support for boards based on the STA2X11 IO-Hub,
+-	  a.k.a. "ConneXt". The chip is used in place of the standard
+-	  PC chipset, so all "standard" peripherals are missing. If this
+-	  option is selected the kernel will still be able to boot on
+-	  standard PC machines.
+-
+ config X86_32_IRIS
+ 	tristate "Eurobraille/Iris poweroff module"
  	depends on X86_32
+@@ -1102,7 +1076,7 @@ config UP_LATE_INIT
+ config X86_UP_APIC
+ 	bool "Local APIC support on uniprocessors" if !PCI_MSI
+ 	default PCI_MSI
+-	depends on X86_32 && !SMP && !X86_32_NON_STANDARD
++	depends on X86_32 && !SMP
+ 	help
+ 	  A local APIC (Advanced Programmable Interrupt Controller) is an
+ 	  integrated interrupt controller in the CPU. If you have a single-CPU
+@@ -1127,7 +1101,7 @@ config X86_UP_IOAPIC
+ 
+ config X86_LOCAL_APIC
+ 	def_bool y
+-	depends on X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_APIC || PCI_MSI
++	depends on X86_64 || SMP || X86_UP_APIC || PCI_MSI
+ 	select IRQ_DOMAIN_HIERARCHY
+ 
+ config ACPI_MADT_WAKEUP
+@@ -1589,7 +1563,7 @@ config ARCH_FLATMEM_ENABLE
+ 
+ config ARCH_SPARSEMEM_ENABLE
+ 	def_bool y
+-	depends on X86_64 || NUMA || X86_32 || X86_32_NON_STANDARD
++	depends on X86_64 || NUMA || X86_32
+ 	select SPARSEMEM_STATIC if X86_32
+ 	select SPARSEMEM_VMEMMAP_ENABLE if X86_64
+ 
+diff --git a/arch/x86/include/asm/sta2x11.h b/arch/x86/include/asm/sta2x11.h
+deleted file mode 100644
+index e0975e9c4f47..000000000000
+--- a/arch/x86/include/asm/sta2x11.h
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Header file for STMicroelectronics ConneXt (STA2X11) IOHub
+- */
+-#ifndef __ASM_STA2X11_H
+-#define __ASM_STA2X11_H
+-
+-#include <linux/pci.h>
+-
+-/* This needs to be called from the MFD to configure its sub-devices */
+-struct sta2x11_instance *sta2x11_get_instance(struct pci_dev *pdev);
+-
+-#endif /* __ASM_STA2X11_H */
+diff --git a/arch/x86/pci/Makefile b/arch/x86/pci/Makefile
+index 48bcada5cabe..4933fb337983 100644
+--- a/arch/x86/pci/Makefile
++++ b/arch/x86/pci/Makefile
+@@ -12,8 +12,6 @@ obj-$(CONFIG_X86_INTEL_CE)      += ce4100.o
+ obj-$(CONFIG_ACPI)		+= acpi.o
+ obj-y				+= legacy.o irq.o
+ 
+-obj-$(CONFIG_STA2X11)           += sta2x11-fixup.o
+-
+ obj-$(CONFIG_X86_NUMACHIP)	+= numachip.o
+ 
+ obj-$(CONFIG_X86_INTEL_MID)	+= intel_mid_pci.o
+diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
+deleted file mode 100644
+index 8c8ddc4dcc08..000000000000
+--- a/arch/x86/pci/sta2x11-fixup.c
++++ /dev/null
+@@ -1,233 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * DMA translation between STA2x11 AMBA memory mapping and the x86 memory mapping
+- *
+- * ST Microelectronics ConneXt (STA2X11/STA2X10)
+- *
+- * Copyright (c) 2010-2011 Wind River Systems, Inc.
+- */
+-
+-#include <linux/pci.h>
+-#include <linux/pci_ids.h>
+-#include <linux/export.h>
+-#include <linux/list.h>
+-#include <linux/dma-map-ops.h>
+-#include <linux/swiotlb.h>
+-#include <asm/iommu.h>
+-#include <asm/sta2x11.h>
+-
+-#define STA2X11_SWIOTLB_SIZE (4*1024*1024)
+-
+-/*
+- * We build a list of bus numbers that are under the ConneXt. The
+- * main bridge hosts 4 busses, which are the 4 endpoints, in order.
+- */
+-#define STA2X11_NR_EP		4	/* 0..3 included */
+-#define STA2X11_NR_FUNCS	8	/* 0..7 included */
+-#define STA2X11_AMBA_SIZE	(512 << 20)
+-
+-struct sta2x11_ahb_regs { /* saved during suspend */
+-	u32 base, pexlbase, pexhbase, crw;
+-};
+-
+-struct sta2x11_mapping {
+-	int is_suspended;
+-	struct sta2x11_ahb_regs regs[STA2X11_NR_FUNCS];
+-};
+-
+-struct sta2x11_instance {
+-	struct list_head list;
+-	int bus0;
+-	struct sta2x11_mapping map[STA2X11_NR_EP];
+-};
+-
+-static LIST_HEAD(sta2x11_instance_list);
+-
+-/* At probe time, record new instances of this bridge (likely one only) */
+-static void sta2x11_new_instance(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance;
+-
+-	instance = kzalloc(sizeof(*instance), GFP_ATOMIC);
+-	if (!instance)
+-		return;
+-	/* This has a subordinate bridge, with 4 more-subordinate ones */
+-	instance->bus0 = pdev->subordinate->number + 1;
+-
+-	if (list_empty(&sta2x11_instance_list)) {
+-		int size = STA2X11_SWIOTLB_SIZE;
+-		/* First instance: register your own swiotlb area */
+-		dev_info(&pdev->dev, "Using SWIOTLB (size %i)\n", size);
+-		if (swiotlb_init_late(size, GFP_DMA, NULL))
+-			dev_emerg(&pdev->dev, "init swiotlb failed\n");
+-	}
+-	list_add(&instance->list, &sta2x11_instance_list);
+-}
+-DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, 0xcc17, sta2x11_new_instance);
+-
+-/*
+- * Utility functions used in this file from below
+- */
+-static struct sta2x11_instance *sta2x11_pdev_to_instance(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance;
+-	int ep;
+-
+-	list_for_each_entry(instance, &sta2x11_instance_list, list) {
+-		ep = pdev->bus->number - instance->bus0;
+-		if (ep >= 0 && ep < STA2X11_NR_EP)
+-			return instance;
+-	}
+-	return NULL;
+-}
+-
+-static int sta2x11_pdev_to_ep(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance;
+-
+-	instance = sta2x11_pdev_to_instance(pdev);
+-	if (!instance)
+-		return -1;
+-
+-	return pdev->bus->number - instance->bus0;
+-}
+-
+-/* This is exported, as some devices need to access the MFD registers */
+-struct sta2x11_instance *sta2x11_get_instance(struct pci_dev *pdev)
+-{
+-	return sta2x11_pdev_to_instance(pdev);
+-}
+-EXPORT_SYMBOL(sta2x11_get_instance);
+-
+-/* At setup time, we use our own ops if the device is a ConneXt one */
+-static void sta2x11_setup_pdev(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance = sta2x11_pdev_to_instance(pdev);
+-
+-	if (!instance) /* either a sta2x11 bridge or another ST device */
+-		return;
+-
+-	/* We must enable all devices as master, for audio DMA to work */
+-	pci_set_master(pdev);
+-}
+-DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, sta2x11_setup_pdev);
+-
+-/*
+- * At boot we must set up the mappings for the pcie-to-amba bridge.
+- * It involves device access, and the same happens at suspend/resume time
+- */
+-
+-#define AHB_MAPB		0xCA4
+-#define AHB_CRW(i)		(AHB_MAPB + 0  + (i) * 0x10)
+-#define AHB_CRW_SZMASK			0xfffffc00UL
+-#define AHB_CRW_ENABLE			(1 << 0)
+-#define AHB_CRW_WTYPE_MEM		(2 << 1)
+-#define AHB_CRW_ROE			(1UL << 3)	/* Relax Order Ena */
+-#define AHB_CRW_NSE			(1UL << 4)	/* No Snoop Enable */
+-#define AHB_BASE(i)		(AHB_MAPB + 4  + (i) * 0x10)
+-#define AHB_PEXLBASE(i)		(AHB_MAPB + 8  + (i) * 0x10)
+-#define AHB_PEXHBASE(i)		(AHB_MAPB + 12 + (i) * 0x10)
+-
+-/* At probe time, enable mapping for each endpoint, using the pdev */
+-static void sta2x11_map_ep(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance = sta2x11_pdev_to_instance(pdev);
+-	struct device *dev = &pdev->dev;
+-	u32 amba_base, max_amba_addr;
+-	int i, ret;
+-
+-	if (!instance)
+-		return;
+-
+-	pci_read_config_dword(pdev, AHB_BASE(0), &amba_base);
+-	max_amba_addr = amba_base + STA2X11_AMBA_SIZE - 1;
+-
+-	ret = dma_direct_set_offset(dev, 0, amba_base, STA2X11_AMBA_SIZE);
+-	if (ret)
+-		dev_err(dev, "sta2x11: could not set DMA offset\n");
+-
+-	dev->bus_dma_limit = max_amba_addr;
+-	dma_set_mask_and_coherent(&pdev->dev, max_amba_addr);
+-
+-	/* Configure AHB mapping */
+-	pci_write_config_dword(pdev, AHB_PEXLBASE(0), 0);
+-	pci_write_config_dword(pdev, AHB_PEXHBASE(0), 0);
+-	pci_write_config_dword(pdev, AHB_CRW(0), STA2X11_AMBA_SIZE |
+-			       AHB_CRW_WTYPE_MEM | AHB_CRW_ENABLE);
+-
+-	/* Disable all the other windows */
+-	for (i = 1; i < STA2X11_NR_FUNCS; i++)
+-		pci_write_config_dword(pdev, AHB_CRW(i), 0);
+-
+-	dev_info(&pdev->dev,
+-		 "sta2x11: Map EP %i: AMBA address %#8x-%#8x\n",
+-		 sta2x11_pdev_to_ep(pdev), amba_base, max_amba_addr);
+-}
+-DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, sta2x11_map_ep);
+-
+-#ifdef CONFIG_PM /* Some register values must be saved and restored */
+-
+-static struct sta2x11_mapping *sta2x11_pdev_to_mapping(struct pci_dev *pdev)
+-{
+-	struct sta2x11_instance *instance;
+-	int ep;
+-
+-	instance = sta2x11_pdev_to_instance(pdev);
+-	if (!instance)
+-		return NULL;
+-	ep = sta2x11_pdev_to_ep(pdev);
+-	return instance->map + ep;
+-}
+-
+-static void suspend_mapping(struct pci_dev *pdev)
+-{
+-	struct sta2x11_mapping *map = sta2x11_pdev_to_mapping(pdev);
+-	int i;
+-
+-	if (!map)
+-		return;
+-
+-	if (map->is_suspended)
+-		return;
+-	map->is_suspended = 1;
+-
+-	/* Save all window configs */
+-	for (i = 0; i < STA2X11_NR_FUNCS; i++) {
+-		struct sta2x11_ahb_regs *regs = map->regs + i;
+-
+-		pci_read_config_dword(pdev, AHB_BASE(i), &regs->base);
+-		pci_read_config_dword(pdev, AHB_PEXLBASE(i), &regs->pexlbase);
+-		pci_read_config_dword(pdev, AHB_PEXHBASE(i), &regs->pexhbase);
+-		pci_read_config_dword(pdev, AHB_CRW(i), &regs->crw);
+-	}
+-}
+-DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, suspend_mapping);
+-
+-static void resume_mapping(struct pci_dev *pdev)
+-{
+-	struct sta2x11_mapping *map = sta2x11_pdev_to_mapping(pdev);
+-	int i;
+-
+-	if (!map)
+-		return;
+-
+-
+-	if (!map->is_suspended)
+-		goto out;
+-	map->is_suspended = 0;
+-
+-	/* Restore all window configs */
+-	for (i = 0; i < STA2X11_NR_FUNCS; i++) {
+-		struct sta2x11_ahb_regs *regs = map->regs + i;
+-
+-		pci_write_config_dword(pdev, AHB_BASE(i), regs->base);
+-		pci_write_config_dword(pdev, AHB_PEXLBASE(i), regs->pexlbase);
+-		pci_write_config_dword(pdev, AHB_PEXHBASE(i), regs->pexhbase);
+-		pci_write_config_dword(pdev, AHB_CRW(i), regs->crw);
+-	}
+-out:
+-	pci_set_master(pdev); /* Like at boot, enable master on all devices */
+-}
+-DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, resume_mapping);
+-
+-#endif /* CONFIG_PM */
 -- 
 2.39.5
 
