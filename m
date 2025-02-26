@@ -1,124 +1,105 @@
-Return-Path: <linux-kernel+bounces-534684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5946A469F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:41:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC99A469F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794F31883642
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECA91884B1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96A923372B;
-	Wed, 26 Feb 2025 18:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB6922F384;
+	Wed, 26 Feb 2025 18:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZQkU8DK9"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7tyEHQ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428BF2222CF;
-	Wed, 26 Feb 2025 18:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B6B2222CF;
+	Wed, 26 Feb 2025 18:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595260; cv=none; b=nMzXkUS8a7okGoWm/TcJUDahBVzaPobaFN6p3g5sUOzwAWD9iJtUdRbPWA5aQqoIoB2xgs9aGKSObZA6It2vEpEswbIzKH7i/FgZyFJTchB0i7JduR8BU1rPP4SQxeyPF4zo3l6nikqlja+U72WYN2JU66iJvgGAKZyNBZ3Vl7c=
+	t=1740595329; cv=none; b=DljvcdxBHfAaX81d97ivdEqcFyz+zkPW5amvVEDHzpjMxIFYLu8KnaGc98GewI7AmE4Ch8HtLgE/qNYWudADq7odg/XECq9R0HOiLl3IgYuHlNK8U0jSoTG3gbyxEBvbVSkovUdoIK2bE2SQmU3SA3kgWmc5tqu/Xvt9iXb3NwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595260; c=relaxed/simple;
-	bh=XDo3dXB3ZepMkRvo5YjK5g4NfObnn16Macr8zt68RMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udL108SLbOTPt97c7khlakddzLJQRcqrm0iH1LuoSTkVey8mcX0miEVIG2gVZUrleSzeFm/YUdb++OvsPIGNgbTpBi/VcTY5xa+SIneX5fR9+PFgoLd4zyDLGC18H28Zy7BWNSVYcah53Gks3wrYigTYS4/EiYokQGkV9sRr504=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZQkU8DK9; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Z33Fj4mxNzlm4Yd;
-	Wed, 26 Feb 2025 18:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1740595256; x=1743187257; bh=egOgaD1Wy/xQmlMQKt5dzZhV
-	EvaTAscpf2ST+vETF70=; b=ZQkU8DK9G2NgT6E4oJk9OcmTtOTG71QBNvuYIR32
-	/5kftq6h+AfSPcR2P0tOxsCqVaUKhWTSLON7vpCRDwJAcS4yLtCoRMc1oq/jnWod
-	H/YXaw6GTqVpzts5ozwnH0I9lu54owIEeADPa/kQdDGPr6TdI0EOpgry+Q4lXrmM
-	EsgtLjhUaTfGAZxF3YtGrbAYJ2WqOVlbnZSFR+VoQo3kEwzKzNCjywCcUN3hjZ7Q
-	L+EcNv+cKNznPAPKpqxT7HUt61bY8HNJt2VQA/K4RuYsobmKsX7EhQ1w3M0oE6+v
-	CJxWmd+7fJXbXmovqseRF2H42h+sG+ziEeAR/1m7GfV4gA==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id EQd11jh3aRYl; Wed, 26 Feb 2025 18:40:56 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Z33Fd6S6Hzlsfvx;
-	Wed, 26 Feb 2025 18:40:53 +0000 (UTC)
-Message-ID: <6eb9ec05-96f1-41d2-b055-56e34d5722ae@acm.org>
-Date: Wed, 26 Feb 2025 10:40:51 -0800
+	s=arc-20240116; t=1740595329; c=relaxed/simple;
+	bh=3/4RYj3Peq9LAIKfSrxEMRx2d7CU/6V42ttG2XzmwuU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mWs6y4bODPWjy3Ppmg3EIRn4dDwLMEmrdVFaX5IYYYVP3F6lrTZ7lKOw18kpzriuMzjq0lB7C+t1xAUUl5PyKJuYI+VZmfekieOVfeC3WFxQJHjzR0n3r8yvfbd+6LLXAXR71ZJQpBa405Z6EHgCysOOua2WYaAOIbmwcJdvSt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7tyEHQ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC630C4CED6;
+	Wed, 26 Feb 2025 18:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740595328;
+	bh=3/4RYj3Peq9LAIKfSrxEMRx2d7CU/6V42ttG2XzmwuU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s7tyEHQ00rVHzmlYEqJ9Le5PmkCHox4ccXkJRN7uH7uGX+8sQjezExCasvhV7eFM1
+	 +mcAZgO0xwJJUKkRW53H0zM1x2qeCEM001ilq+cXt4nfwrWX0Z8EoLkYW8PWxK6EL5
+	 jtDfHSBnSuT5RyqwLNTwcYNFbJpIknzexuWXZ5xk8AXiUYImkCxGXYFORPM08ZTztS
+	 mF7DMZnoj3aemVDENiwETLZNKNmpDtsorc5QydGeCaQRFqd4Tu1OefwXz0gf/Hj0Vv
+	 JVBAvPt01v1ZYVuDXtW70unW2gLekOX8d1Pk/TOX5riCUlFwuZPMV3sVOuAeYk0ysS
+	 HBFGlpI0jmDlw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: bus710 <bus710@gmail.com>,
+	SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH] samples/damon: a typo in the kconfig - sameple
+Date: Wed, 26 Feb 2025 10:42:04 -0800
+Message-Id: <20250226184204.29370-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Enable Dumping of Hibern8, MCQ, and
- Testbus Registers
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
- Manish Pandey <quic_mapa@quicinc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com
-References: <20241025055054.23170-1-quic_mapa@quicinc.com>
- <20241112075000.vausf7ulr2t5svmg@thinkpad>
- <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
- <20241209040355.kc4ab6nfp6syw37q@thinkpad>
- <3a850d86-5974-4b2d-95be-e79dad33636f@acm.org>
- <20250226053019.y6tdukcqpijkug4m@thinkpad>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250226053019.y6tdukcqpijkug4m@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/25/25 9:30 PM, Manivannan Sadhasivam wrote:
-> On Mon, Dec 09, 2024 at 10:35:39AM -0800, Bart Van Assche wrote:
->> On 12/8/24 12:03 PM, Manivannan Sadhasivam wrote:
->>> On Tue, Nov 12, 2024 at 10:10:02AM -0800, Bart Van Assche wrote:
->>>> On 11/11/24 11:50 PM, Manivannan Sadhasivam wrote:
->>>>> On Fri, Oct 25, 2024 at 11:20:51AM +0530, Manish Pandey wrote:
->>>>>> Submitting a series of patches aimed at enhancing the debugging and monitoring capabilities
->>>>>> of the UFS-QCOM driver. These patches introduce new functionalities that will significantly
->>>>>> aid in diagnosing and resolving issues related to hardware and software operations.
->>>>>>
->>>>>
->>>>> TBH, the current state of dumping UFSHC registers itself is just annoying as it
->>>>> pollutes the kernel ring buffer. I don't think any peripheral driver in the
->>>>> kernel does this. Please dump only relevant registers, not everything that you
->>>>> feel like dumping.
->>>>
->>>> I wouldn't mind if the code for dumping  UFSHC registers would be removed.
->>>
->>> Instead of removing, I'm planning to move the dump to dev_coredump framework.
->>> But should we move all the error prints also? Like all ufshcd_print_*()
->>> functions?
->>
->> Hmm ... we may be better off to check which of these functions can be
->> removed rather than moving all of them to another framework.
-> 
-> devcoredump turned out to be not a good fit for storage drivers. And I can't
-> figure out another way. And Qcom is telling me that these debug prints are
-> necessary for them to debug the issues going forward.
-> 
-> Your thoughts?
+From: bus710 <bus710@gmail.com>
 
-Does this mean that printk() is the best alternative we have available?
+There is a typo in the Kconfig file of the damon sample module.
+Correct it: s/sample/sample/
 
-Thanks,
+Signed-off-by: bus710 <bus710@gmail.com>
+Reviewed-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
 
-Bart.
+Chagens from v1
+(https://patch.msgid.link/20250224180709.2167187-1-bus710@gmail.com)
+- Wordsmith the message
+
+ samples/damon/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/samples/damon/Kconfig b/samples/damon/Kconfig
+index 63f6dcd71daa..564c49ed69a2 100644
+--- a/samples/damon/Kconfig
++++ b/samples/damon/Kconfig
+@@ -3,7 +3,7 @@
+ menu "DAMON Samples"
+ 
+ config SAMPLE_DAMON_WSSE
+-	bool "DAMON sameple module for working set size estimation"
++	bool "DAMON sample module for working set size estimation"
+ 	depends on DAMON && DAMON_VADDR
+ 	help
+ 	  This builds DAMON sample module for working set size estimation.
+@@ -15,7 +15,7 @@ config SAMPLE_DAMON_WSSE
+ 	  If unsure, say N.
+ 
+ config SAMPLE_DAMON_PRCL
+-	bool "DAMON sameple module for access-aware proactive reclamation"
++	bool "DAMON sample module for access-aware proactive reclamation"
+ 	depends on DAMON && DAMON_VADDR
+ 	help
+ 	  This builds DAMON sample module for access-aware proactive
+
+base-commit: 489e7430013060843b4f7f1ad3935ff58fbd5bfb
+-- 
+2.39.5
 
