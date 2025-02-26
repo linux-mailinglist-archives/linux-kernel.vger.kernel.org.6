@@ -1,196 +1,214 @@
-Return-Path: <linux-kernel+bounces-534998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5979A46DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:40:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855EDA46DB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36BDF3ADC4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87381884D1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DC25C6F9;
-	Wed, 26 Feb 2025 21:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971BB261578;
+	Wed, 26 Feb 2025 21:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTUpxoDY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="onsHIyvf"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A025B676;
-	Wed, 26 Feb 2025 21:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5273C25EF9D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605930; cv=none; b=pq2cLvoy6YZWoJg8ES2jQOYEvdgRwBZ6jvcYuouHpAGKROdW8N60lUwKCNRhNa3dSgBYIijwnTuzQlfbLSiLakQ2L6V0vRl2Tb5LO63H3PD4sKH8oX5e6zOpvaXPOSqxZTZ5wPoAUsvIxNTk5kvVkQaPucE9mZQsJj8DZphg4h8=
+	t=1740605942; cv=none; b=qi2HbwOi1IA9AhKffid/7Co8EfDvImiiuAyyE/cCToqE8vlgeTe5GjgZAlYGr/SJZWeIRj4N4oXBId9nkv9zQFuZLY/Fl6knwJinuE2OUq1hDT3QSFYqcn9XX78M+plxKZh9cOAITu426krQTEGkASMGNd0YZpVEfY82+SZSKEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605930; c=relaxed/simple;
-	bh=k8F2lVzJi4i/JijSj2OIO+3G1yGf7UGJQ1/LCM+ADyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXAPBWkCaPr0qVl2V/I/U+ss2aPOhftAMVKjii6jO+MwjR4N8UdsOeEsfaIzeZgA9nJn8+vNp2r44QRDVUItVka+EFHIZ83MDOgqaQqf6B/4ISu6Hr7vox8896pegzEE4kKOYrim0Xg8Y7MXtDudnmPzfDDDq+84SunQ4O4KS60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTUpxoDY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32407C4CED6;
-	Wed, 26 Feb 2025 21:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605929;
-	bh=k8F2lVzJi4i/JijSj2OIO+3G1yGf7UGJQ1/LCM+ADyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTUpxoDYSqfgiYiLywV6n3sKvT0VCHKyUQ9xZEeVRT+E3lw9uJFcbZIx9EHHD7qIF
-	 ZZBvTIXKIlYglRXf63YZe/FKw3YRpuTXGSrCL0x8A/fBt9xsbcJ3T8ljqSIX4Fs9es
-	 rXjnQSoyBsbjsQL+nmXxj6FK7g2O8aWcL2YKWc6BB2V4Pfy8p3yqdPsfH+8VHmScT2
-	 /68lwcPDfAKpyvatmoTT/WTmiXio9XbHBAqdKsKvEzngeQeXhJiWeqNvaZMRjs1RZT
-	 CCnPwHhokHj7KFxs2O845NUnXktbkSoRknnSHF34QDp3RNSDr4DGutzR4U4slw3X7h
-	 SMeOL8Htxvi5Q==
-Date: Wed, 26 Feb 2025 18:38:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z7-J5vHqHF4kc1HB@x1>
-References: <CAP-5=fXEEMFgPF2aZhKsfrY_En+qoqX20dWfuE_ad73Uxf0ZHQ@mail.gmail.com>
- <Z70wHEl6Sp0H0c-3@google.com>
- <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
- <Z712hzvv22Ni63f1@google.com>
- <Z74U5s7Yf0f6I7Mo@x1>
- <Z74V0hZXrTLM6VIJ@x1>
- <Z74ZL6SUwWL_a5EK@x1>
- <Z74eqEiyrzuoL6uz@x1>
- <Z79std66tPq-nqsD@google.com>
- <Z7-Jte2ImGa93VUD@x1>
+	s=arc-20240116; t=1740605942; c=relaxed/simple;
+	bh=ArH4DXosS6VEtxEnXgez/2JkV2drVRXeyu1zi5Qgjq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChZd8gBku3N0aR6PWL++ccYE9mlYIa/klgdRqH1tQ5m5Gtdx40Fdu9tQ6Ayd0KXy0KP+Y2LR62yE+szZtaI0rZxvUEPBUlVAdBmwuZ6ecf7DDsHreDZRhgk4RvN7eQNwl1ir5YmMCJUFPHDbtYphIbEY3S60M7UwxPI6rVoFaQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=onsHIyvf; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43938828d02so368305e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:38:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740605938; x=1741210738; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PKWXxeyerycjT8mINlrePYKkJ8KjgafF3u1tMHpySjU=;
+        b=onsHIyvfQoeFOBvRwSxVcfUW+96LYZvgEb3NFDesE0R7fB5tvFNWdFTVsxCsyaGCs6
+         Odfug+e/lZmvXfFMZaZv+24y2a7d3NvOnpyExXi5r1i7Q//POtmCkLPBxhozHWeDVIa4
+         KvYMi1KBO90aEYVLJBmbnoe864/J6bGYm+BRRENHVOU9e0HSPicKjtGGbCBM35fiqBzm
+         HRbWl9sirUP8Em2I9TxLUa1NRGj6zIqoup6VDqcuj3+4tR1NBsqfOIe1yuz70hXCCfnm
+         uZLIlFiE8FBC820T6+xcFiN5yvRWVzMYzoB4gpWSVQrL0liFQ8qhqGPrU8p8cxkcczBJ
+         Jx7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740605938; x=1741210738;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PKWXxeyerycjT8mINlrePYKkJ8KjgafF3u1tMHpySjU=;
+        b=bbGe91bSg3pUsWJoSAUwm5/GhR2fNCtGgA4knZecRKbMgAZ2M1ha0OsH9joeBxx7a2
+         Z5/oxev4KyKfq16LgApEVRscVdC/kQ2DP0igryf94uFgWimxN3GZjz7yuxXlfBKg3Ucz
+         vjWkZbqIq7yOWn7CayBDu0BNqKUNWiuPwhyfciQw+QsqFACfsrJLTxtCYtwh1FbnkDek
+         Yl75Zhd3cHb0XJnFJR5q+IcS7H423nrHqSwqEc1s7JEu7lgR8Cv3XdVSFWG8/1Dx0NDf
+         BVvcUbrGhFHjMqr/52u7/cmHkTVOxzeZrbDa5ydl3RPUF2N6hodBayPn91TsaRjXO2LF
+         3hmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0+YToyMXSVUT6zByMit4gk98xdR849gUm3Ul3tMIaWdRR+s0Dxq3Gbp0bkhj3NJgU7Ijep0BTA8Cd5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4Brca6wUhhOg78FdN5N2NFfqoeeLSF/rfG9Wvn5D4nFX9KKYG
+	baTc0HzgUEaBheu5E+/nLPDMMovXwknkm1FPNQy5yBpFVSFg3uP1AcC0XuK8XpQ=
+X-Gm-Gg: ASbGnctl58Cg7ZknHepYJVqggrQ+syyb32Kk19SP3vw/K/z2CmQfzFP+c6SmK4IIs6y
+	gKq8iTcxgV0f6clqF8O7UthABh4Lssok6RPTxEg+0Mc4E13KivHm2NFZ5iY8wYTkKy8QWH/Yn/O
+	6AWZKf8sbM1whFecFMgE2Dv6wOGmoimluZHXi6PZTcLJKHDLMZsdNDZTWdRZsgYAqBJOMCy1lfL
+	VDq1f9gdH9tr+Ieefgp4UhBMytk2yV2QTYMIgxmmbrJfSTRnKMYtRK8O7OchvzYPlfX9jegqvHT
+	Q1Sk3zcmeZpTxfIHdp/cnYcIM9fecU/frTt4g3Z7mCP0iA==
+X-Google-Smtp-Source: AGHT+IGl7z2yXYQHS8gtgp/PqAYtjqjx8GIvMA1PyfTi0fvGywrgelfkuzD4zx0PHjsiR/DbwpgGzg==
+X-Received: by 2002:a05:600c:1d25:b0:439:930a:5899 with SMTP id 5b1f17b1804b1-439ae22991cmr84882045e9.7.1740605938535;
+        Wed, 26 Feb 2025 13:38:58 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f839asm2112905e9.2.2025.02.26.13.38.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 13:38:57 -0800 (PST)
+Message-ID: <6db6b361-caed-42f4-b319-2b8cd43a73b5@linaro.org>
+Date: Wed, 26 Feb 2025 22:38:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7-Jte2ImGa93VUD@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] media: dt-bindings: Add Sony IMX728
+To: Sebastian LaVine <slavine@d3embedded.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
+ <nfraprado@collabora.com>, Abel Vesa <abel.vesa@linaro.org>,
+ Achath Vaishnav <vaishnav.a@ti.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Javier Carrasco <javier.carrasco@wolfvision.net>, Jianzhong Xu <xuj@ti.com>,
+ Julien Massot <julien.massot@collabora.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mikhail Rudenko <mike.rudenko@gmail.com>, Nishanth Menon <nm@ti.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stuart Burtner <sburtner@d3embedded.com>, Tero Kristo <kristo@kernel.org>,
+ Thakkar Devarsh <devarsht@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Will Deacon <will@kernel.org>,
+ Zhi Mao <zhi.mao@mediatek.com>
+References: <20250212195656.69528-1-slavine@d3embedded.com>
+ <20250212195656.69528-2-slavine@d3embedded.com>
+ <20250213-shrewd-tacky-chachalaca-778a50@krzk-bin>
+ <D82KGJEBFQO0.1TX611HMKWB16@d3embedded.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <D82KGJEBFQO0.1TX611HMKWB16@d3embedded.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 06:38:00PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Feb 26, 2025 at 11:34:13AM -0800, Namhyung Kim wrote:
-> > On Tue, Feb 25, 2025 at 08:48:56PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, Feb 25, 2025 at 08:25:35PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > On Tue, Feb 25, 2025 at 08:11:17PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > > On Tue, Feb 25, 2025 at 08:07:18PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > > > On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
-> > > > > > > On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
-> > > > > > > > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
-> > > > > > > [SNIP]
-> > > > > > > > > > I thought the real-time processing had to use
-> > > > > > > > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
-> > > > > > > > > > events only give us VMA data and two mmaps may have been merged.
-> > > > > > > > > > Shouldn't doing this change be the simplest fix?
-> > > > > 
-> > > > > > > > > Make sense.  How about this?
-> > > > > 
-> > > > > > > > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
-> > > > > > > > to get pushed later?
-> > > > > 
-> > > > > > > I just noticed it would add extra kernel maps after modules.  I think it
-> > > > > > > should fixup end address of the kernel maps after adding all maps first.
-> > > > > 
-> > > > > > > Arnaldo, can you please test this?
-> > > > >  
-> > > > > > Trying it now.
-> > > > > 
-> > > > > Now we have something different:
-> > > > > 
-> > > > > root@number:~# perf record sleep
-> > > > > sleep: missing operand
-> > > > > Try 'sleep --help' for more information.
-> > > > > [ perf record: Woken up 1 times to write data ]
-> > > > > perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
-> > > > > Aborted (core dumped)
-> > > > > root@number:~#
-> > > > 
-> > > > __maps__insert() does:
-> > > > 
-> > > >         if (dso && dso__kernel(dso)) {
-> > > >                 struct kmap *kmap = map__kmap(new);
-> > > > 
-> > > >                 if (kmap)
-> > > >                         kmap->kmaps = maps;
-> > > >                 else
-> > > >                         pr_err("Internal error: kernel dso with non kernel map\n");
-> > > >         }
-> > > > 
-> > > > while maps__fixup_overlap_and_insert() doesn't.
-> > > > 
-> > > > It calls __maps__insert_sorted() that probably should do what
-> > > > __maps__insert() does?
-> > > 
-> > > Ok, so I did the following patch but this case fails:
-> > > 
-> > > @@ -910,6 +928,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
-> > >                                  */
-> > >                                 map__put(maps_by_address[i]);
-> > >                                 maps_by_address[i] = map__get(new);
-> > > +                               map__set_kmap(new, maps);
-> > >                                 check_invariants(maps);
-> > >                                 return err;
-> > >                         }
-> > > 
-> > > With:
-> > > 
-> > > perf: util/maps.c:110: check_invariants: Assertion `refcount_read(map__refcnt(map)) > 1' failed.
-> > > 
-> > > As:
-> > > 
-> > > 106				/*
-> > > 107				 * Maps by name maps should be in maps_by_address, so
-> > > 108				 * the reference count should be higher.
-> > > 109				 */
-> > > 110				assert(refcount_read(map__refcnt(map)) > 1);
-> > > 
-> > > Since it is just replacing the map in the maps_by_address and not
-> > > touching on the maps_by_name? Thus the refcount is just 1:
-> > 
-> > Sounds like it.  Can you add this on top?
+On 26/02/2025 18:50, Sebastian LaVine wrote:
+> Hello Krzysztof,
 > 
-> Trying, but somehow its not applying cleanly, checking:
+> On Thu Feb 13, 2025 at 4:26 AM EST, Krzysztof Kozlowski wrote:
+>> On Wed, Feb 12, 2025 at 02:56:53PM -0500, Sebastian LaVine wrote:
+>>> Adds bindings for the Sony IMX728.
+>>>
+>>> Signed-off-by: Sebastian LaVine <slavine@d3embedded.com>
+>>> Mentored-by: Stuart Burtner <sburtner@d3embedded.com>
+>>> ---
+>>
+>> Please run scripts/checkpatch.pl and fix reported warnings. After that,
+>> run also 'scripts/checkpatch.pl --strict' and (probably) fix more
+>> warnings. Some warnings can be ignored, especially from --strict run,
+>> but the code here looks like it needs a fix. Feel free to get in touch
+>> if the warning is not clear.
 > 
-> ⬢ [acme@toolbox perf-tools]$ patch -p1 < ~/wb/1.patch 
-> patching file tools/perf/util/maps.c
-> Hunk #1 succeeded at 815 (offset 18 lines).
-> Hunk #2 succeeded at 826 (offset 18 lines).
-> Hunk #3 succeeded at 846 (offset 18 lines).
-> Hunk #4 succeeded at 893 (offset 18 lines).
-> Hunk #5 succeeded at 919 (offset 18 lines).
-> Hunk #6 FAILED at 923.
-> 1 out of 6 hunks FAILED -- saving rejects to file tools/perf/util/maps.c.rej
-> ⬢ [acme@toolbox perf-tools]$
+> The only output I get from scripts/checkpatch.pl for this patch is the
+> following:
 > 
-> ⬢ [acme@toolbox perf-tools]$ git log --oneline -5
-> 4a9f5d76130b707f (HEAD -> perf-tools) wip: acme
-> d5ba0f5af35937c7 wip: namhyung
-> 42367eca7604e16e (perf-tools/tmp.perf-tools, perf-tools/perf-tools) tools: Remove redundant quiet setup
-> 293f324ce96d7001 tools: Unify top-level quiet infrastructure
-> 9fae5884bb0e3480 (tag: perf-tools-fixes-for-v6.14-2025-01-30) perf cpumap: Fix die and cluster IDs
-> ⬢ [acme@toolbox perf-tools]$
+>> next$ scripts/checkpatch.pl --strict  patches/outgoing/0001-media-dt-bindings-Add-Sony-IMX728.patch
+>> WARNING: Non-standard signature: Mentored-by:
+>> #9:
+>> Mentored-by: Stuart Burtner <sburtner@d3embedded.com>
+>>
+>> total: 0 errors, 1 warnings, 0 checks, 108 lines checked
+>>
+>> ...
+> 
+> I can change this to a Signed-off-by from Stuart if you would like,
+> though I feel that Mentored-by is applicable to this case.
 
-⬢ [acme@toolbox perf-tools]$ cat tools/perf/util/maps.c.rej
---- tools/perf/util/maps.c
-+++ tools/perf/util/maps.c
-@@ -923,6 +936,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 				 */
- 				map__put(maps_by_address[i]);
- 				maps_by_address[i] = map__get(new);
-+				if (maps_by_name) {
-+					map__put(maps_by_name[ni]);
-+					maps_by_name[ni] = map__get(new);
-+				}
- 				check_invariants(maps);
- 				return err;
- 			}
-⬢ [acme@toolbox perf-tools]$
+It has been two weeks, so I don't remember what warning I saw (countless
+of patches in between). It's possible I had in mind the "mentored-by",
+because it's nowhere explained in Linux. Does it mean part of DCO chain?
+Does it mean reviews or suggestions? This should be one of standard
+tags, IMO, with all its effects (because tags have meaning, e.g. DCO or
+reviewer's statement of oversight).
 
-Fixing this up by hand
+
+Best regards,
+Krzysztof
 
