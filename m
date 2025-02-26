@@ -1,153 +1,207 @@
-Return-Path: <linux-kernel+bounces-535061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F4BA46E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:15:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2EA46E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC423A56E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51538168742
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BBB25BAC0;
-	Wed, 26 Feb 2025 22:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA025BACE;
+	Wed, 26 Feb 2025 22:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="2P7POLzv"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="JPBwxd8E"
+Received: from out-14.pe-b.jellyfish.systems (out-14.pe-b.jellyfish.systems [198.54.127.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F5525BAA0;
-	Wed, 26 Feb 2025 22:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB7F25BAB2;
+	Wed, 26 Feb 2025 22:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740608145; cv=none; b=gxFQY9wl26Ui1tg93tD3bzYao7AWaBdSnPogGCp3j/LhbFwIt/BI+kZohNK5j8raFwZKOil4oIVgcZQWWs8KN8jcxnQ10Pw+z0mCZKQbethrSs5OdT1ofX17yJjBMVwTIDx8qMl5sovTXiwStrhfcLAv/Do4ROFV8AxO/e1ZeD0=
+	t=1740608178; cv=none; b=MJozxtU9ulfwAQeMxRKIPugWBC30ao5se9En/oZpc0VkM5Mp+XKvHm+w+6vZQsySg4z8GVZZ6H5k1Or5JiybKaQiHmaymZaosDnRPcMz2XbYmxDBgM6mhqbWEXElKCpuURVIkVwGbxio6g/KiwYuYwm9aHL2A7yAXs40IQUGSMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740608145; c=relaxed/simple;
-	bh=nB+jmAHxPZ3soQmc5wLgDtK8Av2gzHEq4MFA/UQ0nAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxwLrXLNF1lX/lP00AIuIhdVrtGlNqPgf9hfmhhpeP1sO9a8n6Aabqoi2KzdWuQ+IpVIKf4/OiqvVDwqcz0+jkLYqvaT0xtSXKcBk2OW8/+G2+mOi8retCuXUU2ff2l24aq5PSjb/SwWZP0CJaHZ7oC+TwhKBV7hFI52NGsxx2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=2P7POLzv; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 49D992E08410;
-	Thu, 27 Feb 2025 00:15:31 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740608131;
-	bh=VgIwtkMZ00hXOGNLHlqyEU83xt25hqz8jtzstHZ0Rbo=;
-	h=Received:From:Subject:To;
-	b=2P7POLzvQF3ldZmQNpUlDEFHdn0IgH8qKgCOmnUTM3OVCKMov+Y4ix8k1TuzJyKjF
-	 ejkfIwUpm63e0H48uLRXS7s1dQAeVlAq976pudNSQglUvw/Zg0cfvQQOkmus8pqsGi
-	 L2iqIYJ0imAwPkR4RlhEaJ4ytgCMtfQ6j6kdcBh4=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.174) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f174.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f174.google.com with SMTP id
- 38308e7fff4ca-30613802a6bso3677941fa.1;
-        Wed, 26 Feb 2025 14:15:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWC/VeId7UW2g0rq3aKHg0Dbwo8w+1i8hvXGSCgLaINgtUizuL7yCaoDcHWuU6ikhzWEQuBSJnIIUzqpU3vQ4l30NL0jw==@vger.kernel.org,
- AJvYcCXFb1Z5hxbFf0PJNBvvHd4C7UUQIxBPrQ0faAF1f7vLMqAtDC7qcidA6ApVWl/BslS8b0ZIWUKIGmAS@vger.kernel.org,
- AJvYcCXh1Ug0b9tAHmHAUuDmyXarW+ebGELeyH+S7D0Lp2JXOYLJE2KUMP865YBwBejckuwaBOUHi7BT7uSTPO+F@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqtzEVj4qHg4EZvAUrxz6WgGkrTa0IqzNlM8kFnrdnnvLA5ze7
-	NyzMj3S7ikiv1cPUlZW21vBw8McAoij+XklJxFhWeRXORcejmWA/Qio4X2rGB7TDKqw7YEaJu/U
-	xAcKJXzmfI7eq44RH37qwbABImUU=
-X-Google-Smtp-Source: 
- AGHT+IFg4wyGK6VF2wjPjpIZ8OKnRzWWaJZk6o/Gjb7Is6KTQDwhUqgOfMyd55qPLWosSWcc5Up9ckS22GBNFVqu8cQ=
-X-Received: by 2002:a2e:968b:0:b0:304:68e5:eabd with SMTP id
- 38308e7fff4ca-30a80c0f0admr41386401fa.3.1740608130090; Wed, 26 Feb 2025
- 14:15:30 -0800 (PST)
+	s=arc-20240116; t=1740608178; c=relaxed/simple;
+	bh=uUSijLBzxUDMkZHkQcdcmdVTgQGyPSVsyno+xloRIsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMR63+kaGOgywU/GDNRa3abHbVvI+GqgwuBF1DlwfqYopRkCZ8g9SXIrVBCeArVLM5Sl8O5HtKC/btpGCX4lfYsfSevPmAf2BHizH5b9qZtWbBR0TLAUGiCna33ZbxTFLAHeBx2fvJmenA9mxOg33LAml+m7VSajfHMK+bUQsdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=JPBwxd8E; arc=none smtp.client-ip=198.54.127.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
+	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z38270ss2zDqnn;
+	Wed, 26 Feb 2025 22:16:15 +0000 (UTC)
+Received: from MTA-15.privateemail.com (unknown [10.50.14.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z382702ssz3hhVZ;
+	Wed, 26 Feb 2025 17:16:15 -0500 (EST)
+Received: from mta-15.privateemail.com (localhost [127.0.0.1])
+	by mta-15.privateemail.com (Postfix) with ESMTP id 4Z38265nrvz3hhV0;
+	Wed, 26 Feb 2025 17:16:14 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1740608174;
+	bh=uUSijLBzxUDMkZHkQcdcmdVTgQGyPSVsyno+xloRIsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JPBwxd8EJrj6LnOEzK3whKRb5u45RYuZMSsask55Nus5JuT41kFJovzs7py9XlpQy
+	 zosB6g+jIdHeQGZM+36D3mu3T7UoPl6xfj0SkhBOgQACCJ6FGEprkCBYHZjuA+r1SX
+	 ILe6tdyCmQmLk9Qsg9zIIFATClvmW4PLEcJGC3OLGStbi2ZiisS3XGXQFLz7D1cmtV
+	 DrOqR6lcEt+oqh83tF0v/CZDpXdHEnSqX61QIULL0uDzdho+8G6WjuQsPihqo0pAa5
+	 gRO7b1ZWwt+SzmnlRBxTHL9B8Tg56yhSZO7DatkfVgkfbISz23urdoB4VhX2n98AfW
+	 f1UboBIfr4P8Q==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-15.privateemail.com (Postfix) with ESMTPA;
+	Wed, 26 Feb 2025 17:16:02 -0500 (EST)
+Date: Wed, 26 Feb 2025 17:16:02 -0500
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Message-ID: <Z7-SojPPx3kOVa4y@65YTFL3.secure.tethers.com>
+References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
+ <20250225134612.577022-2-sam.winchenbach@framepointer.org>
+ <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
+ <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
+ <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224195059.10185-1-lkml@antheas.dev>
- <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
- <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
- <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
- <9fa91732-3085-4e79-9a8f-b38263ee7d08@gmx.de>
- <CAGwozwHZCLaVD8iRgRxvQNqw3v+T9J+omMF+JoNe1r=+S1-OsA@mail.gmail.com>
- <CAGwozwEEbsLOJROm7rW-240Zoqh3K_JOtZE_NL8AnLy1eChR6A@mail.gmail.com>
- <CAJZ5v0jpSN_Tq6D3OrRj5KDuXwqVuzcwyNXwEuL90fr=juH48g@mail.gmail.com>
- <CAGwozwHAKbR4y9cW8H0nmESS7yv6RrXtgcZyEdz1Wy2e8tAdqQ@mail.gmail.com>
- <CAJZ5v0ihavOHCzfqMc7nd7HUaxYta7-vBBTo6WoJ3gDduZ6iRA@mail.gmail.com>
-In-Reply-To: 
- <CAJZ5v0ihavOHCzfqMc7nd7HUaxYta7-vBBTo6WoJ3gDduZ6iRA@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Wed, 26 Feb 2025 23:15:16 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwEkGDfhUoCSM6eA-1QN3-pCixT-YVPBNY4bLUZYxvff8Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JqPcnpjoEwypmX0Ot_L-bCpE2CHv_Ze7HXHX5i7ZuRYsRKVxaYGbPY5yHs
-Message-ID: 
- <CAGwozwEkGDfhUoCSM6eA-1QN3-pCixT-YVPBNY4bLUZYxvff8Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
- multiple handlers
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Armin Wolf <W_Armin@gmx.de>, Luke Jones <luke@ljones.dev>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"Limonciello, Mario" <mario.limonciello@amd.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
-	me@kylegospodneti.ch
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <174060813166.13020.1806907721096684722@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Wed, 26 Feb 2025 at 21:04, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> Top-posting not welcome.
+On Wed, Feb 26, 2025 at 10:22:03PM +0100, Krzysztof Kozlowski wrote:
+> On 26/02/2025 18:10, Sam Winchenbach wrote:
+> > On Wed, Feb 26, 2025 at 09:03:13AM +0100, Krzysztof Kozlowski wrote:
+> >> On Tue, Feb 25, 2025 at 08:46:12AM -0500, Sam Winchenbach wrote:
+> >>> Adds two properties to add a margin when automatically finding the
+> >>> corner frequencies.
+> >>>
+> >>> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+> >>> ---
+> >>>  .../bindings/iio/filter/adi,admv8818.yaml          | 14 ++++++++++++++
+> >>>  1 file changed, 14 insertions(+)
+> >>
+> >> Bindings are before users (see DT submitting patches), so this should be
+> >> re-ordered.
+> >>
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> >>> index b77e855bd594..2acdbd8d84cb 100644
+> >>> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> >>> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> >>> @@ -44,6 +44,18 @@ properties:
+> >>>    '#clock-cells':
+> >>>      const: 0
+> >>>  
+> >>> +  adi,lpf-margin-hz:
+> >>> +    description:
+> >>> +      Sets minimum low-pass corner frequency to the frequency of rf_in plus
+> >>> +      this value when in auto mode.
+> >>> +    default: 0
+> >>> +
+> >>> +  adi,hpf-margin-hz:
+> >>> +    description:
+> >>> +      Sets maximum high-pass corner frequency to the frequency of rf_in minus
+> >>> +      this value when in auto mode.
+> >>
+> >> IIUC, these are two bounds - lower and upper - in relation to something
+> >> else (like rf_in frequency)? If so, make it an array (naming to be
+> >> discuss, I assume you know better what's that):
+> > 
+> > It is true that these are both related to rf_in but both the low and high pass
+> > filters can operate independently. Logically, IMO, it makes more sense to have
+> 
+> 
+> You mean you can set only low or high pass and keep other as default?
+> But what is the default then - something from reset value or "0" means
+> disabled?
 
-?
+This value isn't setting the corner frequency of the filter, but the minimum
+distance the corner must be from the fundamental frequency. So, for example,
+if rf_in is 3.35 GHz and you set lpf-margin-hz to 0 then the corner frequency
+will be set to 3.35 GHz because that is an exact value supported by the device.
 
-> On Wed, Feb 26, 2025 at 8:52=E2=80=AFPM Antheas Kapenekakis <lkml@antheas=
-.dev> wrote:
-> > >
-> > > What about adding "quiet" as a "hidden choice" to amd-pmf such that i=
-t
-> > > would allow the test_bit(*bit, handler->choices) check in
-> > > _store_class_profile() to pass, but it would not cause this "choice"
-> > > to become visible in the new I/F (or when amd-pmf becomes the only
-> > > platform-profile driver) and it would be aliased to "low-power"
-> > > internally?
-> >
-> > This is what this patch series essentially does. It makes amd-pmf
-> > accept all choices but only show its own in its own handler and when
-> > it is the only option
->
-> No, it does more than this.
+If lpf-margin-hz is set to 30 MHz (for example), then corner frequency would be
+at least 3.35 GHz + 30 MHz = 3.38 GHz.  3.49 GHz is the closest corner
+frequency without going below 3.38 GHz that is supported by the device, so that
+is what will be selected.
 
-I would say functionality-wise no. The patch could be minified further.
+This prevents the situation where your fundamental frequency falls on, or close
+to, a corner frequency which could result in 3dB (half power) loss in your
+signal.
 
->  For instance, it is not necessary to do
-> anything about PLATFORM_PROFILE_BALANCED_PERFORMANCE in it.
+This is all completely indepent of the high-pass filter.
 
-I do not see a difference between QUIET and BALANCED_PERFORMANCE, any
-driver occluding either causes the same issue. Severity is debatably
-lower on BP though.
+> 
+> > them as separate controls but I am happy to put them into an array if that is
+> > the idiomatic approach to situations like this. That said, I am having a
+> > difficult time getting dt_binding_check to pass when I have an array of uint64.
+> > 
+> > When listing two items, as in your example below, I get the following:
+> > adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
+> 
+> Tricky to say without seeing your code. Magic crystal ball had
+> malfunction today.
 
-> The structure of it is questionable either.  It really should be two
-> patches, one modifying the ACPI platform-profile driver and the other
-> changing amd-pmf on top of this.
+This is the property:
 
-Ack. I can spin it up as 2 patches.
+  adi,filter-margins-hz:
+    items:
+      - description: |
+          The minimum distance, in Hz, between rf_in and the low-pass corner
+          frequency when the device is used in "auto" mode. If the sum of
+          rf_in and this value is greater than 18.85 GHz then the low-pass
+          filter will be put into bypass mode, otherwise the closest corner
+          frequency that is greater than or equal to the sum of rf_in plus this
+          value will be used.
+        minimum: 0
+        maximum: 0xFFFFFFFFFFFFFFFF
+        default: 0
+      - description: |
+          The minimum distance, in Hz, between rf_in and the high-pass corner
+          frequency when the device is used in "auto" mode. If the difference
+          between rf_in and this value is less than 1.75 GHz then the high-pass
+          filter will be put into bypass mode, otherwise the closest corner
+          frequency that is less than or equal to the difference of rf_in and
+          this value will be used.
+        minimum: 0
+        maximum: 0xFFFFFFFFFFFFFFFF
+        default: 0
 
-> Moreover, I'm not entirely convinced that the "secondary" driver
-> concept is needed to address the problem at hand.
+And this is the example:
 
-Any suggestions on that front would be welcome. This is just the way I
-came up with doing it.
+examples:
+  - |
+    spi {
+      #address-cells = <1>;
+      #size-cells = <0>;
+      admv8818@0 {
+        compatible = "adi,admv8818";
+        reg = <0>;
+        spi-max-frequency = <10000000>;
+        clocks = <&admv8818_rfin>;
+        clock-names = "rf_in";
+        adi,filter-margins-hz = /bits/ 64 <30000000 30000000>;
+      };
+    };
+...
 
-Best,
-Antheas
+Thank you for taking the time to go through this,
+-Sam
+
+> 
+> Best regards,
+> Krzysztof
 
