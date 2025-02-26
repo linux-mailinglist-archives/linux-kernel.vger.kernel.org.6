@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-534590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272CAA468E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 782E1A468E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311033AF568
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7180E3AF760
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9386B2356B8;
-	Wed, 26 Feb 2025 18:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA85923535E;
+	Wed, 26 Feb 2025 18:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHE8TKrs"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlIPOyFh"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABEA23535E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AABC2356D1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593152; cv=none; b=B4lE42Jqo7c3e5ALxOltayjAruGiAx5QWg78QPPkB5lGlAAzWKrKTZ8MgX7Tuc/SykX+nOmvGLnjOS7uQzYzd0BqCDC7uZ+olEUav16DoScmyJNBbcEpub/OOmW+p3uSFPtWA4bVa7LWOix7/wgv1ZbOj7pl+1UFMHe3J92dh8A=
+	t=1740593156; cv=none; b=BtCU1BXF/1xwIFQYawpAYmd6kIfIif2Y8Gp8xCrK3ZYBS9JIy7MM6tpyAyKPNwih5L6iyaaLIeWHEp+KS9ifP4caFTDz41fPfz4gKILId+tEboSM0IsivY1EfEZ4VNMoVetnd45Gobxkf8C3uw97pjvlMq2mBqsPf/zuItO2JxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593152; c=relaxed/simple;
-	bh=EqJavPMpXmCpA8qSqAJ44MdPREeuZfT+T6RTPcdaOXM=;
+	s=arc-20240116; t=1740593156; c=relaxed/simple;
+	bh=+R4AE2vH5/O6elwe4lTeR/IxdlRNPhicCE/pDetofCk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o8QTOiwU5907U5kKqEXFazLvXx2uFwJVkZHwu1w4dg5v1eu9VSn0sY0eD9Cbwr/xIFDBrg96axYQQdNPGioNzHW5Ha8VpQGMaRR+OFvwdcleBaMJMKWTZwo2GJcW34OgfHkqn7o8z3UEFA8+Muqxmm0jdmj7cI17dp+uLF+A5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHE8TKrs; arc=none smtp.client-ip=209.85.167.173
+	 MIME-Version; b=WOSXW1q5u5/NZMgTuu3n5VDExQ7M6EjWkQfoYSMcczSNndTnpCq/JAYfi951S1WXq7p9aEnL8Yu3g+Dx8XR4B22kU3DkQCgHjPaQpJGW/5Dbg7pyvuBN42TYmu838JEYmA0rC6F3UGson+GEKebXfpvxjGgJnzMsUO/OCAE+lVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlIPOyFh; arc=none smtp.client-ip=209.85.161.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f40ad1574fso109091b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:05:51 -0800 (PST)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fcd7d306f3so42777eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:05:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740593150; x=1741197950; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740593153; x=1741197953; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=436B8vpLTNU8Oi703zHdG5tjEBpnGGK8nyxnE2IzJMU=;
-        b=nHE8TKrs32KXhOo6wz1dGqH1APvdWg16k1JO/PIDpcNR4hCBszxXLx/WV2SUkE0VW+
-         2qql2DMhof5CHkV5Ruw4/VDhCkHzgFSKlL8BLJT4vmPYiMtpsrKZadPgLC3LoOeAkShx
-         ZrWgOLhAJwYzSPsESsz8NsP1T3Du8dkIXK70EtrnGkIWzUGTilxUU8PGqnD3r0eEmtEt
-         /CqXGQ8q4dgGYeeDUm8i7j1wJuqevgw/v1O2iah4DibIiAE/p9wgxnWsMy+/Uoplu2WV
-         EO/cO++NuQzgFvKl1uIFYsUN5bqo1u7UsuzLAjikhUer68UaFIXoGy83GuIn8XMSyzc3
-         bBHQ==
+        bh=ifmVptM9mxgQ/UQ1wElHFd5KU5UJQ5Cl2dkvmNdyxqo=;
+        b=BlIPOyFhxFs+TQl73Ph9VnfbzfyF4LvZ6LZGWBxxe325eQsRQcBDWCR/ucpMbe+Xec
+         Izcv68j6EQK5/Tp9xbIWDSScrhJHMwp49uTsS/fJtWcL3RpIXiwZcT2MqR7t6iK9X3eu
+         DX0p8eicUnxrlGJvxXTBIkdBbGNj6aJQry6hRsqcziAL9UHVWcp7RbOusXoIkz993CSm
+         lNyqynKANrsuZyoYEGqwcBb7a3zPMouAXFoXTPJ6nAz05v6sd+SVnUD3Jhd16+jPZD8t
+         Yi1mqA+RQ65FJu9RvrSWdqKq0QdUEf5+Oh91FPBBq6Ozrqt+QRHANlgwetYMStvE1vv1
+         eDaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740593150; x=1741197950;
+        d=1e100.net; s=20230601; t=1740593153; x=1741197953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=436B8vpLTNU8Oi703zHdG5tjEBpnGGK8nyxnE2IzJMU=;
-        b=WAu1+iOR9UPH/od2IxV+yvpe2NoTtQX9Ly+kSlDworUT0mrVjAEFypqbXx/BhyR4tY
-         TbxN/GTc2zqfp00CxUxqU9mZgzxKPgyovk2mg/bNECrMvXLC9pXkrF1Ft851DyONV2Nr
-         VZs8Hv7c0BqqpExfBeiLKUx8ojQPU3AoFnEwrY42VIbiejMtUv3ckhpBiIrsB54D8jqb
-         nA62EMZorQERv4j1o7zybkvPFIdNtezwqtVbJwhpr0vTSWQ0gcapTC/PcTstE6fvtPro
-         sBXrZF4qsP4j39LvWJZxgxJFHYg7dVeynvrLZPjjzS3mc7boxYDFu3KWB9FBofGzEUDZ
-         hxMA==
-X-Gm-Message-State: AOJu0YwrUbpap1yRwTZ2j36Ibqd92ZNwLZhHNb+DIjrvUS5dqauqd+q7
-	K0DeLN/4jhOEsP6yO6IDBgiwx7pPyiTGm888JJGnX15ZEgiMkUMQkblB
-X-Gm-Gg: ASbGnctxpp/9KXx2jwKgCElQ0DoB826f25reZudNkkp67pzm2RqrJHflNt+nBqbU8jJ
-	/d5VQMJFw2gs1sRpGLBlYXlWmmlDJXEl0bAwN8Na12CjHwMWIpfndn0Z6mAuFchBvUWJKvivUdA
-	vEboJ7TyrIqTs4GAuheSaa9FuiDt2G8bJvxzcha3mSHcgG4jacj/Ah5Wj7vjyD9hqjZJC+Joa0b
-	Ct7fq94W2wJhdecZwHygVlEZY5C6rFayNXT7c04c4yGTc37uBjCSMqn87tnSdXCt54Sq28YBkiZ
-	sL0GGdk=
-X-Google-Smtp-Source: AGHT+IHBoZzpk5ImyC5zzaHAekmEnhUZpbt3EjDP8LKX859d6FgFlKgg2K8qSx307vOhxAe3FHhv7A==
-X-Received: by 2002:a05:6808:3209:b0:3f4:400:e5f3 with SMTP id 5614622812f47-3f547e3981fmr2319169b6e.24.1740593149857;
-        Wed, 26 Feb 2025 10:05:49 -0800 (PST)
+        bh=ifmVptM9mxgQ/UQ1wElHFd5KU5UJQ5Cl2dkvmNdyxqo=;
+        b=cQPfAZUtc+hGw+G9xT04cQWJNm0ZxM/G+PmplSmWWMzY38O/r4Jrh6P7QAk72/KMjh
+         m/rp3TNtrWQfyF5Bv4bK/QZUxfIsJ95PEotOJipN4CUhiNm/liNRK11c17rCrEjIpUbF
+         1SYUi34NXd7wCk/l3blHGwzvZLSzgiygPm0nAV2rGReqiaXV9s5d6cKqGQDyfnSRtz71
+         NQ1xQ6KyqidokX0Xl8rCIkrUStjtwrU39ZcEFbJHok4yZhECsmx/EIwut7zyih0zL2wy
+         H7vvqbXts8GA/798lnK/NL8WJal0qVSXNBqwaS/dceMg/++X1g9Ts5EKRlgwrx1DG3tw
+         CHSw==
+X-Gm-Message-State: AOJu0YzXSXDTyVhk8+mr6SfpAu/OmPI9VvHvr7sahmSsBOpSsOQlQIOu
+	k4sA8ZZV+Id4CkzEY0QdHwtphlwrakVrlxH9b/jSe1TPbmPX70jI/DLL
+X-Gm-Gg: ASbGnctytFx/vEmj0pbjfpK8tb7hssrI1ZQL6toL2ibwR74Bum1pwRQhihCY5PMGAjr
+	D6cNvgqIqRElaVvuUO5k3EAf2AJCr4mEJbh94rv7nKBFjHeZ9k8ibnM1Io2fzmfhIXZ0+kd0/He
+	sZsqlUUwmITS/vfQpddf23v2iDGeav3hbmECO9aTyfMXHr5gqfoISVBKfrHyf3brKsMLNMwgpc5
+	ubLdCfjOuQTTZMnzRU/jPviw/FVpboEnHWPcClLwuxqaus1CDDX6+AMPWYdwn5/jUe/S+TawDRb
+	bQMZpQQ=
+X-Google-Smtp-Source: AGHT+IF/ZgHy4vtLZAvsawnyeMz7UU5Be3jh32wQjYh6McKl2h1yO+IqNJydP8JJwsvPil3Dzyt5kw==
+X-Received: by 2002:a05:6820:997:b0:5fe:87b7:6ecf with SMTP id 006d021491bc7-5fe9d4a9f2dmr2377092eaf.0.1740593153145;
+        Wed, 26 Feb 2025 10:05:53 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fe9428c8b3sm755069eaf.39.2025.02.26.10.05.47
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fe9428c8b3sm755069eaf.39.2025.02.26.10.05.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 10:05:48 -0800 (PST)
+        Wed, 26 Feb 2025 10:05:51 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -84,9 +84,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v2 03/11] x86/preempt: Move preempt count to percpu hot section
-Date: Wed, 26 Feb 2025 13:05:22 -0500
-Message-ID: <20250226180531.1242429-4-brgerst@gmail.com>
+Subject: [PATCH v2 04/11] x86/smp: Move cpu number to percpu hot section
+Date: Wed, 26 Feb 2025 13:05:23 -0500
+Message-ID: <20250226180531.1242429-5-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250226180531.1242429-1-brgerst@gmail.com>
 References: <20250226180531.1242429-1-brgerst@gmail.com>
@@ -102,158 +102,93 @@ No functional change.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/include/asm/current.h |  1 -
- arch/x86/include/asm/preempt.h | 25 +++++++++++++------------
- arch/x86/kernel/cpu/common.c   |  4 +++-
- include/linux/preempt.h        |  1 +
- 4 files changed, 17 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/current.h | 1 -
+ arch/x86/include/asm/smp.h     | 7 ++++---
+ arch/x86/kernel/setup_percpu.c | 5 ++++-
+ kernel/bpf/verifier.c          | 4 ++--
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/current.h
-index 60bc66edca83..46a736d6f2ec 100644
+index 46a736d6f2ec..f988462d8b69 100644
 --- a/arch/x86/include/asm/current.h
 +++ b/arch/x86/include/asm/current.h
 @@ -14,7 +14,6 @@ struct task_struct;
  
  struct pcpu_hot {
  	struct task_struct	*current_task;
--	int			preempt_count;
- 	int			cpu_number;
+-	int			cpu_number;
  #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
  	u64			call_depth;
-diff --git a/arch/x86/include/asm/preempt.h b/arch/x86/include/asm/preempt.h
-index 919909d8cb77..578441db09f0 100644
---- a/arch/x86/include/asm/preempt.h
-+++ b/arch/x86/include/asm/preempt.h
-@@ -4,10 +4,11 @@
+ #endif
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index ca073f40698f..d1db2c131b1d 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -5,9 +5,10 @@
+ #include <linux/cpumask.h>
  
- #include <asm/rmwcc.h>
- #include <asm/percpu.h>
+ #include <asm/cpumask.h>
 -#include <asm/current.h>
+ #include <asm/thread_info.h>
  
- #include <linux/static_call_types.h>
- 
-+DECLARE_PER_CPU_CACHE_HOT(int, __preempt_count);
++DECLARE_PER_CPU_CACHE_HOT(int, cpu_number);
 +
- /* We use the MSB mostly because its available */
- #define PREEMPT_NEED_RESCHED	0x80000000
- 
-@@ -23,18 +24,18 @@
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
+@@ -133,8 +134,8 @@ __visible void smp_call_function_single_interrupt(struct pt_regs *r);
+  * This function is needed by all SMP systems. It must _always_ be valid
+  * from the initial startup.
   */
- static __always_inline int preempt_count(void)
- {
--	return raw_cpu_read_4(pcpu_hot.preempt_count) & ~PREEMPT_NEED_RESCHED;
-+	return raw_cpu_read_4(__preempt_count) & ~PREEMPT_NEED_RESCHED;
- }
+-#define raw_smp_processor_id()  this_cpu_read(pcpu_hot.cpu_number)
+-#define __smp_processor_id() __this_cpu_read(pcpu_hot.cpu_number)
++#define raw_smp_processor_id()  this_cpu_read(cpu_number)
++#define __smp_processor_id() __this_cpu_read(cpu_number)
  
- static __always_inline void preempt_count_set(int pc)
- {
- 	int old, new;
+ #ifdef CONFIG_X86_32
+ extern int safe_smp_processor_id(void);
+diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
+index 1e7be9409aa2..175afc3ffb12 100644
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -23,6 +23,9 @@
+ #include <asm/cpumask.h>
+ #include <asm/cpu.h>
  
--	old = raw_cpu_read_4(pcpu_hot.preempt_count);
-+	old = raw_cpu_read_4(__preempt_count);
- 	do {
- 		new = (old & PREEMPT_NEED_RESCHED) |
- 			(pc & ~PREEMPT_NEED_RESCHED);
--	} while (!raw_cpu_try_cmpxchg_4(pcpu_hot.preempt_count, &old, new));
-+	} while (!raw_cpu_try_cmpxchg_4(__preempt_count, &old, new));
- }
- 
- /*
-@@ -43,7 +44,7 @@ static __always_inline void preempt_count_set(int pc)
- #define init_task_preempt_count(p) do { } while (0)
- 
- #define init_idle_preempt_count(p, cpu) do { \
--	per_cpu(pcpu_hot.preempt_count, (cpu)) = PREEMPT_DISABLED; \
-+	per_cpu(__preempt_count, (cpu)) = PREEMPT_DISABLED; \
- } while (0)
- 
- /*
-@@ -57,17 +58,17 @@ static __always_inline void preempt_count_set(int pc)
- 
- static __always_inline void set_preempt_need_resched(void)
- {
--	raw_cpu_and_4(pcpu_hot.preempt_count, ~PREEMPT_NEED_RESCHED);
-+	raw_cpu_and_4(__preempt_count, ~PREEMPT_NEED_RESCHED);
- }
- 
- static __always_inline void clear_preempt_need_resched(void)
- {
--	raw_cpu_or_4(pcpu_hot.preempt_count, PREEMPT_NEED_RESCHED);
-+	raw_cpu_or_4(__preempt_count, PREEMPT_NEED_RESCHED);
- }
- 
- static __always_inline bool test_preempt_need_resched(void)
- {
--	return !(raw_cpu_read_4(pcpu_hot.preempt_count) & PREEMPT_NEED_RESCHED);
-+	return !(raw_cpu_read_4(__preempt_count) & PREEMPT_NEED_RESCHED);
- }
- 
- /*
-@@ -76,12 +77,12 @@ static __always_inline bool test_preempt_need_resched(void)
- 
- static __always_inline void __preempt_count_add(int val)
- {
--	raw_cpu_add_4(pcpu_hot.preempt_count, val);
-+	raw_cpu_add_4(__preempt_count, val);
- }
- 
- static __always_inline void __preempt_count_sub(int val)
- {
--	raw_cpu_add_4(pcpu_hot.preempt_count, -val);
-+	raw_cpu_add_4(__preempt_count, -val);
- }
- 
- /*
-@@ -91,7 +92,7 @@ static __always_inline void __preempt_count_sub(int val)
-  */
- static __always_inline bool __preempt_count_dec_and_test(void)
- {
--	return GEN_UNARY_RMWcc("decl", __my_cpu_var(pcpu_hot.preempt_count), e,
-+	return GEN_UNARY_RMWcc("decl", __my_cpu_var(__preempt_count), e,
- 			       __percpu_arg([var]));
- }
- 
-@@ -100,7 +101,7 @@ static __always_inline bool __preempt_count_dec_and_test(void)
-  */
- static __always_inline bool should_resched(int preempt_offset)
- {
--	return unlikely(raw_cpu_read_4(pcpu_hot.preempt_count) == preempt_offset);
-+	return unlikely(raw_cpu_read_4(__preempt_count) == preempt_offset);
- }
- 
- #ifdef CONFIG_PREEMPTION
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 9b8bf43019e8..1470f687f8d6 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2016,12 +2016,14 @@ __setup("clearcpuid=", setup_clearcpuid);
- 
- DEFINE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot) = {
- 	.current_task	= &init_task,
--	.preempt_count	= INIT_PREEMPT_COUNT,
- 	.top_of_stack	= TOP_OF_INIT_STACK,
- };
- EXPORT_PER_CPU_SYMBOL(pcpu_hot);
- EXPORT_PER_CPU_SYMBOL(const_pcpu_hot);
- 
-+DEFINE_PER_CPU_CACHE_HOT(int, __preempt_count) = INIT_PREEMPT_COUNT;
-+EXPORT_PER_CPU_SYMBOL(__preempt_count);
++DEFINE_PER_CPU_CACHE_HOT(int, cpu_number);
++EXPORT_PER_CPU_SYMBOL(cpu_number);
 +
- #ifdef CONFIG_X86_64
- static void wrmsrl_cstar(unsigned long val)
- {
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index ca86235ac15c..4c1af9b7e28b 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -319,6 +319,7 @@ do { \
- #ifdef CONFIG_PREEMPT_NOTIFIERS
+ DEFINE_PER_CPU_READ_MOSTLY(unsigned long, this_cpu_off);
+ EXPORT_PER_CPU_SYMBOL(this_cpu_off);
  
- struct preempt_notifier;
-+struct task_struct;
- 
- /**
-  * preempt_ops - notifiers called when a task is preempted and rescheduled
+@@ -161,7 +164,7 @@ void __init setup_per_cpu_areas(void)
+ 	for_each_possible_cpu(cpu) {
+ 		per_cpu_offset(cpu) = delta + pcpu_unit_offsets[cpu];
+ 		per_cpu(this_cpu_off, cpu) = per_cpu_offset(cpu);
+-		per_cpu(pcpu_hot.cpu_number, cpu) = cpu;
++		per_cpu(cpu_number, cpu) = cpu;
+ 		setup_percpu_segment(cpu);
+ 		/*
+ 		 * Copy data used in early init routines from the
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 9971c03adfd5..604134d33282 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -21687,12 +21687,12 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
+ 		if (insn->imm == BPF_FUNC_get_smp_processor_id &&
+ 		    verifier_inlines_helper_call(env, insn->imm)) {
+ 			/* BPF_FUNC_get_smp_processor_id inlining is an
+-			 * optimization, so if pcpu_hot.cpu_number is ever
++			 * optimization, so if cpu_number is ever
+ 			 * changed in some incompatible and hard to support
+ 			 * way, it's fine to back out this inlining logic
+ 			 */
+ #ifdef CONFIG_SMP
+-			insn_buf[0] = BPF_MOV32_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
++			insn_buf[0] = BPF_MOV32_IMM(BPF_REG_0, (u32)(unsigned long)&cpu_number);
+ 			insn_buf[1] = BPF_MOV64_PERCPU_REG(BPF_REG_0, BPF_REG_0);
+ 			insn_buf[2] = BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 0);
+ 			cnt = 3;
 -- 
 2.48.1
 
