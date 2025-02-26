@@ -1,106 +1,92 @@
-Return-Path: <linux-kernel+bounces-533917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1945EA46042
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:09:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF237A46047
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AD3A16686C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 931AB3AA1CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BD4215052;
-	Wed, 26 Feb 2025 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ME+RHoIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2C413AA2A;
-	Wed, 26 Feb 2025 13:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DECA2185B1;
+	Wed, 26 Feb 2025 13:09:52 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF543166;
+	Wed, 26 Feb 2025 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575333; cv=none; b=qRxB5bfXZAIXoIY03iAHIEFz2bWngqwy32Cn7fKAF9Po5VZjkWZkZacH1/kfvaEPr/aOF8GLviCw4wR4urah9VSDeUUfVAvtPGWxq54HKEzRQ4aaAtd9tvFnCP5I2Yiu14T0P0gjVuiW+O6mAthNtFEGjVqp26H6UWygyHWUUtM=
+	t=1740575391; cv=none; b=sDE9QlDPZsZHMQ1Cp7q+TdKPmial+UBBnOGtg/PBbQGZfkPztmIcooN2M7y4qTBmw9n50zAVjHUYWJMDzn3Q93FlGdGDaMtjxZeT9R8/wQz8QMlYRL/8XojxWCeAT+V6uaKJ5VUItNVENp40Zj+YNrfIzuFhQJ7wb2SWQK0OduY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575333; c=relaxed/simple;
-	bh=nTMS76C2pWow6+Hfgqh3RiybiXmTOBQMbdZsndNGZwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSBrWr5YNZHG8wkmQy2B9sIXg+Osobe5ctlrY61lzqKsfYVq8weQtkia4++R6vq6YDtof5I/x8dmtkJFsU0EZ+HHa1vaK7IQB7mq/+fyOXhWMKNvxgbsNhyMG3EIcUhyIrE+p2o9dmDFB6jp2HeoUQvUxht4KDZoAKu1dIzjZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ME+RHoIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FF9C4CED6;
-	Wed, 26 Feb 2025 13:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740575332;
-	bh=nTMS76C2pWow6+Hfgqh3RiybiXmTOBQMbdZsndNGZwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ME+RHoILBMzVIp4Bd4JiiRk4Zlv7nlYJbwH5NzZqAcRGuI6rJKgUlU1llm7Vtw3Tf
-	 4ebQiXFU0kNxnVHeQgCvfouU9KvoefwQA2t/HfFgGDKgKSdVFdpofwLTAPXkXRvMUH
-	 SH2P2YslThNNKFayVjaBX9SX5grXSi+2YFekWeerRDXyUTszrOm4wNHRJSgeBVv/+5
-	 cMspK3A85HxXWQrUjM4LwqB4ZlOMkauTW9nyVFPdjNYMnRhho5h4aC5MtTiPa7sbPA
-	 84fYFnfO5fN8F5jpzVYHhLZkqznILr1ANJCJmDnK+veGUA50chEcnihUHeQRC9PZuN
-	 ZC1MjBx4fMNBQ==
-Date: Wed, 26 Feb 2025 14:08:37 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Benjamin Berg <benjamin@sipsolutions.net>
-Cc: linux-arch@vger.kernel.org, linux-um@lists.infradead.org,
-	x86@kernel.org, briannorris@chromium.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: Re: [PATCH 3/3] x86: avoid copying dynamic FP state from init_task
-Message-ID: <Z78SVdv5YKie-Mcp@gmail.com>
-References: <20241217202745.1402932-1-benjamin@sipsolutions.net>
- <20241217202745.1402932-4-benjamin@sipsolutions.net>
+	s=arc-20240116; t=1740575391; c=relaxed/simple;
+	bh=bCcxfvpdXbBBjUSDwnVfkGZ0fRP2avcMfB6Z7XWNpvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ToZqwNdWRhC0per9h2v/7uDl85l6rd2PCm9YwaYsuBkNo05cARpNHU6JL7GHCJwCinw3aE/GK9dBI7xhVvqWlyo9CHuwkDbfC88twKDU748vC3e9vXPTycsvV0d6sBWHrjP+QeWtDEM6kASeEK+WyyQJJZep+2k+v0UrV3ESLAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: 2vsAOOb9T12jy6zJRyq5KQ==
+X-CSE-MsgGUID: AMYO0F/TTXiKLwOdbC2mqQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Feb 2025 22:09:46 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.92.221])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 693DB4069605;
+	Wed, 26 Feb 2025 22:09:43 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/13] dt-bindings: soc: Add Renesas RZ/T2H (R9A09G077) SoC
+Date: Wed, 26 Feb 2025 14:09:20 +0100
+Message-ID: <20250226130935.3029927-2-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217202745.1402932-4-benjamin@sipsolutions.net>
+Content-Transfer-Encoding: 8bit
 
+Add RZ/T2H (R9A09G077), its variants, and the rt2h-evk evaluation board in
+documentation.
 
-* Benjamin Berg <benjamin@sipsolutions.net> wrote:
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+---
+ .../devicetree/bindings/soc/renesas/renesas.yaml       | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> From: Benjamin Berg <benjamin.berg@intel.com>
-> 
-> The init_task instance of struct task_struct is statically allocated and
-> may not contain the full FP state for userspace. As such, limit the copy
-> to the valid area of init_task and fill the rest with zero.
-> 
-> Note that the FP state is only needed for userspace, and as such it is
-> entirely reasonable for init_task to not contain parts of it.
-> 
-> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-> Fixes: 5aaeb5c01c5b ("x86/fpu, sched: Introduce CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT and use it on x86")
-> ---
->  arch/x86/kernel/process.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index f63f8fd00a91..1be45fe70cad 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -92,7 +92,15 @@ EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
->   */
->  int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
->  {
-> -	memcpy(dst, src, arch_task_struct_size);
-> +	/* init_task is not dynamically sized (incomplete FPU state) */
-> +	if (unlikely(src == &init_task)) {
-> +		memcpy(dst, src, sizeof(init_task));
-> +		memset((void *)dst + sizeof(init_task), 0,
-> +		       arch_task_struct_size - sizeof(init_task));
-> +	} else {
-> +		memcpy(dst, src, arch_task_struct_size);
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 225c0f07ae94..98563a31b5e1 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -554,6 +554,16 @@ properties:
+               - renesas,r9a09g057h44 # RZ/V2HP with Mali-G31 + Mali-C55 support
+           - const: renesas,r9a09g057
+ 
++      - description: RZ/T2H (R9A09G077)
++        items:
++          - enum:
++              - renesas,rzt2h-evk # RZ/T2H Evaluation Board
++          - enum:
++              - renesas,r9a09g077m04 # RZ/T2H with Single Cortex-A55 + Dual Cortex-R52 - no security
++              - renesas,r9a09g077m24 # RZ/T2H with Dual Cortex-A55 + Dual Cortex-R52 - no security
++              - renesas,r9a09g077m44 # RZ/T2H with Quad Cortex-A55 + Dual Cortex-R52 - no security
++          - const: renesas,r9a09g077
++
+ additionalProperties: true
+ 
+ ...
+-- 
+2.43.0
 
-Note that this patch, while it still applies cleanly, crashes/hangs the 
-x86-64 defconfig kernel bootup in the early boot phase in a KVM guest 
-bootup.
-
-Thanks,
-
-	Ingo
 
