@@ -1,363 +1,218 @@
-Return-Path: <linux-kernel+bounces-533527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54702A45BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:25:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAE9A45BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF961899C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD1A188FF40
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0732F23816F;
-	Wed, 26 Feb 2025 10:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2FE2459D0;
+	Wed, 26 Feb 2025 10:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="FImBJ3bm"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VXb8cC6l"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A72226D03
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31603238165
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565523; cv=none; b=Vs5jINWMz3JFOJbEREnN6ii4kOhp+P7vnBw5UqAtrXzXsoYNhKIydKhy7DmCXvhoYfVsRw8hRFadwOF3xGve1NTlMpzJgXXWw1z0weIzbRCRKv78TYQcmRPKOjlSUTvt900rjWuX7V6aM3hx3H3iIooy09dyRfmnK9q1k1OySy8=
+	t=1740565514; cv=none; b=I854BsxAIpykl7wyctsaOcThV//PIDodyj3WRG0MNbBimSq4WNf/iULv/poWF0hbfjH73JQqbhizXdacGstz3hkE2TT9X2KcQ/e9bIuEeY9naABWXjz4jSgxqm6RruaFv5PxtbTvYVs9vTbqRWYqjlRaoK4RKctxWgFmI4S8Gko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565523; c=relaxed/simple;
-	bh=+h++cLSineGel2oThcDp5bZpYh/LUhniSQMK++ibchY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l21+vMjBIM3R89tN92gI1hy4f4zST3XUkAOKozdyjvCVdj2I5J0P0dhgtYqGqHg8MAFezN5GWzeNmDVqSPEEQt9QN2+6oTZ61aejV0MyjP6tifMTLxqofoBjB1j8FyfBTRIk/HyG4mdVXG4CCNn3i9Z6kF4ZcIdjX5snGATwQeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=FImBJ3bm; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iwgg7Sa/hYFUPfapeDs/PKCErbJNAXvFMQwYU2jvLh8=; b=FImBJ3bmcH/yFRK7MwpJuYKlci
-	uQTgM2zmZUSGc2WqHVlNUBp8dYwD5Mic3VXFWnu/o3Z6FmxYDr2+yuZLf+r0KRvlyAOz4PTZdcbaY
-	m9Xd5kV4RawJmneQ93qIxokesaK0m6n0j6+Q67MJwV58nD/mWrf29iFuakHmDCAVvMBX+AXvEh9Ez
-	UrKf9HPkqbFKAg8stEuSXyWqDFNMi/ARhIFhi9oblr5zdlhXCzduAtu9aB5IJGONFqcjZksdWtAUI
-	8yzqfZQTIxKNOrmN0DQKCAMAsqTLchrVrY/lp5TZQv7N2koCFzpw4h1hOkC87TKq9PoOHBaM5DXYT
-	YwFxVhzQ==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tnEbO-0006Ro-8f; Wed, 26 Feb 2025 11:25:18 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: quentin.schulz@cherry.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lukasz.czechowski@thaumatec.com,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v3] arm64: dts: rockchip: add usb typec host support to rk3588-jaguar
-Date: Wed, 26 Feb 2025 11:25:07 +0100
-Message-ID: <20250226102507.3743437-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740565514; c=relaxed/simple;
+	bh=I+/Cav1TJHj/Tbx1gffjMoAc+RpLVvSUahSN9bSlFcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gIN0Wmfy0TQFEUKvTn7dq+3g+gdQpWbq0IL1oQ/Q5tepTZYeTFk/ztXhtLqp24GUb5b/1nd6fEBEbStRvcC4Xjqvmqw4iVP9S6E+l/9QpUomQPMNPzLiqcFlDqnNl4AWhgLRXZrCpzdHWk2W6qSuL7Lt83s0ABB0ktGH0dCDXl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VXb8cC6l; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so3756953f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740565510; x=1741170310; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wibN8Cvu0K5ErM6j1Uy/yqqzYl4gFqiUmqiGWxUEQOM=;
+        b=VXb8cC6lmiI3YiUBwRJFeKrnQeaP2PS7ECGLqJ88XLyENtWEqvOx9t0iZpCGaJw26V
+         /XK8UJQMH9sjpokVuyb0SZmVfnqBv01nmJ6LbD+Js2qTbmIfOxqgYNZtPKujpZOZxkhu
+         WfEhUPUqIj3CvE9xInv6Rr2rXnroRME7i85/P+Ahr8E4AcW0+j2xTbwh9MCU6bfBWgvy
+         VtQI+41vGF+rHvTmMcA71/rXYg9ms+TGw9S82cjnKX/dl39XcBDbaZAEa3DSV5mSOcAU
+         RXiHKrLR82zcLS0mq5pUnlMD6BgxdP9t9tqyR7Mo3wvh+4JrIc5f+Ejsxu2vvoMcDyBd
+         aU8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740565510; x=1741170310;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wibN8Cvu0K5ErM6j1Uy/yqqzYl4gFqiUmqiGWxUEQOM=;
+        b=O5maSJa+VfcVtCOYaATQRIiTuYN43pDqBLfChAWX89R6hOFmMFL1dVvvu7+g4q9p7Q
+         N9Wp9L2p2KoX4K3ktyzsGkHIyp0ceLlunbbJi0Mz/hUJk9CB7m5lhv7a03wr08NM1lNd
+         fABtVQqLaKHJS+NQDTZOgjh6xgc2uFoKK6q0waACDiFLjSqoAxq4w+CGrd9FIrU3gDGo
+         lZM3AbdGzEloM3kwUOoZsLSRhqgEkIpipXYz1UxRmkm9LF0g9suwpMQKmYdq9h5kxfHb
+         orMn/rbqu+VMoENCodne/c3dPyLnvN1jr3Iju3HwX6LOkZgH27ABzpE/mrvNRpzEu7vB
+         k5ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWpG1kZ1hbLub+yickGFtd5M+y9XVPjg0Q6+CpvMFV0cKaEo0Yau1Sei1o/lXHwMb6/93fuNnhnbgrp8RM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBigiCFjqtW2TINHKBZWWg1CxCv0Ui+4ziK5QUZWONr+ABwG7j
+	sEhNqwvSTkghN4/xF0itFeanOJLplqf1hJrCchD10wzK/5rDEZhkfpU9VO3+QAo=
+X-Gm-Gg: ASbGnct+SrwVzJr3/ye1yemv4YkdY1JwEJtty66jj/Qc8HasPHqzX9Jny8PmoobXUCj
+	OYPKn9ZMaAXDAXQ2vmnuhBjOWLtgZ37BflJQ/wqaFw6Mo46fE5a0NkI50UJDFQNR6wNAPKF2qwS
+	F35IovoWaB1qsujZmcJnJFGITIdrCo35EXOboOnC6KVxREAnyBNkdNiTg5avZhBbIBKz8dAWbCG
+	O/z5GNDVjCW7W3sIPA7JWWOhWCS16hWIa39mFnAeuG7U1F++9mD5LAsnlY72y7+/J8JqJjjgBui
+	b+R8ybZdrT9l0f75VHhQWrY8fzOhozQnuQ==
+X-Google-Smtp-Source: AGHT+IHjTO/1pjFHH+kjwewzcZzsGbp38uIF1SvTmpmkYjcZgHEn+7WkzgXXANIFTttdLT6P7jm5tA==
+X-Received: by 2002:adf:e912:0:b0:38f:24f9:8bac with SMTP id ffacd0b85a97d-390cc60c1f9mr5068902f8f.23.1740565510339;
+        Wed, 26 Feb 2025 02:25:10 -0800 (PST)
+Received: from [192.168.1.247] ([145.224.66.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86caf2sm5066404f8f.23.2025.02.26.02.25.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 02:25:09 -0800 (PST)
+Message-ID: <b91333cd-ebc0-44a0-919e-a9455f4c44c8@linaro.org>
+Date: Wed, 26 Feb 2025 10:25:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] perf pmu: Dynamically allocate tool PMU
+To: Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, namhyung@kernel.org, cyy@cyyself.name,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Weilin Wang <weilin.wang@intel.com>, Junhao He <hejunhao3@huawei.com>,
+ Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+ linux-kernel@vger.kernel.org
+References: <20250225164639.522741-1-james.clark@linaro.org>
+ <20250225164639.522741-2-james.clark@linaro.org>
+ <CAP-5=fW1NkeZjBpNijV1oKNjZ_F480wahmUPfEN9vrxYjwD=9A@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fW1NkeZjBpNijV1oKNjZ_F480wahmUPfEN9vrxYjwD=9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Jaguar has two type-c ports connected to fusb302 controllers that can
-work both in host and device mode and can also run in display-port
-altmode.
 
-While these ports can work in dual-role data mode, they do not support
-powering the device itself as power-sink. This causes issues because
-the current infrastructure does not cope well with dual-role data
-without dual-role power.
+On 25/02/2025 5:19 pm, Ian Rogers wrote:
+> On Tue, Feb 25, 2025 at 8:47 AM James Clark <james.clark@linaro.org> wrote:
+>>
+>> perf_pmus__destroy() treats all PMUs as allocated and free's them so we
+>> can't have any static PMUs that are added to the PMU lists. Fix it by
+>> allocating the tool PMU in the same way as the others. Current users of
+>> the tool PMU already use find_pmu() and not perf_pmus__tool_pmu(), so
+>> rename the function to add 'new' to avoid it being misused in the
+>> future.
+>>
+>> perf_pmus__fake_pmu() can remain as static as it's not added to the
+>> PMU lists.
+>>
+>> Fixes the following error:
+>>
+>>    $ perf bench internals pmu-scan
+>>
+>>    # Running 'internals/pmu-scan' benchmark:
+>>    Computing performance of sysfs PMU event scan for 100 times
+>>    munmap_chunk(): invalid pointer
+>>    Aborted (core dumped)
+>>
+>> Fixes: 240505b2d0ad ("perf tool_pmu: Factor tool events into their own PMU")
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   tools/perf/util/pmus.c     |  2 +-
+>>   tools/perf/util/tool_pmu.c | 23 +++++++++++------------
+>>   tools/perf/util/tool_pmu.h |  2 +-
+>>   3 files changed, 13 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+>> index 8a0a919415d4..c1815edaca37 100644
+>> --- a/tools/perf/util/pmus.c
+>> +++ b/tools/perf/util/pmus.c
+>> @@ -268,7 +268,7 @@ static void pmu_read_sysfs(unsigned int to_read_types)
+>>
+>>          if ((to_read_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) != 0 &&
+>>              (read_pmu_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) == 0) {
+>> -               tool_pmu = perf_pmus__tool_pmu();
+>> +               tool_pmu = perf_pmus__new_tool_pmu();
+>>                  list_add_tail(&tool_pmu->list, &other_pmus);
+>>          }
+>>          if ((to_read_types & PERF_TOOL_PMU_TYPE_HWMON_MASK) != 0 &&
+>> diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+>> index 3a68debe7143..45eae810b205 100644
+>> --- a/tools/perf/util/tool_pmu.c
+>> +++ b/tools/perf/util/tool_pmu.c
+>> @@ -490,17 +490,16 @@ int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread)
+>>          return 0;
+>>   }
+>>
+>> -struct perf_pmu *perf_pmus__tool_pmu(void)
+>> +struct perf_pmu *perf_pmus__new_tool_pmu(void)
+>>   {
+>> -       static struct perf_pmu tool = {
+>> -               .name = "tool",
+>> -               .type = PERF_PMU_TYPE_TOOL,
+>> -               .aliases = LIST_HEAD_INIT(tool.aliases),
+>> -               .caps = LIST_HEAD_INIT(tool.caps),
+>> -               .format = LIST_HEAD_INIT(tool.format),
+>> -       };
+>> -       if (!tool.events_table)
+>> -               tool.events_table = find_core_events_table("common", "common");
+>> -
+>> -       return &tool;
+>> +       struct perf_pmu *tool = zalloc(sizeof(struct perf_pmu));
+>> +
+>> +       tool->name = strdup("tool");
+>> +       tool->type = PERF_PMU_TYPE_TOOL;
+>> +       INIT_LIST_HEAD(&tool->aliases);
+>> +       INIT_LIST_HEAD(&tool->caps);
+>> +       INIT_LIST_HEAD(&tool->format);
+>> +       tool->events_table = find_core_events_table("common", "common");
+>> +
+>> +       return tool;
+>>   }
+>> diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
+>> index a60184859080..268f05064d03 100644
+>> --- a/tools/perf/util/tool_pmu.h
+>> +++ b/tools/perf/util/tool_pmu.h
+>> @@ -51,6 +51,6 @@ int evsel__tool_pmu_open(struct evsel *evsel,
+>>                           int start_cpu_map_idx, int end_cpu_map_idx);
+>>   int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread);
+>>
+>> -struct perf_pmu *perf_pmus__tool_pmu(void);
+>> +struct perf_pmu *perf_pmus__new_tool_pmu(void);
+> 
+> I think for consistency this should be "tool_pmu__new" although pmus
+> have odd function names like "lookup" which is basically "new". I was
+> trying to be smart by avoiding the allocation, but I also don't think
+> it matters and correct is more important. Thanks for doing this.
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> 
+> Ian
+> 
 
-So add the necessary nodes for the type-c controllers as well
-as enable the relevant core usb nodes, but limit the mode to host-mode
-for now until we figure out device mode.
+No worries. Yes you're right about the rename, I'll resend it.
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
-changes in v3:
-- more review comments from Quentin
-  (sbu-pin pinctrl, comments)
-changes in v2:
-- address review comments from Quentin
-  (comments, pinctrl, sbu-gpios and much more)
+I did try adding a static flag that caused them to not be free'd, but 
+it's fragile because there are members that could contain allocations 
+even if the PMU is static, and then you also need to track re-adding it 
+to the list if that gets cleared.
 
- .../arm64/boot/dts/rockchip/rk3588-jaguar.dts | 218 ++++++++++++++++++
- 1 file changed, 218 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-index 20b566d4168f..5dbcdf67f0a5 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-@@ -333,6 +333,56 @@ rtc_twi: rtc@6f {
- 		};
- 	};
- 
-+	typec-portc@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cc_int1>;
-+		vbus-supply = <&vcc_5v0_usb_c1>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			data-role = "dual";
-+			label = "USBC-1 P11";
-+			power-role = "source";
-+			self-powered;
-+			source-pdos =
-+				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
-+			vbus-supply = <&vcc_5v0_usb_c1>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usbc0_hs: endpoint {
-+						remote-endpoint = <&usb_host0_xhci_drd_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usbc0_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usbc0_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	vdd_npu_s0: regulator@42 {
- 		compatible = "rockchip,rk8602";
- 		reg = <0x42>;
-@@ -394,6 +444,56 @@ &i2c8 {
- 	pinctrl-0 = <&i2c8m2_xfer>;
- 	status = "okay";
- 
-+	typec-portc@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <RK_PA4 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cc_int2>;
-+		vbus-supply = <&vcc_5v0_usb_c2>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			data-role = "dual";
-+			label = "USBC-2 P12";
-+			power-role = "source";
-+			self-powered;
-+			source-pdos =
-+				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
-+			vbus-supply = <&vcc_5v0_usb_c2>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usbc1_hs: endpoint {
-+						remote-endpoint = <&usb_host1_xhci_drd_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usbc1_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy1_typec_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usbc1_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy1_typec_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	vdd_cpu_big0_s0: regulator@42 {
- 		compatible = "rockchip,rk8602";
- 		reg = <0x42>;
-@@ -483,6 +583,26 @@ pcie30x4_waken_m0: pcie30x4-waken-m0 {
- 			rockchip,pins = <0 RK_PC7 12 &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb3 {
-+		cc_int1: cc-int1 {
-+			rockchip,pins = <4 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cc_int2: cc-int2 {
-+			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		typec0_sbu_pins: typec0-sbu-pins {
-+			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<1 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		typec1_sbu_pins: typec1-sbu-pins {
-+			rockchip,pins = <0 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<1 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &saradc {
-@@ -850,6 +970,24 @@ &tsadc {
- 	status = "okay";
- };
- 
-+/* USB-C P11 connector */
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
-+/* USB-C P12 connector */
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	status = "okay";
-+};
-+
- &u2phy2 {
- 	status = "okay";
- };
-@@ -892,6 +1030,56 @@ &uart7 {
- 	status = "okay";
- };
- 
-+/* Type-C on P11 */
-+&usbdp_phy0 {
-+	orientation-switch;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&typec0_sbu_pins>;
-+	sbu1-dc-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>; /* Q7_USB_C0_SBU1_DC */
-+	sbu2-dc-gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>; /* Q7_USB_C0_SBU2_DC */
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_typec_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_ss>;
-+		};
-+
-+		usbdp_phy0_typec_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc0_sbu>;
-+		};
-+	};
-+};
-+
-+/* Type-C on P12 */
-+&usbdp_phy1 {
-+	orientation-switch;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&typec1_sbu_pins>;
-+	sbu1-dc-gpios = <&gpio0 RK_PD4 GPIO_ACTIVE_HIGH>; /* Q7_USB_C1_SBU1_DC */
-+	sbu2-dc-gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>; /* Q7_USB_C1_SBU2_DC */
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy1_typec_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc1_ss>;
-+		};
-+
-+		usbdp_phy1_typec_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc1_sbu>;
-+		};
-+	};
-+};
-+
- /* host0 on P10 USB-A */
- &usb_host0_ehci {
- 	status = "okay";
-@@ -902,6 +1090,36 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+/* host0 on P11 USB-C */
-+&usb_host0_xhci {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usb_host0_xhci_drd_sw: endpoint {
-+			remote-endpoint = <&usbc0_hs>;
-+		};
-+	};
-+};
-+
-+/* host1 on P12 USB-C */
-+&usb_host1_xhci {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usb_host1_xhci_drd_sw: endpoint {
-+			remote-endpoint = <&usbc1_hs>;
-+		};
-+	};
-+};
-+
- /* host1 on M.2 E-key */
- &usb_host1_ehci {
- 	status = "okay";
--- 
-2.47.2
+>>
+>>   #endif /* __TOOL_PMU_H */
+>> --
+>> 2.34.1
+>>
 
 
