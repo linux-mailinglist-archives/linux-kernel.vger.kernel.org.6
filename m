@@ -1,170 +1,118 @@
-Return-Path: <linux-kernel+bounces-533094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60B9A455AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:34:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97F7A4559D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E31166C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638D63A9664
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B437A2686BE;
-	Wed, 26 Feb 2025 06:34:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6C12690CB;
+	Wed, 26 Feb 2025 06:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K37PiYz6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5A627455;
-	Wed, 26 Feb 2025 06:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F4A18DB0C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740551664; cv=none; b=EsXFCWRlZJG9RPbn7IzJ23aQtquh9qX13ayRuj71VshXAKNO3lKk4Rt/frgxqpCrmsQe+1skNAeHhHreKyS0BZ/qFh+v0ig0cH0SXuCME8jl4jhT5+MouLrzMnv4K3CkRq77Ilaw70wpzdSD49U6mBKyU4MmhDWHIoxkKWtZB6M=
+	t=1740551511; cv=none; b=q1JaUldRz83vKvjG36A9oniPzryrgIH/KB2RcU7eKfXnONZbdpnrShI1z1+JdsjEXAtnkA2QOxGEkZcnjP9Sjga0vjgeZCvY4RDg/E/8PpPoGPpAJF7HXJpw1Dqm9ix+ioNo0V+KELfIciFja+mkbMsxXKerELxwW7+eXs5hHdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740551664; c=relaxed/simple;
-	bh=uagHt1edGLsKO/w7E5CpRr6rb9GrmY+1q7+2GhMUNWQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TBhqqXQAeKiQEy11jn/XGBrkCRKZjabvg+Nky6nz8gbntrdZVuP7ug0IKwfcPqtRJ3wEn6FwUnlo8bkNa0LY8YYwCRwSFV4aI4alAF3FxDx0eGRAUq6IDDsoicewHIc84qe1YAc9y9T1mKtQZkw/PLkrrNUmSjDKhLY4h/CEHXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z2l6m5XwCz4f3jrt;
-	Wed, 26 Feb 2025 14:33:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 98B6C1A058E;
-	Wed, 26 Feb 2025 14:34:14 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKl_ktb5nQ+25Ew--.13735S4;
-	Wed, 26 Feb 2025 14:34:14 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] md/raid1,raid10: don't ignore IO flags
-Date: Wed, 26 Feb 2025 14:30:11 +0800
-Message-Id: <20250226063011.968761-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740551511; c=relaxed/simple;
+	bh=lMIoZiMZ4mhGg+0vrUQlsibF7NLzRddktgUROVViGko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U3oRrrws8ygunkVQk4pKAD382z6pLOWRhyuhgkc2NpYDMuC6ccUh8NgvW3IYNNofTbabZg7a9rfSKpP9P/s3cuqkypmTMO9Fyqebb7VQpeLCYgvcyl1QXPaLdY42xPr2DoZmPpgkp2gJMqaB0ZZuCvKXunWrAQPmzbcclxBYcJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K37PiYz6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740551509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lMIoZiMZ4mhGg+0vrUQlsibF7NLzRddktgUROVViGko=;
+	b=K37PiYz6V9xEAAhAKfDA569NqHHfz2njpCvNZ6xT4gSDRx9t1TsfPOkE+jpayzsfNe/WBu
+	8LN9A83onEYzV44hHVfUrbw4B1sya4GDfcYtwEgQjk5d6tdGnLNHxBryJJWLTzRZkcnSzX
+	h1v4KIweUJOa2+nfZORwZitmKuKixoA=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439-xgno1ajIOq2_qoK80PG3-w-1; Wed, 26 Feb 2025 01:31:46 -0500
+X-MC-Unique: xgno1ajIOq2_qoK80PG3-w-1
+X-Mimecast-MFC-AGG-ID: xgno1ajIOq2_qoK80PG3-w_1740551505
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc2f22f959so1148339a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:31:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740551505; x=1741156305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lMIoZiMZ4mhGg+0vrUQlsibF7NLzRddktgUROVViGko=;
+        b=GfWCrPsRV2ySXxGJWx+I/ZDfjH/8d1noQr4qSn4jFsN5ax3tmsEAOs7kFrjnusoyi3
+         rIjd+Iisy7E/VvpADJIkj8rvUc85fDCYBeZZjLaO+bEJcf6WavunJKwdo/AbOkTRBt4O
+         qKaToo8phVfrB1lVc8NmcpJk+gN6UhWRPbHiNuNiIwlXqgagxoZaOmcz6koZx+18cKwE
+         oTT7g9DVTo6yV6KPfxyVu4d3MIwnWQQTFLO3OuUVR8Um7dPAOY5OLjWRYKrwDquXUKmq
+         U8Uxws6zPypqMocjjwE6VNQHz7BiNIwNPQm8/E8UoUVRYZcPm9fYs1xdfZ2dkh5IOqSS
+         7mAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv9STPfk/EBaei7MaSPvPo6+66X95o5TYkCiuDDOvAP2v0Y6pLoKmaGOb2741sYhAtYJL/RjAsl9VgLUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb0rgz4/V+Uc2/ZJcoePBF3J/MgkvNsgegDOdkRmIWFTGr6TQB
+	cbmwSIbmPALx21l7qDndNkY+i11ruHx+Vz37wi/ZdYm+DF3Cr9LuVV31RJuKyL5eCYCZ5vsya+x
+	DCbUbeFLbeocXUgMtF2JVthR63+2Ulfr6um3qk+kyRSa+0kDjQWCUSBosoWWJtQDJyACa/ETjqW
+	sVHwbjHjpO743zP09o5hAt0N5XpWlQCyC6adma
+X-Gm-Gg: ASbGncudJdyHIsOmLUTplomnuG+oubRCDUu8U4CgQWTK9dbqw0/0i/3AL4HL4JUm9SD
+	ShxjhjVuxqWq6uidIAhlKVdLkBcMn1nwukkORjq3GIfuKTtZy9XeSH61mARwvOzcRViFo1EZp3Q
+	==
+X-Received: by 2002:a17:90a:c105:b0:2fb:fe21:4841 with SMTP id 98e67ed59e1d1-2fccc117c76mr44400174a91.8.1740551505315;
+        Tue, 25 Feb 2025 22:31:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHgJ5uK64t8Qtg0HyTf+eyJQk/RcSifCuXdoxenxtpslxzpKs5bezA8wPuv+n2H82B3bP4YRr7ay+RtusUhlC4=
+X-Received: by 2002:a17:90a:c105:b0:2fb:fe21:4841 with SMTP id
+ 98e67ed59e1d1-2fccc117c76mr44400139a91.8.1740551504951; Tue, 25 Feb 2025
+ 22:31:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHKl_ktb5nQ+25Ew--.13735S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr1fZr1kGFyUKFykWw15Arb_yoWrXr48pa
-	9rtayrurW3Jw4UZr1DXFZruaySgF4qgFW2krW8Ww1fJw1avFyqqa1rJrWrWFn8ZFW3ur17
-	Xwn5A3yDCr4agFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de> <20250224152909.3911544-4-marcus.wichelmann@hetzner-cloud.de>
+In-Reply-To: <20250224152909.3911544-4-marcus.wichelmann@hetzner-cloud.de>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 26 Feb 2025 14:31:33 +0800
+X-Gm-Features: AWEUYZnqLtwn7p8rdsbyWWPnxjSlaXy5DuVDq_eYBndkM_qofe9C8RC5AoEl0-4
+Message-ID: <CACGkMEuoaqKB-4rs1QgsEU2rDn5s5GTJaL6jOiFj_TDSF2pC0A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 3/6] selftests/bpf: move open_tuntap to
+ network helpers
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, willemdebruijn.kernel@gmail.com, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, 
+	mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	shuah@kernel.org, hawk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Mon, Feb 24, 2025 at 11:29=E2=80=AFPM Marcus Wichelmann
+<marcus.wichelmann@hetzner-cloud.de> wrote:
+>
+> To test the XDP metadata functionality of the tun driver, it's necessary
+> to create a new tap device first. A helper function for this already
+> exists in lwt_helpers.h. Move it to the common network helpers header,
+> so it can be reused in other tests.
+>
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+> ---
 
-If blk-wbt is enabled by default, it's found that raid write performance
-is quite bad because all IO are throttled by wbt of underlying disks,
-due to flag REQ_IDLE is ignored. And turns out this behaviour exist since
-blk-wbt is introduced.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Other than REQ_IDLE, other flags should not be ignored as well, for
-example REQ_META can be set for filesystems, clear it can cause priority
-reverse problems; And REQ_NOWAIT should not be cleared as well, because
-io will wait instead of fail directly in underlying disks.
-
-Fix those problems by keeping IO flags from master bio.
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/raid1.c  | 5 -----
- drivers/md/raid10.c | 8 --------
- 2 files changed, 13 deletions(-)
-
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index a87eb9a3b016..347de0e36d59 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1316,8 +1316,6 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 	struct r1conf *conf = mddev->private;
- 	struct raid1_info *mirror;
- 	struct bio *read_bio;
--	const enum req_op op = bio_op(bio);
--	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
- 	int max_sectors;
- 	int rdisk, error;
- 	bool r1bio_existed = !!r1_bio;
-@@ -1405,7 +1403,6 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 	read_bio->bi_iter.bi_sector = r1_bio->sector +
- 		mirror->rdev->data_offset;
- 	read_bio->bi_end_io = raid1_end_read_request;
--	read_bio->bi_opf = op | do_sync;
- 	if (test_bit(FailFast, &mirror->rdev->flags) &&
- 	    test_bit(R1BIO_FailFast, &r1_bio->state))
- 	        read_bio->bi_opf |= MD_FAILFAST;
-@@ -1654,8 +1651,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 
- 		mbio->bi_iter.bi_sector	= (r1_bio->sector + rdev->data_offset);
- 		mbio->bi_end_io	= raid1_end_write_request;
--		mbio->bi_opf = bio_op(bio) |
--			(bio->bi_opf & (REQ_SYNC | REQ_FUA | REQ_ATOMIC));
- 		if (test_bit(FailFast, &rdev->flags) &&
- 		    !test_bit(WriteMostly, &rdev->flags) &&
- 		    conf->raid_disks - mddev->degraded > 1)
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index efe93b979167..e294ba00ea0e 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1146,8 +1146,6 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
- {
- 	struct r10conf *conf = mddev->private;
- 	struct bio *read_bio;
--	const enum req_op op = bio_op(bio);
--	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
- 	int max_sectors;
- 	struct md_rdev *rdev;
- 	char b[BDEVNAME_SIZE];
-@@ -1228,7 +1226,6 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
- 	read_bio->bi_iter.bi_sector = r10_bio->devs[slot].addr +
- 		choose_data_offset(r10_bio, rdev);
- 	read_bio->bi_end_io = raid10_end_read_request;
--	read_bio->bi_opf = op | do_sync;
- 	if (test_bit(FailFast, &rdev->flags) &&
- 	    test_bit(R10BIO_FailFast, &r10_bio->state))
- 	        read_bio->bi_opf |= MD_FAILFAST;
-@@ -1247,10 +1244,6 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
- 				  struct bio *bio, bool replacement,
- 				  int n_copy)
- {
--	const enum req_op op = bio_op(bio);
--	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
--	const blk_opf_t do_fua = bio->bi_opf & REQ_FUA;
--	const blk_opf_t do_atomic = bio->bi_opf & REQ_ATOMIC;
- 	unsigned long flags;
- 	struct r10conf *conf = mddev->private;
- 	struct md_rdev *rdev;
-@@ -1269,7 +1262,6 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
- 	mbio->bi_iter.bi_sector	= (r10_bio->devs[n_copy].addr +
- 				   choose_data_offset(r10_bio, rdev));
- 	mbio->bi_end_io	= raid10_end_write_request;
--	mbio->bi_opf = op | do_sync | do_fua | do_atomic;
- 	if (!replacement && test_bit(FailFast,
- 				     &conf->mirrors[devnum].rdev->flags)
- 			 && enough(conf, devnum))
--- 
-2.39.2
+Thanks
 
 
