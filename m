@@ -1,76 +1,121 @@
-Return-Path: <linux-kernel+bounces-534708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C991A46A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE352A46A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A550B16D694
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6B116D551
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D289223372B;
-	Wed, 26 Feb 2025 18:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA50233724;
+	Wed, 26 Feb 2025 18:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCCeaNyu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C5N51EM5"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37018235BF1;
-	Wed, 26 Feb 2025 18:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3282356A5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595794; cv=none; b=o4eNAMalblra/rSdmsoblHCq27pyI3C/lwktm9VREvvF9fNjMqKIeo2d43bw9uBd9LutapJpgl3I4zu/8U8EQM4hbAzeuH3Pfzvf9l64pd6St1FO8yEEnuaewAHmHr39kMviugCu5wkwsVROYmnctR1+ca/hD1zBs4z+AQVhbF0=
+	t=1740595811; cv=none; b=OLDl9OP4OtdLuF4aOYcKySn841SIT20WO9HWHMLmD1IkFRfIKVsyv2OdQzZmugN0Dg3oqRe1UhUGYxb6CdG3APVqBVF04ycEB7hxgs7MzV/Wha7WbUtRwqaQMrEG9nPMEN3iHLHSX9YLROVZyetl9nE1bj1WK9fpnaBu+onmfto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595794; c=relaxed/simple;
-	bh=Ba4soV8/sXJENjDlLInMDsIGvLpp7Zt4UelFxb7q/Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmOLSnKldodr6UEInkdzS9pPCCBC2nzVrSRbK7lqGEMwJxaA/NhewESdMujoXAqL4kZ+itptBVwKdQ59O5p2Dfz9xlAz8/qOwAURFQBt/h/wp1GUV8vhAxBS2TenmTOAjbdcYQzfS2/ZPTjGxDDexgmFO2YUE+u8Ng4Xe0SnDwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCCeaNyu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B170C4CEE7;
-	Wed, 26 Feb 2025 18:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740595793;
-	bh=Ba4soV8/sXJENjDlLInMDsIGvLpp7Zt4UelFxb7q/Ok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RCCeaNyuNK+h7Cth2eplXSmYW6qjs5sXEzt3x6uNYAOPdp8BquRFA7IwqSNT2Ru8o
-	 nc0IVjh2htJR1XeulUeQD+Gr5MCFBUjrRyWvJ63U4lSim6Ko4XLFqIuKyWiCWmVwVo
-	 1UL8in++7IYa7x3lab57xDN7druDL6bq24e8RUDF5zmzh1XobGBmZprkPCS65Uj1V9
-	 6D2Vo7SlBmzOHfih+t4sbP/b6T1+LFZgqPC/0GRZq3X+wA+Q7XY7Zp1BU2cunNppDf
-	 XLMd5A0BEVns5NUfaCmibOwzrojVi01+OjUcI+bnWbSG+IxsWIyAxjJ7JGZ7uaJn7T
-	 Eh6TTiUbDueLw==
-Date: Wed, 26 Feb 2025 08:49:52 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.15] selftests/sched_ext: Add NUMA-aware
- scheduler test
-Message-ID: <Z79iUHunOU8PcUNV@slm.duckdns.org>
-References: <20250226065057.151976-1-arighi@nvidia.com>
+	s=arc-20240116; t=1740595811; c=relaxed/simple;
+	bh=QjLBKUPu/fo8+UnsxQcBT3c6o1uCrB6eHJBJqKsC+W4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mu2zgNoXgIbizfm8DiDai7VOdjVJASdZ10DM/Oe+Zamk+Hexinveg1auo1wcHJZ9l8Wy1GOQWjVz8sQJz+BKErjChiTXSgqo5wpsUoL7T0JqNBTltqg1PDyg46mavgjTtrrs1oYBmLMvi1Hnri0G2edbMRym4RltjZGhXqIi8RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C5N51EM5; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QIo2KI1550254
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 12:50:02 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740595802;
+	bh=nyrTkivqa5p9GTKson4Jh8E/hGqHDVIUjBOtaASPEQk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=C5N51EM5GbMuZuZRgqOlYaCgVonW8i8DNZvRxAaxH7Llusaey0UOpy62uEMR/IySQ
+	 qKAPBri6Ah0Avm9Y640WaFByea8fpQkHZd0LNMtCPO9bv+hm6D4mzfSKbHylWt5O13
+	 ouqwxlIYtoC3ncq/sOsKOWSTuNntp64D/qbKRKyI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QInvkG108623
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Feb 2025 12:49:57 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Feb 2025 12:49:57 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Feb 2025 12:49:57 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QInvBM082351;
+	Wed, 26 Feb 2025 12:49:57 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Tero Kristo <kristo@kernel.org>,
+        Guillaume La Roque
+	<glaroque@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] firmware: config: ti-sci: Default set to ARCH_K3 for the ti sci driver
+Date: Wed, 26 Feb 2025 12:49:56 -0600
+Message-ID: <174059578810.2603560.7052142220899568448.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250220-ti-firmware-v2-1-ff26883c6ce9@baylibre.com>
+References: <20250220-ti-firmware-v2-1-ff26883c6ce9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226065057.151976-1-arighi@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Feb 26, 2025 at 07:50:57AM +0100, Andrea Righi wrote:
-> Add a selftest to validate the behavior of the NUMA-aware scheduler
-> functionalities, including idle CPU selection within nodes, per-node
-> DSQs and CPU to node mapping.
+Hi Guillaume La Roque,
+
+On Thu, 20 Feb 2025 14:31:17 +0100, Guillaume La Roque wrote:
+> With ARCH_K3=y we cannot enable TI_SCI_PROTOCOL=m because
+> ARCH_K3 selects TI_SCI_PROTOCOL.
 > 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> Modify the logic to enable TI_SCI_PROTOCOL by default when ARCH_K3=y
+> allowing us to submit a future patch to remove select on ARCH_K3 without
+> breaking existing users.
+> 
+> [...]
 
-Applied to sched_ext/for-6.15.
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
 
-Thanks.
+[1/1] firmware: config: ti-sci: Default set to ARCH_K3 for the ti sci driver
+      commit: 9a9b7cd77b2427d0722fe52301fa270690928989
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-tejun
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
