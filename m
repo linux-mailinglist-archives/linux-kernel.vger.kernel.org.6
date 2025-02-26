@@ -1,175 +1,155 @@
-Return-Path: <linux-kernel+bounces-534777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6A5A46B34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:36:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C91A46B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055D116E7E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:36:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423B11885E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2D323906A;
-	Wed, 26 Feb 2025 19:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="mkc0h+Lv"
-Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EDF23A9BE;
+	Wed, 26 Feb 2025 19:29:19 +0000 (UTC)
+Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B2F239584;
-	Wed, 26 Feb 2025 19:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598129; cv=pass; b=SK4hY2gFETscQTTAYcZOq8+PP6OYuy8u4FOaMor1MgLrEBFowxAVRJEdd6bud8Jx/l41BrYyhK9MtGYWiOVhgWh4LxHN4oASGoAbNhhJ+tJ3wSvHK+Yf3QmE/UFhXKqRy93Rv1ARjYIsaiVH5AcgwxhjTi7KnfjIdQbSWeTarAY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598129; c=relaxed/simple;
-	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XUZq6UMznYvEDLudCoh0nI4n9qF4jkPhNXbn7cg7fLArC75wR6ZD9dzrGD9O4Gz68Rx7rpbPTQ9vd08Iez97T12+tYv6YHTYYZh4XpdJXIyEQhMuPYbobaZKq20PxTn1dXfndXqzTkwOeqKS7jUt5us0DFLbKNz9XQhmjNHVXVM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=mkc0h+Lv; arc=pass smtp.client-ip=23.83.223.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 0EB399054F5;
-	Wed, 26 Feb 2025 19:28:41 +0000 (UTC)
-Received: from pdx1-sub0-mail-a232.dreamhost.com (100-99-192-59.trex-nlb.outbound.svc.cluster.local [100.99.192.59])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 85BE3903CC7;
-	Wed, 26 Feb 2025 19:28:40 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1740598120; a=rsa-sha256;
-	cv=none;
-	b=OKAz95KvTk5hRyDwD7osiCT/FD/FEjnfvSK3cZaf4w8vDvr4iOaCnc8iMFisKIXctETH9m
-	4CiUXoBk/m9tIB5C831nwrJOeHmb0Iky7c6n68rRnbEDT4T6n/atUO1HB96j+ClQ3qVklr
-	Ch0pMX0RFFRe8XceTwPo2mKcFXcVnBKK4AFBB49oNWIold7L3tyswycOLhEZCl18gkZhWk
-	xJRU//KP/8EjznmlDjm2JkYNawmf8V+LqfHLpcD8hwwzb3hda5lqtqs2r5FwHzbEXazgAW
-	hKyK7QJKqzeyxa33WiUTjAJ8wZrgBUPvAT+FtKOf7hsi4io2qf3cMI3UmjiaWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1740598120;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
-	b=UWQRn6xsASkGBMAtFOr/ULkhbwi1IpSOwjhH86ZbdrwhTE61imWUpb2iyKM9npq5EcUGAn
-	LyRJRWqDN9hXK6RLhmIBeKl2/wkzKSMHKYvTc/iocQMbcgIeU+Dyc9PmUf0OVRmWu0AQPS
-	pkiPLPVxCtjbZ/vLa0OyGsgVKPZbDB+bmK2Ee1D45ulnC4K3RO5R8qH0BrNp6O/G7Sjl6+
-	3kVr23g6aq9wyCtCae3ulKKolU8Jd9nWUjYmF8oA4DMHbbcMtLPRl314sQLOpzTO71MgRe
-	Zd5C3g2h74czoGSuUEeToI/aPDOc4RU26HeKflI+IisA1CYPfr9qtWLSR9JNlQ==
-ARC-Authentication-Results: i=1;
-	rspamd-6d7cc6b78d-jpb69;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Shrill-Squirrel: 7e800a0258e359d8_1740598120877_3242746971
-X-MC-Loop-Signature: 1740598120877:4221620723
-X-MC-Ingress-Time: 1740598120877
-Received: from pdx1-sub0-mail-a232.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.99.192.59 (trex/7.0.2);
-	Wed, 26 Feb 2025 19:28:40 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a232.dreamhost.com (Postfix) with ESMTPSA id 4Z34Jl41B8zLF;
-	Wed, 26 Feb 2025 11:28:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1740598120;
-	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=mkc0h+Lv2m2i8Hp/ny7cTPnrR/Rj06rgBp19qbgM+HJkUxv4+L7sNLswOk1B+LvPW
-	 Hr5aiWVaS+rtM/rLs3zK92JGFKVRBVUm41EGuEVNzWT0itjZGxW70SJfEkWQr+iZgY
-	 kdKj1/z1jYwQRFhpy2Wvxj8hl//mgctMgkBfk4rB+3hmNF6Hg6669l0tzAx7Hh/QiJ
-	 61hmzUNp0hVBL7EOmEF7ylfynogImtwg9gI+QwADgUCmjeiiR4oYn8saabBknSlfZq
-	 ikU24o3LalQBplB+pTzYYrCmPApZqou/d3a0GGanJ74pHq5BRVaC9ArYVNYeYOW+aT
-	 sr28ct+tivzmw==
-Date: Wed, 26 Feb 2025 11:28:35 -0800
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce
- localtry_lock_t
-Message-ID: <20250226192835.bmehafm2rjcbq42z@offworld>
-Mail-Followup-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexei Starovoitov <ast@kernel.org>
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz>
- <20250226170053.lxpreaegz5tysef7@offworld>
- <CAADnVQLAfZBvSyqE=2sbdH-kuNhvAJM+R_qMzfgPv=MDF+=VQA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33999239097;
+	Wed, 26 Feb 2025 19:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740598158; cv=none; b=NY5WxDT3Cno1u58CpjIsWHyee3E4XDAS0wYNzvfeQAdVQR6KswkSyqucm/VjMU8i5YzDHwv3ANRRGXF4F3pi0y23+ZalCcG2UZgtfD6LF9S3ZQg11MXWDKCTHfnyTpYjvHhLZqJBEcSHsuIbdWmWuYoBmhtQCnMCHMWXhZgA/Zo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740598158; c=relaxed/simple;
+	bh=2ZUteOkaSTwBrgPlfemqClgy+FPwyulmg41Bi4EpecI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=ujHWqN7wb/E+xUoesthdCzeJlGH/DdVhLaf/3xlQrriD9VZih2WJvnYvLU62PF4wRVJG7vulGlOdnlrGahoLgajn7adeusPx+sYk79zN9oSLHfkZR9lpliRvyDBPtcfo+spwGoM+Pe/TMeKtC76HUAiYSz9W7fsrKTdWoh9MQ9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tnN5b-0002zp-CB; Wed, 26 Feb 2025 20:29:03 +0100
+Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tnN5b-000453-03;
+	Wed, 26 Feb 2025 20:29:03 +0100
+Message-ID: <0ec1f766-a0be-42ed-b505-0fc94205f724@hetzner-cloud.de>
+Date: Wed, 26 Feb 2025 20:29:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAADnVQLAfZBvSyqE=2sbdH-kuNhvAJM+R_qMzfgPv=MDF+=VQA@mail.gmail.com>
-User-Agent: NeoMutt/20220429
+User-Agent: Mozilla Thunderbird
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ hawk@kernel.org
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250224152909.3911544-6-marcus.wichelmann@hetzner-cloud.de>
+ <Z7yo3VfHofK-W7EY@mini-arch>
+ <165bbf6e-ca06-4eac-a9a2-2033314aa027@hetzner-cloud.de>
+ <Z79k0vKn39XsZ-j7@mini-arch>
+Content-Language: en-US
+From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
+ 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
+ wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
+Subject: Re: [PATCH bpf-next v3 5/6] selftests/bpf: add test for XDP metadata
+ support in tun driver
+In-Reply-To: <Z79k0vKn39XsZ-j7@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27561/Wed Feb 26 10:36:26 2025)
 
-On Wed, 26 Feb 2025, Alexei Starovoitov wrote:
 
->On Wed, Feb 26, 2025 at 9:01???AM Davidlohr Bueso <dave@stgolabs.net> wrote:
+Am 26.02.25 um 20:00 schrieb Stanislav Fomichev:
+> On 02/26, Marcus Wichelmann wrote:
+>> Am 24.02.25 um 18:14 schrieb Stanislav Fomichev:
+>>> On 02/24, Marcus Wichelmann wrote:
+>>>> [...]
+>>>> +void test_xdp_context_tuntap(void)
+>>>
+>>> tap0 is already used by lwt tests, so there is a chance this new test
+>>> will clash with it? Should we run your new test in a net namespace
+>>> to be safe? Bastien recently added a change where you can make
+>>> your test run in a net ns by naming the function test_ns_xxx.
+>>>
 >>
->> On Fri, 14 Feb 2025, Vlastimil Babka wrote:
+>> Ah, cool, I didn't know of that feature.
 >>
->> >From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> >
->> >In !PREEMPT_RT local_lock_irqsave() disables interrupts to protect
->> >critical section, but it doesn't prevent NMI, so the fully reentrant
->> >code cannot use local_lock_irqsave() for exclusive access.
->> >
->> >Introduce localtry_lock_t and localtry_lock_irqsave() that
->> >disables interrupts and sets acquired=1, so localtry_lock_irqsave()
->> >from NMI attempting to acquire the same lock will return false.
->> >
->> >In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
->> >Map localtry_lock_irqsave() to preemptible spin_trylock().
->> >When in hard IRQ or NMI return false right away, since
->> >spin_trylock() is not safe due to PI issues.
->> >
->> >Note there is no need to use local_inc for acquired variable,
->> >since it's a percpu variable with strict nesting scopes.
->> >
->>
->> LGTM.
->>
->> Acked-by: Davidlohr Bueso <dave@stgolabs.net>
->
->Thanks for the review.
->Do you mind if I apply your ack to the latest version of this patch?
->https://lore.kernel.org/bpf/20250222024427.30294-2-alexei.starovoitov@gmail.com/
+>> For reference, you probably mean this one?
+>> commit c047e0e0e435 ("selftests/bpf: Optionally open a dedicated namespace to run test in it")
+> 
+> Yes.
+>   
+>> As long as the tests are not run in parallel, the test function SHOULD
+>> clean up well enough behind itself that no conflicts should occur.
+>> But having that bit of extra safety won't hurt.
+> 
+> The test you're adding is gonna be running in parallel with most of the
+> other test cases. If you want it to be executed in a serial fashion
+> (which I don't think you do, running in parallel in a ns is a better
+> option), the function as to be called serial_test_xxx.
+> 
 
-Yes, that is fine.
+Ah, I didn't know parallel execution is opt-out. Then I must have been
+lucky that it didn't cause issues.
 
-Thanks,
-Davidlohr
+Added it in the V4 patch series that I'll send in a bit.
 
