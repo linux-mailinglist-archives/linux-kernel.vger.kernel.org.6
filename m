@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-534972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E60A46D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A83A8A46D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9787B3A7881
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:30:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B310D3A67B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEA225A33E;
-	Wed, 26 Feb 2025 21:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35B125C6FE;
+	Wed, 26 Feb 2025 21:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ydanzjl1"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFCNng3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A641E1DE8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4859E1E1DE8;
+	Wed, 26 Feb 2025 21:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605447; cv=none; b=pPFFyey4TLY/GOAWuYPu9IszmXQgZUXdHPmNgTQmVJXYn3myt89WN64rUbPtT74VsLSbQ9Z3w+dTxd3muJ0tgj8of1s6mKX11M5PaPR4wyC7NEKhoAYU0Tbt4cKcaqFpdRawVE0PAI9Ti0o4fCl7xIACJrzfZNtyqVTZ6GgEyBI=
+	t=1740605450; cv=none; b=u/8Jooiw7tdgz3vxB42TmicCpanWWvMDonGlF0WwaxC0FCdzkhTXe0s7Ed5bTpiCIgIoLtqv0DHTdX0SAw85aoAeSNduYXWLMQHBGw1p5Iej5/KORyVb83JGmRubRauM1zMFeSjeI/nBxriESrW4QAGaqXiZtFy+n3vRMpfJto8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605447; c=relaxed/simple;
-	bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
+	s=arc-20240116; t=1740605450; c=relaxed/simple;
+	bh=Fa+SeEJeFDsoKrxwGND4hBVmD0Q2qWhMtMhE4PIUYJM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQ5dc2jgkwL2rOdVnpILzZLy/6CoaOqMuN0X/Q+oYQcnf35C4muyzAQ2BqVTMgkxwFHXHoPSAkgVreXVLyU0vSmAM9xqBnu4Ma0mci3vCmLyyiTfF6gHuHMXsjFFYBPFn0zi20z4JrqcZthap6Oer8DdvP5WNGFJehhgp2CnOog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ydanzjl1; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54527a7270eso199139e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740605443; x=1741210243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
-        b=Ydanzjl14hrygn91S8Nko4t/Lu6O+jHrxkLHwEUvVpQLrL27BW1krQWoOXnuIpMhcD
-         /SCyOav0DKnLX3+CJqsN+yJkwcWvXzaD3AUkrBVlQo5QLPKSr7MFdSKsD4/M3B15RIrH
-         KfxPZhNEI6gnTqPTq8IqmLhfmV5Xlf/WdeG1sr2jZB3qRusSGa/01jV6J74VMuZ4C8DB
-         CE2blEc734i/ApojqloxUGTMjH6KtTB/8f4VNtupqKgzPYc56Y/fARkBT6vXoKjr6RTn
-         CRYn6WMMxVunHXwNtKEVpa4JluLqxKpNEtrx1E4LVcWGMyG135R0cr2o97Nka2L0wcBe
-         RxAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740605443; x=1741210243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
-        b=sjlGvaN22GIJ2Q/wC/oapuvmxIoub2U5Iy6cU2PK9Hq1dCYfd8kQsXfvwEVxs4mh71
-         LDHB5kCy1vh8c/5nSbs36StrZzg8e/FGV+EZaVQm8rYWdDb2UsfJq7bAW8ZgXnDDUgTJ
-         AEYoG4oa1qO96jHibuVHEeYp/SD9dkcPfqkp7iVHFhk0Gbzz80PmlxcEuMXwWa1TCXnX
-         LQIF17cScNW2UmmN91u7KXIpWJNjEVng+bpFpMGoiaT2/D2FmsjvfoZoZZO/TmXyHrUc
-         qc1760FNGSvoO7+P5irt3CDoDlwmnIQsYGqqd3szqgZuWmQuD1Pi4+6lnVSe5Cw0vdb7
-         GSUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrUjdCReXDY2G0t5rtwm+8U5Ks6aOzrBia3Co7I+Nf9MlaLMHYTNFVTNCJK7UpdbTIpZBTQtPuvohp6+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdcnO7DNufvJSpZecqc5aTpSzRJCYvKnPNOhNYnasQJeV0Rb17
-	XYiEFNjNzbcP4DlytD3ttDODqs/x03Jxfx+loM92Ae/+FxBOuostXmmSw4eZh53LPABLij3E6ik
-	LaEU3fJKVpY4axlEmjzGYp3JMO1POpFsAGDZufw==
-X-Gm-Gg: ASbGncsXNpa/2zI0U/PPYMiUYOIRKHLDCrfAIBrAoBVjxfVWR5fmpDVY6CoNrJ9X0cR
-	4xywjcXYYdqIZugrZhVG/HXeXe3r02xMEymP5cR1qnE5DGtWmpcZgnPMgJZ+r60vtKPaM2MkJKv
-	ORx0swsFo=
-X-Google-Smtp-Source: AGHT+IE8+uZvHOPVlO4cJtPSuzroRvBR0aRjVwpJAshWI+BRIHeRYPen8jIF3ZZZVKAcoSrk/otZQzN4xJtaQL33NME=
-X-Received: by 2002:a05:6512:2347:b0:545:27f0:7b6f with SMTP id
- 2adb3069b0e04-5483912fc82mr10885628e87.11.1740605442695; Wed, 26 Feb 2025
- 13:30:42 -0800 (PST)
+	 To:Cc:Content-Type; b=njV/GpFo++miLlwAr5I3uhJrLegJc7LyQ4tJ3JT0qru45D47getIP1xvW8Pama/mjGjkjLoIuES57xvjikzvU0LP07fkTaRrnQA6VlYBIx+E1yuyEkQsou68aglX66Ko3Pyclw8a2TWK0/Za36z0gytGH4Y32f/hpqiGSZlzNx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFCNng3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A833FC4CEE7;
+	Wed, 26 Feb 2025 21:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740605449;
+	bh=Fa+SeEJeFDsoKrxwGND4hBVmD0Q2qWhMtMhE4PIUYJM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bFCNng3PjzrdqJ3i6uwG8OTTGJ9NDho7HkEeLKPfYsNqSnUbhoN9F9g4I267mEsmd
+	 9SwmdZEN45dZwdPZBMB4Px1Mq8+jyKSuwv5uwwIe1lwxkyJga3hed0p2v9sChKscvl
+	 VnFPcQ5ZVLS8ItwKDwLruqllgsb4LTHismU1pIf9iGKRnRt0o6fm93JJ2FLAhj3zu5
+	 Nccz9W4FX1OU6N1pSGq6vPtLCcKfu+/8a39ZDQ5nvtozYIJf05Yj9zfHrFqHJiY7vY
+	 wr/V5VTRHsW4SlL+d0XV4FqDhD1d8O7XTiD47othuqZgFvguBvVJDBYBbiAymEBtyQ
+	 pjCT/OKsNOn2A==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so2490132a12.1;
+        Wed, 26 Feb 2025 13:30:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUYD5bKqfgEN5BeZ7IPB4uJywmNvovxaXNqHBCrsHQfREJI1ciPPLBoJWbHc911rPlq9QEXqJLQd74I@vger.kernel.org, AJvYcCUkQFr0dOueZ8xo0dfocWbgesk0sinMnvx+lmytdo421KIrgMwTbgwm1xEq4zC5hI5Xb9CzrV8nFYUg56gf@vger.kernel.org, AJvYcCVBCEcNiUJa8YKpElK/CAFtmN4pWhqxwQutESqbYeTRmiI+A9YaMRJ5OTWwoAQMQZOa0K5DJr0K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymp+ODjnKBq8zGoXZGbHfjY3+HO3iqqqQbENlQmWHJ9Y1sch5v
+	bi5cOgROKnnni8/uonaCxbiImyAfXrYJwLE2pOrua6Unr31LK1PxD75/pnkMaqTxE+ZTFyKRgO3
+	2gG5RceFRPmdXoQbCp6Vj9lD1WQ==
+X-Google-Smtp-Source: AGHT+IHlCJ+Xi+JTkFIYA5G/1VXTRL3VRHAkWieMIv5z0HohGMqAAYdNDks5N9f1LpXkXE9M9XJfxNjXEHZGQO/HrLQ=
+X-Received: by 2002:a05:6402:27ce:b0:5e0:6332:9af0 with SMTP id
+ 4fb4d7f45d1cf-5e4bfba9566mr1293250a12.14.1740605448294; Wed, 26 Feb 2025
+ 13:30:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org> <20250211-msm8937-v1-4-7d27ed67f708@mainlining.org>
-In-Reply-To: <20250211-msm8937-v1-4-7d27ed67f708@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Feb 2025 22:30:31 +0100
-X-Gm-Features: AQ5f1JpA8TYnCxYWLh_Nsj3CaoL2jBGTRtip6jpMFprAlot5Cs6Ct5PvAxVIfSk
-Message-ID: <CACRpkdaokrm1wLHGpP6aCTA9uQYAptVqt8J6+BQu1MmJsk9=Cw@mail.gmail.com>
-Subject: Re: [PATCH 04/10] pinctrl: qcom: msm8917: Add MSM8937 wsa_reset pin
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephan Gerhold <stephan@gerhold.net>, =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
-	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	iommu@lists.linux.dev, Dang Huynh <danct12@riseup.net>
+References: <20250109-of_core_fix-v4-0-db8a72415b8c@quicinc.com>
+ <20250109-of_core_fix-v4-9-db8a72415b8c@quicinc.com> <20250113232551.GB1983895-robh@kernel.org>
+ <Z70aTw45KMqTUpBm@google.com> <97ac58b1-e37c-4106-b32b-74e041d7db44@quicinc.com>
+ <Z74CDp6FNm9ih3Nf@google.com> <20250226194505.GA3407277-robh@kernel.org> <f81e6906-499c-4be3-a922-bcd6378768c4@icloud.com>
+In-Reply-To: <f81e6906-499c-4be3-a922-bcd6378768c4@icloud.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 26 Feb 2025 15:30:36 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+P=sZu6Wnqq7uEnGMnAQGNEDf_B+VgO8E8ob4RX8b=QA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqOKeTnW33IInftxXZnL7Y77FEoU1DLo5L9sHUHjSG2OYc_YVgyXt2Rr7M
+Message-ID: <CAL_Jsq+P=sZu6Wnqq7uEnGMnAQGNEDf_B+VgO8E8ob4RX8b=QA@mail.gmail.com>
+Subject: Re: [PATCH v4 09/14] of: reserved-memory: Fix using wrong number of
+ cells to get property 'alignment'
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: William McVicker <willmcvicker@google.com>, Zijun Hu <quic_zijuhu@quicinc.com>, 
+	Saravana Kannan <saravanak@google.com>, Maxime Ripard <mripard@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Grant Likely <grant.likely@secretlab.ca>, 
+	Marc Zyngier <maz@kernel.org>, Andreas Herrmann <andreas.herrmann@calxeda.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mike Rapoport <rppt@kernel.org>, Oreoluwa Babatunde <quic_obabatun@quicinc.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 11:38=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
-
-> From: Dang Huynh <danct12@riseup.net>
+On Wed, Feb 26, 2025 at 2:31=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com> wrot=
+e:
 >
-> It looks like both 8917 and 8937 are the same except for one pin
-> "wsa_reset".
+> On 2025/2/27 03:45, Rob Herring wrote:
+> >> Right, I think it's already backported to the LTS kernels, but if it b=
+reaks any
+> >> in-tree users then we'd have to revert it. I just like Rob's idea to i=
+nstead
+> >> change the spec for obvious reasons =F0=9F=99=82
+> > While if it is downstream, it doesn't exist, I'm reverting this for now=
+.
 >
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
+> perhaps, it is better for us to slow down here.
+>
+> 1) This change does not break any upstream code.
+>    is there downstream code which is publicly visible and is broken by
+>    this change ?
 
-This patch 4/10 applied to the pinctrl tree.
+We don't know that unless you tested every dts file. We only know that
+no one has reported an issue yet.
 
-Yours,
-Linus Walleij
+Even if we did test everything, there are DT's that aren't in the
+kernel tree. It's not like this downstream DT is using some
+undocumented binding or questionable things. It's a standard binding.
+
+Every time this code is touched, it breaks. This is not even the only
+breakage right now[1].
+
+> 2) IMO, the spec may be right.
+>    The type of size is enough to express any alignment wanted.
+>    For several kernel allocators. type of 'alignment' should be the type
+>    of 'size', NOT the type of 'address'
+
+As I said previously, it can be argued either way.
+
+Rob
+
+[1] https://lore.kernel.org/all/20250226115044.zw44p5dxlhy5eoni@pengutronix=
+.de/
 
