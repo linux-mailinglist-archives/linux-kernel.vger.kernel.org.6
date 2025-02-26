@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-534101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B806FA462BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EA7A462D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F62189CA1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD203B3C71
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A082222C8;
-	Wed, 26 Feb 2025 14:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B810221F3D;
+	Wed, 26 Feb 2025 14:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ELwbPabn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOt/uCgm"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E172222B8;
-	Wed, 26 Feb 2025 14:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DDC21171A;
+	Wed, 26 Feb 2025 14:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580144; cv=none; b=Q0K7gzkynlJOfLgL9WbmcF7/iIXmavb5KWYM82gWaYNUKtawlExz/MGLRd954ZA1wUlP4VxTPhTZcuxAWRffxWOKiehfcVonVUPHKWGgE85KgXSGF8deV+rjvUJi/SosKfVA/sppLfqZbthn/E86Fs7ZZs6xd438FLjUZI9DBTE=
+	t=1740580157; cv=none; b=tuu2dZzDMuS9zAmYfISzbYirMa0vQKZ3i9yHK94IJRa3/nKvp0Cxb6YHAcJvo6XYloKsvS3sVvGOCTPJnzAWbOJXYfHVUJdu+aGjiMo1cShXhEWEqqgnzieeojLCy/Wzkl2WADvLK6+3aZddUsLOPiU/87ffqfcArZHoIrjYOpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580144; c=relaxed/simple;
-	bh=j/5JWghuXCUO3SOMTNdgDAU9Feo4d1B+GIR+Xy28gaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlLWFnpV4Iw27l+ReIlaIGlg/eZYSMSVs26/ANME1IYQuzEPAzonWZWKELQKba3NajRiaW6aEPcd7gWBSeg+rgmGZp0a9OqMSYebP31zn8DKxy6dtGZshkLJaubZuEwlDLbNohK0c+P1EKpLYPG9i8/V7PZHMSQUtjSifDYe1+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ELwbPabn; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740580143; x=1772116143;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j/5JWghuXCUO3SOMTNdgDAU9Feo4d1B+GIR+Xy28gaE=;
-  b=ELwbPabnXl3cs0pedRaUdKtIbkP3/a3CsbXk/jM1UDIfjHmvGWQ2FVTv
-   hun+LRPP2+REPU4DkneEpRDCBJY4QoJdWzK915Ypsq4t6uRcpVDoHCV5+
-   LVg5t2mKy0DjaUyO1yXJLUjflvPIDpb6Uckl9DnnFcDpLq39ZOGPGB2h+
-   DZK3HPP4eWYil3AFyMIqzGnLBECvg/607p/FM/q4WjRUQKbN+vIYN1+6+
-   LG2nvpzNdX6lO5QMY8QIXt2v8FpJ1dyCCzPxV71ekXzBWyor+HX1awrqc
-   UN9ycZl1mFU8StpOwoW1IiYf9rClD7mibYQf1XJXly8leKAlCE/osh23M
-   Q==;
-X-CSE-ConnectionGUID: OsKpKw2uTIe1ezWcmIBszA==
-X-CSE-MsgGUID: QRU8pfXkT+mbPp9A7Z5udg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="29022145"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="29022145"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:29:02 -0800
-X-CSE-ConnectionGUID: a8kMsAfPQBGqBpWu0PxTkQ==
-X-CSE-MsgGUID: Lr9rxYqQTL2eG6rqqpGZlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="116740066"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:29:01 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 53B3D11F944;
-	Wed, 26 Feb 2025 16:28:57 +0200 (EET)
-Date: Wed, 26 Feb 2025 14:28:57 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: shravan kumar <shravan.chippa@microchip.com>
-Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	conor.dooley@microchip.com, valentina.fernandezalanis@microchip.com,
-	praveen.kumar@microchip.com
-Subject: Re: [PATCH V5 1/2] media: i2c: imx334: Optimized 4k and 2k mode
- register arrays
-Message-ID: <Z78lKVUsd-sxnZ0v@kekkonen.localdomain>
-References: <20250225062635.3566513-1-shravan.chippa@microchip.com>
- <20250225062635.3566513-2-shravan.chippa@microchip.com>
+	s=arc-20240116; t=1740580157; c=relaxed/simple;
+	bh=U3XRu9BKSm5XctFw50gAsIGx5i29PiCx3IkvGID+i84=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUYUH3sMvhf3rR/mQ78EP3Zz5oBACJKgSEKuMLwuvhYQUShnQHH3u3D3bXT5TaFOZugEQS3dEoo5D2lT89AaloxQcy08I5p4LFqLOctc4wDXigSrc+6qsl5ELzR2jWyBqcjVvxG4SW+1ETkZ0P5EO0bF96EXb64hUcYEYKQXgtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOt/uCgm; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so7852115e87.1;
+        Wed, 26 Feb 2025 06:29:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740580153; x=1741184953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P2kiu/HsUSKw59lXGQxuGghGnHIXAC6zHsBsQ9Wyn90=;
+        b=WOt/uCgmB52JDNqvMqBaxDvo0DLTgMguPGtyUm/n5XIgK7pBF6lSvMNxpH06awe7bK
+         fJpTNQ0gbIj1hyZmdEKYBZezvwFWf9vhkzk8y+Q6uzfvK9TaogVXsswB7hX/FYqU7DDh
+         uc0bDQXzAwvVN4Of2G5+2Y9V3BrrmQGuqNga9Oir/mXZqLxC+kgtRMmU9FFy2cg48KMk
+         bJCJ7NhPi37bAXxyxKuxujc2e7s6/5V7Pivz0DSHcAzKIr+wIxklQevXnHcU5EEs3P5Z
+         bHEwgj2J6nXW15OFpnMb2HcgphKcZhoLwZQhFbWHxavPrVCHJz6e5GmgLGGcKJ9qPaUY
+         bhrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740580153; x=1741184953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P2kiu/HsUSKw59lXGQxuGghGnHIXAC6zHsBsQ9Wyn90=;
+        b=KzGLpYanAsaaAMLMci1OPmTDf1CQD5zQ52kwIRUy/guVlu0XAfYGRkBbs5JojyUTGI
+         8hBHbH/5N7E6+VgOB08XskavYrlO2StnXTCrHovZq6DtjdLNEH9oFdgN7suCEhMnUMyL
+         jqhuzUMSbmbK0FZhnEyiSpa4jhW324foDap+2UeTHd5KXM+NE+FbNstV1X3Z1t0XMHbF
+         tXZeOeKOElwcCErZj3fPtyy5cTlZqQCud6n2gQpVLvNMCZ5oqFGLcDIMWU96nGSji2fX
+         rM5AOg7Kc1+kmKnWqFOfSVGGTAzVPwJSOLBpBJEg1iMfxU4egWEIeNHLUUI9dEIo4NHf
+         DUHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJr7MdqhQm7TK7ja55aXe7tueRTg0PpjwzAgcId2dBgkRUgqVQJJFF525SW4GqpGZXSsQmw0/imO30YSo=@vger.kernel.org, AJvYcCX84ojp5EdXVtGOjAsPJzkA26BD/e2RGhMOLvw4GROc64JqzhxjQ5smVoCyz9ygRcxtq8X/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSWpPvEFzqJEyrAZg8wySEXvvkk79C8D1kozvZwXMWtuOSnBAo
+	Dx+0WZdQxxO6mRhU9JoR68Hm1P6MeSClimxORsjZLyApWocg+aH9Wfq8/GNc
+X-Gm-Gg: ASbGncv33g/XUVBXjyi/zoBXXV+gTU2VabVTCL/dK/K5lIPT1B+1CCDHSAeDLn5L/Lg
+	kMqUQr1k1Y+bxYIyKC75AIxFvbF7BCMc1sPm6vcTKxHuh4DlzdIT9e1wj6ktRbi/gWTbA/aEnn0
+	ebX1i5jjL+FoOx99f+rE2QQf1gBdmdOU7hb6mavfeNLzeOppaRIa5WE+GlTLLEoDgkDc6ozih8l
+	oEHbi2DHeSL9eoNGJIlECR3Kr3/ostOuZqlUAUc0RlY3UR5Qf1if9lkPf/eaIIXWw+zMSNUwALA
+	NhCn3r2lV0SL0zixJBubl6DjCNNJqwsZnsXl9EgBV4YnlDlN
+X-Google-Smtp-Source: AGHT+IEwjEWmxx978qjGI809JUeWj0qQG87ubxYGrnt++ojs9L+/TlCz0ZiMFqjIWL2+srJwoWhmfw==
+X-Received: by 2002:a05:6512:3c99:b0:549:38eb:d690 with SMTP id 2adb3069b0e04-5493c5c11b5mr1910652e87.36.1740580152930;
+        Wed, 26 Feb 2025 06:29:12 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548b3fc7a07sm391300e87.20.2025.02.26.06.29.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:29:12 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 26 Feb 2025 15:29:09 +0100
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v3 1/3] rcutorture: Allow a negative value for
+ nfakewriters
+Message-ID: <Z78lNRKjLQKigyLw@pc636>
+References: <20250225110020.59221-1-urezki@gmail.com>
+ <20250225212409.GA1807836@joelnvbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,248 +96,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225062635.3566513-2-shravan.chippa@microchip.com>
+In-Reply-To: <20250225212409.GA1807836@joelnvbox>
 
-Hi Shravan,
-
-On Tue, Feb 25, 2025 at 11:56:34AM +0530, shravan kumar wrote:
-> From: Shravan Chippa <shravan.chippa@microchip.com>
+On Tue, Feb 25, 2025 at 04:24:09PM -0500, Joel Fernandes wrote:
+> On Tue, Feb 25, 2025 at 12:00:18PM +0100, Uladzislau Rezki (Sony) wrote:
+> > Currently "nfakewriters" parameter can be set to any value but
+> > there is no possibility to adjust it automatically based on how
+> > many CPUs a system has where a test is run on.
+> > 
+> > To address this, if the "nfakewriters" is set to negative it will
+> > be adjusted to num_online_cpus() during torture initialization.
+> > 
+> > Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > ---
+> >  kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
+> >  1 file changed, 16 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > index d98b3bd6d91f..f376262532ce 100644
+> > --- a/kernel/rcu/rcutorture.c
+> > +++ b/kernel/rcu/rcutorture.c
+> > @@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
 > 
-> Optimized the resolution arrays by integrating a common register array.
+> IMO, this should also be updated to reflect the possibily to set it negative
+> and hence to number CPUs:
 > 
-> Adjusted the register array values for 1920x1080@30 and 3840x2160@30
-> resolutions to align with the common register array values.
+> torture_param(int, nfakewriters, 4, "Number of RCU fake writer threads");
 > 
-> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
-> ---
->  drivers/media/i2c/imx334.c | 148 +++++++++++--------------------------
->  1 file changed, 43 insertions(+), 105 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> index a544fc3df39c..b2ad19abaca8 100644
-> --- a/drivers/media/i2c/imx334.c
-> +++ b/drivers/media/i2c/imx334.c
-> @@ -167,8 +167,8 @@ static const s64 link_freq[] = {
->  	IMX334_LINK_FREQ_445M,
->  };
->  
-> -/* Sensor mode registers for 1920x1080@30fps */
-> -static const struct imx334_reg mode_1920x1080_regs[] = {
-> +/* Sensor common mode registers values */
-> +static const struct imx334_reg common_mode_regs[] = {
->  	{0x3000, 0x01},
->  	{0x3018, 0x04},
->  	{0x3030, 0xca},
-> @@ -176,26 +176,10 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x3032, 0x00},
->  	{0x3034, 0x4c},
->  	{0x3035, 0x04},
-> -	{0x302c, 0xf0},
-> -	{0x302d, 0x03},
-> -	{0x302e, 0x80},
-> -	{0x302f, 0x07},
-> -	{0x3074, 0xcc},
-> -	{0x3075, 0x02},
-> -	{0x308e, 0xcd},
-> -	{0x308f, 0x02},
-> -	{0x3076, 0x38},
-> -	{0x3077, 0x04},
-> -	{0x3090, 0x38},
-> -	{0x3091, 0x04},
-> -	{0x3308, 0x38},
-> -	{0x3309, 0x04},
-> -	{0x30C6, 0x00},
-> +	{0x30c6, 0x00},
->  	{0x30c7, 0x00},
->  	{0x30ce, 0x00},
->  	{0x30cf, 0x00},
-> -	{0x30d8, 0x18},
-> -	{0x30d9, 0x0a},
->  	{0x304c, 0x00},
->  	{0x304e, 0x00},
->  	{0x304f, 0x00},
-> @@ -210,7 +194,7 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x300d, 0x29},
->  	{0x314c, 0x29},
->  	{0x314d, 0x01},
-> -	{0x315a, 0x06},
-> +	{0x315a, 0x0a},
->  	{0x3168, 0xa0},
->  	{0x316a, 0x7e},
->  	{0x319e, 0x02},
-> @@ -330,116 +314,63 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x3002, 0x00},
->  };
->  
-> +/* Sensor mode registers for 1920x1080@30fps */
-> +static const struct imx334_reg mode_1920x1080_regs[] = {
-> +	{0x302c, 0xf0},
-> +	{0x302d, 0x03},
-> +	{0x302e, 0x80},
-> +	{0x302f, 0x07},
-> +	{0x3074, 0xcc},
-> +	{0x3075, 0x02},
-> +	{0x308e, 0xcd},
-> +	{0x308f, 0x02},
-> +	{0x3076, 0x38},
-> +	{0x3077, 0x04},
-> +	{0x3090, 0x38},
-> +	{0x3091, 0x04},
-> +	{0x3308, 0x38},
-> +	{0x3309, 0x04},
-> +	{0x30d8, 0x18},
-> +	{0x30d9, 0x0a},
-> +};
-> +
->  /* Sensor mode registers for 3840x2160@30fps */
->  static const struct imx334_reg mode_3840x2160_regs[] = {
-> -	{0x3000, 0x01},
-> -	{0x3002, 0x00},
-> -	{0x3018, 0x04},
-> -	{0x37b0, 0x36},
-> -	{0x304c, 0x00},
-> -	{0x300c, 0x3b},
-> -	{0x300d, 0x2a},
-> -	{0x3034, 0x26},
-> -	{0x3035, 0x02},
-> -	{0x314c, 0x29},
-> -	{0x314d, 0x01},
-> -	{0x315a, 0x02},
-> -	{0x3168, 0xa0},
-> -	{0x316a, 0x7e},
-> -	{0x3288, 0x21},
-> -	{0x328a, 0x02},
->  	{0x302c, 0x3c},
->  	{0x302d, 0x00},
->  	{0x302e, 0x00},
->  	{0x302f, 0x0f},
-> +	{0x3074, 0xb0},
-> +	{0x3075, 0x00},
-> +	{0x308e, 0xb1},
+You can set it to a negative as well as to number of CPUs or any other
+number.
 
-This register wasn't part of the original register list for the mode. It
-seems to have been written to in the other (binned?) mode only. It looks
-like a possible bugfix. Should it be in a separate patch? This patch is
-only meant to reorganise register settings to a base set and modes, not
-change the registers written in any way.
-
-> +	{0x308f, 0x00},
->  	{0x3076, 0x70},
->  	{0x3077, 0x08},
->  	{0x3090, 0x70},
->  	{0x3091, 0x08},
-> -	{0x30d8, 0x20},
-> -	{0x30d9, 0x12},
->  	{0x3308, 0x70},
->  	{0x3309, 0x08},
-> -	{0x3414, 0x05},
-> -	{0x3416, 0x18},
-> -	{0x35ac, 0x0e},
-> -	{0x3648, 0x01},
-> -	{0x364a, 0x04},
-> -	{0x364c, 0x04},
-> -	{0x3678, 0x01},
-> -	{0x367c, 0x31},
-> -	{0x367e, 0x31},
-> -	{0x3708, 0x02},
-> -	{0x3714, 0x01},
-> -	{0x3715, 0x02},
-> -	{0x3716, 0x02},
-> -	{0x3717, 0x02},
-> -	{0x371c, 0x3d},
-> -	{0x371d, 0x3f},
-> -	{0x372c, 0x00},
-> -	{0x372d, 0x00},
-> -	{0x372e, 0x46},
-> -	{0x372f, 0x00},
-> -	{0x3730, 0x89},
-> -	{0x3731, 0x00},
-> -	{0x3732, 0x08},
-> -	{0x3733, 0x01},
-> -	{0x3734, 0xfe},
-> -	{0x3735, 0x05},
-> -	{0x375d, 0x00},
-> -	{0x375e, 0x00},
-> -	{0x375f, 0x61},
-> -	{0x3760, 0x06},
-> -	{0x3768, 0x1b},
-> -	{0x3769, 0x1b},
-> -	{0x376a, 0x1a},
-> -	{0x376b, 0x19},
-> -	{0x376c, 0x18},
-> -	{0x376d, 0x14},
-> -	{0x376e, 0x0f},
-> -	{0x3776, 0x00},
-> -	{0x3777, 0x00},
-> -	{0x3778, 0x46},
-> -	{0x3779, 0x00},
-> -	{0x377a, 0x08},
-> -	{0x377b, 0x01},
-> -	{0x377c, 0x45},
-> -	{0x377d, 0x01},
-> -	{0x377e, 0x23},
-> -	{0x377f, 0x02},
-> -	{0x3780, 0xd9},
-> -	{0x3781, 0x03},
-> -	{0x3782, 0xf5},
-> -	{0x3783, 0x06},
-> -	{0x3784, 0xa5},
-> -	{0x3788, 0x0f},
-> -	{0x378a, 0xd9},
-> -	{0x378b, 0x03},
-> -	{0x378c, 0xeb},
-> -	{0x378d, 0x05},
-> -	{0x378e, 0x87},
-> -	{0x378f, 0x06},
-> -	{0x3790, 0xf5},
-> -	{0x3792, 0x43},
-> -	{0x3794, 0x7a},
-> -	{0x3796, 0xa1},
-> -	{0x3e04, 0x0e},
-> +	{0x30d8, 0x20},
-> +	{0x30d9, 0x12},
->  	{0x319e, 0x00},
->  	{0x3a00, 0x01},
->  	{0x3a18, 0xbf},
-> -	{0x3a19, 0x00},
->  	{0x3a1a, 0x67},
-> -	{0x3a1b, 0x00},
->  	{0x3a1c, 0x6f},
-> -	{0x3a1d, 0x00},
->  	{0x3a1e, 0xd7},
->  	{0x3a1f, 0x01},
-> +	{0x300d, 0x2a},
-> +	{0x3034, 0x26},
-> +	{0x3035, 0x02},
-> +	{0x315a, 0x02},
->  	{0x3a20, 0x6f},
->  	{0x3a21, 0x00},
->  	{0x3a22, 0xcf},
->  	{0x3a23, 0x00},
->  	{0x3a24, 0x6f},
->  	{0x3a25, 0x00},
-> +	{0x3a24, 0x6f},
-> +	{0x3a25, 0x00},
->  	{0x3a26, 0xb7},
->  	{0x3a27, 0x00},
->  	{0x3a28, 0x5f},
-> @@ -989,6 +920,13 @@ static int imx334_start_streaming(struct imx334 *imx334)
->  	const struct imx334_reg_list *reg_list;
->  	int ret;
->  
-> +	ret = imx334_write_regs(imx334, common_mode_regs,
-> +				ARRAY_SIZE(common_mode_regs));
-> +	if (ret) {
-> +		dev_err(imx334->dev, "fail to write common registers");
-> +		return ret;
-> +	}
-> +
->  	/* Write sensor mode registers */
->  	reg_list = &imx334->cur_mode->reg_list;
->  	ret = imx334_write_regs(imx334, reg_list->regs,
-
--- 
-Kind regards,
-
-Sakari Ailus
+--
+Uladzislau Rezki
 
