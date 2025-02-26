@@ -1,215 +1,228 @@
-Return-Path: <linux-kernel+bounces-533836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C233A45EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F2DA45F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC9A160FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D3A163BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B2A2222AC;
-	Wed, 26 Feb 2025 12:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D1D2222D5;
+	Wed, 26 Feb 2025 12:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="USc2OQBm"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="qKw9aQBn"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11021133.outbound.protection.outlook.com [52.101.65.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC09221DA7;
-	Wed, 26 Feb 2025 12:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572827; cv=none; b=BiJ3iLuMd3svn5Qc0PoepcYlSo6sqtKS7EjZqH7Gpn8Ny15S34P7uVbT6pzSv2Frz8t5Scw5tjEk5KyLCZqOydwratvt7kU09gv7g+d508YLG5sWt4nMYdhD/YkmOfftDZHzr4t6kn8TO+laPcKSbetGEoQ/4D9TcSpHdsNqFqE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572827; c=relaxed/simple;
-	bh=vMbVgXuk9HmZXPgEYqNY35eo3taAR49F2PRIL20ghAc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uxY9IP0Ye7bUcdbXeam9l6TBmgBxfly3RhraBP2cUqb35vXskU/f0YdDITPbFxol4t5XYZRwLe3dm29w5qpxcBez+/WcbWenc1Ws/6kiU0OJqm51eKIICOzGoTL1aPIiNrvxcuzMKnjcPlkwQH1Ug5iqdgphZHjeBDKx75blhK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=USc2OQBm; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eYvstlbF5OwC2qe4RHz/86oxp99siT+rbZMDS0NJQxM=; b=USc2OQBmgTrwv5C9Qjsqmeu/oH
-	C3VRIVYodwtzQolezyBKdMXFtebBw34XZ5xGdvzdxkO/GWnCH2DKLxpKvorEQkU8wXqrRCqtv150y
-	9beuOl8xsajF2YA67HgLfysBDXsIn4GWie2+3xhRZ9ZxeKP4vcXxk2ohJ+5DHnDSHpEaIGPByk8Wt
-	oBvYZt8mn4m4/bEz8tB6IDuGxoutLhM+e97XsQTJ5m3Vnf0pLA7b34w1RAAj0EQ5xAj6wtzlZe0h0
-	1M6u5I3yVEKxDLI36mZMTvRkHYa4lysBYktSpOuny5xrglfFiOFQCjr9ecFa4N2RRMpmjsDRSQooZ
-	G6Wk5ahQ==;
-Received: from [179.125.94.240] (helo=[192.168.67.187])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tnGV7-000xB7-10; Wed, 26 Feb 2025 13:27:03 +0100
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Date: Wed, 26 Feb 2025 09:26:28 -0300
-Subject: [PATCH 2/2] m68k: rtc: dp8570a: make it a proper RTC class driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD51221DAA;
+	Wed, 26 Feb 2025 12:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740572828; cv=fail; b=ui/ZK9ozkgwUYSwf8SzgOREYMaiSjmOGo+kFUZrSDi4GM1O3sYsfLRL41fyeBTRV0eDGOiLJzufwqgaIcdg9iCYv6K78BcS/RmY8VyEv9QTA9u7dTp3HWhAhpPYlPixfqempf01/nkk7GxEShLIIF1c5iukDwtfVHAx7fDkQGHo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740572828; c=relaxed/simple;
+	bh=0D74nxs8k5zJdqw8PAxqjrZSmrkIF9WueMHxWHcE23I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=H7ftAnxtLK3aHQrMRqdcR6NQ6wXjN5vAxOKCp1lSf2xS1DXUTkRZ2B2eYvlR0K9gOAakdoaOcugI6QwOLFEH8CdSRufGEpQLEJ+oXK+zpUFgXrzecFrEAIk09lmESj79s5l6+aO+A+yyH35S/mfcTrQcMcXmv1OZRwwqYXEczBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=qKw9aQBn; arc=fail smtp.client-ip=52.101.65.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SEnE2mH0XKtlkACf8Zwaw+3GKMBA4bJ032uGeR2szVGQRIFV82XwHUYNG6Fo4rHuE2BaxvQYezdR+n5KIsRas5rx1XMcMNQ0/NH/PGvhCKcM54MzLhZ9wAWHf3oVAvRSKACoxnfk+IOSzIgfSJxmmNNzS4+9bFYYGJlsRzfVEChyjkTkYwqDXh8Z4NtIsmJ7aLYvYgh4pemCJL+qY7FyHcAPQgJ+JbSfxjYlosxu1l7IbHoPP23QgYWEisKpseTYvqjp45xj4lJil5LLLl7MKp9o1g/4npvOOHjMMx742w/oX3OVQr9xSDxy0boN0KnfRBa7tZVBYPjAQNbxepNRkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QLyk3UzaLGvBhsHU8wI4wALNc+oNV8Vwedg8RKLIl2E=;
+ b=hLm/nWsFNkpJq1ZY1r4LRtneEq/4LKC2Bd57YOtIJI9IL9+8W1N1Rf0V2rN87Wfsc6rq1dVCATatWKzumcw9ZK6UIR9HU0HJZ/WSqxjy1wPuIJlHdvxEzm40MKPOF/eyKkd6dpLseyKOIcSM+3uNVpuB2Pasupg3Y7fCYnRoIs+MbdYIbFnnHLicMSL+0D91poX4EHun1YjUQgBTsEDLbvdg5hVvuaBuEVMdLhRcnWP0lDOnTpGdRGlBI2aRvA6aXHpDACyRSLL3+QsQ2QKmFVyqTbmz0s8gTW7yzjjhj6Hi6y+zSpqcfgT1A8UJQeWK8T5smCgRUA2fIBS5bKry8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
+ dkim=pass header.d=iopsys.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QLyk3UzaLGvBhsHU8wI4wALNc+oNV8Vwedg8RKLIl2E=;
+ b=qKw9aQBnPQ9gArEfGE6ntOMvE21hPeN6CiXTkI/+TJsaHEWqpRhWxVE6nPnUq2dtcdfT69S5IHzr4quLUwtLD7TGicITDH1ucbBSqpltd8VhRgfqFlBBzUJCaZyJEUyjNE9yYJJRMr4351dimt8BOP/Hz0e6aTcR3cFZcQev+XqfcT2I4+Xgd6QtydgvbejT92bwYWlV1O89VgvPErvwQOLMVCJvEmOKojJZ6MR6P+c9W8fkUKrXfo5N9omGZ6em2CwfbWlW3t6bOcnQBJP8VdzK0CGE7eKraOTchK1mdIlTUGnk39Waqqy7317PkdOrO01Mho1M4YWvmfCFsLaIbA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iopsys.eu;
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
+ by AS4PR08MB7507.eurprd08.prod.outlook.com (2603:10a6:20b:4fe::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Wed, 26 Feb
+ 2025 12:27:02 +0000
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 12:27:02 +0000
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>
+Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH v2] arm64: dts: mediatek: mt7986-bpi-r3: Change fan PWM value for mid speed
+Date: Wed, 26 Feb 2025 15:26:54 +0300
+Message-ID: <20250226122654.576636-1-mikhail.kshevetskiy@iopsys.eu>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <618b3cdb-0fef-4194-aeb0-4111c011904d@collabora.com>
+References: <618b3cdb-0fef-4194-aeb0-4111c011904d@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR3P281CA0055.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4b::18) To GV2PR08MB8121.eurprd08.prod.outlook.com
+ (2603:10a6:150:7d::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-m68k-rtc-v1-2-404641ec62e6@igalia.com>
-References: <20250226-m68k-rtc-v1-0-404641ec62e6@igalia.com>
-In-Reply-To: <20250226-m68k-rtc-v1-0-404641ec62e6@igalia.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-rtc@vger.kernel.org, 
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, kernel-dev@igalia.com
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|AS4PR08MB7507:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c3ce34d-32f7-4c29-a5ec-08dd5660df17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KuNP82DsyM8VfJcxAoKHEpHI8+nR6344YFt34Fpe6pmsbjsGZh3qvaLay6En?=
+ =?us-ascii?Q?wb1ea3CDU/0nk5u9wqjzZ2yQhVZG3CrHH505nbq0wPXJUrAFhaqG1sXetZYA?=
+ =?us-ascii?Q?8iKsGI3GFb6Gj4QSkg6KrKKwt3aHJvrrlDVYqvugjVLDU8dsBcBOBWX/49Kn?=
+ =?us-ascii?Q?xeKteu+jigbV8K6y5pjdoCZchLKLAvzsQ16ZG20VPfRlipBvlJMJzLUeTVXW?=
+ =?us-ascii?Q?htMBDhjNYEWUqb553NoDOUu9xyqJyBx2vYDwq+mVPZPN+PJp7BM3Uc6Etpew?=
+ =?us-ascii?Q?qbVa/0J0VEbhcADGz9QzHIa1dV974d/onEEsiW52jf2X8+PyJBxVGcaVSMro?=
+ =?us-ascii?Q?YyIeZLbgHQ2bBSh3n3yhG+EWCapJseOktKmoJz+6X7tu7zlRdundJDrG6HMa?=
+ =?us-ascii?Q?3JKLWSLED5eqv2QHF+2RgFTpqQ+WWrUBdLsuRx1ShW1DVvQWWxYZ9mDFUG8R?=
+ =?us-ascii?Q?r5vFx6IIeWAKAiZdbyxZWA1V+XEcRn/NJVDkOaMnY8+8Ag2/S75xgB9jZ/wG?=
+ =?us-ascii?Q?CPVo4jLDB126sIEvx6z/QqDgft+cNCABBx5cfYfNAxgPGsEMqYsJdAQ6dKBY?=
+ =?us-ascii?Q?502q3lsUrH/GjTZFmqyGU39dW7n24xCjolXJGuoUyHzS1rruwmNvhrDOfQ76?=
+ =?us-ascii?Q?yHaey+epyBnO/ZjaKIjl3AX1+s3z02Gf+dS0Z+/+BwfCyw5rvLbWvwxE7/Pa?=
+ =?us-ascii?Q?Nl5op837VO7Zwq4o7+b11+I/zYaFgIVainwXmFkQte1Mm/dRSar0bBSxh7SS?=
+ =?us-ascii?Q?s1F2K7EKPHqrmrSKGTqfzquR1S+COnygQh6ZSduteefYYqEMcwIbeOujO+xK?=
+ =?us-ascii?Q?JQOjD4bZyFvK0JMhyG0T4uDb2bdtJe5hLd/vX6rZRyGjezvZeVfXcNTJFuUE?=
+ =?us-ascii?Q?a7w0VmYwz1jCvd7ePsJFdraId10wj9tM41Wgn/zVlORQMFeKG5FCM2zQhKNe?=
+ =?us-ascii?Q?wJT0ea6ya7dVl8sbR77C6bXpAdDGYvzepeoxCV6Sn3/hLNGftlzUvGQos/Ip?=
+ =?us-ascii?Q?FUPRlrelJQ7UrxFlvEf3MfDXFx6u7jqjgbf2j0gHcm0Z/cawO3EraSIHoTPU?=
+ =?us-ascii?Q?3B3dKLNXe9fOxwwlLtni003PlWk6v2vjxx4/qDPrT15rHlCpeSLWd7JYG7th?=
+ =?us-ascii?Q?bvnlJP4EnbNomq7/v991+5uypX9YAe2Con1dzZTRfaXeZW3eE7ijDowmQIBI?=
+ =?us-ascii?Q?fMmOwFDYmQk25csXnQGHfgF7f3/U3lbM4PAUfm8uDfT7JOg7gYIYsMnWtBC/?=
+ =?us-ascii?Q?ThiBJBjbVrCi4KtvtKM0Ju7+yvcfG1Co7DMoHU9ulO5IKYMTF3bJmPJXerxn?=
+ =?us-ascii?Q?Pw6KiRHk+ZPq9xTEMurhdYptZg65I62AmQIEifXwCxixN7YjVSqpYS6d2UI4?=
+ =?us-ascii?Q?JLe5mqmEzMEpeLF69PRdfhRIbp5KU0BtSWKS0JY6gf5C1IFLdcPZ2808pP3H?=
+ =?us-ascii?Q?E6MbDTDGDyL1s2hj0rlH5qlczo/RoF0oI9b6gJl+GKsL4otANxkmZw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ytYkpB+0s0GXL2p/ioVo+UL1dkR+4CPDAp4UqyaFrZeajAIW5qwcJyCpZySP?=
+ =?us-ascii?Q?+wRQbrmzYuowb8AsM8Fy84sp8YEZulaMOcx1wilpp04wHwGBu57YUK5k3+sg?=
+ =?us-ascii?Q?QhChyvl3PJgAC55EEXAaV8SesxMMbzOGYKdBsQvThc//kr8ULGAIG2PiIc5V?=
+ =?us-ascii?Q?u3zL242t/fUPVbUk9l6YpUht2j5qVDpGQb0b2bpUziHrcMV8KcaXGyt51NSl?=
+ =?us-ascii?Q?MFccqPYCkBaqDgUTKVgWslzf8ueoEp4Kc+IB5ayd16b8Mqh50ceJxp2TFuHM?=
+ =?us-ascii?Q?mxrU3LQ2kM6NnvXOOCLEhImJqiSg2ZteYQuiEY8k90mqh4mzZhr3yzvit7rg?=
+ =?us-ascii?Q?jfrv0rHY9ZNspLs/GECsfh1aGNVoPEM6zbRz24GkKrm8wA2uYeAp6HBFzBd1?=
+ =?us-ascii?Q?bnbfEZ97D7akhNWxm6z1uK2+h4vIfNbbg+ssHAOIsd/X29zQmWj0AOjqbtgH?=
+ =?us-ascii?Q?Fp3cdExZtnvXkyEbYAxOeU6/Rgd9sQ2h0m0Y2Yq525gvtkW/Gb3GlN+7kd8z?=
+ =?us-ascii?Q?NbOIbhrCd+l7vI+d0Yd28vYkk/3Xf9xSAiQUrCScj8QdLrCoYI00mqpUR1qZ?=
+ =?us-ascii?Q?5OUxFudnf5vHTRFgtDvroFR0MQS2nb17yhMlqpalZTTFfKulVOXPYnYgsYSD?=
+ =?us-ascii?Q?0Lb8yfkOxUNjP8sEmzIYxsBRIXy7qH/D5w93ItLOstWQmx9hNGZSGKUXJpWE?=
+ =?us-ascii?Q?86XlYNDpu5ewRwdbpou0FSgrfyFSL1GPRNAYgC1DO07UVcA5H01inl9BKzf6?=
+ =?us-ascii?Q?vFkKTQEEMIcEQrrPqWbvDoVDvvyXzALNLsRlGv2FJhdGHHrbQZdl8oz3fZVB?=
+ =?us-ascii?Q?xcCFWVgp2dJ+mEvDbIoE3IcsllenKUbiPsHE9/gp3wC24YzwyJydrSb7zeGP?=
+ =?us-ascii?Q?mUHTAbcP6fTcETinKuiIU0eQrMU4AY8HU1NcgaXpzILfQXPMzPaNva8l+IGT?=
+ =?us-ascii?Q?Ff/sHmijQtosZapqcuuG0zFzheAInqTsQkqXB146PaI+yK+tlEvmLaxIX9iQ?=
+ =?us-ascii?Q?cPcBiROQTRWkFx3Hn3u3CfJqwxBAKFGa1qbVEYijnpIKPLfmXPyfLIHdBufQ?=
+ =?us-ascii?Q?Z4vkM0FM0ujWEqO8HVj8F8sK34ULjErOxuacj0gcwjBScH4zuVorwYrB++IY?=
+ =?us-ascii?Q?Xr54TVDJsQKgpQc74lEawFJJ4Rv+uoRjNjLU2Cssk/fFFh3JRbjJVzru4IKr?=
+ =?us-ascii?Q?JPd/CDwIORkLS2YGWfGkMnNyZs75IetEYpK+eFWsuZiZT6PqvkXL+RQa5rh6?=
+ =?us-ascii?Q?HEgplOKq4223s574Ulp4F/qdL9nKLqMIhA4/l4P1e/82NlXarrDSXnADJaNx?=
+ =?us-ascii?Q?b9zDxRjqquUtUOgMK61QfYEXf0tt1AkyaYA5PEFO4g8xPle8HaCF9u3STmct?=
+ =?us-ascii?Q?D6vVI238F/zsoGqWwItgwNL55DsXfw2vvqsr2FcHUwph88+KLBJUfzxG0onR?=
+ =?us-ascii?Q?vu8BD9bEgNGQw6tVE/xUfFQw+Nv4ycXiL82I6NR6HDwSqCc60sI59ifwvNHp?=
+ =?us-ascii?Q?AdgkKFYvv2TcKV631DsebxRcrYz+YgrVTtDSxbSBD/3x65B75lfwVppEdcwj?=
+ =?us-ascii?Q?qB32MdSl84G8GKHJ2a3bB0EAoWuAUKR2p11y0RgRnNkMS7BsnNdL2McGME3N?=
+ =?us-ascii?Q?PW+01BDy2j8YbcW5IjdGZ8E=3D?=
+X-OriginatorOrg: iopsys.eu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c3ce34d-32f7-4c29-a5ec-08dd5660df17
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 12:27:01.9034
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Zu/4dBFfbzpxEj+RfsWlGZokY82BAsHo9GG3eHVm8q/iWXoiW06fBcMVicQuOo9l1WOe0DLx+9cRMdXwEqeB2QS8UCpSyF9nQbkiFD36Ao=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7507
 
-In the past, each rtc implementation had to rewrite the same ioctls in
-order to be compatible. But since 2006, a common RTC interface has been
-introduced. Use it for the last user of RTC_MINOR.
+Popular cheap PWM fans for this machine, like the ones coming in
+heatsink+fan combos will not work properly at the currently defined
+medium speed. Trying different pwm setting using a command
 
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+  echo $value > /sys/devices/platform/pwm-fan/hwmon/hwmon1/pwm1
+
+I found:
+
+  pwm1 value     fan rotation speed   cpu temperature     notes
+  -----------------------------------------------------------------
+    0            maximal              31.5 Celsius        too noisy
+   40            optimal              35.2 Celsius        no noise hearable
+   95            minimal
+   above 95      does not rotate      55.5 Celsius
+  -----------------------------------------------------------------
+
+Thus only cpu-active-high and cpu-active-low modes are usable.
+I think this is wrong.
+
+This patch fixes cpu-active-medium settings for bpi-r3 board.
+
+I know, the patch is not ideal as it can break pwm fan for some users.
+Likely this is the only official mt7986-bpi-r3 heatsink+fan solution
+available on the market.
+
+This patch may not be enough. Users may wants to tweak their thermal_zone0
+trip points, thus tuning fan rotation speed depending on cpu temperature.
+That can be done on the base of the following example:
+
+  === example =========
+  # cpu temperature below 25 Celsius degrees, no rotation
+  echo 25000 > /sys/class/thermal/thermal_zone0/trip_point_4_temp
+  # cpu temperature in [25..32] Celsius degrees, normal rotation speed
+  echo 32000 > /sys/class/thermal/thermal_zone0/trip_point_3_temp
+  # cpu temperature above 50 Celsius degrees, max rotation speed
+  echo 50000 > /sys/class/thermal/thermal_zone0/trip_point_2_temp
+  =====================
+
+Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+
 ---
- arch/m68k/bvme6000/rtc.c | 91 ++++++++----------------------------------------
- 1 file changed, 15 insertions(+), 76 deletions(-)
+Changes from v1 to v2:
+ * improve patch description
+---
+ arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/m68k/bvme6000/rtc.c b/arch/m68k/bvme6000/rtc.c
-index a84996bd1491da3c1d9bd8dae7e1a92805c735e0..7e7b40863e5eb3423c53b44c2d63c8806e7a1bbe 100644
---- a/arch/m68k/bvme6000/rtc.c
-+++ b/arch/m68k/bvme6000/rtc.c
-@@ -16,7 +16,8 @@
- #include <linux/init.h>
- #include <linux/poll.h>
- #include <linux/module.h>
--#include <linux/rtc.h>	/* For struct rtc_time and ioctls, etc */
-+#include <linux/rtc.h>	/* For struct rtc_time and etc */
-+#include <linux/platform_device.h>
- #include <linux/bcd.h>
- #include <asm/bvme6000hw.h>
- 
-@@ -24,19 +25,10 @@
- #include <linux/uaccess.h>
- #include <asm/setup.h>
- 
--/*
-- *	We sponge a minor off of the misc major. No need slurping
-- *	up another valuable major dev number for this. If you add
-- *	an ioctl, make sure you don't conflict with SPARC's RTC
-- *	ioctls.
-- */
--
- static unsigned char days_in_mo[] =
- {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
- 
--static atomic_t rtc_status = ATOMIC_INIT(1);
--
--static int dp8570a_rtc_read_time(struct rtc_time *wtime)
-+static int dp8570a_rtc_read_time(struct device *dev, struct rtc_time *wtime)
- {
- 	volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
- 	unsigned char msr;
-@@ -63,7 +55,7 @@ static int dp8570a_rtc_read_time(struct rtc_time *wtime)
- 	return 0;
- }
- 
--static int dp8570a_rtc_set_time(struct rtc_time *rtc_tm)
-+static int dp8570a_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
- {
- 	volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
- 	unsigned char msr;
-@@ -117,77 +109,24 @@ static int dp8570a_rtc_set_time(struct rtc_time *rtc_tm)
- 	return 0;
- }
- 
--static long rtc_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
--{
--	void __user *argp = (void __user *)arg;
--
--	switch (cmd) {
--	case RTC_RD_TIME:	/* Read the time/date from RTC	*/
--	{
--		struct rtc_time wtime;
--
--		dp8570a_rtc_read_time(&wtime);
--		return copy_to_user(argp, &wtime, sizeof wtime) ?
--								-EFAULT : 0;
--	}
--	case RTC_SET_TIME:	/* Set the RTC */
--	{
--		struct rtc_time rtc_tm;
--
--		if (!capable(CAP_SYS_ADMIN))
--			return -EACCES;
--
--		if (copy_from_user(&rtc_tm, argp, sizeof(struct rtc_time)))
--			return -EFAULT;
--
--		return dp8570a_rtc_set_time(&rtc_tm);
--	}
--	default:
--		return -EINVAL;
--	}
--}
--
--/*
-- * We enforce only one user at a time here with the open/close.
-- */
--static int rtc_open(struct inode *inode, struct file *file)
--{
--	if (!atomic_dec_and_test(&rtc_status)) {
--		atomic_inc(&rtc_status);
--		return -EBUSY;
--	}
--	return 0;
--}
--
--static int rtc_release(struct inode *inode, struct file *file)
--{
--	atomic_inc(&rtc_status);
--	return 0;
--}
--
--/*
-- *	The various file operations we support.
-- */
--
--static const struct file_operations rtc_fops = {
--	.unlocked_ioctl	= rtc_ioctl,
--	.open		= rtc_open,
--	.release	= rtc_release,
--	.llseek		= noop_llseek,
--};
--
--static struct miscdevice rtc_dev = {
--	.minor =	RTC_MINOR,
--	.name =		"rtc",
--	.fops =		&rtc_fops
-+static const struct rtc_class_ops dp8570a_rtc_ops = {
-+	.read_time	= dp8570a_rtc_read_time,
-+	.set_time	= dp8570a_rtc_set_time,
- };
- 
- static int __init rtc_DP8570A_init(void)
- {
-+	struct platform_device *pdev;
-+
- 	if (!MACH_IS_BVME6000)
- 		return -ENODEV;
- 
- 	pr_info("DP8570A Real Time Clock Driver v%s\n", RTC_VERSION);
--	return misc_register(&rtc_dev);
-+
-+	pdev = platform_device_register_data(NULL, "rtc-generic", -1,
-+					     &dp8570a_rtc_ops,
-+					     sizeof(dp8570a_rtc_ops));
-+
-+	return PTR_ERR_OR_ZERO(pdev);
- }
- module_init(rtc_DP8570A_init);
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+index ed79ad1ae871..b0cc0cbdff0f 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+@@ -42,7 +42,7 @@ fan: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		#cooling-cells = <2>;
+ 		/* cooling level (0, 1, 2) - pwm inverted */
+-		cooling-levels = <255 96 0>;
++		cooling-levels = <255 40 0>;
+ 		pwms = <&pwm 0 10000>;
+ 		status = "okay";
+ 	};
 -- 
 2.47.2
 
