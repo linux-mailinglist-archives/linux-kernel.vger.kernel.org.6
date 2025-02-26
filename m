@@ -1,268 +1,139 @@
-Return-Path: <linux-kernel+bounces-534613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53D0A46923
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:12:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F8DBA46928
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63994188388E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989143B0568
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF510238D49;
-	Wed, 26 Feb 2025 18:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E3A23496B;
+	Wed, 26 Feb 2025 18:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gpjVOu0U"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r/1CKV8q"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB8723373C;
-	Wed, 26 Feb 2025 18:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B527B23535B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593445; cv=none; b=ZLV/de0iW8c71ihOy0wswm/nZg60N8Qajv7hSS3Wq0Pr2bWYxThc0Y4aRPAfzT+sjYh1FjgTv5szIW6znnMvQ/Js2VgI+z7ZmzdETjNCUcjHdZtKKtWuJnwj0g2xlNXPh4Ujyb0jW9vnuvNt3Fkp9OYGqyOJ/RKoYPCUuGWDDQE=
+	t=1740593455; cv=none; b=WLqyHQbX+g5BIctPUexeUFnwk8M4IQac/d7YETmApT8XYSER4ss6mU//qzbe2VKr+ZNYRkuwY8v751oe7cLC10820qvI99XtPiMvG9fkaPbENicejakOWfOfc9/tPO+4qoaIk30f16SbBoZbLWrvfBM7ayrPmMnB0qyaGZo8Rnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593445; c=relaxed/simple;
-	bh=+cZv6B2VihtIgFKFPHh72gXMXVRuG/3ZlaOAhioIrZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GnfHoF6dWT7eve7bPCBpwlvk7uUXa7m/+k2ItW1dawEucrnHkEQ+7/NH9+yCQryg6wvhUPN8d/vQAtnDp93AFE1vT/5duVQKpf9BSa9gxA9On021IRB/35woSovTfd/FdayAsQoQ9Chn3pYottucdHP7RclX3K5ePvcBKlAlY8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gpjVOu0U; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QD992d001049;
-	Wed, 26 Feb 2025 18:10:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n0hSrkjXKmYsEh9sCXZPZ4DwQDCMfykbRzVJOJNGExQ=; b=gpjVOu0UWbUFMoOp
-	uxHLgdRyN6ntnEiCn+avipKLuZTnuKEJY4wKgVlrxK291J8+7usSsVET2tRAYnzw
-	3LqsHIzLKfrXWekaiWb0PxQ32uFtJo9YxwqmgRYP7MvjHfpmTTlJBMeXhHwTMa9h
-	zjzLbisObJO9l/uu88+t+o56PQ0Pw6ielkbtZpJVKPkPF8bdU5isC2OmEnJHubSi
-	/m8zI7ir49Z1X1pFbMcss6Lggz1ZDbLXWrUQBxEbhYGmS1z5KkScU2C2cjq6zpci
-	hLrElpiXnQZzSoS0bXR0kugxNLm1wTJsP7fB2JtTCmEvyAwxPv8HZOAPB/jPcUQX
-	Brdnzg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4523kc8ts8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 18:10:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51QIAU5o032311
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 18:10:30 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
- 2025 10:10:29 -0800
-Message-ID: <ca42d2b4-4b0c-48a8-abd5-d34486e62d8e@quicinc.com>
-Date: Wed, 26 Feb 2025 10:10:29 -0800
+	s=arc-20240116; t=1740593455; c=relaxed/simple;
+	bh=EbaACQr0vW701BtG20JwXpLEEwmHg6MVq+JFkWjYS7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVdryFpUd3fY0XR1sU91C674L1zm1Wkbmt+clYIj59CHRPUE8XvOEXz0Yd71CV8CrmYVanrK9gCKmiSqVxveCln+qFB8IBeTN5Z2xNbPf4/TvxUbjPFuNFdZ/TzVJEWHJG8nBJX4pJtl4uTQ1go15yKV5g58SVQ5Vi2MpIcPFNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r/1CKV8q; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so11421138a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740593452; x=1741198252; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V/V8Jj9rYZChtFzsP4NciMXPlW80o7eEp6Sp5AawXIs=;
+        b=r/1CKV8qvh0NZI4pB8cYtEz8RKReCDQlnten3tS5b3ak6xfdjFuuVPVYLyucOgOFmk
+         0R9f7YWx1CAkqaFb4QBFl3DgP1W6c8rbLrzt3CHSzWFiCiV2PLJ0+lnNaOu2AJZWEREF
+         DPFJL9zTFraPR4MSF61OCheX0rpD+QHb7mNfi8U2CWBDQMKjlmsVgnW5H50qeEhEU3fo
+         x8qcCBGM/U+P0hACkairgz4EYX35ds3I4LE+ahprNS5OpWK8Q7ecn5vYZySiqUHpCnzY
+         T6TvW3W/TYGc5j+Gv1RPG9G1nO0e5/JxoZ7oA6OOnNJJeWcyfQPzC2rKBOaeczTFf07z
+         UALQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740593452; x=1741198252;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V/V8Jj9rYZChtFzsP4NciMXPlW80o7eEp6Sp5AawXIs=;
+        b=Co/+g1cQw/p3lFYnzVrrBjLm4Zv1H/F1zZRti9ypyoMjJZ35mqqJZxh6j57Eme+5MQ
+         PCdAu0E3MBoAo1O4+wCjzPUoeRZhdMhkAVI5mOG4EXTiWNYKsfJEvagCWcPS3TfFfcT4
+         TcWO4P2K8/VKyuGyxDmuxah/yXEOBmvKhQ1W2JVcgzp/SRpY2lKzP+c++yOwrLkcyEcM
+         exo0+CSgcM5z0L8B3hSKBPCqYb+9jakUrU1q9p5sOp9qfLrHT5HKbZ07sOomOP2DRMm9
+         +Dp2gjBPm8j+4+ribL2nmC5Ykvvn+Znx3vk9QMMgnSDbwKsTORl3f9XMO2d5YDsrQrZd
+         04Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5CJ8e0YcuHRw/xfi+w6F09Iw5Mn8rdDVy8oRJ9z8ekeG1o6TcoG8d6nGEIUDiE6Gwchb5Xky9VBAu3Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySzeBiqKybMvlmEPcH7HJj5CHUyZ1HDl42JppU66Sd0eSODo+x
+	DFyWURuqJERMqJ4Ixn5oi1tUTh11Mb5w31Eu5AuyLIkYfElwDnxo1K/Fw8xE7w==
+X-Gm-Gg: ASbGncsjMLjdPNpLz72gNXsurzQwzyLZKhGRpi8LQ0WaPgrp2/e1n0IPg6uft7OsAUl
+	kng23gdA96drftOoJ4d8dD1QEu/gGd0LkCAkyuAJhFdii29a1dfRjzc1dAEaX9nRJtVkSPTMuQH
+	o9j0Aj2+5fcWgRN32qnAiXkmLqmgFGd6YAS9iRytouVpkPXTBNrsvp95sLz7ZTN0dPmteEzLWW6
+	sw/OBA7Trp3FihODUVVEjMTuub6BNGXuCMKy/q9/GNy6+saGz23DwnF87HEhsb4NE1SskEXVSik
+	zFYqWuq2eeoJFgVFeL7VPqzV+HLO05YikdjKIxD6JSIyg2bPQZcG+8OtaC5s02U=
+X-Google-Smtp-Source: AGHT+IFSemQuFVxhcR1OJIBHEWyJQf2Hjrc2hP3J/LbxvQX6+WX1I3uywZ6yJMAv4hfkJ2aaAYgxNQ==
+X-Received: by 2002:a05:6402:501a:b0:5de:a6a8:5ecc with SMTP id 4fb4d7f45d1cf-5e4a0d490aamr5970613a12.5.1740593451852;
+        Wed, 26 Feb 2025 10:10:51 -0800 (PST)
+Received: from google.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e45a8b8c4esm3155601a12.26.2025.02.26.10.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 10:10:50 -0800 (PST)
+Date: Wed, 26 Feb 2025 18:10:45 +0000
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] KVM: arm64: Selftest for pKVM transitions
+Message-ID: <Z79ZJVOHtNu6YsVt@google.com>
+References: <20250225015327.3708420-1-qperret@google.com>
+ <20250225015327.3708420-4-qperret@google.com>
+ <867c5crd2j.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 13/15] drm/msm/dpu: support SSPP assignment for
- quad-pipe case
-Content-Language: en-US
-To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
- <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-13-8d5f5f426eb2@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-13-8d5f5f426eb2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _gu8KJ3lIDDWdYT4FmoDP8r8HVEkM3-R
-X-Proofpoint-ORIG-GUID: _gu8KJ3lIDDWdYT4FmoDP8r8HVEkM3-R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
- clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <867c5crd2j.wl-maz@kernel.org>
 
-
-
-On 2/26/2025 4:31 AM, Jun Nie wrote:
-> Currently, SSPPs are assigned to a maximum of two pipes. However,
-> quad-pipe usage scenarios require four pipes and involve configuring
-> two stages. In quad-pipe case, the first two pipes share a set of
-> mixer configurations and enable multi-rect mode when certain
-> conditions are met. The same applies to the subsequent two pipes.
+On Wednesday 26 Feb 2025 at 14:32:52 (+0000), Marc Zyngier wrote:
+> On Tue, 25 Feb 2025 01:53:26 +0000,
+> Quentin Perret <qperret@google.com> wrote:
+> > 
+> > We have recently found a bug [1] in the pKVM memory ownership
+> > transitions by code inspection, but it could have been caught with a
+> > test.
+> > 
+> > Introduce a boot-time selftest exercising all the known pKVM memory
+> > transitions and importantly checks the rejection of illegal transitions.
+> > 
+> > The new test is hidden behind a new Kconfig option separate from
+> > CONFIG_EL2_NVHE_DEBUG on purpose as that has side effects on the
+> > transition checks ([1] doesn't reproduce with EL2 debug enabled).
 > 
-> Assign SSPPs to the pipes in each stage using a unified method and
-> to loop the stages accordingly.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 11 +++++
->   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  |  2 +
->   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 71 ++++++++++++++++++++-----------
->   3 files changed, 58 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 0a053c5888262d863a1e549e14e3aa40a80c3f06..9405453cbf5d852e72a5f954cd8c6aed3a222723 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -1366,6 +1366,17 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool en)
->   	return 0;
->   }
->   
-> +/**
-> + * dpu_crtc_get_num_lm - Get mixer number in this CRTC pipeline
-> + * @state: Pointer to drm crtc state object
-> + */
-> +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state)
-> +{
-> +	struct dpu_crtc_state *cstate = to_dpu_crtc_state(state);
-> +
-> +	return cstate->num_mixers;
-> +}
-> +
->   #ifdef CONFIG_DEBUG_FS
->   static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
->   {
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> index 0b148f3ce0d7af80ec4ffcd31d8632a5815b16f1..b14bab2754635953da402d09e11a43b9b4cf4153 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> @@ -264,4 +264,6 @@ static inline enum dpu_crtc_client_type dpu_crtc_get_client_type(
->   
->   void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
->   
-> +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state);
-> +
->   #endif /* _DPU_CRTC_H_ */
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index d67f2ad20b4754ca4bcb759a65a39628b7236b0f..d1d6c91ed0f8e1c62b757ca42546fbc421609f72 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -1112,11 +1112,10 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   	struct dpu_rm_sspp_requirements reqs;
->   	struct dpu_plane_state *pstate;
->   	struct dpu_sw_pipe *pipe;
-> -	struct dpu_sw_pipe *r_pipe;
->   	struct dpu_sw_pipe_cfg *pipe_cfg;
-> -	struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> +	struct dpu_plane *pdpu = to_dpu_plane(plane);
->   	const struct msm_format *fmt;
-> -	int i;
-> +	int i, num_lm, stage_id, num_stages;
->   
->   	if (plane_state->crtc)
->   		crtc_state = drm_atomic_get_new_crtc_state(state,
-> @@ -1124,11 +1123,6 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   
->   	pstate = to_dpu_plane_state(plane_state);
->   
-> -	pipe = &pstate->pipe[0];
-> -	r_pipe = &pstate->pipe[1];
-> -	pipe_cfg = &pstate->pipe_cfg[0];
-> -	r_pipe_cfg = &pstate->pipe_cfg[1];
-> -
->   	for (i = 0; i < PIPES_PER_PLANE; i++)
->   		pstate->pipe[i].sspp = NULL;
->   
-> @@ -1142,24 +1136,49 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   
->   	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
->   
-> -	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-> -	if (!pipe->sspp)
-> -		return -ENODEV;
-> -
-> -	if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
-> -					      pipe->sspp,
-> -					      msm_framebuffer_format(plane_state->fb),
-> -					      dpu_kms->catalog->caps->max_linewidth)) {
-> -		/* multirect is not possible, use two SSPP blocks */
-> -		r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-> -		if (!r_pipe->sspp)
-> -			return -ENODEV;
-> -
-> -		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> -		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> -
-> -		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> -		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +	num_lm = dpu_crtc_get_num_lm(crtc_state);
+> That's a bit annoying, isn't it? Without EL2_DEBUG selected, you won't
+> get any stacktrace, and the WARN_ON()s are a guaranteed panic. Yes,
+> this is better than nothing, but I'm a bit worried this is going to be
+> hard to use.
 
-Hi Jun,
+Right, so you _can_ enable EL2_DEBUG on top of the selftest stuff, and
+if you're not hitting one of those hard-to-find bugs described in the
+commit message above, then you're golden. In practice I suspect that if
+enabling the selftest alone leads to a panic, the next logical step is
+to enable EL2_DEBUG and see what you get. If enabling EL2_DEBUG makes
+the issue go away, then that'll require digging a bit deeper, but that
+should be pretty rare I presume.
 
-Just wondering, why not use dpu_rm_get_assigned_resources() here instead 
-of adding a new *_get_num_lm() API?
+> Is there a way to reduce the impact the EL2 debug has on the rest of
+> the code? It feels like it is more invasive than it should be...
+
+Turns out I have a WiP series that moves the hypervisor ownership state
+to the hyp_vmemmap, similar to what we did for the host ownership. A
+nice property of that is that hyp state lookups become really cheap, no
+page-table walks required. So we could probably afford to drop the
+EL2_DEBUG ifdefery in host_share_hyp() and friends, and just
+unconditionally cross-check the hyp state on all transitions where it is
+involved. And with that we should probably just fold the pkvm selftest
+under EL2_DEBUG and call it a day. Would that work?
 
 Thanks,
-
-Jessica Zhang
-
-> +	num_stages = (num_lm + 1) / 2;
-> +	for (stage_id = 0; stage_id < num_stages; stage_id++) {
-> +		for (i = stage_id * PIPES_PER_STAGE; i < (stage_id + 1) * PIPES_PER_STAGE; i++) {
-> +			struct dpu_sw_pipe *r_pipe;
-> +			struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> +
-> +			pipe = &pstate->pipe[i];
-> +			pipe_cfg = &pstate->pipe_cfg[i];
-> +
-> +			if (drm_rect_width(&pipe_cfg->src_rect) == 0)
-> +				break;
-> +
-> +			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-> +			if (!pipe->sspp)
-> +				return -ENODEV;
-> +
-> +			/* use solo SSPP for the 2nd pipe in pipe pair */
-> +			if (i % PIPES_PER_STAGE != 0)
-> +				goto use_solo_sspp;
-> +
-> +			/*
-> +			 * Check multi-rect opportunity for the 2nd pipe in the
-> +			 * pair. SSPP multi-rect mode cross mixer pairs is not
-> +			 * supported.
-> +			 */
-> +			r_pipe = &pstate->pipe[i + 1];
-> +			r_pipe_cfg = &pstate->pipe_cfg[i + 1];
-> +
-> +			if (drm_rect_width(&r_pipe_cfg->src_rect) != 0 &&
-> +			    dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
-> +							      pipe->sspp,
-> +							      msm_framebuffer_format(plane_state->fb),
-> +							      dpu_kms->catalog->caps->max_linewidth)) {
-> +				i++;
-> +				continue;
-> +			}
-> +use_solo_sspp:
-> +			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +			DPU_DEBUG_PLANE(pdpu, "allocating sspp_%d for pipe %d.\n",
-> +					pipe->sspp->idx - SSPP_NONE, i);
-> +		}
->   	}
->   
->   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
-> 
-> -- 
-> 2.34.1
-> 
-
+Quentin
 
