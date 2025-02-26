@@ -1,902 +1,331 @@
-Return-Path: <linux-kernel+bounces-534621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0313DA4694B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:16:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07B1A4698F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 122857A3DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891EA3A7AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89F22D4F6;
-	Wed, 26 Feb 2025 18:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8FE13A88A;
+	Wed, 26 Feb 2025 18:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Sx+fkQgc"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bFVL6/xQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="o3zGS/xa"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBAA21C19E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593629; cv=none; b=nni5NMIO9jf0+rUmi/8k9VQltnKG+AQAiQCMWyR2O51hSMf8PnA/bi651wTX+AFdPF9x0C7o2TGXOZ89GA+neBNaqguPzYdBIcPtyw240R585I9kNjZs/uo7XC4ZIgLOlaQLj7kMR1bLmb4pgGsIgqk55vDGytdnIyClG5yMxOk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593629; c=relaxed/simple;
-	bh=UN/xJWvEh/I9jYF3pAHyEEuEY1unkayD0kc0028j5GM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LO0p/38z6VmpN3epY9/Z1zb5JLNDyk5ynXDCrNT2I/6KFOQNkMWl364eKvB0VnGwxaMf0bMSBbrhPk4c3YMMIxT9RZvM4AZv2/0Hen4Ea4rDIAos+mfQyGOgmEx1kJyI+d9Q1A3uYeHH8nTxdIVPNn/HdOkipEM/iOP9AxQ/2Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Sx+fkQgc; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740593623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PXJAnYddVpDC3qHas9aB9KwFNFnsMuRLC3lSV36UGtw=;
-	b=Sx+fkQgcXDnLpRw1PR7gI8YUpTNhqfDvJnvQahtumjnGV8aU840qN+pK40XobDSfli1yLy
-	TjbXqRIBmsQeiBzfCNqjn+dmBHy4sz9RbRRVkuOksFdRoHo6EjzdrAhVcZBFON1L/JcjKb
-	DhWDfXuI8izztiJ/viN7lxQyekM1dqk=
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v6 4/4] drm/tidss: Add OLDI bridge support
-Date: Wed, 26 Feb 2025 23:43:00 +0530
-Message-Id: <20250226181300.756610-5-aradhya.bhatia@linux.dev>
-In-Reply-To: <20250226181300.756610-1-aradhya.bhatia@linux.dev>
-References: <20250226181300.756610-1-aradhya.bhatia@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39E322540A;
+	Wed, 26 Feb 2025 18:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740593782; cv=fail; b=JTwttZlRT9nunsJNAN8S8RPB/VMjPRs8QzN0J1SPUdSmDFMujfG83o00Jc2HH3RsvDjovvzNd1kR0dfKSjHkTZ+TEbHeaEsBDowM8CoWa93QwhkFdXEggJ7JSccP4ecK7AwnaZ+ua9Wb9YpVFj69ujVo89ST/XXR+41A+vKsVVs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740593782; c=relaxed/simple;
+	bh=HJsfyLIPbjbFeIvHOxfT0AME6TpxhRHKrCp4I98Wpr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Voc3whJevSiZKoEHCYyGz2RwdKaq5fL3gnhfE5nCxBQBXIKdLOSP8Q9Lbt8UlLHD9jWc0D9YQg3ytywEyCxvZXHVgE4xmkyt989x+MUYIDQhofalJJ9VcnvfxAz0j4JpVBBWDMa6c4FLGTOf8+ko0mh8OKH4wysD/EYbj0TB4XY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bFVL6/xQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=o3zGS/xa; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QHtZSu031142;
+	Wed, 26 Feb 2025 18:14:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=SexyYlZe8Ub6r8pxefkA6wDieDUW656zii7RaDXNEGY=; b=
+	bFVL6/xQrlIym0pxmjaWmPJ7hczcu8PDC0tHFEPQogjYFQS3+x4f0FsL3M++Rbtl
+	vydF4TtXPd8X+h1Zf/vNjY63QuCsR78JmMv87P1zxnkWaDIId9a1Qg4dMK1+SE8F
+	Ak62uZveaK0kazYEkaqq8aMvTgeIYC5f6qgiqS3Kkx9hYMsaW7OiLs9UuziyAd23
+	qkB6OVElDfz4GmXt4AfWj2UZI1iggXMq8yE61ruk9th0/zGVFubLiMWxgUrD37nT
+	/SQpALB6y0azj3OBKJjOWD8X2fAi6qr4rb4AJbOYI6SfoeAwFId0OlnxhmGogX5G
+	0NFZET5ReO2Fz7Nkj+hMtw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451pse9rjg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 18:14:31 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51QI528a010247;
+	Wed, 26 Feb 2025 18:14:23 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51as5u7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 18:14:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k23p/5DiF8x88tw1cDRbimL4lMNNr+62DoBg3eIWNEcj7KQsNSyGUaJMqj0ORXvkCSNuANHg98OQPQnYQUhqCdEoUb1xDD2zmf4ou40ysw4JZRnjRqFSGLcdJ7XzVPJKlvjM14UEUXWqF5e/louzS5TpfDczAPIB/0zGE2yN7I3PW5rsNWN/vnouSlXHV5EvGxcrC4hp8hyQkzNRtwLjHHDB5NT65MCn+b/ns7xBqVRATXyNgcKHXMUsushKqYOo34jNw5dXpeHa5AhbuNuSYkjb1Grh0IRNI2bZvva3GD5w2ysuSbuKTzSTa0/k3YcDm7aFo6CBhSiZlCnlnNlXBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SexyYlZe8Ub6r8pxefkA6wDieDUW656zii7RaDXNEGY=;
+ b=cpa9kQWqKueZBj72YgbUbye+6KETRTkiva5DusgkbSJqZVtvxnvPiTOHfA+BmvVznik3nYdokexBIg586BVhPHA3rcTZMBpVFgSQtd9q5EbxmX6+JDNvwOzDDHms5lFNoZHkSR9PT3FMUJVW3knj7eCprh94LYlUNte7J3g7th1QK5VbQu41839KcIBs+VqGGtAcrE/i3Ur9ffP+Fj+ljD/cVTnMk8zVhfOoUdHSXeBxqNL+V4IePa5HFI/y312ig9RKxpjY4Xzi/mDIvBg1m8gvgY4kvS/FgJhuq0dN7PcmsByqwWpHNXwwf3wUherQjxIKhp/xsGCHtrYKVBJ/bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SexyYlZe8Ub6r8pxefkA6wDieDUW656zii7RaDXNEGY=;
+ b=o3zGS/xafR6BGOt/nkVa3G7YYmtl6YGGMcSB8e3neGQLNE4zHDVeydlTZKB5FOpxr9e9t6WMPN658Z8FoDwXljWgIIZCSYJXqN7ORnS3kXf53CYvuBvWkyMLb7RjlzD+MKIBVr8SdUzBswSZuT1PikKIp91lbbtUFaFdIUBQBOE=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by SN7PR10MB6596.namprd10.prod.outlook.com (2603:10b6:806:2ac::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Wed, 26 Feb
+ 2025 18:14:19 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
+ 18:14:19 +0000
+Date: Wed, 26 Feb 2025 18:14:16 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org,
+        keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org,
+        vbabka@suse.cz, adhemerval.zanella@linaro.org, oleg@redhat.com,
+        avagin@gmail.com, benjamin@sipsolutions.net,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
+        hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
+        adobriyan@gmail.com, johannes@sipsolutions.net,
+        pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
+        anna-maria@linutronix.de, mark.rutland@arm.com,
+        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+        enh@google.com, rientjes@google.com, groeck@chromium.org,
+        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+        mike.rapoport@gmail.com
+Subject: Re: [PATCH v7 4/7] mseal, system mappings: enable arm64
+Message-ID: <aedde96f-c1fe-4d88-bef1-1d07aef72c44@lucifer.local>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+ <20250224225246.3712295-5-jeffxu@google.com>
+ <899d39af-08d2-4cd9-9698-9741d37186b8@lucifer.local>
+ <CABi2SkX0oGnqM4BDfRt0+7Pcf31td8np3=dVg1ixcaDNoUyHkQ@mail.gmail.com>
+ <ea970928-ccea-4314-9cde-b64fa1a7824e@lucifer.local>
+ <qk4m74uscjxdnlchcxolvgbw7ijppzqk57ajyc4m6jjixq5gti@lokjqegpftzh>
+ <CABi2SkUprOT=TEDQb62SByjyW+csarKnGypdmxVdktj=+C9_yg@mail.gmail.com>
+ <ba04b513-0eb5-425d-b24c-82c9f9b6c7ee@lucifer.local>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba04b513-0eb5-425d-b24c-82c9f9b6c7ee@lucifer.local>
+X-ClientProxiedBy: LO4P265CA0286.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::13) To MN2PR10MB4112.namprd10.prod.outlook.com
+ (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|SN7PR10MB6596:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a1d2a81-bbf3-4303-da72-08dd5691632b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZW1wbWRkRzVOTWI3cmdEc0Y1VEZ5KzNRT0J5dTBWamtXRDJ2OTFXc1VVU1or?=
+ =?utf-8?B?UjhWMkorcTE4V2MvRzRHOHY2aVdCVC9YcFB3ZWw5T0FSRXdiWXJxS3Q4Z2Jr?=
+ =?utf-8?B?aDN1UG9DRC9GRnpGa0pqUzZESlB2cUpYZkR4MUREQzNTenB5NExQdUIxTWtu?=
+ =?utf-8?B?TlFlUFRpbEpDck1zcEJEcTh0VnJaYkY1R0JJa056LzJidnVjY3NYQ1lFeFB5?=
+ =?utf-8?B?d1hwejRONG1FY1JOS1ZyeGZvSjQ3OHprNkZCcHp0cGRtRHNQR1JJM0xWYk5B?=
+ =?utf-8?B?RFdzaERYZzEyd0FTYUNDUkRYbjBJZTJNRU5JKzBsd1YrVCtqOG9ESzh4Qk5W?=
+ =?utf-8?B?dmR6LytJSmFPVFZMbmZpSEZ2K0oyb3lPUzdYaGZ4Mm9nTjVFdFFKWnB1dG5B?=
+ =?utf-8?B?NU1pWUs2SXo5c1I5dFFZTUJIUGg4bytoSVp3R3kwSEYyc0NOSytLL3M3NmlI?=
+ =?utf-8?B?VGVRVUJQOGpSSWJIYnZsRUFObDNyeURkWFRPdFpGSWlpRzcyMCtXOE5Rayt0?=
+ =?utf-8?B?WER6c08wL0ZKeUVnVzF2S25qS3l2c3Z3cUpRaWUxSGNJTmNjSWRaeUFCOHZo?=
+ =?utf-8?B?OHJlcnZyZ0ZxVitFQ3Nta2VVOXpiM0FYTWtSeHZaKythLzRGSXd3dHdKQi9z?=
+ =?utf-8?B?K1h0MW12RFRwOHBBNkxLUjEvYkc0NjRDU0hqVFpxUVA4eG51RGdwckpTUk96?=
+ =?utf-8?B?cm9RVkhxTlIyVHA4bEM5Y0lVTkhsYnJaU3NnbURmWW5HVWZHU21pZDZsT1lp?=
+ =?utf-8?B?cTFUaDdiV1R1MkpGL1NtWTR5ckYyQ0drYmlmVEM4eG5CWjIvMUh4RE5qYVVZ?=
+ =?utf-8?B?eEJQdjQ4UEUvUmp6VkxaL1M3a2orYm9SaXFjWlV3VFgxWEFqMHk3akMzZUsz?=
+ =?utf-8?B?bDlCZjY1alJmN0JDV3dDWHh4YUpqZWswVVhCQ0paRFlDdmx4VlE0NmV0Z0sz?=
+ =?utf-8?B?cXluREhOZ2Y3ZlRLWlpiOGhQekZYTm9EWGxtTG0rZW5wQWRjRk5nTHpHYkhZ?=
+ =?utf-8?B?TVVNYXVkUUI3RGdFRnhSQTFxV2J3cU4vSTVDb0NVY2JQSEpNTzlEQUpqWEdX?=
+ =?utf-8?B?dVdqdmZxay9WYTlVWWgxdWxYampmOS9uSE92OWwzNzRWTndzSUwxaldycHAr?=
+ =?utf-8?B?ZzZZOENVaDFxOXF5L2M1S0xvSVlqVmhIM3VudE9DejFFT3BZZ0JMaU0yb2k4?=
+ =?utf-8?B?bXhmZzg2WmxNOWsvUTV2Nmp4TDFycmpkWGZEQUVzbWFmWVZkeFk5MHJxMEV2?=
+ =?utf-8?B?UFZCS29WU3FIVzZJeWhQT0Y5LzNIMzZpNmRzaHVuVHBjUEFRdVRFTkQweC8r?=
+ =?utf-8?B?VFNDS2Z6OHRpMkI4aGN2TTRnYzJTV1I2Q2hlTzJMTjZ0SWV4amN4NExvbDFH?=
+ =?utf-8?B?SjNmZ1FDeGcwWDV6VHdUREIwRWNEQ1ZKcXZRL3JJYVJzVUxFOXU4NWNKdG9X?=
+ =?utf-8?B?ODNpSGhOQmZIUERDQU9IYkZya2dFU3JKQVhaek9FWmNqQXZCYUpHcFU4cUwr?=
+ =?utf-8?B?SzFIby9nQlR0NjBHM2g0NjgxVmoySENmZzJzZVdJdXZyYkVxSlNxaG5kZTBN?=
+ =?utf-8?B?VmtwbTJaVm04eFh3dkJkQXNncjZNTlJiM09GMWpLZ3VFM3cwOUNTYUZDR3N0?=
+ =?utf-8?B?cUF3UzhPRUxNS3U1b3VSWXFFVndRMkszdEZIc2hxeFlZc1RrTlljWnV2UDQ0?=
+ =?utf-8?B?Wkk3RG1Id2c1TVBiejlSRnFmQVBVbDF2VXlNUSsrSFdmU3V3Z29aWjVBYmZx?=
+ =?utf-8?B?UG5yaWYrOW9VcmZPMG1oRERzbnlsd3k4V2NuZnJUVWZ0ekJ6YkNWc2dSNjUz?=
+ =?utf-8?B?Y21Pc3VyK0xYYTBCTURpZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TWNMb1pkN00vT25YbXJpbmFWVU5DZzd4L1pxRHNVQnNpT1JOTGJSSWRNOXow?=
+ =?utf-8?B?SWgvZHpFQnBCY3c0azFPY29zRkpiV2J6dk5WR2daRlhIVDE3NkhhWWFSb0FK?=
+ =?utf-8?B?enVtQlNnSWR0SHdlSWNwZGZKK01veU1RMHJ5Q1Y5QjBOVDVDd1dKQXk3RUU3?=
+ =?utf-8?B?S0VDL0ZzRW9DRE96VlkyTkowZ3dVV1lZZDhKb3VjczdQR2RHYUxkZWpQbk1M?=
+ =?utf-8?B?S2xGbTFHVllsTk1hUXhwMCtSTFdiZzhmMGUzK2c5R0lad0dIdmUzMi9TWlNt?=
+ =?utf-8?B?OXEyS0tueVhKdlpNNzl4UFc5Qi9oa29ldjNyLzFCLzNwVDBhMXRwanNKZDdP?=
+ =?utf-8?B?bVJYMVFFYXZySTAzUzR1NDhFekp6Qm9vUTV0THlPN1dMMldmZTE3UWdzWTBz?=
+ =?utf-8?B?eUJqYzg0STh0aTdrUXpGN2xiU2dabzhIRlNzWDQ4SjBDSllhNUxtNVNIcUNs?=
+ =?utf-8?B?aGxXRVpXNFd6YTVySGZ1ZlVSOEk3Wnp0cFVaa0hZRmJyOTNPemMvejRicmZk?=
+ =?utf-8?B?dTZPeU93blp4dUp3NzdlMC9rRkVueHAxbkpzTEtKUStkUGpiSGNaYzdpLzN3?=
+ =?utf-8?B?dzlNV244OUwwTFJReVVhSnRtdTVKbmNuNW9BQm01L0ZOV1RHZlI2c2FJRmZH?=
+ =?utf-8?B?UXZrZ3lvVksva2JOQ0Q5a1RseEFSaVJvZFBNMXU3aExMeTVYQ3RtTndzTnI1?=
+ =?utf-8?B?YWNkNjN1UzM2bGNsMUY3TThCcktNamJrZFFaQm9XV0M0TEd6VGlpN29TWkpo?=
+ =?utf-8?B?YUhtVFM2OHo5TE1haGo4UnQzb2lQNDJNQll6RUdIYTRDSnVITnROODh3Qy9r?=
+ =?utf-8?B?a0pWS0Q5ZUNBalZzSGlKekEwaWZRdFdjTVBBN1hhYmtGZ1dtclJDcjN2VXFj?=
+ =?utf-8?B?Y0g3d09rNks5dlAybkhkaXl2eTVseEUvN1NJbUV6UTBhaW9YK2Z3eS9vSFFy?=
+ =?utf-8?B?bjEyZm0rZmJDSmxzL1dzSmluMEY4QU5iYWNaL0xDUVY2N1ZzNitNR1Y0MnV3?=
+ =?utf-8?B?a1JqcndSdE5qbHVSZVhtb3ArSUpPVkhtS3hITUlPSGxTS3NuUFovUzA4TW9K?=
+ =?utf-8?B?bGhTdmVQdjBETm5PcjFIMVlxNWR6ZlRyRFJKWHRISGQxSktaNGU4amZtYWo5?=
+ =?utf-8?B?azFiZUJIZEZtU1VrV2s2a05CNytvTEpXdFRNV1k4OTZLaGJyQ3U4VTRWWHVC?=
+ =?utf-8?B?ejFmWi9GaDE3ekFJdGt4eVB2VHJxbzJkVnJKbEQxdjhkbVVFdzZpTVVmY3M4?=
+ =?utf-8?B?UWhrL1RObWIxaHNJd25mVE04YmdIaTNxT285YnB3OGpBTG5ValB3TTBDSGZB?=
+ =?utf-8?B?eEVDLy9aQlBGWnVwcTluT295eHV1SWtINDdJMDQ1NjdQdU5uUkxRNnZ3bUxm?=
+ =?utf-8?B?ZHhMOUpvc0k5UldZcjA4SklBQ2J4ZjhPcFhrb2h3N21sSGZhaGN5SldrdDZU?=
+ =?utf-8?B?NThha01RTDkva2lpdktuOXlISExSNldyYnFYeFhyM2VPU3BWcEZGRFlLNWUx?=
+ =?utf-8?B?UHBHUk1mWDc1b29ZcU5SaTRwWVlhVnQ0VXpTVVlKa21VWno1VksvSlFKWkk3?=
+ =?utf-8?B?c3c0UXErcVp3RXNmY2lsQ0trZkxZNXRZS1FJNDYwMnBGN2FsTVFGQWdLL1dX?=
+ =?utf-8?B?VVdLOEVtRTVZYkVlR1VMVkRLTXFnYXVaLzBiZXMxdEJEdnROYThwajRkUnI2?=
+ =?utf-8?B?QUtNY3NRcE5oSTR2ZlhTdlpWdFRSU0QzSVFEMk9YS2ZLaGJ0ZndMc3VxTDVy?=
+ =?utf-8?B?YzdnalJvNzhjK2Q1dnFmdlFHMDEzQnZwQjA5dXN4MlE0RGdXUnlRN2pXU3Ja?=
+ =?utf-8?B?cFpYd1czVDMrNzBZcjZKWWh5YTJnUXNNeHdwU2x4S1A2bm9tN1hoRzhZVC9P?=
+ =?utf-8?B?MktJYys4ZXp5MUFkS3U1OW9sRXo2VVRjNTAwaEppQXBpakw4T0FQdTY4eFcw?=
+ =?utf-8?B?a0NXQ211dFRzN2lJTFpKTWJ6TWJUZzhSZTJZQXFpN1o2REVzWGs4NUNTajg5?=
+ =?utf-8?B?TmY2UWlFNDZuVFpta1dEdlJydUJaMUJPekRiMFo5UStRRHQwSDJoSERJdkda?=
+ =?utf-8?B?eUNFN1BDT0tPVFdwdlA5RmJqazN3NjdxZFk4cGZGYTgxeFg2d2hmWFdDQ3Br?=
+ =?utf-8?B?UXdLU0szZGNNTk1WRE1US1dtNEVsaTNHaGhHT2tYbGdPZW9VUTQ3Q3hHOHlp?=
+ =?utf-8?B?UWc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NlGSxlRoRb8SDeDhC5N4XIms3DCpOKzZGTroP1RjHZEwGgFiyHfWGC12j3cI8jKjZtglZd8PppJnvqGlvEm3Rh6PPSalgTB1id7PCXe+wDsxZFwO2Kuxjk/vzim4atL1jLtDPTybGLYS/Dc6lXog+OcSaa/y0+S4fi2kjPsAjhyiagy2Opr1N9f7ngnWh5F99w9WN+83/7CJuO31e9BQXsR1hAplvp+fwK1F4leRNnQs1eivRr7VkRf/VE3KDhodAgRVEflLLsZ6zx9xwU6KYMvc3Rr1nJ/5OQSPTGza6e4UEVrGTOrUeUq8PAMvgKDHko5w9vFt0l0YwnR9CGBmMzoo/KvwTrAmFW2tzsbMLa09zihy2+xnZU5zFk7TTpZdLmEg4BnopneKqsuLjW7fTGmNYw4LvyKR5wWtZ4sNAFO/iViXQWPhypcoEEzfTmY+mbE5N3DpAN4s1034LUqaSkM6Bbk/IprhLOGpnpw5TmTrGe+OBMaGU1TrxSvTatsbjPwwYNijqge9RrArrDfKsHWRwC5hjW4ztVJ2KyV5c/evDsqRuxfgDPNOUcfDpSnXAroa/uD9OuOiCyQts0vbo68g1WsPtnDPwTKCsnTMMQY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a1d2a81-bbf3-4303-da72-08dd5691632b
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 18:14:19.2117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LlMiiDMkd52XQ4oMPpIXjEmn02mlqgDuYZbJ5WEFarFIoUVSbBYIk4ru73WnYaisvQ6ilTJIUJypWiR2qLADbnnMNgaGiLo9cnAfBJhvPYY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6596
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502100000 definitions=main-2502260143
+X-Proofpoint-GUID: cxGx8jX9TcF3DhTBvQ6LqEZaV8brdVbE
+X-Proofpoint-ORIG-GUID: cxGx8jX9TcF3DhTBvQ6LqEZaV8brdVbE
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+On Wed, Feb 26, 2025 at 05:43:22PM +0000, Lorenzo Stoakes wrote:
+> On Wed, Feb 26, 2025 at 09:17:10AM -0800, Jeff Xu wrote:
+> > On Wed, Feb 26, 2025 at 9:12 AM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
+> > >
+> > > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250226 00:26]:
+> > > > On Tue, Feb 25, 2025 at 02:26:50PM -0800, Jeff Xu wrote:
+> > > > > On Mon, Feb 24, 2025 at 10:20 PM Lorenzo Stoakes
+> > > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > > >
+> > > > > > On Mon, Feb 24, 2025 at 10:52:43PM +0000, jeffxu@chromium.org wrote:
+> > > > > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > > > > >
+> > > > > > > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on arm64, covering
+> > > > > > > the vdso, vvar, and compat-mode vectors and sigpage mappings.
+> > > > > > >
+> > > > > > > Production release testing passes on Android and Chrome OS.
+> > > > > >
+> > > > > > This is pretty limited (yes yes I know android is massive etc. but we must
+> > > > > > account for all the weird and wonderful arm64 devices out there in context of
+> > > > > > upstream :)
+> > > > > >
+> > > > > > Have you looking through all arm64-code relating to vdso, vvar, compat-mode
+> > > > > > vectors, sigpage mapping and ensured nothing kernel-side relies upon relocation?
+> > > > > > Some arches actually seem to want to do this. Pretty sure PPC does... so a bit
+> > > > > > nervous of that.
+> > > > > >
+> > > > > Can you please point out where PPC munmap/mremap the vdso ?
+> > > > >
+> > > > > Previously, when you mentioned that, I thought you meant user space in
+> > > > > PPC, I didn't realize that you meant that kernel code in PPC.  I
+> > > > > tried, but didn't find anything, hence asking.
+> > > >
+> > > > Jeff, please stick to replying to review. 'Have you looking through all
+> > > > arm64-code'.
+> > > >
+> > > > I ended up doing this myself yesterday and found no issues, as with x86-64.
+> > > >
+> > > > I said I'm _pretty sure_ PPC does this. Liam mentioned something about
+> > > > it. We can discuss it, and I can find specifics if + when you try to add
+> > > > this to PPC.
+> > > >
+> > >
+> > > PPC allows the vma to be munmapped then detects and falls back to the
+> > > slower method, iirc.
+> > >
+> > Is this code in the kernel or userspace?
+> >
+> > If PPC doesn't want to create vdso for all its userspace apps, we
+> > could instead "don't create" vdso during the execve call.
+> >
+> >
+> > > They were against the removal of the fallback; other archs also have
+> > > this infrastructure.  Really, if we fixed the fallback to work for
+> > > all platforms then it would probably also remove the possibility of a
+> > > remap over the VDSO being a problem (if it is today, which still isn't
+> > > clear?).
+> > >
+> > Any past thread/communication about this that I can read ?
+>
+> Jeff, I'm sure you don't intend to, but I find it quite disrespectful that you
+> ignored my feedback here (and elsewhere, regarding you ignoring 4 sets of
+> feedback).
 
-The AM62x and AM62Px SoCs feature 2 OLDI TXes each, which makes it
-possible to connect them in dual-link or cloned single-link OLDI display
-modes. The current OLDI support in tidss_dispc.c can only support for
-a single OLDI TX, connected to a VP and doesn't really support
-configuration of OLDIs in the other modes. The current OLDI support in
-tidss_dispc.c also works on the principle that the OLDI output can only
-be served by one, and only one, DSS video-port. This isn't the case in
-the AM62Px SoC, where there are 2 DSS controllers present that share the
-OLDI TXes.
+Apologies, I meant to reword this to sound less harsh but somebody phoned
+me and I hit send...
 
-Having their own devicetree and their own bridge entity will help
-support the various display modes and sharing possiblilities of the OLDI
-hardware.
+What I mean to say is I think you _do_ ack what I've said here, but you
+think it's not useful to reply because there's not really a converastion to
+be had.
 
-For all these reasons, add support for the OLDI TXes as DRM bridges.
+Whereas I'm saying it'd be useful to ack :)
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
----
- drivers/gpu/drm/tidss/Makefile           |   3 +-
- drivers/gpu/drm/tidss/tidss_dispc.c      |  24 +-
- drivers/gpu/drm/tidss/tidss_dispc.h      |   5 +
- drivers/gpu/drm/tidss/tidss_dispc_regs.h |  14 +
- drivers/gpu/drm/tidss/tidss_drv.c        |   9 +
- drivers/gpu/drm/tidss/tidss_drv.h        |   5 +
- drivers/gpu/drm/tidss/tidss_oldi.c       | 568 +++++++++++++++++++++++
- drivers/gpu/drm/tidss/tidss_oldi.h       |  42 ++
- 8 files changed, 668 insertions(+), 2 deletions(-)
- create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
- create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
+Sorry I did not mean for this to sound quite so 'full on'.
 
-diff --git a/drivers/gpu/drm/tidss/Makefile b/drivers/gpu/drm/tidss/Makefile
-index 312645271014..b6d6becf1683 100644
---- a/drivers/gpu/drm/tidss/Makefile
-+++ b/drivers/gpu/drm/tidss/Makefile
-@@ -7,6 +7,7 @@ tidss-y := tidss_crtc.o \
- 	tidss_irq.o \
- 	tidss_plane.o \
- 	tidss_scale_coefs.o \
--	tidss_dispc.o
-+	tidss_dispc.o \
-+	tidss_oldi.o
- 
- obj-$(CONFIG_DRM_TIDSS) += tidss.o
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 7e5a062da896..817668b8639c 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.c
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -466,6 +466,29 @@ static u32 dispc_vp_read(struct dispc_device *dispc, u32 hw_videoport, u16 reg)
- 	return ioread32(base + reg);
- }
- 
-+int tidss_configure_oldi(struct tidss_device *tidss, u32 hw_videoport,
-+			 u32 oldi_cfg)
-+{
-+	u32 count = 0;
-+	u32 oldi_reset_bit = BIT(5 + hw_videoport);
-+
-+	dispc_vp_write(tidss->dispc, hw_videoport, DISPC_VP_DSS_OLDI_CFG, oldi_cfg);
-+
-+	while (!(oldi_reset_bit & dispc_read(tidss->dispc, DSS_SYSSTATUS)) &&
-+	       count < 10000)
-+		count++;
-+
-+	if (!(oldi_reset_bit & dispc_read(tidss->dispc, DSS_SYSSTATUS)))
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+void tidss_disable_oldi(struct tidss_device *tidss, u32 hw_videoport)
-+{
-+	dispc_vp_write(tidss->dispc, hw_videoport, DISPC_VP_DSS_OLDI_CFG, 0);
-+}
-+
- /*
-  * TRM gives bitfields as start:end, where start is the higher bit
-  * number. For example 7:0
-@@ -1308,7 +1331,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
-  * Calculate the percentage difference between the requested pixel clock rate
-  * and the effective rate resulting from calculating the clock divider value.
-  */
--static
- unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
- {
- 	int r = rate / 100, rr = real_rate / 100;
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index d8e3f18c610f..ada25c21c8fe 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -94,6 +94,11 @@ extern const struct dispc_features dispc_am62a7_feats;
- extern const struct dispc_features dispc_am65x_feats;
- extern const struct dispc_features dispc_j721e_feats;
- 
-+int tidss_configure_oldi(struct tidss_device *tidss, u32 hw_videoport,
-+			 u32 oldi_cfg);
-+void tidss_disable_oldi(struct tidss_device *tidss, u32 hw_videoport);
-+unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate);
-+
- void dispc_set_irqenable(struct dispc_device *dispc, dispc_irq_t mask);
- dispc_irq_t dispc_read_and_clear_irqstatus(struct dispc_device *dispc);
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc_regs.h b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-index 30ce5ee40e1e..50a3f28250ef 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-@@ -226,6 +226,20 @@ enum dispc_common_regs {
- #define DISPC_VP_DSS_DMA_THREADSIZE		0x170 /* J721E */
- #define DISPC_VP_DSS_DMA_THREADSIZE_STATUS	0x174 /* J721E */
- 
-+/* OLDI Config Bits (DISPC_VP_DSS_OLDI_CFG) */
-+#define OLDI_ENABLE		BIT(0)
-+#define OLDI_MAP		(BIT(1) | BIT(2) | BIT(3))
-+#define OLDI_SRC		BIT(4)
-+#define OLDI_CLONE_MODE		BIT(5)
-+#define OLDI_MASTERSLAVE	BIT(6)
-+#define OLDI_DEPOL		BIT(7)
-+#define OLDI_MSB		BIT(8)
-+#define OLDI_LBEN		BIT(9)
-+#define OLDI_LBDATA		BIT(10)
-+#define OLDI_DUALMODESYNC	BIT(11)
-+#define OLDI_SOFTRST		BIT(12)
-+#define OLDI_TPATCFG		BIT(13)
-+
- /* LVDS Format values for OLDI_MAP field in DISPC_VP_OLDI_CFG register */
- enum oldi_mode_reg_val { SPWG_18 = 0, JEIDA_24 = 1, SPWG_24 = 2 };
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-index d4652e8cc28c..05fbb672838e 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.c
-+++ b/drivers/gpu/drm/tidss/tidss_drv.c
-@@ -24,6 +24,7 @@
- #include "tidss_drv.h"
- #include "tidss_kms.h"
- #include "tidss_irq.h"
-+#include "tidss_oldi.h"
- 
- /* Power management */
- 
-@@ -147,6 +148,10 @@ static int tidss_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = tidss_oldi_init(tidss);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to init OLDI\n");
-+
- 	pm_runtime_enable(dev);
- 
- 	pm_runtime_set_autosuspend_delay(dev, 1000);
-@@ -203,6 +208,8 @@ static int tidss_probe(struct platform_device *pdev)
- 	pm_runtime_dont_use_autosuspend(dev);
- 	pm_runtime_disable(dev);
- 
-+	tidss_oldi_deinit(tidss);
-+
- 	return ret;
- }
- 
-@@ -227,6 +234,8 @@ static void tidss_remove(struct platform_device *pdev)
- 	pm_runtime_dont_use_autosuspend(dev);
- 	pm_runtime_disable(dev);
- 
-+	tidss_oldi_deinit(tidss);
-+
- 	/* devm allocated dispc goes away with the dev so mark it NULL */
- 	dispc_remove(tidss);
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-index 7f4f4282bc04..d14d5d28f0a3 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.h
-+++ b/drivers/gpu/drm/tidss/tidss_drv.h
-@@ -11,8 +11,10 @@
- 
- #define TIDSS_MAX_PORTS 4
- #define TIDSS_MAX_PLANES 4
-+#define TIDSS_MAX_OLDI_TXES 2
- 
- typedef u32 dispc_irq_t;
-+struct tidss_oldi;
- 
- struct tidss_device {
- 	struct drm_device ddev;		/* DRM device for DSS */
-@@ -27,6 +29,9 @@ struct tidss_device {
- 	unsigned int num_planes;
- 	struct drm_plane *planes[TIDSS_MAX_PLANES];
- 
-+	unsigned int num_oldis;
-+	struct tidss_oldi *oldis[TIDSS_MAX_OLDI_TXES];
-+
- 	unsigned int irq;
- 
- 	/* protects the irq masks field and irqenable/irqstatus registers */
-diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-new file mode 100644
-index 000000000000..e113c87fa730
---- /dev/null
-+++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-@@ -0,0 +1,568 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2025 - Texas Instruments Incorporated
-+ *
-+ * Aradhya Bhatia <a-bhatia1@ti.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/of_graph.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/media-bus-format.h>
-+#include <linux/regmap.h>
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_of.h>
-+
-+#include "tidss_dispc.h"
-+#include "tidss_dispc_regs.h"
-+#include "tidss_oldi.h"
-+
-+struct tidss_oldi {
-+	struct tidss_device	*tidss;
-+	struct device		*dev;
-+
-+	struct drm_bridge	bridge;
-+	struct drm_bridge	*next_bridge;
-+
-+	enum tidss_oldi_link_type link_type;
-+	const struct oldi_bus_format *bus_format;
-+	u32 oldi_instance;
-+	u32 companion_instance;
-+	u32 parent_vp;
-+
-+	struct clk *serial;
-+	struct regmap *io_ctrl;
-+};
-+
-+struct oldi_bus_format {
-+	u32 bus_fmt;
-+	u32 data_width;
-+	enum oldi_mode_reg_val oldi_mode_reg_val;
-+	u32 input_bus_fmt;
-+};
-+
-+static const struct oldi_bus_format oldi_bus_formats[] = {
-+	{ MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,	18, SPWG_18,	MEDIA_BUS_FMT_RGB666_1X18 },
-+	{ MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,	24, SPWG_24,	MEDIA_BUS_FMT_RGB888_1X24 },
-+	{ MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA,	24, JEIDA_24,	MEDIA_BUS_FMT_RGB888_1X24 },
-+};
-+
-+#define OLDI_IDLE_CLK_HZ	25000000 /*25 MHz */
-+
-+static inline struct tidss_oldi *
-+drm_bridge_to_tidss_oldi(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct tidss_oldi, bridge);
-+}
-+
-+static int tidss_oldi_bridge_attach(struct drm_bridge *bridge,
-+				    enum drm_bridge_attach_flags flags)
-+{
-+	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-+
-+	if (!oldi->next_bridge) {
-+		dev_err(oldi->dev,
-+			"%s: OLDI%u Failure attach next bridge\n",
-+			__func__, oldi->oldi_instance);
-+		return -ENODEV;
-+	}
-+
-+	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
-+		dev_err(oldi->dev,
-+			"%s: OLDI%u DRM_BRIDGE_ATTACH_NO_CONNECTOR is mandatory.\n",
-+			__func__, oldi->oldi_instance);
-+		return -EINVAL;
-+	}
-+
-+	return drm_bridge_attach(bridge->encoder, oldi->next_bridge,
-+				 bridge, flags);
-+}
-+
-+static int
-+tidss_oldi_set_serial_clk(struct tidss_oldi *oldi, unsigned long rate)
-+{
-+	unsigned long new_rate;
-+	int ret;
-+
-+	ret = clk_set_rate(oldi->serial, rate);
-+	if (ret) {
-+		dev_err(oldi->dev,
-+			"OLDI%u: failed to set serial clk rate to %lu Hz\n",
-+			 oldi->oldi_instance, rate);
-+		return ret;
-+	}
-+
-+	new_rate = clk_get_rate(oldi->serial);
-+
-+	if (dispc_pclk_diff(rate, new_rate) > 5)
-+		dev_warn(oldi->dev,
-+			 "OLDI%u Clock rate %lu differs over 5%% from requested %lu\n",
-+			 oldi->oldi_instance, new_rate, rate);
-+
-+	dev_dbg(oldi->dev, "OLDI%u: new rate %lu Hz (requested %lu Hz)\n",
-+		oldi->oldi_instance, clk_get_rate(oldi->serial), rate);
-+
-+	return 0;
-+}
-+
-+static void tidss_oldi_tx_power(struct tidss_oldi *oldi, bool enable)
-+{
-+	u32 mask;
-+
-+	/*
-+	 * The power control bits are Active Low, and remain powered off by
-+	 * default. That is, the bits are set to 1. To power on the OLDI TXes,
-+	 * the bits must be cleared to 0. Since there are cases where not all
-+	 * OLDI TXes are being used, the power logic selectively powers them
-+	 * on.
-+	 * Setting the variable 'val' to particular bit masks, makes sure that
-+	 * the unrequired OLDI TXes remain powered off.
-+	 */
-+
-+	if (enable) {
-+		switch (oldi->link_type) {
-+		case OLDI_MODE_SINGLE_LINK:
-+			/* Power-on only the required OLDI TX's IO*/
-+			mask = OLDI_PWRDOWN_TX(oldi->oldi_instance) | OLDI_PWRDN_BG;
-+			break;
-+		case OLDI_MODE_CLONE_SINGLE_LINK:
-+		case OLDI_MODE_DUAL_LINK:
-+			/* Power-on both the OLDI TXes' IOs */
-+			mask = OLDI_PWRDOWN_TX(oldi->oldi_instance) |
-+			       OLDI_PWRDOWN_TX(oldi->companion_instance) |
-+			       OLDI_PWRDN_BG;
-+			break;
-+		default:
-+			/*
-+			 * This code execution should never reach here as any
-+			 * OLDI with an unsupported OLDI mode would never get
-+			 * registered in the first place.
-+			 * However, power-off the OLDI in concern just in case.
-+			 */
-+			mask = OLDI_PWRDOWN_TX(oldi->oldi_instance);
-+			enable = false;
-+			break;
-+		}
-+	} else {
-+		switch (oldi->link_type) {
-+		case OLDI_MODE_CLONE_SINGLE_LINK:
-+		case OLDI_MODE_DUAL_LINK:
-+			mask = OLDI_PWRDOWN_TX(oldi->oldi_instance) |
-+			       OLDI_PWRDOWN_TX(oldi->companion_instance) |
-+			       OLDI_PWRDN_BG;
-+			break;
-+		case OLDI_MODE_SINGLE_LINK:
-+		default:
-+			mask = OLDI_PWRDOWN_TX(oldi->oldi_instance);
-+			break;
-+		}
-+	}
-+
-+	regmap_update_bits(oldi->io_ctrl, OLDI_PD_CTRL, mask, enable ? 0 : mask);
-+}
-+
-+static int tidss_oldi_config(struct tidss_oldi *oldi)
-+{
-+	const struct oldi_bus_format *bus_fmt = NULL;
-+	u32 oldi_cfg = 0;
-+	int ret;
-+
-+	bus_fmt = oldi->bus_format;
-+
-+	/*
-+	 * MASTERSLAVE and SRC bits of OLDI Config are always set to 0.
-+	 */
-+
-+	if (bus_fmt->data_width == 24)
-+		oldi_cfg |= OLDI_MSB;
-+	else if (bus_fmt->data_width != 18)
-+		dev_warn(oldi->dev,
-+			 "OLDI%u: DSS port width %d not supported\n",
-+			 oldi->oldi_instance, bus_fmt->data_width);
-+
-+	oldi_cfg |= OLDI_DEPOL;
-+
-+	oldi_cfg = (oldi_cfg & (~OLDI_MAP)) | (bus_fmt->oldi_mode_reg_val << 1);
-+
-+	oldi_cfg |= OLDI_SOFTRST;
-+
-+	oldi_cfg |= OLDI_ENABLE;
-+
-+	switch (oldi->link_type) {
-+	case OLDI_MODE_SINGLE_LINK:
-+		/* All configuration is done for this mode.  */
-+		break;
-+
-+	case OLDI_MODE_CLONE_SINGLE_LINK:
-+		oldi_cfg |= OLDI_CLONE_MODE;
-+		break;
-+
-+	case OLDI_MODE_DUAL_LINK:
-+		/* data-mapping field also indicates dual-link mode */
-+		oldi_cfg |= BIT(3);
-+		oldi_cfg |= OLDI_DUALMODESYNC;
-+		break;
-+
-+	default:
-+		dev_err(oldi->dev, "OLDI%u: Unsupported mode.\n",
-+			oldi->oldi_instance);
-+		return -EINVAL;
-+	}
-+
-+	ret = tidss_configure_oldi(oldi->tidss, oldi->parent_vp, oldi_cfg);
-+	if (ret == -ETIMEDOUT)
-+		dev_warn(oldi->dev, "OLDI%u: timeout waiting for OLDI reset done.\n",
-+			 oldi->oldi_instance);
-+
-+	return ret;
-+}
-+
-+static void tidss_oldi_atomic_pre_enable(struct drm_bridge *bridge,
-+					 struct drm_atomic_state *state)
-+{
-+	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-+	struct drm_connector *connector;
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_display_mode *mode;
-+
-+	connector = drm_atomic_get_new_connector_for_encoder(state,
-+							     bridge->encoder);
-+	if (WARN_ON(!connector))
-+		return;
-+
-+	conn_state = drm_atomic_get_new_connector_state(state, connector);
-+	if (WARN_ON(!conn_state))
-+		return;
-+
-+	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
-+	if (WARN_ON(!crtc_state))
-+		return;
-+
-+	mode = &crtc_state->adjusted_mode;
-+
-+	/* Configure the OLDI params*/
-+	tidss_oldi_config(oldi);
-+
-+	/* Set the OLDI serial clock (7 times the pixel clock) */
-+	tidss_oldi_set_serial_clk(oldi, mode->clock * 7 * 1000);
-+
-+	/* Enable OLDI IO power */
-+	tidss_oldi_tx_power(oldi, true);
-+}
-+
-+static void tidss_oldi_atomic_post_disable(struct drm_bridge *bridge,
-+					   struct drm_atomic_state *state)
-+{
-+	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-+
-+	/* Disable OLDI IO power */
-+	tidss_oldi_tx_power(oldi, false);
-+
-+	/* Set the OLDI serial clock to IDLE Frequency */
-+	tidss_oldi_set_serial_clk(oldi, OLDI_IDLE_CLK_HZ);
-+
-+	/* Clear OLDI Config */
-+	tidss_disable_oldi(oldi->tidss, oldi->parent_vp);
-+}
-+
-+#define MAX_INPUT_SEL_FORMATS	1
-+
-+static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-+						 struct drm_bridge_state *bridge_state,
-+						 struct drm_crtc_state *crtc_state,
-+						 struct drm_connector_state *conn_state,
-+						 u32 output_fmt,
-+						 unsigned int *num_input_fmts)
-+{
-+	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-+	u32 *input_fmts;
-+	int i;
-+
-+	*num_input_fmts = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(oldi_bus_formats); i++)
-+		if (oldi_bus_formats[i].bus_fmt == output_fmt)
-+			break;
-+
-+	if (i == ARRAY_SIZE(oldi_bus_formats))
-+		return NULL;
-+
-+	input_fmts = kcalloc(MAX_INPUT_SEL_FORMATS, sizeof(*input_fmts),
-+			     GFP_KERNEL);
-+	if (!input_fmts)
-+		return NULL;
-+
-+	*num_input_fmts = 1;
-+	input_fmts[0] = oldi_bus_formats[i].input_bus_fmt;
-+	oldi->bus_format = &oldi_bus_formats[i];
-+
-+	return input_fmts;
-+}
-+
-+static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
-+	.attach	= tidss_oldi_bridge_attach,
-+	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
-+	.atomic_post_disable = tidss_oldi_atomic_post_disable,
-+	.atomic_get_input_bus_fmts = tidss_oldi_atomic_get_input_bus_fmts,
-+	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-+	.atomic_reset = drm_atomic_helper_bridge_reset,
-+};
-+
-+static int get_oldi_mode(struct device_node *oldi_tx, u32 *companion_instance)
-+{
-+	struct device_node *companion;
-+	struct device_node *port0, *port1;
-+	int pixel_order;
-+
-+	/*
-+	 * Find if the OLDI is paired with another OLDI for combined OLDI
-+	 * operation (dual-lvds or clone).
-+	 */
-+	companion = of_parse_phandle(oldi_tx, "ti,companion-oldi", 0);
-+	if (!companion) {
-+		/*
-+		 * OLDI TXes in Single Link mode do not have companion
-+		 * OLDI TXes and, Secondary OLDI nodes don't need this
-+		 * information.
-+		 */
-+		*companion_instance = -1;
-+
-+		if (of_property_read_bool(oldi_tx, "ti,secondary-oldi"))
-+			return OLDI_MODE_SECONDARY;
-+
-+		/*
-+		 * The OLDI TX does not have a companion, nor is it a
-+		 * secondary OLDI. It will operate independently.
-+		 */
-+		return OLDI_MODE_SINGLE_LINK;
-+	}
-+
-+	if (of_property_read_u32(companion, "reg", companion_instance))
-+		return OLDI_MODE_UNSUPPORTED;
-+
-+	/*
-+	 * We need to work out if the sink is expecting us to function in
-+	 * dual-link mode. We do this by looking at the DT port nodes we are
-+	 * connected to, if they are marked as expecting even pixels and
-+	 * odd pixels than we need to enable vertical stripe output.
-+	 */
-+	port0 = of_graph_get_port_by_id(oldi_tx, 1);
-+	port1 = of_graph_get_port_by_id(companion, 1);
-+	pixel_order = drm_of_lvds_get_dual_link_pixel_order(port0, port1);
-+	of_node_put(port0);
-+	of_node_put(port1);
-+	of_node_put(companion);
-+
-+	switch (pixel_order) {
-+	case -EINVAL:
-+		/*
-+		 * The dual link properties were not found in at least
-+		 * one of the sink nodes. Since 2 OLDI ports are present
-+		 * in the DT, it can be safely assumed that the required
-+		 * configuration is Clone Mode.
-+		 */
-+		return OLDI_MODE_CLONE_SINGLE_LINK;
-+
-+	case DRM_LVDS_DUAL_LINK_ODD_EVEN_PIXELS:
-+		return OLDI_MODE_DUAL_LINK;
-+
-+	/* Unsupported OLDI Modes */
-+	case DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS:
-+	default:
-+		return OLDI_MODE_UNSUPPORTED;
-+	}
-+}
-+
-+static int get_parent_dss_vp(struct device_node *oldi_tx, u32 *parent_vp)
-+{
-+	struct device_node *ep, *dss_port;
-+	int ret;
-+
-+	ep = of_graph_get_endpoint_by_regs(oldi_tx, OLDI_INPUT_PORT, -1);
-+	if (ep) {
-+		dss_port = of_graph_get_remote_port(ep);
-+		if (!dss_port) {
-+			ret = -ENODEV;
-+			goto err_return_ep_port;
-+		}
-+
-+		ret = of_property_read_u32(dss_port, "reg", parent_vp);
-+
-+		of_node_put(dss_port);
-+err_return_ep_port:
-+		of_node_put(ep);
-+		return ret;
-+	}
-+
-+	return -ENODEV;
-+}
-+
-+static const struct drm_bridge_timings default_tidss_oldi_timings = {
-+	.input_bus_flags = DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE
-+			 | DRM_BUS_FLAG_DE_HIGH,
-+};
-+
-+void tidss_oldi_deinit(struct tidss_device *tidss)
-+{
-+	for (int i = 0; i < tidss->num_oldis; i++) {
-+		if (tidss->oldis[i]) {
-+			drm_bridge_remove(&tidss->oldis[i]->bridge);
-+			tidss->oldis[i] = NULL;
-+		}
-+	}
-+}
-+
-+int tidss_oldi_init(struct tidss_device *tidss)
-+{
-+	struct tidss_oldi *oldi;
-+	struct device_node *child;
-+	struct drm_bridge *bridge;
-+	u32 parent_vp, oldi_instance, companion_instance;
-+	enum tidss_oldi_link_type link_type = OLDI_MODE_UNSUPPORTED;
-+	struct device_node *oldi_parent;
-+	int ret = 0;
-+
-+	tidss->num_oldis = 0;
-+
-+	oldi_parent = of_get_child_by_name(tidss->dev->of_node, "oldi-transmitters");
-+	if (!oldi_parent)
-+		/* Return gracefully */
-+		return 0;
-+
-+	for_each_child_of_node(oldi_parent, child) {
-+		ret = get_parent_dss_vp(child, &parent_vp);
-+		if (ret) {
-+			if (ret == -ENODEV) {
-+				/*
-+				 * ENODEV means that this particular OLDI node
-+				 * is not connected with the DSS, which is not
-+				 * a harmful case. There could be another OLDI
-+				 * which may still be connected.
-+				 * Continue to search for that.
-+				 */
-+				ret = 0;
-+				continue;
-+			}
-+			goto err_put_node;
-+		}
-+
-+		ret = of_property_read_u32(child, "reg", &oldi_instance);
-+		if (ret)
-+			goto err_put_node;
-+
-+		/*
-+		 * Now that its confirmed that OLDI is connected with DSS, let's
-+		 * continue getting the OLDI sinks ahead and other OLDI
-+		 * properties.
-+		 */
-+		bridge = devm_drm_of_get_bridge(tidss->dev, child,
-+						OLDI_OUTPUT_PORT, 0);
-+		if (IS_ERR(bridge)) {
-+			/*
-+			 * Either there was no OLDI sink in the devicetree, or
-+			 * the OLDI sink has not been added yet. In any case,
-+			 * return.
-+			 * We don't want to have an OLDI node connected to DSS
-+			 * but not to any sink.
-+			 */
-+			ret = dev_err_probe(tidss->dev, PTR_ERR(bridge),
-+					    "no panel/bridge for OLDI%u.\n",
-+					    oldi_instance);
-+			goto err_put_node;
-+		}
-+
-+		link_type = get_oldi_mode(child, &companion_instance);
-+		if (link_type == OLDI_MODE_UNSUPPORTED) {
-+			ret = dev_err_probe(tidss->dev, -EINVAL,
-+					    "OLDI%u: Unsupported OLDI connection.\n",
-+					    oldi_instance);
-+			goto err_put_node;
-+		} else if (link_type == OLDI_MODE_CLONE_SINGLE_LINK) {
-+			/*
-+			 * The OLDI driver cannot support OLDI clone mode
-+			 * properly at present.
-+			 * The clone mode requires 2 working encoder-bridge
-+			 * pipelines, generating from the same crtc. The DRM
-+			 * framework does not support this at present. If
-+			 * there were to be, say, 2 OLDI sink bridges each
-+			 * connected to an OLDI TXes, they couldn't both be
-+			 * supported simultaneously.
-+			 * This driver still has some code pertaining to OLDI
-+			 * clone mode configuration in DSS hardware for future,
-+			 * when there is a better infrastructure in the DRM
-+			 * framework to support 2 encoder-bridge pipelines
-+			 * simultaneously.
-+			 * Till that time, this driver shall error out if it
-+			 * detects a clone mode configuration.
-+			 */
-+			ret = dev_err_probe(tidss->dev, -EOPNOTSUPP,
-+					    "The OLDI driver does not support Clone Mode at present.\n");
-+			goto err_put_node;
-+		} else if (link_type == OLDI_MODE_SECONDARY) {
-+			/*
-+			 * This is the secondary OLDI node, which serves as a
-+			 * companinon to the primary OLDI, when it is configured
-+			 * for the dual-lvds mode. Since the primary OLDI will
-+			 * be a part of bridge chain, no need to put this one
-+			 * too. Continue onto the next OLDI node.
-+			 */
-+			continue;
-+		}
-+
-+		oldi = devm_kzalloc(tidss->dev, sizeof(*oldi), GFP_KERNEL);
-+		if (!oldi) {
-+			ret = -ENOMEM;
-+			goto err_put_node;
-+		}
-+
-+		oldi->parent_vp = parent_vp;
-+		oldi->oldi_instance = oldi_instance;
-+		oldi->companion_instance = companion_instance;
-+		oldi->link_type = link_type;
-+		oldi->dev = tidss->dev;
-+		oldi->next_bridge = bridge;
-+
-+		oldi->io_ctrl = syscon_regmap_lookup_by_phandle(child,
-+								"ti,oldi-io-ctrl");
-+		if (IS_ERR(oldi->io_ctrl)) {
-+			ret = dev_err_probe(oldi->dev, PTR_ERR(oldi->io_ctrl),
-+					    "OLDI%u: syscon_regmap_lookup_by_phandle failed.\n",
-+					    oldi_instance);
-+			goto err_put_node;
-+		}
-+
-+		oldi->serial = of_clk_get_by_name(child, "serial");
-+		if (IS_ERR(oldi->serial)) {
-+			ret = dev_err_probe(oldi->dev, PTR_ERR(oldi->serial),
-+					    "OLDI%u: Failed to get serial clock.\n",
-+					    oldi_instance);
-+			goto err_put_node;
-+		}
-+
-+		/* Register the bridge. */
-+		oldi->bridge.of_node = child;
-+		oldi->bridge.driver_private = oldi;
-+		oldi->bridge.funcs = &tidss_oldi_bridge_funcs;
-+		oldi->bridge.timings = &default_tidss_oldi_timings;
-+
-+		tidss->oldis[tidss->num_oldis++] = oldi;
-+		oldi->tidss = tidss;
-+
-+		drm_bridge_add(&oldi->bridge);
-+	}
-+
-+	of_node_put(child);
-+	of_node_put(oldi_parent);
-+
-+	return 0;
-+
-+err_put_node:
-+	of_node_put(child);
-+	of_node_put(oldi_parent);
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/tidss/tidss_oldi.h b/drivers/gpu/drm/tidss/tidss_oldi.h
-new file mode 100644
-index 000000000000..7231cbeb451f
---- /dev/null
-+++ b/drivers/gpu/drm/tidss/tidss_oldi.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2025 - Texas Instruments Incorporated
-+ *
-+ * Aradhya Bhatia <a-bhatia1@ti.com>
-+ */
-+
-+#ifndef __TIDSS_OLDI_H__
-+#define __TIDSS_OLDI_H__
-+
-+#include "tidss_drv.h"
-+
-+struct tidss_oldi;
-+
-+/* OLDI PORTS */
-+#define OLDI_INPUT_PORT		0
-+#define OLDI_OUTPUT_PORT	1
-+
-+/* Control MMR Registers */
-+
-+/* Register offsets */
-+#define OLDI_PD_CTRL            0x100
-+#define OLDI_LB_CTRL            0x104
-+
-+/* Power control bits */
-+#define OLDI_PWRDOWN_TX(n)	BIT(n)
-+
-+/* LVDS Bandgap reference Enable/Disable */
-+#define OLDI_PWRDN_BG		BIT(8)
-+
-+enum tidss_oldi_link_type {
-+	OLDI_MODE_UNSUPPORTED,
-+	OLDI_MODE_SINGLE_LINK,
-+	OLDI_MODE_CLONE_SINGLE_LINK,
-+	OLDI_MODE_DUAL_LINK,
-+	OLDI_MODE_SECONDARY,
-+};
-+
-+int tidss_oldi_init(struct tidss_device *tidss);
-+void tidss_oldi_deinit(struct tidss_device *tidss);
-+
-+#endif /* __TIDSS_OLDI_H__ */
--- 
-2.34.1
+>
+> This?
+>
+> https://elixir.bootlin.com/linux/v6.13.4/source/arch/powerpc/kernel/vdso.c#L236
+>
+> Was [0] a relevant discussion?
+>
+> [0]: https://lore.kernel.org/all/lhe2mky6ahlk2jzvvfjyongqiseelyx2uy7sbyuso6jcy3b2dq@7ju6cea62jgk/
 
+I did in the end go and check this, so hopefully this is useful at least.
+
+But again, I really think we should hold off on PPC stuff until we come to
+it and focus on getting this series into mergeable state.
+
+Am doing my best to try to get you there ASAP as there's been a lot of
+delays here.
+
+>
+> >
+> > Thanks
+> > -Jeff
+> >
+> >
+> > > Thanks,
+> > > Liam
+
+Cheers, Lorenzo
 
