@@ -1,93 +1,76 @@
-Return-Path: <linux-kernel+bounces-534103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EA7A462D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:31:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72C2A462C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD203B3C71
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65DD9189D317
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B810221F3D;
-	Wed, 26 Feb 2025 14:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9438022170B;
+	Wed, 26 Feb 2025 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOt/uCgm"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IXjiY/pR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DDC21171A;
-	Wed, 26 Feb 2025 14:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7634633EC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580157; cv=none; b=tuu2dZzDMuS9zAmYfISzbYirMa0vQKZ3i9yHK94IJRa3/nKvp0Cxb6YHAcJvo6XYloKsvS3sVvGOCTPJnzAWbOJXYfHVUJdu+aGjiMo1cShXhEWEqqgnzieeojLCy/Wzkl2WADvLK6+3aZddUsLOPiU/87ffqfcArZHoIrjYOpw=
+	t=1740580197; cv=none; b=OgRgzBj0myubaIHrOqwMG16CzhO+6X15VvNZnjmzK/LG0uZ9HIQDLtz8MBCA5Mz3GcnFi2I8h5zwnyQwK8ySnZIDy2PGPlW694+7EZst6l2Ids3SSl5LF8VQ11g7gvZvUJxcqcuNFcvRN8XaezepfPEEYNP5Y+P2yDztcVFTra0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580157; c=relaxed/simple;
-	bh=U3XRu9BKSm5XctFw50gAsIGx5i29PiCx3IkvGID+i84=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUYUH3sMvhf3rR/mQ78EP3Zz5oBACJKgSEKuMLwuvhYQUShnQHH3u3D3bXT5TaFOZugEQS3dEoo5D2lT89AaloxQcy08I5p4LFqLOctc4wDXigSrc+6qsl5ELzR2jWyBqcjVvxG4SW+1ETkZ0P5EO0bF96EXb64hUcYEYKQXgtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOt/uCgm; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so7852115e87.1;
-        Wed, 26 Feb 2025 06:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740580153; x=1741184953; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P2kiu/HsUSKw59lXGQxuGghGnHIXAC6zHsBsQ9Wyn90=;
-        b=WOt/uCgmB52JDNqvMqBaxDvo0DLTgMguPGtyUm/n5XIgK7pBF6lSvMNxpH06awe7bK
-         fJpTNQ0gbIj1hyZmdEKYBZezvwFWf9vhkzk8y+Q6uzfvK9TaogVXsswB7hX/FYqU7DDh
-         uc0bDQXzAwvVN4Of2G5+2Y9V3BrrmQGuqNga9Oir/mXZqLxC+kgtRMmU9FFy2cg48KMk
-         bJCJ7NhPi37bAXxyxKuxujc2e7s6/5V7Pivz0DSHcAzKIr+wIxklQevXnHcU5EEs3P5Z
-         bHEwgj2J6nXW15OFpnMb2HcgphKcZhoLwZQhFbWHxavPrVCHJz6e5GmgLGGcKJ9qPaUY
-         bhrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740580153; x=1741184953;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2kiu/HsUSKw59lXGQxuGghGnHIXAC6zHsBsQ9Wyn90=;
-        b=KzGLpYanAsaaAMLMci1OPmTDf1CQD5zQ52kwIRUy/guVlu0XAfYGRkBbs5JojyUTGI
-         8hBHbH/5N7E6+VgOB08XskavYrlO2StnXTCrHovZq6DtjdLNEH9oFdgN7suCEhMnUMyL
-         jqhuzUMSbmbK0FZhnEyiSpa4jhW324foDap+2UeTHd5KXM+NE+FbNstV1X3Z1t0XMHbF
-         tXZeOeKOElwcCErZj3fPtyy5cTlZqQCud6n2gQpVLvNMCZ5oqFGLcDIMWU96nGSji2fX
-         rM5AOg7Kc1+kmKnWqFOfSVGGTAzVPwJSOLBpBJEg1iMfxU4egWEIeNHLUUI9dEIo4NHf
-         DUHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJr7MdqhQm7TK7ja55aXe7tueRTg0PpjwzAgcId2dBgkRUgqVQJJFF525SW4GqpGZXSsQmw0/imO30YSo=@vger.kernel.org, AJvYcCX84ojp5EdXVtGOjAsPJzkA26BD/e2RGhMOLvw4GROc64JqzhxjQ5smVoCyz9ygRcxtq8X/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSWpPvEFzqJEyrAZg8wySEXvvkk79C8D1kozvZwXMWtuOSnBAo
-	Dx+0WZdQxxO6mRhU9JoR68Hm1P6MeSClimxORsjZLyApWocg+aH9Wfq8/GNc
-X-Gm-Gg: ASbGncv33g/XUVBXjyi/zoBXXV+gTU2VabVTCL/dK/K5lIPT1B+1CCDHSAeDLn5L/Lg
-	kMqUQr1k1Y+bxYIyKC75AIxFvbF7BCMc1sPm6vcTKxHuh4DlzdIT9e1wj6ktRbi/gWTbA/aEnn0
-	ebX1i5jjL+FoOx99f+rE2QQf1gBdmdOU7hb6mavfeNLzeOppaRIa5WE+GlTLLEoDgkDc6ozih8l
-	oEHbi2DHeSL9eoNGJIlECR3Kr3/ostOuZqlUAUc0RlY3UR5Qf1if9lkPf/eaIIXWw+zMSNUwALA
-	NhCn3r2lV0SL0zixJBubl6DjCNNJqwsZnsXl9EgBV4YnlDlN
-X-Google-Smtp-Source: AGHT+IEwjEWmxx978qjGI809JUeWj0qQG87ubxYGrnt++ojs9L+/TlCz0ZiMFqjIWL2+srJwoWhmfw==
-X-Received: by 2002:a05:6512:3c99:b0:549:38eb:d690 with SMTP id 2adb3069b0e04-5493c5c11b5mr1910652e87.36.1740580152930;
-        Wed, 26 Feb 2025 06:29:12 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548b3fc7a07sm391300e87.20.2025.02.26.06.29.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 06:29:12 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 26 Feb 2025 15:29:09 +0100
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
+	s=arc-20240116; t=1740580197; c=relaxed/simple;
+	bh=Jo3BHYyduZAmEWf8mHoWcMQFegvpBohhWbEH+f8gg3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uq3L2qDH+oUnFc5sbgSCzjPWX2pe6VhvZheg5ziZzW6YgqI3tmUrvRDyya2qNGK6qx5Pd+IjOak5odzXtGdW+eKsa/OfV/7po0mrV7pNgoO0F/h3bjVvCqySMJv9wcKUWyKLalfbsPCgaHxAImlyt/tRSin455sP815K7kbT6IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IXjiY/pR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740580194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jo3BHYyduZAmEWf8mHoWcMQFegvpBohhWbEH+f8gg3o=;
+	b=IXjiY/pR7CuqJaSdC8Zv8HM74pVjCWNbxSe5zNEEHFzGjx4+asnexJOPHmO9ebtubj1oF9
+	xAYe8K1qCoOvdPO3HbKnOQz3VUWwwDnHO2DXWEv2ysuyzrnmcyRJI8naukbGtFqBxGGSwZ
+	ADueGgA02AHUmtWkkEDIPh8hnYRACHU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-WHL9b_OPP06l4SvJEm618w-1; Wed,
+ 26 Feb 2025 09:29:51 -0500
+X-MC-Unique: WHL9b_OPP06l4SvJEm618w-1
+X-Mimecast-MFC-AGG-ID: WHL9b_OPP06l4SvJEm618w_1740580189
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 662021800876;
+	Wed, 26 Feb 2025 14:29:49 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4EF4819560AB;
+	Wed, 26 Feb 2025 14:29:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 15:29:19 +0100 (CET)
+Date: Wed, 26 Feb 2025 15:29:15 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v3 1/3] rcutorture: Allow a negative value for
- nfakewriters
-Message-ID: <Z78lNRKjLQKigyLw@pc636>
-References: <20250225110020.59221-1-urezki@gmail.com>
- <20250225212409.GA1807836@joelnvbox>
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
+ the callbacks.
+Message-ID: <20250226142914.GF8995@redhat.com>
+References: <20250221170530.L3yMvO0i@linutronix.de>
+ <20250223224014.GC23282@redhat.com>
+ <20250226141601.VBQ91ZDb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,37 +79,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225212409.GA1807836@joelnvbox>
+In-Reply-To: <20250226141601.VBQ91ZDb@linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Feb 25, 2025 at 04:24:09PM -0500, Joel Fernandes wrote:
-> On Tue, Feb 25, 2025 at 12:00:18PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Currently "nfakewriters" parameter can be set to any value but
-> > there is no possibility to adjust it automatically based on how
-> > many CPUs a system has where a test is run on.
-> > 
-> > To address this, if the "nfakewriters" is set to negative it will
-> > be adjusted to num_online_cpus() during torture initialization.
-> > 
-> > Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > ---
-> >  kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
-> >  1 file changed, 16 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > index d98b3bd6d91f..f376262532ce 100644
-> > --- a/kernel/rcu/rcutorture.c
-> > +++ b/kernel/rcu/rcutorture.c
-> > @@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
-> 
-> IMO, this should also be updated to reflect the possibily to set it negative
-> and hence to number CPUs:
-> 
-> torture_param(int, nfakewriters, 4, "Number of RCU fake writer threads");
-> 
-You can set it to a negative as well as to number of CPUs or any other
-number.
+On 02/26, Sebastian Andrzej Siewior wrote:
+>
+> On 2025-02-23 23:40:15 [+0100], Oleg Nesterov wrote:
+> > Well... I won't really argue because I can't suggest a better fix at
+> > least right now. Most probably never.
+> >
+> > However, let me say that this patch doesn't make me happy ;) See below.
+> >
+> > On 02/21, Sebastian Andrzej Siewior wrote:
+> > >
+> > > Oleg pointed out that this might be problematic if one closes 2.000.000
+> > > files at once. While testing this scenario by opening that many files
+> > > following by exit() to ensure that all files are closed at once, I did
+> > > not observe anything outside of noise.
+> >
+> > and this probably means that we can revert c82199061009 ("task_work: remove
+> > fifo ordering guarantee") and restore the fifo ordering which IMO makes much
+> > more sense.
+>
+> So assume that turning around will fix the problem because the cancel
+> callback is run first followed by the clean up.
 
---
-Uladzislau Rezki
+Not really, they can run in any order, so fifo can't really help.
+
+But this doesn't matter, please see another email:
+https://lore.kernel.org/all/20250226125048.GC8995@redhat.com/
+
+Oleg.
+
 
