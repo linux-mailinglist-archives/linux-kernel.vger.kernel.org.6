@@ -1,114 +1,172 @@
-Return-Path: <linux-kernel+bounces-535165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD13A46FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:53:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDFBA46FB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B782188D3DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:53:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A0C7A3357
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB2425D217;
-	Wed, 26 Feb 2025 23:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1417225BABA;
+	Wed, 26 Feb 2025 23:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="KA+cbgny"
-Received: from pv50p00im-ztdg10012101.me.com (pv50p00im-ztdg10012101.me.com [17.58.6.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UGTlOc+S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78EE27004B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E361E27004B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613974; cv=none; b=aIbWm7BB7HNft/kF/Il5WISQtDiHdM9DxOwVBJT8ttv49uhh2Bj9k4V8QcpKTvFyhMwL+vVcIEcDtnzXxV0E8hNRmjYWffOLNS2YbHsbRD505T+n4DPV8mIzsY/N5sWvAliNPwUTgiH+2kwmlwLtjSB+QCZ4s3mjyl1x0ezJ+Eo=
+	t=1740614024; cv=none; b=H26pYVDKewxDNSFCnP70l68pufWok3DB12j19PYn43R4Cyvgr9cohyJA5ckUvCb6murSSmHXdKvm42yZaiHHtsdcajTHlNcU+Unni2adIo8mtwt3lqEGUzK89SrcmEOhtjCKTIdUR+4BiqGX2w1GgIu87wNaUEtUwMB2swHnis0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613974; c=relaxed/simple;
-	bh=MRaEsWys87Pn4a0qFFl/SQ4wZqGYEGJJfYgg4Zvyktg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lfsVRNZpiEwmGNlUQngFCS2TolLHd4mFcX2m+0HDb31RwuEtpLyNJx6SQzHwHNrAW6a903kzsrt5ljwdcaPvYPpUcGD/QgaeLfazA1+4ZkYAyAwj6Yw66zeUl+taG6ncW7jKfjuScMvBFlLWgxV9doujT/jeT04TluyiXzLEubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=KA+cbgny; arc=none smtp.client-ip=17.58.6.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=i7mhFoUi2tw6qZatddnr2O9pvtJog0jFw0rliAU9o6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=KA+cbgnyDoqsho3Q5gI5znPAuKp2oQfrJDAeF5jYGHtDbBWw5F6EaB4nM6J8CECnI
-	 f07mP0H9If/o0dwnt0zNYHSy2L4YM1PqRI+3C3RvNdR1HaGsKIuivxxB9HEK8EVUnE
-	 RQg2fGLLtEsQb0F1EYnOEa93lMZ/+s3+oWCzILuxcvEpOeU0fERWoID4oJi1JBB8AS
-	 k3OQy9WEARP2E86PFlOqxsByo4yvs+b0bLR2yAHvt60/fVXcEunGM0tnuHHJn143zM
-	 J7s+6oz1sCjnJ9F6qNKUfTrDjeb+cfAlz9cnuV64WVCvPyfQLokQQEhErWv+Ixp/7A
-	 gfSBD6DhAQBjw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012101.me.com (Postfix) with ESMTPSA id E4903740566;
-	Wed, 26 Feb 2025 23:52:46 +0000 (UTC)
-Message-ID: <67308adf-65bd-489c-80cb-5354ef202b51@icloud.com>
-Date: Thu, 27 Feb 2025 07:52:13 +0800
+	s=arc-20240116; t=1740614024; c=relaxed/simple;
+	bh=PpixIuc7c9S8Znm6fEduLybMhupHbzKyiowTmier0F8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=q4cIJsof4VK9gnBfuE6cvvCw3rWsdP1GBGjetjrSxk6TRmu+1bye0TTuTm2xH/p1q1TNl8KEdNt9EO9w657j8bSVTuCHbfJKrQt3AOMadSnIKBlnc210XU58Exc+ERv12dG1MmE+9H0McaOSLpoXg5JnGWzhZRjoQT4yExs/Fyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UGTlOc+S; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740614023; x=1772150023;
+  h=date:from:to:cc:subject:message-id;
+  bh=PpixIuc7c9S8Znm6fEduLybMhupHbzKyiowTmier0F8=;
+  b=UGTlOc+SDfSKRS8loo6PehFpTbcs2eVu1Vlp1Cu5Sa349OgHrP82+taS
+   gKwOEk+NBYp1+2xgO4hCb/mUU7wktClE6CFOwkFdZBhh3mJLbLy2mniog
+   J3e+6tyVOIDQkKNJkG9D0Ov7xZDwxNE9yXBMCEOi3pQvXRtL9LfeXJnOq
+   DdEA0Tf/9fjFVxLSUetEvZxYJZBbAJ8rDtl3iUKMIcEmQtarHoAy/TGg7
+   z/noaSlnrxJer2s3ZVx5hhw3oC64U/+X0qysDeBW+jZG0Js+DmPFekn1P
+   RV/U3W0E4PF5YTl9eNQ5JN1VKIv1uvfJuNC1H8SccwGBVxZABH9PD/iJ/
+   g==;
+X-CSE-ConnectionGUID: dp+zQYlsQz6Kh1bXMhQapQ==
+X-CSE-MsgGUID: GavE7akyTEG1zU8FuMh7bw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41508831"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="41508831"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:53:42 -0800
+X-CSE-ConnectionGUID: 5vJBm1kEQg+mN7ylKazjhw==
+X-CSE-MsgGUID: 6eQpmwJYRFGpS/m5UtKf/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="116852250"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Feb 2025 15:53:39 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnRDZ-000CcA-38;
+	Wed, 26 Feb 2025 23:53:35 +0000
+Date: Thu, 27 Feb 2025 07:53:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ f8c857238a392f21d5726d07966f6061007c8d4f
+Message-ID: <202502270759.UC9vXWXL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/14] of: reserved-memory: Fix using wrong number of
- cells to get property 'alignment'
-To: Rob Herring <robh@kernel.org>
-Cc: William McVicker <willmcvicker@google.com>,
- Zijun Hu <quic_zijuhu@quicinc.com>, Saravana Kannan <saravanak@google.com>,
- Maxime Ripard <mripard@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Grant Likely <grant.likely@secretlab.ca>, Marc Zyngier <maz@kernel.org>,
- Andreas Herrmann <andreas.herrmann@calxeda.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Mike Rapoport <rppt@kernel.org>,
- Oreoluwa Babatunde <quic_obabatun@quicinc.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, kernel-team@android.com
-References: <20250109-of_core_fix-v4-0-db8a72415b8c@quicinc.com>
- <20250109-of_core_fix-v4-9-db8a72415b8c@quicinc.com>
- <20250113232551.GB1983895-robh@kernel.org> <Z70aTw45KMqTUpBm@google.com>
- <97ac58b1-e37c-4106-b32b-74e041d7db44@quicinc.com>
- <Z74CDp6FNm9ih3Nf@google.com> <20250226194505.GA3407277-robh@kernel.org>
- <f81e6906-499c-4be3-a922-bcd6378768c4@icloud.com>
- <CAL_Jsq+P=sZu6Wnqq7uEnGMnAQGNEDf_B+VgO8E8ob4RX8b=QA@mail.gmail.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <CAL_Jsq+P=sZu6Wnqq7uEnGMnAQGNEDf_B+VgO8E8ob4RX8b=QA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 2025/2/27 05:30, Rob Herring wrote:
->>    this change ?
-> We don't know that unless you tested every dts file. We only know that
-> no one has reported an issue yet.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
+branch HEAD: f8c857238a392f21d5726d07966f6061007c8d4f  uprobes: Remove too strict lockdep_assert() condition in hprobe_expire()
 
-Sorry, my mistake to post the question here for convenience.
+elapsed time: 1454m
 
-actually, i want to ask William this question, and he/she shared applet
-of the downstream code.
+configs tested: 80
+configs skipped: 2
 
-> Even if we did test everything, there are DT's that aren't in the
-> kernel tree. It's not like this downstream DT is using some
-> undocumented binding or questionable things. It's a standard binding.
-> 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-IMO, that may be a downstream bug since they don't refer to binding spec
-to set property 'alignment'.
+tested configs:
+alpha                            allnoconfig    gcc-14.2.0
+alpha                           allyesconfig    gcc-14.2.0
+arc                             allmodconfig    gcc-13.2.0
+arc                              allnoconfig    gcc-13.2.0
+arc                             allyesconfig    gcc-13.2.0
+arc                  randconfig-001-20250226    gcc-13.2.0
+arc                  randconfig-002-20250226    gcc-13.2.0
+arm                              allnoconfig    clang-17
+arm                        assabet_defconfig    clang-21
+arm                          h3600_defconfig    gcc-14.2.0
+arm                           mps2_defconfig    clang-15
+arm                  randconfig-001-20250226    gcc-14.2.0
+arm                  randconfig-002-20250226    clang-21
+arm                  randconfig-003-20250226    gcc-14.2.0
+arm                  randconfig-004-20250226    gcc-14.2.0
+arm                          spitz_defconfig    gcc-14.2.0
+arm64                            allnoconfig    gcc-14.2.0
+arm64                randconfig-001-20250226    gcc-14.2.0
+arm64                randconfig-002-20250226    gcc-14.2.0
+arm64                randconfig-003-20250226    clang-21
+arm64                randconfig-004-20250226    gcc-14.2.0
+csky                             allnoconfig    gcc-14.2.0
+csky                 randconfig-001-20250226    gcc-14.2.0
+csky                 randconfig-002-20250226    gcc-14.2.0
+hexagon                          allnoconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250226    clang-21
+hexagon              randconfig-002-20250226    clang-21
+i386       buildonly-randconfig-001-20250226    gcc-12
+i386       buildonly-randconfig-002-20250226    gcc-12
+i386       buildonly-randconfig-003-20250226    gcc-12
+i386       buildonly-randconfig-004-20250226    clang-19
+i386       buildonly-randconfig-005-20250226    gcc-12
+i386       buildonly-randconfig-006-20250226    gcc-12
+loongarch                        allnoconfig    gcc-14.2.0
+loongarch            randconfig-001-20250226    gcc-14.2.0
+loongarch            randconfig-002-20250226    gcc-14.2.0
+m68k                         hp300_defconfig    gcc-14.2.0
+nios2                randconfig-001-20250226    gcc-14.2.0
+nios2                randconfig-002-20250226    gcc-14.2.0
+parisc               randconfig-001-20250226    gcc-14.2.0
+parisc               randconfig-002-20250226    gcc-14.2.0
+parisc64                        alldefconfig    gcc-14.1.0
+powerpc              mpc834x_itxgp_defconfig    clang-18
+powerpc              randconfig-001-20250226    gcc-14.2.0
+powerpc              randconfig-002-20250226    clang-18
+powerpc              randconfig-003-20250226    clang-21
+powerpc64            randconfig-001-20250226    clang-18
+powerpc64            randconfig-002-20250226    gcc-14.2.0
+powerpc64            randconfig-003-20250226    gcc-14.2.0
+riscv                randconfig-001-20250226    clang-18
+riscv                randconfig-002-20250226    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250226    gcc-14.2.0
+s390                 randconfig-002-20250226    clang-15
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250226    gcc-14.2.0
+sh                   randconfig-002-20250226    gcc-14.2.0
+sh                          se7751_defconfig    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250226    gcc-14.2.0
+sparc                randconfig-002-20250226    gcc-14.2.0
+sparc64              randconfig-001-20250226    gcc-14.2.0
+sparc64              randconfig-002-20250226    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250226    clang-18
+um                   randconfig-002-20250226    gcc-12
+x86_64                           allnoconfig    clang-19
+x86_64     buildonly-randconfig-001-20250226    clang-19
+x86_64     buildonly-randconfig-002-20250226    clang-19
+x86_64     buildonly-randconfig-003-20250226    gcc-12
+x86_64     buildonly-randconfig-004-20250226    clang-19
+x86_64     buildonly-randconfig-005-20250226    gcc-12
+x86_64     buildonly-randconfig-006-20250226    gcc-12
+x86_64                             defconfig    gcc-11
+xtensa               randconfig-001-20250226    gcc-14.2.0
+xtensa               randconfig-002-20250226    gcc-14.2.0
 
-> Every time this code is touched, it breaks. This is not even the only
-> breakage right now[1].
-> 
-
-indeed.
-
->> 2) IMO, the spec may be right.
->>    The type of size is enough to express any alignment wanted.
->>    For several kernel allocators. type of 'alignment' should be the type
->>    of 'size', NOT the type of 'address'
-> As I said previously, it can be argued either way.
-> 
-> Rob
-> 
-> [1] https://lore.kernel.org/all/20250226115044.zw44p5dxlhy5eoni@pengutronix.de/
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
