@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-532799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123E4A4525B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B635A45260
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE31819C07CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:45:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DAC19C0F62
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A43F17B506;
-	Wed, 26 Feb 2025 01:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1B019E7F7;
+	Wed, 26 Feb 2025 01:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTpTTGjY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kmh5HbcD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690D67DA66
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6354689;
+	Wed, 26 Feb 2025 01:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740534324; cv=none; b=Cefb+qp+fOdFZ2F8xr6RWvec7VEe4z8PGuzZqXtdQks5erD+PqUEzJ0Dh0EWF4ZdTcwPMW7eFeLDw6SaqCPH3uw8Ftxl+W9FCq3ZtaG5SSsHaNSM0WJHe6k4orKAJtkRe/0gCBRaKx5nvOTjO0aU4SA9QLMZCL8qDZgwveqIIN0=
+	t=1740534476; cv=none; b=qIPV01bvrN+yP/t7FxyD6Prh7lKz7GWI5AgbPQm9hdRwh+SB/1GqiO6PxiPcaOanXu8Ly10d8B0lcnEkxBjcy6Hx2C15Z+s9X/keZ0vlyl7FiuW2ydB6S+dI+K88ZYm85iP5T3qTaq96vKpK2zHEVUO6aYDsBiPclum+ZlLx87g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740534324; c=relaxed/simple;
-	bh=ngX5hmUBid2B/leasE/ldqcaQuKWY4R/b6bE5lXGa9g=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=K9TLj6FobBQkDVLR08ZPIXsTEh/HpOo3ooDpUcBeWQ7n33azySDGaPjTsg/GRsZslmVwuo+2NoAsK9Op+doRZBDz48GOnxzA/ZOxUA6+GHquuYIkIW8Yk/y/lZfFcqBlHd5BkuxXVzSKJRZGIq1ULtF3KvmceFJJjyQjtDngu+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTpTTGjY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850BBC4CEDD;
-	Wed, 26 Feb 2025 01:45:22 +0000 (UTC)
+	s=arc-20240116; t=1740534476; c=relaxed/simple;
+	bh=V3CB8LY1DGZbWMpcmpZd8j50hGMDpnu5UssYkcrx0sQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j5GrPYkLRLcC2pB0awWPRbAn2DDE9vpeceH2foaCz9KLv71iehi3xfuGwYnE8VWDgFiRo6mdhT0ezscs4xJAiFPfNOLkSAn/w46KUYumFFOYgggjF5Oh+aTq2HeeqSQN87k5lNn+LkA6HoBte5V2EcFNPOQpFC09ehHkBnOm6p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kmh5HbcD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4361C4CEDD;
+	Wed, 26 Feb 2025 01:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740534323;
-	bh=ngX5hmUBid2B/leasE/ldqcaQuKWY4R/b6bE5lXGa9g=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=rTpTTGjYdx2MUuAKzqQZmH2+d0v8Kbdea04pfGIjqYXLovNpjxmSR8xlnwTElkR5M
-	 NxR1SjvxFJzLlqpXpEee9cB2M4LI+3e4m5pVxmKeKNB/CWu0/XIZ61PxW22rhvaAzy
-	 Av/PjMEKjuEYbM0ThtE04yKXMjEzQyHbLIf0v6W4g6Cs1kog/ZtaFj1rLDqcP8EU/h
-	 dnimeoOuJT1aNQXi9P7NyRvSTvPNtoa0B9y1m3D9cx37DRICtbTZg6f6nk4YCzcex/
-	 oWWrwdX6iZ0hW63LtdVPVKhtT87sCsrrHmciWynV4qCI00HKk7TMCuAWdDECl+yYTV
-	 Ba4STfOufVZNQ==
-Message-ID: <6f097ce3-5a0b-4d58-bd48-6b2ed135747f@kernel.org>
-Date: Wed, 26 Feb 2025 09:45:20 +0800
+	s=k20201202; t=1740534474;
+	bh=V3CB8LY1DGZbWMpcmpZd8j50hGMDpnu5UssYkcrx0sQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kmh5HbcDs82upshjPAyIwCjyAkA1oin6SLySK+vyk9WO0zOaYqhbbYWGt+/ol1zY3
+	 A/K20xkQeUiXRw/rwjAp5cFIpYT75QGpUca6iwsrw6uHZ8QzEqasRaX/Csws7c8j0Z
+	 YQQrI+O1ZXbY8jO0j9iLtOdEkF81tQahQFuQRxU3Ch7cLZ7h73tDcm3ERv9sRSbhkj
+	 e5hs+Z0KZuMJtjoONRvOp61iZ8Zy98ooCHeoSZAxMiW/XvV0O9Dx2kxNZ2iSpicC95
+	 eHy83tqMBMDkgu4NkPd1Q4rJkd/7nuNcuGc09SWEbBbcL5JThcBQ/dIm1V2PiQs7oh
+	 IEEArVJDAgf0g==
+Date: Tue, 25 Feb 2025 17:47:52 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
+ <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
+ <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <20250225174752.5dbf65e2@kernel.org>
+In-Reply-To: <20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-6-3da486e5fd64@bootlin.com>
+	<20250220165129.6f72f51a@kernel.org>
+	<20250224141037.1c79122b@kmaincent-XPS-13-7390>
+	<20250224134522.1cc36aa3@kernel.org>
+	<20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: add ftruncate command in f2fs_io
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20250226002707.358601-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250226002707.358601-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/26/25 08:27, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On Tue, 25 Feb 2025 10:25:58 +0100 Kory Maincent wrote:
+> On Mon, 24 Feb 2025 13:45:22 -0800
+> Jakub Kicinski <kuba@kernel.org> wrote:
 > 
-> add ftruncate command to do file truncate.
-
-Need to update manual of f2fs_io as well?
-
-Thanks,
-
+> > > No they can't for now. Even different PSE power domains within the same PSE
+> > > controller. I will make it explicit.    
+> > 
+> > Sounds like the property is placed at the wrong level of the hierarchy,
+> > then.  
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->  tools/f2fs_io/f2fs_io.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-> index fa01f8f..08056a9 100644
-> --- a/tools/f2fs_io/f2fs_io.c
-> +++ b/tools/f2fs_io/f2fs_io.c
-> @@ -1887,6 +1887,31 @@ static void do_get_advise(int argc, char **argv, const struct cmd_desc *cmd)
->  	printf("\n");
->  }
->  
-> +#define ftruncate_desc "ftruncate a file"
-> +#define ftruncate_help					\
-> +"f2fs_io ftruncate [length] [file_path]\n\n"	\
-> +"Do ftruncate a file in file_path with the length\n"	\
-> +
-> +static void do_ftruncate(int argc, char **argv, const struct cmd_desc *cmd)
-> +{
-> +	int fd, ret;
-> +	off_t length;
-> +
-> +	if (argc != 3) {
-> +		fputs("Excess arguments\n\n", stderr);
-> +		fputs(cmd->cmd_help, stderr);
-> +		exit(1);
-> +	}
-> +
-> +	length = atoll(argv[1]);
-> +	fd = xopen(argv[2], O_WRONLY, 0);
-> +
-> +	ret = ftruncate(fd, length);
-> +	if (ret < 0)
-> +		die_errno("ftruncate failed");
-> +	exit(0);
-> +}
-> +
->  #define CMD_HIDDEN 	0x0001
->  #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
->  #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-> @@ -1932,6 +1957,7 @@ const struct cmd_desc cmd_list[] = {
->  	CMD(removexattr),
->  	CMD(lseek),
->  	CMD(get_advise),
-> +	CMD(ftruncate),
->  	{ NULL, NULL, NULL, NULL, 0 }
->  };
->  
+> When a PSE controller appears to be able to support mixed budget strategy and
+> could switch between them it will be better to have it set at the PSE power
+> domain level. As the budget is per PSE power domain, its strategy should also
+> be per PSE power domain.
+> For now, it is simply not configurable and can't be mixed. It is hard-coded by
+> the PSE driver.
 
+Yes, but uAPI is forever. We will have to live with those domain
+attributes duplicated on each port. Presumably these port attributes
+will never support a SET operation, since the set should be towards 
+the domain? The uAPI does not inspire confidence. If we need more
+drivers to define a common API maybe a local sysfs API in the driver
+will do?
 
