@@ -1,262 +1,224 @@
-Return-Path: <linux-kernel+bounces-534494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09D2A467A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:14:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218DDA46791
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42EC617186C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C333F1890FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01AC224AE8;
-	Wed, 26 Feb 2025 17:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727051632C8;
+	Wed, 26 Feb 2025 17:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fwt3AhCh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cVAOrcdv"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazolkn19010014.outbound.protection.outlook.com [52.103.37.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3584F224894
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589534; cv=none; b=o9969a/A9cqBiFzNzZDtu2y1ZDz+gWTLxTGA3pXctTK5/4mwl1qKSwHJJ7lHwEErROo2y/IETudp+wzIaIcV561zEec3ABaMTnIKHBAtN/RMgbRpx56Y37+owMCugcJN84z6CEuHgSyq4I8CQUAlMXES31Hoq9oonFoAs8cRSTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589534; c=relaxed/simple;
-	bh=Wn1/CceYWAVJQuoyMYnGd5us75/9qlS0eq34VURZLMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VqP3rU4Xdqw/6QBFcnHOQKFH4FfJE5kVttihyX751DkCvvGUb9DNy4SRwjuOVXispttyZhYYvprR2Wgce5hzPv5yg+M8F2L1ytk0Ac33wHq8bGppV6Z7m3EVFgvKpnhrL3BEdoj+e5xwH7a0KTUKQquJy81XA39uHNQjm4JfdW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fwt3AhCh; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740589533; x=1772125533;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Wn1/CceYWAVJQuoyMYnGd5us75/9qlS0eq34VURZLMM=;
-  b=fwt3AhCh3ntoIbdE1DZq8xK3Yg1G2fTHb9LFUe9MoLy4dyQqhHaOgE9E
-   JiAOYsHiOi1WGDOfm+FPrpGrNwVFCVTDoMfN/DzM5BhL54aXVjiQ63QUa
-   MEBGOuUNHWTShcumOEBm6Kinsw1V5RcmRMr7jig2wIg2EHZydIwW/gSwD
-   ht74LOP94UgzsgjYvzXa4BE+3x2K9fov28yVWKy0NbNwGm1Oo1nLKWFxA
-   GGm8fAiR0V+Bk84CA14q1E9GB48YOi8wccT1Ne+yz90n+kH7LMAxJHsQB
-   U4/oqMWmlibpaKDTuvpPhxtoi1ZL4uPGhoKSDiZbPXd15NgTRDsex5oE7
-   g==;
-X-CSE-ConnectionGUID: icfJt0CMS7KMP9wrxDCuaw==
-X-CSE-MsgGUID: 9qB+TiIWRG+iEU0OUM6pxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45361827"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="45361827"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 09:04:54 -0800
-X-CSE-ConnectionGUID: RHud15SvQtKBdyyCLk+kDw==
-X-CSE-MsgGUID: wR9CR6AyRJ2Sr+r4b6DYlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="116946786"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Feb 2025 09:04:50 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnKq0-000C7r-0h;
-	Wed, 26 Feb 2025 17:04:48 +0000
-Date: Thu, 27 Feb 2025 01:03:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Bartosz Szczepanek <bsz@semihalf.com>
-Subject: include/linux/tpm_eventlog.h:165:6: warning: variable 'mapping_size'
- set but not used
-Message-ID: <202502270159.BdFzuxvF-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC75B258CC0;
+	Wed, 26 Feb 2025 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.37.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740589496; cv=fail; b=LjedYyTtdxMBbk/KMKUgzi2z9/z6ia3GCpBFp+/BeVepk6lCsiPoAbHaWB7f2b8lJJ+iEp644q9MnvAHQlDoXvgd8Udz69UTnLFbn8QuNxyi5pF7MCiao7knGUlj3tq9Vpl5WIbu9mOeiQ8V1i9Uv/F5aS26D9BRd/WKOQU0iHY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740589496; c=relaxed/simple;
+	bh=p0aacvA5ygU9bDOuASHjcy0NHMjifSJprsW0aSzaoxo=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=M8Jc1iLx7t4unPn/kwafzwi8t4774oyyr67iziG0LfBXDN8jVLVAdRXtfrARYl7oBgG58s1NV/PUunuYGE5Q/lIJpuH/zvJbJp+3/9PMFYlXeD/N2PxOQedhf62xveSceSI0a1hPYEtKXv1W3qzDJC4mgqjgzzG5Ds9uyHzu2PI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cVAOrcdv; arc=fail smtp.client-ip=52.103.37.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SGmVZ8fNpbxzdxK6ShTHQd0Ytu/DQDueDfgv7lrUouIwgVkpOYrF2n1M6/j6McTTnYVohR9DlKk0eaQyY1E6W/cVdDHwWFSIYnOh/Yt/tujhDqipsYxOeoKWR7hwckaoWCxsTceJcEkdiewwVOJzxsJXL3mxUoxbHgXayY3XfPQndc/uKQVgzVK5zG9lckCcVHgQ428hIkCP/8SY7wP+6m2kz9SeG+H+wpobN34bYreJof8zGzMY2KRwxOG44EJRNBQBSH9DqCnClguQUICYJZJGHGKhXFbZMtrWnyUau/DzwHDr9O3AZLySr2BImQqiqH3MhJNQbtFaQ/RITZ2CBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JIoZUrz/GOM9lrAk9LJoPWZUPtxnSRMqeFfM/mjeHPs=;
+ b=IIa+WcChn1OsON3krSYPi98g84Y7g9bhkOLk69GjNAy9wuAcegqI0UPh7+LE8sqYI86qQ/un2ki1k5gewucbC2+Ld6mpyoHb+7tL0M/jBDU3ncpRwrWI2Sgd5PDNYiOj6RaijMdSGHjeGHltnwycw19pe4uKmZ3tVGcoohGoIQNKw3wQYy534RpH4D3l0h1/ucEO4sd4+N1DboIUfeqlbPlm50bAOyDqQL55Gac86us7kGcDCYfy6w/e912CkJBbsjhekJONtMrQa/8/lJTlu4sissLr8zALgQ0SW8jlEUVmKuCBbj4HOeRMzO8iydRAw/tO9EzODasl5B8xDYDjqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JIoZUrz/GOM9lrAk9LJoPWZUPtxnSRMqeFfM/mjeHPs=;
+ b=cVAOrcdv6aH80yn4ms7PxxChVrh43TCDLnp1OWwBuss7HL70hYbuDX8tn6t98tHPC8T0yoZU74gZM+/2oE8FRCF3QBH0zPEiJEcHJJMjjuHaEwW+UPTmzk97kOWYAfG7GjvsOb8N3CU/3Mm2Kpgquw+j08uDfDUiXNV/8fXHObZgla8UP5tfCcTEapjLmFcesdGx2zk/RimVzKl45bszyS1a3wVGKZscMvopf/8Ndc65yJjsNB7i6dJ3kGPInhSTx5XXzcgXkV1Ym3PHTvtfmU/aIBqpL6uv21Cu3CH7lGispzUBj9M2sf8AzScpOYvy8VjSrm4wQetGLRbhPM5YcQ==
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
+ by LO2P123MB4239.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:165::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.20; Wed, 26 Feb
+ 2025 17:04:52 +0000
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb%5]) with mapi id 15.20.8489.019; Wed, 26 Feb 2025
+ 17:04:52 +0000
+From: Manuel Fombuena <fombuena@outlook.com>
+To: pavel@ucw.cz,
+	lee@kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] leds-st1202 improvements
+Date: Wed, 26 Feb 2025 17:04:40 +0000
+Message-ID:
+ <CWLP123MB54739F38EF9CFA057021BC2DC5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0458.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1aa::13) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:160::13)
+X-Microsoft-Original-Message-ID:
+ <20250226170440.2327838-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|LO2P123MB4239:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb51598e-4110-440c-bc5a-08dd5687af6b
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|5062599005|19110799003|5072599009|15080799006|8060799006|7092599003|4302099013|440099028|10035399004|3412199025|41001999003|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6J7uNt3ouhvVstuuA5OdLvqFdQkaWsva+4tVew1ynruPhmi0cCrHT98Vy/Ud?=
+ =?us-ascii?Q?nznxRYZDt7wc66rekn+9xC/Tv5cdrMh415hlBOtuLXv1EfjIJ29Rk/EHDZ4c?=
+ =?us-ascii?Q?uleKJcUbrugNrCRajtbIqhT0v/i+exDCp+/5SymsToTEzyrL3DBj1HphfMP1?=
+ =?us-ascii?Q?voezZN9EAg26EzbEBoGJLKV1neN1jd61jubRVUgP3JZ3LpEc12VxEsvN8+1b?=
+ =?us-ascii?Q?U1tclp3FhxAvy5oLVI3vS0s79I573ywEySP64S8Qh2lCcLBFl1Gs9fOJP8l4?=
+ =?us-ascii?Q?7y0HEhl8WRAUgx0heBAR299U4+bAbQPCq0lqvIto8cVjX1G+Tl8Ue+ryoN+Z?=
+ =?us-ascii?Q?mawSsEu+L06yXLJVvNPkwcbEFDz03sMlJSv+OypOjREM4mQFQnUJTz9S3fzV?=
+ =?us-ascii?Q?sTnCmyYtSAvl9VtHI7EAjy7B5Tp0CiUZbEt0SGgIt2Rcxav4QwBoo5yYg/if?=
+ =?us-ascii?Q?IRucezlAppwyu8YifnH4MBluuMrnORj0gu/qU9JBeji/KMk8GIHj/OhFjPDb?=
+ =?us-ascii?Q?A3qCji23M8F22hsKTiFYuK3nv+EdnHN8hQ0J7USxVZb38tz4oumTqPmfLf9+?=
+ =?us-ascii?Q?TnBmn4zKiG4mB62rq27nWVEDiKjP9d4TLOC1XsafYYuOAN/6AST8iPSl0GqJ?=
+ =?us-ascii?Q?0wrynzKcD4SVVewypM29+BxvwAsYAkzy6a5JQtVO/L4ddQbVZhEmKOenLdw2?=
+ =?us-ascii?Q?I+Su4eOocD8VOsWEKbfgNAMg5KLHYbS7RBFzjPE8560V+HjGmz26nV5K5c0Y?=
+ =?us-ascii?Q?rqTDExUwQKHsF7V4VMkFzHfvsPawOe9ehUnFWGIxkMwW5CY4NQISVbqh0Qoj?=
+ =?us-ascii?Q?+iRYevJ9BEv5/WqbkWe6lHZZPkrgA3CsI9ufh9qvYHkIw9XFDCU421ToPBaW?=
+ =?us-ascii?Q?njVYiSyCj5hE1uPt4VN6ZKorBROysxfrTtkEAd+Ej53Sx077RaKmzbfhgzQe?=
+ =?us-ascii?Q?j7+NjcQImRVMPh5fCUCzgYQFixxVBxG5ZHNBlM9zsdZylr4zZpygIOCtOLrv?=
+ =?us-ascii?Q?0LdxMxYAi20/XC6IogNforACcdE3MtPSMeFPIjV91w/VrkDxAoMPYU53pFCp?=
+ =?us-ascii?Q?PHVWDL2hROp/eZiV4/TBb/d9T8HWC9FgO8mc6LbOVcXayBq2WSxcfQgheHZP?=
+ =?us-ascii?Q?dAuiOtIn6jfV8pT7OmANlxhSWobd9ltMlp7kUWDxWVB+5lKNdUXHX4hQuufS?=
+ =?us-ascii?Q?f36E08h9RxuZdVQT4YxTlJFlCl47s7deqYcnqsDIuDVmlfTePILmoDwilp1S?=
+ =?us-ascii?Q?V1P/7u1yzNVVLRgKLFUcJ9fzvMoftNlODDlsjAZ3jWUjmyFIo0NQISNy7X0E?=
+ =?us-ascii?Q?xZDvKixtmSloR/btUjLy8o2s?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uJB7MBNWyC9e13ncfN6dVt0bMMppi6SlVukuT+f6fPzY3bWKSYrs8pcBw8PM?=
+ =?us-ascii?Q?R0IhOxdgpc5HpgtFxJ8LLHu75BE/WJUXfn3IIfow6rYoglUDEfM9Ox+lREgr?=
+ =?us-ascii?Q?jSgnGFfey4I1yDhmdwzkb+Yrjek67TULqEqYmQspvtoDtXrkK6ckjY1s+/d2?=
+ =?us-ascii?Q?On7baVWoAhXkCI0E9Cn9DI4WzOLJJ5rmyOwcql0ujveFvM3KqEI6iZUMA2wY?=
+ =?us-ascii?Q?eQ11ZINbQXK7EiHM5KGHvN+029AqtneiwRsvDtfwL/r5g4azdvXaIJEKOUmX?=
+ =?us-ascii?Q?13CqB6hwo6KBcqbViXV1fKA9iXH/IApBxfKQHXMWWL25vWZekw5kHnxR1lT4?=
+ =?us-ascii?Q?b1HY93Y+/Q/M9Lox1Il2GVEXI8sxfCcX14q0DOnMIDLN3Qre4B7nCVQO+dK/?=
+ =?us-ascii?Q?yHpGmvinsGooD538iZODHvKAJ5Yo8XtiJ6qW7Pf3XQ3JSSPjo0dOpliNd2s+?=
+ =?us-ascii?Q?0eOGVB2NKaPO1Ic/tP17CwGWb/F0dlyaJINi4/gfu7wBzixCwo54DT7nnjed?=
+ =?us-ascii?Q?XG6KeG5bJUkbQDZd64/Gfm84VYq1+zuijIk7vI7AKJ/75PI0TOBISze2bYyW?=
+ =?us-ascii?Q?rEfUN+SRSgF/4Q90EcP8Jn6D+LP2bKKQ6XWtE3ghmZn3ff03dv+2qtsqQX7a?=
+ =?us-ascii?Q?wcW5wwxTm2deSz08Idg/4ZJ5BmZHx32IuJzOOZZfbpCo8p3rtHa34sbQ0rRm?=
+ =?us-ascii?Q?jp4skF0ABJaUIg/El1z62dVhLJdj64PNdjD/OTI3dMTTFlsOKaSBbkr50Jgy?=
+ =?us-ascii?Q?+M4dT668viXwJab6ZbvwULyNrONaPjCZMBW/NGplCnJqFpn/2P626/Kco1Wc?=
+ =?us-ascii?Q?+zXBm60cWKWSArPEkU8YBZ+uCX3hU05eJW95zCW6h2nQEYrDTrlN4zVseHz6?=
+ =?us-ascii?Q?mn6qbH0dl7FNd8lB8XliaqT5vFCcFooxZoPWJ4Iud48CYSgVxVQFvR/APpry?=
+ =?us-ascii?Q?Kt4bPoEEhISSe6IOgFR5PrrcOEphaFlmdPW4p+GYjuhPmn/QGKkYf2DmakwM?=
+ =?us-ascii?Q?985wfuw+bMSyk5T1c8GFtcI+6vKAQBoxa4HmDbStW376YHARTy1ABORSnB9m?=
+ =?us-ascii?Q?fEQ5XU+h6UrvKX+Mpom2E2sIqCrPUiXZJWSYIs8jrPw8r3pEBNwLbICyK36G?=
+ =?us-ascii?Q?XEKWXV7xg+xqoPWIoLp3NE3qW7jGBkddNwnXmQpvgdqsOhVLP9qWE+911jEp?=
+ =?us-ascii?Q?KixZ8rjGEx8q+RTsNjHkWvd45ZIE3UT59M1kZTNkOkTpk23Wl04zY858sdKq?=
+ =?us-ascii?Q?LSE0hyrNyEnlwrNLHt+4ZWuhugCa6NGjCtudceJojANVW7Z+nb2s2u8/iy3u?=
+ =?us-ascii?Q?neg=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb51598e-4110-440c-bc5a-08dd5687af6b
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 17:04:52.4455
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P123MB4239
 
-Hi Matthew,
+Following the feedback received on the set of patches for leds-st1202 that
+I sent previously, I am sending separately for your consideration those
+that are not fixes with an improved cover letter that hopefully is more
+aligned with the guidelines.
 
-FYI, the error/warning still remains.
+[PATCH 1/3] leds: leds-st1202: initialize hardware before DT node
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
-commit: c46f3405692de1ac82240d927b9c7a0f9d6a4a36 tpm: Reserve the TPM final events table
-date:   6 years ago
-config: x86_64-buildonly-randconfig-006-20250127 (https://download.01.org/0day-ci/archive/20250227/202502270159.BdFzuxvF-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502270159.BdFzuxvF-lkp@intel.com/reproduce)
+The purpose of this change is to make leds-st1202 initialization more
+robust. The underlying idea is that a hardware initialization
+failure is somewhat more likely to happen than merely filling a
+led_classdev struct.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502270159.BdFzuxvF-lkp@intel.com/
+Currently, st1202_dt_init() is called first to fill the led_classdev
+struct. Afterwards, st1202_setup() is called to initialize the hardware,
+but it doesn't require any return from st1202_dt_init() or depends on
+anything done by it to do that. This has been inferred reviewing the code
+and corroborated with testing on an actual device switching the order
+of the calls.
 
-All warnings (new ones prefixed by >>):
+The present calling order can lead to a situation in which the hardware
+fails to initialize while the led_classdev struct has been filled.
 
-   In file included from drivers/char/tpm/tpm_tis.c:30:
-   In file included from drivers/char/tpm/tpm.h:29:
->> include/linux/tpm_eventlog.h:165:6: warning: variable 'mapping_size' set but not used [-Wunused-but-set-variable]
-     165 |         int mapping_size;
-         |             ^
-   1 warning generated.
---
-   In file included from drivers/char/tpm/tpm-chip.c:24:
->> include/linux/tpm_eventlog.h:165:6: warning: variable 'mapping_size' set but not used [-Wunused-but-set-variable]
-     165 |         int mapping_size;
-         |             ^
-   drivers/char/tpm/tpm-chip.c:422:11: warning: cast from 'void (*)(struct device *)' to 'void (*)(void *)' converts to incompatible function type [-Wcast-function-type-strict]
-     422 |                                       (void (*)(void *)) put_device,
-         |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 warnings generated.
---
-   In file included from drivers/char/tpm/eventlog/tpm1.c:24:
->> include/linux/tpm_eventlog.h:165:6: warning: variable 'mapping_size' set but not used [-Wunused-but-set-variable]
-     165 |         int mapping_size;
-         |             ^
-   drivers/char/tpm/eventlog/tpm1.c:253:6: warning: variable 'len' set but not used [-Wunused-but-set-variable]
-     253 |         int len = 0;
-         |             ^
-   2 warnings generated.
+It is important to note that this situation would be more severe if a
+patch that I submitted previously [1] was not applied, as in that case
+devm_led_classdev_register_ext would be in st1202_dt_init and a later
+failure on st1202_setup would mean that the kobjects are available in user
+space but the hardware is in failed state.
 
+While I think this change makes an improvement and I can't foresee any
+issue, not applying the patch would have no consequences under normal
+circumstances.
 
-vim +/mapping_size +165 include/linux/tpm_eventlog.h
+[1] https://lore.kernel.org/all/CWLP123MB54732771AC0CE5491B3C84DCC5C32@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM/
 
-   138	
-   139	/**
-   140	 * __calc_tpm2_event_size - calculate the size of a TPM2 event log entry
-   141	 * @event:        Pointer to the event whose size should be calculated
-   142	 * @event_header: Pointer to the initial event containing the digest lengths
-   143	 * @do_mapping:   Whether or not the event needs to be mapped
-   144	 *
-   145	 * The TPM2 event log format can contain multiple digests corresponding to
-   146	 * separate PCR banks, and also contains a variable length of the data that
-   147	 * was measured. This requires knowledge of how long each digest type is,
-   148	 * and this information is contained within the first event in the log.
-   149	 *
-   150	 * We calculate the length by examining the number of events, and then looking
-   151	 * at each event in turn to determine how much space is used for events in
-   152	 * total. Once we've done this we know the offset of the data length field,
-   153	 * and can calculate the total size of the event.
-   154	 *
-   155	 * Return: size of the event on success, <0 on failure
-   156	 */
-   157	
-   158	static inline int __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
-   159						 struct tcg_pcr_event *event_header,
-   160						 bool do_mapping)
-   161	{
-   162		struct tcg_efi_specid_event_head *efispecid;
-   163		struct tcg_event_field *event_field;
-   164		void *mapping = NULL;
- > 165		int mapping_size;
-   166		void *marker;
-   167		void *marker_start;
-   168		u32 halg_size;
-   169		size_t size;
-   170		u16 halg;
-   171		int i;
-   172		int j;
-   173	
-   174		marker = event;
-   175		marker_start = marker;
-   176		marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
-   177			+ sizeof(event->count);
-   178	
-   179		/* Map the event header */
-   180		if (do_mapping) {
-   181			mapping_size = marker - marker_start;
-   182			mapping = TPM_MEMREMAP((unsigned long)marker_start,
-   183					       mapping_size);
-   184			if (!mapping) {
-   185				size = 0;
-   186				goto out;
-   187			}
-   188		} else {
-   189			mapping = marker_start;
-   190		}
-   191	
-   192		event = (struct tcg_pcr_event2_head *)mapping;
-   193	
-   194		efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
-   195	
-   196		/* Check if event is malformed. */
-   197		if (event->count > efispecid->num_algs) {
-   198			size = 0;
-   199			goto out;
-   200		}
-   201	
-   202		for (i = 0; i < event->count; i++) {
-   203			halg_size = sizeof(event->digests[i].alg_id);
-   204	
-   205			/* Map the digest's algorithm identifier */
-   206			if (do_mapping) {
-   207				TPM_MEMUNMAP(mapping, mapping_size);
-   208				mapping_size = halg_size;
-   209				mapping = TPM_MEMREMAP((unsigned long)marker,
-   210						     mapping_size);
-   211				if (!mapping) {
-   212					size = 0;
-   213					goto out;
-   214				}
-   215			} else {
-   216				mapping = marker;
-   217			}
-   218	
-   219			memcpy(&halg, mapping, halg_size);
-   220			marker = marker + halg_size;
-   221	
-   222			for (j = 0; j < efispecid->num_algs; j++) {
-   223				if (halg == efispecid->digest_sizes[j].alg_id) {
-   224					marker +=
-   225						efispecid->digest_sizes[j].digest_size;
-   226					break;
-   227				}
-   228			}
-   229			/* Algorithm without known length. Such event is unparseable. */
-   230			if (j == efispecid->num_algs) {
-   231				size = 0;
-   232				goto out;
-   233			}
-   234		}
-   235	
-   236		/*
-   237		 * Map the event size - we don't read from the event itself, so
-   238		 * we don't need to map it
-   239		 */
-   240		if (do_mapping) {
-   241			TPM_MEMUNMAP(mapping, mapping_size);
-   242			mapping_size += sizeof(event_field->event_size);
-   243			mapping = TPM_MEMREMAP((unsigned long)marker,
-   244					       mapping_size);
-   245			if (!mapping) {
-   246				size = 0;
-   247				goto out;
-   248			}
-   249		} else {
-   250			mapping = marker;
-   251		}
-   252	
-   253		event_field = (struct tcg_event_field *)mapping;
-   254	
-   255		marker = marker + sizeof(event_field->event_size)
-   256			+ event_field->event_size;
-   257		size = marker - marker_start;
-   258	
-   259		if ((event->event_type == 0) && (event_field->event_size == 0))
-   260			size = 0;
-   261	out:
-   262		if (do_mapping)
-   263			TPM_MEMUNMAP(mapping, mapping_size);
-   264		return size;
-   265	}
-   266	
+[PATCH 2/3] leds: leds-st1202: spacing and proofreading editing
+
+These are minor changes to polish the format of a comment for consistency,
+correct a typo that comes straight from the datasheet, and add punctuation
+for readability.
+
+There would be no consequences if the patch was not applied.
+
+[PATCH 3/3] leds: Kconfig: leds-st1202: add select for required
+LEDS_TRIGGER_PATTERN
+
+leds-st1202 requires the LED pattern trigger to work. Without it, there
+would be no /sys/class/leds/<led>/hw_pattern to write the patterns to and
+no way to interact with the LEDs.
+
+With such requirement, it doesn't feel prudent to leave the selection
+of LEDS_TRIGGER_PATTERN effectively on it being already selected,
+since nothing on leds-st1202's Kconfig does it.
+
+To reproduce the potential issue that I am trying to explain:
+
+- make menuconfig KCONFIG_CONFIG=
+- select LEDS_ST1202 dependencies OF, I2C and LEDS_CLASS.
+- select LEDS_ST1202.
+- LEDS_TRIGGERS is selected but LEDS_TRIGGER_PATTERN isn't.
+
+Without this requirement explicitly selected, the resulting kernel won't
+include the LED pattern trigger so the consequence of not applying
+this patch would be that downstream projects and users would need to
+figure the requirement out, if their starting base .config file doesn't
+have LEDS_TRIGGER_PATTERN already selected.
+
+Manuel Fombuena (3):
+  leds: leds-st1202: initialize hardware before DT node child operations
+  leds: leds-st1202: spacing and proofreading editing
+  leds: Kconfig: leds-st1202: add select for required
+    LEDS_TRIGGER_PATTERN
+
+ drivers/leds/Kconfig       |  1 +
+ drivers/leds/leds-st1202.c | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
