@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-534154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACB0A4637A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:48:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E152A46381
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A25189F2C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB864165067
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7294122370F;
-	Wed, 26 Feb 2025 14:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D322222A5;
+	Wed, 26 Feb 2025 14:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S64eu0v7"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHrrOgkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D1A2236EB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D83921CC48;
+	Wed, 26 Feb 2025 14:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581226; cv=none; b=dwuJS4Wpu14aLXlo3bR+Nm5iKtjvrZluOoSuu4ZD0Ve3olhh6U7wBm8Wq2wppqAAAh2kdz+u3k+s3sr8v1Kj8TTlRQPTdwlhRv/KaW20obbixAZ2ppibp77DpN5fTvU36F/ynu5rsuXhyKi6YSgcIh7ck7/DfvmN+J9J59Oh4Z0=
+	t=1740581289; cv=none; b=Ez3HUPhy99RHn8+EMhg1UligOL5EIAuyJ1JyxhDycZBvPBzPXf8R0OdNSLC7lsp8YvwL4tZPsCufvn1NFcP21zeoQ0mXOxyv1hXS8ZiDl4sGSsNy8NnJ2dYBSWdzZce6NyWJ2VlupmqaCaUZf3E3TzCanGiTYG0hb0JhLIHwtxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581226; c=relaxed/simple;
-	bh=m/XdZhhvS6FYiXUcwXOJ1LLkTXVWffO1oF02DIV7wEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DZAGDO6UiS20MrkhN2VM3PuRc5XfcKMcD205HPGyeunYWz4H+uEJg9uX78UEU39YxQqdcUjn4GUJ5cAERk7IkuSgbc1D6mu6krOPjaqFwYnEDZOHYC7SIo4vJpbHL+St3KxCtJgK0Qmr+qRg1TtMsNKT+LtPVaTrOS+vCUT3Fh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S64eu0v7; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43998deed24so66131535e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740581223; x=1741186023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8pOyW28UvUKwTgBKlyrzwQ8HJbMn+0BIuk/+k9qJPJw=;
-        b=S64eu0v7kcYJRl94NyQejbkOgpNvivDTCue5bJsmUbKgycmp10LRfYgw2JK0jIeSSR
-         2HxeVGcDCrNiVEB8c1g1Y3HLuA4xnRL8LF8oLpzlopCa1RWX4wLlfvCtdZzJkjCr2PBM
-         mt/Fu+3LJiR4x8/Ei7BDgZQE7nUNar9ULoklm11wS3Ruibktvj8Gyr1D3x5oVTGqooL0
-         V0Bkg/OdQ2AOec5Tz6THR4ygE06twnjFcKpMbOt3mI6knb2Nzgk7w8+ogdmeM++L0OZH
-         RfWidhzjrLo5xZyl/lII2rgRiBkASRlsQTllTBQcO43wUlD8ff/uqraX771hn1o+Xu+m
-         7xzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740581223; x=1741186023;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8pOyW28UvUKwTgBKlyrzwQ8HJbMn+0BIuk/+k9qJPJw=;
-        b=s8xdi/NyTN8vX+S45RqBrnX9FXs4fc1I0A5mKbwyaI/TRZLw1odRHjvdr9+p3yV4b9
-         MP6OwmSGlO5HqSGHoPyuDC6wXg17zIKC/KGaNFOudcchz6vaTdLrNI5AGkCvX+FELDba
-         MZiy8xoBTe6ZJuzKHwjqrQ5PmMGNucbI2vAEO9izEq+8bglGFojGfKl4SG9uj1nH0PXZ
-         jXmmex3XiCypm7LGKU+nz06EOdvY7LlEtMT0uJp8jbokP1ImdI+oMQvoTA+Ps3OM83/O
-         wfuQfQK7x2uk0P9hyEWtSJAMJ0JtoGhE8iiSdcE5+e9qskLoPlkN36SGQ5ROMnrEpoic
-         Rshw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpbGVL3JqWg4qk/QBIW7sHpEx4xYAkRkIQfBfZ8Zs7JXxwQQ6xZZUbhu7I+hAm3srcXk8gNsruFqgbXX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ0rNuwfnMrgjtk/4vv6QjPkbP/AQ0pObmq1lDgy3uFKM5fNxS
-	jisNHzWmPzz0R0xl9fHUGCMKMR6wc1arjLCwAXC0qkPLTXdGeTV1+x9RnhQHr8U=
-X-Gm-Gg: ASbGncsLBKNkt6LI1Hdhi16tnpnwdQ1Wl9k35FZCW/ivjh5fUaSozQ7TVAz2t/u7880
-	Omj4Io03+PL2nt26RUGLgivS0us1fqnEhrc7w1AbxtLxgHBxb7gIhgdWyhmeO3tYkEn24hZlHtz
-	l5mLveK3wQDBqt0NQ9SEy7kDCG9mvUvsbmCuMP91aQPmvBoaPLIVtwxH75cu6A3OWdc1Swfnztm
-	8BTdeu9QMRewnONFu0ks665xFd0VDk/z63vqVgRJDYAn4y/gCH9h1BclEEoqVZSwt5T7dCf9Ec6
-	6a9T2PhIXvtgQP9afNVeD+tw12tlLQdHWMfMENVTEZEYfZCZ4hcZDcJaoH+mksI4Erk=
-X-Google-Smtp-Source: AGHT+IHNRfpULJPxhQY9HtJFoLDR0d9T57OoOlmyePOM9Y/l+ILE+lMCUBjbQM1hxPRcUu2S6ET/Lg==
-X-Received: by 2002:a05:6000:1a85:b0:38d:ba81:b5c2 with SMTP id ffacd0b85a97d-38f70854e1amr17780733f8f.47.1740581223249;
-        Wed, 26 Feb 2025 06:47:03 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fbb5dsm5716850f8f.84.2025.02.26.06.47.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 06:47:02 -0800 (PST)
-Message-ID: <eb06daf1-3cc3-4b31-a0bf-bc450cd0f041@linaro.org>
-Date: Wed, 26 Feb 2025 14:47:01 +0000
+	s=arc-20240116; t=1740581289; c=relaxed/simple;
+	bh=xd3neVQnKKxta6h/dkB0x1HKr/mwp+2cJLoVDQVsKqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pj+lqlf7JMzSAp21JZqFwVmHnorc3PODgoqTaA3Q1lEzd56gSseyTCkvcUPs7ww1x62ISrrg1QmWeJIhD5Evom7Jd9EzU2RHiqhsqfeJNN0zn63uOqPPMsp+j+mHpxr3VxVbxNRlzMoMf/HyM+HzZNl5AwJqupPOgptklxW7/Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHrrOgkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611C8C4CED6;
+	Wed, 26 Feb 2025 14:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740581289;
+	bh=xd3neVQnKKxta6h/dkB0x1HKr/mwp+2cJLoVDQVsKqc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nHrrOgkRXHnaJloFeHcTWFMBS6+Fcuy0rjgphJAHpsvi2mcRgDXskJXRe9cOWAM/E
+	 qWcdyAlnrIYnU/YXtzy91y/uCmVTRbC6NG2k3edfTHzrU0+t85qoTgvzMqQdmexUYg
+	 mr9+yn7QMTIuQ88tg2bhQ62xsrJfU6xRQvlCCwiO3nCH6Sp5x5WkpK+wcLPpsNxp3R
+	 gS82Bdf0KbW3RpECZNRxtrhyFtVe7JQB012Bpz4dzC0cXAH40wvOdCLVF5zAkIZ+Yo
+	 VFILJ39/Ko+fJCQJPSn30MYVJgydxJQdZaL3EdvHCHu7HYo2T4UGp0ZOASwU4xCu75
+	 P2Wgfmk+Jlr2g==
+From: Maxime Ripard <mripard@kernel.org>
+To: Joel Stanley <joel@jms.id.au>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@nxp.com>,
+	Xinliang Liu <xinliang.liu@linaro.org>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yongqin Liu <yongqin.liu@linaro.org>,
+	John Stultz <jstultz@google.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Marek Vasut <marex@denx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Anusha Srivatsa <asrivats@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	linux-aspeed@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: (subset) [PATCH RESEND 01/12] drm/aspeed: move to devm_platform_ioremap_resource() usage
+Date: Wed, 26 Feb 2025 15:47:53 +0100
+Message-ID: <174058126145.2737122.17862276006786077975.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250225-memory-drm-misc-next-v1-1-9d0e8761107a@redhat.com>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com> <20250225-memory-drm-misc-next-v1-1-9d0e8761107a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Some small preparations around CAMSS D-PHY / C-PHY
- support
-To: Luca Weiss <luca.weiss@fairphone.com>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Barnabas Czeman <barnabas.czeman@mainlining.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Caleb Connolly <caleb.connolly@linaro.org>, David Heidelberg <david@ixit.cz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
- <D82FU3SIX5RZ.1Y525GJO0UOAA@fairphone.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <D82FU3SIX5RZ.1Y525GJO0UOAA@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 26/02/2025 14:13, Luca Weiss wrote:
-> Hi all,
+On Tue, 25 Feb 2025 17:20:42 -0500, Anusha Srivatsa wrote:
+> Replace platform_get_resource + devm_ioremap_resource
+> with just devm_platform_ioremap_resource()
 > 
-> On Mon Dec 9, 2024 at 1:01 PM CET, Luca Weiss wrote:
->> Since the hardware blocks on the SoCs generally support both D-PHY and
->> C-PHY standards for camera, but the camss driver currently is only
->> supporting D-PHY, do some preparations in order to add C-PHY support at
->> some point.
->>
->> Make the dt bindings explicit that the hardware supports both (except
->> for MSM8916) but also add a check to the driver that errors out in case
->> a dt tries to use C-PHY since that's not supported yet.
->>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->> Luca Weiss (2):
->>        media: dt-bindings: media: camss: Restrict bus-type property
->>        media: qcom: camss: Restrict endpoint bus-type to D-PHY
+> Used Coccinelle to do this change. SmPl patch:
+> @rule_1@
+> identifier res;
+> expression ioremap_res;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> -ioremap_res = devm_ioremap_resource(...);
+> +ioremap_res = devm_platform_ioremap_resource(pdev,0);
 > 
-> This series is still pending, both patches got reviews and no pending
-> comments from what I can see.
-> 
-> Would be nice to get it in for 6.15.
-> 
-Yes this should be merged.
+> [...]
 
-Thanks for following up.
+Applied to misc/kernel.git (drm-misc-next).
 
----
-bod
+Thanks!
+Maxime
 
