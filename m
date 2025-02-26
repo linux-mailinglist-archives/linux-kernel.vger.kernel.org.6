@@ -1,105 +1,205 @@
-Return-Path: <linux-kernel+bounces-533947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A779A460A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:22:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53641A460B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B9F3ACC2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:22:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316F77A9E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BD821C9FA;
-	Wed, 26 Feb 2025 13:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697D02222A2;
+	Wed, 26 Feb 2025 13:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXNV4NZT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MF1PRG5Q"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AD9258CCB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1438B21D018
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576151; cv=none; b=IgKtafObLsXc/lUaWRHNzHWcOs27wvtpy2k6kNQDCEBLDgP4rEEP5UruRZavyvmIChktRKVJghSa8e2Kaau2fa8sl+EFm64YvqKPFfLOuwafm6y0zXRsm2JtOofHuCsnq2AOLM6dWmqVDd4BqU6OG1JTS6f6JLJTxZ8DuA3TFac=
+	t=1740576200; cv=none; b=TuMqaaZdlfvvql4O3XSlfZI5CahtlH92gEQNrQN22vZ09nqUcNViMi9xygZmFQgem56gClWXWeNJM7+C0qeiskZOcrmI6N/XviwUbfOugDi6c7c4wWVhy0a/oRtzlwTC28GxhAInDHRFotQ9OeYU+40ofl1UMe0uPxTsYFHlZDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576151; c=relaxed/simple;
-	bh=F4EDCOt+pN0vItg4IqYGZS5cM2Bt7kx6pZt5jApU9o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWaNN0gEJCh5pJ5vOiNMJxXdO4tPqxP96hybpn8qSmjLY59tiMb+o/Y7lXdqp4BezYB3yJLzooMV1UHzr3GJbw/zi8iCfYxKjKhzYwmka8LrvqPhtmUYF7VIli1IYKYTOEPeJl8wGn4P+y6TFdPPfLjY7WDTNXYIA0fQG2LNqCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXNV4NZT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740576150; x=1772112150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F4EDCOt+pN0vItg4IqYGZS5cM2Bt7kx6pZt5jApU9o0=;
-  b=XXNV4NZTinZNQnqMRqY0ktWC1aORDsQYUuU9E3xwM3oR1u4WaviKdV+U
-   AQI5aFgXlq1mlw9gaa1g1uL2tBTSsPggpCyQVo4LaiECrWCVvPAW/KoGO
-   uUIFj8ZMFTWbKsv89pHQL9L3DqqHA7FB/1zk0/a/YFLY4HzumzvXKM92y
-   oIBj91DXU4+opxhddLGQwvX8Hkyx/JyLKJMJ2/bt0ZAScyauAFXlVq8ND
-   LHcN8vQ/CCkZaTBXxjh2XxIMFSeGX6ycrrqIcnB09LqIAGoeNVhZHPY2j
-   +p4xiLhmgBH97ZyWcOeagWf+i5atHYuubL/JkQItgoAO9R3UjCWzxnN10
-   A==;
-X-CSE-ConnectionGUID: 0qv9J6qoSvKqq3QpUfXJ9A==
-X-CSE-MsgGUID: SW6jvaH0Tz2UXeQVkkF/CA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="66791351"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="66791351"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:22:29 -0800
-X-CSE-ConnectionGUID: OUQayhPtTsCfClUhjmwcSg==
-X-CSE-MsgGUID: 6tT3gXXJQfe1nByuA8qkRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="117189432"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:22:28 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tnHMm-0000000FKhp-2rnr;
-	Wed, 26 Feb 2025 15:22:24 +0200
-Date: Wed, 26 Feb 2025 15:22:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] mfd: intel-ehl: Introduce Intel Elkhart Lake PSE
- GPIO and TIO
-Message-ID: <Z78VkEnJh8l9MWF7@smile.fi.intel.com>
-References: <20250226061527.3031250-1-raag.jadav@intel.com>
- <20250226061527.3031250-5-raag.jadav@intel.com>
- <Z78VIjgkzf_GlauU@smile.fi.intel.com>
+	s=arc-20240116; t=1740576200; c=relaxed/simple;
+	bh=BNBjN9eojJuckvSPmE2E6Krsv7VXfHHr3UGTTgvNq2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pDUQaYSqfyNXRg+n+Wsqk4sQUgUX8fkKdN8Whp9VCKvN95Edn2kzQyY6MEGZDEsC8XX8fn0DhAGyTC6GO+8w93MiTQXy5NgEI3okVQYY0j+Po3FJTd8Qg8jVUAt8/dJ6zKDY0Gl1YDiyXrx4M78e6NwIrTyevbg9TAjf9Am78ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MF1PRG5Q; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740576186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LIrVE00T1J3Jz4vdwi9do6q1hDo8nGa1bNYBlY2fo8E=;
+	b=MF1PRG5QQ1Lqq7wFZG6q8r8CMol2naHU/jSKSQcnkINwj7weVztyp1WqNvpg3VINv/Eagu
+	UQJz/MQx3uCsrKpXXyVmU+KtzlQ4AXW1YfmXE0s9Tuz3zDBtPXfEZ4vaH44dG5/ZLgL+t0
+	FzDdjq2JIzguGZDV3fxP8WfDZtVwvis=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: cong.wang@bytedance.com,
+	john.fastabend@gmail.com,
+	jakub@cloudflare.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	mhal@rbox.co,
+	jiayuan.chen@linux.dev,
+	sgarzare@redhat.com,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	mrpre@163.com
+Subject: [PATCH bpf-next v1 0/3] bpf: Fix use-after-free of sockmap
+Date: Wed, 26 Feb 2025 21:22:39 +0800
+Message-ID: <20250226132242.52663-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z78VIjgkzf_GlauU@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 26, 2025 at 03:20:35PM +0200, Andy Shevchenko wrote:
-> On Wed, Feb 26, 2025 at 11:45:27AM +0530, Raag Jadav wrote:
+1. Issue
+Syzkaller reported this issue [1].
 
-...
+2. Reproduce
 
-> > +++ b/drivers/mfd/intel-ehl-gpio.c
-> 
-> We are usually align the file name and Kconfig option, and I like Kconfig
-> choice, so intel_ehl_pse_gpio.c (also note the style with other intel_$SOC_*
-> files in the folder.
+We can reproduce this issue by using the test_sockmap_with_close_on_write()
+test I provided in selftest, also you need to apply the following patch to
+ensure 100% reproducibility (sleep after checking sock):
 
-And also Subject, you have currently 3 different names for the same:
-Kconfig, Subject, filename.
+'''
+static void sk_psock_verdict_data_ready(struct sock *sk)
+{
+        .......
+        if (unlikely(!sock))
+                return;
++       if (!strcmp("test_progs", current->comm)) {
++               printk("sleep 2s to wait socket freed\n");
++               mdelay(2000);
++               printk("sleep end\n");
++       }
+        ops = READ_ONCE(sock->ops);
+        if (!ops || !ops->read_skb)
+                return;
+}
+'''
+
+Then running './test_progs -v sockmap_basic', and if the kernel has KASAN
+enabled [2], you will see the following warning:
+
+'''
+BUG: KASAN: slab-use-after-free in sk_psock_verdict_data_ready+0x29b/0x2d0
+Read of size 8 at addr ffff88813a777020 by task test_progs/47055
+
+Tainted: [O]=OOT_MODULE
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x53/0x70
+ print_address_description.constprop.0+0x30/0x420
+ ? sk_psock_verdict_data_ready+0x29b/0x2d0
+ print_report+0xb7/0x270
+ ? sk_psock_verdict_data_ready+0x29b/0x2d0
+ ? kasan_addr_to_slab+0xd/0xa0
+ ? sk_psock_verdict_data_ready+0x29b/0x2d0
+ kasan_report+0xca/0x100
+ ? sk_psock_verdict_data_ready+0x29b/0x2d0
+ sk_psock_verdict_data_ready+0x29b/0x2d0
+ unix_stream_sendmsg+0x4a6/0xa40
+ ? __pfx_unix_stream_sendmsg+0x10/0x10
+ ? fdget+0x2c1/0x3a0
+ __sys_sendto+0x39c/0x410
+'''
+
+3. Reason
+'''
+CPU0                                             CPU1
+unix_stream_sendmsg(sk):
+  other = unix_peer(sk)
+  other->sk_data_ready(other):
+    socket *sock = sk->sk_socket
+    if (unlikely(!sock))
+        return;
+                                                 close(other):
+                                                   ...
+                                                   other->close()
+                                                   free(socket)
+    READ_ONCE(sock->ops)
+    ^
+    use 'sock' after free
+'''
+
+For TCP, UDP, or other protocols, we have already performed
+rcu_read_lock() when the network stack receives packets in ip_input.c:
+'''
+ip_local_deliver_finish():
+    rcu_read_lock()
+    ip_protocol_deliver_rcu()
+        xxx_rcv
+    rcu_read_unlock()
+'''
+
+However, for Unix sockets, sk_data_ready is called directly from the
+process context without rcu_read_lock() protection.
+
+4. Solution
+Based on the fact that the 'struct socket' is released using call_rcu(),
+We add rcu_read_{un}lock() at the entrance and exit of our sk_data_ready.
+It will not increase performance overhead, at least for TCP and UDP, they
+are already in a relatively large critical section.
+
+Of course, we can also add a custom callback for Unix sockets and call
+rcu_read_lock() before calling _verdict_data_ready like this:
+'''
+if (sk_is_unix(sk))
+    sk->sk_data_ready = sk_psock_verdict_data_ready_rcu;
+else
+    sk->sk_data_ready = sk_psock_verdict_data_ready;
+
+sk_psock_verdict_data_ready_rcu():
+    rcu_read_lock()
+    sk_psock_verdict_data_ready()
+    rcu_read_unlock()
+'''
+However, this will cause too many branches, and it's not suitable to
+distinguish network protocols in skmsg.c.
+
+[1] https://syzkaller.appspot.com/bug?extid=dd90a702f518e0eac072
+[2] https://syzkaller.appspot.com/text?tag=KernelConfig&x=1362a5aee630ff34
+
+Jiayuan Chen (3):
+  bpf, sockmap: avoid using sk_socket after free
+  selftests/bpf: Add socketpair to create_pair to support unix socket
+  selftests/bpf: Add edge case tests for sockmap
+
+ net/core/skmsg.c                              | 18 ++++--
+ .../selftests/bpf/prog_tests/socket_helpers.h | 13 ++++-
+ .../selftests/bpf/prog_tests/sockmap_basic.c  | 57 +++++++++++++++++++
+ 3 files changed, 82 insertions(+), 6 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.1
 
 
