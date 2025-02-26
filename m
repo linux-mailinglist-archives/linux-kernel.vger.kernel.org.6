@@ -1,137 +1,91 @@
-Return-Path: <linux-kernel+bounces-533057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C81A45545
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:07:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCC8A45546
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34AC43ABDE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07B21898430
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7B0267722;
-	Wed, 26 Feb 2025 06:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012762676DD;
+	Wed, 26 Feb 2025 06:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIZ9LpwA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RMm8SUg0"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDE933997;
-	Wed, 26 Feb 2025 06:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C008B260A20
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550048; cv=none; b=crZXNY1okGnaKxrhC/8Ro+zR7yROcornhczfCBHpf1LPJAvuabcLhAeWl+if30XpMhgPUtzSPp3YNOFlqu4qaSxl/B2ScJyHZn01DFJkAxhCUC1GIcgj41tvdN1fRMCREIV1kmRSLpTcIHcUBXH9qresfKxrA6as8iEt9SfN3B8=
+	t=1740550073; cv=none; b=bQGYR1EpMM8c2emkdmOSwN5wFSoLOjfI0DgfE5RqcBJDuoKCN270Pp146BiFiQd7WjBF5Q+5erPNWBwyUV6UmhKmQ686mMJk8lzVxS6+eswcUJM6FQwJIr4TeHJVumZnqFmngSmmEtssgvDUVy3Xel0Szs2hr9m6jN7EwEvSxLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550048; c=relaxed/simple;
-	bh=ZyHSW2CFJY0phCrOV3ftPgjBH4sON/3HnsEMzS5mjrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1KCIy+Y227CvR+olANXrbs0VJ2xeLIm+u1pX6tveMFE7JmShsNAQC/7Orq6t0OFaOTf6bXycV6e/6xXo9uSqsP0kLbdBNYmHkBvPzQ0cpqJdYljvdTSlktoEeNS//8RvMppuJYYjCxo/ydoiLdsztYN1GU5LqoVpH9E2AL7xHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIZ9LpwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CA6C4CED6;
-	Wed, 26 Feb 2025 06:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740550048;
-	bh=ZyHSW2CFJY0phCrOV3ftPgjBH4sON/3HnsEMzS5mjrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIZ9LpwAcREXQgfuNg0zyNw0M++bvgoKOyYmGBHqKBWJWIkoYcu+Sm1wJ8tWOUEZh
-	 EnRA0v7pJNyg+h1sZYC8QkXrwzrlQH24Zzku0cZm99ayVIxijNVEBS0K/LruEWa8dT
-	 /hKigNIP8L0xmkTai29HFfvIkz/ayat6ka7Vel+0SD+hwTpopXHvo0TtdnZ/3xwKzQ
-	 x2ilMqyS7yU8GnKatLUixjjy4COKOFtxw6qAmfTxiliNM5KapWNaR6v44zxjFGKNrQ
-	 3Ep/Rd4/juKbj150cjM6pJHukAy107hyro8VaICi4NEhenpUukLcRfhaxEVth95Gzo
-	 mP2bYYkBWGW9w==
-Date: Tue, 25 Feb 2025 22:07:25 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Will Deacon <will@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH] crypto: lib/Kconfig - Select and hide arch options
-Message-ID: <20250226060725.GA41090@sol.localdomain>
-References: <20250225164216.4807-1-arnd@kernel.org>
- <20250225213344.GA23792@willie-the-truck>
- <f7c298b8-7989-49e7-90a2-5356029a6283@app.fastmail.com>
- <c4896a12-8abe-4fe6-b381-86b23d32b332@app.fastmail.com>
- <Z75xKexTUNm_FnSK@gondor.apana.org.au>
- <Z76aUfPIbhPAsHbv@gondor.apana.org.au>
+	s=arc-20240116; t=1740550073; c=relaxed/simple;
+	bh=8k4y1k9uoqfb+mNYhBKVhr39gYXqU/HUdNIc+gDhJpk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uhWhKuM2mCJcYDGyHzOHBqlOiPjTG53JsUY8wSukpIJm5LTXyYIbws4KrXKWoVnV5sH4CO7Tg8cAR00/Q4n/nfj0YCPISRCtRbGn1f3N9e1AHPp4jbN9W1YaVCyOlk4ZOuhViwBG3vEvgcJwGjEuOBIryDvv/kPoM2TFOAuhzy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RMm8SUg0; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740550065; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=wAxArRDxBnjpu2aNqzZ/Asf0HNXmKUNnebF3IwcFNFM=;
+	b=RMm8SUg0A/nDxObKfJ4tzG43FIVeff9z14K1P0qL6KzeMwteMkHrLFYUjyx7pcDLs0rDM4C2BoJIlATYYbRBHWcsO8+GDyQPG7OPG9SHiDsCEQ79WGjnS0x6BmHZ1a1OxGn1R81MM2cIXzmodn5pBmLkt0t2Y2zN1YOIjEOHWfY=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WQH-AtE_1740550058 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 14:07:44 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: dpenkler@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next 1/2] staging: gpib: Remove unnecessary print function dev_err()
+Date: Wed, 26 Feb 2025 14:07:34 +0800
+Message-Id: <20250226060735.7484-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z76aUfPIbhPAsHbv@gondor.apana.org.au>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 12:36:33PM +0800, Herbert Xu wrote:
-> The ARCH_MAY_HAVE patch missed arm64, mips and s390.  But it may
-> also lead to arch options being enabled but ineffective because
-> of modular/built-in conflicts.
-> 
-> As the primary user of all these options wireguard is selecting
-> the arch options anyway, make the same selections at the lib/crypto
-> option level and hide the arch options from the user.
-> 
-> Fixes: 1047e21aecdf ("crypto: lib/Kconfig - Fix lib built-in failure when arch is modular")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Arnd Bergmann <arnd@kernel.org>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502232152.JC84YDLp-lkp@intel.com/
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+The print function dev_err() is redundant because platform_get_irq()
+already prints an error.
 
-As I said earlier, fixing the arch-optimized code to be enabled automatically is
-the right way to do it.  There are still some issues with this patch, though:
+./drivers/staging/gpib/eastwood/fluke_gpib.c:1027:2-9: line 1027 is redundant because platform_get_irq() already prints an error.
 
->  config CRYPTO_LIB_CHACHA
->  	tristate "ChaCha library interface"
-> +	select CRYPTO
->  	select CRYPTO_LIB_CHACHA_GENERIC if CRYPTO_ARCH_HAVE_LIB_CHACHA=n
-> +	select CRYPTO_CHACHA20_X86_64 if X86 && 64BIT
-> +	select CRYPTO_CHACHA20_NEON if ARM || (ARM64 && KERNEL_MODE_NEON)
-> +	select CRYPTO_CHACHA_MIPS if CPU_MIPS32_R2
-> +	select CRYPTO_CHACHA_S390 if S390
-> +	select CRYPTO_CHACHA20_P10 if PPC64 && CPU_LITTLE_ENDIAN && VSX
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19058
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/staging/gpib/eastwood/fluke_gpib.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-There's no need to have a select for every architecture, with the dependencies
-redundantly listed.  Instead just 'default' each of the arch-optimized options
-to CRYPTO_LIB_CHACHA.
+diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
+index 731732bd8301..4fd3a6cad0d2 100644
+--- a/drivers/staging/gpib/eastwood/fluke_gpib.c
++++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
+@@ -1023,10 +1023,9 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
+ 	}
+ 
+ 	irq = platform_get_irq(fluke_gpib_pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&fluke_gpib_pdev->dev, "failed to obtain IRQ\n");
++	if (irq < 0)
+ 		return -EBUSY;
+-	}
++
+ 	retval = request_irq(irq, fluke_gpib_interrupt, isr_flags, fluke_gpib_pdev->name, board);
+ 	if (retval) {
+ 		dev_err(&fluke_gpib_pdev->dev,
+-- 
+2.32.0.3.g01195cf9f
 
-> config CRYPTO_CHACHA20_X86_64
->	tristate
->	depends on X86 && 64BIT
->	default CRYPTO_CHACHA20
->	select CRYPTO_ARCH_HAVE_LIB_CHACHA
-[...]
->
-> config CRYPTO_CHACHA20
-> 	tristate "ChaCha"
-> 	select CRYPTO_LIB_CHACHA_GENERIC
-> 	select CRYPTO_SKCIPHER
-
-This introduces a problem where to enable optimized ChaCha in the crypto API
-users will now need to enable CRYPTO_LIB_CHACHA, instead of
-CRYPTO_CHACHA20_X86_64 etc. as was needed before.  LIB symbols should never be
-user-selectable, so that makes no sense.
-
-The way it should work is that CRYPTO_CHACHA20 should just select
-CRYPTO_LIB_CHACHA (and thus also the optimized code).
-
-And similarly for the other algorithms, which should be in their patches.
-
-- Eric
 
