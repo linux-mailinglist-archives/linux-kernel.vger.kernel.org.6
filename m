@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-534794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6288FA46B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:39:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51232A46B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462207A828F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26A73B02DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F385E248874;
-	Wed, 26 Feb 2025 19:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7642512D2;
+	Wed, 26 Feb 2025 19:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JUlJ19yh"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXp5HnXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCFD21D3FD;
-	Wed, 26 Feb 2025 19:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384BE24634F;
+	Wed, 26 Feb 2025 19:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598754; cv=none; b=kn8DEnZ14GVqDWlud/FOo2O+f4Eh36X9aaXUQmMFvhRvdJlnmvmW4jughI4n1ljfwB3A5DNNtHKCydoZe8C8Fb/jBS3xKT4HE4THAFEhL/v68XW8WnCpfV3mwhZhkD38OekuPVRr+Righ+0ZlHF1qvufm7sfCtmoDWDf6AYU9KM=
+	t=1740598811; cv=none; b=VwA35YsC2SgfKbPXib6K3f9Ix/KC1MGNG0GjTko1E2/mZWdl65y3S4eJ0NTMCVVjZTIhF94Q0+0t2ZCKvz0IGir6vIzpiHZleJqvspbWlQ4te0LToGkMcvY7DAJH9OtIv1e4rwU+lJUYad+6+l/NSJhreFK7ZqzrRQqJz3PxOBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598754; c=relaxed/simple;
-	bh=UE+m9vv62bRQym/uRamfQ8UcEzNrpPotmPVrRKnG6wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FskPs3wxShgkFOIVSW7kqo0quT3KX2ct6auqHRmVd3VLBqlpAdAtNdP00Zm48CX2+8W5/4xkEekXkcJEM7sR34JWqsCvBKXuMrwWPce7YfRY++Fr10fPJIkuBc8DcTK+RKJPOq4MIZYWZI1wNdgBOdITAcED6+zPAbl4WACvkQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JUlJ19yh; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QGAbgO007251;
-	Wed, 26 Feb 2025 19:38:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2NodUu
-	DqBVgh06dQFbOnbxo6Vyl/71hN00dWquC3Hbo=; b=JUlJ19yhsTkUXsoA1AI8Bf
-	xI/lDy0PPo2UPm221VeybLrn0su/4FdAzWpCPmnxV2v+g4j5cjaaq3tqhOLJRPIf
-	1qqZ8REniygf6CGrC7mStIygwzXRmOK1mW3oqNZPaNXP1z6HbjxlvAMcYbOY0La9
-	GfO/l05FBGK3Mf6l8832A6hhm+TuIKo0g7BG99QSz9hnUE6+dXBSNoUV/y6O0SH7
-	dD3+dRbfLQxYLx4XpSTUqDOIEiz+UBoiOSTl4b9xsWme6/POBCMY0BZEa3CfcSm9
-	XtP/JW7Yr4Xlnl7jwZYhctrmyArlR+PfRlOUm0oesA50IFEygWzk01X5GgH6hkQg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451xnp3ggy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 19:38:05 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QH4YBr027333;
-	Wed, 26 Feb 2025 19:38:05 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yum245uk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 19:38:04 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QJc12p17826152
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 19:38:01 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 28C2020043;
-	Wed, 26 Feb 2025 19:38:01 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 882C120040;
-	Wed, 26 Feb 2025 19:38:00 +0000 (GMT)
-Received: from localhost (unknown [9.179.20.154])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Feb 2025 19:38:00 +0000 (GMT)
-Date: Wed, 26 Feb 2025 20:37:59 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
-        Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Fangrui Song <i@maskray.me>, Xi Ruoyao <xry111@xry111.site>,
-        Heiko Carstens <hca@linux.ibm.com>, Jens Remus <jremus@linux.ibm.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests/vDSO: fix GNU hash table entry size for
- s390x
-Message-ID: <your-ad-here.call-01740598679-ext-1013@work.hours>
-References: <20250217-selftests-vdso-s390-gnu-hash-v2-1-f6c2532ffe2a@linutronix.de>
- <your-ad-here.call-01739836346-ext-7522@work.hours>
+	s=arc-20240116; t=1740598811; c=relaxed/simple;
+	bh=iqsdq2p5uze2ya4zhfPOi6HCsOmbEwMOmKjx129lr6A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lGrrgI3hiwqetymkLvnOJxWVXGKnrkY0xrB8o+IaP60mTMIXCCQRo5lCOj0uNkiaL+Dyo1MYHWx4ulYOAcGQrG8XdiuWoleu0VE7vhimWyg6aCaxg3Y/vhvJlnjh4ImxhTawro43QVJAVpwqeCeVmf1zOHP2B5dj35oHGp/4otE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXp5HnXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DDDDC4CEE7;
+	Wed, 26 Feb 2025 19:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740598809;
+	bh=iqsdq2p5uze2ya4zhfPOi6HCsOmbEwMOmKjx129lr6A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LXp5HnXIU93C2GpA3Ioh6xBPLKGb8n8eIb+n3KK6ZSi1RAFO4i4taQT9DLrlTqon+
+	 WiV6Z1KTeHYfDqm3YFqRhVwZdM39aV1c8V2vWUwOZmWw/UQ+4hX7LAAJjhIZrjBDAv
+	 WvpJjLhC/ghljgU+UxQHaGGXqcRSgSD3PrDhH9Q0XU2yBMPyBoqd1MkxjstC8XAKyi
+	 yOvauVBlwqVQn3ww+Kp0pNKv87DrfUVn9T64QJB7VRRE7GhW2Wmo1KN5VWOAkIT5DU
+	 7sKHC4gsUm+W3gBQMw5f+tktMBaapO5D9ALsazdXLDfeLGnK+g7WnYCQUAzsLu2FPi
+	 CVds/UXAMdeQw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <x86@kernel.org>,  <linux-riscv@lists.infradead.org>,
+  <linux-arm-kernel@lists.infradead.org>,  <loongarch@lists.linux.dev>,
+  <tglx@linutronix.de>,  <mingo@redhat.com>,  <bp@alien8.de>,
+  <dave.hansen@linux.intel.com>,  <peterz@infradead.org>,  <hpa@zytor.com>,
+  <paul.walmsley@sifive.com>,  <palmer@dabbelt.com>,
+  <aou@eecs.berkeley.edu>,  <catalin.marinas@arm.com>,  <will@kernel.org>,
+  <chenhuacai@kernel.org>,  <kernel@xen0n.name>,
+  <tangyouling@loongson.cn>,  <hejinyang@loongson.cn>,
+  <yangtiezhu@loongson.cn>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
+  <boqun.feng@gmail.com>,  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <aliceryhl@google.com>,  <tmgross@umich.edu>
+Subject: Re: [PATCH v3 0/5] rust: Add bug/warn abstractions
+In-Reply-To: <20250213135759.190006-1-fujita.tomonori@gmail.com> (FUJITA
+	Tomonori's message of "Thu, 13 Feb 2025 22:57:54 +0900")
+References: <yy_ESUuchCjlaGIJHzCPAcP_d9ucSD0CGXaoZNNkY7BmN5Ch1J8avsA9QpKO5LkTjlGpu99jl8NrFl5NFSQXuw==@protonmail.internalid>
+	<20250213135759.190006-1-fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 26 Feb 2025 20:39:45 +0100
+Message-ID: <8734g0v6ke.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <your-ad-here.call-01739836346-ext-7522@work.hours>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: K5XKfpIqAJHYF1z-CT97MdAtdrnzuwQs
-X-Proofpoint-GUID: K5XKfpIqAJHYF1z-CT97MdAtdrnzuwQs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=644 spamscore=0 phishscore=0
- mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260153
+Content-Type: text/plain
 
-On Tue, Feb 18, 2025 at 12:52:31AM +0100, Vasily Gorbik wrote:
-> On Mon, Feb 17, 2025 at 02:04:18PM +0100, Thomas Weißschuh wrote:
-> > Commit 14be4e6f3522 ("selftests: vDSO: fix ELF hash table entry size for s390x")
-> > changed the type of the ELF hash table entries to 64bit on s390x.
-> > However the *GNU* hash tables entries are always 32bit.
-> > The "bucket" pointer is shared between both hash algorithms.
-> --
-> > On s390x the GNU algorithm assigns and dereferences this pointer to a
-> > 64bit value as a pointer to a 32bit value, leading to compiler warnings and
-> > runtime crashes.
-> 
-> I would rephrase it as follows:
-> 
-> On s390, this caused the GNU hash algorithm to access its 32-bit entries as if they
-> were 64-bit, triggering compiler warnings (assignment between "Elf64_Xword *" and
-> "Elf64_Word *") and runtime crashes.
-> 
-> And take it via s390 tree.
-> 
-> Shuah, if you don't mind, may I get your Acked-by?
 
-Hello Shuah,
+Hi Fujita,
 
-friendly ping. Could you please respond with "Acked-by" if you don’t
-mind me taking this patch via the s390 tree? Or let me know if you plan
-to take it via your tree.
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
 
-Thank you!
+> This patchset adds warn_on and warn_on_once macros with the bug/warn
+> abstraction.
+>
+> Wrapping C's BUG/WARN macros does not work well for x86, RISC-V,
+> ARM64, and LoongArch. Rust code needs to directly execute the same
+> assembly code used on the C side. To avoid duplicating the assembly
+> code, this approach mirrors what the static branch code does: it
+> generates the assembly code for Rust using the C preprocessor at
+> compile time.
+>
+> The 1st to 4th patches export the BUG/WARN assembly code for Rust on
+> each architecture, with no functional changes on the C side. The
+> changes for x86 and RISC-V are straightforward. However, the ARM64 and
+> LoongArch assembly code are designed differently; they are used by
+> both C inline assembly and assembly code. As a result, sharing this
+> code with Rust is complicated.
+>
+> The last patch adds the bug abstraction with warn_on and warn_on_once
+> implementations.
+>
+> This has been tested on x86, ARM64, and RISC-V (QEMU), with only a
+> compile test performed for LoongArch.
+>
+> The assembly code can be used for both BUG and WARN, but currently
+> only supports warn_on and warn_on_once. I will work on the remaining
+> functionality after this abstraction is merged.
+>
+
+How does this series compare/overlap with [1] ?
+
+
+Best regards,
+Andreas Hindborg
+
+
+
+[1] https://lore.kernel.org/all/20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io/
+
 
