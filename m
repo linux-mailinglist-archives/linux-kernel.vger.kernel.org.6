@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-534995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62881A46DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CEEA46DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEF816D5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE051884A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63086266B73;
-	Wed, 26 Feb 2025 21:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C47A266EFA;
+	Wed, 26 Feb 2025 21:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syFJyoYO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4W21VhZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCF92661B5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DD825A659
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605878; cv=none; b=nmbGr6OrWR0iIU+nvGRyunRGl3eYFjvqOZ7aJxggbbbmGi2TuVXJ4cJegg/FKVH4/4ZGKL7iDgwigWK9O4yw+oiKHD4NQF965j4D/D2MfI3YhUeqPVYSmoO4ixXvWfQfxices6Ayf6HudJVv680YRLgvNeTKMkzBa6FtHM2hbS4=
+	t=1740605880; cv=none; b=O8c0Jbx4z4+S+sWi6F8NirUpYRkSJAWJ+JGu7tjyDI3eihVNdI+sHwUZe2sEgcehch0xw2jSC7ZPCWgb9MmeSpcfOl6XYJDlqp0NvP09S5Pv8BGskrwax/sYLjk1bWaJyMvMDuY4TRUyQoUj9CUQvieP50fw99qbMxEKj0c1538=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605878; c=relaxed/simple;
-	bh=ifI9Snfcz3zQLA9mdjWdKtA//RgDy8KyxkOighq+7AM=;
+	s=arc-20240116; t=1740605880; c=relaxed/simple;
+	bh=IOxQVnALRKR6nwmNlhLbcO8Dis1BaEtI2yIqJXyBP5w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T4S4jIkEqihnHspvRbzzWIIsYd/bq3BDhTiLq9+MqCKHbUFyOu1Nl/kF/m4x3HeOWcJlpwjYrjpc51BzdIPDlmBVPT2mhQA6HKGTw/43DxQRtMJkycbZSy9EIv+uCnvwj68HoZUJCC4GPOuEJCrQK3ce18ZsPNyQ7FtES754n4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syFJyoYO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94508C4CED6;
-	Wed, 26 Feb 2025 21:37:55 +0000 (UTC)
+	 MIME-Version; b=d22EFgs+apX4KJ5mVahBzJIONo0HgblieA8vVdssUVBTL6UYh38fP72wJacNydmD1TKAZgs7aHpXSKkAOTu3xgUpmwg3rcDaksSeOImNBW9TP/GnEQhVzOfIpLMQLmF5moqh5R6YPcXYnBUWoOlZ4eLoggVBIIiLcVSZD18Hrms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4W21VhZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF84C4CEED;
+	Wed, 26 Feb 2025 21:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605877;
-	bh=ifI9Snfcz3zQLA9mdjWdKtA//RgDy8KyxkOighq+7AM=;
+	s=k20201202; t=1740605880;
+	bh=IOxQVnALRKR6nwmNlhLbcO8Dis1BaEtI2yIqJXyBP5w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=syFJyoYO9efFR9Nf4TZf/C3HO3vUfSoLg+jGDXpSz/z5h2Lw7F4nHXrG22ngzTSjI
-	 fKCw1uLhfIYDaICw3Az9kCCcdrFApLt1I21hePwgj/e6xlef7ZIBkGOy975N/g3Ywh
-	 uUIkh/B61Ir1Thnb2KWzg9o/RQLP+g21cPZ4Cd251h6Z8zB5mCpMHSK81Jle/7m88J
-	 ELGc9TPb2wFxysy2c3fmpo2C0ZQUdUcGgy8mk8R3tP1UQoQfICaaWMDwLL8L3NCZgZ
-	 Tnw6Ax93puIlirmEVX4BhiJiI0FrLJAI5OSdyJBHPxJL7luqiPJaulzgExnHbhCAiL
-	 mYUjfZfFGMsOg==
+	b=K4W21VhZgJrYaxE9alE/r5v6cKrWD3ezLnm/9XG+b/JWPbuh2K3TY7kHWArOmOHDO
+	 PivTHoOVgvG2yxddAR0LeVTY+xxROJFcSNoX77hymIDip58Gu8QpBE1pqabo9NA4gI
+	 a2gF7ss47BQT/4+NupWT2VgL9UuHhVncDGp++VaxoF87tGY4yhWVrnRXaqtDejIoxJ
+	 xHWaUe6SuPNtel33DgB3QQWz6KB5qNynOWK0PtilP3VtaZdzHn6QGyCA6QMlNx72R0
+	 n39A9D9++Tao/W1NktnnhfiqhSjWoXMGxy/OUU7m4NTvHGNbYP0613MxNq036ntfBH
+	 rB59TBQd4E1ew==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -52,10 +52,10 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>
-Subject: [PATCH v3 09/10] x86: remove old STA2x11 support
-Date: Wed, 26 Feb 2025 22:37:13 +0100
-Message-Id: <20250226213714.4040853-10-arnd@kernel.org>
+	"Maciej W. Rozycki" <macro@orcam.me.uk>
+Subject: [PATCH v3 10/10] x86: only allow EISA for 32-bit
+Date: Wed, 26 Feb 2025 22:37:14 +0100
+Message-Id: <20250226213714.4040853-11-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250226213714.4040853-1-arnd@kernel.org>
 References: <20250226213714.4040853-1-arnd@kernel.org>
@@ -69,378 +69,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-ST ConneXt STA2x11 was an interface chip for Atom E6xx processors,
-using a number of components usually found on Arm SoCs. Most of this
-was merged upstream, but it was never complete enough to actually work
-and has been abandoned for many years.
+The CONFIG_EISA menu was cleaned up in 2018, but this inadvertently
+brought the option back on 64-bit machines: ISA remains guarded by
+a CONFIG_X86_32 check, but EISA no longer depends on ISA.
 
-We already had an agreement on removing it in 2022, but nobody ever
-submitted the patch to do it.
+The last Intel machines ith EISA support used a 82375EB PCI/EISA bridge
+from 1993 that could be paired with the 440FX chipset on early Pentium-II
+CPUs, long before the first x86-64 products.
 
-Without STA2x11, the CONFIG_X86_32_NON_STANDARD no longer has any
-use.
-
-Suggested-by:  Davide Ciminaghi <ciminaghi@gnudd.com>
-Link: https://lore.kernel.org/lkml/Yw3DKCuDoPkCaqxE@arcana.i.gnudd.com/
+Fixes: 6630a8e50105 ("eisa: consolidate EISA Kconfig entry in drivers/eisa")
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/Kconfig               |  32 +----
- arch/x86/include/asm/sta2x11.h |  13 --
- arch/x86/pci/Makefile          |   2 -
- arch/x86/pci/sta2x11-fixup.c   | 233 ---------------------------------
- 4 files changed, 3 insertions(+), 277 deletions(-)
- delete mode 100644 arch/x86/include/asm/sta2x11.h
- delete mode 100644 arch/x86/pci/sta2x11-fixup.c
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 42dd3c58abfb..14dd7b5abd5d 100644
+index 14dd7b5abd5d..f84a9e5dda20 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -547,7 +547,6 @@ config X86_EXTENDED_PLATFORM
- 		AMD Elan
- 		RDC R-321x SoC
- 		SGI 320/540 (Visual Workstation)
--		STA2X11-based (e.g. Northville)
- 
- 	  64-bit platforms (CONFIG_64BIT=y):
- 		Numascale NumaChip
-@@ -731,18 +730,6 @@ config X86_RDC321X
- 	  as R-8610-(G).
- 	  If you don't have one of these chips, you should say N here.
- 
--config X86_32_NON_STANDARD
--	bool "Support non-standard 32-bit SMP architectures"
--	depends on X86_32 && SMP
--	depends on X86_EXTENDED_PLATFORM
--	help
--	  This option compiles in the STA2X11 default
--	  subarchitecture.  It is intended for a generic binary
--	  kernel. If you select them all, kernel will probe it one by
--	  one and will fallback to default.
--
--# Alphabetically sorted list of Non standard 32 bit platforms
--
- config X86_SUPPORTS_MEMORY_FAILURE
- 	def_bool y
- 	# MCE code calls memory_failure():
-@@ -752,19 +739,6 @@ config X86_SUPPORTS_MEMORY_FAILURE
- 	depends on X86_64 || !SPARSEMEM
- 	select ARCH_SUPPORTS_MEMORY_FAILURE
- 
--config STA2X11
--	bool "STA2X11 Companion Chip Support"
--	depends on X86_32_NON_STANDARD && PCI
--	select SWIOTLB
--	select MFD_STA2X11
--	select GPIOLIB
--	help
--	  This adds support for boards based on the STA2X11 IO-Hub,
--	  a.k.a. "ConneXt". The chip is used in place of the standard
--	  PC chipset, so all "standard" peripherals are missing. If this
--	  option is selected the kernel will still be able to boot on
--	  standard PC machines.
--
- config X86_32_IRIS
- 	tristate "Eurobraille/Iris poweroff module"
- 	depends on X86_32
-@@ -1102,7 +1076,7 @@ config UP_LATE_INIT
- config X86_UP_APIC
- 	bool "Local APIC support on uniprocessors" if !PCI_MSI
- 	default PCI_MSI
--	depends on X86_32 && !SMP && !X86_32_NON_STANDARD
-+	depends on X86_32 && !SMP
- 	help
- 	  A local APIC (Advanced Programmable Interrupt Controller) is an
- 	  integrated interrupt controller in the CPU. If you have a single-CPU
-@@ -1127,7 +1101,7 @@ config X86_UP_IOAPIC
- 
- config X86_LOCAL_APIC
- 	def_bool y
--	depends on X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_APIC || PCI_MSI
-+	depends on X86_64 || SMP || X86_UP_APIC || PCI_MSI
- 	select IRQ_DOMAIN_HIERARCHY
- 
- config ACPI_MADT_WAKEUP
-@@ -1589,7 +1563,7 @@ config ARCH_FLATMEM_ENABLE
- 
- config ARCH_SPARSEMEM_ENABLE
- 	def_bool y
--	depends on X86_64 || NUMA || X86_32 || X86_32_NON_STANDARD
-+	depends on X86_64 || NUMA || X86_32
- 	select SPARSEMEM_STATIC if X86_32
- 	select SPARSEMEM_VMEMMAP_ENABLE if X86_64
- 
-diff --git a/arch/x86/include/asm/sta2x11.h b/arch/x86/include/asm/sta2x11.h
-deleted file mode 100644
-index e0975e9c4f47..000000000000
---- a/arch/x86/include/asm/sta2x11.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * Header file for STMicroelectronics ConneXt (STA2X11) IOHub
-- */
--#ifndef __ASM_STA2X11_H
--#define __ASM_STA2X11_H
--
--#include <linux/pci.h>
--
--/* This needs to be called from the MFD to configure its sub-devices */
--struct sta2x11_instance *sta2x11_get_instance(struct pci_dev *pdev);
--
--#endif /* __ASM_STA2X11_H */
-diff --git a/arch/x86/pci/Makefile b/arch/x86/pci/Makefile
-index 48bcada5cabe..4933fb337983 100644
---- a/arch/x86/pci/Makefile
-+++ b/arch/x86/pci/Makefile
-@@ -12,8 +12,6 @@ obj-$(CONFIG_X86_INTEL_CE)      += ce4100.o
- obj-$(CONFIG_ACPI)		+= acpi.o
- obj-y				+= legacy.o irq.o
- 
--obj-$(CONFIG_STA2X11)           += sta2x11-fixup.o
--
- obj-$(CONFIG_X86_NUMACHIP)	+= numachip.o
- 
- obj-$(CONFIG_X86_INTEL_MID)	+= intel_mid_pci.o
-diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
-deleted file mode 100644
-index 8c8ddc4dcc08..000000000000
---- a/arch/x86/pci/sta2x11-fixup.c
-+++ /dev/null
-@@ -1,233 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * DMA translation between STA2x11 AMBA memory mapping and the x86 memory mapping
-- *
-- * ST Microelectronics ConneXt (STA2X11/STA2X10)
-- *
-- * Copyright (c) 2010-2011 Wind River Systems, Inc.
-- */
--
--#include <linux/pci.h>
--#include <linux/pci_ids.h>
--#include <linux/export.h>
--#include <linux/list.h>
--#include <linux/dma-map-ops.h>
--#include <linux/swiotlb.h>
--#include <asm/iommu.h>
--#include <asm/sta2x11.h>
--
--#define STA2X11_SWIOTLB_SIZE (4*1024*1024)
--
--/*
-- * We build a list of bus numbers that are under the ConneXt. The
-- * main bridge hosts 4 busses, which are the 4 endpoints, in order.
-- */
--#define STA2X11_NR_EP		4	/* 0..3 included */
--#define STA2X11_NR_FUNCS	8	/* 0..7 included */
--#define STA2X11_AMBA_SIZE	(512 << 20)
--
--struct sta2x11_ahb_regs { /* saved during suspend */
--	u32 base, pexlbase, pexhbase, crw;
--};
--
--struct sta2x11_mapping {
--	int is_suspended;
--	struct sta2x11_ahb_regs regs[STA2X11_NR_FUNCS];
--};
--
--struct sta2x11_instance {
--	struct list_head list;
--	int bus0;
--	struct sta2x11_mapping map[STA2X11_NR_EP];
--};
--
--static LIST_HEAD(sta2x11_instance_list);
--
--/* At probe time, record new instances of this bridge (likely one only) */
--static void sta2x11_new_instance(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance;
--
--	instance = kzalloc(sizeof(*instance), GFP_ATOMIC);
--	if (!instance)
--		return;
--	/* This has a subordinate bridge, with 4 more-subordinate ones */
--	instance->bus0 = pdev->subordinate->number + 1;
--
--	if (list_empty(&sta2x11_instance_list)) {
--		int size = STA2X11_SWIOTLB_SIZE;
--		/* First instance: register your own swiotlb area */
--		dev_info(&pdev->dev, "Using SWIOTLB (size %i)\n", size);
--		if (swiotlb_init_late(size, GFP_DMA, NULL))
--			dev_emerg(&pdev->dev, "init swiotlb failed\n");
--	}
--	list_add(&instance->list, &sta2x11_instance_list);
--}
--DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, 0xcc17, sta2x11_new_instance);
--
--/*
-- * Utility functions used in this file from below
-- */
--static struct sta2x11_instance *sta2x11_pdev_to_instance(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance;
--	int ep;
--
--	list_for_each_entry(instance, &sta2x11_instance_list, list) {
--		ep = pdev->bus->number - instance->bus0;
--		if (ep >= 0 && ep < STA2X11_NR_EP)
--			return instance;
--	}
--	return NULL;
--}
--
--static int sta2x11_pdev_to_ep(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance;
--
--	instance = sta2x11_pdev_to_instance(pdev);
--	if (!instance)
--		return -1;
--
--	return pdev->bus->number - instance->bus0;
--}
--
--/* This is exported, as some devices need to access the MFD registers */
--struct sta2x11_instance *sta2x11_get_instance(struct pci_dev *pdev)
--{
--	return sta2x11_pdev_to_instance(pdev);
--}
--EXPORT_SYMBOL(sta2x11_get_instance);
--
--/* At setup time, we use our own ops if the device is a ConneXt one */
--static void sta2x11_setup_pdev(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance = sta2x11_pdev_to_instance(pdev);
--
--	if (!instance) /* either a sta2x11 bridge or another ST device */
--		return;
--
--	/* We must enable all devices as master, for audio DMA to work */
--	pci_set_master(pdev);
--}
--DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, sta2x11_setup_pdev);
--
--/*
-- * At boot we must set up the mappings for the pcie-to-amba bridge.
-- * It involves device access, and the same happens at suspend/resume time
-- */
--
--#define AHB_MAPB		0xCA4
--#define AHB_CRW(i)		(AHB_MAPB + 0  + (i) * 0x10)
--#define AHB_CRW_SZMASK			0xfffffc00UL
--#define AHB_CRW_ENABLE			(1 << 0)
--#define AHB_CRW_WTYPE_MEM		(2 << 1)
--#define AHB_CRW_ROE			(1UL << 3)	/* Relax Order Ena */
--#define AHB_CRW_NSE			(1UL << 4)	/* No Snoop Enable */
--#define AHB_BASE(i)		(AHB_MAPB + 4  + (i) * 0x10)
--#define AHB_PEXLBASE(i)		(AHB_MAPB + 8  + (i) * 0x10)
--#define AHB_PEXHBASE(i)		(AHB_MAPB + 12 + (i) * 0x10)
--
--/* At probe time, enable mapping for each endpoint, using the pdev */
--static void sta2x11_map_ep(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance = sta2x11_pdev_to_instance(pdev);
--	struct device *dev = &pdev->dev;
--	u32 amba_base, max_amba_addr;
--	int i, ret;
--
--	if (!instance)
--		return;
--
--	pci_read_config_dword(pdev, AHB_BASE(0), &amba_base);
--	max_amba_addr = amba_base + STA2X11_AMBA_SIZE - 1;
--
--	ret = dma_direct_set_offset(dev, 0, amba_base, STA2X11_AMBA_SIZE);
--	if (ret)
--		dev_err(dev, "sta2x11: could not set DMA offset\n");
--
--	dev->bus_dma_limit = max_amba_addr;
--	dma_set_mask_and_coherent(&pdev->dev, max_amba_addr);
--
--	/* Configure AHB mapping */
--	pci_write_config_dword(pdev, AHB_PEXLBASE(0), 0);
--	pci_write_config_dword(pdev, AHB_PEXHBASE(0), 0);
--	pci_write_config_dword(pdev, AHB_CRW(0), STA2X11_AMBA_SIZE |
--			       AHB_CRW_WTYPE_MEM | AHB_CRW_ENABLE);
--
--	/* Disable all the other windows */
--	for (i = 1; i < STA2X11_NR_FUNCS; i++)
--		pci_write_config_dword(pdev, AHB_CRW(i), 0);
--
--	dev_info(&pdev->dev,
--		 "sta2x11: Map EP %i: AMBA address %#8x-%#8x\n",
--		 sta2x11_pdev_to_ep(pdev), amba_base, max_amba_addr);
--}
--DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, sta2x11_map_ep);
--
--#ifdef CONFIG_PM /* Some register values must be saved and restored */
--
--static struct sta2x11_mapping *sta2x11_pdev_to_mapping(struct pci_dev *pdev)
--{
--	struct sta2x11_instance *instance;
--	int ep;
--
--	instance = sta2x11_pdev_to_instance(pdev);
--	if (!instance)
--		return NULL;
--	ep = sta2x11_pdev_to_ep(pdev);
--	return instance->map + ep;
--}
--
--static void suspend_mapping(struct pci_dev *pdev)
--{
--	struct sta2x11_mapping *map = sta2x11_pdev_to_mapping(pdev);
--	int i;
--
--	if (!map)
--		return;
--
--	if (map->is_suspended)
--		return;
--	map->is_suspended = 1;
--
--	/* Save all window configs */
--	for (i = 0; i < STA2X11_NR_FUNCS; i++) {
--		struct sta2x11_ahb_regs *regs = map->regs + i;
--
--		pci_read_config_dword(pdev, AHB_BASE(i), &regs->base);
--		pci_read_config_dword(pdev, AHB_PEXLBASE(i), &regs->pexlbase);
--		pci_read_config_dword(pdev, AHB_PEXHBASE(i), &regs->pexhbase);
--		pci_read_config_dword(pdev, AHB_CRW(i), &regs->crw);
--	}
--}
--DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, suspend_mapping);
--
--static void resume_mapping(struct pci_dev *pdev)
--{
--	struct sta2x11_mapping *map = sta2x11_pdev_to_mapping(pdev);
--	int i;
--
--	if (!map)
--		return;
--
--
--	if (!map->is_suspended)
--		goto out;
--	map->is_suspended = 0;
--
--	/* Restore all window configs */
--	for (i = 0; i < STA2X11_NR_FUNCS; i++) {
--		struct sta2x11_ahb_regs *regs = map->regs + i;
--
--		pci_write_config_dword(pdev, AHB_BASE(i), regs->base);
--		pci_write_config_dword(pdev, AHB_PEXLBASE(i), regs->pexlbase);
--		pci_write_config_dword(pdev, AHB_PEXHBASE(i), regs->pexhbase);
--		pci_write_config_dword(pdev, AHB_CRW(i), regs->crw);
--	}
--out:
--	pci_set_master(pdev); /* Like at boot, enable master on all devices */
--}
--DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_STMICRO, PCI_ANY_ID, resume_mapping);
--
--#endif /* CONFIG_PM */
+@@ -232,7 +232,7 @@ config X86
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI	if X86_64
+ 	select HAVE_EBPF_JIT
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+-	select HAVE_EISA
++	select HAVE_EISA			if X86_32
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
 -- 
 2.39.5
 
