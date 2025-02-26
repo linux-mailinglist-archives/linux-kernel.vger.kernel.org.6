@@ -1,234 +1,230 @@
-Return-Path: <linux-kernel+bounces-533341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233BAA458B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:46:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C879A458B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412563AA970
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:45:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79FE3AB9C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27301A5BA0;
-	Wed, 26 Feb 2025 08:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6120E001;
+	Wed, 26 Feb 2025 08:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q22NNPjU"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SBjRpves"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FAA258CEF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72C81E1DEB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559556; cv=none; b=C+3Nx0MB/c+wV5Nd0hzGbSgJGk+4XwYVgijkrI+wj+XCcPgkIMOJ+/fDLc48LzBGsLQO2EHG15l0YlOfn9GBwmpuaHC/oPOJrVthN4WApzCW+oOGFvVWKR65QbqfHxc2KMHVmdTjKzVHW9aTjdko8S91GuSCSXyNuth2i+HS29w=
+	t=1740559585; cv=none; b=NW2Z7rbYnkacaKCPMRu33k5G5HP9/vTnseTbI6NF0/BTgy9O4bYOY6nADzZSzdUFUVu2Ax3HDbSbORHJy5pPDoBWijff4hfslSxeZ/8nlKZUrNYpo731yaVB9am7+nXCIrSL1VwwBwUAfkl9Z3UqYI6TAfKty5PacyN2PGJUB1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559556; c=relaxed/simple;
-	bh=UENyK6nf1sqkzjJ9uKX6c6MBHZH8oAEzlZrBi/B3ayE=;
+	s=arc-20240116; t=1740559585; c=relaxed/simple;
+	bh=wIFKbS85eOb3/S4qRQtbgqZshrM7VAEcqE/gBDTCPr8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p5gq192as5pzqXKHTO1w9ZTXXEA3vR7D4YPZCTTW4vl14itlsrS9DP6MFF3HB3t69ZIjaCV4JZAfsQiW9FUwlE2+ZyBqhBNNSHf9qAgMTicdas/+xiMVgP6vJzpekabPUGZn/TSxQ+rwiaL65f4aQlQxErTctXL/vrYeXSSe1Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q22NNPjU; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4be74b9de53so1928606137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:45:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740559553; x=1741164353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XaQtfK1ctsYhz+bqcOdbV6RX9cgXfU4dyosRcNQlmSM=;
-        b=q22NNPjUYiUNh3+5VP7QaJdCWnz2v/HPNSozkb2uEcTJB9mN3HeZwms0uInzxbd1Mr
-         Dlfn6jete5W/wwfR9jkouWcsj5c+fS/M7AOXWuoQbLqU7XpUDmQhMLOmwN46ANUnf9Mp
-         V7ImPWrf8UQE7gEeiW7XtadTmV9Hzwr0Ez5aAbLwj3t2naWRF2jWr/KJu5Z6emXgrsEQ
-         Q8VgxCcBh8vaiPPy7XHMO/KCAmYHpJX9Pq7oDMZxUGYwulLWkMHLZJ/j2veMw5xiHqlB
-         7rbOmVuYyqzmPYFlzexmH6vrzK6B/J41yIBZwvrYNd4qiRDLAaetgAfs10ExPDB5RmVR
-         7dTg==
+	 To:Cc:Content-Type; b=Scv340CZwgzDCj2toaEK0XrUVF1bYHkJSnganohX/P5j6GkxlY0mI4uexIlGZO37+VezBqM52FvMG1+ZZ29FIDBRkUqzUjLGM3QFvGuPWCM8CPqLJt3SFo2XIo/c0nK1UtVx0kNdb4Fxnf3VSNTAYGejzuRGW3l69g46aFCCU4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SBjRpves; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740559582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+HhWFHTtLqRTKGNYZHFqREUf9Kb3AFGzGIEE9cBLMoM=;
+	b=SBjRpves2AyytKADLEou6gS4TMq7ciIN0rzoNo5mBvrNd6BJZuCSNwFv5PB0+TYIeVT0YN
+	8B5p3ld7CHtLqyjC1P4e8XIF9JWvvHuFa+R6u1gEjzBpcY2uKtZylFOcVj5NDRgEwHaAH3
+	nB0LjR2g+36aLTfH4SP50DQOLOgBeAo=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-7YpdOxi7Mtu68Z2I-_ZFFA-1; Wed, 26 Feb 2025 03:46:18 -0500
+X-MC-Unique: 7YpdOxi7Mtu68Z2I-_ZFFA-1
+X-Mimecast-MFC-AGG-ID: 7YpdOxi7Mtu68Z2I-_ZFFA_1740559578
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6fcfa304ef4so10110777b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:46:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740559553; x=1741164353;
+        d=1e100.net; s=20230601; t=1740559578; x=1741164378;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XaQtfK1ctsYhz+bqcOdbV6RX9cgXfU4dyosRcNQlmSM=;
-        b=Pw6QShFxzce+E5JF9gGJt+tHmrTaDLhGpya9n+HAjuMborhoPj0+BaC14oTsM52WTW
-         RiSXMsutYQIRwaIZ3YdgpSjg/clbXdlzt6/OKI5mINaOoY0IxM0KPCzy9U+XlJI1RjVj
-         hVd6/tPOrSxqEPEVHW7eJSBiHIZ8jAec+ImL75dZrszHFPEGiOg9EOVI9ci+OeU/byr4
-         YE/nsTU8rNdGikhGikWIdCyHHI6HO3Pf5zFVNlhavkxq9eixtht3Z4u17H8V88BQWWYE
-         bBhMWJdBFCELCm9mHKz91s5nPBpJXSgbKjX3jfnzYsMpHqe4iQHCa+9s2S+LrMmHvQq2
-         qNVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0go5qDY8hbab6C8N1gm1/nRJelC/My2NAKVZfbKP8EB72FnDIY5HyRz5OLVViXAItOj42svO+6sMgpjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzziXcX3GOxyyzGYX9CNZT0dr/h/nf+5jFbsKY1IU03FF74LPJt
-	d5PdjohyiVISjOlaifpxibDcDDAOfFdgn2ZGWXTj/SBIu7jbWo3BYAYHWbEUsahgm3fnZTjmT0w
-	BSMbgJuTw3wbNzUV7ZHTe8Nb8fFfTKp7K4rdAiQ==
-X-Gm-Gg: ASbGnctiGZVieno4qp12zT6qwBI9+Y8sXdVZRs7Ze0jPwrLQ579cq2ujeyyvq9W91sP
-	xulM7EsACVBYV1/7/tkCBzsGuUBhOgEm4AN5B5bumVJno6pMiwatOFjOB4xMdSMdfmUL4zgmkG7
-	7prOEEKq4NT71y13eA52xjWPMV6LWBJXBq5k7nT1zb
-X-Google-Smtp-Source: AGHT+IHlTWHmx/PR+pAg6v0zjV4nAI7mL/7+NhbjnE90ZG7dJ3J/mJSI9AvKQBNoL98EdaRoCDlUqdYVK0tIYP4I298=
-X-Received: by 2002:a05:6102:41a2:b0:4af:deaf:f891 with SMTP id
- ada2fe7eead31-4c00ad0bf53mr3858141137.4.1740559553235; Wed, 26 Feb 2025
- 00:45:53 -0800 (PST)
+        bh=+HhWFHTtLqRTKGNYZHFqREUf9Kb3AFGzGIEE9cBLMoM=;
+        b=Mgfx/O/g7YOSLv8eFpE4wQs7C1lAl+3gJ8p9B7/f1H238EHrUrUOu0A1vYpBV1CXPG
+         MEXJUoX9ffcPbstJlTcbYIcEO5KkJrbI1FTyz0XeLsTmXF9TONog2zEB4IMIFflwir7A
+         8u4MontftqZ1FBkq5y7Ao68Uwh20v0MHvIO9R9vyJZSo5AIP31SiTqFNZ5pDZlGb3GmE
+         3jVgLc5jzHRpdLwCvHin587mcnTu0o0oWx2Pa3Uai3G31aEtqWp79LKp1P6QuVfXtJHI
+         vVQBYRcUHALqI6Xw8WtKwWu6HzfCrvMT3A94dOpOp3F4OmYjAYs9IKFKUZi1J0eJnCBm
+         xR2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgnRoyEUTebpFh3jl8ASfNxRiuee++wmTs7MIPWHGuFTnijTHUEg6iufaH+CIfU1DpkuhrtjPI/QSbLYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPuvEUuF9jysxC+IP+vdU+q1Y1cX5n2OCDUUT/CtmOyHFrZB0u
+	q1kcBkP8zS7dtCbJIWtGt9J9ClthHyxZzhvjxZRdmZPyvQ9U9yOC3slPlIsCstPhZkFTPMJwzQO
+	gnRXuO7jQll15MnKjSbhSsBoFN1JA/k3wk05+zxsijqAtf1MZdnOr2FprMKGZsxxFzIQuVfEyZ/
+	W/XyJQhUBG4gEZ2zgoQ7UVlzTIrIyEuz7sqE2VRhgQDvb9u58=
+X-Gm-Gg: ASbGncvaDrR4GH2qwEVKg19/sJSODRsUfVX7+N9leCABiIw3ArfIjptVIxGYZ7SBbBH
+	dXbHcqD0v+a6ljKtcROUNUUHCAqjBx+pT5bHGje8WfihaNpxXw3AaiFEheP6T3tfrGc/J9omb
+X-Received: by 2002:a05:690c:c0b:b0:6fb:9e2e:93ed with SMTP id 00721157ae682-6fbcbe5e2aamr168560317b3.18.1740559578072;
+        Wed, 26 Feb 2025 00:46:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFKcMeU7iACAVvx7cPhCpmaATkm6R5lrHmtMjxwYPJIelmHPb54T40NA1E/fqr9s+weB43Wqwu3tWV8JhPGevg=
+X-Received: by 2002:a05:690c:c0b:b0:6fb:9e2e:93ed with SMTP id
+ 00721157ae682-6fbcbe5e2aamr168560047b3.18.1740559577778; Wed, 26 Feb 2025
+ 00:46:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225064750.953124108@linuxfoundation.org>
-In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 26 Feb 2025 14:15:40 +0530
-X-Gm-Features: AQ5f1JrJY6iKijR8inxTrQ5QwIT5PIXgHcc5gyMzNTXahEI-z93knUfSfRHeZtA
-Message-ID: <CA+G9fYvH8nowEkm9td-HZi0C67i=uChzHC7BDt6AhQFNGGDJbw@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20250223154042.556001-1-lulu@redhat.com> <20250223154042.556001-6-lulu@redhat.com>
+ <6vadeadshznfijaugusnwqprssqirxjtbtpprvokdk6yvvo6br@5ngvuz7peqoz> <CACLfguU8-F=i3N6cyouBxwneM1Fr0oNs9ac3+c5xoHr_zcZW6A@mail.gmail.com>
+In-Reply-To: <CACLfguU8-F=i3N6cyouBxwneM1Fr0oNs9ac3+c5xoHr_zcZW6A@mail.gmail.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 26 Feb 2025 09:46:06 +0100
+X-Gm-Features: AQ5f1JrMmNoSkoKLKrZ-gssaJb3Hgne6ydzR99UUBf8jlpyWbdpp35nP5uJ9whE
+Message-ID: <CAGxU2F7-UB+Jh41HkHKOqM+KNqSi2chEzVnFe9XAFmNun=0CTA@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025 at 12:20, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Hi Cindy,
+
+On Wed, 26 Feb 2025 at 07:14, Cindy Lu <lulu@redhat.com> wrote:
 >
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.5-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> On Tue, Feb 25, 2025 at 7:31=E2=80=AFPM Stefano Garzarella <sgarzare@redh=
+at.com> wrote:
+> >
+> > On Sun, Feb 23, 2025 at 11:36:20PM +0800, Cindy Lu wrote:
+> > >Add a new UAPI to enable setting the vhost device to task mode.
+> > >The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
+> > >to configure the mode if necessary.
+> > >This setting must be applied before VHOST_SET_OWNER, as the worker
+> > >will be created in the VHOST_SET_OWNER function
+> > >
+> > >Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > >---
+> > > drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
+> > > include/uapi/linux/vhost.h | 18 ++++++++++++++++++
+> > > 2 files changed, 40 insertions(+), 2 deletions(-)
+> > >
+> > >diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > >index d8c0ea118bb1..45d8f5c5bca9 100644
+> > >--- a/drivers/vhost/vhost.c
+> > >+++ b/drivers/vhost/vhost.c
+> > >@@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev=
+, struct vhost_iotlb *umem)
+> > >       int i;
+> > >
+> > >       vhost_dev_cleanup(dev);
+> > >-
+> > >+      dev->inherit_owner =3D true;
+> > >       dev->umem =3D umem;
+> > >       /* We don't need VQ locks below since vhost_dev_cleanup makes s=
+ure
+> > >        * VQs aren't running.
+> > >@@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsi=
+gned int ioctl, void __user *argp)
+> > > {
+> > >       struct eventfd_ctx *ctx;
+> > >       u64 p;
+> > >-      long r;
+> > >+      long r =3D 0;
+> > >       int i, fd;
+> > >+      u8 inherit_owner;
+> > >
+> > >       /* If you are not the owner, you can become one */
+> > >       if (ioctl =3D=3D VHOST_SET_OWNER) {
+> > >               r =3D vhost_dev_set_owner(d);
+> > >               goto done;
+> > >       }
+> > >+      if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
+> > >+              /*inherit_owner can only be modified before owner is se=
+t*/
+> > >+              if (vhost_dev_has_owner(d)) {
+> > >+                      r =3D -EBUSY;
+> > >+                      goto done;
+> > >+              }
+> > >+              if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
+> > >+                      r =3D -EFAULT;
+> > >+                      goto done;
+> > >+              }
+> > >+              /* Validate the inherit_owner value, ensuring it is eit=
+her 0 or 1 */
+> > >+              if (inherit_owner > 1) {
+> > >+                      r =3D -EINVAL;
+> > >+                      goto done;
+> > >+              }
+> > >+
+> > >+              d->inherit_owner =3D (bool)inherit_owner;
+> > >
+> > >+              goto done;
+> > >+      }
+> > >       /* You must be the owner to do anything else */
+> > >       r =3D vhost_dev_check_owner(d);
+> > >       if (r)
+> > >diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> > >index b95dd84eef2d..8f558b433536 100644
+> > >--- a/include/uapi/linux/vhost.h
+> > >+++ b/include/uapi/linux/vhost.h
+> > >@@ -235,4 +235,22 @@
+> > >  */
+> > > #define VHOST_VDPA_GET_VRING_SIZE     _IOWR(VHOST_VIRTIO, 0x82,      =
+ \
+> > >                                             struct vhost_vring_state)
+> > >+
+> > >+/**
+> > >+ * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost d=
+evice
+> > >+ *
+> > >+ * @param inherit_owner: An 8-bit value that determines the vhost thr=
+ead mode
+> > >+ *
+> > >+ * When inherit_owner is set to 1:
+> > >+ *   - The VHOST worker threads inherit its values/checks from
+> > >+ *     the thread that owns the VHOST device, The vhost threads will
+> > >+ *     be counted in the nproc rlimits.
+> > >+ *
+> > >+ * When inherit_owner is set to 0:
+> > >+ *   - The VHOST worker threads will use the traditional kernel threa=
+d (kthread)
+> > >+ *     implementation, which may be preferred by older userspace appl=
+ications that
+> > >+ *     do not utilize the newer vhost_task concept.
+> > >+ */
+> > >+#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+> >
+> > I don't think we really care of the size of the parameter, so can we
+> > just use `bool` or `unsigned int` or `int` for this IOCTL?
+> >
+> > As we did for other IOCTLs where we had to enable/disable something (e.=
+g
+> > VHOST_VSOCK_SET_RUNNING, VHOST_VDPA_SET_VRING_ENABLE).
+> >
+> hi Stefano
+> I initially used it as a boolean, but during the code review, the
+> maintainers considered it was unsuitable for the bool use as the
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I see, indeed I found only 1 case of bool:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+include/uapi/misc/xilinx_sdfec.h:#define XSDFEC_SET_BYPASS
+_IOW(XSDFEC_MAGIC, 9, bool)
 
-## Build
-* kernel: 6.13.5-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 1a0f764e17e372bfc20424b8e79ca2594782924c
-* git describe: v6.13.3-397-g1a0f764e17e3
-* test details:
-https://staging.qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/bui=
-ld/v6.13.3-397-g1a0f764e17e3/
+> interface in ioctl (I think in version 3 ?). So I changed it to u8,
+> then will check if this is 1/0 in ioctl and the u8 should be
+> sufficient for us to use
 
-## Test Regressions (compared to 6.13.4)
+Okay, if Michael and Jason are happy with it, it's fine.
+It just seemed strange to me that for other IOCTLs we use int or
+unsigned int when we need a boolean instead of a sized type.
 
-## Metric Regressions (compared to 6.13.4)
+Thanks for looking at it,
+Stefano
 
-## Test Fixes (compared to 6.13.4)
-
-## Metric Fixes (compared to 6.13.4)
-
-## Test result summary
-total: 125711, pass: 102863, fail: 4064, skip: 18784, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 137 total, 137 passed, 0 failed
-* arm64: 48 total, 48 passed, 0 failed
-* i386: 17 total, 17 passed, 0 failed
-* mips: 32 total, 32 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 38 total, 38 passed, 0 failed
-* riscv: 22 total, 22 passed, 0 failed
-* s390: 21 total, 20 passed, 1 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 3 total, 3 passed, 0 failed
-* x86_64: 44 total, 44 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
