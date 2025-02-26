@@ -1,184 +1,162 @@
-Return-Path: <linux-kernel+bounces-534046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5CBA46212
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:15:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04665A461FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04461780F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4181018894A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415C6221F1F;
-	Wed, 26 Feb 2025 14:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FCC22157D;
+	Wed, 26 Feb 2025 14:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8BUmLbT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRb74Edi"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DF0221DBA;
-	Wed, 26 Feb 2025 14:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C83C1F8908;
+	Wed, 26 Feb 2025 14:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579307; cv=none; b=jodeuf1MarLweVjAfYUjR+zrnA+unE6M8G+A/C4cVqBchiZYqB1BNP9g8NLBsIxz9YHG4DJ3l7jWkRBmp4dIregC33tW4+V4Vaz/0Z+P+MLY/d7n+EGHuG/5oew0JvL15nWEyT4unZ/5wgyS0BsY9p55xkADWQ7C2reLUO1/OJ8=
+	t=1740579214; cv=none; b=s8A9b6285XMoMxJ9bGskNUAORQF1lW/8wY03j8qzwzmqROCNffMa7fVbW0/TFnQxEIDpThXLTPvPxwvV3LqPRaPZiJW678XratnL8hNnUHWR1Shc/f5LOQQQOJIcjw6vQGS4Xx2w7iCXfPO7eqSVcudNpuZS4dm/VlF6pInIUkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579307; c=relaxed/simple;
-	bh=DQfqoYcLRD2Zeo+43lklnMk6+hDgT7YZ/1xvKUYxQ1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z93+Nf3Vr4QkJmOaQ5n+CETovQBuox+Y2Cah2BJPF/VkjnpX+pfANWYfVXO1PlpFrvU5257xVqOSnJWeCcjEbkrQVkPx7NB8zENBCwl1ps1Rug2h7YasoKYfkHFqtLbWEk4e2Z/DZL4Ea7Bqt/Og+n5flpUdNxm6ml7L+MGa21A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8BUmLbT; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740579306; x=1772115306;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DQfqoYcLRD2Zeo+43lklnMk6+hDgT7YZ/1xvKUYxQ1o=;
-  b=W8BUmLbTeydN+RUrOssfhUFEMxZ7Wmi62FDwyk0sCPtgZhQOONTFJrX4
-   lRwnAx+vTuPdax/XkUXrXVGmFcXI09HbF3DbNm+CJD5Zp5bLyvnojHL4P
-   5UeFkGUBTyFcahCdU44+oCDvZxyrPf/dts3+s5FO+gZjUZICmmp+DrZuE
-   8vs/otl/xS6dwY5ykjCQ0F8/zLH0IKzY7IZM/bLZlfgpA9myZChsxNiZa
-   yfe6+G18xYeujHdNTtQABuqTXBcBurfuoXnXnWqr+suH3dIcEEWK3R3X5
-   XB8qQlP3PQGaD4HQpmMuZ1o7BeV3uvVt/oxpxgffZy3+24sAsnpFHSVLn
-   A==;
-X-CSE-ConnectionGUID: B2KRgDT1QnaEH5Xi7eqCJQ==
-X-CSE-MsgGUID: mxZi/vjDRYmAfMkKd49sOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52817162"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="52817162"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:11:23 -0800
-X-CSE-ConnectionGUID: SfzjqrcRQU6U9pWwkoyKjw==
-X-CSE-MsgGUID: DAtu5ZbIRzCICP2T7HfhTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121960718"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:11:15 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tnI7y-0000000FLJp-1jew;
-	Wed, 26 Feb 2025 16:11:10 +0200
-Date: Wed, 26 Feb 2025 16:11:10 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v4 02/10] property: Add
- device_get_child_node_count_named()
-Message-ID: <Z78g_uiXumn4mvET@smile.fi.intel.com>
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
- <Z72QAOA9xXbP16K-@kuha.fi.intel.com>
- <Z72Zp8tpnvlFGdQ_@smile.fi.intel.com>
- <ad39b453-7e5b-49bd-a4fd-6a4988636130@gmail.com>
- <Z72d7TzZ21WITW3f@smile.fi.intel.com>
- <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
- <Z73M3Ua6u1FpgBEK@smile.fi.intel.com>
- <720f9c69-ca1f-45cb-9f6e-c8e4703c9aad@gmail.com>
+	s=arc-20240116; t=1740579214; c=relaxed/simple;
+	bh=sF+wrjoqh7eS2eosvwwxS9kfFbryi7H+R+0xBrcNTwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pUKvTcK7TFjwkhZdVtkbVtRaX8BYcM+bWBlMJQBAuNY1CsDtLLdEowPHgz0Rb4TH4NRuUUSWlWaHRFueU2cYjAybnAZ7xnFRqF6ypffFdHP5diYP34tdtdpTHjonBci0KS8lh8HKTzdEDjcwB7bLa63Rf9uteZ6VHqP/Ef2SllQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRb74Edi; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f3ac22948so3618327f8f.0;
+        Wed, 26 Feb 2025 06:13:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740579211; x=1741184011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xXi+eUzL7kkJHbA3feNPv6qZ/m6EwXmdoOaHeEp4SMA=;
+        b=FRb74Edi+y/gTpxXT2574WpVWgdXBC5IvY9vtECyVbogBSdPdIUqYsq46k4NFCj9Lp
+         tmRaCsFz9T5F+vY7Jlo0KA506foUQG0uQXAJ/XTFdc0y+iXGuxcVaODqO4r0lP92lV/p
+         3GjUvLrDxbkc4zRPg0MNwzkmOQ1WFWZe5TqRJCe1YOZ/KqRJaY0tTiDSfcyuJhuaVu6+
+         02M2edbNL3eEwaXZkHW2KJnW8Sxstm4ShBWB79c5eCzRyIYJtAVNnwm6lUKllijNMfxy
+         6xjgLUpPrIobTZ4GNSVaWCoanRDQ7xm6Sdq+6ALoognroeT4qm+XuQQI9ty+YN0C43fw
+         h/aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740579211; x=1741184011;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xXi+eUzL7kkJHbA3feNPv6qZ/m6EwXmdoOaHeEp4SMA=;
+        b=hYCEzPZMyOdDF3DVoYf2nQSCqDPkTxAsMYBx3oC+ltaYb3D4w5XLP4IKoaUCZzvgVu
+         UTn693wae0WoBfovzMsukaYqiF6LoeRX5MasuciwDKdFmmzu1Gqf+/JcubYMEz2kzkJg
+         7+yIZUno/Fyc+bDQTFf0EwqbP4KquGAO7GPAERUYzsUax78iZ818qEAKwjhneQ2UATv4
+         4XPr9byaRo1J8VOnxowV/AEvIt/I8g+R2vjXjfxpQyChdFzxh1LQW4TTGA1KF51FREym
+         oYau0sBCvCFZ+OWtTfns7oc5dzoXL6zsMmBRrovxLO1pBSO7A4/Bvp7zSZs96pYVz44k
+         cAZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrrVBTK1uNfBT1B7xev3584MXxfxnmXsVxH1w+GWV0hqOZpb+UIs2yx5eu+FNy9E6NjUmN1CUhIF4wrIiI@vger.kernel.org, AJvYcCWbemc6x60eEEgLlUIy2+MwpFA8WjA6FTWkuGCtItV+bINmlUkSwdVbiuMgnyxKwEbuKzibRPqP+ViXUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQOf0Ja1K7p1Wnj+JeVXr2QI/bnTPefRLIWlC/dHTwi4V5ff2N
+	8DsQlGeDD8GmL7K46NYzZmrhMTaj+SLF++vPeW4gNIP0yhXXVNE4
+X-Gm-Gg: ASbGncuQb69CAj7PMFRFm4SDCMQy2c/XCF6dODBXQ1Uj5PNxQiUdFRoj75uL/C8r9yN
+	eveocbJrkFHgFJ+p85Jqk2YbsvAF4eVKlAJkwj+KAE6IVQmR1cbOextD9KBKa9itKNsT3ifD5NQ
+	SiSzjnmzELz4uEzsPn8/TlX6tPo8ewnwRia3WDAeCisTwTbDhnnle3I1YV8OVaNWgDKtChEZb5V
+	1izfDdbTpieRbqEHdqKO/A5/jBNzEkTF8kfGsLWckCGvjT1cTqPiiPZu/uosi7+CCJT3N0D5j7Z
+	6YJc6s7DMVZlZwKKcfz2Yw98DlnICNhIRa+Q25wwWFHwE/RkfylUOthUxV4IGpvG
+X-Google-Smtp-Source: AGHT+IERgDII+QzJfQCdxmEiU11JLMf4j5Itf9olIlCQol2DM9XddoJiIukJUn84pxF63XXvFAVL5A==
+X-Received: by 2002:a5d:5f53:0:b0:38f:3b9b:6f91 with SMTP id ffacd0b85a97d-390cc60293cmr5354277f8f.12.1740579210344;
+        Wed, 26 Feb 2025 06:13:30 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390de5a5b5esm1091851f8f.89.2025.02.26.06.13.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:13:29 -0800 (PST)
+Date: Wed, 26 Feb 2025 14:13:28 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David
+ Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>, Arnd Bergmann
+ <arnd@arndb.de>, kernel test robot <lkp@intel.com>, Johannes Thumshirn
+ <johannes.thumshirn@wdc.com>, Anand Jain <anand.jain@oracle.com>, Filipe
+ Manana <fdmanana@suse.com>, Li Zetao <lizetao1@huawei.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] btrfs: use min_t() for mismatched type comparison
+Message-ID: <20250226141328.76239d58@pumpkin>
+In-Reply-To: <20250225194416.3076650-1-arnd@kernel.org>
+References: <20250225194416.3076650-1-arnd@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <720f9c69-ca1f-45cb-9f6e-c8e4703c9aad@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 04:04:02PM +0200, Matti Vaittinen wrote:
-> On 25/02/2025 15:59, Andy Shevchenko wrote:
-> > On Tue, Feb 25, 2025 at 03:29:17PM +0200, Matti Vaittinen wrote:
-> > > On 25/02/2025 12:39, Andy Shevchenko wrote:
-> > > > On Tue, Feb 25, 2025 at 12:29:31PM +0200, Matti Vaittinen wrote:
-> > > > > On 25/02/2025 12:21, Andy Shevchenko wrote:
-> > > > > > On Tue, Feb 25, 2025 at 11:40:16AM +0200, Heikki Krogerus wrote:
+On Tue, 25 Feb 2025 20:44:10 +0100
+Arnd Bergmann <arnd@kernel.org> wrote:
 
-...
-
-> > > > > > > 
-> > > > > > > I did not check how many users are you proposing for this, but if
-> > > > > > > there's only one, then IMO this should not be a global function yet.
-> > > > > > > It just feels to special case to me. But let's see what the others
-> > > > > > > think.
-> > > > > > 
-> > > > > > The problem is that if somebody hides it, we might potentially see
-> > > > > > a duplication in the future. So I _slightly_ prefer to publish and
-> > > > > > then drop that after a few cycles if no users appear.
-> > > > > 
-> > > > > After taking a very quick grep I spotted one other existing place where we
-> > > > > might be able to do direct conversion to use this function.
-> > > > > 
-> > > > > drivers/net/ethernet/freescale/gianfar.c
-> > > > > 
-> > > > > That'd be 2 users.
-> > > > 
-> > > > I haven't checked myself, I believe your judgement,
-> > > 
-> > > I took a better look and you obviously shouldn't believe :) The gianfar used
-> > > of_node instead of the fwnode. So, it'd be a single caller at starters.
-> > 
-> > ...which is the same as dev_of_node(), which means that you can use your
-> > function there.
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> I'm unsure what you mean. The proposed function
-> device_get_child_node_count_named() takes device pointer. I don't see how
-> dev_of_node() helps converting node to device?
-
-dev_of_node() takes the device pointer and dev_fwnode() takes that as well,
-it means that there is no difference which one to use OF-centric or fwnode
-API in this particular case. Just make sure that the function (and there
-is also a second loop AFAICS) takes struct device *dev instead of struct
-device_node *np as a parameter.
-
-> I think I could actually kill the whole gfar_of_group_count() function and
-> replace it with a direct call to the device_get_child_node_count_named() -
-> but I am not at all convinced that'd be worth including the property.h to a
-> file which is currently using only of_* -stuff. Well, I suppose it can be
-> asked from netdev peeps but I am not convinced they see it as a great idea.
+> loff_t is a signed type, so using min() to compare it against a u64
+> causes a compiler warning:
 > 
-> If I misunderstood your meaning - please elaborate.
+> fs/btrfs/extent_io.c:2497:13: error: call to '__compiletime_assert_728' declared with 'error' attribute: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
+>  2497 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
 
-The driver is quite old and has a lot of room to improve. Briefly looking it
-may be almost fully converted to fwnode, but it's not your call (only if you
-wish). Nevertheless, using agnostic APIs if they reduce code base is fine.
-We have drivers that do OF and fwnode mixed approach (for various reasons,
-one of which is the new API that is absent in OF realm.
+Isn't the actual problem that folio_pos() has the wrong return type.
+I can't remember what loff_t is supposed to be for, but here you want
+something that reduces to 'unsigned long'.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Use min_t() instead.
 
+If a signed variable is known to contain a non-negative value then
+min_unsigned() is better.
+In particular it will never discard upper bits.
+
+Enough min_t() cause bugs (usually due to high bits being discarded when the
+type of the destination (eg u8) is used) that is is tempting to start a 'duck shoot'
+season against them.
+
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202502211908.aCcQQyEY-lkp@intel.com/
+> Fixes: aba063bf9336 ("btrfs: prepare extent_io.c for future larger folio support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/btrfs/extent_io.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index f0a1da40d641..7dc996e7e249 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2485,7 +2485,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
+>  		 * code is just in case, but shouldn't actually be run.
+>  		 */
+>  		if (IS_ERR(folio)) {
+> -			cur_end = min(round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
+> +			cur_end = min_t(u64, round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
+
+That one is fine and doesn't need changing.
+
+>  			cur_len = cur_end + 1 - cur;
+>  			btrfs_mark_ordered_io_finished(BTRFS_I(inode), NULL,
+>  						       cur, cur_len, false);
+> @@ -2494,7 +2494,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
+>  			continue;
+>  		}
+>  
+> -		cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
+> +		cur_end = min_t(u64, folio_pos(folio) + folio_size(folio) - 1, end);
+
+A subtle alternative to min_unsigned() is to change the 1 to 1ull.
+
+	David
+
+>  		cur_len = cur_end + 1 - cur;
+>  
+>  		ASSERT(folio_test_locked(folio));
 
 
