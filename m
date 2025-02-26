@@ -1,138 +1,268 @@
-Return-Path: <linux-kernel+bounces-533312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A876A4582F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:30:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E1AA45836
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1506816D23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CB163AA13F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65F01E1E16;
-	Wed, 26 Feb 2025 08:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D7226D00;
+	Wed, 26 Feb 2025 08:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gc0p9kTK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gi+rkCH1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hm/CYtcW"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F1D1E1E0E;
-	Wed, 26 Feb 2025 08:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F9A224256
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558576; cv=none; b=I/DTW1qQpjRqdUfeb89AOrCe9h+B1qfbu2bxF98Pie7DevV1ZKZZh/YfREiVYi94i3Brs0ihxizkMVdlBgzjUdXL60hlrpFregzUQ2gbR1dcxznzjrB6QYtxP7hVK2P1cC5VZEURWjclpxq5F7j8KtnwYD4aL9pH3SSIobK3N58=
+	t=1740558592; cv=none; b=VQX8aRAUlitZIiWwNmROZ8hjqkOoub3HYVZ9S5QMAPGknKeitNzy6DlEIvXIcug/9x2JBn/dNyTQz+Pws7qxSvoFlw8gkgAieTG0ns1lyFtmfO2ZMbGdIojW1tRoXhjEvitOcRfO1Y1KmTm2nO9jvuYPY01cqdYph2Ht1fiNiyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558576; c=relaxed/simple;
-	bh=RL30Pp+x27pQ6VdoOBnCGDXZwzGVw2Dvuj1jGbNVQ3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbcUxdw4+niixMVLDDzTJLhhoEzcqjdQDobz+OOckzaGDMaExHplfvhZFM5tTPfobLVKr4Hgtvfe+PK/77gEIvIPurPwjFqAUZKuDtsh0NzpV95txCb8LZzcR1OK1PQLowpD03hNGWAlhm6wLoZY1OsL7SlE9DAkAK19MIJ5oMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gc0p9kTK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gi+rkCH1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 09:29:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740558573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TwWpGxilYiF2FM26W1JaazrlwiSWSwm+svJOYKjovKI=;
-	b=gc0p9kTKtMNTobyJFmU4W4ITXwXapmQYNuYFPUCvRGDKMeVIJL3oIVi4dOWSte3u6M8Y41
-	rv6ZxbeP4jUBzarrZ1qndKuKp/ROf54k+9tRReYFA8WkubwuJMrEwwj9rmdzZs5fgmK0tA
-	mT8a4h3JrGcoFEPH67udCn43+6MOH7eGNeCTtFIYmzoD8Ytc5WIO57+s86v0ilwXDhEZMu
-	V/K2ZfsdiU8G6vmGjPtwvyB/9RHlt6bMdw1eW2xceH1YCswH7TtD0r4fpjmvGRlZbWWgth
-	WzZieTI4y6KEY9uGv5MnT9DZ5pT0MYPgo1WLk+/61d1nBFodq99tRyHdpFvvvA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740558573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TwWpGxilYiF2FM26W1JaazrlwiSWSwm+svJOYKjovKI=;
-	b=gi+rkCH1Rl/zSsS24JFZZnWFJ4dwoNt83GriE9ghfh8nNypDXTAZJ0h5T8CuLpDPL6zBs7
-	k4Fug1FT7N++02Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc: linux-rt-devel@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Pawel Laszczak <pawell@cadence.com>,
-	Frank Li <Frank.Li@nxp.com>, Ferry Toth <ftoth@exalondelft.nl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC PATCH] usb: gadget: u_ether: prevent deadlock under RT
-Message-ID: <20250226082931.-XRIDa6D@linutronix.de>
-References: <20250219181556.1020029-1-ralph.siemsen@linaro.org>
+	s=arc-20240116; t=1740558592; c=relaxed/simple;
+	bh=+w08B6WQFLWGoY7KAUzC4ng4zpNF75XfE1/K5F/1xRU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xe05wW/DiYw1ZqMBxh0j6pgOdxcbIkJjo4CCQ4Hs3EV+y9i3TfeTfo8o+3u27HMRbB0VIiHKwgpRn921KHWijP51RX9nYtr3KaadOoeWiL01WrDUDtezu78R6i+7m6HJXdqPM4N+m+ruM01VQlSDdz+nmY4U2rKPX9fZGsVbovk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hm/CYtcW; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abbd96bef64so1071609966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740558588; x=1741163388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
+        b=Hm/CYtcWSPW1k4fv9hDPqmE66S4dHDlH3+8R0sXYWiBdQitIDMEmtvpLhZI/Y5By9S
+         sKR7EEAWBP9y+hDW8nyhlSKuiTppxodU/pVlJAOgF6i/xxuAmdB3c+uBfd9mqRuVNfkm
+         1nhKI4KTfI2DVSCdQJax6zLJQSfl0Nir+9hLn1CXgOyXpo0ydvtgt1ILpZsIKfIze3f7
+         2ebGtc2bWVp0iTe6doS09oetqbmoeXAtO4D0lkQ6bDEIq2tJhJh7Mc+kWvYod31kDaMR
+         SK6SfwUwNyNGVyKGLHuM2oEtVFrf4Pzxk945NBPutBBNUiSSSx4OHm3lFzog+Lh4xehk
+         6bNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740558588; x=1741163388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
+        b=o+IjhxiMZ8LjC1VIidTE687s+abWndvOBVqfVapo4/AAczNqfrnrqRTEthD3wFFEpn
+         RswxQTahrQ7yKTQfsH8H3JEVbInUJDMWpAOeP/UxGZXIRFcYyQ1Zr3gP0yuRSHfUKeIq
+         fItn9x7xPJ9EQn0MuhzGcJ7gp58AqAUbz/AbFzdTfeU6wR8O9dqMqou9PontZC2B6lFO
+         YsTdUoI4pvdbCaQV3qUDwesONeaFk2zr8y9q1QAYNQBWiWhJ/0rM8gshExJI7zb2Jde3
+         0g8xEAfWSvp4AGscAvZ7K8P26+1N22W78LxgmSUdgQZZNW3RFnog4QYlhAlHBFBUGVAX
+         oOgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgt4+6UKPiAStPMUj6T82rs/beGmNfJWn1mXx3e9DlFa9pYAtCBYnefYlEFzIvN8tStUepBnMEkUPJ/qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY6fDVGbg+2pSMNocHpocp22F1f9IIhWwDq402fCw7KBjC/H7u
+	tEIyauWvfwbqDB3onumgBDr/Kv8qsmsE73IRRQKJOwiOpzFUakmrAfwQs98V3pXQsS87M00dyuH
+	B3v7HGF4JZupYzUhbeYLcqzJRD+Lp7uqEVpmXHg==
+X-Gm-Gg: ASbGnctQeIj7cffpMYM2x9unBQXTYqE7mCD781zUdLcWqmuuWsuH4V1yhNJZDJ87dap
+	y1OPPW7BcCyXxhXzbWkIl1rmQqHVwwLuWUHPmxeYj6Kx5AlgBmd3nr3w53Mzj0ZaLAqCxNVgLxr
+	Exd9r9xA==
+X-Google-Smtp-Source: AGHT+IHCBmf3hFVyDRWrbNjNMJpg3u3tAe5Gkum3edJXg5+W5jYzpdGCY2CkRcaqBj3q4FkgF3ZBCF2Ur/l8ZS65ls8=
+X-Received: by 2002:a17:907:7711:b0:ab7:c152:a3ca with SMTP id
+ a640c23a62f3a-abed0c66952mr598124866b.6.1740558587743; Wed, 26 Feb 2025
+ 00:29:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
+ <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr> <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
+ <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
+In-Reply-To: <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 26 Feb 2025 09:29:36 +0100
+X-Gm-Features: AQ5f1Jrr13SgxwVjT6ysFNM9oHlwZl6dEEKFUrutAasFQHuednVFm1EELk7zLLU
+Message-ID: <CAPjX3Fc1UuWvih_krriaF32aPCbGP0SPg2TSrBA8Xb7a=Ozc5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Frank.Li@nxp.com, James.Bottomley@hansenpartnership.com, 
+	Julia.Lawall@inria.fr, Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org, 
+	axboe@kernel.dk, broonie@kernel.org, cassel@kernel.org, cem@kernel.org, 
+	ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr, 
+	dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org, 
+	dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org, 
+	dsterba@suse.com, eahariha@linux.microsoft.com, festevam@gmail.com, 
+	hch@lst.de, hdegoede@redhat.com, hmh@hmh.eng.br, 
+	ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com, 
+	ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev, james.smart@broadcom.com, 
+	jgg@ziepe.ca, josef@toxicpanda.com, kalesh-anakkur.purayil@broadcom.com, 
+	kbusch@kernel.org, kernel@pengutronix.de, leon@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org, 
+	perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de, 
+	sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org, 
+	sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250219181556.1020029-1-ralph.siemsen@linaro.org>
 
-On 2025-02-19 13:15:52 [-0500], Ralph Siemsen wrote:
-> [   71.106003] task:irq/507-s-f4000 state:D stack:0     pid:125   tgid:12=
-5   ppid:2      flags:0x00000008
-> [   71.106018] Call trace:
-> [   71.106022]  __switch_to+0xf4/0x158
-> [   71.106046]  __schedule+0x2b4/0x920
-> [   71.106055]  schedule_rtlock+0x24/0x50
-> [   71.106064]  rtlock_slowlock_locked+0x348/0xcb8
-> [   71.106077]  rt_spin_lock+0x88/0xb8
-> [   71.106086]  eth_start_xmit+0x30/0x1490 [u_ether]        /*****/
-> [   71.106112]  ncm_tx_timeout+0x2c/0x50 [usb_f_ncm]
-Explicit softirq timer as per HRTIMER_MODE_REL_SOFT
+On Wed, 26 Feb 2025 at 09:10, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 26/02/2025 =C3=A0 08:28, Daniel Vacek a =C3=A9crit :
+> > On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
+> > <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+> >>
+> >> Le 25/02/2025 =C3=A0 21:17, Easwar Hariharan a =C3=A9crit :
+> >>> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> >>> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> >>> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multipli=
+cation
+> >>>
+> >>> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci=
+ with
+> >>> the following Coccinelle rules:
+> >>>
+> >>> @depends on patch@ expression E; @@
+> >>>
+> >>> -msecs_to_jiffies(E * 1000)
+> >>> +secs_to_jiffies(E)
+> >>>
+> >>> @depends on patch@ expression E; @@
+> >>>
+> >>> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> >>> +secs_to_jiffies(E)
+> >>>
+> >>> While here, remove the no-longer necessary check for range since ther=
+e's
+> >>> no multiplication involved.
+> >>
+> >> I'm not sure this is correct.
+> >> Now you multiply by HZ and things can still overflow.
+> >
+> > This does not deal with any additional multiplications. If there is an
+> > overflow, it was already there before to begin with, IMO.
+> >
+> >> Hoping I got casting right:
+> >
+> > Maybe not exactly? See below...
+> >
+> >> #define MSEC_PER_SEC    1000L
+> >> #define HZ 100
+> >>
+> >>
+> >> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
+> >>
+> >> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
+> >> {
+> >>          return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
+> >> }
+> >>
+> >> int main() {
+> >>
+> >>          int n =3D INT_MAX - 5;
+> >>
+> >>          printf("res  =3D %ld\n", secs_to_jiffies(n));
+> >>          printf("res  =3D %ld\n", _msecs_to_jiffies(1000 * n));
+> >
+> > I think the format should actually be %lu giving the below results:
+> >
+> > res  =3D 18446744073709551016
+> > res  =3D 429496130
+> >
+> > Which is still wrong nonetheless. But here, *both* results are wrong
+> > as the expected output should be 214748364200 which you'll get with
+> > the correct helper/macro.
+> >
+> > But note another thing, the 1000 * (INT_MAX - 5) already overflows
+> > even before calling _msecs_to_jiffies(). See?
+>
+> Agreed and intentional in my test C code.
+>
+> That is the point.
+>
+> The "if (result.uint_32 > INT_MAX / 1000)" in the original code was
+> handling such values.
 
-> [   71.106131]  __hrtimer_run_queues+0x180/0x378
-> [   71.106143]  hrtimer_run_softirq+0x90/0x100
-> [   71.106151]  handle_softirqs.isra.0+0x14c/0x360
-> [   71.106165]  __local_bh_enable_ip+0x104/0x118
-> [   71.106177]  __netdev_alloc_skb+0x1e0/0x210
-> [   71.106192]  ncm_unwrap_ntb+0x1ec/0x528 [usb_f_ncm]
-> [   71.106206]  rx_complete+0x120/0x288 [u_ether]           /*****/
-Network stack
+I see. But that was rather an unrelated side-effect. Still you're
+right, it needs to be handled carefully not to remove additional
+guarantees which were implied unintentionally. At least in places
+where these were provided in the first place.
 
-> [   71.106221]  usb_gadget_giveback_request+0x34/0xf8
-> [   71.106236]  cdns3_gadget_giveback+0xe4/0x2d0 [cdns3]
-Returns URB to usb-core.
+> >
+> > Now, you'll get that mentioned correct result with:
+> >
+> > #define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
+>
+> Not looked in details, but I think I would second on you on this, in
+> this specific example. Not sure if it would handle all possible uses of
+> secs_to_jiffies().
 
-> [   71.106286]  cdns3_transfer_completed+0x3b0/0x630 [cdns3]
-> [   71.106320]  cdns3_device_thread_irq_handler+0x8b8/0xd18 [cdns3]
+Yeah, I was referring only in context of the example you presented,
+not for the rest of the kernel. Sorry about the confusion.
 
-Threaded interrupt handler. Not forced-threaded but voluntary threaded
-due to devm_request_threaded_irq() usage.
+> But it is not how secs_to_jiffies() is defined up to now. See [1].
+>
+> [1]:
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/jiffies.h=
+#L540
+>
+> >
+> > Still, why unsigned? What if you wanted to convert -5 seconds to jiffie=
+s?
+>
+> See commit bb2784d9ab495 which added the cast.
 
-> [   71.106353]  irq_thread_fn+0x34/0xb8
-> [   71.106364]  irq_thread+0x180/0x2f0
-> [   71.106374]  kthread+0x104/0x118
-> [   71.106384]  ret_from_fork+0x10/0x20
->=20
-> The deadlock occurs because eth_start_xmit() and rx_complete() both
-> acquire the same spinlock in the same instance of struct eth_dev.
-> The nested call occurs because rx_complete() calls __netdev_alloc_skb()
-> which performs a brief local_bh_disable/enable() sequence.
-=E2=80=A6
+Hmmm, fishy. Maybe a function would be better than a macro?
 
-Based on the backtrace the problem is within the cdns3. The driver
-acquires at the beginning of its threaded routine
-	spin_lock_irqsave(&priv_dev->lock, flags);
+> >
+> >>          return 0;
+> >> }
+> >>
+> >>
+> >> gives :
+> >>
+> >> res  =3D -600
+> >> res  =3D 429496130
+> >>
+> >> with msec, the previous code would catch the overflow, now it overflow=
+s
+> >> silently.
+> >
+> > What compiler options are you using? I'm not getting any warnings.
+>
+> I mean, with:
+>         if (result.uint_32 > INT_MAX / 1000)
+>                 goto out_of_range;
+> the overflow would be handled *at runtime*.
 
-and then before returning the URB it does
-	         spin_unlock(&priv_dev->lock);
-                 usb_gadget_giveback_request()
+Got it. But that may still fail if you configure HZ to 5000 or
+anything above 1000. Not that anyone should go this way but...
 
-so the lock is dropped but the interrupts are still disabled. This makes
-me wonder why using threaded interrupts at all since interrupts are
-disabled for the whole routine but then others do the same.
+> Without such a check, an unexpected value could be stored in
+> opt->lock_timeout.
+>
+> I think that a test is needed and with secs_to_jiffies(), I tentatively
+> proposed:
+>         if (result.uint_32 > INT_MAX / HZ)
+>                 goto out_of_range;
 
-If you look at dwc3_thread_interrupt() they have local_bh_disable()/
-enable() before acquiring the lock and this is what I would suggest
-doing here, too. The NCM is probably not the only one affected but
-everything doing network that may since it may recourse into softirq.
+Right, that should correctly handle any HZ value. Looks good to me.
 
-Sebastian
+> CJ
+>
+> >
+> >> untested, but maybe:
+> >>          if (result.uint_32 > INT_MAX / HZ)
+> >>                  goto out_of_range;
+> >>
+> >> ?
+> >>
+> >> CJ
+> >>
+>
+> ...
 
