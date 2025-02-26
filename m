@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-534351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76648A465FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:04:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC04A46605
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702C8188DA89
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF76617595C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97A3220683;
-	Wed, 26 Feb 2025 15:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5B72222BA;
+	Wed, 26 Feb 2025 15:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NxG+GPkr"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i/ikqM0g"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7174721E087
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E4D21CC55
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585197; cv=none; b=FhS8bfOM/Md/w8SCYjERcfJb0kYl2Yx8xdDbLo+sN3XxTskFtDrENEZ3BWrssFNFC08C43+gVTUsRvwLeosBB5/n+3ofljcVl/mCjQ28Ix/H0SIMhgYIUml9G6fZUqkcTEV9/LyFflY+MAZAMLFXmbNdzGdMA5HtrRJSX88ToWU=
+	t=1740585202; cv=none; b=CkzRQeoAm/Vhbks9tRDfz82uL7Sr7CIIopYeQUpf5OPnh24uce2IEh/r51ZiLwgTeNkCxK6KzKKI5dWabYjnWbKuPM3MPLQueDXPAsTHWGnWhrsZwDoQBgh8EtllU6G69Iq8NsirePzsfuo4g7D86Cd8MumOGf2MRgyifYsKaMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585197; c=relaxed/simple;
-	bh=t73ea11TS9UQWCRTvfTajaXePuC5dbriqwM6P2DJ4Jk=;
+	s=arc-20240116; t=1740585202; c=relaxed/simple;
+	bh=sKXshHcrF8dsvwwlhCdDqn2yxEPNnLSq7VCCDI0ORpc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mfRAKIueVVDeFeMzoBDI14V/VI3KqLjmi95F9mbr7I/KfuWiRvTzFbo0EbRyI2BE5+ZrPfQ9LvtmC/VnxPs/7ZW85zmH0pKNJULVDblx2U94wWKn9Z8XcyVDjz2qiAfWXjmBBX7+y7qV88zHKzoVDfOKdjX41Q5Ge6QLxqQQwFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NxG+GPkr; arc=none smtp.client-ip=95.215.58.170
+	 MIME-Version; b=YAb56q90MjRRRiWcD1H1BZLgJ7uQUwje5knaeCAUfjMppE6ofGyAELHIoLapWXbhP6BcnzX4hE6aljNrA9sVAk4G6C5Q9LisRGVq6rfU23nJi5GKXlnZP/ACd8Zq6lg4iE71fsQQ7krrPnH6fKOaueUj3qj9uS9KH1ByggqLqEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i/ikqM0g; arc=none smtp.client-ip=95.215.58.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740585193;
+	t=1740585199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tFZJ7JEMUoVvImeZ0sdnwA5+EEzG7PaBaENE6+qETI4=;
-	b=NxG+GPkraaPPTh9dS4VLw2ZGtM70laBc5shoH2Bgrzw87Y4lohSxxsM71IvvWH94ROftlr
-	Y2JIUdlLfzaSIYQhaXqV3n5mgMnayBQj3USROCbEzrPchcqgsMFRw4/5SAdOqCVp55r3fF
-	EhI4phxfb3eaQfS/345y/7DLNq8O9N0=
+	bh=eobn+uRC30jkH7Wn+Ivtvt6YUyiii/EOGRhM4Ld1Tw4=;
+	b=i/ikqM0gWulIAazgejN/hyaNmB8bK5ijtkiA8HYKXnTaGT6RFOKOIt/rNvUmpbZ4OH8onz
+	232g+Knd0MEoyNjTSFHzz0LXrn3mz+o5eV1fQw64m2MNk+qwJIXPGFTlTBF3CmDxDH6AQO
+	MPll3cKoyxZCDieLt6LhZBrs+SP4aaE=
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -64,10 +64,11 @@ Cc: Nishanth Menon <nm@ti.com>,
 	DRI Development List <dri-devel@lists.freedesktop.org>,
 	Linux Kernel List <linux-kernel@vger.kernel.org>,
 	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
-	stable@vger.kernel.org
-Subject: [PATCH v10 04/13] drm/bridge: cdns-dsi: Check return value when getting default PHY config
-Date: Wed, 26 Feb 2025 21:22:19 +0530
-Message-Id: <20250226155228.564289-5-aradhya.bhatia@linux.dev>
+	stable@vger.kernel.org,
+	Dominik Haller <d.haller@phytec.de>
+Subject: [PATCH v10 05/13] drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
+Date: Wed, 26 Feb 2025 21:22:20 +0530
+Message-Id: <20250226155228.564289-6-aradhya.bhatia@linux.dev>
 In-Reply-To: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
 References: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
 Precedence: bulk
@@ -81,39 +82,66 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 
-Check for the return value of the phy_mipi_dphy_get_default_config()
-call, and in case of an error, return back the same.
+Once the DSI Link and DSI Phy are initialized, the code needs to wait
+for Clk and Data Lanes to be ready, before continuing configuration.
+This is in accordance with the DSI Start-up procedure, found in the
+Technical Reference Manual of Texas Instrument's J721E SoC[0] which
+houses this DSI TX controller.
 
-Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
+If the previous bridge (or crtc/encoder) are configured pre-maturely,
+the input signal FIFO gets corrupt. This introduces a color-shift on the
+display.
+
+Allow the driver to wait for the clk and data lanes to get ready during
+DSI enable.
+
+[0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
+     TRM Link: http://www.ti.com/lit/pdf/spruil1
+
+Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
 Cc: stable@vger.kernel.org
+Tested-by: Dominik Haller <d.haller@phytec.de>
 Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 19cc8734a4c8..87921a748cdb 100644
+index 87921a748cdb..6a77ca36cb9d 100644
 --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
 +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -575,9 +575,11 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
- 	if (ret)
- 		return ret;
+@@ -769,7 +769,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
+ 	unsigned long tx_byte_period;
+ 	struct cdns_dsi_cfg dsi_cfg;
+-	u32 tmp, reg_wakeup, div;
++	u32 tmp, reg_wakeup, div, status;
+ 	int nlanes;
  
--	phy_mipi_dphy_get_default_config(mode_clock * 1000,
--					 mipi_dsi_pixel_format_to_bpp(output->dev->format),
--					 nlanes, phy_cfg);
-+	ret = phy_mipi_dphy_get_default_config(mode_clock * 1000,
-+					       mipi_dsi_pixel_format_to_bpp(output->dev->format),
-+					       nlanes, phy_cfg);
-+	if (ret)
-+		return ret;
+ 	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
+@@ -786,6 +786,19 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	cdns_dsi_hs_init(dsi);
+ 	cdns_dsi_init_link(dsi);
  
- 	ret = cdns_dsi_adjust_phy_config(dsi, dsi_cfg, phy_cfg, mode, mode_valid_check);
- 	if (ret)
++	/*
++	 * Now that the DSI Link and DSI Phy are initialized,
++	 * wait for the CLK and Data Lanes to be ready.
++	 */
++	tmp = CLK_LANE_RDY;
++	for (int i = 0; i < nlanes; i++)
++		tmp |= DATA_LANE_RDY(i);
++
++	if (readl_poll_timeout(dsi->regs + MCTL_MAIN_STS, status,
++			       (tmp == (status & tmp)), 100, 500000))
++		dev_err(dsi->base.dev,
++			"Timed Out: DSI-DPhy Clock and Data Lanes not ready.\n");
++
+ 	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
+ 	       dsi->regs + VID_HSIZE1);
+ 	writel(HFP_LEN(dsi_cfg.hfp) | HACT_LEN(dsi_cfg.hact),
 -- 
 2.34.1
 
