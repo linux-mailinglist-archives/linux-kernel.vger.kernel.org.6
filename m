@@ -1,90 +1,113 @@
-Return-Path: <linux-kernel+bounces-533989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECCEA46129
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:43:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4669A4612F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909507A7875
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705853AB226
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACA321D3D2;
-	Wed, 26 Feb 2025 13:42:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1840721D59F;
+	Wed, 26 Feb 2025 13:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="O+J6C6YS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA2941C71;
-	Wed, 26 Feb 2025 13:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009E041C71;
+	Wed, 26 Feb 2025 13:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740577350; cv=none; b=XURUS5PM6R5XqeGw0BEcI76lFiq1LINOKxPzxCq8BZTQG47kbk//HaWDSkcrxl4QK8m4ZolNk0kISaeqj0m9Zfd48p6UKzGh8/ea1tCbACdQBRACeFNB0PX96ObdYqtAIuv3Ws8qmVCtUBpS+6WvozAN+x+UwL+z1/feQ35sCB0=
+	t=1740577421; cv=none; b=FYjjDYxn/fO5Lo+a0J1K3p0B48RvBj/ECYvfw5kBTc8BmT9Gy//GFO3E4EePS0cvXT9m0jDwhe6heFvdXfCxRBFAFM66NXEmNNJv/YNm3zCe6qkZ+TKmtIJrpNyMDKI13rC/VR5AEFsJ3j6Ei519cuO9LEzhKrfXIS3Btgt86ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740577350; c=relaxed/simple;
-	bh=ET8IdWibJq88gqcdMDd8LUX/7ELv88Rz1Le9FXQoe4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PxMAN/As6gydzMhYY6dPNWhz1u3yxPZzPEtWqFsFaeLYEUWWpoKNF5m9cfZO0N3cdntS7Decb8xmilA8AE93N5T0VowCqa1PlHWozTxaVEZ59ftBRzbT4fViznY7GGT0h7AY7iBZ2KTJLPMW3xwHXgOg6jxm8v86mphXJ+Ek5C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56662C4CED6;
-	Wed, 26 Feb 2025 13:42:29 +0000 (UTC)
-Date: Wed, 26 Feb 2025 08:43:09 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: add dependency from vmlinux to sorttable
-Message-ID: <20250226084309.0665a335@gandalf.local.home>
-In-Reply-To: <20250226133014.381585-1-xry111@xry111.site>
-References: <20250226133014.381585-1-xry111@xry111.site>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740577421; c=relaxed/simple;
+	bh=C1RgbLR6GSfvgGMUX8LxeDVo7GdVzjmW06YGox9WhSA=;
+	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Md+QrwwDR005Mwl2QpnxTVImF9KRaAQsRWAc9yETJXQu6GpLzN6DmT7/UgEK+yPAuQkWDFCFqV8VsKQjzsEBPbWaVYw9Eb5jwdKIx52+n3+4tN6xUrxax4Q70xiRbmfFocgTVH1XB9nXLkF4mhv9BzCN2tLUDpMqaPCawSwhmeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=O+J6C6YS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:From:Date:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+RM9fCd/pH/t1kXOr5ohz3w+lMtjBfCOedTcP39zAaM=; b=O+J6C6YSUoR+qkSnbq3xnBv7kq
+	TK4+SebVazszU6RcdBlkTq5CUyf3NmIhIhYO4MGohY316oVlXE0KLvs6ss0yQ3ky3nYPY3QhgpeF9
+	eE9Sc7oXJ+d8EeSJgvEf/0+iAexlZBH/QGnIn08RsEP67gXc1wGFh+n+8SXiFA7yLrgA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tnHhD-000Gqa-Mm; Wed, 26 Feb 2025 14:43:31 +0100
+Date: Wed, 26 Feb 2025 14:43:31 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: fix uninitialised access in mii_nway_restart()
+Message-ID: <418ddcf6-e7c9-4a8e-ba1a-38a83cb2b5f8@lunn.ch>
+References: <Z7R6uet1dJ1UJsJ1@qasdev.system>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7R6uet1dJ1UJsJ1@qasdev.system>
 
-On Wed, 26 Feb 2025 21:30:14 +0800
-Xi Ruoyao <xry111@xry111.site> wrote:
-
-> Without this dependency it's really puzzling when we bisect for a "bad"
-> commit in a series of sorttable change: when "git bisect" switches to
-> another commit, "make" just does nothing to vmlinux.
+On Tue, Feb 18, 2025 at 12:19:57PM +0000, Qasim Ijaz wrote:
+> On Tue, Feb 18, 2025 at 02:10:08AM +0100, Andrew Lunn wrote:
+> > On Tue, Feb 18, 2025 at 12:24:43AM +0000, Qasim Ijaz wrote:
+> > > In mii_nway_restart() during the line:
+> > > 
+> > > 	bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+> > > 
+> > > The code attempts to call mii->mdio_read which is ch9200_mdio_read().
+> > > 
+> > > ch9200_mdio_read() utilises a local buffer, which is initialised 
+> > > with control_read():
+> > > 
+> > > 	unsigned char buff[2];
+> > > 	
+> > > However buff is conditionally initialised inside control_read():
+> > > 
+> > > 	if (err == size) {
+> > > 		memcpy(data, buf, size);
+> > > 	}
+> > > 
+> > > If the condition of "err == size" is not met, then buff remains 
+> > > uninitialised. Once this happens the uninitialised buff is accessed 
+> > > and returned during ch9200_mdio_read():
+> > > 
+> > > 	return (buff[0] | buff[1] << 8);
+> > > 	
+> > > The problem stems from the fact that ch9200_mdio_read() ignores the
+> > > return value of control_read(), leading to uinit-access of buff.
+> > > 
+> > > To fix this we should check the return value of control_read()
+> > > and return early on error.
+> > 
+> > What about get_mac_address()?
+> > 
+> > If you find a bug, it is a good idea to look around and see if there
+> > are any more instances of the same bug. I could be wrong, but it seems
+> > like get_mac_address() suffers from the same problem?
 > 
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->  scripts/Makefile.vmlinux | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> index 873caaa55313..fb79fd6b2465 100644
-> --- a/scripts/Makefile.vmlinux
-> +++ b/scripts/Makefile.vmlinux
-> @@ -79,6 +79,10 @@ ifdef CONFIG_DEBUG_INFO_BTF
->  vmlinux: $(RESOLVE_BTFIDS)
->  endif
->  
-> +ifdef CONFIG_BUILDTIME_TABLE_SORT
-> +vmlinux: scripts/sorttable
-> +endif
+> Thank you for the feedback Andrew. I checked get_mac_address() before
+> sending this patch and to me it looks like it does check the return value of
+> control_read(). It accumulates the return value of each control_read() call into 
+> rd_mac_len and then checks if it not equal to what is expected (ETH_ALEN which is 6),
+> I believe each call should return 2.
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+It is unlikely a real device could trigger an issue, but a USB Rubber
+Ducky might be able to. So the question is, are you interested in
+protecting against malicious devices, or just making a static analyser
+happy? Feel free to submit the patch as is.
 
-I haven't tested this yet, but when working on the sorttable.c changes, it
-definitely was an annoyance that the updates to sorttable.c didn't make any
-changes without first modifying something in the kernel.
-
--- Steve
-
-
-> +
->  # module.builtin.ranges
->  #
-> ---------------------------------------------------------------------------
-> ifdef CONFIG_BUILTIN_MODULE_RANGES
-
+	Andrew
 
