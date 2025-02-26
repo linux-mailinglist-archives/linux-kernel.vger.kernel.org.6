@@ -1,105 +1,75 @@
-Return-Path: <linux-kernel+bounces-533324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77217A45868
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:33:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E91FA4586E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1347A286B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64C23ACEF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3DF224253;
-	Wed, 26 Feb 2025 08:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkYkbob3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB511E1DEF;
-	Wed, 26 Feb 2025 08:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8AD1E1DF9;
+	Wed, 26 Feb 2025 08:32:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB6C258CEA;
+	Wed, 26 Feb 2025 08:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558742; cv=none; b=aLMzofvqUYsOrDdd4GAk4k2J5B7fPuEO2rDS39D67e+P71cDz4VazLTMjPRTmDg7gmtPP1cs2nfRm0GfttuEyTtfkFPs2fmgKhiqDvfPUD0M9XYWQi4woi47xOmJpWReMv9AZLOsnfGvdtiWd9ueKV7uUbFHPClQDGfdkOC6jbs=
+	t=1740558772; cv=none; b=Q9fFJA/IQw9EYczN5w1vVSvtSGWcb9lYTc8eI28hNlevfVbqGTxKXTQnlO+RV+w9G4rm3KhKTRYYKaZLp7oMSkvfaMNyk1g+byQei7feWZ2PvF4hs9F4sGJcRiUkQCvep44bYq38l9hMdalohbgEyH22BozR+RnuSVJjrFzdOgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558742; c=relaxed/simple;
-	bh=pCY5MJcHID/t2Pb6RIB298aS9Enq1BhXl+cqd9OOkmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aop1d9Da433DGAodKNHDupEwU/eyM09BHt2fSFboOEpYvzU1S4h68Nb3tCBtc/9A4m+OBmf0Wo9h15EcYD4we/Ne7kOxfQgv4BPwYbmqjQ8Ny/iVxjN2xtpnxHMU/EwIWgAiUpuzoCKjRij0J0RB7lNMmKoyBLWp1hD1gzAUY30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkYkbob3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C5E8C4CED6;
-	Wed, 26 Feb 2025 08:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740558741;
-	bh=pCY5MJcHID/t2Pb6RIB298aS9Enq1BhXl+cqd9OOkmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WkYkbob3F/FEh42Rx8pbhLsqPxB9WOaFobE/EZjopEvktMV32lK3zQohLNTQSZcTt
-	 0OeayTHGLe4FurZoLIdV4SVa3zXNM8J6OLEvEHp3bbwozERqQUTFCFL7dtqsbI8nMT
-	 713eIKNYQ3nnXqP55Dac+TorJINYr83Z+WEqa4b+l9CHVToDRtNgvXGQtt1w9bg69E
-	 1Ezzu+aC4FSlJThngdeT4GGupXNlOb7grliknak2jIBrSeTjGMR6T76D19k/sYGjm9
-	 /eAmCMtM3WUFuGJfvuXmDpEvLew3EijXa2xCespHGV+XTzX265tK+qJ4SqOFS8mcR8
-	 PcaXURSBZ1www==
-Date: Wed, 26 Feb 2025 09:32:18 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, vz@mleia.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: Convert
- nxp,lpc3220-mic.txt to yaml format
-Message-ID: <20250226-khaki-wildebeest-of-action-ddec48@krzk-bin>
-References: <20250226010956.50566-1-leo.fthirata@gmail.com>
+	s=arc-20240116; t=1740558772; c=relaxed/simple;
+	bh=7pU1bTs6zExJNZzR8vWaDHfqRCQs2gbgxqw5feS2tCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jMW+wUS4liRn9oR5EUVbK4F9562Q8NTLxk6/e268HOft2FVdheCpw6b1sNIxbeU/mlfT1G3HQyN3J4Vhx6tIhJYj0k11mQN9CIHzQPaJLE7Ph7lpXQfXoifIXZyaGISOMEKyLZbphR7LXzhwQF8pgFgp8H//smK4ve2+zzR8/ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D78141516;
+	Wed, 26 Feb 2025 00:33:05 -0800 (PST)
+Received: from [10.57.78.248] (unknown [10.57.78.248])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37E3B3F673;
+	Wed, 26 Feb 2025 00:32:42 -0800 (PST)
+Message-ID: <528335f4-0648-4d49-992b-10c4d1949d0c@arm.com>
+Date: Wed, 26 Feb 2025 09:32:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226010956.50566-1-leo.fthirata@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] mm: pgtable: remove tlb_remove_page_ptdesc()
+To: Qi Zheng <zhengqi.arch@bytedance.com>, peterz@infradead.org,
+ riel@surriel.com, vishal.moola@gmail.com, david@redhat.com,
+ jannh@google.com, hughd@google.com, willy@infradead.org, yuzhao@google.com,
+ muchun.song@linux.dev, akpm@linux-foundation.org, will@kernel.org,
+ aneesh.kumar@kernel.org, npiggin@gmail.com, arnd@arndb.de,
+ dave.hansen@linux.intel.com, rppt@kernel.org, alexghiti@rivosinc.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
+ <3df04c8494339073b71be4acb2d92e108ecd1b60.1740454179.git.zhengqi.arch@bytedance.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <3df04c8494339073b71be4acb2d92e108ecd1b60.1740454179.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 10:09:40PM -0300, Leonardo Felipe Takao Hirata wrote:
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,lpc3220-mic
-> +      - nxp,lpc3220-sic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +  interrupts:
-> +    items:
-> +      - description:
-> +          IRQ number.
-> +      - description: |
-> +          IRQ type. Can be one of:
+On 25/02/2025 04:45, Qi Zheng wrote:
+> The tlb_remove_ptdesc()/tlb_remove_table() is specially designed for page
+> table pages, and now all architectures have been converted to use it to
+> remove page table pages. So let's remove tlb_remove_page_ptdesc(), it
+> currently has no users and should not be used for page table pages.
+>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-That's not correct. Previously you said you have here two interrupts -
-SIC1 and SIC2. Now you say you have one intrerrupt "IRQ Number" and
-second interrupt "IRQ type". This makes little sense - your interrupt is
-not "IRQ type". Unless it is an interrupt signaling that other interrupt
-has type?
-
-Look at other bindings what are the interrupts.
-
-> +
-> +              IRQ_TYPE_EDGE_RISING = Low-to-high edge triggered,
-> +              IRQ_TYPE_EDGE_FALLING = High-to-low edge triggered,
-> +              IRQ_TYPE_LEVEL_HIGH = Active high level-sensitive,
-> +              IRQ_TYPE_LEVEL_LOW = Active low level-sensitive.
-
-None of these are relevant here.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
