@@ -1,258 +1,252 @@
-Return-Path: <linux-kernel+bounces-534511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D08AA467AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:15:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1033A467D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354793A90E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B021F188A6A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46E7224AFC;
-	Wed, 26 Feb 2025 17:14:45 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77DB2253A9;
+	Wed, 26 Feb 2025 17:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSNucT1W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E46192D63;
-	Wed, 26 Feb 2025 17:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03522248B5;
+	Wed, 26 Feb 2025 17:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740590085; cv=none; b=TG4Kcg27FxpIRuGuJZbtZXyATXor00G7d8+tE7+kDYB8ElEXjzzJTYShAYNp+1+9xHOxsYwKPWhzoXUvOJ1xrY0iNU+AF4ucOcvdISTSe6ulcLKWx/OiueCeZHxMroGxdAc/7SYsn7lPiuyjg16UlWq0CW7uyi5hqg/ZVFIkRKE=
+	t=1740590110; cv=none; b=UHV7pZ9kHFDfaSWuStm1qBZnAmEE7EaiaSYRiXujAWzqzUmkWBeVIgHKtus8hUnH63JnaypC4ox+c9HnoEHATPlgeZssC8gGx9paS5dKtVPYWQr7rCxCHPp2GUbF787giB/zJs3jWKhJqEWW0HCvfLxOOjETdqckmQHdYSOqkok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740590085; c=relaxed/simple;
-	bh=KxFN3aNE7TxRGAXyhYwm0L9K2okbb+lZv7kvdmTMwlw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=TaoMBIn1HBnopVnntjq+8fJJ2qQRvNSIAKNZSERXrWjhJ+/eiX6H3uwESy4kFiebWUJpiyzE9z+bAE8Rksl0KKF7xUg3r4WV7kUYXx3PZTD8zq6czCO7w/U6tFP4uZUXofK0aiRImEBJPoEcdD9cz+q0OlBGe82mf0HHtgnbmg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnKzE-000Kjt-53; Wed, 26 Feb 2025 18:14:20 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnKzE-000CxP-0Q;
-	Wed, 26 Feb 2025 18:14:19 +0100
-Message-ID: <c2fc1cc2-b0e4-40de-9f0c-0e383c0fe1b3@hetzner-cloud.de>
-Date: Wed, 26 Feb 2025 18:14:18 +0100
+	s=arc-20240116; t=1740590110; c=relaxed/simple;
+	bh=yDq6FhiPks4Ni/UD3gdC1MXn9apoLwfXV3btFFdqudE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iZXWb0dvyD5QWEIay2xvWeQyV/gfv/qnE8AMKn4V7PmDrHqOvTNFPWQ37tGOq7I57pf0fXjFHa/baviIQoxlFkfX7QR7CHmDYZM6gUaHnuHsPaT44uG+hlbRafXUrX+2RWLYf0nqHN2hTGIFgiw0YHKB1Bsud4J+1IssTs5/114=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSNucT1W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B5EC4AF0B;
+	Wed, 26 Feb 2025 17:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740590110;
+	bh=yDq6FhiPks4Ni/UD3gdC1MXn9apoLwfXV3btFFdqudE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CSNucT1WVr6bhbaG/eNar7P4qAOsFQ8TrHKH3gaK9MwmmZRBaBSVTE43K6W3tQKb0
+	 iqBYqLAG6yzC36vGRpTQvCrJmpfEasZgcZyU6aaSROMHRpmJYudFkYrE8hhZy6Rcvf
+	 kSMIAYhUcauzMJsqTiu8MZI8VP2rwn5F/8P4JKfRyDbdS5fY6PDfNLWXMyQeLk4QHw
+	 5SSTs89hh+e5LBgfI07SJ+CEqL+no3LlPdkQ14TsptCGbsJ0euYXYcRUJdAF+fDG1B
+	 YjoT+TiBgyHchsYu0zqD/W7oYMfOUCEwtFBM4QltnDCgv7jt3bzIVEzvy3v6wORLqQ
+	 UD/4Mksq5YO9g==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0813bd105so11813368a12.1;
+        Wed, 26 Feb 2025 09:15:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV7VrFiWY6lyZBZC+1Ejvj0dfT06pODA+CfiPndyy7JWnRlCvYbD3/QoHb2oe447kMcXFKegYHZ/hqteV7G@vger.kernel.org, AJvYcCWQT/Cwrb/QP1ONbR6gbNRsJQw5C9UToyVJKhXk0uY93E9mNu7TkN1Ek5OCd2noc39tLM0oM9dkGRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7IH5E6aIzXCcKkzjSM9gi65bEWVvfAtrXlOPqWPzpPrjCpHNV
+	zQe9HgozXpoRryaa0df8de/Atj+OS0ylLiwuWEjw68qCpqs4TaP5XNcJWgCtLJhWDWcfjNtZ998
+	zLKQPFBey8LfD9vwFyNZ2E11KZA==
+X-Google-Smtp-Source: AGHT+IG6ki3Nh3Jcc3+FNKhZ4DjyuMcfvS8JuUCdoIhctR7oFoNEKiasPTiCqnoci1e/I6F3G+94PRSzioyjymj83WE=
+X-Received: by 2002:a05:6402:448f:b0:5e4:b874:3df7 with SMTP id
+ 4fb4d7f45d1cf-5e4b8743f06mr1681182a12.25.1740590108944; Wed, 26 Feb 2025
+ 09:15:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: jasowang@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org,
- eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, hawk@kernel.org
-References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
- <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
- <67be0cac4d366_25ccfc294e8@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [PATCH bpf-next v3 4/6] selftests/bpf: refactor
- xdp_context_functional test and bpf program
-In-Reply-To: <67be0cac4d366_25ccfc294e8@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27561/Wed Feb 26 10:36:26 2025)
+References: <20250203050828.1049370-1-anshuman.khandual@arm.com>
+ <20250203050828.1049370-8-anshuman.khandual@arm.com> <Z7x-EDH9QP7g4lC6@J2N7QTR9R3.cambridge.arm.com>
+ <2ca1dc13-cd5a-4597-9733-2343e05f53b3@arm.com>
+In-Reply-To: <2ca1dc13-cd5a-4597-9733-2343e05f53b3@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 26 Feb 2025 11:14:57 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+dJiRLNM_QE_r6HOg7hEkJCPR6j-TGBpiJZLd+RDBbAA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpoZHEuOBz0soF4EZKCAojh2v6H8m90soOJSt-k1bfoGbHi4kDZ6Ti1chI
+Message-ID: <CAL_Jsq+dJiRLNM_QE_r6HOg7hEkJCPR6j-TGBpiJZLd+RDBbAA@mail.gmail.com>
+Subject: Re: [PATCH V2 7/7] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, Eric Auger <eric.auger@redhat.com>, kvmarm@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 25.02.25 um 19:32 schrieb Willem de Bruijn:
-> Marcus Wichelmann wrote:
->> The existing XDP metadata test works by creating a veth pair and
->> attaching XDP & TC programs that drop the packet when the condition of
->> the test isn't fulfilled. The test then pings through the veth pair and
->> succeeds when the ping comes through.
->>
->> While this test works great for a veth pair, it is hard to replicate for
->> tap devices to test the XDP metadata support of them. A similar test for
->> the tun driver would either involve logic to reply to the ping request,
->> or would have to capture the packet to check if it was dropped or not.
->>
->> To make the testing of other drivers easier while still maximizing code
->> reuse, this commit refactors the existing xdp_context_functional test to
->> use a test_result map. Instead of conditionally passing or dropping the
->> packet, the TC program is changed to copy the received metadata into the
->> value of that single-entry array map. Tests can then verify that the map
->> value matches the expectation.
->>
->> This testing logic is easy to adapt to other network drivers as the only
->> remaining requirement is that there is some way to send a custom
->> Ethernet packet through it that triggers the XDP & TC programs.
->>
->> The payload of the Ethernet packet is used as the test data that is
->> expected to be passed as metadata from the XDP to the TC program and
->> written to the map. It has a fixed size of 32 bytes which is a
->> reasonalbe size that should be supported by both drivers. Additional
->> packet headers are not necessary for the test and were therefore skipped
->> to keep the testing code short.
->>
->> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-> 
->> -	SYS(close, "ip addr add " RX_ADDR "/24 dev " RX_NAME);
-> 
-> Why remove the Rx and Tx addresses?
+On Tue, Feb 25, 2025 at 12:17=E2=80=AFAM Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 2/24/25 19:41, Mark Rutland wrote:
+> > On Mon, Feb 03, 2025 at 10:38:28AM +0530, Anshuman Khandual wrote:
+> >> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_=
+EL1
+> >> access from EL1 requires appropriate EL2 fine grained trap configurati=
+on
+> >> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_E=
+L2.
+> >> Otherwise such register accesses will result in traps into EL2.
+> >>
+> >> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based f=
+ine
+> >> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting =
+the
+> >> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access in=
+to
+> >> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
+> >>
+> >> Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_F=
+GT2
+> >> based registers to be accessible in EL2.
+> >>
+> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >> Cc: Will Deacon <will@kernel.org>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: Rob Herring <robh@kernel.org>
+> >> Cc: Jonathan Corbet <corbet@lwn.net>
+> >> Cc: Marc Zyngier <maz@kernel.org>
+> >> Cc: Oliver Upton <oliver.upton@linux.dev>
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Cc: linux-doc@vger.kernel.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: kvmarm@lists.linux.dev
+> >> Tested-by: Rob Herring (Arm) <robh@kernel.org>
+> >> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
+> >>  arch/arm64/include/asm/el2_setup.h   | 25 +++++++++++++++++++++++++
+> >>  2 files changed, 43 insertions(+)
+> >
+> > Three things to note here:
+> >
+> > (1) I think this is missing some other necessary register configuration=
+.
+> >
+> >     From a quick scan, we also require MDCR_EL3.EnPM2 (bit [7]) to be
+> >     configured, which is not described in mainline nor here. If that
+>
+> Will update the Documentation/arch/arm64/booting.rst.
+>
+> >     resets to 0, then EL{2,1,0} accesses to a number of registers such
+> >     as PMUACR_EL1 may trap to EL3>
+> >     AFAICT the boot-wrapper resets that bit to 0, so have we actually
+> >     tested all of this with the boot-wrapper? Does TF-A set this bit?
+>
+> Right, boot wrapper resets the bit to 0. We will need the following chang=
+es
+> to set that up when PMUv3p9 is available. MDCR_EL3.EnPM2 also needs to be
+> set when FEAT_SPMU, FEAT_EBEP, FEAT_PMUv3_SS or FEAT_SPMU2 are implemente=
+d.
+> Should those features be checked here as well ?
 
-Because the testing methodology is changed from pinging and IP address
-to sending a custom packet and handling it in XDP instead, the IP addresses
-are no longer relevant for this test.
-I removed them to reduce the testing code to only the setup tasks that are
-needed for the test to do its job.
+From Arm ARM:
+If FEAT_SPMU is implemented, then FEAT_PMUv3p9 is implemented.
+If FEAT_SPMU2 is implemented, then FEAT_SPMU is implemented.
+If FEAT_PMUv3_SS is implemented, then FEAT_PMUv3p9 is implemented.
 
-I can add a note about this to the commit message.
+FEAT_EBEP is v9.3 and later. if FEAT_PMUv3p9 is implemented, FEAT_EBEP
+is implemented.
 
->> [...]
->>   
->> -	tc_prog = bpf_object__find_program_by_name(skel->obj, "ing_cls");
->> -	if (!ASSERT_OK_PTR(tc_prog, "open ing_cls prog"))
->> -		goto close;
->> -
->> -	tc_opts.prog_fd = bpf_program__fd(tc_prog);
->> +	tc_opts.prog_fd = bpf_program__fd(skel->progs.ing_cls);
-> 
-> This refactor seems irrelevant to the goal of this patch? Same below.
+So I don't think we need to check anything else.
 
-Fair point. These were drive-by cleanups to make the testing code less
-verbose. But you're right, they are not relevant and just inflate the diff.
-I'll remove them from the patch.
+>
+> --- a/arch/aarch64/include/asm/cpu.h
+> +++ b/arch/aarch64/include/asm/cpu.h
+> @@ -56,6 +56,7 @@
+>  #define MDCR_EL3_SBRBE_NOTRAP_NOPROHIBIT       (UL(3) << 32)
+>  #define MDCR_EL3_ENPMSN                                BIT(36)
+>  #define MDCR_EL3_EBWE                          BIT(43)
+> +#define MDCR_EL3_EnPM2                         BIT(7)
+>
+>  #define SCR_EL3_RES1                   BITS(5, 4)
+>  #define SCR_EL3_NS                     BIT(0)
+> @@ -87,6 +88,7 @@
+>  #define ID_AA64DFR0_EL1_PMSVER         BITS(35, 32)
+>  #define ID_AA64DFR0_EL1_TRACEBUFFER    BITS(47, 44)
+>  #define ID_AA64DFR0_EL1_BRBE           BITS(55, 52)
+> +#define ID_AA64DFR0_EL1_PMUVER         BITS(11, 8)
+>  #define ID_AA64DFR0_EL1_DEBUGVER       BITS(3, 0)
+>
+>  #define ID_AA64ISAR0_EL1_TME           BITS(27, 24)
+> diff --git a/arch/aarch64/init.c b/arch/aarch64/init.c
+> index 54e4cc4..fe7ed5f 100644
+> --- a/arch/aarch64/init.c
+> +++ b/arch/aarch64/init.c
+> @@ -152,6 +152,9 @@ static void cpu_init_el3(void)
+>         if (mrs_field(ID_AA64DFR0_EL1, DEBUGVER) >=3D 11)
+>                 mdcr |=3D MDCR_EL3_EBWE;
+>
+> +       if (mrs_field(ID_AA64DFR0_EL1, PMUVER) >=3D 0b1001)
+> +               mdcr |=3D MDCR_EL3_EnPM2;
+> +
+>         msr(MDCR_EL3, mdcr);
+>
+>         if (mrs_field(ID_AA64PFR0_EL1, SVE)) {
+>
+> MDCR_EL2.EnPM2 does not seem to be set on TFA either, will double check a=
+nd
+> get it enabled.
+>
+> >
+> >     Are we sure we've cpatured *all* requirements for FEAT_PMUv3p9? i.e=
+.
+> >     is there anything else that we've missed?
 
->> [...]
->> @@ -179,9 +231,18 @@ void test_xdp_context_functional(void)
->>   	if (!ASSERT_OK_PTR(nstoken, "setns tx_ns"))
->>   		goto close;
->>   
->> -	SYS(close, "ip addr add " TX_ADDR "/24 dev " TX_NAME);
->> +	SYS(close, "ip link set dev " TX_NAME " arp off");
->>   	SYS(close, "ip link set dev " TX_NAME " up");
-> 
->>   SEC("tc")
->>   int ing_cls(struct __sk_buff *ctx)
->>   {
->> -	__u8 *data, *data_meta, *data_end;
->> -	__u32 diff = 0;
->> +	void *data_meta = (void *)(unsigned long)ctx->data_meta;
->> +	void *data = (void *)(unsigned long)ctx->data;
->>   
->> -	data_meta = ctx_ptr(ctx, data_meta);
->> -	data_end  = ctx_ptr(ctx, data_end);
->> -	data      = ctx_ptr(ctx, data);
-> 
-> Similarly: why these changes?
-> 
-> In general, please minimize your patch to the core purpose. Avoid
-> including "cleanups" or other such refactors. Or justify the choice
-> explicitly in the commit message.
+For FEAT_PMUv3_SS, there's MDCR_EL3.EnPMSS, MDCR_EL3.PMSSE, and MDCR_EL2.PM=
+SSE.
 
-I had rewritten the function bodies of these two BPF programs from
-scratch because the functionality changed significantly. That's where
-this comes from.
-I'll try to reuse more of the existing code to make the diff shorter.
+For FEAT_EBEP (and SEBEP), there's  MDCR_EL3.PMEE and MDCR_EL2.PMEE
 
->> -
->> -	if (data + ETH_ALEN > data_end ||
->> -	    data_meta + round_up(ETH_ALEN, 4) > data)
->> +	if (data_meta + META_SIZE > data)
->>   		return TC_ACT_SHOT;
->>   
->> -	diff |= ((__u32 *)data_meta)[0] ^ ((__u32 *)data)[0];
->> -	diff |= ((__u16 *)data_meta)[2] ^ ((__u16 *)data)[2];
->> +	int key = 0;
->> +
->> +	bpf_map_update_elem(&test_result, &key, data_meta, BPF_ANY);
->>   
->> -	return diff ? TC_ACT_SHOT : TC_ACT_OK;
->> +	return TC_ACT_SHOT;
->>   }
->>   
->>   SEC("xdp")
->>   int ing_xdp(struct xdp_md *ctx)
->>   {
->> -	__u8 *data, *data_meta, *data_end;
->> -	int ret;
->> -
->> -	ret = bpf_xdp_adjust_meta(ctx, -round_up(ETH_ALEN, 4));
->> +	int ret = bpf_xdp_adjust_meta(ctx, -META_SIZE);
->>   	if (ret < 0)
->>   		return XDP_DROP;
->>   
->> -	data_meta = ctx_ptr(ctx, data_meta);
->> -	data_end  = ctx_ptr(ctx, data_end);
->> -	data      = ctx_ptr(ctx, data);
->> +	void *data_meta = (void *)(unsigned long)ctx->data_meta;
->> +	void *data = (void *)(unsigned long)ctx->data;
->> +	void *data_end = (void *)(unsigned long)ctx->data_end;
->>   
->> -	if (data + ETH_ALEN > data_end ||
->> -	    data_meta + round_up(ETH_ALEN, 4) > data)
->> +	void *payload = data + sizeof(struct ethhdr);
->> +
->> +	if (data_meta + META_SIZE > data || payload + META_SIZE > data_end)
->>   		return XDP_DROP;
->>   
->> -	__builtin_memcpy(data_meta, data, ETH_ALEN);
->> +	__builtin_memcpy(data_meta, payload, META_SIZE);
->> +
->>   	return XDP_PASS;
->>   }
->>   
->> -- 
->> 2.43.0
->>
+I would assume those become requirements when and if the kernel uses
+those features.
+
+>
+> >
+> > (2) This is a fix for !VHE support for PMUACR and ICNTR, where the host
+> >     may run at EL1 and consequently will be affected by fine grained
+> >     traps.
+> >
+> >     So this probably needs a CC stable and/or fixes tag, and backport.
+>
+> Fixes: 0bbff9ed8165 ("perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access =
+control")
+> Fixes: d8226d8cfbaf ("perf: arm_pmuv3: Add support for Armv9.4 PMU instru=
+ction counter")
+> Cc: stable@vger.kernel.org
+>
+> But is there a particular stable tree this patch should be addressed ?
+
+It's 6.12+, but the Fixes tags are enough for the tooling to decide.
+
+>
+> >
+> > (3) As there's no KVM changes, this is only safe provided that the
+> >     registers affected by these fine grained traps are already
+> >     unconditionally trapped by other traps when running a vCPU.
+> >
+> >     It looks like PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 are all
+> >     trapped by MDCR_EL2.TPM, so that should work as long as we emulate
+> >     the PMU. For direct access, FGT2 support will be a prerequisite.
+> >
+> > Ideally, we'd have added support for FGT2 before the PMU functionality
+> > that implicitly depends upon it. We should pay more attention to trap
+> > controls in future.
+> >
+> > Given (1) and (2) I think someone needs to look into this a bit more an=
+d
+> > figure out if this needs a fixup or a respin.
+>
+> To summarize
+>
+> - Update arm64/booting.rst regarding MDCR_EL3.EnPM2
+> - Add above mentioned "Fixes:" tag and "CC: stable"
+> - But should respin this patch or send a fix up instead ?
+
+It is not applied yet, right? So respin.
+
+Rob
 
