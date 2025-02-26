@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-533943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98418A46096
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 329D1A46099
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98FFB3ADB49
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:20:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F9F3AAD13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB1E21C19A;
-	Wed, 26 Feb 2025 13:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D9F258CF1;
+	Wed, 26 Feb 2025 13:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HjFgdJZU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MmX1z1PO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7126B219308
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BB421930E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576061; cv=none; b=lAHgRnGlIVZUc2zDHIRYbwDYiJPQ3ydmMru4F+yR6YjXJ8DOgebe1vgfClSmpn809jJXcd6KjlVXoVMiZ0mlShmoVkbwyN274O4JGmyVMqWCP9INpwAag4+u/Jv1umgcYZO6nebKTORajCJ3TNMnRLKHDFw1nRbSVwtpFeROPJk=
+	t=1740576082; cv=none; b=APwYtqtzWkn6KM6s7WTz+4P51Ts30oYyWpBKrlfLVpnk6qT7uTjhljqrVbd3hSxfLnshDARqZOjfxjyEMtvZSClzn2tF5hd+cQ5U8gMSkNnnz0tp0pSBSD8chrdJwHEdewl4ZMYUa5YpR2iBafXJWX+GQ0n5R1jVXcUUuygg0Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576061; c=relaxed/simple;
-	bh=Qnm2hG1KnsQDqXnZ7Ak67qCxfQakLBBxso81jVcduA0=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Ri/e+DixpUkHPe96zNr7cuXYr0Txw4cxNJaheGI5YyBW/bskEwZXUMqOgWLEfs696Xv3BBSWkSuzuKNDThYdxi1vFmMUym6itqkIQhdtUlMuXYk6ME2453JudLY877h/JaGqVMIjWe6CCtrAm4rvXeSRdo8Ala0SZUHAkwAP4VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HjFgdJZU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740576058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pOKQylrR35KbXG+jocGUv5N9FH8CHHirEUON+cGjZNs=;
-	b=HjFgdJZUnwASIzhI0Iw8ydW/UmjBcsR+seNTTjJmh4v6lkR4Bjr7yZLGh2My4g3AFxaBLM
-	Dt3w4VHgG/cCe66xdOqEvpuaIRuSZPdzdlOcn7hxtwDfEpkBZEiJ5PKYVPTL1sKfCVgajb
-	lu1IDUs6+ftt/jvQzUY+yfM1MbrgrCM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-92-Cd6NdM0AOWCNDV3PSSOq0g-1; Wed,
- 26 Feb 2025 08:20:54 -0500
-X-MC-Unique: Cd6NdM0AOWCNDV3PSSOq0g-1
-X-Mimecast-MFC-AGG-ID: Cd6NdM0AOWCNDV3PSSOq0g_1740576052
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A516918EB2CE;
-	Wed, 26 Feb 2025 13:20:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.9])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 49C0F1800358;
-	Wed, 26 Feb 2025 13:20:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>,
-    Steve French <stfrench@microsoft.com>,
-    Dominique Martinet <asmadeus@codewreck.org>
-cc: dhowells@redhat.com, Ihor Solodrai <ihor.solodrai@pm.me>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>,
-    Paulo Alcantara <pc@manguebit.com>, Jeff Layton <jlayton@kernel.org>,
-    v9fs@lists.linux.dev, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Fix unbuffered writes
+	s=arc-20240116; t=1740576082; c=relaxed/simple;
+	bh=6euHJfox0e0l2tuWVzWUNGuLH97SMFfgyjkGT8aGx1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pz0tM8Gv/2ulF+dClXlxzgp5HIY65HP9TprgftZZt77HbCG8MlJ1QbJ5G5jInMX+oqY5zhIVbuXtMK9tlfjQlIHWjiewwdOZ10yxyMmyvBRgmQBiehsppLe38PLBxuWFxh+5pY9sBeBs00H3maM9n9RH+Pb1BsCTUQ9ikM42eng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MmX1z1PO; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740576081; x=1772112081;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6euHJfox0e0l2tuWVzWUNGuLH97SMFfgyjkGT8aGx1s=;
+  b=MmX1z1POLRopYyB1xQoejdUHIL6QNiCwCY1JwZtjgXHdtTKk2sf4heSj
+   FN/Jw8k0oEHepzHK623VWLw++Lj/hZ+UcHrClA/6CfYUrxHf3m/XKv9QY
+   1PPQ5ve/0PAVGdap9y8Cfc1JDsfdkl42wbnm79Oe1XNkFdXSB5PJAAe78
+   fIRTzUqFZIJPEkDf0V10icdUXK/hi6/eEQh8iGBLR2sepSXmT0SPgCPal
+   kMCFl7I/2I9xt20kOrCMJYL+SF31lWKE4Z8L1ATrtG1u7cdEJ1t45aeTl
+   yu53RK2GAvyfBG2Km9KOXghaHvfisaR3Sl7beWb5r10BG0JGEWPaGnn2M
+   w==;
+X-CSE-ConnectionGUID: hsojORCOSqmLSqlJLKmXxw==
+X-CSE-MsgGUID: PfE4ScHpQQuhvxd4224npA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41615329"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41615329"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:21:21 -0800
+X-CSE-ConnectionGUID: c1uFttXDQzGV1g6bwIamOA==
+X-CSE-MsgGUID: p4XYpNa2Qr+7/2Fknb5fQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120810105"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:21:19 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tnHLg-0000000FKhD-2FiA;
+	Wed, 26 Feb 2025 15:21:16 +0200
+Date: Wed, 26 Feb 2025 15:21:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] Introduce Intel Elkhart Lake PSE TIO
+Message-ID: <Z78VTGTKdUoQxjjN@smile.fi.intel.com>
+References: <20250226061527.3031250-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2602344.1740576046.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 26 Feb 2025 13:20:46 +0000
-Message-ID: <2602345.1740576046@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226061527.3031250-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix netfs_wait_for_request() so that it doesn't check the outcome of a
-synchronous unbuffered write and emit error -EIO and a netfs_failure trace
-line if the write appears to be short.  This will affect both 9p and cifs,
-depending on the mount options; it does not affect DIO writes.
+On Wed, Feb 26, 2025 at 11:45:23AM +0530, Raag Jadav wrote:
+> Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
+> devices that expose two different capabilities of GPIO and Timed I/O
+> as a single PCI function through shared MMIO.
+> 
+> This series adds MFD driver for them and extends PPS generator driver
+> to support initial PSE TIO functionality.
 
-This check is a problem because the write side doesn't set rreq->submitted=
-,
-but rather ->issued_to (the two ought to be merged as one is superfluous).
-This now occurs because the code was generalised from just the read side t=
-o
-the write side as well.
+A few comments here and there, after addressing them
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Fixes: 9dc06eff2097 ("netfs: Fix wait/wake to be consistent about the wait=
-queue used")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Ihor Solodrai <ihor.solodrai@pm.me>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: v9fs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/misc.c |    1 +
- 1 file changed, 1 insertion(+)
+(Nice small driver, thanks!)
 
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 6a5a7704e983..77e7f7c79d27 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -461,6 +461,7 @@ static ssize_t netfs_wait_for_request(struct netfs_io_=
-request *rreq,
- 		case NETFS_DIO_READ:
- 		case NETFS_DIO_WRITE:
- 		case NETFS_READ_SINGLE:
-+		case NETFS_UNBUFFERED_WRITE:
- 			break;
- 		default:
- 			if (rreq->submitted < rreq->len) {
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
