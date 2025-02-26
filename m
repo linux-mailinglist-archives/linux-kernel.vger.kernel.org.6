@@ -1,212 +1,157 @@
-Return-Path: <linux-kernel+bounces-534319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC76A4657C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:50:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCAFA4657D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901FB1897B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56B216C3E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9716223302;
-	Wed, 26 Feb 2025 15:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC31221DAA;
+	Wed, 26 Feb 2025 15:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y92Tuumh"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXnhwFEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C2721CA1E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050BE21C184;
+	Wed, 26 Feb 2025 15:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584531; cv=none; b=VDV4jZqIIfGpjFXBTwV9XZV1HpXI5wSsgIrr+/hkhZm4P/s0UGpR6WecLEBChYzmsIV49/rmouib1uYAVl9Xrm9QelEoInrenH7szdxEOiqVrbNThwfmOEf3RfnsecbHe+WeGyqmyR7aUmnbDjo+GN3yalJdCZ5KARsFX9w/bok=
+	t=1740584529; cv=none; b=sQv4zShFM1/H/TUzwOQTGoKr7gQnM20AhXudYuDl/pMtI7humKcnsZMC3K33Vllm03zL9Adfwt6JQwVjvKowCAYqyb/GXPL4JLbW2tEiKzbvQKHbitg0GEchVlUzk4WnyuwVey4MV+5xZXbqy7inEWErPoUM/VG5gior2xzBUps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584531; c=relaxed/simple;
-	bh=X/2mRuNpOCsKfLqIY1rhKBcbI/1znlC5uDg55ux+Qk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXvcFv/cV33KVLBqcdOwJthPX9V+QQCTBa+JbrltW4c04ItpOfEPD7s/oN7DCR/Xy8TTAUazt3Yssas6reM4kHxizcPZ7Ey0bPN1jK4z9ueqqW2P6q4sHSAakJdUVuxizoykdKUEuTZ/T1JvZWaby6wI7GTv0XDu/Z5SuiyYfDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y92Tuumh; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 15:42:00 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740584525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G0ka5+57U6hHrywsA4GiXl4SPgDlHG+Ia84OVSI5zrg=;
-	b=Y92TuumhhX48sxCcHAtjxEUE7+wn9akk6NdxpMBZJJQsRa2Iy/RzGC+H5P165D76CAHDX5
-	DnFw39WGfHZ9cBqyX3lD2rUlsB4zi9iWbAP89TxnMojgduqiPwtqjvR5Fc3jZhS6wd5wYt
-	fGHMPDavMUJaD9WK+vXJ/G//pOYAJOk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-Message-ID: <Z782SPcJI8DFISRa@google.com>
-References: <20250225213200.729056-1-nphamcs@gmail.com>
- <20250226005149.GA1500140@cmpxchg.org>
- <Z76AVZ_tjq2NvmLT@google.com>
- <20250226035730.GA1775487@cmpxchg.org>
+	s=arc-20240116; t=1740584529; c=relaxed/simple;
+	bh=4lwpw1eA/OAPQ5ze01nLd6Rlmb9Y7GXtIaV2zlbGfNc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RZVgJ1/72ija4g6+M1rKhzkTGH4kmGzOB8AM7gvwHdiEA70oP8oc+KxiQP+o5AyjDz3oSOEGLPgaqJ5P/AZN2/RZUfP3puq5Mx+TRAAVFa/jvc4zBCdhVP0Qm753tOViquj18KV6nBFdbw0+hMQkAmcq8tKCFlIbW0uPmUCbAW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXnhwFEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44595C4CED6;
+	Wed, 26 Feb 2025 15:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740584528;
+	bh=4lwpw1eA/OAPQ5ze01nLd6Rlmb9Y7GXtIaV2zlbGfNc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=dXnhwFEwBY6VP6k7cOZwDBV1N5vsNzykK8CthuOaXQ2jeLgaF+JX4B43aMCNVf7yC
+	 PbnI7DElkJwpHJzVd337zgkQfJhuByiCe/Dm7CaafCcCIWYAUGpn48CmMtqMhV38Q7
+	 u6TOS+jhcizfpd/mVVaDet2JGXGWq00m9rpxBOKh01OFxkTjr2NxYdCo+n+Wy1aTnt
+	 Iz317hYKewS5jGMvj9oJ1fg/LjEuJGReXlrbPZotbpuVsRXSW4lzdcMsyh0IKysSI2
+	 qru9t3IE355Fk7EOKIoFotJobEsAcx7SFWeZSu8Vf5aHqBRps9n4Q0wWjf7MpJHJZZ
+	 tBmghqK3FbSyA==
+Date: Wed, 26 Feb 2025 09:42:06 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226035730.GA1775487@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Georgi Djakov <djakov@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-tegra@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-1-clamor95@gmail.com>
+References: <20250225143501.68966-1-clamor95@gmail.com>
+Message-Id: <174058435857.2478604.15934788005971294558.robh@kernel.org>
+Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
 
-On Tue, Feb 25, 2025 at 10:57:30PM -0500, Johannes Weiner wrote:
-> On Wed, Feb 26, 2025 at 02:45:41AM +0000, Yosry Ahmed wrote:
-> > On Tue, Feb 25, 2025 at 07:51:49PM -0500, Johannes Weiner wrote:
-> > > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> > > > +	}
-> > > >  	mutex_unlock(&acomp_ctx->mutex);
-> > > >  
-> > > >  	if (src != acomp_ctx->buffer)
-> > > >  		zpool_unmap_handle(zpool, entry->handle);
-> > > > +	return ret;
-> > > >  }
-> > > >  
-> > > >  /*********************************
-> > > > @@ -1018,6 +1028,7 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > > >  	struct writeback_control wbc = {
-> > > >  		.sync_mode = WB_SYNC_NONE,
-> > > >  	};
-> > > > +	int ret = 0;
-> > > >  
-> > > >  	/* try to allocate swap cache folio */
-> > > >  	mpol = get_task_policy(current);
-> > > > @@ -1034,8 +1045,8 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > > >  	 * and freed when invalidated by the concurrent shrinker anyway.
-> > > >  	 */
-> > > >  	if (!folio_was_allocated) {
-> > > > -		folio_put(folio);
-> > > > -		return -EEXIST;
-> > > > +		ret = -EEXIST;
-> > > > +		goto put_folio;
-> > > >  	}
-> > > >  
-> > > >  	/*
-> > > > @@ -1048,14 +1059,17 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > > >  	 * be dereferenced.
-> > > >  	 */
-> > > >  	tree = swap_zswap_tree(swpentry);
-> > > > -	if (entry != xa_cmpxchg(tree, offset, entry, NULL, GFP_KERNEL)) {
-> > > > -		delete_from_swap_cache(folio);
-> > > > -		folio_unlock(folio);
-> > > > -		folio_put(folio);
-> > > > -		return -ENOMEM;
-> > > > +	if (entry != xa_load(tree, offset)) {
-> > > > +		ret = -ENOMEM;
-> > > > +		goto fail;
-> > > >  	}
-> > > >  
-> > > > -	zswap_decompress(entry, folio);
-> > > > +	if (!zswap_decompress(entry, folio)) {
-> > > > +		ret = -EIO;
-> > > > +		goto fail;
-> > > > +	}
-> > > > +
-> > > > +	xa_erase(tree, offset);
-> > > >  
-> > > >  	count_vm_event(ZSWPWB);
-> > > >  	if (entry->objcg)
-> > > > @@ -1071,9 +1085,14 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > > >  
-> > > >  	/* start writeback */
-> > > >  	__swap_writepage(folio, &wbc);
-> > > > -	folio_put(folio);
-> > > > +	goto put_folio;
-> > > >  
-> > > > -	return 0;
-> > > > +fail:
-> > > > +	delete_from_swap_cache(folio);
-> > > > +	folio_unlock(folio);
-> > > > +put_folio:
-> > > > +	folio_put(folio);
-> > > > +	return ret;
-> > > >  }
-> > > 
-> > > Nice, yeah it's time for factoring out the error unwinding. If you
-> > > write it like this, you can save a jump in the main sequence:
-> > > 
-> > > 	__swap_writepage(folio, &wbc);
-> > > 	ret = 0;
-> > > put:
-> > > 	folio_put(folio);
-> > > 	return ret;
-> > > delete_unlock:
-> > 
-> > (I like how you sneaked the label rename in here, I didn't like 'fail'
-> > either :P)
-> > 
-> > > 	delete_from_swap_cache(folio);
-> > > 	folio_unlock(folio);
-> > > 	goto put;
-> > 
-> > I would go even further and avoid gotos completely (and make it super
-> > clear what gets executed in the normal path vs the failure path):
-> > 
-> > 	__swap_writepage(folio, &wbc);
-> > 	folio_put(folio);
-> > 	if (ret) {
-> > 		delete_from_swap_cache(folio);
-> > 		folio_unlock(folio);
-> > 	}
-> > 	return ret;
+
+On Tue, 25 Feb 2025 16:34:52 +0200, Svyatoslav Ryhel wrote:
+> Add support for External Memory Controller found in Tegra 4 SoC along
+> with adjustments required for it to work properly.
 > 
-> The !folio_was_allocated case only needs the put. I guess that could
-> stay open-coded.
-
-We also do:
-
-	if (ret && ret != -EEXIST) {
-		...
-	}
-
-or
-
-	if (ret && !folio_was_allocated) {
-		...
-	}
-
-Probably the latter is clearer. If the folio was already there, we
-didn't add it to the swapcache or lock it ourselves so we don't unwind
-that.
-
+> Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
 > 
-> And I think you still need one goto for the other two error legs to
-> jump past the __swap_writepage.
-
-Oh yeah I meant eliminate the jumps within the cleanup/return code, not
-entirely. Sorry for the confusion. We still need an 'out' label or
-similar after __swap_writepage().
-
+> Svyatoslav Ryhel (9):
+>   ARM: tegra: Add ACTMON support on Tegra114
+>   dt-bindings: memory: Document Tegra114 Memory Controller
+>   drivers: memory: tegra: implement EMEM regs and ICC ops for T114
+>   dt-bindings: memory: tegra114: Add memory client IDs
+>   clk: tegra114: remove emc to mc clock mux
+>   dt-bindings: memory: Document Tegra114 External Memory Controller
+>   memory: tegra: Add Tegra114 EMC driver
+>   ARM: tegra: Add External Memory Controller node on Tegra114
+>   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
+>     device-tree nodes
 > 
-> > > Something like this?
-> > > 
-> > > 	if (!zswap_decompress(entry, folio)) {
-> > > 		/*
-> > > 		 * The zswap_load() return value doesn't indicate success or
-> > > 		 * failure, but whether zswap owns the swapped out contents.
-> > > 		 * This MUST return true here, otherwise swap_readpage() will
-> > > 		 * read garbage from the backend.
-> > > 		 *
-> > > 		 * Success is signaled by marking the folio uptodate.
-> > > 		 */
-> > 
-> > We use the same trick in the folio_test_large() branch, so maybe this
-> > should be moved to above the function definition. Then we can perhaps
-> > refer to it in places where we return true wihout setting uptodate for
-> > added clarity if needed.
+>  .../nvidia,tegra114-emc.yaml                  |  431 +++++
+>  .../nvidia,tegra114-mc.yaml                   |  154 ++
+>  .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
+>  drivers/clk/tegra/clk-tegra114.c              |   48 +-
+>  drivers/memory/tegra/Kconfig                  |   12 +
+>  drivers/memory/tegra/Makefile                 |    1 +
+>  drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
+>  drivers/memory/tegra/tegra114.c               |  193 +++
+>  include/dt-bindings/memory/tegra114-mc.h      |   67 +
+>  10 files changed, 2561 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-emc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-mc.yaml
+>  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
+>  create mode 100644 drivers/memory/tegra/tegra114-emc.c
 > 
-> That makes sense to me. Nhat, what do you think?
+> --
+> 2.43.0
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250225143501.68966-1-clamor95@gmail.com:
+
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: actmon@6000c800: '#cooling-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: actmon@6000c800: '#cooling-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: actmon@6000c800: '#cooling-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: actmon@6000c800: '#cooling-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: bluetooth: reset-gpios: False schema does not allow [[22, 134, 1]]
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/brcm,bluetooth.yaml#
+
+
+
+
+
 
