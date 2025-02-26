@@ -1,263 +1,233 @@
-Return-Path: <linux-kernel+bounces-533011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54451A454CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:13:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B7CA454CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E226B188ECFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3127170D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A99721CA0E;
-	Wed, 26 Feb 2025 05:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E27025569;
+	Wed, 26 Feb 2025 05:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TBiFlBpi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD15C21ABB4;
-	Wed, 26 Feb 2025 05:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740546828; cv=none; b=djiSh1TxOjU5tvVkOWR3KQsKzvO2X5+DiIf6fMRiBY1pHrBlgSTXXtF75sjr/3QT1PLIq7Q0mkQwgn+eb1xf5ittwWJWaEZrFdjyZwyuBcvoU8A7Avb/d94ydNp/RFUAyszGroJvJ3TgYWRt+bD3hr37iVTZ4m34+RsKbtucYzc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740546828; c=relaxed/simple;
-	bh=95VA5pP7sXkxtwvVKHirwBMf5wutktNBo2bDGwl/yfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iI1+h1+qyQRKvsJ15y4XxUQDE4zdzyLq3xz1EpnQWuhCqEVSe5LqcahPhm+7G2RPV2Yx0NVf4Gc6BnK+pl6jknHA07WhtdDWCQjpM+/hyIOjb7RGkx50YZ87YCdnjLSbPa9MEFRJ6qn4IitUzbynl0NIob0bnClWh8v1o350hUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TBiFlBpi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.69.26] (unknown [167.220.238.90])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AE2AA206940D;
-	Tue, 25 Feb 2025 21:13:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AE2AA206940D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740546826;
-	bh=cKDXjTMY6Z12dq3z1lksi6XbbwedelRkdXpqMEzvSOs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TBiFlBpiu2+fIFcRHSAV8q70WeV6hFO1K8jXW8QqZ/usBsMxX1VHnsgRUevjUUGxX
-	 NMgMv3ws7oXL1GPYP+hhsplC4izHbp/G5djzDil1frv9sZiPIvmWqzgb2zef00whDO
-	 FQoL827McYGD60Whwmh8FreXGuhA+BouVa8O+PHk=
-Message-ID: <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
-Date: Wed, 26 Feb 2025 10:43:41 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlF8Lx9j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B61607A4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740547057; cv=fail; b=lW0Cl54hLBkomI4lSu4u5dfNti8zHeSutVmTQdfoSlfQIxjxAdBmrEeho4U4K+Zr8U08fdcRR3bUwSX6xlvUMucaGfmbPWQq2tKwu1JNkboaKzZPwRjklAxMZZVJg8KrTmiM1X9fHk9W+E3hZDhhHEP0Z+H1Jxh8bI0Bt2S61BQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740547057; c=relaxed/simple;
+	bh=N9aauW39sp0nahKpht99+/4km1dPZoRqrxJeAe5PZ8c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=P6rHqr/RX+/OZ85prOJ481dZlNuVBONAP+/HZH3m83x1sSbP9KFd/qh8ZLiy4uXkJKTz6WeVxGzX1Q+PcbMBqe5nW7LyEHRiTjRNIgWde5Vdk45QBVcm4cma3cvYU+t7qKsS2Oe6mf3+XlYjmr1D+Klhm17TYHutsAcKYQdznok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlF8Lx9j; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740547056; x=1772083056;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=N9aauW39sp0nahKpht99+/4km1dPZoRqrxJeAe5PZ8c=;
+  b=BlF8Lx9jgMm+jJt7ipwKSgsxevtosLwEjaChP3Rz9au+J1Qo2jxpUXkv
+   dSeICtvZ2w+jiTiFacftT3s/uyi7CZTIVe+eqvuGWa4ekHXulsvmQN1VR
+   2Vrz1hu4XlCaWSSSQR7JEQAqqY8sZJz+106l6kelZ5/mxIKzXwEZSjGrZ
+   tc+3HXUpIWG4sFf8V4fu0wXll1zDqXnsIcvy7vZwRqu1hmmfoHCR4RQGK
+   i0AzvBeW1UoYrL5cPyb5yVHdmEPDe3brt2C2w9NiOsfy+1LlYmGp4HRmY
+   FzZxJO7UtejR2jZq0s8rbYsgWcBQScxhjXwPvJsY5qo4JO2eFWcN63Ply
+   w==;
+X-CSE-ConnectionGUID: zwXgQFtiTe6zlvqOKwQV5A==
+X-CSE-MsgGUID: FaXooFLtRr6vLMEoBIve3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41398260"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="41398260"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:17:35 -0800
+X-CSE-ConnectionGUID: 6ITDL+YOTzOxEitgWTwgbw==
+X-CSE-MsgGUID: p51jWlcjR36VXLlJR2DCjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="116389029"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:17:35 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 25 Feb 2025 21:17:34 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 25 Feb 2025 21:17:34 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.44) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 25 Feb 2025 21:17:34 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gx95ENbRk212QtK3jwC+eqL8HqFzcmFwQw9YCecJhej0hjyAO/FhGLbIKy8wY9lYL/dqQoSIOvvL2ulv03KJCV1rmRcb8BlhovIzzHNUlH0bM6p5KocEsNWqvvQbAgZ+0Gug2hj2DTA2RZ0IhvsAZqfilG8o1Hmf3lJS0LKOjyrzl2qlWPK4dWjS4bu7RfWMOY2FRShL+vTEvTq/7JnRe3HPyuYZQsB447fQQV91ZPd7/S1e629pjTgTGRvMkk50CuZMeyeSUUcY7LxL2SHvCgrSGqTcX7vpwNXzgDJe34y92O97leDY630tcLiosjgtN+8zud4sbvLChbFiLGmIWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N9aauW39sp0nahKpht99+/4km1dPZoRqrxJeAe5PZ8c=;
+ b=nWWwNHctUz52TSWsFTONxF58wFgnqk209C9umNe558J3vggt8Kf/o69/Q6PqqB6GQUKLoNn+M3ocn7VPL3J6R0d4MIvpGgxemllaha2+HG80FN+Rq1kvrfclL/YJlnFVWN7tAUs9E07vCrYtApR/KgU5A17Ab9Cs204JT+SpjO8gAOen9W9MG4jQ3pAXR8uq8D9FWna+citG11ryombwMjas8aSOsc+pmL+ITc+KgmrL+gzUcPkreBN9OcF0cz3w2OZcPCSSbjSc77A9OAuYJWDNEtZwdr4PO3Hjl77KxTupREmWcX3JxgYdU5GW6rl5zRM+P1wGc7PbcN77DneyRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by SN7PR11MB7993.namprd11.prod.outlook.com (2603:10b6:806:2e5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
+ 2025 05:17:27 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%6]) with mapi id 15.20.8466.020; Wed, 26 Feb 2025
+ 05:17:27 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>
+CC: "Jiang, Dave" <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+	Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 06/12] iommu/vt-d: Cleanup
+ intel_context_flush_present()
+Thread-Topic: [PATCH v2 06/12] iommu/vt-d: Cleanup
+ intel_context_flush_present()
+Thread-Index: AQHbhntMC6a5A/3El0281ujJDWut9LNXpELAgAFT5YCAABZK4A==
+Date: Wed, 26 Feb 2025 05:17:27 +0000
+Message-ID: <BN9PR11MB527652E646F7437CA7E4AFE58CC22@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
+ <20250224051627.2956304-7-baolu.lu@linux.intel.com>
+ <BN9PR11MB52763EE4B5976621A7797DBD8CC32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <421bb6af-4b7b-4987-8db2-037a39d43078@linux.intel.com>
+In-Reply-To: <421bb6af-4b7b-4987-8db2-037a39d43078@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SN7PR11MB7993:EE_
+x-ms-office365-filtering-correlation-id: 06e13819-96e1-4a46-8312-08dd5624dc4b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?OFdqQ2pGSGFZZjNKSVgzSEJoTWY0em9SVkFVUFlidzdyWG13RHJBRnhZaDRm?=
+ =?utf-8?B?ek9FT0pKTVZrS2xsTVBtQWZUQzZRNUZSVmRmbitWT1E5QkRyV3hFblVidUx4?=
+ =?utf-8?B?TzE5Qis0czJsZThsbnUxNlJBc3JTSWo3NnhqN1piR00zR016a3V2bzcvRmsz?=
+ =?utf-8?B?RmRDS1laWGRIbS9JckhtT0cxL1FpRzRROGU4Wk9ZZ3llQmRkRktoU21uUzBB?=
+ =?utf-8?B?YnRmcDZZRm91dW5paWlqVk9sdzY0blBpdGxqTWxsOWZyR3J2V1R2L0ZMMDhY?=
+ =?utf-8?B?TCtkL0lKZzZld0ZDdWF6dnJBRHdqdjRvQzVKbnZEdnUzMUJ1WUhmMmdVdGJa?=
+ =?utf-8?B?ZUNxVGljTHR1QkxncVlha1dIWC9teTZDcmZkbWtpL2FlWnB0STlaQTU5K3Vi?=
+ =?utf-8?B?a3JuUDU4azNnREZFZU5ickUybUxhNWFSNVFoblBKZHFQRWVyb25hU3U5ZHBk?=
+ =?utf-8?B?bU9wWm9VSFg3eDhkMEh4VUpHdklrbEtVaVZCYVNhK0wwU3JYT0dSUWh1Yld0?=
+ =?utf-8?B?WWJzVFJYbWFvaXRlSnpRWFR6K1FEMGxSQ1dTSkpLUVpvY2NycHJ1STVmaUt3?=
+ =?utf-8?B?VVdoUTFwNjdsQnZqZk0wcFVTUDcxUC8rOEtWcWZZa3ZQbWMyVlpWRTRHM2VQ?=
+ =?utf-8?B?czB0Tnp2NS93VEhCMU93dW5Yc2RNSXozcm1jaXU5RjltOHErZU5XWjFZQjZj?=
+ =?utf-8?B?SjRPcVpmdjgrM0pXTGZzMUxoelRhS1JCQitqZzhZVDJ4aTFuTnFDTEk2dkFn?=
+ =?utf-8?B?a1FVY1JEVDMxbFlmNjBSSXVXN04zaTVTZEV5V3E4T2diNnBoOWUxdmJvMnor?=
+ =?utf-8?B?V1JTVFJqb1krV04yVjBZdGlFYk9TK1pLTEV1bzNJQTJhWUY2WGFOSGorMm55?=
+ =?utf-8?B?cVIySHRLVkxLeE9IZERFMkQ0TnFISW03Q3libUJFZnd0Q3pSM2x2ZGZQYWhq?=
+ =?utf-8?B?NzJPenJjMmFpZHdmWHIrdGszdHN1Mms2aUZPaGpGZmMvRGFSNDZnOUMreXI0?=
+ =?utf-8?B?SHV0eW9UR3NlV1h3RzkrM25ucmZaMkFRWTJJb2ZzNTg3c0hjNnRLaFJ2MXhk?=
+ =?utf-8?B?ZmpGcmRaZVRDdmdwUzd5b2NiQVNPOE1oeXJRem5YV0hUMDk4eTdRMGlpWHVX?=
+ =?utf-8?B?SGxZb2t5TTVtb3A5aHB6RWo4bXY0Ni92MnZxUThQK0ozK25TSTQvZGZSUmpW?=
+ =?utf-8?B?T1B5cldTK2E4eTMzb0hxZkhEZE5oN1o1QmpPTnVLQUludEI2bXNOVW9BN1dN?=
+ =?utf-8?B?SjlPV210alpXRjBXMVB3bDBOdGVlSjJKb2tTSVN1YmdMTW1sR09DWU5DYTBK?=
+ =?utf-8?B?TEFKNmFtZ0RkMnlzOTEwaVFsZHFyQU1ORFJtcHNlVDMyUjRJOGV6Y0t4aXZ4?=
+ =?utf-8?B?UjlrY2tkSWN6ZTVpaGY5bzJtY1NPVXZQRk9TOVFrdHpUUXJNK3NONkFBb1Bm?=
+ =?utf-8?B?QkgrcmxHZlZncUpqMGdFZjdva0ZnYmorUTNXOTMweVhQMlJhS3NsbEZZSHcv?=
+ =?utf-8?B?OWMrWDRvOXYrc2daZXloc3FMMmFhMVhnTVByK3ZuclEvSGg1eC91RStxN3RK?=
+ =?utf-8?B?VXdFaldHUFQ0VHNOb3BqOU5XOHlPUlhmUEtTa0xPdUVIeTZBa3NhUitGcGR1?=
+ =?utf-8?B?VE5QdFdXbEJrSlpQbjJoNjdYSzZzNmtHMjlUOUxya2Ixa3gwT3dSLytRZXdh?=
+ =?utf-8?B?a1lWY2FYcWcyeWFtcUQ1SkRnVjltZDAybkU5S2E3RFl1MDRuY3RHSEJ6U0JZ?=
+ =?utf-8?B?aDdCckJHNEZWTncwZCswMGd6OEZhbWgxMnRYb2Z4YXdNRUxQR3M5VXNyQSsv?=
+ =?utf-8?B?Z3VmYUxWNkpNM2dyTkVNbEwvUmdjVmVmS2ZiV0VnN1REQ2dWc1QrYjZTOWcz?=
+ =?utf-8?B?Sm1pT2svZWxxUVBsY1V1MXFoZnhUdlh1OE01TUxlUHVnS05QZnBEOUdCc3l1?=
+ =?utf-8?Q?M6E0xXDcUTnEQGy8fIPNm8NnPelBYPTW?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SnI1b2dsNEd2UXVjZHBlRUp6OW5GZi9YMHlGcW9naUltQlpkaU5rdVhJQVA5?=
+ =?utf-8?B?R2IzN043RG5yNXFndHlvdmlGTEVGdk9PMkhJL252TE5UNUt1dkMySUJTeFRk?=
+ =?utf-8?B?YThjWGhTc1JKdC9GcWxvMkdLSXRsVmxETDR5NXJwUE5JeEg3SkpQbUczcW9q?=
+ =?utf-8?B?MlRLRTBCRW1kRTA2RG50ZVJZTXBDczBSMmJLVlBvWlk5NHdhTXROZUhVZ3Rs?=
+ =?utf-8?B?eEdFUWdTeENMeXNJMFNxRGdBVFh0Q1dUK1doMDFEek5MNVZuRzlRRkhxSjFL?=
+ =?utf-8?B?OU9TWUdHcERoUlh0WldpYTBhRVJuSHdmZ0VZcklJOFQ2Vk16QzRMcGYzaDNF?=
+ =?utf-8?B?MkdkWFdHaDhOQTJjNVh5Nlh4TDlsT2V1aVdJYjRUSnVKVVB1RGQydXRqUnFs?=
+ =?utf-8?B?SlNxTzJxdjcrYUhCRXorMEF6ZjQ3Sy82V0lrMVRrY2pLbUR6ak1lb2czWVRZ?=
+ =?utf-8?B?SmxPek1ieWtKa3drbmJIUTgwZDlxMCs1bmFvR0JxM0wrN3dYZ2JGT0s5ZVp0?=
+ =?utf-8?B?cTM2RU9HTkJEVHYzbW1jVkowaEdTV21lTTBwVHhReWpGb292T1VZbWY2M2Vv?=
+ =?utf-8?B?MjBxTHZhNmw4MDBJSmR3V0J2MzUxT0JsU3gwN3g1NWJQYzVmK2o3ZWxYR2pq?=
+ =?utf-8?B?UVJ6dFpGZVNWMUI4UEh4K1ZxcmFVK2QxV1lTRUVLNVB5NkR3T3FXUWh5dG9O?=
+ =?utf-8?B?OTJxY0Z2ODk3bXZ3TldMRjRXL3JJWjh5NW02VUl1VGRDL2pESG5NVG41RDhk?=
+ =?utf-8?B?b3JJaVJDWE5rcGYxekRmLzFLNERvYWpGNGRSOUN0VTQwVkFieXFsYy9ibSsz?=
+ =?utf-8?B?SS8vYngvNzNCRlgzQzVnTkIxUkgwZmFYcFZBWUJVQzRLMDRwR0F5TDFOcC9x?=
+ =?utf-8?B?RklmZFVTeXYyN1htL2FHV3JQbGRtUU9VT1c4Y3ZxSGZDTzBObFpsaC9WcVlM?=
+ =?utf-8?B?MzhVWWJabndqdnhFRHJWVlJURTFrZUcxNlpDdGp6TEtjTVJwWHlFd0ZEbHpD?=
+ =?utf-8?B?bi9vbUZVcHlZVEluR2QvYmRGSS9DMlFLRDVrMXBsaHJGR3d4dCtWZmh6ZkpR?=
+ =?utf-8?B?eEVwa2g2Vlg3ZUJxSGFOaDNFaW1vZzd1by9telJDaGxNK2poajVWRkN2bEk1?=
+ =?utf-8?B?YWYzVG5DNmlKaU9WaDdRMGFwTmFqbVY1Vmp5NWdSemk4d3ZPQUVTMDNpbWZK?=
+ =?utf-8?B?cm85UVlCKzdjQi9zM3JGQVcrWGxDcDJQdFBURFBiOTc2TFFsNXZ3NnBBZ2g1?=
+ =?utf-8?B?UEJEM0VoOTkyNytzWXk4b2pDZTYyUkIxUGE5dFI1T2U0eXdsQkVBY09TOXha?=
+ =?utf-8?B?UURQWjVSZWRLSVJuVzJZUjB1KzRTY3FrZENRSHVSS3E2dWhJbXpUdStYejZG?=
+ =?utf-8?B?VHlaOW1KYS9sSU5UamtHYTNja0REWE5CZFVyV09wM2x6WU1vaHlhTGFIKzRM?=
+ =?utf-8?B?S3FRUlNtQmJocG9vN1JMQmV2OTFQanZrQjBsVnMxUjhrNDAxOStyWXhpa2xz?=
+ =?utf-8?B?UFdWWVN4NHZWNlYxc0d1SW1QSDd2WURHWlZZRE03OWlCbllYVDVQaXdpNjJx?=
+ =?utf-8?B?RERXTHpxZ3o3T2VXVHNLZWhCdXFoaUhmRlVFY3VQbEJUKzVMTHlCZnZXUnhU?=
+ =?utf-8?B?aTIrVXJibEErY0MxZGNPV2hYVHIyRG1XZ3hIeG5kc3RmUG1lWXlrZSsxOWZa?=
+ =?utf-8?B?YWFlWUhtZm80SHNyOGRweVlScHVqc0FzbG5NUktzWlpQUHVNM3hVZEhGaGV5?=
+ =?utf-8?B?OU9xdFJGc1hUSGErRnZaZUxtRTZTTms3dE9oTDgwSGNmT2VsNVduUGZla1VF?=
+ =?utf-8?B?dC81dEZjQ3dwZlNhMjROSjAzakdLcUY5NzJ4YzZlck9XRGRBZmdRbG1DNXNU?=
+ =?utf-8?B?SnpieGcwWnlqMGw1dG1KbDQ4RDVzTHdyNTJlNzRySHR3MndCd29nWlNTNGtm?=
+ =?utf-8?B?SnNzN04zS1Q3bk1vd3BzUVhlRVIrRkFvM3JSU3lIQjZqM1dCQURPdDQzZkp4?=
+ =?utf-8?B?VjRFeTREV0duSlFZVVRjNDBOcWtpMTZYWEt1cUFxc1VLU3lxTWVaNkdCS3h5?=
+ =?utf-8?B?eDJmMW9zcXp2cE5nVDRrODBWckxVMlgwSmFzUTFlc2pYdU5CMHJhNXN4cVFn?=
+ =?utf-8?Q?ngRzpg65jlI9UntFud44CAb7A?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>, Long Li <longli@microsoft.com>
-References: <20250225052001.2225-1-namjain@linux.microsoft.com>
- <2025022504-diagnosis-outsell-684c@gregkh>
- <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
- <2025022515-lasso-carrot-4e1d@gregkh>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <2025022515-lasso-carrot-4e1d@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06e13819-96e1-4a46-8312-08dd5624dc4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 05:17:27.1039
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /uktuIvOPVrIYR1GyidCE7VL2u5ZXAtJgj3BDIU+i2icTQpm++dmUnkx7usdarEBveLvbEqHOV6Z5SmpgpSU1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7993
+X-OriginatorOrg: intel.com
 
-
-
-On 2/25/2025 2:09 PM, Greg Kroah-Hartman wrote:
-> On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
->>
->>
->> On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
->>> On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
->>>> On regular bootup, devices get registered to vmbus first, so when
->>>> uio_hv_generic driver for a particular device type is probed,
->>>> the device is already initialized and added, so sysfs creation in
->>>> uio_hv_generic probe works fine. However, when device is removed
->>>> and brought back, the channel rescinds and device again gets
->>>> registered to vmbus. However this time, the uio_hv_generic driver is
->>>> already registered to probe for that device and in this case sysfs
->>>> creation is tried before the device gets initialized completely.
->>>>
->>>> Fix this by moving the core logic of sysfs creation for ring buffer,
->>>> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
->>>> attributes for the channels are defined. While doing that, make use
->>>> of attribute groups and macros, instead of creating sysfs directly,
->>>> to ensure better error handling and code flow.
->>>>
->>>> Problem path:
->>>> vmbus_device_register
->>>>       device_register
->>>>           uio_hv_generic probe
->>>>                       sysfs_create_bin_file (fails here)
->>>>           kset_create_and_add (dependency)
->>>>           vmbus_add_channel_kobj (dependency)
->>>>
->>>> Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
->>>> Cc: stable@kernel.org
->>>> Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->>>> Suggested-by: Michael Kelley <mhklinux@outlook.com>
->>>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->>>> ---
->>>> Hi,
->>>> This is the first patch after initial RFC was posted.
->>>> https://lore.kernel.org/all/20250214064351.8994-1-namjain@linux.microsoft.com/
->>>>
->>>> Changes since RFC patch:
->>>> * Different approach to solve the problem is proposed (credits to
->>>>     Michael Kelley).
->>>> * Core logic for sysfs creation moved out of uio_hv_generic, to VMBus
->>>>     drivers where rest of the sysfs attributes for a VMBus channel
->>>>     are defined. (addressed Greg's comments)
->>>> * Used attribute groups instead of sysfs_create* functions, and bundled
->>>>     ring attribute with other attributes for the channel sysfs.
->>>>
->>>> Error logs:
->>>>
->>>> [   35.574120] ------------[ cut here ]------------
->>>> [   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
->>>> [   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
->>>> [   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
->>>> [   35.574197] Call Trace:
->>>> [   35.574199]  <TASK>
->>>> [   35.574200]  ? show_regs+0x69/0x80
->>>> [   35.574217]  ? __warn+0x8d/0x130
->>>> [   35.574220]  ? sysfs_create_bin_file+0x81/0x90
->>>> [   35.574222]  ? report_bug+0x182/0x190
->>>> [   35.574225]  ? handle_bug+0x5b/0x90
->>>> [   35.574244]  ? exc_invalid_op+0x19/0x70
->>>> [   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
->>>> [   35.574252]  ? sysfs_create_bin_file+0x81/0x90
->>>> [   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
->>>> [   35.574271]  vmbus_probe+0x3b/0x90
->>>> [   35.574275]  really_probe+0xf4/0x3b0
->>>> [   35.574279]  __driver_probe_device+0x8a/0x170
->>>> [   35.574282]  driver_probe_device+0x23/0xc0
->>>> [   35.574285]  __device_attach_driver+0xb5/0x140
->>>> [   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
->>>> [   35.574291]  bus_for_each_drv+0x86/0xe0
->>>> [   35.574294]  __device_attach+0xc1/0x200
->>>> [   35.574297]  device_initial_probe+0x13/0x20
->>>> [   35.574315]  bus_probe_device+0x99/0xa0
->>>> [   35.574318]  device_add+0x647/0x870
->>>> [   35.574320]  ? hrtimer_init+0x28/0x70
->>>> [   35.574323]  device_register+0x1b/0x30
->>>> [   35.574326]  vmbus_device_register+0x83/0x130
->>>> [   35.574328]  vmbus_add_channel_work+0x135/0x1a0
->>>> [   35.574331]  process_one_work+0x177/0x340
->>>> [   35.574348]  worker_thread+0x2b2/0x3c0
->>>> [   35.574350]  kthread+0xe3/0x1f0
->>>> [   35.574353]  ? __pfx_worker_thread+0x10/0x10
->>>> [   35.574356]  ? __pfx_kthread+0x10/0x10
->>>>
->>>> ---
->>>>    drivers/hv/hyperv_vmbus.h    |  4 +++
->>>>    drivers/hv/vmbus_drv.c       | 62 ++++++++++++++++++++++++++++++++++++
->>>>    drivers/uio/uio_hv_generic.c | 34 ++------------------
->>>>    include/linux/hyperv.h       |  3 ++
->>>>    4 files changed, 72 insertions(+), 31 deletions(-)
->>>>
->>>> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
->>>> index 29780f3a7478..e0c7b75e6c7a 100644
->>>> --- a/drivers/hv/hyperv_vmbus.h
->>>> +++ b/drivers/hv/hyperv_vmbus.h
->>>> @@ -477,4 +477,8 @@ static inline int hv_debug_add_dev_dir(struct hv_device *dev)
->>>>    #endif /* CONFIG_HYPERV_TESTING */
->>>> +/* Create and remove sysfs entry for memory mapped ring buffers for a channel */
->>>> +int hv_create_ring_sysfs(struct vmbus_channel *channel);
->>>> +int hv_remove_ring_sysfs(struct vmbus_channel *channel);
->>>> +
->>>>    #endif /* _HYPERV_VMBUS_H */
->>>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->>>> index 22afebfc28ff..0110643bad3f 100644
->>>> --- a/drivers/hv/vmbus_drv.c
->>>> +++ b/drivers/hv/vmbus_drv.c
->>>> @@ -1802,6 +1802,39 @@ static ssize_t subchannel_id_show(struct vmbus_channel *channel,
->>>>    }
->>>>    static VMBUS_CHAN_ATTR_RO(subchannel_id);
->>>> +/* Functions to create sysfs interface to allow mmap of the ring buffers.
->>>> + * The ring buffer is allocated as contiguous memory by vmbus_open
->>>> + */
->>>> +static int hv_mmap_ring_buffer(struct vmbus_channel *channel, struct vm_area_struct *vma)
->>>> +{
->>>> +	void *ring_buffer = page_address(channel->ringbuffer_page);
->>>> +
->>>> +	if (channel->state != CHANNEL_OPENED_STATE)
->>>> +		return -ENODEV;
->>>> +
->>>> +	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
->>>> +			       channel->ringbuffer_pagecount << PAGE_SHIFT);
->>>> +}
->>>> +
->>>> +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
->>>> +				       const struct bin_attribute *attr,
->>>> +				       struct vm_area_struct *vma)
->>>> +{
->>>> +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
->>>> +
->>>> +	if (!channel->mmap_ring_buffer)
->>>> +		return -ENODEV;
->>>> +	return channel->mmap_ring_buffer(channel, vma);
->>>
->>> What is preventing mmap_ring_buffer from being set to NULL right after
->>> checking it and then calling it here?  I see no locks here or where you
->>> are assigning this variable at all, so what is preventing these types of
->>> races?
->>>
->>> thanks,
->>>
->>> greg k-h
->>
->> Thank you so much for reviewing.
->> I spent some time to understand if this race condition can happen and it
->> seems execution flow is pretty sequential, for a particular channel of a
->> device.
->>
->> Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
->> called in parallel to hv_uio_probe (which had set
->> channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
->>
->> Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
->>
->> vmbus_device_register
->>    device_register
->>      hv_uio_probe
->> 	  hv_create_ring_sysfs (W to non NULL)
->>          sysfs_update_group
->>            vmbus_chan_attr_is_visible (R)
->>    vmbus_add_channel_kobj
->>      sysfs_create_group
->>        vmbus_chan_attr_is_visible  (R)
->>        hv_mmap_ring_buffer_wrapper (critical section)
->>
->> hv_uio_remove
->>    hv_remove_ring_sysfs (W to NULL)
-> 
-> Yes, and right in here someone mmaps the file.
-> 
-> I think you can race here, no locks at all feels wrong.
-> 
-> Messing with sysfs groups and files like this is rough, and almost never
-> a good idea, why can't you just do this all at once with the default
-> groups, why is this being added/removed out-of-band?
-> 
-> thanks,
-> 
-> greg k-h
-
-The decision to avoid creating a "ring" sysfs attribute by default
-likely stems from a specific use case where it wasn't needed for every
-device. By creating it automatically, it keeps the uio_hv_generic
-driver simpler and helps prevent potential race conditions. However, it
-has an added cost of having ring buffer for all the channels, where it
-is not required. I am trying to find if there are any more implications
-of it.
-
-Thanks,
-Naman
+PiBGcm9tOiBCYW9sdSBMdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBXZWRu
+ZXNkYXksIEZlYnJ1YXJ5IDI2LCAyMDI1IDExOjU4IEFNDQo+IA0KPiBPbiAyLzI1LzI1IDE1OjQz
+LCBUaWFuLCBLZXZpbiB3cm90ZToNCj4gPj4gRnJvbTogTHUgQmFvbHU8YmFvbHUubHVAbGludXgu
+aW50ZWwuY29tPg0KPiA+PiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDI0LCAyMDI1IDE6MTYgUE0N
+Cj4gPj4NCj4gPj4gVGhlIGludGVsX2NvbnRleHRfZmx1c2hfcHJlc2VudCgpIGlzIGNhbGxlZCBp
+biBwbGFjZXMgd2hlcmUgZWl0aGVyIHRoZQ0KPiA+PiBzY2FsYWJsZSBtb2RlIGlzIGRpc2FibGVk
+LCBvciBzY2FsYWJsZSBtb2RlIGlzIGVuYWJsZWQgYnV0IGFsbCBQQVNJRA0KPiA+PiBlbnRyaWVz
+IGFyZSBrbm93biB0byBiZSBub24tcHJlc2VudC4gSW4gdGhlc2UgY2FzZXMsIHRoZSBmbHVzaF9k
+b21haW5zDQo+ID4+IHBhdGggd2l0aGluIGludGVsX2NvbnRleHRfZmx1c2hfcHJlc2VudCgpIHdp
+bGwgbmV2ZXIgZXhlY3V0ZS4gVGhpcyBkZWFkDQo+ID4+IGNvZGUgaXMgdGhlcmVmb3JlIHJlbW92
+ZWQuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEx1IEJhb2x1PGJhb2x1Lmx1QGxpbnV4Lmlu
+dGVsLmNvbT4NCj4gPiB1c3VhbGx5IGEgc3VmZml4ICJfcHJlc2VudCgpIiBpbmRpY2F0ZXMgdGhh
+dCB0aGUgaGVscGVyIGNhbiBiZSBjYWxsZWQNCj4gPiBvbiBhbiBvYmplY3Qgd2hpY2ggaXMgY3Vy
+cmVudGx5IGluLXVzZSwgd2hpY2ggaXMgb2J2aW91c2x5IG5vdCB0aGUNCj4gPiBjYXNlIGhlcmUu
+DQo+ID4NCj4gPiBUbyBhdm9pZCBjb25mdXNpb24gcHJvYmFibHkganVzdCBjYWxsIGl0IGludGVs
+X2NvbnRleHRfZmx1c2goKSBvcg0KPiA+IGludGVsX2NvbnRleHRfZmx1c2hfbm9fdXNlcigpIGlz
+IGNsZWFyZXIuDQo+IA0KPiBIb3cgYWJvdXQgaW50ZWxfY29udGV4dF9mbHVzaF9ub19wYXNpZCgp
+Pw0KDQp5ZXMNCg==
 
