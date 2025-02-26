@@ -1,205 +1,162 @@
-Return-Path: <linux-kernel+bounces-533546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A36A45BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:34:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF304A45BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9DE1733A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:34:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34203188B78D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6479238171;
-	Wed, 26 Feb 2025 10:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89EB2459FF;
+	Wed, 26 Feb 2025 10:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WOj13tc0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eAHBHaUk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9BE258CED
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3A1258CED;
+	Wed, 26 Feb 2025 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566085; cv=none; b=GW5SIHk8Qtt/aKDSPvRSeLX/X6nDEzlVzVpRRGg+6qQGKsCbwkqS2vhzoYtnIsOuYkp/cjO5upYAuwZ794Rpml2Tc/3dJc1BwW++f0037XL/9FKZrtBp51VNo2Ko48TO4VbjZEfufSHRvQ/GLTeQTYjmnr0gm3AurZQmjC2EKHE=
+	t=1740566179; cv=none; b=AXsbfxLS2CJ/iDAbxNgDYnq/GSYNXaty4pf+i6t6jmq6NBSeLyJ67LrRR7ahfw4J5pc5yEXkbro54tqFp6FYIrCtl6tQxJLpdU5F8dfvSKlOucvjy5b9WKXCcwdk+ySJWrbygxeXRw7pVUKMgYHMB0ZAy2Sl0LYaTal3tjXg/No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566085; c=relaxed/simple;
-	bh=ZwpbPAQDpfXXvC5bnx73RX9l87tEewCgIZFh7VoRISw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMtXmnJbsy1VJ7FiIs2xRY4V2lB/ZoBpB3eHK1fdN6w5w/3SXL3GK6B7eFlBfPYIEOFv1W1WfqttGeoJ0LnK/Rpcpv4kUb944+S4EKmKf2lSigX5aOgVmZVm28foPQPUSKzPa04sUsBXN1K48lnrJvAy/LcpBdGAG0D2Qs7Gy8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WOj13tc0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740566070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFsFyW0JsFOyjdFU+q14/lZqV9kDgAqshzcYwesYMoE=;
-	b=WOj13tc0pDCtAxGu9YgX+NM3u0dhMNAOYE7gRtSABvhY/rxuC6FG3u2U0r+4V5Q9pjIr0m
-	ZnRLq+4O5ysgVALQzNfsEo0hecPHmqhnwlYdp/olchMYXalKp7h9rEY8vA4X3nRYVOoVcM
-	f5hRii30klYo61bzTAW57Xh8kmhp6CA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-102-LTsIioOaPd6vuHmT1PKl7Q-1; Wed,
- 26 Feb 2025 05:34:26 -0500
-X-MC-Unique: LTsIioOaPd6vuHmT1PKl7Q-1
-X-Mimecast-MFC-AGG-ID: LTsIioOaPd6vuHmT1PKl7Q_1740566063
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C33C91800875;
-	Wed, 26 Feb 2025 10:34:22 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.27])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 685D8300018D;
-	Wed, 26 Feb 2025 10:34:13 +0000 (UTC)
-Date: Wed, 26 Feb 2025 18:34:08 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
-Message-ID: <Z77uID36yIvWDQEj@fedora>
-References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
- <Z77R_rqgDdAvFVgP@fedora>
- <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
+	s=arc-20240116; t=1740566179; c=relaxed/simple;
+	bh=TcF7pBopWNv+fsMVLLhtQarsDd01uxmgIXiVYrz6yA8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CFiV0powExUI+kN9R7XiqzLtIgLJXNC/dnU5riGes3ADVFmZjQSWZnkgfVec2hNEsYtM8KXbI2FcwQHUvAH2j3CxWykuoWz1QRw2N7Cd6T7tVYayyxOJenMumB2o6cYCtb7A4EERDCJ1O9xj2F59pIXtQ7MhJICXktuRJwbim8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eAHBHaUk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q9s2eX011698;
+	Wed, 26 Feb 2025 10:36:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=gia87sU3TdGN7wwxbdDe6jcxSYNCi0evg5C
+	9blwswhc=; b=eAHBHaUkG2qIiTOQSpzJZf9yYPC4RAyJMTxmMPFeQRPhfD1XG8J
+	l2palYZPNPyVP1CElXtkKkyoz40g63orqYOyD/JxZ38PQKfUONyIATC2KwVcrRcA
+	K1x0QPxXUzfyv/m7mWM0E5OPOk+/2n+Td1mpNHqS4aXENl8Ld0SHOKRR9Hq/ah7O
+	2MAzk5nru2z2GDd/cLU3wjcApnBX6W36syDHY1p1FnFCQAOJEwlMEqoaijv5HfK4
+	W7JuF8JyQ/BQqaGTETDb4JvUpPXJt813kFegl+H35B4/51Kn9hGz/kklLlyTnOMg
+	NJTGi0OkVWZz1E8yr9lsLiLCERWQGXKIV/w==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prk9n7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 10:36:06 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QAa3xP023967;
+	Wed, 26 Feb 2025 10:36:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 44y7nm1d86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 10:36:03 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51QAa3g5023958;
+	Wed, 26 Feb 2025 10:36:03 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 51QAa2oI023955
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 10:36:03 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id 5027B40DA1; Wed, 26 Feb 2025 18:36:02 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
+        dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+        quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
+        manivannan.sadhasivam@linaro.org, quic_devipriy@quicinc.com,
+        konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: quic_wenbyao@quicinc.com
+Subject: [PATCH v5 0/2] phy: qcom: qmp-pcie: Add PCIe PHY no_csr reset support
+Date: Wed, 26 Feb 2025 18:35:58 +0800
+Message-Id: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: O85JKIw47XFGIUuU_7LTqHJVDLu4vrUS
+X-Proofpoint-ORIG-GUID: O85JKIw47XFGIUuU_7LTqHJVDLu4vrUS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260084
 
-On Wed, Feb 26, 2025 at 05:56:03PM +0800, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/02/26 16:34, Ming Lei 写道:
-> > On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
-> > > From: Yu Kuai <yukuai3@huawei.com>
-> > > 
-> > > The bio submission time may be a few jiffies more than the expected
-> > > waiting time, due to 'extra_bytes' can't be divided in
-> > > tg_within_bps_limit(), and also due to timer wakeup delay. In this
-> > > case, adjust slice_start to jiffies will discard the extra wait time,
-> > > causing lower rate than expected.
-> > > 
-> > > This problem will cause blktests throtl/001 failure in case of
-> > > CONFIG_HZ_100=y, fix it by preserving one finished slice in
-> > > throtl_trim_slice() and allowing deviation between [0, 2 slices).
-> > 
-> > I think it only can cover single default slice deviation, since
-> > throtl_trim_slice() just keeps dispatch data in the previous single
-> > default slice. Or can you add words on how to allow 2 default slices
-> > deviation?
-> > 
-> > > 
-> > > For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
-> > > slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
-> > > per slice.
-> > > 
-> > > If user issues two 21 bytes IO, then wait time will be 30ms for the
-> > > first IO:
-> > > 
-> > > bytes_allowed = 20, extra_bytes = 1;
-> > > jiffy_wait = 1 + 2 = 3 jiffies
-> > > 
-> > > and consider
-> > > extra 1 jiffies by timer, throtl_trim_slice() will be called at:
-> > > 
-> > > jiffies = 40ms
-> > > slice_start = 0ms, slice_end= 40ms
-> > > bytes_disp = 21
-> > > 
-> > > In this case, before the patch, real rate in the first two slices is
-> > > 10.5 bytes per slice, and slice will be updated to:
-> > > 
-> > > jiffies = 40ms
-> > > slice_start = 40ms, slice_end = 60ms,
-> > > bytes_disp = 0;
-> > > 
-> > > Hence the second IO will have to wait another 30ms;
-> > > 
-> > > With the patch, the real rate in the first slice is 20 bytes per slice,
-> > > which is the same as expected, and slice will be updated:
-> > > 
-> > > jiffies=40ms,
-> > > slice_start = 20ms, slice_end = 60ms,
-> > > bytes_disp = 1;
-> > > 
-> > > And now, there is still 19 bytes allowed in the second slice, and the
-> > > second IO will only have to wait 10ms;
-> > > 
-> > > Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
-> > > Reported-by: Ming Lei <ming.lei@redhat.com>
-> > > Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
-> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> > > ---
-> > >   block/blk-throttle.c | 13 +++++++++++--
-> > >   1 file changed, 11 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-> > > index 8d149aff9fd0..cb472cf7b6b6 100644
-> > > --- a/block/blk-throttle.c
-> > > +++ b/block/blk-throttle.c
-> > > @@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
-> > >   	 * sooner, then we need to reduce slice_end. A high bogus slice_end
-> > >   	 * is bad because it does not allow new slice to start.
-> > >   	 */
-> > > -
-> > >   	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
-> > >   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
-> > >   				 tg->td->throtl_slice);
-> > > -	if (!time_elapsed)
-> > > +	/* Don't trim slice until at least 2 slices are used */
-> > > +	if (time_elapsed < tg->td->throtl_slice * 2)
-> > >   		return;
-> > > +	/*
-> > > +	 * The bio submission time may be a few jiffies more than the expected
-> > > +	 * waiting time, due to 'extra_bytes' can't be divided in
-> > > +	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
-> > > +	 * case, adjust slice_start to jiffies will discard the extra wait time,
-> > > +	 * causing lower rate than expected. Therefore, one slice is preserved,
-> > > +	 * allowing deviation that is less than two slices.
-> > > +	 */
-> > > +	time_elapsed -= tg->td->throtl_slice;
-> > 
-> > Please document that default slice window size is doubled actually in
-> > this way.
-> 
-> I said two slices because there is a round down:
-> 
-> >>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
-> >>   				 tg->td->throtl_slice);
-> 
-> Hence the deviation is actually between [1 ,2) jiffies, depends on the
-> time start to wait and how long the delay is.
-> 
-> If start to wait at slice_start + n * throtl_slice - 1, the deviation is
-> *at most 1 slice*
-> 
-> If start to wait at slice_stat + n * throtl_slice, the max deviation is
-> *less than 2 slices* (2 slices not included)
-> 
-> Now, I agree allowing deviation at most 1 slice is more appropriate. :)
+The series aims to skip phy register programming and drive PCIe PHY with
+register setting programmed in bootloader by simply toggling no_csr reset,
+which once togglled, PHY hardware will be reset while PHY registers are
+retained.
 
-Actually the in-tree code already covers deviation from the rounddown(),
-but turns out it is still not enough, so this patch increases one extra
-def slice size. With this thing is documented, feel free to add:
+First, determine whether PHY setting can be skipped by checking
+QPHY_START_CTRL register and the existence of nocsr reset. If it is
+programmed and no_csr reset is supported, do no_csr reset and skip BCR
+reset which will reset entire PHY.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+This series also remove has_nocsr_reset flag in qmp_phy_cfg structure and
+decide whether the PHY supports nocsr reset by checking the existence of
+nocsr reset in device tree.
+
+The series are tested on X1E80100-QCP and HDK8550.
+
+The commit messages of this patchset have been modified based on comments
+and suggestions.
+
+Changes in v5:
+- Add a check whether the init sequences are exist if the PHY needs to be
+  initialized to Patch 2/2.
+- Link to v4: https://lore.kernel.org/all/20250220102253.755116-1-quic_wenbyao@quicinc.com/ 
+
+Changes in v4:
+- Add Philipp's Reviewed-by tag to Patch 1/2.
+- Use PHY instead of phy in comments in Patch 2/2.
+- Use "if (qmp->nocsr_reset)" instead of "if (!qmp->nocsr_reset)" in
+  function qmp_pcie_exit for readability in Patch 2/2.
+- Use goto statements in function qmp_pcie_power_on and qmp_pcie_power_off
+  for readability in Patch 2/2.
+- Refine the comment of why not checking qmp->skip_init when reset PHY in
+  function qmp_pcie_power_off in Patch 2/2.
+- Link to v3: https://lore.kernel.org/all/20250214104539.281846-1-quic_wenbyao@quicinc.com/
+
+Changes in v3:
+- Replace devm_reset_control_get_exclusive with
+  devm_reset_control_get_optional_exclusive when get phy_nocsr reset
+  control in Patch 1/2.
+- Do not ignore -EINVAL when get phy_nocsr reset control in Patch 1/2.
+- Replace phy_initialized with skip_init in struct qmp_pcie in Patch 2/2.
+- Add a comment to why not check qmp->skip_init in function
+  qmp_pcie_power_off in Patch 2/2.
+- Link to v2: https://lore.kernel.org/all/20250211094231.1813558-1-quic_wenbyao@quicinc.com/
+
+Changes in v2:
+- Add Abel's and Manivannan's Reviewed-by tag to Patch 1/2.
+- Refine commit msg of Patch 2/2.
+- Link to v1: https://lore.kernel.org/all/20250121094140.4006801-1-quic_wenbyao@quicinc.com/
+
+Konrad Dybcio (1):
+  phy: qcom: pcie: Determine has_nocsr_reset dynamically
+
+Qiang Yu (1):
+  phy: qcom: qmp-pcie: Add PHY register retention support
+
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 86 +++++++++++++++++-------
+ 1 file changed, 63 insertions(+), 23 deletions(-)
 
 
-Thanks,
-Ming
+base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
+-- 
+2.34.1
 
 
