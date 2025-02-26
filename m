@@ -1,220 +1,246 @@
-Return-Path: <linux-kernel+bounces-534741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893A2A46A9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:07:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C42A46AA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172A61889ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D6E77A7B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC89236A70;
-	Wed, 26 Feb 2025 19:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01135239573;
+	Wed, 26 Feb 2025 19:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="JJk9cBYa"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="mN42JVeg"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0A3221DA6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD18236A70;
+	Wed, 26 Feb 2025 19:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740596845; cv=none; b=RIM9XM+qE54c7XOUgor1K6wK12h3F6OHkkHGKs4MLcMKNE4Tl0i+pvszoZJ6pcjaTt2oRy5s0ui4NsT1GMsc7CLJPRNCUgca0TqoW//kZtw3pKQIZXtEUwV2GaFccOoTUYxdGrJVHgP+xoRlqO4Gfgr/ErPlUIuOcREVy3V2U4w=
+	t=1740596870; cv=none; b=Vkz+TANWGx0GYKQJ+aSGdw//VTEtDZIMHcDnF5ZRoUORQ9XgNobokF1k3P07ipcgbjj1nZG8aOgtaSas0/OlLYQcg3OTFllTzkYiK3Z57vuqFgT4it1YrCXqxcSeg4f3Pn6+10RGRnX/5GPm1UpAl9pKHOdsyTJUhmJwSGZqnnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740596845; c=relaxed/simple;
-	bh=a/8WyEtK/YE9A9vVXJRVEHG0DlCVRpTdCYEWIfsyvH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGVQQinrurgO5eBz08orYpG51+igPjMieJdqUQYDoDDScL5+SXx9Tv1In2APZCBO4FsExaZZ+Jax2fc74YIrmNozWzoww4ctGOZgm/M/A24e/9/haoUuZYVHHxZ5YHLaKPYnkDNF0/J2DlLh06Xk822aUfeoBD8Xip/XPN9z4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=JJk9cBYa; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Wed, 26 Feb 2025 14:07:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1740596840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XRyr85wv+Jt7zIzz+tfragSxhfwzZtVzqMybKiCgq0E=;
-	b=JJk9cBYafeuuqFYmvkxzOTIOX6ShEumbs1jZ6lZY7mK8Pd0v9urG7IjetG7mAsote6mFnI
-	kVn5mrO1Ix7c4hbSKWrAl/vCyh9QuMvFVtmkotz6/ed/o0tpHmake+CYbsLOx49WizBhPy
-	XTEtoHsjDdSwXJjrcih6oIPZiJxNxrGyWX2/iJep5Z+zlquJQ4mf9P8ZQ5XVBC75fp952K
-	M79COiW2UQi+Jbijlk2FgMViuaV7gk9fkHoyHQv7E/1+ZLtrAdAufG1TNxojpW87INiFh5
-	dPDdG8A+zl73p54uD/dIE52z0jQ4ntwHHjxv3zyuylQZxh/u+HnHeaCQ3G67xQ==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH v2 2/4] soc: apple: rtkit: Implement OSLog buffers
- properly
-Message-ID: <Z79mYrxWDSpaRPyX@blossom>
-References: <20250226-apple-soc-misc-v2-0-c3ec37f9021b@svenpeter.dev>
- <20250226-apple-soc-misc-v2-2-c3ec37f9021b@svenpeter.dev>
+	s=arc-20240116; t=1740596870; c=relaxed/simple;
+	bh=LQc6T8tWWBk4IcNFOqld2ZcIVJBhbYgbzmhmv20T35Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GVgzyR7VUaP4Cm1832kZnmBshZpgEiy324uJkYKksRDT4WkHzVWskZ8RBy14oJ67owLdSeD6HZygoxRAM6LO0mVzKWhm+XmmZgviOF0MdWRk/ik6aDMZhaxXA1Z6WNo9cFzUNKkIUQBaMv4o13e+P6EOvZmmMZqM/9VxACceMl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=mN42JVeg; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-172-88.tugraz.at (vra-172-88.tugraz.at [129.27.172.88])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z33rB2vrlz1LM0S;
+	Wed, 26 Feb 2025 20:07:22 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Z33rB2vrlz1LM0S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740596844;
+	bh=cBIHY7NjixY9R3mec4by4eNMqR4KPX/KoOMaOf8bOCY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=mN42JVegxivQYDFjBQ8lV12Huw2FoF2uVXjcLcRYITxwsiT07gKtX/DyLziRlkdm3
+	 EFMA3fDzkbyRTpTI4HtkfI38wExcxGlCwuBVQV1W+9YwLM8X8F7NB12kxCabvXZBXM
+	 bf1y8O+H3hlX9p1OQogcADuQlve67JrDmyY0Dy9I=
+Message-ID: <dd28fe6e2c174f605a104723a5ab8d5445fe8002.camel@tugraz.at>
+Subject: Re: C aggregate passing (Rust kernel policy)
+From: Martin Uecker <uecker@tugraz.at>
+To: Ralf Jung <post@ralfj.de>, Ventura Jack <venturajack85@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Miguel Ojeda
+	 <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
+	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Date: Wed, 26 Feb 2025 20:07:22 +0100
+In-Reply-To: <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
+References: 
+	<CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	 <20250222141521.1fe24871@eugeo>
+	 <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+	 <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+	 <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+	 <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
+	 <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
+	 <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
+	 <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250226-apple-soc-misc-v2-2-c3ec37f9021b@svenpeter.dev>
-X-Migadu-Flow: FLOW_OUT
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.116
 
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Am Mittwoch, dem 26.02.2025 um 17:32 +0100 schrieb Ralf Jung:
+> Hi VJ,
+>=20
+> > >=20
+> > > > - Rust has not defined its aliasing model.
+> > >=20
+> > > Correct. But then, neither has C. The C aliasing rules are described =
+in English
+> > > prose that is prone to ambiguities and misintepretation. The strict a=
+liasing
+> > > analysis implemented in GCC is not compatible with how most people re=
+ad the
+> > > standard (https://bugs.llvm.org/show_bug.cgi?id=3D21725). There is no=
+ tool to
+> > > check whether code follows the C aliasing rules, and due to the afore=
+mentioned
+> > > ambiguities it would be hard to write such a tool and be sure it inte=
+rprets the
+> > > standard the same way compilers do.
+> > >=20
+> > > For Rust, we at least have two candidate models that are defined in f=
+ull
+> > > mathematical rigor, and a tool that is widely used in the community, =
+ensuring
+> > > the models match realistic use of Rust.
+> >=20
+> > But it is much more significant for Rust than for C, at least in
+> > regards to C's "restrict", since "restrict" is rarely used in C, while
+> > aliasing optimizations are pervasive in Rust. For C's "strict aliasing"=
+,
+> > I think you have a good point, but "strict aliasing" is still easier to
+> > reason about in my opinion than C's "restrict". Especially if you
+> > never have any type casts of any kind nor union type punning.
+>=20
+> Is it easier to reason about? At least GCC got it wrong, making no-aliasi=
+ng=20
+> assumptions that are not justified by most people's interpretation of the=
+ model:
+> https://bugs.llvm.org/show_bug.cgi?id=3D21725
+> (But yes that does involve unions.)
 
-Le Wed , Feb 26, 2025 at 07:00:04PM +0000, Sven Peter via B4 Relay a écrit :
-> From: Hector Martin <marcan@marcan.st>
-> 
-> Apparently nobody can figure out where the old logic came from, but it
-> seems like it has never been actually used on any supported firmware to
-> this day. OSLog buffers were apparently never requested.
-> 
-> But starting with 13.3, we actually need this implemented properly for
-> MTP (and later AOP) to work, so let's actually do that.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
->  drivers/soc/apple/rtkit-internal.h |  1 +
->  drivers/soc/apple/rtkit.c          | 56 +++++++++++++++++++++++---------------
->  2 files changed, 35 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/soc/apple/rtkit-internal.h b/drivers/soc/apple/rtkit-internal.h
-> index 27c9fa745fd5..b8d5244678f0 100644
-> --- a/drivers/soc/apple/rtkit-internal.h
-> +++ b/drivers/soc/apple/rtkit-internal.h
-> @@ -44,6 +44,7 @@ struct apple_rtkit {
->  
->  	struct apple_rtkit_shmem ioreport_buffer;
->  	struct apple_rtkit_shmem crashlog_buffer;
-> +	struct apple_rtkit_shmem oslog_buffer;
->  
->  	struct apple_rtkit_shmem syslog_buffer;
->  	char *syslog_msg_buffer;
-> diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
-> index be0d08861168..7e7b4f64ab17 100644
-> --- a/drivers/soc/apple/rtkit.c
-> +++ b/drivers/soc/apple/rtkit.c
-> @@ -67,8 +67,9 @@ enum {
->  #define APPLE_RTKIT_SYSLOG_MSG_SIZE  GENMASK_ULL(31, 24)
->  
->  #define APPLE_RTKIT_OSLOG_TYPE GENMASK_ULL(63, 56)
-> -#define APPLE_RTKIT_OSLOG_INIT	1
-> -#define APPLE_RTKIT_OSLOG_ACK	3
-> +#define APPLE_RTKIT_OSLOG_BUFFER_REQUEST 1
-> +#define APPLE_RTKIT_OSLOG_SIZE GENMASK_ULL(55, 36)
-> +#define APPLE_RTKIT_OSLOG_IOVA GENMASK_ULL(35, 0)
->  
->  #define APPLE_RTKIT_MIN_SUPPORTED_VERSION 11
->  #define APPLE_RTKIT_MAX_SUPPORTED_VERSION 12
-> @@ -259,15 +260,21 @@ static int apple_rtkit_common_rx_get_buffer(struct apple_rtkit *rtk,
->  					    struct apple_rtkit_shmem *buffer,
->  					    u8 ep, u64 msg)
->  {
-> -	size_t n_4kpages = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg);
->  	u64 reply;
->  	int err;
->  
-> +	/* The different size vs. IOVA shifts look odd but are indeed correct this way */
-> +	if (ep == APPLE_RTKIT_EP_OSLOG) {
-> +		buffer->size = FIELD_GET(APPLE_RTKIT_OSLOG_SIZE, msg);
-> +		buffer->iova = FIELD_GET(APPLE_RTKIT_OSLOG_IOVA, msg) << 12;
-> +	} else {
-> +		buffer->size = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg) << 12;
-> +		buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
-> +	}
-> +
->  	buffer->buffer = NULL;
->  	buffer->iomem = NULL;
->  	buffer->is_mapped = false;
-> -	buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
-> -	buffer->size = n_4kpages << 12;
->  
->  	dev_dbg(rtk->dev, "RTKit: buffer request for 0x%zx bytes at %pad\n",
->  		buffer->size, &buffer->iova);
-> @@ -292,11 +299,21 @@ static int apple_rtkit_common_rx_get_buffer(struct apple_rtkit *rtk,
->  	}
->  
->  	if (!buffer->is_mapped) {
-> -		reply = FIELD_PREP(APPLE_RTKIT_SYSLOG_TYPE,
-> -				   APPLE_RTKIT_BUFFER_REQUEST);
-> -		reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_SIZE, n_4kpages);
-> -		reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_IOVA,
-> -				    buffer->iova);
-> +		/* oslog uses different fields and needs a shifted IOVA instead of size */
-> +		if (ep == APPLE_RTKIT_EP_OSLOG) {
-> +			reply = FIELD_PREP(APPLE_RTKIT_OSLOG_TYPE,
-> +					   APPLE_RTKIT_OSLOG_BUFFER_REQUEST);
-> +			reply |= FIELD_PREP(APPLE_RTKIT_OSLOG_SIZE, buffer->size);
-> +			reply |= FIELD_PREP(APPLE_RTKIT_OSLOG_IOVA,
-> +					    buffer->iova >> 12);
-> +		} else {
-> +			reply = FIELD_PREP(APPLE_RTKIT_SYSLOG_TYPE,
-> +					   APPLE_RTKIT_BUFFER_REQUEST);
-> +			reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_SIZE,
-> +					    buffer->size >> 12);
-> +			reply |= FIELD_PREP(APPLE_RTKIT_BUFFER_REQUEST_IOVA,
-> +					    buffer->iova);
-> +		}
->  		apple_rtkit_send_message(rtk, ep, reply, NULL, false);
->  	}
->  
-> @@ -494,25 +511,18 @@ static void apple_rtkit_syslog_rx(struct apple_rtkit *rtk, u64 msg)
->  	}
->  }
->  
-> -static void apple_rtkit_oslog_rx_init(struct apple_rtkit *rtk, u64 msg)
-> -{
-> -	u64 ack;
-> -
-> -	dev_dbg(rtk->dev, "RTKit: oslog init: msg: 0x%llx\n", msg);
-> -	ack = FIELD_PREP(APPLE_RTKIT_OSLOG_TYPE, APPLE_RTKIT_OSLOG_ACK);
-> -	apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_OSLOG, ack, NULL, false);
-> -}
-> -
->  static void apple_rtkit_oslog_rx(struct apple_rtkit *rtk, u64 msg)
->  {
->  	u8 type = FIELD_GET(APPLE_RTKIT_OSLOG_TYPE, msg);
->  
->  	switch (type) {
-> -	case APPLE_RTKIT_OSLOG_INIT:
-> -		apple_rtkit_oslog_rx_init(rtk, msg);
-> +	case APPLE_RTKIT_OSLOG_BUFFER_REQUEST:
-> +		apple_rtkit_common_rx_get_buffer(rtk, &rtk->oslog_buffer,
-> +						 APPLE_RTKIT_EP_OSLOG, msg);
->  		break;
->  	default:
-> -		dev_warn(rtk->dev, "RTKit: Unknown oslog message: %llx\n", msg);
-> +		dev_warn(rtk->dev, "RTKit: Unknown oslog message: %llx\n",
-> +			 msg);
->  	}
->  }
->  
-> @@ -729,6 +739,7 @@ int apple_rtkit_reinit(struct apple_rtkit *rtk)
->  
->  	apple_rtkit_free_buffer(rtk, &rtk->ioreport_buffer);
->  	apple_rtkit_free_buffer(rtk, &rtk->crashlog_buffer);
-> +	apple_rtkit_free_buffer(rtk, &rtk->oslog_buffer);
->  	apple_rtkit_free_buffer(rtk, &rtk->syslog_buffer);
->  
->  	kfree(rtk->syslog_msg_buffer);
-> @@ -916,6 +927,7 @@ void apple_rtkit_free(struct apple_rtkit *rtk)
->  
->  	apple_rtkit_free_buffer(rtk, &rtk->ioreport_buffer);
->  	apple_rtkit_free_buffer(rtk, &rtk->crashlog_buffer);
-> +	apple_rtkit_free_buffer(rtk, &rtk->oslog_buffer);
->  	apple_rtkit_free_buffer(rtk, &rtk->syslog_buffer);
->  
->  	kfree(rtk->syslog_msg_buffer);
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Did you mean to say LLVM got this wrong?   As far as I know,
+the GCC TBBA code is more correct than LLVMs.  It gets=C2=A0
+type-changing stores correct that LLVM does not implement.
+
+>=20
+> > > > - The aliasing rules in Rust are possibly as hard or
+> > > >      harder than for C "restrict", and it is not possible to
+> > > >      opt out of aliasing in Rust, which is cited by some
+> > > >      as one of the reasons for unsafe Rust being
+> > > >      harder than C.
+> > >=20
+> > > That is not quite correct; it is possible to opt-out by using raw poi=
+nters.
+> >=20
+> > Again, I did have this list item:
+> >=20
+> > - Applies to certain pointer kinds in Rust, namely
+> >      Rust "references".
+> >      Rust pointer kinds:
+> >      https://doc.rust-lang.org/reference/types/pointer.html
+> >=20
+> > where I wrote that the aliasing rules apply to Rust "references".
+>=20
+> Okay, fair. But it is easy to misunderstand the other items in your list =
+in=20
+> isolation.
+>=20
+> >=20
+> > > >      the aliasing rules, may try to rely on MIRI. MIRI is
+> > > >      similar to a sanitizer for C, with similar advantages and
+> > > >      disadvantages. MIRI uses both the stacked borrow
+> > > >      and the tree borrow experimental research models.
+> > > >      MIRI, like sanitizers, does not catch everything, though
+> > > >      MIRI has been used to find undefined behavior/memory
+> > > >      safety bugs in for instance the Rust standard library.
+> > >=20
+> > > Unlike sanitizers, Miri can actually catch everything. However, since=
+ the exact
+> > > details of what is and is not UB in Rust are still being worked out, =
+we cannot
+> > > yet make in good conscience a promise saying "Miri catches all UB". H=
+owever, as
+> > > the Miri README states:
+> > > "To the best of our knowledge, all Undefined Behavior that has the po=
+tential to
+> > > affect a program's correctness is being detected by Miri (modulo bugs=
+), but you
+> > > should consult the Reference for the official definition of Undefined=
+ Behavior.
+> > > Miri will be updated with the Rust compiler to protect against UB as =
+it is
+> > > understood by the current compiler, but it makes no promises about fu=
+ture
+> > > versions of rustc."
+> > > See the Miri README (https://github.com/rust-lang/miri/?tab=3Dreadme-=
+ov-file#miri)
+> > > for further details and caveats regarding non-determinism.
+> > >=20
+> > > So, the situation for Rust here is a lot better than it is in C. Unfo=
+rtunately,
+> > > running kernel code in Miri is not currently possible; figuring out h=
+ow to
+> > > improve that could be an interesting collaboration.
+> >=20
+> > I do not believe that you are correct when you write:
+> >=20
+> >      "Unlike sanitizers, Miri can actually catch everything."
+> >=20
+> > Critically and very importantly, unless I am mistaken about MIRI, and
+> > similar to sanitizers, MIRI only checks with runtime tests. That means
+> > that MIRI will not catch any undefined behavior that a test does
+> > not encounter. If a project's test coverage is poor, MIRI will not
+> > check a lot of the code when run with those tests. Please do
+> > correct me if I am mistaken about this. I am guessing that you
+> > meant this as well, but I do not get the impression that it is
+> > clear from your post.
+>=20
+> Okay, I may have misunderstood what you mean by "catch everything". All=
+=20
+> sanitizers miss some UB that actually occurs in the given execution. This=
+ is=20
+> because they are inserted in the pipeline after a bunch of compiler-speci=
+fic=20
+> choices have already been made, potentially masking some UB. I'm not awar=
+e of a=20
+> sanitizer for sequence point violations. I am not aware of a sanitizer fo=
+r=20
+> strict aliasing or restrict. I am not aware of a sanitizer that detects U=
+B due=20
+> to out-of-bounds pointer arithmetic (I am not talking about OOB accesses;=
+ just=20
+> the arithmetic is already UB), or UB due to violations of "pointer lifeti=
+me end=20
+> zapping", or UB due to comparing pointers derived from different allocati=
+ons. Is=20
+> there a sanitizer that correctly models what exactly happens when a struc=
+t with=20
+> padding gets copied? The padding must be reset to be considered "uninitia=
+lized",=20
+> even if the entire struct was zero-initialized before. Most compilers imp=
+lement=20
+> such a copy as memcpy; a sanitizer would then miss this UB.
+
+Note that reading padding bytes in C is not UB. Regarding
+uninitialized variables, only automatic variables whose address
+is not taken is UB in C. =C2=A0 Although I suspect that compilers
+have compliance isues here.
+
+But yes, it sanitizers are still rather poor.
+
+Martin
+
+>=20
+> In contrast, Miri checks for all the UB that is used anywhere in the Rust=
+=20
+> compiler -- everything else would be a critical bug in either Miri or the=
+ compiler.
+> But yes, it only does so on the code paths you are actually testing. And =
+yes, it=20
+> is very slow.
+>=20
+> Kind regards,
+> Ralf
+>=20
+
 
