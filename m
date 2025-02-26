@@ -1,166 +1,125 @@
-Return-Path: <linux-kernel+bounces-533248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E587A45760
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:59:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EF4A4574D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD3A189BEA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768331749E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721C5271287;
-	Wed, 26 Feb 2025 07:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E14271827;
+	Wed, 26 Feb 2025 07:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlndDT8r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A4WLs/BD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t9/OFfAe"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82859271263;
-	Wed, 26 Feb 2025 07:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E945224249;
+	Wed, 26 Feb 2025 07:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556287; cv=none; b=qdvhvyLCSemyBdrq61HWZkJgNZIe1S5aJQfeMJgJ1lsD4EFdhfg7O6d5qTB1phCUKG9sui2Pcj12BXiIhKsk4S3HWFDhkUPXx6+7Usz2POs3IyVZg5hY/e91OHB8jZhF8aRTdKgOWF/LWgxGiM3zKf7z1N/W/SWIGKo1UaXAIc0=
+	t=1740556299; cv=none; b=kBNUp3zd8tijN4z1qa+KADTyhiv5J5gxiv6MPNmp5ppLvbIqmclh8Yz6mMbJu4OYy1b13+7eGfkZ59cX+yXfdFcFPlob5J2K/eQGs9tf/iK5LXDTTbyA8ewKm8ghdm6pY+MPHkkQ135LwFVyb5IbUkdcZKzxo5nPC/1xgbPGCwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556287; c=relaxed/simple;
-	bh=9eFHXpGsf3ECjgV3E67TSiU05/e2Y8rXQci+VACk4XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfG/qplJL1lRao1AEl7GfU+fdWMcLp3vW5cZ+LRzuMqLgSNgXqFUWwTGssQduw/0To8p7apcnn452TwxJJx41uiTR4VcdMjvzBTS2c7XMP8sqdS5Rua5HmdzqH5kjSsj3eyTRSnBknVfZpDTKTRITysxwUp+RvADfyUF71HaPMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlndDT8r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07280C4CEE2;
-	Wed, 26 Feb 2025 07:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740556287;
-	bh=9eFHXpGsf3ECjgV3E67TSiU05/e2Y8rXQci+VACk4XY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WlndDT8raEr4NnEzyhjKw9QpCmbUwYWGO60bPAtCHgbIIGRCOC5v095KILS2MqmgV
-	 Wu+tLLUHnZfeMzPnnEHduboaYP8tSAfZUNMMQmFzIr1525nsoN/lJ2u6/SWIhAwV2y
-	 FiEnK24nL8TAoWijHNI4/RDEeL4GVQkZjDM3VqEaP9o3hMeauMz7akBEydItfN0Xav
-	 aIIfIuD9exIcWIhTZlAGkMN14MJEacXCHmV49b17nskRmgfe4nYGbVqQ/gjt+7z8Wy
-	 CjVrTMbSENOprnPHAl+guVQ0Yz4de79CQuOUf4eiP1Ls0YAzjklhEe1hd0qRLUXDEw
-	 ZRc2oNA5Bkc+A==
-Message-ID: <8b42f0ad-2993-43b8-9055-6d74dc3bafbe@kernel.org>
-Date: Wed, 26 Feb 2025 08:51:19 +0100
+	s=arc-20240116; t=1740556299; c=relaxed/simple;
+	bh=ZenfNeMV6+9GnXRrsF8Grg09WBJF1uOFpAAdO2uG1Pk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HT1s4ZjsS3MTCRjEbl6X0DPX/wOMU8yruDkiNGlmLFkwJQ6uHULQddL+iXbTQJrVq5Ob5ImI4SC7aMQs06uajTd/gLNbyMVCeiCHHaPs0txScFzMRlaeuODqDqD9VKL9ageMGeiOS5Iss2/19snjTzfWdiZHbGVKQ6YmlxSTi3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A4WLs/BD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t9/OFfAe; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 07:51:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740556295;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l+cv/hHQA4Bxqa7Tdev9Mtys53BxoXr0ORorFZ5HD2Y=;
+	b=A4WLs/BD2jdXiYPqpS1pNAi3zDKjqrAM35xEE6dvnHrPP5UWK4fSBCA7mc8JteNjL7zBun
+	YN89TL0bDEwy5rVI0T+iX+3Xd3Z1edMXtSfMzdCChjVVEC2flpD6GAFStbuenSZY60IUn7
+	Ix3DuzuM1WXDwlD19SHGmp9+NXPZbIHQD8IeskLO9ATfeBy4RNGaT/TtWTwbnhh4tyauVS
+	t6Qs3Vcr1DuB/OpALSLJkE9OLlW2tECen4XLjVApDOC9VgRqTxdCCAUmTYgMP5BuCNFirg
+	DoI8xZl/BSVKMAadLpfv7m9aRoguR2LU3PMhcGTpDdQBB8ZRD7weRtdPU41GHw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740556295;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l+cv/hHQA4Bxqa7Tdev9Mtys53BxoXr0ORorFZ5HD2Y=;
+	b=t9/OFfAeS/9WV9qIKsk8phrqbD5KgJFp4eibk+tPYUm3rs0a/IQ3VYqGM1iAaCAuEWoV7r
+	2YF/iBg1GlBa0WBw==
+From: "tip-bot2 for Chen Wang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] riscv: sophgo: dts: Add msi controller for SG2042
+Cc: Chen Wang <unicorn_wang@outlook.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3Cf47c6c3f0309a543d495cb088d6c8c5750bb5647=2E17405?=
+ =?utf-8?q?35748=2Egit=2Eunicorn=5Fwang=40outlook=2Ecom=3E?=
+References: =?utf-8?q?=3Cf47c6c3f0309a543d495cb088d6c8c5750bb5647=2E174053?=
+ =?utf-8?q?5748=2Egit=2Eunicorn=5Fwang=40outlook=2Ecom=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: mfd: stm32-lptimer: add support for
- stm32mp25
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: lee@kernel.org, ukleinek@kernel.org, alexandre.torgue@foss.st.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, wbg@kernel.org,
- jic23@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
- catalin.marinas@arm.com, will@kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
- olivier.moysan@foss.st.com
-References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
- <20250224180150.3689638-2-fabrice.gasnier@foss.st.com>
- <20250225-outgoing-scorpion-of-music-be0bea@krzk-bin>
- <acabacb8-8ea1-4b16-a562-8ffba64fdd36@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <acabacb8-8ea1-4b16-a562-8ffba64fdd36@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174055629167.10177.2318536825336903930.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 25/02/2025 15:57, Fabrice Gasnier wrote:
-> On 2/25/25 13:02, Krzysztof Kozlowski wrote:
->> On Mon, Feb 24, 2025 at 07:01:43PM +0100, Fabrice Gasnier wrote:
->>>    pwm:
->>>      type: object
->>>      additionalProperties: false
->>>  
->>>      properties:
->>>        compatible:
->>> -        const: st,stm32-pwm-lp
->>> +        enum:
->>> +          - st,stm32-pwm-lp
->>> +          - st,stm32mp25-pwm-lp
->>>  
->>>        "#pwm-cells":
->>>          const: 3
->>> @@ -69,7 +76,9 @@ properties:
->>>  
->>>      properties:
->>>        compatible:
->>> -        const: st,stm32-lptimer-counter
->>> +        enum:
->>> +          - st,stm32-lptimer-counter
->>> +          - st,stm32mp25-lptimer-counter
->>
->> Driver changes suggest many of these are compatible. Why isn't this expressed?
-> 
-> Hi Krzysztof,
-> 
-> The Low Power Timer (LPTIM) hardware isn't fully backward compatible.
-> 
-> At driver level, as indicated in the cover-letter, same feature list as
-> on STM32MP1x is supported currently. This is probably what makes it look
-> like it's compatible, but it's not fully compatible.
+The following commit has been merged into the irq/drivers branch of tip:
 
-I don't understand. Same feature list is supported means fully
-compatible, but you say not fully compatible. You are aware that
-compatible means not the same?
+Commit-ID:     0edaa4593efe9377b4536211f9bc3812e3e53315
+Gitweb:        https://git.kernel.org/tip/0edaa4593efe9377b4536211f9bc3812e3e53315
+Author:        Chen Wang <unicorn_wang@outlook.com>
+AuthorDate:    Wed, 26 Feb 2025 10:15:37 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 26 Feb 2025 08:41:28 +01:00
 
-> 
-> The hardware controller is a bit different. Some registers/bits has been
-> revisited among other things. This is the purpose for these new compatibles.
+riscv: sophgo: dts: Add msi controller for SG2042
 
-We do not discuss new compatibles. We discuss lack of compatibility. If
-registers/bits are changed, how existing driver can work with same ID table?
+Add msi-controller node to dts for SG2042.
 
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/f47c6c3f0309a543d495cb088d6c8c5750bb5647.1740535748.git.unicorn_wang@outlook.com
 
+---
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+index e62ac51..fef2a0e 100644
+--- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
++++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+@@ -173,6 +173,16 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		msi: msi-controller@7030010304 {
++			compatible = "sophgo,sg2042-msi";
++			reg = <0x70 0x30010304 0x0 0x4>,
++			      <0x70 0x30010300 0x0 0x4>;
++			reg-names = "clr", "doorbell";
++			msi-controller;
++			#msi-cells = <0>;
++			msi-ranges = <&intc 64 IRQ_TYPE_LEVEL_HIGH 32>;
++		};
++
+ 		rpgate: clock-controller@7030010368 {
+ 			compatible = "sophgo,sg2042-rpgate";
+ 			reg = <0x70 0x30010368 0x0 0x98>;
 
