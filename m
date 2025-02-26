@@ -1,309 +1,191 @@
-Return-Path: <linux-kernel+bounces-534531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E402FA46829
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:34:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C89A4682B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE021884F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5513AB4F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17484224B15;
-	Wed, 26 Feb 2025 17:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830452253E4;
+	Wed, 26 Feb 2025 17:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmhKH2zQ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="shkujR8w"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733FF1E1E1A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740591276; cv=none; b=kVrGPvaFlYSW2lBjQklbQhrmo3l0+j2woKJ1HST+dGTk/5dLfoN9ZtWpBWKItWQnmpW0yCKa3hv+CoMomlxJvx/n1VK+B2m0kbK1kwsSxhZ9wNO6xywtqB+luiwRLhAIJGL2/3i66Dq7A2L/m1JjWnivLXO39gL9sn4koUU7tfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740591276; c=relaxed/simple;
-	bh=jCRPNLGSi/oQj3TrKIvzQq1kRoQsVcTmH9HUiymr1As=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OcwTdDpgC79IZWDIwXKc4zuM13W8YWSoybY2cPr7KkuVbaxHXH9NAGN3HyM/YqvwbhGzXPy/zONeSG62Kg3snaGzaKyRAipZFLNgieIwkwZNRZrI1Yy71kBm7lYmv/aUcJW85hNvFCsMrGtUVs51Ul4M+RhdneDN65UKvPCxqd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmhKH2zQ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f378498b0so5920732f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740591273; x=1741196073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gk9vQF5EfQ/Ok65dcPgc2M8a/3DSVXE8cp20Sffo8xY=;
-        b=dmhKH2zQ8E/qZM+O/FXDIw8/2Oc7XxcuoBaFBKZn/mwm2fz67h7ZquzED5N2hnf4+O
-         PCFSb9shQWZcv3XtiITsU5xhkuW7Sjh2wDIUt5wRqchcT5K9LG99ti/kuGT/N/OArM0O
-         sHSBZEdGujqO93cHARreBJaWlenkgDRMbTgGTfrjFYsQjxt8n2ISFmCXk+eBgrFosVKd
-         wkhAaRGa/YDQYPomz0UI1INuMtKQ4rdb4i7IKngTMyK/2R7QXs8VCOz5Uq8yqv1hKXdy
-         +ABklcGHUULHR9Q/dsD6cm1Zm34Y66Cvp4YhmWgRY4de+BUkSIRXegHC+NXiRTwFAUlD
-         /qLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740591273; x=1741196073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gk9vQF5EfQ/Ok65dcPgc2M8a/3DSVXE8cp20Sffo8xY=;
-        b=AluUUciokqwMgE2wjv8DbSvak5mR0qt8PVwfO9XFkCoQK0VqhuLJg4loBMaoGMEhzc
-         OxgDv/UNtaAvefoNutwLap9/ptNqxz8cz4goJwGNlwgxqP2yE84U4WV6upZtfZRhxQZi
-         LgX49n+moPq9qWKLibPlWCg/qCyW2GnFMUzsJSgJ2TUj9yIrR7D27ESDBkuLi671SosE
-         PQXxDrfjPL6dffCuu9Bp1HgGFQAu8f80Sd0MRWNWXhpLLV9ejp3oxpgIjPC6MscXUdKg
-         1i9zV34ZYlRA7CL32BscbzBVWV0f6yyH7OJycjdSoxBQMC8ZHtnL2TZDybJfQl8RT1se
-         419w==
-X-Forwarded-Encrypted: i=1; AJvYcCUv/wa/8Lb2V+Dl176FrBb/G4SmoOqPln++uAkDDKcojAIrSM2Leu71wQiL7jYqzFQspJaqo18GjSSHFdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsPWTnvUmH8JuU+s5Bv4tK6JN2bItalKB+z/p27MXbeyKPy4Uv
-	3GDu55waGKK85NyuYkWOTwVP16tCp6Mb8vx7miYTzzO02AWjZlzyrROiSEU9ozUun8W5QORxHbg
-	p89NSsRFt0t2yqQy3sB5q0fPCVaM=
-X-Gm-Gg: ASbGncs/a8whHxJakxVUp/6DltoHxxFxtx9Y/OtAxa3+WDK5wQWBortIshjUoQxljuw
-	dBn448FzUMBWtcGZLcqr/BenlITD2xBBlP1eITlxG16JvDSYdrKLZceI/6M+DeKyBrPaelK5kIV
-	pytGEpE84=
-X-Google-Smtp-Source: AGHT+IHv78SlBVrJnqZc1wfB0Dm1rMWidmm78JH5ipxyqSTd1JOH7deq52Yh/Ml3OCKNcPg/n9t2JzU84r3WW8Bg1zg=
-X-Received: by 2002:a05:6000:156c:b0:390:dfec:259e with SMTP id
- ffacd0b85a97d-390dfec2748mr1127923f8f.28.1740591272442; Wed, 26 Feb 2025
- 09:34:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0451E1E1A;
+	Wed, 26 Feb 2025 17:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740591378; cv=fail; b=EXltJg+SPSRn/L5cpkHaao2R4DoWZpLCBsCduIl8ZQby1NYpf2BSY78lAoeC/f+p9lxMLDNa0eOezC9aNp3J7/flUBsh6B+wZxUdcqblqTJhwVUCXT92FkhfEZheby0Zi6PmDyprzkteQO2rZzRj86+HEcuEEDqQr7qpZKuYNB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740591378; c=relaxed/simple;
+	bh=0Bl3Iqp8C8XUhaBpNI5QmNIwyK87UbxaEak5pZShxdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YthmsYD7gn1IRO8q5Kz4vauZ9gkdLcya4BBnk/9TdIqhoOaDYJ4pzWsdfgXMSsRpq8EBw/RJkTZedWfyJB3rt+4CmlP4A7172MzBnZ7OVgaampB0+6rKruLef9cD+JzxXBZBdV0RTkZ0ogMePNKFurocnRJTtjbkQjZk9HxHzz0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=shkujR8w; arc=fail smtp.client-ip=40.107.237.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EtGB9PIi1ZmxNUDPp0yrAceIwSmUuc+1IA+H5vSwYVBxH6LBc25ia8PwuJpRZe2d+zFtE9SqbfMWtF1b4Uy8TEVETkLNUP1LNocET3Vk0U7YUSc8s0scD4Lw6M0ZfRRGwqBJmpZ+UGWJpxV6W2YW0X1rhHDnvfiLRPvJ0A2gQhWwXJsCV47sp8n+tIDRwTv+IfYcUZuvafTTdI/ObmDK0+6mOskzpFn8zaqurGa/MrEtlpc3WfPaS+erk56sst4303MY6M/CbKJRhdu8E2lSsXDG6jquEk3yZmcpminBMLPEVt5jtuNiqb1jNCZ67PT7NbFZbdXM4m6KKowzuzZa4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/dJhByED9KmeAfa8cQOEyTQUL3lqj2ilupRNu5JsX0o=;
+ b=VPjfJngKalgVyIyJE/+m0AvCMl3kugehCko81jihMlboOHpr8UbLetIgXZQp6+vK3c9U8xKDKWQGbGxWmyIhsT4R5QmWo5DazrN83vj3HYv3GLuIu84Q5JaMlQ1991yb4a0TGwAk6KBPpB84IZkIwu6tMIjTU0cRRkG+oLxjq2AZcI44tdfXFyG3EaG80izcqHE0rxAr5IrlLok4PgYyevTmPJfR7VqQHAIxlcv3Yy8yFNdykZvYGQvYSdp6R+GxSuD2BBEoLc1MuIg3ctMb29rDzUxZTd7TpiKJ+gm8pOKuaHDEHNybb1LBFuyUilMZRgCKk20qDw/CXr8oCpa+9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/dJhByED9KmeAfa8cQOEyTQUL3lqj2ilupRNu5JsX0o=;
+ b=shkujR8w3L/6/VU673vWwODCBnZ0TKO0oxE0ljGM90Gx4GGV3j/7iyqxUTvTv9YJjrUWSBi0EFbqpS9ficiJTw7Rwgv5RmNRbpGvFultLFAleHMHuUi/pzLjqRgNCT5yACNXMUj47qWdus3tkHAKc7/32WBfZqBpM+EMLh/Ic3wnwQtG9SQjN3RjWBHiosrC8MAuF932OsG3SeEXB87wrTcuNtHbqSsywq+OEopRdk3vEMX6d+rTNMD11A+rLvcN0Mjuq9WUg/vNOBK9ujr4wzxKfv3ongKb9dce9QdEb8Ygzfq8BrI8u5/rMCC3hqiSi6T21wjoS7DrIqwm2huGNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN0PR12MB5762.namprd12.prod.outlook.com (2603:10b6:208:375::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
+ 2025 17:36:13 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 17:36:12 +0000
+Date: Wed, 26 Feb 2025 13:36:10 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, tglx@linutronix.de, maz@kernel.org,
+	joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	shuah@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
+	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
+Subject: Re: [PATCH v2 7/7] iommu: Turn iova_cookie to dma-iommu private
+ pointer
+Message-ID: <20250226173610.GE28425@nvidia.com>
+References: <cover.1740014950.git.nicolinc@nvidia.com>
+ <949e28875e01646feac5c4951b63723579d29b36.1740014950.git.nicolinc@nvidia.com>
+ <20250221143959.GA272220@nvidia.com>
+ <Z757lz6ucDE6Otix@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z757lz6ucDE6Otix@Asurada-Nvidia>
+X-ClientProxiedBy: BN9PR03CA0139.namprd03.prod.outlook.com
+ (2603:10b6:408:fe::24) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250117164536.3918949-1-Mr.Bossman075@gmail.com>
-In-Reply-To: <20250117164536.3918949-1-Mr.Bossman075@gmail.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Wed, 26 Feb 2025 12:33:55 -0500
-X-Gm-Features: AQ5f1Jq3UvHVqA2QSiPG2s2N6c54tqzunb7-m3q7gugH9eFkG2wEagm1mHr3iXU
-Message-ID: <CAJFTR8Q0rruNDSC0_biPhHQqnHobTaZc=6so2kAuw5jbJcs-9g@mail.gmail.com>
-Subject: Re: [PATCH v5] clocksource/drivers/timer-clint: Add T-Head C9xx clint
-To: linux-riscv@lists.infradead.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
-	Conor Dooley <conor@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, Jisheng Zhang <jszhang@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN0PR12MB5762:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6644acf-5a15-4a5b-724f-08dd568c0fea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tclUH77wq0JGtuqxdLshUyUZ60AwL/avN0TDUMK1zhA8fPWbwkIcYsGhlNTW?=
+ =?us-ascii?Q?esLKx4Sy2Fva9bBvevBam1AH75zOSccYJSPRXT5QtDkT9h4vPnyEAg4HDk+q?=
+ =?us-ascii?Q?Q9V8QPiEcQdqe2r7NHq+CS6B1GsD2Mq2fn95prSeYGrZjzrZioSx7X3r7BF+?=
+ =?us-ascii?Q?M+SYZ0N8v2kr698k88q6GX/UfTRYFjt+KkSP+sBqBqpHxoDpSkOXbRlKT9VQ?=
+ =?us-ascii?Q?248ykMzyDRe3Q561A9FO+NhbfwxTwzmF+phpR7kXd4jCXabImvtncKVIKdYH?=
+ =?us-ascii?Q?zjZDqjEWJFyFwVCGbrVyoNI69uYm5LGOmZtHF7BkeeM2tzEI49NlH/jgWZl7?=
+ =?us-ascii?Q?QpI9gAJZr1Ut1E4UMyBA6SF1Flz8Jwk8ZEw4KdC6uNcBcyZ1cwb0O2ZTENoj?=
+ =?us-ascii?Q?DLEed9j15x8jDWLF0Mfk6VWD8TCIMNecpGdux1rs6+dq9SQ/VSx+UUaw3jdl?=
+ =?us-ascii?Q?Nd1yxRIF1qY6uDaqEjyreTXiaMC45K7QS+kWyaw8HL/58pcwpIfc6zWg8Ow1?=
+ =?us-ascii?Q?UjIEHd2eY82NfM9jOUhq09m8T5R+E0KEAXoO7Cv5NSs7KI6JXSLF4MNzPorm?=
+ =?us-ascii?Q?EsDu75DERPsGMsWHBvd1wi+/2EV9fgoiYPwQ8ZW/VZNeolrTIbN8vg8mxu19?=
+ =?us-ascii?Q?GlcauzRFQn2VyrNvk9YuTnjg4tu3tmmvaESeyrC0GFbyQxwAGBPZfmP0sxqR?=
+ =?us-ascii?Q?exmr+Rm8lqQDWCUKDSrHdR879tYugOHQuGIxJx3Xzohv/pP37BLAZ+y8E0Jf?=
+ =?us-ascii?Q?Ku/r/M12ZMfoXJuyacuji8r8VQqLq3x3aLcFOKN0JZQWW7U/MTu5dPpE6qy/?=
+ =?us-ascii?Q?5rpj7Hw7+PLarQ5gmRHgkJKVL7rtbXtcAsBjx44L4Wyxp8bMU0qAPfQJUpUI?=
+ =?us-ascii?Q?nsidBZsRpnmQA0y9AvwVM+cseCIgX0ly/CPZDt2AqRlUcXyhLwJ0AAm98amu?=
+ =?us-ascii?Q?qbOjwd2zL67ZIIuj4Fj4kdhNPEHfN4jVPVTbN/T19yIgS5yJkbZ7cCIdentW?=
+ =?us-ascii?Q?jee7aPx8VG6y4AAkPpKUqOJmcor7UgkN19oi4KmQQ2cl55QQLhTONgG+42Cu?=
+ =?us-ascii?Q?sH/l6fVEKWk27k15RQ4p2xbLYz8xdhHFlxp23dISIUESk0CCA4aiQ0rJ67an?=
+ =?us-ascii?Q?KC5egv3+C86LK+ID/GcW6jFzHX4IsYhneRf6Dqegps+o5Pp5L/6R6SqpEVAb?=
+ =?us-ascii?Q?Ea5wF7xrkIbMV8iPIlVYI8Oy/YZt0/qnTQfoKk9uCid74QYA5I2n6gIUENzc?=
+ =?us-ascii?Q?yPsUDmWZgj7LpHpjrsi6s/lzgVyFrKeXVgVAShknmOPj8kGZOa2BlEje8WLZ?=
+ =?us-ascii?Q?QQRjyx5ipjtld+wStvluc06u8Iqq3wDyxgICx9ud6RgOzJOoXigdeveQGbTe?=
+ =?us-ascii?Q?/RqJfEmzmGPwPKRDvZGeRGRPuUIX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?51ACzUF4Bn1uPX4jrcm0ia37PMoIngLep6DKn1cD8flEQblP0CXENR5s4ABX?=
+ =?us-ascii?Q?MviL3BH/9OMSmPh6Wf3lFFvqT6Qrtms+SaT+q64F4FxrKfJepv1934VsiZSC?=
+ =?us-ascii?Q?n11wxeccUU2vYbizq/UGUz7GMR7tcUrkQptWO0qV6x6MKhETq1rEGwcu/9iS?=
+ =?us-ascii?Q?aQruYuWXqZ7S0U2pJBVg83UDDbXUCl+rVFnjhyAniBwObN8NdSXsm0lOAkKk?=
+ =?us-ascii?Q?fCX44vk2BA/pBRUI82QrZ4Eqsb6ZW24q7MjwK/ihjGHhttoE9k6gCmynZ+HJ?=
+ =?us-ascii?Q?TQoxrNSaJntoaZKUweLbqYkc4AoTzkqPUPvheAx66DEFFxZahr7DENt8SR48?=
+ =?us-ascii?Q?9wKefPBKDAim0/eICQwG7XYgfkUnp1SpctA9tQV09Xl8eAWgt3MjsPYNq2MI?=
+ =?us-ascii?Q?Okx7VQjIo+JJGWQzCHY58oW/U3HGGW3nQ2Q0xffh/qGeB7JF2iSKOr2FQIKi?=
+ =?us-ascii?Q?qdhIiZ9FvOQtLaVWJKt9lC1h39U6UsVLmtWYObT8GBX/UytbuV+uFJbTFEYj?=
+ =?us-ascii?Q?gQxsVl+fPlZa7V6hbZIRIxZCJ11unszY64skKs1Jhrly/b5N5sezlbh8Fpdj?=
+ =?us-ascii?Q?gQ3yYfHvgHry1JDwDVPkSejdKqZipIeIAeccJPoHtBDkApYWv1dH3Dqg6ssl?=
+ =?us-ascii?Q?23d9YJAUmn3F3Lk4u3RHAlgMuLcH0g1wA7C5qs/mfh8whPPRxjBE2uykRK9c?=
+ =?us-ascii?Q?FSuTiIHJ+AW+Dt0asbkbj/5WKurHJ3FoY/Wd6X/IBtEgZXun47Zur8DG5bkM?=
+ =?us-ascii?Q?FoBNlzE0MSJcbBu2naXLAu3szXMAjFbyEl1GOIh4RM2EMwvzW/hxvo2Qfmh+?=
+ =?us-ascii?Q?2QMbZCK//11CfUuoDALU3S7Sauljf4YDLhyOS8swm0H4RlkkzgAuQ+Ud4JTi?=
+ =?us-ascii?Q?b6PMzd1xOsJQFCHL/tMupusRr1oCYFtEFRNdPd429yjbWI7v9u/jWfdJrfNR?=
+ =?us-ascii?Q?xrq+Hcpnn2x3dIsth0RHt/QJXS75jX2LhMSsapcZaGHyQesHpadUwoEhHYaA?=
+ =?us-ascii?Q?yDud6D22teZAqp8wm0zVB79X8JUCp/zr/WTNX+qT1AXN5Nweto5JY90K08o6?=
+ =?us-ascii?Q?HpKPSilPqaA2CemIYtenTF0yihZSUCuF7tDMemPO4le7FLb1qd2g2yktQtfs?=
+ =?us-ascii?Q?XnyP06yStV6gYGWLlHryAGcvzLLHdnrR4Rhhox0k7rX8JuAW49Ue0yAWSPz8?=
+ =?us-ascii?Q?yHaCPa60XSld1TC77wO8JyA3oE1wcRqgGUFB2vYSl7BWNOptmyQGMsoAdOAU?=
+ =?us-ascii?Q?wWL1rlsRnJ+c1JHvHa5h3uFLhN+aIBLQQZ12QmcH+GNiIK/N0QGtkt9FNWoj?=
+ =?us-ascii?Q?AGmp27/VxGDi9DLHBPX+F5g8WSF0C9h7CcAQUGKQBsk6ZoCY4+ZShrcwcpiT?=
+ =?us-ascii?Q?PbAXoQx67DPj6fD1+QBrd+m7u5DfnXvpEMDYp+2uuXQS66bNgDrFs4d6K84P?=
+ =?us-ascii?Q?ekFlhZoQlKUzqn92hjUCEt56Wu3Ow9jplp1Yl4yePFN+CcxlcOJ+bbvvw6Zq?=
+ =?us-ascii?Q?+sFSAwxP9YwMTRk9uZ6Y28aLKwolG5XrEb4+rez0fU4oXbGv4NDDWtk0TDJB?=
+ =?us-ascii?Q?IIyxKJtIDvlqjuOTXjrgMk9Qb2jFxvrMIOUIECwz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6644acf-5a15-4a5b-724f-08dd568c0fea
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 17:36:12.0949
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZlaaHI8f/4WltJsliUTuAiHjM/mz0UliRglQ2hESHWvDvS17axBV6uRtBQlp3Ux+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5762
 
-On Fri, Jan 17, 2025 at 11:45=E2=80=AFAM Jesse Taube <mr.bossman075@gmail.c=
-om> wrote:
->
-> From: Jisheng Zhang <jszhang@kernel.org>
->
-> To use the T-HEAD C9xx clint in RISCV-M NOMMU env, we need to take
-> care two points:
->
-> 1.The mtimecmp in T-Head C9xx clint only supports 32bit read/write,
-> implement such support.
->
-> 2. As pointed out by commit ca7810aecdba ("lib: utils/timer: mtimer:
-> add a quirk for lacking mtime register") of opensbi:
->
-> "T-Head developers surely have a different understanding of time CSR and
-> CLINT's mtime register with SiFive ones, that they did not implement
-> the mtime register at all -- as shown in openC906 source code, their
-> time CSR value is just exposed at the top of their processor IP block
-> and expects an external continous counter, which makes it not
-> overrideable, and thus mtime register is not implemented, even not for
-> reading. However, if CLINTEE is not enabled in T-Head's MXSTATUS
-> extended CSR, these systems still rely on the mtimecmp registers to
-> generate timer interrupts. This makes it necessary to implement T-Head
-> C9xx CLINT support in OpenSBI MTIMER driver, which skips implementing
-> reading mtime register and falls back to default code that reads time
-> CSR."
->
-> So, we need to fall back to read time CSR instead of mtime register.
-> Add riscv_csr_time_available static key for this purpose.
->
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> Treat this as a completely new patch, as it is mostly rewritten.
-> Original:
-> https://lore.kernel.org/all/20240410142347.964-3-jszhang@kernel.org/
-> V3 -> V4:
->  - Add riscv,csr-clint
->  - Allow using of CSRs in S mode
->  - Change if return else return to if return return
->  - Change static_branch_likely to static_branch_unlikely
->  - Fix 32-bit clint_get_cycles64 csr_available check being inverted
->  - Fix is_c900_clint being uninitialized
-> V4 -> V5:
->  - Remove riscv,csr-clint
->  - Remove riscv_csr_time_available
->  - Replace all static_branch_unlikely(&riscv_csr_time_available) with
->     riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR)
-> ---
->  arch/riscv/include/asm/timex.h    | 12 +++++++-
->  drivers/clocksource/timer-clint.c | 50 +++++++++++++++++++++++++++----
->  2 files changed, 56 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/timex.h b/arch/riscv/include/asm/time=
-x.h
-> index a06697846e69..d78075351bf4 100644
-> --- a/arch/riscv/include/asm/timex.h
-> +++ b/arch/riscv/include/asm/timex.h
-> @@ -17,17 +17,26 @@ typedef unsigned long cycles_t;
->  #ifdef CONFIG_64BIT
->  static inline cycles_t get_cycles(void)
->  {
-> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR))
-> +               return csr_read(CSR_TIME);
-> +
->         return readq_relaxed(clint_time_val);
->  }
->  #else /* !CONFIG_64BIT */
->  static inline u32 get_cycles(void)
->  {
-> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR))
-> +               return csr_read(CSR_TIME);
-> +
->         return readl_relaxed(((u32 *)clint_time_val));
->  }
->  #define get_cycles get_cycles
->
->  static inline u32 get_cycles_hi(void)
->  {
-> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR))
-> +               return csr_read(CSR_TIMEH);
-> +
->         return readl_relaxed(((u32 *)clint_time_val) + 1);
->  }
->  #define get_cycles_hi get_cycles_hi
-> @@ -40,7 +49,8 @@ static inline u32 get_cycles_hi(void)
->   */
->  static inline unsigned long random_get_entropy(void)
->  {
-> -       if (unlikely(clint_time_val =3D=3D NULL))
-> +       if (!riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR) &&
-> +          (unlikely(clint_time_val =3D=3D NULL)))
->                 return random_get_entropy_fallback();
->         return get_cycles();
->  }
-> diff --git a/drivers/clocksource/timer-clint.c b/drivers/clocksource/time=
-r-clint.c
-> index 0bdd9d7ec545..cdf8b33d2dd2 100644
-> --- a/drivers/clocksource/timer-clint.c
-> +++ b/drivers/clocksource/timer-clint.c
-> @@ -39,6 +39,7 @@ static u64 __iomem *clint_timer_cmp;
->  static u64 __iomem *clint_timer_val;
->  static unsigned long clint_timer_freq;
->  static unsigned int clint_timer_irq;
-> +static bool is_c900_clint;
->
->  #ifdef CONFIG_RISCV_M_MODE
->  u64 __iomem *clint_time_val;
-> @@ -79,6 +80,9 @@ static void clint_ipi_interrupt(struct irq_desc *desc)
->  #ifdef CONFIG_64BIT
->  static u64 notrace clint_get_cycles64(void)
->  {
-> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR))
-> +               return csr_read(CSR_TIME);
-> +
->         return clint_get_cycles();
->  }
->  #else /* CONFIG_64BIT */
-> @@ -86,10 +90,17 @@ static u64 notrace clint_get_cycles64(void)
->  {
->         u32 hi, lo;
->
-> -       do {
-> -               hi =3D clint_get_cycles_hi();
-> -               lo =3D clint_get_cycles();
-> -       } while (hi !=3D clint_get_cycles_hi());
-> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZICNTR)) {
-> +               do {
-> +                       hi =3D csr_read(CSR_TIMEH);
-> +                       lo =3D csr_read(CSR_TIME);
-> +               } while (hi !=3D csr_read(CSR_TIMEH));
-> +       } else {
-> +               do {
-> +                       hi =3D clint_get_cycles_hi();
-> +                       lo =3D clint_get_cycles();
-> +               } while (hi !=3D clint_get_cycles_hi());
-> +       }
->
->         return ((u64)hi << 32) | lo;
->  }
-> @@ -119,6 +130,19 @@ static int clint_clock_next_event(unsigned long delt=
-a,
->         return 0;
->  }
->
-> +static int c900_clint_clock_next_event(unsigned long delta,
-> +                                      struct clock_event_device *ce)
-> +{
-> +       void __iomem *r =3D clint_timer_cmp +
-> +                         cpuid_to_hartid_map(smp_processor_id());
-> +       u64 val =3D clint_get_cycles64() + delta;
-> +
-> +       csr_set(CSR_IE, IE_TIE);
-> +       writel_relaxed(val, r);
-> +       writel_relaxed(val >> 32, r + 4);
-> +       return 0;
-> +}
-> +
->  static DEFINE_PER_CPU(struct clock_event_device, clint_clock_event) =3D =
-{
->         .name           =3D "clint_clockevent",
->         .features       =3D CLOCK_EVT_FEAT_ONESHOT,
-> @@ -130,6 +154,9 @@ static int clint_timer_starting_cpu(unsigned int cpu)
->  {
->         struct clock_event_device *ce =3D per_cpu_ptr(&clint_clock_event,=
- cpu);
->
-> +       if (is_c900_clint)
-> +               ce->set_next_event =3D c900_clint_clock_next_event;
-> +
->         ce->cpumask =3D cpumask_of(cpu);
->         clockevents_config_and_register(ce, clint_timer_freq, 100, ULONG_=
-MAX);
->
-> @@ -161,7 +188,7 @@ static irqreturn_t clint_timer_interrupt(int irq, voi=
-d *dev_id)
->         return IRQ_HANDLED;
->  }
->
-> -static int __init clint_timer_init_dt(struct device_node *np)
-> +static int __init clint_timer_init(struct device_node *np)
->  {
->         int rc;
->         u32 i, nr_irqs;
-> @@ -273,5 +300,18 @@ static int __init clint_timer_init_dt(struct device_=
-node *np)
->         return rc;
->  }
->
-> +static int __init clint_timer_init_dt(struct device_node *np)
-> +{
-> +       is_c900_clint =3D false;
-> +       return clint_timer_init(np);
-> +}
-> +
-> +static int __init c900_clint_timer_init_dt(struct device_node *np)
-> +{
-> +       is_c900_clint =3D true;
-> +       return clint_timer_init(np);
-> +}
-> +
->  TIMER_OF_DECLARE(clint_timer, "riscv,clint0", clint_timer_init_dt);
->  TIMER_OF_DECLARE(clint_timer1, "sifive,clint0", clint_timer_init_dt);
-> +TIMER_OF_DECLARE(clint_timer2, "thead,c900-clint", c900_clint_timer_init=
-_dt);
-> --
-> 2.45.2
->
+On Tue, Feb 25, 2025 at 06:25:27PM -0800, Nicolin Chen wrote:
+> On Fri, Feb 21, 2025 at 10:39:59AM -0400, Jason Gunthorpe wrote:
+> > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> > index 99dd72998cb7f7..082274e8ba6a3d 100644
+> > --- a/include/linux/iommu.h
+> > +++ b/include/linux/iommu.h
+> > @@ -1534,12 +1534,16 @@ void iommu_debugfs_setup(void);
+> >  static inline void iommu_debugfs_setup(void) {}
+> >  #endif
+> >  
+> > -#ifdef CONFIG_IOMMU_DMA
+> > +#if defined(CONFIG_IOMMU_DMA) && IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
+> >  int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base);
+> > +void iommu_put_msi_cookie(struct iommu_domain *domain);
+> >  #else /* CONFIG_IOMMU_DMA */
+> >  static inline int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
+> >  {
+> > -	return -ENODEV;
+> > +	return 0;
+> 
+> Should we keep the -ENODEV here for !CONFIG_IOMMU_DMA?
 
-Any updates on this palmer?
-It seems to be marked as handled elsewhere on patchwork, but i'm not
-sure where and iirc i didn't mark it as that.
-https://patchwork.kernel.org/project/linux-riscv/patch/20250117164536.39189=
-49-1-Mr.Bossman075@gmail.com/
+My feeling was if the system doesn't have an IRQ driver that needs
+MSI_IOMMU but does have a IOMMU driver that reports SW_MSI reserved
+regions then iommufd/vfio should not fail.
 
-Thanks,
-Jesse Taube
+I don't think it is realistic that we'd ever hit this return.
+
+Jason
 
