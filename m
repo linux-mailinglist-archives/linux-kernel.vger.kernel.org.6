@@ -1,171 +1,230 @@
-Return-Path: <linux-kernel+bounces-533562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A55A45C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:43:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F68A45C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559DC3A560D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFFD188723F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D737624E010;
-	Wed, 26 Feb 2025 10:43:24 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADBF2686B7;
+	Wed, 26 Feb 2025 10:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bIHTaAVG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92BC2459ED
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B47824E01E;
+	Wed, 26 Feb 2025 10:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566604; cv=none; b=V0p0BNEx3JTeMpDgCLtQ5agSD7OBbKXTmdwholxIlBsGUpRFaBVFL9Vi9+udDr8YW8TTLkPT/kfg3gYWmN53xDnYq78xTVBG5YOlUOfp+WGtM4sDKBSM698nlvQb98NHhG1tqSM+1SZbPwYj/7Jn43ucB+t9qPiU432YQ2dBgxI=
+	t=1740566674; cv=none; b=goiCuS/CwgYgl5viF3+/ITXkzDQ8lc6ukgWiCWSwEuyd3vhW8wjI1Xn7unCUV3yWkOki3kBv6ifi5FXt179syo6n5PRcvVf0FRukgubk+FhZ7ZO4RnV2iufR7OxB4/7802NHfMuIlFtpMOUzNEl68HQavwWdLQXN+dh4iv9fsU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566604; c=relaxed/simple;
-	bh=/1D2hWZ33Wvm8tZchRpvwsmFkPCAijJoSs7d8EyqLjg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NFwZNwhAaZYTt3hUbr6J8FlIYXzbKeoTkqunknrmhYSTs0Jup74Ux8W+WVcw5HkoGzV18GHtT4uyvw5ifiiag54CYexPu00WyBOP058EYbbOl60REnAfmB8+ty/wlxkh4hJu09wSwnYvHfYHkwYoY+ub+PfAHcLYkq6zbMcUTCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-851a991cf8bso49708339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:43:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740566602; x=1741171402;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CLamul0Qy1bSNuPWUSE2AWn8j3h3sPf3L6/qyPeSfR8=;
-        b=DJl/3Jqrw6XgBlZxsMwyglaIEv2YYknDhTdbSrkqliajVnwlqi8zZF2BhoV1uttwa0
-         wU2w8CuFAA1HicOxI0pjAattcbaNLpMQcw1LbH23bqA53xFGc9Ap8o3kDzQwX9aJb2NI
-         mnUQ+prGJ2Saw/sr4dySoBTUahPzOS00yOne3EXvL2bntwQCNDiJJIpHXOMY0Ua+nhDc
-         OQSoxR9PcAGt8cZnDjNxulA4KR/G9zFpTGchzGDy/eGVFdIvlE0ZvtqOIHdpEMysIsvH
-         pU50AAWJftB7fONs6IVkQpuVduK5wPpBDqp2t/jVBm3QOjK6sRtrpu98tTiMIVIhdQ7f
-         +rxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxgHjIDobl0JOKyLYvGoTaNm8pCeUvgaiLAYS4/dJ/hx5S5C+DvDIUsSnxM3oTM12TPpzsiC60mQdczg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHMj5OgTLREg828ihgiE+VKHi0quOg/BrFPw+5nBJHvonkxz9T
-	mZnE9UoqS4csOM1lII2ruJEW7tx5jECOiAoRgjEajhVz/FXKmv5sVJNfgf0A+3EGLlAhi9qUvpn
-	fngU28/YD/03YNwE4/biDbrnPoTjRNw1IM71NBTyezm+09wGdGF29icY=
-X-Google-Smtp-Source: AGHT+IEozNnp1RtmNrcxO3YpCynOBqGVr75Ha2A7UsRZoGZ85WoOwK1VOHFxodkoYYhmcdFTIg3Tv6nG2Vgy81FdzccUMzmPTSz9
+	s=arc-20240116; t=1740566674; c=relaxed/simple;
+	bh=a+VLb1uo63X22UpMZnjWuAzAvl+QuCcIaAxbSBtDjDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GpzXyRmtWEwZUx6BWkAbYL5NzLZwP8fETI0eGn7ql1YQdjohSwGV7BC8flDEoWaVleZMVjYz0XPMJgdif+bE+iB1WbYsCVbaMYMja+Va1GnKAgp9KnOnMLAtkMUxAcVd88qsQge0B3Ps2lE90/CRLiL/c6i60BjC79Xfv8QlFH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIHTaAVG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q9xGdq023826;
+	Wed, 26 Feb 2025 10:44:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RI3j6QNwCd3E9WU+AhkXeYiWCb5d3Rx1nK60VGbwaBM=; b=bIHTaAVGTL5S3YAH
+	jlA0utMUcg6yFORPmn1aHaZv1AyuVV8UgMlCRhaFAjeGnY+BTYCN5fdqb8fI7Z/u
+	2uPmO4+8knNVjYqU7PmEk+hlZ4lIQol+35kJYjM4CFzWH4HOMjcjR70tQ48r6X+a
+	1VDTtewbGaCmwrS5ekpb4/V5ZH+E7OsJvs2A/ByAYfwV740I6m09Ha+OGEIapg0Y
+	TSSlfiwJIbe9/ah7F8Rbp6NC3Q2mHjdR37TYUqCwPao2jqOsENehebJAfXBc7LYJ
+	aazGkMywkZJJAZVCuG03Lz8ISnj+QZvzrfBZkz64vyvfnhyYSeJZphwSAgJCnUsz
+	8a5fJg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmhnw1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 10:44:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51QAiJxp011305
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 10:44:19 GMT
+Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
+ 2025 02:44:11 -0800
+Message-ID: <13cabef8-8e68-412e-a6eb-42d22604f941@quicinc.com>
+Date: Wed, 26 Feb 2025 18:44:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb4e:0:b0:3d1:84ad:165e with SMTP id
- e9e14a558f8ab-3d2c020ccabmr203896295ab.7.1740566601966; Wed, 26 Feb 2025
- 02:43:21 -0800 (PST)
-Date: Wed, 26 Feb 2025 02:43:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bef049.050a0220.38b081.00ef.GAE@google.com>
-Subject: [syzbot] [mm?] [ext4?] WARNING in get_dump_page
-From: syzbot <syzbot+0b544778e9923a3de766@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, akpm@linux-foundation.org, cem@kernel.org, 
-	clm@fb.com, djwong@kernel.org, dsterba@suse.com, jack@suse.cz, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] coresight: add coresight Trace NOC driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark
+	<james.clark@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250221-trace-noc-driver-v1-0-0a23fc643217@quicinc.com>
+ <20250221-trace-noc-driver-v1-2-0a23fc643217@quicinc.com>
+ <38996ae8-321b-4239-8fe9-b769fdff296c@kernel.org>
+Content-Language: en-US
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+In-Reply-To: <38996ae8-321b-4239-8fe9-b769fdff296c@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=107eec98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5b4c41bdaeea1964
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b544778e9923a3de766
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176626e4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eec98580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1e5dabe499e7/disk-d082ecbc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1e0f27be469a/vmlinux-d082ecbc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7e058c08d6c9/bzImage-d082ecbc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/24600c6adfb8/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=16397fdf980000)
-
-The issue was bisected to:
-
-commit 5121711eb8dbcbed70b1db429a4665f413844164
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Fri Nov 15 15:30:32 2024 +0000
-
-    fs: enable pre-content events on supported file systems
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10ae1db0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12ae1db0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ae1db0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0b544778e9923a3de766@syzkaller.appspotmail.com
-Fixes: 5121711eb8db ("fs: enable pre-content events on supported file systems")
-
-WARNING: CPU: 0 PID: 5840 at mm/gup.c:1856 __get_user_pages_locked mm/gup.c:1856 [inline]
-WARNING: CPU: 0 PID: 5840 at mm/gup.c:1856 get_dump_page+0x242/0x2f0 mm/gup.c:2275
-Modules linked in:
-CPU: 0 UID: 0 PID: 5840 Comm: syz-executor267 Not tainted 6.14.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:__get_user_pages_locked mm/gup.c:1856 [inline]
-RIP: 0010:get_dump_page+0x242/0x2f0 mm/gup.c:2275
-Code: 00 00 00 48 3b 8c 24 80 00 00 00 0f 85 a3 00 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 1f 37 03 ff e8 0f b4 b4 ff 90 <0f> 0b 90 eb ae 44 89 c9 80 e1 07 80 c1 03 38 c1 0f 8c db fe ff ff
-RSP: 0018:ffffc900032c7180 EFLAGS: 00010293
-RAX: ffffffff820d09f1 RBX: 0000000000000000 RCX: ffff8880346f0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900032c7250 R08: ffffffff820d0968 R09: 1ffffd4000399126
-R10: dffffc0000000000 R11: fffff94000399127 R12: 1ffff92000658e38
-R13: dffffc0000000000 R14: 1ffff92000658e34 R15: 0000000000000000
-FS:  0000555587160380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff9150b8f8 CR3: 0000000075dae000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- dump_user_range+0x14d/0x970 fs/coredump.c:943
- elf_core_dump+0x4054/0x4a80 fs/binfmt_elf.c:2129
- do_coredump+0x232c/0x32c0 fs/coredump.c:758
- get_signal+0x13e5/0x1720 kernel/signal.c:3021
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
- exc_page_fault+0x590/0x8b0 arch/x86/mm/fault.c:1541
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7ff653b312d1
-Code: c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
-RSP: 002b:00000000fffffe10 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007ff653b312c9
-RDX: 0000000000000000 RSI: 00000000fffffe10 RDI: 0000000000000000
-RBP: 00007fff9150b940 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000f4240
-R13: 00007ff653b7f9dc R14: 00007ff653b7a0e2 R15: 00007fff9150b930
- </TASK>
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ix_23qutW023h22aYfSDWugCTYUvCKNE
+X-Proofpoint-ORIG-GUID: ix_23qutW023h22aYfSDWugCTYUvCKNE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502260086
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 2/22/2025 6:54 PM, Krzysztof Kozlowski wrote:
+> On 21/02/2025 08:40, Yuanfang Zhang wrote:
+>> Add driver to support Coresight device Trace NOC(Network On Chip).
+>> Trace NOC is an integration hierarchy which is a replacement of
+>> Dragonlink configuration. It brings together debug components like
+>> TPDA, funnel and interconnect Trace Noc.
+>>
+>> It sits in the different subsystem of SOC and aggregates the trace
+>> and transports to QDSS trace bus.
+>>
+>> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+>> ---
+>>  drivers/hwtracing/coresight/Kconfig          |  10 ++
+>>  drivers/hwtracing/coresight/Makefile         |   1 +
+>>  drivers/hwtracing/coresight/coresight-tnoc.c | 191 +++++++++++++++++++++++++++
+>>  drivers/hwtracing/coresight/coresight-tnoc.h |  53 ++++++++
+>>  4 files changed, 255 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+>> index 06f0a7594169c5f03ca5f893b7debd294587de78..712b2469e37610e6fc5f15cedb2535bf570f99aa 100644
+>> --- a/drivers/hwtracing/coresight/Kconfig
+>> +++ b/drivers/hwtracing/coresight/Kconfig
+>> @@ -247,4 +247,14 @@ config CORESIGHT_DUMMY
+>>  
+>>  	  To compile this driver as a module, choose M here: the module will be
+>>  	  called coresight-dummy.
+>> +
+>> +config CORESIGHT_TNOC
+>> +	tristate "Coresight Trace Noc driver"
+>> +	help
+>> +	  This driver provides support for Trace NoC component.
+>> +	  Trace NoC is a interconnect that is used to collect trace from
+>> +	  various subsystems and transport it QDSS trace sink.It sits in
+>> +	  the different tiles of SOC and aggregates the trace local to the
+>> +	  tile and transports it another tile or to QDSS trace sink eventually.
+>> +
+>>  endif
+>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+>> index 4ba478211b318ea5305f9f98dda40a041759f09f..ab1cff8f027495fabe3872d52f8c0877e39f0ea8 100644
+>> --- a/drivers/hwtracing/coresight/Makefile
+>> +++ b/drivers/hwtracing/coresight/Makefile
+>> @@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
+>>  		   coresight-cti-sysfs.o
+>>  obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+>>  obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
+>> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
+> 
+> Why do you keep adding entries to the end instead to some logically
+> ordered place?
+> 
+> Dummy driver, before tpda (obviously tpda should go after tpdm) and now
+> this... This is just unnecessarily making simultaneous edits difficult.
+> 
+sure, add it after funnel/replicator before etm, since it work as a link.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..11b9a7fd1efdc9fff7c1e9666bda14acb41786cb
+>> --- /dev/null
+>> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+>> @@ -0,0 +1,191 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/amba/bus.h>
+>> +#include <linux/io.h>
+>> +#include <linux/coresight.h>
+>> +#include <linux/of.h>
+>> +
+>> +#include "coresight-priv.h"
+>> +#include "coresight-tnoc.h"
+>> +#include "coresight-trace-id.h"
+>> +
+> 
+> 
+>> +
+>> +	drvdata->base = devm_ioremap_resource(dev, &adev->res);
+>> +	if (!drvdata->base)
+>> +		return -ENOMEM;
+>> +
+>> +	spin_lock_init(&drvdata->spinlock);
+>> +
+>> +	ret = trace_noc_init_default_data(drvdata);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	desc.ops = &trace_noc_cs_ops;
+>> +	desc.type = CORESIGHT_DEV_TYPE_LINK;
+>> +	desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
+>> +	desc.pdata = adev->dev.platform_data;
+>> +	desc.dev = &adev->dev;
+>> +	desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
+>> +	drvdata->csdev = coresight_register(&desc);
+>> +	if (IS_ERR(drvdata->csdev))
+>> +		return PTR_ERR(drvdata->csdev);
+>> +
+>> +	pm_runtime_put(&adev->dev);
+>> +
+>> +	dev_dbg(drvdata->dev, "Trace Noc initialized\n");
+> 
+> 
+> Drop. There is really no need to tell that function finished.
+> 
+> Please run standard kernel tools for static analysis, like coccinelle,
+> smatch and sparse, and fix reported warnings. Also please check for
+> warnings when building with W=1. Most of these commands (checks or W=1
+> build) can build specific targets, like some directory, to narrow the
+> scope to only your code. The code here looks like it needs a fix. Feel
+> free to get in touch if the warning is not clear.
+> 
+Done.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
