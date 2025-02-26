@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-535139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D492CA46F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:29:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A0DA46F7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE62F3A6415
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257AE188D392
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6E126036E;
-	Wed, 26 Feb 2025 23:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EA225DB1E;
+	Wed, 26 Feb 2025 23:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga78yzGi"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mwz4xeBN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B72260366
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CA625FA23
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740612560; cv=none; b=HmRgUCja9ZTKMbpdvGpX8lIZjpDRHCUrAsH1pVPVDElFLipbewoiWsaE4YJgUQIY7TIALN9pU72/JUIZ6+9KDEdBY5Dxen2IVSeX3rsdgZIj2Je6Cqu3vPGEN+0oOlpEAgCbMl9wOZ7VGiKD2Mtr/Dfjh5rtiE3ECqEmSrXBr9U=
+	t=1740612770; cv=none; b=QL55klZg3wgbZ/ZMDHNGDTnKhMd2aSk4ld6cT459af9Lh/+M+t/89RZPPvJgf9Ol66LnxWiubiHr+lLYTihLkYLVw6lJoHykF4vQUkeIL6In4kLV6JoYTXF5wcIEaDVxz2ovzutPWm98QrY0DexRwqo3wMFjFFMajVmtUp80NKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740612560; c=relaxed/simple;
-	bh=J/dQk4SZYN5ePkzsS3cMgdnGZmrR3Q/tY6oGbPoub5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=snJhh3Dd9xgv0Jnh9j/bnRUezIFeLGmG0z8l9PXu+klJrPFUj7e0D8n4xNpMhYGn4IQLWmQe0N6I5thh/WOQ07DgxbaheoDGeo4hAQmH0mhgQ27fN1BrJPb1sApxZnQHUJMxkXMZhp1RriGo/oQvtN0n7j0Ne+wsygi5SBsKa8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ga78yzGi; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e893a8d2c3so2067806d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:29:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740612557; x=1741217357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/dQk4SZYN5ePkzsS3cMgdnGZmrR3Q/tY6oGbPoub5w=;
-        b=ga78yzGi1LQpBam2GPUts4AZ75jmXutUVeadXnWpM0KPx9wBSQt0dKXE0Bnc7o2f7G
-         mG098bBp3wARkQiwpXnV9/Zjtxm+CJ/9uCQrtmMGhur5ZHtrj74MfWzhpkKEGMopoTSa
-         VLMy4dqcO6RfI3DEugHM++UOLZh++ICIgyMZpKHd7sRsdhkqe6sVlsyxQnRM7gkDQNTd
-         DY44TnPwzkWKFZJWDb6+Y0sJJpmNgR6+06OLY2268/AyrLQZI2LYMVwWqCuyhgbeNatw
-         XKLaNRjz1kl2RWpWyBbQNc7O1R2IeLA85EVdrthOaQMOf1WrkK92fG9N2qKxczMaz0s8
-         DrxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740612557; x=1741217357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J/dQk4SZYN5ePkzsS3cMgdnGZmrR3Q/tY6oGbPoub5w=;
-        b=rdf7GFHUnssuLQtiybe+vk3nQPntmA0v9W0CPvw3lQKiyzZJkbo2aPtbia6h11/O0s
-         m3D8d/Aw7VeEh9jwdUHqy7cwgrUzPKIsXkP4oLWa4RyrJ7LgmQS5hFKXRB65uaUdEO2L
-         hwk9LjDhzF3bQStZzeFyxD8YGe8xHDscGWTLZhOP3ElBDSWDa+SIlVfsnNyAnHLxTpW2
-         GNtWsQw1U265j8RKcCm2oopAYf1TnbnOGzfu/piHcgcytEhxNQDK/70dhhtb8bxHAqHX
-         NoP65cwHegsPCM4riX1pGpWDcUVH19MTjwUgOE0sPcUldaOSc3wQC7pcOekRzum77Pe+
-         CtIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDkbKR9mSBCFbNXpYn7DgG9KIF04DIgKPsUOWVr9g4izKOUwK/3evIs6GbeqHKC4aTG67AfEmnMvGGrYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYTA80b5AzZ0Amf7ORv7iIC9ucTnVPL0JaEq+IKONe+tje8B4/
-	2b01Ily343FEpeDtzhu0nYPmE+vKWWlk7BAagcG/ijaq6s9ESG33nst/0y5BKm4bio07pIJeRc1
-	CzyXLq8BzdbkdGhHeJNC+HaSoEoc=
-X-Gm-Gg: ASbGncskE8uC9FwF+ULe1eNoktPSqE9IlsBNhR+SKWgWCDOX0hhEAuVLXwbB9NLb23H
-	zH4UQIBrIFIbD2xtC8aBbnV+QkH+nsn7wXqn57Edx539q6WaGNE7saQseNmjVOPZWp/WqVwNrll
-	v1gBNgc5xvGwtgPIHVFKecj6w=
-X-Google-Smtp-Source: AGHT+IEK2N3gE/8VfY/AR0Y6ytUjwbGPgl9rer6rSlGeqvaTDUu0JLII+3SkCTDMI092dXsoJ6jINsLMcK/3wYhwkCk=
-X-Received: by 2002:a05:6214:c88:b0:6e1:5076:c400 with SMTP id
- 6a1803df08f44-6e886902ec2mr59807596d6.39.1740612557602; Wed, 26 Feb 2025
- 15:29:17 -0800 (PST)
+	s=arc-20240116; t=1740612770; c=relaxed/simple;
+	bh=Z6oczsRL4Qrk5EsGGblA1Gkj/yW1zjMf4xn/yAa7B9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=clgfmmB1eHpuh8PM1/9O/fNYg8+aWiQmRsqUkvDCU8ySwPpWiy1X+rfNEzuuN2uFfTix/cN2OzlLz9MtwhidqUV3eUt2+2Oygd2FXFbogOm3QF7yCTFwqbUCi0X/MXPvtYFwyEf/TRYCnSdaYwoxX3IMze9329+ASoJhosQgbTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mwz4xeBN; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740612768; x=1772148768;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Z6oczsRL4Qrk5EsGGblA1Gkj/yW1zjMf4xn/yAa7B9I=;
+  b=Mwz4xeBNL4nzowOdzZ5WHaR8OY9BskpslLKhFDwPEXVsyy6d1+3jFrYE
+   D+yqHkrOt6Y7U1tg7u2JwuxAznn8hEcON/YDiZqbVBFFTSbq99JbqTmk0
+   CZsJBiie+ec+aFEGQr+tDEgUOc7AAYE6Fo9OrRpxBZn9MXIt/lCrPizFb
+   VbLByBzeKugQvCaOtcafADQJuv9yWorxlcTtFAokm8UXRG2VGxObMDiEJ
+   ee2kDPOgCRJqakpo5LBBAKAcFTpuVi2CxvHiHi23wGpNE+570SpoMpa2E
+   z5YQ9lIro2icyzIsyTAAwRaYwoEGSUfXsOU1pLgKeE7wXntfPIOjOL4VG
+   A==;
+X-CSE-ConnectionGUID: orii6lwxTAGZ/0Lci9Ms2g==
+X-CSE-MsgGUID: 20BKOZkYQ1GTDYs8p4Qk0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41336703"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="41336703"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:32:47 -0800
+X-CSE-ConnectionGUID: UtUeZGWzTd+f5l7j9Ye9cQ==
+X-CSE-MsgGUID: 5rlCpWIfREu4T+JXR89SoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120970563"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 26 Feb 2025 15:32:45 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnQtA-000CbJ-1I;
+	Wed, 26 Feb 2025 23:32:33 +0000
+Date: Thu, 27 Feb 2025 07:30:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: drivers/video/fbdev/pxafb.c:913:24: sparse: sparse: incorrect type
+ in assignment (different address spaces)
+Message-ID: <202502270742.weTnX9Oe-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225213200.729056-1-nphamcs@gmail.com> <Z76Go1VGw272joly@google.com>
-In-Reply-To: <Z76Go1VGw272joly@google.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 26 Feb 2025 15:29:06 -0800
-X-Gm-Features: AQ5f1Jo8WiMfrrcbDj1XSStbJugMrvbOacaXonziWyPRA4RnosYcazj9rzgd2kU
-Message-ID: <CAKEwX=O+27wN5p_j5REfnEsfVi4zsgvyowdhGUKQseo9g1GtLg@mail.gmail.com>
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Feb 25, 2025 at 7:12=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
->
-> On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> > Currently, we crash the kernel when a decompression failure occurs in
-> > zswap (either because of memory corruption, or a bug in the compression
-> > algorithm). This is overkill. We should only SIGBUS the unfortunate
-> > process asking for the zswap entry on zswap load, and skip the corrupte=
-d
-> > entry in zswap writeback.
->
-> Some relevant observations/questions, but not really actionable for this
-> patch, perhaps some future work, or more likely some incoherent
-> illogical thoughts :
->
-> (1) It seems like not making the folio uptodate will cause shmem faults
-> to mark the swap entry as hwpoisoned, but I don't see similar handling
-> for do_swap_page(). So it seems like even if we SIGBUS the process,
-> other processes mapping the same page could follow in the same
-> footsteps.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f4ce1f3318ad4bc12463698696ebc36b145a6aa3
+commit: 07438779313caafe52ac1a1a6958d735a5938988 alloc_tag: avoid current->alloc_tag manipulations when profiling is disabled
+date:   5 weeks ago
+config: arm-randconfig-r132-20250227 (https://download.01.org/0day-ci/archive/20250227/202502270742.weTnX9Oe-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250227/202502270742.weTnX9Oe-lkp@intel.com/reproduce)
 
-poisoned, I think? It's the weird SWP_PTE_MARKER thing.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502270742.weTnX9Oe-lkp@intel.com/
 
-[...]
+sparse warnings: (new ones prefixed by >>)
+>> drivers/video/fbdev/pxafb.c:913:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *video_mem @@     got void *[assigned] _res @@
+   drivers/video/fbdev/pxafb.c:913:24: sparse:     expected void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:913:24: sparse:     got void *[assigned] _res
+   drivers/video/fbdev/pxafb.c:918:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *x @@     got void [noderef] __iomem *video_mem @@
+   drivers/video/fbdev/pxafb.c:918:47: sparse:     expected void const volatile *x
+   drivers/video/fbdev/pxafb.c:918:47: sparse:     got void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:974:53: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *virt @@     got void [noderef] __iomem *video_mem @@
+   drivers/video/fbdev/pxafb.c:974:53: sparse:     expected void *virt
+   drivers/video/fbdev/pxafb.c:974:53: sparse:     got void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:1711:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *video_mem @@     got void *[assigned] _res @@
+   drivers/video/fbdev/pxafb.c:1711:24: sparse:     expected void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:1711:24: sparse:     got void *[assigned] _res
+   drivers/video/fbdev/pxafb.c:1715:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *x @@     got void [noderef] __iomem *video_mem @@
+   drivers/video/fbdev/pxafb.c:1715:47: sparse:     expected void const volatile *x
+   drivers/video/fbdev/pxafb.c:1715:47: sparse:     got void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:2387:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *virt @@     got void [noderef] __iomem *video_mem @@
+   drivers/video/fbdev/pxafb.c:2387:29: sparse:     expected void *virt
+   drivers/video/fbdev/pxafb.c:2387:29: sparse:     got void [noderef] __iomem *video_mem
+   drivers/video/fbdev/pxafb.c:2414:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *virt @@     got void [noderef] __iomem *video_mem @@
+   drivers/video/fbdev/pxafb.c:2414:29: sparse:     expected void *virt
+   drivers/video/fbdev/pxafb.c:2414:29: sparse:     got void [noderef] __iomem *video_mem
 
->
->
-> (3) If we run into a decompression failure, should we free the
-> underlying memory from zsmalloc? I don't know. On one hand if we free it
-> zsmalloc may start using it for more compressed objects. OTOH, I don't
-> think proper hwpoison handling will kick in until the page is freed.
-> Maybe we should tell zsmalloc to drop this page entirely and mark
-> objects within it as invalid? Probably not worth the hassle but
-> something to think about.
+vim +913 drivers/video/fbdev/pxafb.c
 
-This might be a fun follow up :) I guess my question is - is there a
-chance that we might recover in the future?
+782385ae176b30 drivers/video/pxafb.c Eric Miao          2009-03-19  906  
+48c68c4f1b5424 drivers/video/pxafb.c Greg Kroah-Hartman 2012-12-21  907  static int pxafb_overlay_map_video_memory(struct pxafb_info *pxafb,
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  908  					  struct pxafb_layer *ofb)
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  909  {
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  910  	/* We assume that user will use at most video_mem_size for overlay fb,
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  911  	 * anyway, it's useless to use 16bpp main plane and 24bpp overlay
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  912  	 */
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11 @913  	ofb->video_mem = alloc_pages_exact(PAGE_ALIGN(pxafb->video_mem_size),
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  914  		GFP_KERNEL | __GFP_ZERO);
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  915  	if (ofb->video_mem == NULL)
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  916  		return -ENOMEM;
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  917  
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  918  	ofb->video_mem_phys = virt_to_phys(ofb->video_mem);
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  919  	ofb->video_mem_size = PAGE_ALIGN(pxafb->video_mem_size);
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  920  
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  921  	mutex_lock(&ofb->fb.mm_lock);
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  922  	ofb->fb.fix.smem_start	= ofb->video_mem_phys;
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  923  	ofb->fb.fix.smem_len	= pxafb->video_mem_size;
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  924  	mutex_unlock(&ofb->fb.mm_lock);
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  925  
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  926  	ofb->fb.screen_base	= ofb->video_mem;
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  927  
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  928  	return 0;
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  929  }
+1b98d7c4491e5e drivers/video/pxafb.c Vasily Khoruzhick  2011-03-11  930  
 
-For example, can memory (hardware) failure somehow recover, or the
-decompression algorithm somehow fix itself? I suppose not?
+:::::: The code at line 913 was first introduced by commit
+:::::: 1b98d7c4491e5eaba7c403ec1bc5997e6596e569 ARM: pxafb: rework pxafb overlay memory management
 
-If that is the case, one thing we can do is just free the zsmalloc
-slot, then mark the zswap entry as corrupted somehow. We can even
-invalidate the zswap entry altogether, and install a (shared)
-ZSWAP_CORRUPT_ENTRY. Future readers can check for this and exit if
-they encounter a corrupted entry?
+:::::: TO: Vasily Khoruzhick <anarsoul@gmail.com>
+:::::: CC: Eric Miao <eric.y.miao@gmail.com>
 
-It's not common enough (lol hopefully) for me to optimize right away,
-but I can get on with it if there are actual data of this happening
-IRL/in product :)ion
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
