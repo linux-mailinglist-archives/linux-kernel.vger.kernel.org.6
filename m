@@ -1,192 +1,271 @@
-Return-Path: <linux-kernel+bounces-534139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D92A46349
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:42:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DCEA462DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2663B1888
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 022CC7A98AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C93221724;
-	Wed, 26 Feb 2025 14:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F07221D9F;
+	Wed, 26 Feb 2025 14:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YVmqFcjk"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOoWo6I4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBF321D3FE;
-	Wed, 26 Feb 2025 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC1114D283;
+	Wed, 26 Feb 2025 14:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580972; cv=none; b=kwHM3vWvW4A3NPsH2r5Lo6jR7+SZafK7nnnNqlOCPGRRPTuYJHPFlK7vWMo9ZVNYHpppoUb0eC+TVTjKIbk6rEy1Gm2SiQpmhmobJMI/xAZnjM8Tjbvxr6qGDP64LL+UVktCkZzTiRsqG5VphLLJyR+R2Dg38g9HCH1FWzLhO7Y=
+	t=1740580138; cv=none; b=MYYSIIjgr65CtkyDmc2PUAjsCuMPR/+WrUJPlfk9c/N9UxsnrLDOFDby8UDHtAtboa95w2UC8Iuv47eLJcykc0h8X0SeGNgHC/P2+DgqSQK827uuEfahrlJHicDM/IOw6Q4m881NGPTDxrCgixXiDEfZ0RKnru4Ly4jN5EDB6Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580972; c=relaxed/simple;
-	bh=L80fYVFGV8j/KWuiRZ66wUrLJVUXLJ2i31oOoMautDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pyEgVsIK7rb8JpqwXT4p/DzgOX6y0nMOQ6B5Yt4F5dFVeN1k7zfh8TIIwPCR+h4L45ZqJdraXhtXE5nGqZhN20AqEcgWPYGLk3zreW8NnSKKMwhVj8v1ZdixQLsKieV/xjNb3b6rZxxu19Py2n0vxh24nnEz/WSmNNavL8PYJY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YVmqFcjk; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id B39B558146B;
-	Wed, 26 Feb 2025 14:28:27 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 85F5844279;
-	Wed, 26 Feb 2025 14:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740580100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=srlQpvYJmp4WGJbQ2gOhstlghcIxLLDbBOH3Hms1G1E=;
-	b=YVmqFcjk0U4E+e7zKuj6Rpt4rxnNlmQ/mknWE7cS2QlmyRYYG1pX0skomC3EzGSFK0+D0F
-	LofQCcAcczK0rToLqkgTL6IcBlrchx6Td+Em78I4vSLNbZiWK81HGy3XvZ4r9UK2BY2m+s
-	t4y9WnK03LesL2wCljRBBavDBr7cQcUGTVz+SqalkLwcf72W6+PuUyj9YfmeNtygDQ7AL2
-	mQM1gdT5t/e1zEh2tTHsacPJtCQUZfENXAk/U235HEbS8uFItYZ5vSwAM2o94jAhPbDzwS
-	EC5ezudhpnVxZ2B1Yw5qFD9iXvELunSAI9SqyWyf+7aI5kLws9yeteiVn2k+6w==
-Date: Wed, 26 Feb 2025 15:28:13 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Jagan
- Teki <jagan@amarulasolutions.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Daniel Thompson <danielt@kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Paul Kocialkowski
- <contact@paulk.fr>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, =?UTF-8?B?SGVy?=
- =?UTF-8?B?dsOp?= Codina <herve.codina@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Paul Kocialkowski
- <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v6 14/26] drm/bridge: add support for refcounted DRM
- bridges
-Message-ID: <20250226152813.4a1ad218@booty>
-In-Reply-To: <20250211-merciful-nyala-of-justice-a4fabb@houat>
-References: <20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com>
-	<20250206-hotplug-drm-bridge-v6-14-9d6f2c9c3058@bootlin.com>
-	<20250207-ingenious-daffodil-dugong-51be57@houat>
-	<20250210181252.5ee028d4@booty>
-	<20250211-merciful-nyala-of-justice-a4fabb@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740580138; c=relaxed/simple;
+	bh=imG2eoF7EhULeRCWxlkU478DrsG7zuM8IA1zXttiVIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwEJ1wpv8F78vPQHlyx02eZH5lbtDkSAVNoy+pYrdoQclG78v/euEP4WKRkxhsTehRe5sxTR8Ok/3SzIqeUy9A4GmALPxZs1o6XsUySUW5ZRQyrDCMVK9JxCKv2f2mJrBWEyjwRKgC+nfTv8PhprJJjwKo19C031DRB1X7ltA18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOoWo6I4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DACC4CED6;
+	Wed, 26 Feb 2025 14:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740580138;
+	bh=imG2eoF7EhULeRCWxlkU478DrsG7zuM8IA1zXttiVIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jOoWo6I4axjc7/g3HzbBnRFc+bA68ZZR3cVJiGZ4m/qgqjPAatfRVKgjcDg9ZZGQt
+	 PimKjt9TdT6ogmZnuyKrvpZckMidtvJ0PxOJNFPI2CiW1DBM8t6hhYYrlJj3hZrW4+
+	 Y0+M+8c0TVPmzP2HAt5KWoP8LXTK9ytXg9B4f1HeUg+bVlZE4JgD4lUn4RNcYHQm76
+	 qL8irsILkPnFzN4ukaj5mwEQl2ItHgXji0xyV+1/nrltYul0p1dHIc1cu0zIZLD7OI
+	 N2smNVVERmR8m7QXregyeB9z/xbQRf55L5mB+mim13MpOSJHcys2hX/gcPdvmgNcGY
+	 4q11+sAs4NzaQ==
+Date: Wed, 26 Feb 2025 15:28:47 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Shivendra Pratap <quic_spratap@quicinc.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 3/6] firmware: psci: Read and use vendor reset types
+Message-ID: <Z78lH/XErc7G8bL9@lpieralisi>
+References: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
+ <20241107-arm-psci-system_reset2-vendor-reboots-v8-3-e8715fa65cb5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefjedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepihhnkhhirdgurggvsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepj
- hgrghgrnhesrghmrghruhhlrghsohhluhhtihhonhhsrdgtohhmpdhrtghpthhtohepmhdrshiihihprhhofihskhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-arm-psci-system_reset2-vendor-reboots-v8-3-e8715fa65cb5@quicinc.com>
 
-Hi Maxime,
-
-On Tue, 11 Feb 2025 14:10:50 +0100
-Maxime Ripard <mripard@kernel.org> wrote:
-
-> On Mon, Feb 10, 2025 at 06:12:52PM +0100, Luca Ceresoli wrote:
-> > Hello Maxime,
-> > 
-> > On Fri, 7 Feb 2025 12:47:51 +0100
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >   
-> > > > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> > > > index ad7ba444a13e5ecf16f996de3742e4ac67dc21f1..43cef0f6ccd36034f64ad2babfebea62db1d9e43 100644
-> > > > --- a/include/drm/drm_bridge.h
-> > > > +++ b/include/drm/drm_bridge.h
-> > > > @@ -31,6 +31,7 @@
-> > > >  #include <drm/drm_encoder.h>
-> > > >  #include <drm/drm_mode_object.h>
-> > > >  #include <drm/drm_modes.h>
-> > > > +#include <drm/drm_print.h>
-> > > >  
-> > > >  struct device_node;
-> > > >  
-> > > > @@ -863,6 +864,22 @@ struct drm_bridge {
-> > > >  	const struct drm_bridge_timings *timings;
-> > > >  	/** @funcs: control functions */
-> > > >  	const struct drm_bridge_funcs *funcs;
-> > > > +
-> > > > +	/**
-> > > > +	 * @container_offset: Offset of this struct within the container
-> > > > +	 * struct embedding it. Used for refcounted bridges to free the
-> > > > +	 * embeddeing struct when the refcount drops to zero. Unused on
-> > > > +	 * legacy bridges.
-> > > > +	 */
-> > > > +	size_t container_offset;    
-> > > 
-> > > This shouldn't be in there. You can create an intermediate structure and
-> > > store both pointers for the action to consume.  
-> > 
-> > You mean to store container_offset + refcount + is_refcounted?  
+On Thu, Nov 07, 2024 at 03:38:27PM -0800, Elliot Berman wrote:
+> SoC vendors have different types of resets and are controlled through
+> various registers. For instance, Qualcomm chipsets can reboot to a
+> "download mode" that allows a RAM dump to be collected. Another example
+> is they also support writing a cookie that can be read by bootloader
+> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> vendor reset types to be implemented without requiring drivers for every
+> register/cookie.
 > 
-> No, I meant for the private structure pointer and the drm_bridge
-> pointer. refcount should be in drm_bridge, and I think is_refcounted
-> should be dropped.
+> Add support in PSCI to statically map reboot mode commands from
+> userspace to a vendor reset and cookie value using the device tree.
+> 
+> A separate initcall is needed to parse the devicetree, instead of using
+> psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> 
+> Reboot mode framework is close but doesn't quite fit with the
+> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> be solved but doesn't seem reasonable in sum:
+>  1. reboot mode registers against the reboot_notifier_list, which is too
+>     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+>     type from the reboot-mode framework callback and use it
+>     psci_sys_reset.
+>  2. reboot mode assumes only one cookie/parameter is described in the
+>     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+>     cookie.
+>  3. psci cpuidle driver already registers a driver against the
+>     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+>     cpuidle and reboot-mode driver.
+> 
+> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  drivers/firmware/psci/psci.c | 104 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+> 
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 2328ca58bba61fdb677ac20a1a7447882cd0cf22..e60e3f8749c5a6732c51d23a2c1f453361132d9a 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -79,6 +79,14 @@ struct psci_0_1_function_ids get_psci_0_1_function_ids(void)
+>  static u32 psci_cpu_suspend_feature;
+>  static bool psci_system_reset2_supported;
+>  
+> +struct psci_reset_param {
+> +	const char *mode;
+> +	u32 reset_type;
+> +	u32 cookie;
+> +};
+> +static struct psci_reset_param *psci_reset_params __ro_after_init;
+> +static size_t num_psci_reset_params __ro_after_init;
+> +
+>  static inline bool psci_has_ext_power_state(void)
+>  {
+>  	return psci_cpu_suspend_feature &
+> @@ -305,9 +313,38 @@ static int get_set_conduit_method(const struct device_node *np)
+>  	return 0;
+>  }
+>  
+> +static void psci_vendor_system_reset2(const char *cmd)
+> +{
+> +	unsigned long ret;
+> +	size_t i;
+> +
+> +	for (i = 0; i < num_psci_reset_params; i++) {
+> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
+> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
+> +					     psci_reset_params[i].reset_type,
+> +					     psci_reset_params[i].cookie, 0);
+> +			/*
+> +			 * if vendor reset fails, log it and fall back to
+> +			 * architecture reset types
+> +			 */
+> +			pr_err("failed to perform reset \"%s\": %ld\n", cmd,
+> +			       (long)ret);
+> +			return;
+> +		}
+> +	}
+> +}
+> +
+>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+>  			  void *data)
+>  {
+> +	/*
+> +	 * try to do the vendor system_reset2
+> +	 * If the reset fails or there wasn't a match on the command,
+> +	 * fall back to architectural resets
+> +	 */
+> +	if (data && num_psci_reset_params)
+> +		psci_vendor_system_reset2(data);
 
-Storing the container pointer instead of the offset is a good idea, it
-will allow to get rid of is_refcounted: drm_bridge_is_refcounted() can
-just return "container != NULL" instead of "bridge->is_refcounted". So
-far so good.
+Mulling over this. If a command (data) was provided and a PSCI vendor
+reset parsed at boot, if the vendor reset fails, isn't it correct to
+just fail reboot instead of falling back to architectural resets ?
 
-I'm not sure about the intermediate struct you have in mind though.
+What's missing is defining the "contract" between the
+LINUX_REBOOT_CMD_RESTART2 arg parameter and the kernel reboot
+type that is executed.
 
-Do you mean:
+I do wonder whether this is an opportunity to deprecate reboot_mode
+altogether on arm64 (I think that the relationship between REBOOT_WARM
+and REBOOT_SOFT with PSCI arch warm reset is already loose - let alone
+falling back to cold reset if reboot_mode == REBOOT_GPIO - which does
+not make any sense at all simply because REBOOT_GPIO is ill-defined to
+say the least).
 
-struct drm_bridge_pointers {
-    struct drm_bridge *bridge;
-    void              *container;
-}
+Thoughts ?
 
-?
+Thanks,
+Lorenzo
 
-If that's what you mean, should it be embedded in drm_struct or
-allocated separately?
-
-If you mean to embed that struct in drm_bridge, then I the drm_bridge
-pointer inside the intermediate struct would be useless.
-
-If instead you mean to embed it in drm_struct: I'm not sure I see much
-benefit except maybe not exposing the container pointer to drm_bridge
-users, but I see a drawbacks: at the last put we need to find the
-container pointer to free from a struct kref pointer, which can work
-only if the container pointer is in the same struct as struct kref.
-
-Additionally, the consuming action for that struct just needs a
-drm_bridge pointer:
-
-     static void drm_bridge_put_void(void *data)
-     {
-	struct drm_bridge *bridge = (struct drm_bridge *)data;
-
-	drm_bridge_put(bridge);
-     }
-
-Can you clarify this? I'd love to have this cleanup in the next
-iteration.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +
+>  	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>  	    psci_system_reset2_supported) {
+>  		/*
+> @@ -750,6 +787,73 @@ static const struct of_device_id psci_of_match[] __initconst = {
+>  	{},
+>  };
+>  
+> +#define REBOOT_PREFIX "mode-"
+> +
+> +static int __init psci_init_system_reset2_modes(void)
+> +{
+> +	const size_t len = strlen(REBOOT_PREFIX);
+> +	struct psci_reset_param *param;
+> +	struct device_node *psci_np __free(device_node) = NULL;
+> +	struct device_node *np __free(device_node) = NULL;
+> +	struct property *prop;
+> +	size_t count = 0;
+> +	u32 magic[2];
+> +	int num;
+> +
+> +	if (!psci_system_reset2_supported)
+> +		return 0;
+> +
+> +	psci_np = of_find_matching_node(NULL, psci_of_match);
+> +	if (!psci_np)
+> +		return 0;
+> +
+> +	np = of_find_node_by_name(psci_np, "reset-types");
+> +	if (!np)
+> +		return 0;
+> +
+> +	for_each_property_of_node(np, prop) {
+> +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> +			continue;
+> +		num = of_property_count_u32_elems(np, prop->name);
+> +		if (num != 1 && num != 2)
+> +			continue;
+> +
+> +		count++;
+> +	}
+> +
+> +	param = psci_reset_params =
+> +		kcalloc(count, sizeof(*psci_reset_params), GFP_KERNEL);
+> +	if (!psci_reset_params)
+> +		return -ENOMEM;
+> +
+> +	for_each_property_of_node(np, prop) {
+> +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> +			continue;
+> +
+> +		param->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+> +		if (!param->mode)
+> +			continue;
+> +
+> +		num = of_property_read_variable_u32_array(np, prop->name, magic,
+> +							  1, ARRAY_SIZE(magic));
+> +		if (num < 0) {
+> +			pr_warn("Failed to parse vendor reboot mode %s\n",
+> +				param->mode);
+> +			kfree_const(param->mode);
+> +			continue;
+> +		}
+> +
+> +		/* Force reset type to be in vendor space */
+> +		param->reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | magic[0];
+> +		param->cookie = num > 1 ? magic[1] : 0;
+> +		param++;
+> +		num_psci_reset_params++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +arch_initcall(psci_init_system_reset2_modes);
+> +
+>  int __init psci_dt_init(void)
+>  {
+>  	struct device_node *np;
+> 
+> -- 
+> 2.34.1
+> 
 
