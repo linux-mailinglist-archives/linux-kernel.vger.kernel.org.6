@@ -1,134 +1,217 @@
-Return-Path: <linux-kernel+bounces-533062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFEC3A45553
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A697EA45555
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F0F188BF4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9559189248F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1162E267399;
-	Wed, 26 Feb 2025 06:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B89267399;
+	Wed, 26 Feb 2025 06:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIh1lWDD"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VkFQOFz+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A913596D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3471F3596D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550356; cv=none; b=Wrd+2CuH1Olm2U5i1uplV+rC1e17ELpc16n8b6tIfmm/Ul8V+CrvvUgbnUkhOWD2zZxjabUuwFBahCSVfvBL0hM8qRD4S0KOJMNg4nSDijHJwxSTE55NYJO+wigoJrp2M9Yt7cvDHxseDhwa0z4TN4vtQVE2jfDY/RIoCSOCwz8=
+	t=1740550451; cv=none; b=Whk0FVzgfPobvxApVYfwxCqLLwrrk/Ml+ejPcK+kN+Kp2QQ3qsMV4gU7XoqwmIo4UIqSoDfGnZ5k/xTJyoRbxGQUAELEM5t/er9GVE82N0ty3G4QjZHvmNxaXhypJ9CONM41u2RZKx+J1jk5lpD3BVmW1qWUMh8h35qKIHSN7vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550356; c=relaxed/simple;
-	bh=WOQXDp5riDI+4FrPcTDf1jOFc5q0usC0W0DmxIklFWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4sunEZEAntREaF5GNRUHCDKM59Vl+m2wo/qHALH1Uz74xmMafa1cx0InPOgVQRgs9C9scNRB2wpWo8yoJZiqEngmpy3LDQ8Dw62G2ugsTepPmqVxDV31/PvmMcTDaeWQLlRfvNuswgfD7LsYmgLuPeJbpFcfhz71bQlUYFMRkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IIh1lWDD; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30613802a04so68315221fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:12:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740550353; x=1741155153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IaruDcylLEm+Tejyz9t/dN5GAS7R88L1RYxNud2d5xM=;
-        b=IIh1lWDDQ2/nzfzvfAWUOd0lkeMG9MAiigRm+LGIexuzCnBe4XkluhsWLJo8NhJSlH
-         b8pi4AdcSDAGFfpVvMwUSrGq+4yDzpGiQ+woSlUctL7YgyhQsKi3tASbhrY6+GMsi4cx
-         F4p9qXqyCxzGYVTX78m2ChV+8W8g4bNXGhykVqaqhFGKrvcAYOBvsY4DuK790Is9WOxL
-         y6qY8nymHnxI+n3HjRHB7caMRVWbZrWNt/c6cZK/gyIhaJ+fo2IviqUkF1t4upAMlB6x
-         ZmyWzSz9+facOyOWaq6RclACb/ECRFuQGMMNWRSZ7PGEzEEvWGp9fkMnMnYuvO8CdN0/
-         DEwQ==
+	s=arc-20240116; t=1740550451; c=relaxed/simple;
+	bh=occPEZDucJVb8lBD1jQ1GAuOO0994gL1zBT5kTdiRNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LX5/MnbOWcPp79OFMv+/kFJHI9lQCN3JWuzggpU9CYiB8L9UdhyzR6C3bF/P55c4gBJ+qlaM0wqiPz2Yv87fHiXgvS2cUht4xz6aYdfSMWXzzuMgfy4GNK5pFxpvNM7MS+u9hAJlcUesmO0yMJUUJgex6bdoSUPDHPr4t5fxhQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VkFQOFz+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740550449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hrYuHXAnjLqXKtPJWbNFQh22GoqGfQZfdjz3jbFGr6E=;
+	b=VkFQOFz+Sem9Q9zdnjDRdiOvAxNeQsk3KU9iVNFyXxvAY/1ACk7PpPeYrVu0CEkBXWiOz5
+	6TPmFKUQoAinq/9Kd6smx3EySAL5uPqpyB2KF5ni80XXg5SD8iQNFefk/hPi58a98xt/41
+	Sg5g4r1BQk71u4KcHpqPE/ml6JwxQDA=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-MuTajGP2MQmuMdnn7OC8HQ-1; Wed, 26 Feb 2025 01:14:07 -0500
+X-MC-Unique: MuTajGP2MQmuMdnn7OC8HQ-1
+X-Mimecast-MFC-AGG-ID: MuTajGP2MQmuMdnn7OC8HQ_1740550446
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abbe5ac36a9so721160266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:14:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740550353; x=1741155153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaruDcylLEm+Tejyz9t/dN5GAS7R88L1RYxNud2d5xM=;
-        b=YOcz3BI0DTp4U3a8kH02edAybgpMpwW3CXhxZqnW28xG+ZONxVA86DJkqx+SMY8jL2
-         RZeziqFi4xlA8hOZrDtvQCKnY91W8KTcSL1+2fXGI6lW5ew9eD1HD/+wMA+LZxJv4lG8
-         wxK+hrJY3H7KB+Pza/OtTgFDMQA66ShoFHIXvFj4sPP+NPqKJx3XzivU8f8+INqe/ObB
-         xCgsHy2tMNRM2EQoju9QGRQTzUp8f9gNCF1lwHRidPUBneEwO0CJ/b3Wx7Y6rx5aHsYI
-         ofAsvgpiViAjzLgf4ORJFEvWCGXpNx13AaBGP3+vjG63+/BH3VBf6fYabY9DmHpcImq2
-         n0qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU15Vb07mhipDK1LkbqxoOj0TbcMjckB79d/Sh5/lW0/N1PiQVSirNQq6xVXfbi9H9h9N9UjYmD0fw27Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq6Ergwz2VJdDeoTPemMfdvRlzvH4M86TBWMtt/zi08PbMunyO
-	8pmhwgRB4FTwfB/ioXMOK4oSwKjtlAzTFP3j5r3K5gVQfjQkzhMV1y3J7bRdxJw=
-X-Gm-Gg: ASbGncvGRZ9cOhpunzhQ+EcER5CmyoVV9Se4H5bdE09xRRwIwrNADd3Ck6iSiE8aicJ
-	ZFuPFhoiGA04B8RCu7UkAH5T06e6qMlykyZXlrjZi9e/2KNyh4EOinCywaa7Kp9g8EkiqyhroCl
-	ihayzR0lH6bQm4Q6cJbtyuIwqKlurLyd6JfLLjTDmgxBJRzdNooEKnzC44Oor/T+l6fuZa5cnZa
-	RP9UHFf+zjQW/waDTrMKz6kvXDMhXURJtLamYEkKfxhLvs5aA5S7FFZtVhygSgVbuEQPg8VeWTV
-	NHjNWOUce4KtQpoNJ+s0anDQ4NfW015rI5qpp93xsCb4ffsWXXOVuoND2RfhFlAO8iIo/sME06a
-	TRph27g==
-X-Google-Smtp-Source: AGHT+IFz6ZRFFfoWvl+wT0LHyq+EB0DTesxFaL6W97Z42BiDtgdF9wEmDGfGKV2JzCVZFJiUcR0nIQ==
-X-Received: by 2002:a05:651c:213:b0:308:f6cf:3602 with SMTP id 38308e7fff4ca-30a5b2046d6mr91106011fa.25.1740550352580;
-        Tue, 25 Feb 2025 22:12:32 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a81ae8193sm4086641fa.105.2025.02.25.22.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:12:31 -0800 (PST)
-Date: Wed, 26 Feb 2025 08:12:28 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	Herve Codina <herve.codina@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/15] drm/bridge: cdns-csi: Switch to atomic helpers
-Message-ID: <g4jq5pntacp6alieq6uejskblmu2hnvvdvf3k4e54yvnjl65m4@xqs5yrcptpmz>
-References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
- <20250225-bridge-connector-v4-11-7ecb07b09cad@kernel.org>
+        d=1e100.net; s=20230601; t=1740550446; x=1741155246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hrYuHXAnjLqXKtPJWbNFQh22GoqGfQZfdjz3jbFGr6E=;
+        b=rMMGPEikLJPE6iy0E19nomys3tQUNlLtvAMvOVGx6BBKCIYAZjh2Zfkb7ocabk8IO/
+         2Ghc42g9X4QwyUNX0v5Cm1hOLbSegR+aUIMEAeedAWXuWQutl7wd7C/h3G8UEUacW+Gs
+         8THVdXQncvZzzhr/65xfl/ritZSC7Cm4Rs8xPIB1E1i3ye6CRIMQkDRPxSVHV2s5Gaif
+         Q52b3kq2AoFrklFmLb/iwn7prdPY7bNIIzUF5aPnltXN1j5tahfcNzGbfuDdH7bTsXTz
+         wWko99qO6SYq6uXSclT2zjxhOP/scNctJusG31+UqXYkETiQx0QQ/0Z/dpM0dlL1y1J6
+         kkJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdW5bOE4RIGB5UhyPz3CnECm9dtCliZ9hceuAKT04OoR1gYZ6X/wcnCMoUlAtpiJb1B5k9FPfPboUR81w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT/3LkI4m9HFyjeTu3RuHOfvZ0STSUwlQr2H/SfDJ4/tymztsz
+	iqfwUBbNgHkr6994SgXDC2QL5kE5DOg43kLUmzvlZ0Ddp8oWia8hcxJDoi0rLp+IH+Yt/3u8FGT
+	Nl9LDWFAKbblfZ1BlRwtkWMedE+FQaSgMr04zMQoM9s7c4Hx7PRs39h1uZIAsh+S8Z2hXiruBnU
+	o/lb3PeZHk3txCqpRtprtQxU366uoFIve7rkju
+X-Gm-Gg: ASbGncuSAcj/EC+vc6g9XM4GsJJjW0EdRaKCtieMljky5/zNpke33fGb+O+8+y4oIBH
+	U6hFw7LihlT2nmg5dFyLuDRdQgTmV1BDOjiKYTJXxQCCQE/LkM/OS+F/U7EKOWzjy0CGeiUD/aQ
+	==
+X-Received: by 2002:a17:907:6d05:b0:aba:598b:dbde with SMTP id a640c23a62f3a-abc0d97e504mr2119382666b.8.1740550446136;
+        Tue, 25 Feb 2025 22:14:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEEPM7VfuOk/Au93iZs65YIRLhsjQkDmCkNqmGnjdzf1TQUXJWU9PFxQBBs189DJw6J4yaO/kqbah0ezftoIDw=
+X-Received: by 2002:a17:907:6d05:b0:aba:598b:dbde with SMTP id
+ a640c23a62f3a-abc0d97e504mr2119381266b.8.1740550445828; Tue, 25 Feb 2025
+ 22:14:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-bridge-connector-v4-11-7ecb07b09cad@kernel.org>
+References: <20250223154042.556001-1-lulu@redhat.com> <20250223154042.556001-6-lulu@redhat.com>
+ <6vadeadshznfijaugusnwqprssqirxjtbtpprvokdk6yvvo6br@5ngvuz7peqoz>
+In-Reply-To: <6vadeadshznfijaugusnwqprssqirxjtbtpprvokdk6yvvo6br@5ngvuz7peqoz>
+From: Cindy Lu <lulu@redhat.com>
+Date: Wed, 26 Feb 2025 14:13:27 +0800
+X-Gm-Features: AQ5f1JoNoWEefztuGY9ylFIkLRXZ0YQ4UToF_h0n3mIP4S6r1pE-NAlUqjniIn0
+Message-ID: <CACLfguU8-F=i3N6cyouBxwneM1Fr0oNs9ac3+c5xoHr_zcZW6A@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 05:43:59PM +0100, Maxime Ripard wrote:
-> The Cadence DSI driver follows the drm_encoder->crtc pointer that is
-> deprecated and shouldn't be used by atomic drivers.
-> 
-> This was due to the fact that we did't have any other alternative to
-> retrieve the CRTC pointer. Fortunately, the CRTC pointer is now provided
-> in the bridge state, so we can move to atomic callbacks and drop that
-> deprecated pointer usage.
+On Tue, Feb 25, 2025 at 7:31=E2=80=AFPM Stefano Garzarella <sgarzare@redhat=
+.com> wrote:
+>
+> On Sun, Feb 23, 2025 at 11:36:20PM +0800, Cindy Lu wrote:
+> >Add a new UAPI to enable setting the vhost device to task mode.
+> >The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
+> >to configure the mode if necessary.
+> >This setting must be applied before VHOST_SET_OWNER, as the worker
+> >will be created in the VHOST_SET_OWNER function
+> >
+> >Signed-off-by: Cindy Lu <lulu@redhat.com>
+> >---
+> > drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
+> > include/uapi/linux/vhost.h | 18 ++++++++++++++++++
+> > 2 files changed, 40 insertions(+), 2 deletions(-)
+> >
+> >diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >index d8c0ea118bb1..45d8f5c5bca9 100644
+> >--- a/drivers/vhost/vhost.c
+> >+++ b/drivers/vhost/vhost.c
+> >@@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev, =
+struct vhost_iotlb *umem)
+> >       int i;
+> >
+> >       vhost_dev_cleanup(dev);
+> >-
+> >+      dev->inherit_owner =3D true;
+> >       dev->umem =3D umem;
+> >       /* We don't need VQ locks below since vhost_dev_cleanup makes sur=
+e
+> >        * VQs aren't running.
+> >@@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsign=
+ed int ioctl, void __user *argp)
+> > {
+> >       struct eventfd_ctx *ctx;
+> >       u64 p;
+> >-      long r;
+> >+      long r =3D 0;
+> >       int i, fd;
+> >+      u8 inherit_owner;
+> >
+> >       /* If you are not the owner, you can become one */
+> >       if (ioctl =3D=3D VHOST_SET_OWNER) {
+> >               r =3D vhost_dev_set_owner(d);
+> >               goto done;
+> >       }
+> >+      if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
+> >+              /*inherit_owner can only be modified before owner is set*=
+/
+> >+              if (vhost_dev_has_owner(d)) {
+> >+                      r =3D -EBUSY;
+> >+                      goto done;
+> >+              }
+> >+              if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
+> >+                      r =3D -EFAULT;
+> >+                      goto done;
+> >+              }
+> >+              /* Validate the inherit_owner value, ensuring it is eithe=
+r 0 or 1 */
+> >+              if (inherit_owner > 1) {
+> >+                      r =3D -EINVAL;
+> >+                      goto done;
+> >+              }
+> >+
+> >+              d->inherit_owner =3D (bool)inherit_owner;
+> >
+> >+              goto done;
+> >+      }
+> >       /* You must be the owner to do anything else */
+> >       r =3D vhost_dev_check_owner(d);
+> >       if (r)
+> >diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> >index b95dd84eef2d..8f558b433536 100644
+> >--- a/include/uapi/linux/vhost.h
+> >+++ b/include/uapi/linux/vhost.h
+> >@@ -235,4 +235,22 @@
+> >  */
+> > #define VHOST_VDPA_GET_VRING_SIZE     _IOWR(VHOST_VIRTIO, 0x82,       \
+> >                                             struct vhost_vring_state)
+> >+
+> >+/**
+> >+ * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost dev=
+ice
+> >+ *
+> >+ * @param inherit_owner: An 8-bit value that determines the vhost threa=
+d mode
+> >+ *
+> >+ * When inherit_owner is set to 1:
+> >+ *   - The VHOST worker threads inherit its values/checks from
+> >+ *     the thread that owns the VHOST device, The vhost threads will
+> >+ *     be counted in the nproc rlimits.
+> >+ *
+> >+ * When inherit_owner is set to 0:
+> >+ *   - The VHOST worker threads will use the traditional kernel thread =
+(kthread)
+> >+ *     implementation, which may be preferred by older userspace applic=
+ations that
+> >+ *     do not utilize the newer vhost_task concept.
+> >+ */
+> >+#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+>
+> I don't think we really care of the size of the parameter, so can we
+> just use `bool` or `unsigned int` or `int` for this IOCTL?
+>
+> As we did for other IOCTLs where we had to enable/disable something (e.g
+> VHOST_VSOCK_SET_RUNNING, VHOST_VDPA_SET_VRING_ENABLE).
+>
+hi Stefano
+I initially used it as a boolean, but during the code review, the
+maintainers considered it was unsuitable for the bool use as the
+interface in ioctl (I think in version 3 ?). So I changed it to u8,
+then will check if this is 1/0 in ioctl and the u8 should be
+sufficient for us to use
+Thanks
+cindy
+> Thanks,
+> Stefano
+>
 
-Here and in the next several patches: commit message in no longer
-accurate. You've dropped the drm_bridge_state.crtc change.
-
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 31 ++++++++++++++++++--------
->  1 file changed, 22 insertions(+), 9 deletions(-)
-> 
-
-[...]
-
-> -	mode = &bridge->encoder->crtc->state->adjusted_mode;
-> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
-> +	conn_state = drm_atomic_get_new_connector_state(state, connector);
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
-> +	mode = &crtc_state->adjusted_mode;
->  	nlanes = output->dev->lanes;
->  
->  	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, false));
->  
->  	cdns_dsi_hs_init(dsi);
-
--- 
-With best wishes
-Dmitry
 
