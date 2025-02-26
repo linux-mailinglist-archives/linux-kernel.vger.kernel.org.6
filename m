@@ -1,111 +1,213 @@
-Return-Path: <linux-kernel+bounces-532812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F021FA4527E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:57:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D8FA45298
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9AC176CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17713AAEFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFD019D06B;
-	Wed, 26 Feb 2025 01:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4441A83EB;
+	Wed, 26 Feb 2025 01:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vuy8I0AX"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="T07tFiD8"
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [217.182.113.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35CFE56A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DE51A5BAE;
+	Wed, 26 Feb 2025 01:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.182.113.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740535039; cv=none; b=IfRzlDbEv6nS/Po/pF1tu8h34x4joL+dfGxWNTBu/AlUYVjPbn0YoikjuqoWYI0ukK0gzJmKMWHxg9PRxAqkNtLArwC5aic0nuIWT7DhM1nbkJFiyIbtdAF4QyDS1i1H6S2dAbBj1s4gOaMto2rKcBRweKNUdEFb+a5wZRy3zkI=
+	t=1740535077; cv=none; b=iXf5ZmKopwnbgENwjmS4LGEiatkOYILCAbH/8i3i36d2nIRRcS0iW4g9Cw4/xhD7kOzfNK7aaM0BLumgkmm0wzuKuqW5N3vla144NMw6+6oZaHFDe7fwVllS6MP0zixxwMgVESs+nkkvkcXxrPxcSzKweAF9WVe50fHmEPwV6fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740535039; c=relaxed/simple;
-	bh=2AjpPUgwyW35ZlY25/RBMK6h76d3ORQR2twl+cHmmAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5dVVEbq2WRDyy2bk5SQp0DKnucbCZlxmRma2x8z2QR6LKXXiuK3f6bIXWaoMqfZ1P7GMEEJtzqzijbSZ/AKLZPf+kvZafcXaa0MJpPBXsvAGpvUD4cBTlPDwVSQPD6yA6Fc+qVF846ixEGhaqT9lcTFhy6bO5/9W2KJNSc+2nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vuy8I0AX; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3db2c2fd-5125-4664-83d0-a0706ef2050f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740535034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2AjpPUgwyW35ZlY25/RBMK6h76d3ORQR2twl+cHmmAE=;
-	b=vuy8I0AX2kkd1NjVZbGg37cUhDQeJMeKe5nEoM65o5UfhKmbIqzYuU9pBMUWsU4YmLjjI2
-	gjcRzkpsMyaCXuTGcI8mbvFGA+9gy8a/YMGgFP3LeKxcEvr+aB1+fNGWNe/JLmacQq47RQ
-	FKRd9rCECzhjSHl8Z1zYg+AfqpPSUeM=
-Date: Wed, 26 Feb 2025 09:57:03 +0800
+	s=arc-20240116; t=1740535077; c=relaxed/simple;
+	bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tedtHhiK45hTw/ZRKm5QrrWFNVtAUZcXIogQswr380JNUwhcfslyRMQm8a26MBFti+FPGqTnGOUcC+WHdsLPO1CnsDsHT4orrmcngYYoaX+b8HJxfQOXNhIAkuVFBYzXmq6YxncdoPfFbHWCNk7MRJLNnGk5xcgVANFKf6VByGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=T07tFiD8; arc=none smtp.client-ip=217.182.113.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id 7101B3E8A5;
+	Wed, 26 Feb 2025 01:57:53 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 9E3634023E;
+	Wed, 26 Feb 2025 01:57:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1740535072; bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=T07tFiD8k3l+F1ihE5Y+v9JsjZTKcsFlbU0Jt61MrK7i4nAcoTug0UrTZCcly7mnK
+	 zeIcc6jZR0Eu0Tc/fZWSIhjZMNhWUCOcxPKd64BKDicM44nJubx22MEMV2j5Ak3KDP
+	 nzdbYJt5BzXhy+FaPBgf0GyWFzEIi57WYVPclEZo=
+Received: from [172.29.0.32] (unknown [203.175.14.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 90274404F6;
+	Wed, 26 Feb 2025 01:57:42 +0000 (UTC)
+From: Mingcong Bai <jeffbai@aosc.io>
+Subject: [PATCH 0/5] drm/xe: enable driver usage on non-4KiB kernels
+Date: Wed, 26 Feb 2025 09:57:31 +0800
+Message-Id: <20250226-xe-non-4k-fix-v1-0-e61660b93cc3@aosc.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 2/4] stmmac: loongson: Remove surplus loop
-To: Philipp Stanner <pstanner@redhat.com>, Philipp Stanner
- <phasta@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Huacai Chen <chenhuacai@kernel.org>, Yinggang Gu <guyinggang@loongson.cn>,
- Feiyang Chen <chenfeiyang@loongson.cn>, Jiaxun Yang
- <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250224135321.36603-2-phasta@kernel.org>
- <20250224135321.36603-4-phasta@kernel.org>
- <437d4fad-6cd4-4f90-a1bb-07193d015cad@linux.dev>
- <7df6e1846ed6932c789a913c6a10aa8df5e26519.camel@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <7df6e1846ed6932c789a913c6a10aa8df5e26519.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAt1vmcC/x2MQQqAIBAAvyJ7bsEW9dBXooPlVkugoRCC9Pek4
+ wzMNCichQtMqkHmR4qk2GEcFGynjwejhM5AmqwmclgZY4poLtyloluJAwftrTPQmztz1/9vXt7
+ 3A+VGO45fAAAA
+X-Change-ID: 20250226-xe-non-4k-fix-6b2eded0a564
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ =?utf-8?q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>, 
+ Francois Dugast <francois.dugast@intel.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Alan Previn <alan.previn.teres.alexis@intel.com>, 
+ Zhanjun Dong <zhanjun.dong@intel.com>, 
+ Matt Roper <matthew.d.roper@intel.com>, 
+ Mateusz Naklicki <mateusz.naklicki@intel.com>
+Cc: Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, 
+ =?utf-8?q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>, 
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>, 
+ Shang Yatsen <429839446@qq.com>, Mingcong Bai <jeffbai@aosc.io>, 
+ stable@vger.kernel.org, Haien Liang <27873200@qq.com>, 
+ Shirong Liu <lsr1024@qq.com>, Haofeng Wu <s2600cw2@126.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740535062; l=4506;
+ i=jeffbai@aosc.io; s=20250225; h=from:subject:message-id;
+ bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+ b=h1P5B1NsPwC752Eq4QwdLC/ar+9y08WwQAliWRHpeTAe2zGDgTLcx28irCVGWb4zz+NP3K1Vw
+ UOoshffMQFlCNBgYA+DmqFPwV+PEJNnG+gn3zo/6ogCJXs4fFsl6D2A
+X-Developer-Key: i=jeffbai@aosc.io; a=ed25519;
+ pk=PShXLX1m130BHsde1t/EjBugyyOjSVdzV0dYuYejXYU=
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: 9E3634023E
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-0.14 / 10.00];
+	MIME_GOOD(-0.10)[text/plain];
+	BAYES_HAM(-0.04)[59.07%];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[intel.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,429839446.qq.com:server fail,kexybiscuit.aosc.io:server fail];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	FREEMAIL_ENVRCPT(0.00)[126.com,gmail.com,qq.com];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,lists.freedesktop.org,vger.kernel.org,aosc.io,qq.com,126.com];
+	TO_DN_SOME(0.00)[]
 
+This patch series attempts to enable the use of xe DRM driver on non-4KiB
+kernel page platforms. This involves fixing the ttm/bo interface, as well
+as parts of the userspace API to make use of kernel `PAGE_SIZE' for
+alignment instead of the assumed `SZ_4K', it also fixes incorrect usage of
+`PAGE_SIZE' in the GuC and ring buffer interface code to make sure all
+instructions/commands were aligned to 4KiB barriers (per the Programmer's
+Manual for the GPUs covered by this DRM driver).
 
-在 2/25/25 5:15 PM, Philipp Stanner 写道:
-> On Tue, 2025-02-25 at 17:06 +0800, Yanteng Si wrote:
->> 在 2/24/25 9:53 PM, Philipp Stanner 写道:
->>> loongson_dwmac_probe() contains a loop which doesn't have an
->>> effect,
->>> because it tries to call pcim_iomap_regions() with the same
->>> parameters
->>> several times. The break statement at the loop's end furthermore
->>> ensures
->>> that the loop only runs once anyways.
->>>
->>> Remove the surplus loop.
->>>
->>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->> It seems that the fix-tag has been forgotten, next two patches as
->> well.
-> Not forgotten, I just think that patches 2-4 are code improvements, not
-> bug fixes.
->
-> The issue in patch 1 would cause actual misbehavior (a useless debug
-> information print in case of a resource collision), whereas 2-4 are
-> just ugly code, but not actual bugs: the loop always just runs once;
-> and unmapping the PCI resources manually is valid, but obviously
-> unnecessary.
->
-> Agreed?
+This issue was first discovered and reported by members of the LoongArch
+user communities, whose hardware commonly ran on 16KiB-page kernels. The
+patch series began on an unassuming branch of a downstream kernel tree
+maintained by Shang Yatsen.[^1]
 
-You bet!
+It worked well but remained sparsely documented, a lot of the work done
+here relied on Shang Yatsen's original patch.
 
+AOSC OS then picked it up[^2] to provide Intel Xe/Arc support for users of
+its LoongArch port, for which I worked extensively on. After months of
+positive user feedback and from encouragement from Kexy Biscuit, my
+colleague at the community, I decided to examine its potential for
+upstreaming, cross-reference kernel and Intel documentation to better
+document and revise this patch.
 
-Thanks,
+Now that this series has been tested good (for boot up, OpenGL, and
+playback of a standardised set of video samples[^3]... with the exception
+of the Intel Arc B580, which seems to segfault at intel-media-driver -
+iHD_drv_video.so, but strangely, hardware accelerated video playback works
+well with Firefox?) on the following platforms (motherboard + GPU model):
 
-Yanteng
+- x86-64, 4KiB kernel page:
+    - MS-7D42 + Intel Arc A580
+- LoongArch, 16KiB kernel page:
+    - XA61200 + GUNNIR DG1 Blue Halberd (Intel DG1)
+    - XA61200 + ASRock Arc A380 Challenger ITX OC (Intel Arc 380)
+    - XA61200 + Intel Arc 580
+    - XA61200 + GUNNIR Intel Arc A750 Photon 8G OC (Intel Arc A750)
+    - ASUS XC-LS3A6M + GUNNIR Intel Arc B580 INDEX 12G (Intel Arc B580)
 
->
+On these platforms, basic functionalities tested good but the driver was
+unstable with occasional resets (I do suspect however, that this platform
+suffers from PCIe coherence issues, as instability only occurs under heavy
+VRAM I/O load):
+
+- AArch64, 4KiB/64KiB kernel pages:
+    - ERUN-FD3000 (Phytium D3000) + GUNNIR Intel Arc A750 Photon 8G OC
+      (Intel Arc A750)
+
+I think that this patch series is now ready for your comment and review.
+Please forgive me if I made any simple mistake or used wrong terminologies,
+but I have never worked on a patch for the DRM subsystem and my experience
+is still quite thin.
+
+But anyway, just letting you all know that Intel Xe/Arc works on non-4KiB
+kernel page platforms (and honestly, it's great to use, especially for
+games and media playback)!
+
+[^1]: https://github.com/FanFansfan/loongson-linux/tree/loongarch-xe
+[^2]: We maintained Shang Yatsen's patch until our v6.13.3 tree, until
+      we decided to test and send this series upstream,
+      https://github.com/AOSC-Tracking/linux/tree/aosc/v6.13.3
+[^3]: Delicious hot pot!
+      https://repo.aosc.io/ahvl/sample-videos-20250223.tar.zst
+
+Suggested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+Co-developed-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+Mingcong Bai (5):
+      drm/xe/bo: fix alignment with non-4K kernel page sizes
+      drm/xe/guc: use SZ_4K for alignment
+      drm/xe/regs: fix RING_CTL_SIZE(size) calculation
+      drm/xe: use 4K alignment for cursor jumps
+      drm/xe/query: use PAGE_SIZE as the minimum page alignment
+
+ drivers/gpu/drm/xe/regs/xe_engine_regs.h |  3 +--
+ drivers/gpu/drm/xe/xe_bo.c               |  8 ++++----
+ drivers/gpu/drm/xe/xe_guc.c              |  4 ++--
+ drivers/gpu/drm/xe/xe_guc_ads.c          | 32 ++++++++++++++++----------------
+ drivers/gpu/drm/xe/xe_guc_capture.c      |  8 ++++----
+ drivers/gpu/drm/xe/xe_guc_ct.c           |  2 +-
+ drivers/gpu/drm/xe/xe_guc_log.c          |  4 ++--
+ drivers/gpu/drm/xe/xe_guc_pc.c           |  4 ++--
+ drivers/gpu/drm/xe/xe_migrate.c          |  4 ++--
+ drivers/gpu/drm/xe/xe_query.c            |  2 +-
+ include/uapi/drm/xe_drm.h                |  2 +-
+ 11 files changed, 36 insertions(+), 37 deletions(-)
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250226-xe-non-4k-fix-6b2eded0a564
+
+Best regards,
+-- 
+Mingcong Bai <jeffbai@aosc.io>
+
 
