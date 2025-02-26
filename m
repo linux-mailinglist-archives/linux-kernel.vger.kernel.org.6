@@ -1,183 +1,123 @@
-Return-Path: <linux-kernel+bounces-533423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F61A459E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:23:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5AF6A45A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BE23AC4A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7156172872
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A722423B;
-	Wed, 26 Feb 2025 09:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F10822425F;
+	Wed, 26 Feb 2025 09:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EzajmSa0"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="IPc116QA"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB21DC997
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561825; cv=none; b=NK9+PKM3oT8+zI3sN1j8AiQlbs5qh/jYvp6R0BLRFemKmEto8e1VMbixGOtUmqjMd8h7/R3AIBkAzFDeH4WSEJZf2/tWhqAYN/XJHOqTez8uxUrli/4WRk5LFjj0YIecMORRbbQ8p1DPJNlUljy7JvAeCvSrEUIhc/hesKm3mBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561825; c=relaxed/simple;
-	bh=p4Ym6uFd+a4HjnTUB8RZrVFMgrTyDhnkWn9RtsDN2XE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ru1B9AzLddskT4XaZQFR1zllbXdQTGUxicFd1xC4HnToKTBV2t1u5WaB8k68UyaPFBFlbs3KZBrnpx5nCewlCsIa+2faMtsYxeakZZhBgLLHb0t2/zeIFyddHK9TYFY5zQdCO6fPQrISQAdadSKrFbzvI2TOANzGDLmdzqssdjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EzajmSa0; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4399a5afc95so27869415e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740561822; x=1741166622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pk8dgs27jijazmvA8B3vaETW0/po24foxSj9cCzDqsU=;
-        b=EzajmSa0x/KKEQVBx8YeJ8bErOEjzK3Eeccmw4bKl8/vFZCB441pIrCzzNco/cP2Dw
-         SmNaD/rge7oyyPPeFlqlbf6rWy9pXVQ25Q6eLrincHOFgBu213IevXEeHs7IGGpWgX0n
-         +2Kjo0GmheIxqXgeZL2iAOHDtx7he8ZszGG+pAl18s8q8JyKxNDJlrfvM6ZysqDSVdzj
-         5JXl2nZLtMuzPuk9UimGHzX03poOOH/PEWXJ5Lj6hFnJ/4Bva6qRmaHAC/JF2yh2IKwM
-         q6RUO/LbsIMS8RhfaCtrNRc2xgsKG5d3vRV/1oHW/YcT8DnSsNn/NWl06O0dQufAmpMQ
-         5QqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740561822; x=1741166622;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pk8dgs27jijazmvA8B3vaETW0/po24foxSj9cCzDqsU=;
-        b=LJYaiGnaJ9VkJLTDz2aKFGyvzvjP/51CeeE4IhU8DptMOB7B9NydUpAOJOEXxOm5QV
-         8MwJ5h94Qxww++laJocMj8xWx7PsofvPlDYNTda5Nr6v/lErZ0NdQY0MYuKwbQhv4i39
-         s4l9+vNinYHmT4ytdHa9ykojXk3tbuo+jJLal9MNjSDB7HbNIibvQABJCROXwa2fRqOD
-         em9QD2rqeIgbn9jbzmCdbJdZlTHMJVfe1GSWog0aAASRuLPybr+6sp0o25o/lkmStL91
-         7zrR38Aph+ghXGb7ncaEkZveS+1UrVtq1AHeivuQ4m2I/o1Saq+H2xAlIAzlTBQMFG+4
-         3qNg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1J9lrG6XnUpLmCI1GieAMRa8tfLYj+lhEaQlDpU0YrTVs5kXRUfcaq6UdQsBuNPAK+tdSahPFHG2U20k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo6VMcmq7C0OPWZvyfWOCjY16WZvUO4fLMwX2M5t67g/PGGH3e
-	iLTOmyQ1FrIslOBPChpjSzTbYsAIKaRQpEzNUFBYo2ROxp3GsTIXPclDM5nxN9f2pU+JACInJt0
-	H19QqFVydtSziSw==
-X-Google-Smtp-Source: AGHT+IEs8HO5Ml6nZnQ6KRY5UHYewnhQ67q+wlvUIYAlBU5XFYac8t8uvtmNF73ubLQpqxPWbCQNxWONvTz7wYM=
-X-Received: from wmbfm22.prod.google.com ([2002:a05:600c:c16:b0:439:98a4:d14])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4f93:b0:439:9c0e:3692 with SMTP id 5b1f17b1804b1-439b75b6417mr142482775e9.28.1740561821904;
- Wed, 26 Feb 2025 01:23:41 -0800 (PST)
-Date: Wed, 26 Feb 2025 09:23:39 +0000
-In-Reply-To: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80F31E1E1C;
+	Wed, 26 Feb 2025 09:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740561919; cv=pass; b=gmzxwS3zvgBnJMYQLkkJGSRroHVzgwCg2ia96s8w8UEAawy484kUa4mT94VrfVHC8HTvVbndqRXbnCShM3mUe8GFOdq6zchoX643zATKp4f1U+ceN7eaqAVN9B+Luc8FUk6aWWHU/i6zlWFYeQAH5b0HQ7h4X4K+S8aZVI/tGGI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740561919; c=relaxed/simple;
+	bh=oUOx9Kz4dvI/7dVS3nn6fCIBr41Arep8TQVo5tX9YAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D52LJL4oXbjl/Zciapvc+o+2TxgQA09Ih5fZbIhr49X5AyEsConU6KxYkERObMMeKpvBO2tMHQw5LWCwJ1MWQU0TmqGhJ+hP7i4EMWECf3oNd1C78itaMk/T/jCm4WX8TkvjjiO8r8PlbujhH5qV0G/Es4yBqrFN8m4j2V/IR38=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=IPc116QA; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740561869; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KCb4NYylXhPLcCtlRcYxc2+z9bebyyP+zFAmiQalFIagup8Quw7gnJKP7jTHxQU0+lpnQpUUro5KDs6MencGDmVmi2qdR9RrEVud6II6I2Sc3RbV0dZg31zeZ9iZ+zLVrGHVmAWXAxrknuXh3tdASgc58XBSmcQdbRTHYC75PiU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740561869; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=v64rHJTOh+QwNJ4+f9WHe2WqRnNhrh1i028ev/E/4UA=; 
+	b=G2Ue4d+GAqNUqs+LcfxCg245SIt8MpZIeoxf+Ao0FHlqh7Tfrk7AhRyyOUGzbdbXK2iG0T6OLTK/Tg9pjtxghwb/Q/Hlw907glvdm12sPETGLSIyA8vAxH/iBNN4j69vkW6aMy7Gx63Ow27lP4LNwGdEqkYIcVrXNA2ysQyl+RY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740561869;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=v64rHJTOh+QwNJ4+f9WHe2WqRnNhrh1i028ev/E/4UA=;
+	b=IPc116QAWR1v4ByKA2qDn3rrCNPzPMDE1INUy2HtcYZsytOJAiXcMSxkS1qvbAe3
+	c7yw7et10rmf3w5cr1Ihh6OzuPn5h7dyhIfPJw/lAIyJA15tChzlM25geymHHHLPasO
+	9fSNIQEPGHuLV+PFltoL0k0hxW1zwFXYd7VXPssI=
+Received: by mx.zohomail.com with SMTPS id 1740561867817714.6694770539592;
+	Wed, 26 Feb 2025 01:24:27 -0800 (PST)
+Message-ID: <ba3bafcc-b7b4-4237-bbeb-b81c0c9328d0@collabora.com>
+Date: Wed, 26 Feb 2025 12:24:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250226092339.989767-1-aliceryhl@google.com>
-Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to Registration::new()
-From: Alice Ryhl <aliceryhl@google.com>
-To: kernel@dakr.org
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dakr@kernel.org, gary@garyguo.net, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, lyude@redhat.com, mairacanal@riseup.net, 
-	ojeda@kernel.org, rafael@kernel.org, rust-for-linux@vger.kernel.org, 
-	tmgross@umich.edu
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 6/6] arm64: defconfig: Enable Synopsys HDMI receiver
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
+ <20250225183058.607047-7-dmitry.osipenko@collabora.com>
+ <a8a6c8c8-ee3b-422a-8573-a2cbb61fc3aa@xs4all.nl>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <a8a6c8c8-ee3b-422a-8573-a2cbb61fc3aa@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Wed, Feb 26, 2025 at 10:06=E2=80=AFAM <kernel@dakr.org> wrote:
->
-> On 2025-02-26 09:38, Alice Ryhl wrote:
-> > On Tue, Feb 25, 2025 at 10:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> =
-wrote:
-> >>
-> >> A little late in the review of the faux device interface, we added the
-> >> ability to specify a parent device when creating new faux devices -
-> >> but
-> >> this never got ported over to the rust bindings. So, let's add the
-> >> missing
-> >> argument now so we don't have to convert other users later down the
-> >> line.
-> >>
-> >> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> ---
-> >>  rust/kernel/faux.rs              | 10 ++++++++--
-> >>  samples/rust/rust_driver_faux.rs |  2 +-
-> >>  2 files changed, 9 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> >> index 41751403cd868..ae99ea3d114ef 100644
-> >> --- a/rust/kernel/faux.rs
-> >> +++ b/rust/kernel/faux.rs
-> >> @@ -23,11 +23,17 @@
-> >>
-> >>  impl Registration {
-> >>      /// Create and register a new faux device with the given name.
-> >> -    pub fn new(name: &CStr) -> Result<Self> {
-> >> +    pub fn new(name: &CStr, parent: Option<&device::Device>) ->
-> >> Result<Self> {
-> >>          // SAFETY:
-> >>          // - `name` is copied by this function into its own storage
-> >>          // - `faux_ops` is safe to leave NULL according to the C API
-> >> -        let dev =3D unsafe {
-> >> bindings::faux_device_create(name.as_char_ptr(), null_mut(), null())
-> >> };
-> >> +        let dev =3D unsafe {
-> >> +            bindings::faux_device_create(
-> >> +                name.as_char_ptr(),
-> >> +                parent.map_or(null_mut(), |p| p.as_raw()),
-> >> +                null(),
-> >
-> > This function signature only requires that `parent` is valid for the
-> > duration of this call to `new`, but `faux_device_create` stashes a
-> > pointer without touching the refcount. How do you ensure that the
-> > `parent` pointer does not become dangling?
->
-> I was wondering the same, but it seems that the subsequent device_add()
-> call takes care of that:
->
-> https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/base/core.c#L35=
-88
->
-> device_del() drops the reference.
->
-> This makes device->parent only valid for the duration between
-> faux_device_create() and faux_device_remove().
->
-> But this detail shouldn=E2=80=99t be relevant for this API.
+On 2/26/25 11:31, Hans Verkuil wrote:
+> On 25/02/2025 19:30, Dmitry Osipenko wrote:
+>> From: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>
+>> The Rockchip RK3588 has a built-in HDMI receiver block from
+>> Synopsys. Let's enable the driver for it.
+>>
+>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> ---
+>>  arch/arm64/configs/defconfig | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index cb7da4415599..3dccc9e1c4aa 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -859,6 +859,8 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+>>  CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
+>>  CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
+>>  CONFIG_VIDEO_SUN6I_CSI=m
+>> +CONFIG_VIDEO_SYNOPSYS_HDMIRX=m
+>> +CONFIG_VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID=y
+> 
+> I do not believe it is a good idea to default to y for this option.
+> 
+> The EDID depends on the specific device you make, and you should
+> think carefully about whether the default EDID fits the needs of the
+> device.
+> 
+> So if you want the default EDID, then you should manually select it
+> and not have it autoselected.
 
-I think this could use a few more comments to explain it. E.g.:
+Ack
 
-diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-index 531e9d789ee0..674db8863d96 100644
---- a/drivers/base/faux.c
-+++ b/drivers/base/faux.c
-@@ -131,6 +131,7 @@ struct faux_device *faux_device_create_with_groups(cons=
-t char *name,
-=20
-        device_initialize(dev);
-        dev->release =3D faux_device_release;
-+       /* The refcount of dev->parent is incremented in device_add. */
-        if (parent)
-                dev->parent =3D parent;
-        else
-diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-index 7673501ebe37..713ee6842e3f 100644
---- a/rust/kernel/faux.rs
-+++ b/rust/kernel/faux.rs
-@@ -28,6 +28,7 @@ pub fn new(name: &CStr, parent: Option<&device::Device>) =
--> Result<Self> {
-         // SAFETY:
-         // - `name` is copied by this function into its own storage
-         // - `faux_ops` is safe to leave NULL according to the C API
-+        // - `faux_device_create` ensures that `parent` stays alive until =
-`faux_device_destroy`.
-         let dev =3D unsafe {
-             bindings::faux_device_create(
-                 name.as_char_ptr(),
-
+-- 
+Best regards,
+Dmitry
 
