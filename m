@@ -1,196 +1,106 @@
-Return-Path: <linux-kernel+bounces-532968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C978A45443
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:06:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAABA45448
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85C8E7A59C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0B5189A34D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9436D25D54D;
-	Wed, 26 Feb 2025 04:05:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D00625A65A;
+	Wed, 26 Feb 2025 04:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EWu3VBoP"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AC233DF;
-	Wed, 26 Feb 2025 04:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF4321519D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740542753; cv=none; b=B7Tt2MSk3xlBtSG0Q4YXmMs4ljntQpxsuwL+VGyWyDFl+tqUVYbOEFMkI6kc/3Z5OZLfeu4sxE3hXMiYSleEvdZstEro3bBzDjQ8vsniowkKhAGXFO+MC/iwJW2j2USHOmgKrPihofqvotxJi/bqhueKGagDRRDhtFmoIa49IDM=
+	t=1740542784; cv=none; b=oTHOnX9FFDobk6x5d+3bduTNUTHDPi0r5uoTo/WLW8C6FgdQI2czbi9SQWUUZ5Zhx2tJ76daC9w3oJb7DfmiRWsPZkR63cjii+exOV6IlgNcwdPsfVoGfvLnXmJJbWvqXMcbr5jOb0+xUdyU23dla+EecgTeD6GHG1GIXtLJt78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740542753; c=relaxed/simple;
-	bh=dXlDjg2pNVnOI7c52EzxCpiStSzswa9gIBOFh2fPjwk=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YWamOf5Gr5K7QmmujTk04DJ3qId8lGFnNe3CCFAZrmcrwuqi9eMknpNVqS+qeSowG0TCwB8DHyvtDnNbycFVVSHiERLGfDpuVK4u0nPnXsyPwQVyreUTTeZY+p0vUB+/EeIHEEB/peJQrBC8lxgWdBHaxpPOAbC656eShjuiaxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z2gqL2wzFz4f3jrs;
-	Wed, 26 Feb 2025 12:05:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3B45A1A10B0;
-	Wed, 26 Feb 2025 12:05:40 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP4 (Coremail) with SMTP id gCh0CgDXOV4Nk75nguOvEw--.31068S2;
-	Wed, 26 Feb 2025 12:05:37 +0800 (CST)
-Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
- map atomically
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
- bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>,
- Cody Haas <chaas@riotgames.com>, Hou Tao <hotforest@gmail.com>
-References: <20250204082848.13471-1-hotforest@gmail.com>
- <20250204082848.13471-3-hotforest@gmail.com>
- <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com>
- <8734gr3yht.fsf@toke.dk>
- <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com>
- <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com>
-Date: Wed, 26 Feb 2025 12:05:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1740542784; c=relaxed/simple;
+	bh=AuW50vH3VSY/Xf8J37DQxfTy+N6QXSGr4cXcli5U37I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p31MnFEN/DlfaPnN0DUOEfPDvSOMfClYedQcXSw4nQK1tYfjbiFBB3fOWxxokhfTJmC/uFwngeN2p8SCtTWNAtlo6pBA9bhmsfAwFrcMJuoP5pYJ79Tk4BMmdc7QVHK6gWZMXpC075GiN50wrjY2H6R/MkHjZl/UUYDgM9qazIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EWu3VBoP; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab771575040so82248566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:06:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1740542781; x=1741147581; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=40VvcXlH8rEZKpE1INxpbYUwpWWo+F2leARtkRuHi+c=;
+        b=EWu3VBoPeC+lM/0iimQzipsR91hbnRhtAMO83B19JK/zHZFpEKJhB5kxVWxTrTqTdM
+         bI6V/bJHVf6EfFqZ0F3JgRqsSg+iL4K6lD5FdB5gUZWvlkD2FEeK6LgGNTr8XCBtKKXO
+         ksS2BPy87yj3IJJB8LryH36UJVj3OTDuGo/vo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740542781; x=1741147581;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=40VvcXlH8rEZKpE1INxpbYUwpWWo+F2leARtkRuHi+c=;
+        b=IvqOJnvlDjjOZ0IUdtHGi2mN7LGGAe8gWkVSjzZI/8uKQ/1H6wMC4RFhQQiGjAsj1j
+         sS50p0//XTod2Z2eeQq7+F7FHMaEm76nnf/tSesfz3I9+Ll+kRnI3kuwRKmuPkJngiZQ
+         bVbGJgbRtPGiAqciARt4c0mHyLMGHtTe24iiGlPH5zf44+5SnK+7o6h+F7vxBdYFGzzC
+         9V+GB6zI/ZzvnHtYHzRsIplvXuwMgquahpD1QmN6OLFfT6bvjLvD+n0clY5SDTThe5Fq
+         dh4qzRJVShQ0/euAVQtqR9vD20QOMhDQoAeN2U9fhTBnXTX5sehfxDCURgA9NCWLFP3A
+         Co/A==
+X-Gm-Message-State: AOJu0YyXLFrY7tVRmo1ujzTAw+AhUctrRhyazRkrTCmlt2swtrPsUV01
+	VYSx795kounckBKNmcbaWcvDY445DRDilahFEFGUcG8j+b2tPvc3HurWlM0gUvBcPaASYkvjsGH
+	GNJc=
+X-Gm-Gg: ASbGncu+xNL4P8UnX4VNL55tlo9LZVouUPRKO2YE3hnaNW1VqFtgco2IMGHQKteTAtM
+	rhHeoeKExtVJBkAsC7Vgq68vtTmpFHvdBhnqWuLeezYkKz+OSF5+HrrHEHCPwMt7CLNByffS1rM
+	+N3nxU/9BdeXUk84VRdnbXS0rq+Ven4nIh1qgXxvgvlESSVFW4XriL6ASvOArByTH+3ks36BHum
+	kknMtvfBUAkcG5B+EJVZ7mBqCXK3BB/8t/KFnYQrIPfqk/PiiIFMIuqIQ9sHX2Xu1R0btZv9u0f
+	j1eNLZZE5meK6d1CYeLEnNo55QIplO9frZMtbO2LodujY8KBNZLULawAofWqH6aMwvp8ooDEHs/
+	Z
+X-Google-Smtp-Source: AGHT+IErGX0YoPDc7pYzB1dOg+I+ous5yGGcXqKo28/ZwwY7As12yzWArWua8h3VUJpe1YUjfrBagA==
+X-Received: by 2002:a17:906:380d:b0:abc:2aca:e5e1 with SMTP id a640c23a62f3a-abc2acae668mr1329127866b.8.1740542781104;
+        Tue, 25 Feb 2025 20:06:21 -0800 (PST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdc52esm256640666b.13.2025.02.25.20.06.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 20:06:19 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbdf897503so88980866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:06:18 -0800 (PST)
+X-Received: by 2002:a17:907:cf91:b0:abb:bb82:385b with SMTP id
+ a640c23a62f3a-abbeddc5eb9mr2218246466b.13.1740542778393; Tue, 25 Feb 2025
+ 20:06:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:gCh0CgDXOV4Nk75nguOvEw--.31068S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4xWrW8GFyfGF4xKFyDJrb_yoWrtFy3pr
-	WrKF1jyF4DJa4j9wn2ywnruFWayrs3t3y8Xr1Dtry5Arn8Krn3Ar4Ika109ryrAr1rGr1Y
-	qw1jqrZIkayjkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07jIksgUUUUU=
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
+ <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
+ <Z76APkysrjgHjgR2@casper.infradead.org> <CAHk-=wj+VBV5kBMfXYNOb+aLt3WJqMKFT0wU=KaV3R12NvN5TA@mail.gmail.com>
+ <Z76R6ESSwiYipQVn@casper.infradead.org>
+In-Reply-To: <Z76R6ESSwiYipQVn@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Feb 2025 20:06:02 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
+X-Gm-Features: AQ5f1JoCnqtK6fTnLK3CaWRyz3BVTY7M9pK4Iq32FOaHAgO4MK-3ssz-_tr_HuM
+Message-ID: <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
+Subject: Re: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY when we clear _PAGE_RW
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	kernel test robot <oliver.sang@intel.com>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-
-On 2/26/2025 11:24 AM, Alexei Starovoitov wrote:
-> On Sat, Feb 8, 2025 at 2:17 AM Hou Tao <houtao@huaweicloud.com> wrote:
->> Hi Toke,
->>
->> On 2/6/2025 11:05 PM, Toke Høiland-Jørgensen wrote:
->>> Hou Tao <houtao@huaweicloud.com> writes:
->>>
->>>> +cc Cody Haas
->>>>
->>>> Sorry for the resend. I sent the reply in the HTML format.
->>>>
->>>> On 2/4/2025 4:28 PM, Hou Tao wrote:
->>>>> Currently, the update of existing element in hash map involves two
->>>>> steps:
->>>>> 1) insert the new element at the head of the hash list
->>>>> 2) remove the old element
->>>>>
->>>>> It is possible that the concurrent lookup operation may fail to find
->>>>> either the old element or the new element if the lookup operation starts
->>>>> before the addition and continues after the removal.
->>>>>
->>>>> Therefore, replacing the two-step update with an atomic update. After
->>>>> the change, the update will be atomic in the perspective of the lookup
->>>>> operation: it will either find the old element or the new element.
-> I'm missing the point.
-> This "atomic" replacement doesn't really solve anything.
-> lookup will see one element.
-> That element could be deleted by another thread.
-> bucket lock and either two step update or single step
-> don't change anything from the pov of bpf prog doing lookup.
-
-The point is that overwriting an existed element may lead to concurrent
-lookups return ENOENT as demonstrated by the added selftest and the
-patch tried to "fix" that. However, it seems using
-hlist_nulls_replace_rcu() for the overwriting update is still not
-enough. Because when the lookup procedure found the old element, the old
-element may be reusing, the comparison of the map key may fail, and the
-lookup procedure may still return ENOENT.
+On Tue, 25 Feb 2025 at 20:00, Matthew Wilcox <willy@infradead.org> wrote:
 >
->>>>> Signed-off-by: Hou Tao <hotforest@gmail.com>
->>>>> ---
->>>>>  kernel/bpf/hashtab.c | 14 ++++++++------
->>>>>  1 file changed, 8 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
->>>>> index 4a9eeb7aef85..a28b11ce74c6 100644
->>>>> --- a/kernel/bpf/hashtab.c
->>>>> +++ b/kernel/bpf/hashtab.c
->>>>> @@ -1179,12 +1179,14 @@ static long htab_map_update_elem(struct bpf_map *map, void *key, void *value,
->>>>>             goto err;
->>>>>     }
->>>>>
->>>>> -   /* add new element to the head of the list, so that
->>>>> -    * concurrent search will find it before old elem
->>>>> -    */
->>>>> -   hlist_nulls_add_head_rcu(&l_new->hash_node, head);
->>>>> -   if (l_old) {
->>>>> -           hlist_nulls_del_rcu(&l_old->hash_node);
->>>>> +   if (!l_old) {
->>>>> +           hlist_nulls_add_head_rcu(&l_new->hash_node, head);
->>>>> +   } else {
->>>>> +           /* Replace the old element atomically, so that
->>>>> +            * concurrent search will find either the new element or
->>>>> +            * the old element.
->>>>> +            */
->>>>> +           hlist_nulls_replace_rcu(&l_new->hash_node, &l_old->hash_node);
->>>>>
->>>>>             /* l_old has already been stashed in htab->extra_elems, free
->>>>>              * its special fields before it is available for reuse. Also
->>>>>
->>>> After thinking about it the second time, the atomic list replacement on
->>>> the update side is enough to make lookup operation always find the
->>>> existing element. However, due to the immediate reuse, the lookup may
->>>> find an unexpected value. Maybe we should disable the immediate reuse
->>>> for specific map (e.g., htab of maps).
->>> Hmm, in an RCU-protected data structure, reusing the memory before an
->>> RCU grace period has elapsed is just as wrong as freeing it, isn't it?
->>> I.e., the reuse logic should have some kind of call_rcu redirection to
->>> be completely correct?
->> Not for all cases. There is SLAB_TYPESAFE_BY_RCU-typed slab. For hash
->> map, the reuse is also tricky (e.g., the goto again case in
->> lookup_nulls_elem_raw), however it can not prevent the lookup procedure
->> from returning unexpected value. I had post a patch set [1] to "fix"
->> that, but Alexei said it is "a known quirk". Here I am not sure about
->> whether it is reasonable to disable the reuse for htab of maps only. I
->> will post a v2 for the patch set.
->>
->> [1]:
->> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.com/
-> yes. we still have to keep prealloc as default for now :(
-> Eventually bpf_mem_alloc is replaced with fully re-entrant
-> and safe kmalloc, then we can do fully re-entrant and safe
-> kfree_rcu. Then we can talk about closing this quirk.
-> Until then the prog has to deal with immediate reuse.
-> That was the case for a decade already.
+> I think the entire point of this file is to manipulate kernel mappings.
 
-I see. In v2 I will fallback to the original idea: adding a standalone
-update procedure for htab of maps in which it will atomically overwrite
-the map_ptr just like array of maps does.
+Very likely. But just looking at the patch, it was very non-obvious.
 
+           Linus
 
