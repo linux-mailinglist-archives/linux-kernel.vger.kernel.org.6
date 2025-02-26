@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-533630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DD5A45CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:14:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00CDA45CD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41BBE1880885
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5301624AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86146215776;
-	Wed, 26 Feb 2025 11:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2328213E77;
+	Wed, 26 Feb 2025 11:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVdemwKX"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlE2FNGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258D2212FB0;
-	Wed, 26 Feb 2025 11:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D512144BA;
+	Wed, 26 Feb 2025 11:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740568369; cv=none; b=aFzV4IPfAgEV/WKuETn+dZJDFEelfUUpzoLYUMoXGHdN/A97rqT8UT+vV8xG95kbYuFoMzXdSM5GBGH1D6+DM+l44glOqWBVEqzk/NeyMO6ntV0A4mwFQAvKPOyiFXAAibf1HKRM/0Vm1sQGa4So5vf9vLPj7fb+dqfA2KTFiJE=
+	t=1740568444; cv=none; b=tXK3ytxBCxhlXZ1/i6bAMFx/HAbFEHFoyp/j16THo27wyRXVq67nVNpCAl6vWzzwdHkzrTmbOGFhDgQZGPG6SvlF9nFAPbS8owrixJ8M/ehg44hWFE02vGbSAmXUvjN8NXEYM/NUDj98vZ75GAouJRn7vA7Ovb3xs1Yf+NHdsJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740568369; c=relaxed/simple;
-	bh=0UlUDFrQTjxR5+TiaNCyX/ilCZ98LfsN6ADmFlOi+lI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ji8kQ+POMFghXJOununu4Sf93J3EPS46uRlEbSA4jOokQ7Sd9/L4fwccnQ4rLJNJNZXbccWVBJuUIb4u4CJix4MkFEGWHVhqx6p7v03x8jP9nLsLkXXLEJHrwpBVuOznuzYO4MUlIczpq7oaQZ/O1joeJ3vNSi4yqKuEC702Ysk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVdemwKX; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abb7520028bso898635266b.3;
-        Wed, 26 Feb 2025 03:12:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740568366; x=1741173166; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HSX1gchtdLPsHJVZW3liHqT5F/QQ11+VlmXYOeh0zFY=;
-        b=DVdemwKXeW/W/sQLj2J/v2CRufUJI+LzzODfgBMy2rZ5YmMGooPiQUY8NoKEansU5K
-         PImt+I4aXKB0Slmc+dkZrCURbu+0F5uZnL2jkf0x7ltGsM83gK44KXKVIbSXUIh9DPFH
-         IeA/cBO/MI3jGJYHT02MN3Vnr0o9rbtw2MDuMzFZC9XLHj/Q9JfrLWW+PEYiu/7zshiy
-         Umn/x4rpj7DvaSSpV3LI+BZLXsyLBRto50s158x8weF8cQT6o1hJ5U7w9TlNtDbJl/ND
-         FybW2INDbh1cfrzPjK/SKARZ3gTFXtLocbdQDNxWVI+X4gNnnV08J/Fmr9A6Nv92BwFO
-         g6Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740568366; x=1741173166;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSX1gchtdLPsHJVZW3liHqT5F/QQ11+VlmXYOeh0zFY=;
-        b=UKEZbfl84vuzIdAKewf0J2cZ1cJUdMqstGWl7X4zXgkDs7IQd4ZJQXB+Xw8l3KhFBA
-         I8tQPhriFx6YSk0SqGvdGLxrtyVHTlWsW7vkuf+e3md/TvY9aie4MHT3diY6XowOPHE7
-         AE3XToU1u7p0M3UanHkGkDLWwyoSfOeCfL+yN3JGDKEhF1kig3XkwjmHcpICubenwVDT
-         b7OIVQ6JrLJikYFnwkQ2aDKYo/nYmlIc/oK6ZV0VykaKR1Uqjj2Nsz5+V+mqUPnh8g5b
-         Y7fUqStAEPY2EQYBBScyP27jsLSvDy+VCyO+2N2xbTRvkx5V7D0tNLJPcOiMeqXOAXvP
-         fvSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJk9tHUJP9RaNXYzpKZOgFUYmSpImsfBREAJ8LDCfvmeJtbKMYa4uzgW1qHGbgen6dN6+dW1861PsMvB6j@vger.kernel.org, AJvYcCWfJ0Ci/g7ZXbdVo/JewzRVhMbefcT3lRSvgxlm3TOOd4OTdzNmCTOM1/BGZSCYLyQddKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDThznxkNgF5qnLrXihcgNSdY+L498hD4dOb7fDDE0nmGOJkr/
-	rIK/xUji/F8mU9jolxNOOs7xa4aSwLouvVJUDLvPIq2Jqf551RMu
-X-Gm-Gg: ASbGncug2qv3B6cpQQ1v1bhsq/HwlpfXaHvLVAlexcoPPyiklLscYZanjk3tYj7d80L
-	6aFJj4J1AOPkB6N+aU5dWm/dnv0hKvgFu06Ag4nN/KmdmRES+Y4VbIVNfSHuF3k5eoWK9qDoth5
-	BUZCmpA7I+73deJc2y2c+L4cK6qHU3FuGLhq1oE7fsTBu98rzoNp4di8pEQ6AWuIdm/Tj9WJRJX
-	huax4TQPAYfRpGbCw04hOWnY6IQtYu1juo2i3I+oEruSM0fK/JmlVorQCR27vcPEk45O3hkOlMk
-	03iqijwI91Vh
-X-Google-Smtp-Source: AGHT+IFuag5Hh8iCN/4J2NNLM8BFpJbCM7MdvAPaAId6Hc9uWb70DG+3MrrwrflsCiucQcaMVkjZxA==
-X-Received: by 2002:a17:907:72d4:b0:ab7:b6cb:b633 with SMTP id a640c23a62f3a-abeeee40310mr343858566b.34.1740568366130;
-        Wed, 26 Feb 2025 03:12:46 -0800 (PST)
-Received: from krava ([173.38.220.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cd5629sm305686566b.8.2025.02.26.03.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 03:12:45 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 26 Feb 2025 12:12:43 +0100
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
-	andrii@kernel.org, eddyz87@gmail.com, haoluo@google.com,
-	qmo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com
-Subject: Re: [PATCH bpf-next v8 4/5] libbpf: Init kprobe prog
- expected_attach_type for kfunc probe
-Message-ID: <Z773KxMF0N1nEFsH@krava>
-References: <20250224165912.599068-1-chen.dylane@linux.dev>
- <20250224165912.599068-5-chen.dylane@linux.dev>
- <CAEf4BzYz9_0Po-JLU+Z4kB7L5snuh2KFSTO0X9KK00GKSq91Sw@mail.gmail.com>
- <d25b468f-0a84-45c9-b48e-9fd3b9f65b54@linux.dev>
- <CAEf4BzY85DmfwRruD4tnTj+UiRTk64k1N5vO69cdL1T7H+QTXw@mail.gmail.com>
+	s=arc-20240116; t=1740568444; c=relaxed/simple;
+	bh=dRntQbhkPiyvpxbsFrXS59xCf98DADWZpoV1gVAltWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gShB/QxhSe0t6Gr/XhnQVmQw8me0xTri3yLWRZyZuoHZDPEJhOdDyaILRW4h3FF8DjyG5gjlhc0EZNeC8XT/LMIz/nFWO994Jy7VS/oUbFNKSmmfNjC1eZYHx1f+atJC1FtcQrTOFOTrwHSr3ag8R9pqTZIPL0g2VKefI8aeQd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlE2FNGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D081C4CED6;
+	Wed, 26 Feb 2025 11:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740568443;
+	bh=dRntQbhkPiyvpxbsFrXS59xCf98DADWZpoV1gVAltWY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AlE2FNGBsVJDVhYlLqpbPiIS8FxBSTiGXBjJCN24a6t4mI1wPOD6uv2RsgDpDCU1r
+	 vam5tKvxdC4o87AG6UKUTc53zrDLxuJpgfbUAuasaqLWtco3KnJI33Fs9Lz1QQkuMK
+	 /D0Afdgj1pCMg+qIqi4Ivgcq0+LlhSCBlRaqLDRv4PgE/sbg00+sLPgUeY9npxIF9+
+	 600duS6VpMzXanmBY+1+Evt//sUvy4RWfi12P6MuTSP1Z9JK75anYJmgraQxEJ7YhG
+	 z4eeCEN0TSPaiw17cYSCgJ+ZE5H6EmXYMaihqF4NT6St2nvLD8Raftlm09EbjnhMgb
+	 8CPPBTXbaQjeA==
+Message-ID: <5e8af795-53de-4376-a201-697bddc20215@kernel.org>
+Date: Wed, 26 Feb 2025 12:14:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzY85DmfwRruD4tnTj+UiRTk64k1N5vO69cdL1T7H+QTXw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: More than 256/512 glyphs on the Liinux console
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alan Mackenzie <acm@muc.de>
+Cc: Simona Vetter <simona@ffwll.ch>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh> <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+ <2025022355-peroxide-defacing-4fa4@gregkh> <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
+ <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
+ <Z73sqvjlbJ54FCtH@MAC.fritz.box> <2025022652-uptown-cheating-5df8@gregkh>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <2025022652-uptown-cheating-5df8@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 09:04:58AM -0800, Andrii Nakryiko wrote:
-> On Mon, Feb 24, 2025 at 9:44 PM Tao Chen <chen.dylane@linux.dev> wrote:
-> >
-> > 在 2025/2/25 09:15, Andrii Nakryiko 写道:
-> > > On Mon, Feb 24, 2025 at 9:03 AM Tao Chen <chen.dylane@linux.dev> wrote:
-> > >>
-> > >> Kprobe prog type kfuncs like bpf_session_is_return and
-> > >> bpf_session_cookie will check the expected_attach_type,
-> > >> so init the expected_attach_type here.
-> > >>
-> > >> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> > >> ---
-> > >>   tools/lib/bpf/libbpf_probes.c | 1 +
-> > >>   1 file changed, 1 insertion(+)
-> > >>
-> > >> diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
-> > >> index 8efebc18a215..bb5b457ddc80 100644
-> > >> --- a/tools/lib/bpf/libbpf_probes.c
-> > >> +++ b/tools/lib/bpf/libbpf_probes.c
-> > >> @@ -126,6 +126,7 @@ static int probe_prog_load(enum bpf_prog_type prog_type,
-> > >>                  break;
-> > >>          case BPF_PROG_TYPE_KPROBE:
-> > >>                  opts.kern_version = get_kernel_version();
-> > >> +               opts.expected_attach_type = BPF_TRACE_KPROBE_SESSION;
-> > >
-> > > so KPROBE_SESSION is relative recent feature, if we unconditionally
-> > > specify this, we'll regress some feature probes for old kernels where
-> > > KPROBE_SESSION isn't supported, no?
-> > >
-> >
-> > Yeah, maybe we can detect the kernel version first, will fix it.
-> 
-> Hold on. I think the entire probing API is kind of unfortunately
-> inadequate. Just the fact that we randomly pick some specific
-> expected_attach_type to do helpers/kfunc compatibility detection is
-> telling. expected_attach_type can change a set of available helpers,
-> and yet it's not even an input parameter for either
-> libbpf_probe_bpf_helper() or kfunc variant you are trying to add.
+On 26. 02. 25, 11:09, Greg Kroah-Hartman wrote:
+> I don't know why distros seem to not be using it anymore, maybe there's
+> something else?
 
-could we use the libbpf_probe_bpf_kfunc opts argument and
-allow to specify and override expected_attach_type?
+FWIW I re-tried that thing yesterday and it doesn't work with 
+FB_DEVICE=n at all... We disabled FB_DEVICE in openSUSE in 6.12.9.
 
-jirka
+kmscon should work with drm directly and be able to use even 
+acceleration. But it renders nothing for me (without fbdev). Reported at:
+https://bugzilla.suse.com/show_bug.cgi?id=1237599
 
-> 
-> Basically, I'm questioning the validity of even adding this API to
-> libbpf. It feels like this kind of detection is simple enough for
-> application to do on its own.
-> 
-> >
-> > +               if (opts.kern_version >= KERNEL_VERSION(6, 12, 0))
-> > +                       opts.expected_attach_type =BPF_TRACE_KPROBE_SESSION;
-> 
-> no, we shouldn't hard-code kernel version for feature detection (but
-> also see above, I'm not sure this API should be added in the first
-> place)
-> 
-> >
-> > > pw-bot: cr
-> > >
-> > >>                  break;
-> > >>          case BPF_PROG_TYPE_LIRC_MODE2:
-> > >>                  opts.expected_attach_type = BPF_LIRC_MODE2;
-> > >> --
-> > >> 2.43.0
-> > >>
-> >
-> >
-> > --
-> > Best Regards
-> > Tao Chen
+thanks,
+-- 
+js
+suse labs
 
