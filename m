@@ -1,165 +1,172 @@
-Return-Path: <linux-kernel+bounces-533629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FE1A45CD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DD5A45CD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C041897814
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41BBE1880885
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC5421519A;
-	Wed, 26 Feb 2025 11:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86146215776;
+	Wed, 26 Feb 2025 11:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4UZjGRV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVdemwKX"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6FF214207;
-	Wed, 26 Feb 2025 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258D2212FB0;
+	Wed, 26 Feb 2025 11:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740568341; cv=none; b=LIyke05fPD0vHhojyUvzafcpEGuE4KdSH+iNzzWJYWyGikCMxRskPogkUUZr1JzgW3i3rx8WDx0atFobafqLi+FheZynCnqTfYYAbk7lbGUMsrlwEKnlucavhP8u3U0gOAJu8/B+/xRsMifr59gaHQxfFKX8b3z+7WC09LHKLtA=
+	t=1740568369; cv=none; b=aFzV4IPfAgEV/WKuETn+dZJDFEelfUUpzoLYUMoXGHdN/A97rqT8UT+vV8xG95kbYuFoMzXdSM5GBGH1D6+DM+l44glOqWBVEqzk/NeyMO6ntV0A4mwFQAvKPOyiFXAAibf1HKRM/0Vm1sQGa4So5vf9vLPj7fb+dqfA2KTFiJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740568341; c=relaxed/simple;
-	bh=jZw9UiUOrosfMM/sq64CfD9dAVrPX0T09356az2lcn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iMhF3KKKWgjCqIV0tgQWH+Jan/p4tfI5kwkRD3C3kY9p34BcM2/OJrpB07URYSZngLD4Y+RC5HFf/SD6ba3z8hC7GlUDGCDWpdqT0wDdEHkwap2sLDps7QceHb5fcWgEUIs6YUYCrEenotSnUsbEtWnsHLnyJRkR1/lDLZUxWUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4UZjGRV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDEEC4CED6;
-	Wed, 26 Feb 2025 11:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740568341;
-	bh=jZw9UiUOrosfMM/sq64CfD9dAVrPX0T09356az2lcn8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U4UZjGRVj/GAe6cQw0SBXKABZXheweZqqsnuaK4R7FEnAhhYuB8935c1pxzUuKy23
-	 iKjuW4Gyk85euPwoTSQRQZXO3d5OS/TLNhoYgQAOdHbBsHV7Xo2oLkm3xSXxMdV9Lc
-	 R0AQM+OizId6HH0sYEAvA0CGTxafjlOnDoPQMAWbfdDFf/r//XF22TUUvNUWqx1810
-	 ZQhPRTOagkhWDk8B9E/QspEnB24zRmoHkblV1OSbhEx26tV7D3NGJu8fa+snYKJKoH
-	 6jllMkSzApR7AHf3oNSAJRZM0SvgnJujN9hKmFDFVb8L+fipgtmQVaBEmobtFW0jfn
-	 /5ZnapxjCVNow==
-Message-ID: <6f01269a-bd64-46e7-800f-d8d59c4bf72e@kernel.org>
-Date: Wed, 26 Feb 2025 12:12:15 +0100
+	s=arc-20240116; t=1740568369; c=relaxed/simple;
+	bh=0UlUDFrQTjxR5+TiaNCyX/ilCZ98LfsN6ADmFlOi+lI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ji8kQ+POMFghXJOununu4Sf93J3EPS46uRlEbSA4jOokQ7Sd9/L4fwccnQ4rLJNJNZXbccWVBJuUIb4u4CJix4MkFEGWHVhqx6p7v03x8jP9nLsLkXXLEJHrwpBVuOznuzYO4MUlIczpq7oaQZ/O1joeJ3vNSi4yqKuEC702Ysk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVdemwKX; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abb7520028bso898635266b.3;
+        Wed, 26 Feb 2025 03:12:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740568366; x=1741173166; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HSX1gchtdLPsHJVZW3liHqT5F/QQ11+VlmXYOeh0zFY=;
+        b=DVdemwKXeW/W/sQLj2J/v2CRufUJI+LzzODfgBMy2rZ5YmMGooPiQUY8NoKEansU5K
+         PImt+I4aXKB0Slmc+dkZrCURbu+0F5uZnL2jkf0x7ltGsM83gK44KXKVIbSXUIh9DPFH
+         IeA/cBO/MI3jGJYHT02MN3Vnr0o9rbtw2MDuMzFZC9XLHj/Q9JfrLWW+PEYiu/7zshiy
+         Umn/x4rpj7DvaSSpV3LI+BZLXsyLBRto50s158x8weF8cQT6o1hJ5U7w9TlNtDbJl/ND
+         FybW2INDbh1cfrzPjK/SKARZ3gTFXtLocbdQDNxWVI+X4gNnnV08J/Fmr9A6Nv92BwFO
+         g6Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740568366; x=1741173166;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSX1gchtdLPsHJVZW3liHqT5F/QQ11+VlmXYOeh0zFY=;
+        b=UKEZbfl84vuzIdAKewf0J2cZ1cJUdMqstGWl7X4zXgkDs7IQd4ZJQXB+Xw8l3KhFBA
+         I8tQPhriFx6YSk0SqGvdGLxrtyVHTlWsW7vkuf+e3md/TvY9aie4MHT3diY6XowOPHE7
+         AE3XToU1u7p0M3UanHkGkDLWwyoSfOeCfL+yN3JGDKEhF1kig3XkwjmHcpICubenwVDT
+         b7OIVQ6JrLJikYFnwkQ2aDKYo/nYmlIc/oK6ZV0VykaKR1Uqjj2Nsz5+V+mqUPnh8g5b
+         Y7fUqStAEPY2EQYBBScyP27jsLSvDy+VCyO+2N2xbTRvkx5V7D0tNLJPcOiMeqXOAXvP
+         fvSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJk9tHUJP9RaNXYzpKZOgFUYmSpImsfBREAJ8LDCfvmeJtbKMYa4uzgW1qHGbgen6dN6+dW1861PsMvB6j@vger.kernel.org, AJvYcCWfJ0Ci/g7ZXbdVo/JewzRVhMbefcT3lRSvgxlm3TOOd4OTdzNmCTOM1/BGZSCYLyQddKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDThznxkNgF5qnLrXihcgNSdY+L498hD4dOb7fDDE0nmGOJkr/
+	rIK/xUji/F8mU9jolxNOOs7xa4aSwLouvVJUDLvPIq2Jqf551RMu
+X-Gm-Gg: ASbGncug2qv3B6cpQQ1v1bhsq/HwlpfXaHvLVAlexcoPPyiklLscYZanjk3tYj7d80L
+	6aFJj4J1AOPkB6N+aU5dWm/dnv0hKvgFu06Ag4nN/KmdmRES+Y4VbIVNfSHuF3k5eoWK9qDoth5
+	BUZCmpA7I+73deJc2y2c+L4cK6qHU3FuGLhq1oE7fsTBu98rzoNp4di8pEQ6AWuIdm/Tj9WJRJX
+	huax4TQPAYfRpGbCw04hOWnY6IQtYu1juo2i3I+oEruSM0fK/JmlVorQCR27vcPEk45O3hkOlMk
+	03iqijwI91Vh
+X-Google-Smtp-Source: AGHT+IFuag5Hh8iCN/4J2NNLM8BFpJbCM7MdvAPaAId6Hc9uWb70DG+3MrrwrflsCiucQcaMVkjZxA==
+X-Received: by 2002:a17:907:72d4:b0:ab7:b6cb:b633 with SMTP id a640c23a62f3a-abeeee40310mr343858566b.34.1740568366130;
+        Wed, 26 Feb 2025 03:12:46 -0800 (PST)
+Received: from krava ([173.38.220.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cd5629sm305686566b.8.2025.02.26.03.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 03:12:45 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 26 Feb 2025 12:12:43 +0100
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, eddyz87@gmail.com, haoluo@google.com,
+	qmo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chen.dylane@gmail.com
+Subject: Re: [PATCH bpf-next v8 4/5] libbpf: Init kprobe prog
+ expected_attach_type for kfunc probe
+Message-ID: <Z773KxMF0N1nEFsH@krava>
+References: <20250224165912.599068-1-chen.dylane@linux.dev>
+ <20250224165912.599068-5-chen.dylane@linux.dev>
+ <CAEf4BzYz9_0Po-JLU+Z4kB7L5snuh2KFSTO0X9KK00GKSq91Sw@mail.gmail.com>
+ <d25b468f-0a84-45c9-b48e-9fd3b9f65b54@linux.dev>
+ <CAEf4BzY85DmfwRruD4tnTj+UiRTk64k1N5vO69cdL1T7H+QTXw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] coresight-tnoc: add nodes to configure freq packet
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
- <20250226-trace-noc-driver-v2-5-8afc6584afc5@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226-trace-noc-driver-v2-5-8afc6584afc5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzY85DmfwRruD4tnTj+UiRTk64k1N5vO69cdL1T7H+QTXw@mail.gmail.com>
 
-On 26/02/2025 12:05, Yuanfang Zhang wrote:
-> Three nodes for freq packet config are added here:
+On Tue, Feb 25, 2025 at 09:04:58AM -0800, Andrii Nakryiko wrote:
+> On Mon, Feb 24, 2025 at 9:44 PM Tao Chen <chen.dylane@linux.dev> wrote:
+> >
+> > 在 2025/2/25 09:15, Andrii Nakryiko 写道:
+> > > On Mon, Feb 24, 2025 at 9:03 AM Tao Chen <chen.dylane@linux.dev> wrote:
+> > >>
+> > >> Kprobe prog type kfuncs like bpf_session_is_return and
+> > >> bpf_session_cookie will check the expected_attach_type,
+> > >> so init the expected_attach_type here.
+> > >>
+> > >> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> > >> ---
+> > >>   tools/lib/bpf/libbpf_probes.c | 1 +
+> > >>   1 file changed, 1 insertion(+)
+> > >>
+> > >> diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+> > >> index 8efebc18a215..bb5b457ddc80 100644
+> > >> --- a/tools/lib/bpf/libbpf_probes.c
+> > >> +++ b/tools/lib/bpf/libbpf_probes.c
+> > >> @@ -126,6 +126,7 @@ static int probe_prog_load(enum bpf_prog_type prog_type,
+> > >>                  break;
+> > >>          case BPF_PROG_TYPE_KPROBE:
+> > >>                  opts.kern_version = get_kernel_version();
+> > >> +               opts.expected_attach_type = BPF_TRACE_KPROBE_SESSION;
+> > >
+> > > so KPROBE_SESSION is relative recent feature, if we unconditionally
+> > > specify this, we'll regress some feature probes for old kernels where
+> > > KPROBE_SESSION isn't supported, no?
+> > >
+> >
+> > Yeah, maybe we can detect the kernel version first, will fix it.
 > 
-> 1. freq_type: used to set the type of issued ATB FREQ packets.
-> 0: 'FREQ' packets; 1: 'FREQ_TS' packets.
+> Hold on. I think the entire probing API is kind of unfortunately
+> inadequate. Just the fact that we randomly pick some specific
+> expected_attach_type to do helpers/kfunc compatibility detection is
+> telling. expected_attach_type can change a set of available helpers,
+> and yet it's not even an input parameter for either
+> libbpf_probe_bpf_helper() or kfunc variant you are trying to add.
+
+could we use the libbpf_probe_bpf_kfunc opts argument and
+allow to specify and override expected_attach_type?
+
+jirka
+
 > 
-> 2. freq_req_val: used to set frequency values carried by 'FREQ'
-> and 'FREQ_TS' packets.
+> Basically, I'm questioning the validity of even adding this API to
+> libbpf. It feels like this kind of detection is simple enough for
+> application to do on its own.
 > 
-> 3. freq_ts_req: writing '1' to issue a 'FREQ' or 'FREQ_TS' packet.
+> >
+> > +               if (opts.kern_version >= KERNEL_VERSION(6, 12, 0))
+> > +                       opts.expected_attach_type =BPF_TRACE_KPROBE_SESSION;
 > 
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> ---
->  drivers/hwtracing/coresight/coresight-tnoc.c | 97 ++++++++++++++++++++++++++++
->  1 file changed, 97 insertions(+)
+> no, we shouldn't hard-code kernel version for feature detection (but
+> also see above, I'm not sure this API should be added in the first
+> place)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-> index ad973749250644760adc4dfd855240026d0a744c..24b1add4c921866b944d756e563d50b4172d583a 100644
-> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
-> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-> @@ -112,10 +112,107 @@ static ssize_t flag_type_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(flag_type);
->  
-> +static ssize_t freq_type_show(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      char *buf)
-> +{
-> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +
-> +	return sysfs_emit(buf, "%u\n", drvdata->freq_type);
-> +}
-> +
-> +static ssize_t freq_type_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf,
-> +			       size_t size)
-
-No improvements. You got here comments and you got also later my
-complain that yo missed comments already.
-
-You keep ignoring received feedback and that's a no go for me.
-
-Maybe process needs to be improved, so reach to your colleagues and
-learn how to interact with upstream. There is very comprehensive
-internal guideline in Qualcomm, so follow it carefully.
-
-I expect still to respond to my original comment or implement it fully.
-
-Best regards,
-Krzysztof
+> >
+> > > pw-bot: cr
+> > >
+> > >>                  break;
+> > >>          case BPF_PROG_TYPE_LIRC_MODE2:
+> > >>                  opts.expected_attach_type = BPF_LIRC_MODE2;
+> > >> --
+> > >> 2.43.0
+> > >>
+> >
+> >
+> > --
+> > Best Regards
+> > Tao Chen
 
