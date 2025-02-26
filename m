@@ -1,114 +1,179 @@
-Return-Path: <linux-kernel+bounces-534721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD858A46A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:56:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16E8A46A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0413AD587
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E577F16D89C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B34236A62;
-	Wed, 26 Feb 2025 18:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369BD236A7B;
+	Wed, 26 Feb 2025 18:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DTrVl07I"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YaNvZkTn"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7759F236449
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4175236A70
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740596190; cv=none; b=savRafudg7nwdW7BZ+z4xX0VXCEKGbia5kT57HyPG0cdT4OeaAI8dLPyUU8rDIdMEEFUxSWZz2atk57Jp+7BJDYRH62haS74yjPVdD8LAx5VJVHYEhb+DT7YaX0drB1vE3OFaA3otP1cOiAtLSckBxY9ZPEkl6OhB1n1+f5GzMo=
+	t=1740596204; cv=none; b=UjA1ddV2tuJcnQcVa5Y7ysHxkyGUJ2jQZExmoa3iXyB2VgWijMzo0cPM4SunX/V3U8NmWuNL7pJE62M2ibGkv/lw0Fadc+CHRWDCPQ2AFg3SAIXvfbF9FgpqvoeoeX+QUMrnYVCIhmjRUCsvcXQJY5muGoOdL8PL7OqE0nja0v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740596190; c=relaxed/simple;
-	bh=EUlIfdeF1pzupry08mNxqfWtBGYYyvkzaYg8I7GMfQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uce8qilppa8rwugnZPDS/djzPhcQqX06sNDNpg29N8/MCIPfVJzZqICtoRWchbeeB9RFhJw0BdZUMYTinR98SBFcayeKarvxwx1U17QlrEcv2b1JLAWq6f+9Vp190PKAveHuBX/O4DkAwmsg2fhpdu1YzY93RE9te2dnh84fTxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DTrVl07I; arc=none smtp.client-ip=91.218.175.175
+	s=arc-20240116; t=1740596204; c=relaxed/simple;
+	bh=BfvB7Ae2SjINcTkge75atqrzDzgDgJ2AfU3Icy8j8D0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qf6enloTOK3HcQ9LMWz0I2FSjGmVNDjzJZyEuk6bfVLCsfaql++qJQC/2qz0lA/Lt06S3bBBt9NzGDRpxzshkiJQqS2QOKJbSkbFMc1dN+9Xf6QgJdzzCdiYnesNvxCsKfT0p5ZSib7DmJZuKJqwJUtU993o625omYB0bBwwkrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YaNvZkTn; arc=none smtp.client-ip=91.218.175.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 10:56:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740596186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BSZAKZJBtmXPfCIzyN+pyGhW+GDpOa1dgPvIqwhe5V4=;
-	b=DTrVl07ICp5qpVt9MAbJRYr2jB6odrQGw25//j+jiz92ZneaTgdDrKxpiezmpU/LqmQ43I
-	JALYeNQ0rzYI+D5/Kg7jn9ve6YZsWTOq2pUMBN/fF/SjaKuW4hlJPRhK+IMYGRaD01KVOD
-	/BMsU7qHDH6aVQa/frsYmyPqUVcg77s=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] KVM: arm64: writable MIDR/REVIDR
-Message-ID: <Z79j1ckWLx_Hwqct@linux.dev>
-References: <20250218163443.32836-1-sebott@redhat.com>
- <Z7zxSdW5b6rqe2bt@linux.dev>
- <b2b015de-569b-2cdd-8ec3-8c8690ff950b@redhat.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740596200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N8k5YcDw/4VVVoJt0g7ZtdcJRICdTIVq9GtV33GN43Q=;
+	b=YaNvZkTnOHDLxyQIGgKvqM0HAojGOASBbcB6efdVyccFg/kHmuLMQSGnAfjxgT7154Nqss
+	Gyq8YeI88LRUDOrnIYbtZGZGksf58O/nV3chzVwf2utfExIgizxXtT0eOVYUb2tGAAx4v/
+	14L6ljsqjbvbLMdzmnP0hqDnEJvp+zg=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in zswap_cpu_comp_dead()
+Date: Wed, 26 Feb 2025 18:56:25 +0000
+Message-ID: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b2b015de-569b-2cdd-8ec3-8c8690ff950b@redhat.com>
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 26, 2025 at 05:47:53PM +0100, Sebastian Ott wrote:
-> On Mon, 24 Feb 2025, Oliver Upton wrote:
-> > On Tue, Feb 18, 2025 at 05:34:39PM +0100, Sebastian Ott wrote:
-> > > Based on prior discussion [1] this series allows VMMs to change
-> > > MIDR/REVIDR to enable migration between machines that differ in
-> > > these registers. Since these are used for errata handling the
-> > > errata management series [2] is a prerequisite for this one.
-> > > 
-> > > changes for V3:
-> > > * handle VPIDR_EL2 as part of vcpu ctxt - thanks Oliver!
-> > 
-> > Thanks for respinning. While your changes are looking good, as I got
-> > ready to apply this series I wound up peeling the onion a bit further
-> > and have a few more concerns:
-> > 
-> > - Current KVM allows guests to read SMIDR_EL1 despite the fact that we
-> >   do not support SME (this is part of TID1 traps)
-> > 
-> > - The "invariant" values that KVM presents to userspace originate from
-> >   the boot CPU, not the CPU that resets the ID registers for a VM
-> > 
-> > - A VMM that wants to present big-little can do so on current KVM by
-> >   affining vCPUs, but cannot with this series
-> > 
-> > All of this is to say, I think your series is going to collide with
-> > the pre-existing pile of crap we have. I'm going to pick up these
-> > changes and rework them so we can send a fix for #1 to stable trees and
-> > (hopefully) avoid breaking the old "invariant" behavior.
-> > 
-> > I'll post what I have as soon as I test it, hopefully we can get this
-> > shaped up for 6.15.
-> 
-> Sry, for the additional work I've caused. I gave what you have in next a
-> spin and it looks good so far.
-> Thank you very much!
+Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
+the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
+(through crypto_exit_scomp_ops_async()).
 
-Don't apologize -- it isn't your fault what we had already was a mess! :)
+On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
+(through crypto_scomp_init_tfm()), and then allocates memory.
+If the allocation results in reclaim, we may attempt to hold the per-CPU
+acomp_ctx mutex.
 
-Thanks for kicking the tires.
+The above dependencies can cause an ABBA deadlock. For example in the
+following scenario:
 
-Best,
-Oliver
+(1) Task A running on CPU #1:
+    crypto_alloc_acomp_node()
+      Holds scomp_lock
+      Enters reclaim
+      Reads per_cpu_ptr(pool->acomp_ctx, 1)
+
+(2) Task A is descheduled
+
+(3) CPU #1 goes offline
+    zswap_cpu_comp_dead(CPU #1)
+      Holds per_cpu_ptr(pool->acomp_ctx, 1))
+      Calls crypto_free_acomp()
+      Waits for scomp_lock
+
+(4) Task A running on CPU #2:
+      Waits for per_cpu_ptr(pool->acomp_ctx, 1) // Read on CPU #1
+      DEADLOCK
+
+Since there is no requirement to call crypto_free_acomp() with the
+per-CPU acomp_ctx mutex held in zswap_cpu_comp_dead(), move it after the
+mutex is unlocked. Also move the acomp_request_free() and kfree() calls
+for consistency and to avoid any potential sublte locking dependencies
+in the future.
+
+With this, only setting acomp_ctx fields to NULL occurs with the mutex
+held. This is similar to how zswap_cpu_comp_prepare() only initializes
+acomp_ctx fields with the mutex held, after performing all allocations
+before holding the mutex.
+
+Opportunistically, move the NULL check on acomp_ctx so that it takes
+place before the mutex dereference.
+
+Fixes: 12dcb0ef5406 ("mm: zswap: properly synchronize freeing resources during CPU hotunplug")
+Reported-by: syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67bcea51.050a0220.bbfd1.0096.GAE@google.com/
+Cc: <stable@vger.kernel.org>
+Co-developed-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+
+v1 -> v2:
+- Explained the problem more clearly in the commit message.
+- Moved all freeing calls outside the lock critical section.
+v1: https://lore.kernel.org/all/Z72FJnbA39zWh4zS@gondor.apana.org.au/
+
+---
+ mm/zswap.c | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index ac9d299e7d0c1..adf745c66aa1d 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -881,18 +881,32 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
+ {
+ 	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
+ 	struct crypto_acomp_ctx *acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
++	struct acomp_req *req;
++	struct crypto_acomp *acomp;
++	u8 *buffer;
++
++	if (IS_ERR_OR_NULL(acomp_ctx))
++		return 0;
+ 
+ 	mutex_lock(&acomp_ctx->mutex);
+-	if (!IS_ERR_OR_NULL(acomp_ctx)) {
+-		if (!IS_ERR_OR_NULL(acomp_ctx->req))
+-			acomp_request_free(acomp_ctx->req);
+-		acomp_ctx->req = NULL;
+-		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+-			crypto_free_acomp(acomp_ctx->acomp);
+-		kfree(acomp_ctx->buffer);
+-	}
++	req = acomp_ctx->req;
++	acomp = acomp_ctx->acomp;
++	buffer = acomp_ctx->buffer;
++	acomp_ctx->req = NULL;
++	acomp_ctx->acomp = NULL;
++	acomp_ctx->buffer = NULL;
+ 	mutex_unlock(&acomp_ctx->mutex);
+ 
++	/*
++	 * Do the actual freeing after releasing the mutex to avoid subtle
++	 * locking dependencies causing deadlocks.
++	 */
++	if (!IS_ERR_OR_NULL(req))
++		acomp_request_free(req);
++	if (!IS_ERR_OR_NULL(acomp))
++		crypto_free_acomp(acomp);
++	kfree(buffer);
++
+ 	return 0;
+ }
+ 
+-- 
+2.48.1.658.g4767266eb4-goog
+
 
