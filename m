@@ -1,170 +1,98 @@
-Return-Path: <linux-kernel+bounces-534177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D6EA463D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:56:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9F7A463D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093BE17A194
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C9C17A194
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF4222332C;
-	Wed, 26 Feb 2025 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rwVvg8dt"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFE12222C5;
+	Wed, 26 Feb 2025 14:55:43 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23DF2222D0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBCD221736;
+	Wed, 26 Feb 2025 14:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581758; cv=none; b=TVnFw6jaWarH6yyd3dsjFC6M10BsFwtOem9srRnP6/tYDQsYU6FjVWymvx1AzwKrUiXayiuCwf5KDiXNs9bV7jEhg357bBBzkPG20AdP1hGL06/xmvh6OrddAgSj/07KdqHxk+aAAT0I8Y+zPSUOl1f9/MP+A7Y4If+zXH1unds=
+	t=1740581743; cv=none; b=uFA0dKg94Wr79ecC6Zr0JEo0ZFuLwfmVvpymObJAaNL7P/iPI1kDEnAPmf+9jlsxt1y8HTa6QGRyfNDysu25D28cSsuYWzQGSj3LNekN8ZajkNK4CDxJSHuul2EZj0rxI00D4urOjbim9RisRvTOuZZhSi5xcenWa7q7gdphK7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581758; c=relaxed/simple;
-	bh=zuIqAKgte0TNhWMQcUFuXFOS6ml4+tb80DkOVV5ygEE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qEzgh8PheRijMN1R8zM3oVDC8ciMlg9ivm8c4EYud/8Ny+NYcKHkU3PDLnnKDh7y57xGz/U5iPYkqRWYQmDVQ1sZU+Zzr36/owsCcTTZKflKonG6+vY15P/7aigpe303Hh7q4p2sci6Tzh46r3JIOsMFa2HNxb1XNHUYXbYiqS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rwVvg8dt; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390d6b29ba4so421783f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:55:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740581755; x=1741186555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Lh9ErM/3Q+yhun0mC3IR97PyDjsGz9W3qYuqQOhapo=;
-        b=rwVvg8dtSyjqf2cBJQZYtLAdMkjb48y/F25Ks32i8ZC6Jrw6pg1JhcNtpfjTxBUIDz
-         tqAzwdl5M56k42XPFbA0V7bRuJb2fRYb76MycjSNk8ay3mcj09DBpaEhs+cmpD105/YC
-         Bvlby+uU6pkF3nGCcEKY9FZSTInmumVDbk0s2fiIu+n42Lh550vKYTunV5f2NTcKELRi
-         rnWj1QApVPpaX8+ySKH3sImPTNAH8XzLv+PGvkx+h0/UyHunC+3Epwr82Qj5iJyJFSkk
-         NpnUBqRhwTFVSIBip0F374k9JlyqBvAs7U9WDtr2S4C3t0FqYF/VUx0iu5+arxvoKAZC
-         YJ5Q==
+	s=arc-20240116; t=1740581743; c=relaxed/simple;
+	bh=kqe+6WP8zwuAM8lStwswFPaBIe7m1+DTxkz3F6unuCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVAL1NGPYylcy51VEB0Id9udYiAqgpY79q1XJtsCbpCmMJpx1rkWfxSsIHGeOxp55+vYIJfbAedaWAxeOhCjbW8zMexaR7J9U6MqCDBseSAeNZ408jjewx89dpHqIIPjR3goJqRWulg0EdhctlTWIb8Ip3DKvdGRibhVAYkMmN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2233622fdffso13127965ad.2;
+        Wed, 26 Feb 2025 06:55:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740581755; x=1741186555;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Lh9ErM/3Q+yhun0mC3IR97PyDjsGz9W3qYuqQOhapo=;
-        b=ZOXm6jvx9p7+6hObmpZ64N86c/ZeHTdcsccL7oHJ2atUFqA+t9/LMrto7hrov+i7yO
-         yv2lbyMGuwor0krKP9s78pJLKKIbU2wrQEGEqipEzGDhVqY2jMsHTpeW2BrRf+5ViQoo
-         6beJS+DI22grGyyOuAAxLZF2WWXSOyuytQJ1dgBmzpCwHDGkU/RirtMs6rxaSmqe2Jx6
-         YBB3GU0mXJjyH0/aEvu5rEYZ0n3Oro2Gqxlua65jX0Va2MUugOgFnTrNeINnyO4KlqEW
-         mstt4DSwHjE/78TErvUqXxzdThraxs9nQJfPwPb8i5iHArVJnX+Q9eZT5rZkYiBB6vTX
-         nY2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUToK6kdT8NJmv9ZcnymR472e3lqPuuuxC4SbsnOAzp2HlAX/qaHLqKO+6E00GSKDu1j7vF8nlGlH5JTwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjepd/aRcdZtchBSr3jXBIGUXCiFLkHdRrFF1RInGM2C23zVT0
-	10qwUBQBTEyt3O3WFRXtmWUbCzYlGhuRnjZ9619tD736PwOEZQQiUkM8wF7mDWI=
-X-Gm-Gg: ASbGncs3VO86Heq7uNL7ZtAFEQO6jk2Cl2Aq5Rf9Ev3YLdHOysRUlegEjHA68BjM04H
-	/nzDcQju8tdAtlAz35A1L1vtoObFGn9CWWz2+L6UrZU8RJ8UktTVbIFLH3nphAqrKm2M+T00vpw
-	1LfMdobgii0iDAlH0VMhn/s8lI8rQ16FQPWB9mYbIwL7gclBXIfUY3TAE/YAgkeJqtEm6iTVvfX
-	4QO4SCXSdyWgG39u0mmELVkTVLCztbkwf7vvRApNcw2c0rqgz72V6Cw0ZrN67aHEgtxtR8yCWZM
-	kKTuLX/XYpgVIKkQJY0sLS42xEo=
-X-Google-Smtp-Source: AGHT+IHSR7ol++tcQ3t55KxpPADDKkuJUrc5pqPg7oVpe58mjcbGDwgbdiIc/J1H2cHUewzyAYI/RA==
-X-Received: by 2002:a05:6000:1fa3:b0:38d:d603:ff46 with SMTP id ffacd0b85a97d-38f7d1ffbfemr15478346f8f.14.1740581755300;
-        Wed, 26 Feb 2025 06:55:55 -0800 (PST)
-Received: from pop-os.lan ([145.224.66.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e71c0sm5803309f8f.78.2025.02.26.06.55.53
+        d=1e100.net; s=20230601; t=1740581741; x=1741186541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qygdnn8/rGb3p7MtdeT/GcR8Vsv7irPMGDAbFAo9qWg=;
+        b=wVftFEvIU+SPPR6OVdvlIjsuOXVDDNHiB1panqSR5eoC0X7EZoU+xCbVxPIReZSJeX
+         iNq7b1s1HpSYNd+wWli1YwP/Jp+AF3a0gqp+AA9QNHZIfBc6+Db1jKeWnl9Fu8ulTwLd
+         WR/u76D2J4M9MI7NuK1g0ZcB7upRB0EeWSA8bvD/qyKw1qO/hUG8zmI0/vI2rjgvo378
+         1xfaHtLo+cVBJjkJjhITNAPH+YPfScQiRGnuFkSvx2TaoushX+vIdw08oozhmH6CDA84
+         mcwdggTSy4wZUaKoyXWRUbyxsZPzlHg2f723u9mGSjGboxoKd6GimJqnmDLc0JApQru0
+         SHTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhsQVsfQaoOQ5ZeT2yIYfQebBpSlvHOjbRVizV9SwatrBShSTF97nLO5ngUUm181z/A39raEpTplXJ@vger.kernel.org, AJvYcCWtRCCqNVcWIk4BVRrjOJaKzHG4LIM+x3A61jwRnIPanTdVxs1zc7vEQe8YztBZANCAvOeNcfXUFbBqynz8@vger.kernel.org, AJvYcCX7nSJrNm9watK4L3sW8nx05SY/3VRHretviFD1z6KvbVSo9sn1WUnmfaG1r/ehnv0MNAt+imTqn0Yn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHc8n76jQSr2mDOmUy538+GAVgiU0p9bWR/0ftK2nyXVPpSJ+P
+	t9zG63SHZHIoTD7zdbOJh90PBE+scmrATAIpGPgzqW/ue/yrbFzs
+X-Gm-Gg: ASbGncv+XdAcMVItF7hYESmikrG2SF7EjabTdxtZfeSuHS3jBXg94QALBt0tJKNgIs5
+	+n5DtEmCEisH78XjIeSuob9aUUdSpWLcAvQpaCk/kbrtsP3CJD5XZDucexfq0bk5nnYdsxRimo/
+	C6Yju+WJYxJwgcuRYRnirbHULH/vDRmW0TeOJvewWlHHIST+wCFDCoEbYho8PQ3YaT1HfSNpyYX
+	yCT/GIRIpRJe/XtVNVR3cYMbibEpMjBu19a4p7y1K1aCdUB8WTMukMcGiSIKqXjZyc0l3YapOU4
+	8ReerGQxr69miNRycsgj/IsvfGxDdUFKzxZlH+/veGAFyEjPohgUb1QpbKsD
+X-Google-Smtp-Source: AGHT+IHpReDZSPPm6VjjIZPy7MkI2n87DOyqv+KvtWFP7LuZsR9/Xzl8+SaiWZs9PmK6WFRJ4senxw==
+X-Received: by 2002:a05:6a00:1709:b0:732:2967:400 with SMTP id d2e1a72fcca58-7347910977emr12444159b3a.12.1740581741225;
+        Wed, 26 Feb 2025 06:55:41 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7347a6f761fsm3544593b3a.47.2025.02.26.06.55.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 06:55:54 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org,
-	irogers@google.com,
-	namhyung@kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] perf stat: Fix non-uniquified hybrid legacy events
-Date: Wed, 26 Feb 2025 14:55:25 +0000
-Message-Id: <20250226145526.632380-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 26 Feb 2025 06:55:40 -0800 (PST)
+Date: Wed, 26 Feb 2025 23:55:39 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: fsl,imx6q-pcie: Add optional DMA
+ interrupt
+Message-ID: <20250226145539.GA3691935@rocinante>
+References: <20250225102726.654070-1-alexander.stein@ew.tq-group.com>
+ <20250225102726.654070-2-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225102726.654070-2-alexander.stein@ew.tq-group.com>
 
-Legacy hybrid events have attr.type == PERF_TYPE_HARDWARE, so they look
-like plain legacy events if we only look at attr.type. But legacy events
-should still be uniquified if they were opened on a non-legacy PMU. Fix
-it by checking if the evsel is hybrid and forcing needs_uniquify
-before looking at the attr.type.
+Hello,
 
-This restores PMU names on hybrid systems and also changes "perf stat
-metrics (shadow stat) test" from a FAIL back to a SKIP (on hybrid). The
-test was gated on "cycles" appearing alone which doesn't happen on
-here.
+> i.MX8QM and i.MX8QXP/DXP have an additional interrupt for DMA.
 
-Before:
-  $ perf stat -- true
-  ...
-     <not counted>      instructions:u                           (0.00%)
-           162,536      instructions:u            # 0.58  insn per cycle
-  ...
+Applied to dt-bindings, thank you!
 
-After:
-  $ perf stat -- true
-  ...
-      <not counted>      cpu_atom/instructions/u                  (0.00%)
-            162,541      cpu_core/instructions/u   # 0.62  insn per cycle
-  ...
-
-Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
-
-Changes since V1:
- * Move the existing evsel__is_hybrid() test earlier instead of looking
-   at the PMU of the evsel. Looking at the PMU creates a dependency that
-   the PMU is assigned which may prevent refactors in the future.
-
- tools/perf/util/stat-display.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index e65c7e9f15d1..e852ac0d9847 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -1688,6 +1688,12 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
- 		return;
- 	}
- 
-+	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
-+		/* Unique hybrid counters necessary. */
-+		counter->needs_uniquify = true;
-+		return;
-+	}
-+
- 	if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
- 		/* Legacy event, don't uniquify. */
- 		return;
-@@ -1705,12 +1711,6 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
- 		return;
- 	}
- 
--	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
--		/* Unique hybrid counters necessary. */
--		counter->needs_uniquify = true;
--		return;
--	}
--
- 	/*
- 	 * Do other non-merged events in the evlist have the same name? If so
- 	 * uniquify is necessary.
--- 
-2.34.1
-
+	Krzysztof
 
