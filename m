@@ -1,173 +1,201 @@
-Return-Path: <linux-kernel+bounces-534007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFA9A4616D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:57:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F14ABA46164
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7127117B374
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:57:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E27175ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC3822154F;
-	Wed, 26 Feb 2025 13:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF6F21D3FF;
+	Wed, 26 Feb 2025 13:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K05hIEVf"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="lAYR+mu/"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA1622EE5;
-	Wed, 26 Feb 2025 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0466118CC10
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578210; cv=none; b=VioS7ibbhBcNlJaAT/vpyxRo/0snDhhqNuOZp5OhNnLGoo3jZmYWEnEmPntUWDZRqEwJhjiG8pL0/HRbgoFp8Sdx+J4PpR5ITA1NXeSXNuodzWWeCAuivf6nEVAc9vFX1OjaNhsfnEa+BM9lT+O4pFokzmmNorK6FBc04Hp0vOE=
+	t=1740578154; cv=none; b=PkCZmgmjxPAeaN9hlydmpWVM+SpZE18wyIRAzmiDnUID2ppudBv221hRw5/11qxoTEzS35/fOYjXDP65bPR9E1B9WWgzNf3WreqviikXEN/PuHtMr2zlojxe632vLqb8oG07q8dFtGmmmrgD57wixcUu0Zv05kg141ePMQvJVV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578210; c=relaxed/simple;
-	bh=xLApNdjWQ4KRERmyEa8v+pqECrHbj6oX7g6m845DTIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PWzBo7nmlShWq3lRU0bPVV8CS7eXT7AZJsxn0T87ZMMWdmFLVd5nsL/1Gvs/ygFZuZNjgu03Ez4x1Oa+bdK+JzgahHPLx+4z3UB2xMqrjAvUWXBd/cs6X12V6FUistE9JpzowUBzB5uwYtxL6H4YJuvdCuYcxEcSc5JKftKm54o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K05hIEVf; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43690d4605dso43432245e9.0;
-        Wed, 26 Feb 2025 05:56:48 -0800 (PST)
+	s=arc-20240116; t=1740578154; c=relaxed/simple;
+	bh=tpF74Bc8nkP8DDuqSqjtD4uoz4vOJq3ZHVih9iTzIt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h/xWig4n5lHlKIdcmH8+Ku6FptFl10+Ve8UiHBc4r3HN134o9olxhT+guX9jfcjjhLVnGreOk8/81B4XB2VclBe9P9e8iw2VBB54RGnaoAqri+SkBNfZzV2qCZ7FICYo6DMJKffg/l+DdKgf3SumdSM/fzovee5a7d6291X+qUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=lAYR+mu/; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7be49f6b331so661272285a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:55:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740578207; x=1741183007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLBcLYAUEEJtPk7aexes/iel8Kg1Zz6U1ofbl7NXVd8=;
-        b=K05hIEVfTOfo2CC3VlQCR5Pmntwe+za7/fcBKUkj+zghKEc8RArg7mF7N4FQfYv1qQ
-         KFchXByGZT4hIqRuzw1B7wXJbIShX+tulWRfGN9+rYPmTsXrbszX6hIJzWWg1T7rJI13
-         +yvsT1EjrMXLvuwqAgANNWlyeu0dBf1wxBjr6JQht7k6ktw4d1bSfrkvx3kObMfhEpfa
-         9opNlXp+W7nwRNW8qHSCzFrYMQHzjO0oHM8C4TOBuwlSQ/dJN4QgBaK5iacqW8bM01g7
-         pY7DDbfXscDcnSGJEvPxZ5d2s8V4oCrDy66AawObCJuKkmRbrWbiKhF3nrj1KQI4vFB0
-         0Gpg==
+        d=fooishbar.org; s=google; t=1740578152; x=1741182952; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WhUvj0RFZy69SqBW6GfxIwgPOzkEGSiBv5ZaFs5vLVs=;
+        b=lAYR+mu/irYh3vdlb5SDeFq7CpMNztR93KukqXdFXVPGZ9KC9Ufw9Ig9OZPgBYa1Md
+         8/ElnANDGHczu4G9bQY4fTcZrGUfV9ngg/w5UytacABQ8tyQcWycaQ3eUvlxMs2cszyd
+         OWT20NMpvSSewqYNMfzgbUQLZmU8q1zqhTiRhPUoiLDJVNvkp7ggp0tqjoAsVDxqtIKk
+         D6lfq+gNBAuzxeeQCW5usUrjzubXBrmqPO2R1q2NFTeJxfe38vtZMik/iasIbQQMbuU+
+         AiS25zMxtyGLX7EvYXg3Btz6xRGNSl5V4LstNOZVttiftLGyaRk3pVmXPnW7TWkINdgh
+         7mcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740578207; x=1741183007;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740578152; x=1741182952;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TLBcLYAUEEJtPk7aexes/iel8Kg1Zz6U1ofbl7NXVd8=;
-        b=W6aIaZrJw/5/lpyRXVk3wmPxE/kX7mBZLo58hMTClY6dulrk0DHv8AMa9SH1ekYXRu
-         OLPQjSLgkfmXwmuN44J9L+Iq/RAQEpjHwGFeluzMJ42Y018NHUubxzblyZvZg0yP9xK/
-         eeLfdY/mgh5KVoqnCaXKF76oO60XJwGWkXqQb7GeOyS03xV1MQPLtfrsjlyI1129d9Ma
-         xAxpdOulXCLqFqIrrpmlwMNndvKZ0camNlg7WA+xcEDj0fEY88ORGZ0w5XubqZVvZosP
-         H1kLLwO6S5ZBmN8+pqGO38qbUTEO3Hb/I+jpI0cJ/P7n/6St3ptJQsfFoVPpCDcAQ/ZN
-         a66A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXRehgAGh3IQz1j6bp8IVdqEMf4YthG/GKrQDGJJTi/gnQb47Bmjm4JsModbCycv7QyRu0t8Wg@vger.kernel.org, AJvYcCXDaxspQTbfQ8CdDWAmf5n+5TjME5i4bQBvkZJ9HCCTB4hwHCe8Hc/heVYgid3EYCA5wDM4gA2YPlBD+Ok=@vger.kernel.org, AJvYcCXp/TKbmHtkwgY59EcFdAyVJdLpQn7nw1QiYr/GUE9OSIPLDGHyi6YQuiTUcF3nZONtw/DbWBNcYviwWGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxre3713GRj31KaHM6UNyTUJb2fQKM8qtG8KTBfdbmDFr1zyijU
-	9CsHy777RV/cr8b4mXS+uTTVFPh372fXX0V4/y7NGbpst1hzjcwB
-X-Gm-Gg: ASbGncvPj1v9H6euUbjfjOEAdWXvrjBrEQBQPTxElMTOsQT5TbMk6gTTI8+gEB2H8Re
-	rJFQWYLqd67OAiHESg6wHZvfMTsQpbsZEQw4NKn3f3hP/INrHGzGVwadvUegqP2jcvlskEasjsH
-	jtgS8CTILE89/qTz2bd6pIMvrRo6q81kUJcsu1b9wD30ilq59zIY7xmQyHMFZJuDur0wt/Ei42w
-	jUFstkeLTfKCijdEoxLgCWGjFSlxdR7eAPBOx7wR1dRxMfprNmCz8xc2A3Gmh+FqJb+qVKt6Qco
-	hUcrQK5nZPnVW7Zv5u7A++JnUkXnwtHWGox0ODeswTaVxZ9ilHugnH4iQU4a/hyDXz5tx9AoqBS
-	YaA==
-X-Google-Smtp-Source: AGHT+IEcaG42hm1M4DeIg13bxZaCubKXi8JgmCH5B4XKyuqtjyyh+TfBNwfNvKbUqdkw6bzG+yKHrA==
-X-Received: by 2002:a05:600c:1ca7:b0:439:8185:4ad3 with SMTP id 5b1f17b1804b1-43ab0f72b36mr58211405e9.27.1740578207163;
-        Wed, 26 Feb 2025 05:56:47 -0800 (PST)
-Received: from localhost.localdomain (211.252.11.109.rev.sfr.net. [109.11.252.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532d86sm23088645e9.14.2025.02.26.05.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 05:56:46 -0800 (PST)
-From: =?UTF-8?q?Adrien=20Verg=C3=A9?= <adrienverge@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Kailang Yang <kailang@realtek.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Joshua Grisham <josh@joshuagrisham.com>,
-	Athaariq Ardhiansyah <foss@athaariq.my.id>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Chris Chiu <chris.chiu@canonical.com>,
-	=?UTF-8?q?Adrien=20Verg=C3=A9?= <adrienverge@gmail.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] ALSA: hda/realtek: Fix microphone regression on ASUS N705UD
-Date: Wed, 26 Feb 2025 14:55:15 +0100
-Message-ID: <20250226135515.24219-1-adrienverge@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        bh=WhUvj0RFZy69SqBW6GfxIwgPOzkEGSiBv5ZaFs5vLVs=;
+        b=E8ZW7edGBaSzdmqEMqt2LImg6JR9zmNt9a6xUpjsLxq9a3B1YeH843G9dR9on+6ptD
+         lX0nZZnu55wIaiwjbsH8UG6eTQ/Mg0HWfKfswSOE50jAK9RZod07sZMDiJ8e6hiaN+ve
+         jSDtxMi3H9kz+7xctd6SOjJP+32yNuYgtyr6Pk/T0r2HrlamoOCWuWfC04dc4GbeKPix
+         PvRQcWtb/+DETRVL6pZrR6hyJzwe23c8vtmhhN0sykQazvW99EZKVbix17RvQHOvTgBz
+         mVbYo4pjFl5nEhFLjBCgQSu+IMsrAOXsZTEgPyKTeYs3aXuxUpOVn6r15U1zGRzvpkEp
+         kDPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnOmdQEfSd/pi4R7UfYrPrKKeNdmvXkH++s8FpSgfoWtok33oSAB7MMXJsxIeyyvNe0bztcWG6h88sqos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBqHMfo9SpNDsDf4iDFmIre4pHkrGW03nsDI5v8S+M0jQD2fB3
+	o4q8PbUtiv8MsL++dIwwmmYI6diyXZ9O3TscFDP8brEZZO9elbQPLG2JvME8Qgz4WTr8bzNJfbO
+	jzzlC7+Q5J8pDaCz5jK1qxVAe92kmksqTlYolBQ==
+X-Gm-Gg: ASbGnctVr/c4xuW/kpmAfQvfKhlvQw+7EyDIJmwe98ZnxpHM7/TcMloksSR5ZU6m1Fm
+	ZKKcw08fUirQAOQ+j1ckIOyMbJo3QNVmePnuF0pzg+ange/Nt54OB5ORZxyQfg95PULaamhymQx
+	evfn2CupeDjfKedIm8JYw2Y2E=
+X-Google-Smtp-Source: AGHT+IF9JNVuuN8bPIEslvqP08Rm/fPznkmgjxA71qYbkp5tsuuoVM8OWD850Rm891NlxodE4XcG6gIPGkpGJXT6eNs=
+X-Received: by 2002:a05:622a:1a1b:b0:472:1812:23d3 with SMTP id
+ d75a77b69052e-47224716f88mr242782461cf.10.1740578151740; Wed, 26 Feb 2025
+ 05:55:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io>
+ <CAPj87rO3N2=3mNQg8-CUF=-XTysJHLmgArRKuvDpdk3YZ2xMvQ@mail.gmail.com> <Z75BwWllrew-DIlS@blossom>
+In-Reply-To: <Z75BwWllrew-DIlS@blossom>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 26 Feb 2025 13:55:40 +0000
+X-Gm-Features: AWEUYZlVeaWaGooIARJfI13M5E2woUVblHaLAgLiu0Mf6aUTrS-ZPIVERoXVQWc
+Message-ID: <CAPj87rMpSbaOe0qEU8x-VFCGOvoWpyRURr=0bJ80=cdkTQiAbQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm: add modifiers for Apple GPU layouts
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-This fixes a regression introduced a few weeks ago in stable kernels
-6.12.14 and 6.13.3. The internal microphone on ASUS Vivobook N705UD /
-X705UD laptops is broken: the microphone appears in userspace (e.g.
-Gnome settings) but no sound is detected.
-I bisected it to commit 3b4309546b48 ("ALSA: hda: Fix headset detection
-failure due to unstable sort").
+Hey,
 
-I figured out the cause:
-1. The initial pins enabled for the ALC256 driver are:
-       cfg->inputs == {
-         { pin=0x19, type=AUTO_PIN_MIC,
-           is_headset_mic=1, is_headphone_mic=0, has_boost_on_pin=1 },
-         { pin=0x1a, type=AUTO_PIN_MIC,
-           is_headset_mic=0, is_headphone_mic=0, has_boost_on_pin=1 } }
-2. Since 2017 and commits c1732ede5e8 ("ALSA: hda/realtek - Fix headset
-   and mic on several ASUS laptops with ALC256") and 28e8af8a163 ("ALSA:
-   hda/realtek: Fix mic and headset jack sense on ASUS X705UD"), the
-   quirk ALC256_FIXUP_ASUS_MIC is also applied to ASUS X705UD / N705UD
-   laptops.
-   This added another internal microphone on pin 0x13:
-       cfg->inputs == {
-         { pin=0x13, type=AUTO_PIN_MIC,
-           is_headset_mic=0, is_headphone_mic=0, has_boost_on_pin=1 },
-         { pin=0x19, type=AUTO_PIN_MIC,
-           is_headset_mic=1, is_headphone_mic=0, has_boost_on_pin=1 },
-         { pin=0x1a, type=AUTO_PIN_MIC,
-           is_headset_mic=0, is_headphone_mic=0, has_boost_on_pin=1 } }
-   I don't know what this pin 0x13 corresponds to. To the best of my
-   knowledge, these laptops have only one internal microphone.
-3. Before 2025 and commit 3b4309546b48 ("ALSA: hda: Fix headset
-   detection failure due to unstable sort"), the sort function would let
-   the microphone of pin 0x1a (the working one) *before* the microphone
-   of pin 0x13 (the phantom one).
-4. After this commit 3b4309546b48, the fixed sort function puts the
-   working microphone (pin 0x1a) *after* the phantom one (pin 0x13). As
-   a result, no sound is detected anymore.
+On Tue, 25 Feb 2025 at 22:18, Alyssa Rosenzweig <alyssa@rosenzweig.io> wrote:
+> > > These layouts are notably not used for interchange across hardware
+> > > blocks (e.g. with the display controller). There are other layouts for
+> > > that but we don't support them either in userspace or kernelspace yet
+> > > (even downstream), so we don't add modifiers here.
+> >
+> > Yeah, when those have users with good definitions matching these, we
+> > can add them here, even if they are downstream. Anything the GPU would
+> > share out of context, or the codec, would be good for this.
+>
+> Sure. The mentioned "other layouts" are for scanout (GPU->display), and
+> apparently the GPU can render but not sample them... You can imagine
+> about how well that would go without a vendor extension + compositor
+> patches......
+>
+> (Currently we use linear framebuffers for scanout and avoid that rat's
+> nest.)
 
-It looks like the quirk ALC256_FIXUP_ASUS_MIC is not needed anymore for
-ASUS Vivobook X705UD / N705UD laptops. Without it, everything works
-fine:
-- the internal microphone is detected and records actual sound,
-- plugging in a jack headset is detected and can record actual sound
-  with it,
-- unplugging the jack headset makes the system go back to internal
-  microphone and can record actual sound.
+Heh, impressive. Are those the twiddled-but-not-tiled ones?
 
-Cc: stable@vger.kernel.org
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Chris Chiu <chris.chiu@canonical.com>
-Fixes: 3b4309546b48 ("ALSA: hda: Fix headset detection failure due to unstable sort")
-Tested-by: Adrien Vergé <adrienverge@gmail.com>
-Signed-off-by: Adrien Vergé <adrienverge@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 1 -
- 1 file changed, 1 deletion(-)
+> > > +/*
+> > > + * Apple GPU-tiled layout.
+> > > + *
+> > > + * GPU-tiled images are divided into tiles. Tiles are always 16KiB, with
+> > > + * dimensions depending on the base-format. Within a tile, pixels are fully
+> > > + * interleaved (Morton order). Tiles themselves are raster-order.
+> > > + *
+> > > + * Images must be 16-byte aligned.
+> > > + *
+> > > + * For more information see
+> > > + * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
+> >
+> > This writeup is really nice. I would prefer it was inlined here though
+> > (similar to AFBC), with Mesa then referring to the kernel, but tbf
+> > Vivante does have a similar external reference.
+>
+> Thanks :-) I wasn't sure which way would be better. Most of the
+> complexity in that writeup relates to mipmapping and arrayed images,
+> which I don't think WSI hits...?
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 224616fbec4f..456dfa2b4b4b 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10656,7 +10656,6 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1043, 0x19ce, "ASUS B9450FA", ALC294_FIXUP_ASUS_HPE),
- 	SND_PCI_QUIRK(0x1043, 0x19e1, "ASUS UX581LV", ALC295_FIXUP_ASUS_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
--	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1a63, "ASUS UX3405MA", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1a83, "ASUS UM5302LA", ALC294_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x1043, 0x1a8f, "ASUS UX582ZS", ALC245_FIXUP_CS35L41_SPI_2),
+Yeah, anything that wouldn't be exported out of a GPU API context
+doesn't need to be in here!
 
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
--- 
-2.48.1
+> Also, the Mesa docs are easier for me
+> to update, support tables and LaTeX, have other bits of hw writeups on
+> the same page, etc... so they feel like a better home for the unabridged
+> version.  And since Vivante did this, I figured it was ok.
+>
+> If people feel strongly I can of course inline it, it's just not clear
+> to me that dumping all that info into the header here is actually
+> desired. (And there's even more info Marge queued ...
+> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33743/diffs?commit_id=5ddb57ceb46d42096a34cbef1df6b4109ac2b511
+> )
 
+I don't feel strongly about this btw, was just thinking out loud, and
+also lets you move asahi.html around (e.g. split into subpages)
+without having to worry about breaking old links.
+
+> > The one thing it's missing is an explicit description of how stride is
+> > computed and used. I can see the 'obvious' way to do it for this and
+> > compression, but it would be good to make it explicit, given some
+> > misadventures in the past. CCS is probably the gold standard to refer
+> > to here.
+>
+> Ah, right -- thanks for raising that! I'll add this for v3. Indeed, I
+> picked the "obvious" way, given said misadventures with AFBC ;)
+>
+> This is the relevant Mesa code:
+>
+>    /*
+>     * For WSI purposes, we need to associate a stride with all layouts.
+>     * In the hardware, only strided linear images have an associated
+>     * stride, there is no natural stride associated with twiddled
+>     * images.  However, various clients assert that the stride is valid
+>     * for the image if it were linear (even if it is in fact not
+>     * linear). In those cases, by convention we use the minimum valid
+>     * such stride.
+>     */
+>    static inline uint32_t
+>    ail_get_wsi_stride_B(const struct ail_layout *layout, unsigned level)
+>    {
+>       assert(level == 0 && "Mipmaps cannot be shared as WSI");
+>
+>       if (layout->tiling == AIL_TILING_LINEAR)
+>          return ail_get_linear_stride_B(layout, level);
+>       else
+>          return util_format_get_stride(layout->format, layout->width_px);
+>    }
+>
+> I can either copy that comment here, or to make that logic more explicit:
+>
+>     Producers must set the stride to the image width in
+>     pixels times the bytes per pixel. This is a software convention, the
+>     hardware does not use this stride.
+
+Hrm. I guess more in keeping with how it's used in other APIs, as well
+as more kind of future-proof in the sense of not needing possibly
+gen-specific rounding everywhere, would be to pass (n_tiles_h(buf) *
+tile_size_bytes) / n_rows_in_tile(format). That gives you the same
+information as you get for other users of stride, and might help make
+things more explicit for small tiles as well? Plus would apply pretty
+obviously to compression.
+
+I know it seems pretty inconsequential, but it does help for utils
+which e.g. dump and copy content. And makes sure no-one can make some
+dumb assumptions and get it wrong.
+
+Cheers,
+Daniel
 
