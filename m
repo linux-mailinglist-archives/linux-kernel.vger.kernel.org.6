@@ -1,103 +1,190 @@
-Return-Path: <linux-kernel+bounces-533620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A88CA45CB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:10:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C290EA45CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15883A3215
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:10:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A84D7AB6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507772139A2;
-	Wed, 26 Feb 2025 11:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282BD211A20;
+	Wed, 26 Feb 2025 11:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ItN4oEdC"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="g8JJHqY1"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11C720D4FC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0F621323B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740568216; cv=none; b=V1qZ42qaeWBozLlhi/YJsYne5FhUJL/f5eivZ096r8wYawBJxZI2d6kciPzgWL0XRpA+NMgz3vGIMRaVPYk6SEUhtYdBp3OA3s6JBUPhX/PnMvL0N47WfUVgK4TdxbKy2H7vIVj9y5U0imKPfGj90xi08S0yAHwQDJmKdXI+K60=
+	t=1740568230; cv=none; b=iaH1kO7JWkrbKDxzEg2sJbVtayfN56e6bjIMB07vDTlkXvNcGClrl05dOj2ug2kg6Bcg4+sP02SnQNe47UoR2new8n10HH5M5QLLrm1OTpF+jg396KUf17gWcoLuxhajr9LctMtDYJV+2KcjtQQQ+otTsuyJzVDqL/AOXysTXkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740568216; c=relaxed/simple;
-	bh=wv94hBbdnTRJdedj2FoMPT7G6yT2DLXVF930aiuXtPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0scSsYZthLxpCsu9qxyKJ2u8xBhlPelJWAkUSPyktE+pLnCj3tRMyE+l37EDuZNu4U7LhgPH5iFncN8WLyxWweIHSK/C+LpsJUaYa0o6T+IxU8ecOjDxCwD8qedwK3MAooenYVU1D0fPRjtY2a7dqE5HZ7fLMse5lqu8ORF290=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ItN4oEdC; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 12:10:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740568211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCxMw2L0Wubw3V23lW0qdnXnu1qOyK0WFsTNRlXpsds=;
-	b=ItN4oEdCWWnUUsTW40UXF3qUpMv7WMDGDSEVkAL6r5rkM66XYGOQ4cMP1Cp/kmLJE55OHx
-	b1BAzKE08T0ZHMqxxsG+gmTkzfrL6EH0px/UZ2FhxIr1buJQomYv00a/e7zN4wmGZy0bFG
-	WVOHM0MWuLMGSY58144eXzM/0SQoKw8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
-Message-ID: <7ng76j5fqwv6rz3sxw4cjcupeel3o6loydr6mr572ecigq4ano@hbzmlrayqbkb>
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
- <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
- <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
- <20250225154607.GA18426@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1740568230; c=relaxed/simple;
+	bh=J0FW/ZpAPbGl+eGdpRYfVmEBIhxvySS/tVwrm7wt8mY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SROyq6s0nPTxrvlb+LrXb9xGI6AipJM//UYlNfbYrp0f9uAzP440Cx1hHxEhy3oB7yp+xxidWUl9e04IuHcJz5y1WmSI78XDVOVFGXAgn11Y8kosiY5NpolT3ket2NpdCwDNCC4i/w+actLnhbXowNmcBJjw13NQKKbc/+b+w6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=g8JJHqY1; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3f3f149c334so3814242b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:10:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740568227; x=1741173027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YBMoR/ArodhoSoFeh7LaWi6Owi/0ZX4Wd5Am5SNNHF4=;
+        b=g8JJHqY144jbtrjSVO1qoQkXDAtpTNgXMpqjzpnsyX1ngM+aG7uIxxwIyPea69B8AS
+         lbr/xGej6N6TdSdmgYNh6RM2x77hVcLFqZE5afe9r5ksmUXLENBQQjrOm7XqU0VVYW/4
+         sqzeFjrQbMsHwZh5C/tohLhIMpF2ZDMf9YEzDuNHNRlGJ+uoS3ZqXWYasdI2xbk9CCZq
+         VmtenI+h16mCG45xqywsqYQe+RmW1MEkrz07N4858RUz5BwB6TVsZs00M5dTddNhrh2I
+         Fd8OCE0dLZfb9LnfLMYUenwPM2ykaHP7xMS1ONGDoSjBaOUUvmIW/7r9YeruTRWNJNZn
+         P8dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740568227; x=1741173027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YBMoR/ArodhoSoFeh7LaWi6Owi/0ZX4Wd5Am5SNNHF4=;
+        b=TAnJEW+8uEYG1dA0LqkpdmbAQQLXcJVZqGvjt6pUn2xEji3eH2pAQMqW0XH6pX5VVB
+         AugDHmxsaq4r9mgXilnbpWyRg99CrbMcVlPHt+nV+FhzUx1VzxDGnl/VQQBOvUYw6lPL
+         i+h5owc+0RHGfh+T0/tG91iBzouxQBLyKjXADo0snu6IGKEwKI5yemstQih4KmdjIG0j
+         CbyH+r9iT9PzJE1GLbAHdujeu7bOByrRdrl4XX6m5HDqawXAst9XDx/ZNmgU/Npbkttd
+         785NW0ntY9KwtW9AW4z8pg0daJ7KUAACYgw5vw9v3qXJ6/oXs76O8iEcDU0kYNTnBzCV
+         yaPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxbmlRGHZtH1uXDg3TwUhAL+U/Hv+H8JCdCU5jYZxfWAdWuppYHpTf2NxxhETYuAZnjQQzmLsK/947PuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgcx2D3QYy2RslB+e7NR8qmZggHUJQ6mwPvuhusL556IaRaZ0B
+	xMeEL9LaWaAXN8qvl+7uZ9JKuuZLR0X1MijgiHYFeVuPmgP8tkoDbCnwRrkQM11IoNSi74hWuHi
+	xyS0+6730ABRQ0x3Xl5ZF6k/hykj2wBlFBM0TDA==
+X-Gm-Gg: ASbGncsdyDu8W/pqzGqM2hPsmAkv7ar4jMy8yfFrYOtm2iRqjakaThg+TMd9vdDMy8C
+	lfGr11LozrQF64qmbauxFvicxYE767KsDi5rgqA5Y0yJGRU77fHAvoPN1zq9/ieLy2QizdBUcDM
+	tuojVgRICvBA==
+X-Google-Smtp-Source: AGHT+IFY+L/f4Zs9pF53F2VadmOaBwoDscmttE66sKkMkDrENSfkvd4Uv+2+QT/1Y3Me6cp5dQ64I9SS9F3F4i971AM=
+X-Received: by 2002:a05:6808:124b:b0:3f4:1fd2:1bac with SMTP id
+ 5614622812f47-3f547e08930mr1518804b6e.20.1740568226922; Wed, 26 Feb 2025
+ 03:10:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225154607.GA18426@pendragon.ideasonboard.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250115024024.84365-1-cuiyunhui@bytedance.com>
+ <CAHVXubhapunBD_+cZ=WeEp9GPJec795xOWSnMKmh_iSH09r2Yw@mail.gmail.com>
+ <CAEEQ3wkeLrTFVqVZEAYSsROSLHzkC-EeKvuPHmW=qH3CxamwhA@mail.gmail.com> <CAHVXubhCOivB8oxG7gcCNKTfK0DgHdu721SxsyGX2E4XAjbi6w@mail.gmail.com>
+In-Reply-To: <CAHVXubhCOivB8oxG7gcCNKTfK0DgHdu721SxsyGX2E4XAjbi6w@mail.gmail.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Wed, 26 Feb 2025 19:10:16 +0800
+X-Gm-Features: AQ5f1JqM3klrVlTfvA2HKaStjUgmmSxXZxwlOv1ogVvdE4509n751aKn9XVYGRs
+Message-ID: <CAEEQ3wnu11zS+C8xfF0-gk0S5Ck-W4Ep8DuqEU-kvgsX_DTSug@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 0/3] Enable Zicbom in usermode
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: ajones@ventanamicro.com, andybnac@gmail.com, aou@eecs.berkeley.edu, 
+	charlie@rivosinc.com, cleger@rivosinc.com, conor.dooley@microchip.com, 
+	conor@kernel.org, corbet@lwn.net, evan@rivosinc.com, jesse@rivosinc.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	palmer@dabbelt.com, paul.walmsley@sifive.com, samuel.holland@sifive.com, 
+	shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+Hi Alex,
 
-On Tue, Feb 25, 2025 at 05:46:07PM +0200, Laurent Pinchart wrote:
-> On Tue, Feb 25, 2025 at 03:30:16PM +0000, Dave Stevenson wrote:
-> > On Tue, 25 Feb 2025 at 13:09, Richard Leitner wrote:
-
-...
-
-> > > @@ -605,7 +604,11 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
-> > >         if (ret)
-> > >                 goto error_release_group_hold;
+On Tue, Feb 25, 2025 at 10:07=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
+c.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 2:27=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.c=
+om> wrote:
+> >
+> > Hi Alex,
+> >
+> > On Tue, Feb 25, 2025 at 9:21=E2=80=AFPM Alexandre Ghiti <alexghiti@rivo=
+sinc.com> wrote:
 > > >
-> > > -       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-> > > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, (gain >> 8) & 0x1f);
-> > > +       if (ret)
-> > > +               goto error_release_group_hold;
-> > > +
-> > > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN + 1, 1, gain & 0xff);
-> 
-> Ignoring Dave's functional review for a moment to focus on the code:
-> 16-bit registers should ideally use the v4l2-cci helpers. It would be
-> nice to convert the driver to them.
-
-Thanks for the feedback! I will take a look at the v4l2-cci helpers.
-
-regards;rl
-
-> 
+> > > Hi Yunhui,
 > > >
-> > >  error_release_group_hold:
-> > >         ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
+> > > On Wed, Jan 15, 2025 at 3:40=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> > > >
+> > > > v1/v2:
+> > > > There is only the first patch: RISC-V: Enable cbo.clean/flush in us=
+ermode,
+> > > > which mainly removes the enabling of cbo.inval in user mode.
+> > > >
+> > > > v3:
+> > > > Add the functionality of Expose Zicbom and selftests for Zicbom.
+> > > >
+> > > > v4:
+> > > > Modify the order of macros, The test_no_cbo_inval function is added
+> > > > separately.
+> > > >
+> > > > v5:
+> > > > 1. Modify the order of RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE in hwpro=
+be.rst
+> > > > 2. "TEST_NO_ZICBOINVAL" -> "TEST_NO_CBO_INVAL"
+> > > >
+> > > > Yunhui Cui (3):
+> > > >   RISC-V: Enable cbo.clean/flush in usermode
+> > > >   RISC-V: hwprobe: Expose Zicbom extension and its block size
+> > > >   RISC-V: selftests: Add TEST_ZICBOM into CBO tests
+> > > >
+> > > >  Documentation/arch/riscv/hwprobe.rst        |  6 ++
+> > > >  arch/riscv/include/asm/hwprobe.h            |  2 +-
+> > > >  arch/riscv/include/uapi/asm/hwprobe.h       |  2 +
+> > > >  arch/riscv/kernel/cpufeature.c              |  8 +++
+> > > >  arch/riscv/kernel/sys_hwprobe.c             |  6 ++
+> > > >  tools/testing/selftests/riscv/hwprobe/cbo.c | 66 +++++++++++++++++=
+----
+> > > >  6 files changed, 78 insertions(+), 12 deletions(-)
+> > > >
+> > > > --
+> > > > 2.39.2
+> > > >
 > > >
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+> > > So a v6 needs to be sent with:
+> > >
+> > > - the fix for hwprobe_ext0_has() reported by kernel test robot
+> > > - a rebase on top of 6.14 since patch 2 will conflict with
+> > > RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0
+> >
+> > Thank you for the reminder. In fact, version 6 was sent out almost a
+> > month ago. Reference:
+> > https://lore.kernel.org/lkml/20250124035959.45499-1-cuiyunhui@bytedance=
+.com/
+>
+> Oh sorry, I missed it somehow!
+>
+> I think we can fix RISCV_HWPROBE_MAX_KEY when merging the patch.
+>
+> Sorry again and thanks!
+
+It's all good. I've rebased a version:
+https://lore.kernel.org/all/20250226063206.71216-1-cuiyunhui@bytedance.com/=
+.
+Could you help to merge it? Thanks.
+
+
+>
+> Alex
+>
+> >
+> > >
+> > > Do you think you can do that soon so that it gets merged in 6.15? The
+> > > patchset received a lot of RB so it would be too bad to miss this
+> > > release.
+> > >
+> > > Thanks,
+> > >
+> > > Alex
+> >
+> > Thanks,
+> > Yunhui
+
+Thanks,
+Yunhui
 
