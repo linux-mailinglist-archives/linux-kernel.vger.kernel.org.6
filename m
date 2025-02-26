@@ -1,116 +1,171 @@
-Return-Path: <linux-kernel+bounces-533346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B6CA458CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:49:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD419A458D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82306168877
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0474A3AACAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB9A20CCEA;
-	Wed, 26 Feb 2025 08:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AInarJXT"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7072E224225;
+	Wed, 26 Feb 2025 08:50:19 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA73520C033
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9220CCF1;
+	Wed, 26 Feb 2025 08:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559788; cv=none; b=bmsDcQ16zMhX4Fq7UH1d4CokuZKLDU6BPgz6/aFhfV8BCNTm3cTZ5oFWm9GGKRltB9yqeqwhJMv0J5ny80gJVu2xJ821jBB9Eln92l8xW3+ef4xuH2ANsjkaiuFdwfyfRXTK2NjipWdUSYYOFLnTNCAn8vQionXxXPVElrO7qRg=
+	t=1740559819; cv=none; b=iwbxmKW1OsGsVtrrwkuiCYFrseY06JN5j/qaFNGVhncOvaxiJI0Ml44Ze35moXglpiUAdVu/jQum1lnYsDE0vL1GNAjo7x2+CEdLtz8DDmQ9hb4MEbX82VPYcUyb8xWS5jONVLZkch1WizyrX/jwuoa8GrtodAUhO2po3ukbhDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559788; c=relaxed/simple;
-	bh=gFxUO1ZJeey5NNh3RZFFk7xhQJI5Unus4snehkjECRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdXNI1QMLVUrt38cS+xN6hKjl1xJ/8lQlTWu4yMX9aU6x7MyZPJX9R254a1MeZHFaAknSoXshsjZL9zpxRZH+qE9edA0ol0j3hmWlUVEqkvyQeCRfPhhiggJ2u2MW6Jnl857fbUqhuRF7Xvl0o5DyvagcltSytfCrW8Pjx/t8j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AInarJXT; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30a2d4b61e4so48021521fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:49:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740559784; x=1741164584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBWsqS/whIX9PLa8T/uKhxlw/cCkygdxChh7NsPf6v4=;
-        b=AInarJXTMZDxDBEo2U6x70mCtm7WS2qwMXaab7xlEhkpkixqPPBkLrm1yifdtnHhYr
-         5QNqFigmaxtiBaJc+Ll7gKvPUlSmt5CfGCJV5B+jgbz57QH4PNguoYvNCQE3K4KaPLRY
-         Yzxi/xICFTvH2zhvmU6tGHkP/5XN3VqMUBgF2gD+jEla/uqxevJC+xQpGQoiy6UH2Awo
-         Vxj5Kt3GJOxscsQCvTYzXLE9xTppQ5nW9h3SHhaIEnV42wIk2i8G84p3qGWUrFSqtEHn
-         QCOnbGjNKW6DWPA8bHcvrPR8ufG0fKeH1wWqxeN9/RBa1Ltrtkz5WzhBWjzE3NTavwd6
-         W4/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740559784; x=1741164584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBWsqS/whIX9PLa8T/uKhxlw/cCkygdxChh7NsPf6v4=;
-        b=NVWCSvFgnDHqeStQIpFqibEKLMmWVUwrBmXDXIOZUte61Fy6weaUNq2Z8L5ly6eVd6
-         K4V8UykV3pBqF8O/bX28LvW8ksWmREjSPt66n3ic9zw96TLYgPhvwTavtn2Ci5+sDBRM
-         oJ1eaI4ifPophJS8PlrAeM6ihrBkRcNMYWG9c+/GzwJfM3BA42Qgckhm4dgqVGVGfKeI
-         2AhWjqTNi0T+3VTb8/ugnNcRzqmi/jfwBRJoahBXpfHTxO47hzX6NX8YnGQ/8Rq0v+Zo
-         rrdnQ/r4Fv2XFaQLPLB4a4JTyiJ/XbZq5Oqp7k0X2rCuLUOTw2q73JWbNfaEawUlUBlQ
-         V0UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9kAXORjssyQDkqupgPxb/wXXS9MoFf7bpV7A8Pu0tHtNBw0ow9wtMcj9yOkqCCKBiwqZbgtLQ5TbCgOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1AAg712rcm4brubAQ496pee5VaiXzBeJFbdJfMDyU0Z/iepQ7
-	BSRvgj/KMydJerI81Uw32oZaHiMG0Zuc7QV8rSr4YBWWD3PomT1u69MnaUe8gL4=
-X-Gm-Gg: ASbGncsyh+ffwZkda5N7/1aNDGA7717YfcO3pV38h07jB9W6PbQs5uGPz2oBZguPpvr
-	hMl8zby+oIcYnqv+/gxU0G3j4bNl+RjejLBC3HFVaC5JMQXJi7OY2Xm5vXv74jnIyqy2Cq3ppQm
-	olO4Pi4DGyPxq/3Pv48hgotAD3LKNRA1qz/Jj7zroBLNF2kNnUYOEJe6z9ODZ1xVh4gCvX8nsp0
-	zJQrzU7zdQx8z4eOp58qzFOceraYpn30UBWOWiq8EpV5w6/ssH8dw8Y3EjFkb35dNJ4f47wlu7a
-	XewtPUhMF3OIM5S3zyuqKDfWzeZ3t9Q3Dg+ei/oeuxbfaP2N5u60SLpDgUJY1UTfGyaoFpjne4J
-	Z2Jk4jQ==
-X-Google-Smtp-Source: AGHT+IFmNXDufx/J57BTLJkr+VSf9kHXFB6UwcnIhCd9d3vLZPOjvq5ZmG+p9/djmOEH4ULjuzqc/g==
-X-Received: by 2002:a05:6512:39c9:b0:545:e2e:843a with SMTP id 2adb3069b0e04-5493c5b85e0mr2175585e87.38.1740559783671;
-        Wed, 26 Feb 2025 00:49:43 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f724csm380300e87.207.2025.02.26.00.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 00:49:42 -0800 (PST)
-Date: Wed, 26 Feb 2025 10:49:40 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rudraksha Gupta <guptarud@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, wctrl <wctrl@proton.me>
-Subject: Re: [PATCH v2 2/2] ARM: dts: qcom: msm8960: Add tsens
-Message-ID: <yuabzxapfn3xshnzicrgndcw4xnsgofpwfhqmzurhnfzeyjjbs@4awiletaxsna>
-References: <20250226-expressatt-tsens-v2-0-7a4ce3a91f27@gmail.com>
- <20250226-expressatt-tsens-v2-2-7a4ce3a91f27@gmail.com>
+	s=arc-20240116; t=1740559819; c=relaxed/simple;
+	bh=BivH3tFszd2zVodppEZRuCAzcKz2LvnM2DIJgfFZE88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kTdIZ0L0zq7xUltpKqSghrXpIMB+BDwpy3uRfsjkDW/wC0HXHq8Gi2C+vNhqpCMrCHeot0WTArjyE1nMM46BD3ZaNOmvmzKNjRCkf2AKxt3iZAQHJ8bdd8aN3mDveKSHCuY5c0sjroRO2OzMCajDDOG1bxkDKUKbaovVzf9YrMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C632A441D9;
+	Wed, 26 Feb 2025 08:50:10 +0000 (UTC)
+Message-ID: <78e15b54-af08-4d41-bc39-71b4b7828497@ghiti.fr>
+Date: Wed, 26 Feb 2025 09:50:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-expressatt-tsens-v2-2-7a4ce3a91f27@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: tracing: Fix __write_overflow_field in
+ ftrace_partial_regs()
+Content-Language: en-US
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20250224-fix_ftrace_partial_regs-v1-1-54b906417e86@rivosinc.com>
+ <b449aacb-f981-4907-af37-1ca5aea83bb4@ghiti.fr> <Z74DlyiSS75MrkqS@ghost>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <Z74DlyiSS75MrkqS@ghost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepteeiieetgffhuedvvdejieduheehieffffegveeitdelheegfffgtdevkeethedunecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmh
+ hhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopeholhgvghesrhgvughhrghtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Feb 26, 2025 at 12:11:09AM -0800, Rudraksha Gupta wrote:
-> Copy tsens node from ap8064 and adjust some values
+Hi Charlie,
 
-Which values?
+On 25/02/2025 18:53, Charlie Jenkins wrote:
+> On Tue, Feb 25, 2025 at 09:36:04AM +0100, Alexandre Ghiti wrote:
+>> Hi Charlie,
+>>
+>> On 25/02/2025 03:42, Charlie Jenkins wrote:
+>>> The size of &regs->a0 is unknown, causing the error:
+>>>
+>>> ../include/linux/fortify-string.h:571:25: warning: call to
+>>> '__write_overflow_field' declared with attribute warning: detected write
+>>> beyond size of field (1st parameter); maybe use struct_group()?
+>>> [-Wattribute-warning]
+>>
+>> I can't reproduce this warning with gcc and llvm, even when setting by hand
+>> -Wattribute-warning when compiling bpf_trace.c (which is the user of
+>> ftrace_partial_regs()).
+>>
+>> Which toolchain did you use?
+> You need to have the configs:
+> CONFIG_BPF_SYSCALL=y
+> CONFIG_FORTIFY_SOURCE=y
+> CONFIG_FUNCTION_TRACER=y
+> CONFIG_FPROBE=y
+> CONFIG_DYNAMIC_FTRACE=y
+>
+> I used gcc 14.2.0
 
-> 
-> Co-developed-by: wctrl <wctrl@proton.me>
-> Signed-off-by: wctrl <wctrl@proton.me>
 
-This doesn't look like a name.
+I was missing FPROBE!
 
-> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-> ---
->  arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 59 +++++++++++++++++++++++++++++++-
->  1 file changed, 58 insertions(+), 1 deletion(-)
-> 
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
--- 
-With best wishes
-Dmitry
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
+
+>
+> - Charlie
+>
+>> Thanks,
+>>
+>> Alex
+>>
+>>
+>>> Fix this by wrapping the required registers in pt_regs with
+>>> struct_group() and reference the group when doing the offending
+>>> memcpy().
+>>>
+>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>> ---
+>>>    arch/riscv/include/asm/ftrace.h |  2 +-
+>>>    arch/riscv/include/asm/ptrace.h | 18 ++++++++++--------
+>>>    2 files changed, 11 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
+>>> index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..ec6db1162021fbf4fa48fc87e7984266040aa7d9 100644
+>>> --- a/arch/riscv/include/asm/ftrace.h
+>>> +++ b/arch/riscv/include/asm/ftrace.h
+>>> @@ -207,7 +207,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+>>>    {
+>>>    	struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
+>>> -	memcpy(&regs->a0, afregs->args, sizeof(afregs->args));
+>>> +	memcpy(&regs->a_regs, afregs->args, sizeof(afregs->args));
+>>>    	regs->epc = afregs->epc;
+>>>    	regs->ra = afregs->ra;
+>>>    	regs->sp = afregs->sp;
+>>> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+>>> index b5b0adcc85c18e15c156de11172a5d7f03ada037..2910231977cb71dac3cc42f2dc32590284204057 100644
+>>> --- a/arch/riscv/include/asm/ptrace.h
+>>> +++ b/arch/riscv/include/asm/ptrace.h
+>>> @@ -23,14 +23,16 @@ struct pt_regs {
+>>>    	unsigned long t2;
+>>>    	unsigned long s0;
+>>>    	unsigned long s1;
+>>> -	unsigned long a0;
+>>> -	unsigned long a1;
+>>> -	unsigned long a2;
+>>> -	unsigned long a3;
+>>> -	unsigned long a4;
+>>> -	unsigned long a5;
+>>> -	unsigned long a6;
+>>> -	unsigned long a7;
+>>> +	struct_group(a_regs,
+>>> +		unsigned long a0;
+>>> +		unsigned long a1;
+>>> +		unsigned long a2;
+>>> +		unsigned long a3;
+>>> +		unsigned long a4;
+>>> +		unsigned long a5;
+>>> +		unsigned long a6;
+>>> +		unsigned long a7;
+>>> +	);
+>>>    	unsigned long s2;
+>>>    	unsigned long s3;
+>>>    	unsigned long s4;
+>>>
+>>> ---
+>>> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+>>> change-id: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
