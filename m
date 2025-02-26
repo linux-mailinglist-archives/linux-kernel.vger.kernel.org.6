@@ -1,104 +1,126 @@
-Return-Path: <linux-kernel+bounces-533336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9D1A4589C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3F0A4580A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C648E7A91CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23801893E67
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D521E1E18;
-	Wed, 26 Feb 2025 08:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PbvPLbqk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Skl5oxJL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577F61E1DE6;
+	Wed, 26 Feb 2025 08:24:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C85E1E1DFA
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6E46426;
+	Wed, 26 Feb 2025 08:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559233; cv=none; b=SbLvHFETEhznqFU/NgRXMC+GSjdeC2/czEUxGdGenN3eYEhsQDdRKqdtjQZRKIiJkN3Suvx1D83xjUjTTgsuNaKWZw4/PVRQmfGMrmhTPJvVJ+iPZdMByaPYdXDv0QhFo7z8pTQjlfq0k22kbCdNJOCvtzNgmZKigEwlLR/DdXs=
+	t=1740558262; cv=none; b=Nzvlhm80mhRtdZcLgz9Dasfcl+Boiy5jfjIREcHZJYKEn9sDNt4wytPGTyyhKyMIZjU4NFKNjvoCUKvJjLj/ZUNyFQZ6wiPhH/Kb8tdQP9hEhJDwo1l+NBp0k1Q9GmORAm53F0kru69pA1eIcwDMjdjQD6hjzbPW5Sc1mbvUL9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559233; c=relaxed/simple;
-	bh=BFXRlMltLpsJGq1TFtysWuABxzl7LDTPA2W5fyGGy/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuMlj/swMOxcFW8k+RW4XClHibx3hf78DVkvIH6UmeU95vPfYi5PIHPnET8JdCVlDjY+RoWl2afCZa4j7iqAOkQ+RM+4AfPRRmSM8Hu++nLF6xSnCKKIsU+DjUbHtzB+rIG40RVlww8UHrqe8IMsDoCMIivvr63j6q2xnUrKK4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PbvPLbqk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Skl5oxJL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 09:40:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740559230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B2KcQDXl/HfwbqMhaaPuOFbhbYmPrfwlA8REnYAWHWE=;
-	b=PbvPLbqkitSl3BPbnnY41LJfduEsQwGDlT1bapMamKyuoRmyxUpc+rTaycqZasH9bNDIto
-	ugaTIv/AacJX7ec16+8esnAXFNdbiDKXNnx4OuqCES2WRKbX0UdEKXGqHsWh7MrhvygrZf
-	O+RyphLauh02Ej1hlbo9wS2rmOBXQDL/JgYVar/Sczy25LzmNNS8dF5D6vA4U8BC1y5kPq
-	Zzav/l8OfMirZLHF6HqME4lgNKoIj8HcM/L/JVXRDyzT7LVd6RmrlOa+F6uPRqJgL9EoQk
-	2/qJ4xnqkZlGcwbNiKKH9v5qLlttM/Um7k9QEyAdp4HB/vQF1ZhdtNqV8IIMCw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740559230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B2KcQDXl/HfwbqMhaaPuOFbhbYmPrfwlA8REnYAWHWE=;
-	b=Skl5oxJLhWnVcZq+fYhWU8Dmo2+2+iUss+RGsSOuNi2SK2L1/4jrR/Rr6AIluhhReqkk20
-	Kyq2hlbD8qFVt5Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v9 01/11] futex: fixup futex_wait_setup [fold futex: Move
- futex_queue() into futex_wait_setup()]
-Message-ID: <20250226084029.iGLKxrlv@linutronix.de>
-References: <20250225170914.289358-1-bigeasy@linutronix.de>
- <20250225170914.289358-2-bigeasy@linutronix.de>
- <878qptf7g9.ffs@tglx>
+	s=arc-20240116; t=1740558262; c=relaxed/simple;
+	bh=c8H8rdd6EqpekwRsXzHBZUQjED7TQMef11mcwfcOceY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d1hlEQmY934uIrH3U+al8B+8CidU75aPczeMK+QGKfOoGsLiK3yPKZJwZGEODBuG74AKksl/ppHV3L0LMvSsml7GNXYexVP1nstLVtbN2gyShrZ98RrS33PmDY3NkjQZV7SHZN1epoBw162PPEISmCo8cXXaA2fWzQGYiuwg7JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z2nWw6kHNz6K94s;
+	Wed, 26 Feb 2025 16:22:20 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0BDBB14097D;
+	Wed, 26 Feb 2025 16:24:16 +0800 (CST)
+Received: from china (10.200.201.82) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 26 Feb
+ 2025 09:24:04 +0100
+From: Gur Stavi <gur.stavi@huawei.com>
+To: <jdamato@fastly.com>
+CC: <andrew+netdev@lunn.ch>, <cai.huoqing@linux.dev>, <corbet@lwn.net>,
+	<davem@davemloft.net>, <edumazet@google.com>, <gongfan1@huawei.com>,
+	<guoxin09@huawei.com>, <gur.stavi@huawei.com>, <helgaas@kernel.org>,
+	<horms@kernel.org>, <kuba@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
+	<meny.yossefi@huawei.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<przemyslaw.kitszel@intel.com>, <shenchenyang1@hisilicon.com>,
+	<shijing34@huawei.com>, <sumang@marvell.com>, <wulike1@huawei.com>,
+	<zhoushuai28@huawei.com>
+Subject: Re: [PATCH net-next v06 1/1] hinic3: module initialization and tx/rx logic
+Date: Wed, 26 Feb 2025 10:41:24 +0200
+Message-ID: <20250226084124.650275-1-gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <Z73pMXNsYprCcbmk@LQ3V64L9R2>
+References: <Z73pMXNsYprCcbmk@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <878qptf7g9.ffs@tglx>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-On 2025-02-26 09:15:02 [+0100], Thomas Gleixner wrote:
-> On Tue, Feb 25 2025 at 18:09, Sebastian Andrzej Siewior wrote:
-> 
-> > we could also make @task a bool signaling it is either NULL or current.
-> 
-> I have no idea what this change log is trying to tell me. It gives zero
-> information what this patch is about and the subject line is confusing
-> at best.
+> On Tue, Feb 25, 2025 at 04:53:30PM +0200, Gur Stavi wrote:
+> > From: Fan Gong <gongfan1@huawei.com>
+> >
+> > This is [1/3] part of hinic3 Ethernet driver initial submission.
+> > With this patch hinic3 is a valid kernel module but non-functional
+> > driver.
+>
+> IMHO, there's a huge amount of code so it makes reviewing pretty
+> difficult.
+>
+> Is there no way to split this into multiple smaller patches? I am
+> sure his was asked and answered in a previous thread that I missed.
+>
+> I took a quick pass over the code, but probably missed many things
+> due to the large amount of code in a single patch.
 
-This is meant for PeterZ as this should be folded into one of this
-patches on which this series is built upon.
-The argument "task" passed to futex_wait_setup() is always current or
-NULL. The latter is only used by io_uring. So instead getting a task
-passed and assuming it belongs to the current process we could have a
-bool and enforce this.
-The problem would be if things change later on and the passed task does
-not belong to the current process hierarchy and would not share the same
-private hash.
 
-> Thanks,
-> 
->         tglx
+>
+> Doesn't this function need to re-enable hw IRQs? Maybe it does
+> somewhere in one of the helpers and I missed it?
+>
+> Even so, it should probably be checking napi_complete_done before
+> re-enabling IRQs and I don't see a call to that anywhere, but maybe
+> I missed it?
+>
+> I also don't see any calls to netif_napi_add, so I'm not sure if
+> this code needs to be included in this patch ?
+>
 
-Sebastian
+Hi Joe, thanks for the review.
+
+There was a discussion during our initial submission where we were required to
+limit submission size to 4k LoC.
+https://lore.kernel.org/netdev/cover.1730290527.git.gur.stavi@huawei.com
+
+After removing almost anything optional from the driver we reached ~12K LoC
+and broke it into 3 submissions of 4K LoC that compile. This is the 1st
+submission.
+
+The rational for patch ordering was to start with the code that have lots of
+interaction with Linux interfaces and therefore is of more interest to the
+community and keep the code that deals with proprietary HW interfaces for later.
+We also try to make the patches incremental and avoid introducing ad-hoc code
+that is being deleted or modified in later submission.
+
+The actual calls to rx/tx poll and napi require IRQs that require hw management
+interfaces.
+I can try to pull these functions from later submission (without breaking the 4K
+limit) into this patch. They are currently static functions so I will have to
+un-static them to avoid compilation errors and then re-static them at a later
+submission.
+
+As for breaking the 4K submission into smaller patches, I will try to find
+some finer granularity that makes sense. When I studied the mailing list,
+there were conflicting opinions about the right way for initial driver
+submission. For example:
+https://lore.kernel.org/netdev/20170817.220343.905568389038615738.davem@davemloft.net
 
