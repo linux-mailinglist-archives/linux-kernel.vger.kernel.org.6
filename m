@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-534437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45604A466B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94407A466B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1068B3AA25A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296473AADAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24B5221DA0;
-	Wed, 26 Feb 2025 16:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC6B221DA0;
+	Wed, 26 Feb 2025 16:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YT5RG1v9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1v04m/g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A8220694
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E71821CFF4;
+	Wed, 26 Feb 2025 16:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587701; cv=none; b=ew60BvzCYjcnUwI+nb9rd3Wc4U5QfYVbx6lpu1B0K87UD/Al3s04QWeZsK7PCUgmlSXO0yld8mkS5dUfdU8fOUnpKOPKkCE9hoh1xv5s3gpYkixsWSk6Vk3oaZg4Oe2eFc6JJkV+Y2a0hTudF+AVX+bSmUuYYdtx2p2uZ4VQGYc=
+	t=1740587693; cv=none; b=e9Q9tBYZk9+KL4S3RQFZxKNAczrbI0AXa3ROvvzT4uXZwEUmLjyJbT/QPCw5SROTZRd96fpbM4ywGIWTeq25wqNtvlPLCZ3yalbZ/f843n1lh0vNVPQmaN2o4ReoirqeG6CBOaIvu/RJarEjVFa1nkOnQkMpsLMXYMJoectWG8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587701; c=relaxed/simple;
-	bh=+eYCtkXeUjDx5HX7zQv5kNtD7gM7axtjo4d8GobgnvQ=;
+	s=arc-20240116; t=1740587693; c=relaxed/simple;
+	bh=mvx6+EXXly8II1zzsjmdmKG74+6KBaMwBa7GrjjKFVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHLqz1NC0lVoCTZrVuSyJY/VjLIt/36t+WR3pPCBsnFG1eCaNPaACSU8/Tdx4erYyod4ViGDp1TdfQqsc0tCRW/FlAPE5HOW83Fd0wI5NGcwW8IkoRUbZ5znMvq2N17baycikvVsLPeTy3tmvYNJlbDEr/25SuA0W4mJPeYMmt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YT5RG1v9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740587698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yyEeKTSwKpsNdlVwXwewsRo+Wp2oqTEyHSu9r2lJIi8=;
-	b=YT5RG1v96KOd3sHJblIsYxZRQJuL6EoqVu0fQujBRHtFWEyu/F/tPhcKE9HpVPuooqf5D8
-	aaik/UTEzDO79uYAZC+7cNhLlPAZaB59kr7l+MzrVqqeByAhSHh3q6PaMer5ZzDozFhghR
-	9XVEwmKxZm46X79zstocjvvYCs1aumQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-K_6v7QjvOk28uSUtvhbxJw-1; Wed,
- 26 Feb 2025 11:34:55 -0500
-X-MC-Unique: K_6v7QjvOk28uSUtvhbxJw-1
-X-Mimecast-MFC-AGG-ID: K_6v7QjvOk28uSUtvhbxJw_1740587689
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C305C193578F;
-	Wed, 26 Feb 2025 16:34:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DB74919560AB;
-	Wed, 26 Feb 2025 16:34:30 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 17:34:17 +0100 (CET)
-Date: Wed, 26 Feb 2025 17:33:59 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-	torvalds@linux-foundation.org, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@Oracle.com,
-	adhemerval.zanella@linaro.org, avagin@gmail.com,
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
-	ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-Message-ID: <20250226163359.GB17833@redhat.com>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-7-jeffxu@google.com>
- <20250226162604.GA17833@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzcgLPVk3+xtGHG7UyDPLLsVStEJ6GiM3TzToQw7m11UZIbHMX0aH+TGlqQIecOvLYHJk4ZM9947BZsx7nc+x7Nn0mFZ6udxE99lvcrp1d2VuzMOTlB/BF3ZycqLzwmSPUeXaverQlPI2DGiOqCVW+6X02FFuCPYQ7AMNv8RPrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1v04m/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A07C4CED6;
+	Wed, 26 Feb 2025 16:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740587693;
+	bh=mvx6+EXXly8II1zzsjmdmKG74+6KBaMwBa7GrjjKFVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q1v04m/gG7AL5wvVNPKsD+wqei/+x1E+JQo7GYgjWeCnMgyFcgyP3jxUyZCD/4dEy
+	 PhYj3OJ+rEo3G+jfTIDfkrfqhUb9QmdPBGqXbgfqae/plKwXSfw9XDxFwrgFQn7RO+
+	 vt+kbWjlFs6UG/YkxuZ2kajLR997Mn6k4uspIA1gNxapxwasjLOvhOX7ELg8GURtv+
+	 +iSwtU+c739KQrmOxzJOXrYJl1gwuR+7r+a5DfxBbCBfK/rVum1TnUf7Akel6KaZl+
+	 uIbey7eo7b4wIJF1J4ErFquTuVgcJf7xtywgDVJp1M7IQmwYaf2V0lbutHW2tTq8R7
+	 31vEBpYOdXN0Q==
+Date: Wed, 26 Feb 2025 17:34:50 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-pwm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] backlight: pwm_bl: Read back PWM period from provider
+Message-ID: <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
+References: <20250226-pwm-bl-read-back-period-from-hw-v1-1-ccd1df656b23@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t53jomeslf3qf4an"
 Content-Disposition: inline
-In-Reply-To: <20250226162604.GA17833@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20250226-pwm-bl-read-back-period-from-hw-v1-1-ccd1df656b23@linaro.org>
 
-On 02/26, Oleg Nesterov wrote:
->
-> On 02/24, jeffxu@chromium.org wrote:
-> >
-> > Unlike other system mappings, the uprobe mapping is not
-> > established during program startup. However, its lifetime is the same
-> > as the process's lifetime. It could be sealed from creation.
->
-> Agreed, VM_SEALED should be always for the "[uprobes]" vma, regardless
-> of config options.
->
-> ACK,
->
-> but can't we do
->
-> 	#ifdef CONFIG_64BIT
-> 	/* VM is sealed, in vm_flags */
-> 	#define VM_SEALED	_BITUL(63)
-> +	#else
-> +	#define VM_SEALED	0
-> 	#endif
->
-> and then simply
->
-> 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
-> -				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
-> +				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
->
-> ?
->
-> But I am fine either way, feel free to ignore.
 
-Yes, but either way, why your patch adds "unsigned long vm_flags" ?
-OK, perhaps it makes sense for readability, but
+--t53jomeslf3qf4an
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC] backlight: pwm_bl: Read back PWM period from provider
+MIME-Version: 1.0
 
-	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
-	vm_flags |= VM_SEALED_SYSMAP;
+Hello,
 
-looks a bit strange, why not
+On Wed, Feb 26, 2025 at 05:31:08PM +0200, Abel Vesa wrote:
+> The current implementation assumes that the PWM provider will be able to
+> meet the requested period, but that is not always the case. Some PWM
+> providers have limited HW configuration capabilities and can only
+> provide a period that is somewhat close to the requested one. This
+> simply means that the duty cycle requested might either be above the
+> PWM's maximum value or the 100% duty cycle is never reached.
 
-	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP;
+If you request a state with 100% relative duty cycle you should get 100%
+unless the hardware cannot do that. Which PWM hardware are you using?
+Which requests are you actually doing that don't match your expectation?
+=20
+> This could be easily fixed if the pwm_apply*() API family would allow
+> overriding the period within the PWM state that's used for providing the
+> duty cycle. But that is currently not the case.
 
-?
+I don't understand what you mean here.
 
-Oleg.
+> So easiest fix here is to read back the period from the PWM provider via
+> the provider's ->get_state() op, if implemented, which should provide the
+> best matched period. Do this on probe after the first ->pwm_apply() op has
+> been done, which will allow the provider to determine the best match
+> period based on available configuration knobs. From there on, the
+> backlight will use the best matched period, since the driver's internal
+> PWM state is now synced up with the one from provider.
+> [...]
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/p=
+wm_bl.c
+> index 237d3d3f3bb1a6d713c5f6ec3198af772bf1268c..71a3e9cd8844095e85c01b194=
+d7466978f1ca78e 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -525,6 +525,17 @@ static int pwm_backlight_probe(struct platform_devic=
+e *pdev)
+>  		goto err_alloc;
+>  	}
+> =20
+> +	/*
+> +	 * The actual period might differ from the requested one due to HW
+> +	 * limitations, so sync up the period with one determined by the
+> +	 * provider driver.
+> +	 */
+> +	ret =3D pwm_get_state_hw(pb->pwm, &pb->pwm->state);
 
+As a consumer you're not supposed to write to &pb->pwm->state. That's a
+layer violation. Please call pwm_get_state_hw() with a struct pwm_state
+that you own and save the relevant parts in your driver data.
+
+> +	if (ret && ret !=3D -EOPNOTSUPP) {
+> +		dev_err(&pdev->dev, "failed to get PWM HW state");
+> +		goto err_alloc;
+> +	}
+> +
+>  	memset(&props, 0, sizeof(struct backlight_properties));
+> =20
+>  	if (data->levels) {
+
+Best regards
+Uwe
+
+--t53jomeslf3qf4an
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAme/QqcACgkQj4D7WH0S
+/k4bwAgArDWKg0WhEwFLL4M/6k79bOAvJmMv8uejFcfzyG+Fd/V5nucWn7itRBo8
+ocKADshbtsuMT2Nir9cg3s7PdimAOYQowvJdq+yrVpx4K3XBIgLmIdvZq+jM0ZBI
+qCf7EeEFYnP/RmXj+Uo2vyKO8bVTRrgAgkERBEXBtAEJiYQnCQLJGs4YV2weHdI4
+60kHuK9dj3VBrg+8kQt4t1I4+sPxAq82WUjY6CwMSDvSG/afgr80e+ROQJnsTLDo
+Dd5Lt+R6aSaT2w2IxaX1m7lBYP9avafCk0mqcEsGI4H6q42VKZdKHza5bLw5gurH
+v/1zfCMKzB9KZXQeomIYTu7C+vAhRA==
+=rPaF
+-----END PGP SIGNATURE-----
+
+--t53jomeslf3qf4an--
 
