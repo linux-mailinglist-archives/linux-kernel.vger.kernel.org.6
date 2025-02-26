@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-534317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCAFA4657D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8926A46580
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56B216C3E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8450E17E949
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC31221DAA;
-	Wed, 26 Feb 2025 15:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFFC22258E;
+	Wed, 26 Feb 2025 15:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXnhwFEw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYxYxlbU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050BE21C184;
-	Wed, 26 Feb 2025 15:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31F2222A6;
+	Wed, 26 Feb 2025 15:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584529; cv=none; b=sQv4zShFM1/H/TUzwOQTGoKr7gQnM20AhXudYuDl/pMtI7humKcnsZMC3K33Vllm03zL9Adfwt6JQwVjvKowCAYqyb/GXPL4JLbW2tEiKzbvQKHbitg0GEchVlUzk4WnyuwVey4MV+5xZXbqy7inEWErPoUM/VG5gior2xzBUps=
+	t=1740584530; cv=none; b=BfXseT1OrnRlX0wJFAtyW1lF8k3FEkWjxenHKZ0l4TcG0TTehpAEDu8gMMK6ReM2FBHgRMcG0y6SDEOpSHGN6iBMghXGV+qIAOqtVavN+Cnh36OizsCIY6/9Ds1DwS5SUhzw/lZVJUSgydWPsM7KHhiUihO+4vN/JUnn8ekTVdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584529; c=relaxed/simple;
-	bh=4lwpw1eA/OAPQ5ze01nLd6Rlmb9Y7GXtIaV2zlbGfNc=;
+	s=arc-20240116; t=1740584530; c=relaxed/simple;
+	bh=huXQpBhuM1kfilitAZHRzwO77flxXbmFTFSXnv1mATE=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=RZVgJ1/72ija4g6+M1rKhzkTGH4kmGzOB8AM7gvwHdiEA70oP8oc+KxiQP+o5AyjDz3oSOEGLPgaqJ5P/AZN2/RZUfP3puq5Mx+TRAAVFa/jvc4zBCdhVP0Qm753tOViquj18KV6nBFdbw0+hMQkAmcq8tKCFlIbW0uPmUCbAW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXnhwFEw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44595C4CED6;
-	Wed, 26 Feb 2025 15:42:08 +0000 (UTC)
+	 Message-Id:Subject; b=KPGNoOyx0KQd8z0z9fMF07U7ohp1/cIi3yFEzOE4IhQwI8ZxBNW2jmKa4KKP/lF7EPsITX/AqfEnWfQcIjQ9hfKzG0EIEpC3KRMlxPfH4ilH90kzjFKZYFfF6DOFARftJaAXaA7bN5Y8uLb14zzlmqXn62Uwjz+uWGa5fY3Hncs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYxYxlbU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09210C4CEE4;
+	Wed, 26 Feb 2025 15:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740584528;
-	bh=4lwpw1eA/OAPQ5ze01nLd6Rlmb9Y7GXtIaV2zlbGfNc=;
+	s=k20201202; t=1740584530;
+	bh=huXQpBhuM1kfilitAZHRzwO77flxXbmFTFSXnv1mATE=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=dXnhwFEwBY6VP6k7cOZwDBV1N5vsNzykK8CthuOaXQ2jeLgaF+JX4B43aMCNVf7yC
-	 PbnI7DElkJwpHJzVd337zgkQfJhuByiCe/Dm7CaafCcCIWYAUGpn48CmMtqMhV38Q7
-	 u6TOS+jhcizfpd/mVVaDet2JGXGWq00m9rpxBOKh01OFxkTjr2NxYdCo+n+Wy1aTnt
-	 Iz317hYKewS5jGMvj9oJ1fg/LjEuJGReXlrbPZotbpuVsRXSW4lzdcMsyh0IKysSI2
-	 qru9t3IE355Fk7EOKIoFotJobEsAcx7SFWeZSu8Vf5aHqBRps9n4Q0wWjf7MpJHJZZ
-	 tBmghqK3FbSyA==
-Date: Wed, 26 Feb 2025 09:42:06 -0600
+	b=VYxYxlbU0L5HY5wcEVvO7pVIY2iRaFA9QMwOVFz9bUQSg2UWtdlLnR/NjsNKvr/i+
+	 BK8hB0HjGeAne2tWsnAXz1Wcdca/Ltz+YJ2RjtoBZk9tSzqDNPu7XIJSrORHs86PVV
+	 VKyEjGN9KeP4oSSx/6cR7F/YN7SRjxiFZIRD8/L+JHWMAOrK9K508IgKjxFhb5PsCC
+	 p57/7zWtjmFGUzgjwRxAMMiwTiCdk4ktqEBEqB+zvgz2BWss/Fz4RMGXxA3zBQk+lP
+	 FtseonvJ3v1f7+UVRlzCRWLmTk3powzu7IECyOgW2nMmsU0E/aj47c8O0B7RVrlN8M
+	 /6MggL1uzjfiQ==
+Date: Wed, 26 Feb 2025 09:42:08 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,59 +50,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Georgi Djakov <djakov@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-tegra@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250225143501.68966-1-clamor95@gmail.com>
-References: <20250225143501.68966-1-clamor95@gmail.com>
-Message-Id: <174058435857.2478604.15934788005971294558.robh@kernel.org>
-Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, pavel@kernel.org, conor+dt@kernel.org, 
+ lee@kernel.org, krzk+dt@kernel.org
+To: Nam Tran <trannamatk@gmail.com>
+In-Reply-To: <20250225170601.21334-1-trannamatk@gmail.com>
+References: <20250225170601.21334-1-trannamatk@gmail.com>
+Message-Id: <174058435900.2478640.10516296167276043499.robh@kernel.org>
+Subject: Re: [PATCH v1 0/2] leds: add new LED driver for TI LP5812
 
 
-On Tue, 25 Feb 2025 16:34:52 +0200, Svyatoslav Ryhel wrote:
-> Add support for External Memory Controller found in Tegra 4 SoC along
-> with adjustments required for it to work properly.
+On Wed, 26 Feb 2025 00:05:59 +0700, Nam Tran wrote:
+> From: Nam Tran <trannamatk@gmail.com>
+> To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+> Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 > 
-> Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
+> This patch series adds support for the Texas Instruments LP5812 LED driver.
+> Patch 1 adds the Device Tree (DT) bindings documentation.
+> Patch 2 introduces the core driver implementation.
 > 
-> Svyatoslav Ryhel (9):
->   ARM: tegra: Add ACTMON support on Tegra114
->   dt-bindings: memory: Document Tegra114 Memory Controller
->   drivers: memory: tegra: implement EMEM regs and ICC ops for T114
->   dt-bindings: memory: tegra114: Add memory client IDs
->   clk: tegra114: remove emc to mc clock mux
->   dt-bindings: memory: Document Tegra114 External Memory Controller
->   memory: tegra: Add Tegra114 EMC driver
->   ARM: tegra: Add External Memory Controller node on Tegra114
->   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
->     device-tree nodes
+> The LP5812 is an I2C-controlled LED driver capable of driving up to 4 LEDs with independent brightness control and pattern programming.
+> This driver provides support through the Linux LED framework and includes device tree bindings for proper integration.
 > 
->  .../nvidia,tegra114-emc.yaml                  |  431 +++++
->  .../nvidia,tegra114-mc.yaml                   |  154 ++
->  .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
->  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
->  drivers/clk/tegra/clk-tegra114.c              |   48 +-
->  drivers/memory/tegra/Kconfig                  |   12 +
->  drivers/memory/tegra/Makefile                 |    1 +
->  drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
->  drivers/memory/tegra/tegra114.c               |  193 +++
->  include/dt-bindings/memory/tegra114-mc.h      |   67 +
->  10 files changed, 2561 insertions(+), 15 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-emc.yaml
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra114-mc.yaml
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
->  create mode 100644 drivers/memory/tegra/tegra114-emc.c
+> This driver has been tested on Raspberry Pi 4 B using kernel version 6.14.0.
 > 
-> --
-> 2.43.0
+> I kindly request feedback from the community to ensure that this driver adheres to the Linux LED subsystem standards.
 > 
+> Thank you for your consideration.
+> 
+> Best regards,
+> Nam
+> 
+> ---
+> 
+> Changes in v2:
+> - Renamed DT bindings file from `leds-lp5812.yaml` to `ti,lp5812.yaml`.
+> - Added LP5812 device tree node to `bcm2711-rpi-4b.dts` for Raspberry Pi 4B.
+> - Updated core driver implementation to fix build errors in kernel version 6.14.0-rc4. (The v1 patch was only compatible with kernel version 6.1.93)
+> 
+> Signed-off-by: Nam Tran <trannamatk@gmail.com>
 > 
 > 
 
@@ -121,34 +107,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250225143501.68966-1-clamor95@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/broadcom/' for 20250225170601.21334-1-trannamatk@gmail.com:
 
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: actmon@6000c800: '#cooling-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: actmon@6000c800: '#cooling-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: actmon@6000c800: '#cooling-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: clock@60006000: 'nvidia,external-memory-controller' does not match any of the regexes: '^(sclk)|(pll-[cem])$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/nvidia,tegra20-car.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: actmon@6000c800: compatible: ['nvidia,tegra114-actmon', 'nvidia,tegra124-actmon'] is too long
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: actmon@6000c800: '#cooling-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/devfreq/nvidia,tegra30-actmon.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: bluetooth: reset-gpios: False schema does not allow [[22, 134, 1]]
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/brcm,bluetooth.yaml#
+arch/arm/boot/dts/broadcom/bcm2711-rpi-400.dtb: /soc/i2c@7e804000/lp5812@1b: failed to match any schema with compatible: ['ti,lp5812']
+arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dtb: /soc/i2c@7e804000/lp5812@1b: failed to match any schema with compatible: ['ti,lp5812']
 
 
 
