@@ -1,115 +1,201 @@
-Return-Path: <linux-kernel+bounces-532807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E84A45274
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:55:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CC5A45276
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA93171186
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6F8188A8EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737C017E45B;
-	Wed, 26 Feb 2025 01:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975E319E999;
+	Wed, 26 Feb 2025 01:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbmoBrey"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dw8z0bBs"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587F6EBE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72902EBE;
+	Wed, 26 Feb 2025 01:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740534902; cv=none; b=SLetegOjZ4XyHhgussv4TfRRbMmW4vbH9EnfAsVS0hsfZJlJhhFs8Ijz5NEP2EozhaPe1Y5GccnSfa8ld0NAXk3EriJR1N07rVFebp/ivvF4F4BIzHTJRbuFm8IHWjxuPeu9KR/irpJ50BuJwkjBB9pRBN7ktsjkPux15ULJAxk=
+	t=1740534952; cv=none; b=t1oW0UR1SShhWvJolEpFa1iNEXT+qmPIYV82zb5u/gGwJlOzwJUdN4kqES6a3s2MJNLwkWbTDUuGLTu0HZVl9rsvPujHM9Vyw35VUV64sfzGrWPduA1+rykDzCqbSjhcy+UkNeT9RhuXPQls+hUjau0djqbii4beMkW3FBP/hZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740534902; c=relaxed/simple;
-	bh=qKfesCctE/K12QuygJLzdrcIJInJArYzz755rZy62bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtiydaSSeAugXisHL6x1noDPjLaw+bfNsKj99Hd2BJHgqk2zSQXUve2ak9BiNP7d5RrD+wMd4/7QWfVqepcc7VwwdGvVh2l0l9E84I3cGMY7+FKcsvoXr1q4gi3RS/K+wstHPbx4ez46TN+w/Du/0CuSsJSwQ4E/st1mn23yU4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbmoBrey; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so11302974a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740534899; x=1741139699; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9H9GBuQxb7tmxrvUu+zqJxWqL0txTdzcC55QK9WokbI=;
-        b=TbmoBreyriCZrV66q8H0pHK2zSD2YLVimWdA3VeQpedAbB/7LQ1xgrJLjkplJMkl07
-         0/MaK07zUTdNN569ppgaHlAzC+MxXSgIsli6zuCO3g1c8AISO/CaC8NDjh+SKTyMnL47
-         y94w2RZ2bv0q/O69xrqn8GsGS6JfWpmsZJNayUzPleNcXo4+5grSJyN5p3hDa+t9X2i2
-         OvHo4zbUcLSwaFrJuhujG2/OjqecHxLb59+bAu8tvpkAtqBJ/dHUcKdUvZeKTEDmXO2V
-         BQmQyh8g4I5CER3H9A4BRVTH8r6n/N8T36Ty2rN/S/2x3dFX5y6w8/AcvnBqpdoBnP8d
-         6tpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740534899; x=1741139699;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9H9GBuQxb7tmxrvUu+zqJxWqL0txTdzcC55QK9WokbI=;
-        b=w96jZJrgQNjQRcwr6brV3R9NDLYSB03FHZMBGNyVONaOlnX44WpoTCAaZ2HloA8kFj
-         4oDjyBmBbq88QYmt2JFKJbHqTL8BDXc3F09PT5sLB2zchlnJuz7aoae1DARAyAOhZVe7
-         UoxRtttfkOT5HpYitiV3H/6OweOdgvdaK9zBROBD7fodHALF+HV4oSCQGREnb+ew5Cv+
-         /2xdHhkzgjFRrioaKnDhgjg/27iuBoz+ESMzvqNlhGELXWWy9tDIipoR0nsIsHcCKQzu
-         932E5ImzU3fVRfnEFsP/D4lDNm+dRpgPY7u0KZfL4BVnPBCoQnIi6vpmZDx2wjlaTI44
-         wrTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUb5feIgcHZkUpW72xHBRV8zKADtbSZySZMk2LI6C/qinDmiTGskwrmXJ11O3eXR6nn92xsRb/xJFNaQfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlb2fm8xyfSi5FM4+l+Cd8Fq9LgD9cqzxTfQNtgwAIkiZDlTfk
-	NP/uOLbyMfciSnF9SERKaEXt9hNgcrB5tBydZbO9M5MRTCCM6SNE
-X-Gm-Gg: ASbGncv/E6xzvmfRyfuIztWai6uQWZgg11UCpAFVI4VAob99Mtvtb0xhHnMWvphXgdo
-	dGcLIKF3eY0gucwiYgCxbbslcDNt6KOmQ4z4/QPGdlsd3DdJgrZ7dhzP1Yn/rJqDypadXLG5shM
-	p5gp6NHB/oi3I5aJEbz8COjQaL7xbBrEjsVGg0FzbyW2NaCjTateklQ82foi7nF7fBqPgu5msOb
-	W+grLkVDBoZPvFpe22cMbNf2zHHh4g4zh59kyoifaReWpucB9C93NrelwF6VOTNT2Ltga4gIWTg
-	ea8ZGuOVpYv+SLLFSRqDRQeKxA==
-X-Google-Smtp-Source: AGHT+IFwNd4cxnMZQflLC+24HaBcAUcg+8DA7JR1rZIOh4jqFoPNGORJVT/6HXYJ6ygRGy/f3IYDvg==
-X-Received: by 2002:a17:907:724f:b0:ab7:bf87:d9de with SMTP id a640c23a62f3a-abc0de146b4mr1817661766b.37.1740534899395;
-        Tue, 25 Feb 2025 17:54:59 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d89sm235268066b.151.2025.02.25.17.54.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Feb 2025 17:54:58 -0800 (PST)
-Date: Wed, 26 Feb 2025 01:54:58 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Frank van der Linden <fvdl@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 2/2] mm/mm_init: rename init_reserved_page to
- init_deferred_page
-Message-ID: <20250226015458.5xo5qlvvyijyuutm@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250225083017.567649-1-rppt@kernel.org>
- <20250225083017.567649-3-rppt@kernel.org>
+	s=arc-20240116; t=1740534952; c=relaxed/simple;
+	bh=hpo8SdVEcKI6pEDAOsFUUwXI4aD7oAd5zuM5+KJpZsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HRmB3bMSLF4399HT+gARNNwEGDyy610MaG8TI1gAm7ijMuUY9RbnB2uMqcPD6MoOR/XwRFSN4/Nxp8OWdLz2BiUJUi6SCGgjoHqPspqIkSZ17M0tqxedrPdTvF1XpMbWQXXCBqyUIqcBSxxtYACNPRAVT8SMD54wTma398NIjzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dw8z0bBs; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740534940; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=SYGXr6ObxBCz/rMlq9BwzU4N8B+1nvlSFrvEr4NdUT8=;
+	b=dw8z0bBsxUhOZMmHzHYtDeeO/j2jLAMVUXVXhxEjqNYE9YRkzPf7d/qty8zCitUGUcshbJP+GFz8MBXx/ubsquf0fOvy6RzrI22HBHtScSSadwJPAQ8ihtye8xrdLXDhb0VlsqEM8ZWL9jEi0lEAssEMFcg70ak6tyCJ8+5iPFo=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQGACDe_1740534937 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 09:55:38 +0800
+Message-ID: <855b4178-cbd5-4d95-a2eb-32c5ee0e5894@linux.alibaba.com>
+Date: Wed, 26 Feb 2025 09:55:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225083017.567649-3-rppt@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/5] perf/dwc_pcie: Move common DWC struct definitions
+ to 'pcie-dwc.h'
+To: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org
+Cc: manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, kw@linux.com,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ Jonathan.Cameron@Huawei.com, fan.ni@samsung.com, nifan.cxl@gmail.com,
+ a.manzanares@samsung.com, pankaj.dubey@samsung.com, cassel@kernel.org,
+ 18255117159@163.com, renyu.zj@linux.alibaba.com, will@kernel.org,
+ mark.rutland@arm.com
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132024epcas5p13d6e617805e4ef0c081227b08119871b@epcas5p1.samsung.com>
+ <20250221131548.59616-2-shradha.t@samsung.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250221131548.59616-2-shradha.t@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 10:30:17AM +0200, Mike Rapoport wrote:
->From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
->When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, init_reserved_page()
->function performs initialization of a struct page that would have been
->deferred normally.
->
->Rename it to init_deferred_page() to better reflect what the function does.
->
->Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
--- 
-Wei Yang
-Help you, Help me
+在 2025/2/21 21:15, Shradha Todi 写道:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Since these are common to all Desginware PCIe IPs, move them to a new
+> header 'pcie-dwc.h', so that other drivers like debugfs, perf and sysfs
+> could make use of them.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>   MAINTAINERS                 |  1 +
+>   drivers/perf/dwc_pcie_pmu.c | 25 +++----------------------
+>   include/linux/pcie-dwc.h    | 34 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 38 insertions(+), 22 deletions(-)
+>   create mode 100644 include/linux/pcie-dwc.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3864d473f52f..6474a2d83de4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18167,6 +18167,7 @@ S:	Maintained
+>   F:	Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+>   F:	Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+>   F:	drivers/pci/controller/dwc/*designware*
+> +F:	include/linux/pcie-dwc.h
+>   
+>   PCI DRIVER FOR TI DRA7XX/J721E
+>   M:	Vignesh Raghavendra <vigneshr@ti.com>
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index cccecae9823f..da30f2c2d674 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/errno.h>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+> +#include <linux/pcie-dwc.h>
+>   #include <linux/perf_event.h>
+>   #include <linux/pci.h>
+>   #include <linux/platform_device.h>
+> @@ -99,26 +100,6 @@ struct dwc_pcie_dev_info {
+>   	struct list_head dev_node;
+>   };
+>   
+> -struct dwc_pcie_pmu_vsec_id {
+> -	u16 vendor_id;
+> -	u16 vsec_id;
+> -	u8 vsec_rev;
+> -};
+> -
+> -/*
+> - * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> - * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> - */
+> -static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
+> -	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{} /* terminator */
+> -};
+> -
+>   static ssize_t cpumask_show(struct device *dev,
+>   					 struct device_attribute *attr,
+>   					 char *buf)
+> @@ -529,14 +510,14 @@ static void dwc_pcie_unregister_pmu(void *data)
+>   
+>   static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
+>   {
+> -	const struct dwc_pcie_pmu_vsec_id *vid;
+> +	const struct dwc_pcie_vsec_id *vid;
+>   	u16 vsec;
+>   	u32 val;
+>   
+>   	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
+>   		return 0;
+>   
+> -	for (vid = dwc_pcie_pmu_vsec_ids; vid->vendor_id; vid++) {
+> +	for (vid = dwc_pcie_rasdes_vsec_ids; vid->vendor_id; vid++) {
+>   		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
+>   						vid->vsec_id);
+>   		if (vsec) {
+> diff --git a/include/linux/pcie-dwc.h b/include/linux/pcie-dwc.h
+> new file mode 100644
+> index 000000000000..40f3545731c8
+> --- /dev/null
+> +++ b/include/linux/pcie-dwc.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2021-2023 Alibaba Inc.
+> + *
+> + * Copyright 2025 Linaro Ltd.
+> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> + */
+> +
+> +#ifndef LINUX_PCIE_DWC_H
+> +#define LINUX_PCIE_DWC_H
+> +
+> +#include <linux/pci_ids.h>
+> +
+> +struct dwc_pcie_vsec_id {
+> +	u16 vendor_id;
+> +	u16 vsec_id;
+> +	u8 vsec_rev;
+> +};
+> +
+> +/*
+> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> + */
+> +static const struct dwc_pcie_vsec_id dwc_pcie_rasdes_vsec_ids[] = {
+> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{} /* terminator */
+> +};
+> +
+> +#endif /* LINUX_PCIE_DWC_H */
+
+LGTM. Thanks.
+
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
+
+Shuai
 
