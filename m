@@ -1,251 +1,206 @@
-Return-Path: <linux-kernel+bounces-533882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85895A45FC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:53:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4F0A45FCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873BC168A8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F93B3AE8C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96F721770D;
-	Wed, 26 Feb 2025 12:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC25215179;
+	Wed, 26 Feb 2025 12:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="f3sdHV5e"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b8kIWi6i";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nA/yIeWS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185092CAB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D95A258CD1;
+	Wed, 26 Feb 2025 12:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740574386; cv=none; b=XscVHueuRRdzFxVautGcZIUhzi5flYY2cFb40klwlwHiCFzvihPj8yvd61c+T0SUYH7nB7cLlQbXDBKpDESacSwivmeLgsUK3RMbQ3+Us7Vh6ITAx3IsIJspliQMebHC4f0jDIOwui9k36QGkHxT7LnZM7PJvf2KTuEfAPylDWI=
+	t=1740574479; cv=none; b=VO7xmcxKZh2QyrgT0l83Km9AaG15rYGphSgI2oghXPqjYTmhLwzeKuh4GA/4WnPux4KCbO9w8aRA26Ys+0Z+nGWhaRsbKJOYNxWzZb1T+tEXbQ60azGl+Xce7sqyllxFVt5c1mZeU7Z2olBiI7YRGy/OHX6B1PVwpo4kaaw55rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740574386; c=relaxed/simple;
-	bh=jRNgPW45zWQ45hI3RAWVxJoCz1a2NuguVn3BaKcnNrs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOjqviQX33YuL7ER1USWiBjK3kvWaI7VAIaY4gx4ePPfuAwCOo1CDsyl3QGMEolMn74PypxGlNGjuWGt3v3EUXEz9fEne54ulFutiimlDX2UV73AGQ+v7NF1DIskqjSc/hONFVxjljUoswb2JrLaLKBHTCurHM6pxf4a6n4CNr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=f3sdHV5e; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dcc411189so6086217276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:53:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1740574383; x=1741179183; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYv9w16OZV8gtKXzmVqp/j+qAA3eBSefly8IKqb6078=;
-        b=f3sdHV5enlGY3RBiAufLa3zr6jigy9DHFtHELJV1ouuLv/210g+1VQ3Y5VqwujfrMM
-         URvUb21Gth0DZAuGdOv/FTAoJayyIymlUjWRGAfG0eKAz5yelb1Mkn9LfMnxYlRkY29q
-         p8XV0ZWOqDiEPvywxuMjn2gs4NdMmStgHe0VmAB6VSBpPnG/kp0DQ8rJeHbpfcGyRFZr
-         MWt9bulqSFxTDyA0DIDGo7pt8rOihovmWfeYFjYjWQ8Rpob9HGBg43636UOHwPoL7a12
-         FVQdgCgjgXc5srgdb8uheTc44xsz5Sz3sgwE2LNJ4JL+Ik6YCcHm3N3bVcZNUQuHZEDS
-         RDeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740574383; x=1741179183;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rYv9w16OZV8gtKXzmVqp/j+qAA3eBSefly8IKqb6078=;
-        b=tPt1/GWFITGnXf89bw44p38ehx1KFfYUlfuf06l18r9WLnybxK/HSQyufBZ+j3qxyv
-         SY+LKbtSrraJAv9IGikV+XPaTRx3ora8ph1pXrgeI3tlO5FJwnUExM8gdlTX/RrkZRSx
-         RB3dXkjh+25z5YR8aUm0nfjh+7qDNPyXsZf0ZsrLsPWl/E7px9SgrkO6+oArY99Oa3Oq
-         SBhL4y55VVyuxlOLBw8O0vzaWKzEH5Ua2fFxzCF7KoOcUsRGLMfm0Rh6GHG+j9bMhJ/t
-         2x5AyLfe3iVNM4ovpe/vI6NiyoGWQcYgu++iDhGIGZVAwPQeSUBzoa2mCif4ZWfKCUh0
-         ET4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUl30tlauKbUvaalW4vHijeghDSXCEUsAI0gs3jiciv42nayuK1ST7o4UrOKCf7xRVtmjUqxBPXbuGce4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBPFPCRS8/k+VjWRzQUjeRIPaJvBkoy74QidoEddnb8F94SOID
-	zpUk85QZb4o/gSmA8LywyMn2sgdkHk6qKKPbz97UQHsltcXmkR1Y2j4saiw7mn2+aVY58ikPxBd
-	3S2RQ1jfaKST7Tmw9N/CPyhwYlb9R0V3qMdsd1g==
-X-Gm-Gg: ASbGncs9qiJr1KUgK4wleqyKyNb93i0SWct/g2IR+L4f2ulP6UJMpHb+UsIdMxFtjKn
-	LPeogr4QsZ0jQsZ4uYfUQJjqQllX8FdOYZRCHiXWcbdgK3kHPK9TXWGpOXRHnXaSwS+pnbejITj
-	Fo5NmftTGJHoASA4CxnPL1xke2ResJ+KQp+lW4h/U=
-X-Google-Smtp-Source: AGHT+IFsSdkRzl5nNIyhhaLn10+uqRdISbdnkxZnKFwU3/R5s9QQ3ML2yLmFOFKhQg1ciToNB9YPY1sS5bi5tQZYKMA=
-X-Received: by 2002:a05:6902:2701:b0:e5d:e04f:f2bb with SMTP id
- 3f1490d57ef6-e607a56c2e1mr5789855276.45.1740574382263; Wed, 26 Feb 2025
- 04:53:02 -0800 (PST)
+	s=arc-20240116; t=1740574479; c=relaxed/simple;
+	bh=JDKkiSfLHuCyNatFzQjSaB9g8HG0MbsM5nXVveeJHp0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eTb707vK2FG2YPiiIv5TMJ67ILF4tVhEytFVlZw6n5Ky5oajRReOb8D7a3HuZ2OgM+O0BggkHX8Jh7Lr+JZokjEdpiOC+VcOMe/bKiQrrkdPvwGDsDC+GYwczYQojtD9GRxRBI9hQlDwj0VwVE/xAhTfAjOzkaHzxFuTUvy3EV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b8kIWi6i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nA/yIeWS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 12:54:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740574475;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cegxWfMOnhRr75WjAoi+N2y8psFDvw8YU2/P7Mj9j40=;
+	b=b8kIWi6iAW3wsDoFDKFBoqYTM/+z8uTY2JTZHB0ynKGBnjKNOYO3Lc1xrKveaYIDAsB86d
+	5ubam2Erc1NnVHe5er4k1q7g+xy6gxaP3H7zjXPcF9ohdgfZ9JXZyuhJSJVIXW2cezmQAX
+	MRK0q8RcagVy/CyYCJ32mji6zXRQbNkoCQu0osaKuaYJ8SiDzg4/YWLE/AUdto8efA9oPS
+	y9MLjPD+jjQU9c+qlsNQYgnbs0LubPFW0gPOyGp2hAggs2TQygbqjFtmF4OFai70BnMZaa
+	eKJqw6Sbvo5ZRjZvVPX7AkshUp+m5nH/D1ucw6ho2098sovVwSgyl/P9FPvGFw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740574475;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cegxWfMOnhRr75WjAoi+N2y8psFDvw8YU2/P7Mj9j40=;
+	b=nA/yIeWSV8tqf5wQ5ynPR6ekmU/8jGejWD44YolUo6rCegJRHcwNF874gcwxpvT9gcFG4p
+	KDFkYGFSY6PFfmAw==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/ibt: Optimize the fineibt-bhi arity 1 case
+Cc: Scott Constable <scott.d.constable@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250224124200.927885784@infradead.org>
+References: <20250224124200.927885784@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
- <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev> <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
- <ljhusn3jkbq64rn2ureul5kurenjwrtu7ppv5jjx5i542goe65@h4oltlieomfp>
-In-Reply-To: <ljhusn3jkbq64rn2ureul5kurenjwrtu7ppv5jjx5i542goe65@h4oltlieomfp>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 26 Feb 2025 12:52:46 +0000
-X-Gm-Features: AQ5f1JozCOdThpWKsqLB_NoitB7XM2WjA44sxQQj0vcWMgnWJcJeSjdsaFkAhNY
-Message-ID: <CAPY8ntD3k48cPfOQK2iEveLHahhFMV9JMwfq3sV-SvnrsZkxng@mail.gmail.com>
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174057447143.10177.16018462845591323897.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 at 11:07, Richard Leitner <richard.leitner@linux.dev> wrote:
->
-> Hi Dave,
-> thanks for the quick and detailled reply!
->
-> On Tue, Feb 25, 2025 at 03:30:16PM +0000, Dave Stevenson wrote:
-> > Hi Richard
-> >
-> > On Tue, 25 Feb 2025 at 13:09, Richard Leitner <richard.leitner@linux.dev> wrote:
-> > >
-> > > The sensors analogue gain is stored within two "LONG GAIN" registers
-> > > (0x3508 and 0x3509) where the first one holds the upper 5 bits of the
-> > > value. The second register (0x3509) holds the lower 4 bits of the gain
-> > > value in its upper 4 bits. The lower 4 register bits are fraction bits.
-> > >
-> > > This patch changes the gain control to adhere to the datasheet and
-> > > make the "upper gain register" (0x3508) accessible via the gain control,
-> > > resulting in a new maximum of 0x1fff instead of 0xff.
-> > >
-> > > As the "upper gain register" is now written during exposure/gain update
-> > > remove the hard-coded 0x00 write to it from common_regs.
-> > >
-> > > We cover only the "real gain format" use-case. The "sensor gain
-> > > format" one is ignored as based on the hard-coded "AEC MANUAL" register
-> > > configuration it is disabled.
-> > >
-> > > All values are based on the OV9281 datasheet v1.01 (09.18.2015).
-> >
-> > My web searches turn up a 1.53 from Jan 2019 -
-> > http://www.sinotimes-tech.com/product/20220217221034589.pdf
-> > That lists 0x3508 as DEBUG, not LONG_GAIN.
->
-> Thanks. That helps a lot :-)
->
-> >
-> > The current range allows analogue gain to x15.9375.
-> > Expanding it to 0x1ff.f would be up to x511.9375. I believe that
-> > equates to ~54dB as we're scaling voltages, not power. The spec sheet
-> > for the sensor lists S/N of 38dB and dynamic range of 68dB, so x511
-> > will be almost pure noise.
-> >
-> > Doing a very basic test using i2ctransfer to set gain values whilst
-> > the sensor is running suggests that the image is the same regardless
-> > of bits 2-4 of 0x3508. Setting either bits 0 or 1 increases the gain
-> > by around x8.5, but they don't combine.
-> >
-> > Overall can I ask how you've tested that a range up to 0x1fff works,
-> > and on which module? I currently don't believe this works as intended.
->
-> I've done some basic testing on a vision components OV9281 module.
-> Nonetheless it seems I should have done more testing... I just ran a
-> "gain sweep" test and it seems you are perfectly right...
->
-> The lower two bits of 0x3508 have some kind of offset and "flattening" effect
-> on the applied gain, like shown in the plot (X is the gain, Y is the reported
-> mean brightness of the picture, read by magick).
->
->   45 +---------------------------------------------------------------------+
->      |         +           +           +           +           +           |
->      |                     A                     AA                        |
->   40 |-+                AAA                    AA                        +-|
->      |                 AA                 A AAA                            |
->   35 |-+             AA                AAA A                             +-|
->      |              AA              AAAA                             AAAAAA|
->      |            AA             AAAA                          AAAAAA      |
->   30 |-+         AA           AAAA                       AAAAAA          +-|
->      |         AA           AAA                    AAAAAA                  |
->      |         A           A                         A                     |
->   25 |-+     AA                                                          +-|
->      |      A                                                              |
->      |     A                                                               |
->   20 |-+ AA                                                              +-|
->      |   A                                                                 |
->   15 |-AA                                                                +-|
->      |A                                                                    |
->      |A        +           +           +           +           +           |
->   10 +---------------------------------------------------------------------+
->             0x0080      0x0100      0x0180      0x0200      0x0280      0x0300
->                                       gain
->
-> This pattern repeats up to 0x1fff, so I guess all other bits of 0x3508
-> have no effect on the gain (like shown in the plot attached as png, as
-> it got way to big for ascii).
->
-> I'm sorry for the inconvenience caused... I've somehow messed up my
-> initial tests.
+The following commit has been merged into the x86/core branch of tip:
 
-No problem - this is why we review and test patches.
-My general view would be that anything over x64 on analogue gain would
-be unusual, and on most sensors x16 is about the limit of useful gain.
+Commit-ID:     dfebe7362f6f461d771cdb9ac2c5172a4721f064
+Gitweb:        https://git.kernel.org/tip/dfebe7362f6f461d771cdb9ac2c5172a4721f064
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 24 Feb 2025 13:37:13 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 26 Feb 2025 13:49:11 +01:00
 
-> Thank you again for your feedback!
->
-> So please feel free to ignore this patch. Should I send a new series
-> with just the two minor patches of this series? Or should I include them
-> in the next series for the ov9282 driver?
+x86/ibt: Optimize the fineibt-bhi arity 1 case
 
-Up to Sakari.
-The other two patches have my R-b responses, so taking those two and
-ignoring this one should be fairly simple, but it just depends upon
-workflows.
+Saves a CALL to an out-of-line thunk for the common case of 1
+argument.
 
-  Dave
+Suggested-by: Scott Constable <scott.d.constable@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Link: https://lore.kernel.org/r/20250224124200.927885784@infradead.org
+---
+ arch/x86/include/asm/ibt.h    |  4 ++-
+ arch/x86/kernel/alternative.c | 59 ++++++++++++++++++++++++++++------
+ 2 files changed, 54 insertions(+), 9 deletions(-)
 
-> regards;rl
->
-> >
-> >   Dave
-> >
-> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > ---
-> > >  drivers/media/i2c/ov9282.c | 17 ++++++++++-------
-> > >  1 file changed, 10 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > index c882a021cf18852237bf9b9524d3de0c5b48cbcb..e6effb2b42d4d5d0ca3d924df59c60512f9ce65d 100644
-> > > --- a/drivers/media/i2c/ov9282.c
-> > > +++ b/drivers/media/i2c/ov9282.c
-> > > @@ -54,11 +54,11 @@
-> > >  #define OV9282_AEC_MANUAL_DEFAULT      0x00
-> > >
-> > >  /* Analog gain control */
-> > > -#define OV9282_REG_AGAIN       0x3509
-> > > -#define OV9282_AGAIN_MIN       0x10
-> > > -#define OV9282_AGAIN_MAX       0xff
-> > > -#define OV9282_AGAIN_STEP      1
-> > > -#define OV9282_AGAIN_DEFAULT   0x10
-> > > +#define OV9282_REG_AGAIN       0x3508
-> > > +#define OV9282_AGAIN_MIN       0x0010
-> > > +#define OV9282_AGAIN_MAX       0x1fff
-> > > +#define OV9282_AGAIN_STEP      0x0001
-> > > +#define OV9282_AGAIN_DEFAULT   0x0010
-> > >
-> > >  /* Group hold register */
-> > >  #define OV9282_REG_HOLD                0x3308
-> > > @@ -226,7 +226,6 @@ static const struct ov9282_reg common_regs[] = {
-> > >         {OV9282_REG_AEC_MANUAL, OV9282_GAIN_PREC16_EN},
-> > >         {0x3505, 0x8c},
-> > >         {0x3507, 0x03},
-> > > -       {0x3508, 0x00},
-> > >         {0x3610, 0x80},
-> > >         {0x3611, 0xa0},
-> > >         {0x3620, 0x6e},
-> > > @@ -605,7 +604,11 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
-> > >         if (ret)
-> > >                 goto error_release_group_hold;
-> > >
-> > > -       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-> > > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, (gain >> 8) & 0x1f);
-> > > +       if (ret)
-> > > +               goto error_release_group_hold;
-> > > +
-> > > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN + 1, 1, gain & 0xff);
-> > >
-> > >  error_release_group_hold:
-> > >         ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-> > >
-> > > --
-> > > 2.47.2
-> > >
-> > >
+diff --git a/arch/x86/include/asm/ibt.h b/arch/x86/include/asm/ibt.h
+index f0ca5c0..9423a29 100644
+--- a/arch/x86/include/asm/ibt.h
++++ b/arch/x86/include/asm/ibt.h
+@@ -70,6 +70,10 @@ static inline bool __is_endbr(u32 val)
+ 	if (val == gen_endbr_poison())
+ 		return true;
+ 
++	/* See cfi_fineibt_bhi_preamble() */
++	if (IS_ENABLED(CONFIG_FINEIBT_BHI) && val == 0x001f0ff5)
++		return true;
++
+ 	val &= ~0x01000000U; /* ENDBR32 -> ENDBR64 */
+ 	return val == gen_endbr();
+ }
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index b8d65d5..32e4b80 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1311,6 +1311,53 @@ static int cfi_rand_preamble(s32 *start, s32 *end)
+ 	return 0;
+ }
+ 
++static void cfi_fineibt_bhi_preamble(void *addr, int arity)
++{
++	if (!arity)
++		return;
++
++	if (!cfi_warn && arity == 1) {
++		/*
++		 * Crazy scheme to allow arity-1 inline:
++		 *
++		 * __cfi_foo:
++		 *  0: f3 0f 1e fa             endbr64
++		 *  4: 41 81 <ea> 78 56 34 12  sub     0x12345678, %r10d
++		 *  b: 49 0f 45 fa             cmovne  %r10, %rdi
++		 *  f: 75 f5                   jne     __cfi_foo+6
++		 * 11: 0f 1f 00                nopl    (%rax)
++		 *
++		 * Code that direct calls to foo()+0, decodes the tail end as:
++		 *
++		 * foo:
++		 *  0: f5                      cmc
++		 *  1: 0f 1f 00                nopl    (%rax)
++		 *
++		 * which clobbers CF, but does not affect anything ABI
++		 * wise.
++		 *
++		 * Notably, this scheme is incompatible with permissive CFI
++		 * because the CMOVcc is unconditional and RDI will have been
++		 * clobbered.
++		 */
++		const u8 magic[9] = {
++			0x49, 0x0f, 0x45, 0xfa,
++			0x75, 0xf5,
++			BYTES_NOP3,
++		};
++
++		text_poke_early(addr + fineibt_preamble_bhi, magic, 9);
++
++		return;
++	}
++
++	text_poke_early(addr + fineibt_preamble_bhi,
++			text_gen_insn(CALL_INSN_OPCODE,
++				      addr + fineibt_preamble_bhi,
++				      __bhi_args[arity]),
++			CALL_INSN_SIZE);
++}
++
+ static int cfi_rewrite_preamble(s32 *start, s32 *end)
+ {
+ 	s32 *s;
+@@ -1341,14 +1388,8 @@ static int cfi_rewrite_preamble(s32 *start, s32 *end)
+ 			  "kCFI preamble has wrong register at: %pS %*ph\n",
+ 			  addr, 5, addr);
+ 
+-		if (!cfi_bhi || !arity)
+-			continue;
+-
+-		text_poke_early(addr + fineibt_preamble_bhi,
+-				text_gen_insn(CALL_INSN_OPCODE,
+-					      addr + fineibt_preamble_bhi,
+-					      __bhi_args[arity]),
+-				CALL_INSN_SIZE);
++		if (cfi_bhi)
++			cfi_fineibt_bhi_preamble(addr, arity);
+ 	}
+ 
+ 	return 0;
+@@ -1361,7 +1402,7 @@ static void cfi_rewrite_endbr(s32 *start, s32 *end)
+ 	for (s = start; s < end; s++) {
+ 		void *addr = (void *)s + *s;
+ 
+-		if (!is_endbr(addr + 16))
++		if (!exact_endbr(addr + 16))
+ 			continue;
+ 
+ 		poison_endbr(addr + 16);
 
