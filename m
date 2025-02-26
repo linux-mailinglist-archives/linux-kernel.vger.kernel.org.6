@@ -1,126 +1,224 @@
-Return-Path: <linux-kernel+bounces-534402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E43CA46653
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:15:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A60A46657
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 448443A1E2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E71B3A6DA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBAA21CC68;
-	Wed, 26 Feb 2025 16:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00E21CC65;
+	Wed, 26 Feb 2025 16:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VUUaK42l"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDvZO4Y9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CDE21C9E8;
-	Wed, 26 Feb 2025 16:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4E521C9E8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586426; cv=none; b=srQKlPMmYd/0sNbYidX8LbfzPlwGDBAJqqRtQ5NbDPXpJRXRoLcvuuuzTYYzOH3l/jUMKy18w9pJpXd087sXfbsuGYIizAzHOORfl5J7s9jJArinpT+LC5/h9NU5FCAW7ZoxAn6/HNu1c+7zFjMsq2yes93isqv/yNh4EWhGW9w=
+	t=1740586456; cv=none; b=G2ex8ZKACUm8y1Z6eCr13VcnPh0aeW0sBoeAh7CtmkmHaV6wCAAcM5dqBzGlj6bvyG9A1Hqs4BoPU1PZ6XvsTK6Nly8Peegi/K5b4uyZn8gOsJKEeQpSyRtYnLXkQ99MygUjchOf2o2SAF9XDdW6MLVMygUH8dWKlbXApWOdLfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586426; c=relaxed/simple;
-	bh=nbk32YFzMdxsXfzMgqNjh2MOqm+b8/DeI5pYD18xT44=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=sljEep1FefXojWdu/cdRekQ4qvgkrP+UbC5CXfV0oOShxRTklYQZXe+SR0IFO5gWpjqTn1P69+i0danCf052Ty5po+AdKLv5px280gv//6HnLblQpmHzHTAYBOgrjVx94gTthIPv/uErKBLVEmKvHtKlpZtQdPlrcU6RNMtNYk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VUUaK42l; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740586399; x=1741191199; i=markus.elfring@web.de;
-	bh=C3c05qXcKU5hYx1ptwwL1abjQhPrDsvUvAbpYz2Al6M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=VUUaK42lfERESAXrLV120LCFragepAPzgvI9ZM2xzkwhRfWz2rCQI0xrnzCXbXOe
-	 s1AdW0bqYJnBXuSuEeDjvELiRCWXl+m9p+UTWrlpApBnJMB5djX8WCI3EnfAH1KOn
-	 DsYY/sjIOy1jz9gZM6y2S7+TxohVfYBvEu5V3oPDWPVwSVzqsC3rc/ctaG8UPPB0x
-	 4SIaFmw0DMQ9WtSU0Cb6xT/jlY6EoOCrh1V09nGeD2tHo1PSHSoFiXFZcALLvEe7O
-	 oKpJaVlzJNxMaOLdIalXHQMc1POlQRfeujOmuW5EUVvP0OhGGlTq33/44AlyKJ7+O
-	 5jXtJHQnEpewF8vYhg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLifq-1u4zRW3dui-00Iw5U; Wed, 26
- Feb 2025 17:13:18 +0100
-Message-ID: <516ea911-acc6-47c2-87d5-2df0a18468de@web.de>
-Date: Wed, 26 Feb 2025 17:13:17 +0100
+	s=arc-20240116; t=1740586456; c=relaxed/simple;
+	bh=VWgjdVCCAYLfAMVoQ7sn9DmErxaB7SJqb0egoUiHw1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dWf065WXpHYuOJfZXGsI6oMIIZQcXBMtwHyw3bUiAXUN0QObh/oJ5wnnXUwVbzPkHQsAsmetXzE0E5UFigY6m4JqwFTns6gMZqKEc4VWyuAF+TaUqBUnhKB+YD1y0qg4asZ90KomNCwHYGfzfYbBGR9JweZN6zF4QiKmGssQx0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDvZO4Y9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B976EC4CED6;
+	Wed, 26 Feb 2025 16:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740586456;
+	bh=VWgjdVCCAYLfAMVoQ7sn9DmErxaB7SJqb0egoUiHw1o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TDvZO4Y9kztbbQJcuHJk1nAzPQRlbfmXQwy7E0kI3ypexpyGO+jGa+Vs1lhwnGdwL
+	 DxeVr5o7kjQ7OTLqMmbYi1MdEvX5HHcrBJxurqx9qzETplHq/zRF+R8GYdV3sBUM5k
+	 n+fNwO0zCAqkUKsOPa0Fer73E5ytusz9jEa9IJhajmT7cpPewUlTgm+yyTRbljyhTa
+	 5vvxPYGZ27nIdz1dM/XRF1BscBP6RPv9sSL0LH4+SO+GRKHj+Ga8aUV3ES/pr2RnJ4
+	 FTXkbloQPHuG0vw4vkEgp+vYgFpL9rN/2Qbb7Igy7+mICtRFfA8TQGu0p2r+TvCeNM
+	 FXX5b9yV6Pp8Q==
+Date: Wed, 26 Feb 2025 17:14:06 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] acpi/ghes: Use HEST table offsets when
+ preparing GHES records
+Message-ID: <20250226171406.19c2de6b@sal.lan>
+In-Reply-To: <20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
+References: <cover.1738345063.git.mchehab+huawei@kernel.org>
+	<9610ff88cf6fdc59cbfc8871d653fd890391be1e.1738345063.git.mchehab+huawei@kernel.org>
+	<20250203153423.3e4de17c@imammedo.users.ipa.redhat.com>
+	<20250221070221.329bdfb0@foz.lan>
+	<20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hari Bathini
- <hbathini@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <174055075075.4079315.10916648136898316476.stgit@mhiramat.tok.corp.google.com>
-Subject: Re: [PATCH 4/8] tracing: probe-events: Log errro for exceeding the
- number of arguments
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <174055075075.4079315.10916648136898316476.stgit@mhiramat.tok.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UZdbfm8Jyj5pDTg2dnA4FRZxSZY84azYIEQUKAQgH2svbyxX3gu
- 08c1/2YY9/U6YbnQzqnDDT2auFa+9vVjjl6S16nghJZEWPGQ7obrvuxMMULQzw5S30hp0t6
- 3mYCXYGrFIswosXM+Cje2vEYJ1qA/ceTfU5jvsfrZsmJLUyZMOBpC7FH5JzB9tBzhevGPFV
- +SM2PdtNd8yyWlMDLBFQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JXcb3I61tNg=;j+LC9tXYsMbwwkJH+9vLK8PTLft
- GTV0+z46Q4Buyk95uhIoHhh0x0ew1PNvQ59yD61Md0ylNf/mXVexSk7k8mqbKDQSqvg6hITtt
- oTSxNZLfW4zD1+KCrX+J1pKn+j0Cg3RWSEKcolqV36DEHsSVK5QzRfVm+tFOUDsZJjT1EvZv/
- xjhihTTDLG5PtBSBA+eoshvgKfUwMwi+xdEXH5Eultf22PEzNdOfMA2bON9FiJYtINuBnnCDM
- yXNCaDf+3WwWF2oo61QwUs7tASmMMYAOcSbH24PRv6Levs8pWJvVUhxer4xsrvj9g1ipGa/5e
- aXbhcKVz4U3mr54ERojgyXRISBHr9R/JVq1farA5z4b8X17oteG3UDEYZS+Tqt5nSNipMyK57
- jNEVekhGgkWqKmwS6TiWxkq69d6wimfAr22MqrrSEgMD5KcsIjROYILU/jGo8ghYApcGX488I
- LLV4PtjK8u0r/ZYNb2cpdMo9PSvIlUNz0CIAru8GE+0F9f/TVQtgdh/7Ehw/m5N5f1oFiM7GH
- qwCiO6VKfYSLYmywQJ7jnbr9VNCAYIwwQAqIx5Yqahs6rVzq5q5kTIAu+vzIkbeMKWtP0y3+5
- 550amv7K5gY6tbxX7uN50H1fKDlNELnM+rn5icD7KX4ZuWrA2NJp00uH91RWBkJVoLYh7Qdct
- SAHQ56kPLqzDAyF+vJ9cXgcFMdpFzxZUW+FoqtI3+VUJJ9EGXwHKERQnbbuDAzdxIEm651Tpj
- Od7PW/4y0uLZnJcwCbCf0X2xRBs1bvvfMSu3l/e/Tkf+TssOR8W6/scogXnni2F9yGiAoZO1q
- f6Ui6tsWl8L6xMMegRn75XDQmoQl/ADXdwb59zF+Xm2eTzKkYUfV29q/JNuNVvbrBElxN6ezy
- cB6+Oubz/PAtw224atbNTcTM1FEK3QEhaAk4YFg87wbf1969RxzBH68VukVvM9eby55vjyf/I
- b3sZ4UB98h9TGvof5WhN4XsBJtRDz+jpA7WtW4HmWc3KbKyIveivvVbLoCR1INLUNinC6ilKO
- ZPHd0fAHy20sK0uMtXBvvlQLRcJtBqTzNaYAbLfv8P4EdratUae+HGfhj1OeDyvYTrorn/2kX
- 17e9avdGI94T2r41jcl9LG6mTR839837KN0uUI0Us+lwzQy6kElnbQtQHG1wBwcey63lZGcvV
- lgi2B35cdFxU9SmHmEIA4XB18ZuvUwGBysNhUofUY1Jgv8O6/GDxBJDDBGBgBPeq4wPGKBkal
- VN7BS+RTSZvU7YRTRPFVUTt8CY+J0fJbZ6UIUs5gOtKAXdqAI/bVvZyHHvDU/zFDjDvDtV8pv
- 4bKJj2R+VI5K7oBw8KMYuT4evKB/gLMKGUkyMp+Xk+whQTwCyfVvDSucWNBCzAsZXkp+J4NP6
- rv9s5Dpy4oSx3qgwtro+elBMlzTlU9WivbCaYjlSK30ghqEjhRg9ngrTUfCBtypKbwegEm6Ib
- GGgw+rQ==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> +++ b/kernel/trace/trace_fprobe.c
-> @@ -1201,8 +1201,11 @@ static int trace_fprobe_create_internal(int argc,=
- const char *argv[],
->  		argc =3D new_argc;
->  		argv =3D new_argv;
->  	}
-> -	if (argc > MAX_TRACE_ARGS)
-> +	if (argc > MAX_TRACE_ARGS) {
-> +		trace_probe_log_set_index(2);
-> +		trace_probe_log_err(0, TOO_MANY_ARGS);
->  		return -E2BIG;
-> +	}
->
->  	ret =3D traceprobe_expand_dentry_args(argc, argv, &dbuf);
-=E2=80=A6
+Em Tue, 25 Feb 2025 10:43:27 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-May a bit of exception handling code be shared by an additional jump targe=
-t?
-Will another goto chain become helpful here?
+> On Fri, 21 Feb 2025 07:02:21 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Em Mon, 3 Feb 2025 15:34:23 +0100
+> > Igor Mammedov <imammedo@redhat.com> escreveu:
+> >   
+> > > On Fri, 31 Jan 2025 18:42:44 +0100
+> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > >     
+> > > > There are two pointers that are needed during error injection:
+> > > > 
+> > > > 1. The start address of the CPER block to be stored;
+> > > > 2. The address of the ack.
+> > > > 
+> > > > It is preferable to calculate them from the HEST table.  This allows
+> > > > checking the source ID, the size of the table and the type of the
+> > > > HEST error block structures.
+> > > > 
+> > > > Yet, keep the old code, as this is needed for migration purposes.
+> > > > 
+> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > > ---
+> > > >  hw/acpi/ghes.c         | 132 ++++++++++++++++++++++++++++++++++++-----
+> > > >  include/hw/acpi/ghes.h |   1 +
+> > > >  2 files changed, 119 insertions(+), 14 deletions(-)
+> > > > 
+> > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > > > index 27478f2d5674..8f284fd191a6 100644
+> > > > --- a/hw/acpi/ghes.c
+> > > > +++ b/hw/acpi/ghes.c
+> > > > @@ -41,6 +41,12 @@
+> > > >  /* Address offset in Generic Address Structure(GAS) */
+> > > >  #define GAS_ADDR_OFFSET 4
+> > > >  
+> > > > +/*
+> > > > + * ACPI spec 1.0b
+> > > > + * 5.2.3 System Description Table Header
+> > > > + */
+> > > > +#define ACPI_DESC_HEADER_OFFSET     36
+> > > > +
+> > > >  /*
+> > > >   * The total size of Generic Error Data Entry
+> > > >   * ACPI 6.1/6.2: 18.3.2.7.1 Generic Error Data,
+> > > > @@ -61,6 +67,25 @@
+> > > >   */
+> > > >  #define ACPI_GHES_GESB_SIZE                 20
+> > > >  
+> > > > +/*
+> > > > + * Offsets with regards to the start of the HEST table stored at
+> > > > + * ags->hest_addr_le,      
+> > > 
+> > > If I read this literary, then offsets above are not what
+> > > declared later in this patch.
+> > > I'd really drop this comment altogether as it's confusing,
+> > > and rather get variables/macro naming right
+> > >     
+> > > > according with the memory layout map at
+> > > > + * docs/specs/acpi_hest_ghes.rst.
+> > > > + */      
+> > > 
+> > > what we need is update to above doc, describing new and old ways.
+> > > a separate patch.    
+> > 
+> > I can't see anything that should be changed at
+> > docs/specs/acpi_hest_ghes.rst, as this series doesn't change the
+> > firmware layout: we're still using two firmware tables:
+> > 
+> > - etc/acpi/tables, with HEST on it;
+> > - etc/hardware_errors, with:
+> > 	- error block addresses;
+> > 	- read_ack registers;
+> > 	- CPER records.
+> > 
+> > The only changes that this series introduce are related to how
+> > the error generation logic navigates between HEST and hw_errors
+> > firmware. This is not described at acpi_hest_ghes.rst, and both
+> > ways follow ACPI specs to the letter.
+> > 
+> > The only difference is that the code which populates the CPER
+> > record and the error/read offsets doesn't require to know how
+> > the HEST table generation placed offsets, as it will basically
+> > reproduce what OSPM firmware does when handling	HEST events.  
+> 
+> section 8 describes old way to get to address to record old CPER,
+> so it needs to amended to also describe a new approach and say
+> which way is used for which version.
+> 
+> possibly section 11 might need some messaging as well.
+
+Ok, I'll modify it and place at the end of the series. Please
+see below if the new text is ok for you.
+
+---
+
+[PATCH] docs/specs/acpi_hest_ghes.rst: update it to reflect some changes
+
+While the HEST layout didn't change, there are some internal
+changes related to how offsets are calculated and how memory error
+events are triggered.
+
+Update specs to reflect such changes.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
+index c3e9f8d9a702..f22d2eefdec7 100644
+--- a/docs/specs/acpi_hest_ghes.rst
++++ b/docs/specs/acpi_hest_ghes.rst
+@@ -89,12 +89,21 @@ Design Details
+     addresses in the "error_block_address" fields with a pointer to the
+     respective "Error Status Data Block" in the "etc/hardware_errors" blob.
+ 
+-(8) QEMU defines a third and write-only fw_cfg blob which is called
+-    "etc/hardware_errors_addr". Through that blob, the firmware can send back
+-    the guest-side allocation addresses to QEMU. The "etc/hardware_errors_addr"
+-    blob contains a 8-byte entry. QEMU generates a single WRITE_POINTER command
+-    for the firmware. The firmware will write back the start address of
+-    "etc/hardware_errors" blob to the fw_cfg file "etc/hardware_errors_addr".
++(8) QEMU defines a third and write-only fw_cfg blob to store the location
++    where the error block offsets, read ack registers and CPER records are
++    stored.
++
++    Up to QEMU 9.2, the location was at "etc/hardware_errors_addr", and
++    contains an offset for the beginning of "etc/hardware_errors".
++
++    Newer versions place the location at "etc/acpi_table_hest_addr",
++    pointing to the beginning of the HEST table.
++
++    Through that such offsets, the firmware can send back the guest-side
++    allocation addresses to QEMU. They contain a 8-byte entry. QEMU generates
++    a single WRITE_POINTER command for the firmware. The firmware will write
++    back the start address of either "etc/hardware_errors" or HEST table at
++    the correspoinding address firmware.
+ 
+ (9) When QEMU gets a SIGBUS from the kernel, QEMU writes CPER into corresponding
+     "Error Status Data Block", guest memory, and then injects platform specific
+@@ -105,8 +114,6 @@ Design Details
+      kernel, on receiving notification, guest APEI driver could read the CPER error
+      and take appropriate action.
+ 
+-(11) kvm_arch_on_sigbus_vcpu() uses source_id as index in "etc/hardware_errors" to
+-     find out "Error Status Data Block" entry corresponding to error source. So supported
+-     source_id values should be assigned here and not be changed afterwards to make sure
+-     that guest will write error into expected "Error Status Data Block" even if guest was
+-     migrated to a newer QEMU.
++(11) kvm_arch_on_sigbus_vcpu() report RAS errors via a SEA notifications,
++     when a SIGBUS event is triggered. The logic to convert a SEA notification
++     into a source ID is defined inside ghes.c source file.
 
 
-How do you think about to avoid a typo in the summary phrase?
 
-Regards,
-Markus
 
