@@ -1,240 +1,132 @@
-Return-Path: <linux-kernel+bounces-534134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88C1A46334
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 405FDA46344
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBE4172CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1677167D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B606F21D3FE;
-	Wed, 26 Feb 2025 14:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DFC221DB1;
+	Wed, 26 Feb 2025 14:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XTVibonf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TMv9IRLx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XTVibonf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TMv9IRLx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UA0T92Yi"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552E5218AB4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3DB21D3C7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580812; cv=none; b=n8a0g6EX35y7IxMyfYt/SDERFOckTEnbrMPXcYn8WK0ddNUtdZbDCVPRMjExnV1GRGekjuUZA0H39pWan6c+YhA5l02RIZljQQEqtTjO/XPpumbDeR+MTeSYz+joEeHV7DxgBYgeajQfgJYHbi8iR9WesLZvJ/IB4Dbpp+t4hP8=
+	t=1740580923; cv=none; b=jRg/xhXsBNx9E6/PfzqbnQvKA2sJhiW5jSAF+9JiorT1tXoepsiS3zzOkvnETk4U0CaQm18aTN0ReeyL9B5pXN0n2q/HjG88c8oiLGeQ/IGRSS9lthO3Ct4CwJ4QFh5QGuCLUfVqxlWCmx65XO1UAmTu7Zfc2bjcdXZ/nGEIW98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580812; c=relaxed/simple;
-	bh=gzgLkQrlMVrKRkc+f083jvOCMJCBvyornDXSONhTj2A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dA2PKlNgkM9SvxdK+sACryS8bn+KzyBq20V7SEKuyX3NmzKf5WeltItaRoGWAIkOtTV+uVdbGgdfkPou3j26+XUa7qOw+fKNzkrqS62f3dOZxM6QVpDHMPe0wRhsAGceXJ3HZ4FBfq85eJ29uTJaEKF/5Pf/0NtCtjT/VXA6QyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XTVibonf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TMv9IRLx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XTVibonf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TMv9IRLx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5935D21157;
-	Wed, 26 Feb 2025 14:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740580808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kMwkagBb3OSkFxt1zCwHHQVo5cOY39VhHxnQhHuA2OI=;
-	b=XTVibonfnAQjc8xj33ZksqK3Np337lSxmUKH2qL0wH2smBqkf9vH/aNcLiZNTlYbKKvgmj
-	flsGkruBmzoJ2Gsy/8uEEqt2L5zM7bzat8EQ31hfVhz5SwboDVt+nfL+ghFis6IpgLQ9lm
-	csAprURoj/yARS4ho3VXfG7xoM5Cqmw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740580808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kMwkagBb3OSkFxt1zCwHHQVo5cOY39VhHxnQhHuA2OI=;
-	b=TMv9IRLxVR9DZtjgLTXFOpjE+hCTc1i22F7xnwAnd9OND0C6Wn+8yBN9xhFtbmgNjCqOG2
-	dgem1H5fCHXA0/Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XTVibonf;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TMv9IRLx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740580808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kMwkagBb3OSkFxt1zCwHHQVo5cOY39VhHxnQhHuA2OI=;
-	b=XTVibonfnAQjc8xj33ZksqK3Np337lSxmUKH2qL0wH2smBqkf9vH/aNcLiZNTlYbKKvgmj
-	flsGkruBmzoJ2Gsy/8uEEqt2L5zM7bzat8EQ31hfVhz5SwboDVt+nfL+ghFis6IpgLQ9lm
-	csAprURoj/yARS4ho3VXfG7xoM5Cqmw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740580808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kMwkagBb3OSkFxt1zCwHHQVo5cOY39VhHxnQhHuA2OI=;
-	b=TMv9IRLxVR9DZtjgLTXFOpjE+hCTc1i22F7xnwAnd9OND0C6Wn+8yBN9xhFtbmgNjCqOG2
-	dgem1H5fCHXA0/Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E87DC1377F;
-	Wed, 26 Feb 2025 14:40:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7G4xOMcnv2fWSAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 26 Feb 2025 14:40:07 +0000
-Date: Wed, 26 Feb 2025 15:40:07 +0100
-Message-ID: <87cyf44vnc.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	regressions@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
-In-Reply-To: <2025022626-octane-rickety-304a@gregkh>
-References: <874j0lvy89.wl-tiwai@suse.de>
-	<dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
-	<87jz9d5cdp.wl-tiwai@suse.de>
-	<263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
-	<87h64g4wr1.wl-tiwai@suse.de>
-	<7a4072d6-3e66-4896-8f66-5871e817d285@oracle.com>
-	<2025022657-credit-undrilled-81f1@gregkh>
-	<2025022626-octane-rickety-304a@gregkh>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1740580923; c=relaxed/simple;
+	bh=4FWXayBvVhNTS0E6OWpQiCVezWoKUfgMUUoPmP8gePk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pl3SMZiWx05KDwgmvtlSHLnb0k6m5Z1+/3oQoE7QqzQ9E+mfbBtJkdjXmrQxyI+Rr6HghCH/KFyY/51Tv38E+L0Tjyxh2LAHwDUnyaNhPM0Vt7ZRkRovW5C1Omf1wlpWpgmRxP18MRC4ts478C0ELN9jBq8Corx8AC7UgTo2YZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UA0T92Yi; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso1203685866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:42:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740580919; x=1741185719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yd4Q4hVeUYOM1ue+qUfzWNg9Q9i3oT/9A9AYIFfGkUc=;
+        b=UA0T92YiBtus8ppEPCDg10F757C1qob4i4FvX+s7vjhN06JNq09tElmthayuZTKbKR
+         RzBb38v/U1Tzi19jDCCKfJ53nBVMHlTo4YRBTAT+fa36GR1daqknAVGi9+MjMMyGwuYA
+         rOmuWLd2B4Pm7oDF7avN9M6Le7mDbT/Ur4DX0LIzc+0kCLKShWuMR7lyzkU9yirIXxsA
+         SHikx/C4FcLi+M3Uu8T8uTvLjeMOiachCQHWNAcZlLpyXRW/exId+fnmOo6+wm54cA+Y
+         5KlcZvwLo+17WtT5kNkzT6tI7l+preG+EKVTlgCpuLnooIW80GCVX1kZYEmVFa+eTgri
+         kjnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740580919; x=1741185719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yd4Q4hVeUYOM1ue+qUfzWNg9Q9i3oT/9A9AYIFfGkUc=;
+        b=mby1afW4Qe/ZBpzyRVBcGeQnF70mmKFBWuB9FlW9QsAqhj6TIkMDniRJoH2oqWiy97
+         g0Wx8Bt/UKg+s9CLHjOWkkYnYooLX3HVM8HywHRbhIjKD/YmplLyDO9aXOEEt6Ey/E9O
+         RWXefo34ErNvBbv8/05zqJqbplLwend8XfSOqbNJpPr4rrxn3WcdXk/1NJ9zg7rA70yt
+         d+9cHl9jArBxABUiEpRKTscMAQHxKj2tghgxnsn9qG9GyK+kUTq+CZlir9zsnNhTRcRL
+         jEPTd2hhXqqy6KolZE4UgaqQmelrGrCbLBgxdbmsHBsPKIFYC6CGK0D2NAsBiOZXonZr
+         JIgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTCk7plM6xGy85EEqyAB0tPioNEoAQ/j1x5LlfU/zICXy/bmMrx5tnL81TNBm59s4Dns+zCQDMXKlfN/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy++h0zousjAEyBQZuzWe7VUXwelR9/rHj9Y9ivWFwLe+EMG7OJ
+	MQPDJ+F4sudz+4lxTMMH1mSlf4+F0CxxdOnuoAIuCBh1DuXHH2GjrcAb9eVDDF0=
+X-Gm-Gg: ASbGncvOWQkKkCB7G2RcOpu3im0/e/35I4z/GgIKiMsF2ppUn57wPqeZYNfsvo3HVHT
+	Jn+5D6hnjl+adz/5nlvDFgxO86cywS7JynjuK/ZTc0NxQJwTZOhmEzdEhDS+8R2qtJiksb5p3GR
+	60rLe9Pe0YEkWbyaujrLfD0Rsyj+utQ9bMaQdUC/C8C0ddBuNf7117PstoM582VEBB3xhllb89E
+	mTKawrgPB1WILVHojbmWbaTC5TzvBLYlszjaEdWC52m+w2IW3/q2Too4zSyurj3WCYK3FBHk47R
+	itIXAoGBvpf7hger1kK/ebhbo3UggZE=
+X-Google-Smtp-Source: AGHT+IEqq+wCIO+7KpV9xqIa2Ubw1hCVyP4Ga6WxVj5wemOObN4UBSusPlhMuI5n8yBIpYErWlyqpg==
+X-Received: by 2002:a17:906:314d:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-abc0de55dbcmr1974440866b.48.1740580919225;
+        Wed, 26 Feb 2025 06:41:59 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed2012142sm333883966b.117.2025.02.26.06.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:41:58 -0800 (PST)
+Date: Wed, 26 Feb 2025 17:41:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: slongerbeam@gmail.com, p.zabel@pengutronix.de, mchehab@kernel.org,
+	gregkh@linuxfoundation.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] media: imx: fix a potential memory leak in
+ imx_media_csc_scaler_device_init()
+Message-ID: <450cdcc9-ccb8-4ebd-847c-b106fae2d709@stanley.mountain>
+References: <20250226142126.3620482-1-haoxiang_li2024@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 5935D21157
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.com:url];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226142126.3620482-1-haoxiang_li2024@163.com>
 
-On Wed, 26 Feb 2025 15:35:34 +0100,
-Greg KH wrote:
+On Wed, Feb 26, 2025 at 10:21:26PM +0800, Haoxiang Li wrote:
+> Add video_device_release() in label 'err_m2m' to release the memory
+> allocated by video_device_alloc() and prevent potential memory leaks.
 > 
-> On Wed, Feb 26, 2025 at 03:26:44PM +0100, Greg KH wrote:
-> > On Wed, Feb 26, 2025 at 09:20:20AM -0500, Chuck Lever wrote:
-> > > On 2/26/25 9:16 AM, Takashi Iwai wrote:
-> > > > On Wed, 26 Feb 2025 15:11:04 +0100,
-> > > > Chuck Lever wrote:
-> > > >>
-> > > >> On 2/26/25 3:38 AM, Takashi Iwai wrote:
-> > > >>> On Sun, 23 Feb 2025 16:18:41 +0100,
-> > > >>> Chuck Lever wrote:
-> > > >>>>
-> > > >>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
-> > > >>>>> [ resent due to a wrong address for regression reporting, sorry! ]
-> > > >>>>>
-> > > >>>>> Hi,
-> > > >>>>>
-> > > >>>>> we received a bug report showing the regression on 6.13.1 kernel
-> > > >>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
-> > > >>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
-> > > >>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> > > >>>>>
-> > > >>>>> Quoting from there:
-> > > >>>>> """
-> > > >>>>> I use the latest TW on Gnome with a 4K display and 150%
-> > > >>>>> scaling. Everything has been working fine, but recently both Chrome
-> > > >>>>> and VSCode (installed from official non-openSUSE channels) stopped
-> > > >>>>> working with Scaling.
-> > > >>>>> ....
-> > > >>>>> I am using VSCode with:
-> > > >>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-> > > >>>>> """
-> > > >>>>>
-> > > >>>>> Surprisingly, the bisection pointed to the backport of the commit
-> > > >>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-> > > >>>>> to iterate simple_offset directories").
-> > > >>>>>
-> > > >>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
-> > > >>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
-> > > >>>>> release is still affected, too.
-> > > >>>>>
-> > > >>>>> For now I have no concrete idea how the patch could break the behavior
-> > > >>>>> of a graphical application like the above.  Let us know if you need
-> > > >>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
-> > > >>>>> and ask there; or open another bug report at whatever you like.)
-> > > >>>>>
-> > > >>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
-> > > >>>>>
-> > > >>>>>
-> > > >>>>> thanks,
-> > > >>>>>
-> > > >>>>> Takashi
-> > > >>>>>
-> > > >>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-> > > >>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> > > >>>>
-> > > >>>> We received a similar report a few days ago, and are likewise puzzled at
-> > > >>>> the commit result. Please report this issue to the Chrome development
-> > > >>>> team and have them come up with a simple reproducer that I can try in my
-> > > >>>> own lab. I'm sure they can quickly get to the bottom of the application
-> > > >>>> stack to identify the misbehaving interaction between OS and app.
-> > > >>>
-> > > >>> Do you know where to report to?
-> > > >>
-> > > >> You'll need to drive this, since you currently have a working
-> > > >> reproducer.
-> > > > 
-> > > > No, I don't have, I'm merely a messenger.
-> > > 
-> > > Whoever was the original reporter has the ability to reproduce this and
-> > > answer any questions the Chrome team might have. Please have them drive
-> > > this. I'm already two steps removed, so it doesn't make sense for me to
-> > > report a problem for which I have no standing.
-> > 
-> > Ugh, no.  The bug was explictly bisected to the offending commit.  We
-> > should just revert that commit for now and it can come back in the
-> > future if the root-cause is found.
-> > 
-> > As the revert seems to be simple, and builds here for me, I guess I'll
-> > have to send it in. {sigh}
-> > 
-> > Takashi, thanks for the report and the bisection, much appreciated.
+> Fixes: a8ef0488cc59 ("media: imx: add csc/scaler mem2mem device")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+>  drivers/staging/media/imx/imx-media-csc-scaler.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Now sent:
-> 	https://lore.kernel.org/r/2025022644-blinked-broadness-c810@gregkh
+> diff --git a/drivers/staging/media/imx/imx-media-csc-scaler.c b/drivers/staging/media/imx/imx-media-csc-scaler.c
+> index e5e08c6f79f2..f99c88e87a94 100644
+> --- a/drivers/staging/media/imx/imx-media-csc-scaler.c
+> +++ b/drivers/staging/media/imx/imx-media-csc-scaler.c
+> @@ -913,6 +913,7 @@ imx_media_csc_scaler_device_init(struct imx_media_dev *md)
+>  
+>  err_m2m:
+>  	video_set_drvdata(vfd, NULL);
+> +	video_device_release(vfd);
 
-Thanks Greg!
+The video_set_drvdata() call is pointless.  It just does:
 
-Let's continue hunting the cause before 6.14 release, meanwhile.
+	vfd.dev->driver_data = NULL;
 
+but that's not necessary if we're just going to free "vfd" on the next
+line.
 
-Takashi
+regards,
+dan carpenter
+
+>  err_vfd:
+>  	kfree(priv);
+>  	return ERR_PTR(ret);
+
 
