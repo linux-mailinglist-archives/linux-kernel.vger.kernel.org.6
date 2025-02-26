@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-535087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CD2A46EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB05FA46EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376893AFC09
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46DF3AFA44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C41725D1F5;
-	Wed, 26 Feb 2025 22:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA6625D1F2;
+	Wed, 26 Feb 2025 22:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsihiHmF"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHMxOX5t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128625D1E1;
-	Wed, 26 Feb 2025 22:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B1725D1E1;
+	Wed, 26 Feb 2025 22:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609591; cv=none; b=ouffO2HfIjk8pckipqXkeJJxhYuftX+3Mo8exE8WtMSoQ18LDKaEF6C8N19T4K2/itHCLYa7VAqclxmW0SaZCYnmoLlgsUG+qlD+/TVCS3TYy7cYHztaOoVDUIBG9pKHjX91NDMD54NMNdxJSh4tA8Z4ee5X6T5duRzWeGFOG8k=
+	t=1740609626; cv=none; b=lMCbxIam0s02aluwc39+xSgzYdgkdONTwVZOmQs/013BBlW9zciDtbzVgre8pb+TE+Z0I7JMqRhaWcO1x3bECR4BToMiEFAQnmvbpXc4svNFeOHv3LFUHcqt48ZUgBzUmRXWUrMy+2K8bfOe6hmHCpQrc6L4hnLGDObzNOa+ShA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609591; c=relaxed/simple;
-	bh=u2A9qCjDWZkzV/a5G2DIvQAlNnCeoYE8Rtqwv4VilKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LrvYq9hWcT4GhnHe7XsJ0ej4etF6j4fFFScD39AR+PyTOVMgBMPu/1Wp5ncn99OCuinhJ5vK+ZlNTyX2X3ynU8s/sjnsrWD19HTsfqQDcse/86ikMuC4GqqeDauShamHie4dGwvtL0209iBb4lpEIg0krK3yoMw8oybhabjVOnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsihiHmF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so2107645e9.1;
-        Wed, 26 Feb 2025 14:39:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740609587; x=1741214387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
-        b=bsihiHmF0kFmwEfaX3UNF0Vjwvpu2pblgDX78du3Vx7XK6E6o/669sKgf+MUpW9bZK
-         Idk7hIVqQRhNMS7zWkAXrvAQrsGBO7QohCsTjQ76gzjCXAE099KjwVUarj24Yd76FNZ6
-         fTGRb+wx45uwhhtC32r2PTZEH/zn+ElIK/J0MovUwT8VjdUpmiIxCDFV89P9+dotV91T
-         PtJuKjWFatpEv0NsHoGU9EPzp6b0FEnqSSv2PqyVMZgAB58/xTFP3Q6BYw2UHsRm20OA
-         6PuUM8P3sAbIISePjIySSt+LtXV2PAWFs5YuD9oL2//5WJvQF+Ls+VAQXyD009NOfEeJ
-         jStA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740609587; x=1741214387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
-        b=v2dXJbqSdA563B+GwYxoNr4RVaQo9GeSHi1G8EgULao6gZUUV7bJvMAvUmlKOZXBoy
-         j2XY1NzjW5HU2qb2+Clwp0k89C52i8QtBsEsEjB2AwyL9F1PJIuwCZ/o3QQDtaaDGiSK
-         0yiX/Ab04PlymeS+H5v6cfMyD3qgLBrIu8upihwuAJjL/Sv0UgaAFZ0TrPfFe7hulepm
-         shevge/t5wmQp5+q3YG955p5Ug82qk0eM+ZZIsDcuC77Sf+w5i0ifwEwO3Xt2jvahMUL
-         wjojLLQy1JAjC7C9n7FGgJAKc07kFAJ3x8iYsoPgslFJd2hWEObkW7iCDtgPy0GhQOuu
-         1WlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQsabP8gRNG1SSZascGH/jC1h16MtlJ3sWJw2w4Z3EkcO8iaUDUUh9LWml/pymrlwL4OBQTLsgid4LhlCW@vger.kernel.org, AJvYcCXPli9OHVhWKogwldLN40GZf5w47m6bO34B9QLknX9rvD73tfNH90TXOO7U6fIFS25b2ei+GEw3AsSu8UmD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxHWCV9pJW5b+fGyHaheDHyhZZB6+m8rngDfU3j+IaF7IpCeam
-	lxchFkMfUiBg1ANXMl1lRG4UUp2DiDFwR1CW+Tc3abUui94jJNLh
-X-Gm-Gg: ASbGncvlOjonMASt+S6xjWWUMXMfIKQMnooATnQI+APgwPfB05XBHfeHgxGVS1f6Oc4
-	Vs9awGmnUzuohCcOahZRbPBIAQkoEh9QkoFz8w5mEmEvNXSbHaPegpJhmFuo1+QNnS4IVgj5o7B
-	1DYtnJgxgSYfzvM1NKsc9bNk9UPyukAobDMlFhggdL/JExkMt/Q0F1oMf0SOp+8iuda2Z09y2SB
-	4Pc97dg0XAkXHY0zyXvJvIaqlMw8LGjWV76Gm7LHhFHf7UwRNS67PJLMezSFNJFvef0ZCq/6fx1
-	Nyxg9EchZr01lQSYjkG2S4jhXU4=
-X-Google-Smtp-Source: AGHT+IEKmoN/1Etv0GnYfbieq7HiOjjWHpmIeqo/u0VjHW2My8Y0pb14MM+VqaWPvkUE+4XaiIxTew==
-X-Received: by 2002:a05:6000:1fa1:b0:387:8752:5691 with SMTP id ffacd0b85a97d-390cc63ce07mr8391029f8f.47.1740609587301;
-        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e485d6dbsm155058f8f.82.2025.02.26.14.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs: Fix uninitialized variable uflags
-Date: Wed, 26 Feb 2025 22:39:12 +0000
-Message-ID: <20250226223913.591371-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740609626; c=relaxed/simple;
+	bh=Tu1nE4Q3dyBkfNVe3WH+1VRORM2AVFLgDFLmA+vu5Eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2MfvfGzNfqmRMo92bC6yTzr/GbFzUh++k4vI7EBuT0HGRubS0zVCAeppsZsnfXU/IVOMGoxE9alVdOaL1uGSg9w07DO3nIsP6SecAJbAzGNSM0M9BTcHbRIhnOKbS0Nkc/q/jRMUL4NaO6uDa8NfKTfSrAnMt5san1bZYH6agQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHMxOX5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4C7C4CED6;
+	Wed, 26 Feb 2025 22:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740609625;
+	bh=Tu1nE4Q3dyBkfNVe3WH+1VRORM2AVFLgDFLmA+vu5Eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YHMxOX5tSubQW8hSAELPyOewhU7DnMOHzUPM3K7WVk1IeV06qM94wp9etUCxD1sB3
+	 KW46v64/YnrF8sRcMYic8yhmr8Mpu2E/R3DdVMmGtUeWX6xL0vU2QeldT2W68l0wq1
+	 6z0JkJLFfv36PdzeWBpOswj2GaYTddI7BNkt/kuPw8vjl+7y06A6YLhVc96+ciEX7P
+	 7Xm0ndcD+lKXldwvXV/u3XG0oBuy0s1ht2AXgXmGQPguW4o0oT83jKYUBbIc9qlE6T
+	 63LORntFbDo8xw9SAR6BPXGBAY3qwlwxkvqb783S1J0w7DriXdawO7LGS0sNqxa3+w
+	 YsxBnXt2wnvrg==
+Date: Wed, 26 Feb 2025 22:40:20 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: lgirdwood@gmail.com, aaro.koskinen@iki.fi, andreas@kemnade.info,
+	khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com,
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+	m-leonard@ti.com, praneeth@ti.com
+Subject: Re: [PATCH v4 0/4] Add TI TPS65214 & TPS65215 Regulator Support
+Message-ID: <131466cc-dc54-4251-82f7-5ec9e9c20f26@sirena.org.uk>
+References: <20250212191129.467728-1-s-ramamoorthy@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HaBd6upumVx/cA7B"
+Content-Disposition: inline
+In-Reply-To: <20250212191129.467728-1-s-ramamoorthy@ti.com>
+X-Cookie: I've been there.
 
-The variable uflags is only being initialized in the if statement that
-checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
-initializing uflags at the start of the system call move_mount.
 
-Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--HaBd6upumVx/cA7B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 663bacefddfa..c19e919a9108 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
- 	struct path from_path __free(path_put) = {};
- 	struct filename *to_name __free(putname) = NULL;
- 	struct filename *from_name __free(putname) = NULL;
--	unsigned int lflags, uflags;
-+	unsigned int lflags, uflags = 0;
- 	enum mnt_tree_flags_t mflags = 0;
- 	int ret = 0;
- 
--- 
-2.47.2
+On Wed, Feb 12, 2025 at 01:11:25PM -0600, Shree Ramamoorthy wrote:
 
+> Dependencies:
+> - Patches 2 & 3 depend on https://lore.kernel.org/all/20250206173725.386720-5-s-ramamoorthy@ti.com/
+> - Patch 4 depends on https://lore.kernel.org/all/20250206173725.386720-6-s-ramamoorthy@ti.com/
+
+These all appear to be in the MFD tree without a tag to pull from or
+anything so I can't apply any of this stuff until after the merge
+window.  I'm not clear why they weren't sent as part of the MFD series?
+You should probably resend copying Lee.
+
+--HaBd6upumVx/cA7B
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme/mFMACgkQJNaLcl1U
+h9A41wf9E9XKpozxVx8/quKsH1uIUSHOnJ8jTvKBHC3jBC97Hkq2zawKIO8ihBLy
+pCYgVLGeAIiikzkrAUsioX2KnEhpoScNG5l98oSqz30SRXnoxtMj9ilYVfPYH016
+XbaTl/3aJrbqml6f28yj/aZHFdG0fMqkDhaiPtOGdwyQD82fudWW720WSaAsKZUm
+P6fimiULpDMsBvNvb70nY3MhHDxKQFJgOQ1igi7TtKIdweksMx/K0S4RBwraie5W
+5PU8TNsjDAcldatju8bqg89HZzrb5X/K9oQJH/3GZjEdkN8QaDEON+18KvFB3cT9
+wO8jj1LK6M+4h43lghvTC8NlWI0uAg==
+=nhrl
+-----END PGP SIGNATURE-----
+
+--HaBd6upumVx/cA7B--
 
