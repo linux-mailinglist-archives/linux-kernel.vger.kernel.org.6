@@ -1,239 +1,131 @@
-Return-Path: <linux-kernel+bounces-534967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59CDA46D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:25:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5288AA46D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB78F16BF9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142041888323
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C163922332E;
-	Wed, 26 Feb 2025 21:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB75223321;
+	Wed, 26 Feb 2025 21:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ikf0by6P"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LyPPWAxE"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9A8218591
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C366015852E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605098; cv=none; b=kYdyH3H22QGkWsu/I5j4MYXg/HXS/9cwKlOt3p4pB5BnkQtYWQQG7xDE/BvTYIuIjHSxS/8+0Y4g36SHLbSh9oBQESRrNEtzOJrPOOVnQFko+uT5maiVZ2EP7jLHZgqQmMugfo2GZS6cYObn5Tu0qT0SGx3W6jjxWy0PyCL4G1E=
+	t=1740605052; cv=none; b=WN/9+nkH6/o1SSe6I5NQHKzTKUlb2FQGuTIem5CwSd7JdWV9PJ7pxCEexqW1lvf4xGnlzEgzWr0qk3lhpa89XmP/32vB7KX5COpHtJ1QQQRML0MitOXKADtKM3WztPVOfXnPSeN6uBQTXFGmUnQ42h8b5R9sUeRzXlSz6I6nZoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605098; c=relaxed/simple;
-	bh=GPvtEcspJU6GxP83VqwaJwmNYNNs6KoVA1yAU/7fUWY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BqkfwiDu7au8d3Qv+YDXAsUhl9Ebqq9FdjulNBmEYYtSfQUDBebRbu34RDFBY7AFu9Rk8Zl6XPWiDWgeLOFU0wuuWjFPvpGlAc/RpE6PAw6tHBGmsChx7Ff72Z15KePRcFTvEU01cEDv48EOq+g7CwYCR3FzpHRkdOB/X7LiP/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ikf0by6P; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EAF6C4435B;
-	Wed, 26 Feb 2025 21:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740605094;
+	s=arc-20240116; t=1740605052; c=relaxed/simple;
+	bh=t4znlvu/N1sdiJLnPFZguZXq2eiz7OvDH3WW/R0/urw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Twr466xAkSQrYoI9+C5hg+zYdkdQExNQFXo93L+a/RNkBb8KVWRinaSs7hAHhwpBqTCHAlfpiQbp5wlfrDu0hneIGVyZB7DqDfX+tWMhR/rz+O3uAQmKwZ3Bz/0U4DvgxcjL0u3+tNSxrA5NyOJ/D7kk5Dk1Jh8Mi3hkKtOqFKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LyPPWAxE; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 21:23:53 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740605038;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RjXIFbrycUalHpcnR/F5qePySLzaC2KIyI6Go0Y3H6o=;
-	b=ikf0by6PP6wDzBzH4f1AW/7i/C50BiqT4SRCVXjtBq8jUBcsVS9BqRMC/ofjH0KTQiqIzR
-	H0RueAaGHUHfIErOLGlCgP6uXHEhjX+2YhxbOTWqyaF2sIqaa7MXullaZFsiwz6pt8iFII
-	ICoEC6T3Cw5nxBTW9AQl6sJT4Bw9PrH+CpK3saQqljwg+K7PELliMqLIEYl/1GHOi9vCvE
-	sn0GJxmAiFfzOUwy5VCZITyTyiFCZkmPT6s6PYmyZ19qirlXaHncsHl3naVH/UfV4Jcy55
-	gNqwDwifbgXjFk9kHk2GTgHVfgoyqfgOsZYdJabdGx+Gmq7EnTirFIEY8gMAGw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 26 Feb 2025 22:23:53 +0100
-Subject: [PATCH v8 2/2] drm/debugfs: add top-level 'bridges' file showing
- all added bridges
+	bh=uJQGr+aTHnne3w5uc9X4/jJeY03gqZ4f7+KcAq7dW68=;
+	b=LyPPWAxEWmkvlpAaeOkB0LyTb0NOTyoQALIAYITZFvXbCw88dvPQBXQB/eTmb24p3dHat1
+	ocBilEY5UdJy0v873ihFR79MORCfmEvIN5z4HrsdJV2uGgJQx7HxGbvOWYODYX1sN8JIF/
+	v0rGNQ/GP1Apni1yTp6ebXEYPZKHj2c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>, linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
+ zswap_cpu_comp_dead()
+Message-ID: <Z7-GaVJHC_1ynigx@google.com>
+References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
+ <20250226200016.GB3949421@google.com>
+ <Z796VjPjno2PLTut@google.com>
+ <20250226211628.GD3949421@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-drm-debugfs-show-all-bridges-v8-2-bb511cc49d83@bootlin.com>
-References: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
-In-Reply-To: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieeiuedvffetgfeuudelheeutefggfejieettdetteekueeuueeukeevvedvueevnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhop
- ehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepjhgrnhhirdhnihhkuhhlrgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226211628.GD3949421@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-The global bridges_list holding all the bridges between drm_bridge_add()
-and drm_bridge_remove() cannot be inspected via debugfs. Add a file showing
-it.
+On Wed, Feb 26, 2025 at 09:16:28PM +0000, Eric Biggers wrote:
+> On Wed, Feb 26, 2025 at 08:32:22PM +0000, Yosry Ahmed wrote:
+> > On Wed, Feb 26, 2025 at 08:00:16PM +0000, Eric Biggers wrote:
+> > > On Wed, Feb 26, 2025 at 06:56:25PM +0000, Yosry Ahmed wrote:
+> > > > Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
+> > > > the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
+> > > > (through crypto_exit_scomp_ops_async()).
+> > > > 
+> > > > On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
+> > > > (through crypto_scomp_init_tfm()), and then allocates memory.
+> > > > If the allocation results in reclaim, we may attempt to hold the per-CPU
+> > > > acomp_ctx mutex.
+> > > 
+> > > The bug is in acomp.  crypto_free_acomp() should never have to wait for a memory
+> > > allocation.  That is what needs to be fixed.
+> > 
+> > crypto_free_acomp() does not explicitly wait for an allocation, but it
+> > waits for scomp_lock (in crypto_exit_scomp_ops_async()), which may be
+> > held while allocating memory from crypto_scomp_init_tfm().
+> > 
+> > Are you suggesting that crypto_exit_scomp_ops_async() should not be
+> > holding scomp_lock?
+> 
+> I think the solution while keeping the bounce buffer in place would be to do
+> what the patch
+> https://lore.kernel.org/linux-crypto/Z6w7Pz8jBeqhijut@gondor.apana.org.au/ does,
+> i.e. make the actual allocation and free happen outside the lock.
 
-To avoid code duplication, move the code printing a bridge info to a common
-function.
+I am fine with a solution like that if Herbert is fine with it. Although
+as I mentioned, I think this patch is nice to have anyway.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> > > But really the bounce buffering in acomp (which is what is causing this problem)
+> > > should not exist at all.  There is really no practical use case for it; it's
+> > > just there because of the Crypto API's insistence on shoehorning everything into
+> > > scatterlists for no reason...
+> > 
+> > I am assuming this about scomp_scratch logic, which is what we need to
+> > hold the scomp_lock for, resulting in this problem.
+> 
+> Yes.
+> 
+> > If this is something that can be done right away I am fine with dropping
+> > this patch for an alternative fix, although it may be nice to reduce the
+> > lock critical section in zswap_cpu_comp_dead() to the bare minimum
+> > anyway.
+> 
+> Well, unfortunately the whole Crypto API philosophy of having a single interface
+> for software and for hardware offload doesn't really work.  This is just yet
+> another example of that; it's a problem caused by shoehorning software
+> compression into an interface designed for hardware offload.  zcomp really
+> should just use the compression libs directly (like most users of compression in
+> the kernel already do), and have an alternate code path specifically for
+> hardware offload (using acomp) for the few people who really want that.
 
----
-
-Changed in v8:
-- add the file in drm_bridge.c, which avois the added #if CONFIG_DEBUG_FS
-- fix incorrect (but harmless) idx increment in
-  drm_bridge_debugfs_show_bridge()
-
-Changed in v7:
-- move implementation to drm_bridge.c to avoid exporting bridge_list and
-  bridge_mutex
-
-This patch was added in v6.
----
- drivers/gpu/drm/drm_bridge.c | 72 ++++++++++++++++++++++++++++++--------------
- drivers/gpu/drm/drm_drv.c    |  2 ++
- include/drm/drm_bridge.h     |  1 +
- 3 files changed, 53 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index a6bf1a565e3c3a8d24de60448972849f6d86ba72..9c6e35d41ed54a14d5745e684a341c907ed84d6b 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -1336,6 +1336,49 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
- EXPORT_SYMBOL(of_drm_find_bridge);
- #endif
- 
-+static void drm_bridge_debugfs_show_bridge(struct drm_printer *p,
-+					   struct drm_bridge *bridge,
-+					   unsigned int idx)
-+{
-+	drm_printf(p, "bridge[%u]: %ps\n", idx, bridge->funcs);
-+	drm_printf(p, "\ttype: [%d] %s\n",
-+		   bridge->type,
-+		   drm_get_connector_type_name(bridge->type));
-+
-+	if (bridge->of_node)
-+		drm_printf(p, "\tOF: %pOFfc\n", bridge->of_node);
-+
-+	drm_printf(p, "\tops: [0x%x]", bridge->ops);
-+	if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-+		drm_puts(p, " detect");
-+	if (bridge->ops & DRM_BRIDGE_OP_EDID)
-+		drm_puts(p, " edid");
-+	if (bridge->ops & DRM_BRIDGE_OP_HPD)
-+		drm_puts(p, " hpd");
-+	if (bridge->ops & DRM_BRIDGE_OP_MODES)
-+		drm_puts(p, " modes");
-+	if (bridge->ops & DRM_BRIDGE_OP_HDMI)
-+		drm_puts(p, " hdmi");
-+	drm_puts(p, "\n");
-+}
-+
-+static int allbridges_show(struct seq_file *m, void *data)
-+{
-+	struct drm_printer p = drm_seq_file_printer(m);
-+	struct drm_bridge *bridge;
-+	unsigned int idx = 0;
-+
-+	mutex_lock(&bridge_lock);
-+
-+	list_for_each_entry(bridge, &bridge_list, list)
-+		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
-+
-+	mutex_unlock(&bridge_lock);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(allbridges);
-+
- static int encoder_bridges_show(struct seq_file *m, void *data)
- {
- 	struct drm_encoder *encoder = m->private;
-@@ -1343,33 +1386,18 @@ static int encoder_bridges_show(struct seq_file *m, void *data)
- 	struct drm_bridge *bridge;
- 	unsigned int idx = 0;
- 
--	drm_for_each_bridge_in_chain(encoder, bridge) {
--		drm_printf(&p, "bridge[%u]: %ps\n", idx++, bridge->funcs);
--		drm_printf(&p, "\ttype: [%d] %s\n",
--			   bridge->type,
--			   drm_get_connector_type_name(bridge->type));
--
--		if (bridge->of_node)
--			drm_printf(&p, "\tOF: %pOFfc\n", bridge->of_node);
--
--		drm_printf(&p, "\tops: [0x%x]", bridge->ops);
--		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
--			drm_puts(&p, " detect");
--		if (bridge->ops & DRM_BRIDGE_OP_EDID)
--			drm_puts(&p, " edid");
--		if (bridge->ops & DRM_BRIDGE_OP_HPD)
--			drm_puts(&p, " hpd");
--		if (bridge->ops & DRM_BRIDGE_OP_MODES)
--			drm_puts(&p, " modes");
--		if (bridge->ops & DRM_BRIDGE_OP_HDMI)
--			drm_puts(&p, " hdmi");
--		drm_puts(&p, "\n");
--	}
-+	drm_for_each_bridge_in_chain(encoder, bridge)
-+		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
- 
- 	return 0;
- }
- DEFINE_SHOW_ATTRIBUTE(encoder_bridges);
- 
-+void drm_bridge_debugfs_params(struct dentry *root)
-+{
-+	debugfs_create_file("bridges", 0444, root, NULL, &allbridges_fops);
-+}
-+
- void drm_bridge_debugfs_encoder_params(struct dentry *root,
- 				       struct drm_encoder *encoder)
- {
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 3cf440eee8a2ab3de134d925db8f1d2ce68062b7..22e8cd0a6a37a0ac25535e9d570da25571b0b2bc 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -38,6 +38,7 @@
- #include <linux/xarray.h>
- 
- #include <drm/drm_accel.h>
-+#include <drm/drm_bridge.h>
- #include <drm/drm_cache.h>
- #include <drm/drm_client_event.h>
- #include <drm/drm_color_mgmt.h>
-@@ -1120,6 +1121,7 @@ static int __init drm_core_init(void)
- 	}
- 
- 	drm_debugfs_root = debugfs_create_dir("dri", NULL);
-+	drm_bridge_debugfs_params(drm_debugfs_root);
- 
- 	ret = register_chrdev(DRM_MAJOR, "drm", &drm_stub_fops);
- 	if (ret < 0)
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 0890acfe04b99b1ccbbff10b507cb8c2b2705e06..2a99d70865571f24db0ca75c758cfd09d3a5d459 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -1108,6 +1108,7 @@ static inline struct drm_bridge *drmm_of_get_bridge(struct drm_device *drm,
- }
- #endif
- 
-+void drm_bridge_debugfs_params(struct dentry *root);
- void drm_bridge_debugfs_encoder_params(struct dentry *root, struct drm_encoder *encoder);
- 
- #endif
-
--- 
-2.48.1
-
+zcomp is for zram, zswap does not use it. If zswap is not going to use
+the crypto API we'll want something like zcomp or maybe reuse zcomp
+itself. That's a problem for another day :) 
 
