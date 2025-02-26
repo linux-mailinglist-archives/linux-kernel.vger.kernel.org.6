@@ -1,124 +1,91 @@
-Return-Path: <linux-kernel+bounces-534359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A0A46651
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:15:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015E8A46624
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F402A425EDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0BE1883DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D6921D58C;
-	Wed, 26 Feb 2025 15:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CBB21E092;
+	Wed, 26 Feb 2025 15:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bj7UdVGI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCvVLYNl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B94221CA1A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF9D21D5A8;
+	Wed, 26 Feb 2025 15:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585353; cv=none; b=epfvHIWumiOBIKEMCFm4rlZT/YLiBx9YRvgf5Ff5KnBM2Jfjx9Wg7FVNod4LRRhrK0vdeuJJ9jFqZKLokfOhd3U9qILD19gaxHmB6HKMw1bCTEQcQtzAgUFX0OsRUYanv08oi1GwJpSFyzWnLCGXN5QSzRZjH8V4z19CBq+ohA4=
+	t=1740585355; cv=none; b=XHbsU0FDRu0C92bXMkCsnNIeHtWxdSj+ioOSEUck3yEK5mwBcedX/uC6SkvnaCKeQs0WziRVs+YhF8rZaTXwTt0bU1TxoZovQomHxc12ZeIwpmkSq3acgrvlqFPe7zMBR3bsyHLkh8TUCsMkeJJRG9fMNS53wDjBmpUzW+NIgtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585353; c=relaxed/simple;
-	bh=2V2GATVQJcPkGjF/duSvrvUcmkbPPn2Zf8HokeRm1VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qz5xmOYhJ7nZ81qidWriSdxKJbcOYdS6eqitGtkgljDagW3dfMaC6FYTiX6ulH//ROVwHYL/omwqdA4V2eGhVulOKFe+Sl6F6HEYxtORRzAYZcpvfpEY5vCuFGpORVyl5odoN7pzGt/xOMBQXMTfGN4LqNsNePDVfgJjNWlZFXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bj7UdVGI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740585350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8CqY4o0DPQo+Y928L9zA4t9/2HrPF7Rgytn7kgXlYc=;
-	b=Bj7UdVGIgY18SvqR/Il12ecs9gqQwrDoWzwyB0QZHcCb2DT0prD+gbCvfZd2zw+egp823J
-	JxrOvNrXuoNIQggsyV7QJTBbwITO5A3zkSmDKtKAVgYJCBjNCfEG6tOA/PiC2Cv1bKJkf6
-	+bEE6qKpDbv0eSsvCFRGE5MAwlIUT5o=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-bYfCjx7XPCeU8lfQruPBjA-1; Wed, 26 Feb 2025 10:55:49 -0500
-X-MC-Unique: bYfCjx7XPCeU8lfQruPBjA-1
-X-Mimecast-MFC-AGG-ID: bYfCjx7XPCeU8lfQruPBjA_1740585348
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43998ec3733so35546435e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:55:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740585348; x=1741190148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r8CqY4o0DPQo+Y928L9zA4t9/2HrPF7Rgytn7kgXlYc=;
-        b=CdpJeswFLehy3Z59hVZakQ/MI0vuGaHT+Vj64Zk3fH94MvB1SmNTUT4AqUWjqAboWW
-         pcJN4G+PXuGiKuWZDvnaawd2gqFrxQQ/b5PpcyEwhXw7BflSS62FaHVGvzMG8VEnI9w1
-         ROUH2ZTywUdle3XBhbkiOMzi2wvIazvwoF/VnNQwaowJAVcUGEP4r/t1OFDZ/44VQ6Zg
-         sD//ee0tLZNT/y41k6wxQKuR/Kb/GERmaXKuZP1i+2DLF+NrlB/RHk1b4gG2Ll93OXDB
-         YOxszBNuwowiSKmOYoCjEZbFuFVDRXdTGINXJhB1IPSb4wmGILZUFVU/em6HhajTQoUg
-         WBhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6+wiMSqT61Poa8lrjGXgnPnqyp7Fxa694XXU6zxb4MJ9uUIFC5Jqg31Diz/GD+D+AFLtNel8+eQSg4zo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE/19QlSQPsTllSAF87GeVujTvgSbhJGIPSN0+Kuv+46bqYrHb
-	NFMpQpFLuch78QYj7uCAKjgF5Ni1HO5WiMImcmKHV5cC5F1nucCMnaOOwj3rI+G7mJohQO8ATvi
-	uvdEEF2gkcEzqj8uMBCJWvi7PCIIfIKpDZS+Qfyozvz47UMk4t3YyrcIsrE5RBQ==
-X-Gm-Gg: ASbGncth4FbBNnjV2y3WTPY+7vobc9hxkc2koxjVlppI+iZGYXCsMRwEhuyVmRSgVXM
-	en0is7WLp+1KvYyvz8176clFRDBD42c9oeY+7l8DSU9DCorOpvi6JajfAZ4QEZ5SwRKH9xGhQkI
-	7p/DtgSa24R2+nk8KKFyJcvJUlfg3ROcbK0D5Ge3deiZJ8XslDYVT4ahtnOgELjzUj4Batmf0dK
-	LuFbq37Lzb0Og3HfzAAzxyDAc0xo51U2jYbb2hX2YEARxogNgdOrJX14cVeByu2wFSuNoOtkAp9
-	dDNKu+4092O4+DUCTatWbDvBAnTXK/szJ/vX9MvxlbysbtDw2m1mzHSxb4kiO60=
-X-Received: by 2002:a05:6000:18ad:b0:38a:615b:9ec0 with SMTP id ffacd0b85a97d-390cc6475ddmr6949959f8f.54.1740585348082;
-        Wed, 26 Feb 2025 07:55:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFyuJQRaFb4583I4taVqxsuF1Qw2F0ZkJcIPI2a6MwWctYzyb+OQVaF4zA3fJ8tVybL/MtDRQ==
-X-Received: by 2002:a05:6000:18ad:b0:38a:615b:9ec0 with SMTP id ffacd0b85a97d-390cc6475ddmr6949942f8f.54.1740585347741;
-        Wed, 26 Feb 2025 07:55:47 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e1040844sm110155f8f.85.2025.02.26.07.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 07:55:47 -0800 (PST)
-Date: Wed, 26 Feb 2025 16:55:46 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/14] tests/acpi: virt: allow acpi table changes for
- a new table: HEST
-Message-ID: <20250226165546.3b1ded0b@imammedo.users.ipa.redhat.com>
-In-Reply-To: <94ff7f7ccde4c8d74c7838c0021cbb453e91f12a.1740148260.git.mchehab+huawei@kernel.org>
-References: <cover.1740148260.git.mchehab+huawei@kernel.org>
-	<94ff7f7ccde4c8d74c7838c0021cbb453e91f12a.1740148260.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740585355; c=relaxed/simple;
+	bh=2b/0jmiET26RzTFkTnCeyD691GwyGBvbl6ZzIxxMzBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpo8r7jBA5RpdIG3kbE5+nbem1tBpQ+NpA5UdUspFVnPIP6+PuniF7nyk8oDy4dbxyaAKGrKhRHFvS3k72DBn0wdPqsUZ6z3ui2xMmQkb6UPfYklFtD/9dchEpoZYEpa35+eJWRJ8WoV7/iWwmMXQB3OLlSmhoZ8Dnd/x4Ve9V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCvVLYNl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880C5C4CEE9;
+	Wed, 26 Feb 2025 15:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740585354;
+	bh=2b/0jmiET26RzTFkTnCeyD691GwyGBvbl6ZzIxxMzBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DCvVLYNl/BDsnaShGUmbG2XfXhp7YkwSQPo2z31Zh+BrguxCktqVKeTxq/nCVPSV7
+	 yrH8LApkaemi3jyzNA8FJIbyi/WOfZSF5oEYnphgr5mPDmAgzIsR3EX7i31YGK7kG6
+	 sC01lAwwrqlEXvKb3FXFz4lUT7BB6T+dEGU/78Hrv6d6Wv3e5diyU/v8Miwnc9I0Lg
+	 Yj4i2icq3VyziG/Z3uTdQRPAOJuExBbLP3KCHxa62ogm0wc7XR3aPGEVh1OLBKGHqD
+	 qhCvmfTo5PlRk2mhcEmV7QH1AqRGaBRk78vS+mvYTXlB/PHSuwtGZbW7jbeTOD2Ftn
+	 PQCd2eAg4QyVg==
+Date: Wed, 26 Feb 2025 09:55:52 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	spacemit@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Alex Elder <elder@riscstar.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Yangyu Chen <cyy@cyyself.name>, Conor Dooley <conor@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v7 1/4] dt-bindings: gpio: spacemit: add support for K1
+ SoC
+Message-ID: <174058535208.2501613.753521033662405764.robh@kernel.org>
+References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
+ <20250226-03-k1-gpio-v7-1-be489c4a609b@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-03-k1-gpio-v7-1-be489c4a609b@gentoo.org>
 
-On Fri, 21 Feb 2025 15:35:19 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> The DSDT table will also be affected by such change.
+On Wed, 26 Feb 2025 08:41:17 +0800, Yixun Lan wrote:
+> The GPIO controller of K1 support basic functions as input/output,
+> all pins can be used as interrupt which route to one IRQ line,
+> trigger type can be select between rising edge, falling edge, or both.
+> There are four GPIO banks, each consisting of 32 pins.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > ---
->  tests/qtest/bios-tables-test-allowed-diff.h | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 79 ++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 > 
-> diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
-> index dfb8523c8bf4..1a4c2277bd5a 100644
-> --- a/tests/qtest/bios-tables-test-allowed-diff.h
-> +++ b/tests/qtest/bios-tables-test-allowed-diff.h
-> @@ -1 +1,2 @@
->  /* List of comma-separated changed AML files to ignore */
-> +"tests/data/acpi/aarch64/virt/DSDT",
-this and flowing update would also include HEST table, once you enable 'ras' in tests
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
