@@ -1,239 +1,78 @@
-Return-Path: <linux-kernel+bounces-532717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A020A45157
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:19:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0414BA45159
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC8D16C7DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF413A5860
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937CE14A8B;
-	Wed, 26 Feb 2025 00:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6FC182BC;
+	Wed, 26 Feb 2025 00:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XXw100AV"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2070.outbound.protection.outlook.com [40.107.236.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiRQfezN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26E418024
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740529186; cv=fail; b=AVrJCcLpxdVlwnliIJrkO1zEZZvF4ee+zY9shHukyTIVv8+IcSuV+wQxOAjo+htujrlclyCUgSgkCR9zpJn6G5tm/NHK/CUyoEcJ+0pFGLHMk2v+i0q4CJDd5geDbXzeXfFpnEEj3cqV/rLYtRk/k4sFg07zFdzgkCw6zZ1YAw8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740529186; c=relaxed/simple;
-	bh=WE3Ni1Ch3tBumJz2L/SsWRG0cszElt9mIQdm4+skQSg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Hoez70fEcZqFSN14LTQYqe8tGoJvDgeVP82HPt8te3sDewU22Sw5u8Bw6tu2pJrpn/S+HwxLZ4a70bcvhTeVm6ImPTJBxoWFwYcZ0OKjB0h9nxKkpH7msQBKmVgOYFPjSSgSa/ITkAtWjLKBNXHrqAEYZkB1Atw9NN6hRM3qUeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XXw100AV; arc=fail smtp.client-ip=40.107.236.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RZCOWIPKcluS8Z1Ovr6g9uP6zY5ciPMwBk7eS0yxBQvxnVssYo5137eAwbWAgKo0BdxEyy5Gq9jH6OQu0+7GXIYu9Egr5uENzTn5yl3hbiTUbUmDYzs8eO21Q89GREAolJ/PSk5qFOmXR595hzTjFnIa+R/Es8xCQjAPTp63J5eS2oBPDql5UL05ObFAWr6pLTq77GGTEpxFX8ypEh3kzm8ta4OM/u4MarLVCwS0e/Q4wXqykHIQr+bMB0e8NLLQHXmIQB6UD/lFv2/YtR45NaWLUg4imFzh/ledYrWSMDBTIjsr1y104S/b7lHP3ZCugo0i/i0xThC+svJKc7PS/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cNDOdOc0XtQE73Ke0X54RD0xksQt2iUUpnK6MXw97wg=;
- b=oshf1g/iNdy03RixRCUlFY93XZMoN1Qk5FIytQ1uBh1GkpylwuDHbTig11bXb/5X95RrySldBbA7GmF+Mq2vgseti/wftICCb/gs+QBXPneDPMSWyXAm8toYlZgO8YnoHbLF278agiNNpXLZVaWRCrxrTIFapCijqB2LP3SUT5KPVbu3ijPKWmqWhIIBboA+gL/3K0+IdxPSfb9V38ydKr3VaoWCCs0DhnmZ4I5O3CbUah0+lcJw77xWmFoMakZpjn7fXG4VVuQ72FaO3ALJRyi0YbJa9CmzYlD1SPTHbSuW93FQ2QE5/GPCPnDabbpsqr4c2Auc5bzZGIImjgg+FQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cNDOdOc0XtQE73Ke0X54RD0xksQt2iUUpnK6MXw97wg=;
- b=XXw100AV5qYgkfo2CUERMmhy/S1ko9QAxxiS5uJFTuatz5Rm+H73VX2IQ4noVzOxPqLoH454fCgeiP7r/3HFUaPURG47jZa1nnl5/odfLjLh///990YJUh9+6z4qfyFgqGUCFaTFsv9mlL/fRk79k6vnntSqFSToXbyYt1QqAr8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by IA1PR12MB6115.namprd12.prod.outlook.com (2603:10b6:208:3e9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
- 2025 00:19:42 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 00:19:42 +0000
-Message-ID: <58f33eb8-ae56-416a-ab23-2690160756cd@amd.com>
-Date: Tue, 25 Feb 2025 17:19:37 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: fix type mismatch in
- CalculateDynamicMetadataParameters()
-To: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>,
- Chaitanya Dhere <chaitanya.dhere@amd.com>
-Cc: Jun Lei <jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Fangzhi Zuo <jerry.zuo@amd.com>,
- Aric Cyr <aric.cyr@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20250222235818.1990-1-v.shevtsov@mt-integration.ru>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250222235818.1990-1-v.shevtsov@mt-integration.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0154.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:7e::12) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7BDDCD;
+	Wed, 26 Feb 2025 00:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740529198; cv=none; b=LtCE3IzCxiYo3wtaMvKpuGCUWkch8H4TTtL6DnhBuiSW4UJlxMbBPEFV1j+1PSGfmxO+yyt+4kJnyQ01XqKvkyhf5yK9CAKRV3XC2fPU90V2VF7KqE/50hRosttB1AloBCBUrq4tDPWgP4cdBYaWmqYlsVobyj11eIl6i/91cMY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740529198; c=relaxed/simple;
+	bh=wyuE+HQdjDPiLBHCXVWwd2bHxF9sJ6kKMUdRklRIjDA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=u/H++DETBqxFru4+9uwgfRps8LaOYwjnaYzIGBlTlUVQMKrLAW+37xBP9DgBq1ScqMz/+MCrpXVJqsHTtVBW/8ysLiF6VhSuAn93pz5b41M5qa0Qs5ofZnUGiqdaxXfg+WilfdlmoT9+BI61qUO51C3BqIHuU22cf68qqNulRBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiRQfezN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A98C4CEDD;
+	Wed, 26 Feb 2025 00:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740529198;
+	bh=wyuE+HQdjDPiLBHCXVWwd2bHxF9sJ6kKMUdRklRIjDA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RiRQfezNf9Yj0xruAgmPIPvEW7nftyX4aDT1mPhlZY4TM3ZchvQStG4KEP430H/fN
+	 s/6Y+the/TgSD893TOfda58zbo1xwCQ3C3rvHz3Xto8r3paCpt7LyzH88NX2WOm0dN
+	 oIlyR0bZVDkBviAJkfppEMwdTVW46+yTjiQx2EDe+/ACnXijUBA5JTcT8PCZZlhUrU
+	 fQEFQ9vH4UrH3aN+mu8V4Yr6LIdfcDurYuNvdn3U8wEYoghIux3I6XaaeFfZiKeipg
+	 FjXz/CPGuAZcaSAnxicRQArBZOvf9TTxZ8qn335UC3lMsYwVtFNrxQGxTlxkvivxpa
+	 SgBRdFEB8Tl/g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB37F380CFDC;
+	Wed, 26 Feb 2025 00:20:30 +0000 (UTC)
+Subject: Re: [GIT PULL] perf tools fixes for v6.14: 2nd batch
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250225190552.115479-1-acme@kernel.org>
+References: <20250225190552.115479-1-acme@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250225190552.115479-1-acme@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.14-2-2025-02-25
+X-PR-Tracked-Commit-Id: 42367eca7604e16e170bd6bd94ef61ffdd335f4a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9f5270d758d955506dcb114cb863a86b30a4c783
+Message-Id: <174052922944.175592.7729004694751845663.pr-tracker-bot@kernel.org>
+Date: Wed, 26 Feb 2025 00:20:29 +0000
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>, Andrii Nakryiko <andrii@kernel.org>, Quentin Monnet <qmo@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|IA1PR12MB6115:EE_
-X-MS-Office365-Filtering-Correlation-Id: cca57985-b6bb-42ec-58ec-08dd55fb43bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzFubG0zYS9XcWZMMDRFSFVyRFNLRnBtd1JYZHdJMWZjTHBtTk1wdDg5NWNI?=
- =?utf-8?B?YVVGdStLOUZYSWJOUitKSkpOTmNZKzNNWXZMRU1QcVNDMEJyOGNKZ2FmSHAy?=
- =?utf-8?B?OGNwMjNwR3JQUEFEcmhRRHNlcXIyUGkzRGZPb1ZOWGUvRnQ5S2tVdFYxdnZq?=
- =?utf-8?B?MmdjWnYzaXk3QWpqTUYrajFoRUVuYUpOaG5acE8zSEVteHRWU2diU2syNzVu?=
- =?utf-8?B?cTFzUytWN2hHeGFiNlRBeVdhTm1FcURWV0NFZ2czOVNSdXgrVzlZcFdOK0g4?=
- =?utf-8?B?UFAxdG82ZFFvWWtHeTczNTAyNUlJU3BhNHJWNHRtaE5JUEJHbkF5c2Q5OC9C?=
- =?utf-8?B?a05sZ0hlclpDTW83Y042Umo2b0FteW4xZWxVbzI1QS96S2R2TWVQNy90WnQv?=
- =?utf-8?B?MGdpODhUaEkrZGlsM09hUFI0S1JqV0dTbld2ZG82dHdvNzVqWVU1L3Y0Y0lk?=
- =?utf-8?B?VU9OSlRzOTB6Zjd3aWVMNS9HT0Mxczh4eHhLM0lQYkhtbXRpVnBhNzRrODRQ?=
- =?utf-8?B?ajNzeE1pQmFhZnhKTWdyRXo3UzhHcDlrTEUvbnYxanUxUDJaaUNISFovYzZj?=
- =?utf-8?B?b3R6cklncTdITFkxWm5XNUZNVEFQTnI0ckRXM1N1cFo2Q3ZuT0VlbC84c1Vy?=
- =?utf-8?B?N2pmRjdwdDNjRVZnbnIwT1FGbnBpWWcwUnhVOTBmS2Y3cWtBK3dpMHM3bHNR?=
- =?utf-8?B?RkxXTEhVajd3UTJCSGhabWgvM0ZTR0pmSWJxYXc0NFQvSlJHMUxxQnRGbmox?=
- =?utf-8?B?cVdwRG1yOHhoWmhQajVuV2lReE5DOUFtZkRocXVrWnp6cGtMcTRZU05maEFN?=
- =?utf-8?B?bVNHWG5LRHdTSjQ3UzYrY05MRVBRNVErTFZUd3k5UE9PYW12WGovSGluMWsr?=
- =?utf-8?B?SncvWVFGYWk5YmkvQUdDa2tkYXJKTU14YTJFZGJqbHRxNjlHdFl2UXVlamxa?=
- =?utf-8?B?OGIzb2lBaFBwd2tYak82S1F5WWFQazg2ekFscUdCSzhiTVF5dGt3Z25DbWJ1?=
- =?utf-8?B?cEpsVXJwOTNrLy9DY1YxejkzVzNwM3dqRWdQN0FjbGc2UWxpbnNhMm1pYVQy?=
- =?utf-8?B?bjlLcXg3WE90cXFzbEhNTVFWbC9vaStla2dWeEFZMmNaeWhhV0hvUXZIekRO?=
- =?utf-8?B?bkZxS2JhZmo4bDNHTVlqY3FkY09ZSUVueGM5YnFWT2FDTFd0YThXZmZWMytO?=
- =?utf-8?B?ZFJNMnkxRkU3R2MvdnoxSnFIV1BSOXF6VGgvYm4zTVNBRTdqMjhKT0V0VnVT?=
- =?utf-8?B?dW9rdnFYcklHalo2N1lETzVIaUdPdWJGbmFET29aRmtPOXBXK21zNGx6Zm5Q?=
- =?utf-8?B?S1lYaWZmNklKbVlwYitRYldjck9abzluL0F5Uk5JY1REcnZnZWVBS3BHTWF6?=
- =?utf-8?B?ZW8wQ3Y5WWtxditqaG1oMENlVGJGMmdRUll6eDVqYTlncGE2dVNNa3N5ZFJx?=
- =?utf-8?B?UTRaTHBGT1dWOW1RWHdtRy8xZUZFWkxEaFh0aVlnMExpYll3QWQ2bGx5dEpr?=
- =?utf-8?B?N2R5S2NKak9xWGVFNWRZQWtGa0xiU1hKMmZLUmpuMzZiWEo0NDRyUUxUcTNY?=
- =?utf-8?B?RWhzZGF2NEYwYVhYZDcyd05DTVdzaXdwendtSDlaM2FYUG5EWHFYTWxaK1RO?=
- =?utf-8?B?dStuWmp6aDVQOGVlN2R3SWpjRHNFM1RQczVvTmhzMmxqMUxUdytZTkR5cHFJ?=
- =?utf-8?B?dkFXckJDVStzcjVJazYxZERpUS9hUk5mZFpTWnZtL1dsc05LNi9wODNkWmRp?=
- =?utf-8?B?RWxERVMzenNOclFkZnRSZVN2UVVsUDJWSzZmck12MDVMMFJJZy80Q3dMcTdK?=
- =?utf-8?B?WGRDMlBUN1V3S1ZnbldCVlFORXBTK2hocTUwUUxGR3BENGFrTC9CMU93RDZu?=
- =?utf-8?Q?qQC7nZB+0rhFu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TVhTWTFVaU1DNnBVMEg1R3g1ZUViYU52cUpMWlJPczQ0MVdHaW0wNG9qaUEv?=
- =?utf-8?B?UjRoeWpVV0V0cldERHFjeHZwUWVzWmhDSm9lVTNpa3VreSsvcEhIeUt1UVND?=
- =?utf-8?B?S1ZYaFg0SWVOVmlPa1RaK0JwSWw0SlU1UkFsSlcxaFBSMTVMeUlSQWJBeVVk?=
- =?utf-8?B?dkRucjNOT293cDJuWHJ5M0V3VURXeG90dnVJM01YcGhpZENjOVFYbWlEbjNQ?=
- =?utf-8?B?TFd6c0xoZnAyeTU3MU0yYXRKamRpT1pIK1Z0MWN6YnFNMnA0YmVvb09sTE01?=
- =?utf-8?B?N1dMZDlBZEwrem9lM2hraVd5ZE8vbGE0alhSdHYzQXpmTjF6Tkc2TDdIVWlQ?=
- =?utf-8?B?SVZKb1prTWg4VDJ2R2RRdWUrdWFMMjBEcDRGQTBuSERmTzhoM0lzR2xlSEt6?=
- =?utf-8?B?djR2SGgyeG8rM1ZGcllXdjZoaktoYUs1UUNmM2ZndGZpSGZvQ2ZYaG1ubGNH?=
- =?utf-8?B?TDZSdGk5c09wZFdUYUI1VUJTRi9pR1hxWEVFSGZUUFZ5a2ZLYUFsL1pBREM1?=
- =?utf-8?B?cG90NU0rL1ZSNDZvVFhrVENNMFdrWkhWdmtvckJuZEpEOHp3TjVLbDkzQ2VY?=
- =?utf-8?B?R0hjaVNmV3BQVnRacVgzanVzN1Rrdk8yc0dlNTE1YVBPT2lRK01KTnZSY1ZI?=
- =?utf-8?B?bEhMdE5sYTIvZzRHbW1TRHBxRmZWS1QxR3c0N05DL3phRnJOZzJ2Uy8yS3F3?=
- =?utf-8?B?RXNJQlRKaHhCWk11UEdHV2tHV01LVWh3ZkxtaVNBaUhNRmpMV012TUI1QkpR?=
- =?utf-8?B?U3ZXTzdlTzV0RXBvR2g3WTNOMlFMbmVraHlrM1ZXZEE5REkyVi90WWg5SWM5?=
- =?utf-8?B?c1hGYlJ5UnIxNzkvWTg4MnBvYU5XRGJRdmtVWVIyaERNZzl3blJkdmRMTEFE?=
- =?utf-8?B?MEtyblhmNjB4RkVTeDlacHE0R1FRQi9sSURhNUwvemtVTjh3UU9KelpkbkFI?=
- =?utf-8?B?QzBHMm8xRE51VzVlYktOYnhBOVkyZU96RHFFa2tqL21WS3ZZeUVHWVovYm9j?=
- =?utf-8?B?S2R3YjE0NFRBbTNYaFRyZVBicHhkc2xZNW05MVd4eXVMbE5rZkhGejMzTE05?=
- =?utf-8?B?TE5kUFZKaFdnZHpibTNxZjR1dVJKSGhpenR0Kzk1WTQ3R3o4OGhXRjdMQ0tY?=
- =?utf-8?B?Zm1ENXRodkVKdWlPWFd0NU1BRmhnYWVsV0Rjb0RpOC95alFiaDMxRUZvaVR0?=
- =?utf-8?B?MUkvYUhIRUF1R2xpcmh4MnM0TEgyNGRuTnRQOWs4RkdkYS9MZmgybFp3dVN3?=
- =?utf-8?B?cGtIWkxvRE9SQ3dodHNUczQ0dDlnSk01cEZMRFdnYWIzOERMdmpnSkNocDV6?=
- =?utf-8?B?Q1JWUzYxV1psSnZrMHYwcG8xd0ZGa0I0NEErMitIRW5KY1o2cE5XOEZNV2FD?=
- =?utf-8?B?RVZQSFNhd25uaWljTVZNVjBtd1hSd0JRZ0txc1dwa2ZLWmNuS2FLWE9BNUZt?=
- =?utf-8?B?bWJ3YkZMckppT2hzN3Zmdnk0QXU0OXBaRGM2b1U3ZUhGN2lTN2VZMWZ1L2tG?=
- =?utf-8?B?U3NkRHNwSFR0STBlTEorZGFoVys0SWlDZGtLcW1ybmNTekxaNkRCYzFQbmts?=
- =?utf-8?B?a25wZzE3US9pc0o0NktvOUh3VFdlQUZwR1dzN3ZmQTVWSWZzdmM5cGJrZWtG?=
- =?utf-8?B?YjFwd1NqVW0rL0NjS2hMeEV6NnE2dTJSc21PUzV5NlJUYTRXZVlVVnJuVFAy?=
- =?utf-8?B?UkxuNTlSMXJ6MkpiR25QVk9lWmJHK0QrcUhiQnNLU0dqOHpXbC9FZVQxanRZ?=
- =?utf-8?B?N2V2YTJPRzRIVHlDY29IUXVodzlybG5nekttbVUzMmhxT3NnbEs3WW80ODFZ?=
- =?utf-8?B?c3lPblVnNThFMWpSc1ZwdVFtMzY5Nnpzc2czTjByMXFDWEE5bFhhUGY4YThj?=
- =?utf-8?B?Q2lMR2ZRd21rMWJsRUNPaXhsdnloOEZrcnJpOGEyMnFGaWpYb0RvL3V5bkd0?=
- =?utf-8?B?dGgxVDk0MHRiSzdXQ2oxSlVJdlphVjZNSDgwRW9jUFBFdWVrd1FTWi9ZblhD?=
- =?utf-8?B?dE1ZVVNqOW54RWM1L1p0Ujh2dGtpUXp0akZrMEZqQWttK1huZjBNcmt1TjM1?=
- =?utf-8?B?OEU1aHRuRC9VWEUrV1ZFSm96NWNYWjduRFdCQ1VrcHBYempsUVBDbDFSQ0Qv?=
- =?utf-8?Q?7po2a0swzf1uOqyFLoZOY3E+y?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cca57985-b6bb-42ec-58ec-08dd55fb43bf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 00:19:42.0185
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BXN1nXgQqcJX7gysrTLnFNAOuo10JPUIwLUUCH6FEFGra9wiCqV9/nUih3252hU7roBPjq88oP/6c4Eea/eLJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6115
 
+The pull request you sent on Tue, 25 Feb 2025 20:05:52 +0100:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.14-2-2025-02-25
 
-On 2/22/25 16:58, Vitaliy Shevtsov wrote:
-> There is a type mismatch between what CalculateDynamicMetadataParameters()
-> takes and what is passed to it. Currently this function accepts several
-> args as signed long but it's called with unsigned integers. On some systems
-> where long is 32 bits and one of these input params is greater than INT_MAX
-> it may cause passing input params as negative values.
-> 
-> Fix this by changing these argument types from long to unsigned int. Also
-> this will align the function's definition with similar functions in other
-> dcn* drivers.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-> ---
->   .../amd/display/dc/dml/dcn30/display_mode_vba_30.c   | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> index cee1b351e105..c6c7ce84e260 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> @@ -281,10 +281,10 @@ static void CalculateDynamicMetadataParameters(
->   		double DISPCLK,
->   		double DCFClkDeepSleep,
->   		double PixelClock,
-> -		long HTotal,
-> -		long VBlank,
-> -		long DynamicMetadataTransmittedBytes,
-> -		long DynamicMetadataLinesBeforeActiveRequired,
-> +		unsigned int HTotal,
-> +		unsigned int VBlank,
-> +		unsigned int DynamicMetadataTransmittedBytes,
-> +		unsigned int DynamicMetadataLinesBeforeActiveRequired,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9f5270d758d955506dcb114cb863a86b30a4c783
 
-DynamicMetadataLinesBeforeActiveRequired past to 
-"CalculateDynamicMetadataParameters" are int instead of unsigned int. 
-Can you confirm and try with Svace?
+Thank you!
 
-Thanks.
-
-
->   		int InterlaceEnable,
->   		bool ProgressiveToInterlaceUnitInOPP,
->   		double *Tsetup,
-> @@ -3265,8 +3265,8 @@ static double CalculateWriteBackDelay(
->   
->   
->   static void CalculateDynamicMetadataParameters(int MaxInterDCNTileRepeaters, double DPPCLK, double DISPCLK,
-> -		double DCFClkDeepSleep, double PixelClock, long HTotal, long VBlank, long DynamicMetadataTransmittedBytes,
-> -		long DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
-> +		double DCFClkDeepSleep, double PixelClock, unsigned int HTotal, unsigned int VBlank, unsigned int DynamicMetadataTransmittedBytes,
-> +		unsigned int DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
->   		double *Tsetup, double *Tdmbf, double *Tdmec, double *Tdmsks)
->   {
->   	double TotalRepeaterDelayTime = 0;
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
