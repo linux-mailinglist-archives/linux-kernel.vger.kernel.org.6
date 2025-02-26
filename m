@@ -1,995 +1,432 @@
-Return-Path: <linux-kernel+bounces-533762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E5CA45E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58783A45E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38FB3B561F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B353B6218
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AB122FF29;
-	Wed, 26 Feb 2025 12:04:05 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DC622A7E1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EB12222A1;
+	Wed, 26 Feb 2025 12:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A/RvDrnq"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466D4221F1F;
+	Wed, 26 Feb 2025 12:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571443; cv=none; b=sSs6VeVr15E9grurS2TVEB4OTeshl98Q29rQhT8M9jZMPWM+qm+s9jyGBCUx+jlMmpl77AJ1hv67A6KWhodbOC68hYlZdY3KU5SXmjUo3vbxF70rb1Cm3EeQsRgkj+HnlILpp2zWu32n4MBsd67SWRRrZnTe/qaFSOwQ2evHGAg=
+	t=1740571466; cv=none; b=rYbAAR/Gy8jxbXRuNSaIE8AZOm8Iqp71fNVDTbAsJuFTL1ZvppjqDMO6rcPnkQUp5yc8it+6JcuB5IoQcxeAR7N9rVnbevEGsmxH6MaUgjjrd/iOqMSF2io9JXnOirbxfs3mjP4u3QWA+i5rqUra1UlHcSE7wQ+xR1dfK5R+1DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571443; c=relaxed/simple;
-	bh=HYQVxMvuFfCvmdGllcejce+5V0qmNzucsFa6ottFEw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=E6sBFoMR/Szi85TT9NOzeQo16op0jNSH7lApYTgte7Ssw+hTdUQKvLNVerEE2Q+jy1b9T1PMBM3mTkPb0yCZyDOF8Mi4nk6du7CD7/zzi9steTlWEBlNCNQ0ejKOtVpj245QVGr8uN6fxZOXdI1cebzutjDCfxK69wIDGIvtpcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-70-67bf03230b95
-From: Byungchul Park <byungchul@sk.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: kernel_team@skhynix.com,
-	akpm@linux-foundation.org,
-	vernhao@tencent.com,
-	mgorman@techsingularity.net,
-	hughd@google.com,
-	willy@infradead.org,
-	david@redhat.com,
-	peterz@infradead.org,
-	luto@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	rjgolo@gmail.com
-Subject: [RFC PATCH v12 based on v6.14-rc4 25/25] mm/luf: implement luf debug feature
-Date: Wed, 26 Feb 2025 21:03:36 +0900
-Message-Id: <20250226120336.29565-25-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250226120336.29565-1-byungchul@sk.com>
-References: <20250226113024.GA1935@system.software.com>
- <20250226120336.29565-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsXC9ZZnoa4y8/50gxOHNSzmrF/DZvF5wz82
-	i6/rfzFbPP3Ux2JxedccNot7a/6zWpzftZbVYsfSfUwWlw4sYLI43nuAyWL+vc9sFps3TWW2
-	OD5lKqPF7x9z2Bz4PL639rF47Jx1l91jwaZSj80rtDw2repk89j0aRK7x7tz59g9Tsz4zeLx
-	ft9VNo+tv+w8GqdeY/P4vEkugCeKyyYlNSezLLVI3y6BK6N1j1vBq5OMFYv/BjQwXlvC2MXI
-	ySEhYCJx4MZbVhj7xsllYDabgLrEjRs/mUFsEQEziYOtf9i7GLk4mAWWMUnsPdHABpIQFgiV
-	mPa8iaWLkYODRUBVYvnqJBCTF6j+SnMBxEh5idUbDoCN4QQKf5p2DKxTSCBZYufvP0wgIyUE
-	brNJvD38gw2iQVLi4IobLBMYeRcwMqxiFMrMK8tNzMwx0cuozMus0EvOz93ECAzpZbV/oncw
-	froQfIhRgINRiYf3wZm96UKsiWXFlbmHGCU4mJVEeDkz96QL8aYkVlalFuXHF5XmpBYfYpTm
-	YFES5zX6Vp4iJJCeWJKanZpakFoEk2Xi4JRqYHRLWTG1+2brt9K/GTP1SksV8nRNulc5RtVI
-	1okte7TooOpEvyeb30xSV/5jpNgovrF85067/APmB0J21lQblivOdtxlVTHBpnTKzS9Wi8J0
-	PG1zojbe6z8Uf8lAw3x3q8alL7YPL/27IXmxR/7NDAazD4dq34rL8IbXtzkvdVjnopAo/D59
-	mxJLcUaioRZzUXEiAMG3Ti1lAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsXC5WfdrKvMvD/d4PQ+GYs569ewWXze8I/N
-	4uv6X8wWTz/1sVgcnnuS1eLyrjlsFvfW/Ge1OL9rLavFjqX7mCwuHVjAZHG89wCTxfx7n9ks
-	Nm+aymxxfMpURovfP+awOfB7fG/tY/HYOesuu8eCTaUem1doeWxa1cnmsenTJHaPd+fOsXuc
-	mPGbxeP9vqtsHotffGDy2PrLzqNx6jU2j8+b5AJ4o7hsUlJzMstSi/TtErgyWve4Fbw6yVix
-	+G9AA+O1JYxdjJwcEgImEjdOLmMFsdkE1CVu3PjJDGKLCJhJHGz9w97FyMXBLLCMSWLviQY2
-	kISwQKjEtOdNLF2MHBwsAqoSy1cngZi8QPVXmgsgRspLrN5wAGwMJ1D407RjYJ1CAskSO3//
-	YZrAyLWAkWEVo0hmXlluYmaOqV5xdkZlXmaFXnJ+7iZGYIAuq/0zcQfjl8vuhxgFOBiVeHgf
-	nNmbLsSaWFZcmXuIUYKDWUmElzNzT7oQb0piZVVqUX58UWlOavEhRmkOFiVxXq/w1AQhgfTE
-	ktTs1NSC1CKYLBMHp1QDo37WOY9WIXn1ghOFW/1N9qdZrf5/kHe7XU2RVt/RxgZvyQI1k0cJ
-	VqYTko24Jh7m6FVqs9O0zD89a87uPT4HxC4tULMwdw+5E3X+1jseuay0fZ98O1dO/2Latn/t
-	v/hDy9Zu3j1z+/HZK2Ysl/gnf3pSgWcyg8ic3Vv+Ok27M/1QKbv2G+6sX0osxRmJhlrMRcWJ
-	AGAHFYJMAgAA
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1740571466; c=relaxed/simple;
+	bh=tq9ItEHDOF/EU6fXfoAv0mrW5orE9FlUkuJQMNvZN7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VK/ACGBZObLdBTL5wmhcUTd2Yf44GfhH8Gb9zTzOx3VEoOs0w1zUmKfH4gUKn6eMgjkzzLoKSueoC8RnTC1Dg+ozoAz7/5ZNmOlLnR+9b/YN8+M+ukLmXwflPDl2MvHzGw+wm1gqIWbf+TBP708ITCrBm44Z0loxhnpwPeH8t24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A/RvDrnq; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740571453; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bMY0I/faBqsEl+K1JuLDXBif0Lf6N8G7fWUGI8Oe4ys=;
+	b=A/RvDrnqDaIrBEhuheiR3lpBsRgNmQp+HfR3z38o0pU9gsFFuwYWsleaLncab65aiOCY0kwIgKbDynHW7aRApEKEJ8oIzWC66Y56/K7L9u/rP4hCfkxlxHFKeaLuFZ2GAofN8yWjEDfDWVwYar0so/lPfMuWfm5exaVH4Nlpviw=
+Received: from 30.221.130.195(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WQIZgr3_1740571452 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 20:04:12 +0800
+Message-ID: <86311349-5ce2-4a67-87d2-c0080946bb7a@linux.alibaba.com>
+Date: Wed, 26 Feb 2025 20:04:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] virtio-blk: add uring_cmd support for I/O passthru
+ on chardev.
+To: lizetao <lizetao1@huawei.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Christoph Hellwig
+ <hch@infradead.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>
+References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
+ <20241218092435.21671-3-mengferry@linux.alibaba.com>
+ <e7e8751a45334b9c8ac75ac8ed325d7c@huawei.com>
+Content-Language: en-US
+From: Ferry Meng <mengferry@linux.alibaba.com>
+In-Reply-To: <e7e8751a45334b9c8ac75ac8ed325d7c@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We need luf debug feature to detect when luf goes wrong by any chance.
-As a RFC, suggest a simple implementation to report problematic
-situations by luf.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- arch/riscv/include/asm/tlbflush.h |   3 +
- arch/riscv/mm/tlbflush.c          |  35 ++++-
- arch/x86/include/asm/pgtable.h    |  10 ++
- arch/x86/include/asm/tlbflush.h   |   3 +
- arch/x86/mm/pgtable.c             |  10 ++
- arch/x86/mm/tlb.c                 |  35 ++++-
- include/linux/highmem-internal.h  |   5 +
- include/linux/mm.h                |  20 ++-
- include/linux/mm_types.h          |  16 +--
- include/linux/mm_types_task.h     |  16 +++
- include/linux/sched.h             |   5 +
- mm/highmem.c                      |   1 +
- mm/memory.c                       |  12 ++
- mm/page_alloc.c                   |  34 ++++-
- mm/page_ext.c                     |   3 +
- mm/rmap.c                         | 229 ++++++++++++++++++++++++++++++
- 16 files changed, 418 insertions(+), 19 deletions(-)
-
-diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
-index ec5caeb3cf8ef..9451f3d22f229 100644
---- a/arch/riscv/include/asm/tlbflush.h
-+++ b/arch/riscv/include/asm/tlbflush.h
-@@ -69,6 +69,9 @@ bool arch_tlbbatch_check_done(struct arch_tlbflush_unmap_batch *batch, unsigned
- bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch, unsigned long ugen);
- void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch, unsigned long ugen);
- void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen);
-+#ifdef CONFIG_LUF_DEBUG
-+extern void print_lufd_arch(void);
-+#endif
- 
- static inline void arch_tlbbatch_clear(struct arch_tlbflush_unmap_batch *batch)
- {
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 93afb7a299003..de91bfe0426c2 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -216,6 +216,25 @@ static int __init luf_init_arch(void)
- }
- early_initcall(luf_init_arch);
- 
-+#ifdef CONFIG_LUF_DEBUG
-+static DEFINE_SPINLOCK(luf_debug_lock);
-+#define lufd_lock(f) spin_lock_irqsave(&luf_debug_lock, (f))
-+#define lufd_unlock(f) spin_unlock_irqrestore(&luf_debug_lock, (f))
-+
-+void print_lufd_arch(void)
-+{
-+	int cpu;
-+
-+	pr_cont("LUFD ARCH:");
-+	for_each_cpu(cpu, cpu_possible_mask)
-+		pr_cont(" %lu", atomic_long_read(per_cpu_ptr(&ugen_done, cpu)));
-+	pr_cont("\n");
-+}
-+#else
-+#define lufd_lock(f) do { (void)(f); } while(0)
-+#define lufd_unlock(f) do { (void)(f); } while(0)
-+#endif
-+
- /*
-  * batch will not be updated.
-  */
-@@ -223,17 +242,22 @@ bool arch_tlbbatch_check_done(struct arch_tlbflush_unmap_batch *batch,
- 			unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		goto out;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		unsigned long done;
- 
- 		done = atomic_long_read(per_cpu_ptr(&ugen_done, cpu));
--		if (ugen_before(done, ugen))
-+		if (ugen_before(done, ugen)) {
-+			lufd_unlock(flags);
- 			return false;
-+		}
- 	}
-+	lufd_unlock(flags);
- 	return true;
- out:
- 	return cpumask_empty(&batch->cpumask);
-@@ -243,10 +267,12 @@ bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch,
- 			unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		goto out;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		unsigned long done;
- 
-@@ -254,6 +280,7 @@ bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch,
- 		if (!ugen_before(done, ugen))
- 			cpumask_clear_cpu(cpu, &batch->cpumask);
- 	}
-+	lufd_unlock(flags);
- out:
- 	return cpumask_empty(&batch->cpumask);
- }
-@@ -262,10 +289,12 @@ void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch,
- 			     unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		return;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		atomic_long_t *done = per_cpu_ptr(&ugen_done, cpu);
- 		unsigned long old = atomic_long_read(done);
-@@ -283,15 +312,18 @@ void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch,
- 		 */
- 		atomic_long_cmpxchg(done, old, ugen);
- 	}
-+	lufd_unlock(flags);
- }
- 
- void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		return;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, mm_cpumask(mm)) {
- 		atomic_long_t *done = per_cpu_ptr(&ugen_done, cpu);
- 		unsigned long old = atomic_long_read(done);
-@@ -309,4 +341,5 @@ void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen)
- 		 */
- 		atomic_long_cmpxchg(done, old, ugen);
- 	}
-+	lufd_unlock(flags);
- }
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 593f10aabd45a..414bcabb23b51 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -695,12 +695,22 @@ static inline pud_t pud_mkyoung(pud_t pud)
- 	return pud_set_flags(pud, _PAGE_ACCESSED);
- }
- 
-+#ifdef CONFIG_LUF_DEBUG
-+pud_t pud_mkwrite(pud_t pud);
-+static inline pud_t __pud_mkwrite(pud_t pud)
-+{
-+	pud = pud_set_flags(pud, _PAGE_RW);
-+
-+	return pud_clear_saveddirty(pud);
-+}
-+#else
- static inline pud_t pud_mkwrite(pud_t pud)
- {
- 	pud = pud_set_flags(pud, _PAGE_RW);
- 
- 	return pud_clear_saveddirty(pud);
- }
-+#endif
- 
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pte_soft_dirty(pte_t pte)
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index dbcbf0477ed2a..03b3e90186ab1 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -298,6 +298,9 @@ extern bool arch_tlbbatch_check_done(struct arch_tlbflush_unmap_batch *batch, un
- extern bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch, unsigned long ugen);
- extern void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch, unsigned long ugen);
- extern void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen);
-+#ifdef CONFIG_LUF_DEBUG
-+extern void print_lufd_arch(void);
-+#endif
- 
- static inline void arch_tlbbatch_clear(struct arch_tlbflush_unmap_batch *batch)
- {
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 1fef5ad32d5a8..d0b7a1437214c 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -904,6 +904,7 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- 
- pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma)
- {
-+	lufd_check_pages(pte_page(pte), 0);
- 	if (vma->vm_flags & VM_SHADOW_STACK)
- 		return pte_mkwrite_shstk(pte);
- 
-@@ -914,6 +915,7 @@ pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma)
- 
- pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
- {
-+	lufd_check_pages(pmd_page(pmd), PMD_ORDER);
- 	if (vma->vm_flags & VM_SHADOW_STACK)
- 		return pmd_mkwrite_shstk(pmd);
- 
-@@ -922,6 +924,14 @@ pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
- 	return pmd_clear_saveddirty(pmd);
- }
- 
-+#ifdef CONFIG_LUF_DEBUG
-+pud_t pud_mkwrite(pud_t pud)
-+{
-+	lufd_check_pages(pud_page(pud), PUD_ORDER);
-+	return __pud_mkwrite(pud);
-+}
-+#endif
-+
- void arch_check_zapped_pte(struct vm_area_struct *vma, pte_t pte)
- {
- 	/*
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index be6068b60c32d..99b3d54aa74d2 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1283,6 +1283,25 @@ static int __init luf_init_arch(void)
- }
- early_initcall(luf_init_arch);
- 
-+#ifdef CONFIG_LUF_DEBUG
-+static DEFINE_SPINLOCK(luf_debug_lock);
-+#define lufd_lock(f) spin_lock_irqsave(&luf_debug_lock, (f))
-+#define lufd_unlock(f) spin_unlock_irqrestore(&luf_debug_lock, (f))
-+
-+void print_lufd_arch(void)
-+{
-+	int cpu;
-+
-+	pr_cont("LUFD ARCH:");
-+	for_each_cpu(cpu, cpu_possible_mask)
-+		pr_cont(" %lu", atomic_long_read(per_cpu_ptr(&ugen_done, cpu)));
-+	pr_cont("\n");
-+}
-+#else
-+#define lufd_lock(f) do { (void)(f); } while(0)
-+#define lufd_unlock(f) do { (void)(f); } while(0)
-+#endif
-+
- /*
-  * batch will not be updated.
-  */
-@@ -1290,17 +1309,22 @@ bool arch_tlbbatch_check_done(struct arch_tlbflush_unmap_batch *batch,
- 			unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		goto out;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		unsigned long done;
- 
- 		done = atomic_long_read(per_cpu_ptr(&ugen_done, cpu));
--		if (ugen_before(done, ugen))
-+		if (ugen_before(done, ugen)) {
-+			lufd_unlock(flags);
- 			return false;
-+		}
- 	}
-+	lufd_unlock(flags);
- 	return true;
- out:
- 	return cpumask_empty(&batch->cpumask);
-@@ -1310,10 +1334,12 @@ bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch,
- 			unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		goto out;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		unsigned long done;
- 
-@@ -1321,6 +1347,7 @@ bool arch_tlbbatch_diet(struct arch_tlbflush_unmap_batch *batch,
- 		if (!ugen_before(done, ugen))
- 			cpumask_clear_cpu(cpu, &batch->cpumask);
- 	}
-+	lufd_unlock(flags);
- out:
- 	return cpumask_empty(&batch->cpumask);
- }
-@@ -1329,10 +1356,12 @@ void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch,
- 			     unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		return;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, &batch->cpumask) {
- 		atomic_long_t *done = per_cpu_ptr(&ugen_done, cpu);
- 		unsigned long old = atomic_long_read(done);
-@@ -1350,15 +1379,18 @@ void arch_tlbbatch_mark_ugen(struct arch_tlbflush_unmap_batch *batch,
- 		 */
- 		atomic_long_cmpxchg(done, old, ugen);
- 	}
-+	lufd_unlock(flags);
- }
- 
- void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen)
- {
- 	int cpu;
-+	unsigned long flags;
- 
- 	if (!ugen)
- 		return;
- 
-+	lufd_lock(flags);
- 	for_each_cpu(cpu, mm_cpumask(mm)) {
- 		atomic_long_t *done = per_cpu_ptr(&ugen_done, cpu);
- 		unsigned long old = atomic_long_read(done);
-@@ -1376,6 +1408,7 @@ void arch_mm_mark_ugen(struct mm_struct *mm, unsigned long ugen)
- 		 */
- 		atomic_long_cmpxchg(done, old, ugen);
- 	}
-+	lufd_unlock(flags);
- }
- 
- void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
-diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
-index dd100e849f5e0..0792530d1be7b 100644
---- a/include/linux/highmem-internal.h
-+++ b/include/linux/highmem-internal.h
-@@ -41,6 +41,7 @@ static inline void *kmap(struct page *page)
- {
- 	void *addr;
- 
-+	lufd_check_pages(page, 0);
- 	might_sleep();
- 	if (!PageHighMem(page))
- 		addr = page_address(page);
-@@ -161,6 +162,7 @@ static inline struct page *kmap_to_page(void *addr)
- 
- static inline void *kmap(struct page *page)
- {
-+	lufd_check_pages(page, 0);
- 	might_sleep();
- 	return page_address(page);
- }
-@@ -177,11 +179,13 @@ static inline void kunmap(struct page *page)
- 
- static inline void *kmap_local_page(struct page *page)
- {
-+	lufd_check_pages(page, 0);
- 	return page_address(page);
- }
- 
- static inline void *kmap_local_folio(struct folio *folio, size_t offset)
- {
-+	lufd_check_folio(folio);
- 	return page_address(&folio->page) + offset;
- }
- 
-@@ -204,6 +208,7 @@ static inline void __kunmap_local(const void *addr)
- 
- static inline void *kmap_atomic(struct page *page)
- {
-+	lufd_check_pages(page, 0);
- 	if (IS_ENABLED(CONFIG_PREEMPT_RT))
- 		migrate_disable();
- 	else
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1577bc8b743fe..5e577d5fba130 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -45,6 +45,24 @@ extern int sysctl_page_lock_unfairness;
- void mm_core_init(void);
- void init_mm_internals(void);
- 
-+#ifdef CONFIG_LUF_DEBUG
-+void lufd_check_folio(struct folio *f);
-+void lufd_check_pages(const struct page *p, unsigned int order);
-+void lufd_check_zone_pages(struct zone *zone, struct page *page, unsigned int order);
-+void lufd_check_queued_pages(void);
-+void lufd_queue_page_for_check(struct page *page, int order);
-+void lufd_mark_folio(struct folio *f, unsigned short luf_key);
-+void lufd_mark_pages(struct page *p, unsigned int order, unsigned short luf_key);
-+#else
-+static inline void lufd_check_folio(struct folio *f) {}
-+static inline void lufd_check_pages(const struct page *p, unsigned int order) {}
-+static inline void lufd_check_zone_pages(struct zone *zone, struct page *page, unsigned int order) {}
-+static inline void lufd_check_queued_pages(void) {}
-+static inline void lufd_queue_page_for_check(struct page *page, int order) {}
-+static inline void lufd_mark_folio(struct folio *f, unsigned short luf_key) {}
-+static inline void lufd_mark_pages(struct page *p, unsigned int order, unsigned short luf_key) {}
-+#endif
-+
- #ifndef CONFIG_NUMA		/* Don't use mapnrs, do it properly */
- extern unsigned long max_mapnr;
- 
-@@ -114,7 +132,7 @@ extern int mmap_rnd_compat_bits __read_mostly;
- #endif
- 
- #ifndef page_to_virt
--#define page_to_virt(x)	__va(PFN_PHYS(page_to_pfn(x)))
-+#define page_to_virt(x)	({ lufd_check_pages(x, 0); __va(PFN_PHYS(page_to_pfn(x)));})
- #endif
- 
- #ifndef lm_alias
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index c5f44b5c9758f..0cd83c1c231b9 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -22,6 +22,10 @@
- 
- #include <asm/mmu.h>
- 
-+#ifdef CONFIG_LUF_DEBUG
-+extern struct page_ext_operations luf_debug_ops;
-+#endif
-+
- #ifndef AT_VECTOR_SIZE_ARCH
- #define AT_VECTOR_SIZE_ARCH 0
- #endif
-@@ -32,18 +36,6 @@
- struct address_space;
- struct mem_cgroup;
- 
--#ifdef CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
--struct luf_batch {
--	struct tlbflush_unmap_batch batch;
--	unsigned long ugen;
--	rwlock_t lock;
--};
--void luf_batch_init(struct luf_batch *lb);
--#else
--struct luf_batch {};
--static inline void luf_batch_init(struct luf_batch *lb) {}
--#endif
--
- /*
-  * Each physical page in the system has a struct page associated with
-  * it to keep track of whatever it is we are using the page for at the
-diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
-index a82aa80c0ba46..3b87f8674e528 100644
---- a/include/linux/mm_types_task.h
-+++ b/include/linux/mm_types_task.h
-@@ -10,6 +10,7 @@
- 
- #include <linux/align.h>
- #include <linux/types.h>
-+#include <linux/spinlock_types.h>
- 
- #include <asm/page.h>
- 
-@@ -88,4 +89,19 @@ struct tlbflush_unmap_batch {
- #endif
- };
- 
-+#ifdef CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
-+struct luf_batch {
-+	struct tlbflush_unmap_batch batch;
-+	unsigned long ugen;
-+	rwlock_t lock;
-+};
-+void luf_batch_init(struct luf_batch *lb);
-+#else
-+struct luf_batch {};
-+static inline void luf_batch_init(struct luf_batch *lb) {}
-+#endif
-+
-+#if defined(CONFIG_LUF_DEBUG)
-+#define NR_LUFD_PAGES 512
-+#endif
- #endif /* _LINUX_MM_TYPES_TASK_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 96375274d0335..9cb8e6fa1b1b4 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1406,6 +1406,11 @@ struct task_struct {
- 	unsigned long luf_ugen;
- 	unsigned long zone_ugen;
- 	unsigned long wait_zone_ugen;
-+#if defined(CONFIG_LUF_DEBUG)
-+	struct page *lufd_pages[NR_LUFD_PAGES];
-+	int lufd_pages_order[NR_LUFD_PAGES];
-+	int lufd_pages_nr;
-+#endif
- #endif
- 
- 	struct tlbflush_unmap_batch	tlb_ubc;
-diff --git a/mm/highmem.c b/mm/highmem.c
-index ef3189b36cadb..a323d5a655bf9 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -576,6 +576,7 @@ void *__kmap_local_page_prot(struct page *page, pgprot_t prot)
- {
- 	void *kmap;
- 
-+	lufd_check_pages(page, 0);
- 	/*
- 	 * To broaden the usage of the actual kmap_local() machinery always map
- 	 * pages when debugging is enabled and the architecture has no problems
-diff --git a/mm/memory.c b/mm/memory.c
-index 6cdc1df0424f3..e7a0a89d7027e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6224,6 +6224,18 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 			mapping = vma->vm_file->f_mapping;
- 	}
- 
-+#ifdef CONFIG_LUF_DEBUG
-+	if (luf_flush) {
-+		/*
-+		 * If it has a VM_SHARED mapping, all the mms involved
-+		 * in the struct address_space should be luf_flush'ed.
-+		 */
-+		if (mapping)
-+			luf_flush_mapping(mapping);
-+		luf_flush_mm(mm);
-+	}
-+#endif
-+
- 	if (unlikely(is_vm_hugetlb_page(vma)))
- 		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
- 	else
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2a2103df2d88e..9258d7c4eaf42 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -758,6 +758,8 @@ void luf_takeoff_end(struct zone *zone)
- 		VM_WARN_ON(current->zone_ugen);
- 		VM_WARN_ON(current->wait_zone_ugen);
- 	}
-+
-+	lufd_check_queued_pages();
- }
- 
- /*
-@@ -853,8 +855,10 @@ bool luf_takeoff_check_and_fold(struct zone *zone, struct page *page)
- 		struct luf_batch *lb;
- 		unsigned long lb_ugen;
- 
--		if (!luf_key)
-+		if (!luf_key) {
-+			lufd_check_pages(page, buddy_order(page));
- 			return true;
-+		}
- 
- 		lb = &luf_batch[luf_key];
- 		read_lock_irqsave(&lb->lock, flags);
-@@ -875,12 +879,15 @@ bool luf_takeoff_check_and_fold(struct zone *zone, struct page *page)
- 
- 		if (!current->luf_ugen || ugen_before(current->luf_ugen, lb_ugen))
- 			current->luf_ugen = lb_ugen;
-+		lufd_queue_page_for_check(page, buddy_order(page));
- 		return true;
- 	}
- 
- 	zone_ugen = page_zone_ugen(zone, page);
--	if (!zone_ugen)
-+	if (!zone_ugen) {
-+		lufd_check_pages(page, buddy_order(page));
- 		return true;
-+	}
- 
- 	/*
- 	 * Should not be zero since zone-zone_ugen has been updated in
-@@ -888,17 +895,23 @@ bool luf_takeoff_check_and_fold(struct zone *zone, struct page *page)
- 	 */
- 	VM_WARN_ON(!zone->zone_ugen);
- 
--	if (!ugen_before(READ_ONCE(zone->zone_ugen_done), zone_ugen))
-+	if (!ugen_before(READ_ONCE(zone->zone_ugen_done), zone_ugen)) {
-+		lufd_check_pages(page, buddy_order(page));
- 		return true;
-+	}
- 
- 	if (current->luf_no_shootdown)
- 		return false;
- 
-+	lufd_check_zone_pages(zone, page, buddy_order(page));
-+
- 	/*
- 	 * zone batched flush has been already set.
- 	 */
--	if (current->zone_ugen)
-+	if (current->zone_ugen) {
-+		lufd_queue_page_for_check(page, buddy_order(page));
- 		return true;
-+	}
- 
- 	/*
- 	 * Others are already performing tlb shootdown for us.  All we
-@@ -933,6 +946,7 @@ bool luf_takeoff_check_and_fold(struct zone *zone, struct page *page)
- 		atomic_long_set(&zone->nr_luf_pages, 0);
- 		fold_batch(tlb_ubc_takeoff, &zone->zone_batch, true);
- 	}
-+	lufd_queue_page_for_check(page, buddy_order(page));
- 	return true;
- }
- #endif
-@@ -1238,6 +1252,11 @@ static inline void __free_one_page(struct page *page,
- 	} else
- 		zone_ugen = page_zone_ugen(zone, page);
- 
-+	if (!zone_ugen)
-+		lufd_check_pages(page, order);
-+	else
-+		lufd_check_zone_pages(zone, page, order);
-+
- 	while (order < MAX_PAGE_ORDER) {
- 		int buddy_mt = migratetype;
- 		unsigned long buddy_zone_ugen;
-@@ -1299,6 +1318,10 @@ static inline void __free_one_page(struct page *page,
- 		set_page_zone_ugen(page, zone_ugen);
- 		pfn = combined_pfn;
- 		order++;
-+		if (!zone_ugen)
-+			lufd_check_pages(page, order);
-+		else
-+			lufd_check_zone_pages(zone, page, order);
- 	}
- 
- done_merging:
-@@ -3168,6 +3191,8 @@ void free_frozen_pages(struct page *page, unsigned int order,
- 	unsigned long pfn = page_to_pfn(page);
- 	int migratetype;
- 
-+	lufd_mark_pages(page, order, luf_key);
-+
- 	if (!pcp_allowed_order(order)) {
- 		__free_pages_ok(page, order, FPI_NONE, luf_key);
- 		return;
-@@ -3220,6 +3245,7 @@ void free_unref_folios(struct folio_batch *folios, unsigned short luf_key)
- 		unsigned long pfn = folio_pfn(folio);
- 		unsigned int order = folio_order(folio);
- 
-+		lufd_mark_folio(folio, luf_key);
- 		if (!free_pages_prepare(&folio->page, order))
- 			continue;
- 		/*
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index 641d93f6af4c1..be40bc2a93378 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -89,6 +89,9 @@ static struct page_ext_operations *page_ext_ops[] __initdata = {
- #ifdef CONFIG_PAGE_TABLE_CHECK
- 	&page_table_check_ops,
- #endif
-+#ifdef CONFIG_LUF_DEBUG
-+	&luf_debug_ops,
-+#endif
- };
- 
- unsigned long page_ext_size;
-diff --git a/mm/rmap.c b/mm/rmap.c
-index df350b4dfddd0..6a6188d47031b 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1161,6 +1161,235 @@ static bool should_defer_flush(struct mm_struct *mm, enum ttu_flags flags)
- }
- #endif /* CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH */
- 
-+#ifdef CONFIG_LUF_DEBUG
-+
-+static bool need_luf_debug(void)
-+{
-+	return true;
-+}
-+
-+static void init_luf_debug(void)
-+{
-+	/* Do nothing */
-+}
-+
-+struct page_ext_operations luf_debug_ops = {
-+	.size = sizeof(struct luf_batch),
-+	.need = need_luf_debug,
-+	.init = init_luf_debug,
-+	.need_shared_flags = false,
-+};
-+
-+static bool __lufd_check_zone_pages(struct page *page, int nr,
-+		struct tlbflush_unmap_batch *batch, unsigned long ugen)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page_ext *page_ext;
-+		struct luf_batch *lb;
-+		unsigned long lb_ugen;
-+		unsigned long flags;
-+		bool ret;
-+
-+		page_ext = page_ext_get(page + i);
-+		if (!page_ext)
-+			continue;
-+
-+		lb = (struct luf_batch *)page_ext_data(page_ext, &luf_debug_ops);
-+		write_lock_irqsave(&lb->lock, flags);
-+		lb_ugen = lb->ugen;
-+		ret = arch_tlbbatch_done(&lb->batch.arch, &batch->arch);
-+		write_unlock_irqrestore(&lb->lock, flags);
-+		page_ext_put(page_ext);
-+
-+		if (!ret || ugen_before(ugen, lb_ugen))
-+			return false;
-+	}
-+	return true;
-+}
-+
-+void lufd_check_zone_pages(struct zone *zone, struct page *page, unsigned int order)
-+{
-+	bool warn;
-+	static bool once = false;
-+
-+	if (!page || !zone)
-+		return;
-+
-+	warn = !__lufd_check_zone_pages(page, 1 << order,
-+			&zone->zone_batch, zone->luf_ugen);
-+
-+	if (warn && !READ_ONCE(once)) {
-+		WRITE_ONCE(once, true);
-+		VM_WARN(1, "LUFD: ugen(%lu) page(%p) order(%u)\n",
-+				atomic_long_read(&luf_ugen), page, order);
-+		print_lufd_arch();
-+	}
-+}
-+
-+static bool __lufd_check_pages(const struct page *page, int nr)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page_ext *page_ext;
-+		struct luf_batch *lb;
-+		unsigned long lb_ugen;
-+		unsigned long flags;
-+		bool ret;
-+
-+		page_ext = page_ext_get(page + i);
-+		if (!page_ext)
-+			continue;
-+
-+		lb = (struct luf_batch *)page_ext_data(page_ext, &luf_debug_ops);
-+		write_lock_irqsave(&lb->lock, flags);
-+		lb_ugen = lb->ugen;
-+		ret = arch_tlbbatch_diet(&lb->batch.arch, lb_ugen);
-+		write_unlock_irqrestore(&lb->lock, flags);
-+		page_ext_put(page_ext);
-+
-+		if (!ret)
-+			return false;
-+	}
-+	return true;
-+}
-+
-+void lufd_queue_page_for_check(struct page *page, int order)
-+{
-+	struct page **parray = current->lufd_pages;
-+	int *oarray = current->lufd_pages_order;
-+
-+	if (!page)
-+		return;
-+
-+	if (current->lufd_pages_nr >= NR_LUFD_PAGES) {
-+		VM_WARN_ONCE(1, "LUFD: NR_LUFD_PAGES is too small.\n");
-+		return;
-+	}
-+
-+	*(parray + current->lufd_pages_nr) = page;
-+	*(oarray + current->lufd_pages_nr) = order;
-+	current->lufd_pages_nr++;
-+}
-+
-+void lufd_check_queued_pages(void)
-+{
-+	struct page **parray = current->lufd_pages;
-+	int *oarray = current->lufd_pages_order;
-+	int i;
-+
-+	for (i = 0; i < current->lufd_pages_nr; i++)
-+		lufd_check_pages(*(parray + i), *(oarray + i));
-+	current->lufd_pages_nr = 0;
-+}
-+
-+void lufd_check_folio(struct folio *folio)
-+{
-+	struct page *page;
-+	int nr;
-+	bool warn;
-+	static bool once = false;
-+
-+	if (!folio)
-+		return;
-+
-+	page = folio_page(folio, 0);
-+	nr = folio_nr_pages(folio);
-+
-+	warn = !__lufd_check_pages(page, nr);
-+
-+	if (warn && !READ_ONCE(once)) {
-+		WRITE_ONCE(once, true);
-+		VM_WARN(1, "LUFD: ugen(%lu) page(%p) nr(%d)\n",
-+				atomic_long_read(&luf_ugen), page, nr);
-+		print_lufd_arch();
-+	}
-+}
-+EXPORT_SYMBOL(lufd_check_folio);
-+
-+void lufd_check_pages(const struct page *page, unsigned int order)
-+{
-+	bool warn;
-+	static bool once = false;
-+
-+	if (!page)
-+		return;
-+
-+	warn = !__lufd_check_pages(page, 1 << order);
-+
-+	if (warn && !READ_ONCE(once)) {
-+		WRITE_ONCE(once, true);
-+		VM_WARN(1, "LUFD: ugen(%lu) page(%p) order(%u)\n",
-+				atomic_long_read(&luf_ugen), page, order);
-+		print_lufd_arch();
-+	}
-+}
-+EXPORT_SYMBOL(lufd_check_pages);
-+
-+static void __lufd_mark_pages(struct page *page, int nr, unsigned short luf_key)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page_ext *page_ext;
-+		struct luf_batch *lb;
-+
-+		page_ext = page_ext_get(page + i);
-+		if (!page_ext)
-+			continue;
-+
-+		lb = (struct luf_batch *)page_ext_data(page_ext, &luf_debug_ops);
-+		fold_luf_batch(lb, &luf_batch[luf_key]);
-+		page_ext_put(page_ext);
-+	}
-+}
-+
-+void lufd_mark_folio(struct folio *folio, unsigned short luf_key)
-+{
-+	struct page *page;
-+	int nr;
-+	bool warn;
-+	static bool once = false;
-+
-+	if (!luf_key)
-+		return;
-+
-+	page = folio_page(folio, 0);
-+	nr = folio_nr_pages(folio);
-+
-+	warn = !__lufd_check_pages(page, nr);
-+	__lufd_mark_pages(page, nr, luf_key);
-+
-+	if (warn && !READ_ONCE(once)) {
-+		WRITE_ONCE(once, true);
-+		VM_WARN(1, "LUFD: ugen(%lu) page(%p) nr(%d)\n",
-+				atomic_long_read(&luf_ugen), page, nr);
-+		print_lufd_arch();
-+	}
-+}
-+
-+void lufd_mark_pages(struct page *page, unsigned int order, unsigned short luf_key)
-+{
-+	bool warn;
-+	static bool once = false;
-+
-+	if (!luf_key)
-+		return;
-+
-+	warn = !__lufd_check_pages(page, 1 << order);
-+	__lufd_mark_pages(page, 1 << order, luf_key);
-+
-+	if (warn && !READ_ONCE(once)) {
-+		WRITE_ONCE(once, true);
-+		VM_WARN(1, "LUFD: ugen(%lu) page(%p) order(%u)\n",
-+				atomic_long_read(&luf_ugen), page, order);
-+		print_lufd_arch();
-+	}
-+}
-+#endif
-+
- /**
-  * page_address_in_vma - The virtual address of a page in this VMA.
-  * @folio: The folio containing the page.
--- 
-2.17.1
-
+On 1/7/25 9:14 PM, lizetao wrote:
+> Hi,
+>
+>> -----Original Message-----
+>> From: Ferry Meng <mengferry@linux.alibaba.com>
+>> Sent: Wednesday, December 18, 2024 5:25 PM
+>> To: Michael S . Tsirkin <mst@redhat.com>; Jason Wang
+>> <jasowang@redhat.com>; linux-block@vger.kernel.org; Jens Axboe
+>> <axboe@kernel.dk>; virtualization@lists.linux.dev
+>> Cc: linux-kernel@vger.kernel.org; io-uring@vger.kernel.org; Stefan Hajnoczi
+>> <stefanha@redhat.com>; Christoph Hellwig <hch@infradead.org>; Joseph Qi
+>> <joseph.qi@linux.alibaba.com>; Jeffle Xu <jefflexu@linux.alibaba.com>; Ferry
+>> Meng <mengferry@linux.alibaba.com>
+>> Subject: [PATCH v1 2/3] virtio-blk: add uring_cmd support for I/O passthru on
+>> chardev.
+>>
+>> Add ->uring_cmd() support for virtio-blk chardev (/dev/vdXc0).
+>> According to virtio spec, in addition to passing 'hdr' info into kernel, we also
+>> need to pass vaddr & data length of the 'iov' requeired for the writev/readv op.
+>>
+>> Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
+>> ---
+>>   drivers/block/virtio_blk.c      | 223 +++++++++++++++++++++++++++++++-
+>>   include/uapi/linux/virtio_blk.h |  16 +++
+>>   2 files changed, 235 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c index
+>> 3487aaa67514..cd88cf939144 100644
+>> --- a/drivers/block/virtio_blk.c
+>> +++ b/drivers/block/virtio_blk.c
+>> @@ -18,6 +18,9 @@
+>>   #include <linux/vmalloc.h>
+>>   #include <uapi/linux/virtio_ring.h>
+>>   #include <linux/cdev.h>
+>> +#include <linux/io_uring/cmd.h>
+>> +#include <linux/types.h>
+>> +#include <linux/uio.h>
+>>
+>>   #define PART_BITS 4
+>>   #define VQ_NAME_LEN 16
+>> @@ -54,6 +57,20 @@ static struct class *vd_chr_class;
+>>
+>>   static struct workqueue_struct *virtblk_wq;
+>>
+>> +struct virtblk_uring_cmd_pdu {
+>> +	struct request *req;
+>> +	struct bio *bio;
+>> +	int status;
+>> +};
+>> +
+>> +struct virtblk_command {
+>> +	struct virtio_blk_outhdr out_hdr;
+>> +
+>> +	__u64	data;
+>> +	__u32	data_len;
+>> +	__u32	flag;
+>> +};
+>> +
+>>   struct virtio_blk_vq {
+>>   	struct virtqueue *vq;
+>>   	spinlock_t lock;
+>> @@ -122,6 +139,11 @@ struct virtblk_req {
+>>   	struct scatterlist sg[];
+>>   };
+>>
+>> +static void __user *virtblk_to_user_ptr(uintptr_t ptrval) {
+>> +	return (void __user *)ptrval;
+>> +}
+>> +
+>>   static inline blk_status_t virtblk_result(u8 status)  {
+>>   	switch (status) {
+>> @@ -259,9 +281,6 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   	if (!IS_ENABLED(CONFIG_BLK_DEV_ZONED) &&
+>> op_is_zone_mgmt(req_op(req)))
+>>   		return BLK_STS_NOTSUPP;
+>>
+>> -	/* Set fields for all request types */
+>> -	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+>> -
+>>   	switch (req_op(req)) {
+>>   	case REQ_OP_READ:
+>>   		type = VIRTIO_BLK_T_IN;
+>> @@ -309,9 +328,11 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   		type = VIRTIO_BLK_T_ZONE_RESET_ALL;
+>>   		break;
+>>   	case REQ_OP_DRV_IN:
+>> +	case REQ_OP_DRV_OUT:
+>>   		/*
+>>   		 * Out header has already been prepared by the caller
+>> (virtblk_get_id()
+>> -		 * or virtblk_submit_zone_report()), nothing to do here.
+>> +		 * virtblk_submit_zone_report() or io_uring passthrough cmd),
+>> nothing
+>> +		 * to do here.
+>>   		 */
+>>   		return 0;
+>>   	default:
+>> @@ -323,6 +344,7 @@ static blk_status_t virtblk_setup_cmd(struct
+>> virtio_device *vdev,
+>>   	vbr->in_hdr_len = in_hdr_len;
+>>   	vbr->out_hdr.type = cpu_to_virtio32(vdev, type);
+>>   	vbr->out_hdr.sector = cpu_to_virtio64(vdev, sector);
+>> +	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+>>
+>>   	if (type == VIRTIO_BLK_T_DISCARD || type ==
+>> VIRTIO_BLK_T_WRITE_ZEROES ||
+>>   	    type == VIRTIO_BLK_T_SECURE_ERASE) { @@ -832,6 +854,7 @@
+>> static int virtblk_get_id(struct gendisk *disk, char *id_str)
+>>   	vbr = blk_mq_rq_to_pdu(req);
+>>   	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
+>>   	vbr->out_hdr.type = cpu_to_virtio32(vblk->vdev,
+>> VIRTIO_BLK_T_GET_ID);
+>> +	vbr->out_hdr.ioprio = cpu_to_virtio32(vblk->vdev,
+>> +req_get_ioprio(req));
+>>   	vbr->out_hdr.sector = 0;
+>>
+>>   	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES,
+>> GFP_KERNEL); @@ -1250,6 +1273,197 @@ static const struct blk_mq_ops
+>> virtio_mq_ops = {
+>>   	.poll		= virtblk_poll,
+>>   };
+>>
+>> +static inline struct virtblk_uring_cmd_pdu *virtblk_get_uring_cmd_pdu(
+>> +		struct io_uring_cmd *ioucmd)
+>> +{
+>> +	return (struct virtblk_uring_cmd_pdu *)&ioucmd->pdu; }
+>> +
+>> +static void virtblk_uring_task_cb(struct io_uring_cmd *ioucmd,
+>> +		unsigned int issue_flags)
+>> +{
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +	struct virtblk_req *vbr = blk_mq_rq_to_pdu(pdu->req);
+>> +	u64 result = 0;
+>> +
+>> +	if (pdu->bio)
+>> +		blk_rq_unmap_user(pdu->bio);
+>> +
+>> +	/* currently result has no use, it should be zero as cqe->res */
+>> +	io_uring_cmd_done(ioucmd, vbr->in_hdr.status, result, issue_flags); }
+>> +
+>> +static enum rq_end_io_ret virtblk_uring_cmd_end_io(struct request *req,
+>> +						   blk_status_t err)
+>> +{
+>> +	struct io_uring_cmd *ioucmd = req->end_io_data;
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +
+>> +	/*
+>> +	 * For iopoll, complete it directly. Note that using the uring_cmd
+>> +	 * helper for this is safe only because we check blk_rq_is_poll().
+>> +	 * As that returns false if we're NOT on a polled queue, then it's
+>> +	 * safe to use the polled completion helper.
+>> +	 *
+>> +	 * Otherwise, move the completion to task work.
+>> +	 */
+>> +	if (blk_rq_is_poll(req)) {
+>> +		if (pdu->bio)
+>> +			blk_rq_unmap_user(pdu->bio);
+>> +		io_uring_cmd_iopoll_done(ioucmd, 0, pdu->status);
+>> +	} else {
+>> +		io_uring_cmd_do_in_task_lazy(ioucmd, virtblk_uring_task_cb);
+>> +	}
+>> +
+>> +	return RQ_END_IO_FREE;
+>> +}
+>> +
+>> +static struct virtblk_req *virtblk_req(struct request *req) {
+>> +	return blk_mq_rq_to_pdu(req);
+>> +}
+>> +
+>> +static inline enum req_op virtblk_req_op(const struct virtblk_uring_cmd
+>> +*cmd) {
+>> +	return (cmd->type & VIRTIO_BLK_T_OUT) ? REQ_OP_DRV_OUT :
+>> +REQ_OP_DRV_IN; }
+>> +
+>> +static struct request *virtblk_alloc_user_request(
+>> +		struct request_queue *q, struct virtblk_command *cmd,
+>> +		blk_opf_t rq_flags, blk_mq_req_flags_t blk_flags) {
+>> +	struct request *req;
+>> +
+>> +	req = blk_mq_alloc_request(q, rq_flags, blk_flags);
+>> +	if (IS_ERR(req))
+>> +		return req;
+>> +
+>> +	req->rq_flags |= RQF_DONTPREP;
+>> +	memcpy(&virtblk_req(req)->out_hdr, &cmd->out_hdr, sizeof(struct
+>> virtio_blk_outhdr));
+>> +	return req;
+>> +}
+>> +
+>> +static int virtblk_map_user_request(struct request *req, u64 ubuffer,
+>> +		unsigned int bufflen, struct io_uring_cmd *ioucmd,
+>> +		bool vec)
+>> +{
+>> +	struct request_queue *q = req->q;
+>> +	struct virtio_blk *vblk = q->queuedata;
+>> +	struct block_device *bdev = vblk ? vblk->disk->part0 : NULL;
+>> +	struct bio *bio = NULL;
+>> +	int ret;
+>> +
+>> +	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+>> +		struct iov_iter iter;
+>> +
+>> +		/* fixedbufs is only for non-vectored io */
+>> +		if (WARN_ON_ONCE(vec))
+>> +			return -EINVAL;
+> Shoule be goto out here? Or req will not be free. And I suggest to
+> free request in virtblk_uring_cmd_io().
+Thx, u are right. This will be fixed in v2 series.
+I will send out v2 in next week.
+>> +		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
+>> +				rq_data_dir(req), &iter, ioucmd);
+>> +		if (ret < 0)
+>> +			goto out;
+>> +		ret = blk_rq_map_user_iov(q, req, NULL,
+>> +			&iter, GFP_KERNEL);
+>> +	} else {
+>> +		ret = blk_rq_map_user_io(req, NULL,
+>> +				virtblk_to_user_ptr(ubuffer),
+>> +				bufflen, GFP_KERNEL, vec, 0,
+>> +				0, rq_data_dir(req));
+>> +	}
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	bio = req->bio;
+>> +	if (bdev)
+>> +		bio_set_dev(bio, bdev);
+>> +	return 0;
+>> +
+>> +out:
+>> +	blk_mq_free_request(req);
+>> +	return ret;
+>> +}
+>> +
+>> +static int virtblk_uring_cmd_io(struct virtio_blk *vblk,
+>> +		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool
+>> vec) {
+>> +	struct virtblk_uring_cmd_pdu *pdu =
+>> virtblk_get_uring_cmd_pdu(ioucmd);
+>> +	const struct virtblk_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd-
+>>> sqe);
+>> +	struct request_queue *q = vblk->disk->queue;
+>> +	struct virtblk_req *vbr;
+>> +	struct virtblk_command d;
+>> +	struct request *req;
+>> +	blk_opf_t rq_flags = REQ_ALLOC_CACHE | virtblk_req_op(cmd);
+>> +	blk_mq_req_flags_t blk_flags = 0;
+>> +	int ret;
+>> +
+>> +	if (!capable(CAP_SYS_ADMIN))
+>> +		return -EACCES;
+>> +
+>> +	d.out_hdr.ioprio = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd-
+>>> ioprio));
+>> +	d.out_hdr.type = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd->type));
+>> +	d.out_hdr.sector = cpu_to_virtio64(vblk->vdev, READ_ONCE(cmd-
+>>> sector));
+>> +	d.data = READ_ONCE(cmd->data);
+>> +	d.data_len = READ_ONCE(cmd->data_len);
+>> +
+>> +	if (issue_flags & IO_URING_F_NONBLOCK) {
+>> +		rq_flags |= REQ_NOWAIT;
+>> +		blk_flags = BLK_MQ_REQ_NOWAIT;
+>> +	}
+>> +	if (issue_flags & IO_URING_F_IOPOLL)
+>> +		rq_flags |= REQ_POLLED;
+>> +
+>> +	req = virtblk_alloc_user_request(q, &d, rq_flags, blk_flags);
+>> +	if (IS_ERR(req))
+>> +		return PTR_ERR(req);
+>> +
+>> +	vbr = virtblk_req(req);
+>> +	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
+>> +	if (d.data && d.data_len) {
+>> +		ret = virtblk_map_user_request(req, d.data, d.data_len,
+>> ioucmd, vec);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	/* to free bio on completion, as req->bio will be null at that time */
+>> +	pdu->bio = req->bio;
+>> +	pdu->req = req;
+>> +	req->end_io_data = ioucmd;
+>> +	req->end_io = virtblk_uring_cmd_end_io;
+>> +	blk_execute_rq_nowait(req, false);
+>> +	return -EIOCBQUEUED;
+>> +}
+>> +
+>> +
+>> +static int virtblk_uring_cmd(struct virtio_blk *vblk, struct io_uring_cmd
+>> *ioucmd,
+>> +			     unsigned int issue_flags)
+>> +{
+>> +	int ret;
+>> +
+>> +	BUILD_BUG_ON(sizeof(struct virtblk_uring_cmd_pdu) >
+>> +sizeof(ioucmd->pdu));
+>> +
+>> +	switch (ioucmd->cmd_op) {
+>> +	case VIRTBLK_URING_CMD_IO:
+>> +		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, false);
+>> +		break;
+>> +	case VIRTBLK_URING_CMD_IO_VEC:
+>> +		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, true);
+>> +		break;
+>> +	default:
+>> +		ret = -ENOTTY;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int virtblk_chr_uring_cmd(struct io_uring_cmd *ioucmd, unsigned
+>> +int issue_flags) {
+>> +	struct virtio_blk *vblk = container_of(file_inode(ioucmd->file)->i_cdev,
+>> +			struct virtio_blk, cdev);
+>> +
+>> +	return virtblk_uring_cmd(vblk, ioucmd, issue_flags); }
+>> +
+>>   static void virtblk_cdev_rel(struct device *dev)  {
+>>   	ida_free(&vd_chr_minor_ida, MINOR(dev->devt)); @@ -1297,6
+>> +1511,7 @@ static int virtblk_cdev_add(struct virtio_blk *vblk,
+>>
+>>   static const struct file_operations virtblk_chr_fops = {
+>>   	.owner		= THIS_MODULE,
+>> +	.uring_cmd	= virtblk_chr_uring_cmd,
+>>   };
+>>
+>>   static unsigned int virtblk_queue_depth; diff --git
+>> a/include/uapi/linux/virtio_blk.h b/include/uapi/linux/virtio_blk.h index
+>> 3744e4da1b2a..93b6e1b5b9a4 100644
+>> --- a/include/uapi/linux/virtio_blk.h
+>> +++ b/include/uapi/linux/virtio_blk.h
+>> @@ -313,6 +313,22 @@ struct virtio_scsi_inhdr {  };  #endif
+>> /* !VIRTIO_BLK_NO_LEGACY */
+>>
+>> +struct virtblk_uring_cmd {
+>> +	/* VIRTIO_BLK_T* */
+>> +	__u32 type;
+>> +	/* io priority. */
+>> +	__u32 ioprio;
+>> +	/* Sector (ie. 512 byte offset) */
+>> +	__u64 sector;
+>> +
+>> +	__u64 data;
+>> +	__u32 data_len;
+>> +	__u32 flag;
+>> +};
+>> +
+>> +#define VIRTBLK_URING_CMD_IO		1
+>> +#define VIRTBLK_URING_CMD_IO_VEC	2
+>> +
+>>   /* And this is the final byte of the write scatter-gather list. */
+>>   #define VIRTIO_BLK_S_OK		0
+>>   #define VIRTIO_BLK_S_IOERR	1
+>> --
+>> 2.43.5
+>>
+>>
 
