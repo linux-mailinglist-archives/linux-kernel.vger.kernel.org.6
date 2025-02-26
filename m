@@ -1,113 +1,178 @@
-Return-Path: <linux-kernel+bounces-532956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEF3A45420
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E7AA45423
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D8D16F07F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C181717021A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8084266EF1;
-	Wed, 26 Feb 2025 03:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84672266EF9;
+	Wed, 26 Feb 2025 03:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HgX8tasU"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E64942AB4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPX77T/5"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2CE42AB4;
+	Wed, 26 Feb 2025 03:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740541554; cv=none; b=cA2KxtMhhe2thNuGGick0h5AazL7/f/j30xKIi0Qkl4NMabX71jbmB8QcB/S70vxqc6lS6rlk+MY3pDMVfQqUvgGA3D7KZ0VKZMkeXvP+R6UMU+YjA3aXsWZYxeNMgHrOcOyvdYWzyY2qXXu9P25A7mMZplpbZVYuqwPHZq3vM0=
+	t=1740541648; cv=none; b=NzRAyX/SL0KozDVX0yDrj823+Jk07mjz2tKxYhmNi7I+FyurskxuYcGyjJ93Msxy82UCDWL3aA/c+2Wq8uv2vT68xebY/B2qyhdazcJ4JCpUH8vyjTuUcFOmCebKrd6d69ubuS0QnAGx1miBZ3InVrOyQsyox3Lb/1rTJkEKEXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740541554; c=relaxed/simple;
-	bh=A8wLeaPz+KXaAe28bGFXAyg33i1t+Hjd7ha8vFjEDi4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=WbEXCn8nGtDd21IHyDJVrKGcmO7gcQGHheewswp9uT7T2wcm5PdJrDjEyWdqStaAM13+GcgCOMdFqHq5yB7uwLxj0N5AYxNBYddW3bLFXMOOTRWfocrpbZLTN7wXxQvZEZJqLkpvyBfdtPm+DIFTKcBwRzxmjj+xq0m1fVlHF+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HgX8tasU reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=kqrb1Tuv45oCW2s52tTkGEMymHWWUvdmwqaWUOHB7w8=; b=H
-	gX8tasUmKHVA1Lxwkufzo1CRzUWwwHfkJwGvmr2upyq0OHqXkFvJ6K5bT/tRnxhP
-	az78h9LgPlnt4hqyWjJN/fw4MMOBTUGAog8SoDjoMkU3p13rX5SHyx1uhDoErgvw
-	qJkzBcT0nw75bRJvD8VPPNOxix+RaYYC6m0mefN2uU=
-Received: from 00107082$163.com ( [111.35.188.205] ) by
- ajax-webmail-wmsvr-40-114 (Coremail) ; Wed, 26 Feb 2025 11:45:06 +0800
- (CST)
-Date: Wed, 26 Feb 2025 11:45:06 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Alexandre Ghiti" <alex@ghiti.fr>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 12/13] riscv/irq: use seq_put_decimal_ull_width() for
- decimal values
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <4c7393a5-ad1a-4740-b454-a9b85682a78f@ghiti.fr>
-References: <20241108162503.9914-1-00107082@163.com>
- <4c7393a5-ad1a-4740-b454-a9b85682a78f@ghiti.fr>
-X-NTES-SC: AL_Qu2fAvmfvk0r4CKeY+kZnEYQheY4XMKyuPkg1YJXOp80oyT14wcab19+GEfU1cmEMjuxkDi4QBVL8OF6frh9bYSLHs3bYr0Aa7jmWCMw5TKj
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1740541648; c=relaxed/simple;
+	bh=kbzTfEFTc42i/4CW4iSA0pKghpwg4lWEx58lDd/Nxyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBUF0Td01MGO7TYElKKs7JAtQX/ugH6ouqwlEo5hMIlNH/B1eJcUdXAHPJ6pDMXKz6JxXRSfELL+mn4KseaQrlCSQkE7uUb4RgpZmMdgwgugf0TXgwRVHdKmWLnaRf/orutMxH3e41uVUlcTTsWSOHqHPDdTGOeswdDESUG3PYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPX77T/5; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e65d6e1f12so79430966d6.0;
+        Tue, 25 Feb 2025 19:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740541646; x=1741146446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZSJhmAbNuFPvPvbPYk7L0OT8cajN6anynVXiM0Y3tPc=;
+        b=HPX77T/5PFMmp6BDYRFrHjbhqIY6lq7IedWsC9CYSjt30mLkKTeKgpOhMdIE6O6xLg
+         Db6Owobw/JyMkMg6NYCojWIlsK0kReXhEcc1Q/78X14gBan4T8duFM6nzLCOIs1b+2Nt
+         LWT7ffNzrWkBi4KdiMy0qsmgkmOQWqb+JLEVPxVkXX/BVjp75br/6HUJjNkmePBtDKGe
+         lKkytRT82tT+gAoZPVPta+GFjKPmkn4WS9njPbW/6L40m01iG6f7nfCVR4v0YPyoho+Y
+         +nVA8Jgy7CTVX0Xc+oTN0xyrW/IODk45hx9vLGdowAjlDDlwU9csGFoS6QSgNE1C93sv
+         HDgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740541646; x=1741146446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZSJhmAbNuFPvPvbPYk7L0OT8cajN6anynVXiM0Y3tPc=;
+        b=ZNuApjboZFVyoDDyFxieUR7HjL4d5Ov04pj9Img90JvT3veMJOiaa5XmUfJqDkZApc
+         b+kLIenDFtNO8PR8I0Jhbnyb+9DD99LsxWo23gZoDkVzlpOSrDRZaXpi5s23VpJSVFw7
+         GMu1n6zSJLjtGT8EnohKcCkOhWAEk0sthxqHYOxbdB0PQFaOgLKhCEJENkiy+jdK5Clo
+         A5eKW/SHXByq8G7Lzpwe3jW/b4cuxX2BPUC10AKrwh3yjgl2ml9KJk0ejXQpc8qyCkWb
+         VpzKVqXESQfe4cgu1zU2JRy5CHDM3DAo2Nrlu01ep6XWtlkylqixq14PAaT8Jq9Z34LU
+         uPaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW6bK88F6+cMQTse9aokqrvwSruXxtLZX6WA4zbBV9Wo9VOPwXVELtFFS/jjDiuWf8CpiWXRUiGPVUMhel1A==@vger.kernel.org, AJvYcCVfORxPGjQvFyGsaDVXocBlE1CJfIFZdmCgyruVhxvxPjbyxkDX7b5xT9b43szAXMBFDlEPe1wckvU58tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzURsZOchNfWrBBxvWLbrqTVcU5w7Vb122yJxWJcYfCSHpBHgos
+	9EVxXk1/bnmmvdEzIDsNDlO0Ag/AHN0FJq9wDa2RzSo18nkIPFmayI0fLz+71hx2kcQwAxi/QTE
+	joG4eIsP2gu8Qmw6WUPPtkzPNaHk=
+X-Gm-Gg: ASbGncunVbtZk+Fej6OPb35S0RCDgGu1s5Ax01yW4HD5HfKsPcqSLvMgnZjEL93HwqH
+	4dHFjbiH8eefFXiV1y6lgg4if0ju4tCqButEFlJoEwi8FLY0ZtQ9VnTafHjrMsijP6qvt6pYD3N
+	gIjlScO8hG
+X-Google-Smtp-Source: AGHT+IE4Gdw9CcFvSKMLJIzqS9mSmsmlvzZNg5/hmMPKSTuQrBW8M3Kd3gCQToYlIyQXlgD3CMI4THe4eN13hJd4ta4=
+X-Received: by 2002:a05:6214:402:b0:6d8:8466:d205 with SMTP id
+ 6a1803df08f44-6e87ab14369mr82912316d6.6.1740541646358; Tue, 25 Feb 2025
+ 19:47:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <70e006c0.4333.195405bb2e1.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cigvCgAHrgpDjr5np6FwAA--.46027W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hIAqme+gqCYAQAGsO
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20250223062046.2943-1-laoar.shao@gmail.com> <20250223062046.2943-3-laoar.shao@gmail.com>
+ <20250225183308.yjtgdl3esisvlhab@jpoimboe>
+In-Reply-To: <20250225183308.yjtgdl3esisvlhab@jpoimboe>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 26 Feb 2025 11:46:50 +0800
+X-Gm-Features: AQ5f1JqAkTcNbfvs-xt53XUJirI6BZqpqPgGmZ6moHy2ERZ2y4U6dOAqL9rwrLc
+Message-ID: <CALOAHbDcKoO4Wicva_qtNy4fNyS+ey7_PybbmXSk_xhKM=ZG=A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] livepatch: Replace tasklist_lock with RCU
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com, 
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGksIAoKVGhhbmtzIGZvciB0aGUgdGVzdCBhbmQgIHJldmlldywgYW5kIHNvcnJ5IGZvciBub3Qg
-Z2l2aW5nICBtb3JlIGF0dGVudGlvbnMgdG8gYWxpZ25tZW50IGlzc3VlcyB3aGVuIG1hZGUgdGhl
-IHBhdGNoLgpCdXQgaWYgYWxpZ25tZW50IHNob3VsZCBub3QgYmUgY2hhbmdlZCwgc2ltcGx5IGFw
-cGVuZGluZyBhIFtzcGFjZV0gaXMgbm90IGVub3VnaDogIHRoZSBwYXRjaCBjaGFuZ2UKJyUxMHVb
-c3BhY2VdIiB0byAiW3NwYWNlXSUxMHUiLCAgIG9uZSBbc3BhY2VdIGlzIG1vdmVkIGZyb20gdGFp
-bCB0byB0aGUgZnJvbnQsICBhbmQgdG8gcmVzdG9yZSB0byBpdHMgb3JpZ2luYWwgc3RhdGUKLCBv
-bmUgW3NwYWNlXSBzaG91bGQgYmUgcmVtb3ZlZCBmcm9tIGZyb250LiAgYW5kIEl0IHdvdWxkIG1h
-a2UgdGhlIGNvZGUgIHVnbHkgYW5kIHVucGxlYXNhbnQgIHRvIHJlbW92ZSBhIFtzcGFjZV0KZnJv
-bSB0aGlzIGxpbmUgCiAgICAgICAgc2VxX3ByaW50ZihwLCAiJSpzJXU6JXMiLCBwcmVjIC0gMSwg
-IklQSSIsIGksIHByZWMgPj0gNCA/ICIgIiA6ICIiKTsKKCBvciBtYWtlIGNoYW5nZXMgdG8gc2Vx
-X3B1dF9kZWNpbWFsX3VsbF93aWR0aCkKCgpLaW5kIG9mIHRoaW5rIHRoYXQgaXQgZG9lcyBub3Qg
-d29ydGggdGhlIGVmZm9ydCBpZiAgY29kZSBjaGFuZ2VzIGFyZSB3YXkgdG9vIHVucGxlYXNhbnQu
-Li4uCgoKVGhhbmtzCkRhdmlkCiAKCkF0IDIwMjUtMDItMjUgMjM6MTA6MjYsICJBbGV4YW5kcmUg
-R2hpdGkiIDxhbGV4QGdoaXRpLmZyPiB3cm90ZToKPkhpIERhdmlkLAo+Cj5PbiAwOC8xMS8yMDI0
-IDE3OjI1LCBEYXZpZCBXYW5nIHdyb3RlOgo+PiBQZXJmb3JtYW5jZSBpbXByb3ZlbWVudCBmb3Ig
-cmVhZGluZyAvcHJvYy9pbnRlcnJ1cHRzIG9uIGFyY2ggcmlzY3YKPj4KPj4gU2lnbmVkLW9mZi1i
-eTogRGF2aWQgV2FuZyA8MDAxMDcwODJAMTYzLmNvbT4KPj4gLS0tCj4+ICAgYXJjaC9yaXNjdi9r
-ZXJuZWwvc21wLmMgfCAzICsrLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
-IDEgZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3Yva2VybmVsL3NtcC5j
-IGIvYXJjaC9yaXNjdi9rZXJuZWwvc21wLmMKPj4gaW5kZXggYzE4MGE2NDdhMzBlLi5mMWU5YzNk
-YjA5NGMgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gvcmlzY3Yva2VybmVsL3NtcC5jCj4+ICsrKyBiL2Fy
-Y2gvcmlzY3Yva2VybmVsL3NtcC5jCj4+IEBAIC0yMjYsNyArMjI2LDggQEAgdm9pZCBzaG93X2lw
-aV9zdGF0cyhzdHJ1Y3Qgc2VxX2ZpbGUgKnAsIGludCBwcmVjKQo+PiAgIAkJc2VxX3ByaW50Zihw
-LCAiJSpzJXU6JXMiLCBwcmVjIC0gMSwgIklQSSIsIGksCj4+ICAgCQkJICAgcHJlYyA+PSA0ID8g
-IiAiIDogIiIpOwo+PiAgIAkJZm9yX2VhY2hfb25saW5lX2NwdShjcHUpCj4+IC0JCQlzZXFfcHJp
-bnRmKHAsICIlMTB1ICIsIGlycV9kZXNjX2tzdGF0X2NwdShpcGlfZGVzY1tpXSwgY3B1KSk7Cj4+
-ICsJCQlzZXFfcHV0X2RlY2ltYWxfdWxsX3dpZHRoKHAsICIgIiwKPj4gKwkJCQkJCSAgaXJxX2Rl
-c2Nfa3N0YXRfY3B1KGlwaV9kZXNjW2ldLCBjcHUpLCAxMCk7Cj4+ICAgCQlzZXFfcHJpbnRmKHAs
-ICIgJXNcbiIsIGlwaV9uYW1lc1tpXSk7Cj4+ICAgCX0KPj4gICB9Cj4KPgo+VmVyeSBsYXRlIGFu
-c3dlciBzb3JyeSEKPgo+SSBkb24ndCBoYXZlIHRoZSBzYW1lIG91dHB1dCBiZWZvcmUgYW5kIGFm
-dGVyIHlvdXIgcGF0Y2ggYmVjYXVzZSAKPnNlcV9wdXRfZGVjaW1hbF91bGxfd2lkdGgoKSBzZWNv
-bmQgYXJndW1lbnQgaXMgcGxhY2VkICpiZWZvcmUqIHRoZSAKPm51bWJlciwgbm90IGFmdGVyIGFz
-IGl0IHdhcyBiZWZvcmUuCj4KPlRoZSBmb2xsb3dpbmcgZGlmZiBmaXhlcyB0aGUgaXNzdWU6Cj4K
-PmRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L2tlcm5lbC9zbXAuYyBiL2FyY2gvcmlzY3Yva2VybmVs
-L3NtcC5jIGluZGV4IAo+ZjFlOWMzZGIwOTRjMy4uNGI4MGVlNGU1YjJjMCAxMDA2NDQgLS0tIGEv
-YXJjaC9yaXNjdi9rZXJuZWwvc21wLmMgKysrIAo+Yi9hcmNoL3Jpc2N2L2tlcm5lbC9zbXAuYyBA
-QCAtMjI1LDkgKzIyNSwxMSBAQCB2b2lkIAo+c2hvd19pcGlfc3RhdHMoc3RydWN0IHNlcV9maWxl
-ICpwLCBpbnQgcHJlYykgZm9yIChpID0gMDsgaSA8IElQSV9NQVg7IAo+aSsrKSB7IHNlcV9wcmlu
-dGYocCwgIiUqcyV1OiVzIiwgcHJlYyAtIDEsICJJUEkiLCBpLCBwcmVjID49IDQgPyAiICIgOiAK
-PiIiKTsgLSBmb3JfZWFjaF9vbmxpbmVfY3B1KGNwdSkgLSBzZXFfcHV0X2RlY2ltYWxfdWxsX3dp
-ZHRoKHAsICIgIiwgKyAKPmZvcl9lYWNoX29ubGluZV9jcHUoY3B1KSB7ICsgc2VxX3B1dF9kZWNp
-bWFsX3VsbF93aWR0aChwLCBOVUxMLCAKPmlycV9kZXNjX2tzdGF0X2NwdShpcGlfZGVzY1tpXSwg
-Y3B1KSwgMTApOyArIHNlcV9wdXRjKHAsICcgJyk7ICsgfSAKPnNlcV9wcmludGYocCwgIiAlc1xu
-IiwgaXBpX25hbWVzW2ldKTsgfSB9Cj4KPldpbGwgeW91IHJlc3BpbiBhIG5ldyB2ZXJzaW9uPwo+
-Cj5UaGFua3MsCj4KPkFsZXgK
+On Wed, Feb 26, 2025 at 2:33=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
+>
+> On Sun, Feb 23, 2025 at 02:20:46PM +0800, Yafang Shao wrote:
+> > +++ b/kernel/livepatch/patch.c
+> > @@ -95,7 +95,12 @@ static void notrace klp_ftrace_handler(unsigned long=
+ ip,
+> >
+> >               patch_state =3D current->patch_state;
+> >
+> > -             WARN_ON_ONCE(patch_state =3D=3D KLP_TRANSITION_IDLE);
+> > +             /* If the patch_state is KLP_TRANSITION_IDLE, it indicate=
+s the
+> > +              * task was forked after klp_init_transition(). For this =
+newly
+> > +              * forked task, it is safe to switch it to klp_target_sta=
+te.
+> > +              */
+> > +             if (patch_state =3D=3D KLP_TRANSITION_IDLE)
+> > +                     current->patch_state =3D klp_target_state;
+>
+> Hm, but then the following line is:
+>
+> >               if (patch_state =3D=3D KLP_TRANSITION_UNPATCHED) {
+>
+> Shouldn't the local 'patch_state' variable be updated?
+
+Ah, I missed it.
+
+>
+> It also seems unnecessary to update 'current->patch_state' here.
+
+Got it.
+
+>
+> > @@ -294,6 +294,13 @@ static int klp_check_and_switch_task(struct task_s=
+truct *task, void *arg)
+> >  {
+> >       int ret;
+> >
+> > +     /* If the patch_state remains KLP_TRANSITION_IDLE at this point, =
+it
+> > +      * indicates that the task was forked after klp_init_transition()=
+. For
+> > +      * this newly forked task, it is now safe to perform the switch.
+> > +      */
+> > +     if (task->patch_state =3D=3D KLP_TRANSITION_IDLE)
+> > +             goto out;
+> > +
+>
+> This also seems unnecessary.  No need to transition the patch if the
+> ftrace handler is already doing the right thing.  klp_try_switch_task()
+> can just return early on !TIF_PATCH_PENDING.
+
+Good suggestion.
+
+>
+> > @@ -466,11 +474,11 @@ void klp_try_complete_transition(void)
+> >        * Usually this will transition most (or all) of the tasks on a s=
+ystem
+> >        * unless the patch includes changes to a very common function.
+> >        */
+> > -     read_lock(&tasklist_lock);
+> > +     rcu_read_lock();
+> >       for_each_process_thread(g, task)
+> >               if (!klp_try_switch_task(task))
+> >                       complete =3D false;
+> > -     read_unlock(&tasklist_lock);
+> > +     rcu_read_unlock();
+>
+> Can this also be done for the idle tasks?
+
+The cpus_read_lock() around the idle tasks is in place to protect
+against CPU hotplug operations. If we aim to eliminate this lock
+during the KLP transition, the CPU hotplug logic would need to be
+adjusted accordingly. For instance, we would need to address how to
+handle wake_up_if_idle() when a CPU is in the process of hotplugging.
+
+Given that the number of CPUs is unlikely to be large enough to create
+a bottleneck in the current implementation, optimizing this mechanism
+may not be a priority at the moment. It might be more practical to
+address this issue at a later stage.
+
+
+--
+Regards
+Yafang
 
