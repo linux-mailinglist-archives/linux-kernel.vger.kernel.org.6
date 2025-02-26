@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-534422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA88A466C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:38:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35281A466DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01FF19C3737
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67BD81770BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F0F221701;
-	Wed, 26 Feb 2025 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE46C221DAA;
+	Wed, 26 Feb 2025 16:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZH27SIB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lDPSTg2f"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEA22068B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9B22069A;
+	Wed, 26 Feb 2025 16:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587225; cv=none; b=lYllaSMjB+b3LwkgcNGo0F5mZ8pbu7WoE7QPhA5prQnz8LM2xhUPYRnaUpj5UQvuK6wZjvY3XFc3TpJqyqT4I3Vx8RQlMNVVhifUTNom36TIU2gsMXnt0BiHM4lxzbphnuEWgiqsnIFNnalY51O6yH1xVagufLTKuGAApUBKXH4=
+	t=1740587282; cv=none; b=YsvHBetAEr5FV84kZ5EkvVPgadce3JZACMaLTJDRriYcpPuyy06EcD9kVDLN0eiRdhp13CkxTnKQKkQSidncYO+1eAmXUxItLR5QmIMpLD/fhQv3PMDEQI2FKE+af8EehmejIpjDRkneUYolwv+/Txfd3PREc9xtgZXAu0+5yJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587225; c=relaxed/simple;
-	bh=Te2kIeqdYdMn9tYf2u9iApRSgSZW5n90rzOPs8gdJpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obvzyaRJekyKnb5pIGQGNPJtocqWbHhv2wncVq7jBi/8mz6ij1ztH//uoz00Del8CIScv8Bhgj/JRCIL/rQJ8WiBOipRd7ZXc8VVF6ZCDVDwoZ5dfYKYmf2Cek9c5wfyHkM2nYjLoDKoFaoDC+W0GlFR8xXZjcAaN2CpvLFb2OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZH27SIB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740587223;
+	s=arc-20240116; t=1740587282; c=relaxed/simple;
+	bh=+CJnwpM3+mYhb/baNTRwUdP82sSzeFGR+8cKV8R2Jaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M+ZRxVnpSkISnlCs4rOC5tETIfJSf2gQPiDNrut28VbPk6TRttTGOy4r30fMmduylcXTurZgCg+Hl8IXmx41WACKRWWRyEefaicWHXP+tVNyCLwDiQLPIrbzkjB3fkWjcWt6FcoIh22ZDSr9r2Mm55z9gACoyI4nM43NDMSXbDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lDPSTg2f; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C618544421;
+	Wed, 26 Feb 2025 16:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740587277;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ppomcWQSOcgvzeEl160zR2jOyW8ovhKpqyTRKDX1OIo=;
-	b=KZH27SIBiUwYhIfDkMmx+eXejf2URrNSZ3RacFjt1UVult3Wf+Lc2f09OzTaOWpSlGHf9A
-	XZakr7jaU2ZsAx5GNzQ419gJGZZsEiXCCUiakxSc/ays5Pk376tdRGtQZpYZn6YYGIR2uw
-	R09hg6bU1uS7S7ZCONm8qs0gCiRM0tM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-LPGgYWgyOTyPOxcZJ_DLYw-1; Wed,
- 26 Feb 2025 11:26:58 -0500
-X-MC-Unique: LPGgYWgyOTyPOxcZJ_DLYw-1
-X-Mimecast-MFC-AGG-ID: LPGgYWgyOTyPOxcZJ_DLYw_1740587214
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 436A51800998;
-	Wed, 26 Feb 2025 16:26:52 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8BD4D3000199;
-	Wed, 26 Feb 2025 16:26:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 17:26:22 +0100 (CET)
-Date: Wed, 26 Feb 2025 17:26:04 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-	torvalds@linux-foundation.org, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@Oracle.com,
-	adhemerval.zanella@linaro.org, avagin@gmail.com,
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
-	ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-Message-ID: <20250226162604.GA17833@redhat.com>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-7-jeffxu@google.com>
+	bh=U+rOTwaDm+HJIE1QxwBJkpKIsIaJ4w8lQuPLKb8xSMk=;
+	b=lDPSTg2fGI4tnkuNQQXNmHL/uceaFcw+Dr6r1NOElk2opoMeJe7utT0IqRefe2C5yEOnAf
+	0AjcrlnCYZ9rq8yVET/0r2V/MRzviky7OuvAYjx048eT+qEzgDO9Hgnh1y6qw4YBq3BDGl
+	BXA+8O0VZXMnwjQGTAv32W1QzO2/aL8CVVFRG1fYWHrqkcqb3S/I7u4s2NkoMQTuuvQQYR
+	HQWlYXhF/lIACwzMnqCNhHhXR8o2zKTSpLV+OOWtv1TV65rIXDUrryTNojPZplas3cw14r
+	7k7moZX7mdZzUo5UGvac3VPErFsR+DBPGVAOtoEP6jPIHVJQrUhJvdW0+xlZdA==
+Date: Wed, 26 Feb 2025 17:27:54 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
+ hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
+ SFP+ module
+Message-ID: <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
+In-Reply-To: <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
+References: <20250226141002.1214000-1-ms@dev.tdt.de>
+	<Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
+	<d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
+	<20250226162649.641bba5d@kmaincent-XPS-13-7390>
+	<b300404d2adf0df0199230d58ae83312@dev.tdt.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224225246.3712295-7-jeffxu@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekhedtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemleehrggvmeelfhdttdemrggsvggtmedugehfjeemvgdviegrmedufegttdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeelhegrvgemlehftddtmegrsggvtgemudegfhejmegvvdeirgemudeftgdtpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmshesuggvvhdrthguthdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfiesl
+ hhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 02/24, jeffxu@chromium.org wrote:
->
-> Unlike other system mappings, the uprobe mapping is not
-> established during program startup. However, its lifetime is the same
-> as the process's lifetime. It could be sealed from creation.
+On Wed, 26 Feb 2025 16:55:38 +0100
+Martin Schiller <ms@dev.tdt.de> wrote:
 
-Agreed, VM_SEALED should be always for the "[uprobes]" vma, regardless
-of config options.
+> On 2025-02-26 16:26, Kory Maincent wrote:
+> > On Wed, 26 Feb 2025 15:50:46 +0100
+> > Martin Schiller <ms@dev.tdt.de> wrote:
+> >  =20
+> >> On 2025-02-26 15:38, Russell King (Oracle) wrote: =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+> >>=20
+> >> OK, I'll rename it to sfp_fixup_rollball_wait. =20
+> >=20
+> > I would prefer sfp_fixup_fs_rollball_wait to keep the name of the=20
+> > manufacturer.
+> > It can't be a generic fixup as other FSP could have other waiting time=
+=20
+> > values
+> > like the Turris RTSFP-10G which needs 25s. =20
+>=20
+> I think you're getting two things mixed up.
+> The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
+> there simply is an additional 4s wait at the beginning before we start
+> searching for a phy.
 
-ACK,
+Indeed you are right, I was looking in older Linux sources, sorry.
+Still, the additional 4s wait seems relevant only for FS SFP, so it should
+be included in the function naming to avoid confusion.
 
-but can't we do
-
-	#ifdef CONFIG_64BIT
-	/* VM is sealed, in vm_flags */
-	#define VM_SEALED	_BITUL(63)
-+	#else
-+	#define VM_SEALED	0
-	#endif
-
-and then simply
-
-	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
--				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
-+				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
-
-?
-
-But I am fine either way, feel free to ignore.
-
-Oleg.
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
