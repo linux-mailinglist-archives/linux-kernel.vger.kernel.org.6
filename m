@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-534392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968DFA46632
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:10:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F49A4668E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AFF27A6E05
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2701648BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E93621CA09;
-	Wed, 26 Feb 2025 16:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F6A21CA04;
+	Wed, 26 Feb 2025 16:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIy2WahF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cu4APmzB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137191DE2A0;
-	Wed, 26 Feb 2025 16:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237811A238B;
+	Wed, 26 Feb 2025 16:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586126; cv=none; b=D9XP8PURx8j/MairIBvjViyGI3pXNIaUBA9Oc/sd+ZIbgd0M7vt6+QUwbJa1fmfS6PsOTPQ97NBq3DbGG8gZejb8nvKDBBwawULJzNkFr1x3U/2pslv7Z2lMZG1duf+5VTWywPfX/EmW+dUDvqFSzbbCP10dY4WQlpTeCn3ZuLs=
+	t=1740586188; cv=none; b=T/ecwh9xxenfR+Txx6CP176Wbq3kVK+ZJ5mhhUfylDGI8JjYC8IuEWyAXSZsBCMiRpwTnAZqF2Mky6BEBMStRfE9cEL/hI47F0tecp4ZDEwXqKjzZ8Px1j5rDpBtMHQobdsMJSBn4Wi0+RTJpUFAzgOokyHt77N9t00cGgsy9Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586126; c=relaxed/simple;
-	bh=YIhN7xyFT7K0nQ06jXmx+41n6tZRGej2Wzg4+MGtWTA=;
+	s=arc-20240116; t=1740586188; c=relaxed/simple;
+	bh=4fr3AKLLBzkmgQNjqldIIllTzp1wJuSK/spkoGmZf2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhP3eaLDYAxKuqGUC+cApb/1cuNuOikptUvIaMs3UnoZvppYNDFvfHtLiilH8eMCwDn03R9zab68mOSZu6SWPSyiJdSg6jeYO216nqjSDBuh2zh/t9JRcI/2I/j73yABMMrJ67q8SizxAr/xu/xNwWXhT1nm7zVoHLq1/Sy3BhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIy2WahF; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740586125; x=1772122125;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YIhN7xyFT7K0nQ06jXmx+41n6tZRGej2Wzg4+MGtWTA=;
-  b=BIy2WahFfy8ck95U0QH+K4H7KNoXu/CDfM7GXD3OCNjfxsvTMBXiwPk/
-   Oa5cDEOE1VVII9L76ZqQg8IcKcGGYqfSXpj4RKf0O/7k9UqIltM7zC0bZ
-   me3eeI0n+M3yeHaqyBDfDEHIwBGlA7G9VERaQtCVyRM7XRsv0S2/pE9qp
-   HDlMxQ0jfVN5SS0ZCTpeCsihTraTQvyvW/xEMG+iWkMbOibWJHbEnOOa/
-   LGlcADYdbJ3VLvTUVmWkN/wq/rld7EiiORyQFVg9PMfjuC7e3EDsf2hKc
-   qfDwbGmsOXoWAN2NYNsv1V+LnSJe7dSDbEwuVWXRATHloHWtUTxzwpY65
-   A==;
-X-CSE-ConnectionGUID: cRxxDJXdQf2oSph4myZELA==
-X-CSE-MsgGUID: tpivdYVcSpeN2h713KOCKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45221831"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="45221831"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:08:44 -0800
-X-CSE-ConnectionGUID: EeN2cePgQJadJV9KcS74OA==
-X-CSE-MsgGUID: FhQCKIXsTVyjFb9MYsveXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="121737427"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:08:41 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 0F04211F944;
-	Wed, 26 Feb 2025 18:08:39 +0200 (EET)
-Date: Wed, 26 Feb 2025 16:08:39 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mathis Foerst <mathis.foerst@mt.com>
-Cc: linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, manuel.traut@mt.com
-Subject: Re: [PATCH v1 1/8] MT9M114: Add bypass-pll DT-binding
-Message-ID: <Z788hw7pSpwmL2Ze@kekkonen.localdomain>
-References: <20250226153929.274562-1-mathis.foerst@mt.com>
- <20250226153929.274562-2-mathis.foerst@mt.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYEInpxprVlC2ng9QwcHvUwXP0pGN5zau3Sqf6+kEw4WFGiomBZOPgAfCvcqmmKzLYlwymV4COxUPLwypd5gZW0YkYhEr26DDqXLUKDdTRWbaylfsqFD9TUz+y3s1cNsnQjvj2TdGBBKNaQZL/EfJbPacvJ1UUA5C8G6XGBq1bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cu4APmzB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611D8C4CED6;
+	Wed, 26 Feb 2025 16:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740586187;
+	bh=4fr3AKLLBzkmgQNjqldIIllTzp1wJuSK/spkoGmZf2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cu4APmzBKKuG1yJTJ3Kjzvu1b/XV9Lgfb2iRpXh+ViZ4QaRYwFT8bgukcpTgTPW3w
+	 t3Y9upodYRnbs1cyShcUhMo9PNaG3kTcymlYNiHJwVFAvSJSL6nf6uc6TtcDYPtb7q
+	 RrQXfvcN47tfVix7Qb2POo5LbdEl+ZfzdbSOWe1F2z3GWn5fZPijM6KcNy7L4dOdBP
+	 U4qMNBM8OuRRRqdxt0dz/Kx90tw0f4mVnL3iUYGIrA2IB72LjLsAnkHqVvX/oiInjV
+	 jAlPo7gHP9ppOJx2UZN61dD7zL9u6Mc3VYHe2fVS9/MsFVHdRIsmY4KgKcOQrt8rEa
+	 rB4CQG+OZLQaw==
+Date: Wed, 26 Feb 2025 10:09:45 -0600
+From: Rob Herring <robh@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, saravanak@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [RFC] dt-bindings: firmware: scmi: Introduce compatible string
+Message-ID: <20250226160945.GA2505223-robh@kernel.org>
+References: <20250226094456.2351571-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,51 +58,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226153929.274562-2-mathis.foerst@mt.com>
+In-Reply-To: <20250226094456.2351571-1-peng.fan@oss.nxp.com>
 
-Hi Mathis,
-
-Please see which subject prefix has been used in the past for these
-bindings.
-
-On Wed, Feb 26, 2025 at 04:39:22PM +0100, Mathis Foerst wrote:
-> The MT9M114 sensor has an internal PLL that generates the required SYSCLK
-> from EXTCLK. It also has the option to bypass the PLL and use EXTCLK
-> directly as SYSCLK.
-> The current driver implementation uses a hardcoded PLL configuration that
-> requires a specific EXTCLK frequency. Depending on the available clocks,
-> it can be desirable to use a different PLL configuration or to bypass it.
+On Wed, Feb 26, 2025 at 05:44:56PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Add the 'bypass-pll' property to the MT9M114 DT-bindings to allow selecting
-> the PLL bypass mode.
+> Add compatible string for the protocols by adding new nodes
+> The current nodename pattern is "protocol@[0-9a-f]+$", the new node
+> name will be "scmi-[a-z\-]+$".
+> With compatible string and new nodename, cpufreq and devfreq could be
+> separated into two nodes. And fwdevlink could correctly link suppliers
+> and consumers.
+> With compatible string, and driver updated.
+> - Differnet vendor drivers with same SCMI protocol ID could be built in
+>   without concerning vendor A's driver got probed when using vendor B's
+>   SoC
+> - NXP scmi pinctrl and ARM scmi pinctrl could be both built in, without
+>   concerning arm scmi platform takes nxp scmi pinctrl node as supplier.
+
+How are you going to handle DTs which aren't updated and still don't 
+have compatible strings? Seems like that would be messy if not 
+impossible.
+
 > 
-> Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> index f6b87892068a..72e258d57186 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> @@ -70,6 +70,10 @@ properties:
->            - bus-type
->            - link-frequencies
->  
-> +  onnn,bypass-pll:
-> +    description: Bypass the internal PLL of the sensor to use EXTCLK directly as SYSCLK.
-> +    type: boolean
-> +
+> RFC:
+>  This may sounds like that adding compatible to resovle linux driver issue.
+>  Yes indeed. current scmi framework limitation makes it not work well with
+>  fwdevlink, wrong suppliers maybe linked to consumers.
+>  I have tried various's method to not introduce compatible, but rejected by
+>  fwdevlink maintainer or scmi maintainer
+>  There was a long discussion in [1][2][3].
+>  [1] https://lore.kernel.org/arm-scmi/20240729070325.2065286-1-peng.fan@oss.nxp.com/
+>  [2] https://lore.kernel.org/arm-scmi/20241225-scmi-fwdevlink-v1-0-e9a3a5341362@nxp.com/T/#mdd17c4b9b11af9fae0d5b6ec2e13756c2c6f977d
+>  [3] https://lore.kernel.org/arm-scmi/20250120-scmi-fwdevlink-v2-0-3af2fa37dbac@nxp.com/
+> 
+>  The binding changes are posted out to see whether DT maintainer's view on
+>  whether introduce compatible string is welcomed or not.
+>  I not include driver changes, because this is just to see whether people
+>  are happy with this or not.
+> 
+> Quote Sudeep's reply"
+> I am not blocking you. What I mentioned is I don't agree that DT can be used
+> to resolve this issue, but I don't have time or alternate solution ATM. So
+> if you propose DT based solution and the maintainers agree for the proposed
+> bindings I will take a look and help you to make that work. But I will raise
+> any objections I may have if the proposal has issues mainly around the
+> compatibility and ease of maintenance.
+> "
 
-But on the content itself: do you need this? Could you instead compare the
-external clock frequency to the link-frequencies property value(s)?
+This all looks to me like SCMI has failed to provide common interfaces.
 
->  required:
->    - compatible
->    - reg
+I'm indifferent. If everyone involved thinks adding compatibles will 
+solve whatever the issues are, then it's going to be fine with me 
+(other than the issue above). It doesn't seem like you have that, so I 
+don't know that I'd keep going down this path.
 
--- 
-Regards,
-
-Sakari Ailus
+Rob
 
