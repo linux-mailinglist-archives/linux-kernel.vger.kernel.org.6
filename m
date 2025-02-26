@@ -1,203 +1,102 @@
-Return-Path: <linux-kernel+bounces-534780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA3AA46B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:30:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13123A46B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6183AF7C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C791F188B321
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B09245002;
-	Wed, 26 Feb 2025 19:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9C224292C;
+	Wed, 26 Feb 2025 19:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OjY5H8m9"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MUPXdYRI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF3B242914
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8F23716E;
+	Wed, 26 Feb 2025 19:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598219; cv=none; b=QTU8qw1TXK0wSEKMDiNiCTCnwM7eBD1CrQ/wHsqP4Uije8mkqRKppaxh4AxHFB/lBVsAEetHKLPBUJYZdxaIClzEmPQGxA6QYjJsoMJzFe5K9qGjkjc7MqggM+NGWzJf4imOgHeiqyyavTk30j2miWpCjdsWEes9otllCvO35lo=
+	t=1740598352; cv=none; b=rQStF66gnZhvEcR8sM0SjTZvNWNzKyARM/KTzJg9KEl0omA6gjmo7UrDb9zQmYFwHc4mqivGoHW1GKdGBVg59E0OcwL7pMEbref5Qjk6bytKpRlKXMuJQgMpQ/SJDpRMuUlYhiAapxn8sKDII32VsGFx5kR7yZi83YfXOm3GD1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598219; c=relaxed/simple;
-	bh=T8SKnVuj5amiDvmw0Q8NP2f2aLMgczBdy+zu8tchxUc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jkpKBaxctspze7yKC8Kk0MBmHRczevNmNGIfTuB8tBym5SjUbbG2S7AWgk/oN8uJWiSMcDNzpw0KXjPrVqjig8tY9u4iINXJxBJineAHdCzTa1AVgQqbf/0Oq0Eb3tyIg0Wn2Aw0ch7oA11XFkfmncuYAGpxP8xiXrdgs1Ydoig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OjY5H8m9; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fbff6426f5so376723a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740598217; x=1741203017; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yk9qPe36kdkp/4GjWGuolcvhbSG7j2duzScI0vfASzM=;
-        b=OjY5H8m9hqxVvCzxWxb6xnv4WytqjOv9B8XsyzsjfQ88HjXKUncUQw6xybRWOmKdYd
-         Wy+b0YDmUrCD+kWWanKJ/41cNL1SI9ZeK2/kPL6SeU4h1pJO7C7opn9Yq1Z4rSp2yoTw
-         qmjlnDm8EEXHPXTauPTIjf/7A1981yBQO211CzwbdQqhOM0Nd/Gxw/+oMzmwFrXKh+k7
-         Sk7E/2OKmHHfCkGyi9nq+B20oDUFWpgttCKZ8f0fFsHCLiHx47eeg47QyABwD2kCKeTP
-         DOGEUBJRLDo5Blj2K0VxuoXLadgo/WtNoRbQl917l3dcp46BxBe5KQAV+VFFlZRgJBGD
-         zE4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740598217; x=1741203017;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yk9qPe36kdkp/4GjWGuolcvhbSG7j2duzScI0vfASzM=;
-        b=A7o8httARU1E8K05gtr/1KfaKpznwqovFcQHW77nZUw86W81hlGtyGq4DBu4cuPjRK
-         LM5rJB5e8e9uKQ+QvvPwDI+NyfUKh6fxm8DXvPOAxhDZ4nh+i0gsqFA1eynWn8fNzZSx
-         qm/F4CqWZwdo3brI/5h1f5ugiPhT1D53vEXE3aN2d2wSRzrTuwf18zIaVEkNsLtFvx3b
-         7+WM7FXXKAQaYDUKakqdsHsbe8f5/aXAAzz0UStefPUdQ7YZ/mtenQ0rnsf4CAWBxtTw
-         XcrTi1BiLXwryT4wxOeFwEFrSaOychM7yyiIwMWSxVvUMsm/XsAUdJuqQtImW4HH02gH
-         H0rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFjFq1ve+PZHvT9WVrjAI5TV69bKD9JgWZxn5jNGyHclNXEHUaNJ2/+B4Uf7jRRR2qMPOywpVyiYeM+cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLUuXnlK6MML5PB8lbikDIb0l21eTnjhweVMzXiKyXPkzLDEAK
-	ItgIGQ60nRhxHezudlFtIPQa98eIk3HNKbTMc0phWxLMIU1Gd4kzCHzQQjYhe8ULiAWdqGku6LU
-	eCg==
-X-Google-Smtp-Source: AGHT+IHBKYGn/gl8hziMmDxNGUh/uHXjoq+aD6OtmP7y0wfSfIPRlFBItqTtqbmEp+G/L2qNVWF+MTW8bww=
-X-Received: from pjbsf13.prod.google.com ([2002:a17:90b:51cd:b0:2fc:e37d:85dc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:56ce:b0:2eb:140d:f6df
- with SMTP id 98e67ed59e1d1-2fe68ac9543mr12810336a91.1.1740598216741; Wed, 26
- Feb 2025 11:30:16 -0800 (PST)
-Date: Wed, 26 Feb 2025 11:30:15 -0800
-In-Reply-To: <Z76FxYfZlhDG/J3s@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1740598352; c=relaxed/simple;
+	bh=n34QbtmMdjpzkgNnPzOLGUCqAdv9+gXWSqDi7wMP8JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bpyk2lp6+eacdJe2zUXB8/+WQbwbsschM5aNlYgKMcX4fG31J69Dp2ZsEbXj81TLppPn3jPftCDjnbxMPlNRCUFwyBv8f086O1AOKtOzyFEeg2kbX03x39LRDdqoSTK9XoDdtbzxk9wOeKyl2ewA/vLzsjMM0eJhzE6CDlaJ71g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MUPXdYRI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01732C4CED6;
+	Wed, 26 Feb 2025 19:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740598352;
+	bh=n34QbtmMdjpzkgNnPzOLGUCqAdv9+gXWSqDi7wMP8JY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MUPXdYRIMYCgud+9BPFBGDu6ScQgBqRiQMtVOvZjpC2ksYD/sjJZGWclC1VyQF89f
+	 NWLC6w9tcmk8ahh9imh5i7GsYfhueO8HlAJrEUlioS1INJwwqGn7flzNmDSUAJA76R
+	 2N/EEzzLDC5BkEd+cM+N/DxZxz7VS87j88jVZ5Wo=
+Date: Wed, 26 Feb 2025 11:31:23 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to
+ Registration::new()
+Message-ID: <2025022628-cyclist-clubbing-9762@gregkh>
+References: <20250225213112.872264-1-lyude@redhat.com>
+ <20250225213112.872264-3-lyude@redhat.com>
+ <2025022601-starlit-roamer-1687@gregkh>
+ <7c7f9b38e321353507a75520c35efd9b20d69acf.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250208105318.16861-1-yan.y.zhao@intel.com> <Z75y90KM_fE6H1cJ@google.com>
- <Z76FxYfZlhDG/J3s@yzhao56-desk.sh.intel.com>
-Message-ID: <Z79rx0H1aByewj5X@google.com>
-Subject: Re: [PATCH] KVM: selftests: Wait mprotect_ro_done before write to RO
- in mmu_stress_test
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c7f9b38e321353507a75520c35efd9b20d69acf.camel@redhat.com>
 
-On Wed, Feb 26, 2025, Yan Zhao wrote:
-> On Tue, Feb 25, 2025 at 05:48:39PM -0800, Sean Christopherson wrote:
-> > On Sat, Feb 08, 2025, Yan Zhao wrote:
-> > > In the read-only mprotect() phase of mmu_stress_test, ensure that
-> > > mprotect(PROT_READ) has completed before the guest starts writing to the
-> > > read-only mprotect() memory.
-> > > 
-> > > Without waiting for mprotect_ro_done before the guest starts writing in
-> > > stage 3 (the stage for read-only mprotect()), the host's assertion of stage
-> > > 3 could fail if mprotect_ro_done is set to true in the window between the
-> > > guest finishing writes to all GPAs and executing GUEST_SYNC(3).
-> > > 
-> > > This scenario is easy to occur especially when there are hundred of vCPUs.
-> > > 
-> > > CPU 0                  CPU 1 guest     CPU 1 host
-> > >                                        enter stage 3's 1st loop
-> > >                        //in stage 3
-> > >                        write all GPAs
-> > >                        @rip 0x4025f0
-> > > 
-> > > mprotect(PROT_READ)
-> > > mprotect_ro_done=true
-> > >                        GUEST_SYNC(3)
-> > >                                        r=0, continue stage 3's 1st loop
-> > > 
-> > >                        //in stage 4
-> > >                        write GPA
-> > >                        @rip 0x402635
-> > > 
-> > >                                        -EFAULT, jump out stage 3's 1st loop
-> > >                                        enter stage 3's 2nd loop
-> > >                        write GPA
-> > >                        @rip 0x402635
-> > >                                        -EFAULT, continue stage 3's 2nd loop
-> > >                                        guest rip += 3
-> > > 
-> > > The test then fails and reports "Unhandled exception '0xe' at guest RIP
-> > > '0x402638'", since the next valid guest rip address is 0x402639, i.e. the
-> > > "(mem) = val" in vcpu_arch_put_guest() is compiled into a mov instruction
-> > > of length 4.
+On Wed, Feb 26, 2025 at 11:51:26AM -0500, Lyude Paul wrote:
+> On Wed, 2025-02-26 at 11:01 +0100, Greg Kroah-Hartman wrote:
 > > 
-> > This shouldn't happen.  On x86, stage 3 is a hand-coded "mov %rax, (%rax)", not
-> > vcpu_arch_put_guest().  Either something else is going on, or __x86_64__ isn't
-> > defined?
-> stage 3 is hand-coded "mov %rax, (%rax)", but stage 4 is with
-> vcpu_arch_put_guest().
+> > 
+> > I guess you can add parent can be NULL to the SAFETY line?
+> > 
+> > Sorry, I thought I would just leave it this way without a parent pointer
+> > until you actually had a user that needed it.  And then we could add the
+> > new parameter and fix up all callers.  No need to add support for it yet
+> > without that, changing apis is easy!  :)
+> > 
+> > Do you have a real user for this any time soon?
+> > 
 > 
-> The original code expects that "mov %rax, (%rax)" in stage 3 can produce
-> -EFAULT, so that in the host thread can jump out of stage 3's 1st vcpu_run()
-> loop.
+> Not particularly! My thought process was mostly just this seems like a simple
+> enough addition that it would probably be easy to add it now when we don't
+> have any users upstream yet rather than building up faux device users in rust
+> and potentially having to refactor later to add such an argument.
+> 
+> I don't think the refactoring would be that much work either, but it seemed
+> harmless to just get it over with now.
 
-Ugh, I forgot that there are two loops in stage-3.  I tried to prevent this race,
-but violated my own rule of not using arbitrary delays to avoid races.
+Ok, fair enough, want me to take this one and you'll figure out if/when
+the SAFETY comment needs to be changed for the parent pointer as an
+add-on patch?
 
-Completely untested, but I think this should address the problem (I'll test
-later today; you already did the hard work of debugging).  The only thing I'm
-not positive is correct is making the first _vcpu_run() a one-off instead of a
-loop.
+Or do you want to send a new version?  Your choice.
 
-diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
-index d9c76b4c0d88..9ac1800bb770 100644
---- a/tools/testing/selftests/kvm/mmu_stress_test.c
-+++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-@@ -18,6 +18,7 @@
- #include "ucall_common.h"
- 
- static bool mprotect_ro_done;
-+static bool vcpu_hit_ro_fault;
- 
- static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
- {
-@@ -36,9 +37,9 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
- 
-        /*
-         * Write to the region while mprotect(PROT_READ) is underway.  Keep
--        * looping until the memory is guaranteed to be read-only, otherwise
--        * vCPUs may complete their writes and advance to the next stage
--        * prematurely.
-+        * looping until the memory is guaranteed to be read-only and a fault
-+        * has occured, otherwise vCPUs may complete their writes and advance
-+        * to the next stage prematurely.
-         *
-         * For architectures that support skipping the faulting instruction,
-         * generate the store via inline assembly to ensure the exact length
-@@ -56,7 +57,7 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
- #else
-                        vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
- #endif
--       } while (!READ_ONCE(mprotect_ro_done));
-+       } while (!READ_ONCE(mprotect_ro_done) && !READ_ONCE(vcpu_hit_ro_fault));
- 
-        /*
-         * Only architectures that write the entire range can explicitly sync,
-@@ -148,12 +149,13 @@ static void *vcpu_worker(void *data)
-         * be stuck on the faulting instruction for other architectures.  Go to
-         * stage 3 without a rendezvous
-         */
--       do {
--               r = _vcpu_run(vcpu);
--       } while (!r);
-+       r = _vcpu_run(vcpu);
-        TEST_ASSERT(r == -1 && errno == EFAULT,
-                    "Expected EFAULT on write to RO memory, got r = %d, errno = %d", r, errno);
- 
-+       /* Tell the vCPU it hit a RO fault. */
-+       WRITE_ONCE(vcpu_hit_ro_fault, true);
-+
- #if defined(__x86_64__) || defined(__aarch64__)
-        /*
-         * Verify *all* writes from the guest hit EFAULT due to the VMA now
-@@ -378,7 +380,6 @@ int main(int argc, char *argv[])
-        rendezvous_with_vcpus(&time_run2, "run 2");
- 
-        mprotect(mem, slot_size, PROT_READ);
--       usleep(10);
-        mprotect_ro_done = true;
-        sync_global_to_guest(vm, mprotect_ro_done);
+thanks,
 
+greg k-h
 
