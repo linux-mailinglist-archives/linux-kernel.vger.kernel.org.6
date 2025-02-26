@@ -1,141 +1,295 @@
-Return-Path: <linux-kernel+bounces-533647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926EFA45D2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:31:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B62A45D30
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00E23AAF63
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:30:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BC111895A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24A2153EA;
-	Wed, 26 Feb 2025 11:30:44 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70832189F57
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38F321579C;
+	Wed, 26 Feb 2025 11:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Izt1h1lk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61D017BB35;
+	Wed, 26 Feb 2025 11:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740569444; cv=none; b=BIphAVjHUcRL+dzFORkbp1cOg12e1lhA7v33GJVv9vwVimenaXcSxSs3q47HrvJvwlyLKmNVibWY9CoT/VzuiTIJghHLLgM4apz6Rp70BO0sJNYOMTqEu0ZuhlpHt01GR7Aa5QAY2wiDJP1JZndiCNMkBuJwV/N5IFNq5QZ2BdU=
+	t=1740569477; cv=none; b=W+lSOxDaEefh1d99yT1aVNT8uDr/5FrvvrgG3j8iYDESVvEV/SGn8bm0Xf/JduXDERgsDnE624ifWIqsrkKZIVCUg1uN+yeAoa7+HJVMC4NRoZ0dSDRuufnquLFA6HAdnVgQjHOOwPF4pDuCUATidVl/+xgN2QLzQMwNmQZEtlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740569444; c=relaxed/simple;
-	bh=Vj0k0Xz8v+PvsqVolEgKEFB7rkqHzqE8zyl2dJdOgK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fY6W7othdS9KVnDygQ8KnJpS4H/lVxp7hgfg1uhx9R6vkVA3OTfp/qSkzhqjsuAPZXXPGiCzxVTGg+10qxy8nweZU2j7fDLrKlpfB9PCwpueOvOdx8KRzpS/h1Ny8+ysVVRYItQCd4c74KowHK6ngzOJCbGVhTPk3lZ62Dxkgr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-d3-67befb55b04c
-Date: Wed, 26 Feb 2025 20:30:24 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, ying.huang@intel.com,
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
-	willy@infradead.org, david@redhat.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	rjgolo@gmail.com
-Subject: RFC v12 rebased on v6.14-rc4
-Message-ID: <20250226113024.GA1935@system.software.com>
-References: <20250220052027.58847-1-byungchul@sk.com>
- <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
- <fc94c383-5788-43c8-beb3-2fd76acae7bd@suse.cz>
- <20250220233710.GB39373@system.software.com>
+	s=arc-20240116; t=1740569477; c=relaxed/simple;
+	bh=AqaQc47KScGcVr3eESFC0LndEz0Dr5eNjmVGnvzicIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RxeRXf//5UeowglVpZljL0lM+u/18zf0KIhQP5N4DunWHUhGcHYA1a3p25/AL2h2CEK9pOjPxTpdikjnOA+OrGmioXHSQpD4fglmyRC5UGRn1H9ZM3ud8oEVEOxdCloWO8xuYdYSsNlZlSiIAalWRTFA3QAgPyaHGf+UzHCWDpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Izt1h1lk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3D5C4CED6;
+	Wed, 26 Feb 2025 11:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740569475;
+	bh=AqaQc47KScGcVr3eESFC0LndEz0Dr5eNjmVGnvzicIk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Izt1h1lkeViZUXbX7cUqtNidC2hDYndE19VlJ7nGxVdqiwfFPZNThnALtoJ1mRWTv
+	 FE9n1R8I9Mgvq/nb+A53gSSg7gD4Ds67aUoWH3FCViVhbUq86OVIoPt4kXRp+YkWpS
+	 vGa7GoOWEQ93bedM7Y/MQQSShgCM47hyqZ7eN3RLwUIJGWW1HVAGtni1ppEqEtgsR4
+	 B1I7LDg6NM+yebNMf71VyoizsgFUp/Av92aKxUzQ0Dv0pXEe/ZMQ4XyhjWcYMySBoa
+	 ASmUSChsBrLtBLtXPu24jxH4NJuPkpv2+W2LVXjUFOJHPd9YkEdhJXn65VJMkJAVgs
+	 Pxj052z2bRgrQ==
+Date: Wed, 26 Feb 2025 12:31:07 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Michael S . Tsirkin"
+ <mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+ <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>, Philippe =?UTF-8?B?TWF0?=
+ =?UTF-8?B?aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, "Markus Armbruster" <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, "Paolo Bonzini" <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 00/14] Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250226123107.0cdb2e17@foz.lan>
+In-Reply-To: <20250226122303.0131ce8b@foz.lan>
+References: <cover.1738345063.git.mchehab+huawei@kernel.org>
+	<20250203110934.000038d8@huawei.com>
+	<20250203162236.7d5872ff@imammedo.users.ipa.redhat.com>
+	<20250221073823.061a1039@foz.lan>
+	<20250221102127.000059e6@huawei.com>
+	<20250225110115.6090e416@imammedo.users.ipa.redhat.com>
+	<20250226105628.7e60f952@foz.lan>
+	<20250226122303.0131ce8b@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220233710.GB39373@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsXC9ZZnoW7o733pBvtmaVjMWb+GzeLzhn9s
-	Fp9ePmC0+Lr+F7PF0099LBaXd81hs7i35j+rxflda1ktdizdx2Rx6cACJovjvQeYLObf+8xm
-	sXnTVGaL2Y19jBbHp0xltPj9A6jj5KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
-	qpPNY9OnSewe786dY/c4MeM3i8f7fVfZPM4sOMLusfWXnUfj1GtsHp83yQXwRXHZpKTmZJal
-	FunbJXBl7F/tWPBPuKJ58zHGBsb9/F2MnBwSAiYSt088YIOxvx1tBbNZBFQlXjT1MYPYbALq
-	Ejdu/ASzRQRUJB5tOMraxcjFwSzQziyxoXMaWEIYqGHjxRVANgcHr4C5xMwOXZAaIYETjBIz
-	+xtZQGp4BQQlTs58AmYzC2hJ3Pj3kgmknllAWmL5Pw6QMKeApcS59pPsILaogLLEgW3HmUDm
-	SAhsY5dYt/QrC8ShkhIHV9xgmcAoMAvJ2FlIxs5CGLuAkXkVo1BmXlluYmaOiV5GZV5mhV5y
-	fu4mRmBMLqv9E72D8dOF4EOMAhyMSjy8D87sTRdiTSwrrsw9xCjBwawkwsuZuSddiDclsbIq
-	tSg/vqg0J7X4EKM0B4uSOK/Rt/IUIYH0xJLU7NTUgtQimCwTB6dUA2PPRpc/bissa9MDgoQc
-	U6dwxsfr19gVXlnUVxHHOPGgYez/13v+Cvz8l3Z814llv9QVbpc/Dpv1T2jOJ/aM5AquFaHR
-	IWtvfUrIPi3Xel9rz6ffD57EBHJOuHcroTpyw4VZx+OEEnWScvzWbmAqfRF9v4Lxxttt1dKS
-	sT/ufW6N+1sr9TGNrVKJpTgj0VCLuag4EQDrtH8GxQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsXC5WfdrBv6e1+6wYs3YhZz1q9hs/i84R+b
-	xaeXDxgtvq7/xWzx9FMfi8XhuSdZLS7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
-	zL/3mc1i86apzBazG/sYLY5Pmcpo8fsHUMfJWZNZHIQ8vrf2sXjsnHWX3WPBplKPzSu0PBbv
-	ecnksWlVJ5vHpk+T2D3enTvH7nFixm8Wj/f7rrJ5LH7xgcnjzIIj7B5bf9l5NE69xubxeZNc
-	AH8Ul01Kak5mWWqRvl0CV8b+1Y4F/4QrmjcfY2xg3M/fxcjJISFgIvHtaCsbiM0ioCrxoqmP
-	GcRmE1CXuHHjJ5gtIqAi8WjDUdYuRi4OZoF2ZokNndPAEsJADRsvrgCyOTh4BcwlZnbogtQI
-	CZxglJjZ38gCUsMrIChxcuYTMJtZQEvixr+XTCD1zALSEsv/cYCEOQUsJc61n2QHsUUFlCUO
-	bDvONIGRdxaS7llIumchdC9gZF7FKJKZV5abmJljqlecnVGZl1mhl5yfu4kRGGHLav9M3MH4
-	5bL7IUYBDkYlHt4HZ/amC7EmlhVX5h5ilOBgVhLh5czcky7Em5JYWZValB9fVJqTWnyIUZqD
-	RUmc1ys8NUFIID2xJDU7NbUgtQgmy8TBKdXAmCFiopF4cLb2i89qKj3/DoROPWgytWnmfDfL
-	M8m6tT710mFrvVvDJrGf1noWzqJVumiZ4vQtLc8Xc7qnJr+vV15Y/HSfY+Skm7oFlX7hi6Ku
-	K9v8kcgO+Me4NNt41q/XrwUjsyzlfgRrprTbR7z/fqorNVzH0jjgWlDo+xwrBbtAjrY9f92U
-	WIozEg21mIuKEwE7jT2ErAIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 08:37:10AM +0900, Byungchul Park wrote:
-> On Thu, Feb 20, 2025 at 04:29:51PM +0100, Vlastimil Babka wrote:
-> > On 2/20/25 16:15, Dave Hansen wrote:
-> > > On 2/19/25 21:20, Byungchul Park wrote:
-> > >> I'm posting the latest version so that anyone can try luf mechanism if
-> > >> wanted by any chance.  However, I tagged RFC again because there are
-> > >> still issues that should be resolved to merge to mainline:
-> > > 
-> > > I don't see anything fundamentally different here from the last 11
-> > > versions. I think the entire approach is dangerous and basically makes
-> > > things impossible to debug. It's not clear that some of the failure
-> > > scenarios that I've brought up in the past have actually been fixed.
-> > 
-> > Yes, and it's still an invasive change to the buddy allocator.
-> 
-> Didn't want.. but admit.
-> 
-> > IIRC at Plumbers the opinion in the audience was that there might be ways to
-> > improve the batching on unmap to reduce the flushes without such an invasive
-> > and potentially dangerous change? Has that been investigated?
-> 
-> Sure.  I tried like, by holding those pages not freed until either no
-> one accesses the interesting pages or memory pressure is high.  However,
-> unfortunately it was super hard to fix performance degradation by the
-> number of page reclaim increased due to the unfreed pages.
-> 
-> > Also "Rebase on akpm/mm.git mm-unstable(5a7056135b) as of Nov 22, 2024." is
-> > very outdated at this point?
-> 
-> Sorry for that.  I will rebase and share.
+Em Wed, 26 Feb 2025 12:23:03 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-This is the same patch set but rebased on v6.14-rc4.
-
-	Byungchul
+> Em Wed, 26 Feb 2025 10:56:28 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 > 
-> 	Byungchul
+> > Em Tue, 25 Feb 2025 11:01:15 +0100
+> > Igor Mammedov <imammedo@redhat.com> escreveu:
+> >   
+> > > On Fri, 21 Feb 2025 10:21:27 +0000
+> > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> > >     
+> > > > On Fri, 21 Feb 2025 07:38:23 +0100
+> > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > >       
+> > > > > Em Mon, 3 Feb 2025 16:22:36 +0100
+> > > > > Igor Mammedov <imammedo@redhat.com> escreveu:
+> > > > >         
+> > > > > > On Mon, 3 Feb 2025 11:09:34 +0000
+> > > > > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> > > > > >           
+> > > > > > > On Fri, 31 Jan 2025 18:42:41 +0100
+> > > > > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > > > > >             
+> > > > > > > > Now that the ghes preparation patches were merged, let's add support
+> > > > > > > > for error injection.
+> > > > > > > > 
+> > > > > > > > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
+> > > > > > > > table and hardware_error firmware file, together with its migration code. Migration tested
+> > > > > > > > with both latest QEMU released kernel and upstream, on both directions.
+> > > > > > > > 
+> > > > > > > > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
+> > > > > > > >    to inject ARM Processor Error records.
+> > > > > > > > 
+> > > > > > > > If I'm counting well, this is the 19th submission of my error inject patches.              
+> > > > > > > 
+> > > > > > > Looks good to me. All remaining trivial things are in the category
+> > > > > > > of things to consider only if you are doing another spin.  The code
+> > > > > > > ends up how I'd like it at the end of the series anyway, just
+> > > > > > > a question of the precise path to that state!            
+> > > > > > 
+> > > > > > if you look at series as a whole it's more or less fine (I guess you
+> > > > > > and me got used to it)
+> > > > > > 
+> > > > > > however if you take it patch by patch (as if you've never seen it)
+> > > > > > ordering is messed up (the same would apply to everyone after a while
+> > > > > > when it's forgotten)
+> > > > > > 
+> > > > > > So I'd strongly suggest to restructure the series (especially 2-6/14).
+> > > > > > re sum up my comments wrt ordering:
+> > > > > > 
+> > > > > > 0  add testcase for HEST table with current HEST as expected blob
+> > > > > >    (currently missing), so that we can be sure that we haven't messed
+> > > > > >    existing tables during refactoring.          
+> > > > 
+> > > > To potentially save time I think Igor is asking that before you do anything
+> > > > at all you plug the existing test hole which is that we don't test HEST
+> > > > at all.   Even after this series I think we don't test HEST.  You add
+> > > > a stub hest and exclusion but then in patch 12 the HEST stub is deleted whereas
+> > > > it should be replaced with the example data for the test.      
+> > > 
+> > > that's what I was saying.
+> > > HEST table should be in DSDT, but it's optional and one has to use
+> > > 'ras=on' option to enable that, which we aren't doing ATM.
+> > > So whatever changes are happening we aren't seeing them in tests
+> > > nor will we see any regression for the same reason.
+> > > 
+> > > While white listing tables before change should happen and then updating them
+> > > is the right thing to do, it's not sufficient since none of tests
+> > > run with 'ras' enabled, hence code is not actually executed.     
 > > 
-> > Thanks,
-> > Vlastimil
+> > Ok. Well, again we're not modifying HEST table structure on this
+> > changeset. The only change affecting HEST is when the number of entries
+> > increased from 1 to 2.
 > > 
-> > > What I've said here still stands:
-> > > 
-> > >> https://lore.kernel.org/all/fab1dd64-c652-4160-93b4-7b483a8874da@intel.com/
-> > > 
-> > >> I think tglx would call all of this "tinkering".  The approach to this
-> > >> series is to "fix" narrow, specific cases that reviewers point out, make
-> > >> it compile, then send it out again, hoping someone will apply it.
-> > >> 
-> > >> So, for me, until the approach to this series changes: NAK, for x86.
-> > >> Andrew, please don't take this series.  Or, if you do, please drop the
-> > >> patch enabling it on x86.
-> > > 
-> > > I think I'd also like to stop being cc'd on this. If LUF is merged into
-> > > mainline and proven to work on arm64 or riscv for a year, I'd be happy
-> > > to take another look at enabling it on x86. I think that's just about
-> > > the only thing that would make me reconsider.
-> > > 
+> > Now, looking at bios-tables-test.c, if I got it right, I should be doing
+> > something similar to the enclosed patch, right?
+> > 
+> > If so, I have a couple of questions:
+> > 
+> > 1. from where should I get the HEST table? dumping the table from the
+> >    running VM?
+> > 
+> > 2. what values should I use to fill those variables:
+> > 
+> > 	int hest_offset = 40 /* HEST */;
+> > 	int hest_entry_size = 4;  
+> 
+> Thanks,
+> Mauro
+> 
+> As a reference, this is the HEST table before the patch series:
+
+This is the diff of the HEST table before/after this series.
+
+As already commented, the diff is basically:
+
+	-[024h 0036 004h]          Error Source Count : 00000001
+	+[024h 0036 004h]          Error Source Count : 00000002
+
+Plus the new entry for source ID 1 using notify type 7 (GPIO):
+
+	+[084h 0132 002h]               Subtable Type : 000A [Generic Hardware Error Source V2]
+	+[086h 0134 002h]                   Source Id : 0001
+	+[088h 0136 002h]           Related Source Id : FFFF
+	...
+	+[0A4h 0164 001h]                 Notify Type : 07 [GPIO]
+	...
+	+[0D0h 0208 008h]           Read Ack Preserve : FFFFFFFFFFFFFFFE
+	+[0D8h 0216 008h]              Read Ack Write : 0000000000000001
+
+Complete diff follows.
+
+Regards,
+Mauro
+
+---
+
+diff -u hest-before-changes.dsl hest-after-changes.dsl
+--- hest-before-changes.dsl     2025-02-26 11:23:30.845089077 +0000
++++ hest-after-changes.dsl      2025-02-26 11:25:29.095066026 +0000
+@@ -11,16 +11,16 @@
+  */
+ 
+ [000h 0000 004h]                   Signature : "HEST"    [Hardware Error Source Table]
+-[004h 0004 004h]                Table Length : 00000084
++[004h 0004 004h]                Table Length : 000000E0
+ [008h 0008 001h]                    Revision : 01
+-[009h 0009 001h]                    Checksum : E0
++[009h 0009 001h]                    Checksum : 68
+ [00Ah 0010 006h]                      Oem ID : "BOCHS "
+ [010h 0016 008h]                Oem Table ID : "BXPC    "
+ [018h 0024 004h]                Oem Revision : 00000001
+ [01Ch 0028 004h]             Asl Compiler ID : "BXPC"
+ [020h 0032 004h]       Asl Compiler Revision : 00000001
+ 
+-[024h 0036 004h]          Error Source Count : 00000001
++[024h 0036 004h]          Error Source Count : 00000002
+ 
+ [028h 0040 002h]               Subtable Type : 000A [Generic Hardware Error Source V2]
+ [02Ah 0042 002h]                   Source Id : 0000
+@@ -55,19 +55,62 @@
+ [069h 0105 001h]                   Bit Width : 40
+ [06Ah 0106 001h]                  Bit Offset : 00
+ [06Bh 0107 001h]        Encoded Access Width : 04 [QWord Access:64]
+-[06Ch 0108 008h]                     Address : 0000000139E40008
++[06Ch 0108 008h]                     Address : 0000000139E40010
+ 
+ [074h 0116 008h]           Read Ack Preserve : FFFFFFFFFFFFFFFE
+ [07Ch 0124 008h]              Read Ack Write : 0000000000000001
+ 
+-Raw Table Data: Length 132 (0x84)
++[084h 0132 002h]               Subtable Type : 000A [Generic Hardware Error Source V2]
++[086h 0134 002h]                   Source Id : 0001
++[088h 0136 002h]           Related Source Id : FFFF
++[08Ah 0138 001h]                    Reserved : 00
++[08Bh 0139 001h]                     Enabled : 01
++[08Ch 0140 004h]      Records To Preallocate : 00000001
++[090h 0144 004h]     Max Sections Per Record : 00000001
++[094h 0148 004h]         Max Raw Data Length : 00000400
++
++[098h 0152 00Ch]        Error Status Address : [Generic Address Structure]
++[098h 0152 001h]                    Space ID : 00 [SystemMemory]
++[099h 0153 001h]                   Bit Width : 40
++[09Ah 0154 001h]                  Bit Offset : 00
++[09Bh 0155 001h]        Encoded Access Width : 04 [QWord Access:64]
++[09Ch 0156 008h]                     Address : 0000000139E40008
++
++[0A4h 0164 01Ch]                      Notify : [Hardware Error Notification Structure]
++[0A4h 0164 001h]                 Notify Type : 07 [GPIO]
++[0A5h 0165 001h]               Notify Length : 1C
++[0A6h 0166 002h]  Configuration Write Enable : 0000
++[0A8h 0168 004h]                PollInterval : 00000000
++[0ACh 0172 004h]                      Vector : 00000000
++[0B0h 0176 004h]     Polling Threshold Value : 00000000
++[0B4h 0180 004h]    Polling Threshold Window : 00000000
++[0B8h 0184 004h]       Error Threshold Value : 00000000
++[0BCh 0188 004h]      Error Threshold Window : 00000000
++
++[0C0h 0192 004h]   Error Status Block Length : 00000400
++[0C4h 0196 00Ch]           Read Ack Register : [Generic Address Structure]
++[0C4h 0196 001h]                    Space ID : 00 [SystemMemory]
++[0C5h 0197 001h]                   Bit Width : 40
++[0C6h 0198 001h]                  Bit Offset : 00
++[0C7h 0199 001h]        Encoded Access Width : 04 [QWord Access:64]
++[0C8h 0200 008h]                     Address : 0000000139E40018
+ 
+-    0000: 48 45 53 54 84 00 00 00 01 E0 42 4F 43 48 53 20  // HEST......BOCHS 
++[0D0h 0208 008h]           Read Ack Preserve : FFFFFFFFFFFFFFFE
++[0D8h 0216 008h]              Read Ack Write : 0000000000000001
++
++Raw Table Data: Length 224 (0xE0)
++
++    0000: 48 45 53 54 E0 00 00 00 01 68 42 4F 43 48 53 20  // HEST.....hBOCHS 
+     0010: 42 58 50 43 20 20 20 20 01 00 00 00 42 58 50 43  // BXPC    ....BXPC
+-    0020: 01 00 00 00 01 00 00 00 0A 00 00 00 FF FF 00 01  // ................
++    0020: 01 00 00 00 02 00 00 00 0A 00 00 00 FF FF 00 01  // ................
+     0030: 01 00 00 00 01 00 00 00 00 04 00 00 00 40 00 04  // .............@..
+     0040: 00 00 E4 39 01 00 00 00 08 1C 00 00 00 00 00 00  // ...9............
+     0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  // ................
+-    0060: 00 00 00 00 00 04 00 00 00 40 00 04 08 00 E4 39  // .........@.....9
++    0060: 00 00 00 00 00 04 00 00 00 40 00 04 10 00 E4 39  // .........@.....9
+     0070: 01 00 00 00 FE FF FF FF FF FF FF FF 01 00 00 00  // ................
+-    0080: 00 00 00 00                                      // ....
++    0080: 00 00 00 00 0A 00 01 00 FF FF 00 01 01 00 00 00  // ................
++    0090: 01 00 00 00 00 04 00 00 00 40 00 04 08 00 E4 39  // .........@.....9
++    00A0: 01 00 00 00 07 1C 00 00 00 00 00 00 00 00 00 00  // ................
++    00B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  // ................
++    00C0: 00 04 00 00 00 40 00 04 18 00 E4 39 01 00 00 00  // .....@.....9....
++    00D0: FE FF FF FF FF FF FF FF 01 00 00 00 00 00 00 00  // ................
+
+
+Thanks,
+Mauro
 
