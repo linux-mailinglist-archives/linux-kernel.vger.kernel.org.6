@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-534368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375A2A465ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:03:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C479A46675
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056793B6EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDABD441FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE0222257B;
-	Wed, 26 Feb 2025 15:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EE1223333;
+	Wed, 26 Feb 2025 15:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QvEVOVSs"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YyUyRzRZ"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B091A238B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E5F223321
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585484; cv=none; b=csSNza0AAYh+xnvZzmont38XXnq1kLlIETOCgiTzHV+0AHMAZ6PcSSPy67kheWj5fmyG3m4iGweMCfe6I1tSn++12qXP6lI6qfXi4SEjzAKihI6Bbdzbe58zmgzF1oWnwptLBkmAe6qMothkRXI36SHK1IhxlLHuwhAdrIv0Ay0=
+	t=1740585489; cv=none; b=WbPfMbvcXd2heERy31K9iQKuja+DFMP1AFnGX4BTUVXnaxU9ZjkXPSEo+LlO9ftnj5+qJfmC5kR+yGELTGFB3eD8rGIFfZeBuGwZTKvQIVMDFERCLrTC7l9K2JXouO/5zLc6qFe0oLrhpMuH4BBlmmzCFfjOackOBRQ/j3vJ+7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585484; c=relaxed/simple;
-	bh=NOcfAygVohCXs9NArCTaIkHuParLL/xPGQejq6yJ6NM=;
+	s=arc-20240116; t=1740585489; c=relaxed/simple;
+	bh=mQoY15LSzHaCmzkBQLKVYiF7mxjHfnDr65f3cFQqHWw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q/vZ9H+7Adp7c1+wC7Ez143YiSM77LRFAXAhjzeH/hPBFcAik6OPUK8uBmN8pqXR4PaJaYprdrahbWDtwPu/uRn8xddp/XM3PK0Jrn5mOmdunKBAl3dtXH8W3TuT0FLVw3Zft2c6vBYooDFoqz04g/ZsoxCRe88JNoCdIgrnefA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QvEVOVSs; arc=none smtp.client-ip=95.215.58.187
+	 MIME-Version; b=b28Fn1SXzEugZAynbj0FsDihiWHS1GcAzGUqkLLng0crVoeGe2ULsfURzrTKyWpgIAJbGPQ7k2qYYZy+JjseWGKk6UHV5ErrHvDsC8rn14uVINOUVzqLYNMku2pQYjIw1QZzXT2F+8AHyVvkxRuN2etxIQQjKh30futMqHW7NOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YyUyRzRZ; arc=none smtp.client-ip=95.215.58.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740585479;
+	t=1740585485;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XU8iIG53hBYcgacvbqNkF7ZUcu7TY5+clPCHpUiBP+Y=;
-	b=QvEVOVSsYWqQutbusLdCCRp9LW+0bjW4zsZrkxHUn1xf3Lh4r46zGqt/3hTmEvWkjpbKo2
-	n+yP3Yrf/NBmZVo+iKMK2E66+bUVBIR/+A/5sHT823KSufYcPhwC0IAaBkRsGFVcxM+irk
-	uryZRR6NymA2ueNlTM0Pp5wwpe/IHhU=
+	bh=jklZLBYCEE+OmwIoYtlSr3uMwHWkfh2W7zGiyaa7ZXM=;
+	b=YyUyRzRZxNTtUr33mQuzi3Nvw7vHs1016V/hF2Uywzp+ZhQWyCvihu14+ahTbZxCUFCkp+
+	X1rr5vKHuh/6mBqZm1CGe9O8+vCP8E0XNcFNPQ6dHBAh6tpUxcF6G+tDvyuh0fSZmvqSAb
+	MpnEO18LxjIWQ0AkhFepqI4/WdZGESE=
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -64,9 +64,9 @@ Cc: Nishanth Menon <nm@ti.com>,
 	DRI Development List <dri-devel@lists.freedesktop.org>,
 	Linux Kernel List <linux-kernel@vger.kernel.org>,
 	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v10 10/13] drm/atomic-helper: Refactor crtc & encoder-bridge op loops into separate functions
-Date: Wed, 26 Feb 2025 21:27:34 +0530
-Message-Id: <20250226155737.565931-3-aradhya.bhatia@linux.dev>
+Subject: [PATCH v10 11/13] drm/atomic-helper: Separate out bridge pre_enable/post_disable from enable/disable
+Date: Wed, 26 Feb 2025 21:27:35 +0530
+Message-Id: <20250226155737.565931-4-aradhya.bhatia@linux.dev>
 In-Reply-To: <20250226155737.565931-1-aradhya.bhatia@linux.dev>
 References: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
  <20250226155737.565931-1-aradhya.bhatia@linux.dev>
@@ -79,161 +79,188 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+The encoder-bridge ops occur by looping over the new connector states of
+the display pipelines. The enable sequence runs as follows -
 
-The way any singular display pipeline, in need of a modeset, gets
-enabled is as follows -
+	- pre_enable(bridge),
+	- enable(encoder),
+	- enable(bridge),
 
-	crtc enable
-	(all) bridge pre-enable
-	encoder enable
-	(all) bridge enable
+while the disable sequnce runs as follows -
 
-- and the disable sequence is exactly the reverse of this.
+	- disable(bridge),
+	- disable(encoder),
+	- post_disable(bridge).
 
-The crtc operations occur by looping over the old and new crtc states,
-while the encoder and bridge operations occur together, by looping over
-the connector states of the display pipelines.
+Separate out the pre_enable(bridge), and the post_disable(bridge)
+operations into separate functions each.
 
-Refactor these operations - crtc enable/disable, and encoder & bridge
-(pre/post) enable/disable - into separate functions each, to make way
-for the re-ordering of the enable/disable sequences.
+This patch keeps the sequence same for any singular disaplay pipe, but
+changes the sequence across multiple display pipelines.
 
-This patch doesn't alter the sequence of crtc/encoder/bridge operations
-in any way, but helps to cleanly pave the way for the next two patches,
-by maintaining logical bisectability.
+This patch is meant to be an interim patch, to cleanly pave the way for
+the sequence re-ordering patch, and maintain bisectability in the
+process.
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Jayesh Choudhary <j-choudhary@ti.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 69 ++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 20 deletions(-)
+Note on checkpatch warning:
+This patch causes the checkpatch to flare up for 1 checkpatch 'check' -
+
+CHECK: Lines should not end with a '('
+#77: FILE: drivers/gpu/drm/drm_atomic_helper.c:1304:
++                       new_crtc_state = drm_atomic_get_new_crtc_state(
+
+This patch is largely duplicating the original code, with minor differences to
+perform different operations. This line of code pre-exists in the file and
+have simply been duplicated. I have decided to keep it as is to maintain the
+uniformity and the originally intended readability. Should perhaps a fix be
+required, this patch/series is not the right place, and another patch can be
+created to fix this across the whole file.
+
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 91 ++++++++++++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 5302ab324898..ce13c9b58bbd 100644
+index ce13c9b58bbd..d6a14e0c3e93 100644
 --- a/drivers/gpu/drm/drm_atomic_helper.c
 +++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1160,11 +1160,10 @@ crtc_needs_disable(struct drm_crtc_state *old_state,
+@@ -1223,8 +1223,6 @@ encoder_bridge_disable(struct drm_device *dev, struct drm_atomic_state *state)
+ 			else if (funcs->dpms)
+ 				funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
+ 		}
+-
+-		drm_atomic_bridge_chain_post_disable(bridge, state);
+ 	}
  }
  
- static void
--disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
-+encoder_bridge_disable(struct drm_device *dev, struct drm_atomic_state *state)
- {
- 	struct drm_connector *connector;
- 	struct drm_connector_state *old_conn_state, *new_conn_state;
--	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
- 	int i;
- 
-@@ -1227,6 +1226,14 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
- 
- 		drm_atomic_bridge_chain_post_disable(bridge, state);
+@@ -1281,11 +1279,65 @@ crtc_disable(struct drm_device *dev, struct drm_atomic_state *state)
  	}
-+}
-+
+ }
+ 
 +static void
-+crtc_disable(struct drm_device *dev, struct drm_atomic_state *state)
++encoder_bridge_post_disable(struct drm_device *dev, struct drm_atomic_state *state)
 +{
-+	struct drm_crtc *crtc;
++	struct drm_connector *connector;
++	struct drm_connector_state *old_conn_state, *new_conn_state;
 +	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
 +	int i;
- 
- 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
- 		const struct drm_crtc_helper_funcs *funcs;
-@@ -1274,6 +1281,14 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
- 	}
- }
- 
-+static void
-+disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
-+{
-+	encoder_bridge_disable(dev, state);
 +
-+	crtc_disable(dev, state);
++	for_each_oldnew_connector_in_state(state, connector, old_conn_state, new_conn_state, i) {
++		struct drm_encoder *encoder;
++		struct drm_bridge *bridge;
++
++		/*
++		 * Shut down everything that's in the changeset and currently
++		 * still on. So need to check the old, saved state.
++		 */
++		if (!old_conn_state->crtc)
++			continue;
++
++		old_crtc_state = drm_atomic_get_old_crtc_state(state, old_conn_state->crtc);
++
++		if (new_conn_state->crtc)
++			new_crtc_state = drm_atomic_get_new_crtc_state(
++						state,
++						new_conn_state->crtc);
++		else
++			new_crtc_state = NULL;
++
++		if (!crtc_needs_disable(old_crtc_state, new_crtc_state) ||
++		    !drm_atomic_crtc_needs_modeset(old_conn_state->crtc->state))
++			continue;
++
++		encoder = old_conn_state->best_encoder;
++
++		/* We shouldn't get this far if we didn't previously have
++		 * an encoder.. but WARN_ON() rather than explode.
++		 */
++		if (WARN_ON(!encoder))
++			continue;
++
++		drm_dbg_atomic(dev, "post-disabling bridges [ENCODER:%d:%s]\n",
++			       encoder->base.id, encoder->name);
++
++		/*
++		 * Each encoder has at most one connector (since we always steal
++		 * it away), so we won't call disable hooks twice.
++		 */
++		bridge = drm_bridge_chain_get_first_bridge(encoder);
++		drm_atomic_bridge_chain_post_disable(bridge, state);
++	}
 +}
 +
- /**
-  * drm_atomic_helper_update_legacy_modeset_state - update legacy modeset state
-  * @dev: DRM device
-@@ -1483,28 +1498,12 @@ static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
- 	}
- }
- 
--/**
-- * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
-- * @dev: DRM device
-- * @state: atomic state object being committed
-- *
-- * This function enables all the outputs with the new configuration which had to
-- * be turned off for the update.
-- *
-- * For compatibility with legacy CRTC helpers this should be called after
-- * drm_atomic_helper_commit_planes(), which is what the default commit function
-- * does. But drivers with different needs can group the modeset commits together
-- * and do the plane commits at the end. This is useful for drivers doing runtime
-- * PM since planes updates then only happen when the CRTC is actually enabled.
-- */
--void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
--					      struct drm_atomic_state *state)
-+static void
-+crtc_enable(struct drm_device *dev, struct drm_atomic_state *state)
+ static void
+ disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
  {
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state;
- 	struct drm_crtc_state *new_crtc_state;
--	struct drm_connector *connector;
--	struct drm_connector_state *new_conn_state;
- 	int i;
+ 	encoder_bridge_disable(dev, state);
  
- 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
-@@ -1528,6 +1527,14 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 				funcs->commit(crtc);
- 		}
- 	}
-+}
++	encoder_bridge_post_disable(dev, state);
 +
+ 	crtc_disable(dev, state);
+ }
+ 
+@@ -1498,6 +1550,38 @@ static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
+ 	}
+ }
+ 
 +static void
-+encoder_bridge_enable(struct drm_device *dev, struct drm_atomic_state *state)
++encoder_bridge_pre_enable(struct drm_device *dev, struct drm_atomic_state *state)
 +{
 +	struct drm_connector *connector;
 +	struct drm_connector_state *new_conn_state;
 +	int i;
- 
- 	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
- 		const struct drm_encoder_helper_funcs *funcs;
-@@ -1565,6 +1572,28 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 
- 		drm_atomic_bridge_chain_enable(bridge, state);
- 	}
++
++	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
++		struct drm_encoder *encoder;
++		struct drm_bridge *bridge;
++
++		if (!new_conn_state->best_encoder)
++			continue;
++
++		if (!new_conn_state->crtc->state->active ||
++		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
++			continue;
++
++		encoder = new_conn_state->best_encoder;
++
++		drm_dbg_atomic(dev, "pre-enabling bridges [ENCODER:%d:%s]\n",
++			       encoder->base.id, encoder->name);
++
++		/*
++		 * Each encoder has at most one connector (since we always steal
++		 * it away), so we won't call enable hooks twice.
++		 */
++		bridge = drm_bridge_chain_get_first_bridge(encoder);
++		drm_atomic_bridge_chain_pre_enable(bridge, state);
++	}
 +}
 +
-+/**
-+ * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
-+ * @dev: DRM device
-+ * @state: atomic state object being committed
-+ *
-+ * This function enables all the outputs with the new configuration which had to
-+ * be turned off for the update.
-+ *
-+ * For compatibility with legacy CRTC helpers this should be called after
-+ * drm_atomic_helper_commit_planes(), which is what the default commit function
-+ * does. But drivers with different needs can group the modeset commits together
-+ * and do the plane commits at the end. This is useful for drivers doing runtime
-+ * PM since planes updates then only happen when the CRTC is actually enabled.
-+ */
-+void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
-+					      struct drm_atomic_state *state)
-+{
-+	crtc_enable(dev, state);
+ static void
+ crtc_enable(struct drm_device *dev, struct drm_atomic_state *state)
+ {
+@@ -1559,7 +1643,6 @@ encoder_bridge_enable(struct drm_device *dev, struct drm_atomic_state *state)
+ 		 * it away), so we won't call enable hooks twice.
+ 		 */
+ 		bridge = drm_bridge_chain_get_first_bridge(encoder);
+-		drm_atomic_bridge_chain_pre_enable(bridge, state);
+ 
+ 		if (funcs) {
+ 			if (funcs->atomic_enable)
+@@ -1593,6 +1676,8 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+ {
+ 	crtc_enable(dev, state);
+ 
++	encoder_bridge_pre_enable(dev, state);
 +
-+	encoder_bridge_enable(dev, state);
+ 	encoder_bridge_enable(dev, state);
  
  	drm_atomic_helper_commit_writebacks(dev, state);
- }
 -- 
 2.34.1
 
