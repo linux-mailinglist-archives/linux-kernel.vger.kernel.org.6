@@ -1,188 +1,251 @@
-Return-Path: <linux-kernel+bounces-534496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE545A467BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:16:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724E0A46771
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:08:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034BE440A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83013B0186
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE5B222577;
-	Wed, 26 Feb 2025 17:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46852248B4;
+	Wed, 26 Feb 2025 17:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZZBj+Msa"
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazolkn19011031.outbound.protection.outlook.com [52.103.38.31])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="dvHIUUlO"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B482206B6;
-	Wed, 26 Feb 2025 17:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.38.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589621; cv=fail; b=mpf3KFncwmMyMFPgKk1bDK56dZGoRufIbd4XdVP3MonBhRZ8/2mlE3HG682HfuPkJr0CcXkmTeXIwDi98mM7tT5+YtAxMBAR0hderAVBuv1p5mDNEGLueY1aKss/S7fU8bS8ugHlyih2JdYqYrtZ1cutDREkPpoEj4vuDuO5iPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589621; c=relaxed/simple;
-	bh=lglBZu2z6/yDzUwKJSJ/ugixjS96HCeKUOGNVxI+vc8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lyGnntso7acUlQxUmTLAZffEHNBiexoMlGh2Ucm1n8IYwSG3/ASRKk40YfySiF35cBzqlolrUrvh61GsONmDF0h8lxwUA1VGsu9AoCKPfCMk0sVa7eSpK3f7sf0jbepAQ9buJKTEgPwS4S5nZAsnImDbkHX1KOewpXlqqzJ2Ruo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZZBj+Msa; arc=fail smtp.client-ip=52.103.38.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hBMSE0CvqZV56XphDT+oXgLRGDWngwiNjbfRme1uLcXbQQpTxLe35UUz35cCsSVQDkjYXyYT/04eu13zd63g4Cobc+bXdp4ASM0qNcN8heeEVRqPCzTb0iHDok8CyXtb/AcSl0sVnu9fygYr1dTehPtYJDbyxob5x/lm2LdJl4msIR49VsnSAwbbmxz8U+wPRn0zCOnpte3arnlhTb9HEGGDd1d30yRhrgAn6LY61CeKCbI4NK4IITHjztTifZseSjly6g39jPDusgPyyWZnzmr1LMqOGXizU9dOZllH8CxtwMRuh+ANIJZBzcjcD/xMxyebSjOb6rfrGK6yRmIsSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6FqGZgT5fIFbVNTdsVQ2HmeFfN6EenK8dxUuBkA6s+Q=;
- b=E8j0BdfUJPDzH48AjCOSSnSjt+lnwZk37Mb91yudtDmNsYraTZb8f8OFL73DPuqsODVwsvp6uaswKvBm2sn83SKP6jqPRzzdYmUSUFvUSEHXikNIl3P7PejCHwzYcYJWnUV6bTpswdEtSvZhbCmO9RRCkvnmtlwEemY4mhL6q/sFnXIErdGmpYUVm8D/40+TGaquhmhC3+v5xxFSqHu8V738XnAG+MPJgRVMDVWl7g42QA9EPikVHj3vtUYoGZLk4D1bKjzv5piF3EbtGIhZJenJ3ybPmGvwxxZVJrpw8ph6UJYxZ/21wmW/3Lzxd3Hb4qAyatg8sB2DMKDbLHA23Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6FqGZgT5fIFbVNTdsVQ2HmeFfN6EenK8dxUuBkA6s+Q=;
- b=ZZBj+MsaGTGbj1eshpmkyITgJ61xAsGia8BxWMg7w1i33n6sbrXChgiIaA6WI0n5a7YO92YJGFfcy6NsIoYXAq//JobtYXhM5zCttyHH+fBJ6UP9kCLcpmImbxKaBizZEL5JVi52jjfvT/B2yH+PLcrqDGYxWQB8DF0ROryz6tOq0gfhWXSWcZ62+gwU0Nz1lpwGENu9A9gsUhFZW8TUlfPf455trWQOSHoF6uTy0xpRA93nWh0R9azN8tT3p0IPSdGUXWdOoQM3gFLLIvaGwMCmjDL9FX25/h80Iyj3XHjADL0ZqRgQ7Jt7OAaMoIw77u5J6W4E54eDY0AWPgd0aQ==
-Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
- by CWLP123MB2803.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:5b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Wed, 26 Feb
- 2025 17:06:55 +0000
-Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
- ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
- ([fe80::c0fe:9ff5:51fd:3fdb%5]) with mapi id 15.20.8489.019; Wed, 26 Feb 2025
- 17:06:55 +0000
-From: Manuel Fombuena <fombuena@outlook.com>
-To: pavel@ucw.cz,
-	lee@kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] leds: leds-st1202: initialize hardware before DT node child operations
-Date: Wed, 26 Feb 2025 17:06:40 +0000
-Message-ID:
- <CWLP123MB54731877A8DC54EDD33F0229C5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <CWLP123MB54739F38EF9CFA057021BC2DC5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
-References: <CWLP123MB54739F38EF9CFA057021BC2DC5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BLAPR03CA0159.namprd03.prod.outlook.com
- (2603:10b6:208:32f::34) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:160::13)
-X-Microsoft-Original-Message-ID:
- <20250226170640.2338617-1-fombuena@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0697E223716;
+	Wed, 26 Feb 2025 17:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740589679; cv=none; b=Yml/XPT2drIyUZvaC7h70FB/I/RTAXukznAmdGpiBNexbLYnGO8T2hHF+tD7SGsFYJ/OSHc+pst/kM4jcO8+OVML3cBb7kYglZeKX1unBZwkf4VXE19N0QpV32wrC33U0CKIYhl8Awu3QhUhig7nzLTAfpj5j9bjKr16TDFL+9M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740589679; c=relaxed/simple;
+	bh=cBaG+oS7JYdfqzVyKfbb8rgJ131fRZ/Hoj95YqdcdI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YX60Egk4dH2+Sy1PzIB3VWwshdZqZxmz6UHHEU6isriOx/0z/UjpA5u4oVyxN2kyUIgu368x/+YCkW+hCHOP9X9RI6IGeONvAckEKKI3S8rt8zSzlxnNIGFX5l0EScFv3GUqYrU0uWUBCeR1Og/g9i6mIK/fmt5yHm9wVSNsmOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=dvHIUUlO; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740589675; x=1772125675;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=BPwWo87sDuI7usZUdxHnOOz0ofoKPOJ/UoJEVKcIEVA=;
+  b=dvHIUUlOBNo4GgWcl7FyIGPqQDJrgfqHS3tZxYLwuk4fcLq71PdgqETE
+   lprAPuIWnTeZnAwfccI4Dcmb3v87Fq5LU1ueJ8cicRVsF2ru9GlRu5Psg
+   d4WfppAtjGrKsDERCkm+07q3FNvPAqx1hjSoCxOt4+A3lJ3AYjl55Aa4h
+   k=;
+X-IronPort-AV: E=Sophos;i="6.13,317,1732579200"; 
+   d="scan'208";a="176232161"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 17:07:44 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.17.79:25271]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.36.78:2525] with esmtp (Farcaster)
+ id 9ef91057-2ea6-4f6a-bc79-4520280e04df; Wed, 26 Feb 2025 17:07:43 +0000 (UTC)
+X-Farcaster-Flow-ID: 9ef91057-2ea6-4f6a-bc79-4520280e04df
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 17:07:39 +0000
+Received: from [192.168.22.24] (10.106.83.21) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Wed, 26 Feb 2025
+ 17:07:38 +0000
+Message-ID: <946fc0f5-4306-4aa9-9b63-f7ccbaff8003@amazon.com>
+Date: Wed, 26 Feb 2025 17:07:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|CWLP123MB2803:EE_
-X-MS-Office365-Filtering-Correlation-Id: db0c2ac8-d8b9-4bd4-278d-08dd5687f8cb
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|5072599009|461199028|15080799006|8060799006|7092599003|41001999003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VX6pI64bcCYYd6wuffa/2TwqKFfZbvfIdKmE5b3fvhFDYLfuNziI3cua9101?=
- =?us-ascii?Q?/34QkbyZcJzUW6aW9z05P88H7kYLqGIf5R11H+2lHSW5KQEnNIDqLsfEAoF+?=
- =?us-ascii?Q?KnOJ/EaCuq/GJtVbhllUFNRhGeKWdFWcXQZD0Aqh2WP9mhv71FxJFpPkRAyy?=
- =?us-ascii?Q?EX0OlRfbMtNS5f3eR3NGbiB2NMLT4hM/KizpglvDYJZTtyxg6Z1KgEkF38PY?=
- =?us-ascii?Q?XcfgqclPXi6a+ahBV0QulcrEJ2xNRVD2rfqygd3sOKibRN4Fk+p1/5+XUo6P?=
- =?us-ascii?Q?rXlVLSXzpNNbxyvU8jxUPRcFddpjWqVD89Jrgi42gZJZvPhWZMYxpy2Fc07Q?=
- =?us-ascii?Q?+sIjBMHNErYjH0TzN/8gAwlrkno5x4nhM9LNsqglCOKWBTC0HaTqJfidObMq?=
- =?us-ascii?Q?uGSp0erSaamQZGySc6MXWhXWyGLbGoPhgxF75wxID+a6LPFvjLykdXLQPS57?=
- =?us-ascii?Q?u3PsDpntiagvuuUAWzprb1dA2wIrtBgX/HIZXQ1IoVETj8wSqwrjk709oxG5?=
- =?us-ascii?Q?Zf5c6DapzJWoPh41Iw4cbtJ6KQ9kj1YeOO0ghuU+xdivcoduAwqyWLNYrX93?=
- =?us-ascii?Q?bQ6HQv53SXe8eyaT5F3x8huDvL3vXf9xLcFp0FVZbGB/LArFhWv8GioxaVIY?=
- =?us-ascii?Q?tmlh917OXlmQgLfoM+vGmL23SgN8LJ2yqnYyct75Rdbriw0hS0ySoq7JWxXC?=
- =?us-ascii?Q?+eRLP5fLpXPWCW4vhOAsrIPxTeINwTILkT0tp0TLtP5oxcxCxWz8tyzk9pYz?=
- =?us-ascii?Q?mIYGZ/gvGITjJvX/GI/d6Mxe64oZB+dlJHHotRXDNOD1UcWm3OncOobVXLOR?=
- =?us-ascii?Q?+HpzmlaBfcJPxhGx9Z0j1zjgZR/e0uuY1x9lFoAWSsW2bIXjuc3YwJuzKDQ0?=
- =?us-ascii?Q?6ZAzIg1h46H+L1/nDytcotPnfwyHFLLa/UsG1xD3mjSCwoZb31X2VDjxJVe5?=
- =?us-ascii?Q?meX9ohGz1eFrWqOebXzr6Drk2+fv7v0FDFdBR/yJfhk3tDqfs7Uc1kvjlox/?=
- =?us-ascii?Q?uGs+b5qKNDkeuAJ5C+hT/3lxnjpKA1H9AoE06L304gLnLRb5z3tX8sgrfIm9?=
- =?us-ascii?Q?o5kKBOcUxGD/zcCumM/H5OekH827cpP//q6QIrW+FNSuHK8pLmI=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KhDJoW6bRm4Ldmhv4elamB5/DV/i3OeKgTCSDRjwfhOmMldCjO3EhIdsGjoS?=
- =?us-ascii?Q?fD8bTCn7WnGOMDkpjLiSs5RFrzcAqJWfbBywWlDXSCdP7EEp9n2DhrYeCRmc?=
- =?us-ascii?Q?pefIqf56p6YrDvunOnDlEdsOI9ktLNjEnWAAAIcdmS9/e+n/5zsq4ggw6nkU?=
- =?us-ascii?Q?4IoIRc56EWHQ7Tb6B1/onPq4pANckaisYlzH6wwQlUmCOycR0j5QApD4Xm1l?=
- =?us-ascii?Q?h9SPkkLLUdGLJTQBzT5t3est08gDKcKGXAnWO7W/pLemUv8bEtxQBX57mUua?=
- =?us-ascii?Q?2zAouj1b5lEtJ2OzRpnRw7/e69s1Frq0P+MaUXOUrC71/RyxWSQjGgo4mTIx?=
- =?us-ascii?Q?TkMhK9PBnFJ0cx+WrrWxkykGM/Iz8jLhFQr08kLWKslPjkvRoEP+I4vMIrYc?=
- =?us-ascii?Q?0YeLaIs6/mHHugbVKUPXmxljrTv+32kzt59WyYK8qnihogAGX7TTuz1cpK+Z?=
- =?us-ascii?Q?USF/l1Yi1+xfFeCiZR4680LPXLlN6phmsa+Bx9ZZwa8WbNGeyqa8hBKspEMx?=
- =?us-ascii?Q?y7rHCJ4fV3ctrTCqar/UfQYOM5R8TPRb5kh9PnCyS2pTmIuxn0NO47UiMUIW?=
- =?us-ascii?Q?5tTG1TMoPmmsFsqUX+nGetsWCGjVYX1FOQNkXGoThgBW2g9ZS1NBeZknaELQ?=
- =?us-ascii?Q?iB3LZ+z871fGqWNukdvIAr1De4v7ZWp0985iQN+Dff+7Qms3gxZz4WDvW3j9?=
- =?us-ascii?Q?BNsukdr1SxQavdylgt6Rk8BtlWP0cSn6m5XWBuRRHHXSBLIoI0q2h0IpsPo/?=
- =?us-ascii?Q?AYp2+K+TM+GcXlJxbNIW9PPzo63pc9LAStMTEZtOMbq5pK8ZXTVCXHEVKgPp?=
- =?us-ascii?Q?tLCYH3mDIMGgSSk3nb5f4i5nStyhaZHOYfdJGoJ9hmAddHoY2KYpTYokNywC?=
- =?us-ascii?Q?s0sCKohU+pjEG5qVUXfWSPAjxdtNmVGlDBAvSr4ZN7VH5OvlhxLSiDNedioL?=
- =?us-ascii?Q?vBV48Hs1JaJmTXk3jfjEJoX0k4gw/ZhdVaLhyTZJ4VXGawQzWyTtWUu4zMDH?=
- =?us-ascii?Q?YD7Ha+dUu7odvMBp19wM5xVpoKCGHEwUK3nraG70rXYJUmoa3wMdT396Zo/7?=
- =?us-ascii?Q?OdKFrdfumPakYJG68xl01s70VNHAIKCjy2NmmM6XfJyaC2UBIApaolBW4VK/?=
- =?us-ascii?Q?wq0qR4IC/y7U1CwX3uFXkBo88/evpHOnnN6ZHaxyjB59A67OgIGsBEfYALfl?=
- =?us-ascii?Q?OWO98O2G6QxlDgqUG5DvN83bVg9YYxLYcQbMJapalhGBLqILBiRSY1mQOvkw?=
- =?us-ascii?Q?Ryb0Id1EPIPIKFeFFya9IimcIFGy/buZdeui8r2PIdAOLBcHUD/ZxY48FXfv?=
- =?us-ascii?Q?V7s=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db0c2ac8-d8b9-4bd4-278d-08dd5687f8cb
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 17:06:55.5907
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP123MB2803
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <jthoughton@google.com>,
+	<david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
+	<vkuznets@redhat.com>, <gshan@redhat.com>, <graf@amazon.de>,
+	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
+	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20241118123948.4796-1-kalyazin@amazon.com>
+ <Z6u-WdbiW3n7iTjp@google.com>
+ <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
+ <Z7X2EKzgp_iN190P@google.com>
+ <6eddd049-7c7a-406d-b763-78fa1e7d921b@amazon.com>
+ <Z7d5HT7FpE-ZsHQ9@google.com>
+ <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
+ <Z75nRwSBxpeMwbsR@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <Z75nRwSBxpeMwbsR@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D006EUC001.ant.amazon.com (10.252.51.203) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-Arguably, there are more chances of errors occurring during the
-initialization of the hardware, so this should complete successfully
-before the devicetree node's children are initialized.
+On 26/02/2025 00:58, Sean Christopherson wrote:
+> On Fri, Feb 21, 2025, Nikita Kalyazin wrote:
+>> On 20/02/2025 18:49, Sean Christopherson wrote:
+>>> On Thu, Feb 20, 2025, Nikita Kalyazin wrote:
+>>>> On 19/02/2025 15:17, Sean Christopherson wrote:
+>>>>> On Wed, Feb 12, 2025, Nikita Kalyazin wrote:
+>>>>> The conundrum with userspace async #PF is that if userspace is given only a single
+>>>>> bit per gfn to force an exit, then KVM won't be able to differentiate between
+>>>>> "faults" that will be handled synchronously by the vCPU task, and faults that
+>>>>> usersepace will hand off to an I/O task.  If the fault is handled synchronously,
+>>>>> KVM will needlessly inject a not-present #PF and a present IRQ.
+>>>>
+>>>> Right, but from the guest's point of view, async PF means "it will probably
+>>>> take a while for the host to get the page, so I may consider doing something
+>>>> else in the meantime (ie schedule another process if available)".
+>>>
+>>> Except in this case, the guest never gets a chance to run, i.e. it can't do
+>>> something else.  From the guest point of view, if KVM doesn't inject what is
+>>> effectively a spurious async #PF, the VM-Exiting instruction simply took a (really)
+>>> long time to execute.
+>>
+>> Sorry, I didn't get that.  If userspace learns from the
+>> kvm_run::memory_fault::flags that the exit is due to an async PF, it should
+>> call kvm run immediately, inject the not-present PF and allow the guest to
+>> reschedule.  What do you mean by "the guest never gets a chance to run"?
+> 
+> What I'm saying is that, as proposed, the API doesn't precisely tell userspace
+> an exit happened due to an "async #PF".  KVM has absolutely zero clue as to
+> whether or not userspace is going to do an async #PF, or if userspace wants to
+> intercept the fault for some entirely different purpose.
 
-st1202_dt_init() fills the led_classdev struct.
+Userspace is supposed to know whether the PF is async from the dedicated 
+flag added in the memory_fault structure: 
+KVM_MEMORY_EXIT_FLAG_ASYNC_PF_USER.  It will be set when KVM managed to 
+inject page-not-present.  Are you saying it isn't sufficient?
 
-st1202_setup() initializes the hardware. Specifically, resets the chip,
-enables its phase-shift delay feature, enables the device and disables all
-the LEDs channels. All that writing to registers, with no input from
-st1202_dt_init().
+@@ -4396,6 +4412,35 @@ static int __kvm_faultin_pfn(struct kvm_vcpu 
+*vcpu, struct kvm_page_fault *fault
+  {
+  	bool async;
 
-Real-world testing corroborates that calling st1202_setup() before
-st1202_dt_init() doesn't cause any issue during initialization.
++	/* Pre-check for userfault and bail out early. */
++	if (gfn_has_userfault(fault->slot->kvm, fault->gfn)) {
++		bool report_async = false;
++		u32 token = 0;
++
++		if (vcpu->kvm->arch.vm_type == KVM_X86_SW_PROTECTED_VM &&
++			!fault->prefetch && kvm_can_do_async_pf(vcpu)) {
++			trace_kvm_try_async_get_page(fault->addr, fault->gfn, 1);
++			if (kvm_find_async_pf_gfn(vcpu, fault->gfn)) {
++				trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn, 1);
++				kvm_make_request(KVM_REQ_APF_HALT, vcpu);
++				return RET_PF_RETRY;
++			} else if (kvm_can_deliver_async_pf(vcpu) &&
++				kvm_arch_setup_async_pf_user(vcpu, fault, &token)) {
++				report_async = true;
++			}
++		}
++
++		fault->pfn = KVM_PFN_ERR_USERFAULT;
++		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
++
++		if (report_async) {
++			vcpu->run->memory_fault.flags |= KVM_MEMORY_EXIT_FLAG_ASYNC_PF_USER;
++			vcpu->run->memory_fault.async_pf_user_token = token;
++		}
++
++		return -EFAULT;
++	}
++
 
-Switch the order of st1202_dt_init() and st1202_setup() to ensure the
-hardware is correctly initialized before the led_classdev struct is
-filled.
+>>>> If we are exiting to userspace, it isn't going to be quick anyway, so we can
+>>>> consider all such faults "long" and warranting the execution of the async PF
+>>>> protocol.  So always injecting a not-present #PF and page ready IRQ doesn't
+>>>> look too wrong in that case.
+>>>
+>>> There is no "wrong", it's simply wasteful.  The fact that the userspace exit is
+>>> "long" is completely irrelevant.  Decompressing zswap is also slow, but it is
+>>> done on the current CPU, i.e. is not background I/O, and so doesn't trigger async
+>>> #PFs.
+>>>
+>>> In the guest, if host userspace resolves the fault before redoing KVM_RUN, the
+>>> vCPU will get two events back-to-back: an async #PF, and an IRQ signalling completion
+>>> of that #PF.
+>>
+>> Is this practically likely?
+> 
+> Yes, I think's it's quite possible.
+> 
+>> At least in our scenario (Firecracker snapshot restore) and probably in live
+>> migration postcopy, if a vCPU hits a fault, it's probably because the content
+>> of the page is somewhere remote (eg on the source machine or wherever the
+>> snapshot data is stored) and isn't going to be available quickly.
+> 
+> Unless the remote page was already requested, e.g. by a different vCPU, or by a
+> prefetching algorithim.
+> 
+>> Conversely, if the page content is available, it must have already been
+>> prepopulated into guest memory pagecache, the bit in the bitmap is cleared
+>> and no exit to userspace occurs.
+> 
+> But that doesn't happen instantaneously.  Even if the VMM somehow atomically
+> receives the page and marks it present, it's still possible for marking the page
+> present to race with KVM checking the bitmap.
 
-Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
----
- drivers/leds/leds-st1202.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+That looks like a generic problem of the VM-exit fault handling.  Eg 
+when one vCPU exits, userspace handles the fault and races setting the 
+bitmap with another vCPU that is about to fault the same page, which may 
+cause a spurious exit.
 
-diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-index 9f275f7fb159..e7dce8c26bde 100644
---- a/drivers/leds/leds-st1202.c
-+++ b/drivers/leds/leds-st1202.c
-@@ -349,11 +349,11 @@ static int st1202_probe(struct i2c_client *client)
- 		return ret;
- 	chip->client = client;
- 
--	ret = st1202_dt_init(chip);
-+	ret = st1202_setup(chip);
- 	if (ret < 0)
- 		return ret;
- 
--	ret = st1202_setup(chip);
-+	ret = st1202_dt_init(chip);
- 	if (ret < 0)
- 		return ret;
- 
--- 
-2.48.1
+On the other hand, is it malignant?  The only downside is additional 
+overhead of the async PF protocol, but if the race occurs infrequently, 
+it shouldn't be a problem.
+
+>>>>>> What advantage can you see in it over exiting to userspace (which already exists
+>>>>>> in James's series)?
+>>>>>
+>>>>> It doesn't exit to userspace :-)
+>>>>>
+>>>>> If userspace simply wakes a different task in response to the exit, then KVM
+>>>>> should be able to wake said task, e.g. by signalling an eventfd, and resume the
+>>>>> guest much faster than if the vCPU task needs to roundtrip to userspace.  Whether
+>>>>> or not such an optimization is worth the complexity is an entirely different
+>>>>> question though.
+>>>>
+>>>> This reminds me of the discussion about VMA-less UFFD that was coming up
+>>>> several times, such as [1], but AFAIK hasn't materialised into something
+>>>> actionable.  I may be wrong, but James was looking into that and couldn't
+>>>> figure out a way to scale it sufficiently for his use case and had to stick
+>>>> with the VM-exit-based approach.  Can you see a world where VM-exit
+>>>> userfaults coexist with no-VM-exit way of handling async PFs?
+>>>
+>>> The issue with UFFD is that it's difficult to provide a generic "point of contact",
+>>> whereas with KVM userfault, signalling can be tied to the vCPU, and KVM can provide
+>>> per-vCPU buffers/structures to aid communication.
+>>>
+>>> That said, supporting "exitless" KVM userfault would most definitely be premature
+>>> optimization without strong evidence it would benefit a real world use case.
+>>
+>> Does that mean that the "exitless" solution for async PF is a long-term one
+>> (if required), while the short-term would still be "exitful" (if we find a
+>> way to do it sensibly)?
+> 
+> My question on exitless support was purely exploratory, just ignore it for now.
 
 
