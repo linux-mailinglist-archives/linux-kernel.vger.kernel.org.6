@@ -1,169 +1,123 @@
-Return-Path: <linux-kernel+bounces-533079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B85BA4557C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:20:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40613A4557B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1557517BBE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14673ADB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284A26A0AB;
-	Wed, 26 Feb 2025 06:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FCE269831;
+	Wed, 26 Feb 2025 06:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOMm0TxG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WMMXNNIr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99417266F07;
-	Wed, 26 Feb 2025 06:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4E1268FE0;
+	Wed, 26 Feb 2025 06:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550753; cv=none; b=G56dLtjA4B0L/QMF66aKrWA6UWB52bUfmo/2n5vEzIDngi9zNsQOplsJc3MNC8sfqMc8wGJZRrKvzxovixUpZQaMyErwtvFS7iHNQNhJsJznsmubaHZ/ByeY8QexLeeLvwYBbTnK33ceJWnc4JFG76PC590BlJCT9/Ub6d1ljss=
+	t=1740550763; cv=none; b=POpZHKNnFGtl4S9sqOIABXu/0M5zPvaORmPsbhJYIHWHzs6xyWTIBueShhqN1ZanbqNx1t7M3a7+od/2zBJ7wRojYo6Jk5idL8/svq1WbgtGt8uKbmnozjzmds0i34rdwmy/yRYhyrRp44OIKjKsIw+mGQn3gbvas8SQxqYF8es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550753; c=relaxed/simple;
-	bh=yIj1pQj0C3AN7gwtkMH3z56V1irEizXLsEKGmF8Vx60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ExCEoh1+/hXkvWU7MkYqq3LnRji+vCk1JJWNTvpe+cgxK3O6zZtuudGcEiHyneetV4uCJPF1Gg/hZGP9NpgFStBeaay3i8vRFZZNJeLPmyM4kI52vHGD+agZjmOxin1yJplV2/QvRnlNLGJewsaISIRLDsKrD1ru9Uy09n94NpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOMm0TxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739D6C4CED6;
-	Wed, 26 Feb 2025 06:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740550753;
-	bh=yIj1pQj0C3AN7gwtkMH3z56V1irEizXLsEKGmF8Vx60=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NOMm0TxGnl1PdY8iEYhNAvpsm0KO60mG+sQYqMKeFRT9NfJvCLU6ElhjBNiaw+Sv5
-	 P5XlcZHAN4DDnLr1eY1npddfQ+aVqGXcSSSay0Jf6uLwtJ4CoTujVQkfZPhmFUOmbV
-	 i6WC7p1dVzhln4DeJpOFfG7fdZyz6j86wPlAd8zRcZ1FD/GngRMh5z95LA+miNIEKi
-	 T9o92Ul1xstabFgausqlfSWtGEujrq8GGa+jeFifwpLtSplsSn5DKmNBCFkyA4idPC
-	 lZKwztFjzqf90HkxfGKMQ5bByJW8NHSf2Hrq2NijiTiS1r6kUaD2BVM7UW8adKHQsG
-	 rKf7lu7f0iThw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 4/8] tracing: probe-events: Log errro for exceeding the number of arguments
-Date: Wed, 26 Feb 2025 15:19:10 +0900
-Message-ID:  <174055075075.4079315.10916648136898316476.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To:  <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
-References:  <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1740550763; c=relaxed/simple;
+	bh=Oa2YIv4jT7MVju5UNokRoZX38+elx2PrQ7nNMpOU8hA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SvN6SkP59rw3powFbG68wQJLb2faVNJLsVVUJZ4TpkR/ieyj+03GXW1D1V90q/JrzrZeiLT3F4VXeEYE5iZMsj/KFSxky+9nLPHE4YzJIEU1iSX12jmxf6m8OriqvYVPt4OTzr5dxB0zF3FzS8eebaABJMApxcec2+oqAFr6nSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WMMXNNIr; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740550763; x=1772086763;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Oa2YIv4jT7MVju5UNokRoZX38+elx2PrQ7nNMpOU8hA=;
+  b=WMMXNNIrMy36qezdc2EGvfXvWeXjpt5CFqOngkWpyL/kp8CgM88W/fNc
+   weH34LanmFTU51iqEBVyj/N1MUamL4I6xsAb3MlC//r3I97ZYGFTN5noS
+   sfgRk1SiAPyGYg8hSxFnWzvEMDJDIIjLLA/7tz0z5S8yC+g2mEUT69F7W
+   p1IlvzPp7ZfG+xR0HOd0ZSwTaLxueeJ1n9lRC5YYejbJtTl+UsQpxRZ3d
+   62Lsp626JRXvEwpPnCF9aarsONlQbpFCXAE40k9Zf500PonTRNhChlTlT
+   N2suDIrh6rn+O1ySARGnRQyOMCZxHrghaSHV2b8FHEYTr7AK4xw6P/Kwx
+   g==;
+X-CSE-ConnectionGUID: Goa++g7KQUqtADreIEbTeg==
+X-CSE-MsgGUID: 9Edpz4QlR3O+W6oA2RzKqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58805161"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="58805161"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:19:22 -0800
+X-CSE-ConnectionGUID: XZPyJO19QXea6Q/geZ/vyA==
+X-CSE-MsgGUID: DizwxAgrQJaOPiJk0X3zUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="147524214"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:19:18 -0800
+Message-ID: <000043b8-1284-46f3-b117-9ece905f218e@linux.intel.com>
+Date: Wed, 26 Feb 2025 14:19:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+ <20250225112543.GM11590@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250225112543.GM11590@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Add error message when the number of arguments exceeeds the limitation.
+On 2/25/2025 7:25 PM, Peter Zijlstra wrote:
+> On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
+>> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
+>> buffer physical address. This patch allocates arch-PEBS buffer and then
+>> initialize IA32_PEBS_BASE MSR with the buffer physical address.
+> Just to clarify, parts with ARCH PEBS will not have BTS and thus not
+> have DS?
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_eprobe.c |    2 ++
- kernel/trace/trace_fprobe.c |    5 ++++-
- kernel/trace/trace_kprobe.c |    5 ++++-
- kernel/trace/trace_probe.h  |    1 +
- kernel/trace/trace_uprobe.c |    9 +++++++--
- 5 files changed, 18 insertions(+), 4 deletions(-)
+No, DS and BTS still exist along with arch-PEBS, only the legacy DS based
+PEBS is unavailable and replaced by arch-PEBS.
 
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index 82fd637cfc19..af9fa0632b57 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -913,6 +913,8 @@ static int __trace_eprobe_create(int argc, const char *argv[])
- 	}
- 
- 	if (argc - 2 > MAX_TRACE_ARGS) {
-+		trace_probe_log_set_index(2);
-+		trace_probe_log_err(0, TOO_MANY_ARGS);
- 		ret = -E2BIG;
- 		goto error;
- 	}
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index e27305d31fc5..372936163c21 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -1201,8 +1201,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
- 		argc = new_argc;
- 		argv = new_argv;
- 	}
--	if (argc > MAX_TRACE_ARGS)
-+	if (argc > MAX_TRACE_ARGS) {
-+		trace_probe_log_set_index(2);
-+		trace_probe_log_err(0, TOO_MANY_ARGS);
- 		return -E2BIG;
-+	}
- 
- 	ret = traceprobe_expand_dentry_args(argc, argv, &dbuf);
- 	if (ret)
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index d8d5f18a141a..8287b175667f 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1007,8 +1007,11 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
- 		argc = new_argc;
- 		argv = new_argv;
- 	}
--	if (argc > MAX_TRACE_ARGS)
-+	if (argc > MAX_TRACE_ARGS) {
-+		trace_probe_log_set_index(2);
-+		trace_probe_log_err(0, TOO_MANY_ARGS);
- 		return -E2BIG;
-+	}
- 
- 	ret = traceprobe_expand_dentry_args(argc, argv, &dbuf);
- 	if (ret)
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index c47ca002347a..6075afc8ea67 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -546,6 +546,7 @@ extern int traceprobe_define_arg_fields(struct trace_event_call *event_call,
- 	C(BAD_BTF_TID,		"Failed to get BTF type info."),\
- 	C(BAD_TYPE4STR,		"This type does not fit for string."),\
- 	C(NEED_STRING_TYPE,	"$comm and immediate-string only accepts string type"),\
-+	C(TOO_MANY_ARGS,	"Too many arguments are specified"),	\
- 	C(TOO_MANY_EARGS,	"Too many entry arguments specified"),
- 
- #undef C
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index ccc762fbb69c..3386439ec9f6 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -562,8 +562,14 @@ static int __trace_uprobe_create(int argc, const char **argv)
- 
- 	if (argc < 2)
- 		return -ECANCELED;
--	if (argc - 2 > MAX_TRACE_ARGS)
-+
-+	trace_probe_log_init("trace_uprobe", argc, argv);
-+
-+	if (argc - 2 > MAX_TRACE_ARGS) {
-+		trace_probe_log_set_index(2);
-+		trace_probe_log_err(0, TOO_MANY_ARGS);
- 		return -E2BIG;
-+	}
- 
- 	if (argv[0][1] == ':')
- 		event = &argv[0][2];
-@@ -582,7 +588,6 @@ static int __trace_uprobe_create(int argc, const char **argv)
- 		return -ECANCELED;
- 	}
- 
--	trace_probe_log_init("trace_uprobe", argc, argv);
- 	trace_probe_log_set_index(1);	/* filename is the 2nd argument */
- 
- 	*arg++ = '\0';
+Here is output of CPUID.1:EDX[21] and IA32_MISC_ENABLE MSR on PTL.
+
+sudo cpuid -l 0x1 | grep DS
+      DS: debug store                        = true
+      DS: debug store                        = true
+      DS: debug store                        = true
+      DS: debug store                        = true
+      DS: debug store                        = true
+      DS: debug store                        = true
+
+sudo rdmsr 0x1a0 -a
+851089
+851089
+851089
+851089
+851089
+851089
+
+We can see debug store is supported, BTS_UNAVAILABLE bit (bit[11] of
+IA32_MISC_ENABLE) is cleared but PEBS_UNAVAILABLE bit (bit[12] of
+IA32_MISC_ENABLE) is set.
+
 
 
