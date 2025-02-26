@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-534493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EB8A46766
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:06:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266D7A467B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9410B7A9FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A77170051
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59D72236E0;
-	Wed, 26 Feb 2025 17:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE56224AF3;
+	Wed, 26 Feb 2025 17:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="sc7elpqN"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/8x3DgJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2B92222CF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B4E221DA1;
+	Wed, 26 Feb 2025 17:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589528; cv=none; b=ldl90UxktX2XfIZAYU20yUF2WTjeK1s+eZJWq0oVCXupvucnD5Y0i3LuMVKYLIK3HFIEV4Qby7x3QfRn7C4Xkwy9Ud0mpSbbEJSzAfQ/3qA+tHdUGRQCBCT7fU7HvyyudGKUgZA9tJPzUvMOjPqSRGAxnXAMaYEj6tdW/juPOfw=
+	t=1740589599; cv=none; b=CaEeYgcns8BONft+EgJNvRfBAfjeDwKA8KD8rJbgYjpVxbuNK2kfV3xAxbRsWoB7yEAV/IUO43e2u9Acv3Lgja47HgHI/z+iWtP9VHhJs23tNiZC8xmFMCxehYwdZAjtKlwTRUSKeQQUFA1GnP/Sy9fIbA2Gb4IrS2/+3SjC9pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589528; c=relaxed/simple;
-	bh=Wk0YWZOUZv5kpZHp/iUsznrpW1N4cbTlGmF9LQZpze4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8oJ2EOcujqv7IlmUcmiMhI8gQUyyEwRU+UW3IENryc4T3X0n9thOkcRvWwbv6ZUGp8QAYTQHrd0VlApjRbDsNVYenaHeswmYO3j9ioLT5YEGMT4jZGoR9CvQEhswAJfCu49px8pflbzwFJpsLsadBhbJDe+RetJoFPnJBQ9gd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=sc7elpqN; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Wed, 26 Feb 2025 12:05:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1740589520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DFvEhuZpUCM6lOpRG/AFVq+EwIoa9bUMBQFUnLqng0=;
-	b=sc7elpqNNJvAnZnVGvSLjMwVznTy184QqQhcH8XqsjNzZDb5qZCQLL82P8XaYD0lowgdcN
-	SFD5WKpmY4j/KKfMM5pNLNWC7yAg5YrYCGtBYUtNb/td+HprbMg1+akXRaNNRlr8XH3bjL
-	3yMM7nIKNXFlgtVUIOlPIUqeiKFNCAYhI0HPd0TXgo+ol7UVCozBfAeZTCEDCX8YrLhuRW
-	/yC4+SLGKEVUdCUKoDif1+SAlNe4KZIynfWBUJhC4POmZFtDe0KX8o/ySaPEzKWLfpm9VC
-	lRie38LV26T/kRZedroALuS5WMVELZrUKw9JbAbMSjIMZ/WBFffHjjXmDqDbvA==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: Sven Peter <sven@svenpeter.dev>
-Cc: Janne Grunau <j@jannau.net>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH 2/4] soc: apple: rtkit: Implement OSLog buffers properly
-Message-ID: <Z79JyhOQUI_LV4oV@blossom>
-References: <20250222-apple-soc-misc-v1-0-1a3af494a48a@svenpeter.dev>
- <20250222-apple-soc-misc-v1-2-1a3af494a48a@svenpeter.dev>
- <Z7y14Q3ifu7U1tHI@blossom>
- <63c5cbfe-4751-4409-9be7-2fda21b09503@app.fastmail.com>
+	s=arc-20240116; t=1740589599; c=relaxed/simple;
+	bh=2R180IJ7APaALd1g+yyfkVhGYnf3hIvGDgk8lsKLG8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m8TRhcxJ8E3aPz7bLSpfkPrnIcocCIott6ZVLDDO4z+gY8rni9T+BvmmjRIctFzF+QofmMWLcAbFzwExQjXQKv+VdbrC7nG5puN8Tlh/W1fTC0RneefW5rLhcyxMzR4OaDhIurtyCinpqBw8CK1ldNMHBnFs7mFA3Ih+1KSupnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/8x3DgJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC56BC116B1;
+	Wed, 26 Feb 2025 17:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740589599;
+	bh=2R180IJ7APaALd1g+yyfkVhGYnf3hIvGDgk8lsKLG8A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a/8x3DgJgskglabgyo16PGJtzrAVaL3wlI4GWiUa2t3h6Arsj1fdxCDGHHUKE1qz+
+	 MkWqGYj4HEBPBct7yYViRQUjlal1IbYHMnBCcmswporwMRHlB0Nx9dMjqXBPC9R6BF
+	 4qXyHcAPiRTt8nxgOwp7kjYrgjhT3u1JQIevs3oxA6uy6x3/jSFm7QuEaI+C811iY+
+	 4AL2jhdvnuhR4d5R91R5M0A3eER7PnxdjHvqOLqUclMX+1F16ZGFfW+dcq/tsjnLMP
+	 kSGz3A674HrBV9uFQqMNpCDNbxrVVIxuFXU3Ie1gj1RsPLiIjEfUxTtzaPunB5VN6E
+	 gP899WOFULZWA==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5fcd811d939so580383eaf.0;
+        Wed, 26 Feb 2025 09:06:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1vPJFgkoyBTCdNw1rIiYiW8YUNF9HhM9VaqAZ4B4yEPdqoAAbEIDZ0o0Q6Rg5rux9WYh+meLb8lRKx12/@vger.kernel.org, AJvYcCUSDPE2Kl8M+7tbz7bCGjoKzqd1onjZylURVRI7FCYD6YzZyFNz6OdTPv/yOB0vjrMYKxRtBtjs5iD/hQ==@vger.kernel.org, AJvYcCUe+0MrzgLg5q81ot+3P7kXDFDDpCqjtquPJiLom3G8IZ/8+eEHtpmsu/JMEky5b95OP+iinJOa40YGBQ==@vger.kernel.org, AJvYcCV4bSwqvhjKgmoG7xQK1fRFqHrNEzNyFrQKgf8A3P/jZ7IA907+RNDZvJBWZJ6Bpirf5av6EhxOGc/4pd4ID/0=@vger.kernel.org, AJvYcCVPbHi1at06YwsIaMt0Yofh9Iwv1VohDT4wWsmGIcx4EpBCu4T/tD7p9UEfYG9rlvSwSAoVlLHREZrQFlwV@vger.kernel.org, AJvYcCVTiZbwv8Bom8+ndrw4bl9f5hnk6gLmH0fayyhA5BVKbndv4YgviLbEX6DI8qlpCDqPcjsvG5kv@vger.kernel.org, AJvYcCXMHLoZc61wf+WW7M961lIzX55prjUjgLz7iTtu4ijfS77SVyJYe4v5UlPajl+1kFx25VCrojkxJ0Oz@vger.kernel.org, AJvYcCXZPGPzuoeF0XjVRL9NSA/jtSnHijtGwqtGUeFEJ6VjYlVg8dhoxntEjp6qhuAJqrAI7eQ0MD8Nyrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUiLgECOSOV+P096p4zKi6lxpj31zoCwRXzUM5tyAHOu1AF5mD
+	ZW3hbalWNlyMwAQpTLuHY8M5UEb3cCkCAJm1MCd6JNjTztaTELU4KRvgfYXrI+t+qzqkEFYJi52
+	bSGcfhHiGLdpvzdJFsVkC6RobjMc=
+X-Google-Smtp-Source: AGHT+IHyPLVjXp7kw5kgInAMNb4jd7h5cWQZCWKEZs0yMGYHKslrekdKrqf86zX892n/fj3IchT6bMpb2Dem6Q8+U3o=
+X-Received: by 2002:a05:6871:d20d:b0:2bd:286:d713 with SMTP id
+ 586e51a60fabf-2c155700434mr67466fac.11.1740589597661; Wed, 26 Feb 2025
+ 09:06:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63c5cbfe-4751-4409-9be7-2fda21b09503@app.fastmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com> <20250221-rmv_return-v1-14-cc8dff275827@quicinc.com>
+In-Reply-To: <20250221-rmv_return-v1-14-cc8dff275827@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Feb 2025 18:06:26 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i-_08mhOpsecuU+XzS8rKbk9mtgr_Kwx-QGRPh9jumKw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo18T3Py72uAV75_Jf5fdQvWu4rZ8JYWNQWcMOGXjnJR1QY3tpi4Yj9mbE
+Message-ID: <CAJZ5v0i-_08mhOpsecuU+XzS8rKbk9mtgr_Kwx-QGRPh9jumKw@mail.gmail.com>
+Subject: Re: [PATCH *-next 14/18] PM: wakeup: Remove needless return in three
+ void APIs
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Will Deacon <will@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, Thomas Graf <tgraf@suug.ch>, 
+	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Zijun Hu <zijun_hu@icloud.com>, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> >> +	if (ep == APPLE_RTKIT_EP_OSLOG) {
-> >> +		buffer->size = FIELD_GET(APPLE_RTKIT_OSLOG_SIZE, msg);
-> >> +		buffer->iova = FIELD_GET(APPLE_RTKIT_OSLOG_IOVA, msg) << 12;
-> >> +	} else {
-> >> +		buffer->size = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg) << 12;
-> >> +		buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
-> >> +	}
-> >
-> > The shifts are suspiciously asymmetric. Are we really sure this is
-> > correct? My guess is that both size & iova for both oslog & buffer need
-> > to be page-aligned, so all 4 lines should be shifted, and the bit
-> > offsets should be adjusted in turn, and the lower 12-bits in oslog_size
-> > and buffer_iova are reserved. But that's just a guess.
-> >
-> > Anyway if this logic is really what we want it deserves a comment
-> > because it looks like a typo.
-> 
-> That guess can't be true for syslog since there's no change in behavior here
-> and the syslog endpoint has been working fine so far. This common code is
-> also used for other endpoints that request buffers and there haven't been
-> any issues there either. The size is just passed in "number of 4k chunks"
-> and the IOVA needs no additional fixups.
-> 
-> 
-> The entire reason for this commit is because this common logic just didn't
-> work for oslog. Our u-boot fork uses the same logic as used here [1]. We're stealing
-> a chunk of MTP's SRAM to make hand-off to Linux easier there. If either size or
-> IOVA was off by a factor 0x4000 this would've never worked in the first
-> place.
+On Fri, Feb 21, 2025 at 2:03=E2=80=AFPM Zijun Hu <quic_zijuhu@quicinc.com> =
+wrote:
+>
+> Remove needless 'return' in the following void APIs:
+>
+>  __pm_wakeup_event()
+>  pm_wakeup_event()
+>  pm_wakeup_hard_event()
+>
+> Since both the API and callee involved are void functions.
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  include/linux/pm_wakeup.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+> index d501c09c60cd..51e0e8dd5f9e 100644
+> --- a/include/linux/pm_wakeup.h
+> +++ b/include/linux/pm_wakeup.h
+> @@ -205,17 +205,17 @@ static inline void device_set_awake_path(struct dev=
+ice *dev)
+>
+>  static inline void __pm_wakeup_event(struct wakeup_source *ws, unsigned =
+int msec)
+>  {
+> -       return pm_wakeup_ws_event(ws, msec, false);
+> +       pm_wakeup_ws_event(ws, msec, false);
+>  }
+>
+>  static inline void pm_wakeup_event(struct device *dev, unsigned int msec=
+)
+>  {
+> -       return pm_wakeup_dev_event(dev, msec, false);
+> +       pm_wakeup_dev_event(dev, msec, false);
+>  }
+>
+>  static inline void pm_wakeup_hard_event(struct device *dev)
+>  {
+> -       return pm_wakeup_dev_event(dev, 0, true);
+> +       pm_wakeup_dev_event(dev, 0, true);
+>  }
+>
+>  /**
+>
+> --
 
-I'm not suggesting things are off by a factor of 4k. Rather I'm
-questioning what the behaviour is when we're not 4k aligned. (I.e.
-the syslog or oslog buffer does not both start and end at 4k
-boundaries.)
-
-If we're aligned, all our bottom bits are 0, and hypothetically we're
-putting 0 into "reserved-must be zero" bits.
-
-I guess it's inconsequential if everything is 4k aligned in practice.
-But .. is it? I don't know.
+Applied as 6.15 material, thanks!
 
