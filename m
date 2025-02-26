@@ -1,171 +1,229 @@
-Return-Path: <linux-kernel+bounces-533348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD419A458D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:50:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA8AA458D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0474A3AACAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12523AAD10
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7072E224225;
-	Wed, 26 Feb 2025 08:50:19 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B871721ABDD;
+	Wed, 26 Feb 2025 08:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BxqWzA6B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9220CCF1;
-	Wed, 26 Feb 2025 08:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCEE1E1DE8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559819; cv=none; b=iwbxmKW1OsGsVtrrwkuiCYFrseY06JN5j/qaFNGVhncOvaxiJI0Ml44Ze35moXglpiUAdVu/jQum1lnYsDE0vL1GNAjo7x2+CEdLtz8DDmQ9hb4MEbX82VPYcUyb8xWS5jONVLZkch1WizyrX/jwuoa8GrtodAUhO2po3ukbhDM=
+	t=1740559857; cv=none; b=uBTanL5b0Cv9mFuLX9bqpBUmEGVipM3rETTffR8TCN6/+ogdETlSXez0/JYONgKPG2Lh+pFDKoVLKrEFcgOZ0LYqQ/zqIMhiK1h5imSw0LzXex0snraynRB7w/rDGUr5ZeC7o1HCNcmTrjHuTABIG2Pf0YrQoB2d9J8mBXEViQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559819; c=relaxed/simple;
-	bh=BivH3tFszd2zVodppEZRuCAzcKz2LvnM2DIJgfFZE88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTdIZ0L0zq7xUltpKqSghrXpIMB+BDwpy3uRfsjkDW/wC0HXHq8Gi2C+vNhqpCMrCHeot0WTArjyE1nMM46BD3ZaNOmvmzKNjRCkf2AKxt3iZAQHJ8bdd8aN3mDveKSHCuY5c0sjroRO2OzMCajDDOG1bxkDKUKbaovVzf9YrMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C632A441D9;
-	Wed, 26 Feb 2025 08:50:10 +0000 (UTC)
-Message-ID: <78e15b54-af08-4d41-bc39-71b4b7828497@ghiti.fr>
-Date: Wed, 26 Feb 2025 09:50:09 +0100
+	s=arc-20240116; t=1740559857; c=relaxed/simple;
+	bh=TlqIDV8RqYlxPo/b6yGAe9zWBggL5/w9qEsziGhHGZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhQtz/jK0p8QbYYQMV/tf5LPgLhAd9jTRTVhJK5znwPxwvRI8GT7NeNWweXOD4Fw0IREIcYioBv1t98mhF3mi0AiyXdWPVLoYLimvTFYyjodIqr5aUhddxXGqEVT/xajxwenl3BE39M4X106lnpwsi0vyJId7zTcsWYMjt1T8HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BxqWzA6B; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740559853;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W569uJXR/VXEzmXeXl4vPfAutQmoCsakKrgYooeW6j8=;
+	b=BxqWzA6BEAa3Fgkd7mINLnBTi92ZepZPFf0huM2qEmHB15Vfb9RJaO8mh9PAuWaVb2TuTm
+	tUgYN3ugpoB3yiDem7NePyhlIrcT7xsoBpv+ddAcP6ArHk4lEHRTs8xhFRZnHot1uYx9/t
+	Tpi78dAbtxMmF/ZxhgsIKB0n+M6S4VQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-3WwMwYbvP2SDeAnK7qewIg-1; Wed, 26 Feb 2025 03:50:52 -0500
+X-MC-Unique: 3WwMwYbvP2SDeAnK7qewIg-1
+X-Mimecast-MFC-AGG-ID: 3WwMwYbvP2SDeAnK7qewIg_1740559851
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4394c747c72so27749645e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:50:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740559851; x=1741164651;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W569uJXR/VXEzmXeXl4vPfAutQmoCsakKrgYooeW6j8=;
+        b=v6Z9feR6aYGLGhofxigEtJU06Ary34hnNy+dLKSdJmPYKiCGy3FubcGJT8e6vQ2BtE
+         Cy5K4o4ExOvHknF0wuwz6OLkSWzPHvoFGQ8acuQJgDFPdispbwgbGIg+BvY49GSZ48yJ
+         DIhTzlhuCC1KzuodQSe7oI8yjXvlhkR+8+lzZUbtbd4IB8yW7HpZ939x31WNEbnoeqIf
+         7e4LqIVR5SAolhfRt5ZAdBvP5KNnIRddlRXDefqJiyXVg33M9YfLsC3ITdFXuWavAnzR
+         Eb5xIHLZgzr9d8oLQ/k1u8L3eSN5kqv3WaMJ8J0UCzc7uhvTi6jjNd1Da/u76Vmfj6PD
+         egCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIAKryGg5Zzre11Y13x9SfdXDZpbJ+UaPnYDqSobkTbXN9dra0Z5Uv9vLpmDjT4uhYc/dNP9NyyPEuTPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhtTTf+v2W80ngspRv8dwY13vx0WOtVt0xS4qKXd91y2MdwVyd
+	AIC/5oLlmOuYSPwaHgNXKG4RyaW32UQugoKkYc75XczZt2PqkKX/asZstOahbvtdSzcIlvZkx2h
+	OhPH/TDTrSYnuXfjk6IJQo0HSxZnaniUwx4erwNpitDfUOniNZTJm1O9SYDIvpg==
+X-Gm-Gg: ASbGncvp8KnBs+QPLQxq2g/r2Weyijbj7+95TTV1qopXfKppbYtpiFCgSEprD0ia/f4
+	4CNksj6HlB67epTcZFN62OiRz/6XLgZQng32be1FUZIqRuAUkz2rdoc2jjJ20WEXCQoIj/XOTP0
+	7UhBgqOZJsBNTzfZRagZVQOPSxFQeAFsHpc/KWnJBCuz5IEzOvf+EOHjtFisbjSxRKr0Pnn+66k
+	L4r4hFin01321GQkm7uCaj4KjQZp7tclMYgGHvVuOTRW6tM+j9bPJ2LTcGWEr5hVorKjuuCd7XK
+	ltyWFdbPsw==
+X-Received: by 2002:a05:600c:4f93:b0:439:9c0e:3692 with SMTP id 5b1f17b1804b1-439b75b6417mr141340505e9.28.1740559851183;
+        Wed, 26 Feb 2025 00:50:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHbMJ5mkQfjiSQborGir/O3+YljBsy/esutoUmpA27ZFyuTcn1+Xvu16xwWUH6sOldzPwK0qQ==
+X-Received: by 2002:a05:600c:4f93:b0:439:9c0e:3692 with SMTP id 5b1f17b1804b1-439b75b6417mr141340255e9.28.1740559850795;
+        Wed, 26 Feb 2025 00:50:50 -0800 (PST)
+Received: from redhat.com ([2a02:14f:1eb:e270:8595:184c:7546:3597])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba4c437asm14054485e9.0.2025.02.26.00.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 00:50:50 -0800 (PST)
+Date: Wed, 26 Feb 2025 03:50:46 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com,
+	michael.christie@oracle.com, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
+Message-ID: <20250226035030-mutt-send-email-mst@kernel.org>
+References: <20250223154042.556001-1-lulu@redhat.com>
+ <20250223154042.556001-6-lulu@redhat.com>
+ <6vadeadshznfijaugusnwqprssqirxjtbtpprvokdk6yvvo6br@5ngvuz7peqoz>
+ <CACLfguU8-F=i3N6cyouBxwneM1Fr0oNs9ac3+c5xoHr_zcZW6A@mail.gmail.com>
+ <CAGxU2F7-UB+Jh41HkHKOqM+KNqSi2chEzVnFe9XAFmNun=0CTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: tracing: Fix __write_overflow_field in
- ftrace_partial_regs()
-Content-Language: en-US
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250224-fix_ftrace_partial_regs-v1-1-54b906417e86@rivosinc.com>
- <b449aacb-f981-4907-af37-1ca5aea83bb4@ghiti.fr> <Z74DlyiSS75MrkqS@ghost>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <Z74DlyiSS75MrkqS@ghost>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepteeiieetgffhuedvvdejieduheehieffffegveeitdelheegfffgtdevkeethedunecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmh
- hhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopeholhgvghesrhgvughhrghtrdgtohhm
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGxU2F7-UB+Jh41HkHKOqM+KNqSi2chEzVnFe9XAFmNun=0CTA@mail.gmail.com>
 
-Hi Charlie,
+On Wed, Feb 26, 2025 at 09:46:06AM +0100, Stefano Garzarella wrote:
+> Hi Cindy,
+> 
+> On Wed, 26 Feb 2025 at 07:14, Cindy Lu <lulu@redhat.com> wrote:
+> >
+> > On Tue, Feb 25, 2025 at 7:31 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
+> > >
+> > > On Sun, Feb 23, 2025 at 11:36:20PM +0800, Cindy Lu wrote:
+> > > >Add a new UAPI to enable setting the vhost device to task mode.
+> > > >The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
+> > > >to configure the mode if necessary.
+> > > >This setting must be applied before VHOST_SET_OWNER, as the worker
+> > > >will be created in the VHOST_SET_OWNER function
+> > > >
+> > > >Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > > >---
+> > > > drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
+> > > > include/uapi/linux/vhost.h | 18 ++++++++++++++++++
+> > > > 2 files changed, 40 insertions(+), 2 deletions(-)
+> > > >
+> > > >diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > > >index d8c0ea118bb1..45d8f5c5bca9 100644
+> > > >--- a/drivers/vhost/vhost.c
+> > > >+++ b/drivers/vhost/vhost.c
+> > > >@@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev, struct vhost_iotlb *umem)
+> > > >       int i;
+> > > >
+> > > >       vhost_dev_cleanup(dev);
+> > > >-
+> > > >+      dev->inherit_owner = true;
+> > > >       dev->umem = umem;
+> > > >       /* We don't need VQ locks below since vhost_dev_cleanup makes sure
+> > > >        * VQs aren't running.
+> > > >@@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
+> > > > {
+> > > >       struct eventfd_ctx *ctx;
+> > > >       u64 p;
+> > > >-      long r;
+> > > >+      long r = 0;
+> > > >       int i, fd;
+> > > >+      u8 inherit_owner;
+> > > >
+> > > >       /* If you are not the owner, you can become one */
+> > > >       if (ioctl == VHOST_SET_OWNER) {
+> > > >               r = vhost_dev_set_owner(d);
+> > > >               goto done;
+> > > >       }
+> > > >+      if (ioctl == VHOST_FORK_FROM_OWNER) {
+> > > >+              /*inherit_owner can only be modified before owner is set*/
+> > > >+              if (vhost_dev_has_owner(d)) {
+> > > >+                      r = -EBUSY;
+> > > >+                      goto done;
+> > > >+              }
+> > > >+              if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
+> > > >+                      r = -EFAULT;
+> > > >+                      goto done;
+> > > >+              }
+> > > >+              /* Validate the inherit_owner value, ensuring it is either 0 or 1 */
+> > > >+              if (inherit_owner > 1) {
+> > > >+                      r = -EINVAL;
+> > > >+                      goto done;
+> > > >+              }
+> > > >+
+> > > >+              d->inherit_owner = (bool)inherit_owner;
+> > > >
+> > > >+              goto done;
+> > > >+      }
+> > > >       /* You must be the owner to do anything else */
+> > > >       r = vhost_dev_check_owner(d);
+> > > >       if (r)
+> > > >diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> > > >index b95dd84eef2d..8f558b433536 100644
+> > > >--- a/include/uapi/linux/vhost.h
+> > > >+++ b/include/uapi/linux/vhost.h
+> > > >@@ -235,4 +235,22 @@
+> > > >  */
+> > > > #define VHOST_VDPA_GET_VRING_SIZE     _IOWR(VHOST_VIRTIO, 0x82,       \
+> > > >                                             struct vhost_vring_state)
+> > > >+
+> > > >+/**
+> > > >+ * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost device
+> > > >+ *
+> > > >+ * @param inherit_owner: An 8-bit value that determines the vhost thread mode
+> > > >+ *
+> > > >+ * When inherit_owner is set to 1:
+> > > >+ *   - The VHOST worker threads inherit its values/checks from
+> > > >+ *     the thread that owns the VHOST device, The vhost threads will
+> > > >+ *     be counted in the nproc rlimits.
+> > > >+ *
+> > > >+ * When inherit_owner is set to 0:
+> > > >+ *   - The VHOST worker threads will use the traditional kernel thread (kthread)
+> > > >+ *     implementation, which may be preferred by older userspace applications that
+> > > >+ *     do not utilize the newer vhost_task concept.
+> > > >+ */
+> > > >+#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+> > >
+> > > I don't think we really care of the size of the parameter, so can we
+> > > just use `bool` or `unsigned int` or `int` for this IOCTL?
+> > >
+> > > As we did for other IOCTLs where we had to enable/disable something (e.g
+> > > VHOST_VSOCK_SET_RUNNING, VHOST_VDPA_SET_VRING_ENABLE).
+> > >
+> > hi Stefano
+> > I initially used it as a boolean, but during the code review, the
+> > maintainers considered it was unsuitable for the bool use as the
+> 
+> I see, indeed I found only 1 case of bool:
+> 
+> include/uapi/misc/xilinx_sdfec.h:#define XSDFEC_SET_BYPASS
+> _IOW(XSDFEC_MAGIC, 9, bool)
+> 
+> > interface in ioctl (I think in version 3 ?). So I changed it to u8,
+> > then will check if this is 1/0 in ioctl and the u8 should be
+> > sufficient for us to use
+> 
+> Okay, if Michael and Jason are happy with it, it's fine.
+> It just seemed strange to me that for other IOCTLs we use int or
+> unsigned int when we need a boolean instead of a sized type.
 
-On 25/02/2025 18:53, Charlie Jenkins wrote:
-> On Tue, Feb 25, 2025 at 09:36:04AM +0100, Alexandre Ghiti wrote:
->> Hi Charlie,
->>
->> On 25/02/2025 03:42, Charlie Jenkins wrote:
->>> The size of &regs->a0 is unknown, causing the error:
->>>
->>> ../include/linux/fortify-string.h:571:25: warning: call to
->>> '__write_overflow_field' declared with attribute warning: detected write
->>> beyond size of field (1st parameter); maybe use struct_group()?
->>> [-Wattribute-warning]
->>
->> I can't reproduce this warning with gcc and llvm, even when setting by hand
->> -Wattribute-warning when compiling bpf_trace.c (which is the user of
->> ftrace_partial_regs()).
->>
->> Which toolchain did you use?
-> You need to have the configs:
-> CONFIG_BPF_SYSCALL=y
-> CONFIG_FORTIFY_SOURCE=y
-> CONFIG_FUNCTION_TRACER=y
-> CONFIG_FPROBE=y
-> CONFIG_DYNAMIC_FTRACE=y
->
-> I used gcc 14.2.0
+I only found VHOST_VSOCK_SET_RUNNING. which other ioctls?
 
+> Thanks for looking at it,
+> Stefano
 
-I was missing FPROBE!
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
-
->
-> - Charlie
->
->> Thanks,
->>
->> Alex
->>
->>
->>> Fix this by wrapping the required registers in pt_regs with
->>> struct_group() and reference the group when doing the offending
->>> memcpy().
->>>
->>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->>> ---
->>>    arch/riscv/include/asm/ftrace.h |  2 +-
->>>    arch/riscv/include/asm/ptrace.h | 18 ++++++++++--------
->>>    2 files changed, 11 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
->>> index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..ec6db1162021fbf4fa48fc87e7984266040aa7d9 100644
->>> --- a/arch/riscv/include/asm/ftrace.h
->>> +++ b/arch/riscv/include/asm/ftrace.h
->>> @@ -207,7 +207,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
->>>    {
->>>    	struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
->>> -	memcpy(&regs->a0, afregs->args, sizeof(afregs->args));
->>> +	memcpy(&regs->a_regs, afregs->args, sizeof(afregs->args));
->>>    	regs->epc = afregs->epc;
->>>    	regs->ra = afregs->ra;
->>>    	regs->sp = afregs->sp;
->>> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
->>> index b5b0adcc85c18e15c156de11172a5d7f03ada037..2910231977cb71dac3cc42f2dc32590284204057 100644
->>> --- a/arch/riscv/include/asm/ptrace.h
->>> +++ b/arch/riscv/include/asm/ptrace.h
->>> @@ -23,14 +23,16 @@ struct pt_regs {
->>>    	unsigned long t2;
->>>    	unsigned long s0;
->>>    	unsigned long s1;
->>> -	unsigned long a0;
->>> -	unsigned long a1;
->>> -	unsigned long a2;
->>> -	unsigned long a3;
->>> -	unsigned long a4;
->>> -	unsigned long a5;
->>> -	unsigned long a6;
->>> -	unsigned long a7;
->>> +	struct_group(a_regs,
->>> +		unsigned long a0;
->>> +		unsigned long a1;
->>> +		unsigned long a2;
->>> +		unsigned long a3;
->>> +		unsigned long a4;
->>> +		unsigned long a5;
->>> +		unsigned long a6;
->>> +		unsigned long a7;
->>> +	);
->>>    	unsigned long s2;
->>>    	unsigned long s3;
->>>    	unsigned long s4;
->>>
->>> ---
->>> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
->>> change-id: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
