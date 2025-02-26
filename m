@@ -1,116 +1,185 @@
-Return-Path: <linux-kernel+bounces-533042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A226A4551A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:52:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681DCA4551D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007D9189B886
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D97189407A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D59725E45B;
-	Wed, 26 Feb 2025 05:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FCB267399;
+	Wed, 26 Feb 2025 05:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C2ikENMY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJL2ZaKb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA4B27702
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CD1152196
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740549092; cv=none; b=Kqufh+V1T40483IYJZNg57o5AhgXFoLpOtPAvgJ5hW+p/1WzLnjVAmfPFKOwm85sDS768AIzFjRMQ4tKdLz2sWcISTzkdp5IBaL2C2KHO5wggoOYesKebWsiPpstcriKJJ+mQUd/yPveytPlRJRymQaSHspo5f8JzttUQu5OI6k=
+	t=1740549335; cv=none; b=Y6ZoHAVZ89JT6yPCaEXeVPzOY53CCxZLltLazfa10FMigKw166waIDtMEj1F23tjAeeKowjWI9JDq6Tjwzylre0+uVY1ZUq1iQ9uLonUBT7OVybK1doBLpSWccUr27TaSlEtQ37z2RpV8EHCEUmPzOWeZAk/QyaXw775Ig0y9k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740549092; c=relaxed/simple;
-	bh=IeJVwbCbE5P91licqnFXoefwVpnMOxtIkMli1JEBuEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Phw+QTZyRRcDl4ZaLrFBBDf+lpzPidmmoURy3zhHyosn5CpoMDpzoBsj0aafAphYdHjuYkH+woFqdDdcxPl2j1yemNDyQTGgyrlS5hV2dJZTu/2bXcHO2/6GEkfMuCzt0XweKKu7W9ja8HEoJN8FRIUI0luZJEVXXC6Fx98tG8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C2ikENMY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWqar011761;
-	Wed, 26 Feb 2025 05:51:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Pq0VnmDD2J5WUBS9njZY7rvRpMdayjGUpkeBScg3ekM=; b=C2ikENMYRACnTxuw
-	bI/s+EQQCe6OpTLIWYOJsv6HCa7zV09RbPZx/wkOn2YcqHNZgnyRIeP/ZnxoiuYB
-	pjv8TjEM12072me4GgMFpQqnJ7JFfvf8xrBCwN7N5sg+WN59fDr+ZNynS4tvqbwO
-	veC+P+9+/FPKVFEQZibOIIT+5ZwzuFjhpWDura5wnuLBb95iuSUeCzNh3yHy5JA3
-	kyc/rxLXAhs3ID+dyWH9a8kvJdjFloa5u1AF7lt2uepf31Cywg6a2f0wcwrD10AX
-	0C9aUOf4ucQ5Viij0+YTXz2banZQgW01LxFkZgq3cRIlC72g5H21fpYTN4u/aWVf
-	s9AqhQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmgv9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 05:51:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q5pGFx023779
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 05:51:16 GMT
-Received: from [10.50.7.168] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
- 2025 21:51:14 -0800
-Message-ID: <786af13e-942a-09ff-49c4-2a3d7e9be7c9@quicinc.com>
-Date: Wed, 26 Feb 2025 11:21:10 +0530
+	s=arc-20240116; t=1740549335; c=relaxed/simple;
+	bh=vaKDR9hbngLiZGD+p2sJcDm1T1lwxYB0m6SR8CKiniM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTwwOa5fMPAHouDlBheerltQ7I92uy9rQWPDuBmphApuKrwUFg0LWzqlXwH3OHLZH/Y6Hl8ctaOhYLl9iRWkULTBLZ4ClaFnECoe2oB6nNQK7Cb92AUkH1gjYB1SYMOvUytbCu/y9sxrFQXXirbsuUCeh/wNXs91SFC8YR60A6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJL2ZaKb; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740549333; x=1772085333;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vaKDR9hbngLiZGD+p2sJcDm1T1lwxYB0m6SR8CKiniM=;
+  b=GJL2ZaKbmqHLDxU79vOCmotSChyxtqazqfXQjhMMby5+4er74ScX4N4O
+   MrhA0JUV5ELgRh3b3OH2wV5xOXqsllXITPAH1NKaiQ3gEIKnx+1MaC0Zh
+   1pefWN2xrWAs40csaKyALydWMVZQBWqiPIC3lEPsxLuOcMJBcc2UOkgfK
+   GxsA1+gYb0tNd2Q9bUanFaw7Wn8r+11sgpYHHkiSq79iuWWzHb3zvc4f1
+   XtgekUasIEoGs+BnHNR1Ydrdv4Feb+cge0WU1MVQI1JjweQEQvH1biTwo
+   1lGtJ6ka6wC0V0h/rfx2VFMovrLJKyohsCTph1zIijKe6qTcW1OVz2jgX
+   A==;
+X-CSE-ConnectionGUID: a4yRLZ5ySqq3nNcBLd2hSg==
+X-CSE-MsgGUID: 1uB3NKioTAiA0PPb6j96jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52018649"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="52018649"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:55:33 -0800
+X-CSE-ConnectionGUID: ngLwMS7AQDizina2Nsdrgw==
+X-CSE-MsgGUID: SC0JhgYBRIOsgWTqvRAPvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="121599573"
+Received: from unknown (HELO [10.238.129.135]) ([10.238.129.135])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:55:30 -0800
+Message-ID: <83039906-77f7-4318-94bf-4c98bb3f0e32@linux.intel.com>
+Date: Wed, 26 Feb 2025 13:55:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] arm64: defconfig: Enable iris video driver
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-References: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
- <2bfb37fe-6e6a-4f9a-82be-5776935563cc@kernel.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <2bfb37fe-6e6a-4f9a-82be-5776935563cc@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: z8aScgOngP9vRzdKumFFZDUQ-X238CDA
-X-Proofpoint-GUID: z8aScgOngP9vRzdKumFFZDUQ-X238CDA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
- mlxlogscore=714 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260044
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
+To: Baolu Lu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+ <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+ <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
+ <20250225142610.GB545008@ziepe.ca>
+ <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
+ <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
+ 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
+ 8TCx1OJHpvWFmL4Deq8=
+In-Reply-To: <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+在 2025/2/26 13:18, Baolu Lu 写道:
+> On 2/26/25 11:50, Ethan Zhao wrote:
+>>>>>>
+>>> If the schedular doesn't run how did we get from 4 -> 5?
+>>>
+>>> Maybe the issue is the shutdown handler here is running in the wrong
+>>> time and it should not be running after the scheduler has been shut
+>>> down.
+>>>
+>>> I don't think removing the lock is a great idea without more
+>>> explanation.
+>>
+>> Seems it is not so simple job to explain why there is no race window 
+>> between
+>> this iommu_shutdown() and following dmar_global_lock holders.
+>>
+>> 1. PCIe hotplug dmar_pci_bus_notifier()
+>>
+>> 2. mm_core_init detect_intel_iommu()
+>>
+>> 3. late_initcall dmar_free_unused_resources()
+>>
+>> 4. acpi attach dmar_device_hotplug()
+>>
+>> 5. pci_iommu_init intel_iommu_init() init_dmars()
+>>
+>> 6. rootfs_initcall ir_dev_scope_init()
+>>
+>> though here is the last stage of reboot. then how about we turn back 
+>> to v1
+>>
+>> Just repalce with own_write() with down_write_trylock().
+>
+> I don't think trylock is a reasonable solution. intel_iommu_shutdown()
+> should not become a no-op simply because it cannot acquire a lock
+> immediately.
 
-On 2/25/2025 6:36 PM, Krzysztof Kozlowski wrote:
-> On 25/02/2025 11:09, Dikshita Agarwal wrote:
->> Enable the building of the iris video driver by default.
-> 
-> 
-> 1. Why?
-> 
-> 2. This was already sent by Neil...
-> 
-Apologies, I wasn't aware of that. May be I should subscribe to
-linux-kernel mailing list for such patches.
+No other CPUs is holding lock after they were brought down by sync call to
 
-Please ignore this patch.
+functionnative_stop_other_cpus(1).
 
-> Best regards,
-> Krzysztof
+So actually it wouldn't fail to acquire a lock.  this is also the reason why we don't
+
+need to down_write() thedmar_global_lock.
+
+>
+> The lock here is to protect the drhd (representation of iommu hardware)
+> list. It needs protection because this driver supports iommu hot-add and
+> remove, which is triggered by an ACPI event for I/O board hotplug.
+
+Yup, the lock is used to protect the global listdmar_drhd_units.
+
+but here all IOAPIC/LAPIC are brought down, hotplug interrupts couldn't 
+happend either. (only legacy and NMI are alive).
+
+> Provided the system does not respond to those events when this function
+> is called, it's fine to remove the lock.
+I agree.
+>
+> Thanks,
+> baolu
+
+-- 
+"firm, enduring, strong, and long-lived"
+
 
