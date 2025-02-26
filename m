@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-535167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F255A46FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:54:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80995A46FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A631888B66
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:54:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476D87A545F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ECB25E828;
-	Wed, 26 Feb 2025 23:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D09325F7A5;
+	Wed, 26 Feb 2025 23:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dkn+UrTV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFyzvZ+O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E234327004B;
-	Wed, 26 Feb 2025 23:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7927004B;
+	Wed, 26 Feb 2025 23:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740614050; cv=none; b=Owa2GtCij+a3ntIU3KymqNO1x6yn0NyYAWshy1SfPmUtjSaR2S0Lcm452tcSp/d+qse0kgPYzq2/3MLDQ/fUd9tiC5kZEVMENJCcw6TRLxYS/vO7oPf9BWSRuQEJvYMIacyJhwbhzX6nsz7KnA+IPymasF7SPLX6dONiWg3LzoI=
+	t=1740614090; cv=none; b=Wit5yS/XZ6pFgCFJnkrDUJXh8yKPcwM1LslqnGlgX7z4oRsnlPSE3x0Ei4V64QY2io1/fNmHrIxhY3mUEtkzY5JmthOu7p3yZj3KrgMQN9d6QVUY2N0n4WY0vLIfdcy45L0HAMOzcOAmqWMa9FbWdalAlsSu4+3n8cOyRysAh8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740614050; c=relaxed/simple;
-	bh=jD7Egp07f6gfVmAR4BHuiJ5BbwvTOiAt4ojlMd6cO0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dlzh3N74TzAFbMjxvVrl+OrGg4o5ONfOjAI4D4fliloeopyqy0JTZpErtZzVyrIvYy/BTHIkDrIQgHFf4Nq2o+TdyRNW4fGIUbS1JCY48IjYFS6fXKDUgqUBEmIk+VsrRpKIqM1kDOqrLDO1/JbW1sjii/9HlUYvAZR3F1PVeaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dkn+UrTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F40C4CED6;
-	Wed, 26 Feb 2025 23:54:09 +0000 (UTC)
+	s=arc-20240116; t=1740614090; c=relaxed/simple;
+	bh=YUskBTkxhympUP6Mt/bQ164L/YKQXYDZt/yEpEGdp9c=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=XdIbE3wanLfUTpWU22xf0HHU4CIh0JjHFt7ptmXscKzh1zSoIHHEdoZeyCIKRiCbi8UZ5xgE8wOOeGFCEGW3hrr3xMoAEACJ9LrcSA6rHuCF+XeT9O1GgcpAMnt7jdeSgGhg808ELpBz/YR3ukwzEK5+Zimk8HR4pZVbEE4oblw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFyzvZ+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DF2C4CED6;
+	Wed, 26 Feb 2025 23:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740614049;
-	bh=jD7Egp07f6gfVmAR4BHuiJ5BbwvTOiAt4ojlMd6cO0s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dkn+UrTVK3hyBc8RIZFfjdh7VK3/c4/eAlGuSsLCCAuCylSpxQeaK+3CtSkMJkqb7
-	 OOhZDnRwlsAFUkVt8hnh0BR2S4WMM5UVMSzhxjPicwgIew7zBMZeLi0ZaPT7EpHz0U
-	 hqofYN3QJv+oZ9ouYVNK2HWA7JmGplpkgXM21cWn3zgNkbGj9Q8e0F30XnpBH07wWJ
-	 9QI3D33b38pJmh4FufTfWTpFbcNmgu/T4ru9cL6UrAzUj+AM1xEKsFFLaCtdjkmCzK
-	 nPjIVffIJoIlgdaou3PdXJQlt60IEswZj4TEc/394l2U9sDVmkX9iddidGgOQnQ2hh
-	 NzpHI1B87RNBQ==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] clk: Print an error when clk registration fails
-Date: Wed, 26 Feb 2025 15:54:07 -0800
-Message-ID: <20250226235408.1339266-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+	s=k20201202; t=1740614090;
+	bh=YUskBTkxhympUP6Mt/bQ164L/YKQXYDZt/yEpEGdp9c=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=dFyzvZ+O6w2TFJX7p/NFufQIv1pOXDI8An2gT1zT7nQqP0GPusWu1vEiM2WMUWcmW
+	 sItYVpBw12Gmv3SwQOitJb+esi6VjFL3ZwZW3qaFuF+JLNr1EjusjOfzHbBAmx6HJm
+	 EOXAALJP09nJKYT/jsKRW2pBpeyCwVpxcxpj9U0fMJNT/S1MfHMZbDTcoB1xMAioxQ
+	 oshnfGtb5X7cRAy/j/kNanRYFp90H57W0Ac51V1vGA5wsDfivIAvqi47Q0q8Qmwcxg
+	 yBcv5bRlKfO5H3dBs7XSWlgt8rbvC9vHEjMawVBPTPjw7MqUA+YNvKTHJrf6byMVMx
+	 aBTYceJ3EUB0w==
+Message-ID: <eaae8c47a4bc27d512c76d9f107f1e00.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+References: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
+From: Stephen Boyd <sboyd@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 26 Feb 2025 15:54:48 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-We have a lot of driver code that prints an error message when
-registering a clk fails. Do that in the core function instead to
-consolidate code. This also helps drivers avoid the anti-pattern of
-accessing the struct clk_hw::init pointer after registration.
+Quoting Krzysztof Kozlowski (2025-01-29 07:45:19)
+> The parent of disp_cc_mdss_byte0_intf_clk clock should not propagate up
+> the rates, because this messes up entire clock hierarchy when setting
+> clock rates in MSM DSI driver.
+>=20
+> The dsi_link_clk_set_rate_6g() first sets entire clock hierarchy rates
+> via dev_pm_opp_set_rate() on byte clock and then sets individual clock
+> rates, like pixel and byte_intf clocks, to proper frequencies.  Having
+> CLK_SET_RATE_PARENT caused that entire tree was re-calced and the byte
+> clock received halved frequency.  Drop CLK_SET_RATE_PARENT to fix this
+> and align with SM8550 and SM8650.
+>=20
+> Fixes: f1080d8dab0f ("clk: qcom: dispcc-sm8750: Add SM8750 Display clock =
+controller")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> ---
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cf7720b9172f..466521248a34 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4397,6 +4397,13 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- fail_name:
- 	kref_put(&core->ref, __clk_release);
- fail_out:
-+	if (dev) {
-+		dev_err_probe(dev, ret, "failed to register clk '%s' (%pS)\n",
-+			      init->name, hw);
-+	} else {
-+		pr_err("%pOF: error %pe: failed to register clk '%s' (%pS)\n",
-+		       np, ERR_PTR(ret), init->name, hw);
-+	}
- 	return ERR_PTR(ret);
- }
- 
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
+Applied to clk-fixes
 
