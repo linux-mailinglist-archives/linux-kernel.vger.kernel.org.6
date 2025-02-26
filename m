@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-534639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A4CA46966
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:19:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C966A46988
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA003A9A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:19:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A3787A1330
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BA424BBF7;
-	Wed, 26 Feb 2025 18:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3484725D536;
+	Wed, 26 Feb 2025 18:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CTx0gEBC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YtXXhq1I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AF02405E9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6346F25A32B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593728; cv=none; b=X89RwuB3iM3zW6QeFaj5UFC3pQ1HQIisMc6THYG73DW4oUAilwCnYW6bjHEvMr+8/1kEzbXyVQEH6g2VigcYm1ebqG9ZA+1Ir00f8yLgC7pgY+TM8Njeoe6cibG+lcAEOUFjfRH5p3Y38BeXBKyqIjX64hVyWlJZffwMqAXmaHg=
+	t=1740593744; cv=none; b=dPoqb/i+ElGYzfFZReqV86VHHp8s1qaGfaEhh9GcP16JGRGHNSV4RpScKSxfrJc61OwbLJI1XdEA3k9JTssFbVcuwAjPGIWV4FRg7PKKEv/8QKww3lP4M0PFgCYT4l2J7dD+TQcZZzYpr/54aV8500z+gIO9IB7Vgsah18fwQLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593728; c=relaxed/simple;
-	bh=icjSmhgPFStnbRyA4WYaOU0vRUDRbVJz/bGa7RLscpg=;
+	s=arc-20240116; t=1740593744; c=relaxed/simple;
+	bh=eu50HJKfyrCTMD4ztoEkCZGNty0iOhs0JtUIdC5Ri1o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VjOlsqo9K2JjNqoO8WdXLjZ3TilYmicvPgN+ZRX1jbafCiv2tEggFAjigpr1Ry5UiH7l70ko7wMZYigDr2MDeI1pXfrhdS3833eSQAhXkgtE5a784Vt05Ty7mmy9gTrDR0xvph69e0LfmALviU9yxZJzKc+QYbJh8muLYjUMcz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CTx0gEBC; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=kwvjBD3qoKwIpfuLFLXvyc7wfiqbHEk4U5r5Ee7wVTZaOIhO3hpEy6yBQkD3IhbvJ65DgO/M82C3WYNmLGluSYPYVILVPMcqkr/VEdUDZ7csrdafLPcjxbUt+ohm8REL9zMgHlGiZ5mP9RSSZH0sp/RyOpPqRLfBHwyJo4IbdfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YtXXhq1I; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740593723;
+	s=mimecast20190719; t=1740593741;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=05c5BPt8MNpSjxU+rl+LAMkTS2Bxf0RZmafFNTbklaQ=;
-	b=CTx0gEBCBIA+OImDPHlmmtGCIhir9v7SBG2QqepT6hhHZwJHy39wYwIYIIXXfZ5HV/zC3l
-	7YbrEiA8oPFxrPhtYhYpjHIHh/TuOWRWxWgwtLcJpFapxBg5z1ZGwLh3SLSsxgyIinHeWw
-	uQ7hvB6we/I5Z8amZAlq5QMwB0fl/cU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=bVGdK/kkfSDfuv7grRfMiXUUF7ivbIYfwlJKDtAOPok=;
+	b=YtXXhq1IG5ouOzhrW9XnQ6gCvp8HmMiS+Mb6sXGqJxMJNHiSOqG/xByvoFoCd3UVoshC65
+	wrcCOYYRrXGdrWQ9+FIHvH59fGcjP9pUVlZB08qLb8ocI6a23KC7fAHNw0t+0tebeNgV1y
+	slgUYB9kqIUawiJ1wFife5IIEp8hFEI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-twfcRpmnP86DFa7eIrtoZA-1; Wed,
- 26 Feb 2025 13:15:21 -0500
-X-MC-Unique: twfcRpmnP86DFa7eIrtoZA-1
-X-Mimecast-MFC-AGG-ID: twfcRpmnP86DFa7eIrtoZA_1740593720
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-iXwxSvNBN0O21JYPwKaTow-1; Wed,
+ 26 Feb 2025 13:15:24 -0500
+X-MC-Unique: iXwxSvNBN0O21JYPwKaTow-1
+X-Mimecast-MFC-AGG-ID: iXwxSvNBN0O21JYPwKaTow_1740593722
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D7D619560BC;
-	Wed, 26 Feb 2025 18:15:20 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 178331800987;
+	Wed, 26 Feb 2025 18:15:22 +0000 (UTC)
 Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BDA21954B01;
-	Wed, 26 Feb 2025 18:15:19 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A1CA11955BD4;
+	Wed, 26 Feb 2025 18:15:20 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
 Cc: seanjc@google.com,
 	Yan Zhao <yan.y.zhao@intel.com>,
 	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: [PATCH 17/33] KVM: TDX: Add placeholders for TDX VM/vCPU structures
-Date: Wed, 26 Feb 2025 13:14:36 -0500
-Message-ID: <20250226181453.2311849-18-pbonzini@redhat.com>
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>,
+	Sean Christopherson <sean.j.christopherson@intel.com>,
+	Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH 18/33] KVM: TDX: Define TDX architectural definitions
+Date: Wed, 26 Feb 2025 13:14:37 -0500
+Message-ID: <20250226181453.2311849-19-pbonzini@redhat.com>
 In-Reply-To: <20250226181453.2311849-1-pbonzini@redhat.com>
 References: <20250226181453.2311849-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -80,242 +83,170 @@ X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 From: Isaku Yamahata <isaku.yamahata@intel.com>
 
-Add TDX's own VM and vCPU structures as placeholder to manage and run
-TDX guests.  Also add helper functions to check whether a VM/vCPU is
-TDX or normal VMX one, and add helpers to convert between TDX VM/vCPU
-and KVM VM/vCPU.
+Define architectural definitions for KVM to issue the TDX SEAMCALLs.
 
-TDX protects guest VMs from malicious host.  Unlike VMX guests, TDX
-guests are crypto-protected.  KVM cannot access TDX guests' memory and
-vCPU states directly.  Instead, TDX requires KVM to use a set of TDX
-architecture-defined firmware APIs (a.k.a TDX module SEAMCALLs) to
-manage and run TDX guests.
+Structures and values that are architecturally defined in the TDX module
+specifications the chapter of ABI Reference.
 
-In fact, the way to manage and run TDX guests and normal VMX guests are
-quite different.  Because of that, the current structures
-('struct kvm_vmx' and 'struct vcpu_vmx') to manage VMX guests are not
-quite suitable for TDX guests.  E.g., the majority of the members of
-'struct vcpu_vmx' don't apply to TDX guests.
-
-Introduce TDX's own VM and vCPU structures ('struct kvm_tdx' and 'struct
-vcpu_tdx' respectively) for KVM to manage and run TDX guests.  And
-instead of building TDX's VM and vCPU structures based on VMX's, build
-them directly based on 'struct kvm'.
-
-As a result, TDX and VMX guests will have different VM size and vCPU
-size/alignment.
-
-Currently, kvm_arch_alloc_vm() uses 'kvm_x86_ops::vm_size' to allocate
-enough space for the VM structure when creating guest.  With TDX guests,
-ideally, KVM should allocate the VM structure based on the VM type so
-that the precise size can be allocated for VMX and TDX guests.  But this
-requires more extensive code change.  For now, simply choose the maximum
-size of 'struct kvm_tdx' and 'struct kvm_vmx' for VM structure
-allocation for both VMX and TDX guests.  This would result in small
-memory waste for each VM which has smaller VM structure size but this is
-acceptable.
-
-For simplicity, use the same way for vCPU allocation too.  Otherwise KVM
-would need to maintain a separate 'kvm_vcpu_cache' for each VM type.
-
-Note, updating the 'vt_x86_ops::vm_size' needs to be done before calling
-kvm_ops_update(), which copies vt_x86_ops to kvm_x86_ops.  However this
-happens before TDX module initialization.  Therefore theoretically it is
-possible that 'kvm_x86_ops::vm_size' is set to size of 'struct kvm_tdx'
-(when it's larger) but TDX actually fails to initialize at a later time.
-
-Again the worst case of this is wasting couple of bytes memory for each
-VM.  KVM could choose to update 'kvm_x86_ops::vm_size' at a later time
-depending on TDX's status but that would require base KVM module to
-export either kvm_x86_ops or kvm_ops_update().
-
+Co-developed-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+---
+ - Drop old duplicate defines, the x86 core exports what's needed (Kai)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- - Make to_kvm_tdx() and to_tdx() private to tdx.c (Francesco, Tony)
- - Add pragma poison for to_vmx() (Paolo)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/main.c | 53 ++++++++++++++++++++++++++++++++++++++---
- arch/x86/kvm/vmx/tdx.c  | 14 ++++++++++-
- arch/x86/kvm/vmx/tdx.h  | 37 ++++++++++++++++++++++++++++
- 3 files changed, 100 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx/tdx.h      |   2 +
+ arch/x86/kvm/vmx/tdx_arch.h | 123 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+)
+ create mode 100644 arch/x86/kvm/vmx/tdx_arch.h
 
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 97c453187cc1..5c1acc88feef 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -8,6 +8,39 @@
- #include "posted_intr.h"
- #include "tdx.h"
- 
-+static __init int vt_hardware_setup(void)
-+{
-+	int ret;
-+
-+	ret = vmx_hardware_setup();
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Update vt_x86_ops::vm_size here so it is ready before
-+	 * kvm_ops_update() is called in kvm_x86_vendor_init().
-+	 *
-+	 * Note, the actual bringing up of TDX must be done after
-+	 * kvm_ops_update() because enabling TDX requires enabling
-+	 * hardware virtualization first, i.e., all online CPUs must
-+	 * be in post-VMXON state.  This means the @vm_size here
-+	 * may be updated to TDX's size but TDX may fail to enable
-+	 * at later time.
-+	 *
-+	 * The VMX/VT code could update kvm_x86_ops::vm_size again
-+	 * after bringing up TDX, but this would require exporting
-+	 * either kvm_x86_ops or kvm_ops_update() from the base KVM
-+	 * module, which looks overkill.  Anyway, the worst case here
-+	 * is KVM may allocate couple of more bytes than needed for
-+	 * each VM.
-+	 */
-+	if (enable_tdx)
-+		vt_x86_ops.vm_size = max_t(unsigned int, vt_x86_ops.vm_size,
-+				sizeof(struct kvm_tdx));
-+
-+	return 0;
-+}
-+
- #define VMX_REQUIRED_APICV_INHIBITS				\
- 	(BIT(APICV_INHIBIT_REASON_DISABLED) |			\
- 	 BIT(APICV_INHIBIT_REASON_ABSENT) |			\
-@@ -163,7 +196,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
- };
- 
- struct kvm_x86_init_ops vt_init_ops __initdata = {
--	.hardware_setup = vmx_hardware_setup,
-+	.hardware_setup = vt_hardware_setup,
- 	.handle_intel_pt_intr = NULL,
- 
- 	.runtime_ops = &vt_x86_ops,
-@@ -180,6 +213,7 @@ module_exit(vt_exit);
- 
- static int __init vt_init(void)
- {
-+	unsigned vcpu_size, vcpu_align;
- 	int r;
- 
- 	r = vmx_init();
-@@ -191,12 +225,25 @@ static int __init vt_init(void)
- 	if (r)
- 		goto err_tdx_bringup;
- 
-+	/*
-+	 * TDX and VMX have different vCPU structures.  Calculate the
-+	 * maximum size/align so that kvm_init() can use the larger
-+	 * values to create the kmem_vcpu_cache.
-+	 */
-+	vcpu_size = sizeof(struct vcpu_vmx);
-+	vcpu_align = __alignof__(struct vcpu_vmx);
-+	if (enable_tdx) {
-+		vcpu_size = max_t(unsigned, vcpu_size,
-+				sizeof(struct vcpu_tdx));
-+		vcpu_align = max_t(unsigned, vcpu_align,
-+				__alignof__(struct vcpu_tdx));
-+	}
-+
- 	/*
- 	 * Common KVM initialization _must_ come last, after this, /dev/kvm is
- 	 * exposed to userspace!
- 	 */
--	r = kvm_init(sizeof(struct vcpu_vmx), __alignof__(struct vcpu_vmx),
--		     THIS_MODULE);
-+	r = kvm_init(vcpu_size, vcpu_align, THIS_MODULE);
- 	if (r)
- 		goto err_kvm_init;
- 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index b74a50e8d086..c319eb44d9f9 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -5,16 +5,28 @@
- #include "capabilities.h"
- #include "tdx.h"
- 
-+#pragma GCC poison to_vmx
-+
- #undef pr_fmt
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--static bool enable_tdx __ro_after_init;
-+bool enable_tdx __ro_after_init;
- module_param_named(tdx, enable_tdx, bool, 0444);
- 
- static enum cpuhp_state tdx_cpuhp_state;
- 
- static const struct tdx_sys_info *tdx_sysinfo;
- 
-+static __always_inline struct kvm_tdx *to_kvm_tdx(struct kvm *kvm)
-+{
-+	return container_of(kvm, struct kvm_tdx, kvm);
-+}
-+
-+static __always_inline struct vcpu_tdx *to_tdx(struct kvm_vcpu *vcpu)
-+{
-+	return container_of(vcpu, struct vcpu_tdx, vcpu);
-+}
-+
- static int tdx_online_cpu(unsigned int cpu)
- {
- 	unsigned long flags;
 diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index 8aee938a968f..fc013c8816f1 100644
+index fc013c8816f1..4dea6e89fc69 100644
 --- a/arch/x86/kvm/vmx/tdx.h
 +++ b/arch/x86/kvm/vmx/tdx.h
-@@ -5,9 +5,46 @@
+@@ -2,6 +2,8 @@
+ #ifndef __KVM_X86_VMX_TDX_H
+ #define __KVM_X86_VMX_TDX_H
+ 
++#include "tdx_arch.h"
++
  #ifdef CONFIG_INTEL_TDX_HOST
  int tdx_bringup(void);
  void tdx_cleanup(void);
+diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+new file mode 100644
+index 000000000000..fb7abe9fef8e
+--- /dev/null
++++ b/arch/x86/kvm/vmx/tdx_arch.h
+@@ -0,0 +1,123 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* architectural constants/data definitions for TDX SEAMCALLs */
 +
-+extern bool enable_tdx;
++#ifndef __KVM_X86_TDX_ARCH_H
++#define __KVM_X86_TDX_ARCH_H
 +
-+struct kvm_tdx {
-+	struct kvm kvm;
-+	/* TDX specific members follow. */
++#include <linux/types.h>
++
++/* TDX control structure (TDR/TDCS/TDVPS) field access codes */
++#define TDX_NON_ARCH			BIT_ULL(63)
++#define TDX_CLASS_SHIFT			56
++#define TDX_FIELD_MASK			GENMASK_ULL(31, 0)
++
++#define __BUILD_TDX_FIELD(non_arch, class, field)	\
++	(((non_arch) ? TDX_NON_ARCH : 0) |		\
++	 ((u64)(class) << TDX_CLASS_SHIFT) |		\
++	 ((u64)(field) & TDX_FIELD_MASK))
++
++#define BUILD_TDX_FIELD(class, field)			\
++	__BUILD_TDX_FIELD(false, (class), (field))
++
++#define BUILD_TDX_FIELD_NON_ARCH(class, field)		\
++	__BUILD_TDX_FIELD(true, (class), (field))
++
++
++/* Class code for TD */
++#define TD_CLASS_EXECUTION_CONTROLS	17ULL
++
++/* Class code for TDVPS */
++#define TDVPS_CLASS_VMCS		0ULL
++#define TDVPS_CLASS_GUEST_GPR		16ULL
++#define TDVPS_CLASS_OTHER_GUEST		17ULL
++#define TDVPS_CLASS_MANAGEMENT		32ULL
++
++enum tdx_tdcs_execution_control {
++	TD_TDCS_EXEC_TSC_OFFSET = 10,
 +};
 +
-+struct vcpu_tdx {
-+	struct kvm_vcpu	vcpu;
-+	/* TDX specific members follow. */
++/* @field is any of enum tdx_tdcs_execution_control */
++#define TDCS_EXEC(field)		BUILD_TDX_FIELD(TD_CLASS_EXECUTION_CONTROLS, (field))
++
++/* @field is the VMCS field encoding */
++#define TDVPS_VMCS(field)		BUILD_TDX_FIELD(TDVPS_CLASS_VMCS, (field))
++
++/* @field is any of enum tdx_guest_other_state */
++#define TDVPS_STATE(field)		BUILD_TDX_FIELD(TDVPS_CLASS_OTHER_GUEST, (field))
++#define TDVPS_STATE_NON_ARCH(field)	BUILD_TDX_FIELD_NON_ARCH(TDVPS_CLASS_OTHER_GUEST, (field))
++
++/* Management class fields */
++enum tdx_vcpu_guest_management {
++	TD_VCPU_PEND_NMI = 11,
 +};
 +
-+static inline bool is_td(struct kvm *kvm)
-+{
-+	return kvm->arch.vm_type == KVM_X86_TDX_VM;
-+}
++/* @field is any of enum tdx_vcpu_guest_management */
++#define TDVPS_MANAGEMENT(field)		BUILD_TDX_FIELD(TDVPS_CLASS_MANAGEMENT, (field))
 +
-+static inline bool is_td_vcpu(struct kvm_vcpu *vcpu)
-+{
-+	return is_td(vcpu->kvm);
-+}
++#define TDX_EXTENDMR_CHUNKSIZE		256
 +
- #else
- static inline int tdx_bringup(void) { return 0; }
- static inline void tdx_cleanup(void) {}
++struct tdx_cpuid_value {
++	u32 eax;
++	u32 ebx;
++	u32 ecx;
++	u32 edx;
++} __packed;
 +
-+#define enable_tdx	0
++#define TDX_TD_ATTR_DEBUG		BIT_ULL(0)
++#define TDX_TD_ATTR_SEPT_VE_DISABLE	BIT_ULL(28)
++#define TDX_TD_ATTR_PKS			BIT_ULL(30)
++#define TDX_TD_ATTR_KL			BIT_ULL(31)
++#define TDX_TD_ATTR_PERFMON		BIT_ULL(63)
 +
-+struct kvm_tdx {
-+	struct kvm kvm;
-+};
++/*
++ * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is 1024B.
++ */
++struct td_params {
++	u64 attributes;
++	u64 xfam;
++	u16 max_vcpus;
++	u8 reserved0[6];
 +
-+struct vcpu_tdx {
-+	struct kvm_vcpu	vcpu;
-+};
++	u64 eptp_controls;
++	u64 config_flags;
++	u16 tsc_frequency;
++	u8  reserved1[38];
 +
-+static inline bool is_td(struct kvm *kvm) { return false; }
-+static inline bool is_td_vcpu(struct kvm_vcpu *vcpu) { return false; }
++	u64 mrconfigid[6];
++	u64 mrowner[6];
++	u64 mrownerconfig[6];
++	u64 reserved2[4];
 +
- #endif
- 
- #endif
++	union {
++		DECLARE_FLEX_ARRAY(struct tdx_cpuid_value, cpuid_values);
++		u8 reserved3[768];
++	};
++} __packed __aligned(1024);
++
++/*
++ * Guest uses MAX_PA for GPAW when set.
++ * 0: GPA.SHARED bit is GPA[47]
++ * 1: GPA.SHARED bit is GPA[51]
++ */
++#define TDX_CONFIG_FLAGS_MAX_GPAW      BIT_ULL(0)
++
++/*
++ * TDH.VP.ENTER, TDG.VP.VMCALL preserves RBP
++ * 0: RBP can be used for TDG.VP.VMCALL input. RBP is clobbered.
++ * 1: RBP can't be used for TDG.VP.VMCALL input. RBP is preserved.
++ */
++#define TDX_CONFIG_FLAGS_NO_RBP_MOD	BIT_ULL(2)
++
++
++/*
++ * TDX requires the frequency to be defined in units of 25MHz, which is the
++ * frequency of the core crystal clock on TDX-capable platforms, i.e. the TDX
++ * module can only program frequencies that are multiples of 25MHz.  The
++ * frequency must be between 100mhz and 10ghz (inclusive).
++ */
++#define TDX_TSC_KHZ_TO_25MHZ(tsc_in_khz)	((tsc_in_khz) / (25 * 1000))
++#define TDX_TSC_25MHZ_TO_KHZ(tsc_in_25mhz)	((tsc_in_25mhz) * (25 * 1000))
++#define TDX_MIN_TSC_FREQUENCY_KHZ		(100 * 1000)
++#define TDX_MAX_TSC_FREQUENCY_KHZ		(10 * 1000 * 1000)
++
++#endif /* __KVM_X86_TDX_ARCH_H */
 -- 
 2.43.5
 
