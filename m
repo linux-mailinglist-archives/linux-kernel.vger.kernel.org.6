@@ -1,137 +1,265 @@
-Return-Path: <linux-kernel+bounces-534664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F726A469B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFEAA469B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04717A3B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:26:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC9A67A2542
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3714D242914;
-	Wed, 26 Feb 2025 18:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2C1241673;
+	Wed, 26 Feb 2025 18:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MIXtaLXN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TFhmjS12"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473724290C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DF919924E;
+	Wed, 26 Feb 2025 18:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594111; cv=none; b=A9q4OwAJqUcLkMWBaVzWPGE1ctVvjdqTYmpUG8SpO/Q9IXatr4f0BI1kDR90pLNPw8GPEiqr6QCrLglMZXdTnnMChnTq4KQHHb6CB6y9jS+xOeYHw5IgE9f7CFQCK8x6i2y7Ne1pmWud81tz1DnNJvhnMB5ihxoXOcHX4cMegN0=
+	t=1740594098; cv=none; b=CeNjpmf3lvDyYsFN98T95uTqZxY2FiQjoFN2t8OvTchKvPo+vpsPRfS0xUkc1FjzWQjs8vyDsgAc0bkiOfEsXR6XbI8TRoRmF24THK5YbLWKCihOJw8khGE10S7mF811e7o4nJ8pg+a9g25WAS/voDrDTa0GxXE9Czu0mHLcRTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594111; c=relaxed/simple;
-	bh=J7ovxnKT0ZvQVH613CvGpayHDJqrYNEgWsiZJWPhdB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayT1hEuJJ8kmlo5iJ+uclXxvzFv+EHtH0cxYs3GVh60+HsmCuOdYoUe/jKDoHcptNoaGplRFDeak+jY9sjakTtLeo7rzM/IaTUgdPhnUpdO5qGbfCPlXdwbX8f+J+VuXuf4AtnSCnlRq9bTjSYoApB68Itm+0+qf7PD7EEXqcUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MIXtaLXN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740594109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j1F9I/iZ8TAs5hDxt1ttZ19kx2JlBHbTF4jlMhaCVOo=;
-	b=MIXtaLXNnTuYXPTKGd+quTwwlUJKo+2gs2YRZrj2NgRNZZdXRBxcJhOXgH5MvxHuEhT882
-	+Fu5yuYYlpp0UF5FFP8Wt5Qt7RIzIyPo7R0wSrJc3WkfL1zFwTDePIEgDc1eaJO4MGMY+G
-	QFh0Osp61MBl+uA701eWezlaIE+JH0E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-xJSHAuiPNtaqTVVQa1RKpQ-1; Wed,
- 26 Feb 2025 13:21:44 -0500
-X-MC-Unique: xJSHAuiPNtaqTVVQa1RKpQ-1
-X-Mimecast-MFC-AGG-ID: xJSHAuiPNtaqTVVQa1RKpQ_1740594100
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4022B19039C5;
-	Wed, 26 Feb 2025 18:21:38 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CF318300018D;
-	Wed, 26 Feb 2025 18:21:21 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 19:21:08 +0100 (CET)
-Date: Wed, 26 Feb 2025 19:20:50 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz,
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org,
-	avagin@gmail.com, benjamin@sipsolutions.net,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
-	hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-Message-ID: <20250226182050.GK8995@redhat.com>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-7-jeffxu@google.com>
- <20250226162604.GA17833@redhat.com>
- <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
- <20250226180135.GI8995@redhat.com>
- <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
+	s=arc-20240116; t=1740594098; c=relaxed/simple;
+	bh=9GQVHSyqDyUopJd0bMK6Kr3UM36PkXsxLEFxyNe1IOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YHqDc7Ii9XEPRtcbJ0AhtTmivDA8AJK6d0vd7BIjlCLT03+/VmxKXelb7px/h11UoVG4KdYdK3y7QzuwBUvS7C2cEO/muHZHLV2+gsTR+qYft7nLokGnPWK+bkJGT9ID/O8XyCarMSAMY+wOofMRYyrDipPPojBivdxSNr5mnkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TFhmjS12; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QA4XtO013260;
+	Wed, 26 Feb 2025 18:21:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZWSD4j6EEFeqcOQdnQ85n26HkbUr80sn+V/kPvDpcbA=; b=TFhmjS128+nTmbVt
+	zgEhsr+6Gk9pCQ5euCwg59tHf768r3RCoo/nwqxl4b3JM/sduzRjgq4VDxiJyty9
+	4v98eHvQQPdplALtddMSMkp3KgybruXhgX/QzgNEvm8Il220HyjzJzDJdcnRo+VW
+	y4pXy+VimBqWbfJiDM0u8uFbYvdH3ot05YpZACePJiKF0JlsvKY6ChKYPGWtEyMg
+	nVztZ0kM3+ErXYeQfuXswA8PEiedMTGMZ2BZ9tyMsHuxb6ReRAcp+qUhuuzLNaHb
+	jYbZKESkazH7+wO2Y3q4bFfkDgtmlmvxGBWCjPtjaShjjDkygn8u9M8O0DgHMy6a
+	mTLmmw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prk2wg2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 18:21:30 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51QILTom026686
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 18:21:29 GMT
+Received: from [10.216.2.27] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
+ 2025 10:21:25 -0800
+Message-ID: <0a193a56-0197-486b-9d36-20aeb0d5860a@quicinc.com>
+Date: Wed, 26 Feb 2025 23:51:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: add wifi node for IPQ5332 based
+ RDP441
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>
+References: <20250130045900.1903927-1-quic_rajkbhag@quicinc.com>
+ <3iwfhcl5gmpwfiatsawwkm5qns4pmzvhcrroq236y45kklw244@6rngcplttabx>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <3iwfhcl5gmpwfiatsawwkm5qns4pmzvhcrroq236y45kklw244@6rngcplttabx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sHONV2xv9nPhtqYL3M9SXHmuBq0UOOMR
+X-Proofpoint-ORIG-GUID: sHONV2xv9nPhtqYL3M9SXHmuBq0UOOMR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260144
 
-On 02/26, Lorenzo Stoakes wrote:
->
-> Like I said, Jeff opposes the change. I disagree with him, and agree with you,
-> because this is very silly.
->
-> But I don't want to hold up this series with that discussion (this is for his
-> sake...)
+On 2/26/2025 9:22 AM, Bjorn Andersson wrote:
+> On Thu, Jan 30, 2025 at 10:29:00AM +0530, Raj Kumar Bhagat wrote:
+>> RDP441 is based on IPQ5332. It has inbuilt AHB bus based IPQ5332 WiFi
+>> device.
+>>
+>> Describe and add WiFi node for RDP441. Also, reserve the memory
+>> required by IPQ5332 firmware.
+>>
+>> Depends-On: [PATCH V2 0/2] mailbox: tmel-qmp: Introduce QCOM TMEL QMP mailbox driver
+>> Depends-On: [PATCH V3 0/8] Add new driver for WCSS secure PIL loading
+>> Link: https://lore.kernel.org/lkml/20241231054900.2144961-1-quic_srichara@quicinc.com/
+>> Link: https://lore.kernel.org/lkml/20250107101647.2087358-1-quic_gokulsri@quicinc.com/
+> 
+> Please run "git log --grep 'Depends-on'" to see how this tag is expected
+> to be used. As you can see, dependencies on other patches in flight does
+> not go into the git history, and should as such be mentioned only below
+> the --- line below.
+> 
 
-Neither me, so lets go with VM_SEALED_SYSMAP.
+Thanks will take care for next submission.
 
-My only objection is that
+> Please wait for these dependencies to be accepted before resubmitting
+> this Devicetree change.
+> 
 
-	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
-	vm_flags |= VM_SEALED_SYSMAP;
+Sure
 
-looks unnecessarily confusing to me,
+>>
+>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+>> ---
+>> NOTE:
+>> The DT binding changes for this patch has been posted along with the
+>> driver ath12k AHB series.
+>> Link: https://lore.kernel.org/all/20250130043508.1885026-1-quic_rajkbhag@quicinc.com/
+>>
+>> v2:
+>> - Dropped 'dt-bindings: net: wireless: describe the ath12k AHB module'.
+>>   This DT binding is posted along with the ath12k AHB driver changes.
+>> - Reserved four memory regions required by IPQ5332 ath12k firmware in DTS.
+>>   These memory regions are also referenced in the WiFi node.
+>> - Moved 'qcom,smem-states' and 'qcom,smem-states' to the ipq5332.dtsi file.
+>> - Used lowercase hex values for the reg property.
+>>
+>> v1: https://lore.kernel.org/all/20250128091012.2574478-1-quic_rajkbhag@quicinc.com/
+>> ---
+>>  arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts |  64 ++++++++++-
+>>  arch/arm64/boot/dts/qcom/ipq5332.dtsi       | 113 ++++++++++++++++++++
+>>  2 files changed, 176 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+>> index 846413817e9a..4b7a75e450ca 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+>> @@ -2,7 +2,7 @@
+>>  /*
+>>   * IPQ5332 AP-MI01.2 board device tree source
+>>   *
+>> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>>   */
+>>  
+>>  /dts-v1/;
+>> @@ -12,6 +12,61 @@
+>>  / {
+>>  	model = "Qualcomm Technologies, Inc. IPQ5332 MI01.2";
+>>  	compatible = "qcom,ipq5332-ap-mi01.2", "qcom,ipq5332";
+>> +
+>> +	/*                 Default Profile
+> 
+> Why is the title "Default Profile", is this expected to be changed by
+> someone? At what point?
+> 
+>> +	 * +============+==============+=====================+
+>> +	 * |            |              |                     |
+>> +	 * | Region     | Start Offset |       Size          |
+> 
+> "Start Offset" relative to address 0 is typically called "base address".
+> 
+>> +	 * |            |              |                     |
+>> +	 * +------------+--------------+---------------------+
+>> +	 * |            |              |                     |
+>> +	 * |            |              |                     |
+>> +	 * |            |              |                     |
+>> +	 * | WLAN Q6    |  0x4A900000  |       43MB          |
+>> +	 * |            |              |                     |
+>> +	 * |            |              |                     |
+>> +	 * +------------+--------------+---------------------+
+>> +	 * | M3 Dump    |  0x4D400000  |       1MB           |
+>> +	 * +------------+--------------+---------------------+
+>> +	 * | Q6 caldb   |  0x4D500000  |       5MB           |
+>> +	 * +------------+--------------+---------------------+
+>> +	 * | MLO        |  0x4DB00000  |       18MB          |
+> 
+> 18MB is the same size in your graph as the 1MB segment, but somehow the
+> 43MB segment is 5 times the size of the 18MB segment. So the graph isn't
+> to scale...
+> 
+>> +	 * +============+==============+=====================+
+>> +	 * |                                                 |
+>> +	 * |                                                 |
+>> +	 * |                                                 |
+>> +	 * |            Rest of memory for Linux             |
+>> +	 * |                                                 |
+>> +	 * |                                                 |
+>> +	 * |                                                 |
+>> +	 * +=================================================+
+> 
+> Doesn't DDR start on a more even address, such as 0x40000000? I presume
+> the purpose of your picture was to give a good overview of the memory
+> layout of this system, but the only thing it added to the table below is
+> a curious question about what happened to the first 169MB of DDR.
+> 
 
-	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP;
+Yes this graph provide the overview for memory related to wireless
+components(rproc and ath12k firmware memory).
 
-or just
+> 
+> Please omit the graph, it doesn't add value beyond what's provided by
+> the below text form of the "same" data.
+> 
 
-	vma = _install_special_mapping(...,
-				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP,
-				...
+Sure, will remove in next version.
 
-looks more readable. But this is cosmetic/subjective, so I won't argue/insist.
+>> +	 */
+>> +
+>> +	reserved-memory {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		q6_region: wcss@4a900000 {
+>> +			reg = <0x0 0x4a900000 0x0 0x02b00000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		m3_dump: m3-dump@4d400000 {
+>> +			reg = <0x0 0x4d400000 0x0 0x100000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		q6_caldb: q6-caldb@4d500000 {
+>> +			reg = <0x0 0x4d500000 0x0 0x500000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		mlo_mem: mlo-global-mem@4db00000 {
+>> +			reg = <0x0 0x4db00000 0x0 0x01200000>;
+>> +			no-map;
+>> +		};
+>> +	};
+>>  };
+>>  
+>>  &blsp1_i2c1 {
+>> @@ -63,3 +118,10 @@ data-pins {
+>>  		};
+>>  	};
+>>  };
+>> +
+>> +&wifi0 {
+>> +	memory-region = <&q6_region>, <&m3_dump>, <&q6_caldb>, <&mlo_mem>;
+>> +	memory-region-names = "q6-region", "m3-dump", "q6-caldb", "mlo-global-mem";
+> 
+> As you are resubmitting this, it would be nice to have these two
+> properties wrapped (one entry per line), to increase readability...
+> 
 
-> Jeff - perhaps drop this and let's return to it in a follow up so this series
-> isn't held up?
-
-Up to you and Jeff.
-
-But this patch looks "natural" to me in this series.
-
-Oleg.
+will update in next version.
 
 
