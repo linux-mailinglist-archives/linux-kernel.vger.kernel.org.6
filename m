@@ -1,158 +1,311 @@
-Return-Path: <linux-kernel+bounces-534345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D044DA465E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:02:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006B3A4660B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F9A19C7734
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8C119C7C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EE321CC66;
-	Wed, 26 Feb 2025 15:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9F621CC56;
+	Wed, 26 Feb 2025 15:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/wtZVHD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QpBZD1hz"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7C62904;
-	Wed, 26 Feb 2025 15:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9928D21CC76
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585102; cv=none; b=TgvWW17cYPZJKZVytXBXKtPhHaLREZHOmXg2wAf4UgSK569yeXK1ulwZ93sR8uAiZTB6nK5IX3PYbCOqmxobN9pJl7ohaKJjTMIUs7aq2OtU1TygpcMhfOXIm2ZzDQEBZdOkvkaeBgSM+FmIykBruwoNtSqFTKzVyNmPV8VRJjM=
+	t=1740585172; cv=none; b=P4inkHBfirVDCC4pbJIu21F6XsTb0aP/YrjFPd++NF20cmzhzMh0yUDRWelHKn5iAQK4aGpuvbioLbVkl1CFAURF1cGMERa6/WNLmGPy5O3CN19YUwiJiavsAzUL4b0vGsC8gKRW8wP6Js+UyteQneP/BHGtIZAhWiodLlhCcyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585102; c=relaxed/simple;
-	bh=dystgmSF/TCO8+uxX80prLd9mmlEKMg2wmXGUfrA378=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cD2PbHZ1dbmstvKL3M3eDvyPylXut+c9LD9vVUhGNX+COSxQM9QaYSNRiGdl3v9wHMttOJkYK3emTLPhDBVyMzBz8xwBI8LsicxHy1u8HZ+flnHlIk0PlcWOaig6Ybes1+VmyaY0jOicBwnbv/v9y6hcDIHhIKmIF3bWPGccFKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/wtZVHD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B506C4CED6;
-	Wed, 26 Feb 2025 15:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740585101;
-	bh=dystgmSF/TCO8+uxX80prLd9mmlEKMg2wmXGUfrA378=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/wtZVHDOkcHb7Wj/XoTGhFH+jxWlVoY/3JmSc85XIsQBGuD3Gxmv325CJ64iW62I
-	 sLn3ueeKUKKEkkKxXG1r3zuySs0GQNjC2xBBRb9EJlIYFWS6GbsPUfrvvmRV2a6dvf
-	 XZAXHrOF0l30oLCks2wqUQnLjyU0cWBHUEWG6Y+ePaw0Mbm1ktvpkoGZBHjhBfKYwi
-	 B7uFEabl3vRtrjctHeND1AeJpBZ72c+gaKOg/ZzNTibJxVnK7fN2grML69IQB6MsBH
-	 BpVyRJswqscjYs7RJNdAbTx/Zlf0XO+ANH2X/3e4oTROLG/KcresZY91V6qxiCWYPA
-	 BqIqJwDfWeC1Q==
-Date: Wed, 26 Feb 2025 08:51:37 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Keith Busch <keith.busch@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
-	leitao@debian.org
-Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
- kmem_cache_destroy()
-Message-ID: <Z784iRR13v6SkJv5@kbusch-mbp>
-References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
- <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
- <Z7iqJtCjHKfo8Kho@kbusch-mbp>
- <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
- <Z7xbrnP8kTQKYO6T@pc636>
- <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz>
- <Z73p2lRwKagaoUnP@kbusch-mbp>
- <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
- <Z74Av6tlSOqcfb-q@pc636>
- <Z74KHyGGMzkhx5f-@pc636>
+	s=arc-20240116; t=1740585172; c=relaxed/simple;
+	bh=ugu1pUk9aQoCbZ3IE2K0HAMGPO5Mnb3WJ7jxvC5lFY4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MTJsqq956ZGeZLGjExut1TXzVZ4CIeQ6hw03DwnvRTDKCJKWEP3S9W2rvCVvGCEothW2IgbTFJ2azHCiKPOyBwQTvY4F3F2P3WcF3e2QtuQRzTImzzIckbUccdUnQ71X4/1wArQ3GKvrh6ZP/6mdF0wrt9Fui/XCqOJyjnoRVD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QpBZD1hz; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740585167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iaWogmezSHYR9AiWcl15rVOFVsw8GjabRPkn09PMMK8=;
+	b=QpBZD1hzqSLHJcJuv0R7coDaZ3Ps7V7L3ftiNjU90PgME/4X5Yyi1d3R9rZoxqlRuI/xm4
+	9TGb4Yx3AwfxyVj6wRcYyzuWoEvr5sZmhMVa4tY/OFtDzi2Nofsmhlm6oCShOxdCuyd8Zv
+	Bl0Ij4MdyO8IKv15+fLasdO9v6zWSdY=
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Devarsh Thakkar <devarsht@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Subject: [PATCH v10 00/13] drm/bridge: cdns-dsi: Fix the color-shift issue
+Date: Wed, 26 Feb 2025 21:22:15 +0530
+Message-Id: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z74KHyGGMzkhx5f-@pc636>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 25, 2025 at 07:21:19PM +0100, Uladzislau Rezki wrote:
-> WQ_MEM_RECLAIM-patch fixes this for me:
+Hello all,
 
-This is successful with the new kuint test for me as well. I can't
-readily test this in production where I first learned of this issue (at
-least not in the near term), but for what it's worth, this looks like a
-good change to me.
+This series provides some crucial fixes and improvements for the Cadence's DSI
+TX (cdns-dsi) controller found commonly in Texas Instruments' J7 family of SoCs,
+as well as in Sitara AM62P and AM62L SoCs.
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
- 
-> <snip>
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 4030907b6b7d..1b5ed5512782 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1304,6 +1304,8 @@ module_param(rcu_min_cached_objs, int, 0444);
->  static int rcu_delay_page_cache_fill_msec = 5000;
->  module_param(rcu_delay_page_cache_fill_msec, int, 0444);
-> 
-> +static struct workqueue_struct *rcu_reclaim_wq;
-> +
->  /* Maximum number of jiffies to wait before draining a batch. */
->  #define KFREE_DRAIN_JIFFIES (5 * HZ)
->  #define KFREE_N_BATCHES 2
-> @@ -1632,10 +1634,10 @@ __schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
->         if (delayed_work_pending(&krcp->monitor_work)) {
->                 delay_left = krcp->monitor_work.timer.expires - jiffies;
->                 if (delay < delay_left)
-> -                       mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
-> +                       mod_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
->                 return;
->         }
-> -       queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
-> +       queue_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
->  }
-> 
->  static void
-> @@ -1733,7 +1735,7 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
->                         // "free channels", the batch can handle. Break
->                         // the loop since it is done with this CPU thus
->                         // queuing an RCU work is _always_ success here.
-> -                       queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
-> +                       queued = queue_rcu_work(rcu_reclaim_wq, &krwp->rcu_work);
->                         WARN_ON_ONCE(!queued);
->                         break;
->                 }
-> @@ -1883,7 +1885,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
->         if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
->                         !atomic_xchg(&krcp->work_in_progress, 1)) {
->                 if (atomic_read(&krcp->backoff_page_cache_fill)) {
-> -                       queue_delayed_work(system_unbound_wq,
-> +                       queue_delayed_work(rcu_reclaim_wq,
->                                 &krcp->page_cache_work,
->                                         msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
->                 } else {
-> @@ -2120,6 +2122,10 @@ void __init kvfree_rcu_init(void)
->         int i, j;
->         struct shrinker *kfree_rcu_shrinker;
-> 
-> +       rcu_reclaim_wq = alloc_workqueue("rcu_reclaim",
-> +               WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
-> +       WARN_ON(!rcu_reclaim_wq);
-> +
->         /* Clamp it to [0:100] seconds interval. */
->         if (rcu_delay_page_cache_fill_msec < 0 ||
->                 rcu_delay_page_cache_fill_msec > 100 * MSEC_PER_SEC) {
-> <snip>
+Along with that, this series aims to fix the color-shift issue that has been
+going on with the DSI controller. This controller requires to be enabled before
+the previous entity enables its stream[0]. It's a strict requirement which, if
+not followed, causes the colors to "shift" on the display. The fix happens in
+2 steps.
+
+    1. The bridge pre_enable calls have been shifted before the crtc_enable and
+       the bridge post_disable calls have been shifted after the crtc_disable.
+       This has been done as per the definition of bridge pre_enable.
+
+       "The display pipe (i.e. clocks and timing signals) feeding this bridge
+       will not yet be running when this callback is called".
+
+       Since CRTC is also a source feeding the bridge, it should not be enabled
+       before the bridges in the pipeline are pre_enabled.
+
+       The sequence of enable after this patch will look like:
+
+	        bridge[n]_pre_enable
+	        ...
+	        bridge[1]_pre_enable
+
+	        crtc_enable
+	        encoder_enable
+
+	        bridge[1]_enable
+	        ...
+	        bridge[n]_enable
+
+       and vice-versa for the bridge chain disable sequence.
+
+
+    2. The cdns-dsi enable / disable sequences have now been moved to pre_enable
+       and post_disable sequences. This is the only way to have cdns-dsi drivers
+       be up and ready before the previous entity is enables its streaming.
+
+The DSI also spec requires the Clock and Data Lanes be ready before the DSI TX
+enables its stream[0]. A patch has been added to make the code wait for that to
+happen. Going ahead with further DSI (and DSS configuration), while the lanes
+are not ready, has been found to be another reason for shift in colors.
+
+These patches have been tested with J721E based BeagleboneAI64 along with a
+RaspberryPi 7" DSI panel. The extra patches can be found in the
+"next_dsi-v10_1-tests" branch[1] of my github fork if anyone would like to test
+them.
+
+Thanks,
+Aradhya
+
+
+* Important note about the authorship of patches *
+
+All but one of the patches have been authored when I owned a "ti.com" based
+email id, i.e. <a-bhatia1@ti.com>. This email id is not in use anymore, and all
+the work done later has been part of my personal work. Since the original
+patches were authored using TI's email id, I have maintained the original
+authorships as they are, as well as their sign offs.
+
+I have further added another sign off that uses my current (and personal) email
+id, the one that is being used to send this revision, i.e.
+<aradhya.bhatia@linux.dev>.
+
+
+* Note on checkpatch warning in patch 11/13 *
+Patch 11/13 causes the checkpatch to flare up for 1 checkpatch 'check' -
+
+CHECK: Lines should not end with a '('
+#77: FILE: drivers/gpu/drm/drm_atomic_helper.c:1304:
++                       new_crtc_state = drm_atomic_get_new_crtc_state(
+
+This patch is largely duplicating the original code, with minor differences to
+perform different operations. This line of code pre-exists in the file and
+have simply been duplicated. I have decided to keep it as is to maintain the
+uniformity and the originally intended readability. Should perhaps a fix be
+required, this patch/series is not the right place, and another patch can be
+created to fix this across the whole file.
+
+
+[0]: Section 12.6.5.7.3: "Start-up Procedure" [For DSI TX controller]
+     in TDA4VM Technical Reference Manual https://www.ti.com/lit/zip/spruil1
+
+[1]: https://github.com/aradhya07/linux-ab/tree/next_dsi-v10_1-tests
+
+
+Change Log:
+  - Changes in v10:
+    - Rebase on latest linux-next (next-20250226).
+    - As part of rebase, update the patches to accommodate a couple of
+      widespread changes in DRM Framework -
+        - All the ("drm/atomic-helper: Change parameter name of ***") commits.
+        - All the ("drm/bridge: Pass full state to ***") commits.
+      (These updates are only trivial substitutions.)
+    - Add Tomi Valkeinen's T-b tags in all the patches.
+
+  - Changes in v9:
+    - Fix the oops in 11/13 - where the encoder_bridge_enable _was_ pre_enabling
+      the bridges instead of enabling.
+    - Add the following tags:
+      - Dmitry Baryshkov's R-b in patches 2, 10, 11, and A-b in patch 12.
+      - Jayesh Choudhary's R-b in patch 12.
+      - Tomi Valkeinen's R-b in patches 2, 10, 11, 12.
+
+  - Changes in v8:
+    - Move the phy de-initialization to bridge post_disable() instead of bridge
+      disable() in patch-3.
+    - Copy the private bridge state (dsi_cfg), in addition to the bridge_state,
+      in patch-9.
+    - Split patch v7:11/12 into three patches, v8:{10,11,12}/13, to separate out
+      different refactorings into different patches, and improve bisectability.
+    - Move patch v7:02/12 down to v8:06/12, to keep the initial patches for
+      fixes only.
+    - Drop patch v7:04/12 as it doesn't become relevant until patch v7:12/12.
+    - Add R-b tags of Dmitry Baryshkov in patch-9 and patch-3, and of
+      Tomi Valkeinen in patch-9.
+   
+  - Changes in v7:
+    - phy_init()/exit() were called from the PM path in v6. Change it back to
+      the bridge enable/disable path in patch-3, so that the phy_init() can go
+      back to being called after D-Phy reset assert.
+    - Reword commit text in patch-5 to explain the need of the fix.
+    - Drop the stray code in patch-10.
+    - Add R-b tag of Dmitry Baryshkov in patch-6.
+
+  - Changes in v6:
+    - Reword patch 3 to better explain the fixes around phy de-init.
+    - Fix the Lane ready timeout condition in patch 7.
+    - Fix the dsi _bridge_atomic_check() implementation by adding a new
+      bridge state structure in patch 10.
+    - Rework and combine patches v5:11/13 and v5:12/13 to v6:11/12.
+    - Generate the patches of these series using the "patience" algorithm.
+      Note: All patches, except v6:11/12, *do not* differ from their default
+      (greedy) algorithm variants.
+      For patch 11, the patience algorithm significantly improves the readability.
+    - Rename and move the Bridge enable/disable enums from public to private
+      in patch 11.
+    - Add R-b tags of Tomi Valkeinen in patch 6, and Dmitry Baryshkov in patch 2.
+
+  - Changes in v5:
+    - Fix subject and description in patch 1/13.
+    - Add patch to check the return value of
+      phy_mipi_dphy_get_default_config() (patch: 6/13).
+    - Change the Clk and Data Lane ready timeout from forever to 5s.
+    - Print an error instead of calling WARN_ON_ONCE in patch 7/13.
+    - Drop patch v4-07/11: "drm/bridge: cdns-dsi: Reset the DCS write FIFO".
+      There has been some inconsistencies found with this patch upon further
+      testing. This patch was being used to enable a DSI panel based on ILITEK
+      ILI9881C bridge. This will be debugged separately.
+    - Add patch to move the DSI mode check from _atomic_enable() to
+      _atomic_check() (patch: 10/13).
+    - Split patch v4-10/11 into 2 patches - 11/13 and 12/13.
+      Patch 11/13 separates out the Encoder-Bridge operations into a helper
+      function *without* changing the logic. Patch 12/13 then changes the order
+      of the encoder-bridge operations as was intended in the original patch.
+    - Add detailed comment for patch 13/13.
+    - Add Tomi Valkeinen's R-b in patches 1, 2, 4, 5, 7, 8, 9, 13.
+
+  - Changes in v4:
+    - Add new patch, "drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()",
+      to update to an auto-managed way of finding next bridge in the chain.
+    - Drop patch "drm/bridge: cdns-dsi: Fix the phy_initialized variable" and
+      add "drm/bridge: cdns-dsi: Fix Phy _init() and _exit()" that properly
+      de-initializes the Phy and maintains the initialization state.
+    - Reword patch "drm/bridge: cdns-dsi: Reset the DCS write FIFO" to explain
+      the HW concerns better.
+    - Add R-b tag from Dmitry Baryshkov for patches 1/11 and 8/11.
+
+  - Changes in v3:
+    - Reword the commit message for patch "drm/bridge: cdns-dsi: Fix OF node
+      pointer".
+    - Add a new helper API to figure out DSI host input pixel format
+      in patch "drm/mipi-dsi: Add helper to find input format".
+    - Use a common function for bridge pre-enable and enable, and bridge disable
+      and post-disable, to avoid code duplication.
+    - Add T-b tag from Dominik Haller in patch 5/10. (Missed to add it in v2).
+    - Add R-b tag from Dmitry Baryshkov for patch 8/10.
+
+  - Changes in v2:
+    - Drop patch "drm/tidss: Add CRTC mode_fixup"
+    - Split patch "drm/bridge: cdns-dsi: Fix minor bugs" into 4 separate ones
+    - Drop support for early_enable/late_disable APIs and instead re-order the
+      pre_enable / post_disable APIs to be called before / after crtc_enable /
+      crtc_disable.
+    - Drop support for early_enable/late_disable in cdns-dsi and use
+      pre_enable/post_disable APIs instead to do bridge enable/disable.
+
+
+Previous versions:
+
+v1: https://lore.kernel.org/all/20240511153051.1355825-1-a-bhatia1@ti.com/
+v2: https://lore.kernel.org/all/20240530093621.1925863-1-a-bhatia1@ti.com/
+v3: https://lore.kernel.org/all/20240617105311.1587489-1-a-bhatia1@ti.com/
+v4: https://lore.kernel.org/all/20240622110929.3115714-1-a-bhatia1@ti.com/
+v5: https://lore.kernel.org/all/20241019195411.266860-1-aradhya.bhatia@linux.dev/
+v6: https://lore.kernel.org/all/20250111192738.308889-1-aradhya.bhatia@linux.dev/
+v7: https://lore.kernel.org/all/20250114055626.18816-1-aradhya.bhatia@linux.dev/
+v8: https://lore.kernel.org/all/20250126191551.741957-1-aradhya.bhatia@linux.dev/
+v9: https://lore.kernel.org/all/20250209121032.32655-1-aradhya.bhatia@linux.dev/
+
+Aradhya Bhatia (13):
+  drm/bridge: cdns-dsi: Fix connecting to next bridge
+  drm/bridge: cdns-dsi: Fix phy de-init and flag it so
+  drm/bridge: cdns-dsi: Fix the clock variable for mode_valid()
+  drm/bridge: cdns-dsi: Check return value when getting default PHY
+    config
+  drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
+  drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()
+  drm/mipi-dsi: Add helper to find input format
+  drm/bridge: cdns-dsi: Support atomic bridge APIs
+  drm/bridge: cdns-dsi: Move DSI mode check to _atomic_check()
+  drm/atomic-helper: Refactor crtc & encoder-bridge op loops into
+    separate functions
+  drm/atomic-helper: Separate out bridge pre_enable/post_disable from
+    enable/disable
+  drm/atomic-helper: Re-order bridge chain pre-enable and post-disable
+  drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
+
+ .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 224 ++++++++++++++----
+ .../gpu/drm/bridge/cadence/cdns-dsi-core.h    |   2 -
+ drivers/gpu/drm/drm_atomic_helper.c           | 160 +++++++++++--
+ drivers/gpu/drm/drm_mipi_dsi.c                |  37 +++
+ include/drm/drm_mipi_dsi.h                    |   1 +
+ 5 files changed, 348 insertions(+), 76 deletions(-)
+
+
+base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
+-- 
+2.34.1
+
 
