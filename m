@@ -1,147 +1,213 @@
-Return-Path: <linux-kernel+bounces-534688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10972A469FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:45:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A19DA46A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:48:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C829E3A4556
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C43B16C7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035632356B7;
-	Wed, 26 Feb 2025 18:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA304236436;
+	Wed, 26 Feb 2025 18:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/DP6f2o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PBE2H7eo"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ACF235362;
-	Wed, 26 Feb 2025 18:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C06822D784
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595522; cv=none; b=L9KthyhU5UnaqfscL/cT6kzjVdKcgMVu0MtstXwYSx6qD7CkUZIlDdqP5rOVGbDvyJC5B/n8zZY6bEZhOjYxfk4g1MTF6Fz68BqdOVgqQyF35z0HTzm6pcYrcA+TmxNHM5BhpqjWVtcIAq7sTvepMjBcEmmk685hiHyA+OtJjPA=
+	t=1740595619; cv=none; b=XW+S7WoPasBdibuXmEZCjMnjfxnpHrTD90AWTV3v6AMUfDtYmt2UJ4dks/8QN+XXo4d3WYTdOSD51EqanGearboo5j8sTjassHOSbJaNQQVMy5/k5ZcwbUqkXhZq7fq8Yu6UMRJt6ltF4Ie7y3AejE4lsEAzRnPPisb67nNRn8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595522; c=relaxed/simple;
-	bh=UQX5b9FThbfXC5EaNwBLuTStMWQtZPAMy+PEviHm4f0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=d1u8lHVLXP/ANFUc964loIxM2wawsGFTyIU4bUpQSa9o5TphqkZwAO0ZZMKOiTdx/COwMHOMqqc3YITGFcnwUyFFVkG27QZKFl4aS9PdQaypXEddXqsBJDkaNzgyFn2PXjxZbg2Ktz5uVg/UC1IGS5PHL/jCk9G6Jg2p0+bhJ0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/DP6f2o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A44C4CED6;
-	Wed, 26 Feb 2025 18:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740595521;
-	bh=UQX5b9FThbfXC5EaNwBLuTStMWQtZPAMy+PEviHm4f0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=d/DP6f2odU0xWuLlFFE6Zghy4hWE6i8gZAxfVWux4PC8ZmGdjMjZUyo5cXfbbrofP
-	 b7Fs29L3AM4mjfNhTIXqBtTUpfjtlgGg3Ctla5CcVJoRMmqUdIDYh/awr5+l9JRHP+
-	 oKBBKsyH1pu9oZdl1XcmaeRdnVKkfFWKh3C8/3S1GrRs6XvjBR1hiIcHi0xF8xWxgx
-	 a/4YLkYQJ8GT4MzblzTF7UiDVP0QmzKP8LW7rMQrQXepPrxc6gUkSzgCDakv1zjJll
-	 fV/ffE8WEeNXc7t7YQDVPrgPxtPITI3UofFyM+5ychJLfeLwcDWl2oGBipyQTtznQ2
-	 w50qawF7ElkMw==
-Date: Wed, 26 Feb 2025 12:45:19 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740595619; c=relaxed/simple;
+	bh=JodBzx7M4AQGobZza2uhbaZSvsPMslokXhqcEliSGAY=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=UVk9RfCE+USb4JQktK5PdsK/AYy51jCKJ0SMtlvpOZW7RXa7QNMJN+oXZYn9KDjuQAvQ3P1IIEgGPjfB6YJQj/h2amLtoHGIkLtDLweskxpLhaQLDH303WjkWorzIPlHQhw4Oj/Yhq1EoHEptzxQdBHD86/R6MGrsWBGgaqHYLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PBE2H7eo; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43947979ce8so606975e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:46:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740595615; x=1741200415; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sOguHpycwUX8eihJ1N7vZXsBa1ko3FW4hupJ5yAhZ8c=;
+        b=PBE2H7eox33eoJAMIFOS5adyQ4BsMfq4y8S8zbjWu7hL6InF3QJ3wbp1ytKyEEGR4d
+         9buwgOgC4sxsCItSrRMPBwT2YwCKyNjaol6kQThPCF4ukv3VqzbqAv34xkXC4nyBZ57q
+         qamm0Z8I+ZyOcDpIRgn0JXH+07BEXI24YN8UGrgO90HtuRL/5124S7O4zG2uRRl9lPJa
+         EVhDhvRx3VUL7cs4PnU4YYK50JuwCMRkk5rRaWp8f/9FQvLEke1RPIYp60Bg2eg9mNub
+         98Hk3WyxyCfki+8NBSGZLUcLVUusgSe3gplK440Ztb9zgmuzAZraOuhlM8FYNbEGYWda
+         ddTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740595615; x=1741200415;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sOguHpycwUX8eihJ1N7vZXsBa1ko3FW4hupJ5yAhZ8c=;
+        b=DN6Wf7cgwOHJm2gcHnPsnzPEhjzW74soXsgvKrpmo/TH7VBnSCx1A34NJL8OIQLdSG
+         tXBLwAzQoAJagAqtrJZqu+sdxlaoqD5PZIQNZ1VOo770hhmDVjuh9B4lJ6Z1BV2FNi82
+         qaFEDuq5e5Ug1cnpGZlxtvCdCgGmYiPEHenAGRAvxwy5yPRMBhWvDAp0CU8pafypBjqg
+         xZAj0TRVi4p7aaFkEOqpdmVM4wNW9KGBwFk/ZBInc7ANtQ1cic8vd45SL816NjnRUFws
+         ozXVKOTw3+QTfMEV2fqLEknrLBeNvLHbl1zTkrvdx1hfB9kZx86LRXFdrdzN/K6uRBaf
+         3d5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3fqrpVH5UIvS3SXsFRUUzc0NKvtVq7f9NNHpKmFTcAghm8DWOI3q3zie/1TXdasATgZudt7wc8m+KDaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGbns9iHtH+4cevGF1l6H115yT//8RDoKvGBadIYvhmpdkbTFj
+	dp0Q6XbXACMtAuYvpOJVU9PjFx6lxtLhdDJ0GhXkEVRcbBV8h4EdvOycKfojfiUo4311FtSvlO+
+	at4kMNFnHGQ==
+X-Google-Smtp-Source: AGHT+IHASSc7e4RmQTri0Z7g3+xd3N5kxnQGr9pL116mxIOSxNQO+ye9Qs7fGUpkV1t41+kDq2AToRr56faLhg==
+X-Received: from wmpz20.prod.google.com ([2002:a05:600c:a14:b0:439:9558:cfae])
+ (user=derkling job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3151:b0:439:a1ef:c242 with SMTP id 5b1f17b1804b1-439ae18fdc1mr219774895e9.0.1740595615641;
+ Wed, 26 Feb 2025 10:46:55 -0800 (PST)
+Date: Wed, 26 Feb 2025 18:45:40 +0000
+In-Reply-To: 20250218153414.GMZ7Sodh_eQXqTNE2x@fat_crate.local
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- linuxppc-dev@lists.ozlabs.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Crystal Wood <oss@buserror.net>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, 
- Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>
-To: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-In-Reply-To: <20250226-ppcyaml-elbc-v3-3-a90ed71da838@posteo.net>
-References: <20250226-ppcyaml-elbc-v3-0-a90ed71da838@posteo.net>
- <20250226-ppcyaml-elbc-v3-3-a90ed71da838@posteo.net>
-Message-Id: <174059551786.3319377.4330281854518280945.robh@kernel.org>
-Subject: Re: [PATCH v3 3/3] dt-bindings: memory-controllers: Convert
- fsl,elbc to YAML
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250226184540.2250357-1-derkling@google.com>
+Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
+From: Patrick Bellasi <derkling@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Patrick Bellasi <derkling@google.com>, Sean Christopherson <seanjc@google.com>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Patrick Bellasi <derkling@matbug.net>, Brendan Jackman <jackmanb@google.com>, 
+	David Kaplan <David.Kaplan@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On Wed, 26 Feb 2025 18:01:42 +0100, J. Neuschäfer wrote:
-> Convert the Freescale localbus controller bindings from text form to
-> YAML. Compared to the .txt version, the YAML binding contains a new
-> usage example with FCM NAND flash, and a full list of compatible strings
-> based on current usage in arch/powerpc/boot/dts/.
+> On Tue, Feb 18, 2025 at 02:42:57PM +0000, Patrick Bellasi wrote:
+> > Maybe a small improvement we could add on top is to have a separate and
+> > dedicated cmdline option?
+> > 
+> > Indeed, with `X86_FEATURE_SRSO_USER_KERNEL_NO` we are not effectively using an
+> > IBPB on VM-Exit anymore. Something like the diff down below?
 > 
-> Note that the both the compatible strings and the unit address format
-> are kept as-is, for compatibility with existing kernels and device
-> trees, as well as unit address readability. This results in dts
-> validation warnings:
-> 
->   Warning (simple_bus_reg): /example-0/localbus@f0010100/board-control@1,0:
->   simple-bus unit address format error, expected "100000000"
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> 
-> V3:
-> - move this patch after the GPCM/FCM patches to dtschema/dtc warnings
->   due to missing bindings for fsl,elbc-gpcm-uio and fsl,elbc-fcm-nand
-> - add "simple-bus" again, for compatibility with existing DTs/drivers
->   based on discussion with Crystal Wood and Rob Herring
-> - fix fsl,pq2-localbus compatible properties based on mgcoge.dts / ep8248e.dts
->   (was missing "simple-bus")
-> - add board-control (bcsr) example again, now using the compatible
->   string listed in Documentation/devicetree/bindings/board/fsl,bcsr.yaml
-> - remove interrupt-parent property from example
-> - rework the commit message
-> 
-> V2:
-> - fix order of properties in examples, according to dts coding style
-> - move to Documentation/devicetree/bindings/memory-controllers
-> - clarify the commit message a tiny bit
-> - remove unnecessary multiline markers (|)
-> - define address format in patternProperties
-> - trim subject line (remove "binding")
-> - remove use of "simple-bus", because it's technically incorrect
-> ---
->  .../bindings/memory-controllers/fsl,elbc.yaml      | 158 +++++++++++++++++++++
->  .../devicetree/bindings/powerpc/fsl/lbc.txt        |  43 ------
->  2 files changed, 158 insertions(+), 43 deletions(-)
-> 
+> Except that I don't see the point of this yet one more cmdline option. Our
+> mitigations options space is a nightmare. Why do we want to add another one?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The changelog of the following patch provides the motivations.
 
-yamllint warnings/errors:
+Do you think something like the following self contained change can be added on
+top of your change?
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dts:29.23-34.15: Warning (simple_bus_reg): /example-0/localbus@f0010100/flash@0,0: simple-bus unit address format error, expected "0"
-Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dts:36.31-39.15: Warning (simple_bus_reg): /example-0/localbus@f0010100/board-control@1,0: simple-bus unit address format error, expected "100000000"
-Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dts:41.31-46.15: Warning (simple_bus_reg): /example-0/localbus@f0010100/simple-periph@2,0: simple-bus unit address format error, expected "200000000"
-Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dts:82.23-89.15: Warning (simple_bus_reg): /example-1/localbus@e0005000/flash@0,0: simple-bus unit address format error, expected "0"
-Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dts:91.22-97.15: Warning (simple_bus_reg): /example-1/localbus@e0005000/nand@1,0: simple-bus unit address format error, expected "100000000"
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/fsl,elbc.example.dtb: nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
-	from schema $id: http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
+Best,
+Patrick
 
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/display/ssd1289fb.txt references a file that doesn't exist: Documentation/devicetree/bindings/powerpc/fsl/lbc.txt
-Documentation/devicetree/bindings/display/ssd1289fb.txt: Documentation/devicetree/bindings/powerpc/fsl/lbc.txt
+---
+From 62bd6151cdb5f8e3322d8c91166cf89b6ed9f5b6 Mon Sep 17 00:00:00 2001
+From: Patrick Bellasi <derkling@google.com>
+Date: Mon, 24 Feb 2025 17:41:30 +0000
+Subject: [PATCH] x86/bugs: Add explicit BP_SPEC_REDUCE cmdline
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250226-ppcyaml-elbc-v3-3-a90ed71da838@posteo.net
+Some AMD CPUs are vulnerable to SRSO only limited to the Guest->Host
+attack vector. When no command line options are specified, the default
+SRSO mitigation on these CPUs is "safe-ret", which is optimized to use
+"ibpb-vmexit". A further optimization, introduced in [1], replaces IBPB
+on VM-Exits with the more efficient BP_SPEC_REDUCE mitigation when the
+CPU reports X86_FEATURE_SRSO_BP_SPEC_REDUCE support.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+The current implementation in bugs.c automatically selects the best
+mitigation for a CPU when no command line options are provided. However,
+it lacks the ability to explicitly choose between IBPB and
+BP_SPEC_REDUCE.
+In some scenarios it could be interesting to mitigate SRSO only when the
+low overhead of BP_SPEC_REDUCE is available, without overwise falling
+back to an IBPB at each VM-Exit.
+More in general, an explicit control is valuable for testing,
+benchmarking, and comparing the behavior and overhead of IBPB versus
+BP_SPEC_REDUCE.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Add a new kernel cmdline option to explicitly select BP_SPEC_REDUCE.
+Do that with a minimal change that does not affect the current SafeRET
+"fallback logic". Do warn when reduced speculation is required but the
+support not available and properly report the vulnerability reason.
 
-pip3 install dtschema --upgrade
+[1] https://lore.kernel.org/lkml/20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local/
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Signed-off-by: Patrick Bellasi <derkling@google.com>
+---
+ arch/x86/kernel/cpu/bugs.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 7fafd98368b91..2d785b2ca4e2e 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2523,6 +2523,7 @@ enum srso_mitigation {
+ 	SRSO_MITIGATION_IBPB,
+ 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
+ 	SRSO_MITIGATION_BP_SPEC_REDUCE,
++	SRSO_MITIGATION_BP_SPEC_REDUCE_NA,
+ };
+
+ enum srso_mitigation_cmd {
+@@ -2531,6 +2532,7 @@ enum srso_mitigation_cmd {
+ 	SRSO_CMD_SAFE_RET,
+ 	SRSO_CMD_IBPB,
+ 	SRSO_CMD_IBPB_ON_VMEXIT,
++	SRSO_CMD_BP_SPEC_REDUCE,
+ };
+
+ static const char * const srso_strings[] = {
+@@ -2542,6 +2544,7 @@ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
+ 	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
+ 	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation",
++	[SRSO_MITIGATION_BP_SPEC_REDUCE_NA]	= "Vulnerable: Reduced Speculation, not available",
+ };
+
+ static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
+@@ -2562,6 +2565,8 @@ static int __init srso_parse_cmdline(char *str)
+ 		srso_cmd = SRSO_CMD_IBPB;
+ 	else if (!strcmp(str, "ibpb-vmexit"))
+ 		srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
++	else if (!strcmp(str, "bp-spec-reduce"))
++		srso_cmd = SRSO_CMD_BP_SPEC_REDUCE;
+ 	else
+ 		pr_err("Ignoring unknown SRSO option (%s).", str);
+
+@@ -2672,12 +2677,8 @@ static void __init srso_select_mitigation(void)
+
+ ibpb_on_vmexit:
+ 	case SRSO_CMD_IBPB_ON_VMEXIT:
+-		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
+-			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
+-			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
+-			break;
+-		}
+-
++		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
++			goto bp_spec_reduce;
+ 		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
+ 			if (has_microcode) {
+ 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
+@@ -2694,6 +2695,17 @@ static void __init srso_select_mitigation(void)
+ 			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
+ 		}
+ 		break;
++
++	case SRSO_CMD_BP_SPEC_REDUCE:
++		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
++bp_spec_reduce:
++			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
++			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
++			break;
++		} else {
++			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE_NA;
++			pr_warn("BP_SPEC_REDUCE not supported!\n");
++		}
+ 	default:
+ 		break;
+ 	}
+--
+2.48.1.711.g2feabab25a-goog
 
