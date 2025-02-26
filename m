@@ -1,350 +1,289 @@
-Return-Path: <linux-kernel+bounces-535160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCF0A46FAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:47:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19233A46FAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C407A3411
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE8E16CFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E754D25D21C;
-	Wed, 26 Feb 2025 23:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B2F25F7BE;
+	Wed, 26 Feb 2025 23:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccLwNz0J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GjXONNDx"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB65327004B;
-	Wed, 26 Feb 2025 23:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613651; cv=none; b=HCgL8vw+V7WA33uSGO7uXifq6fSYx65l9jsjKstGj4RptrbzufZsJK/tCgG9nRX4P1qvZ5PolBV20LgNeU2SXhOrNC9lAjyXmTKk/TWh3NfC1nxtbjq4tbASIh/W0Y7+PT43BQ6uOBBl7S6fMSeU7/dvbSKHT6uv3EYQWmrvAAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613651; c=relaxed/simple;
-	bh=9gh38cLMFslMKg9mxXqa/8TIiaIyScOmY7iBmk/7J+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ig+xk2/nJmXZtjREfLl5PW9fyfKDSecLP4fEdkp2W2howbunmUruwT3tXizUzK+s40d8ekBP8L6cpwDoghLHxmYER7wX9r5hgQQLcdosQbayev2s1WlZ4dneYGpasjYKytkuZAp8yEvGMGyN1wunlnO1IKFgNBgDySeOxQE0WdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccLwNz0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D2CC4CED6;
-	Wed, 26 Feb 2025 23:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740613650;
-	bh=9gh38cLMFslMKg9mxXqa/8TIiaIyScOmY7iBmk/7J+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ccLwNz0JqSL2cY/6ZgKbo3RBuAAjgne4TJXxfOD7rihL/L9trPi1YF8vosAn0jhY0
-	 PXxM8QfCKDAAl4VBg4GmwRKOnFf/mTkfVTC/oLVg+2nEAqsisSf828LAX0nMZcaRiM
-	 eP9wpZcxP2SoknA3ClZbZvCNLQZrHJdpV2CD3U4Ro7URpToeVFR9/N3FcZKAJOMvny
-	 oot69foyQLUf3qYNRMBiFdJT6K2Fxa2u409gSm+pGSSA9Gr/sJ7NoeiFbmjwswHcjr
-	 EKKcuhXwmQlbrGhNbVBviIFmfAbJ52s/Kqj+Efh6SoifMX47/veK/or6DFrSigNlpy
-	 lhKE8RMM7deXQ==
-Date: Wed, 26 Feb 2025 15:47:27 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	guoren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 0/8] perf: Support multiple system call tables in the
- build
-Message-ID: <Z7-oD7ZZmvwla351@google.com>
-References: <20250219185657.280286-1-irogers@google.com>
- <Z70zejQJvppH8Sfh@google.com>
- <CAP-5=fU8Xw-aeCGUOFo8Zph=xagHv43jo+BkXY5vUai5tUsmDA@mail.gmail.com>
- <Z71X5wXm1bQ7RM4m@google.com>
- <Z76A3sU46Jxpc2s5@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A411127005D;
+	Wed, 26 Feb 2025 23:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740613662; cv=fail; b=DKuDW1BqK3JMlmQmb7Hy0H2psRWHC364yX1AF7IdRUWn+drdcWm4tvmN5cpQd1nSFDe/9ZIVkibT87JGOkR/ztb4qv6ZzWZAz9ArYMQQb7M03ETTHxUy0xqPnZxZtA9Fvblue97C4vnHH5ghfzQJvEWA2hEu13dg3RsPYkV2Quc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740613662; c=relaxed/simple;
+	bh=S+EDZAw8W98+GgJp7b23gqG5IgCUVldyxjsScAJftXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PgtrSTIwZx7UZpZ67p6/kE570w3iDonSUs8qb8/JDbAyGabEHbmQR/2Agjt+IUhhESTJiKR7st35Py4Ol7fPTJfV+l/C1LNwA2Z3o9Va3H3QyAm1ckqwvFmOxzTty7Zscy61HfhfbGT3SpFFKZM7ikEWfu9+o+G3OyFlE+Mmka8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GjXONNDx; arc=fail smtp.client-ip=40.107.237.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c8ipJIhEENF/6MhrI0snQWcpjCejMbSzgoNUxtmSzUwizj7HieW79AyR+DEAVPFvuaRAuHSzi2w2T/YeygG102K/2m28MRntThN5rd2TUjSBvZ6+RPgknHgp7LOfLgPW5hWRWUM9jbkBu2k66WzGaDgbBIg5YhRdXL/KLpvY277KBVmeoo0EbJJ+D5NSV3x3s3EnaD47dn1NtWX0cn26P9cdW0fK6t7sKx7DiKIz6e46SlQYd7TrHPnNMxvFAFdoPzwbt+z6HJ5aAFTKjfY3p7vehhhVoJFlAiiFsjkeL+wX4W9AALcyKTs7nPq0+aDWdVJboRc3RlqTf/xtr6K1ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aHBHvFhVum5dof8QZtCbUerTYJEBkAW98R3V7wMpViU=;
+ b=CIkSrnRaGkqTxsEkcXU1yB3LTEIGz0pmGqyFF8gYIp6amSwCj9fPRyWOKfUrBQYtK4+J2Ge1mxzCpncEtw6d+m2BJd/LDYUGf23q5vNDGNoE2xX9DQdNq8TSi+6YuKJFrVdRKwCKJYplUpLf8Ox67J/tFvHpcrr8/EO0qna0svGY/gW0MQZDBxes9kLfCKbI80FbovY6FmLlsXHjoVcrg10OE5exsGlx8oJ4xT4MNugulnsks/Krfymw92Nt6psV364WvrvnNjTcyIDYypwtPP9HxXAv0QG9P70Z4u7Cc5pxb/uehghqAPphbbZWz/QrdJAVnrdTtpCFwJFYWrpuWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aHBHvFhVum5dof8QZtCbUerTYJEBkAW98R3V7wMpViU=;
+ b=GjXONNDxywc6AhLxMZs6XPHnAS2TrPqu88VsWvBIX2I/CKweIQ32rFHj9ANmuwQ3x1z/ciAjQW9dPjifwecHMyrXXR2uC5jziVBA+So7CjB2lg4xcrK5Hi/974BA0Xm/TXNvszwG6XYS+XMlihjVIQ1UxlU8LKKPzEjBhoE5n2dwXBEh9Gs27mVIRzR+TOzweiizZIY/R07NlrvhIPxtuGS40Q5VTVpCtx94eUAeUcNT3n4mEYZUtrAwOZiKHbX3wMOYNQZ9+FoZKIxKXL3T6iMpxNQYbZsDDa8GRWTEbVUNWlS/mRlciaW5Yw4JQSXcjvzxpR17ATR/yGsX52R1QA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB9345.namprd12.prod.outlook.com (2603:10b6:8:1a9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 23:47:37 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 23:47:31 +0000
+Date: Wed, 26 Feb 2025 19:47:30 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250226234730.GC39591@nvidia.com>
+References: <Z70EcwNIX0KtWy36@cassiopeiae>
+ <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
+ <20250225225756.GA4959@nvidia.com>
+ <Z75WKSRlUVEqpysJ@cassiopeiae>
+ <20250226004916.GB4959@nvidia.com>
+ <Z75riltJo0WvOsS5@cassiopeiae>
+ <20250226172120.GD28425@nvidia.com>
+ <Z7-IHgcVVS8XBurW@cassiopeiae>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7-IHgcVVS8XBurW@cassiopeiae>
+X-ClientProxiedBy: MN2PR14CA0008.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::13) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z76A3sU46Jxpc2s5@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB9345:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28f1d868-f4a6-42a1-bb3c-08dd56bfef63
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RAXoN67TTnoqbIowIgZEOUrQ1vLde052lMGcolWW8jWwFZRVvuuo+lAPtfY3?=
+ =?us-ascii?Q?0kCCAguKHCEQ1vE2pMUNNa1ZtT323QghbBFn7xHQ9cqxtwiWcz956OseJPVe?=
+ =?us-ascii?Q?F7MT4FfXs0uM7pEj5uRVT5hpDzZGA8CpmnAD7IgLKpRi2gBSrwsx49OkfFgs?=
+ =?us-ascii?Q?psBpbwySDsRoU7pwaPvVoZxQh/9W9aM8YQiyZrJ4Z1giWpCe58V8jGAWcX7n?=
+ =?us-ascii?Q?WHVfSqFgqzSDZv3dsilhI03yh0BlODLqWbwGNuCavqu9o4lnMtL50/k07O8Y?=
+ =?us-ascii?Q?46yjpXUnXcs2d1YWgRlSNI7LMtWAKqDiJfGZ0wWcLTwGlV6gWjc0Dkzc5Mlc?=
+ =?us-ascii?Q?Ri/Orp3W1lVpgnnHJt0CLzgQvzWQm6qs64DOGTRH4zZKVd2GhNS97KAkowK5?=
+ =?us-ascii?Q?ViAA4v8wShNLseFlaUX/CjwPRvxUaFJGyJfuWHhQ2vSKjhYKhe1jvLDH/YqJ?=
+ =?us-ascii?Q?mkQpOMqIjI5lqpkcJLUAVuhuzTbi/BboSSBFOHO5UQKDGnJZbEpFlgwZqzJ8?=
+ =?us-ascii?Q?HwLZkPDeTlRFPQZdRn6fAUx6yahQuCuNgsUysaUMnEkhVMu1YflXUgLjxxi7?=
+ =?us-ascii?Q?4us4Sh/dRYh2EQ+ALs0dsbntv3GJsTEC9Coj6HRb1LLJrd3msgYHZxL/CAlD?=
+ =?us-ascii?Q?uIdKEd4erR+2IwG/7MCGddmWKhQZO2wZvHU/JBy5fn+YP6aqowLlU+N/nmNt?=
+ =?us-ascii?Q?PyJu83zu48BTaSDSrIaXu5I8ml3LJ0BRUWdh2wD+4daq+KnKxw8pKpG4Tb8B?=
+ =?us-ascii?Q?g38ypjJe7J337PI4ObKB6EiJojVHwDImiF3gWnhuBbBAw4Km8ahAdTdD6WZS?=
+ =?us-ascii?Q?sbvdTN7AOEM4W56sXX17prpAGZuii3Udb+v3TsxZbltiv/VVoP6pH7K+vJeq?=
+ =?us-ascii?Q?JQjQrOR56e/yK9lhyqAXjdEXzpZ8u+wPK4JSMrjmgAsevHTagxRBcDtnXjJX?=
+ =?us-ascii?Q?m+iEVm82bJ74EUbQQO2GoVLW2xGsP0juZX4ARxqiR3/q+8wZNcl4rgIl/dLg?=
+ =?us-ascii?Q?1OPwZKP/W3QKK22YVOB4dqbd1zOLgSGNLELzKgCGA464bqldoXJW4vzQWlIB?=
+ =?us-ascii?Q?s3cNxcdgR6eLCuZC/lRiICNiejmwGDgdh/1dEMB0PW4EgE4nKPtVhPGArj48?=
+ =?us-ascii?Q?SD0hJzm5W84mRJFi1m8K8EJJvejnPSCMXXcghIYjkrXsE/3fA0GuCqXEIwKE?=
+ =?us-ascii?Q?zkiaSBB19RKi5SJKIl0HEmN0Pn/QDPE39ifIkCMXv60xinWx8gppzAmkFhVY?=
+ =?us-ascii?Q?8e2/5Eh107W7xkaVY3dUYUvjICBRerqY2A86Pi37XvOf4Od/r/xBGi3bsRVT?=
+ =?us-ascii?Q?pLO7G7/Q+aRqoOnYjWurFUOYtBZ6jedhBfervVR/jKDo+ErSH6fqno7ccfdT?=
+ =?us-ascii?Q?rrnxHfa2ECpGwXAwNSTlb48Kmugo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bsAkToUYLeN559RvJ1GZuFS76Tfeyy7WrBnNlTUOQ+Y6ghs2gGjahtRVPjbC?=
+ =?us-ascii?Q?uz5sMF1cT4ai97aDKEdkIP3LpuHXO3mDornls1HLH27HaeWGj3XCiqfjwp+s?=
+ =?us-ascii?Q?jwIpofrML7XJroMAFN2NaZYYCeY+tkzUwYKbXkEiIyRIimOx21BT2sTlMsPb?=
+ =?us-ascii?Q?40JjJpZPkQ3x+G+uvVEquUh301qiXFU97mdg2+tksfdmmInGHnmX7/R56sgC?=
+ =?us-ascii?Q?ERQ+gpHS4swJGsma+aX+zcJpjOzDz6snEpIa1pODD54Fjlw/19RUkGbszKz3?=
+ =?us-ascii?Q?Af5mZTrMvjq/FLQPx4ryhmzONYnIIuvdDbQyCvzUro4TvFkPINm2plP+JKOb?=
+ =?us-ascii?Q?ApS174Htf0+BuwkRFHOlesQvBcaOefQKqfpFrjGrX7cSDwiWRfZwTrAlUbe/?=
+ =?us-ascii?Q?GLDILftaXU5Ri6PzFVQAuFJdfG3jlQw8jz/4Row2GixSkgKJD8eS1j1SkemE?=
+ =?us-ascii?Q?m4Dexsaygs+9iEqKEzkDs0h41LkPvxLd0lXXMEt+jhB1IEAZ2zIXI4Yn7lpp?=
+ =?us-ascii?Q?quYeR8I47F7zsXZS3QNxsKvRXRQ95kJD0bDlRywdh6ufvWvU/Ua4wOEa+P+P?=
+ =?us-ascii?Q?bwTieGmM8t72q5GtAiwMCl5wHQFl0oQRhqgxTvuoBJpmodzyzq4a3bkifgUA?=
+ =?us-ascii?Q?TwtNU8b5uVSpaxaUB4ADmAMk7oACcFbi+zWUFMdlNS1qNMFrBtYiyrprfRUJ?=
+ =?us-ascii?Q?8Oh9CxkDQgVnRxdr9JNEDkr/AoUphmSkIbkHTalk/JgGucYXRCw2keUv1wCl?=
+ =?us-ascii?Q?h4PXWpmJvXwnlIumyEv/H5INE0Mj5HIOAFd1xeP8MBj70YKnQf3MjCLMPPHz?=
+ =?us-ascii?Q?2TdeF/IC7JaI2BJcrGeAMIOoBwF2NHPzF939NDhd+L3h9y7B8/Uhz6Kx13Cs?=
+ =?us-ascii?Q?BUO10WKCTMbtgdKxWwuK0WLzaD0G/R9zYaHJWcwmbHzjL34CT+Vcip60C9aM?=
+ =?us-ascii?Q?+0Lx19wMCUdb4CcS/1wTQe+UctnG+WveHYNFq1V1SegNGsxAz2zJwa4GcpH4?=
+ =?us-ascii?Q?SUDN+yi4qUWsL9kLB/979lMQTjZstzAVj2LvzhjcQJlmuTswm8D/CKjDfP1i?=
+ =?us-ascii?Q?zLklbKcxwHzaY98iKdqlhy6AVab/o4vPP2Gkqzr5wuiaOO6jo9p53ojf1L/b?=
+ =?us-ascii?Q?wjIvqaAjvlq7fpbWxLkk/fbz7iBKcmPjleyLRyPixl5XmgXmcuEc2UDEHQtg?=
+ =?us-ascii?Q?EcEYiTsyZnHm7W+3L/lJ7OoV6/Wh3miMQ/ZH94CDe7DuBMw+A8gxK5uMJxHo?=
+ =?us-ascii?Q?Ynm26NRlvmbhW1IgwpWph9Yo0YNE1Ij2cy8kNKuxwc9nZKTjizsIBgXjZpiV?=
+ =?us-ascii?Q?rHrFPsJj0gohNlqIwuim/aXUxZWBQ62g6nkISHZlD91WFZC3skXFtCN+G7JL?=
+ =?us-ascii?Q?rPipQYJ5rxJWDZdLcTa7tC4Sqib3ZTQHWQBbQkn44t1PRTcgA4X0CMB7FL9b?=
+ =?us-ascii?Q?UOP+ULRCMk14tbDWItftA9idjm+yPwRdtu3fuDhx85uAyW0Iln66OFUfVC33?=
+ =?us-ascii?Q?FCG5ReQ7aoba0IXNNsIUsEXpAw0WAmuirOvpRlTyKI/nTUGFNPLJwrLV/Ttz?=
+ =?us-ascii?Q?DiG4A+lzJwFtt5jeik0=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28f1d868-f4a6-42a1-bb3c-08dd56bfef63
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 23:47:31.3809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mTKvvc4n4R1fWE1QoNmx9x6JL8V77LRnBCdT/z3nIatP/JJxVKrECM9Cl1Gp+8x8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9345
 
-On Tue, Feb 25, 2025 at 06:47:58PM -0800, Namhyung Kim wrote:
-> On Mon, Feb 24, 2025 at 09:40:55PM -0800, Namhyung Kim wrote:
-> > On Mon, Feb 24, 2025 at 08:37:01PM -0800, Ian Rogers wrote:
-> > > On Mon, Feb 24, 2025 at 7:05 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Wed, Feb 19, 2025 at 10:56:49AM -0800, Ian Rogers wrote:
-> > > > > This work builds on the clean up of system call tables and removal of
-> > > > > libaudit by Charlie Jenkins <charlie@rivosinc.com>.
-> > > > >
-> > > > > The system call table in perf trace is used to map system call numbers
-> > > > > to names and vice versa. Prior to these changes, a single table
-> > > > > matching the perf binary's build was present. The table would be
-> > > > > incorrect if tracing say a 32-bit binary from a 64-bit version of
-> > > > > perf, the names and numbers wouldn't match.
-> > > > >
-> > > > > Change the build so that a single system call file is built and the
-> > > > > potentially multiple tables are identifiable from the ELF machine type
-> > > > > of the process being examined. To determine the ELF machine type, the
-> > > > > executable's header is read from /proc/pid/exe with fallbacks to using
-> > > > > the perf's binary type when unknown.
-> > > > >
-> > > > > Remove some runtime types used by the system call tables and make
-> > > > > equivalents generated at build time.
-> > > >
-> > > > So I tested this with a test program.
-> > > >
-> > > >   $ cat a.c
-> > > >   #include <stdio.h>
-> > > >   int main(void)
-> > > >   {
-> > > >         char buf[4096];
-> > > >         FILE *fp = fopen("a.c", "r");
-> > > >         size_t len;
-> > > >
-> > > >         len = fread(buf, sizeof(buf), 1, fp);
-> > > >         fwrite(buf, 1, len, stdout);
-> > > >         fflush(stdout);
-> > > >         fclose(fp);
-> > > >         return 0;
-> > > >   }
-> > > >
-> > > >   $ gcc -o a64.out a.c
-> > > >   $ gcc -o a32.out -m32 a.c
-> > > >
-> > > >   $ ./perf version
-> > > >   perf version 6.14.rc1.ge002a64f6188
-> > > >
-> > > >   $ git show
-> > > >   commit e002a64f61882626992dd6513c0db3711c06fea7 (HEAD -> perf-check)
-> > > >   Author: Ian Rogers <irogers@google.com>
-> > > >   Date:   Wed Feb 19 10:56:57 2025 -0800
-> > > >
-> > > >       perf syscalltbl: Mask off ABI type for MIPS system calls
-> > > >
-> > > >       Arnd Bergmann described that MIPS system calls don't necessarily start
-> > > >       from 0 as an ABI prefix is applied:
-> > > >       https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.fastmail.com/
-> > > >       When decoding the "id" (aka system call number) for MIPS ignore values
-> > > >       greater-than 1000.
-> > > >
-> > > >       Signed-off-by: Ian Rogers <irogers@google.com>
-> > > >
-> > > > It works well with 64bit.
-> > > >
-> > > >   $ sudo ./perf trace ./a64.out |& tail
-> > > >        0.266 ( 0.007 ms): a64.out/858681 munmap(addr: 0x7f392723a000, len: 109058)                             = 0
-> > > >        0.286 ( 0.002 ms): a64.out/858681 getrandom(ubuf: 0x7f3927232178, len: 8, flags: NONBLOCK)              = 8
-> > > >        0.289 ( 0.001 ms): a64.out/858681 brk()                                                                 = 0x56419ecf7000
-> > > >        0.291 ( 0.002 ms): a64.out/858681 brk(brk: 0x56419ed18000)                                              = 0x56419ed18000
-> > > >        0.299 ( 0.009 ms): a64.out/858681 openat(dfd: CWD, filename: "a.c")                                     = 3
-> > > >        0.312 ( 0.001 ms): a64.out/858681 fstat(fd: 3, statbuf: 0x7ffdfadf1eb0)                                 = 0
-> > > >        0.315 ( 0.002 ms): a64.out/858681 read(fd: 3, buf: 0x7ffdfadf2030, count: 4096)                         = 211
-> > > >        0.318 ( 0.009 ms): a64.out/858681 read(fd: 3, buf: 0x56419ecf7480, count: 4096)                         = 0
-> > > >        0.330 ( 0.001 ms): a64.out/858681 close(fd: 3)                                                          = 0
-> > > >        0.338 (         ): a64.out/858681 exit_group()                                                          = ?
-> > > >
-> > > > But 32bit is still broken and use 64bit syscall table wrongly.
-> > > >
-> > > >   $ file a32.out
-> > > >   a32.out: ELF 32-bit LSB pie executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2,
-> > > >   BuildID[sha1]=6eea873c939012e6c715e8f030261642bf61cb4e, for GNU/Linux 3.2.0, not stripped
-> > > >
-> > > >   $ sudo ./perf trace ./a32.out |& tail
-> > > >        0.296 ( 0.001 ms): a32.out/858699 getxattr(pathname: "", name: "������", value: 0xf7f6ce14, size: 1)  = 0
-> > > >        0.305 ( 0.007 ms): a32.out/858699 fchmod(fd: -134774784, mode: IFLNK|ISUID|ISVTX|IWOTH|0x10000)         = 0
-> > > >        0.333 ( 0.001 ms): a32.out/858699 recvfrom(size: 4160146964, flags: RST|0x20000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) = 1481879552
-> > > >        0.335 ( 0.004 ms): a32.out/858699 recvfrom(fd: 1482014720, ubuf: 0xf7f71278, size: 4160146964, flags: NOSIGNAL|MORE|WAITFORONE|BATCH|SPLICE_PAGES|CMSG_CLOEXEC|0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) = 1482014720
-> > > >        0.355 ( 0.002 ms): a32.out/858699 recvfrom(fd: 1482018816, ubuf: 0x5855d000, size: 4160146964, flags: RST|NOSIGNAL|MORE|WAITFORONE|BATCH|SPLICE_PAGES|CMSG_CLOEXEC|0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) = 1482018816
-> > > >        0.362 ( 0.010 ms): a32.out/858699 preadv(fd: 4294967196, vec: (struct iovec){.iov_base = (void *)0x1b01000000632e62,.iov_len = (__kernel_size_t)1125899909479171,}, pos_h: 4160146964) = 3
-> > > >        0.385 ( 0.002 ms): a32.out/858699 close(fd: 3)                                                          = 211
-> > > >        0.388 ( 0.001 ms): a32.out/858699 close(fd: 3)                                                          = 0
-> > > >        0.393 ( 0.002 ms): a32.out/858699 lstat(filename: "")                                                   = 0
-> > > >        0.396 ( 0.004 ms): a32.out/858699 recvfrom(fd: 1482014720, size: 4160146964, flags: NOSIGNAL|MORE|WAITFORONE|BATCH|SPLICE_PAGES|CMSG_CLOEXEC|0x10500000, addr: 0xf7f6ce14, addr_len: 0xf7f71278) = 1482014720
-> > > >
-> > > > The last 5 should be openat, read, read, close and brk(?).
-> > > 
-> > > That's strange as nearly the same test works for me:
-> > > ```
-> > > $ git show
-> > > commit 7920020237af8138f7be1a21be9a2918a71ddc5e (HEAD -> ptn-syscalltbl)
-> > > Author: Ian Rogers <irogers@google.com>
-> > > Date:   Fri Jan 31 21:34:07 2025 -0800
-> > > 
-> > >    perf syscalltbl: Mask off ABI type for MIPS system calls
-> > > 
-> > >    Arnd Bergmann described that MIPS system calls don't necessarily start
-> > >    from 0 as an ABI prefix is applied:
-> > >    https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.fastmail.com/
-> > >    When decoding the "id" (aka system call number) for MIPS ignore values
-> > >    greater-than 1000.
-> > > 
-> > >    Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ..
-> > > $ file a.out
-> > > a.out: ELF 32-bit LSB pie executable, Intel 80386, version 1 (SYSV),
-> > > dynamically linked, interpreter /lib/ld-linux.so.2,
-> > > BuildID[sha1]=3fcd28f85a27a3108941661a91dbc675c06868f9, for GNU/Linux
-> > > 3.2.0, not stripped
-> > > $ sudo /tmp/perf/perf trace ./a.out
-> > > ...
-> > >          ? (         ): a.out/218604  ... [continued]: execve())
-> > >                                     = 0
-> > >      0.067 ( 0.003 ms): a.out/218604 brk()
-> > >                                     = 0x5749e000
-> > >      0.154 ( 0.007 ms): a.out/218604 access(filename: 0xf7fc7f28,
-> > > mode: R)                                 = -1 ENOENT (No such file or
-> > > directory)
-> > >      0.168 ( 0.023 ms): a.out/218604 openat(dfd: CWD, filename:
-> > > 0xf7fc44c3, flags: RDONLY|CLOEXEC|LARGEFILE) = 3
-> > >      0.193 ( 0.006 ms): a.out/218604 statx(dfd:
-> > > 3</proc/218604/status>, filename: 0xf7fc510a, flags:
-> > > NO_AUTOMOUNT|EMPTY_PATH, mask:
-> > > TYPE|MODE|NLINK|UID|GID|ATIME|MTIME|CTIME|INO|SIZE|BLOCKS, buffer:
-> > > 0xffaa6b88) = 0
-> > >      0.212 ( 0.002 ms): a.out/218604 close(fd: 3</proc/218604/status>)
-> > >                                     = 0
-> > >      0.233 ( 0.019 ms): a.out/218604 openat(dfd: CWD, filename:
-> > > 0xf7f973e0, flags: RDONLY|CLOEXEC|LARGEFILE) = 3
-> > >      0.255 ( 0.004 ms): a.out/218604 read(fd: 3</proc/218604/status>,
-> > > buf: 0xffaa6df0, count: 512)         = 512
-> > >      0.262 ( 0.003 ms): a.out/218604 statx(dfd:
-> > > 3</proc/218604/status>, filename: 0xf7fc510a, flags:
-> > > NO_AUTOMOUNT|EMPTY_PATH, mask:
-> > > TYPE|MODE|NLINK|UID|GID|ATIME|MTIME|CTIME|INO|SIZE|BLOCKS, buffer:
-> > > 0xffaa6b38) = 0
-> > >      0.347 ( 0.002 ms): a.out/218604 close(fd: 3</proc/218604/status>)
-> > >                                     = 0
-> > >      0.372 ( 0.002 ms): a.out/218604 set_tid_address(tidptr:
-> > > 0xf7f98528)                                   = 218604 (a.out)
-> > >      0.376 ( 0.002 ms): a.out/218604 set_robust_list(head: 0xf7f9852c,
-> > > len: 12)                            =
-> > >      0.381 ( 0.002 ms): a.out/218604 rseq(rseq: 0xf7f98960, rseq_len:
-> > > 32, sig: 1392848979)                 =
-> > >      0.469 ( 0.010 ms): a.out/218604 mprotect(start: 0xf7f6e000, len:
-> > > 8192, prot: READ)                    = 0
-> > >      0.489 ( 0.007 ms): a.out/218604 mprotect(start: 0x5661a000, len:
-> > > 4096, prot: READ)                    = 0
-> > >      0.503 ( 0.007 ms): a.out/218604 mprotect(start: 0xf7fd0000, len:
-> > > 8192, prot: READ)                    = 0
-> > >      0.550 ( 0.015 ms): a.out/218604 munmap(addr: 0xf7f7b000, len:
-> > > 111198)                                 = 0
-> > >      0.589 ( 0.035 ms): a.out/218604 openat(dfd: CWD, filename:
-> > > 0x56619008)                                = 3
-> > >      0.627 ( 0.024 ms): a.out/218604 read(fd: 3</proc/218604/status>,
-> > > buf: 0xffaa68fc, count: 4096)        = 1437
-> > >      0.654 ( 0.090 ms): a.out/218604 write(fd: 1</dev/pts/3>, buf: ,
-> > > count: 1437)                          = 1437
-> > >      0.766 (1000.164 ms): a.out/218604 clock_nanosleep(rqtp:
-> > > 0xffaa6824, rmtp: 0xffaa681c)                   = 0
-> > >   1000.942 (         ): a.out/218604 exit_group()
-> > > $ file /tmp/perf/perf
-> > > /tmp/perf/perf: ELF 64-bit LSB pie executable, x86-64, version 1
-> > > (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2,
-> > > BuildID[sha1]=60b07f65d2559a7193b2d1d36cfa00054dfbd076, for GNU/Linux
-> > > 3.2.0, with debug_info, not stripped
-> > > ```
-> > > Perhaps your a.out binary was built as an x32 one?
-> > > Looking under the covers with gdb:
-> > > ```
-> > > $ sudo gdb --args /tmp/perf/perf trace ./a.out
-> > > GNU gdb (Debian 15.1-1) 15.1
-> > > ...
-> > > Reading symbols from /tmp/perf/perf...
-> > > (gdb) b syscalltbl__name
-> > > Breakpoint 1 at 0x23a51b: file util/syscalltbl.c, line 47.
-> > > (gdb) r
-> > > ...
-> > > [Detaching after vfork from child process 218826]
-> > > 
-> > > Breakpoint 1, syscalltbl__name (e_machine=3, id=11) at util/syscalltbl.c:47
-> > > 47              const struct syscalltbl *table = find_table(e_machine);
-> > > ```
-> > > So the e_machine is 3 which corresponds to EM_386.
-> > > 
-> > > I've not fixed every use of syscalltbl but I believe this one is working.
-> > 
-> > Strange.  I'm seeing 62 (x86_64).
-> > 
-> >   $ sudo gdb -q --args ./perf trace ./a32.out
-> >   Reading symbols from ./perf...
-> >   (gdb) b syscalltbl__name
-> >   Breakpoint 1 at 0x27998b: file util/syscalltbl.c, line 46.
-> >   (gdb) r
-> >   Starting program: /home/namhyung/tmp/perf trace ./a32.out
-> >   [Thread debugging using libthread_db enabled]
-> >   Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-> >   [Detaching after fork from child process 886888]
-> >   
-> >   Breakpoint 1, syscalltbl__name (e_machine=62, id=156) at util/syscalltbl.c:46
-> >   46	{
-> > 
-> > But the binary is i386.
-> > 
-> >   $ file a32.out
-> >   a32.out: ELF 32-bit LSB pie executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2,
-> >   BuildID[sha1]=6eea873c939012e6c715e8f030261642bf61cb4e, for GNU/Linux 3.2.0, not stripped
-> >   
-> >   $ readelf -h a32.out
-> >   ELF Header:
-> >     Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
-> >     Class:                             ELF32
-> >     Data:                              2's complement, little endian
-> >     Version:                           1 (current)
-> >     OS/ABI:                            UNIX - System V
-> >     ABI Version:                       0
-> >     Type:                              DYN (Position-Independent Executable file)
-> >     Machine:                           Intel 80386
-> >     Version:                           0x1
-> >     Entry point address:               0x10a0
-> >     Start of program headers:          52 (bytes into file)
-> >     Start of section headers:          13932 (bytes into file)
-> >     Flags:                             0x0
-> >     Size of this header:               52 (bytes)
-> >     Size of program headers:           32 (bytes)
-> >     Number of program headers:         11
-> >     Size of section headers:           40 (bytes)
-> >     Number of section headers:         30
-> >     Section header string table index: 29
-> > 
-> >   $ hexdump -C -n 32 a32.out
-> >   00000000  7f 45 4c 46 01 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
-> >   00000010  03 00 03 00 01 00 00 00  a0 10 00 00 34 00 00 00  |............4...|
-> >   00000020  ----- -----
-> >               ^     ^
-> > 	      |     |
-> > 	   ET_DYN   |
-> > 	          EM_386
-> > 
+On Wed, Feb 26, 2025 at 10:31:10PM +0100, Danilo Krummrich wrote:
+> Let's take a step back and look again why we have Devres (and Revocable) for
+> e.g. pci::Bar.
 > 
-> I found it failed to open /proc/PID/exe for some reason.  It failed with
-> ENOENT but I've confirmed there's /proc/PID directory.  Strange...
+> The device / driver model requires that device resources are only held by a
+> driver, as long as the driver is bound to the device.
+> 
+> For instance, in C we achieve this by calling
+> 
+> 	pci_iounmap()
+> 	pci_release_region()
+> 
+> from remove().
+> 
+> We rely on this, we trust drivers to actually do this.
 
-It sometimes succeeded and showed the correct syscall names. :(
+Right, exactly
 
-I don't know what's the problem on my machine.  But I think this is a
-pre-exisiting problem and this patch improves it.
+But it is not just PCI bar. There are a *huge* number of kernel APIs
+that have built in to them the same sort of requirement - teardown
+MUST run with remove, and once done the resource cannot be used by
+another thread.
 
-Thanks,
-Namhyung
+Basically most things involving function pointers has this sort of
+lifecycle requirement because it is a common process that prevents a
+EAF of module unload.
 
+This is all incredibly subtle and driver writers never seem to
+understand it properly.. See below for my thoughts on hrtimer bindings
+having the same EAF issue.
+
+My fear, that is intensifying as we go through this discussion, is
+that rust binding authors have not fully comprehended what the kernel
+life cycle model and common design pattern actually is, and have not
+fully thought through issues like module unload creating a lifetime
+cycle for *function pointers*.
+
+This stuff is really hard. C programers rarely understand it. Existing
+drivers tend to frequenly have these bug classes. Without an obvious
+easy to use Rust framework to, effectively, revoke function pointers
+and synchronously destroy objects during remove, I think this will be
+a recurring problem going forward.
+
+I assume that Rust philsophy should be quite concerned if it does not
+protect against function pointers becoming asynchronously invalid due
+to module unload races. That sounds like a safety problem to me??
+
+> We also trust drivers that they don't access the pointer originally
+> returned by pci_iomap() after remove().
+
+Yes, I get it, you are trying to use a reference tracking type design
+pattern when the C API is giving you a fencing design pattern, they
+are not compatible and it is hard to interwork them.
+
+> Now, let's get back to concurrent code that might still attempt to use the
+> pci::Bar. Surely, we need mechanisms to shut down all asynchronous execution
+> paths (e.g. workqueues) once the device is unbound. But that's not the job of
+> Devres<pci::Bar>. The job of Devres<pci::Bar> is to be robust against misuse.
+
+The thing is once you have a mechanism to shutdown all the stuff you
+don't need the overhead of this revocable checking on the normal
+paths. What you need is a way to bring your pci::Bar into a safety
+contract that remove will shootdown concurrency and that directly
+denies references to pci::Bar, and the same contract will guarentee it
+frees pci::Bar memory.
+
+A more fancy version of devm, if you will.
+
+> I guess you're referring to cancel_work_sync() and friends as well as
+> destroy_workqueue(), etc.
+
+Yes, and flush, and you often need to design special locking to avoid
+work-self-requeing. It is tricky stuff, again I've seen lots and lots
+of bugs in these remove paths here.
+
+Hopefully rust can describe this adequately without limiting work
+queue functionality :\
+
+> But yes, once people start using workqueues for other modules, we
+> surely need to extend the abstraction accordingly.
+
+You say that like it will be easy, but it is exactly the same type of
+lifetime issue as pci_iomap, and that seems to be quite a challenge
+here???
+
+> Other abstractions do consider this though, e.g. the upcoming hrtimer work. [1]
+
+Does it??? hrtimer uses function pointers. Any time you take a
+function pointer you have to reason about how does the .text lifetime
+work relative to the usage of the function pointer.
+
+So how does [1] guarentee that the hrtimer C code will not call the
+function pointer after driver remove() completes?
+
+My rust is aweful, but it looks to me like the timer lifetime is
+linked to the HrTimerHandle lifetime, but nothing seems to hard link
+that to the driver bound, or module lifetime?
+
+This is what I'm talking about, the design pattern you are trying to
+fix with revocable is *everywhere* in the C APIs, it is very subtle,
+but must be considered. One solution would be to force hrtimer into
+a revocable too.
+
+And on and on for basically every kernel API that uses function
+pointers.
+
+This does not seem reasonable to me at all, it certainly isn't better
+than the standard pattern.
+
+> be) also reflected by the corresponding abstraction. Dropping a
+> MiscDeviceRegistration [2] on module_exit() for instance will ensure that there
+> are no concurrent IOCTLs, just like the corresponding C code.
+
+The way misc device works you can't unload the module until all the
+FDs are closed and the misc code directly handles races with opening
+new FDs while modules are unloading. It is quite a different scheme
+than discussed in this thread.
+
+Jason
 
