@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-534344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1526A465A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:55:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D044DA465E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5003A1F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F9A19C7734
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4D921C9EE;
-	Wed, 26 Feb 2025 15:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EE321CC66;
+	Wed, 26 Feb 2025 15:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LmfMVmtH"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/wtZVHD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7242904;
-	Wed, 26 Feb 2025 15:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7C62904;
+	Wed, 26 Feb 2025 15:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585068; cv=none; b=uJy0i52IjC5CU7/zaOUm0ERLaAOMl9JsdVLqz0IE3CfwvY0+pm9DNDOYSTeTrpcGSFExbeA95XTEpHXEtptak5LVBKMMcPEwu5X/ubfXQ6DB8vYRGDNVDW/5fPNQuDaQlNnvHweEb+937quIoEEC0dZMfQhQj9Q0N7cMGvg7QdU=
+	t=1740585102; cv=none; b=TgvWW17cYPZJKZVytXBXKtPhHaLREZHOmXg2wAf4UgSK569yeXK1ulwZ93sR8uAiZTB6nK5IX3PYbCOqmxobN9pJl7ohaKJjTMIUs7aq2OtU1TygpcMhfOXIm2ZzDQEBZdOkvkaeBgSM+FmIykBruwoNtSqFTKzVyNmPV8VRJjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585068; c=relaxed/simple;
-	bh=qLjC8EE3OknpLXkqkBTQuQzocH/YaHfLD4Ws8Dwfis4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ZLHPwjlI/iRsZbWgM40NUhkBBXUz9Hwil5dOlS043U2TZ4Q0F6hkNb+sH/0TMnJNuapREygSZI/TSkLVx08WfEefn8fM+D6rX4Vxt5xHqAOMPY6n8mOrM6PoReE/WwmGn6iyOOSofOn2A3Q+l8K1IjuYefzMKR5sT1bRJlL33yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LmfMVmtH; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740585042; x=1741189842; i=markus.elfring@web.de;
-	bh=S+F6SpZ9ta8idotlXporaMgDhf86eKSQRHJcK09/2Jc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LmfMVmtHO9bFtC0wd3130UcjXxKJI13WWuZ0UWZx8bOmLPE7Jp56m642phRQSTqn
-	 wiKTEizvyicwLnscPBlhRm/zd6GJNipniqGA8OLqUGnX54IX0MnIZPHLTjUdMbNEw
-	 cRYFQx943KbwYkRANBckLs5eFZhOP8VkBBv5Z04ZVPUTUCdaEeTLgwM4t7J3BA3Vs
-	 iH8odxpSE7vZsQw1RFmO4B6cMB0zr0YondVa47PfBXP83Xglgs/842IMpHniQ+VMx
-	 9Sm5EZT1YAQU3Gg353yeBJGbyDMlv3VRhoy/VeO+wU82quZJa5rafeWwzPMs6vOUr
-	 nA63Zn0Cj4GglD+35g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDdyH-1tcZ7N0fQt-00480y; Wed, 26
- Feb 2025 16:50:42 +0100
-Message-ID: <e4f9a423-6c47-42ea-a6c8-6954a9b5ca2e@web.de>
-Date: Wed, 26 Feb 2025 16:50:39 +0100
+	s=arc-20240116; t=1740585102; c=relaxed/simple;
+	bh=dystgmSF/TCO8+uxX80prLd9mmlEKMg2wmXGUfrA378=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD2PbHZ1dbmstvKL3M3eDvyPylXut+c9LD9vVUhGNX+COSxQM9QaYSNRiGdl3v9wHMttOJkYK3emTLPhDBVyMzBz8xwBI8LsicxHy1u8HZ+flnHlIk0PlcWOaig6Ybes1+VmyaY0jOicBwnbv/v9y6hcDIHhIKmIF3bWPGccFKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/wtZVHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B506C4CED6;
+	Wed, 26 Feb 2025 15:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740585101;
+	bh=dystgmSF/TCO8+uxX80prLd9mmlEKMg2wmXGUfrA378=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J/wtZVHDOkcHb7Wj/XoTGhFH+jxWlVoY/3JmSc85XIsQBGuD3Gxmv325CJ64iW62I
+	 sLn3ueeKUKKEkkKxXG1r3zuySs0GQNjC2xBBRb9EJlIYFWS6GbsPUfrvvmRV2a6dvf
+	 XZAXHrOF0l30oLCks2wqUQnLjyU0cWBHUEWG6Y+ePaw0Mbm1ktvpkoGZBHjhBfKYwi
+	 B7uFEabl3vRtrjctHeND1AeJpBZ72c+gaKOg/ZzNTibJxVnK7fN2grML69IQB6MsBH
+	 BpVyRJswqscjYs7RJNdAbTx/Zlf0XO+ANH2X/3e4oTROLG/KcresZY91V6qxiCWYPA
+	 BqIqJwDfWeC1Q==
+Date: Wed, 26 Feb 2025 08:51:37 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Keith Busch <keith.busch@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
+	leitao@debian.org
+Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
+ kmem_cache_destroy()
+Message-ID: <Z784iRR13v6SkJv5@kbusch-mbp>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
+ <Z7iqJtCjHKfo8Kho@kbusch-mbp>
+ <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
+ <Z7xbrnP8kTQKYO6T@pc636>
+ <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz>
+ <Z73p2lRwKagaoUnP@kbusch-mbp>
+ <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
+ <Z74Av6tlSOqcfb-q@pc636>
+ <Z74KHyGGMzkhx5f-@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hari Bathini
- <hbathini@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <174055073461.4079315.15875502830565214255.stgit@mhiramat.tok.corp.google.com>
-Subject: Re: [PATCH 2/8] tracing: tprobe-events: Reject invalid tracepoint
- name
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <174055073461.4079315.15875502830565214255.stgit@mhiramat.tok.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:n2V73HTKUMsttjj+irp3DGXEpuKoblqa/jm149fQRGDv22nixeS
- pXiNxgQmN7UO4ybag6D0F+PmVCRcrYaO+KH43n+XYC6GIZRMXDTva7GGJEJRT+v40ADxsLd
- 0CJGA445bBF5QNxtvAuUWK770eVor1tC5LtCvlWZyElCoh3DbJJPz2Hy35CyAzpiIfcU4l9
- kjxbE0h4r7vesANfv1qFQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RMHg8zTBDfI=;Sm0cZFN09LdR3EYcBvKv3bikMCS
- /wJDKmyotCOgRx0A//I7yWUC20y2tpsOJ+Y0K78cWs/JEE2guRhYOW9oSTGL/8D1iUKUI1jEV
- 24k7c5nhcqnHufWkVPe+gFCjRNdbllj0N9G+PPUYqD8bnjghqAd4BTa0vmaA1a65xBTFmds06
- jZkiTCmtkk77SaBqJ0o+w1WSZU6kruJAfdQw5C1jvNK0tRFoN97un5dTeVxLciL2bbC7u45yK
- zN6gVhoUyGzBw8lk1qGD0lA1vTJXe+cd9ofbHK5eHrkZjqIZ3pEM5TGNvF/mVRiruACGxeLOs
- gU4/TTI/GN0HNgB4Tjnnty1BuqPL7tBv7McqKfS3qm3lAAJlL3frbB6Ie4tyVAyPxnHPe97MG
- UfcVr10/G63vwQAJ0WTdr3YAgZMME6qTZAdLyq60A1zxs4FpMOJDnM6s+o2wDwt1kFyHztC+O
- CAnTULYqYN7Ip0AzvSknD3r1jy2KP2qK01eGH+G5a9B2OVT+wl4gOFCKF+Nuc2ChKtsjOJcZk
- dLR0PsLNVxdI1lM5jDA0oA2a23XGr6lKJb9rg3Q0At1/ggPK2rJPAaoKmtVLGUYaErdxA7R+r
- KOeEnB6Oq3RkHAvS5uSjhB6jo5sQ2MaGwGLcpfNotjnd2asxuqWzIbpZ6PSSHGFmAuq4tW42O
- 3Cqr6I4B8zKRxQtMkIjEXcxckG047UTXwQtPKcLYTdB5WM8p2b3LrMspcnzfsCbrzzr1sp/UX
- RJAnvUFVNvAOtBzZumFfqRnh6njnusMkEwMe+fPDE9+sKfYxZKxyPF0JjMsseCjLyD0+23Wyo
- fuWdBE5LMeb9kOTztZGO5z3IPN+fO1IIbBS9HdXqJVv8n8uQ1Jyh0qMHIrJJqtjaQ9zUJfMUb
- lv1ISGbF+x8P+tS0HoN6HgxDPXZTLT0vEIvc5KH72f9H2gRI8/imyeuxQnmU7BstY1QVwDy1z
- dx1y5I1iRS5rt6ET4AVuRcO+5G/8UFxWstsKJgLBZHuZSNmmEdrqMbPmWf7uw4kinkmgbGKFk
- VlA5v7ZL2ttH4N30SyYQGdT19xLyKM+U9VJ2k19M+7JGUvwhT1ZL3rCqYinDcykzCkQ9kie+S
- 3QDyqqg4jjElM0uXBx16rnIPsugAUF8mGRGEOp7OxPke1dCp3bHJHU1xwwl58RoieH8Nvr2WW
- 7a7SoGH2VNEV50H8yPwUbdQKIdY1E7VTrKiTRRQ8aJzLNKOgqvSnLZEqVAY29ZPP2knhB9vZw
- e/IZCXWnqiJV2b9tQJ1MJML2keLruS6L8rISzfGLyFGJsNvHxU/B50dMMV8xXLpOqIInQmmZN
- AI4pP69yuJuxUpHAfdAEaCd6PyrBwu1jsQDGCM4wyF9XOSWJKHNYr/q6VWmtJtx+vaybPaEpX
- bnYH7dPts3ceq3JeXeA9rLBCM8VVajd3/sv25BvnIEGlYLU8TphQj2qml/p5cT50zvpS2q3+k
- +QMecKQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z74KHyGGMzkhx5f-@pc636>
 
-=E2=80=A6
-> +++ b/kernel/trace/trace_fprobe.c
-> @@ -1049,6 +1049,19 @@ static int parse_symbol_and_return(int argc, cons=
-t char *argv[],
->  	if (*is_return)
->  		return 0;
->
-> +	if (is_tracepoint) {
-=E2=80=A6
-> +			kfree(*symbol);
-> +			*symbol =3D NULL;
-> +			return -EINVAL;
-> +		}
-> +	}
-=E2=80=A6
+On Tue, Feb 25, 2025 at 07:21:19PM +0100, Uladzislau Rezki wrote:
+> WQ_MEM_RECLAIM-patch fixes this for me:
 
-May a bit of exception handling code be shared by an additional jump targe=
-t?
-Will another goto chain become helpful here?
+This is successful with the new kuint test for me as well. I can't
+readily test this in production where I first learned of this issue (at
+least not in the near term), but for what it's worth, this looks like a
+good change to me.
 
-Regards,
-Markus
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+ 
+> <snip>
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 4030907b6b7d..1b5ed5512782 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1304,6 +1304,8 @@ module_param(rcu_min_cached_objs, int, 0444);
+>  static int rcu_delay_page_cache_fill_msec = 5000;
+>  module_param(rcu_delay_page_cache_fill_msec, int, 0444);
+> 
+> +static struct workqueue_struct *rcu_reclaim_wq;
+> +
+>  /* Maximum number of jiffies to wait before draining a batch. */
+>  #define KFREE_DRAIN_JIFFIES (5 * HZ)
+>  #define KFREE_N_BATCHES 2
+> @@ -1632,10 +1634,10 @@ __schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
+>         if (delayed_work_pending(&krcp->monitor_work)) {
+>                 delay_left = krcp->monitor_work.timer.expires - jiffies;
+>                 if (delay < delay_left)
+> -                       mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+> +                       mod_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
+>                 return;
+>         }
+> -       queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+> +       queue_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
+>  }
+> 
+>  static void
+> @@ -1733,7 +1735,7 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+>                         // "free channels", the batch can handle. Break
+>                         // the loop since it is done with this CPU thus
+>                         // queuing an RCU work is _always_ success here.
+> -                       queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
+> +                       queued = queue_rcu_work(rcu_reclaim_wq, &krwp->rcu_work);
+>                         WARN_ON_ONCE(!queued);
+>                         break;
+>                 }
+> @@ -1883,7 +1885,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
+>         if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
+>                         !atomic_xchg(&krcp->work_in_progress, 1)) {
+>                 if (atomic_read(&krcp->backoff_page_cache_fill)) {
+> -                       queue_delayed_work(system_unbound_wq,
+> +                       queue_delayed_work(rcu_reclaim_wq,
+>                                 &krcp->page_cache_work,
+>                                         msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
+>                 } else {
+> @@ -2120,6 +2122,10 @@ void __init kvfree_rcu_init(void)
+>         int i, j;
+>         struct shrinker *kfree_rcu_shrinker;
+> 
+> +       rcu_reclaim_wq = alloc_workqueue("rcu_reclaim",
+> +               WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
+> +       WARN_ON(!rcu_reclaim_wq);
+> +
+>         /* Clamp it to [0:100] seconds interval. */
+>         if (rcu_delay_page_cache_fill_msec < 0 ||
+>                 rcu_delay_page_cache_fill_msec > 100 * MSEC_PER_SEC) {
+> <snip>
 
