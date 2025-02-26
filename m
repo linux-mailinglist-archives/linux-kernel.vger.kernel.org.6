@@ -1,156 +1,97 @@
-Return-Path: <linux-kernel+bounces-533073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BAFA45569
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:18:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C383A4556C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50733A5911
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731C73A8800
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9218326773B;
-	Wed, 26 Feb 2025 06:18:23 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCBD267AF2;
+	Wed, 26 Feb 2025 06:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbzL73He"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5F829D0E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371D16DEB1;
+	Wed, 26 Feb 2025 06:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550703; cv=none; b=u3mrKCB5OcjLJwFIKOb4YeDE4ZUr3AfdaJd0mlI9/Z/+blT2UT4ZTdLGvifSANQdbvyCpS6/jK61mImbxKaj0GERRWa6GnJajWnVya/RA7LrrkWmb5a8Wqbj2mtwX1Zo2BEaCP2BP2u0SH01wxXMTc7n+x8mfCz+Imm7I5t8pzM=
+	t=1740550721; cv=none; b=SPWb+7Q/2MQP8I6kM9ciqbC81l2X0qRYfxB0E1nfV0B+gueqvZom6iwo13LIPXR6CknVKryqLSWpACRhIEZWvS/NnUaCVsDdlvEynpKCyAm7VNt7AYzcgNH1x926MAI/Rq+RorvXtB1FhLRoqF2/3/53TLfUJy0EVc0hm6djiIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550703; c=relaxed/simple;
-	bh=JryWq7WV8uNmBfkhQojR45hf3u/Eku7l7OsIR6FXLt4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BcxLkbn0NNwO3XZtfzPqAld4Cmq3VR//vnai6VroYeZoGuWHE9YDFzCtoDWyuRsS1RamF+dHAUJTD6ONM4x9zRkPh2dQf86CbMSpaQ7UWuf2tnm/BahUbUO1RHHVIzPB+PUr05yzY8HEMWwgR7fd+tRY7t4WSiy79EV1CNyRudw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8578011a152so135393239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:18:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740550701; x=1741155501;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KkxgE/b/3yDI6a3ezLAF95DWpHfHSO/kSkJ/250V8Pw=;
-        b=oetj/LAupa6PH7poa1NdFQHsb+3gq5cKqBZ5dkRsfjCnTsS8VNj/GdctPfzvQJLFKh
-         GfE0LE8bW2AzjWesC4RJSecBpFTuSnnDewDoHITpYT6sLGzgBh7uzDaL//jXBEyAnY+n
-         /32YiF9cYTju8KsTRZd6yJxnfonQ9oXOGdVPKuj8e2aimkKRA5R2CkYOCifYnZvNn67r
-         QEuXGmCcZ5Mj3vBURVxJg5t7Sj0FBwY+UNfvwYLIxSZV1Q1AdSeF12pTqUyNfrQLHb47
-         PYac5mcLvid1pcheB3SX2edyGyQ/295pZ9z288JnaOoJgpqvaP38ai9IOs4nB9voyq5p
-         m08g==
-X-Forwarded-Encrypted: i=1; AJvYcCXqBuUOb6WWJ2ngqHKlnP/7wq+/v9iqBG2ReWQqQiBBHE03FL44E0Z4c3ESmNOW3lbt1cgMjgB6zh6gng0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz29FY/ACu07ua+9rF3+5gXXm3PNYxu6IxfroZAJoLWsrRSJ3dV
-	tYNJYMhHi2Hj3DnbIJXKJpwq9UaD0NIGMj5C3fVeta9kPPNWVHy9f+hgaqAmDzIm3eqCG278TxL
-	n9JaeKvE9duZXxsjKhK/dG38G1QGAiO2pHxh6t+276xWGab6bAJRdROk=
-X-Google-Smtp-Source: AGHT+IFdIux2xCtFwI+X+/UDsvvVlScy23UF65J2zNj1GVC4lv0CCjLGdoMoDNbuKgtiI8OrR3OPi0YijYbRJGd/OibgL9Kcz2RE
+	s=arc-20240116; t=1740550721; c=relaxed/simple;
+	bh=ih0Il9VNpXYbKf9bvdfY0gWj93ycLMrwGzMmW0dJ+fY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OsyAyeH7VEpxud0Ba3sLEAEwAQ7LoSeVXIM6pz0Jnxv+JlbWZQ5v0HoheeLWVoPCs06Q8LNskBbo+RSCZ2DLXrSgKS6C2e0igdgo8VPSA9g81/n0Gi3ybNoHuF7Haac5IaWpGiyw+rXQsTGJjtVE+nH9A/sjZ+sZKGmA6KFTN9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbzL73He; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE67C4CED6;
+	Wed, 26 Feb 2025 06:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740550721;
+	bh=ih0Il9VNpXYbKf9bvdfY0gWj93ycLMrwGzMmW0dJ+fY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AbzL73HehKGV2Yfi4pr6Iw/PzCjphe0OupUVlfAS4QQ/cPn9isb2Ug2ROIbI2vOvh
+	 SUX3bF4ZVNpa+G4XA/qe4Xc08Z4kSIduDftSW/UYkMX6cmedEgxGOWi2AzdXVnCQim
+	 4BN0kxFn1unZ4bOIK9jPLAcDXdQiWZIRYhgVLfojcFpXfHM9yswHhmO7wZKoGjP7DJ
+	 u1BIgWDELd6srw2SxcbWaBuPbd+BbV34vVMj2p5BCozjnnOlP0g61QMo3Ar03QmYsX
+	 whYENUeUe//eqRafVWKsHD4YT4ltzUk28isLlgdJEUdCd4pfO0o+eOuj8viJWS9api
+	 gK9difvOiXatw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/8] tracing: probes: Fixes and enhancing error logs
+Date: Wed, 26 Feb 2025 15:18:37 +0900
+Message-ID:  <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd8f:0:b0:3d0:405d:e94f with SMTP id
- e9e14a558f8ab-3d3d1f90759mr21788395ab.17.1740550700768; Tue, 25 Feb 2025
- 22:18:20 -0800 (PST)
-Date: Tue, 25 Feb 2025 22:18:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67beb22c.050a0220.2eba0.0049.GAE@google.com>
-Subject: [syzbot] [bluetooth?] WARNING in hci_send_cmd (2)
-From: syzbot <syzbot+d04bd412c1b0e2f36647@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The following series fixes some bugs and adding some error messages
+which are not handled.
+This also add some selftests which tests the new error messages.
 
-syzbot found the following issue on:
-
-HEAD commit:    28b04731a38c MAINTAINERS: fix DWMAC S32 entry
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=15507ae4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=d04bd412c1b0e2f36647
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e10163bfe6ac/disk-28b04731.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0bb611c3bfe3/vmlinux-28b04731.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c3fd8dd5fabb/bzImage-28b04731.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d04bd412c1b0e2f36647@syzkaller.appspotmail.com
-
-Bluetooth: MGMT ver 1.23
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6674 at kernel/workqueue.c:2257 __queue_work+0xcd3/0xf50 kernel/workqueue.c:2256
-Modules linked in:
-CPU: 1 UID: 0 PID: 6674 Comm: syz.2.227 Not tainted 6.14.0-rc3-syzkaller-00154-g28b04731a38c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:__queue_work+0xcd3/0xf50 kernel/workqueue.c:2256
-Code: ff e8 e1 af 38 00 90 0f 0b 90 e9 b2 fe ff ff e8 d3 af 38 00 eb 13 e8 cc af 38 00 eb 0c e8 c5 af 38 00 eb 05 e8 be af 38 00 90 <0f> 0b 90 48 83 c4 60 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
-RSP: 0018:ffffc9001b5ef6c8 EFLAGS: 00010087
-RAX: ffffffff81890ac4 RBX: ffff888028dc8000 RCX: 0000000000080000
-RDX: ffffc9000bf59000 RSI: 000000000003158c RDI: 000000000003158d
-RBP: 0000000000000000 R08: ffffffff8188ff24 R09: 0000000000000000
-R10: ffffc9001b5ef7a0 R11: fffff520036bdef5 R12: ffff888027d1c800
-R13: ffff888027d1c9c0 R14: dffffc0000000000 R15: 0000000000000008
-FS:  00007f93037aa6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c381f89 CR3: 000000007d25a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- hci_send_cmd+0xb6/0x180 net/bluetooth/hci_core.c:3048
- set_link_security+0x606/0x820 net/bluetooth/mgmt.c:1909
- hci_mgmt_cmd+0xa1f/0xf10 net/bluetooth/hci_sock.c:1712
- hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1137
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xacf/0xd10 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f930298d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f93037aa038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f9302ba5fa0 RCX: 00007f930298d169
-RDX: 0000000000000007 RSI: 0000400000000000 RDI: 0000000000000008
-RBP: 00007f9302a0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9302ba5fa0 R15: 00007ffeb82b7bb8
- </TASK>
-
+Thank you,
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Masami Hiramatsu (Google) (8):
+      tracing: tprobe-events: Fix a memory leak when tprobe with $retval
+      tracing: tprobe-events: Reject invalid tracepoint name
+      tracing: fprobe-events: Log error for exceeding the number of entry args
+      tracing: probe-events: Log errro for exceeding the number of arguments
+      tracing: probe-events: Remove unused MAX_ARG_BUF_LEN macro
+      selftests/ftrace: Expand the tprobe event test to check wrong format
+      selftests/ftrace: Add new syntax error test
+      selftests/ftrace: Add dynamic events argument limitation test case
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+ kernel/trace/trace_eprobe.c                        |    2 +
+ kernel/trace/trace_fprobe.c                        |   25 +++++++++++-
+ kernel/trace/trace_kprobe.c                        |    5 ++
+ kernel/trace/trace_probe.h                         |    6 ++-
+ kernel/trace/trace_uprobe.c                        |    9 +++-
+ .../ftrace/test.d/dynevent/add_remove_tprobe.tc    |   14 +++++++
+ .../ftrace/test.d/dynevent/dynevent_limitations.tc |   42 ++++++++++++++++++++
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    1 
+ 8 files changed, 98 insertions(+), 6 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
