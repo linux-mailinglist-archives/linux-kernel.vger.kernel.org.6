@@ -1,136 +1,102 @@
-Return-Path: <linux-kernel+bounces-533159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F469A4563F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:04:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC87A4579A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:05:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3AD3A701E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C133A42EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEBB26A093;
-	Wed, 26 Feb 2025 07:03:39 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6215E191F84;
+	Wed, 26 Feb 2025 08:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="M1sany9x"
+Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3B922FDE4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E2258CCB;
+	Wed, 26 Feb 2025 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740553419; cv=none; b=sFLEIwUqjmFet3582oMXe5Zk8gueNlAjFsL5i73D1Ry6RaFX4qwBEkd0Zxg8edh75jHOH/YIyIsQW8Wg7ztvl86vI1R+zCmRXVSBbjyQ7iqCuI6hcvZjvA3tD4rpY0SX7mZqpYlqS7mGuDkBi1drT1Tbo+jCeV+qUcneaV/WaL8=
+	t=1740557091; cv=none; b=u2iinM3ewDtgUSX/bEmBUjkfdE5mCBaxYHw+xSXXdrXOakTEGbpvHkGCF6qxRSdtIqNo9R42IVUD3mwLyArpJGdaMe82volLu7Rznh3Z6E2iRHPUJ2gwToVnAbvPvXcCqxz2v688Es5FWwbd5BZ2Gf4J7zD3hz4t6yQIOaf8w3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740553419; c=relaxed/simple;
-	bh=gXyhxY0ezuQp00101R1rDD6B+63lkwo6g0egIfxSXso=;
-	h=To:From:Subject:CC:Message-ID:Date:MIME-Version:Content-Type; b=fguv5ACmOsAZ0C5AzLMrphFqRBY2LKSj54IMa+Kv6cKRwxEU2AzsGI0LQvp2oa5Zps8nuMreBjuSOcY3UZzupD1LCEXPZz0Eh7H/DC8TH69aUI7ptHF3pePW3KhX660CVjPvOaHeDjkja1H0skzF7fzG62URD+ZKYMaHsVRYMGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z2lhJ5sw6z1ltY8;
-	Wed, 26 Feb 2025 14:59:28 +0800 (CST)
-Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
-	by mail.maildlp.com (Postfix) with ESMTPS id 271541A0188;
-	Wed, 26 Feb 2025 15:03:32 +0800 (CST)
-Received: from [10.174.179.24] (10.174.179.24) by
- kwepemg200013.china.huawei.com (7.202.181.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 26 Feb 2025 15:03:31 +0800
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-From: Liu Shixin <liushixin2@huawei.com>
-Subject: Softlockup when test shmem swapout-swapin and compaction
-CC: Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh
- Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Lance
- Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>, Ryan
- Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>
-Message-ID: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
-Date: Wed, 26 Feb 2025 15:03:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1740557091; c=relaxed/simple;
+	bh=l8E5RKP2L+w9L35Iyf+g+FiycmYARSKEIs/aumVhbF8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HzT+vILxpjNC0TvE5yK7DqRtZLehQwW9RCk0tLTZhu+eh/WxOoqv1t8yig2WJzaLXnzSvjOaEjSHPDTOm2LGjD6w1FiRwsU3HkYrejKgQdAL7kWatBm3HN/dFOVIibnFl+wgnsNrAzxJzt8gREXAhvC+YKXCRS/ZbB3OISZLRF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=M1sany9x; arc=none smtp.client-ip=45.254.49.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.45] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id c3c2a2d3;
+	Wed, 26 Feb 2025 14:48:58 +0800 (GMT+08:00)
+Message-ID: <a4f43d3e-2e41-4163-8938-5aa1592db371@rock-chips.com>
+Date: Wed, 26 Feb 2025 14:48:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200013.china.huawei.com (7.202.181.64)
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] scsi: ufs: rockchip: Fix spelling mistake "susped"
+ -> "suspend"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-scsi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250225101142.161474-1-colin.i.king@gmail.com>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20250225101142.161474-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNCHlYdTBlJHhodGBpOSENWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9541040a1509cckunmc3c2a2d3
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngg6PBw4UTILHQsaTh4TMzIq
+	VhkKCSNVSlVKTE9LTk5JTkhCTEpJVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNNTjcG
+DKIM-Signature:a=rsa-sha256;
+	b=M1sany9xNBK7VREkWV+9K9oI/K7EOJWY8i/mkHFni5If+uuFp4nTfsfWo9NCBVfDJdv9SDXXVnASaacyLeGHJB5rIQt9n3k0cBugM1hAYPP0B+QlPaT6e/DmwYoHFTvU8BUo6xe397yo4rW3fLRhW2Du3oV/FRStof5aetgnBqQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=vU92AfkXpo1upHQPW1E57oSrBRV5YkhXMeN9wMA5lys=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi all,
+在 2025/2/25 18:11, Colin Ian King 写道:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
 
-I found a softlockup when testing shmem large folio swapout-swapin and compaction:
+Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
 
- watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
- Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
- CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
- Tainted: [L]=SOFTLOCKUP
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
- RIP: 0010:xas_load+0x5d/0xc0
- Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
- RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
- RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
- RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
- RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
- R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
- R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
- FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- PKRU: 55555554
- Call Trace:
-  <IRQ>
-  ? watchdog_timer_fn+0x1c9/0x250
-  ? __pfx_watchdog_timer_fn+0x10/0x10
-  ? __hrtimer_run_queues+0x10e/0x250
-  ? hrtimer_interrupt+0xfb/0x240
-  ? __sysvec_apic_timer_interrupt+0x4e/0xe0
-  ? sysvec_apic_timer_interrupt+0x68/0x90
-  </IRQ>
-  <TASK>
-  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-  ? xas_load+0x5d/0xc0
-  xas_find+0x153/0x1a0
-  find_get_entries+0x73/0x280
-  shmem_undo_range+0x1fc/0x640
-  shmem_evict_inode+0x109/0x270
-  evict+0x107/0x240
-  ? fsnotify_destroy_marks+0x25/0x180
-  ? _atomic_dec_and_lock+0x35/0x50
-  __dentry_kill+0x71/0x190
-  dput+0xd1/0x190
-  __fput+0x128/0x2a0
-  task_work_run+0x57/0x90
-  syscall_exit_to_user_mode+0x1cb/0x1e0
-  do_syscall_64+0x67/0x170
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7fd95776eb8b
+Thanks Colin.
 
-If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
-shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
-compaction which is necessary for reproduction,  although without a clear why.
 
-To reproduce the problem, we need firstly a zram device as swap backend, and then run the
-reproduction program. The reproduction program consists of three parts:
- 1. A process constantly changes the status of shmem large folio by these interfaces:
-        /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
- 2. A process constantly echo 1 > /proc/sys/vm/compact_memory
- 3. A process constantly alloc/free/swapout/swapin shmem large folios.
-
-I'm not sure whether the first process is necessary but the second and third are. In addition,
-I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
-so I guess the problem is in migration.
-
-The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
-since I have confirmed this porblem still existed after merge the fixed patch.
-
-Thanks,
-Liu Shixin.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/ufs/host/ufs-rockchip.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
+> index 5b0ea9820767..dddff5f538b9 100644
+> --- a/drivers/ufs/host/ufs-rockchip.c
+> +++ b/drivers/ufs/host/ufs-rockchip.c
+> @@ -307,7 +307,7 @@ static int ufs_rockchip_system_suspend(struct device *dev)
+>   
+>   	err = ufshcd_system_suspend(dev);
+>   	if (err) {
+> -		dev_err(hba->dev, "UFSHCD system susped failed %d\n", err);
+> +		dev_err(hba->dev, "UFSHCD system suspend failed %d\n", err);
+>   		return err;
+>   	}
+>   
 
 
