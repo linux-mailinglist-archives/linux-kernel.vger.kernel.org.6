@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-534440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5441AA46702
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99FDA466DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F111D1883AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB58A3AC59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E56222589;
-	Wed, 26 Feb 2025 16:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0A621D3E5;
+	Wed, 26 Feb 2025 16:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="SSVOYE67"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rA33+QYv"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C309AEED7;
-	Wed, 26 Feb 2025 16:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57831221F17
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588165; cv=none; b=kNwgUraK4K+sN3xV3sc8Hpcx3XdBbjdNpU/nn8oDFQbOYWx0Z0E0oxHDmKaNKUQtTtSJIFQAYQG+OYBSoGFoa63on3vBLeI8Jz/nRfxGMGQPe0PBe+boyLQT1w6wN0U80HTMaaoAu6eQyQNZyGP/LiQKdpDvNgWn0BKoYgTCePw=
+	t=1740588281; cv=none; b=UNt8ewRK50k6ri/Au5T0rq6GGQKvCgmg0dM8uuzxfQfHzhT2gdiTO4Gi0XGGSeUCZF8m+YQnnzORAay8SggcSa2PspBm/dNMs1qEsiv6kyCpTyNUzhL6xCGIvQIp6HYhKLSIOSu0q14pio/f2N3eAmBkPBTNKQ18Q/tjMnuVkPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588165; c=relaxed/simple;
-	bh=j0Jdfh5ZTam2i9FjA30XjZbPHXQrlJPvw53xGy1ieHs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Uzju5iOhKsV7Gcv/AmfPdBSvg4S6fTdAZd1OOzyECHAlgua/B8xj/bTEdJjChp/e25VLFrGWfbqqgEQErbSMoC5IMr8U7oUL6fVzBXkbasCffiDNx3FCRd+TukPKQJQ1Ujffx2QR40dwUqoQuamCJondeLwc4ebHOB0YZ2LllwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=SSVOYE67; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1740588162;
-	bh=j0Jdfh5ZTam2i9FjA30XjZbPHXQrlJPvw53xGy1ieHs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=SSVOYE678KR2GDHy2EtEFvTuf7lqdjn0YzCHGpOE7neu1sCZRPwt6+RYEiOUwc12z
-	 a1wd3W4LwHQEp24uq1XApSsz/FWC+LZ6mWbX+Na/1Dc75ze7IrPMiIef6w5JYnhfwr
-	 cIOOqB8E7+7uzIBIDiVGDK4QVdIL7LXm7lQKmXOU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id E48171C0034;
-	Wed, 26 Feb 2025 11:42:41 -0500 (EST)
-Message-ID: <9c443013493f8f380f9c4d51b1eeeb9d29b208a3.camel@HansenPartnership.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, Ventura Jack <venturajack85@gmail.com>, 
- Kent Overstreet <kent.overstreet@linux.dev>, "H. Peter Anvin"
- <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>,  Linus Torvalds
- <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com,  boqun.feng@gmail.com, david.laight.linux@gmail.com,
- hch@infradead.org,  ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
-Date: Wed, 26 Feb 2025 11:42:41 -0500
-In-Reply-To: <20250226110033.53508cbf@gandalf.local.home>
-References: 
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	 <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	 <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	 <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
-	 <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
-	 <5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com>
-	 <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
-	 <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
-	 <CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
-	 <f2bf76553c666178505cb9197659303a39faf7aa.camel@HansenPartnership.com>
-	 <2025022611-work-sandal-2759@gregkh>
-	 <16127450a24e9df8112a347fe5f6df9c9cca2926.camel@HansenPartnership.com>
-	 <20250226110033.53508cbf@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1740588281; c=relaxed/simple;
+	bh=EAZCxfsdAbOo+Fr4fqypNUN33rmB2Bh/8eVrz3m4U6U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JDjY07Gr+FVJ9Y1TOZQLiZp3HxaxUPA507x40fm2YxcWAGPUbXNZ5O9593oy+ahUzqp+N37tm6STuhQRkJjiEoOPZKAMOiMk+yx38Kb+wAWr6CNUwRSxLNvqWu5FVb5gCaHCXD93r848Koh37wuF19FkoOCfYvakSBPIiDU9fBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rA33+QYv; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso1396924866b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740588277; x=1741193077; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vKCRcTLMZnIrHbEKuD43z5qHVVfLC3XXEk/6jO6k5Hw=;
+        b=rA33+QYvoAoUG5FyuBT+AyU3gCaSEIrIQ8s56jqZnyp8OZbqm2xaIovbvJp60B1fgW
+         tXfpnKgMDis7d8Jo3gxiUqtKQRsEVL5+zCyz4su3F+8WjSFnxhjEiupk2toADwt4IaF/
+         rh1T78RP3RWNQUlP5UPVXiFPFqHvZ1BgEfx9K4/7rCqJugl9mzXKJRzAK54GUQZiVR6m
+         Fnzf1Z1WpTJfwi1gad7gEIkpYMQ9rfiL3u5K3E989XlaTfqZEcZq6sTvLqzjeYpgrmRa
+         Rskz7jkp14MDujwuVYO5HgFcYyTrzFSqPHyxl3PYqoV6H8EWnFXfTlBm3KtucV4Gnmy2
+         LdSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740588277; x=1741193077;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vKCRcTLMZnIrHbEKuD43z5qHVVfLC3XXEk/6jO6k5Hw=;
+        b=S2ZclgMr3IS1GmBFjtWh6TMltyeRWbW3q1aDNX/XMbsi37eGfwPXR7UEkkeZfwYJfW
+         QwB1YdMgBxdnJXQxOV3Rl5fWtQDDMowFYtIrISFjp5spI/fzJH3jO4Mus2grAFVqXHq5
+         4S0ds3cK+FQOwrstyP8/DMShevTTx4cG3JNgTH5RkNk5oZJ7wUEBjo2kz6EtGdaDVKMk
+         gJZ3lwAfkQ5AA+t0bMBUlQ+rdYNFl+YVmHO/M11AFMUZ2FehJj8+uHulkM7fbu8DrMQB
+         zpfer54T0zt76EgEDGKtVzhw/UR+oisyJEeBA0mmNvTAtSrrA3yWokczbVv1xpdVgmpG
+         bzRg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4dOzX2D1uKEcgCYafEP7ndpytzyk6eThf1A5TLUKNec010egkuRPX81TOJ9Ty/NP5oqzxwTqkF++NUho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXvjsLTQnjp3G90aaZFZTvxaHfT0YhxsOOm7ZvXTcW8iOmatyp
+	tAreQZurw9HzF6R3YdlhuDeoO2zfb/IN+yaPNKlZRf4QUuna7Mzdw8kS3n8DQeA=
+X-Gm-Gg: ASbGncsNgFIAH2zY4tA8zE/vQLMBDNY6KkLg5BQtM3ddu3vtYFOuDP5sbCt14OHS46B
+	8Q5+bCsCTF05qOsKL6mSb3hsU6Kzep27IsTuJfNXeeMzhE021jAVR+eMrsgvto3M1wOfW6/2Zrq
+	jJQ4JMIYr7fz6zGMUF4v5P3zJJpM1ZMQ2ypNfb+Z6jppX0/zzWaIGAbYicHQFwZh/+m+ZNilmnW
+	j28zLZDl0J/18b34ZJK5Kn951GTSD5WF+Ni7skvm30CJvrqDSbARUr8F3JZhDj00Ty3KljB7j9k
+	srbOaN+UE738MAATEBTBoPRDzcjxpkMvtiHW1DqtSiU1aJxUr8B+F8ECCh565AfDuOSfHrw3YbN
+	WEncqCboLvQ==
+X-Google-Smtp-Source: AGHT+IFNAtJHyDKSHEKDSUw9B2zaIiFn3sdbmyXKXU0qKvllh5gJYoJgG6lFeV+RuUdWCGeQdROOSQ==
+X-Received: by 2002:a17:906:32cb:b0:abf:2bb:13e5 with SMTP id a640c23a62f3a-abf02bb14cdmr109491666b.50.1740588277524;
+        Wed, 26 Feb 2025 08:44:37 -0800 (PST)
+Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e462032b00sm3058459a12.68.2025.02.26.08.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 08:44:37 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/2] support Linux reboot modes in syscon-reboot
+Date: Wed, 26 Feb 2025 16:44:25 +0000
+Message-Id: <20250226-syscon-reboot-reset-mode-v2-0-f80886370bb7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOlEv2cC/42NQQ6CQAxFr0K6toaZyIiuvIdhMUCFJjo1LSESw
+ t0dOYGrn/eT//4KRspkcC1WUJrZWFIGfyigG2MaCLnPDL70Vel9QFusk4RKrciUw2jCl/SEVQh
+ VXbf16UwO8vyt9ODPrr43mUe2SXTZn2b3a/+Qzg5LvLjOtcG7ECLdnpyiylF0gGbbti+/QFR2w
+ QAAAA==
+X-Change-ID: 20250226-syscon-reboot-reset-mode-566588b847e1
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Wed, 2025-02-26 at 11:00 -0500, Steven Rostedt wrote:
-> On Wed, 26 Feb 2025 09:45:53 -0500
-> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> > > From some other rust boot system work, I know that the quality of
-> > > a  
-> > simple backtrace in rust where you just pick out addresses you
-> > think you know in the stack and print them as symbols can sometimes
-> > be rather misleading, which is why you need an unwinder to tell you
-> > exactly what happened.
-> 
-> One thing I learned at GNU Cauldron last year is that the kernel
-> folks use the term "unwinding" incorrectly. Unwinding to the compiler
-> folks mean having full access to all the frames and variables and
-> what not for all the previous functions.
-> 
-> What the kernel calls "unwinding" the compiler folks call "stack
-> walking". That's a much easier task than doing an unwinding, and that
-> is usually all we need when something crashes.
+This series teaches syscon-reboot some of Linux' different reboot
+modes.
 
-Well, that's not the whole story.  We do have at least three unwinders
-in the code base.  You're right in that we don't care about anything
-other than the call trace embedded in the frame, so a lot of unwind
-debug information isn't relevant to us and the unwinders ignore it.  In
-the old days we just used to use the GUESS unwinder which looks for
-addresses inside the text segment in the stack and prints them in
-order.  Now we (at least on amd64) use the ORC unwinder because it
-gives better traces:
+Linux supports a couple different reboot modes, but syscon-reboot
+doesn't distinguish between them and issues the same syscon register
+write irrespective of the reboot mode requested by the kernel.
 
-https://docs.kernel.org/arch/x86/orc-unwinder.html
+This is a problem when platforms want to do a cold reboot most of the
+time, which could e.g. wipe RAM etc, but also want to support rebooting
+while keeping RAM contents in certain cases.
 
-while we don't need full unwind in rust, we do need enough to get
-traces working.
+One example of such a platform is Google Pixel.
 
-Regards,
+DTs can now specify the existing properties prefixed with one of the
+Linux reboot modes. All the changes to support this are optional and
+opt-in, platforms that don't, or don't specify a register/value/mask
+pair for a specific mode will behave just as before.
 
-James
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- fix whitespace issues in binding
+- Link to v1: https://lore.kernel.org/r/20250226-syscon-reboot-reset-mode-v1-0-91c1b62166ae@linaro.org
+
+---
+André Draszik (2):
+      dt-bindings: reset: syscon-reboot: support reset modes
+      power: reset: syscon-reboot: support different reset modes
+
+ .../bindings/power/reset/syscon-reboot.yaml        | 74 ++++++++++++++++++
+ drivers/power/reset/syscon-reboot.c                | 88 +++++++++++++++++++---
+ 2 files changed, 151 insertions(+), 11 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20250226-syscon-reboot-reset-mode-566588b847e1
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
