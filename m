@@ -1,96 +1,121 @@
-Return-Path: <linux-kernel+bounces-533366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD38EA4591B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:57:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09AAA45919
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BD87AA024
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A50164C23
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6205B224259;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7D1225416;
 	Wed, 26 Feb 2025 08:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="PDGQGBiz"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAaiCEXv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9BD224227;
-	Wed, 26 Feb 2025 08:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53F2224223;
+	Wed, 26 Feb 2025 08:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740560196; cv=none; b=LxyMRxJlb86opKANZDiX7HL8flv/YcxaXD3EmOcZ27dxrGud+3WZYpJBpybwCnuAbXrpaaAQ4QEZJjFAoxso9jE8uoTXZy7XYlDgQZ0F7K+DkaAes7/3qkQVKBjxMJVC+FHjMb4COl3UQU8ZysTKLI5lKmvMlHY5MQ3JMnJPbR8=
+	t=1740560197; cv=none; b=FXyoCrIiPAJWzzL2+STo5EOq8ofL1E43GY/vu8oSpp/UZDmEQdm6E3asGTh5ULceWGqub6KK2re4Ix2Ae1pYbtcGidWU7ibIEiOTn6GG469mu6h4lRRd+8kf15TagXSIeDjPEJg/+k2ms7Z2Z7rX8ShsT8ZdZTWkWf6HsS9PXyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740560196; c=relaxed/simple;
-	bh=lapwsaYN/6a8avn+z+sqN0WLDPLDIRMiUEwq5GkoaP0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Ut6yKUUodU1Y2LliP0iVLvI/LexAAoFT0DTfayfY7wgoNATvRghGWdOnL4C+HehN/lcn3NfPe26LXoNYbLBY3vMaWxMfouKF+sgjrz0x33PAk8OgW7eoEIBt5d9l1GjqUsqk/hHONc0XeXxaw2a/xjD41rgx8EcDZdkigQAcA20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=PDGQGBiz; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id 97C467D32D;
-	Wed, 26 Feb 2025 09:56:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1740560185;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AO4dus6nos3/M4bgaC9Y3FCL/9dfTCqU6L18Mmc1suo=;
-	b=PDGQGBizWHjHqqErDtFLxXfrn/cXL4c0DFVc6v7WzWpV33LYdHhFdkyGnSbWB2541jOTC/
-	xZq73KuaZVhjAY2AynYlt3F4CStYybnkbr3XSL6MJBUvyo/FvuaI4H847SVk1vZIw+05yN
-	WUQuMjRq1KmtN76pC+3VERHTQTdoZBo=
+	s=arc-20240116; t=1740560197; c=relaxed/simple;
+	bh=DIghG7Un6r/EZf+0vYjWs17UV3/YXHHvJnrt7OX+iuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qiTdDjYVjWDbKGryWLSk27jm5as65Q/4jV0C5LW21c8pOkWTYGlfYi4YDDMWXUAwP5fFyIgYlOogK+5rC+XxAz3koI3LGu8Ljz+2GLhkW+MV2iZ3vGfO2Ftat54vC0Oz7+03tjVjshAaCYEVKh2s4X32SuyNhQRA3UeSa+rB3o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAaiCEXv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB38C4CEEA;
+	Wed, 26 Feb 2025 08:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740560196;
+	bh=DIghG7Un6r/EZf+0vYjWs17UV3/YXHHvJnrt7OX+iuc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UAaiCEXvw/yoBmi7n7NM3vY8zJguA8nCpifBHAPRuYHSMrMzgxsLBgy0sk69SQPiP
+	 NSKYO2P204JgtJUO/ZncHdt/SfsfbqO9qyEIcsfNM7ZwkEy2DKoVXi7ndDmj+sV8NZ
+	 H7jmRSbH19m39+sa+kODJnst/sZiR+icDtNCt9XLcsVM7cqkm+h7M60VAfWQbWlit5
+	 O5ClEhtjU4tCowVaAeBYz5WvbDsX6TCDxCE9kT6TmTIHFgQJfA9+Ua2IFh54Mpizrp
+	 aTBHB46mq/bWXS2c8HMXzike8HHh3QdOxkeZgQiqqs0eSgAYy8nSRsD45UmCKGvgnd
+	 hpSD8ptpnkmgw==
+Message-ID: <f6686e38-b6f1-4e7d-8033-58913d2ad4d8@kernel.org>
+Date: Wed, 26 Feb 2025 09:56:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: Add compatible for MSM8960
+To: Rudraksha Gupta <guptarud@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226-expressatt-tsens-v2-0-7a4ce3a91f27@gmail.com>
+ <20250226-expressatt-tsens-v2-1-7a4ce3a91f27@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250226-expressatt-tsens-v2-1-7a4ce3a91f27@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Feb 2025 09:56:18 +0100
-Message-Id: <D82937IUEK5I.2KBH1DI5WI8XF@pwned.life>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250225064750.953124108@linuxfoundation.org>
-In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
+Content-Transfer-Encoding: 7bit
 
-On Tue Feb 25, 2025 at 7:49 AM CET, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.5-=
-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 26/02/2025 09:11, Rudraksha Gupta wrote:
+> Document the QFPROM on MSM8960.
 
-Tested on Alpine Linux without obvious regressions. Thanks!
 
-Tested-By: Achill Gilgenast <fossdd@pwned.life>
+Missing SoB.
+
+Please run scripts/checkpatch.pl and fix reported warnings.
+
+Best regards,
+Krzysztof
 
