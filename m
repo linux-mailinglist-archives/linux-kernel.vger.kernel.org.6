@@ -1,268 +1,105 @@
-Return-Path: <linux-kernel+bounces-533538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E8AA45BD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:31:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F85A45B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29AF176464
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CE53A915E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9354626B08C;
-	Wed, 26 Feb 2025 10:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FE123816F;
+	Wed, 26 Feb 2025 10:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E8PYZ7dn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="QusQmhNj"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F0125E452;
-	Wed, 26 Feb 2025 10:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5A1DC997
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565854; cv=none; b=tHCZbS1iouuJv0ArivPPQkcuDiF9SsS/H8qxdoxxpzxMEQwC8Frhhn5BBhZ6XIhJhDV+/2SGx4yiXPOwF6+h84Dj+jP24KmsgnN+eq2BCUOcuLkpN/bNidOJ2Xys55pfQkuvUYKagGv5RHz4JqKT8Qbr9KlexfauVz3qu9zXiVs=
+	t=1740564302; cv=none; b=pGqux9pWOqwSvzf9KQmEdS61rrwEepCwg3oitxypEDA2bcBLZfYrQuvDTIy58H/6tlZpvkyxbBGOTQGGaEv8zL5Ha1kpzJRCQP5eOzj+yMU8QrYEgS85aTwBt9Bhtw2Qb8+3XW2DclSBPyd1wwK4tj7e+6suQOp9+b1itQD48fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565854; c=relaxed/simple;
-	bh=x/Uj7UmAr2p1q7I1A8Edz+aiWWpquD6Tji14C/cDSyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOikQDlfKlkbrWGeDx5AYaGndkrkYo7cBuWQFIIzoc6nKAx0UPKtgpAY1/h8u6e5oWXoJlT5Pdw5ciBvYx1j0ndTO303mzDZg/n/cznDYelbRy4nJUHSdoGYQCDhYx4ZgBiTmSa1h5LxwXQH3wh+sygH1hZWfsMAmrztxnQCfMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E8PYZ7dn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32162C4CEED;
-	Wed, 26 Feb 2025 10:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740565854;
-	bh=x/Uj7UmAr2p1q7I1A8Edz+aiWWpquD6Tji14C/cDSyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8PYZ7dnnM/xPs66avuMceSjw+P+RSlWcwCfYUSsMS7jeiZuLYQao2UN+oWnFm69U
-	 H4+V6e9zKrC/c0uFKz9jsYOyJFfvp8tIrEd676F3lUsIL3WY3i0ak9gs870ozFKp7O
-	 K1/oj/k8GePbLYB72aFzcqiUrjjAeyIxEULxKIFo=
-Date: Wed, 26 Feb 2025 11:03:37 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Long Li <longli@microsoft.com>
-Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
-Message-ID: <2025022627-deflate-pliable-6da0@gregkh>
-References: <20250225052001.2225-1-namjain@linux.microsoft.com>
- <2025022504-diagnosis-outsell-684c@gregkh>
- <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
- <2025022515-lasso-carrot-4e1d@gregkh>
- <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
+	s=arc-20240116; t=1740564302; c=relaxed/simple;
+	bh=lkXvFAFJ4LrxyJ5nie3SWbPFgwf9r/hzAHjEEMlbhE0=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=BWUsy2xbmMk6DKwXukHxNWU6SgqWIiZu3oMksbCIfR6E5j0iO0W8iO/txnJX3xyeakYlXWWwvCgRplUCZFIiXTSgA+y+7qUwjxcYO6t8XulyO894J31Knu8uegCYdhSEZ8N0/em4izucegld7Wrqb2zm+N3zOvWRmGwz9WTqr2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=QusQmhNj; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q7M4FB010391;
+	Wed, 26 Feb 2025 10:04:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=H
+	NeVkcyhJTDYPqzpSDY2qxIpZaWs6DnKv2b1WJOnJt4=; b=QusQmhNjZGkf2LIws
+	xzW3CJIVDf8kwQ5BZZ8n2ZgY+pnGsEdWjdfeo7iVK/PzAcgCSMAkaVMZqEzqMem7
+	Ga7o8JyeByu+9p8+aU7fGMbuQUvvRFww52ZHyiyhaOTDtIGeGGDMvJh9Y75cuH0z
+	wUxbJQfmF+cvOVRvZthb+aQ+xgHuhi3lFPauc0y0HaUYmixwXLwD/Ze5uXHNp6Yv
+	OAxhAWo8BpLhoQ2LQCpipuVO36nplFng8KQhf8BNsoptRKr/jugfrfKV+Dk8mxCi
+	ilVV8seRBcMlGKlsjeOZEv/Jd09/o5/DUs9gi7+9HA6Do7VwoXc229P6+I5Q5ijC
+	ynmmw==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 44y5qxass2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 26 Feb 2025 10:04:32 +0000 (GMT)
+Received: from Matts-MacBook-Pro.local (172.25.7.33) by HHMAIL05.hh.imgtec.org
+ (10.100.10.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Wed, 26 Feb
+ 2025 10:04:30 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+To: Frank Binns <frank.binns@imgtec.com>,
+        Masahiro Yamada
+	<masahiroy@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>
+In-Reply-To: <20250210102352.1517115-1-masahiroy@kernel.org>
+References: <20250210102352.1517115-1-masahiroy@kernel.org>
+Subject: Re: [PATCH] drm/imagination: remove unnecessary header include
+ path
+Message-ID: <174056427082.17179.5057304555659162001.b4-ty@imgtec.com>
+Date: Wed, 26 Feb 2025 10:04:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Proofpoint-GUID: B7ua5HpXOp3VEP3ICcYKjWDxBZznJFv_
+X-Authority-Analysis: v=2.4 cv=OLPd3TaB c=1 sm=1 tr=0 ts=67bee730 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=V9sbW7EuxLoA:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=r_1tXGB3AAAA:8 a=5yNAjN4o7YE2XUz26QkA:9 a=QEXdDO2ut3YA:10
+ a=t8nPyN_e6usw4ciXM-Pk:22
+X-Proofpoint-ORIG-GUID: B7ua5HpXOp3VEP3ICcYKjWDxBZznJFv_
 
-On Wed, Feb 26, 2025 at 10:43:41AM +0530, Naman Jain wrote:
+
+On Mon, 10 Feb 2025 19:23:50 +0900, Masahiro Yamada wrote:
+> drivers/gpu/drm/imagination/ includes local headers with the double-quote
+> form (#include "...").
+> 
+> Hence, the header search path addition is unneeded.
 > 
 > 
-> On 2/25/2025 2:09 PM, Greg Kroah-Hartman wrote:
-> > On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
-> > > 
-> > > 
-> > > On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
-> > > > On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
-> > > > > On regular bootup, devices get registered to vmbus first, so when
-> > > > > uio_hv_generic driver for a particular device type is probed,
-> > > > > the device is already initialized and added, so sysfs creation in
-> > > > > uio_hv_generic probe works fine. However, when device is removed
-> > > > > and brought back, the channel rescinds and device again gets
-> > > > > registered to vmbus. However this time, the uio_hv_generic driver is
-> > > > > already registered to probe for that device and in this case sysfs
-> > > > > creation is tried before the device gets initialized completely.
-> > > > > 
-> > > > > Fix this by moving the core logic of sysfs creation for ring buffer,
-> > > > > from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
-> > > > > attributes for the channels are defined. While doing that, make use
-> > > > > of attribute groups and macros, instead of creating sysfs directly,
-> > > > > to ensure better error handling and code flow.
-> > > > > 
-> > > > > Problem path:
-> > > > > vmbus_device_register
-> > > > >       device_register
-> > > > >           uio_hv_generic probe
-> > > > >                       sysfs_create_bin_file (fails here)
-> > > > >           kset_create_and_add (dependency)
-> > > > >           vmbus_add_channel_kobj (dependency)
-> > > > > 
-> > > > > Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
-> > > > > Cc: stable@kernel.org
-> > > > > Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > > > > Suggested-by: Michael Kelley <mhklinux@outlook.com>
-> > > > > Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> > > > > ---
-> > > > > Hi,
-> > > > > This is the first patch after initial RFC was posted.
-> > > > > https://lore.kernel.org/all/20250214064351.8994-1-namjain@linux.microsoft.com/
-> > > > > 
-> > > > > Changes since RFC patch:
-> > > > > * Different approach to solve the problem is proposed (credits to
-> > > > >     Michael Kelley).
-> > > > > * Core logic for sysfs creation moved out of uio_hv_generic, to VMBus
-> > > > >     drivers where rest of the sysfs attributes for a VMBus channel
-> > > > >     are defined. (addressed Greg's comments)
-> > > > > * Used attribute groups instead of sysfs_create* functions, and bundled
-> > > > >     ring attribute with other attributes for the channel sysfs.
-> > > > > 
-> > > > > Error logs:
-> > > > > 
-> > > > > [   35.574120] ------------[ cut here ]------------
-> > > > > [   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
-> > > > > [   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
-> > > > > [   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
-> > > > > [   35.574197] Call Trace:
-> > > > > [   35.574199]  <TASK>
-> > > > > [   35.574200]  ? show_regs+0x69/0x80
-> > > > > [   35.574217]  ? __warn+0x8d/0x130
-> > > > > [   35.574220]  ? sysfs_create_bin_file+0x81/0x90
-> > > > > [   35.574222]  ? report_bug+0x182/0x190
-> > > > > [   35.574225]  ? handle_bug+0x5b/0x90
-> > > > > [   35.574244]  ? exc_invalid_op+0x19/0x70
-> > > > > [   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
-> > > > > [   35.574252]  ? sysfs_create_bin_file+0x81/0x90
-> > > > > [   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
-> > > > > [   35.574271]  vmbus_probe+0x3b/0x90
-> > > > > [   35.574275]  really_probe+0xf4/0x3b0
-> > > > > [   35.574279]  __driver_probe_device+0x8a/0x170
-> > > > > [   35.574282]  driver_probe_device+0x23/0xc0
-> > > > > [   35.574285]  __device_attach_driver+0xb5/0x140
-> > > > > [   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
-> > > > > [   35.574291]  bus_for_each_drv+0x86/0xe0
-> > > > > [   35.574294]  __device_attach+0xc1/0x200
-> > > > > [   35.574297]  device_initial_probe+0x13/0x20
-> > > > > [   35.574315]  bus_probe_device+0x99/0xa0
-> > > > > [   35.574318]  device_add+0x647/0x870
-> > > > > [   35.574320]  ? hrtimer_init+0x28/0x70
-> > > > > [   35.574323]  device_register+0x1b/0x30
-> > > > > [   35.574326]  vmbus_device_register+0x83/0x130
-> > > > > [   35.574328]  vmbus_add_channel_work+0x135/0x1a0
-> > > > > [   35.574331]  process_one_work+0x177/0x340
-> > > > > [   35.574348]  worker_thread+0x2b2/0x3c0
-> > > > > [   35.574350]  kthread+0xe3/0x1f0
-> > > > > [   35.574353]  ? __pfx_worker_thread+0x10/0x10
-> > > > > [   35.574356]  ? __pfx_kthread+0x10/0x10
-> > > > > 
-> > > > > ---
-> > > > >    drivers/hv/hyperv_vmbus.h    |  4 +++
-> > > > >    drivers/hv/vmbus_drv.c       | 62 ++++++++++++++++++++++++++++++++++++
-> > > > >    drivers/uio/uio_hv_generic.c | 34 ++------------------
-> > > > >    include/linux/hyperv.h       |  3 ++
-> > > > >    4 files changed, 72 insertions(+), 31 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> > > > > index 29780f3a7478..e0c7b75e6c7a 100644
-> > > > > --- a/drivers/hv/hyperv_vmbus.h
-> > > > > +++ b/drivers/hv/hyperv_vmbus.h
-> > > > > @@ -477,4 +477,8 @@ static inline int hv_debug_add_dev_dir(struct hv_device *dev)
-> > > > >    #endif /* CONFIG_HYPERV_TESTING */
-> > > > > +/* Create and remove sysfs entry for memory mapped ring buffers for a channel */
-> > > > > +int hv_create_ring_sysfs(struct vmbus_channel *channel);
-> > > > > +int hv_remove_ring_sysfs(struct vmbus_channel *channel);
-> > > > > +
-> > > > >    #endif /* _HYPERV_VMBUS_H */
-> > > > > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > > > > index 22afebfc28ff..0110643bad3f 100644
-> > > > > --- a/drivers/hv/vmbus_drv.c
-> > > > > +++ b/drivers/hv/vmbus_drv.c
-> > > > > @@ -1802,6 +1802,39 @@ static ssize_t subchannel_id_show(struct vmbus_channel *channel,
-> > > > >    }
-> > > > >    static VMBUS_CHAN_ATTR_RO(subchannel_id);
-> > > > > +/* Functions to create sysfs interface to allow mmap of the ring buffers.
-> > > > > + * The ring buffer is allocated as contiguous memory by vmbus_open
-> > > > > + */
-> > > > > +static int hv_mmap_ring_buffer(struct vmbus_channel *channel, struct vm_area_struct *vma)
-> > > > > +{
-> > > > > +	void *ring_buffer = page_address(channel->ringbuffer_page);
-> > > > > +
-> > > > > +	if (channel->state != CHANNEL_OPENED_STATE)
-> > > > > +		return -ENODEV;
-> > > > > +
-> > > > > +	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
-> > > > > +			       channel->ringbuffer_pagecount << PAGE_SHIFT);
-> > > > > +}
-> > > > > +
-> > > > > +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
-> > > > > +				       const struct bin_attribute *attr,
-> > > > > +				       struct vm_area_struct *vma)
-> > > > > +{
-> > > > > +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
-> > > > > +
-> > > > > +	if (!channel->mmap_ring_buffer)
-> > > > > +		return -ENODEV;
-> > > > > +	return channel->mmap_ring_buffer(channel, vma);
-> > > > 
-> > > > What is preventing mmap_ring_buffer from being set to NULL right after
-> > > > checking it and then calling it here?  I see no locks here or where you
-> > > > are assigning this variable at all, so what is preventing these types of
-> > > > races?
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > 
-> > > Thank you so much for reviewing.
-> > > I spent some time to understand if this race condition can happen and it
-> > > seems execution flow is pretty sequential, for a particular channel of a
-> > > device.
-> > > 
-> > > Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
-> > > called in parallel to hv_uio_probe (which had set
-> > > channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
-> > > 
-> > > Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
-> > > 
-> > > vmbus_device_register
-> > >    device_register
-> > >      hv_uio_probe
-> > > 	  hv_create_ring_sysfs (W to non NULL)
-> > >          sysfs_update_group
-> > >            vmbus_chan_attr_is_visible (R)
-> > >    vmbus_add_channel_kobj
-> > >      sysfs_create_group
-> > >        vmbus_chan_attr_is_visible  (R)
-> > >        hv_mmap_ring_buffer_wrapper (critical section)
-> > > 
-> > > hv_uio_remove
-> > >    hv_remove_ring_sysfs (W to NULL)
-> > 
-> > Yes, and right in here someone mmaps the file.
-> > 
-> > I think you can race here, no locks at all feels wrong.
-> > 
-> > Messing with sysfs groups and files like this is rough, and almost never
-> > a good idea, why can't you just do this all at once with the default
-> > groups, why is this being added/removed out-of-band?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> The decision to avoid creating a "ring" sysfs attribute by default
-> likely stems from a specific use case where it wasn't needed for every
-> device. By creating it automatically, it keeps the uio_hv_generic
-> driver simpler and helps prevent potential race conditions. However, it
-> has an added cost of having ring buffer for all the channels, where it
-> is not required. I am trying to find if there are any more implications
-> of it.
 
-You do know about the "is_visable" attribute callback, right?  Why not
-just use that instead of manually mucking around with the
-adding/removing of sysfs attributes at all?  That is what it was
-designed for.
+Applied, thanks!
 
-thanks,
+[1/1] drm/imagination: remove unnecessary header include path
+      commit: 2e064e3f3282ec016d80cb7b1fadff0d8e2014ca
 
-greg k-h
+Best regards,
+-- 
+Matt Coster <matt.coster@imgtec.com>
+
 
