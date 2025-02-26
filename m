@@ -1,212 +1,217 @@
-Return-Path: <linux-kernel+bounces-534576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D13A468B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:58:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76022A468C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295583ADB0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2E3188D45B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C30822FE13;
-	Wed, 26 Feb 2025 17:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E822A7EB;
+	Wed, 26 Feb 2025 18:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QlH9EHuA"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Fp8DG3mp"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8398522F3B8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CA122B8B3
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740592609; cv=none; b=UOR6mWwa6trKm9D2LGNnwstWxt+Qfp77Wwc06JmUgs2V8l03A47/80dPopp1qsHrch9QXAQT16a92bokotza9gpbzPa9GGIwIVd4FPHO0LaAl4h+lLdZOayG1TycSePT7q5Pckpy7yOPaTElKFQKUe2RoXIdG/dqQjDera/ZPNg=
+	t=1740592804; cv=none; b=BmCbPt4ZYuETLjmh0FuNmSoLu3B8rmC0jhaDZy6O7HxNMuVF3J6qN9ajX3I/9C7XlIKXuMw3Dnqa4gh1uE1NbUJ3sPoJ6o02m0DlQaTpGJX2ZFI8zmVF8qpHIDm/aoJvpJiFfF/NrYZPXfWXFWrYD6IHo0S5s7sWRSLgsaQhPq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740592609; c=relaxed/simple;
-	bh=U8EjsXn8hthZd5WnCdsOmkpAAV6+VKIGUBqWIRaY+iI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l1bRw3osNrbIUaJAQC9vC8BgIPLsA4etVOhSjOWYJeWzyYs+6rAz78rzxPIZWzkqOcQuOyc2wE/pEe0hEzvjFDCTbcKGwTv4dlPbb5/2lSj3KO6FC8dKwt7h2G+vt+CpPBEloZgyt37Xp6b/S/dK6mlJBHyGPAndShqwaAXgObY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QlH9EHuA; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390d6426f1bso630742f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:56:47 -0800 (PST)
+	s=arc-20240116; t=1740592804; c=relaxed/simple;
+	bh=OcHOvGQB/t3qwwXBib/RirE/KtrFLYIGCcrfx/cQcj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xe3rQ5u6n5LOZZYpeyRgeR3ydqiKBEWVcG7Vt6oQKWOsyNswLJPW102JxVhj8EzK938tWEGYCBpec84XWulCXB15h7vu3xf/5Pv8xqeYnfe+0yDbSEOF74r/1GWuET/Xxc/RqnBHgK29HpHTxTkc6w8YmNLtM4TLlT/6tZzgwHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Fp8DG3mp; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaecf50578eso1414765366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:00:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740592606; x=1741197406; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IQ1ie5P4f3zQ3Bmnzk4jBndSv2upreQmxRiSWOb230I=;
-        b=QlH9EHuAuRerdMHTmbjR5b8xrxGgRglOzbY/6+i41QNkpwbb/RRITEgnpl3vOymKVu
-         DhCn3Bsd5mdsHGuWbkibasoIah8vs5Q561WoDUVd2WCFH+ofCtLyYCU6JAZy/cKdmvsY
-         tG2oXY0OEqety8VFf76JwAAUA6azcRqN6+F4J4u2R3EHFV538GOUo0CM0iDJTEA2eMvz
-         d2BtMd4eaZ9ii6qm96E5WpGJsWBQd6FlEpcyZsKkkpFxNgHqYfBNAkDS7TR3jt0aISUI
-         ev6qJMCKIzaeO0jNDx3ZLuWnkdEnuQBkim6nZYBxssGlNlRwswBHz5EsQvhVNoYaMZ9K
-         3iyw==
+        d=linux-foundation.org; s=google; t=1740592800; x=1741197600; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=K2pF5VtPLvizqkjhJdWgYLaGhWqd4Ef/Qdw8QfNuuuk=;
+        b=Fp8DG3mpq4+AaO0TnTg0vYO6ZzCsE1EcC+M74IPo7Ae9rmopLsZyQR3j1oY09Vzs+I
+         6uSDNH57szH53KmN98BLmtvI/M4TVc03GrNSFLjoC/HT0kiqPFwoww3+KfCgWmCVUAKT
+         yY/Z8Kjyd3aJWO7xKiV/SnTQuVR6qe8cu+T2Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740592606; x=1741197406;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IQ1ie5P4f3zQ3Bmnzk4jBndSv2upreQmxRiSWOb230I=;
-        b=p2gVtJRk8JVdLF9rpjCUxz9JYDhtfjPx5FPGBVz3Sm4MSOCa2FTcmd6TsCaCvliuQs
-         0xxPZhER+IfSHzUUHDp8jk8t0SWR0v1+ZqXihDf7iv49RzaN1zn0TZ91WAr9Vu8Hu6WL
-         SNBejTsMQzU8fpXAmpRQ0i1wrO++Bc1R/p7KFRREHWR6m60t9icvK5ouhC7NrtUhjdd3
-         aIHBRLOSlFuD8kHQSu2z+KlzU+a1thbxXNJGRX0JdwEqWr2G+D15B0nYe90OyfS0oIc4
-         tubPt4ixHU57HJyxuZj1ee2TOx3qkalm1vcy9x//QSj9ov0Eqz7FezdKgfQyA8KzVrwm
-         vgJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfrcH17TqE9Ich9h+Gc4NuGD4hScf6CbdIEy2FfuOQFywc+gYevwQ7qmHXzG4Bu626MU8uZflY7pVTzv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQKxh/ElT2CjwA7Tm2OcsmnMLPHcsnIcQahX4lCOgZTzo6mve
-	Ona8C6Rk0tkQmBSUMgVCn+yrL9UGFDd0f+QnA6nkYjVcjf97MSCLDZyn10xERPA=
-X-Gm-Gg: ASbGncuP8oFw/eAKeHcSrBkfmY4rmm1FcvDq3bpNVzkSS77cpLuFjBJiH5lYp636JHg
-	pqJAtUbR3W4GLbsJK5QcSlXoCryvcAwWg5iVIq+8oY52WK3DQWsVY3PKbjUsXVSEHxcwAdjFz09
-	Dg20iEghgogOr/dp+VQbeN7KhW3T40L2g0+N+KR9TR2N8GGNuhr6/mwoCWwbHGABct9t3vQ7sBU
-	ASJiQW+q+R3qbP3BBSPXcUm29XaSHf4UFZN6NOwB0P2VsqkX7Z0IdZa7VwqccvGk41iW/L80vr+
-	iS5juq3qY4KrUwvjc6zU0ekChKTHTQ==
-X-Google-Smtp-Source: AGHT+IEBNkLMPMj9+puIgcT6KXydMqr4dpitTxkeEa4qusNjXwjam9ho838YGBqllbydfQzyijAD/g==
-X-Received: by 2002:a5d:64e5:0:b0:38d:e3fd:1990 with SMTP id ffacd0b85a97d-38f6e4b223bmr20340023f8f.0.1740592605805;
-        Wed, 26 Feb 2025 09:56:45 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5442c0sm28868475e9.32.2025.02.26.09.56.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 09:56:45 -0800 (PST)
-Message-ID: <5cce915b5a22cff1d538059d79c152b83c99a265.camel@linaro.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
-Date: Wed, 26 Feb 2025 17:56:44 +0000
-In-Reply-To: <865e878e79a4e5c3a7619bedd81cc8bdb00a4914.camel@linaro.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
-		 <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
-		 <20250224153716.GA3137990-robh@kernel.org>
-	 <865e878e79a4e5c3a7619bedd81cc8bdb00a4914.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        d=1e100.net; s=20230601; t=1740592800; x=1741197600;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K2pF5VtPLvizqkjhJdWgYLaGhWqd4Ef/Qdw8QfNuuuk=;
+        b=DdbLReR/T2whPhFjr/rQ9twYZDgkBGSuYWsnEHq0Mrr9fPeTNh91h1BhJ2ni9cZhcr
+         W+WtVaUt2eY5I0pIJGwjOwG4znVDS3sBOX51ZVzCyBn/e5Gm/nR6szip4s0g8OyFDB8o
+         Mv9d4hBYdB3xnu9n6BamqqOVzMeetlj3so0z2r9SPXp/94avcSAfFFjQmjf6t6bkXSaN
+         wId3iZYhQfU38CB/HWoTZeBahQgBoCCJ/wrQspI/kY11yIavd0or326cdX9ZYkIi9n1l
+         ruCBkNFxSq/V3YQBjRw3KdlqxMT4qt0qDcyDdMKtkhB8hG8EcQ989sx05zDXZkQuh15d
+         /FKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOujdio6DMtrs+s4smNFJiKvw93MzOwACHGMgFwdpavaTRr8YUrXn7/mvtc1gL7ZetNHlb/nmIBMML5tE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBsNhWQ0WgAjhAJ0yDOTyAr4CmUZmoMBfQy0aO7I4XAMFSbTBb
+	F81eYTZhsLCFy3tmLVP78VZ3V+s+TfcNfLtklj5YIXuBSt1cY9fHAfdG2Zdqo0ecU+mA2ubUQVg
+	35Zs=
+X-Gm-Gg: ASbGncuLH3WWAbZNqVt7pj+RjoEsTtCIo4V6RjC18LkE+8M843jzKJcHZ0Q+HUMWR/4
+	QBD2pvxtEj7ZX+w4x+fA9zIMB906jy2ayf0mzKb60zngOyC+vM8VolLo7L5GBlV69Co5ElXow4R
+	qzRWhgn7WcgErmXIhqymwtFbxQmN8r8wvMpFA+jI4INRLMIVvn2v0/siG7FEkcMwyJbUtvFe9M0
+	M3zNka365jLFNr56+AKg4Mk1ACRC21HOJnnwK2G9EjVbUHe4qsfZB1llDnWXGFuT1FuFzVuut0U
+	99Q8q1SId7CWM2AHapgTeRR3J2UQ8R6/mpUpitwQtAJ5/tnG2je5TlaSKWf4DYbRKastT43KacE
+	w
+X-Google-Smtp-Source: AGHT+IF3VYf7qIAsthu+C02irGIsYcIu00hkAND+ANmur58J3UdMCX/aLnXbHlXfR3CYIeAiBoTtcQ==
+X-Received: by 2002:a17:907:7e96:b0:abc:ad5:c with SMTP id a640c23a62f3a-abc0d9956d4mr2406481366b.3.1740592800200;
+        Wed, 26 Feb 2025 10:00:00 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed205d7afsm367410266b.140.2025.02.26.09.59.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 09:59:58 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf06950db5so1135366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:59:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXWMyBdm43BmQCndvFSwh4Zc2wcCmJ5gvYq54uYMoOy60VoQFFwEdWWEyJPHWqLnPjHDyb8bhYYZcvrLew=@vger.kernel.org
+X-Received: by 2002:a17:906:308e:b0:ab6:511d:8908 with SMTP id
+ a640c23a62f3a-abc0de19516mr1960252766b.40.1740592798401; Wed, 26 Feb 2025
+ 09:59:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com> <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+In-Reply-To: <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 26 Feb 2025 09:59:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqHaF8iBdXsZjiLGeP-Wg76QW9xhjWAhICZNldwiZDCjoY2SKOw5r5wwWM
+Message-ID: <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Ralf Jung <post@ralfj.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-02-24 at 16:05 +0000, Andr=C3=A9 Draszik wrote:
-> Hi Rob,
->=20
-> Thanks for the review!
->=20
-> On Mon, 2025-02-24 at 09:37 -0600, Rob Herring wrote:
-> > On Mon, Feb 24, 2025 at 10:28:49AM +0000, Andr=C3=A9 Draszik wrote:
-> > > Add device tree binding for the Maxim MAX77759 companion PMIC for USB
-> > > Type-C applications.
-> > >=20
-> > > The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensor=
-s,
-> > > USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> > >=20
-> > > This describes the core mfd device.
-> > >=20
-> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > > ---
-> > > =C2=A0.../devicetree/bindings/mfd/maxim,max77759.yaml=C2=A0=C2=A0=C2=
-=A0 | 104 +++++++++++++++++++++
-> > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 ++
-> > > =C2=A02 files changed, 110 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yam=
-l
-> > > b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> > > new file mode 100644
-> > > index 000000000000..1efb841289fb
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> > > @@ -0,0 +1,104 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
-> > > +
-> > > +maintainers:
-> > > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > > +
-> > > +description: |
-> > > +=C2=A0 This is a part of device tree bindings for the MAX77759 compa=
-nion Power
-> > > +=C2=A0 Management IC for USB Type-C applications.
-> > > +
-> > > +=C2=A0 The MAX77759 includes Battery Charger, Fuel Gauge, temperatur=
-e sensors, USB
-> > > +=C2=A0 Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> > > +
-> > > +properties:
-> > > +=C2=A0 compatible:
-> > > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759
-> > > +
-> > > +=C2=A0 interrupts:
-> > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > +
-> > > +=C2=A0 interrupt-controller: true
-> > > +
-> > > +=C2=A0 "#interrupt-cells":
-> > > +=C2=A0=C2=A0=C2=A0 const: 2
-> > > +
-> > > +=C2=A0 gpio-controller: true
-> > > +
-> > > +=C2=A0 "#gpio-cells":
-> > > +=C2=A0=C2=A0=C2=A0 const: 2
-> > > +
-> > > +=C2=A0 gpio:
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/gpio/maxim,max77759-gpio.yaml
-> > > +
-> > > +=C2=A0 reg:
-> > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > +
-> > > +=C2=A0 pmic-nvmem:
-> >=20
-> > Just 'nvmem'
->=20
-> TBH, I'd prefer that as well, and I had just 'nvmem' initially,
-> but that doesn't work:
->=20
-> .../maxim,max77759.example.dtb: pmic@66: nvmem: {'compatible': ['maxim,ma=
-x77759-nvmem'], 'nvmem-layout': {'compatible': ['fixed-
-> layout'], '#address-cells': 1, '#size-cells': 1, 'reboot-mode@0': {'reg':=
- [[0, 4]]}, 'boot-reason@4': {'reg': [[4, 4]]},
-> 'shutdown-user-flag@8': {'reg': [[8, 1]]}, 'rsoc@10': {'reg': [[10, 2]]}}=
-} is not of type 'array'
-> 	from schema $id: http://devicetree.org/schemas/nvmem/nvmem-consumer.yaml=
-#
->=20
-> I don't know if this can be made to work, i.e. can you have both
-> in yaml? Can a type be declared as a oneOf or something like that?
+On Wed, 26 Feb 2025 at 05:54, Ralf Jung <post@ralfj.de> wrote:
+>
+>      The only approach we know that we can actually
+> pull through systematically (in the sense of "at least in principle, we can
+> formally prove this correct") is to define the "visible behavior" of the source
+> program, the "visible behavior" of the generated assembly, and promise that they
+> are the same.
 
-I wasn't able to get this to work with a node name of just
-'nvmem'.
+That's literally what I ask for with that "naive" code generation, you
+just stated it much better.
 
-If anybody has any suggestions, I'll gladly try them.
+I think some of the C standards problems came from the fact that at
+some point the standards people decided that the only way to specify
+the language was from a high-level language _syntax_ standpoint.
 
-I've renamed the node from pmic-nvmem to nvmem-0 in v2, though.
+Which is odd, because a lot of the original C semantics came from
+basically a "this is how the result works". It's where a lot of the
+historical C architecture-defined (and undefined) details come from:
+things like how integer division rounding happens, how shifts bigger
+than the word size are undefined, etc. But most tellingly, it's how
+"volatile" was defined.
 
-https://lore.kernel.org/all/20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.=
-org/
+I suspect that what happened is that the C++ people hated the volatile
+definition *so* much (because of how they changed what an "access"
+means), that they then poisoned the C standards body against
+specifying behavior in terms of how the code *acts*, and made all
+subsequent C standards rules be about some much more abstract
+higher-level model that could not ever talk about actual code
+generation, only about syntax.
 
-Cheers,
-Andre
+And that was a fundamental shift, and not a good one.
 
+It caused basically insurmountable problems for the memory model
+descriptions. Paul McKenney tried to introduce the RCU memory model
+requirements into the C memory model discussion, and it was entirely
+impossible. You can't describe memory models in terms of types and
+syntax abstractions. You *have* to talk about what it means for the
+actual code generation.
+
+The reason? The standards people wanted to describe the memory model
+not at a "this is what the program does" level, but at the "this is
+the type system and the syntactic rules" level. So the RCU accesses
+had to be defined in terms of the type system, but the actual language
+rules for the RCU accesses are about how the data is then used after
+the load.
+
+(We have various memory model documentation in
+tools/memory-model/Documentation and that goes into the RCU rules in
+*much* more detail, but simplified and much shortened: a
+"rcu_dereference()" could be seen as a much weaker form of
+"load_acquire": it's a barrier only to accesses that are
+data-dependencies, and if you turn a data dependency into a control
+dependency you have to then add specific barriers.
+
+When a variable access is no longer about "this loads this value from
+memory", but is something much more high-level, trying to describe
+that is complete chaos. Plus the description gets to be so abstract
+that nobody understands it - neither the user of the language nor the
+person implementing the compiler.
+
+So I am personally - after having seen that complete failure as a
+by-stander - 100% convinced that the semantics of a language *should*
+be defined in terms of behavior, not in terms of syntax and types.
+Sure, you have to describe the syntax and type system *too*, but then
+you use those to explain the behavior and use the behavior to explain
+what the allowable optimizations are.
+
+> So the Rust compiler promises nothing about the shape of the assembly
+> you will get, only about its "visible" behavior
+
+Oh, absolutely. That should be the basic rule of optimization: you can
+do anything AT ALL, as long as the visible behavior is the same.
+
+> (and which exact memory access occurs when is generally
+> not considered "visible").
+
+.. but this really has to be part of it. It's obviously part of it
+when there might be aliases, but it's also part of it when there is
+_any_ question about threading and/or memory ordering.
+
+And just as an example: threading fundamentally introduces a notion of
+"aliasing" because different *threads* can access the same location
+concurrently. And that actually has real effects that a good language
+absolutely needs to deal with, even when there is absolutely *no*
+memory ordering or locking in the source code.
+
+For example, it means that you cannot ever widen stores unless you
+know that the data you are touching is thread-local. Because the bytes
+*next* to you may not be things that you control.
+
+It also *should* mean that a language must never *ever* rematerialize
+memory accesses (again, unless thread-local).
+
+Seriously - I consider memory access rematerialization a huge bug, and
+both a security and correctness issue. I think it should be expressly
+forbidden in *any* language that claims to be reliablel.
+Rematerialization of memory accesses is a bug, and is *hugely* visible
+in the end result. It introduces active security issues and makes
+TOCTOU (Time-of-check to time-of-use) a much bigger problem than it
+needs to be.
+
+So memory accesses need to be part of the "visible" rules.
+
+I claim that C got that right with "volatile". What C got wrong was to
+move away from that concept, and _only_ have "volatile" defined in
+those terms. Because "volatile" on its own is not very good (and that
+"not very good" has nothing to do with the mess that C++ made of it).
+
+              Linus
 
