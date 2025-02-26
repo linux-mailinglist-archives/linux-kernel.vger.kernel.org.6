@@ -1,395 +1,202 @@
-Return-Path: <linux-kernel+bounces-532744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB9DA451BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:50:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B506A451B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38413A64E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A353A9AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C22A145B27;
-	Wed, 26 Feb 2025 00:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2399522EE5;
+	Wed, 26 Feb 2025 00:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKOj+m0r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TspGTA46"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D371494C9;
-	Wed, 26 Feb 2025 00:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740531002; cv=none; b=T10dGKb3G17Cki2cpTV+qX90Y/Ue0/Cmri3aY774iaY46NTqSmw9Bo99vaclbczSu9tR72FUzDKKh9VFnXWajyAeEY+kYLVIqDKm10o3I49AAN/PVD72SPcBfbtQk0uF7Bv3FdBD7i+qXJl5LuWH41mESvRjTD1RFjkKbm/jDRI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740531002; c=relaxed/simple;
-	bh=skkKd73cXLLRxcXwPAzNIOOjqaomSO+3N7ybm/u5Kkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=saY6THP+9fHohpFissLD/lhoWyms7p5JisjpYtEOyFT21Px7Uc+/BLE0+/U+pNSwBAycUOc+Re7FY72e6C29dUZfHkAKpiqJjhn82NX+5escK0Ol33loTTSGxOXAhhL0JK15KExsH9Mxe0CBF4Zgj/m5CRBZHxGC1phZVaogmHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKOj+m0r; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740531001; x=1772067001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=skkKd73cXLLRxcXwPAzNIOOjqaomSO+3N7ybm/u5Kkw=;
-  b=nKOj+m0rfZq4ax6VpuPMX9oqGwbVwa9YVIWg8flc483HDAXWpUzq2thW
-   USMuAihVmHSbNUjvnP+oqAGbox+BVlX8wKHp3lIvJ9DRqGhwxYJlsyuo3
-   JHmT9POEa2j86i7iiAFf1ClV46LO41aWbqXHxw5p/Msk+ocXEM61Ktv+j
-   eFHUHFLO3jKATrHGZKV7b02sQ/zZjGZI8xgUOfUOvuVOp51fUKwEVMGDI
-   Pfh3Ts75PSlz/ck86WMKBsEC2JrO0yTDsX/+NC43q3rxCQz4zJqgKTfFd
-   4nWuKgLKw5HBSolW0wl2XNe9Zk6D5Suf2tU/kIjBWraQihM8zrYlANCzh
-   w==;
-X-CSE-ConnectionGUID: aRB5iKtMQECNkob9B3sfZA==
-X-CSE-MsgGUID: WhTE4aOMRKOD4VruGgYcGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52760452"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="52760452"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 16:50:00 -0800
-X-CSE-ConnectionGUID: RoHyEH7ETDGrYANjeA8Pog==
-X-CSE-MsgGUID: WH0QefF3TPWVDVxU0kXDGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="116331979"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 25 Feb 2025 16:49:58 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tn5cZ-000AyR-0P;
-	Wed, 26 Feb 2025 00:49:55 +0000
-Date: Wed, 26 Feb 2025 08:49:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
-Message-ID: <202502260805.jPVNYTZ0-lkp@intel.com>
-References: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0251494C9;
+	Wed, 26 Feb 2025 00:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740530963; cv=fail; b=J5gc8IWITtnda7XuRbZj/9Gea8n2DRZGNoCfryt6ZCg/VeQkkp3NlFXq3xTVUTYh61Xv4EO2H2Btw7Mc8XnofPmyiv9UANKhedmTY6Gbzijdd4C3WPlXDF1IyPV7qtHPxNk6hgoU9h99dlm6igB9DXvpuYbMEyheepR+1cuqCOc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740530963; c=relaxed/simple;
+	bh=16Ekmce5l7CYWBlJYPXMNzBWqvf4q6pSdG0zXZWu2cA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TKJuOgoRupK1xwl+DX0nyBMzdQn7AqKjarE2bs62IQJYZTqwZB5HV9b8g98gGmZUiqe3vtDJOFIQR4STXeW2RvEne95yymCw3le3aLCxcGHbnKyf0foI46X4XTjEGExvvvkIceNNJSii1Ht0bFBOnqPtHHylKpzha3h+WCnv7Sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TspGTA46; arc=fail smtp.client-ip=40.107.220.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mUwKXMJHYY3CQEZ8Qh6eAixxJYB2HoZpVR+c88FuwftxyU9rJ4jY+mBOvIZzK1hIk7dIcRDmvvnJt5AK0pXUNiSYMIEH0fKob6Nqz8Yb0QlKnfLwNzvMQ4oQsqMs+JFadRK+7WPGMOhnpP0xAoPsdWObOA4+woTIY3OPnGhVW+6/+PclU4YRdc8FkfuPZlIPOZGDIZkNGRtJNoE0zF/RY2UiiRcnLjpK0+AVVbN9FMm0t99H7jk8Ky7Cs0yYS/cCOPWXb7FywBJvL1ESQi8A6/gjeftBqGHKbL9rm7yoTfxMbJz2YCFw5xKiuDHvK6LqrpXpqNrjhlssdWTlqsTxMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wdi8QPj5+ubJssuLU8x8rt1XbSugnTdGgUIASxYtJz8=;
+ b=AhE/geW009tPNppNL1y0v3B+nPBvTJ1OmuJaMVBZmqMUZb7z88z6GDWah9imxmSnJ6B6JBzs7VovfTHAsvWy0ehSgIST5E6YNjNdTpqiSQbTOLhQ7NdUWl3+FTxh8l+2qhyXVV4Tr+iRWsLkdQ9NUbqUKTed1ZbIN4Kf1Uxw1U15gB/udlnKtv9NgI/PDDk5BN25RycOe2MgoWPVQvVCfAyQDXdyzCVhO47yQ3GEVCN5EkHNx/RUCWSBj+OguFhFeqoF/a0qwCA2DkWxc+4asWBWkv1J92ytHTe8LAelQh7JfSXyWjPVxKYTOjp+bgLclkEtncoRmdTpvgZsGUzRMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wdi8QPj5+ubJssuLU8x8rt1XbSugnTdGgUIASxYtJz8=;
+ b=TspGTA469cV0n7qLvoDYBI6yHMBX6jUJH0Y7GIGH6H77gyWju6C74IfZjwcNwR4tAQpywPdovWPVnWWWIrIkl5U+i7/kuXosVrzUJiF9tvfN2MiR2V6zfJ3Rv3wvoopxyPkYitBpTxQBIOwIwf++1AveI2ZZtVHro+ecRaIuHydqmcl9NhlsxswaW62kbrYrh+EBCRONhqknQQ7QXtn9QlxCmrgSBBlk7Y3vKVJ1KxUGFqmaFasL2wXLSTR3JzZF3k0mKH9lgh1W4qaZpMmknd51zPn8BqOF+usdSTolt7H35h9TnTfynaL62iiSV9N0JWVJ+P4p3ytXY8dZkz3yTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN2PR12MB4357.namprd12.prod.outlook.com (2603:10b6:208:262::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
+ 2025 00:49:18 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 00:49:18 +0000
+Date: Tue, 25 Feb 2025 20:49:16 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250226004916.GB4959@nvidia.com>
+References: <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
+ <Z7xg8uArPlr2gQBU@pollux>
+ <Z7xh5bEyh_MII4WV@pollux>
+ <20250224184502.GA1599486@joelnvbox>
+ <Z70EcwNIX0KtWy36@cassiopeiae>
+ <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
+ <20250225225756.GA4959@nvidia.com>
+ <Z75WKSRlUVEqpysJ@cassiopeiae>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z75WKSRlUVEqpysJ@cassiopeiae>
+X-ClientProxiedBy: BL1PR13CA0158.namprd13.prod.outlook.com
+ (2603:10b6:208:2bd::13) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4357:EE_
+X-MS-Office365-Filtering-Correlation-Id: e337b819-834d-4b76-6984-08dd55ff664c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gvStVip5vhW1tIL1kYZaDR+cNNOgsxReRR0n3GdQqpVNt5Y18l6sq+h4mN1W?=
+ =?us-ascii?Q?UDc907Jo93rPCyMuYZ+jPYbZJJHzmmXw58kGHYHUhKt6uhUbjU3/f2Zx/zyT?=
+ =?us-ascii?Q?+spcbDYrzzyaZG0gWdaXdPMCIRStA8uQgKzXQ+bVKwoGtCCPCcVvQnZgrN5D?=
+ =?us-ascii?Q?N3iSHeoKXsuLQlNfLBx/nC/CR1GrBAiqgTo7NGu+SyVOLVJ3OVXitDCHUbyK?=
+ =?us-ascii?Q?ydieaY9JZTtPRmMv9S+UJvn1aJmxqT2iRgT0ceMXrtZ5zNUY13kVAqtkfPhP?=
+ =?us-ascii?Q?wPFFT3ihM+pF3VM3BEMKtOCTXGhGtCL8kyN7Ebhtt8d4ncArgIlLdxBWav1+?=
+ =?us-ascii?Q?m7Vu7cpaCquRARHx8dvL09diSMLpAVYjBtRhX6zLgqxv1gRL7Y/axOAiyTNa?=
+ =?us-ascii?Q?xsoKfYGjIB77MN2m4xSZawG/b42WT8lVW0Gdi5hWDC4bmvlQ6JFfVxTTZs8v?=
+ =?us-ascii?Q?Tu05xTQWcwqKmlRJSnFTuj59ALE86chd4kXeLQ1AXg3ywodlCweZY3z3mMqU?=
+ =?us-ascii?Q?mRELVAUVv79gpWA/91X1sQf1HADlHThNd6YYloauZ16fv30M2FZ7lwTDipdY?=
+ =?us-ascii?Q?imJJsovNXSdi8h4u2nbtHFqhMmnN4pgeXPrdV3vRh5ri16Py0gcCZVlrKNkF?=
+ =?us-ascii?Q?4o9AkfgUBwi+3WPVbhhIK+elSPk8YmfTPJoKMb81IlNwtjXWn24icFTAZPhI?=
+ =?us-ascii?Q?k4lKCf+n+ylbKsFOSMgd68HUU3FO0MWhvTES4QxHqwfBwqCaiyYBS9cm2HPQ?=
+ =?us-ascii?Q?zLP0zeLmP603U7HjSOF/qrOqo/rmSkx94kQKc/BrcrntoW0u4+2JF68m7YcY?=
+ =?us-ascii?Q?JCoZ+V0uzQIoojJ+/yqzCmvyt1bZAzw/5OD4AZ4hiD9SCbJFwtQa7oLrlsds?=
+ =?us-ascii?Q?04r3ayo3uJAqQmXA9XTQieB/K2rrkykpNruBj3c6sC/G+pFqXCUgHypHHWsu?=
+ =?us-ascii?Q?DdBv2aTlXY6jhQpX1IPd4yGpM0Q4gZaHSX7nM9wpvnrVIQnJCi2pptP3seRa?=
+ =?us-ascii?Q?eDVssQHbnLeQxcLYHq7cimSd0NjoqsxK5tqxN24Zy3ytWGO6jwwhSnBb61rK?=
+ =?us-ascii?Q?w9Ikf+jE6u3e11BZPEtDHnCwruWLePWbF9uQTVxR1ficyz+NdZg05VH/z/3+?=
+ =?us-ascii?Q?FJTqzT1QxWLAZmMPkqU4/POSiU9Zbolc17GWHDtlVOdDsFZPzizSmSH0m1CP?=
+ =?us-ascii?Q?b+BmAQOmE3c7UNVUSYiTw/7zMVzsnVL0dQccZcp5m0uT9Ju12D4U/9YdN1Kl?=
+ =?us-ascii?Q?uJQfdcJ5TzPVRNtePLTdVC7QQ7KSmnlAxw9O9rO6Po6b1LNFu2s95BYGCbET?=
+ =?us-ascii?Q?j8BjOZ88ajZvgAW1yX1mfHDyENWCR1q26grg0qHBCy67FDaylP8gH3NMv1bm?=
+ =?us-ascii?Q?Y0ZS1klzUkd6q/0RFQvyE1Yt7vs8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b40s9TV4vVXZsmWtbX4sP2pWDKA9fG0gnw8P/M6yUuFSAlknOa1sGyXbO5aT?=
+ =?us-ascii?Q?Q3MFvQoIo4tdjzXfO/2er0bwUUFmAq4gNQ+agL7iMM8ztYICv7ZQmSTXE1qZ?=
+ =?us-ascii?Q?Drj/znAzmDq16mhUGcAf5oliBE+rkPfTKNWGVbUJNwVijVhwPJPvcP3+zFnH?=
+ =?us-ascii?Q?ZAEw2TnvF6uR4WXCWyEF/225DIBt1kDXt5Qszvc3Xsh1A9NPQhIG3ZqeA3rO?=
+ =?us-ascii?Q?1xHvluRu4pOzSyPg+W2Gh2zecg2+/xJ9ksVBuV5miYz0jAgwewCNHurL8zzS?=
+ =?us-ascii?Q?valR60BCELy0bhHjkpRr2N9jOtwcLXyY5/y04x5EsVnmOljhFL9L8QekyZS4?=
+ =?us-ascii?Q?N4rZTnJyW2O6uDOXevyanYaahjjFOs3Gw289vLjkWydbK5ZvoIyh+5KWCU80?=
+ =?us-ascii?Q?cqsEbtaGYTo7j8VPq7SMcKxYnS3JYydrmmt5oTsARLH8KbKYq4v6/7Kyv/C+?=
+ =?us-ascii?Q?Z/EK+R8c6hbtbVFajOkyFyNZ92O9HsdWLMpu25cEcKiyk472HCZzD7EZWDzr?=
+ =?us-ascii?Q?AUkq2ihSWf/ra0vTMwtodJWlNYsdB0IQwoziH3ChKYGZqT8Znc5E9S/6abpw?=
+ =?us-ascii?Q?/vS8Ucwo0zwRQlFE2h+6NTrICta6zCK/uZ9dxEFbRN6tAH7jMm4QUA1ePHde?=
+ =?us-ascii?Q?82kaMbsxz71a4dkFHTMEs85K6zn8r6/85eXTjrNk2fNix13YvvMm8jffd3wE?=
+ =?us-ascii?Q?wxzQEctqT/25jjSrW6u6f41V+8w/efeYE3P5AdzqefioZyA7eoY4iZIOOovr?=
+ =?us-ascii?Q?CUs6Vjh66EZ//N6n8NMt0Wi2TAOmsaq0iTx1KbubfqEhmMYOSj71TGugzU7y?=
+ =?us-ascii?Q?0naS+rmWofJQ5jdWBtYLQEGE5oDP8lLs0wtyoVZroNaNKdgenXUSZ7bMa6am?=
+ =?us-ascii?Q?AU6LYNTXbhGRD1scc5IlChD6NHSCdm8Pg2J63Gs213bO2XBcBw1dHFC1440O?=
+ =?us-ascii?Q?ULJLNmYx9jEIMGjl7kQiMGfyDrQxwj5xYy1RrevWXoJ2nuZGPWjUHjK2USvl?=
+ =?us-ascii?Q?wn+rZlk/DnvmcurkLiHqtmzWsjX8gD05UrV+xExrFr/9mjIQ4DOJhChABWf7?=
+ =?us-ascii?Q?eU4hLT6rRVlKbju7qwvzr1Hdi67h7E6y4pW0OVH6sOvM7EpjFbAkuTObCOqH?=
+ =?us-ascii?Q?mdyTcomYDwVLCLtP7jVhoSh9OQAtSwzB0B9XFFjiuAmQJBAmc3pS1aSrzSG/?=
+ =?us-ascii?Q?79qNzsRgPvIAvniglDvyhtMrC6wKLWx2b2mElaoHwanka0nMJJF2JZI7CD1a?=
+ =?us-ascii?Q?k61rd6c1G+tBnehu+S7aaQVEsgewf6MR3O7mjicT9l8rg3SQ0QnWcO1I8ZXI?=
+ =?us-ascii?Q?yKdwE1OejIER5/zLWq/KrgaUgeSA9hZ90cRqE67Fhd10qiHu1BwLphjDEskl?=
+ =?us-ascii?Q?kQnLyeXNuA/X96Qo46xIKSrqWWM5k0twnn6k5j+bZn8ozAxr+H2Yb8NIV6T7?=
+ =?us-ascii?Q?jAzBOYiNv6Lg736mS1xGSMXuPgOirX4UDqo39ornNeBPBSucL5YrPhUUIN2S?=
+ =?us-ascii?Q?2k4fJZxJPn0Uj1JDsKmVbjZlAE8DpKsmia5J6mLKy6XYfOJPDQju1F3EMSwC?=
+ =?us-ascii?Q?fi0EHonzs9CL5Phq6fQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e337b819-834d-4b76-6984-08dd55ff664c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 00:49:17.9283
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o1hwaWSDySjGx9LkrXehwbBj07AHZV1pyKpQcK5D4RZS24I7+lKW1O7OIduXCtuN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4357
 
-Hi Andy,
+On Wed, Feb 26, 2025 at 12:45:45AM +0100, Danilo Krummrich wrote:
+> On Tue, Feb 25, 2025 at 06:57:56PM -0400, Jason Gunthorpe wrote:
+> > The common driver shutdown process in the kernel, that is well tested
+> > and copied, makes the driver single threaded during the remove()
+> > callback.
+> 
+> All devres callbacks run in the same callchain, __device_release_driver() first
+> calls remove() and then all the devres callbacks, where we revoke the pci::Bar,
+> by which gets dropped and hence the bar is unmapped and resource regions are
+> free. It's not different to C drivers. Except that in C you don't lose access to
+> the void pointer that still points to the (unmapped) MMIO address.
 
-kernel test robot noticed the following build errors:
+I understand how devm works.
 
-[auto build test ERROR on groeck-staging/hwmon-next]
-[also build test ERROR on linus/master v6.14-rc4 next-20250225]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'm pointing out the fundamental different in approachs. The typical
+widely used pattern results in __device_release_driver() completing
+with no concurrent driver code running.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/watchdog-nic7018_wdt-tidy-up-ACPI-ID-table/20250225-180908
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250225095804.360899-1-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250226/202502260805.jPVNYTZ0-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250226/202502260805.jPVNYTZ0-lkp@intel.com/reproduce)
+DRM achieves this, in part, by using drm_dev_unplug().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502260805.jPVNYTZ0-lkp@intel.com/
+The Rust approach ends up with __device_release_driver() completing
+and leaving driver code still running in other threads.
 
-All errors (new ones prefixed by >>):
+This is a significant different outcome that must be mitigated somehow
+to prevent an Execute After Free failure for Rust. DRM happens to be
+safe because it ends up linking the driver module refcount to FD
+lifetime. This also prevents unloading the driver (bad!!).
 
-   In file included from drivers/watchdog/nic7018_wdt.c:7:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:181:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/watchdog/nic7018_wdt.c:209:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     209 |         outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:213:3: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     213 |                 outb(LOCK, wdt->io_base + WDT_REG_LOCK);
-         |                 ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:229:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     229 |         outb(LOCK, wdt->io_base + WDT_REG_LOCK);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:96:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-      96 |         outb(counter << 4 | config->divider,
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
->> drivers/watchdog/nic7018_wdt.c:112:12: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
-     112 |         control = inb(wdt->io_base + WDT_RELOAD_CTRL);
-         |                   ^
-   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
-     643 | #define inb _inb
-         |             ^
-   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
-     542 | #define _inb _inb
-         |              ^
-   drivers/watchdog/nic7018_wdt.c:113:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     113 |         outb(control | WDT_RELOAD_PORT_EN, wdt->io_base + WDT_RELOAD_CTRL);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:115:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     115 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:117:12: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
-     117 |         control = inb(wdt->io_base + WDT_CTRL);
-         |                   ^
-   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
-     643 | #define inb _inb
-         |             ^
-   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
-     542 | #define _inb _inb
-         |              ^
-   drivers/watchdog/nic7018_wdt.c:118:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     118 |         outb(control | WDT_CTRL_RESET_EN, wdt->io_base + WDT_CTRL);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:127:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     127 |         outb(0, wdt->io_base + WDT_CTRL);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:128:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     128 |         outb(0, wdt->io_base + WDT_RELOAD_CTRL);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:129:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     129 |         outb(0xF0, wdt->io_base + WDT_PRESET_PRESCALE);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:138:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-     138 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:96:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
-      96 |         outb(counter << 4 | config->divider,
-         |         ^
-   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
-     655 | #define outb _outb
-         |              ^
-   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
-     596 | #define _outb _outb
-         |               ^
-   drivers/watchdog/nic7018_wdt.c:148:10: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
-     148 |         count = inb(wdt->io_base + WDT_COUNT) & 0xF;
-         |                 ^
-   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
-     643 | #define inb _inb
-         |             ^
-   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
-     542 | #define _inb _inb
-         |              ^
-   3 warnings and 15 errors generated.
+However, for instance, you can't rely on the module reference count
+with work queues, so this scheme is not generally applicable.
 
-
-vim +209 drivers/watchdog/nic7018_wdt.c
-
-98078ca34a0a71 Hui Chun Ong 2016-12-28  104  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  105  static int nic7018_start(struct watchdog_device *wdd)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  106  {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  107  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  108  	u8 control;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  109  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  110  	nic7018_set_timeout(wdd, wdd->timeout);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  111  
-98078ca34a0a71 Hui Chun Ong 2016-12-28 @112  	control = inb(wdt->io_base + WDT_RELOAD_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  113  	outb(control | WDT_RELOAD_PORT_EN, wdt->io_base + WDT_RELOAD_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  114  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  115  	outb(1, wdt->io_base + WDT_RELOAD_PORT);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  116  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  117  	control = inb(wdt->io_base + WDT_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  118  	outb(control | WDT_CTRL_RESET_EN, wdt->io_base + WDT_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  119  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  120  	return 0;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  121  }
-98078ca34a0a71 Hui Chun Ong 2016-12-28  122  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  123  static int nic7018_stop(struct watchdog_device *wdd)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  124  {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  125  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  126  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  127  	outb(0, wdt->io_base + WDT_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  128  	outb(0, wdt->io_base + WDT_RELOAD_CTRL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  129  	outb(0xF0, wdt->io_base + WDT_PRESET_PRESCALE);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  130  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  131  	return 0;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  132  }
-98078ca34a0a71 Hui Chun Ong 2016-12-28  133  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  134  static int nic7018_ping(struct watchdog_device *wdd)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  135  {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  136  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  137  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  138  	outb(1, wdt->io_base + WDT_RELOAD_PORT);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  139  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  140  	return 0;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  141  }
-98078ca34a0a71 Hui Chun Ong 2016-12-28  142  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  143  static unsigned int nic7018_get_timeleft(struct watchdog_device *wdd)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  144  {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  145  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  146  	u8 count;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  147  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  148  	count = inb(wdt->io_base + WDT_COUNT) & 0xF;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  149  	if (!count)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  150  		return 0;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  151  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  152  	return nic7018_timeout(wdt->period, count);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  153  }
-98078ca34a0a71 Hui Chun Ong 2016-12-28  154  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  155  static const struct watchdog_info nic7018_wdd_info = {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  156  	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  157  	.identity = "NIC7018 Watchdog",
-98078ca34a0a71 Hui Chun Ong 2016-12-28  158  };
-98078ca34a0a71 Hui Chun Ong 2016-12-28  159  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  160  static const struct watchdog_ops nic7018_wdd_ops = {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  161  	.owner = THIS_MODULE,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  162  	.start = nic7018_start,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  163  	.stop = nic7018_stop,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  164  	.ping = nic7018_ping,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  165  	.set_timeout = nic7018_set_timeout,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  166  	.get_timeleft = nic7018_get_timeleft,
-98078ca34a0a71 Hui Chun Ong 2016-12-28  167  };
-98078ca34a0a71 Hui Chun Ong 2016-12-28  168  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  169  static int nic7018_probe(struct platform_device *pdev)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  170  {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  171  	struct device *dev = &pdev->dev;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  172  	struct watchdog_device *wdd;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  173  	struct nic7018_wdt *wdt;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  174  	struct resource *io_rc;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  175  	int ret;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  176  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  177  	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  178  	if (!wdt)
-98078ca34a0a71 Hui Chun Ong 2016-12-28  179  		return -ENOMEM;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  180  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  181  	platform_set_drvdata(pdev, wdt);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  182  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  183  	io_rc = platform_get_resource(pdev, IORESOURCE_IO, 0);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  184  	if (!io_rc) {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  185  		dev_err(dev, "missing IO resources\n");
-98078ca34a0a71 Hui Chun Ong 2016-12-28  186  		return -EINVAL;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  187  	}
-98078ca34a0a71 Hui Chun Ong 2016-12-28  188  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  189  	if (!devm_request_region(dev, io_rc->start, resource_size(io_rc),
-98078ca34a0a71 Hui Chun Ong 2016-12-28  190  				 KBUILD_MODNAME)) {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  191  		dev_err(dev, "failed to get IO region\n");
-98078ca34a0a71 Hui Chun Ong 2016-12-28  192  		return -EBUSY;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  193  	}
-98078ca34a0a71 Hui Chun Ong 2016-12-28  194  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  195  	wdt->io_base = io_rc->start;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  196  	wdd = &wdt->wdd;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  197  	wdd->info = &nic7018_wdd_info;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  198  	wdd->ops = &nic7018_wdd_ops;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  199  	wdd->min_timeout = WDT_MIN_TIMEOUT;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  200  	wdd->max_timeout = WDT_MAX_TIMEOUT;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  201  	wdd->timeout = WDT_DEFAULT_TIMEOUT;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  202  	wdd->parent = dev;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  203  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  204  	watchdog_set_drvdata(wdd, wdt);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  205  	watchdog_set_nowayout(wdd, nowayout);
-14fad5d98d9043 Wolfram Sang 2019-04-19  206  	watchdog_init_timeout(wdd, timeout, dev);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  207  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  208  	/* Unlock WDT register */
-98078ca34a0a71 Hui Chun Ong 2016-12-28 @209  	outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  210  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  211  	ret = watchdog_register_device(wdd);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  212  	if (ret) {
-98078ca34a0a71 Hui Chun Ong 2016-12-28  213  		outb(LOCK, wdt->io_base + WDT_REG_LOCK);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  214  		return ret;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  215  	}
-98078ca34a0a71 Hui Chun Ong 2016-12-28  216  
-98078ca34a0a71 Hui Chun Ong 2016-12-28  217  	dev_dbg(dev, "io_base=0x%04X, timeout=%d, nowayout=%d\n",
-98078ca34a0a71 Hui Chun Ong 2016-12-28  218  		wdt->io_base, timeout, nowayout);
-98078ca34a0a71 Hui Chun Ong 2016-12-28  219  	return 0;
-98078ca34a0a71 Hui Chun Ong 2016-12-28  220  }
-98078ca34a0a71 Hui Chun Ong 2016-12-28  221  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jason
 
