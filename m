@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-533254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4104A4575D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:59:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D54A45757
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810EB3AA0F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FFA57A8198
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20F71E1DF0;
-	Wed, 26 Feb 2025 07:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E592B1E1E14;
+	Wed, 26 Feb 2025 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ce6nZdwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yGKdeAVa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qnFaOadQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yGKdeAVa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qnFaOadQ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245451E1DE1;
-	Wed, 26 Feb 2025 07:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F52D1E1DE1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556451; cv=none; b=g9UuBlH3PHutYy6ouUmjx9n3f9SkP4bxzGPbN/8TQSqH2JT64JZi7U+KdK9lsjsAuS6ZPuCZ+mOkt/HiJWvD7X2Rhcvxd/yz19PT36OTWY2TqgHNjcqxoGRKUkqdLxNiK4Dp8k9LaQ9UdJjcDQCg4HuEaiiEoH5CGybLVAU6dj0=
+	t=1740556471; cv=none; b=RJGNAC4rrD9ZZse6N4r3LG4gk6OsfObJ10lOj3owusvWuLHmKfamXu+QR+KtW94075/IjQvX+u1IHyOHxVigcVgow/vUyV6eUqnpVip35JJq9zSDbYE9Fkuf4VXaqIxUdsguQ/Fdt0qDsemG8ayfxQVMEcnNLWQUYv9FeD9Arjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556451; c=relaxed/simple;
-	bh=92ToKjMng5UJUg3byfnfnCY3Q+fzsJoKi/ZAArA68TU=;
+	s=arc-20240116; t=1740556471; c=relaxed/simple;
+	bh=lzrzkFqtYn2XPfyVD+uYwO2Z2Ocwc3IK+Hs3ALah9Fw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmh7383RgnChYWLeHGA21F6Lw5zzhbU1XTI9Pr1HUvkeSaFCYVjD9tYCLYBAV3HJMkSjG6W7fJrWqf3JU7qdqaOlPIIZ89CEck+W6Gr4Pl0XcH8SZCIiiIudxcfvsYDRREh6/FgBdAY/T584YDkC09Ug7bIg0ELwZcIXBFWnkNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ce6nZdwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE84C4CED6;
-	Wed, 26 Feb 2025 07:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740556450;
-	bh=92ToKjMng5UJUg3byfnfnCY3Q+fzsJoKi/ZAArA68TU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ce6nZdwnF5HOI22QJhzYb5t8RwkQjtWsnao+FKm1SpQOChhAwFCdysaLhkPDn04Cv
-	 NLqqqCVkdQ4hXH/0C8lupYVVQwdw74TRcto1HT22ydBm6UPA0aHHuiW3FCDrfBQiWj
-	 YQTGu9w88jPqL5CC4ixAE41VGoRyTl8y/CUrrQMGB8G3VQN9BcaRzFbZJFCXw60UKx
-	 T5X+8mD8ZR3+2UMmMa+BzJi5fp1TtWDewmKuZzXpJ7XiZhlbrlCi5Hl57n6l+O/Hir
-	 /uD02db9EF+GZeXCdMQq1cmLZbL3oO4UHX082Akmi0g/thcbG2F68JUnBk6h+UkHSJ
-	 jFIOpzoK8m2WA==
-Message-ID: <e15754dd-5f4e-424d-a3a9-308dae814708@kernel.org>
-Date: Wed, 26 Feb 2025 08:54:03 +0100
+	 In-Reply-To:Content-Type; b=PAs1okmM+HM97CU+07XDftyhF7jtK+XwWPYYNzWYQXa1Y14SF6aoZisc/7DZQaZhsAquKA+u7Jidj+kHgV6iztQmH3w8IO4Y/wqNfcTdc+Qx1E4Ups0bladp35djbhaYTo+TwVCyxKgCvEAmBY7K6COT7+xdR2uBboCiIfe5PWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yGKdeAVa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qnFaOadQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yGKdeAVa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qnFaOadQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9C34B1F387;
+	Wed, 26 Feb 2025 07:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740556467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5VYTfqhAjaSaoouv3YNmgRttChRZ90xHDXAk/bW06pk=;
+	b=yGKdeAVaVVKm46qEuA2yXDoMzbVKl/C5A5EEjmM9UnCNcsoUyL7+jrY89uhsyApt+TTP0L
+	VSiHV7xzttNSbMrWPZyt1r93wuilYNtuKWrsRD1FzJl86tZIOzCDQfhrgO/pbYcES+JF6c
+	NJvtGtQjUwzNbITNjKSfCxaW7XyRTxs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740556467;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5VYTfqhAjaSaoouv3YNmgRttChRZ90xHDXAk/bW06pk=;
+	b=qnFaOadQX+Wpon5T3/5CH4vQ7MEAAtEMzcSFqAp9sdHw1poIlSxqZBqZTcUDc9DhzKHt4A
+	SJ2wmKs0JD4hzjCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yGKdeAVa;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qnFaOadQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740556467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5VYTfqhAjaSaoouv3YNmgRttChRZ90xHDXAk/bW06pk=;
+	b=yGKdeAVaVVKm46qEuA2yXDoMzbVKl/C5A5EEjmM9UnCNcsoUyL7+jrY89uhsyApt+TTP0L
+	VSiHV7xzttNSbMrWPZyt1r93wuilYNtuKWrsRD1FzJl86tZIOzCDQfhrgO/pbYcES+JF6c
+	NJvtGtQjUwzNbITNjKSfCxaW7XyRTxs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740556467;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5VYTfqhAjaSaoouv3YNmgRttChRZ90xHDXAk/bW06pk=;
+	b=qnFaOadQX+Wpon5T3/5CH4vQ7MEAAtEMzcSFqAp9sdHw1poIlSxqZBqZTcUDc9DhzKHt4A
+	SJ2wmKs0JD4hzjCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6016013A53;
+	Wed, 26 Feb 2025 07:54:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7pv8FbPIvmcjOwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 07:54:27 +0000
+Message-ID: <4d1a50b5-aa41-4e8e-829a-5c404e2110ca@suse.de>
+Date: Wed, 26 Feb 2025 08:54:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +97,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] pwm: stm32-lp: add support for stm32mp25
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: lee@kernel.org, ukleinek@kernel.org, alexandre.torgue@foss.st.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, wbg@kernel.org,
- jic23@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
- catalin.marinas@arm.com, will@kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
- olivier.moysan@foss.st.com
-References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
- <20250224180150.3689638-6-fabrice.gasnier@foss.st.com>
- <20250225-psychedelic-iguana-of-education-d5fff7@krzk-bin>
- <e309c016-4dcb-49e3-945e-54ddadfbddb8@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] dummycon: fix default rows/cols
+To: Arnd Bergmann <arnd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller
+ <deller@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: kernel test robot <lkp@intel.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <20250225164436.56654-2-arnd@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e309c016-4dcb-49e3-945e-54ddadfbddb8@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250225164436.56654-2-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.29 / 50.00];
+	RSPAMD_URIBL(4.50)[arndb.de:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	BAD_REP_POLICIES(0.10)[];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	R_DKIM_ALLOW(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[kernel.org,linuxfoundation.org,gmx.de,arndb.de,redhat.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:email,suse.de:email,suse.de:dkim,suse.de:mid]
+X-Spam-Score: 0.29
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 9C34B1F387
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 
-On 25/02/2025 15:58, Fabrice Gasnier wrote:
-> 
-> 
-> On 2/25/25 13:04, Krzysztof Kozlowski wrote:
->> On Mon, Feb 24, 2025 at 07:01:47PM +0100, Fabrice Gasnier wrote:
->>>  	}
->>>  
->>>  	return pinctrl_pm_select_sleep_state(dev);
->>> @@ -246,6 +413,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
->>>  
->>>  static const struct of_device_id stm32_pwm_lp_of_match[] = {
->>>  	{ .compatible = "st,stm32-pwm-lp", },
->>> +	{ .compatible = "st,stm32mp25-pwm-lp", },
->>
->> No driver data suggests device is backwards compatible. Commit msg
->> suggests not, so that's confusing.
-> 
-> 
-> The LPTimer PWM driver takes benefit of the MFD parent driver to feed in
-> data, e.g. 'num_cc_chans'. Number of channels is now variable, on
-
-This means this ID table is useless. You do the matching via parent
-device, so stop growing the table and call it deprecated or something.
-
-> STM32MP25 (e.g. not a single channel). But it can't be hard-coded as
-> compatible data. (there's only 1 channel on earlier LP Timer hardware
-> revision).
-> 
-> The hardware controller is a bit different, hence the new compatible
-
-If it works with old compatible, it's an easy proof that it is
-compatible, so please counter argument that with something specific.
-What is different that driver cannot work with new device using old
-interface or old features?
 
 
-Best regards,
-Krzysztof
+Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> dummycon fails to build on ARM/footbridge when the VGA console is
+> disabled, since I got the dependencies slightly wrong in a previous
+> patch:
+>
+> drivers/video/console/dummycon.c: In function 'dummycon_init':
+> drivers/video/console/dummycon.c:27:25: error: 'CONFIG_DUMMY_CONSOLE_COLUMNS' undeclared (first use in this function); did you mean 'CONFIG_DUMMY_CONSOLE'?
+>     27 | #define DUMMY_COLUMNS   CONFIG_DUMMY_CONSOLE_COLUMNS
+> drivers/video/console/dummycon.c:28:25: error: 'CONFIG_DUMMY_CONSOLE_ROWS' undeclared (first use in this function); did you mean 'CONFIG_DUMMY_CONSOLE'?
+>     28 | #define DUMMY_ROWS      CONFIG_DUMMY_CONSOLE_ROWS
+>
+> This only showed up after many thousand randconfig builds on Arm, and
+> doesn't matter in practice, but should still be fixed. Address it by
+> using the default row/columns on footbridge after all in that corner
+> case.
+>
+> Fixes: 4293b0925149 ("dummycon: limit Arm console size hack to footbridge")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409151512.LML1slol-lkp@intel.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   drivers/video/console/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+> index 1c4263c164ce..ea4863919eb9 100644
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@ -51,7 +51,7 @@ config DUMMY_CONSOLE
+>   
+>   config DUMMY_CONSOLE_COLUMNS
+>   	int "Initial number of console screen columns"
+> -	depends on DUMMY_CONSOLE && !ARCH_FOOTBRIDGE
+> +	depends on DUMMY_CONSOLE && !(ARCH_FOOTBRIDGE && VGA_CONSOLE)
+>   	default 160 if PARISC
+>   	default 80
+>   	help
+> @@ -61,7 +61,7 @@ config DUMMY_CONSOLE_COLUMNS
+>   
+>   config DUMMY_CONSOLE_ROWS
+>   	int "Initial number of console screen rows"
+> -	depends on DUMMY_CONSOLE && !ARCH_FOOTBRIDGE
+> +	depends on DUMMY_CONSOLE && !(ARCH_FOOTBRIDGE && VGA_CONSOLE)
+>   	default 64 if PARISC
+>   	default 30 if ARM
+>   	default 25
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
