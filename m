@@ -1,77 +1,70 @@
-Return-Path: <linux-kernel+bounces-533771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3390A45E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:16:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D43A45E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDEE3A2177
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE3817D924
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F353238157;
-	Wed, 26 Feb 2025 12:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6026D26B089;
+	Wed, 26 Feb 2025 12:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IBVRGAHb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tgntS3b4"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RK4eXwr0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xBmKh/Jp"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29790222577;
-	Wed, 26 Feb 2025 12:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FA235362;
+	Wed, 26 Feb 2025 12:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571491; cv=none; b=VAlVdr6WYx5pjeKbQHheZeK8fL3q5nhSFaIT9ESyRuO8DkkD01iAXx7JGSI876mhyi7wIBE8WeBWGtg8rSdkGrZaK/zQFXH7/w00LfePz7vPJsu4O7fEcnzinjc0K8mPpX1+VSciOcSmo1LrDOueg94LBgloPQQT1AFktbTPsVY=
+	t=1740571493; cv=none; b=ZEtLgDRzHp+mwvHUwcqUXLyVRRNUQQjPboMAcF229rjTE1894JOJ1+9Tjrcatqrgbdf2QsxBO8t/eVuKyfx2CLFIslGLMX3to8gqyJPbpxi9Vpydbt6gpg4UiYZTzXd7g0gEQn2n5x3pw5FS8bEGn7cp1PSH7ZxxCvZuRqOsHJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571491; c=relaxed/simple;
-	bh=4mqSQweqk5Ke54tXJllzQ1r7XA3eLTrodB+gqRK4HPo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RQa9h13pY/jWRHpeI906749NmZCKfqKMpwoffOyPeIryJYOsd/3BTPluhcnTGwC1TKxSt13bw4PU8HBAjFZcfO6lEKqX7XaV4eWAYcJXbPO0CQjY2l5h0NXxGYFnDq8R8Z/42FiNUUwlrK2VqEOtL7DFYg+deDOtbg3sfG/9HlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IBVRGAHb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tgntS3b4; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1740571493; c=relaxed/simple;
+	bh=7u7qDL3AUV9lFZYDf96IH+Z08ePa3apNnD6Ysrdoh+s=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=DZtWUUTM3Hl0N86CRJMiWWV70R9tD8wy4Zm4Z9jmbuOfMcnU6BMJ7IMyJE5OuZT05yANtQrZ6YBiXKgjGNkPjGVV9RJOQd+INjeptaOYYaJVbGQZ4EG9eH4jJ+CK+82yVwNOYiTbegoJRzIS/6E2zqIj9FPz6ikFPYbyAlMhemA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RK4eXwr0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xBmKh/Jp; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 12:04:47 -0000
+Date: Wed, 26 Feb 2025 12:04:48 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740571488;
+	s=2020; t=1740571489;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kelAVk/r41IjFAA4RvwAdw98C/DFXsLx1YIW8j/x5g=;
-	b=IBVRGAHbABdGj1uk3fJ99ahqHV07SuWeVhW/QkPo4lzC8MFSdaUebanD+6qmFYHkpHgtVX
-	fTRBrNvoq4a8v/+f5eX4A1ZsLGgebREGcRIyVO466nvOj+QANq7cW4l14Wv8ypY+tKxeUp
-	EPRb3HFXivUwkOC3UlmaHRTdyULE0HIbMS4YjCiY0u6yZoiOvJrv6UGgTkhjG5bYgw3tWk
-	2VZHgAkN7GxbzkSrARD/GBadHi3FGsgRqVsOOoIJggHRqL/M2gqwNMpSBY21O74Wcn4+f4
-	/I1snhx/UJUdhuTT4cUoq0nyMfsc9cPDXZxODPZte0fCXuh6wyiu9L4AlSVj2Q==
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=lw3USrelmIzSzZwwAkW0i93TZR9Xx5/67/Wm2JJHPFQ=;
+	b=RK4eXwr018+9efhqKe+v9PokP+wt0OMI5e6V0P9g6HnOrSE2EIiv5W0eBKzR99STMzk3ye
+	wp0BBjgKw/JNaaQylwkt23zTG0hHRjvtKiuhr1t9lu0EX6Q3XuFcEGB8bMvEgsxJqsrY1Q
+	VCp5cN/NMyzJqbzH4CXJfKvS6/3L4AE1e5tn4F4UAxrO/dwgAwmvVFZWpMHThp/6l5kL4u
+	9BVHwt3dyijctI/c5SrjTr3IHfbvcQesEhWThQbSeNSBCwLnSwW7bEH5kVEBJ8x2gONejH
+	UyICAcYxRDLA0EH26pmbpYbsXRcTgjVSOOBdqC3hXDDY1GZJfjcrDMhYJxOmdQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740571488;
+	s=2020e; t=1740571489;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1kelAVk/r41IjFAA4RvwAdw98C/DFXsLx1YIW8j/x5g=;
-	b=tgntS3b4z3z9q04sDtbo+WMBQg6278eXW+QxFTbRXUiDripWvnb+gBKo/MWc/he6CiIni/
-	tO3pBzcY2QAXjNBw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=lw3USrelmIzSzZwwAkW0i93TZR9Xx5/67/Wm2JJHPFQ=;
+	b=xBmKh/JptEbhQqERWOKtKnBJcaN8vym5Z4Sl6LIuHlJSs5nfy0Hr6azEKshtYkgg4WpfBX
+	DYruy6Yb2fRA6aAQ==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/traps: Decode 0xEA instructions as #UD
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124200.166774696@infradead.org>
-References: <20250224124200.166774696@infradead.org>
+Subject: [tip: x86/core] x86/alternatives: Clean up preprocessor conditional
+ block comments
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174057148785.10177.16118220702526941186.tip-bot2@tip-bot2>
+Message-ID: <174057148849.10177.13934770176706315375.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,90 +74,128 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     2e044911be75ce3321c5b3d10205ac0b54f8cb92
-Gitweb:        https://git.kernel.org/tip/2e044911be75ce3321c5b3d10205ac0b54f8cb92
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:06 +01:00
+Commit-ID:     5d703825fde301677e8a79b0738927490407f435
+Gitweb:        https://git.kernel.org/tip/5d703825fde301677e8a79b0738927490407f435
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Wed, 26 Feb 2025 12:15:15 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 26 Feb 2025 12:22:10 +01:00
+CommitterDate: Wed, 26 Feb 2025 12:15:15 +01:00
 
-x86/traps: Decode 0xEA instructions as #UD
+x86/alternatives: Clean up preprocessor conditional block comments
 
-FineIBT will start using 0xEA as #UD. Normally '0xEA' is a 'bad',
-invalid instruction for the CPU.
+When in the middle of a kernel source code file a kernel developer
+sees a lone #else or #endif:
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+   ...
+
+   #else
+
+   ...
+
+It's not obvious at a glance what those preprocessor blocks are
+conditional on, if the starting #ifdef is outside visible range.
+
+So apply the standard pattern we use in such cases elsewhere in
+the kernel for large preprocessor blocks:
+
+  #ifdef CONFIG_XXX
+  ...
+  ...
+  ...
+  #endif /* CONFIG_XXX */
+
+  ...
+
+  #ifdef CONFIG_XXX
+  ...
+  ...
+  ...
+  #else /* !CONFIG_XXX: */
+  ...
+  ...
+  ...
+  #endif /* !CONFIG_XXX */
+
+( Note that in the  #else case we use the /* !CONFIG_XXX */ marker
+  in the final #endif, not /* CONFIG_XXX */, which serves as an easy
+  visual marker to differentiate #else or #elif related #endif closures
+  from singular #ifdef/#endif blocks. )
+
+Also clean up __CFI_DEFAULT definition with a bit more vertical alignment
+applied, and a pointless tab converted to the standard space we use in
+such definitions.
+
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124200.166774696@infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/bug.h |  1 +
- arch/x86/kernel/traps.c    | 20 +++++++++++++++++---
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ arch/x86/kernel/alternative.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 1a5e4b3..bc8a2ca 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -25,6 +25,7 @@
- #define BUG_UD2			0xfffe
- #define BUG_UD1			0xfffd
- #define BUG_UD1_UBSAN		0xfffc
-+#define BUG_EA			0xffea
- 
- #ifdef CONFIG_GENERIC_BUG
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 05b86c0..a02a51b 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -96,6 +96,7 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
-  * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
-  * If it's a UD1, further decode to determine its use:
-  *
-+ * FineIBT:      ea                      (bad)
-  * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
-  * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
-  * static_call:  0f b9 cc                ud1    %esp,%ecx
-@@ -113,6 +114,10 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
- 	v = *(u8 *)(addr++);
- 	if (v == INSN_ASOP)
- 		v = *(u8 *)(addr++);
-+	if (v == 0xea) {
-+		*len = addr - start;
-+		return BUG_EA;
-+	}
- 	if (v != OPCODE_ESCAPE)
- 		return BUG_NONE;
- 
-@@ -309,10 +314,16 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 
- 	switch (ud_type) {
- 	case BUG_UD2:
--		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
--		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
--			regs->ip += ud_len;
-+		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN) {
-+			handled = true;
-+			break;
-+		}
-+		fallthrough;
-+
-+	case BUG_EA:
-+		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
- 			handled = true;
-+			break;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 83316ea..ea68f0e 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -839,16 +839,16 @@ void __init_or_module noinline apply_returns(s32 *start, s32 *end)
  		}
- 		break;
- 
-@@ -328,6 +339,9 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 		break;
  	}
+ }
+-#else
++#else /* !CONFIG_MITIGATION_RETHUNK: */
+ void __init_or_module noinline apply_returns(s32 *start, s32 *end) { }
+-#endif /* CONFIG_MITIGATION_RETHUNK */
++#endif /* !CONFIG_MITIGATION_RETHUNK */
  
-+	if (handled)
-+		regs->ip += ud_len;
-+
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_disable();
- 	instrumentation_end();
+ #else /* !CONFIG_MITIGATION_RETPOLINE || !CONFIG_OBJTOOL */
+ 
+ void __init_or_module noinline apply_retpolines(s32 *start, s32 *end) { }
+ void __init_or_module noinline apply_returns(s32 *start, s32 *end) { }
+ 
+-#endif /* CONFIG_MITIGATION_RETPOLINE && CONFIG_OBJTOOL */
++#endif /* !CONFIG_MITIGATION_RETPOLINE || !CONFIG_OBJTOOL */
+ 
+ #ifdef CONFIG_X86_KERNEL_IBT
+ 
+@@ -916,18 +916,18 @@ void __init_or_module noinline apply_seal_endbr(s32 *start, s32 *end)
+ 	}
+ }
+ 
+-#else
++#else /* !CONFIG_X86_KERNEL_IBT: */
+ 
+ void __init_or_module apply_seal_endbr(s32 *start, s32 *end) { }
+ 
+-#endif /* CONFIG_X86_KERNEL_IBT */
++#endif /* !CONFIG_X86_KERNEL_IBT */
+ 
+ #ifdef CONFIG_CFI_AUTO_DEFAULT
+-#define __CFI_DEFAULT	CFI_AUTO
++# define __CFI_DEFAULT CFI_AUTO
+ #elif defined(CONFIG_CFI_CLANG)
+-#define __CFI_DEFAULT	CFI_KCFI
++# define __CFI_DEFAULT CFI_KCFI
+ #else
+-#define __CFI_DEFAULT	CFI_OFF
++# define __CFI_DEFAULT CFI_OFF
+ #endif
+ 
+ enum cfi_mode cfi_mode __ro_after_init = __CFI_DEFAULT;
+@@ -1457,7 +1457,7 @@ Efault:
+ 	return false;
+ }
+ 
+-#else
++#else /* !CONFIG_FINEIBT: */
+ 
+ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
+ 			    s32 *start_cfi, s32 *end_cfi, bool builtin)
+@@ -1468,7 +1468,7 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
+ static void poison_cfi(void *addr) { }
+ #endif
+ 
+-#endif
++#endif /* !CONFIG_FINEIBT */
+ 
+ void apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
+ 		   s32 *start_cfi, s32 *end_cfi)
 
