@@ -1,151 +1,206 @@
-Return-Path: <linux-kernel+bounces-535004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB08A46DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:42:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F9DA46DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6953188CAD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19B716D4D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3340125C6E7;
-	Wed, 26 Feb 2025 21:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BAE260A52;
+	Wed, 26 Feb 2025 21:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXlaftwN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8HSj5y8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4722745E;
-	Wed, 26 Feb 2025 21:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7CA25D55C;
+	Wed, 26 Feb 2025 21:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740606006; cv=none; b=aWZ8z7fJk0eq2Lfowog7YhOICQ/M2QuN166A+D4Iubk3AV4G5rP4PxH39iGogHJkvYJ22WpqHbTlj25BUkxbltASitZVLm97fDrARulaJRKJnVUbdKOex7Rog3AKzBbkkR9Ap3fjCVXSjTOACgKar/yQ+6rWKhxgYGhj3qtXw1c=
+	t=1740606029; cv=none; b=uGJFTc9MCvBzcijnohIZ0GgXhbdY5KBt/gNAMV049iL7TkshB64AYwK6o6W7zvfFG7LIZeEXQbNGu5is1CZKFrIAO2KHieZN/7ufb5ITpheZJngB/7Sv/aNaMopdVAFtMElyosuUdR29UO7w8RYcigBdNNSk8IAVALcMaHF/ne4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740606006; c=relaxed/simple;
-	bh=B5Pl0F39NNjaJkCDzCw6Eg5v+4wqR8cVZY9hkGYMii0=;
+	s=arc-20240116; t=1740606029; c=relaxed/simple;
+	bh=rsinQTDikxMDKEeW17oGITcDhmuWhxvdqqHbb2cJnfU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTMctj16qiSyctIwlJwOA4ZWg99xwzpqg3j2qvkdCLf1O6inHO3XifWW9ebT71O1gXrwDNvSvozVacwRi8Abvskr8c1tH3mhuN/3fdlytymeRsMo4uxCvTatCD3weXP+BCZumMSu1RVNghYxiiRLLvwV1oH9MzjDU5NGf+fShiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXlaftwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B28BCC4CED6;
-	Wed, 26 Feb 2025 21:40:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZpY20egT5lquGVUM4u2Z1cZtnQojWQxLB1mLZuqIFAUVZw/vtXi/io5ab2EKS9bpjlW65q6ecVAYCXjvf1/vYNkePqh11IryzZA8g9o82PenRhijr5big3WXdtM+yEYS+7i1/xJiTHFVhTopUmyUYqFa3n64bQ7aOOsyk6IPjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8HSj5y8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A77EC4CED6;
+	Wed, 26 Feb 2025 21:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740606004;
-	bh=B5Pl0F39NNjaJkCDzCw6Eg5v+4wqR8cVZY9hkGYMii0=;
+	s=k20201202; t=1740606028;
+	bh=rsinQTDikxMDKEeW17oGITcDhmuWhxvdqqHbb2cJnfU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXlaftwNhTvsbSJFi2WuyxKTGJ5z/6LPZOgY88fQ2guL2Ron8SNUAVXUqoWZ88sS1
-	 ua0oSDiMc+KZMys6juRTsdjmrTfh7Phdr92ixazCPgCvWe5sFYqoLq4IO3+JD+Mwja
-	 FWjIFZzJg4N8rVTUPRY6MQDFvKt1tfOanlUW+wsVM3NFDbqIUWpvK/HMUv5KDLLINF
-	 nI/O8dTREtghtWLxz7u+zb9s7QtmcaUl6AScLdss84Uj0tBdodQAhiw/CAD3BG4c+/
-	 cnekK6JX5y59jWXSbZmEHCRAS24H/rJ1ddG3lJ+wF0vNGgz5stFFsEicVHPTrupiXm
-	 OeKkxit2vkDYg==
-Date: Wed, 26 Feb 2025 21:40:03 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Takashi Iwai <tiwai@suse.de>, regressions@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit
- b9b588f22a0c
-Message-ID: <20250226214003.GE3949421@google.com>
-References: <874j0lvy89.wl-tiwai@suse.de>
- <dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
- <87jz9d5cdp.wl-tiwai@suse.de>
- <263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
- <20250226204229.GC3949421@google.com>
- <4e1b220d-1737-468d-af0b-6050f8cdaf8b@oracle.com>
+	b=Z8HSj5y8v/aADV3XAJLJQilENfospSp7aqeuqHoQhn5xSG4Ht03u3/MZp8JpaOOEN
+	 oTTEcSpwHFyhkdxJ9TjaySiv40kosFnFigOp4G6Hv1VKU+Q7MNNTcycMYh66Q7hRkF
+	 Kj9onOqVIUR1+6L+x0ENFJMfuLwY2aeHX1PrtrKLoHnDS9iWbiKCDhswoYOBljIKwm
+	 PKeBpcm+7vnNtwkKPTzunBPYLx3oSAFVsv+lLW6TT15yDy5y77dfnpWSGnbko/NDZS
+	 dTuLFvAMk1twRxyxejFsZ79OBob4Zs2qx5MwMK3+zHGz6PrkioNnBVMi7uRN0cpcLA
+	 kUE6XsZqI5Lpw==
+Date: Wed, 26 Feb 2025 18:40:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z7-KSRttQLImuWtJ@x1>
+References: <Z70wHEl6Sp0H0c-3@google.com>
+ <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
+ <Z712hzvv22Ni63f1@google.com>
+ <Z74U5s7Yf0f6I7Mo@x1>
+ <Z74V0hZXrTLM6VIJ@x1>
+ <Z74ZL6SUwWL_a5EK@x1>
+ <Z74eqEiyrzuoL6uz@x1>
+ <Z79std66tPq-nqsD@google.com>
+ <Z7-Jte2ImGa93VUD@x1>
+ <Z7-J5vHqHF4kc1HB@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4e1b220d-1737-468d-af0b-6050f8cdaf8b@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7-J5vHqHF4kc1HB@x1>
 
-On Wed, Feb 26, 2025 at 04:01:18PM -0500, Chuck Lever wrote:
-> On 2/26/25 3:42 PM, Eric Biggers wrote:
-> > On Wed, Feb 26, 2025 at 09:11:04AM -0500, Chuck Lever wrote:
-> >> On 2/26/25 3:38 AM, Takashi Iwai wrote:
-> >>> On Sun, 23 Feb 2025 16:18:41 +0100,
-> >>> Chuck Lever wrote:
-> >>>>
-> >>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
-> >>>>> [ resent due to a wrong address for regression reporting, sorry! ]
-> >>>>>
-> >>>>> Hi,
-> >>>>>
-> >>>>> we received a bug report showing the regression on 6.13.1 kernel
-> >>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
-> >>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
-> >>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>>
-> >>>>> Quoting from there:
-> >>>>> """
-> >>>>> I use the latest TW on Gnome with a 4K display and 150%
-> >>>>> scaling. Everything has been working fine, but recently both Chrome
-> >>>>> and VSCode (installed from official non-openSUSE channels) stopped
-> >>>>> working with Scaling.
-> >>>>> ....
-> >>>>> I am using VSCode with:
-> >>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-> >>>>> """
-> >>>>>
-> >>>>> Surprisingly, the bisection pointed to the backport of the commit
-> >>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-> >>>>> to iterate simple_offset directories").
-> >>>>>
-> >>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
-> >>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
-> >>>>> release is still affected, too.
-> >>>>>
-> >>>>> For now I have no concrete idea how the patch could break the behavior
-> >>>>> of a graphical application like the above.  Let us know if you need
-> >>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
-> >>>>> and ask there; or open another bug report at whatever you like.)
-> >>>>>
-> >>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
-> >>>>>
-> >>>>>
-> >>>>> thanks,
-> >>>>>
-> >>>>> Takashi
-> >>>>>
-> >>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-> >>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>
-> >>>> We received a similar report a few days ago, and are likewise puzzled at
-> >>>> the commit result. Please report this issue to the Chrome development
-> >>>> team and have them come up with a simple reproducer that I can try in my
-> >>>> own lab. I'm sure they can quickly get to the bottom of the application
-> >>>> stack to identify the misbehaving interaction between OS and app.
-> >>>
-> >>> Do you know where to report to?
-> >>
-> >> You'll need to drive this, since you currently have a working
-> >> reproducer. You can report the issue here:
-> >>
-> >> https://support.google.com/chrome/answer/95315?hl=en&co=GENIE.Platform%3DDesktop
-> >>
-> >>
+On Wed, Feb 26, 2025 at 06:38:50PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 26, 2025 at 06:38:00PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Feb 26, 2025 at 11:34:13AM -0800, Namhyung Kim wrote:
+> > > On Tue, Feb 25, 2025 at 08:48:56PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > On Tue, Feb 25, 2025 at 08:25:35PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > On Tue, Feb 25, 2025 at 08:11:17PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > On Tue, Feb 25, 2025 at 08:07:18PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > > On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
+> > > > > > > > On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
+> > > > > > > > > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > > > > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
+> > > > > > > > [SNIP]
+> > > > > > > > > > > I thought the real-time processing had to use
+> > > > > > > > > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
+> > > > > > > > > > > events only give us VMA data and two mmaps may have been merged.
+> > > > > > > > > > > Shouldn't doing this change be the simplest fix?
+> > > > > > 
+> > > > > > > > > > Make sense.  How about this?
+> > > > > > 
+> > > > > > > > > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
+> > > > > > > > > to get pushed later?
+> > > > > > 
+> > > > > > > > I just noticed it would add extra kernel maps after modules.  I think it
+> > > > > > > > should fixup end address of the kernel maps after adding all maps first.
+> > > > > > 
+> > > > > > > > Arnaldo, can you please test this?
+> > > > > >  
+> > > > > > > Trying it now.
+> > > > > > 
+> > > > > > Now we have something different:
+> > > > > > 
+> > > > > > root@number:~# perf record sleep
+> > > > > > sleep: missing operand
+> > > > > > Try 'sleep --help' for more information.
+> > > > > > [ perf record: Woken up 1 times to write data ]
+> > > > > > perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
+> > > > > > Aborted (core dumped)
+> > > > > > root@number:~#
+> > > > > 
+> > > > > __maps__insert() does:
+> > > > > 
+> > > > >         if (dso && dso__kernel(dso)) {
+> > > > >                 struct kmap *kmap = map__kmap(new);
+> > > > > 
+> > > > >                 if (kmap)
+> > > > >                         kmap->kmaps = maps;
+> > > > >                 else
+> > > > >                         pr_err("Internal error: kernel dso with non kernel map\n");
+> > > > >         }
+> > > > > 
+> > > > > while maps__fixup_overlap_and_insert() doesn't.
+> > > > > 
+> > > > > It calls __maps__insert_sorted() that probably should do what
+> > > > > __maps__insert() does?
+> > > > 
+> > > > Ok, so I did the following patch but this case fails:
+> > > > 
+> > > > @@ -910,6 +928,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+> > > >                                  */
+> > > >                                 map__put(maps_by_address[i]);
+> > > >                                 maps_by_address[i] = map__get(new);
+> > > > +                               map__set_kmap(new, maps);
+> > > >                                 check_invariants(maps);
+> > > >                                 return err;
+> > > >                         }
+> > > > 
+> > > > With:
+> > > > 
+> > > > perf: util/maps.c:110: check_invariants: Assertion `refcount_read(map__refcnt(map)) > 1' failed.
+> > > > 
+> > > > As:
+> > > > 
+> > > > 106				/*
+> > > > 107				 * Maps by name maps should be in maps_by_address, so
+> > > > 108				 * the reference count should be higher.
+> > > > 109				 */
+> > > > 110				assert(refcount_read(map__refcnt(map)) > 1);
+> > > > 
+> > > > Since it is just replacing the map in the maps_by_address and not
+> > > > touching on the maps_by_name? Thus the refcount is just 1:
+> > > 
+> > > Sounds like it.  Can you add this on top?
 > > 
-> > FYI this was already reported on the Chrome issue tracker 2 weeks ago:
-> > https://issuetracker.google.com/issues/396434686
+> > Trying, but somehow its not applying cleanly, checking:
+> > 
+> > ⬢ [acme@toolbox perf-tools]$ patch -p1 < ~/wb/1.patch 
+> > patching file tools/perf/util/maps.c
+> > Hunk #1 succeeded at 815 (offset 18 lines).
+> > Hunk #2 succeeded at 826 (offset 18 lines).
+> > Hunk #3 succeeded at 846 (offset 18 lines).
+> > Hunk #4 succeeded at 893 (offset 18 lines).
+> > Hunk #5 succeeded at 919 (offset 18 lines).
+> > Hunk #6 FAILED at 923.
+> > 1 out of 6 hunks FAILED -- saving rejects to file tools/perf/util/maps.c.rej
+> > ⬢ [acme@toolbox perf-tools]$
+> > 
+> > ⬢ [acme@toolbox perf-tools]$ git log --oneline -5
+> > 4a9f5d76130b707f (HEAD -> perf-tools) wip: acme
+> > d5ba0f5af35937c7 wip: namhyung
+> > 42367eca7604e16e (perf-tools/tmp.perf-tools, perf-tools/perf-tools) tools: Remove redundant quiet setup
+> > 293f324ce96d7001 tools: Unify top-level quiet infrastructure
+> > 9fae5884bb0e3480 (tag: perf-tools-fixes-for-v6.14-2025-01-30) perf cpumap: Fix die and cluster IDs
+> > ⬢ [acme@toolbox perf-tools]$
 > 
-> That appears to be as a response to the first report to us. Thanks for
-> finding this.
+> ⬢ [acme@toolbox perf-tools]$ cat tools/perf/util/maps.c.rej
+> --- tools/perf/util/maps.c
+> +++ tools/perf/util/maps.c
+> @@ -923,6 +936,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+>  				 */
+>  				map__put(maps_by_address[i]);
+>  				maps_by_address[i] = map__get(new);
+> +				if (maps_by_name) {
+> +					map__put(maps_by_name[ni]);
+> +					maps_by_name[ni] = map__get(new);
+> +				}
+>  				check_invariants(maps);
+>  				return err;
+>  			}
+> ⬢ [acme@toolbox perf-tools]$
 > 
-> I notice that this report indicates the problem is with a developer
-> build of Chrome, not a GA build.
-> 
-> If /dev/dri is a tmpfs file system, then it would indeed be affected by
-> b9b588f22a0c. No indication yet of how.
+> Fixing this up by hand
 
-Just to confirm, the commit did change the directory iteration order, right?
-The theory at https://issuetracker.google.com/issues/396434686#comment4 seems
-promising.  Just the exact code hasn't been identified yet.
+I see, I had tried this after sending that patch:
 
-- Eric
+     map__set_kmap(new, maps);
+
+Before check_invariants(), but that doesn't make sense, I should've
+dropped that, doing it now.
+
+- Arnaldo
 
