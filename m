@@ -1,142 +1,346 @@
-Return-Path: <linux-kernel+bounces-534324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31239A46592
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:53:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E98A4659D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EAA19C056F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E45F19C094A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905722578D;
-	Wed, 26 Feb 2025 15:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCEB229B11;
+	Wed, 26 Feb 2025 15:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8UxfAq/"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONhkYj1I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F8D22541F;
-	Wed, 26 Feb 2025 15:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE66225419;
+	Wed, 26 Feb 2025 15:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584578; cv=none; b=UYw1Keywyih18NN9Kp8qfcPVfOp1lmkh8UK2md6VHxBwQXuot6QNsw+Vn2s35WywbMymPz2weskHgsrkG+lY3yOOw+LrPvxI9VvbuLtJrZZLGSiaBcdsgaMehSnB+XhuRKYp5OQwjanDlTk0j7UDY9eN/pMvqkFRsK7cxt80Eok=
+	t=1740584589; cv=none; b=ecvxCTY8ae/wWsgRIxKa1C/1CcLmcxQdcwbOxuMKp5fZhY1mT+udbdFzllPunxRKInJjClEfamFf3bGv5PYw7Sbv742tOo9Wg8lNbTP6J69ipSEWg36Ojs1UfG0gx61RtsAUfmVyZV3UwzvbXgY1acpi75F8CmHe9H4ynGQct+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584578; c=relaxed/simple;
-	bh=y2U4LiplXrqnccDqV+8uusl1+bnBBatPfxdZRviXsbE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZ88lm1Js60fnPJK9F3ooh4VAPD56oNrqqIdg6l8yaIiAyIwrFePmMb9WzM8Xad9DioKXcAR+1ptH3atwMEZkAWSG413xFjGtc6L3GjCndSHJpB5KbXgJNmjRTt0SKKrjt8f+wnYQk8dNe8/IYDDc0IOtsGsTfolKnlMb78plc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8UxfAq/; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3078fb1fa28so54782341fa.3;
-        Wed, 26 Feb 2025 07:42:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740584575; x=1741189375; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EC1eEy16dWk77oUwR2C/pnSf364aeM1Gi+/TEG7RfzQ=;
-        b=J8UxfAq/b1A8CKRW1adinMe8HL/aesxCubfLsvL0xr5Ml6P13zgAX9IlxwiR2+6dED
-         lfCMDorBY5D510f2TZGrWvFnrh0GM7BKGIG5Ak9pLkEivzT9m+MvBtroRp1VtYzqJaaI
-         J9OtLr1WK82ohmGnYRZ2iMTZoqEmyx2+GmnRYjQ45yR5dkCj0CoDSyiB29qhZJjvBwWE
-         wSe2+XDGseUepAkQhI8+DznPt9oKvUJklZywEUT2DMyjhz1KIf3pQ3iVpYZWm+5WDan1
-         SwT66l3mtrE8AUZbvkK6oGVg5WaBESOiZcPAZ6ffo/jtYAvdnJV5/ePBl7A2f0IfExm2
-         EmSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740584575; x=1741189375;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EC1eEy16dWk77oUwR2C/pnSf364aeM1Gi+/TEG7RfzQ=;
-        b=j1EIhKK81M3Y8eGtLAzYhOYGMJLJ+rltbcsPsODGSaJZgHNzctIx4PIobAKB7nKU0z
-         a2yUoiKMrRMaHkOwg+nbqXvIhV16+lL11n44WZd54VQMhyXf4TcpxeIblVHJ693rLK/Q
-         cW+P5iqgvR6Vmu+SSGZBdRuAwfm12vSvGB+OibtRp7qC+03o8JRknV5etZFdnYNAm7TW
-         J2DLDgLFXeI863lVtY3kb+wkcmu39rZKwJcMF1apjQr27CrDNqHJhhoByEH03i374/FF
-         0jtL72o0caSMSMrAKk18/wC0VGG9sDlp0fufRJExNa8ZfccFbn6oVwxiE9Fk/hUBfqPv
-         04Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGoz8g0JMtpIu+49YsOpejlCxQo0UYeuNoaD924M9GLn/QN50C02Bqz+lVF9zRkzzEn1sg@vger.kernel.org, AJvYcCUnGe48OgLe0EJ79t+nnFf71iJ0t8eayzsWP5zf6kx6n05EzHFy3pBYMiISil6aQMkPhPEXsGaxEappzWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyczrAxePrv8MTAzYneKm77JYk6lXy6BhcflF3XCTRAC1CA0eWK
-	VqqEtG7Taa9Jb0k6s+jQ6K20m4kIt/8X+MwXUAA5uRyIV6NJ8NW9
-X-Gm-Gg: ASbGncuQZohe5Iy0DOy9tozhoMdZZpKtg9JoAMagGwCKAkfTGdd7jKRfcUr0qJM1IFn
-	jA6trDJw4jdHoO7MT3cR38LlxtItJ437nwu7Ntq/8aqxnoYM243KLH0OfQ4/NIgzOhKsO9NuTLN
-	Pr/2D3sIPUL4aesz9dFevo8onM+Uq9iejBDR0zpflT0w4/g4v6MOB5Ryj/D65o9ZLh5KnuoY+mc
-	oCJ7wF/hJ16EpZqv5CrnzOvSno3M9WlelfjXSimQgDaBIURHLyycRLBQAWLF2MEzZnQHwa9jcgR
-	19Y5Lw5XmcxcXP/IcgwlTuuqdTbrZBkucrFrFWWq+y9QbheO
-X-Google-Smtp-Source: AGHT+IGXJ4oZ/znpdkecPp5tddj+wrT+wUd+ZQGedDdTB7EiMlBVxjC98UHDukKm8jBLnJwAplj21Q==
-X-Received: by 2002:a2e:3207:0:b0:309:bc3:3b01 with SMTP id 38308e7fff4ca-30a5af4c7bbmr85358301fa.0.1740584574916;
-        Wed, 26 Feb 2025 07:42:54 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a819ebe39sm5640871fa.28.2025.02.26.07.42.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 07:42:54 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 26 Feb 2025 16:42:50 +0100
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Keith Busch <keith.busch@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
-	leitao@debian.org
-Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
- kmem_cache_destroy()
-Message-ID: <Z782eoh-d48KXhTn@pc636>
-References: <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
- <Z7xbrnP8kTQKYO6T@pc636>
- <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz>
- <Z73p2lRwKagaoUnP@kbusch-mbp>
- <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
- <Z74Av6tlSOqcfb-q@pc636>
- <Z74KHyGGMzkhx5f-@pc636>
- <8d7aabb2-2836-4c09-9fc7-8bde271e7f23@suse.cz>
- <Z78lpfLFvNxjoTNf@pc636>
- <93f03922-3d3a-4204-89c1-90ea4e1fc217@suse.cz>
+	s=arc-20240116; t=1740584589; c=relaxed/simple;
+	bh=vToeMbjU8t0jB4Xe99q4NLmDcKF4K2Dllwyj2UJO+CU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B+rYAF8bkIkulmXSXychPbFT8bOeGWQS5V6PfrWTQMyO3VnGEEuMpUj6hdufHSwEe9FAKEElVVuzM97DqqzpB7jWbOY4zLd6JhKSLzboheWwVTah2ARblY5vV793/oMYVNZY8fJCNt0246+Bd+xZxjk7Ta+2Dw0HjiebBMLOZFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONhkYj1I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 16D53C4CEE4;
+	Wed, 26 Feb 2025 15:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740584589;
+	bh=vToeMbjU8t0jB4Xe99q4NLmDcKF4K2Dllwyj2UJO+CU=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ONhkYj1I70JJ+oVQBCmxr8IWS/2Lh6M9kQ9DFWyPANNjVX2JFJRkoQ3CZPznPkgqg
+	 w2tUtEtmrgqa6WN1ewrwyEHwGCg6qDaQqqzhao/USgA6llE/jb8b3Dq0vnLPKYn6e2
+	 m0myiaqmcHoQALv5Hy8eitrkJATe5v4sE/eIzsnnoO8FkXX7IYbyfqx+gU4rhJA81H
+	 TY0s3odYXYq5mVrzfNHTSpwdjV9KtUYEZKbgM5iTI/i0GZl0p8nc/tzOlMUChhc/2X
+	 O5uxpdcPu1V1F/PUtqMcKsN5Fc63++hSCRX/gw2NZvFsyvLSks/tSBcRUG1nXBNzgL
+	 bwGMLVX45eNTg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4FDC19F2E;
+	Wed, 26 Feb 2025 15:43:09 +0000 (UTC)
+From: Brendan King via B4 Relay <devnull+Brendan.King.imgtec.com@kernel.org>
+Date: Wed, 26 Feb 2025 15:43:06 +0000
+Subject: [PATCH v2] drm/imagination: Hold drm_gem_gpuva lock for unmap
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93f03922-3d3a-4204-89c1-90ea4e1fc217@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250226-hold-drm_gem_gpuva-lock-for-unmap-v2-1-3fdacded227f@imgtec.com>
+X-B4-Tracking: v=1; b=H4sIAIk2v2cC/5WNSw6CMBRFt0Le2Gf6ASOO2IchprYPaKSUtNBoC
+ Hu3sgMHd3Du4JwNIgVLEW7FBoGSjdZPGcSpAD2oqSe0JjMIJiommMTBjwZNcI+e8uY1KRy9fmH
+ nA66TUzMaVUp5lXX1FBKyZw7U2ffRuLeZBxsXHz5HMvHf+489ceRoDGfs0sm6ZKyxrl9In7V30
+ O77/gXWiMuH0wAAAA==
+X-Change-ID: 20250203-hold-drm_gem_gpuva-lock-for-unmap-da4338395b23
+To: Frank Binns <frank.binns@imgtec.com>, 
+ Matt Coster <matt.coster@imgtec.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Brendan King <brendan.king@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740584588; l=8971;
+ i=Brendan.King@imgtec.com; s=20250203; h=from:subject:message-id;
+ bh=oNc9LaZRivBoYlOEl/Er8MdAZzhlXTKhjoMsJS29CGU=;
+ b=/mq55+VrLnxl6xU5bafIu5i2OO+zeMxvIVphWHf7CfN7EXL90O5APjlt/HUiXlFoMoLxDFXG+
+ vbWkvl0H/PTCMww9cMC9ohpOqoGd2mv5syCMqhbHiZ5gWbkDhrghLWa
+X-Developer-Key: i=Brendan.King@imgtec.com; a=ed25519;
+ pk=i3JvC3unEBLW+4r5s/aEWQZFsRCWaCBrWdFbMXIXCqg=
+X-Endpoint-Received: by B4 Relay for Brendan.King@imgtec.com/20250203 with
+ auth_id=335
+X-Original-From: Brendan King <Brendan.King@imgtec.com>
+Reply-To: Brendan.King@imgtec.com
 
-On Wed, Feb 26, 2025 at 03:36:39PM +0100, Vlastimil Babka wrote:
-> On 2/26/25 3:31 PM, Uladzislau Rezki wrote:
-> > On Wed, Feb 26, 2025 at 11:59:53AM +0100, Vlastimil Babka wrote:
-> >> On 2/25/25 7:21 PM, Uladzislau Rezki wrote:
-> >>>>
-> >>> WQ_MEM_RECLAIM-patch fixes this for me:
-> >>
-> >> Sounds good, can you send a formal patch then?
-> >>
-> > Do you mean both? Test case and fix? I can :)
-> 
-> Sure, but only the fix is for stable. Thanks!
-> 
-It is taken by Gregg if there is a Fixes tag in the commit.
-What do you mean: the fix is for stable? The current Linus
-tree is not suffering from this?
+From: Brendan King <Brendan.King@imgtec.com>
 
---
-Uladzislau Rezki
+Avoid a warning from drm_gem_gpuva_assert_lock_held in drm_gpuva_unlink.
+
+The Imagination driver uses the GEM object reservation lock to protect
+the gpuva list, but the GEM object was not always known in the code
+paths that ended up calling drm_gpuva_unlink. When the GEM object isn't
+known, it is found by calling drm_gpuva_find to lookup the object
+associated with a given virtual address range, or by calling
+drm_gpuva_find_first when removing all mappings.
+
+Cc: stable@vger.kernel.org
+Fixes: 4bc736f890ce ("drm/imagination: vm: make use of GPUVM's drm_exec helper")
+Signed-off-by: Brendan King <brendan.king@imgtec.com>
+---
+Changes in v2:
+- Added 'Cc:' and 'Fixes:' tags
+- Link to v1: https://lore.kernel.org/r/20250203-hold-drm_gem_gpuva-lock-for-unmap-v1-1-dd1006f39400@imgtec.com
+---
+ drivers/gpu/drm/imagination/pvr_fw_meta.c |   6 +-
+ drivers/gpu/drm/imagination/pvr_vm.c      | 134 ++++++++++++++++++++++++------
+ drivers/gpu/drm/imagination/pvr_vm.h      |   3 +
+ 3 files changed, 115 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/gpu/drm/imagination/pvr_fw_meta.c b/drivers/gpu/drm/imagination/pvr_fw_meta.c
+index c39beb70c3173ebdab13b4e810ce5d9a3419f0ba..6d13864851fc2e83bdaa94f16435b97841e5de94 100644
+--- a/drivers/gpu/drm/imagination/pvr_fw_meta.c
++++ b/drivers/gpu/drm/imagination/pvr_fw_meta.c
+@@ -527,8 +527,10 @@ pvr_meta_vm_map(struct pvr_device *pvr_dev, struct pvr_fw_object *fw_obj)
+ static void
+ pvr_meta_vm_unmap(struct pvr_device *pvr_dev, struct pvr_fw_object *fw_obj)
+ {
+-	pvr_vm_unmap(pvr_dev->kernel_vm_ctx, fw_obj->fw_mm_node.start,
+-		     fw_obj->fw_mm_node.size);
++	struct pvr_gem_object *pvr_obj = fw_obj->gem;
++
++	pvr_vm_unmap_obj(pvr_dev->kernel_vm_ctx, pvr_obj,
++			 fw_obj->fw_mm_node.start, fw_obj->fw_mm_node.size);
+ }
+ 
+ static bool
+diff --git a/drivers/gpu/drm/imagination/pvr_vm.c b/drivers/gpu/drm/imagination/pvr_vm.c
+index 363f885a709826efa3d45a906c5f65131f7ed7b9..2896fa7501b1ccddaae48b212b6a724d152df9f2 100644
+--- a/drivers/gpu/drm/imagination/pvr_vm.c
++++ b/drivers/gpu/drm/imagination/pvr_vm.c
+@@ -293,8 +293,9 @@ pvr_vm_bind_op_map_init(struct pvr_vm_bind_op *bind_op,
+ 
+ static int
+ pvr_vm_bind_op_unmap_init(struct pvr_vm_bind_op *bind_op,
+-			  struct pvr_vm_context *vm_ctx, u64 device_addr,
+-			  u64 size)
++			  struct pvr_vm_context *vm_ctx,
++			  struct pvr_gem_object *pvr_obj,
++			  u64 device_addr, u64 size)
+ {
+ 	int err;
+ 
+@@ -318,6 +319,7 @@ pvr_vm_bind_op_unmap_init(struct pvr_vm_bind_op *bind_op,
+ 		goto err_bind_op_fini;
+ 	}
+ 
++	bind_op->pvr_obj = pvr_obj;
+ 	bind_op->vm_ctx = vm_ctx;
+ 	bind_op->device_addr = device_addr;
+ 	bind_op->size = size;
+@@ -597,20 +599,6 @@ pvr_vm_create_context(struct pvr_device *pvr_dev, bool is_userspace_context)
+ 	return ERR_PTR(err);
+ }
+ 
+-/**
+- * pvr_vm_unmap_all() - Unmap all mappings associated with a VM context.
+- * @vm_ctx: Target VM context.
+- *
+- * This function ensures that no mappings are left dangling by unmapping them
+- * all in order of ascending device-virtual address.
+- */
+-void
+-pvr_vm_unmap_all(struct pvr_vm_context *vm_ctx)
+-{
+-	WARN_ON(pvr_vm_unmap(vm_ctx, vm_ctx->gpuvm_mgr.mm_start,
+-			     vm_ctx->gpuvm_mgr.mm_range));
+-}
+-
+ /**
+  * pvr_vm_context_release() - Teardown a VM context.
+  * @ref_count: Pointer to reference counter of the VM context.
+@@ -703,11 +691,7 @@ pvr_vm_lock_extra(struct drm_gpuvm_exec *vm_exec)
+ 	struct pvr_vm_bind_op *bind_op = vm_exec->extra.priv;
+ 	struct pvr_gem_object *pvr_obj = bind_op->pvr_obj;
+ 
+-	/* Unmap operations don't have an object to lock. */
+-	if (!pvr_obj)
+-		return 0;
+-
+-	/* Acquire lock on the GEM being mapped. */
++	/* Acquire lock on the GEM object being mapped/unmapped. */
+ 	return drm_exec_lock_obj(&vm_exec->exec, gem_from_pvr_gem(pvr_obj));
+ }
+ 
+@@ -772,8 +756,10 @@ pvr_vm_map(struct pvr_vm_context *vm_ctx, struct pvr_gem_object *pvr_obj,
+ }
+ 
+ /**
+- * pvr_vm_unmap() - Unmap an already mapped section of device-virtual memory.
++ * pvr_vm_unmap_obj_locked() - Unmap an already mapped section of device-virtual
++ * memory.
+  * @vm_ctx: Target VM context.
++ * @pvr_obj: Target PowerVR memory object.
+  * @device_addr: Virtual device address at the start of the target mapping.
+  * @size: Size of the target mapping.
+  *
+@@ -784,9 +770,13 @@ pvr_vm_map(struct pvr_vm_context *vm_ctx, struct pvr_gem_object *pvr_obj,
+  *  * Any error encountered while performing internal operations required to
+  *    destroy the mapping (returned from pvr_vm_gpuva_unmap or
+  *    pvr_vm_gpuva_remap).
++ *
++ * The vm_ctx->lock must be held when calling this function.
+  */
+-int
+-pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 size)
++static int
++pvr_vm_unmap_obj_locked(struct pvr_vm_context *vm_ctx,
++			struct pvr_gem_object *pvr_obj,
++			u64 device_addr, u64 size)
+ {
+ 	struct pvr_vm_bind_op bind_op = {0};
+ 	struct drm_gpuvm_exec vm_exec = {
+@@ -799,11 +789,13 @@ pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 size)
+ 		},
+ 	};
+ 
+-	int err = pvr_vm_bind_op_unmap_init(&bind_op, vm_ctx, device_addr,
+-					    size);
++	int err = pvr_vm_bind_op_unmap_init(&bind_op, vm_ctx, pvr_obj,
++					    device_addr, size);
+ 	if (err)
+ 		return err;
+ 
++	pvr_gem_object_get(pvr_obj);
++
+ 	err = drm_gpuvm_exec_lock(&vm_exec);
+ 	if (err)
+ 		goto err_cleanup;
+@@ -818,6 +810,96 @@ pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 size)
+ 	return err;
+ }
+ 
++/**
++ * pvr_vm_unmap_obj() - Unmap an already mapped section of device-virtual
++ * memory.
++ * @vm_ctx: Target VM context.
++ * @pvr_obj: Target PowerVR memory object.
++ * @device_addr: Virtual device address at the start of the target mapping.
++ * @size: Size of the target mapping.
++ *
++ * Return:
++ *  * 0 on success,
++ *  * Any error encountered by pvr_vm_unmap_obj_locked.
++ */
++int
++pvr_vm_unmap_obj(struct pvr_vm_context *vm_ctx, struct pvr_gem_object *pvr_obj,
++		 u64 device_addr, u64 size)
++{
++	int err;
++
++	mutex_lock(&vm_ctx->lock);
++	err = pvr_vm_unmap_obj_locked(vm_ctx, pvr_obj, device_addr, size);
++	mutex_unlock(&vm_ctx->lock);
++
++	return err;
++}
++
++/**
++ * pvr_vm_unmap() - Unmap an already mapped section of device-virtual memory.
++ * @vm_ctx: Target VM context.
++ * @device_addr: Virtual device address at the start of the target mapping.
++ * @size: Size of the target mapping.
++ *
++ * Return:
++ *  * 0 on success,
++ *  * Any error encountered by drm_gpuva_find,
++ *  * Any error encountered by pvr_vm_unmap_obj_locked.
++ */
++int
++pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 size)
++{
++	struct pvr_gem_object *pvr_obj;
++	struct drm_gpuva *va;
++	int err;
++
++	mutex_lock(&vm_ctx->lock);
++
++	va = drm_gpuva_find(&vm_ctx->gpuvm_mgr, device_addr, size);
++	if (va) {
++		pvr_obj = gem_to_pvr_gem(va->gem.obj);
++		err = pvr_vm_unmap_obj_locked(vm_ctx, pvr_obj,
++					      va->va.addr, va->va.range);
++	} else {
++		err = -ENOENT;
++	}
++
++	mutex_unlock(&vm_ctx->lock);
++
++	return err;
++}
++
++/**
++ * pvr_vm_unmap_all() - Unmap all mappings associated with a VM context.
++ * @vm_ctx: Target VM context.
++ *
++ * This function ensures that no mappings are left dangling by unmapping them
++ * all in order of ascending device-virtual address.
++ */
++void
++pvr_vm_unmap_all(struct pvr_vm_context *vm_ctx)
++{
++	mutex_lock(&vm_ctx->lock);
++
++	for (;;) {
++		struct pvr_gem_object *pvr_obj;
++		struct drm_gpuva *va;
++
++		va = drm_gpuva_find_first(&vm_ctx->gpuvm_mgr,
++					  vm_ctx->gpuvm_mgr.mm_start,
++					  vm_ctx->gpuvm_mgr.mm_range);
++		if (!va)
++			break;
++
++		pvr_obj = gem_to_pvr_gem(va->gem.obj);
++
++		WARN_ON(pvr_vm_unmap_obj_locked(vm_ctx, pvr_obj,
++						va->va.addr, va->va.range));
++	}
++
++	mutex_unlock(&vm_ctx->lock);
++}
++
+ /* Static data areas are determined by firmware. */
+ static const struct drm_pvr_static_data_area static_data_areas[] = {
+ 	{
+diff --git a/drivers/gpu/drm/imagination/pvr_vm.h b/drivers/gpu/drm/imagination/pvr_vm.h
+index 79406243617c1f025c0119eb8deeaa13c0415586..b0528dffa7f1ba4342c98c2abd7fac31d254d0e7 100644
+--- a/drivers/gpu/drm/imagination/pvr_vm.h
++++ b/drivers/gpu/drm/imagination/pvr_vm.h
+@@ -38,6 +38,9 @@ struct pvr_vm_context *pvr_vm_create_context(struct pvr_device *pvr_dev,
+ int pvr_vm_map(struct pvr_vm_context *vm_ctx,
+ 	       struct pvr_gem_object *pvr_obj, u64 pvr_obj_offset,
+ 	       u64 device_addr, u64 size);
++int pvr_vm_unmap_obj(struct pvr_vm_context *vm_ctx,
++		     struct pvr_gem_object *pvr_obj,
++		     u64 device_addr, u64 size);
+ int pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 size);
+ void pvr_vm_unmap_all(struct pvr_vm_context *vm_ctx);
+ 
+
+---
+base-commit: 3ab334814dc7dff39075e055e12847d51878916e
+change-id: 20250203-hold-drm_gem_gpuva-lock-for-unmap-da4338395b23
+
+Best regards,
+-- 
+Brendan King <Brendan.King@imgtec.com>
+
+
 
