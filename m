@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-534056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E74A4623B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:19:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD29A4625C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3D53A715A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:19:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E6B165699
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C5A22759B;
-	Wed, 26 Feb 2025 14:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A748B2222A2;
+	Wed, 26 Feb 2025 14:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1TW05CY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VjGKdP0R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73689221738;
-	Wed, 26 Feb 2025 14:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888B2215189;
+	Wed, 26 Feb 2025 14:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579452; cv=none; b=n6iZeWnIFIHQ5T4W3149Tyn2kmlPubPUgp7Ti9DsoWchZ9sOVL3xNg+6HqjieUdMAnGNfyg9UXW0wN208cNpt2zGav1KExELMAPVYFifUVCafWLnXFE3LVpplINJEoE0JOOkeUGPF5dnJCwKiEbWecyW+fz4LmA23qH5J6Zi/v8=
+	t=1740579516; cv=none; b=vB0XXPPNTN+XLdztdLt0HocYDnW/q2y/B2GpLH5h9LIZ41TIic5Qc8TgQZHQS8Gs7+pKe5b9L8Uz9DCj/M1NhF/Wu5yN3UosH2ha+fingTrFwoprarfQi86SxB1K+aknKCIAdFYJdJrGoWh/fy+rtkb0OEDbvD8HBJTZwCBssAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579452; c=relaxed/simple;
-	bh=w8aMXJ+NU/5C6KBOxx5hHJUngYjg57KJkqVbAGaaDDk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DhTfyQTHegY5znFJbh+KIf2X6CRvvYeiB7u0UmCjCF0cG0LbojCkJeEU9zAe9Mbvs6n82Pe1rt5c9dB3gTN/1fLY8RgQqv20yMQzPUOvfw6xUlsLFk5UDybfZcSuUs+iXC3QCpdMoxTC7snLw9bipal3cGr3c6u0QHy0fSldG7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1TW05CY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 12B20C4CEF0;
-	Wed, 26 Feb 2025 14:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740579452;
-	bh=w8aMXJ+NU/5C6KBOxx5hHJUngYjg57KJkqVbAGaaDDk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=P1TW05CYq18CmhYa1SsaOA0YV0Ee70Ec0EpOFGYWX+NGNf1oOL9IwrIUWiyQcSSzG
-	 7rC6UXJ+qDjlmeHX/s6Pk46vxSvW0xs8lAytE7+a24WYoH2SnWfqh/ctNksy/5cuGg
-	 uYMtuTheIJFUYW2v8kL8jLioNXuLoyVlumN9Mfgc0aUtJnhgrfbZD3tSPHbmySDgBJ
-	 N2aW8RXUrlUtGtWpcdh9AlTzAKhWy+FxBomVU11ge6ciYdYr24N6AQ76rm5oo22M8W
-	 WLmoXy4lSoO20v0WlmKFBGOQ0UrS4rkJxM6J0Rpd7k4SQ4QT9QmqMJ/4Pvi6ily1+m
-	 akoyv9R60YE4w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6F3C18E7C;
-	Wed, 26 Feb 2025 14:17:32 +0000 (UTC)
-From: =?utf-8?q?Jonathan_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Wed, 26 Feb 2025 15:17:31 +0100
-Subject: [PATCH v2 9/9] usb: storage: shuttle_usbat: Use const for constant
- array
+	s=arc-20240116; t=1740579516; c=relaxed/simple;
+	bh=ndFpRLYKEHxnJ1s8gsGlGIAitzbvs/D3TQNPbg4ow/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IIPea7E/cULtDm3GWCFDDWdTnJ13OYB+lp3ZhJDNXDxbUAjZtAwB8hBMx+Zzkwpjm4EgwK0EZpKK8aEqIjlXVspvXrBvV83VypEJO4KeLD22emY6Nv2ugyF06/JjMK5lM6EltKyW+/4CNiTzFT2TJP8APJVtDGOWy/S/e3+ciCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VjGKdP0R; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740579515; x=1772115515;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ndFpRLYKEHxnJ1s8gsGlGIAitzbvs/D3TQNPbg4ow/4=;
+  b=VjGKdP0RR9OtzcPPpO+RBQOmqRLbIc6PIuW129y9wzj8HYsnoQ2a1MeV
+   E/UW54QcDumKBigGkZUyGT/+/KqomHqmIS5ZsyU1VQpIiTRzZe8gvQPyW
+   WNqleyuCY84Hpmq8tFQ5weqRwtI1Pl0zevsiesJI3ccZi8N2ea4R+4Oyy
+   kiXmJSDbqtSJVyzfdNj46hKn4ybW0ne8AhVmxDsnv7IgjwkjJ1HoSAM8J
+   zJxU7RFolpy/tRXKRMtoOMEkYCIPe34dYcQoLWOUt63bPyHD3wuliZ4eT
+   FYGRaQO9Lmf2MvcFZI6bT18Xmxliu6t6mX7zuPbye/ho5NArPCFo9RZWa
+   A==;
+X-CSE-ConnectionGUID: XMGDdfudSTuPYfqofaqN7Q==
+X-CSE-MsgGUID: /teYI7eRREm62hu5vGSFEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45338541"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="45338541"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:18:34 -0800
+X-CSE-ConnectionGUID: rhYYiWhVRAOX7qAfXgafIQ==
+X-CSE-MsgGUID: D1fJBsABR9agnTTNax24AA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="121647667"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 06:18:32 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tnIF2-0000000FLRA-45Z9;
+	Wed, 26 Feb 2025 16:18:28 +0200
+Date: Wed, 26 Feb 2025 16:18:28 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR()
+ protections
+Message-ID: <Z78itKfsojtMpr_o@smile.fi.intel.com>
+References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
+ <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
+ <88ad89bc-9261-4af0-a7ab-28dd760af567@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250226-misc-const-v2-9-ab655a4a29cc@posteo.net>
-References: <20250226-misc-const-v2-0-ab655a4a29cc@posteo.net>
-In-Reply-To: <20250226-misc-const-v2-0-ab655a4a29cc@posteo.net>
-To: Alan Stern <stern@rowland.harvard.edu>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740579450; l=924;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=v11yX1jHyBzwioDip32r3C5+SG/nGSwnzcapdw5f/+I=;
- b=yTY/YVeDIcz1oPqt/3tMNvIL+X+JBEfVSdcEGQiPavrbg/dA86vlZ53iZ8WWkrM27T2qUMCvW
- Ha2BVh4wvqKABomcpZw0heowIJEmh1Rc+/7B9NC/oZWKDzWpruJ3w6o
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88ad89bc-9261-4af0-a7ab-28dd760af567@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Jonathan Neuschäfer <j.ne@posteo.net>
+On Tue, Feb 25, 2025 at 06:21:29PM +0100, Krzysztof Kozlowski wrote:
+> On 25/02/2025 11:29, Arnd Bergmann wrote:
+> > On Tue, Feb 25, 2025, at 11:08, Andy Shevchenko wrote:
+> >> These result in a very small reduction in driver size, but at the cost
+> >> of more complex build and slightly harder to read code. In the case of
+> >> of_match_ptr() it also prevents use of PRP0001 ACPI based identification.
+> >> In this particular case we have a valid ACPI/PNP ID that should be used
+> >> in preference to PRP0001 but doesn't mean we should prevent that route.
+> >>
+> >> With this done, drop unneeded of*.h inclusions and __maybe_unused markers.
+> >>
+> >> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > For reference, see below for a couple of patches in this area that
+> > I have sent in the past. Ideally I think we should try to fix these
+> > all up and enable -Wunused-const-variable, which is useful in its
+> > own right.
+> 
+> I tried to fix this in SPI, regulator and ASoC 2 years ago and Mark
+> rejected such approach of dropping ACPI/of_match_ptr. AFAIU, Mark wants
+> this to be fixed in more generic way, on the OF and ACPI common code,
+> not per driver.
+> 
+> SPI:
+> https://lore.kernel.org/all/7a65d775-cf07-4393-8b10-2cef4d5266ab@sirena.org.uk/
+> 
+> regulator:
+> https://lore.kernel.org/all/20230310214553.275450-1-krzysztof.kozlowski@linaro.org/
+> 
+> ASoC:
+> https://lore.kernel.org/all/20230310214333.274903-1-krzysztof.kozlowski@linaro.org/
 
-This array is only read, not modified.
+It was almost two years ago. Things may be changed :-)
+At least I have no impediments so far with converting drivers I'm supporting in
+the SPI. For ASoC there might be a new attempt by Cezary Rojewski in the future
+(he does some cleanups in that area, and we discussed cleaning up ACPI_PTR() at
+ minimum).
 
-Signed-off-by: Jonathan Neuschäfer <j.ne@posteo.net>
----
+Also note
 
-V2:
-- new patch
----
- drivers/usb/storage/shuttle_usbat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ git grep -lw ACPI_PTR | wc -l
+238
 
-diff --git a/drivers/usb/storage/shuttle_usbat.c b/drivers/usb/storage/shuttle_usbat.c
-index c33cbf177e6fcaa80e0d2639594d1314c59f4950..27faa0ead11d1b0ee9e45ba6a3ee5bade8a416e4 100644
---- a/drivers/usb/storage/shuttle_usbat.c
-+++ b/drivers/usb/storage/shuttle_usbat.c
-@@ -1683,7 +1683,7 @@ static int usbat_flash_transport(struct scsi_cmnd * srb, struct us_data *us)
- 	struct usbat_info *info = (struct usbat_info *) (us->extra);
- 	unsigned long block, blocks;
- 	unsigned char *ptr = us->iobuf;
--	static unsigned char inquiry_response[36] = {
-+	static const unsigned char inquiry_response[36] = {
- 		0x00, 0x80, 0x00, 0x01, 0x1F, 0x00, 0x00, 0x00
- 	};
- 
+$ git grep -lw of_match_ptr | wc -l
+841
+
+So, at least dropping ACPI_PTR() seems on the track to getting rid of.
+And I checked, they are spread all over the kernel with top subsystems as
+
+  ...
+  10 drivers/hwtracing/coresight
+  11 drivers/input/touchscreen
+  15 drivers/media/i2c
+  53 sound/soc/codecs
 
 -- 
-2.48.0.rc1.219.gb6b6757d772
+With Best Regards,
+Andy Shevchenko
 
 
 
