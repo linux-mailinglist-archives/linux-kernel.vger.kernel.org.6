@@ -1,144 +1,108 @@
-Return-Path: <linux-kernel+bounces-533168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67590A45656
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:06:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C69A45659
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A390E16CF56
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3657C1892548
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8997026E178;
-	Wed, 26 Feb 2025 07:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAE726AAB6;
+	Wed, 26 Feb 2025 07:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkeLbFeJ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TV70/dOj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8AD192D84;
-	Wed, 26 Feb 2025 07:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCE625D537;
+	Wed, 26 Feb 2025 07:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740553543; cv=none; b=c+f5iWTDmi3pdl3yLSC3VINSJj5efs9TdF3KVtoDbARVGYKjyydNKIV8Tuu36zJMzQGLAl4Lqgb9rXeiBGZIAAioxAY2w2kcIGtPqGr+AxVPZGzLu7pMofh+BZwFt4k1kTvd0TYN2kiiX2ZbB7pV+kwWwPXOVPszPWtR8US0Du8=
+	t=1740553603; cv=none; b=Y/lauEVJk3DgN4/lClzgAZrsel2FW1QIwUDImWTMfJOgs/vH+Fkqm/I9uNcs+cC48p0+Sbm68I/vM/ZYT3cawku+ca/KqeZpOwDebyepzv5Tqh4XbhW9C0tMonlgRK94qIejJLQsq3jgQCeO95T07PMrqbj7bStMmWjIIKpfkPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740553543; c=relaxed/simple;
-	bh=Gk2NOsd/J//xRxLUPvfvBLSPupHBrxHxFuGx3y8W788=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HTkHVl7pt+F8AwMj69axyl3aS9WLY75/twqp0ZiOlZyVVq9YBLEMVGZ58Q1MJEVuTXIoPDqZdidGoWFAIvx0uCEO32yaJlSRi/+mZ73pKx+iBmnC39oj4jYRnFTUZ+yYMFRJSwMWvQjQqNj04GKJP7L0zvLZjsDJlHrAM2Ix+bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkeLbFeJ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso8704811a12.1;
-        Tue, 25 Feb 2025 23:05:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740553540; x=1741158340; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mkJ817mz5egdhi58ZIWEmLBtlaoU7i9Gaj/7Bxj66wY=;
-        b=AkeLbFeJ9JPG+2L18jh9izAuDMXQcFA21wGLPZQwkKSnIHGywaux9O7DFx0LGxGOr/
-         /tlexjHKwlYKObTuc0tpMUrXQlH06U8z1bGOOuC4tx+1eW4oN8gN2Lyi9zfX7R2jHUP8
-         ntJEm1WnmztAtabi0XuCyglgX+OXV7N1LG3fihdL+g0kPvJ7Jndk7FC3MZL/mpI4kGer
-         labZ7oVySoOqw74u8zWdpCrw+Ma1klJ2szmokaghYglgYp7DNdnbWPQnJHNqT+4MGlnF
-         aqXiXohOQNhN3S8e5SYvXg1s6YEfpweUSgdbIf4F6X/v/+NBzfMeO4uIpr80qIT+Sf3m
-         sqEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740553540; x=1741158340;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mkJ817mz5egdhi58ZIWEmLBtlaoU7i9Gaj/7Bxj66wY=;
-        b=tioeg8Ba5wUUIk9gYvfNUJ/wCDeOo+VG1KkB51ZwRayA/YF/Jj/u/qaZjzXb3l7eTg
-         V/sbf9Ay09yUopOlXp5RlWSCmXtJElho1cNid/eHaZj+z3ELDSI0qCHlrAawUwX7Gnpc
-         ch4BHcRVQ0bG2n+ldyXIQ8F9QDW2NwLJ64rFINLwyqlrlZMtKEP7TKTmGgQ9xcxONAie
-         L1BWjZg6+MjSGKr0sJC9iFW+6/45JUWDw36ZgiWsEMnsqDcLy4J1qPp7mPw6eGatA/z3
-         Lp503WRPglWezTO1O2zNguU6venNsFcG1mhiHZmLd3wrBzJhZVO5FRpyLrhGgS7UpEAS
-         GYGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj5fMp25RWLRCU3J6SEQHbH4IAugSTeayIILyhfPwg3i2JQ1KYSzTIVKQTf67cwzsZnL/M/p9cOWjw9IM=@vger.kernel.org, AJvYcCX90NalwsG/Z3lengqxcbF5gxEvGGp5vsKwz8aGQWjYd5qZHnFwtxinhM1RNhz2q0VsUmxGzGpXmJe6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhjxZrO5CHAuIjRuduU53TH3UG0YoGLsg4xbtPNxD/i6IUJHxC
-	oWYROC2fCXthHJQWViOJZ5Rab0O1nbRKmGrMjFrXMKYg+6STR+OV
-X-Gm-Gg: ASbGncuXMz5ovmwYmbSggRCcXAi4GM0+0fsI4Rw9DkoH35w22orl+/bCdqV6XRM/yRW
-	LpA1KV8hywAHARrtVmITFV8s/lTjApOXhA9M0FdXlhHll+2Y6z8AFgaHkPvj795bjFam1D7WyES
-	+IBSfRjlOZkuck0/NKTVmaKeIbp2gTHX9bP1nnGGhWpxSlfg6Ifj9yT1GoUD9Ii7KQbCU+KGwJn
-	ShlIYyASzlrg4TFl7K1U7DSS65Ty0Hk83vM/UimbtYgDLCyXZyC2e+zZm/i/X1G1ntMKepkYMGX
-	tv9vWow53im4SqmI6Cj1yNenTyeEvbCVq3VeiZCJ
-X-Google-Smtp-Source: AGHT+IEC1/k6GzG+zCvlAtOOJEZgDQR+mHRxEYNcXErOnLu63oM3/CoHm7JPuq/yW42KPJGGuf3kKw==
-X-Received: by 2002:a17:906:b2c4:b0:abe:e2ac:62db with SMTP id a640c23a62f3a-abeeed11204mr189466466b.7.1740553540289;
-        Tue, 25 Feb 2025 23:05:40 -0800 (PST)
-Received: from foxbook (adqi59.neoplus.adsl.tpnet.pl. [79.185.142.59])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20ac11bsm268083666b.163.2025.02.25.23.05.39
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 25 Feb 2025 23:05:40 -0800 (PST)
-Date: Wed, 26 Feb 2025 08:05:36 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
-Message-ID: <20250226080536.4f6f7e93@foxbook>
-In-Reply-To: <20250226080202.7eb5e142@foxbook>
-References: <20250226080202.7eb5e142@foxbook>
+	s=arc-20240116; t=1740553603; c=relaxed/simple;
+	bh=mWyo/N8+DDNXUg5/NyVlWyuBe6c73l9NTi/yTouqFF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U9V5YRFXTr5WOC9UwOo5bREK48gHy9AEwltRKeD40t5hvcVh4L6gf3ESOLem6QkxTfGmbCCrbi+XiPwoX05ahcOla5Qd7n+PVNebOCEgGdzsAKW2f4i1eb3s8hP691kp62tWIo5IHFKy6PboYnC7Cm2ClKvYbjX5pgUhMpj4ijo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TV70/dOj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F16EC4CEED;
+	Wed, 26 Feb 2025 07:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740553601;
+	bh=mWyo/N8+DDNXUg5/NyVlWyuBe6c73l9NTi/yTouqFF4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TV70/dOjBQpAP9cvSXh3cLIU9bu5XLmWT0qDZyQ2tDkVx8D1Nb7lJT9HUibqNOldu
+	 CfzgBnMqoYsoxOIMsHTihHH82ZF3LdNPKol5y+LWt4L4cMtMt5QmpIVw03c0wLfEBX
+	 I8PrltAzLeffROhDBR7hfWZQZ6pnTheGDzyGbe9GwvC5ZWc0BEIEdqFdq2/evHluV1
+	 YiIPiclNyTS7gagvMcRqUCBB8GegATNJ5qIZbrWaV3nhYrln6BM/lOzwZ+XMg3sU/m
+	 oC+ges9YKhuuiNKKgRo1rf/6u6xpW2EJ9AQucCB2lFUNKcO2xx3bmU2QRT99fPeTpL
+	 XrRjZ8fp0RIwA==
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d2b6ed8128so1954125ab.0;
+        Tue, 25 Feb 2025 23:06:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUnTHNVf2zPXewWQSrxBXfghHlVZuJVK9BLnR1OaznOErPnPObrqGQrMSL6S95fgAHMupSqpLE4TA==@vger.kernel.org, AJvYcCV0DdpFKZfIefw2UAFKQWwi4hA5BUgFiHdeoMH8yzpzILwdQbxnZAdkNZlLJH9SnmNuwQWXNjH4Dol+5/7l@vger.kernel.org, AJvYcCVc/twlzJduaSkCfGxcr8b38JoSb4nQJQi/bHbko+fAuvjj46gi9ohGjF7tqArNpGMTZOEP8Y5oJo/h0KI9L64aJODzE4So@vger.kernel.org, AJvYcCWnWLzwnaIZzomY2mVpQOBZva+IVdiuUBznpM3uwkT0Yg78CuZ4RSDyZLJu00yrUn8rLF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2cnABYHDxP1MALd8DNBWJPlHtHvHk8eyZaaedho9T6gysFtTf
+	1EBKb1yEazISBiBLeHDgz3MANo5NV4y/T0GHaobu0+f5W9qF+NKYd/39RCEEQANwZoU9opK10hq
+	UL/2cZ/Qw+sejXmCKTvAbvlKL/lY=
+X-Google-Smtp-Source: AGHT+IEcdOl98oXKlXxePv3jLOaWtXiDN+kmLxVG+wppb9FMPoMqDpGYB5LiymeF8aw5tl3Fb5pRrkiVl+Tsje8J7oM=
+X-Received: by 2002:a05:6e02:1aaf:b0:3d0:26a5:b2c with SMTP id
+ e9e14a558f8ab-3d2cad53783mr161545385ab.8.1740553600762; Tue, 25 Feb 2025
+ 23:06:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com> <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 25 Feb 2025 23:06:29 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrQbQVFIc9h30vn4-9xqbLwmuveTiAWwZ-YCxa69xS_lPBL2nuj90MTZaQ
+Message-ID: <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf hooks
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If skipping is deferred to events other than Missed Service Error itsef,
-it means we are running on an xHCI 1.0 host and don't know how many TDs
-were missed until we reach some ordinary transfer completion event.
+On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> Certain bpf syscall subcommands are available for usage from both
+> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> need to take a different course of action depending on whether or not
+> a BPF syscall originated from the kernel or userspace.
+>
+> Additionally, some of the bpf_attr struct fields contain pointers to
+> arbitrary memory. Currently the functionality to determine whether or
+> not a pointer refers to kernel memory or userspace memory is exposed
+> to the bpf verifier, but that information is missing from various LSM
+> hooks.
+>
+> Here we augment the LSM hooks to provide this data, by simply passing
+> the corresponding universal pointer in any hook that contains already
+> contains a bpf_attr struct that corresponds to a subcommand that may
+> be called from the kernel.
 
-And in case of ring xrun, we can't know where the xrun happened either.
+I think this information is useful for LSM hooks.
 
-If we skip all pending TDs, we may prematurely give back TDs added after
-the xrun had occurred, risking data loss or buffer UAF by the xHC.
+Question: Do we need a full bpfptr_t for these hooks, or just a boolean
+"is_kernel or not"?
 
-If we skip none, a driver may become confused and stop working when all
-its URBs are missed and appear to be "in flight" forever.
+Thanks,
+Song
 
-Skip exactly one TD on each xrun event - the first one that was missed,
-as we can now be sure that the HC has finished processing it. Provided
-that one more TD is queued before any subsequent doorbell ring, it will
-become safe to skip another TD by the time we get an xrun again.
-
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index ad5f0e439200..2749ebe23a33 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -2885,8 +2885,21 @@ static int handle_tx_event(struct xhci_hcd *xhci,
- 					return 0;
- 
- 				skip_isoc_td(xhci, td, ep, status);
--				if (!list_empty(&ep_ring->td_list))
-+
-+				if (!list_empty(&ep_ring->td_list)) {
-+					if (ring_xrun_event) {
-+						/*
-+						 * If we are here, we are on xHCI 1.0 host with no
-+						 * idea how many TDs were missed or where the xrun
-+						 * occurred. New TDs may have been added after the
-+						 * xrun, so skip only one TD to be safe.
-+						 */
-+						xhci_dbg(xhci, "Skipped one TD for slot %u ep %u",
-+								slot_id, ep_index);
-+						return 0;
-+					}
- 					continue;
-+				}
- 
- 				xhci_dbg(xhci, "All TDs skipped for slot %u ep %u. Clear skip flag.\n",
- 					 slot_id, ep_index);
--- 
-2.48.1
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 
