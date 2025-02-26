@@ -1,122 +1,246 @@
-Return-Path: <linux-kernel+bounces-534958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748F1A46D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:16:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E19A46D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E441887D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FE93B036A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312D0236A74;
-	Wed, 26 Feb 2025 21:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EE62571A7;
+	Wed, 26 Feb 2025 21:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjJlQYC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b="axwnsklG"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2111.outbound.protection.outlook.com [40.107.223.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D132755E5;
-	Wed, 26 Feb 2025 21:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604590; cv=none; b=Qiqv+IZ7ufz6zXu8f+okEFgLozhqIj+m0NqfoCy3X2V2vYqsCSDpS1n1TLIpzoDoyelYytxR8dm0/gt+IxSmF1/XSXdxHzCwA05ik1Rh2EjYgaWsxDK1+yKocb5PdVLoik3sZSTUVw2FBrkej954Son8jp9DpmA6PIt2jkIVd7I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604590; c=relaxed/simple;
-	bh=BlXrr5d0eV/LhE0K1ldO09vh9dZWhnRmDBzqcBJ+MDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9KkXfRCXZRzIGowlUr6fKL/dBA53TkMAjy9p5ezkmPpIRb2kUIxDiBp4LxsikLBC5YaNOsFGHcKzvi/jQEfg7iXikL0weldIjZF0FHJEPaRrp4eF69LfQAziMhhkpECx867W9bqiDqzF03el83jXgpfMaag5sTEwz/Css7lN6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjJlQYC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEAAC4CEE7;
-	Wed, 26 Feb 2025 21:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740604590;
-	bh=BlXrr5d0eV/LhE0K1ldO09vh9dZWhnRmDBzqcBJ+MDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PjJlQYC6X0Ysyd0rN4GOVuwn8p1vTM0P/RTtiVegzerz7GdF/X8yBE1ul9r8dIvme
-	 v4pmKoPifGMG7esQKPU2DDle9YL8BV9r9Ifm31rUYkQEcthrbkqOCXf5+aiL3tIrna
-	 OC+bYnJxK8E4N9G86mVOs7hBOCP1d8R4B9Fz/cX7ZqgjPqfa7dFgjZK6UckAtvaU63
-	 FnTr+OXy399bfR/1hbmvQwKEbitnTw0w8Rd93GjUDUjtC47AwS5/tqB1JrMMuxHNDN
-	 KtIvu/UEGFElCZECX5tsqoBx1znqsJZVRuwd2q+fOYeLHY03n9m/fMXIkq1/2nkVFe
-	 cobiK/OYjJdWw==
-Date: Wed, 26 Feb 2025 21:16:28 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>, linux-mm@kvack.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
- zswap_cpu_comp_dead()
-Message-ID: <20250226211628.GD3949421@google.com>
-References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
- <20250226200016.GB3949421@google.com>
- <Z796VjPjno2PLTut@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85372755E5;
+	Wed, 26 Feb 2025 21:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740604684; cv=fail; b=AFdKUEsx/Q7IVjRgASOsismrq/9iiyK+ICNRXlllyP6DVYWdfSJ0lkqYqdSrytNUxix2XSNWFm5l3plEmf0k+GuBxJ6JvSBI7CzuhzfumtMPXiViOBbSm2PKEuBay3KwBY2mQxtVW56C7/0ZNdbcQl19iEQ30+PVN0I9lwuk3q0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740604684; c=relaxed/simple;
+	bh=f6azlYE2mkFuIhqpY6E4Af6/1fgViBFsbvc5/o4rlN4=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=b1WKevffO8x/EXtIG/GnosiBwREk+ju0UVkmHDJmz/PgVwwxLCFyuFFNvdlXFrihCO6/o49Xw+CuMc2tbc2exmP4CkloukMLRF4rqqs0YoQoyXEIHMmBsP0/fr1UKbwsEkvsNsZszckW5kqP7SuW6N9P0ieQdsZHpBLLcCs7ph8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com; spf=pass smtp.mailfrom=d3embedded.com; dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b=axwnsklG; arc=fail smtp.client-ip=40.107.223.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d3embedded.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bCIJ0Y6kIylFY0zW9pq18/kQtk60rEDAamwawEYWVt96+rhzaZCd7Omh8qGv5gBTlXj2PJEyU4QH7KVgt2v3bFX0hCn2bO+FERI+f2rYRbM4A8npsLTswYsZcvrn+e0LN2WXvG8SxuwxaeI97eoN54l+wgEhW7G32Q7zNYj23SWNcmh8mY9vp9lH3DSzapOSshNrZv39Ubk2H96f8YxpHcxiP/boCxz/KotpiSeCh027zxwB2ElCT3UUVkZ4cXpPKW69aEtJaDz6Zbfs80NKBFI9zfR0vLdPBIoIOQuHk0tbVETsTKUjj3r281SrzFzbijP0Gmzx1DzeJ2jm882XcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qMPqHkZ2yWvviD3ZN8OOibZCsDVCae6LW80VZH4AwF0=;
+ b=Vg3qmOFBxOqg1VEMtzBKeci3lTaY8LfRQS8YjfJ82Jdfy3BS05JCze2fgJMizr3qDVjNW64jqcmT+8Iga8KYluoWnbqpXB/FY2QLbA9I2DvlG5pZhBfIP0TpHI1yb/bAQS1I68hiMwfamIawuZNwjuPQU2Vqsqr1cvvVgstULu3eeh0xO/TbXMDp1p6OcRDe0NfOZVuCo8C02JP+aDKzdyh3Q7MmXUcnXwsCKo6REnTIsgA0RyMFzKOc5VGVUJJffT3U2KGUV/mxt4hsWbP7S/HidpmcxJVw9t+/z/HNYdL2rBM6DJ0QEpcnyBSAe9qPNoaqtMN6RP0GO3rnJN5dhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=d3embedded.com; dmarc=pass action=none
+ header.from=d3embedded.com; dkim=pass header.d=d3embedded.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=d3engineering.onmicrosoft.com; s=selector2-d3engineering-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qMPqHkZ2yWvviD3ZN8OOibZCsDVCae6LW80VZH4AwF0=;
+ b=axwnsklGu12q4HDQA+mFTZTGmW+LdMgII+8NeUEPhVnC5lc25Nxyi80uSMVNb5oWpKmh5e7P/L6T7TZ8txLBFg/xII2q8jsfpozYz96t6DpRPT5Dng8bMYKhCC2Fcr+4jDVEYqbtBxDr6qV2igJY80Sofkk5FfPmmugbyfY3g+Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=d3embedded.com;
+Received: from MN2PR14MB4207.namprd14.prod.outlook.com (2603:10b6:208:1d6::13)
+ by CYXPR14MB7572.namprd14.prod.outlook.com (2603:10b6:930:d6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 21:17:59 +0000
+Received: from MN2PR14MB4207.namprd14.prod.outlook.com
+ ([fe80::1232:fdf5:3cae:d9d7]) by MN2PR14MB4207.namprd14.prod.outlook.com
+ ([fe80::1232:fdf5:3cae:d9d7%3]) with mapi id 15.20.8466.020; Wed, 26 Feb 2025
+ 21:17:59 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Feb 2025 16:17:56 -0500
+Message-Id: <D82OV1MZ1U4T.2KKSJIP8P27I@d3embedded.com>
+From: "Sebastian LaVine" <slavine@d3embedded.com>
+To: "Markus Elfring" <Markus.Elfring@web.de>, "Stuart Burtner"
+ <sburtner@d3embedded.com>, <linux-media@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>
+Cc: "LKML" <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>, "Abel
+ Vesa" <abel.vesa@linaro.org>, "Alexander Stein"
+ <alexander.stein@ew.tq-group.com>, "Angelo Gioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "Benjamin Mugnier" <benjamin.mugnier@foss.st.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Bjorn Andersson"
+ <quic_bjorande@quicinc.com>, "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Dave Stevenson"
+ <dave.stevenson@raspberrypi.com>, "Devarsh Thakkar" <devarsht@ti.com>,
+ "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>, "Elinor Montmasson"
+ <elinor.montmasson@savoirfairelinux.com>, "Fabio Estevam"
+ <festevam@gmail.com>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "Hans
+ Verkuil" <hverkuil@xs4all.nl>, "Javier Carrasco"
+ <javier.carrasco@wolfvision.net>, "Jianzhong Xu" <xuj@ti.com>, "Julien
+ Massot" <julien.massot@collabora.com>, "Kieran Bingham"
+ <kieran.bingham@ideasonboard.com>, "Kory Maincent"
+ <kory.maincent@bootlin.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, "Laurent Pinchart"
+ <laurent.pinchart@ideasonboard.com>, "Mauro Carvalho Chehab"
+ <mchehab@kernel.org>, "Mikhail Rudenko" <mike.rudenko@gmail.com>,
+ =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ "Nishanth Menon" <nm@ti.com>, "Rob Herring" <robh@kernel.org>, "Sakari
+ Ailus" <sakari.ailus@linux.intel.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Spencer Hill"
+ <shill@d3engineering.com>, "Tero Kristo" <kristo@kernel.org>, "Tomi
+ Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Umang Jain"
+ <umang.jain@ideasonboard.com>, "Vaishnav Achath" <vaishnav.a@ti.com>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Will Deacon" <will@kernel.org>,
+ "Zhi Mao" <zhi.mao@mediatek.com>
+Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
+X-Mailer: aerc 0.20.1
+References: <20250212195656.69528-3-slavine@d3embedded.com>
+ <c929975d-6928-4161-b062-64636a4f278e@web.de>
+In-Reply-To: <c929975d-6928-4161-b062-64636a4f278e@web.de>
+X-ClientProxiedBy: BL6PEPF00013E11.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1001:0:17) To MN2PR14MB4207.namprd14.prod.outlook.com
+ (2603:10b6:208:1d6::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z796VjPjno2PLTut@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR14MB4207:EE_|CYXPR14MB7572:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40dce939-1c36-41fc-f20c-08dd56ab0b9f
+X-LD-Processed: b7153db5-3376-478b-b601-92ce9bc0d3bc,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?YjYvZ1BLUXZmQnpoSVNteFdPR1RDSk93RHh5aFBpeFFpd3p4Z1YrQTFseDNW?=
+ =?utf-8?B?eU94TTVoaC9ISkliS2FyUlVRaUxCdnRwWmpNSEwzRmF4R052c3VLM2x6R011?=
+ =?utf-8?B?Unhxblh5azVuQmU1bUc0VDQyQ3pncldGbG51c2kwaSttcFpLaCt5aDBzT2NN?=
+ =?utf-8?B?Qllya0xhZU5vRmFmUmJCREVacWtYZ0tGd1pnRTNFbndLMVFqL1d5NWJRQkxq?=
+ =?utf-8?B?a0Y1cGEzUXZRTGJSMnhpMnBHcWQrSGk4TU85b3JFMEw3UDFnMTBwWjFhWUFC?=
+ =?utf-8?B?Y1N0MTJ0V094ci9sZWdicE0rNUZCcytPai9GdnhabVFQQ0tyL1IxMFlJcVRw?=
+ =?utf-8?B?WlhWQXVoZmdHSlZtQyt2cFczdG1GQkVRTElPNWhVMFc0WEg2empOWDdoUEpU?=
+ =?utf-8?B?K3hCbTJZazVOTk13ay9uR0E1OFA5L3U3TDhQWjY5djl3SHBENnBtQWhYK0RK?=
+ =?utf-8?B?Q0U1ME9IV252QldiTWJsdS9ueHowWGMvWXZIZTUvQ3JFYkE1MDBYZ2lCb2VL?=
+ =?utf-8?B?S1pjQjZYYmRpWGlXQlVYbkppdVdTNUdFTStTMjcrOC92M1RualFia0swK1pr?=
+ =?utf-8?B?VGpKZGF3NjJXemdtYmZpS09qUkJFcG1Gd0lTMzU5WThWdFBOT2I2Z2U2WkFZ?=
+ =?utf-8?B?djhUVFFKYU5qbWE5Z2hxanMzZDJuM1RDREtUL0FnYUlFeWYwZ21qdnFDTHZj?=
+ =?utf-8?B?K2dmL3pobncrRGVtdC9rV0ZhSEF4VDFxSjBic29kWGlqU212cEh5U0dXeFU1?=
+ =?utf-8?B?R2hJbGZEeFFwclVQL3Q3U1RBaWNQQTZPbjBhMUhXNXN0OTM2dm1YVnhxUU8x?=
+ =?utf-8?B?RDVJbGE0RTM4cVNNRW8veE9IVVlzWVhUdFd0QTE4VWludE15aDE4azkra0J0?=
+ =?utf-8?B?akVjL0FZS25CQTN5RU1nWXc3S2F2SkdWcVo1SERIRDI3T2RqTmtwMnZuTS9x?=
+ =?utf-8?B?NlBkT2tYdDluenVCanBwRDRwTFNmazNBWkRqQkhpbXVPUFZ6YWZKUjZmb3Zl?=
+ =?utf-8?B?dWNxcVFvcmptTENreTQrcHB6SVFYbnNRbkY3amF2MCttc0VYcEdxSDdzZDBa?=
+ =?utf-8?B?dkFZaDlrUmx2M0VMb0J5d1pPVzB2V1hrK081dmZoMzkydzJvYUlKSTBuRWIz?=
+ =?utf-8?B?eUFnckROKzVPVEZ3UEY0Umc2Y01JNXJ3Vms1THpmVTBNRVJKRURodStIYUFz?=
+ =?utf-8?B?K0NiWjhYVStZemdBVEhnQlNscGNKVUdGMkJXQk9TUkQ1dkNtVmpwTUpGRkJk?=
+ =?utf-8?B?cGVRL1QwNXF5R005OTBTVmxDY2ZWQ2s2OXZQSjBLR3o0WG1wRkZETmgzcDBq?=
+ =?utf-8?B?VGQrUFlzQXl1Yy9pblhkOTc0TWQ2K2ljanhNRE0ydUxXc0JrU1BLcC9zUitG?=
+ =?utf-8?B?enB0eW9HckIweTV5Vm5XM3lyeWp3aERKRWVmTWt5MElOa2xnd3YwYmorTkhu?=
+ =?utf-8?B?aWJKbzJ0ZEp5SHZpd08wTmdPTXZjUW1vMk1aMFJMd3pEVmZIT01KY0RGWCtr?=
+ =?utf-8?B?amhFM2xYeURaL2VEYzNrN2VjZEErdjd6d21MbDlCOHBQOVMzcnZMYWNzM2NN?=
+ =?utf-8?B?V29ncS91cmcxMmkvdzVVejlPYXVSLy9KNXJBaGh5TWE3Z0hSeGJneWVBWFRz?=
+ =?utf-8?B?cWJkYVV5MzMvdEpGUndXcEtCa3A5UGhTWEdRbG9SY1UvQlVRdWhoaG1NR3E4?=
+ =?utf-8?B?OHR2eU1uVTJIa3FQUVFPTHVLcWE2UVRDTjYrVlRtU09LaHNVRGI3dlBvQk1p?=
+ =?utf-8?Q?4yMqyz7A48pirtj08iYHutUd0c9eS54gTocHzqH?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR14MB4207.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?UmE1ZzNrN3JySXliZmRTMHc5MjBVM1VBWG5kZ2RiTlpBdXhYYWVMUkRiZXlH?=
+ =?utf-8?B?WElZbE9hMDBUcENiUFk0TXVCcEErckZBT0VwbVdiQnZyU01JRUJTdE5QQy9V?=
+ =?utf-8?B?azJXdmtCd2ZrNG9uN2d6dnVvZmNGTU5OSDBjSnFTNnFBOU1PaGdXMFJMMlVI?=
+ =?utf-8?B?Vm4zV0QxWFlUNXF5bk85YTQ2MmFxNzQxU2VhNnFsZFRISXNBWHJ4a2V2SXJZ?=
+ =?utf-8?B?U2RtR3VwNlhTdE9CVE1ZZ0MwZWNrNzMyVnY4cmx5MlU4amIxV1Q5M1ZxZDc2?=
+ =?utf-8?B?d3hyeTN3aThseTh6SHF3bHR2V0FaMUF0RTJMdkYreVBaVVdMTCsrbThnR1lP?=
+ =?utf-8?B?UkFDdlBxY2pRa2Q2Yk9JMVlHUFdGb1FmN29DRG1UYS9YemZQN3hIeVVsQ05s?=
+ =?utf-8?B?amloUUZzVFpBT05VTHg5d1dHb25OSjNOemNNcHhNREcxTmVQUkUrZ0FLZ1Fz?=
+ =?utf-8?B?TGRFa2Z2U0QyUDZySTRGY1IxN01EWERxU3pBYjdxUCtkK1Z4bjI3OUQwb1Ur?=
+ =?utf-8?B?dnRSMW5XaURFNkg1bVlCNnQ2cS85aVRSSVVHNUJacURIQVhIQk5NVU9jN01D?=
+ =?utf-8?B?YkNlaThiRnAzS0l6U1dTMFlMSkJmYysvOG9BZG9sbGZTSzg4NEJwRGpZWGZt?=
+ =?utf-8?B?U1Vmek5lTlQvU2ZXY3dreUlGZlgxS3grT0JyU3VjZ3pGQWNETHYrME4rUXI5?=
+ =?utf-8?B?KzNRbHl2UFRaRjBESVJTT3lvTmlCTUVXWXlyODNOeTNtYmV2OTBvVVFaWHNy?=
+ =?utf-8?B?azJkc3puaU05TnFzK0J3a21sdkpaZTF2YW9La0xCdS9kaGk2djdnTVhMNFdw?=
+ =?utf-8?B?TGJpS0cxcGQ5NHlxL2RmY3NlQnZZRkNTOVJYc0VWTHlmSFJYeUlMNFlEdXZH?=
+ =?utf-8?B?R05Ud0dqUHRicThISjFOMmNZY01obUtOc3FIU3hjamlRODExZ0wzTDZKUVhm?=
+ =?utf-8?B?ZWVENDhUb0p4a2NyRjdWRXYzT1RiQmdRSWtnWHNrWkxPeFdicHB1c3Vac2g3?=
+ =?utf-8?B?bUpIc0dkNUtjeUlxM3JZTmVKMzhZVTRrWkd1WHVXTlJWUSs2MUxrZ0lNMUNp?=
+ =?utf-8?B?Qk9FZ2RiTDM3cXdHeDYxdFYxYk12N0dJaHRiMVJwV3pPNTJ1dWw4R3Jma3hz?=
+ =?utf-8?B?SVhKWmRSQ0I4aGhRRVB2cU00dFYvY2l6UG9jdk5LUzA2YWZBOFpwNUVFdXU5?=
+ =?utf-8?B?UzBTbExud3ovanp0SnBod25NTjJwa1lsQXREVkE3Z2J3TnV2WU9rblpNbzdJ?=
+ =?utf-8?B?eG1LRWlTZG16ZDVwb0l2MXNZWVRKRjdkZCtSM1RLOUUrSUtPcVJwZGEzeDF4?=
+ =?utf-8?B?ZEM3NDF2T1VpWUxPUkdJdTJCcDR5cmxlWjkyZXhFbHVpeU5OTFNTeEpMVkZE?=
+ =?utf-8?B?VHJaSE93TmpOUzQ5cWxLbVA4NGdFK1VNajdla2hEZ3NaZzY4S2MrbGVRNE54?=
+ =?utf-8?B?aU5sM2t0YVY1enozbFJWNFVRUDlzaFNHblh3ZDZlZTRma0NXQkZyVERScnJB?=
+ =?utf-8?B?WW9SMzB3NHZybmpwL0hXN05rblpza3pldlR1U0tTdGlqUzl2bXFvNERDWjVZ?=
+ =?utf-8?B?ZWhxaDZHMGR2OFkxVnVvK2I1MXM1QzF0ZjBjcXh6UGNXUXMxYUFKV2JQN2xo?=
+ =?utf-8?B?S0lVRm9OUjJaTWtHeEpTbHcvd1duZnpIeXEwQVBwb1A3anB5NnJsSGFmZll0?=
+ =?utf-8?B?dlZaQ29RZXpRMllPUlV6ZjhjUnhwdWJtQmdJWlY1U0lOUlh2YVd3VUpuTmpM?=
+ =?utf-8?B?Y1U4RGQwcy9VZS9Hd2NRaFM0TDQ2UEJCcnpNNm5IZXV2WTVUV0hKTksyTEJG?=
+ =?utf-8?B?Umd4dmFoa080cXBhOWdGMnpoQTVxc3Njc1VzUnZFcWgxK01MS010NXZvSklu?=
+ =?utf-8?B?dWxaMHgxU2ZnQ04wWGV4Sm4yUFZYbHA1SjdqRXI5UmhySDkrVXY3aXJtYzN0?=
+ =?utf-8?B?ODB1RGNqckRlenB0bmkwYStGNWVUQXZ4WFdyQlZnK2xDc1YwN2tJN3dnVW5T?=
+ =?utf-8?B?QnRIQnJlRU9QbVc4MEdKcXNoeW1FWHNXYTBWT2J6QTVyRmFzOXFXMndGR09k?=
+ =?utf-8?B?OWFqbGN3ZEtpaTREcEEzaTNTcEtYd2l3RkxHdzJOTjhyTEpHUU9qVk9aV0xv?=
+ =?utf-8?B?RXZPVWl5TndFN0Vqdmd0K1djODFTeGc1OVlWaTZhM2JKUEFHdG5JQWRUY2tv?=
+ =?utf-8?B?d0E9PQ==?=
+X-OriginatorOrg: d3embedded.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40dce939-1c36-41fc-f20c-08dd56ab0b9f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR14MB4207.namprd14.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 21:17:59.2582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b7153db5-3376-478b-b601-92ce9bc0d3bc
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J+q33GjXHPS9PRjePuPS4s8YprNWLS2Nt1GvhSck8g69xQak9frRLAG3X7OxQo0yjbPM1peT2/l7bWNcaciSsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR14MB7572
 
-On Wed, Feb 26, 2025 at 08:32:22PM +0000, Yosry Ahmed wrote:
-> On Wed, Feb 26, 2025 at 08:00:16PM +0000, Eric Biggers wrote:
-> > On Wed, Feb 26, 2025 at 06:56:25PM +0000, Yosry Ahmed wrote:
-> > > Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
-> > > the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
-> > > (through crypto_exit_scomp_ops_async()).
-> > > 
-> > > On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
-> > > (through crypto_scomp_init_tfm()), and then allocates memory.
-> > > If the allocation results in reclaim, we may attempt to hold the per-CPU
-> > > acomp_ctx mutex.
-> > 
-> > The bug is in acomp.  crypto_free_acomp() should never have to wait for a memory
-> > allocation.  That is what needs to be fixed.
-> 
-> crypto_free_acomp() does not explicitly wait for an allocation, but it
-> waits for scomp_lock (in crypto_exit_scomp_ops_async()), which may be
-> held while allocating memory from crypto_scomp_init_tfm().
-> 
-> Are you suggesting that crypto_exit_scomp_ops_async() should not be
-> holding scomp_lock?
+Hello Markus,
 
-I think the solution while keeping the bounce buffer in place would be to do
-what the patch
-https://lore.kernel.org/linux-crypto/Z6w7Pz8jBeqhijut@gondor.apana.org.au/ does,
-i.e. make the actual allocation and free happen outside the lock.
+On Wed Feb 19, 2025 at 12:51 PM EST, Markus Elfring wrote:
+>> Adds a driver for the Sony IMX728 image sensor.
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
-> > But really the bounce buffering in acomp (which is what is causing this problem)
-> > should not exist at all.  There is really no practical use case for it; it's
-> > just there because of the Crypto API's insistence on shoehorning everything into
-> > scatterlists for no reason...
-> 
-> I am assuming this about scomp_scratch logic, which is what we need to
-> hold the scomp_lock for, resulting in this problem.
+Thanks, I'll modify the commit description in v4 to use the imperative
+mood.
 
-Yes.
+>
+> =E2=80=A6
+>> +++ b/drivers/media/i2c/imx728.c
+>> @@ -0,0 +1,9655 @@
+> =E2=80=A6
+>> +static int imx728_set_stream(struct v4l2_subdev *sd, int enable)
+>> +{
+>> +       struct imx728 *imx728 =3D to_imx728(sd);
+>> +       int ret;
+>> +
+>> +       mutex_lock(&imx728->lock);
+> =E2=80=A6
+>> +       __v4l2_ctrl_grab(imx728->ctrl.v_flip, enable);
+>> +
+>> +       mutex_unlock(&imx728->lock);
+> =E2=80=A6
+>
+> Under which circumstances would you become interested to apply a statemen=
+t
+> like =E2=80=9Cguard(mutex)(&imx728->lock);=E2=80=9D?
+> https://elixir.bootlin.com/linux/v6.14-rc3/source/include/linux/mutex.h#L=
+201
 
-> If this is something that can be done right away I am fine with dropping
-> this patch for an alternative fix, although it may be nice to reduce the
-> lock critical section in zswap_cpu_comp_dead() to the bare minimum
-> anyway.
+I will use this construct in v4.
 
-Well, unfortunately the whole Crypto API philosophy of having a single interface
-for software and for hardware offload doesn't really work.  This is just yet
-another example of that; it's a problem caused by shoehorning software
-compression into an interface designed for hardware offload.  zcomp really
-should just use the compression libs directly (like most users of compression in
-the kernel already do), and have an alternate code path specifically for
-hardware offload (using acomp) for the few people who really want that.
+Thanks,
 
-- Eric
+--
+Sebastian
+
+Please be aware that this email includes email addresses outside of the org=
+anization.
 
