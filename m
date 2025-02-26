@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-533938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F559A4608A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:18:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A2CA4608E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5953AEEB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C637179B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888052192FC;
-	Wed, 26 Feb 2025 13:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D067521A421;
+	Wed, 26 Feb 2025 13:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZpAmK6O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Vj51z+uc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fvlMAn+D"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EAD7464;
-	Wed, 26 Feb 2025 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0606A1AF0B8;
+	Wed, 26 Feb 2025 13:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575905; cv=none; b=IdoVfEhlsEbJsbmhqaHTdxSJbRXb7xZ5913MfziZLo+68CMMwLrHufPF8of10659mxxlsxhc1vwJFMDRZ0ckSwW/kjzmi++AJ8hCZDmB3jlFqmMvMVlgRUizLAb8p0G1WjTf+I433ljACiKVqt73sYG7ZuL/ypPHpTGrUsVWWSA=
+	t=1740575951; cv=none; b=Z39r3Iw2rtcIdtsKnkPVJco3FE9CHgPvzgv+XESnBAvTwGrnjBji7HpNWf09qO8+zFUGTIAxt4FSGjKFTnMm8bqW8pn/UYMAOUJ/s0WkHz8FRAB09v4Qbsh/mH5Y14oIhZRWwTvk7Vkxapnr4aZEKe+0pcY8Gj/Xd1tSshwmM2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575905; c=relaxed/simple;
-	bh=bjVlsvLBOM7oVxLFv550/V99CFQCpay+9nslgLYQNs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXsYIWrNvUII1nyEErAQfVGW26IVOcpVCwrhbKxK3sQTgDiKkIAkCtrOviN9HIO+EyI7Thnx7r1mBCa5AQXZWBU9II0FKhJaEDBNVUBObEZMAZ9bFE6UhfRu7ft6HodGn0Yj8Go5e1xc6E940DfHWdJyje+8RQUnEyY7U40GLTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZpAmK6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25D4C4CED6;
-	Wed, 26 Feb 2025 13:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740575904;
-	bh=bjVlsvLBOM7oVxLFv550/V99CFQCpay+9nslgLYQNs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZpAmK6OmPPXdOKdQAJ8TDd3iL5slf4J8ox7f8bN33QeX9duxiSN0tIJNQVkHN8Ro
-	 GM+AcGcws6AghkcU2OoXo7xCulRGWLVBERRvSvO90RNgcuR33A7aeqhTCedASa57aD
-	 p16JUBGgvjeoFD2CGefXIkLbDcCQ8k0PrM7uXVcCnNsuzX1R9u8P0BDvAWp26aCzOV
-	 TNHYtC5wWM6OVXJPSYSFrnpiNPE9sTXRaQeQzOYg9QxjmArTIK8kWmLK0wsgQxqwZc
-	 HYU1AStDgPGgaHtDjcShDBSAJHGKZo7BlWTcH9oh8LSELCopc+/2pmVvb/bwxVg9Xs
-	 7EQ/hGrqDDYfg==
-Date: Wed, 26 Feb 2025 13:18:16 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 06/10] regmap: irq: Add support for chips without
- separate IRQ status
-Message-ID: <ef7b9c80-88f9-4985-814e-e58cd44a3611@sirena.org.uk>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
- <Z69eue2dV37vw61v@smile.fi.intel.com>
+	s=arc-20240116; t=1740575951; c=relaxed/simple;
+	bh=Lj3Ctgm7NZ6KeH4zbqWmLO8wuZosl0vGgvp1DgxPET8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GiniwEWZr8acAx4Q+sbFc6NPrUhOBTfBwXjWF5Qp7GcEkOYPmO6gMeJ7UCDFmaJJAKqJbg7Et28ZlABUWaGmXO+yaPOdUBKy7y2chs4/9Cd9DFqnjudL8gaR9lCKwr/TkSp3mgVrR7ncpo3O8SaaCElWzkGmWxuD3NRWuoCKJzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Vj51z+uc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fvlMAn+D; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id C7DDC11400D1;
+	Wed, 26 Feb 2025 08:19:07 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 08:19:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740575947;
+	 x=1740662347; bh=UOZ4mYVIFdHTT9aEkdVg/UTAHR5Mna/PggP4OynHPN0=; b=
+	Vj51z+ucrADMcGvPqgqm/ocyub19PD6MhBlhIXOjDkMHHQrXIoD20teKX+xNT1Zz
+	AXLjQis+dGRDMnzTDBswrYrAgopT1GRSFlqVjgdwZZKU0WZKHen3lzZPiKM4Wk8r
+	nai+TBLBqRej9mDuNQE6WWAOmnH+0EujDEPCWSXIBDqd6TXN8y5jPnhbOmCGLqAt
+	MoRcttDaaPfRveyhiyOJVHWNL1EDf3c5gK1+yFglSp/2TIhR3AglzZxkQKPeQBxd
+	MsFZ3VeWpMryBpJHKuKulTzzgbXJIxUJUqb4w3X/kHKYs5KjqK5xVJSJjOGzekNf
+	6Q+r4oMTHv605qMhlo6bag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740575947; x=
+	1740662347; bh=UOZ4mYVIFdHTT9aEkdVg/UTAHR5Mna/PggP4OynHPN0=; b=f
+	vlMAn+D0OgBAbrUqB8/MFQSJG4PCDpgig7vU5ZUqhkzF1tvJusovpC/BZ4uZ1EYV
+	ZhLeuB9pgsiSRCEj95M/AM5UmWiVGo3N3hFVaFTdUNN62524J22Wi7//qjidWCso
+	cq+yTwxVyD4Iwla1hBnzuvqcbTbC1+haZ29yNxExZTYRLLbSS5Hh9YdSki6MEOCg
+	7tiZPskxi3jW/vkaR2pD5eyp2cQIYyYO1zVP7ZMvDHfPeB3NUK5FTje9kjoAc2eS
+	jbR87RNxIUarqUAiOxqHB4wncfeFz8jOdc6DDS8/sDfQwF989CyfwtRAw4JFZ1GH
+	/yqmoP+pEx/sIfakxgQVA==
+X-ME-Sender: <xms:yxS_Z6qOOLfzklww1--oi0qfaUrTdjq1-WVjRtzkVH5yja5by4s4eQ>
+    <xme:yxS_Z4qW7wtd7fsum4uEViAYsaLmi-DC0Cv27_VgyW2m2X8AAYNhuoPoGEuwziM2w
+    1H8wc4gIq297NQeEC8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeeikecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
+    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
+    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
+    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgr
+    vhhivghrmhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnh
+    esshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvghvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:yxS_Z_Ns28A9EpUPipAK62UZsgV4g1ZSXq956j1168XrUDQrkY3T2w>
+    <xmx:yxS_Z54hN7DqCojVjxK3CIYOBJbCqfOWW45Qwjc6UHicALTLLVwFTg>
+    <xmx:yxS_Z54Imc1xlBHDZovquYk91g6UG_qQCS_Xn8-2MEwuLFb3ZcEmaA>
+    <xmx:yxS_Z5g7dX5-PTdzwF0F5VTdCY1owA7G6RhCuIK5hqgyFaHVQTxbJw>
+    <xmx:yxS_Z0bX88-s-Yzjw4WeScj6dc3Lj5BaKxN-8sRLlhSarnBie8vVa6qh>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E80192220072; Wed, 26 Feb 2025 08:19:06 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/ZnMkqajxP1BmR2o"
-Content-Disposition: inline
-In-Reply-To: <Z69eue2dV37vw61v@smile.fi.intel.com>
-X-Cookie: I've been there.
+Date: Wed, 26 Feb 2025 14:18:46 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Javier Martinez Canillas" <javierm@redhat.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Helge Deller" <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <98ed694b-0f2f-4bfb-9280-729842d9f95c@app.fastmail.com>
+In-Reply-To: <87mse8zzb0.fsf@minerva.mail-host-address-is-not-set>
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+ <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
+ <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
+ <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+ <87mse8zzb0.fsf@minerva.mail-host-address-is-not-set>
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Wed, Feb 26, 2025, at 13:05, Javier Martinez Canillas wrote:
+> "Arnd Bergmann" <arnd@arndb.de> writes:
+>> in drivers/video/console, with the simpler alternative just
+>> calling into fbcon functions. I'm not sure if we can already drop
+>> vgacon from normal x86-64 distro configs, i.e. if there are cases
+>> that are not already covered by any of efi-earlycon, efifb,
+>> vga16fb, vesafb/uvesafb or a PCI DRM driver.
+>>
+>
+> I believe vgacon is still useful for x86 with legacy BIOS, because
+> vesafb (and simpledrm) only works if the user defines a mode using
+> the vga= kernel cmdline parameter.
 
---/ZnMkqajxP1BmR2o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Right, at the minimum, a configuration without vgacon would
+have to pick a graphical mode in arch/x86/boot/video*.c if one
+wasn't already set by grub.
 
-On Fri, Feb 14, 2025 at 05:18:17PM +0200, Andy Shevchenko wrote:
-> On Fri, Feb 14, 2025 at 12:49:56PM +0100, Mathieu Dubois-Briand wrote:
+Looking through the git history of that code, it seems that there
+are lots of corner cases with weird 32-bit hardware.
+Anything from the past 20 years is probably reasonably safe,
+but there still needs to be a way to configure vgacon back in
+to be safe.
 
-> > +	int ret, i;
-
-> 	unsigned int i;
-> ?
-
-If it's just an iterator it's idiomatic to use signed ints.  IIRC if it
-makes a difference to the code generation it's likely to be positive.
-
---/ZnMkqajxP1BmR2o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme/FJcACgkQJNaLcl1U
-h9DQ8Af/fxLiNmnQb8ioOReWGeFUKZvjmO/mJ5ANAtemDTiaMKVnIsLZMihmn/B2
-+70z79eF26afBgEU1LBny6ne+p8KRWLGUL6vs92uHUla5bfKe1ZgAI8BUUV8Ogbx
-GZyPQ+bBWUUcqPczn9ttmLum7ekJvVybhBOvp588OiWUcOt1FNhp8eRyQlWzy+Ed
-RRrKTS1tJUqQ4Yph7qv2nHN5cXW1qihotymBqR2biySVSoPleXZNfJAmiZL25SSd
-RpuG5LAzY11iS2Mbg/nLRHRdppdaMdJvhMgcnY3RS+G4KHeozJhLy0KpI18/tB5d
-TZp4Krkq13kYk/mGspSpeUqDVNXs7g==
-=zw63
------END PGP SIGNATURE-----
-
---/ZnMkqajxP1BmR2o--
+    Arnd
 
