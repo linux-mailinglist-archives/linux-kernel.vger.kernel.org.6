@@ -1,224 +1,132 @@
-Return-Path: <linux-kernel+bounces-533071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10718A45565
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:17:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1828A45566
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215CA3AAB44
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796B117AA25
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B151E267721;
-	Wed, 26 Feb 2025 06:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3050A211A33;
+	Wed, 26 Feb 2025 06:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LJRw2dJw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J226bZhb"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815442A9D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF78A1922EF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550616; cv=none; b=XIfidEqlsLg3PadJhmYQNY8QVAN2uLfAvMe2QDqIaTm9i75UwWlUNS3MiIhUUKSh4mhCWZ0Vvw+cpFkfpkJnX4O95XfL1JdLOwKYG4tBe9Hxac2hHQCadUvJ7k6T+v9MCelFYo1zdWaccFijKaXsS1KGNXGHlW74lUYMWoUBvMo=
+	t=1740550635; cv=none; b=Ocl/MSIO5Hd1XqHFQC2IFmZViZkBdTCy/rGSqIoKXtia7vW7PXKKDngSagG4HO/HIp7uhOaJLq7Mw/VHpvMhY6hkcYtxb77LmRPFblhWCbAMlnY5rzHwnDUcxC0avlbXbezeF48rsdr1HEj4FdCNwybsxlyrgXnJWOlf+nebV7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550616; c=relaxed/simple;
-	bh=s7RNNwS1VeCqaA1MtGD3SocRHTpkYCAIDVHP7LurC8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=us73U+PMuDKmz9yhigmXf0RcQmr88S73gddjMzQ8gvhB9XRUWa8abMcYSm73nnywRyriRLu06oK8TFzMbmNyIPXlchxqj039T06oKH5GjFCplW4X/0vGj3QRqjrmEIdyGC+Rcg1SNsC/4L7vbfHuO4Z85dlBuKTnAPWZlkgEHjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LJRw2dJw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740550611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1FB4LOVmyku7dBx/0yNo7XDVAzCNkcepNULZYDZTsFo=;
-	b=LJRw2dJwUhgUDRbsNf92s6C++zkQ38XoxngBfkkkoTodp/uEVMNQsTwAUNFDWtiGd33k0X
-	QcU6tBpad3DjeYgQxR0aI3x76/MTOga/TWbQCRUDN10eS3zgPtwgPdNMrokHkWH/QfZy3E
-	RwNsaHwL3yGftTk3a1EyD4jFFAB12xQ=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-YNgYyGENMo6xGVwNbBp1eg-1; Wed, 26 Feb 2025 01:16:49 -0500
-X-MC-Unique: YNgYyGENMo6xGVwNbBp1eg-1
-X-Mimecast-MFC-AGG-ID: YNgYyGENMo6xGVwNbBp1eg_1740550608
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5da0b47115aso8544591a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:16:49 -0800 (PST)
+	s=arc-20240116; t=1740550635; c=relaxed/simple;
+	bh=4zHr+lKCZGLp+AVj3GLsr40g87x+7GH7RBtFf2xj2yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASkrSO/Z/O72slgk6CqiEpX7otQAm9SGhIMt7uiF1i9erk/iRLUV83cU6MpqOQaXJHkJhgzZOYRe8YAzxANdGTpiSskFfRy2SMQwgpF/JPOXrw8R22K6enH7YCQkgZEyiKyyAvt6v48XUnm5OuFzmlP6c5jPDOCVYfGlai64bHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J226bZhb; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5439a6179a7so614926e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:17:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740550632; x=1741155432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdAWglkpNWkKlfVQY0b30qa+fHtrIyjn4IdPv+J5KmY=;
+        b=J226bZhbZ5bOZz8dYWZ4cyo6aa2Pt46xcYpRo4+hQx4I+xZf9GkcbjbyqwQOcolwaP
+         QYiyuy7LtL9jo7ByLMRR2MkQsZushQdFXF1Yz9NbIEd7H+29Y3p+RU/dawWH1pRFJq+G
+         6sCqJs3jQupiaLl6NG6Z65VJFKeij/jlTtSa9fEpSK7YakX86j9yue63iqRhTZY7mIc8
+         0VbnED7E0/vILC9f9aQ0CyhKArrNP8dJ4dHwiO168cDNfkenoeHnk42fj4efuaEuTsF3
+         bn9R10RjgO0Cyr6yTm57BFHqzuCTxGBrdyrRApwNVnLU/HaNi8/fw4zrBV5wf3neeylB
+         F+/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740550608; x=1741155408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1FB4LOVmyku7dBx/0yNo7XDVAzCNkcepNULZYDZTsFo=;
-        b=h4Rg5izbgE/etil+kt6RTl/hfPvA5tiEkrVyi5ofo5pWHGoCBC4L9Ab9oALUirYeND
-         VTwBRLPfwwHfMTqW+nzMhgVAbIf3pnUTB47ExQP2B61OC0fqesXu7+W+WeU4hD8qnO1X
-         d3tGJFcAMERvGdASNAos/tkHMAa+OPdUPAmU9lLvq6HcSjNxTNMDiXoVayAQZa+x8Cc1
-         7MvGj2psarSb+esd3r4pMZDDpe2QXMxqMoA6deyCW0DQBnfBwSXiyIk54EnpN0Zc/dwj
-         xUbLrwh5tS0Dpxl6SoM6XDphZO9+g4kGW58Bms9Eob72Mio8IVZOyAnPnBwRKerDgBNo
-         ZA7g==
-X-Forwarded-Encrypted: i=1; AJvYcCViTeNmzFTozg4Ae1xopgFAxggYH/08f5j4VyUCJJwqvGGgXFTuvbuB0FBam0+hhwptMI3AWmlPEy6WYgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwukgyjJrErPee5Rl/fcnBmzxWbYDkJAEAZxdPafDZW124jI9UW
-	R/920AFHud8sAxMrYuGfCP/xOKRS9y8ZN27fohJdKcp2kh6UaZdTOhM0VWf/7ZsltWl2XI1CJY5
-	0NtQRfV7SUltGg6mgReys3UwG9UOtXJGrfzQbSNbW6U1yj+Xe4gS5ill41CoU8XyE9hyWvcQn3t
-	BBK+NS+Wrz9eUbhrWzyUbeyV87OqkqbwQEaJQ9
-X-Gm-Gg: ASbGncs7JAGwMBnb5mk7F/OQm0MzngpMbE8pw0KsKYcoUxePm7LWcQfyXHcCfwCIvj2
-	GDulgNUa5xc9ryK3LGqlpst4X3LmjRm+/PobO2qBoJJHhkOLpPlst5bjX7JdeGccNWAZb1OiiZA
-	==
-X-Received: by 2002:a05:6402:34cc:b0:5dc:cfc5:9305 with SMTP id 4fb4d7f45d1cf-5e4a0dfc8b9mr2496856a12.25.1740550607934;
-        Tue, 25 Feb 2025 22:16:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH1Svm9zCE7jvsU1DaFVhMr5yn9In9YqFnmIGZJOqqstdyPg6Py8o1nFKh/wslu91Gg/91zZXUIrxektg2nXhQ=
-X-Received: by 2002:a05:6402:34cc:b0:5dc:cfc5:9305 with SMTP id
- 4fb4d7f45d1cf-5e4a0dfc8b9mr2496837a12.25.1740550607523; Tue, 25 Feb 2025
- 22:16:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740550632; x=1741155432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vdAWglkpNWkKlfVQY0b30qa+fHtrIyjn4IdPv+J5KmY=;
+        b=beqKzW2sLGOcewC0hPbfLp8sLdb3a4bJj74GAu7dD3DvAVRP8JPqDCDcM3h4L9iNN9
+         Kp0GD1wfYG0Rsjb94FMSUjiYvorAVqhj0VppGnX6ktB2Ry88IYMK193eGKfTrneFiVN7
+         u2qMdysg9v4wwVvBEIA7bFpAB4I7MsaNF6UzVdADfHqoR9ojOAKAuE/kYMpOnHV8gh9N
+         5jDhZR2UJrx8NE5tGr16vXM9VZa9YwP2kNAGmsvE1Te7oNH1r4ilFCnMyULXG3u3xMLL
+         XawjePKPnOJtrKQE/15W+QP5UUr2bOq11u9k0PFogUsW3oRx4b8S/Se1RpzoagEdBBA4
+         JnUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSF5407pduiP2EFdjIrtEF2odtB9gHvkk81ws8FiR/ISkWS6a4Utpgotb75E8H1Ja4Q4G1rsLYHWLXyQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3KHzsUv73KBazMDxOc/VvO7AX4P0JuWn1UVAPqmvjq18kPT/J
+	KtvPYtwm8HQ5DxIhuTZWTzCI3N2TJsHLm3WwioWN8f00mJ14nUcYORo8f+2rCPk=
+X-Gm-Gg: ASbGncuHolSrp/emhkUGPzTLUt53kZtFeVGtlZQ6j+KOWkgkxmAvaxOFhvp0SzjabmT
+	gWZ08fvJl1plgkAv/1U6B0aZs4I714mDsih36flifR6m3/t7Bu3Zhl5v5CIp0KqzMDlexT/gC58
+	vJP0Qu30+32H1pX0d81PIkewSMGrnIK1KEbZfRDCr6W06QKJvocXYVBouxknQz3mFjBB4Dco1i7
+	JXWL0ojBpsLPcktW+xlJsROKTp9D0tkqEwBJ962ma2Maj0lEbvaGoZX5x1xNX16r8IGsZulqeWp
+	wnlmhupCGuhdxsRR7eE3pVN3eZVCslqApikZBgohMJ5Qzq2LTukNWLomPf0kcz95J2tGT9rwyrK
+	tyw8nAw==
+X-Google-Smtp-Source: AGHT+IEs1dUcvgsmZtfFrnbSncV3gTJJg9pAfhXogUOwliuGtG6jolEBnnLRWX36IkMjWaHHwSk3BQ==
+X-Received: by 2002:a05:6512:3d8b:b0:545:81b:1516 with SMTP id 2adb3069b0e04-54838c73e38mr9564126e87.15.1740550631678;
+        Tue, 25 Feb 2025 22:17:11 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f4d3asm357995e87.186.2025.02.25.22.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 22:17:10 -0800 (PST)
+Date: Wed, 26 Feb 2025 08:17:08 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	Herve Codina <herve.codina@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v4 04/15] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <foezi4xoq6zpzcn56z465epcxifkky6cctgvujkio5v4aswuqe@jx5wv437w3k4>
+References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
+ <20250225-bridge-connector-v4-4-7ecb07b09cad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223154042.556001-1-lulu@redhat.com> <20250223154042.556001-6-lulu@redhat.com>
- <20250224164312-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250224164312-mutt-send-email-mst@kernel.org>
-From: Cindy Lu <lulu@redhat.com>
-Date: Wed, 26 Feb 2025 14:16:09 +0800
-X-Gm-Features: AQ5f1JoQwYeVFJ0uSnuf6OMlUOLtzkJzFZrJtoyQ-MQBSJ8pPR3vnflY_UdihLw
-Message-ID: <CACLfguWpj=-Ad3o731xbRdGRr3NT6oEQ67Z-FPBmd93gYEhAXw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-bridge-connector-v4-4-7ecb07b09cad@kernel.org>
 
-On Tue, Feb 25, 2025 at 5:46=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> better subject:
->
-> vhost: uapi to control task mode (owner vs kthread)
->
->
-> On Sun, Feb 23, 2025 at 11:36:20PM +0800, Cindy Lu wrote:
-> > Add a new UAPI to enable setting the vhost device to task mode.
->
-> better:
->
-> Add a new UAPI to configure the vhost device to use the kthread mode
->
-Thanks MST, will change this
->
-> > The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
-> > to configure the mode
->
-> ... to either owner or kthread.
->
-sure, will change this
-thanks
-cindy
->
-> > if necessary.
-> > This setting must be applied before VHOST_SET_OWNER, as the worker
-> > will be created in the VHOST_SET_OWNER function
-> >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > ---
-> >  drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
-> >  include/uapi/linux/vhost.h | 18 ++++++++++++++++++
-> >  2 files changed, 40 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index d8c0ea118bb1..45d8f5c5bca9 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev,=
- struct vhost_iotlb *umem)
-> >       int i;
-> >
-> >       vhost_dev_cleanup(dev);
-> > -
-> > +     dev->inherit_owner =3D true;
-> >       dev->umem =3D umem;
-> >       /* We don't need VQ locks below since vhost_dev_cleanup makes sur=
-e
-> >        * VQs aren't running.
-> > @@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsig=
-ned int ioctl, void __user *argp)
-> >  {
-> >       struct eventfd_ctx *ctx;
-> >       u64 p;
-> > -     long r;
-> > +     long r =3D 0;
-> >       int i, fd;
-> > +     u8 inherit_owner;
-> >
-> >       /* If you are not the owner, you can become one */
-> >       if (ioctl =3D=3D VHOST_SET_OWNER) {
-> >               r =3D vhost_dev_set_owner(d);
-> >               goto done;
-> >       }
-> > +     if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
-> > +             /*inherit_owner can only be modified before owner is set*=
-/
-> > +             if (vhost_dev_has_owner(d)) {
-> > +                     r =3D -EBUSY;
-> > +                     goto done;
-> > +             }
-> > +             if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
-> > +                     r =3D -EFAULT;
-> > +                     goto done;
-> > +             }
-> > +             /* Validate the inherit_owner value, ensuring it is eithe=
-r 0 or 1 */
-> > +             if (inherit_owner > 1) {
-> > +                     r =3D -EINVAL;
-> > +                     goto done;
-> > +             }
-> > +
-> > +             d->inherit_owner =3D (bool)inherit_owner;
-> >
-> > +             goto done;
-> > +     }
-> >       /* You must be the owner to do anything else */
-> >       r =3D vhost_dev_check_owner(d);
-> >       if (r)
-> > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> > index b95dd84eef2d..8f558b433536 100644
-> > --- a/include/uapi/linux/vhost.h
-> > +++ b/include/uapi/linux/vhost.h
-> > @@ -235,4 +235,22 @@
-> >   */
-> >  #define VHOST_VDPA_GET_VRING_SIZE    _IOWR(VHOST_VIRTIO, 0x82,       \
-> >                                             struct vhost_vring_state)
-> > +
-> > +/**
-> > + * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost de=
-vice
-> > + *
-> > + * @param inherit_owner: An 8-bit value that determines the vhost thre=
-ad mode
-> > + *
-> > + * When inherit_owner is set to 1:
-> > + *   - The VHOST worker threads inherit its values/checks from
-> > + *     the thread that owns the VHOST device, The vhost threads will
-> > + *     be counted in the nproc rlimits.
-> > + *
-> > + * When inherit_owner is set to 0:
-> > + *   - The VHOST worker threads will use the traditional kernel thread=
- (kthread)
-> > + *     implementation, which may be preferred by older userspace appli=
-cations that
-> > + *     do not utilize the newer vhost_task concept.
-> > + */
-> > +#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
-> > +
-> >  #endif
-> > --
-> > 2.45.0
->
+On Tue, Feb 25, 2025 at 05:43:52PM +0100, Maxime Ripard wrote:
+> With the bridges switching over to drm_bridge_connector, the direct
+> association between a bridge driver and its connector was lost.
+> 
+> This is mitigated for atomic bridge drivers by the fact you can access
+> the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> 
+> This was also made easier by providing drm_atomic_state directly to all
+> atomic hooks bridges can implement.
+> 
+> However, bridge drivers don't have a way to access drm_atomic_state
+> outside of the modeset path, like from the hotplug interrupt path or any
+> interrupt handler.
+> 
+> Let's introduce a function to retrieve the connector currently assigned
+> to an encoder, without using drm_atomic_state, to make these drivers'
+> life easier.
+> 
+> Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_atomic.h     |  3 +++
+>  2 files changed, 48 insertions(+)
+> 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
