@@ -1,192 +1,109 @@
-Return-Path: <linux-kernel+bounces-532881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DBEA4534F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:46:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B81A45351
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01FE93AD307
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2CC3ACE8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5584E21CA16;
-	Wed, 26 Feb 2025 02:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E50721C9E8;
+	Wed, 26 Feb 2025 02:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSqaQ/TT"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XCzviblH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5441D1DFE12;
-	Wed, 26 Feb 2025 02:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290D33FB0E;
+	Wed, 26 Feb 2025 02:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740537867; cv=none; b=YFjq8BKXJ5YZhLxy1B2P5/EExbSBHDOGT86kQWuDS67v0SzOm74Ej7cq8+WdxRQvD6xrK7osg6a48PSqN6w3CuzdqkNTOUfVPvapGenWiDK3u3PB/bxvjbTtvWSod6cZxHM2PUHcUqfEmG87+aWOK3Ts41+DUydM/wl5KeLNQ2k=
+	t=1740537926; cv=none; b=J8kcAVKvLCu1Ot9F7Kvfpx5TNwMo1Zaz/JpoDZuEXUm7Z5zlyV85usKIiSk0cZY1yFoPVXKuW2f3OWmSVCuqEuv7vS+4iqFo+oHVqrYqdry0P0qQOwlYrCl6IqAavtPqgq7aTLNoAc62QU0HGdydMKjas5rukwjoM5q4y3my+CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740537867; c=relaxed/simple;
-	bh=/SsM2lvIy+4I5ZCHTuMAYaqGMvZ9KXloNa1qv9ctxBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EOD3Y/lqvkUQn8/SM8iEnzmuyv5tnj/yFaITvulKCsw5tyOu29GyP9jRdPFTFHwbW2uPg87d0/Fy88aZgiOlKEqSNMZ5iCOYhE2pLEOfcygYScwbs6JC595q3m4IY6YTW19R4shy29d9HHmJV7Sl+FyNy267r3u7pM9JCDE9A8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dSqaQ/TT; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220c665ef4cso110954695ad.3;
-        Tue, 25 Feb 2025 18:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740537865; x=1741142665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+uXOnMgJWi0E4hYshfQG3k7XndxyGiWTLCTuagC7Zs=;
-        b=dSqaQ/TTu7O1v0144ArpZzJQ3wa0PKYQuCe1OLStuiEARdyWNPSHCnq+YrfUkc4/aV
-         UJr8tlu7ltrfvyJYp0UETP6BToAUBJCPJat1bRv6mADiX27f+22cuX4MSMRxHfEgm69e
-         qFFJLVEk81QdOmdXI+E/d2GuelrXvsMjUmUfUJcY9jZDoUoZU2C/4F/pS6gfXXDtS40l
-         EYXoLzWzKFUqjzFvaPuMrhyS/QvydDJyXDMG8MlCsrOwlYg4JS8GMrfP5Du6WWSBQufG
-         zMMIGmJutyHTXK+Y2AMOLxUI8s9xa8Xg1k6Npvv3XiynUGLQX/F1nyLy0WrZu92+70u8
-         D6dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740537865; x=1741142665;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+uXOnMgJWi0E4hYshfQG3k7XndxyGiWTLCTuagC7Zs=;
-        b=PplP7+VhWp80YgcdI+HCw34W5CzWJHp5ongd18kLJF5skRxvjnPS8cFuBONAIenc/O
-         mV7JR4M8JxpOy9o+AGenizLY6/SWZfcagxRgRMclTY2XH5FP3zeiZdUK06YKhCcttdf1
-         DptWazB+L6SOpHQi22kIbbCuOBn8gOmcB5kVbu0VqMVdrxXZDa/OJZd3dUMSl6+TctsH
-         en1g8wBcdDtdwS4tSt8yVoEPWdYvGWEMOCQdWCh9UUUs40Au9bQ28a9X8laa/0xLC3Rm
-         RADx4dm9fRMVi79J23LQyXiBsG+7N5KbsPNK8rwfY5ZcXtgO3W6F7l5P7Q835ihKWOCs
-         /VEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqdpk4qcBbRh0yctzFHEjBbNpw+FpR/vBnHw7e9vFQBBFGuuVI4p7YYKRhSAwb04ktUqB+nAK@vger.kernel.org, AJvYcCWwYsWENq+NPMmJtxVBopMz4gDioqXcXYjy4hHQgV3nXiOMAxNsCWuWiHoBqUf3B8n0KmOF0x23W09tM/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFsE9RlAgG5BpcRYtSFZj5RhkG/704G0To8dwoAIzjTyViBQXS
-	8ZdfdEJbdhsryeo1719we0AVajfbX67vPIb4yBHXJPHMiyBtW4Ev
-X-Gm-Gg: ASbGncvKBhL6OfzvpieG+nPnh18YBvKHFkYe17KvmqMg5u6orvTc4cLfT7KKvvCTjfy
-	RQNmM8ETNiAAZlcJGO2Jsbw8KPWrf1sdfsLhsBC9LQ20+DJ1fhYa33NASpkkoHPLvRyHEJi7HfL
-	Fh0zmbqRKvcOR5GxVVlHX8l8gxosg+HMVevC7wLe36Y2GGGLDFAwCnuTQ9nHywjOVQ71l7t03bd
-	gx63VaUebUU/je8sIwZ5fTbBrU6wYbLZ5kYc/pHJv9bU21Ul1O/wEoetLrxfGT1AJen88r7n8rB
-	Pjb8D3G8IR4izhQiQLLKGuecSbqyPIl9Z18WwXmC4A==
-X-Google-Smtp-Source: AGHT+IG1fRtUBVAiDJJoWtLf7D3sCM2/eafgzX/Bc/o0aMgJXWae3BE9C/HTxwJmx8C5S+M/UIUHdA==
-X-Received: by 2002:a17:902:e546:b0:221:7b4a:474b with SMTP id d9443c01a7336-2219ffb857dmr380479915ad.24.1740537865641;
-        Tue, 25 Feb 2025 18:44:25 -0800 (PST)
-Received: from Barrys-MBP.hub ([118.92.30.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00ab82sm21797685ad.70.2025.02.25.18.44.16
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 25 Feb 2025 18:44:25 -0800 (PST)
-From: Barry Song <21cnbao@gmail.com>
-To: peterx@redhat.com,
-	akpm@linux-foundation.org
-Cc: 21cnbao@gmail.com,
-	Liam.Howlett@oracle.com,
-	aarcange@redhat.com,
-	axelrasmussen@google.com,
-	bgeffon@google.com,
-	brauner@kernel.org,
-	david@redhat.com,
-	hughd@google.com,
-	jannh@google.com,
-	kaleshsingh@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lokeshgidra@google.com,
-	mhocko@suse.com,
-	ngeoffray@google.com,
-	rppt@kernel.org,
-	ryan.roberts@arm.com,
-	shuah@kernel.org,
-	stable@vger.kernel.org,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org,
-	zhangpeng362@huawei.com,
-	zhengtangquan@oppo.com
-Subject: Re: [PATCH v2] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
-Date: Wed, 26 Feb 2025 15:44:11 +1300
-Message-Id: <20250226024411.47092-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <Z75nokRl5Bp0ywiX@x1.local>
-References: <Z75nokRl5Bp0ywiX@x1.local>
+	s=arc-20240116; t=1740537926; c=relaxed/simple;
+	bh=uYMMZXMmXuEmXF+mt2VzXpg5mqrpTp80IRJvj1y0p68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnpQNMvZmbwOI9e25y8CCjAJ7PnX1bBd0uTagN8vmURDKFHh6uLTgCy+4HaUbTJj2grNiuIJ93QKqdwZMkDQUxBUSWJML+fioFwWptEQynAlIZ2EqVS5WW8YYcDINj5/TbD7qTSyXVjXf00unHv52xyyy/D0jnnWeAA+308zlg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XCzviblH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6RwGAOPkxr9NfsXVfI3sYKQyWxyJfmW9afLmo9FB8L0=; b=XCzviblHCpZasiqUlLzleRu1H4
+	BdG31/ftNsKOK9HxMmulkg3wFD7yHrKYgBPcw7NdSSl62pkxPcWK3AWqcRzsTrftOXfmpG31Uvy0k
+	hBmiR4TEBGGlBj93F08A+aJBReKnlnB6LxaG5FChiFofqZ4jWfKRTDLvS6CLP3NoWuKkLr6zMG/Ys
+	avLzjtGVbjywyE/fEvHEltHtx3yS6lth4v2XfnJdFd7nts7Q3AZqfoWpxNs57+V3iE4Q44Po8wJ9n
+	hM29l2h4LWcGHEFF1SJFljA4+3V1DDK4kD6lQk+e9qTa867QAKsItWQHA/lFCjXV0cA6kFEWxfw2I
+	5IN5fweQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tn7QE-0000000DbNB-3trN;
+	Wed, 26 Feb 2025 02:45:19 +0000
+Date: Wed, 26 Feb 2025 02:45:18 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org
+Subject: Re: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY when we clear _PAGE_RW
+Message-ID: <Z76APkysrjgHjgR2@casper.infradead.org>
+References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
+ <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
 
-On Wed, Feb 26, 2025 at 2:00 PM Peter Xu <peterx@redhat.com> wrote:
->
-> Acked-by: Peter Xu <peterx@redhat.com>
->
+On Tue, Feb 25, 2025 at 01:07:08PM -0800, Linus Torvalds wrote:
+> On Tue, 25 Feb 2025 at 12:10, tip-bot2 for Matthew Wilcox (Oracle)
+> <tip-bot2@linutronix.de> wrote:
+> >
+> > We should, therefore, clear the _PAGE_DIRTY bit whenever we clear
+> > _PAGE_RW.  I opted to do it in the callers in case we want to use
+> > __change_page_attr() to create shadow stacks inside the kernel at some
+> > point in the future.  Arguably, we might also want to clear _PAGE_ACCESSED
+> > here.
+> 
+> This explanation makes ZERO sense, and screams "this is a major bug" to me.
+> 
+> If a page is dirty, it doesn't magically turn clean just because it
+> becomes read-only. The dirty data remains and may need to be written
+> back to memory.
 
-Thanks!
+Are you saying that the PTE dirty bit controls whether the CPU flushes
+cache back to memory?  That isn't how I understand CPUs to work.
 
-> Some nitpicks below, maybe no worth for a repost..
+> Imagine writing to a shared memory area, and then marking it all
+> read-only after you're done. It's still dirty, even if it's read-only.
+> 
+> Now, I don't actually expect this patch to be wrong, I'm literally
+> just complaining about the explanation. Because the explanation is
+> very lacking. That's particularly true for the __set_pages_np() case
+> which also clears _PAGE_PRESENT, because then the whole shadow stacks
+> explanation flies right out the window: the shadow stack rules simply
+> do NOT APPLY to non-present pte's in the first place.
 
-Hi Andrew,
+Dave and I talked about that case.  We were concerned not that _this_
+manipulation would lead to a shadow stack entry appearing (since the
+present bit is being cleared), but that the next manipulation would just
+set the present bit without setting the RW bit and we'd accidentally
+end up with one.
 
-Could you please help squash the below change?
+> So honestly, I think this wants an explanation for why it's actually a
+> safe change, and how the dirty bit has been saved before the
+> operation.
 
-From 42273506ba00723151e3a08b4ffd3f2c303e7ccc Mon Sep 17 00:00:00 2001
-From: Barry Song <v-songbaohua@oppo.com>
-Date: Wed, 26 Feb 2025 15:22:17 +1300
-Subject: [PATCH] minor cleanup according to Peter Xu
-
-According to Peter Xu:
-1. Unnecessary line move.
-2. Can drop this folio check as it just did check
-   "!IS_ERR_OR_NULL(folio)"
-3. Not sure if it can do any harm, but maybe still nicer
-   to put swap before locking folio.
-
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- mm/userfaultfd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 2df5d100e76d..2955e20f86bf 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1101,8 +1101,8 @@ static int move_swap_pte(struct mm_struct *mm, struct vm_area_struct *dst_vma,
- 
- 	orig_src_pte = ptep_get_and_clear(mm, src_addr, src_pte);
- 	set_pte_at(mm, dst_addr, dst_pte, orig_src_pte);
--
- 	double_pt_unlock(dst_ptl, src_ptl);
-+
- 	return 0;
- }
- 
-@@ -1369,7 +1369,7 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 			folio = filemap_get_folio(swap_address_space(entry),
- 					swap_cache_index(entry));
- 		if (!IS_ERR_OR_NULL(folio)) {
--			if (folio && folio_test_large(folio)) {
-+			if (folio_test_large(folio)) {
- 				err = -EBUSY;
- 				folio_put(folio);
- 				goto out;
-@@ -1380,10 +1380,10 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 				pte_unmap(&orig_src_pte);
- 				pte_unmap(&orig_dst_pte);
- 				src_pte = dst_pte = NULL;
--				/* now we can block and wait */
--				folio_lock(src_folio);
- 				put_swap_device(si);
- 				si = NULL;
-+				/* now we can block and wait */
-+				folio_lock(src_folio);
- 				goto retry;
- 			}
- 		}
--- 
-2.39.3 (Apple Git-146)
-
-> Peter Xu
->
-
-Thanks
-Barry
-
+I don't understand why the dirty bit needs to be saved.  At least in
+the vfree() case, we're freeing the memory so any unflushed writes to
+it may as well disappear.  But I don't know all the circumstances in
+which these functions are called.
 
