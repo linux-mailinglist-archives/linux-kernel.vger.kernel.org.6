@@ -1,64 +1,95 @@
-Return-Path: <linux-kernel+bounces-533274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FB0A457AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEDEA457AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6D17A6948
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:08:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F38D16AF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0A9258CC5;
-	Wed, 26 Feb 2025 08:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D781E1DED;
+	Wed, 26 Feb 2025 08:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ekT/Y/m6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iKk8yCtS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mSZKK7LV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iKk8yCtS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mSZKK7LV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5598B258CC1;
-	Wed, 26 Feb 2025 08:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00EC258CC1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557329; cv=none; b=gmFpD/vKKajzhHg1LGT0o7s+uTDkAp7LI7t3s9WRPyNpc4mTDlg/CQp2G432Ktjcm4rBG7NYTOJqE2hAnPV0OZ+Yy99aELeFwHUQEkleP0+J/fInxgpjiX8P9gsmJv1Ij41qnmscXH9PcwQrILXECbQhOTiSG/LqxLn+IixI+vQ=
+	t=1740557334; cv=none; b=frmexpwGdA1K/PDjpzlKlBixkSMRX+dvh394w8gp/8kDiJ03nqEUdUVSez0xpYRlhkAU74XElpC7Z6p5qAAQimK90sv4MuUNDKUGQNfmpMjq0q97EOJ1y524XjhMkqIh9vV2IHqhBGGQacVlt9/1DWA9RxqGhR0nunuPYGKJ/Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557329; c=relaxed/simple;
-	bh=B/hiPmKEz5qpr2mvnHDi1IQ26fNUocCZtx+QMWwB4rI=;
+	s=arc-20240116; t=1740557334; c=relaxed/simple;
+	bh=OEo5HEFOh73EFDlZH1hOetdDxPQFrwvqRlBIQw3OlCU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UNOt+jiPfUpPm5kv0cZ9OGuQ1TX7fgsyCLBbMZYRIWBNXL41lJfo6jiMTExx+M/qhZRN9t6klYYbKSuHobZuG+PUTfE7IkdxuFjkAMDaH+VC4m1h1A6PmOvcJz/FkpsLbmw2aHH8J1V+Mzz/p0DxSVJ+UUqFHLg/9s2lWrC6now=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ekT/Y/m6; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740557328; x=1772093328;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=B/hiPmKEz5qpr2mvnHDi1IQ26fNUocCZtx+QMWwB4rI=;
-  b=ekT/Y/m6Dn+EQ6CK6s8Sm7V0epWkI5WfGtAfOj9cg29jD7d9jioP3aUW
-   X/zPreQJdDXR7cTMXwfOa33rupLhyYBACbzKy2J/cmQJ1O8fI6m7dGJWn
-   2xjnu2WCroY/rDtGjFl6z71xP2wJ7rVypArmVumpr1Zl9xBYTvStufGiG
-   qA8Hha+XLLBBWN0QZf4oXb71/8m+rI8UPptWo9G/TcUu66+SZLs6w73NX
-   GBQzNJhzKX2+4Q5QW0mT6xyHNSRPdP6zUrxqxvZiXULUHTvZN7Vg+WB6f
-   2NdNFKTwTo3bT2/obXP43BgsXxZXZ0m6rQIuVMh5QsNdEedgd4v8xzk4B
-   A==;
-X-CSE-ConnectionGUID: I1b4K35jTMy/cVoDjNh9zg==
-X-CSE-MsgGUID: QOyMIkIbTA6Xh4iXvmfrIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="44216303"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="44216303"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:08:47 -0800
-X-CSE-ConnectionGUID: lQd4AGeYQUy4dKroRqU2LQ==
-X-CSE-MsgGUID: 2v0xwVowQA+m/4oUaSYCWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="153808112"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:08:42 -0800
-Message-ID: <bda04ccd-fa90-4f14-89cc-9835de36bcfb@linux.intel.com>
-Date: Wed, 26 Feb 2025 16:08:40 +0800
+	 In-Reply-To:Content-Type; b=cm+foIhZeL8cJ/4QVGRMK9Atxzn3H/X9eNIPOdBsgCXxAi5q52OuAf8oMH5uIwT1TWHG3sf7F3ztsh1O+906RXVbfJTqxdOn5W6s1VQEz4ded5NMqJKRIndDcKhM7/VKzdq6OreMh6xy/Su9MVXd4ClwFYIXU61d/lQ4aZQjXUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iKk8yCtS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mSZKK7LV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iKk8yCtS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mSZKK7LV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 16CAC21192;
+	Wed, 26 Feb 2025 08:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740557331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
+	b=iKk8yCtSvi+W43VW3jZwHJCfrBO3nFqO1nyRAg9WOGrtfQ99aNSDnqAyF1EuUYq73pJ0m0
+	7cpDxjT0C4fgp0I3ZFIUtm81Yhw8oR7T3SZmlFUATHUhA0IN5cD94Qc9CHfPRdb1X+l47p
+	jCRst/MdPF5COdGOpogNPilTCw4to0M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740557331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
+	b=mSZKK7LV8gPe5qgFMdbMSl+qFS/2Xmg4JJdEEu4T8GUDxOgdsl847tENLpFf8LoUWx+hmP
+	pbGLhxqo1wyxzFAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iKk8yCtS;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=mSZKK7LV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740557331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
+	b=iKk8yCtSvi+W43VW3jZwHJCfrBO3nFqO1nyRAg9WOGrtfQ99aNSDnqAyF1EuUYq73pJ0m0
+	7cpDxjT0C4fgp0I3ZFIUtm81Yhw8oR7T3SZmlFUATHUhA0IN5cD94Qc9CHfPRdb1X+l47p
+	jCRst/MdPF5COdGOpogNPilTCw4to0M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740557331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
+	b=mSZKK7LV8gPe5qgFMdbMSl+qFS/2Xmg4JJdEEu4T8GUDxOgdsl847tENLpFf8LoUWx+hmP
+	pbGLhxqo1wyxzFAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD6F913A53;
+	Wed, 26 Feb 2025 08:08:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jIF7KBLMvmfmPwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 08:08:50 +0000
+Message-ID: <69a78c98-d843-4e94-8559-7d435a56a442@suse.de>
+Date: Wed, 26 Feb 2025 09:08:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,160 +97,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 18/24] perf/x86/intel: Support arch-PEBS vector
- registers group capturing
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
- <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 3/3] mdacon: rework dependency list
+To: Arnd Bergmann <arnd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller
+ <deller@gmx.de>, Roland Kletzing <devzero@web.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <20250225164436.56654-3-arnd@kernel.org>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250225164436.56654-3-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [0.29 / 50.00];
+	RSPAMD_URIBL(4.50)[arndb.de:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	BAD_REP_POLICIES(0.10)[];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[kernel.org,linuxfoundation.org,gmx.de,web.de,linux-foundation.org];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de,web.de];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,arndb.de:email];
+	R_DKIM_ALLOW(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 16CAC21192
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: 0.29
+X-Spam-Level: 
 
 
-On 2/25/2025 11:32 PM, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 03:28:12PM +0000, Dapeng Mi wrote:
->> Add x86/intel specific vector register (VECR) group capturing for
->> arch-PEBS. Enable corresponding VECR group bits in
->> GPx_CFG_C/FX0_CFG_C MSRs if users configures these vector registers
->> bitmap in perf_event_attr and parse VECR group in arch-PEBS record.
->>
->> Currently vector registers capturing is only supported by PEBS based
->> sampling, PMU driver would return error if PMI based sampling tries to
->> capture these vector registers.
+
+Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
->> @@ -676,6 +709,32 @@ int x86_pmu_hw_config(struct perf_event *event)
->>  			return -EINVAL;
->>  	}
->>  
->> +	/*
->> +	 * Architectural PEBS supports to capture more vector registers besides
->> +	 * XMM registers, like YMM, OPMASK and ZMM registers.
->> +	 */
->> +	if (unlikely(has_more_extended_regs(event))) {
->> +		u64 caps = hybrid(event->pmu, arch_pebs_cap).caps;
->> +
->> +		if (!(event->pmu->capabilities & PERF_PMU_CAP_MORE_EXT_REGS))
->> +			return -EINVAL;
->> +
->> +		if (has_opmask_regs(event) && !(caps & ARCH_PEBS_VECR_OPMASK))
->> +			return -EINVAL;
->> +
->> +		if (has_ymmh_regs(event) && !(caps & ARCH_PEBS_VECR_YMM))
->> +			return -EINVAL;
->> +
->> +		if (has_zmmh_regs(event) && !(caps & ARCH_PEBS_VECR_ZMMH))
->> +			return -EINVAL;
->> +
->> +		if (has_h16zmm_regs(event) && !(caps & ARCH_PEBS_VECR_H16ZMM))
->> +			return -EINVAL;
->> +
->> +		if (!event->attr.precise_ip)
->> +			return -EINVAL;
->> +	}
->> +
->>  	return x86_setup_perfctr(event);
->>  }
->>  
->> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->> index f21d9f283445..8ef5b9a05fcc 100644
->> --- a/arch/x86/events/intel/core.c
->> +++ b/arch/x86/events/intel/core.c
->> @@ -2963,6 +2963,18 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
->>  			if (pebs_data_cfg & PEBS_DATACFG_XMMS)
->>  				ext |= ARCH_PEBS_VECR_XMM & cap.caps;
->>  
->> +			if (pebs_data_cfg & PEBS_DATACFG_YMMS)
->> +				ext |= ARCH_PEBS_VECR_YMM & cap.caps;
->> +
->> +			if (pebs_data_cfg & PEBS_DATACFG_OPMASKS)
->> +				ext |= ARCH_PEBS_VECR_OPMASK & cap.caps;
->> +
->> +			if (pebs_data_cfg & PEBS_DATACFG_ZMMHS)
->> +				ext |= ARCH_PEBS_VECR_ZMMH & cap.caps;
->> +
->> +			if (pebs_data_cfg & PEBS_DATACFG_H16ZMMS)
->> +				ext |= ARCH_PEBS_VECR_H16ZMM & cap.caps;
->> +
->>  			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
->>  				ext |= ARCH_PEBS_LBR & cap.caps;
->>  
->> @@ -5115,6 +5127,9 @@ static inline void __intel_update_pmu_caps(struct pmu *pmu)
->>  
->>  	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_XMM)
->>  		dest_pmu->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
->> +
->> +	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_EXT)
->> +		dest_pmu->capabilities |= PERF_PMU_CAP_MORE_EXT_REGS;
->>  }
-> There is no technical reason for it to error out, right? We can use
-> FPU/XSAVE interface to read the CPU state just fine.
-
-I think it's not because of technical reason. Let me confirm if we can add
-it for non-PEBS sampling.
-
-
+> mdacon has roughly the same dependencies as vgacon but expresses them
+> as a negative list instead of a positive list, with the only practical
+> difference being PowerPC/CHRP, which uses vga16fb instead of vgacon.
 >
+> The CONFIG_MDA_CONSOLE description advises to only turn it on when vgacon
+> is also used because MDA/Hercules-only systems should be using vgacon
+> instead, so just change the list to enforce that directly for simplicity.
 >
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index 4b01beee15f4..7e5a4202de37 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -1437,9 +1438,37 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
->>  	if (gprs || (attr->precise_ip < 2) || tsx_weight)
->>  		pebs_data_cfg |= PEBS_DATACFG_GP;
->>  
->> -	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
->> -	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
->> -		pebs_data_cfg |= PEBS_DATACFG_XMMS;
->> +	if (sample_type & PERF_SAMPLE_REGS_INTR) {
->> +		if (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK)
->> +			pebs_data_cfg |= PEBS_DATACFG_XMMS;
->> +
->> +		for_each_set_bit_from(bit,
->> +			(unsigned long *)event->attr.sample_regs_intr_ext,
->> +			PERF_NUM_EXT_REGS) {
-> This is indented wrong; please use cino=(0:0
-> if you worry about indentation depth, break out in helper function.
-
-Sure. would modify it.
-
-
+> The probing was broken from 2002 to 2008, this improves on the fix
+> that was added then: If vgacon is a loadable module, then mdacon
+> cannot be built-in now, and the list of systems that support vgacon
+> is carried over.
 >
->> +			switch (bit + PERF_REG_EXTENDED_OFFSET) {
->> +			case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
->> +				pebs_data_cfg |= PEBS_DATACFG_OPMASKS;
->> +				bit = PERF_REG_X86_YMMH0 -
->> +				      PERF_REG_EXTENDED_OFFSET - 1;
->> +				break;
->> +			case PERF_REG_X86_YMMH0 ... PERF_REG_X86_ZMMH0 - 1:
->> +				pebs_data_cfg |= PEBS_DATACFG_YMMS;
->> +				bit = PERF_REG_X86_ZMMH0 -
->> +				      PERF_REG_EXTENDED_OFFSET - 1;
->> +				break;
->> +			case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMM16 - 1:
->> +				pebs_data_cfg |= PEBS_DATACFG_ZMMHS;
->> +				bit = PERF_REG_X86_ZMM16 -
->> +				      PERF_REG_EXTENDED_OFFSET - 1;
->> +				break;
->> +			case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM_MAX - 1:
->> +				pebs_data_cfg |= PEBS_DATACFG_H16ZMMS;
->> +				bit = PERF_REG_X86_ZMM_MAX -
->> +				      PERF_REG_EXTENDED_OFFSET - 1;
->> +				break;
->> +			}
->> +		}
->> +	}
->>  
->>  	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
->>  		/*
+> Fixes: 0b9cf3aa6b1e ("mdacon messing up default vc's - set default to vc13-16 again")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+> I have no idea when the last time was that someone actually tried using
+> dualhead vgacon/mdacon with two ISA cards, or if it still works. We may
+> be better off removing the driver altogether, but I don't see anything
+> immediately wrong it with it.
+> ---
+>   drivers/video/console/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+> index ea4863919eb9..12f54480f57f 100644
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@ -24,7 +24,7 @@ config VGA_CONSOLE
+>   	  Say Y.
+>   
+>   config MDA_CONSOLE
+> -	depends on !M68K && !PARISC && ISA
+> +	depends on VGA_CONSOLE && ISA
+>   	tristate "MDA text console (dual-headed)"
+>   	help
+>   	  Say Y here if you have an old MDA or monochrome Hercules graphics
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
