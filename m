@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-533662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B60FA45D69
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EEEA45D6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5493A72B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6BA18924B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FF32153FD;
-	Wed, 26 Feb 2025 11:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBLyiBHY"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4ED2153FD;
+	Wed, 26 Feb 2025 11:43:57 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A652321505D;
-	Wed, 26 Feb 2025 11:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03F120CCEB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570181; cv=none; b=knFhLJEaabqn6M5HPjEtbz2l8Y2RR5pru3joBFLMKd1tJCY0mNp1rFekE5hJToheBAdzpPzYBss0n+7DLDjOVt3F0brjFVK+EWRyr1sex9iPJRbNuiubQ4ooBabvyhjuwtYZU1w8OrnE/rHBI/XPfXhN1UI08jlQbVJ6aSx3c54=
+	t=1740570237; cv=none; b=pKbrkw8+0zcUV3+1n7AlP3sxphXRS5MeJRcaus7Q5qkKkjvGzVCzjEt6/wXztj/dBpwpO4ySLFi5RjHcGO/zGEjC/fQm3wn+QMCG7qTYck8YVfxEV2hyc/ks9j5a09+dgzQa+fohSqn8NnHWgqiXmmZqonrDOu0xcvpjdI5Wqm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570181; c=relaxed/simple;
-	bh=5i/OknVHZIgAS7fy0fc/g2sApGx+XqAVMHcU0hKTur8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5oK8zgAgIF8/Pc9QEB1eBQMCc5t01hvT0Wrj2+zMWDE1eQEsXIw+Wir1KqOsSPPjpTGoNmMy2xPsuryCGnhvdRUDpOU3wQZdIbitQsW4W/DMFoHFfFVUpKt2epgQ59T60jnhtSzf4ZZ2Gvoj7GvgnYEPgZG7YOhOHXDb+mpWso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBLyiBHY; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54838cd334cso5763908e87.1;
-        Wed, 26 Feb 2025 03:42:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740570178; x=1741174978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L5hrGQtYfhc5Y+HY7h904Luh/ddK0W6WhpT8KbPVtUc=;
-        b=NBLyiBHYCPyuZ6VxRa/b9eUn51wslQDiMgx8zyTznQ4UcE/rzXKLMfIkJgTc27gYrT
-         UlGrFIM9S5MBv2onMJnbB8WMIbfMfZORn9bfOK6CJkjHeDzdIyco99V69L+hbRSxHsTb
-         6AzLDlIossix8m478tYzP+OLcjd1HaOJ0enyNDbEZ/sZJg+WmQJZuj3m0oLj77XU1nEN
-         qyXctGUdx7KJR7/kavkBusr1V6jfJ82+wdxKcR61OMTcz7AYpbsXBw/yekiGo8MkSAVK
-         DkkVTnXVsQ+/G6tTWs7tYjaHwKPpchVk+K1vaqiwz7hNwScQ4RA6OqlaN5KS26bahlv9
-         OO4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740570178; x=1741174978;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5hrGQtYfhc5Y+HY7h904Luh/ddK0W6WhpT8KbPVtUc=;
-        b=aUV/wsBJGOeGUlZfVvVewiHQyTOpidqh3xQCaB41rt3UQkbaMgwf7raJ8Hhg+fVcN4
-         uy1qYIxOIuMMr66kxmwQZujEbRy37nQ09k1ZotUeWlbg1ZR0PNo9i0sm05XKND/ox1go
-         cCXyKYPGcm0Xq5LotPmjhEIUWVt+175l9h/or4ZEA1yX1Ma6BjDCqeoABNZIaHVvYLSy
-         F1CktVxVNMg8NzmBGH3T46x3MJntkXg39ZveUeWatA0l6lYMzm8PtvxYypJy+sFOVyhn
-         /Y2eEPOmy9X5D/vsmsgKQA539SymKbjsSz685jSXvmveCrm6jEeCkHg3aIYfPwSnyY+y
-         JK4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUFUJJuRvEsbVzqtMtNphkkIw1wctvR1K/MvXFpd8TCZHJyTQOTeJjyj7UDeLZ/S7MRsNvS+JLSOdJqcpo@vger.kernel.org, AJvYcCX4f7XMVtkQo7jfgCKeamMJrxbMt316/7REqxTJ/+jXR32eGnDEOBvlXaD/bzHp0f3AQtqFv4HZldp3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+l4ikjAB9YIkdECl5NKgAzQvRax7OzDg9+vUVpgEzTECNwT63
-	EaENA2g5SSpIj0EW2brnt2jUSkZ+KKpvhJyhOPAm4n70V/aUZVbeuG3GHw==
-X-Gm-Gg: ASbGncsjkyHZ8Q7dCPAqhty1y7sqi8mC1QLxWKkxGoHyYhiLEXCV3G73A8aScPjPt88
-	jrPIHE7ZPwZbOomQ82OfjPgZh60/z/mHiVGMcOvdcfa27xicGaYc4CRHli/pxwRECrLqiYu3l8N
-	LFD48H7L0mcOCtBGl7gi7fzYdw6Rz42QOoFg+IDDpL+9zgEDxNGgeq6HdGY2yirid3ytxGJaEE6
-	boAkAr6lJoz6QmPD/MjcoKX9D1+NLnqIvb52B7TawjHrzhtU1D4jqjghPOeeQJIWcQXI9h7wviS
-	IbUo8QlaoaZNqgTPtwGfJ5l0b54YCNIK6i8JmuM/dKW0+88QpK0QphsifUv3R9E2B52iWsYAXq5
-	5x5tpyAM=
-X-Google-Smtp-Source: AGHT+IGWmhNVTANspZfihUtvglm0GZovp+BUZPoZB6tq8t5oZerY9iOeHToM9Prhn88TfpdSdzHrIg==
-X-Received: by 2002:a05:6512:3f07:b0:545:a1a:556b with SMTP id 2adb3069b0e04-5493c373156mr2643553e87.0.1740570177524;
-        Wed, 26 Feb 2025 03:42:57 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514efcd5sm432787e87.141.2025.02.26.03.42.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 03:42:56 -0800 (PST)
-Message-ID: <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
-Date: Wed, 26 Feb 2025 13:42:55 +0200
+	s=arc-20240116; t=1740570237; c=relaxed/simple;
+	bh=sniYNrvNUWro087KyCuTDWcHiLJf2phQ6kPrOWDLdgo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cm4qfMUaZ4RLgykfKFcxEM4LtM4MRyYpBfSoHBbnqWUc2zIAwqe02H6igX42aQTAwU5P+TzQoASFEEgpXPn3uWi0Cyo8+QlC0p5tUVDDvkroIECp7Fyv6EkcKlccMMcvlBtaG+58FTlEYx6YRpfKWWenY41iwaFz0YEaOjxSA74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 51QBheXL091362;
+	Wed, 26 Feb 2025 19:43:40 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Z2stx2SXHz2PqL3B;
+	Wed, 26 Feb 2025 19:39:05 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 26 Feb 2025 19:43:38 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>
+CC: <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <ke.wang@unisoc.com>, <di.shen@unisoc.com>,
+        <xuewen.yan94@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] sched/fair: Prevent from cpufreq not being updated when delayed-task is iowait
+Date: Wed, 26 Feb 2025 19:43:01 +0800
+Message-ID: <20250226114301.4900-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Z71qphikHPGB0Yuv@mva-rohm>
- <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
- <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
- <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 51QBheXL091362
 
-On 26/02/2025 12:18, Linus Walleij wrote:
-> On Wed, Feb 26, 2025 at 7:09 AM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
->> On 25/02/2025 23:36, Linus Walleij wrote:
->>> we can maybe move it to struct gpio_device in
->>> drivers/gpio/gpiolib.h?
->>>
->>> This struct exist for every gpio_chip but is entirely gpiolib-internal.
->>>
->>> Then it becomes impossible to do it wrong...
->>
->> True. I can try seeing what it'd require to do that. But ... If there
->> are any drivers out there altering the valid_mask _after_ registering
->> the driver to the gpio-core ... Then it may be a can of worms and I may
->> just keep the lid closed :)
-> 
-> That's easy to check with some git grep valid_mask
+Because the sched-delayed task maybe in io-wait state,
+so we should place the requeue_delayed_entity() after the
+cpufreq_update_util(), to prevent not boosting iowait cpufreq
+before return.
 
-True. I just tried. It seems mostly Ok, but...
-For example the drivers/gpio/gpio-rcar.c uses the contents of the 
-'valid_mask' in it's set_multiple callback to disallow setting the value 
-of masked GPIOs.
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+---
+ kernel/sched/fair.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-For uneducated person like me, it feels this check should be done and 
-enforced by the gpiolib and not left for untrustworthy driver writers 
-like me! (I am working on BD79124 driver and it didn't occur to me I 
-should check for the valid_mask in driver :) If gpiolib may call the 
-driver's set_multiple() with masked lines - then the bd79124 driver just 
-had one unknown bug less :rolleyes:) )
-
-I tried looking at the gpiolib to see how this works... It seems to me:
-
-gpio_chip_set_multiple() does not seem to check for valid_mask. This is 
-called from the gpiod_set_array_value_complex() - which gave me a 
-headache as it is, as name says, complex. Well, I didn't spot valid_mask 
-check but I may have missed a thing or 2...
-
-If someone remembers straight away how this is supposed to work - I 
-appreciate any guidance. If not, then I try doing some testing when I 
-wire the BD79124 to my board for the next version of the BD79124 series.
-
-> and intuition. I think all calls actually changing the valid_mask
-> are in the init_valid_mask() callback as they should be.
-> 
->> Furthermore, I was not 100% sure the valid_mask was not intended to be
->> used directly by the drivers. I hoped you and Bart have an opinion on that.
-> 
-> Oh it was. First we just had .valid_mask and then it was
-> manipulated directly.
-
-I still can't decide if hiding the valid_mask is the right thing to do, 
-or if we should just respect it if it is set by driver (as it was 
-originally intended).
-
-> Then we introduced init_valid_mask() and all users switched over
-> to using that.
-> 
-> So evolution, not intelligent design...
-
-Like anything we actually get done ^_^;
-
-Yours,
-	-- Matti
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2d6d5582c3e9..040674734128 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6931,11 +6931,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
+ 		util_est_enqueue(&rq->cfs, p);
+ 
+-	if (flags & ENQUEUE_DELAYED) {
+-		requeue_delayed_entity(se);
+-		return;
+-	}
+-
+ 	/*
+ 	 * If in_iowait is set, the code below may not trigger any cpufreq
+ 	 * utilization updates, so do it here explicitly with the IOWAIT flag
+@@ -6944,6 +6939,11 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (p->in_iowait)
+ 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
+ 
++	if (flags & ENQUEUE_DELAYED) {
++		requeue_delayed_entity(se);
++		return;
++	}
++
+ 	if (task_new && se->sched_delayed)
+ 		h_nr_runnable = 0;
+ 
+-- 
+2.25.1
 
 
