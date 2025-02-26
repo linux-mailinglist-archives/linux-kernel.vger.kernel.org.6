@@ -1,128 +1,210 @@
-Return-Path: <linux-kernel+bounces-534378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB9FA46643
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:13:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FDBA4660A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA7819E46C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03B73B0570
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7865223704;
-	Wed, 26 Feb 2025 16:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BE02248B5;
+	Wed, 26 Feb 2025 16:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QP/HB7ym"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cgAd6pzO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2CF79D0;
-	Wed, 26 Feb 2025 16:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4EC79D0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585637; cv=none; b=ZypeDKUbgl7BnnJ2mJXOKihjz9QjyxurUQv8LNJ85ypzBXnnct7TdA6pbkq4kxoeu841LFk5J7SX4oqyUzBX3Ffnz+9isaQgCCBBWX4mO3lE3dEPDbY1AYqtTke/pAXkmDS0/Gubn9UE2wX63/w8Y07y2EkC5JpSmOKY5zv0jy4=
+	t=1740585646; cv=none; b=N0D1bcoVTceupQxkRzN5mMZgIIue+CvfWsNgoQ1f+UpXU8uPnMc9AQP1vUipmB9TbR/nH7c4rOjztu1P5Dejt3h3aCq73i+UmOmy19WIUrr0bHwxZTeqY0WyD6SRW1IwYNlwZ/QCPEo5AMRDPKxIy4rZNJWeS3eN/ujJm7bgigA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585637; c=relaxed/simple;
-	bh=kHkB+HCaBdSvy0bFIms6en6j+ch1WkP5IOkqbnS1gSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FMvCRltD4Td0TwzIp7wF/uEKZRF2sWs4iC8VTwUdLgdV5+ex9XpxJpl5gbSQKjb73OhK7hoBEDIy7Pcooo+zUhfyASpPSZOC4cguF9nF3KuPlG9bXnoLOzGRPEJWcYuP0T5H6QTfRVRj2XDxmluAtyHdYfrsV+BlGh8s1hdqqeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QP/HB7ym; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4394036c0efso45294005e9.2;
-        Wed, 26 Feb 2025 08:00:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740585633; x=1741190433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kHkB+HCaBdSvy0bFIms6en6j+ch1WkP5IOkqbnS1gSY=;
-        b=QP/HB7ymyPudJ3I4Wqhk/S5eVzWclxnPKfgoS/DmWCh1+xWScs4W5MS/I73T48D1oJ
-         jeq6o+1R62mxBMctZ1HZ+dFQsRYHt4Pz5SLpigd0kj/gFqNnKAXMjjxgOGUdt43QERB1
-         cDRlpGvZ4Y9Ev8gu9hAOlDoBFEZRVR8bbMg0CgRf7/Ox2HTHsiAmJIpnxjps906FXjx0
-         Dm2w6Zo0Urmw2JN99AXvp1kUHMt4iAq3LpjiPZBw7EEiZEiQkjb/0Wd50+LbRz1fQ5dI
-         YXoZsJEsDq5hNwa+BizBdia8cuTAtb2q6CQN6lvTWSTIHrB6x11zNkeoKGR+ZNNCZiIW
-         MVEA==
+	s=arc-20240116; t=1740585646; c=relaxed/simple;
+	bh=PzU4b01qO2LwfblWa/oKQuFMDxEUtm45DRVjkCcoteY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j0l4Y0BYMA1Nv2HvTbVl6g4IplhJ2I5uUhI6Qm48/wQa6Z06IIv7F1TJMCxWHkGA2ztqz37AgtCcQ/b84WFUXwhVlEtYWgroYX1jrT4I64FaDpLoh1LAH/b1/crYWwrQGhg1LSStDXjlFjK6yh95g7f1TZZXXCz22IPtVE2wNgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cgAd6pzO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740585643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lqa5gQlqS9US5GtfUQPHzeFlJi9ebohvbqbVThoHRcI=;
+	b=cgAd6pzOEJuz8vcml6ta9hJZw/bV0c+3bDz4HOj465LlP2hPY9LBBuzn8aGiMmwY1UQQ21
+	mb1Coz5rh5vg6BTSUHGpFW5nms4q0FqHqXSvNZh2p+M19dNWvOxpb9ae7LbRe0Z/Py2MjF
+	BqqIEwdQP/vUPHsSvVhvPIvoAlw8mts=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-146-xbL7-FDlOPCPnvHbdr577w-1; Wed, 26 Feb 2025 11:00:42 -0500
+X-MC-Unique: xbL7-FDlOPCPnvHbdr577w-1
+X-Mimecast-MFC-AGG-ID: xbL7-FDlOPCPnvHbdr577w_1740585641
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso64230335e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:00:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740585633; x=1741190433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740585641; x=1741190441;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kHkB+HCaBdSvy0bFIms6en6j+ch1WkP5IOkqbnS1gSY=;
-        b=aUQy29w7tbJv/FCYVdDw2t6N2XqiucPV1kBZoJr5SsYH6zufZlQHs5+hLYRkudUOVZ
-         VhvT3rLSVlRbK08cn/8L7OfdM/rXgY9+7GvSb2Dlo3AvvOdoXJxOwqQ8BxvvgmahkrxC
-         eYSZntWNhTEzJkPIlOKuMvmvm82/g4G1M8J5MRhFXvPtJeWo/qBVXSo4qnuOwJJjg/PE
-         H/htgUATONL9emXccFtIykd45l48fgw5ozjWcpdo/j2pTE5hEgcys9ok7VpkqDWo7g6J
-         ALYfiualdfngt99KmspKWIw4lMFq8/LN7HvHicRnNaQD0TyM7vXZcMA3QK+Je4wb6bPm
-         atIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNQyg19SB81raOJCSzyJZxB+BH8Nd0UIBo+DIKMdS/pHQaCYp2HjjQwFYRbDolPWqDZDBESik6DQ==@vger.kernel.org, AJvYcCWbeofh/YL4a1yL8mMDo6zjGaMCldaFdG8XBoDeEJgQ5jUyrNqDjfnznCvIYdHwrDCIJ57dCtPWRtdtC2+Btaje1zOYWZO8@vger.kernel.org, AJvYcCWlZFtVWYiADK6uy9RvlYU16HvtyRYj8DrLWEXmHFX2bkPLhfBvlNzs3iwSo/ISVWbV/dbh2MCiPcLgS27F@vger.kernel.org, AJvYcCXRR2ch2tnlPBlmrgT/egIcCpfZOKoXqXh6kqfFU0cPktTB+Y4xGZeP9TiJS6XCghT2VaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt3hyLEoIK8xDQ8ZqiMJBmzVtpYM3WfUY5IJRPeyg9dyxEukj4
-	tPtCFGs97fEYnjXTzepbx7qZx9Pom2SiNVPCvpgKKMoA4zW27FB9AbemqXQztgrbs1lCGvwAH0x
-	SLGK+ebdKQfcUnO5MLsRe1MduphM=
-X-Gm-Gg: ASbGncvki0pCZhKCNxp+uWlMkTxwjUKoGcjwGvuhGPJHojf842AgdnxO2IQ9pDso+T9
-	8kQp3HrcsP4QFLILOxrHXuKJ+ZmOQ2cemVN1lStYd8tg+gBRoVrgnlgwMk4MvPMgyb15871ngmi
-	G+ZWWNVNbqz2Q4jAwyW+mgiLM=
-X-Google-Smtp-Source: AGHT+IEnzIccpTSpu38ZRm976PQcvhBwWZzlzuIa9i47JomSH3nFGn6WIQR/4wJQ7agbT1bgR03CzlctzwvY2FprXoU=
-X-Received: by 2002:a5d:64ee:0:b0:38f:4acd:976d with SMTP id
- ffacd0b85a97d-390d4f367e8mr2395003f8f.9.1740585632741; Wed, 26 Feb 2025
- 08:00:32 -0800 (PST)
+        bh=lqa5gQlqS9US5GtfUQPHzeFlJi9ebohvbqbVThoHRcI=;
+        b=MhvhFb42x77jNAWbHf/931xiQ7vPUi2P6MMvtTwAVBMF8VdPRikpfw6i/UqiEERAYg
+         Ofd5dqEFQdyXgC+jdT14qsJzw37Gjx/K8WkMtM2MG+t48Ts0+5DREfP01vtPeqnZRGaP
+         d7IfXW+7ZZVkhA9U4mTfmLFAibnuozC/+qfez9fiHGjY6nl3ygD2wkYTqbzX6+pTjZ0/
+         MPLBlql/rvDnfoJnWz79Dr7Mn24ILERFGmbgKhbhZfnWb32SPpCNJeYBv+Z110fPVkg0
+         YTtsABZ3daPmPXJzr0INEckA3DTpJDZzjn3wOZpkAH53FzDswGjcflMOsP1yhZZt0ybj
+         +Wkw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1T6NnArZ7tbOBBGghDR/SzwfNzUqokqRCH+RXDwT2+DevyaHaAXXBVmNbXxgGtpIPicXaio4koT9N0DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHNL0KxBlTrXAufpyB9pcrrQjL+uos3L+tcrLLKxgj/BjdUSeb
+	/UD6Gu+oyKKdwCIzng5iM2qXcEhFh+vxZbAdMiWhJBrE0EEo/0N8eKqbZf3ihmojtx4qSVaeiKw
+	HfsdS70T5cke9jkG+kHcVydsPiqTdxFNoi9mNQHAhwg+bSqQHHLtqoRzTDFbfaw==
+X-Gm-Gg: ASbGncsffIJCzYIoujefiHpAKsU+YDd1CQFR2DG1d5iIWSDIBYSb3Qe53sJJXVcF7oP
+	kaWVOoziv6SveEQT5LITXfuv+IZmQfnynN/YBJOw1xozzFP5axPelukiWwxN8hu+WuJpQovi+rt
+	54xWzSGgdCSgMDv6RsLB8feQbujSMKuKYRsYgzy8V/WTwoGPXzF5LnPvGkIjza6qbxofXRtNuJo
+	RtuyosDTvXP95ddUc9ej1vpwlLuzlzHp/q56Oth3yAqW6o8FsUFCIMkQ4GBRI16S0DpbgsFhogu
+	4575FC1wg44K8KG4eQFJTfIgplnrN08spUhCw1p+nTuIPTbOVWk9XEeND0aqedc=
+X-Received: by 2002:a05:600c:1c86:b0:439:8b05:66a6 with SMTP id 5b1f17b1804b1-43ab0f64425mr75173515e9.22.1740585639366;
+        Wed, 26 Feb 2025 08:00:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEGOJUxfNkJ47dOepAoS3DkNdGuo0CohyHyhD/GA0TMRONmh8zeK9C4FdbnePVZ6SIE8cqCJg==
+X-Received: by 2002:a05:600c:1c86:b0:439:8b05:66a6 with SMTP id 5b1f17b1804b1-43ab0f64425mr75170455e9.22.1740585637323;
+        Wed, 26 Feb 2025 08:00:37 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5393e5sm26113765e9.20.2025.02.26.08.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 08:00:36 -0800 (PST)
+Date: Wed, 26 Feb 2025 17:00:33 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
+ =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/14] Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250226170033.5c4687dd@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20250226155143.0e4a05f8@imammedo.users.ipa.redhat.com>
+References: <cover.1740148260.git.mchehab+huawei@kernel.org>
+	<20250226151656.10665bc9@imammedo.users.ipa.redhat.com>
+	<20250226153913.27255b1e@sal.lan>
+	<20250226155143.0e4a05f8@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
- <20250226003055.1654837-2-bboscaccy@linux.microsoft.com> <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
-In-Reply-To: <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 26 Feb 2025 08:00:21 -0800
-X-Gm-Features: AQ5f1JqssAv3oBHTb3IsiX4NYi90Rnt9V3TLX6TONZbYMfDzNUbG2vAqbXFr2u8
-Message-ID: <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf hooks
-To: Song Liu <song@kernel.org>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	LSM List <linux-security-module@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 11:06=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> >
-> > Certain bpf syscall subcommands are available for usage from both
-> > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
-> > need to take a different course of action depending on whether or not
-> > a BPF syscall originated from the kernel or userspace.
-> >
-> > Additionally, some of the bpf_attr struct fields contain pointers to
-> > arbitrary memory. Currently the functionality to determine whether or
-> > not a pointer refers to kernel memory or userspace memory is exposed
-> > to the bpf verifier, but that information is missing from various LSM
-> > hooks.
-> >
-> > Here we augment the LSM hooks to provide this data, by simply passing
-> > the corresponding universal pointer in any hook that contains already
-> > contains a bpf_attr struct that corresponds to a subcommand that may
-> > be called from the kernel.
->
-> I think this information is useful for LSM hooks.
->
-> Question: Do we need a full bpfptr_t for these hooks, or just a boolean
-> "is_kernel or not"?
+On Wed, 26 Feb 2025 15:51:43 +0100
+Igor Mammedov <imammedo@redhat.com> wrote:
 
-+1
-Just passing the bool should do.
-Passing uattr is a footgun. Last thing we need is to open up TOCTOU concern=
-s.
+> On Wed, 26 Feb 2025 15:39:13 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+[...]
+> 
+> PS: do not respin until I've finish this review.
+
+finished
+
+>  
+> > >     
+> > > > 
+> > > > ---
+> > > > v4:
+> > > > - added an extra comment for AcpiGhesState structure;
+> > > > - patches reordered;
+> > > > - no functional changes, just code shift between the patches in this series.
+> > > > 
+> > > > v3:
+> > > > - addressed more nits;
+> > > > - hest_add_le now points to the beginning of HEST table;
+> > > > - removed HEST from tests/data/acpi;
+> > > > - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
+> > > > 
+> > > > v2: 
+> > > > - address some nits;
+> > > > - improved ags cleanup patch and removed ags.present field;
+> > > > - added some missing le*_to_cpu() calls;
+> > > > - update date at copyright for new files to 2024-2025;
+> > > > - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+> > > > - added HEST and DSDT tables after the changes to make check target happy.
+> > > >   (two patches: first one whitelisting such tables; second one removing from
+> > > >    whitelist and updating/adding such tables to tests/data/acpi)
+> > > > 
+> > > > 
+> > > > 
+> > > > Mauro Carvalho Chehab (14):
+> > > >   acpi/ghes: prepare to change the way HEST offsets are calculated
+> > > >   acpi/ghes: add a firmware file with HEST address
+> > > >   acpi/ghes: Use HEST table offsets when preparing GHES records
+> > > >   acpi/ghes: don't hard-code the number of sources for HEST table
+> > > >   acpi/ghes: add a notifier to notify when error data is ready
+> > > >   acpi/ghes: create an ancillary acpi_ghes_get_state() function
+> > > >   acpi/generic_event_device: Update GHES migration to cover hest addr
+> > > >   acpi/generic_event_device: add logic to detect if HEST addr is
+> > > >     available
+> > > >   acpi/generic_event_device: add an APEI error device
+> > > >   tests/acpi: virt: allow acpi table changes for a new table: HEST
+> > > >   arm/virt: Wire up a GED error device for ACPI / GHES
+> > > >   tests/acpi: virt: add a HEST table to aarch64 virt and update DSDT
+> > > >   qapi/acpi-hest: add an interface to do generic CPER error injection
+> > > >   scripts/ghes_inject: add a script to generate GHES error inject
+> > > > 
+> > > >  MAINTAINERS                                   |  10 +
+> > > >  hw/acpi/Kconfig                               |   5 +
+> > > >  hw/acpi/aml-build.c                           |  10 +
+> > > >  hw/acpi/generic_event_device.c                |  43 ++
+> > > >  hw/acpi/ghes-stub.c                           |   7 +-
+> > > >  hw/acpi/ghes.c                                | 231 ++++--
+> > > >  hw/acpi/ghes_cper.c                           |  38 +
+> > > >  hw/acpi/ghes_cper_stub.c                      |  19 +
+> > > >  hw/acpi/meson.build                           |   2 +
+> > > >  hw/arm/virt-acpi-build.c                      |  37 +-
+> > > >  hw/arm/virt.c                                 |  19 +-
+> > > >  hw/core/machine.c                             |   2 +
+> > > >  include/hw/acpi/acpi_dev_interface.h          |   1 +
+> > > >  include/hw/acpi/aml-build.h                   |   2 +
+> > > >  include/hw/acpi/generic_event_device.h        |   1 +
+> > > >  include/hw/acpi/ghes.h                        |  54 +-
+> > > >  include/hw/arm/virt.h                         |   2 +
+> > > >  qapi/acpi-hest.json                           |  35 +
+> > > >  qapi/meson.build                              |   1 +
+> > > >  qapi/qapi-schema.json                         |   1 +
+> > > >  scripts/arm_processor_error.py                | 476 ++++++++++++
+> > > >  scripts/ghes_inject.py                        |  51 ++
+> > > >  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
+> > > >  target/arm/kvm.c                              |   7 +-
+> > > >  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+> > > >  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+> > > >  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+> > > >  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+> > > >  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+> > > >  29 files changed, 1677 insertions(+), 79 deletions(-)
+> > > >  create mode 100644 hw/acpi/ghes_cper.c
+> > > >  create mode 100644 hw/acpi/ghes_cper_stub.c
+> > > >  create mode 100644 qapi/acpi-hest.json
+> > > >  create mode 100644 scripts/arm_processor_error.py
+> > > >  create mode 100755 scripts/ghes_inject.py
+> > > >  create mode 100755 scripts/qmp_helper.py
+> > > >       
+> > >     
+> >   
+> 
+
 
