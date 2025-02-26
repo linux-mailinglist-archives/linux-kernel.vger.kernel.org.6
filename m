@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-533801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9B3A45E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 647B4A45E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7742165664
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A0916BF7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A88D22A7FA;
-	Wed, 26 Feb 2025 12:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F091A00D1;
+	Wed, 26 Feb 2025 12:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BwnxugIw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="672bSY3z"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="COR4gKZm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="36rJ1k5X"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFB2223311;
-	Wed, 26 Feb 2025 12:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A52421D3FF;
+	Wed, 26 Feb 2025 12:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572112; cv=none; b=N6K5gmr+VCKOetFi6HwoW0b9C10WRUdYrSeMz4X8kiL5wm/fWgh0rY5rM+RifrpDAkNAQGl473CwQ6HA/K6E/ftxqIVG7yKA3TcbrOWLZ14PeSG454IhxD6lycoP+ajvv/yOmwDIuOVPg17x7ZEl33LwtgBJwsw5DLaEtunTXlc=
+	t=1740572110; cv=none; b=sJEVA3wqHOK8DFc0PX9Kka0yqZFOSrEdrS6rKGAZ8/mMrdmhmb5midjpsugBnXK++MSa6XOe0ABHzXvq1ZNQTILxgaWnhXGwY1HDILkXmK3KbqeN6Lo5faeBCKlcBB8XwHxdibd331eNrDzt3Qg5pJYpoto/6QXIZNS7VxVsQ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572112; c=relaxed/simple;
-	bh=kqj0iuVozlL2gR0XZUcXjCuXQcs7Wl11m2FUnyoc1MA=;
+	s=arc-20240116; t=1740572110; c=relaxed/simple;
+	bh=b9QmZzmh2WflAXViBmu2pm9aty3awYaH2mF+B3GrfBk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PMkw5+4ekUMI5L0OeyTMqnbrTS/CqVOCc5Hak+ZDocs6w2GaWfQ+QszOD27LYAmbq9GZb3xG5hRlF/UEQnNexqe9U4sRmWASOcFdbpH8qPpT20qGPNpKOp32hlom/Z5/7iZYCRIOJ1j9teZAU8Cmvi5zHNSyBB98oKkE61YG79w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BwnxugIw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=672bSY3z; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=K2cF9tWYY7ARtc8uBJEgfsQF/MrCQeDYVUtjtV3i1nLtbGXwaF+x7ofNS2dMGFOtDAPtt+CmC8ZC8WFiaaMG8maDh34JCnicVsUwhQaQjJsYgvYNayYxSqFZE4YGNqb/tFpe+NMSwVupFZWI/T2vlMdiOBVCzYCuqcCGcEx0y3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=COR4gKZm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=36rJ1k5X; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Wed, 26 Feb 2025 12:15:06 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740572108;
+	s=2020; t=1740572106;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Npf5gcDPFUu2TgZcA1Eb1QL7Ec63YVLG8BCSYkVYueQ=;
-	b=BwnxugIwGCI7Eah5JQqooHi+4OY5mPOIgRnaTMjt4NB8Zz6RvOHTFfjKBhx2tnHXzj0Tln
-	4tkzSl49KvcvZuRck4b/jOzpRfK8mHVR/xkwshe6WwyN05vgivjPeahkZ2VQUrKKnrQngk
-	2Se/bpf1bt8zGuyfVBHW8NkBt/WLulVSGjnrbAapQSyrcoTRDo8XGexkO+E97apzd6AH/q
-	+sYhPCUx6tqZqJSg750Vu5uBgvOTqVk/2MWNV/eylyYCpvIdSZoXQI/Kau+LBeg6o2Bri/
-	t5vHFrhLKwquj1YiMTqQkogCAqIJmaEg5PmcgruZL1Bqtrmxc6BAf0iaQVFVIw==
+	bh=y3KFWfEOxs06YvVwNNzFPcDsj+XewpKCJt5oNy/PkZk=;
+	b=COR4gKZmGrZk4GDGgoWNDqjf72la+JRZf4NoIj/mpwU7tGmimp9ki9KUx6OMC5u28JVvmd
+	xPXLivIcVfLXs/GKc83DvwTZaqu8tNNhA3IiY2yPyHqQ8OC9AcGu81UfG1jBseuowKJfWK
+	sql3q/NszOG9orzIbUTkNgRKoITeZzX3QuYowc3mgXCT70tW7gNcvYG1SmDuDWw2zVmNe7
+	DMLAtM+WND6cuv+scWA1blEBfuOvHUef77SH9kBUA0aXkxdwu9vg64vwR+Yx03I8jI7RYh
+	VKHPOWPHwuHqvnQmbJ9BmL4QuiZw+ExjWIXYSGvrJR/TVKneVD14WyDdqk754Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740572108;
+	s=2020e; t=1740572106;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Npf5gcDPFUu2TgZcA1Eb1QL7Ec63YVLG8BCSYkVYueQ=;
-	b=672bSY3zzQihEOKjMRbIaGB0dVKo7QpR0X95NY56zwFeZApaKu9zEdTeOMDFqWSb3LS26s
-	gPjVPSQKr1v2JJBQ==
+	bh=y3KFWfEOxs06YvVwNNzFPcDsj+XewpKCJt5oNy/PkZk=;
+	b=36rJ1k5XppWTweYpJl6u5pjduKQgXilwFYiATzdrUcvbzrxPjWm+Fv3lRt32U/pi1MdIzH
+	tJNBiXb4i8ZTP9DA==
 From: "tip-bot2 for Chang S. Bae" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] selftests/x86/xstate: Refactor context switching test
+Subject: [tip: x86/fpu] selftests/x86/xstate: Refactor ptrace ABI test
 Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, Ingo Molnar <mingo@kernel.org>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250226010731.2456-5-chang.seok.bae@intel.com>
-References: <20250226010731.2456-5-chang.seok.bae@intel.com>
+In-Reply-To: <20250226010731.2456-6-chang.seok.bae@intel.com>
+References: <20250226010731.2456-6-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174057210678.10177.12394499663747386118.tip-bot2@tip-bot2>
+Message-ID: <174057210611.10177.8781465858635484679.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,473 +80,361 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/fpu branch of tip:
 
-Commit-ID:     40f6852ef2bffcd6fb3634cf71e6fbc2d1d6b768
-Gitweb:        https://git.kernel.org/tip/40f6852ef2bffcd6fb3634cf71e6fbc2d1d6b768
+Commit-ID:     7cb2fbe41949caa35ef1805323b8fc011fac2537
+Gitweb:        https://git.kernel.org/tip/7cb2fbe41949caa35ef1805323b8fc011fac2537
 Author:        Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate:    Tue, 25 Feb 2025 17:07:24 -08:00
+AuthorDate:    Tue, 25 Feb 2025 17:07:25 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Wed, 26 Feb 2025 13:05:29 +01:00
 
-selftests/x86/xstate: Refactor context switching test
+selftests/x86/xstate: Refactor ptrace ABI test
 
-The existing context switching and ptrace tests in amx.c are not specific
-to dynamic states, making them reusable for general xstate testing.
+Following the refactoring of the context switching test, the ptrace test is
+another component reusable for other xstate features. As part of this
+restructuring, add a missing check to validate the
+user_xstateregs->xstate_fx_sw field in the ABI.
 
-As a first step, move the context switching test to xstate.c. Refactor
-the test code to allow specifying which xstate component being tested.
-
-To decouple the test from dynamic states, remove the permission request
-code. In fact, The permission request inside the test wrapper was
-redundant.
-
-Additionally, replace fatal_error() with ksft_exit_fail_msg() for
+Also, replace err() and fatal_error() with ksft_exit_fail_msg() for
 consistency in error handling.
 
   Expected output:
   $ amx_64
   ...
-  [RUN]   AMX Tile data: check context switches, 10 iterations, 5 threads.
-  [OK]    No incorrect case was found.
+  [RUN]   AMX Tile data: inject xstate via ptrace().
+  [OK]    'xfeatures' in SW reserved area was correctly written
+  [OK]    xstate was correctly updated.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250226010731.2456-5-chang.seok.bae@intel.com
+Link: https://lore.kernel.org/r/20250226010731.2456-6-chang.seok.bae@intel.com
 ---
- tools/testing/selftests/x86/Makefile |   2 +-
- tools/testing/selftests/x86/amx.c    | 166 +----------------------
- tools/testing/selftests/x86/xstate.c | 198 ++++++++++++++++++++++++++-
- tools/testing/selftests/x86/xstate.h |   2 +-
- 4 files changed, 204 insertions(+), 164 deletions(-)
- create mode 100644 tools/testing/selftests/x86/xstate.c
+ tools/testing/selftests/x86/amx.c    | 108 +----------------------
+ tools/testing/selftests/x86/xstate.c | 129 ++++++++++++++++++++++++++-
+ tools/testing/selftests/x86/xstate.h |   1 +-
+ 3 files changed, 131 insertions(+), 107 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index d51249f..f15efdc 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -132,3 +132,5 @@ $(OUTPUT)/check_initial_reg_state_64: CFLAGS += -Wl,-ereal_start -static
- 
- $(OUTPUT)/nx_stack_32: CFLAGS += -Wl,-z,noexecstack
- $(OUTPUT)/nx_stack_64: CFLAGS += -Wl,-z,noexecstack
-+
-+$(OUTPUT)/amx_64: EXTRA_FILES += xstate.c
 diff --git a/tools/testing/selftests/x86/amx.c b/tools/testing/selftests/x86/amx.c
-index cde22f3..b3c51dd 100644
+index b3c51dd..4bafbb7 100644
 --- a/tools/testing/selftests/x86/amx.c
 +++ b/tools/testing/selftests/x86/amx.c
-@@ -3,7 +3,6 @@
- #define _GNU_SOURCE
- #include <err.h>
- #include <errno.h>
--#include <pthread.h>
- #include <setjmp.h>
- #include <stdio.h>
- #include <string.h>
-@@ -434,14 +433,6 @@ static inline bool __validate_tiledata_regs(struct xsave_buffer *xbuf1)
- 	return true;
+@@ -13,10 +13,8 @@
+ #include <sys/auxv.h>
+ #include <sys/mman.h>
+ #include <sys/shm.h>
+-#include <sys/ptrace.h>
+ #include <sys/syscall.h>
+ #include <sys/wait.h>
+-#include <sys/uio.h>
+ 
+ #include "helpers.h"
+ #include "xstate.h"
+@@ -32,8 +30,6 @@
+ #define XFEATURE_MASK_XTILEDATA	(1 << XFEATURE_XTILEDATA)
+ #define XFEATURE_MASK_XTILE	(XFEATURE_MASK_XTILECFG | XFEATURE_MASK_XTILEDATA)
+ 
+-static uint32_t xbuf_size;
+-
+ struct xstate_info xtiledata;
+ 
+ /* The helpers for managing XSAVE buffer and tile states: */
+@@ -154,13 +150,6 @@ static inline bool load_rand_tiledata(struct xsave_buffer *xbuf)
+ 	return xrstor_safe(xbuf, XFEATURE_MASK_XTILEDATA);
  }
  
--static inline void validate_tiledata_regs_same(struct xsave_buffer *xbuf)
+-/* Return XTILEDATA to its initial configuration. */
+-static inline void init_xtiledata(void)
 -{
--	int ret = __validate_tiledata_regs(xbuf);
--
--	if (ret != 0)
--		fatal_error("TILEDATA registers changed");
+-	clear_xstate_header(stashed_xsave);
+-	xrstor_safe(stashed_xsave, XFEATURE_MASK_XTILEDATA);
 -}
 -
- static inline void validate_tiledata_regs_changed(struct xsave_buffer *xbuf)
- {
- 	int ret = __validate_tiledata_regs(xbuf);
-@@ -498,158 +489,6 @@ static void test_fork(void)
+ enum expected_result { FAIL_EXPECTED, SUCCESS_EXPECTED };
+ 
+ /* arch_prctl() and sigaltstack() test */
+@@ -489,99 +478,6 @@ static void test_fork(void)
  	_exit(0);
  }
  
--/* Context switching test */
+-/* Ptrace test */
 -
--static struct _ctxtswtest_cfg {
--	unsigned int iterations;
--	unsigned int num_threads;
--} ctxtswtest_config;
--
--struct futex_info {
--	pthread_t thread;
--	int nr;
--	pthread_mutex_t mutex;
--	struct futex_info *next;
--};
--
--static void *check_tiledata(void *info)
+-/*
+- * Make sure the ptracee has the expanded kernel buffer on the first
+- * use. Then, initialize the state before performing the state
+- * injection from the ptracer.
+- */
+-static inline void ptracee_firstuse_tiledata(void)
 -{
--	struct futex_info *finfo = (struct futex_info *)info;
+-	load_rand_tiledata(stashed_xsave);
+-	init_xtiledata();
+-}
+-
+-/*
+- * Ptracer injects the randomized tile data state. It also reads
+- * before and after that, which will execute the kernel's state copy
+- * functions. So, the tester is advised to double-check any emitted
+- * kernel messages.
+- */
+-static void ptracer_inject_tiledata(pid_t target)
+-{
 -	struct xsave_buffer *xbuf;
--	int i;
+-	struct iovec iov;
 -
 -	xbuf = alloc_xbuf();
 -	if (!xbuf)
 -		fatal_error("unable to allocate XSAVE buffer");
 -
--	/*
--	 * Load random data into 'xbuf' and then restore
--	 * it to the tile registers themselves.
--	 */
+-	printf("\tRead the init'ed tiledata via ptrace().\n");
+-
+-	iov.iov_base = xbuf;
+-	iov.iov_len = xbuf_size;
+-
+-	memset(stashed_xsave, 0, xbuf_size);
+-
+-	if (ptrace(PTRACE_GETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
+-		fatal_error("PTRACE_GETREGSET");
+-
+-	if (!__compare_tiledata_state(stashed_xsave, xbuf))
+-		printf("[OK]\tThe init'ed tiledata was read from ptracee.\n");
+-	else
+-		printf("[FAIL]\tThe init'ed tiledata was not read from ptracee.\n");
+-
+-	printf("\tInject tiledata via ptrace().\n");
+-
 -	load_rand_tiledata(xbuf);
--	for (i = 0; i < ctxtswtest_config.iterations; i++) {
--		pthread_mutex_lock(&finfo->mutex);
 -
--		/*
--		 * Ensure the register values have not
--		 * diverged from those recorded in 'xbuf'.
--		 */
--		validate_tiledata_regs_same(xbuf);
+-	memcpy(&stashed_xsave->bytes[xtiledata.xbuf_offset],
+-	       &xbuf->bytes[xtiledata.xbuf_offset],
+-	       xtiledata.size);
 -
--		/* Load new, random values into xbuf and registers */
--		load_rand_tiledata(xbuf);
+-	if (ptrace(PTRACE_SETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
+-		fatal_error("PTRACE_SETREGSET");
 -
--		/*
--		 * The last thread's last unlock will be for
--		 * thread 0's mutex.  However, thread 0 will
--		 * have already exited the loop and the mutex
--		 * will already be unlocked.
--		 *
--		 * Because this is not an ERRORCHECK mutex,
--		 * that inconsistency will be silently ignored.
--		 */
--		pthread_mutex_unlock(&finfo->next->mutex);
+-	if (ptrace(PTRACE_GETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
+-		fatal_error("PTRACE_GETREGSET");
+-
+-	if (!__compare_tiledata_state(stashed_xsave, xbuf))
+-		printf("[OK]\tTiledata was correctly written to ptracee.\n");
+-	else
+-		printf("[FAIL]\tTiledata was not correctly written to ptracee.\n");
+-}
+-
+-static void test_ptrace(void)
+-{
+-	pid_t child;
+-	int status;
+-
+-	child = fork();
+-	if (child < 0) {
+-		err(1, "fork");
+-	} else if (!child) {
+-		if (ptrace(PTRACE_TRACEME, 0, NULL, NULL))
+-			err(1, "PTRACE_TRACEME");
+-
+-		ptracee_firstuse_tiledata();
+-
+-		raise(SIGTRAP);
+-		_exit(0);
 -	}
 -
--	free(xbuf);
--	/*
--	 * Return this thread's finfo, which is
--	 * a unique value for this thread.
--	 */
--	return finfo;
+-	do {
+-		wait(&status);
+-	} while (WSTOPSIG(status) != SIGTRAP);
+-
+-	ptracer_inject_tiledata(child);
+-
+-	ptrace(PTRACE_DETACH, child, NULL, NULL);
+-	wait(&status);
+-	if (!WIFEXITED(status) || WEXITSTATUS(status))
+-		err(1, "ptrace test");
 -}
 -
--static int create_threads(int num, struct futex_info *finfo)
--{
--	int i;
--
--	for (i = 0; i < num; i++) {
--		int next_nr;
--
--		finfo[i].nr = i;
--		/*
--		 * Thread 'i' will wait on this mutex to
--		 * be unlocked.  Lock it immediately after
--		 * initialization:
--		 */
--		pthread_mutex_init(&finfo[i].mutex, NULL);
--		pthread_mutex_lock(&finfo[i].mutex);
--
--		next_nr = (i + 1) % num;
--		finfo[i].next = &finfo[next_nr];
--
--		if (pthread_create(&finfo[i].thread, NULL, check_tiledata, &finfo[i]))
--			fatal_error("pthread_create()");
--	}
--	return 0;
--}
--
--static void affinitize_cpu0(void)
--{
--	cpu_set_t cpuset;
--
--	CPU_ZERO(&cpuset);
--	CPU_SET(0, &cpuset);
--
--	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0)
--		fatal_error("sched_setaffinity to CPU 0");
--}
--
--static void test_context_switch(void)
--{
--	struct futex_info *finfo;
--	int i;
--
--	/* Affinitize to one CPU to force context switches */
--	affinitize_cpu0();
--
--	req_xtiledata_perm();
--
--	printf("[RUN]\tCheck tiledata context switches, %d iterations, %d threads.\n",
--	       ctxtswtest_config.iterations,
--	       ctxtswtest_config.num_threads);
--
--
--	finfo = malloc(sizeof(*finfo) * ctxtswtest_config.num_threads);
--	if (!finfo)
--		fatal_error("malloc()");
--
--	create_threads(ctxtswtest_config.num_threads, finfo);
--
--	/*
--	 * This thread wakes up thread 0
--	 * Thread 0 will wake up 1
--	 * Thread 1 will wake up 2
--	 * ...
--	 * the last thread will wake up 0
--	 *
--	 * ... this will repeat for the configured
--	 * number of iterations.
--	 */
--	pthread_mutex_unlock(&finfo[0].mutex);
--
--	/* Wait for all the threads to finish: */
--	for (i = 0; i < ctxtswtest_config.num_threads; i++) {
--		void *thread_retval;
--		int rc;
--
--		rc = pthread_join(finfo[i].thread, &thread_retval);
--
--		if (rc)
--			fatal_error("pthread_join() failed for thread %d err: %d\n",
--					i, rc);
--
--		if (thread_retval != &finfo[i])
--			fatal_error("unexpected thread retval for thread %d: %p\n",
--					i, thread_retval);
--
--	}
--
--	printf("[OK]\tNo incorrect case was found.\n");
--
--	free(finfo);
--}
--
- /* Ptrace test */
- 
- /*
-@@ -745,6 +584,7 @@ static void test_ptrace(void)
- 
  int main(void)
  {
-+	const unsigned int ctxtsw_num_threads = 5, ctxtsw_iterations = 10;
- 	unsigned long features;
- 	long rc;
+ 	const unsigned int ctxtsw_num_threads = 5, ctxtsw_iterations = 10;
+@@ -594,8 +490,6 @@ int main(void)
+ 		return KSFT_SKIP;
+ 	}
  
-@@ -772,9 +612,7 @@ int main(void)
+-	xbuf_size = get_xbuf_size();
+-
+ 	xtiledata = get_xstate_info(XFEATURE_XTILEDATA);
+ 	if (!xtiledata.size || !xtiledata.xbuf_offset) {
+ 		fatal_error("xstate cpuid: invalid tile data size/offset: %d/%d",
+@@ -614,7 +508,7 @@ int main(void)
  
- 	test_fork();
+ 	test_context_switch(XFEATURE_XTILEDATA, ctxtsw_num_threads, ctxtsw_iterations);
  
--	ctxtswtest_config.iterations = 10;
--	ctxtswtest_config.num_threads = 5;
--	test_context_switch();
-+	test_context_switch(XFEATURE_XTILEDATA, ctxtsw_num_threads, ctxtsw_iterations);
+-	test_ptrace();
++	test_ptrace(XFEATURE_XTILEDATA);
  
- 	test_ptrace();
- 
+ 	clearhandler(SIGILL);
+ 	free_stashed_xsave();
 diff --git a/tools/testing/selftests/x86/xstate.c b/tools/testing/selftests/x86/xstate.c
-new file mode 100644
-index 0000000..e5b51e7
---- /dev/null
+index e5b51e7..d318b35 100644
+--- a/tools/testing/selftests/x86/xstate.c
 +++ b/tools/testing/selftests/x86/xstate.c
-@@ -0,0 +1,198 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -2,12 +2,25 @@
+ 
+ #define _GNU_SOURCE
+ 
++#include <elf.h>
+ #include <pthread.h>
+ #include <stdbool.h>
+ 
++#include <sys/ptrace.h>
++#include <sys/uio.h>
++#include <sys/wait.h>
 +
-+#define _GNU_SOURCE
+ #include "helpers.h"
+ #include "xstate.h"
+ 
++static inline uint64_t xgetbv(uint32_t index)
++{
++	uint32_t eax, edx;
 +
-+#include <pthread.h>
-+#include <stdbool.h>
++	asm volatile("xgetbv" : "=a" (eax), "=d" (edx) : "c" (index));
++	return eax + ((uint64_t)edx << 32);
++}
 +
-+#include "helpers.h"
-+#include "xstate.h"
-+
-+static struct xstate_info xstate;
-+
-+struct futex_info {
-+	unsigned int iterations;
-+	struct futex_info *next;
-+	pthread_mutex_t mutex;
-+	pthread_t thread;
-+	bool valid;
-+	int nr;
-+};
-+
-+static inline void load_rand_xstate(struct xstate_info *xstate, struct xsave_buffer *xbuf)
+ static struct xstate_info xstate;
+ 
+ struct futex_info {
+@@ -27,6 +40,19 @@ static inline void load_rand_xstate(struct xstate_info *xstate, struct xsave_buf
+ 	xrstor(xbuf, xstate->mask);
+ }
+ 
++static inline void load_init_xstate(struct xstate_info *xstate, struct xsave_buffer *xbuf)
 +{
 +	clear_xstate_header(xbuf);
-+	set_xstatebv(xbuf, xstate->mask);
-+	set_rand_data(xstate, xbuf);
 +	xrstor(xbuf, xstate->mask);
 +}
 +
-+static inline bool validate_xstate_same(struct xsave_buffer *xbuf1, struct xsave_buffer *xbuf2)
++static inline void copy_xstate(struct xsave_buffer *xbuf_dst, struct xsave_buffer *xbuf_src)
 +{
-+	int ret;
-+
-+	ret = memcmp(&xbuf1->bytes[xstate.xbuf_offset],
-+		     &xbuf2->bytes[xstate.xbuf_offset],
-+		     xstate.size);
-+	return ret == 0;
++	memcpy(&xbuf_dst->bytes[xstate.xbuf_offset],
++	       &xbuf_src->bytes[xstate.xbuf_offset],
++	       xstate.size);
 +}
 +
-+static inline bool validate_xregs_same(struct xsave_buffer *xbuf1)
+ static inline bool validate_xstate_same(struct xsave_buffer *xbuf1, struct xsave_buffer *xbuf2)
+ {
+ 	int ret;
+@@ -196,3 +222,106 @@ void test_context_switch(uint32_t feature_num, uint32_t num_threads, uint32_t it
+ 
+ 	free(finfo);
+ }
++
++/*
++ * Ptrace test for the ABI format as described in arch/x86/include/asm/user.h
++ */
++
++/*
++ * Make sure the ptracee has the expanded kernel buffer on the first use.
++ * Then, initialize the state before performing the state injection from
++ * the ptracer. For non-dynamic states, this is benign.
++ */
++static inline void ptracee_touch_xstate(void)
 +{
-+	struct xsave_buffer *xbuf2;
-+	bool ret;
-+
-+	xbuf2 = alloc_xbuf();
-+	if (!xbuf2)
-+		ksft_exit_fail_msg("failed to allocate XSAVE buffer\n");
-+
-+	xsave(xbuf2, xstate.mask);
-+	ret = validate_xstate_same(xbuf1, xbuf2);
-+
-+	free(xbuf2);
-+	return ret;
-+}
-+
-+/* Context switching test */
-+
-+static void *check_xstate(void *info)
-+{
-+	struct futex_info *finfo = (struct futex_info *)info;
 +	struct xsave_buffer *xbuf;
-+	int i;
 +
 +	xbuf = alloc_xbuf();
-+	if (!xbuf)
-+		ksft_exit_fail_msg("unable to allocate XSAVE buffer\n");
 +
-+	/*
-+	 * Load random data into 'xbuf' and then restore it to the xstate
-+	 * registers.
-+	 */
 +	load_rand_xstate(&xstate, xbuf);
-+	finfo->valid = true;
-+
-+	for (i = 0; i < finfo->iterations; i++) {
-+		pthread_mutex_lock(&finfo->mutex);
-+
-+		/*
-+		 * Ensure the register values have not diverged from the
-+		 * record. Then reload a new random value.  If it failed
-+		 * ever before, skip it.
-+		 */
-+		if (finfo->valid) {
-+			finfo->valid = validate_xregs_same(xbuf);
-+			load_rand_xstate(&xstate, xbuf);
-+		}
-+
-+		/*
-+		 * The last thread's last unlock will be for thread 0's
-+		 * mutex. However, thread 0 will have already exited the
-+		 * loop and the mutex will already be unlocked.
-+		 *
-+		 * Because this is not an ERRORCHECK mutex, that
-+		 * inconsistency will be silently ignored.
-+		 */
-+		pthread_mutex_unlock(&finfo->next->mutex);
-+	}
++	load_init_xstate(&xstate, xbuf);
 +
 +	free(xbuf);
-+	return finfo;
 +}
 +
-+static void create_threads(uint32_t num_threads, uint32_t iterations, struct futex_info *finfo)
++/*
++ * Ptracer injects the randomized xstate data. It also reads before and
++ * after that, which will execute the kernel's state copy functions.
++ */
++static void ptracer_inject_xstate(pid_t target)
 +{
-+	int i;
++	uint32_t xbuf_size = get_xbuf_size();
++	struct xsave_buffer *xbuf1, *xbuf2;
++	struct iovec iov;
 +
-+	for (i = 0; i < num_threads; i++) {
-+		int next_nr;
++	/*
++	 * Allocate buffers to keep data while ptracer can write the
++	 * other buffer
++	 */
++	xbuf1 = alloc_xbuf();
++	xbuf2 = alloc_xbuf();
++	if (!xbuf1 || !xbuf2)
++		ksft_exit_fail_msg("unable to allocate XSAVE buffer\n");
 +
-+		finfo[i].nr = i;
-+		finfo[i].iterations = iterations;
++	iov.iov_base = xbuf1;
++	iov.iov_len  = xbuf_size;
 +
-+		/*
-+		 * Thread 'i' will wait on this mutex to be unlocked.
-+		 * Lock it immediately after initialization:
-+		 */
-+		pthread_mutex_init(&finfo[i].mutex, NULL);
-+		pthread_mutex_lock(&finfo[i].mutex);
++	if (ptrace(PTRACE_GETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
++		ksft_exit_fail_msg("PTRACE_GETREGSET failed\n");
 +
-+		next_nr = (i + 1) % num_threads;
-+		finfo[i].next = &finfo[next_nr];
++	printf("[RUN]\t%s: inject xstate via ptrace().\n", xstate.name);
 +
-+		if (pthread_create(&finfo[i].thread, NULL, check_xstate, &finfo[i]))
-+			ksft_exit_fail_msg("pthread_create() failed\n");
-+	}
++	load_rand_xstate(&xstate, xbuf1);
++	copy_xstate(xbuf2, xbuf1);
++
++	if (ptrace(PTRACE_SETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
++		ksft_exit_fail_msg("PTRACE_SETREGSET failed\n");
++
++	if (ptrace(PTRACE_GETREGSET, target, (uint32_t)NT_X86_XSTATE, &iov))
++		ksft_exit_fail_msg("PTRACE_GETREGSET failed\n");
++
++	if (*(uint64_t *)get_fpx_sw_bytes(xbuf1) == xgetbv(0))
++		printf("[OK]\t'xfeatures' in SW reserved area was correctly written\n");
++	else
++		printf("[FAIL]\t'xfeatures' in SW reserved area was not correctly written\n");
++
++	if (validate_xstate_same(xbuf2, xbuf1))
++		printf("[OK]\txstate was correctly updated.\n");
++	else
++		printf("[FAIL]\txstate was not correctly updated.\n");
++
++	free(xbuf1);
++	free(xbuf2);
 +}
 +
-+static bool checkout_threads(uint32_t num_threads, struct futex_info *finfo)
++void test_ptrace(uint32_t feature_num)
 +{
-+	void *thread_retval;
-+	bool valid = true;
-+	int err, i;
-+
-+	for (i = 0; i < num_threads; i++) {
-+		err = pthread_join(finfo[i].thread, &thread_retval);
-+		if (err)
-+			ksft_exit_fail_msg("pthread_join() failed for thread %d err: %d\n", i, err);
-+
-+		if (thread_retval != &finfo[i]) {
-+			ksft_exit_fail_msg("unexpected thread retval for thread %d: %p\n",
-+					   i, thread_retval);
-+		}
-+
-+		valid &= finfo[i].valid;
-+	}
-+
-+	return valid;
-+}
-+
-+static void affinitize_cpu0(void)
-+{
-+	cpu_set_t cpuset;
-+
-+	CPU_ZERO(&cpuset);
-+	CPU_SET(0, &cpuset);
-+
-+	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0)
-+		ksft_exit_fail_msg("sched_setaffinity to CPU 0 failed\n");
-+}
-+
-+void test_context_switch(uint32_t feature_num, uint32_t num_threads, uint32_t iterations)
-+{
-+	struct futex_info *finfo;
-+
-+	/* Affinitize to one CPU to force context switches */
-+	affinitize_cpu0();
++	pid_t child;
++	int status;
 +
 +	xstate = get_xstate_info(feature_num);
 +
-+	printf("[RUN]\t%s: check context switches, %d iterations, %d threads.\n",
-+	       xstate.name, iterations, num_threads);
++	child = fork();
++	if (child < 0) {
++		ksft_exit_fail_msg("fork() failed\n");
++	} else if (!child) {
++		if (ptrace(PTRACE_TRACEME, 0, NULL, NULL))
++			ksft_exit_fail_msg("PTRACE_TRACEME failed\n");
 +
-+	finfo = malloc(sizeof(*finfo) * num_threads);
-+	if (!finfo)
-+		ksft_exit_fail_msg("unable allocate memory\n");
++		ptracee_touch_xstate();
 +
-+	create_threads(num_threads, iterations, finfo);
++		raise(SIGTRAP);
++		_exit(0);
++	}
 +
-+	/*
-+	 * This thread wakes up thread 0
-+	 * Thread 0 will wake up 1
-+	 * Thread 1 will wake up 2
-+	 * ...
-+	 * The last thread will wake up 0
-+	 *
-+	 * This will repeat for the configured
-+	 * number of iterations.
-+	 */
-+	pthread_mutex_unlock(&finfo[0].mutex);
++	do {
++		wait(&status);
++	} while (WSTOPSIG(status) != SIGTRAP);
 +
-+	/* Wait for all the threads to finish: */
-+	if (checkout_threads(num_threads, finfo))
-+		printf("[OK]\tNo incorrect case was found.\n");
-+	else
-+		printf("[FAIL]\tFailed with context switching test.\n");
++	ptracer_inject_xstate(child);
 +
-+	free(finfo);
++	ptrace(PTRACE_DETACH, child, NULL, NULL);
++	wait(&status);
++	if (!WIFEXITED(status) || WEXITSTATUS(status))
++		ksft_exit_fail_msg("ptracee exit error\n");
 +}
 diff --git a/tools/testing/selftests/x86/xstate.h b/tools/testing/selftests/x86/xstate.h
-index d3461c4..5ef66f2 100644
+index 5ef66f2..2bf11d3 100644
 --- a/tools/testing/selftests/x86/xstate.h
 +++ b/tools/testing/selftests/x86/xstate.h
-@@ -189,4 +189,6 @@ static inline void set_rand_data(struct xstate_info *xstate, struct xsave_buffer
- 		*ptr = data;
+@@ -190,5 +190,6 @@ static inline void set_rand_data(struct xstate_info *xstate, struct xsave_buffer
  }
  
-+void test_context_switch(uint32_t feature_num, uint32_t num_threads, uint32_t iterations);
-+
+ void test_context_switch(uint32_t feature_num, uint32_t num_threads, uint32_t iterations);
++void test_ptrace(uint32_t feature_num);
+ 
  #endif /* __SELFTESTS_X86_XSTATE_H */
 
