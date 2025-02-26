@@ -1,189 +1,144 @@
-Return-Path: <linux-kernel+bounces-532987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347D0A4548B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:20:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97386A4548C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F95175AA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30ABB189C254
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED2D25E452;
-	Wed, 26 Feb 2025 04:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2582825B675;
+	Wed, 26 Feb 2025 04:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WrJw/GWR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IBjxv5M2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iQXnRaS8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C3721ABD7;
-	Wed, 26 Feb 2025 04:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ADF15098A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740543613; cv=none; b=EscC5P/bEgOhfvmJiS2yPOEiHbvHhr1frM2FW/vV4xsxDa+9CRO25H8rC3Kg0RYmpqIrwegqeST+XUnmaMjJOMH0qmLp7JNiItsTQ0q0+GrNaROk5JKpU6spRdCzwQd/6+e9lmrjTtuxdhyLXilH3p91F0GDGsDclZdsrnlwR5w=
+	t=1740543958; cv=none; b=XaJvlshOqUWd7RfPIsAM8dqKf0Bfx+zYHLKp/vlwy/mfryhRcynaKMivWDqBzvtZSLPLt47KZpLZVdgmX+H0nFl6VdP0JGb5GGQCqNiHzBbt6hVUWl4Kwb+BbCgo7peT3hAVtBi1d2JQmyijO2CIq4emPAI1vghTXC1AARNcZCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740543613; c=relaxed/simple;
-	bh=ZHVrDwJExnx36XfFWRiPc6MnOFvFnKgaoMa3KBB53o8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eAZXzolTRLo05a+RvbN2i1+UtHExYMlGlFOGAfP8O8EYF+9rla6fpiIKGzZdGtbZQU/U/zqw6TUr2lAjFnH0yxg0xW7CiYSYlmn2yVyPOil9wnLC6khS/5knHvNehQszWHgHU/Kszbj4Fpn8+0Xp+3M1cpk+vhUDh8KX+F8UWjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WrJw/GWR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMX4I7017692;
-	Wed, 26 Feb 2025 04:20:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HziE7p2em3oylv3aYDJyUsu7KPrCXdkhC04EonUReFU=; b=WrJw/GWRlGPrJy5+
-	QHtzhMaVna8M0b0AD9Z8cQdIn/i1HgVO2ay3LtG5nFMPzYEeF+ID09M2EP9Ue61T
-	c8HxJxNcH9reuPFVz1EFqrmZLCbbJzRd/qfs5+xZ0iTUx10ADqLfHTSBa+Ywi87P
-	IMZY6hNcVisLdHEYSKPghyfpj6TuiKJQbPJ194Vof+k420ZC90yDLvRZDC/a4xr1
-	eFg9DQR0QI6j2et2a/zMZucsz430fI4n4+iSFweGGcmERoGn1Rm7328YJ/FdsA2d
-	WJ9gerWf7PFmcpJLzKVzAh77UiQJA3FKHV9Nl6xmNZNW6FuN8Xm3TI4zQapacy+z
-	gmJi7w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn0phn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 04:20:07 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q4K59a025206
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 04:20:05 GMT
-Received: from [10.216.47.64] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
- 2025 20:20:01 -0800
-Message-ID: <c367e9bf-d04d-4757-b061-5803ba6304d4@quicinc.com>
-Date: Wed, 26 Feb 2025 09:49:58 +0530
+	s=arc-20240116; t=1740543958; c=relaxed/simple;
+	bh=zZP5+1eZJWuflqb2MTMj+/qM9inemghd3GToni9vRCE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RI2PXJFiIAsMcqKi3NDiJJHYLeM3l5pmonRjADiD+PvmMZoIt5DuChwtOsBeMjdKr9IYrSI4U6uMQA0j32v8DYibJSUF389Qcpb9Jr7192C+VTnwQumAOssStS4MNETp0GTWQe4iIl2MRzY7RMqRKet++sfWS0HI4TsNuqjuugM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IBjxv5M2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iQXnRaS8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740543954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eStMvHC894Q2g/dFThMFyClASVgx74TaSqqWiNEOKMw=;
+	b=IBjxv5M2aTYeEDnASxf/wd/jz8Yd2PYUSm2DHkFKVbsPmADa1CK3cT1f29Onp1CqoI/dXt
+	PZtra+hsZpGy+ibRHKbcZShc8w9VyoxZFLUDRtlay1nv+CBUOcqUs9OXnqt2rXi0BPKd6g
+	/ithagtTc92VRfXRwZCNjvp/pFzsjEF9cHri8i4TpoW83P+WsDzYhSqLUGRT/+ja6kcGsA
+	/qB8q0mSKdDLLZr4Jx7+EmXimpOjixdYP2mTA98sWiA/xgrdXMXp6ffKJCi/YImbMzzXkM
+	I/QgLSXl7iR7S6zJNKMJDIm6abW6XDv/N97iJvRD2OZr9OVV51ma3qyk03CDvw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740543954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eStMvHC894Q2g/dFThMFyClASVgx74TaSqqWiNEOKMw=;
+	b=iQXnRaS8/e9MpSwhUyGHURH7MtnSWRKvO+O4dsV9ev0/9uWpPsu+XPS0XnEz4oqeL4lODg
+	JZxib8k8AwtJ/7DQ==
+To: Donghyeok Choe <d7271.choe@samsung.com>, pmladek@suse.com
+Cc: linux-kernel@vger.kernel.org, takakura@valinux.co.jp,
+ youngmin.nam@samsung.com, hajun.sung@samsung.com, seungh.jung@samsung.com,
+ jh1012.choi@samsung.com
+Subject: Re: printk: selective deactivation of feature ignoring non panic
+ cpu's messages
+In-Reply-To: <20250226031628.GB592457@tiffany>
+References: <CGME20250226031756epcas2p3674cccc82687effb40575aa5fa2956e0@epcas2p3.samsung.com>
+ <20250226031628.GB592457@tiffany>
+Date: Wed, 26 Feb 2025 05:31:53 +0106
+Message-ID: <84ikoxxrfy.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: qcom: geni-se: Rename qcom,geni-se.yaml
- to qcom,geni-se-qup.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20250221085439.235821-1-quic_vdadhani@quicinc.com>
- <49fc59ed-9d09-46bd-9ca6-99d3445221f7@kernel.org>
- <f3349d2a-7eba-4865-9b58-0b2e7e57cc92@quicinc.com>
- <ed8f7aee-e5be-453c-b324-e59e90ecee77@kernel.org>
- <428a1384-bc06-4952-a117-d57f5ab6446c@quicinc.com>
- <03587630-9378-4b67-822a-563379c06655@kernel.org>
- <a65344c8-9b1d-44b1-923a-3840298d19d1@quicinc.com>
- <e508f58f-70cc-4c6a-a6e1-2f046d54d1c3@kernel.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <e508f58f-70cc-4c6a-a6e1-2f046d54d1c3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FUIbBqbcg98zwAX1L77hXiDuSePGzcDT
-X-Proofpoint-GUID: FUIbBqbcg98zwAX1L77hXiDuSePGzcDT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=422
- suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260032
+Content-Type: text/plain
 
+Hi Donghyeok,
 
+On 2025-02-26, Donghyeok Choe <d7271.choe@samsung.com> wrote:
+> I would like to print out the message of non panic cpu as it is.
+> Can I use early_param to selectively disable that feature?
 
-On 2/25/2025 6:49 PM, Krzysztof Kozlowski wrote:
-> On 25/02/2025 10:33, Viken Dadhaniya wrote:
->>
->>
->> On 2/24/2025 6:59 PM, Krzysztof Kozlowski wrote:
->>> On 24/02/2025 14:25, Viken Dadhaniya wrote:
->>>>
->>>>
->>>> On 2/24/2025 3:48 PM, Krzysztof Kozlowski wrote:
->>>>> On 24/02/2025 09:47, Viken Dadhaniya wrote:
->>>>>>
->>>>>>
->>>>>> On 2/21/2025 5:05 PM, Krzysztof Kozlowski wrote:
->>>>>>> On 21/02/2025 09:54, Viken Dadhaniya wrote:
->>>>>>>> The qcom,geni-se.yaml file describes the Qualcomm Universal Peripheral
->>>>>>>> (QUP) wrapper and the common entities required by QUP to run any Serial
->>>>>>>> Engine (SE) as I2C, SPI, UART, or I3C protocol.
->>>>>>>>
->>>>>>>> Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml to better reflect its
->>>>>>>> association with QUP (Qualcomm Universal Peripheral) and the compatible
->>>>>>>> string.
->>>>>>>>
->>>>>>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>>>>>>> ---
->>>>>>>>      .../soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml}       | 2 +-
->>>>>>>>      1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>>      rename Documentation/devicetree/bindings/soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml} (98%)
->>>>>>>>
->>>>>>>
->>>>>>> That's just churn for no real gain. Not even tested churn.
->>>>>>
->>>>>> That's just churn for no real gain.
->>>>>>
->>>>>> We made this change based on below plan, we think this will be helpful.
->>>>>>
->>>>>> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml. Reason at 2 below.
->>>>>
->>>>> There is no reason 2 at this point. You split your patchsets
->>>>> incorrectly. At this point this is churn, without gain. No users of this
->>>>> rename, no benefits.
->>>>>
->>>>>> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (spi,
->>>>>> i2c, uart) nodes. This will be helpful for the shared schema in the
->>>>>> ongoing changes
->>>>>
->>>>> Then post it, instead of sending something which makes no sense on its own.
->>>>
->>>> Should I include this change in v3 of the following serial patch?
->>>>
->>>> https://lore.kernel.org/linux-arm-msm/f090d637-1ef1-4967-b5bc-6bfce3d7130e@kernel.org/T/
->>>>
->>>> I hope the approach below is fine for you:
->>>>
->>>> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml.
->>>
->>> I still do not see any need nor justification for above.
->>>
->>>> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (i2c,
->>>> spi, uart) nodes.
->>>
->>> Look how other common qcom schemas are named :/
->>>
->>
->> Yes, but we need to get agreement on whether we can create it or not. I
-> 
-> That's not how upstream works.
-> https://www.goodreads.com/quotes/437173-talk-is-cheap-show-me-the-code
-> 
-> I don't have time to discuss imaginary future work which might happen or
-> might not. Send complete work.
-> 
+I have no issues about allowing this type of feature for debugging
+purposes. I do not know if early_param is the best approach. I expect
+Petr will offer good insight here.
 
-I will post the code in the next patch.
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index fb242739aec8..3f420e8bdb2c 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2368,6 +2368,17 @@ void printk_legacy_allow_panic_sync(void)
+>         }
+>  }
+>
+> +static bool __read_mostly keep_printk_all_cpu_in_panic;
+> +
+> +static int __init keep_printk_all_cpu_in_panic_setup(char *str)
+> +{
+> +       keep_printk_all_cpu_in_panic = true;
+> +       pr_info("printk: keep printk all cpu in panic.\n");
+> +
+> +       return 0;
+> +}
+> +early_param("keep_printk_all_cpu_in_panic", keep_printk_all_cpu_in_panic_setup);
 
-> 
->> found a few commonly used files:
->>
->> - /pci/qcom,pcie-common.yaml
->> - /pinctrl/qcom,tlmm-common.yaml
-> 
-> so common suffix - geni-se-common... or geni-se-qup-props to mimic
-> peripheral properties.
-> 
-> Best regards,
-> Krzysztof
+Quite a long argument. I am horrible at naming. I expect Petr would have
+a good suggestion (if early_param is the way to go).
+
+> +
+>  asmlinkage int vprintk_emit(int facility, int level,
+>                             const struct dev_printk_info *dev_info,
+>                             const char *fmt, va_list args)
+> @@ -2379,13 +2390,15 @@ asmlinkage int vprintk_emit(int facility, int level,
+>         if (unlikely(suppress_printk))
+>                 return 0;
+>
+> -       /*
+> -        * The messages on the panic CPU are the most important. If
+> -        * non-panic CPUs are generating any messages, they will be
+> -        * silently dropped.
+> -        */
+> -       if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+> -               return 0;
+> +       if (!keep_printk_all_cpu_in_panic) {
+> +               /*
+> +                * The messages on the panic CPU are the most important. If
+> +                * non-panic CPUs are generating any messages, they will be
+> +                * silently dropped.
+> +                */
+> +               if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+> +                       return 0;
+> +       }
+
+I would not nest it. Just something like:
+
+	/*
+	 * The messages on the panic CPU are the most important. If
+	 * non-panic CPUs are generating any messages, they may be
+	 * silently dropped.
+	 */
+	if (!keep_printk_all_cpu_in_panic &&
+	    !panic_triggering_all_cpu_backtrace &&
+	    other_cpu_in_panic()) {
+		return 0;
+	}
+
+John
 
