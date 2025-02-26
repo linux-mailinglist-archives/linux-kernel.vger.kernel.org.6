@@ -1,227 +1,182 @@
-Return-Path: <linux-kernel+bounces-533275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEDEA457AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86F9A457B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F38D16AF3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:09:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647E7188E863
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D781E1DED;
-	Wed, 26 Feb 2025 08:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CF21E1DEB;
+	Wed, 26 Feb 2025 08:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iKk8yCtS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mSZKK7LV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iKk8yCtS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mSZKK7LV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="VoFYNTJj"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2096.outbound.protection.outlook.com [40.107.255.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00EC258CC1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557334; cv=none; b=frmexpwGdA1K/PDjpzlKlBixkSMRX+dvh394w8gp/8kDiJ03nqEUdUVSez0xpYRlhkAU74XElpC7Z6p5qAAQimK90sv4MuUNDKUGQNfmpMjq0q97EOJ1y524XjhMkqIh9vV2IHqhBGGQacVlt9/1DWA9RxqGhR0nunuPYGKJ/Gw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557334; c=relaxed/simple;
-	bh=OEo5HEFOh73EFDlZH1hOetdDxPQFrwvqRlBIQw3OlCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cm+foIhZeL8cJ/4QVGRMK9Atxzn3H/X9eNIPOdBsgCXxAi5q52OuAf8oMH5uIwT1TWHG3sf7F3ztsh1O+906RXVbfJTqxdOn5W6s1VQEz4ded5NMqJKRIndDcKhM7/VKzdq6OreMh6xy/Su9MVXd4ClwFYIXU61d/lQ4aZQjXUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iKk8yCtS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mSZKK7LV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iKk8yCtS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mSZKK7LV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 16CAC21192;
-	Wed, 26 Feb 2025 08:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740557331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
-	b=iKk8yCtSvi+W43VW3jZwHJCfrBO3nFqO1nyRAg9WOGrtfQ99aNSDnqAyF1EuUYq73pJ0m0
-	7cpDxjT0C4fgp0I3ZFIUtm81Yhw8oR7T3SZmlFUATHUhA0IN5cD94Qc9CHfPRdb1X+l47p
-	jCRst/MdPF5COdGOpogNPilTCw4to0M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740557331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
-	b=mSZKK7LV8gPe5qgFMdbMSl+qFS/2Xmg4JJdEEu4T8GUDxOgdsl847tENLpFf8LoUWx+hmP
-	pbGLhxqo1wyxzFAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iKk8yCtS;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=mSZKK7LV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740557331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
-	b=iKk8yCtSvi+W43VW3jZwHJCfrBO3nFqO1nyRAg9WOGrtfQ99aNSDnqAyF1EuUYq73pJ0m0
-	7cpDxjT0C4fgp0I3ZFIUtm81Yhw8oR7T3SZmlFUATHUhA0IN5cD94Qc9CHfPRdb1X+l47p
-	jCRst/MdPF5COdGOpogNPilTCw4to0M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740557331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PbZP9a76kFF7v/5fgh8JyxkHa3nu4MM5DkC25sBFUEw=;
-	b=mSZKK7LV8gPe5qgFMdbMSl+qFS/2Xmg4JJdEEu4T8GUDxOgdsl847tENLpFf8LoUWx+hmP
-	pbGLhxqo1wyxzFAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD6F913A53;
-	Wed, 26 Feb 2025 08:08:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jIF7KBLMvmfmPwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 08:08:50 +0000
-Message-ID: <69a78c98-d843-4e94-8559-7d435a56a442@suse.de>
-Date: Wed, 26 Feb 2025 09:08:50 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A08018C0C;
+	Wed, 26 Feb 2025 08:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740557356; cv=fail; b=EStBMDiMKSb+MjSI76gzBT589Rz9q8Q2UKoFLvVpTYmrRA+zu3KIVdg+gZXKJ7/b9ArTPe4zCgnTcK8ydOoqy+VAwDlhspQbckn5qpraangrzcBkteYqYq75PlfrF37YAv4VF4py644gwoZcpVyjKBUU5jxMemHLiQkkHk3No4Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740557356; c=relaxed/simple;
+	bh=viRZxU/ZwXurH5kfFdsEQl7ABqaiKtFyW3RXMAqMvtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqS8qY1ZML0YYPiq9H9KMFRAoI6IqX0MVdvY0LlY4EbietCAmw7GvDpQ1YvVhJtb02lc+VkZjcLVJyL03ldRSAuiMxRrEWnulyo7LMKAELN8MjVH6fqkECB/kkefISevMKPZ/Fhv9Gv/s2UPMxeEn/VpzH/iTqAJKvlerR3m9l0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=VoFYNTJj; arc=fail smtp.client-ip=40.107.255.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UHsRMDKSSF9NSvCNDMuBxEiqM8cX/3/2EflptBGRt98pFFXFSg+QZu8sN27b+oiXLQHZpk4Vml4hsHpwSxh0NOgdZr7H2i4nl0EZS3V2rvKUSy/P8RGU7OAalBQ2IqkCVvEv+fCMHj6t78ewv/XFw8KjitoGWQtISEVm9ofK0sp80vNUFqvfJtkZgopxtOQbxaoI+yx7GZ6qt7YVlmJHa6gqUYNUvxRPBQAKz164HxuF4XIrCHlHfwM/HBRKxhlCKyrHB0YC1XgR8Glrohb+fZsH6atLni8yRzjuwGDkwgu6d1WUsCmagqa0DZkn+DYlNp6pheeF6kdsBIutujbong==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U7nfxIdf8M/5IC9KVZlOZ+U6lRsZC040/sXFOP/9g+E=;
+ b=G4oNkiRlXlN6YEG/Qdg8KMxfECntKIpyj3bxovs5DXGzfgQ1xSATWR0rtRzXvyjDL/0yywaPdS3tCsofCaL53DIpDh6onieDrI8apY2Le5Obxic/uk1okXRs75R52g0vpyQ7QuzOiQ3uPNLwjV82qveqQhY1MD7+OktIQAEdpVQk8ZYq8vowCBC4LGjdlpkPqb0GR8I0o70HjrKh0iNesmtD0P3c3lnoxU/BITQOyNouzK94tSQjzxDbCLp0eoeTuSjpk1j2ZEME473oovNoeVoByJgw02d1IAZ4s5tr7NzI4xumVM763dISi1sUO+2p8FjYhKXtX+NCCksTihtAqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U7nfxIdf8M/5IC9KVZlOZ+U6lRsZC040/sXFOP/9g+E=;
+ b=VoFYNTJjAT1w7KpuvCeNCGRfYf3RlX5R6VI1vYco/sRYeuXidw3bopJavCc37Hf3awltO0qPSSZ6oqLh96aZOW5NTWH/f14KjYZ/B790aDxIDrzPLi7gHmQWT9wH9QNqTtwqIPcjuggji2ZB2SN1Ftm76yltjSkbwnxuuMFhPAXDZtHSws9Bsaw1lU+pFqHY60KGEdiNG6q8bDNqHRSqWn/Wdp7tCBetfR+HsEF1YFsg1BK/fv+gGk4tecRYN7lQFyH7AIV2urwCVWCTKRrz59FwbzYKDlG1oZW4X7w40wPFg/1GnKbTi2ZxuRfQl8hN0UIVt79w3ff88Dcj4UOIHg==
+Received: from SG2PR02CA0104.apcprd02.prod.outlook.com (2603:1096:4:92::20) by
+ PUZPR06MB5556.apcprd06.prod.outlook.com (2603:1096:301:e9::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.19; Wed, 26 Feb 2025 08:09:08 +0000
+Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
+ (2603:1096:4:92:cafe::2a) by SG2PR02CA0104.outlook.office365.com
+ (2603:1096:4:92::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.21 via Frontend Transport; Wed,
+ 26 Feb 2025 08:09:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 08:09:07 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 3B7C24160CA0;
+	Wed, 26 Feb 2025 16:09:06 +0800 (CST)
+Date: Wed, 26 Feb 2025 16:09:00 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl, Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v2 2/6] dt-bindings: arm: add CIX P1 (SKY1) SoC
+Message-ID: <Z77MHGhUF6pPwLww@nchen-desktop>
+References: <20250226012136.854614-1-peter.chen@cixtech.com>
+ <20250226012136.854614-3-peter.chen@cixtech.com>
+ <f89817fe-22af-460e-9f5c-a3347eba1892@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mdacon: rework dependency list
-To: Arnd Bergmann <arnd@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller
- <deller@gmx.de>, Roland Kletzing <devzero@web.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250225164436.56654-1-arnd@kernel.org>
- <20250225164436.56654-3-arnd@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250225164436.56654-3-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [0.29 / 50.00];
-	RSPAMD_URIBL(4.50)[arndb.de:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[kernel.org,linuxfoundation.org,gmx.de,web.de,linux-foundation.org];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de,web.de];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,arndb.de:email];
-	R_DKIM_ALLOW(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 16CAC21192
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 0.29
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f89817fe-22af-460e-9f5c-a3347eba1892@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|PUZPR06MB5556:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6e4e211-2e8a-4dd9-9de3-08dd563cd7dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rmhARDMwuanQ9Qeju5EaWqjhCQQ6CfFFkMD2C7uEVDJsEroo3fMteOeZSkss?=
+ =?us-ascii?Q?HQIP1kFmgFwxSCyRry9/0OKIeaZSX1kz5WFQpkXZkNVlSiLE4aEVN/m6kegl?=
+ =?us-ascii?Q?AR8xs5aIzH2IB0Q1wJ7r9NKfI2MnkGK0c5SNt8Vyf320g5X5Lk75eiIbKskc?=
+ =?us-ascii?Q?bzNeiEqGp+vw014j/ZTOoyZYTWkpVKiP/GPnbPv9qK8/yvJ5eTGB5/WV78/t?=
+ =?us-ascii?Q?xG3nJL52UamUOAqDlcij00gBy8rAhKDBcCVstrpQTTWU2rfh9kLHnEFIfptd?=
+ =?us-ascii?Q?muZfPgzCq2uJ5+3puvHHjAUV2VpAf+HTX64cIMdNtKAZa1490jPvG6piYofL?=
+ =?us-ascii?Q?ZDOPM6BXclmtNyyPBtv5TRDhXTqzvHkZ3Es5NPVM9Q9L4yOlU/XGCGIrxomm?=
+ =?us-ascii?Q?wgH7llMshwC2XuLfdljn9lo307CiCKr8SUwwRQjbLwSxkZTQGE+nJGnEpygj?=
+ =?us-ascii?Q?+53/fZmNSE+THKvzv2AKbw1spfS1C9fd+R/9lyB6OpqlCS5voj/eIUv0UZWN?=
+ =?us-ascii?Q?1ac8fkFCtlmQeyC3rbIaLlAQCMZzAb/7WmVAQOZmFCB7WMNPkPK/lLc6Xu3z?=
+ =?us-ascii?Q?OljbvnzZ4LZX/hvZK/IrwjtvMyNCXBgTsLNvrPhumXmUF+X7+3nYUsvibktI?=
+ =?us-ascii?Q?i1B3sFG3QavLmlTT6Z9CoDo3GWlsR4WmM2B6uZwt7pDPeiOXzRcBNvQ3FXd8?=
+ =?us-ascii?Q?QIa6NkdYYnsOuYOmhdjjSH6gCQQXPLobdqBdJGzlNNF1fZH8U5wfm9eLCcuE?=
+ =?us-ascii?Q?Y+XhPtrW5jOr0GODs1evBNspFnhbQBeO93LeWdZLeck+WiR1EW00TLfME/uo?=
+ =?us-ascii?Q?tgI8TkP9fdGnEp3U3mP1oKVXMVQOc0Tp/zrbd4/QACJ16eFYAq532IfSGKal?=
+ =?us-ascii?Q?d8/Cb9h/gKsCNvfxLwbUH4b+luCTgml68kREkFUunQ+PldtQ7gpt6sdR9ryG?=
+ =?us-ascii?Q?7ZMCQeARfPDH+50q7GFuojWg+cZqMqGABXJ49gBcOfOvzrsq8CnaFi7LBwPd?=
+ =?us-ascii?Q?cH9Hqar09wuDf+bNOlkg1QNdIDK+Q95pVWNfwRMip66iO+gC8aZRLLa2M5I5?=
+ =?us-ascii?Q?k5FDH7eYUNE34o9V2vm8dFXiOAReV5l5xAWTpLSl06Ym1IAZLubF+qOpqAw8?=
+ =?us-ascii?Q?Ih8u6sLwses0KzaOcp6HmlDoeiyV37V5bjaW5MZs9S/gxh5Pogvur9m6d60R?=
+ =?us-ascii?Q?u4WcDsEQyOAGAvf2Q/ctMnXyd2m149iWuHUDSbv8kI1Wop0qXfnOF0zg2l6T?=
+ =?us-ascii?Q?lWlt358lbVZl4dwpxGaiygLIeWR+wN2eczK2nlPk01Q6iMyy37x/XtA9TGiW?=
+ =?us-ascii?Q?FYtZdtswo0pmkZFVLUHwBrqPE06vG9qUTzpfhkIvxtaltnKOxp8FSQsntaZp?=
+ =?us-ascii?Q?UWvxB4AJT3yB69bIXYuncY+Q/O44T/ZVcDtPBTufzgV/8GU5ObPiBYpUOIxh?=
+ =?us-ascii?Q?k+KlNFkQ5Jk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 08:09:07.3786
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6e4e211-2e8a-4dd9-9de3-08dd563cd7dd
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FB4.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5556
 
+On 25-02-26 08:02:12, Krzysztof Kozlowski wrote:
+> EXTERNAL EMAIL
+> 
+> On 26/02/2025 02:21, Peter Chen wrote:
+> > Add device tree bindings for CIX P1 (Internal name sky1) Arm SoC,
+> > it consists several SoC models like CP8180, CD8180, etc.
+> >
+> > Acked-by: Fugang Duan <fugang.duan@cixtech.com>
+> > Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> > ---
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+> of patchset, under or above your Signed-off-by tag, unless patch changed
+> significantly (e.g. new properties added to the DT bindings). Tag is
+> "received", when provided in a message replied to you on the mailing
+> list. Tools like b4 can help here. However, there's no need to repost
+> patches *only* to add the tags. The upstream maintainer will do that for
+> tags received on the version they apply.
+> 
+> Please read:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
 
+I have checked the review-process again at:
+https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=935897
+It seems no one gives any Reviewed-by or Acked-by Tag.
 
-Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> mdacon has roughly the same dependencies as vgacon but expresses them
-> as a negative list instead of a positive list, with the only practical
-> difference being PowerPC/CHRP, which uses vga16fb instead of vgacon.
->
-> The CONFIG_MDA_CONSOLE description advises to only turn it on when vgacon
-> is also used because MDA/Hercules-only systems should be using vgacon
-> instead, so just change the list to enforce that directly for simplicity.
->
-> The probing was broken from 2002 to 2008, this improves on the fix
-> that was added then: If vgacon is a loadable module, then mdacon
-> cannot be built-in now, and the list of systems that support vgacon
-> is carried over.
->
-> Fixes: 0b9cf3aa6b1e ("mdacon messing up default vc's - set default to vc13-16 again")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-> ---
-> I have no idea when the last time was that someone actually tried using
-> dualhead vgacon/mdacon with two ISA cards, or if it still works. We may
-> be better off removing the driver altogether, but I don't see anything
-> immediately wrong it with it.
-> ---
->   drivers/video/console/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-> index ea4863919eb9..12f54480f57f 100644
-> --- a/drivers/video/console/Kconfig
-> +++ b/drivers/video/console/Kconfig
-> @@ -24,7 +24,7 @@ config VGA_CONSOLE
->   	  Say Y.
->   
->   config MDA_CONSOLE
-> -	depends on !M68K && !PARISC && ISA
-> +	depends on VGA_CONSOLE && ISA
->   	tristate "MDA text console (dual-headed)"
->   	help
->   	  Say Y here if you have an old MDA or monochrome Hercules graphics
+If I am missing something, please correct me.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
 
+Best regards,
+Peter
 
