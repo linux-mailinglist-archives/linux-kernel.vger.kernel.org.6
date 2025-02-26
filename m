@@ -1,55 +1,39 @@
-Return-Path: <linux-kernel+bounces-533709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1003A45DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22251A45DF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98C33A93B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89AB3A5496
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAE221D3E7;
-	Wed, 26 Feb 2025 11:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FgF5BQbo"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D68A20FA9B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81152185AC;
+	Wed, 26 Feb 2025 11:55:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F8F212D67;
 	Wed, 26 Feb 2025 11:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570951; cv=none; b=djoU+Ez3jXe53heNODomC8SP4TxyZeG97U29DdVBHDA/wHexMs0r/UHmtmhefMKOkmta7p4nV5UNChXQnS2C8JConPe150MmhI4VH6Fo3kGzMTqivoZqLsWhDrYlkzVzkNf5LoT/qiBShHrpeWdrmcbPMAzr5mZyoajHugejlEk=
+	t=1740570951; cv=none; b=O69vMa7uAoR4DnVFKyNgoZioCWga5FV0N6F29aef7Hs+nTjTjlPvJJfHb8wodHBJVqgggMewtOyCYshUxv9aJ3LWdaMXyK989y5qCpGXNPH5ZySedcRkCtu1WW9FQ/GAgf3+NwYnx0ZxKXa7jOf3iJNimpdNy7swwYR7oabN7Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740570951; c=relaxed/simple;
-	bh=sTX8xi6LRWxYofvmbcRQIPwzk4BhNjim5Kc1TZCgi5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=oa2f+uIviei+UOpW+FvaORTW8H79sCtzIO5I5byYm/xMmFhRB06NmNmIMpFHLZ5g7SYpxD20t5wzXBUmB5WX3Wki+KWapLdJ7T0ElsFMCIBwu28Tr5V7FAO4ed1Qb7ErD0b4Ge8+HchhElsDbUJnKLtKc21GyT3ZujrMLYjlJKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FgF5BQbo; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740570931; x=1741175731; i=markus.elfring@web.de;
-	bh=sTX8xi6LRWxYofvmbcRQIPwzk4BhNjim5Kc1TZCgi5I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FgF5BQbol86RnWL2Sk24p7qdL5tQLOeT6f07Kvxk4P0VuErz4WgTRL7pn6j/9HBZ
-	 z+cak2KgFRXeyXt7h/+BTqXGvv0hTXqqct+9+hLjPcNj3botKQ3pCtj1zGcH4ifEh
-	 yFa3sBuphYKHeZZwVQaSV3wyFrLsvWanJ3Z6ukLmBSFQ8+HjJKTN807sEt43aEoUg
-	 HbB2HsK30RgebgKAq9z+FLUxZ7GFREklxLf4JkReYQU8HhTTePiNS5BpbM3Q4Iq3/
-	 /8xzXq7fVNqYLas56fa9vFIZ5anQ0OIXKnqjBE+M5zkQbuCHIU124L0CnFIHiM9E2
-	 ngho7wBag929Q1fQLw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M604f-1tfrLt2zXv-00E5Ph; Wed, 26
- Feb 2025 12:55:30 +0100
-Message-ID: <5495665a-774b-4bc5-8eb2-a9680d09b0be@web.de>
-Date: Wed, 26 Feb 2025 12:55:17 +0100
+	bh=jbHQK301dzYzqlCeR9tMhQ7C/BKSlI9rFj3QbZTlF9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exH6OewDXeArKGKAUqgN8EXSS2JKicu116f4cSmsr5Dp66tMSRY670nsA2GoI1PopcDU7uXt8t+i198u547KWRnk4+VxDMQo0cM4hTMgdEEuBl6kGrBAPmFJKs6PMNpUuXI+Fw7gNCZiqmfp4jHjBeOwdprH4XrxvUgw1Pziig8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCD60106F;
+	Wed, 26 Feb 2025 03:56:03 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB17A3F6A8;
+	Wed, 26 Feb 2025 03:55:45 -0800 (PST)
+Message-ID: <abad8cd1-2436-416b-9db8-3c5e9eb38d73@arm.com>
+Date: Wed, 26 Feb 2025 11:55:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,107 +41,242 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH v3 04/16] ALSA: ac97: convert timeouts to
- secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr,
- Andrew Morton <akpm@linux-foundation.org>,
- Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay <ogabbay@kernel.org>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
- Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>,
- Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Selvin Xavier <selvin.xavier@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-4-a43967e36c88@linux.microsoft.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- linux-rdma@vger.kernel.org, kernel@pengutronix.de,
- Takashi Iwai <tiwai@suse.de>
-In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-4-a43967e36c88@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ucYXuYgBQVTEWaObV/mFjtsvpzQ/KO5i5l5ZjdohfyGQ4hlxvcY
- sTVdlsTl9fld7Rgr2WyDph9nJLEmgybCGSVtuMLyhQK485ALORk88bsJZJIOfByFUNZedr7
- Tig7GhQucLbNWxtaLBapV3p7oWArgHdIII/eRzvvtip6IPoz+StdW8P4rzipPjdrxqJNq7V
- w9kH46OLKD2fAu1DJ4I4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NqOsrw7wXz4=;wwgFpUfWgrNKqonaHrxuK0zBMVo
- mDjqDBwUTGC2TEakQ0FQpQb+jPeq8+VUsHA9FysNiUMcu9jvRYzUnVW/cePngei1HuxUi+9jB
- gzwpaGWWDjDgiqloN8NkKw7fK1k9aiq9WO2QV+FahFVJxKCiEOht1QwMKGQlNmk9KSfqrx+xY
- /ZLupqHBoI8IrXEf4BLPHHel92dIDpHQKboSzjjYqqe+D17jNVvkdG6fNPyA61KaW3VNs4cNO
- VvTz7objQwY3sXV9VVKfi5xn57PHN9mTjtQuIqd+Fkmo2WDIvSm1qZXwIHn3nMByQ+tt7svzC
- Q8spwoR/tPpS2RHogJczvjm/AJwifCv3M4zmOA7P6thgwODVRmcvR/4vF01uKQLuK9qMgFlyc
- bcgjRUxbqZme7tOe+3/skv2xiRyQEbhJKJtGN5D+YuDiSWxugE0waVrKszeAKPmktude+e3Wm
- hb6pdZnYZCt8B9GbDEP5Vb/mlwKymujzJht1qssYcn8d3Ml1SMkSc3vuwSRHDX6T7apEaslxL
- H1ldZBfcHAqqxfpa5LbXdHASW4m4p3H0K1hJHORXZqCUnOEcZxDWNffnSEspRVYifgrFqGv4y
- Kj26KhRIVUoBKuigt9Q2mdl8jTmWXytY3VzlUIiR7tUQHVdIIbUdCyTnywoOmuD6VO0yepr5x
- bLQ4dW/TIsHMfmgenog//zbU7q2CO3bneqDQJPNt+SnDmx59ilBfNjed2YgZwvn4cQlSdaI0L
- F6NIFthjhreE3/Mi2NLvYEGxVUZoOMS2U7r5bxeagKeTc2gxxXa1GQVKaGa4DKQrDpFctrZO+
- VgS1EfusE5lk8m0igJwjGV8T5jJ4yK8zBmXHUgf2B7xsqbzIVsymf73VTGRYna5d8fpSlwFol
- Z7qd+KqzL47eifD09GmZjoE4UJBGc7zuzHDS6dRLZAuI/Zl84ps/Ym32YxhbN/YAsutAmmp+v
- TOkjv6MdafHxETdnQKdh/rPigxuHdcazx7XB6EEgDKbDg3iSQfzRgSR4xQ4NJ8AZ2iLg0mWum
- 0vXgI8wXv34gMt9O2p3er2RQWDsVcZ08cX04PIZdsztxTjwu0CPkBaXXuUyTd+ZnGMu5xuqJ6
- NVigR36nr3N2Z8mQFMK5WqrimZH+EH+M90+yC79G0/T7t0PPocKOZnJL41HJTo+LovTIveleV
- HWrp9ctFsgjPDj6UJNJTykjtt8NgQ82/CLAEHggdCeEf/T9E6KPlLG59U+DvbDeDV1a/KcYk6
- oIKY/n0w1wj9RkAu6PcR+vZ6tUptSyjIto4BLBRON4Vu2xjOkAgT2n2QCgRNb4wktwpFOdB2t
- dil/Pn0qWsKxuLlEMj/YzfiGEHQVObo/J888IPK+k+5H0DLKihuIJZ57xoknHewbhE68lpmcV
- rG+nfMuo4dycdcDOCDQ3IWqIkBsiusNZFDRDG0JStERTtnEkvLAd8i/CYVJdEg4hKBw+fpLvN
- wNpIdlENtYji5zVvncyHslb0goYM=
+Subject: Re: [PATCH v14 02/10] Coresight: Add trace_id function to retrieving
+ the trace ID
+To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250226041342.53933-1-quic_jiegan@quicinc.com>
+ <20250226041342.53933-3-quic_jiegan@quicinc.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250226041342.53933-3-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci wi=
-th
-> the following Coccinelle rules:
+On 26/02/2025 04:13, Jie Gan wrote:
+> Add 'trace_id' function pointer in coresight_ops. It's responsible for retrieving
+> the device's trace ID.
+> 
+> Co-developed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c  | 27 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-dummy.c | 13 ++++++++-
+>   .../coresight/coresight-etm3x-core.c          |  1 +
+>   .../coresight/coresight-etm4x-core.c          |  1 +
+>   drivers/hwtracing/coresight/coresight-stm.c   | 11 ++++++++
+>   drivers/hwtracing/coresight/coresight-tpda.c  | 11 ++++++++
+>   include/linux/coresight.h                     |  5 ++++
+>   7 files changed, 68 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 0a9380350fb5..6cad777757f3 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -23,6 +23,7 @@
+>   #include "coresight-etm-perf.h"
+>   #include "coresight-priv.h"
+>   #include "coresight-syscfg.h"
+> +#include "coresight-trace-id.h"
+>   
+>   /*
+>    * Mutex used to lock all sysfs enable and disable actions and loading and
+> @@ -1515,6 +1516,32 @@ void coresight_remove_driver(struct amba_driver *amba_drv,
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_remove_driver);
+>   
+> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
+> +			       struct coresight_device *sink)
+> +{
+> +	int trace_id;
+> +	int cpu = source_ops(csdev)->cpu_id(csdev);
+> +
+> +	switch (mode) {
+> +	case CS_MODE_SYSFS:
+> +		trace_id = coresight_trace_id_get_cpu_id(cpu);
+> +		break;
+> +	case CS_MODE_PERF:
 
-Is only a single SmPL script rule relevant here?
+Please could we handle a case where "sink" may be passed NULL ?
+
+		if (WARN_ON(!sink))
+			return -EINVAL;
+
+Sorry, didn't spot that in the last review.
+
+Suzuki
 
 
-> @depends on patch@
-> expression E;
-> @@
->
-> -msecs_to_jiffies
-> +secs_to_jiffies
-> (E
-> - * \( 1000 \| MSEC_PER_SEC \)
-> )
+> +		trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink->perf_sink_id_map);
 
-I would miss two space characters in the first text column.
-Please avoid typos also in such SmPL code.
-Would you like to compare your contributions with a previous change sugges=
-tion
-like =E2=80=9C[PATCH v3 03/16] accel/habanalabs: convert timeouts to secs_=
-to_jiffies()=E2=80=9D
-once more?
-https://lore.kernel.org/cocci/20250225-converge-secs-to-jiffies-part-two-v=
-3-3-a43967e36c88@linux.microsoft.com/
+> +		break;
+> +	default:
+> +		trace_id = -EINVAL;
+> +		break;
+> +	}
+> +
+> +	if (!IS_VALID_CS_TRACE_ID(trace_id))
+> +		dev_err(&csdev->dev,
+> +			"Failed to allocate trace ID on CPU%d\n", cpu);
+> +
+> +	return trace_id;
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
+> +
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
+>   MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
+> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
+> index 9be53be8964b..b5692ba358c1 100644
+> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+> @@ -41,6 +41,16 @@ static void dummy_source_disable(struct coresight_device *csdev,
+>   	dev_dbg(csdev->dev.parent, "Dummy source disabled\n");
+>   }
+>   
+> +static int dummy_source_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
+> +				 __maybe_unused struct coresight_device *sink)
+> +{
+> +	struct dummy_drvdata *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	return drvdata->traceid;
+> +}
+> +
+>   static int dummy_sink_enable(struct coresight_device *csdev, enum cs_mode mode,
+>   				void *data)
+>   {
+> @@ -62,7 +72,8 @@ static const struct coresight_ops_source dummy_source_ops = {
+>   };
+>   
+>   static const struct coresight_ops dummy_source_cs_ops = {
+> -	.source_ops = &dummy_source_ops,
+> +	.trace_id	= dummy_source_trace_id,
+> +	.source_ops	= &dummy_source_ops,
+>   };
+>   
+>   static const struct coresight_ops_sink dummy_sink_ops = {
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> index c103f4c70f5d..c1dda4bc4a2f 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> @@ -704,6 +704,7 @@ static const struct coresight_ops_source etm_source_ops = {
+>   };
+>   
+>   static const struct coresight_ops etm_cs_ops = {
+> +	.trace_id	= coresight_etm_get_trace_id,
+>   	.source_ops	= &etm_source_ops,
+>   };
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index 2c1a60577728..cfd116b87460 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -1067,6 +1067,7 @@ static const struct coresight_ops_source etm4_source_ops = {
+>   };
+>   
+>   static const struct coresight_ops etm4_cs_ops = {
+> +	.trace_id	= coresight_etm_get_trace_id,
+>   	.source_ops	= &etm4_source_ops,
+>   };
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index b581a30a1cd9..aca25b5e3be2 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -281,12 +281,23 @@ static void stm_disable(struct coresight_device *csdev,
+>   	}
+>   }
+>   
+> +static int stm_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
+> +			__maybe_unused struct coresight_device *sink)
+> +{
+> +	struct stm_drvdata *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	return drvdata->traceid;
+> +}
+> +
+>   static const struct coresight_ops_source stm_source_ops = {
+>   	.enable		= stm_enable,
+>   	.disable	= stm_disable,
+>   };
+>   
+>   static const struct coresight_ops stm_cs_ops = {
+> +	.trace_id	= stm_trace_id,
+>   	.source_ops	= &stm_source_ops,
+>   };
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 189a4abc2561..68079169b11b 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -241,12 +241,23 @@ static void tpda_disable(struct coresight_device *csdev,
+>   	dev_dbg(drvdata->dev, "TPDA inport %d disabled\n", in->dest_port);
+>   }
+>   
+> +static int tpda_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
+> +			 __maybe_unused struct coresight_device *sink)
+> +{
+> +	struct tpda_drvdata *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(csdev->dev.parent);
+> +
+> +	return drvdata->atid;
+> +}
+> +
+>   static const struct coresight_ops_link tpda_link_ops = {
+>   	.enable		= tpda_enable,
+>   	.disable	= tpda_disable,
+>   };
+>   
+>   static const struct coresight_ops tpda_cs_ops = {
+> +	.trace_id	= tpda_trace_id,
+>   	.link_ops	= &tpda_link_ops,
+>   };
+>   
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index 157c4bd009a1..ce89ad24c2a2 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -335,6 +335,7 @@ enum cs_mode {
+>   	CS_MODE_PERF,
+>   };
+>   
+> +#define coresight_ops(csdev)	csdev->ops
+>   #define source_ops(csdev)	csdev->ops->source_ops
+>   #define sink_ops(csdev)		csdev->ops->sink_ops
+>   #define link_ops(csdev)		csdev->ops->link_ops
+> @@ -410,6 +411,8 @@ struct coresight_ops_helper {
+>   };
+>   
+>   struct coresight_ops {
+> +	int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
+> +			struct coresight_device *sink);
+>   	const struct coresight_ops_sink *sink_ops;
+>   	const struct coresight_ops_link *link_ops;
+>   	const struct coresight_ops_source *source_ops;
+> @@ -697,4 +700,6 @@ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
+>   
+>   void coresight_remove_driver(struct amba_driver *amba_drv,
+>   			     struct platform_driver *pdev_drv);
+> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
+> +			       struct coresight_device *sink);
+>   #endif		/* _LINUX_COREISGHT_H */
 
-Regards,
-Markus
 
