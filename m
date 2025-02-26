@@ -1,205 +1,154 @@
-Return-Path: <linux-kernel+bounces-534464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA84A46744
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:02:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D05DA4674E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAC3188F929
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF61B18848CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD8E223715;
-	Wed, 26 Feb 2025 16:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0C721E082;
+	Wed, 26 Feb 2025 16:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+gLlw62"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbfTDvgD"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF4F21171A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994D2221D80
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588779; cv=none; b=X/5I6VsqsWc8Q0fE80UASGYVFmmhpI23FdE/ADUq8rCq63JJtx7RgnjRpJUMru7/qT2R8vjs6Rphj/FikQVyjFC8SeSEMxJ7nGXugh5mtr4Ln8tbWOMGEfaMWh/Ab2Bx31H9UqQqrrexgRilm7ndA/q7uQmyqRX7CwVBhiiXum8=
+	t=1740588864; cv=none; b=dxcbRi37YimNlbXMeCZou18pdPhlz2hcM6zACrgdY6L3kCNi2N8kzoZkTr0qTL1ULZtE5gTf4HfNR/Y36xeIu0Q0vZc1bV4qlZuuFRajvq99hRzSVK2xoJxeryo/3lESCOTBErq06/ggit7tg/zulZEV0IM8dlMaeBi7JdIdLxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588779; c=relaxed/simple;
-	bh=Qf/Qm0nkzf7U3vlvRsLDs3vQoV9ABJSWnA6WtOiN2ig=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D+58hBp18OmDeZCFEqakEaqutkwmrX8DtPYDjTlAuSdBGYHLKcmxoMv4f1FHlZFRZnLD3kyvCEcIU02GG63pERlP9qjhyrHPTXsajXPXknR9H+qrcI1fmRNELnAAM2JkCZPCqpinD0vVUyLCTArcsMIIJEICihsPdvPczPsdXnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+gLlw62; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740588776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qf/Qm0nkzf7U3vlvRsLDs3vQoV9ABJSWnA6WtOiN2ig=;
-	b=J+gLlw62K7t4nQLqh/eCztgxf5Fg2RUFnZfalzbLz7G4JkaSaI98fxLoJofLamUdKiq9lF
-	AR5TImaky7EeD9LjA8lc2AfffaIe1F5zPSAVzupIlXI8hJbREi5Xvylty0oavr+Tqbm+xj
-	K1XIY0YigzYySnTUVOWTEqhsAoXWxVI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-rKySKBfVOTCAaAIpZD5PgQ-1; Wed, 26 Feb 2025 11:52:55 -0500
-X-MC-Unique: rKySKBfVOTCAaAIpZD5PgQ-1
-X-Mimecast-MFC-AGG-ID: rKySKBfVOTCAaAIpZD5PgQ_1740588774
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4388eee7073so4954855e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:55 -0800 (PST)
+	s=arc-20240116; t=1740588864; c=relaxed/simple;
+	bh=vEb7wZbAKp2+E00O1H3FnSBoPcs396kmDnQUTh8XiO8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o9XszNHRwg2LNX5K1GVQPY5f4GJIka8QEt3MySCnf2r2EuFSSRXPvSN8Wi1QCREJcZuIDAICBMaeKQdSqBg4M7uOX19Q7F1Sc8Nohe0Y8ShV6xNpLFTRsmfQJW4k4y/tkDziaFq9owFsnbtbW9gwaDEIpKwitZWFxxPGs55wDm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbfTDvgD; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390dd3403fdso630426f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:54:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740588861; x=1741193661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7vkfh4ddTTsMmNol3nhPNfYX8H1c5FYy0uhOqg4mVE=;
+        b=cbfTDvgDi+loilxMRbmAIqJx11PEFj0luOef0IANXhrdctySmUAXsH/ihVht8Udk5N
+         GIETkMKmeW82M0RcXaxf1+KWsdPsAW7Hv/xzYYMQ7uzVjI3h0yNN7nQYs/KTgKQp3gsd
+         RmPTSnCU0mTJks28+UOkHIQk5FcboDsN/MoGLgg3rwRaoyC39TUUhP+0tikYoyLSHEIn
+         GNDfTmQCLL15Qjg+5MOdidS9On8dVGbHgG3O2b93+G1X9WjcNd3YQ6A6q34iSe9onMeX
+         VRlQRNuqfit9hnny2e3PtkhRJy+4lT9nEhZFbheS91ov59Y2GZG9DHq8O+UEayjec0F8
+         nvgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740588774; x=1741193574;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qf/Qm0nkzf7U3vlvRsLDs3vQoV9ABJSWnA6WtOiN2ig=;
-        b=KuyV2B3NTqI3bjuKT0S3C5RQ+PIn0cw6hJEHE0yqAok9UZroM5LCXZLZRZ76mcAhYi
-         N7arjaXpHnfDHK1U+VX2hEt0dPtgM54lugLRjTYOEii4O1WXWX7bo/qg8Wh/pWluBchh
-         j/YaM1XZRv8/86lIIOowdOFaauiJncRpUguwHm98gul3HDC02HXLvm8vrQA41fNNbBsq
-         tQfi53fUTjLI1TE3B18pl5+QrUGTVLHbY8/erdVxzHxPLB1XpDACiCCwwhpveG4ENt0J
-         SPnml50BazROA21B48wNTY1cIRPU55Ned9uwy/PQc9aSlS6tUBFnFrbMa2fIbAbh7LG4
-         h/+g==
-X-Gm-Message-State: AOJu0Yy6gkK2O7ITa0u+cgk/5qMdHW3/lQ4XLa8FssyKVYHN1lwz1mv5
-	4+NzAO4x4sIKW+QJGmZPJc0kQdO485jx8sYcSMZwhGJfCfN/saNC4EGeqAO+QKc0ystt8kMVydo
-	fWVlIMTpjVq78WkkAQSToYLHDrtGGkPXC3BlMyOxlt1QnNNt/07ShMZx+l4e1Mg==
-X-Gm-Gg: ASbGnctazbKlSGoIktehoreJnD+h4FPJjOtIFkJZTcoGwepNgf9mokVHBQMEw36aE9S
-	OZaVjOr3blFtXQs+J26z9vIZmpYuN8wtxw9ZvtNLtlL24Ai/D7o703SIzUTmdNKvcFvKpTgIasN
-	f/bW1c3eayjgh/23d/DhC35OuZ2HXsoezk7fDRydp3MOR9SgZ/uhS5kqh+AdyC8QuXOoMBOdGP6
-	6KyS68JeSe1Oi7G1QZLwyVltsGSZnNiQTP1LpfPX5MmGTqw9urwxpyjmu8+tgsLnnzJI+gAsRnS
-	B8Dh39T93V2n55zgmflC9LSXO8Aj1Nd6/QOC0I6XL0UTS4J+FVVihnO3d6IgJSLM2PnFhqrtym/
-	z
-X-Received: by 2002:a05:600c:ca:b0:439:91c7:895a with SMTP id 5b1f17b1804b1-43afddc6489mr797495e9.7.1740588774299;
-        Wed, 26 Feb 2025 08:52:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGWpDWParbyEFSiQubNArY/pYMHk4T+vY7Yfjqs/xu0tXoSgFv+Leti7F7TfR+hujI+3HmBjw==
-X-Received: by 2002:a05:600c:ca:b0:439:91c7:895a with SMTP id 5b1f17b1804b1-43afddc6489mr797035e9.7.1740588773857;
-        Wed, 26 Feb 2025 08:52:53 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390d98c0642sm2242326f8f.81.2025.02.26.08.52.51
+        d=1e100.net; s=20230601; t=1740588861; x=1741193661;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V7vkfh4ddTTsMmNol3nhPNfYX8H1c5FYy0uhOqg4mVE=;
+        b=grsaaxB2qCV9Tq4G3r4AQNMI/Gbnj7WqzzVMBlznSSe/g42x14T5lJ7bbrqnMfuxIw
+         9f4xygO/eLBOtEbyRGrNl57/e54BY9UyWpj3nhXDsvUNa1bV3sBsOSdM8V/nHujAWkKk
+         dNd/K2XXDIj5O9Pmi92j9L7aCSoIzpzzt6jvRksq+I8/Iv0PJXW706S9wO/fnfY3bk2N
+         w0iv7C23DEFcYnnB3AO8GnvlaV9uRi+9i2j+AQ59rUasMJxtXdJTlzTZFP/oRczgql6m
+         HGs2DQbmQeg5n6rNyzknAcZkAfeha9gyNJZxi9rtqnvZCfstiFp0+/l5XOIX1gzwKd0+
+         zM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXaS2dUdwTI7Zu75AitsJLvdKeaJF23l1jkBN+kW2ipL6tg/UbMGPPpxuTQHnf/mw1gAxYpc9RqucegLEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhTu663kRjH2QB3TzGARPue7JM1+3ezZLztQRCTfRJK+lK2xOh
+	UuLz1oNmg6Th75//sLNz02xfTJ75atI7EU2ZuUK2fFSzOEzUy6VP
+X-Gm-Gg: ASbGncsVfAWBEWZXb+Xh402aaQJAutOttFDOunjPFTjKcJ0M7smxGiJFXAInYSjZyoK
+	wMivXJD9od/SA3MfbUVd+5/s3X2aU79OQX5sSJ4oRvRJdrcWINsguos/H9wPPBQ43xPgrK5WVTc
+	XhgkqXyDjsf7C0w4cSaIfhnLDPNmx5PPxccD/tSE8i5Xkjlq8fhKKGTLgmWMj4V9OjZRyS9aSXy
+	t81NrdzXhwlUWSrz1G9Rrt5jSEPOsGmQaeIlO2m9AuHcYJ+lghkTVUwEdL+0h+EqWyijwpzvdLJ
+	bBJE78AoJ9Ps6MqkPpDysgat3k6IjuWB/1HTZYsgLq4deubzELVpMr3ovW9/S3/s
+X-Google-Smtp-Source: AGHT+IFkEUgrTUm48/FTrUcUruOOa4wlLyjFj2y//pjXXddwMb+aMzVxF/jrzVCXgJFveDwHMDYHJg==
+X-Received: by 2002:a05:6000:2c2:b0:38d:d371:e04d with SMTP id ffacd0b85a97d-390d4f8b6a7mr3152525f8f.34.1740588860292;
+        Wed, 26 Feb 2025 08:54:20 -0800 (PST)
+Received: from playground.localdomain ([188.25.208.27])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba587163sm27672515e9.36.2025.02.26.08.54.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 08:52:53 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
- kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <408ebd8b-4bfb-4c4f-b118-7fe853c6e897@intel.com>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
- <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
- <xhsmhh64qhssj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <eef09bdc-7546-462b-9ac0-661a44d2ceae@intel.com>
- <xhsmhfrk84k5k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <408ebd8b-4bfb-4c4f-b118-7fe853c6e897@intel.com>
-Date: Wed, 26 Feb 2025 17:52:50 +0100
-Message-ID: <xhsmhfrk0lkbh.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Wed, 26 Feb 2025 08:54:19 -0800 (PST)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Frank Li <Frank.li@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
+Date: Wed, 26 Feb 2025 11:53:09 -0500
+Message-Id: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 20/02/25 09:38, Dave Hansen wrote:
-> On 2/20/25 09:10, Valentin Schneider wrote:
->>> The LDT and maybe the PEBS buffers are the only implicit supervisor
->>> accesses to vmalloc()'d memory that I can think of. But those are both
->>> handled specially and shouldn't ever get zapped while in use. The LDT
->>> replacement has its own IPIs separate from TLB flushing.
->>>
->>> But I'm actually not all that worried about accesses while actually
->>> running userspace. It's that "danger zone" in the kernel between entry
->>> and when the TLB might have dangerous garbage in it.
->>>
->> So say we have kPTI, thus no vmalloc() mapped in CR3 when running
->> userspace, and do a full TLB flush right before switching to userspace -
->> could the TLB still end up with vmalloc()-range-related entries when we're
->> back in the kernel and going through the danger zone?
->
-> Yes, because the danger zone includes the switch back to the kernel CR3
-> with vmalloc() fully mapped. All bets are off about what's in the TLB
-> the moment that CR3 write occurs.
->
-> Actually, you could probably use that.
->
-> If a mapping is in the PTI user page table, you can't defer the flushes
-> for it. Basically the same rule for text poking in the danger zone.
->
-> If there's a deferred flush pending, make sure that all of the
-> SWITCH_TO_KERNEL_CR3's fully flush the TLB. You'd need something similar
-> to user_pcid_flush_mask.
->
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Right, that's what I (roughly) had in mind...
+The AIPSTZ bridge offers some security-related configurations which can
+be used to restrict master access to certain peripherals on the bridge.
 
-> But, honestly, I'm still not sure this is worth all the trouble. If
-> folks want to avoid IPIs for TLB flushes, there are hardware features
-> that *DO* that. Just get new hardware instead of adding this complicated
-> pile of software that we have to maintain forever. In 10 years, we'll
-> still have this software *and* 95% of our hardware has the hardware
-> feature too.
+Normally, this could be done from a secure environment such as ATF before
+Linux boots but the configuration of AIPSTZ5 is lost each time the power
+domain is powered off and then powered on. Because of this, it has to be
+configured each time the power domain is turned on and before any master
+tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
 
-... But yeah, it pretty much circumvents arch_context_tracking_work, or at
-the very least adds an early(er) flushing of the context tracking
-work... Urgh.
+The child-parent relationship between the bridge and its peripherals
+should guarantee that the bridge is configured before the AP attempts
+to access the IPs.
 
-Thank you for grounding my wild ideas into reality. I'll try to think some
-more see if I see any other way out (other than "buy hardware that does
-what you want and ditch the one that doesn't").
+Other masters should use the 'access-controllers' property to enforce
+a dependency between their device and the bridge device (see the DSP,
+for example).
+
+At the moment, we only want to apply a default, more relaxed
+configuration, which is why the number of access controller cells
+is 0.
+
+The initial version of the series can be found at [1]. The new version
+should provide better management of the device dependencies.
+
+[1]: https://lore.kernel.org/linux-arm-kernel/20241119130726.2761726-1-daniel.baluta@nxp.com/
+
+---
+Changes in v2:
+* adress Frank Li's comments
+* pick up some A-b/R-b's
+* don't use "simple-bus" as the second compatible. As per Krzysztof's
+comment, AIPSTZ is not a "simple-bus".
+---
+
+Laurentiu Mihalcea (5):
+  dt-bindings: bus: add documentation for the IMX AIPSTZ bridge
+  dt-bindings: dsp: fsl,dsp: document 'access-controllers' property
+  bus: add driver for IMX AIPSTZ bridge
+  arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
+  arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
+
+ .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 86 +++++++++++++++++
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      |  3 +
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  9 +-
+ drivers/bus/Kconfig                           |  6 ++
+ drivers/bus/Makefile                          |  1 +
+ drivers/bus/imx-aipstz.c                      | 92 +++++++++++++++++++
+ 6 files changed, 194 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+ create mode 100644 drivers/bus/imx-aipstz.c
+
+-- 
+2.34.1
 
 
