@@ -1,111 +1,261 @@
-Return-Path: <linux-kernel+bounces-533970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B713DA460EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:30:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C285A460EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715CF1899162
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2115E18892B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948451624C0;
-	Wed, 26 Feb 2025 13:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E608F1624C0;
+	Wed, 26 Feb 2025 13:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lQt/OrFS"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KWaohmUR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27297C8FE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E8721C194
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576624; cv=none; b=k3EQWQ/tXC63jcdsAfCRBmsnuZre0FFCm4rH/IFO5tR2Zc7y1l4ULNC537OhF5MGdVcMEQUAUsGfx4/tBWWuDF/nCSHRBaEYeu7P1dZa+k8i750QTfFbCdCjQjSAvUEvxNVHbmVv1DboIY495mh9W0DDzeu9+B5GPzmMgQ/P4oo=
+	t=1740576607; cv=none; b=WkMJ1d6hmDYBiSuWB/1mHnLOifyzPISd5HMvdyX08SOKgaixi1AtSu2aqQ7gfHUz3qPov++YaDzAQ8W+QHYSSGoINAjG8Mfb/Tu7of8MlSOmhDeq4aSxUj0CIbVZjdhb/89Ury5C4bJUQUeROvG89up+0kBN3FfhVcd0/gFk9pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576624; c=relaxed/simple;
-	bh=3dDkhn1fLF4MVhPHRiRvY7cjk3QUZvQQu314ISBNtzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CnhDeP/Jl5lM1w6axEaTPf6Hk9t2M2DzEWoaM+RKNq4ohVQ9RdAQeJ9hdqxkPVsd1zkVgBAV9caM6m2BYk/DAQ3vDViQ14oycUCQNhHkVX0Z5sAsZtb0BVJb8CW2o58+gqmGl0gGstJhXH0kpe+8hWb8/uHA4bfE46sGCFefWhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lQt/OrFS; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QDTklD1469543
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 07:29:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740576586;
-	bh=ci5vAe+2l6Sr2oYlsn9z5Et83nVZjCvDi9dpoxa55vw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lQt/OrFSvSN3I0KrMZwPomoSdv1fbWfG8fbc8qC95+isYSmwGnxBm5u6vovHYJ9Ab
-	 ZPKgezJfy3+FW1IJLGU94/kdx5yHb1mf+6QKPy36YtUq+8xfoPPEfijfwqdKaqcwvs
-	 LmTG93Mah6/tYVDcLhsMdnzAYx3n22veslktRaZQ=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QDTkC0044010
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 07:29:46 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 07:29:46 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 07:29:46 -0600
-Received: from [10.249.129.76] ([10.249.129.76])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QDTZw1013607;
-	Wed, 26 Feb 2025 07:29:36 -0600
-Message-ID: <5dd84e6e-61c6-4496-811d-cf7af7ace2d2@ti.com>
-Date: Wed, 26 Feb 2025 18:59:34 +0530
+	s=arc-20240116; t=1740576607; c=relaxed/simple;
+	bh=gbtSDsNREtt1StU3tTGiU8wDwt7jFuQNsaQebRZe3U0=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=c7rwYoggSn1DcIO+Gl3+B7W7lqmrGeVXE0DFKPFAbecWH3Gp/MD6UuVtbnmXV8MOwkILYh9IoArBV2SPJvvJ8DX9v4q4oANPw7kc2GBJ9H1ewdGlk4XBNsdoTS+d/B1O8FBT3Mf9tSGQOOurYkR2U4LUUzONdUDh/0H3WvmjBSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KWaohmUR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740576604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C4B22y5jIbu5fLuM9ql7DqeVvYnnQsAnENr+CqjaWMY=;
+	b=KWaohmURoQONnnSFuREpATsWQHZqDpNuXUWMDhXkvjXteSPo9eIKarYuKdr9i5ymeiLdmz
+	fxop7onZjSMUMiI/wbzxPRNvW3m2Y2kCGIak878kpKSvUUrLaZkngyHmqHl14sX7KQZY3X
+	VEursR8DsqGzcRcCdtget5cP36pNmr8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-202-KjdWZ0_6OGOxakcyLi6G8Q-1; Wed,
+ 26 Feb 2025 08:30:02 -0500
+X-MC-Unique: KjdWZ0_6OGOxakcyLi6G8Q-1
+X-Mimecast-MFC-AGG-ID: KjdWZ0_6OGOxakcyLi6G8Q_1740576601
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E7141800878;
+	Wed, 26 Feb 2025 13:30:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.9])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B8C2719560A3;
+	Wed, 26 Feb 2025 13:29:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Use rreq->issued_to instead of rreq->submitted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: defconfig: Enable HSR driver
-To: Meghana Malladi <m-malladi@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth Menon <nm@ti.com>
-CC: <elinor.montmasson@savoirfairelinux.com>, <javier.carrasco@wolfvision.net>,
-        <ebiggers@google.com>, <biju.das.jz@bp.renesas.com>,
-        <quic_tdas@quicinc.com>, <nfraprado@collabora.com>, <arnd@arndb.de>,
-        <dmitry.baryshkov@linaro.org>, <krzysztof.kozlowski@linaro.org>,
-        <geert+renesas@glider.be>, <quic_bjorande@quicinc.com>,
-        <will@kernel.org>, <catalin.marinas@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        "Ravi
- Gunasekaran" <r-gunasekaran@ti.com>
-References: <20250226104517.1746190-1-m-malladi@ti.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20250226104517.1746190-1-m-malladi@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2613163.1740576598.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 26 Feb 2025 13:29:58 +0000
+Message-ID: <2613164.1740576598@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+The netfslib read side uses rreq->submitted to track what's been issued an=
+d
+the write side uses rreq->issued_to - but both mean the same thing.
 
+Switch the read side to use rreq->issued_to instead and get rid of
+rreq->submitted.
 
-On 2/26/2025 4:15 PM, Meghana Malladi wrote:
-> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> 
-> HSR is a redundancy protocol that can be realized with any
-> two port ethernet controller.
-> 
-> Many of TI's K3 SoCs support multi port ethernet controller.
-> So enable HSR driver inorder to support this protocol on
-> such SoCs.
-> 
-> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_read.c |   10 +++++-----
+ fs/netfs/direct_read.c   |    4 ++--
+ fs/netfs/main.c          |    2 +-
+ fs/netfs/misc.c          |    2 +-
+ fs/netfs/read_single.c   |    4 ++--
+ fs/netfs/write_collect.c |    3 ++-
+ include/linux/netfs.h    |    1 -
+ 7 files changed, 13 insertions(+), 13 deletions(-)
 
-Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index fd4619275801..80143f17ed26 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -96,14 +96,14 @@ static ssize_t netfs_prepare_read_iterator(struct netf=
+s_io_subrequest *subreq)
+ 		struct folio_batch put_batch;
+ =
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+ 		folio_batch_init(&put_batch);
+-		while (rreq->submitted < subreq->start + rsize) {
++		while (atomic64_read(&rreq->issued_to) < subreq->start + rsize) {
+ 			ssize_t added;
+ =
+
+ 			added =3D rolling_buffer_load_from_ra(&rreq->buffer, rreq->ractl,
+ 							    &put_batch);
+ 			if (added < 0)
+ 				return added;
+-			rreq->submitted +=3D added;
++			atomic64_add(added, &rreq->issued_to);
+ 		}
+ 		folio_batch_release(&put_batch);
+ 	}
+@@ -360,7 +360,7 @@ void netfs_readahead(struct readahead_control *ractl)
+ 	netfs_rreq_expand(rreq, ractl);
+ =
+
+ 	rreq->ractl =3D ractl;
+-	rreq->submitted =3D rreq->start;
++	atomic64_set(&rreq->issued_to, rreq->start);
+ 	if (rolling_buffer_init(&rreq->buffer, rreq->debug_id, ITER_DEST) < 0)
+ 		goto cleanup_free;
+ 	netfs_read_to_pagecache(rreq);
+@@ -386,7 +386,7 @@ static int netfs_create_singular_buffer(struct netfs_i=
+o_request *rreq, struct fo
+ 	added =3D rolling_buffer_append(&rreq->buffer, folio, rollbuf_flags);
+ 	if (added < 0)
+ 		return added;
+-	rreq->submitted =3D rreq->start + added;
++	atomic64_set(&rreq->issued_to, rreq->start + added);
+ 	rreq->ractl =3D (struct readahead_control *)1UL;
+ 	return 0;
+ }
+@@ -455,7 +455,7 @@ static int netfs_read_gaps(struct file *file, struct f=
+olio *folio)
+ 	if (to < flen)
+ 		bvec_set_folio(&bvec[i++], folio, flen - to, to);
+ 	iov_iter_bvec(&rreq->buffer.iter, ITER_DEST, bvec, i, rreq->len);
+-	rreq->submitted =3D rreq->start + flen;
++	atomic64_set(&rreq->issued_to, rreq->start + flen);
+ =
+
+ 	netfs_read_to_pagecache(rreq);
+ =
+
+diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
+index 17738baa1124..210a11068455 100644
+--- a/fs/netfs/direct_read.c
++++ b/fs/netfs/direct_read.c
+@@ -94,7 +94,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_=
+io_request *rreq)
+ 		slice =3D subreq->len;
+ 		size -=3D slice;
+ 		start +=3D slice;
+-		rreq->submitted +=3D slice;
++		atomic64_add(slice, &rreq->issued_to);
+ 		if (size <=3D 0) {
+ 			smp_wmb(); /* Write lists before ALL_QUEUED. */
+ 			set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
+@@ -143,7 +143,7 @@ static int netfs_unbuffered_read(struct netfs_io_reque=
+st *rreq, bool sync)
+ =
+
+ 	ret =3D netfs_dispatch_unbuffered_reads(rreq);
+ =
+
+-	if (!rreq->submitted) {
++	if (!atomic64_read(&rreq->issued_to)) {
+ 		netfs_put_request(rreq, netfs_rreq_trace_put_no_submit);
+ 		inode_dio_end(rreq->inode);
+ 		ret =3D 0;
+diff --git a/fs/netfs/main.c b/fs/netfs/main.c
+index 4e3e62040831..07b1adfac57f 100644
+--- a/fs/netfs/main.c
++++ b/fs/netfs/main.c
+@@ -72,7 +72,7 @@ static int netfs_requests_seq_show(struct seq_file *m, v=
+oid *v)
+ 		   rreq->flags,
+ 		   rreq->error,
+ 		   0,
+-		   rreq->start, rreq->submitted, rreq->len);
++		   rreq->start, atomic64_read(&rreq->issued_to), rreq->len);
+ 	seq_putc(m, '\n');
+ 	return 0;
+ }
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 77e7f7c79d27..055b7d53a018 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -464,7 +464,7 @@ static ssize_t netfs_wait_for_request(struct netfs_io_=
+request *rreq,
+ 		case NETFS_UNBUFFERED_WRITE:
+ 			break;
+ 		default:
+-			if (rreq->submitted < rreq->len) {
++			if (atomic64_read(&rreq->issued_to) < rreq->len) {
+ 				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
+ 				ret =3D -EIO;
+ 			}
+diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
+index fa622a6cd56d..66926c80fda0 100644
+--- a/fs/netfs/read_single.c
++++ b/fs/netfs/read_single.c
+@@ -123,12 +123,12 @@ static int netfs_single_dispatch_read(struct netfs_i=
+o_request *rreq)
+ 		}
+ =
+
+ 		rreq->netfs_ops->issue_read(subreq);
+-		rreq->submitted +=3D subreq->len;
++		atomic64_add(subreq->len, &rreq->issued_to);
+ 		break;
+ 	case NETFS_READ_FROM_CACHE:
+ 		trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+ 		netfs_single_read_cache(rreq, subreq);
+-		rreq->submitted +=3D subreq->len;
++		atomic64_add(subreq->len, &rreq->issued_to);
+ 		ret =3D 0;
+ 		break;
+ 	default:
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index 3cc6a5a0919b..3dbde09b692d 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -27,7 +27,8 @@ static void netfs_dump_request(const struct netfs_io_req=
+uest *rreq)
+ 	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
+ 	       rreq->origin, rreq->error);
+ 	pr_err("  st=3D%llx tsl=3D%zx/%llx/%llx\n",
+-	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
++	       rreq->start, rreq->transferred, atomic64_read(&rreq->issued_to),
++	       rreq->len);
+ 	pr_err("  cci=3D%llx/%llx/%llx\n",
+ 	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued=
+_to));
+ 	pr_err("  iw=3D%pSR\n", rreq->netfs_ops->issue_write);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 6869f6d36ee7..5ec7dfa7a9dc 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -250,7 +250,6 @@ struct netfs_io_request {
+ 	atomic_t		subreq_counter;	/* Next subreq->debug_index */
+ 	unsigned int		nr_group_rel;	/* Number of refs to release on ->group */
+ 	spinlock_t		lock;		/* Lock for queuing subreqs */
+-	unsigned long long	submitted;	/* Amount submitted for I/O so far */
+ 	unsigned long long	len;		/* Length of the request */
+ 	size_t			transferred;	/* Amount to be indicated as transferred */
+ 	long			error;		/* 0 or error that occurred */
 
 
