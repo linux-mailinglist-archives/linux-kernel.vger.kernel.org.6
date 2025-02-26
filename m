@@ -1,292 +1,195 @@
-Return-Path: <linux-kernel+bounces-533885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BB6A45FD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:54:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CC3A45FD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9BD167B60
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D271892675
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EAC21A44B;
-	Wed, 26 Feb 2025 12:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040C82BB13;
+	Wed, 26 Feb 2025 12:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xVKm85Kb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZbEXdykV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="et/wU7fR"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3951DF990;
-	Wed, 26 Feb 2025 12:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64BC258CD1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740574480; cv=none; b=fuTAIboiLtuWIi46aAgyWsTNaF+qvg8pmb/VcWLl8zdA7HJzT+UhslG/LvXLOfCr8vs+MkYMX3BYQOX3aDkrz3i7nO9ppTqA5TavrL0q6YYcXczDC2kt8gCs7rdbl/bvOxQDnPpVig7FJGZXe9hUCveL/Lnn8ydRULP4dBwXKHo=
+	t=1740574626; cv=none; b=Rnm6b+E2dhY6GnYqaQOXRCTt3M2rQoS9DTcjQZ1uEudwNn+YtX5mE5703TdUYZEJmq0mrRfB4SDizwXIkacxzopm8NTYztLv5X34VTQDU2tnQRctUL14Z1VLBF9IZqsWicDA+X3zP7R0Nzkk7wISo0tS/MdSWK8B3qJcxbV5T0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740574480; c=relaxed/simple;
-	bh=8pv4RUUkDhbNy+4qHg7mdpoS8yc2m0b9M/Z43gQlaMI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=soRwTDwRU6nwxBcVmebafHr+jYTagnprJNo4q8HzpBrx2ODFxyuk2hjiWbq4n1uyFgneEpwJSVH28BAiYAQADSx2Qco8p2Pzup1Vny9Kr4pXujRy4H6IbnW8ydkU2VUtOisd0n/3kMBRHwtw75wbHYqQAC0IvAQXV763MCqWsA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xVKm85Kb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZbEXdykV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 12:54:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740574476;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CIUXEkY0A0t1HoVPQbmbgORGiJM7SDaggTzdqyU81/A=;
-	b=xVKm85KbG/JwwUJdk9r+MBKwM/HrsI8Gv03r6/WTxwjQJRrhxY9/Xi6x/ix4J2VIzmdzJx
-	vaY90R4sE8g4fLMd1sk1UlDD0uJH1auInQ+rtA0ofh+3t5pSvD0ZB3SQRMo638qlOX/J4V
-	UOLEglgPBJb5j6feAqkTrUWcpzXf+njoHBN8WVH2UPL0uGjqOqjUED1XzwyTBXZc90Xhmn
-	6GLvLsRdY+FpWRXt5k1he1Xa/sJgaHa/ASvmCha7sq7lDQK59Z744/UN7CQPh5GJ00jipz
-	4VI/Sa51KboRMseNg0dtCsyB0+44sfazAhodS0UnmFZ20/Zig+QSMl3on5xJzg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740574476;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CIUXEkY0A0t1HoVPQbmbgORGiJM7SDaggTzdqyU81/A=;
-	b=ZbEXdykVlEVCHmg8SuyQ2QKtttF7tA9D4F40hk5pJvzqmYuCd9QxfVnON1pMQLfmHvpR2S
-	8oA80HyXibVX+WDg==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/bhi: Add BHI stubs
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124200.717378681@infradead.org>
-References: <20250224124200.717378681@infradead.org>
+	s=arc-20240116; t=1740574626; c=relaxed/simple;
+	bh=vYHKSf9G/6YR8hGt2H3qnQTG0LkmOZubgXk6KXZvxIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VgiHKLh4oKAEHJVZZMr9eqUmU070eN/2b81+chRqC6HhHuqeczpLHqQEfaVhemVkIXId1XTisOZcnAVLBBA1DmoubD/yY9Ibroz+A+9BNzKXuQiH1VFWbqkeAc/KQ7S5X+CNtJAXBl6NUwFGwUahjWdQ1dFJK5/Gag6ALoHvam8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=et/wU7fR; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220c8cf98bbso57533785ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:57:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1740574624; x=1741179424; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYHKSf9G/6YR8hGt2H3qnQTG0LkmOZubgXk6KXZvxIg=;
+        b=et/wU7fRx+7uUwCjskdNZpFj5117rKWAqzJO3ievUeSC83zZ8UP5T1hjqr3yL0xdim
+         WF+TU2zzEkDP3jyNOYoL/CagdNiPJxhSJl9xsfTA+tCocOe17GYyplwr5NQ3Yo8zSwNo
+         ij1BYiy9f2ck4faCevES0BuC9PSEg5DozBkY8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740574624; x=1741179424;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vYHKSf9G/6YR8hGt2H3qnQTG0LkmOZubgXk6KXZvxIg=;
+        b=dAXbQlM0Bnr2b00v55zTaTIsjHWdPIbgVS2rZ9ksaS+uUlLObb+m7aU8W2WsRFbh10
+         juyIG7F6mZG6KBqgZevn7CQZvMCJHl8DrvOdVd2LkoXE2LsGuZlA9ogOcXmfJJDJw33Z
+         WTOhDknszR+I6ODCrivPMwAFv5yq4OSvZ7yZ4oYqKqZEdfoAe5Vm6I1exqs/C8088scU
+         MdAhqvVM4MAH2nRy3jf/LeWhpwSCH6BWU6IkMCyOYUdWN/sO6oZZ/qrNZcJQcGbfRny2
+         yI88GNZYKPbTGMLzV86h6lhX5HrKsWuhnj2PpVBMsjRKTSdGF4+CNF9VehyI613kSxa+
+         OVcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMcesXyY+gvIP8MlPcJegtwWhY+MvdowBp0FIeo1ZzrSuu4PxbF6sydFBpS+60zJb/gPTNmLPkhReiPkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1zqzKfFjOEntQFFCPxVEtBKfq0B9jkj2SmkIk4ku4VIUxJCLU
+	TJbtrqIYQvgF1ujgq50Iq5Nlqs7/0dnWIu1Ks9ryMQ4CS01eyu4ZqbxMomEqR/fROtZKm5DmdgK
+	C+c8JcWp9Fl3pbpBca7iP62RuB4G172beAj6N
+X-Gm-Gg: ASbGncvkeZKykhephhgk9+M1k1YeLoFTKxFLet2f/zbYNqqQ1SEUpJPxa7Hq1H9u64C
+	Pl385w+S1aE2mBJ/cXor/PzkY3owlbU3DxjwCTeSvJcAfnxLUtJhxNOlrQPASH/KCy+Y9+SGDXV
+	t4yl6+bPM=
+X-Google-Smtp-Source: AGHT+IFH3g7HN4iE91lCdGVsGae6WaOOsrDSLzOQY6mUkXhf06h6hXf5Oi1Rks/zMbvBuJpRs08HcvYWUWO85ytWY7Q=
+X-Received: by 2002:aa7:8889:0:b0:730:97a6:f04 with SMTP id
+ d2e1a72fcca58-73426cbbd9bmr35547729b3a.7.1740574624074; Wed, 26 Feb 2025
+ 04:57:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174057447611.10177.16167426753225126743.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250226122543.147594-1-tariqt@nvidia.com> <20250226122543.147594-5-tariqt@nvidia.com>
+In-Reply-To: <20250226122543.147594-5-tariqt@nvidia.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Wed, 26 Feb 2025 18:26:51 +0530
+X-Gm-Features: AQ5f1JqlTZboPJQTvHkvhpa3l5tKenQ-YqRM6hkbeJByf9oVSiOCakkF5Tlms9s
+Message-ID: <CAH-L+nP5o_cO0NOoKDKFQ4xZdLapBuQnuZaNpnm2ksX0ymLzqw@mail.gmail.com>
+Subject: Re: [PATCH net-next 4/4] net/mlx5: Add trust lockdown error to health
+ syndrome print function
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>, 
+	Leon Romanovsky <leonro@nvidia.com>, Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shahar Shitrit <shshitrit@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000031c7e5062f0b1cd3"
 
-The following commit has been merged into the x86/core branch of tip:
+--00000000000031c7e5062f0b1cd3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit-ID:     b815f6877d8063482fe745f098eeef632679aa8a
-Gitweb:        https://git.kernel.org/tip/b815f6877d8063482fe745f098eeef632679aa8a
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:11 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 26 Feb 2025 13:48:52 +01:00
+On Wed, Feb 26, 2025 at 6:02=E2=80=AFPM Tariq Toukan <tariqt@nvidia.com> wr=
+ote:
+>
+> From: Shahar Shitrit <shshitrit@nvidia.com>
+>
+> Add the new health syndrome value to hsynd_str() function
+> to indicate that the device got a trust lockdown fault.
+>
+> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
+> Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-x86/bhi: Add BHI stubs
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-Add an array of code thunks, to be called from the FineIBT preamble,
-clobbering the first 'n' argument registers for speculative execution.
 
-Notably the 0th entry will clobber no argument registers and will never
-be used, it exists so the array can be naturally indexed, while the 7th
-entry will clobber all the 6 argument registers and also RSP in order to
-mess up stack based arguments.
+--=20
+Regards,
+Kalesh AP
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124200.717378681@infradead.org
----
- arch/x86/include/asm/cfi.h |   4 +-
- arch/x86/lib/Makefile      |   3 +-
- arch/x86/lib/bhi.S         | 147 ++++++++++++++++++++++++++++++++++++-
- 3 files changed, 153 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/lib/bhi.S
+--00000000000031c7e5062f0b1cd3
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
-index 7dd5ab2..7c15c4b 100644
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -101,6 +101,10 @@ enum cfi_mode {
- 
- extern enum cfi_mode cfi_mode;
- 
-+typedef u8 bhi_thunk[32];
-+extern bhi_thunk __bhi_args[];
-+extern bhi_thunk __bhi_args_end[];
-+
- struct pt_regs;
- 
- #ifdef CONFIG_CFI_CLANG
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 8a59c61..f453507 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -66,5 +66,6 @@ endif
-         lib-y += clear_page_64.o copy_page_64.o
-         lib-y += memmove_64.o memset_64.o
-         lib-y += copy_user_64.o copy_user_uncached_64.o
--	lib-y += cmpxchg16b_emu.o
-+        lib-y += cmpxchg16b_emu.o
-+        lib-y += bhi.o
- endif
-diff --git a/arch/x86/lib/bhi.S b/arch/x86/lib/bhi.S
-new file mode 100644
-index 0000000..5889168
---- /dev/null
-+++ b/arch/x86/lib/bhi.S
-@@ -0,0 +1,147 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/linkage.h>
-+#include <asm/unwind_hints.h>
-+#include <asm/nospec-branch.h>
-+
-+/*
-+ * Notably, the FineIBT preamble calling these will have ZF set and r10 zero.
-+ *
-+ * The very last element is in fact larger than 32 bytes, but since its the
-+ * last element, this does not matter,
-+ *
-+ * There are 2 #UD sites, located between 0,1-2,3 and 4,5-6,7 such that they
-+ * can be reached using Jcc.d8, these elements (1 and 5) have sufficiently
-+ * big alignment holes for this to not stagger the array.
-+ */
-+
-+.pushsection .noinstr.text, "ax"
-+
-+	.align 32
-+SYM_CODE_START(__bhi_args)
-+
-+#ifdef CONFIG_FINEIBT_BHI
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_0, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_1
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_1, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_1
-+	cmovne %r10, %rdi
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 8
-+	ANNOTATE_REACHABLE
-+.Lud_1:	ud2
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_2, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_1
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_3, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_1
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	cmovne %r10, %rdx
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_4, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_2
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	cmovne %r10, %rdx
-+	cmovne %r10, %rcx
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_5, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_2
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	cmovne %r10, %rdx
-+	cmovne %r10, %rcx
-+	cmovne %r10, %r8
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 8
-+	ANNOTATE_REACHABLE
-+.Lud_2:	ud2
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_6, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_2
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	cmovne %r10, %rdx
-+	cmovne %r10, %rcx
-+	cmovne %r10, %r8
-+	cmovne %r10, %r9
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_7, SYM_L_LOCAL)
-+	ANNOTATE_NOENDBR
-+	UNWIND_HINT_FUNC
-+	jne .Lud_2
-+	cmovne %r10, %rdi
-+	cmovne %r10, %rsi
-+	cmovne %r10, %rdx
-+	cmovne %r10, %rcx
-+	cmovne %r10, %r8
-+	cmovne %r10, %r9
-+	cmovne %r10, %rsp
-+	ANNOTATE_UNRET_SAFE
-+	ret
-+	int3
-+
-+#endif /* CONFIG_FINEIBT_BHI */
-+
-+	.align 32
-+SYM_INNER_LABEL(__bhi_args_end, SYM_L_GLOBAL)
-+	ANNOTATE_NOENDBR
-+	nop /* Work around toolchain+objtool quirk */
-+SYM_CODE_END(__bhi_args)
-+
-+.popsection
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIChhKF4zMThu/uJnFWD2ccZCbIwEo59bbUEXaqEmc3ycMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIyNjEyNTcwNFowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC6OKhYlVaf
+5TblEQfMneveRz6rIGWExANuBa/pO+nj1T0/B126DswBe7Zx/OFKr67wWXTzvtRu5O73wL/8SYpi
+ySz1W0EoeFGqjV6J9vrz0lG5zN78UFum8QkeEjNeHVoUaBflI7PZxtlab+w5Vrb/2Nk8hhv32Ts2
+CIuE+pyzaDL+aNQTXiWrkVVnXL05UnO4d+1/drFPi18BoDEmv8WtaDk0g3pXlnCB5O/8wV3qlnT4
++jywlis2Xkm4v47Xuf1YksFpa3yzswEIaG9zxaihFqiXyDQzFXoJowExgo5gqMiDKOpL/Pdapo2P
+GHTwyH7kmsYJw3n5spU9Mj0w4GN6
+--00000000000031c7e5062f0b1cd3--
 
