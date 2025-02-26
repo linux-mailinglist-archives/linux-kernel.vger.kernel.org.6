@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-534090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA493A462AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:27:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABC1A462B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15353B461F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:26:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC9F7AD355
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D69F22CBE8;
-	Wed, 26 Feb 2025 14:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0873B223329;
+	Wed, 26 Feb 2025 14:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1DN+8/i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="wn0+bHMy"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A6822B595;
-	Wed, 26 Feb 2025 14:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4A5155322
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579823; cv=none; b=OgX06UDFN7jsK1uAZOlT3xNSEsBKwlSKiQk+mWN1fUAPofohxdL840waKfggDQoT9CKie9zCVpmq7hcgCpp8NRxj4ZVCvp1S5GoUZ/eOJ7/kxKnyR/8ZJqqCoduqJCc+rByINqnto0teTVP+XL6iH3EbdwGgl+084J/oX8+7pmQ=
+	t=1740579894; cv=none; b=LATZHxaCkt7slkOc/PJ1XGxKLMsw+JPPdl8dsNCftLuYOsw5IVVqd727YyAcs5rMVC4rdhWrUMODoyUFiyuOadJPDDl/5Pbj95WkV90icRWsBQS3nQFNZwmrzfUl4N5DzGN3tf220qUsemN6GXQs8pZmA1+9pZ4WSc6TKhbcpEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579823; c=relaxed/simple;
-	bh=AAEKm1O7htp5NeH3NMI9L3J6SDIohMjK9ooiU+PU/cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0zAKK8lZ/ayt3Z+lCFIwqYybusSiyzd0T/jlfQVOnYiSiRdVXJJ5aWZLsSTog28tQbcrB6L0pZB4qTpp5b9Vnug2g9Z/1QIi9MxFXgP4MvSazds2jlrSSOIOE6q6etsbmpY39ciZg+CRpuppoPt66dGwVbfGjWcHJJoIXo1vBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1DN+8/i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB389C4CED6;
-	Wed, 26 Feb 2025 14:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740579822;
-	bh=AAEKm1O7htp5NeH3NMI9L3J6SDIohMjK9ooiU+PU/cc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I1DN+8/iEv1J0mjRLjUZDQUsEGe8kHDqvcRFHtejC6d6diiU/Ni2ditT1E7s4LFWE
-	 XHuvHlBUUcqXuAYFvvIFOs10FpyQ6ksQTLoOYMg7SJlKFdNP8Q0mKKfVlX6NQ6rjcw
-	 y6exKcM8nk+GlFoUcownxU54EMWM0uy36bNlMIKgxKy9t7/UYe3oyKMY2+e8YQmjww
-	 NNOhW5o2SAf0xkJfrG4llLtxRyICQa6lNdjfqWRPryLs9Tjxm9jXUMhtJ4mZCjA+D7
-	 wdoYMD7/dy1Xp9cjPHuFei8ghGvGkF0q0WUrPqSxnNB2tcmoIMra1PatsT1aAi6aCL
-	 3fah9XHMFWWew==
-Message-ID: <9e973021-8f10-4870-8534-29c7669c7c74@kernel.org>
-Date: Wed, 26 Feb 2025 15:23:38 +0100
+	s=arc-20240116; t=1740579894; c=relaxed/simple;
+	bh=j5EgVv6d+kyiKhWyckDkYkwqFgiVsmt9E6yGrK9raLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYeFWCnHPMM6AwK98ITQeoAjegDMfXbGa2hCal59Vyn6PLRWxCng0wVpjjO6TITcbhRHxUeoWlt/VVq+A9/teGkbmKDHZ1gyeWKpdTYKBozqnPKJB2V6HADy57cizzhKRtjFDvGlHtC/bkN9tWSS0wOlfXa05fcXUGyH5k3kS9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=wn0+bHMy; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbdf897503so174250666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:24:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1740579889; x=1741184689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UaKzYJ1iRW+gT1IZX66/MBk7evQghVEHdi8TUh6olgc=;
+        b=wn0+bHMy3ra6Dk9RtKWvrsP7lII4rG/KOiK6T66XlsdGHZOTY3vYwT/0LhB1F4gc6o
+         zyaz6h2VrXi0SrvSFLBIBcsam1AObaP2pPNqGCMsxrgVJW3mTrqzIXcYkY6MoAEz+GIo
+         Ol5AayWAQ1YTS4wxVdLwIG06gJ8g+e6dHhvWmCcDNfl/8TB0Xfc+/DQJ981m2wrryZxX
+         42GtnI4C5Q0poB++czsb8p/dcrhgavfHRc1pFJtfl/DqLLcm6FuE9eDmMPE6D/hQE385
+         PbsfIcm2ev9frgkqU0me93x/R+6JftNGlG4iOrrWhlTJYvjPeoPfCQtNkoNhr7m4sBcS
+         NB6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740579889; x=1741184689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UaKzYJ1iRW+gT1IZX66/MBk7evQghVEHdi8TUh6olgc=;
+        b=cab6sNljzPHg/NxeD2t2ibbQJ8jfdnJFCwxppGSePczz5f3s3NtfFuM5lZFxWfPNE6
+         ppHi/uY1DrYvXTRRLChMhGzwYamwoM9mVk4DMlZO/42Jic3BThFUE/Ko6O09oJjOKRJe
+         JJiica/7etT8hbr89nDPqW9F8bmjhycwpEqHoAu2tzwLfF8bWmhvzNyesLly/h/yqBCz
+         yCzMVXnHm9rhkCiWnHguHuxfGto/BdNZ4m6O+J0S3IEyCZfD/AieJZ1IihSuCP3hWaWE
+         nXXPYPFgGIkYwdviwPI4I93WEURjArhBx4kFq03e8STBT/ioztIW1vfVMzIgtHPRCS5U
+         zd5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFK5KoQfPr5CAcf/jS8g1wkKFOGYcuLGqeWEzzDallgrVkG7UPytcJlfd6AbMWQ7Kqz2+QexkOsH8ZAkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzssNOSfXeMXZ+HUMeSsSvhSlqWMF0u/zqQ5DCFwuxuMcUwCgEK
+	UsGxYWFs8xWfuq84j6dwShhf3cRqrZvvFWP+FLcnpeiS/FMHKNVPTdeel6O4TaI25l3W9Urxc0E
+	Q
+X-Gm-Gg: ASbGncvEWdLeG0sXOq82K8J0xxHsVq7rc+9YgnsJureoAXk6fFmXYM078SjPdJJFMTD
+	hY+ZoST2X7uAMQ1M3M2mt516DV4S74lddXeHYYfv0NQXhG5Q4T2H1UIZftGmUB4Ws6KO0gDGR3V
+	b/oBrPpR6//rcOm6mb0SugVipL7TWOUOEhgASc+kMtlH7Yh+fq0Ine1qntSdzCfE2jVvNwzheaA
+	6rUebqrSrvmFjvB5aX0hPRVWyM6lhUPr5nY9fH9I7qsCtamjK0q5cpSOQClFl42eGzAPslloNE0
+	PjU01eHIX7wdjlYyci+KcnIW44BUs+FS5/cRDZyYfG7Le3nzbDxXSA==
+X-Google-Smtp-Source: AGHT+IGJIqgQNaPZX0a6W5ewvuM4Gn2WI+QaD2er9M4fEBIE83GKmsFVhaLQNCuycoVnCTpaVnktFA==
+X-Received: by 2002:a17:907:3e0b:b0:aba:620a:acf7 with SMTP id a640c23a62f3a-abc0ae5728bmr2420097366b.10.1740579888970;
+        Wed, 26 Feb 2025 06:24:48 -0800 (PST)
+Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1d54e08sm334745166b.41.2025.02.26.06.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:24:48 -0800 (PST)
+Date: Wed, 26 Feb 2025 15:24:45 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Cc: arkadiusz.kubalewski@intel.com, davem@davemloft.net, 
+	jan.glaza@intel.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	przemyslaw.kitszel@intel.com, stable@vger.kernel.org, vadim.fedorenko@linux.dev
+Subject: Re: [PATCH v2] dpll: Add an assertion to check freq_supported_num
+Message-ID: <74xcws6rns5hrmkf4hsfuittgzsddsc3hnqj6jbfsfu3o2vvol@gy32jyg75gmd>
+References: <txrxpe7tmpsyiu4cwjd2gbs3udogmzdo5ertjwmhbeynu23iep@dcryfdoi7o5x>
+ <20250226030930.20574-1-jiashengjiangcool@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/13] arm64: dts: renesas: Add initial support for
- renesas RZ/T2H eval board
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- paul.barker.ct@bp.renesas.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-13-thierry.bultel.yh@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250226130935.3029927-13-thierry.bultel.yh@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226030930.20574-1-jiashengjiangcool@gmail.com>
 
-On 26/02/2025 14:09, Thierry Bultel wrote:
-> Add the initial device tree for the RZ/T2H evaluation board.
-> 
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Wed, Feb 26, 2025 at 04:09:30AM +0100, jiashengjiangcool@gmail.com wrote:
+>Since the driver is broken in the case that src->freq_supported is not
+>NULL but src->freq_supported_num is 0, add an assertion for it.
+>
+>Fixes: 830ead5fb0c5 ("dpll: fix pin dump crash for rebound module")
 
-Where did this happen? I see tags only to few patches, not all of them.
+It's not a real bug in current kernel. I don't think it's worth "fixes"
+line and -net tree. I think it should be just sent to -net-next.
 
-Same questions for all other places.
 
-Best regards,
-Krzysztof
+>Cc: <stable@vger.kernel.org> # v6.8+
+>Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+>---
+>Changelog:
+>
+>v1 -> v2:
+>
+>1. Replace the check with an assertion.
+>---
+> drivers/dpll/dpll_core.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+>index 32019dc33cca..3296776c1ebb 100644
+>--- a/drivers/dpll/dpll_core.c
+>+++ b/drivers/dpll/dpll_core.c
+>@@ -443,8 +443,9 @@ static void dpll_pin_prop_free(struct dpll_pin_properties *prop)
+> static int dpll_pin_prop_dup(const struct dpll_pin_properties *src,
+> 			     struct dpll_pin_properties *dst)
+> {
+>+	BUG_ON(src->freq_supported && !src->freq_supported_num);
+
+Warnon-return please.
+
+
+> 	memcpy(dst, src, sizeof(*dst));
+>-	if (src->freq_supported && src->freq_supported_num) {
+>+	if (src->freq_supported) {
+> 		size_t freq_size = src->freq_supported_num *
+> 				   sizeof(*src->freq_supported);
+> 		dst->freq_supported = kmemdup(src->freq_supported,
+>-- 
+>2.25.1
+>
 
