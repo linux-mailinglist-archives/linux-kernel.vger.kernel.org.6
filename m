@@ -1,141 +1,240 @@
-Return-Path: <linux-kernel+bounces-534294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC1CA4651E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9133CA4651B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACC2189B53C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976D11891922
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714AB22258B;
-	Wed, 26 Feb 2025 15:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1D421D5BC;
+	Wed, 26 Feb 2025 15:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Nr0yY4QO"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tc26uTk9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+zlWQVqG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06248221DAD;
-	Wed, 26 Feb 2025 15:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558CC21D5A8;
+	Wed, 26 Feb 2025 15:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584102; cv=none; b=BlISPjEjGcN80PwqRrsiD3Da+CjQ6/yPo7BJYFqLu1Jb8ET+Z1sJJQ0/R4ioyyhWxdn2xJS00KLnrvqW+dPwPSNJXPdNrgRxIy2JLjwEW5iqMGHxbjRG63xtCS1RPwVrAGVjJKjN59xLJc0PzOuHV6JCIs749J4yUlu+fZdHHZw=
+	t=1740584087; cv=none; b=cJAttJj9y92wQRH/Yzozv7aY23dYKWpgBylnvmvk4X9seApsHVljt3lLkDSgOFOEtlEpKSr/ObbVMDSZhvBWkcZhG9aD7Qqf2exWSWhXx7BFUESPc3csFVO/lD9m8mFg9dDjctVwDuknxXmYvttQs3Y5gjqRnSuq4hjlKsSwJbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584102; c=relaxed/simple;
-	bh=33i2bTQp+ZsHKxRZbNCSdJ8c5HwFI463KJdRgZDmFH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oN9OAmXouZXuXjqShP1bq/b8dU0CA/ummb4rfVEQx7WSv2RhZP0zrS67IdTCYHIhsy95csKw3x6llFMqlYqkkB994jUCsh99KTYkU2pg9t3hbeufhdngxdQBMSIMX8suFQ65huExZGTzym5Hc/GOX16iqiYQuE9aMFbOASj2wGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Nr0yY4QO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=We2PZZN/Z/OuW0OC8GwI1XN1ZlLiDb7BHXEm1VKevUk=; b=Nr0yY4QOvO504vfmWBFQmckDao
-	kNFatIEDpJJ49/rgYpfiH++mWZHYZIFvqFiGiXICM9+pzthfUMdPm085ugAORIS3wfA6892RzO7ys
-	XfghSaloouVCRP/vJ4x1dPqWm4qT9JOLDlXny/EWwtvq2FoQRvL01pJn6YNuVsEDQ2AQbmNrF1sMQ
-	prEvODafyJe2vhYMbMrOCqIzl76gHh8JPgUgK0HbiqTvGpBjuY6PfdNEeMiouWLF5C7wG2IiUlS9m
-	XFFePb5qrC1YziycPejRxgJ/jMXRSUZrhxfnRbnOM6zeZFJ4JKzGAho6Vn3ki5ucSBQ0Uy6i9xN8H
-	fIvMutIA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42746)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tnJQQ-0004iF-1A;
-	Wed, 26 Feb 2025 15:34:18 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tnJQG-0007CL-1X;
-	Wed, 26 Feb 2025 15:34:08 +0000
-Date: Wed, 26 Feb 2025 15:34:08 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: Simon Horman <horms@kernel.org>, Jose Abreu <joabreu@synopsys.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	David E Box <david.e.box@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v8 1/6] net: phylink: use pl->link_interface in
- phylink_expects_phy()
-Message-ID: <Z780cM9bejxhzTXO@shell.armlinux.org.uk>
-References: <20250226074837.1679988-1-yong.liang.choong@linux.intel.com>
- <20250226074837.1679988-2-yong.liang.choong@linux.intel.com>
+	s=arc-20240116; t=1740584087; c=relaxed/simple;
+	bh=hmkvwcTIdYAvDNtqq/5w7MBuFB4NLwEVUX8gu5GXASc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=B43C+Zaa5QBmhH9GZP8af26AQfnna/a46DYzL6+mLSBQ5Jl/mPXqwTxM18Ln/fF8h3Wjvwu27sMz2fzUPbPy1pbKTnVNC0HTQgQutzXVGgsy6AoHaWXrBgO12EDHktrjjplve0fXcrmr5ZEM3G7tFU7X6FOIkt1n8kbVVU+P+lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tc26uTk9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+zlWQVqG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 15:34:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740584083;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68nDCmc0e5uDwQm6onA+XKw91++5cI8pdO7sHEgoBJc=;
+	b=tc26uTk9v65yj6NI/H5C4iUwtuKswi3jRKdeJDl1aNpqOfJxAooPlehzfJmoa61LDtcVXf
+	2YRF7pnyGOD5zOxFbeX6qfZtOFC7jO4iuRmjlT7Oorzlb42ur/SserClLC9VvJPDV4j/kb
+	8dWU7KCnExBPDrB5Gqe2HcwETRjWOhTs9323O/yUUSLU5yfcXb/2ZvKWx2ozlXf9lodpjn
+	0G2vXnvVw4TvgYlrPpRKa92BdMj1+jm79lfd61SmRLWJS1crXeBzE6isEoBDJPPPQ1PI1o
+	IJsjCTuy8g2guU77bT0ICr/PREf6vWHp1KFlqqXuq9wmgWQ5/rQwheI713cKGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740584083;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68nDCmc0e5uDwQm6onA+XKw91++5cI8pdO7sHEgoBJc=;
+	b=+zlWQVqGt3stOxe+fVfvBvX7jUBAa29v53iwBoWtyBzCTpodujmzFXsu5/EY1P9tgQuVwU
+	J7HaPs9UXJ7Q/JCg==
+From: "tip-bot2 for Michael Jeanson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] rseq: Update kernel fields in lockstep with
+ CONFIG_DEBUG_RSEQ=y
+Cc: Michael Jeanson <mjeanson@efficios.com>, Ingo Molnar <mingo@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250225202500.731245-1-mjeanson@efficios.com>
+References: <20250225202500.731245-1-mjeanson@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226074837.1679988-2-yong.liang.choong@linux.intel.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Message-ID: <174058407855.10177.734490277457259426.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 03:48:32PM +0800, Choong Yong Liang wrote:
-> The phylink_expects_phy() function allows MAC drivers to check if they are
-> expecting a PHY to attach. The checking condition in phylink_expects_phy()
-> aims to achieve the same result as the checking condition in
-> phylink_attach_phy().
-> 
-> However, the checking condition in phylink_expects_phy() uses
-> pl->link_config.interface, while phylink_attach_phy() uses
-> pl->link_interface.
-> 
-> Initially, both pl->link_interface and pl->link_config.interface are set
-> to SGMII, and pl->cfg_link_an_mode is set to MLO_AN_INBAND.
-> 
-> When the interface switches from SGMII to 2500BASE-X,
-> pl->link_config.interface is updated by phylink_major_config().
-> At this point, pl->cfg_link_an_mode remains MLO_AN_INBAND, and
-> pl->link_config.interface is set to 2500BASE-X.
-> Subsequently, when the STMMAC link goes down and comes up again,
-> it is blocked by phylink_expects_phy().
+The following commit has been merged into the sched/core branch of tip:
 
-I thought we ascertained that it's not "link goes down" but when the
-interface is taken down administratively. "Link goes down" to most
-people mean an event such as the network cable being unplugged.
-Please fix the patch description.
+Commit-ID:     79e10dad1ce3feac7937bedf911d92f486a9e76a
+Gitweb:        https://git.kernel.org/tip/79e10dad1ce3feac7937bedf911d92f486a9e76a
+Author:        Michael Jeanson <mjeanson@efficios.com>
+AuthorDate:    Tue, 25 Feb 2025 15:24:46 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 26 Feb 2025 16:20:23 +01:00
 
-> Since phylink_expects_phy() and phylink_attach_phy() aim to achieve the
-> same result, phylink_expects_phy() should check pl->link_interface,
-> which never changes, instead of pl->link_config.interface, which is
-> updated by phylink_major_config().
-> 
-> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+rseq: Update kernel fields in lockstep with CONFIG_DEBUG_RSEQ=y
 
-With, and *only* with the above fixed:
+With CONFIG_DEBUG_RSEQ=y, an in-kernel copy of the read-only fields is
+kept synchronized with the user-space fields. Ensure the updates are
+done in lockstep in case we error out on a write to user-space.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Fixes: 7d5265ffcd8b ("rseq: Validate read-only fields under DEBUG_RSEQ config")
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/r/20250225202500.731245-1-mjeanson@efficios.com
+---
+ kernel/rseq.c | 80 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
 
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 442aba2..3d136c4 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -78,24 +78,24 @@ efault:
+ 	return -EFAULT;
+ }
+ 
+-static void rseq_set_ro_fields(struct task_struct *t, u32 cpu_id_start, u32 cpu_id,
+-			       u32 node_id, u32 mm_cid)
+-{
+-	rseq_kernel_fields(t)->cpu_id_start = cpu_id;
+-	rseq_kernel_fields(t)->cpu_id = cpu_id;
+-	rseq_kernel_fields(t)->node_id = node_id;
+-	rseq_kernel_fields(t)->mm_cid = mm_cid;
+-}
++/*
++ * Update an rseq field and its in-kernel copy in lock-step to keep a coherent
++ * state.
++ */
++#define rseq_unsafe_put_user(t, value, field, error_label)		\
++	do {								\
++		unsafe_put_user(value, &t->rseq->field, error_label);	\
++		rseq_kernel_fields(t)->field = value;			\
++	} while (0)
++
+ #else
+ static int rseq_validate_ro_fields(struct task_struct *t)
+ {
+ 	return 0;
+ }
+ 
+-static void rseq_set_ro_fields(struct task_struct *t, u32 cpu_id_start, u32 cpu_id,
+-			       u32 node_id, u32 mm_cid)
+-{
+-}
++#define rseq_unsafe_put_user(t, value, field, error_label)		\
++	unsafe_put_user(value, &t->rseq->field, error_label)
+ #endif
+ 
+ /*
+@@ -173,17 +173,18 @@ static int rseq_update_cpu_node_id(struct task_struct *t)
+ 	WARN_ON_ONCE((int) mm_cid < 0);
+ 	if (!user_write_access_begin(rseq, t->rseq_len))
+ 		goto efault;
+-	unsafe_put_user(cpu_id, &rseq->cpu_id_start, efault_end);
+-	unsafe_put_user(cpu_id, &rseq->cpu_id, efault_end);
+-	unsafe_put_user(node_id, &rseq->node_id, efault_end);
+-	unsafe_put_user(mm_cid, &rseq->mm_cid, efault_end);
++
++	rseq_unsafe_put_user(t, cpu_id, cpu_id_start, efault_end);
++	rseq_unsafe_put_user(t, cpu_id, cpu_id, efault_end);
++	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
++	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
++
+ 	/*
+ 	 * Additional feature fields added after ORIG_RSEQ_SIZE
+ 	 * need to be conditionally updated only if
+ 	 * t->rseq_len != ORIG_RSEQ_SIZE.
+ 	 */
+ 	user_write_access_end();
+-	rseq_set_ro_fields(t, cpu_id, cpu_id, node_id, mm_cid);
+ 	trace_rseq_update(t);
+ 	return 0;
+ 
+@@ -195,6 +196,7 @@ efault:
+ 
+ static int rseq_reset_rseq_cpu_node_id(struct task_struct *t)
+ {
++	struct rseq __user *rseq = t->rseq;
+ 	u32 cpu_id_start = 0, cpu_id = RSEQ_CPU_ID_UNINITIALIZED, node_id = 0,
+ 	    mm_cid = 0;
+ 
+@@ -202,38 +204,36 @@ static int rseq_reset_rseq_cpu_node_id(struct task_struct *t)
+ 	 * Validate read-only rseq fields.
+ 	 */
+ 	if (rseq_validate_ro_fields(t))
+-		return -EFAULT;
+-	/*
+-	 * Reset cpu_id_start to its initial state (0).
+-	 */
+-	if (put_user(cpu_id_start, &t->rseq->cpu_id_start))
+-		return -EFAULT;
+-	/*
+-	 * Reset cpu_id to RSEQ_CPU_ID_UNINITIALIZED, so any user coming
+-	 * in after unregistration can figure out that rseq needs to be
+-	 * registered again.
+-	 */
+-	if (put_user(cpu_id, &t->rseq->cpu_id))
+-		return -EFAULT;
+-	/*
+-	 * Reset node_id to its initial state (0).
+-	 */
+-	if (put_user(node_id, &t->rseq->node_id))
+-		return -EFAULT;
++		goto efault;
++
++	if (!user_write_access_begin(rseq, t->rseq_len))
++		goto efault;
++
+ 	/*
+-	 * Reset mm_cid to its initial state (0).
++	 * Reset all fields to their initial state.
++	 *
++	 * All fields have an initial state of 0 except cpu_id which is set to
++	 * RSEQ_CPU_ID_UNINITIALIZED, so that any user coming in after
++	 * unregistration can figure out that rseq needs to be registered
++	 * again.
+ 	 */
+-	if (put_user(mm_cid, &t->rseq->mm_cid))
+-		return -EFAULT;
+-
+-	rseq_set_ro_fields(t, cpu_id_start, cpu_id, node_id, mm_cid);
++	rseq_unsafe_put_user(t, cpu_id_start, cpu_id_start, efault_end);
++	rseq_unsafe_put_user(t, cpu_id, cpu_id, efault_end);
++	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
++	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
+ 
+ 	/*
+ 	 * Additional feature fields added after ORIG_RSEQ_SIZE
+ 	 * need to be conditionally reset only if
+ 	 * t->rseq_len != ORIG_RSEQ_SIZE.
+ 	 */
++	user_write_access_end();
+ 	return 0;
++
++efault_end:
++	user_write_access_end();
++efault:
++	return -EFAULT;
+ }
+ 
+ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
 
