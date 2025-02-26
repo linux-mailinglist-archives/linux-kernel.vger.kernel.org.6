@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-534354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD98A465C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:58:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AD0A46623
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C233A8020
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C2D424F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEEA223321;
-	Wed, 26 Feb 2025 15:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA0421CC60;
+	Wed, 26 Feb 2025 15:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fLj1Qt5I"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1iAtqqQ"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0A021D3C1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221E22370A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585208; cv=none; b=f3npvITcqEl/O/HCxBRTM/53YJ9FLJBeBppR1DR5soImYkzQtArH6ma5BhA/oxsx1NtTObbt32FpocNS8M/ivWL48PHB72pJ7VIpSkO8QsETbDkt4VA1yT8znRnJLzBMfhexMan5RI8FGiOvdpX68+VrwiwXI96AEQzQOESTFjQ=
+	t=1740585212; cv=none; b=lMpG3J9BKvJv2JfIqUKT7WVuzjUtbqPDrM0xB/zClFVKwEkBOcxxAkqvK+vaVmgNPRppdAiVHvo55DVbgQKFLWY8qJhk3Lv53VQUGziQ0MSrnRnFYVrK2c2Hht+4LOX5m899rLZijq1HQrd8ozGdLIKuAUdkqEb49aW9jUbrUHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585208; c=relaxed/simple;
-	bh=OHdXXOUPpkn9RkycrhGhRhHj/Xriw87NlVhr6kBgbJg=;
+	s=arc-20240116; t=1740585212; c=relaxed/simple;
+	bh=+l9+q+ZpJR/2zzQFN7qY30Hlk5wVNR0Mp31jHBFT5qc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UTUVzmZyPWtb0jENOLtkfxLmUmiHyWjK1YBo6eICPPDKBo1dMb8HOkHIleEYHj0w+G9no1EkL0Y846TV+yrdoUWO6zmt8DkWuRo8EQFmn/PGq0Dt0HXw0n//MiRBGhyHgq7J3ipDykez9tyN3l5969uIEamlysNgUkkzhmtt2Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fLj1Qt5I; arc=none smtp.client-ip=95.215.58.174
+	 MIME-Version; b=nkbzHRh4t7VbpPxqceCDbIBZKr3xR7hFdxS24zXMsfLL9tE+3rrWZxwGDhsZJlONupV/Rfg3z3f5P5DC9s00wLNaVrTKlPwVtVfEfev6vhGwupYj8vVwOhqtsB09oJxtqc+VYqd89Wx+u3G3JHNWw91bucLfUD63U3U6OMLp5Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1iAtqqQ; arc=none smtp.client-ip=95.215.58.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740585203;
+	t=1740585209;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=B7NMtDHbuevgiT8wcr3gh6V+afY/ND0IPd6hQ5X6ZjE=;
-	b=fLj1Qt5ID0GQe5hlg/Ra/ZKFhmqYmp5+KDevq/a1TWvLKkb5qbrDYOrb0q4oWzKDAiyOqM
-	hYtIl1wDI/VFXLwIZAW0PkKyF5ICD8vnihR4/3PXw/JELEm3SmZudM4D1Lc2YufFEjYg3n
-	Wuy0Wdf2axXOLjo+vzXjWHe5lmJpkY4=
+	bh=LGo5A1qwTPvIwUTBzzm6zcRuuolGFzB54L0V7i4Wa5c=;
+	b=B1iAtqqQMgRGIGbewYzHTUXLt3rW53YozwuCdWPz9ldfcZSdCR1ZhR19MWpWiYYIVW8QZE
+	XJq6UQTi5HWXQ0pzFZaX2AzpUZXlF/HD6ay7q14/hLjqoAoU9rVu5qKX3FPcuRkkwoZCT0
+	8lVA3UTydWHG/9fKYa9/IOIAayoIRTA=
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -64,9 +64,9 @@ Cc: Nishanth Menon <nm@ti.com>,
 	DRI Development List <dri-devel@lists.freedesktop.org>,
 	Linux Kernel List <linux-kernel@vger.kernel.org>,
 	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v10 06/13] drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()
-Date: Wed, 26 Feb 2025 21:22:21 +0530
-Message-Id: <20250226155228.564289-7-aradhya.bhatia@linux.dev>
+Subject: [PATCH v10 07/13] drm/mipi-dsi: Add helper to find input format
+Date: Wed, 26 Feb 2025 21:22:22 +0530
+Message-Id: <20250226155228.564289-8-aradhya.bhatia@linux.dev>
 In-Reply-To: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
 References: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
 Precedence: bulk
@@ -80,106 +80,86 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 
-Instead of manually finding the next bridge/panel, and maintaining the
-panel-bridge (in-case the next entity is a panel), switch to using the
-automatically managing devm_drm_of_get_bridge() API.
+Add a helper API that can be used by the DSI hosts to find the required
+input bus format for the given output dsi pixel format.
 
-Drop the drm_panel support completely from the driver while at it.
-
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 ---
- .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 28 ++-----------------
- .../gpu/drm/bridge/cadence/cdns-dsi-core.h    |  2 --
- 2 files changed, 3 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/drm_mipi_dsi.c | 37 ++++++++++++++++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h     |  1 +
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 6a77ca36cb9d..c2512342139c 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -941,8 +941,6 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
- 	struct cdns_dsi_output *output = &dsi->output;
- 	struct cdns_dsi_input *input = &dsi->input;
- 	struct drm_bridge *bridge;
--	struct drm_panel *panel;
--	struct device_node *np;
- 	int ret;
- 
- 	/*
-@@ -960,26 +958,10 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
- 	/*
- 	 * The host <-> device link might be described using an OF-graph
- 	 * representation, in this case we extract the device of_node from
--	 * this representation, otherwise we use dsidev->dev.of_node which
--	 * should have been filled by the core.
-+	 * this representation.
- 	 */
--	np = of_graph_get_remote_node(dsi->base.dev->of_node, DSI_OUTPUT_PORT,
--				      dev->channel);
--	if (!np)
--		np = of_node_get(dev->dev.of_node);
--
--	panel = of_drm_find_panel(np);
--	if (!IS_ERR(panel)) {
--		bridge = drm_panel_bridge_add_typed(panel,
--						    DRM_MODE_CONNECTOR_DSI);
--	} else {
--		bridge = of_drm_find_bridge(np);
--		if (!bridge)
--			bridge = ERR_PTR(-EINVAL);
--	}
--
--	of_node_put(np);
--
-+	bridge = devm_drm_of_get_bridge(dsi->base.dev, dsi->base.dev->of_node,
-+					DSI_OUTPUT_PORT, dev->channel);
- 	if (IS_ERR(bridge)) {
- 		ret = PTR_ERR(bridge);
- 		dev_err(host->dev, "failed to add DSI device %s (err = %d)",
-@@ -989,7 +971,6 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
- 
- 	output->dev = dev;
- 	output->bridge = bridge;
--	output->panel = panel;
- 
- 	/*
- 	 * The DSI output has been properly configured, we can now safely
-@@ -1005,12 +986,9 @@ static int cdns_dsi_detach(struct mipi_dsi_host *host,
- 			   struct mipi_dsi_device *dev)
- {
- 	struct cdns_dsi *dsi = to_cdns_dsi(host);
--	struct cdns_dsi_output *output = &dsi->output;
- 	struct cdns_dsi_input *input = &dsi->input;
- 
- 	drm_bridge_remove(&input->bridge);
--	if (output->panel)
--		drm_panel_bridge_remove(output->bridge);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-index ca7ea2da635c..5db5dbbbcaad 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-@@ -10,7 +10,6 @@
- 
- #include <drm/drm_bridge.h>
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 2e148753ea97..58326ccc7c79 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -36,6 +36,8 @@
  #include <drm/drm_mipi_dsi.h>
--#include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
  
- #include <linux/bits.h>
- #include <linux/completion.h>
-@@ -21,7 +20,6 @@ struct reset_control;
++#include <linux/media-bus-format.h>
++
+ #include <video/mipi_display.h>
  
- struct cdns_dsi_output {
- 	struct mipi_dsi_device *dev;
--	struct drm_panel *panel;
- 	struct drm_bridge *bridge;
- 	union phy_configure_opts phy_opts;
- };
+ /**
+@@ -870,6 +872,41 @@ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ }
+ EXPORT_SYMBOL(mipi_dsi_generic_read);
+ 
++/**
++ * drm_mipi_dsi_get_input_bus_fmt() - Get the required MEDIA_BUS_FMT_* based
++ *				      input pixel format for a given DSI output
++ *				      pixel format
++ * @dsi_format: pixel format that a DSI host needs to output
++ *
++ * Various DSI hosts can use this function during their
++ * &drm_bridge_funcs.atomic_get_input_bus_fmts operation to ascertain
++ * the MEDIA_BUS_FMT_* pixel format required as input.
++ *
++ * RETURNS:
++ * a 32-bit MEDIA_BUS_FMT_* value on success or 0 in case of failure.
++ */
++u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format)
++{
++	switch (dsi_format) {
++	case MIPI_DSI_FMT_RGB888:
++		return MEDIA_BUS_FMT_RGB888_1X24;
++
++	case MIPI_DSI_FMT_RGB666:
++		return MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
++
++	case MIPI_DSI_FMT_RGB666_PACKED:
++		return MEDIA_BUS_FMT_RGB666_1X18;
++
++	case MIPI_DSI_FMT_RGB565:
++		return MEDIA_BUS_FMT_RGB565_1X16;
++
++	default:
++		/* Unsupported DSI Format */
++		return 0;
++	}
++}
++EXPORT_SYMBOL(drm_mipi_dsi_get_input_bus_fmt);
++
+ /**
+  * mipi_dsi_dcs_write_buffer() - transmit a DCS command with payload
+  * @dsi: DSI peripheral device
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index bd40a443385c..d6796ce9f5ff 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -293,6 +293,7 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
+ 				  const void *payload, size_t size);
+ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ 			      size_t num_params, void *data, size_t size);
++u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format);
+ 
+ #define mipi_dsi_msleep(ctx, delay)	\
+ 	do {				\
 -- 
 2.34.1
 
