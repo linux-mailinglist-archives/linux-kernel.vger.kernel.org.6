@@ -1,160 +1,237 @@
-Return-Path: <linux-kernel+bounces-534868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7FEA46C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:10:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3753A46C0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F1616EB84
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176173B3BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BEB275613;
-	Wed, 26 Feb 2025 20:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E332755F6;
+	Wed, 26 Feb 2025 20:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gU/OzMWB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBzra++V"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19912566F5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFC02755F0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740600511; cv=none; b=NxUQuDlbHzTB8cHvVflkZKT+ikB5I2ZVWoTXQtCWTTd0IFejYPbPTw7MDh6yu13lbkvIJsRF7HwAJGkoR9IMKxHOumpcuIhImiQ92IYJsKHJwH+hXSa2c7REh6yufGvFsHzUr3k/3LNl3/qg8zc3JJVxKSMoteLixbKpL2uBzNE=
+	t=1740600498; cv=none; b=fq9Q+MaOw63x0sYzQv49aivVpiM+ewmeI14jcVv/oeO5XgURAsjQR8og5PlHYVWKoGc4HL4KFHtTrz7D+4kpu0SRUw/sV6sBx3M7vwuUOB/kCgPI8YTFK8lMVH/zdGABmA9bLsZDVwbQy1bkuxkV+b699tZoUwLAhJJ6+hKwmLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740600511; c=relaxed/simple;
-	bh=s0VlMDsy/CfwsULs14IStSBfX9tPP0S0+8e+uTLX5pE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=QYA59eTiTcAMDbVtfpfEGGZCRXGsHMKie6ALw8IV3YBZkFu+xQb4/YtJ/8rEAcOK+rdlhUbowPIrBGS6NQXmzCyg21ghwe6CpmrltsDHFpPMQ8lz99Vpqzy2y9hE/sWwdNDc7T80dMtwLfgr8db1gUqFAZEwoofTRJ5JV1D25Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gU/OzMWB; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740600510; x=1772136510;
-  h=date:from:to:cc:subject:message-id;
-  bh=s0VlMDsy/CfwsULs14IStSBfX9tPP0S0+8e+uTLX5pE=;
-  b=gU/OzMWBnFP6mhoNKnnOGQ9c089DqP97dWoy5n9Rpv2j1+hGbsOrd572
-   WE1aroDkrlhRgJC84+4ZGEJzsIQO8xXPvP9Tdw+mPezajEe5gCxNzQcT4
-   ousXnuPF8G4qf/Ke2YLk4Hq/DFGyG9rCVCUe/8oXIIEpBZlCfxc6ZnXMF
-   01n4oVC5jbTDJXXq+cbx6rlpHtyZx3X63cV2Yy/NkSUHyqsXkqaGQ79Rm
-   oJ5gjmHnCC3xSvkRGv0+ZBkT8ArOjCwxd5jkMgeRwIsJ56Y1ZJeswGSqo
-   iZUH9w+b4kqcaAbZ5YZZ+lADGuQWlpfYuF8EAGXQVSPU7lWYWuglT9lC5
-   w==;
-X-CSE-ConnectionGUID: vY/jsKm3R5a/yBM/gu6bEA==
-X-CSE-MsgGUID: Bvwb+GlNToWJawXTstc8tQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41599660"
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="41599660"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 12:08:29 -0800
-X-CSE-ConnectionGUID: aI144SUDQ/m1YHOeVTReZg==
-X-CSE-MsgGUID: dcMRcUIJR86vgyFWUYsGFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="153985859"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 26 Feb 2025 12:08:27 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnNhP-000CP3-2k;
-	Wed, 26 Feb 2025 20:08:10 +0000
-Date: Thu, 27 Feb 2025 04:07:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/mm] BUILD SUCCESS
- 8e8f0306497dea58fb4e8e2558949daae5eeac5c
-Message-ID: <202502270457.PkCVVcrr-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740600498; c=relaxed/simple;
+	bh=VqyBoVnbdYoDVanLk+Pb9vBV+DONTnFvxhCnDC7ri8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q6LugQ7hdpc9ezOn/yk1rychEaA/nSUODB9Rygx+bKBohtVItz5AbxtkwrF/3mzGl4E/q0QlHJ1vE/i35vBjLWgPZKhKbhfMDXAgFbNqwktoOW3p4zvdvWdL+206g1O7Z9/DnvqJWkQnhNCbfvfe8ezM8Xcw6H3c+vElyrgwPek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBzra++V; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307c13298eeso3140641fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740600495; x=1741205295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hD5wMmXhknkXEjEekUf2HCsGMo+y7LLTruXjjEmauLE=;
+        b=TBzra++Vfw5wcKxDEZs5F6CdnDP6dkynYuZw5JCLvbDX7yw83AzBYilF07+pWuNYXI
+         u0wKGINRWO3db5Lkv9UWHrxRSf7WeIQE8IIvR0zGnfTr+a32WjUIbtWmzzM+NhfL19on
+         OGmhPVXKqbY6BOeOYsxi3EqhEyRUvxYKONVkNft/Ispdm/UaBGAv9tiNvRxsECHVg/mN
+         BbBgPrIIFEJT3zXRheLdmwy0iJlvMIbyF1qMeh9oXfIsGNwXnZymU9sx6Is2vtlFgGsG
+         NL+YMvMgI1Y8sjayrStVH5rXnsyjdo07cDPyBn297brzmn8xKFDMk+1CwjEZdWAP7gQL
+         IKyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740600495; x=1741205295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hD5wMmXhknkXEjEekUf2HCsGMo+y7LLTruXjjEmauLE=;
+        b=V40JNrTmUjXV2STj9AE56LtLikcNm9y85tROf6vMNnSCYSWxebRZESZwITCqOlpVXm
+         VR48pz6ScpaIqVPoJUtQ0MYtYUrUESIDLifbMPtaZsnWBcW2bhclF99eDUMhsAs9Sm6c
+         aMUkr8W7iRuzi6k6LNTpUrYwAggw43p/pu75pUbjdMzIBPWT66wB9VtqNItvzZgI8dzK
+         eJUprLJCTtMIhq5m+HhDFK+fvLng751SIO1y2XSsr5Vu1TaepdB2KdqKwI3rcBo4F+2J
+         ewUPQ2b69mpnU0WIFBaiTnl3myPde7hUa2Rh7foDcMRPJvLn2RNqxCpMU4ptlJDoLbNh
+         wj7Q==
+X-Gm-Message-State: AOJu0YyW5IsQwN11DteWY44mJdbzBAtORITCS+npIsTmOoEDGkJ35kkl
+	daptp4KbUKHASmlbXHt6Bg8bNlg41oaqth0fSVngcSevgb/sZSGlNr5OmgJ3Wk39wwPLBNCRDQR
+	AaPtDNH7AZ/DmaZf3F36Cz/ZxyRM=
+X-Gm-Gg: ASbGncsYx7mFUF6cuiDYBHnpgzrE0onKUzIK8DpiWhnbeNnuzxvfrCZuG56IvhmbGad
+	KA70zNcnl6T5PtUk8wMedNUu+nrONkxtoDThtR18eyHt0fHiHG3+104vy5ediKU2hxg1UPkfn0o
+	Ri+/4H5BI=
+X-Google-Smtp-Source: AGHT+IFRiJ0qNVfah6Zvym9h2cD+hwf82GeX4SkBF3w5Skjf8pSRJaV1g4sFKzfRxMSJb27GJIOfAjjq57Did7PWE9k=
+X-Received: by 2002:a2e:ad0b:0:b0:309:2999:77d4 with SMTP id
+ 38308e7fff4ca-30b84650d3dmr3263481fa.6.1740600494454; Wed, 26 Feb 2025
+ 12:08:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250226180531.1242429-1-brgerst@gmail.com> <20250226180531.1242429-9-brgerst@gmail.com>
+In-Reply-To: <20250226180531.1242429-9-brgerst@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 26 Feb 2025 21:08:02 +0100
+X-Gm-Features: AQ5f1JqJrMZ52eZTlZhMhcHdBQnM1PRTSkVUBJPdgOFfMEZF4t_eSVGF4M3iOrU
+Message-ID: <CAFULd4Z3o18zRebbqTgNH9QrPkoSLtbS=_mZGfheJYoeMawUaw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] x86/percpu: Move top_of_stack to percpu hot section
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
-branch HEAD: 8e8f0306497dea58fb4e8e2558949daae5eeac5c  x86/mtrr: Remove unnecessary strlen() in mtrr_write()
+On Wed, Feb 26, 2025 at 7:06=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wro=
+te:
+>
+> No functional change.
+>
+> Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> ---
+>  arch/x86/entry/entry_32.S        | 4 ++--
+>  arch/x86/entry/entry_64.S        | 6 +++---
+>  arch/x86/entry/entry_64_compat.S | 4 ++--
+>  arch/x86/include/asm/current.h   | 1 -
+>  arch/x86/include/asm/percpu.h    | 2 +-
+>  arch/x86/include/asm/processor.h | 8 ++++++--
+>  arch/x86/kernel/asm-offsets.c    | 1 -
+>  arch/x86/kernel/cpu/common.c     | 3 ++-
+>  arch/x86/kernel/process_32.c     | 4 ++--
+>  arch/x86/kernel/process_64.c     | 2 +-
+>  arch/x86/kernel/smpboot.c        | 2 +-
+>  arch/x86/kernel/vmlinux.lds.S    | 1 +
+>  12 files changed, 21 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index 20be5758c2d2..92c0b4a94e0a 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -1153,7 +1153,7 @@ SYM_CODE_START(asm_exc_nmi)
+>          * is using the thread stack right now, so it's safe for us to us=
+e it.
+>          */
+>         movl    %esp, %ebx
+> -       movl    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esp
+> +       movl    PER_CPU_VAR(cpu_current_top_of_stack), %esp
+>         call    exc_nmi
+>         movl    %ebx, %esp
+>
+> @@ -1217,7 +1217,7 @@ SYM_CODE_START(rewind_stack_and_make_dead)
+>         /* Prevent any naive code from trying to unwind to our caller. */
+>         xorl    %ebp, %ebp
+>
+> -       movl    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esi
+> +       movl    PER_CPU_VAR(cpu_current_top_of_stack), %esi
+>         leal    -TOP_OF_KERNEL_STACK_PADDING-PTREGS_SIZE(%esi), %esp
+>
+>         call    make_task_dead
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 33a955aa01d8..9baf32a7a118 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -92,7 +92,7 @@ SYM_CODE_START(entry_SYSCALL_64)
+>         /* tss.sp2 is scratch space. */
+>         movq    %rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rsp
+> -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>
+>  SYM_INNER_LABEL(entry_SYSCALL_64_safe_stack, SYM_L_GLOBAL)
+>         ANNOTATE_NOENDBR
+> @@ -1166,7 +1166,7 @@ SYM_CODE_START(asm_exc_nmi)
+>         FENCE_SWAPGS_USER_ENTRY
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rdx
+>         movq    %rsp, %rdx
+> -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>         UNWIND_HINT_IRET_REGS base=3D%rdx offset=3D8
+>         pushq   5*8(%rdx)       /* pt_regs->ss */
+>         pushq   4*8(%rdx)       /* pt_regs->rsp */
+> @@ -1484,7 +1484,7 @@ SYM_CODE_START_NOALIGN(rewind_stack_and_make_dead)
+>         /* Prevent any naive code from trying to unwind to our caller. */
+>         xorl    %ebp, %ebp
+>
+> -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rax
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rax
+>         leaq    -PTREGS_SIZE(%rax), %rsp
+>         UNWIND_HINT_REGS
+>
+> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_c=
+ompat.S
+> index ed0a5f2dc129..a45e1125fc6c 100644
+> --- a/arch/x86/entry/entry_64_compat.S
+> +++ b/arch/x86/entry/entry_64_compat.S
+> @@ -57,7 +57,7 @@ SYM_CODE_START(entry_SYSENTER_compat)
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rax
+>         popq    %rax
+>
+> -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>
+>         /* Construct struct pt_regs on stack */
+>         pushq   $__USER_DS              /* pt_regs->ss */
+> @@ -193,7 +193,7 @@ SYM_CODE_START(entry_SYSCALL_compat)
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rsp
+>
+>         /* Switch to the kernel stack */
+> -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>
+>  SYM_INNER_LABEL(entry_SYSCALL_compat_safe_stack, SYM_L_GLOBAL)
+>         ANNOTATE_NOENDBR
+> diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/curren=
+t.h
+> index 6fad5a4c21d7..3d1b123c2ee3 100644
+> --- a/arch/x86/include/asm/current.h
+> +++ b/arch/x86/include/asm/current.h
+> @@ -14,7 +14,6 @@ struct task_struct;
+>
+>  struct pcpu_hot {
+>         struct task_struct      *current_task;
+> -       unsigned long           top_of_stack;
+>  };
+>
+>  DECLARE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot);
+> diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.=
+h
+> index 7cb4f64b2e60..044410462d36 100644
+> --- a/arch/x86/include/asm/percpu.h
+> +++ b/arch/x86/include/asm/percpu.h
+> @@ -554,7 +554,7 @@ do {                                                 =
+                       \
+>   * it is accessed while this_cpu_read_stable() allows the value to be ca=
+ched.
+>   * this_cpu_read_stable() is more efficient and can be used if its value
+>   * is guaranteed to be valid across CPUs.  The current users include
+> - * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
+> + * pcpu_hot.current_task and cpu_current_top_of_stack, both of which are
+>   * actually per-thread variables implemented as per-CPU variables and
+>   * thus stable for the duration of the respective task.
+>   */
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proc=
+essor.h
+> index 54fce8d7504d..b4d51de071f2 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -427,6 +427,10 @@ DECLARE_PER_CPU_CACHE_HOT(bool, hardirq_stack_inuse)=
+;
+>  DECLARE_PER_CPU_CACHE_HOT(struct irq_stack *, softirq_stack_ptr);
+>  #endif
+>
+> +DECLARE_PER_CPU_CACHE_HOT(unsigned long, cpu_current_top_of_stack);
+> +/* const-qualified alias provided by the linker. */
+> +DECLARE_PER_CPU_CACHE_HOT(const unsigned long __percpu_seg_override, con=
+st_cpu_current_top_of_stack);
 
-elapsed time: 1446m
+Please split the above line, like you did with const_current_task declarati=
+on.
 
-configs tested: 68
-configs skipped: 1
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                  randconfig-001-20250226    gcc-13.2.0
-arc                  randconfig-002-20250226    gcc-13.2.0
-arm                  randconfig-001-20250226    gcc-14.2.0
-arm                  randconfig-002-20250226    clang-21
-arm                  randconfig-003-20250226    gcc-14.2.0
-arm                  randconfig-004-20250226    gcc-14.2.0
-arm64                randconfig-001-20250226    gcc-14.2.0
-arm64                randconfig-002-20250226    gcc-14.2.0
-arm64                randconfig-003-20250226    clang-21
-arm64                randconfig-004-20250226    gcc-14.2.0
-csky                 randconfig-001-20250226    gcc-14.2.0
-csky                 randconfig-002-20250226    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250226    clang-21
-hexagon              randconfig-002-20250226    clang-21
-i386                             allnoconfig    gcc-12
-i386       buildonly-randconfig-001-20250226    gcc-12
-i386       buildonly-randconfig-002-20250226    gcc-12
-i386       buildonly-randconfig-003-20250226    gcc-12
-i386       buildonly-randconfig-004-20250226    clang-19
-i386       buildonly-randconfig-005-20250226    gcc-12
-i386       buildonly-randconfig-006-20250226    gcc-12
-loongarch            randconfig-001-20250226    gcc-14.2.0
-loongarch            randconfig-002-20250226    gcc-14.2.0
-nios2                randconfig-001-20250226    gcc-14.2.0
-nios2                randconfig-002-20250226    gcc-14.2.0
-openrisc                         allnoconfig    gcc-14.2.0
-parisc                           allnoconfig    gcc-14.2.0
-parisc               randconfig-001-20250226    gcc-14.2.0
-parisc               randconfig-002-20250226    gcc-14.2.0
-powerpc                          allnoconfig    gcc-14.2.0
-powerpc              randconfig-001-20250226    gcc-14.2.0
-powerpc              randconfig-002-20250226    clang-18
-powerpc              randconfig-003-20250226    clang-21
-powerpc64            randconfig-001-20250226    clang-18
-powerpc64            randconfig-002-20250226    gcc-14.2.0
-powerpc64            randconfig-003-20250226    gcc-14.2.0
-riscv                randconfig-001-20250226    clang-18
-riscv                randconfig-002-20250226    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250226    gcc-14.2.0
-s390                 randconfig-002-20250226    clang-15
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250226    gcc-14.2.0
-sh                   randconfig-002-20250226    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250226    gcc-14.2.0
-sparc                randconfig-002-20250226    gcc-14.2.0
-sparc64              randconfig-001-20250226    gcc-14.2.0
-sparc64              randconfig-002-20250226    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250226    clang-18
-um                   randconfig-002-20250226    gcc-12
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20250226    clang-19
-x86_64     buildonly-randconfig-002-20250226    clang-19
-x86_64     buildonly-randconfig-003-20250226    gcc-12
-x86_64     buildonly-randconfig-004-20250226    clang-19
-x86_64     buildonly-randconfig-005-20250226    gcc-12
-x86_64     buildonly-randconfig-006-20250226    gcc-12
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20250226    gcc-14.2.0
-xtensa               randconfig-002-20250226    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Uros.
 
