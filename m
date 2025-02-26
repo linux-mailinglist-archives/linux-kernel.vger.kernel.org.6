@@ -1,152 +1,240 @@
-Return-Path: <linux-kernel+bounces-533257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3D8A45790
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F637A4578F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63F5188D1DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547F188C870
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079BE22422E;
-	Wed, 26 Feb 2025 07:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8051E1E17;
+	Wed, 26 Feb 2025 07:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="O/tkTSbO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qpxup3rq"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qd8gPi7k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996A1E1DFB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DF1E1E00;
 	Wed, 26 Feb 2025 07:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556539; cv=none; b=WGXLGqezjupnk9Ag5+ORVl2fsh7PDqmG8Miq7SuQhDJZxcY74+v4NXLQdr8VHfGQN5PFjyoQmzwjxBjIWQayPAlSbafj5VadAZgUR8Ex6eKGPzGr+8n0vUeddCil4dewRSJK820qDR1bFlanjWsS2MbeOssyL9wRbZQXr0Q+XrY=
+	t=1740556538; cv=none; b=QFEVfYtu2tihLTsXf1KNYaw6Qc6eY6XGledI+nhG6AnL7xqHrS/mhs5/JpJPyZ3ODPGXpThKVHqJJZc/EDCtAwvOUqXnT4vbc5iB09p74rQQFb944jgm+i28sx3WcxvHPAVEdo1xlx9flRd207FAsGGjuAWS9WxSGaHNADZnzro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556539; c=relaxed/simple;
-	bh=m+xrRvgwuYLrN4JztV5V76ixaE7nsY1/hfFoToWmS1w=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Nmuv9ViKr1Gto1lKZHGtbYTWA1cHxndFZ7pvrcMIF94mQDlzkUNe6uuiMqc2kLh7vuRc30xzwj8h6svwd8rVmxYFVsy2DKDvimV3VTx9VQtQISVL1vYVhtbM07R3ZTWihA5yhX1H1M6ChFLvnf2KJGWf6VF5No9safrJvLLk6vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=O/tkTSbO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qpxup3rq; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id CF6542540195;
-	Wed, 26 Feb 2025 02:55:35 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 02:55:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740556535;
-	 x=1740642935; bh=0lfVMDjZo5CB8ddhotjizAXW5wzmIW+8vVGHFlSkNxI=; b=
-	O/tkTSbOvJV94Iaf6WoPjb4B9fGynObugRnGl0gk773eFW7URrcxdHxm9btKC7nu
-	XKHsEXsSqu6oxzkrOyYBG4ZidF/hxSoMi5v2AwYQSEPvXTkI2XtCXj7W6+WiUHxN
-	q6lalbT2k5r0tZRiZ1q5Cd6UM6lLLVBSMo+O0uK9Ohvb6NXc7FaE6QY6G/TAhqR4
-	1ON31VDxMsDwzfbDyvhc473GfigyWaIK3XkwZAAagUHSGQ1gXxyugbWvdRXMcvEO
-	BNldS+9H1PPEJsLhybgJZ/AZJ1lEWv6BBGrm9OouWIn0gMAdueVq73RfeJgzVC7f
-	dxYREDp/4nAWdIVvi8kK3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740556535; x=
-	1740642935; bh=0lfVMDjZo5CB8ddhotjizAXW5wzmIW+8vVGHFlSkNxI=; b=Q
-	pxup3rqqWswG31LJz6phFx5YfQya2XhCculULTr3Vw1mJZI/IgaHzEv4WS1N23m4
-	R1W4YGYkg8qIzhdAKkrZxCpLMd16gxh41DeTknNK9d6Oft6v5zbDjHe+n/JBPoX5
-	QffjUSDZoUE0dNe5uJ64cLaUR4jlCoftwjseYd+FOMjbLerLrjvE+Vtx//PS/ReH
-	zuZcqY8aN5K8tTnBRa5kVBiTecUbFpUwRD+649xFe0FAFXiAtDFJXbFbzT6QbbnO
-	yqpOFa7LwBIDhv87QzlmcAMPfRmfNdWUMPQbY4UmiEPtE33edAvHoqa/OWjVwJ+6
-	L5gQxNGCramAsOLNdDWSA==
-X-ME-Sender: <xms:98i-Z5gp7UUrLdqU8dwrQX3Z2o3uGAYSYhruiGvNtgpc1OW39ryehA>
-    <xme:98i-Z-Bhb0nCCncAtPOwR-R9aQMMVOWE-wGzSs99gGHE1esXrBHlwlpmLcj2sfV_g
-    wP9VDlTOxnPog1PlPk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgedtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
-    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
-    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
-    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthii
-    ihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvg
-    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:98i-Z5FEPMgvJmA8Kh9Pc9mZjD2JMgOwNwChq2VaHhUZ_AlqT14Ttg>
-    <xmx:98i-Z-Tj0p_rWAd9G8OsoBIii3ZmSFGy6xgLUI_5X7J7G9byZ7lU_A>
-    <xmx:98i-Z2yk_Y9gdeJmWud_qNcV0K64B40UJ_6MhYVZWpbrDVoliIXmwA>
-    <xmx:98i-Z06mLu0UM5St6S9XU5ZWOLF7fv7JjZY5ncoZ9EYcZagm2HIo3w>
-    <xmx:98i-Z9kk2B_X7E519FNYh5mtDir_cDTr5xUw_srlvnh1X03_63eW3xVy>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 409FB2220072; Wed, 26 Feb 2025 02:55:35 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740556538; c=relaxed/simple;
+	bh=/YceScPPQMvHiNJjr+5pdUHJJ20GDGgy99xO79TB4oo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RR8gawAdCrtqGtlSr63cP2jap+csA+VkvvWWVrLoqABxSwgv44Oa6hOJbX+XFOiRrCvOJ6rbTVUN5d5mzdN7pU8hC7BAA3q8Rr3pQDKcICc0XVq+QrAMgmmtXe8V3ynFzz4YV8tubJ3vwwwibrjBIqoM39wVofvVqgvHQ8AphLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qd8gPi7k; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740556537; x=1772092537;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/YceScPPQMvHiNJjr+5pdUHJJ20GDGgy99xO79TB4oo=;
+  b=Qd8gPi7kOhI6cQ5xgVHRxWU9dMjrGBvBmvfNt6b2DE5RNuFuOFmw4tQs
+   p5eeTxLiZTZIGfJRiOCpK2o3piN0D6TtA11gwVZhbXpngkGM5ALthIUsP
+   W1yHycm8fJErnrt76mNGqn8kHZBuD2c7lwusPazpgsdwibc5HBB2HTYqM
+   n0kLnOyp3rF1hdz7InQwU1CBky/nNWYtCPSwVveBHs4g0SyFo5hCHyG0C
+   m8H1FUiHj5WEQ3OFf9STGeNY3KTjkG1NjtKuJ5Y7XSj3bledjzRIgZsV+
+   st6JvL2b8GoEv7ojECuVqBHHNYVDm30hVYDm4xO7I58za+6n1ns1tVYyP
+   A==;
+X-CSE-ConnectionGUID: Gw7Wq4mpTVaJFTcxvkhJhw==
+X-CSE-MsgGUID: PogOqnqRT1KYDNY2CLsaiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41644266"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="41644266"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:55:36 -0800
+X-CSE-ConnectionGUID: 3cJ6f5llTW6EhFWJIkmLsA==
+X-CSE-MsgGUID: 03D8LZSzQbWr9l417L5DIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="116825690"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:55:33 -0800
+Message-ID: <b92f8e0b-7dc1-49a2-89e1-c47c0ecc1d89@linux.intel.com>
+Date: Wed, 26 Feb 2025 15:55:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 08:55:14 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Arnd Bergmann" <arnd@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Helge Deller" <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Message-Id: <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
-In-Reply-To: <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
-References: <20250225164436.56654-1-arnd@kernel.org>
- <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
-Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 17/24] perf/core: Support to capture higher width
+ vector registers
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-18-dapeng1.mi@linux.intel.com>
+ <20250225203224.GB1278@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250225203224.GB1278@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025, at 08:48, Thomas Zimmermann wrote:
-> Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> Dummycon is used as a fallback conswitchp for vgacon and fbcon
->> in the VT code, and there are no references to it if all three
->> are disabled, so just leave it out of the kernel image for
->> configurations without those.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>   drivers/video/console/Kconfig | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
->> index bc31db6ef7d2..1c4263c164ce 100644
->> --- a/drivers/video/console/Kconfig
->> +++ b/drivers/video/console/Kconfig
->> @@ -47,8 +47,7 @@ config SGI_NEWPORT_CONSOLE
->>   	  card of your Indy.  Most people say Y here.
->>   
->>   config DUMMY_CONSOLE
->> -	bool
->> -	default y
->> +	def_bool VT || VGA_CONSOLE || FRAMEBUFFER_CONSOLE
+
+On 2/26/2025 4:32 AM, Peter Zijlstra wrote:
+> On Tue, Feb 18, 2025 at 03:28:11PM +0000, Dapeng Mi wrote:
+>> diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
+>> index 9ee9e55aed09..3851f627ca60 100644
+>> --- a/arch/x86/include/uapi/asm/perf_regs.h
+>> +++ b/arch/x86/include/uapi/asm/perf_regs.h
+>> @@ -33,7 +33,7 @@ enum perf_event_x86_regs {
+>>  	PERF_REG_X86_32_MAX = PERF_REG_X86_GS + 1,
+>>  	PERF_REG_X86_64_MAX = PERF_REG_X86_SSP + 1,
+>>  
+>> -	/* These all need two bits set because they are 128bit */
+>> +	/* These all need two bits set because they are 128 bits */
+>>  	PERF_REG_X86_XMM0  = 32,
+>>  	PERF_REG_X86_XMM1  = 34,
+>>  	PERF_REG_X86_XMM2  = 36,
+>> @@ -53,6 +53,87 @@ enum perf_event_x86_regs {
+>>  
+>>  	/* These include both GPRs and XMMX registers */
+>>  	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+>> +
+>> +	/*
+>> +	 * YMM upper bits need two bits set because they are 128 bits.
+>> +	 * PERF_REG_X86_YMMH0 = 64
+>> +	 */
+>> +	PERF_REG_X86_YMMH0	= PERF_REG_X86_XMM_MAX,
+>> +	PERF_REG_X86_YMMH1	= PERF_REG_X86_YMMH0 + 2,
+>> +	PERF_REG_X86_YMMH2	= PERF_REG_X86_YMMH1 + 2,
+>> +	PERF_REG_X86_YMMH3	= PERF_REG_X86_YMMH2 + 2,
+>> +	PERF_REG_X86_YMMH4	= PERF_REG_X86_YMMH3 + 2,
+>> +	PERF_REG_X86_YMMH5	= PERF_REG_X86_YMMH4 + 2,
+>> +	PERF_REG_X86_YMMH6	= PERF_REG_X86_YMMH5 + 2,
+>> +	PERF_REG_X86_YMMH7	= PERF_REG_X86_YMMH6 + 2,
+>> +	PERF_REG_X86_YMMH8	= PERF_REG_X86_YMMH7 + 2,
+>> +	PERF_REG_X86_YMMH9	= PERF_REG_X86_YMMH8 + 2,
+>> +	PERF_REG_X86_YMMH10	= PERF_REG_X86_YMMH9 + 2,
+>> +	PERF_REG_X86_YMMH11	= PERF_REG_X86_YMMH10 + 2,
+>> +	PERF_REG_X86_YMMH12	= PERF_REG_X86_YMMH11 + 2,
+>> +	PERF_REG_X86_YMMH13	= PERF_REG_X86_YMMH12 + 2,
+>> +	PERF_REG_X86_YMMH14	= PERF_REG_X86_YMMH13 + 2,
+>> +	PERF_REG_X86_YMMH15	= PERF_REG_X86_YMMH14 + 2,
+>> +	PERF_REG_X86_YMMH_MAX	= PERF_REG_X86_YMMH15 + 2,
+>> +
+>> +	/*
+>> +	 * ZMM0-15 upper bits need four bits set because they are 256 bits
+>> +	 * PERF_REG_X86_ZMMH0 = 96
+>> +	 */
+>> +	PERF_REG_X86_ZMMH0	= PERF_REG_X86_YMMH_MAX,
+>> +	PERF_REG_X86_ZMMH1	= PERF_REG_X86_ZMMH0 + 4,
+>> +	PERF_REG_X86_ZMMH2	= PERF_REG_X86_ZMMH1 + 4,
+>> +	PERF_REG_X86_ZMMH3	= PERF_REG_X86_ZMMH2 + 4,
+>> +	PERF_REG_X86_ZMMH4	= PERF_REG_X86_ZMMH3 + 4,
+>> +	PERF_REG_X86_ZMMH5	= PERF_REG_X86_ZMMH4 + 4,
+>> +	PERF_REG_X86_ZMMH6	= PERF_REG_X86_ZMMH5 + 4,
+>> +	PERF_REG_X86_ZMMH7	= PERF_REG_X86_ZMMH6 + 4,
+>> +	PERF_REG_X86_ZMMH8	= PERF_REG_X86_ZMMH7 + 4,
+>> +	PERF_REG_X86_ZMMH9	= PERF_REG_X86_ZMMH8 + 4,
+>> +	PERF_REG_X86_ZMMH10	= PERF_REG_X86_ZMMH9 + 4,
+>> +	PERF_REG_X86_ZMMH11	= PERF_REG_X86_ZMMH10 + 4,
+>> +	PERF_REG_X86_ZMMH12	= PERF_REG_X86_ZMMH11 + 4,
+>> +	PERF_REG_X86_ZMMH13	= PERF_REG_X86_ZMMH12 + 4,
+>> +	PERF_REG_X86_ZMMH14	= PERF_REG_X86_ZMMH13 + 4,
+>> +	PERF_REG_X86_ZMMH15	= PERF_REG_X86_ZMMH14 + 4,
+>> +	PERF_REG_X86_ZMMH_MAX	= PERF_REG_X86_ZMMH15 + 4,
+>> +
+>> +	/*
+>> +	 * ZMM16-31 need eight bits set because they are 512 bits
+>> +	 * PERF_REG_X86_ZMM16 = 160
+>> +	 */
+>> +	PERF_REG_X86_ZMM16	= PERF_REG_X86_ZMMH_MAX,
+>> +	PERF_REG_X86_ZMM17	= PERF_REG_X86_ZMM16 + 8,
+>> +	PERF_REG_X86_ZMM18	= PERF_REG_X86_ZMM17 + 8,
+>> +	PERF_REG_X86_ZMM19	= PERF_REG_X86_ZMM18 + 8,
+>> +	PERF_REG_X86_ZMM20	= PERF_REG_X86_ZMM19 + 8,
+>> +	PERF_REG_X86_ZMM21	= PERF_REG_X86_ZMM20 + 8,
+>> +	PERF_REG_X86_ZMM22	= PERF_REG_X86_ZMM21 + 8,
+>> +	PERF_REG_X86_ZMM23	= PERF_REG_X86_ZMM22 + 8,
+>> +	PERF_REG_X86_ZMM24	= PERF_REG_X86_ZMM23 + 8,
+>> +	PERF_REG_X86_ZMM25	= PERF_REG_X86_ZMM24 + 8,
+>> +	PERF_REG_X86_ZMM26	= PERF_REG_X86_ZMM25 + 8,
+>> +	PERF_REG_X86_ZMM27	= PERF_REG_X86_ZMM26 + 8,
+>> +	PERF_REG_X86_ZMM28	= PERF_REG_X86_ZMM27 + 8,
+>> +	PERF_REG_X86_ZMM29	= PERF_REG_X86_ZMM28 + 8,
+>> +	PERF_REG_X86_ZMM30	= PERF_REG_X86_ZMM29 + 8,
+>> +	PERF_REG_X86_ZMM31	= PERF_REG_X86_ZMM30 + 8,
+>> +	PERF_REG_X86_ZMM_MAX	= PERF_REG_X86_ZMM31 + 8,
+>> +
+>> +	/*
+>> +	 * OPMASK Registers
+>> +	 * PERF_REG_X86_OPMASK0 = 288
+>> +	 */
+>> +	PERF_REG_X86_OPMASK0	= PERF_REG_X86_ZMM_MAX,
+>> +	PERF_REG_X86_OPMASK1	= PERF_REG_X86_OPMASK0 + 1,
+>> +	PERF_REG_X86_OPMASK2	= PERF_REG_X86_OPMASK1 + 1,
+>> +	PERF_REG_X86_OPMASK3	= PERF_REG_X86_OPMASK2 + 1,
+>> +	PERF_REG_X86_OPMASK4	= PERF_REG_X86_OPMASK3 + 1,
+>> +	PERF_REG_X86_OPMASK5	= PERF_REG_X86_OPMASK4 + 1,
+>> +	PERF_REG_X86_OPMASK6	= PERF_REG_X86_OPMASK5 + 1,
+>> +	PERF_REG_X86_OPMASK7	= PERF_REG_X86_OPMASK6 + 1,
+>> +
+>> +	PERF_REG_X86_VEC_MAX	= PERF_REG_X86_OPMASK7 + 1,
+>>  };
+>>  
+>>  #define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
+>> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+>> index 0524d541d4e3..8a17d696d78c 100644
+>> --- a/include/uapi/linux/perf_event.h
+>> +++ b/include/uapi/linux/perf_event.h
+>> @@ -379,6 +379,10 @@ enum perf_event_read_format {
+>>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+>>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+>>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+>> +#define PERF_ATTR_SIZE_VER9	168	/* add: sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE] */
+>> +
+>> +#define PERF_EXT_REGS_ARRAY_SIZE	4
+>> +#define PERF_NUM_EXT_REGS		(PERF_EXT_REGS_ARRAY_SIZE * 64)
+>>  
+>>  /*
+>>   * Hardware event_id to monitor via a performance monitoring event:
+>> @@ -531,6 +535,13 @@ struct perf_event_attr {
+>>  	__u64	sig_data;
+>>  
+>>  	__u64	config3; /* extension of config2 */
+>> +
+>> +	/*
+>> +	 * Extension sets of regs to dump for each sample.
+>> +	 * See asm/perf_regs.h for details.
+>> +	 */
+>> +	__u64	sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE];
+>> +	__u64   sample_regs_user_ext[PERF_EXT_REGS_ARRAY_SIZE];
+>>  };
+>>  
+>>  /*
+> *groan*... so do people really need per-register (or even partial
+> register) masks for all this?
+
+Yeah, I agree. Users should never read partial registers. But as current
+perf tool has already supported to read per-register on XMM registers, not
+sure if it would introduce back-compatible issues if we only support read
+register group, like XMM, YMM or ZMM group.
+
+
 >
-> What about MDA_CONSOLE and STI_CONSOLE. Don't they require this as fallback?
+> Or can we perhaps -- like XSAVE/PEBS -- do it per register group?
+
+If there is no back-compatible issue, I think it should work.
+
+
 >
-
-MDA_CONSOLE clearly does not, because that is only the second
-console when VGA_CONSOLE is the main one.
-
-For sti_console, I don't see how it would do use it: when CONFIG_VT
-is enabled, the line above turns on DUMMY_CONSOLE, but without
-CONFIG_VT there seems to be no reference to it after
-58a5c67aadde ("parisc/sticon: Always register sticon console
-driver"). I also see that CONFIG_STI_CONSOLE is a 'bool' symbol,
-so there is no dynamic loading/unloading of the driver.
-
-    Arnd
+> Also, we're going to be getting EGPRs, which I think just about fit in
+> this 320 bit mask we now have, but it is quite insane.
+>
 
