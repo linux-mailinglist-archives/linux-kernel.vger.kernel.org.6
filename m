@@ -1,257 +1,220 @@
-Return-Path: <linux-kernel+bounces-533190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6322A456AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:29:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73F6A456B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACDF517692F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CE01895C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A2B26E155;
-	Wed, 26 Feb 2025 07:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698326B96D;
+	Wed, 26 Feb 2025 07:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DPnzDNfL"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orMVkifx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FEC26AAB6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0801F1624EA;
+	Wed, 26 Feb 2025 07:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554944; cv=none; b=MNsMBShKufd43eHHYRrfAQxVf8+EBW1TpmWs+NQBb5BR+YCWrj3VPf/DDCHTpmuL9olAwB0Nx+ntlEFXjJsWeV9z07ihMQpajz0qBrsA4pKagioHAETUhkU2JHUMxt0ugB9U6lfI3jhQV+7xZl8udHDu1z70LWn24HxMkEDv40k=
+	t=1740555021; cv=none; b=QgwZf+p+ruMDSI4XvhPZGK9k30CF0H3EN3AKvzH1lCA02CuBQGE6QABZ5GtQzXWTvVvt5Vq1szE+Y9P4Q31G+M4zTHcAGysqOc+w7fi+ibGRIzuzW2EvOp+IJMH4ZXQQM6EJ2sL0wl4lyWfl0hROC/AQqB7XCCz0t9GP4JHtRhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554944; c=relaxed/simple;
-	bh=6zbN5jOaaksOEj+lbfcyYF58FVbBR2uEiZ1U9Xm0Q7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cf/ewoV0H/HscnpEk/tG9n1+mWGce895j9FcgbR7dXRTC/yOh7cIU/Ark+RC3r3SjGRut7p9KqTK+ESFbgDpllAiTEhwBgE7jLxN1pSQPKbY2e2n7ya3rrLMiJa884HAddev4ZLEOmS1Ci6mPTomRp19wBw01MvB0XojYIOjX1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DPnzDNfL; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso8735486a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:29:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740554939; x=1741159739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jy5UzyKzocsSx5cSXomfjfFL//CTemBkcuebkephmC0=;
-        b=DPnzDNfLR7XZTTtbDw+DuW1lx1StRSsipS09fizN5cRrJGW7tcTHqO5NSG7xYdoHX2
-         o6tzx9bfAow0wJAO8wvFqoZHbs4mPyUkYNJ6p4x4X2XVpneFKc09+/l/Yb7I0rXWNvZf
-         59PADbwRVs1Z2Ld7EANg+3GvujiSVL9sTJFNAfRUgh+fg6qGE9wORi/b9D6BsDA1wVBw
-         nERAEUIHLAgGAaFUFnLURjg/tr13IDXYc82dy/A6pzvk+xS3FFlJBWRs/jLhn1DVfYvd
-         oBGL2zkNNM7XMhVb58ZA7Zr8kDt7ripM7lDqQoP5adxc4THLPzMH4Ps/LDy2jBnSEDqQ
-         ZvWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740554939; x=1741159739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jy5UzyKzocsSx5cSXomfjfFL//CTemBkcuebkephmC0=;
-        b=Dx/UXs+JytoQovOVA8+WO5ckQSJsU2SoBXoI2oJLv/olT+1qLfSv/wG381cPSd3XPT
-         PQFFFhFTszc7ErkxtZGoMKHsbX630LocxArNAXfrHqkISfFBu6lvtFhU7S5KVzD0YMGz
-         ERBFrOoaExa+VWYiPcZiwcYaoJUghnQT4730lFH13SCZ5B21XDlBIFM7IiqXnqSy431N
-         sdYr2cFrfHn7clNs+T5szQwWq3NUqUD3ikU8fVwST7FaZSz4yO9yYrmMXRs131OQTqZR
-         avRAV5ULY6RPP4XJruXP4IYjTz7/acuB6GDp5BK316bbLFJfiILScUtEAnhFlNgVyTgo
-         nQzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuFsPtgnrmCMREXHfXqZit84CgVsLS7zaZg9K1Mw1BikKcXQlVPcFIi4OHhx2z7ywVc41N+oICVTOC7x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtCr3jVNK2h6Gmmq25woHfIAj/+B9lD17/MNz9ibqKYpH0FGZk
-	3nzV+vEL5LacGyYJvU0acohYb4m6t8DoJHB95zfHSJOZaMDcX17Qk2eY2hOsqrQUEhOUo5oBmWX
-	SjrXGp+fNXsjR90HIYL/YActHePVnPRCSRLNZ8Q==
-X-Gm-Gg: ASbGncvPAoRFkQ9YqKOngXRK3lJ1iK0g+VFwNWLSxdt1mtInvIAG+4THfCUA9m8YIFi
-	YmNI58jU56DmzVURTXYIc0VXDUB0kZTcrd5P+RbWicp7VpuwmZ6xc8wfTHjuTmv2m0qbbg9byo/
-	s1GAMkQQ==
-X-Google-Smtp-Source: AGHT+IFYP8Tba+z3P6zhrfLVohTtXs/BwRHQBKKRVXu59ZSzqEPbWtjoPmnK2n59Ee5Tugvqu0RIdPnu12lt6iEjWaU=
-X-Received: by 2002:a17:906:18b1:b0:ab6:ed8a:601f with SMTP id
- a640c23a62f3a-abeeed1123amr202024966b.12.1740554939189; Tue, 25 Feb 2025
- 23:28:59 -0800 (PST)
+	s=arc-20240116; t=1740555021; c=relaxed/simple;
+	bh=wtnd1/XXRkP1lzyc+LlUNzBBy4X9q2wxr2JDxp6SR3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpnQ+PgCL/Rq8OrxIlSojSdCSmGbi0ikhtF/KO/cFveRwbQw45ZwixmCKkr+ugx8HGfrGr5DiGM9vmBpGC8A735sPm+0IpbRD064s0cZFJLHjviNoS00561D9H0DMRqFJTTAPvcbCVggjwuhlnpAgzGmQOfVXTz3GSPd/MBu8cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orMVkifx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CC4C4CED6;
+	Wed, 26 Feb 2025 07:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740555020;
+	bh=wtnd1/XXRkP1lzyc+LlUNzBBy4X9q2wxr2JDxp6SR3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=orMVkifxynbHqu5sHKtW4cb/uJTJfB7a44IAbaj3ZXQkCAeosHqkkMqPZrOhEvrR+
+	 NGnFdEzDXi08kkIcuvGdCZTLLE9ESStU0eAjM2QYxq42ofWpeYxSJs/xExW1EHwhYH
+	 a3PwBkVulfHLqLAU/GZolDNNO3uYJCnQfoqZgjOU9SUphNnM2zlfCKKSyirz/rr+SD
+	 NRXZ2WHbZQAMb4Ao9hbgsr9Onxs9nuTh2NP8dKw+IiSJb+fERUnsCvAYW4nIzfUHCw
+	 d5IIP2FIAdEPHlChDxxz9AbUQEcDnDBQq6Dj02YDrYfdriUc4Y9xCFjXgaRLfNEiE+
+	 JPOVNjOgvTocA==
+Date: Wed, 26 Feb 2025 08:30:17 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, dmitry.baryshkov@linaro.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	jorge.ramirez@oss.qualcomm.com
+Subject: Re: [PATCH v4 01/10] dt-bindings: PCI: Add binding for Toshiba
+ TC956x PCIe switch
+Message-ID: <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
- <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
-In-Reply-To: <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
-From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 26 Feb 2025 08:28:48 +0100
-X-Gm-Features: AQ5f1JpekOKemtGu2BHsnbGs6fr563e7jHjxxRB5HZ2bESNce9YNZRbPCIKk9Cc
-Message-ID: <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, Frank.Li@nxp.com, 
-	James.Bottomley@hansenpartnership.com, Julia.Lawall@inria.fr, 
-	Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org, axboe@kernel.dk, 
-	broonie@kernel.org, cassel@kernel.org, cem@kernel.org, 
-	ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr, 
-	dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org, 
-	dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org, 
-	dsterba@suse.com, festevam@gmail.com, hch@lst.de, hdegoede@redhat.com, 
-	hmh@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com, 
-	ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev, james.smart@broadcom.com, 
-	jgg@ziepe.ca, josef@toxicpanda.com, kalesh-anakkur.purayil@broadcom.com, 
-	kbusch@kernel.org, kernel@pengutronix.de, leon@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org, 
-	perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de, 
-	sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org, 
-	sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
 
-On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 25/02/2025 =C3=A0 21:17, Easwar Hariharan a =C3=A9crit :
-> > Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> > secs_to_jiffies().  As the value here is a multiple of 1000, use
-> > secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplica=
-tion
-> >
-> > This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci w=
-ith
-> > the following Coccinelle rules:
-> >
-> > @depends on patch@ expression E; @@
-> >
-> > -msecs_to_jiffies(E * 1000)
-> > +secs_to_jiffies(E)
-> >
-> > @depends on patch@ expression E; @@
-> >
-> > -msecs_to_jiffies(E * MSEC_PER_SEC)
-> > +secs_to_jiffies(E)
-> >
-> > While here, remove the no-longer necessary check for range since there'=
-s
-> > no multiplication involved.
->
-> I'm not sure this is correct.
-> Now you multiply by HZ and things can still overflow.
+On Tue, Feb 25, 2025 at 03:03:58PM +0530, Krishna Chaitanya Chundru wrote:
+> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> 
+> Add a device tree binding for the Toshiba TC956x PCIe switch, which
+> provides an Ethernet MAC integrated to the 3rd downstream port and two
+> downstream PCIe ports.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-This does not deal with any additional multiplications. If there is an
-overflow, it was already there before to begin with, IMO.
+Drop, file was named entirely different. I see other changes, altough
+comparing with b4 is impossible.
 
-> Hoping I got casting right:
+Why b4 does not work for this patch?
 
-Maybe not exactly? See below...
+  b4 diff '20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com'
+  Checking for older revisions
+  Grabbing search results from lore.kernel.org
+  Nothing matching that query.
 
-> #define MSEC_PER_SEC    1000L
-> #define HZ 100
->
->
-> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
->
-> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
-> {
->         return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
-> }
->
-> int main() {
->
->         int n =3D INT_MAX - 5;
->
->         printf("res  =3D %ld\n", secs_to_jiffies(n));
->         printf("res  =3D %ld\n", _msecs_to_jiffies(1000 * n));
+Looks like you use b4 but decide to not use b4 changesets/versions. Why
+making it difficult for reviewers and for yourself?
 
-I think the format should actually be %lu giving the below results:
 
-res  =3D 18446744073709551016
-res  =3D 429496130
+> ---
+>  .../devicetree/bindings/pci/toshiba,tc956x.yaml    | 178 +++++++++++++++++++++
+>  1 file changed, 178 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
+> new file mode 100644
+> index 000000000000..ffed23004f0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
 
-Which is still wrong nonetheless. But here, *both* results are wrong
-as the expected output should be 214748364200 which you'll get with
-the correct helper/macro.
+What is "x" here? Wildcard?
 
-But note another thing, the 1000 * (INT_MAX - 5) already overflows
-even before calling _msecs_to_jiffies(). See?
+> @@ -0,0 +1,178 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/toshiba,tc956x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Toshiba TC956x PCIe switch
+> +
+> +maintainers:
+> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> +
+> +description: |
+> +  Toshiba TC956x PCIe switch has one upstream and three downstream
 
-Now, you'll get that mentioned correct result with:
+TC9560? Which one are you using here?
 
-#define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
+> +  ports. The 3rd downstream port has integrated endpoint device of
+> +  Ethernet MAC. Other two downstream ports are supposed to connect
+> +  to external device.
+> +
+> +  The TC956x PCIe switch can be configured through I2C interface before
+> +  PCIe link is established to change FTS, ASPM related entry delays,
+> +  tx amplitude etc for better power efficiency and functionality.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - "pci1179,0623"
 
-Still, why unsigned? What if you wanted to convert -5 seconds to jiffies?
+Why quotes?
 
->         return 0;
-> }
->
->
-> gives :
->
-> res  =3D -600
-> res  =3D 429496130
->
-> with msec, the previous code would catch the overflow, now it overflows
-> silently.
+> +      - const: pciclass,0604
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  i2c-parent:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      A phandle to the parent I2C node and the slave address of the device
+> +      used to do configure tc956x to change FTS, tx amplitude etc.
+> +    items:
+> +      - description: Phandle to the I2C controller node
+> +      - description: I2C slave address
+> +
+> +  vdd18-supply: true
+> +
+> +  vdd09-supply: true
+> +
+> +  vddc-supply: true
+> +
+> +  vddio1-supply: true
+> +
+> +  vddio2-supply: true
+> +
+> +  vddio18-supply: true
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO controlling the RESX# pin.
+> +
+> +allOf:
+> +  - $ref: "#/$defs/tc956x-node"
+> +
+> +patternProperties:
+> +  "^pcie@[1-3],0$":
+> +    description:
+> +      child nodes describing the internal downstream ports
+> +      the tc956x switch.
+> +    type: object
+> +    $ref: "#/$defs/tc956x-node"
+> +    unevaluatedProperties: false
+> +
+> +$defs:
+> +  tc956x-node:
+> +    type: object
+> +
+> +    properties:
+> +      tc956x,tx-amplitude-microvolt:
 
-What compiler options are you using? I'm not getting any warnings.
+You already got comments on this.
 
-> untested, but maybe:
->         if (result.uint_32 > INT_MAX / HZ)
->                 goto out_of_range;
->
-> ?
->
-> CJ
->
->
-> >
-> > Acked-by: Ilya Dryomov <idryomov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.or=
-g>
-> > Signed-off-by: Easwar Hariharan <eahariha-1pm0nblsJy7Jp67UH1NAhkEOCMrvL=
-tNR@public.gmane.org>
-> > ---
-> >   drivers/block/rbd.c | 8 +++-----
-> >   1 file changed, 3 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> > index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..41207133e21e9203192adf3=
-b92390818e8fa5a58 100644
-> > --- a/drivers/block/rbd.c
-> > +++ b/drivers/block/rbd.c
-> > @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
-> >   #define RBD_OBJ_PREFIX_LEN_MAX      64
-> >
-> >   #define RBD_NOTIFY_TIMEOUT  5       /* seconds */
-> > -#define RBD_RETRY_DELAY              msecs_to_jiffies(1000)
-> > +#define RBD_RETRY_DELAY              secs_to_jiffies(1)
-> >
-> >   /* Feature bits */
-> >
-> > @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *=
-work)
-> >               dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
-> >                    rbd_dev);
-> >               mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
-> > -                 msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SE=
-C));
-> > +                 secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
-> >       }
-> >   }
-> >
-> > @@ -6283,9 +6283,7 @@ static int rbd_parse_param(struct fs_parameter *p=
-aram,
-> >               break;
-> >       case Opt_lock_timeout:
-> >               /* 0 is "wait forever" (i.e. infinite timeout) */
-> > -             if (result.uint_32 > INT_MAX / 1000)
-> > -                     goto out_of_range;
-> > -             opt->lock_timeout =3D msecs_to_jiffies(result.uint_32 * 1=
-000);
-> > +             opt->lock_timeout =3D secs_to_jiffies(result.uint_32);
-> >               break;
-> >       case Opt_pool_ns:
-> >               kfree(pctx->spec->pool_ns);
-> >
->
->
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+
+Never tested.
+
+
+> +        description:
+> +          Change Tx Margin setting for low power consumption.
+> +
+> +      tc956x,no-dfe-support:
+
+There is no such vendor prefix and you already got exactly the same
+comment at v3. How did you resolve that comment?
+
+> +        type: boolean
+> +        description:
+> +          Disable DFE (Decision Feedback Equalizer), which mitigates
+> +          intersymbol interference and some reflections caused by impedance mismatches.
+> +
+> +    allOf:
+> +      - $ref: /schemas/pci/pci-pci-bridge.yaml#
+> +
+> +unevaluatedProperties: false
+
+Keep order as in example-schema.
+
+Best regards,
+Krzysztof
+
 
