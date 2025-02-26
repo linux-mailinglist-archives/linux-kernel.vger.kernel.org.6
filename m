@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-535150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CCCA46F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA165A46F94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E185D3AF4B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC833AF274
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A320E32A;
-	Wed, 26 Feb 2025 23:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EA525F985;
+	Wed, 26 Feb 2025 23:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8+gzMDR"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6joGw31"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9B12620EE;
-	Wed, 26 Feb 2025 23:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E58A2620E4;
+	Wed, 26 Feb 2025 23:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613383; cv=none; b=OaYqk6AUD3OIYYyanSpbJvy9X6JstemVX6VwzJDjuy2BsWpcSAhID0JxCL4fpnqEZ2MYr4NFPvRdF4Npy3TDsO249IetZ/JynfLaI61d8HOKR7g6vPAJENaRqE7kzEtsPFmzB6XiV4nRPalZhcuAYf/U4VUILr7FhieCYusx7eI=
+	t=1740613389; cv=none; b=MOzi9dvBK0UZ67igHEdFj5xEtGuFHUBT2Vdy0oRReTOiaziRQgHekboe/2FQqUwXvjcxq8Kvbk4DL1ks/owkpcMa9hZQYqfWKcMZh814byjJ7lN3K2M27WSeP0O8j7SKiAl2cLekUVoFZEejSSM6lSkQbK5uP4KBbM5vAL/AkIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613383; c=relaxed/simple;
-	bh=yB4+HY8mRrtS+9q//3dQ5/10SMQ6N0Qm4zJtdHlCn+Q=;
+	s=arc-20240116; t=1740613389; c=relaxed/simple;
+	bh=cga9488zLVFf7sCO0MjjdfdtRfVLyx321Cy+QiZ4Dvg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SgnIclWWFMJbb59T9RIPAMfA700EwbeVpwcR9fNR/4bFkabsrgSKNoGJUEFZlp3ngWVtWj/Bbb2d2OOIwWK4aKNbxtgzBYHMtfQh/te/olB7OJSNP2hYJ1MyI7c+OK7Outss22eV8/pCrhBzRvIRrDznPsrvsqjcZJ9YEkYWL0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8+gzMDR; arc=none smtp.client-ip=209.85.160.175
+	 MIME-Version; b=lHodTbRz9EED8CVKzerTf4U6qEmf++apGYl2DbsmGKmAqOf1ySBvQDngM9jIZbNjdif3VOU7O3d3IldjKU+iXoNHJKqhLbixO7L9T2rpbAGEnh8KBmiyJnkAhpGPeRNvZ+CK/Svk4aDX2BpfxUIZMrfPQTkBN2VgJVlypLWPJWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6joGw31; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-471eb0e3536so6239561cf.3;
-        Wed, 26 Feb 2025 15:43:01 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-472049c72afso3783131cf.2;
+        Wed, 26 Feb 2025 15:43:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740613380; x=1741218180; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740613384; x=1741218184; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j1+lP/WIL+F/rv1NC/9PUv+dZq+2rnJ1+5/Qq+1dd3M=;
-        b=c8+gzMDR2WkhJRwHF/vq8QzWIS/VEYXoZ1/Ez36/iKqKl+1ebsANoNK3QW+v39xXcq
-         D8HN3qmvxcv2d8RELT+22jaP5NBI4GwR9hCpObaoBK40iSPqpOF3jjSGKp2ZpJ379sO4
-         US/EQsOoTJK8kDi6GdOhCw/MINhE0vep5uI5SIvtcvaSa6hY4AaHqAbAl+953DOPwRfO
-         751/iO6wCFEJG7dTfs/EgTKpvddtuCCn3idkd/wvEHSQ7bK9oOoeyRhatocBYehbRQZ7
-         t5fhiLFe/nr7tEiV8ocIeZYWEZi0DQ0IHuFpgvG0Sq4AJsq8hqSZRcfE9DEEWsWpMbAr
-         zbUw==
+        bh=lqQoHTg7agUCd14WEWX/oWRFNn9TygqwW0Esl6cK8GI=;
+        b=J6joGw31se8+a4xfAZsI1MAZqwSmGysdBPQgVkiqpE4GlcVt1/da/XcygqRmCt90mU
+         8XBCOuPK9bnbXcW5QqbZy6y9ygXfB3MAjWIO8bPuiQji91e1r9bPyEmK6KDwTqjA2Uch
+         pIafKjDUcuBhYSJ81gGyjAMwu6xEpDDyIH7pNEoYpy/YbTdhjfyHxua7ODT6zcvxskbF
+         AJJqc9/qiv4NMYx3eoV2LkaF+TasyRTy9ntsu7D95/GmT8EDpIPgrcqpKsLRII28UYkt
+         P+NW5ZqLXvJyx1HG3S1+aZStVybGALwZs4AljIMyrD8LYBafxVElI/0qeB82Tzjp+ufU
+         om1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740613380; x=1741218180;
+        d=1e100.net; s=20230601; t=1740613384; x=1741218184;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j1+lP/WIL+F/rv1NC/9PUv+dZq+2rnJ1+5/Qq+1dd3M=;
-        b=DqDaSvoiwn1/F+QdvU1GezhmlfPqFqzRWydVUX7FivUr0kSeO0+kj0tSOyL1VX20k2
-         xUurH6sSGrOVfdu0bkR/91PUev5iJFuO7O7uR99QT5tFyLtxey6FB1QpJ23vySDU11Yz
-         VkCUKHBq4rSPoga4WbvPcKUIeawsE0JrcTYWYr9WIGVr7ovzRwNWXz571hgsvA4sEPDl
-         ny3961vJgUxAcBQHtEv5djlaqmghnmaHRTmmByIoz6bi7cgh5v/MsxraGKXemGX4GEJb
-         9FcYXAqLr2f073DJWZJfOYRlWt4HxoxjPNJHF9u8wgDazVc9/N3Ah7tHj2Q8mt0GwFhV
-         lwuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhv0nCjZd2LDF7SoknJNCjU9etUez3L9nvRlKWb99jGU+SM86Gd04Yn2iq8MEfRPpW4Az8P6XsLvh4y/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd7XG3ev8mrZghHDBBc0RyO+6ZaadfAaen7z2g6chGr5MVJi79
-	+D6b/4XNeM4z/aP7zWDlvRFPTBidk8uhNY2sZGHnngkAZeavqIk9
-X-Gm-Gg: ASbGncuIfN28U1tn0zfkg0pGXSMEYgLsyZZ3iK1rbqcSJoKRTl6cb63X7XET7NDm8X5
-	Se8QmWPBYAJrYbahAnJtsaqMmEoMZZxWuBDWwo67/pQiuHmJqT3OrwV5Eu0m068mrYddmVeBBZT
-	MXzT6sqjEFOAEMxtR31lBtDpqYJ96WgDzYCelUD6yVQMOq93U4VnimYud4cgjLG2xvvl5/5ljeX
-	UwmyH1uQ5LJLwtZzrKKTlrahhENvT2jOOD3vjW1SbjTSwUX2I/uCE3n5iNAorXWOLcnStzq8AwT
-	vg==
-X-Google-Smtp-Source: AGHT+IE44ZeBH/IrSFQFlBWBOeEM9K3xucoChT7wDAEvDlnvzZniYENcKpDmeUtZGqquKBj12bm2Iw==
-X-Received: by 2002:ac8:7c41:0:b0:472:1de:c912 with SMTP id d75a77b69052e-473772722edmr140400091cf.50.1740613380578;
-        Wed, 26 Feb 2025 15:43:00 -0800 (PST)
+        bh=lqQoHTg7agUCd14WEWX/oWRFNn9TygqwW0Esl6cK8GI=;
+        b=NGimbjZewLinF5iYO5z5Ysmywj2ltQRyZIJl+KtmgNxMjn4PtvvwMP36/4wzeaAqRg
+         Gd1rAyvDYnF4hXB6/520kRuevZ10lzljZX4eWa86NkLBLJUnYIE2n5eYJW5bFUXooNGn
+         66qNanDO2FUj1yU1a8lffBka3/TucM3QPrdJt1zY611UltViyb89lqfjpxLT1DqyG7hw
+         XoGzS/djSyvsuMwZYMhLiMv4uppMEJIs3Ec4NrR5ivz3uhpol2HYelUdsImYfIGvM/R9
+         RgEMGZGNDiqAMR+4sR5+8oT8wx6HfFqKKHP/nFz95LZAqMf0wy4Xhu5hF8MfiBA68D3M
+         /+kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUzfInDV3P10R/vzK65pAJOEq1S/ggkWFg4v4Qo9Vhly+MXHwgjeM0inosvG6a0rhu6xGH9zVhWAWlrUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8NKsSAuVayamR4U4p8AjpbUig30eOwvWiN9jDIzLoZ3l4gE3M
+	1MOrSbkiOzT2Hp/C/x5gxIll7kRc9q66RFMF48ttos4u+nQ491hJacv6wA==
+X-Gm-Gg: ASbGncv74F/8kkteZ1VNj1iBzR8DvS1JCzoZ95lChqw40pjLWDfM76jAo3jSCyGw3KO
+	HaL/p70y7Cofq7p7U197LZe9VXlP3Hr313F/g/9q/c1P3dXV+JVKxDoI18pga8kznM1CKwdNvaH
+	67yko7O07V1j8NCHfMW0bu2UIAA1bgcL+0L10usqbvHyjj//Xm48ngC1ifrQveZTqoqjgYoyObE
+	89m8hJpCISYgF2LmmfEWxstFC9RRgrO4NtLGDB7n52h7bja8CRaMNAtf2AbkC1HG8+4p/XH4Vvn
+	3A==
+X-Google-Smtp-Source: AGHT+IGamOlB8L5DPR7KmoFMGsjzwDrX/7GZPr5d7+DS9KT5p5K9ctOUhXRuQL0MoiV6ugPJfD161A==
+X-Received: by 2002:ad4:5ccf:0:b0:6d8:8109:a547 with SMTP id 6a1803df08f44-6e88689b91fmr79086796d6.22.1740613384532;
+        Wed, 26 Feb 2025 15:43:04 -0800 (PST)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47472430d89sm2637701cf.68.2025.02.26.15.42.59
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976d9f19sm2383616d6.98.2025.02.26.15.43.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 15:43:00 -0800 (PST)
+        Wed, 26 Feb 2025 15:43:03 -0800 (PST)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -89,9 +89,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Yixun Lan <dlan@gentoo.org>,
 	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v2 1/5] dt-bindings: reset: add generic bit reset controller
-Date: Thu, 27 Feb 2025 07:42:29 +0800
-Message-ID: <20250226234234.125305-2-inochiama@gmail.com>
+Subject: [PATCH v2 2/5] reset: simple: Add active-low property support.
+Date: Thu, 27 Feb 2025 07:42:30 +0800
+Message-ID: <20250226234234.125305-3-inochiama@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250226234234.125305-1-inochiama@gmail.com>
 References: <20250226234234.125305-1-inochiama@gmail.com>
@@ -103,90 +103,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
-a simple reset controller by toggling bit. It is a hard time
-for each device to add its own compatible to the driver.
-Since these devices share a common design, it is possible to
-add a common device to reduce these unnecessary change for
-the driver.
-
-Add common binding for these kind generic reset controller.
-Check the binding description for its requirement and
-suitable scenarios.
+Introduce "active-low" property support for the reset-simple driver.
+This property allow users to mark the reset device is active low
+without adding a new device id in the driver.
 
 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 ---
- .../bindings/reset/reset-simple.yaml          | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/reset-simple.yaml
+ drivers/reset/reset-simple.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/reset-simple.yaml b/Documentation/devicetree/bindings/reset/reset-simple.yaml
-new file mode 100644
-index 000000000000..86c33a608148
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/reset-simple.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/reset/reset-simple.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
+index 276067839830..4b08f8d70942 100644
+--- a/drivers/reset/reset-simple.c
++++ b/drivers/reset/reset-simple.c
+@@ -16,6 +16,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/property.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/reset/reset-simple.h>
+@@ -190,6 +191,11 @@ static int reset_simple_probe(struct platform_device *pdev)
+ 		data->status_active_low = devdata->status_active_low;
+ 	}
+ 
++	if (device_property_present(dev, "active-low")) {
++		data->active_low = true;
++		data->status_active_low = true;
++	}
 +
-+title: Generic Bit Reset Controller
-+
-+maintainers:
-+  - Inochi Amaoto <inochiama@gmail.com>
-+
-+description: |
-+  This document defines device tree properties common to reset
-+  controller devices that perform assert/deassert by simply
-+  toggling bit.
-+
-+  All devices in this binding should satisfy the following requirement:
-+  - There is a single, contiguous range of 32-bit registers.
-+  - All bits in each register directly control a reset line.
-+     - There are no self-deasserting resets.
-+     - There are no timing requirements.
-+     - The bits are exclusively resets, nothing else.
-+  - All bits behave the same, so all reset bits are either
-+    active-high or all are active-low.
-+  - The bits can be read back, but the read status may
-+    be active-low independently from the writes.
-+
-+  If the device is not meet the requirement, it should use its
-+  own binding to describe the device.
-+
-+properties:
-+  compatible:
-+    const: reset-simple
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  active-low:
-+    type: boolean
-+    description:
-+      If true, bits are cleared to assert the reset. Otherwise,
-+      bits are set to assert the reset. This also applies to
-+      read back.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    reset-controller@1000000 {
-+        compatible = "reset-simple";
-+        reg = <0x1000000 0x1000>;
-+        #reset-cells = <1>;
-+    };
+ 	data->membase += reg_offset;
+ 
+ 	return devm_reset_controller_register(dev, &data->rcdev);
 -- 
 2.48.1
 
