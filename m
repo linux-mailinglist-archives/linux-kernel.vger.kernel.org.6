@@ -1,75 +1,83 @@
-Return-Path: <linux-kernel+bounces-534095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DF1A462C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:30:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6C1A462C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F9E7A859B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B18B17D0CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F12C221F00;
-	Wed, 26 Feb 2025 14:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28B5221D8F;
+	Wed, 26 Feb 2025 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tXwF2kCB"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g1N2SYnY"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA90F22332E;
-	Wed, 26 Feb 2025 14:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A573A21171A;
+	Wed, 26 Feb 2025 14:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580014; cv=none; b=LCQk/OVrjeLonh3i2S2cCqYf5sUgB7MI09S6Ntp/95Mq4wlWXd//osSgyCMx8sWuJrwuZcIQwx+64sqVp+aE1ZgMNBe8nre1Ov/Tka9WspsXqhFNBPNKs8YcMesWMmE8fQpjAifOGlPxNFxelM3EuALBMNCHRFdVbG/UzLq3u4E=
+	t=1740580039; cv=none; b=IsyljDn3KXgvXUHy3Jk/kb8E0kYn/LGyfjOgA2bNrxAWCQZJFQ2ud26QrtUb32a5qYaIDXV1jeY2qOZZzzLyDL/sDLdiksu0zrJPp+tt0BDwxsZ+tGq4PgmceRnXfpDkYBM3iRO5FVREvZTPFuZZBJVmwnC9VOGeV2UAb8/cN3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580014; c=relaxed/simple;
-	bh=/OSmedE/ACjr7gFlF/szGIcSg2BBYnDAW6sXgSCux1M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f95L6LuYNh9NSiysahjyMWwQpbthwjcAgkqNPLeS1hoS3JcgeC/t1P76r7eYObTFt7nidJiGYiASbzPXt2nDz4ZGUWYOMweOfoaAsghqdxjrJVaZITKtyBYE+IWjVvEn8kS8+XJSjrMLcMV13tQ0+z/QfzmAUSNKkQJZzac6+0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=tXwF2kCB; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1740580011;
-	bh=/OSmedE/ACjr7gFlF/szGIcSg2BBYnDAW6sXgSCux1M=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=tXwF2kCB1vbEyn8qGStqaZZVIB+Wbe2KS4s7B6H0K3VGoOXZ4oxq/zoCDBMcwJ1v1
-	 fZ6oFZZf8mKYA32O9ZjdPM/VZKSx3qISuThxcc7PBzG+Sty1S6LL+FKOQhP31q1bTF
-	 n0FKfgp8mzn+anNwwaC0tK9pCHMx+BWBm23uFxDw=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 465FC1C257A;
-	Wed, 26 Feb 2025 09:26:51 -0500 (EST)
-Message-ID: <f2bf76553c666178505cb9197659303a39faf7aa.camel@HansenPartnership.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Ventura Jack
-	 <venturajack85@gmail.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, "H. Peter Anvin"
- <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com,  boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de,  gregkh@linuxfoundation.org, hch@infradead.org,
- ksummit@lists.linux.dev,  linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
-Date: Wed, 26 Feb 2025 09:26:50 -0500
-In-Reply-To: <CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
-References: 
-	<CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	 <20250222141521.1fe24871@eugeo>
-	 <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	 <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	 <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	 <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	 <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	 <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
-	 <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
-	 <5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com>
-	 <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
-	 <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
-	 <CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1740580039; c=relaxed/simple;
+	bh=dYFlL32N8DX1Xl0oKGBDfnt4Dp/7shZ7JfzayKZkIto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hnRJ/K8VxbwQ9/FHuoRCG+KMep+Wwa206K3lWvSfwq0QITfV1hJbybh4+F/lIA3IInKyaLYZ9/TSWCpqNKVHiXnwpC6hfBY8p0BD6FgR1H1zlgnrS3ef9mtM9kGxHCy0rN+jMh83BNHk7dCaXEp0l7hYb3i2BIQ3zEsBroQOV30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g1N2SYnY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDZ55e029108;
+	Wed, 26 Feb 2025 14:27:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=LBqcteT4tdYdKHL/7+g5XlDYiuAXlFBQoB4+G4OES
+	Qs=; b=g1N2SYnYXXgK9QYLeRQUFYF2O6O5x39KdRzGWIM5o3DQERuvO5nKcV0hu
+	63JiBeDB/ByAFPcVoN41k2ANRWQoBmjBS0txfGnTvvHHoFZ2qk7F1A2l2zNySCww
+	Sq8cM+0tWK0753d6s49Y3MoDMLrilfW4QcEPkLG5Uvys9980xV+T5z7o6p/w8z4u
+	r0B7jLAQe6xHZX03QGLDXJToEsYIVOXs23jCIQRnohS0YJSFlBvL7dliPFXjH+sS
+	jdLTSN5uqX4zmiqcI8utcUiyWcZlmf1Kvb7W0lwH4Zt4GDn/cl6vPPuy95LSq3Tz
+	Rq0OCJDlJ/FCx6CMIfkT56l4Sk/ZQ==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5jbmq9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 14:27:09 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDPMPi002588;
+	Wed, 26 Feb 2025 14:27:08 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jtqr1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 14:27:08 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QER4Se55509292
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 14:27:04 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 681FD2004B;
+	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 46BD320043;
+	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] selftests/ftrace: Let fprobe test consider already enabled functions
+Date: Wed, 26 Feb 2025 15:27:03 +0100
+Message-ID: <20250226142703.910860-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,23 +85,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -2MmPF4lgE4DXYssnY9AyMYkhFxESotJ
+X-Proofpoint-ORIG-GUID: -2MmPF4lgE4DXYssnY9AyMYkhFxESotJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 phishscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260112
 
-On Wed, 2025-02-26 at 14:53 +0100, Miguel Ojeda wrote:
-> On Wed, Feb 26, 2025 at 2:03 PM Ventura Jack
-> <venturajack85@gmail.com> wrote:
-[...]
-> > Exception/unwind safety may be another subject that increases
-> > the difficulty of writing unsafe Rust.
-> 
-> Note that Rust panics in the kernel do not unwind.
+The fprobe test fails on Fedora 41 since the fprobe test assumption that
+the number of enabled_functions is zero before the test starts is not
+necessarily true. Some user space tools, like systemd, add BPF programs
+that attach to functions. Those will show up in the enabled_functions table
+and must be taken into account by the fprobe test.
 
-I presume someone is working on this, right?  While rust isn't
-pervasive enough yet for this to cause a problem, dumping a backtrace
-is one of the key things we need to diagnose how something went wrong,
-particularly for user bug reports where they can't seem to bisect.
+Therefore count the number of lines of enabled_functions before tests
+start, and use that as base when comparing expected results.
 
-Regards,
+Fixes: e85c5e9792b9 ("selftests/ftrace: Update fprobe test to check enabled_functions file")
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ .../test.d/dynevent/add_remove_fprobe.tc       | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-James
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+index 449f9d8be746..73f6c6fcecab 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+@@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
+ PLACE2="kmem_cache_free"
+ PLACE3="schedule_timeout"
+ 
++# Some functions may have BPF programs attached, therefore
++# count already enabled_functions before tests start
++ocnt=`cat enabled_functions | wc -l`
++
+ echo "f:myevent1 $PLACE" >> dynamic_events
+ 
+ # Make sure the event is attached and is the only one
+ grep -q $PLACE enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
+ 
+ # It should till be the only attached function
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
+ 
+ grep -q $PLACE2 enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
+ 
+ # should still have 2 left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -57,7 +61,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
+@@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
+ 
+ # Should only have one enabled
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -73,7 +77,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
+-- 
+2.45.2
 
 
