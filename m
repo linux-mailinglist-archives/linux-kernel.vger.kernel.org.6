@@ -1,125 +1,90 @@
-Return-Path: <linux-kernel+bounces-534924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDFAA46CCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:56:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC00A46CCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA0718873A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3289316641D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF592528F5;
-	Wed, 26 Feb 2025 20:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163872505B0;
+	Wed, 26 Feb 2025 20:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Cv3MOR7P"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5VHZD2d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EF6222586
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1FC2222A5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740603362; cv=none; b=o7Ilzsd7EnD35JxemjN0WGgWGV1W8nCEWUtybWWJveAq23Vas4uV4kJDUzXEUcW9Kt6LwlzRtKzAw8YPGwUe2IJe/h9+CAJj9FIe9RuZ++AZWC1opJByJA00Vwv/llw8cTiMm9RGjgNC6d2a62AZOH2cCcnTOAMHgYCGK+/LbUs=
+	t=1740603417; cv=none; b=VN+drNrUfeNb+GaosLGoiJgmRTo9SEgOd2TyWU+j/0+doBXxeL2qKNxIPiYsqpmXZpguXVdFFQ/aMPkPJbZlyBSp1deB7cS1ZMAZ3v29yVg2vfqTgCi1JHMV38zkV9pGjNd4nvSUEFrvX4S4gBsrMl7WCKB32wLGF2Ba26Y9pfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740603362; c=relaxed/simple;
-	bh=mqYzICldJl61KdyHfxq8I6OeV9x311OW0csxdK20FtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAyygVdcNmkrwET05nSaLbtAym9AwwWHEVIoOmxmrS67Q0LJ8DpIi3Q4GRQ4V3QebLdLkeYGNlu/ws0F5Sql2GRPzuq11Ts2JPXnzJdjPjWCk8wDCxUIdhgRf1roYQRExats9vYaPRofci1Dmd0E2uewTC2GHKGtZlZywvH5kW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Cv3MOR7P; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-855c122b3e7so16415039f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:55:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1740603359; x=1741208159; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ACXceot6so0qEECSDnrDchyxYrTH5BMNjPgKlk4vqYE=;
-        b=Cv3MOR7PfOlBCHo3kE3GZlSf4noqQpj3XAbOflR+DpQjGZAZrsPbajaNp1sPREKfny
-         nUZ2l84GiLiptGORPyxWvYXwF5dNwWBzSYPRkWK6QGrhCVvkNYgylNZCLT87d30Fi+Mm
-         Uat7XL9Lmj/mu2/22Ekg4F3oV8EcinwsAt7gQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740603359; x=1741208159;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACXceot6so0qEECSDnrDchyxYrTH5BMNjPgKlk4vqYE=;
-        b=dfty8cZeBFRWEiwp+gMlSWLhq3d2uT9az1GQzsuasFIFsYcgEfeheO1wmxN7pIRShB
-         gWEUmRCVDnmL0utOSGEkxcuQUoBoE59IG69w76vcx/K00/BG6hftLYHDTpEUm/+Oj9SZ
-         0rbjwUEmLH6cOnURHzHsT0VDniQVYZdwWOZPa3tzZ+HrR3wKAcYPVphplkz/7TXIxGuk
-         MN32kvpFG/39E3hu5MUfZaov9gHuSEsAWP2Ry7A3x8LbOjPJUKovN+qmet/burXXRsmX
-         crjOTaRM1xBhGntgdV4BLdiFASx0lZrAx6Gb22zeHN82qFBDfh6yK4RkeAfZSKVEKwYW
-         bHvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxfLr/5dCrP9SJVyTvbSuFtaFXBoYvGgcCMKqoaijLI08CS6hYbBmLIH0LxnDMOtecZWO2o2MqB1qcckA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJlDr3xO/HgAa1wPT5N3lZg8kcXr9HdGFnxwwYXAFe3qEU7Tb
-	jxhNR3M290pi8uh0LAklWsG8JtxWUXL/0YMg4myh6af9Zyf/ht5ff0wiVkPacDW4hYR9BIIGXDJ
-	1
-X-Gm-Gg: ASbGncv21KkLESSAg9nkPbqOz+YDefN0gZ80jgPHOLAIzZ5ypeGWx5jp9TUln2fZzSa
-	ZMxI836BD13f49DPKlzVcsEuscQMgYd97MlUrByprTW2UMPIosC24NccuVqJc1Yiibmw82TfvM6
-	mLHVQDNS7urMQQlk7XLZzanrH3K3vIsRM3sqw/Jafu/grgxVfB9SMmYXWGCevyb7O1BzsK6OEcW
-	yRSK2RbvFCqEsh2oBH5kigdtuvlcvp88H+fsBLU1TSWBtJMnYxfJMGSQAFwtyjJz05+trncQ9sO
-	exatAKtDJCZ8R4+sQkH0fiqOp97+km+DoOCf
-X-Google-Smtp-Source: AGHT+IEdrq2nDcrlokLWu5B99Vt7XXGUTSjVaYnvuG/TeLYt4skaR2JoYGjFSX/j14RH9VpA4xleeA==
-X-Received: by 2002:a05:6602:3d0:b0:855:c980:6eb4 with SMTP id ca18e2360f4ac-855dabd790cmr2360259239f.1.1740603359298;
-        Wed, 26 Feb 2025 12:55:59 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061f3905fsm21244173.88.2025.02.26.12.55.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 12:55:58 -0800 (PST)
-Message-ID: <04c7f895-d587-4023-9fdf-60085c329ff3@linuxfoundation.org>
-Date: Wed, 26 Feb 2025 13:55:58 -0700
+	s=arc-20240116; t=1740603417; c=relaxed/simple;
+	bh=wtrGav14nqc924JHov6dgFHD0ODvX9k7DwUCy2hUKaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y5lDdlRbYVpaEpCD6JXYv0eykQp2hxhNa6vXTkov9E70PFVbgEkF1nIqstPg4AQLXzDM9ryqhCNDUfUvQ+IZY9hARg93X9pz/LXhBILm7vACAeL7ziTN8D+yDKfUXOpqUaO3r1TfOUvGMQlK05vOsidHJN7ZzZgQMw5f8qRdwkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5VHZD2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EF9C4CED6;
+	Wed, 26 Feb 2025 20:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740603416;
+	bh=wtrGav14nqc924JHov6dgFHD0ODvX9k7DwUCy2hUKaE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=W5VHZD2d24lyT/7J1H414uYQwX3ntyTleYkyNr0oqJrKryM9GuXvWDKbX6zB5CST+
+	 No4D8BVOBvFNEi9AIVVvvJIwQ9UNe3/lfHDIaXI1PT2b2vL4LbWRZxrYJvgxVxlOcN
+	 W4Q/mldBFyfmOSUUtASXXizhfz3eX1cGLG/+GttxmSxGYl37obMZFyHXoGpQwY14wc
+	 k77+ta02/OtLapAOpnsiaprbOETTAyXX1/p0dXtRPdH2KRAQotJsqD7Gca5vKcHupi
+	 yz0kXblwaZbi35DldGSbK7KjyQJdYWA19SWWaEkogriX1v/Mu6rps+m+f9c99yobru
+	 PW1ErVGlTXHLw==
+Date: Wed, 26 Feb 2025 10:56:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Andrea Righi <arighi@nvidia.com>
+Subject: [GIT PULL] sched_ext: A fix for v6.14-rc4
+Message-ID: <Z7-AF0Oi6TF24bl5@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/ftrace: Use readelf to find entry point in
- uprobe test
-To: Steven Rostedt <rostedt@goodmis.org>, Heiko Carstens <hca@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250220130102.2079179-1-hca@linux.ibm.com>
- <20250226121316.7653ae38@gandalf.local.home>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250226121316.7653ae38@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2/26/25 10:13, Steven Rostedt wrote:
-> On Thu, 20 Feb 2025 14:01:02 +0100
-> Heiko Carstens <hca@linux.ibm.com> wrote:
-> 
->> The uprobe events test fails on s390, but also on x86 (Fedora 41). The
->> problem appears to be that there is an assumption that adding a uprobe to
->> the beginning of the executable mapping of /bin/sh is sufficient to trigger
->> a uprobe event when /bin/sh is executed.
->>
->> This assumption is not necessarily true. Therefore use "readelf -h" to find
->> the entry point address of /bin/sh and use this address when adding the
->> uprobe event.
->>
->> This adds a dependency to readelf which is not always installed. Therefore
->> add a check and exit with exit_unresolved if it is not installed.
->>
->> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-> 
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 
-> Shuah,
-> 
-> Can you take this in your tree?
-> 
-> -- Steve
+The following changes since commit f5717c93a1b999970f3a64d771a1a9ee68cc37d0:
 
-Applied to linux_kselftest next for Linux 6.15-rc1.
+  sched_ext: Use SCX_CALL_OP_TASK in task_tick_scx (2025-02-13 06:57:33 -1000)
 
-thanks,
--- Shuah
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.14-rc4-fixes
+
+for you to fetch changes up to 8fef0a3b17bb258130a4fcbcb5addf94b25e9ec5:
+
+  sched_ext: Fix pick_task_scx() picking non-queued tasks when it's called without balance() (2025-02-25 08:28:52 -1000)
+
+----------------------------------------------------------------
+sched_ext: A fix for v6.14-rc4
+
+pick_task_scx() has a workaround to avoid stalling when the fair class's
+balance() says yes but pick_task() says no. The workaround was incorrectly
+deciding to keep the prev taks running if the task is on SCX even when the
+task is in a sleeping state, which can lead to several confusing failure
+modes. Fix it by testing the prev task is currently queued on SCX instead.
+
+----------------------------------------------------------------
+Tejun Heo (1):
+      sched_ext: Fix pick_task_scx() picking non-queued tasks when it's called without balance()
+
+ kernel/sched/ext.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+-- 
+tejun
 
