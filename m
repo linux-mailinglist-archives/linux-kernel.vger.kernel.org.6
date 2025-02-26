@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-534539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697E5A46843
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:41:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD3FA46845
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5535C7A4149
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEDB18858E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D015F225405;
-	Wed, 26 Feb 2025 17:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QONkdgJ2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7D022578C;
+	Wed, 26 Feb 2025 17:41:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DB82253F2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DCB21CC6A;
+	Wed, 26 Feb 2025 17:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740591687; cv=none; b=HPMKMoroIuk3ulg74ys+td67QjzMRFxaTFXCdQKLetThwbZLO/iZe4u0P/noJ3ej/OtWADPIy/wTYndLhMzyNwKg9Prj62ZZOeBdPYy4eVcCmEwkI4d75LbZb2PQPJgxAABhdeKX6y2WQjfXRqex4odIxnIF5XZ6nJj6im/fww4=
+	t=1740591696; cv=none; b=J19mEGITd8w/DwWmzlYj9YSbF/ha44awuZP548mlWR0616O8HsefPw7ds/KSSnwKMHEk/fDmMi5FHE24LvDs0/vnNTH1M5Q4c5TgPZYS5MWfUfu5HYKoGXcDnSoUOiUXURkTxCSVh7CytPWbwPT1Yp7RW4lNIqkfiHz5BUSoW1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740591687; c=relaxed/simple;
-	bh=/JvBT/0/7dZvHgQgFaLb0ni7CcSoMNUfe3viymP0TS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJEW1iN2ShH6EZD/ow2GcekB36FHoUKw+gQZ1nylnuOiHTkRvhrWyKsAEY/S3ApUVwOvwjAHsKgNJLpRgp8q9N9D6PYjGDNU8HANH4m1uGSC0vqLY8yXKFCZDNasQFLV2CFF4QGTGq5xHkHIygturXwYi0URNpBrg52KGwxDjP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QONkdgJ2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q9HiXj023823
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:41:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WceNgE5SAip/l6TR8JhKv+cXYxPZIixLZpvMQwGzGmg=; b=QONkdgJ2bL0Y78O4
-	HHz4/6LWlR5RKGGOQy/ZtvermHL7FTg6F7RJkJ4t6t1+fTpn6Rd/gMJX2odqhVte
-	TB/TQdpjiMhEnP3R6D1BaMzJb/xEHQiwz9BJgai8ewD3+OjGNJV8ojvAqiaRrrtF
-	Kk/sMapYdV6w3CtYuYeT9hdZEmnGOe2o1tF4nPitux4b06YwL1CUJRXSCk963JeX
-	lT6kBCcpdCtH7mCZW52ltkKJyQzVPiuYnuWxT9P8ZORXFir/ySiI7zWKzlhOSNpA
-	qD9tJXU6rXcBmVCiJDhRLUDGP7bIFuAKMIJ6JNSjoyuWY79UGlQn0fqeuFjc8JyX
-	asNOtQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmjtnc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:41:24 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e4546f8c47so332376d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:41:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740591684; x=1741196484;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WceNgE5SAip/l6TR8JhKv+cXYxPZIixLZpvMQwGzGmg=;
-        b=PGg8/Y4IioCN4hi/iGEjNhG9846aa7AAGbhHv9iKJ3ukX+9P/jtUHcVcBkkyIJthFZ
-         KAkWpyLVsHynUF76RLX0+53QpTlp0QSur5ACNMIjaPMPmeobeWdyBTHv8zusYI6zM3QJ
-         WnITxdX0GsX8vnMZJubpXGXXZaX3xOEmGvkUaSSAwOW/AGWqSxxn8h697z1fJt4N+u5l
-         5NL39Ko7m7f1xyHiwqO3M5K32hYNOGgpdZRtBBK455ExJBhZZki56tDUYmsRHjPtqXq8
-         e+8clnUFu8mIFq3wRPL7z3ZJ4ocywA/eZpYHxxr7eAAAUy870f1LDNbOsLb/FfK4CBUy
-         DNbg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9QFQ78RIGIdELymmI/RxFATCVyj22y9/XxDi+veGPXbafX+LGw/aaM6/UMaBVaJPUtecXV7mn0uUZlb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/WNwSjDIF7f3CSEpYzXTnSf6z2pkUCgzBCFbML4f93Xwy9q4L
-	FEu8Ho17HbTGIpl5mm2qA4muUPAEY8MLl3EUcj1B18TCe/CpwGsqDs4jdHwc04YYfCz8vRCAmuX
-	fyObsNHlrFXpl8lt6fQmBjooLYvum2D12lLq/oIMpngHhbIwiEsx0WIdHxP/Nr0g=
-X-Gm-Gg: ASbGncv/XuLhD1cWIlDuFxbSL0N+I0o+nRB2V6asYc8xS1pTW9Y3uDq5c5Xz2/cd1gZ
-	Uw/CRekF6yqq9dc5757celDzRr/w6J1IEcEFYEABeLpq9k7GEMw0NvSYY28kNTZfTj/4hjPdo0o
-	nKnrSyAYRZyiScnlmLK1axrpYb1/ucgTuu4Mir1RUIsX4ZdLOiW5e9BCZHAZRE0L5qo1Xoi1rjy
-	4mRFbvwgB5RIhtiJ+5G0H2Y2jfPdbL9+t2BR542Oq1nvLz64YSKjWn7VAcRHsrhKTVq81KYqxNl
-	mmUG/vIEFL0vybHsTEZ5ljtm5A7elefuIIvZQHeTpk3UtuiQqE80aZ35OHKwfJQ6v0FTOQ==
-X-Received: by 2002:a05:6214:e64:b0:6d8:b169:dcd1 with SMTP id 6a1803df08f44-6e6ae9ffd9bmr103315756d6.11.1740591683907;
-        Wed, 26 Feb 2025 09:41:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFUoD0KqFhTewJuMkxxXFrnwh3b6VH9EZzaLS8vXwnSFJJIp8Wn4VgaZQJTIvs3+vb4T/7G8Q==
-X-Received: by 2002:a05:6214:e64:b0:6d8:b169:dcd1 with SMTP id 6a1803df08f44-6e6ae9ffd9bmr103315676d6.11.1740591683588;
-        Wed, 26 Feb 2025 09:41:23 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2013973sm364624266b.109.2025.02.26.09.41.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 09:41:23 -0800 (PST)
-Message-ID: <d56dc103-1c60-4e0a-9b40-8e9d04e18b92@oss.qualcomm.com>
-Date: Wed, 26 Feb 2025 18:41:21 +0100
+	s=arc-20240116; t=1740591696; c=relaxed/simple;
+	bh=8sV5lBpJpfsYzYIXD7QQspHnPGHzN2tgfhX2Q7fvFxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnrc4SMOBJ75ul2MAtmOb64gEcri/Mfo8sKBC+IctGQ3aNBy1yKomvG2DZfyyXJpOeG88uM7mZENWpBII95Wq7r6nYXhYq3AyMajymH/DrTszKlQUHkhrY367IKBBS+WqDfGWxPhywDoMrZ9JicT22/rMjt2JB73gpFNDBX0zFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C9E5C4CEE2;
+	Wed, 26 Feb 2025 17:41:29 +0000 (UTC)
+Date: Wed, 26 Feb 2025 17:41:27 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
+ non-present ptes
+Message-ID: <Z79SR77ml5ckIzUv@arm.com>
+References: <20250226120656.2400136-1-ryan.roberts@arm.com>
+ <20250226120656.2400136-3-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: qcm6490-fairphone-fp5: Add OCP96011
- audio switch
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250226-fp5-pmic-glink-dp-v1-0-e6661d38652c@fairphone.com>
- <20250226-fp5-pmic-glink-dp-v1-2-e6661d38652c@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250226-fp5-pmic-glink-dp-v1-2-e6661d38652c@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KSbhfDrPT5_sS4rJODLWFRVNL_XkOWy3
-X-Proofpoint-ORIG-GUID: KSbhfDrPT5_sS4rJODLWFRVNL_XkOWy3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=893
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502260139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226120656.2400136-3-ryan.roberts@arm.com>
 
-On 26.02.2025 3:10 PM, Luca Weiss wrote:
-> Add a node for the OCP96011 on the board which is used to handle USB-C
-> analog audio switch and handles the SBU mux for DisplayPort-over-USB-C.
+On Wed, Feb 26, 2025 at 12:06:52PM +0000, Ryan Roberts wrote:
+> arm64 supports multiple huge_pte sizes. Some of the sizes are covered by
+> a single pte entry at a particular level (PMD_SIZE, PUD_SIZE), and some
+> are covered by multiple ptes at a particular level (CONT_PTE_SIZE,
+> CONT_PMD_SIZE). So the function has to figure out the size from the
+> huge_pte pointer. This was previously done by walking the pgtable to
+> determine the level and by using the PTE_CONT bit to determine the
+> number of ptes at the level.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> But the PTE_CONT bit is only valid when the pte is present. For
+> non-present pte values (e.g. markers, migration entries), the previous
+> implementation was therefore erroneously determining the size. There is
+> at least one known caller in core-mm, move_huge_pte(), which may call
+> huge_ptep_get_and_clear() for a non-present pte. So we must be robust to
+> this case. Additionally the "regular" ptep_get_and_clear() is robust to
+> being called for non-present ptes so it makes sense to follow the
+> behavior.
+> 
+> Fix this by using the new sz parameter which is now provided to the
+> function. Additionally when clearing each pte in a contig range, don't
+> gather the access and dirty bits if the pte is not present.
+> 
+> An alternative approach that would not require API changes would be to
+> store the PTE_CONT bit in a spare bit in the swap entry pte for the
+> non-present case. But it felt cleaner to follow other APIs' lead and
+> just pass in the size.
+> 
+> As an aside, PTE_CONT is bit 52, which corresponds to bit 40 in the swap
+> entry offset field (layout of non-present pte). Since hugetlb is never
+> swapped to disk, this field will only be populated for markers, which
+> always set this bit to 0 and hwpoison swap entries, which set the offset
+> field to a PFN; So it would only ever be 1 for a 52-bit PVA system where
+> memory in that high half was poisoned (I think!). So in practice, this
+> bit would almost always be zero for non-present ptes and we would only
+> clear the first entry if it was actually a contiguous block. That's
+> probably a less severe symptom than if it was always interpreted as 1
+> and cleared out potentially-present neighboring PTEs.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> tmp
 > ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Random "tmp" here, otherwise the patch looks fine (can be removed when
+applying).
 
-Konrad
-
+-- 
+Catalin
 
