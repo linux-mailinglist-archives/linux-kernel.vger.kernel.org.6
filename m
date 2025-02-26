@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-533813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA15A45EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:27:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D92FA45EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CE73B84A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93F33A4C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEF1220681;
-	Wed, 26 Feb 2025 12:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8093D21D3D3;
+	Wed, 26 Feb 2025 12:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vxns5nMo"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465F4198E65
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YBzXRM7w"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5D815C0;
+	Wed, 26 Feb 2025 12:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572513; cv=none; b=Pkxa8iVvNKhQjzrUulFZCWRSMS2tq2Y7W8Ol9wl2YyxItNZ53j6mPpsKXx+MQC43XsrVL33HxKCMnak9e+lIGI7jBq/iRQa0z030ET1JN9PckRWSRLTZzHqarG4bxaEnJdTxZNYgljxUME2X1CmoaEJVf0E+wS1PeMaRgVU9OcI=
+	t=1740572512; cv=none; b=aAh59YFPrjr4OJlWZMQl9E46TVZMH8s0nogCztlTL4WrI/2RMgEY876I3QW3Ci5/Jd7zHJ7mGyX7PrUR+o9SDWX7zCTCn0A4dExC7+8wcru7EOhnLMyZ5avEYSIs7IXzoVTRJyfaDQTJTkAmBhVQUJkZlmGtBwYHUoAV1Y2k6c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572513; c=relaxed/simple;
-	bh=AwiFrWtV+715zMILrRkjE/bS7f4TFBxTFpu/weZEttM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ckd2kvyvPdCxJPF9tpf1Rwetwre1nPUEBm6f20IL9oeZZ1i8MXpwauckiPujdYbUvnaOiHjCm350c/6CZgfhiJbaBuBGL3DgpQvjr9yAkmHmv5G//pZ0NGbxEejWPEcC5YJ8Q6n+/fKNqWSmy53C6M0f34s1ZvZuGM1VXZS8Cgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vxns5nMo; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471fa3b19bcso226401cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:21:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740572511; x=1741177311; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZ8fLnFs5jC511KEwwc78QvRtxNOftae4m622VwEotA=;
-        b=Vxns5nMohq2469Yc/t3p9uzRVo1FuK2/q9QgWRJamyKImSY2r4GoG1MVpRv/WWkOQe
-         Cn4mw9TSk1116/mFRffkP+uGA/dNNiJJJtmdyShWDcGzCGCBPVEtDhxbjyPeD5Y3JQ/V
-         xk2TvBCwF35h3Hmbj2gWlm6Zh2bj89mgZRhi7ABvc3j4EMNX5yB1szg1UOpLxagesKXk
-         Da4ZoBZ7/URkUddjVt2UcUkovCCg410wDs3OKOFnshELdyQQwD3GuXVY0t3SBCItrs8p
-         Z5H7viuQP4UF06WudfhMyTX00WORC5Ww6ZKL5JWPYI2H2Ng/iNbiNghqc4AlWichLdOD
-         eIJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740572511; x=1741177311;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FZ8fLnFs5jC511KEwwc78QvRtxNOftae4m622VwEotA=;
-        b=qcSC/OLsFkX8R2bDujfROEkh+9b//mcxmQPUAdOOKjHilUoCMIJx4oVcuyba2BTFZ9
-         pzDyFXjdeBZit2q4LNjVemF4JXOzte/ItAobhuWgLD9UKFPtpW3sWJfhfd9SXotqqZxM
-         C/aVviAbMqwfFq0Eq40U2PFdlJt5TbrboAnUVzivRHjEgrQpGHDLtKLIzARI/ALXsxQ2
-         K5tVXtY/Ok+QfEai8VpoVxhKlJKrFnMNSvFgimMAb411dWHHgIWMniF+xUQE4eDvutrG
-         9PQZcoocDiudsS4jGci5r2tL3NTH4JW8zsNVWnS4OgYwBZoYEvYDIoL+zjV9spAZKKbq
-         7VwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnZ6CxHjOZtgtH3qCXJvS9z5nO3LKRH+WJ1wb5UPxVs9s+E3PV+0jEPCKFL3hbPgEVVnluX6FMbF2tVhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWuMOtFN1S/+eAtUjpNY639dt8/FhWZL+17da3GjfTLUAU6UcM
-	DMTtOoqXGNSZC0vjfDzLjAEILVWXM1TvcbLzIXla0ef8AJEpyfX45TiyfWAbuxnLtC/LxjOIDUh
-	GrQryybB7PJMIu7/zm17ErzFsUFUrkp7Yd0je
-X-Gm-Gg: ASbGncvxViB6OBdbNgfwaIyoKfv0RgyD7DlpEOOGsdCWLQeklcJLHTR8fkBJmKXexw/
-	fylQ7MhgBRlOldcp+SxybAdYajpZUNTmCbTnBmts44sBkA3kVxf4Ac3zDzduGq9Xo/rlgk9K5+6
-	XJlLTtvBwqF9NInzAiBW6QGrR1HKNtaNnzAbY=
-X-Google-Smtp-Source: AGHT+IHhkPpVrAfcuu6cQ99DaZetDklozQpTm2/0R7nz9+TlVkUIb9LVAMa4c37TFqY7rDF6/NSPiYVd6iEl3BowJcw=
-X-Received: by 2002:a05:622a:1806:b0:46e:1311:5920 with SMTP id
- d75a77b69052e-47376dd1d49mr8958801cf.0.1740572510952; Wed, 26 Feb 2025
- 04:21:50 -0800 (PST)
+	s=arc-20240116; t=1740572512; c=relaxed/simple;
+	bh=XFlpru4HT2cDn6bnGT2IlGUhhMyYfvHdQwQ8YIK93nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c/ypageHUeuLeZxnd8Kie7HX+BK+WhWCqw+V2fNWEe3TX+AVVlX4dkE78Icxxem7PoKiMFL6z94AXYZI1dL8V3MWwgP49xo+OrcNUaVqnMX4dHAQ4n5EPA9cM0FXMqD0/JIMgrg/tTbZGG5e17V6nPIvmhhbTGfHRxficTwAEpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YBzXRM7w; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.160.79] (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id CF81B206ADE3;
+	Wed, 26 Feb 2025 04:21:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CF81B206ADE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740572510;
+	bh=0qk0lG6fEudYnLnAjNAk9vu7Jq0ZrZ0mFb8apziXmoc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YBzXRM7wseDdFCtzdrp9U4jUxqxjtigZIQlX4nWqMU7JX8EBqOl5UPlekHEpV88sf
+	 CZNiGVSupwBWUMiH9XtbKGuRdI+N2brkESsyrh6eBG7hI3RFqML9QvFGkkb5cvrJT1
+	 edX0Aof5ijszSvf6WlEFgVEtasosU8D60QXVVoek=
+Message-ID: <0a694947-809d-48b2-9138-d3f6175fe09d@linux.microsoft.com>
+Date: Wed, 26 Feb 2025 17:51:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
- <0449ff75-0a6b-4c1e-bf12-ff052aad5287@redhat.com> <Z72-AP-yQ2hPwpKe@google.com>
- <657f10ed-4e82-4048-98ab-1c4b65349298@redhat.com>
-In-Reply-To: <657f10ed-4e82-4048-98ab-1c4b65349298@redhat.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 26 Feb 2025 13:21:39 +0100
-X-Gm-Features: AQ5f1JpRBblxfE48EKs85Q8pbMMgiuSClFK4hMJuxnVUG4HT_JiUqeb3ib6VHjM
-Message-ID: <CA+i-1C01x3CUf_pVEZCmr-rWV26-JZoRoF_uBkchOhobraKGvg@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/4] mm: KUnit tests for the page allocator
-To: David Hildenbrand <david@redhat.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>, Long Li <longli@microsoft.com>
+References: <20250225052001.2225-1-namjain@linux.microsoft.com>
+ <2025022504-diagnosis-outsell-684c@gregkh>
+ <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
+ <2025022515-lasso-carrot-4e1d@gregkh>
+ <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
+ <2025022627-deflate-pliable-6da0@gregkh>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <2025022627-deflate-pliable-6da0@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 at 12:52, David Hildenbrand <david@redhat.com> wrote:
->  > > It seems possible that very little mm code cares if the memory we're
-> > managing actually exists. (For ASI code we did briefly experiment with
-> > tracking information about free pages in the page itself, but it's
-> > pretty sketchy and the presence of debug_pagealloc makes me think
-> > nobody does it today).
->
-> At least when it comes to the buddy, only page zeroing+poisoning should
-> access actual page content.
->
-> So making up memory might actually work in quite some setups, assuming
-> that it will never get allocated.
->
-> The "complicated" thing is still that we are trying to test parts of the
-> buddy in a well-controlled way while other kernel infrastructure is
-> using the buddy in rather uncontrolled ways.
 
-Thanks, yeah that makes sense, and I agree that's the hard part. If we
-can design a way to actually test the interface in an isolated way,
-where we get the "memory" that we use to do that is kinda secondary
-and can be changed later.
 
-> > There might be arch-specific issues there, but for unit tests it
-> > seems OK if they don't work on every ISA.
->
-> Just pointing it out: for memblock tests (tools/testing/memblock/) we
-> actually compile memblock.c to be used in a user space application,
-> stubbing all external function calls etc such that we get the basics
-> running.
->
-> It'd probably be quite some work to get page_alloc.c into a similar
-> shape, likely we'd have to move a lot of unrelated-for-the tests stuff,
-> and think about how to handle some nasty details like pcp etc. Just
-> wondering, did you think about that option as well?
->
-> The nice thing about such an approach is that we can test the allcator
-> without any possible side effects from the running system.
+On 2/26/2025 3:33 PM, Greg Kroah-Hartman wrote:
+> On Wed, Feb 26, 2025 at 10:43:41AM +0530, Naman Jain wrote:
+>>
+>>
+>> On 2/25/2025 2:09 PM, Greg Kroah-Hartman wrote:
+>>> On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
+>>>>
+>>>>
+>>>> On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
+>>>>> On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
+>>>>>> On regular bootup, devices get registered to vmbus first, so when
+>>>>>> uio_hv_generic driver for a particular device type is probed,
+>>>>>> the device is already initialized and added, so sysfs creation in
+>>>>>> uio_hv_generic probe works fine. However, when device is removed
+>>>>>> and brought back, the channel rescinds and device again gets
+>>>>>> registered to vmbus. However this time, the uio_hv_generic driver is
+>>>>>> already registered to probe for that device and in this case sysfs
+>>>>>> creation is tried before the device gets initialized completely.
+>>>>>>
+>>>>>> Fix this by moving the core logic of sysfs creation for ring buffer,
+>>>>>> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+>>>>>> attributes for the channels are defined. While doing that, make use
+>>>>>> of attribute groups and macros, instead of creating sysfs directly,
+>>>>>> to ensure better error handling and code flow.
 
-Yeah Lorenzo also pointed me to tools/testing/vma and I am pretty sold
-that it's a better approach than KUnit where it's possible. But, I'm
-doubtful about using it for page_alloc.
+<snip>
 
-I think it could definitely be a good idea for the really core buddy
-logic (like rmqueue_buddy() and below), where I'm sure we could stub
-out stuff like percpu_* and locking and have the tests still be
-meaningful. But I'm not sure that really low-level code is calling out
-for more testing.
+>>>>>> +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
+>>>>>> +				       const struct bin_attribute *attr,
+>>>>>> +				       struct vm_area_struct *vma)
+>>>>>> +{
+>>>>>> +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
+>>>>>> +
+>>>>>> +	if (!channel->mmap_ring_buffer)
+>>>>>> +		return -ENODEV;
+>>>>>> +	return channel->mmap_ring_buffer(channel, vma);
+>>>>>
+>>>>> What is preventing mmap_ring_buffer from being set to NULL right after
+>>>>> checking it and then calling it here?  I see no locks here or where you
+>>>>> are assigning this variable at all, so what is preventing these types of
+>>>>> races?
+>>>>>
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
+>>>>
+>>>> Thank you so much for reviewing.
+>>>> I spent some time to understand if this race condition can happen and it
+>>>> seems execution flow is pretty sequential, for a particular channel of a
+>>>> device.
+>>>>
+>>>> Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
+>>>> called in parallel to hv_uio_probe (which had set
+>>>> channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
+>>>>
+>>>> Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
+>>>>
+>>>> vmbus_device_register
+>>>>     device_register
+>>>>       hv_uio_probe
+>>>> 	  hv_create_ring_sysfs (W to non NULL)
+>>>>           sysfs_update_group
+>>>>             vmbus_chan_attr_is_visible (R)
+>>>>     vmbus_add_channel_kobj
+>>>>       sysfs_create_group
+>>>>         vmbus_chan_attr_is_visible  (R)
+>>>>         hv_mmap_ring_buffer_wrapper (critical section)
+>>>>
+>>>> hv_uio_remove
+>>>>     hv_remove_ring_sysfs (W to NULL)
+>>>
+>>> Yes, and right in here someone mmaps the file.
+>>>
+>>> I think you can race here, no locks at all feels wrong.
+>>>
+>>> Messing with sysfs groups and files like this is rough, and almost never
+>>> a good idea, why can't you just do this all at once with the default
+>>> groups, why is this being added/removed out-of-band?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> The decision to avoid creating a "ring" sysfs attribute by default
+>> likely stems from a specific use case where it wasn't needed for every
+>> device. By creating it automatically, it keeps the uio_hv_generic
+>> driver simpler and helps prevent potential race conditions. However, it
+>> has an added cost of having ring buffer for all the channels, where it
+>> is not required. I am trying to find if there are any more implications
+>> of it.
+> 
+> You do know about the "is_visable" attribute callback, right?  Why not
+> just use that instead of manually mucking around with the
+> adding/removing of sysfs attributes at all?  That is what it was
+> designed for.
+> 
+> thanks,
+> 
+> greg k-h
 
-Whereas I suspect if you zoom out even just to the level of
-__alloc_frozen_pages_noprof(), it starts to get a bit impractical
-already. And that's where I really wanna get coverage.
+Hi Greg,
+Yes, I am utilizing that in my patch. For differentiating channels of a
+uio_hv_generic device, and for *selectively* creating sysfs, we
+introduced this field in channel struct "channel->mmap_ring_buffer",
+which we were setting only in uio_hv_generic. But, by the time we set
+this in uio_hv_generic driver, the sysfs creation has already gone
+through and sysfs doesn't get updated dynamically. That's where there
+was a need to call sysfs_update_group. I thought the better place to
+keep sysfs_update_group would be in vmbus driver, where we are creating
+the original sysfs entries, hence I had to add the wrapper functions.
+This led us to the race condition we are trying to address now.
 
-Anyway, I'm thinking the next step here is to explore how to get away
-from the node_isolated() stuff in this RFC, so I'll keep that idea in
-mind and try to get a feel for whether it looks possible.
+
+@@ -1838,6 +1872,10 @@ static umode_t vmbus_chan_attr_is_visible(struct 
+kobject *kobj,
+  	     attr == &chan_attr_monitor_id.attr))
+  		return 0;
+
++	/* Hide ring attribute if channel's mmap_ring_buffer function is not 
+yet initialised */
++	if (attr ==  &chan_attr_ring_buffer.attr && !channel->mmap_ring_buffer)
++		return 0;
++
+  	return attr->mode;
+  }
+
+
+Thanks,
+Naman
 
