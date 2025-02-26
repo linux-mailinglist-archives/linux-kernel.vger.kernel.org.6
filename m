@@ -1,282 +1,311 @@
-Return-Path: <linux-kernel+bounces-532932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DB3A453DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:17:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11163A453E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE7517A64C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A3A188B6D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2204A2512C3;
-	Wed, 26 Feb 2025 03:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165D02512FD;
+	Wed, 26 Feb 2025 03:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtmX0zix"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zEhuAFTf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E1+pozVj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tU6jn1Vc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uSu6mEyJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419F124BC1D;
-	Wed, 26 Feb 2025 03:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB62505A4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740539857; cv=none; b=qqa8w8+tC+MifjlXVR7vhh7N3VkXBE2RFc5vnnpF8dnkyd96fEx15ZwHJfopeyMJfCAcITrsMV7z6KIyawiGytF2atv15HbxY52lHHJF8CkkILAcIeKhSEtMojO1pifagGFbE+iw2bxXhWINpZuyTERAbO1N0o8Huc0B7V17Us4=
+	t=1740539902; cv=none; b=XymYkiBS4VzJbNWyZTxUfdhYULz7h8DN/sKXfMUglUvtpJwPsVHhE5wuY80BPOx7XxTp4dTVeYn/QGKIgiV0JeDqPBRQNZVuhttiinMQd8/wuqQzB2VlmNk+QVWDM0iB86NCJDKr5O3TqVlwtlKctSmDgJZyAdEJg6Gr25oOhbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740539857; c=relaxed/simple;
-	bh=qyiHTIerQE6+KLmsNrdKGg/Q9Vrha8TBI40tETZkDD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QzFdJH6QBtV03rcvDI9hKEq3BSnuI3hj9Y2cJoHu9iDNmpkshpYUBNUPcMjscYyinQsb20sIjjYJ/z407qtN1tSh5mhpU8Qa+TsVzunWvQgW76Nm7jhL+W0n2vKV9Ze6i7HnhhEYB2fDliAk9+jiXHqWwEPDPUqXeFsYSwfSd/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtmX0zix; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E81C4CED6;
-	Wed, 26 Feb 2025 03:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740539856;
-	bh=qyiHTIerQE6+KLmsNrdKGg/Q9Vrha8TBI40tETZkDD8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XtmX0zixNNB409O9h3CYoAx0YgwMJRWkOzYsGiExsRcrtQdHU5Vnmbh97dJxKildL
-	 M2J91+Mldyml3FffT7wgq2FCjG0pVJ8XVNT6Oifv4LLCeH7DsduaSXKWR0kdWVbsXd
-	 B9T3YFJWTKYzUCFYTISp7aVYhZnP4n4NSXg4oQO9j4p16EQKfqETPccqRGsOW9IryT
-	 trDkMyLJ6zEt0ASjws+I5zBu+yvyoS3Dxd98uxtL371ANOzD2dbeKj2tusUh18U7ZW
-	 fj0YToiLo0K4NfTAVti/sk5/QIIqdqpXMdFAIVRWKEQkXzsdLyeOZtMbTdDc1yI27d
-	 c6JBCdLBddbmw==
-Date: Wed, 26 Feb 2025 13:47:32 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v3][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z76HzPW1dFTLOSSy@kspp>
+	s=arc-20240116; t=1740539902; c=relaxed/simple;
+	bh=bLoqe3iWK2rHJMWZK3S1g1ZUAkxrMh2WccF3afuhLgM=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=oL7IuKPOiPw0ZDLC6nEnejg17YWtOX/adC5eMXVK4QtSJp0OGBIPZ+U1DBOArL2/NjXFHo5lyRzRExls9G5fYVzeLy8+XH6k6zBxvcqaas037Et2jpzlojjbQ3Impgh4FnhGUowMdx7ZH/I/PRjSLl9vAFmEgpkVBfMQ41wFFdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zEhuAFTf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E1+pozVj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tU6jn1Vc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uSu6mEyJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DECD921185;
+	Wed, 26 Feb 2025 03:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740539897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hi2lTyABX6F+Zk3VP84YZcYJcPAqNVeDNsTUYCj+h2E=;
+	b=zEhuAFTfm6IsEpNDNJO5Xc6cZVW0QiFbDHnBLr5VGWBbUXXJvhGp3wbd7V3zsUUbN1qVXu
+	q3+qo4z7iDXaODumFWhNwKWXWXjILwySTbGzkJj8E8fepbmX+wFwS6NjlL9sJ0H/ELtAMw
+	Q352GtSO7Rts7C31MWlPIXD2LAzQsYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740539897;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hi2lTyABX6F+Zk3VP84YZcYJcPAqNVeDNsTUYCj+h2E=;
+	b=E1+pozVjwSpODLNi6k/C/UGijOjJ62EqcPQYuabXGiu7p9SbLDtEvFqYZPm9IsQBQJpzJ7
+	c1TbLOiIjXr5oUAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tU6jn1Vc;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uSu6mEyJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740539896; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hi2lTyABX6F+Zk3VP84YZcYJcPAqNVeDNsTUYCj+h2E=;
+	b=tU6jn1Vc/w9SxfcdTk9W0KPhwzFtRkstbWKw33r4giZ8UqAGBhbuLK7cf1l4cHzRopo5uz
+	lVK5VR3uWx48Fwlz6WqHDLdnkwOUIB9vNI9D3GaGqyviA1Ukb2qobmV758a10khWtB0zjJ
+	B2MSUbrJ2SEJkjxOb+UqPxZAQ4JCGA8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740539896;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hi2lTyABX6F+Zk3VP84YZcYJcPAqNVeDNsTUYCj+h2E=;
+	b=uSu6mEyJStRTu5JWG6fW8zpu+ADnh0C1nN2rbqrQuxPLjI050eHP/t3WY/o7ZUxt9e5nPQ
+	rM6O40yxt9DEoDBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEEEF13404;
+	Wed, 26 Feb 2025 03:18:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x4+RH/CHvmfcbwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 26 Feb 2025 03:18:08 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "NeilBrown" <neilb@suse.de>
+To: "Trond Myklebust" <trondmy@hammerspace.com>
+Cc: "xiubli@redhat.com" <xiubli@redhat.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,
+ "okorniev@redhat.com" <okorniev@redhat.com>,
+ "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+ "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>,
+ "anna@kernel.org" <anna@kernel.org>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
+ "richard@nod.at" <richard@nod.at>,
+ "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+ "senozhatsky@chromium.org" <senozhatsky@chromium.org>
+Subject:
+ Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+In-reply-to: <50e6b21c644b050a29e159c9484a5e01061434f6.camel@hammerspace.com>
+References:
+ <>, <50e6b21c644b050a29e159c9484a5e01061434f6.camel@hammerspace.com>
+Date: Wed, 26 Feb 2025 14:18:01 +1100
+Message-id: <174053988113.102979.18024415194793753569@noble.neil.brown.name>
+X-Rspamd-Queue-Id: DECD921185
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,kernel.org,gmail.com,vger.kernel.org,oracle.com,sipsolutions.net,szeredi.hu,cambridgegreys.com,zeniv.linux.org.uk,suse.cz,talpey.com,nod.at,lists.infradead.org,lists.linux.dev,chromium.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Wed, 26 Feb 2025, Trond Myklebust wrote:
+> On Wed, 2025-02-26 at 13:09 +1100, NeilBrown wrote:
+> > On Tue, 25 Feb 2025, Trond Myklebust wrote:
+> > > On Mon, 2025-02-24 at 14:09 +1100, NeilBrown wrote:
+> > > > On Mon, 24 Feb 2025, Al Viro wrote:
+> > > > > On Mon, Feb 24, 2025 at 12:34:06PM +1100, NeilBrown wrote:
+> > > > > > On Sat, 22 Feb 2025, Al Viro wrote:
+> > > > > > > On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
+> > > > > > >=20
+> > > > > > > > +In general, filesystems which use d_instantiate_new() to
+> > > > > > > > install the new
+> > > > > > > > +inode can safely return NULL.=C2=A0 Filesystems which may not
+> > > > > > > > have an I_NEW inode
+> > > > > > > > +should use d_drop();d_splice_alias() and return the
+> > > > > > > > result
+> > > > > > > > of the latter.
+> > > > > > >=20
+> > > > > > > IMO that's a bad pattern, _especially_ if you want to go
+> > > > > > > for
+> > > > > > > "in-update"
+> > > > > > > kind of stuff later.
+> > > > > >=20
+> > > > > > Agreed.=C2=A0 I have a draft patch to change d_splice_alias() and
+> > > > > > d_exact_alias() to work on hashed dentrys.=C2=A0 I thought it
+> > > > > > should
+> > > > > > go after
+> > > > > > these mkdir patches rather than before.
+> > > > >=20
+> > > > > Could you give a braindump on the things d_exact_alias() is
+> > > > > needed
+> > > > > for?
+> > > > > It's a recurring headache when doing ->d_name/->d_parent
+> > > > > audits;
+> > > > > see e.g.
+> > > > > https://lore.kernel.org/all/20241213080023.GI3387508@ZenIV/=C2=A0for
+> > > > > related
+> > > > > mini-rant from the latest iteration.
+> > > > >=20
+> > > > > Proof of correctness is bloody awful; it feels like the
+> > > > > primitive
+> > > > > itself
+> > > > > is wrong, but I'd never been able to write anything concise
+> > > > > regarding
+> > > > > the things we really want there ;-/
+> > > > >=20
+> > > >=20
+> > > > As I understand it, it is needed (or wanted) to handle the
+> > > > possibility
+> > > > of an inode becoming "stale" and then recovering.=C2=A0 This could
+> > > > happen,
+> > > > for example, with a temporarily misconfigured NFS server.
+> > > >=20
+> > > > If ->d_revalidate gets a NFSERR_STALE from the server it will
+> > > > return
+> > > > '0'
+> > > > so lookup_fast() and others will call d_invalidate() which will
+> > > > d_drop()
+> > > > the dentry.=C2=A0 There are other paths on which -ESTALE can result in
+> > > > d_drop().
+> > > >=20
+> > > > If a subsequent attempt to "open" the name successfully finds the
+> > > > same
+> > > > inode we want to reuse the old dentry rather than create a new
+> > > > one.
+> > > >=20
+> > > > I don't really understand why.=C2=A0 This code was added 20 years ago
+> > > > before
+> > > > git.
+> > > > It was introduced by
+> > > >=20
+> > > > commit 89a45174b6b32596ea98fa3f89a243e2c1188a01
+> > > > Author: Trond Myklebust <trond.myklebust@fys.uio.no>
+> > > > Date:=C2=A0=C2=A0 Tue Jan 4 21:41:37 2005 +0100
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 VFS: Avoid dentry aliasing problems in files=
+ystems like NFS,
+> > > > where
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inodes may be =
+marked as stale in one instance (causing
+> > > > the
+> > > > dentry
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to be dropped)=
+ then re-enabled in the next instance.
+> > > > =C2=A0=C2=A0=C2=A0=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 Signed-off-by: Trond Myklebust <trond.mykleb=
+ust@fys.uio.no>
+> > > >=20
+> > > > in history.git
+> > > >=20
+> > > > Trond: do you have any memory of this?=C2=A0 Can you explain what the
+> > > > symptom
+> > > > was that you wanted to fix?
+> > > >=20
+> > > > The original patch used d_add_unique() for lookup and atomic_open
+> > > > and
+> > > > readdir prime-dcache.=C2=A0 We now only use it for v4 atomic_open.=C2=
+=A0
+> > > > Maybe
+> > > > we
+> > > > don't need it at all?=C2=A0 Or maybe we need to restore it to those
+> > > > other
+> > > > callers?=20
+> > > >=20
+> > >=20
+> > > 2005? That looks like it was trying to deal with the userspace NFS
+> > > server. I can't remember when it was given the ability to use the
+> > > inode
+> > > generation counter, but I'm pretty sure that in 2005 there were
+> > > plenty
+> > > of setups out there that had the older version that reused
+> > > filehandles
+> > > (due to inode number reuse). So you would get spurious ESTALE
+> > > errors
+> > > sometimes due to inode number reuse, sometimes because the
+> > > filehandle
+> > > fell out of the userspace NFS server's cache.
+> >=20
+> > So this was likely done to work-around known weaknesses in NFS
+> > servers
+> > at the time.
+> >=20
+> > The original d_add_unique() was used in nfs_lookup()
+> > nfs_atomic_lookup()
+> > and nfs_readdir_lookup() but the current descendent d_exact_alias()
+> > is
+> > only used in _nfs4_open_and_get_state() called only by nfs4_do_open()
+> > which is only used in nfs4_atomic_open() and nfs4_proc_create().
+> >=20
+> > So the usage in 'lookup' and 'readdir' have fallen by the wayside
+> > with
+> > no apparent negative consequences.=C2=A0=20
+> > The old NFS servers have probably been fixed.
+> >=20
+> > So do you have any concerns with us discarding d_exact_alias() and
+> > only
+> > using d_splice_alias() in _nfs4_open_get_state() ??
+> >=20
+>=20
+> AFAIK, there were never any NFSv4 servers in public use that mimicked
+> the quirks of the userspace NFSv2/NFSv3 server. So I'm thinking it
+> should be safe to retire d_exact_alias.
 
-So, in this particular case, we create a new `struct mlx5e_umr_wqe_hdr`
-to enclose the header part of flexible structure `struct mlx5e_umr_wqe`.
-This is, all the members except the flexible arrays `inline_mtts`,
-`inline_klms` and `inline_ksms` in the anonymous union. We then replace
-the header part with `struct mlx5e_umr_wqe_hdr hdr;` in `struct
-mlx5e_umr_wqe`, and change the type of the object currently causing
-trouble `umr_wqe` from `struct mlx5e_umr_wqe` to `struct
-mlx5e_umr_wqe_hdr` --this last bit gets rid of the flex-array-in-the-middle
-part and avoid the warnings.
+Thanks.  I'll submit a patch through the VFS tree as I have other VFS
+patches in the works that will depend on that so having them together
+would be good.
 
-Also, no new members should be added to `struct mlx5e_umr_wqe`, instead
-any new members must be included in the header structure `struct
-mlx5e_umr_wqe_hdr`. To enforce this, we use `static_assert()`, ensuring
-that the memory layout of both the flexible structure and the newly
-created header struct remain consistent.
-
-The next step is to refactor the rest of the related code accordingly,
-which means adding a bunch of `hdr.` wherever needed.
-
-Lastly, we use `container_of()` whenever we need to retrieve a pointer
-to the flexible structure `struct mlx5e_umr_wqe`.
-
-So, with these changes, fix 125 of the following warnings:
-
-drivers/net/ethernet/mellanox/mlx5/core/en.h:664:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v3:
- - Update error message in the assertion.
- - Also, this part is intentionally left as-is (to keep the assertion
-   as close as possible to the flex struct):
-
-| CHECK: Please use a blank line after function/struct/union/enum declarations
-| #63: FILE: drivers/net/ethernet/mellanox/mlx5/core/en.h:249:
-| };
-| +static_assert(offsetof(struct mlx5e_umr_wqe, inline_mtts) == sizeof(struct mlx5e_umr_wqe_hdr),
-
-Changes in v2:
- - Split the header members of `struct mlx5e_umr_wqe` into a
-   separate `struct mlx5e_umr_wqe_hdr`, and refactor the code
-   accordingly. (Jakub)
- - Update the changelog text.
- - Link: https://lore.kernel.org/linux-hardening/Z76FE8oZO2Ssuj9T@kspp/
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z6GCJY8G9EzASrwQ@kspp/
-
- drivers/net/ethernet/mellanox/mlx5/core/en.h  | 10 +++++++--
- .../ethernet/mellanox/mlx5/core/en/xsk/rx.c   |  6 ++---
- .../net/ethernet/mellanox/mlx5/core/en_main.c |  8 ++++---
- .../net/ethernet/mellanox/mlx5/core/en_rx.c   | 22 +++++++++----------
- 4 files changed, 27 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-index 979fc56205e1..90de40521029 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -232,16 +232,22 @@ struct mlx5e_rx_wqe_cyc {
- 	DECLARE_FLEX_ARRAY(struct mlx5_wqe_data_seg, data);
- };
- 
--struct mlx5e_umr_wqe {
-+struct mlx5e_umr_wqe_hdr {
- 	struct mlx5_wqe_ctrl_seg       ctrl;
- 	struct mlx5_wqe_umr_ctrl_seg   uctrl;
- 	struct mlx5_mkey_seg           mkc;
-+};
-+
-+struct mlx5e_umr_wqe {
-+	struct mlx5e_umr_wqe_hdr hdr;
- 	union {
- 		DECLARE_FLEX_ARRAY(struct mlx5_mtt, inline_mtts);
- 		DECLARE_FLEX_ARRAY(struct mlx5_klm, inline_klms);
- 		DECLARE_FLEX_ARRAY(struct mlx5_ksm, inline_ksms);
- 	};
- };
-+static_assert(offsetof(struct mlx5e_umr_wqe, inline_mtts) == sizeof(struct mlx5e_umr_wqe_hdr),
-+	      "struct members should be included in struct mlx5e_umr_wqe_hdr, not in struct mlx5e_umr_wqe");
- 
- enum mlx5e_priv_flag {
- 	MLX5E_PFLAG_RX_CQE_BASED_MODER,
-@@ -660,7 +666,7 @@ struct mlx5e_rq {
- 		} wqe;
- 		struct {
- 			struct mlx5_wq_ll      wq;
--			struct mlx5e_umr_wqe   umr_wqe;
-+			struct mlx5e_umr_wqe_hdr umr_wqe;
- 			struct mlx5e_mpw_info *info;
- 			mlx5e_fp_skb_from_cqe_mpwrq skb_from_cqe_mpwrq;
- 			__be32                 umr_mkey_be;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-index 1b7132fa70de..2b05536d564a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-@@ -123,7 +123,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 	bitmap_zero(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	wi->consumed_strides = 0;
- 
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((icosq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) | MLX5_OPCODE_UMR);
- 
- 	/* Optimized for speed: keep in sync with mlx5e_mpwrq_umr_entry_size. */
-@@ -134,7 +134,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 		offset = offset * sizeof(struct mlx5_klm) * 2 / MLX5_OCTWORD;
- 	else if (unlikely(rq->mpwqe.umr_mode == MLX5E_MPWRQ_UMR_MODE_TRIPLE))
- 		offset = offset * sizeof(struct mlx5_ksm) * 4 / MLX5_OCTWORD;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
- 
- 	icosq->db.wqe_info[pi] = (struct mlx5e_icosq_wqe_info) {
- 		.wqe_type = MLX5E_ICOSQ_WQE_UMR_RX,
-@@ -144,7 +144,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 
- 	icosq->pc += rq->mpwqe.umr_wqebbs;
- 
--	icosq->doorbell_cseg = &umr_wqe->ctrl;
-+	icosq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 2fdc86432ac0..9abc6ce13ac9 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -311,8 +311,8 @@ static inline void mlx5e_build_umr_wqe(struct mlx5e_rq *rq,
- 				       struct mlx5e_icosq *sq,
- 				       struct mlx5e_umr_wqe *wqe)
- {
--	struct mlx5_wqe_ctrl_seg      *cseg = &wqe->ctrl;
--	struct mlx5_wqe_umr_ctrl_seg *ucseg = &wqe->uctrl;
-+	struct mlx5_wqe_ctrl_seg      *cseg = &wqe->hdr.ctrl;
-+	struct mlx5_wqe_umr_ctrl_seg *ucseg = &wqe->hdr.uctrl;
- 	u16 octowords;
- 	u8 ds_cnt;
- 
-@@ -393,7 +393,9 @@ static int mlx5e_rq_alloc_mpwqe_info(struct mlx5e_rq *rq, int node)
- 		bitmap_fill(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	}
- 
--	mlx5e_build_umr_wqe(rq, rq->icosq, &rq->mpwqe.umr_wqe);
-+	mlx5e_build_umr_wqe(rq, rq->icosq,
-+			    container_of(&rq->mpwqe.umr_wqe,
-+					 struct mlx5e_umr_wqe, hdr));
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-index 1963bc5adb18..5fd70b4d55be 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -631,16 +631,16 @@ static void build_ksm_umr(struct mlx5e_icosq *sq, struct mlx5e_umr_wqe *umr_wqe,
- 			  __be32 key, u16 offset, u16 ksm_len)
- {
- 	memset(umr_wqe, 0, offsetof(struct mlx5e_umr_wqe, inline_ksms));
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((sq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) |
- 			     MLX5_OPCODE_UMR);
--	umr_wqe->ctrl.umr_mkey = key;
--	umr_wqe->ctrl.qpn_ds = cpu_to_be32((sq->sqn << MLX5_WQE_CTRL_QPN_SHIFT)
-+	umr_wqe->hdr.ctrl.umr_mkey = key;
-+	umr_wqe->hdr.ctrl.qpn_ds = cpu_to_be32((sq->sqn << MLX5_WQE_CTRL_QPN_SHIFT)
- 					    | MLX5E_KSM_UMR_DS_CNT(ksm_len));
--	umr_wqe->uctrl.flags = MLX5_UMR_TRANSLATION_OFFSET_EN | MLX5_UMR_INLINE;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
--	umr_wqe->uctrl.xlt_octowords = cpu_to_be16(ksm_len);
--	umr_wqe->uctrl.mkey_mask     = cpu_to_be64(MLX5_MKEY_MASK_FREE);
-+	umr_wqe->hdr.uctrl.flags = MLX5_UMR_TRANSLATION_OFFSET_EN | MLX5_UMR_INLINE;
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_octowords = cpu_to_be16(ksm_len);
-+	umr_wqe->hdr.uctrl.mkey_mask     = cpu_to_be64(MLX5_MKEY_MASK_FREE);
- }
- 
- static struct mlx5e_frag_page *mlx5e_shampo_hd_to_frag_page(struct mlx5e_rq *rq, int header_index)
-@@ -704,7 +704,7 @@ static int mlx5e_build_shampo_hd_umr(struct mlx5e_rq *rq,
- 
- 	shampo->pi = (shampo->pi + ksm_entries) & (shampo->hd_per_wq - 1);
- 	sq->pc += wqe_bbs;
--	sq->doorbell_cseg = &umr_wqe->ctrl;
-+	sq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
-@@ -814,12 +814,12 @@ static int mlx5e_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 	bitmap_zero(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	wi->consumed_strides = 0;
- 
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((sq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) |
- 			    MLX5_OPCODE_UMR);
- 
- 	offset = (ix * rq->mpwqe.mtts_per_wqe) * sizeof(struct mlx5_mtt) / MLX5_OCTWORD;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
- 
- 	sq->db.wqe_info[pi] = (struct mlx5e_icosq_wqe_info) {
- 		.wqe_type   = MLX5E_ICOSQ_WQE_UMR_RX,
-@@ -829,7 +829,7 @@ static int mlx5e_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 
- 	sq->pc += rq->mpwqe.umr_wqebbs;
- 
--	sq->doorbell_cseg = &umr_wqe->ctrl;
-+	sq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
--- 
-2.43.0
-
+Thanks,
+NeilBrown
 
