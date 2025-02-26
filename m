@@ -1,213 +1,127 @@
-Return-Path: <linux-kernel+bounces-533556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B83A45C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:40:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33247A45C07
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55571889CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4998D3A67BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914224DFED;
-	Wed, 26 Feb 2025 10:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED1B258CED;
+	Wed, 26 Feb 2025 10:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiWnfKXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AejhHYXM"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7B64642D;
-	Wed, 26 Feb 2025 10:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447851F4177
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566378; cv=none; b=hzz9tSe3xEA0q0EL8VQqWgyZM8r5x5HAATcPUps09VY3EvgJhZVqLBeXLseJIdO7U+4oQavNwtns3C09IiUxhwg6NC5AHPqq9qAq96clSB3bUza8YMucUJvkzOdLCGRl4jriF8eGR2+wtqj3XkiMbLurkjlOwouSnDgnAk2Rzpk=
+	t=1740566486; cv=none; b=Uon/UWSBUn750W7S52KTsIrd2FiKboj8pbLbuvVQCvSZfAWtayGDzl/ajDKy5If8yw+Hnv+Xw1OxVpQPEmKRWmNMp3zsh4iWPSAfqIlMKzfPP3k63cRvTbIuxae6VotS9OHuaG9HZwfDRZ7+G8E8so7nKg0FoBPiXH/rf/1ejAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566378; c=relaxed/simple;
-	bh=z+ACc9/vEmMyxvrB3zAJly+TnJcjuVrM2NtlojVPahc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFqegw9qu9L/N8SR9PxMkoYcgsQX4UuM/lilcDNlcaJ8QTEHHVFGCmNARLdgyyEgYkGQLxfB+goemz80C8FLBx8GDOiLOueC6mepMghsdMPhm9ftGUzuAxZPLvp+xZsF0Ooo7tjBQ06eQHDbKW7d80QXijBK/9XXbK7o27LFMus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiWnfKXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B92C4CED6;
-	Wed, 26 Feb 2025 10:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740566377;
-	bh=z+ACc9/vEmMyxvrB3zAJly+TnJcjuVrM2NtlojVPahc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BiWnfKXAgC/TYQa9VF3IfGq1FIaDa8/lsitIellUfrpvLbrymFLgoQvv7udZM89xr
-	 QNIk0whBQhCSjJ3D6q+OS+yO/UgMzGXeyaLTC75w0+WcYPE4T9D7jbHQbK7Ov4zJZU
-	 velRFQWDb7lx5Wz3TQrNXetlemsGPNBByNLpyvdarH4yout5zvVwEnYMzuNSlJqOMW
-	 MQ1WKg5RZnx8KWnlY+OOnkJ36Yj2DSfVYbMSRlBDZDozzrGSPInIQeo0OU3r5odrDb
-	 RIWTbZBGNvVLncJy11IdhwsJayvC4BX56qvQl67D4QHp9uN6h9UwKkRWE8jtPL1icW
-	 6r2YJU/EMsFng==
-Date: Wed, 26 Feb 2025 11:39:31 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, kernel@dakr.org,
-	a.hindborg@kernel.org, alex.gaynor@gmail.com,
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net,
-	linux-kernel@vger.kernel.org, lyude@redhat.com,
-	mairacanal@riseup.net, ojeda@kernel.org, rafael@kernel.org,
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu
-Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to
- Registration::new()
-Message-ID: <Z77vYxUYVyFtW2lG@cassiopeiae>
-References: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
- <20250226092339.989767-1-aliceryhl@google.com>
- <Z77iHj56551mDybd@pollux>
- <2025022659-spray-treble-759f@gregkh>
+	s=arc-20240116; t=1740566486; c=relaxed/simple;
+	bh=XRXy6RSItxNq6QnKOnKdXg5Yk8DodK9KEgrENi0WQ2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lmse00uwdeoolwAYuJjJmFwJXe02PALVu50MPX5sHdxRBRnBg+KOpDAIJpB4awbPfNa8ESaFj3lenM26AMM5C9pey1CX9SAm5Y7Fm5o9dwTzLLSmLTbjFfWLBigmLRED2VTzNnmljDym20FCCLvmsJwtlAeAjB8mci3seH/3U2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AejhHYXM; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4398e3dfc66so58089245e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:41:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740566483; x=1741171283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Io4l6/kfa0Abr7c2gr2/O0xUhpbW7CfkwJb9n48BOE0=;
+        b=AejhHYXM1X2OqFulETr1+E5mdC+oPAllJ4ttBkAK18cSs7YRVg61z1TMVs6y3nTL1p
+         ufoSUADTlOTl7rxVN/a5+42rq3iuHgFzWP1n0PhxkOlnY9Dsp4iEY+Jqse2uEpQtwLQc
+         +VZuQtM8AF7iWB6IQMVSISmojak2X8LoYvvN5lx7jDoqto1GeMdJa4dEfr5EHAf8WCcj
+         BkovwLHZjCcxU5BxDtoWDcWhGPF506QkIABbWGtNM5dtSZUEgY57B3bSRNxFxc2C4nZ7
+         w5gYssY1jGopo79D4t1nrq01/Jo9Yn2/t3SPQUadKQa5h7K7+lIeSwq7fcqOB3y+9EgY
+         JcAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740566483; x=1741171283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Io4l6/kfa0Abr7c2gr2/O0xUhpbW7CfkwJb9n48BOE0=;
+        b=r3qeRY6AcXcoHyK0cCyejHD1mmSWMpe/kmy5B1LUed+JpcdJ8BC/4tiOB5QQszublU
+         oym35jQ+u7NtZFLigUIVFC6Yfh1M8Vy7hYcHZVmCltl12OQh9ijjcHPmEOOsFV4BAwN2
+         02Mm8ORVnDesjAg96vemWbrgOV/LMUgIu2ICXL+WrCvOus8bttU0ZY1fV/ST23JLv5sy
+         hyFozNFShO1BLXbbWkg9SmfqZeYVv7fwreSwF4Y//jkauxaxxzQ+6diW7bJfzNdiQJ03
+         P6M3DCtOHh/oymnshU06oHp4zTY8/pwUxXSl1Y6hFD64M+pio0VZX146tJQlwDLHqujO
+         SCdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzEy0MM6iLyK/fuAGU9ZKsGKnPKa4ZASSH/CBG2suepvsJeAXsQHBs6bNQYvaAP/h7gUfF45e0KeaPf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu9uDL223P4zBFNP9R+Ld56w7ZKg83vhuazSKhjXCkSYWaHk1w
+	9nLq7LUsfCjJmxJyQgJpHD+BC7xo1UGE4ohRze4woPf5nUCf6lFyqBuGphM1CSg=
+X-Gm-Gg: ASbGncsUXQziuA66lyiKWxyRUgPCtVXfz7juRiUQ1UtdR6zc4JtCEEQ5gizhIx8BAOl
+	8RUvZWwgcQl9r53NEBOhw0kYdgPlssbsjnT4G6rCCrs+tKmffj9TRbc2jZBmVI/sU2DUsn+r6CH
+	PTiZyGmQ1Z5Y+8i9P5umBZXXg7A4Na0Kc1nWS8OtywAXR0je7fEn1FgosniNEtSLNd7Sr3722O9
+	KCRj/KnbfSf4DJYS9XgjEfoi66F2zLz3OW2LDO8SNLcnPQD5NkFa+8Y7PGpN1UZ9ehwgmgTcDUr
+	PFVTNpTrdVm6js2ADcKGbmjUCnI=
+X-Google-Smtp-Source: AGHT+IGM/5sKGlj2yIGkYDThiqtYqRuGy0u3oCOTR3Uv1tGaYGxuD0FRM9XnnIUJokzK6qFNma0+pg==
+X-Received: by 2002:a05:600c:19d4:b0:439:34dd:c3cc with SMTP id 5b1f17b1804b1-43ab90169c6mr20461805e9.22.1740566483568;
+        Wed, 26 Feb 2025 02:41:23 -0800 (PST)
+Received: from pop-os.lan ([145.224.66.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c93bsm5080832f8f.26.2025.02.26.02.41.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 02:41:23 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	namhyung@kernel.org,
+	cyy@cyyself.name
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Junhao He <hejunhao3@huawei.com>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] perf pmu: Dynamically allocate tool PMU
+Date: Wed, 26 Feb 2025 10:40:59 +0000
+Message-Id: <20250226104111.564443-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025022659-spray-treble-759f@gregkh>
 
-On Wed, Feb 26, 2025 at 10:58:17AM +0100, Greg KH wrote:
-> On Wed, Feb 26, 2025 at 10:42:54AM +0100, Danilo Krummrich wrote:
-> > On Wed, Feb 26, 2025 at 09:23:39AM +0000, Alice Ryhl wrote:
-> > > On Wed, Feb 26, 2025 at 10:06 AM <kernel@dakr.org> wrote:
-> > > >
-> > > > On 2025-02-26 09:38, Alice Ryhl wrote:
-> > > > > On Tue, Feb 25, 2025 at 10:31 PM Lyude Paul <lyude@redhat.com> wrote:
-> > > > >>
-> > > > >> A little late in the review of the faux device interface, we added the
-> > > > >> ability to specify a parent device when creating new faux devices -
-> > > > >> but
-> > > > >> this never got ported over to the rust bindings. So, let's add the
-> > > > >> missing
-> > > > >> argument now so we don't have to convert other users later down the
-> > > > >> line.
-> > > > >>
-> > > > >> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > > > >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > >> ---
-> > > > >>  rust/kernel/faux.rs              | 10 ++++++++--
-> > > > >>  samples/rust/rust_driver_faux.rs |  2 +-
-> > > > >>  2 files changed, 9 insertions(+), 3 deletions(-)
-> > > > >>
-> > > > >> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> > > > >> index 41751403cd868..ae99ea3d114ef 100644
-> > > > >> --- a/rust/kernel/faux.rs
-> > > > >> +++ b/rust/kernel/faux.rs
-> > > > >> @@ -23,11 +23,17 @@
-> > > > >>
-> > > > >>  impl Registration {
-> > > > >>      /// Create and register a new faux device with the given name.
-> > > > >> -    pub fn new(name: &CStr) -> Result<Self> {
-> > > > >> +    pub fn new(name: &CStr, parent: Option<&device::Device>) ->
-> > > > >> Result<Self> {
-> > > > >>          // SAFETY:
-> > > > >>          // - `name` is copied by this function into its own storage
-> > > > >>          // - `faux_ops` is safe to leave NULL according to the C API
-> > > > >> -        let dev = unsafe {
-> > > > >> bindings::faux_device_create(name.as_char_ptr(), null_mut(), null())
-> > > > >> };
-> > > > >> +        let dev = unsafe {
-> > > > >> +            bindings::faux_device_create(
-> > > > >> +                name.as_char_ptr(),
-> > > > >> +                parent.map_or(null_mut(), |p| p.as_raw()),
-> > > > >> +                null(),
-> > > > >
-> > > > > This function signature only requires that `parent` is valid for the
-> > > > > duration of this call to `new`, but `faux_device_create` stashes a
-> > > > > pointer without touching the refcount. How do you ensure that the
-> > > > > `parent` pointer does not become dangling?
-> > > >
-> > > > I was wondering the same, but it seems that the subsequent device_add()
-> > > > call takes care of that:
-> > > >
-> > > > https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/base/core.c#L3588
-> > > >
-> > > > device_del() drops the reference.
-> > > >
-> > > > This makes device->parent only valid for the duration between
-> > > > faux_device_create() and faux_device_remove().
-> > > >
-> > > > But this detail shouldn’t be relevant for this API.
-> > > 
-> > > I think this could use a few more comments to explain it. E.g.:
-> > > 
-> > > diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-> > > index 531e9d789ee0..674db8863d96 100644
-> > > --- a/drivers/base/faux.c
-> > > +++ b/drivers/base/faux.c
-> > > @@ -131,6 +131,7 @@ struct faux_device *faux_device_create_with_groups(const char *name,
-> > >  
-> > >         device_initialize(dev);
-> > >         dev->release = faux_device_release;
-> > > +       /* The refcount of dev->parent is incremented in device_add. */
-> > 
-> > Yeah, this one is a bit odd to rely on a subsequent device_add() call, it
-> > clearly deserves a comment.
-> 
-> What do you mean?  That's the way the driver model works, a parent
-> always gets the reference count incremented as it can not go away until
-> all of the children are gone.
+A few minor fixes that I came across when poking around with the Perf
+list behavior on hybrid Arm.
 
-That's all correct and I agree. I said it's a bit off because the reference is
-not taken in the pointer assignment in faux_device_create_with_groups(), i.e.
+Changes since v1:
+  * Rename perf_pmus__new_tool_pmu() -> tool_pmu__new()
 
-	if (parent)
-		dev->parent = parent;
+James Clark (3):
+  perf pmu: Dynamically allocate tool PMU
+  perf pmu: Don't double count common sysfs and json events
+  perf list: Document -v option deduplication feature
 
-but subsequently in device_add(). That doesn't make it obvious to the reader
-that the driver core does indeed do the correct thing.
+ tools/perf/Documentation/perf-list.txt |  2 +-
+ tools/perf/builtin-list.c              |  2 +-
+ tools/perf/util/pmu.c                  |  7 ++++---
+ tools/perf/util/pmu.h                  |  5 +++++
+ tools/perf/util/pmus.c                 |  2 +-
+ tools/perf/util/tool_pmu.c             | 23 +++++++++++------------
+ tools/perf/util/tool_pmu.h             |  2 +-
+ 7 files changed, 24 insertions(+), 19 deletions(-)
 
-> 
-> So if you pass a parent pointer into a "create" function in the driver
-> core, it will be incremented, you don't have to worry about it.
-> 
-> I don't understand the issue with the rust binding here, it's not saving
-> a pointer to the parent device, as long as it is valid going in, that's
-> all that matters.
+-- 
+2.34.1
 
-There's none, that's what I pointed out earlier too. :-)
-
-> 
-> 
-> 
-> > >         if (parent)
-> > >                 dev->parent = parent;
-> > >         else
-> > > diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> > > index 7673501ebe37..713ee6842e3f 100644
-> > > --- a/rust/kernel/faux.rs
-> > > +++ b/rust/kernel/faux.rs
-> > > @@ -28,6 +28,7 @@ pub fn new(name: &CStr, parent: Option<&device::Device>) -> Result<Self> {
-> > >          // SAFETY:
-> > >          // - `name` is copied by this function into its own storage
-> > >          // - `faux_ops` is safe to leave NULL according to the C API
-> > > +        // - `faux_device_create` ensures that `parent` stays alive until `faux_device_destroy`.
-> > 
-> > Not sure that's a safety requirement for faux_device_create().
-> 
-> It's by default what the driver model does for you.
-> 
-> > The typical convention is that a caller must hold a reference to the object
-> > behind the pointer when passing it to another function. If the callee decides
-> > to store the pointer elsewhere, it's on the callee to take an additional
-> > reference.
-> 
-> Exactly, the driver core handles this.
-
-Agreed.
-
-> 
-> > I think if we want to add something to the safety comment, it should be somthing
-> > along the line of "the type of `parent` implies that for the duration of this
-> > call `parent` is a valid device with a non-zero reference count".
-> 
-> I don't understand the need for any safety comment about the parent
-> here.  Again, as long as it is valid when the call is made, that is all
-> that is needed.
-
-Right, and we could mention that in the safety comment that something of the
-type `&device::Device` is indeed valid by definition and hence fullfills the
-requirement of faux_device_create() to get a valid pointer (or NULL).
 
