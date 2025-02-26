@@ -1,180 +1,154 @@
-Return-Path: <linux-kernel+bounces-534132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96AAA46330
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:40:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0977A4632E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204023AB870
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6881898068
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B77C221D8F;
-	Wed, 26 Feb 2025 14:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CA2218AB4;
+	Wed, 26 Feb 2025 14:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EiuZnVdu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSdIy5Yl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E63C21D3FE;
-	Wed, 26 Feb 2025 14:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0891B19CD0B;
+	Wed, 26 Feb 2025 14:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580766; cv=none; b=u/CzJKusEIqb8bu0uyxDZuZnlx5wTvCbbgJ0voLypRPm7mWx1fry2hHeEmEmMTJdtdcrYvuAXemq4ReZnl6NfmcGrAatI6xlQz55VURMwufJ3fq6lGWRAppUc6llUo0u9lToZUMijucTVAt8aCQeqhdF///SU00f2tW50xTrUVQ=
+	t=1740580800; cv=none; b=IZnNbP7jd0eng3ezvC/gKZxYapQnkAz6yY1J0ByX1gs6iT8Kk1Z0P8uc1+cZDioGOLrp3SvSa8jw0hqUUwHz73/83pWPJBtr51oJ+abH49X9Xjxagw32fMmPyMIQIZgCqmer1YGOMPBY7SD3im0yXp8Pkm3URTUGWBTMqRRsEtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580766; c=relaxed/simple;
-	bh=PdfgDdLgn0IJXw0MEyFZqSpfBoy/QCZjj2OrYc2BhaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W00IozEcY42E18EhdN/X1sV2J8uYfw1rPikT8cYilAIIFLiixfDXMzTQ9y6e3r/IjwDDRMjEyQ8tzgaVsbkRHD2+GKfr3ukdB1G0Pnid/IvIlrwaU+FCmlwRXcZzNRx0qrr3lj4G2XoGU80kVtYxUMITpzunvU6Yea0Bg4SQq5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EiuZnVdu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 874B6C4CED6;
-	Wed, 26 Feb 2025 14:39:18 +0000 (UTC)
+	s=arc-20240116; t=1740580800; c=relaxed/simple;
+	bh=UizutcGrQROvMXVefR0tVZ4gwid3/rjhlsvjPSmD9iE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AZNc0WqgiATaSmnaSP0xfIX5o3kaEI4+BnbLmfb/nS1fb+cKPgrKvSvYKy5EibT/8U7FVHcUdmQtNfwqRdBtz0WPOyYLt1nQKGACvTgbAbe607LRJRtO5rjTVKd+tHmIYfZ1REZSeawwo9EsPNSDJDr3Dh49Jq4AASqkN4kfqqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSdIy5Yl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA0DCC4CEE8;
+	Wed, 26 Feb 2025 14:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740580765;
-	bh=PdfgDdLgn0IJXw0MEyFZqSpfBoy/QCZjj2OrYc2BhaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EiuZnVdusmYzHSdb6I2fJJTx0wjQMJJg1KQ9ZIZRPuOpsCK1VdUgYWLRZXpmIEERt
-	 dvBG/PAIjDhM7kgaXkpcR4WImK8YNiJ41KRMU49S4fd7BbQ0fUM9iJ6xjW0pfTLuWY
-	 HODM8YlZNXTNOMQXlAOdTfNpf4wddkm1CFTDThQfZRcY3OoZLhjwD5vKuW7QRlDcSq
-	 p4rsWYtAxlrZpjIpsI/1jds7nbpNzIlc7dT9/gYQmJSTolV1U4lEEjTfGf5xqn1Kls
-	 3PkN+nw6fH8SreM5/DOar8Jm7cpHRyhk7FQ4F4kQn2C0+Q63isaM/DAhMNbgDLdNF1
-	 a1GPIvWh0D1DA==
-Date: Wed, 26 Feb 2025 15:39:13 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
- =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
- <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
- Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/14] Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250226153913.27255b1e@sal.lan>
-In-Reply-To: <20250226151656.10665bc9@imammedo.users.ipa.redhat.com>
-References: <cover.1740148260.git.mchehab+huawei@kernel.org>
-	<20250226151656.10665bc9@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1740580799;
+	bh=UizutcGrQROvMXVefR0tVZ4gwid3/rjhlsvjPSmD9iE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iSdIy5YlY9OjefogR2PNerBmmXht7wVcASIsAdgfHZjvfXcruSn9OpkJScfau3LwS
+	 NgGCYv9i+aRQsPXAEazB2ddgSi9EFSsDLtU54VxS6uIEfYwm70n5kCv3iqj4zSxq0z
+	 R5kKld/SXucL01J5frvAnHraua4g5fpPKb4F7kGFRd/TPdHGTthJe9Onhqh4BoBcrk
+	 3IMTnhjouOCKBU3PjmJyBk4OSIzGDQYTjAx1zd5qsUbgBau11WIRPtK+GjitGmRQnR
+	 qxIZrBhsnVi6kek4/urdheDB3JvE3TEBp4ZLrKgjeGjVtFCjCbk5XWwlaJ3Ty/eN7j
+	 oztEErZPQKj7A==
+Message-ID: <f134c607-2a03-4ee2-9f7a-befa1e4feb74@kernel.org>
+Date: Wed, 26 Feb 2025 15:39:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC
+ option
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+ "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "geert@linux-m68k.org" <geert@linux-m68k.org>,
+ Paul Barker <paul.barker.ct@bp.renesas.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
+ <20250226130935.3029927-14-thierry.bultel.yh@bp.renesas.com>
+ <fe4ccf6d-bdf0-41eb-bffe-83d459319689@kernel.org>
+ <TYCPR01MB1149252F0825C9BCF6A1B832F8AC22@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <TYCPR01MB1149252F0825C9BCF6A1B832F8AC22@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Em Wed, 26 Feb 2025 15:16:56 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> On Fri, 21 Feb 2025 15:35:09 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On 26/02/2025 15:32, Thierry Bultel wrote:
+> Hi Krysztof,
 > 
-> > Now that the ghes preparation patches were merged, let's add support
-> > for error injection.
-> > 
-> > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
-> > table and hardware_error firmware file, together with its migration code. Migration tested
-> > with both latest QEMU released kernel and upstream, on both directions.
-> > 
-> > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
-> >    to inject ARM Processor Error records.  
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org> 
+>> Sent: mercredi 26 février 2025 15:22
+>> To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>; thierry.bultel@linatsea.fr
+>> Cc: linux-renesas-soc@vger.kernel.org; geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; linux-arm->kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC option
+>>
+>> On 26/02/2025 14:09, Thierry Bultel wrote:
+>>> Selects support for RZ/T2H (aka r9a09g077), and SCI (serial) specific 
+>>> code for it.
+>>>
+>>> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+>>> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+>>> ---
+>>
+>> You never responded to my comments at v1. So I asked at v2. Still no answer.
+>>
+>> That's v3 and still silence from your side.
 > 
-> please, run ./scripts/checkpatch on patches before submitting them.
-> as it stands now series cannot be merged due to failing checkpatch
+> Yes, I understand your position and have added a paragraph 
+> at the end of the cover letter about this point.
 
-Weird... checkpatch is at pre-commit hook, as recommended at QEMU 
-documentation. It is actually a little harder to manage this way, as it 
-sometimes cause troubles with binary files.
+We do no read cover letters, unless look for dependencies, so if you
+disagree with someone you ought to respond to the email directly. Not
+silently discard.
 
-Anyway, I'll run it by hand before sending the next version.
+You keep adding more and more symbols, so your "out of scope of this
+patchset" is no true. Otherwise every contributor will use exactly the
+same arguments - "not my problem".
 
-> 
-> > 
-> > ---
-> > v4:
-> > - added an extra comment for AcpiGhesState structure;
-> > - patches reordered;
-> > - no functional changes, just code shift between the patches in this series.
-> > 
-> > v3:
-> > - addressed more nits;
-> > - hest_add_le now points to the beginning of HEST table;
-> > - removed HEST from tests/data/acpi;
-> > - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
-> > 
-> > v2: 
-> > - address some nits;
-> > - improved ags cleanup patch and removed ags.present field;
-> > - added some missing le*_to_cpu() calls;
-> > - update date at copyright for new files to 2024-2025;
-> > - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
-> > - added HEST and DSDT tables after the changes to make check target happy.
-> >   (two patches: first one whitelisting such tables; second one removing from
-> >    whitelist and updating/adding such tables to tests/data/acpi)
-> > 
-> > 
-> > 
-> > Mauro Carvalho Chehab (14):
-> >   acpi/ghes: prepare to change the way HEST offsets are calculated
-> >   acpi/ghes: add a firmware file with HEST address
-> >   acpi/ghes: Use HEST table offsets when preparing GHES records
-> >   acpi/ghes: don't hard-code the number of sources for HEST table
-> >   acpi/ghes: add a notifier to notify when error data is ready
-> >   acpi/ghes: create an ancillary acpi_ghes_get_state() function
-> >   acpi/generic_event_device: Update GHES migration to cover hest addr
-> >   acpi/generic_event_device: add logic to detect if HEST addr is
-> >     available
-> >   acpi/generic_event_device: add an APEI error device
-> >   tests/acpi: virt: allow acpi table changes for a new table: HEST
-> >   arm/virt: Wire up a GED error device for ACPI / GHES
-> >   tests/acpi: virt: add a HEST table to aarch64 virt and update DSDT
-> >   qapi/acpi-hest: add an interface to do generic CPER error injection
-> >   scripts/ghes_inject: add a script to generate GHES error inject
-> > 
-> >  MAINTAINERS                                   |  10 +
-> >  hw/acpi/Kconfig                               |   5 +
-> >  hw/acpi/aml-build.c                           |  10 +
-> >  hw/acpi/generic_event_device.c                |  43 ++
-> >  hw/acpi/ghes-stub.c                           |   7 +-
-> >  hw/acpi/ghes.c                                | 231 ++++--
-> >  hw/acpi/ghes_cper.c                           |  38 +
-> >  hw/acpi/ghes_cper_stub.c                      |  19 +
-> >  hw/acpi/meson.build                           |   2 +
-> >  hw/arm/virt-acpi-build.c                      |  37 +-
-> >  hw/arm/virt.c                                 |  19 +-
-> >  hw/core/machine.c                             |   2 +
-> >  include/hw/acpi/acpi_dev_interface.h          |   1 +
-> >  include/hw/acpi/aml-build.h                   |   2 +
-> >  include/hw/acpi/generic_event_device.h        |   1 +
-> >  include/hw/acpi/ghes.h                        |  54 +-
-> >  include/hw/arm/virt.h                         |   2 +
-> >  qapi/acpi-hest.json                           |  35 +
-> >  qapi/meson.build                              |   1 +
-> >  qapi/qapi-schema.json                         |   1 +
-> >  scripts/arm_processor_error.py                | 476 ++++++++++++
-> >  scripts/ghes_inject.py                        |  51 ++
-> >  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
-> >  target/arm/kvm.c                              |   7 +-
-> >  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
-> >  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
-> >  29 files changed, 1677 insertions(+), 79 deletions(-)
-> >  create mode 100644 hw/acpi/ghes_cper.c
-> >  create mode 100644 hw/acpi/ghes_cper_stub.c
-> >  create mode 100644 qapi/acpi-hest.json
-> >  create mode 100644 scripts/arm_processor_error.py
-> >  create mode 100755 scripts/ghes_inject.py
-> >  create mode 100755 scripts/qmp_helper.py
-> >   
-> 
+So again NAK because it is something ought to be finally fixed (and is
+not even tricky to, so I don't ask for impossible).
+
+
+Best regards,
+Krzysztof
 
