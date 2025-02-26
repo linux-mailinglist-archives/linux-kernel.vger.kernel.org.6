@@ -1,269 +1,323 @@
-Return-Path: <linux-kernel+bounces-533793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30CFA45EAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:23:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F650A45EAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D7318885B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:19:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0D33B49AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867BF21B1AC;
-	Wed, 26 Feb 2025 12:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB321C9FA;
+	Wed, 26 Feb 2025 12:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GKis/B3g"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpyhS0QE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7749721ADA0;
-	Wed, 26 Feb 2025 12:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED639217670;
+	Wed, 26 Feb 2025 12:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572062; cv=none; b=QRRLz5E9R6Q794K8/v4E1bEZxPVLfaFLGKWDbFy+uQwdkxbaARBLDKrubnlt5RnV0L1z4DXxSel3eWpT9M5g7fXb6uTyq3esV42FA/aW3rmOyhk4FyQFxCKQA5n1l5+ZTg/859Az1ANr0/DrOVecZ9LEtNbxvqILutSwWmW6NJc=
+	t=1740572077; cv=none; b=hULJNiGVq6GiokTwVfEl5sRWOghZDKjAC/xD0UQk+XohiLtGCRtLv7SBKgHNggU9t9RGJR6vQnY8Drch2kfLErsfmkkSWMBixIoGjH5vLI/9JVTc04jhFLgjM2w86C8dQ/Xc/Mcva0yJAj64uUyGJOUYlOnHGXlQTp15AA6OmP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572062; c=relaxed/simple;
-	bh=rqCCBNqXwX4V8aDAu9AF4qY0OGm7CseWGja67coCy5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CBbxTq0HTVJGdqr97feZArGfO/VxXNoP4DA5GRrDR+SIKyWez3gRmyWUaCigYe4z0sVCH/RPhtPYm7vdH/Z0DAQVaqmRVMmay/obAx9WPKA1Lf4DmzIh1GkgN8TR5o3+ZzKNyCoVpFATIHX2iZVu66z2jY32xJYXD4a4EBCGwWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GKis/B3g; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740572058;
-	bh=rqCCBNqXwX4V8aDAu9AF4qY0OGm7CseWGja67coCy5c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GKis/B3gCV2Up4PlhYkjHwnXjxI4wulD5+R8haxATHmM1XWM5j3pG1Oo5ecM+L7BY
-	 SeGBHRjt5DN7jdPAaFVvszr5Op7oi8IYYybFHxmcg2enbtntBGBJzShX8T6t1sGOKb
-	 oPcHLF1XDTcL3OPr6jlFfUVuQXX62MhQOa8JWGoDYxTjGBpzzXduhmsKQGtJpAkct+
-	 ZDdyw35Sv+uw5zvIWJB5MMf0yeRyUVLsoqHIyLHtwrrNcF2KGaNguFHV7Xb9tnO6zU
-	 /R6qn5KWHpBXVGPHV+T7iGG35R7UbkCdg681ly6oWWIRiuqEAIlqiaH1QU3KthG9f2
-	 jKDdpN7GJIHfw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6D8AE17E0649;
-	Wed, 26 Feb 2025 13:14:17 +0100 (CET)
-Message-ID: <cfb97821-d202-4bd6-99d6-059178b6ad00@collabora.com>
-Date: Wed, 26 Feb 2025 13:14:17 +0100
+	s=arc-20240116; t=1740572077; c=relaxed/simple;
+	bh=dw8RKuOuBbZ3OPX6aFcUgjkDc62wOApZJuJQGPQATPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kaFLKr1EECycu1jFykDhCpy44lssaPwG7CkXCJjSld/C68MiNNSEnekF/SDel6AHdVXg3OrSkwNumJ2GzlqLE3uew5qEELxcPapa9ABfLujXNlz0st9BcmeuEnhxk9yqqUcqyFgRlUJB2fVskPMX1FZ3Qh/XpxFtdF0Ki5AzCEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpyhS0QE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1ED0C4CED6;
+	Wed, 26 Feb 2025 12:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740572076;
+	bh=dw8RKuOuBbZ3OPX6aFcUgjkDc62wOApZJuJQGPQATPo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UpyhS0QEk3eIXFiHz+SzhlE0ZxDDQs98OgkE/+hgERQ/tBnnHv+mqQgThnFQt+hZn
+	 qDPQ95i6PfHtSk+jmcynOUJiZtIOJRcMF6EpTHxf8/LiAh/+5utWnLsCZNYI5CdJs5
+	 JuyoictNbBaeopc+8eLDZvl0+yIdlQdUHa+B5UbdfzGvfQU5d0peUS86UXM5GfVYu7
+	 6Zm+F98gJzj/E9KOCsdrwAlEPzLKrRvaxHHBpYMoCSbzTMjPHM5tPT8ddu6uajiN7Y
+	 87BeCeLlzcprmLMQ+F5KX9gdW7jNdOvvGGSE68fwS5HJaqg0VeWsRQjFAxBBffBzST
+	 RRhYFBXoVWXzw==
+Date: Wed, 26 Feb 2025 13:14:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [GIT PULL] KVM changes for Linux 6.14
+Message-ID: <20250226-portieren-staudamm-10823e224307@brauner>
+References: <CAHk-=wg4Wm4x9GoUk6M8BhLsrhLj4+n8jA2Kg8XUQF=kxgNL9g@mail.gmail.com>
+ <20250126142034.GA28135@redhat.com>
+ <CAHk-=wiOSyfW3sgccrfVtanZGUSnjFidSbaP3tg9wapydb-u6g@mail.gmail.com>
+ <20250126185354.GB28135@redhat.com>
+ <CAHk-=wiA7wzJ9TLMbC6vfer+0F6S91XghxrdKGawO6uMQCfjtQ@mail.gmail.com>
+ <20250127140947.GA22160@redhat.com>
+ <CABgObfaar9uOx7t6vR0pqk6gU-yNOHX3=R1UHY4mbVwRX_wPkA@mail.gmail.com>
+ <20250204-liehen-einmal-af13a3c66a61@brauner>
+ <CABgObfaBizrwP6mh82U20Y0h9OwYa6OFn7QBspcGKak2r+5kUw@mail.gmail.com>
+ <20250205-bauhof-fraktionslos-b1bedfe50db2@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/mediatek: Add CCORR component support for MT8196
-To: =?UTF-8?B?SmF5IExpdSAo5YiY5Y2aKQ==?= <Jay.Liu@mediatek.com>,
- =?UTF-8?B?WW9uZ3FpYW5nIE5pdSAo54mb5rC45by6KQ==?=
- <yongqiang.niu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "simona@ffwll.ch" <simona@ffwll.ch>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "hsinyi@chromium.org" <hsinyi@chromium.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20250219092040.11227-1-jay.liu@mediatek.com>
- <20250219092040.11227-2-jay.liu@mediatek.com>
- <779b0915-f0fa-46b6-8c5b-57745114252f@collabora.com>
- <18ea04bde26b9cbc22609d621eea1cd65a0f1109.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <18ea04bde26b9cbc22609d621eea1cd65a0f1109.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250205-bauhof-fraktionslos-b1bedfe50db2@brauner>
 
-Il 26/02/25 12:36, Jay Liu (刘博) ha scritto:
-> On Wed, 2025-02-19 at 13:49 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 19/02/25 10:20, Jay Liu ha scritto:
->>> Add CCORR component support for MT8196.
->>>
->>> CCORR is a hardware module that optimizes the visual effects of
->>> images by adjusting the color matrix, enabling features such as
->>> night light.
->>>
->>> The 8196 hardware platform includes two CCORR (Color Correction)
->>> units.
->>> However, the `mtk_ccorr_ctm_set` API only utilizes one of these
->>> units.
->>> To prevent the unused CCORR unit from inadvertently taking effect,
->>> we need to block it by adding mandatory_ccorr flag in the
->>> driver_data.
->>>
->>> Signed-off-by: Jay Liu <jay.liu@mediatek.com>
->>
->> This is yet another thing that can be resolved by using OF Graph for
->> defining the
->> display pipeline: by using that, I don't see how can CCORR1 be used
->> instead of
->> CCORR0, if the latter is in the pipeline, but not the former.
->>
->> NACK.
->>
->> Regards,
->> Angelo
->>
-> hi Angelo, thank you for your review,
+On Wed, Feb 05, 2025 at 12:49:30PM +0100, Christian Brauner wrote:
+> On Tue, Feb 04, 2025 at 05:05:06PM +0100, Paolo Bonzini wrote:
+> > On Tue, Feb 4, 2025 at 3:19 PM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Mon, Jan 27, 2025 at 04:15:01PM +0100, Paolo Bonzini wrote:
+> > > > On Mon, Jan 27, 2025 at 3:10 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > > On 01/26, Linus Torvalds wrote:
+> > > > > > On Sun, 26 Jan 2025 at 10:54, Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > > > >
+> > > > > > > I don't think we even need to detect the /proc/self/ or /proc/self-thread/
+> > > > > > > case, next_tid() can just check same_thread_group,
+> > > > > >
+> > > > > > That was my thinking yes.
+> > > > > >
+> > > > > > If we exclude them from /proc/*/task entirely, I'd worry that it would
+> > > > > > hide it from some management tool and be used for nefarious purposes
+> > > > >
+> > > > > Agreed,
+> > > > >
+> > > > > > (even if they then show up elsewhere that the tool wouldn't look at).
+> > > > >
+> > > > > Even if we move them from /proc/*/task to /proc ?
+> > > >
+> > > > Indeed---as long as they show up somewhere, it's not worse than it
+> > > > used to be. The reason why I'd prefer them to stay in /proc/*/task is
+> > > > that moving them away at least partly negates the benefits of the
+> > > > "workers are children of the starter" model. For example it
+> > > > complicates measuring their cost within the process that runs the VM.
+> > > > Maybe it's more of a romantic thing than a real practical issue,
+> > > > because in the real world resource accounting for VMs is done via
+> > > > cgroups. But unlike the lazy creation in KVM, which is overall pretty
+> > > > self-contained, I am afraid the ugliness in procfs would be much worse
+> > > > compared to the benefit, if there's a benefit at all.
+> > > >
+> > > > > Perhaps, I honestly do not know what will/can confuse userspace more.
+> > > >
+> > > > At the very least, marking workers as "Kthread: 1" makes sense and
 > 
-> The 8196 IC has two CCORRs, and they must be chained together in a
-> fixed order, for example: MDP_RSZ0->DISP_TDSHP0->DISP_CCORR0-
->> DISP_CC0RR1->DISP_GAMMA0->DISP_POSTMASK0->DISP_DITHER0. Among them,
-> DISP_CCORR0 is used for ctm_set, and DISP_CCORR1 was originally for PQ
-> functions, but the current project does not have PQ functions, so relay
-> can be used. Moreover, ctm_set only needs to configure one CCORR, so
-> currently, mandatory_ccorr is set. Considering that previous ICs, such
-> as 8195, only have one CCORR, so mandatory_ccorr is set to DISP_CCORR0.
-> This is the current practice. Do you have any other suggestions to
-> achieve similar things? For example, adding a property in the dts to
-
-Really, just use OF graphs to set the display controller path, you can like that
-guarantee that the exact path that you define will be respected.
-
-This means that you can simply:
-- Point the output endpoint of TDSHP0 to the input endpoint of CCORR0
-- Point the input endpoint of CCORR0 to TDSHP0
-- Point the output endpoint of CCORR0 to CCORR1
-- etc
-
-Check the upstream bindings, and also check MT8195 and MT8188 device trees on
-the current linux-next (starting from next-20250226).
-
-Cheers,
-Angelo
-
-> set mandatory_ccorr, but this will inevitably change the dts of past
-> ICs, and we are worried that such changes will be significant.
+> You mean in /proc/<pid>/status? Yeah, we can do that. This expands the
+> definition of Kthread a bit. It would now mean anything that the kernel
+> spawned for userspace. But that is probably fine.
 > 
-> Thanks a lot
-> JAY
+> But it won't help with the problem of just checking /proc/<pid>/task/ to
+> figure out whether the caller is single-threaded or not. If the caller
+> has more than 1 entry in there they need to walk through all of them and
+> parse through /proc/<pid>/status to discount them if they're kernel
+> threads.
 > 
+> > > > should not cause too much confusion. I wouldn't go beyond that unless
+> > > > we get more reports of similar issues, and I'm not even sure how
+> > > > common it is for userspace libraries to check for single-threadedness.
+> > >
+> > > Sorry, just saw this thread now.
+> > >
+> > > What if we did what Linus suggests and hide (odd) user workers from
+> > > /proc/<pid>/task/* but also added /proc/<pid>/workers/*. The latter
+> > > would only list the workers that got spawned by the kernel for that
+> > > particular task? This would acknowledge their somewhat special status
+> > > and allow userspace to still detect them as "Hey, I didn't actually
+> > > spawn those, they got shoved into my workload by the kernel for me.".
+> > 
+> > Wouldn't the workers then disappear completely from ps, top or other
+> > tools that look at /proc/$PID/task? That seems a bit too underhanded
+> > towards userspace...
 > 
->>> ---
->>>    drivers/gpu/drm/mediatek/mtk_ddp_comp.c   |  3 ++-
->>>    drivers/gpu/drm/mediatek/mtk_disp_ccorr.c | 16 ++++++++++++++++
->>>    2 files changed, 18 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
->>> b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
->>> index edc6417639e6..d7e230bac53e 100644
->>> --- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
->>> +++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
->>> @@ -457,7 +457,8 @@ static const struct mtk_ddp_comp_match
->>> mtk_ddp_matches[DDP_COMPONENT_DRM_ID_MAX]
->>>        [DDP_COMPONENT_AAL0]            = {
->>> MTK_DISP_AAL,               0, &ddp_aal },
->>>        [DDP_COMPONENT_AAL1]            = {
->>> MTK_DISP_AAL,               1, &ddp_aal },
->>>        [DDP_COMPONENT_BLS]             = {
->>> MTK_DISP_BLS,               0, NULL },
->>> -     [DDP_COMPONENT_CCORR]           = {
->>> MTK_DISP_CCORR,             0, &ddp_ccorr },
->>> +     [DDP_COMPONENT_CCORR0]          = {
->>> MTK_DISP_CCORR,             0, &ddp_ccorr },
->>> +     [DDP_COMPONENT_CCORR1]          = {
->>> MTK_DISP_CCORR,             1, &ddp_ccorr },
->>>        [DDP_COMPONENT_COLOR0]          = {
->>> MTK_DISP_COLOR,             0, &ddp_color },
->>>        [DDP_COMPONENT_COLOR1]          = {
->>> MTK_DISP_COLOR,             1, &ddp_color },
->>>        [DDP_COMPONENT_DITHER0]         = {
->>> MTK_DISP_DITHER,            0, &ddp_dither },
->>> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
->>> b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
->>> index 10d60d2c2a56..94e82b3fa2d8 100644
->>> --- a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
->>> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
->>> @@ -31,11 +31,13 @@
->>>
->>>    struct mtk_disp_ccorr_data {
->>>        u32 matrix_bits;
->>> +     enum mtk_ddp_comp_id mandatory_ccorr;
->>>    };
->>>
->>>    struct mtk_disp_ccorr {
->>>        struct clk *clk;
->>>        void __iomem *regs;
->>> +     enum mtk_ddp_comp_id comp_id;
->>>        struct cmdq_client_reg cmdq_reg;
->>>        const struct mtk_disp_ccorr_data        *data;
->>>    };
->>> @@ -115,6 +117,9 @@ void mtk_ccorr_ctm_set(struct device *dev,
->>> struct drm_crtc_state *state)
->>>        if (!blob)
->>>                return;
->>>
->>> +     if (ccorr->comp_id != ccorr->data->mandatory_ccorr)
->>> +             return;
->>> +
->>>        ctm = (struct drm_color_ctm *)blob->data;
->>>        input = ctm->matrix;
->>>
->>> @@ -154,6 +159,7 @@ static int mtk_disp_ccorr_probe(struct
->>> platform_device *pdev)
->>>        struct device *dev = &pdev->dev;
->>>        struct mtk_disp_ccorr *priv;
->>>        int ret;
->>> +     enum mtk_ddp_comp_id comp_id;
->>>
->>>        priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->>>        if (!priv)
->>> @@ -169,6 +175,14 @@ static int mtk_disp_ccorr_probe(struct
->>> platform_device *pdev)
->>>                return dev_err_probe(dev, PTR_ERR(priv->regs),
->>>                                     "failed to ioremap ccorr\n");
->>>
->>> +     comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DISP_CCORR);
->>> +     if (comp_id < 0) {
->>> +             dev_err(dev, "Failed to identify by alias: %d\n",
->>> comp_id);
->>> +             return comp_id;
->>> +     }
->>> +
->>> +     priv->comp_id = comp_id;
->>> +
->>>    #if IS_REACHABLE(CONFIG_MTK_CMDQ)
->>>        ret = cmdq_dev_get_client_reg(dev, &priv->cmdq_reg, 0);
->>>        if (ret)
->>> @@ -192,10 +206,12 @@ static void mtk_disp_ccorr_remove(struct
->>> platform_device *pdev)
->>>
->>>    static const struct mtk_disp_ccorr_data mt8183_ccorr_driver_data
->>> = {
->>>        .matrix_bits = 10,
->>> +     .mandatory_ccorr = DDP_COMPONENT_CCORR0,
->>>    };
->>>
->>>    static const struct mtk_disp_ccorr_data mt8192_ccorr_driver_data
->>> = {
->>>        .matrix_bits = 11,
->>> +     .mandatory_ccorr = DDP_COMPONENT_CCORR0,
->>>    };
->>>
->>>    static const struct of_device_id mtk_disp_ccorr_driver_dt_match[]
->>> = {
->>
->>
+> So maybe, but then there's also the possibility to do:
+> 
+> - Have /proc/<pid>/status list all tasks.
+> - Have /proc/<pid>/worker only list user workers spawned by the kernel for userspace.
+> 
+> count(/proc/<pid>/status) - count(/proc/<pid>/workers) == 1 => (userspace) single threaded
+> 
+> My wider point is that I would prefer we add something that is
+> consistent and doesn't have to give the caller a different view than a
+> foreign task. I think that will just create confusion in the long run.
+
+So what I had in mind was (quickly sketched) the rough draft below. This
+will unconditionally skip PF_USER_WORKER tasks in /proc/<pid>/task and
+will only list them in /proc/<pid>/worker.
+
+ fs/proc/base.c | 122 ++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 116 insertions(+), 6 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index cd89e956c322..60e6b2cea259 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3315,10 +3315,13 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
+  * Thread groups
+  */
+ static const struct file_operations proc_task_operations;
++static const struct file_operations proc_worker_operations;
+ static const struct inode_operations proc_task_inode_operations;
++static const struct inode_operations proc_worker_inode_operations;
+ 
+ static const struct pid_entry tgid_base_stuff[] = {
+ 	DIR("task",       S_IRUGO|S_IXUGO, proc_task_inode_operations, proc_task_operations),
++	DIR("worker",     S_IRUGO|S_IXUGO, proc_worker_inode_operations, proc_worker_operations),
+ 	DIR("fd",         S_IRUSR|S_IXUSR, proc_fd_inode_operations, proc_fd_operations),
+ 	DIR("map_files",  S_IRUSR|S_IXUSR, proc_map_files_inode_operations, proc_map_files_operations),
+ 	DIR("fdinfo",     S_IRUGO|S_IXUGO, proc_fdinfo_inode_operations, proc_fdinfo_operations),
+@@ -3835,11 +3838,14 @@ static struct dentry *proc_task_lookup(struct inode *dir, struct dentry * dentry
+ 
+ 	fs_info = proc_sb_info(dentry->d_sb);
+ 	ns = fs_info->pid_ns;
+-	rcu_read_lock();
+-	task = find_task_by_pid_ns(tid, ns);
+-	if (task)
+-		get_task_struct(task);
+-	rcu_read_unlock();
++	scoped_guard(rcu) {
++		task = find_task_by_pid_ns(tid, ns);
++		if (task) {
++			if (task->flags & PF_USER_WORKER)
++				goto out;
++			get_task_struct(task);
++		}
++	}
+ 	if (!task)
+ 		goto out;
+ 	if (!same_thread_group(leader, task))
+@@ -3949,7 +3955,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+ 	tid = (int)(intptr_t)file->private_data;
+ 	file->private_data = NULL;
+ 	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
+-	     task;
++	     task && !(task->flags & PF_USER_WORKER);
+ 	     task = next_tid(task), ctx->pos++) {
+ 		char name[10 + 1];
+ 		unsigned int len;
+@@ -3987,6 +3993,97 @@ static int proc_task_getattr(struct mnt_idmap *idmap,
+ 	return 0;
+ }
+ 
++static struct dentry *
++proc_worker_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
++{
++	struct task_struct *task;
++	struct task_struct *leader = get_proc_task(dir);
++	unsigned tid;
++	struct proc_fs_info *fs_info;
++	struct pid_namespace *ns;
++	struct dentry *result = ERR_PTR(-ENOENT);
++
++	if (!leader)
++		goto out_no_task;
++
++	tid = name_to_int(&dentry->d_name);
++	if (tid == ~0U)
++		goto out;
++
++	fs_info = proc_sb_info(dentry->d_sb);
++	ns = fs_info->pid_ns;
++	scoped_guard(rcu) {
++		task = find_task_by_pid_ns(tid, ns);
++		if (task) {
++			if (!(task->flags & PF_USER_WORKER))
++				goto out;
++			get_task_struct(task);
++		}
++	}
++	if (!task)
++		goto out;
++	if (!same_thread_group(leader, task))
++		goto out_drop_task;
++
++	result = proc_task_instantiate(dentry, task, NULL);
++out_drop_task:
++	put_task_struct(task);
++out:
++	put_task_struct(leader);
++out_no_task:
++	return result;
++}
++
++static int proc_worker_getattr(struct mnt_idmap *idmap, const struct path *path,
++			       struct kstat *stat, u32 request_mask,
++			       unsigned int query_flags)
++{
++	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(path->dentry), stat);
++	return 0;
++}
++
++static int proc_worker_readdir(struct file *file, struct dir_context *ctx)
++{
++	struct inode *inode = file_inode(file);
++	struct task_struct *task;
++	struct pid_namespace *ns;
++	int tid;
++
++	if (proc_inode_is_dead(inode))
++		return -ENOENT;
++
++	if (!dir_emit_dots(file, ctx))
++		return 0;
++
++	/* We cache the tgid value that the last readdir call couldn't
++	 * return and lseek resets it to 0.
++	 */
++	ns = proc_pid_ns(inode->i_sb);
++	tid = (int)(intptr_t)file->private_data;
++	file->private_data = NULL;
++	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
++	     task && (task->flags & PF_USER_WORKER);
++	     task = next_tid(task), ctx->pos++) {
++		char name[10 + 1];
++		unsigned int len;
++
++		tid = task_pid_nr_ns(task, ns);
++		if (!tid)
++			continue;	/* The task has just exited. */
++		len = snprintf(name, sizeof(name), "%u", tid);
++		if (!proc_fill_cache(file, ctx, name, len,
++				proc_task_instantiate, task, NULL)) {
++			/* returning this tgid failed, save it as the first
++			 * pid for the next readir call */
++			file->private_data = (void *)(intptr_t)tid;
++			put_task_struct(task);
++			break;
++		}
++	}
++
++	return 0;
++}
++
+ /*
+  * proc_task_readdir() set @file->private_data to a positive integer
+  * value, so casting that to u64 is safe. generic_llseek_cookie() will
+@@ -4005,6 +4102,19 @@ static loff_t proc_dir_llseek(struct file *file, loff_t offset, int whence)
+ 	return off;
+ }
+ 
++static const struct inode_operations proc_worker_inode_operations = {
++	.lookup		= proc_worker_lookup,
++	.getattr	= proc_worker_getattr,
++	.setattr	= proc_setattr,
++	.permission	= proc_pid_permission,
++};
++
++static const struct file_operations proc_worker_operations = {
++	.read		= generic_read_dir,
++	.iterate_shared	= proc_worker_readdir,
++	.llseek		= proc_dir_llseek,
++};
++
+ static const struct inode_operations proc_task_inode_operations = {
+ 	.lookup		= proc_task_lookup,
+ 	.getattr	= proc_task_getattr,
+-- 
+2.47.2
 
 
