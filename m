@@ -1,222 +1,114 @@
-Return-Path: <linux-kernel+bounces-534669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5331DA469CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:31:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91790A469C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE43173DB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12183AC174
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2947C233714;
-	Wed, 26 Feb 2025 18:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4566622D787;
+	Wed, 26 Feb 2025 18:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FbMWb8kA"
-Received: from 002.mia.mailroute.net (002.mia.mailroute.net [199.89.3.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="yP0Bckl/"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA77E21C19E;
-	Wed, 26 Feb 2025 18:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A4922332B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594528; cv=none; b=lH1JGskk06AcbqXilsRFuJkoToCKeccD7Yk7zb3l/x+u4rFE732OtjcVsHb1Y19vo04PKpJGXlNOPUqXi8W+apcJOUeTdBkZiyZWierEWLoEH1QtmathsPfF0QTVxjI6lugUOx9pFHgHEda6RIrknRye0M5RD/3OybJMFJFdxKs=
+	t=1740594621; cv=none; b=FAzVcUs7TR8/JaSgIVX9hz/kvprp6fKEJCw9UtJfFyN9J+RfBXnSeomjbsmJZi28ZfoOT3G8htkw6HBheKQupUqKB6M2aKoz0QVXClmK66Vf/ADk8KFZAYCYgNO5VbLfq30HA9GbfXBy/4WLr1+W3ud35+PxkBSUtByXPm7HTKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594528; c=relaxed/simple;
-	bh=xgLlMELhRjjgX4wSWhoOtD6ZOngS4uqiYbGhlQQhuy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t70J9t4m+ry06AuSkN05pFdW3D1vcyhZJ44UryZ1J6TVt7bIERtIVZ7TcdOAly7b/qSbXpmb6tzuAtGSBkOk+BHLaK9nx8FfqA2fzLPLVS9Do4ZKH+EQAIOVcJ/wFMP53cVvY769h8u8pUAZhHdO3hCtr2wUjWYvr9RBYDDEgNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FbMWb8kA; arc=none smtp.client-ip=199.89.3.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 002.mia.mailroute.net (Postfix) with ESMTP id 4Z32zc6Vf6zmB6xx;
-	Wed, 26 Feb 2025 18:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1740594523; x=1743186524; bh=KyPmYbL6zItehixQFi6Llkvh
-	GEJE3rfZhaDk8EUQkxc=; b=FbMWb8kAwfE3DveSTfkaX0bTjbcAPF6jJwaG2vqa
-	o96YiC65ASo2GWw08BDKdO1ZG5Yk2vzbMp/AbhTCu6BwAJ32RucT98AiqNS+ZpfL
-	CGcheOl5wUWIjium7kPq0OlvPcpGazTZgbzk30zwpX6/f2chNlG6lNXHx3v5wteM
-	WGip9CAXkDU/5V0gfNZBljZY5AAvp9YfCPJmZETqNhXAKuTX3onRADo2FgdyRtrp
-	avS+1CKwiv1Few0k5AJqxpRowSZ7u8ZoAVk27Kv5Okv2J/nhyE4EaR7AWs2xsZno
-	jcWeF33yfqBZ1VON0y0oKMS+q59V5AoehkCLdGmM/vXnCQ==
-X-Virus-Scanned: by MailRoute
-Received: from 002.mia.mailroute.net ([127.0.0.1])
- by localhost (002.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id wp3WPZv53FQq; Wed, 26 Feb 2025 18:28:43 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 002.mia.mailroute.net (Postfix) with ESMTPSA id 4Z32zZ5Pf2znSXxj;
-	Wed, 26 Feb 2025 18:28:42 +0000 (UTC)
-Message-ID: <125e3b04-a614-4d9d-aba4-8e08684374a8@acm.org>
-Date: Wed, 26 Feb 2025 10:28:41 -0800
+	s=arc-20240116; t=1740594621; c=relaxed/simple;
+	bh=+jga4JO8dADdKRtvta8VebEu1Vb9jzqyHkqVw1d6tfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uyGIDyJCRkDIXwqXNwJva4XWa4XkCJgA/UuvRV1QR3zAgWvMJprrQnwgOs+x1+4uhxwwGI01DvKQAm60e4D44m/vAEG1Pf9PegR6FkSYCXANZ4f4NEBF6WEV9SDeU2EXzeVgOkzCjOBlGTqZ9bKVuNLaGJhr/bhNVRPPn+kshSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=yP0Bckl/; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-47200236004so852221cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:30:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740594618; x=1741199418; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G34dONYPhw2r4Q4f7nNimh2xr7YUguxLyO4lgwNsaz4=;
+        b=yP0Bckl/4/aqmzBi1BMSEHHGh+WaIWBoNO6a7UTGTB33Sgtqv6QcMibkoLUBs6+Kuw
+         cha+Zwc98AJmOg6BgsUHsinFyulzVI74YRxiHClPA8glHbFyJS/98i+i6cZPqix6G9Ku
+         5bAZ/ljoVCRrnAFCIC2F7kd5Xn7LlKqSCHpjDAoDzqBwnEAETpfdn8UUi4dbBr5IFuGR
+         Hux+YKHwnprEEZpXheNzc18YK9KhjboX+JkY3rJ+zZEtE7f980vBoOkwdBcxN4frxMVy
+         eKQkwx9TxWZLFUDQ6L2JwvBi0GzlfjJk8Smb1E9LkbfOisW+qz+s4x3G1Jx8BanH5KQf
+         nrvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740594618; x=1741199418;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G34dONYPhw2r4Q4f7nNimh2xr7YUguxLyO4lgwNsaz4=;
+        b=ujxl7epIn/SvmkQ+b1SeHbkotLGDytai38JCbzRKp55m6z06kieB7DANMwchyqP/nM
+         /i96oag7SNV/vBVRovenl5SD9MQ+9sU8Naj8jrD4NU5YV7MnfMEN5uK5tYUlZMs0Lm2M
+         K7oNCh+Yfy/mQ3bhCHEY2MUsES8GOYGzlSW2Jk6rv39eStFxvNhaWVM61eAWmYiTtE9k
+         fpsW+Kro9tOTTcyDTpRnF1m9mrph+tZEgLkvzgbt57Kg6RL8r+BYFkmyW4hSo6q/HqSr
+         2t3PmCZ/mk000XpvwRlkczwn5vyNjyPCCMo2mCXOjsuD3ovG7vbyD1m2r7hiWyCRaARX
+         svAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTivJxaesp8++i1+KHBWmJ2tO8ggGZnOApP5Gv0/nEzzpjwHwNsIhauBs6POYk3SpIMBxjQL8MoBxdZsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAxrQa6SZvd7Uftqb4GYiNHnX0c9QbgQrd/HwO0MqAulnOAnm
+	WBqZ0IlSbXywqWxFKBsLL41ycxy2s21wHt8fWXaCHiJUy3dvAZTQnwjh2rHfQVd4hx9dnTDC+h0
+	n
+X-Gm-Gg: ASbGncvQCEPTSUMHT/P0GqfMqrUfKi3DVW4Pm5cVnYCPnp+qpp9lNlJuaZ3zITiNjfc
+	5pdmM/UdJkhAJahD45+uNFwzYTsvqGqV54DGQykS2qVVXRgRckVzihIORWeMMHnwtmO3IEw7zkF
+	y22iOCOk16NOCasmslZkEOOyemlCe4IZWjmVqGy9DiWE5rjQU2t+xRaPbkY0iQslgTQ1kL2gCGm
+	rDSoRXiOGa4cpE3RnNZnB5peqUNyno46n7f0W/7imw9IhgIBPULcHNlS+68qal/8u980lqc+hBp
+	46bM6k54n1ul9OljarOf/Vex
+X-Google-Smtp-Source: AGHT+IHEP6GOSANauCCiF6HIJY9CX8U8MzYneKogkmfz4bKxjEBVuecl7Uf2HGZQ6jZAxfPs7MX1wA==
+X-Received: by 2002:ac8:7f01:0:b0:471:c03d:cd6c with SMTP id d75a77b69052e-4738132e9dbmr64736051cf.19.1740594617901;
+        Wed, 26 Feb 2025 10:30:17 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4737806a5b8sm27450391cf.54.2025.02.26.10.30.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 10:30:17 -0800 (PST)
+Date: Wed, 26 Feb 2025 13:30:13 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: CONFIG_PT_RECLAIM
+Message-ID: <20250226183013.GB1042@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: stop judging after finding a VPD page expected to
- be processed.
-To: Chaohai Chen <wdhh6@aliyun.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250226065802.234144-1-wdhh6@aliyun.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250226065802.234144-1-wdhh6@aliyun.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2/25/25 10:58 PM, Chaohai Chen wrote:
-> When the vpd_buf->data[i] is expected to be processed, stop other
-> judgments.
-> 
-> Signed-off-by: Chaohai Chen <wdhh6@aliyun.com>
-> ---
->   drivers/scsi/scsi.c | 28 ++++++++++++++++++++--------
->   1 file changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
-> index a77e0499b738..53daf923ad8e 100644
-> --- a/drivers/scsi/scsi.c
-> +++ b/drivers/scsi/scsi.c
-> @@ -510,22 +510,34 @@ void scsi_attach_vpd(struct scsi_device *sdev)
->   		return;
->   
->   	for (i = 4; i < vpd_buf->len; i++) {
-> -		if (vpd_buf->data[i] == 0x0)
-> +		switch (vpd_buf->data[i]) {
-> +		case 0x0:
->   			scsi_update_vpd_page(sdev, 0x0, &sdev->vpd_pg0);
-> -		if (vpd_buf->data[i] == 0x80)
-> +			break;
-> +		case 0x80:
->   			scsi_update_vpd_page(sdev, 0x80, &sdev->vpd_pg80);
-> -		if (vpd_buf->data[i] == 0x83)
-> +			break;
-> +		case 0x83:
->   			scsi_update_vpd_page(sdev, 0x83, &sdev->vpd_pg83);
-> -		if (vpd_buf->data[i] == 0x89)
-> +			break;
-> +		case 0x89:
->   			scsi_update_vpd_page(sdev, 0x89, &sdev->vpd_pg89);
-> -		if (vpd_buf->data[i] == 0xb0)
-> +			break;
-> +		case 0xb0:
->   			scsi_update_vpd_page(sdev, 0xb0, &sdev->vpd_pgb0);
-> -		if (vpd_buf->data[i] == 0xb1)
-> +			break;
-> +		case 0xb1:
->   			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
-> -		if (vpd_buf->data[i] == 0xb2)
-> +			break;
-> +		case 0xb2:
->   			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
-> -		if (vpd_buf->data[i] == 0xb7)
-> +			break;
-> +		case 0xb7:
->   			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
-> +			break;
-> +		default:
-> +			break;
-> +		}
->   	}
->   	kfree(vpd_buf);
->   }
+Does PT_RECLAIM need to be configurable by the user?
 
-Instead of preserving the code duplication, please change this function
-such that no code is duplicated. This will make it easier to cache more
-VPD pages in the future. Here is an example of how this could be done
-(entirely untested):
+Why not always try to free the page tables if the arch supports it?
 
-diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
-index a77e0499b738..1365168941ed 100644
---- a/drivers/scsi/scsi.c
-+++ b/drivers/scsi/scsi.c
-@@ -487,6 +487,19 @@ static void scsi_update_vpd_page(struct scsi_device 
-*sdev, u8 page,
-  		kfree_rcu(vpd_buf, rcu);
-  }
-
-+struct vpd_page_info {
-+	u8 page_code;
-+	u16 offset; /* offset in struct scsi_device of vpd_pg... member */
-+};
-+
-+#define SCSI_BUILD_BUG_ON(cond) (sizeof(char[1 - 2 * !!(cond)]) - 
-sizeof(char))
-+
-+#define VPD_PAGE_INFO(vpd_page)						\
-+	{ 0x##vpd_page, offsetof(struct scsi_device, vpd_pg##vpd_page) +\
-+		SCSI_BUILD_BUG_ON(					\
-+		!__same_type(&((struct scsi_device *)NULL)->vpd_pg##vpd_page, \
-+			     struct scsi_vpd __rcu **))}
-+
-  /**
-   * scsi_attach_vpd - Attach Vital Product Data to a SCSI device structure
-   * @sdev: The device to ask
-@@ -498,7 +511,17 @@ static void scsi_update_vpd_page(struct scsi_device 
-*sdev, u8 page,
-   */
-  void scsi_attach_vpd(struct scsi_device *sdev)
-  {
--	int i;
-+	static const struct vpd_page_info cached_page[] = {
-+		VPD_PAGE_INFO(0),
-+		VPD_PAGE_INFO(80),
-+		VPD_PAGE_INFO(83),
-+		VPD_PAGE_INFO(89),
-+		VPD_PAGE_INFO(b0),
-+		VPD_PAGE_INFO(b1),
-+		VPD_PAGE_INFO(b2),
-+		VPD_PAGE_INFO(b7),
-+	};
-+	int i, j;
-  	struct scsi_vpd *vpd_buf;
-
-  	if (!scsi_device_supports_vpd(sdev))
-@@ -510,22 +533,17 @@ void scsi_attach_vpd(struct scsi_device *sdev)
-  		return;
-
-  	for (i = 4; i < vpd_buf->len; i++) {
--		if (vpd_buf->data[i] == 0x0)
--			scsi_update_vpd_page(sdev, 0x0, &sdev->vpd_pg0);
--		if (vpd_buf->data[i] == 0x80)
--			scsi_update_vpd_page(sdev, 0x80, &sdev->vpd_pg80);
--		if (vpd_buf->data[i] == 0x83)
--			scsi_update_vpd_page(sdev, 0x83, &sdev->vpd_pg83);
--		if (vpd_buf->data[i] == 0x89)
--			scsi_update_vpd_page(sdev, 0x89, &sdev->vpd_pg89);
--		if (vpd_buf->data[i] == 0xb0)
--			scsi_update_vpd_page(sdev, 0xb0, &sdev->vpd_pgb0);
--		if (vpd_buf->data[i] == 0xb1)
--			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
--		if (vpd_buf->data[i] == 0xb2)
--			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
--		if (vpd_buf->data[i] == 0xb7)
--			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
-+		for (j = 0; j < ARRAY_SIZE(cached_page); j++) {
-+			const u8 page_code = cached_page[j].page_code;
-+			const u16 offset = cached_page[j].offset;
-+			struct scsi_vpd __rcu **vpd_data =
-+				(void *)&sdev + offset;
-+
-+			if (vpd_buf->data[i] == page_code) {
-+				scsi_update_vpd_page(sdev, page_code, vpd_data);
-+				break;
-+			}
-+		}
-  	}
-  	kfree(vpd_buf);
-  }
-
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 2761098dbc1a..99383c93db33 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1309,16 +1309,9 @@ config ARCH_SUPPORTS_PT_RECLAIM
+ 	def_bool n
+ 
+ config PT_RECLAIM
+-	bool "reclaim empty user page table pages"
+-	default y
++	def_bool y
+ 	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
+ 	select MMU_GATHER_RCU_TABLE_FREE
+-	help
+-	  Try to reclaim empty user page table pages in paths other than munmap
+-	  and exit_mmap path.
+-
+-	  Note: now only empty user PTE page table pages will be reclaimed.
+-
+ 
+ source "mm/damon/Kconfig"
+ 
 
