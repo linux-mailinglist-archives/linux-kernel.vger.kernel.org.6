@@ -1,101 +1,171 @@
-Return-Path: <linux-kernel+bounces-532801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B635A45260
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:48:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8637CA45263
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DAC19C0F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EA316BB85
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1B019E7F7;
-	Wed, 26 Feb 2025 01:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F02F19DF8B;
+	Wed, 26 Feb 2025 01:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kmh5HbcD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W33KhOJh"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6354689;
-	Wed, 26 Feb 2025 01:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A66EEAFA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740534476; cv=none; b=qIPV01bvrN+yP/t7FxyD6Prh7lKz7GWI5AgbPQm9hdRwh+SB/1GqiO6PxiPcaOanXu8Ly10d8B0lcnEkxBjcy6Hx2C15Z+s9X/keZ0vlyl7FiuW2ydB6S+dI+K88ZYm85iP5T3qTaq96vKpK2zHEVUO6aYDsBiPclum+ZlLx87g=
+	t=1740534522; cv=none; b=OeM4vNIdJ+1EeByCpoHxtmBeYcRRWYu+xlu8cna/ibeXgaO64qK9KghMq0wpW0YXn9395cBt5EBfLt9RxessXbdktMQf0y2Y+KRPjfzB9jpu4EcT75eXIimHCVFtRLutV7tkAZmfcrUTSFB19jkWn+oeEbOyCCncKCiSNlsdPgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740534476; c=relaxed/simple;
-	bh=V3CB8LY1DGZbWMpcmpZd8j50hGMDpnu5UssYkcrx0sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j5GrPYkLRLcC2pB0awWPRbAn2DDE9vpeceH2foaCz9KLv71iehi3xfuGwYnE8VWDgFiRo6mdhT0ezscs4xJAiFPfNOLkSAn/w46KUYumFFOYgggjF5Oh+aTq2HeeqSQN87k5lNn+LkA6HoBte5V2EcFNPOQpFC09ehHkBnOm6p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kmh5HbcD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4361C4CEDD;
-	Wed, 26 Feb 2025 01:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740534474;
-	bh=V3CB8LY1DGZbWMpcmpZd8j50hGMDpnu5UssYkcrx0sQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Kmh5HbcDs82upshjPAyIwCjyAkA1oin6SLySK+vyk9WO0zOaYqhbbYWGt+/ol1zY3
-	 A/K20xkQeUiXRw/rwjAp5cFIpYT75QGpUca6iwsrw6uHZ8QzEqasRaX/Csws7c8j0Z
-	 YQQrI+O1ZXbY8jO0j9iLtOdEkF81tQahQFuQRxU3Ch7cLZ7h73tDcm3ERv9sRSbhkj
-	 e5hs+Z0KZuMJtjoONRvOp61iZ8Zy98ooCHeoSZAxMiW/XvV0O9Dx2kxNZ2iSpicC95
-	 eHy83tqMBMDkgu4NkPd1Q4rJkd/7nuNcuGc09SWEbBbcL5JThcBQ/dIm1V2PiQs7oh
-	 IEEArVJDAgf0g==
-Date: Tue, 25 Feb 2025 17:47:52 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
- <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
- evaluation strategies
-Message-ID: <20250225174752.5dbf65e2@kernel.org>
-In-Reply-To: <20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
-References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
-	<20250218-feature_poe_port_prio-v5-6-3da486e5fd64@bootlin.com>
-	<20250220165129.6f72f51a@kernel.org>
-	<20250224141037.1c79122b@kmaincent-XPS-13-7390>
-	<20250224134522.1cc36aa3@kernel.org>
-	<20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1740534522; c=relaxed/simple;
+	bh=8KerjFk2EvGwBFPKQDzV8ouER5CpZD5Yyf5qGt3H7/w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jLyzemcUO6+viwpD//E6qXd5BjZn7SLxWanlVS+HyjjkXXwmTuN04DTz8LQ0DgRRmnSjzf1ru2db+NtHVeKB8iGDdfY1UQ10EFMLAR3z18RqqsAX1GyqmkkKbyU6b3QaK7y/HaJLffT7trE6dZldbOzXf5JmLGSXTGRhn1IP2yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W33KhOJh; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc43be27f8so20759692a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:48:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740534520; x=1741139320; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fxV7S/kNxrYNocrcYJbAAgRx5UIwaRych+aDBLsw374=;
+        b=W33KhOJh+c86u34AeCXBGI1TUzZGsfa20n8uGVxfedx6lsXubEMXdirwVTqbdNA20P
+         gIq51sfRCotgXqc7fsilR2SQXl/vhm22k7UHQqcLioo7pyAfeTcJJXAZeD09c5Dfznig
+         xVNyVk5c0UbAF2wtCZSxjKsTFt36Ijfv1bzk1chI4MU8UgIz+IUZ0cl9v3Ndtlx9qb7m
+         gyxHwyXAKTTVq/F4VMQDUb5bdCDoLYj5X033zmKE0hA50EbQjsj0RlvUmZYsGbjHKbf7
+         9OYAbaCwOo5jL/xLK85A9H1i9uLEsK5MCIPXc7Q+RSjgip1aUuYUdVMJOxDpsFsS4ZZF
+         vUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740534520; x=1741139320;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fxV7S/kNxrYNocrcYJbAAgRx5UIwaRych+aDBLsw374=;
+        b=bwJqqZEGpO9F6XBvEU0VXXMybKeYm8PZztZARxBBDz3LXDEm/bF08Vxgo50/lpIEY3
+         lRqTMsy8CyRjVghK2wRapxV9MigMqFdrzrE10KP5A+eUwwVIbDTlS2m0AL9iYaUavD4j
+         xUgrN11Xtb2NNtbSLrYO1TNnEy7NLkG28UYERtrV/f9VCU2FlZh5sOrkl+lpJzs4qMyk
+         xKubcSWH/YkJyjpK08JxS/KBa4oP4EmAfS5rHS/2vS1Bn1D3Dny2nKEnGJb2dGB+Ylvg
+         i4aSKKa6dRLzxYhgRZ9GGx6M9j36lZAV09F7VmlvyBaEacCuTtXH4GbKXym7ur0/nYo8
+         +5wg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2T13b/fCJNtiIophFvpwunXLdjqQNXtXez65ZujsMlWvppnlbZ3mYQRTtt4mx2ScCTscTT52AaT1ahzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN2UyWkdpF1oXIrhz2dAmXUAMse5DKqeinvUD7OPk8emWzRpee
+	dT2SnWlpt7fvxCb6jYuOu0xH+Tml3CNMmS+ZOhUyyEnTIeVNIu1OFnPf/378SiAMlaSKt7mpg71
+	aEg==
+X-Google-Smtp-Source: AGHT+IG6F4CEGu1Wh56KOfshDry3QLMGkz+lzFq3rrJNvVa5WCqoW7cR/Az9DHNbApkDRbLe1gfNGWHwcpw=
+X-Received: from pjtq6.prod.google.com ([2002:a17:90a:c106:b0:2fc:11a0:c53f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5686:b0:2ee:aed6:9ec2
+ with SMTP id 98e67ed59e1d1-2fe7e30045emr3002205a91.14.1740534520656; Tue, 25
+ Feb 2025 17:48:40 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:48:39 -0800
+In-Reply-To: <20250208105318.16861-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250208105318.16861-1-yan.y.zhao@intel.com>
+Message-ID: <Z75y90KM_fE6H1cJ@google.com>
+Subject: Re: [PATCH] KVM: selftests: Wait mprotect_ro_done before write to RO
+ in mmu_stress_test
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 25 Feb 2025 10:25:58 +0100 Kory Maincent wrote:
-> On Mon, 24 Feb 2025 13:45:22 -0800
-> Jakub Kicinski <kuba@kernel.org> wrote:
+On Sat, Feb 08, 2025, Yan Zhao wrote:
+> In the read-only mprotect() phase of mmu_stress_test, ensure that
+> mprotect(PROT_READ) has completed before the guest starts writing to the
+> read-only mprotect() memory.
 > 
-> > > No they can't for now. Even different PSE power domains within the same PSE
-> > > controller. I will make it explicit.    
-> > 
-> > Sounds like the property is placed at the wrong level of the hierarchy,
-> > then.  
+> Without waiting for mprotect_ro_done before the guest starts writing in
+> stage 3 (the stage for read-only mprotect()), the host's assertion of stage
+> 3 could fail if mprotect_ro_done is set to true in the window between the
+> guest finishing writes to all GPAs and executing GUEST_SYNC(3).
 > 
-> When a PSE controller appears to be able to support mixed budget strategy and
-> could switch between them it will be better to have it set at the PSE power
-> domain level. As the budget is per PSE power domain, its strategy should also
-> be per PSE power domain.
-> For now, it is simply not configurable and can't be mixed. It is hard-coded by
-> the PSE driver.
+> This scenario is easy to occur especially when there are hundred of vCPUs.
+> 
+> CPU 0                  CPU 1 guest     CPU 1 host
+>                                        enter stage 3's 1st loop
+>                        //in stage 3
+>                        write all GPAs
+>                        @rip 0x4025f0
+> 
+> mprotect(PROT_READ)
+> mprotect_ro_done=true
+>                        GUEST_SYNC(3)
+>                                        r=0, continue stage 3's 1st loop
+> 
+>                        //in stage 4
+>                        write GPA
+>                        @rip 0x402635
+> 
+>                                        -EFAULT, jump out stage 3's 1st loop
+>                                        enter stage 3's 2nd loop
+>                        write GPA
+>                        @rip 0x402635
+>                                        -EFAULT, continue stage 3's 2nd loop
+>                                        guest rip += 3
+> 
+> The test then fails and reports "Unhandled exception '0xe' at guest RIP
+> '0x402638'", since the next valid guest rip address is 0x402639, i.e. the
+> "(mem) = val" in vcpu_arch_put_guest() is compiled into a mov instruction
+> of length 4.
 
-Yes, but uAPI is forever. We will have to live with those domain
-attributes duplicated on each port. Presumably these port attributes
-will never support a SET operation, since the set should be towards 
-the domain? The uAPI does not inspire confidence. If we need more
-drivers to define a common API maybe a local sysfs API in the driver
-will do?
+This shouldn't happen.  On x86, stage 3 is a hand-coded "mov %rax, (%rax)", not
+vcpu_arch_put_guest().  Either something else is going on, or __x86_64__ isn't
+defined?
+
+	do {
+		for (gpa = start_gpa; gpa < end_gpa; gpa += stride)
+#ifdef __x86_64__
+			asm volatile(".byte 0x48,0x89,0x00" :: "a"(gpa) : "memory"); /* mov %rax, (%rax) */
+#elif defined(__aarch64__)
+			asm volatile("str %0, [%0]" :: "r" (gpa) : "memory");
+#else
+			vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
+#endif
+	} while (!READ_ONCE(mprotect_ro_done));
+
+	/*
+	 * Only architectures that write the entire range can explicitly sync,
+	 * as other architectures will be stuck on the write fault.
+	 */
+#if defined(__x86_64__) || defined(__aarch64__)
+	GUEST_SYNC(3);
+#endif
+
+	for (gpa = start_gpa; gpa < end_gpa; gpa += stride)
+		vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
+	GUEST_SYNC(4);
+
+
+
+> Even if it could be compiled into a mov instruction of length 3, the
+> following execution of GUEST_SYNC(4) in guest could still cause the host
+> failure of the assertion of stage 3.
+
+Sorry, I don't follow.  The guest doesn't get "released" from GUEST_SYNC(3) until
+the host runs the vCPU again, and that happens after asserting on stage 3 and
+synchronizing with the main thread.
+
+	assert_sync_stage(vcpu, 3);
+#endif /* __x86_64__ || __aarch64__ */
+	rendezvous_with_boss();
+
+	/*
+	 * Stage 4.  Run to completion, waiting for mprotect(PROT_WRITE) to
+	 * make the memory writable again.
+	 */
+	do {
+		r = _vcpu_run(vcpu);
+	} while (r && errno == EFAULT);
 
