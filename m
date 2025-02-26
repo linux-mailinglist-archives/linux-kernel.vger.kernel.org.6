@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-533273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0FEA457AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:07:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FB0A457AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF107A33DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:06:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6D17A6948
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF411E1DE1;
-	Wed, 26 Feb 2025 08:07:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91918258CFE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0A9258CC5;
+	Wed, 26 Feb 2025 08:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ekT/Y/m6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5598B258CC1;
+	Wed, 26 Feb 2025 08:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557246; cv=none; b=uSXZZ5vSSHs4d6dkuG8u5xlOq2b8o7zU2BdwHAsKllj8a1CJhCmM6R91cXtMoWHQbmr/KDXMGBEuNgP6RFgxs7K45S6Kg7DGweaYTteLFFhkI02vvxoAvKxS0dkKyoLz5aEPguJI5gy3h3fk82mDUbT9YSs+hwrxpZBCEHBCLuQ=
+	t=1740557329; cv=none; b=gmFpD/vKKajzhHg1LGT0o7s+uTDkAp7LI7t3s9WRPyNpc4mTDlg/CQp2G432Ktjcm4rBG7NYTOJqE2hAnPV0OZ+Yy99aELeFwHUQEkleP0+J/fInxgpjiX8P9gsmJv1Ij41qnmscXH9PcwQrILXECbQhOTiSG/LqxLn+IixI+vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557246; c=relaxed/simple;
-	bh=N2KL1DyrUtutDsE/+Mc5MAUpjf838HeDi3zCizxJPwU=;
+	s=arc-20240116; t=1740557329; c=relaxed/simple;
+	bh=B/hiPmKEz5qpr2mvnHDi1IQ26fNUocCZtx+QMWwB4rI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H+Dp3ptueb3wR+FkisYhA/J5AtvtnjuhtWq5//a0ODqDPyebKSiHub4ZwWhOYVkBRJw2TH3/uad+fevscozLHpuc90/RGzXjBK3/IDP3JzimimRAbgYonLDZm7UdFm5PJsdLUdf0gCZq2jkrFynqCJmafki48LQvA7ZSTsqGJq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DCDB1516;
-	Wed, 26 Feb 2025 00:07:33 -0800 (PST)
-Received: from [10.57.84.229] (unknown [10.57.84.229])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 246F03F673;
-	Wed, 26 Feb 2025 00:07:16 -0800 (PST)
-Message-ID: <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com>
-Date: Wed, 26 Feb 2025 08:07:14 +0000
+	 In-Reply-To:Content-Type; b=UNOt+jiPfUpPm5kv0cZ9OGuQ1TX7fgsyCLBbMZYRIWBNXL41lJfo6jiMTExx+M/qhZRN9t6klYYbKSuHobZuG+PUTfE7IkdxuFjkAMDaH+VC4m1h1A6PmOvcJz/FkpsLbmw2aHH8J1V+Mzz/p0DxSVJ+UUqFHLg/9s2lWrC6now=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ekT/Y/m6; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740557328; x=1772093328;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=B/hiPmKEz5qpr2mvnHDi1IQ26fNUocCZtx+QMWwB4rI=;
+  b=ekT/Y/m6Dn+EQ6CK6s8Sm7V0epWkI5WfGtAfOj9cg29jD7d9jioP3aUW
+   X/zPreQJdDXR7cTMXwfOa33rupLhyYBACbzKy2J/cmQJ1O8fI6m7dGJWn
+   2xjnu2WCroY/rDtGjFl6z71xP2wJ7rVypArmVumpr1Zl9xBYTvStufGiG
+   qA8Hha+XLLBBWN0QZf4oXb71/8m+rI8UPptWo9G/TcUu66+SZLs6w73NX
+   GBQzNJhzKX2+4Q5QW0mT6xyHNSRPdP6zUrxqxvZiXULUHTvZN7Vg+WB6f
+   2NdNFKTwTo3bT2/obXP43BgsXxZXZ0m6rQIuVMh5QsNdEedgd4v8xzk4B
+   A==;
+X-CSE-ConnectionGUID: I1b4K35jTMy/cVoDjNh9zg==
+X-CSE-MsgGUID: QOyMIkIbTA6Xh4iXvmfrIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="44216303"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="44216303"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:08:47 -0800
+X-CSE-ConnectionGUID: lQd4AGeYQUy4dKroRqU2LQ==
+X-CSE-MsgGUID: 2v0xwVowQA+m/4oUaSYCWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153808112"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:08:42 -0800
+Message-ID: <bda04ccd-fa90-4f14-89cc-9835de36bcfb@linux.intel.com>
+Date: Wed, 26 Feb 2025 16:08:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,119 +66,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
-To: Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, Luiz Capitulino <luizcap@redhat.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250225114638.2038006-1-ryan.roberts@arm.com>
- <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
- <20250226001047.GA24197@willie-the-truck>
- <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
+Subject: Re: [Patch v2 18/24] perf/x86/intel: Support arch-PEBS vector
+ registers group capturing
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
+ <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 06:59, Ard Biesheuvel wrote:
-> On Wed, 26 Feb 2025 at 01:10, Will Deacon <will@kernel.org> wrote:
->>
->> On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
->>> Apologies for the breakage, and thanks for the fix.
->>>
->>> I have to admit that I was a bit overzealous here: there is no point
->>> yet in using the sanitised value, given that we don't actually
->>> override the PA range in the first place. 
 
-But unless I've misunderstood something, parange is overridden; Commit
-62cffa496aac (the same one we are fixing) adds an override to force parange to
-48 bits when arm64.nolva is specified for LPA2 systems (see mmfr2_varange_filter()).
+On 2/25/2025 11:32 PM, Peter Zijlstra wrote:
+> On Tue, Feb 18, 2025 at 03:28:12PM +0000, Dapeng Mi wrote:
+>> Add x86/intel specific vector register (VECR) group capturing for
+>> arch-PEBS. Enable corresponding VECR group bits in
+>> GPx_CFG_C/FX0_CFG_C MSRs if users configures these vector registers
+>> bitmap in perf_event_attr and parse VECR group in arch-PEBS record.
+>>
+>> Currently vector registers capturing is only supported by PEBS based
+>> sampling, PMU driver would return error if PMI based sampling tries to
+>> capture these vector registers.
+>
+>> @@ -676,6 +709,32 @@ int x86_pmu_hw_config(struct perf_event *event)
+>>  			return -EINVAL;
+>>  	}
+>>  
+>> +	/*
+>> +	 * Architectural PEBS supports to capture more vector registers besides
+>> +	 * XMM registers, like YMM, OPMASK and ZMM registers.
+>> +	 */
+>> +	if (unlikely(has_more_extended_regs(event))) {
+>> +		u64 caps = hybrid(event->pmu, arch_pebs_cap).caps;
+>> +
+>> +		if (!(event->pmu->capabilities & PERF_PMU_CAP_MORE_EXT_REGS))
+>> +			return -EINVAL;
+>> +
+>> +		if (has_opmask_regs(event) && !(caps & ARCH_PEBS_VECR_OPMASK))
+>> +			return -EINVAL;
+>> +
+>> +		if (has_ymmh_regs(event) && !(caps & ARCH_PEBS_VECR_YMM))
+>> +			return -EINVAL;
+>> +
+>> +		if (has_zmmh_regs(event) && !(caps & ARCH_PEBS_VECR_ZMMH))
+>> +			return -EINVAL;
+>> +
+>> +		if (has_h16zmm_regs(event) && !(caps & ARCH_PEBS_VECR_H16ZMM))
+>> +			return -EINVAL;
+>> +
+>> +		if (!event->attr.precise_ip)
+>> +			return -EINVAL;
+>> +	}
+>> +
+>>  	return x86_setup_perfctr(event);
+>>  }
+>>  
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index f21d9f283445..8ef5b9a05fcc 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -2963,6 +2963,18 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
+>>  			if (pebs_data_cfg & PEBS_DATACFG_XMMS)
+>>  				ext |= ARCH_PEBS_VECR_XMM & cap.caps;
+>>  
+>> +			if (pebs_data_cfg & PEBS_DATACFG_YMMS)
+>> +				ext |= ARCH_PEBS_VECR_YMM & cap.caps;
+>> +
+>> +			if (pebs_data_cfg & PEBS_DATACFG_OPMASKS)
+>> +				ext |= ARCH_PEBS_VECR_OPMASK & cap.caps;
+>> +
+>> +			if (pebs_data_cfg & PEBS_DATACFG_ZMMHS)
+>> +				ext |= ARCH_PEBS_VECR_ZMMH & cap.caps;
+>> +
+>> +			if (pebs_data_cfg & PEBS_DATACFG_H16ZMMS)
+>> +				ext |= ARCH_PEBS_VECR_H16ZMM & cap.caps;
+>> +
+>>  			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
+>>  				ext |= ARCH_PEBS_LBR & cap.caps;
+>>  
+>> @@ -5115,6 +5127,9 @@ static inline void __intel_update_pmu_caps(struct pmu *pmu)
+>>  
+>>  	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_XMM)
+>>  		dest_pmu->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
+>> +
+>> +	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_EXT)
+>> +		dest_pmu->capabilities |= PERF_PMU_CAP_MORE_EXT_REGS;
+>>  }
+> There is no technical reason for it to error out, right? We can use
+> FPU/XSAVE interface to read the CPU state just fine.
 
-I thought it would be preferable to honour that override, hence my use of
-arm64_apply_feature_override() in the fix. Are you saying we don't need to worry
-about that case?
+I think it's not because of technical reason. Let me confirm if we can add
+it for non-PEBS sampling.
 
-Thanks,
-Ryan
 
->>> This is something I've
->>> prototyped for Android use, so that linear map randomization can be
->>> force enabled on CPUs with a wide PArange, but right now, mainline
->>> does not have that capability, and so I'd be inclined to just revert
->>> the hunk that introduces the call to read_sanitised_ftr_reg() into
->>> arm64_memblock_init(), especially given the fact that commit
->>> 62cffa496aac was tagged for stable, and was already pulled into 6.13
->>> and 6.12
->>>
->>> In any case, it would be good if we could get a fix into Linus's tree asap
->>
->> Makes sense. So the patch below?
->>
-> 
-> Yes, but please don't forget the cc:stable
-> 
-> To the patch below,
-> 
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
-> 
-> 
->> --->8
->>
->> From b76ddd40dd6fe350727a4b2ec50709fd919d8408 Mon Sep 17 00:00:00 2001
->> From: Ryan Roberts <ryan.roberts@arm.com>
->> Date: Tue, 25 Feb 2025 11:46:36 +0000
->> Subject: [PATCH] arm64/mm: Fix Boot panic on Ampere Altra
->>
->> When the range of present physical memory is sufficiently small enough
->> and the reserved address space for the linear map is sufficiently large
->> enough, The linear map base address is randomized in
->> arm64_memblock_init().
->>
->> Prior to commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and
->> use it consistently"), we decided if the sizes were suitable with the
->> help of the raw mmfr0.parange. But the commit changed this to use the
->> sanitized version instead. But the function runs before the register has
->> been sanitized so this returns 0, interpreted as a parange of 32 bits.
->> Some fun wrapping occurs and the logic concludes that there is enough
->> room to randomize the linear map base address, when really there isn't.
->> So the top of the linear map ends up outside the reserved address space.
->>
->> Since the PA range cannot be overridden in the first place, restore the
->> mmfr0 reading logic to its state prior to 62cffa496aac, where the raw
->> register value is used.
->>
->> Reported-by: Luiz Capitulino <luizcap@redhat.com>
->> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
->> Closes: https://lore.kernel.org/all/a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com/
->> Fixes: 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and use it consistently")
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> Link: https://lore.kernel.org/r/20250225114638.2038006-1-ryan.roberts@arm.com
->> Signed-off-by: Will Deacon <will@kernel.org>
->> ---
->>  arch/arm64/mm/init.c | 7 +------
->>  1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index 9c0b8d9558fc..ccdef53872a0 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -279,12 +279,7 @@ void __init arm64_memblock_init(void)
->>
->>         if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
->>                 extern u16 memstart_offset_seed;
->> -
->> -               /*
->> -                * Use the sanitised version of id_aa64mmfr0_el1 so that linear
->> -                * map randomization can be enabled by shrinking the IPA space.
->> -                */
->> -               u64 mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
->> +               u64 mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
->>                 int parange = cpuid_feature_extract_unsigned_field(
->>                                         mmfr0, ID_AA64MMFR0_EL1_PARANGE_SHIFT);
->>                 s64 range = linear_region_size -
->> --
->> 2.48.1.658.g4767266eb4-goog
->>
+>
+>
+>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>> index 4b01beee15f4..7e5a4202de37 100644
+>> --- a/arch/x86/events/intel/ds.c
+>> +++ b/arch/x86/events/intel/ds.c
+>> @@ -1437,9 +1438,37 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
+>>  	if (gprs || (attr->precise_ip < 2) || tsx_weight)
+>>  		pebs_data_cfg |= PEBS_DATACFG_GP;
+>>  
+>> -	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
+>> -	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
+>> -		pebs_data_cfg |= PEBS_DATACFG_XMMS;
+>> +	if (sample_type & PERF_SAMPLE_REGS_INTR) {
+>> +		if (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK)
+>> +			pebs_data_cfg |= PEBS_DATACFG_XMMS;
+>> +
+>> +		for_each_set_bit_from(bit,
+>> +			(unsigned long *)event->attr.sample_regs_intr_ext,
+>> +			PERF_NUM_EXT_REGS) {
+> This is indented wrong; please use cino=(0:0
+> if you worry about indentation depth, break out in helper function.
 
+Sure. would modify it.
+
+
+>
+>> +			switch (bit + PERF_REG_EXTENDED_OFFSET) {
+>> +			case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
+>> +				pebs_data_cfg |= PEBS_DATACFG_OPMASKS;
+>> +				bit = PERF_REG_X86_YMMH0 -
+>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>> +				break;
+>> +			case PERF_REG_X86_YMMH0 ... PERF_REG_X86_ZMMH0 - 1:
+>> +				pebs_data_cfg |= PEBS_DATACFG_YMMS;
+>> +				bit = PERF_REG_X86_ZMMH0 -
+>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>> +				break;
+>> +			case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMM16 - 1:
+>> +				pebs_data_cfg |= PEBS_DATACFG_ZMMHS;
+>> +				bit = PERF_REG_X86_ZMM16 -
+>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>> +				break;
+>> +			case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM_MAX - 1:
+>> +				pebs_data_cfg |= PEBS_DATACFG_H16ZMMS;
+>> +				bit = PERF_REG_X86_ZMM_MAX -
+>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>> +				break;
+>> +			}
+>> +		}
+>> +	}
+>>  
+>>  	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
+>>  		/*
 
