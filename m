@@ -1,178 +1,197 @@
-Return-Path: <linux-kernel+bounces-535064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC61A46E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:18:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF59CA46E65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2F9C7A40D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A0016983A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F725BAD2;
-	Wed, 26 Feb 2025 22:17:55 +0000 (UTC)
-Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FD825CC69;
+	Wed, 26 Feb 2025 22:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VjpmShBT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5AB25BABD;
-	Wed, 26 Feb 2025 22:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F00325CC62
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740608275; cv=none; b=PeNr3SfBJZLMLR5TlfgAKmMR9tnEBegLlIp8HRkrwCS+wn1wt2tLhW5ziasi+GUWbQjBjJXnSEixa42dUVh6Ux2r+m25z8ALvOB5AO05u9UdrcBNWeA2U5cPYiR8eJpkP5yxeGz1XFab2RAovAwEClzKZ3pm8NcTFaCtwrSQrUc=
+	t=1740608404; cv=none; b=tM9uuNSFRy5QhB8/9tRmZMUiJenxH1kF+0QBWlYe97cM4+g8crhfgZeBtqQbGcv7Gc6zb/eXXXmHO0AEhBq9HbgsWGkRtOcxoiTmG4lWrTNtK9wdCDy0/Cbxbv9V3WCaJFdvm/mMURQq3Kk6Xq5Gn2+aIEIUbXAOTO7414tQbmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740608275; c=relaxed/simple;
-	bh=ferVKhh06TlPVDqgV9LZurHR7vzDaHcpdeX6NQh2JDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYYAsyK6jhOtdcGh9dxFVIgfKOrGwR7szDV4EnAtzJMXEmWSGiVwXjLWIdr/gMccyrqxMIkKK0j9LPyiQlxLEGPnSH2wJFpHtYRro18oklF7jksvpRjDoR+0tEXc2UeDCltqeEJ7u480WV2843uywCso07rY+J+FF48Fl2f20G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9F0AA54C42A;
-	Wed, 26 Feb 2025 23:17:44 +0100 (CET)
-Date: Wed, 26 Feb 2025 23:17:43 +0100
-From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Roopa Prabhu <roopa@nvidia.com>, linux-kernel@vger.kernel.org,
-	bridge@lists.linux.dev, Jan Hoffmann <jan@3e8.eu>,
-	Birger Koblitz <git@birger-koblitz.de>,
-	Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Subject: Re: [PATCH RFC net-next 00/10] MC Flood disable and snooping
-Message-ID: <Z7-TBwv6iDY-1uAm@sellars>
-References: <804b7bf3-1b29-42c4-be42-4c23f1355aaf@gmail.com>
- <20240405102033.vjkkoc3wy2i3vdvg@skbuf>
- <935c18c1-7736-416c-b5c5-13ca42035b1f@blackwall.org>
- <651c87fc-1f21-4153-bade-2dad048eecbd@gmail.com>
- <20240405211502.q5gfwcwyhkm6w7xy@skbuf>
- <1f385946-84d0-499c-9bf6-90ef65918356@gmail.com>
- <20240430012159.rmllu5s5gcdepjnc@skbuf>
- <b90caf5f-fa1e-41e6-a7c2-5af042b0828e@gmail.com>
- <431e1af1-6043-4e3e-bc3b-5998ec366de7@blackwall.org>
- <Z793qqMMvxKuFxbM@sellars>
+	s=arc-20240116; t=1740608404; c=relaxed/simple;
+	bh=2R3jk3LWIuwwEVPnk835IzI/96JL1vWLEUpvSgCyDOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YcmYJaUY1lnqtzA10F6URBEz9w/w+VcPBc6BKWIBZO0qhbXZZM9HmyeQX8q5bR7maZ/aGctYTHFbCUer3xmtfJjqjuu7+E73qYCL7Jxqbja5Kwehh0YmSohyKxt789+EVYpMeQ/OAlU05SYqesM9Ux1TiB+7P8C+Yg6Gx4iP3pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VjpmShBT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740608402; x=1772144402;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2R3jk3LWIuwwEVPnk835IzI/96JL1vWLEUpvSgCyDOg=;
+  b=VjpmShBTi+LwC7z6tEP5r8bc7we8uyf3W9jQuSsjKFgjbPM3Q+lG74BU
+   4Z45m0lEgMk4/X2wvNgwJ+1gPTN8hdgaw7ME7YIqdf0xot9/y7jwAqWWX
+   5P55N8AqeO2M26iFjLETciL/4aj3aajsmOsLz2puQJW5cXYnKNO/Q+IjN
+   +9NR9lFFCFJzZ8Qr8E+g3cI4dC4962AFevXeDIL8sOTtnwWu1x+XOZ555
+   TFvOqWMFdEI9sQNZueAC9cJ0UOHqaaDwNAH7n3wWcg2+GZlTOGmNZHXt2
+   miNmrr12ud0gvN75SSF5EcmO5hsK5BJD1UyDf53n7WqzZ9tgDhAnw3228
+   g==;
+X-CSE-ConnectionGUID: NWXup4W5TiWfhT1sPvkQ7g==
+X-CSE-MsgGUID: Vi9CdmKdQrSmQeZl/BNaAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52875884"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="52875884"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:20:02 -0800
+X-CSE-ConnectionGUID: jjqWLe81Q7Ge0C4qbP3HDg==
+X-CSE-MsgGUID: epAsV+qiRpy2wpsDCO+b+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="122095666"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 26 Feb 2025 14:20:00 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnPkG-000CXd-02;
+	Wed, 26 Feb 2025 22:19:25 +0000
+Date: Thu, 27 Feb 2025 06:17:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: drivers/firmware/turris-mox-rwtm.c:249:90: warning: '%08x' directive
+ writing 8 bytes into a region of size between 7 and 9
+Message-ID: <202502270657.cNsilu1y-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z793qqMMvxKuFxbM@sellars>
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Feb 26, 2025 at 09:20:58PM +0100, Linus LÃ¼ssing wrote:
-> [...]
-> The main issue seems that the learned or manually set multicast
-> router ports in the Linux bridge are not propagated down to the
-> actual multicast offloading switches.
+Hi Marek,
 
-Next to this issue I'm also wondering if the following might still
-need addressing (which this patchset does not try to address?) to
-support multicast offloading switches with kernelspace
-IGMP/MLD snooping - or if there are some switch chips which do
-not support this and hence won't be able to use kernelspace
-IGMP/MLD snooping. A rough first attempt of a guideline/checklist:
+FYI, the error/warning still remains.
 
-Needed switch chip capabilities:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
+commit: e34e60253d9272311831daed8a2d967cf80ca3dc firmware: turris-mox-rwtm: fix reply status decoding function
+date:   3 years, 8 months ago
+config: arm-randconfig-r002-20220811 (https://download.01.org/0day-ci/archive/20250227/202502270657.cNsilu1y-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502270657.cNsilu1y-lkp@intel.com/reproduce)
 
-1) adding MDB entries to ports
-2) adding multicast router ports
-3) -> the switch chip must only apply these to
-        a) IP packets with a matching protocol family
-	   (ether type 0x0800 || 0x86DD) and:
-        b.1) snoopable IP multicast address ranges
-           (224.0.0.0/4 minus 224.0.0.0/24,
-	    ff00::/8 minus ff02::1/128
-	    IP destination addresses)
-	   b.2) alternatively to b.1 (+a), but less
-	   desirably a switch chip might match on layer 2:
-	   01:00:5E:00:00:00, mask ff:ff:ff:f8:00:00
-	   minus 01:00:5e:00:00:00, mask ff:ff:ff:ff:ff:00;
-	   33:33:00:00:00:00, mask ff:ff:00:00:00:00
-	   minus 33:33:00:00:00:01, mask ff:ff:ff:ff:ff:ff
-	c.1) must *not* apply this to IGMP/MLD reports
-	   (especially IGMPv1/v2/MLDv1 reports), they
-	   must only be forwarded to the registered
-	   multicast router ports *plus*
-	   the CPU port / Linux bridge,
-	   for the latter to be able to learn
-	   c.2) may forward IGMP/MLD packets
-	   only to the CPU port / Linux bridge,
-	   if the Linux bridge (or DSA) can in turn
-	   selectively forward the IGMP/MLD
-	   to multicast router ports,
-	   excluding the incoming port
-	   -> DSA might need to inform the
-	      Linux bridge about the
-	      supported mode of the switch chip?
-	(d) IGMP/MLD queries need to be flooded to
-	   all ports by default, but they would not
-	   match 3.b or 3.c.1 anyway; 3.c.2 may
-	   match, then the Linux bridge (or DSA)
-	   needs to make sure to reflect it back
-	   to all ports excluding the incoming port
-4) Any frame that did not match via 3) within the
-   switch chip must by default be flooded to all ports
-   4.1) this should be tunable and propagated from
-        Linux bridge MCAST_FLOOD port flag to the
-	switch chip
-   4.2) if a switch chip cannot comply with 3) and
-        has bridge port isolation enabled then
-	the Linux bridge should perform multicast
-	forwarding and IGMP/MLD snooping fully
-	in kernelspace and return a warning
-	about missing hardware support
-   4.3) if a switch chip cannot adhere to neither 3) nor 4.2)
-        then a user trying to enable bridge multicast snooping
-	should be denied and return an error
-	=> no incomplete hacks allowed, which might break
-	   especially IP in specific scenarios
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502270657.cNsilu1y-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/firmware/turris-mox-rwtm.c: In function 'mox_get_board_info':
+>> drivers/firmware/turris-mox-rwtm.c:249:90: warning: '%08x' directive writing 8 bytes into a region of size between 7 and 9 [-Wformat-overflow=]
+     249 |                         "%06x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x",
+         |                                                                                          ^~~~
+   drivers/firmware/turris-mox-rwtm.c:248:17: note: 'sprintf' output between 135 and 137 bytes into a destination of size 135
+     248 |                 sprintf(rwtm->pubkey,
+         |                 ^~~~~~~~~~~~~~~~~~~~~
+     249 |                         "%06x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x",
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     250 |                         ret, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7],
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     251 |                         s[8], s[9], s[10], s[11], s[12], s[13], s[14], s[15]);
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Would it maybe make sense to add some guideline/checklist like this,
-which is more explicit than RFC4541 but should be compatible
-to it, to Documentation/networking/dsa/dsa.rst?
+vim +249 drivers/firmware/turris-mox-rwtm.c
 
-(I'm not as familiar with DSA/switchdev/switch chips as
- with IP/IGMP/MLD/RFC4541 on layer 2+. So especially feedback
- from people more familiar with these lower layes would be
- appreciated.)
+389711b3749399 Marek Behún 2019-08-22  190  
+389711b3749399 Marek Behún 2019-08-22  191  static int mox_get_board_info(struct mox_rwtm *rwtm)
+389711b3749399 Marek Behún 2019-08-22  192  {
+389711b3749399 Marek Behún 2019-08-22  193  	struct armada_37xx_rwtm_tx_msg msg;
+389711b3749399 Marek Behún 2019-08-22  194  	struct armada_37xx_rwtm_rx_msg *reply = &rwtm->reply;
+389711b3749399 Marek Behún 2019-08-22  195  	int ret;
+389711b3749399 Marek Behún 2019-08-22  196  
+389711b3749399 Marek Behún 2019-08-22  197  	msg.command = MBOX_CMD_BOARD_INFO;
+389711b3749399 Marek Behún 2019-08-22  198  	ret = mbox_send_message(rwtm->mbox, &msg);
+389711b3749399 Marek Behún 2019-08-22  199  	if (ret < 0)
+389711b3749399 Marek Behún 2019-08-22  200  		return ret;
+389711b3749399 Marek Behún 2019-08-22  201  
+389711b3749399 Marek Behún 2019-08-22  202  	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+389711b3749399 Marek Behún 2019-08-22  203  	if (ret < 0)
+389711b3749399 Marek Behún 2019-08-22  204  		return ret;
+389711b3749399 Marek Behún 2019-08-22  205  
+389711b3749399 Marek Behún 2019-08-22  206  	ret = mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
+389711b3749399 Marek Behún 2019-08-22  207  	if (ret < 0 && ret != -ENODATA) {
+389711b3749399 Marek Behún 2019-08-22  208  		return ret;
+389711b3749399 Marek Behún 2019-08-22  209  	} else if (ret == -ENODATA) {
+389711b3749399 Marek Behún 2019-08-22  210  		dev_warn(rwtm->dev,
+389711b3749399 Marek Behún 2019-08-22  211  			 "Board does not have manufacturing information burned!\n");
+389711b3749399 Marek Behún 2019-08-22  212  	} else {
+389711b3749399 Marek Behún 2019-08-22  213  		rwtm->serial_number = reply->status[1];
+389711b3749399 Marek Behún 2019-08-22  214  		rwtm->serial_number <<= 32;
+389711b3749399 Marek Behún 2019-08-22  215  		rwtm->serial_number |= reply->status[0];
+389711b3749399 Marek Behún 2019-08-22  216  		rwtm->board_version = reply->status[2];
+389711b3749399 Marek Behún 2019-08-22  217  		rwtm->ram_size = reply->status[3];
+389711b3749399 Marek Behún 2019-08-22  218  		reply_to_mac_addr(rwtm->mac_address1, reply->status[4],
+389711b3749399 Marek Behún 2019-08-22  219  				  reply->status[5]);
+389711b3749399 Marek Behún 2019-08-22  220  		reply_to_mac_addr(rwtm->mac_address2, reply->status[6],
+389711b3749399 Marek Behún 2019-08-22  221  				  reply->status[7]);
+389711b3749399 Marek Behún 2019-08-22  222  		rwtm->has_board_info = 1;
+389711b3749399 Marek Behún 2019-08-22  223  
+389711b3749399 Marek Behún 2019-08-22  224  		pr_info("Turris Mox serial number %016llX\n",
+389711b3749399 Marek Behún 2019-08-22  225  			rwtm->serial_number);
+389711b3749399 Marek Behún 2019-08-22  226  		pr_info("           board version %i\n", rwtm->board_version);
+389711b3749399 Marek Behún 2019-08-22  227  		pr_info("           burned RAM size %i MiB\n", rwtm->ram_size);
+389711b3749399 Marek Behún 2019-08-22  228  	}
+389711b3749399 Marek Behún 2019-08-22  229  
+389711b3749399 Marek Behún 2019-08-22  230  	msg.command = MBOX_CMD_ECDSA_PUB_KEY;
+389711b3749399 Marek Behún 2019-08-22  231  	ret = mbox_send_message(rwtm->mbox, &msg);
+389711b3749399 Marek Behún 2019-08-22  232  	if (ret < 0)
+389711b3749399 Marek Behún 2019-08-22  233  		return ret;
+389711b3749399 Marek Behún 2019-08-22  234  
+389711b3749399 Marek Behún 2019-08-22  235  	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+389711b3749399 Marek Behún 2019-08-22  236  	if (ret < 0)
+389711b3749399 Marek Behún 2019-08-22  237  		return ret;
+389711b3749399 Marek Behún 2019-08-22  238  
+389711b3749399 Marek Behún 2019-08-22  239  	ret = mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
+389711b3749399 Marek Behún 2019-08-22  240  	if (ret < 0 && ret != -ENODATA) {
+389711b3749399 Marek Behún 2019-08-22  241  		return ret;
+389711b3749399 Marek Behún 2019-08-22  242  	} else if (ret == -ENODATA) {
+389711b3749399 Marek Behún 2019-08-22  243  		dev_warn(rwtm->dev, "Board has no public key burned!\n");
+389711b3749399 Marek Behún 2019-08-22  244  	} else {
+389711b3749399 Marek Behún 2019-08-22  245  		u32 *s = reply->status;
+389711b3749399 Marek Behún 2019-08-22  246  
+389711b3749399 Marek Behún 2019-08-22  247  		rwtm->has_pubkey = 1;
+389711b3749399 Marek Behún 2019-08-22  248  		sprintf(rwtm->pubkey,
+389711b3749399 Marek Behún 2019-08-22 @249  			"%06x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x",
+389711b3749399 Marek Behún 2019-08-22  250  			ret, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7],
+389711b3749399 Marek Behún 2019-08-22  251  			s[8], s[9], s[10], s[11], s[12], s[13], s[14], s[15]);
+389711b3749399 Marek Behún 2019-08-22  252  	}
+389711b3749399 Marek Behún 2019-08-22  253  
+389711b3749399 Marek Behún 2019-08-22  254  	return 0;
+389711b3749399 Marek Behún 2019-08-22  255  }
+389711b3749399 Marek Behún 2019-08-22  256  
 
------
+:::::: The code at line 249 was first introduced by commit
+:::::: 389711b374939968d2d0adede01b9e1f3bb4f531 firmware: Add Turris Mox rWTM firmware driver
 
-Why I'm also wondering if a guideline might be useful because:
+:::::: TO: Marek Behún <marek.behun@nic.cz>
+:::::: CC: Arnd Bergmann <arnd@arndb.de>
 
-Saw this merging of multicast routers ports and MDB approach
-discussion here:
-
-https://lore.kernel.org/netdev/db38eb8f-9109-b142-6ef4-91df1c1c9de3@3e8.eu/
-
-I have some suspicion what it might try to achieve, but am unsure
-if that can work reliably in all scenarios.
-Is this intended as a hack where the switch chip or DSA has no
-support to configure multicast router ports?
-
-If yes, what would happen if there is:
-
-1) a layer 3 multicast router
-2) a multicast sender with a routable destination address
-3) no local multicast listener for 3), so no local reports
-   for it?
-
-Would neither an MDB nor a multicast router port be configured then?
-
-Or with two multicast snooping switches, if one of them never sees
-the according IGMP/MLD reports due to RFC4541 forwarding
-restrictions?
-
-Regards, Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
