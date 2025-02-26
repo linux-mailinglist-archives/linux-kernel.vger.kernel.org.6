@@ -1,133 +1,144 @@
-Return-Path: <linux-kernel+bounces-534541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD3FA46845
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:41:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AA9A4684B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:42:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEDB18858E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A11E18860A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7D022578C;
-	Wed, 26 Feb 2025 17:41:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C141225785;
+	Wed, 26 Feb 2025 17:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uBX08G3r"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DCB21CC6A;
-	Wed, 26 Feb 2025 17:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EE42248B9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740591696; cv=none; b=J19mEGITd8w/DwWmzlYj9YSbF/ha44awuZP548mlWR0616O8HsefPw7ds/KSSnwKMHEk/fDmMi5FHE24LvDs0/vnNTH1M5Q4c5TgPZYS5MWfUfu5HYKoGXcDnSoUOiUXURkTxCSVh7CytPWbwPT1Yp7RW4lNIqkfiHz5BUSoW1I=
+	t=1740591709; cv=none; b=GivZlvhN7SXxbTExAlsjJ83ynMzqWd3VzzwlaT+TkqwC64QecC+gnJplp6AI1HACVUKY6retRH+0oJsA6BxauDc0po3m9F2u2+gWd73Q961o5+Mbg33HNZ3hOy80UKCUPB4BbpaAxgazCypZwcbOEwbaHpYBAY9CogdA3+SSSlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740591696; c=relaxed/simple;
-	bh=8sV5lBpJpfsYzYIXD7QQspHnPGHzN2tgfhX2Q7fvFxc=;
+	s=arc-20240116; t=1740591709; c=relaxed/simple;
+	bh=F1fm5AbZ3HNUz/Nj9rrGexucCZHmsXis/sgMR3ZkbNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnrc4SMOBJ75ul2MAtmOb64gEcri/Mfo8sKBC+IctGQ3aNBy1yKomvG2DZfyyXJpOeG88uM7mZENWpBII95Wq7r6nYXhYq3AyMajymH/DrTszKlQUHkhrY367IKBBS+WqDfGWxPhywDoMrZ9JicT22/rMjt2JB73gpFNDBX0zFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C9E5C4CEE2;
-	Wed, 26 Feb 2025 17:41:29 +0000 (UTC)
-Date: Wed, 26 Feb 2025 17:41:27 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Arnd Bergmann <arnd@arndb.de>, Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
- non-present ptes
-Message-ID: <Z79SR77ml5ckIzUv@arm.com>
-References: <20250226120656.2400136-1-ryan.roberts@arm.com>
- <20250226120656.2400136-3-ryan.roberts@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUIyAqXr14FYW/rRjepzMOrBsV1+l26bebSxaAqghgc9Gyh7ArDYXGsWuINxqTaDOfrQ4z7NB144ZrIyTcd4wK8ySj9i6gpyy2bii20fBLumMET390QBHJU3VL3h18DV+47eaNjorhdfS19HxYNopnyPFeUPIwxdiBfeupClJsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uBX08G3r; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 12:41:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740591695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LacZ+GVTa9QlMyWBHLDLvTEMaP9C/9n3aDDQj2YV9kM=;
+	b=uBX08G3r95FkGvKm7sLtS+I2Zpb2uT7EzS7xFPWqu7DxUc04P1Z6WLuR2E9eSQQHHyGaLq
+	I+4eJO6dQHOGyUvEXp7r/EbJ79UR0JCc4bQAFey0guncKUgHPru1/DZRlQ41nM00RMBa1H
+	tsoNvDhdPt2TTrKFAqEwjh10/iK/LHQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Ventura Jack <venturajack85@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
+	david.laight.linux@gmail.com, hch@infradead.org, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>, 
+	Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <olxh7iwz5yjuuqwpbzgohrl3dkcurbmzij3o2dbha5mtkr2ipn@wtee4jjj7ope>
+References: <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
+ <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
+ <CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
+ <f2bf76553c666178505cb9197659303a39faf7aa.camel@HansenPartnership.com>
+ <2025022611-work-sandal-2759@gregkh>
+ <16127450a24e9df8112a347fe5f6df9c9cca2926.camel@HansenPartnership.com>
+ <20250226110033.53508cbf@gandalf.local.home>
+ <9c443013493f8f380f9c4d51b1eeeb9d29b208a3.camel@HansenPartnership.com>
+ <ylsffirqsrogli5fqlyhklhy6s54ngolvk5hj5fnpn3ceglyii@cgcvtm4ohtra>
+ <20250226115726.27530000@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250226120656.2400136-3-ryan.roberts@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250226115726.27530000@gandalf.local.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 26, 2025 at 12:06:52PM +0000, Ryan Roberts wrote:
-> arm64 supports multiple huge_pte sizes. Some of the sizes are covered by
-> a single pte entry at a particular level (PMD_SIZE, PUD_SIZE), and some
-> are covered by multiple ptes at a particular level (CONT_PTE_SIZE,
-> CONT_PMD_SIZE). So the function has to figure out the size from the
-> huge_pte pointer. This was previously done by walking the pgtable to
-> determine the level and by using the PTE_CONT bit to determine the
-> number of ptes at the level.
+On Wed, Feb 26, 2025 at 11:57:26AM -0500, Steven Rostedt wrote:
 > 
-> But the PTE_CONT bit is only valid when the pte is present. For
-> non-present pte values (e.g. markers, migration entries), the previous
-> implementation was therefore erroneously determining the size. There is
-> at least one known caller in core-mm, move_huge_pte(), which may call
-> huge_ptep_get_and_clear() for a non-present pte. So we must be robust to
-> this case. Additionally the "regular" ptep_get_and_clear() is robust to
-> being called for non-present ptes so it makes sense to follow the
-> behavior.
+> [ Adding Josh ]
 > 
-> Fix this by using the new sz parameter which is now provided to the
-> function. Additionally when clearing each pte in a contig range, don't
-> gather the access and dirty bits if the pte is not present.
+> On Wed, 26 Feb 2025 11:47:09 -0500
+> Kent Overstreet <kent.overstreet@linux.dev> wrote:
 > 
-> An alternative approach that would not require API changes would be to
-> store the PTE_CONT bit in a spare bit in the swap entry pte for the
-> non-present case. But it felt cleaner to follow other APIs' lead and
-> just pass in the size.
+> > On Wed, Feb 26, 2025 at 11:42:41AM -0500, James Bottomley wrote:
+> > > On Wed, 2025-02-26 at 11:00 -0500, Steven Rostedt wrote:  
+> > > > On Wed, 26 Feb 2025 09:45:53 -0500
+> > > > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> > > >   
+> > > > > > From some other rust boot system work, I know that the quality of
+> > > > > > a    
+> > > > > simple backtrace in rust where you just pick out addresses you
+> > > > > think you know in the stack and print them as symbols can sometimes
+> > > > > be rather misleading, which is why you need an unwinder to tell you
+> > > > > exactly what happened.  
+> > > > 
+> > > > One thing I learned at GNU Cauldron last year is that the kernel
+> > > > folks use the term "unwinding" incorrectly. Unwinding to the compiler
+> > > > folks mean having full access to all the frames and variables and
+> > > > what not for all the previous functions.
+> > > > 
+> > > > What the kernel calls "unwinding" the compiler folks call "stack
+> > > > walking". That's a much easier task than doing an unwinding, and that
+> > > > is usually all we need when something crashes.  
+> > > 
+> > > Well, that's not the whole story.  We do have at least three unwinders
+> > > in the code base.  You're right in that we don't care about anything
+> > > other than the call trace embedded in the frame, so a lot of unwind
+> > > debug information isn't relevant to us and the unwinders ignore it.  In
+> > > the old days we just used to use the GUESS unwinder which looks for
+> > > addresses inside the text segment in the stack and prints them in
+> > > order.  Now we (at least on amd64) use the ORC unwinder because it
+> > > gives better traces:
+> > > 
+> > > https://docs.kernel.org/arch/x86/orc-unwinder.html  
 > 
-> As an aside, PTE_CONT is bit 52, which corresponds to bit 40 in the swap
-> entry offset field (layout of non-present pte). Since hugetlb is never
-> swapped to disk, this field will only be populated for markers, which
-> always set this bit to 0 and hwpoison swap entries, which set the offset
-> field to a PFN; So it would only ever be 1 for a 52-bit PVA system where
-> memory in that high half was poisoned (I think!). So in practice, this
-> bit would almost always be zero for non-present ptes and we would only
-> clear the first entry if it was actually a contiguous block. That's
-> probably a less severe symptom than if it was always interpreted as 1
-> and cleared out potentially-present neighboring PTEs.
+> Note, both myself and Josh (creator of ORC) were arguing with the GCC folks
+> until we all figured out we were talking about two different things. Once
+> they said "Oh, you mean stack walking. Yeah that can work" and the
+> arguments stopped. Lessons learned that day was that compiler folks take
+> the term "unwinding" to mean much more than kernel folks, and since we have
+> compiler folks on this thread, I'd figure I would point that out.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> We still use the term "unwinder" in the kernel, but during the sframe
+> meetings, we need to point out that we all just care about stack walking.
 > 
-> tmp
-> ---
+> > 
+> > More accurate perhaps, but I still don't see it working reliably - I'm x
+> > still having to switch all my test setups (and users) to frame pointers
+> > if I want to be able to debug reliably.
+> 
+> Really? The entire point of ORC was to have accurate stack traces so that
+> live kernel patching can work. If there's something incorrect, then please
+> report it.
 
-Random "tmp" here, otherwise the patch looks fine (can be removed when
-applying).
+It's been awhile since I've looked at one, I've been just automatically
+switching back to frame pointers for awhile, but - I never saw
+inaccurate backtraces, just failure to generate a backtrace - if memory
+serves.
 
--- 
-Catalin
+When things die down a bit more I might be able to switch back and see
+if I get something reportable, I'm still in bug crunching mode :)
 
