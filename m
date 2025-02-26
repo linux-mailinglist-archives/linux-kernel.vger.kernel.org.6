@@ -1,247 +1,297 @@
-Return-Path: <linux-kernel+bounces-533141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92959A45615
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 647E6A45619
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A966C3A7207
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6B33A738A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE39269AEA;
-	Wed, 26 Feb 2025 06:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECAA26A095;
+	Wed, 26 Feb 2025 06:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoeQ1WYs"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCVOpUqK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4D5028C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357E267B77;
+	Wed, 26 Feb 2025 06:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552994; cv=none; b=ikYDIReU0jyE9JQGKSCkd/c6KU8OBt1TQwCKwNrtpbjaSfTJ3Td35A3eocnozQRDpxpBQOtNugcs6EAOwrbfNaz7V3nYba+paHqSXqIwMLaRC3c1MvnOjia04bxkAdP2E8ivDzrAB8g2Hfc3dKoYGXYGywU8SCtaxzCRSQCmoEw=
+	t=1740553014; cv=none; b=IeUylUzRjMhRYzcAy0EuSUK5J9K7WVvfs7ky3bfPcBechKnugpNsWloeSX1ga7wdcE8sfmYHGZ6CYt+1vBAeMK+Da+X3ZI+JrJo9I68AUcAss3WDGVebOCsCFqRYsAyDC7kZP+CaHrKLuS0Skjt7bAx0rzfdr/m5WGwYeqqfmbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552994; c=relaxed/simple;
-	bh=maWE2ec0tJrqxvlM/sGG8sDlN+b8R1Q5EaLQCSNYN3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLG/daZSmAU1uUxAwkz18nBHd3acU8l+iLT8G6Iybkjiyz2N3E4vWrPYt7ITlOgs8UGVMg/V3YcCzVIDa70OhCgICfpQQA+1t+o7IN7T02KMncmjZjvOnxPp9WR4PUDs+StnOAsc+pw10nNPETOXxX8GDlAdZyPEtXCUQnSJrT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoeQ1WYs; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-222e8d07dc6so10063585ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:56:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740552992; x=1741157792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UvBUkvrpnaWOB4XGkZSpuc/FodpmoXmalQA7k8tmnYE=;
-        b=JoeQ1WYsfuB7RyMMdA3+9W6pemWuotKy08QhOoGhm056R+Btdu4Zuso/E25ogQB7u0
-         XI8Lu8479vCmSZ3FqWXSxRFEspKl18zidfukbrkWkJcxazqGH95sgmmytCcpH8UNH3st
-         touDl2EazpCpHQCY0yWhXXO2ioVTp48fs48Jpv0pSTG6aqaFgHyNWiOnGrhX3IZC5ai4
-         5j/0DdDjve7PMSr2zFZs2hE6zclp4Dd41mcizIzm7U+izLo22vjfuPHMbjsmQI4B4MYK
-         divuWYXxCbzcU2Zspev771qXLmkRfBWwlCXVM34MqV3xNLckxrNn6api531+y/G4dGDT
-         7ZVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740552992; x=1741157792;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UvBUkvrpnaWOB4XGkZSpuc/FodpmoXmalQA7k8tmnYE=;
-        b=V8vIhOEyrqst6t6t21I9xw35H+pSlbYPCK3fAi2Lc/RA9uyAwjCDPVqj7rfcodafjZ
-         2F7UpaMKdt46hGwSiLaN5bkNKyz4/MULXphye2xhpanpQXKS2uQbDrByrDJwpoW2DJsz
-         phwR8HfzKwI/uPh65PqfCTDyueMQ44d1vsTa/sjVYVQ5A3mcgiKoHTb3yNbVoLINAGOh
-         9374bGD6Z79kI8eLmfGsRepZ+I5qmQzgX51ZZP7U5f1A1Snl3jX9Qo+cEZ3tq2v7kTfz
-         L3X7vmK5BWteciS7Oc+SlCq5U2wE2yR57txASSohWKmmGomfuZ4xwlelWwhNHHE4zB7B
-         ZoQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl0Kt4xfPYqIv2QCfspkNGNIuA47Ua1ioJXhowItEIZOFWyyglGHngHRrtXfYI8af+YPIxoZTY27cqXHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ2XhBTnWiPq7G/h/k4S7WuXShjX0WqAMnNTSRMR3v/QxhmrH0
-	YCJhfFIcL9d6ztSXAI3brY9qo3vDy5aO+fVMYhRF92r+QMiY7zdPpv4t7g9v
-X-Gm-Gg: ASbGnctQBz1KQGHeskFTbpsOnEI2WWUvW6WLYg413t1b9D0dunbkzjS4fVMtdU/kpEj
-	wTscmLeF0bjZtbmz6MjVFG70ebWkAU9gmsDZnqtvMXpNXOOUvmnkSOnoGKEqmpnmV/fN/nxeJXn
-	0r/9OvfhN1c9m02KozUzNrSri3xKwMHMEg54aWXorDcpjxyLvIksROHtl1RR0y/6VoBBl3CwtXr
-	3zojZzCRF0GAJmmkQdX3y4LzyLtgfrE5dHjoDAN+nX/ki6QmM7Nk9URNoa5ECTTA0Ic3WR5AAEZ
-	zXWx7bNjPOKGGpGIC+L7VOj888VLaDxTThOhZfKm/X/tTWyxCDUULgi3
-X-Google-Smtp-Source: AGHT+IHWNgMRxS2wDsQ8DfmTVlhhQ98TvahLD3DSbQQe0MJnnyowlR0MgLuR1nRqrbVlX+8Z8D6BeA==
-X-Received: by 2002:a17:902:d2c1:b0:21a:7e04:7021 with SMTP id d9443c01a7336-221a001fb74mr306421785ad.24.1740552992216;
-        Tue, 25 Feb 2025 22:56:32 -0800 (PST)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:484a:6ad2:2b8e:884b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00ab54sm25236725ad.77.2025.02.25.22.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:56:31 -0800 (PST)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: yury.norov@gmail.com
-Cc: david.laight.linux@gmail.com,
-	anshuman.khandual@arm.com,
-	arnd@arndb.de,
-	linux-kernel@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw,
-	skhan@linuxfoundation.org,
-	mka@chromium.org,
-	akpm@linux-foundation.org,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH v3 RESEND] uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"
-Date: Wed, 26 Feb 2025 14:56:23 +0800
-Message-ID: <20250226065623.1567363-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740553014; c=relaxed/simple;
+	bh=oC8X1r5Bp9u4Te+gPu5p4PdHDO2o2swwbII27w2F7Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XW4QUl9Eju6UhIcLdiDQsluMv44Xg8sUfKaiydlfdQtukJGPqHz9ZsMeUkpoxuQm06Znjruw1+gJk/X2R3P3G+2Dh22TTSHtffuqYJNkyoGSeT5VTroLyk0FasK/6QIZQEWQ+qUihNPpwmxXCT+1HLydzAi+ZtUaXRgQ+RlFO7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCVOpUqK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D16C4CED6;
+	Wed, 26 Feb 2025 06:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740553013;
+	bh=oC8X1r5Bp9u4Te+gPu5p4PdHDO2o2swwbII27w2F7Q4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vCVOpUqKGHIYoLt6mA2ejxvK/qJ5K3ocbUovRZmIOEH1cKuB+WBbAPpDLYsbmyzKE
+	 tQQ3NzWaT1SlVW/8CBI/AJkLEY8oWJHE8idDJXbFN5zyYv8L9VJvQmg8nxUkpE/bVI
+	 yJQg0YKD64V4qvxJnKDkviXBXeQLlDqbbUH5sBTztWP1338BtkbeDe4cRAcHzYkNf/
+	 maDHYtEZlpT20C2VakJm8wp76UFO3lzYWcFdtIdRycoFVnORL5z4qaAZsDGUN+x0ia
+	 cG92woJr9xh2mJt/VHcbnyp8o8JprDOVq8gvgWa4GugXFOXuoR/NOyunR0M2VhTZRY
+	 6xm1T3jbFH9yQ==
+Date: Wed, 26 Feb 2025 07:56:47 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/39] scripts/kernel-doc.py: add a Python parser
+Message-ID: <20250226075647.5de4c7b0@foz.lan>
+In-Reply-To: <87tt8hyedw.fsf@trenco.lwn.net>
+References: <cover.1740387599.git.mchehab+huawei@kernel.org>
+	<3905b7386d5f1bfa76639cdf1108a46f0bccbbea.1740387599.git.mchehab+huawei@kernel.org>
+	<87v7sy29rh.fsf@trenco.lwn.net>
+	<20250225083814.51975742@foz.lan>
+	<87tt8hyedw.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This patch reverts 'commit c32ee3d9abd2("bitops: avoid integer overflow in
- GENMASK(_ULL)")'.
+Em Tue, 25 Feb 2025 13:10:19 -0700
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-The code generation can be shrink by over 1KB by reverting this commit.
-Originally the commit claimed that clang would emit warnings using the
-implementation at that time.
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+>=20
+> > Em Mon, 24 Feb 2025 16:38:58 -0700
+> > Jonathan Corbet <corbet@lwn.net> escreveu:
+> > =20
+> >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> >>=20
+> >>=20
+> >> I also think you should give consideration to preserving the other
+> >> copyright notices in the Perl version.  A language translation doesn't
+> >> remove existing copyrights...who knows how much creativity went into
+> >> some of those regexes? =20
+> >
+> > Makes sense, but the copyrights at kernel-doc.pl:
+> >
+> > 	## Copyright (c) 1998 Michael Zucchi, All Rights Reserved        ##
+> > 	## Copyright (C) 2000, 1  Tim Waugh <twaugh@redhat.com>          ##
+> > 	## Copyright (C) 2001  Simon Huggins                             ##
+> > 	## Copyright (C) 2005-2012  Randy Dunlap                         ##
+> > 	## Copyright (C) 2012  Dan Luedtke                               ##
+> > 	##                                                               ##
+> > 	## #define enhancements by Armin Kuster <akuster@mvista.com>     ##
+> > 	## Copyright (c) 2000 MontaVista Software, Inc.                  ##
+> > 	#
+> > 	# Copyright (C) 2022 Tomasz Warnie=C5=82=C5=82o (POD)
+> >
+> > Also doesn't preserve all copyrights from people that worked hard to
+> > maintain it all over those years. =20
+>=20
+> Agreed ... and I'm not sure what we can do about that.  But *removing*
+> existing copyright notices is a bit of a different story; that is
+> generally considered to be fairly bad form.
 
-The patch was applied and tested against numerous compilers, including
-gcc-13, gcc-12, gcc-11 cross-compiler, clang-17, clang-18 and clang-19.
-Various warning levels were set (-W=0, -W=1, -W=2) and CONFIG_WERROR
-disabled to complete the compilation. The results show that no compilation
-errors or warnings were generated due to the patch.
+I'm with you: we shall not remove copyrights.
 
-The results of code size reduction are summarized in the following table.
-The code size changes for clang are all zero across different versions,
-so they're not listed in the table.
+Yet, copyrights were originally developed for artwork (paintings, music
+and such). So I guess we can borrow an analogy from there to try=20
+understanding what a conversion like that would mean. At least for me,
+it sounds like having two paintings of the same image: they both
+reflect the same picture, but they have different brush strokes. They
+also may have different painting styles that may look similar but are
+different.
 
-For NR_CPUS=64 on x86_64.
-----------------------------------------------
-|	        |   gcc-13 |   gcc-12 |   gcc-11 |
-----------------------------------------------
-|       old | 22438085 | 22453915 | 22302033 |
-----------------------------------------------
-|       new | 22436816 | 22452913 | 22300826 |
-----------------------------------------------
-| new - old |    -1269 |    -1002 |    -1207 |
-----------------------------------------------
+Using such analogy, let's say someone draws a new painting while looking
+at a famous painting like Monalisa. Surely the painter should give credits
+to Leonardo Da Vinci  for his brilliant artwork, but, on the other hand,
+he cannot and should not sign that his painting was authored by Leonardo
+Da Vinci.=20
 
-For NR_CPUS=1024 on x86_64.
-----------------------------------------------
-|	        |   gcc-13 |   gcc-12 |   gcc-11 |
-----------------------------------------------
-|       old | 22493682 | 22509812 | 22357661 |
-----------------------------------------------
-|       new | 22493230 | 22509487 | 22357250 |
-----------------------------------------------
-| new - old |     -452 |     -325 |     -411 |
-----------------------------------------------
+This is the same here: the Python code, while derivated from the
+Perl version, doesn't have the same coding style ("brush strokes") nor
+we can say that it were authored by the original writers. IMO, all we
+can do is to give credits for the original authors and preserve GPLv2
+license, which explicitly allows derivative work.=20
 
-For arm64 architecture, gcc cross-compiler was used and QEMU was
-utilized to execute a VM for a CPU-heavy workload to ensure no
-side effects and that functionalities remained correct. The test
-even demonstrated a positive result in terms of code size reduction:
-* Before: 31660668
-* After: 31658724
-* Difference (After - Before): -1944
+That's why I think we could give such credits with some preamble
+note to distinguish it from the Python copyrights.=20
 
-An analysis of multiple functions compiled with gcc-13 on x86_64 was
-performed. In summary, the patch elimates one negation in almost
-every use case. However, negative effects may occur in some cases,
-such as the generation of additional "mov" instruction or increased
-register usage. The use of "~_UL(0) << (l)" may even result in the
-allocations of "%r*" registers instead of "%e*" registers (which are
-32-bit registers) because the compiler cannot assume that the higher
-bits are zero.
+It could be something like:
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
----
-Changelog:
+	# Converted from the kernel-doc script originally written in Perl
+	# under GPLv2, copyrighted since 1998 by the following authors:
 
-v1 -> v2:
-	- Refer the patch explicitly as a revert of commit c32ee3d
-	- Squash commits into 1 commit
-	- Perform compilation for numerous compilers, architectures and
-	  compare code size shrink for each of them
-	- Perform cpu-heavy workload test inside x86_64 VM and ARM64 VM
-	- Analyze the result of disassembly of several small use cases
+Followed by a list of the contributors, or it could be mentioning the
+original script and how people could browse to see the developers
+who wrote/modified kernel-doc.
 
-v2 -> v3:
-	- Refactor code to single line
-	- Disabled CONFIG_WERROR to ensure no additional compilation errors or warnings
-	- Remove description for unrelated compilation errors and warnings
-	- Summarize the result into a better looking table
-	- Rephrase the patch and fix typos
+Feel free to suggest a better text if you think the above won't fit.
+
+> I don't have a problem with adding a longer credits area, I guess, if we
+> want to do that (though it's not normal for other source files).  But
+> I'm not sure we need to.
+
+I have the same doubts, but on the other hand, looking at the
+copyrights written on kernel-doc.pl since 2005 (git version), I can see=20
+records for just 3 persons:
+
+- Dan Luedtke: a single patch adding html5 support
+  1b40c1944db4 ("scripts/kernel-doc: added support for html5")
+
+  We didn't port html5 to Python - and html output was already removed
+  from kernel-doc a long time ago. Maybe there might have some small
+  pieces of his original work that could have been ported. I dunno.
+
+- Tomasz Warnie=C5=82=C5=82o: basically, changes at the help/man part of th=
+e script
+
+  2b306ecaf57b scripts: kernel-doc: Refresh the copyright lines
+  258092a89085 scripts: kernel-doc: Drop obsolete comments
+  252b47da9fd9 scripts: kernel-doc: Replace the usage function
+  834cf6b9039e scripts: kernel-doc: Translate the "Other parameters" subsec=
+tion of OPTIONS
+  c15de5a19a28 scripts: kernel-doc: Translate the "Output selection modifie=
+rs" subsection of OPTIONS
+  9c77f108f43a scripts: kernel-doc: Translate the "Output selection" subsec=
+tion of OPTIONS
+  dd803b04b0a0 scripts: kernel-doc: Translate the "Output format selection =
+modifier" subsection of OPTIONS
+  2875f7870821 scripts: kernel-doc: Translate the "Output format selection"=
+ subsection of OPTIONS
+  f1583922bf93 scripts: kernel-doc: Translate the DESCRIPTION section
+  43caf1a6823d scripts: kernel-doc: Relink argument parsing error handling =
+to pod2usage
+  a5cdaea525c3 scripts: kernel-doc: Add the basic POD sections
+
+  Parts of the text used at the POD sections were preserved at the=20
+  Python version. I didn't check if the texts we're using were
+  authored by him.
+
+- Randy Dunlap: 64 patches fixing things and improving the script
+
+  I'm pretty sure I ported lots of stuff from Randy to the Python
+  version.
+
+At least for me, while it sounds right to give credits for the above
+3 developers and also for Michael, Simon and Armin, who collaborated
+and authored it before git time, it doesn't sound right to not mention=20
+any but one of the several developers that have been maintaining it=20
+since 2005. Now, the list, ordered by the number of patches is:
+
+     65 Randy Dunlap
+     57 Mauro Carvalho Chehab
+     32 Jani Nikula
+     20 Jonathan Corbet
+     11 Tomasz Warnie=C5=82=C5=82o
+     11 Johannes Berg
+      7 Kees Cook
+      6 Vegard Nossum
+      6 Aditya Srivastava
+      5 Paolo Bonzini
+      5 Martin Waitz
+      4 Matthew Wilcox
+      4 Daniel Vetter
+      3 Mike Rapoport
+      3 Danilo Cesar Lemes de Paula
+      3 Daniel Santos
+      3 Conch=C3=BAr Navid
+      3 Borislav Petkov
+      3 Ben Hutchings
+      3 Andy Shevchenko
+      3 Andr=C3=A9 Almeida
+      3 Akira Yokosawa
+      2 Yujie Liu
+      2 Yacine Belkadi
+      2 Sakari Ailus
+      2 Pavel Pisa
+      2 Pavan Kumar Linga
+      2 Markus Heiser
+      2 Jonathan Neusch=C3=A4fer
+      2 Jason Baron
+      2 Jakub Kicinski
+      2 Ilya Dryomov
+      1 Will Deacon
+      1 valdis.kletnieks@vt.edu
+      1 Utkarsh Tripathi
+      1 Silvio Fricke
+      1 Rolf Eike Beer
+      1 Rich Walker
+      1 Richard Kennedy
+      1 Randy.Dunlap
+      1 Pierre-Louis Bossart
+      1 Peter Maydell
+      1 Nishanth Menon
+      1 Niklas S=C3=B6derlund
+      1 Michal Wajdeczko
+      1 Masahiro Yamada
+      1 Mark Rutland
+      1 Lucas De Marchi
+      1 Linus Torvalds
+      1 Levin, Alexander (Sasha Levin)
+      1 Laurent Pinchart
+      1 Kamil Rytarowski
+      1 Jonathan Cameron
+      1 Johannes Weiner
+      1 J=C3=A9r=C3=A9my Bobbio
+      1 Jason Gunthorpe
+      1 Horia Geanta
+      1 Harvey Harrison
+      1 Greg Kroah-Hartman
+      1 Gabriel Krisman Bertazi
+      1 Donald Hunter
+      1 Dan Luedtke
+      1 Coco Li
+      1 Chen-Yu Tsai
+      1 Bart Van Assche
+      1 Anna-Maria Behnsen
+      1 Alexander Lobakin
+      1 Alexander A. Klimov
+
+If you think the list is too long, one option would be to draw a line
+(for instance picking developers with more than 2 patches or something
+like that) and add an "and others" to not forget about the others.
+
+We might analyze each individual contribution to see what was relevant
+or not, ignoring for instance single-line authors that did changes like
+this one:
+
+	diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+	index 28b761567815..f565536a2bef 100755
+	--- a/scripts/kernel-doc
+	+++ b/scripts/kernel-doc
+	@@ -2082 +2081,0 @@ sub dump_function($$) {
+	-    $prototype =3D~ s/__devinit +//;
+
+which almost certainly doesn't affect copyrights, which doesn't add any new
+code to it, while preserving credits for single-patch authors that did=20
+regex changes like this one:
+
+	diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+	index 3982d47048a7..724528f4b7d6 100755
+	--- a/scripts/kernel-doc
+	+++ b/scripts/kernel-doc
+	@@ -1086 +1086 @@ sub dump_struct($$) {
+	-    if ($x =3D~ /(struct|union)\s+(\w+)\s*\{(.*)\}(\s*(__packed|__aligned=
+|____cacheline_aligned_in_smp|__attribute__\s*\(\([a-z0-9,_\s\(\)]*\)\)))*/=
+) {
+	+    if ($x =3D~ /(struct|union)\s+(\w+)\s*\{(.*)\}(\s*(__packed|__aligned=
+|____cacheline_aligned_in_smp|____cacheline_aligned|__attribute__\s*\(\([a-=
+z0-9,_\s\(\)]*\)\)))*/) {
+	@@ -1101,0 +1102 @@ sub dump_struct($$) {
+	+       $members =3D~ s/\s*____cacheline_aligned/ /gos;
 
 
-Hi Yury,
+but for me it sounds a waste of our time to analyze all patches, and
+we may risk of get things wrong, so I prefer to place the complete list.
 
-Sorry about the last iteration that I included everything, making
-the email too large and difficult to read. However, you still reviewed
-it and gave me feedbacks, really big thanks for your patience and those
-feedbacks. Running these tests also gave me a great opportunity to learn
-a lot.
-
-If there's anything else needed to be test or modified, please let
-me know, I'll ammend them as soon as possible.
-
-Hi David,
-
-Thanks for your advise on alternative ideas for this code. I ran some
-simple test (basically check the result of code size reduction) based
-on your suggestions.
-
-For gcc-13 on x86_64 + defconfig.
-* "(_UL(2) << (h)) - (_UL(1) << (l))"
-	Before=22438085, After=22438193, Difference ( After - Before ) = 108
-* "((_UL(1) + _UL(1)) << (h)) - (_UL(1) << (l))"
-	Before=22438085, After=22438209, Difference ( After - Before ) = 124
-
-I tried to do an analysis on "intel_arch_events_quirk()", it only +2 in
-code size change, I think it would be a nice example to see the differences
-in generated code.
-
-So the result shows that your proposal can save 1 negation and 1 "and".
--ffffffff83278ad2:	48 f7 d8             	neg    %rax
--ffffffff83278adc:	83 e0 7f             	and    $0x7f,%eax
-
-However, one more "mov" and one more "sub" are generated.
-+ffffffff83278acf:	b8 80 00 00 00       	mov    $0x80,%eax
-+ffffffff83278ad7:	48 29 d0             	sub    %rdx,%rax
-
-No change in total number of instructions, but negation only requires
-one register, and the "mov" generated is more expensive then usual.
-(Usually "mov" of the following form are generated,
-"48 89 ea             	mov    %rbp,%rdx",
-"89 c3                	mov    %eax,%ebx" ).
-
-Thanks for your advise again, in some scenario it does have positive
-effect, but unfortunately, the overall impact is not beneficial.
-
-Best regards,
-I Hsin Cheng.
-
-Tests performed on ubuntu 24.04 with AMD Ryzen 7 5700X3D 8-Core
-Processor on x86_64 with kernel version v6.14.0-rc1.
----
- include/uapi/linux/bits.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
-index 5ee30f882736..682b406e1067 100644
---- a/include/uapi/linux/bits.h
-+++ b/include/uapi/linux/bits.h
-@@ -4,13 +4,9 @@
- #ifndef _UAPI_LINUX_BITS_H
- #define _UAPI_LINUX_BITS_H
- 
--#define __GENMASK(h, l) \
--        (((~_UL(0)) - (_UL(1) << (l)) + 1) & \
--         (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
-+#define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
- 
--#define __GENMASK_ULL(h, l) \
--        (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
--         (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
-+#define __GENMASK_ULL(h, l) (((~_ULL(0)) << (l)) & (~_ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
- 
- #define __GENMASK_U128(h, l) \
- 	((_BIT128((h)) << 1) - (_BIT128(l)))
--- 
-2.43.0
-
+Thanks,
+Mauro
 
