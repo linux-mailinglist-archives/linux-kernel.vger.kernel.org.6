@@ -1,83 +1,140 @@
-Return-Path: <linux-kernel+bounces-533987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8ECA46125
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED1CA46126
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC1C16AECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47D3189B7A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6D322171D;
-	Wed, 26 Feb 2025 13:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D1C21D00A;
+	Wed, 26 Feb 2025 13:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkoVsqQs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="POL8t4gp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD6219E86;
-	Wed, 26 Feb 2025 13:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B85219E86;
+	Wed, 26 Feb 2025 13:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740577259; cv=none; b=OffOH34gP+alRQ5JKrfPdidO8AmPB2HiLqi8+Ffz7BUj2jjYENpxyq5lUU7UNydQ94lvOGEbM9wlPcNMz/LHboF5xz9OERh6mp70hZ5LS8soNAwSSdE1sMxTlJaIiLOdvlfF0byR+4m4Le4RGWWwsPSHxCGDIbHGRtWgQ2Aw8Sg=
+	t=1740577274; cv=none; b=bd9n2435DFWiXj8kMlGh/QI6G4gNdK/GG1IcdxmJ6OFKY6T3fHkLiII0qT9OfrGIUHtmRfHDcsihXe9gR60qZriuS01xtppNK7R+HUeF4G/Q/VW7L1Oh2dT6GDBRY8ktHn1iICKuoUnOcHldAK3FtRNG3T9NnWV/6Rukjssbsh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740577259; c=relaxed/simple;
-	bh=EiDghBz5rOWEkCy7DfK1X7QaWLd5nUQck1/JK+pH5PQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PQt7ysmjQLGby+YqIV71aFdUWwtJupK3if7LRrw745VCmKZ1hxfbAiXVzwDt6eJuXTqO6IPw8pKFWAFXNGBIwLvt86Xnjt/SJ5pptAAe8/CN+Q3SSGXpedH6UHwpnzTN2+B5Z9jABty49mm3e/Cf8yBnU4rcISG2AgiAljeJfdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkoVsqQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C56DC4CEE8;
-	Wed, 26 Feb 2025 13:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740577259;
-	bh=EiDghBz5rOWEkCy7DfK1X7QaWLd5nUQck1/JK+pH5PQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KkoVsqQsiXFZriOBmPuWDNF4035dKvy6VvPiyroXJAbCOP6EoVtSrK5Sk9uVKjEfd
-	 msHXGBznQxkMOrbUdmGxSu69Yl9sj50u9PrAQgCK4ocTt6Eo1GUTz4u4MsPuHmRasv
-	 JD4hVBCMEuWiJ7pWL3Q+PfwEbS48mL9jf5JYm/9FIeK6EUcbTFSpu/DG72emy4GnDl
-	 BxfAn/8XJ3TUF+0V8PeG41oxtQSAVC57y8KQpSjw9kvhJuOo9hRwsGKmCu8ImciDLi
-	 aA8QxVVuRrXo5+1248zFFqMGzswQmnbC6fqHpGiHR1sQ2UPNs2Q3DeX/EJbi8GJkjk
-	 wBhGC54uJQbyQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: quic_msavaliy@quicinc.com,
-	quic_anupkulk@quicinc.com
-Subject: Re: [PATCH v4 RESEND] arm64: dts: qcom: qcs8300: Add QUPv3 configuration
-Date: Wed, 26 Feb 2025 07:40:49 -0600
-Message-ID: <174057724680.237840.4730026381777923841.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224063338.27306-1-quic_vdadhani@quicinc.com>
-References: <20250224063338.27306-1-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1740577274; c=relaxed/simple;
+	bh=bRJ+Y2frt13NbfDCG2ElOCtwsN6xrTBDS3rGxlu1PAk=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=nFcZeBy3F0wVHyy1fDlvR4JEOMKAmW6mULbDRTlDoCHF7QeWDthFHDf3Hgmo2Y4cow/OPDHRsOgECRQ7DFSxYzAR/El67pGU2auih+JpmmINVIJ3dLJQlG+zdpcDM5jzASufwnj6kp7GMYEEjDOeIv8O7UbCxKOTePjIiurZh0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=POL8t4gp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q5NweN020622;
+	Wed, 26 Feb 2025 13:41:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=WgtB+I5EeEFFDyU/wj4PxUl8h/5X
+	Zf6iZzGCRVFO66w=; b=POL8t4gpLVUc+HgYGz3vYczC96Q3LZny7SFcOegDfmzI
+	m1NaAv2MAchuGyvdSL8H2CEazS6xe1EFOmSPdcJ+5uoe2r0rRiAokydZpyKlJzr8
+	CldNQPSSWJC7WWfv24aSfxar16MxQtfzu7c0TiD99XKO+hy8tpHE5b0dW96NgW2K
+	wprZvguIed4GnAnl8XzUg49pB72tTxfgSEFJm9c+O6IFPNKXKfyFKvMDgPyWGso+
+	opbLB6TUXzXCCyvvmCKmy0VGT7x3TIwgS13LH0iW9vY3iE2Egt4V6xxMNrAYrzdu
+	zlUN5AcrOls5HMKDNjBEsJQJ9afIBj60VhhoP8j9CQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451vs823cd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:41:03 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QBIYrQ012507;
+	Wed, 26 Feb 2025 13:41:02 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ys9yk2ke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:41:02 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QDf1wu48365956
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 13:41:01 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 26FD258058;
+	Wed, 26 Feb 2025 13:41:02 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9EF658061;
+	Wed, 26 Feb 2025 13:41:01 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.180.23])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Feb 2025 13:41:01 +0000 (GMT)
+Message-ID: <dc3b985a9324acf0455434943c2ead3b39945354.camel@linux.ibm.com>
+Subject: [GIT PULL] integrity: subsystem fixes for v6.14
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel
+ <linux-kernel@vger.kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huaweicloud.com>
+Date: Wed, 26 Feb 2025 08:41:01 -0500
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mqDd6fSGfbIDE9Ndu2ytHS2NR_I6EvdT
+X-Proofpoint-GUID: mqDd6fSGfbIDE9Ndu2ytHS2NR_I6EvdT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260108
+
+Hi Linus,
+
+Here's two changes: 1 bug fix and 1 spelling cleanup.  The bug fix restores=
+ a
+performance improvement.
+
+thanks,
+
+Mimi
 
 
-On Mon, 24 Feb 2025 12:03:38 +0530, Viken Dadhaniya wrote:
-> Add DT support for QUPV3 Serial Engines.
-> 
-> 
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b=
+:
 
-Applied, thanks!
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-[1/1] arm64: dts: qcom: qcs8300: Add QUPv3 configuration
-      commit: 467284a3097f4348cf227053b53eb1bba2af9ae5
+are available in the Git repository at:
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
+/ tags/integrity-v6.14-fix
+
+for you to fetch changes up to 57a0ef02fefafc4b9603e33a18b669ba5ce59ba3:
+
+  ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr (2025-02-04 21:36:=
+43 -0500)
+
+----------------------------------------------------------------
+integrity-v6.14-fix
+
+----------------------------------------------------------------
+Roberto Sassu (1):
+      ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
+
+Tanya Agarwal (1):
+      integrity: fix typos and spelling errors
+
+ security/integrity/evm/evm_crypto.c |  2 +-
+ security/integrity/evm/evm_main.c   |  2 +-
+ security/integrity/ima/ima.h        |  3 +++
+ security/integrity/ima/ima_main.c   | 13 ++++++++-----
+ 4 files changed, 13 insertions(+), 7 deletions(-)
 
