@@ -1,218 +1,148 @@
-Return-Path: <linux-kernel+bounces-533811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27CBA45EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:28:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA15A45EE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF523AF74E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CE73B84A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B89220685;
-	Wed, 26 Feb 2025 12:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEF1220681;
+	Wed, 26 Feb 2025 12:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HUCrkptn"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01olkn2051.outbound.protection.outlook.com [40.92.53.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vxns5nMo"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBB921E097;
-	Wed, 26 Feb 2025 12:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572439; cv=fail; b=r4D7ICwoCUuV+D0qNuSX/25h/tSom8iS1NldjmO/+75Ih8yryPMKgPPMXgkALUGr1pZvlTDX6tGh4LQ+tqD/TrLm39h2mpGfn0wWd8eb7ZudWvYu6+9UeB/AhThZc687OLkzrWXNMmj1ugTw9BlMYXTKtuZ46GnEKdn927hyhzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572439; c=relaxed/simple;
-	bh=0YP27jwv4+GI5s9tBOfa5G7u7gzG6cFeAt76HnWauTg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NQws6tqwsl9O0asH2TrpFbGqglzEHRZ+89bew3WrcuxPfcdzUFKEv+ku9HGOmKT7OaLositqA/j7ZJVGElRkaJap3qdrfIrRNboIIwleP3ltF7bCNKTnNQtAE+N//GjXBBDi/Xg2gbWBPw/e83D5i7WlzrdX9pdYpPl/f+vR+vU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HUCrkptn; arc=fail smtp.client-ip=40.92.53.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GJFIcaX3Xj/iZjUTgPIeU9Ef/UiTQ/2+fDsnk1Ogsz9QKgwbcigiuEXzSmBVkBYk0y2pGHioxVC3Vt6r+m3rr6HG9GThcne90ly7H/2AnmnCy1GzQFIdLh8+7BprPsygHqk3/lCVYRAi3uRslzBELI8jy6hJPHoWW1DhqLNY1my8rMyD6pdzkWcmMeUxiBxW4kKOou4RrpuzrR7vuxMrOotds8qONbEdHqRD6bhn0Af0PY7pdkGiBqt0H1t63dyhdRe4TL4pwVjNsSggZwcr8V5Bpir6ZXni1uCtrg70gs4rCYXItt6wNvTJdji9N0PKeumKU87UQF7RY4cpwkNd0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fZ1MmjNm+FJaK/HoGxo+7DfSD9fcnJ3Y2/pOwZ/JU2w=;
- b=CJMy8RxGPzzj2W/59QD9rYySThAg2avBEERQhQd1ZTKJ3r53LlTxkZDbVCVvd5lBe3ynYa1erbKUpgeHecKL2NJRjEsTzy5cFfdXJuuSbIcymUwRK/Yxy0D2rn7+E4MB0U7lsBZ4vbkwfUoUX3RumogNWvheESflHr7FSdcPxIa13WCs5R3fQnHzcxV6VsvkoRBuC1P7m8NMkFwlhPLLFGAXlMeCzt+ETfFTZLHlT8agwLDtotVrZZy3GD7dUTw+3AunLtta0SVSbb5QTBBw41gpUOW/IXqBDDoVNb/+MeUuGO7QiDttI1JG5nevDN4f1hgIam3Q1yAax+0EZqxSlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fZ1MmjNm+FJaK/HoGxo+7DfSD9fcnJ3Y2/pOwZ/JU2w=;
- b=HUCrkptnQqtwdZMIR0+Jj+IaW5NanXa5CjtNFFfdcxq0XjZYsz6DxjkzKkPESAwA0c07m2gRfSA6w4T+RIn1daCR0AUp6vs+xHzsm+S0lQaR940C1J9bZbzEvw4OjR4sQvp/zyh1a2+TDLVpdCA4iTVXmd5PKamCFM8eFl/Z1IEEQRK433belEPnIY1dVE3vfvMXsU1s8ZtJKH5vYbAJt1oNcYCcvR8NBpnSUm/zEr4PniV8v70JSO9e2dTbNC6le00ShSdgUIi4jkbj1Ud0DTETqnsslgracXTEBwXkfJKreMl70d2MVQWvnU+YpDgSoQUXL7db0WMzbVjV7Wifsw==
-Received: from SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- (2603:1096:101:76::5) by SEZPR01MB6080.apcprd01.prod.exchangelabs.com
- (2603:1096:101:221::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Wed, 26 Feb
- 2025 12:20:32 +0000
-Received: from SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- ([fe80::653b:3492:9140:d2bf]) by SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- ([fe80::653b:3492:9140:d2bf%5]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 12:20:32 +0000
-Message-ID:
- <SEZPR01MB452764342165B17819AAF554A8C22@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
-Date: Wed, 26 Feb 2025 20:20:26 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] PCI: Fix the issue of failed speed limit lifting
-To: Jiwei Sun <sjiwei@163.com>, macro@orcam.me.uk,
- ilpo.jarvinen@linux.intel.com, bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- helgaas@kernel.org, lukas@wunner.de, ahuang12@lenovo.com,
- sunjw10@lenovo.com, jiwei.sun.bj@qq.com
-References: <20250123055155.22648-1-sjiwei@163.com>
-Content-Language: en-US
-From: Jiwei Sun <sunjw10@outlook.com>
-In-Reply-To: <20250123055155.22648-1-sjiwei@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP301CA0073.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::11) To SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- (2603:1096:101:76::5)
-X-Microsoft-Original-Message-ID:
- <9d6440de-1909-4629-9798-1965b0799efe@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465F4198E65
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740572513; cv=none; b=Pkxa8iVvNKhQjzrUulFZCWRSMS2tq2Y7W8Ol9wl2YyxItNZ53j6mPpsKXx+MQC43XsrVL33HxKCMnak9e+lIGI7jBq/iRQa0z030ET1JN9PckRWSRLTZzHqarG4bxaEnJdTxZNYgljxUME2X1CmoaEJVf0E+wS1PeMaRgVU9OcI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740572513; c=relaxed/simple;
+	bh=AwiFrWtV+715zMILrRkjE/bS7f4TFBxTFpu/weZEttM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ckd2kvyvPdCxJPF9tpf1Rwetwre1nPUEBm6f20IL9oeZZ1i8MXpwauckiPujdYbUvnaOiHjCm350c/6CZgfhiJbaBuBGL3DgpQvjr9yAkmHmv5G//pZ0NGbxEejWPEcC5YJ8Q6n+/fKNqWSmy53C6M0f34s1ZvZuGM1VXZS8Cgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vxns5nMo; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471fa3b19bcso226401cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:21:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740572511; x=1741177311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZ8fLnFs5jC511KEwwc78QvRtxNOftae4m622VwEotA=;
+        b=Vxns5nMohq2469Yc/t3p9uzRVo1FuK2/q9QgWRJamyKImSY2r4GoG1MVpRv/WWkOQe
+         Cn4mw9TSk1116/mFRffkP+uGA/dNNiJJJtmdyShWDcGzCGCBPVEtDhxbjyPeD5Y3JQ/V
+         xk2TvBCwF35h3Hmbj2gWlm6Zh2bj89mgZRhi7ABvc3j4EMNX5yB1szg1UOpLxagesKXk
+         Da4ZoBZ7/URkUddjVt2UcUkovCCg410wDs3OKOFnshELdyQQwD3GuXVY0t3SBCItrs8p
+         Z5H7viuQP4UF06WudfhMyTX00WORC5Ww6ZKL5JWPYI2H2Ng/iNbiNghqc4AlWichLdOD
+         eIJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740572511; x=1741177311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FZ8fLnFs5jC511KEwwc78QvRtxNOftae4m622VwEotA=;
+        b=qcSC/OLsFkX8R2bDujfROEkh+9b//mcxmQPUAdOOKjHilUoCMIJx4oVcuyba2BTFZ9
+         pzDyFXjdeBZit2q4LNjVemF4JXOzte/ItAobhuWgLD9UKFPtpW3sWJfhfd9SXotqqZxM
+         C/aVviAbMqwfFq0Eq40U2PFdlJt5TbrboAnUVzivRHjEgrQpGHDLtKLIzARI/ALXsxQ2
+         K5tVXtY/Ok+QfEai8VpoVxhKlJKrFnMNSvFgimMAb411dWHHgIWMniF+xUQE4eDvutrG
+         9PQZcoocDiudsS4jGci5r2tL3NTH4JW8zsNVWnS4OgYwBZoYEvYDIoL+zjV9spAZKKbq
+         7VwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnZ6CxHjOZtgtH3qCXJvS9z5nO3LKRH+WJ1wb5UPxVs9s+E3PV+0jEPCKFL3hbPgEVVnluX6FMbF2tVhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWuMOtFN1S/+eAtUjpNY639dt8/FhWZL+17da3GjfTLUAU6UcM
+	DMTtOoqXGNSZC0vjfDzLjAEILVWXM1TvcbLzIXla0ef8AJEpyfX45TiyfWAbuxnLtC/LxjOIDUh
+	GrQryybB7PJMIu7/zm17ErzFsUFUrkp7Yd0je
+X-Gm-Gg: ASbGncvxViB6OBdbNgfwaIyoKfv0RgyD7DlpEOOGsdCWLQeklcJLHTR8fkBJmKXexw/
+	fylQ7MhgBRlOldcp+SxybAdYajpZUNTmCbTnBmts44sBkA3kVxf4Ac3zDzduGq9Xo/rlgk9K5+6
+	XJlLTtvBwqF9NInzAiBW6QGrR1HKNtaNnzAbY=
+X-Google-Smtp-Source: AGHT+IHhkPpVrAfcuu6cQ99DaZetDklozQpTm2/0R7nz9+TlVkUIb9LVAMa4c37TFqY7rDF6/NSPiYVd6iEl3BowJcw=
+X-Received: by 2002:a05:622a:1806:b0:46e:1311:5920 with SMTP id
+ d75a77b69052e-47376dd1d49mr8958801cf.0.1740572510952; Wed, 26 Feb 2025
+ 04:21:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR01MB4527:EE_|SEZPR01MB6080:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c4a47ba-efad-4b08-bc22-08dd565ff6e0
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|7042599007|6090799003|19110799003|8060799006|15080799006|461199028|3412199025|4302099013|440099028|10035399004|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmpaK1RiYnlZbTRCYWttNmV3eGJNZFFlcWhPd2dubU52QzhMc2ZqTjJPY3Vs?=
- =?utf-8?B?VVJnMmNHV1BmVHQwRGc1cUIxc1BXKzQ2TEFydVdONFp2ZE1OSmNpQmJiK0Nj?=
- =?utf-8?B?aVlyb0E3dHVwYjhZMThNbXpjZUJ1Q0dUT21yZXUwR09vSnhIbDUrSnRubTdP?=
- =?utf-8?B?Y2kzZERybGhvVXNSejVsWjY4OVFGMHJYNlIvaUt0YmRJWHFQdU9JaVZnRHo2?=
- =?utf-8?B?a2o1SVhleUh5dDlnL0tKM1ZBSytTRHZBV2M4akRmMVhpZTNSWWhpQUFrbHpy?=
- =?utf-8?B?QjRHWjVvZDBxbkJ0Z0lCMWVMdWxGT0ZaN242bTZKSXpVM0FkZVBLMngwTWtU?=
- =?utf-8?B?TDJ1cmh3ZDhQMXhxbW9VaGdsMjFDYjI4Sm92UTJJaEl1K08yanFvUm1ld1p6?=
- =?utf-8?B?dFRuS3RLTDZHbzROY3RHQTZBR1V0K3dIZzNIUVRHay85U3EyK3B0MDBPOTFw?=
- =?utf-8?B?a0ZSUzlUcm1TODJaWGRGc3VBcVU4ZHFCWTl6eWtpN04veWk0aHplekZubm81?=
- =?utf-8?B?UmE3SzhxSWVmWitiUy9sOU91VUltcE5rZWdBVWdiaW5kNXZBVzBaUG50SmRF?=
- =?utf-8?B?YVBDZUZpaXJ0czNUMG01QU42VUo3Y0FlbnFZdE9UeS82VVRJSlltUmE2eDFt?=
- =?utf-8?B?czJiZVBXSzFlUGNCd2NQQVhTQ2VhZmFLZy9Edk5KVVFUSjNxNVBJRzVsdEZQ?=
- =?utf-8?B?VVdXK1hKNzkvQ1MxUm1ZclFhUko2NkJUMTNhYVR4VlBFemMrTFhlWTRNVUU4?=
- =?utf-8?B?TjlkUlNvMWJDTWgvTXIxTFFUTG1UTldURUNJTFlESm44dDFBVHZlK2dIUEgw?=
- =?utf-8?B?OXpub2tYOXgxVmIrR1ZVTXBHUWhOQllpMW9hQWRwMTRwOWRaQ2Y0OWM4ZTFv?=
- =?utf-8?B?bzdGZTN3cTZmS2kyeHVsdVdDQkVGK2tYbkJQTFVaNDZSeUp2VUZBVnJsdTND?=
- =?utf-8?B?VDR2T1VqSVlFb042emxnQUU1Zk5RdzMrOUFwbzBuV1BMRlczbnN5T0lvKzJ6?=
- =?utf-8?B?UmdSRGVPcStKbll0WUoxY09ESnB3WUtzMXVyV1BKVG9ScnRlN29kWWhZVzNR?=
- =?utf-8?B?cldwR3JYZzdvbFU2alVXZTJkOWRuaFNRcSt0bFpPckZwamx4QXhnWTRQMWlI?=
- =?utf-8?B?VE9HQUZVaWpOeVBrNE9LZXhuRStGdWpySVhyckJkQjZVcU85LzI0bGx1RGlL?=
- =?utf-8?B?NzJ0eG5vQzZVOFVoZlppdXFBL08yRDhiYVlxMUVJQ3ViSTgraFJDSmdsUjRF?=
- =?utf-8?B?NjlCMWdLUHZzUisyemt4WHZiTjUyck96YTdQVWI3KzZhOXhLNEpXY2dqMlEx?=
- =?utf-8?B?RWEvaXVodUMzSG5PdlJYM0hxS2FoWGU2NVRPQVdWQkZXVnRSakliMFBtNEg2?=
- =?utf-8?B?ck1UY1lmRHYxNzhNWEVhb0wwcG9za1pubjFCRkFnYVZsZEdrSGk1WWN2WHQ2?=
- =?utf-8?B?b1ViekpMcUFDY21Ma2lMdmNnT0NpMEZQdVpZUjhGajNCRGlhZjFqUS85QldD?=
- =?utf-8?B?WEZFd3JEK3JoYUJSMVVKeGNkanlSeHdzYnZBMEtzVG1KRFF6VkVDanpwekN2?=
- =?utf-8?B?dFhyVG1OWmVtYWxpSmNKUmhnaHgxNTV4eURSWjQ3NGhCSzRKK2ZIOFRBLy9h?=
- =?utf-8?B?bjdsS1VNaWtVSGwrMVAwVjM1MlY5UTh3Skp5SkMrbWxPamtRL1Q2WG1YUGl1?=
- =?utf-8?B?SGliWklPTVlvMFc1eDk3OTJnOXBhZnQyRjFzNmxTektvVkFnODBCTHhRPT0=?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V2pqSkVjTklVTFJjY0Y2SzdtNk9IUFoxcmEzbGg5dVQ5RDljQSsxMTJKYjB6?=
- =?utf-8?B?YmFYWlc0UEV0UFBLTlZwa0FZMmdtdlg4L0QvSjE3QlExcGY5dzRwdDYyNXFX?=
- =?utf-8?B?MWJjWWlKOGc0RTZjZjZrbVBWSk9rL1QrSWJaTmc3WGpFN0lRT2Y4TkpaUkRC?=
- =?utf-8?B?RHE0VFNRWUdSZDljUlQ1eG1oOUpKOWQrSnFJaG1abWlwaTd0SU9JTDFaRTJu?=
- =?utf-8?B?MUdTV1hHWThRcU1DTVFpN1o5Q2IrR3J6Qy9GeXEvS1JxNm93RHVvYWc2QWdH?=
- =?utf-8?B?Qm9hL1dISzhPdVMyRmMyUm5odjBUeFZYbEplSGEyS05ua0JIcWVvbXFjUVhY?=
- =?utf-8?B?bEVwVW9pTTZNNjdDZi9vOHBJTWh4WThWOTN1ZFFJS2Z0bnNabXNzN1RFTUNG?=
- =?utf-8?B?NDMxSlE4SGJhS1BueHplWTRJZUpnRnlFUjJxTExjUjVnV0VPMS9EV1pxTm82?=
- =?utf-8?B?czU0RnBieTJSRyt6czZpTkVHVTczdzhvaFIxWjhLWEp1TEJhdXBYSWlOZ01J?=
- =?utf-8?B?Y2hZSTRnL0VIN3hOZ0VIcmJFTnpvaEQyeXo3UUVKbTlEM3FlaWNmcjEwT0J0?=
- =?utf-8?B?K3JFalBpNFdOUjNLTmZFNXNGVUQrbVIyMVFLQ09qWHhpUUtiay9MTWxITTVG?=
- =?utf-8?B?K2RWaTN2Z2c3RVQyQWMyRzh6ZXFFblhtdlFyT1RhaHdsejVNcUYrN2FyTnhy?=
- =?utf-8?B?c3YwRlMwOGFIM0ZDRG5zandlT002Zi8vWUVQRUd4U252WnQ5WFQramlEcGZk?=
- =?utf-8?B?WEIyemhnY0ZYaFJDVUgveU0zMkF0cFpKSWxLTUFJRUNsQnJPZ1JXU0ZiKzhG?=
- =?utf-8?B?UDlONG9FK3FralUwV3NDT3BlSVJiRXNIQlZPc2I5TmpwTVY5dEpvUWdtL2d0?=
- =?utf-8?B?aExMc08xanJ5VTdkZUErNldrbGVieHNldUMrRnNlMVp3Y0REZi8rdXJvTkUr?=
- =?utf-8?B?aElMQm1YMW41ZHBLOFE5b2pEQnFQRlJFNFluM2JEalpNbXpiYytGNGtWRzI0?=
- =?utf-8?B?Z09Mb2dqMFM4bDhqaW1pNmhXZjQ3WlF1d1A0QmJmWDh2T3dTZHcrOEpwYmVL?=
- =?utf-8?B?S1FFREJGNHFIYUk4bFJqK3JPOGZrWTZFQVg5WmxvVUxxSGd6R2EvamtMd2p5?=
- =?utf-8?B?VzlPT1h0cmprRWtQb1NQVnE5K2h3ZVMrYXlBZDJJM3JYenlzbG5Ia3UyeFJS?=
- =?utf-8?B?ZUtQY3NwYVE1TkR4Y0NlaXdYZmwwNmNtYkNZY29tMFJnY3F6NWJ1cUdqbVYr?=
- =?utf-8?B?bGZBT2ZaSDRZZHNqdkdNdTFoaHY2cTFkQktnUFBvMU12aWMzSUVZWXZFV0Zl?=
- =?utf-8?B?SzI5M01KV0MwWE9ULzcvemFlTi9tV2JPOTlaRVFza0FaRnRRTERvQjFvZm4z?=
- =?utf-8?B?Q1RHdjJHdUhEcjlaUjZ6anlPb2RPamFpdEJsQlBCTmFSdXE2bzRTRTVnTGFO?=
- =?utf-8?B?VlNCeVErend1bVpjUHFyTGlZZTlrdHlmcU5XVlZJWW1LVGdlWGRPTjQyTE9I?=
- =?utf-8?B?NjA2bU1zUTVvT0RuN1g4bk54RnVBMTVFaXpuVFREOWNTMUxVZWlDalUxSUU0?=
- =?utf-8?B?cSs5YWIzYkxZVlhxNWZDQ3Y5TUZiWHh3R1FDempSWm9OY20xYnZYTkxadDlr?=
- =?utf-8?B?MnFXSkx1OVVPVlUxaG5tYW44Z2hNTkgwWjZlZGJ5L2VSR2NsNUlEQ0JJVXRN?=
- =?utf-8?B?bEplQ2NwQ2ZBSGM0Q3pYazFqU29ESnd0Vnd2MUJEV0pkQTJBQXI1WVJXbi9n?=
- =?utf-8?Q?G88YD4JqgqCadJeLGU=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c4a47ba-efad-4b08-bc22-08dd565ff6e0
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR01MB4527.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 12:20:32.4914
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB6080
+References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
+ <0449ff75-0a6b-4c1e-bf12-ff052aad5287@redhat.com> <Z72-AP-yQ2hPwpKe@google.com>
+ <657f10ed-4e82-4048-98ab-1c4b65349298@redhat.com>
+In-Reply-To: <657f10ed-4e82-4048-98ab-1c4b65349298@redhat.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 26 Feb 2025 13:21:39 +0100
+X-Gm-Features: AQ5f1JpRBblxfE48EKs85Q8pbMMgiuSClFK4hMJuxnVUG4HT_JiUqeb3ib6VHjM
+Message-ID: <CA+i-1C01x3CUf_pVEZCmr-rWV26-JZoRoF_uBkchOhobraKGvg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/4] mm: KUnit tests for the page allocator
+To: David Hildenbrand <david@redhat.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 26 Feb 2025 at 12:52, David Hildenbrand <david@redhat.com> wrote:
+>  > > It seems possible that very little mm code cares if the memory we're
+> > managing actually exists. (For ASI code we did briefly experiment with
+> > tracking information about free pages in the page itself, but it's
+> > pretty sketchy and the presence of debug_pagealloc makes me think
+> > nobody does it today).
+>
+> At least when it comes to the buddy, only page zeroing+poisoning should
+> access actual page content.
+>
+> So making up memory might actually work in quite some setups, assuming
+> that it will never get allocated.
+>
+> The "complicated" thing is still that we are trying to test parts of the
+> buddy in a well-controlled way while other kernel infrastructure is
+> using the buddy in rather uncontrolled ways.
 
+Thanks, yeah that makes sense, and I agree that's the hard part. If we
+can design a way to actually test the interface in an isolated way,
+where we get the "memory" that we use to do that is kinda secondary
+and can be changed later.
 
-On 1/23/25 13:51, Jiwei Sun wrote:
-> From: Jiwei Sun <sunjw10@lenovo.com>
-> 
-> Since commit de9a6c8d5dbf ("PCI/bwctrl: Add pcie_set_target_speed() to set
-> PCIe Link Speed"), there are two potential issues in the function
-> pcie_failed_link_retrain().
-> 
-> (1) The macro PCIE_LNKCTL2_TLS2SPEED() and PCIE_LNKCAP_SLS2SPEED() just
-> use the link speed field of the registers. However, there are many other
-> different function fields in the Link Control 2 Register or the Link
-> Capabilities Register. If the register value is directly used by the two
-> macros, it may cause getting an error link speed value (PCI_SPEED_UNKNOWN).
-> 
-> (2) In the pcie_failed_link_retrain(), the local variable lnkctl2 is not
-> changed after reading from PCI_EXP_LNKCTL2. It might cause that the
-> removing 2.5GT/s downstream link speed restriction codes are not executed.
-> 
-> In order to avoid the above-mentioned potential issues, only keep link
-> speed field of the two registers before using and reread the Link Control 2
-> Register before using.
-> 
-> This series focuses on the first patch of the original series [1]. The
-> second one of the original series will submitted via the other single
-> patch.
-> 
-> [1] https://lore.kernel.org/linux-pci/tencent_DD9CBE5B44210B43A04EF8DAF52506A08509@qq.com/
-> ---
-> v4 changes:
->  - rename the variable name in the macro
-> 
-> v3 changes:
->  - add fix tag in the commit messages of first patch
->  - add an empty line after the local variable definition in the macro
->  - adjust the position of reading the Link Control 2 register in the code
-> 
-> v2 changes:
->  - divide the two issues into different patches
->  - get fixed inside the macros
-> 
-> Jiwei Sun (2):
->   PCI: Fix the wrong reading of register fields
->   PCI: Adjust the position of reading the Link Control 2 register
-> 
->  drivers/pci/pci.h    | 32 +++++++++++++++++++-------------
->  drivers/pci/quirks.c |  6 ++++--
->  2 files changed, 23 insertions(+), 15 deletions(-)
-> 
+> > There might be arch-specific issues there, but for unit tests it
+> > seems OK if they don't work on every ISA.
+>
+> Just pointing it out: for memblock tests (tools/testing/memblock/) we
+> actually compile memblock.c to be used in a user space application,
+> stubbing all external function calls etc such that we get the basics
+> running.
+>
+> It'd probably be quite some work to get page_alloc.c into a similar
+> shape, likely we'd have to move a lot of unrelated-for-the tests stuff,
+> and think about how to handle some nasty details like pcp etc. Just
+> wondering, did you think about that option as well?
+>
+> The nice thing about such an approach is that we can test the allcator
+> without any possible side effects from the running system.
 
-Gentle ping.
+Yeah Lorenzo also pointed me to tools/testing/vma and I am pretty sold
+that it's a better approach than KUnit where it's possible. But, I'm
+doubtful about using it for page_alloc.
 
-Thanks,
-Regards,
-Jiwei
+I think it could definitely be a good idea for the really core buddy
+logic (like rmqueue_buddy() and below), where I'm sure we could stub
+out stuff like percpu_* and locking and have the tests still be
+meaningful. But I'm not sure that really low-level code is calling out
+for more testing.
+
+Whereas I suspect if you zoom out even just to the level of
+__alloc_frozen_pages_noprof(), it starts to get a bit impractical
+already. And that's where I really wanna get coverage.
+
+Anyway, I'm thinking the next step here is to explore how to get away
+from the node_isolated() stuff in this RFC, so I'll keep that idea in
+mind and try to get a feel for whether it looks possible.
 
