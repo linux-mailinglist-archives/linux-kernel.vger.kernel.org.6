@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-534903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1705A46C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:30:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44A3A46C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C519E16E9CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E243A50FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67C91E1E01;
-	Wed, 26 Feb 2025 20:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8E226D01;
+	Wed, 26 Feb 2025 20:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bog87JRo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN9hkMfv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8B24438B;
-	Wed, 26 Feb 2025 20:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B54B4438B;
+	Wed, 26 Feb 2025 20:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740601841; cv=none; b=bVptL0h90JwW85aamN/WZvl3ev2HVxnsCv/1DSoYuBhlX+lWBctKF8K6oYIF/dEAhQOjeuKrzf9fP/CpNyK00rjbyEQFX+xFPIBf7986nI77XB53udsMi6hg5mp3fFM+cgvjCL79Z5hxRkWj1WEUpN8MiYH7JjiWY1AE69Vip/U=
+	t=1740601852; cv=none; b=M2Z+WIHEcGtYJMMb9CUZiqiot+JZP33bSuWyG93JAISD6ABcnaV93K87e5xrzS25OJOaaGP4QSsJbDorfR4ohuvoo2YiSSPt+6+s0gOkulMdGwiDV8WhZevKrlvTGRjxLOimcnHRwoL3rlCbnpZbL/uuDc0bVz/G1zw0dt0mVCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740601841; c=relaxed/simple;
-	bh=wZTCWf6ZebZc0yurgS6uOME+IY65fpn8ucRzbLvZEuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LKQbXlrk4Cd/9POfhBMspUb79SZHYcrJsZ4kSHLuptew6EzOo5BvmZQ9WdY3xTT+v5zPuUaUMNMTXDaWJwHvypujeXqQojFOTA6h10AVV/GvtGGchUZlyeZrvg1Q5vYsCQIT4CWEv12L1y9hmrVMpw3cYWO5l2os34AxB4MTCQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bog87JRo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B7DC4CED6;
-	Wed, 26 Feb 2025 20:30:40 +0000 (UTC)
+	s=arc-20240116; t=1740601852; c=relaxed/simple;
+	bh=FOpMpPdnsC/Ffhw7zqdqp5avU6Q0msmffQzJVlfldJU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=in+1r04UL3rEsBLVaiPJ1gW7v+DldCZ3SwrABZhEB9J41z0bE/toF5PmSw9fm5KSLDMP1EKtq/tBdsAcJsnVApTReE+gU7Xo9hjLsORKH8KfIDlgo+F4ChoD0fLhzAY72gBigcE0akDwQAhQgAvscgFjnD8WCUTuE3JQ0+7sX9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UN9hkMfv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372F9C4CEE7;
+	Wed, 26 Feb 2025 20:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740601840;
-	bh=wZTCWf6ZebZc0yurgS6uOME+IY65fpn8ucRzbLvZEuc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bog87JRoUr35Ua+nDXLhR4CvKuyz/6jzbVtHG6XTLy/rffkOAclE36VRuoGYGVku0
-	 mojYrOdH/nGCDCVS2XVzZOBeh5idlZD2qpRpwCUF50BaR63DvO0UDUp6ISViTdIRXt
-	 ekOo6UZ5qHIXSSGqcjPRQ9+Kuyucqg9qpQs2AvbGgEikgpE4x1mHvCjVmxAG1Talau
-	 ove7itQ9i6iMIZQzrj0rEATMt4TaEFXMNMFALDYli5lb5pC4JYo41Q8a4B5P4HRKkB
-	 W1m+ObYx6KAYND2+bYmb6cD4pQl4yMQKSoZNu/0CMreELUd5I+XEHSYdlxdKLHEeJb
-	 Wrh4ZFat6zXaA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	James Clark <james.clark@linaro.org>,
-	Song Liu <song@kernel.org>
-Subject: [PATCH] perf tools: Skip BPF sideband event for userspace profiling
-Date: Wed, 26 Feb 2025 12:30:39 -0800
-Message-ID: <20250226203039.1099131-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+	s=k20201202; t=1740601851;
+	bh=FOpMpPdnsC/Ffhw7zqdqp5avU6Q0msmffQzJVlfldJU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=UN9hkMfv6Ptd+9HnLi61p5HRBCNfi9pDTQCzWHW3XFcc/VCLIgKBbmtPwSg8XHg3p
+	 bvEdOoPPGq6HN2xCXj3qCCkTPLJ5sjWzoGf4e9ZIYMhVei2I8xercP9HEwtqSiguxw
+	 ZxDSkfeahO83/b9wWRfaqBN5tqTWQe6QOAdpiLoxR4C0bnG3CmFk0pF4PDr5wCc0I8
+	 Rwq5ETB/woGlNhURrVmgAs4svNBpAzKZRriTFqejyHwtIG1V4pIk+rOSfnw4O5ezyz
+	 L+f/uj0nMyG7/iOnlMMZs7feTMcEmqWy73hzCMi6KzddtF7cW3ZHpRqmKkueSAgHQW
+	 O7HSiLxSatEfg==
+Date: Wed, 26 Feb 2025 14:30:49 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ devicetree@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+ linux-gpio@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ kernel-team@android.com, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lee Jones <lee@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+In-Reply-To: <20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org>
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
+ <20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org>
+Message-Id: <174060184807.3654907.17826939583833772128.robh@kernel.org>
+Subject: Re: [PATCH v2 1/6] dt-bindings: gpio: add max77759 binding
 
-The BPF sideband information is tracked using a separate thread and
-evlist.  But it's only useful for profiling kernel and we can skip it
-when users profile their application only.
 
-It seems it already fails to open the sideband event in that case.
-Let's remove the noise in the verbose output anyway.
+On Wed, 26 Feb 2025 17:51:20 +0000, André Draszik wrote:
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+> 
+> This describes its GPIO module.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
+> ---
+> v2:
+> * drop 'interrupts' property and sort properties alphabetically
+> ---
+>  .../bindings/gpio/maxim,max77759-gpio.yaml         | 44 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 +++
+>  2 files changed, 50 insertions(+)
+> 
 
-Cc: Song Liu <song@kernel.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/builtin-record.c |  3 +++
- tools/perf/builtin-top.c    |  3 +++
- tools/perf/util/evlist.c    | 14 ++++++++++++++
- tools/perf/util/evlist.h    |  1 +
- 4 files changed, 21 insertions(+)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0e45bd64185403ae..cc61f5d6c599039c 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -2535,6 +2535,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		goto out_free_threads;
- 	}
- 
-+	if (!evlist__needs_bpf_sb_event(rec->evlist))
-+		opts->no_bpf_event = true;
-+
- 	err = record__setup_sb_evlist(rec);
- 	if (err)
- 		goto out_free_threads;
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 6440b5c1757d92ce..c284a384542ff822 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1833,6 +1833,9 @@ int cmd_top(int argc, const char **argv)
- 		goto out_delete_evlist;
- 	}
- 
-+	if (!evlist__needs_bpf_sb_event(top.evlist))
-+		top.record_opts.no_bpf_event = true;
-+
- #ifdef HAVE_LIBBPF_SUPPORT
- 	if (!top.record_opts.no_bpf_event) {
- 		top.sb_evlist = evlist__new();
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index f0dd174e2debdbe8..43adf6b3d855771a 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -2594,3 +2594,17 @@ bool evlist__has_bpf_output(struct evlist *evlist)
- 
- 	return false;
- }
-+
-+bool evlist__needs_bpf_sb_event(struct evlist *evlist)
-+{
-+	struct evsel *evsel;
-+
-+	evlist__for_each_entry(evlist, evsel) {
-+		if (evsel__is_dummy_event(evsel))
-+			continue;
-+		if (!evsel->core.attr.exclude_kernel)
-+			return true;
-+	}
-+
-+	return false;
-+}
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index adddb1db1ad2b25d..edcbf1c10e92f0c4 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -435,5 +435,6 @@ void evlist__check_mem_load_aux(struct evlist *evlist);
- void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
- void evlist__uniquify_name(struct evlist *evlist);
- bool evlist__has_bpf_output(struct evlist *evlist);
-+bool evlist__needs_bpf_sb_event(struct evlist *evlist);
- 
- #endif /* __PERF_EVLIST_H */
--- 
-2.48.1.658.g4767266eb4-goog
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml: Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
