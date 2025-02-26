@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-534017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26D7A46185
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72840A4618A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A781884FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02EDC188E06D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B4822171C;
-	Wed, 26 Feb 2025 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42C32206B2;
+	Wed, 26 Feb 2025 13:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AJty9foa"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZuyzHR4F"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D73221544
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEF94A1C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578355; cv=none; b=jLyUUD5QpyjdkmJexkmT4JxhX1DVtJ/zZBpcShdDOiuZ/+n6T8lbHJ49fDY61iT6TU25IFI0NCFFrOIR4+7rGDzSmvEXtM1QbMx0LR+eGfXH5ZkGL0X8L5cdFtnO6EoqEGm5Z1FISujj10ZL1eYF8g+tGxTh6r5huQUVfp7ijMA=
+	t=1740578369; cv=none; b=C00HKhmDO10IPztgDf1EzC0yN7XL78KNar1PRyJcizoW+a0IgLJPk2UGecrEc4HPsbc8zi6BwS9k9GjmGGM9HlP7lXmV4J+/kTcBCQswIxlzTRpmv0yD4I1jA553qUI0OdIYdohFFrF5kfdtd61ZwnITPuNMOcra2XQiFkxBnxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578355; c=relaxed/simple;
-	bh=B6vNRR24vZm7iSTdEc4QXuLRyq/IRPqoeXQGjK0c00E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DOmYhLKRtQUpJFPjTaUPym9t2hGvIgJP2xdEEa1Mb7K71VlzlTV0R1JfBud+yvvXvLqja7GOb4mrTD+3IrFji0OaQcgqrLxILzmr5dRHSol2ooMef0+yI2feTmwXPwPB/6EEH86WKKidlbrMWC99EbFpPWnqtirCCuoOZGyFEzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AJty9foa; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abee54ae370so239959166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:59:13 -0800 (PST)
+	s=arc-20240116; t=1740578369; c=relaxed/simple;
+	bh=FaNJbP28GrwA0xqX71qpviLKU4s/iLv9ygoXh3IRVjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AZRMuWP5ObIwcanJM1adnc6AiILxeaMtApGR8hsHu8As6tS9x8Q14D+7iOrQlalo0AImOfd9bBA3KxB52yp9b74uuivp6hq2A7UbhemraeOHLOTe4NQzTSwse4jsU/zB7OkfXhIJQudwEY+orwDXUadBAaaLju0GgcWPB9h8c9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZuyzHR4F; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0892e4b19so803976785a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:59:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740578352; x=1741183152; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=436GsJyLmwRgLe/Pi/bM1GPjpxKDesYcznC8EJvTAV0=;
-        b=AJty9foaOFCNTcFISDPOiUln1DzprL/0pvfUnI4hP/loPrclGot4zA3rANemzNkXLW
-         At/kJmMf+ASZyzFMurB56acxTTvx4+jG+Yo2oImY7mCAAmCrDhCqgWZYPM7fegBkHpjR
-         VVKK7AUNHZ8QHoqRkQhh0V7NREkjgfx7NIIwwHa8S2uQIXCso+u/bIi6yAEoG4wFo077
-         lVl+umbE0gC/nOjI0G9MflIyJi1g2LUh+AZ0UnsaQgbSOlzete1zsMYz5QlqKyKkdaRO
-         WS98/aBa26lAiPTXX7Lon6MPjiTt6TDMY3LDbk4HHycPkAOnckio8hkF43xbta5UeKTA
-         lAkA==
+        d=fooishbar.org; s=google; t=1740578366; x=1741183166; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnxH9uSAX9kLW2aHAnB9zwl34wSWVlyTXJAkrl1jEgk=;
+        b=ZuyzHR4F9nTkh0hJEqM5eDJYvG5YjFNxFPRCN0gROJHzrlLUQwPk6cMV8WNy9pR7Xz
+         T80WwPsdG/7xy+/ypqUJ1KzQQle/di6TYQ6jp9t3GQlDys7j47zR03cAQTTDXRWQ8SPc
+         W0Eg+K117v+9Do+4SpnI5sAozVeK/e6L2qQsThnjJR/VzCe7fROxPBKOAfHVNDP7uO18
+         ph13zmY8RrqO9pmxy2JNDRY889QU/NOjL+/0wOaTdwmQ5tVYvtEgPESZt8F/+LmSyzwA
+         HFM8BZHnIkg5gS08N7N1+bfvkv1IEtp28krep4w5+SfcGnok3/+iF9ETy/coen8D6d4Y
+         OTEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740578352; x=1741183152;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=436GsJyLmwRgLe/Pi/bM1GPjpxKDesYcznC8EJvTAV0=;
-        b=lliVlPNFu7TcmLdxsPLDcSEg3a2bsV4QXz5QMAr4ry66QPQJmJv7baK4qQFaVYRDBY
-         lVDsMtW5QkRWGe9pXmeY9oXF8GU+uOYlSaeKLpGkXjQ5QKThQkTIfaeAdBz4slqcubw4
-         UIKRyjpBQQnuii4j2J0xOrHcrYYHjswepyR8L7abJKklBuVwiOzP90MyXblMJNttwdJ/
-         8OhquUB+2jMxuBCLsQO4MBYExkd7FggEWaDNYc8PG+I6CI2uaysj+25KqoHIOVkj/J07
-         zxIaRsdBtuwk+2CzYcDGsB+SqxCcIPjZ7q6oUl+2iJl+0tbYPBLJ8qMr+j8va29o8oNN
-         pcQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw5PlA7lYKeVUQq/kvS4pFn43lPYGWPMwqShoRX9592KNgjK8ADA73FtdYwpOlx2hw3xVQzHMSo8a7SUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnI8aHba7xI0Rg4CTjNW2Ugx1+wMjVih0QvghqlS7ig/QHDxE6
-	s8TsfKSLYCHm+jzWeDcXfIqjYgJrrdzc0KYebdKer1+k1x6yrpwjiGjzJ0+IUSA=
-X-Gm-Gg: ASbGncttG90JcqD4MCiEAJdCDiNyBWl5RRaNW/hES7yUKtX91KfscLEWa+gg6DoYwUz
-	+rRwBdsDsR7XOLEU5MutjBpSC+lBgVzAoCGFggWeAc3ZgU+6i7E2LENuTYiceL77dgGyMRnNNIq
-	HcuW1laSVZtKl1fHCYfPwqC1ruY5g5sA4zYdJIDh1cmZCpUqis6QSIlNFw0IYQZf9r1chM5GFS/
-	OLIuFEzn5yVqlGzSCKW/XlRhoDIpRIo9v6pDm/owB/ye4dyK0eZ+hB8yKAkVqyoY3mERhtWxKPd
-	1bW7psekNgwW2h7J1y6kaRSy
-X-Google-Smtp-Source: AGHT+IE5ZCJikWYBQYNCfYeCZ7i01fPaQ1YL5PYutRrdkWV8ZfElsYhJmfpfgT7H3II/AP9b0v/4mA==
-X-Received: by 2002:a17:907:7706:b0:abb:c7d2:3a65 with SMTP id a640c23a62f3a-abeeef64485mr389483966b.39.1740578351780;
-        Wed, 26 Feb 2025 05:59:11 -0800 (PST)
-Received: from [127.0.1.1] ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1d59391sm335378766b.56.2025.02.26.05.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 05:59:11 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Wed, 26 Feb 2025 15:58:55 +0200
-Subject: [PATCH v2 2/2] leds: rgb: leds-qcom-lpg: Fix calculation of best
- period Hi-Res PWMs
+        d=1e100.net; s=20230601; t=1740578366; x=1741183166;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QnxH9uSAX9kLW2aHAnB9zwl34wSWVlyTXJAkrl1jEgk=;
+        b=MhFx0+oVLQt3I5nFwEY5TOqqdd+WMG9ZNaj2Hz+AenZL4fXllh+ywJPrkKjE4tThQI
+         yiCx1wtnNyOM4YaFQWMfOt1ZHxm04BJfMHSTVwj8SKBWA4Fhk/J16Xk9wBj6AKhSC6N+
+         EMKo+d68Sj1upHxQy+V6PIhswbWn6ylNdh6kefPbC1FwEmfyHnHdLvL+wkOedeR2Am8O
+         oNMfNdHVJ7YrxSCan9rc0yMjMeL+ujSCbSeDdEN5XkVcSD6SgVdGmKeDsJ1e2qmde8nt
+         XC2qUdspaJfTmcmcjpBrI0V43Hb5YbRIGiLc9PoPjwihi7BgUZnFeD6laptkrybLPyhU
+         5QTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUY7/VIgCw5/Id2Z8m5pVYC+rW9ChAkjWL4kOOia60IjBnZcMgE5OvXHldwCAm+fW83UJzCqrIWDWTcOC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Fk3aTFORtltL17n9OLPM/0n0SHGPOuqJdlsWzR/FIdl5CoN+
+	jfUPxZYAAs3n2GFxY0TmEe+uytct05DcK1GQvIU30svPi7Y4gvQ9ex9c078oTVZel9JF56rN2WS
+	/T/90rX9C+RgLD6FyaMkzRroz2cQpPwxuqhvvbw==
+X-Gm-Gg: ASbGncs1YydEcO8tWvObRbssSokIsVGN++Q1Oij7cKLUVLaIieB6rr7PhNY2Sqk9kCk
+	e2oj+o3D1PtffqNT+CWE67SrZAyi+vj60v9CLz+75c7sMH9U7QC08r8ZtNT9piT5NUC6wtLgfoD
+	splVyV
+X-Google-Smtp-Source: AGHT+IH3LH2E7qdLqaSbVmbd0vwQgYzSLFH3zYoBT6JZblmu5a/hbpYOUjW39/0dbNVn1kAPYr4FC5G28TPPww11BC4=
+X-Received: by 2002:a05:620a:2453:b0:7c0:7aab:9b43 with SMTP id
+ af79cd13be357-7c247fcb787mr576156185a.40.1740578366648; Wed, 26 Feb 2025
+ 05:59:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-2-7af5ef5d220b@linaro.org>
-References: <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-0-7af5ef5d220b@linaro.org>
-In-Reply-To: <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-0-7af5ef5d220b@linaro.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Anjelique Melendez <quic_amelende@quicinc.com>
-Cc: Kamal Wadhwa <quic_kamalw@quicinc.com>, 
- Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2125; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=B6vNRR24vZm7iSTdEc4QXuLRyq/IRPqoeXQGjK0c00E=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnvx4qQlcZWrwEMBg5/sca45Aic4oiGh3wo+wat
- QxqpZiktruJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ78eKgAKCRAbX0TJAJUV
- VpcOD/9avCUtmDTMHZbfSFIgp5PcEQzz734ZCCgByqtIk66s8J7P8Ssk5NGSJ2FdPbW1rnKkd9k
- qUdvQBApJpc6D23MzZURiVTANNCrnK6g/VyPHRPHI3LHwBN6pmgPUzaDQe8zPPqOEouXXToFcxm
- bHGP8OaM+isg2DJyL5+KXRCG1LuMOqFVDOBQT1g9TeMdE1QXwWj4uQfUOL73tAhXaYjXRMiButy
- tPMx9Tk8lDmfpKqJJ3T9BXv0NRkLJLsbhRnEzhWqvcpu1Dpa95OkzfduDzMmD9zkpc+9NmMPhyA
- BBBxRHYNuU6xuIEhTjentojQGNJyN6FSvh4QPF/bZX4QG404U+Hp/vfpZEvaT92IcUtx9sWZB/4
- mdvPjal7XDY1u5hW7HD1d9nfLNvv/v9DPyL7MBYDXcv55JeIabLdQM2oaTQ+wg4HPoqWglAJkIq
- bLIAGRbwuEcYFjbbjPYL28XzWKKYtRUpoU3UZdHVWyet8HpOAtf7M7eSPmAHMHXLzmD7jEnqlRp
- b8b6ijyCibnOMivunZWBbFA34qMVdi+a6+jEYN8YuLHIXs4dNQxq9R8tISx39iKxE5PZ5jzpCSn
- yi0XbiH2/NC/yC2MpdR89E111LpqkptQuElxYqIf78UohQyelGaoqXm9LbwMm9fnDj9nZ1CoMnc
- afCK0DsTY7N4UyQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+References: <20250226135415.363605-1-vignesh.raman@collabora.com>
+In-Reply-To: <20250226135415.363605-1-vignesh.raman@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 26 Feb 2025 13:59:15 +0000
+X-Gm-Features: AWEUYZmmxdS5ypGHcyPPeldS7LVaWK9H32Imx1ThxzBXN-bcd6PFnzxtamWHxx8
+Message-ID: <CAPj87rNAaPUEmk1edcuHX1+bMWysF=aOMceUsCxnk2SMJUjqKg@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/ci: fix merge request rules
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
+	robdclark@gmail.com, dmitry.baryshkov@linaro.org, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	valentine.burley@collabora.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When determining the actual best period by looping through all
-possible PWM configs, the resolution currently used is based on
-bit shift value which is off-by-one above the possible maximum
-PWM value allowed.
+Hi Vignesh,
 
-So subtract one from the resolution before determining the best
-period so that the maximum duty cycle requested by the PWM user
-won't result in a value above the maximum allowed.
+On Wed, 26 Feb 2025 at 13:55, Vignesh Raman <vignesh.raman@collabora.com> wrote:
+> Merge request pipelines were only created when changes
+> were made to drivers/gpu/drm/ci/, causing MRs that didn't
+> touch this path to break. Fix MR pipeline rules to trigger
+> jobs for all changes.
 
-Cc: stable@vger.kernel.org    # 6.4
-Fixes: b00d2ed37617 ("leds: rgb: leds-qcom-lpg: Add support for high resolution PWM")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/leds/rgb/leds-qcom-lpg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks a lot for fixing this up!
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 146cd9b447787bf170310321e939022dfb176e9f..5d8e27e2e7ae71c19637b90cc15eb363c53317d9 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -461,7 +461,7 @@ static int lpg_calc_freq(struct lpg_channel *chan, uint64_t period)
- 		max_res = LPG_RESOLUTION_9BIT;
- 	}
- 
--	min_period = div64_u64((u64)NSEC_PER_SEC * (1 << pwm_resolution_arr[0]),
-+	min_period = div64_u64((u64)NSEC_PER_SEC * ((1 << pwm_resolution_arr[0]) - 1),
- 			       clk_rate_arr[clk_len - 1]);
- 	if (period <= min_period)
- 		return -EINVAL;
-@@ -482,7 +482,7 @@ static int lpg_calc_freq(struct lpg_channel *chan, uint64_t period)
- 	 */
- 
- 	for (i = 0; i < pwm_resolution_count; i++) {
--		resolution = 1 << pwm_resolution_arr[i];
-+		resolution = (1 << pwm_resolution_arr[i]) - 1;
- 		for (clk_sel = 1; clk_sel < clk_len; clk_sel++) {
- 			u64 numerator = period * clk_rate_arr[clk_sel];
- 
-@@ -1291,7 +1291,7 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- 		if (ret)
- 			return ret;
- 
--		state->period = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * (1 << resolution) *
-+		state->period = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * ((1 << resolution) - 1) *
- 						 pre_div * (1 << m), refclk);
- 		state->duty_cycle = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * pwm_value * pre_div * (1 << m), refclk);
- 	} else {
+>      # Build everything after someone bypassed the CI
+>      - if: *is-direct-push
+>        when: on_success
 
--- 
-2.34.1
+Should these be when: manual? I think it would be good to align with
+the rules we have for Mesa: run automatically for marge-bot and also
+for scheduled pipelines, but in all other cases (MR context but not
+scheduled for merge, direct push to ref, etc) be manual, so we don't
+overwhelm the CI by testing everything everyone pushed.
 
+Cheers,
+Daniel
 
