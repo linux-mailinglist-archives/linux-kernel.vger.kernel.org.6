@@ -1,108 +1,81 @@
-Return-Path: <linux-kernel+bounces-533318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4137EA45849
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:31:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6034BA4584E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115741716C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA52188A602
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FA1224242;
-	Wed, 26 Feb 2025 08:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AgxYcLK+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0001E1E19;
-	Wed, 26 Feb 2025 08:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B51224252;
+	Wed, 26 Feb 2025 08:30:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D731E1DEB;
+	Wed, 26 Feb 2025 08:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558634; cv=none; b=Dc06yHHdXgOEVFvy896xfTl0zDu+TlX6L8P3xq/dHUwlzLDH0Fn8v2bqRczIUWUBFAHxQry45yrQyqLWr0aw1FqnMcX4F5roUXcLBRkT8A6JXpTjEInuOc1XWJCXmGmwyBa8iNjfmuT5cwip6jfCl+YWTA4DkgJzQuYNhvAabt4=
+	t=1740558656; cv=none; b=HTrdKwlMN4uaWwDyLRHZx1JN8ZEJ02HwmGe1PKhwAVssKIU0R3SOAkuFVcDpDd2GyptX01SvhL0cNs6U6iPaN3oqsYu1kgLekC1a7vy6JcBaVJLywu9PjwRypfZyur1EyAo4UIAdvVRKJEyXZH97UNR93lHlfUva3IvwsH3HsZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558634; c=relaxed/simple;
-	bh=q18//s8n8pY2gsTThR86DC4iH15g7zncNdFsfg5rVOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/78sB/Yv4ANUudqbRXXLWU2q2WGzyfa+D9OrpdENaVd6xQD/9DlAxdVNNy7gBflyraHglKPAJgJHTw1yP9BoeGjwPFR1r+3GO3eA6DuTrX4bbku8wYtoUINpNoe+4+oivtA+FG7Qi7mIMS4fSC0YaFCpNwbf+Uv3BBhg0hm3nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AgxYcLK+; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740558633; x=1772094633;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q18//s8n8pY2gsTThR86DC4iH15g7zncNdFsfg5rVOY=;
-  b=AgxYcLK+0pHsaVATMeM2yIoAEO4tyV8EOuIo41WoYQmfj2EpaKqWwC/D
-   HGAlxj456cW0I59PD4de9w7gpjW5xQpLM+MHN3eNGayThGuBZ4pp6Bwms
-   ASPhxg/HtpoJOMxktxCGXR6BumHrSIfp5icIFGsvqDaRQsXTRtWRypsZ1
-   N1SUwz33VjFKqxL+DcQd/IA5WrfqhHKFA8gt76Kh6pXt6uSPGjqp48NJe
-   s2m3MHZ0vltmmEdHSW5c7zB9PyedRhlX629g3Qw9Vv59WhMLGO3OEwgL3
-   P3mFLOEOkhwkIYVoCckfO0g2Dr5P3AIvAwNlHJlceQKn/TIWgZXXT38GP
-   A==;
-X-CSE-ConnectionGUID: 0dHe5HTBTCOhv7EIhIM3bw==
-X-CSE-MsgGUID: GI6edK7hToaujhlMD7M3Fg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45176357"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="45176357"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:30:32 -0800
-X-CSE-ConnectionGUID: 2TV7sHHxSPShoc3oxu3twg==
-X-CSE-MsgGUID: CnqJZI44QNizqN6m1bzo5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="117123195"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:30:28 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 06D0511F944;
-	Wed, 26 Feb 2025 10:30:26 +0200 (EET)
-Date: Wed, 26 Feb 2025 08:30:26 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v4 2/2] of: Align macro MAX_PHANDLE_ARGS with
- NR_FWNODE_REFERENCE_ARGS
-Message-ID: <Z77RIg-i-_ZgMgJW@kekkonen.localdomain>
-References: <20250225-fix_arg_count-v4-0-13cdc519eb31@quicinc.com>
- <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+	s=arc-20240116; t=1740558656; c=relaxed/simple;
+	bh=8W1YS7kw1UYuPTog9vP2KQU1oV+SEgE+lxrN/xiMMxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X16I2PEN23sCU+IKTPVOs9Oi2tEIZVAP0XxiaZV5+9Btx2ypWroNUmBxoOP4IHjcFzFOihWx0yMKd4ecqOUloX9kvrWBNHDeLpOaV8HvQBOgNp8BEQZ1dIT9Q/OSwZzMyuxWGSWIeHRGhyvXmdblbz939fu0OgEtYN9j4dUv0ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4719D1516;
+	Wed, 26 Feb 2025 00:31:10 -0800 (PST)
+Received: from [10.57.78.248] (unknown [10.57.78.248])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE2A83F673;
+	Wed, 26 Feb 2025 00:30:47 -0800 (PST)
+Message-ID: <14fefa3a-9522-4995-8e51-662e80ae1747@arm.com>
+Date: Wed, 26 Feb 2025 09:30:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] mm: pgtable: make generic tlb_remove_table() use
+ struct ptdesc
+To: Qi Zheng <zhengqi.arch@bytedance.com>, peterz@infradead.org,
+ riel@surriel.com, vishal.moola@gmail.com, david@redhat.com,
+ jannh@google.com, hughd@google.com, willy@infradead.org, yuzhao@google.com,
+ muchun.song@linux.dev, akpm@linux-foundation.org, will@kernel.org,
+ aneesh.kumar@kernel.org, npiggin@gmail.com, arnd@arndb.de,
+ dave.hansen@linux.intel.com, rppt@kernel.org, alexghiti@rivosinc.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
+ <5be8c3ab7bd68510bf0db4cf84010f4dfe372917.1740454179.git.zhengqi.arch@bytedance.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <5be8c3ab7bd68510bf0db4cf84010f4dfe372917.1740454179.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 09:58:07PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Macro NR_FWNODE_REFERENCE_ARGS defines the maximal argument count
-> for firmware node reference, and MAX_PHANDLE_ARGS defines the maximal
-> argument count for DT node reference, both have the same value now.
-> 
-> To void argument count inconsistency between firmware and DT, simply
-> align both macros by '#define MAX_PHANDLE_ARGS NR_FWNODE_REFERENCE_ARGS'.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+On 25/02/2025 04:45, Qi Zheng wrote:
+> Now only arm will call tlb_remove_ptdesc()/tlb_remove_table() when
+> CONFIG_MMU_GATHER_TABLE_FREE is disabled. In this case, the type of the
+> table parameter is actually struct ptdesc * instead of struct page *.
+>
+> Since struct ptdesc still overlaps with struct page and has not been
+> separated from it, forcing the table parameter to struct page * will not
+> cause any problems at this time. But this is definitely incorrect and
+> needs to be fixed. So just like the generic __tlb_remove_table(), let
+> generic tlb_remove_table() use struct ptdesc by default when
+> CONFIG_MMU_GATHER_TABLE_FREE is disabled.
+>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
--- 
-Sakari Ailus
+Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
