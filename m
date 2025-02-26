@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-533015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83012A454D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:21:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8FAA454DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A4E16FC10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972B416755E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C20214203;
-	Wed, 26 Feb 2025 05:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8131B2343CF;
+	Wed, 26 Feb 2025 05:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2cK3MWu"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PHUKbaGX"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2DE137E;
-	Wed, 26 Feb 2025 05:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FCA27702;
+	Wed, 26 Feb 2025 05:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740547304; cv=none; b=YfBu+ljoxBYshXtHVGb1mz2Vhk3XPkVIQLMogcldxNjOkcOeZNj+2xwjgBdnpL7HYsOudmiFKJWIxZzcU2FLi4vSKCg7B9QBoWM3hi2m8LZRXlJEgihLdDBEjXfFMAKN4lxvVGGz1pqxqkaoGlYY0gNlhA3nnuL4pBqyPguSrqw=
+	t=1740547482; cv=none; b=u5rFYhXpN4Ksy4+lAVP/kt38ymkm0fMJQ4T0sors18sWRQmhUNCMxH0bD9d8dLZF2Q+oIxPQb15QaK9iW1T7YpCLQQHvTNC/QkhghZT1Tff7QRaZiG/SU/uFOneLP3lDv8Q2vTkS4kbF6wtxo/pexg+pOziCaJWgLnDZJtj0kXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740547304; c=relaxed/simple;
-	bh=5u42TaZfiT7kHxPhHJHkG8B3VXwDOaJxgtIfoAyv++Q=;
+	s=arc-20240116; t=1740547482; c=relaxed/simple;
+	bh=G90pOcWX1Z+SzDLPl0A42IQphLvwAP2qZb1GAd5q7v4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OjQMaX5wPhMicPd87NqqGz10odrLrguGv+IDDJhWiHkb4Ggk6jfM3Hpq+qSTJaE4Cjj9R7DrNdoZAEJSJg4SwcO1DsplN+otZgQfIVVnmAhBId/iqvPcpDoj6v64x04PtaW0NIuVSj/2LMST9ju05Ysz0D0w1o1oyU3Ms7L9fqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2cK3MWu; arc=none smtp.client-ip=209.85.208.41
+	 To:Cc:Content-Type; b=rlHtILmEelA8ckViIuWDktTJ3eXoLqII3pqQ11xTL5tBng2jcRM/3DDANBV5JGQmwb1pLhSE8ciodhvbMMvUuY0sVITOs4QZuDzmopZosUvqxnw2qwYp1w0SpmBkPzHc44mWEij3nmvUUjRWlvuiTO6Fci7Ctjk+A6noJIqh1UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PHUKbaGX; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso39927a12.2;
-        Tue, 25 Feb 2025 21:21:42 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-438a39e659cso42010015e9.2;
+        Tue, 25 Feb 2025 21:24:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740547301; x=1741152101; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740547478; x=1741152278; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ilb2rxBJ3i7v6d7nLIk5GihtEfmnK3ceocDgl/ZfviY=;
-        b=D2cK3MWuAfq4GbSi/FlaDQL7ZOEkbWJjTJG+gJ8HLgpOr8yu9nwU0z7dnLypk8BQdi
-         RQslU7wCeNMU9+giWC+jgF5SPSWNoHl1QjKaLYv1Af6D7tHg7Wtiry9X8GzulgvMSndK
-         FySx7BT7MeDVXMLd85pBVV3aGsyqyDxvASpEuUKW34YIZh7BXuOkeiMW0uzgikBqdMRU
-         lK6patDYKu0gVGAsFrO6ZBQgK3qSzZWjiFEwoI7JUv8lGtyyJeLdt74n7WH5Y8qEC+gX
-         kB4065T+qo04J8sE2gVYUt10//ofl20ba3UktA3hHlFYEZoZZOCIx4d4QTwOjmOSJEI3
-         /DsA==
+        bh=Fi1ogS3Az0I6GJStO1RYp2yegcWsiDecxnayl6kiJM8=;
+        b=PHUKbaGXF6KuEYjSMmbo0kwwOkOJ2EgBjpZYreoPZy1/+tsKgjJYMo/Y3gGkEcYcWK
+         uLwDlTiIzpTkzBqi23PH02liHDYNjQ4QrAwYtxqqjHaBKlK4eeSsj4Hdp6g+XpOcto9j
+         Z0nup7BiNvozus0G9BhwZgjkxNfbny3hFqXUP76xU2FyzYnPt8F0a7XgvVl7XtlCzvNm
+         Xs26pcMvCYg7rF+whNcuEjl3ojPLOytGUb9d9P2I0WFvj3JkgdXVm9YCN6br7f8uV4E3
+         mhvauxeA1nBRL3HyH46k8EhEmMzLOqzoR+MzLvYdSN18nTC0SkYUwPFgU8cSdyZJuAu3
+         34Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740547301; x=1741152101;
+        d=1e100.net; s=20230601; t=1740547478; x=1741152278;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ilb2rxBJ3i7v6d7nLIk5GihtEfmnK3ceocDgl/ZfviY=;
-        b=eXZyeYIRjj7Q+HYOnQTnvi11avoyAPkTHGnfUZyQedM2CtfwsdTGmoOu9vY4YjhXrd
-         mO89uYTEkpMR9aatEDmSrYdS+wROUY91fG3B4x/sVeHnN4PJoaFLUJmNNX43BsU0tPqV
-         sAifKRDqzmQf690Ye2Nkgg4uFqJSZRfiaiHFSayGuffBWYorHxJW7Ivl1Hv+B5SaHHVk
-         owAUAiFoNzD+7HMQeDNXNDeCbz5v9aF1UvJLm5NdDbss8/t+9OPFP15KW5EhUFiL3dDc
-         S5BDdbS+iO2sWwMOq9wVlUAiMY4mvv6c3+5+5q5vcSSSiu/l/zNdQIyV1i/DFF8PGar5
-         TJ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk1ufrNceSzi3dV9LRgP5czASA5tmV0YGHsZSikN/3KOfiKEDvLL/+E2rk1I8UAxh3Ulul0O75qQA=@vger.kernel.org, AJvYcCWLSYSHQWqs4ewo5uL3jflVnSD1tiI25FzcWAB/HsACZFKdj8go5ZPvnqioBIO399AJRtxC4WcLm3v9r1/M@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGqagbAHhnizOOzxOvJ22Vc3XyS/1e2n0WOER7kcs5hhoEvaTO
-	gW7tGA7eVyiVf5lL6dixi0mJsgQtYvkirn8AIRLYEQkXDrWiLGdE3ZDueHviXZthFkMr5rR+eD8
-	3giTiubJaTymnFcDyr8sJkW8tE4A=
-X-Gm-Gg: ASbGncvnM5ftglSzyPVurfpLZdRB2pLlq0dHowVz+n9rOdYdf5+rkH2VZFuEIxY/HqX
-	RpJBhkTT+ficQ0ieU7V2KSwH3SZ7/dznFquLaftBftw97X4dT3wN5GhsrSpEEXRc6mjg5Ojm4fX
-	SMhN7X8Vn69g==
-X-Google-Smtp-Source: AGHT+IE+W97F9VNY3wyKM14FFFnj1CjB1eVhl7K+LtH0POkui0vVywM4ZUS9T6BfUlUgp2gR6UdEaPszqmSqMJY7hUs=
-X-Received: by 2002:a05:6402:1ed2:b0:5e4:96b5:1b20 with SMTP id
- 4fb4d7f45d1cf-5e4a0e1349bmr1851415a12.22.1740547300660; Tue, 25 Feb 2025
- 21:21:40 -0800 (PST)
+        bh=Fi1ogS3Az0I6GJStO1RYp2yegcWsiDecxnayl6kiJM8=;
+        b=mmub+RHzWO03wpE908nwJZPNFsNPzFvxhDO3ZYRpicT+2rKoyRQy3G8tK/fKas5mlu
+         TE8UB4ezZB0rWkpp63dRk8t1sa9WqAcrgsvK6vzuvUfGnnp6osARMNKF8jvjgRptgyLv
+         42eWI8Sl7qBGL5oeeSytQuQ45aQE3dqrPIKldZztXmprlkY1nWx0NP/gt2VLGlgo2NXk
+         PKaBCQ/8duFdv6rao+OhTUWQWvePSwdBZKss5Bmnti/mtMv+yw8IXHPZkcDbZKExov4S
+         z1UBYcLju9Ourhqu8l35pUOHgyHsBtdaTVVBidU8vlutOaJAri22EpQeyLI/byGnxUZw
+         qaAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU44qhZ+V+pRlXmV3/VH0OHQao7fw/EeDPV+QRsWyzcB9O2zmpL7xQLrn+KsAe7Zniyn+A=@vger.kernel.org, AJvYcCWh3cPpfmAUHhj273WznDFV+rtmFEscWdbJPhLLKtWmg4R55TNaxl3wgWUHb7gGW2VMaLwEkWbjYESorEDO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl/o09pAgLos6IbUBlWHPj7UETFHVpl0vTYQN9vlBIL6ZXkcUG
+	9T5BWN/tPu2ZXBHORMedD0fPzStOxVsLlSOaPMTZ7zDsexURoktr+9ymBnuI7qdEyABPHxR73c3
+	fgWOiFfJuUUWMb6yriKcvefRltGs=
+X-Gm-Gg: ASbGnctK00lNWFHXzKhoSc6IpF01E563CDM1ORJE3tCIBXjjdxmYyWOcCErjUriqUIp
+	CFYM5NAq2spAzfpStzVJxfc5cArge+TMfn52cgmGEmURkS3t9NPqZrDRI8GyQzyyAEUhHrF/ucb
+	XQHAm+OSql0zau5Xp41goPP9I=
+X-Google-Smtp-Source: AGHT+IH/wvoBjrtKyvFZospHbq6cBCwFLwpGP8TtU9MZ512+kxHDitWtBKTVcRhrgza9XtFLNJNwnKv1O5Z1gysZJ3A=
+X-Received: by 2002:a05:6000:381:b0:390:d82d:6d51 with SMTP id
+ ffacd0b85a97d-390d82d7242mr320054f8f.29.1740547478410; Tue, 25 Feb 2025
+ 21:24:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226014942.2586561-1-yaxin_wang_uestc@163.com>
-In-Reply-To: <20250226014942.2586561-1-yaxin_wang_uestc@163.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Wed, 26 Feb 2025 13:21:14 +0800
-X-Gm-Features: AQ5f1Jqpi5uAVgci3pGRFDhCrjRk73KISMHA5f9W2dbyPZfHqmZWbXcTT7f0prQ
-Message-ID: <CAD-N9QV1vukcXNNtmasSjkWAAVHFi6D42RvUF572stDgmO7FLg@mail.gmail.com>
-Subject: Re: [PATCH linux next] Docs/zh_CN: Translate msg_zerocopy.rst to
- Simplified Chinese
-To: yaxin_wang <yaxin_wang_uestc@163.com>
-Cc: corbet@lwn.net, alexs@kernel.org, si.yanteng@linux.dev, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, 
-	yang.yang29@zte.com.cn, wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, 
-	he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, 
-	zhang.yunkai@zte.com.cn, ye.xingchen@zte.com.cn, jiang.kun2@zte.com.cn
+References: <AM6PR03MB5080855B90C3FE9B6C4243B099FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080D59AD7DD5B59E1FB14E599FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5080D59AD7DD5B59E1FB14E599FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 25 Feb 2025 21:24:27 -0800
+X-Gm-Features: AQ5f1Jr2UIURRp1Lti-ppy57RX2Us7w0EeeDal7_mR6RAGvM0IXB54MGpg9AtXM
+Message-ID: <CAADnVQKnJCdW5OCs338W4ts_mn6JVw7fD5U6w5o6dtc4DSJQrA@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next v2 3/5] sched_ext: Add scx_kfunc_ids_ops_context
+ for unified filtering of context-sensitive SCX kfuncs
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
+	Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 9:50=E2=80=AFAM yaxin_wang <yaxin_wang_uestc@163.co=
-m> wrote:
->
-> ><jiang.kun2@zte.com.cn> writes:
-> >
-> >> From: Wang Yaxin <wang.yaxin@zte.com.cn>
-> >>
-> >> translate the "msg_zerocopy.rst" into Simplified Chinese
-> >>
-> >> Update to commit bac2cac12c26("docs: net: description of
-> >> MSG_ZEROCOPY for AF_VSOCK")
-> >>
-> >> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-> >> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-> >> Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-> >> Reviewed-by: He Peilin <he.peilin@zte.com.cn>
-> >
-> >So how did these reviews happen?  I have certainly not seen them on the
-> >public lists...
-> >
-> >Thanks,
-> >
-> >jon
->
-> xu xin and he peilin are my colleagues. They helped me with the internal
-> review of the document and did not participate in the public lists review=
-.
+On Fri, Feb 14, 2025 at 12:13=E2=80=AFPM Juntong Deng <juntong.deng@outlook=
+.com> wrote:
+> +static int scx_kfunc_ids_ops_context_filter(const struct bpf_prog *prog,=
+ u32 kfunc_id)
+> +{
+> +       u32 moff, flags;
+> +
+> +       if (!btf_id_set8_contains(&scx_kfunc_ids_ops_context, kfunc_id))
+> +               return 0;
+> +
+> +       if (prog->type =3D=3D BPF_PROG_TYPE_SYSCALL &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id))
+> +               return 0;
+> +
+> +       if (prog->type =3D=3D BPF_PROG_TYPE_STRUCT_OPS &&
+> +           prog->aux->st_ops !=3D &bpf_sched_ext_ops)
+> +               return 0;
+> +
+> +       /* prog->type =3D=3D BPF_PROG_TYPE_STRUCT_OPS && prog->aux->st_op=
+s =3D=3D &bpf_sched_ext_ops*/
+> +
+> +       moff =3D prog->aux->attach_st_ops_member_off;
+> +       flags =3D scx_ops_context_flags[SCX_MOFF_IDX(moff)];
+> +
+> +       if ((flags & SCX_OPS_KF_UNLOCKED) &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id))
+> +               return 0;
+> +
+> +       if ((flags & SCX_OPS_KF_CPU_RELEASE) &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_cpu_release, kfunc_id))
+> +               return 0;
+> +
+> +       if ((flags & SCX_OPS_KF_DISPATCH) &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_dispatch, kfunc_id))
+> +               return 0;
+> +
+> +       if ((flags & SCX_OPS_KF_ENQUEUE) &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_enqueue_dispatch, kfunc_i=
+d))
+> +               return 0;
+> +
+> +       if ((flags & SCX_OPS_KF_SELECT_CPU) &&
+> +           btf_id_set8_contains(&scx_kfunc_ids_select_cpu, kfunc_id))
+> +               return 0;
+> +
+> +       return -EACCES;
+> +}
 
-One suggestion is that you can cc your patches to a public mailing
-list (e.g., https://groups.google.com/g/hust-os-kernel-patches, our
-club mailing list) during the internal review.
+This looks great.
+Very good cleanup and run-time speed up.
+Please resend without RFC tag, so sched-ext folks can review.
 
-So reviewers and maintainers could search the thread from the Internet.
-
-Dongliang Mu
-
->
-> Thanks,
->
-> Yaxin
->
->
+From bpf pov, pls add my Ack to patch 1 when you respin.
+The set can probably target sched-ext tree too.
 
