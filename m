@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-533524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A79A45BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:24:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0341A45BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9462C3AA47B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB20188F6C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0353E2459D0;
-	Wed, 26 Feb 2025 10:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BAE23815E;
+	Wed, 26 Feb 2025 10:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hbh0LX3O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hjnxnxtx"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC242AB4;
-	Wed, 26 Feb 2025 10:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8CC42AB4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565472; cv=none; b=nmQMFbfRJet0YZR6jASTlqdLFHhs8XnjIgoFCFDgV5vIopZaWlZ4olHxLZQ+5zfn05d8YpjO9LMnJTEut1XzKGmQxLMyF+YZIjQwsc+ZEzTx8W7Aaeyd1eEO5j8WVOsGC80YfD89PmeToEXNHCAEwa3p36qBsl5WygH45A/xPAk=
+	t=1740565482; cv=none; b=H6HBMRa/oZbwiZDF359vEKNCLqZWrqR9MxzLYsmw0SZLQ6v2LNc97TB7uBbnrbY2evdBWvc58+Y9vdANYH+5mLF0VqBa3EpPySA5PX2BORm1HbJGcVt2V1gEaq0KvoycVeDH9kgL2FE4KcyhW/NmbVxQ8nG11/oD/B+Rqd+xFCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565472; c=relaxed/simple;
-	bh=W3UsMTl1eRoZNqDh2olgWY2KMFo9sL5/ZGwphflCQTc=;
+	s=arc-20240116; t=1740565482; c=relaxed/simple;
+	bh=f8hhLyZlJLg3VVOM9RdCgNWjzvtlFruSMQ7KM6g2fZU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j4laiW0lZU+kcac+rgIN+Ln16ncgcp4E+oakdlvdTY2uusyv+SNVSvQGSd+yd00kjM9G0V18bm5gPiiAzNbO7PYJyKG8eu0Xnz4RFGFRX0dLJQ5B+XmLuZCp8OJ3k6MTZ+6t2fHtRbhK6F83hJb5YKdcLTgyF/Zsf+LtsbTmAlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hbh0LX3O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDEEC4CEE2;
-	Wed, 26 Feb 2025 10:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740565471;
-	bh=W3UsMTl1eRoZNqDh2olgWY2KMFo9sL5/ZGwphflCQTc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Hbh0LX3OvqnEzXqoqBSlj+0QUOI0stsyv5l/YUTRzvHxhxhfJ1LfarmaQqLeK/PPX
-	 Nf21o64OI4SCRX28t4aiFSGyusLwvQx840jKEJHB+fZxT694bEi8IzpYvRbxaXycLi
-	 NJ3GqiVldGVUopIPO1mkyyqrhsJjFgQ+CyLV6SIWddcCZBSG/k4Mxfu/jRD/aCQNDJ
-	 my2P9E+PTlzSEztoe9ys00pcRBMNXsSKf7ead1UPUnlNUK72fqq4Q9SKntdaRVz1zJ
-	 o2aU9/8+I42b4h0S76IbryxhfNP5lJ3+ZdjpP216QDAfp7kYpj6TozMkOIBgRYRkqk
-	 jSnPTfQfm2jng==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5fd28093334so2400227eaf.3;
-        Wed, 26 Feb 2025 02:24:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVONQwkX/4wF3g0Mga9OUzzolRuQAtvs7VeEsOjBeDFjmVkngNHM8xf5euOYc24l9FeP1CEx62hB2v4+60=@vger.kernel.org, AJvYcCW36SG9BsFbnbP2f282T44+SYIJvTRxKUZNuXtPqx/NVBG5qCZTl6vs0cLB1QsYhqfP2GyXVWpXLxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFZFvaVsHyMa3FDxHJmhsGZJ7mwWzo9V/CW5GIDBydJS1sCIYf
-	fX146636A9WEcrlssYTbzafU4hnzhKLi+VwpuCbpEy59MOJTMo+swHzRAmTOf4DfvF2FFK4vEuX
-	rVaN0c45h/S4387E8ZWSo3Q2ZGqs=
-X-Google-Smtp-Source: AGHT+IGgEx4OXnx9BIFtFtCp5NL6tvorlL2rEvgAw6hgpWmJrhzDYNJls6DAs1pEStloVcNXyD5vvTw3VdxBifERd/0=
-X-Received: by 2002:a05:6871:7b87:b0:29e:559b:d694 with SMTP id
- 586e51a60fabf-2bd518598bdmr15408803fac.32.1740565471114; Wed, 26 Feb 2025
- 02:24:31 -0800 (PST)
+	 To:Cc:Content-Type; b=N9RF0Qg1C5VzCDbI5vMkusR2noxhSOPJ3B2PiITnB/WSOZtGWkOnnZ+E7VCFy7HOWoKjH9Lgwub9UlOWhCuPIdWaHq5GgoNpqkof3p0h4aZ4UD1o3DLXFSBYjVJ7ADNbujK7U32DGcvy5r8ukqLPcDSuGCadAUhQQR7K8PowM3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hjnxnxtx; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5452efeb87aso6637975e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740565479; x=1741170279; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVtrqvkPNmYmY0oGPxOkrh36jDkhWLE+ptRBX0xtIwg=;
+        b=HjnxnxtxSy56laJXQZQOmpddTR++OB5Qoumo5tdaqyL2XuinuB2y5Cgm/B0HMr/Mlg
+         CGI29/J8WCLYMOa+oo86sDyZwq736Osei0vgjzw3XItrlutJUC09LyLkU5acMLVN6oB+
+         8UjOwds7Q/0kp35vUoJtmtHv4diI9zAuoyhJsYz0y9N7NuNwfwhItq8t4nrdwCSp4ILK
+         oYoK/x+aajBlfcRIiHvvOxi5DH57bS2IVl1EBUqsjCQN2EdpKU5lb3jnhsLSo1EHKi93
+         Wz3DHA7usFTAxuWIJXsHNLjSBFVG6l65U87JtFQOKT+8Lva9PKVbB1PrNVFLLJuLM3bM
+         lXhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740565479; x=1741170279;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LVtrqvkPNmYmY0oGPxOkrh36jDkhWLE+ptRBX0xtIwg=;
+        b=WCagtRoWVGRUlBuzTdacPRnoclctCMdmfque1+2kkb+ZmDliD+F15nx7DFopXwYbJr
+         /BuW7/DyBkPo6da2abpt5WeuQGXqYIPZR8fB7k7hFlQAM9f0FbMbAICMHd0dVJbD/QfF
+         t3Om+xaToOQtwT3L2BBNHqznmlQNjxiQQymtnje8P7nL8IwbCJrZjXS1jihWRAaAkQ6Z
+         5g5v91NzAzuckjGXcPH4pQZO/OOAGMkeGlQoxUNoZpvTo3UrofDCC3Bpdnu9kNj3vxt4
+         3oYhGfq9n0FP61J1fXPCLU5xSlKh5eU0nRwvjxAEhjJ1YTbYZIt0470JAMdHKjbITjob
+         V0Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqZccBh4sEJH8ajO+Lkl2EMp6OcJLqWHybEn4298P1/gyDBK7ZgBjgqiKY7ndj36VAZx8d+oLqYmdbiRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+w61jDOH8UvXsgF2EcNbToqNON5k1eIleSfuwCFGPU9RlGQ9D
+	u9PRMWEwuBlCnejo/yzLuxePyxMy3vA3G58W5RkyjglLf8CkINyqYwSKL27yaDwNYFl1i9ML7ho
+	EOCQSaw9OzdHlFQC/U61x5vj5rmS+63WK2mhE6g==
+X-Gm-Gg: ASbGncveFX8BpmObRk1v74ywcswg+uiiGbcaJ/qM0EvGA/rsQWvcxkeq+aoeF4gSDPG
+	++RiI1PjOo6H2jcg51H4XSsIXYgloNBlrnYMgpRu6GATUquvcRG1+1OImot50c/NB0UJDlARQ+K
+	bBLus7QGQ=
+X-Google-Smtp-Source: AGHT+IG7rCTedQa3N//tlOn/Z+rwnS1xGhASGu57SObkcmSjqd8E+pQMLoYev9jUwKtQyOyzKJ6ryDKvddvmmgwJH44=
+X-Received: by 2002:a05:6512:2211:b0:545:aa5:d451 with SMTP id
+ 2adb3069b0e04-5493c5837d3mr1960628e87.25.1740565478561; Wed, 26 Feb 2025
+ 02:24:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10cf96aa-1276-4bd4-8966-c890377030c3.ref@yahoo.fr>
- <10cf96aa-1276-4bd4-8966-c890377030c3@yahoo.fr> <22539099.EfDdHjke4D@debian>
- <CANDhNCqdpbi=r81NyXVWBbB5POj5nmrc7qo3r2bi1yYqYBgiAg@mail.gmail.com>
- <CANDhNCqFi1adk_MdejQC1bod5STHPDjaSB9imSGpRtJt3TbW1Q@mail.gmail.com>
- <c1d1b79c-bb2e-4a69-888d-a3301bcbfeb2@yahoo.fr> <CANDhNCreiCQUKccmW1wBtvVzQrfB=xC0GFRO65SHG-+Wfu1wtA@mail.gmail.com>
- <b9b58a9e-eb56-4acd-b854-0b5ccb8e6759@yahoo.fr> <87plkoau8w.ffs@tglx>
- <15f4f44d-6f73-4031-a7dc-d2105672bc81@yahoo.fr> <874j0jhiag.ffs@tglx>
- <5114de6a-e6ef-4459-9570-6dd2245fabd5@yahoo.fr> <87eczlg6ls.ffs@tglx> <87bjupfy7f.ffs@tglx>
-In-Reply-To: <87bjupfy7f.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Feb 2025 11:24:18 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hCqV+=05ojjzvymwC5Z97WccbihCwXT22_my0TRJiWoA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrACA-XbyyVs587zDWqD6pwPNTSLsblqgkJ_LQqoUVOrDE7wdkknfHvWQc
-Message-ID: <CAJZ5v0hCqV+=05ojjzvymwC5Z97WccbihCwXT22_my0TRJiWoA@mail.gmail.com>
-Subject: Re: [PATCH] intel_idle: Handle older CPUs, which stop the TSC in
- deeper C states, correctly
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Fab Stz <fabstz-it@yahoo.fr>, John Stultz <jstultz@google.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, 
-	Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org> <20250226010108-GYA44567@gentoo>
+In-Reply-To: <20250226010108-GYA44567@gentoo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Feb 2025 11:24:27 +0100
+X-Gm-Features: AQ5f1JpPbkJVEZf5u-mwEpqGT95jx-dhaIMZLx12Jfkquh3vL3NT-QkCOF6Pjgo
+Message-ID: <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>, 
+	Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 11:37=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> The Intel idle driver is preferred over the ACPI processor idle driver,
-> but fails to implement the work around for Core2 generation CPUs, where
-> the TSC stops in C2 and deeper C-states. This causes stalls and boot
-> delays, when the clocksource watchdog does not catch the unstable TSC
-> before the CPU goes deep idle for the first time.
->
-> The ACPI driver marks the TSC unstable when it detects that the CPU
-> supports C2 or deeper and the CPU does not have a non-stop TSC.
->
-> Add the equivivalent work around to the Intel idle driver to cure that.
->
-> Fixes: 18734958e9bf ("intel_idle: Use ACPI _CST for processor models with=
-out C-state tables")
-> Reported-by: Fab Stz <fabstz-it@yahoo.fr>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Tested-by: Fab Stz <fabstz-it@yahoo.fr>
-> Cc: stable@vger.kernel.org
-> Closes: https://lore.kernel.org/all/10cf96aa-1276-4bd4-8966-c890377030c3@=
-yahoo.fr
-> ---
->  drivers/idle/intel_idle.c |    4 ++++
->  1 file changed, 4 insertions(+)
->
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -56,6 +56,7 @@
->  #include <asm/intel-family.h>
->  #include <asm/mwait.h>
->  #include <asm/spec-ctrl.h>
-> +#include <asm/tsc.h>
->  #include <asm/fpu/api.h>
->
->  #define INTEL_IDLE_VERSION "0.5.1"
-> @@ -1799,6 +1800,9 @@ static void __init intel_idle_init_cstat
->                 if (intel_idle_state_needs_timer_stop(state))
->                         state->flags |=3D CPUIDLE_FLAG_TIMER_STOP;
->
-> +               if (cx->type > ACPI_STATE_C1 && !boot_cpu_has(X86_FEATURE=
-_NONSTOP_TSC))
-> +                       mark_tsc_unstable("TSC halts in idle");
-> +
->                 state->enter =3D intel_idle;
->                 state->enter_s2idle =3D intel_idle_s2idle;
->         }
+On Wed, Feb 26, 2025 at 2:01=E2=80=AFAM Yixun Lan <dlan@gentoo.org> wrote:
 
-Applied as a fix for 6.14-rc5, thank you!
+> Current this v7 version work great with request irq from gpio, like:
+>         pin =3D devm_gpiod_get_optional(dev, "myirq", GPIOD_IN);
+>         irq =3D gpiod_to_irq(pin);
+>         devm_request_threaded_irq(dev, irq, ..)
+>
+> but have problem if request irq via of_irq_get(), something like this:
+> DT part
+>         mytst {
+>                 ..
+>                 interrupt-parent =3D <&gpio>;
+>                 interrupts =3D <1 28 IRQ_TYPE_EDGE_RISING>;
+>                 interrupt-names =3D "wakeup";
+>         }
+>
+> In source code
+>         irq =3D of_irq_get_byname(dev->of_node, "wakeup");
+>
+> I've made an attempt to patch gpiolib to support three cells "interrupts"
+> syntax, but still fail, it always get last gpio irqchip of four, thus usi=
+ng
+> the wrong pin (e.g: will always get 3 from gpiochips 0, 1, 2, 3)
+
+Right, we need a proper patch to fix this.
+
+Can you paste your patch so I can see if I can spot/fix
+the problem?
+
+I think the irq cell parser needs to call out to
+of_node_instance_match() - or similar - as well.
+
+Yours,
+Linus Walleij
 
