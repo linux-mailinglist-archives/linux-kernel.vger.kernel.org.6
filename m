@@ -1,104 +1,146 @@
-Return-Path: <linux-kernel+bounces-533001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C311A454AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:49:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382F9A454B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A4E18903F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8703A8BF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B606418DB3B;
-	Wed, 26 Feb 2025 04:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D894518FDDC;
+	Wed, 26 Feb 2025 04:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A1QezSnW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Ocj0OMAJ"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB6F23C9;
-	Wed, 26 Feb 2025 04:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FDC1632F2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740545370; cv=none; b=r+JV3judIVqb8vCOmEdkk395obiHulThjgvrfS5TRGkpqnxNVTLYVYHGndF2607dcBG7vxoHRFwfG/8bbwvVXSC4vnogxaodhd13B3G1RdEiESZxg6kM8B0HhcOpqvaMZkEEam2j1s7JtTpolvVVR+nMV8uasvIG6BQvBklp3dM=
+	t=1740545858; cv=none; b=Gd0Z2KCLBnIGi/hsOX6HDaEUyRQmpeYu/lYW9iyBGF+RcOFnw1fNebzomJ/uWGBa09kMgMKW6DLwO4WGR65pjZXJnKqr8UFetgmRf7WKjqRFVAUa8OzS5oDe69rYTtmmIpfldvKC2TLQbkdlsMlE9VemgNzBgAWBax2dHi+OimU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740545370; c=relaxed/simple;
-	bh=6olGzjnBeWPGeuFhbXKTjNtOhLdMNRERI8gSrfoDzCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A+QcILlnwz2VZJfVoAyCPZ/G3Q3t/zmDriMTPDAjnl5x0W+c/kPuoFRUfsejpm4LLTTKI9BaMNxb8JDqb1KQjNDO8LHwXK2QlwQsAnrk93lD0q3MCuhTktrcUe3TZ0DARzmQxeS2gK7SSD9RfjC18CeiBUZ1DRJsRoqE38jtqvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=A1QezSnW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740545365;
-	bh=l+smM60R6iQq9p+ZZTLD7EftOyGRcpR1LyFuCh94ndk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=A1QezSnWNneAL0ntWqdVfltQPTIBiLvViGHBnz52b2W9l6HoMg6LJpPC5eA/rKzeP
-	 FNKT8FK4l7CuXdoMiSpuBRSt+yOheYuR/VAvd17eByNt/ArRpHfyO5P8ASKeS7kRxl
-	 IAfHDKv0kUP46j3kwq8CiWfzsOgC8EcouWl69aCaNolW8R6HLhQJtauFdHb3IKKBDk
-	 rUakJ0GoI2bJ+ZxmHv03CaMKIhpxgYa7MyZsSUusmE6L7m38XgqDkyePrVIAtiClg3
-	 Aycd3fHzxI2yMGjtFIK9CC2FERKdUpcD5rXi1DTy/G9ABIx1AoPZpm3KnRJLF+gZoo
-	 mgYajcHxm/+WA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z2hpF1zcQz4wcj;
-	Wed, 26 Feb 2025 15:49:25 +1100 (AEDT)
-Date: Wed, 26 Feb 2025 15:49:24 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the cxl tree
-Message-ID: <20250226154924.6446eec8@canb.auug.org.au>
+	s=arc-20240116; t=1740545858; c=relaxed/simple;
+	bh=xhqbPG4+GMSn8o791ws1Rw0k2EnLcyKrODLOwXQtM8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRXCK9vMleRVT4hB/HpMRVoosk9+YcVqVXuxSp0gVwDghv7YCr37Q4h/EZk44d5C1QdCu0ncXS0JFQR2o8hwhcoPlmBerR7lErHlF8OxZvsYl+uzxjeZ03LM3o4QHIZ/V25qU9XIjaOHAozLLG7Yob+ykow/qKTnEuLmvKMOPco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Ocj0OMAJ; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7be8f281714so822253385a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740545853; x=1741150653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rx2vdR43aGu8aw7BzqWEnWG1tJkA9ALfWFU1ddi5U7c=;
+        b=Ocj0OMAJaodJ9uoQNJAVJYj2Pma6g1T2pARTEF3oMUJeSBv3Pkrr9JHCBVk0p581O6
+         4CdUMPudFIsBfR5qugnHgTTOyjK61Qj5gXsAK7b/EsM8HmVaCVKhhxR1fuvsqJx5KNUB
+         nJrrKPbMpkwqo9U3czBoICUW8h4aw8SnnjzlVH5JoBYmEN2FQjoblenbR6v1LomfT1Jb
+         gWnifH9S1Weyduant1U5nRt4WCEgE5He4nvW2A7h83TZsdIv0cXxoo/WA3GQ14TI/i4z
+         9wkV/Lcimh04DGE208J8pR78FReIiiHcwNkUkBiQDok5UPIp5v+NA/nemIU9l2DULq0s
+         /bgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740545853; x=1741150653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rx2vdR43aGu8aw7BzqWEnWG1tJkA9ALfWFU1ddi5U7c=;
+        b=hc0eoqQ7CNoOXDq3k3hrNfjH6GMb3Fixfz1sWO41iwa10DySlR7V4HfTB0VmStDjhN
+         1wfQ/8MYcnuPrxSyJe114t/9br7eDsGaYRmxrCxnNjOFl+lGpqUGE7iddl35a0FjoBja
+         S7bO7vDbtlIdYf7MWRFSFoB1MMi/Aa2ejhfCTYBQ0XL8mMxGHU2yKm87hqXNOvhBJX6e
+         ypOY74g8NKEVGF3gaW2H3q/4AQPYsJOYOVZsaWOOqoyHovvJedLENy/HRcMqRmQhKhj0
+         bBgVZpFKjKLDVVY7ZGyNORnlLDVAYRC/V6PhcLgbk8U9F0ehRHtCL6u5TRWm0Xvjmw2P
+         0EiA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5405+ZDYCQyNu39uaiXikpIwAxrnG/mHItX1nkFHiJf4ZvRBs2dOt7y53A/KZxsRjNYHp46UdPB3phYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxViG+SkQmuFbx/E2rzZUDgxE+a0B4gjHrJ2/BQr0q4PPP31LFk
+	m+9uki/x4utEsE6a2D+PoFKJMuwzOVUmYz3IWVtkEJ8JksvYwaN81hwblOdwIA4=
+X-Gm-Gg: ASbGncuxqrRyjB0yoItCjbCCc32vNqnAy0zbmlQ6K2gXhNw/bVBBl+iwN2DDyCVls1+
+	uzmu2gIhwLxi85LHhq+iYRaPKvtYtgUHL5QOokFHjDUmk67AGv+ovjtv+GyeNp+RKOf9B+MBvYg
+	5nux2I9JREB17mG7Sj/a5Q9eSJGqSLKBJge0HmH/k+XClcYefD5E19D8iVVIaNQFtalHFZD8L+1
+	OcHAryuwoxPForNayxtRneRhbToeXkkzlD+8ki+gTTjIihJy9TLGzO4BncQxd1hoZROG92OOQdo
+	CI027uI/fr91M5rubEKWRVKz
+X-Google-Smtp-Source: AGHT+IHXpQr2tIK8axL1NoO+YvHxXBFNOZWB+wrlACns9MHvBxqxlaVoPTBvxRIK5eVJNczA7wRl1A==
+X-Received: by 2002:a05:620a:1916:b0:7c0:c0f5:29ab with SMTP id af79cd13be357-7c23c049b02mr942050085a.55.1740545853621;
+        Tue, 25 Feb 2025 20:57:33 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c23c298f08sm200157185a.5.2025.02.25.20.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 20:57:32 -0800 (PST)
+Date: Tue, 25 Feb 2025 23:57:27 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
+Message-ID: <20250226045727.GB1775487@cmpxchg.org>
+References: <20250225213200.729056-1-nphamcs@gmail.com>
+ <Z76Go1VGw272joly@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oEwC6fCG6nq7dUTOUjoHS7F";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z76Go1VGw272joly@google.com>
 
---Sig_/oEwC6fCG6nq7dUTOUjoHS7F
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 26, 2025 at 03:12:35AM +0000, Yosry Ahmed wrote:
+> On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
+> > Currently, we crash the kernel when a decompression failure occurs in
+> > zswap (either because of memory corruption, or a bug in the compression
+> > algorithm). This is overkill. We should only SIGBUS the unfortunate
+> > process asking for the zswap entry on zswap load, and skip the corrupted
+> > entry in zswap writeback.
+> 
+> Some relevant observations/questions, but not really actionable for this
+> patch, perhaps some future work, or more likely some incoherent
+> illogical thoughts :
+> 
+> (1) It seems like not making the folio uptodate will cause shmem faults
+> to mark the swap entry as hwpoisoned, but I don't see similar handling
+> for do_swap_page(). So it seems like even if we SIGBUS the process,
+> other processes mapping the same page could follow in the same
+> footsteps.
 
-Hi all,
+It's analogous to what __end_swap_bio_read() does for block backends,
+so it's hitchhiking on the standard swap protocol for read failures.
 
-After merging the cxl tree, today's linux-next build (htmldocs) produced
-this warning:
+The page sticks around if there are other users. It can get reclaimed,
+but since it's not marked dirty, it won't get overwritten. Another
+access will either find it in the swapcache and die on !uptodate; if
+it was reclaimed, it will attempt another decompression. If all
+references have been killed, zswap_invalidate() will finally drop it.
 
-drivers/cxl/cxlmem.h:439: warning: Function parameter or struct member 'cxl=
-fs' not described in 'cxl_dev_state'
-drivers/cxl/cxlmem.h:439: warning: Excess struct member 'cxl_features' desc=
-ription in 'cxl_dev_state'
+Swapoff actually poisons the page table as well (unuse_pte).
 
-Introduced by commit
+> (2) A hwpoisoned swap entry results in VM_FAULT_SIGBUS in some cases
+> (e.g. shmem_fault() -> shmem_get_folio_gfp() -> shmem_swapin_folio()),
+> even though we have VM_FAULT_HWPOISON. This patch falls under this
+> bucket, but unfortunately we cannot tell for sure if it's a hwpoision or
+> a decompression bug.
 
-  7d2bffbd7fb6 ("cxl: Add Get Supported Features command for kernel usage")
+Are you sure? Actual memory failure should replace the ptes of a
+mapped shmem page with TTU_HWPOISON, which turns them into special
+swap entries that trigger VM_FAULT_HWPOISON in do_swap_page().
 
---=20
-Cheers,
-Stephen Rothwell
+Anon swap distinguishes as long as the swapfile is there. Swapoff
+installs poison markers, which are then handled the same in future
+faults (VM_FAULT_HWPOISON):
 
---Sig_/oEwC6fCG6nq7dUTOUjoHS7F
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme+nVQACgkQAVBC80lX
-0GwuaAgAg9pEwNAeh/sYN8ASFdt0hZxF5SozzNowgJnIr6nArmWSqloDbpYLfzpt
-CjPWAxPR1eMcNzpU75b3c+Iv5DK/Rsv41ILvHf/vEkEEIxDCxWFXmQnQD/m3BXRx
-30JJtXoBc/66LjkZ+PVSWAuLHq5ztWJQmSDx9XfE0Qe4CXQ3/cymgRI5y9Yq71Ld
-aSEORNJ/xdhfTI9a9Mz07wtmKG2FkuGzOg6gPXLMggyDdoYRArSiOzfO9hyS/AgL
-F6SUs3BaF+S/DsQKMFPi9cBjh9Kyx5nRUj5e3j+xRnMBMLx6e5ecyJoUdaKJUsMd
-bNxep/EZKMRtcANMjYsyEHqwwdpWRA==
-=Y1vz
------END PGP SIGNATURE-----
-
---Sig_/oEwC6fCG6nq7dUTOUjoHS7F--
+/*
+ * "Poisoned" here is meant in the very general sense of "future accesses are
+ * invalid", instead of referring very specifically to hardware memory errors.
+ * This marker is meant to represent any of various different causes of this.
+ *
+ * Note that, when encountered by the faulting logic, PTEs with this marker will
+ * result in VM_FAULT_HWPOISON and thus regardless trigger hardware memory error
+ * logic.
+ */
+#define  PTE_MARKER_POISONED                    BIT(1)
 
