@@ -1,160 +1,164 @@
-Return-Path: <linux-kernel+bounces-533906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9A4A46027
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:04:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B8BA46029
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:05:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B103AFEB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156AF1765C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBD22206B2;
-	Wed, 26 Feb 2025 13:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E535221549;
+	Wed, 26 Feb 2025 13:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8/7CjMn"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idw5Ulc0"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFC11891A9;
-	Wed, 26 Feb 2025 13:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D621C19B;
+	Wed, 26 Feb 2025 13:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575018; cv=none; b=XamUFe2Nlmzftthls4NrY5ny35wVchiwpRy25Wyg9ehpNC0HND+54tZIbcN0yhenw4zWn64UA+zNKhxHTYHflZkhiaAlQYBHmcC396ao8jWFmo4ay00dkQydR9iX11pdd6E35JYWt4wsysaJqVNcAybVMGUthtUnqgsOUA2YW8Y=
+	t=1740575019; cv=none; b=J8oBuKO5Vb7mPGZuKNoEYZuk+/8vBy5c2aGlzjW+XVrGHuMnJRB/m3oLP4naV4J7cwm8lsxurnCL0I3JYDtbSrsiv0epnrazBQiRhGG6l8+nHQrqVnzdMDkimdB1CfjWyi0bYygO/BIyDqOxhBOm4fkcWKHLYZ6QpvHfC8VD6Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575018; c=relaxed/simple;
-	bh=eHXH2xcwHvpeP2rTbNNDIAknPYHbqmdnpV8ggdyjZ7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Svoh9Q7oiPGw3De4tPzQ02Z7xsBUrNa1hzfpCPu91mWRMMx5KQRee3r9+EpFlqhA/no48NzNWW5OUputxjTEu7kOo1BynouCW/2azXm2PgAZv/a8xO5K1dCRa/TJ1dQKjMLI68GBnhau6SEY4IPzP8aN8GJ6COy+sIGFUtEdCG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E8/7CjMn; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1740575019; c=relaxed/simple;
+	bh=8T6tXmiYYvrkr4KlwtHpcA8a60dsrFrQaaLCFu7UZ70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sfh30mAQ2wJFxyb1pONCp1P8BuOpODczb5l0bsqB8xTwA8HAaGi/mPay+qqE3Pn7f7uqY8OQu2BLB5+gOS2bPBZ5gKmGccXPErblpCyelT6xKVO9eyF7eFMdvYIxX6XiLjBhqH8l42o4sxHQUR6RMFuuPMD4oArPuePw2uQg8Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idw5Ulc0; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5461dab4bfdso8013600e87.3;
-        Wed, 26 Feb 2025 05:03:36 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fcc99efe9bso10403942a91.2;
+        Wed, 26 Feb 2025 05:03:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740575015; x=1741179815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOaAyIgCFX8Depn/PozouTZSxlQDaDtgCKWZ+jCIr88=;
-        b=E8/7CjMn1kbAPnjhKJeOSvnDX2ffIHZEor8AXIe9+2OFoPwTvqeyLAHCy9eB719KAZ
-         mC0Hokq/E5lZOUb73xpW/lr+MMPuKoFlpo0Vv2LTldb7dsK1uEFOOylrFOL22przRUsx
-         SCy+01cRq6Zzbv/YBChx9L1oWH7nGO0azfcct55QgPvCEsNTZtKQldrAJsSjixow5dp4
-         DG3i8yrWEIB/DC+Wnbu2XSZUX+gROSFMXFgbWiHXVC7j35MJOklx+LKkto1Yibef0Jue
-         zhaT5Zjr0hmC/3GmeJgWZLStNWwUTR7VmtsrzjsX8BDIDwElW+T66HBp9Y8D+Te53pIG
-         +oJQ==
+        d=gmail.com; s=20230601; t=1740575017; x=1741179817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPeycN86f1xgOWk4uKeGQv6tEJQSGR7VL8YmCabJzZE=;
+        b=idw5Ulc0PvMikk3g0b0NTEwHqVgOO5yA35MmIvQ7tE+rkKpnqVX51Tj7mE/knCNsTj
+         fb6V9PRcsrj3o4YqTCFw8bUCGjVwE/SN10tqejzg/x34KFQaacIv27B3Tf+xBl8YltUJ
+         41WzRzwr366LHypYtPWUcoviY3TkE014AsrowFqqRBzhKWyrPuJ0MWelB42LGDEAV9Tn
+         iUUl6VlaYczB7VPEVVKIrAC9JG+eBuJHCNVhMU35jJWXscmdLVnAjL20NtdOPVUC8bU4
+         c89Y4Nj5PIH4NPoiPizVKJFIBJh44lmc+3enaUHTofkMcAK99VSCLqQCpuSX13Zq3de2
+         FrnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740575015; x=1741179815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOaAyIgCFX8Depn/PozouTZSxlQDaDtgCKWZ+jCIr88=;
-        b=uYMbfZkvLKuCV6LoI/nNhMUjngp9StNET5D9HS9MG07cR78K/ZipnLQMMewu9mUvUG
-         x+UDGwwlQk6rm/yh3U0gZyC8zwPEsf43jhTNy0R5zIPHNufvpBv25/eNNGaLhQfkAPPs
-         OpSPSYbquUD8kbbe+XLuQ3jAa1bROLLgxNPyxF5NoczwhiwgFqNvyAL8a/CcxIYvUjIX
-         lCmcONYpzCD2Z9ri1mRYjfg0YzdnusAKxhsq1DNyQnnH3O/fSaaAO0rdM7Aly0YVRns2
-         mapeV172WeOqfXP6VkhE08YQuWDtpQNE4BKW/t0o3LaTpwgNLYVkkdAjWyS5MSrE32Qo
-         IdmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdd28eGA7olQXiOscqVm2SODPlUG1mMKtWGkPawFIsQ3r0jbp9d7dX7ROt0aikfFHt6uvn3Ni/Ad/bxmI=@vger.kernel.org, AJvYcCXGv35DwHEQmvtUrvdmUNYQf2lNEijIZ/6d8sxkDrKOCbEyeOToZISV648yi/pbkjsxyiqu5kMchFiD/+KY1us=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDWCnDF6OnwshAiIYP3edbyNOtvRBAhRM2F9+1GGymm/zRpOfY
-	s6qFGklOf53dxWE133vtd5f9hCOK/AEjB8Z1YePy7nL/N/+4Y04f92JoVSg3XGQvFygUv6fCdNM
-	j/LZsyu4+O/EFqJa/vq1KfMaRbWg=
-X-Gm-Gg: ASbGncvekjZBzJJp2ydtCTPhasNF0fVqEp1pRpjJuF26XfBibVZt01RpRm2TWdqBgPr
-	kmejou3GfOriJd4jA4pcFNDeN+0ZNeiFCTiA1b1nORLwFqvhgcLE32gAjI9Gv5NzpQbnYQYY2R3
-	k3kNZ/hl2y
-X-Google-Smtp-Source: AGHT+IF4/7i4cn3DiJ773zF8xOQe9L3YSlR5TCr/4/VVZsgTQa7dvgs28vk0rkrTCUmUnVPKqxiqJEINXiihbPUT3OY=
-X-Received: by 2002:a05:6512:e99:b0:545:6fa:bf5f with SMTP id
- 2adb3069b0e04-54838edd8b6mr9406658e87.2.1740575014818; Wed, 26 Feb 2025
- 05:03:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740575017; x=1741179817;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IPeycN86f1xgOWk4uKeGQv6tEJQSGR7VL8YmCabJzZE=;
+        b=qCGg0R/KY1MoXqCqhKrWhP0E06/KG6+xDXKmK84lAuXxa/+Nk9+4aGLRlF82ewB6fh
+         7CPVB2gbgD3H1qo8pu+6O/du8QRRuEfXT+w58gUutc6PXBoyInB1lxvUZLF4gQX5CqlB
+         Hxdfv01Decu/NTqmJovQ6oAtpVkui4W3u3ZRJzN1PFNzm0SJkihyg0QGxYmPT4stvLDe
+         6f9N8JufNKfUoF94ZAhFHI4f90VHtS8f3R+iQZq0ZgTYIiM/sH9Ly8mf0gbP5sTgJKxU
+         EluXwUnqI4s41h9xEpd1rHWsuJwhCwurFXHwogiLvT4mtDumKELAEm4IbhQnwaWq1W1a
+         U9tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbQEQFEl7EWm9lm7YeJCWPiPenXIQbTZtODpn8Tfix6FPpmGIUlaz55u703uDqMG+HCSpg3R6NRhC4@vger.kernel.org, AJvYcCW6Rb7KUrirNEG0F+qlMzBQMPNdZrI5D443lXrO3J5IrX8Te5uHWT8B7JcVI1SY0InkLQu877107QrQPp4=@vger.kernel.org, AJvYcCWE0ziU2DN10Mve8LiMp+JO9p+GhMqnVghUxXSFgOyyBp8vBlHOtrruiZbk2MjYHTPx4WXsSY674WQ=@vger.kernel.org, AJvYcCXr9b4wObLD8TbARkYqOx4zAgwG7pKASfGDlTFN+lzQe6gDCfnfynke/HuFvyASK5OGnONADTSyBNrpVT5j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQLcIavxR5rrAcCClIrtwjO23THope957d/JWWt4igGm9D2fiF
+	s4eBBQFXeAWo9PwRfkdel+hPuA+neW273od1RYMFWfE+twdQg/kRA61zrQ==
+X-Gm-Gg: ASbGncvLGDbguAJiQ96WtyauEesw8UvrLVvHe3r5Z1GWd9eMwkciqOFjbMHx9zMpACl
+	hZkhjtN9mVZeg5STBUESODktqVe+3itufOtkGp/EkVP1+LAcsiBhnms5YE4qtiK2koYLBgFAlvP
+	r/6gSigilwPFHWolIOiDk1oAIMjWKCweIu5F0/2dO7LWQsYvFFz42jcyQ5hmi1GVINwidEHbET8
+	Nuv+AaGQSUUr+zvQfpBOmzpwtQYmw7xC0g05U6GqWyLOBZiEOUo4vNGq18mO+hsXeC6qf+tJE86
+	veWmxZX/iligbyKgknsXn9C+spfVFrTS+mVgvSHSYluAusxuKeLh/gfxPs4yh/4DsTSNGLk0vVw
+	=
+X-Google-Smtp-Source: AGHT+IGgYhj5gsQpPyttqAS3GexKHR9IIhHogREyZHF8AOZjqXjmabp+xGynlia3rdtJXq/nZtHbKQ==
+X-Received: by 2002:a17:90a:e710:b0:2fe:8902:9ecd with SMTP id 98e67ed59e1d1-2fe8902a396mr2253619a91.1.1740575016767;
+        Wed, 26 Feb 2025 05:03:36 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825a98e7sm1414288a91.4.2025.02.26.05.03.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 05:03:36 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7f72629e-50d1-40bc-bf7e-2c54ee62323d@roeck-us.net>
+Date: Wed, 26 Feb 2025 05:03:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
- <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
- <5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com> <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
-In-Reply-To: <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Wed, 26 Feb 2025 06:03:20 -0700
-X-Gm-Features: AQ5f1JoDaaLCqIcdIZhNNBP4aubytjJzFmRPFjw-ljPopqVIQo-B9DJXO1CskAM
-Message-ID: <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] hwmon: (pmbus/lt3074): add support for lt3074
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
+ <20250225-upstream-lt3074-v2-2-18ad10ba542e@analog.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250225-upstream-lt3074-v2-2-18ad10ba542e@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 1:21=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Tue, Feb 25, 2025 at 10:16:17AM -0800, H. Peter Anvin wrote:
-> >
-> > I do have to say one thing about the standards process: it forces a
-> > real specification to be written, as in a proper interface contract,
-> > including the corner cases (which of course may be "undefined", but
-> > the idea is that even what is out of scope is clear.)
->
-> Did it, though?
->
-> The C standard didn't really define undefined behaviour in a
-> particularly useful way, and the compiler folks have always used it as a
-> shield to hide behind - "look! the standard says we can!", even though
-> that standard hasn't meaninfully changed it decades. It ossified things.
->
-> Whereas the Rust process seems to me to be more defined by actual
-> conversations with users and a focus on practicality and steady
-> improvement towards meaningful goals - i.e. concrete specifications.
-> There's been a lot of work towards those.
->
-> You don't need a standards body to have specifications.
+On 2/25/25 05:01, Cedric Encarnacion wrote:
+> Add hardware monitoring and regulator support for LT3074. The LT3074 is an
+> ultrafast, ultralow noise 3A, 5.5V dropout linear regulator. The PMBus
+> serial interface allows telemetry for input/output voltage, bias voltage,
+> output current, and die temperature.
+> 
+> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
 
-Some have claimed that a full specification for aliasing missing
-makes unsafe Rust harder than it otherwise would be. Though
-there is work on specifications as far as I understand it.
+For my reference:
 
-One worry I do have, is that the aliasing rules being officially
-tied to LLVM instead of having its own separate specification,
-may make it harder for other compilers like gccrs to implement
-the same behavior for programs as rustc.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-    https://doc.rust-lang.org/stable/reference/behavior-considered-undefine=
-d.html
-    http://llvm.org/docs/LangRef.html#pointer-aliasing-rules
+The core looks good to me. I don't know what Krzysztof means with "hwmon
+code might need some changes" in the feedback to the dt patch, or what those
+changes might be. I'll wait for that to be sorted out.
 
-Interestingly, some other features of Rust are defined through C++
-or implemented similar to C++.
+Guenter
 
-    https://doc.rust-lang.org/nomicon/atomics.html
-        "Rust pretty blatantly just inherits the memory model for
-        atomics from C++20. This is not due to this model being
-        particularly excellent or easy to understand."
-
-    https://rust-lang.github.io/rfcs/1236-stabilize-catch-panic.html
-        "Panics in Rust are currently implemented essentially as
-        a C++ exception under the hood. As a result, exception
-        safety is something that needs to be handled in Rust code
-        today."
-
-Exception/unwind safety may be another subject that increases
-the difficulty of writing unsafe Rust. At least the major or
-aspiring Rust compilers, rustc and gccrs, are all sharing
-code or infrastructure with C++ compilers, so C++ reuse in
-the Rust language should not hinder making new major
-compilers for Rust.
-
-Best,  VJ.
 
