@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-534702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A19DA46A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:48:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08E2A46A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C43B16C7C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62983A30DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA304236436;
-	Wed, 26 Feb 2025 18:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCAE22A7F3;
+	Wed, 26 Feb 2025 18:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PBE2H7eo"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHoCcHaE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C06822D784
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB621A92F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595619; cv=none; b=XW+S7WoPasBdibuXmEZCjMnjfxnpHrTD90AWTV3v6AMUfDtYmt2UJ4dks/8QN+XXo4d3WYTdOSD51EqanGearboo5j8sTjassHOSbJaNQQVMy5/k5ZcwbUqkXhZq7fq8Yu6UMRJt6ltF4Ie7y3AejE4lsEAzRnPPisb67nNRn8s=
+	t=1740595557; cv=none; b=ppNB+4uDyaUoCDmte4NPf46pqz2XxytTc5oZtyhhpTmki4lWZYId0rJy5O9L5lwqoJZrshojxB/oZe3MST6DXdiHlcRRn+mHX+xoUIyjhO9Kn7GPX69+oimhWSjYrNfXSEPh5gkPBW9QAbcupEI8bsghE1Onpq4wDVBAj5P6VoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595619; c=relaxed/simple;
-	bh=JodBzx7M4AQGobZza2uhbaZSvsPMslokXhqcEliSGAY=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=UVk9RfCE+USb4JQktK5PdsK/AYy51jCKJ0SMtlvpOZW7RXa7QNMJN+oXZYn9KDjuQAvQ3P1IIEgGPjfB6YJQj/h2amLtoHGIkLtDLweskxpLhaQLDH303WjkWorzIPlHQhw4Oj/Yhq1EoHEptzxQdBHD86/R6MGrsWBGgaqHYLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PBE2H7eo; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43947979ce8so606975e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:46:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740595615; x=1741200415; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sOguHpycwUX8eihJ1N7vZXsBa1ko3FW4hupJ5yAhZ8c=;
-        b=PBE2H7eox33eoJAMIFOS5adyQ4BsMfq4y8S8zbjWu7hL6InF3QJ3wbp1ytKyEEGR4d
-         9buwgOgC4sxsCItSrRMPBwT2YwCKyNjaol6kQThPCF4ukv3VqzbqAv34xkXC4nyBZ57q
-         qamm0Z8I+ZyOcDpIRgn0JXH+07BEXI24YN8UGrgO90HtuRL/5124S7O4zG2uRRl9lPJa
-         EVhDhvRx3VUL7cs4PnU4YYK50JuwCMRkk5rRaWp8f/9FQvLEke1RPIYp60Bg2eg9mNub
-         98Hk3WyxyCfki+8NBSGZLUcLVUusgSe3gplK440Ztb9zgmuzAZraOuhlM8FYNbEGYWda
-         ddTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740595615; x=1741200415;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sOguHpycwUX8eihJ1N7vZXsBa1ko3FW4hupJ5yAhZ8c=;
-        b=DN6Wf7cgwOHJm2gcHnPsnzPEhjzW74soXsgvKrpmo/TH7VBnSCx1A34NJL8OIQLdSG
-         tXBLwAzQoAJagAqtrJZqu+sdxlaoqD5PZIQNZ1VOo770hhmDVjuh9B4lJ6Z1BV2FNi82
-         qaFEDuq5e5Ug1cnpGZlxtvCdCgGmYiPEHenAGRAvxwy5yPRMBhWvDAp0CU8pafypBjqg
-         xZAj0TRVi4p7aaFkEOqpdmVM4wNW9KGBwFk/ZBInc7ANtQ1cic8vd45SL816NjnRUFws
-         ozXVKOTw3+QTfMEV2fqLEknrLBeNvLHbl1zTkrvdx1hfB9kZx86LRXFdrdzN/K6uRBaf
-         3d5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3fqrpVH5UIvS3SXsFRUUzc0NKvtVq7f9NNHpKmFTcAghm8DWOI3q3zie/1TXdasATgZudt7wc8m+KDaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGbns9iHtH+4cevGF1l6H115yT//8RDoKvGBadIYvhmpdkbTFj
-	dp0Q6XbXACMtAuYvpOJVU9PjFx6lxtLhdDJ0GhXkEVRcbBV8h4EdvOycKfojfiUo4311FtSvlO+
-	at4kMNFnHGQ==
-X-Google-Smtp-Source: AGHT+IHASSc7e4RmQTri0Z7g3+xd3N5kxnQGr9pL116mxIOSxNQO+ye9Qs7fGUpkV1t41+kDq2AToRr56faLhg==
-X-Received: from wmpz20.prod.google.com ([2002:a05:600c:a14:b0:439:9558:cfae])
- (user=derkling job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3151:b0:439:a1ef:c242 with SMTP id 5b1f17b1804b1-439ae18fdc1mr219774895e9.0.1740595615641;
- Wed, 26 Feb 2025 10:46:55 -0800 (PST)
-Date: Wed, 26 Feb 2025 18:45:40 +0000
-In-Reply-To: 20250218153414.GMZ7Sodh_eQXqTNE2x@fat_crate.local
+	s=arc-20240116; t=1740595557; c=relaxed/simple;
+	bh=l7UD7IetAj7BmrCoDO0U0uQx/vTHlH3SaHjBpIIiXwo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F121YALFof6F99elxrAYZChHxCN3qPzkzCaJYzmlQCY77pljltSg56GLm50JfY85KYbDVPZ5J28Rz6ZtQZ7EG28K+5l+Tzi50Y/PCTm1SHDjLxc/h7qo1ws2/zFroCWFU621DnmJTUW7LkwLV95ko6765WNyFS40GU6mte+Z2+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHoCcHaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC58C4CED6;
+	Wed, 26 Feb 2025 18:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740595556;
+	bh=l7UD7IetAj7BmrCoDO0U0uQx/vTHlH3SaHjBpIIiXwo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gHoCcHaE6zHSuAJOBBTmSXgjrkQwNsFNU+3QHgpgWz47MT2/kNVqBR0KK6ILdr1Yj
+	 NR+lhGDlUw6ppeSmY0xTyMvMGEm2OX7k5u0/cWa/YJJHx0BmMVZMbb01qRcGvLgIUr
+	 bLOUyv2tuQnaGUPQqKejvmpYWOViVWCJOBV647o//9XYxpPauzd3EA/cICfkNutxeS
+	 I8ZTcVa8UqdhUIKJmqg/Z40uFXU0NeFmLYGI3wWQognmPAO2+gwtjx8CgpCQ6t4Xyk
+	 VP9agKNXiTXmdCT7y9CUj27BYAhINMi+HfCqqW0o346swVwR+ghr4aXF5fTFY69nqm
+	 wb6XgpdaCQnFA==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH 00/11] nvmet-fcloop: track resources via reference counting
+Date: Wed, 26 Feb 2025 19:45:52 +0100
+Message-Id: <20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250226184540.2250357-1-derkling@google.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Patrick Bellasi <derkling@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Patrick Bellasi <derkling@google.com>, Sean Christopherson <seanjc@google.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Patrick Bellasi <derkling@matbug.net>, Brendan Jackman <jackmanb@google.com>, 
-	David Kaplan <David.Kaplan@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGBhv2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0MT3byy3NQS3bTknPz8At1EMxNLc2OLJPNUs1QloJaCotS0zAqwcdG
+ xtbUA6pQdMF4AAAA=
+X-Change-ID: 20250214-nvmet-fcloop-a649738b7e6e
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-> On Tue, Feb 18, 2025 at 02:42:57PM +0000, Patrick Bellasi wrote:
-> > Maybe a small improvement we could add on top is to have a separate and
-> > dedicated cmdline option?
-> > 
-> > Indeed, with `X86_FEATURE_SRSO_USER_KERNEL_NO` we are not effectively using an
-> > IBPB on VM-Exit anymore. Something like the diff down below?
-> 
-> Except that I don't see the point of this yet one more cmdline option. Our
-> mitigations options space is a nightmare. Why do we want to add another one?
+The fcloop module is mainly used for testing, that is with blktests.
+Unfortunatly, there are shortcomings when it comes to releases resources.
+E.g. unloading the module can result in UAFs.
 
-The changelog of the following patch provides the motivations.
+I've written two new blktests which are triggering reconnects. The first
+one is doing this by removing the target while the host is still up and
+running. The second one is trigger a reset via the new debugfs interface.
 
-Do you think something like the following self contained change can be added on
-top of your change?
+Both of these two tests cases work fine for TCP and RDMA but not FC.
 
-Best,
-Patrick
+By introducing reference counting on various objects the UAFs go away.
+Also KASAN is happy. There are also a bunch of fixes for nvmet-fc which
+got uncovered by the fcloop fixes.
 
+I still see one UAF sometimes happening. When the association attempt
+fails (looks like yet another bug), the test case removes all resources:
+
+ (NULL device *): Create Association LS failed: Association Allocation Failed
+ (NULL device *): queue 0 connect admin queue failed (-6).
+ nvme nvme1: NVME-FC{0}: reset: Reconnect attempt failed (-6)
+ nvme nvme1: NVME-FC{0}: Reconnect attempt in 1 seconds
+ nvme nvme1: NVME-FC{0}: create association : host wwpn 0x20001100aa000001  rport wwpn 0x20001100ab000001: NQN "blktests-subsystem-1"
+ (NULL device *): Create Association LS failed: Association Allocation Failed
+ (NULL device *): queue 0 connect admin queue failed (-6).
+ nvme nvme1: NVME-FC{0}: reset: Reconnect attempt failed (-6)
+ nvme nvme1: NVME-FC{0}: Reconnect attempt in 1 seconds
+ nvme nvme1: Removing ctrl: NQN "blktests-subsystem-1"
+ nvme_ns_head_submit_bio: 29 callbacks suppressed
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ block nvme1n1: no available path - failing I/O
+ nvme nvme2: Removing ctrl: NQN "nqn.2014-08.org.nvmexpress.discovery"
+ ==================================================================
+ BUG: KASAN: slab-use-after-free in nvme_fc_rescan_remoteport+0x56/0x1d0 [nvme_fc]
+ Read of size 8 at addr ffff88810b662890 by task kworker/u36:10/1876
+
+ CPU: 3 UID: 0 PID: 1876 Comm: kworker/u36:10 Tainted: G        W          6.14.0-rc2+ #48 d5f3bf6340950de08bebd912d815fcf6b60c18ab
+ Tainted: [W]=WARN
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-3.fc41 04/01/2014
+ Workqueue: nvmet-wq fcloop_tgt_rscn_work [nvme_fcloop]
+
+static void nvmet_port_subsys_drop_link(struct config_item *parent,
+		struct config_item *target)
+{
+	[...]
+found:
+	list_del(&p->entry);
+	nvmet_port_del_ctrls(port, subsys);
+	nvmet_port_disc_changed(port, subsys);   /* XXX triggers the above UAF */
+
+	if (list_empty(&port->subsystems))
+		nvmet_disable_port(port);
+	up_write(&nvmet_config_sem);
+	kfree(p);
+}
+
+The nvmet_port_disc_changed is a bit useless, because these event will
+never be seen by the host. Anyway, more debugging is necessary.
+
+I'll send the new tests cases for blktests soon.
+
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
-From 62bd6151cdb5f8e3322d8c91166cf89b6ed9f5b6 Mon Sep 17 00:00:00 2001
-From: Patrick Bellasi <derkling@google.com>
-Date: Mon, 24 Feb 2025 17:41:30 +0000
-Subject: [PATCH] x86/bugs: Add explicit BP_SPEC_REDUCE cmdline
+Daniel Wagner (11):
+      nvmet-fcloop: remove nport from list on last user
+      nvmet-fcloop: add ref counting to lport
+      nvmet-fcloop: refactor fcloop_nport_alloc
+      nvmet-fcloop: track ref counts for nports
+      nvmet-fcloop: track tport with ref counting
+      nvmet-fcloop: track rport with ref counting
+      nvmet-fc: update tgtport ref per assoc
+      nvmet-fc: take tgtport reference only once
+      nvmet-fc: free pending reqs on tgtport unregister
+      nvmet-fc: inline nvmet_fc_delete_assoc
+      nvmet-fc: inline nvmet_fc_free_hostport
 
-Some AMD CPUs are vulnerable to SRSO only limited to the Guest->Host
-attack vector. When no command line options are specified, the default
-SRSO mitigation on these CPUs is "safe-ret", which is optimized to use
-"ibpb-vmexit". A further optimization, introduced in [1], replaces IBPB
-on VM-Exits with the more efficient BP_SPEC_REDUCE mitigation when the
-CPU reports X86_FEATURE_SRSO_BP_SPEC_REDUCE support.
-
-The current implementation in bugs.c automatically selects the best
-mitigation for a CPU when no command line options are provided. However,
-it lacks the ability to explicitly choose between IBPB and
-BP_SPEC_REDUCE.
-In some scenarios it could be interesting to mitigate SRSO only when the
-low overhead of BP_SPEC_REDUCE is available, without overwise falling
-back to an IBPB at each VM-Exit.
-More in general, an explicit control is valuable for testing,
-benchmarking, and comparing the behavior and overhead of IBPB versus
-BP_SPEC_REDUCE.
-
-Add a new kernel cmdline option to explicitly select BP_SPEC_REDUCE.
-Do that with a minimal change that does not affect the current SafeRET
-"fallback logic". Do warn when reduced speculation is required but the
-support not available and properly report the vulnerability reason.
-
-[1] https://lore.kernel.org/lkml/20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local/
-
-Signed-off-by: Patrick Bellasi <derkling@google.com>
+ drivers/nvme/target/fc.c     |  82 +++++------
+ drivers/nvme/target/fcloop.c | 326 ++++++++++++++++++++++++++++---------------
+ 2 files changed, 255 insertions(+), 153 deletions(-)
 ---
- arch/x86/kernel/cpu/bugs.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250214-nvmet-fcloop-a649738b7e6e
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 7fafd98368b91..2d785b2ca4e2e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2523,6 +2523,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
- 	SRSO_MITIGATION_BP_SPEC_REDUCE,
-+	SRSO_MITIGATION_BP_SPEC_REDUCE_NA,
- };
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
- enum srso_mitigation_cmd {
-@@ -2531,6 +2532,7 @@ enum srso_mitigation_cmd {
- 	SRSO_CMD_SAFE_RET,
- 	SRSO_CMD_IBPB,
- 	SRSO_CMD_IBPB_ON_VMEXIT,
-+	SRSO_CMD_BP_SPEC_REDUCE,
- };
-
- static const char * const srso_strings[] = {
-@@ -2542,6 +2544,7 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
- 	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
- 	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation",
-+	[SRSO_MITIGATION_BP_SPEC_REDUCE_NA]	= "Vulnerable: Reduced Speculation, not available",
- };
-
- static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-@@ -2562,6 +2565,8 @@ static int __init srso_parse_cmdline(char *str)
- 		srso_cmd = SRSO_CMD_IBPB;
- 	else if (!strcmp(str, "ibpb-vmexit"))
- 		srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
-+	else if (!strcmp(str, "bp-spec-reduce"))
-+		srso_cmd = SRSO_CMD_BP_SPEC_REDUCE;
- 	else
- 		pr_err("Ignoring unknown SRSO option (%s).", str);
-
-@@ -2672,12 +2677,8 @@ static void __init srso_select_mitigation(void)
-
- ibpb_on_vmexit:
- 	case SRSO_CMD_IBPB_ON_VMEXIT:
--		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
--			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
--			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
--			break;
--		}
--
-+		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-+			goto bp_spec_reduce;
- 		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
- 			if (has_microcode) {
- 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-@@ -2694,6 +2695,17 @@ static void __init srso_select_mitigation(void)
- 			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
- 		}
- 		break;
-+
-+	case SRSO_CMD_BP_SPEC_REDUCE:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+bp_spec_reduce:
-+			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+			break;
-+		} else {
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE_NA;
-+			pr_warn("BP_SPEC_REDUCE not supported!\n");
-+		}
- 	default:
- 		break;
- 	}
---
-2.48.1.711.g2feabab25a-goog
 
