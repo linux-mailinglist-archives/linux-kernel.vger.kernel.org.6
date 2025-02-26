@@ -1,126 +1,190 @@
-Return-Path: <linux-kernel+bounces-535015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CC4A46DD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:46:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F6FA46DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2A23A6B0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:46:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E1C18897C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B02525E444;
-	Wed, 26 Feb 2025 21:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2169260A44;
+	Wed, 26 Feb 2025 21:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xk/u0j4I"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQJKFzsB"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4025D520;
-	Wed, 26 Feb 2025 21:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C473A25E47E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740606382; cv=none; b=It2DYItEUQQqvhqZd9/fUh8FqCV7RG+/JCAsBY6OPKt8EF0fGasicYhUAJcnuTull65B6Z5knTD17vR5CBUARIdR5xUUZ3lWomdQxgDNIPABsWkjzanOBnth5hV4mQ6G/cEHo7wMp9rcImdvcxO3/EEotXFWSYce8sKZ/w5izgw=
+	t=1740606390; cv=none; b=IGUEyUt5Q/tLtazJbLBry8wF1xL0O/UqqLyzlZmxj4Mi70O69oZxDrDaC1o68UY2Z/HqfUhqeQtjWlqaqxTzSOf6k0+XZGtYyn+6jbwNftMLiP3vNY1Zxqcd2UBq8cxYnXedDnKa/bK1BP6c/yZa1NB4Tp3DebslJ5nRT9zvi9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740606382; c=relaxed/simple;
-	bh=vDS2m86MVEOOJ/jODeGIyoehwvTtnHgSNxooCbbAH/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N5H/v5zI/JezE6bEBwF5swVIeuL14hDg/N9VfGWCTYqf1kfOawDqZdfWT9d+7zBA/P98RIvtFlFkEyTifzXmn3XY5Q89TlSkB92lIJkJBHV+4fL4nCFlnF9xUtdbOBDxOnT6lJdkCX2pQ86diJBml23n3akWx4B6eT19/JfF8xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xk/u0j4I; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so2110355e9.0;
-        Wed, 26 Feb 2025 13:46:20 -0800 (PST)
+	s=arc-20240116; t=1740606390; c=relaxed/simple;
+	bh=ThhmSY4jBoAA9rtbe8PZn8mnnG6PPQqSANknf1zTY5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XNL5wnC39pxRKxxwokMVQpIIE/Qgi3GCzoVvIDf8TTPnIF2MjQABH5A9zEqMMMkMlOUpVcGTAJ5sCkNzgkjsuUcKf0z25lIi3B+ENE8kKDj+JQqSp6EMYLxsEMmqkN4ShwaC6biiogKPhSoE5ZT0P6iPNeFjbxEgy3inY3BrE+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQJKFzsB; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43989d2afe1so367055e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:46:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740606379; x=1741211179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v52o9iFz2RvmSJmry90JmfMqduEAHrHJVM746pOYQ90=;
-        b=Xk/u0j4IekaZzyWl3dszAqoEpIR1p3tNOc4D6bAPpBDd6oUfe2AZRluGdPOrs0ISH9
-         6ayUDsfTenHDjJaiRCv3ByPaelX5ZPqFTB0idI2tDXWWvXFaQIzXROm1IZkOKpwdDBu0
-         6qHU8qAVStiqOswgKTMgsfx3zf8JMDGp8x5R7jxSOUmJ9hW/C8+CUrFmONxizZ1e/35T
-         tJPEg1DEc4Hh44ohp49QLtcXfmDbhuOEzS0eCbrWCOBd3Rd6xLE0MxEPGWVi/swTKPMD
-         8Xtqrv++K4q/Wwh903NJ7pNPkVJWsVU4NTw017MeT1TzrydvEuWV3dLojmAxnQOhyqhc
-         EEFw==
+        d=linaro.org; s=google; t=1740606386; x=1741211186; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFbakQilfrCFdJzAsEkSswfsOnqR/LYLZZiUe3xWbCI=;
+        b=qQJKFzsBm7rjcJZxCasCpW8J0NTG8JYt+fYUs1y2l0hC+COhFjmXz/FDL+8WNdLQDm
+         R4K7sgIAZxzuju7c0Sr7SJJNQ1hl8nWxbNUfcUq0xS+Sw/uXW7rl6GhfLZ4+R7WYDuc/
+         xubKzb6R7G2jZVrgoPunwmSDZv2IyEN9uHDkjpqwGGSClC6zBBBTX99pquLhWLaX5vkZ
+         F5BSSfGEB8Y3OLsnpJl+mTo2VkHg60mFrevFBPrCwSSDBcH0XeYJVYcT4kJuI0x8O3O+
+         Wk3bWJGbWm5M6t0av5hiU7MGOG75KAIylwdmwlSv94WcpqAZVTp6bknGDUrCwKl4AS9j
+         cyXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740606379; x=1741211179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v52o9iFz2RvmSJmry90JmfMqduEAHrHJVM746pOYQ90=;
-        b=Gi+qnLCdvqbtiA/QSmEDLHjhH+v/drt9f1q9y9fL8DS09YZwNAgM0IttIaJGFWbIR/
-         ay0WcxEc2blDM7sdu0eL9DSGGyQ0icBlLZ8GJSIOgKa2XP4eai3EfEeZ6L/Ti0fV+KsP
-         Ck7UWUJgvXh5fre1l1nvZ7tsKYuShLV0YyxSuUhmd4lHP+7t+EBlWwYLzScKH45qKS5E
-         FChaXihn0kzdWNBkdTV6vxyySc6oJXTtTGmzWsHhpFJTua/8KEPR6/02bLBIzD6d11Mx
-         LA0tT3jJFaWW4kqS3sLTnrtxdnq3wamTqZvpg/VidOSMto2bOMMmZLHoD8fyiX/i8hnU
-         q+oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3cdfcB8wQA2zNy0InLcJlKDzJrdY5je6SHUXlaQuw2rTlm0tLhsg07tBBzm0lNAU4OhAXLxFASHI/Klda@vger.kernel.org, AJvYcCX6sHb9+ZmWmsD2Es8u64i3KBs3Ys8jbHu2wvXbuKGIIKI8qSokUmG4qQKihZnDW5JhyvGMmunEN2Tq@vger.kernel.org
-X-Gm-Message-State: AOJu0YysfBbscqtAVdLMUJrXWH1DJwJlV7cqYsH2WjpuUDSFHA+tbNRL
-	c3/Cv69T1BpKSdQbTKxrhJZHAQQB4gwNyr6LyZCfzpQyx+UWpx8k
-X-Gm-Gg: ASbGncvAR26juGInw6tzPk5E+D+fvdTsLNq/zeVEM2juFeGwSahV7HYnFZedHzGeb8Q
-	0+39QjFInmCZ18XpSWO27Cyh/2NbrMb1FMyBlp9CrwFiu44t1IRs6BamqITr2+pkVv+slOuZeZH
-	k1E+ixD1SkiDG34xs11vJj49XrFeo277/xg2LxgzGDTv52cMftEIHHD3lGvpthI5I5Ff4Bo3KGZ
-	dxF5edMIv6yDktbyZdKoZRpr8pG8b3+7JY+nPgi1h6YYX+uJJlBraQtHQWPTsM+pa7lT+Ri+Ejx
-	TCfSx1UeLuPXT5MLdw6RQGqee7+eZfPjtliVRKBGeRuCSVQZV6K4RvGJkxuh7Yr5
-X-Google-Smtp-Source: AGHT+IH2F/nrBIX+jYcZEENuWK+JQ6D/Yvxr0QqyXWYSNiGB6DiVbth6DgCaUN9pisIAXAjJHPHLwQ==
-X-Received: by 2002:a05:600c:3b04:b0:439:98ca:e39e with SMTP id 5b1f17b1804b1-439aebc36a9mr152755485e9.24.1740606377462;
-        Wed, 26 Feb 2025 13:46:17 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532b0dsm33608875e9.13.2025.02.26.13.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 13:46:16 -0800 (PST)
-Date: Wed, 26 Feb 2025 21:46:13 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
- <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: use the required minimum set of headers
-Message-ID: <20250226214613.1e814f9a@pumpkin>
-In-Reply-To: <Z72fBfM4afo5SL0m@smile.fi.intel.com>
-References: <20250225095210.25910-1-brgl@bgdev.pl>
-	<Z72fBfM4afo5SL0m@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1740606386; x=1741211186;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFbakQilfrCFdJzAsEkSswfsOnqR/LYLZZiUe3xWbCI=;
+        b=kp4ecaz275BLKjCZ+2WVlQFfGwxpOcsSnIfONAQFR77l1NQg3a/9rDkfnnNtp27Lzc
+         B5GIu4bRTMu0Txe09KyFUS+39imIXm8rFFMfcLYba/yAd1yuzVQgLFPuoHrXZ6yyXgnk
+         79kh+v/PF1z0AE+m/KHqgDcmkqbfWg8POfcVuj/VUGZ36vM/2HpmxYObbodeafKHnmUy
+         7Fc7/4+mz85EfqaVzzvgJJRGKHtFnmIviWPP36fzkbVusreyj3sW4lnr9sfaGFJ0zA61
+         L7/JxeanwZlQttH+H5OHQflC3aWSV58aq+nQTvNXGu47WTfdEUJrTlfidNu7HPZWiF5W
+         EjaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7cKgXq81u6BWhEYfgUp1rpSJKH0h/MBSERLe+x4rgt24xMhvoKg+ggknyUjKkqitckx1MYncsjOg4aQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqHUezfl4fD2ad4WoG3QXF10aljYWw742FqRqd4652MzZk2pbe
+	iFrCNDGUcSkTwslybjaNTCG/aaWEtNqH90TCUt8lUn3CSAFto6J+pgotOLky9b0=
+X-Gm-Gg: ASbGncvyVELsy8uiVkDJEjj7zFnpvEs3Zbj4NDZk45XQqmVWVXWFRPf4rAYJR6udg3L
+	VAH4pSGlxhP4vjGr4C5p2Uebe//h1Z01LOMLwQc/j14QZQEXIrVqYWwknqEsolt1Zc3+DQa8M5i
+	qpJCB61kanBjRL2s0VOyGlX3/JsXuuR5K2S/OZ7HyX4HejWW/5B/D97324zdQH2WdzFehS7O2J+
+	X+gRjJPMpcvFg/pTm8qPLJrI7n4Ta5w+Sv28XloBIT2JqOIXRL7qPzqWWAQKcFe4Iu40IyDdieL
+	MiyiZMsZccWXg1b+/hMGl9hIAZ71ccUp3Igzkf60veGHlw==
+X-Google-Smtp-Source: AGHT+IEtK1mvKfE+Jrb2eiE9/ZRmv/XDdzfXvcs10OfwXomz3dm8J+yPkFC2Jsa9R+dhNmzu86YwxA==
+X-Received: by 2002:a05:600c:4f02:b0:439:930a:589b with SMTP id 5b1f17b1804b1-439ae21e0fdmr78223425e9.3.1740606386090;
+        Wed, 26 Feb 2025 13:46:26 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5329besm33666575e9.15.2025.02.26.13.46.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 13:46:25 -0800 (PST)
+Message-ID: <455e8796-bf53-40d2-b3dc-13f583af0865@linaro.org>
+Date: Wed, 26 Feb 2025 22:46:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] docs: process: maintainer-soc-clean-dts: linux-next
+ is decisive
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ soc@lists.linux.dev, workflows@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250225184822.213296-1-krzysztof.kozlowski@linaro.org>
+ <20250225184822.213296-2-krzysztof.kozlowski@linaro.org>
+ <20250226152910.GA2447540-robh@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250226152910.GA2447540-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Feb 2025 12:44:21 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-
-> On Tue, Feb 25, 2025 at 10:52:10AM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > 
-> > Andy suggested we should keep a fine-grained scheme for includes and
-> > only pull in stuff required within individual ifdef sections. Let's
-> > revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
-> > gpio/consumer.h") and make the headers situation even more fine-grained
-> > by only including the first level headers containing requireded symbols
-> > except for bug.h where checkpatch.pl warns against including asm/bug.h.  
+On 26/02/2025 16:29, Rob Herring wrote:
+> On Tue, Feb 25, 2025 at 07:48:22PM +0100, Krzysztof Kozlowski wrote:
+>> Devicetree bindings patches go usually via driver subsystem tree, so
+>> obviously testing only SoC branches would result in new dtbs_check
+>> warnings.  Mention that linux-next branch is decisice for zero-warnings
+>> rule.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  Documentation/process/maintainer-soc-clean-dts.rst | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/process/maintainer-soc-clean-dts.rst b/Documentation/process/maintainer-soc-clean-dts.rst
+>> index 1b32430d0cfc..5423fb7d6047 100644
+>> --- a/Documentation/process/maintainer-soc-clean-dts.rst
+>> +++ b/Documentation/process/maintainer-soc-clean-dts.rst
+>> @@ -17,8 +17,9 @@ Strict DTS DT Schema and dtc Compliance
+>>  No changes to the SoC platform Devicetree sources (DTS files) should introduce
+>>  new ``make dtbs_check W=1`` warnings.  Warnings in a new board DTS, which are
+>>  results of issues in an included DTSI file, are considered existing, not new
+>> -warnings.  The platform maintainers have automation in place which should point
+>> -out any new warnings.
+>> +warnings.  For series split between different trees (DT bindings go via driver
+>> +subsystem tree), warnings on linux-next are decisive.  The platform maintainers
+>> +have automation in place which should point out any new warnings.
 > 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> 
-> FWIW, I have checked the current state of affairs of linux/bug.h vs. asm/bug.h
-> and found no possible issues with the dependencies. While linux/bug.h drags
-> more than needed into this header it won't prevent cleaning up the rest of
-> the headers. So for now we can stick with linux/bug.h, but at some point it
-> would be better to be more pedantic on this.
-> 
+> I see a lot of warnings due to dependencies (both bindings and other dts 
+> changes) not be applied yet (or applied but not in linux-next). I've 
+> been filtering those out, but maybe they're useful? Some are things like 
+> missing labels, so dtc fails. I think that gets run enough a failure 
+> report on it isn't too useful.
+Maintainer-soc-clean-dts is an opt-in and so far only two guys in kernel
+opted-in: for Arm/Arm64 one Samsung dude and for other archs only the
+Risc-v guy.
 
-A 'fun' activity is to pick a random file add "#define _IOW xxx" at the
-top and see where ioctl.h is is first included from.
-(I've not got a build machine up at the moment.)
+Total coincidence is that these two do the DT bindings reviews...
 
-Then start fixing that include sequence.
-Moving a few headers around is otherwise pretty pointless.
+I would say most of such warnings are very useful, just the question is
+how much of false positives you have. For example LKP (Kernel test
+robot) was sending reports on maintainer branches, but that had too many
+false reports due to missing bindings going via different tree, e.g.
+driver subsystem tree.
 
-	David
+Best regards,
+Krzysztof
 
