@@ -1,179 +1,206 @@
-Return-Path: <linux-kernel+bounces-533468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5D0A45AE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:57:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419CCA45AEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60B41894A61
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6626E3AA997
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE38826B08F;
-	Wed, 26 Feb 2025 09:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fycxGK30";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wFau2qWV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fycxGK30";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wFau2qWV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8F24E017;
+	Wed, 26 Feb 2025 09:56:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD8524DFF2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072BB23816C;
+	Wed, 26 Feb 2025 09:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563725; cv=none; b=t15KUWbs1i0vwdL7iqBxpEof2rt9m2VS4nwJD7eXCdCfIY0+w8KZ6QrP5Vt65RExbNKR6QolywgYGKweS7J/qs20f18h6K5bVXPGREieYswDI7L9NsFmR2ebub1C6IuFzw8mDE81h9OFeteR2OEop2TJF/SsUW9wJMq3c2fU094=
+	t=1740563774; cv=none; b=i5/mrFMYnviRFrtdxJ1M44tCE//S6bbKajiT9eRDRv6aJDU6drZPFdJrBN0CBFXqJCULfBUxxtv2ZcQUjD09fNrlQhmGkY/ECDvF9FHqe07C2jTMgJYhN6XRtv0HFbG4CV4zCmd1YY+ZdbyjU+UbrU6QEOhILCZe+m5eHk/TAlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563725; c=relaxed/simple;
-	bh=QPAOCmQvwaCgErFjKDf4GwL8w0XhDnR4Iwcohrh6Prg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcAfL5dfS4X5a2N6H1YB088PKrkxdUVEVviPntuIJ/ZY+2u5UYjziHu7JQKywBKrp6fq3CnhEAurSZl8joXyy1szXmJ798hqejaQ8SfiaxVabdBiQs3xrnO0XGZtdqKXXVEEqMOdA5bpPF/4y6hc/ppg1N+ojGoe7hxxKIN6ehY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fycxGK30; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wFau2qWV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fycxGK30; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wFau2qWV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C371D1F387;
-	Wed, 26 Feb 2025 09:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740563721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M5n2CNT/If87O2/WgTYuEsYzy/NIOAowhCO9ovKL/mA=;
-	b=fycxGK30uI9SoB76rQO3idQAUfhKpyM5pxNWZpCMZ4UOUZ70FQ84TrMpQDnMA2iJbHOrrb
-	h8QUGLJ0qDSie9Pq2nLgHf1Tt8dB/hIP5AkMuYVOg/UAW7WzxtvNNG9pD6rnYRKv+4dWpE
-	E7OFxAVtGzzCoR9wOd4wtcQO5hqgmVc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740563721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M5n2CNT/If87O2/WgTYuEsYzy/NIOAowhCO9ovKL/mA=;
-	b=wFau2qWVSX42Xd4qmtjdpVWdtpKJk7gJXmsFbr3wxdtdbd8B3gjs9y30caghAwjmOSrXta
-	yBwPNfFyIKe2S4Aw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740563721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M5n2CNT/If87O2/WgTYuEsYzy/NIOAowhCO9ovKL/mA=;
-	b=fycxGK30uI9SoB76rQO3idQAUfhKpyM5pxNWZpCMZ4UOUZ70FQ84TrMpQDnMA2iJbHOrrb
-	h8QUGLJ0qDSie9Pq2nLgHf1Tt8dB/hIP5AkMuYVOg/UAW7WzxtvNNG9pD6rnYRKv+4dWpE
-	E7OFxAVtGzzCoR9wOd4wtcQO5hqgmVc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740563721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M5n2CNT/If87O2/WgTYuEsYzy/NIOAowhCO9ovKL/mA=;
-	b=wFau2qWVSX42Xd4qmtjdpVWdtpKJk7gJXmsFbr3wxdtdbd8B3gjs9y30caghAwjmOSrXta
-	yBwPNfFyIKe2S4Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3D4E13A53;
-	Wed, 26 Feb 2025 09:55:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jbaRJwnlvmehYwAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 26 Feb 2025 09:55:21 +0000
-Message-ID: <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
-Date: Wed, 26 Feb 2025 10:55:21 +0100
+	s=arc-20240116; t=1740563774; c=relaxed/simple;
+	bh=ACfxlLi96pq3LwoFRbPH7LVakUiixUCwz36+zU6xyXY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=boHFqlJ7LFuoFYnoxWrXz3iEf9PrZRhzBby35bJ9IyNucDDHUmwvKPzVta6PWRd90SiwXmW56rOI2fNxF2TBowDJDKhownypKBeGd91KG4wPcDvXkVLNf+ek4elwm2W5Y+a/PzVk9/ESjDrZy6IGfQOG8cgo6fuoNKiM1B1VIDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2qbh09NTz4f3lVs;
+	Wed, 26 Feb 2025 17:55:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 49F631A06D7;
+	Wed, 26 Feb 2025 17:56:07 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXul4z5b5nbYzHEw--.15301S3;
+	Wed, 26 Feb 2025 17:56:05 +0800 (CST)
+Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
+ <Z77R_rqgDdAvFVgP@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
+Date: Wed, 26 Feb 2025 17:56:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-To: Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, John Meneghini <jmeneghi@redhat.com>,
- hch@lst.de, bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
-References: <20250204211158.43126-1-bgurney@redhat.com>
- <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
- <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
- <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
- <Z7TARX-tFY3mnuU7@kbusch-mbp>
- <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
- <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
- <Z7dct_AbaSO7uZ2h@kbusch-mbp>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <Z7dct_AbaSO7uZ2h@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <Z77R_rqgDdAvFVgP@fedora>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-CM-TRANSID:gCh0CgBXul4z5b5nbYzHEw--.15301S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1kAFWxGr1kAF15Kw4xXrb_yoWrAF4xpF
+	W3AFWF9Fs8XFyIkFW3X3Z3tayjk3yfGFyUGw15Cr48Awn8Cr1fKFnxAw4Y9a4rAas3uw4F
+	v3WDXry7Cr12vrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 2/20/25 17:47, Keith Busch wrote:
-> On Thu, Feb 20, 2025 at 01:05:04PM +0200, Sagi Grimberg wrote:
->> This discussion is not specific to RHEL, if there is a real use-case
->> that we are interested in supporting, we can change our minds and keep
->> it (and simply remove the log msg), but I haven't heard any real life
->> use-cases thus far.
-> 
-> One use case: ublk.
-> 
-> Other use cases are manufacturing and debugging. Linux has been a great
-> environment for both, which don't want anything hidden behind virtual
-> devices.
-> 
-> The module parameter makes it possible to do this with your distro's
-> stock kernel that came with the CONFIG option enabled.
-> 
-> The device mapper multipath needed some layering violations out of the
-> driver to make failover work correctly/better. That's one reason it's
-> not supported here, and that's an appropriate place to draw the line on
-> what kinds of patches should be accepted.
-> 
-Plus there are some NVMe devices out there which _despite_ being PCIe do 
-report NMIC and CMIC set (I won't name names, if you came across them 
-you'll know). This is causing stacking drivers (most notably MD) to 
-behave vastly different on hotplug. Having the module option is an easy 
-way of debugging (and, in quite some cases, fixing) the issue.
+Hi,
 
-If the module option really causes issues just make it read-only; that
-way you can still set if if absolutely required, and at the same time
-catch installations which try to modify it.
+ÔÚ 2025/02/26 16:34, Ming Lei Ð´µÀ:
+> On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> The bio submission time may be a few jiffies more than the expected
+>> waiting time, due to 'extra_bytes' can't be divided in
+>> tg_within_bps_limit(), and also due to timer wakeup delay. In this
+>> case, adjust slice_start to jiffies will discard the extra wait time,
+>> causing lower rate than expected.
+>>
+>> This problem will cause blktests throtl/001 failure in case of
+>> CONFIG_HZ_100=y, fix it by preserving one finished slice in
+>> throtl_trim_slice() and allowing deviation between [0, 2 slices).
+> 
+> I think it only can cover single default slice deviation, since
+> throtl_trim_slice() just keeps dispatch data in the previous single
+> default slice. Or can you add words on how to allow 2 default slices
+> deviation?
+> 
+>>
+>> For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+>> slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
+>> per slice.
+>>
+>> If user issues two 21 bytes IO, then wait time will be 30ms for the
+>> first IO:
+>>
+>> bytes_allowed = 20, extra_bytes = 1;
+>> jiffy_wait = 1 + 2 = 3 jiffies
+>>
+>> and consider
+>> extra 1 jiffies by timer, throtl_trim_slice() will be called at:
+>>
+>> jiffies = 40ms
+>> slice_start = 0ms, slice_end= 40ms
+>> bytes_disp = 21
+>>
+>> In this case, before the patch, real rate in the first two slices is
+>> 10.5 bytes per slice, and slice will be updated to:
+>>
+>> jiffies = 40ms
+>> slice_start = 40ms, slice_end = 60ms,
+>> bytes_disp = 0;
+>>
+>> Hence the second IO will have to wait another 30ms;
+>>
+>> With the patch, the real rate in the first slice is 20 bytes per slice,
+>> which is the same as expected, and slice will be updated:
+>>
+>> jiffies=40ms,
+>> slice_start = 20ms, slice_end = 60ms,
+>> bytes_disp = 1;
+>>
+>> And now, there is still 19 bytes allowed in the second slice, and the
+>> second IO will only have to wait 10ms;
+>>
+>> Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
+>> Reported-by: Ming Lei <ming.lei@redhat.com>
+>> Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/blk-throttle.c | 13 +++++++++++--
+>>   1 file changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+>> index 8d149aff9fd0..cb472cf7b6b6 100644
+>> --- a/block/blk-throttle.c
+>> +++ b/block/blk-throttle.c
+>> @@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+>>   	 * sooner, then we need to reduce slice_end. A high bogus slice_end
+>>   	 * is bad because it does not allow new slice to start.
+>>   	 */
+>> -
+>>   	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
+>>   
+>>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+>>   				 tg->td->throtl_slice);
+>> -	if (!time_elapsed)
+>> +	/* Don't trim slice until at least 2 slices are used */
+>> +	if (time_elapsed < tg->td->throtl_slice * 2)
+>>   		return;
+>>   
+>> +	/*
+>> +	 * The bio submission time may be a few jiffies more than the expected
+>> +	 * waiting time, due to 'extra_bytes' can't be divided in
+>> +	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
+>> +	 * case, adjust slice_start to jiffies will discard the extra wait time,
+>> +	 * causing lower rate than expected. Therefore, one slice is preserved,
+>> +	 * allowing deviation that is less than two slices.
+>> +	 */
+>> +	time_elapsed -= tg->td->throtl_slice;
+> 
+> Please document that default slice window size is doubled actually in
+> this way.
 
-Cheers,
+I said two slices because there is a round down:
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 NÃ¼rnberg
-HRB 36809 (AG NÃ¼rnberg), GF: I. Totev, A. McDonald, W. Knoblich
+ >>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+ >>   				 tg->td->throtl_slice);
+
+Hence the deviation is actually between [1 ,2) jiffies, depends on the
+time start to wait and how long the delay is.
+
+If start to wait at slice_start + n * throtl_slice - 1, the deviation is
+*at most 1 slice*
+
+If start to wait at slice_stat + n * throtl_slice, the max deviation is
+*less than 2 slices* (2 slices not included)
+
+Now, I agree allowing deviation at most 1 slice is more appropriate. :)
+
+Thanks,
+Kuai
+
+> 
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
+
 
