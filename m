@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-533514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F03A45B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:17:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAA6A45B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:19:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B32816DDDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF3617642A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C452A226D1B;
-	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19816224259;
+	Wed, 26 Feb 2025 10:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="utWFaXvL"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC0619CC11;
-	Wed, 26 Feb 2025 10:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB951A0BCD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740564996; cv=none; b=bq0BMLm4Aex3nVO9b+phLiNf5qPKaqXFj2YxVCs8zviP5dTgV/6GzQwJf9BbkyhjOQGasqXNt7fabMcXVM6MylfFuWQelnq/oqWuyPdCXzbRelCASeGJqgbC3AxGikTAhRaudOqbqeokZeTO6iCiIThvf3u1+2gr7M+hnGZUE2g=
+	t=1740565150; cv=none; b=K/DI+emCOwxujcJHDAuyBIDlHHs2CUt7D1VYPJNk+dhazAjMidQ5ycN0M5Nw33aa5wBqbPPeu+lqBH76CosT879XyLk4UB3Cr86IRJhzkrh7Yh9XYdhn0Ls+cR1ZHeXE0lQ0kLhh2DJmtflbXXIvJy48Av98NHIqQkHTAMbQnxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740564996; c=relaxed/simple;
-	bh=/CcL2F/cVbDssQ66xgDLuEBSQTiJSj/VCfAF0UsU5rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mVDcXt5CxNJXpWW9PDo/3S45AaMu7cgN0Rc224slhqKUKu2BJvaqpdqpag7au+8aCYqdmnIPJlue/Xzu5CdzFkzsRElAylDTwdfegEJQ3m8SVWLpQJ58IgeWFxWEXZw9dTtQEbCdE7P4SMkbsQvLlVzGwSSYb/huq8HwSx7hfnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031EFC4CED6;
-	Wed, 26 Feb 2025 10:16:31 +0000 (UTC)
-Message-ID: <6b261f80-6713-430d-93ee-9dac77f47580@xs4all.nl>
-Date: Wed, 26 Feb 2025 11:16:30 +0100
+	s=arc-20240116; t=1740565150; c=relaxed/simple;
+	bh=DKJPAUCWpMarL6wTRvPVlA7VYpvvjyB6zrJZ3/cdENU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nr729N7cLwCzGXzJCOu1bf/CRNd3Cf1eOamXSwrdFT7DmBueSCGSKpL/GsvLnYjUWcHci6s6pAQOeEJ++6rN0fS0qqhcl+cXh/up1eshLTw65V9d/T4hOQ7dzxBf/RlZD7msNusY5Rk6COJ4psMp8gEA6IdNDLmBZuW1xxnnNcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=utWFaXvL; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30a440effcfso7940031fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:19:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740565147; x=1741169947; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DKJPAUCWpMarL6wTRvPVlA7VYpvvjyB6zrJZ3/cdENU=;
+        b=utWFaXvLMnJxUSS5zmFp1zMLVLctrM8Cbe1nzLsNRGWhBJoACvjkquhXJBV+3rkJHW
+         rtzapm8lDzWTq2lmp8rNzk3Qe5NkHrMHC+9kYftMvfzDHusMfhnav9JyRMz2jICebb6h
+         O+iepKZpSvAXjmf+f3NkFWoeWhdxTqj0UbgvPDJeCpz0owP78ivQsQfzf543q32lZbDW
+         RXH9PCQBklsOO2OJpTx9AU1u8Gx3KLm9AuyriTecz7/PX4IJ9UQEnp+0YLTrltNZqght
+         DoAWSdnmQLnxe3fPn2vTM8vXJkx5FBbWNXmn3kOVz8bSybKyXhO7iq5xMiRpCiRscy9Z
+         wWMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740565147; x=1741169947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DKJPAUCWpMarL6wTRvPVlA7VYpvvjyB6zrJZ3/cdENU=;
+        b=sRxUcDcpWvvbhS0AHmmelhAoET1Zl2MoBoBUEKyGDhabWgqmh5Vqsa27XLqlWvtM2/
+         I7e3kSTjyJBFMRJE8YIgPUrCq0Y1GXCjX/z4T0JJ67N7ypICsjD9s8qlUxACVnloiX1i
+         ktSj0lJF98dNE3YUihy9a1Gmnqrk3y6tysDnEpL339M33qX997qcucB34m4M8RWPeIQW
+         tOpIqf7/QJLMobL7AfuYzTeRrfto2NTxIGTGs4kBBM49PLSpc3A5fcNe2BdIy91kjFAn
+         6a6ImTwdz1je2C0+7knNzOrLFi/tgkaImQT64IAC3fgIBzd4RRtVGRZwo9zr+0jhdChU
+         +jNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/bXHxQU5XCOhpR+/jut8pWNwMKdaI2uhs/oICbI/BhrAU+B05k05nqNXbZOoRIiTaKhT8s2+dZzW5abg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvVoS6Rz0jhxgPqFBuA3z2wM/pIpdr4uceopp1t0x1Kb9Ddu0p
+	kdqNF4kXZ3LuCbBpyy4mkEvUUG1gVAEpVqaKN7Wx3bEIebwTYIM6CNKZSRiwAnCmf6Q9diHw1La
+	XlIEs2Ehp+3edqHO8LGXn3mh/50yuRmBYzIZXnA==
+X-Gm-Gg: ASbGncvcQ+bPxdkk6O2rgIfgpzro3CpG+eAIz/v9ZRttxkTh2aqbTUs9g6q7cqWqLj0
+	Rl2TV80zqcRtq/fMAc7FpVTCAJxS55OlFqvPn0uq/ASUXbi3/dNDzcjb0AWdEFQ8bMyQeYnUAnb
+	pUXnY19gk=
+X-Google-Smtp-Source: AGHT+IH9IyLn8GVoExU+oQLlxh7oTefH69fzA03PH2aYFHwj0v/wUocnCBinUIb/4NLpBPrOJ0p2aprs1CvgBYqqRcA=
+X-Received: by 2002:a05:6512:308f:b0:546:1d8c:60f1 with SMTP id
+ 2adb3069b0e04-546e4662ce7mr11792066e87.15.1740565146777; Wed, 26 Feb 2025
+ 02:19:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/6] media: platform: synopsys: Add support for HDMI
- input driver
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <20250226094946.665963-1-dmitry.osipenko@collabora.com>
- <20250226094946.665963-4-dmitry.osipenko@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
- BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
- yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
- C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
- BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
- E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
- YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
- JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
- 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
- UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
- aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwEKAD8CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAFiEEBSzee8IVBTtonxvKvS1hSGYUO0wFAmaU3GkFCRf7lXsACgkQvS1hSGYUO0wZ
- cw//cLMiaV+p2rCyzdpDjWon2XD6M646THYvqXLb9eVWicFlVG78kNtHrHyEWKPhN3OdWWjn
- kOzXseVR/nS6vZvqCaT3rwgh3ZMb0GvOQk1/7V8UbcIERy036AjQoZmKo5tEDIv48MSvqxjj
- H6wbKXbCyvnIwpGICLyb0xAwvvpTaJkwZjvGqeo5EL0Z+cQ8fCelfKNO5CFFP3FNd3dH8wU6
- CHRtdZE03iIVEWpgCTjsG2zwsX/CKfPx0EKcrQajW3Tc50Jm0uuRUEKCVphlYORAPtFAF1dj
- Ly8zpN1bEXH+0FDXe/SHhzbvgS4sL0J4KQCCZ/GcbKh/vsDC1VLsGS5C7fKOhAtOkUPWRjF+
- kOEEcTOROMMvSUVokO+gCdb9nA/e3WMgiTwWRumWy5eCEnCpM9+rfI2HzTeACrVgGEDkOTHW
- eaGHEy8nS9a25ejQzsBhi+T7MW53ZTIjklR7dFl/uuK+EJ6DLbDpVbwyYo2oeiwP+sf8/Rgv
- WfJv4wzfUo/JABwrsbfWfycVZwFWBzqq+TaKFkMPm017dkLdg4MzxvvTMP7nKfJxU1bQ2OOr
- xkPk5KDcz+aRYBvTqEXgYZ6OZtnOUFKD+uPlbWf68vuz/1iFbQYnNJkTxwWhiIMN7BULK74d
- Ek89MU7JlbYNSv0v21lRF+uDo0J6zyoTt0ZxSPzOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
- p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
- sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
- DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
- wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
- TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
- 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
- VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
- z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
- pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
- /ejCHUQIl40wLSDRABEBAAHCwXwEGAEKACYCGwwWIQQFLN57whUFO2ifG8q9LWFIZhQ7TAUC
- ZpTcxwUJF/uV2gAKCRC9LWFIZhQ7TMlPD/9ppgrN4Z9gXta9IdS8a+0E7lj/dc0LnF9T6MMq
- aUC+CFffTiOoNDnfXh8sfsqTjAT50TsVpdlH6YyPlbU5FR8bC8wntrJ6ZRWDdHJiCDLqNA/l
- GVtIKP1YW8fA01thMcVUyQCdVUqnByMJiJQDzZYrX+E/YKUTh2RL5Ye0foAGE7SGzfZagI0D
- OZN92w59e1Jg3zBhYXQIjzBbhGIy7usBfvE882GdUbP29bKfTpcOKkJIgO6K+w82D/1d5TON
- SD146+UySmEnjYxHI8kBYaZJ4ubyYrDGgXT3jIBPq8i9iZP3JSeZ/0F9UIlX4KeMSG8ymgCR
- SqL1y9pl9R2ewCepCahEkTT7IieGUzJZz7fGUaxrSyexPE1+qNosfrUIu3yhRA6AIjhwPisl
- aSwDxLI6qWDEQeeWNQaYUSEIFQ5XkZxd/VN8JeMwGIAq17Hlym+JzjBkgkm1LV9LXw9D8MQL
- e8tSeEXX8BZIen6y/y+U2CedzEsMKGjy5WNmufiPOzB3q2JwFQCw8AoNic7soPN9CVCEgd2r
- XS+OUZb8VvEDVRSK5Yf79RveqHvmhAdNOVh70f5CvwR/bfX/Ei2Szxz47KhZXpn1lxmcds6b
- LYjTAZF0anym44vsvOEuQg3rqxj/7Hiz4A3HIkrpTWclV6ru1tuGp/ZJ7aY8bdvztP2KTw==
-In-Reply-To: <20250226094946.665963-4-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Z71qphikHPGB0Yuv@mva-rohm> <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+In-Reply-To: <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Feb 2025 11:18:54 +0100
+X-Gm-Features: AQ5f1Jp5WtBrqIoIAmiHI68a90umMToYtMRHUCvv-S3W-GZVg3ZNkYQ-qANM-U8
+Message-ID: <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/02/2025 10:49, Dmitry Osipenko wrote:
-> From: Shreeya Patel <shreeya.patel@collabora.com>
-> 
-> Add initial support for the Synopsys DesignWare HDMI RX
-> Controller Driver used by Rockchip RK3588. The driver
-> supports:
->  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
->  - RGB888, YUV422, YUV444 and YCC420 pixel formats
->  - CEC
->  - EDID configuration
-> 
-> The hardware also has Audio and HDCP capabilities, but these are
-> not yet supported by the driver.
-> 
-> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
-> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> ---
->  drivers/media/platform/Kconfig                |    1 +
->  drivers/media/platform/Makefile               |    1 +
->  drivers/media/platform/synopsys/Kconfig       |    3 +
->  drivers/media/platform/synopsys/Makefile      |    2 +
->  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
->  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
->  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2752 +++++++++++++++++
->  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
->  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
->  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
->  10 files changed, 3512 insertions(+)
->  create mode 100644 drivers/media/platform/synopsys/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
-> 
+On Wed, Feb 26, 2025 at 7:09=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+> On 25/02/2025 23:36, Linus Walleij wrote:
+> > we can maybe move it to struct gpio_device in
+> > drivers/gpio/gpiolib.h?
+> >
+> > This struct exist for every gpio_chip but is entirely gpiolib-internal.
+> >
+> > Then it becomes impossible to do it wrong...
+>
+> True. I can try seeing what it'd require to do that. But ... If there
+> are any drivers out there altering the valid_mask _after_ registering
+> the driver to the gpio-core ... Then it may be a can of worms and I may
+> just keep the lid closed :)
 
-<snip>
+That's easy to check with some git grep valid_mask
+and intuition. I think all calls actually changing the valid_mask
+are in the init_valid_mask() callback as they should be.
 
-> +/* vb2 queue */
-> +static const struct vb2_ops hdmirx_vb2_ops = {
-> +	.queue_setup = hdmirx_queue_setup,
-> +	.buf_queue = hdmirx_buf_queue,
-> +	.wait_prepare = vb2_ops_wait_prepare,
-> +	.wait_finish = vb2_ops_wait_finish,
+> Furthermore, I was not 100% sure the valid_mask was not intended to be
+> used directly by the drivers. I hoped you and Bart have an opinion on tha=
+t.
 
-These two ops are no longer needed. New drivers must not use them. I'm
-working on removing these ops, but it's not quite there yet.
+Oh it was. First we just had .valid_mask and then it was
+manipulated directly.
 
-I will remove these two lines manually for this v11, but if a v12 is needed,
-then make sure you drop these two lines.
+Then we introduced init_valid_mask() and all users switched over
+to using that.
 
-Regards,
+So evolution, not intelligent design...
 
-	Hans
-
-> +	.stop_streaming = hdmirx_stop_streaming,
-> +	.start_streaming = hdmirx_start_streaming,
-> +};
+Yours,
+Linus Walleij
 
