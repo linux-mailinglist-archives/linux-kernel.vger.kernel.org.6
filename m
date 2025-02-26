@@ -1,201 +1,257 @@
-Return-Path: <linux-kernel+bounces-533189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7452FA456A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:27:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6322A456AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E863A7294
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACDF517692F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E48526B082;
-	Wed, 26 Feb 2025 07:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A2B26E155;
+	Wed, 26 Feb 2025 07:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="PcDHjRNC"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DPnzDNfL"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC96268684;
-	Wed, 26 Feb 2025 07:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FEC26AAB6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554870; cv=none; b=bUEmaRzcdLUjZoToMnUyRIe2aJStRcXFuTBji+WD4sLPodI3VeQI/FjsWkiYjlo/wGLUR1M3Pxj+x8q83DR3+UgvMlHLLB1Ze6nvONtHuQ4WbMst0h/0/nWvP4brgpgmdT1lU+0/sUreE9dvtzSMykDi8RQWr+cLUgPsDQM2LX0=
+	t=1740554944; cv=none; b=MNsMBShKufd43eHHYRrfAQxVf8+EBW1TpmWs+NQBb5BR+YCWrj3VPf/DDCHTpmuL9olAwB0Nx+ntlEFXjJsWeV9z07ihMQpajz0qBrsA4pKagioHAETUhkU2JHUMxt0ugB9U6lfI3jhQV+7xZl8udHDu1z70LWn24HxMkEDv40k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554870; c=relaxed/simple;
-	bh=FVZ11zz+9uMRbbgoxc9G6ohf2abrzH5GaK9fKCvKprQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cF8aUfrhhlBc8tmy5tXqa9MRVI2YN7+v/ysVwOTnbsCTwhj0ULKp2A8gmjpU7LiVO0Mc3cnNdxGE7yqnY6c7Olhf1LJoIhOlY9KLPgCsh6jUnYBSUZwG6RFo6VqoAorVsL2PVnvq+Go/uMAUE9065mLRlCV0e1tCgBttlDT9kik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=PcDHjRNC; arc=none smtp.client-ip=159.100.241.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.155])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id E2CAF200C2;
-	Wed, 26 Feb 2025 07:27:46 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay4.mymailcheap.com (Postfix) with ESMTPS id 0F4D020318;
-	Wed, 26 Feb 2025 07:27:39 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id CBED040078;
-	Wed, 26 Feb 2025 07:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1740554856; bh=FVZ11zz+9uMRbbgoxc9G6ohf2abrzH5GaK9fKCvKprQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PcDHjRNCSaB/5RifTNhwEwK0UxD0FvPgDPXQyvkDV88Du6AnI92/pD2OZl5aJR9k4
-	 skHB9tc3hj22PnOUTEiPCuPXdDB2B2JgybvH2m41SCbSM6d1W+I7h/6lpvro/enS0y
-	 eeGVtPp3+4ExDLlrxzE29PMWRVirCCl1kWsa9aU4=
-Received: from [172.29.0.1] (unknown [203.175.14.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 0C53840CEA;
-	Wed, 26 Feb 2025 07:27:27 +0000 (UTC)
-Message-ID: <c9eb3743-cd41-4ef6-bb8b-19d049edc312@aosc.io>
-Date: Wed, 26 Feb 2025 15:27:24 +0800
+	s=arc-20240116; t=1740554944; c=relaxed/simple;
+	bh=6zbN5jOaaksOEj+lbfcyYF58FVbBR2uEiZ1U9Xm0Q7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cf/ewoV0H/HscnpEk/tG9n1+mWGce895j9FcgbR7dXRTC/yOh7cIU/Ark+RC3r3SjGRut7p9KqTK+ESFbgDpllAiTEhwBgE7jLxN1pSQPKbY2e2n7ya3rrLMiJa884HAddev4ZLEOmS1Ci6mPTomRp19wBw01MvB0XojYIOjX1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DPnzDNfL; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso8735486a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:29:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740554939; x=1741159739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jy5UzyKzocsSx5cSXomfjfFL//CTemBkcuebkephmC0=;
+        b=DPnzDNfLR7XZTTtbDw+DuW1lx1StRSsipS09fizN5cRrJGW7tcTHqO5NSG7xYdoHX2
+         o6tzx9bfAow0wJAO8wvFqoZHbs4mPyUkYNJ6p4x4X2XVpneFKc09+/l/Yb7I0rXWNvZf
+         59PADbwRVs1Z2Ld7EANg+3GvujiSVL9sTJFNAfRUgh+fg6qGE9wORi/b9D6BsDA1wVBw
+         nERAEUIHLAgGAaFUFnLURjg/tr13IDXYc82dy/A6pzvk+xS3FFlJBWRs/jLhn1DVfYvd
+         oBGL2zkNNM7XMhVb58ZA7Zr8kDt7ripM7lDqQoP5adxc4THLPzMH4Ps/LDy2jBnSEDqQ
+         ZvWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740554939; x=1741159739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jy5UzyKzocsSx5cSXomfjfFL//CTemBkcuebkephmC0=;
+        b=Dx/UXs+JytoQovOVA8+WO5ckQSJsU2SoBXoI2oJLv/olT+1qLfSv/wG381cPSd3XPT
+         PQFFFhFTszc7ErkxtZGoMKHsbX630LocxArNAXfrHqkISfFBu6lvtFhU7S5KVzD0YMGz
+         ERBFrOoaExa+VWYiPcZiwcYaoJUghnQT4730lFH13SCZ5B21XDlBIFM7IiqXnqSy431N
+         sdYr2cFrfHn7clNs+T5szQwWq3NUqUD3ikU8fVwST7FaZSz4yO9yYrmMXRs131OQTqZR
+         avRAV5ULY6RPP4XJruXP4IYjTz7/acuB6GDp5BK316bbLFJfiILScUtEAnhFlNgVyTgo
+         nQzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuFsPtgnrmCMREXHfXqZit84CgVsLS7zaZg9K1Mw1BikKcXQlVPcFIi4OHhx2z7ywVc41N+oICVTOC7x0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtCr3jVNK2h6Gmmq25woHfIAj/+B9lD17/MNz9ibqKYpH0FGZk
+	3nzV+vEL5LacGyYJvU0acohYb4m6t8DoJHB95zfHSJOZaMDcX17Qk2eY2hOsqrQUEhOUo5oBmWX
+	SjrXGp+fNXsjR90HIYL/YActHePVnPRCSRLNZ8Q==
+X-Gm-Gg: ASbGncvPAoRFkQ9YqKOngXRK3lJ1iK0g+VFwNWLSxdt1mtInvIAG+4THfCUA9m8YIFi
+	YmNI58jU56DmzVURTXYIc0VXDUB0kZTcrd5P+RbWicp7VpuwmZ6xc8wfTHjuTmv2m0qbbg9byo/
+	s1GAMkQQ==
+X-Google-Smtp-Source: AGHT+IFYP8Tba+z3P6zhrfLVohTtXs/BwRHQBKKRVXu59ZSzqEPbWtjoPmnK2n59Ee5Tugvqu0RIdPnu12lt6iEjWaU=
+X-Received: by 2002:a17:906:18b1:b0:ab6:ed8a:601f with SMTP id
+ a640c23a62f3a-abeeed1123amr202024966b.12.1740554939189; Tue, 25 Feb 2025
+ 23:28:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] drm/xe/query: use PAGE_SIZE as the minimum page
- alignment
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Alan Previn <alan.previn.teres.alexis@intel.com>,
- Zhanjun Dong <zhanjun.dong@intel.com>, Matt Roper
- <matthew.d.roper@intel.com>, Mateusz Naklicki <mateusz.naklicki@intel.com>,
- Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>,
- =?UTF-8?Q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>,
- Shang Yatsen <429839446@qq.com>, stable@vger.kernel.org,
- Haien Liang <27873200@qq.com>, Shirong Liu <lsr1024@qq.com>,
- Haofeng Wu <s2600cw2@126.com>
-References: <20250226-xe-non-4k-fix-v1-0-80f23b5ee40e@aosc.io>
- <20250226-xe-non-4k-fix-v1-5-80f23b5ee40e@aosc.io>
- <Z76b3lgScK2gbtnG@lstrano-desk.jf.intel.com>
-Content-Language: en-US
-From: Mingcong Bai <jeffbai@aosc.io>
-In-Reply-To: <Z76b3lgScK2gbtnG@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: CBED040078
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,27873200.qq.com:server fail,stable.vger.kernel.org:server fail,lsr1024.qq.com:server fail,429839446.qq.com:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,aosc.io,qq.com,126.com];
-	FREEMAIL_ENVRCPT(0.00)[126.com,gmail.com,qq.com];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Action: no action
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
+ <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
+In-Reply-To: <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 26 Feb 2025 08:28:48 +0100
+X-Gm-Features: AQ5f1JpekOKemtGu2BHsnbGs6fr563e7jHjxxRB5HZ2bESNce9YNZRbPCIKk9Cc
+Message-ID: <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, Frank.Li@nxp.com, 
+	James.Bottomley@hansenpartnership.com, Julia.Lawall@inria.fr, 
+	Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org, axboe@kernel.dk, 
+	broonie@kernel.org, cassel@kernel.org, cem@kernel.org, 
+	ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr, 
+	dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org, 
+	dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org, 
+	dsterba@suse.com, festevam@gmail.com, hch@lst.de, hdegoede@redhat.com, 
+	hmh@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com, 
+	ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev, james.smart@broadcom.com, 
+	jgg@ziepe.ca, josef@toxicpanda.com, kalesh-anakkur.purayil@broadcom.com, 
+	kbusch@kernel.org, kernel@pengutronix.de, leon@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org, 
+	perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de, 
+	sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org, 
+	sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 25/02/2025 =C3=A0 21:17, Easwar Hariharan a =C3=A9crit :
+> > Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> > secs_to_jiffies().  As the value here is a multiple of 1000, use
+> > secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplica=
+tion
+> >
+> > This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci w=
+ith
+> > the following Coccinelle rules:
+> >
+> > @depends on patch@ expression E; @@
+> >
+> > -msecs_to_jiffies(E * 1000)
+> > +secs_to_jiffies(E)
+> >
+> > @depends on patch@ expression E; @@
+> >
+> > -msecs_to_jiffies(E * MSEC_PER_SEC)
+> > +secs_to_jiffies(E)
+> >
+> > While here, remove the no-longer necessary check for range since there'=
+s
+> > no multiplication involved.
+>
+> I'm not sure this is correct.
+> Now you multiply by HZ and things can still overflow.
 
+This does not deal with any additional multiplications. If there is an
+overflow, it was already there before to begin with, IMO.
 
-在 2025/2/26 12:43, Matthew Brost 写道:
-> On Wed, Feb 26, 2025 at 10:00:22AM +0800, Mingcong Bai via B4 Relay wrote:
->> From: Mingcong Bai <jeffbai@aosc.io>
->>
->> As this component hooks into userspace API, it should be assumed that it
->> will play well with non-4K/64K pages.
->>
->> Use `PAGE_SIZE' as the final reference for page alignment instead.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: dd08ebf6c352 ("drm/xe: Introduce a new DRM driver for Intel GPUs")
->> Fixes: 801989b08aff ("drm/xe/uapi: Make constant comments visible in kernel doc")
->> Tested-by: Mingcong Bai <jeffbai@aosc.io>
->> Tested-by: Haien Liang <27873200@qq.com>
->> Tested-by: Shirong Liu <lsr1024@qq.com>
->> Tested-by: Haofeng Wu <s2600cw2@126.com>
->> Link: https://github.com/FanFansfan/loongson-linux/commit/22c55ab3931c32410a077b3ddb6dca3f28223360
->> Co-developed-by: Shang Yatsen <429839446@qq.com>
->> Signed-off-by: Shang Yatsen <429839446@qq.com>
->> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
->> ---
->>   drivers/gpu/drm/xe/xe_query.c | 2 +-
->>   include/uapi/drm/xe_drm.h     | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/xe/xe_query.c b/drivers/gpu/drm/xe/xe_query.c
->> index c059639613f7b548c168f808b7b7b354f1cf3c94..8a017c526942d1f2b401e8b9a4244e6083d7b1e5 100644
->> --- a/drivers/gpu/drm/xe/xe_query.c
->> +++ b/drivers/gpu/drm/xe/xe_query.c
->> @@ -336,7 +336,7 @@ static int query_config(struct xe_device *xe, struct drm_xe_device_query *query)
->>   		config->info[DRM_XE_QUERY_CONFIG_FLAGS] =
->>   			DRM_XE_QUERY_CONFIG_FLAG_HAS_VRAM;
->>   	config->info[DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT] =
->> -		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : SZ_4K;
->> +		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : PAGE_SIZE;
-> 
-> We should probably assert or build a bug somewhere to ensure SZ_64K >=
-> PAGE_SIZE for future-proofing. Otherwise, I think the patch makes sense.
-> One more comment below.
+> Hoping I got casting right:
 
-Hmm, >= 64KiB kernel pages don't seem to be a thing yet but this does 
-make sense for the sake of completeness. Will change in v2.
+Maybe not exactly? See below...
 
-> 
->>   	config->info[DRM_XE_QUERY_CONFIG_VA_BITS] = xe->info.va_bits;
->>   	config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY] =
->>   		xe_exec_queue_device_get_max_priority(xe);
->> diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
->> index f62689ca861a4673b885629460c11d6f3bc6523d..db7cf904926ebd6789a29d620161ac051e59f13f 100644
->> --- a/include/uapi/drm/xe_drm.h
->> +++ b/include/uapi/drm/xe_drm.h
->> @@ -394,7 +394,7 @@ struct drm_xe_query_mem_regions {
->>    *    - %DRM_XE_QUERY_CONFIG_FLAG_HAS_VRAM - Flag is set if the device
->>    *      has usable VRAM
->>    *  - %DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT - Minimal memory alignment
->> - *    required by this device, typically SZ_4K or SZ_64K
->> + *    required by this device, typically PAGE_SIZE.
-> 
-> So I think the kernel doc needs bit more updating here, how about:
-> 
-> Minimal memory alignment required by this device and the CPU. The
-> minimum page size for the device is usually SZ_4K or SZ_64K, while for
-> the CPU, it is PAGE_SIZE. This value is calculated by
-> max(min_gpu_page_size, PAGE_SIZE). This alignment is enforced on
-> buffer object allocations and VM binds.
-> 
-> Again welcome others CC'd suggestion on this updated kernel doc.
+> #define MSEC_PER_SEC    1000L
+> #define HZ 100
+>
+>
+> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
+>
+> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
+> {
+>         return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
+> }
+>
+> int main() {
+>
+>         int n =3D INT_MAX - 5;
+>
+>         printf("res  =3D %ld\n", secs_to_jiffies(n));
+>         printf("res  =3D %ld\n", _msecs_to_jiffies(1000 * n));
 
-Looks good to me, will revise in v2.
+I think the format should actually be %lu giving the below results:
 
-Best Regards,
-Mingcong Bai
+res  =3D 18446744073709551016
+res  =3D 429496130
 
-> 
-> Matt
-> 
->>    *  - %DRM_XE_QUERY_CONFIG_VA_BITS - Maximum bits of a virtual address
->>    *  - %DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY - Value of the highest
->>    *    available exec queue priority
->>
->> -- 
->> 2.48.1
->>
->>
+Which is still wrong nonetheless. But here, *both* results are wrong
+as the expected output should be 214748364200 which you'll get with
+the correct helper/macro.
 
+But note another thing, the 1000 * (INT_MAX - 5) already overflows
+even before calling _msecs_to_jiffies(). See?
+
+Now, you'll get that mentioned correct result with:
+
+#define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
+
+Still, why unsigned? What if you wanted to convert -5 seconds to jiffies?
+
+>         return 0;
+> }
+>
+>
+> gives :
+>
+> res  =3D -600
+> res  =3D 429496130
+>
+> with msec, the previous code would catch the overflow, now it overflows
+> silently.
+
+What compiler options are you using? I'm not getting any warnings.
+
+> untested, but maybe:
+>         if (result.uint_32 > INT_MAX / HZ)
+>                 goto out_of_range;
+>
+> ?
+>
+> CJ
+>
+>
+> >
+> > Acked-by: Ilya Dryomov <idryomov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.or=
+g>
+> > Signed-off-by: Easwar Hariharan <eahariha-1pm0nblsJy7Jp67UH1NAhkEOCMrvL=
+tNR@public.gmane.org>
+> > ---
+> >   drivers/block/rbd.c | 8 +++-----
+> >   1 file changed, 3 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> > index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..41207133e21e9203192adf3=
+b92390818e8fa5a58 100644
+> > --- a/drivers/block/rbd.c
+> > +++ b/drivers/block/rbd.c
+> > @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
+> >   #define RBD_OBJ_PREFIX_LEN_MAX      64
+> >
+> >   #define RBD_NOTIFY_TIMEOUT  5       /* seconds */
+> > -#define RBD_RETRY_DELAY              msecs_to_jiffies(1000)
+> > +#define RBD_RETRY_DELAY              secs_to_jiffies(1)
+> >
+> >   /* Feature bits */
+> >
+> > @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *=
+work)
+> >               dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+> >                    rbd_dev);
+> >               mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+> > -                 msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SE=
+C));
+> > +                 secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
+> >       }
+> >   }
+> >
+> > @@ -6283,9 +6283,7 @@ static int rbd_parse_param(struct fs_parameter *p=
+aram,
+> >               break;
+> >       case Opt_lock_timeout:
+> >               /* 0 is "wait forever" (i.e. infinite timeout) */
+> > -             if (result.uint_32 > INT_MAX / 1000)
+> > -                     goto out_of_range;
+> > -             opt->lock_timeout =3D msecs_to_jiffies(result.uint_32 * 1=
+000);
+> > +             opt->lock_timeout =3D secs_to_jiffies(result.uint_32);
+> >               break;
+> >       case Opt_pool_ns:
+> >               kfree(pctx->spec->pool_ns);
+> >
+>
+>
 
