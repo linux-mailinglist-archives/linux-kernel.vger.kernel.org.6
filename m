@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-533820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713FCA45ECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:25:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C247A45F00
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736FB165A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2C5188EED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3592206A6;
-	Wed, 26 Feb 2025 12:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA097218845;
+	Wed, 26 Feb 2025 12:24:26 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A02E2206BB;
-	Wed, 26 Feb 2025 12:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBF84A1A;
+	Wed, 26 Feb 2025 12:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572619; cv=none; b=pRybqMyYSzj6BU0Z505QRQvJRLKMARTmCIby1aFr/r6g82jsUHg+zHW7Je1yurKEMrqsj6BGmmyXJNE4zlRIv25G90EP5P/LMPM+hcTR4Us3Qmy5CpXta+U9bvjbK/82E3glXXfDywd0dMvQtaBjW2CAW9cwO+dhtdaj54ApLDA=
+	t=1740572666; cv=none; b=mZ5MNXwuuYSgu3lDpUPBBcN4T5g014sgo+xoKLTuZnKBE5SgxubqgUBR5ATmk/VU5DfwY6pe66KdKXScdGB8O1rbbXMQRL3IJkHkJzwLZC6kibishybXRUSdGZLJXGYaO2BuEKDj76axP5J/Xsgvg8X9d/eysdtAmC9YUF7qeKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572619; c=relaxed/simple;
-	bh=nFlhUJpu5IyDOM3Yvq2TQXWWyR5FKc900AMjUz0SMXU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DsD2EMmBe4PmritLdSZVdzoDb5lztElgCBiq7yTVKZ7pQhRBJ/b0Bp1t/8cqz/kki9PQKZbMGY3jn3tr0dhKt2Y86mT22z6jk9nvLoO/RmDgQps7wRdzT8YqRSrJl5/vKtwDwquthSj+6xFDXOE16ORE+6wwns+tVVzk6mec6Is=
+	s=arc-20240116; t=1740572666; c=relaxed/simple;
+	bh=Is/QCHbWqAmr1YoxzAfhHFGcmQ46LcKYWWOELKfsQ8A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aPVsLNRskg1fQujRtAKEBBRlGyJGDPMeR5rGPohe/PYEzLg9NMp9HOmSuKFPSn53u+QLoLFhJhQ2vsp1PYH3+X15hBUNzbImLDhWl14nlSK3bF3nrFCLP6r68uN6Y93/+qZZPyytmeeevwZ3Y2rUIP7OWgdUDw9tmgwaJwVqkVc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C61F813D5;
-	Wed, 26 Feb 2025 04:23:53 -0800 (PST)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 374903F5A1;
-	Wed, 26 Feb 2025 04:23:36 -0800 (PST)
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-To: linux-sound@vger.kernel.org
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/4] MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
-Date: Wed, 26 Feb 2025 12:23:25 +0000
-Message-ID: <20250226122325.2014547-5-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250226122325.2014547-1-vincenzo.frascino@arm.com>
-References: <20250226122325.2014547-1-vincenzo.frascino@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B55113D5;
+	Wed, 26 Feb 2025 04:24:40 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.40.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 646443F5A1;
+	Wed, 26 Feb 2025 04:24:20 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH V3 0/5] mm: Rework generic PTDUMP configs
+Date: Wed, 26 Feb 2025 17:53:59 +0530
+Message-Id: <20250226122404.1927473-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,34 +56,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Vincenzo Frascino <vincenzo.frascino@arm.com> as Xilinx Sound Driver
-Maintainer.
+The series reworks generic PTDUMP configs before eventually renaming them
+after some basic clean ups first. This is derived after splitting changes
+from the following patch.
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+https://lore.kernel.org/all/20250205050039.1506377-1-anshuman.khandual@arm.com/
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b0cc181db74..8dea8da3d6d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26011,6 +26011,14 @@ S:	Maintained
- F:	drivers/pwm/pwm-xilinx.c
- F:	include/clocksource/timer-xilinx.h
- 
-+XILINX SOUND DRIVERS
-+M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
-+F:	Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-+F:	Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
-+F:	sound/soc/xilinx/*
-+
- XILINX SD-FEC IP CORES
- M:	Derek Kiernan <derek.kiernan@amd.com>
- M:	Dragan Cvetic <dragan.cvetic@amd.com>
+This series applies on v6.14-rc3 and has been tested on arm64. Although it
+also builds on other platforms as well.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: kvmarm@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+
+Changes in V3:
+
+- Added CONFIG_PTDUMP_DEBUGFS in mpc885_ads_defconfig per Christophe
+- Added back MMU dependency for CONFIG_ARCH_HAS_PTDUMP on riscv platform
+
+Changes in V2:
+
+https://lore.kernel.org/all/20250217042220.32920-1-anshuman.khandual@arm.com/
+
+- Dropped the patch "mm: Make GENERIC_PTDUMP dependent on MMU"
+- Dropped GENERIC_PTDUMP from mpc885_ads_defconfig
+- Dropped PTDUMP config options from ptdump.rst
+
+Changes in V1:
+
+https://lore.kernel.org/all/20250213040934.3245750-1-anshuman.khandual@arm.com/
+
+Anshuman Khandual (5):
+  configs: Drop GENERIC_PTDUMP from debug.config
+  arch/powerpc: Drop GENERIC_PTDUMP from mpc885_ads_defconfig
+  docs: arm64: Drop PTDUMP config options from ptdump.rst
+  mm: Make DEBUG_WX depdendent on GENERIC_PTDUMP
+  mm: Rename GENERIC_PTDUMP and PTDUMP_CORE
+
+ Documentation/arch/arm64/ptdump.rst       |  2 --
+ arch/arm64/Kconfig                        |  2 +-
+ arch/arm64/include/asm/ptdump.h           |  4 ++--
+ arch/arm64/kvm/Kconfig                    |  4 ++--
+ arch/arm64/mm/Makefile                    |  2 +-
+ arch/powerpc/Kconfig                      |  2 +-
+ arch/powerpc/configs/mpc885_ads_defconfig |  2 +-
+ arch/powerpc/mm/Makefile                  |  2 +-
+ arch/riscv/Kconfig                        |  2 +-
+ arch/riscv/mm/Makefile                    |  2 +-
+ arch/s390/Kconfig                         |  2 +-
+ arch/s390/mm/Makefile                     |  2 +-
+ arch/x86/Kconfig                          |  2 +-
+ arch/x86/Kconfig.debug                    |  2 +-
+ arch/x86/mm/Makefile                      |  2 +-
+ kernel/configs/debug.config               |  1 -
+ mm/Kconfig.debug                          | 11 ++++++-----
+ mm/Makefile                               |  2 +-
+ 18 files changed, 23 insertions(+), 25 deletions(-)
+
 -- 
-2.43.0
+2.25.1
 
 
