@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-533814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C98FA45F02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C136BA45EC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8603E3B668B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB65316E998
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE77212B23;
-	Wed, 26 Feb 2025 12:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdYyYqrb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6D1198E65
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C54821A425;
+	Wed, 26 Feb 2025 12:23:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1FA258CD2;
+	Wed, 26 Feb 2025 12:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572530; cv=none; b=t/K7RW3jmVuvmed2v7+Nl9jU0dQKjx3k+zBzoBEBDoUKNylUDbAD/SmD8JsaLqLyHbmqZrKSxOMvEJELDIKZnnleptxIW8mF8iVklG7tzi1dWnC6opHrKbMGBn/vshkAfhx8cTm7nQa1qbIW82XCg0KxGdQLwunIFCCItSeSPj8=
+	t=1740572612; cv=none; b=Xb5IwxXsrGFKjUiZOwYfIjoEkNIM/uVqc6z/o4nxgJAXcJuNuPUSanh9J+AImNyO1yljtJJVOb3oM1QyXskUO8SVSg2gQUR7gKglW6+5Mc0vVKdJNW/ID7GM2RQXuq4p15a8/0+FFCZPn6ZdoFum6bb8+g12YgYZG1t0R+Fw3Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572530; c=relaxed/simple;
-	bh=eYNdnldgFakXb3cWiD8nUcmIzqR/RShqi1B3BqcRVgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/wPsjXLBk3y31gx+xyYtcghrqeyOfy+ZkRpP5asiR/8WhrL3xvZOx2Zm3Q8nN1ehcV8au8kcZSgpu1kxxUWT7jfSx+3fH74fj7zMTB+RLuIphdt23gw0qWpk9nBsA+y1h7dikbcjjcBfRm06KN+UgFYkajYJgxuQnK2/G2uW3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdYyYqrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19EF4C4CED6;
-	Wed, 26 Feb 2025 12:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740572530;
-	bh=eYNdnldgFakXb3cWiD8nUcmIzqR/RShqi1B3BqcRVgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jdYyYqrb6LKMj7SS5wUoVsmKJT6e61xd00w+DGA1JV6haakqrSWMLWanBJdtGa8Hv
-	 MHgzXdlaSoEl32Ug8IkcN01jIHbcjNemPWOvIUFUHM6++REeaakELSfLCdFJwgDy61
-	 V0HMhZoEkOxXF5TCq5xd1NbOQyW7QSv+/yqWKh+rkVJPwADA5NiwYdRWPFdWS/Lxx9
-	 25sq7MsBvCBygUffZz4ys/BeuyZNls/exuFduui5NF9SCaiOnyYLkXSlB4DjeZ0oQt
-	 Kwb0EQEngw79ibmkoCJJeoQm5CBu6eEv3POojqnw1so1o3rbdSrt4PAyNYkxIbL/uT
-	 h9eFCKVQkzG1A==
-Date: Wed, 26 Feb 2025 13:21:59 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
-Message-ID: <Z78HZ5i9aMJq58E4@gmail.com>
-References: <20250129154920.6773-1-ubizjak@gmail.com>
- <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
- <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
- <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org>
- <CAFULd4bTYudfNap1trVyjqA0xv5cQQeWxSZ8numv_uHqxz1Afw@mail.gmail.com>
- <ef6e2925-f005-41e9-bc24-b9adc3922706@kernel.org>
- <Z7zBXyywUEC2ieiR@gmail.com>
- <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
+	s=arc-20240116; t=1740572612; c=relaxed/simple;
+	bh=fAqlBot061vHiWVkJRN64vfvgl+i6LKS5sFXrcE4rQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=clNyuia4ZLHGSi44kDZoFlmlE/moYQaj938/o0qiTMtimyYPmlkTwgE5xeECyUnC5aD5350PIH+lFIvJXlZhk1h9I2Gi+yNCFWGULhbe0BwHIWBcs01aQXOV06adH3O5zbmANYWa/OoL5PpBgLT+lJliB9K6aCV58aK1xDiBKUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FBA813D5;
+	Wed, 26 Feb 2025 04:23:46 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83EBB3F5A1;
+	Wed, 26 Feb 2025 04:23:28 -0800 (PST)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-sound@vger.kernel.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/4] xlnx: dt-bindings: Convert to json-schema
+Date: Wed, 26 Feb 2025 12:23:21 +0000
+Message-ID: <20250226122325.2014547-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+This series converts the folling Xilinx device tree binding documentation:
+ - xlnx,i2s
+ - xlnx,audio-formatter
+ - xlnx,spdif
+to json-schema.
 
-* Jiri Slaby <jirislaby@kernel.org> wrote:
+To simplify the testing a linux tree rebased on 6.13-rc4 is accessible
+at [1].
 
-> On 24. 02. 25, 19:58, Ingo Molnar wrote:
-> > So this CodingStyle entry is a red herring, and the !! is absolutely
-> > used in the kernel
-> 
-> Sure, for intended conversion to either 0 or 1.
-> 
-> > as an explicit marker of intentional type conversion
-> > to bool.
-> 
-> With this in mind, you would have to write "if (!!x)" everywhere.
+[1] https://codeberg.org/vincenzo/linux/src/branch/xlnx/dt-bindings/v6
 
-No, why would I? In a conditional statement any type conversion is for 
-that evaluation alone and any mistakes are limited to that statement.
+Note: These bindings are required for future work on the ARM Morello
+Platforms device tree.
 
-On a return statement the value continues to live on in the call 
-context and has a far longer lifetime. Marking that the type conversion 
-from int to bool was intentional is prudent, and the use of '!!' is 
-common practice within the kernel:
+Cc: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-  starship:~/tip> git grep '!!' -- '*.[ch]' | wc -l
-  10739
+Changes
+=======
+v6:
+  - Address review comments.
+  - Rebase on the latest master.
+v5:
+  - Address review comments.
+v4:
+  - Address review comments.
+v3:
+  - Address an issue with the MAINTAINERS file reported by the kernel
+    test robot. 
+v2:
+  - Address review comments.
+  - Rebase on 6.14-rc4.
 
-Thanks,
+Vincenzo Frascino (4):
+  ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
+  ASoC: dt-bindings: xlnx,audio-formatter: Convert to json-schema
+  ASoC: dt-bindings: xlnx,spdif: Convert to json-schema
+  MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
 
-	Ingo
+ .../bindings/sound/xlnx,audio-formatter.txt   | 29 -------
+ .../bindings/sound/xlnx,audio-formatter.yaml  | 72 +++++++++++++++++
+ .../devicetree/bindings/sound/xlnx,i2s.txt    | 28 -------
+ .../devicetree/bindings/sound/xlnx,i2s.yaml   | 65 ++++++++++++++++
+ .../devicetree/bindings/sound/xlnx,spdif.txt  | 28 -------
+ .../devicetree/bindings/sound/xlnx,spdif.yaml | 77 +++++++++++++++++++
+ MAINTAINERS                                   |  8 ++
+ 7 files changed, 222 insertions(+), 85 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
+
+-- 
+2.43.0
 
 
