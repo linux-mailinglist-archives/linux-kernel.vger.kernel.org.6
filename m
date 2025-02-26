@@ -1,226 +1,208 @@
-Return-Path: <linux-kernel+bounces-534339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ADDA465DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:01:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E667A465D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165D117E34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A540519C6CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309121D5BD;
-	Wed, 26 Feb 2025 15:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2150F21E0BE;
+	Wed, 26 Feb 2025 15:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Z2nL4ldM"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010042.outbound.protection.outlook.com [52.101.229.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YU7xe1AF"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E670F21CA09;
-	Wed, 26 Feb 2025 15:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584968; cv=fail; b=cGubhB0t/deEHSLrliuLBVaoAS40Ly+8xJdruDcdtcgHOtvdM7XvjaU6EoM20cKVfZ47ytLRSBQIW2WW79URaJMqu4oGGVfhDN1zHRVDbidqDry+MjtKMQXrw/KBNczwOUoYYZeotmWzz7byFlGvUm3w7KKBgI+ivYaXM9DVAZA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584968; c=relaxed/simple;
-	bh=Eepiv8ICOw6VCdIQMx5jDY3juWPDW9ehGyXgu/buhXo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eElNtd8yEHRBQ/7ig/8y2UlxnuSGzzLtZpUINTq5HBD4rE2d/uE4t3H0n3jpdAy/rsYeP7Lm6zfIE9YRq1ilnLd8x8MqBX53EKkRX7peYvByZnlvXsbjdbqV/STNt+sZmOSUkBh/IIFfd/pyM/ypgRaeELhqSoy/TAuk1LvU1to=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Z2nL4ldM; arc=fail smtp.client-ip=52.101.229.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RmxyaBLfF+I/WMdDAz+A/QABQGpCENSP6VWEzl+g9LRiMIU96J0xPKEBRh7cJhwyxKYGPlRG+rVUabydkMvynZl2eL3l9IDh13grvlaNOQVACapwNnseHncqcXg4Dner89FsIeGEjqQ95N7JX+m0303ehcUyhjUgw3sJmw8FKle/palWZPEXucOum8mPEv/D9/85B/qy5fNbBU5AHt/I4ybk2GBInVKKxp5uWuSnESF1yMOY4y/AXyMGZwpnjRpH3Xh8Lc9rnwQqC4t9KidnTsDDBOQMZksaNL20KVEp7e3rjH+bKmrJsY2DVCPBgeM4ZQArOHhIVPhMwJoNQHX6Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D5P07I7qJFOWeNV3FFRAOpZql673rM8Gs4QSN3kq7FI=;
- b=O/YqXQYpcOUJzP4BNP6ma1IJmnqC76eJwCOBqTEMZnVuW74edWgQCiyWnAebmxkb1tV+zq52BCAy2WXgPJl/T3GeFkRJK/3VOr1/zByQFKoru57QFjBipVjVxGzFIu978n7/haZnOxIrTKbRUdt7oTkHN4kfCqgB8IGtvbtTkuYtnj5naOUz8lrLWPuEvwf39IRxT4djFCIzFiSh1SjB3DmmOafI3qquKH+O6eH3ASBfJcxhn9ByDboUQOy04ZfqQwkDXGZK23t+v46r1Z0Md/qxg3tUbWguMJ2AGc3hGzBymJVFdwLHdSjRz1nI2ZAyNQLJNSy/s8A8u2/frpepGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D5P07I7qJFOWeNV3FFRAOpZql673rM8Gs4QSN3kq7FI=;
- b=Z2nL4ldMMwgZiY49fq2FVyOdrU6l5YTE7lgf9UgGtx7yfnMw+ecf9WH9aaZuq1ApWq3QeGJ5YpqpCRX1L1KApppwXfGpuFMGlrSSgIC0B5E2wka2yiUrsNWT8sjEZFAvFHVlLJ90D6LX2PNaUxqT7aa6U6HNhFev3/J+TAf/3Ds=
-Received: from OSBPR01MB2775.jpnprd01.prod.outlook.com (2603:1096:604:13::17)
- by TYCPR01MB6207.jpnprd01.prod.outlook.com (2603:1096:400:78::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Wed, 26 Feb
- 2025 15:49:23 +0000
-Received: from OSBPR01MB2775.jpnprd01.prod.outlook.com
- ([fe80::54f7:9a51:ae47:185b]) by OSBPR01MB2775.jpnprd01.prod.outlook.com
- ([fe80::54f7:9a51:ae47:185b%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 15:49:23 +0000
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, "rui.zhang@intel.com"
-	<rui.zhang@intel.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Biju
- Das <biju.das.jz@bp.renesas.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-	"rafael@kernel.org" <rafael@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "magnus.damm@gmail.com"
-	<magnus.damm@gmail.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>
-Subject: RE: [PATCH 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the TSU
- unit
-Thread-Topic: [PATCH 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
- TSU unit
-Thread-Index: AQHbg6wEBHvU/a0YLUuj007LSYfAeLNQf50AgAlEdLA=
-Date: Wed, 26 Feb 2025 15:49:23 +0000
-Message-ID:
- <OSBPR01MB2775633E8B74FF2857302D24FFC22@OSBPR01MB2775.jpnprd01.prod.outlook.com>
-References: <20250220152640.49010-1-john.madieu.xa@bp.renesas.com>
- <20250220152640.49010-4-john.madieu.xa@bp.renesas.com>
- <174007535477.3240838.6529561683095110061.robh@kernel.org>
-In-Reply-To: <174007535477.3240838.6529561683095110061.robh@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSBPR01MB2775:EE_|TYCPR01MB6207:EE_
-x-ms-office365-filtering-correlation-id: f7c2152b-bdfe-49e2-edd7-08dd567d240b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?TwOBR55CHx6Y5c0TVGjPq80yeBwRd7bRGBW49tMXkwQkirmiaCFUEvayyESL?=
- =?us-ascii?Q?+HwnUdlLyttJys9jx3k5g+DnXmVEHO316tDJSE0NWPVjlsQRkaCoSuQLsZT2?=
- =?us-ascii?Q?hSRA/ZRUrAMXV7C0hZHGhclCsjZGdYfrZjXemcM8IlxT6Oe6kB9ubuYXqxy+?=
- =?us-ascii?Q?et+rmgtNdkcMbDa6+8ep0Kg2mjSjLHQ/NS//IuNJknm58PrQlZxuNSRt7/ko?=
- =?us-ascii?Q?hAVN4BO4MfUWPkIJ/RJXBycBjQYvG2dL4XOE1zkOjDwAQVJ4eRJMDfCD0VsN?=
- =?us-ascii?Q?pjmNtvV6KiEshqi/la7kv2cj0AAj3RFgBOMkYSSOGmiZRnMVmi281ffjtTJL?=
- =?us-ascii?Q?L2Smo1d8wPD5yRNhNxvHi61cF9AVA6IgJhp9giHmkMOj0VpLG7YSbizufHgJ?=
- =?us-ascii?Q?GK39inD6K6VBA9klCGQRdabRY8tSg9Jhv6umQlbIItUDonxkNkNJIpvHEUNf?=
- =?us-ascii?Q?3zO0Ttcf3AMcquljIjTDFfvkqM26uc5LK/n3+c/MJVx6nan8Buh6AnstQso7?=
- =?us-ascii?Q?7zz8flF1o6lEn9f/rx7h+EQv7IRiAX5W+Yy7OqlveZJqeHfA6jFkIL9Qzz6W?=
- =?us-ascii?Q?uLj4xpvZ082rTsozPzWO5ji7O+uixgLiLnl+J4heEof2i+7zfn2Ricv0qC2a?=
- =?us-ascii?Q?npUWAad6NudiZPVISgUmX/ukx8h09J3q3aFPpNcnhIDvsWu5IMy5hrILRdGZ?=
- =?us-ascii?Q?mWMMW4P38ekQWA2mBnMFIoqnty8hMPlABXs8T6VmqJUluvEIC+k2vkBR7hOX?=
- =?us-ascii?Q?vFmHdGY+kRMWpFzFR4sxfuSZhRIVwtDcyMDnRPWe6AKY6U41dYmEbVA1nkbx?=
- =?us-ascii?Q?Kn4jqfWzASNiTA43TOi4UuRUHSm0ZLRbHvCNboNDFZHRfb6pT6ZIhC9dY7Fo?=
- =?us-ascii?Q?qOIxg6UAnOMizWPFPruoR7NzY42oO/GwJE8goJuqyZiPOZbaG2FFALlM1ZWS?=
- =?us-ascii?Q?TlpciXlgeF2N/PezC/b6X7DSH81xdKo3Mz+ZapWOAZY3S5OtZNvDhfhGStG/?=
- =?us-ascii?Q?OclKzff5BP+LY/Ww4Y+PXJOPsM9HrxGT3+G8CiOL7y1oSS47D4g+D9FJIKmQ?=
- =?us-ascii?Q?errSB7De6Zm54C8EPKMAE5IyFhVDXqSBntQ2b5Jx4IReVdE0GXwY1pmJ0wMp?=
- =?us-ascii?Q?L7ZtPmhF/RKRC/xnOqVlB9C2mKMUnNqJmvLxb61gvTs3wi8Nhr6DN7PmhGON?=
- =?us-ascii?Q?Z3lx0JHpSrughSzHJJ1SR8Nz9kghtB+EgAjMUpcs4y1qJ20qVpDg3weGzft2?=
- =?us-ascii?Q?r7dCa5bQ6stpnjRjnwh44wnF9i31iV3NNDFIu6kMYtWcJco93fNovx/x0GnG?=
- =?us-ascii?Q?1aSThPWusE94fpxWYK85kQF3uFyWdpO5vAQQwM6VTPoc0/wsqFuWHagS8eb+?=
- =?us-ascii?Q?f2JpPw581rMRPkA6CYpHRRRG0od/K9ur99kcbbXha0+A2KL5INZWCBH3Y+Pi?=
- =?us-ascii?Q?aOPSBQAZL9zfhs//43HTUQrAo3VHGrHY?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2775.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?QV/UymXxBWJyk6ozg2rAdozGhX8rYXkq6WI4PC1NUlj/W8MPK9qle7Mt4Q/5?=
- =?us-ascii?Q?xFFQc5t6FlxpNCfaTMMpYqjqHwtAvM2g7EgR8VMJ3GVX66v5eumiIdg+Qxrg?=
- =?us-ascii?Q?13neForyBls7xJnwrxOERyemNY+QS63PkvRZOIrx/abfjAHtiM9ceZjb6E8y?=
- =?us-ascii?Q?Q2NdkSu0WBuYaKNMfTs43oq28PyRALfQyDkEWaZdiYsWib9vecuM9R79W3pu?=
- =?us-ascii?Q?JoorG4Jg6iZGrZhGdfYLrh009JA/NhrV2pxpZ1QS51/6sSpJb1Y1I/9dY2Cf?=
- =?us-ascii?Q?UqPSPcbuXrDL2Aalc/p/TBrVo3mRtPuu2p5dsR5K/1J+e2G9fwQHtM0/B/1M?=
- =?us-ascii?Q?bID6KDbda1I2U75IEPuqViapJ4rUT2HbybnRStwZdIlGoGveSt/hCxCPc/yd?=
- =?us-ascii?Q?mk+cuBedB8/LkuHrAV//YXw9KKb/ntUJM7h2haVJhiAGrb3ie3PmdS+lPQ76?=
- =?us-ascii?Q?g8idYW4n/t9AShSuUw2+ZTpTE0jD0OZBEwuycfNRaLqmnj/OcBEJO3iErsPA?=
- =?us-ascii?Q?m0xeSSHTqDZas20MezjXg+GtD0C+3VYwnRqU4sbli5yaDODPmvkiDUFrCQ6f?=
- =?us-ascii?Q?JvXjeFnE+XZo9tg7xUIVtc4q3+/WHVI7w+aDB39Anss+2oll1Iqsq6f89IUa?=
- =?us-ascii?Q?eJrvCyoGd3Is0VCWVTrIkcW9hZWyD7CgLN5c5++yivlP1C/B06xFVGhGgH/J?=
- =?us-ascii?Q?g8DqRzqTYHEluVqSuO9OUj5XNlTDUek8FBlnp6KxVC9ACltY5Np7NKUlHpT/?=
- =?us-ascii?Q?lj8D3RxvrX5NEajEYRXBDgdjhOk/Mh2dlIuWKIAPONedK9A/m0BOnuMPx892?=
- =?us-ascii?Q?nMyyNfEUh7iwUYJR5zoh/QQCksPkHcPTJGtgGQJqji5Vn1p1t4v/Ut0F4Dh0?=
- =?us-ascii?Q?PCAMws75zP0xee4xJQdau9MZ/eqUSG2WQz0x/wsEysH3Or9m42nMXKidMXDt?=
- =?us-ascii?Q?dAbzjEBBrybXyc8iTPwRp6+k2yjKTkGqTWxD/MD4ovK9FQPWAn4ROFsqA0I0?=
- =?us-ascii?Q?eQ5H5HkP2W2CnfuB2mP488o+DU8xs934oYPaG2mGcu8jTOBmFSG848vg90vc?=
- =?us-ascii?Q?EdmKLTUQjITWtHIsBj87C8wFq9qqesyj68BP+34M4PiH4KemaPsKsWlr6/U9?=
- =?us-ascii?Q?AIkZnS2a4q8b222pL785f9PiEIk7CHNDsm9vJC0ZUwHYrGPPSMBnv2QKyKNs?=
- =?us-ascii?Q?ChW32OIwSEYTXaD/WHpFw7WkCKUczqENH/KIyI+0rm2UXEkYOVT0p0VXSUcs?=
- =?us-ascii?Q?ru03h66vZOXsfCL1w5NoS0N+vug9E28P/hEOK7cy/5PWFK11+MrvwigNZfS+?=
- =?us-ascii?Q?sv3ZmOJVpe4xZ7PsBuiNKyMEOgZ7JyK97PR0YhUEL9hm0sRQgjhr/8Y+krix?=
- =?us-ascii?Q?EKAXngOX/A4gB2OoxZZqNBSKlw+bzUYJpVi3CTgRuc1Jn/nYIMEVkVm+KxgI?=
- =?us-ascii?Q?zOR66v1l3T7rliqnf/lJoTRbGJOtB26Zqe3VDAtEercv0fo5rp7+Zb3nBwPf?=
- =?us-ascii?Q?Fg4YPGMCVpPt5N/1GuDSDgZ1lEK2R4mcPgClFJm8hMtVYDD2vmaKMZK64zA6?=
- =?us-ascii?Q?BGgJ+LuBD6tUXCqdm4UEfhLyDctmD33KGup9f1B54fwGJnrGetDSEk4hzLT7?=
- =?us-ascii?Q?Gw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2703121E098
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740584973; cv=none; b=UcuOr2lnRf/4qbU3dujd0OuFNDWkN5IrZvMBLxcQRPVNRLGRdSt+JJaAKBa/6mMvUUBIHkHQ+6+EqD+IYWlSlH7UmBPwjzFb1lKKcqKh38sAiKrPXt64/hAQARdyxt6MybOdHj+mt+USs654WHjjhBmorJs3XnIf34XjtuJGUeM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740584973; c=relaxed/simple;
+	bh=n9sfwMLjqZKr8H/DBdrE0eiQovz4JNiyMotXUT2Uvjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n5DqoUkYLEF5+Dd5IBlvD46cmSsWBtRic5TBGiIVkHrVuLfmMcxRI7WM725dqaPX4F2tzxWBqzQIeU17Dzo7TNhsF7Za91Dx17foyJz5vqnnUFefSW+Zxp30Nv0v0XSK7FW3I8Byd5ku2qW+kiNL/gMRY3k4uVz7tbYdkPTXmfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YU7xe1AF; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4397dff185fso61300685e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:49:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740584969; x=1741189769; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0p0n/HvVMpkGcsOceJadWdw3uKxq8oQ66r+vg7p98B4=;
+        b=YU7xe1AF+mIIRE7HEzTv/xqfgG3daQ37STLk0+GSYkYg5cHt4hw5iGQ91J1s+f+/0B
+         Bo/RzLGkB5EvQtsml+u54+dLeCStLnhdzvlC8aeQBBQMYdWwNuAXtdU2KItZRtD6IX8Q
+         SFVz2bkymusgV+/ggXZxf+8p6Gi4kAnialYcFKMp1YQMnxhPra4gSugoceRexIJZDGGl
+         8WX+ThWR32eP+CmdjRDEDDBVlhYPOSpOpmXsG+QwzFQuyInlz5q6+PFLG34iuw7jrGeb
+         E4EE3avW1e1Z7wiKOz4cEKtg2CRAYVIjOr4kbgOHBKw3ph/SdOqZS2HMcnuYZ1aK/hZG
+         tdBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740584969; x=1741189769;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0p0n/HvVMpkGcsOceJadWdw3uKxq8oQ66r+vg7p98B4=;
+        b=M9Mcsnk1cc2bokFULeYx6O/4hhCHHWH2z8bBhkLOt5DOVGAyAno2yefaqltzLnV0aw
+         r5+4qq27Qcv5G+JXNtBxBHDI2uvtr8cktLQE6gC2D/edg32CT3+SHCRU1mkD/FFuhGlr
+         xyF9+1rArQSZsMM/AcAfjeS7AE6irnLla5ua3dRz3RK56arUOhrKNzugvNnZP1yUL8Ng
+         bkwd6BB1xTvm7Siz6bB3D5OM8i+KOdvirLTpugamob6lLQQIYMmBsI2YTscdB010oUev
+         orbSrEZ3O8s26YwEIIjDsNFMS3zvk6ZLU0p1P04xYTyg9kZ3sOCHRnpqFg2z44brHyVM
+         pMOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHWvpbUxCC8B4RTFuS/wBQhgV22GJf+Rkv99kHjoD79blmWymZhGDussLEIS6DVzcmt/GMp0zL+rGmLFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxt1uNXRp35X4X6w9kLoHwBzwtim2peF7tVBgOCfNz1NIiS/TN
+	fLpi/zogOyuiLECHox5F74kpXkluebWqjDV/OFnzXH9W84MgwfydjnA/6ZU6tv8=
+X-Gm-Gg: ASbGncuQmG9l0nAgbCB0noUCb0SHjrE9AJRRK7vyrNIGkA4WejaEzbBL7Z4mLSsB3Nr
+	PIQuOnGtp45wHXNR24V/JZ/DiPtwPR0I1u9NvDRk0pmbEnKJiCdB1IcQdtUDLUS/3HUcTs8JFCR
+	mekYyZ2AcTXBQ+hLEjJVDWEgmlzlqQVIJu9Bk3fkqk2S33q1oUaWX+2u/ADOJ4XhcVMnqxScpB9
+	236y5I7Ch570eq6AOpjidT0C2B+WZ3hG7ccgZNt9aN6i828TmvzlAyOXDEbzCD87wSyU6GFkAwi
+	9u0RoOAO6VggVGD/skBZSL1JZEtR
+X-Google-Smtp-Source: AGHT+IFrDL1uk86PVoF2mj9jbYVArsum6vONC+I6iG2Yc+eitETSemITRmSloxxMANxWuwoKDv84Ng==
+X-Received: by 2002:a05:600c:4506:b0:439:6e12:fdb4 with SMTP id 5b1f17b1804b1-43ab8fe90camr40816605e9.14.1740584969299;
+        Wed, 26 Feb 2025 07:49:29 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532d33sm25750165e9.15.2025.02.26.07.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 07:49:28 -0800 (PST)
+Date: Wed, 26 Feb 2025 16:49:26 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Ryo Takakura <ryotkkr98@gmail.com>
+Cc: hamzamahfooz@linux.microsoft.com, akpm@linux-foundation.org,
+	bhe@redhat.com, decui@microsoft.com, gregkh@linuxfoundation.org,
+	haiyangz@microsoft.com, jani.nikula@intel.com, jfalempe@redhat.com,
+	joel.granados@kernel.org, john.ogness@linutronix.de,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	wei.liu@kernel.org
+Subject: Re: [PATCH RFC] panic: call panic handlers before
+ panic_other_cpus_shutdown()
+Message-ID: <Z784BiUZohADyoOW@pathway.suse.cz>
+References: <Z7juu2YMiVfYm7ZM@hm-sls2>
+ <20250222054405.298294-1-ryotkkr98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2775.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7c2152b-bdfe-49e2-edd7-08dd567d240b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 15:49:23.1636
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vkwPIaI1S4DFFcWMbURApF8a8z79ezkZX8A6ZoZzuBGFwePrGeWVq/DzpF0lTpR0H3y29g7z9UuULDvqRx0kuHoeZsRZr5wLr+nO9MGDcQY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6207
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222054405.298294-1-ryotkkr98@gmail.com>
 
-Hi Rob,
-
-Thanks for the review.
-
-> -----Original Message-----
-> From: Rob Herring (Arm) <robh@kernel.org>
-> Sent: Thursday, February 20, 2025 7:16 PM
-> Subject: Re: [PATCH 3/7] dt-bindings: thermal: r9a09g047-tsu: Document th=
-e
-> TSU unit
->=20
->=20
-> On Thu, 20 Feb 2025 16:26:08 +0100, John Madieu wrote:
-> > The Renesas RZ/G3E SoC includes a Thermal Sensor Unit (TSU) block
-> > designed to measure the junction temperature. The device provides
-> > real-time temperature measurements for thermal management, utilizing a
-> > single dedicated channel (channel 1) for temperature sensing.
+On Sat 2025-02-22 14:44:05, Ryo Takakura wrote:
+> On Fri, 21 Feb 2025 16:23:07 -0500, Hamza Mahfooz wrote:
+> >On Fri, Feb 21, 2025 at 11:23:28AM +0900, Ryo Takakura wrote:
+> >> On Thu, 20 Feb 2025 17:53:00 -0500, Hamza Mahfooz wrote:
+> >> >Since, the panic handlers may require certain cpus to be online to panic
+> >> >gracefully, we should call them before turning off SMP. Without this
+> >> >re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
+> >> >vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
+> >> >is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
+> >> >crash_smp_send_stop() before the vmbus channel can be deconstructed.
+> >> >
+> >> So maybe panic_other_cpus_shutdown() should be palced after 
+> >> atomic_notifier_call_chain() along with printk_legacy_allow_panic_sync()
+> >> like below?
+> >> 
+> >> ----- BEGIN -----
+> >> diff --git a/kernel/panic.c b/kernel/panic.c
+> >> index d8635d5cecb2..7ac40e85ee27 100644
+> >> --- a/kernel/panic.c
+> >> +++ b/kernel/panic.c
+> >> @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
+> >>         if (!_crash_kexec_post_notifiers)
+> >>                 __crash_kexec(NULL);
+> >> 
+> >> -       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+> >> -
+> >> -       printk_legacy_allow_panic_sync();
+> >> -
+> >>         /*
+> >>          * Run any panic handlers, including those that might need to
+> >>          * add information to the kmsg dump output.
+> >>          */
+> >>         atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+> >> 
+> >> +       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+> >> +
+> >> +       printk_legacy_allow_panic_sync();
+> >> 
+> >>         panic_print_sys_info(false);
+> >> 
+> >>         kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
+> >> ----- END -----
 > >
-> > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > ---
-> >  .../thermal/renesas,r9a09g047-tsu.yaml        | 123 ++++++++++++++++++
-> >  1 file changed, 123 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> >
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
->=20
-> doc reference errors (make refcheckdocs):
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->=20
-> pip3 install dtschema --upgrade
+> >Ya, that looks fine to me, that's actually how I had it initally, but I
+> >wasn't sure if it had to go before the panic handlers. So, I erred on
+> >the side of caution.
 
-I'll upgrade my dtschema and double check before pushing in v2.
+The ordering (stopping CPUs before allowing printk_legacy loop)
+is important from the printk POV. So, keep it, please.
 
->=20
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your
-> schema.
 
-Cheers,
-John.
+> I see, sorry that I was only speaking in relation to stored backtraces.
+> It seems that printk_legacy_allow_panic_sync() is placed before 
+> atomic_notifier_call_chain() so that it can handle flushing before calling
+> any panic handlers as described [0].
 
+> [0] https://lore.kernel.org/lkml/ZeHSgZs9I3Ihvpye@alley/
+
+> I'm not really familar with the problems associated with panic handlers
+> so I hope maybe John and Petr can help on this matter...
+
+Honestly, I do not have much experience with failures of the panic
+notifiers. But I saw a patchset which tried to add filtering of
+some problematic ones, see
+https://lore.kernel.org/lkml/20220108153451.195121-1-gpiccoli@igalia.com/
+
+I did not like the way of ad-hoc filtering. The right solution was to
+fix the problematic notifiers.
+
+Anyway, it went out that the situation was not that easy. The notifiers
+do various things. Some of them just printing extra information. Others
+stopped or suspended some devices or services. Some should be called
+before and some after crash_dump.
+
+The outcome was a monster-patchset which tried to fix some problematic
+notifiers and split them into more notifier chains, see
+https://lore.kernel.org/all/20220427224924.592546-1-gpiccoli@igalia.com/
+
+Some of the fixes were accepted but the split has never been done.
+
+
+My opinion:
+
+1. The best solution would be to make the problematic notifier working
+   with stopped CPUs. The discussion around [v2] suggests that the author
+   made it working at least for x86_64, see
+   https://lore.kernel.org/r/20250221213055.133849-1-hamzamahfooz@linux.microsoft.com
+
+
+2. Another good solution might be to do the split of the notifier
+   chain, for an example, see
+   https://lore.kernel.org/lkml/Yn0TnsWVxCcdB2yO@alley/
+
+   The problematic notifier can be then added into a chain which
+   is called before stopping CPUs.
+
+
+3. In the worst case, you could change the ordering as proposed above.
+   I am just afraid that it might bring in new problems. There might
+   be notifiers which were not tested with more running CPUs...
+
+
+In general, the system is in an unpredictable state when panic() is
+called. Notifiers should not expect that non-panic CPUs will be
+able to handle any requests.
+
+Also it looks like a good idea to stop non-panic CPUs as soon as possible.
+Otherwise, they might create more harm than good.
+
+Best Regards,
+Petr
 
