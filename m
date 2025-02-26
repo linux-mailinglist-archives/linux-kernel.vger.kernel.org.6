@@ -1,91 +1,132 @@
-Return-Path: <linux-kernel+bounces-533111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C08A455C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:40:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AB7A455DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D783AC3FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35BF1898C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C2D2698AD;
-	Wed, 26 Feb 2025 06:38:10 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7A526A1BD;
+	Wed, 26 Feb 2025 06:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgA36R8j"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E295269896
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2132026A0C7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740551890; cv=none; b=TeR6yqWGF+9FlS3aKTepX8n1Us7a9V4lueN0fO4pspGdixAsOueRuolNo1WStr6kEroCwi9jC0dI7XtWVTAnPHh7aKlCR5h7VXybcJnem/kFAVMx2aTPMRtBIHmoJKvxcaZ6q7PFMkLj1BmAuGP7lzQ5ba/P8+l9zFA0WA22kbA=
+	t=1740551926; cv=none; b=uVll3uRLxa5V1fmJ2YdtcoCk3cmMEPfp5Jmvu3HD8IEHMMrtwoAL6Lc/NxvUFX6l9Tt3wFQYOLcNFpvn+A3XMVT5F/iUcY83GvKFaKFN5YicopPRD5VeofVSF596WIRwUqed2TcitttXTv55DiLsX3xo4Up+a1bZ39qJwADPBc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740551890; c=relaxed/simple;
-	bh=guiF0Wi7P0ZzC1Ced0aQ6A0N70jYk5WtLawsVVcMeSg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QIUYyRK75VdnOimKY/xAUtKUYni27lv5NAmh0NNMQ6ub6P2QxOWtlCb0KEdTjrT0DJEP8YmdR8GFYxGDff3xVW1kTo8jfJPv8r6JZKLxrOwQFDLhOZd5ZOGDGSKgxbMpyxLc+k4GQgJpoUmq3ENRA+qlQh2tv4WS8zrXQSi1RN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-851a991cf8bso40584939f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:38:08 -0800 (PST)
+	s=arc-20240116; t=1740551926; c=relaxed/simple;
+	bh=4zHr+lKCZGLp+AVj3GLsr40g87x+7GH7RBtFf2xj2yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LITIUiz2jL9JtSfUUrc989O6o38N3wmYm7oSZ8gdfrYLGmSUUrV0VJ/F9Mxx7E/tU8W9EFryHE6NIPpWBkv9eYf4AT7ChTdBH7FKAGYuwmxOKTjWvsB1UZbWOT+a/ToH5xNYs6qZfa7HTFgpn3bUQOliVW1juapnPbvfc1IMcWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgA36R8j; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54622829175so6051344e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:38:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740551922; x=1741156722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdAWglkpNWkKlfVQY0b30qa+fHtrIyjn4IdPv+J5KmY=;
+        b=fgA36R8jD1+xHXkh4uHxxApxkvXsGB16E+q1a8FR/pnqQdTSCZRuywp1vQeY+Qwo2k
+         2Veh7P++jd93iHwBIoDIWnqz2yNgSw6MMdARwk44Q1knmr+MDVPd35VmG1P8VP8J68/3
+         EkiuWFX0xyGbDWlxOkXMIqVqFIdGi72Pd7tkOLHSf8AdAcKviwVq2sMc00ikWZ2gKGA8
+         tfl6pL+mci6AQ0vxEdwEAC9yedLKAY/sSauWPKOHE9LzrRlMPyLNxeo3z0CQfF/poFLU
+         yogQSIzSQX0bkYvhWbqp9VA4RAQxeF6oioNQ9hLGJGnsgExFNHQT1WoUCyEkvuZHVAxc
+         zNkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740551887; x=1741156687;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2Sd3OH8n0uNJj8VT5Bq1G6tV5mGRmXD3SIdjLiVvUw=;
-        b=KjkmZHhnATtB+ReZOvhuUNC5BDvqjXeMFmstdE1aZnPL46vLuiCYWE5s7m/bmXrfQI
-         Qry/GWXdLDnsG0XrDGbCTgterrtCeE8yX0XUsY1Pw51D/djjq5b0UfRNwU+mzs/p1yYt
-         tLAWANQuCWszuOzEYZL/Dwsosxrf9NJGyLKWONc71oMCgKrUGwT17Zltuys/3tq+xN5/
-         pfPZqKfCSaiutb0xJEPtU5mzwrMOG3Vv/oiSXnay5e96xbej2ptULLlMsEDQb2Vjgncy
-         nEwr0dejhIlwcZ/IzR35pYCw3/osEbr7U7mxrr04hT7omnr9PcSo37rwkY/F6xqmgnhl
-         2log==
-X-Forwarded-Encrypted: i=1; AJvYcCVxZY+Zc3O413RMAh4R5zshhlAZxmcda12Gn/ZUKRLTTtD4NTbZgdvWYfbcnFpVUa1b4Ha7M6Knnm9Aa9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0uSuhuv9W2TW3KOl/2Qwl+WcrOB5tU0cTxVztSQ5ObsvGwa+Z
-	HdowpfTK2eXzxxn8KQ5RPxcM2NHX1QLSEi+BbHtVt8c7FQvB/co2Ncq3gGPkd79R2gB5VZgT7mX
-	1aez8Qat146jcYbC+yRbS/A8GmbpbVxWdjq8ugKzJWAYZDmXPg1ODsoA=
-X-Google-Smtp-Source: AGHT+IFNIqlmmdkyElIfBgTMksbFAvD3UKgEmB0dGWiHR2hbc3WlCha1vSR4JlQ0eyJwK/IiVVxa+1etEqawYHKhoVPYLv5Za64d
+        d=1e100.net; s=20230601; t=1740551922; x=1741156722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vdAWglkpNWkKlfVQY0b30qa+fHtrIyjn4IdPv+J5KmY=;
+        b=RO8K/QOafQ+bxdYkRpU1jb1G2tKYrO49d/hP0Ds+RphC2Y9Jwc7G13pWy/1I+HsnPU
+         tLzf0lygEScXX07AKFHu7ZcdZzIimQYLrhwUIOmaxNVCSY1EtKQ6OeUXiq+KI49032cd
+         iJioGl8hPqrUgZwT9S53KfThXhYGI4lA0LIWg1kJGIWeKCFxRXcI8otEjDa2ah4mOvNT
+         PIC5IcXL3Sy7Pgo9urwdxwhLz/4EtQMXiOi8/nTH4PwbGj4yAH+LN/24FTwUhhU/dHxa
+         wiVxjz1ZUBEogbiFszaaIPIzX8y2raHCF+gofHJmW9/1BuGE4JmbEo5LXls3Yq57K/0W
+         WQcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZltB8ytMVe4ZoB0Usrv6NbV4v9vwbKpvcMgiqg+uLSvVtuDIWTilYt6fMF4GMyqIdDCS2jl1pPjcACM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8LjN3wXpFo+sRmlozJIY4EDklFkiz26aW4c2+th6fZGprwSRF
+	E1E3COFzznBMKylp12goTvpguc0bdVFugmuhMN85EWawjjWXomRjcbwunqbiI+g=
+X-Gm-Gg: ASbGncvXdvKKnhiVQc5va+5qk92wxYJNYFQE1hGqyJ3ONwcPPFEI62o1jI63rw8qDzv
+	bSWDeP5jBb7K045uht+tbtph9VuC8/dhPiyfNrzFHyXA48BG2cpy1AxhE24zefCe4Dk+QDAwhxN
+	3lw+ThYSNjRFYwtdcriCoZbMyuzqCyekLSw5rG2HbAGyr/RnA6uyZMPGR0KfPWJQj/Puqa6cCRH
+	ZdYax416DlxInsIOLnsFYy/NIrYwBAoQOijA5jrmgN7YuQ3f7bulf2Pym2ZufJTrTM23r22JD6/
+	lFpl6+zU52t72RiuPp66JwW+WlGCo5EevYhcVCLGrWOA5D5SHPDCYt6uaMXfjWzCOSuT0Z74FPW
+	oRvuhvw==
+X-Google-Smtp-Source: AGHT+IGIr+d6iAad7GGGqJtdFIIrbosoSV2T/fF6VruZ1PJO3g36OWay8E3V9QE+EEdkJZgWoEXISg==
+X-Received: by 2002:a19:4314:0:b0:548:f3f5:b26a with SMTP id 2adb3069b0e04-548f3f5b333mr2954664e87.50.1740551922133;
+        Tue, 25 Feb 2025 22:38:42 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514fa94bsm353388e87.249.2025.02.25.22.38.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 22:38:40 -0800 (PST)
+Date: Wed, 26 Feb 2025 08:38:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	Herve Codina <herve.codina@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v4 04/15] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <qskzti5jawqioug2jw46zylnax4uxoczvqolwqgbseflqaddze@3uke3rkwbpzs>
+References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
+ <20250225-bridge-connector-v4-4-7ecb07b09cad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3286:b0:3d1:5f67:f0e6 with SMTP id
- e9e14a558f8ab-3d2cac94fb3mr193538655ab.1.1740551887676; Tue, 25 Feb 2025
- 22:38:07 -0800 (PST)
-Date: Tue, 25 Feb 2025 22:38:07 -0800
-In-Reply-To: <674c6006.050a0220.ad585.0036.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67beb6cf.050a0220.38b081.0003.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_xattr_ibody_find
-From: syzbot <syzbot+2471d99ca242f0f7a2a3@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	rgoldwyn@suse.com, sandeen@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-bridge-connector-v4-4-7ecb07b09cad@kernel.org>
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Feb 25, 2025 at 05:43:52PM +0100, Maxime Ripard wrote:
+> With the bridges switching over to drm_bridge_connector, the direct
+> association between a bridge driver and its connector was lost.
+> 
+> This is mitigated for atomic bridge drivers by the fact you can access
+> the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> 
+> This was also made easier by providing drm_atomic_state directly to all
+> atomic hooks bridges can implement.
+> 
+> However, bridge drivers don't have a way to access drm_atomic_state
+> outside of the modeset path, like from the hotplug interrupt path or any
+> interrupt handler.
+> 
+> Let's introduce a function to retrieve the connector currently assigned
+> to an encoder, without using drm_atomic_state, to make these drivers'
+> life easier.
+> 
+> Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_atomic.h     |  3 +++
+>  2 files changed, 48 insertions(+)
+> 
 
-commit 9be53fe697eccf45e5c37e10ffd399eeca5eb489
-Author: Eric Sandeen <sandeen@redhat.com>
-Date:   Mon Oct 28 14:41:15 2024 +0000
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-    ocfs2: convert to the new mount API
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15fdffdf980000
-start commit:   9b2ffa6148b1 Merge tag 'mtd/fixes-for-6.13-rc5' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4c4096b0d467a682
-dashboard link: https://syzkaller.appspot.com/bug?extid=2471d99ca242f0f7a2a3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172412f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12155adf980000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: ocfs2: convert to the new mount API
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+With best wishes
+Dmitry
 
