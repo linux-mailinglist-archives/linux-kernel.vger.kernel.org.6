@@ -1,176 +1,111 @@
-Return-Path: <linux-kernel+bounces-534761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966B8A46ADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:22:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AAEA46ADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237143AF66D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FACC16E594
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE00B23E235;
-	Wed, 26 Feb 2025 19:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50943237A3C;
+	Wed, 26 Feb 2025 19:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jtrJ28NW"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C80B23A99C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i1DdCjY7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D32236A66;
+	Wed, 26 Feb 2025 19:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740597667; cv=none; b=IK/Vz4iF1HO0vxp1brnPZXpMXncQX05psYLmo6t7tF8KNrWaxaWW0M1H1DVHcwsMMyk1ZH2S9s8kX/fLrUnU2SzaorSCcsYk6B0d8SSPrpPgwGR2oDGwhWxf0mygA3yJKG1K9NDVmwVuSV6youvmy8ScCnNM5qRjopuflo65qFI=
+	t=1740597707; cv=none; b=upirvRH93dTC1yXiNnrNUHk6D3j5NLw5Sn6Rev7zsR93hYB2dHErcu0OoDmuPqT2rorNFvGET9hKCESNzX7/BoVglV0gKFqFDijUZ5nRMKbZnpgx1ZwwILPwNGfttsbtHG1C4BFxgVWWpmXFXeQ2+qD1xcEMmgwrhekZzvlK5Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740597667; c=relaxed/simple;
-	bh=WpYr04p1UkLDWtl5dIg7zK3U1th+UqvFkMU1unWOfHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZaxLPGXnBMb6IgNT8o0TiCFtlY79Q9DOakygsPZPJbjs4Z1Y6kYTT1mOABJQHZ/JWAGZLskHAK417t3JTmiI+W8xU8jqM/JD8zyd5GzCJi3s+UwrJFJjzKibebyahWSvy8/yR5EiV8To11KsG38NQjRpSAF+GoinWHYAf8jlR8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jtrJ28NW; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22104c4de96so1699415ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:21:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740597663; x=1741202463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8N3fCiVrbRYJnsDcemalRElfbpkz7bQc2o4sOKvhYDA=;
-        b=jtrJ28NWEq3+3bKSZhT4zVDOqQFdnr9bXCfdSJRkLhNwFa9eZETgqOh8kUBo/wNyHe
-         Dy6pUxlZDCzqQYU0Rw2/SUk09ufzCimHjUL5EsARgjW8D383fLd8bX/fuaFVifqNFrFs
-         jPbpJwAXjloMzODIX48KfqnyLElw1ZJO08wwc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740597663; x=1741202463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8N3fCiVrbRYJnsDcemalRElfbpkz7bQc2o4sOKvhYDA=;
-        b=EJDHaFKbr0WbgRKQtbpJGwqjSsY4PQHTCABHnT1sOLzmed6qQZmv7Gp837qAY7ty+a
-         oABEc5yaEEah2pvBMV4UAY7uDwIlBfllGLIwus53s+W0A8mXgyiEurN6ArfbP3yeeOUh
-         y7A/Xp016idqQRq3k2rNHwJqL1hR3HyVLZvnNLAXnZ2pD40gxy0iw3hgQceghP4XE+7l
-         aWSUpamgU4mD6TQGL9mom5r32Mp0mHFn0BhB4cvNei+VLBtJusbNXfwjTSI7eToQCKV9
-         Rh2Am8CsRNubR52Fyd7tDj1saWcs8uX9c3zq6YqPPgwN04jD6MbWIOELxY/woN03+vMc
-         OxSg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8iC1JwXUHLPUVGbn7WeUw+PuAn7zNvJ1nnUeyYR/LpzmUHooJGAlNz9dw09VeFoeJdjLXkmcOBuxwSXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh0B8e7Viy+3JL2WEgqcEkKRWEZQYgb2S5KptNU/SSEwiSGz8G
-	i9XmCcI3qOLA4bZfbb5UNM7i8irrlfAg0g7pW3fOTeRupo2eCJBEi9E42/rN7w==
-X-Gm-Gg: ASbGnctSMwzAaD4LN4WemD6BG/jHyqrqWRCZOg0m0lfbVEqNhQlq1Q1wyvwO+BftUZq
-	+oB5vYHZKvHQTDci1Ujo9g3JvZHIoPQ8Ocz2PzEJ9l77Gi7GjliawwkvMqJSdGlJzu9dYwxSjjm
-	hTj4hGI8Bku3eOtZN74F0iFhO17dyVJHXaYeiqxo7+PW174F7EWhaz7A9b1aahNoLvlXh3N7Zom
-	HzLNVCluS8UH0LRv0HAg6s/E3jfdkLj75cFgqnwzSpdPZLYHgF8vbZx/mmKsT74roUAKG7aDBhp
-	XGi6wnMfuTOPNkBluN1C2BGmFEq6JTurGc7lq4uUIhwlLhncDOYBun2MWXezk+a+dr/FnRSPyUT
-	abkYWkC0viqw0
-X-Google-Smtp-Source: AGHT+IHloyY5llsRwZmYOAMtChiquooiL7oF22Jfz6xhil9TWQQpChOD8vyx6ebjqWqMfIQbsvyx2w==
-X-Received: by 2002:a17:902:d48c:b0:216:7ee9:220b with SMTP id d9443c01a7336-22307b4cc17mr117990425ad.22.1740597663658;
-        Wed, 26 Feb 2025 11:21:03 -0800 (PST)
-Received: from li-cloudtop.c.googlers.com.com (4.198.125.34.bc.googleusercontent.com. [34.125.198.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22341c04d16sm8473865ad.190.2025.02.26.11.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 11:21:03 -0800 (PST)
-From: Li Li <dualli@chromium.org>
-To: dualli@google.com,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com,
-	gregkh@linuxfoundation.org,
-	arve@android.com,
-	tkjos@android.com,
-	maco@android.com,
-	joel@joelfernandes.org,
-	brauner@kernel.org,
-	cmllamas@google.com,
-	surenb@google.com,
-	omosnace@redhat.com,
-	shuah@kernel.org,
-	arnd@arndb.de,
-	masahiroy@kernel.org,
-	bagasdotme@gmail.com,
-	horms@kernel.org,
-	tweek@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	selinux@vger.kernel.org,
-	hridya@google.com
-Cc: smoreland@google.com,
-	ynaffit@google.com,
-	kernel-team@android.com
-Subject: [PATCH v15 3/3] binder: generic netlink binder_features flag
-Date: Wed, 26 Feb 2025 11:20:47 -0800
-Message-ID: <20250226192047.734627-4-dualli@chromium.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To: <20250226192047.734627-1-dualli@chromium.org>
-References: <20250226192047.734627-1-dualli@chromium.org>
+	s=arc-20240116; t=1740597707; c=relaxed/simple;
+	bh=9voOCpIr5KsR2MrzPyH2v0+Hl+LD4VAcKc3oOdHexTo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bERe8gWXMOILJ/kL73AIX7ZA0e5ZsZgVCl5evAQBNNHUeWJLx6Ht8veB/210fzCtR3En5F6aU2SNbMJ8b69QztQ7aUZbhKqxMyPERt38gD4AH7jVlc2rmYVGPG4vIeL5xxXgvhrVYBf+511DxKW4y1NG1RJwX6NOUXMGf9jaA98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i1DdCjY7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id F37A72107AAB;
+	Wed, 26 Feb 2025 11:21:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F37A72107AAB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740597700;
+	bh=9voOCpIr5KsR2MrzPyH2v0+Hl+LD4VAcKc3oOdHexTo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=i1DdCjY7F0rctTcaMxKIxXXmBJZYfZpU2ARs6hjfPwxgl/oOBWgQ8ZkwhMtwb7dAt
+	 kvdQLVVWHY+r3NlVA73slr8Gx16VJbEED1agkRJwxq9pcC4t78BnizML2qgpxUw9uJ
+	 8pwpJebUVF+/3SH4DjtuCeb/QpvlHUD7V/CmQ/2g=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu
+ <song@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
+ Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, LSM List
+ <linux-security-module@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ selinux@vger.kernel.org
+Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf
+ hooks
+In-Reply-To: <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
+References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
+ <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
+ <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
+ <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
+Date: Wed, 26 Feb 2025 11:21:30 -0800
+Message-ID: <87plj4jyv9.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Li Li <dualli@google.com>
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Add a flag to binder_features to indicate that the generic netlink
-feature is available.
+> On Tue, Feb 25, 2025 at 11:06=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>>
+>> On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
+>> <bboscaccy@linux.microsoft.com> wrote:
+>> >
+>> > Certain bpf syscall subcommands are available for usage from both
+>> > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+>> > need to take a different course of action depending on whether or not
+>> > a BPF syscall originated from the kernel or userspace.
+>> >
+>> > Additionally, some of the bpf_attr struct fields contain pointers to
+>> > arbitrary memory. Currently the functionality to determine whether or
+>> > not a pointer refers to kernel memory or userspace memory is exposed
+>> > to the bpf verifier, but that information is missing from various LSM
+>> > hooks.
+>> >
+>> > Here we augment the LSM hooks to provide this data, by simply passing
+>> > the corresponding universal pointer in any hook that contains already
+>> > contains a bpf_attr struct that corresponds to a subcommand that may
+>> > be called from the kernel.
+>>
+>> I think this information is useful for LSM hooks.
+>>
+>> Question: Do we need a full bpfptr_t for these hooks, or just a boolean
+>> "is_kernel or not"?
+>
+> +1
+> Just passing the bool should do.
+> Passing uattr is a footgun. Last thing we need is to open up TOCTOU conce=
+rns.
 
-Signed-off-by: Li Li <dualli@google.com>
----
- drivers/android/binderfs.c                                | 8 ++++++++
- .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
- 2 files changed, 9 insertions(+)
+Sounds good to me, I'll rework it to use a bool instead.
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 94c6446604fc..b3d21ccd81f2 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -59,6 +59,7 @@ struct binder_features {
- 	bool oneway_spam_detection;
- 	bool extended_error;
- 	bool freeze_notification;
-+	bool generic_netlink;
- };
- 
- static const struct constant_table binderfs_param_stats[] = {
-@@ -76,6 +77,7 @@ static struct binder_features binder_features = {
- 	.oneway_spam_detection = true,
- 	.extended_error = true,
- 	.freeze_notification = true,
-+	.generic_netlink = true,
- };
- 
- static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
-@@ -619,6 +621,12 @@ static int init_binder_features(struct super_block *sb)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-+	dentry = binderfs_create_file(dir, "generic_netlink",
-+				      &binder_features_fops,
-+				      &binder_features.generic_netlink);
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
-+
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 81db85a5cc16..96e64ebf910f 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
- 		"oneway_spam_detection",
- 		"extended_error",
- 		"freeze_notification",
-+		"generic_netlink",
- 	};
- 
- 	change_mountns(_metadata);
--- 
-2.48.1.658.g4767266eb4-goog
-
+-blaise
 
