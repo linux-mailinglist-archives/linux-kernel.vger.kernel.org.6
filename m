@@ -1,220 +1,153 @@
-Return-Path: <linux-kernel+bounces-533191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73F6A456B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:30:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098F4A456B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CE01895C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C3C176D33
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698326B96D;
-	Wed, 26 Feb 2025 07:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC6E26B089;
+	Wed, 26 Feb 2025 07:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orMVkifx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bf/wJYKa"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0801F1624EA;
-	Wed, 26 Feb 2025 07:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648F4171E49
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740555021; cv=none; b=QgwZf+p+ruMDSI4XvhPZGK9k30CF0H3EN3AKvzH1lCA02CuBQGE6QABZ5GtQzXWTvVvt5Vq1szE+Y9P4Q31G+M4zTHcAGysqOc+w7fi+ibGRIzuzW2EvOp+IJMH4ZXQQM6EJ2sL0wl4lyWfl0hROC/AQqB7XCCz0t9GP4JHtRhg=
+	t=1740555133; cv=none; b=uIQ1Q6wRZ4luzFw0hy87ak4htuq9EJENgsRLrYl4U3iL9bSOlrW7tOFWIqS4Um925HpD+2ocID2VrySD5ea+2GEgyIXQCh5FgwD9iZMIgKVxdpGbLNI9fYJWBOCrVDU7fjmUuAYHvFsP1RrxP6xz6U08IQKRMmqH1uYxwnW0wmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740555021; c=relaxed/simple;
-	bh=wtnd1/XXRkP1lzyc+LlUNzBBy4X9q2wxr2JDxp6SR3M=;
+	s=arc-20240116; t=1740555133; c=relaxed/simple;
+	bh=2d7ZYo/J6xNOpi6uaMp2ccWOTHvJMpT+pl0WNwgOe4U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpnQ+PgCL/Rq8OrxIlSojSdCSmGbi0ikhtF/KO/cFveRwbQw45ZwixmCKkr+ugx8HGfrGr5DiGM9vmBpGC8A735sPm+0IpbRD064s0cZFJLHjviNoS00561D9H0DMRqFJTTAPvcbCVggjwuhlnpAgzGmQOfVXTz3GSPd/MBu8cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orMVkifx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CC4C4CED6;
-	Wed, 26 Feb 2025 07:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740555020;
-	bh=wtnd1/XXRkP1lzyc+LlUNzBBy4X9q2wxr2JDxp6SR3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=orMVkifxynbHqu5sHKtW4cb/uJTJfB7a44IAbaj3ZXQkCAeosHqkkMqPZrOhEvrR+
-	 NGnFdEzDXi08kkIcuvGdCZTLLE9ESStU0eAjM2QYxq42ofWpeYxSJs/xExW1EHwhYH
-	 a3PwBkVulfHLqLAU/GZolDNNO3uYJCnQfoqZgjOU9SUphNnM2zlfCKKSyirz/rr+SD
-	 NRXZ2WHbZQAMb4Ao9hbgsr9Onxs9nuTh2NP8dKw+IiSJb+fERUnsCvAYW4nIzfUHCw
-	 d5IIP2FIAdEPHlChDxxz9AbUQEcDnDBQq6Dj02YDrYfdriUc4Y9xCFjXgaRLfNEiE+
-	 JPOVNjOgvTocA==
-Date: Wed, 26 Feb 2025 08:30:17 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
-	amitk@kernel.org, dmitry.baryshkov@linaro.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	jorge.ramirez@oss.qualcomm.com
-Subject: Re: [PATCH v4 01/10] dt-bindings: PCI: Add binding for Toshiba
- TC956x PCIe switch
-Message-ID: <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=REJ+pEfUHl/OiA4TI+bmTrHlGE/iVwcQ9nxQG1NNc0XFA/TmYQoRl4WsbEKuA1OwGxiDJg9geo5MjIISnliFFkLTa2NDqMIIjWwx9VCuCIiQQJOoiDv4q6xsxwIu48xSGxwWrPk0GJsGa8e/Ck+jAd1s+O3vrjMt/zmXkSwbuRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bf/wJYKa; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so8719484a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:32:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740555130; x=1741159930; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fV/8UPNYlCCgRVHTwtkpq+W+pfg36jdrdbg5juiRqX0=;
+        b=bf/wJYKaBz5PcBGldDLGM5AhUG8EVBoUB2WB4W1J4hyei3TSuWbSYDc61yJEK0yGOH
+         MzqAUmpb7Lve4O0eDzYcz0GXEdVf0D/YZLovYwtNg3uGIrqHCMZYEVAFqQd2HkPVvvqC
+         eZgi6TflAkFmx7GZXo1aumGXr3CQGIZrOcib22MRwQ7MqQ77fymUGGsTVlMLOznzKfY5
+         IQR9CdIEc256f7Ma/9cuw9eSLpsVUmC5gSCh+ljfatIoXdO4YiDLFJGLgQHobjsVygYS
+         +kRkOecAkD2t1fDcsFo2AnOIyAQIuLRisS6EhUFz2o9kZ9kpOjorFjCF6a5aooxjSHpq
+         yXkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740555130; x=1741159930;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fV/8UPNYlCCgRVHTwtkpq+W+pfg36jdrdbg5juiRqX0=;
+        b=RzSPvTcBMdsRzfhl2Kc7t6FA7AjG1fExdIMPE1NvUgoRebuKfQNFFbU3//tT7dakKO
+         1bCUN2LeOVL2EUS49mv6hXe6Q2dDFgOeZSo/w+EyN2kNPXOya45cnqVrkP9Fw7nYJXoz
+         FLi1+cb6NvM3b1XHDBLvnbNVd9dlOIHpMSzgVIkbMp3VBFlmGcxrj2+fEL8ip6vEzq0J
+         v4Hl/NSZhL38ot2FZYAZYrLwrhHL89l9m2znDZ9yxSedrKhU8nh6YvG0hMIjHyPfNyF3
+         xLG9B9z3i3mANE5SsLr0z+vsDCuHNnePPqnRM7tPa06q3HsNnTZVDCqW772dTqq8qJj9
+         USgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmxGAezxibB4ehwgahzeHNN+x4Qe7NgV2cOaS6auV0Cq8Cr3g/PI/qJuPKVippfWP7ECqn8kknbtZykDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSeP0AOC3B55nvXRaH2DNI8d1NCZGACOK7TdogAIv4vfVGLcoF
+	95CvCkqNp10qWlEDP9ojqBvWqWFm5LtSd5rmJeU6Y24hTlIZeKm6xfyQ8jtWEtI=
+X-Gm-Gg: ASbGncuirLEPCkVtrLNBkpLBRQnAoESME0C8JRTh/AZIByB7I4y+Cd3LKwf9cHvjiPF
+	aPzQiR2WT4PKSMy3HA/mNpJZuOit2C6jtflFt+msPj0srHUyjTFsHNbddMX9Hfqjnm37td5s7iL
+	gafCPW5VGyrtCDwchdlZbvPyxv0hT5lWhtpaUU2qvzdbQTxn5TOXJqJUGVXYDbGVEU+JlmNIwx/
+	LC9gkE/rDZHXn/Z9urB6pOn4Oe0Clf6Jz7TgPtgcc4mCYgTcLWB95UMJBf0FwWSz2smFeijaEk1
+	maH17fwZDPoYOYHvhzR7GTQEc9c1qZ0=
+X-Google-Smtp-Source: AGHT+IEn3LearM21K5U7hoqi12X3IHtk0Y4SVgsVZwZq95cg2z1JvH53DBpCfb50hAH/YxGjgv13xg==
+X-Received: by 2002:a05:6402:51d0:b0:5e0:818a:5f43 with SMTP id 4fb4d7f45d1cf-5e4a0e29a82mr2240541a12.30.1740555129678;
+        Tue, 25 Feb 2025 23:32:09 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4a6353eb6sm572296a12.48.2025.02.25.23.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 23:32:08 -0800 (PST)
+Date: Wed, 26 Feb 2025 10:32:04 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Karan Tilak Kumar <kartilak@cisco.com>
+Cc: sebaddel@cisco.com, arulponn@cisco.com, djhawar@cisco.com,
+	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
+	aeasi@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] scsi: fnic: Remove unnecessary spinlock locking and
+ unlocking
+Message-ID: <80809232-9490-4a0d-8159-af53228b612b@stanley.mountain>
+References: <20250225215146.4937-1-kartilak@cisco.com>
+ <20250225215146.4937-2-kartilak@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
+In-Reply-To: <20250225215146.4937-2-kartilak@cisco.com>
 
-On Tue, Feb 25, 2025 at 03:03:58PM +0530, Krishna Chaitanya Chundru wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add a device tree binding for the Toshiba TC956x PCIe switch, which
-> provides an Ethernet MAC integrated to the 3rd downstream port and two
-> downstream PCIe ports.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+On Tue, Feb 25, 2025 at 01:51:46PM -0800, Karan Tilak Kumar wrote:
+> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
+> index 8843d9486dbb..6530298733f0 100644
+> --- a/drivers/scsi/fnic/fdls_disc.c
+> +++ b/drivers/scsi/fnic/fdls_disc.c
+> @@ -311,36 +311,30 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+>  	unsigned long flags;
+>  	int idx;
+>  
+> -	spin_lock_irqsave(&fnic->fnic_lock, flags);
+> -
+>  	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
+>  
+>  		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+>  			"Schedule oxid free. oxid idx: %d\n", idx);
+>  
+> -		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+>  		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
+> -		spin_lock_irqsave(&fnic->fnic_lock, flags);
+> -
+>  		if (!reclaim_entry) {
+>  			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
+>  				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
+> -			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+>  			return;
+>  		}
+>  
+>  		if (test_and_clear_bit(idx, oxid_pool->pending_schedule_free)) {
 
-Drop, file was named entirely different. I see other changes, altough
-comparing with b4 is impossible.
+We discussed this earlier and I really should have brought it up then,
+but what is this check about?  We "know" (scare quotes) that it is true
+because we're inside a for_each_set_bit() loop.  I had assumed it was to
+test for race conditions so that's why I put it under the lock.  If the
+locking doesn't matter then we could just do a clear_bit() without doing
+a second test.
 
-Why b4 does not work for this patch?
+regards,
+dan carpenter
 
-  b4 diff '20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com'
-  Checking for older revisions
-  Grabbing search results from lore.kernel.org
-  Nothing matching that query.
+>  			reclaim_entry->oxid_idx = idx;
+>  			reclaim_entry->expires = round_jiffies(jiffies + delay_j);
+> +			spin_lock_irqsave(&fnic->fnic_lock, flags);
+>  			list_add_tail(&reclaim_entry->links, &oxid_pool->oxid_reclaim_list);
+> +			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+>  			schedule_delayed_work(&oxid_pool->oxid_reclaim_work, delay_j);
+>  		} else {
+>  			/* unlikely scenario, free the allocated memory and continue */
+>  			kfree(reclaim_entry);
+>  		}
+>  	}
 
-Looks like you use b4 but decide to not use b4 changesets/versions. Why
-making it difficult for reviewers and for yourself?
-
-
-> ---
->  .../devicetree/bindings/pci/toshiba,tc956x.yaml    | 178 +++++++++++++++++++++
->  1 file changed, 178 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
-> new file mode 100644
-> index 000000000000..ffed23004f0d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
-
-What is "x" here? Wildcard?
-
-> @@ -0,0 +1,178 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/toshiba,tc956x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Toshiba TC956x PCIe switch
-> +
-> +maintainers:
-> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> +
-> +description: |
-> +  Toshiba TC956x PCIe switch has one upstream and three downstream
-
-TC9560? Which one are you using here?
-
-> +  ports. The 3rd downstream port has integrated endpoint device of
-> +  Ethernet MAC. Other two downstream ports are supposed to connect
-> +  to external device.
-> +
-> +  The TC956x PCIe switch can be configured through I2C interface before
-> +  PCIe link is established to change FTS, ASPM related entry delays,
-> +  tx amplitude etc for better power efficiency and functionality.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - "pci1179,0623"
-
-Why quotes?
-
-> +      - const: pciclass,0604
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  i2c-parent:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      A phandle to the parent I2C node and the slave address of the device
-> +      used to do configure tc956x to change FTS, tx amplitude etc.
-> +    items:
-> +      - description: Phandle to the I2C controller node
-> +      - description: I2C slave address
-> +
-> +  vdd18-supply: true
-> +
-> +  vdd09-supply: true
-> +
-> +  vddc-supply: true
-> +
-> +  vddio1-supply: true
-> +
-> +  vddio2-supply: true
-> +
-> +  vddio18-supply: true
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description:
-> +      GPIO controlling the RESX# pin.
-> +
-> +allOf:
-> +  - $ref: "#/$defs/tc956x-node"
-> +
-> +patternProperties:
-> +  "^pcie@[1-3],0$":
-> +    description:
-> +      child nodes describing the internal downstream ports
-> +      the tc956x switch.
-> +    type: object
-> +    $ref: "#/$defs/tc956x-node"
-> +    unevaluatedProperties: false
-> +
-> +$defs:
-> +  tc956x-node:
-> +    type: object
-> +
-> +    properties:
-> +      tc956x,tx-amplitude-microvolt:
-
-You already got comments on this.
-
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-
-Never tested.
-
-
-> +        description:
-> +          Change Tx Margin setting for low power consumption.
-> +
-> +      tc956x,no-dfe-support:
-
-There is no such vendor prefix and you already got exactly the same
-comment at v3. How did you resolve that comment?
-
-> +        type: boolean
-> +        description:
-> +          Disable DFE (Decision Feedback Equalizer), which mitigates
-> +          intersymbol interference and some reflections caused by impedance mismatches.
-> +
-> +    allOf:
-> +      - $ref: /schemas/pci/pci-pci-bridge.yaml#
-> +
-> +unevaluatedProperties: false
-
-Keep order as in example-schema.
-
-Best regards,
-Krzysztof
-
+> -
+> -	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+>  }
+>  
+>  static bool fdls_is_oxid_fabric_req(uint16_t oxid)
+> -- 
+> 2.47.1
 
