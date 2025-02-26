@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-534456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B89A46722
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:56:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F416BA46733
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C723C1896F6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B327165FC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4B6223321;
-	Wed, 26 Feb 2025 16:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4B222371F;
+	Wed, 26 Feb 2025 16:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCdE1u/s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLxnVBLw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453B9220683;
-	Wed, 26 Feb 2025 16:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBC21D594;
+	Wed, 26 Feb 2025 16:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588510; cv=none; b=VK/RWkrzyxuvJRdKzFgdf6fDcBS0PT/0LSaBgceiDDQ8Qpb+mEjkydDqeBtGf8zth4EgC4SIGBITQ3NggZCPltCodc9LyzKrl+mn8eRBK10TvxCJd+Xk5EuLg4iTw5HX50YmRt3bI41vzE8NOIquF+WsAsYgzshTXvGX0YwbiNg=
+	t=1740588524; cv=none; b=OgQfPPJzhzGcRuU3zLCHEUeMlRatE47IrB2I5FzLGbPZaS9vyEjtj52vWKE25lX8lOM4P4RGnXsOshxtJaH97Rp8w6gUSrYsnt83UT37TVVKH+Y7KMHI2WFJSyR0GGEj8I6RsWmzsVhGNbfsyubGMNZFvOw47EKJyv1Z8babpGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588510; c=relaxed/simple;
-	bh=V0eP11ys4UBKYIyVMcIalsuc1S5/rdawoXtavRMVxbM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Qv8BlkLOb0ZftI0Ci+du3is/QsEVLwsF0VbnEKBpXP+v3+oeWnWZh0sApIqRQF4ovZiENIv3RReAvmG2wSjeU9sS5GmW4lA45YfVlNxBX5UB/Ru357azQSPNdhS86EVaNRw+yzTzcbI/SQW4MFzGaPmSIhIbowdb5yVn0uk2jQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCdE1u/s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B430C4CEE4;
-	Wed, 26 Feb 2025 16:48:25 +0000 (UTC)
+	s=arc-20240116; t=1740588524; c=relaxed/simple;
+	bh=cudwfSFk+04xxJC0BxMm+5FmyfHUG/wZm2fscloKh1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIZiVTGRvAbVeyCQI2oXAKTrHhcUW3FWWJZGkRc7vsOQBknJhUFv9oC+CcsgwPXLJ2LW/HCapBwPMNQefhLE6CMiSBuuU8v3+s/SxQ907F9X7FVb1vMLQk4uPEFrrlOhVZSz+r7jxUCqUyWu61wQfxIXzJBHwWEgrUrsbDHoaSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLxnVBLw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B523C4CED6;
+	Wed, 26 Feb 2025 16:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740588509;
-	bh=V0eP11ys4UBKYIyVMcIalsuc1S5/rdawoXtavRMVxbM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iCdE1u/srDnmbqcyqDr0YGZIETy/BcVLfqnaDFDiU4YHsBTfAlTZAZMCgKqhrZU5G
-	 27NcKpuZp5El+JeuWaltK7Nra2rWzKQyV6KGA+tkhLs+EMA/gqZ27EoiK9xozIfo/z
-	 ZRb9iqvGFPHcC8BziEzCHO7vN1r0zQsBlXHkWCleYRNcI4NquYihoX25X4mqPFund4
-	 0RZrbqSI0MYF8XEGzXzOZkq6osEujIoaZpr79C9U4Q/wJv/sVleC/I+UzoFhJiaRce
-	 DSc+qOEPzTweP1iV6OsIOINf0AL3Qr/5atJYGQbrP9v5j8T/ZIBWnaqCDFlyF26Ra3
-	 ZH0fCN0sDb7+Q==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Will Deacon <will@kernel.org>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Peter Collingbourne <pcc@google.com>
-Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
-In-Reply-To: <Z786ODqxlYNpj40l@arm.com>
-References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
- <Z7xSfVME4z2ComUm@arm.com> <86ldtvr0nl.wl-maz@kernel.org>
- <Z7yElHKrJGn8XuPS@arm.com> <86jz9fqtbk.wl-maz@kernel.org>
- <yq5aseo3gund.fsf@kernel.org> <86ikozqmsl.wl-maz@kernel.org>
- <yq5a8qptauyl.fsf@kernel.org> <Z786ODqxlYNpj40l@arm.com>
-Date: Wed, 26 Feb 2025 22:18:21 +0530
-Message-ID: <yq5a1pvkbqju.fsf@kernel.org>
+	s=k20201202; t=1740588524;
+	bh=cudwfSFk+04xxJC0BxMm+5FmyfHUG/wZm2fscloKh1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLxnVBLwIzYmWNnND9nldb0LrWIDDYx/QB9Y26joWfuhvXEklTTbYl2orqF6JtrH8
+	 61dh3G0GT+mhLPcLVWDoMdrw91KWrlDQAmLu+N46Y2puzex5GikBkgXD3SZ/0oIPRV
+	 zZ2Pj9/bq3JnVuYVKOwZRKXTIPUxiYOZVzR3Zlia/2OQJO9z1rtcroKOChFA+cyYad
+	 PWCZpbG2rDrwHGr12GOhkLS+v6QxMybkIiO/MF1QUOHOuXlsxFvT6FG2JXQEzMd6gF
+	 6iGP7MNLhH4TzrXC/l4TjAa0WaK8n+clQjrCxaaVgtxBrb4D72mQSBvWRq9Twhdpio
+	 OEp4T90UUhKtQ==
+Date: Wed, 26 Feb 2025 06:48:43 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: ming.lei@redhat.com, josef@toxicpanda.com, axboe@kernel.dk,
+	vgoyal@redhat.com, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
+Message-ID: <Z79F6xfDbwVJ4psU@slm.duckdns.org>
+References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226011627.242912-1-yukuai1@huaweicloud.com>
 
-Catalin Marinas <catalin.marinas@arm.com> writes:
+On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The bio submission time may be a few jiffies more than the expected
+> waiting time, due to 'extra_bytes' can't be divided in
+> tg_within_bps_limit(), and also due to timer wakeup delay. In this
+> case, adjust slice_start to jiffies will discard the extra wait time,
+> causing lower rate than expected.
+> 
+> This problem will cause blktests throtl/001 failure in case of
+> CONFIG_HZ_100=y, fix it by preserving one finished slice in
+> throtl_trim_slice() and allowing deviation between [0, 2 slices).
+> 
+> For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+> slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
+> per slice.
+> 
+> If user issues two 21 bytes IO, then wait time will be 30ms for the
+> first IO:
+> 
+> bytes_allowed = 20, extra_bytes = 1;
+> jiffy_wait = 1 + 2 = 3 jiffies
+> 
+> and consider
+> extra 1 jiffies by timer, throtl_trim_slice() will be called at:
+> 
+> jiffies = 40ms
+> slice_start = 0ms, slice_end= 40ms
+> bytes_disp = 21
+> 
+> In this case, before the patch, real rate in the first two slices is
+> 10.5 bytes per slice, and slice will be updated to:
+> 
+> jiffies = 40ms
+> slice_start = 40ms, slice_end = 60ms,
+> bytes_disp = 0;
+> 
+> Hence the second IO will have to wait another 30ms;
+> 
+> With the patch, the real rate in the first slice is 20 bytes per slice,
+> which is the same as expected, and slice will be updated:
+> 
+> jiffies=40ms,
+> slice_start = 20ms, slice_end = 60ms,
+> bytes_disp = 1;
+> 
+> And now, there is still 19 bytes allowed in the second slice, and the
+> second IO will only have to wait 10ms;
+> 
+> Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
+> Reported-by: Ming Lei <ming.lei@redhat.com>
+> Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-> On Wed, Feb 26, 2025 at 03:28:26PM +0530, Aneesh Kumar K.V wrote:
->> Marc Zyngier <maz@kernel.org> writes:
->> > On Mon, 24 Feb 2025 16:44:06 +0000,
->> > Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
->> >> >> On Mon, Feb 24, 2025 at 12:24:14PM +0000, Marc Zyngier wrote:
->> >> >> > > On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Ar=
-m) wrote:
->> >> >> > > > This change is needed because, without it, users are not abl=
-e to use MTE
->> >> >> > > > with VFIO passthrough (currently the mapping is either Devic=
-e or
->> >> >> > > > NonCacheable for which tag access check is not applied.), as=
- shown
->> >> >> > > > below (kvmtool VMM).
-> [...]
->> >> >> > My other concern is that this gives pretty poor consistency to t=
-he
->> >> >> > guest, which cannot know what can be tagged and what cannot, and
->> >> >> > breaks a guarantee that the guest should be able to rely on.
-> [...]
->> >> What if we trigger a memory fault exit with the TAGACCESS flag, allow=
-ing
->> >> the VMM to use the GPA to retrieve additional details and print extra
->> >> information to aid in analysis? BTW, we will do this on the first fau=
-lt
->> >> in cacheable, non-tagged memory even if there is no tagaccess in that
->> >> region. This can be further improved using the NoTagAccess series I
->> >> posted earlier, which ensures the memory fault exit occurs only on
->> >> actual tag access
->> >>=20
->> >> Something like below?
->> >
->> > Something like that, only with:
->> >
->> > - a capability informing userspace of this behaviour
->> >
->> > - a per-VM (or per-VMA) flag as a buy-in for that behaviour
->>=20
->> If we=E2=80=99re looking for a capability based control, could we tie th=
-at up to
->> FEAT_MTE_PERM? That=E2=80=99s what I did here:
->>=20
->> https://lore.kernel.org/all/20250110110023.2963795-1-aneesh.kumar@kernel=
-.org
->>=20
->> That patch set also addresses the issue mentioned here. Let me know if
->> you think this is a better approach
->
-> From the patch linked above:
->
-> | @@ -2152,7 +2162,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kv=
-m,
-> |  		if (!vma)
-> |  			break;
-> |=20
-> | -		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
-> | +		if (kvm_has_mte(kvm) &&
-> | +		    !kvm_has_mte_perm(kvm) && !kvm_vma_mte_allowed(vma)) {
-> |  			ret =3D -EINVAL;
-> |  			break;
-> |  		}
->
-> we also have the same ABI change every time FEAT_MTE_PERM is present.
-> TBH, I'd rather have it from the start as per the patch in this thread,
-> irrespective of FEAT_MTE_PERM. I'm fine, however, with better exit to
-> VMM information though.
->
+Acked-by: Tejun Heo <tj@kernel.org>
 
-The patch also does:
+Thanks.
 
-#define kvm_has_mte_perm(kvm)					\
-	(system_supports_notagaccess() &&				\
-	 test_bit(KVM_ARCH_FLAG_MTE_PERM_ENABLED, &(kvm)->arch.flags))
-
-
-That is it depends on userspace to drive the behavior and also relies on the
-FEAT_MTE_PERM hardware feature. I was considering whether, if we're
-introducing this capability, should we also include FEAT_MTE_PERM? since
-adding FEAT_MTE_PERM would also require a capability to handle VM
-migration
-
->
-> If we don't want to confuse the VMMs, we could skip the
-> kvm_vma_mte_allowed() check only for VM_ALLOW_ANY_UNCACHED and
-> VM_PFNMAP vmas, maybe the latter only with FEAT_MTE_PERM. I don't think
-> the VMM would get it wrong here since a VFIO mmap() would not support
-> MTE anyway.
-
-ok.
-
--aneesh
+-- 
+tejun
 
