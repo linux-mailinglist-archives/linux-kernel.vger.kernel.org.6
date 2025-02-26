@@ -1,185 +1,154 @@
-Return-Path: <linux-kernel+bounces-534969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2074A46D64
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:27:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C073A46D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCB167A1FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C961888B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F7525A327;
-	Wed, 26 Feb 2025 21:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90202257AD7;
+	Wed, 26 Feb 2025 21:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMfD/eQQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VvvEOims"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D595321CC54;
-	Wed, 26 Feb 2025 21:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B0B21ABB4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605209; cv=none; b=Wx+h+1fd2P0q5cVTLM6Ja/k5PjuT/a45uuSiJDXDdhMy8+ToKmxxE5PIcgrnvXiuWr3Fq1SxZF9EwioUE3xg0uLexcaQ3+iPpZjy/ES3sNQDcWLv8AlDOSnuRbO2SskvMzFyFsERscQpo+pFEge53qc9AQfMZMMjqCewV1SbU+I=
+	t=1740605230; cv=none; b=hi6RFNrUozFnR4QBTn6O6y8AXF2k3amtp4bQGbsJ+y7BS0RI8pLk3PjV6u+n1yTfHm2d3GeMTUcelgUMKYkLGzzpC1sGuhsMk4wfXblH1Phu6bV0yORWAdSuXuRbhiBLw/nrM1T94hUbG/v7sF3bu7RbFwXS38SCx30HGpZ4FQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605209; c=relaxed/simple;
-	bh=N0p6giHID6vuUMte39YzG4bLLkWWTqAf5RxVREU0uHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PQdadFttlvYEKcy1wxbqmRlumxlsV2tzsdjOuOQHRudmYJRIiT9a6cIiiSHqy5xrK3jkbf2oCkY0Ht2lGtLcFFWqKUdStQKGSjeS4AEp/YYIS+Zv4WyMnL2YBquwew784mdqjzhiSCujc6B+BBtXWdgE5yPaCZsipIuyrT37HYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMfD/eQQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08592C4CED6;
-	Wed, 26 Feb 2025 21:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605209;
-	bh=N0p6giHID6vuUMte39YzG4bLLkWWTqAf5RxVREU0uHs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NMfD/eQQrqHV9pTdIckatEZl4BeD6NYAHsAUl5qBh4MVZcdnA3aEIwj40FR8CBStq
-	 4OsXX5vfQHb/YJAcgsShtWEAO7ptB7eQ8p4R6MRaF6ZzD5o2TFtsBYx8YYuRalTGgp
-	 jHxbv0JAcrjYH5E0IjK5+CJSRKCS1y0UyjZFoj+Nc22yyGH9zbFDLSo9ePtEiXE0Ik
-	 GxXuV1Fzm6uIN43JbNgroBjkPuQmRjOy3s9T6DCYgcQ9pNSeu/8pibvKJJfupavdcz
-	 VQrBKZhoOx08Gp6LfKT+zxDWfGLJpc5RzZtLAsYAr0oPrkPrjSk2NdgXLqE1m0UyuO
-	 OmcHsaqWS4dNw==
-Message-ID: <48cc626a-d632-444f-8563-07a9ea0ecc71@kernel.org>
-Date: Wed, 26 Feb 2025 22:26:42 +0100
+	s=arc-20240116; t=1740605230; c=relaxed/simple;
+	bh=61ANiR1iehyO0k28G1LeSomHl280SCXwJSq1uVzIqVc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=o+BzTkG7Y+JvfjxNR3pBYRUcbQQxJ3XXz5Lgg0MTxeoUlQ87oENWT9+HKIW1DVuNzZZ/TGC55DxEfti//U20iLhIZIbqgQeMrSzRtX1PLWPJS+3ANPiNMlR0HaPiSCrcA+otHy/FtkAThHUI5HMDCsBtrqK8kws4N5pRRmmTqdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VvvEOims; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740605229; x=1772141229;
+  h=date:from:to:cc:subject:message-id;
+  bh=61ANiR1iehyO0k28G1LeSomHl280SCXwJSq1uVzIqVc=;
+  b=VvvEOimsWwfQenGHGsT/XOYaYg7kqQr3Apfhr6ZV2Al6LOVRs+W6r1Ga
+   h6AvkrJ52ggjgfT2pRalzauGQpSv5kdJBJqFVTu0Aq5CIXpZpyB5xLb2k
+   3xo/r2SDpxhcDhM6joeu+xPXiIYMJ6AUSx3hD/LECpBmg1VYjJgUOET4D
+   s8UeKHLadEEgldiaKlGTlOrS1WiL8mmWE29viIS8oSyhYaTX2DZlZAuRv
+   bPFi5FXh7QF61c6QbNwSVj30qkFB6FKOPWrF4BHrzU4z0AE7tkHpnwZJ4
+   hi8oth3GFhNF+SjwvR6u7YDx5n3LnNmf4FLxxfv9baZtqdP7MgPamcx05
+   A==;
+X-CSE-ConnectionGUID: ZLpkF1yWSICrg3jOcbpy5g==
+X-CSE-MsgGUID: 6/DtNFvzRf2Wux9/61GtaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41674294"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41674294"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 13:27:08 -0800
+X-CSE-ConnectionGUID: yEW1sl6rSrOBSmsdGLc3vw==
+X-CSE-MsgGUID: poGoCTPSSL6bp1Bv+x/9pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="140043999"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Feb 2025 13:27:06 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnOvn-000CTZ-0q;
+	Wed, 26 Feb 2025 21:27:03 +0000
+Date: Thu, 27 Feb 2025 05:26:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/asm] BUILD SUCCESS
+ 79165720f31868d9a9f7e5a50a09d5fe510d1822
+Message-ID: <202502270547.KhgIqJjs-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
- Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
- <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
- <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
- <988667a4-4bc0-4594-8dfd-a7b652b149b2@foss.st.com>
- <55beb3e7-65ac-4145-adae-fb064378c78d@kernel.org>
- <8cdc7e52-f9e2-4fc9-be68-0dd72a25ee1b@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8cdc7e52-f9e2-4fc9-be68-0dd72a25ee1b@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 16:30, Alexandre TORGUE wrote:
-> 
-> 
-> On 2/26/25 16:08, Krzysztof Kozlowski wrote:
->> On 26/02/2025 10:33, Alexandre TORGUE wrote:
->>>>>>> +		hdp: pinctrl@44090000 {
->>>>>>> +			compatible = "st,stm32mp-hdp";
->>>>>>
->>>>>> So here again - you have stm32mp251 SoC, but use entirely different
->>>>>> compatible.
->>>>>
->>>>> Ok so I will use "st,stm32mp15-hdp"
->>>>
->>>>
->>>> This means this is stm32mp15 SoC. I do not see such SoC on list of your
->>>> SoCs in bindings. What's more, there are no bindings for other SoC
->>>> components for stm32mp15!
->>>
->>> Yes stm32mp15 is not a "real SoC". I agree that at the beginning of the
->>> STM32 story we didn't have a clear rule/view to correctly naming our
->>> compatible. We tried to improve the situation to avoid compatible like
->>> "st,stm32", "st,stm32mp" or "st,stm32mp1". So we introduced
->>> "st,stm32mp13", "st,stm32mp15" or "st,stm32mp25" for new drivers. So yes
->>> it represents a SoC family and not a real SoC. We haven't had much
->>> negative feedback it.
->>>
->>> But, if it's not clean to do it in this way, lets define SoC compatible
->>> for any new driver.
->>
->> Compatibles are for hardware.
->>
->>> For the HDP case it is: "st,stm32mp157" and used for STM32MP13,
->>> STM32MP15 end STM32MP25 SoC families (if driver is the same for all
->>> those SoCs).
->>
->> No, it's three compatibles, because you have three SoCs. BTW, writing
->> bindings (and online resources and previous reviews and my talks) are
->> saying that, so we do not ask for anything new here, anything different.
->> At least not new when looking at last 5 years, because 10 years ago many
->> rules were relaxed...
-> 
-> So adding 3 times the same IP in 3 different SoCs implies to have 3 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
+branch HEAD: 79165720f31868d9a9f7e5a50a09d5fe510d1822  x86/percpu: Construct __percpu_seg_override from __percpu_seg
 
-Yes. Always, as requested by writing bindings.
+elapsed time: 1452m
 
-> different compatibles. So each time we use this same IP in a new SoC, we 
-> have to add a new compatible. My (wrong) understanding was: as we have 
+configs tested: 62
+configs skipped: 1
 
-Yes, as requested by writing bindings and followed up by all recent
-platforms having decent/active upstream support. See qcom, nxp, renesas
-for example.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> the same IP (same hardware) in each SoC we have the same compatible (and 
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                  randconfig-001-20250226    gcc-13.2.0
+arc                  randconfig-002-20250226    gcc-13.2.0
+arm                  randconfig-001-20250226    gcc-14.2.0
+arm                  randconfig-002-20250226    clang-21
+arm                  randconfig-003-20250226    gcc-14.2.0
+arm                  randconfig-004-20250226    gcc-14.2.0
+arm64                randconfig-001-20250226    gcc-14.2.0
+arm64                randconfig-002-20250226    gcc-14.2.0
+arm64                randconfig-003-20250226    clang-21
+arm64                randconfig-004-20250226    gcc-14.2.0
+csky                 randconfig-001-20250226    gcc-14.2.0
+csky                 randconfig-002-20250226    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250226    clang-21
+hexagon              randconfig-002-20250226    clang-21
+i386       buildonly-randconfig-001-20250226    gcc-12
+i386       buildonly-randconfig-002-20250226    gcc-12
+i386       buildonly-randconfig-003-20250226    gcc-12
+i386       buildonly-randconfig-004-20250226    clang-19
+i386       buildonly-randconfig-005-20250226    gcc-12
+i386       buildonly-randconfig-006-20250226    gcc-12
+loongarch            randconfig-001-20250226    gcc-14.2.0
+loongarch            randconfig-002-20250226    gcc-14.2.0
+nios2                randconfig-001-20250226    gcc-14.2.0
+nios2                randconfig-002-20250226    gcc-14.2.0
+parisc               randconfig-001-20250226    gcc-14.2.0
+parisc               randconfig-002-20250226    gcc-14.2.0
+powerpc              randconfig-001-20250226    gcc-14.2.0
+powerpc              randconfig-002-20250226    clang-18
+powerpc              randconfig-003-20250226    clang-21
+powerpc64            randconfig-001-20250226    clang-18
+powerpc64            randconfig-002-20250226    gcc-14.2.0
+powerpc64            randconfig-003-20250226    gcc-14.2.0
+riscv                randconfig-001-20250226    clang-18
+riscv                randconfig-002-20250226    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250226    gcc-14.2.0
+s390                 randconfig-002-20250226    clang-15
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250226    gcc-14.2.0
+sh                   randconfig-002-20250226    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250226    gcc-14.2.0
+sparc                randconfig-002-20250226    gcc-14.2.0
+sparc64              randconfig-001-20250226    gcc-14.2.0
+sparc64              randconfig-002-20250226    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250226    clang-18
+um                   randconfig-002-20250226    gcc-12
+x86_64     buildonly-randconfig-001-20250226    clang-19
+x86_64     buildonly-randconfig-002-20250226    clang-19
+x86_64     buildonly-randconfig-003-20250226    gcc-12
+x86_64     buildonly-randconfig-004-20250226    clang-19
+x86_64     buildonly-randconfig-005-20250226    gcc-12
+x86_64     buildonly-randconfig-006-20250226    gcc-12
+xtensa               randconfig-001-20250226    gcc-14.2.0
+xtensa               randconfig-002-20250226    gcc-14.2.0
 
-You do not have same hardware. You have same IP, or almost same because
-they are almost never same, implemented in different hardware.
-
-> IP integration differences (clocks, interrupts) are handled by DT 
-> properties.
-
-Which binding doc/guide suggested such way? Countless reviews from DT
-maintainers were saying opposite.
-
-Best regards,
-Krzysztof
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
