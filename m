@@ -1,118 +1,175 @@
-Return-Path: <linux-kernel+bounces-534763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76350A46AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:22:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5E9A46AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6530F16E5C4
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066413B07D5
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11862238D5A;
-	Wed, 26 Feb 2025 19:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BE23959E;
+	Wed, 26 Feb 2025 19:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/gfgBbM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcfmka38"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DE022E3F1;
-	Wed, 26 Feb 2025 19:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4842397B4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740597741; cv=none; b=lf/jPoB6MODetwng56J1L+uy/hVNWKTog7HcPPHMNQYIl3/e9C2/FrYsUtOFAa6Q3n3Q22bMdtvsxW9ar60Ic0Rjta502CNWPJwef15IggRLD9yeZsSV8vfA16Zh6Hspf2g/Qa/49EtS+9rFFwnHd0FZ+v2QDJHgNW2SMOL9wow=
+	t=1740597748; cv=none; b=WLWl0TfGuvpJ9LW1Xcxeo9GnyxSbuujVXiZhxSXBAdEm7lhNrfkycb+s4P30fh6e0pI2JzMOEKe8HCn49XjZagdk8jLyBFHG3BlepA2yn9fRrqhxa/baA2iMGARsyVfCQqU/0zsk3jW+JJZKWYJNS8VId7B35YvStoEf2S73DNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740597741; c=relaxed/simple;
-	bh=70HPt7cXIlQ+KkPTytAjDaBWtPrvl6+QqP5ouDBmFLo=;
+	s=arc-20240116; t=1740597748; c=relaxed/simple;
+	bh=wSR3W8OfnLO8hMVgjqMSb/3Rx24rkpJcG0QFu43lqeE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJ/FvrV92SXuKRlDBp4JW/KVFWKzeKgBC0hTNdINNMzc+RH5ZqBj1beRZyl+b/FXYThP9ElJYurlwxkA8Tkv8tVDYI+j7229Gcz/2Rv3HvtIbmTSiuicg0P2UvK/2Uq7hzw8n8tZDhiZInvGRxKrYSf8n9Q0qL50TLfZ8lJLyUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/gfgBbM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA20C4CEE8;
-	Wed, 26 Feb 2025 19:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740597740;
-	bh=70HPt7cXIlQ+KkPTytAjDaBWtPrvl6+QqP5ouDBmFLo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h/gfgBbMNup3uDIk+icOzLt+LsY+Y44k8czZKXOueFZxvu3VjgCaT0LKGbx0NH4hM
-	 95gfVq8fUKWCl49f+d+VYi0PzzX9vQZjCCygY8pnRa7krLyNP9B07mWtqrMY5benNh
-	 REf55tk6hg8R0iGPKQM8nUAXOnK6AQBQKCpMKk7EO6Y7hP843P0Smpl289HbzUjzUM
-	 E34XPLILwjLYkIbVPPyszQizUdn9qPSqZUcIMp65lrO+o2qomYIhFi8ovxT6fCOH9f
-	 KjsPnoGEVu66EuTgGRpHGn4/DsYYO/NOl0arqfq3Cp/HA1R8liQJ9Qn0BLvuda0/tw
-	 Pw1fkbci+l7ew==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e4c0c12bccso121263a12.1;
-        Wed, 26 Feb 2025 11:22:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU73DmcGC+2Igambfpkz/QDf6UPCkz6xZGTjicmqH3z8Dkk8pw4bhBaZA5ZLkez04vgJpiQIEkRjYCr@vger.kernel.org, AJvYcCW4m8tYuDWahZcgU5k0S32E80gwYZMrFborUToxOHgHs2zZjwjRAu0ZTV3dviT+ltFHoJ6nuH/x8ZT19OXA4Q==@vger.kernel.org, AJvYcCXMaCN6eBYNJdmJ5uzfpdNyZedf+zi0hymqhgO0Aj6au2vtsd/9AzGCF6a4A2G1is+FlK6uOBzIdBRFlCzE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW8hLD0LLBvxLtkMD0+Y78wuEfdV+yd1uP7ZTBlu//2kBnYmHX
-	k5SGosM2G7K7P4ixd6v5Z2QRzbOx2znUdbd/aKfWbbfA/+FExay/3SbmfyGWK1Z5CnMkxkl5iUq
-	y/0ZJz1ST19mJWDJyPG5bJa1O2A==
-X-Google-Smtp-Source: AGHT+IE879zpQVonAD3+QX2VFbqk24PyMa64J5Q0ZFCMgA4E7ybBbhC+LwGrmURfNPkEUYddUs8POdQv17d4bNrYwl4=
-X-Received: by 2002:a05:6402:518f:b0:5e0:51c0:701e with SMTP id
- 4fb4d7f45d1cf-5e0b7254f98mr23443051a12.32.1740597739433; Wed, 26 Feb 2025
- 11:22:19 -0800 (PST)
+	 To:Cc:Content-Type; b=DH1tOtGUL5oJlxzq0BJd8Z8+CeH9KR/XLRGihtBt+rfXd7k8UkzPDMxg/Hca7oo4CptuZUufM6FI5KttYmVkIRMBvX6/TL5sci+yp94XOpayjhcBqh3Wy4XoG39X0iJ0/c1vXHK9dfeB5y5tNNJkMpIbdOvPzc/2oGbbU7ghens=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcfmka38; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc95e20e72so48479a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:22:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740597746; x=1741202546; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1y7AKbsdNld8g2hpFglN8JrmjtPrHU1b2vsuKh5wAQM=;
+        b=Gcfmka38/i9TpAOeNiNW44GNs/HUUpleeS7oJCj+EL/doA08HgxBdwIOuK4L2fOVCF
+         awgaUvqKvcLsRqkWS33L/Cpud/o0pLQMuhFyf4HLDFVQi34yNUzBbkBCGLYsFdL6Res8
+         yBcO4Frcg9QVJLgKSYunDdF3ije1UsmKps6PyKK3h7gRn0MCmU0UcNnJAXhM/hJJpFvA
+         gE07af4c1ZR23Gjn90V1E7Rs0leyGS2U99KLD0lTJeq5mF4LILDw67yzwmsiwbeXpPIH
+         yrxQeHc5yG5w0HnUKucDZjypYBkXQcuYmUG/jlnZx+nM10++bZMF/+DQgOkuUezqm4pj
+         L7CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740597746; x=1741202546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1y7AKbsdNld8g2hpFglN8JrmjtPrHU1b2vsuKh5wAQM=;
+        b=Lh6rr27YOg7wkMANTVArzHnYfLntuSkLTyUECW4WNnBUuO4X4WduYft1fQo50uRz6s
+         4HyBYq+wEpwd25s+owmrLQz2/0vamXzJgux63bajNsB3eDcO+9riWUg2BcX9LeR+Jfj8
+         WO9csjKFjWy7TLNk1rOyAYDCxE7iEmLhDkXmumwloTYmf/cH/aOY6ZJWAH4yDLNselYu
+         8QZtUPFXEB8OLL/IUyEd7mACw6SNuVZnfZsy26YbGNl5/04Ye+QOWJecmmRjx8OECA8Y
+         oZWXdv3OgUGo5BxLu1tBc07JwYw7V9M63lrJClNdx0/5gVo/a6ynG6Ni12nMWmikzlsX
+         dfGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXV8ecEwAQw2zEhWQ/ZN41iYrCdI7eEhRvA1A3dlxHs94C9u4RHR+b08jmUpgQ9ICSenp0jg7sMnFombuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDlXBUOFCckwcYC5IqfnmP5U1OXR449FJNvouazwL1iCZTOtXq
+	j95C7G6TTbHnEsInDrTdaSOje1PHMi/Uz3U4uOCcncOVDEv2Mi17piLUPmnXUBG5d3BxukVTjad
+	VRl/JLKYNXcKyplRPdd5TETg46AI=
+X-Gm-Gg: ASbGnct6wqye3TUy4IvGs5MIgfEfkTly5QCfC6lLJriy3Fi/umavrq6kcQ5jKhP+JDI
+	G5wELN9A2C40sWhQSXvLDdIM9muiZ2WsgcOh75beCnTOS306rc7WPlf1J9i77ZE5rHv0PfwtyVJ
+	Oeq4sYcN4=
+X-Google-Smtp-Source: AGHT+IFXlPewfDjTcQd23uWt5JHmAkzRm8cSyjPkDV01jbpADxXVm68Lc0wOKp9OIqOnGomJpkNfOnYa2s2/BMzgZ+k=
+X-Received: by 2002:a17:90b:4acb:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-2fe91d0f86bmr1193058a91.2.1740597746090; Wed, 26 Feb 2025
+ 11:22:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru> <20250226-qcom-nonroot-overlays-v1-1-26c6e7605833@trvn.ru>
-In-Reply-To: <20250226-qcom-nonroot-overlays-v1-1-26c6e7605833@trvn.ru>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 26 Feb 2025 13:22:07 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJH5g-A0Td8zYn--FuYFZi=HQ96BeNSMLuxQU6+5X3k-w@mail.gmail.com>
-X-Gm-Features: AQ5f1JqBSWKWscupDtx7XUeNsPytnMVaiTjrHhniqHbmTDtYseDb8YQVhIUWai0
-Message-ID: <CAL_JsqJH5g-A0Td8zYn--FuYFZi=HQ96BeNSMLuxQU6+5X3k-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix
- broken overlay root
-To: Nikita Travkin <nikita@trvn.ru>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250226131118.1012223-1-andrealmeid@igalia.com>
+In-Reply-To: <20250226131118.1012223-1-andrealmeid@igalia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 26 Feb 2025 14:22:13 -0500
+X-Gm-Features: AQ5f1Jrj8uBp_Nld3i5VpcTJQMhPSbajAtBz4HQQ7cHskmCGLtzNlphUVbvrm-o
+Message-ID: <CADnq5_MjDxqG9GzPShL0oucpCPx9J5HodMWRuaOAgs0s0CD0=A@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Create a debug option to disable ring reset
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, siqueira@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 8:30=E2=80=AFAM Nikita Travkin <nikita@trvn.ru> wro=
-te:
+Applied.  Thanks!
+
+On Wed, Feb 26, 2025 at 8:11=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
 >
-> When converting to the overlay format, it was missed that "/" in the
-> overlay corresponds to the overlay's own root node and not the fragment
-> targeted to update root of the base dts, which should be "&{/}" instead.
-> This results in the cma node never actually being applied by libfdt.
+> Prior to the addition of ring reset, the debug option
+> `debug_disable_soft_recovery` could be used to force a full device
+> reset. Now that we have ring reset, create a debug option to disable
+> them in amdgpu, forcing the driver to go with the full device
+> reset path again when both options are combined.
 >
-> Fix the overlay to use correct target node.
+> This option is useful for testing and debugging purposes when one wants
+> to test the full reset from userspace.
 >
-> Fixes: 231c03c6119d ("arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Con=
-vert mezzanine riser to dtbo")
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
->  arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/amd/amdgpu/amdgpu.h     | 1 +
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 6 ++++++
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 5 +++--
+>  3 files changed, 10 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso b=
-/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> index ae256c713a36078afdadc67193f381a19ea8e5d3..254df3d518d8cbfb1082511f3=
-8e132435b7fdf59 100644
-> --- a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> +++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> @@ -9,7 +9,7 @@
->  #include <dt-bindings/clock/qcom,camcc-sm8250.h>
->  #include <dt-bindings/gpio/gpio.h>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/am=
+dgpu/amdgpu.h
+> index 69895fccb474..75dc4b962d64 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+> @@ -1186,6 +1186,7 @@ struct amdgpu_device {
+>         bool                            debug_use_vram_fw_buf;
+>         bool                            debug_enable_ras_aca;
+>         bool                            debug_exp_resets;
+> +       bool                            debug_disable_gpu_ring_reset;
 >
-> -/ {
-> +&{/} {
->         reserved-memory {
-
-IMO, this should be applied to the /reserved-memory node rather than
-the root node. Though I also think using overlays to set CMA size is
-questionable. It's much easier to change the kernel command line than
-apply an overlay.
-
->                 linux,cma {
->                         compatible =3D "shared-dma-pool";
+>         bool                            enforce_isolation[MAX_XCP];
+>         /* Added this mutex for cleaner shader isolation between GFX and =
+compute processes */
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_drv.c
+> index 95a05b03f799..edeb12c816e8 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -136,6 +136,7 @@ enum AMDGPU_DEBUG_MASK {
+>         AMDGPU_DEBUG_USE_VRAM_FW_BUF =3D BIT(3),
+>         AMDGPU_DEBUG_ENABLE_RAS_ACA =3D BIT(4),
+>         AMDGPU_DEBUG_ENABLE_EXP_RESETS =3D BIT(5),
+> +       AMDGPU_DEBUG_DISABLE_GPU_RING_RESET =3D BIT(6),
+>  };
 >
+>  unsigned int amdgpu_vram_limit =3D UINT_MAX;
+> @@ -2221,6 +2222,11 @@ static void amdgpu_init_debug_options(struct amdgp=
+u_device *adev)
+>                 pr_info("debug: enable experimental reset features\n");
+>                 adev->debug_exp_resets =3D true;
+>         }
+> +
+> +       if (amdgpu_debug_mask & AMDGPU_DEBUG_DISABLE_GPU_RING_RESET) {
+> +               pr_info("debug: ring reset disabled\n");
+> +               adev->debug_disable_gpu_ring_reset =3D true;
+> +       }
+>  }
+>
+>  static unsigned long amdgpu_fix_asic_type(struct pci_dev *pdev, unsigned=
+ long flags)
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_job.c
+> index 7b79b0f39ba1..8ab23182127e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> @@ -137,8 +137,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(st=
+ruct drm_sched_job *s_job)
+>         dma_fence_set_error(&s_job->s_fence->finished, -ETIME);
+>
+>         /* attempt a per ring reset */
+> -       if (amdgpu_gpu_recovery &&
+> -           ring->funcs->reset) {
+> +       if (unlikely(adev->debug_disable_gpu_ring_reset)) {
+> +               dev_err(adev->dev, "Ring reset disabled by debug mask\n")=
+;
+> +       } else if (amdgpu_gpu_recovery && ring->funcs->reset) {
+>                 dev_err(adev->dev, "Starting %s ring reset\n", s_job->sch=
+ed->name);
+>                 /* stop the scheduler, but don't mess with the
+>                  * bad job yet because if ring reset fails
 > --
 > 2.48.1
 >
