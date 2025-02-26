@@ -1,70 +1,105 @@
-Return-Path: <linux-kernel+bounces-534202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9333A46413
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:07:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B360A46418
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97FE818865FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE64E17A04C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12E222591;
-	Wed, 26 Feb 2025 15:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BD122257D;
+	Wed, 26 Feb 2025 15:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ+aUmnG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACEF22257D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF199194AF9;
+	Wed, 26 Feb 2025 15:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582411; cv=none; b=A8aROL5ShRCRrAaNqDH5klty/1hMqbT25pGA27jEVSi+fGoTkcF50qbIYTFK/XnLZHlUDgTAJeoJEn/1keLrPou1LG1jQjXRyshsFU+ra9OnJ/VcWyHTKtUTOdlCsuyA9I5Rc2GL+kSAZTmhTXxlb45qRzZGSBTKz7frNBQW+2A=
+	t=1740582471; cv=none; b=pW07g3wvLEv7U8Pr5/jtlfNLLJew7IQnUVDIZAoCGskiZuqm9K7iY8HATHN8YxljURob9/XyevRKNue4ntOUChoVlLIO37MSeaqmVzpLInRECfP+4idctgLwHt8l1l5v+v93Ukfu0AjQheAZxB9jpGizK+DAkHiX4SmA/pYo6RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582411; c=relaxed/simple;
-	bh=tviHhy8BJcFC+InBeKEgYk6Kx+1EzxVXlDZYrXIvfWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hMgboVIzrJnC2oFA5M2kICAR5ujiCnpmo4ghqIHt7RG+A32SBAaQ2j+dd3+oqeie39aleNTi660zLuor6it0/zqApSBVQ9a1E6hNlsn5Ibw9v+dvS1oq3SpV0UFHUkUJp3j6Mx3F82RbXe7h2CMqwR2lFSPBGiLnEvDBFSfC0NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F3FC4CED6;
-	Wed, 26 Feb 2025 15:06:49 +0000 (UTC)
-Date: Wed, 26 Feb 2025 10:07:30 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon
- <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Boqun Feng
- <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, Joel Granados
- <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>,
- Lance Yang <ioworker0@gmail.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, Tomasz
- Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-Message-ID: <20250226100730.3097dc38@gandalf.local.home>
-In-Reply-To: <sp5amdg3pewlnhcigeitslfdmf4sprss6fia4vrtx6dwixotlf@lfuama2h2nrw>
-References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
-	<174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
-	<sp5amdg3pewlnhcigeitslfdmf4sprss6fia4vrtx6dwixotlf@lfuama2h2nrw>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740582471; c=relaxed/simple;
+	bh=B9XcjEPM+jhCbMj4W001+uMUwpvu1a7JWj4XEnZFlac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFenPevJVxF5TlGd6qhkpQ8C3rH0tCgxN+PC6F/fmkd3kkPb/qTJk0LQXudJIyxqzLnNz1cHQUmHzA/OURtKFL4vHi+uJG90a+C29XId3yzjh7fMJmwdZgy0f4IlUucbkTeZccUj9IYQ4Nuuu3qUF+bUxw37yEpp0SclnllUBPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ+aUmnG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 130D7C4CED6;
+	Wed, 26 Feb 2025 15:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740582471;
+	bh=B9XcjEPM+jhCbMj4W001+uMUwpvu1a7JWj4XEnZFlac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IZ+aUmnGf45RfCarvX357sQ0Upo/AdKZqHhBt4oOqwP8TPtAfjR6zWOS8m3TuOSAU
+	 UY7ZgRODLPPOjC1epR1nf8EdlAkZ7DV+R3o92iqNS+rakx5GYMAm7rjdoRPaJr0wT2
+	 XJRto9IdXDtU21j80XiD6UnO/7j9w6+g/mRdRXpuJdk5Z91fAkR+xsFEWe2jG2MZU+
+	 /BXkBXe4NieukmbhY0hKKiYMychTz4bvorcVf+kvl0WDZPfyjNlqpb4TjhsDbVqepN
+	 qeNXv68dlFM2vWFvVAJ3tGv9G9L7ZUv2zDvsqbo9JmIWhpXJPNCKzD7sHWj2QTND+s
+	 O3oEvGjOQUOyA==
+Date: Wed, 26 Feb 2025 16:07:37 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Rostyslav Khudolii <ros@qtec.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+Message-ID: <Z78uOaPESGXWN46M@gmail.com>
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local>
+ <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
 
-On Wed, 26 Feb 2025 13:38:19 +0900
-Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
 
-> I assume another possibility can be that the owner is still around,
-> let's say a kworker that simply forgot to mutex_unlock(), so we'll
-> get its backtrace but it can be misleading, because kworker in
-> question might be doing something completely unrelated.
+* Rostyslav Khudolii <ros@qtec.com> wrote:
 
-Well, if that happens, then we have much bigger problems than this ;-)
+> > My understanding, based on the above info, is that ACPI should be 
+> > used. The direct register enablement is still possible for 
+> > backwards compatibility, if needed.
+> >
+> > I think your observation proves a good point. The registers were 
+> > moved starting in Zen. But this is not an issue on modern OSes 
+> > since ACPI is used by default.
+> 
+> This is my understanding too. However, what is the desired behavior 
+> on Zen if the CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are both 
+> disabled? ECS should not be possible since the registers were moved, 
+> right? If that's the case then, at the very least, it would be great 
+> to have a warning message.
+>
+> > For your specific issue, I think we should determine if there is a 
+> > configuration or a firmware problem.
+> 
+> To give a bit more context: I am porting the kernel which works on 
+> the AMD Ryzen™ Embedded V1000-based device. On that system, it seems 
+> like the firmware doesn't disable IO access to ECS (which is wrong), 
+> hence we have never experienced this issue before. Now, the 
+> R2000-based device's firmware disables IO access to ECS (correctly) 
+> and that's when the issue starts to happen.
 
--- Steve
+[ Sorry about the late reply. ]
+
+So what is the practical impact here? Do things start breaking 
+unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled? 
+Then I'd suggest fixing that in the Kconfig space, either by adding a 
+dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those 
+must-have pieces of infrastructure.
+
+Thanks,
+
+	Ingo
 
