@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-532958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EA4A45424
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:49:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAC0A45427
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA3B172F8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F6B3A922D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AB7266F04;
-	Wed, 26 Feb 2025 03:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC3F266F08;
+	Wed, 26 Feb 2025 03:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="po+cAviU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsn53geV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5988F218821
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDE8266B6A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740541786; cv=none; b=nk4TNi4fc/6aSxiLGjwXS3PTTLAsM0fRGF+KcDZ1joltwSVmBkfIYK7MXTWEK8QF8TLJjVabktu/ObSMBZVrI4ukJ1kOLZGdN3Xxe2wObM3MJzYG9tQHCSHB5LTZyPTdodvHhW7uW9la7qJLyTCm7vSRjSrLzr7JO2RHblTWK/Q=
+	t=1740541852; cv=none; b=C+Lu0R0NtMGsT3pvNt5ltfmJFmSTAAcYHsZ6q8hgoavTihhGWAIqYK7AbCuhBeFrVcaoAMwD4ZyfelZXK8h2ZtzDnhBLHWwPHo/T0dH83P95h3klAzVp8VchtZgRuS+PAow88OrdUpxCIa5mXW03CgTVedaKEYSS9qGwXihyYDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740541786; c=relaxed/simple;
-	bh=smdSWu/7w/UJeur1fo+oz/WRApeT+wO6uic4lBedw7E=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=m/+7l8EkPAAy7ykhyXfASFAfZhAmEDe0HjwTfAhBnfxV5cBymJ3CfNYE3+i6hI4howhy+1VSMQPExnMUXyQtV5YHpesW0UUC4KCTG9gIzN4CXrgB9ATrwPBKLYq5jbd4ufU7/OtJ9EGbF0thVPsPEMXkEd2iWlG1koTtUCm2Nrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=po+cAviU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D13BC4CED6;
-	Wed, 26 Feb 2025 03:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740541784;
-	bh=smdSWu/7w/UJeur1fo+oz/WRApeT+wO6uic4lBedw7E=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=po+cAviUd7OkfDBOtWbooia5FMbYIbAqB/BgKPcQrNg+F6DGwUj4mj2aL273JkvGY
-	 d2DgQx7I19o2e+2PrwkofSkuxHefRB9TpQ55TIOMl0gAKd6gtDC+svloEyNsChQmc3
-	 Ops/qbLbkaY5i3O1bWYR4q5NSxWRkyyPGoz3X/wWeXYz0ovo0KTQ0KYFLv9V/+zvYA
-	 CHKaGnGIwdB2rx1RTq53qPSqDI8pNtDx4L7Sl8qbONDWypNHWRI3aFeMBah7nVy9Q8
-	 G5qm7Phfuy7gPIV2AsBkggHgu2nqop1AiuxAWfJaG5CQtCtpCWG9+R5yD/4iQEvu9D
-	 LeXROTsMS20/A==
-Message-ID: <7fb3ffcb-4513-45da-8f83-eebe8f5e008b@kernel.org>
-Date: Wed, 26 Feb 2025 11:49:41 +0800
+	s=arc-20240116; t=1740541852; c=relaxed/simple;
+	bh=GIKSrcAdARWGtqwXcvhyMAAyoUO1Ab9BSrALrgWmSXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ExnZm6GxW3ZqUJacpHj2w1rYciVgk5QzrkXt7MdnhwSgGAuAo6rKVk4Sjye+xKCacmG5nCOGv0GsYrD2JtSvGxQfqrwc1PGt/DQKvm8HfLOfrg8nay2aaADLsV7r2OVT9rXqxoZM0phKpyLeo3iZTzoB2+op58dxUiZBVbtr3xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsn53geV; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740541851; x=1772077851;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GIKSrcAdARWGtqwXcvhyMAAyoUO1Ab9BSrALrgWmSXs=;
+  b=dsn53geVIbPBkPkw79xyFarURoRtsrGsiIq23KeZMMj0+BvJKm/24Rg4
+   gOPK0xTb9YP8R91ay6ltqinWCq5ny7C9SU9EN9IwCoTcZ0MlPIcjWJHgi
+   UYzpF1dj7n91khUogCZQWUGnaBLD2grVteoI6Hk1mMia21FuOoT4PtCPc
+   6KSEa0UqJHa/OvkuO9yDJ3RXOBc0YMzROzn/QK7OqfgyQ9/onS/zHhBGp
+   RqfEGSt1WkL+StdUQM8Zt9eoxXVwIQ2FXHyFYT82lrUdHDIJZn3pFGG9p
+   D/9Az1T59FMDszre54qum6slu3oHFY3R6Nf0xpH4Dl6LzR0SEeRRRi+4C
+   w==;
+X-CSE-ConnectionGUID: 0+Pih0kQSDGpcTSpWCAyXg==
+X-CSE-MsgGUID: 83bjZWwbTkufqjkhnEuzXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52795775"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="52795775"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 19:50:50 -0800
+X-CSE-ConnectionGUID: zIgZAE2rTNKTn75tBkZ9xw==
+X-CSE-MsgGUID: n0Od5gPkRL6JE5HxqOUpWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="121683447"
+Received: from unknown (HELO [10.238.129.135]) ([10.238.129.135])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 19:50:48 -0800
+Message-ID: <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
+Date: Wed, 26 Feb 2025 11:50:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,250 +66,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Leo Stone <leocstone@gmail.com>,
- syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] f2fs: add check for deleted inode
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250212072742.977248-1-chao@kernel.org>
- <Z6zQoyNp5td-Wgd1@google.com>
- <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
- <Z64uA2ys4nhV54lI@google.com>
- <666e62d1-3446-485e-bac9-0cc8089b04de@kernel.org>
- <5f390129-1b93-42d2-8db7-276c370db90f@kernel.org>
- <Z76KaW6iAsafDDbB@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Z76KaW6iAsafDDbB@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Yunhui Cui
+ <cuiyunhui@bytedance.com>, dwmw2@infradead.org, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+ <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+ <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
+ <20250225142610.GB545008@ziepe.ca>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
+ xsDNBGdk+/wBDADPlR5wKSRRgWDfH5+z+LUhBsFhuVPzmVBykmUECBwzIF/NgKeuRv2U0GT1
+ GpbF6bDQp6yJT8pdHj3kk612FqkHVLlMGHgrQ50KmwClPp7ml67ve8KvCnoC1hjymVj2mxnL
+ fdfjwLHObkCCUE58+NOCSimJOaicWr39No8t2hIDkahqSy4aN2UEqL/rqUumxh8nUFjMQQSR
+ RJtiek+goyH26YalOqGUsSfNF7oPhApD6iHETcUS6ZUlytqkenOn+epmBaTal8MA9/X2kLcr
+ IFr1X8wdt2HbCuiGIz8I3MPIad0Il6BBx/CS0NMdk1rMiIjogtEoDRCcICJYgLDs/FjX6XQK
+ xW27oaxtuzuc2WL/MiMTR59HLVqNT2jK/xRFHWcevNzIufeWkFLPAELMV+ODUNu2D+oGUn/6
+ BZ7SJ6N6MPNimjdu9bCYYbjnfbHmcy0ips9KW1ezjp2QD+huoYQQy82PaYUtIZQLztQrDBHP
+ 86k6iwCCkg3nCJw4zokDYqkAEQEAAc0pRXRoYW4gWmhhbyA8aGFpZmVuZy56aGFvQGxpbnV4
+ LmludGVsLmNvbT7CwQcEEwEIADEWIQSEaSGv5l4PT4Wg1DGpx5l9v2LpDQUCZ2T7/AIbAwQL
+ CQgHBRUICQoLBRYCAwEAAAoJEKnHmX2/YukNztAL/jkfXzpuYv5RFRqLLruRi4d8ZG4tjV2i
+ KppIaFxMmbBjJcHZCjd2Q9DtjjPQGUeCvDMwbzq1HkuzxPgjZcsV9OVYbXm1sqsKTMm9EneL
+ nCG0vgr1ZOpWayuKFF7zYxcF+4WM0nimCIbpKdvm/ru6nIXJl6ZsRunkWkPKLvs9E/vX5ZQ4
+ poN1yRLnSwi9VGV/TD1n7GnpIYiDhYVn856Xh6GoR+YCwa1EY2iSJnLj1k9inO3c5HrocZI9
+ xikXRsUAgParJxPK80234+TOg9HGdnJhNJ3DdyVrvOx333T0f6lute9lnscPEa2ELWHxFFAG
+ r4E89ePIa2ylAhENaQoSjjK9z04Osx2p6BQA0uZuz+fQh9TDqh4JRKaq50uPnM+uQ0Oss2Fx
+ 4ApWvrG13GsjGF5Qpd7vl0/gxHtztDcr5Kln6U1i5FW0MP1Z6z/JRI2WPED1dnieA6/tBqwj
+ oiHixmpw4Zp/5gITmGoUdF1jTwXcYC7cPM/dvsCZ1AGgdmk/ic7AzQRnZPv9AQwA0rdIWu25
+ zLsl9GLiZHGBVZIVut88S+5kkOQ8oIih6aQ8WJPwFXzFNrkceHiN5g16Uye8jl8g58yWP8T+
+ zpXLaPyq6cZ1bfjmxQ7bYAWFl74rRrdots5brSSBq3K7Q3W0v1SADXVVESjGa3FyaBMilvC/
+ kTrx2kqqG+jcJm871Lfdij0A5gT7sLytyEJ4GsyChsEL1wZETfmU7kqRpLYX+l44rNjOh7NO
+ DX3RqR6JagRNBUOBkvmwS5aljOMEWpb8i9Ze98AH2jjrlntDxPTc1TazE1cvSFkeVlx9NCDE
+ A6KDe0IoPB2X4WIDr58ETsgRNq6iJJjD3r6OFEJfb/zfd3W3JTlzfBXL1s2gTkcaz6qk/EJP
+ 2H7Uc2lEM+xBRTOp5LMEIoh2HLAqOLEfIr3sh1negsvQF5Ll1wW7/lbsSOOEnKhsAhFAQX+i
+ rUNkU8ihMJbZpIhYqrBuomE/7ghI/hs3F1GtijdM5wG7lrCvPeEPyKHYhcp3ASUrj8DMVEw/
+ ABEBAAHCwPYEGAEIACAWIQSEaSGv5l4PT4Wg1DGpx5l9v2LpDQUCZ2T7/QIbDAAKCRCpx5l9
+ v2LpDSePC/4zDfjFDg1Bl1r1BFpYGHtFqzAX/K4YBipFNOVWPvdr0eeKYEuDc7KUrUYxbOTV
+ I+31nLk6HQtGoRvyCl9y6vhaBvcrfxjsyKZ+llBR0pXRWT5yn33no90il1/ZHi3rwhgddQQE
+ 7AZJ6NGWXJz0iqV72Td8iRhgIym53cykWBakIPyf2mUFcMh/BuVZNj7+zdGHwkS+B9gIL3MD
+ GzPKkGmv7EntB0ccbFVWcxCSSyTO+uHXQlc4+0ViU/5zw49SYca8sh2HFch93JvAz+wZ3oDa
+ eNcrHQHsGqh5c0cnu0VdZabSE0+99awYBwjJi2znKp+KQfmJJvDeSsjya2iXQMhuRq9gXKOT
+ jK7etrO0Bba+vymPKW5+JGXoP0tQpNti8XvmpmBcVWLY4svGZLunmAjySfPp1yTjytVjWiaL
+ ZEKDJnVrZwxK0oMB69gWc772PFn/Sz9O7WU+yHdciwn0G5KOQ0bHt+OvynLNKWVR+ANGrybN
+ 8TCx1OJHpvWFmL4Deq8=
+In-Reply-To: <20250225142610.GB545008@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2/26/25 11:28, Jaegeuk Kim wrote:
-> On 02/24, Chao Yu wrote:
->> On 2/14/25 09:44, Chao Yu wrote:
->>> On 2/14/25 01:38, Jaegeuk Kim wrote:
->>>> On 02/13, Chao Yu wrote:
->>>>> On 2/13/25 00:47, Jaegeuk Kim wrote:
->>>>>> On 02/12, Chao Yu wrote:
->>>>>>> From: Leo Stone <leocstone@gmail.com>
->>>>>>>
->>>>>>> The syzbot reproducer mounts a f2fs image, then tries to unlink an
->>>>>>> existing file. However, the unlinked file already has a link count of 0
->>>>>>> when it is read for the first time in do_read_inode().
->>>>>>>
->>>>>>> Add a check to sanity_check_inode() for i_nlink == 0.
->>>>>>>
->>>>>>> [Chao Yu: rebase the code and fix orphan inode recovery issue]
->>>>>>> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
->>>>>>> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
->>>>>>> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
->>>>>>> Signed-off-by: Leo Stone <leocstone@gmail.com>
->>>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>>>> ---
->>>>>>>  fs/f2fs/checkpoint.c | 4 ++++
->>>>>>>  fs/f2fs/f2fs.h       | 1 +
->>>>>>>  fs/f2fs/inode.c      | 6 ++++++
->>>>>>>  3 files changed, 11 insertions(+)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>>>> index bd890738b94d..ada2c548645c 100644
->>>>>>> --- a/fs/f2fs/checkpoint.c
->>>>>>> +++ b/fs/f2fs/checkpoint.c
->>>>>>> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>>>>  	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
->>>>>>>  		f2fs_info(sbi, "orphan cleanup on readonly fs");
->>>>>>>  
->>>>>>> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>>>>
->>>>>> What about using SBI_POR_DOING?
->>>>>
->>>>> SBI_POR_DOING will cover most flow of f2fs_fill_super(), I think we can add a
->>>>> separated flag just covering f2fs_recover_orphan_inodes(), so that we can allow
->>>>> iget() of root_inode and all inodes during roll-forward recovery to do sanity
->>>>> check nlink w/ zero. What do you think?
+在 2025/2/25 22:26, Jason Gunthorpe 写道:
+> On Tue, Feb 25, 2025 at 04:54:54PM +0800, Ethan Zhao wrote:
+>>> On 2025/2/25 14:48, Yunhui Cui wrote:
+>>>> We found that executing the command ./a.out &;reboot -f (where a.out
+>>>> is a
+>>>> program that only executes a while(1) infinite loop) can
+>>>> probabilistically
+>>>> cause the system to hang in the intel_iommu_shutdown() function,
+>>>> rendering
+>>>> it unresponsive. Through analysis, we identified that the factors
+>>>> contributing to this issue are as follows:
 >>>>
->>>> Can we do this sanity check after f2fs_iget in the f2fs_unlink() only?
->>>
->>> Sure, we need to cover f2fs_rename() as well, please check this:
->>>
->>> https://lore.kernel.org/all/67450f9a.050a0220.21d33d.0003.GAE@google.com
->>
->> Hi Jaegeuk,
->>
->> I'm testing this, seems there is a problem, once we opened an inode that
->> has zeroed nlink, in f2fs_evict_inode(), the inode and all its data will be
->> deleted, then leaving its stale dir entry in parent directory.
->>
->> What do you think using v4? so that we may has chance to repair it w/ fsck
->> rather than just deleting it?
-> 
-> Do you mean v4 as the below change?
+>>>> 1. The reboot -f command does not prompt the kernel to notify the
+>>>> application layer to perform cleanup actions, allowing the
+>>>> application to
+>>>> continue running.
+>>>>
+>>>> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
+>>>> BSP (Bootstrap Processor) CPU is operational in the system.
+>>>>
+>>>> 3. During the execution of intel_iommu_shutdown(), the function
+>>>> down_write
+>>>> (&dmar_global_lock) causes the process to sleep and be scheduled out.
+> Why does this happen? If the kernel has shutdown other CPUs then what
+> thread is holding the other side of this lock and why?
+>
+>>>> 4. At this point, though the processor's interrupt flag is not cleared,
+>>>>    allowing interrupts to be accepted. However, only legacy devices
+>>>> and NMI
+>>>> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
+>>>> routing have already been disabled. If no legacy or NMI interrupts occur
+>>>> at this stage, the scheduler will not be able to run.
+>>>> 5. If the application got scheduled at this time is executing a
+>>>> while(1)-
+>>>> type loop, it will be unable to be preempted, leading to an infinite
+>>>> loop
+>>>> and causing the system to become unresponsive.
+> If the schedular doesn't run how did we get from 4 -> 5?
+>
+> Maybe the issue is the shutdown handler here is running in the wrong
+> time and it should not be running after the scheduler has been shut
+> down.
+>
+> I don't think removing the lock is a great idea without more
+> explanation.
 
-I mean this v4 patch:
+Seems it is not so simple job to explain why there is no race window between
+this iommu_shutdown() and following dmar_global_lock holders.
 
----
- fs/f2fs/checkpoint.c | 4 ++++
- fs/f2fs/f2fs.h       | 1 +
- fs/f2fs/inode.c      | 6 ++++++
- 3 files changed, 11 insertions(+)
+1. PCIe hotplug dmar_pci_bus_notifier()
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bd890738b94d..ada2c548645c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
- 		f2fs_info(sbi, "orphan cleanup on readonly fs");
+2. mm_core_init detect_intel_iommu()
 
-+	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
-+
- 	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
- 	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+3. late_initcall dmar_free_unused_resources()
 
-@@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 		}
- 		f2fs_put_page(page, 1);
- 	}
-+
- 	/* clear Orphan Flag */
- 	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
- out:
-+	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
- 	set_sbi_flag(sbi, SBI_IS_RECOVERED);
+4. acpi attach dmar_device_hotplug()
 
- 	return err;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 05879c6dc4d6..1c75081c0c14 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1322,6 +1322,7 @@ enum {
- 	SBI_IS_CLOSE,				/* specify unmounting */
- 	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
- 	SBI_POR_DOING,				/* recovery is doing or not */
-+	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
- 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
- 	SBI_NEED_CP,				/* need to checkpoint */
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index d6ad7810df69..02f1b69d03d8 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		}
- 	}
+5. pci_iommu_init intel_iommu_init() init_dmars()
 
-+	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
-+		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
-+			  __func__, inode->i_ino);
-+		return false;
-+	}
-+
- 	return true;
- }
+6. rootfs_initcall ir_dev_scope_init()
+
+though here is the last stage of reboot. then how about we turn back to v1
+
+Just repalce with own_write() with down_write_trylock().
 
 Thanks,
 
-> 
->>
->> ---
->>  fs/f2fs/namei.c | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index a278c7da8177..949621bc0d07 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -547,6 +547,16 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->>  		goto fail;
->>  	}
->>
->> +	if (unlikely(S_ISDIR(inode->i_mode) ?
->> +			inode->i_nlink <= 1 : inode->i_nlink == 0)) {
->> +		f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
->> +				__func__, inode->i_ino, inode->i_nlink,
->> +				S_ISDIR(inode->i_mode));
->> +		err = -EFSCORRUPTED;
->> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +		goto fail;
->> +	}
->> +
->>  	err = f2fs_dquot_initialize(dir);
->>  	if (err)
->>  		goto fail;
->> @@ -968,6 +978,15 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->>  	}
->>
->>  	if (new_inode) {
->> +		if (unlikely(old_is_dir ?
->> +			new_inode->i_nlink <= 1 : new_inode->i_nlink == 0)) {
->> +			f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
->> +				__func__, new_inode->i_ino, new_inode->i_nlink,
->> +				S_ISDIR(new_inode->i_mode));
->> +			err = -EFSCORRUPTED;
->> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +			goto out_dir;
->> +		}
->>
->>  		err = -ENOTEMPTY;
->>  		if (old_is_dir && !f2fs_empty_dir(new_inode))
->> -- 
->> 2.48.1.601.g30ceb7b040-goog
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>>> +
->>>>>>>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
->>>>>>>  	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
->>>>>>>  
->>>>>>> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>>>>  		}
->>>>>>>  		f2fs_put_page(page, 1);
->>>>>>>  	}
->>>>>>> +
->>>>>>>  	/* clear Orphan Flag */
->>>>>>>  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
->>>>>>>  out:
->>>>>>> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>>>>>  	set_sbi_flag(sbi, SBI_IS_RECOVERED);
->>>>>>>  
->>>>>>>  	return err;
->>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>> index 05879c6dc4d6..1c75081c0c14 100644
->>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>> @@ -1322,6 +1322,7 @@ enum {
->>>>>>>  	SBI_IS_CLOSE,				/* specify unmounting */
->>>>>>>  	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
->>>>>>>  	SBI_POR_DOING,				/* recovery is doing or not */
->>>>>>> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
->>>>>>>  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
->>>>>>>  	SBI_NEED_CP,				/* need to checkpoint */
->>>>>>>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
->>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>>>>> index d6ad7810df69..02f1b69d03d8 100644
->>>>>>> --- a/fs/f2fs/inode.c
->>>>>>> +++ b/fs/f2fs/inode.c
->>>>>>> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>>>>>>  		}
->>>>>>>  	}
->>>>>>>  
->>>>>>> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
->>>>>>> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
->>>>>>> +			  __func__, inode->i_ino);
->>>>>>> +		return false;
->>>>>>> +	}
->>>>>>> +
->>>>>>>  	return true;
->>>>>>>  }
->>>>>>>  
->>>>>>> -- 
->>>>>>> 2.48.1.502.g6dc24dfdaf-goog
->>>
+Ethan
+
+
+>
+> Jason
+
+-- 
+"firm, enduring, strong, and long-lived"
 
 
