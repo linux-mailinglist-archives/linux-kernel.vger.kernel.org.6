@@ -1,221 +1,147 @@
-Return-Path: <linux-kernel+bounces-534291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF79A46535
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:43:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025AFA46517
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C633A74B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEEA019C193E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490121D001;
-	Wed, 26 Feb 2025 15:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8621CC68;
+	Wed, 26 Feb 2025 15:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYKFj8pl"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AX7MX3wM"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECE819D8BC;
-	Wed, 26 Feb 2025 15:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035141624E0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584051; cv=none; b=cQxi/NQXEBloqinKNZxRHVBOgEHfMg8tOGaYRPpUQkGxlvjOBs0d+UMz1Iv1Adpj4HWcANIviTILokZ4lUEnq6vB4CvcvtdfnS63gyu3wUIvQrbB8TBL6syB+4v+cxv6qAROyFtTsn3uFs06QHhSVLh5NYwuBdv2oiK2S/CoBTs=
+	t=1740584032; cv=none; b=bOnvZd0TwRPrr8IW+C4yrDunf/5gO2tWq/qyQXUig0mZLTaNgArAbnljGw4P/PljA0DjJyvyivTZwP4Xl+ckQNzpacM6tf3YidibGIFJAvCTJgm2EpdZLapxim68Q9933AGnSOP6cg5QAbYGv+d5Q9IDWcovcObm76nqMqqoLHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584051; c=relaxed/simple;
-	bh=n4mIBYZgIixrVokqwsvcaHoa8d9u1VJMq2c/C0UO6EM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nB6OEXPRJmODPtrBmd4XlSrPJ2kodfR5vzsHEMciALMU/6if4mMbzoOSCwZU6xHAhIzwE8UPehnycgrx6g8NS9Mf05efThOGrcxFwfjUbfP/i2+mWjulZh197Qf6tGH7qrOSai+o8HdsSa9oms4H7xusqlGRZJ/Uf57D7B1DBLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYKFj8pl; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2234338f2bbso841485ad.3;
-        Wed, 26 Feb 2025 07:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740584049; x=1741188849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5N2H7QhldHeJAoRM14lUnMCgcOLfJQcotAm+h7n6lzQ=;
-        b=HYKFj8pln3S8AcZAYSptQqYshjzOehvVhefahL9ficlPkkUTVFm+g7oD5aKaHX1n/T
-         ug97vy6pTQza9T6ozaYnXsna1+HIuS/dZy3IbFVhUR67HzWej/nBBPpCEAGwYa+0v/3Q
-         L+8G4urIBBtVcEIIP5EV0UI3gOtq6U1iN87HCbctoSc2kw4Hp2yq14o0y9AiS5UXlFtX
-         L8c2g78//c4YeeLbnGj5RoWKU8bWVO0QPMCef3dIQso4ytUajxpLGncz4LddetV0G6IG
-         ubaCqs/JdGNZapnU4TEU3S8vUUapaO8Pr0ZVYRylqBDrvvnJN6a8UnODRxQMcexTZHqZ
-         HhOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740584049; x=1741188849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5N2H7QhldHeJAoRM14lUnMCgcOLfJQcotAm+h7n6lzQ=;
-        b=G++eJo/sbMWxL1S37GCUhu8a5y5DlmFJD29S3rLy53a2r+AWRlHaW2EpsOH+ZkMOXF
-         wNEgBMExjBaQOLNfdg/680d9/+ZTqkYANV5ifIDWh/qnNT+vJOFMMZuSA/g3lNczYpyS
-         R3wDqKxSCYMIXEReBCtWc0AQd0QG9umbEueCcgyP8YXs4MqPHjQHLSlfvotFQ04v5F/j
-         ghX6k7q/PuspRru9Y8fLjpukRQYvCYZDTfRKlLMn7EL5Ve6ZQYmAuGnbmzV1ep8AUQfY
-         wAXEVjtLmxmhEBFjLkXb7T0glAySgpYXZ57oovQJvESwdiWVQwNqNIUn/YhLaVRpFZkf
-         UYzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwvEDtREdO+4C4/ZAOCv9nJ/LTvknPE4nKdk137G9TpgQ8uyeaoTaMciBdoJ/MFuTEdcurylUCCicKdgMQ@vger.kernel.org, AJvYcCXZ1M3JZpQsnLRhBCmRavVF7pqrADPGztEFXINcSqlwFMrMFk49ckNcA7zHodYLcf0+YrJvRfPrY/Ya7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkP4Ix6B3EOGLoTHZPToajjTZDrlgY4bsYfVoTcwzOCgwei/q6
-	5Sg0tt4gFrsXjoH2eLBcKI5YkOOiDbo3/ehHel3UyvF/owvAcg5n
-X-Gm-Gg: ASbGnculka9MoBvpkPDhIEKmbaQOAfpo5AI5ykgThIEN47X3Ff1HtlrvhoJOhazMPdZ
-	ZKqNmYn25dOYRBISbwObaEbgE716XZcaa1h1jpdrZN8w5wCpEkb6n7UnccnpjTxRbxBef8+h5k3
-	SwQ78cwxzfCq331CCCah7e08JfDQL7070Hes08RekJ7Zm0eFG8N1Fz1LEsUm5dxXNcwaEr83plx
-	0Dyj4WxQPipK2BF+vVgundBDfvpHFKCoL5eyRZ6DaxEnxOpTE9zQxh9On/EY9hD1uD8b5pFH/d8
-	A4JNftfm5LzHj1rqzZuC1lwcTl4=
-X-Google-Smtp-Source: AGHT+IHUkEmnPXQSMqTediebYjWiSuSk6ge3LwPbPbrdWL0b+9tYBp4tfNmLQnDxQ6RRPUzbOTb8zg==
-X-Received: by 2002:a17:902:dac8:b0:220:e04b:839a with SMTP id d9443c01a7336-2219ff39359mr137441585ad.3.1740584049213;
-        Wed, 26 Feb 2025 07:34:09 -0800 (PST)
-Received: from SaltyKitkat.. ([2403:18c0:5:400:bca6:d6ff:fe8f:8ac0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00054dsm33926355ad.4.2025.02.26.07.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 07:34:08 -0800 (PST)
-From: Sun YangKai <sunk67188@gmail.com>
-To: 
-Cc: Sun YangKai <sunk67188@gmail.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] btrfs: simplify copy_to_sk() by removing unnecessary min key check
-Date: Wed, 26 Feb 2025 23:33:36 +0800
-Message-ID: <20250226153402.19387-1-sunk67188@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740584032; c=relaxed/simple;
+	bh=/bB/yZLGL3DWE2PUG3M5lw3kgRGqPeayAXHhqErbi10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBKCEFOCCYkCnOj0OOZFUoDJIsKL7DeApCiNZEK6egzVc/+URLpPUTA8knf2pRe5TahXz5rZlEzKuMemCaEiIisR3muCT8pxcbVUBXiK9EryCfyroftX6kkKhGfn4gTHsJpiEL6X6YVuS5vk6e+vO/TpTVv8X6iZjxLbMygS4NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AX7MX3wM; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 15:33:43 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740584027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YghUIUtGJFDQ2JIT44YnprUkmQqQzSSO6n1OgaplZRk=;
+	b=AX7MX3wMWgNLdA8YTvt8dSILGImJRuHBwZfP9SPk6Nd9B/IDdvnJogK8ehjKudK4AGLCH/
+	T4oOprYE0r6ihvzf6xnEmIstsYkgnvP2L0maEprSSu4xkQK5pvsUwcIoP2U6awEyoyHMse
+	zjCIDxX/rtym74xSdEBw1a5mqf/+fYg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
+Message-ID: <Z780VzBOE3LKY0yi@google.com>
+References: <20250225213200.729056-1-nphamcs@gmail.com>
+ <Z76Go1VGw272joly@google.com>
+ <20250226045727.GB1775487@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226045727.GB1775487@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-The copy_to_sk() function, which is used solely by
-search_ioctl(), previously relied on the helper function
-key_in_sk() to evaluate whether a key fell within
-the range defined by the search key (sk). This function
-checked the key against both the minimum and maximum
-bounds in the search key.
+On Tue, Feb 25, 2025 at 11:57:27PM -0500, Johannes Weiner wrote:
+> On Wed, Feb 26, 2025 at 03:12:35AM +0000, Yosry Ahmed wrote:
+> > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
+> > > Currently, we crash the kernel when a decompression failure occurs in
+> > > zswap (either because of memory corruption, or a bug in the compression
+> > > algorithm). This is overkill. We should only SIGBUS the unfortunate
+> > > process asking for the zswap entry on zswap load, and skip the corrupted
+> > > entry in zswap writeback.
+> > 
+> > Some relevant observations/questions, but not really actionable for this
+> > patch, perhaps some future work, or more likely some incoherent
+> > illogical thoughts :
+> > 
+> > (1) It seems like not making the folio uptodate will cause shmem faults
+> > to mark the swap entry as hwpoisoned, but I don't see similar handling
+> > for do_swap_page(). So it seems like even if we SIGBUS the process,
+> > other processes mapping the same page could follow in the same
+> > footsteps.
+> 
+> It's analogous to what __end_swap_bio_read() does for block backends,
+> so it's hitchhiking on the standard swap protocol for read failures.
 
-However, within search_ioctl(), the btrfs_search_forward()
-ensures that the search starts at an item whose key
-is already no less than min_key. This guarantees that
-no keys below the minimum threshold will be encountered
-during the traversal. As a result, the check against
-the minimum key is redundant and can be safely removed.
+Right, that's also how I got the idea when I did the same for large
+folios handling.
 
-This patch:
+> 
+> The page sticks around if there are other users. It can get reclaimed,
+> but since it's not marked dirty, it won't get overwritten. Another
+> access will either find it in the swapcache and die on !uptodate; if
+> it was reclaimed, it will attempt another decompression. If all
+> references have been killed, zswap_invalidate() will finally drop it.
+> 
+> Swapoff actually poisons the page table as well (unuse_pte).
 
-* Removes the key_in_sk() helper function, as
-  it is no longer needed.
-* Refactors copy_to_sk() to directly compare keysi
-  with the max_key from the search key. If a key
-  exceeds max_key, the traversal stops early since
-  all relevant items have been processed.
-* Remove the inline mark for copy_to_sk(), since
-  it is only called once in search_ioctl().
-* Updates the comments in copy_to_sk() to clarify
-  the reasoning behind removing the min_key check
-  and to document the new logic.
+Right. My question was basically why don't we also poison the page table
+in do_swap_page() in this case. It's like that we never swapoff.
 
-By removing the redundant check and simplifying the
-traversal logic, this patch improves both readability
-and runtime efficiency for this code path.
+This will cause subsequent fault attempts to return VM_FAULT_HWPOISON
+quickly without doing through the swapcache or decompression. Probably
+not a big deal, but shmem does it so maybe it'd be nice to do it for
+consistency.
 
-Signed-off-by: Sun YangKai <sunk67188@gmail.com>
----
- fs/btrfs/ioctl.c | 57 ++++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 33 deletions(-)
+> 
+> > (2) A hwpoisoned swap entry results in VM_FAULT_SIGBUS in some cases
+> > (e.g. shmem_fault() -> shmem_get_folio_gfp() -> shmem_swapin_folio()),
+> > even though we have VM_FAULT_HWPOISON. This patch falls under this
+> > bucket, but unfortunately we cannot tell for sure if it's a hwpoision or
+> > a decompression bug.
+> 
+> Are you sure? Actual memory failure should replace the ptes of a
+> mapped shmem page with TTU_HWPOISON, which turns them into special
+> swap entries that trigger VM_FAULT_HWPOISON in do_swap_page().
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 61c4c6ac8994..857de98c5f27 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1447,31 +1447,10 @@ static noinline int btrfs_ioctl_subvol_setflags(struct file *file,
- 	return ret;
- }
- 
--static noinline int key_in_sk(struct btrfs_key *key,
--			      struct btrfs_ioctl_search_key *sk)
--{
--	struct btrfs_key test;
--	int ret;
--
--	test.objectid = sk->min_objectid;
--	test.type = sk->min_type;
--	test.offset = sk->min_offset;
--
--	ret = btrfs_comp_cpu_keys(key, &test);
--	if (ret < 0)
--		return 0;
--
--	test.objectid = sk->max_objectid;
--	test.type = sk->max_type;
--	test.offset = sk->max_offset;
--
--	ret = btrfs_comp_cpu_keys(key, &test);
--	if (ret > 0)
--		return 0;
--	return 1;
--}
--
--static noinline int copy_to_sk(struct btrfs_path *path,
-+/*
-+ * This is a helper function only used by search_ioctl()
-+ */
-+static int copy_to_sk(struct btrfs_path *path,
- 			       struct btrfs_key *key,
- 			       struct btrfs_ioctl_search_key *sk,
- 			       u64 *buf_size,
-@@ -1490,6 +1469,9 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 	int slot;
- 	int ret = 0;
- 
-+	test.objectid = sk->max_objectid;
-+	test.type = sk->max_type;
-+	test.offset = sk->max_offset;
- 	leaf = path->nodes[0];
- 	slot = path->slots[0];
- 	nritems = btrfs_header_nritems(leaf);
-@@ -1505,8 +1487,22 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 		item_len = btrfs_item_size(leaf, i);
- 
- 		btrfs_item_key_to_cpu(leaf, key, i);
--		if (!key_in_sk(key, sk))
--			continue;
-+		/*
-+		 * The btrfs_search_forward() ensures that the key of
-+		 * the returned slot should be no less than the min_key.
-+		 * This guarantees that no keys below the minimum threshold
-+		 * will be encountered during the traversal.
-+		 * So we only need to check the max key here.
-+		 * 
-+		 * If a key greater than max_key is found,
-+		 * no more keys in range can be found in following slots
-+		 * and all keys in range have been found and copied to
-+		 * the buffer. So we should return 1 here.
-+		 */
-+		if (btrfs_comp_cpu_keys(key, &test) > 0) {
-+			ret = 1;
-+			goto out;
-+		}
- 
- 		if (sizeof(sh) + item_len > *buf_size) {
- 			if (*num_found) {
-@@ -1575,12 +1571,7 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 	}
- advance_key:
- 	ret = 0;
--	test.objectid = sk->max_objectid;
--	test.type = sk->max_type;
--	test.offset = sk->max_offset;
--	if (btrfs_comp_cpu_keys(key, &test) >= 0)
--		ret = 1;
--	else if (key->offset < (u64)-1)
-+	if (key->offset < (u64)-1)
- 		key->offset++;
- 	else if (key->type < (u8)-1) {
- 		key->offset = 0;
--- 
-2.48.1
+I was looking at the shmem_fault() path. It seems like for this path we
+end up with VM_SIGBUS because shmem_swapin_folio() returns -EIO and not
+-EHWPOISON. This seems like something that can be easily fixed though,
+unless -EHWPOISON is not always correct for a diffrent reason.
 
+> 
+> Anon swap distinguishes as long as the swapfile is there. Swapoff
+> installs poison markers, which are then handled the same in future
+> faults (VM_FAULT_HWPOISON):
+> 
+> /*
+>  * "Poisoned" here is meant in the very general sense of "future accesses are
+>  * invalid", instead of referring very specifically to hardware memory errors.
+>  * This marker is meant to represent any of various different causes of this.
+>  *
+>  * Note that, when encountered by the faulting logic, PTEs with this marker will
+>  * result in VM_FAULT_HWPOISON and thus regardless trigger hardware memory error
+>  * logic.
+
+If that's the case, maybe it's better for zswap in the future if we stop
+relying on not marking the folio uptodate, and instead propagate an
+error through swap_read_folio() to the callers to make sure we always
+return VM_FAULT_HWPOISON and install poison markers.
+
+The handling is a bit quirky and inconsistent, but it ultimately results
+in VM_SIGBUS or VM_FAULT_HWPOISON which I guess is fine for now.
+
+>  */
+> #define  PTE_MARKER_POISONED                    BIT(1)
 
