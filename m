@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-533733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74004A45E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:05:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A188FA45E28
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D83178F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173181887D9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B214A221DB2;
-	Wed, 26 Feb 2025 12:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD1221D3F5;
+	Wed, 26 Feb 2025 12:01:59 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BA4221DA5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE134221F16
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571317; cv=none; b=kLZSEgWaSFa1r/qRLuyIfXSfJ/wlJC3GyRQHbd2CG7HVr/8OtY/G2nSzn7QhhxFzCi+GHK7VgkAitUfKvm+Evz2dUdHe9dScdU75tB111dts/QQ6gSNyRsViiVFUb2RXNAWx4ls2f6b70obUnpbDnDj7H1GOwjgh6MKiLFhR0Ac=
+	t=1740571318; cv=none; b=nE3+a6JiP00ijrbASNTkyF3tbZtqEvw4BZBdAhVoBtqLxcxRw2mPBpsjKgnRxgobGNgHslZX4waglAjaLUImkGfMLIFyk85ZGpx5qxUcHiMRi4eVL0gCHba7l1fWzKk2A8qXdB5HuN5qOf9DGo1MmYL5RTdEeA+h8Kg8e0uDEGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571317; c=relaxed/simple;
-	bh=fQF55MlodRofCtKpM/2iYYKXMGxXZ+PpVYpvP/083Xg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=P3wnZmKDLcXV+vXmOEwMGlCBHaggBhyKKgfbtNNN7L4o5mbJGnVWZ1M89r2klaI3gTjKXDGOKc+xBkKpoiVUv0pJigetS7GJTFHCsWUWdr6BYsIo4keNvOpW4ldLGt5jwHXxeBp0LpRPdXP8bVPb7U5lRonOYVBZ9XQ+nwO4L8Q=
+	s=arc-20240116; t=1740571318; c=relaxed/simple;
+	bh=kH5EqBVOftht7y89XT+HXFB1VSLRW6Ml9C7ObYEE/vE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=uE/FWCHPaX3mTZStXUM7kXOIgtFRYRrOF/ERwmfMA/0ffmP6kzI6qJcvASIzMGwh12xXs1xsgNqhaokf9/GUo/FE7vDgYZat6kDh23BO/YkjOYumUIldnwGLOgBbnj82XUpwyGUB3JsbG850dudOJ3PaIYxyZowB/cAngkuFP2s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-31-67bf02a743c9
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-37-67bf02a70812
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -42,37 +42,37 @@ Cc: kernel_team@skhynix.com,
 	mingo@redhat.com,
 	bp@alien8.de,
 	rjgolo@gmail.com
-Subject: [RFC PATCH v12 based on mm-unstable as of Feb 21, 2025 22/25]  mm/page_alloc: not allow to tlb shootdown if !preemptable() && non_luf_pages_ok()
-Date: Wed, 26 Feb 2025 21:01:29 +0900
-Message-Id: <20250226120132.28469-22-byungchul@sk.com>
+Subject: [RFC PATCH v12 based on mm-unstable as of Feb 21, 2025 23/25]  mm/migrate: apply luf mechanism to unmapping during migration
+Date: Wed, 26 Feb 2025 21:01:30 +0900
+Message-Id: <20250226120132.28469-23-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250226120132.28469-1-byungchul@sk.com>
 References: <20250226113342.GB1935@system.software.com>
  <20250226120132.28469-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsXC9ZZnke5ypv3pBj0TtS3mrF/DZvF5wz82
-	i6/rfzFbPP3Ux2JxedccNot7a/6zWpzftZbVYsfSfUwWlw4sYLI43nuAyWL+vc9sFps3TWW2
-	OD5lKqPF7x9z2Bz4PL639rF47Jx1l91jwaZSj80rtDw2repk89j0aRK7x7tz59g9Tsz4zeLx
-	ft9VNo+tv+w8GqdeY/P4vEkugCeKyyYlNSezLLVI3y6BK+P19GUsBV+sKj5ff83WwPjOoIuR
-	k0NCwERi48knjDD2rP6vzCA2m4C6xI0bP8FsEQEziYOtf9i7GLk4mAWWMUnsPdHABuIIC8xk
-	lHjx/w4rSBWLgKrEiU0TmUBsXqCOG/Oa2CCmykus3nAAbBInUPzf7t/sILaQQLJEy/rfLCCD
-	JATus0k0/fkAdYakxMEVN1gmMPIuYGRYxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREY2Mtq/0Tv
-	YPx0IfgQowAHoxIP74Mze9OFWBPLiitzDzFKcDArifByZu5JF+JNSaysSi3Kjy8qzUktPsQo
-	zcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cBYO7Hbtv1PTnnl1/QjFxe3TSxfW2WhO43r
-	1I+i/wf3C6WJz9t2cMqP5UKlaVU2C6aZC/43SPCsv7fpwoa/dssC3rx/ai6k4P97s6VRj1bc
-	gq0TjFa8fG67RGjyaSZdV+4XZcpq1W03Xbec+79sP8+Z5u0yni/jH3R9zXtjf7/aWLNn+yEv
-	t+1nlFiKMxINtZiLihMBFJdnCmgCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsXC5WfdrLucaX+6Qf9jRYs569ewWXze8I/N
-	4uv6X8wWTz/1sVgcnnuS1eLyrjlsFvfW/Ge1OL9rLavFjqX7mCwuHVjAZHG89wCTxfx7n9ks
-	Nm+aymxxfMpURovfP+awOfB7fG/tY/HYOesuu8eCTaUem1doeWxa1cnmsenTJHaPd+fOsXuc
-	mPGbxeP9vqtsHotffGDy2PrLzqNx6jU2j8+b5AJ4o7hsUlJzMstSi/TtErgyXk9fxlLwxari
-	8/XXbA2M7wy6GDk5JARMJGb1f2UGsdkE1CVu3PgJZosImEkcbP3D3sXIxcEssIxJYu+JBjYQ
-	R1hgJqPEi/93WEGqWARUJU5smsgEYvMCddyY18QGMVVeYvWGA2CTOIHi/3b/ZgexhQSSJVrW
-	/2aZwMi1gJFhFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmCYLqv9M3EH45fL7ocYBTgYlXh4
-	H5zZmy7EmlhWXJl7iFGCg1lJhJczc0+6EG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0
-	xJLU7NTUgtQimCwTB6dUA6Pi/8N/DF4/6VNO22JuWHxJQMp62mxfzyTWiXVzMvdemGr8WY7x
-	W06zx4ubobOnCS+9+uOao6eg2p78a0f+O8/dWVdwRk+n9POX77qpzxiTb5vkrftso+UbnWLq
-	7qi3UDR2XrmweYRRMmfjnJeuPPOPOp0/JZMX1z9r+6zNvq9jCsNfuDPXLFJiKc5INNRiLipO
-	BACYa2oITwIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsXC9ZZnke5ypv3pBouOGVjMWb+GzeLzhn9s
+	Fl/X/2K2ePqpj8Xi8q45bBb31vxntTi/ay2rxY6l+5gsLh1YwGRxvPcAk8X8e5/ZLDZvmsps
+	cXzKVEaL3z/msDnweXxv7WPx2DnrLrvHgk2lHptXaHlsWtXJ5rHp0yR2j3fnzrF7nJjxm8Xj
+	/b6rbB5bf9l5NE69xubxeZNcAE8Ul01Kak5mWWqRvl0CV8b5/WdZChoCKy7sPMrYwDjJsYuR
+	k0NCwESi6dMqJhj7y9EFrCA2m4C6xI0bP5lBbBEBM4mDrX/Yuxi5OJgFljFJ7D3RwAbiCAu0
+	Mkp82/cDyOHgYBFQlZjYVgLSwAvU0PriPRvEUHmJ1RsOgA3iBIr/2/2bHcQWEkiWaFn/mwVk
+	joTAfTaJ9k/r2CEaJCUOrrjBMoGRdwEjwypGocy8stzEzBwTvYzKvMwKveT83E2MwLBeVvsn
+	egfjpwvBhxgFOBiVeHgfnNmbLsSaWFZcmXuIUYKDWUmElzNzT7oQb0piZVVqUX58UWlOavEh
+	RmkOFiVxXqNv5SlCAumJJanZqakFqUUwWSYOTqkGxjW6OpsO1jryLxfZJVdqah4ac86a5eJ/
+	ve61z1l0L7sfm3vzjsh85gahXuYVS1IyeQr7Xxy7vdf6QJ+gNoPjhot3D786374osHca+3qr
+	gmksu8VOpJnU1bw22ulbvfXx2j+vWVcdmLOFl6uLmcftbMDE4C16DomuledCHWrqHm42M1z2
+	Ve3SayWW4oxEQy3mouJEAK0R8WtnAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsXC5WfdrLucaX+6wanXahZz1q9hs/i84R+b
+	xdf1v5gtnn7qY7E4PPckq8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
+	bN40ldni+JSpjBa/f8xhc+D3+N7ax+Kxc9Zddo8Fm0o9Nq/Q8ti0qpPNY9OnSewe786dY/c4
+	MeM3i8f7fVfZPBa/+MDksfWXnUfj1GtsHp83yQXwRnHZpKTmZJalFunbJXBlnN9/lqWgIbDi
+	ws6jjA2Mkxy7GDk5JARMJL4cXcAKYrMJqEvcuPGTGcQWETCTONj6h72LkYuDWWAZk8TeEw1s
+	II6wQCujxLd9P4AcDg4WAVWJiW0lIA28QA2tL96zQQyVl1i94QDYIE6g+L/dv9lBbCGBZImW
+	9b9ZJjByLWBkWMUokplXlpuYmWOqV5ydUZmXWaGXnJ+7iREYpMtq/0zcwfjlsvshRgEORiUe
+	3gdn9qYLsSaWFVfmHmKU4GBWEuHlzNyTLsSbklhZlVqUH19UmpNafIhRmoNFSZzXKzw1QUgg
+	PbEkNTs1tSC1CCbLxMEp1cDIa29wK/ymecbRHynKTbPXdK+55+J/4aqCUeO2wj67Y9Y6R01f
+	Mp+d9cJKqeW91/Kr712+X/T6c0QjrSdYatrufA6P3uJu20UPHly+9X39NIucoyav3M5XFW6J
+	nG/ALjBV2/HTmyUlr4N2Tj99+PGt+zn/7Z37tUwOrgs9P1GHVelhrtAMH04HJZbijERDLeai
+	4kQAW73xwE4CAAA=
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -80,212 +80,292 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Do not perform tlb shootdown if the context is in preempt disable and
-there are already enough non luf pages, not to hurt preemptibility.
+A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
+that have been unmapped and freed, eventually get allocated again.  It's
+safe for folios that had been mapped read only and were unmapped, since
+the contents of the folios don't change while staying in pcp or buddy
+so we can still read the data through the stale tlb entries.
+
+Applied the mechanism to unmapping during migration.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- mm/compaction.c     |  6 +++---
- mm/internal.h       |  5 +++--
- mm/page_alloc.c     | 27 +++++++++++++++------------
- mm/page_isolation.c |  2 +-
- mm/page_reporting.c |  4 ++--
- 5 files changed, 24 insertions(+), 20 deletions(-)
+ include/linux/mm.h   |  2 ++
+ include/linux/rmap.h |  2 +-
+ mm/migrate.c         | 66 ++++++++++++++++++++++++++++++++++----------
+ mm/rmap.c            | 15 ++++++----
+ mm/swap.c            |  2 +-
+ 5 files changed, 64 insertions(+), 23 deletions(-)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index c87a1803b10e2..9098ddb04bbf5 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -606,7 +606,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 
- 	page = pfn_to_page(blockpfn);
- 
--	luf_takeoff_start();
-+	luf_takeoff_start(cc->zone);
- 	/* Isolate free pages. */
- 	for (; blockpfn < end_pfn; blockpfn += stride, page += stride) {
- 		int isolated;
-@@ -1603,7 +1603,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
- 		if (!area->nr_free)
- 			continue;
- 
--		can_shootdown = luf_takeoff_start();
-+		can_shootdown = luf_takeoff_start(cc->zone);
- 		spin_lock_irqsave(&cc->zone->lock, flags);
- 		freelist = &area->free_list[MIGRATE_MOVABLE];
- retry:
-@@ -2417,7 +2417,7 @@ static enum compact_result compact_finished(struct compact_control *cc)
- 	 * luf_takeoff_{start,end}() is required to identify whether
- 	 * this compaction context is tlb shootdownable for luf'd pages.
- 	 */
--	luf_takeoff_start();
-+	luf_takeoff_start(cc->zone);
- 	ret = __compact_finished(cc);
- 	luf_takeoff_end(cc->zone);
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index 53056ad7dade9..7c4198f5e22c3 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1609,7 +1609,7 @@ static inline void accept_page(struct page *page)
- #endif /* CONFIG_UNACCEPTED_MEMORY */
- #if defined(CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH)
- extern struct luf_batch luf_batch[];
--bool luf_takeoff_start(void);
-+bool luf_takeoff_start(struct zone *zone);
- void luf_takeoff_end(struct zone *zone);
- bool luf_takeoff_no_shootdown(void);
- bool luf_takeoff_check(struct zone *zone, struct page *page);
-@@ -1623,6 +1623,7 @@ static inline bool non_luf_pages_ok(struct zone *zone)
- 
- 	return nr_free - nr_luf_pages > min_wm;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2fa5185880105..b41d7804a06a2 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1566,6 +1566,8 @@ static inline void folio_put(struct folio *folio)
+ 		__folio_put(folio);
  }
+ 
++void page_cache_release(struct folio *folio);
 +
- unsigned short fold_unmap_luf(void);
+ /**
+  * folio_put_refs - Reduce the reference count on a folio.
+  * @folio: The folio.
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 6abf7960077aa..bfccf2efb9000 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -675,7 +675,7 @@ static inline int folio_try_share_anon_rmap_pmd(struct folio *folio,
+ int folio_referenced(struct folio *, int is_locked,
+ 			struct mem_cgroup *memcg, unsigned long *vm_flags);
  
- /*
-@@ -1709,7 +1710,7 @@ static inline bool can_luf_vma(struct vm_area_struct *vma)
- 	return true;
- }
- #else /* CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH */
--static inline bool luf_takeoff_start(void) { return false; }
-+static inline bool luf_takeoff_start(struct zone *zone) { return false; }
- static inline void luf_takeoff_end(struct zone *zone) {}
- static inline bool luf_takeoff_no_shootdown(void) { return true; }
- static inline bool luf_takeoff_check(struct zone *zone, struct page *page) { return true; }
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0f986cfa4fe39..9a58d6f7a9609 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -623,22 +623,25 @@ compaction_capture(struct capture_control *capc, struct page *page,
- #endif /* CONFIG_COMPACTION */
+-void try_to_migrate(struct folio *folio, enum ttu_flags flags);
++bool try_to_migrate(struct folio *folio, enum ttu_flags flags);
+ void try_to_unmap(struct folio *, enum ttu_flags flags);
  
- #if defined(CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH)
--static bool no_shootdown_context(void)
-+static bool no_shootdown_context(struct zone *zone)
+ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 365c6daa8d1b1..7d6472cc236ae 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1164,7 +1164,8 @@ static void migrate_folio_undo_dst(struct folio *dst, bool locked,
+ 
+ /* Cleanup src folio upon migration success */
+ static void migrate_folio_done(struct folio *src,
+-			       enum migrate_reason reason)
++			       enum migrate_reason reason,
++			       unsigned short luf_key)
  {
  	/*
--	 * If it performs with irq disabled, that might cause a deadlock.
--	 * Avoid tlb shootdown in this case.
-+	 * Tries to avoid tlb shootdown if !preemptible().  However, it
-+	 * should be allowed under heavy memory pressure.
- 	 */
-+	if (zone && non_luf_pages_ok(zone))
-+		return !(preemptible() && in_task());
+ 	 * Compaction can migrate also non-LRU pages which are
+@@ -1175,16 +1176,31 @@ static void migrate_folio_done(struct folio *src,
+ 		mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
+ 				    folio_is_file_lru(src), -folio_nr_pages(src));
+ 
+-	if (reason != MR_MEMORY_FAILURE)
+-		/* We release the page in page_handle_poison. */
++	/* We release the page in page_handle_poison. */
++	if (reason == MR_MEMORY_FAILURE)
++		luf_flush(luf_key);
++	else if (!luf_key)
+ 		folio_put(src);
++	else {
++		/*
++		 * Should be the last reference.
++		 */
++		if (unlikely(!folio_put_testzero(src)))
++			VM_WARN_ON(1);
 +
- 	return !(!irqs_disabled() && in_task());
++		page_cache_release(src);
++		folio_unqueue_deferred_split(src);
++		mem_cgroup_uncharge(src);
++		free_frozen_pages(&src->page, folio_order(src), luf_key);
++	}
  }
  
- /*
-  * Can be called with zone lock released and irq enabled.
+ /* Obtain the lock on page, remove all ptes. */
+ static int migrate_folio_unmap(new_folio_t get_new_folio,
+ 		free_folio_t put_new_folio, unsigned long private,
+ 		struct folio *src, struct folio **dstp, enum migrate_mode mode,
+-		enum migrate_reason reason, struct list_head *ret)
++		enum migrate_reason reason, struct list_head *ret,
++		bool *can_luf)
+ {
+ 	struct folio *dst;
+ 	int rc = -EAGAIN;
+@@ -1200,7 +1216,7 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+ 		folio_clear_unevictable(src);
+ 		/* free_pages_prepare() will clear PG_isolated. */
+ 		list_del(&src->lru);
+-		migrate_folio_done(src, reason);
++		migrate_folio_done(src, reason, 0);
+ 		return MIGRATEPAGE_SUCCESS;
+ 	}
+ 
+@@ -1317,7 +1333,7 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+ 		/* Establish migration ptes */
+ 		VM_BUG_ON_FOLIO(folio_test_anon(src) &&
+ 			       !folio_test_ksm(src) && !anon_vma, src);
+-		try_to_migrate(src, mode == MIGRATE_ASYNC ? TTU_BATCH_FLUSH : 0);
++		*can_luf = try_to_migrate(src, mode == MIGRATE_ASYNC ? TTU_BATCH_FLUSH : 0);
+ 		old_page_state |= PAGE_WAS_MAPPED;
+ 	}
+ 
+@@ -1345,7 +1361,7 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+ static int migrate_folio_move(free_folio_t put_new_folio, unsigned long private,
+ 			      struct folio *src, struct folio *dst,
+ 			      enum migrate_mode mode, enum migrate_reason reason,
+-			      struct list_head *ret)
++			      struct list_head *ret, unsigned short luf_key)
+ {
+ 	int rc;
+ 	int old_page_state = 0;
+@@ -1399,7 +1415,7 @@ static int migrate_folio_move(free_folio_t put_new_folio, unsigned long private,
+ 	if (anon_vma)
+ 		put_anon_vma(anon_vma);
+ 	folio_unlock(src);
+-	migrate_folio_done(src, reason);
++	migrate_folio_done(src, reason, luf_key);
+ 
+ 	return rc;
+ out:
+@@ -1694,7 +1710,7 @@ static void migrate_folios_move(struct list_head *src_folios,
+ 		struct list_head *ret_folios,
+ 		struct migrate_pages_stats *stats,
+ 		int *retry, int *thp_retry, int *nr_failed,
+-		int *nr_retry_pages)
++		int *nr_retry_pages, unsigned short luf_key)
+ {
+ 	struct folio *folio, *folio2, *dst, *dst2;
+ 	bool is_thp;
+@@ -1711,7 +1727,7 @@ static void migrate_folios_move(struct list_head *src_folios,
+ 
+ 		rc = migrate_folio_move(put_new_folio, private,
+ 				folio, dst, mode,
+-				reason, ret_folios);
++				reason, ret_folios, luf_key);
+ 		/*
+ 		 * The rules are:
+ 		 *	Success: folio will be freed
+@@ -1788,7 +1804,11 @@ static int migrate_pages_batch(struct list_head *from,
+ 	int rc, rc_saved = 0, nr_pages;
+ 	LIST_HEAD(unmap_folios);
+ 	LIST_HEAD(dst_folios);
++	LIST_HEAD(unmap_folios_luf);
++	LIST_HEAD(dst_folios_luf);
+ 	bool nosplit = (reason == MR_NUMA_MISPLACED);
++	unsigned short luf_key;
++	bool can_luf;
+ 
+ 	VM_WARN_ON_ONCE(mode != MIGRATE_ASYNC &&
+ 			!list_empty(from) && !list_is_singular(from));
+@@ -1863,9 +1883,11 @@ static int migrate_pages_batch(struct list_head *from,
+ 				continue;
+ 			}
+ 
++			can_luf = false;
+ 			rc = migrate_folio_unmap(get_new_folio, put_new_folio,
+ 					private, folio, &dst, mode, reason,
+-					ret_folios);
++					ret_folios, &can_luf);
++
+ 			/*
+ 			 * The rules are:
+ 			 *	Success: folio will be freed
+@@ -1911,7 +1933,8 @@ static int migrate_pages_batch(struct list_head *from,
+ 				/* nr_failed isn't updated for not used */
+ 				stats->nr_thp_failed += thp_retry;
+ 				rc_saved = rc;
+-				if (list_empty(&unmap_folios))
++				if (list_empty(&unmap_folios) &&
++				    list_empty(&unmap_folios_luf))
+ 					goto out;
+ 				else
+ 					goto move;
+@@ -1925,8 +1948,13 @@ static int migrate_pages_batch(struct list_head *from,
+ 				stats->nr_thp_succeeded += is_thp;
+ 				break;
+ 			case MIGRATEPAGE_UNMAP:
+-				list_move_tail(&folio->lru, &unmap_folios);
+-				list_add_tail(&dst->lru, &dst_folios);
++				if (can_luf) {
++					list_move_tail(&folio->lru, &unmap_folios_luf);
++					list_add_tail(&dst->lru, &dst_folios_luf);
++				} else {
++					list_move_tail(&folio->lru, &unmap_folios);
++					list_add_tail(&dst->lru, &dst_folios);
++				}
+ 				break;
+ 			default:
+ 				/*
+@@ -1946,6 +1974,8 @@ static int migrate_pages_batch(struct list_head *from,
+ 	stats->nr_thp_failed += thp_retry;
+ 	stats->nr_failed_pages += nr_retry_pages;
+ move:
++	/* Should be before try_to_unmap_flush() */
++	luf_key = fold_unmap_luf();
+ 	/* Flush TLBs for all unmapped folios */
+ 	try_to_unmap_flush();
+ 
+@@ -1959,7 +1989,11 @@ static int migrate_pages_batch(struct list_head *from,
+ 		migrate_folios_move(&unmap_folios, &dst_folios,
+ 				put_new_folio, private, mode, reason,
+ 				ret_folios, stats, &retry, &thp_retry,
+-				&nr_failed, &nr_retry_pages);
++				&nr_failed, &nr_retry_pages, 0);
++		migrate_folios_move(&unmap_folios_luf, &dst_folios_luf,
++				put_new_folio, private, mode, reason,
++				ret_folios, stats, &retry, &thp_retry,
++				&nr_failed, &nr_retry_pages, luf_key);
+ 	}
+ 	nr_failed += retry;
+ 	stats->nr_thp_failed += thp_retry;
+@@ -1970,6 +2004,8 @@ static int migrate_pages_batch(struct list_head *from,
+ 	/* Cleanup remaining folios */
+ 	migrate_folios_undo(&unmap_folios, &dst_folios,
+ 			put_new_folio, private, ret_folios);
++	migrate_folios_undo(&unmap_folios_luf, &dst_folios_luf,
++			put_new_folio, private, ret_folios);
+ 
+ 	return rc;
+ }
+diff --git a/mm/rmap.c b/mm/rmap.c
+index a2dc002a9c33d..e645bb0dd44b5 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -2925,8 +2925,9 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+  *
+  * Tries to remove all the page table entries which are mapping this folio and
+  * replace them with special swap entries. Caller must hold the folio lock.
++ * Return true if all the mappings are read-only, otherwise false.
   */
--bool luf_takeoff_start(void)
-+bool luf_takeoff_start(struct zone *zone)
+-void try_to_migrate(struct folio *folio, enum ttu_flags flags)
++bool try_to_migrate(struct folio *folio, enum ttu_flags flags)
  {
- 	unsigned long flags;
--	bool no_shootdown = no_shootdown_context();
-+	bool no_shootdown = no_shootdown_context(zone);
+ 	struct rmap_walk_control rwc = {
+ 		.rmap_one = try_to_migrate_one,
+@@ -2944,11 +2945,11 @@ void try_to_migrate(struct folio *folio, enum ttu_flags flags)
+ 	 */
+ 	if (WARN_ON_ONCE(flags & ~(TTU_RMAP_LOCKED | TTU_SPLIT_HUGE_PMD |
+ 					TTU_SYNC | TTU_BATCH_FLUSH)))
+-		return;
++		return false;
  
- 	local_irq_save(flags);
- 
-@@ -2669,7 +2672,7 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
- 		 * luf_takeoff_{start,end}() is required for
- 		 * get_page_from_free_area() to use luf_takeoff_check().
- 		 */
--		luf_takeoff_start();
-+		luf_takeoff_start(zone);
- 		spin_lock_irqsave(&zone->lock, flags);
- 		for (order = 0; order < NR_PAGE_ORDERS; order++) {
- 			struct free_area *area = &(zone->free_area[order]);
-@@ -2874,7 +2877,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- 	unsigned long flags;
- 	int i;
- 
--	luf_takeoff_start();
-+	luf_takeoff_start(zone);
- 	spin_lock_irqsave(&zone->lock, flags);
- 	for (i = 0; i < count; ++i) {
- 		struct page *page = __rmqueue(zone, order, migratetype,
-@@ -3500,7 +3503,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
- 
- 	do {
- 		page = NULL;
--		luf_takeoff_start();
-+		luf_takeoff_start(zone);
- 		spin_lock_irqsave(&zone->lock, flags);
- 		if (alloc_flags & ALLOC_HIGHATOMIC)
- 			page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
-@@ -3645,7 +3648,7 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
- 	struct page *page;
- 	unsigned long __maybe_unused UP_flags;
- 
--	luf_takeoff_start();
-+	luf_takeoff_start(NULL);
- 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
- 	pcp_trylock_prepare(UP_flags);
- 	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-@@ -5268,7 +5271,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 	if (unlikely(!zone))
- 		goto failed;
- 
--	luf_takeoff_start();
-+	luf_takeoff_start(NULL);
- 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
- 	pcp_trylock_prepare(UP_flags);
- 	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-@@ -7371,7 +7374,7 @@ unsigned long __offline_isolated_pages(unsigned long start_pfn,
- 
- 	offline_mem_sections(pfn, end_pfn);
- 	zone = page_zone(pfn_to_page(pfn));
--	luf_takeoff_start();
-+	luf_takeoff_start(zone);
- 	spin_lock_irqsave(&zone->lock, flags);
- 	while (pfn < end_pfn) {
- 		page = pfn_to_page(pfn);
-@@ -7489,7 +7492,7 @@ bool take_page_off_buddy(struct page *page)
- 	unsigned int order;
- 	bool ret = false;
- 
--	luf_takeoff_start();
-+	luf_takeoff_start(zone);
- 	spin_lock_irqsave(&zone->lock, flags);
- 	for (order = 0; order < NR_PAGE_ORDERS; order++) {
- 		struct page *page_head = page - (pfn & ((1 << order) - 1));
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 521ed32bdbf67..70f938c0921ae 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -218,7 +218,7 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
- 	struct page *buddy;
- 
- 	zone = page_zone(page);
--	luf_takeoff_start();
-+	luf_takeoff_start(zone);
- 	spin_lock_irqsave(&zone->lock, flags);
- 	if (!is_migrate_isolate_page(page))
- 		goto out;
-diff --git a/mm/page_reporting.c b/mm/page_reporting.c
-index b23d3ed34ec07..83b66e7f0d257 100644
---- a/mm/page_reporting.c
-+++ b/mm/page_reporting.c
-@@ -170,7 +170,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
- 	if (free_area_empty(area, mt))
- 		return err;
- 
--	can_shootdown = luf_takeoff_start();
-+	can_shootdown = luf_takeoff_start(zone);
- 	spin_lock_irq(&zone->lock);
+ 	if (folio_is_zone_device(folio) &&
+ 	    (!folio_is_device_private(folio) && !folio_is_device_coherent(folio)))
+-		return;
++		return false;
  
  	/*
-@@ -250,7 +250,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
- 		/* update budget to reflect call to report function */
- 		budget--;
+ 	 * During exec, a temporary VMA is setup and later moved.
+@@ -2968,10 +2969,12 @@ void try_to_migrate(struct folio *folio, enum ttu_flags flags)
+ 	else
+ 		rmap_walk(folio, &rwc);
  
--		luf_takeoff_start();
-+		luf_takeoff_start(zone);
+-	if (can_luf_test())
++	if (can_luf_test()) {
+ 		fold_batch(tlb_ubc_luf, tlb_ubc_ro, true);
+-	else
+-		fold_batch(tlb_ubc, tlb_ubc_ro, true);
++		return true;
++	}
++	fold_batch(tlb_ubc, tlb_ubc_ro, true);
++	return false;
+ }
  
- 		/* reacquire zone lock and resume processing */
- 		spin_lock_irq(&zone->lock);
+ #ifdef CONFIG_DEVICE_PRIVATE
+diff --git a/mm/swap.c b/mm/swap.c
+index bdfede631aea9..21374892854eb 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -84,7 +84,7 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
+  * This path almost never happens for VM activity - pages are normally freed
+  * in batches.  But it gets used by networking - and for compound pages.
+  */
+-static void page_cache_release(struct folio *folio)
++void page_cache_release(struct folio *folio)
+ {
+ 	struct lruvec *lruvec = NULL;
+ 	unsigned long flags;
 -- 
 2.17.1
 
