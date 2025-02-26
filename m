@@ -1,194 +1,258 @@
-Return-Path: <linux-kernel+bounces-533428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0694A45A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:26:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A57A45A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C2C173339
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:26:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FEA3A9594
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9E5226CF1;
-	Wed, 26 Feb 2025 09:26:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF866226D05;
+	Wed, 26 Feb 2025 09:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="Y/h+a99M";
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="qPsBrJwY"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2924215189;
-	Wed, 26 Feb 2025 09:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CE8258CE2;
+	Wed, 26 Feb 2025 09:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561973; cv=none; b=WVqqoUNsKprQv3KPcYyxR8evjuJc8p9A/jR35aaLorNcXiEnKy4OdRHvSTWVELmMZ0R1Yz6BpD+OciptqlicmtPiRcCccnKcaMVgzh3gznhKjPSzVoUhYbUsOjRa8vWhgwm2QELGB7IOUL0OGmKjVDJm96P+UHRcMtu1HFt4lLE=
+	t=1740562400; cv=none; b=roW1djFWwcwXdwAin0kPCMiOeehWh6PU1WMPyJxHwu8X2kZGJYYAvZJhF1TrzzrJPzbOUWKSABWYpuTOAwb/lZEAZ4/9Vt8a91ZEyBh485e/B8bvw5USi11+gAhN/u6RRwxdpMbjNjyI/SIHkUEGzq7hLFejbAYjh/JwAr520RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561973; c=relaxed/simple;
-	bh=snXsEhf+LNi9fdlosqnbK4Qm4UNaUVu8+oUbUR/A6+M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ce68aP8A0HTTc4W08baic+o3oINx26Lpf1Ak+qLubh20zDdD8P1SCf8E39bdHqQOgq0saNpbo3re6w3VjxtwceiuXYWS77C7/HtJm+mgHuK6KjhFup+R0xg7eI64OndqHt4m829ws/ajw7B06Oxrb3XQ0Igt6BajoyQz1TG4hbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z2pvJ1wwcz6K9Fn;
-	Wed, 26 Feb 2025 17:24:12 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 72B0814097D;
-	Wed, 26 Feb 2025 17:26:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 26 Feb 2025 10:26:07 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Wed, 26 Feb 2025 10:26:07 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
- without VF device driver
-Thread-Topic: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
- without VF device driver
-Thread-Index: AQHbh07C3f9e7H+vQ0mq3v4m2vU4obNZTIOQ
-Date: Wed, 26 Feb 2025 09:26:07 +0000
-Message-ID: <fa8cd8c1cdbe4849b445ffd8f4894515@huawei.com>
-References: <20250225062757.19692-1-liulongfang@huawei.com>
- <20250225062757.19692-6-liulongfang@huawei.com>
-In-Reply-To: <20250225062757.19692-6-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740562400; c=relaxed/simple;
+	bh=POFRDazrszvS0QnZZVAljjxN4oXlt99iQqupMJS0sPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UyNrMbIXsiWbobdmJ2JgfGXMDGDdPmiMAPV7bUdTzrAVlxjPnZHb8TEDuher/i4v/i4qcwtACH5e9js3Kk4ILOqq8LcjYl0qbLxNMXcABq3ZVTgo/M8E7nEmvSM4U48GR2ynQXzWmJfSskwiBIkVPnudnVJT+tPqff/yz50em90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=Y/h+a99M; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=qPsBrJwY; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1740562081; bh=POFRDazrszvS0QnZZVAljjxN4oXlt99iQqupMJS0sPg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Y/h+a99MpDTIEjCo9L7E+7mqOeOyTMgSflxfKkJEvVJCrHGPquCnK0aSmWf/3gHkh
+	 kXhYh6OC2CghVQeNQI5UHFmNWOjcJaIfmb6BMd+D99r1Bj+ZeAGH5dINc7oRa9sh39
+	 wsBsYzJOyF1kxaKR/CQU67PSZ3u904MUsrEJru8r97CY10gBusxoEuvkQ4FGOcf97T
+	 LWX7jvJWqR6Y2W/zjajoCXY31YEJAXnsBMG2Rv2PJLXlb0DMt0hgRU9a+KIMxyiGSh
+	 EuY+jIYlbGThYo/FSt/XgWdCBxAeiGlTKhb86UtEkbkO9MwcCD/dLEoONKev45/PoQ
+	 o+VbZZm7Q+jRw==
+Received: by gofer.mess.org (Postfix, from userid 501)
+	id D4B7B100740; Wed, 26 Feb 2025 09:28:01 +0000 (GMT)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1740562079; bh=POFRDazrszvS0QnZZVAljjxN4oXlt99iQqupMJS0sPg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qPsBrJwYO1gwvTtZ2VcnF5onhFBhuJH3qrC9XBU+FH23v9SvV3ZWHMX8PfT0dUd82
+	 5yUED/QSEWuZNEf4cEG2o4hQaAkf2mkw3VZ+jbNJ+xYxTMl/TJpxHa6LXVNObnyiXf
+	 mjmos6+Cmb7Juu9Ldqa+SjGkQJeO7fZiWwk3vK1ZeTk0Rq14MzZIMM4+FSdE6p4bjL
+	 CyMejtxJFc/wIHEW7ubnIklSe7k4KjNZ4SCYpNaNpOad9ljZgFtUxXE/rkLBAKDxg8
+	 CJ3SWdyA+lnbPNwiji4pz1uoKD9xTr1DQCpcHKUnnFcHzlaRpwhZZcIZvwAn/3giIg
+	 Z1F2IycKeIIrA==
+Received: from bigcore.mess.org (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gofer.mess.org (Postfix) with ESMTPSA id D654F10005D;
+	Wed, 26 Feb 2025 09:27:59 +0000 (GMT)
+From: Sean Young <sean@mess.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: rc: reduce useless padding in struct rc_dev etc
+Date: Wed, 26 Feb 2025 09:27:50 +0000
+Message-ID: <20250226092751.8836-1-sean@mess.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Reorder the fields in these structs so that we waste less space due to
+padding. pahole shows that lirc_fh is 8 bytes smaller, and rc_dev is 32
+bytes smaller.
 
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ drivers/media/rc/rc-core-priv.h |  4 +--
+ include/media/rc-core.h         | 46 ++++++++++++++++-----------------
+ 2 files changed, 25 insertions(+), 25 deletions(-)
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, February 25, 2025 6:28 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
-> without VF device driver
->=20
-> If the driver of the VF device is not loaded in the Guest OS,
-> then perform device data migration. The migrated data address will
-> be NULL.
-
-May be rephrase:
-
-If the VF device driver is not loaded in the Guest OS and we attempt to
-perform device data migration, the address of the migrated data will
-be NULL.
-
-> The live migration recovery operation on the destination side will
-> access a null address value, which will cause access errors.
-=20
-> Therefore, live migration of VMs without added VF device drivers
-> does not require device data migration.
-> In addition, when the queue address data obtained by the destination
-> is empty, device queue recovery processing will not be performed.
->=20
-> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live
-> migration")
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
->  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 3f0bcd855839..77872fc4cd34 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -440,6 +440,7 @@ static int vf_qm_get_match_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  				struct acc_vf_data *vf_data)
->  {
->  	struct hisi_qm *pf_qm =3D hisi_acc_vdev->pf_qm;
-> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
->  	struct device *dev =3D &pf_qm->pdev->dev;
->  	int vf_id =3D hisi_acc_vdev->vf_id;
->  	int ret;
-> @@ -466,6 +467,13 @@ static int vf_qm_get_match_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  		return ret;
->  	}
->=20
-> +	/* Get VF driver insmod state */
-> +	ret =3D qm_read_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state,
-> 1);
-
-We already have qm_wait_dev_not_ready() function that checks the QM_VF_STAT=
-E.=20
-Why can't we use that here?
-
-Also we are getting this vf_qm_state already in vf_qm_state_save(). And you=
- don't
-seem to check the vf_qm_state in vf_qm_check_match(). So why it is read=20
-early in this function?
-
-
-Thanks,
-Shameer
-
-> +	if (ret) {
-> +		dev_err(dev, "failed to read QM_VF_STATE!\n");
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->=20
-> @@ -505,6 +513,12 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	qm->qp_base =3D vf_data->qp_base;
->  	qm->qp_num =3D vf_data->qp_num;
->=20
-> +	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
-> +	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
-> +		dev_err(dev, "resume dma addr is NULL!\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	ret =3D qm_set_regs(qm, vf_data);
->  	if (ret) {
->  		dev_err(dev, "set VF regs failed\n");
-> @@ -727,6 +741,9 @@ static int hisi_acc_vf_load_state(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev)
->  	struct hisi_acc_vf_migration_file *migf =3D hisi_acc_vdev-
-> >resuming_migf;
->  	int ret;
->=20
-> +	if (hisi_acc_vdev->vf_qm_state !=3D QM_READY)
-> +		return 0;
-> +
->  	/* Recover data to VF */
->  	ret =3D vf_qm_load_data(hisi_acc_vdev, migf);
->  	if (ret) {
-> @@ -1530,6 +1547,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
-> vfio_device *core_vdev)
->  	hisi_acc_vdev->vf_id =3D pci_iov_vf_id(pdev) + 1;
->  	hisi_acc_vdev->pf_qm =3D pf_qm;
->  	hisi_acc_vdev->vf_dev =3D pdev;
-> +	hisi_acc_vdev->vf_qm_state =3D QM_NOT_READY;
->  	mutex_init(&hisi_acc_vdev->state_mutex);
->  	mutex_init(&hisi_acc_vdev->open_mutex);
->=20
-> --
-> 2.24.0
+diff --git a/drivers/media/rc/rc-core-priv.h b/drivers/media/rc/rc-core-priv.h
+index 7df949fc65e2b..4967d87ec4b77 100644
+--- a/drivers/media/rc/rc-core-priv.h
++++ b/drivers/media/rc/rc-core-priv.h
+@@ -85,8 +85,8 @@ struct ir_raw_event_ctrl {
+ 	struct rc6_dec {
+ 		int state;
+ 		u8 header;
+-		u32 body;
+ 		bool toggle;
++		u32 body;
+ 		unsigned count;
+ 		unsigned wanted_bits;
+ 	} rc6;
+@@ -127,8 +127,8 @@ struct ir_raw_event_ctrl {
+ 	struct mce_kbd_dec {
+ 		/* locks key up timer */
+ 		spinlock_t keylock;
+-		struct timer_list rx_timeout;
+ 		int state;
++		struct timer_list rx_timeout;
+ 		u8 header;
+ 		u32 body;
+ 		unsigned count;
+diff --git a/include/media/rc-core.h b/include/media/rc-core.h
+index d095908073ef9..35c7a0546f02e 100644
+--- a/include/media/rc-core.h
++++ b/include/media/rc-core.h
+@@ -57,11 +57,11 @@ enum rc_filter_type {
+  * struct lirc_fh - represents an open lirc file
+  * @list: list of open file handles
+  * @rc: rcdev for this lirc chardev
+- * @carrier_low: when setting the carrier range, first the low end must be
+- *	set with an ioctl and then the high end with another ioctl
+  * @rawir: queue for incoming raw IR
+  * @scancodes: queue for incoming decoded scancodes
+  * @wait_poll: poll struct for lirc device
++ * @carrier_low: when setting the carrier range, first the low end must be
++ *	set with an ioctl and then the high end with another ioctl
+  * @send_mode: lirc mode for sending, either LIRC_MODE_SCANCODE or
+  *	LIRC_MODE_PULSE
+  * @rec_mode: lirc mode for receiving, either LIRC_MODE_SCANCODE or
+@@ -70,10 +70,10 @@ enum rc_filter_type {
+ struct lirc_fh {
+ 	struct list_head list;
+ 	struct rc_dev *rc;
+-	int				carrier_low;
+ 	DECLARE_KFIFO_PTR(rawir, unsigned int);
+ 	DECLARE_KFIFO_PTR(scancodes, struct lirc_scancode);
+ 	wait_queue_head_t		wait_poll;
++	u32				carrier_low;
+ 	u8				send_mode;
+ 	u8				rec_mode;
+ };
+@@ -82,6 +82,12 @@ struct lirc_fh {
+  * struct rc_dev - represents a remote control device
+  * @dev: driver model's view of this device
+  * @managed_alloc: devm_rc_allocate_device was used to create rc_dev
++ * @registered: set to true by rc_register_device(), false by
++ *	rc_unregister_device
++ * @idle: used to keep track of RX state
++ * @encode_wakeup: wakeup filtering uses IR encode API, therefore the allowed
++ *	wakeup protocols is the set of all raw encoders
++ * @minor: unique minor remote control device number
+  * @sysfs_groups: sysfs attribute groups
+  * @device_name: name of the rc child device
+  * @input_phys: physical path to the input child device
+@@ -91,13 +97,10 @@ struct lirc_fh {
+  * @rc_map: current scan/key table
+  * @lock: used to ensure we've filled in all protocol details before
+  *	anyone can call show_protocols or store_protocols
+- * @minor: unique minor remote control device number
+  * @raw: additional data for raw pulse/space devices
+  * @input_dev: the input child device used to communicate events to userspace
+  * @driver_type: specifies if protocol decoding is done in hardware or software
+- * @idle: used to keep track of RX state
+- * @encode_wakeup: wakeup filtering uses IR encode API, therefore the allowed
+- *	wakeup protocols is the set of all raw encoders
++ * @users: number of current users of the device
+  * @allowed_protocols: bitmask with the supported RC_PROTO_BIT_* protocols
+  * @enabled_protocols: bitmask with the enabled RC_PROTO_BIT_* protocols
+  * @allowed_wakeup_protocols: bitmask with the supported RC_PROTO_BIT_* wakeup
+@@ -111,18 +114,17 @@ struct lirc_fh {
+  *	anything with it. Yet, as the same keycode table can be used with other
+  *	devices, a mask is provided to allow its usage. Drivers should generally
+  *	leave this field in blank
+- * @users: number of current users of the device
+  * @priv: driver-specific data
+  * @keylock: protects the remaining members of the struct
+  * @keypressed: whether a key is currently pressed
++ * @last_toggle: toggle value of last command
++ * @last_keycode: keycode of last keypress
++ * @last_protocol: protocol of last keypress
++ * @last_scancode: scancode of last keypress
+  * @keyup_jiffies: time (in jiffies) when the current keypress should be released
+  * @timer_keyup: timer for releasing a keypress
+  * @timer_repeat: timer for autorepeat events. This is needed for CEC, which
+  *	has non-standard repeats.
+- * @last_keycode: keycode of last keypress
+- * @last_protocol: protocol of last keypress
+- * @last_scancode: scancode of last keypress
+- * @last_toggle: toggle value of last command
+  * @timeout: optional time after which device stops sending data
+  * @min_timeout: minimum timeout supported by device
+  * @max_timeout: maximum timeout supported by device
+@@ -132,8 +134,6 @@ struct lirc_fh {
+  * @gap_start: start time for gap after timeout if non-zero
+  * @lirc_fh_lock: protects lirc_fh list
+  * @lirc_fh: list of open files
+- * @registered: set to true by rc_register_device(), false by
+- *	rc_unregister_device
+  * @change_protocol: allow changing the protocol used on hardware decoders
+  * @open: callback to allow drivers to enable polling/irq when IR input device
+  *	is opened.
+@@ -157,6 +157,10 @@ struct lirc_fh {
+ struct rc_dev {
+ 	struct device			dev;
+ 	bool				managed_alloc;
++	bool				registered;
++	bool				idle;
++	bool				encode_wakeup;
++	unsigned int			minor;
+ 	const struct attribute_group	*sysfs_groups[5];
+ 	const char			*device_name;
+ 	const char			*input_phys;
+@@ -165,12 +169,10 @@ struct rc_dev {
+ 	const char			*map_name;
+ 	struct rc_map			rc_map;
+ 	struct mutex			lock;
+-	unsigned int			minor;
+ 	struct ir_raw_event_ctrl	*raw;
+ 	struct input_dev		*input_dev;
+ 	enum rc_driver_type		driver_type;
+-	bool				idle;
+-	bool				encode_wakeup;
++	u32				users;
+ 	u64				allowed_protocols;
+ 	u64				enabled_protocols;
+ 	u64				allowed_wakeup_protocols;
+@@ -178,17 +180,16 @@ struct rc_dev {
+ 	struct rc_scancode_filter	scancode_filter;
+ 	struct rc_scancode_filter	scancode_wakeup_filter;
+ 	u32				scancode_mask;
+-	u32				users;
+ 	void				*priv;
+ 	spinlock_t			keylock;
+ 	bool				keypressed;
+-	unsigned long			keyup_jiffies;
+-	struct timer_list		timer_keyup;
+-	struct timer_list		timer_repeat;
++	u8				last_toggle;
+ 	u32				last_keycode;
+ 	enum rc_proto			last_protocol;
+ 	u64				last_scancode;
+-	u8				last_toggle;
++	unsigned long			keyup_jiffies;
++	struct timer_list		timer_keyup;
++	struct timer_list		timer_repeat;
+ 	u32				timeout;
+ 	u32				min_timeout;
+ 	u32				max_timeout;
+@@ -200,7 +201,6 @@ struct rc_dev {
+ 	spinlock_t			lirc_fh_lock;
+ 	struct list_head		lirc_fh;
+ #endif
+-	bool				registered;
+ 	int				(*change_protocol)(struct rc_dev *dev, u64 *rc_proto);
+ 	int				(*open)(struct rc_dev *dev);
+ 	void				(*close)(struct rc_dev *dev);
+-- 
+2.48.1
 
 
