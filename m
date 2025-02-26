@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-535065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA088A46E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:18:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97218A46E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E126D7A64F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DEC3A83AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7525BAD8;
-	Wed, 26 Feb 2025 22:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95D420E31F;
+	Wed, 26 Feb 2025 22:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDOkHq1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="CqdwBf3U"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A34625BAD1;
-	Wed, 26 Feb 2025 22:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E5A25BACE;
+	Wed, 26 Feb 2025 22:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740608324; cv=none; b=rIAet46XRrULp/p7zvwsYpxmQfcnuqN7/oqg1u6Y8HfhYs/hYn43JSt78k4w4jDJcc6/9nlcRxaVs9nw5N63K82/DBbfuzbwliQvH/tVwnEdwPw47RsQaGjpm57Zzp52osjAa5A+8WogcOjMI0XP1qEe/WuAbKDo3R7f/pf+Zbs=
+	t=1740608335; cv=none; b=CUJ/9v1ie62wOUcDxK/oio0Ul6rl12ldIljtDVjlybc4sxD63EAw//9G+865CoMKIIkuUIY7FQlRqm8p3R3U0DDq72D0Bn/RcsdiT/m8/jGwAlcYJaQF5l0G1h2GJNHLJ0rzE0BENrBnpf0Og7sB9HBSlvAeAGyrmXCzlY+6P5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740608324; c=relaxed/simple;
-	bh=cLP2PJ3efgcI4MlJm4t+DzhLwIjEdO/2/L9titqg9gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATLoPv6CztKvkBtTZqiFnpmPZcXYtSuQ0yrEoj38D2qH+gIuUOl1g2498kVn5W71viQIg2daiQoraSOEvEf35u/A8E9ZbnF5iJUbfnpLgYtQwxkF0KrL6WbC+BYJ2P9V2UUmI6txJcVa4IAZB/FlhNgsSwNouzqdvbwxAnVT09k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDOkHq1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06700C4CED6;
-	Wed, 26 Feb 2025 22:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740608323;
-	bh=cLP2PJ3efgcI4MlJm4t+DzhLwIjEdO/2/L9titqg9gU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HDOkHq1LSz8+rDhpPeKIDjaUTYNumfgRX5ZOU1iXaXruj+N/vdG+yCiSCpSd9OZ71
-	 mrqhf0NF188mNe2Ui+t8PgXAGxnORkAOzirbifapyAT1RC151lXbSdVwRkLhriHOzm
-	 1VZL/o9OJinE/GJatkq76y/6AYyXI7LzwN9V0iy3Q6poeUeJDeHk1zh7ICREaQOsCl
-	 RLFEFK9RN91sY+Tsx0xHJ4JC4Dvvbx5rJ8wVheA2HOCDOMA6+RtCEEGACNC3EuO7HI
-	 rOaENGjy3wCFo+6we2UgpnTF0eGOmiaVSgkX+kQl3+XUdLdWIA5TUt30a5F3lYOKXs
-	 91DptvU/Dxp8g==
-Date: Wed, 26 Feb 2025 23:18:39 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i2c: npcm: disable interrupt enable bit before
- devm_request_irq
-Message-ID: <nantj66w7l7bmk2sz6i2akyaw7cievmeuuvpl3622wj5xmdmtm@g4rcuwxghxdp>
-References: <20250220040029.27596-1-kfting@nuvoton.com>
- <20250220040029.27596-2-kfting@nuvoton.com>
+	s=arc-20240116; t=1740608335; c=relaxed/simple;
+	bh=6+ds0fDE230uGEJmCn7EW1JKMdx4MNGD35GrH5IvopU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fIwAFWmQH4oHXjeVp4SDeJmPcwQniCNJ+OzjnasJV6KMUE8kQ9TMyL5BqRKmsle6D/T1xlqsyHsRk1PtFo4GgrTYuB8JWARA0EX2ehpmMTWiXVSR/rmUuJs24ZfhuacUb1jnUUJt5lM3AtgSAC55DotSVVNREyQ69HTTq2q4D6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=CqdwBf3U; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1740608325; bh=6+ds0fDE230uGEJmCn7EW1JKMdx4MNGD35GrH5IvopU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=CqdwBf3UB1FYG6uHtww+aGb8/5OdgV02krxsyJZcuVQLjOzTnKnYfOuYkR1VXs7Ct
+	 fZDxUrIVkjl1mUzDYTvsB8Oc6I6Ys5P/i3jX4tU8q/vCgDR4RMaJZmxmSGWlbGYbZh
+	 BAiGNnPn9VpMhKhVsPuNO2/BjwTi3BESUE8Bfd8o=
+Message-ID: <ebb3d366-05a2-4ae8-9b50-4b6a76d108a0@lucaweiss.eu>
+Date: Wed, 26 Feb 2025 23:18:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220040029.27596-2-kfting@nuvoton.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: display: panel: Add Himax HX83112B
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
+ <20250225-fp3-display-v2-2-0b1f05915fae@lucaweiss.eu>
+ <20250226-speedy-dark-mushroom-5d7c4b@krzk-bin>
+Content-Language: en-US
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <20250226-speedy-dark-mushroom-5d7c4b@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tyrone,
+On 26-02-2025 8:46 a.m., Krzysztof Kozlowski wrote:
+> On Tue, Feb 25, 2025 at 10:14:30PM +0100, Luca Weiss wrote:
+>> Himax HX83112B is a display driver IC used to drive LCD DSI panels.
+>> Describe it and the Fairphone 3 panel (98-03057-6598B-I) from DJN using
+>> it.
+>>
+>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+>> ---
+>>   .../bindings/display/panel/himax,hx83112b.yaml     | 75 ++++++++++++++++++++++
+>>   1 file changed, 75 insertions(+)
+>>
+> 
+> Discussion is still going. Sending v2 after two days is hiding that
+> previous talk, so that makes me sad.
+> 
+> I am still at v1 and I am not going to review this one here.
 
-On Thu, Feb 20, 2025 at 12:00:29PM +0800, Tyrone Ting wrote:
-> The customer reports that there is a soft lockup issue related to
-> the i2c driver. After checking, the i2c module was doing a tx transfer
-> and the bmc machine reboots in the middle of the i2c transaction, the i2c
-> module keeps the status without being reset.
+Sorry about that. I'm going to be away/not have time for kernel dev for 
+the next ~1.5 weeks so I thought I'd send v2 with the updated compatible 
+string already.
 
-...
+Regards
+Luca
 
-> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-I guess we also need:
-
-Fixes: 56a1485b102e ("i2c: npcm7xx: Add Nuvoton NPCM I2C controller driver")
-Cc: <stable@vger.kernel.org> # v5.8+
-
-I'm now applying the patch to the i2c/i2c-host-fixes with these
-tags
-
-Please, let me know if you think that's not the case.
-
-Thanks,
-Andi
 
