@@ -1,139 +1,83 @@
-Return-Path: <linux-kernel+bounces-532890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059EAA45371
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:55:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B08CA45372
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1470D173928
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E720116F843
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BDB21C9EE;
-	Wed, 26 Feb 2025 02:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F6021C9EE;
+	Wed, 26 Feb 2025 02:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m3C/1Ecx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBw7aDFl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5654A19ADA2;
-	Wed, 26 Feb 2025 02:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C32AE7F;
+	Wed, 26 Feb 2025 02:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740538492; cv=none; b=mCmClLtL9M7wZUw2WI6Tu2B6OqDIccc3AMMt9y0Odbc5WK1ADfG9bhejTkeRhYPM1SSmYQmXCTyDW8pqJDqN0sxv8YLkjWZt6jEyiktFBPsVFs22MlL/UV2c+7HR3x3dKnwTMdozcdKoBDjeJV7UBkySlKZ/+GA91ar1+Cwo7QU=
+	t=1740538562; cv=none; b=FkLSEwixytbGdl04+DZWLvukcZXwN5jJnoh//ipO0qYtS52aLIPxYT5VvM4KN2T2B/EJQiQ9Xcqta/o0ClLUtZKBQWy6C4ytSG5D28OCEIkOxpedpvreH+b2UE5KnTceyKuyoQIpmz0jwaTzueVOv2b9aw5jpOnEk4x1bgosqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740538492; c=relaxed/simple;
-	bh=V8y25v+1F2+s34M2jg0QgqYF/zc3itcB1hTBuAz6DE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kpKWv3JydnA5ldleZyaOY9cr2Pp+bgyPwEhM2uaxA/ixK1gij85k9/0rrL7FMAAXRmwL57Sd3Kobw9oGRSkDJvKJgFNVEkCuIUDP6+kFP91lqM7lD6z4Psqo2ZK3Y2vwfbio5pz4cbgofv5ojogjOtLb6bQNYq4ziJ1Og9Z8Q/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m3C/1Ecx; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740538490; x=1772074490;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=V8y25v+1F2+s34M2jg0QgqYF/zc3itcB1hTBuAz6DE4=;
-  b=m3C/1Ecx5Ug2ZRQGCL7k0auqw10U/JujIZfgXzOieXwZELcZ932k73Jx
-   g+SwbTBpSfb9TrMN4+xDJml4e145meLNQn7Y6HUqpv4ePHlqnxkQNgdKZ
-   iaU6Bd9GV1OcdA464eeVmJ1ocqdlEks090gOigREcVohnN032m8hMvr4g
-   Pn1okXBIlVb67wmt/o919zdeMUvNgn2dE5ncaP42pGAA5z2+Ups3vF5O6
-   jC8wIGsrPHkAuG27CaAs1Pz874RuxXUZWS56xqU6DSLKeDtX4PnAPNgIv
-   /69Jk17K0dPu+iMIakjZtiV2PHe4E1uzo6cfYlJC9x3iFUS9m6RvtPr69
-   Q==;
-X-CSE-ConnectionGUID: GbIZ0D4PQeq8b1rmlOySHg==
-X-CSE-MsgGUID: oVCjs965QD2Fc6Px6fxM2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52369156"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="52369156"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 18:54:49 -0800
-X-CSE-ConnectionGUID: HW/niNfFSyeKC5+Z6bTokg==
-X-CSE-MsgGUID: 7DRKwY1uRAKoMdxhE86hmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="116583114"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 18:54:46 -0800
-Message-ID: <ec26fba4-978e-47c6-b0c1-17e387d701e1@linux.intel.com>
-Date: Wed, 26 Feb 2025 10:54:43 +0800
+	s=arc-20240116; t=1740538562; c=relaxed/simple;
+	bh=0QrH2Zd+D5Gfx52FrY2snKkSglnbNxISIbI0Z4qrDzg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=e53oxT72RkCvS8gx2xyJVqWX2ATTv9X0Um26jf3HxD8irVA/bVphYWMXik/yg/kxVWDmmfmKoiWh6sji7aI9J1RqOak+t9lLZrQ4aSNGNsNPcx6K8p+Zl5UBpZkmz2ZgDtFjRl45LzjXKadNB+HhC7wO7D+JbAfpbSwQDchbhKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBw7aDFl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B73FC4CEDD;
+	Wed, 26 Feb 2025 02:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740538561;
+	bh=0QrH2Zd+D5Gfx52FrY2snKkSglnbNxISIbI0Z4qrDzg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=VBw7aDFlLfoIsY52a+6ydG8VMiyc0pTFo66YhF8mJSN06vLgLxpw+8MjxxO32U8an
+	 1VVrOKR6KsB/+Cg2P9rG7pEv5uZlr+Fd9h5vyg/Ngi9ZJtAM4VSMAccJ9UyiIO5ccG
+	 2Vuw5TwryLQCUqT8mD0lOE+k/JiTrRQGoRlrtwUiV8huoFfba81+pZHQXc7quO4ven
+	 +Nj7HgYljgiHN6VsdRIL/vaOcBRNopLF37jAvmyM8rBDPLwnd4a3IfhftjLDGdK0mT
+	 fSCtWBkDBe/7j8i1XYiPH/lJbWXZ2jMDoD1a6PpJQRgO3Vnzd8LYSyVC3MbnPo/pm8
+	 oE5Lttk8HIBVg==
+Date: Tue, 25 Feb 2025 18:55:59 -0800
+From: Kees Cook <kees@kernel.org>
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+ Rudolf Marek <r.marek@assembler.cz>, Jann Horn <jannh@google.com>
+CC: jmill@asu.edu, joao@overdrivepizza.com, luto@kernel.org,
+ samitolvanen@google.com, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ linux-hardening@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+ x86 maintainers <x86@kernel.org>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8b82b394-3f54-437b-bd3a-7ac0eabda687@citrix.com>
+References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com> <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com> <CAG48ez0h0wUS6y+W1HTOwN14V95gKmmFZ_2TamAX+JKTmXT=DA@mail.gmail.com> <1cf8d5a5-bf3e-4667-bc6a-d1b1d662d822@citrix.com> <e46ca730-8858-4f57-bdd0-2fd0db086500@assembler.cz> <fa66e2f1-4770-45f5-aa4d-1a0ebec8a912@citrix.com> <d50dac43-51da-4b18-9fab-214896bdc9a5@assembler.cz> <8b82b394-3f54-437b-bd3a-7ac0eabda687@citrix.com>
+Message-ID: <7D503F1A-42FD-4585-BB4F-D8D00C303BE5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 10/24] perf/x86/intel: Process arch-PEBS records or
- record fragments
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-11-dapeng1.mi@linux.intel.com>
- <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-On 2/25/2025 6:39 PM, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 03:28:04PM +0000, Dapeng Mi wrote:
->> A significant difference with adaptive PEBS is that arch-PEBS record
->> supports fragments which means an arch-PEBS record could be split into
->> several independent fragments which have its own arch-PEBS header in
->> each fragment.
->>
->> This patch defines architectural PEBS record layout structures and add
->> helpers to process arch-PEBS records or fragments. Only legacy PEBS
->> groups like basic, GPR, XMM and LBR groups are supported in this patch,
->> the new added YMM/ZMM/OPMASK vector registers capturing would be
->> supported in subsequent patches.
->>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  arch/x86/events/intel/core.c      |   9 ++
->>  arch/x86/events/intel/ds.c        | 219 ++++++++++++++++++++++++++++++
->>  arch/x86/include/asm/msr-index.h  |   6 +
->>  arch/x86/include/asm/perf_event.h | 100 ++++++++++++++
->>  4 files changed, 334 insertions(+)
->>
->> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->> index 37540eb80029..184f69afde08 100644
->> --- a/arch/x86/events/intel/core.c
->> +++ b/arch/x86/events/intel/core.c
->> @@ -3124,6 +3124,15 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
->>  			wrmsrl(MSR_IA32_PEBS_ENABLE, cpuc->pebs_enabled);
->>  	}
->>  
->> +	/*
->> +	 * Arch PEBS sets bit 54 in the global status register
->> +	 */
->> +	if (__test_and_clear_bit(GLOBAL_STATUS_ARCH_PEBS_THRESHOLD_BIT,
->> +				 (unsigned long *)&status)) {
-> Will arch_pebs hardware ever toggle bit 62?
 
-No, arch-PEBS won't touch anything of debug store related.
+On February 25, 2025 1:14:01 PM PST, Andrew Cooper <andrew=2Ecooper3@citri=
+x=2Ecom> wrote:
+>Peter Zijlstra has added a FineIBT=3Dparanoid mode which performs the has=
+h
+>check ahead of calling the function pointer, which ought to mitigate
+>this but at even higher overhead=2E
 
+Was kCFI vs FineIBT perf ever measured? Is the assumption of higher overhe=
+ad based on kCFI filling dcache in addition to icache, whereas FineIBT only=
+ fills icache?
 
->
->> +		handled++;
->> +		x86_pmu.drain_pebs(regs, &data);
-> 		static_call(x86_pmu_drain_pebs)(regs, &data);
+-Kees
 
-Sure.
-
-
->
->> +	}
->
+--=20
+Kees Cook
 
