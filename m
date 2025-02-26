@@ -1,101 +1,206 @@
-Return-Path: <linux-kernel+bounces-534874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE29A46C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:16:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90231A46C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58E1F7A23CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F397E188AA7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7117D2755FE;
-	Wed, 26 Feb 2025 20:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7182755E0;
+	Wed, 26 Feb 2025 20:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LZmK+rnQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SHNt6EG/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48F10F2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870C210F2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740601004; cv=none; b=j32rAU+w4ghd65nlgsSSdgGRM3tO+9WmfM/zm3iVIf2//byiNPuIu22sct3PB3vMuTlonb0ufG7XIYOexam35NcY6Nm4tsd2cL66sc7QjjMcyfjm7SZxn5S3MZZSl4tKB82bD8A6E3GAuQ5OHVBzGsQBYOEnxD2N4SeH/aAWfSA=
+	t=1740601129; cv=none; b=qiMP++5axP2ZV56zizFhJ2Hl915wOm0RRY+q+zuWpL8NMBn5P6dvt393Q7RDIEki26z/AnJDfSPJQgatSBs+LsYdvF87UsA0LAZ/vZnps/Nei5BPr3eYSD8SVlYL5ILf3gR6hhStB6XzFT6KXbJ+MrRwAtNqGIrnz7UsOSQgzk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740601004; c=relaxed/simple;
-	bh=37DvqOPn9uy1mbasvVuWfivennlICRP/S8sgcd5uoVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VenqNrw8GXlwWHp2jyI98bTMg2F6nnQdNAzPD9+Op3hRPvq4Gv+3+nsZBNFV1BUcN97MC8smnOaYmMvIbsaGtfdIOgT3VhlVsNAeHrtvucCpk9B9Ns8oFGGfMI+//tlThe5xUw/3abPvxqWNjORlMMF6iF8nApwrw3nU7PbkETg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LZmK+rnQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F141C4CED6;
-	Wed, 26 Feb 2025 20:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740601004;
-	bh=37DvqOPn9uy1mbasvVuWfivennlICRP/S8sgcd5uoVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZmK+rnQVJex1eH+Dq0ke9QjNO1if1+2//6EBnAJB88iyjvUbAPeHsRR5X2RDHJdy
-	 CzbTIQaVlynI9R1G6qxl1Y9nT6QmB09a93QDvCUOhz7l0zLUWx/wOEmnAoK8Bt36VM
-	 9jvNdZ5a4wzKzL+qmwtQR02zW5AK3Y7E82WjjXBA=
-Date: Wed, 26 Feb 2025 15:16:43 -0500
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: users@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: git.kernel.org -> web.git.kernel.org
-Message-ID: <20250226-cheerful-delicate-partridge-33280c@lemur>
-References: <20250226-enlightened-dragon-from-wonderland-09c2de@lemur>
+	s=arc-20240116; t=1740601129; c=relaxed/simple;
+	bh=a6Gr2fGBsSIxKNBsdnR8AcB356TYiEQ2ev9BeMjs/7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJ85F0bPYz7rhKdGNGyWavWvy/DJ9bk0wWcbJo78sNr/bB8splBGgKlUlW1u0C0lpkfG807QtXcQf3jv+aTGGsrWI1QequTsQxLJAu4Kc2cPl3Fi7PEXLdTL2P+wCJjCka93UYbIzzUPW6wJDfO8y12jvfPaRfaKM/BzdLfYIFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SHNt6EG/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740601126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DnRnPXT+HxB6Fa3LnjUopL2yefmMufyBefSBY059ozY=;
+	b=SHNt6EG/Nj0tBjDjRuMvs7EVaxpl4YfCXQxqTyVPdPt+Gcu8adzcbhfMMTxCPzj21kFWKm
+	+pzjA4WuqOpUlM4hmMHf8IVYi+kn4+zYAm2UD3Y3LUC3n0/AAniE6gDBNUIRHnUAhlaFpX
+	R/ch8e55XnfpAaVWjDezRdTWVUhOqxQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-DoOsbRtPN8qMr5OBIIobMA-1; Wed,
+ 26 Feb 2025 15:18:45 -0500
+X-MC-Unique: DoOsbRtPN8qMr5OBIIobMA-1
+X-Mimecast-MFC-AGG-ID: DoOsbRtPN8qMr5OBIIobMA_1740601124
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B20A418009A5;
+	Wed, 26 Feb 2025 20:18:42 +0000 (UTC)
+Received: from random.internal.datastacks.com (unknown [10.22.82.64])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9C5B7180035E;
+	Wed, 26 Feb 2025 20:18:41 +0000 (UTC)
+From: Peter Jones <pjones@redhat.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	Lenny Szubowicz <lszubowi@redhat.com>,
+	Peter Jones <pjones@redhat.com>
+Subject: [PATCH] efi: don't map the entire mokvar table to determine its size
+Date: Wed, 26 Feb 2025 15:18:39 -0500
+Message-ID: <20250226201839.2374631-1-pjones@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226-enlightened-dragon-from-wonderland-09c2de@lemur>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Feb 26, 2025 at 03:08:21PM -0500, Konstantin Ryabitsev wrote:
-> Hi, all:
-> 
-> The change is now in place -- all browser requests to git.kernel.org will be
-> redirected to web.git.kernel.org, which is a CDN service currently fronted by
-> Fastly. The backend requests for web.git.kernel.org are sent to a dedicated
-> set of systems that are separate from git.kernel.org frontends, so hopefully
-> this will help shift a large chunk of load from the systems where we actually
-> want to serve git and lore traffic.
-> 
-> Please report any problems you encounter to helpdesk@kernel.org.
+Currently when validating the mokvar table, we (re)map the entire table
+on each iteration of the loop, adding space as we discover new entries.
+If the table grows over a certain size, this fails due to limitations of
+early_memmap(), and we get a failure and traceback:
 
-I just realized that I cc'd the linux-kernel list on this announcement, but
-they don't have all of the context for why this change was needed (it was
-discussed just on the users list).
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at mm/early_ioremap.c:139 __early_ioremap+0xef/0x220
+  Modules linked in:
+  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.15-200.fc41.x86_64 #1
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20250221-6.copr8698600 02/21/2025
+  RIP: 0010:__early_ioremap+0xef/0x220
+  Code: e5 00 f0 ff ff 48 81 e5 00 f0 ff ff 4c 89 6c 24 08 41 81 e4 ff 0f 00 00 4c 29 ed 48 89 e8 48 c1 e8 0c 41 89 c7 83 f8 40 76 04 <0f> 0b eb 82 45 6b ee c0 41 81 c5 ff 05 00 00 45 85 ff 74 36 83 3d
+  RSP: 0000:ffffffff96803dd8 EFLAGS: 00010002 ORIG_RAX: 0000000000000000
+  RAX: 0000000000000041 RBX: 0000000000000001 RCX: ffffffff97768250
+  RDX: 8000000000000163 RSI: 0000000000000001 RDI: 000000007c4c3000
+  RBP: 0000000000041000 R08: ffffffffff201630 R09: 0000000000000030
+  R10: 000000007c4c3000 R11: ffffffff96803e20 R12: 0000000000000000
+  R13: 000000007c4c3000 R14: 0000000000000001 R15: 0000000000000041
+  FS:  0000000000000000(0000) GS:ffffffff97291000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: ffff9f1d8000040e CR3: 00000000653a4000 CR4: 00000000000000f0
+  Call Trace:
+   <TASK>
+   ? __early_ioremap+0xef/0x220
+   ? __warn.cold+0x93/0xfa
+   ? __early_ioremap+0xef/0x220
+   ? report_bug+0xff/0x140
+   ? early_fixup_exception+0x5d/0xb0
+   ? early_idt_handler_common+0x2f/0x3a
+   ? __early_ioremap+0xef/0x220
+   ? efi_mokvar_table_init+0xce/0x1d0
+   ? setup_arch+0x864/0xc10
+   ? start_kernel+0x6b/0xa10
+   ? x86_64_start_reservations+0x24/0x30
+   ? x86_64_start_kernel+0xed/0xf0
+   ? common_startup_64+0x13e/0x141
+   </TASK>
+  ---[ end trace 0000000000000000 ]---
+  mokvar: Failed to map EFI MOKvar config table pa=0x7c4c3000, size=265187.
 
-So, here is why this was necessary:
+Mapping the entire structure isn't actually necessary, as we don't ever
+need more than one entry header mapped at once.
 
-- We've been struggling with near-ddos levels of bot traffic that tries to
-  grab as many URLs as possible as fast as possible without any regard for the
-  impact it has on a public service like git.kernel.org. It's a problem
-  experienced by nearly all public resources -- see a write-up by LWN here
-  that describes the problem, and goes into why obvious answers like "just
-  throttle the bots" doesn't really work:
-  https://lwn.net/Articles/1008897/
+This patch changes efi_mokvar_table_init() to only map each entry
+header, not the entire table, when determining the table size.  Since
+we're not mapping any data past the variable name, it also changes the
+code to enforce that each variable name is NUL terminated, rather than
+attempting to verify it in place.
 
-- For this reason, we've taken the decision to move repository browsing (and
-  only repository browsing) to a separate domain that is backed by a different
-  set of systems, so that if bots do knock out the web interface, it will not
-  affect git operations.
+Signed-off-by: Peter Jones <pjones@redhat.com>
+---
+ drivers/firmware/efi/mokvar-table.c | 41 +++++++++--------------------
+ 1 file changed, 13 insertions(+), 28 deletions(-)
 
-- This change only affects browsing git repositories via the cgit interface.
-  Git checkouts with their origin as  https://git.kernel.org will continue to
-  work as-is without any change necessary.
+diff --git a/drivers/firmware/efi/mokvar-table.c b/drivers/firmware/efi/mokvar-table.c
+index 5ed0602c2f7..66eb83a0f12 100644
+--- a/drivers/firmware/efi/mokvar-table.c
++++ b/drivers/firmware/efi/mokvar-table.c
+@@ -103,7 +103,6 @@ void __init efi_mokvar_table_init(void)
+ 	void *va = NULL;
+ 	unsigned long cur_offset = 0;
+ 	unsigned long offset_limit;
+-	unsigned long map_size = 0;
+ 	unsigned long map_size_needed = 0;
+ 	unsigned long size;
+ 	struct efi_mokvar_table_entry *mokvar_entry;
+@@ -134,48 +133,34 @@ void __init efi_mokvar_table_init(void)
+ 	 */
+ 	err = -EINVAL;
+ 	while (cur_offset + sizeof(*mokvar_entry) <= offset_limit) {
+-		mokvar_entry = va + cur_offset;
+-		map_size_needed = cur_offset + sizeof(*mokvar_entry);
+-		if (map_size_needed > map_size) {
+-			if (va)
+-				early_memunmap(va, map_size);
+-			/*
+-			 * Map a little more than the fixed size entry
+-			 * header, anticipating some data. It's safe to
+-			 * do so as long as we stay within current memory
+-			 * descriptor.
+-			 */
+-			map_size = min(map_size_needed + 2*EFI_PAGE_SIZE,
+-				       offset_limit);
+-			va = early_memremap(efi.mokvar_table, map_size);
+-			if (!va) {
+-				pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%lu.\n",
+-				       efi.mokvar_table, map_size);
+-				return;
+-			}
+-			mokvar_entry = va + cur_offset;
++		if (va)
++			early_memunmap(va, sizeof(*mokvar_entry));
++		va = early_memremap(efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
++		if (!va) {
++			pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%zu.\n",
++			       efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
++			return;
+ 		}
++		mokvar_entry = va;
+ 
+ 		/* Check for last sentinel entry */
+ 		if (mokvar_entry->name[0] == '\0') {
+ 			if (mokvar_entry->data_size != 0)
+ 				break;
+ 			err = 0;
++			map_size_needed = cur_offset + sizeof(*mokvar_entry);
+ 			break;
+ 		}
+ 
+-		/* Sanity check that the name is null terminated */
+-		size = strnlen(mokvar_entry->name,
+-			       sizeof(mokvar_entry->name));
+-		if (size >= sizeof(mokvar_entry->name))
+-			break;
++		/* Enforce that the name is null terminated */
++		mokvar_entry->name[sizeof(mokvar_entry->name)-1] = '\0';
+ 
+ 		/* Advance to the next entry */
+-		cur_offset = map_size_needed + mokvar_entry->data_size;
++		cur_offset += sizeof(*mokvar_entry) + mokvar_entry->data_size;
+ 	}
+ 
+ 	if (va)
+-		early_memunmap(va, map_size);
++		early_memunmap(va, sizeof(*mokvar_entry));
+ 	if (err) {
+ 		pr_err("EFI MOKvar config table is not valid\n");
+ 		return;
+-- 
+2.48.1
 
-- Existing URLs will continue to work, issuing a redirect from the
-  old to the new location, so there is no need to adjust any existing links.
-
-- Similarly, you can continue to use git.kernel.org links as before without
-  needing to change your scripts.
-
-If you have any other questions, please do not hesitate to ask.
-
--K
 
