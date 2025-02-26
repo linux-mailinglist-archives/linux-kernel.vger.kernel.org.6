@@ -1,491 +1,186 @@
-Return-Path: <linux-kernel+bounces-532747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1F0A451C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:58:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE56A451C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB50C3A9B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:57:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA61189A668
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1818E153BF0;
-	Wed, 26 Feb 2025 00:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8308154BF0;
+	Wed, 26 Feb 2025 00:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="T5oq9OQW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m207YvBl"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kvMIoC7o"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE53625771;
-	Wed, 26 Feb 2025 00:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02681494CC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740531445; cv=none; b=VxOH9H8LB7f30fU6Wypq0aHMChtuwb1ZzLIuTla8S362TUM06Wm5tLW7aorihOumGuN+u/9B8aYZT0CWC1xzcLUe+zgoJLXuANMPzfQvCyFa79egdxldqgSoQHOJ1AUei+0qrJWolc/6wokmbIMEy1KRCYGMptfIleZ5CsyVLM0=
+	t=1740531543; cv=none; b=OspS5rvqMkR5wjXc5rWYHxUZPCFhiWQeCLifmDHMRh1adEZ215sQlOu5r/fimsOOmvEqX4mfmR8TTUwY5s2Kq2BuTcunHr04WdeDxoRKeOKHZlmkkW+YMORuMr3xpQ3ydj6Gz3zyjnrcVOWGcq5cnw5JIin7Vfym7uZlIEbqYY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740531445; c=relaxed/simple;
-	bh=+OABZE4AXs3yQfkRfJbq1DYax0mO7zQB1DWw5ayqNbM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PMO1Bo+cd6IiA2KFvp6gLP/Y8ZYJjsXUSflE1XIGUbAUUkMFgC/79tc1XLjK0gmrFMUs3xio3donTc81VEqw6WVD6QYLYrhxnNi7aEvvKuXiqdbezEwvjAYP4jKIosKqNJMW9kQHohJf4wWpvB2fh5OLp91PUsReS3Rgcmuw6L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=T5oq9OQW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m207YvBl; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id CA8E31380A2A;
-	Tue, 25 Feb 2025 19:57:21 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 25 Feb 2025 19:57:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740531441;
-	 x=1740617841; bh=fkmr3jVkMlq+5ztq39AZmd94l5GYuWwMf/NdP8JjrsU=; b=
-	T5oq9OQWxl24I0Y95GkRCagDZq2J+oOG6qzC9WorbDMAyhcTq0K03w+bSuF+kl/y
-	iGNPDwfn+TXSSFuko291nxlF+SdTi8nPgK34BM5maoThTBwzdcwbP79r06wCQitJ
-	U4PBdzVZAXMON1Cy7y7ggIoOEXbmshBvWLMIn0zLnc2dAa7fdJ9+Ei6SSNWn/p0v
-	fR9fQ1VKzz2OVvWypb5NpVJ6jgO03TLIV5HAMU1j112vnqHwPBpF9aZ7XMu4ipe5
-	B85S7dwxJO/sAdfjfK8eAfla3eCBctTV9xN1NGD5eF2p6z9j+oWJEdHE+FMW0Plj
-	ldBpoE4al1k8Av16YbOJZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740531441; x=
-	1740617841; bh=fkmr3jVkMlq+5ztq39AZmd94l5GYuWwMf/NdP8JjrsU=; b=m
-	207YvBlkhvpDZBIsvZhefURfnq3IywUDT9vhOBK26qgPAcRVM4ITEtQ4+/v0fZ8d
-	O2Ro82SsbuDtcJXWCHh7XCmi80xjAp0J9wnha0PKgLugC73yKWiA0ZrQdZEiKmhX
-	9xoppkU1KzyDNjYO5xZRgsLe5ciBD4+BDa+CZ8Tg1gIF5T8LOwRFDOwjYXOga+aq
-	OxIz5dyIpd6cM2BfduJWReUhaA9mSfPFhqpTCljX7uhRseTIqquXIQujQLVL+e0s
-	dXEclViNO41LjlBGv8SOTB5c4PengvRnWWBMcR3rozrFA/bNAMlNDVBglSjUAisg
-	MYTkFkexcglcxGpUUv7sA==
-X-ME-Sender: <xms:8Wa-Zz-trUM7txcMKTg1ISkD23eo369fAnwQdIvWNircflKkQGj7cQ>
-    <xme:8Wa-Z_t5o3pvev8nGw6o0Qrhlx8KPctrMWZnCNQ2SclzJhNO2i9GYagCQQ6RBEZ0M
-    foSkD1rrPvozJ3R2iQ>
-X-ME-Received: <xmr:8Wa-ZxDK9iv_c2C1weId7Glgdz6DbRedi33dLhOF6FriweN7b-pbXsqC1bltXYCf95TToOUYtBrzytKZnw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekfedvtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttder
-    jeenucfhrhhomhepnfhukhgvucflohhnvghsuceolhhukhgvsehljhhonhgvshdruggvvh
-    eqnecuggftrfgrthhtvghrnhepkeefffeujeevueejueegleelhedtgedvledukedttdff
-    hfeifeelvdduheefjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlh
-    hlohesrghmugdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgv
-    lhdrtghomhdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhishhssehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:8Wa-Z_fUQd27LabGAfAZDFLiCjKP953piWbsnhamD_0gXVLCEqT02g>
-    <xmx:8Wa-Z4NbVRx87RBZyt8CKW5viBELCyI01o1pZ3XgIhDBuB65kKNCoA>
-    <xmx:8Wa-ZxlFOjhbeyCXg6qUUItlAf_7ReKPBGUjN6eFxGLQIKS01k_7NQ>
-    <xmx:8Wa-ZytzjR7_a2GOjM0OO9UZ7iKI5P4aLig8sZFYhUKeL9f3HOLVvg>
-    <xmx:8Wa-Z_d4m8JcMcxh3PZ5nNYNIovQC_UCbGburAnLPwEEUg2Nm8tr9ctX>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Feb 2025 19:57:18 -0500 (EST)
-Message-ID: <e02084eee192d22d15f60b58ff391b4f7da98679.camel@ljones.dev>
-Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: Refactor Ally suspend/resume
-From: Luke Jones <luke@ljones.dev>
-To: Mario Limonciello <mario.limonciello@amd.com>, 
-	linux-kernel@vger.kernel.org
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-	bentiss@kernel.org, jikos@kernel.org
-Date: Wed, 26 Feb 2025 13:57:13 +1300
-In-Reply-To: <323ade14-4d11-49b4-9657-a7f1900ec334@amd.com>
-References: <20250225081744.92841-1-luke@ljones.dev>
-	 <20250225081744.92841-3-luke@ljones.dev>
-	 <323ade14-4d11-49b4-9657-a7f1900ec334@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740531543; c=relaxed/simple;
+	bh=pEtfZVCVm3/XOugzU8Ltx4f7z/cLwxmkARQ2R+6a/Qc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JhtvNTM0o5mk4rWaqedhT76R5HLmfLQdbOkuU0Vhe8dOzWoP5g9IfpBzsIgrvISuPTANZtxjhEAYkOTO/dTtC6UzlMuhYkSpdQ5mQnJC+7eG6kID2X6ixdeE8tvbXjpUgBTMGvJm7Imo0EOa5CrhnoBcWhICvMekJ+8ou8BpDwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kvMIoC7o; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc2e648da3so12039530a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:59:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740531541; x=1741136341; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfE+FYiAOd9DAOybGgX5laywdzU/CIqHsXJrp0PBGSY=;
+        b=kvMIoC7onJ9el6359P2kksBcw1fUyvFQ5BG00eaS6r6g7Lk+2z3Iq1cKWUEIegi8G3
+         FNgUCWwkwwLUasxSDULJOataRitRltGWLhdiEw9uGw5eNLMcnLv/16ekUoZJN80HORm9
+         skeNhoAkG2HWFo6Zq39yfiw2VmdSGzhnbbc8gFZjVa3iu49iiZg6hpNcjkG9qw/yyTDO
+         9IvwBR/wVDP6ybkDGJDaEJKM7JEDJS3KGkOOsbNq/cXaXX0BCoAnMbA+WPAJDHfP5EwA
+         6hQ5TreFgBS6aWqyegaV+NZ70Ir2udjvuBb1eUyIt7Yqo1ocyGXOWOMdO+tAWHhQpzes
+         2E9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740531541; x=1741136341;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfE+FYiAOd9DAOybGgX5laywdzU/CIqHsXJrp0PBGSY=;
+        b=q7a4JQ/PenRkkSP+fqql03xU6THSkW6Bxsbp8lL2cXWnVW6VRX14FwkdC9Y2socWEC
+         xyDv99Kj3x4lL7lVPPRChG9Bm+nFtXyx0Y5O9FGjGfmwAwN9g2Wz3eR1Oqhlp8+GKk4c
+         Mj8wXGNQZZVXZqmp6UzUfsrZsLQSoMkM0fdY6A9A8PS3AUNsZXlIkpYmNkkvU8rtfEBB
+         IZ452head3rhXdbW3zGt0TBhDWWazHBwBE96+7Iw5Jc+7GlfmrWDhkVvZtBLw9g+hnLT
+         /oQHmrTR/znltNpDBO7Tzs9YI9sp71XwUThwEIp3qmue58GOv0FxPQpnQKtTVYl5njXf
+         FXJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3b8d1dMcBKefGwYlaKFNEZiVTbYqpFxM5azaHVqa1Qaj1qi0TQoo7KvrCLzRpnyQU7ShgPe29CFK3wbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzclB1mSOXr/SVfKL9L5k4UVHYI33gQwHH5uHIwR79F/SgGDkMm
+	y4zChOXKyMgxK175LU3VUGmRq4/20H678lO1E4w1Us2VBpa0B3JwlLVO3SIJw5Qx8RmsBytYXXV
+	cQw==
+X-Google-Smtp-Source: AGHT+IFyXk03Mdjf7OBLIfTSLB6+EQPz/jBslrwK2d8KkEi7ba7NS0D3gxx1v5rFfPJNkg1JKx26oqdIPiY=
+X-Received: from pjbqb10.prod.google.com ([2002:a17:90b:280a:b0:2e0:915d:d594])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2708:b0:2f2:3efd:96da
+ with SMTP id 98e67ed59e1d1-2fe7e39f297mr2345354a91.24.1740531541052; Tue, 25
+ Feb 2025 16:59:01 -0800 (PST)
+Date: Tue, 25 Feb 2025 16:58:47 -0800
+In-Reply-To: <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20241118123948.4796-1-kalyazin@amazon.com> <Z6u-WdbiW3n7iTjp@google.com>
+ <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com> <Z7X2EKzgp_iN190P@google.com>
+ <6eddd049-7c7a-406d-b763-78fa1e7d921b@amazon.com> <Z7d5HT7FpE-ZsHQ9@google.com>
+ <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
+Message-ID: <Z75nRwSBxpeMwbsR@google.com>
+Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, jthoughton@google.com, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, 
+	graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, 
+	nsaenz@amazon.es, xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 2025-02-25 at 07:18 -0800, Mario Limonciello wrote:
-> On 2/25/2025 00:17, Luke Jones wrote:
-> > From: "Luke D. Jones" <luke@ljones.dev>
-> >=20
-> > Adjust how the CSEE direct call hack is used.
-> >=20
-> > The results of months of testing combined with help from ASUS to
-> > determine the actual cause of suspend issues has resulted in this
-> > refactoring which immensely improves the reliability for devices
-> > which
-> > do not have the following minimum MCU FW version:
-> > - ROG Ally X: 313
-> > - ROG Ally 1: 319
-> >=20
-> > For MCU FW versions that match the minimum or above the CSEE hack
-> > is
-> > disabled and mcu_powersave set to on by default as there are no
-> > negatives beyond a slightly slower device reinitialization due to
-> > the
-> > MCU being powered off.
-> >=20
-> > As this is set only at module load time, it is still possible for
-> > mcu_powersave sysfs attributes to change it at runtime if so
-> > desired.
-> >=20
-> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> > ---
-> > =C2=A0 drivers/hid/hid-asus.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 4 +
-> > =C2=A0 drivers/platform/x86/asus-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 124 ++++++++++++++--
-> > -----
-> > =C2=A0 include/linux/platform_data/x86/asus-wmi.h |=C2=A0 15 +++
-> > =C2=A0 3 files changed, 104 insertions(+), 39 deletions(-)
-> >=20
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index e1e60b80115a..58794c9024cf 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -614,6 +614,9 @@ static void validate_mcu_fw_version(struct
-> > hid_device *hdev, int idProduct)
-> > =C2=A0=C2=A0			 "The MCU firmware version must be %d or
-> > greater\n"
-> > =C2=A0=C2=A0			 "Please update your MCU with official
-> > ASUS firmware release\n",
-> > =C2=A0=C2=A0			 min_version);
-> > +	} else {
-> > +		set_ally_mcu_hack(false);
->=20
-> Rather than calling this to set a global, how about just
-> unregistering=20
-> the s2idle devops?
->=20
+On Fri, Feb 21, 2025, Nikita Kalyazin wrote:
+> On 20/02/2025 18:49, Sean Christopherson wrote:
+> > On Thu, Feb 20, 2025, Nikita Kalyazin wrote:
+> > > On 19/02/2025 15:17, Sean Christopherson wrote:
+> > > > On Wed, Feb 12, 2025, Nikita Kalyazin wrote:
+> > > > The conundrum with userspace async #PF is that if userspace is given only a single
+> > > > bit per gfn to force an exit, then KVM won't be able to differentiate between
+> > > > "faults" that will be handled synchronously by the vCPU task, and faults that
+> > > > usersepace will hand off to an I/O task.  If the fault is handled synchronously,
+> > > > KVM will needlessly inject a not-present #PF and a present IRQ.
+> > > 
+> > > Right, but from the guest's point of view, async PF means "it will probably
+> > > take a while for the host to get the page, so I may consider doing something
+> > > else in the meantime (ie schedule another process if available)".
+> > 
+> > Except in this case, the guest never gets a chance to run, i.e. it can't do
+> > something else.  From the guest point of view, if KVM doesn't inject what is
+> > effectively a spurious async #PF, the VM-Exiting instruction simply took a (really)
+> > long time to execute.
+> 
+> Sorry, I didn't get that.  If userspace learns from the
+> kvm_run::memory_fault::flags that the exit is due to an async PF, it should
+> call kvm run immediately, inject the not-present PF and allow the guest to
+> reschedule.  What do you mean by "the guest never gets a chance to run"?
 
-The main reason would be because `dev_pm_ops` is used to activate the
-hack also and I need to block that too. This seemed the safest and
-easiest way.
+What I'm saying is that, as proposed, the API doesn't precisely tell userspace
+an exit happened due to an "async #PF".  KVM has absolutely zero clue as to
+whether or not userspace is going to do an async #PF, or if userspace wants to
+intercept the fault for some entirely different purpose.
 
-Ideally I would just remove the entire hack, but as there can still be
-a few people out there with older versions I don't think that is wise
-at all. Maybe in 6 months times we can revisit it.
+> > > If we are exiting to userspace, it isn't going to be quick anyway, so we can
+> > > consider all such faults "long" and warranting the execution of the async PF
+> > > protocol.  So always injecting a not-present #PF and page ready IRQ doesn't
+> > > look too wrong in that case.
+> > 
+> > There is no "wrong", it's simply wasteful.  The fact that the userspace exit is
+> > "long" is completely irrelevant.  Decompressing zswap is also slow, but it is
+> > done on the current CPU, i.e. is not background I/O, and so doesn't trigger async
+> > #PFs.
+> > 
+> > In the guest, if host userspace resolves the fault before redoing KVM_RUN, the
+> > vCPU will get two events back-to-back: an async #PF, and an IRQ signalling completion
+> > of that #PF.
+> 
+> Is this practically likely?
 
-Cheers,
-Luke.
+Yes, I think's it's quite possible.
 
-> > +		set_ally_mcu_powersave(true);
-> > =C2=A0=C2=A0	}
-> > =C2=A0 }
-> > =C2=A0=20
-> > @@ -1420,4 +1423,5 @@ static struct hid_driver asus_driver =3D {
-> > =C2=A0 };
-> > =C2=A0 module_hid_driver(asus_driver);
-> > =C2=A0=20
-> > +MODULE_IMPORT_NS("ASUS_WMI");
-> > =C2=A0 MODULE_LICENSE("GPL");
-> > diff --git a/drivers/platform/x86/asus-wmi.c
-> > b/drivers/platform/x86/asus-wmi.c
-> > index 38ef778e8c19..9dba88a29e2c 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -142,16 +142,20 @@ module_param(fnlock_default, bool, 0444);
-> > =C2=A0 #define ASUS_MINI_LED_2024_STRONG	0x01
-> > =C2=A0 #define ASUS_MINI_LED_2024_OFF		0x02
-> > =C2=A0=20
-> > -/* Controls the power state of the USB0 hub on ROG Ally which
-> > input is on */
-> > =C2=A0 #define ASUS_USB0_PWR_EC0_CSEE "\\_SB.PCI0.SBRG.EC0.CSEE"
-> > -/* 300ms so far seems to produce a reliable result on AC and
-> > battery */
-> > -#define ASUS_USB0_PWR_EC0_CSEE_WAIT 1500
-> > +/*
-> > + * The period required to wait after screen off/on/s2idle.check in
-> > MS.
-> > + * Time here greatly impacts the wake behaviour. Used in
-> > suspend/wake.
-> > + */
-> > +#define ASUS_USB0_PWR_EC0_CSEE_WAIT	600
-> > +#define ASUS_USB0_PWR_EC0_CSEE_OFF	0xB7
-> > +#define ASUS_USB0_PWR_EC0_CSEE_ON	0xB8
-> > =C2=A0=20
-> > =C2=A0 static const char * const ashs_ids[] =3D { "ATK4001", "ATK4002",
-> > NULL };
-> > =C2=A0=20
-> > =C2=A0 static int throttle_thermal_policy_write(struct asus_wmi *);
-> > =C2=A0=20
-> > -static const struct dmi_system_id asus_ally_mcu_quirk[] =3D {
-> > +static const struct dmi_system_id asus_rog_ally_device[] =3D {
-> > =C2=A0=C2=A0	{
-> > =C2=A0=C2=A0		.matches =3D {
-> > =C2=A0=C2=A0			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-> > @@ -274,9 +278,6 @@ struct asus_wmi {
-> > =C2=A0=C2=A0	u32 tablet_switch_dev_id;
-> > =C2=A0=C2=A0	bool tablet_switch_inverted;
-> > =C2=A0=20
-> > -	/* The ROG Ally device requires the MCU USB device be
-> > disconnected before suspend */
-> > -	bool ally_mcu_usb_switch;
-> > -
-> > =C2=A0=C2=A0	enum fan_type fan_type;
-> > =C2=A0=C2=A0	enum fan_type gpu_fan_type;
-> > =C2=A0=C2=A0	enum fan_type mid_fan_type;
-> > @@ -335,6 +336,9 @@ struct asus_wmi {
-> > =C2=A0=C2=A0	struct asus_wmi_driver *driver;
-> > =C2=A0 };
-> > =C2=A0=20
-> > +/* Global to allow setting externally without requiring driver
-> > data */
-> > +static bool use_ally_mcu_hack;
-> > +
-> > =C2=A0 /* WMI
-> > *******************************************************************
-> > *****/
-> > =C2=A0=20
-> > =C2=A0 static int asus_wmi_evaluate_method3(u32 method_id,
-> > @@ -549,7 +553,7 @@ static int asus_wmi_get_devstate(struct
-> > asus_wmi *asus, u32 dev_id, u32 *retval)
-> > =C2=A0=C2=A0	return 0;
-> > =C2=A0 }
-> > =C2=A0=20
-> > -static int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
-> > +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
-> > =C2=A0=C2=A0				 u32 *retval)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	return asus_wmi_evaluate_method(ASUS_WMI_METHODID_DEVS,
-> > dev_id,
-> > @@ -1343,6 +1347,38 @@ static ssize_t nv_temp_target_show(struct
-> > device *dev,
-> > =C2=A0 static DEVICE_ATTR_RW(nv_temp_target);
-> > =C2=A0=20
-> > =C2=A0 /* Ally MCU Powersave
-> > ********************************************************/
-> > +
-> > +/*
-> > + * The HID driver needs to check MCU version and set this to false
-> > if the MCU FW
-> > + * version is >=3D the minimum requirements. New FW do not need the
-> > hacks.
-> > + */
-> > +void set_ally_mcu_hack(bool enabled)
-> > +{
-> > +	use_ally_mcu_hack =3D enabled;
-> > +	pr_info("Disabled Ally MCU suspend quirks");
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_hack, "ASUS_WMI");
-> > +
-> > +/*
-> > + * mcu_powersave should be enabled always, as it is fixed in MCU
-> > FW versions:
-> > + * - v313 for Ally X
-> > + * - v319 for Ally 1
-> > + * The HID driver checks MCU versions and so should set this if
-> > requirements match
-> > + */
-> > +void set_ally_mcu_powersave(bool enabled)
-> > +{
-> > +	int result, err;
-> > +
-> > +	err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_MCU_POWERSAVE,
-> > enabled, &result);
-> > +	if (err)
-> > +		pr_warn("Failed to set MCU powersave: %d\n", err);
-> > +	if (result > 1)
-> > +		pr_warn("Failed to set MCU powersave (result):
-> > 0x%x\n", result);
-> > +
-> > +	pr_info("Set mcu_powersave to enabled");
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_powersave, "ASUS_WMI");
-> > +
-> > =C2=A0 static ssize_t mcu_powersave_show(struct device *dev,
-> > =C2=A0=C2=A0				=C2=A0=C2=A0 struct device_attribute *attr,
-> > char *buf)
-> > =C2=A0 {
-> > @@ -4711,6 +4747,18 @@ static int asus_wmi_add(struct
-> > platform_device *pdev)
-> > =C2=A0=C2=A0	if (err)
-> > =C2=A0=C2=A0		goto fail_platform;
-> > =C2=A0=20
-> > +	use_ally_mcu_hack =3D acpi_has_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE)
-> > +				&&
-> > dmi_check_system(asus_rog_ally_device);
-> > +	if (use_ally_mcu_hack && dmi_match(DMI_BOARD_NAME,
-> > "RC71")) {
-> > +		/*
-> > +		 * These steps ensure the device is in a valid
-> > good state, this is
-> > +		 * especially important for the Ally 1 after a
-> > reboot.
-> > +		 */
-> > +		acpi_execute_simple_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE,
-> > +					=C2=A0=C2=A0
-> > ASUS_USB0_PWR_EC0_CSEE_ON);
-> > +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
-> > +	}
-> > +
-> > =C2=A0=C2=A0	/* ensure defaults for tunables */
-> > =C2=A0=C2=A0	asus->ppt_pl2_sppt =3D 5;
-> > =C2=A0=C2=A0	asus->ppt_pl1_spl =3D 5;
-> > @@ -4723,8 +4771,6 @@ static int asus_wmi_add(struct
-> > platform_device *pdev)
-> > =C2=A0=C2=A0	asus->egpu_enable_available =3D
-> > asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_EGPU);
-> > =C2=A0=C2=A0	asus->dgpu_disable_available =3D
-> > asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
-> > =C2=A0=C2=A0	asus->kbd_rgb_state_available =3D
-> > asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
-> > -	asus->ally_mcu_usb_switch =3D acpi_has_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE)
-> > -						&&
-> > dmi_check_system(asus_ally_mcu_quirk);
-> > =C2=A0=20
-> > =C2=A0=C2=A0	if (asus_wmi_dev_is_present(asus,
-> > ASUS_WMI_DEVID_MINI_LED_MODE))
-> > =C2=A0=C2=A0		asus->mini_led_dev_id =3D
-> > ASUS_WMI_DEVID_MINI_LED_MODE;
-> > @@ -4910,34 +4956,6 @@ static int asus_hotk_resume(struct device
-> > *device)
-> > =C2=A0=C2=A0	return 0;
-> > =C2=A0 }
-> > =C2=A0=20
-> > -static int asus_hotk_resume_early(struct device *device)
-> > -{
-> > -	struct asus_wmi *asus =3D dev_get_drvdata(device);
-> > -
-> > -	if (asus->ally_mcu_usb_switch) {
-> > -		/* sleep required to prevent USB0 being yanked
-> > then reappearing rapidly */
-> > -		if (ACPI_FAILURE(acpi_execute_simple_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE, 0xB8)))
-> > -			dev_err(device, "ROG Ally MCU failed to
-> > connect USB dev\n");
-> > -		else
-> > -			msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
-> > -	}
-> > -	return 0;
-> > -}
-> > -
-> > -static int asus_hotk_prepare(struct device *device)
-> > -{
-> > -	struct asus_wmi *asus =3D dev_get_drvdata(device);
-> > -
-> > -	if (asus->ally_mcu_usb_switch) {
-> > -		/* sleep required to ensure USB0 is disabled
-> > before sleep continues */
-> > -		if (ACPI_FAILURE(acpi_execute_simple_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE, 0xB7)))
-> > -			dev_err(device, "ROG Ally MCU failed to
-> > disconnect USB dev\n");
-> > -		else
-> > -			msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
-> > -	}
-> > -	return 0;
-> > -}
-> > -
-> > =C2=A0 static int asus_hotk_restore(struct device *device)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	struct asus_wmi *asus =3D dev_get_drvdata(device);
-> > @@ -4978,11 +4996,34 @@ static int asus_hotk_restore(struct device
-> > *device)
-> > =C2=A0=C2=A0	return 0;
-> > =C2=A0 }
-> > =C2=A0=20
-> > +static void asus_ally_s2idle_restore(void)
-> > +{
-> > +	if (use_ally_mcu_hack) {
-> > +		acpi_execute_simple_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE,
-> > +					=C2=A0=C2=A0
-> > ASUS_USB0_PWR_EC0_CSEE_ON);
-> > +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
-> > +	}
-> > +}
-> > +
-> > +static int asus_hotk_prepare(struct device *device)
-> > +{
-> > +	if (use_ally_mcu_hack) {
-> > +		acpi_execute_simple_method(NULL,
-> > ASUS_USB0_PWR_EC0_CSEE,
-> > +					=C2=A0=C2=A0
-> > ASUS_USB0_PWR_EC0_CSEE_OFF);
-> > +		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> > +/* Use only for Ally devices due to the wake_on_ac */
-> > +static struct acpi_s2idle_dev_ops asus_ally_s2idle_dev_ops =3D {
-> > +	.restore =3D asus_ally_s2idle_restore,
-> > +};
-> > +
-> > =C2=A0 static const struct dev_pm_ops asus_pm_ops =3D {
-> > =C2=A0=C2=A0	.thaw =3D asus_hotk_thaw,
-> > =C2=A0=C2=A0	.restore =3D asus_hotk_restore,
-> > =C2=A0=C2=A0	.resume =3D asus_hotk_resume,
-> > -	.resume_early =3D asus_hotk_resume_early,
-> > =C2=A0=C2=A0	.prepare =3D asus_hotk_prepare,
-> > =C2=A0 };
-> > =C2=A0=20
-> > @@ -5010,6 +5051,10 @@ static int asus_wmi_probe(struct
-> > platform_device *pdev)
-> > =C2=A0=C2=A0			return ret;
-> > =C2=A0=C2=A0	}
-> > =C2=A0=20
-> > +	ret =3D acpi_register_lps0_dev(&asus_ally_s2idle_dev_ops);
-> > +	if (ret)
-> > +		pr_warn("failed to register LPS0 sleep handler in
-> > asus-wmi\n");
-> > +
-> > =C2=A0=C2=A0	return asus_wmi_add(pdev);
-> > =C2=A0 }
-> > =C2=A0=20
-> > @@ -5042,6 +5087,7 @@ EXPORT_SYMBOL_GPL(asus_wmi_register_driver);
-> > =C2=A0=20
-> > =C2=A0 void asus_wmi_unregister_driver(struct asus_wmi_driver *driver)
-> > =C2=A0 {
-> > +	acpi_unregister_lps0_dev(&asus_ally_s2idle_dev_ops);
-> > =C2=A0=C2=A0	platform_device_unregister(driver->platform_device);
-> > =C2=A0=C2=A0	platform_driver_unregister(&driver->platform_driver);
-> > =C2=A0=C2=A0	used =3D false;
-> > diff --git a/include/linux/platform_data/x86/asus-wmi.h
-> > b/include/linux/platform_data/x86/asus-wmi.h
-> > index 783e2a336861..a32cb8865b2f 100644
-> > --- a/include/linux/platform_data/x86/asus-wmi.h
-> > +++ b/include/linux/platform_data/x86/asus-wmi.h
-> > @@ -158,8 +158,23 @@
-> > =C2=A0 #define ASUS_WMI_DSTS_LIGHTBAR_MASK	0x0000000F
-> > =C2=A0=20
-> > =C2=A0 #if IS_REACHABLE(CONFIG_ASUS_WMI)
-> > +void set_ally_mcu_hack(bool enabled);
-> > +void set_ally_mcu_powersave(bool enabled);
-> > +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32
-> > *retval);
-> > =C2=A0 int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
-> > u32 *retval);
-> > =C2=A0 #else
-> > +static inline void set_ally_mcu_hack(bool enabled)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +static inline void set_ally_mcu_powersave(bool enabled)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +static inline int asus_wmi_set_devstate(u32 dev_id, u32
-> > ctrl_param, u32 *retval)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > =C2=A0 static inline int asus_wmi_evaluate_method(u32 method_id, u32
-> > arg0, u32 arg1,
-> > =C2=A0=C2=A0					=C2=A0=C2=A0 u32 *retval)
-> > =C2=A0 {
->=20
+> At least in our scenario (Firecracker snapshot restore) and probably in live
+> migration postcopy, if a vCPU hits a fault, it's probably because the content
+> of the page is somewhere remote (eg on the source machine or wherever the
+> snapshot data is stored) and isn't going to be available quickly.
 
+Unless the remote page was already requested, e.g. by a different vCPU, or by a
+prefetching algorithim.
+
+> Conversely, if the page content is available, it must have already been
+> prepopulated into guest memory pagecache, the bit in the bitmap is cleared
+> and no exit to userspace occurs.
+
+But that doesn't happen instantaneously.  Even if the VMM somehow atomically
+receives the page and marks it present, it's still possible for marking the page
+present to race with KVM checking the bitmap.
+
+> > > > > What advantage can you see in it over exiting to userspace (which already exists
+> > > > > in James's series)?
+> > > > 
+> > > > It doesn't exit to userspace :-)
+> > > > 
+> > > > If userspace simply wakes a different task in response to the exit, then KVM
+> > > > should be able to wake said task, e.g. by signalling an eventfd, and resume the
+> > > > guest much faster than if the vCPU task needs to roundtrip to userspace.  Whether
+> > > > or not such an optimization is worth the complexity is an entirely different
+> > > > question though.
+> > > 
+> > > This reminds me of the discussion about VMA-less UFFD that was coming up
+> > > several times, such as [1], but AFAIK hasn't materialised into something
+> > > actionable.  I may be wrong, but James was looking into that and couldn't
+> > > figure out a way to scale it sufficiently for his use case and had to stick
+> > > with the VM-exit-based approach.  Can you see a world where VM-exit
+> > > userfaults coexist with no-VM-exit way of handling async PFs?
+> > 
+> > The issue with UFFD is that it's difficult to provide a generic "point of contact",
+> > whereas with KVM userfault, signalling can be tied to the vCPU, and KVM can provide
+> > per-vCPU buffers/structures to aid communication.
+> > 
+> > That said, supporting "exitless" KVM userfault would most definitely be premature
+> > optimization without strong evidence it would benefit a real world use case.
+> 
+> Does that mean that the "exitless" solution for async PF is a long-term one
+> (if required), while the short-term would still be "exitful" (if we find a
+> way to do it sensibly)?
+
+My question on exitless support was purely exploratory, just ignore it for now.
 
