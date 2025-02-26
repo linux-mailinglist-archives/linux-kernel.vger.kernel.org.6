@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-533585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543F9A45C50
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FA3A45C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6311893383
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21CB31893711
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FFF267F56;
-	Wed, 26 Feb 2025 10:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B330826D5DF;
+	Wed, 26 Feb 2025 10:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQEAK98a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVxc+rp4"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD425C6E9;
-	Wed, 26 Feb 2025 10:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF1E24E00E;
+	Wed, 26 Feb 2025 10:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567359; cv=none; b=Mr+Rtdnt+5ulrJkxXBtiYYWhLxo3IvunFb4OzGxtOHUxrSxRW6YKDd+jZ8ctlWQJWYzoY3Ctggn2R8mjsNgi2QR6TmWvzPzibIvFR+pgnH3qFczgEe5EWEB5IdBe6FpOYi3zbXUpTGr4xAXoK2HX9Uhh/Zn4hp4xQEM+xhQ3YwA=
+	t=1740567397; cv=none; b=Q/TFJOV//SpoGAywtmUoMaDg/Gvhsst3TVu+9cOpaXxqe3OK9HmVHjYdoWdvM1FLEevY3+xhwFWeN6wZNmQLigDEYY5/wD6DW3dQRdfbVzO9TDHo6ENSHM7wCIqQHSSZMYtf37yPXY3wyHAHvPuyopErO09yK3AGfCxm1KEP2M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567359; c=relaxed/simple;
-	bh=ZU+ZyR4aLY3x0j3q2rbfwoqtx+ltymMrrVIRBW7+YG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbR4br/v5gVH4+HGlgsDHVm7nXIQejL9gs9p/ghzRl2bIn2Awy7CGI/0uP9ZyLhnNarCQ4VCECWv8aczl95TQeGsEPYHwpyG4q5MjbND08Zwwzn/vYAomVcxaI+kxjJkL+EAdFa3vBeA32xL0iyktvnXX9euScsxeidDbDmxly4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQEAK98a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A38C4CED6;
-	Wed, 26 Feb 2025 10:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740567358;
-	bh=ZU+ZyR4aLY3x0j3q2rbfwoqtx+ltymMrrVIRBW7+YG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UQEAK98a9QsxVuUm4D+p3xKTQ8MVebjyVtb1s6tWkACMs3hlnKv6+T31miCwY1kIh
-	 PiTr1b7Lp89NngG+P0fdlzGCOqhrhC42qtV9ht2jvSv+5HrlLNIxw3w8Hp8gSnZEZg
-	 6DGna/DFkja7qjtlQMZ/HX/Lmo1fw2QrjCIU3IySKHQu8OA/XOu/X3M6QHeT5tjq7z
-	 UDZLDkLgf01Gk6ww34mSoQfEE8Nz3MA5Cpfq9oWS/sI620jNtMi9BjuVoTr8PRN9NE
-	 mp7g4AADraboKmZA5ICnooX09Dtv/aYuRc7WPHpp34SbtsH94KcmRzZbl5fmbeWJvE
-	 4TEzhlXjD9qug==
-Date: Wed, 26 Feb 2025 11:55:48 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>, x86@kernel.org
-Subject: Re: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY when we clear _PAGE_RW
-Message-ID: <Z77zNK7mRdjwILL7@gmail.com>
-References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
- <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
- <Z76APkysrjgHjgR2@casper.infradead.org>
- <CAHk-=wj+VBV5kBMfXYNOb+aLt3WJqMKFT0wU=KaV3R12NvN5TA@mail.gmail.com>
- <Z76R6ESSwiYipQVn@casper.infradead.org>
- <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
+	s=arc-20240116; t=1740567397; c=relaxed/simple;
+	bh=nRes/JIQoSt8qzSsHkQQ44Bc7mQSXTTNQNmjL5Ibs8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CW+x5F/hxNUwIJeAnkOJLmvopl6trhbzve4CcCXRcu6XKQWoP0GniRNBKRRbJ8Yh9HbR2kW4BrLJVzPg6EWL5p8juFQltbcU3cxmEMHlJBnicktsxjJp9xnpVmNF3ziZFvUR4kTt75lrCwQWrFrZrSivsdXmQeZV4NhqSMFncBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVxc+rp4; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so1376792a12.1;
+        Wed, 26 Feb 2025 02:56:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740567393; x=1741172193; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TnRt5kVVsi6y30e+L7tjbQGl7m0u+I/PjKREYzjCPTA=;
+        b=VVxc+rp4icHRPESQSDj1UhkM2Xnn/R8QgYdZt+FJhrp2pTEWyZT0KXi5B0lLeSKq2B
+         LN30wKApY9QuMxRwnuKe8rrw8eC/gCQ9P02efjhU8ESLu2MJZuiUPQHAo/Aq4kusvAYR
+         nkE6WO757+nyN3jYqvL9UyPdQHPd+N+RLV7KkUXzbfmToc5aNcL/oHZS6H9+cB12TfWn
+         Jtym/sp4hedBghXSVkNIxfczFHK6geZSuMW5q0rAjFKaoBCL6p7ihEptVySn2SrdqTMi
+         AKwuHbjsVfP7JoALu+lx6QZxaBZv8t8lzdrYv9roNuhyb1m43hhOjdr3pMfUH92KSebY
+         9Xfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740567393; x=1741172193;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TnRt5kVVsi6y30e+L7tjbQGl7m0u+I/PjKREYzjCPTA=;
+        b=UhcA90MKlQxNjSPyr+yjTTEBU9cW0Bv+JvR2hYh05SY7P6+bFHLRL9BgNxT4/P/KB8
+         4ZIA03TYl/JBbwX9k6Env/IIzseVHSPV2TSRj+B1RDt6RbVdJpecMRPDSRLGcEqFLLiW
+         n0DHLMySTbs9MDez7dlsbrvxzXxEcq7izoqclZiKaZ0L+2pjRXn1ymhBJc6I9rAcg5pv
+         OawWUtbr+NUVYpY0ENlquYKhTKv9E/b62ig4P1SbDYHULK7Ua52mXqpllaEwS2hngkCc
+         IDqH5gUFijT7vSKDEaPFSmSQx8/tydOZKv3ums59Db9ieFXEQjnjp35bt4xuUptLITOa
+         OGFg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/7oO4G6HTWbRlRHf6fTwxs3/bKFnFdgu4R5LB/QS66EamujmlCKB8AVIM4/IHGPCtIMy0I/bwj8JBXkE=@vger.kernel.org, AJvYcCWJuFlKEkUJyTZn+/7vNmialrTCI1cKL/tn8c3kZZX6FDsbxVcig8LuNXIy77H1wqWBe+uypyvvbjWWndI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6TO50rTa+x9lfbkVnzYP6xQCerVs7yKWn8kArHGXL4N++cE5Q
+	1dIWM8uzlfyNOEGcEOZx/sAMJAwDBYY52buupYZYqQh4YH9WjE6x
+X-Gm-Gg: ASbGncuiBgXJJW/7I8CkNYFvrEMksvgUoAIIe01Pts7ipz8o2Lsfv92f620bjvL7S8E
+	P7xEKobZ8rcqvQGOkhThLxSBLCru4b7SWhQ/ugjiTa+mR0AKm027utcUNzcu0aLZuDSPIIOIlrF
+	vWYAycLjOpIuv9kbzLZQrOd5x1CndJRM+aDBAHTHdOtQ4k+wCkAKKbE6IsVkY+CfXq1Qk53xxZS
+	UUUg5FErxGL8Ca+OTTGrkzt18JIaYWsYLNUp5oKcn/+oA7KDWobvFNtjEeWG9BQLPwD4nmsoows
+	e4sPDYR+pnnwWrQqgQ==
+X-Google-Smtp-Source: AGHT+IGmQI8YlYmRSSSs1U9nlakmgv2vFgC7SMwvQJFzv85jTtuYZnRItTetNm56DGjM4pscViq7Rg==
+X-Received: by 2002:a17:907:c80f:b0:abe:cfbf:3da6 with SMTP id a640c23a62f3a-abecfbf4065mr525026866b.19.1740567393327;
+        Wed, 26 Feb 2025 02:56:33 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed205e53fsm299771266b.159.2025.02.26.02.56.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 02:56:32 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/6] ARM: tegra: complete Tegra 4 and Tegra K1 device trees
+Date: Wed, 26 Feb 2025 12:56:09 +0200
+Message-ID: <20250226105615.61087-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Complete T114 and T124 device trees.
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Svyatoslav Ryhel (6):
+  ARM: tegra114: complete HOST1X devices binding
+  ARM: tegra114: switch DSI-B clock parent to PLLD
+  ARM: tegra114: add ARM PMU node
+  ARM: tegra114: add HDA node
+  ARM: tegra124: Add DSI-A and DSI-B nodes
+  ARM: tegra124: complete HOST1X devices binding
 
-> On Tue, 25 Feb 2025 at 20:00, Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > I think the entire point of this file is to manipulate kernel mappings.
-> 
-> Very likely. But just looking at the patch, it was very non-obvious.
+ arch/arm/boot/dts/nvidia/tegra114.dtsi |  99 +++++++++++++++++++++--
+ arch/arm/boot/dts/nvidia/tegra124.dtsi | 105 +++++++++++++++++++++++++
+ 2 files changed, 199 insertions(+), 5 deletions(-)
 
-Yeah, agreed - and I've extended the changelog the following way:
+-- 
+2.43.0
 
-  Subject: [PATCH] x86/mm: Clear _PAGE_DIRTY for kernel mappings when we clear _PAGE_RW
-  
-  The bit pattern of _PAGE_DIRTY set and _PAGE_RW clear is used to mark 
-  shadow stacks.  This is currently checked for in mk_pte() but not 
-  pfn_pte().  If we add the check to pfn_pte(), it catches vfree() 
-  calling set_direct_map_invalid_noflush() which calls 
-  __change_page_attr() which loads the old protection bits from the 
-  PTE, clears the specified bits and uses pfn_pte() to construct the 
-  new PTE.
-  
-  We should, therefore, for kernel mappings, clear the _PAGE_DIRTY bit 
-  consistently whenever we clear _PAGE_RW.  I opted to do it in the 
-  callers in case we want to use __change_page_attr() to create shadow 
-  stacks inside the kernel at some point in the future.  Arguably, we 
-  might also want to clear _PAGE_ACCESSED here.
-  
-  Note that the 3 functions involved:
-  
-    __set_pages_np()
-    kernel_map_pages_in_pgd()
-    kernel_unmap_pages_in_pgd()
-  
-  Only ever manipulate non-swappable kernel mappings, so maintaining 
-  the DIRTY:1|RW:0 special pattern for shadow stacks and DIRTY:0 
-  pattern for non-shadow-stack entries can be maintained consistently 
-  and doesn't result in the unintended clearing of a live dirty bit 
-  that could corrupt (destroy) dirty bit information for user mappings.
-
-Is this explanation better?
-
-Thanks,
-
-	Ingo
 
