@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-535039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99DBA46E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:05:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BF4A46E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7609A168A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2A46168FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C073926FA7A;
-	Wed, 26 Feb 2025 22:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298826B97E;
+	Wed, 26 Feb 2025 22:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gMyC7EE1"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pceV3xtA"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D47F26E62D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABAE26FA66
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740607468; cv=none; b=amI55bc6XITnKncYNbQAKUHMwTTq+opiWUS7XpgC6oeCLTeB3jfm4erm6GO/gQondLvjgLWDhkp5HdC3KwcvPTyCdHeq8ED7ti05GfUnCEuGbXAhh0q8SPqz/ep7EaIXVgqx4NR1hDEoicHoF52qNzsnEzCV3m3rscHQGRy8gdE=
+	t=1740607469; cv=none; b=he4BWpAOMLDe7x49BhhPu3RAUW3OrpfU8vFfDyV7jUR7dmFGTfFCiuo2vWoyUKWKng9x9BPFZICorP+1UZTG/Xpvslh+emJawh1z1tfb9QiRkqXBMOVVlVuXx4HbBNzjBsjW4n1W4k1z6srfLENe5X45LLKrQO2qYIObsf61Y6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740607468; c=relaxed/simple;
-	bh=XD5vHpBRFTxxteEvRZ/Amzm2FaKpvRfB8H6AYjhg1D0=;
+	s=arc-20240116; t=1740607469; c=relaxed/simple;
+	bh=CCW/vi/idj6TZP9g/W7l1pZJSKJbysF20wfjKmqw31w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h8yM1TRpVC3wsLtJluFbammFncC5Na/liCU7mEaBBq4dZPIfQEH0ak6xgeW3aQxuxdZzdl87TIPQHej9NOUmIRnZUfNZDEcrdHnmsHEUC9xQOlt3r+KjFiGhClMAm6BOaNZwEGbbfJoSyxHIAbWm4xEm5QhyMnd8fNEVtMS4f8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gMyC7EE1; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=Wp//iwIEFLgc9vVTxxXw2tCHfEzztWz7FT/oH9T5SUtZOny1Kk32SDPheKbQryvwfeOr+KNovg5VMEhYs2/VTayBpopWc2sAhXBDmer4yF8ZLMa/NR839CB59OkMLxbDXnZT/HDTdBtDcGxAeUgK/J1Ur+rxgtdYJfiS//Inrk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pceV3xtA; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22339936bbfso3756815ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:04:26 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22128b7d587so4078455ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:04:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740607466; x=1741212266; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740607467; x=1741212267; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kqQVvrSG700cJ8ivAGfcs4D2QICVIKls7c2wPxYXgmg=;
-        b=gMyC7EE1m+EpUlfi8P2iye5nBycYRLvHj9VIhmiUXuRPclAMNWlHaPT+lUwsGDX7sv
-         5NjqLMD0lzex16YwaVbx4vmRYlE/jixnnH27RW8cSyeAIDvu7tqGX0q/sTSs2ZalMlWe
-         Kd8d0/tZWEEvPj3pMqig19FWyeE7jYEAZm4bB1D24hnchC68Sy4o6/bHgK6EtDJZ11MB
-         6aRnggH3QMbOgw7nAisf4dzbEhnds8BWcvWtDK36aGAFj4HV7VH1pap8rP0PCYWXiMTr
-         /8DKCwNokHzsYXi6SGVqUL+ZwNwBpwJHzkXR51bVimteJeMCLsqvnL3YC/snskdQLI2H
-         zrUw==
+        bh=gWTKjOPYHYbBCUgjwCQAeP5e/oUzLq3t7mP4ZZ5O21s=;
+        b=pceV3xtAIpkUCiw0uUrfr51u6u9YMS1RRCJV6CAUMT693o00mLse0yjyK9ToFuBu3R
+         32SJynC9Pe1c/dMXxgLfrn+gNODLSs9Ys/cJpUrzbh2Ak4PscnjOIlIde0njH57GWjlP
+         Z0iFhR4t0jgFRjBp6hYS3EBXo3JqNbKp+QiU1zj1A9ZEicwOPXjAx1r90Zt085ncYrZx
+         F+oCHek/IEOLsGLFGdatwFlpLPJxCT504JBPKaMQ+o37znE3j37DPAcZ7IUCW+h2gsVw
+         XA8JgpNd1OsoeupgNoPHKbkmXcRDw/ADRdYFdSGXBo/qKTa9AZ5tzGCxexuqgrEcUhq3
+         5OIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740607466; x=1741212266;
+        d=1e100.net; s=20230601; t=1740607467; x=1741212267;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kqQVvrSG700cJ8ivAGfcs4D2QICVIKls7c2wPxYXgmg=;
-        b=c/g4HkD1rgWvcnWl6HFmuBPUkTykcgt/o+Z4oiuraAzJVCRTtC83uilEGK2cfaiz21
-         yI0IteQy/8aIPThmY4fPbf6ZW4+lRRkUe/eabHHummI02Trd5SjyuIs62nCfQDNMjsSo
-         5EK+LqDEhVK9cS90IpSk3MsW76CryhV/PPKelHClLrUl1OlL2cf1I7MUkKGVvAy0X9U6
-         uNF8pmc3bd76P1UwCMv1h8y36XF2HOe5KVfSlFAj61AOsJxsP2vQXh7D+XQ34H0ITRFW
-         O1paFI5VGkixn/J/S2Gepu5r3gwUDA0zfYQqkNKXT5BN87xGZUk/q355xNts61n3bVCE
-         YURQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyHBv8bvPGwFZAv/mOSNfqXmuep/rdv2nbr8ZBIqJnwqkADeH7Ci9aEW94IFPKqkxVxdVHc31qL0Ly3Cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkvtBnrlGPglkuzpVFNOdowbB54+lPw3Zvq2uxSpqpB8JaW/dv
-	KXgrjcqnT4H2WuKs5QBBXkxfXy1IuWzykAPZO/xa9Vx5rDWWNLItjzMdBViOQ5U=
-X-Gm-Gg: ASbGnctQwTxsr/9eg91jdVdynWiU/INWhbvbs9rkuO0UzKcJckZL4yUih+CdeqDHDW8
-	t9knr+B6GDXV4CJcu9MZON1KBfOaPaVXS44BJndP3Lw3dVQd5g+5gx1mAVn5WV0+TmF76YT5Fzu
-	siuEF5Fk/D+VFFtKnyO90aaF04j4zU43cdKW4o8RFkubkTTMadsY3l68NiOCtj1DPApzkz7UoWA
-	ljylySUazJxkA3rcc9+4m3kpm7NuFJeLFYH4f+yA0pgr9C1+RAEK0yQYzBUAOgddpRjNwJ4N/iB
-	2mBeXolE9XXQMVxlndg2xQn03/b8pqx0ysEwEDHjA7vN2bIOs1gHrqD8
-X-Google-Smtp-Source: AGHT+IH0ey8eRCvxcHgsNYYNwiwm9i82ds1xLg6pyL6Gx4FmTSqN0nYi+iPEnmvAXppRtAVsCj9cLA==
-X-Received: by 2002:a17:902:f68c:b0:223:501c:7576 with SMTP id d9443c01a7336-223501c75e9mr6151485ad.12.1740607466019;
-        Wed, 26 Feb 2025 14:04:26 -0800 (PST)
+        bh=gWTKjOPYHYbBCUgjwCQAeP5e/oUzLq3t7mP4ZZ5O21s=;
+        b=NLR7Dr+AIF+V561rHP4rWOFkCxl/iOYVmWgKa6qy/nQ1k/5gSd/f23elymTKAjemrn
+         oUASsGg3oBSpQmGGMHQq2gs68iLwDeC0r40JhbQKQ1vzekn4FWBs22V0GwU0v+YKG4kH
+         Xm4YY87/gpHQU9fi0PtHeUHoPXBOo8rMxZgRyd3UtBIJ/A3tSQer5UslDEZD/JeK4zgF
+         UAd7OpSsNtNqOF1j/h6X+obQRX8xKarBeVRI6PkFECJj4/J6zPKouOSV396D6Tatgu9M
+         2y2rvr+RB5gskaKcPGY/nNxqdDJeV30Qc+zCEmE+ePjaeOHHIuf0VAgJ/swNj7RYD9xY
+         XdlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ8kmGrOcXfZJalAMEsXJP0q0KUihmEvbN/csxPdbAvJuPFb2z/gO9NGxNu5/2BpKQk57fneY1LtM3HLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8PFzKjqYOLbHhxvoKtbL0BreQcm1UUnvon1nGR0szZkBsh+5K
+	I5WbB3AC0gTUeaDguLGSbTFKd/XFEXs4ILEOCaQhgIcjCj9X2N9xwcIeqjm8X7g=
+X-Gm-Gg: ASbGncsuDG5Yk1i3PwkEYwIwh/bTTU8DP6YOa/BrhQlOyah1R4+bot+t5axa/t77l0e
+	zSX6pVbG0bfgNXy1zxPXKAj6rEMZ66Zq2NnuWoc/RL05AgYWwdFE87jV6L1lsQUQBR3uAQIR3Bm
+	uELfr18j6p/QENjCwM4cLZpEzHliskaiqobd6qJ9kU2SrkSuIiM/myBE6VUWYqD+CmV2qQKGlYP
+	N5J3Aob+sK5wPijygbDOGtzLqVtHNmwTu2LoDPrnemKvJaW6/Mm+DpjDTv0vOv0jyEcbrgqgWri
+	rlKY/Ig8GRarO3u025wPkrWJPF5dKU109FCY+7Qqmu6SZZWxkACdItCp
+X-Google-Smtp-Source: AGHT+IGCx2oLKcB5bpzVlnTDWzwAr4Blf9QYoJQocatHQosYv1is1Be436vWJXS8IWNGbLlM5P64xQ==
+X-Received: by 2002:a17:902:dac5:b0:220:d439:2485 with SMTP id d9443c01a7336-22320094d51mr69995645ad.29.1740607467660;
+        Wed, 26 Feb 2025 14:04:27 -0800 (PST)
 Received: from gpeter-l.roam.corp.google.com ([104.134.203.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350534004sm1044145ad.252.2025.02.26.14.04.24
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350534004sm1044145ad.252.2025.02.26.14.04.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:04:25 -0800 (PST)
+        Wed, 26 Feb 2025 14:04:27 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: alim.akhtar@samsung.com,
 	James.Bottomley@HansenPartnership.com,
@@ -87,9 +87,9 @@ Cc: linux-scsi@vger.kernel.org,
 	bvanassche@acm.org,
 	kernel-team@android.com,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 3/6] scsi: ufs: exynos: ensure consistent phy reference counts
-Date: Wed, 26 Feb 2025 22:04:11 +0000
-Message-ID: <20250226220414.343659-4-peter.griffin@linaro.org>
+Subject: [PATCH 4/6] scsi: ufs: exynos: Enable PRDT pre-fetching with UFSHCD_CAP_CRYPTO
+Date: Wed, 26 Feb 2025 22:04:12 +0000
+Message-ID: <20250226220414.343659-5-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 In-Reply-To: <20250226220414.343659-1-peter.griffin@linaro.org>
 References: <20250226220414.343659-1-peter.griffin@linaro.org>
@@ -101,36 +101,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ufshcd_link_startup() can call ufshcd_vops_link_startup_notify()
-multiple times when retrying. This causes the phy reference count
-to keep increasing and the phy to not properly re-initialize.
-
-If the phy has already been previously powered on, first issue a
-phy_power_off() and phy_exit(), before re-initializing and powering
-on again.
+PRDT_PREFETCH_ENABLE[31] bit should be set when desctype field of
+fmpsecurity0 register is type2 (double file encryption) or type3
+(file and disk excryption). Setting this bit enables PRDT
+pre-fetching on both TXPRDT and RXPRDT.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/ufs/host/ufs-exynos.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/ufs/host/ufs-exynos.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index a00256ede659..943cea569f66 100644
+index 943cea569f66..27eb360458a7 100644
 --- a/drivers/ufs/host/ufs-exynos.c
 +++ b/drivers/ufs/host/ufs-exynos.c
-@@ -962,6 +962,12 @@ static int exynos_ufs_phy_init(struct exynos_ufs *ufs)
- 	}
+@@ -1098,12 +1098,17 @@ static int exynos_ufs_post_link(struct ufs_hba *hba)
+ 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+ 	struct phy *generic_phy = ufs->phy;
+ 	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
++	u32 val = ilog2(DATA_UNIT_SIZE);
  
- 	phy_set_bus_width(generic_phy, ufs->avail_ln_rx);
+ 	exynos_ufs_establish_connt(ufs);
+ 	exynos_ufs_fit_aggr_timeout(ufs);
+ 
+ 	hci_writel(ufs, 0xa, HCI_DATA_REORDER);
+-	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_TXPRDT_ENTRY_SIZE);
 +
-+	if (generic_phy->power_count) {
-+		phy_power_off(generic_phy);
-+		phy_exit(generic_phy);
-+	}
++	if (hba->caps & UFSHCD_CAP_CRYPTO)
++		val |= PRDT_PREFECT_EN;
++	hci_writel(ufs, val, HCI_TXPRDT_ENTRY_SIZE);
 +
- 	ret = phy_init(generic_phy);
- 	if (ret) {
- 		dev_err(hba->dev, "%s: phy init failed, ret = %d\n",
+ 	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_RXPRDT_ENTRY_SIZE);
+ 	hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
+ 	hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
 -- 
 2.48.1.658.g4767266eb4-goog
 
