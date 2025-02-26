@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-533582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE42A45C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13340A45C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D433AB1AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79CB9189359A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876AA271815;
-	Wed, 26 Feb 2025 10:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1FLMiRwX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jepdv8iP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287D326FD85;
-	Wed, 26 Feb 2025 10:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272B126A0AB;
+	Wed, 26 Feb 2025 10:54:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8354624E01A;
+	Wed, 26 Feb 2025 10:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567267; cv=none; b=TG7XBW1LPLnRUtYsGJ6jbS1N9B/t4z8BB0fVRsFknRSDz3GYvyok617PwDdPhenXD73DA6YtZIl4Zkz832+3wHJlddhZbxWpKWsJo3FKQb1UiOb8eTduUd654Z05KFn6S9caihTiSt+nTYbpueL1Mo2scviPUhQjnD43aR0jh8Y=
+	t=1740567283; cv=none; b=CZ0amb6ee6FLZBeu2FerVSA4iJ2E+eyDocEwLKPDy6vzNijwFUIMnDSUcnoqV9PE9DnK+CwlP6ZZbltj7Gv6jweF/+JhFzM51bZsIkirf8CJI+NFRPEXy26c/s3VFqKa4sITFao1wdsEGYD/C1aAKmflSJfOz1QQbOEea5kePi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567267; c=relaxed/simple;
-	bh=UROiS+W0ZalnNDQVlDk6gaX0lUdaLd/4dAR1/K8/rt0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lZVCegOU9j6AtyZjEP54TlHTNpM+gYwfbKW4ikDnJexRpQys//djg5IgWPTnfKkjSpHyrmgSoXjUVVZpqxlngyEoQbGpJ+WCIqO0tehaEd1quPZmxpP/M0GbVl38z1AkTTO7pZ26YMtE1itjv+VwIUCoce5ZXrdq2cRukUCmonw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1FLMiRwX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jepdv8iP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 10:54:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740567263;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5PgpXSae7O1VWFna0jYT6apG/3Hm/MaP/RddLIoQowM=;
-	b=1FLMiRwXVPVIzSk13HjIlWHpkCAVTragpX7TISANO/BrYKLCCXi6QpxAs9orseJDjYk+GJ
-	/ILvouM87vW3oH51vacWZCjYarRTu0REnFS27aLRJUMoR1DmzIjAEx/jZp8Apm5to5FnP4
-	XHF5BiDu3cnUpo1MC9kazi4HND2a+Ba3z9ImBikw8c7eeNoL7hltmSV5YvggrvaIB8F0Aa
-	b31Vle9B1aMhFLIETAat6oLjaHMA6724X2c+HqZgdo8lrDQHAzulDfSpBbznaiv9tOl21p
-	IMwDmSBFPsuGyPsNg4UzXIvoWOiuO8u9uCrfBVPNw6eyDSkZjaTeMTbxYYNiUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740567263;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5PgpXSae7O1VWFna0jYT6apG/3Hm/MaP/RddLIoQowM=;
-	b=jepdv8iPm6eC0jWTzYY/G8zST38TqTPqrCJYnkCk9MXFnLQZKlSzvXylAPyuDPLXXAcyJX
-	o1NlHfXz/YmW2cCQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/cfi: Add warn option
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Kees Cook <kees@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124159.924496481@infradead.org>
-References: <20250224124159.924496481@infradead.org>
+	s=arc-20240116; t=1740567283; c=relaxed/simple;
+	bh=koG82KQ5MAFZbbOnQch9i9ot+SNWC3tiYmyye7wwNLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5/pqYub49s7UUlq9LginRYY35/7AXdHecZH8C0U/LqmlzqtUomo4FJfo/CUYNHk/JqnHxk+jR8rsDchL0sGhfcMK1COibgvb+xWvl0xhgHe+Fyi+jp1zdh/BMQPoNOZ8VzNAH8yAafW1AYZje+Y4Lj6iGRV4+9ULb57SHxFSYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6437D1BA8;
+	Wed, 26 Feb 2025 02:54:56 -0800 (PST)
+Received: from [192.168.102.177] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 380203F673;
+	Wed, 26 Feb 2025 02:54:38 -0800 (PST)
+Message-ID: <bc7f915b-8d9f-4e05-9939-8b7ecc078f85@arm.com>
+Date: Wed, 26 Feb 2025 10:54:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174056726322.10177.14430365702785340054.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT][PATCH v1 0/5] cpuidle: menu: Avoid discarding useful
+ information when processing recent idle intervals
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+References: <1916668.tdWV9SEqCh@rjwysocki.net>
+ <d0c013d5d2a9251d5dc468446f2a08ae8a7a8953.camel@linux.ibm.com>
+ <f949565ef1f256a1641cea3fa1d01d126bcc32e8.camel@linux.ibm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <f949565ef1f256a1641cea3fa1d01d126bcc32e8.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/core branch of tip:
+On 2/26/25 04:49, Aboorva Devarajan wrote:
+> On Mon, 2025-02-24 at 11:57 +0530, Aboorva Devarajan wrote:
+>> On Thu, 2025-02-06 at 15:21 +0100, Rafael J. Wysocki wrote:
+>>
+>>
+>>
+>>
+>> So for the entire series:
+>>
+>> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>>
+>> I'm also trying a minimal unit fuzz-test with the pre- and post- patched version of the get_typical_interval 
+>> function to understand this better, will post the results soon.
+>>
+>>
+> In addition to the previous tests, I also reviewed and tested how get_typical_interval
+> predicts the idle duration before and after the patch by mimicking the function in
+> userspace for better unit fuzz testing [1].
+> 
+> With the patch get_typical_interval function now produces more predictable values, whereas
+> in the previous implementation it frequently returned UINT_MAX. The behavior with the patch
+> seems to be more reasonable compared to before.  
+> 
+> Here are the test results  
+> 
+> 1. Low Variance:
+> 
+> When the history of CPU idle durations (8 intervals) is relatively uniform with low variance,
+> the predicted idle duration is unchanged between the patched and unpatched versions:  
+> 
+> | Test Case | Intervals                                    | Before | After | Difference |
+> |-----------|----------------------------------------------|--------|-------|------------|
+> | 1         | 100,105,110,115,120,125,130,135              | 117    | 117   | 0          |
+> | 2         | 200,205,210,215,220,225,230,235              | 217    | 217   | 0          |
+> | 3         | 500,505,510,515,520,525,530,535              | 517    | 517   | 0          |
+> | 4         | 1000,1005,1010,1015,1020,1025,1030,1035      | 1017   | 1017  | 0          |
+> 
+>  2. High Variance
+>  
+> For cases with high variance, the nonpatched function returned UINT_MAX,
+> 
+> After the patch, the function now returns reasonable values:  
+> 
+> | Test Case | Intervals                                  | Before      | After | Difference       |
+> |-----------|--------------------------------------------|-------------|-------|------------------|
+> | 5         | 99,198,297,396,495,594,693,792             | 4294967295  | 594   | -4294966701      |
+> | 6         | 1000,2000,3000,4000,5000,6000,7000,8000    | 4294967295  | 6000  | -4294961295      |
+> | 7         | 40,140,240,340,440,540,640,740             | 4294967295  | 540   | -4294966755      |
+> | 8         | 90,590,1090,1590,2090,2590,3090,3590       | 4294967295  | 2590  | -4294964705      |
+> | 9         | 42,142,242,342,442,542,642,742             | 4294967295  | 542   | -4294966753      |
+> | 10        | 70,570,1070,1570,2070,2570,3070,3570       | 4294967295  | 2570  | -4294964725      |
+> | 11        | 44,144,244,344,444,544,644,744             | 4294967295  | 544   | -4294966751      |
 
-Commit-ID:     f003da5d29a179bd1beb4ef87ac93a3ca6ddf734
-Gitweb:        https://git.kernel.org/tip/f003da5d29a179bd1beb4ef87ac93a3ca6ddf734
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:04 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 26 Feb 2025 11:41:53 +01:00
+So these are all "highest observed values after dropping high-end outliers" from what I can tell.
 
-x86/cfi: Add warn option
+> 
+>  3. Low-end Outliers 
+> 
+> The patch removes variance from low-end values as well,
+> Without the patch, the function only filtered high-end outliers, but now it correctly eliminates both
+> high and low ends.
+> 
+> | Test Case | Intervals                                 | Before      | After | Difference  |
+> |-----------|-------------------------------------------|-------------|-------|-------------|
+> | 12        | 1,200,200,250,250,230,220,260             | 4294967295  | 230   | -4294967065 |
+> | 13        | 100000,200,200,250,250,230,220,260        | 230         | 230   | 0           |
+> 
+> 
+>  4. As far as I understand, the function only returns UINT_MAX when all values are 0, negative, or the
+> computed average itself is UINT_MAX.  
+> 
+> | Test Case | Intervals                                   | Before      | After       | Difference |
+> |-----------|---------------------------------------------|-------------|-------------|------------|
+> | 14        | 4294967295,4294967295,4294967295,4294967295 | 4294967295  | 4294967295  | 0          |
+> | 15        | 0,0,0,0,0,0,0,0                             | 4294967295  | 4294967295  | 0          |
+> 
+> The updated get_typical_interval function avoids unnecessary UINT_MAX returns, handles both low and high end
+> outliers, and gives more reliable predictions in high-variance cases. It only returns UINT_MAX when absolutely
+> necessary, and this will help in not selecting deeper idle state unless it is needed. So, I'm good with
+> the patch. 
+> 
+> Refer [2] for more test results.
+> 
+> [1] - https://github.com/AboorvaDevarajan/linux-utils/blob/main/cpuidle/cpuidle-predict-duration/predict_cpuidle_interval.c
+> [2] - https://github.com/AboorvaDevarajan/linux-utils/blob/main/cpuidle/cpuidle-predict-duration/out.predict.csv
+> 
+> 
+> Thanks,
+> Aboorva
 
-Rebuilding with CFI_PERMISSIVE toggled is such a pain, esp. since
-clang is so slow.
+Thank you Aboorva, that's very useful.
+Looks all good and as expected to me then.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124159.924496481@infradead.org
----
- arch/x86/kernel/alternative.c | 3 +++
- include/linux/cfi.h           | 2 ++
- kernel/cfi.c                  | 4 +++-
- 3 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 247ee5f..1142ebd 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1022,6 +1022,9 @@ static __init int cfi_parse_cmdline(char *str)
- 			cfi_mode = CFI_FINEIBT;
- 		} else if (!strcmp(str, "norand")) {
- 			cfi_rand = false;
-+		} else if (!strcmp(str, "warn")) {
-+			pr_alert("CFI mismatch non-fatal!\n");
-+			cfi_warn = true;
- 		} else {
- 			pr_err("Ignoring unknown cfi option (%s).", str);
- 		}
-diff --git a/include/linux/cfi.h b/include/linux/cfi.h
-index f0df518..1db17ec 100644
---- a/include/linux/cfi.h
-+++ b/include/linux/cfi.h
-@@ -11,6 +11,8 @@
- #include <linux/module.h>
- #include <asm/cfi.h>
- 
-+extern bool cfi_warn;
-+
- #ifndef cfi_get_offset
- static inline int cfi_get_offset(void)
- {
-diff --git a/kernel/cfi.c b/kernel/cfi.c
-index 08caad7..19be796 100644
---- a/kernel/cfi.c
-+++ b/kernel/cfi.c
-@@ -7,6 +7,8 @@
- 
- #include <linux/cfi.h>
- 
-+bool cfi_warn __ro_after_init = IS_ENABLED(CONFIG_CFI_PERMISSIVE);
-+
- enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
- 				      unsigned long *target, u32 type)
- {
-@@ -17,7 +19,7 @@ enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
- 		pr_err("CFI failure at %pS (no target information)\n",
- 		       (void *)addr);
- 
--	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE)) {
-+	if (cfi_warn) {
- 		__warn(NULL, 0, (void *)addr, 0, regs, NULL);
- 		return BUG_TRAP_TYPE_WARN;
- 	}
 
