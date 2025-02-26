@@ -1,183 +1,208 @@
-Return-Path: <linux-kernel+bounces-534295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB90A46523
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:41:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A35A46546
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A33F1887F21
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A8D3B7F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E079B223710;
-	Wed, 26 Feb 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF9A2248B3;
+	Wed, 26 Feb 2025 15:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bFO5l3q5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPiIIrpc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A391022331C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03D721E0AA;
+	Wed, 26 Feb 2025 15:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584120; cv=none; b=rlNkAYWDKFp6IFy1HlvELslq3JCyMOIXT2ERPUJErR3qc1qWhGm2Y+rDW+N4ayHaGBnUiTgqQz6PfpZBev1cbyFLoiGheMyY5ipuMnhqcm7+TQhY3yPgR1XIp7SIANYN5L6fHG5X1qJsuKWrhiOFqU4SgJmsi4d9A4MsepL91ts=
+	t=1740584211; cv=none; b=XMGOvvTpP2ZL1eCzFL24jhWKYqLnGU5x3xViOxoeeFPBjdpvxb8wrln68qq/JufkfmjYNWsvBwvSzs6I7Ua5ZipOcjtNJldWo3vHKTo+4bac3VZjlvi0ZsqQI1UwPGukefj7ytXwlC6iHj9cy2YephVWg8VFoT+RgePv8VQhFPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584120; c=relaxed/simple;
-	bh=6mdAuvz781FCW4BfxP6ejJKtJ95cFcW7VnKKzsXundE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l86NsvJhaPcaz9dq6cIfVM7bY9vNNynrdfy0Wb7MYn0CBrANeGYm6Y0CTeaFAwDmK/KhtRwOi5pihcsfOMIpDn1A/O3zkvBqmo8HVrvY2Ny9XpWX0HZ8m21hi9h4rtrssVOik82foZRh69GPdOloiAx6aUtSeR2mTS78Rbusm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bFO5l3q5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740584117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GLtL1iYvSdMyja7reFfUkLJoE1s+u20TWnWvDVhqKm8=;
-	b=bFO5l3q5dOUHxNVUZJsl6ZW5e16bty9gXPL2MhlFzByT1B0dmKqq4VP6d+7oUsPdOf8mWx
-	b/q4NXMWWDuIHt2tA1s9rqMzNuvKJsjNWM0zaa86/6jtzWOWl3ecHPg3KGIde9VgS8adH9
-	NgZJ9zLHGPXs8aRQGfGf1n+Ht3Tk+pU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-B5qCOhjJMuWBZWI0iSbnGw-1; Wed, 26 Feb 2025 10:35:14 -0500
-X-MC-Unique: B5qCOhjJMuWBZWI0iSbnGw-1
-X-Mimecast-MFC-AGG-ID: B5qCOhjJMuWBZWI0iSbnGw_1740584113
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4398ed35b10so35293655e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:35:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740584113; x=1741188913;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GLtL1iYvSdMyja7reFfUkLJoE1s+u20TWnWvDVhqKm8=;
-        b=o8WTNsDpM3BaCKGZxFQhi1p693YzukU3+7nB10nKabwT0lxviK117Z8/Wv1SgZyiir
-         n71u2PuRlalkmm+cV6ykzpcsugSeO47f4CjfR6pA2EBdmPezNRhK7+OeJsv6Qza7JbXi
-         liJrfOEqC15+Kk7Gjo3Pkl+BYYWBjSXYjJ5oueKP8qHRWvspT85T5iYB8qKWTb/N4zIh
-         nSw+yM29wkdSFL9DxKbXnLynN99GnH1wUMyKDIV+vTVzrEIsyIb7CoQivK3SZs8mYcBF
-         VOKin4ocmDwHWRz4Q+UmdHwWOGB9GINZ3AY7UNSUAl+QcDCfuuIC3gF0WWv/uXdwWzsR
-         iWrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSf3dvr++EycidmXeDOrr+libPV+Btv13MNJ2Bgpm52vw+bLlVFVdxeKxphzP54NKtJLzvF2XQfHlV6kE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEyjmwKZ/tkaW42S7eHfj6araFAVOTuNtJuVBnoAw/FtNwsaLu
-	gmwM6t2qZvlq9lsJqylsZbeXqesp0kjEJidhIlbX9fS/NyWA6FaFHd7/W6n0JwEpndjVHMblGVa
-	z2eNuzOtec/0qD4veYJ6Um5WHoCec1ClwbSW8rZ+9F+Ar/eqcg7LCjC5cV5J/gQ==
-X-Gm-Gg: ASbGncumgeLYuPQwvv3zbogANNZvj6cEcqj4HWY5hSkxMu1U/EUYcz7XYK6gUfDjBxt
-	gTdsS9tnMxFRT+O7vLNiWbS68lKHLt1jlfAwjN+XAJcmFQ4RKpDW4+yoAffKXIvHuq/jd2LG/iI
-	C5DdxAXLwhUfm06KFcZVtlSTBOnUeVyQXE7wRIA3DeMBM31KlGq2q6IL4ElmGNj8gzpXDJNnwFq
-	JBGgK2YcfHg/zaszmwC3wrZ+2uoY0H0ZKdH1RR4eFTsA2DjnRjRNkhqqWHzMkFd8lwqLS+u6Gjg
-	fmZA0xqxFxdHU3SEr7eDMlhPKqKcHrcOVJBW7/RXCNusIw1OekyTs+1ZAatHyt9tZYICWbcEfUE
-	osRXzpk9DRxyN1JXrQhZo+1wnt0u/H8nKBwIRaj/dgi4=
-X-Received: by 2002:a5d:59a7:0:b0:38d:e304:7478 with SMTP id ffacd0b85a97d-38f7082b185mr23251361f8f.38.1740584113449;
-        Wed, 26 Feb 2025 07:35:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFp3v+bzi9Bw7o6djX9Ddt+sNpMhqZb5smTuPUCjkfiZJUnTn4b/UNLDawFdnr1VzSuvm/7yA==
-X-Received: by 2002:a5d:59a7:0:b0:38d:e304:7478 with SMTP id ffacd0b85a97d-38f7082b185mr23251341f8f.38.1740584113107;
-        Wed, 26 Feb 2025 07:35:13 -0800 (PST)
-Received: from ?IPV6:2003:cb:c747:ff00:9d85:4afb:a7df:6c45? (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba539466sm26915835e9.18.2025.02.26.07.35.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 07:35:12 -0800 (PST)
-Message-ID: <3d372e93-599b-4072-955c-44c98eca469f@redhat.com>
-Date: Wed, 26 Feb 2025 16:35:11 +0100
+	s=arc-20240116; t=1740584211; c=relaxed/simple;
+	bh=Kcxlg+wkdwQqRcewEbnIH5bR8ZjExYIUPT/bKiPZZzA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=FKsGtzfk8E9Os/fu4OkZz2lolyGjnAWM0OhXjmk7O/dxYSpmBBfm6+7YXRTnoi+JfIY7v0rnLMOb3+RAUm9ZKXyqruucriNQlcwU+Q0nUSuWptQLVi6HGGZJKQ+QMMfda/O3iKS7mL33aq8tnd+VNFo+SXFqRsxiAZFC2a1QkIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPiIIrpc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8C9C4CED6;
+	Wed, 26 Feb 2025 15:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740584211;
+	bh=Kcxlg+wkdwQqRcewEbnIH5bR8ZjExYIUPT/bKiPZZzA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=jPiIIrpcBQVeaLUguCnE87OKpBphKCIQfTlQz+vcSIczYpVQ64VB/o+lcViLlKG1Z
+	 1tYvK4Iqgx4+qMw2GZx6BgbCkn5MS7TxFQSD5RWKB8F3Vah68MeDQgss2MrdGRE/j0
+	 Qz96eWw+jFIjVdXqNA/i4aA7wrG0Bc/3Im/DHKKyHntOzH+ygaG3hZt7ogO9SYFnyv
+	 WRWxe58bAbz9p019/dVtcPlGswsEw+FaFRSK4KvOoDup58AJR/iY1DJGV+37OuSwEt
+	 0MYoLrYZXmhPhxBQWUbPflEF8XkJg9AVZ/E+bYIiZG5oeg4YiiwTfcEFOYPbnMWOJe
+	 xz5HzbdDfK1bA==
+Date: Wed, 26 Feb 2025 09:36:49 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: swap: fix build warning when CONFIG_SWAP is not set
-To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org,
- kasong@tencent.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250226182511.592796-1-shikemeng@huaweicloud.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250226182511.592796-1-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ cros-qcom-dts-watchers@chromium.org, Mark Brown <broonie@kernel.org>, 
+ devicetree@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, 
+ linux-arm-msm@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+In-Reply-To: <20250225-starqltechn_integration_upstream-v9-0-a5d80375cb66@gmail.com>
+References: <20250225-starqltechn_integration_upstream-v9-0-a5d80375cb66@gmail.com>
+Message-Id: <174058387176.2466803.5224190356165061330.robh@kernel.org>
+Subject: Re: [PATCH v9 00/12] This is continued work on Samsung S9(SM-9600)
+ starqltechn
 
-On 26.02.25 19:25, Kemeng Shi wrote:
-> Fix build warning that folio_alloc_swap is defined but not used when
-> CONFIG_SWAP is not set.
+
+On Tue, 25 Feb 2025 19:38:51 +0300, Dzmitry Sankouski wrote:
+> Contains starqltechn device tree changes.
+> Add support for new features:
+> - sound (headphones and mics only)
+> - gpu
+> - panel
+> - buttons
+> - MAX77705 MFD:
+>   - charger
+>   - fuelgauge
+>   - haptic
+>   - led
 > 
-> Fixes: b79768ab943cf ("mm, swap: simplify folio swap allocation")
-
-Not a stable commit id from upstream / mm-stable, so this should be 
-squashed into the original commit.
-
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Binding Dependencies:
+> - s2dos05: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com
+>   - This series was applied to krzk/linux.git (for-next)
+> 
+> - max77705: https://lore.kernel.org/r/20241209-starqltechn_integration_upstream-v11-4-dc0598828e01@gmail.com
+>   - applied to
+>     git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+> 
+> - s6e3ha8 panel: https://lore.kernel.org/r/20241006-starqltechn_integration_upstream-v6-0-8336b9cd6c34@gmail.com
+>   - applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+> 
+> Runtime Dependencies:
+> - gcc845 gp clock: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com
+>   - applied to clk-next
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
->   include/linux/swap.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v9:
+> - update applied dependency patchsets
+> - Link to v8: https://lore.kernel.org/r/20241209-starqltechn_integration_upstream-v8-0-ec604481d691@gmail.com
 > 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 3a68da686c4e..d1f5414ea537 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -587,7 +587,7 @@ static inline int swp_swapcount(swp_entry_t entry)
->   	return 0;
->   }
->   
-> -static int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
-> +static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
->   {
->   	return -EINVAL;
->   }
+> Changes in v8:
+> - add reviewed tags
+> - minor fixes
+> - remove 'reg' property in fuel-gauge to comply with v11 max77705 mfd
+> - Link to v7: https://lore.kernel.org/r/20241205-starqltechn_integration_upstream-v7-0-84f9a3547803@gmail.com
+> 
+> Changes in v7:
+> - review fixes.
+> - new patch with dt-binding header for wcd934x
+> - Link to v6: https://lore.kernel.org/r/20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com
+> 
+> Changes in v6:
+> - refactor: no space between tags in commit message
+> - rename starqltechn to sdm845-starqltechn in commit summaries
+> - Link to v5: https://lore.kernel.org/r/20240926-starqltechn_integration_upstream-v5-0-d2084672ff2f@gmail.com
+> 
+> Changes in v5:
+> - Split patchset per subsystem
+> - Add links to subsystem patchsets in description
+> - Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
+> 
+> Changes in v4:
+> - Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+> - Reorder patches:
+>   - squash max77705 subdevice bindings in core file because
+>     no resources there
+>   - split device tree changes
+> - Use _ as space for filenames in power/supply like the majority
+> - Replace gcc-845 freq_tbl frequencies patch with new approach,
+>   based on automatic m/n/pre_div value generation
+> - Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
+> 
+> Changes in version 3:
+> - disable crypto patch removed(disabled on distro level)
+> - dts framebuffer node along with related patches removed,
+> because panel driver added
+> - fix 'make O=.output_arm64 CHECK_DTBS=y qcom/sdm845-samsung-starqltechn.dtb'
+> errors, but it still complains on 'monitored-battery' and
+> 'power-supplies' though I have 'power-supply.yaml' link in charger
+> and fuel gauge bindings.
+> 
+> ---
+> Dzmitry Sankouski (12):
+>       arm64: dts: qcom: sdm845: enable gmu
+>       arm64: dts: qcom: sdm845-starqltechn: remove wifi
+>       arm64: dts: qcom: sdm845-starqltechn: fix usb regulator mistake
+>       arm64: dts: qcom: sdm845-starqltechn: refactor node order
+>       arm64: dts: qcom: sdm845-starqltechn: remove excess reserved gpios
+>       arm64: dts: qcom: sdm845-starqltechn: add gpio keys
+>       arm64: dts: qcom: sdm845-starqltechn: add max77705 PMIC
+>       arm64: dts: qcom: sdm845-starqltechn: add display PMIC
+>       arm64: dts: qcom: sdm845-starqltechn: add touchscreen support
+>       arm64: dts: qcom: sdm845-starqltechn: add initial sound support
+>       arm64: dts: qcom: sdm845-starqltechn: add graphics support
+>       arm64: dts: qcom: sdm845-starqltechn: add modem support
+> 
+>  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                   |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts                      |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts      | 600 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+>  arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           |   4 ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi                         |   2 --
+>  arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts         |   4 ---
+>  11 files changed, 591 insertions(+), 47 deletions(-)
+> ---
+> base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+> change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+> 
+> Best regards,
+> --
+> Dzmitry Sankouski <dsankouski@gmail.com>
+> 
+> 
 
-LGTM
 
--- 
-Cheers,
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-David / dhildenb
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250225-starqltechn_integration_upstream-v9-0-a5d80375cb66@gmail.com:
+
+arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dtb: /soc@0/geniqup@ac0000/i2c@a98000/pmic@66: failed to match any schema with compatible: ['maxim,max77705']
+arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dtb: /soc@0/geniqup@ac0000/i2c@a98000/pmic@66/leds: failed to match any schema with compatible: ['maxim,max77705-rgb']
+arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dtb: /soc@0/geniqup@ac0000/i2c@a98000/pmic@66/haptic: failed to match any schema with compatible: ['maxim,max77705-haptic']
+arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dtb: /soc@0/geniqup@ac0000/i2c@a98000/charger@69: failed to match any schema with compatible: ['maxim,max77705-charger']
+
+
+
+
 
 
