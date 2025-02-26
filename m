@@ -1,172 +1,91 @@
-Return-Path: <linux-kernel+bounces-533443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE1BA45A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:43:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33531A45A80
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58BB3A526D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D25E7A7B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8BF238157;
-	Wed, 26 Feb 2025 09:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+XlRRuo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CC1238152;
+	Wed, 26 Feb 2025 09:44:16 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F513238140;
-	Wed, 26 Feb 2025 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8017258CE8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740562980; cv=none; b=U6TEDIUh/Uq/9Y3cF632LnV5eHXb9I/zVdRc3ft4FwvkPE4GL87jSpFpfU68dQ2GIzYfijuc+LG2Dwv/9Ej5+y+jkKT1qcxsXNRkXxjaJ4gXfmvVTwVHwMC8hyILTJfDsOj6XCk9M9EVrz4VAEp1bxXuao4IOQzCNMdgaPfAdXw=
+	t=1740563055; cv=none; b=dsZ4xfXL4NL28bFVW5rJ5Vy4SIge0uyS4JUbhlLkfDPBidKl95zBPTO6PNm+z/t0ZN8h7p657C+3ZZbLUYTfJ0rBoaULse4LY8cwDt2hfSJlOTpYYo0YH26kjnbGX+/62UnkgG/M2FUUDrWpIuvwheWj+OyJoeQ2CUX3VgfzXFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740562980; c=relaxed/simple;
-	bh=fqSdCAw3iG+/gf4XMmrjEA97tSNw5S/67jAUlLyL7GY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9pmkclO2Mg9ApvPwLsmF7qtSMRyKiJc/fIZ1Rz6Zwsprt25xZTV/5C5y9ViC1lhocRFjeHcyxjHVk5cr0ys0UJXQJsXtIiDmK+AcG97b1oqTcDP/B/KANnT6qOttVWYobl/qqWFiejsPN2jF2V8uF/CX7oblDM1AK7Cajpw81I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+XlRRuo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF646C4CED6;
-	Wed, 26 Feb 2025 09:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740562980;
-	bh=fqSdCAw3iG+/gf4XMmrjEA97tSNw5S/67jAUlLyL7GY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k+XlRRuoSFUbZ5QGi2r5vT/WJZaIQz201WqIZOJr19smd78wE84r+ZfPY2ovFkX59
-	 /YCsBnFZmn06jfDrbgv4WQwTWl1JkLHOhEO0gNPE9OGdl+As5lQEH0HuCds+2ITFic
-	 5gC5OhJvTxAwGxvE3oYJWAiYjwcaYtgNb8yvNFIW62IInEbucRWpCzowJSJn7McNIR
-	 yjlqCxcLlMeNBY2xTfOSKogY0qFWtXclYsTIM5x/p2X6uEWh81AD+oILju2wJ5x4zh
-	 iuF0lf7a87gVqc2sGEQvwNGIOzVy7YQKo9l8S7NSn8YNPeBzFZCXBXK17jUmi6Fei/
-	 5eXjuQlYgGovQ==
-Date: Wed, 26 Feb 2025 10:42:54 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: kernel@dakr.org, a.hindborg@kernel.org, alex.gaynor@gmail.com,
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, lyude@redhat.com,
-	mairacanal@riseup.net, ojeda@kernel.org, rafael@kernel.org,
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu
-Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to
- Registration::new()
-Message-ID: <Z77iHj56551mDybd@pollux>
-References: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
- <20250226092339.989767-1-aliceryhl@google.com>
+	s=arc-20240116; t=1740563055; c=relaxed/simple;
+	bh=5OvhCwfD/H/3h0RdnpDS9+ANym7YlxnxYKqwO+KyK4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=edBrvioUu/7MCupS8HhskLmPkcDae3fK29pg3CH8eUCPoub98D37rzfIo6wN731Ql1+7JNUfUdAApSpCOBlVbd8kBRiWDie0GAXDNYMVEJVX7WieoKM2YaJK09Rif4xLohS3/phWxnP/LFt1rPbYWK625J+ve5437On4KpnKuV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 13FAE44118;
+	Wed, 26 Feb 2025 09:44:08 +0000 (UTC)
+Message-ID: <714de417-e354-4157-84fe-22ecd9c5e4c9@ghiti.fr>
+Date: Wed, 26 Feb 2025 10:44:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] riscv: Move vendor errata definitions into
+ vendorid_list.h
+Content-Language: en-US
+To: Guo Ren <guoren@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>
+Cc: conor@kernel.org, alexghiti@rivosinc.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com,
+ leobras@redhat.com, corbet@lwn.net, peterlin@andestech.com,
+ Guo Ren <guoren@linux.alibaba.com>
+References: <20241214143039.4139398-1-guoren@kernel.org>
+ <20241214143039.4139398-2-guoren@kernel.org> <Z4q9MDsywT5MrlEa@ghost>
+ <CAJF2gTQzvPey8pqsnZ+A2xvNFmb054wdp3+cgnq_p=eq+REBbg@mail.gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAJF2gTQzvPey8pqsnZ+A2xvNFmb054wdp3+cgnq_p=eq+REBbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250226092339.989767-1-aliceryhl@google.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgedvhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdeguefhhfevueejteevveeikeelkedvffdufeelveeggfeikeekgfeghfdttdevnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtohhnohhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrl
+ hgvgihghhhithhisehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Feb 26, 2025 at 09:23:39AM +0000, Alice Ryhl wrote:
-> On Wed, Feb 26, 2025 at 10:06 AM <kernel@dakr.org> wrote:
-> >
-> > On 2025-02-26 09:38, Alice Ryhl wrote:
-> > > On Tue, Feb 25, 2025 at 10:31 PM Lyude Paul <lyude@redhat.com> wrote:
-> > >>
-> > >> A little late in the review of the faux device interface, we added the
-> > >> ability to specify a parent device when creating new faux devices -
-> > >> but
-> > >> this never got ported over to the rust bindings. So, let's add the
-> > >> missing
-> > >> argument now so we don't have to convert other users later down the
-> > >> line.
-> > >>
-> > >> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > >> ---
-> > >>  rust/kernel/faux.rs              | 10 ++++++++--
-> > >>  samples/rust/rust_driver_faux.rs |  2 +-
-> > >>  2 files changed, 9 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> > >> index 41751403cd868..ae99ea3d114ef 100644
-> > >> --- a/rust/kernel/faux.rs
-> > >> +++ b/rust/kernel/faux.rs
-> > >> @@ -23,11 +23,17 @@
-> > >>
-> > >>  impl Registration {
-> > >>      /// Create and register a new faux device with the given name.
-> > >> -    pub fn new(name: &CStr) -> Result<Self> {
-> > >> +    pub fn new(name: &CStr, parent: Option<&device::Device>) ->
-> > >> Result<Self> {
-> > >>          // SAFETY:
-> > >>          // - `name` is copied by this function into its own storage
-> > >>          // - `faux_ops` is safe to leave NULL according to the C API
-> > >> -        let dev = unsafe {
-> > >> bindings::faux_device_create(name.as_char_ptr(), null_mut(), null())
-> > >> };
-> > >> +        let dev = unsafe {
-> > >> +            bindings::faux_device_create(
-> > >> +                name.as_char_ptr(),
-> > >> +                parent.map_or(null_mut(), |p| p.as_raw()),
-> > >> +                null(),
-> > >
-> > > This function signature only requires that `parent` is valid for the
-> > > duration of this call to `new`, but `faux_device_create` stashes a
-> > > pointer without touching the refcount. How do you ensure that the
-> > > `parent` pointer does not become dangling?
-> >
-> > I was wondering the same, but it seems that the subsequent device_add()
-> > call takes care of that:
-> >
-> > https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/base/core.c#L3588
-> >
-> > device_del() drops the reference.
-> >
-> > This makes device->parent only valid for the duration between
-> > faux_device_create() and faux_device_remove().
-> >
-> > But this detail shouldn’t be relevant for this API.
-> 
-> I think this could use a few more comments to explain it. E.g.:
-> 
-> diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-> index 531e9d789ee0..674db8863d96 100644
-> --- a/drivers/base/faux.c
-> +++ b/drivers/base/faux.c
-> @@ -131,6 +131,7 @@ struct faux_device *faux_device_create_with_groups(const char *name,
->  
->         device_initialize(dev);
->         dev->release = faux_device_release;
-> +       /* The refcount of dev->parent is incremented in device_add. */
+Hi Guo,
 
-Yeah, this one is a bit odd to rely on a subsequent device_add() call, it
-clearly deserves a comment.
+On 18/01/2025 04:46, Guo Ren wrote:
+> On Sat, Jan 18, 2025 at 4:27 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
+>> On Sat, Dec 14, 2024 at 09:30:38AM -0500, guoren@kernel.org wrote:
+>>> From: Guo Ren <guoren@linux.alibaba.com>
+>>>
+>>> Move vendor errata definitions into vendorid_list and make it re-useable
+>>> for other header files.
+>> Why can't errata_list.h be included wherever the errata definitions are
+>> needed?
+> errata_list.h can't be included in rwonce.h.
 
->         if (parent)
->                 dev->parent = parent;
->         else
-> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> index 7673501ebe37..713ee6842e3f 100644
-> --- a/rust/kernel/faux.rs
-> +++ b/rust/kernel/faux.rs
-> @@ -28,6 +28,7 @@ pub fn new(name: &CStr, parent: Option<&device::Device>) -> Result<Self> {
->          // SAFETY:
->          // - `name` is copied by this function into its own storage
->          // - `faux_ops` is safe to leave NULL according to the C API
-> +        // - `faux_device_create` ensures that `parent` stays alive until `faux_device_destroy`.
 
-Not sure that's a safety requirement for faux_device_create().
+vendorid_list.h does not seem appropriate, I think the best solution 
+would be to fix the header issue and if not simply possible, introduce a 
+new header.
 
-The typical convention is that a caller must hold a reference to the object
-behind the pointer when passing it to another function. If the callee decides
-to store the pointer elsewhere, it's on the callee to take an additional
-reference.
+Thanks,
 
-I think if we want to add something to the safety comment, it should be somthing
-along the line of "the type of `parent` implies that for the duration of this
-call `parent` is a valid device with a non-zero reference count".
+Alex
 
->          let dev = unsafe {
->              bindings::faux_device_create(
->                  name.as_char_ptr(),
-> 
+
+>
+>> - Charlie
+>>
+>
 
