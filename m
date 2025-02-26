@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-535147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3022A46F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:41:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B7EA46F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F2C7A64A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A91D3AEE6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1F32620E4;
-	Wed, 26 Feb 2025 23:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A7F2620E3;
+	Wed, 26 Feb 2025 23:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WwcvegKB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYMfxdHm"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5532620D5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509962620D6;
+	Wed, 26 Feb 2025 23:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613309; cv=none; b=NsUNhA+bBNdUHI7gOiKJFDeeCSzJCqEYESF6CkB/+eFE8iiK+wvlBdi3eQp0mwjGibjrmerLIoCPdAtLwFgPpOAiAi/fGXLAqB5FhKw33M+kSzEi+RXImPnv6XTsGEavf3stOjqGTUtboP0Ke5aILqVXve9J7CL+JpQp7RowD4w=
+	t=1740613379; cv=none; b=V14nPFgpA9dZk5KmJhDmOz6NLo+2jQ5wMirDKjOEmTQanJGZbtMmkaZoUHQFTGE26jDBWyPQPuxkOcKH0E6Z7RoNx/7/OYMGLohzCzj2xriknFy82vOGHSwlvaoX7S/F7AnKq82SQlqkvnpaXqvyvcqb33xeM+WwxZxNPr77gfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613309; c=relaxed/simple;
-	bh=8Bwz6Uwyna28A9u7qfhyqwnfqrwLq4MaRl2ezjSy15Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pk+DeuLjhNRm+Ln5/UnkrZbbSAxGQBIzf/+O74uzP4Y5YnPS2nEkx4rtDD7gLOJHp6kAaVvEoA2Vsh/82l+UFA6T+gYZ2gjTDhuw2VQx+3TxyvgjRccEnEjgV7l89/kXs8u0ytzppXDYBmHlLRkZT7aJS9j7czNTPv5M3UlsXbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WwcvegKB; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740613307; x=1772149307;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=8Bwz6Uwyna28A9u7qfhyqwnfqrwLq4MaRl2ezjSy15Y=;
-  b=WwcvegKBZWX+ouMczLvubxjle0aj8w//tcL7LDpNPWmRhppNdpeKsx00
-   lNjm9MXkln9rdo7JdY2pTyteShw1mcX5mVjiaOXBLlEAzGpn3RGMgAvD9
-   kgipL6B7L+ycdd0nanujM3uZPJ8VLK+NH3ns9L7BSS/Xqd+uZk2BtkkiF
-   0xcTYiH4CaLpp5vGtuZivFAFLZdsP1/asLkxp/B7TTesqAVRH+p5q2MJ/
-   NJfCX95xGT4kY2nNWdJJYwNawLh5N6ljJAiaVMFK3gL5gctnWFR9k/g1S
-   /qCNXUiN+WJYOAoQRTlxmTse5knX2voBQeyWiN1T9+SLu7oBPcR6ZmxYH
-   Q==;
-X-CSE-ConnectionGUID: H0svRCN/TwelPR8NtKiQ/w==
-X-CSE-MsgGUID: eos45tY5TM6vhcOaplXR3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="29088402"
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="29088402"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:41:47 -0800
-X-CSE-ConnectionGUID: RiJsh+UlQeywQDYkgACb6g==
-X-CSE-MsgGUID: ie/z0suQRXuj9EEPHnB5cA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="121446392"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 26 Feb 2025 15:41:45 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnR27-000CbY-2T;
-	Wed, 26 Feb 2025 23:41:43 +0000
-Date: Thu, 27 Feb 2025 07:41:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: sound/soc/renesas/sh7760-ac97.c:43:17: sparse: sparse: incorrect
- type in argument 1 (different base types)
-Message-ID: <202502270743.XHyhWKWp-lkp@intel.com>
+	s=arc-20240116; t=1740613379; c=relaxed/simple;
+	bh=zKs69zuJTCMuJZx3kqjoXzCIAA1mJhuLMYaLs5UHP2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q4Ly+ifgs0EwmrothfWByA5JjxioEd22yMgbQp4rBEyu3PCbJkHpMA5cOrhq/oLFsCFNlci0JLYhqSd8TTPIsofUXzAJZ9ByaNnaFrzNU5OMp6BukofOs2lK9E28IOz3ZaMmQt57bEcPLrIuKTG6jrkDbMwxN8Znq36nFkQsKuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYMfxdHm; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c0a26b1c67so35913685a.3;
+        Wed, 26 Feb 2025 15:42:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740613377; x=1741218177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCkbkcOBVmYiyCJMExAY8OQtnZbeodmQmHyD6JqPePI=;
+        b=bYMfxdHm5qKBtOZ2gHcfkcUJoKrhABz6nEspZZUeMBkEGuPmoeEOCOW9HkMF7XGT45
+         pshKOXvrVKG5lnT4AXA2QrYcejMZqyoxJtkmoAhAq1UD5T+rAnANDHW2IStYDglRZcdW
+         dvbkyJpZKT5/ucle9ogfeUPkTU9v7fAsgi8qB+PWxA19nkIFvehddniu7ydWn2xCZC/H
+         Vcdsg3LMvYsn5zPeJhEBH+SplW2NeUo9u54nhW1zTL+XZj+HqlXK/xLRsCYqbxiutX0x
+         jPUfnw/NkwADsT4f3Mjdm6ceaSYFNlE6Q8wSG8O+NcXuNr3vT6MCdajd3h9xusFS3chT
+         7Vrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740613377; x=1741218177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YCkbkcOBVmYiyCJMExAY8OQtnZbeodmQmHyD6JqPePI=;
+        b=NT6fD+fRC0beO+VCvWlqgknTkQFOgOS/JBpY7SqfbuF1GI9ldJgUanxomnyRwf1Ysk
+         jJksMw/dvNWPHUerxrnEEQoK9sXdmE9F72Q1+uv3TFXlGFajVJ4RxjHu3ergL4D+NFBH
+         P/jtZ9bVrGNgLNLGBTXqvtt7lnBYSVyULiMYU33ky4pAT/4bHIF+NxJOcnM6RgT0vlyF
+         l2iDy7c3sy6ekF3nfhTqAkN3VUTnxZAmOEl/Z8Rx+WHh4U/P8w5wY7/mLvUV61vnYw7R
+         CC3qEGKW9m4mFDzSzQxU3EB/H8M1I5fxhlVNBn3BpCZ9HnLoWprow7xpJ8euZHuUF6A+
+         mElw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHWT9MwXW83w6hZQissxJ9kuVG9FdZbY38vPYelxzeBhh/JM4o45dbze1Uaxr0QDCH/x/ftipwNRmBIu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjY9/VpU/XKTftIzUscLszG6ThnYwaAqpq0Ym+hIij/WNmyzVK
+	qvCcVpzmm/vB8oouzF66V+kQ+cWrRazii2skuhGcnjtS3RyDjn/q
+X-Gm-Gg: ASbGncuZgWmjY2DoHkm+3zsIRP8CZ+2DoMDC4WZ3ARM2Nl6w48jl1zl3cuH6Wa4bUMV
+	XQtAwmkivwYKf1R+n2+sPo1ZasU3kFDqh2EezqiHaVgWf90KP+3qPu6MkI/jdBI/Q4MsW0UN8IX
+	fSTWWGLIY1gy29Y9WrQVwOkPv/vyK2CJ4foGV2JRn1BrnwfXIXA09TIA5pF939ihWCbi96ddhd6
+	rNpv7Ypc2gfeQfK/nkdvutolCQsq5I2d0VcW9YhM4xC0a71ZOLkTq3BJ/yWF+Vo9iwtfq1nCEDP
+	OQ==
+X-Google-Smtp-Source: AGHT+IEE0yZnL/j3TfydHcx27TvYZq4HNVlRTjBaZb6s+lcBJ8etFGkpoweqrr6ivN/gIINJcC1idA==
+X-Received: by 2002:a05:620a:2914:b0:7c0:a46d:fa92 with SMTP id af79cd13be357-7c23be11a85mr1282129485a.19.1740613377053;
+        Wed, 26 Feb 2025 15:42:57 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36ff0f1e0sm24115785a.52.2025.02.26.15.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 15:42:56 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Guo Ren <guoren@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v2 0/5] reset: introduce generic reset-simple controller
+Date: Thu, 27 Feb 2025 07:42:28 +0800
+Message-ID: <20250226234234.125305-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Lad,
+Many SoC have a simple reset controller with toggling bit to perform
+assert/deassert. It is annoyed to add device id to the reset-simple
+driver for each device when coming a new SoC.
 
-First bad commit (maybe != root cause):
+This patch series introduce a generic binding to collect devices
+match the following requirement:
+- There is a single, contiguous range of 32-bit registers.
+- All bits in each register directly control a reset line.
+   - There are no self-deasserting resets.
+   - There are no timing requirements.
+   - The bits are exclusively resets, nothing else.
+- All bits behave the same, so all reset bits are either
+  active-high or all are active-low.
+- The bits can be read back, but the read status may
+  be active-low independently from the writes.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   f4ce1f3318ad4bc12463698696ebc36b145a6aa3
-commit: c087a94bea49acf34d651f7308506fe462a937b3 ASoC: Rename "sh" to "renesas"
-date:   4 months ago
-config: sh-randconfig-r132-20250226 (https://download.01.org/0day-ci/archive/20250227/202502270743.XHyhWKWp-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250227/202502270743.XHyhWKWp-lkp@intel.com/reproduce)
+If the device follows the requirement, it can set the compatiable
+and reuse the provided "reset-simple" as base compatiable without
+changing the reset-simple driver with unnecessary new device id.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502270743.XHyhWKWp-lkp@intel.com/
+Add a generic reset-simple controller, and migrate the Sophgo
+SG2042 reset controller as an example.
 
-sparse warnings: (new ones prefixed by >>)
->> sound/soc/renesas/sh7760-ac97.c:43:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   sound/soc/renesas/sh7760-ac97.c:43:17: sparse:     expected void const volatile [noderef] __iomem *ptr
-   sound/soc/renesas/sh7760-ac97.c:43:17: sparse:     got unsigned int
-   sound/soc/renesas/sh7760-ac97.c:44:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   sound/soc/renesas/sh7760-ac97.c:44:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   sound/soc/renesas/sh7760-ac97.c:44:9: sparse:     got unsigned int
+Change from v1:
+- https://lore.kernel.org/all/20250213020900.745551-1-inochiama@gmail.com/
+1. fix title to mark it introduce new generic device for
+   reset-simple driver
+2. add "active-low" property support for the generic reset-simple
+   device.
+3. patch 1: update the binding description to illustrate the
+   suitable scenarios to use this binding.
+
+Inochi Amaoto (5):
+  dt-bindings: reset: add generic bit reset controller
+  reset: simple: Add active-low property support.
+  reset: simple: add support generic reset-simple device
+  dt-bindings: reset: simple: migrate sophgo sg2042 reset controller
+  riscv: dts: sg2042: Adapt reset generator for new binding
+
+ .../bindings/reset/reset-simple.yaml          | 66 +++++++++++++++++++
+ .../bindings/reset/sophgo,sg2042-reset.yaml   | 35 ----------
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  3 +-
+ drivers/reset/reset-simple.c                  |  7 ++
+ 4 files changed, 75 insertions(+), 36 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/reset-simple.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reset/sophgo,sg2042-reset.yaml
+
 --
->> sound/soc/renesas/hac.c:77:3: sparse: sparse: symbol 'hac_cpu_data' was not declared. Should it be static?
+2.48.1
 
-vim +43 sound/soc/renesas/sh7760-ac97.c
-
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  36  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  37  static int __init sh7760_ac97_init(void)
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  38  {
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  39  	int ret;
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  40  	unsigned short ipsel;
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  41  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  42  	/* enable both AC97 controllers in pinmux reg */
-48ccb2ceec6fb1d sound/soc/sh/sh7760-ac97.c Paul Mundt    2010-10-27 @43  	ipsel = __raw_readw(IPSEL);
-48ccb2ceec6fb1d sound/soc/sh/sh7760-ac97.c Paul Mundt    2010-10-27  44  	__raw_writew(ipsel | (3 << 10), IPSEL);
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  45  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  46  	ret = -ENOMEM;
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  47  	sh7760_ac97_snd_device = platform_device_alloc("soc-audio", -1);
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  48  	if (!sh7760_ac97_snd_device)
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  49  		goto out;
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  50  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  51  	platform_set_drvdata(sh7760_ac97_snd_device,
-f0fba2ad1b6b53d sound/soc/sh/sh7760-ac97.c Liam Girdwood 2010-03-17  52  			     &sh7760_ac97_soc_machine);
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  53  	ret = platform_device_add(sh7760_ac97_snd_device);
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  54  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  55  	if (ret)
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  56  		platform_device_put(sh7760_ac97_snd_device);
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  57  
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  58  out:
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  59  	return ret;
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  60  }
-aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  61  
-
-:::::: The code at line 43 was first introduced by commit
-:::::: 48ccb2ceec6fb1d46d1bc92dadc602d4341a0149 sound: sh: ctrl_in/outX to __raw_read/writeX conversion.
-
-:::::: TO: Paul Mundt <lethal@linux-sh.org>
-:::::: CC: Paul Mundt <lethal@linux-sh.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
