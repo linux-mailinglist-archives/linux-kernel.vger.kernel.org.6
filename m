@@ -1,229 +1,183 @@
-Return-Path: <linux-kernel+bounces-533422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7594A459DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:20:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F61A459E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:23:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0D757A4FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BE23AC4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01526258CED;
-	Wed, 26 Feb 2025 09:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A722423B;
+	Wed, 26 Feb 2025 09:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="k3Jq1p2G"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010058.outbound.protection.outlook.com [52.101.228.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EzajmSa0"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DAC1E5B85;
-	Wed, 26 Feb 2025 09:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561646; cv=fail; b=iVinheGi9FZfb/fGnzzNrsvsWH2mEpf5qtoKyvlShvjqgscPjDY7nPJnjF/45hYcXD36UsJEHz/9iaeldnoXwWTWq6/bRL8TM+2r6I2lZqurhCMPUBT5tG3shj7kF8C79KWjr2Y63JCaLIs76Xzw1t27AqCyebaaAHmcqb3LkC0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561646; c=relaxed/simple;
-	bh=S+OG4woGnAi3pcvSc/pbpFBksslNf+AaLpiYiWwIMlk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PYhAR1k3284ZXW/9WdUBTyBCghfDR7RJG+Ih6G/B9SdbfQ24v9AJkXsVIbyvXVCEsuWU9O7/S6vl9aphUyeDts4+C9g9f6lk0MFMiEM0P7r7f5Tc6T0keX7/2YKPZdU+w/RQP9IMbbMZGjn0+xTjcHri6CbMXWqynb3CzOT1c2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=k3Jq1p2G; arc=fail smtp.client-ip=52.101.228.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kV6ztxqb78xdawJIStLuez3cWYnSkw0nVaFNxUzygOSXdn9uC2sXqkfHWhfT2s30KkXgL788x+GU6KZHRljSlp4nBIXwCAvtzwCqQfhXcTvtufhMWTXmTAKmIuK7MKMzYli2826dwydK4wQWymwEHHvY65XWcxuoQvDfkv6KNbI3KtddiIorZ/WYMsRLpAzmaIO3KSoXCQMkxTuH6i4J6IsFIb9cO9lbhGn1dVF3JqWD4rRKs4de8L1JNuKq8QgstYzek5wKYvzt80eUgseflu+Hc/6lI2crD3WPIVuZY6dcDGq5B112tj5LfkEGkpJk4OF/WLPHxfAd95LL3UbWSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IxZUk1cpPyh9fyT9o0PVQ2hF06z8oJv3C0OYBLhu1g0=;
- b=BDy/neChmLFAJmGHNw56dO3w2kXotgv+SRYeGFmWGXguGoaL7FgOQEJMBBFZcI4/LOheBqK7nLprg8ugfDf7IS0gf3UhveRcS/RXYFpwT2nSon3v6IkxAZbDyv9ccoOUlHsxHj9elZYWK3AJTXArrExR98RFzysQ1OxClgv7+kLGgHrTuFfypMLYx1/UHD/4w5aP4o6ui4eo9Q1qWblJmZnJlGUV/NcK7SEuwEHadUyiHdk8Zmttyekp0cZ+VtPJvp+2v5tSoCfy+sbYWMZ4U5R3US2WKubsv8JsdY1xP9YlRqGqz2lC2fb0S23Jri2PNXnHcjew36Y+4tI26oabAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IxZUk1cpPyh9fyT9o0PVQ2hF06z8oJv3C0OYBLhu1g0=;
- b=k3Jq1p2Gvsdsi+GkN3n0W3jGUSELAatzO9FC421TSnA6BgZM2YlAP4Ou4kn3LXSwFxya505bSutgXBTLRZ6z7bdiOvX5xFxHzThD9gh1PV8IUGxIMzqRW0mIfLP5z1ikEYmwgTP2cU7IYnzA9AqHFEYgMeXFTwIB4yB1T5H19RU=
-Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
- by OS3PR01MB7407.jpnprd01.prod.outlook.com (2603:1096:604:14a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
- 2025 09:20:40 +0000
-Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
- ([fe80::7497:30af:3081:1479]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
- ([fe80::7497:30af:3081:1479%7]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 09:20:40 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <ukleinek@kernel.org>
-CC: kernel test robot <lkp@intel.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
-Thread-Topic: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
-Thread-Index:
- AQHbUIfEye5JKGoBg0O4godryy/UCLLsKj8AgCDikqCAAUJZAIAAAFoggEOPvgCAB91nAA==
-Date: Wed, 26 Feb 2025 09:20:40 +0000
-Message-ID:
- <TYCPR01MB11332CCA52D52AA982BCDBFA486C22@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-References: <20241217132921.169640-4-biju.das.jz@bp.renesas.com>
- <202412182358.9wma1UUE-lkp@intel.com>
- <TY3PR01MB11346CC402843A628226F5C6186122@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <b7woae7iquvuzs4vcollns7qcyand4ginrbjqs75bnsiockrjc@c4pyody6zdcr>
- <TY3PR01MB1134690173EBB583582DE8E3386132@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <hb7agtiqcuotiie646a2nzwg2cfwmahtgzzexxsf4tqu3rztf6@qqq2a7qkazh5>
-In-Reply-To: <hb7agtiqcuotiie646a2nzwg2cfwmahtgzzexxsf4tqu3rztf6@qqq2a7qkazh5>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|OS3PR01MB7407:EE_
-x-ms-office365-filtering-correlation-id: 71ef120d-6fce-401c-9e95-08dd5646d663
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?g6oxEk1anjkMWEscXX+PT0y4OguHGLgNisReQfOKz8xQQJRIcF1MkOw4vv?=
- =?iso-8859-1?Q?RZVEAUyulxN+vRYWHi/Gi+Q3AQsUfwOPK9WFlq8uuIgx0fIyHlkh2vgHvp?=
- =?iso-8859-1?Q?HHAJheUpIx9h4XSYA3P6DWhmEBAm9W8rQT8jnp7U+CiFAy3yMaXC708Ruz?=
- =?iso-8859-1?Q?I/5CvDNl/Bp/GdhW04/5FEwSwDIy6Vv/YVGmMbD5ojA//wl2Ez6K9Bw9VR?=
- =?iso-8859-1?Q?6zctwnuMtYWKvx0kfl1FtjI5MWQxX6Cqjg6qoL8FyShxEOTT8Pb0fjT4BI?=
- =?iso-8859-1?Q?RWNWgopqKIGGN/Lrj9fJoK2JVuiArBO/U4ySDkewuD++2uMC3mF1awCFLt?=
- =?iso-8859-1?Q?Jl2J4MrsqDTmtXVwQcJwoDWosKsB8y/GukYeVjZ/YNoX5rG7LiNA2GquxK?=
- =?iso-8859-1?Q?vt7ceNfDH0BIW5NbWVmdXoMzVqVIKng9bOGRu8xwPACgOXHP6bGgOVZPpc?=
- =?iso-8859-1?Q?+NhTAp2kA57D7s4ONLvXRHNRAmXwidYVn+JKXDKhNj2WesXtVUnhj/S+t9?=
- =?iso-8859-1?Q?zOdL9UU/uJ1OPBWTCu6nfIhZW0Gf3xRAUVkOlcjChhH9x2T/ySKnRLraan?=
- =?iso-8859-1?Q?BWPYgzOMotUw7eo/IX4NtMOIcb60kKXwIHyPqAsvX3AxAUrsQVhr/orgsy?=
- =?iso-8859-1?Q?S5iA745d0zV/la054I2kpfA3bgNkFxcx+cKqcNWNMBJljS0GdVulMgXbBQ?=
- =?iso-8859-1?Q?bQjR915aF7L4IxlcOlaPm+50aMv4t4KDm0FRdmXAulyFHETbFgS/fGQofP?=
- =?iso-8859-1?Q?ebstMk513+H1tiZ8SzpF4NF/iiehhIxNaU6GWGiBruYkQnHgRs4BGZtYqZ?=
- =?iso-8859-1?Q?o7mzh0eXhq2TD9xzm6bypvkTyY0chlPKCe86GXkV4r17wdVZlBHIuoNski?=
- =?iso-8859-1?Q?nEjDif9/N0Y6ESKw/0ExwHHgG5w+VIPBYqCWJaSNATHevXSlk/bAunocBj?=
- =?iso-8859-1?Q?74ZpBl+4VW3oddT5mmX88fj9KpwiAN1gxv8Hw2a96OCJf2op9B/bZYaGiN?=
- =?iso-8859-1?Q?qKzdD9M057xUVtRhA3GcCU6w+/N+lPGKefhUVie8nGTxMFIbNP7rcAikSb?=
- =?iso-8859-1?Q?b81lq4YEA3N5ugxT51ys9925hNZ1NBZIOC8EBYIxJfsSUwVD9WEutNFTbl?=
- =?iso-8859-1?Q?733unvnSC7vLEHLXaKgUFxRViJVSBx2IeSOrMwbO/LiXohalXYgT3fLaqQ?=
- =?iso-8859-1?Q?dL1f+YcDhpL+EfSmXLm+YkmJvyl1gob4CCG+J9Bf3X8smra1r5SrsKbBIb?=
- =?iso-8859-1?Q?dWoKaCQNzfuVOYJBXTIGYhayCTx9b2tIDxVsqZvA1UaE+IDoPPvfDxCf09?=
- =?iso-8859-1?Q?XE2Cy757ItUHZlS0ueTLRxpzMVJxmddO9ESUSK1RgkEosqNObRZDvOI1cw?=
- =?iso-8859-1?Q?k4GQeQH2usQN5dQjrLcvJrUKqyreSOkFQIDSwHmOCNQShMScKQCK1xj+4G?=
- =?iso-8859-1?Q?Ea7GqgRMtMSPknhezWtymz/m0lQkdEn1SDyAZ5E/Q1Jzxl6Q/9F3EMixl/?=
- =?iso-8859-1?Q?EduX2VDO3+bpLVVJcFJBYj?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?SYhmx1gKiqvHLFeEzzgBDqVRBLX/qTPrgwHYY08tzoltuxzaayMdiauoDf?=
- =?iso-8859-1?Q?CuAvMAQfVuxHDIp0KCpTTeU9yPIs/Vbw/l8rzl/kWScQ2GeWbrbp6fIVHD?=
- =?iso-8859-1?Q?9T90mPDcmtoZw1ibbWD7ZB5J3oLLNM0SWXbUM1zOuzB1yOMoRBRB0YiUFe?=
- =?iso-8859-1?Q?hyleAJa0Eo4kp1lNPxAbNZyJF1MeBvRV1T28yiUdIrytEqB1brBTucwKL0?=
- =?iso-8859-1?Q?Z1cQu3ySadsyP7WuY3cU0NhXLJczrqXvNYF2047CSLAyF7hsM07spgyAUg?=
- =?iso-8859-1?Q?P14WpF5wqyWKmxnkES1phHsHIUMoiIDrPYqmfEPLOAqNWWc4w0caHgz4S3?=
- =?iso-8859-1?Q?mw6ojrFYlJwCbc0VSYGWBblMThx3Ch75rY2jiWh9FMabzDYkxWl+b+DBVV?=
- =?iso-8859-1?Q?yEkXrSkYUxLJmQQ/FbrMysMNO2S/VHfcJOnXPI2Q48zX3EJ5TMINzZdHFx?=
- =?iso-8859-1?Q?zBrydimZyyisuBtubVoSSbN4UXslw16GTzXkigsNU8xBqY8RfrJp0I0XSf?=
- =?iso-8859-1?Q?/zB4C6Bzt08YEvKxy7y9UZDDYmFFLH1KeOHK/LLSwuM9wJCew6nTKc0ITT?=
- =?iso-8859-1?Q?RCFGl9P34lZJ52uIK50kyxdeWNCdsFIjhWe7jgacaqVKBCoZwU6IU2vAbm?=
- =?iso-8859-1?Q?la3jUCICjOPgOYd35t3VnpAaZRFh5q3Cw5m74CEj9hkOfheuOaQ/MkGo3i?=
- =?iso-8859-1?Q?gic0AD7tHna0UJWIRPr0uZg+ZKmgTbePBqiiqrEPMER5q7NPK9bVl/E45V?=
- =?iso-8859-1?Q?X6aSMhHq1+gKCXWLy52quinp99ZTjRTaTGQn6tcMSYmQ5f84NcJjkUJAwC?=
- =?iso-8859-1?Q?pAcMTClBdF+3q1ziZ9JY7oxrcv7IvdcuHxvGDzPQPTh2ZVEn5E2FsXijtl?=
- =?iso-8859-1?Q?IN8EkbIj5Gkv66OcRCfeyamXg4+im5VBBfEJSu4d1pYiCLa7YR28bseOQa?=
- =?iso-8859-1?Q?YgVICdaZxdpNmo0dQlmz/j2uwDsS1g3zOdvpOvFILSrXDdyTbIdpGdeZjh?=
- =?iso-8859-1?Q?aEMfS7IV0torZ4YEtacCpm1NxSHw+1D8kGD2K0qfcN7dVZjM7T1iHgqrrt?=
- =?iso-8859-1?Q?vmK2eFoR8VoqRReL6DpshB6aNHlcmJ4J26jlGZZaW7ej+9MhtcYD6Uvg9K?=
- =?iso-8859-1?Q?SiHj6ZVGXBNIseBVPz1LU+Gmqbf2giOWO7nrH5QoH8jlEZgoHVwF0LVzS/?=
- =?iso-8859-1?Q?6+f4V3Oy9lBUlSAYi4jR4JB4Wzfg7GcCoK4z05r8JVSbkwRJaW6OSXKe3u?=
- =?iso-8859-1?Q?ElVdvDZXc/OvhCY0GDPW4wVt5mIFg3lubVvskJ4xYOiMLfes/y8a8nLpe1?=
- =?iso-8859-1?Q?iEpRPtj0du77moMfYDC85TLQXT2jsRZhvHn0QONoPTcDEOrG6Gs2UtdfqM?=
- =?iso-8859-1?Q?qkKVdNIqTRtJFRjOVXKfNtd8k8Pgf+RMwsvxFLkIFrGz+vTChlTbtNUXSM?=
- =?iso-8859-1?Q?+niAFaD9E2DcmKgdcPUIsPsZxHjTxFgyNQEdj0PJ/WgAi+bIM/iV/n/dTB?=
- =?iso-8859-1?Q?7EJvih1F/d09O2euuDWEti15wgYK9YqbJVL3JBO7cpxF2uWRnSvwOkB3ja?=
- =?iso-8859-1?Q?LUQtz6OPpVfqu9i3a8XcpL4UVPsPQEh1t+7blfMXaSo94qSZYR0vM1oQZQ?=
- =?iso-8859-1?Q?j6GdxkDFeZKz7Om3br9rw10k1BOpqhgqD5Wo38twQqNmXZHNWgSAldYg?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB21DC997
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740561825; cv=none; b=NK9+PKM3oT8+zI3sN1j8AiQlbs5qh/jYvp6R0BLRFemKmEto8e1VMbixGOtUmqjMd8h7/R3AIBkAzFDeH4WSEJZf2/tWhqAYN/XJHOqTez8uxUrli/4WRk5LFjj0YIecMORRbbQ8p1DPJNlUljy7JvAeCvSrEUIhc/hesKm3mBc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740561825; c=relaxed/simple;
+	bh=p4Ym6uFd+a4HjnTUB8RZrVFMgrTyDhnkWn9RtsDN2XE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ru1B9AzLddskT4XaZQFR1zllbXdQTGUxicFd1xC4HnToKTBV2t1u5WaB8k68UyaPFBFlbs3KZBrnpx5nCewlCsIa+2faMtsYxeakZZhBgLLHb0t2/zeIFyddHK9TYFY5zQdCO6fPQrISQAdadSKrFbzvI2TOANzGDLmdzqssdjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EzajmSa0; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4399a5afc95so27869415e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:23:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740561822; x=1741166622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pk8dgs27jijazmvA8B3vaETW0/po24foxSj9cCzDqsU=;
+        b=EzajmSa0x/KKEQVBx8YeJ8bErOEjzK3Eeccmw4bKl8/vFZCB441pIrCzzNco/cP2Dw
+         SmNaD/rge7oyyPPeFlqlbf6rWy9pXVQ25Q6eLrincHOFgBu213IevXEeHs7IGGpWgX0n
+         +2Kjo0GmheIxqXgeZL2iAOHDtx7he8ZszGG+pAl18s8q8JyKxNDJlrfvM6ZysqDSVdzj
+         5JXl2nZLtMuzPuk9UimGHzX03poOOH/PEWXJ5Lj6hFnJ/4Bva6qRmaHAC/JF2yh2IKwM
+         q6RUO/LbsIMS8RhfaCtrNRc2xgsKG5d3vRV/1oHW/YcT8DnSsNn/NWl06O0dQufAmpMQ
+         5QqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740561822; x=1741166622;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pk8dgs27jijazmvA8B3vaETW0/po24foxSj9cCzDqsU=;
+        b=LJYaiGnaJ9VkJLTDz2aKFGyvzvjP/51CeeE4IhU8DptMOB7B9NydUpAOJOEXxOm5QV
+         8MwJ5h94Qxww++laJocMj8xWx7PsofvPlDYNTda5Nr6v/lErZ0NdQY0MYuKwbQhv4i39
+         s4l9+vNinYHmT4ytdHa9ykojXk3tbuo+jJLal9MNjSDB7HbNIibvQABJCROXwa2fRqOD
+         em9QD2rqeIgbn9jbzmCdbJdZlTHMJVfe1GSWog0aAASRuLPybr+6sp0o25o/lkmStL91
+         7zrR38Aph+ghXGb7ncaEkZveS+1UrVtq1AHeivuQ4m2I/o1Saq+H2xAlIAzlTBQMFG+4
+         3qNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1J9lrG6XnUpLmCI1GieAMRa8tfLYj+lhEaQlDpU0YrTVs5kXRUfcaq6UdQsBuNPAK+tdSahPFHG2U20k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo6VMcmq7C0OPWZvyfWOCjY16WZvUO4fLMwX2M5t67g/PGGH3e
+	iLTOmyQ1FrIslOBPChpjSzTbYsAIKaRQpEzNUFBYo2ROxp3GsTIXPclDM5nxN9f2pU+JACInJt0
+	H19QqFVydtSziSw==
+X-Google-Smtp-Source: AGHT+IEs8HO5Ml6nZnQ6KRY5UHYewnhQ67q+wlvUIYAlBU5XFYac8t8uvtmNF73ubLQpqxPWbCQNxWONvTz7wYM=
+X-Received: from wmbfm22.prod.google.com ([2002:a05:600c:c16:b0:439:98a4:d14])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4f93:b0:439:9c0e:3692 with SMTP id 5b1f17b1804b1-439b75b6417mr142482775e9.28.1740561821904;
+ Wed, 26 Feb 2025 01:23:41 -0800 (PST)
+Date: Wed, 26 Feb 2025 09:23:39 +0000
+In-Reply-To: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71ef120d-6fce-401c-9e95-08dd5646d663
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2025 09:20:40.0965
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5OuO+73a/whfHL+akTxECjuqlLJPzJQg522jEqJfSag4pakUPDHklgiomhEIOO3a4f2BS+2FtygG2r9NNbJodRbTmh5RjSfpE0LyxDF8uok=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7407
+Mime-Version: 1.0
+References: <ea2466c4d250ff953b3be9602a3671fb@dakr.org>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250226092339.989767-1-aliceryhl@google.com>
+Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to Registration::new()
+From: Alice Ryhl <aliceryhl@google.com>
+To: kernel@dakr.org
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, lyude@redhat.com, mairacanal@riseup.net, 
+	ojeda@kernel.org, rafael@kernel.org, rust-for-linux@vger.kernel.org, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Uwe,
-
-Thanks for the feedback.
-
-> -----Original Message-----
-> From: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
-> Sent: 21 February 2025 09:08
-> Subject: Re: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
->=20
-> Hello Biju,
->=20
-> On Thu, Jan 09, 2025 at 09:32:58AM +0000, Biju Das wrote:
-> > > On Wed, Jan 08, 2025 at 02:13:09PM +0000, Biju Das wrote:
-> > > > Please let me know, if there is any feedback for this patch series
-> > > > or any new API to be adapted in next kernel version which
-> > > > simplifies the code, So that I can send next
-> > > version.
-> > >
-> > > I didn't look, but if you're ambitious you can convert your driver to=
- the waveform callbacks.
+On Wed, Feb 26, 2025 at 10:06=E2=80=AFAM <kernel@dakr.org> wrote:
+>
+> On 2025-02-26 09:38, Alice Ryhl wrote:
+> > On Tue, Feb 25, 2025 at 10:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> =
+wrote:
+> >>
+> >> A little late in the review of the faux device interface, we added the
+> >> ability to specify a parent device when creating new faux devices -
+> >> but
+> >> this never got ported over to the rust bindings. So, let's add the
+> >> missing
+> >> argument now so we don't have to convert other users later down the
+> >> line.
+> >>
+> >> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> ---
+> >>  rust/kernel/faux.rs              | 10 ++++++++--
+> >>  samples/rust/rust_driver_faux.rs |  2 +-
+> >>  2 files changed, 9 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+> >> index 41751403cd868..ae99ea3d114ef 100644
+> >> --- a/rust/kernel/faux.rs
+> >> +++ b/rust/kernel/faux.rs
+> >> @@ -23,11 +23,17 @@
+> >>
+> >>  impl Registration {
+> >>      /// Create and register a new faux device with the given name.
+> >> -    pub fn new(name: &CStr) -> Result<Self> {
+> >> +    pub fn new(name: &CStr, parent: Option<&device::Device>) ->
+> >> Result<Self> {
+> >>          // SAFETY:
+> >>          // - `name` is copied by this function into its own storage
+> >>          // - `faux_ops` is safe to leave NULL according to the C API
+> >> -        let dev =3D unsafe {
+> >> bindings::faux_device_create(name.as_char_ptr(), null_mut(), null())
+> >> };
+> >> +        let dev =3D unsafe {
+> >> +            bindings::faux_device_create(
+> >> +                name.as_char_ptr(),
+> >> +                parent.map_or(null_mut(), |p| p.as_raw()),
+> >> +                null(),
 > >
-> > Is it ok, after the acceptance of initial version, will switch to
-> > waveform callbacks to enable the users of GPT(Reason: lot of customers =
-are using GPT for backlight
-> for LCD panels)?
-> >
-> > Please let me know.
->=20
-> I'd still accept your driver with the legacy callbacks, mostly because yo=
-ur effort is already that old
-> (which I consider my fault mostly).
+> > This function signature only requires that `parent` is valid for the
+> > duration of this call to `new`, but `faux_device_create` stashes a
+> > pointer without touching the refcount. How do you ensure that the
+> > `parent` pointer does not become dangling?
+>
+> I was wondering the same, but it seems that the subsequent device_add()
+> call takes care of that:
+>
+> https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/base/core.c#L35=
+88
+>
+> device_del() drops the reference.
+>
+> This makes device->parent only valid for the duration between
+> faux_device_create() and faux_device_remove().
+>
+> But this detail shouldn=E2=80=99t be relevant for this API.
 
-OK.=20
+I think this could use a few more comments to explain it. E.g.:
 
->=20
-> > Is there any documentation available for waveform callback? What
-> > scenarios we can use Waveform callbacks compared to traditional one?
->=20
-> There is no nice documentation available yet. The improvements include:
->=20
->  - arbitrary offsets for the duty cycle, so the active phase doesn't
->    need to be at the start or the end of a period any more
->  - consumers can query the result of a configuration request (before and
->    also after the request was issued).
->=20
-> Both are of little importance if your focus is mostly backlights.
+diff --git a/drivers/base/faux.c b/drivers/base/faux.c
+index 531e9d789ee0..674db8863d96 100644
+--- a/drivers/base/faux.c
++++ b/drivers/base/faux.c
+@@ -131,6 +131,7 @@ struct faux_device *faux_device_create_with_groups(cons=
+t char *name,
+=20
+        device_initialize(dev);
+        dev->release =3D faux_device_release;
++       /* The refcount of dev->parent is incremented in device_add. */
+        if (parent)
+                dev->parent =3D parent;
+        else
+diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+index 7673501ebe37..713ee6842e3f 100644
+--- a/rust/kernel/faux.rs
++++ b/rust/kernel/faux.rs
+@@ -28,6 +28,7 @@ pub fn new(name: &CStr, parent: Option<&device::Device>) =
+-> Result<Self> {
+         // SAFETY:
+         // - `name` is copied by this function into its own storage
+         // - `faux_ops` is safe to leave NULL according to the C API
++        // - `faux_device_create` ensures that `parent` stays alive until =
+`faux_device_destroy`.
+         let dev =3D unsafe {
+             bindings::faux_device_create(
+                 name.as_char_ptr(),
 
-Mostly RZ/G2L GPT users are backlights. So, from RZ/G2L usecase point, lega=
-cy
-callback is sufficient.
-
-Later, I will switch to waveform callbacks, for complex GPT usecase support=
- for next
-SoCs(eg: RZ/G3E).
-
-Cheers,
-Biju
 
