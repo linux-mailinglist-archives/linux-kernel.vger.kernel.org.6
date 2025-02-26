@@ -1,174 +1,268 @@
-Return-Path: <linux-kernel+bounces-534851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D155A46BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:05:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1976A46BE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4AF73B2545
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8064316ED45
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2C625FA7D;
-	Wed, 26 Feb 2025 19:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0008266196;
+	Wed, 26 Feb 2025 20:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gu5rAJ4l";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gu5rAJ4l"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="Yp7bCQt9"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D9525E479
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77332262D12;
+	Wed, 26 Feb 2025 20:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740599972; cv=none; b=S7Sh6swfCRtEOP8UFLOOgVaXT4BC3xbb7ycoVeef5YZYbGByjIhGXBoVfYWUk7IxU5VATgmXkx9bBb61tGjC3NUDLJC3nbK8yNRPQ/BbbHrykddrNlKKuBr3jZMhG94KFczn3xflWAcHupwmoEsbHVhYFMf1uYVV8rIVf05ILPs=
+	t=1740600024; cv=none; b=QkJnk05XsdE+pOiQid2OqKzlQMgDCUxmPe0jXEBvNNgZUXbBOW7ND5bXX8BmqqlsTSGRVsPA/vi7k0mwbXf/42e8qxnK2dX6cEJ8HMJlt1EgPXmajCwCBd/B2WVD3Qg1P7HeM8fbNEHsThcY10DVXYAKeFFB51s2Jy8zQ9kxKJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740599972; c=relaxed/simple;
-	bh=JRnPNS2R+SoIrKYk5hs0jEUL60OqbTaEnku8x/ZnQT4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dbNkeLOv63ftzQWGFSzaYBLNOdRe/93UWVueN7TWbxCTS+yVWxtA5iQ3dGmvYseytO00BPCLZjiD19C4pCs3owIOf3hDWFaxz2MiO2Jr6r5q/zU2I5JPwiefLbj/57VnN/VP0VDGBeTI0Vr0kthCeY1NB1XR0kynO2se3jV4Ba0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gu5rAJ4l; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gu5rAJ4l; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2A803211A1;
-	Wed, 26 Feb 2025 19:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740599969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3WmfFEnCvDs4KrvRf1+gcJdaZ6nkRrsX2UH5OZ2D/Y=;
-	b=gu5rAJ4ln2UxWzssNDciupNk61EvKVzSJankbY07PY9XaK3SnqBmfZj8lsUw62H0oO5eMj
-	GMJoxtpmApYaTW1HI3w0aoDX8Gr58rp2mmDyTi1yM5GLcISMc6wo7pvpRZ4sXtKpyOtgCr
-	u2LGAjokAzm1aecIi73WSBfpa6jYdTw=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740599969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3WmfFEnCvDs4KrvRf1+gcJdaZ6nkRrsX2UH5OZ2D/Y=;
-	b=gu5rAJ4ln2UxWzssNDciupNk61EvKVzSJankbY07PY9XaK3SnqBmfZj8lsUw62H0oO5eMj
-	GMJoxtpmApYaTW1HI3w0aoDX8Gr58rp2mmDyTi1yM5GLcISMc6wo7pvpRZ4sXtKpyOtgCr
-	u2LGAjokAzm1aecIi73WSBfpa6jYdTw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA30713A53;
-	Wed, 26 Feb 2025 19:59:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id myk8HKByv2ddMgAAD6G6ig
-	(envelope-from <mpdesouza@suse.com>); Wed, 26 Feb 2025 19:59:28 +0000
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Wed, 26 Feb 2025 16:59:05 -0300
-Subject: [PATCH 5/5] printk: Check CON_SUSPEND when unblanking a console
+	s=arc-20240116; t=1740600024; c=relaxed/simple;
+	bh=LfFyrdi3p+fSTlPHrvITPMsJFwZas28Qz09A3L/Dt2A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ka/KoOyW2JNexXIEKgyOFOV3TN/XDGllJ42SSQlR6jpCpk9Rsx8OcmqDoE5CRjxPdZ9UXIWpk+Y6s58NPm8xRq/q2gAKwrdCjeCtwYNpLqyH+0D7k8QN6/ZN8BGkRAcprnOn4H6BrZnXJUxMXHXj4iryX+Tvf3KrTqupitSagfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=Yp7bCQt9; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-172-88.tugraz.at (vra-172-88.tugraz.at [129.27.172.88])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z351857Byz1LZ2f;
+	Wed, 26 Feb 2025 21:00:12 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Z351857Byz1LZ2f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740600013;
+	bh=DyLAPIgkUJPj4u0uXbf2C16aXcYlu8baPQSuG9CxPYc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Yp7bCQt9ubJfwFb6RLXQoQ2iF5g/w2OVyds54oY3Rimlx6/LDvY/YUtNAwWZrcKm6
+	 cT9oFvaKnAUgwCuut3b0wXxHyZG8gloiuv1sZfSUoKdrDV4ObFcW5ZqN8sQ2V+qXHM
+	 Se6XM69pLGSe8IT4WapgJeB6ppitPv/Ausjq0Jlo=
+Message-ID: <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+Subject: Re: C aggregate passing (Rust kernel policy)
+From: Martin Uecker <uecker@tugraz.at>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Ralf Jung
+ <post@ralfj.de>,  "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Ventura Jack
+ <venturajack85@gmail.com>,  Kent Overstreet <kent.overstreet@linux.dev>,
+ Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
+ david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+ hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+ rust-for-linux@vger.kernel.org
+Date: Wed, 26 Feb 2025 21:00:12 +0100
+In-Reply-To: <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+References: 
+	<CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	 <20250222141521.1fe24871@eugeo>
+	 <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+	 <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+	 <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	 <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	 <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	 <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	 <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+	 <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-printk-renaming-v1-5-0b878577f2e6@suse.com>
-References: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
-In-Reply-To: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Eric Biederman <ebiederm@xmission.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
- Pavel Machek <pavel@ucw.cz>, Petr Mladek <pmladek@suse.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Todd E Brandt <todd.e.brandt@linux.intel.com>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-serial@vger.kernel.org, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740599947; l=1376;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=JRnPNS2R+SoIrKYk5hs0jEUL60OqbTaEnku8x/ZnQT4=;
- b=YZG7GhXC7DlbzU/tfnWu5ZJWEdMcKKy+w3hDjFcb440sfvdbAMzpmhJ3Bxk21gPTiahZl9MRA
- xAt8RkWljJoCoHFjFTT5BAcz42UiIfBD1jRnQDzOo0STCf7ts7Cddnd
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLsew83exbyfiapi7twtunf83p)];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.com:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
 
-The commit 9e70a5e109a4 ("printk: Add per-console suspended state")
-introduced the CON_SUSPENDED flag for consoles. The suspended consoles
-will stop receiving messages, so don't unblank suspended consoles
-because it won't be showing anything either way.
+Am Mittwoch, dem 26.02.2025 um 09:59 -0800 schrieb Linus Torvalds:
+> On Wed, 26 Feb 2025 at 05:54, Ralf Jung <post@ralfj.de> wrote:
+> >=20
+> >      The only approach we know that we can actually
+> > pull through systematically (in the sense of "at least in principle, we=
+ can
+> > formally prove this correct") is to define the "visible behavior" of th=
+e source
+> > program, the "visible behavior" of the generated assembly, and promise =
+that they
+> > are the same.
+>=20
+> That's literally what I ask for with that "naive" code generation, you
+> just stated it much better.
 
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- kernel/printk/printk.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+The model is exactly the same as in C.  One defines "observable
+behavior" (to use C terminology) and compiler can do whatever it
+wants as long as it preserves this.=20
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index fbbaec06c9f3..4b7ed40bf808 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3342,7 +3342,12 @@ void console_unblank(void)
- 	 */
- 	cookie = console_srcu_read_lock();
- 	for_each_console_srcu(c) {
--		if ((console_srcu_read_flags(c) & CON_ENABLED) && c->unblank) {
-+		short flags = console_srcu_read_flags(c);
-+
-+		if (flags & CON_SUSPENDED)
-+			continue;
-+
-+		if ((flags & CON_ENABLED) && c->unblank) {
- 			found_unblank = true;
- 			break;
- 		}
-@@ -3379,7 +3384,12 @@ void console_unblank(void)
- 
- 	cookie = console_srcu_read_lock();
- 	for_each_console_srcu(c) {
--		if ((console_srcu_read_flags(c) & CON_ENABLED) && c->unblank)
-+		short flags = console_srcu_read_flags(c);
-+
-+		if (flags & CON_SUSPENDED)
-+			continue;
-+
-+		if ((flags & CON_ENABLED) && c->unblank)
- 			c->unblank();
- 	}
- 	console_srcu_read_unlock(cookie);
+Regarding undefined behavior, the idea the C standard had originally
+was that compilers do something "naive" (e.g. what the architecture
+does for some operation) or at least reasonable.  This worked well
+until modern optimizers started rather aggressively exploit
+that there is UB. C and Rust are are in the same boat here.
 
--- 
-2.48.1
+As Ralf said, the difference is that Rust makes it much harder to
+accidentally trigger UB.
+
+
+>=20
+> I think some of the C standards problems came from the fact that at
+> some point the standards people decided that the only way to specify
+> the language was from a high-level language _syntax_ standpoint.
+>=20
+> Which is odd, because a lot of the original C semantics came from
+> basically a "this is how the result works". It's where a lot of the
+> historical C architecture-defined (and undefined) details come from:
+> things like how integer division rounding happens, how shifts bigger
+> than the word size are undefined, etc. But most tellingly, it's how
+> "volatile" was defined.
+
+Compiler changed here, not the C standard.  Of course, later the
+compiler people in ISO WG14 may have pushed back against=C2=A0
+*removing* UB or even clarifying things (e.g. TS 6010 is not in C23
+because compiler people want to evaluate the impact on optimization
+first)
+
+>=20
+> I suspect that what happened is that the C++ people hated the volatile
+> definition *so* much (because of how they changed what an "access"
+> means), that they then poisoned the C standards body against
+> specifying behavior in terms of how the code *acts*, and made all
+> subsequent C standards rules be about some much more abstract
+> higher-level model that could not ever talk about actual code
+> generation, only about syntax.
+
+At least since C89 the model did not change.
+For example, see "5.1.2.3 Program execution" in this draft
+for C89:
+
+https://www.open-std.org/JTC1/sc22/wg14/www/docs/n1256.pdf
+
+
+C++ was not standardized until 1998.
+
+> And that was a fundamental shift, and not a good one.
+>=20
+> It caused basically insurmountable problems for the memory model
+> descriptions. Paul McKenney tried to introduce the RCU memory model
+> requirements into the C memory model discussion, and it was entirely
+> impossible. You can't describe memory models in terms of types and
+> syntax abstractions. You *have* to talk about what it means for the
+> actual code generation.
+
+The C model for concurrency indeed came to C11 from C++.  It is defined
+in terms of accesses to memory objects and when those accesses
+become visible to other threads.
+>=20
+> The reason? The standards people wanted to describe the memory model
+> not at a "this is what the program does" level, but at the "this is
+> the type system and the syntactic rules" level. So the RCU accesses
+> had to be defined in terms of the type system, but the actual language
+> rules for the RCU accesses are about how the data is then used after
+> the load.
+
+If your point is that this should be phrased in terms of atomic
+accesses instead of accesses to atomic objects, then I absolutely
+agree with you.  This is something I tried to get fixed, but it
+is difficult. The concurrency work mostly happens in WG21=20
+and not WG14.
+
+But still, the fundamental definition of the model is in terms
+of accesses and when those become visible to other threads, and
+not in terms of syntax and types.
+
+>=20
+> (We have various memory model documentation in
+> tools/memory-model/Documentation and that goes into the RCU rules in
+> *much* more detail, but simplified and much shortened: a
+> "rcu_dereference()" could be seen as a much weaker form of
+> "load_acquire": it's a barrier only to accesses that are
+> data-dependencies, and if you turn a data dependency into a control
+> dependency you have to then add specific barriers.
+>=20
+> When a variable access is no longer about "this loads this value from
+> memory", but is something much more high-level, trying to describe
+> that is complete chaos. Plus the description gets to be so abstract
+> that nobody understands it - neither the user of the language nor the
+> person implementing the compiler.
+>=20
+> So I am personally - after having seen that complete failure as a
+> by-stander - 100% convinced that the semantics of a language *should*
+> be defined in terms of behavior, not in terms of syntax and types.
+> Sure, you have to describe the syntax and type system *too*, but then
+> you use those to explain the behavior and use the behavior to explain
+> what the allowable optimizations are.
+>=20
+> > So the Rust compiler promises nothing about the shape of the assembly
+> > you will get, only about its "visible" behavior
+>=20
+> Oh, absolutely. That should be the basic rule of optimization: you can
+> do anything AT ALL, as long as the visible behavior is the same.
+>=20
+> > (and which exact memory access occurs when is generally
+> > not considered "visible").
+>=20
+> .. but this really has to be part of it. It's obviously part of it
+> when there might be aliases, but it's also part of it when there is
+> _any_ question about threading and/or memory ordering.
+>=20
+> And just as an example: threading fundamentally introduces a notion of
+> "aliasing" because different *threads* can access the same location
+> concurrently. And that actually has real effects that a good language
+> absolutely needs to deal with, even when there is absolutely *no*
+> memory ordering or locking in the source code.
+>=20
+> For example, it means that you cannot ever widen stores unless you
+> know that the data you are touching is thread-local. Because the bytes
+> *next* to you may not be things that you control.
+>=20
+> It also *should* mean that a language must never *ever* rematerialize
+> memory accesses (again, unless thread-local).
+>=20
+> Seriously - I consider memory access rematerialization a huge bug, and
+> both a security and correctness issue. I think it should be expressly
+> forbidden in *any* language that claims to be reliablel.
+> Rematerialization of memory accesses is a bug, and is *hugely* visible
+> in the end result. It introduces active security issues and makes
+> TOCTOU (Time-of-check to time-of-use) a much bigger problem than it
+> needs to be.
+
+Rematerialization or widening is essentially forbidden by=C2=A0
+the C++ / C memory model.
+
+>=20
+> So memory accesses need to be part of the "visible" rules.
+>=20
+> I claim that C got that right with "volatile". What C got wrong was to
+> move away from that concept, and _only_ have "volatile" defined in
+> those terms. Because "volatile" on its own is not very good (and that
+> "not very good" has nothing to do with the mess that C++ made of it).
+
+I don't get your point. The compiler needs to preserve
+observable behavior (which includes volatile accesses), while
+the concurrency model is defined in terms of visibility of
+stored values as seen by loads from other threads.  This
+visibility does not imply observable behavior, so all non-volatile
+accesses do not have to be preserved by optimizations. Still this
+model fundamentally constrains the optimization, e.g. by ruling
+out the widening stores you mention above.   I think this is
+basically how this *has* to work, or at least I do not see how
+this can be done differently.=20
+
+I think C++ messed up a lot (including time-travel UB, uninitialized
+variables, aliasing ules and much more), but I do not see
+the problem here.
+
+
+Martin
+
+
+
+=20
+
 
 
