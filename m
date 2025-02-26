@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-533978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74873A46106
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9888DA46108
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E2DB7A1997
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D82D7A3262
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A228219E86;
-	Wed, 26 Feb 2025 13:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA7F21B192;
+	Wed, 26 Feb 2025 13:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3HOIt5R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvX0hNjk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE72154C00;
-	Wed, 26 Feb 2025 13:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C152153C5;
+	Wed, 26 Feb 2025 13:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740577072; cv=none; b=d95t1cVLdMDYOgf07b07eYO6GUqqrHoRIqPrniN7RFAKYTkMmKwgXsdDo6lMWgthuxDDq6bFhxJrC6WS0Z++BPw8m5xvU2Et6WUV9wMnTUaCyIGOivt5WY1DM+9vbXznlGSc8sueBpnx5o9nVm8aAPCCcBA6W9pDDWD4Uy3DOTE=
+	t=1740577091; cv=none; b=Uj0yvox86ikrHdrybnyNp8GqF8fA74PfAwG5Kvy+769+XgXEywwXxh4B6tGK1yebYZ1/Bm2m8vP/YZ7m5LfWtnxn2X4SPAUOvG3lTxLiwsvN6j/A9VS3tepwSdodfvxnrlUYw0Vg+gsi3CjecDYeiZCvZ88Kp+/nXsgL78Z10ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740577072; c=relaxed/simple;
-	bh=e7ksaBgVZM/n3+KRkzsb8JIum6nQW0z0INzIBzxLwFM=;
+	s=arc-20240116; t=1740577091; c=relaxed/simple;
+	bh=Gc/QJn44eJJBvjOF0aRaRt1WC1pvNCLBm5b+Gn2qFuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iq+x3Wh6u2yb28Umw9HWibwAFiNBzkyMTvMApfDsXkmDGKpmKpQ5qXT0vLgvdxG/bqf6VJ5/BiLNwGtaqLUdSpg46z2FQ5eDptkUiLEotxtLEeMpNMR2684BvnSe6jmfRSI/9ey6I7H8to4dF3+RjBfjPo3ePHrLCGQ5r0/caGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3HOIt5R; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740577071; x=1772113071;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=e7ksaBgVZM/n3+KRkzsb8JIum6nQW0z0INzIBzxLwFM=;
-  b=K3HOIt5RZrR7peYJP6soUi12hpykDgW356qIcWqNrsm7xvLMivQ3clsG
-   phWPb5Bl5++MZwN/FdAcJkJ+BeJZNjgrQZRRnPmSO157Iq40atwTHIpFD
-   PEJD1LaXXN5L2yQIYcUyJ8Wcydw0TdZJcRbrR2cYfIcB8bBUFK4fLeZ49
-   Sj101DbpPREG52ySgUKkHuOhDtB9MqynwIYoF3xhO0+gL481XfUm/f0BN
-   OvIB1Mza5oI853x0eiw1j4W4rHYjhRYYaGcwdeV6N+cnmlZfRIJfTVa1G
-   w7SRs8UCZSL3WPc/1P1nQDyl2D9UZlhOfVrOqjM51a1jB4zUHaTkoZVNl
-   Q==;
-X-CSE-ConnectionGUID: +yER9GoXQGW1vfyyPSzhCg==
-X-CSE-MsgGUID: gJvLnvBCTru/OvotLTY/Yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52811469"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="52811469"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:37:51 -0800
-X-CSE-ConnectionGUID: eQSqF4AvSzmI9Z1mI7/vVQ==
-X-CSE-MsgGUID: 4th0tnM9TamQqQ7t3N9YMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="116488206"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 26 Feb 2025 05:37:49 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 425DF2FB; Wed, 26 Feb 2025 15:37:47 +0200 (EET)
-Date: Wed, 26 Feb 2025 15:37:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: brgl@bgdev.pl, Paul Menzel <pmenzel@molgen.mpg.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux-pci@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: Linux logs new warning `gpio gpiochip0:
- gpiochip_add_data_with_key: get_direction failed: -22`
-Message-ID: <Z78ZK8Sh0cOhMEsH@black.fi.intel.com>
-References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
- <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
- <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
- <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
- <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
- <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
- <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQ7YNK6PjVOuW5aRi09uiJauPF2T7lvE8H2vQx8gEsTYkeF4cPzQlAszXxusuL5uxhUTc2C9AdjTHHXZUBRxrXDp8PlzaCiokWzK2AyzAtRS4rAQL/GNCkeN26NkoqDVkEtmqBTMdcyv+vLBZn4gFZaqSMgmjw/LHJzT+Q6kSBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvX0hNjk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB54C4CED6;
+	Wed, 26 Feb 2025 13:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740577090;
+	bh=Gc/QJn44eJJBvjOF0aRaRt1WC1pvNCLBm5b+Gn2qFuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BvX0hNjkB0u6rZgM0hzJN93mEnXBTCwIaGUlpgcFtdAYHuPYahsAVO0Lw54LfN2ns
+	 WCddzFFspE2mKDC8JrZ+D04bN9IMDRDnwYaPqzQmTK5cTL+7E8F9GWonrY4m2z3vr/
+	 BFkRb0HIj67oOGZ8GjYpG9rRw61la1iOFUEyDuPOR67Tw3NaEK5PdPufiAtGA85rmT
+	 /8/W5UoPWfSmcQMystU/S/mUwVMh4N4XaUBvkX2wk3fMFSx4L84N5slRzYgU2r5XkX
+	 PYQan9w6qqlnIBo+n82SX9nUTgXR1hVK5ifVmq6KRpUhjbH1xtEQPDAhge2acgnAgx
+	 YxYUqEihcQDKg==
+Date: Wed, 26 Feb 2025 14:38:07 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Francois Romieu <romieu@fr.zoreil.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Joe Damato <jdamato@fastly.com>
+Subject: Re: [PATCH net v2] net: Handle napi_schedule() calls from
+ non-interrupt
+Message-ID: <Z78ZPyYrzK5l6P6e@localhost.localdomain>
+References: <20250223221708.27130-1-frederic@kernel.org>
+ <CANn89iLgyPFY_u_CHozzk69dF3RQLrUVdLrf0NHj5+peXo2Yuw@mail.gmail.com>
+ <Z78VaPGU3dzKdvl1@localhost.localdomain>
+ <CANn89i+3+y1br8V4BP5Gq58_1Z-guYQotOKAr9N1k519PLE7rA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,33 +66,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CANn89i+3+y1br8V4BP5Gq58_1Z-guYQotOKAr9N1k519PLE7rA@mail.gmail.com>
 
-On Tue, Feb 25, 2025 at 10:25:00PM +0100, Linus Walleij wrote:
-> On Mon, Feb 24, 2025 at 9:51 AM <brgl@bgdev.pl> wrote:
+Le Wed, Feb 26, 2025 at 02:34:39PM +0100, Eric Dumazet a écrit :
+> On Wed, Feb 26, 2025 at 2:21 PM Frederic Weisbecker <frederic@kernel.org> wrote:
+> >
 > 
-> > In any case: Linus: what should be our policy here? There are some pinctrl
-> > drivers which return EINVAL if the pin in question is not in GPIO mode. I don't
-> > think this is an error. Returning errors should be reserved for read failures
-> > and so on. Are you fine with changing the logic here to explicitly default to
-> > INPUT as until recently all errors would be interpreted as such anyway?
+> > That looks good and looks like what I did initially:
+> >
+> > https://lore.kernel.org/lkml/20250212174329.53793-2-frederic@kernel.org/
+> >
+> > Do you prefer me doing it over DEBUG_NET_WARN_ON_ONCE() or with lockdep
+> > like in the link?
 > 
-> Oh hm I guess. There was no defined semantic until now anyway. Maybe
-> Andy has something to say about it though, it's very much his pin controller.
+> To be clear, I have not tried this thing yet.
+> 
+> Perhaps let your patch as is (for stable backports), and put the debug
+> stuff only after some tests, in net-next.
 
-Driver is doing correct things. If you want to be pedantic, we need to return
-all possible pin states (which are currently absent from GPIO get_direction()
-perspective) and even though it's not possible to tell from the pin muxer
-p.o.v. If function is I2C, it's open-drain, if some other, it may be completely
-different, but pin muxer might only guesstimate the state of the particular
-function is and I do not think guesstimation is a right approach.
+Ok.
 
-We may use the specific error code, though. and document that semantics.
+> 
+> It is very possible that napi_schedule() in the problematic cases were
+> not on a fast path anyway.
 
--- 
-With Best Regards,
-Andy Shevchenko
+That was my assumption but I must confess I don't know well this realm.
 
+> 
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
+Thanks!
 
