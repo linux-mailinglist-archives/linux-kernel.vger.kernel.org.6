@@ -1,242 +1,186 @@
-Return-Path: <linux-kernel+bounces-533046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0749DA45521
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:57:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6FEA4551F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC06189B6C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951303ABFF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88DA267399;
-	Wed, 26 Feb 2025 05:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NOCE6TmH"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF5E2676CE;
+	Wed, 26 Feb 2025 05:56:23 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5370B7DA73;
-	Wed, 26 Feb 2025 05:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740549418; cv=fail; b=Gddmqc992FC485cU0tDLQq5Je398Dn4SgPMlZCcbWdCl8JojsN+C1lvGLhNjDALdz3W1KnLeeqR+ojuz+uNanXB1XHkX7hxeUJQT0pmBDXYfeI++vXwPUomaCypK38GOscv165icC2muzoIMwfHoN8NYAXGnxtZJVbfGp5nz9U4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740549418; c=relaxed/simple;
-	bh=iP9HHN7aSryCZPuXbh3cbkz5l3+WszdsrLlHA25Wh4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IdS8St4dHeY8mp0HkiVqW3RIRo9BDvGTMivnanDHYCzFpSMJ5pqijWKpt3rYXOf6L0wqAWehPxe78wnTxiqLVGTJoEE8/XEB4WeE/7JRBSYGMv1RzDCWAr8vtSRHdJZvm+CMHogY2dQ87zSWL/awq57bIc+xkxa+sijr2a3CFIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NOCE6TmH; arc=fail smtp.client-ip=40.107.92.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FGk9Sqi1uSXHZjtH6FJv5ULkTgKVDYdHQ+2Qnep8b998YCK7WsmzBXmqSf+nQwv3Yxp5no9iL9IRMGyI5AgfajcqZLdu5552lr/e9aLyk3cX5sN3Fs6iF+Z75w/ecmjq5snm/8BRqIsO37hcnHOCl/tK0nARJPq7E9DlHKJnwQnzqAk8C0rz2i3IhYPZ+qPaAO6tLM1oewf+U+TF99II0NJmIyWe3ckH52LKv3QKSbeBJ2ZKS6oyqF+1UPNOs6kxlCxfy9fFVNB67ja36zPzhfzTxBkNmqPlLBy8/mnvJXgHuSzqF8LdovbZIhp7diZc9AMxEuL9GsvXHSIB4nc/iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jjhtA2FZ8rAMEQCU5gSCmsYWtt7qckk9qcR3gl7zDYo=;
- b=gw7HsC3/EW1s20tFdtfn8G+PtsOUZuAC0uRUdIyPz8Jdx5Wuok6mX5qI9KCEvNdgs6qF5hhHHUGflwFFxDunowiKvoIASLPUM9cXkwKP6Gz2oPh4MwQtaiY0t4lx4cXeMUryQ4K/Vq5gUixmwXpsFvn4Qrr88iDztmK6swrIFkng4ZgS0LNR9dXskAzCy+v2ez9cKfC/cv04D5YN/pu3v+qDNCMaIQWDWEqz215X0TiCwoTSW2Jy6n8yA5M/oMayhb9u4ACZe1Mp7hzYnzH1OCJK8MJwL8IHkgnoOinAw22kJbgdi2eomWjWYrT+fF2XMWnjr2aQrq3c91xi21YXeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jjhtA2FZ8rAMEQCU5gSCmsYWtt7qckk9qcR3gl7zDYo=;
- b=NOCE6TmHK1P89oiy5DTZpFKOojp9goma9Ras2+rGkcYutPEOztUNfBpP4m0ccGKKP//RhC/+paMKTwVXSkqtfcXLS1xCRdnaG4tkUPFxEp7OFHEn067J3A4pMPe5lS2HiYE2pV7Lv7P14n3MB3bxb+0H9y1Z+x9xR7yJCIdvScI=
-Received: from MN2PR18CA0010.namprd18.prod.outlook.com (2603:10b6:208:23c::15)
- by CY8PR12MB8412.namprd12.prod.outlook.com (2603:10b6:930:6f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
- 2025 05:56:52 +0000
-Received: from BN1PEPF00006002.namprd05.prod.outlook.com
- (2603:10b6:208:23c:cafe::5d) by MN2PR18CA0010.outlook.office365.com
- (2603:10b6:208:23c::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.21 via Frontend Transport; Wed,
- 26 Feb 2025 05:56:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00006002.mail.protection.outlook.com (10.167.243.234) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 05:56:52 +0000
-Received: from [10.136.35.94] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 23:56:47 -0600
-Message-ID: <2a0a8e1e-1c37-4655-8a82-54681b2a83ae@amd.com>
-Date: Wed, 26 Feb 2025 11:25:41 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA11C25485A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740549383; cv=none; b=OYxrjICzcVEkBcVM8dmbK+SB1H0ON/Uia4AWETZl16BEGG5Pbh8wfJji9lahDBfIizKcbD0/hmk1V1mOpSVh391UCVfy9OwBqd+Tl58fFD/8mH0g1kEcxRQSO0holgxiK5X3tjm6dpjholyYrNbxrEq8pDUEupjx2ytA3TVn5yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740549383; c=relaxed/simple;
+	bh=aJ1CDj6IHG5CdCYhUfhaAMuHbGLGkJsU8mSDkSUKG/k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jU9+QJ9OfeWgSy3r1QcwD6v/Tghs075NCt7Z7Qfu0Csvv6UULHiKM3qg6dckuDHu8R1mbcggnbIS9uauCbE1MxWwgY5RwzLcoGxHWklLHJZJGUm1jpGWag5KVF+qai/KucALGrSZiFOAg9EDRXY7jTOfokBMrCFjLxDTjGx7Wi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so131010495ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:56:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740549381; x=1741154181;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HSP8CbSQTbCE3z3gezg5yrid18Cgij6SuX+4IyN9t1k=;
+        b=RfXFdYQePxTHptChlw1E6yizWtk8SecVIshh0dqdIAvSDuaYJJO6VpIoVD6Ni/pORK
+         fPX8mwSOKhS8XZeex8dNiAMl3+rLhp8UaTusNI3YKvOBh9tVRW2ih85iwT/ujb9qWpKc
+         GVpxQVdLd15lkxmzreT9/EnL3SR0P+4d5vZB2z3Nw3gIfeuLzSdFo/g1MxKolyKs/Wc7
+         ngujz5Jbz+KbWyJ+Hqj2HCjS5/agwTUghpl48YDrCBhc6qTlTdtZQSL8xFyEUcWbHbCB
+         H2VotAMneSYDmMv8SzKDBti8g7gs6zm6g6DoribBRK5hpvwEDT+7Iu8NLj1xGxnZsHWM
+         gtmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPneB4rSWwngiXCA7HzwX2pOVb5o0O3EStyan5SjmOmrG8EcMkpHnHkjltLG0Ix/Pu6fqlsY68sdcR4RA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKY3oFJ1rAN023pVM8xbdDmd2HP3YuJwfLrMD0hhOum+IEhzy8
+	Ovx7ix/tB+k0E2ITPw2jKns+goFn+0yjIRL/rBnW4BPmQtrRMhIDSXor4otB20MKAYD6wWBJK3L
+	8Y/rPVki/C9mgJagRN55ZGFEuhWgQ6EA+3IkiErjo+MN9KOubvkY+nh4=
+X-Google-Smtp-Source: AGHT+IEI/C25oLPvNScwmmGwkgadLS4wD1Jjf3Kg5w27gYr7QxYS7Y67gF1WFdlmVBm20HQhF1It5bWJCaUtmVBn4tQ04g1Gf0mf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-To: Oleg Nesterov <oleg@redhat.com>
-CC: Manfred Spraul <manfred@colorfullife.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "K Prateek
- Nayak" <kprateek.nayak@amd.com>, "Shenoy, Gautham Ranjal"
-	<gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com> <20250225115736.GA18523@redhat.com>
-Content-Language: en-US
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <20250225115736.GA18523@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006002:EE_|CY8PR12MB8412:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8436942-87fa-4e36-906b-08dd562a5e10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QmpPZEJsdTJTeXYxUFFQZWljRGZrTjBQNUNwR2tDM0U2V2VwUjJrSytHNEdh?=
- =?utf-8?B?Y0tIZ2twa25KWktLMlAwcVFXZVYwbTdmSDRsMVRYeVBKNkFibDB1cjdsUFJz?=
- =?utf-8?B?WnNJQkJnbWxmNVhYak0xVGFZNzk2aDlOVDBaNmx2WHBySXozQ3JMRmxMY3hr?=
- =?utf-8?B?ODA3WU9FMzRxdnRwcmN3SEdRcWRjRjZnV3hSdmdEYjJieG9WVWhMYnRTak5U?=
- =?utf-8?B?YUIxVGlpUlVYN2lPOTM1N2s1ZklOL3pOUjM1aUplUjQzVTZ1aC83RGZkNkNt?=
- =?utf-8?B?bC9BSXdSTEF3SGZlbFVMdDVWU3JPWWl4N0lXSWlLUGY2bmorWExmUTlsUTFr?=
- =?utf-8?B?d0FPK3pGUGlCOFVza212enhSbkd5MWRMbXFta3ZxUEp4QjllRW9CU0xORjc5?=
- =?utf-8?B?eGRvYk5KbStXYm9OODI5Q1dIa3ZKUHo3WmFVYmNickFYY1JaWkZ0U2Z4UlB4?=
- =?utf-8?B?ck5heS9GL0pDYyt5KzNuV3FSNkNocmhTM3NkbWVkSkhxa0hqbkdNQXdyN0U3?=
- =?utf-8?B?c0pzMVE0RnZta1pkRUdzR0FGc0JZZzhqa2p3M2N5SnNkZDUvcGNKRU00eERy?=
- =?utf-8?B?bEcrZmx0NkM1WW1rRmNaVmdvWk1xWHpKNUEwMEVJemQvc2s4cU1OdFBwQTBS?=
- =?utf-8?B?U0pYWUNvZk1TTjVHRWtCKzNtcVp4OFAva1piL1A1WmpPYkZ4RnlGeklMelZJ?=
- =?utf-8?B?Tkp4V2hIQmVlM1ZBUmJrZFgvc1VlU0N4MWtTNnNGZ1NacWxnQk12OXdKcTk1?=
- =?utf-8?B?c0h6aEFWZlFNQlBEc2NKWkxUU1YwaWZUdGhRWkhSRnFLSkVscUVSU2lrVkta?=
- =?utf-8?B?QXlkNnA3YXRtbUllU1dDTjJhOGw0Y1hOQXBVT0xScnZtbnQvSGJXWTZEM0Vo?=
- =?utf-8?B?dzRBU3N6UHJab1RPd3RHN2F5akJNWnVxd3R1TFR3OE5ub0lSTVJLWXJZeVZE?=
- =?utf-8?B?MFhpR09YNE42TWltVzMwcUN0Nk1Zb1kzd2k0ZlArTG1PdXV6WFlDdDNPdkZw?=
- =?utf-8?B?RWJvOVh5cE1KcUVKMU1sajU4bTZIMGtkZHlNOFNRRFJTdWNBQzBkbEZiajhZ?=
- =?utf-8?B?NTlVSFRON1FLZVpIMXBxbDVyK3pidlNwcGFWNEhOdTVhRVdybXBDdkpsZjFZ?=
- =?utf-8?B?c0RwNGxkMTNrUENsMVdWQnpEY3ZMVGx2RGJiZjNLL0UySzVmZndaNm9yMENj?=
- =?utf-8?B?ZExrc2ZQbUpFRk5FT3JXejVXVEQycVhmaUR4WVk0b3Z1VlM4bXRQT1ZBWEFj?=
- =?utf-8?B?bWVvUG1wNFZvSG9FWUdjUHdMOWFKVE9NVEZOL2x0RWxhWkp1UnBLYnBsUTBG?=
- =?utf-8?B?ZGtvcUFwZjNQUXNSUFBockZvL0VjMjFGRW95c0U3SVdMZVQwczhlN3k4WkVx?=
- =?utf-8?B?NE5rcVdxUkxWQXViSlJpcWZSeSt5STk2WnRGL0h1UTViVTIyS3U5RHVMNjRZ?=
- =?utf-8?B?ZEg5V05EbU94N2tpbkxJWVhyaExGKzNndlhZYkljWEcxQmNQTk9YZHFWb1Qr?=
- =?utf-8?B?VjlCLy84cFhTc2l4dDZJbUZpNzQzNS81ZTF5QkF3NURIc2lwU3hxSUhMVm44?=
- =?utf-8?B?MFlGbHY4a3piRHQ5SkcxMmd6NDRQaDB4U1FnNERtVGlGcFZBb2crL1lnVUEy?=
- =?utf-8?B?VXJYcnBRVjRGVzFrN3FRVnJKVlkzci9vc1BHNDFwWUxpY0NPd01Nc1EwSk5D?=
- =?utf-8?B?OU14aXZDTWxaNlVxc0pyMklPd3VrL04rV0ZQWXVKNU9tOG8vK2RhN1ovdlc0?=
- =?utf-8?B?SmFzc3FwVTdsNmpCWDBiL2JSN3RHTTJwMGcwYzZWd3FiQm1NS2F2ME9uWXQ1?=
- =?utf-8?B?MEh2RWdHZTk0b3AxUEdYSksyZUR5R2FDeHpTcEJKUFJtdnp4MVJXRXRIWnlz?=
- =?utf-8?B?TGxZWHcxdFVvVWUvbUQ1SE83bFdua3B5eURnQ1VJc0NiU3Z1NGJmY1c4bm81?=
- =?utf-8?Q?lw/l8yjKB1kmvQUWr9Ga3SLn18E0oDyW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 05:56:52.2768
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8436942-87fa-4e36-906b-08dd562a5e10
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006002.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8412
+X-Received: by 2002:a05:6e02:310f:b0:3cf:fe21:af8 with SMTP id
+ e9e14a558f8ab-3d2cb432219mr213116715ab.4.1740549380868; Tue, 25 Feb 2025
+ 21:56:20 -0800 (PST)
+Date: Tue, 25 Feb 2025 21:56:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bead04.050a0220.38b081.0002.GAE@google.com>
+Subject: [syzbot] [io-uring?] general protection fault in native_tss_update_io_bitmap
+From: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Oleg,
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13fcd7f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e2b1803445d236442e54
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149427a4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ed06e4580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 5891 Comm: iou-sqp-5889 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
+Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
+RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
+R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
+R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ task_update_io_bitmap+0xb8/0xf0 arch/x86/kernel/ioport.c:47
+ io_bitmap_exit+0x62/0xf0 arch/x86/kernel/ioport.c:57
+ exit_thread+0x76/0xa0 arch/x86/kernel/process.c:123
+ copy_process+0x277d/0x3cf0 kernel/fork.c:2638
+ create_io_thread+0x16a/0x1e0 kernel/fork.c:2746
+ create_io_worker+0x176/0x540 io_uring/io-wq.c:862
+ io_wq_create_worker io_uring/io-wq.c:332 [inline]
+ io_wq_enqueue+0x7b5/0xa00 io_uring/io-wq.c:989
+ io_queue_iowq+0x433/0x670 io_uring/io_uring.c:542
+ io_submit_state_end io_uring/io_uring.c:2215 [inline]
+ io_submit_sqes+0x1940/0x1cf0 io_uring/io_uring.c:2335
+ __io_sq_thread io_uring/sqpoll.c:189 [inline]
+ io_sq_thread+0xc8c/0x1fd0 io_uring/sqpoll.c:312
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
+Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
+RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
+R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
+R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	df 48 89             	fisttps -0x77(%rax)
+   3:	44 24 50             	rex.R and $0x50,%al
+   6:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+   b:	74 08                	je     0x15
+   d:	48 89 df             	mov    %rbx,%rdi
+  10:	e8 cf 75 c7 00       	call   0xc775e4
+  15:	48 89 5c 24 58       	mov    %rbx,0x58(%rsp)
+  1a:	4c 8b 2b             	mov    (%rbx),%r13
+  1d:	4c 89 f0             	mov    %r14,%rax
+  20:	48 c1 e8 03          	shr    $0x3,%rax
+  24:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 f7             	mov    %r14,%rdi
+  33:	e8 ac 75 c7 00       	call   0xc775e4
+  38:	49 8b 1e             	mov    (%r14),%rbx
+  3b:	4c 89 ef             	mov    %r13,%rdi
+  3e:	48                   	rex.W
 
 
-On 2/25/2025 5:27 PM, Oleg Nesterov wrote:
-> On 02/24, Oleg Nesterov wrote:
->>
->> Just in case, did you use
->>
->> 	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
->>
->> ?
-> 
-> Or did you use another version?
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I am running hackbench using lkp-tests which downloads hackbench source 
-from same rt-tests with version 2.8.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-https://github.com/intel/lkp-tests.git
-https://www.kernel.org/pub/linux/utils/rt-tests/rt-tests-2.8.tar.gz
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> Exactly what parameters did you use?
-> 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Exact command with parameters is
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-	/usr/bin/hackbench -g 16 -f 20 --threads --pipe -l 100000 -s 100
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> If possible, please reproduce the hang again. How many threads/processes
-> sleeping in pipe_read() or pipe_write() do you see? (you can look at
-> /proc/$pid/stack).
-> 
-
-In the latest hang, I saw 37 threads sleeping out of which 20 were 
-sleeping in pipe_read() and 17 in pipe_write().
-
-Main hackbench thread (which spawns the readers and writers) has the 
-following stack trace:
-
-[<0>] futex_wait_queue+0x6e/0x90
-[<0>] __futex_wait+0x143/0x1c0
-[<0>] futex_wait+0x69/0x110
-[<0>] do_futex+0x147/0x1d0
-[<0>] __x64_sys_futex+0x7c/0x1e0
-[<0>] x64_sys_call+0x207a/0x2140
-[<0>] do_syscall_64+0x6f/0x110
-[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The readers have the following pipe_read stack trace:
-
-[<0>] pipe_read+0x338/0x460
-[<0>] vfs_read+0x308/0x350
-[<0>] ksys_read+0xcc/0xe0
-[<0>] __x64_sys_read+0x1d/0x30
-[<0>] x64_sys_call+0x1b89/0x2140
-[<0>] do_syscall_64+0x6f/0x110
-[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The writers have the following pipe_write stack trace:
-
-[<0>] pipe_write+0x370/0x630
-[<0>] vfs_write+0x378/0x420
-[<0>] ksys_write+0xcc/0xe0
-[<0>] __x64_sys_write+0x1d/0x30
-[<0>] x64_sys_call+0x16b3/0x2140
-[<0>] do_syscall_64+0x6f/0x110
-[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-> Please pick one sleeping writer, and do
-> 
-> 	$ strace -p pidof_that_write
-> 
-> this should wake this writer up. If a missed wakeup is the only problem,
-> hackbench should continue.
-> 
-
-I tried waking one of the writer and the benchmark progressed and 
-completed successfully.
-
-> The more info you can provide the better ;)
-> 
-> Oleg.
-> 
---
-Thanks and Regards,
-Swapnil
+If you want to undo deduplication, reply with:
+#syz undup
 
