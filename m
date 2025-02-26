@@ -1,178 +1,200 @@
-Return-Path: <linux-kernel+bounces-532862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633CDA4530E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:25:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA03A45316
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACF41895EF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3ED43AB14B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540A921B1A7;
-	Wed, 26 Feb 2025 02:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD6C21C192;
+	Wed, 26 Feb 2025 02:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pppI9/Jt"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="UMpP+5B3"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D47321A928;
-	Wed, 26 Feb 2025 02:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740536750; cv=fail; b=XMRqvHulLuFpx7CSygPBiW0TFWiNzOfcOoXGqhkwzhd1NkFtP9f213zxm7QKctBYby+3xS0BwSQGNqJQURtX/8MsILC4W+QQNPHweNaZ0TvT81JchID01m6T6tmQafr0mDQ2TM7+TQq2P/3X3BBFrhR6AhAgu6YFXWQzryV52gQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740536750; c=relaxed/simple;
-	bh=TF/ar12C+1Qi0qIy2OEVQYtdpFLhTbxOik+EGfHvdto=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0RHE3J3Ev5rdn1UbrvX02p2ofr1UEVck+qpyMeA2MFkThG5yTXyOuU7MYCzZMPTatK+bPf49i/z5DM7DbPxsjyaxdINpZvtl3lG663B1Yw5RLd3jDC9SmKWt2VV7DwgDLjdrzwaNRCKYMjJR693IHkB3jyQMx0MUo2qzZVePsI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pppI9/Jt; arc=fail smtp.client-ip=40.107.237.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fpWhlsuyvEdqnsqoI8C8BaU3+nsPBRkoEY2et5bthb87Rihzf8XrrTYg+oZAdOH8Mvk4X03McbsTiZNLKf3xSYU0AehrFSLdjw8Wzb/ZMkZJenQcvgNd6WrZwncqE5GfMSdU0RMD0SSUw9MARonLoT1DUIzMubKFwB46HBCjX43Adb9AIqcdQouiAdTpQcSRJh+9222lgulnt1LJWaX/smXgwwBP7jno6jOXNnU6XhIhyUo2umkANejeth66JBeYfWYCrWVcz1tkXLllmY3kViBseKhwuGjisw8v1Y+SQgYktNmAkX7tjFkGeOcsCvFQv5YeOe8xxp3nFkecR/r9Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EDqJ1fA5a5mP/9+4Npmc7qDJwFIdVVri27VpbcmjQng=;
- b=A7sEzmJz7KRecr+y6Sfm2TaWuC+dRwkahvrnfLutWFu1sRHJtrqvITNyUG7YDJQAHDC4YqucFqllJZdMn4R8AuBHGdD3G/Bp5EF2T3yGoL02AL4VHi+I2Wo8hAuJJ642gZkQfGQ2XTZEHtpPDUaqyz0eYCmm7yueJdysyVpQqjHke6hRWszYLWom6txRNJSZK9N/QljzAND8QoXJyGc0z9s7THig8f9GI+Gq33dVWxm5MZVSknTTIY5vbrq24Zu7feANpiqqY+9gCTyA/6UDvPszr8oMTBZpEstzL++SggsqTy5H3DaIQyL/yXcJ9649tsIGLgKADLnstYHCBqhfyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EDqJ1fA5a5mP/9+4Npmc7qDJwFIdVVri27VpbcmjQng=;
- b=pppI9/JtfArEl8LHhhf6Pp+SpJ2RB9dD4+fN9YTgKlgM7J++Yph/gNWr9QQm82EY1CjOM55ovjdcxaUFesBtITXpttwUuDNs1ZLrXtzgTce3o1RZ0Qi761gMm9A9rdYNEiTPQJl1N01kzUQjSX9LEIPWJhGY8l/EZbEbLFtkeSsEaSHP5N5Ew/Xdj9Zz3iRdb4jp+Et9N1XHA9wBi2M2WUBbWer7+4XHZK9KPguWggYqfr+/6cmCyj4Gwm6CSDJ7ZbkhFtYU0tCnMY/peKhDU84ZLKWiWkcRaQM8cgUQw/C/41Xv3F9owA3oOuFCHDiqeklHSRrNy6KxHu0xu0pxgw==
-Received: from CH2PR17CA0015.namprd17.prod.outlook.com (2603:10b6:610:53::25)
- by DS0PR12MB7680.namprd12.prod.outlook.com (2603:10b6:8:11c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
- 2025 02:25:46 +0000
-Received: from DS3PEPF000099DB.namprd04.prod.outlook.com
- (2603:10b6:610:53:cafe::20) by CH2PR17CA0015.outlook.office365.com
- (2603:10b6:610:53::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Wed,
- 26 Feb 2025 02:25:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF000099DB.mail.protection.outlook.com (10.167.17.197) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 02:25:45 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 25 Feb
- 2025 18:25:30 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 25 Feb
- 2025 18:25:29 -0800
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 25 Feb 2025 18:25:28 -0800
-Date: Tue, 25 Feb 2025 18:25:27 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <tglx@linutronix.de>, <maz@kernel.org>,
-	<joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<shuah@kernel.org>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>,
-	<yury.norov@gmail.com>, <jacob.pan@linux.microsoft.com>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v2 7/7] iommu: Turn iova_cookie to dma-iommu private
- pointer
-Message-ID: <Z757lz6ucDE6Otix@Asurada-Nvidia>
-References: <cover.1740014950.git.nicolinc@nvidia.com>
- <949e28875e01646feac5c4951b63723579d29b36.1740014950.git.nicolinc@nvidia.com>
- <20250221143959.GA272220@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498142070;
+	Wed, 26 Feb 2025 02:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740537224; cv=none; b=CBS8IYq+LZwU8pEwGY/U9JdwWoaEE3hpnEYi4C7iWPUlMI9e/EBXbxIuwlo85CyOitc5JnYll4kYUutbMl+cg1l9HJgMLaKKf70hn6LaGVv0SsvAxf/tCA4hZnuYZW+FcqEhocX+m1hGPkYfhxdGfSNyzpmh4+LMD6dLv8hKj9g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740537224; c=relaxed/simple;
+	bh=pnzoR3G97fGxG8EieXVRTWZHaNGSuX1v/Z4EVU4uLMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UzjoLkqYOofuy13pldq7HQdIgtzRM5IG6CyuLhNrIuM/197M3UWBY7UPTrf2dhyV5pFOenWvFEFRmDCDcBYuG0oee/yRM0NWzcL7rvdwFoEkDrGHb1LLw66h0rPm1tTCrdniRvFjR1mu0Uaq9p6v69iFrD9dcabeos+8EqmuSHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=UMpP+5B3; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740537162;
+	bh=pnzoR3G97fGxG8EieXVRTWZHaNGSuX1v/Z4EVU4uLMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=UMpP+5B39OmkkhTqvydhSoYm/nenJStMq/02Qzzn9+ZuVNXbZpklDHP5Is/ZkrqoC
+	 gkObG3XDPCU5z7I0Jh5iWCUNhZQpeeD6cE7pYLw1c8s4fTDKaG6bTq7cMwiVFDUDqJ
+	 WezJpJtTJwwZyTCfCjwsxs2gtl9bPxtwe5e6D6e0=
+X-QQ-mid: bizesmtpip3t1740537098t7ppo3u
+X-QQ-Originating-IP: EFXs5myBNLZQnGcxTf8wJs/hXERYiPRAY/PLbfbVWic=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 26 Feb 2025 10:31:36 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7930221262135158092
+Message-ID: <4EB8ECD64F601331+e2f01a1f-8da5-4e7b-b909-d920a792756a@uniontech.com>
+Date: Wed, 26 Feb 2025 10:31:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250221143959.GA272220@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DB:EE_|DS0PR12MB7680:EE_
-X-MS-Office365-Filtering-Correlation-Id: fcd18569-a9a0-49e3-f5b2-08dd560ce06d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5UVfllaPRPtMhKNJroY4eszeeB2fkMXaK5URiTb9NqqK8nNM1DoUZfPiAqdN?=
- =?us-ascii?Q?SslHAEkwRi58ZB+N9gPha3rRCtYgbaxPEIxlUkHHdVIAryxxAKRdFq6E1TLh?=
- =?us-ascii?Q?skZtz/4KiPBogiJwNXiEY7KK2m9E8QhR6ach1FNC2acPvKRCytkgV6/hbvoN?=
- =?us-ascii?Q?yc4UnZDxjrvrNkgtfBsi/BcnLNvO0qmRtQVI88v8ZFzpejOeFBLXQEJxHQfc?=
- =?us-ascii?Q?IH140l2andnHampIoGSFp88Yhnu62WIVyUbwxsSkd1zk74pV9yHtTb1YOB7r?=
- =?us-ascii?Q?jbJgyWNsikS/QM59vczrX7cEZJLEYVzi+1XuGHNmAaHOUelo1MjQ9F9kfDgz?=
- =?us-ascii?Q?S0ibSRB9dyvm7F8E+Ng3A3UDlHnbPp15rXZ/ELQ0/8A3kBEWPBX7IRllmHwP?=
- =?us-ascii?Q?FMEJLyikoXv7IvPjqjqm3kRQAg9FLqX5rfaKyCLdcURHUbkbfUM80mjx4iQT?=
- =?us-ascii?Q?6LwMNfDoKEdpdmP0X7o699iQgPL211XMFY6h/uiymRzA4whhuH29i72srPF9?=
- =?us-ascii?Q?oOq98RUzOQZvZvIf1e/tTCGQ2VWrRFD4y1vtz2GkYuON/71+Zkpjavodvod6?=
- =?us-ascii?Q?28DI9VkUjmkPi0VZ29yJPTyPrlzMhDCNnJd1TkdZHzv2TxLJl6WWTsG2YMaF?=
- =?us-ascii?Q?Ad7QM3ekYlj8iTXaqc5JHBolkY3Lk5aeg71mSAnMoYljGcIq9HBJ+EYR5c50?=
- =?us-ascii?Q?aKvaXkYuLw0buJOVNjFbV46EEOjzqX/esBSm1WXGtdQMLHCovck6ZjcY9tBD?=
- =?us-ascii?Q?nTpaw9Cj39nx5qnlNyEcUznKxhpQqawa75dHm+EtPVq3vQ3kb/fzery33igU?=
- =?us-ascii?Q?C1XpsS92D1ir81OQUpFzl8S8YfC6+GSVzv/Scp1P7EWUxPiMcUvRnlpWvWQo?=
- =?us-ascii?Q?KS2EOPt7vnUw/jvtaHCF2ow+iE4Pm2O9r2SH3MAFhb7dX7f7UESpEnUXixJx?=
- =?us-ascii?Q?3zKrC3ShPVPWDhLsjv5J/CEnoFNzsnld7zxh3Gi+ao65OL10/PX1xo6Ntgiq?=
- =?us-ascii?Q?tbxURNFCoGUyQQrjY4vAItLn9qRHbPQW7D7fdIPRSfnkGnpF/+EFZqOx2C34?=
- =?us-ascii?Q?sZq2OXGkSe2ptEcBFkVC/bR7KaYhBEYYpTh1Wcjv60PAwvjiCZWK5aUJHQ+R?=
- =?us-ascii?Q?FTjQXxuew+DrkPa9qijq07jsyoPjj5DoCz1l2+SqbEefOPJKULZCKxG44Z8P?=
- =?us-ascii?Q?Yx2YQBchwSzxCVy+9z4HqwQivTRYlHm+xjdb+d+MasK6xekQVieDFpjiN+m6?=
- =?us-ascii?Q?L/kRNCJvecE/mR/kkiNlx08LiS3AMC8G9htPDOLi1wbsKmb3kioMe8qpMlW+?=
- =?us-ascii?Q?hltQuq5u89GFVhfCNrM/ZLEqnfo4Hm0LCa15wOeU52Cd3w+d6dfh8/9L/Gzt?=
- =?us-ascii?Q?VDqsoJMvfxagdEVNM4n8QK1tZTSPpzz0SIaiJMqTMLuywys68GTgwh5k9r7i?=
- =?us-ascii?Q?sc0JH+CrzgehXJzw8b2lykLoKHTu8OgVoViagie6ZE9CxKpgQUm5OL9ZePyP?=
- =?us-ascii?Q?tX4TYA9F7kUKg/4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 02:25:45.9971
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcd18569-a9a0-49e3-f5b2-08dd560ce06d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DB.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7680
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
+ with "use_192_bytes_for_3f" attribute
+To: Bart Van Assche <bvanassche@acm.org>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, chenlinxuan@uniontech.com,
+ Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
+ Yujing Ming <mingyujing@uniontech.com>
+References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+ <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+ <0A01BD2F489C764A+647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
+ <3b6cca0d-7aa5-43b6-8f4a-429f17558121@acm.org>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <3b6cca0d-7aa5-43b6-8f4a-429f17558121@acm.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------xAOa79yi3ABp7zku3yDVyCG9"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NDtUtlvFer7vmXbGnhouoKZcWo/uzLyiyXThVmGj/n0tyrEqThKXHtW2
+	TEMMSBCSX4mqGbcxc2ELOwte/tTf8WeXWJ28i9D/Yt/s9BlXJKJAPS9mfn8UhKC1KEe/OfH
+	PRVYMXgkc2bk6cD1Kd+/Dq5LE/G6pm/T5oxuCgZiRP3B7x+OBsfzDEgSZrt7IuGOA788txN
+	Ox3aYwsrKXICYxvibEjlDfelmXBqKONIj748MFUfVwmxKClWJSKspvLPy7SpagA8sC6Y8zN
+	sIonJBGsI1rvLQqw0xeY66yuGM7xs7AnmTR8Ozc1d2j7jnq2FVzzPEeGyEmAXcekhOZ3VIf
+	D9KVjU2Xos0AotH2BfRmQvOgy6zMvRLBRLAlgCZtR6XmzCgbvWTiOeFnL5DEgybIpK/b6c+
+	p7ZqAturmmsn2PcQR5MBbftUVi2nMu58Fp/5iC9sfQuLX3TiWTahxACE8Lt2CpP6uPGhsTL
+	UkdYA25VXQt9Rwyr5a7A2fqNMQNgiYxw8W3Q2dCokuYFp+t0dKE4wWzhZYIOAOLM6ayRblT
+	/giQf/9aackg3CDTuhC/s1QEg0txybDymsu8ttSo0p5Xb8Z3rnQ0H5CUoqZjAQ2QcPUxkrm
+	5UVXcR7PDzp0Z/KiaO8pNPLvwOElTz5PipkX/dbtPztM5e8QSFdd+siIkFBW9XfeF9RrHIu
+	Rli21DNE81MaFfAgo6Dy0SIqx34frEHnkqUWmsNFEcSDc2Vz8tqmhla5dCHrVJd2AG4gvSS
+	IkDwP7n8Ft+1VkD1gVCUVTaCMcQx9dWLvBN/0/1yb5K/6v6hpD0swMhOJlK35O+bSLaa50k
+	Nmw8437ZHCEWjVcxkKRryG3dZQV2zmDZ9zDI0d/twfEbROTEx35m8xRkc1esVBQSqgLicBc
+	iK0/MLMER4BjybdxdPC/ld14zQHvKLwYY27wA7S8+O4IvTRI0wFuff+RhK80/jRgVYW4Jcv
+	i/GKwkEhd85EXABlFw2WpDXWr2MB8sTecS8yrB86fhmtbuo9+jFWs2QIdEcWJcsGnEVRsvf
+	Ab30jHJKKWBIftMczlH30UupEXn05R6qAJrBDZW5Ctw56jrjYseLam4hRIVAw3XVVtGX3CS
+	Q==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Feb 21, 2025 at 10:39:59AM -0400, Jason Gunthorpe wrote:
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 99dd72998cb7f7..082274e8ba6a3d 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -1534,12 +1534,16 @@ void iommu_debugfs_setup(void);
->  static inline void iommu_debugfs_setup(void) {}
->  #endif
->  
-> -#ifdef CONFIG_IOMMU_DMA
-> +#if defined(CONFIG_IOMMU_DMA) && IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
->  int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base);
-> +void iommu_put_msi_cookie(struct iommu_domain *domain);
->  #else /* CONFIG_IOMMU_DMA */
->  static inline int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
->  {
-> -	return -ENODEV;
-> +	return 0;
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------xAOa79yi3ABp7zku3yDVyCG9
+Content-Type: multipart/mixed; boundary="------------f7tnVTZer3R6bdctOBlJjYS0";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: Bart Van Assche <bvanassche@acm.org>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, chenlinxuan@uniontech.com,
+ Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
+ Yujing Ming <mingyujing@uniontech.com>
+Message-ID: <e2f01a1f-8da5-4e7b-b909-d920a792756a@uniontech.com>
+Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
+ with "use_192_bytes_for_3f" attribute
+References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+ <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+ <0A01BD2F489C764A+647ab6a7-35e5-4aa4-b8d1-c177be1724c6@uniontech.com>
+ <3b6cca0d-7aa5-43b6-8f4a-429f17558121@acm.org>
+In-Reply-To: <3b6cca0d-7aa5-43b6-8f4a-429f17558121@acm.org>
 
-Should we keep the -ENODEV here for !CONFIG_IOMMU_DMA?
+--------------f7tnVTZer3R6bdctOBlJjYS0
+Content-Type: multipart/mixed; boundary="------------g70P2ViavHlgOVjGx7l8fjPX"
 
-Nicolin
+--------------g70P2ViavHlgOVjGx7l8fjPX
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+SGkgQmFydCwNCg0KT24gMjAyNS8yLzI2IDA0OjU0LCBCYXJ0IFZhbiBBc3NjaGUgd3JvdGU6
+DQo+DQo+IEhhcyBpdCBiZWVuIGNvbnNpZGVyZWQgdG8gdHJ1bmNhdGUgdGhlIE1PREUgU0VO
+U0UgYnVmZmVyIHRvIDE5MiBieXRlcw0KPiBpbnN0ZWFkIG9mIHJlamVjdGluZyB0aGUgTU9E
+RSBTRU5TRSBjb21tYW5kPw0KPg0KPg0KQWxhbiBTdGVybiBoYXMgcmFpc2VkIGEgcmVsYXRl
+ZCBpc3N1ZSBiZWZvcmUuIE15IHRha2Ugb24gdGhpcyBpcyANCm91dGxpbmVkIGJlbG93Lg0K
+DQpJIHBlcnNvbmFsbHkgdGhpbmsgdGhhdCBpdCBpcyBub3QgYXBwcm9wcmlhdGUgdG8gbW9k
+aWZ5IGl0IGRpcmVjdGx5DQp0byAxOTIuIEFmdGVyIGFsbCwgaXQgaXMgY2FsbGVkIGJ5IHRo
+ZSB1c2VyIHRocm91Z2ggaW9jdGwsIGFuZCB0aGUNCmtlcm5lbCBpdHNlbGYgd2lsbCBub3Qg
+Y29uc3RydWN0IHN1Y2ggYSBkYXRhIGZyYW1lLiBBcyBzaG93biBpbiB0aGUNCmZvbGxvd2lu
+ZyBjb2RlOg0KDQpzZF9yZWFkX3dyaXRlX3Byb3RlY3RfZmxhZyhzdHJ1Y3Qgc2NzaV9kaXNr
+ICpzZGtwLCB1bnNpZ25lZCBjaGFyICpidWZmZXIpDQogwqDCoMKgwqDCoCB7DQogwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIGludCByZXM7DQogwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHN0cnVjdCBzY3NpX2RldmljZSAqc2RwID0gc2RrcC0+ZGV2aWNlOw0KIMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBzdHJ1Y3Qgc2NzaV9tb2RlX2RhdGEgZGF0YTsNCiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgaW50IG9sZF93cCA9IHNka3AtPndyaXRlX3Byb3Q7DQoNCiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgc2V0X2Rpc2tfcm8oc2RrcC0+ZGlzaywgMCk7DQogwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChzZHAtPnNraXBfbXNfcGFnZV8zZikgew0Kc2Rf
+Zmlyc3RfcHJpbnRrKEtFUk5fTk9USUNFLCBzZGtwLCAiQXNzdW1pbmcgV3JpdGUgRW5hYmxl
+ZFxuIik7DQogwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1
+cm47DQogwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0NCg0KIMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBpZiAoc2RwLT51c2VfMTkyX2J5dGVzX2Zvcl8zZikgew0KcmVzID0gc2RfZG9f
+bW9kZV9zZW5zZShzZHAsIDAsIDB4M0YsIGJ1ZmZlciwgMTkyLCAmZGF0YSwgTlVMTCk7DQoN
+Cg0KTGluazogDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMTM3OTAyRkVFMDNDQ0Iz
+Qis2MTMwMjI3Zi05ZGRjLTQwNDMtOTk0NS1kYTQ2NWMyOGQ5ZDFAdW5pb250ZWNoLmNvbS8N
+Cg0KLS0gDQpXYW5nWXVsaQ0K
+--------------g70P2ViavHlgOVjGx7l8fjPX
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------g70P2ViavHlgOVjGx7l8fjPX--
+
+--------------f7tnVTZer3R6bdctOBlJjYS0--
+
+--------------xAOa79yi3ABp7zku3yDVyCG9
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ759CAUDAAAAAAAKCRDF2h8wRvQL7lYV
+AQDlgt3lmyKrSI8spTwU1k34ewMv8doiPEqMzcEatn/sCQEAv3nNELSEOqrsDc4KF5ezFd4jEF68
+NOmlza7lAer61AA=
+=T7n1
+-----END PGP SIGNATURE-----
+
+--------------xAOa79yi3ABp7zku3yDVyCG9--
 
