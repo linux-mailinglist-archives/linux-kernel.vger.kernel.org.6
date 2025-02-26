@@ -1,152 +1,196 @@
-Return-Path: <linux-kernel+bounces-534462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BB2A4674D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:03:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FEAA4673A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 741691655F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36F6188ED0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F113E2222CF;
-	Wed, 26 Feb 2025 16:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F2C222568;
+	Wed, 26 Feb 2025 16:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="g4ieDrVv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KBJbDOIZ"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L7B74fYX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A318E21E082
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6991E7C12
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588727; cv=none; b=oqXCgy2Epsh6hi5/O9BqdbLVMjIo/aQ69tgY0fquKu3+lJf9SLLmzz1TpYvNQA3lYDLNkJO+lEN30GfK2ZPTlAx3rhls63WKKp2esxQNdFsrI++poypa5LlFFx1hIpIsUuL056tyshfeTn9bu3ncn5VirMinUbFhKd7TcC7svjY=
+	t=1740588741; cv=none; b=RJ67y7zjLhTOaB97Y4sCDnlt3U2E4O+rErccS5cKtzgvIgZ1UXQK0viabky+O+HhCwOOe+8Fj47WYDd02C6umelXjacA9F8xlIv0ULdU6FvmDYlC3w6OE4F7y3eE9tPdpFBdcdfvAIyS0RHkX8ilO5xI7mpuQIICNeW4PqdUp3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588727; c=relaxed/simple;
-	bh=jAnxxUBZkMArF5ezoFHTnzmqC7CXXOP/qNQnnrdNBns=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=T4FD/FOXaA8h/W+DfaYX/jMwzYA5XX5W6RLEdYpvBV/8xUyvQ3HjYRmp+o1oQdRqJyWMQJ910nYMK22r1332vIVmO34EGWXteV2Ab0AeDUD+K7UHZPjW2eEOcCJsdEBJjxA1p+rUjVBYMiNsheso7U48DFEkWPYAdBa+tB39yxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=g4ieDrVv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KBJbDOIZ; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id AE8FB1140094;
-	Wed, 26 Feb 2025 11:52:02 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Wed, 26 Feb 2025 11:52:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1740588722; x=1740675122; bh=5iYy0IpLCeQb1PHojS9KoM42iYxcOqMQ
-	sa9CMfL/p/c=; b=g4ieDrVv/phXnemR3ZsNThAk6E6AZbzLbXJAMV8sJ8sYq63f
-	C9l1L+KTzRWxZCTuoBAsnCkGKNjKdkaiXGvcW8V1yzw2JaeSBvPwfp1WnpQ00Aut
-	XcKK3uF858Mr3vwuu1sx1GEzscaCN4U1QoMUj9ardGnUJzM31t9wa155iHJjauzl
-	27yl0jUZlnvRVIhJctmudrk2Y5FMOKZtgZ+8hxkQieIA7iKojT7IvwZGhDh9BKQW
-	zwOYVE9KoMX6Jg9URnZ7mXjzGkkSh19GhNxEeeNDI/cuNB+LrVgNTaOb1AG87X53
-	JLZMWsIUc/sPraV1lRNGXYEzEmIzeNczIwPR6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740588722; x=
-	1740675122; bh=5iYy0IpLCeQb1PHojS9KoM42iYxcOqMQsa9CMfL/p/c=; b=K
-	BJbDOIZUmLK+w/0hXVbFDRphkfhDphV97il3nzweFbcxWAJEFDjU8Gqw2nFoBi0b
-	o6Av1GVysfMFWCuefVHOy+gjv9lAQGNwlHZ0cgGATLitdagCdzxv2o1zwgQGJdjg
-	OD4wZtqAUwI0OryKx/TDwrj2ZEcxKcvYD51ObUDPBMfg0lxVmDGnY2jp5KaHdKeA
-	hBzMHJRB9DH4vtbWij9TnQXMWtJCX9Br5OAGPf5mtX5CSUfB6ZGe4P1xmWJhS/sl
-	x2BPoNXdVQzAtxeoz9W6CqFswHcsAkNrKs56A8qeteHgSazbV/0EuaBLo6cJw6XP
-	QdosrjWtjktUSlZafCg8g==
-X-ME-Sender: <xms:sUa_Z4RY0KqV2cDjzbFvyZ_o0xAouYiCysSFrkIj_2NPaFiyWR1bnw>
-    <xme:sUa_Z1xk4kM9Jj9iW699vYSOR03jmfTc97a3GJ-ZLpZLijBgtf7SWtgsdLNy-7kPG
-    4x63_D32yAYzy662hI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeegheduteffteeguefgteeugeffvdejgefg
-    gfegkedthffgudfhudduieelkeekkeenucffohhmrghinhepghhithhhuhgsrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghn
-    sehsvhgvnhhpvghtvghrrdguvghvpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopehlihhn
-    uhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprh
-    gtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohep
-    mhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprghlhihsshgrsehrohhsvg
-    hniiifvghighdrihhopdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:sUa_Z127v5F1-tpz_DKAqecbUd9oZRtYLG4AJuxaWLIRoiaKOxaQFw>
-    <xmx:sUa_Z8DAl_UAdWwb2mIcj2iO8LqEc9RuvyJNj4d3i5B61o1RAhZqbA>
-    <xmx:sUa_ZxhWDVY2g5KByIq7c4dKW-uOc4w_ezxWdLEWpL8rw5rn2qKbRA>
-    <xmx:sUa_Z4rUDU6lA7RnFBhp6lG2kcbfeKFv3TrbtaM0DkoeIeQnC8V-nA>
-    <xmx:ska_Z_ZVP3Lm1_PJXM5UDde9viUfhnDEgXIdFDIYe7jvGiWoPzm8HmU9>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CA904BA006F; Wed, 26 Feb 2025 11:52:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740588741; c=relaxed/simple;
+	bh=Jr2awVO967PWhryCmmJTYA3ZJ8MdFBT4PF2HNMlA4gw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHV1f1F6n6DW+XKM/HK34YI5NUj4V3zLPgpVpE70PQXy2pTPLzDJ/UMRKj5Zz6BEqQn7nv4vx1DXj/7nwfeeSi/Q2OJwNuUUffBqEMDmZ8n2DyuGB+k59KD8LdnfMdbq6WLTyOsmntpMSOLcUskTDb5uduol6XKMhzP2rPnwj+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L7B74fYX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740588738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+0HHkRdAiBd7Txtjs9eRODGWP9c636h+jNfm6Og71eo=;
+	b=L7B74fYXpa/7k7ESRSZBuKNCeVNNidHYHi+o7pAs5xWGIZB7Dlpvz/uMJl3NSur5mZUhLB
+	fqVIqcRr7PJDc7Bf00RVp0B+9YmNkyFLPy70h1E2+sSOOQxvAJW/Xd2xEHwn+KBzei1iwR
+	3+yWlCKRnXC00B/bZtRXvTJJLrphL04=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-OEC9Eh4DOb2ckcQUkKCp8w-1; Wed, 26 Feb 2025 11:52:16 -0500
+X-MC-Unique: OEC9Eh4DOb2ckcQUkKCp8w-1
+X-Mimecast-MFC-AGG-ID: OEC9Eh4DOb2ckcQUkKCp8w_1740588735
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f55ccb04bso4689665f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740588735; x=1741193535;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+0HHkRdAiBd7Txtjs9eRODGWP9c636h+jNfm6Og71eo=;
+        b=ZVpwf4m1BzDaI0o3ZKE0YXmsePQ89x4Mq8ZMvKVwem6rVexoHgJHlf6nI656OW3vq6
+         DPSkoYrwEnhDzmriJip22CCeqMJNS1TtPr2qFwTE0O3nQKIvWZZp/PSpM3yEL8q7aXYH
+         SiIeQFLAIunOt+L4kCEkLrFjlWLLgJKlEkHiyt4TEo+u/H5bLsG5v9/WLgvOQPcgt8U/
+         Q/nD8B5//2mcDPl44PVl296u4M1I8nb3G1o+YMzlb0wPZL+iaCSfIyNRDw+Qxob6R3Wx
+         EWRsx29eqz7wGDFw4LV8m5Bm90cSgre9+co8VlN0ucHlSNfpf95rnVRaKFMTSDTHuj9+
+         94fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSc1xxgjuZy8ZdBYvGlzS6aA26wEuKAFrGOdVvELFhSMIw+bZjTjNYrDhtXXYRwIpQH2GU+EVc0VtGvws=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp5H+98ZwxXjXHTFTCAghhvpbyXxPUj8YI9ustERsQjwKgsm9Z
+	bB8Yu8MJ0EW7jGY2owg595ToHKckjBX7Jbo6WTe0++wgeVlEeSZ//6o64YUngqEVdFST229N5x1
+	6++rzvCRvgoHC1j5dN8hBPC07W6trljOZMKGQDjXRO4Yw/tVC51cAD5KInEPNYw==
+X-Gm-Gg: ASbGnctyuzILcMx3Tu2ljOL6Ui8/qOgwbefxaLrqSskVwwWuSygQ/jRqFsnKu96rAb9
+	/nYzp77uln7EkbMuoAZybQ/Pzb/GsJjA6duCps/i+Zeyq6ITIVvdkvuxIz/3s2i2A2F3P1g08es
+	92zV4sKXjNxWzhHX/awNP7qv7KW6Ydc8R45K+a6Ds/1UmXYE9TJfxPAUfO8KfMXRoQec0NGHwdb
+	Kp5jLqyDXvYOfOZeMbTOgon4uqIpmHip/l3e7i5R5T4GrMqylne9UeE3/4N03AhHtn8jkaPmoXJ
+	HDQktI7iRFirQTL+7bU125bZvQQWQXfYLk67o/f4UuWQO852cy2PpOxyOJOlqa/fInyxBi/N0HC
+	l6jVaCvLZAf13yTGAQPL6Ezj8U4Jfec0C8IjHxiB6jLI=
+X-Received: by 2002:a5d:5f4e:0:b0:38f:2bd4:4f83 with SMTP id ffacd0b85a97d-390d4f3cb77mr4468564f8f.16.1740588735377;
+        Wed, 26 Feb 2025 08:52:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF96KvSMRmM5TXBYTyKxVzIlmTEfqQ4jkwmJCUMcZF9SSmULrSOpEHRedOCic6897bciWmd2A==
+X-Received: by 2002:a5d:5f4e:0:b0:38f:2bd4:4f83 with SMTP id ffacd0b85a97d-390d4f3cb77mr4468540f8f.16.1740588734974;
+        Wed, 26 Feb 2025 08:52:14 -0800 (PST)
+Received: from ?IPV6:2003:cb:c747:ff00:9d85:4afb:a7df:6c45? (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c93bsm6150565f8f.26.2025.02.26.08.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 08:52:14 -0800 (PST)
+Message-ID: <12dfdfde-06db-4112-9979-2ed320f80439@redhat.com>
+Date: Wed, 26 Feb 2025 17:52:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 17:51:40 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Alyssa Rosenzweig" <alyssa@rosenzweig.io>
-Cc: "Janne Grunau" <j@jannau.net>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Hector Martin" <marcan@marcan.st>
-Message-Id: <63c5cbfe-4751-4409-9be7-2fda21b09503@app.fastmail.com>
-In-Reply-To: <Z7y14Q3ifu7U1tHI@blossom>
-References: <20250222-apple-soc-misc-v1-0-1a3af494a48a@svenpeter.dev>
- <20250222-apple-soc-misc-v1-2-1a3af494a48a@svenpeter.dev>
- <Z7y14Q3ifu7U1tHI@blossom>
-Subject: Re: [PATCH 2/4] soc: apple: rtkit: Implement OSLog buffers properly
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: fix finish_fault() handling for large folios
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Brian Geffon <bgeffon@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins
+ <hughd@google.com>, Marek Maslanka <mmaslanka@google.com>
+References: <20250226114815.758217-1-bgeffon@google.com>
+ <Z78fT2H3BFVv50oI@casper.infradead.org>
+ <121abab9-5090-486b-a3af-776a9cae04fb@redhat.com>
+ <Z79BHbCL3U5aGS0Q@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z79BHbCL3U5aGS0Q@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 26.02.25 17:28, Matthew Wilcox wrote:
+> On Wed, Feb 26, 2025 at 04:42:46PM +0100, David Hildenbrand wrote:
+>> On 26.02.25 15:03, Matthew Wilcox wrote:
+>>> On Wed, Feb 26, 2025 at 06:48:15AM -0500, Brian Geffon wrote:
+>>>> When handling faults for anon shmem finish_fault() will attempt to install
+>>>> ptes for the entire folio. Unfortunately if it encounters a single
+>>>> non-pte_none entry in that range it will bail, even if the pte that
+>>>> triggered the fault is still pte_none. When this situation happens the
+>>>> fault will be retried endlessly never making forward progress.
+>>>>
+>>>> This patch fixes this behavior and if it detects that a pte in the range
+>>>> is not pte_none it will fall back to setting just the pte for the
+>>>> address that triggered the fault.
+>>>
+>>> Surely there's a similar problem in do_anonymous_page()?
+>>
+>> I recall we handle it in there correctly the last time I stared at it.
+>>
+>> We check pte_none to decide which folio size we can allocate (including
+>> basing the decision on other factors like VMA etc), and after retaking the
+>> PTL, we recheck vmf_pte_changed / pte_range_none() to make sure there were
+>> no races.
+> 
+> Ah, so then we'll retry and allocate a folio of the right size the next
+> time?
 
+IIRC we'll retry the fault in case we had a race. Likely, if we had a 
+race, somebody else installed a (large) folio and we essentially have to 
+second fault. If, for some reason, the race only touched parts of the 
+PTEs we tried to modify, we'll get another fault and allocate something 
+(smaller) that would fit into the new empty range.
 
-On Mon, Feb 24, 2025, at 19:09, Alyssa Rosenzweig wrote:
->> +	if (ep == APPLE_RTKIT_EP_OSLOG) {
->> +		buffer->size = FIELD_GET(APPLE_RTKIT_OSLOG_SIZE, msg);
->> +		buffer->iova = FIELD_GET(APPLE_RTKIT_OSLOG_IOVA, msg) << 12;
->> +	} else {
->> +		buffer->size = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_SIZE, msg) << 12;
->> +		buffer->iova = FIELD_GET(APPLE_RTKIT_BUFFER_REQUEST_IOVA, msg);
->> +	}
->
-> The shifts are suspiciously asymmetric. Are we really sure this is
-> correct? My guess is that both size & iova for both oslog & buffer need
-> to be page-aligned, so all 4 lines should be shifted, and the bit
-> offsets should be adjusted in turn, and the lower 12-bits in oslog_size
-> and buffer_iova are reserved. But that's just a guess.
->
-> Anyway if this logic is really what we want it deserves a comment
-> because it looks like a typo.
+So yes, we're more flexible because we're allocating the folios and 
+don't have to take whatever folio size is in the pagecache in consideration.
 
-That guess can't be true for syslog since there's no change in behavior here
-and the syslog endpoint has been working fine so far. This common code is
-also used for other endpoints that request buffers and there haven't been
-any issues there either. The size is just passed in "number of 4k chunks"
-and the IOVA needs no additional fixups.
+-- 
+Cheers,
 
-
-The entire reason for this commit is because this common logic just didn't
-work for oslog. Our u-boot fork uses the same logic as used here [1]. We're stealing
-a chunk of MTP's SRAM to make hand-off to Linux easier there. If either size or
-IOVA was off by a factor 0x4000 this would've never worked in the first
-place.
-
-I'll add a comment that this is really what we want even though it looks odd.
-
-
-Sven
-
-
-[1] https://github.com/AsahiLinux/u-boot/blob/582f851413c3fd1fcd60d701ed54fff2e840b9cf/arch/arm/mach-apple/rtkit.c#L144
+David / dhildenb
 
 
