@@ -1,291 +1,279 @@
-Return-Path: <linux-kernel+bounces-533699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2B3A45DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:54:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE47A45DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B2417530A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6962E7A2639
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4435021C9E0;
-	Wed, 26 Feb 2025 11:51:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88B6217655;
+	Wed, 26 Feb 2025 11:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ahTLmZ2h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E888321CA02
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4617C1E1DE5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570665; cv=none; b=MUQFaN9FH9dM5ClpxZzwUBFagX6MJ590XRJDJKE2yhv8om82K43RcAyyRdeQl/IrnkInnUsBT56WU+tCRCOrOlOvY2F1FzmRPDWSHu6klsRR4/QxGby7r8d4xtCspWK5e6fULZkJeNgP80jpbwW5FH9asd4X4AdXAmnznzamb/Q=
+	t=1740570757; cv=none; b=Nx7qABb9FaAD14TMPYvqqJzRZrKvXQ2tOChAp7CA8d9kyIYZ/BUHC8PcY/NwOYfPuEuVXSnMX6SZzTDNv8f0TV4ETnFy/WVXx8mgWIwZI7R3ndbfkdfAuxbzmoaKeNno/ihNw8KmMXiUQni+i7ieN99IZuj77HTRDjnOfa2QMa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570665; c=relaxed/simple;
-	bh=Egxyts38uhbzI5cTqjv6hFuVzM23SG1kUUM0YXjMQEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1PPNlp2/0DWXFbpeGP0e6FwW+ai9UiaRH23lSmc2NoFu2qih0yfeq6MlLJvMKlkIu/b7D4VfjkZ1Ifvt3SKSKLyhKjpvNe+4Aht3VnhsMJ/eHAuovTIwTRUatXqwoWe3QyPuM7rXADkS9KJJ1t9KK0LmAEOWFeJILuJy0AlO+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnFw7-0001NV-6m; Wed, 26 Feb 2025 12:50:47 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnFw4-002wSZ-28;
-	Wed, 26 Feb 2025 12:50:44 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnFw4-001Xwx-1i;
-	Wed, 26 Feb 2025 12:50:44 +0100
-Date: Wed, 26 Feb 2025 12:50:44 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: robh@kernel.org, aisheng.dong@nxp.com, andy@black.fi.intel.com,
-	catalin.marinas@arm.com, devicetree@vger.kernel.org, hch@lst.de,
-	iommu@lists.linux.dev, kernel@quicinc.com, klarasmodin@gmail.com,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-	quic_ninanaik@quicinc.com, robin.murphy@arm.com,
-	saravanak@google.com, will@kernel.org, stable@vger.kernel.org,
-	kernel@pengutronix.de, sashal@kernel.org
-Subject: Re: [PATCH v10 1/2] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-Message-ID: <20250226115044.zw44p5dxlhy5eoni@pengutronix.de>
-References: <20241008220624.551309-1-quic_obabatun@quicinc.com>
- <20241008220624.551309-2-quic_obabatun@quicinc.com>
+	s=arc-20240116; t=1740570757; c=relaxed/simple;
+	bh=lAP5jCkkR0TPWw9dGfqZRBeM8Juv+VZLV55JUEKWdDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sfrgrq8HO6ktv66vdX3mPZDdSntCFTwpzdraj94A/1/QwaUmUTFT9b1sfLWhwQeYTS60r2pi8GREuRmnGlmAJlHUdKxXEXZAXEbsjb85Zjkq5RH/WRC55d2c4zvTtSGgi2m14Un+ujxj4ntGMpDRF16cXZuf8HtRmGClgS5uFCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ahTLmZ2h; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740570754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0p71Bc+tSNk19U8eoW67nNiNmqlLTYbFS9i3TH6hlEU=;
+	b=ahTLmZ2hKw5nqPhQEik4b4bnFJZbbqulVoCu2bANMp26FFZJShY2AY9Kpa7zwIP3jQUD3H
+	Z7Hso02Wh9RLUHM0WS71HEKoqlXsWLmFXvz1SDNVC/5ROKkJ1FQBREP4HjBQj4zrJUPYS6
+	kLxRb3ng6uuKjYAjHx2JBhreVEGKbAk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-RPoqSw59PFyd-q6Ipfwmog-1; Wed, 26 Feb 2025 06:52:32 -0500
+X-MC-Unique: RPoqSw59PFyd-q6Ipfwmog-1
+X-Mimecast-MFC-AGG-ID: RPoqSw59PFyd-q6Ipfwmog_1740570751
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f4e47d0b2so3019850f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:52:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740570751; x=1741175551;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0p71Bc+tSNk19U8eoW67nNiNmqlLTYbFS9i3TH6hlEU=;
+        b=golmgTAy4ENVNmTwnaUNwbk1zfz+Z6PHx6AyTajgQZRMLo5mL3dOHQHwSZT+tEgovW
+         XUdtR5hNo+LAmtldgwKSdp94BKU1gQuxRtDFGn8qE/1yx2tN5Gsh4ZH5zlTH+CjG0GXu
+         OUFYtnS3WlZOyYLfYP5KvjOGTwtxbvHH1QGQoQGYbQ48LDQqDjfYm53CusQYF05R2rZd
+         M2LQJ9w3idVS820mCbeKkUk+FXikNLbFSZO2njktVNoI9hPuOjLLQEPuVTFDGhkJSTkY
+         kuiZQ58bK1kcg7UEfl03BRxxDSqRrrZJGyCopMDEciRM7fC/IbOd84hAF4vg087p/r6x
+         n2AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5DX6xWz8xfme8I8e65ZPfa6AD8YyRxbnnfoWlbGVEejI6wkBalRcxC2yO4pjN0pyB6ZrpkluO1Yv/wSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIIBuJo8fEVsxHOGvI5kgy9ybXwfRc3rqDbhcTVpvBlQ7yfabW
+	oYeEJY0K3K2x2HlsnrH1NS+MeZ9huJ8TOEtfy1JZmvHqgJCnnnuGjVWUMMZpRPm/+SlEYaINZnE
+	bSOx23j9vbApB5ont5JJF9A5YCxBCqyKJ+QCV4r0FAUSRSf9/PZKITQO2ZHMoMA==
+X-Gm-Gg: ASbGnctdRICnO7tZua6DOZ+V7Hso0fT7vvXLV2fHNlJkMm6ZW/dbPz0uqvVDUoGInAU
+	VuSicLx2A/MXN4CHnSf/FAwJ96+Jo8bp6FF4RdBpsv58uno0KuVRCkDfL9V+wtd8jLfGmobAqZP
+	nEivDUIN8drr/UGb8Qg8YCLAJNCXMBPIo/fIGe+tJoS2xB/3HGCzBBlpdMta3ocZ0vp7w6LefE3
+	sMJU6lSQ+RmIYwYRcieyc0Y8gmsjYVmLrY2absmXXdoYyv8qkOj4IjwrNZORkSG8yVzPT5qJlL7
+	P52n1U1nzZjfNR4N3+Uj87mVfBw5Tx+FYQYHSKYkkET9xXM5nVMuDYrgXIVFHp9R9uRsN/mdpQo
+	ZW4ld4jAej6NLN9igM96t4ibS24FYUdQ0TzWUVzCCQ0E=
+X-Received: by 2002:a05:6000:2a7:b0:38f:4fa6:e641 with SMTP id ffacd0b85a97d-390d4f84740mr3006486f8f.43.1740570751445;
+        Wed, 26 Feb 2025 03:52:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEw6LTiRCfqsNc3pw3LySJCXKQPJIe6Q8/sql2dmRjbzjqWwsMFFiGxlF1FuddtHIXqDIK76Q==
+X-Received: by 2002:a05:6000:2a7:b0:38f:4fa6:e641 with SMTP id ffacd0b85a97d-390d4f84740mr3006423f8f.43.1740570751066;
+        Wed, 26 Feb 2025 03:52:31 -0800 (PST)
+Received: from ?IPV6:2003:cb:c747:ff00:9d85:4afb:a7df:6c45? (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86cd10sm5467317f8f.37.2025.02.26.03.52.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 03:52:30 -0800 (PST)
+Message-ID: <657f10ed-4e82-4048-98ab-1c4b65349298@redhat.com>
+Date: Wed, 26 Feb 2025 12:52:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008220624.551309-2-quic_obabatun@quicinc.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/4] mm: KUnit tests for the page allocator
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Oscar Salvador
+ <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Yosry Ahmed <yosry.ahmed@linux.dev>
+References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
+ <0449ff75-0a6b-4c1e-bf12-ff052aad5287@redhat.com>
+ <Z72-AP-yQ2hPwpKe@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z72-AP-yQ2hPwpKe@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 24-10-08, Oreoluwa Babatunde wrote:
-> Reserved memory regions defined in the devicetree can be broken up into
-> two groups:
-> i) Statically-placed reserved memory regions
-> i.e. regions defined with a static start address and size using the
->      "reg" property.
-> ii) Dynamically-placed reserved memory regions.
-> i.e. regions defined by specifying an address range where they can be
->      placed in memory using the "alloc_ranges" and "size" properties.
+On 25.02.25 13:56, Brendan Jackman wrote:
+> On Tue, Feb 25, 2025 at 11:01:47AM +0100, David Hildenbrand wrote:
+>>> This is an RFC and not a PATCH because:
+>>>
+>>> 1. I have not taken much care to ensure the isolation is complete.
+>>>      There are probably sources of flakiness and nondeterminism in here.
+>>>
+>>> 2. I suspect the the basic idea might be over-complicated: do we really
+>>>      need memory hotplug here? Do we even need the instance of the
+>>>      allocator we're testing to actual memory behind the pages it's
+>>>      allocating, or could we just hallucinate a new region of vmemmap
+>>>      without any of that awkwardness?
+>>>
+>>>      One significant downside of relying on memory hotplug is that the
+>>>      test won't run if we can't hotplug anything out. That means you have
+>>>      to fiddle with the platform to even run the tests - see the
+>>>      --kernel_args and --qemu_args I had to add to my kunit.py command
+>>>      above.
+>>>
+>>>      So yeah, other suggestions welcome.
+>>>
+>>>      2b. I'm not very confident I'm using the hotplug API properly.
+>>
+>> Me neither ;)
+>>
+>> Dynamically adding memory to that "fake" node is certainly interesting, but
+>> which guarantees do we have that some other features (page migration, memory
+>> offlining, page reporting ...) don't interact in weird ways with this "fake"
+>> node? Adding special-casing all over the place for that feels wrong. I
+>> assume this is point 1. you note above.
 > 
-> These regions are processed and set aside at boot time.
-> This is done in two stages as seen below:
+> Yeah, basically this is the big downside. Changing the system we're
+> trying to test in order to make it testable can't be avoided entirely,
+> but I am also pretty unhappy with sprinkling "if (node_isolated(node))"
+> everywhere.
 > 
-> Stage 1:
-> At this stage, fdt_scan_reserved_mem() scans through the child nodes of
-> the reserved_memory node using the flattened devicetree and does the
-> following:
+> I guess the ideal approach is one where, instead of having to modify
+> the meaning of node_data, we just support replacing it completely,
+> e.g:
 > 
-> 1) If the node represents a statically-placed reserved memory region,
->    i.e. if it is defined using the "reg" property:
->    - Call memblock_reserve() or memblock_mark_nomap() as needed.
->    - Add the information for that region into the reserved_mem array
->      using fdt_reserved_mem_save_node().
->      i.e. fdt_reserved_mem_save_node(node, name, base, size).
+> struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
+> 		int preferred_nid, nodemask_t *nodemask,
+> 		struct pagelist_data *node_data)
+> {
+> 	struct alloc_context ac = { .node_data = node_data };
 > 
-> 2) If the node represents a dynamically-placed reserved memory region,
->    i.e. if it is defined using "alloc-ranges" and "size" properties:
->    - Add the information for that region to the reserved_mem array with
->      the starting address and size set to 0.
->      i.e. fdt_reserved_mem_save_node(node, name, 0, 0).
->    Note: This region is saved to the array with a starting address of 0
->    because a starting address is not yet allocated for it.
+> 	// ...
+> }
 > 
-> Stage 2:
-> After iterating through all the reserved memory nodes and storing their
-> relevant information in the reserved_mem array,fdt_init_reserved_mem() is
-> called and does the following:
+> Ideally this could be done in such a way that it disappears completely
+> outside of KUnit builds, the interface should be private and we'd
+> wanna get rid of any unnecessary pointer chasing with stuff like:
 > 
-> 1) For statically-placed reserved memory regions:
->    - Call the region specific init function using
->      __reserved_mem_init_node().
-> 2) For dynamically-placed reserved memory regions:
->    - Call __reserved_mem_alloc_size() which is used to allocate memory
->      for each of these regions, and mark them as nomap if they have the
->      nomap property specified in the DT.
->    - Call the region specific init function.
+> #ifdef CONFIG_PAGE_ALLOC_KUNIT_TESTS
+> static inline struct ac_node_data(struct alloc_context *ac, int node)
+> {
+> 	return ac->node_data[node];
+> }
+> #else
+> #define ac_node_data(ac, node) (NODE_DATA(node))
+> #endif
 > 
-> The current size of the resvered_mem array is 64 as is defined by
-> MAX_RESERVED_REGIONS. This means that there is a limitation of 64 for
-> how many reserved memory regions can be specified on a system.
-> As systems continue to grow more and more complex, the number of
-> reserved memory regions needed are also growing and are starting to hit
-> this 64 count limit, hence the need to make the reserved_mem array
-> dynamically sized (i.e. dynamically allocating memory for the
-> reserved_mem array using membock_alloc_*).
+> I initially rejected this approach because it felt "too intrusive",
+> but now that I've actually written this RFC I think it could be less
+> intrusive than the node_isolated() thing I've proposed here.
 > 
-> On architectures such as arm64, memory allocated using memblock is
-> writable only after the page tables have been setup. This means that if
-> the reserved_mem array is going to be dynamically allocated, it needs to
-> happen after the page tables have been setup, not before.
+> The most obvious challenges I can see there are:
 > 
-> Since the reserved memory regions are currently being processed and
-> added to the array before the page tables are setup, there is a need to
-> change the order in which some of the processing is done to allow for
-> the reserved_mem array to be dynamically sized.
+> - There might be places that page_alloc.c calls out to that care about
+>    node_data but where we really don't want to plumb the alloc_context
+>    through (maybe vmscan.c is already such a place)?
 > 
-> It is possible to process the statically-placed reserved memory regions
-> without needing to store them in the reserved_mem array until after the
-> page tables have been setup because all the information stored in the
-> array is readily available in the devicetree and can be referenced at
-> any time.
-> Dynamically-placed reserved memory regions on the other hand get
-> assigned a start address only at runtime, and hence need a place to be
-> stored once they are allocated since there is no other referrence to the
-> start address for these regions.
+> - I dunno how many more such helpers we'd need beyond ac_node_data(),
+>    like do we need ac_nodes_possible_mask() etc etc etc?
 > 
-> Hence this patch changes the processing order of the reserved memory
-> regions in the following ways:
+> But maybe worth a try - can you see any obvious reason this idea is
+> stupid?
 > 
-> Step 1:
-> fdt_scan_reserved_mem() scans through the child nodes of
-> the reserved_memory node using the flattened devicetree and does the
-> following:
+>> So I don't quite love the idea on first sight ... but I haven't grasped all
+>> details of the full picture yet I'm afraid.
 > 
-> 1) If the node represents a statically-placed reserved memory region,
->    i.e. if it is defined using the "reg" property:
->    - Call memblock_reserve() or memblock_mark_nomap() as needed.
+> Do you have any thoughts about "making up" memory instead of
+> hot-unplugging real memory for test usage? That might simplify things
+> a bit?
+ > > It seems possible that very little mm code cares if the memory we're
+> managing actually exists. (For ASI code we did briefly experiment with
+> tracking information about free pages in the page itself, but it's
+> pretty sketchy and the presence of debug_pagealloc makes me think
+> nobody does it today).
+
+At least when it comes to the buddy, only page zeroing+poisoning should 
+access actual page content.
+
+So making up memory might actually work in quite some setups, assuming 
+that it will never get allocated.
+
+The "complicated" thing is still that we are trying to test parts of the 
+buddy in a well-controlled way while other kernel infrastructure is 
+using the buddy in rather uncontrolled ways.
+
+
 > 
-> 2) If the node represents a dynamically-placed reserved memory region,
->    i.e. if it is defined using "alloc-ranges" and "size" properties:
->    - Call __reserved_mem_alloc_size() which will:
->      i) Allocate memory for the reserved region and call
->      memblock_mark_nomap() as needed.
->      ii) Call the region specific initialization function using
->      fdt_init_reserved_mem_node().
->      iii) Save the region information in the reserved_mem array using
->      fdt_reserved_mem_save_node().
-> 
-> Step 2:
-> 1) This stage of the reserved memory processing is now only used to add
->    the statically-placed reserved memory regions into the reserved_mem
->    array using fdt_scan_reserved_mem_reg_nodes(), as well as call their
->    region specific initialization functions.
-> 
-> 2) This step has also been moved to be after the page tables are
->    setup. Moving this will allow us to replace the reserved_mem
->    array with a dynamically sized array before storing the rest of
->    these regions.
-> 
-> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-> ---
->  drivers/of/fdt.c             |   5 +-
->  drivers/of/of_private.h      |   3 +-
->  drivers/of/of_reserved_mem.c | 168 ++++++++++++++++++++++++-----------
->  3 files changed, 122 insertions(+), 54 deletions(-)
+> There might be arch-specific issues there, but for unit tests it
+> seems OK if they don't work on every ISA.
 
-this patch got into stable kernel 6.12.13++ as part of Stable-dep-of.
-The stable kernel commit is: 9a0fe62f93ede02c27aaca81112af1e59c8c0979.
+Just pointing it out: for memblock tests (tools/testing/memblock/) we 
+actually compile memblock.c to be used in a user space application, 
+stubbing all external function calls etc such that we get the basics 
+running.
 
-With the patch applied I see that the cma area pool is misplaced which
-cause my 4G device to fail to activate the cma pool. Below are some
-logs:
+It'd probably be quite some work to get page_alloc.c into a similar 
+shape, likely we'd have to move a lot of unrelated-for-the tests stuff, 
+and think about how to handle some nasty details like pcp etc. Just 
+wondering, did you think about that option as well?
 
-*** Good case (6.12)
+The nice thing about such an approach is that we can test the allcator 
+without any possible side effects from the running system.
 
-root@test:~# dmesg|grep -i cma
-[    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
-[    0.000000] OF: reserved mem: 0x0000000044200000..0x00000000541fffff (262144 KiB) map reusable linux,cma
-[    0.056915] Memory: 3695024K/4194304K available (15552K kernel code, 2510K rwdata, 5992K rodata, 6016K init, 489K bss, 231772K reserved, 262144K cma-reserved)
+-- 
+Cheers,
 
-*** Bad (6.12.16)
+David / dhildenb
 
-root@test:~# dmesg|grep -i cma
-[    0.000000] Reserved memory: created CMA memory pool at 0x00000000f2000000, size 256 MiB
-[    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
-[    0.000000] OF: reserved mem: 0x00000000f2000000..0x0000000101ffffff (262144 KiB) map reusable linux,cma
-[    0.056968] Memory: 3694896K/4194304K available (15616K kernel code, 2512K rwdata, 6012K rodata, 6080K init, 491K bss, 231900K reserved, 262144K cma-reserved)
-[    0.116920] cma: CMA area linux,cma could not be activated
-
-*** Good (6.12.16, revert 9a0fe62f93ed)
-
-root@test:~# dmesg|grep -i cma
-[    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
-[    0.000000] OF: reserved mem: 0x0000000044200000..0x00000000541fffff (262144 KiB) map reusable linux,cma
-[    0.060976] Memory: 3694896K/4194304K available (15616K kernel code, 2512K rwdata, 6012K rodata, 6080K init, 491K bss, 231900K reserved, 262144K cma-reserved)
-
-Below is our reserved-memory dts node:
-
-reserved-memory {
-	#address-cells = <2>; 
-	#size-cells = <2>; 
-	ranges;
-
-	linux,cma {
-		compatible = "shared-dma-pool";
-		reusable;
-		/*
-		 * The CMA area must be in the lower 32-bit address range.
-		 */
-		alloc-ranges = <0x0 0x42000000 0 0xc0000000>;
-		size = <0x0 0x10000000>;
-		alignment = <0 0x2000>;
-		linux,cma-default;
-	};
-
-	optee-core@40000000 {
-		reg = <0 0x40000000 0 0x1e00000>;
-		no-map;
-	};
-
-	optee-shm@41e00000 {
-		reg = <0 0x41e00000 0 0x200000>;
-		no-map;
-	};
-
-	m7_reserved: m7@80000000 {
-		reg = <0 0x80000000 0 0x1000000>;
-		no-map;
-	};
-
-	vdev0vring0: vdev0vring0@55000000 {
-		reg = <0 0x55000000 0 0x8000>;
-		no-map;
-	};
-
-	vdev0vring1: vdev0vring1@55008000 {
-		reg = <0 0x55008000 0 0x8000>;
-		no-map;
-	};
-
-	rsc_table: rsc-table@550ff000 {
-		reg = <0 0x550ff000 0 0x1000>;
-		no-map;
-	};
-
-	ram_console_buffer: ram-console-buffer@55100000 {
-		reg = <0 0x55100000 0 0x1000>;
-		no-map;
-	};
-
-	vdev0buffer: vdev0buffer@55400000 {
-		compatible = "shared-dma-pool";
-		reg = <0 0x55400000 0 0x100000>;
-		no-map;
-	};
-};
-
-My current workaround is to revert commit 9a0fe62f93ed and the
-dep-chain: 2d1d620ff27b444 8de4e5a92282. But I would like to get a
-proper solution without having revert commits in my downstream
-patchstack.
-
-Regards,
-  Marco
 
