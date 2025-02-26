@@ -1,80 +1,122 @@
-Return-Path: <linux-kernel+bounces-532865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DC1A45322
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:35:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC67A45323
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D121189B60D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C5B17C576
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0EB21C9E4;
-	Wed, 26 Feb 2025 02:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DEC21C9F2;
+	Wed, 26 Feb 2025 02:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S1gwcxb1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsKY188A"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20626183CA6;
-	Wed, 26 Feb 2025 02:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9241A155C83;
+	Wed, 26 Feb 2025 02:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740537321; cv=none; b=QbJ68SUFvRU3HuF08Vr3VtJfdoIvKbLu43GRXNhLiXksQ8zNtqWgGJPEM2n23hjfKKJSNqHJng8dhlCP+CkUNQvMJ/XzCSZvQP3FEnhMbINCT4eHyj4r/bxJn8TNqDDkuagqxkQus4lWnJ8xPXB5vj4bdOpI6hbzAm9NST1CVoE=
+	t=1740537430; cv=none; b=s0d6usTCB7GaidOryxkBVL0R1+TGCYxXg5gH9Qi5jzmMisv9W/eKo//NClFZQeBa9nEo5rErK6AWCQALaRYk5lfaRs9eEQTs3E4Aa/KOU49Y6Skyrnz/S2LSvtSZeGT6tkW52ZH2MmwPp1SaGMO/96riuhgPTwGzpVRyHc2Mf9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740537321; c=relaxed/simple;
-	bh=D1D8rS483Kvk10lvdoELGqdaSPPJ8+RwRwWrcJv/f3I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CRk5uTgH6enoh6mYTEU88DEVo905Qv0x+CN8V10gPs98ILvhAGilvBQLsU7igpXSAJgXWLPSgdOZ7pRSBtvq4Z3Cur497RfPFCUsB8SQ+qxES9kB5tgBcT8oNgorDM4XNX2zg2laFGVop8SKapKBINpdud1cGHy/FKShKN4C9lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S1gwcxb1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1C5C4CEDD;
-	Wed, 26 Feb 2025 02:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1740537320;
-	bh=D1D8rS483Kvk10lvdoELGqdaSPPJ8+RwRwWrcJv/f3I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S1gwcxb1U5NetK3xMsHF5vM6u60LvjvD37R2V7WH6p4gYsrCTXOx/Tm8FgtAbjivR
-	 qz+7qiIisTFHmeHWl5R9WetoFdsZhGC4DSBkZuJtQrrOYkeMmMmZLGVAL4e/QXKk4q
-	 rWdAk6qG/KIo4K2Hgo8x/4gNeZ32aVYhEb8keWT8=
-Date: Tue, 25 Feb 2025 18:35:19 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: peterz@infradead.org, kevin.brodsky@arm.com, riel@surriel.com,
- vishal.moola@gmail.com, david@redhat.com, jannh@google.com,
- hughd@google.com, willy@infradead.org, yuzhao@google.com,
- muchun.song@linux.dev, will@kernel.org, aneesh.kumar@kernel.org,
- npiggin@gmail.com, arnd@arndb.de, dave.hansen@linux.intel.com,
- rppt@kernel.org, alexghiti@rivosinc.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- linux-openrisc@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-um@lists.infradead.org, x86@kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 5/6] x86: pgtable: convert to use tlb_remove_ptdesc()
-Message-Id: <20250225183519.91a5b75b13c0df6954c68576@linux-foundation.org>
-In-Reply-To: <36ad56b7e06fa4b17fb23c4fc650e8e0d72bb3cd.1740454179.git.zhengqi.arch@bytedance.com>
-References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
-	<36ad56b7e06fa4b17fb23c4fc650e8e0d72bb3cd.1740454179.git.zhengqi.arch@bytedance.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740537430; c=relaxed/simple;
+	bh=fi67Cmr6PldKMUk5aVPFVp0inwBduNK5hSHSrriw+uk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cDs098nL3+SJNJA67csc8RoqiXfUqijWAIGWb2xQXsjZNQ0d8RyoJXaYLxpiKSQwNmk1rBBWNc40++Jvbv140mV+YzPi7urbGx5OVNnWaXu9/iJ+9JL8xREEpLJ4btZcGX5QmRNSyKUFPq1UgZfJBcTkRNp8nawoL2OQLr+gGPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsKY188A; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f6475f747so2966786f8f.3;
+        Tue, 25 Feb 2025 18:37:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740537427; x=1741142227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fi67Cmr6PldKMUk5aVPFVp0inwBduNK5hSHSrriw+uk=;
+        b=SsKY188AXfoSGNt+BDLMmRynSRK7ei7yECTwqiO+RoQC2TyzYmN1STxmhxDStzuc/C
+         sVv3uylbQQq2226NZF//WCbx9Ka19m5mQs4dFY24846Y47hqaMQ1rqmPniDRtOwW/LB1
+         N8vrHlyQxO966lwXXk0uMGEyGsBGXrXamMmxYfP98Sj7rqexcFuuavef2xQCBVogtKZx
+         IGgvhLg44QZYDKOZVgOvRtB0filQ5F9MJz2+813VurLCGaAiZKcRxD+GL9ojqGWAnYr4
+         Rvs5Jtat8oUT5pLf4kiG1B9+lE89rKuyTkzj4moZzpEH7ZZHoxm/mxlNa8u7G3XoAVmH
+         qIOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740537427; x=1741142227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fi67Cmr6PldKMUk5aVPFVp0inwBduNK5hSHSrriw+uk=;
+        b=ukVObCYQdUdOIZJhgTEpWAf9xMDzj19+l8EiLx1JHA7ZB6MrzdGPQFSGrXXV/DNifq
+         ry55wwCVYiB6Qxi/WJE4w0IB14Gb/qLFaMcKoNhXVAWSSihB6EDuT2mtoVwXd3p3LFwO
+         f/pqs1Ocq4qKdlQn2Rs4iKIfYjEz+McJY3oozCQG4+azA2jzK9uVeM3/bTP4lOjozwJ1
+         xpzZYf4eqpSK+SrudA0t1l+EY9p0WaX2Z5OcFzeK8AH/EVSzjacUucslPx4fi6Y9gF2F
+         gfRJKiMal2GxGRlAepWPPogpKd9CJsgTXwGYC+iyPo82W4r7NpAPAPMrRX+Q/ZqpKw/g
+         U6XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA67/9mcmeYjicIVqsDK/exy1TT9ynZ1H3hvc9u7Dah8eILYI9l9nHu97+4kSFaJDhKzU=@vger.kernel.org, AJvYcCWDBq50qIfNy75sq3+JSzklqYHwpnYvR2axc6Z2i1wcAPet0ANy0AD7+buVUhrOWH8KF8yxGPjrTqpx3JWI@vger.kernel.org, AJvYcCWubHcMgnvO+0q8zym3LhCB/pFPn+vDWncghAMNh2wcw376KO1XlkPSrs1BIRNavecZNqdnolv/FfZanatw2/45DWzg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNlOGqH4wUvK2nKckW+i1+mmgv6C6wbPAzLmIUmEt9ARazVQ7w
+	GznDtdseLDHra5j4gjrRJ8YZ/+mShiz/rzHy4cPjKYbfoMYlYrwnenE1lcndvWr6feGnD1VEWHf
+	gxSZPxs7Fy5DvFjZPaahKbmyVBts=
+X-Gm-Gg: ASbGncutzzxPoRiLHfAvnksF/GAGnSnSYfBTxSZlz4zkHMNVcHVeQgXLtWpCVGJjh5P
+	1cwkdQRw6fyu0RzAuJDvZaQByFw3X0M69RfMTHlMDmZWgXhtXGwNLkwaqhQ4QsxFmtV3LoY6w+1
+	nPn9JsIJEWDOjEwkxfUsaITMo=
+X-Google-Smtp-Source: AGHT+IFoU/O1JoX9gM/HVElnXgX87BnqK5dtrNQHsCGw/VfbBb+iQR14xXNuwvgGfIzCDjxhz7jHAcAUeWzQagBMHvo=
+X-Received: by 2002:a05:6000:1ace:b0:38f:3aae:39ef with SMTP id
+ ffacd0b85a97d-38f6e95e670mr18609366f8f.21.1740537426611; Tue, 25 Feb 2025
+ 18:37:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250224140151.667679-1-jolsa@kernel.org> <20250224140151.667679-9-jolsa@kernel.org>
+ <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com>
+ <Z73HDU5IZ5NV3BtM@krava> <CAADnVQKNeWKFkZxb_-Fuenvmfy47-t6Z7KLY_j3UUOrj5pFP-g@mail.gmail.com>
+In-Reply-To: <CAADnVQKNeWKFkZxb_-Fuenvmfy47-t6Z7KLY_j3UUOrj5pFP-g@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 25 Feb 2025 18:36:54 -0800
+X-Gm-Features: AQ5f1JrQFE6uSlXpm4LDhjZBfvba46bsAof3aU9IPeH8yk2HDtzGADPi6743rGg
+Message-ID: <CAADnVQ+eKFOAM5PWpBJAy4pKokwbCOMgEghxLu92sw+HApBUYA@mail.gmail.com>
+Subject: Re: [PATCH RFCv2 08/18] uprobes/x86: Add uprobe syscall to speed up uprobe
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025 11:45:55 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+On Tue, Feb 25, 2025 at 10:06=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 5:35=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
+ote:
+> >
+> > > In later patches I see nop5 is replaced with a call to
+> > > uprobe_trampoline_entry, but which part saves
+> > > rdi and other regs?
+> > > Compiler doesn't automatically spill/fill around USDT's nop/nop5.
+> > > Selftest is doing:
+> > > +__naked noinline void uprobe_test(void)
+> > > so just lucky ?
+> >
+> > if you mean registers that would carry usdt arguments, ebpf programs
+> > access those based on assembler operand string stored in usdt record:
+>
+> No. I'm talking about all normal registers that trap-style uprobe
+> preserves, but this nop5->call will scratch.
+> Instead of void uprobe_test(void)
+> add some arguments to it, and read them before and after nop5 uprobe.
+> They must remain the same.
 
-> The x86 has already been converted to use struct ptdesc, so convert it to
-> use tlb_remove_ptdesc() instead of tlb_remove_table().
-> 
-
-This is dependent upon Rik's a37259732a7dc ("x86/mm: Make
-MMU_GATHER_RCU_TABLE_FREE unconditional") from the x86 tree.  I'll add
-Rik's patch to mm-unstable also and shall figure it out during the
-merge window.
+Ignore me. It's a syscall insn. All fine.
 
