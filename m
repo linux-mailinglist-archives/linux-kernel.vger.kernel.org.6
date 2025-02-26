@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-534675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C511AA469CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:32:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA420A469D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EF9166468
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:31:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6E87AA4CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C176F23373B;
-	Wed, 26 Feb 2025 18:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4580F2EB02;
+	Wed, 26 Feb 2025 18:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="aCkMFOAD"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0n1N1IR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFCB22D4E2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594685; cv=pass; b=KdL/9j0ObNfda/W7kfxYDStprmzSm7tmVA877enS2cZJqsqX9G/EPw/za3ZTsiWZomxot9YmeaJmQxoHKShHRFszUAFIr1lKAnpn9GtJnsET5vVcezZAfEckJ76/786iys19Yp1EGlQkwKUP9n6DDtTLwCgKjZs6CR73Kdv9R0M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594685; c=relaxed/simple;
-	bh=RjIrj3LifxHD27NQaLEt/qFK5V8hezbJ/nCngSDulE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kHKww10olC+UvxqQ8Utkafy5fb9lEdouq3UMyAcrOZOjOyo+ePcEvqR1AQrLdNJieq+y7H0/oud23/GzbLM8EsycJW66y1XM/1+Gc2n9qC6W5SqOPzlC0QiwSE0OLVdF1M+ugCXJk3n5t1+emLYyByw/vqB989b3syWWsxLua6A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=aCkMFOAD; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740594670; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UfqdIUbD87c+2aSgp3POmh2n5CDc8YAs4cWidwB5gI1Xpake3xl8pUJEbOiGE3by7fUsImKXixxylZsm+xZ2uNfHr+6PbgBgWLxjdmZitVkwPoNqUQ0/eYk+Z+ad/bEFda47P1eBHnC2rR0OjaWxI1HeoOkMAAd0PLWqXBXAb/Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740594670; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hIkp+NnTJPxQcX2Rdgo+vdaGlwKLBcPZ5PRXpnJscic=; 
-	b=CelpxNQM/bvC8RQSCMgl//1krTGtg0WP7yMt6QgsmqpD1RuMfHROE82kFOPnoayqX9cEzqFpcHkvwjNcq1ZdVvJQoTW9VWyAY6yzVQw8K61uwychMrUU0UmxxnF7XnVm6+CXTs7M7+PBfnVFBwF0oLvNxr4W9TsiBSR0AXdluwg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740594670;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=hIkp+NnTJPxQcX2Rdgo+vdaGlwKLBcPZ5PRXpnJscic=;
-	b=aCkMFOAD+KcvdKOxRNiKB9myydk1CLwklPIhBNBaKu7p0rF7qqz/MIcWXm9aTVVP
-	3N7uTc1aGY1sQEqAOrM6AIHjDBbtbuSbVezwXpiS3q8CI9s5SaACf5gYjG4lajmlEPh
-	2hfVPwNxSz9fGl1EOicGVDF0Lq7Kr1dFdK1cNxwM=
-Received: by mx.zohomail.com with SMTPS id 1740594668431951.5175651775419;
-	Wed, 26 Feb 2025 10:31:08 -0800 (PST)
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: boris.brezillon@collabora.com,
-	robh@kernel.org,
-	steven.price@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Subject: [RFC PATCH 4/4] drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature flag on Bifrost models
-Date: Wed, 26 Feb 2025 15:30:43 -0300
-Message-ID: <20250226183043.140773-5-ariel.dalessandro@collabora.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
-References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9124D224896;
+	Wed, 26 Feb 2025 18:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740594711; cv=none; b=ibRJI4l9H5uIIb0L1Jk+eHRSeyEaOJJ7JT3WW6vPB75rvpgSaskQAjce/zYfCPcdL0W5XVNdT/IeltpOLGvzSVawE2LRHDz5bSXwJI/XTXjm8p0XirRVX7lfS2Jt1iQYK2asWhuexDk0xA5L/sL7MHEW+Xclh+0prLzvedckbY0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740594711; c=relaxed/simple;
+	bh=BKPXQQ8CjbFDeVNuxprUfazQt1oytQiSgaOL5OrKMwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ggtr8gExZP1VBalpIhAAPJr6PDkyzOcI7WwUgqLtbQ3/eszXdy5RCK0P45xg0XxUoB3Ooc40t+Vzlx9a32GMPbrnZoVdzxC484UY/gxYKOEcyU6uvbSCQEg3oTKImbQaX8LYYiB0A5/XsysExqax4GmSM7MTR4tDBzstqyTFz7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0n1N1IR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65964C4CEE8;
+	Wed, 26 Feb 2025 18:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740594711;
+	bh=BKPXQQ8CjbFDeVNuxprUfazQt1oytQiSgaOL5OrKMwA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r0n1N1IRjZ2zCWZoNYM/PCUvE0GC3ncpxvzxh6u/vY2Bh7XkzusJ1c40fHWv9Fxeq
+	 +CC6/PxKl++lCVb4uPxtV3rAMkaYzx5ZOCl4jpu3Ziff4aHMe58dKEUt/g9NN4HjHb
+	 gxF24oBCFLcZXAZSp1/aeawh4ADlAwwHKl4usKiQPc5Za7W+iX89P6f1Hib41f45Dk
+	 4O58yJwXYICHEBmPe2jPthNgeLcQkCN9FOnKJsVj1voqLYtKUhf7ret52wAR2xKPQz
+	 gvDaB3O3AUY079xs5h1XpLzHAFp3Sq68oSldmj3oSsKpJNqpuLFHd1HpvIspyjBjI6
+	 O1SWHos81FlIw==
+Message-ID: <70168c8f-bf52-4279-b4c4-be64527aa1ac@kernel.org>
+Date: Wed, 26 Feb 2025 11:31:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
+Content-Language: en-US
+To: Eric Dumazet <edumazet@google.com>, Breno Leitao <leitao@debian.org>
+Cc: Neal Cardwell <ncardwell@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, kernel-team@meta.com,
+ yonghong.song@linux.dev
+References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
+ <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
+ <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org>
+ <20250226-cunning-innocent-degu-d6c2fe@leitao>
+ <7e148fd2-b4b7-49a1-958f-4b0838571245@kernel.org>
+ <20250226-daft-inchworm-of-love-3a98c2@leitao>
+ <CANn89iKwO6yiBS_AtcR-ymBaA83uLh8sCh6znWE__+a-tC=qhQ@mail.gmail.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <CANn89iKwO6yiBS_AtcR-ymBaA83uLh8sCh6znWE__+a-tC=qhQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Mali Bifrost MMU support AArch64 4kB page tables. This feature is in
-panfrost based the HW_FEATURE_AARCH64_MMU feature flag.
+On 2/26/25 11:27 AM, Eric Dumazet wrote:
+> On Wed, Feb 26, 2025 at 7:18 PM Breno Leitao <leitao@debian.org> wrote:
+>>
+>> Hello David,
+>>
+>> On Wed, Feb 26, 2025 at 10:12:08AM -0700, David Ahern wrote:
+>>> On 2/26/25 9:10 AM, Breno Leitao wrote:
+>>>>> Also, if a tracepoint is added, inside of tcp_sendmsg_locked would cover
+>>>>> more use cases (see kernel references to it).
+>>>>
+>>>> Agree, this seems to provide more useful information
+>>>>
+>>>>> We have a patch for a couple years now with a tracepoint inside the
+>>>>
+>>>> Sorry, where do you have this patch? is it downstream?
+>>>
+>>> company tree. Attached. Where to put tracepoints and what arguments to
+>>> supply so that it is beneficial to multiple users is always a touchy
+>>> subject :-)
+>>
+>> Thanks. I would like to state that this would be useful for Meta as
+>> well.
+>>
+>> Right now, we (Meta) are using nasty `noinline` attribute in
+>> tcp_sendmsg() in order to make the API stable, and this tracepoint would
+>> solve this problem avoiding the `noinline` hack. So, at least two type
+>> of users would benefit from it.
+>>
+>>> so I have not tried to push the patch out. sock arg should
+>>> be added to it for example.
+>>
+>> True, if it becomes a tracepoint instead of a rawtracepoint, the sock
+>> arg might be useful.
+>>
+>> How would you recommend me proceeding in this case?
+> 
+> In 2022, Menglong Dong added __fix_address
+> 
+> Then later , Yafang Shao  added noinline_for_tracing .
+> 
+> Would one of them be sufficient ?
 
-Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_features.h | 3 +++
- 1 file changed, 3 insertions(+)
+tcp_sendmsg_locked should not be getting inlined; it is the
+sendmsg_locked handler and directly called by several subsystems.
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_features.h b/drivers/gpu/drm/panfrost/panfrost_features.h
-index 7ed0cd3ea2d4..52f9d69f6db9 100644
---- a/drivers/gpu/drm/panfrost/panfrost_features.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_features.h
-@@ -54,6 +54,7 @@ enum panfrost_hw_feature {
- 	BIT_ULL(HW_FEATURE_THREAD_GROUP_SPLIT) | \
- 	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
- 	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
-+	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
- 	BIT_ULL(HW_FEATURE_COHERENCY_REG))
- 
- #define hw_features_g72 (\
-@@ -64,6 +65,7 @@ enum panfrost_hw_feature {
- 	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
- 	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
- 	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
-+	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
- 	BIT_ULL(HW_FEATURE_COHERENCY_REG))
- 
- #define hw_features_g51 hw_features_g72
-@@ -77,6 +79,7 @@ enum panfrost_hw_feature {
- 	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
- 	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
- 	BIT_ULL(HW_FEATURE_IDVS_GROUP_SIZE) | \
-+	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
- 	BIT_ULL(HW_FEATURE_COHERENCY_REG))
- 
- #define hw_features_g76 (\
--- 
-2.47.2
-
+ie., moving the tracepoint to tcp_sendmsg_locked should solve the inline
+problem. From there, the question is inside the loop or at entry to the
+function. Inside the loop has been very helpful for me.
 
