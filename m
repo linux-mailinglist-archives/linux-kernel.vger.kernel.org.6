@@ -1,59 +1,89 @@
-Return-Path: <linux-kernel+bounces-534435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F876A466A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:33:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45604A466B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB1A47A6BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1068B3AA25A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1EB221D80;
-	Wed, 26 Feb 2025 16:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24B5221DA0;
+	Wed, 26 Feb 2025 16:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsbeLXt5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YT5RG1v9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0141F16B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A8220694
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587592; cv=none; b=K4h0ZGYdDUaQLYKBg42i3GTWrZ5Bnsd5dATrlGfLtwLrHg45KxJHp2JMSL/j7qYIve1/yhUN5cYRB2uZMABpaGoRKkscCXoIrun+Ah4lDj/pB0PNbQlU2uFhIbgDb0FOCO/3K/IY3JQmanXRAPDjYT8OESzwuo6VscW0LredWW8=
+	t=1740587701; cv=none; b=ew60BvzCYjcnUwI+nb9rd3Wc4U5QfYVbx6lpu1B0K87UD/Al3s04QWeZsK7PCUgmlSXO0yld8mkS5dUfdU8fOUnpKOPKkCE9hoh1xv5s3gpYkixsWSk6Vk3oaZg4Oe2eFc6JJkV+Y2a0hTudF+AVX+bSmUuYYdtx2p2uZ4VQGYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587592; c=relaxed/simple;
-	bh=E/pn7zPLMxVuzW0n3inIPRr6WHTrZ2ZQCVccs2DIisY=;
+	s=arc-20240116; t=1740587701; c=relaxed/simple;
+	bh=+eYCtkXeUjDx5HX7zQv5kNtD7gM7axtjo4d8GobgnvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcR28yMRd6lqjODoTgim/okFMkdiNAjp83C9RLwIebHFmiwfN782lTQI53etDfDa+ahzazV+oAh16sRjpWCNfSk7JVSrk9j/D0OMYVaBLx7nWBxrg04wjnhMRpLk/ePUkD4VDGFJ2kh/p5koVOv6MlMYQUAjQFk9r4MPabl6gR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsbeLXt5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3F4C4CED6;
-	Wed, 26 Feb 2025 16:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740587592;
-	bh=E/pn7zPLMxVuzW0n3inIPRr6WHTrZ2ZQCVccs2DIisY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BsbeLXt5zRri3Ipqwav8SUFDViIN38ozwJ/yVWtdCVDlkI8KiT5e8DwhW0EW7RUEc
-	 0kWimGZ1XNqizWc3GOJHIQTFiu+0ryCMUAiU5zG4VkmKkcmMBDc75cXTLfi1qrEAdE
-	 qNjANv3fJFHIgG/HVXnRIU4Hk9lS7TQz4cRsXg0646i+dV9bt9xSAMVddGTxePAX6q
-	 fkMQACp1MetVcyCkrSXY2qVBPy7LCEJd3Iehs9jMRvLR1aoQEvyQOzo4ye7Cv52Qjs
-	 Vd0JDrPyrh8gJ4is92HX1dbH3N5JaR3y8smoqZjW2BFkRcyFN/P9ZigOnU5V8zV+VW
-	 r45zPLc0VUepA==
-Date: Wed, 26 Feb 2025 06:33:10 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
- WORK_CPU_UNBOUND.
-Message-ID: <Z79CRnnNHOkxMNXD@slm.duckdns.org>
-References: <20250221112003.1dSuoGyc@linutronix.de>
- <Z7iSboU-05uMJ7-e@localhost.localdomain>
- <Z7iuUObJGgZtsaJe@slm.duckdns.org>
- <Z78s-1jHXehA33px@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHLqz1NC0lVoCTZrVuSyJY/VjLIt/36t+WR3pPCBsnFG1eCaNPaACSU8/Tdx4erYyod4ViGDp1TdfQqsc0tCRW/FlAPE5HOW83Fd0wI5NGcwW8IkoRUbZ5znMvq2N17baycikvVsLPeTy3tmvYNJlbDEr/25SuA0W4mJPeYMmt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YT5RG1v9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740587698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yyEeKTSwKpsNdlVwXwewsRo+Wp2oqTEyHSu9r2lJIi8=;
+	b=YT5RG1v96KOd3sHJblIsYxZRQJuL6EoqVu0fQujBRHtFWEyu/F/tPhcKE9HpVPuooqf5D8
+	aaik/UTEzDO79uYAZC+7cNhLlPAZaB59kr7l+MzrVqqeByAhSHh3q6PaMer5ZzDozFhghR
+	9XVEwmKxZm46X79zstocjvvYCs1aumQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-K_6v7QjvOk28uSUtvhbxJw-1; Wed,
+ 26 Feb 2025 11:34:55 -0500
+X-MC-Unique: K_6v7QjvOk28uSUtvhbxJw-1
+X-Mimecast-MFC-AGG-ID: K_6v7QjvOk28uSUtvhbxJw_1740587689
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C305C193578F;
+	Wed, 26 Feb 2025 16:34:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DB74919560AB;
+	Wed, 26 Feb 2025 16:34:30 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 17:34:17 +0100 (CET)
+Date: Wed, 26 Feb 2025 17:33:59 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
+	torvalds@linux-foundation.org, vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@Oracle.com,
+	adhemerval.zanella@linaro.org, avagin@gmail.com,
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
+	ojeda@kernel.org, thomas.weissschuh@linutronix.de,
+	adobriyan@gmail.com, johannes@sipsolutions.net,
+	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
+	anna-maria@linutronix.de, mark.rutland@arm.com,
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+	enh@google.com, rientjes@google.com, groeck@chromium.org,
+	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+	mike.rapoport@gmail.com
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+Message-ID: <20250226163359.GB17833@redhat.com>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+ <20250224225246.3712295-7-jeffxu@google.com>
+ <20250226162604.GA17833@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,51 +92,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z78s-1jHXehA33px@localhost.localdomain>
+In-Reply-To: <20250226162604.GA17833@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hello, Frederic.
+On 02/26, Oleg Nesterov wrote:
+>
+> On 02/24, jeffxu@chromium.org wrote:
+> >
+> > Unlike other system mappings, the uprobe mapping is not
+> > established during program startup. However, its lifetime is the same
+> > as the process's lifetime. It could be sealed from creation.
+>
+> Agreed, VM_SEALED should be always for the "[uprobes]" vma, regardless
+> of config options.
+>
+> ACK,
+>
+> but can't we do
+>
+> 	#ifdef CONFIG_64BIT
+> 	/* VM is sealed, in vm_flags */
+> 	#define VM_SEALED	_BITUL(63)
+> +	#else
+> +	#define VM_SEALED	0
+> 	#endif
+>
+> and then simply
+>
+> 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+> -				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
+> +				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
+>
+> ?
+>
+> But I am fine either way, feel free to ignore.
 
-On Wed, Feb 26, 2025 at 04:02:19PM +0100, Frederic Weisbecker wrote:
-...
-> > That's API guarantee and there are plenty of users who depend on
-> > queue_work() and schedule_work() on per-cpu workqueues to be actually
-> > per-cpu. I don't think we can pull the rug from under them. If we want to do
-> > this, which I think is a good idea, we should:
-> > 
-> > 1. Convert per-cpu workqueue users to unbound workqueues. Most users don't
-> >    care whether work item is executed locally or not. However, historically,
-> >    we've been preferring per-cpu workqueues because unbound workqueues had a
-> >    lot worse locality properties. Unbound workqueue's topology awareness is
-> >    a lot better now, so this should be less of a problem and we should be
-> >    able to move a lot of users over to unbound workqueues.
-> 
-> But we must check those ~1951 schedule_work() users one by one to make sure they
-> don't rely on locality for correctness, right? :-)
+Yes, but either way, why your patch adds "unsigned long vm_flags" ?
+OK, perhaps it makes sense for readability, but
 
-Yes, no matter what we do, there is no way around that.
+	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
+	vm_flags |= VM_SEALED_SYSMAP;
 
-> > 2. There still are cases where local execution isn't required for
-> >    correctness but local & concurrency controlled executions yield
-> >    performance gains. Workqueue API currently doesn't distinguish these two
-> >    cases. We should add a new API which prefers local execution but doesn't
-> >    require it, which can then do what's suggested in this patch.
-> 
-> That is much trickier to find out and requires to know about the subsystem
-> details and history.
+looks a bit strange, why not
 
-One good thing is that for workqueues that actually should be per-CPU for
-performance, there usually are a group of people, often including the
-mtaintainers, that would be familiar with the performance situation and pipe
-up, so it's not *that* hopeless.
+	vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP;
 
-> For those that don't rely on locality for correctness, we would really like
-> to be able to offload them to unbound pool at least when nohz_full= is filled.
-> Because in that case we don't care much on workqueues performance.
+?
 
-Yeah, that makes sense to me.
+Oleg.
 
-Thanks.
-
--- 
-tejun
 
