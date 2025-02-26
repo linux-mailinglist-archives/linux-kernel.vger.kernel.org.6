@@ -1,185 +1,187 @@
-Return-Path: <linux-kernel+bounces-534961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8807EA46D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:20:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25477A46D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B77916B6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2138A3AB394
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA1A21ABB4;
-	Wed, 26 Feb 2025 21:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3872C25B669;
+	Wed, 26 Feb 2025 21:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K/IagHvo"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="ZqghOfAq"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFE62755F2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF89D21CC54;
+	Wed, 26 Feb 2025 21:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604848; cv=none; b=DJVcDeVpns3GfFM+gF4RU7xUHRmG4VbS2PQs9Bv/FuMujOlqXay3XCXilXZEEprx6DY2argreLtSfld9BFY1uSV/ulB7Fj+2c5wnlm9S1ueSvhKoaffbQUd4dQ4mHFhnOA/gtvSIuxwoKHaM3WNwgJTmTjqwC0UkcOr5f18BvKg=
+	t=1740604477; cv=none; b=UVg+fSFLkNyFQOP3cK1ctUp6W6VOfk5GTd9tr15mJBJRMYJhEtnQtQccBN8GcNORSVtRu5ferBaqjzjUxhXQJvNgGzbNBe0wZRyz9Jyn3HBTQy7rmUM6EFFrD42wgQ46b0/3tc6GG/10brHH8xuDXZqaMkpe9tDRymmiwq85KZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604848; c=relaxed/simple;
-	bh=A5PaH4enkrbYDM7nXZ+Ass9AMQsZEd0mjSntP6Y0BCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2g8uOaEm1oKvHoh1wxLOpbRdqQaDwwwgjvmjRwVuIwleRU+Y5NLMkB+CFEeZUNmIA+pYh4RXcg0Yt30MCimzFHhn/seb8NaPZET7HSRWkQrdoLzWz9KrCzrKmDRc56jXaW+nNo0anV7tUDSwYT9xiJATCszP/NFrWTy3n0lMuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=K/IagHvo; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3098088c630so2646661fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740604843; x=1741209643; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=plHH0IcN9eXsv1E/PqFvNYQwN4wb6pcqv5JKjVIOwQQ=;
-        b=K/IagHvoQ2xkSGlhinLSYj667eVwheF0UThABDU68ZGixk4D5U5xVmH01kbRp1t4/h
-         CGi6e18f4bWtt8rraZHZILKCEnm/CeGY7NYwK5gMfYqZUQtfY1GlCPNCKM8qCWdTAzyR
-         poDHlQN0USZjT15Kg+Gygyu0jBNIYZJh/Ty5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740604843; x=1741209643;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=plHH0IcN9eXsv1E/PqFvNYQwN4wb6pcqv5JKjVIOwQQ=;
-        b=Im/CFVQa/4wlrrBeZtxETpfXZejA817jBOV1xIDLm83E1Zr20MW6voeppv2mJJeH8/
-         Gp7fWNKbaJWT8Atm2jB61kTKOTtLq7eh1GRxfsBznJQ3vVqkKb8it744wwEetWg3+wN0
-         Bs/lQt2FE61ZJ+PhBvBxgUiK4Z19TacB6abVnOHHp65WbmUrffP24iElz07dRNNHJLaq
-         Lk0vIXBGZYLGwWAoKmXF6haQBjOPJrXJPffiYrfAFrhwXlnTn3vftmmWepLOuaeJtZWS
-         mE5glS/qJa2Y4rlKnHu525jfqyQhHwcx6nIGgH6P29p9yWsK6qvA6JgHz4Z570dtpLjq
-         OlxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWccb4lkNL+j00zmRoTJoYLCnI79DMVrJz9JJTD/g149l/HEgIIdFona2ZR6WT77AgE8iiU1gRMbQdX3No=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy72300GjSVC9VzSyjrm3kbmkWNvab8z5Win6aClWYbZsRuTTRt
-	UF0pgjlDbCdN21zoqE3TPIbfzzK+xdQu8A86IYYyszA/7MYtIKdRvxJcfopxXccF0ZLAdvowEva
-	q66DSDw==
-X-Gm-Gg: ASbGnctGG7E6+AkBkbnr/yuU7bNOTevvBbJj5xqcTXQgmGrYbPD/IVDX6b7dNF+XAOW
-	E0VOEwCzClSlGZqEAHENxxoOkFIkuq4FIWp8IgkaOPhXsw0V1azxg5kFd4eK1ydrVf4xNjWr619
-	EG6yjNj55LK/OAbfbhBKbxJ6aYI1rIOkZ222cRwUqOzSDM57hjHogICGjPhxNutIXisPU6g901k
-	2WJuNk3sxVlG3sGsC7E+w5aDvNrV8FIbEuPgjtpYaOrjnRQ9eOuPZMzfLvxJEYq9yRTbwYF5Xv9
-	vl3lHTSh7W0bxNOUrvGgACko8csjwTfIE9d5LYRE0vO+rHRdhs2K9UpBIC8xVrYwaF+6Lf1VbCR
-	K
-X-Google-Smtp-Source: AGHT+IGRKc+TYkKPVtUJYAgB/mxrmnKeNjFoqLmL4QshoG5kTBjCWUQKRB1uziEPJjTLaaRo1jxvVQ==
-X-Received: by 2002:a2e:3c16:0:b0:304:588a:99ce with SMTP id 38308e7fff4ca-30a80a17cedmr47566561fa.0.1740604843138;
-        Wed, 26 Feb 2025 13:20:43 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a81ae808esm6947071fa.90.2025.02.26.13.20.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 13:20:42 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-548409cd2a8so198107e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:20:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWIA4TvPTYn5LEKTqTL2DYfUo+DJVzY5H9wtNDOF/uMIM8xUqU6JhVv0tPjLfIzdRhOVB7MmQy2rpItHgM=@vger.kernel.org
-X-Received: by 2002:a17:906:3150:b0:abe:c894:5986 with SMTP id
- a640c23a62f3a-abed100adb1mr883763566b.39.1740604487746; Wed, 26 Feb 2025
- 13:14:47 -0800 (PST)
+	s=arc-20240116; t=1740604477; c=relaxed/simple;
+	bh=XcLEjNFPOoLRIwImSrjAbC/QV0oZJMWCJiJfGnQ9RQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmbWVNgeq3gQtnvXAFlAc0JRLRMJPHZWzu+SEOPeAgh0T0Pc33CWo8SY0ZjNLTVYwpjR/qp4t01LJkAfkBlSN0r4BhwVTgN+ViQ3KpHfeTjqaR53QH0bmvANgERM64zlw3FQILvAetYx0U9tBrCvtc7E40qsc7zw+vXRVKIWJ20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=ZqghOfAq; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [10.50.4.36] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z36fx3233z4KrM;
+	Wed, 26 Feb 2025 16:14:33 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1740604474; bh=XcLEjNFPOoLRIwImSrjAbC/QV0oZJMWCJiJfGnQ9RQY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ZqghOfAqRbEIhg3c3Ioc2TNh5inQD/y+OFOdgxVLZsc8iE3R1sVwO2ZRi/vXiSOqd
+	 2NmKjYClWrOaMBjUrLwm9UXEH6hpeUjXCrS8UwlIFBNYncx+7+mstum067/TmwdAMi
+	 WeC6LZ3K2qiesn0sRHBRXBbRuB9FIgjNJeJTrogk=
+Message-ID: <b6eff06e-1a8c-48c3-b536-39b567015d0c@panix.com>
+Date: Wed, 26 Feb 2025 13:14:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de> <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-In-Reply-To: <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Feb 2025 13:14:30 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq-snYj9HKjCJh9QYG9k368Ub3WE-vsH9QCuPSV36deSRojSaVqyhZUuTw
-Message-ID: <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Ralf Jung <post@ralfj.de>, "Paul E. McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Kenneth Crudup <kenny@panix.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
+ Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+References: <20250210210502.GA15655@bhelgaas>
+ <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
+ <20250211055722.GW3713119@black.fi.intel.com>
+ <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+ <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com>
+Content-Language: en-US
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <20250226084404.GM3713119@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 at 12:00, Martin Uecker <uecker@tugraz.at> wrote:
->
-> The model is exactly the same as in C.  One defines "observable
-> behavior" (to use C terminology) and compiler can do whatever it
-> wants as long as it preserves this.
+OK, just did a resume after suspended (for an hour, which somehow seems 
+to matter) while my CalDigit dock was attached with the ASMedia NVMe 
+adaptor at suspend, but both disconnected on resume, and I am indeed 
+locked up.
 
-The problem really is that memory accesses (outside of volatile, which
-is defined to be a side effect) aren't actually defined to be
-observable.
+I can attached the "pstore" report if necessary.
 
-Yes, yes, the standard _allows_ that behavior, and even hass language
-to that effect ("The keyword volatile would then be redundant"), but
-nobody ever does that (and honestly, treating all memory accesses as
-volatile would be insane).
+Unfortunately I won't be able to get back to the CalDigit until Saturday 
+afternoon California time.
 
-> As Ralf said, the difference is that Rust makes it much harder to
-> accidentally trigger UB.
+I'll be trying all the reverts/commits listed herein and at least check 
+for regressions in other cases, though.
 
-Yes, but "accidental" is easy - unless the compiler warns about it.
+-Kenny
 
-That's why I basically asked for "either warn about UB, or define the
-UB do the 'naive' thing".
+On 2/26/25 00:44, Mika Westerberg wrote:
+> Hi Kenneth,
+> 
+> On Fri, Feb 14, 2025 at 09:39:33AM -0800, Kenneth Crudup wrote:
+>>
+>> This is excellent news that you were able to reproduce it- I'd figured this
+>> regression would have been caught already (as I do remember this working
+>> before) and was worried it may have been specific to a particular piece of
+>> hardware (or software setup) on my system.
+>>
+>> I'll see what I can dig up on my end, but as I'm not expert in these
+>> subsystems I may not be able to diagnose anything until your return.
+> 
+> [Back now]
+> 
+> My git bisect ended up to this commit:
+> 
+>    9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
+> 
+> Adding Lukas who is the expert.
+> 
+> My steps to reproduce on Intel Meteor Lake based reference system are:
+> 
+> 1. Boot the system up, nothing connected.
+> 2. Once up, connect Thunderbolt 4 dock and Thunderbolt 3 NVMe in a chain:
+> 
+>    [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
+> 
+> 3. Authorize PCIe tunnels (whatever your distro provides, my buildroot just
+>      has the debugging tools so running 'tbauth -r 301')
+> 
+> 4. Check that the PCIe topology matches the expected (lspci)
+> 
+> 5. Enter s2idle:
+> 
+>    # rtcwake -s 30 -mmem
+> 
+> 6. Once it is suspended, unplug the cable between the host and the dock.
+> 
+> 7. Wait for the resume to happen.
+> 
+> Expectation: The system wakes up fine, notices that the TB and PCIe devices
+> are gone, stays responsive and usable.
+> 
+> Actual result: Resume never completes.
+> 
+> I added "no_console_suspend" to the command line and the did sysrq-w to
+> get list of blocked tasks. I've attached it just in case it is needed.
+> 
+> If I revert the above commit the issue is gone. Now I'm not sure if this is
+> exactly the same issue that you are seeing but nevertheless this is kind of
+> normal use case so definitely something we should get fixed.
+> 
+> Lukas, if you need any more information let me know. I can reproduce this
+> easily.
+> 
+>> I also saw some DRM/connected fixes posted to Linus' master so maybe one of
+>> them corrects this new display-crash issue (I'm not home on my big monitor
+>> to be able to test yet).
+>>
+>> -Kenny
+>>
+>> On 2/14/25 08:29, Mika Westerberg wrote:
+>>> Hi,
+>>>
+>>> On Thu, Feb 13, 2025 at 11:19:35AM -0800, Kenneth Crudup wrote:
+>>>>
+>>>> On 2/13/25 05:59, Mika Westerberg wrote:
+>>>>
+>>>>> Hi,
+>>>>
+>>>> As Murphy's would have it, now my crashes are display-driver related (this
+>>>> is Xe, but I've also seen it with i915).
+>>>>
+>>>> Attached here just for the heck of it, but I'll be better testing the NVMe
+>>>> enclosure-related failures this weekend. Stay tuned!
+>>>
+>>> Okay, I checked quickly and no TB related crash there but I was actually
+>>> able to reproduce hang when I unplug the device chain during suspend. I did
+>>> not yet have time to look into it deeper. I'm sure this has been working
+>>> fine in the past as we tested all kinds of topologies including similar to
+>>> this.
+>>>
+>>> I will be out next week for vacation but will continue after that if the
+>>> problem is not alraedy solved ;-)
+>>>
+>>
+>> -- 
+>> Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County
+>> CA
 
-So this is literally the problem I'm trying to bring up: "aliasing" is
-defined to be UD _and_ the memory accesses are not defined to be
-observable in themselves, so a C compiler can take those two things
-and then say "you get random output".
+-- 
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
 
-THAT is what I am asking you to consider.
-
-Pointing to the C standard doesn't help. The C standard GOT THIS WRONG.
-
-And yes, part of getting it wrong is that the standard was written at
-a time when threading wasn't a prime thing. So it was somewhat
-reasonable to claim that memory accesses weren't "observable".
-
-But dammit, doing things like "read the same variable twice even
-though the programmer only read it once" *IS* observable! It's
-observable as an actual security issue when it causes TOCTOU behavior
-that was introduced into the program by the compiler.
-
-So I claimed above that treating all memory accesses as volatile would
-be insane. But I do claim that all memory accesses should be treated
-as "USE the value of a read or write AT MOST as many times as the
-source code said".
-
-IOW, doing CSE on reads - and combining writes - when there aren't any
-aliasing issues (or when there aren't any memory ordering issues)
-should absolutely be considered ok.
-
-And doing speculative reads - even if you then don't use the value -
-is also entirely fine. You didn't introduce any observable behavior
-difference (we'll agree to dismiss cache footprint issues).
-
-But if the source code has sa single write, implementing it as two
-writes (overwriting the first one) IS A BUG. It damn well is visible
-behavior, and even the C standards committee has agreed on that
-eventually.
-
-Similarly, if the source code has a single read, the compiler had
-better not turn that into two reads (because of some register pressure
-issue). That would *ALSO* be a bug, because of the whole TOCTOU issue
-(ie the source code may have had one single access, done sanity
-testing on the value before using it, and if the compiler turned it
-all into "read+sanity test" and "read+use", the compiler is
-introducing behavioral differences).
-
-That "single read done as multiple reads" is sadly still accepted by
-the C standard, as far as I can tell. Because the standard still
-considers it "unobservable" unless I've missed some update.
-
-Please do better than that.
-
-              Linus
 
