@@ -1,125 +1,220 @@
-Return-Path: <linux-kernel+bounces-535050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8ABCA46E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:08:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64683A46E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C560D16983A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7F73A18D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8988D26BDB9;
-	Wed, 26 Feb 2025 22:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0209B26BD90;
+	Wed, 26 Feb 2025 22:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4H338xo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWGeZDxQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5F02561D6;
-	Wed, 26 Feb 2025 22:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ACD2561D6;
+	Wed, 26 Feb 2025 22:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740607709; cv=none; b=mdtfHzNsGqzHMBPISsMnketFAEEKziatwxqc5A9OEzc4d+kjoV4GEm3mBCCpp3qluPQuIXrYeGUq0uYcRY81mQEoQ940IgfJSgQacEXldZT0HRZfPaRCy7kwoJ+tfLDonl+qAGrbD2Z3q7CUhbx9ovmav7ygJbaf8FGRDcE8kDg=
+	t=1740607850; cv=none; b=ie+ESvSa+jnj7Nz+BvLhXKTx6TzYtb+jQLwTx320knifichn6HODrQMB2wn79Kh1Rctd5G6hN4zqAptRAUZ6yRO15+dcohoqrqXtmrQ8rtobXxxXFQL7k+zsZYLZhQFml45/f1gJ8JgnNF3czpE9yDgoP7l/gyZ2ktGoqCtgVhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740607709; c=relaxed/simple;
-	bh=QbUAkvbUHg9cT3BxA/KVVOs8O43DiKCmxS/Svt4jiFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=isRwo7jMJ7CfwFMTW0hrJvYwFDmR5Th5/H2a1Q0fs9FEhjUtrK/k9vPZTSCWopnhS089gO384sF35TvLAUmTlLiyYpu6nhJ88Bq0zLMImeAQ8O6JZ4XSkmZVVYDxa3MsX6noShw4E7TQ8LkN36cytZhAdx6THsXPXv6OUDrCawg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4H338xo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F498C4CED6;
-	Wed, 26 Feb 2025 22:08:28 +0000 (UTC)
+	s=arc-20240116; t=1740607850; c=relaxed/simple;
+	bh=8z/EktT9cohwewcwTxovsYIKkMv5C9KelOQJmHXC5vs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QFhJtWKvPbfBsNgrXh5SYj08QwwDvgrQ+BPC9JFu0aeEhyfQgTnK4NUlaV+/8q2QfI3ykfMHqla5pRMkR5PUUHPtNeItMnNsoRRNEd+2Dh7PyEJjELoUhDP4RhR5i1FNrFAWJw9sdsvy7eqQ0GOQHHpHsjscIVvkrLg/lLDCl8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWGeZDxQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8065C4CED6;
+	Wed, 26 Feb 2025 22:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740607708;
-	bh=QbUAkvbUHg9cT3BxA/KVVOs8O43DiKCmxS/Svt4jiFE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=I4H338xo1mfVr6Ujw1djIt8JYyAEE2PEItm2qphZ7Vc0HhqmIzu9F+ebvxPfXqBMd
-	 E9W7+ilz7ArbdgkYna8Qhzccp6ITfKfttaihg1KdcTLpuy9iNgSozYMj5dgS9dP+DK
-	 fWkKwEOZe5nyATbwy6acLFTbGJF02O8nxPPzcFqfxoa2FCEo2Ca3DFSEVx8Wd2IotW
-	 KdAF0Uv5YXwrYllDG33w2RT3aFsYaxpmfRf+W11+vbklY2jTINbEs6gIFDYT54Bh4d
-	 Ri3cy33ZDoHUWP937iA9O6ylXMscdCo+0pw7UJwU2WnXHIsx3XdEPrLKQcTOCZrse9
-	 SKSh9ginKHdlQ==
-Date: Wed, 26 Feb 2025 16:08:26 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, l.stach@pengutronix.de, lpieralisi@kernel.org,
-	kw@linux.com, manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
-	s.hauer@pengutronix.de, festevam@gmail.com,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
-Message-ID: <20250226220826.GA561554@bhelgaas>
+	s=k20201202; t=1740607849;
+	bh=8z/EktT9cohwewcwTxovsYIKkMv5C9KelOQJmHXC5vs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YWGeZDxQp4p/Ow8Cwd4BbDC5nT+8mq4ln92DLGBjAp31SnHtlHpAU7rCbUV9czI36
+	 2V527EiGj4s6ddqK2BzEcb21Bqjw1TLtQIukAikASMtmH4kfTNvRlyidYe1ipXSObp
+	 dBZcMHlm85R2BaETFgLPGhhyFqLz0K6DdbAP+gX+hprb52736Jed+ubHvaaep7WgTx
+	 4KbsFIHzhlmizU+qNZixL65+KJeUXDsWzi5wcCyoRbGDVTpgAhu5pLOEiYce+XTw2Q
+	 gDXbUZ2O9rsqJD3yIdfmqjfuacFYeLozc/GKZThZ57IQs+VzqmOqPUuTKmqFZrfjHM
+	 8TEe+lFOl20ZA==
+Date: Thu, 27 Feb 2025 07:10:45 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Shuah Khan <shuah@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Hari Bathini <hbathini@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 3/8] tracing: fprobe-events: Log error for exceeding the
+ number of entry args
+Message-Id: <20250227071045.7ead04fb9f467b0a7120c05a@kernel.org>
+In-Reply-To: <20250226102223.586d7119@gandalf.local.home>
+References: <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
+	<174055074269.4079315.17809232650360988538.stgit@mhiramat.tok.corp.google.com>
+	<20250226102223.586d7119@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226024256.1678103-3-hongxing.zhu@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
-> Use the domain number replace the hardcodes to uniquely identify
-> different controller on i.MX8MQ platforms. No function changes.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 90ace941090f..ab9ebb783593 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -41,7 +41,6 @@
->  #define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
->  #define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
->  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11, 8)
-> -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
+On Wed, 26 Feb 2025 10:22:23 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Nice, thanks for getting rid of this!
-
->  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
->  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
-> @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	struct dw_pcie *pci;
->  	struct imx_pcie *imx_pcie;
->  	struct device_node *np;
-> -	struct resource *dbi_base;
->  	struct device_node *node = dev->of_node;
->  	int i, ret, req_cnt;
->  	u16 val;
-> @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  			return PTR_ERR(imx_pcie->phy_base);
->  	}
->  
-> -	pci->dbi_base = devm_platform_get_and_ioremap_resource(pdev, 0, &dbi_base);
-> -	if (IS_ERR(pci->dbi_base))
-> -		return PTR_ERR(pci->dbi_base);
-> -
->  	/* Fetch GPIOs */
->  	imx_pcie->reset_gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->  	if (IS_ERR(imx_pcie->reset_gpiod))
-> @@ -1565,8 +1559,12 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	switch (imx_pcie->drvdata->variant) {
->  	case IMX8MQ:
->  	case IMX8MQ_EP:
-> -		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
-> -			imx_pcie->controller_id = 1;
-> +		ret = of_get_pci_domain_nr(node);
-> +		if (ret < 0 || ret > 1)
-> +			return dev_err_probe(dev, -ENODEV,
-> +					     "failed to get valid pcie domain\n");
-> +		else
-> +			imx_pcie->controller_id = ret;
->  		break;
->  	default:
->  		break;
-> -- 
-> 2.37.1
+> On Wed, 26 Feb 2025 15:19:02 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 > 
+> > index 85f037dc1462..e27305d31fc5 100644
+> > --- a/kernel/trace/trace_fprobe.c
+> > +++ b/kernel/trace/trace_fprobe.c
+> > @@ -1230,6 +1230,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+> >  	if (is_return && tf->tp.entry_arg) {
+> >  		tf->fp.entry_handler = trace_fprobe_entry_handler;
+> >  		tf->fp.entry_data_size = traceprobe_get_entry_data_size(&tf->tp);
+> 
+> Looking at traceprobe_get_entry_data_size(), the setting of the offset and
+> what it returns is a bit of magic. It's not intuitive and really could use
+> some comments. This isn't against this patch, but it does make it hard to
+> review this patch.
+
+Indeed. It is a bit tricky.
+
+> 
+> > +		if (ALIGN(tf->fp.entry_data_size, sizeof(long)) > MAX_FPROBE_DATA_SIZE) {
+> > +			trace_probe_log_set_index(2);
+> > +			trace_probe_log_err(0, TOO_MANY_EARGS);
+> > +			return -E2BIG;
+> > +		}
+> >  	}
+> >  
+> >  	ret = traceprobe_set_print_fmt(&tf->tp,
+> 
+> 
+> We have this in trace_probe.c:
+> 
+> static int __store_entry_arg(struct trace_probe *tp, int argnum)
+> {
+> 	struct probe_entry_arg *earg = tp->entry_arg;
+> 	bool match = false;
+> 	int i, offset;
+> 
+> 	if (!earg) {
+> 		earg = kzalloc(sizeof(*tp->entry_arg), GFP_KERNEL);
+> 		if (!earg)
+> 			return -ENOMEM;
+> 		earg->size = 2 * tp->nr_args + 1;
+> 		earg->code = kcalloc(earg->size, sizeof(struct fetch_insn),
+> 				     GFP_KERNEL);
+> 		if (!earg->code) {
+> 			kfree(earg);
+> 			return -ENOMEM;
+> 		}
+> 		/* Fill the code buffer with 'end' to simplify it */
+> 		for (i = 0; i < earg->size; i++)
+> 			earg->code[i].op = FETCH_OP_END;
+> 		tp->entry_arg = earg;
+> 	}
+> 
+> 	offset = 0;
+> 	for (i = 0; i < earg->size - 1; i++) {
+> 		switch (earg->code[i].op) {
+> 		case FETCH_OP_END:
+> 			earg->code[i].op = FETCH_OP_ARG;
+> 			earg->code[i].param = argnum;
+> 			earg->code[i + 1].op = FETCH_OP_ST_EDATA;
+> 			earg->code[i + 1].offset = offset;
+> 
+> // There's definitely some dependency between FETCH_OP_END, FETCH_OP_ARG
+> // and FETCH_OP_ST_EDATA that isn't documented. At least not in this file.
+
+This accumurates the fetching operation on the code. The problem is
+limitation of the entry data size. So this scans the entry code and
+checks whether the specified function argument is already stored, and
+reuse it (return the offset where it is stored). If there isn't,
+it stores a pair of FETCH_OP_ARG + FETCH_OP_ST_EDATA at the end of
+the code array.
+
+> 
+> 			return offset;
+> 		case FETCH_OP_ARG:
+> 			match = (earg->code[i].param == argnum);
+> 			break;
+> 		case FETCH_OP_ST_EDATA:
+> 			offset = earg->code[i].offset;
+> 			if (match)
+> 				return offset;
+> 			offset += sizeof(unsigned long);
+> 			break;
+> 		default:
+> 			break;
+> 		}
+> 	}
+> 	return -ENOSPC;
+> }
+> 
+> int traceprobe_get_entry_data_size(struct trace_probe *tp)
+> {
+> 	struct probe_entry_arg *earg = tp->entry_arg;
+> 	int i, size = 0;
+> 
+> 	if (!earg)
+> 		return 0;
+> 
+> 	for (i = 0; i < earg->size; i++) {
+> 		switch (earg->code[i].op) {
+> 		case FETCH_OP_END:
+> 			goto out;
+> 		case FETCH_OP_ST_EDATA:
+> 			size = earg->code[i].offset + sizeof(unsigned long);
+> 
+> // What makes earg->code[i].offset so special?
+> // What is the guarantee that code[i + 1].offset is greater than code[i].offset?
+> // I guess the above function guarantees that, but it's not obvious here.
+
+Yeah, let me explain.
+
+	/*
+	 * earg->code[] array has an operation sequence which is run in
+	 * the entry handler.
+	 * The sequence stopped by FETCH_OP_END and each data stored in
+	 * the entry data buffer by FETCH_OP_ST_EDATA. The FETCH_OP_ST_EDATA
+	 * stores the data at the data buffer + its offset, and all data are
+	 * "unsigned long" size. The offset must be increased when a data is
+	 * stored. Thus we need to find the last FETCH_OP_ST_EDATA in the
+	 * code array.
+	 */
+
+> 
+> 			break;
+> 		default:
+> 			break;
+> 		}
+> 	}
+> out:
+> 	return size;
+> }
+> 
+> Assuming that traceprobe_get_entry_data_size() does properly return the max size.
+
+Yes, maybe we can scan the code array from the end for optimization but it still
+needs the explanation.
+
+
+> 
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Thank you!
+
+> 
+> -- Steve
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
